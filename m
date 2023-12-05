@@ -1,54 +1,54 @@
-Return-Path: <io-uring+bounces-233-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-234-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA340805882
-	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 16:24:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95638805883
+	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 16:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DA381F217E3
-	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 15:24:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD261F21810
+	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 15:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D728468EA4;
-	Tue,  5 Dec 2023 15:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BAA68EA6;
+	Tue,  5 Dec 2023 15:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCALABCn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iXmIHF32"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C34310FD
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50FD910D3
 	for <io-uring@vger.kernel.org>; Tue,  5 Dec 2023 07:24:06 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2c9fbb846b7so30535021fa.2
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-54bfd4546fbso7121834a12.1
         for <io-uring@vger.kernel.org>; Tue, 05 Dec 2023 07:24:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1701789844; x=1702394644; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=znkkF+su/afd2Tr2p7STGGP/AsviaGZ8tXbxC7ntFQQ=;
-        b=hCALABCnl83FhcjqFvzcJPWcEMJXr07LRURMFq3NByD8NPpinwYajyMDC0Ah2mhzNR
-         NboLXzu0iyeOvRDIMaiC6zlUVO+PQN3HLpLN9qWuRwyZ7feihbZLV9UeAwe/LfeS/Hsw
-         FNJpzfqqC88WQvVvuonklumOXM7uQ8ITEbHhV+7PIhlMGONoWa+7jsykDL5bJD/WCjdU
-         OFgC4+lbVXVhIWiNwPItRj+QIWxs01Pb3CF71n3i7V+bmoiVzdqjgExP1Xji68PPhg+I
-         Qq+VzfMVSb+rzZG2VAYLTZLiMid614dfg7VBO5z4dn1u2p4tNPC5BZ1Wk10Oc5dIZ+gM
-         zQHg==
+        bh=2QEtZM1ddOlob8bIMBELDAFyo8g74w6lP7y5ucd4Yz8=;
+        b=iXmIHF32aGOyWyc4RMg63vM5l1+t2YDPmtvXxAlHobnPc817SVBAWv3jcP6bhcl53m
+         unlYJqj3dyfM73h7sfmvLd9errVKHT1pt3FnaoRNprZY8+MMYvNJeHyKJ2pRMbouNYOD
+         EJVoUQeTumWGZ4R2BOzkkhwxheOPSq+Anh6/QPol1d+xsZtOE9jumzxjY6NrPyUztPnQ
+         rpBBDXU0IH5B3wReXvw6wZ3EUNc52GbDD3KNp0M/rAuDk98m/8DtxrbyWKtW3RvWPG4F
+         rPr/810U05ZzgG41Qr81BYmJZrZVGESuvyacrqWWRoPbHJeCAMWpedarNLb6gUpuVOQp
+         5JhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1701789844; x=1702394644;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=znkkF+su/afd2Tr2p7STGGP/AsviaGZ8tXbxC7ntFQQ=;
-        b=mjkUAmFmJpDoMGJT5LlLj3kg0KhmPd14kNVUjIooO2EZkyhwgOKXg88RdMbAseKbPg
-         PuqpsLpuCayrQeHPF3gnF0HgKruNNmrR8ZHaKYwIhJVZOy6j8A+ZNwV+VMgji+GRfrjW
-         tg43dDX+LpDhIT7WEcPD2nm4g3AygSu4FsszFSiy9jLC2uETj1DYJvMsyK3bC6Apn1Dg
-         NQfJHgd42UBYUHUzu3kHD2cia0Yk3NUVNRcTJt+iUHlq6DliJkz34wxfqoVKKNoDjdtc
-         UZeFKYdnSEzSar1rZ1JaZiG2BN1CJfUgq4yJAprZfgD911A9Ian4VnvIsdWYe2jARa0V
-         qDZQ==
-X-Gm-Message-State: AOJu0YyXSfZA5iaAX6P+cC1dp66F4/UCflMid27zdS1e4yaO4Js2C1s5
-	Atav2wmwj8K35rddKljVqEYESpARnxM=
-X-Google-Smtp-Source: AGHT+IFlpRpn089H98dV9NwM34Q5Ev+v94RNwhj0dfp/1DKUHGb7pGTQYqI4UPWRvfFdyNNr0fmoBQ==
-X-Received: by 2002:a2e:82c3:0:b0:2c9:f79d:1998 with SMTP id n3-20020a2e82c3000000b002c9f79d1998mr1993481ljh.93.1701789843771;
-        Tue, 05 Dec 2023 07:24:03 -0800 (PST)
+        bh=2QEtZM1ddOlob8bIMBELDAFyo8g74w6lP7y5ucd4Yz8=;
+        b=Hj/D7Nmt7ndhuov8WlUmzCK6BNfHtN2M4A7nSPL20KqyVxEcT6my9k4a9U1hMK3VuC
+         1bgJkNjVTivUblmXKLBAmpUvzfheS8AHYM16/etUBsREed9HDBNIIm/OY4kk50xoF9WX
+         yg9b170jPHDc4L+1RgVUsvfEesVtpFok0Y1Ysrl0txG/RyM0NC3fkA07Okdas9nQylGV
+         9lsjObD3aqVRP7et4s94Wyjhm23EGU7fjoi1NcQLLEXOyVamJHTMBo5kd72rOQUTlW4y
+         kkE0AHI55JdJCIkK78mLPJy5LtJTI7EUxldKSigrSfx0H/TThkXDdYWkGi32ADIxeuBu
+         QRZQ==
+X-Gm-Message-State: AOJu0YyrykQF3wHDh1bhlRkvjlOBAyoGnerYX5hBlA/Q2ZDYHM+IXcFT
+	CVisjDujowbtFisiY0tPF+VZD0wylOA=
+X-Google-Smtp-Source: AGHT+IECk9duWCK6ssEvu4Xn+aPbRY9N/O48x3TwjF5RnBijgVajr4mOCpU0D5K7dlgaXifTkntG6A==
+X-Received: by 2002:a50:a404:0:b0:54c:6bce:375a with SMTP id u4-20020a50a404000000b0054c6bce375amr3680000edb.74.1701789844247;
+        Tue, 05 Dec 2023 07:24:04 -0800 (PST)
 Received: from 127.com ([2620:10d:c092:600::2:ebcf])
         by smtp.gmail.com with ESMTPSA id s24-20020aa7d798000000b0054c9211021csm1221591edq.69.2023.12.05.07.24.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
@@ -57,9 +57,9 @@ From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
 	asml.silence@gmail.com
-Subject: [PATCH liburing 1/5] tests: comment on io_uring zc and SO_ZEROCOPY
-Date: Tue,  5 Dec 2023 15:22:20 +0000
-Message-ID: <84f20fd3b1b0f6bd43b7388f7e442205bf9502f6.1701789563.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 2/5] examples/sendzc: remove get time overhead
+Date: Tue,  5 Dec 2023 15:22:21 +0000
+Message-ID: <cd3e21635093662a4fdc579df047133fa50ccdf6.1701789563.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1701789563.git.asml.silence@gmail.com>
 References: <cover.1701789563.git.asml.silence@gmail.com>
@@ -71,32 +71,94 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Application writes can be using send-zerocopy.c as an example of
-io_uring zc enablement. However, it's a test, and we're testing all
-weird corner cases. One of them is setting SO_ZEROCOPY for io_uring
-zc, which is not needed, and applications should not do it. Add a
-comment in an attempt to limit misunderstanding.
+We call gettimeofday_ms() for each loop iteration, which annoyingly
+adds ~2% of overhead. We don't want to see it there, it should only be
+testing io_uring and the networking stack, so ammortise it to
+nothingness.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/send-zerocopy.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ examples/send-zerocopy.c | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/test/send-zerocopy.c b/test/send-zerocopy.c
-index 9828ac6..1b6dd77 100644
---- a/test/send-zerocopy.c
-+++ b/test/send-zerocopy.c
-@@ -278,6 +278,10 @@ static int create_socketpair_ip(struct sockaddr_storage *addr,
- #ifdef SO_ZEROCOPY
- 		int val = 1;
+diff --git a/examples/send-zerocopy.c b/examples/send-zerocopy.c
+index 1f3b220..19cf961 100644
+--- a/examples/send-zerocopy.c
++++ b/examples/send-zerocopy.c
+@@ -52,6 +52,7 @@ struct thread_data {
+ 	int idx;
+ 	unsigned long long packets;
+ 	unsigned long long bytes;
++	unsigned long long dt_ms;
+ 	struct sockaddr_storage dst_addr;
+ 	int fd;
+ };
+@@ -315,10 +316,11 @@ static void do_tx(struct thread_data *td, int domain, int type, int protocol)
+ 	const int notif_slack = 128;
+ 	struct io_uring ring;
+ 	struct iovec iov;
+-	uint64_t tstop;
++	uint64_t tstart;
+ 	int i, fd, ret;
+ 	int compl_cqes = 0;
+ 	int ring_flags = IORING_SETUP_COOP_TASKRUN | IORING_SETUP_SINGLE_ISSUER;
++	unsigned loop = 0;
  
-+		/*
-+		 * NOTE: apps must not set SO_ZEROCOPY when using io_uring zc.
-+		 * It's only here to test interactions with MSG_ZEROCOPY.
-+		 */
- 		if (setsockopt(*sock_client, SOL_SOCKET, SO_ZEROCOPY, &val, sizeof(val))) {
- 			perror("setsockopt zc");
- 			return 1;
+ 	if (cfg_defer_taskrun)
+ 		ring_flags |= IORING_SETUP_DEFER_TASKRUN;
+@@ -357,7 +359,7 @@ static void do_tx(struct thread_data *td, int domain, int type, int protocol)
+ 
+ 	pthread_barrier_wait(&barrier);
+ 
+-	tstop = gettimeofday_ms() + cfg_runtime_ms;
++	tstart = gettimeofday_ms();
+ 	do {
+ 		struct io_uring_sqe *sqe;
+ 		struct io_uring_cqe *cqe;
+@@ -419,7 +421,9 @@ static void do_tx(struct thread_data *td, int domain, int type, int protocol)
+ 			}
+ 			io_uring_cqe_seen(&ring, cqe);
+ 		}
+-	} while (gettimeofday_ms() < tstop);
++	} while ((++loop % 16 != 0) || gettimeofday_ms() < tstart + cfg_runtime_ms);
++
++	td->dt_ms = gettimeofday_ms() - tstart;
+ 
+ out_fail:
+ 	shutdown(fd, SHUT_RDWR);
+@@ -536,6 +540,7 @@ static void parse_opts(int argc, char **argv)
+ 
+ int main(int argc, char **argv)
+ {
++	unsigned long long tsum = 0;
+ 	unsigned long long packets = 0, bytes = 0;
+ 	struct thread_data *td;
+ 	const char *cfg_test;
+@@ -586,13 +591,18 @@ int main(int argc, char **argv)
+ 		pthread_join(td->thread, &res);
+ 		packets += td->packets;
+ 		bytes += td->bytes;
++		tsum += td->dt_ms;
++	}
++	tsum = tsum / cfg_nr_threads;
++
++	if (!tsum) {
++		fprintf(stderr, "The run is too short, can't gather stats\n");
++	} else {
++		fprintf(stderr, "packets=%llu (MB=%llu), rps=%llu (MB/s=%llu)\n",
++			packets, bytes >> 20,
++			packets * 1000 / tsum,
++			(bytes >> 20) * 1000 / tsum);
+ 	}
+-
+-	fprintf(stderr, "packets=%llu (MB=%llu), rps=%llu (MB/s=%llu)\n",
+-		packets, bytes >> 20,
+-		packets / (cfg_runtime_ms / 1000),
+-		(bytes >> 20) / (cfg_runtime_ms / 1000));
+-
+ 	pthread_barrier_destroy(&barrier);
+ 	return 0;
+ }
 -- 
 2.43.0
 

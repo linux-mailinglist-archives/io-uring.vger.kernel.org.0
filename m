@@ -1,109 +1,150 @@
-Return-Path: <io-uring+bounces-240-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-241-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4B38059E4
-	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 17:22:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D625806117
+	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 22:56:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04C36B2118F
-	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 16:22:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8453B281DF3
+	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 21:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C215563DFF;
-	Tue,  5 Dec 2023 16:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4A26FCD6;
+	Tue,  5 Dec 2023 21:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RtzCZh5Q"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="SCzR8FCn"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F34C9E
-	for <io-uring@vger.kernel.org>; Tue,  5 Dec 2023 08:22:29 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1d0481b68ebso9785465ad.0
-        for <io-uring@vger.kernel.org>; Tue, 05 Dec 2023 08:22:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701793349; x=1702398149; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H/SsCJR078yW5wNi1Nlk4sIcdfiKFED+98FGl0+7gCw=;
-        b=RtzCZh5QGqltLX9pxSxbJxIrBskC39hpgRJORToqLSy9QfHnqgwB3jVNzolGZvhZBJ
-         M2GRogzx2pPlYMxqtqr3a1MD+HoS7PFDY87ba7DmNtGmChbUausK4LZ+1A/k8FTgNkNW
-         NFT0JAmxCZo3mIXCZbYynR1EvxkViB+wVUFk+XPBxUWZPRcu2gnRfamQYAyQp/qufhNE
-         BXQjr4fRYfQoHeDGDgBEZ20N+OfydnzbBCW7J6ZUxOJ2KoxC91qvLCCg2RfzGZjqXr6F
-         pdDmCE8WNfgE4JZxTowjxbyntw/QWkY0Uqiav12PlS140RkLnHvRFA09nThFN8HoC2dQ
-         rPRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701793349; x=1702398149;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H/SsCJR078yW5wNi1Nlk4sIcdfiKFED+98FGl0+7gCw=;
-        b=Rkneji7qEj+PjqZZa+dAVyM/amvdCwoA+Q2+nYP3OEavh6dPqYL4QwTMXQ0LCQT8cr
-         S4FJ9QKKz5vtu6PHeUzpWhp85SNLT3IScUWl1H0ed4/TXxgaanqVHTZsRxXaCpERwHeZ
-         33BP6YW2lKegYCQyf53bIX3HVjaqPqHK4KaEtYQxNFl8XcMEKrIehLmnAX6o6fFalOC1
-         6ixw6YoF7UlXsJu2paitx4YjOjblqFNoF7F5aQkjDpnk8ZBGsUAr5iX1XACr+cjIJtKQ
-         vz9s/krIsi3q5VyqzINcGjJU5R+npQDNbMjYR/803M3WhHnurtfOzZgGTOl74f8W8NyI
-         pQXw==
-X-Gm-Message-State: AOJu0YzGoioNpaHkV3ClFCU+aex7VjxQg/MqIz6ztO11CjTngM9vjRlx
-	+mYx7p0DQwGYcx6aE6s3N2jVLZ5hu3uICUkaNTC5ew==
-X-Google-Smtp-Source: AGHT+IFdy6yzBVyrJEW9ic33TbwdUkvv8JtY+94cfRRXJhJ/BYp4h62si4xnqc1hwmwrvOzgY3Ew0Q==
-X-Received: by 2002:a17:902:e881:b0:1d0:c738:73c8 with SMTP id w1-20020a170902e88100b001d0c73873c8mr1919652plg.0.1701793348625;
-        Tue, 05 Dec 2023 08:22:28 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id iy3-20020a170903130300b001cfed5524easm6784714plb.288.2023.12.05.08.22.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Dec 2023 08:22:28 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1701789563.git.asml.silence@gmail.com>
-References: <cover.1701789563.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing 0/5] send-zc test/bench improvements
-Message-Id: <170179334780.1467554.13296665238355789535.b4-ty@kernel.dk>
-Date: Tue, 05 Dec 2023 09:22:27 -0700
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32F251A5
+	for <io-uring@vger.kernel.org>; Tue,  5 Dec 2023 13:56:28 -0800 (PST)
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+	by m0089730.ppops.net (8.17.1.19/8.17.1.19) with ESMTP id 3B5Lpgfq027082
+	for <io-uring@vger.kernel.org>; Tue, 5 Dec 2023 13:56:27 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=s2048-2021-q4;
+ bh=0qcQiLXPVNu2TXjf/+LpsR/YK5GFcl+ICamtuPaACPs=;
+ b=SCzR8FCnuaSq/PR7ngFAsbwDj0J/dKvyZpr+uB/WEFp/staPAmfGFqGdYbVaAGlwYqbA
+ 4Mm64Dot7TLFFc6EtSqDoLTN6ncruI2+mHv9jyRnA7jm3alENkvyUKYw+97s0lfJ6+D7
+ V8ymebHVdbxVuIRZOdTbRZtf4vCe+7XLI3cxYHywq4yzljI9YDeHExdf6qOWroPJKX/E
+ ezgwJxWhy0CnrRlf83n/LlFru31/5oS3Hur/GalI0A4siIwlRcppR1EvA+/t63SwB7h2
+ P4BkB8ujvSuSMOMV8aj1hxz39CTt/ON9L/W6zqP9J2m4T/C4QKyfYAh1e0D84kGhsTdT kQ== 
+Received: from mail.thefacebook.com ([163.114.132.120])
+	by m0089730.ppops.net (PPS) with ESMTPS id 3utapg0wy0-8
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Tue, 05 Dec 2023 13:56:27 -0800
+Received: from twshared6040.02.ash9.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:21d::8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34; Tue, 5 Dec 2023 13:56:20 -0800
+Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
+	id 2A39F22AAC695; Tue,  5 Dec 2023 13:56:02 -0800 (PST)
+From: Keith Busch <kbusch@meta.com>
+To: <io-uring@vger.kernel.org>
+CC: <asml.silence@gmail.com>, Keith Busch <kbusch@kernel.org>,
+        Jens Axboe
+	<axboe@kernel.dk>
+Subject: [PATCH] io_uring: save repeated issue_flags
+Date: Tue, 5 Dec 2023 13:55:53 -0800
+Message-ID: <20231205215553.2954630-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-7edf1
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: ExSzDlmfofJOMXAY5y65XRQ2LT32uxTF
+X-Proofpoint-ORIG-GUID: ExSzDlmfofJOMXAY5y65XRQ2LT32uxTF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-05_18,2023-12-05_01,2023-05-22_02
 
+From: Keith Busch <kbusch@kernel.org>
 
-On Tue, 05 Dec 2023 15:22:19 +0000, Pavel Begunkov wrote:
-> Patch 1 tries to resolve some misunderstandings from applications
-> using the send zc test as an example.
-> 
-> Patches 2-5 are mostly quality of life improvements noticed while
-> doing some tests.
-> 
-> Pavel Begunkov (5):
->   tests: comment on io_uring zc and SO_ZEROCOPY
->   examples/sendzc: remove get time overhead
->   examples/sendzc: use stdout for stats
->   examples/sendzc: try to print stats on SIGINT
->   examples/sendzc: improve help message
-> 
-> [...]
+No need to rebuild the issue_flags on every IO: they're always the same.
 
-Applied, thanks!
+Suggested-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+---
+ include/linux/io_uring_types.h |  1 +
+ io_uring/io_uring.c            | 15 ++++++++++++---
+ io_uring/uring_cmd.c           |  8 +-------
+ 3 files changed, 14 insertions(+), 10 deletions(-)
 
-[1/5] tests: comment on io_uring zc and SO_ZEROCOPY
-      commit: 88d99205fb4a6eb90dac88b0b44e04c88b74ef39
-[2/5] examples/sendzc: remove get time overhead
-      commit: ec12f8c51af0afc3ebfa2db461c7737e5be012c4
-[3/5] examples/sendzc: use stdout for stats
-      commit: 02866096e714c9e28616b88b5f79c509520999b2
-[4/5] examples/sendzc: try to print stats on SIGINT
-      commit: 6bc6fe9266abe7054908cf10d6b3d0077f7d7465
-[5/5] examples/sendzc: improve help message
-      commit: caa03326c5b6f6d5e013dd1c1a9adc64499e8cec
-
-Best regards,
--- 
-Jens Axboe
-
-
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
+s.h
+index bebab36abce89..dd192d828f463 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -228,6 +228,7 @@ struct io_ring_ctx {
+ 	/* const or read-mostly hot data */
+ 	struct {
+ 		unsigned int		flags;
++		unsigned int		issue_flags;
+ 		unsigned int		drain_next: 1;
+ 		unsigned int		restricted: 1;
+ 		unsigned int		off_timeout_used: 1;
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 1d254f2c997de..a338e3660ecb8 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3975,11 +3975,20 @@ static __cold int io_uring_create(unsigned entrie=
+s, struct io_uring_params *p,
+ 	 * polling again, they can rely on io_sq_thread to do polling
+ 	 * work, which can reduce cpu usage and uring_lock contention.
+ 	 */
+-	if (ctx->flags & IORING_SETUP_IOPOLL &&
+-	    !(ctx->flags & IORING_SETUP_SQPOLL))
+-		ctx->syscall_iopoll =3D 1;
++	if (ctx->flags & IORING_SETUP_IOPOLL) {
++		ctx->issue_flags |=3D IO_URING_F_SQE128;
++		if (!(ctx->flags & IORING_SETUP_SQPOLL))
++			ctx->syscall_iopoll =3D 1;
++	}
+=20
+ 	ctx->compat =3D in_compat_syscall();
++	if (ctx->compat)
++		ctx->issue_flags |=3D IO_URING_F_COMPAT;
++	if (ctx->flags & IORING_SETUP_SQE128)
++		ctx->issue_flags |=3D IO_URING_F_SQE128;
++	if (ctx->flags & IORING_SETUP_CQE32)
++		ctx->issue_flags |=3D IO_URING_F_CQE32;
++
+ 	if (!ns_capable_noaudit(&init_user_ns, CAP_IPC_LOCK))
+ 		ctx->user =3D get_uid(current_user());
+=20
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 8a38b9f75d841..dbc0bfbfd0f05 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -158,19 +158,13 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int=
+ issue_flags)
+ 	if (ret)
+ 		return ret;
+=20
+-	if (ctx->flags & IORING_SETUP_SQE128)
+-		issue_flags |=3D IO_URING_F_SQE128;
+-	if (ctx->flags & IORING_SETUP_CQE32)
+-		issue_flags |=3D IO_URING_F_CQE32;
+-	if (ctx->compat)
+-		issue_flags |=3D IO_URING_F_COMPAT;
+ 	if (ctx->flags & IORING_SETUP_IOPOLL) {
+ 		if (!file->f_op->uring_cmd_iopoll)
+ 			return -EOPNOTSUPP;
+-		issue_flags |=3D IO_URING_F_IOPOLL;
+ 		req->iopoll_completed =3D 0;
+ 	}
+=20
++	issue_flags |=3D ctx->issue_flags;
+ 	ret =3D file->f_op->uring_cmd(ioucmd, issue_flags);
+ 	if (ret =3D=3D -EAGAIN) {
+ 		if (!req_has_async_data(req)) {
+--=20
+2.34.1
 
 

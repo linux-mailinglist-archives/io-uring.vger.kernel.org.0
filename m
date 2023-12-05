@@ -1,62 +1,64 @@
-Return-Path: <io-uring+bounces-228-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-229-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15AE805459
-	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 13:37:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B076380545C
+	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 13:37:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A72CD1F213D0
-	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 12:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A0A1C20B9B
+	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 12:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5B83C48D;
-	Tue,  5 Dec 2023 12:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FBE3C48D;
+	Tue,  5 Dec 2023 12:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zNdarjWd"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BA/GDjsT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FB51AE
-	for <io-uring@vger.kernel.org>; Tue,  5 Dec 2023 04:36:56 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-3333a3a599fso1657477f8f.0
-        for <io-uring@vger.kernel.org>; Tue, 05 Dec 2023 04:36:56 -0800 (PST)
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71E14D5A
+	for <io-uring@vger.kernel.org>; Tue,  5 Dec 2023 04:37:22 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40c09f4bea8so23436895e9.1
+        for <io-uring@vger.kernel.org>; Tue, 05 Dec 2023 04:37:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701779815; x=1702384615; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701779841; x=1702384641; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=lq9Rg0YreoRF3xpt7wQKkV03N9XWMTQ7WfFbqJhw0lI=;
-        b=zNdarjWdDSRTUOj633JpPcubhnFO7aEA8DaqI4u8ctm3b74tpJ1BnGHO5jwoVjsxyt
-         3fbGYhag3+Dv2hAejjMDWOgRAk4b1kb/RaFyoE7aQJ+aLnjknQmR+3biZciCBQuL656l
-         U1vT3sJCmfkz6aG4D5/Qm6E3cOuwVZPzjaiZ3mLjbR8JWJhtUJumS3/+CNijET2cLj0k
-         gxc7RoLciySb3bDolcDfepAlObAnlBpYOuZwQ/5zap04q8HANaWwVezJ3LHqJqJkomP2
-         qVtHdSuRBNHV2WEW9QIQj3PSi9V0UfJx+IdhaY7RqVuqVSp6pxh8nnrVE8bRqln9zyIz
-         uDTA==
+        bh=xEQ0nPJK2l6MEItIcOUo+Cj1aUU6b9K1G/w+FexHPQM=;
+        b=BA/GDjsTIHpykQtRNDowRNmaQIXe2g0tGNJL54hfknz0eL9S2PfnNQTruDPPjnBO70
+         kEd3d7lgJh6Al8YKhCdoF0Cb8Ah2Ue+7QzO5nzlBy8P1ly91C9ApOnLwt6vVIEPBDUG9
+         6O+OD5Qf0hnRwKMVdVt3HmJpY66TUonkjFYJ9koHk5R7LUgEquR79GDZ5AWyWYt6whzm
+         1wGHhpsbs9CcrgSHKPmiSbVobu5cU0qflq1sKmkhmpkgpRhcuo0oKEw9sPstV9FU9ety
+         0wKNtu9JpcGcaeoFBWlhcjv+9mcVBGMHXIIXvpvWUkqxO1VSGgkzfAGYIFYiT1SN5rFQ
+         M5rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701779815; x=1702384615;
+        d=1e100.net; s=20230601; t=1701779841; x=1702384641;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lq9Rg0YreoRF3xpt7wQKkV03N9XWMTQ7WfFbqJhw0lI=;
-        b=qeue7y4wMpcFriG26euIePs/eQg4HuEvi0XRVVapLztxrJ7CaDXnpPOj8JenQVdBSa
-         DG10Sv3/japi6PX3f+irTjD+aeyghYDeNku7l/L7fFkgg8KF+nIUmHkZg7sf1hZaVLhe
-         T+s8409jD1XAYbJuEXfdQZGP70sdQ/m4wI25TbV1Sc9XZOq7sNssziz4Mg60n4EFZ/LS
-         p1UUUBZ2vWAbLrWPU1uWuPi2LEQoDIvRRcIH2o6EEEsZtBoSMguT9v2mEyl3OKyhOuEM
-         2slrQ6YwWZPGGVyc0eDpCHrbxKFsAW7tpPUMkBGCM4GIr7ocsWOW8+OgrDNBCdKAFsfG
-         t7KA==
-X-Gm-Message-State: AOJu0Yxq00+w9ZfOrB1yFyw2CShTvy1rd0rPuJQOQzaew7D62jppp+ai
-	BpSVuO6tptrlCXHE0m+abogeBF8K1thUizGBdc8=
-X-Google-Smtp-Source: AGHT+IHz5wL+rNeT5Ls5SBEOgspwq+7Tt+nvRRjtapYG0Ovyf/tXcniD/quRS2EQmEGjVc56/322Sg==
-X-Received: by 2002:a05:600c:4927:b0:40b:5e56:7b64 with SMTP id f39-20020a05600c492700b0040b5e567b64mr556467wmp.173.1701779814693;
-        Tue, 05 Dec 2023 04:36:54 -0800 (PST)
+        bh=xEQ0nPJK2l6MEItIcOUo+Cj1aUU6b9K1G/w+FexHPQM=;
+        b=cR8t8gqDTxddiEiLwTlZ/oLYXXMGs2DWBqEz8/EaGpIyoX1/3+wnoUI912oU2t6XAa
+         minoe9PnhR7I7vcrzMjE3m5OVKedVqG5dkWKuCYs1fmvSHIAjnHCTRK3ELNFV+PPC6f7
+         MNXa+ykAXYf8UkTHrhKPIfECI1s7LuEcVLoYrMe0pkJys8QLk3perTIX1eWzRC4Z9x4m
+         GLbprk9Q4ZJDiKwAcEDSilnbX+cmdadpBaEhcekAIVweZQwTu21ovHH+mAApEFxZbS9q
+         tansEdbwL3agLIO6NSQMF50L+rvtCpVMw1QZ2o6Iqj+eCiK8bzmH5CiRX65IGUm0ggI9
+         uZwg==
+X-Gm-Message-State: AOJu0YwvEYwpysYWIRO2UtPUioXKYp+IiSEUIxTsoqf7k12lylZWcqWW
+	W3GcoI/h4GArpffFeKiN1uyRIQ==
+X-Google-Smtp-Source: AGHT+IHGwMratcq3hVnhryBa3837VxHeTKKs/Jd/i8LMX25Dk+Chk0tB18TP0Xcjd5ROraLCl/4gNQ==
+X-Received: by 2002:a05:600c:2199:b0:40b:5e21:e281 with SMTP id e25-20020a05600c219900b0040b5e21e281mr375751wme.110.1701779840967;
+        Tue, 05 Dec 2023 04:37:20 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id f15-20020a05600c4e8f00b0040b3632e993sm22180892wmq.46.2023.12.05.04.36.54
+        by smtp.gmail.com with ESMTPSA id h6-20020a05600c350600b0040b43da0bbasm18511650wmq.30.2023.12.05.04.37.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Dec 2023 04:36:54 -0800 (PST)
-Date: Tue, 5 Dec 2023 15:36:51 +0300
+        Tue, 05 Dec 2023 04:37:20 -0800 (PST)
+Date: Tue, 5 Dec 2023 15:37:17 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org
-Subject: [bug report] io_uring: free io_buffer_list entries via RCU
-Message-ID: <9a411872-46c3-4652-8704-d1610f547583@moroto.mountain>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] io_uring/kbuf: Fix an NULL vs IS_ERR() bug in
+ io_alloc_pbuf_ring()
+Message-ID: <5ed268d3-a997-4f64-bd71-47faa92101ab@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -65,43 +67,33 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hello Jens Axboe,
+The io_mem_alloc() function returns error pointers, not NULL.  Update
+the check accordingly.
 
-This is a semi-automatic email about new static checker warnings.
+Fixes: b10b73c102a2 ("io_uring/kbuf: recycle freed mapped buffer ring entries")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ io_uring/kbuf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The patch 5cf4f52e6d8a: "io_uring: free io_buffer_list entries via 
-RCU" from Nov 27, 2023, leads to the following Smatch complaint:
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index 268788305b61..bd25bc2deeaf 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -636,8 +636,8 @@ static int io_alloc_pbuf_ring(struct io_ring_ctx *ctx,
+ 	ibf = io_lookup_buf_free_entry(ctx, ring_size);
+ 	if (!ibf) {
+ 		ptr = io_mem_alloc(ring_size);
+-		if (!ptr)
+-			return -ENOMEM;
++		if (IS_ERR(ptr))
++			return PTR_ERR(ptr);
+ 
+ 		/* Allocate and store deferred free entry */
+ 		ibf = kmalloc(sizeof(*ibf), GFP_KERNEL_ACCOUNT);
+-- 
+2.42.0
 
-    io_uring/kbuf.c:766 io_pbuf_get_address()
-    warn: variable dereferenced before check 'bl' (see line 764)
-
-io_uring/kbuf.c
-   753  void *io_pbuf_get_address(struct io_ring_ctx *ctx, unsigned long bgid)
-   754  {
-   755          struct io_buffer_list *bl;
-   756  
-   757          bl = __io_buffer_get_list(ctx, smp_load_acquire(&ctx->io_bl), bgid);
-   758  
-   759          /*
-   760           * Ensure the list is fully setup. Only strictly needed for RCU lookup
-   761           * via mmap, and in that case only for the array indexed groups. For
-   762           * the xarray lookups, it's either visible and ready, or not at all.
-   763           */
-   764          if (!smp_load_acquire(&bl->is_ready))
-                                      ^^^^^
-bl dereferenced here
-
-   765                  return NULL;
-   766          if (!bl || !bl->is_mmap)
-                    ^^^
-Checked for NULL too late.
-
-   767                  return NULL;
-   768  
-   769          return bl->buf_ring;
-   770  }
-
-regards,
-dan carpenter
 

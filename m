@@ -1,61 +1,62 @@
-Return-Path: <io-uring+bounces-227-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-228-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6276E80494C
-	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 06:26:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15AE805459
+	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 13:37:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4CE1B20C68
-	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 05:26:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A72CD1F213D0
+	for <lists+io-uring@lfdr.de>; Tue,  5 Dec 2023 12:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471F28F6B;
-	Tue,  5 Dec 2023 05:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5B83C48D;
+	Tue,  5 Dec 2023 12:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gpQ586ja"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zNdarjWd"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBDE0101
-	for <io-uring@vger.kernel.org>; Mon,  4 Dec 2023 21:26:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701753962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UItdnX8ajj27d5Qso73kxc+PaX4o0omDbnZKQK9rTcs=;
-	b=gpQ586jaC230LhcJLHPoJ1GX7hNfSuAKPXQksdGsLd6JGb9sORGwCOfO97w1sISBFk8aFU
-	kkJkNlhuIX5WIw8pzEqF5Aztkvij5EbjjsMYkIBWAEflrxEFM2oPRjU+pcwWvK3SrgKyJW
-	LzAZJkR0/azujvMgGgtYzjCEfYs7QyU=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-VYnt0zC1PLC1jjSTgEIXlA-1; Tue,
- 05 Dec 2023 00:25:56 -0500
-X-MC-Unique: VYnt0zC1PLC1jjSTgEIXlA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 700411C068DE;
-	Tue,  5 Dec 2023 05:25:55 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.3])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 1F6671C060AF;
-	Tue,  5 Dec 2023 05:25:48 +0000 (UTC)
-Date: Tue, 5 Dec 2023 13:25:44 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Jeff Moyer <jmoyer@redhat.com>, Keith Busch <kbusch@meta.com>,
-	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org,
-	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	asml.silence@gmail.com, linux-security-module@vger.kernel.org,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH 1/2] iouring: one capable call per iouring instance
-Message-ID: <ZW60WPf/hmAUoxPv@fedora>
-References: <20231204175342.3418422-1-kbusch@meta.com>
- <x49zfypstdx.fsf@segfault.usersys.redhat.com>
- <ZW4hM0H6pjbCpIg9@kbusch-mbp>
- <ZW6jjiq9wXHm5d10@fedora>
- <ZW6nmR2ytIBApXE0@kbusch-mbp>
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FB51AE
+	for <io-uring@vger.kernel.org>; Tue,  5 Dec 2023 04:36:56 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-3333a3a599fso1657477f8f.0
+        for <io-uring@vger.kernel.org>; Tue, 05 Dec 2023 04:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701779815; x=1702384615; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lq9Rg0YreoRF3xpt7wQKkV03N9XWMTQ7WfFbqJhw0lI=;
+        b=zNdarjWdDSRTUOj633JpPcubhnFO7aEA8DaqI4u8ctm3b74tpJ1BnGHO5jwoVjsxyt
+         3fbGYhag3+Dv2hAejjMDWOgRAk4b1kb/RaFyoE7aQJ+aLnjknQmR+3biZciCBQuL656l
+         U1vT3sJCmfkz6aG4D5/Qm6E3cOuwVZPzjaiZ3mLjbR8JWJhtUJumS3/+CNijET2cLj0k
+         gxc7RoLciySb3bDolcDfepAlObAnlBpYOuZwQ/5zap04q8HANaWwVezJ3LHqJqJkomP2
+         qVtHdSuRBNHV2WEW9QIQj3PSi9V0UfJx+IdhaY7RqVuqVSp6pxh8nnrVE8bRqln9zyIz
+         uDTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701779815; x=1702384615;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lq9Rg0YreoRF3xpt7wQKkV03N9XWMTQ7WfFbqJhw0lI=;
+        b=qeue7y4wMpcFriG26euIePs/eQg4HuEvi0XRVVapLztxrJ7CaDXnpPOj8JenQVdBSa
+         DG10Sv3/japi6PX3f+irTjD+aeyghYDeNku7l/L7fFkgg8KF+nIUmHkZg7sf1hZaVLhe
+         T+s8409jD1XAYbJuEXfdQZGP70sdQ/m4wI25TbV1Sc9XZOq7sNssziz4Mg60n4EFZ/LS
+         p1UUUBZ2vWAbLrWPU1uWuPi2LEQoDIvRRcIH2o6EEEsZtBoSMguT9v2mEyl3OKyhOuEM
+         2slrQ6YwWZPGGVyc0eDpCHrbxKFsAW7tpPUMkBGCM4GIr7ocsWOW8+OgrDNBCdKAFsfG
+         t7KA==
+X-Gm-Message-State: AOJu0Yxq00+w9ZfOrB1yFyw2CShTvy1rd0rPuJQOQzaew7D62jppp+ai
+	BpSVuO6tptrlCXHE0m+abogeBF8K1thUizGBdc8=
+X-Google-Smtp-Source: AGHT+IHz5wL+rNeT5Ls5SBEOgspwq+7Tt+nvRRjtapYG0Ovyf/tXcniD/quRS2EQmEGjVc56/322Sg==
+X-Received: by 2002:a05:600c:4927:b0:40b:5e56:7b64 with SMTP id f39-20020a05600c492700b0040b5e567b64mr556467wmp.173.1701779814693;
+        Tue, 05 Dec 2023 04:36:54 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id f15-20020a05600c4e8f00b0040b3632e993sm22180892wmq.46.2023.12.05.04.36.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Dec 2023 04:36:54 -0800 (PST)
+Date: Tue, 5 Dec 2023 15:36:51 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: axboe@kernel.dk
+Cc: io-uring@vger.kernel.org
+Subject: [bug report] io_uring: free io_buffer_list entries via RCU
+Message-ID: <9a411872-46c3-4652-8704-d1610f547583@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -64,72 +65,43 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZW6nmR2ytIBApXE0@kbusch-mbp>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-On Mon, Dec 04, 2023 at 09:31:21PM -0700, Keith Busch wrote:
-> On Tue, Dec 05, 2023 at 12:14:22PM +0800, Ming Lei wrote:
-> > On Mon, Dec 04, 2023 at 11:57:55AM -0700, Keith Busch wrote:
-> > > On Mon, Dec 04, 2023 at 01:40:58PM -0500, Jeff Moyer wrote:
-> > > > I added a CC: linux-security-module@vger
-> > > > Keith Busch <kbusch@meta.com> writes:
-> > > > > From: Keith Busch <kbusch@kernel.org>
-> > > > >
-> > > > > The uring_cmd operation is often used for privileged actions, so drivers
-> > > > > subscribing to this interface check capable() for each command. The
-> > > > > capable() function is not fast path friendly for many kernel configs,
-> > > > > and this can really harm performance. Stash the capable sys admin
-> > > > > attribute in the io_uring context and set a new issue_flag for the
-> > > > > uring_cmd interface.
-> > > > 
-> > > > I have a few questions.  What privileged actions are performance
-> > > > sensitive? I would hope that anything requiring privileges would not
-> > > > be in a fast path (but clearly that's not the case).
-> > > 
-> > > Protocol specifics that don't have a generic equivalent. For example,
-> > > NVMe FDP is reachable only through the uring_cmd and ioctl interfaces,
-> > > but you use it like normal reads and writes so has to be as fast as the
-> > > generic interfaces.
-> > 
-> > But normal read/write pt command doesn't require ADMIN any more since 
-> > commit 855b7717f44b ("nvme: fine-granular CAP_SYS_ADMIN for nvme io commands"),
-> > why do you have to pay the cost of checking capable(CAP_SYS_ADMIN)?
-> 
-> Good question. The "capable" check had always been first so even with
-> the relaxed permissions, it was still paying the price. I have changed
-> that order in commit staged here (not yet upstream):
-> 
->   http://git.infradead.org/nvme.git/commitdiff/7be866b1cf0bf1dfa74480fe8097daeceda68622
+Hello Jens Axboe,
 
-With this change, I guess you shouldn't see the following big gap, right?
+This is a semi-automatic email about new static checker warnings.
 
-> Before: 970k IOPs
-> After: 1750k IOPs
+The patch 5cf4f52e6d8a: "io_uring: free io_buffer_list entries via 
+RCU" from Nov 27, 2023, leads to the following Smatch complaint:
 
-> 
-> Note that only prevents the costly capable() check if the inexpensive
-> checks could make a determination. That's still not solving the problem
-> long term since we aim for forward compatibility where we have no idea
-> which opcodes, admin identifications, or vendor specifics could be
-> deemed "safe" for non-root users in the future, so those conditions
-> would always fall back to the more expensive check that this patch was
-> trying to mitigate for admin processes.
+    io_uring/kbuf.c:766 io_pbuf_get_address()
+    warn: variable dereferenced before check 'bl' (see line 764)
 
-Not sure I get the idea, it is related with nvme's permission model for
-user pt command, and:
+io_uring/kbuf.c
+   753  void *io_pbuf_get_address(struct io_ring_ctx *ctx, unsigned long bgid)
+   754  {
+   755          struct io_buffer_list *bl;
+   756  
+   757          bl = __io_buffer_get_list(ctx, smp_load_acquire(&ctx->io_bl), bgid);
+   758  
+   759          /*
+   760           * Ensure the list is fully setup. Only strictly needed for RCU lookup
+   761           * via mmap, and in that case only for the array indexed groups. For
+   762           * the xarray lookups, it's either visible and ready, or not at all.
+   763           */
+   764          if (!smp_load_acquire(&bl->is_ready))
+                                      ^^^^^
+bl dereferenced here
 
-1) it should be always checked in entry of nvme user pt command
+   765                  return NULL;
+   766          if (!bl || !bl->is_mmap)
+                    ^^^
+Checked for NULL too late.
 
-2) only the following two types of commands require ADMIN, per commit
-855b7717f44b ("nvme: fine-granular CAP_SYS_ADMIN for nvme io commands")
+   767                  return NULL;
+   768  
+   769          return bl->buf_ring;
+   770  }
 
-    - any admin-cmd is not allowed
-    - vendor-specific and fabric commmand are not allowed
-
-Can you provide more details why the expensive check can't be avoided for
-fast read/write user IO commands?
-
-Thanks, 
-Ming
-
+regards,
+dan carpenter
 

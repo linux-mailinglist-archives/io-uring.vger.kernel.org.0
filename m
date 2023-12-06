@@ -1,60 +1,60 @@
-Return-Path: <io-uring+bounces-245-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-246-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F13E8806420
-	for <lists+io-uring@lfdr.de>; Wed,  6 Dec 2023 02:29:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE6A80642B
+	for <lists+io-uring@lfdr.de>; Wed,  6 Dec 2023 02:34:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB531282241
-	for <lists+io-uring@lfdr.de>; Wed,  6 Dec 2023 01:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC1151C20C6E
+	for <lists+io-uring@lfdr.de>; Wed,  6 Dec 2023 01:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D334FEBF;
-	Wed,  6 Dec 2023 01:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9699210EC;
+	Wed,  6 Dec 2023 01:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y7o10oEp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cr7NgsXz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDD3A109
-	for <io-uring@vger.kernel.org>; Tue,  5 Dec 2023 17:29:06 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-54d048550dfso1970655a12.0
-        for <io-uring@vger.kernel.org>; Tue, 05 Dec 2023 17:29:06 -0800 (PST)
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 620B2109
+	for <io-uring@vger.kernel.org>; Tue,  5 Dec 2023 17:34:13 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-a1db6816177so3485766b.0
+        for <io-uring@vger.kernel.org>; Tue, 05 Dec 2023 17:34:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701826145; x=1702430945; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1701826452; x=1702431252; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RrNjUJQUINcCFXTO9rDL8Ky5tKqmH83BD7yI/W6Ixq4=;
-        b=Y7o10oEpsiQ79Xbp09lH4+WjVDSyaTZ6Btop37X/FseHOOFb8pxYdBaR2rCVTJXQMd
-         sU9nKOlHGBbewWcowtt5oY6X190QHgSefBYEClCIU/4uiLdddFxHOGq402xYfrOpxfCe
-         QHEDkmwbucjK+hF44EeKBEjk5IrpZGnXQBbt00vXYBW4bLXXsWarKBh7n57m77ba2RvF
-         ggHLHsrdfLvWeSDiq5tZR+fDbMJsEbHXnzaPBzy5+P9jmtTZi1NXtdv66c0Scv/M1IFc
-         M7hDFmJ9+y4hk3K33I1OlQP6IZ3EUChjQezZSuiS6e9bKrP3QTIHFpUxltORhpH5ks9P
-         QcGg==
+        bh=+YvrZdyk+nz6LYJZMTSvH+vyWdF8Qpn26102FibhIOM=;
+        b=Cr7NgsXzVTrQdssJ+OhrLjgR/+q6n0n0R2LcE7UW3KzKsHTPERe2KgM/AfSPCkWwti
+         e8a0ZQk5kkqd3SnHAwiMDmiye1dOUMTqc1oPliSBphzFDos2/hrSNtEBDWCoGhF1M3Dz
+         VTlwDIhJEFfqWSwRpWptyYJX2/LdPKIJgYjcAdAFDU9l70j5lL3sPnQB9ArxBuGhBjz9
+         NEvItUBAml7oC/gUbT+vV/EAGS4ZNPqzVQkk8Z+5xO2CUfH5f7RijgE+QOetF1+159C9
+         Twn2qEpauq66GgIl3/hPGrubjDPeIVCC23BvSRzMXSosyP5TSmicZ/Et7wS6M4jRfO01
+         5+aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701826145; x=1702430945;
+        d=1e100.net; s=20230601; t=1701826452; x=1702431252;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RrNjUJQUINcCFXTO9rDL8Ky5tKqmH83BD7yI/W6Ixq4=;
-        b=oJ2QRUhdYr/N4vnvLfB0CfJZIHw4USLus6XoHGbvPtDl8GjykVVgWUrIh0TlSLLfQD
-         0q/cLvqtwEUp9kefWlGMBw7F/PIYrIJGhQBuEQ8Ha393yB0IClUCdpaMx8LV95X3+pJ1
-         FB02EkUpOFYy2W2Y1w4yKrg0d3HYJa47KO1DzadunQSXKc04igzbHepQceoLHkMyGl/f
-         cMm3YBV/8ZSZn5gnIzY1+2SL2nZsbl6stoj9eqKAC0sV7662+uhwTZE+sZqYnjUYWbdS
-         ERb3gmP1werXim3ZuZE2YUkPkzUnOJDkE8itOp0Os0LfIcqDAKleFBGNQljKwE/bJ2R3
-         nTng==
-X-Gm-Message-State: AOJu0YxtURM1kdBZAM95+P8aqDwNvwDVz0+/WOCpblWGI9SnIowpKGiW
-	Ei/D4riA8OSwsJa5geMgc3A=
-X-Google-Smtp-Source: AGHT+IF51kDTBzxgGrfc3qve/UXmvbGAeWwuXPQpnlvzdbltoKq9mj2tr8Kg1vzS4FjIEMWLrMuJVw==
-X-Received: by 2002:a50:c181:0:b0:54c:4837:7d37 with SMTP id m1-20020a50c181000000b0054c48377d37mr76990edf.118.1701826144878;
-        Tue, 05 Dec 2023 17:29:04 -0800 (PST)
+        bh=+YvrZdyk+nz6LYJZMTSvH+vyWdF8Qpn26102FibhIOM=;
+        b=h8auEme1+hRWFeVNNNO+lPoS0/jNPqNYLmaq5r50P4A+UARZOYeenogyKByx1EYyGh
+         ERYMfVL+F+f92JqiAgzR19FLS0EVgLDrmwN2xnH3QZPcR5qBx/E4fM+8+rw9ixKxppjK
+         G8zVZVr4NDJf6eMZkaPznEs0YVJDQBF3dPDoBija/UAZ9uwwykNGq9TaPGK3Wee+nbyU
+         OwoZ176Ob3NSZScezm1uhTsM2dpfYbgeYUeGZgfeSH11zItkVeUJjx38oTa/QBg6PeT/
+         pmpMaFDMBcqWCzqnH//onykXbhD1BPYODTdOABHEmB/Ip9Xok3lwgfy2GsA/I94CmpX8
+         Hw6Q==
+X-Gm-Message-State: AOJu0Yxf0BFVtaTQ0UZri9xM8gPA1LDWXCZFFR9ZplvCiX4avDA5quYZ
+	apT43kG1A1j+O/FyeXoVG7U=
+X-Google-Smtp-Source: AGHT+IECYcEJ9KbWD+aRGA9xWnPugIAI4q5ZX5JS6nanE0IeAkGdl7D+fOBonKzTqYrRn2MFlEntPg==
+X-Received: by 2002:a17:907:bb98:b0:a19:a19b:4265 with SMTP id xo24-20020a170907bb9800b00a19a19b4265mr47608ejc.208.1701826451602;
+        Tue, 05 Dec 2023 17:34:11 -0800 (PST)
 Received: from [192.168.8.100] ([148.252.140.209])
-        by smtp.gmail.com with ESMTPSA id b20-20020aa7cd14000000b0054c8f7708c9sm1739425edw.79.2023.12.05.17.29.04
+        by smtp.gmail.com with ESMTPSA id m12-20020a17090607cc00b009ff783d892esm7544305ejc.146.2023.12.05.17.34.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Dec 2023 17:29:04 -0800 (PST)
-Message-ID: <db385b87-d954-4147-a3b3-614b428c5a1e@gmail.com>
-Date: Wed, 6 Dec 2023 01:26:29 +0000
+        Tue, 05 Dec 2023 17:34:11 -0800 (PST)
+Message-ID: <7233dc1f-f9bc-4ec2-9e03-18ccb0919dbe@gmail.com>
+Date: Wed, 6 Dec 2023 01:31:35 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -64,94 +64,52 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] io_uring: save repeated issue_flags
 Content-Language: en-US
-To: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@meta.com>,
- io-uring@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>
+Cc: Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org
 References: <20231205215553.2954630-1-kbusch@meta.com>
  <43ff7474-5174-4738-88d9-9c43517ae235@kernel.dk>
+ <ZW-sE1hOG4EB3ktS@kbusch-mbp>
+ <9aa4aa06-7cc8-4a64-821f-1a00eff9cc9a@kernel.dk>
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <43ff7474-5174-4738-88d9-9c43517ae235@kernel.dk>
+In-Reply-To: <9aa4aa06-7cc8-4a64-821f-1a00eff9cc9a@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/5/23 22:00, Jens Axboe wrote:
-> On 12/5/23 2:55 PM, Keith Busch wrote:
->> From: Keith Busch <kbusch@kernel.org>
+On 12/5/23 23:11, Jens Axboe wrote:
+> On 12/5/23 4:02 PM, Keith Busch wrote:
+>> On Tue, Dec 05, 2023 at 03:00:52PM -0700, Jens Axboe wrote:
+>>>>   		if (!file->f_op->uring_cmd_iopoll)
+>>>>   			return -EOPNOTSUPP;
+>>>> -		issue_flags |= IO_URING_F_IOPOLL;
+>>>>   		req->iopoll_completed = 0;
+>>>>   	}
+>>>>   
+>>>> +	issue_flags |= ctx->issue_flags;
+>>>>   	ret = file->f_op->uring_cmd(ioucmd, issue_flags);
+>>>>   	if (ret == -EAGAIN) {
+>>>>   		if (!req_has_async_data(req)) {
+>>>
+>>> I obviously like this idea, but it should be accompanied by getting rid
+>>> of ->compat and ->syscall_iopoll in the ctx as well?
 >>
->> No need to rebuild the issue_flags on every IO: they're always the same.
->>
->> Suggested-by: Jens Axboe <axboe@kernel.dk>
->> Signed-off-by: Keith Busch <kbusch@kernel.org>
->> ---
-[...]
->> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
->> index 8a38b9f75d841..dbc0bfbfd0f05 100644
->> --- a/io_uring/uring_cmd.c
->> +++ b/io_uring/uring_cmd.c
->> @@ -158,19 +158,13 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
->>   	if (ret)
->>   		return ret;
->>   
->> -	if (ctx->flags & IORING_SETUP_SQE128)
->> -		issue_flags |= IO_URING_F_SQE128;
->> -	if (ctx->flags & IORING_SETUP_CQE32)
->> -		issue_flags |= IO_URING_F_CQE32;
->> -	if (ctx->compat)
->> -		issue_flags |= IO_URING_F_COMPAT;
->>   	if (ctx->flags & IORING_SETUP_IOPOLL) {
->>   		if (!file->f_op->uring_cmd_iopoll)
->>   			return -EOPNOTSUPP;
->> -		issue_flags |= IO_URING_F_IOPOLL;
->>   		req->iopoll_completed = 0;
->>   	}
->>   
->> +	issue_flags |= ctx->issue_flags;
->>   	ret = file->f_op->uring_cmd(ioucmd, issue_flags);
->>   	if (ret == -EAGAIN) {
->>   		if (!req_has_async_data(req)) {
+>> Yeah, I considered that, and can incorporate it here. Below is a snippet
+>> of what I had earlier to make that happen, but felt the purpose for the
+>> "issue_flags" was uring_cmd specific and disconnected from everyone
+>> else. Maybe I'm overthinking it...
 > 
-> I obviously like this idea, but it should be accompanied by getting rid
-> of ->compat and ->syscall_iopoll in the ctx as well?
+> I'd just do a patch 2 that does compat and syscall_iopoll. And then if
 
-This all piggy backing cmd specific bits onto core io_uring issue_flags
-business is pretty nasty. Apart from that, it mixes constant io_uring
-flags and "execution context" issue_flags. And we're dancing around it
-not really addressing the problem.
+I don't understand why and how you'd get rid of syscall_iopoll,
+considering it's not exposed to cmds, and if it is, then we have
+a bigger problem. It's a bit sleazily defined and is not just
+SETUP_IOPOLL.
 
-IMHO, cmds should be testing for IORING_SETUP flags directly via
-helpers, not renaming them and abusing core io_uring flags. E.g. I had
-a patch like below but didn't care enough to send:
-
-
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 909377068a87..1a82a0633f16 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -2874,7 +2874,7 @@ static int ublk_ctrl_uring_cmd(struct io_uring_cmd *cmd,
-  
-  	ublk_ctrl_cmd_dump(cmd);
-  
--	if (!(issue_flags & IO_URING_F_SQE128))
-+	if (!(io_uring_cmd_get_ctx_flags(cmd) & IORING_SETUP_SQE128))
-  		goto out;
-  
-  	ret = ublk_check_cmd_op(cmd_op);
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index d69b4038aa3e..8a18a705ff31 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -79,4 +79,11 @@ static inline struct task_struct *io_uring_cmd_get_task(struct io_uring_cmd *cmd
-  	return cmd_to_io_kiocb(cmd)->task;
-  }
-  
-+static inline unsigned io_uring_cmd_get_ctx_flags(struct io_uring_cmd *cmd)
-+{
-+	struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
-+
-+	return ctx->flags;
-+}
-+
-  #endif /* _LINUX_IO_URING_CMD_H */
+> we ever have a new issue flags (as your other series), then it'd become
+> natural to add that flag too.
+> 
+> It's not a hard requirement, but it's somewhat ugly to have the same
+> state in two spots. Which is why I'd prefer if we got rid of the actual
+> compat/syscall_iopoll members as well, after the conversion is done.
 
 -- 
 Pavel Begunkov

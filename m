@@ -1,114 +1,120 @@
-Return-Path: <io-uring+bounces-264-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-265-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D265880AA10
-	for <lists+io-uring@lfdr.de>; Fri,  8 Dec 2023 18:08:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D86F80AB25
+	for <lists+io-uring@lfdr.de>; Fri,  8 Dec 2023 18:49:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C6A2818B6
-	for <lists+io-uring@lfdr.de>; Fri,  8 Dec 2023 17:08:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09579B20AC0
+	for <lists+io-uring@lfdr.de>; Fri,  8 Dec 2023 17:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A19D22308;
-	Fri,  8 Dec 2023 17:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5624D3B791;
+	Fri,  8 Dec 2023 17:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GbZ97XCp"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jmtHpTh1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 006521989
-	for <io-uring@vger.kernel.org>; Fri,  8 Dec 2023 09:08:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702055287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=geKb5s/2utc6piCF71zpvMcYTqfKwMoL8K14EkjCTh8=;
-	b=GbZ97XCpkekqlIUsMu1enha2MQvl9oxToADOidey3PfGvh66Ld4XsvxTazLrZZCzDATb7/
-	/6A+3OgUTCWsYLyqLNrOt6P9CaAxp+dO0i9PwQ5lQVHRl05bWOeIrWPwWm3Gg7tGKYojmK
-	N8ZB1zS3wALnDZVqig55N018gyyloPA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-28-swUAJBaqPsmjIZT__OEkVg-1; Fri, 08 Dec 2023 12:08:02 -0500
-X-MC-Unique: swUAJBaqPsmjIZT__OEkVg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C11A58820C5;
-	Fri,  8 Dec 2023 17:08:00 +0000 (UTC)
-Received: from segfault.usersys.redhat.com (unknown [10.22.10.6])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 84F388CD0;
-	Fri,  8 Dec 2023 17:08:00 +0000 (UTC)
-From: Jeff Moyer <jmoyer@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Jann Horn <jannh@google.com>,  io-uring@vger.kernel.org,  Pavel Begunkov
- <asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring/af_unix: disable sending io_uring over
- sockets
-References: <c716c88321939156909cfa1bd8b0faaf1c804103.1701868795.git.asml.silence@gmail.com>
-	<170198118655.1944107.5078206606631700639.b4-ty@kernel.dk>
-	<x49sf4c91ub.fsf@segfault.usersys.redhat.com>
-	<CAG48ez2R0AWjsWMh+cHepvpbYWB5te_n1PFtgCaSFQuX51m0Aw@mail.gmail.com>
-	<x49lea48yqm.fsf@segfault.usersys.redhat.com>
-	<6d2d5231-4729-4783-bcc8-0d11396e30fb@kernel.dk>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date: Fri, 08 Dec 2023 12:08:00 -0500
-In-Reply-To: <6d2d5231-4729-4783-bcc8-0d11396e30fb@kernel.dk> (Jens Axboe's
-	message of "Fri, 8 Dec 2023 09:28:35 -0700")
-Message-ID: <x49h6ks8vwv.fsf@segfault.usersys.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4497F10EF
+	for <io-uring@vger.kernel.org>; Fri,  8 Dec 2023 09:48:51 -0800 (PST)
+Received: by mail-io1-xd34.google.com with SMTP id ca18e2360f4ac-7b70c2422a8so10192739f.0
+        for <io-uring@vger.kernel.org>; Fri, 08 Dec 2023 09:48:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1702057730; x=1702662530; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+CC+RMiA1n/fCn48F/utATfW6uQyA26SHbo1tGbywNo=;
+        b=jmtHpTh1PkMam3M/559vZODnNcLH0wAIEGMnVtn6tTr75Up1ilN4gEWlVqAgCRwAb+
+         RiPjge3Jg0ST32aO+fBunNVvqIVX/n3na8QKCX0GKM1e+qBd3WOq6UHxkDoCuMEAAYCt
+         YXW7Zkrdj8bu978B/tVhsdKrG3f3IlLuJWGQj0BEX8Un72tyGv8UzJKh9b6ChY8JGhW8
+         7KpQC4LZjkY/gPhxgyQNWSNXHcSu8D+bCMY8ZFeBMEDzrAnVMB7qiFn6RSLpZnVUpMfi
+         D1quBLsEgvQphFhfLDMnxlEZ8vgeix/5l5LqhE7yDNqCkS/Cs/8Las0Avezsk4qkHKuE
+         NIZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702057730; x=1702662530;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+CC+RMiA1n/fCn48F/utATfW6uQyA26SHbo1tGbywNo=;
+        b=TLC645Mej151Dxrta7D+fuirE+YmXqG/XPNRF9nk0HBatHQkKXxipRTX6E92s+y6xY
+         ++qKBY7C/AIQLzSvi6d53W/1gzBa+m1MqSHb99geViR4GqlYwqjCg66zk/8por+pNnd8
+         8/AN5+xdgN0Txm0rJREE59zCjYQe6oxzYBrQWVFkStpfph0pjouNXb0uU2ULlfVa70ST
+         jxIcVj8pn5smvT/nEMQ4DoS9tkcQ4byeBKDo0B4zl6v2BeZwOvxBnlCYJbySc+/FGJEq
+         evkNL2OxDruyOtHnTiAvn1v8SHFAc/fnBDuA86pqSVPGsy3LoQmSKH2a/SVRvypbrIpl
+         VV5Q==
+X-Gm-Message-State: AOJu0Yznf/jzTyKKqCEOaUdQwLElFWxW4+UougHYzm/oXIIj9RINVIZl
+	PSgxjomyHFgVBLVBa9EIl0DCfTo+t/YxcvLzaSziKw==
+X-Google-Smtp-Source: AGHT+IGVIzECUdlEtSWcEtLlH9W25J5kqYmsRq6fP9+CKBEUxnCYm5FNVmAT3svN90W94UuyHBUBIw==
+X-Received: by 2002:a6b:ea0a:0:b0:7b4:520c:de0b with SMTP id m10-20020a6bea0a000000b007b4520cde0bmr967557ioc.1.1702057730640;
+        Fri, 08 Dec 2023 09:48:50 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id l12-20020a02cd8c000000b0045458b7b4fcsm538082jap.171.2023.12.08.09.48.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Dec 2023 09:48:49 -0800 (PST)
+Message-ID: <9ab83827-12a2-4e63-a557-ea8a837a988a@kernel.dk>
+Date: Fri, 8 Dec 2023 10:48:48 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+User-Agent: Mozilla Thunderbird
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.7-rc5
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Jens Axboe <axboe@kernel.dk> writes:
+Hi Linus,
 
-> On 12/8/23 9:06 AM, Jeff Moyer wrote:
->>>> So, this will break existing users, right?
->>>
->>> Do you know of anyone actually sending io_uring FDs over unix domain
->>> sockets?
->> 
->> I do not.  However, it's tough to prove no software is doing this.
->
-> This is obviously true, however I think it's very low risk here as it's
-> mostly a legacy/historic use case and that really should not what's
-> using io_uring. On top of that, the most efficient ways of using
-> io_uring will exclude passing and using a ring from a different task
-> anyway.
->
->>> That seems to me like a fairly weird thing to do.
->> 
->> I am often surprised by what developers choose to do.  I attribute that
->> to my lack of imagination.
->
-> I think you stated that very professionally, in my experience the
-> reasonings are rather different :-)
+Two minor fixes for issues introduced in this release cycle, and two
+fixes for issues or potential issues that are heading to stable. One of
+these ends up disabling passing io_uring file descriptors via
+SCM_RIGHTS. There really shouldn't be an overlap between that kind of
+historic use case and modern usage of io_uring, which is why this was
+deemed appropriate.
 
-I thought you might like that.  :)
+Please pull!
 
->>> Thinking again about who might possibly do such a thing, the only
->>> usecase I can think of is CRIU; and from what I can tell, CRIU doesn't
->>> yet support io_uring anyway.
->> 
->> I'm not lobbying against turning this off, and I'm sure Pavel had
->> already considered the potential impact before posting.  It would be
->> good to include that information in the commit message, in my opinion.
->
-> It's too late for that now, but I can mention it in the pull request at
-> least.
 
-Thanks, Jens, much appreciated.
+The following changes since commit 73363c262d6a7d26063da96610f61baf69a70f7c:
 
-Cheers,
-Jeff
+  io_uring: use fget/fput consistently (2023-11-28 11:56:29 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.7-2023-12-08
+
+for you to fetch changes up to 705318a99a138c29a512a72c3e0043b3cd7f55f4:
+
+  io_uring/af_unix: disable sending io_uring over sockets (2023-12-07 10:35:19 -0700)
+
+----------------------------------------------------------------
+io_uring-6.7-2023-12-08
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      io_uring/kbuf: Fix an NULL vs IS_ERR() bug in io_alloc_pbuf_ring()
+
+Jens Axboe (1):
+      io_uring/kbuf: check for buffer list readiness after NULL check
+
+Pavel Begunkov (2):
+      io_uring: fix mutex_unlock with unreferenced ctx
+      io_uring/af_unix: disable sending io_uring over sockets
+
+ io_uring/io_uring.c | 9 +++------
+ io_uring/kbuf.c     | 8 ++++----
+ io_uring/rsrc.h     | 7 -------
+ net/core/scm.c      | 6 ++++++
+ 4 files changed, 13 insertions(+), 17 deletions(-)
+
+-- 
+Jens Axboe
 
 

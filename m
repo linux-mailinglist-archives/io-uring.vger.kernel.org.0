@@ -1,62 +1,62 @@
-Return-Path: <io-uring+bounces-302-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-304-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680818191E7
-	for <lists+io-uring@lfdr.de>; Tue, 19 Dec 2023 22:04:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD13F8191EB
+	for <lists+io-uring@lfdr.de>; Tue, 19 Dec 2023 22:04:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0BE283298
-	for <lists+io-uring@lfdr.de>; Tue, 19 Dec 2023 21:04:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC701F23B03
+	for <lists+io-uring@lfdr.de>; Tue, 19 Dec 2023 21:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAC23A1B5;
-	Tue, 19 Dec 2023 21:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6FC3D0AD;
+	Tue, 19 Dec 2023 21:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="mQAsWpko"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="uKbjLRH0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61DA3B29D
-	for <io-uring@vger.kernel.org>; Tue, 19 Dec 2023 21:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10833A29B
+	for <io-uring@vger.kernel.org>; Tue, 19 Dec 2023 21:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-5c701bd98f3so1901362a12.1
-        for <io-uring@vger.kernel.org>; Tue, 19 Dec 2023 13:04:09 -0800 (PST)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-5c701bd9a3cso2265796a12.0
+        for <io-uring@vger.kernel.org>; Tue, 19 Dec 2023 13:04:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1703019849; x=1703624649; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1703019850; x=1703624650; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w5PuaR4d/MoGidxq0L3iO4s55XxlUWagn7UVjiQLif0=;
-        b=mQAsWpko25z+CTg2NQCrn3+F/sH0Eoi9YUbQHrgmGGxjLbwEY6YsIfzFpthxOJgOHX
-         /hALO3Q5rXgVxL3NRJZslycn3rMeSPWyiiHt5OvhvjwvAOYc2iDrpr8dywWrkF9EprJ7
-         nNSvXpPKDJumRdZR+LIgNdtx+pTAUwW8ULXiJxim6D1rFNY28QWkslqjV7anF+dZJk2N
-         uKF+dhTG9TEGUd39BJAXU7J00Cpnhz3Pv3BY4KdbN5nyL4qh/pCEd8aelMV09LenVurg
-         8TSxPHs5nGOQ89YNnSU5PJt2G8DmyZKYxwKngjr1hbQVw/mTBwvsrcmb2cLPj4HT7pLT
-         nDGQ==
+        bh=zs+cSQCBJyAxSPUcytmGfDGwcvea+TXK48eVoO+ZZxM=;
+        b=uKbjLRH01NjyMU7fK0zt3tZfcJ1pBEpXjlyqljltjkbg8k2/UGPp+mj3+dptL+Ij3C
+         9SQrgGNo7SigjukR8AWHedc34Zn2w4yDbrM2T1ETDB9yHWAdjM4TnJqH8MS7ig6dLYLJ
+         FmhGeDfcdkAw+Cq+aRdJDheg28Gg206Ttsf9BPY9DiOgc5so8AVRXpP4L0n8R/9oCVJ9
+         y39bQdxVvpYbefpOEUaoCbhWc7BDlE5qhI91I66RX7YoRUlzUt8nj0T1WhUWCzwC2eSj
+         CNkgeOgXlDiXBTaZOxunw//SA/gPe6QIwg+rzHHRJaCkJsGmNipVdSOYe3WE/ECWVFib
+         ahgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703019849; x=1703624649;
+        d=1e100.net; s=20230601; t=1703019850; x=1703624650;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w5PuaR4d/MoGidxq0L3iO4s55XxlUWagn7UVjiQLif0=;
-        b=Z75qWvs3ViSE0ArPj+7eNPeORCaOYZpI8vOMg9oChw3tQa29qffsE9DqBb5gI0ydjg
-         +zzwpLzejfZ9/pgJwreS0MaFejJjMuxUWgzZTc1ExaqM91f4V2uoh61Vnx6UrMLJwoLD
-         o7qXedOxY0RjFkwkhGQDOl63hJK4sLND/ALE6LIWEstiCZwgoGGn8/G6lhWMS/FaYRSf
-         OsCKeilprsyWPz3xuUXk+SsUvQmiCdL9N0uJaLAs41vHK6iOlRVaSRLQMhnRvkc81B0H
-         hvTcAHjMrw0eHvjrNAqgKSYEMLt485RVrjs3N7+uLSSp+FgO1yPmO9C6IX+JhdzDpDBV
-         gBBg==
-X-Gm-Message-State: AOJu0YypiifJXjB8WlaSUNDqNAhbzeAkpoNcmZEM3Ir3wrafdK0G7ZLw
-	izTryx/rMnIRXAlKBHTDzq86N7suVyWAr7L7l5p0tQ==
-X-Google-Smtp-Source: AGHT+IFxU8K97jLnXcSyyO+D+sbfKINOieazzqXKOxdloDIB5FLVgcl8B8HXGUFAAoIhc0I94Q4ixg==
-X-Received: by 2002:a17:90a:7405:b0:28b:9a2d:c1c3 with SMTP id a5-20020a17090a740500b0028b9a2dc1c3mr2555650pjg.80.1703019848745;
-        Tue, 19 Dec 2023 13:04:08 -0800 (PST)
-Received: from localhost (fwdproxy-prn-008.fbsv.net. [2a03:2880:ff:8::face:b00c])
-        by smtp.gmail.com with ESMTPSA id bx15-20020a17090af48f00b0028b89520c7asm2091559pjb.9.2023.12.19.13.04.08
+        bh=zs+cSQCBJyAxSPUcytmGfDGwcvea+TXK48eVoO+ZZxM=;
+        b=TMPmvtW8DKlBW41qMbIMRyV9WBYa/0UIfcNWzpjWkkeBsC7Uuf+6OkXHk5S/tVVi/f
+         W3b/Kdju+ZfyLGwrGQQ10oaChlx51PkDS9pkee3IYUPGZ2gUA3e/eO6dhA67JqtTO41/
+         9swAGA7hCSRkHM6ReEytaIMDlAa/2fP9O/0Iern9UkaPcdDLqNE9olPFkGt5bVXd+3OE
+         SloKYehj4gAmzuGtY4K5XwQYycQuFa2bFVXVwZ8Ixq9/1c56Y2wHjRfxyiwwB8aVh1fX
+         UFfriRZ2slAge5Hl6swRL0vlNPPUxLrgfhAGjWV6JMCsPVK8ARMdMYXeDZ/Wkwio64ip
+         RwrA==
+X-Gm-Message-State: AOJu0Yz2+zNOV3TTexzk8q1Y9wd6U7yyedqFblMI4oX/1b9jIKq2B7yU
+	P6IrAUt6esBJUGwjFrOap6PSVeoi7teDQ0EhYJcNmQ==
+X-Google-Smtp-Source: AGHT+IHjfDQaUz2sKAkFTiAhNVlx7Yd3lLWWRw8dr6FWMxhyPk+XlzUgXZXfLatLI87/PuyoBdiiAg==
+X-Received: by 2002:a05:6a20:3ca3:b0:18b:ec94:deed with SMTP id b35-20020a056a203ca300b0018bec94deedmr9799295pzj.45.1703019849709;
+        Tue, 19 Dec 2023 13:04:09 -0800 (PST)
+Received: from localhost (fwdproxy-prn-002.fbsv.net. [2a03:2880:ff:2::face:b00c])
+        by smtp.gmail.com with ESMTPSA id e9-20020a17090ab38900b0028b07d1f647sm2076812pjr.23.2023.12.19.13.04.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Dec 2023 13:04:08 -0800 (PST)
+        Tue, 19 Dec 2023 13:04:09 -0800 (PST)
 From: David Wei <dw@davidwei.uk>
 To: io-uring@vger.kernel.org,
 	netdev@vger.kernel.org
@@ -69,9 +69,9 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	Jesper Dangaard Brouer <hawk@kernel.org>,
 	David Ahern <dsahern@kernel.org>,
 	Mina Almasry <almasrymina@google.com>
-Subject: [RFC PATCH v3 04/20] net: enable napi_pp_put_page for ppiov
-Date: Tue, 19 Dec 2023 13:03:41 -0800
-Message-Id: <20231219210357.4029713-5-dw@davidwei.uk>
+Subject: [RFC PATCH v3 05/20] net: page_pool: add ->scrub mem provider callback
+Date: Tue, 19 Dec 2023 13:03:42 -0800
+Message-Id: <20231219210357.4029713-6-dw@davidwei.uk>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <20231219210357.4029713-1-dw@davidwei.uk>
 References: <20231219210357.4029713-1-dw@davidwei.uk>
@@ -85,85 +85,42 @@ Content-Transfer-Encoding: 8bit
 
 From: Pavel Begunkov <asml.silence@gmail.com>
 
-NOT FOR UPSTREAM
-
-Teach napi_pp_put_page() how to work with ppiov.
+page pool is now waiting for all ppiovs to return before destroying
+itself, and for that to happen the memory provider might need to push
+some buffers, flush caches and so on.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: David Wei <dw@davidwei.uk>
 ---
- include/net/page_pool/helpers.h |  2 +-
- net/core/page_pool.c            |  3 ---
- net/core/skbuff.c               | 28 ++++++++++++++++------------
- 3 files changed, 17 insertions(+), 16 deletions(-)
+ include/net/page_pool/types.h | 1 +
+ net/core/page_pool.c          | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/include/net/page_pool/helpers.h b/include/net/page_pool/helpers.h
-index ef380ee8f205..aca3a52d0e22 100644
---- a/include/net/page_pool/helpers.h
-+++ b/include/net/page_pool/helpers.h
-@@ -381,7 +381,7 @@ static inline long page_pool_defrag_page(struct page *page, long nr)
- 	long ret;
- 
- 	if (page_is_page_pool_iov(page))
--		return -EINVAL;
-+		return 0;
- 
- 	/* If nr == pp_frag_count then we have cleared all remaining
- 	 * references to the page:
+diff --git a/include/net/page_pool/types.h b/include/net/page_pool/types.h
+index a701310b9811..fd846cac9fb6 100644
+--- a/include/net/page_pool/types.h
++++ b/include/net/page_pool/types.h
+@@ -134,6 +134,7 @@ enum pp_memory_provider_type {
+ struct pp_memory_provider_ops {
+ 	int (*init)(struct page_pool *pool);
+ 	void (*destroy)(struct page_pool *pool);
++	void (*scrub)(struct page_pool *pool);
+ 	struct page *(*alloc_pages)(struct page_pool *pool, gfp_t gfp);
+ 	bool (*release_page)(struct page_pool *pool, struct page *page);
+ };
 diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index ecf90a1ccabe..71af9835638e 100644
+index 71af9835638e..9e3073d61a97 100644
 --- a/net/core/page_pool.c
 +++ b/net/core/page_pool.c
-@@ -922,9 +922,6 @@ static void page_pool_empty_alloc_cache_once(struct page_pool *pool)
+@@ -947,6 +947,8 @@ static int page_pool_release(struct page_pool *pool)
  {
- 	struct page *page;
+ 	int inflight;
  
--	if (pool->destroy_cnt)
--		return;
--
- 	/* Empty alloc cache, assume caller made sure this is
- 	 * no-longer in use, and page_pool_alloc_pages() cannot be
- 	 * call concurrently.
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index f44c53b0ca27..cf523d655f92 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -896,19 +896,23 @@ bool napi_pp_put_page(struct page *page, bool napi_safe)
- 	bool allow_direct = false;
- 	struct page_pool *pp;
- 
--	page = compound_head(page);
--
--	/* page->pp_magic is OR'ed with PP_SIGNATURE after the allocation
--	 * in order to preserve any existing bits, such as bit 0 for the
--	 * head page of compound page and bit 1 for pfmemalloc page, so
--	 * mask those bits for freeing side when doing below checking,
--	 * and page_is_pfmemalloc() is checked in __page_pool_put_page()
--	 * to avoid recycling the pfmemalloc page.
--	 */
--	if (unlikely((page->pp_magic & ~0x3UL) != PP_SIGNATURE))
--		return false;
-+	if (page_is_page_pool_iov(page)) {
-+		pp = page_to_page_pool_iov(page)->pp;
-+	} else {
-+		page = compound_head(page);
-+
-+		/* page->pp_magic is OR'ed with PP_SIGNATURE after the allocation
-+		 * in order to preserve any existing bits, such as bit 0 for the
-+		 * head page of compound page and bit 1 for pfmemalloc page, so
-+		 * mask those bits for freeing side when doing below checking,
-+		 * and page_is_pfmemalloc() is checked in __page_pool_put_page()
-+		 * to avoid recycling the pfmemalloc page.
-+		 */
-+		if (unlikely((page->pp_magic & ~0x3UL) != PP_SIGNATURE))
-+			return false;
- 
--	pp = page->pp;
-+		pp = page->pp;
-+	}
- 
- 	/* Allow direct recycle if we have reasons to believe that we are
- 	 * in the same context as the consumer would run, so there's
++	if (pool->mp_ops && pool->mp_ops->scrub)
++		pool->mp_ops->scrub(pool);
+ 	page_pool_scrub(pool);
+ 	inflight = page_pool_inflight(pool);
+ 	if (!inflight)
 -- 
 2.39.3
 

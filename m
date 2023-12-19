@@ -1,62 +1,62 @@
-Return-Path: <io-uring+bounces-310-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-311-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B048191FA
-	for <lists+io-uring@lfdr.de>; Tue, 19 Dec 2023 22:05:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5363D8191FB
+	for <lists+io-uring@lfdr.de>; Tue, 19 Dec 2023 22:05:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81BB5B222AB
-	for <lists+io-uring@lfdr.de>; Tue, 19 Dec 2023 21:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77DA31C25015
+	for <lists+io-uring@lfdr.de>; Tue, 19 Dec 2023 21:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483063EA94;
-	Tue, 19 Dec 2023 21:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1694C3FB12;
+	Tue, 19 Dec 2023 21:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="QHalPbvH"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="cyivTOJr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECD63D0D9
-	for <io-uring@vger.kernel.org>; Tue, 19 Dec 2023 21:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B69A3DB8C
+	for <io-uring@vger.kernel.org>; Tue, 19 Dec 2023 21:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-28b71490fbbso1613341a91.0
-        for <io-uring@vger.kernel.org>; Tue, 19 Dec 2023 13:04:16 -0800 (PST)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-5cdbc7bebecso515737a12.1
+        for <io-uring@vger.kernel.org>; Tue, 19 Dec 2023 13:04:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1703019856; x=1703624656; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1703019857; x=1703624657; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tJ8hPjWHfatZ/BzlXTQEl7ypf6OdinK6dQcdfVsR+fI=;
-        b=QHalPbvH6VAGFB+ML/YOP8G66Y1pJOMJ7PVotVN4kS9dVIi9GujUUEApSeSm/i+QjS
-         ZyI0Ejrw0PxFYXM6lwHRKlz88kYi+JIXzg+JKp8Y6fKNccsYHHG5HfcwvbuP1arjpYsq
-         Xlrpvg4hBF2h8K3ak0lKLYxC5WRPZiB/pCFrxpjLLoNylbzUyjoyyBpU6hdV6Vlew38r
-         yutxbLnF9S9BqJOQ06JCLB4UnfCZ+C/ZaD3n7M60VxBg0AN+41mwRoHP2SMSZBU/xEKA
-         8V+SuB/OZpfJWGSuRXeJcFomQ72iw1Z0bt1UfyWmTPRmkdjlIGb0VzqjZ55g/lF4vIy1
-         9VIQ==
+        bh=eEGPLnsr8EuY8VD2FnKVCOVQnMaFt7IkWGFTilccx/A=;
+        b=cyivTOJrwoLI0/YLu3/Ahq31WLXLq4pkB4jViJT9/yx4PwKdylYdEnL5Epq4TWmRUD
+         oyAiY5C1B/+M/ySO9TjFvXA+6XBLhMt97/Dx2XardPGVBuFHDL7m8ZgFRVXjlJ2tu08C
+         VUhLE3zh/zeWAhYiggyYZi3inWeBoxaSTM/8MWf2udzQFHgZAUq39AtJ4RJ8Xcva+wMn
+         C7xi8vvUK9SBTfJ0QtLB9IvJqgIN/3MmwXl4cBr1KXx4X99tL7nVu1JotwzCAArY0VoF
+         FT3nY+h3jhoz1MKz9cWaaW8VxtyWbZH19thI+ARrQDspG6inheCgirph0dCzk74cKArq
+         a5DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703019856; x=1703624656;
+        d=1e100.net; s=20230601; t=1703019857; x=1703624657;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tJ8hPjWHfatZ/BzlXTQEl7ypf6OdinK6dQcdfVsR+fI=;
-        b=XAAfCQ9+eWfxfoG8y2g+eLi+DRUmjZaCE6HSGR8eArHoydL/cWc/dDv6KsNgc2IpOT
-         mLxyoQjK2ejpZHoP0/3c2K2ZgFs3kEiTsdIAoobgrDaWdIOKreHp0mex2kAiucfT8pHt
-         ZdrviHpMGts94ntCwyWUoG4QgX//4IxUue0MkZYpurN4GoZQy6J7WOA1GjuQIRK2PBVj
-         VVKnR7pP6h2Hrjufr8MpOaqD6d43QhTZLZJjyy9NUAdbRRcFBHNi9bSBjPZVl231Zypz
-         EKRS8KuyptmvUYdxkIHT5+KQ32m2cXoFHHavEJP9uYmSIZ8spKUpNu2uRIsdhWeToYVc
-         SRhQ==
-X-Gm-Message-State: AOJu0Yx4mokwziNm9TfmpdOEqn6Yi5zCFPhOZEiBEzri/CMWAEaq0B2h
-	3ecFfZ2pUiglrdqdcnvTlIsY4i05IW/8yTiEOK+Asw==
-X-Google-Smtp-Source: AGHT+IHvfTVtAhN39iKMzYo0U58+EnVbhBRtZTa0KHZT79kAWK1dvewUF2g8Zu6YRl+BF77iiu/Htw==
-X-Received: by 2002:a17:90a:a40b:b0:28b:440f:766d with SMTP id y11-20020a17090aa40b00b0028b440f766dmr2611424pjp.90.1703019856226;
-        Tue, 19 Dec 2023 13:04:16 -0800 (PST)
-Received: from localhost (fwdproxy-prn-020.fbsv.net. [2a03:2880:ff:14::face:b00c])
-        by smtp.gmail.com with ESMTPSA id u12-20020a17090a890c00b0028bbd30172csm1965513pjn.56.2023.12.19.13.04.15
+        bh=eEGPLnsr8EuY8VD2FnKVCOVQnMaFt7IkWGFTilccx/A=;
+        b=MsnJtgAk1bXO3Yca9u9CsDHwFs9vVrqe3jscyHwvCqeTmPQ/Yr8tSnFAV3TwSUGoIj
+         6ir0PnayYQTYI8zeOuMlG+7O9W0MKjPdWxBL3hp+vPLHXtbfjaQ7Ig0sWHHqR+Fl1vpz
+         +YkQU6wgmJYnr/Iobu5kg6C18rtUzfSPSHWTxw0/xCoxVDcGUzfcrQTn4LnETW1FJkyF
+         IVqzFE7XPOGICHT0hmOCB5NvDApUC2f7P63dzFG3bDofjCxl/FRUxV8nF1AzUk+zaYyq
+         gf5zHSjteDwS4j/+k9BeSNRpzgDTMYxuL3F/WlA7Ns9b4Ll7Egzn2tfVTN3gEKLFmAD4
+         iCgQ==
+X-Gm-Message-State: AOJu0YyXg7SRakXr+cvrzC02lvELVTWThg4lL7UOrJe/k6W/BA0UjJnJ
+	orUyyO+5DPzZ6DmuodVkilsQLxwhUSBfuJpse7Qa3A==
+X-Google-Smtp-Source: AGHT+IF8bw1k9pZ9asY2+rvU14RiZot/ft1Sk+wFRr4Kw+D4bW9SqnE775wocw9nZCzUzNSxjlss3A==
+X-Received: by 2002:a05:6a21:1f03:b0:18a:d4c3:1350 with SMTP id ry3-20020a056a211f0300b0018ad4c31350mr7409363pzb.44.1703019857139;
+        Tue, 19 Dec 2023 13:04:17 -0800 (PST)
+Received: from localhost (fwdproxy-prn-003.fbsv.net. [2a03:2880:ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id c14-20020aa781ce000000b006d082dd8086sm16864175pfn.214.2023.12.19.13.04.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Dec 2023 13:04:15 -0800 (PST)
+        Tue, 19 Dec 2023 13:04:16 -0800 (PST)
 From: David Wei <dw@davidwei.uk>
 To: io-uring@vger.kernel.org,
 	netdev@vger.kernel.org
@@ -69,9 +69,9 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	Jesper Dangaard Brouer <hawk@kernel.org>,
 	David Ahern <dsahern@kernel.org>,
 	Mina Almasry <almasrymina@google.com>
-Subject: [RFC PATCH v3 12/20] io_uring: add ZC buf and pool
-Date: Tue, 19 Dec 2023 13:03:49 -0800
-Message-Id: <20231219210357.4029713-13-dw@davidwei.uk>
+Subject: [RFC PATCH v3 13/20] io_uring: implement pp memory provider for zc rx
+Date: Tue, 19 Dec 2023 13:03:50 -0800
+Message-Id: <20231219210357.4029713-14-dw@davidwei.uk>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <20231219210357.4029713-1-dw@davidwei.uk>
 References: <20231219210357.4029713-1-dw@davidwei.uk>
@@ -83,263 +83,315 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: David Wei <davidhwei@meta.com>
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-[TODO: REVIEW COMMIT MESSAGE]
+We're adding a new pp memory provider to implement io_uring zerocopy
+receive. It'll be "registered" in pp and used in later paches.
 
-This patch adds two objects:
+The typical life cycle of a buffer goes as follows: first it's allocated
+to a driver with the initial refcount set to 1. The drivers fills it
+with data, puts it into an skb and passes down the stack, where it gets
+queued up to a socket. Later, a zc io_uring request will be receiving
+data from the socket from a task context. At that point io_uring will
+tell the userspace that this buffer has some data by posting an
+appropriate completion. It'll also elevating the refcount by
+IO_ZC_RX_UREF, so the buffer is not recycled while userspace is reading
+the data. When the userspace is done with the buffer it should return it
+back to io_uring by adding an entry to the buffer refill ring. When
+necessary io_uring will poll the refill ring, compare references
+including IO_ZC_RX_UREF and reuse the buffer.
 
-* Zero copy buffer representation, holding a page, its mapped dma_addr,
-  and a refcount for lifetime management.
-* Zero copy pool, spiritually similar to page pool, that holds ZC bufs
-  and hands them out to net devices.
+Initally, all buffers are placed in a spinlock protected ->freelist.
+It's a slow path stash, where buffers are considered to be unallocated
+and not exposed to core page pool. On allocation, pp will first try
+all its caches, and the ->alloc_pages callback if everything else
+failed.
 
-Pool regions are registered w/ io_uring using the registered buffer API,
-with a 1:1 mapping between region and nr_iovec in
-io_uring_register_buffers. This does the heavy lifting of pinning and
-chunking into bvecs into a struct io_mapped_ubuf for us.
+The hot path for io_pp_zc_alloc_pages() is to grab pages from the refill
+ring. The consumption from the ring is always done in the attached napi
+context, so no additional synchronisation required. If that fails we'll
+be getting buffers from the ->freelist.
 
-For now as there is only one pool region per ifq, there is no separate
-API for adding/removing regions yet and it is mapped implicitly during
-ifq registration.
+Note: only ->freelist are considered unallocated for page pool, so we
+only add pages_state_hold_cnt when allocating from there. Subsequently,
+as page_pool_return_page() and others bump the ->pages_state_release_cnt
+counter, io_pp_zc_release_page() can only use ->freelist, which is not a
+problem as it's not a slow path.
 
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: David Wei <dw@davidwei.uk>
 ---
- include/linux/io_uring/net.h |   8 +++
- io_uring/zc_rx.c             | 135 ++++++++++++++++++++++++++++++++++-
- io_uring/zc_rx.h             |  15 ++++
- 3 files changed, 157 insertions(+), 1 deletion(-)
+ include/linux/io_uring/net.h |   5 +
+ io_uring/zc_rx.c             | 204 +++++++++++++++++++++++++++++++++++
+ io_uring/zc_rx.h             |   6 ++
+ 3 files changed, 215 insertions(+)
 
 diff --git a/include/linux/io_uring/net.h b/include/linux/io_uring/net.h
-index b58f39fed4d5..d994d26116d0 100644
+index d994d26116d0..13244ae5fc4a 100644
 --- a/include/linux/io_uring/net.h
 +++ b/include/linux/io_uring/net.h
-@@ -2,8 +2,16 @@
- #ifndef _LINUX_IO_URING_NET_H
- #define _LINUX_IO_URING_NET_H
+@@ -13,6 +13,11 @@ struct io_zc_rx_buf {
+ };
  
-+#include <net/page_pool/types.h>
-+
- struct io_uring_cmd;
- 
-+struct io_zc_rx_buf {
-+	struct page_pool_iov	ppiov;
-+	struct page		*page;
-+	dma_addr_t		dma;
-+};
-+
  #if defined(CONFIG_IO_URING)
++
++#if defined(CONFIG_PAGE_POOL)
++extern const struct pp_memory_provider_ops io_uring_pp_zc_ops;
++#endif
++
  int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags);
  
+ #else
 diff --git a/io_uring/zc_rx.c b/io_uring/zc_rx.c
-index 06e2c54d3f3d..1e656b481725 100644
+index 1e656b481725..ff1dac24ac40 100644
 --- a/io_uring/zc_rx.c
 +++ b/io_uring/zc_rx.c
-@@ -5,6 +5,7 @@
- #include <linux/mm.h>
+@@ -6,6 +6,7 @@
  #include <linux/io_uring.h>
  #include <linux/netdevice.h>
-+#include <linux/nospec.h>
+ #include <linux/nospec.h>
++#include <trace/events/page_pool.h>
  
  #include <uapi/linux/io_uring.h>
  
-@@ -15,6 +16,11 @@
- 
- typedef int (*bpf_op_t)(struct net_device *dev, struct netdev_bpf *bpf);
- 
-+static inline struct device *netdev2dev(struct net_device *dev)
-+{
-+	return dev->dev.parent;
-+}
-+
- static int __io_queue_mgmt(struct net_device *dev, struct io_zc_rx_ifq *ifq,
- 			   u16 queue_id)
- {
-@@ -67,6 +73,129 @@ static void io_free_rbuf_ring(struct io_zc_rx_ifq *ifq)
- 		folio_put(virt_to_folio(ifq->ring));
+@@ -387,4 +388,207 @@ int io_register_zc_rx_sock(struct io_ring_ctx *ctx,
+ 	return 0;
  }
  
-+static int io_zc_rx_init_buf(struct device *dev, struct page *page, u16 pool_id,
-+			     u32 pgid, struct io_zc_rx_buf *buf)
++static inline struct io_zc_rx_buf *io_iov_to_buf(struct page_pool_iov *iov)
 +{
-+	dma_addr_t addr = 0;
++	return container_of(iov, struct io_zc_rx_buf, ppiov);
++}
 +
-+	/* Skip dma setup for devices that don't do any DMA transfers */
-+	if (dev) {
-+		addr = dma_map_page_attrs(dev, page, 0, PAGE_SIZE,
-+					  DMA_BIDIRECTIONAL,
-+					  DMA_ATTR_SKIP_CPU_SYNC);
-+		if (dma_mapping_error(dev, addr))
-+			return -ENOMEM;
++static inline unsigned io_buf_pgid(struct io_zc_rx_pool *pool,
++				   struct io_zc_rx_buf *buf)
++{
++	return buf - pool->bufs;
++}
++
++static __maybe_unused void io_zc_rx_get_buf_uref(struct io_zc_rx_buf *buf)
++{
++	refcount_add(IO_ZC_RX_UREF, &buf->ppiov.refcount);
++}
++
++static bool io_zc_rx_put_buf_uref(struct io_zc_rx_buf *buf)
++{
++	if (page_pool_iov_refcount(&buf->ppiov) < IO_ZC_RX_UREF)
++		return false;
++
++	return page_pool_iov_sub_and_test(&buf->ppiov, IO_ZC_RX_UREF);
++}
++
++static inline struct page *io_zc_buf_to_pp_page(struct io_zc_rx_buf *buf)
++{
++	return page_pool_mangle_ppiov(&buf->ppiov);
++}
++
++static inline void io_zc_add_pp_cache(struct page_pool *pp,
++				      struct io_zc_rx_buf *buf)
++{
++	refcount_set(&buf->ppiov.refcount, 1);
++	pp->alloc.cache[pp->alloc.count++] = io_zc_buf_to_pp_page(buf);
++}
++
++static inline u32 io_zc_rx_rqring_entries(struct io_zc_rx_ifq *ifq)
++{
++	struct io_rbuf_ring *ring = ifq->ring;
++	u32 entries;
++
++	entries = smp_load_acquire(&ring->rq.tail) - ifq->cached_rq_head;
++	return min(entries, ifq->rq_entries);
++}
++
++static void io_zc_rx_ring_refill(struct page_pool *pp,
++				 struct io_zc_rx_ifq *ifq)
++{
++	unsigned int entries = io_zc_rx_rqring_entries(ifq);
++	unsigned int mask = ifq->rq_entries - 1;
++	struct io_zc_rx_pool *pool = ifq->pool;
++
++	if (unlikely(!entries))
++		return;
++
++	while (entries--) {
++		unsigned int rq_idx = ifq->cached_rq_head++ & mask;
++		struct io_uring_rbuf_rqe *rqe = &ifq->rqes[rq_idx];
++		u32 pgid = rqe->off / PAGE_SIZE;
++		struct io_zc_rx_buf *buf = &pool->bufs[pgid];
++
++		if (!io_zc_rx_put_buf_uref(buf))
++			continue;
++		io_zc_add_pp_cache(pp, buf);
++		if (pp->alloc.count >= PP_ALLOC_CACHE_REFILL)
++			break;
 +	}
-+
-+	buf->dma = addr;
-+	buf->page = page;
-+	refcount_set(&buf->ppiov.refcount, 0);
-+	buf->ppiov.owner = NULL;
-+	buf->ppiov.pp = NULL;
-+	get_page(page);
-+	return 0;
++	smp_store_release(&ifq->ring->rq.head, ifq->cached_rq_head);
 +}
 +
-+static void io_zc_rx_free_buf(struct device *dev, struct io_zc_rx_buf *buf)
++static void io_zc_rx_refill_slow(struct page_pool *pp, struct io_zc_rx_ifq *ifq)
 +{
-+	struct page *page = buf->page;
++	struct io_zc_rx_pool *pool = ifq->pool;
 +
-+	if (dev)
-+		dma_unmap_page_attrs(dev, buf->dma, PAGE_SIZE,
-+				     DMA_BIDIRECTIONAL,
-+				     DMA_ATTR_SKIP_CPU_SYNC);
-+	put_page(page);
++	spin_lock_bh(&pool->freelist_lock);
++	while (pool->free_count && pp->alloc.count < PP_ALLOC_CACHE_REFILL) {
++		struct io_zc_rx_buf *buf;
++		u32 pgid;
++
++		pgid = pool->freelist[--pool->free_count];
++		buf = &pool->bufs[pgid];
++
++		io_zc_add_pp_cache(pp, buf);
++		pp->pages_state_hold_cnt++;
++		trace_page_pool_state_hold(pp, io_zc_buf_to_pp_page(buf),
++					   pp->pages_state_hold_cnt);
++	}
++	spin_unlock_bh(&pool->freelist_lock);
 +}
 +
-+static int io_zc_rx_map_pool(struct io_zc_rx_pool *pool,
-+			     struct io_mapped_ubuf *imu,
-+			     struct device *dev)
++static void io_zc_rx_recycle_buf(struct io_zc_rx_pool *pool,
++				 struct io_zc_rx_buf *buf)
++{
++	spin_lock_bh(&pool->freelist_lock);
++	pool->freelist[pool->free_count++] = io_buf_pgid(pool, buf);
++	spin_unlock_bh(&pool->freelist_lock);
++}
++
++static struct page *io_pp_zc_alloc_pages(struct page_pool *pp, gfp_t gfp)
++{
++	struct io_zc_rx_ifq *ifq = pp->mp_priv;
++
++	/* pp should already be ensuring that */
++	if (unlikely(pp->alloc.count))
++		goto out_return;
++
++	io_zc_rx_ring_refill(pp, ifq);
++	if (likely(pp->alloc.count))
++		goto out_return;
++
++	io_zc_rx_refill_slow(pp, ifq);
++	if (!pp->alloc.count)
++		return NULL;
++out_return:
++	return pp->alloc.cache[--pp->alloc.count];
++}
++
++static bool io_pp_zc_release_page(struct page_pool *pp, struct page *page)
++{
++	struct io_zc_rx_ifq *ifq = pp->mp_priv;
++	struct page_pool_iov *ppiov;
++
++	if (WARN_ON_ONCE(!page_is_page_pool_iov(page)))
++		return false;
++
++	ppiov = page_to_page_pool_iov(page);
++
++	if (!page_pool_iov_sub_and_test(ppiov, 1))
++		return false;
++
++	io_zc_rx_recycle_buf(ifq->pool, io_iov_to_buf(ppiov));
++	return true;
++}
++
++static void io_pp_zc_scrub(struct page_pool *pp)
++{
++	struct io_zc_rx_ifq *ifq = pp->mp_priv;
++	struct io_zc_rx_pool *pool = ifq->pool;
++	struct io_zc_rx_buf *buf;
++	int i;
++
++	for (i = 0; i < pool->nr_bufs; i++) {
++		buf = &pool->bufs[i];
++
++		if (io_zc_rx_put_buf_uref(buf)) {
++			/* just return it to the page pool, it'll clean it up */
++			refcount_set(&buf->ppiov.refcount, 1);
++			page_pool_iov_put_many(&buf->ppiov, 1);
++		}
++	}
++}
++
++static void io_zc_rx_init_pool(struct io_zc_rx_pool *pool,
++			       struct page_pool *pp)
 +{
 +	struct io_zc_rx_buf *buf;
-+	struct page *page;
-+	int i, ret;
++	int i;
 +
-+	for (i = 0; i < imu->nr_bvecs; i++) {
-+		page = imu->bvec[i].bv_page;
++	for (i = 0; i < pool->nr_bufs; i++) {
 +		buf = &pool->bufs[i];
-+		ret = io_zc_rx_init_buf(dev, page, pool->pool_id, i, buf);
-+		if (ret)
-+			goto err;
-+
-+		pool->freelist[i] = i;
++		buf->ppiov.pp = pp;
 +	}
-+
-+	pool->free_count = imu->nr_bvecs;
-+	return 0;
-+err:
-+	while (i--) {
-+		buf = &pool->bufs[i];
-+		io_zc_rx_free_buf(dev, buf);
-+	}
-+	return ret;
 +}
 +
-+static int io_zc_rx_create_pool(struct io_ring_ctx *ctx,
-+				struct io_zc_rx_ifq *ifq,
-+				u16 id)
++static int io_pp_zc_init(struct page_pool *pp)
 +{
-+	struct device *dev = netdev2dev(ifq->dev);
-+	struct io_mapped_ubuf *imu;
-+	struct io_zc_rx_pool *pool;
-+	int nr_pages;
-+	int ret;
++	struct io_zc_rx_ifq *ifq = pp->mp_priv;
 +
-+	if (ifq->pool)
-+		return -EFAULT;
++	if (!ifq)
++		return -EINVAL;
++	if (pp->p.order != 0)
++		return -EINVAL;
++	if (!pp->p.napi)
++		return -EINVAL;
 +
-+	if (unlikely(id >= ctx->nr_user_bufs))
-+		return -EFAULT;
-+	id = array_index_nospec(id, ctx->nr_user_bufs);
-+	imu = ctx->user_bufs[id];
-+	if (imu->ubuf & ~PAGE_MASK || imu->ubuf_end & ~PAGE_MASK)
-+		return -EFAULT;
-+
-+	ret = -ENOMEM;
-+	nr_pages = imu->nr_bvecs;
-+	pool = kvmalloc(struct_size(pool, freelist, nr_pages), GFP_KERNEL);
-+	if (!pool)
-+		goto err;
-+
-+	pool->bufs = kvmalloc_array(nr_pages, sizeof(*pool->bufs), GFP_KERNEL);
-+	if (!pool->bufs)
-+		goto err_buf;
-+
-+	ret = io_zc_rx_map_pool(pool, imu, dev);
-+	if (ret)
-+		goto err_map;
-+
-+	pool->ifq = ifq;
-+	pool->pool_id = id;
-+	pool->nr_bufs = nr_pages;
-+	spin_lock_init(&pool->freelist_lock);
-+	ifq->pool = pool;
++	io_zc_rx_init_pool(ifq->pool, pp);
++	percpu_ref_get(&ifq->ctx->refs);
++	ifq->pp = pp;
 +	return 0;
-+err_map:
-+	kvfree(pool->bufs);
-+err_buf:
-+	kvfree(pool);
-+err:
-+	return ret;
 +}
 +
-+static void io_zc_rx_destroy_pool(struct io_zc_rx_pool *pool)
++static void io_pp_zc_destroy(struct page_pool *pp)
 +{
-+	struct device *dev = netdev2dev(pool->ifq->dev);
-+	struct io_zc_rx_buf *buf;
++	struct io_zc_rx_ifq *ifq = pp->mp_priv;
++	struct io_zc_rx_pool *pool = ifq->pool;
 +
-+	for (int i = 0; i < pool->nr_bufs; i++) {
-+		buf = &pool->bufs[i];
-+		io_zc_rx_free_buf(dev, buf);
-+	}
-+	kvfree(pool->bufs);
-+	kvfree(pool);
++	ifq->pp = NULL;
++
++	if (WARN_ON_ONCE(pool->free_count != pool->nr_bufs))
++		return;
++	percpu_ref_put(&ifq->ctx->refs);
 +}
 +
- static struct io_zc_rx_ifq *io_zc_rx_ifq_alloc(struct io_ring_ctx *ctx)
- {
- 	struct io_zc_rx_ifq *ifq;
-@@ -105,6 +234,8 @@ static void io_zc_rx_ifq_free(struct io_zc_rx_ifq *ifq)
- {
- 	io_shutdown_ifq(ifq);
- 
-+	if (ifq->pool)
-+		io_zc_rx_destroy_pool(ifq->pool);
- 	if (ifq->dev)
- 		dev_put(ifq->dev);
- 	io_free_rbuf_ring(ifq);
-@@ -141,7 +272,9 @@ int io_register_zc_rx_ifq(struct io_ring_ctx *ctx,
- 	if (!ifq->dev)
- 		goto err;
- 
--	/* TODO: map zc region and initialise zc pool */
-+	ret = io_zc_rx_create_pool(ctx, ifq, reg.region_id);
-+	if (ret)
-+		goto err;
- 
- 	ifq->rq_entries = reg.rq_entries;
- 	ifq->cq_entries = reg.cq_entries;
++const struct pp_memory_provider_ops io_uring_pp_zc_ops = {
++	.alloc_pages		= io_pp_zc_alloc_pages,
++	.release_page		= io_pp_zc_release_page,
++	.init			= io_pp_zc_init,
++	.destroy		= io_pp_zc_destroy,
++	.scrub			= io_pp_zc_scrub,
++};
++EXPORT_SYMBOL(io_uring_pp_zc_ops);
++
++
+ #endif
 diff --git a/io_uring/zc_rx.h b/io_uring/zc_rx.h
-index 9257dda77e92..af1d865525d2 100644
+index af1d865525d2..00d864700c67 100644
 --- a/io_uring/zc_rx.h
 +++ b/io_uring/zc_rx.h
-@@ -3,15 +3,30 @@
- #define IOU_ZC_RX_H
- 
- #include <linux/io_uring_types.h>
-+#include <linux/io_uring/net.h>
- #include <linux/skbuff.h>
- 
- #define IO_ZC_MAX_IFQ_SOCKETS		16
+@@ -10,6 +10,9 @@
  #define IO_ZC_IFQ_IDX_OFFSET		16
  #define IO_ZC_IFQ_IDX_MASK		((1U << IO_ZC_IFQ_IDX_OFFSET) - 1)
  
-+struct io_zc_rx_pool {
-+	struct io_zc_rx_ifq	*ifq;
-+	struct io_zc_rx_buf	*bufs;
-+	u32			nr_bufs;
-+	u16			pool_id;
++#define IO_ZC_RX_UREF			0x10000
++#define IO_ZC_RX_KREF_MASK		(IO_ZC_RX_UREF - 1)
 +
-+	/* freelist */
-+	spinlock_t		freelist_lock;
-+	u32			free_count;
-+	u32			freelist[];
-+};
-+
- struct io_zc_rx_ifq {
+ struct io_zc_rx_pool {
+ 	struct io_zc_rx_ifq	*ifq;
+ 	struct io_zc_rx_buf	*bufs;
+@@ -26,12 +29,15 @@ struct io_zc_rx_ifq {
  	struct io_ring_ctx		*ctx;
  	struct net_device		*dev;
-+	struct io_zc_rx_pool		*pool;
-+
+ 	struct io_zc_rx_pool		*pool;
++	struct page_pool		*pp;
+ 
  	struct io_rbuf_ring		*ring;
  	struct io_uring_rbuf_rqe 	*rqes;
  	struct io_uring_rbuf_cqe 	*cqes;
+ 	u32				rq_entries;
+ 	u32				cq_entries;
++	u32				cached_rq_head;
++	u32				cached_cq_tail;
+ 
+ 	/* hw rx descriptor ring id */
+ 	u32				if_rxq_id;
 -- 
 2.39.3
 

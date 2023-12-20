@@ -1,64 +1,64 @@
-Return-Path: <io-uring+bounces-331-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-332-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468D081A3BD
-	for <lists+io-uring@lfdr.de>; Wed, 20 Dec 2023 17:07:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259FB81A458
+	for <lists+io-uring@lfdr.de>; Wed, 20 Dec 2023 17:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7BB1F218CE
-	for <lists+io-uring@lfdr.de>; Wed, 20 Dec 2023 16:07:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A5AE1C22EA6
+	for <lists+io-uring@lfdr.de>; Wed, 20 Dec 2023 16:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09693A29A;
-	Wed, 20 Dec 2023 16:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D74E4D133;
+	Wed, 20 Dec 2023 16:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GJQnnvRF"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RsuNhbfd"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C14B46439
-	for <io-uring@vger.kernel.org>; Wed, 20 Dec 2023 16:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0E64B13D
+	for <io-uring@vger.kernel.org>; Wed, 20 Dec 2023 16:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7b7117ca63eso61771639f.1
-        for <io-uring@vger.kernel.org>; Wed, 20 Dec 2023 08:06:29 -0800 (PST)
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7b714a7835cso70403039f.0
+        for <io-uring@vger.kernel.org>; Wed, 20 Dec 2023 08:13:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1703088388; x=1703693188; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1703088791; x=1703693591; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=VZ6OBeghSb+PMX3MCxqCEyg+gbKi+XvzXWAkModBVro=;
-        b=GJQnnvRF6tfW0wUXRjntfbgozsdVj7mmm5S92EVbZgEcxXeKbDVkGpC1YWVe/Pwkl9
-         kqXLafOUcmpNKSWF/VonxfFsufMAppMF3U6ZAWKLwdhIrj+e44TEPTVdrp+Yspw6yfxi
-         H9iDZJUTjbE6x8PHykXkftZ5+MXLVi65BtusBs4aQvFxeGZ8M7wgl45z/gc0byiCgYCN
-         EWGwNpMSUiz7lmGptO/eurFBlqecFGzAWJHozXxIXU0639oi53fmJxtMAyDr5vZco7Dg
-         +HEFqjRAVTmot9SGFAVCjsplBVUoghmKrhYbgQxeYiv+5Mfp1E4lU/FcOfxtbQI0SkUc
-         ziSA==
+        bh=cVPsNf/S96zsYER9FoQUWrH/cp9G4mSwOa41CLTdXzU=;
+        b=RsuNhbfdkPST/c+Kzw5mk03tWMVH8m6rMH5Vo0gru8OrNaO/2tf6L9fFP1Jf2gGKSc
+         1nKxoNLJdusDX59fku/IQSp/jOTwEt137mXnBzVEdjDg4MJ81rWMDyTYURkezd6wA+i9
+         fwXrmuWXXMFPJ+WaROHpaQCnm47MxgYkcHpoys8Nq9QNFwH2wNKhULzGjfj4BUEPpHBJ
+         Sw6U7UIgHxAHQ7JVEhm7zReCoOzT3CVEhel6REQdb9jfc5/6NPgYpeHKmbYG4XIC9Kxh
+         pn4YRgFlx4zpfU+hJCM2ktEZ5lxuLPvFUP9/DOdoCOZBUso8ahrlrKPGgTyyBOnZ+qjq
+         GgQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703088388; x=1703693188;
+        d=1e100.net; s=20230601; t=1703088791; x=1703693591;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VZ6OBeghSb+PMX3MCxqCEyg+gbKi+XvzXWAkModBVro=;
-        b=aF2KaYBqCMTWp6xbndv483pf6XIFhmB9zApFOVr3vuemubJwJqGIXrs613OIfjrTqG
-         /jFU+8Hrz6ZbyoU+Pj5RMxz55C5/vRgnrhCBJrK7+3InS7lSu6iOaGc05JiGES0/bf63
-         LIY6UEP6cHLAjTreGp4KFVPIxoNtKHzxPBGpduDpGT9OJ1iDy2BvTSvaIM2Affg1FJcM
-         bkYSvLIUg8IMW9PrDSvFl0D9D63lY1Dt2Q2RE2HQHEW3TJ1grh7rEVhTfBN2CE2Pv7x7
-         G3lCAgVDp5jHUn/DWgzJIz8gu7wtYtQ4ztJXzd+8mrT5fpl5ykeT+QINJVqC890SOpZE
-         V1VA==
-X-Gm-Message-State: AOJu0YzN5T5cJX1jNrUxXsAJ+h7F1Q3iaCZzhe+GUW23nIn+/Y4lYjA7
-	SuQECqiuMNP37duoJo+WNDPJXA==
-X-Google-Smtp-Source: AGHT+IG+QXQDe8FELkC+SxY/OEfKeHBY6Vv7IxIk2SPJPwttdSu5ZgVH5RwJHErLBv/bWIIE/Xsg+w==
-X-Received: by 2002:a6b:ea0a:0:b0:7b4:520c:de0b with SMTP id m10-20020a6bea0a000000b007b4520cde0bmr33657528ioc.1.1703088388407;
-        Wed, 20 Dec 2023 08:06:28 -0800 (PST)
+        bh=cVPsNf/S96zsYER9FoQUWrH/cp9G4mSwOa41CLTdXzU=;
+        b=kVLaEBpu4MgyL29ONqffy2ok3J4rejOGRsRWnpZzi5QLwvu/Im6LcE+N/DYksq9bGi
+         3K3OC+JRqb0Yro0sKyyJjFLmkQyKVHnrykPPYhY5FIn+r4Ow5L5JY0ltUEh+kLFp9NxE
+         BOeD40WCwwSiYv8rEDLY0e2Ykc37OJL+0ZI0FPOq5ldBcI+37k+6O7EQ0Lg7ZrqLXdre
+         e8NqXZpNvKXv7Ff9oIBDuVKMD23Q1sBSpK/Zziv9WIKWXqXZKSiekSQfVbBr0v77DsEH
+         sdROT0vXPwx9GkmkD6hULtrlppCBaoK1NDqlTxM702tM2EpRoyB7ihZis4RGHhv5o7KI
+         wSWg==
+X-Gm-Message-State: AOJu0YxYSU3aEsiTldhM8QVmV1LWNZrgYqPwz82m1LJk3rDvcaPDXaxl
+	3RefE03eoXjKuF0PopoZTrrA0m3TrgMlDWvvLsNlXA==
+X-Google-Smtp-Source: AGHT+IF0YldM6uM5mkVuHFMQBigt/J/AqAnx32A9SxbicZcoLGpskk/mDiEbVnO7tlie6OMF8HdKBg==
+X-Received: by 2002:a6b:e517:0:b0:7ba:7d02:f6b3 with SMTP id y23-20020a6be517000000b007ba7d02f6b3mr1003890ioc.1.1703088790957;
+        Wed, 20 Dec 2023 08:13:10 -0800 (PST)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ci13-20020a0566383d8d00b00466604d21d6sm6803961jab.124.2023.12.20.08.06.27
+        by smtp.gmail.com with ESMTPSA id w26-20020a5ed61a000000b007ba783a27c3sm284931iom.11.2023.12.20.08.13.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Dec 2023 08:06:27 -0800 (PST)
-Message-ID: <7fa21652-36fa-4f13-9f36-c1b5ec681bb9@kernel.dk>
-Date: Wed, 20 Dec 2023 09:06:27 -0700
+        Wed, 20 Dec 2023 08:13:10 -0800 (PST)
+Message-ID: <328d24df-1541-4643-8bac-cc81c2f25836@kernel.dk>
+Date: Wed, 20 Dec 2023 09:13:09 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -66,8 +66,7 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 10/20] io_uring: setup ZC for an Rx queue when
- registering an ifq
+Subject: Re: [RFC PATCH v3 07/20] io_uring: add interface queue
 Content-Language: en-US
 To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
  netdev@vger.kernel.org
@@ -77,47 +76,126 @@ Cc: Pavel Begunkov <asml.silence@gmail.com>, Jakub Kicinski
  Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
  Mina Almasry <almasrymina@google.com>
 References: <20231219210357.4029713-1-dw@davidwei.uk>
- <20231219210357.4029713-11-dw@davidwei.uk>
+ <20231219210357.4029713-8-dw@davidwei.uk>
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20231219210357.4029713-11-dw@davidwei.uk>
+In-Reply-To: <20231219210357.4029713-8-dw@davidwei.uk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 12/19/23 2:03 PM, David Wei wrote:
-> From: David Wei <davidhwei@meta.com>
-> 
-> This patch sets up ZC for an Rx queue in a net device when an ifq is
-> registered with io_uring. The Rx queue is specified in the registration
-> struct.
-> 
-> For now since there is only one ifq, its destruction is implicit during
-> io_uring cleanup.
-> 
-> Signed-off-by: David Wei <dw@davidwei.uk>
-> ---
->  io_uring/zc_rx.c | 45 +++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 43 insertions(+), 2 deletions(-)
-> 
-> diff --git a/io_uring/zc_rx.c b/io_uring/zc_rx.c
-> index 7e3e6f6d446b..259e08a34ab2 100644
-> --- a/io_uring/zc_rx.c
-> +++ b/io_uring/zc_rx.c
-> @@ -4,6 +4,7 @@
->  #include <linux/errno.h>
->  #include <linux/mm.h>
->  #include <linux/io_uring.h>
-> +#include <linux/netdevice.h>
+> @@ -750,6 +753,54 @@ enum {
+>  	SOCKET_URING_OP_SETSOCKOPT,
+>  };
 >  
->  #include <uapi/linux/io_uring.h>
->  
-> @@ -11,6 +12,34 @@
->  #include "kbuf.h"
->  #include "zc_rx.h"
->  
-> +typedef int (*bpf_op_t)(struct net_device *dev, struct netdev_bpf *bpf);
+> +struct io_uring_rbuf_rqe {
+> +	__u32	off;
+> +	__u32	len;
+> +	__u16	region;
+> +	__u8	__pad[6];
+> +};
+> +
+> +struct io_uring_rbuf_cqe {
+> +	__u32	off;
+> +	__u32	len;
+> +	__u16	region;
+> +	__u8	sock;
+> +	__u8	flags;
+> +	__u8	__pad[2];
+> +};
 
-Let's get rid of this, since it isn't even typedef'ed on the networking
-side. Doesn't really buy us anything, and it's only used once anyway.
+Looks like this leaves a gap? Should be __pad[4] or probably just __u32
+__pad; For all of these, definitely worth thinking about if we'll ever
+need more than the slight padding. Might not hurt to always leave 8
+bytes extra, outside of the required padding.
+
+> +struct io_rbuf_rqring_offsets {
+> +	__u32	head;
+> +	__u32	tail;
+> +	__u32	rqes;
+> +	__u8	__pad[4];
+> +};
+
+Ditto here, __u32 __pad;
+
+> +struct io_rbuf_cqring_offsets {
+> +	__u32	head;
+> +	__u32	tail;
+> +	__u32	cqes;
+> +	__u8	__pad[4];
+> +};
+
+And here.
+
+> +
+> +/*
+> + * Argument for IORING_REGISTER_ZC_RX_IFQ
+> + */
+> +struct io_uring_zc_rx_ifq_reg {
+> +	__u32	if_idx;
+> +	/* hw rx descriptor ring id */
+> +	__u32	if_rxq_id;
+> +	__u32	region_id;
+> +	__u32	rq_entries;
+> +	__u32	cq_entries;
+> +	__u32	flags;
+> +	__u16	cpu;
+> +
+> +	__u32	mmap_sz;
+> +	struct io_rbuf_rqring_offsets rq_off;
+> +	struct io_rbuf_cqring_offsets cq_off;
+> +};
+
+You have rq_off starting at a 48-bit offset here, don't think this is
+going to work as it's uapi. You'd need padding to align it to 64-bits.
+
+> diff --git a/io_uring/zc_rx.c b/io_uring/zc_rx.c
+> new file mode 100644
+> index 000000000000..5fc94cad5e3a
+> --- /dev/null
+> +++ b/io_uring/zc_rx.c
+> +int io_register_zc_rx_ifq(struct io_ring_ctx *ctx,
+> +			  struct io_uring_zc_rx_ifq_reg __user *arg)
+> +{
+> +	struct io_uring_zc_rx_ifq_reg reg;
+> +	struct io_zc_rx_ifq *ifq;
+> +	int ret;
+> +
+> +	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
+> +		return -EINVAL;
+> +	if (copy_from_user(&reg, arg, sizeof(reg)))
+> +		return -EFAULT;
+> +	if (ctx->ifq)
+> +		return -EBUSY;
+> +	if (reg.if_rxq_id == -1)
+> +		return -EINVAL;
+> +
+> +	ifq = io_zc_rx_ifq_alloc(ctx);
+> +	if (!ifq)
+> +		return -ENOMEM;
+> +
+> +	/* TODO: initialise network interface */
+> +
+> +	ret = io_allocate_rbuf_ring(ifq, &reg);
+> +	if (ret)
+> +		goto err;
+> +
+> +	/* TODO: map zc region and initialise zc pool */
+> +
+> +	ifq->rq_entries = reg.rq_entries;
+> +	ifq->cq_entries = reg.cq_entries;
+> +	ifq->if_rxq_id = reg.if_rxq_id;
+> +	ctx->ifq = ifq;
+
+As these TODO's are removed in later patches, I think you should just
+not include them to begin with. It reads more like notes to yourself,
+doesn't really add anything to the series.
+
+> +void io_shutdown_zc_rx_ifqs(struct io_ring_ctx *ctx)
+> +{
+> +	lockdep_assert_held(&ctx->uring_lock);
+> +}
+
+This is a bit odd?
 
 -- 
 Jens Axboe

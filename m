@@ -1,214 +1,363 @@
-Return-Path: <io-uring+bounces-339-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-340-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5510881AC4E
-	for <lists+io-uring@lfdr.de>; Thu, 21 Dec 2023 02:44:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BA881B488
+	for <lists+io-uring@lfdr.de>; Thu, 21 Dec 2023 11:58:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11B7A28387A
-	for <lists+io-uring@lfdr.de>; Thu, 21 Dec 2023 01:44:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07E971C233C4
+	for <lists+io-uring@lfdr.de>; Thu, 21 Dec 2023 10:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EC115AE;
-	Thu, 21 Dec 2023 01:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A4D6A013;
+	Thu, 21 Dec 2023 10:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="W8SyYAyB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Umbk7IX3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214243C0F
-	for <io-uring@vger.kernel.org>; Thu, 21 Dec 2023 01:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1d3e6c86868so2726275ad.1
-        for <io-uring@vger.kernel.org>; Wed, 20 Dec 2023 17:44:04 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF9B6A029;
+	Thu, 21 Dec 2023 10:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3bb7376957eso454762b6e.1;
+        Thu, 21 Dec 2023 02:58:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1703123044; x=1703727844; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bgED0JL37f6PkBiFDCxfuY2nzyXWc9VTTnJlnrRjf1I=;
-        b=W8SyYAyBuZ/Sxizl7X1AyWxr9hApVhSiHxgFWpBQuUSFJTYhk03wESKjOjeylB8b3O
-         wJwRa2Sf3Fj1QjgSScp4Jmkoa29Yi93NuolScgiiYFDkWY0HHMVeVNtQlAG8kNWsawBJ
-         dVJJjHFN32X2rXpRu3rU1KN9M3/eOIkG2aCXygO/94qVZJMfy6YLfNW7nEYjbzNudnDy
-         uwD1i+T8NPlpQo7je6/ZSTN1iRvI7ckZxPnuBDo0/KD3zwKbzzPxx5EhkBznt0ay+YFQ
-         bd3N6rJBrEtBP/19e319k/WhuSABmuQ05Z3tk35AHY+IzHkYpwRD3aVreyllK+0pOdgW
-         wk6w==
+        d=gmail.com; s=20230601; t=1703156315; x=1703761115; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=31QSY6Ad828ZC5dwczDw26yr6rSk4396NaizMRkH6ME=;
+        b=Umbk7IX3TsRy8Fy9GXPf92Mb8kxcDJTD+AMFfCvsbLSaUOP6f3N0x+RZpFqlaR1CsD
+         d2AJV9v6c51onuF/ZriRAiLl3s5x5/9hJrwCuNo5TazUdbH2sjwiaq1NdDLOdd8JjIdV
+         7HzRj+JsPmbFHdcHi40s96JsXHCf7Z8iJjg91djYNNBCyJPKnWWDD4hCC6U/hEaYwLnq
+         yXTKTi9RaqrUZNUC2VkupFl+9WHhQ3M1lJTyIhEzK2G+Wf9kQVtYM2d9BuPIL2eEy0y/
+         VPa5jkylCTadptSCZIOF0NuLKlvaaZcpj6b6fXhDwDvD2b5329Ks5gi0VLbNBfZ4yY4J
+         0H+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703123044; x=1703727844;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bgED0JL37f6PkBiFDCxfuY2nzyXWc9VTTnJlnrRjf1I=;
-        b=pKkFMYz4L3BLNuxBFny3iDwFhKeUuPPYm0+mA2UwYOPBq4GFYE99P90TPfzsE8/B+i
-         CN5EnXp5NrWIJCS+6LxifbpF8WPTg0P5oYEpn/ufLPmoLRBZAZ2Vx3PBjpRoaZL/sDXu
-         N4j10vvpVWSabKAikdHYZOJuJ1cFSFat8r+pSTcI+AP/vxJocp1KmdqJ2btCaBdZ24ni
-         Eaq6hhUv82Jtz8X6iZExyRl1dkw2pPjJ7EGv/YSF7G30qoGTh7C4kYJrcriJXASF161q
-         eSFnnJGrsXU1Shr+pwr3OsnzK7F0C1tcfAdkSrLCg1mx1yanvXmxAc6CkCf10DdsogIt
-         UkGQ==
-X-Gm-Message-State: AOJu0YzYuXtyR00PjuJfe3VjEKLLd6JSJYpkn4ihvKF/TxtOuQkWxcc9
-	kXKNSf3hkVbfnOy4y3m8bwma1w==
-X-Google-Smtp-Source: AGHT+IG4M1uOiIrQYUPh323xCnfL87oUnwJoi3QiX1MLKtPfsVvWOyrJyp7doejQDCTtTZLCjDqtWw==
-X-Received: by 2002:a17:903:246:b0:1d3:bc96:6c13 with SMTP id j6-20020a170903024600b001d3bc966c13mr7597293plh.35.1703123044420;
-        Wed, 20 Dec 2023 17:44:04 -0800 (PST)
-Received: from ?IPV6:2620:10d:c085:2103:835:39e6:facb:229b? ([2620:10d:c090:400::4:4f9])
-        by smtp.gmail.com with ESMTPSA id ja22-20020a170902efd600b001cfb99d8b82sm371961plb.136.2023.12.20.17.44.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Dec 2023 17:44:04 -0800 (PST)
-Message-ID: <65783fb3-5209-45a3-a4bf-7b3b7acaa75e@davidwei.uk>
-Date: Wed, 20 Dec 2023 17:44:02 -0800
+        d=1e100.net; s=20230601; t=1703156315; x=1703761115;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=31QSY6Ad828ZC5dwczDw26yr6rSk4396NaizMRkH6ME=;
+        b=TDulno8yE96bH12g/K8rP6NOt8AVGC4a5qkcq01+oqUjJTBmCM+DkhP4tUgjRvt1a8
+         1EKLZe4SAe+SSIg6jY1LhGfW3nMgMe+m1M9OMGDWtJx28UTgJ+FmRr9Uz1bHwjG+S9R5
+         N3BMgJ8YLMaWAyg1tKV9ynM0T7MhzEZs3qzu+Hjz7vAVwdRdyxdj6ea5AaoyOqMaH1jA
+         OjxL9ziIK4uz2w7eO/tB/WBn6W54IJhfiiJD0IJwsul6wb3YzsVlaLSowGfIK9UVz13U
+         bGl+GXX+lu3p/8YufajdjnFebfCzRubKJ1cqQZSLSJTznAF71JpVrrQwa9XgSzN4OIwB
+         jXPQ==
+X-Gm-Message-State: AOJu0YxgTBU3+51uD+CJfTP1esjxoRJ9xxOuaigTp2FBBHOZuALdnsbu
+	BMEMrnLGChPuva1R6f+/ocg3QDoRUtTpuf9K35Y=
+X-Google-Smtp-Source: AGHT+IEwwewAvB3CSZ02cyLCVmPmGQ/DQmQB0UzTYkcFu/L5l9DjX10NgzHEZuSnNb4BqKw8juR6MwOCR4YGG7zTz7Y=
+X-Received: by 2002:a05:6808:21a6:b0:3b9:e87b:d963 with SMTP id
+ be38-20020a05680821a600b003b9e87bd963mr27966835oib.85.1703156315316; Thu, 21
+ Dec 2023 02:58:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 07/20] io_uring: add interface queue
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: Pavel Begunkov <asml.silence@gmail.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>
-References: <20231219210357.4029713-1-dw@davidwei.uk>
- <20231219210357.4029713-8-dw@davidwei.uk>
- <328d24df-1541-4643-8bac-cc81c2f25836@kernel.dk>
-Content-Language: en-GB
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <328d24df-1541-4643-8bac-cc81c2f25836@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: xingwei lee <xrivendell7@gmail.com>
+Date: Thu, 21 Dec 2023 18:58:24 +0800
+Message-ID: <CABOYnLzhrQ25C_vjthTZZhZCjQrL-HC4=MKmYG0CyoG6hKpbnw@mail.gmail.com>
+Subject: KMSAN: uninit-value in io_rw_fail
+To: axboe@kernel.dk, syzbot+12dde80bf174ac8ae285@syzkaller.appspotmail.com
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	glider@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2023-12-20 08:13, Jens Axboe wrote:
-> On 12/19/23 2:03 PM, David Wei wrote:
->> @@ -750,6 +753,54 @@ enum {
->>  	SOCKET_URING_OP_SETSOCKOPT,
->>  };
->>  
->> +struct io_uring_rbuf_rqe {
->> +	__u32	off;
->> +	__u32	len;
->> +	__u16	region;
->> +	__u8	__pad[6];
->> +};
->> +
->> +struct io_uring_rbuf_cqe {
->> +	__u32	off;
->> +	__u32	len;
->> +	__u16	region;
->> +	__u8	sock;
->> +	__u8	flags;
->> +	__u8	__pad[2];
->> +};
-> 
-> Looks like this leaves a gap? Should be __pad[4] or probably just __u32
-> __pad; For all of these, definitely worth thinking about if we'll ever
-> need more than the slight padding. Might not hurt to always leave 8
-> bytes extra, outside of the required padding.
+Hello I found a bug in io_uring and comfirmed at the latest upstream
+mainine linux.
+TITLE: KMSAN: uninit-value in io_rw_fail
+and I find this bug maybe existed in the
+https://syzkaller.appspot.com/bug?extid=12dde80bf174ac8ae285 but do
+not have a stable reproducer.
+However, I generate a stable reproducer and comfirmed in the latest mainline.
 
-Apologies, it's been a while since I last pahole'd these structs. We may
-have added more fields later and reintroduced gaps.
+If you fix this issue, please add the following tag to the commit:
+Reported-by: xingwei lee <xrivendell7@gmail.com>
 
-> 
->> +struct io_rbuf_rqring_offsets {
->> +	__u32	head;
->> +	__u32	tail;
->> +	__u32	rqes;
->> +	__u8	__pad[4];
->> +};
-> 
-> Ditto here, __u32 __pad;
-> 
->> +struct io_rbuf_cqring_offsets {
->> +	__u32	head;
->> +	__u32	tail;
->> +	__u32	cqes;
->> +	__u8	__pad[4];
->> +};
-> 
-> And here.
-> 
->> +
->> +/*
->> + * Argument for IORING_REGISTER_ZC_RX_IFQ
->> + */
->> +struct io_uring_zc_rx_ifq_reg {
->> +	__u32	if_idx;
->> +	/* hw rx descriptor ring id */
->> +	__u32	if_rxq_id;
->> +	__u32	region_id;
->> +	__u32	rq_entries;
->> +	__u32	cq_entries;
->> +	__u32	flags;
->> +	__u16	cpu;
->> +
->> +	__u32	mmap_sz;
->> +	struct io_rbuf_rqring_offsets rq_off;
->> +	struct io_rbuf_cqring_offsets cq_off;
->> +};
-> 
-> You have rq_off starting at a 48-bit offset here, don't think this is
-> going to work as it's uapi. You'd need padding to align it to 64-bits.
+kernel: mainline a4aebe936554dac6a91e5d091179c934f8325708
+kernel config: https://syzkaller.appspot.com/text?tag=KernelConfig&x=4a65fa9f077ead01
+with KMSAN enabled
+compiler: Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-I will remove the io_rbuf_cqring in a future patchset which should
-simplify things, but io_rbuf_rqring will stay. I'll make sure offsets
-are 64-bit aligned.
 
-> 
->> diff --git a/io_uring/zc_rx.c b/io_uring/zc_rx.c
->> new file mode 100644
->> index 000000000000..5fc94cad5e3a
->> --- /dev/null
->> +++ b/io_uring/zc_rx.c
->> +int io_register_zc_rx_ifq(struct io_ring_ctx *ctx,
->> +			  struct io_uring_zc_rx_ifq_reg __user *arg)
->> +{
->> +	struct io_uring_zc_rx_ifq_reg reg;
->> +	struct io_zc_rx_ifq *ifq;
->> +	int ret;
->> +
->> +	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
->> +		return -EINVAL;
->> +	if (copy_from_user(&reg, arg, sizeof(reg)))
->> +		return -EFAULT;
->> +	if (ctx->ifq)
->> +		return -EBUSY;
->> +	if (reg.if_rxq_id == -1)
->> +		return -EINVAL;
->> +
->> +	ifq = io_zc_rx_ifq_alloc(ctx);
->> +	if (!ifq)
->> +		return -ENOMEM;
->> +
->> +	/* TODO: initialise network interface */
->> +
->> +	ret = io_allocate_rbuf_ring(ifq, &reg);
->> +	if (ret)
->> +		goto err;
->> +
->> +	/* TODO: map zc region and initialise zc pool */
->> +
->> +	ifq->rq_entries = reg.rq_entries;
->> +	ifq->cq_entries = reg.cq_entries;
->> +	ifq->if_rxq_id = reg.if_rxq_id;
->> +	ctx->ifq = ifq;
-> 
-> As these TODO's are removed in later patches, I think you should just
-> not include them to begin with. It reads more like notes to yourself,
-> doesn't really add anything to the series.
+=* repro.c =*
+#define _GNU_SOURCE
 
-Got it, will remove them.
+#include <dirent.h>
+#include <endian.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <sys/prctl.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <time.h>
+#include <unistd.h>
 
-> 
->> +void io_shutdown_zc_rx_ifqs(struct io_ring_ctx *ctx)
->> +{
->> +	lockdep_assert_held(&ctx->uring_lock);
->> +}
-> 
-> This is a bit odd?
-> 
+#ifndef __NR_io_uring_enter
+#define __NR_io_uring_enter 426
+#endif
+#ifndef __NR_io_uring_setup
+#define __NR_io_uring_setup 425
+#endif
+
+static void sleep_ms(uint64_t ms) { usleep(ms * 1000); }
+
+static uint64_t current_time_ms(void) {
+ struct timespec ts;
+ if (clock_gettime(CLOCK_MONOTONIC, &ts)) exit(1);
+ return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
+}
+
+static bool write_file(const char* file, const char* what, ...) {
+ char buf[1024];
+ va_list args;
+ va_start(args, what);
+ vsnprintf(buf, sizeof(buf), what, args);
+ va_end(args);
+ buf[sizeof(buf) - 1] = 0;
+ int len = strlen(buf);
+ int fd = open(file, O_WRONLY | O_CLOEXEC);
+ if (fd == -1) return false;
+ if (write(fd, buf, len) != len) {
+   int err = errno;
+   close(fd);
+   errno = err;
+   return false;
+ }
+ close(fd);
+ return true;
+}
+
+#define SIZEOF_IO_URING_SQE 64
+#define SIZEOF_IO_URING_CQE 16
+#define SQ_HEAD_OFFSET 0
+#define SQ_TAIL_OFFSET 64
+#define SQ_RING_MASK_OFFSET 256
+#define SQ_RING_ENTRIES_OFFSET 264
+#define SQ_FLAGS_OFFSET 276
+#define SQ_DROPPED_OFFSET 272
+#define CQ_HEAD_OFFSET 128
+#define CQ_TAIL_OFFSET 192
+#define CQ_RING_MASK_OFFSET 260
+#define CQ_RING_ENTRIES_OFFSET 268
+#define CQ_RING_OVERFLOW_OFFSET 284
+#define CQ_FLAGS_OFFSET 280
+#define CQ_CQES_OFFSET 320
+
+struct io_sqring_offsets {
+ uint32_t head;
+ uint32_t tail;
+ uint32_t ring_mask;
+ uint32_t ring_entries;
+ uint32_t flags;
+ uint32_t dropped;
+ uint32_t array;
+ uint32_t resv1;
+ uint64_t resv2;
+};
+
+struct io_cqring_offsets {
+ uint32_t head;
+ uint32_t tail;
+ uint32_t ring_mask;
+ uint32_t ring_entries;
+ uint32_t overflow;
+ uint32_t cqes;
+ uint64_t resv[2];
+};
+
+struct io_uring_params {
+ uint32_t sq_entries;
+ uint32_t cq_entries;
+ uint32_t flags;
+ uint32_t sq_thread_cpu;
+ uint32_t sq_thread_idle;
+ uint32_t features;
+ uint32_t resv[4];
+ struct io_sqring_offsets sq_off;
+ struct io_cqring_offsets cq_off;
+};
+
+#define IORING_OFF_SQ_RING 0
+#define IORING_OFF_SQES 0x10000000ULL
+
+static long syz_io_uring_setup(volatile long a0, volatile long a1,
+                              volatile long a2, volatile long a3) {
+ uint32_t entries = (uint32_t)a0;
+ struct io_uring_params* setup_params = (struct io_uring_params*)a1;
+ void** ring_ptr_out = (void**)a2;
+ void** sqes_ptr_out = (void**)a3;
+ uint32_t fd_io_uring = syscall(__NR_io_uring_setup, entries, setup_params);
+ uint32_t sq_ring_sz =
+     setup_params->sq_off.array + setup_params->sq_entries * sizeof(uint32_t);
+ uint32_t cq_ring_sz = setup_params->cq_off.cqes +
+                       setup_params->cq_entries * SIZEOF_IO_URING_CQE;
+ uint32_t ring_sz = sq_ring_sz > cq_ring_sz ? sq_ring_sz : cq_ring_sz;
+ *ring_ptr_out =
+     mmap(0, ring_sz, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_POPULATE,
+          fd_io_uring, IORING_OFF_SQ_RING);
+ uint32_t sqes_sz = setup_params->sq_entries * SIZEOF_IO_URING_SQE;
+ *sqes_ptr_out = mmap(0, sqes_sz, PROT_READ | PROT_WRITE,
+                      MAP_SHARED | MAP_POPULATE, fd_io_uring, IORING_OFF_SQES);
+ uint32_t* array =
+     (uint32_t*)((uintptr_t)*ring_ptr_out + setup_params->sq_off.array);
+ for (uint32_t index = 0; index < entries; index++) array[index] = index;
+ return fd_io_uring;
+}
+
+static long syz_io_uring_submit(volatile long a0, volatile long a1,
+                               volatile long a2) {
+ char* ring_ptr = (char*)a0;
+ char* sqes_ptr = (char*)a1;
+ char* sqe = (char*)a2;
+ uint32_t sq_ring_mask = *(uint32_t*)(ring_ptr + SQ_RING_MASK_OFFSET);
+ uint32_t* sq_tail_ptr = (uint32_t*)(ring_ptr + SQ_TAIL_OFFSET);
+ uint32_t sq_tail = *sq_tail_ptr & sq_ring_mask;
+ char* sqe_dest = sqes_ptr + sq_tail * SIZEOF_IO_URING_SQE;
+ memcpy(sqe_dest, sqe, SIZEOF_IO_URING_SQE);
+ uint32_t sq_tail_next = *sq_tail_ptr + 1;
+ __atomic_store_n(sq_tail_ptr, sq_tail_next, __ATOMIC_RELEASE);
+ return 0;
+}
+
+static void kill_and_wait(int pid, int* status) {
+ kill(-pid, SIGKILL);
+ kill(pid, SIGKILL);
+ for (int i = 0; i < 100; i++) {
+   if (waitpid(-1, status, WNOHANG | __WALL) == pid) return;
+   usleep(1000);
+ }
+ DIR* dir = opendir("/sys/fs/fuse/connections");
+ if (dir) {
+   for (;;) {
+     struct dirent* ent = readdir(dir);
+     if (!ent) break;
+     if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
+       continue;
+     char abort[300];
+     snprintf(abort, sizeof(abort), "/sys/fs/fuse/connections/%s/abort",
+              ent->d_name);
+     int fd = open(abort, O_WRONLY);
+     if (fd == -1) {
+       continue;
+     }
+     if (write(fd, abort, 1) < 0) {
+     }
+     close(fd);
+   }
+   closedir(dir);
+ } else {
+ }
+ while (waitpid(-1, status, __WALL) != pid) {
+ }
+}
+
+static void setup_test() {
+ prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
+ setpgrp();
+ write_file("/proc/self/oom_score_adj", "1000");
+}
+
+static void execute_one(void);
+
+#define WAIT_FLAGS __WALL
+
+static void loop(void) {
+ int iter = 0;
+ for (;; iter++) {
+   int pid = fork();
+   if (pid < 0) exit(1);
+   if (pid == 0) {
+     setup_test();
+     execute_one();
+     exit(0);
+   }
+   int status = 0;
+   uint64_t start = current_time_ms();
+   for (;;) {
+     if (waitpid(-1, &status, WNOHANG | WAIT_FLAGS) == pid) break;
+     sleep_ms(1);
+     if (current_time_ms() - start < 5000) continue;
+     kill_and_wait(pid, &status);
+     break;
+   }
+ }
+}
+
+uint64_t r[3] = {0xffffffffffffffff, 0x0, 0x0};
+
+void execute_one(void) {
+ intptr_t res = 0;
+ *(uint32_t*)0x200001c4 = 0;
+ *(uint32_t*)0x200001c8 = 0x10100;
+ *(uint32_t*)0x200001cc = 0;
+ *(uint32_t*)0x200001d0 = 0;
+ *(uint32_t*)0x200001d8 = -1;
+ memset((void*)0x200001dc, 0, 12);
+ res = -1;
+ res = syz_io_uring_setup(/*entries=*/0x24f7, /*params=*/0x200001c0,
+                          /*ring_ptr=*/0x20000040, /*sqes_ptr=*/0x20000100);
+ if (res != -1) {
+   r[0] = res;
+   r[1] = *(uint64_t*)0x20000040;
+   r[2] = *(uint64_t*)0x20000100;
+ }
+ *(uint8_t*)0x20000740 = 2;
+ *(uint8_t*)0x20000741 = 0x10;
+ *(uint16_t*)0x20000742 = 0;
+ *(uint32_t*)0x20000744 = 0;
+ *(uint64_t*)0x20000748 = 0;
+ *(uint64_t*)0x20000750 = 0;
+ *(uint32_t*)0x20000758 = 0xfffffe08;
+ *(uint32_t*)0x2000075c = 0;
+ *(uint64_t*)0x20000760 = 0;
+ *(uint16_t*)0x20000768 = 0;
+ *(uint16_t*)0x2000076a = 0;
+ memset((void*)0x2000076c, 0, 20);
+ syz_io_uring_submit(/*ring_ptr=*/r[1], /*sqes_ptr=*/r[2], /*sqe=*/0x20000740);
+ syscall(__NR_io_uring_enter, /*fd=*/r[0], /*to_submit=*/0x2d3e,
+         /*min_complete=*/0, /*flags=*/0ul, /*sigmask=*/0ul, /*size=*/0ul);
+}
+int main(void) {
+ syscall(__NR_mmap, /*addr=*/0x1ffff000ul, /*len=*/0x1000ul, /*prot=*/0ul,
+         /*flags=*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
+ syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0x1000000ul, /*prot=*/7ul,
+         /*flags=*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
+ syscall(__NR_mmap, /*addr=*/0x21000000ul, /*len=*/0x1000ul, /*prot=*/0ul,
+         /*flags=*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
+ loop();
+ return 0;
+}
+
+
+=* repro.txt =*
+r0 = syz_io_uring_setup(0x24f7, &(0x7f00000001c0)={0x0, 0x0, 0x10100},
+&(0x7f0000000040)=<r1=>0x0, &(0x7f0000000100)=<r2=>0x0)
+syz_io_uring_submit(r1, r2, &(0x7f0000000740)=@IORING_OP_WRITEV={0x2,
+0x10, 0x0, @fd_index, 0x0, 0x0, 0xfffffffffffffe08})
+io_uring_enter(r0, 0x2d3e, 0x0, 0x0, 0x0, 0x0)
+
+
+Please also see:
+https://gist.github.com/xrivendell7/0adf878b11e3a71676e1dc696e1c9398
+I hope it helps.
+Thanks!
+
+Best regards.
+xingwei Lee
 

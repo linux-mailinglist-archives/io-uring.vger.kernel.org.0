@@ -1,64 +1,64 @@
-Return-Path: <io-uring+bounces-352-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-353-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD87A81CB5B
-	for <lists+io-uring@lfdr.de>; Fri, 22 Dec 2023 15:31:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27E6781CB8E
+	for <lists+io-uring@lfdr.de>; Fri, 22 Dec 2023 15:55:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C60E1C216D8
-	for <lists+io-uring@lfdr.de>; Fri, 22 Dec 2023 14:31:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1EA4284BA2
+	for <lists+io-uring@lfdr.de>; Fri, 22 Dec 2023 14:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EC91CAAF;
-	Fri, 22 Dec 2023 14:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D560F22F1B;
+	Fri, 22 Dec 2023 14:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="iDkam2ew"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XDe7Dx5P"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB8D1CAA9
-	for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 14:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1259E23740
+	for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 14:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1d3fe03b6b7so4854195ad.1
-        for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 06:31:19 -0800 (PST)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-58962bf3f89so327333a12.0
+        for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 06:55:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1703255479; x=1703860279; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1703256934; x=1703861734; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hCMljXl64bVf1xnNOYFSwE5VnW4uhjdgxZFrLklQSVY=;
-        b=iDkam2ewW1rguNd2uR+v6GcA5sZKsU4X7/Mfk7B/a6UFYOZsL3Y7wvl1sAAkqbu1Sm
-         WR0uSQo18jgoWlqIK7Ga05z8SlYpgEO351Oi+k7qtA0Og3K3MHol1jwLziR4B/BFItMf
-         XmibftlvvH6ZjIcoh+6Wl4viUKV6Nx9gBzJa6vDtPzTa2EfeGBGRvWWzUp1u9JgILMQE
-         +smx7v+rlqza02dPDgN9GsCFToSzuk2kbhOdeitAqlrDn9j7WH8vjQQbfnpqn05keFan
-         KpoTJJ5ECqYT5a1OZmMLofo8U6/r/Z4gsBy7mqwwXgxU7o8sqcBGb4+5MGCzUXp8w8iL
-         iETA==
+        bh=kHQCFGGLNiztDEJ2wrlf/vZG7Mebms+6KQMqUg+YQGU=;
+        b=XDe7Dx5P+/kpAg7lXmxjPsUuai5Mols1mva6/duPa1NssbgqdhRNS0z7IciWSraVgN
+         hpS1FYV+iGOBoGrSamzbfNeScVvfuQ+Ky/5JiuIdKug4wKSN3Z2FwwNDmKeANYlc+CQr
+         KmniHIlfXoMbvBKfCZKYSxy7gcH8gqhUvnI5Z0kb6jxRLJaR5G0xDaBYIXr+nL6xd2cD
+         3VVoexvyAhGQYqTpiUclN3KAKhj2C41oXxQogY8lWEYvLRZLYEhQZFhSZRgnz7LEofXS
+         A4nPq4EEUElUsnE7NOTimDo60zjqjTDDVNd73Q/WaPT2G7syOB7L0EaaZJa9yvyKJaEl
+         CeYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703255479; x=1703860279;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=1e100.net; s=20230601; t=1703256934; x=1703861734;
+        h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hCMljXl64bVf1xnNOYFSwE5VnW4uhjdgxZFrLklQSVY=;
-        b=koDiM4X7MHmIIgCIoU5avdTe0psTpbafUOJkTwRQHzxdj1CuRH7riw7EP9WR5N+KbO
-         vdei2vnd/YPNWC7UKl6DChQyK8aLqM5EC4YTZaBqXfSY3AtcMA1gcaq511Vf1eeZopdi
-         Zyokozv9S7k0SXQMmKZas1cQkrbWstXQyzgLzywzA06kpOPOTatf1urQCNT2ztD9sK2Q
-         hZIN2tf5xkg74B8fMI50ylFTOqSal0B2ecHjKL/SMBDi8MnRe1jb6jID3x2oAZVs2/+O
-         fr6BhcQ89bRuKYKZigj3ZxBVToXLmwSWK8X8vG8+8/U+uAtKyWYAwMxR0iNS8FfdnDxV
-         31Zw==
-X-Gm-Message-State: AOJu0Yx1C9q8EirBd0OfDhEZEsUp+XR4Qh9Ogfi+hYcsAwSE6O+/PynB
-	N6PVKAMp2Fti+sCGF8Uog6ZXHd/OdCjcgQ==
-X-Google-Smtp-Source: AGHT+IFjDQZwXvG5BR3N8L1gnXyEysJlRGKZyMYMuNqbRbFKqbNQ0c1vGGrP08A46agxxuuHnN9aHg==
-X-Received: by 2002:a17:903:244e:b0:1d3:e7cc:e2a6 with SMTP id l14-20020a170903244e00b001d3e7cce2a6mr2631936pls.0.1703255478759;
-        Fri, 22 Dec 2023 06:31:18 -0800 (PST)
+        bh=kHQCFGGLNiztDEJ2wrlf/vZG7Mebms+6KQMqUg+YQGU=;
+        b=iV3XBGOy5eLvbHp72VhR1mxJvEw4GOpcWEdSwc5fMPxqF5PY3SMeuC+NPfpumepI5o
+         HxWiv+BAbK2wLS3p/opJwpa1847OFM96xc3ernWBjOiOIa6inxXAsry9pHCXEoOwbnpi
+         LXAiEOkt7tJjYdTXXo/+lJ2DpV53ybliE201boyOjzAFUkKueDQFHVe8yPsvG9sdjCUh
+         mffxz/ox2tc/uROyAn0t7BA5f5lclzxbH4xIZZxQJN3fi8flIabzBi07pbaaUNI5+UgE
+         LrFHQ5kI1NmPMsrZV8zzt1BNyz13iTwdxUKkzKILczzLpo6cAowtgjFxRsR2Ad55hQP9
+         r4GA==
+X-Gm-Message-State: AOJu0Yy+QbI/SjjOFIiJYoBBi2NFnXM+/zUlp4tkp+pClA+Q8TotOiZk
+	QYXmW5yJpoWVnnbRB0tSpmzvB7hkpD0Xvg==
+X-Google-Smtp-Source: AGHT+IH7UNV2CQYUhtnVKei9ph0mvzFJGhzvL2yJnpBqFgaMPcBfqE1TRyfMYzvN0RP1tDNHcQnQ5g==
+X-Received: by 2002:a05:6a20:c5a0:b0:194:dbd6:9c1e with SMTP id gn32-20020a056a20c5a000b00194dbd69c1emr2139270pzb.2.1703256934236;
+        Fri, 22 Dec 2023 06:55:34 -0800 (PST)
 Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id p2-20020a170902e74200b001d33e65b3cdsm3520002plf.112.2023.12.22.06.31.16
+        by smtp.gmail.com with ESMTPSA id p23-20020a635b17000000b005c66b54476bsm3326753pgb.63.2023.12.22.06.55.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Dec 2023 06:31:17 -0800 (PST)
-Message-ID: <c4c2de2e-b816-41eb-8646-8e57b7ed7913@kernel.dk>
-Date: Fri, 22 Dec 2023 07:31:16 -0700
+        Fri, 22 Dec 2023 06:55:33 -0800 (PST)
+Message-ID: <831312c5-d86f-4d53-8a18-1bd00db61c0d@kernel.dk>
+Date: Fri, 22 Dec 2023 07:55:31 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -66,73 +66,103 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] io_uring: Statistics of the true utilization of sq
- threads.
+Subject: Re: [syzbot] [mm?] [io-uring?] WARNING in get_pte_pfn
 Content-Language: en-US
-To: Xiaobing Li <xiaobing.li@samsung.com>
-Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org, kun.dou@samsung.com, peiwei.li@samsung.com,
- joshi.k@samsung.com, kundan.kumar@samsung.com, wenwen.chen@samsung.com,
- ruyi.zhang@samsung.com
-References: <c3995796-8aab-45e1-ad59-d970373a4fab@kernel.dk>
- <CGME20231222084334epcas5p10badfe3c82a6b8355c03f8d0aa192892@epcas5p1.samsung.com>
- <20231222083530.11051-1-xiaobing.li@samsung.com>
+To: syzbot <syzbot+03fd9b3f71641f0ebf2d@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ syzkaller-bugs@googlegroups.com
+References: <000000000000f9ff00060d14c256@google.com>
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20231222083530.11051-1-xiaobing.li@samsung.com>
+In-Reply-To: <000000000000f9ff00060d14c256@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/22/23 1:35 AM, Xiaobing Li wrote:
-> On 12/18/23 15:53, Jens Axboe wrote:
->> I think I'm convinced that the effectiveness of the chosen SQPOLL
->> settings being exposed is useful, I'm just not sure fdinfo is the right
->> place to do it. Is it going to be a problem that these are just
->> perpetual stats, with no way to reset them? This means there's no way to
->> monitor it for a period of time and get effectiveness for something
->> specific, it'll always just count from when the ring was created.
->>
->> We could of course have the act of reading the stat also reset it, but
->> maybe that'd be a bit odd?
->>
->> Alternatively, it could be exported differently, eg as a register opcode
->> perhaps.
->>
->> Open to suggestions...
+On 12/22/23 1:11 AM, syzbot wrote:
+> Hello,
 > 
-> I thought carefully about your proposed reset stat, and I think it can be 
-> achieved by outputting "work_time" and "total_time".
-> eg:
-> Output at time t1:
-> SqMask: 0x3
-> SqHead: 1168417
-> SqTail: 1168418
-> SqWorkTime: t1_work
-> SqTotalTime: t1_total
+> syzbot found the following issue on:
 > 
-> Output at time t2:
-> SqMask: 0x3
-> SqHead: 1168417
-> SqTail: 1168418
-> SqWorkTime: t2_work
-> SqTotalTime: t2_total
+> HEAD commit:    0e389834672c Merge tag 'for-6.7-rc5-tag' of git://git.kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1454824ee80000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f21aff374937e60e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=03fd9b3f71641f0ebf2d
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b4ef49e80000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=118314d6e80000
 > 
-> Then we can manually calculate the utilization rate from t1 to t2:
-> (t2_work - t1_work) / (t2_total - t1_total)
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/e58cd74e152a/disk-0e389834.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/45d17ccb34bc/vmlinux-0e389834.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/b9b7105d4e08/bzImage-0e389834.xz
 > 
-> Not sure what you think, but if you think it doesn't work, I'll look into 
-> other good ways to add the ability to reset.
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+03fd9b3f71641f0ebf2d@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 5066 at mm/vmscan.c:3242 get_pte_pfn+0x1b5/0x3f0 mm/vmscan.c:3242
+> Modules linked in:
+> CPU: 1 PID: 5066 Comm: syz-executor668 Not tainted 6.7.0-rc5-syzkaller-00270-g0e389834672c #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
+> RIP: 0010:get_pte_pfn+0x1b5/0x3f0 mm/vmscan.c:3242
+> Code: f3 74 2a e8 6d 78 cb ff 31 ff 48 b8 00 00 00 00 00 00 00 02 48 21 c5 48 89 ee e8 e6 73 cb ff 48 85 ed 74 4e e8 4c 78 cb ff 90 <0f> 0b 90 48 c7 c3 ff ff ff ff e8 3c 78 cb ff 48 b8 00 00 00 00 00
+> RSP: 0018:ffffc900041e6878 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: 000000000007891d RCX: ffffffff81bbf6e3
+> RDX: ffff88807d813b80 RSI: ffffffff81bbf684 RDI: 0000000000000005
+> RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
+> R10: 0000000000000200 R11: 0000000000000003 R12: 0000000000000200
+> R13: 1ffff9200083cd0f R14: 0000000000010b21 R15: 0000000020ffc000
+> FS:  0000555555f4d480(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000000 CR3: 000000005fbfa000 CR4: 0000000000350ef0
+> Call Trace:
+>  <TASK>
+>  lru_gen_look_around+0x70d/0x11a0 mm/vmscan.c:4001
+>  folio_referenced_one+0x5a2/0xf70 mm/rmap.c:843
+>  rmap_walk_anon+0x225/0x570 mm/rmap.c:2485
+>  rmap_walk mm/rmap.c:2562 [inline]
+>  rmap_walk mm/rmap.c:2557 [inline]
+>  folio_referenced+0x28a/0x4b0 mm/rmap.c:960
+>  folio_check_references mm/vmscan.c:829 [inline]
+>  shrink_folio_list+0x1ace/0x3f00 mm/vmscan.c:1160
+>  evict_folios+0x6e7/0x1b90 mm/vmscan.c:4499
+>  try_to_shrink_lruvec+0x638/0xa10 mm/vmscan.c:4704
+>  lru_gen_shrink_lruvec mm/vmscan.c:4849 [inline]
+>  shrink_lruvec+0x314/0x2990 mm/vmscan.c:5622
+>  shrink_node_memcgs mm/vmscan.c:5842 [inline]
+>  shrink_node+0x811/0x3710 mm/vmscan.c:5877
+>  shrink_zones mm/vmscan.c:6116 [inline]
+>  do_try_to_free_pages+0x36c/0x1940 mm/vmscan.c:6178
+>  try_to_free_mem_cgroup_pages+0x31a/0x770 mm/vmscan.c:6493
+>  try_charge_memcg+0x3d3/0x11f0 mm/memcontrol.c:2742
+>  obj_cgroup_charge_pages mm/memcontrol.c:3255 [inline]
+>  __memcg_kmem_charge_page+0xdd/0x2a0 mm/memcontrol.c:3281
+>  __alloc_pages+0x263/0x2420 mm/page_alloc.c:4585
+>  alloc_pages_mpol+0x258/0x5f0 mm/mempolicy.c:2133
+>  __get_free_pages+0xc/0x40 mm/page_alloc.c:4615
+>  io_mem_alloc+0x33/0x60 io_uring/io_uring.c:2789
+>  io_allocate_scq_urings io_uring/io_uring.c:3842 [inline]
+>  io_uring_create io_uring/io_uring.c:4019 [inline]
+>  io_uring_setup+0x13ed/0x2430 io_uring/io_uring.c:4131
+>  __do_sys_io_uring_setup io_uring/io_uring.c:4158 [inline]
+>  __se_sys_io_uring_setup io_uring/io_uring.c:4152 [inline]
+>  __x64_sys_io_uring_setup+0x98/0x140 io_uring/io_uring.c:4152
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0x40/0x110 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x63/0x6b
+> RIP: 0033:0x7f4b0e4778a9
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fff814fe868 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f4b0e4778a9
+> RDX: 0000000020000700 RSI: 0000000020000640 RDI: 0000000000005a19
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000020000700
+> R10: 00007fff814fe8d0 R11: 0000000000000202 R12: 0000000020000640
+> R13: 0000000000000000 R14: 0000000000005a19 R15: 0000000020000700
+>  </TASK>
 
-Yep that would work, just leave the stats calculation to the tool
-querying it. Which is really how it should be.
-
-> In addition, on register opcode - generally it is used for resource like
-> buffers, handles etc.. I am not sure how that can help here. If you have
-> something in mind, could you please elaborate in more detail?
-
-It's also a bit of a dumping ground for any kind of out-of-band
-mechanism, so it would work fine for something like this too. But since
-we already have fdinfo and with your idea of just logging work and total
-time, then we should probably just stick with that.
+Don't think this is io_uring related, test case looks like it's just
+setting up and tearing down big rings.
 
 -- 
 Jens Axboe

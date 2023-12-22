@@ -1,166 +1,166 @@
-Return-Path: <io-uring+bounces-350-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-351-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C12981C645
-	for <lists+io-uring@lfdr.de>; Fri, 22 Dec 2023 09:11:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52EE81C6C7
+	for <lists+io-uring@lfdr.de>; Fri, 22 Dec 2023 09:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C61EDB21C41
-	for <lists+io-uring@lfdr.de>; Fri, 22 Dec 2023 08:11:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C6DB28585E
+	for <lists+io-uring@lfdr.de>; Fri, 22 Dec 2023 08:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36481C8CF;
-	Fri, 22 Dec 2023 08:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766C5101FF;
+	Fri, 22 Dec 2023 08:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Lu4DGMyn"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B71C8C8
-	for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 08:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-35fd42a187bso9748115ab.0
-        for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 00:11:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703232682; x=1703837482;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ksai+zLjhGTsulZkcRN0MnHbqLm2ooBbGymZ16RsmE4=;
-        b=FhbiSUbm2guMVlC0Kyk6EqUDEQaSpq/S5nh04m4M8ckEqwsgwkJVlrHvlGuehVi+ty
-         iXj9QaVkSf4VyLyz5N+J8QTudiISjscJAVoFBCIUovLOQnYytlCeMEVUaxUmPCVgQMQ+
-         VzpdHDORZM9/hpk08csc6rDQ3II9XZZg5tJy4Wp4uqdu9sASNZybdPrhm2Ar2VKMoR5C
-         HfZ2OnP108G/I1NFqH0bpnpSrINr5l+y0+8gbAlWlRZayMKCTMkVcbC6cFYW1vHgxGqE
-         RM+BatHH43FFJyiV/MD8nfuf7r0o7IMz108FK0w9bgVGJxVBX6Tz5Q3vvbuWFZ32EgIp
-         OuvA==
-X-Gm-Message-State: AOJu0Yx3Yy8LGQ9u/GZFaWkypISCwHz44OQO5WNBsWHJsUduOJ4rFhTM
-	ZS1pLa+l4NrSr38a7a6TN6qyJG1jmXTkmsjImvtPGEvS7Ydb
-X-Google-Smtp-Source: AGHT+IHm4vI5cGNid0dVo81tFxxdFzC//1MSNc5wPCXhH1phWDbIPa4Uao/Ku9i1xmh48VXvs7OpBOTJH7fI8oC0ALtb/wdFXNZS
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B45101E6
+	for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 08:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231222084345epoutp01ef2a6351a06a2c347c6784d87fd7f6a5~jGt4aM84U0036600366epoutp017
+	for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 08:43:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231222084345epoutp01ef2a6351a06a2c347c6784d87fd7f6a5~jGt4aM84U0036600366epoutp017
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1703234625;
+	bh=QLHE1NWjOSqv7IcomIQ0/EwcPB2puIgo8yJ3Dddp2Zc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Lu4DGMynHAQ9GSBxyvA+6cOspkaJAtQ9NvAdgXWrfTAUW1mJD1JN6phR051AQfA6Y
+	 eVPMk14AncvjHy5f9ibfk8ekrlLfAajOwjQapq/lTJYdeEwESpCcQIUwbgrWjxtUjA
+	 5vbUexHyOi0TQ/meTVfnkOdL7qqKD96oSLQWmMBg=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20231222084344epcas5p322b603419f8014a2912fd0f2a1e499d6~jGt30oR3Z3175031750epcas5p3h;
+	Fri, 22 Dec 2023 08:43:44 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4SxLRz1srHz4x9QC; Fri, 22 Dec
+	2023 08:43:43 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7C.83.10009.F3C45856; Fri, 22 Dec 2023 17:43:43 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20231222084334epcas5p10badfe3c82a6b8355c03f8d0aa192892~jGtuMQb7R0112901129epcas5p1j;
+	Fri, 22 Dec 2023 08:43:34 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20231222084334epsmtrp2cd814b82c44ad3152f22017b180248b5~jGtuLjEd53200432004epsmtrp2-;
+	Fri, 22 Dec 2023 08:43:34 +0000 (GMT)
+X-AuditID: b6c32a4a-ff1ff70000002719-7d-65854c3fead8
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	FB.26.18939.63C45856; Fri, 22 Dec 2023 17:43:34 +0900 (KST)
+Received: from AHRE124.. (unknown [109.105.118.124]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20231222084332epsmtip11a985a5fde17393198ddc06dc8d1b5e1~jGtss24GQ2187121871epsmtip1N;
+	Fri, 22 Dec 2023 08:43:32 +0000 (GMT)
+From: Xiaobing Li <xiaobing.li@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org, kun.dou@samsung.com, peiwei.li@samsung.com,
+	joshi.k@samsung.com, kundan.kumar@samsung.com, wenwen.chen@samsung.com,
+	ruyi.zhang@samsung.com, xiaobing.li@samsung.com
+Subject: Re: Re: [PATCH v5] io_uring: Statistics of the true utilization of
+ sq threads.
+Date: Fri, 22 Dec 2023 16:35:30 +0800
+Message-Id: <20231222083530.11051-1-xiaobing.li@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <c3995796-8aab-45e1-ad59-d970373a4fab@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d190:0:b0:35f:d01c:4fc with SMTP id
- z16-20020a92d190000000b0035fd01c04fcmr56213ilz.2.1703232681932; Fri, 22 Dec
- 2023 00:11:21 -0800 (PST)
-Date: Fri, 22 Dec 2023 00:11:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f9ff00060d14c256@google.com>
-Subject: [syzbot] [mm?] [io-uring?] WARNING in get_pte_pfn
-From: syzbot <syzbot+03fd9b3f71641f0ebf2d@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmpq69T2uqwexzHBZzVm1jtFh9t5/N
+	4l3rORaLo//fsln86r7LaLH1y1dWi8u75rBZPNvLafHl8Hd2i7MTPrBaTN2yg8mio+UyowOP
+	x85Zd9k9Lp8t9ejbsorR4/MmuQCWqGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sL
+	cyWFvMTcVFslF58AXbfMHKDDlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFJgV6
+	xYm5xaV56Xp5qSVWhgYGRqZAhQnZGa/+rGYveMJd8anjLXsD4yrOLkZODgkBE4m+wx+ZQWwh
+	gd2MEpN7i7sYuYDsT4wSP2fcZodz1i2axQrTsfbmXHaIjp2MErvXKUMUvWSUuLjsP9goNgFt
+	ievrusAaRASEJfZ3tLKAFDEL/GWUmPDyN1iRsECkxO6eQ2CTWARUJW73/wSL8wrYSDQe/wi1
+	TV5i/8GzYHFOAVuJd0ufskPUCEqcnPmEBcRmBqpp3jqbGWSBhMBPdomdl28xdTFyADkuEn+m
+	80LMEZZ4dXwLO4QtJfH53V42CLtY4kjPd1aI3gZGiem3r0IVWUv8u7KHBWQOs4CmxPpd+hBh
+	WYmpp9YxQezlk+j9/YQJIs4rsWMejK0qsfrSQxYIW1ridcNvqLiHxNevF6BBOoFRYtXqv8wT
+	GBVmIflnFpJ/ZiGsXsDIvIpRMrWgODc9tdi0wCgvtRwey8n5uZsYwYlVy2sH48MHH/QOMTJx
+	MB5ilOBgVhLhzddpSRXiTUmsrEotyo8vKs1JLT7EaAoM8InMUqLJ+cDUnlcSb2hiaWBiZmZm
+	YmlsZqgkzvu6dW6KkEB6YklqdmpqQWoRTB8TB6dUA5Mrc+uK2tjj87252KftDtCbKWmsdP7J
+	WT6n47rc7Q1ZYuKLUh4ZpLkcuZl7zbBrf+PJkEq5qzl/K18nisgLWEzeleFwefuXt86qz1ck
+	xU64dE2rUbtJqOvKBR8f64WL32fni3FUps9KfN4Zqp49n3e+gtyDyrJ/SxMcHXdkTnNmVdRY
+	IP+gMnjPnAMOn/xYGJO4+r+6NlopN294sDsgR/+ixd2Niy6EfkoJeHNtFvv3+MnMc38ssVpd
+	nbZ3okHcxWkGaw95PffdtulUReOW37fy3ux7UFnnu01GJEVMPWPHj/Amv7thPfYNryO3MJuE
+	C7wX9WG7P7Nv+50pi3lEWqMFFV5Ge3gy3PacrhLzUYmlOCPRUIu5qDgRAFyss8Y1BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsWy7bCSnK6ZT2uqwfV9fBZzVm1jtFh9t5/N
+	4l3rORaLo//fsln86r7LaLH1y1dWi8u75rBZPNvLafHl8Hd2i7MTPrBaTN2yg8mio+UyowOP
+	x85Zd9k9Lp8t9ejbsorR4/MmuQCWKC6blNSczLLUIn27BK6MV39Wsxc84a741PGWvYFxFWcX
+	IyeHhICJxNqbc9m7GLk4hAS2M0rMaDnB1MXIAZSQlvjzpxyiRlhi5b/nUDXPGSUmzPzFDJJg
+	E9CWuL6uixXEFgEq2t/RygJiMwt0Mkm8/qwHYgsLhEusm3eVDcRmEVCVuN3/E6yXV8BGovH4
+	R1aIBfIS+w+eBYtzCthKvFv6lB3EFgKqmfRhPitEvaDEyZlPoObLSzRvnc08gVFgFpLULCSp
+	BYxMqxhFUwuKc9NzkwsM9YoTc4tL89L1kvNzNzGCA14raAfjsvV/9Q4xMnEwHmKU4GBWEuHN
+	12lJFeJNSaysSi3Kjy8qzUktPsQozcGiJM6rnNOZIiSQnliSmp2aWpBaBJNl4uCUamDidMy4
+	3Lm2YmP81F3Ou8LeXkphr0ms9WA3v/n95t2c5Y4yOY6Tru8SzJ/zq9Xv/U0mvu8KzteWTlY4
+	/IYv0vLk0tp5xSElQezTqn5ct2Bf/aVobrDAU2G19ReC/ad373fW+72nsL8mkEPmn7iWYzHf
+	3ngl+WMTOAX8rsxZvZW1qLL8eTQDp7i2X+5Mm41fuPOyUm9vi3ZlnBW1tE/3xsf6p1528S0R
+	Ypb/Tz1cd5Xd/rG1Qc7biB6NPmX+5YuajRpPuK0K7/+6wrG4758Zu/arvBf/fLsjrv08Y1Hp
+	rfKEUcngVUvF362Tq9ZZbedYdTf0x6QoxVnxPI5HeMLuyM+/7PJZ3q8hY0VAValpshJLcUai
+	oRZzUXEiAHE8fRfnAgAA
+X-CMS-MailID: 20231222084334epcas5p10badfe3c82a6b8355c03f8d0aa192892
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231222084334epcas5p10badfe3c82a6b8355c03f8d0aa192892
+References: <c3995796-8aab-45e1-ad59-d970373a4fab@kernel.dk>
+	<CGME20231222084334epcas5p10badfe3c82a6b8355c03f8d0aa192892@epcas5p1.samsung.com>
 
-Hello,
+On 12/18/23 15:53, Jens Axboe wrote:
+> I think I'm convinced that the effectiveness of the chosen SQPOLL
+> settings being exposed is useful, I'm just not sure fdinfo is the right
+> place to do it. Is it going to be a problem that these are just
+> perpetual stats, with no way to reset them? This means there's no way to
+> monitor it for a period of time and get effectiveness for something
+> specific, it'll always just count from when the ring was created.
+> 
+> We could of course have the act of reading the stat also reset it, but
+> maybe that'd be a bit odd?
+> 
+> Alternatively, it could be exported differently, eg as a register opcode
+> perhaps.
+> 
+> Open to suggestions...
 
-syzbot found the following issue on:
+I thought carefully about your proposed reset stat, and I think it can be 
+achieved by outputting "work_time" and "total_time".
+eg:
+Output at time t1:
+SqMask: 0x3
+SqHead: 1168417
+SqTail: 1168418
+SqWorkTime: t1_work
+SqTotalTime: t1_total
 
-HEAD commit:    0e389834672c Merge tag 'for-6.7-rc5-tag' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1454824ee80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f21aff374937e60e
-dashboard link: https://syzkaller.appspot.com/bug?extid=03fd9b3f71641f0ebf2d
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b4ef49e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=118314d6e80000
+Output at time t2:
+SqMask: 0x3
+SqHead: 1168417
+SqTail: 1168418
+SqWorkTime: t2_work
+SqTotalTime: t2_total
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e58cd74e152a/disk-0e389834.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/45d17ccb34bc/vmlinux-0e389834.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b9b7105d4e08/bzImage-0e389834.xz
+Then we can manually calculate the utilization rate from t1 to t2:
+(t2_work - t1_work) / (t2_total - t1_total)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+03fd9b3f71641f0ebf2d@syzkaller.appspotmail.com
+Not sure what you think, but if you think it doesn't work, I'll look into 
+other good ways to add the ability to reset.
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5066 at mm/vmscan.c:3242 get_pte_pfn+0x1b5/0x3f0 mm/vmscan.c:3242
-Modules linked in:
-CPU: 1 PID: 5066 Comm: syz-executor668 Not tainted 6.7.0-rc5-syzkaller-00270-g0e389834672c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
-RIP: 0010:get_pte_pfn+0x1b5/0x3f0 mm/vmscan.c:3242
-Code: f3 74 2a e8 6d 78 cb ff 31 ff 48 b8 00 00 00 00 00 00 00 02 48 21 c5 48 89 ee e8 e6 73 cb ff 48 85 ed 74 4e e8 4c 78 cb ff 90 <0f> 0b 90 48 c7 c3 ff ff ff ff e8 3c 78 cb ff 48 b8 00 00 00 00 00
-RSP: 0018:ffffc900041e6878 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 000000000007891d RCX: ffffffff81bbf6e3
-RDX: ffff88807d813b80 RSI: ffffffff81bbf684 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000200 R11: 0000000000000003 R12: 0000000000000200
-R13: 1ffff9200083cd0f R14: 0000000000010b21 R15: 0000000020ffc000
-FS:  0000555555f4d480(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 000000005fbfa000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- lru_gen_look_around+0x70d/0x11a0 mm/vmscan.c:4001
- folio_referenced_one+0x5a2/0xf70 mm/rmap.c:843
- rmap_walk_anon+0x225/0x570 mm/rmap.c:2485
- rmap_walk mm/rmap.c:2562 [inline]
- rmap_walk mm/rmap.c:2557 [inline]
- folio_referenced+0x28a/0x4b0 mm/rmap.c:960
- folio_check_references mm/vmscan.c:829 [inline]
- shrink_folio_list+0x1ace/0x3f00 mm/vmscan.c:1160
- evict_folios+0x6e7/0x1b90 mm/vmscan.c:4499
- try_to_shrink_lruvec+0x638/0xa10 mm/vmscan.c:4704
- lru_gen_shrink_lruvec mm/vmscan.c:4849 [inline]
- shrink_lruvec+0x314/0x2990 mm/vmscan.c:5622
- shrink_node_memcgs mm/vmscan.c:5842 [inline]
- shrink_node+0x811/0x3710 mm/vmscan.c:5877
- shrink_zones mm/vmscan.c:6116 [inline]
- do_try_to_free_pages+0x36c/0x1940 mm/vmscan.c:6178
- try_to_free_mem_cgroup_pages+0x31a/0x770 mm/vmscan.c:6493
- try_charge_memcg+0x3d3/0x11f0 mm/memcontrol.c:2742
- obj_cgroup_charge_pages mm/memcontrol.c:3255 [inline]
- __memcg_kmem_charge_page+0xdd/0x2a0 mm/memcontrol.c:3281
- __alloc_pages+0x263/0x2420 mm/page_alloc.c:4585
- alloc_pages_mpol+0x258/0x5f0 mm/mempolicy.c:2133
- __get_free_pages+0xc/0x40 mm/page_alloc.c:4615
- io_mem_alloc+0x33/0x60 io_uring/io_uring.c:2789
- io_allocate_scq_urings io_uring/io_uring.c:3842 [inline]
- io_uring_create io_uring/io_uring.c:4019 [inline]
- io_uring_setup+0x13ed/0x2430 io_uring/io_uring.c:4131
- __do_sys_io_uring_setup io_uring/io_uring.c:4158 [inline]
- __se_sys_io_uring_setup io_uring/io_uring.c:4152 [inline]
- __x64_sys_io_uring_setup+0x98/0x140 io_uring/io_uring.c:4152
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x40/0x110 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-RIP: 0033:0x7f4b0e4778a9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff814fe868 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f4b0e4778a9
-RDX: 0000000020000700 RSI: 0000000020000640 RDI: 0000000000005a19
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000020000700
-R10: 00007fff814fe8d0 R11: 0000000000000202 R12: 0000000020000640
-R13: 0000000000000000 R14: 0000000000005a19 R15: 0000000020000700
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+In addition, on register opcode - generally it is used for resource like
+buffers, handles etc.. I am not sure how that can help here. If you have
+something in mind, could you please elaborate in more detail?
 

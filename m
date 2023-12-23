@@ -1,84 +1,81 @@
-Return-Path: <io-uring+bounces-353-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-354-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E6781CB8E
-	for <lists+io-uring@lfdr.de>; Fri, 22 Dec 2023 15:55:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9E181D1E8
+	for <lists+io-uring@lfdr.de>; Sat, 23 Dec 2023 04:31:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1EA4284BA2
-	for <lists+io-uring@lfdr.de>; Fri, 22 Dec 2023 14:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 913501F232EE
+	for <lists+io-uring@lfdr.de>; Sat, 23 Dec 2023 03:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D560F22F1B;
-	Fri, 22 Dec 2023 14:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05381111;
+	Sat, 23 Dec 2023 03:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XDe7Dx5P"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Eflw0YT3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1259E23740
-	for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 14:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-58962bf3f89so327333a12.0
-        for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 06:55:34 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDC8EC7
+	for <io-uring@vger.kernel.org>; Sat, 23 Dec 2023 03:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-357d0d15b29so174125ab.1
+        for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 19:30:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1703256934; x=1703861734; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kHQCFGGLNiztDEJ2wrlf/vZG7Mebms+6KQMqUg+YQGU=;
-        b=XDe7Dx5P+/kpAg7lXmxjPsUuai5Mols1mva6/duPa1NssbgqdhRNS0z7IciWSraVgN
-         hpS1FYV+iGOBoGrSamzbfNeScVvfuQ+Ky/5JiuIdKug4wKSN3Z2FwwNDmKeANYlc+CQr
-         KmniHIlfXoMbvBKfCZKYSxy7gcH8gqhUvnI5Z0kb6jxRLJaR5G0xDaBYIXr+nL6xd2cD
-         3VVoexvyAhGQYqTpiUclN3KAKhj2C41oXxQogY8lWEYvLRZLYEhQZFhSZRgnz7LEofXS
-         A4nPq4EEUElUsnE7NOTimDo60zjqjTDDVNd73Q/WaPT2G7syOB7L0EaaZJa9yvyKJaEl
-         CeYA==
+        d=google.com; s=20230601; t=1703302256; x=1703907056; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mKUKzM+6ifcXsunzZjiqCC3leVlDqBJ+JFGnvTMz+AA=;
+        b=Eflw0YT3ZUjkY6ZvadWeynhcdxaJD29Q/tFPMHKKxv6LtljiLp44xAA98nmnIW2YjN
+         qz2oRQbU43ucqWkZUOuS1TJYL88/Jc2WZRctuelpD5Lo74plx9RaR6yWHUmVjoC/9FZL
+         eQFgtFK+w/mR1jhSsuHuBQNqkvgnri/Fqz2S7j3Cz76S1SeCQ0UhaNiIDxa5iFSS1LPq
+         iL6+CickT+vSzO4NGbdwEsYdnST+YF2YvssepGZFfGLXdfNdTI0veIERekedlWtFGKdE
+         Y+R6kr9sfMb4ohap+NBqmHssKty+6876Uzx0vx+G//lXY/M9r5bHciJHL+SlDGvm4aVx
+         g13w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703256934; x=1703861734;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kHQCFGGLNiztDEJ2wrlf/vZG7Mebms+6KQMqUg+YQGU=;
-        b=iV3XBGOy5eLvbHp72VhR1mxJvEw4GOpcWEdSwc5fMPxqF5PY3SMeuC+NPfpumepI5o
-         HxWiv+BAbK2wLS3p/opJwpa1847OFM96xc3ernWBjOiOIa6inxXAsry9pHCXEoOwbnpi
-         LXAiEOkt7tJjYdTXXo/+lJ2DpV53ybliE201boyOjzAFUkKueDQFHVe8yPsvG9sdjCUh
-         mffxz/ox2tc/uROyAn0t7BA5f5lclzxbH4xIZZxQJN3fi8flIabzBi07pbaaUNI5+UgE
-         LrFHQ5kI1NmPMsrZV8zzt1BNyz13iTwdxUKkzKILczzLpo6cAowtgjFxRsR2Ad55hQP9
-         r4GA==
-X-Gm-Message-State: AOJu0Yy+QbI/SjjOFIiJYoBBi2NFnXM+/zUlp4tkp+pClA+Q8TotOiZk
-	QYXmW5yJpoWVnnbRB0tSpmzvB7hkpD0Xvg==
-X-Google-Smtp-Source: AGHT+IH7UNV2CQYUhtnVKei9ph0mvzFJGhzvL2yJnpBqFgaMPcBfqE1TRyfMYzvN0RP1tDNHcQnQ5g==
-X-Received: by 2002:a05:6a20:c5a0:b0:194:dbd6:9c1e with SMTP id gn32-20020a056a20c5a000b00194dbd69c1emr2139270pzb.2.1703256934236;
-        Fri, 22 Dec 2023 06:55:34 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id p23-20020a635b17000000b005c66b54476bsm3326753pgb.63.2023.12.22.06.55.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Dec 2023 06:55:33 -0800 (PST)
-Message-ID: <831312c5-d86f-4d53-8a18-1bd00db61c0d@kernel.dk>
-Date: Fri, 22 Dec 2023 07:55:31 -0700
+        d=1e100.net; s=20230601; t=1703302256; x=1703907056;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mKUKzM+6ifcXsunzZjiqCC3leVlDqBJ+JFGnvTMz+AA=;
+        b=KU7z+0sI/55s2yGgXqyTGyZXgjZZRQcM3tfsdrlIjxaNfVB9kjE4xADnjs8WAjtBa/
+         fUdNTRbmFsmS24PuI/xErVXmOYBf3Ynh74kOUAwNXD5tVgDooXNrepRKHTScHOVMHl34
+         jUehKkDMusnEYakUwj2chGzHD+RUAWuTOH/cZzm/Muq4JPtxcJJaieu3YREoaCDRCYlD
+         If/B8k2bCKgtZy4dqal/zHna0JYqgFBlqZ0caOGkTRg4A+oRegXlvzvXHRWeDYqJtSko
+         5ov+nXoCl7cRxlAHyctIv+9K+Gw1qVX4lIoJadGfZzMdXsypIFC4LL+TfRhtOtZySFpK
+         f7Tg==
+X-Gm-Message-State: AOJu0Yzo9WM2WGf5z/Uu8jeez7EH56Uz7LZ7upwtRLSje3HvqdsZKPE5
+	18ZG2eeeEUSFVLtFrPvOtDrz2InhAP/Q
+X-Google-Smtp-Source: AGHT+IGqf8TH2N7OR0ICuaHZpx7wnuWDnl0ZbZwaxvo0ZYgzK8CgNYCVQOn1vsdkFaJssQZO57bSwA==
+X-Received: by 2002:a92:d28c:0:b0:359:c80d:f75 with SMTP id p12-20020a92d28c000000b00359c80d0f75mr218341ilp.10.1703302256295;
+        Fri, 22 Dec 2023 19:30:56 -0800 (PST)
+Received: from google.com ([100.64.188.49])
+        by smtp.gmail.com with ESMTPSA id y21-20020a5e8715000000b007baa4dbcfb4sm482689ioj.0.2023.12.22.19.30.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Dec 2023 19:30:55 -0800 (PST)
+Date: Fri, 22 Dec 2023 20:30:50 -0700
+From: Yu Zhao <yuzhao@google.com>
+To: syzbot <syzbot+03fd9b3f71641f0ebf2d@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, axboe@kernel.dk, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm] WARNING in get_pte_pfn
+Message-ID: <ZYZUarJep8b746Et@google.com>
+References: <000000000000f9ff00060d14c256@google.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [mm?] [io-uring?] WARNING in get_pte_pfn
-Content-Language: en-US
-To: syzbot <syzbot+03fd9b3f71641f0ebf2d@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- syzkaller-bugs@googlegroups.com
-References: <000000000000f9ff00060d14c256@google.com>
-From: Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <000000000000f9ff00060d14c256@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 12/22/23 1:11 AM, syzbot wrote:
+On Fri, Dec 22, 2023 at 12:11:21AM -0800, syzbot wrote:
 > Hello,
 > 
 > syzbot found the following issue on:
@@ -134,37 +131,55 @@ On 12/22/23 1:11 AM, syzbot wrote:
 >  shrink_node+0x811/0x3710 mm/vmscan.c:5877
 >  shrink_zones mm/vmscan.c:6116 [inline]
 >  do_try_to_free_pages+0x36c/0x1940 mm/vmscan.c:6178
->  try_to_free_mem_cgroup_pages+0x31a/0x770 mm/vmscan.c:6493
->  try_charge_memcg+0x3d3/0x11f0 mm/memcontrol.c:2742
->  obj_cgroup_charge_pages mm/memcontrol.c:3255 [inline]
->  __memcg_kmem_charge_page+0xdd/0x2a0 mm/memcontrol.c:3281
->  __alloc_pages+0x263/0x2420 mm/page_alloc.c:4585
->  alloc_pages_mpol+0x258/0x5f0 mm/mempolicy.c:2133
->  __get_free_pages+0xc/0x40 mm/page_alloc.c:4615
->  io_mem_alloc+0x33/0x60 io_uring/io_uring.c:2789
->  io_allocate_scq_urings io_uring/io_uring.c:3842 [inline]
->  io_uring_create io_uring/io_uring.c:4019 [inline]
->  io_uring_setup+0x13ed/0x2430 io_uring/io_uring.c:4131
->  __do_sys_io_uring_setup io_uring/io_uring.c:4158 [inline]
->  __se_sys_io_uring_setup io_uring/io_uring.c:4152 [inline]
->  __x64_sys_io_uring_setup+0x98/0x140 io_uring/io_uring.c:4152
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0x40/0x110 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x63/0x6b
-> RIP: 0033:0x7f4b0e4778a9
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fff814fe868 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f4b0e4778a9
-> RDX: 0000000020000700 RSI: 0000000020000640 RDI: 0000000000005a19
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000020000700
-> R10: 00007fff814fe8d0 R11: 0000000000000202 R12: 0000000020000640
-> R13: 0000000000000000 R14: 0000000000005a19 R15: 0000000020000700
->  </TASK>
 
-Don't think this is io_uring related, test case looks like it's just
-setting up and tearing down big rings.
+#syz test
 
--- 
-Jens Axboe
-
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 9dd8977de5a2..041f9ad8f95b 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3230,7 +3230,8 @@ static bool get_next_vma(unsigned long mask, unsigned long size, struct mm_walk
+ 	return false;
+ }
+ 
+-static unsigned long get_pte_pfn(pte_t pte, struct vm_area_struct *vma, unsigned long addr)
++static unsigned long get_pte_pfn(pte_t pte, struct vm_area_struct *vma, unsigned long addr,
++				 struct page *page)
+ {
+ 	unsigned long pfn = pte_pfn(pte);
+ 
+@@ -3239,8 +3240,14 @@ static unsigned long get_pte_pfn(pte_t pte, struct vm_area_struct *vma, unsigned
+ 	if (!pte_present(pte) || is_zero_pfn(pfn))
+ 		return -1;
+ 
+-	if (WARN_ON_ONCE(pte_devmap(pte) || pte_special(pte)))
++	if (pte_devmap(pte) || pte_special(pte)) {
++		if (page)
++			dump_page(page, "get_pte_pfn()");
++		dump_vma(vma);
++		dump_mm(vma->vm_mm);
++		BUG();
+ 		return -1;
++	}
+ 
+ 	if (WARN_ON_ONCE(!pfn_valid(pfn)))
+ 		return -1;
+@@ -3331,7 +3338,7 @@ static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
+ 		total++;
+ 		walk->mm_stats[MM_LEAF_TOTAL]++;
+ 
+-		pfn = get_pte_pfn(ptent, args->vma, addr);
++		pfn = get_pte_pfn(ptent, args->vma, addr, NULL);
+ 		if (pfn == -1)
+ 			continue;
+ 
+@@ -3998,7 +4005,7 @@ void lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
+ 		unsigned long pfn;
+ 		pte_t ptent = ptep_get(pte + i);
+ 
+-		pfn = get_pte_pfn(ptent, pvmw->vma, addr);
++		pfn = get_pte_pfn(ptent, pvmw->vma, addr, pfn_to_page(pvmw->pfn));
+ 		if (pfn == -1)
+ 			continue;
+ 
 

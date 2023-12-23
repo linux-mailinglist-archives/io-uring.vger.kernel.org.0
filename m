@@ -1,186 +1,269 @@
-Return-Path: <io-uring+bounces-356-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-357-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B8D81D24B
-	for <lists+io-uring@lfdr.de>; Sat, 23 Dec 2023 06:01:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2F881D33E
+	for <lists+io-uring@lfdr.de>; Sat, 23 Dec 2023 10:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA6741F2119A
-	for <lists+io-uring@lfdr.de>; Sat, 23 Dec 2023 05:01:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C881F23079
+	for <lists+io-uring@lfdr.de>; Sat, 23 Dec 2023 09:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D485946D;
-	Sat, 23 Dec 2023 05:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBC7BA4E;
+	Sat, 23 Dec 2023 09:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pW1Tqm38"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="htlILD94"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3FF7484
-	for <io-uring@vger.kernel.org>; Sat, 23 Dec 2023 05:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-54744e66d27so20288a12.0
-        for <io-uring@vger.kernel.org>; Fri, 22 Dec 2023 21:00:38 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4A3BA3E;
+	Sat, 23 Dec 2023 09:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7b7fdde8b26so106565339f.1;
+        Sat, 23 Dec 2023 01:08:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1703307637; x=1703912437; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1703322490; x=1703927290; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o9FY/1PotkMZ2tUfKT3NZRuHY0b7e7v8sju1Z+IEqcY=;
-        b=pW1Tqm38GQNgbsPWZpO1i1rTqKRDmKXxuN7T6BzErsZP8z7eYR9/O3tQSP2RfzuP25
-         oBmkrtnPPLRg1xVOhWXNPx9YakNjbsqtY5jcqkf8NHNGyyZZyDBI4zfXuqEy6WZZr5ba
-         F83GjziASnFOEIII1dBKSff5bJiQMF4udpiu6zuTeOzVRqRl0ySU+80t1/X11J3dcq9P
-         pY6XyCAwKzK3NefMtLKr5iBvp94ESSuigMmFVEjyzIOMlad2B6m+u2NRXJdBg6e0nikA
-         uaqBYiCsMTUtd0xkkrw9TlZr9SRx3VVfGo231EJcCEaeMilRtqkEboa0QTEw1teLHlwQ
-         PXnA==
+        bh=o2rGIJcw4PF7MkN1Z8kIClIMdfFg/22eHK3cOPBZMTA=;
+        b=htlILD94Oh7Laq0fAjDt39C3Ujfv5ut4OeAjk/E2SIkh4xuLn7bhGtMxMWDJeSFZQz
+         EX5mTF7WLin1JvQX1wD7JWjx2Vk2a5aZAq3nZAI6i4L+TqNBzsJS3XEDBZp6gM4FHO/w
+         zHYmVcVc08qFYVa+/5w6Ii4x0IQkpA2hl7TwinXZVxFAx00nOYQXJP+gpdyAXOiLTRkm
+         4ISN0LijTEaAxLwpmauheFObWnbddiiZUFC722vSiXgA7vi5w1lj5rZfRT+ni6nGLejJ
+         JCpDYauMNUE8yQKMIH1InSrYzbdEMN04Mch/BUeZVePxPMpmb+0fXMuFxibzIAITiIct
+         8b7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703307637; x=1703912437;
+        d=1e100.net; s=20230601; t=1703322490; x=1703927290;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=o9FY/1PotkMZ2tUfKT3NZRuHY0b7e7v8sju1Z+IEqcY=;
-        b=Oo01PdWNPxLuoyWm4l5vTHIlzv8Qknw82UZhtK3Q89vvCdoThqMzOqBsjLaY+6dkzF
-         Ob5wx4c0rDVWEIoz1UhGUpt28RV/q51MdduazW0PYl1ntqtowZ1TrF4AbeuLKHy+is0t
-         BLgUVkiO6yzsYvtkFaKRUBha3QFF1+WucvlDsjPXnjYgmWLoBXmMtIXUA1ZuVJDxMO0f
-         4CeX0lD3QvBfNSu8ym1nGR8AC9ywSsO38ZN9XGa79XbPg2kfd10NQyCYdmlv/NIpQIZY
-         2duXZDphRa+hKWxRTtSSROlica70winFwkxqrwqRba33wFDmWKvyXW4f077ZLsMSdZI7
-         nMFw==
-X-Gm-Message-State: AOJu0YwdwZP49y9V83LkJbe8ccTDO82acSTV+twZcVKG6s+78ICX3AUj
-	4S3qRSepvG+jSElJ5eKQR3ZeG1jYE0tLB+cJgkjGMZXQ/qsP
-X-Google-Smtp-Source: AGHT+IEEyLVB3e3Z8Bp7DUx1XMxQm9/T+mSvNK3YmQC6Oa312Aw24YAtjVqcOlqm0cf+rnbXOygA91C2Kwgqd0xa85U=
-X-Received: by 2002:a50:ba8e:0:b0:554:228f:4b8e with SMTP id
- x14-20020a50ba8e000000b00554228f4b8emr186732ede.2.1703307636756; Fri, 22 Dec
- 2023 21:00:36 -0800 (PST)
+        bh=o2rGIJcw4PF7MkN1Z8kIClIMdfFg/22eHK3cOPBZMTA=;
+        b=gNM9cCrAa0mO1OAL4ZJjeIKBx3+7ZazefEsRJvCkIR2oFniDXjANmv3nYHphep6MRG
+         l7zi9f/wR2N8slbWelmFGf8FsUV5rvi70auYt6X2GaDGptFkT5083nGe4UXlfMPJ6bXQ
+         CNP2BRKQS1IxhXrr+9girth9ysx1q5P3xXajcBShHbJ7j+FtkJnED6vgJbKmu3IG9TFv
+         f4GG256RMZ9u1xr89dbOKQru5ejuhjlJtJaY3eWvSrmBzPKb3crILWljdd6RFTH18kKo
+         el4s/AXGIwUHfmCC/uybM0Y+ONyhzABDBK5p8GKUkSJJTmpQg0NqMZySbXLJQlN7DqKj
+         If2Q==
+X-Gm-Message-State: AOJu0YyAPHr8C2bHo6o6IHSFB0wM/hlZ3XiA9jJFmlp9u/lTGak3al6u
+	f42SVRBLZfwMVGiE5PbuPEIl1rFOhG2tGwkD+MA=
+X-Google-Smtp-Source: AGHT+IHpRmPFChwsPc6QX82NtiFCUU7q5dwuETJKnTw+g1O49wLu23Y6eixzXgXQ+USwmGMXbX8kuaw4oFgZcGpfOxE=
+X-Received: by 2002:a05:6602:3158:b0:7ba:ab98:77de with SMTP id
+ m24-20020a056602315800b007baab9877demr1992951ioy.25.1703322489657; Sat, 23
+ Dec 2023 01:08:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000f9ff00060d14c256@google.com> <831312c5-d86f-4d53-8a18-1bd00db61c0d@kernel.dk>
-In-Reply-To: <831312c5-d86f-4d53-8a18-1bd00db61c0d@kernel.dk>
-From: Yu Zhao <yuzhao@google.com>
-Date: Fri, 22 Dec 2023 21:59:59 -0700
-Message-ID: <CAOUHufZiHP=j5D_oXwY3BX-HCFmD5MnUtqo77ErjMZ-N27c2PA@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] [io-uring?] WARNING in get_pte_pfn
+References: <CABOYnLzhrQ25C_vjthTZZhZCjQrL-HC4=MKmYG0CyoG6hKpbnw@mail.gmail.com>
+ <c64745d9-4a85-49c0-9df7-f687b18c2c00@kernel.dk>
+In-Reply-To: <c64745d9-4a85-49c0-9df7-f687b18c2c00@kernel.dk>
+From: xingwei lee <xrivendell7@gmail.com>
+Date: Sat, 23 Dec 2023 17:07:55 +0800
+Message-ID: <CABOYnLzKaMLnuAffjwhsYCt3+j-KisSFpX=-EOpfz=KqGR5BAQ@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in io_rw_fail
 To: Jens Axboe <axboe@kernel.dk>
-Cc: syzbot <syzbot+03fd9b3f71641f0ebf2d@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com
+Cc: syzbot+12dde80bf174ac8ae285@syzkaller.appspotmail.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	glider@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 22, 2023 at 7:55=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 12/22/23 1:11 AM, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    0e389834672c Merge tag 'for-6.7-rc5-tag' of git://git.k=
-ern..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1454824ee80=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Df21aff37493=
-7e60e
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D03fd9b3f71641=
-f0ebf2d
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for=
- Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D13b4ef49e=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D118314d6e80=
-000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/e58cd74e152a/d=
-isk-0e389834.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/45d17ccb34bc/vmli=
-nux-0e389834.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/b9b7105d4e08=
-/bzImage-0e389834.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+03fd9b3f71641f0ebf2d@syzkaller.appspotmail.com
-> >
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 1 PID: 5066 at mm/vmscan.c:3242 get_pte_pfn+0x1b5/0x3f0 m=
-m/vmscan.c:3242
-> > Modules linked in:
-> > CPU: 1 PID: 5066 Comm: syz-executor668 Not tainted 6.7.0-rc5-syzkaller-=
-00270-g0e389834672c #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 11/17/2023
-> > RIP: 0010:get_pte_pfn+0x1b5/0x3f0 mm/vmscan.c:3242
-> > Code: f3 74 2a e8 6d 78 cb ff 31 ff 48 b8 00 00 00 00 00 00 00 02 48 21=
- c5 48 89 ee e8 e6 73 cb ff 48 85 ed 74 4e e8 4c 78 cb ff 90 <0f> 0b 90 48 =
-c7 c3 ff ff ff ff e8 3c 78 cb ff 48 b8 00 00 00 00 00
-> > RSP: 0018:ffffc900041e6878 EFLAGS: 00010293
-> > RAX: 0000000000000000 RBX: 000000000007891d RCX: ffffffff81bbf6e3
-> > RDX: ffff88807d813b80 RSI: ffffffff81bbf684 RDI: 0000000000000005
-> > RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
-> > R10: 0000000000000200 R11: 0000000000000003 R12: 0000000000000200
-> > R13: 1ffff9200083cd0f R14: 0000000000010b21 R15: 0000000020ffc000
-> > FS:  0000555555f4d480(0000) GS:ffff8880b9900000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000000000000000 CR3: 000000005fbfa000 CR4: 0000000000350ef0
-> > Call Trace:
-> >  <TASK>
-> >  lru_gen_look_around+0x70d/0x11a0 mm/vmscan.c:4001
-> >  folio_referenced_one+0x5a2/0xf70 mm/rmap.c:843
-> >  rmap_walk_anon+0x225/0x570 mm/rmap.c:2485
-> >  rmap_walk mm/rmap.c:2562 [inline]
-> >  rmap_walk mm/rmap.c:2557 [inline]
-> >  folio_referenced+0x28a/0x4b0 mm/rmap.c:960
-> >  folio_check_references mm/vmscan.c:829 [inline]
-> >  shrink_folio_list+0x1ace/0x3f00 mm/vmscan.c:1160
-> >  evict_folios+0x6e7/0x1b90 mm/vmscan.c:4499
-> >  try_to_shrink_lruvec+0x638/0xa10 mm/vmscan.c:4704
-> >  lru_gen_shrink_lruvec mm/vmscan.c:4849 [inline]
-> >  shrink_lruvec+0x314/0x2990 mm/vmscan.c:5622
-> >  shrink_node_memcgs mm/vmscan.c:5842 [inline]
-> >  shrink_node+0x811/0x3710 mm/vmscan.c:5877
-> >  shrink_zones mm/vmscan.c:6116 [inline]
-> >  do_try_to_free_pages+0x36c/0x1940 mm/vmscan.c:6178
-> >  try_to_free_mem_cgroup_pages+0x31a/0x770 mm/vmscan.c:6493
-> >  try_charge_memcg+0x3d3/0x11f0 mm/memcontrol.c:2742
-> >  obj_cgroup_charge_pages mm/memcontrol.c:3255 [inline]
-> >  __memcg_kmem_charge_page+0xdd/0x2a0 mm/memcontrol.c:3281
-> >  __alloc_pages+0x263/0x2420 mm/page_alloc.c:4585
-> >  alloc_pages_mpol+0x258/0x5f0 mm/mempolicy.c:2133
-> >  __get_free_pages+0xc/0x40 mm/page_alloc.c:4615
-> >  io_mem_alloc+0x33/0x60 io_uring/io_uring.c:2789
-> >  io_allocate_scq_urings io_uring/io_uring.c:3842 [inline]
-> >  io_uring_create io_uring/io_uring.c:4019 [inline]
-> >  io_uring_setup+0x13ed/0x2430 io_uring/io_uring.c:4131
-> >  __do_sys_io_uring_setup io_uring/io_uring.c:4158 [inline]
-> >  __se_sys_io_uring_setup io_uring/io_uring.c:4152 [inline]
-> >  __x64_sys_io_uring_setup+0x98/0x140 io_uring/io_uring.c:4152
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0x40/0x110 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x63/0x6b
-> > RIP: 0033:0x7f4b0e4778a9
-> > Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 1a 00 00 90 48 89 f8 48 89=
- f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 =
-ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007fff814fe868 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
-> > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f4b0e4778a9
-> > RDX: 0000000020000700 RSI: 0000000020000640 RDI: 0000000000005a19
-> > RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000020000700
-> > R10: 00007fff814fe8d0 R11: 0000000000000202 R12: 0000000020000640
-> > R13: 0000000000000000 R14: 0000000000005a19 R15: 0000000020000700
-> >  </TASK>
->
-> Don't think this is io_uring related, test case looks like it's just
-> setting up and tearing down big rings.
+Jens Axboe <axboe@kernel.dk> =E4=BA=8E2023=E5=B9=B412=E6=9C=8821=E6=97=A5=
+=E5=91=A8=E5=9B=9B 23:46=E5=86=99=E9=81=93=EF=BC=9A
 
-Can confirm it is an MM bug. Just posted the fix:
-https://lore.kernel.org/20231223045647.1566043-1-yuzhao@google.com/
+
+On 12/21/23 3:58 AM, xingwei lee wrote:
+
+Hello I found a bug in io_uring and comfirmed at the latest upstream
+mainine linux.
+TITLE: KMSAN: uninit-value in io_rw_fail
+and I find this bug maybe existed in the
+https://syzkaller.appspot.com/bug?extid=3D12dde80bf174ac8ae285 but do
+not have a stable reproducer.
+However, I generate a stable reproducer and comfirmed in the latest mainlin=
+e.
+
+
+I took a look at that one and can't see anything wrong, is that one
+still triggering? In any case, this one is different, as it's the writev
+path. Can you try the below?
+
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 4943d683508b..0c856726b15d 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -589,15 +589,19 @@ static inline int io_rw_prep_async(struct
+io_kiocb *req, int rw)
+      struct iovec *iov;
+      int ret;
+
++       iorw->bytes_done =3D 0;
++       iorw->free_iovec =3D NULL;
++
+      /* submission path, ->uring_lock should already be taken */
+      ret =3D io_import_iovec(rw, req, &iov, &iorw->s, 0);
+      if (unlikely(ret < 0))
+              return ret;
+
+-       iorw->bytes_done =3D 0;
+-       iorw->free_iovec =3D iov;
+-       if (iov)
++       if (iov) {
++               iorw->free_iovec =3D iov;
+              req->flags |=3D REQ_F_NEED_CLEANUP;
++       }
++
+      return 0;
+}
+
+
+--
+Jens Axboe
+
+Hi Jens!
+I test your patch in the lastest mainline commit:
+5254c0cbc92d2a08e75443bdb914f1c4839cdf5a
+without your patch kmsan still trigger the issue like this:
+
+syzkaller login: root
+lsLinux syzkaller 6.7.0-rc6-00248-g5254c0cbc92d #7 SMP PREEMPT_DYNAMIC
+Sat Dec 23 16:19:30 CST 2023 x86_64
+
+[  144.535556][ T8092] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[  144.538187][ T8092] BUG: KMSAN: uninit-value in io_rw_fail+0x191/0x1a0
+[  144.539959][ T8092]  io_rw_fail+0x191/0x1a0
+[  144.541020][ T8092]  io_req_defer_failed+0x1fa/0x380
+[  144.542458][ T8092]  io_queue_sqe_fallback+0x200/0x260
+[  144.543714][ T8092]  io_submit_sqes+0x2466/0x2fc0
+[  144.544880][ T8092]  __se_sys_io_uring_enter+0x3bd/0x4120
+[  144.546222][ T8092]  __x64_sys_io_uring_enter+0x110/0x190
+[  144.547673][ T8092]  do_syscall_64+0x44/0x110
+[  144.549724][ T8092]  entry_SYSCALL_64_after_hwframe+0x63/0x6b
+[  144.551518][ T8092]
+[  144.552075][ T8092] Uninit was created at:
+[  144.553119][ T8092]  slab_post_alloc_hook+0x103/0x9e0
+[  144.554387][ T8092]  __kmem_cache_alloc_node+0x5d5/0x9b0
+[  144.555672][ T8092]  __kmalloc+0x118/0x410
+[  144.556694][ T8092]  io_req_prep_async+0x376/0x590
+[  144.557968][ T8092]  io_queue_sqe_fallback+0x98/0x260
+[  144.559246][ T8092]  io_submit_sqes+0x2466/0x2fc0
+[  144.560397][ T8092]  __se_sys_io_uring_enter+0x3bd/0x4120
+[  144.561706][ T8092]  __x64_sys_io_uring_enter+0x110/0x190
+[  144.563024][ T8092]  do_syscall_64+0x44/0x110
+[  144.564122][ T8092]  entry_SYSCALL_64_after_hwframe+0x63/0x6b
+[  144.565559][ T8092]
+[  144.566140][ T8092] CPU: 2 PID: 8092 Comm: 5e5 Not tainted
+6.7.0-rc6-00248-g5254c0cbc92d #7
+[  144.567756][ T8092] Hardware name: QEMU Standard PC (i440FX + PIIX,
+1996), BIOS 1.16.2-1.fc38 04/01/2014
+[  144.569423][ T8092] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[  144.570623][ T8092] Disabling lock debugging due to kernel taint
+[  144.571689][ T8092] Kernel panic - not syncing: kmsan.panic set ...
+[  144.572796][ T8092] CPU: 2 PID: 8092 Comm: 5e5 Tainted: G    B
+        6.7.0-rc6-00248-g5254c0cbc92d #7
+[  144.574525][ T8092] Hardware name: QEMU Standard PC (i440FX + PIIX,
+1996), BIOS 1.16.2-1.fc38 04/01/2014
+[  144.576180][ T8092] Call Trace:
+[  144.576782][ T8092]  <TASK>
+[  144.577329][ T8092]  dump_stack_lvl+0x1af/0x230
+[  144.578192][ T8092]  dump_stack+0x1e/0x20
+[  144.578957][ T8092]  panic+0x4d6/0xc60
+[  144.579714][ T8092]  kmsan_report+0x2d7/0x2e0
+[  144.580753][ T8092]  ? kmsan_internal_set_shadow_origin+0x6c/0xe0
+[  144.581892][ T8092]  ? __msan_warning+0x96/0x110
+[  144.583055][ T8092]  ? io_rw_fail+0x191/0x1a0
+[  144.583952][ T8092]  ? io_req_defer_failed+0x1fa/0x380
+[  144.584903][ T8092]  ? io_queue_sqe_fallback+0x200/0x260
+[  144.585884][ T8092]  ? io_submit_sqes+0x2466/0x2fc0
+[  144.586798][ T8092]  ? __se_sys_io_uring_enter+0x3bd/0x4120
+[  144.587825][ T8092]  ? __x64_sys_io_uring_enter+0x110/0x190
+[  144.588848][ T8092]  ? do_syscall_64+0x44/0x110
+[  144.589707][ T8092]  ? entry_SYSCALL_64_after_hwframe+0x63/0x6b
+[  144.590807][ T8092]  ? kmsan_get_shadow_origin_ptr+0x4c/0xa0
+[  144.591866][ T8092]  ? __import_iovec+0x2b8/0xed0
+[  144.592746][ T8092]  ? __stack_depot_save+0x37e/0x4a0
+[  144.593688][ T8092]  ? kmsan_internal_set_shadow_origin+0x6c/0xe0
+[  144.594818][ T8092]  ? kmsan_get_shadow_origin_ptr+0x4c/0xa0
+[  144.595876][ T8092]  ? io_import_iovec+0x7d1/0x9d0
+[  144.596776][ T8092]  ? kmsan_get_shadow_origin_ptr+0x4c/0xa0
+[  144.597844][ T8092]  __msan_warning+0x96/0x110
+[  144.598689][ T8092]  io_rw_fail+0x191/0x1a0
+[  144.599489][ T8092]  ? io_setup_async_rw+0x7d0/0x7d0
+[  144.600419][ T8092]  io_req_defer_failed+0x1fa/0x380
+[  144.601349][ T8092]  io_queue_sqe_fallback+0x200/0x260
+[  144.602320][ T8092]  io_submit_sqes+0x2466/0x2fc0
+[  144.603270][ T8092]  __se_sys_io_uring_enter+0x3bd/0x4120
+[  144.604075][ T8092]  ? kmsan_get_shadow_origin_ptr+0x4c/0xa0
+[  144.604731][ T8092]  __x64_sys_io_uring_enter+0x110/0x190
+[  144.605359][ T8092]  do_syscall_64+0x44/0x110
+[  144.605867][ T8092]  entry_SYSCALL_64_after_hwframe+0x63/0x6b
+[  144.606525][ T8092] RIP: 0033:0x432e39
+[  144.606959][ T8092] Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17
+00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c8
+[  144.608998][ T8092] RSP: 002b:00007ffcbc551c78 EFLAGS: 00000216
+ORIG_RAX: 00000000000001aa
+[  144.609905][ T8092] RAX: ffffffffffffffda RBX: 00007ffcbc551eb8
+RCX: 0000000000432e39
+[  144.610758][ T8092] RDX: 0000000000000000 RSI: 0000000000002d3e
+RDI: 0000000000000003
+[  144.611601][ T8092] RBP: 00007ffcbc551ca0 R08: 0000000000000000
+R09: 0000000000000000
+[  144.612452][ T8092] R10: 0000000000000000 R11: 0000000000000216
+R12: 0000000000000001
+[  144.613299][ T8092] R13: 00007ffcbc551ea8 R14: 0000000000000001
+R15: 0000000000000001
+[  144.614149][ T8092]  </TASK>
+[  144.615019][ T8092] Kernel Offset: disabled
+[  144.615507][ T8092] Rebooting in 86400 seconds..
+
+
+with the patch that you provided make a little change to apply to this
+commit: 5254c0cbc92d2a08e75443bdb914f1c4839cdf5a
+
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 4943d683508b..0c856726b15d 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -589,15 +589,19 @@ static inline int io_rw_prep_async(struct
+io_kiocb *req, int rw)
+      struct iovec *iov;
+      int ret;
+
++       iorw->bytes_done =3D 0;
++       iorw->free_iovec =3D NULL;
++
+      /* submission path, ->uring_lock should already be taken */
+      ret =3D io_import_iovec(rw, req, &iov, &iorw->s, 0);
+      if (unlikely(ret < 0))
+              return ret;
+
+-       iorw->bytes_done =3D 0;
+-       iorw->free_iovec =3D iov;
+-       if (iov)
++       if (iov) {
++               iorw->free_iovec =3D iov;
+              req->flags |=3D REQ_F_NEED_CLEANUP;
++       }
++
+      return 0;
+}
+
+since the reproducer is in a loop
+and I ran for about 30 minutes it didn't trigger any issues.
+
+I hope it helps.
+
+Best regards.
+xingwei Lee
 

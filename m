@@ -1,64 +1,64 @@
-Return-Path: <io-uring+bounces-366-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-367-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA7882088C
-	for <lists+io-uring@lfdr.de>; Sat, 30 Dec 2023 22:17:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA1B82089C
+	for <lists+io-uring@lfdr.de>; Sat, 30 Dec 2023 23:17:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398CF1C21E03
-	for <lists+io-uring@lfdr.de>; Sat, 30 Dec 2023 21:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 568EC1F21D38
+	for <lists+io-uring@lfdr.de>; Sat, 30 Dec 2023 22:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421CAC2C5;
-	Sat, 30 Dec 2023 21:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88088D26D;
+	Sat, 30 Dec 2023 22:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hP7yVnZy"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jPKkB8Kk"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C30E555;
-	Sat, 30 Dec 2023 21:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-555aa7fddeaso2205707a12.2;
-        Sat, 30 Dec 2023 13:17:41 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D274BCA49
+	for <io-uring@vger.kernel.org>; Sat, 30 Dec 2023 22:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6d2793532d2so604357b3a.1
+        for <io-uring@vger.kernel.org>; Sat, 30 Dec 2023 14:17:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703971059; x=1704575859; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1703974639; x=1704579439; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9ifBVNIGDNmdHiahBIa2ujG1TJ47BtAvBSmm7JJXvfc=;
-        b=hP7yVnZyS8G0Rg7xVcGi7cQ7w2jucuq6kg2kO9qcl7Gq4t0oOq1CiGYghwP6e5yQ81
-         OOVYyItFMjUa77Edv4ZRFIX5K4tYyWIrMSgAOGj4BNUnHWh0aWA/T388QR3OoFLKHlvC
-         GVt8ni1SvQrnusnDJmwWdtg4kgs8AFVlONQsZuJg9L1HIG6sE7Iq9cWQHQA6Da11nopA
-         UTibKKZ2lprGw8i8p06d+4QaE3XlgCCVXFg+T6HYly7imR/DWXkviv60DGRPZzKQneuC
-         OY6W6wWkr/mDODtooxvFdNtOYQEZ2i2Pui3tckW1DEcuq6w3B9IaSNb7ufuQNbH5/R8t
-         6oiQ==
+        bh=KQ8sovo2bizB+K5f8FD1flPar00AxPI0fwjU2TE0akA=;
+        b=jPKkB8Kku6QZgHB54jq+jAT0VL+i64RfwugIB7UYuXHm6ajvK9Cb3KE+U9na71UF5Y
+         D1qFLpRXbSuI3Kb3u7tAq1BHuw2pZAMlwyXe0qoqTKiUf9cds/OPKbuZ/tpnJU3rRmCI
+         H9vzkZBBCzxI2sRhA4E9C7bLDvwVq6Ab2cYxy+iKUMnyhXN6Z49FhB5yGuaNvSz/yHFj
+         yg4sfRs5qJ1rLpBm6v6rrc2CoL2hbe4ZWWMAKdPlcLYSBa0MTKYKitZ9aObDwcHrd2ny
+         hHCrd2Dwhv/5Y9S19AfTvRS68KvuEeCIN7D+u4wBkpN2tRQe7iHfHE0mLyGPNKspwOO3
+         espQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703971059; x=1704575859;
+        d=1e100.net; s=20230601; t=1703974639; x=1704579439;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ifBVNIGDNmdHiahBIa2ujG1TJ47BtAvBSmm7JJXvfc=;
-        b=gr39ynV4PnXoJ4uen8UP9VO7ZytYNVgi8kZe8MEX+8NCi3kM2Y7TF2kyzL0FNRR80a
-         Rjq6z9q+h/vJhwQg4Lp4rOF+keJdduO1AJFNmnq4B+T1Y0+B0vj581A39QFmjc/FBOWg
-         yj55vra8lbh7dWR+K0x9Fvsq4abN8gVlukAlWM2w4a7XFtVNAWhrF1XnRLgp1gCVDKDL
-         wQlNyLZys/j5yQvyVPj7O0bgKvJJsCXNandyKwv5l32QarcrFLeVsbZVTbMS83iqSHU9
-         Tu41EzyYFT7AQ5I3rgrGaTOcW9hYscdgPWvcSM0fbW5Bxo7zuz75gy+WVrxP+hiHFiHb
-         wrgw==
-X-Gm-Message-State: AOJu0Yw4G+j7LMGhBs160eqA2t9Mwy1XIveyiLs3LcE4U57XrkCnZFXS
-	md8jSIq0CF+OXOVlu38qT6M=
-X-Google-Smtp-Source: AGHT+IFq/xwhynCPcB25Xd9Nm6tTaGg1dA9dqvCEES0ds9twnM1m5/lTLLlWj/n+SczJqAFboaLJEw==
-X-Received: by 2002:a17:906:5184:b0:a26:8eb9:8a28 with SMTP id y4-20020a170906518400b00a268eb98a28mr6070825ejk.24.1703971059470;
-        Sat, 30 Dec 2023 13:17:39 -0800 (PST)
-Received: from [192.168.8.100] ([185.69.144.139])
-        by smtp.gmail.com with ESMTPSA id su24-20020a17090703d800b00a26ab41d0f7sm8898383ejb.26.2023.12.30.13.17.38
+        bh=KQ8sovo2bizB+K5f8FD1flPar00AxPI0fwjU2TE0akA=;
+        b=phF0Gy80e5oALzpaBKxli1grBrPvJn3d+Z60tsAnXrpXMlLx6ijDoMWlBc7J/dDXTO
+         SNi8Nz5/q0cr5cfXT/re7llIIzo77+4eLkIQgm9OQSc5Bj7XXKTkVMucdP+1h5Vu7urQ
+         HLvxBaEufpWHzt3foT3aXb6urpuUOiOnsLkVGDen6jraKwwMItBtIISidBqgirH1STYc
+         r9Lh2uEuMLNF8oI9s3bwxSzPzcjKW96wz24weo+WwOkjrgGq1ThzZEl0l5PjKEFdJv+5
+         zKviTEpNvUXAX8QZcDdOqb4RtXJ4j9t12O4kjSKbgdF+vsASVxux1vz15UZZzpn9MQZ3
+         dGHw==
+X-Gm-Message-State: AOJu0YwyP2AhI448RnwaGJ0+D3wxMFryrhN7uR0TSDoYmXLtoS/R68zT
+	78ff7MbIGCZCgCh4BBNBgJVJfirNDzd73g==
+X-Google-Smtp-Source: AGHT+IFwZc0N1Vsc1jp/K0NEObt8wc1MXFPN9k0Z8EY1WRITtrJhBE4EM6cG4pON5uWVyWO8VELcBQ==
+X-Received: by 2002:a05:6a21:819b:b0:196:16b0:c554 with SMTP id pd27-20020a056a21819b00b0019616b0c554mr12387117pzb.5.1703974639128;
+        Sat, 30 Dec 2023 14:17:19 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id n38-20020a634d66000000b005897bfc2ed3sm16381078pgl.93.2023.12.30.14.17.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Dec 2023 13:17:39 -0800 (PST)
-Message-ID: <20536da2-57e1-4cf3-b040-bd456b86111a@gmail.com>
-Date: Sat, 30 Dec 2023 21:15:53 +0000
+        Sat, 30 Dec 2023 14:17:18 -0800 (PST)
+Message-ID: <d383aaa6-8918-42c6-8ec0-73e234175770@kernel.dk>
+Date: Sat, 30 Dec 2023 15:17:17 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -66,187 +66,143 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 15/20] io_uring: add io_recvzc request
+Subject: Re: [PATCH v6] io_uring: Statistics of the true utilization of sq
+ threads.
 Content-Language: en-US
-To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
- io-uring@vger.kernel.org, netdev@vger.kernel.org
-Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>
-References: <20231219210357.4029713-1-dw@davidwei.uk>
- <20231219210357.4029713-16-dw@davidwei.uk>
- <8a447c17-92a1-40b7-baa7-4098c7701ee9@kernel.dk>
- <bef81787-bb85-441f-9350-c915572ab82e@gmail.com>
- <7d39e650-0879-45f1-b76c-be111b9ee38e@kernel.dk>
- <6042681c-fef6-456b-8c65-e0505c6b4abb@gmail.com>
- <9d715976-6f27-4291-a2b4-f34b1bbeaf77@kernel.dk>
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <9d715976-6f27-4291-a2b4-f34b1bbeaf77@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Xiaobing Li <xiaobing.li@samsung.com>
+Cc: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+ kun.dou@samsung.com, peiwei.li@samsung.com, joshi.k@samsung.com,
+ kundan.kumar@samsung.com, wenwen.chen@samsung.com, ruyi.zhang@samsung.com,
+ cliang01.li@samsung.com, xue01.he@samsung.com
+References: <CGME20231225055252epcas5p43ae8016d329b160f688def7b4f9d4ddb@epcas5p4.samsung.com>
+ <20231225054438.44581-1-xiaobing.li@samsung.com>
+ <170360833542.1229482.7687326255574388809.b4-ty@kernel.dk>
+ <7967c7a9-3d17-44de-a170-2b5354460126@gmail.com>
+ <57b81a15-58ae-46c1-a1af-9117457a31c7@kernel.dk>
+ <6167a98c-35f3-4ea6-a807-dc87c0e4e1bf@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <6167a98c-35f3-4ea6-a807-dc87c0e4e1bf@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/21/23 21:32, Jens Axboe wrote:
-> On 12/21/23 11:59 AM, Pavel Begunkov wrote:
->> On 12/20/23 18:09, Jens Axboe wrote:
->>> On 12/20/23 10:04 AM, Pavel Begunkov wrote:
->>>> On 12/20/23 16:27, Jens Axboe wrote:
->>>>> On 12/19/23 2:03 PM, David Wei wrote:
->>>>>> diff --git a/io_uring/net.c b/io_uring/net.c
->>>>>> index 454ba301ae6b..7a2aadf6962c 100644
->>>>>> --- a/io_uring/net.c
->>>>>> +++ b/io_uring/net.c
-[...]
->>>>>> +    if (issue_flags & IO_URING_F_UNLOCKED)
->>>>>> +        return -EAGAIN;
+On 12/30/23 2:06 PM, Pavel Begunkov wrote:
+> On 12/30/23 17:41, Jens Axboe wrote:
+>> On 12/30/23 9:27 AM, Pavel Begunkov wrote:
+>>> On 12/26/23 16:32, Jens Axboe wrote:
+>>>>
+>>>> On Mon, 25 Dec 2023 13:44:38 +0800, Xiaobing Li wrote:
+>>>>> Count the running time and actual IO processing time of the sqpoll
+>>>>> thread, and output the statistical data to fdinfo.
 >>>>>
->>>>> This seems odd, why? If we're called with IO_URING_F_UNLOCKED set, then
+>>>>> Variable description:
+>>>>> "work_time" in the code represents the sum of the jiffies of the sq
+>>>>> thread actually processing IO, that is, how many milliseconds it
+>>>>> actually takes to process IO. "total_time" represents the total time
+>>>>> that the sq thread has elapsed from the beginning of the loop to the
+>>>>> current time point, that is, how many milliseconds it has spent in
+>>>>> total.
+>>>>>
+>>>>> [...]
 >>>>
->>>> It's my addition, let me explain.
+>>>> Applied, thanks!
 >>>>
->>>> io_recvzc() -> io_zc_rx_recv() -> ... -> zc_rx_recv_frag()
->>>>
->>>> This chain posts completions to a buffer completion queue, and
->>>> we don't want extra locking to share it with io-wq threads. In
->>>> some sense it's quite similar to the CQ locking, considering
->>>> we restrict zc to DEFER_TASKRUN. And doesn't change anything
->>>> anyway because multishot cannot post completions from io-wq
->>>> and are executed from the poll callback in task work.
->>>>
->>>>> it's from io-wq. And returning -EAGAIN there will not do anything to
->>>>
->>>> It will. It's supposed to just requeue for polling (it's not
->>>> IOPOLL to keep retrying -EAGAIN), just like multishots do.
+>>>> [1/1] io_uring: Statistics of the true utilization of sq threads.
+>>>>         commit: 9f7e5872eca81d7341e3ec222ebdc202ff536655
 >>>
->>> It definitely needs a good comment, as it's highly non-obvious when
->>> reading the code!
->>>
->>>> Double checking the code, it can actually terminate the request,
->>>> which doesn't make much difference for us because multishots
->>>> should normally never end up in io-wq anyway, but I guess we
->>>> can improve it a liitle bit.
->>>
->>> Right, assumptions seems to be that -EAGAIN will lead to poll arm, which
->>> seems a bit fragile.
+>>> I don't believe the patch is near complete, there are still
+>>> pending question that the author ignored (see replies to
+>>> prev revisions).
 >>
->> The main assumption is that io-wq will eventually leave the
->> request alone and push it somewhere else, either queuing for
->> polling or terminating, which is more than reasonable. I'd
-> 
-> But surely you don't want it terminated from here? It seems like a very
-> odd choice. As it stands, if you end up doing more than one loop, then
-> it won't arm poll and it'll get failed.
->> add that it's rather insane for io-wq indefinitely spinning
->> on -EAGAIN, but it has long been fixed (for !IOPOLL).
-> 
-> There's no other choice for polling, and it doesn't do it for
-
-zc rx is !IOPOLL, that's what I care about.
-
-> non-polling. The current logic makes sense - if you do a blocking
-> attempt and you get -EAGAIN, that's really the final result and you
-> cannot sanely retry for !IOPOLL in that case. Before we did poll arm for
-> io-wq, even the first -EAGAIN would've terminated it. Relying on -EAGAIN
-> from a blocking attempt to do anything but fail the request with -EAGAIN
-> res is pretty fragile and odd, I think that needs sorting out.
-> 
->> As said, can be made a bit better, but it won't change anything
->> for real life execution, multishots would never end up there
->> after they start listening for poll events.
-> 
-> Right, probably won't ever be a thing for !multishot. As mentioned in my
-> original reply, it really just needs a comment explaining exactly what
-> it's doing and why it's fine.
-> 
->>>> And it should also use IO_URING_F_IOWQ, forgot I split out
->>>> it from *F_UNLOCK.
->>>
->>> Yep, that'd be clearer.
+>> We can drop and defer, that's not an issue. It's still sitting top of
+>> branch.
 >>
->> Not "clearer", but more correct. Even though it's not
->> a bug because deps between the flags.
+>> Can you elaborate on the pending questions?
 > 
-> Both clearer and more correct, I would say.
+> I guess that wasn't clear, but I duplicated all of them in the
+> email you're replying to for convenience
 > 
-[...]
->>>
->>> Oracle coding?
+>>> Why it uses jiffies instead of some task run time?
+>>> Consequently, why it's fine to account irq time and other
+>>> preemption? (hint, it's not)
 >>
->> I.e. knowing how later patches (should) look like.
+>> Yeah that's a good point, might be better to use task run time. Jiffies
+>> is also an annoying metric to expose, as you'd need to then get the tick
+>> rate as well. Though I suspect the ratio is the interesting bit here.
+> 
+> I agree that seconds are nicer, but that's not my point. That's
+> not about jiffies, but that the patch keeps counting regardless
+> whether the SQ task was actually running, or the CPU was serving
+> irq, or even if it was force descheduled.
+
+Right, guess I wasn't clear, I did very much agree with using task run
+time to avoid cases like that where it's perceived running, but really
+isn't. For example.
+
+> I even outlined what a solution may look like, i.e. replace jiffies
+> with task runtime, which should already be counted in the task.
+
+Would be a good change to make. And to be fair, I guess they originally
+wanted something like that, as the very first patch had some scheduler
+interactions. Just wasn't done quite right.
+
+>>> Why it can't be done with userspace and/or bpf? Why
+>>> can't it be estimated by checking and tracking
+>>> IORING_SQ_NEED_WAKEUP in userspace?
 >>
->>> Each patch stands separately, there's no reason not to make this one as
+>> Asking people to integrate bpf for this is a bit silly imho. Tracking
+> 
+> I haven't seen any mention of the real use case, did I miss it?
+> Because otherwise I fail to see how it can possibly be called
+> silly when it's not clear how exactly it's used.
+> 
+> Maybe it's a bash program printing stats to a curious user? Or
+> maybe it's to track once at start, and then nobody cares about
+> it, in which case NEED_WAKEUP would be justified.
+> 
+> I can guess it's for adjusting the sq timeouts, but who knows.
+
+I only know what is in those threads, but the most obvious use case
+would indeed be to vet the efficiency of the chosen timeout value and
+balance cpu usage with latency like that.
+
+>> NEED_WAKEUP is also quite cumbersome and would most likely be higher
+>> overhead as well.
+> 
+> Comparing to reading a procfs file or doing an io_uring
+> register syscall? I doubt that. It's also not everyone
+> would be using that.
+
+What's the proposed integration to make NEED_WAKEUP sampling work? As
+far as I can tell, you'd need to either do that kind of accounting every
+time you do io_uring_submit(), or make it conditional which would then
+at least still have a branch.
+
+The kernel side would obviously not be free either, but at least it
+would be restricted to the SQPOLL side of things and not need to get
+entangled with the general IO path that doesn't use SQPOLL.
+
+If we put it in there and have some way to enable/query/disable, then it
+least it would just be a branch or two in there rather than in the
+generic path.
+
+>>> What's the use case in particular? Considering that
+>>> one of the previous revisions was uapi-less, something
+>>> is really fishy here. Again, it's a procfs file nobody
+>>> but a few would want to parse to use the feature.
 >>
->> They are not standalone, you cannot sanely develop anything not
->> thinking how and where it's used, otherwise you'd get a set of
->> functions full of sleeping but later used in irq context or just
->> unfittable into a desired framework. By extent, code often is
->> written while trying to look a step ahead. For example, first
->> patches don't push everything into io_uring.c just to wholesale
->> move it into zc_rx.c because of exceeding some size threshold.
+>> I brought this up earlier too, fdinfo is not a great API. For anything,
+>> really.
 > 
-> Yes, this is how most patch series are - they will compile separately,
-> but obviously won't necessarily make sense or be functional until you
-> get to the end. But since you very much do have future knowledge in
-> these patches, there's no excuse for not making them interact with each
-> other better. Each patch should not pretend it doesn't know what comes
+> I saw that comment, that's why I mentioned, but the
+> point is that I have doubts the author is even using
+> the uapi.
 
-Which is exactly the reason why it is how it is.
-
-> next in a series, if you can make a followup patch simpler with a tweak
-> to a previous patch, that is definitely a good idea.
-> 
-> And here, even the end result would be better imho without having
-> 
-> if (a) {
-> 	big blob of stuff
-> } else {
-> 	other blob of stuff
-> }
-> 
-> when it could just be
-> 
-> if (a)
-> 	return big_blog_of_stuff();
-> 
-> return other_blog_of_stuff();
-> 
-> instead.
-
-That sounds like a good general advice, but the "blobs" are
-not big nor expected to grow to require splitting, I can't say
-it makes it any cleaner or simpler.
-
->>> clean as it can be. And an error case with the main bits inline is a lot
->>
->> I agree that it should be clean among all, but it _is_ clean
->> and readable, all else is stylistic nit picking. And maybe it's
->> just my opinion, but I also personally appreciate when a patch is
->> easy to review, which includes not restructuring all written before
->> with every patch, which also helps with back porting and other
->> developing aspects.
-> 
-> But that's basically my point, it even makes followup patches simpler to
-> read as well. Is it stylistic? Certainly, I just prefer having the above
-> rather than two big indentations. But it also makes the followup patch
-> simpler
-> and it's basically a one-liner change at that point, and a
-> bigger hunk of added code that's the new function that handles the new
-> case.
-> 
->>> nicer imho than two separate indented parts. For the latter addition
->>> instead of the -EOPNOTSUPP, would probably be nice to have it in a
->>> separate function. Probably ditto for the page pool case here now, would
->>> make the later patch simpler too.
->>
->> If we'd need it in the future, we'll change it then, patches
->> stand separately, at least it's IMHO not needed in the current
->> series.
-> 
-> It's still an RFC series, please do change it for v4.
-
-It's not my patch, but I don't view it as moving the patches in
-any positive direction.
+Not sure I follow... If they aren't using the API, what's the point of
+the patch? Or are you questioning whether this is being done for an
+actual use case, or just as a "why not, might be handy" kind of thing?
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

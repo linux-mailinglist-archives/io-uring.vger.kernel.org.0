@@ -1,160 +1,171 @@
-Return-Path: <io-uring+bounces-371-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-372-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2DA821F48
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jan 2024 17:12:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0185822823
+	for <lists+io-uring@lfdr.de>; Wed,  3 Jan 2024 06:58:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102EC1F22DD8
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jan 2024 16:12:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECA7A1C22ED0
+	for <lists+io-uring@lfdr.de>; Wed,  3 Jan 2024 05:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0577814ABF;
-	Tue,  2 Jan 2024 16:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E20618034;
+	Wed,  3 Jan 2024 05:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xdvm8H+X"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="N+25HVh+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D84314F65
-	for <io-uring@vger.kernel.org>; Tue,  2 Jan 2024 16:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-555144cd330so7020333a12.2
-        for <io-uring@vger.kernel.org>; Tue, 02 Jan 2024 08:12:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1704211923; x=1704816723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KqAcAJvK0gwNUTbSW3CjQlsOCezKK1PboNYWGcW3ipU=;
-        b=Xdvm8H+XyNWjNzpsH+AOgVJh4DxLOjAoK3dSfV8EE4a1vzEvYwhWHtWgDjKAxMaWnQ
-         TEJ6YYuu2MEAFWAkN0HJ7JTlezqG11N2nrF2DPmiyy6w2DBuB0JRP3VKKtOuYSBHbUUi
-         A0hlRWfzlnHlzligrwXU7R/7JoU8QE2fRMU8NJvBTGEzv71lqdUG5n6YAwh32aLxWVS5
-         h76Ps3aVrXxcOl33GvIedSuW2pdI8BErfCPB/7AYdyczHQqng+XhE/x/GUjZX4TS0GQA
-         3IPAkHLshgPotmxG5JDIsGTuUM2NVw8prVR2AazP5kYQDrShJfjBnFhKzqOI5uIu537F
-         vSYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704211923; x=1704816723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KqAcAJvK0gwNUTbSW3CjQlsOCezKK1PboNYWGcW3ipU=;
-        b=O/Vr5NNUAciBEKMKCspD7gH5j2QYovGClwm+05rPHPgm7klj3zbTe2nU0A3rHYX0DT
-         QXej0E7rOldJrUytIXxjkBybkJjd3MP/mYhTKYJxzHXl0XyJ2W5KeyARlITIkTPsI1Ws
-         P6+EKFVKB5WR0A6c2f76hcwKXECYdOZFGdGgj7ioiv5smlCkE+t1zWaHScykyUyxRgAp
-         FqjfIhoeJVxJhArZZsZ4Rc8vILEGEVaRSZkSWGQ7+32xGSgsQGU4fJO4iLEc3H5Gs8K0
-         Lm6LdOBRyu+gYz6vAiQ1KgYaXvFiQcxUZ6fgaglLFR/eMWqnbW8KA/21NT+Bb5fJxzwm
-         GCKQ==
-X-Gm-Message-State: AOJu0YxIqrN9e0BuZdvMDdiCJuYHGU1UL1JJeychoUNyAPVaHWNl0yRd
-	MUj0pDO87DnHesQKyuvU8P8bKjNqj2wPlXBNQ1kdZa7zmNtI
-X-Google-Smtp-Source: AGHT+IFbbQOUZHyvkck+bNRUtx0jkbQqzf8vcbORHAFjDKfpv3QV1eUvusHb9ga4pwHFdRSMqc35X18gsM0N3h9jp7w=
-X-Received: by 2002:a17:906:7490:b0:a27:7cd5:7e9b with SMTP id
- e16-20020a170906749000b00a277cd57e9bmr3103321ejl.141.1704211923473; Tue, 02
- Jan 2024 08:12:03 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743C118021
+	for <io-uring@vger.kernel.org>; Wed,  3 Jan 2024 05:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240103055809epoutp02d1709e69bf7fe075cef4d4494d15fede~mwMt_hJ5R2270222702epoutp02X
+	for <io-uring@vger.kernel.org>; Wed,  3 Jan 2024 05:58:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240103055809epoutp02d1709e69bf7fe075cef4d4494d15fede~mwMt_hJ5R2270222702epoutp02X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1704261489;
+	bh=Pf2dZcRj3DhWgVRNDm7EChH8TNgNl1cEinXghVV1m/0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=N+25HVh+4ML3wkudkDl6FBs2QAVINFb0EWrDUTHUIEi6+0pctB5eASaZ9brs0+sMX
+	 bEslyMbpCxQgfNRl8+2Wluh6Ef04tYw1efx/svHveXLsX39xUx04iTL9J2azFz9x49
+	 LCGW6hGTsNxDi8Ol1AJYjwrhwn1VaV+7eWIExtVk=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240103055808epcas5p15ffe7e7ea10f818af80b259ada734a29~mwMtYYyNb1619516195epcas5p1G;
+	Wed,  3 Jan 2024 05:58:08 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4T4fCM2ZRrz4x9QB; Wed,  3 Jan
+	2024 05:58:07 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6D.20.19369.E67F4956; Wed,  3 Jan 2024 14:58:06 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240103055746epcas5p148c2b06032e09956ddcfc72894abc82a~mwMY6WIXB3067430674epcas5p1x;
+	Wed,  3 Jan 2024 05:57:46 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240103055746epsmtrp296aaac7ef0f47548fc855c3e5f4fd4ee~mwMY5mVys1420114201epsmtrp2e;
+	Wed,  3 Jan 2024 05:57:46 +0000 (GMT)
+X-AuditID: b6c32a50-c99ff70000004ba9-90-6594f76e952d
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A9.EE.08817.A57F4956; Wed,  3 Jan 2024 14:57:46 +0900 (KST)
+Received: from localhost.localdomain (unknown [109.105.118.124]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240103055745epsmtip1f241b366c1140cb8ec56c16fb7bdc7fa~mwMXbCpzL2375623756epsmtip1E;
+	Wed,  3 Jan 2024 05:57:44 +0000 (GMT)
+From: Xiaobing Li <xiaobing.li@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org, kun.dou@samsung.com, peiwei.li@samsung.com,
+	joshi.k@samsung.com, kundan.kumar@samsung.com, wenwen.chen@samsung.com,
+	ruyi.zhang@samsung.com, xiaobing.li@samsung.com
+Subject: Re: Re: [PATCH v6] io_uring: Statistics of the true utilization of
+ sq threads.
+Date: Wed,  3 Jan 2024 13:49:37 +0800
+Message-ID: <20240103054940.2121301-1-xiaobing.li@samsung.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <7967c7a9-3d17-44de-a170-2b5354460126@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231219210357.4029713-1-dw@davidwei.uk> <20231219210357.4029713-3-dw@davidwei.uk>
- <CAHS8izO0ADnYqKczEkfNts2VLDfiYEkQ=AzJ-xzb+Kh2ZpFjbg@mail.gmail.com> <9f5ea0cb-215a-4b43-92dc-d306015c8c7a@gmail.com>
-In-Reply-To: <9f5ea0cb-215a-4b43-92dc-d306015c8c7a@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 2 Jan 2024 08:11:49 -0800
-Message-ID: <CAHS8izN49uEcfajKMHrOHAkZJ8jpWieyudHocQ6bzT7N5-yNsg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 02/20] tcp: don't allow non-devmem originated ppiov
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org, netdev@vger.kernel.org, 
-	Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMJsWRmVeSWpSXmKPExsWy7bCmlm7e9ympBgcnalrMWbWN0WL13X42
+	i3et51gsjv5/y2bxq/suo8XWL19ZLS7vmsNm8Wwvp8WXw9/ZLc5O+MBqMXXLDiaLjpbLjA48
+	Hjtn3WX3uHy21KNvyypGj8+b5AJYorJtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1DS0t
+	zJUU8hJzU22VXHwCdN0yc4AOU1IoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQUmBTo
+	FSfmFpfmpevlpZZYGRoYGJkCFSZkZyyf/oO5oFOg4tPmtAbG5zxdjBwcEgImEjs+ZHUxcnEI
+	CexhlNjdO48JwvnEKHHh6GlGCOcbo0Tr5vtADidYx/+vJ5ghEnsZJd50vWKHcL4yStye9ZkJ
+	pIpNQFvi+rouVhBbREBYYn9HKwtIEbPAX0aJCS9/M4MkhAUiJTq/nWcCOYRFQFXixocIkDCv
+	gJ3Et+ZFbBDb5CUW71gOVs4pYCtx5OMudogaQYmTM5+wgNjMQDXNW2eDXSQhMJVD4tCiG6wQ
+	zS4Svy/0s0DYwhKvjm9hh7ClJD6/2wu1oFjiSM93VojmBkaJ6bevQhVZS/y7socF5DhmAU2J
+	9bv0IcKyElNPrWOCWMwn0fv7CRNEnFdixzwYW1Vi9aWHUHulJV43/IaKe0hMapsMDdMJjBK/
+	dk9lm8CoMAvJQ7OQPDQLYfUCRuZVjFKpBcW56anJpgWGunmp5fBoTs7P3cQITq1aATsYV2/4
+	q3eIkYmD8RCjBAezkgjv+nWTU4V4UxIrq1KL8uOLSnNSiw8xmgJDfCKzlGhyPjC555XEG5pY
+	GpiYmZmZWBqbGSqJ875unZsiJJCeWJKanZpakFoE08fEwSnVwBQ1v/dP/MrZr9XMXD6eWLiI
+	MU/f/GnAo6vmnHFXdi//riB3cDnXHu2ST5NPF3RciRHbul7xjWjz77eybJPX1TrofpdRX+C/
+	4KbwEa2P8pYbFooaGx3l2r0mcvmd9Rb2q99dOCX/qzQy6HIQt2fpjqdlzd/Cco3OXLopzPNb
+	+uZ6vpKq/t92ua2yniUzg7a1xd3mNOhYsf5Bg8T7JcLVnxfZiqZuq2gS7bt4pqLzffHZqH/P
+	tLa3Psg0nJ+bf+SIYssNNYb6mJ5Y5jnnsndGJR7Y/Zpf/rM9D3tT056NQiFnMo55zpe3L6xa
+	Hl6VvyGzI0EwqG//aj6Wt1G6nNoTZ014WrBG/0zBosXmvRU/lZRYijMSDbWYi4oTATgei0A2
+	BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDLMWRmVeSWpSXmKPExsWy7bCSnG7U9ympBtffKFjMWbWN0WL13X42
+	i3et51gsjv5/y2bxq/suo8XWL19ZLS7vmsNm8Wwvp8WXw9/ZLc5O+MBqMXXLDiaLjpbLjA48
+	Hjtn3WX3uHy21KNvyypGj8+b5AJYorhsUlJzMstSi/TtErgylk//wVzQKVDxaXNaA+Nzni5G
+	Tg4JAROJ/19PMHcxcnEICexmlJhwfCljFyMHUEJa4s+fcogaYYmV/56zQ9R8ZpToazrJBJJg
+	E9CWuL6uixXEFgEq2t/RygJiMwt0Mkm8/qwHYgsLhEscbL4FNpNFQFXixocIkDCvgJ3Et+ZF
+	bBDz5SUW71jODGJzCthKHPm4ix3EFhKwkbiyexsbRL2gxMmZT1hAxjALqEusnycEsUleonnr
+	bOYJjIKzkFTNQqiahaRqASPzKkbJ1ILi3PTcYsMCo7zUcr3ixNzi0rx0veT83E2M4AjR0trB
+	uGfVB71DjEwcjIcYJTiYlUR416+bnCrEm5JYWZValB9fVJqTWnyIUZqDRUmc99vr3hQhgfTE
+	ktTs1NSC1CKYLBMHp1QDk/2XQ1t7d0ys4e54drc6WMB8ha1LzNzzdxIrMvZW9V1bt/eUwEqz
+	N5u23JoaINDy8MF/AynJw0JMun/Pxxf1GO9KPPS9nuHOdn7ZxJuVZ6ds2CHf02l84KBr986A
+	PdMbZibpzX/37CdrbEbfl/2R/rvEFhezBHTdfct5/XHZBqMTPM0pS5sLcmJ5v/5N0w3ZcK2r
+	eYM8Y1yF1LHWwx+unG/12MzetEP7U7d2TBvHlPftdZ38pjwuuc9vrTu/adn6uPh3KivffJn9
+	/nPT+6QDcdIZU9rUcut91SJ0u9L557hdfq110KGZ5+rXhrXHi2+Iy/PtZeGPTDi9RefbHKmZ
+	6m+2+qR09BYXCWWuKlStVGIpzkg01GIuKk4EAA5fCGD/AgAA
+X-CMS-MailID: 20240103055746epcas5p148c2b06032e09956ddcfc72894abc82a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240103055746epcas5p148c2b06032e09956ddcfc72894abc82a
+References: <7967c7a9-3d17-44de-a170-2b5354460126@gmail.com>
+	<CGME20240103055746epcas5p148c2b06032e09956ddcfc72894abc82a@epcas5p1.samsung.com>
 
-On Tue, Dec 19, 2023 at 5:34=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> On 12/19/23 23:24, Mina Almasry wrote:
-> > On Tue, Dec 19, 2023 at 1:04=E2=80=AFPM David Wei <dw@davidwei.uk> wrot=
-e:
-> >>
-> >> From: Pavel Begunkov <asml.silence@gmail.com>
-> >>
-> >> NOT FOR UPSTREAM
-> >>
-> >> There will be more users of struct page_pool_iov, and ppiovs from one
-> >> subsystem must not be used by another. That should never happen for an=
-y
-> >> sane application, but we need to enforce it in case of bufs and/or
-> >> malicious users.
-> >>
-> >> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> >> Signed-off-by: David Wei <dw@davidwei.uk>
-> >> ---
-> >>   net/ipv4/tcp.c | 7 +++++++
-> >>   1 file changed, 7 insertions(+)
-> >>
-> >> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-> >> index 33a8bb63fbf5..9c6b18eebb5b 100644
-> >> --- a/net/ipv4/tcp.c
-> >> +++ b/net/ipv4/tcp.c
-> >> @@ -2384,6 +2384,13 @@ static int tcp_recvmsg_devmem(const struct sock=
- *sk, const struct sk_buff *skb,
-> >>                          }
-> >>
-> >>                          ppiov =3D skb_frag_page_pool_iov(frag);
-> >> +
-> >> +                       /* Disallow non devmem owned buffers */
-> >> +                       if (ppiov->pp->p.memory_provider !=3D PP_MP_DM=
-ABUF_DEVMEM) {
-> >> +                               err =3D -ENODEV;
-> >> +                               goto out;
-> >> +                       }
-> >> +
-> >
-> > Instead of this, I maybe recommend modifying the skb->dmabuf flag? My
-> > mental model is that flag means all the frags in the skb are
->
-> That's a good point, we need to separate them, and I have it in my
-> todo list.
->
-> > specifically dmabuf, not general ppiovs or net_iovs. Is it possible to
-> > add skb->io_uring or something?
->
-> ->io_uring flag is not feasible, converting ->devmem into a type
-> {page,devmem,iouring} is better but not great either.
->
-> > If that bloats the skb headers, then maybe we need another place to
-> > put this flag. Maybe the [page_pool|net]_iov should declare whether
-> > it's dmabuf or otherwise, and we can check frag[0] and assume all
->
-> ppiov->pp should be enough, either not mixing buffers from different
-> pools or comparing pp->ops or some pp->type.
->
-> > frags are the same as frag0.
->
-> I think I like this one the most. I think David Ahern mentioned
-> before, but would be nice having it on per frag basis and kill
-> ->devmem flag. That would still stop collapsing if frags are
-> from different pools or so.
->
+On 12/30/23 9:27 AM, Pavel Begunkov wrote:
+> Why it uses jiffies instead of some task run time?
+> Consequently, why it's fine to account irq time and other
+> preemption? (hint, it's not)
+> 
+> Why it can't be done with userspace and/or bpf? Why
+> can't it be estimated by checking and tracking
+> IORING_SQ_NEED_WAKEUP in userspace?
+> 
+> What's the use case in particular? Considering that
+> one of the previous revisions was uapi-less, something
+> is really fishy here. Again, it's a procfs file nobody
+> but a few would want to parse to use the feature.
+> 
+> Why it just keeps aggregating stats for the whole
+> life time of the ring? If the workload changes,
+> that would either totally screw the stats or would make
+> it too inert to be useful. That's especially relevant
+> for long running (days) processes. There should be a
+> way to reset it so it starts counting anew.
 
-This sounds reasonable to me. I'll look into applying this change to
-my next devmem TCP RFC, thanks.
+Hi, Jens and Pavel,
+I carefully read the questions you raised.
+First of all, as to why I use jiffies to statistics time, it
+is because I have done some performance tests and found that
+using jiffies has a relatively smaller loss of performance 
+than using task run time. Of course, using task run time is 
+indeed more accurate.  But in fact, our requirements for 
+accuracy are not particularly high, so after comprehensive 
+consideration, we finally chose to use jiffies.
+Of course, if you think that a little more performance loss 
+here has no impact, I can use task run time instead, but in 
+this case, does the way of calculating sqpoll thread timeout
+also need to be changed, because it is also calculated through
+jiffies.
+Then there’s how to use this metric.
+We are studying some optimization methods for io-uring, including
+performance and CPU utilization, but we found that there is
+currently no tool that can observe the CPU ratio of sqthread's 
+actual processing IO part, so we want to merge this method  that
+can observe this value so that we can more easily observe the 
+optimization effects.
 
-> > But IMO the page pool internals should not leak into the
-> > implementation of generic tcp stack functions.
->
-> --
-> Pavel Begunkov
-
-
-
---=20
-Thanks,
-Mina
+Best regards,
+--
+Xiaobing Li
 

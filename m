@@ -1,64 +1,64 @@
-Return-Path: <io-uring+bounces-383-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-384-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BAB82A051
-	for <lists+io-uring@lfdr.de>; Wed, 10 Jan 2024 19:35:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8636882A056
+	for <lists+io-uring@lfdr.de>; Wed, 10 Jan 2024 19:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0F6C1C20B57
-	for <lists+io-uring@lfdr.de>; Wed, 10 Jan 2024 18:35:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E95E2B26054
+	for <lists+io-uring@lfdr.de>; Wed, 10 Jan 2024 18:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33084D584;
-	Wed, 10 Jan 2024 18:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4926B4B5A5;
+	Wed, 10 Jan 2024 18:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="lyVtLBn/"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="va7Joy/i"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037174D580
-	for <io-uring@vger.kernel.org>; Wed, 10 Jan 2024 18:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECD24D112
+	for <io-uring@vger.kernel.org>; Wed, 10 Jan 2024 18:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-35d374bebe3so2010435ab.1
-        for <io-uring@vger.kernel.org>; Wed, 10 Jan 2024 10:35:10 -0800 (PST)
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-360630beb7bso3502495ab.0
+        for <io-uring@vger.kernel.org>; Wed, 10 Jan 2024 10:38:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1704911710; x=1705516510; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j6k+ge/Y7eNmieyBVc7Hr7rclzJ+YEiEF0K74wZsOxc=;
-        b=lyVtLBn/OZncjLNhEcNJEswvud3uUyCOomXL9TQMA5dJg8f1yr+zY1r/1tkAvFL2oY
-         SLrmOTcALJJnc/vwpqBtEovQNuc22+KI1rVJP+wsKthd0cfKRbLl9rEGX91Y46eXHz6W
-         yruZ/vtYfRxEqC+vKCX1/I42ZajiK8w/NsaYtGvsUe43td3Da9EPRQKQ5Cd+/jbW06YF
-         LoVlTk2bOgzSynjsVwNJ5XrnlgvWhFZ9YmBkc03fOoXUxReFFKVSsDM5O1//KbvHwoV+
-         xILqU75/v2GxncTpZzO1mfwAK+GY4af49iuL+HGMwVavOIOW8NNhiLrAW1qDIxtLtSXK
-         2rxg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1704911883; x=1705516683; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qvS+yY8nDNORPw8RkEmLy6ho2ne1xiAq0CFpgKCyKh4=;
+        b=va7Joy/inVz6/559QCmlopOS07R7hjcat3lFVsWcVIKYISzOEicsP+Rlq4eQxZs7tG
+         v5UnCf6Qie25McyHjSujRu/hX/8nXxfSdBbzJZNpvP5rYSdD+Q4GsYgtdhVjE/uFUwpy
+         N1hpkaZWk5FDI/KZeCYajHpTZvQVAMpCQJq5ilT3Jt1QYBxfc7IBjqlKm/QmR7ppR0qY
+         e+VUGVGkiw6TH6oA32yRo2HrOH+HK3P8uHLNGzwj+Gyncrn1ccnhzIP41m2uRZHgqqEf
+         SFGMua9ILuNtOMmRzR9EGwtTnrlWLVcpm2BdczjUrdzJI63HdSAfnnf5wo880tlKt1HJ
+         jCFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704911710; x=1705516510;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j6k+ge/Y7eNmieyBVc7Hr7rclzJ+YEiEF0K74wZsOxc=;
-        b=qiudpHqDeoZaH/BgeIvNyE1UpcgI4jlhi05qC4VAcE1M9W00HztVUS4iXl0N5rg2eA
-         sk8ppp7K06w0jzBAG+YpNvaIDKDvh5V1L1PpAlBi3v7RlyteVftdfJCggiBi/FUbu0eN
-         wbaWz2rbI4N/NOaGPb51zdtibqGZRHboenTCn+ttasLKQXjBDfNYc7if3S2I1Olxl10L
-         Out8byoH7rMb08EX9Y96ktAD1apDiOl9f4dkdxe3KJ2+CZfQLZvkNpqBx7eCdu2tAWkW
-         UogvBXDv1xreuE7w/6Jm0KATG68Kg/daHwTP/+MweRMj8C76RhNWFWYqo65cbAd3E0/3
-         7buQ==
-X-Gm-Message-State: AOJu0YyP7Pb3PVzgvb+y1C52CtIZsjtSuQ23vDBOhjWUWy8mAmAVykvU
-	iUiPY/Kz97/Ac+ZxfA5skZP4LNZwEWKKfw==
-X-Google-Smtp-Source: AGHT+IF3R9jP5q3s9NFTShv6tgY95thgY3nLlxzA/Y8ttLZa57jyz1oaNEMhuKo68WzfYqSWl9WZ+w==
-X-Received: by 2002:a6b:c810:0:b0:7bc:2c5:4f6a with SMTP id y16-20020a6bc810000000b007bc02c54f6amr9675iof.1.1704911710022;
-        Wed, 10 Jan 2024 10:35:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704911883; x=1705516683;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qvS+yY8nDNORPw8RkEmLy6ho2ne1xiAq0CFpgKCyKh4=;
+        b=W2AgWyYsqZdypnAmbJpQkDjpCkGaU7YXi0Pmumintx0g25RgSXcOmNSa9nQFdiMFJU
+         UGD8PBoSdcHaB4vnbjETi8q7nfoSQfY6tOqlPwuboddHdyVkzmSiNEuyKdhvqJ+eBW38
+         SDpo3PvdBs7BgF9Ot09btyztVnfZoZ+Z6+SVeLSottDkXyugwU20XFs6AO12Q+5eg9Qa
+         Aa6ughZy8nayPgSIYe6zdeZFPKcYNaa5tPDsi8Y90EYDKSzxObv353fQM18EnqM5XGVR
+         VnvlLjXZcwC5D7zOMECiKNm1lXIo6/RwyJegmbVGbli14qwHrxeJbz+89XHufQhszhxc
+         MKmw==
+X-Gm-Message-State: AOJu0Yy9t0335EMlm7P9lLWbdDMVRd3Td2kYOOc4U31NJfCU0hWpPJsv
+	WwaClk2DgmU5F3sDCUATCxOx9ncQseMEuiVldU+afOehKtLN2w==
+X-Google-Smtp-Source: AGHT+IGiL+/+v46zhfSKA/s13Im6DGhwLs+of5lgYX5oynI0ndTPcrCGOgvUtQdpIMwZEwxSv9j3cQ==
+X-Received: by 2002:a05:6e02:b2d:b0:35f:bc09:c56b with SMTP id e13-20020a056e020b2d00b0035fbc09c56bmr3366682ilu.2.1704911883547;
+        Wed, 10 Jan 2024 10:38:03 -0800 (PST)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id du8-20020a056638604800b0046dc14af0cesm1431199jab.153.2024.01.10.10.35.09
+        by smtp.gmail.com with ESMTPSA id w2-20020a92d2c2000000b0035d6f8d02d7sm1394927ilg.7.2024.01.10.10.38.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jan 2024 10:35:09 -0800 (PST)
-Message-ID: <eeca0783-a25a-494d-ad41-9ee67c21c82d@kernel.dk>
-Date: Wed, 10 Jan 2024 11:35:08 -0700
+        Wed, 10 Jan 2024 10:38:02 -0800 (PST)
+Message-ID: <cbc9efdd-9b38-4f6a-8cdf-b603d26db6a3@kernel.dk>
+Date: Wed, 10 Jan 2024 11:38:02 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -66,78 +66,102 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rw: cleanup io_rw_done()
 Content-Language: en-US
-To: Keith Busch <kbusch@kernel.org>
-Cc: io-uring <io-uring@vger.kernel.org>
-References: <8182cb84-0fca-43b8-b36f-0287e20184cd@kernel.dk>
- <ZZ7ivQcfP4rgtbS0@kbusch-mbp>
+To: io-uring <io-uring@vger.kernel.org>
+Cc: Keith Busch <kbusch@kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZZ7ivQcfP4rgtbS0@kbusch-mbp>
+Subject: [PATCH v2] io_uring/rw: cleanup io_rw_done()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 1/10/24 11:32 AM, Keith Busch wrote:
-> On Wed, Jan 10, 2024 at 10:09:19AM -0700, Jens Axboe wrote:
->> +static inline void io_rw_done(struct kiocb *kiocb, ssize_t ret)
->> +{
->> +	if (ret == -EIOCBQUEUED) {
->> +		return;
->> +	} else if (ret >= 0) {
->> +end_io:
->> +		INDIRECT_CALL_2(kiocb->ki_complete, io_complete_rw_iopoll,
->> +				io_complete_rw, kiocb, ret);
->> +	} else {
->> +		switch (ret) {
->> +		case -ERESTARTSYS:
->> +		case -ERESTARTNOINTR:
->> +		case -ERESTARTNOHAND:
->> +		case -ERESTART_RESTARTBLOCK:
->> +			/*
->> +			 * We can't just restart the syscall, since previously
->> +			 * submitted sqes may already be in progress. Just fail
->> +			 * this IO with EINTR.
->> +			 */
->> +			ret = -EINTR;
->> +			WARN_ON_ONCE(1);
->> +			break;
->> +		}
->> +		goto end_io;
->> +	}
->> +}
-> 
-> Are you just trying to get the most common two conditions at the top? A
-> little rearringing and you can remove the 'goto'. Maybe just my opinion,
-> but I find using goto for flow control harder to read if there's a
-> structured alternative.
-> 
-> static inline void io_rw_done(struct kiocb *kiocb, ssize_t ret)
-> {
-> 	if (ret == -EIOCBQUEUED)
-> 		return;
-> 
-> 	if (unlikely(ret < 0)) {
-> 		switch (ret) {
-> 		case -ERESTARTSYS:
-> 		case -ERESTARTNOINTR:
-> 		case -ERESTARTNOHAND:
-> 		case -ERESTART_RESTARTBLOCK:
-> 			/*
-> 			 * We can't just restart the syscall, since previously
-> 			 * submitted sqes may already be in progress. Just fail
-> 			 * this IO with EINTR.
-> 			 */
-> 			ret = -EINTR;
-> 			WARN_ON_ONCE(1);
-> 			break;
-> 		}
-> 	}
-> 
-> 	INDIRECT_CALL_2(kiocb->ki_complete, io_complete_rw_iopoll,
-> 			io_complete_rw, kiocb, ret);
-> }
+This originally came from the aio side, and it's laid out rather oddly.
+The common case here is that we either get -EIOCBQUEUED from submitting
+an async request, or that we complete the request correctly with the
+given number of bytes. Handling the odd internal restart error codes
+is not a common operation.
 
-This does look nicer! I'll fold that in, thanks Keith.
+Lay it out a bit more optimally that better explains the normal flow,
+and switch to avoiding the indirect call completely as this is our
+kiocb and we know the completion handler can only be one of two
+possible variants. While at it, move it to where it belongs in the
+file, with fellow end IO helpers.
+
+Outside of being easier to read, this also reduces the text size of the
+function by 24 bytes for me on arm64.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+v2:	- Further cleanup readability (Keith)
+	- Add a few comments
+
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 0c856726b15d..118cc9f1cf16 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -168,27 +168,6 @@ void io_readv_writev_cleanup(struct io_kiocb *req)
+ 	kfree(io->free_iovec);
+ }
+ 
+-static inline void io_rw_done(struct kiocb *kiocb, ssize_t ret)
+-{
+-	switch (ret) {
+-	case -EIOCBQUEUED:
+-		break;
+-	case -ERESTARTSYS:
+-	case -ERESTARTNOINTR:
+-	case -ERESTARTNOHAND:
+-	case -ERESTART_RESTARTBLOCK:
+-		/*
+-		 * We can't just restart the syscall, since previously
+-		 * submitted sqes may already be in progress. Just fail this
+-		 * IO with EINTR.
+-		 */
+-		ret = -EINTR;
+-		fallthrough;
+-	default:
+-		kiocb->ki_complete(kiocb, ret);
+-	}
+-}
+-
+ static inline loff_t *io_kiocb_update_pos(struct io_kiocb *req)
+ {
+ 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+@@ -371,6 +350,33 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
+ 	smp_store_release(&req->iopoll_completed, 1);
+ }
+ 
++static inline void io_rw_done(struct kiocb *kiocb, ssize_t ret)
++{
++	/* IO was queued async, completion will happen later */
++	if (ret == -EIOCBQUEUED)
++		return;
++
++	/* transform internal restart error codes */
++	if (unlikely(ret < 0)) {
++		switch (ret) {
++		case -ERESTARTSYS:
++		case -ERESTARTNOINTR:
++		case -ERESTARTNOHAND:
++		case -ERESTART_RESTARTBLOCK:
++			/*
++			 * We can't just restart the syscall, since previously
++			 * submitted sqes may already be in progress. Just fail
++			 * this IO with EINTR.
++			 */
++			ret = -EINTR;
++			break;
++		}
++	}
++
++	INDIRECT_CALL_2(kiocb->ki_complete, io_complete_rw_iopoll,
++			io_complete_rw, kiocb, ret);
++}
++
+ static int kiocb_done(struct io_kiocb *req, ssize_t ret,
+ 		       unsigned int issue_flags)
+ {
 
 -- 
 Jens Axboe

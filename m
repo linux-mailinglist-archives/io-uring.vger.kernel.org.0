@@ -1,300 +1,208 @@
-Return-Path: <io-uring+bounces-375-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-376-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36CE7827756
-	for <lists+io-uring@lfdr.de>; Mon,  8 Jan 2024 19:24:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BD0829643
+	for <lists+io-uring@lfdr.de>; Wed, 10 Jan 2024 10:24:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEFB31F22311
-	for <lists+io-uring@lfdr.de>; Mon,  8 Jan 2024 18:24:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A95E286AA4
+	for <lists+io-uring@lfdr.de>; Wed, 10 Jan 2024 09:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62E654665;
-	Mon,  8 Jan 2024 18:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05FC3E47B;
+	Wed, 10 Jan 2024 09:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="iN41nEnA"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CfAGiVER"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793FE54BC2
-	for <io-uring@vger.kernel.org>; Mon,  8 Jan 2024 18:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-360576be804so1424595ab.0
-        for <io-uring@vger.kernel.org>; Mon, 08 Jan 2024 10:24:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1704738264; x=1705343064; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e54DfMFNEZrQuTCzf/OmGwdhzV497nMCiJnQnCLAJl0=;
-        b=iN41nEnAlYoyidnCGJEDJb0Ljq/fW/W3acQvTlHbdt3N/jB8kGEOfTc/uRtomF7Hz/
-         RSE/q01Xe3NR79g/6tLwlCf4O+7+hkaZVLy6A//bpyLmtMXdSoszEhhr7/f03951v8F2
-         YlSWv2ACsQPrtWEymL9CBuXW57n/IhGWGyzEy8TNGAbaAZ1ysRw5z9WmwXDA7XSa9KDe
-         f2ZFZ4U4lMblzvL4hD6O2fNCM1hr4Y+Baf2lJyYU2FfwbeC8mxGjjQRA2ug6pEV4XIah
-         BtVinyGSJzEzVBtkVW4e/SLINqGJOjLvRVKhKK32HVAuu1B/d0kvkj5mj/YxvyWCR/E2
-         0Fkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704738264; x=1705343064;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=e54DfMFNEZrQuTCzf/OmGwdhzV497nMCiJnQnCLAJl0=;
-        b=e3bQUgMjEwUeUlTrJI4TavDJGPDaWQUJUSZwsFzGVCSAyvoShLXAJGqxI9/2CsCJ6j
-         spBQBYB0D00kI2OaKT+o4IOHARKXTxdorG37kmzaXqlw3hVtxG5Z4xIvo2bUV3MId4L7
-         DHegl+HSUV2K4CJwbHd9e7W26qni7WiM0ZI2bosk4ZnvTpK/waW92v4pl3JAoB6y9WAU
-         vTtYxc1iNhAqnzGJF2lOr2FuLMWrCYNINgHniNiU8Rcl2Ys594Psl47IgFKMBryk5QNO
-         3y+l1eZ10NygQT20cQxs53tBjIdlte9Bv45K80/txBR870GiFD/KUFu7DFs9OYCeKnsH
-         ZPVw==
-X-Gm-Message-State: AOJu0Yz3M9JH5kvWmdecB44wlz8SRFuuScu7YTpf+X7eQD/wNnMMJswB
-	LHmC+Mt4HGj8j7VPwgZ1tHRNe1mPlXC0gw==
-X-Google-Smtp-Source: AGHT+IHdMXGcXyk2hAvkka7C7IzliuFnnrjuEuYpsWC4UIooxGfnWJffGGilHDoZMtP7vK+anbg5Sg==
-X-Received: by 2002:a6b:d317:0:b0:7bc:2603:575f with SMTP id s23-20020a6bd317000000b007bc2603575fmr6844976iob.0.1704738264498;
-        Mon, 08 Jan 2024 10:24:24 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id cq3-20020a056638478300b0046e06f936c7sm106826jab.167.2024.01.08.10.24.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jan 2024 10:24:23 -0800 (PST)
-Message-ID: <c5c21ccf-201b-486a-b184-a99924f4fc04@kernel.dk>
-Date: Mon, 8 Jan 2024 11:24:23 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481393DBB9
+	for <io-uring@vger.kernel.org>; Wed, 10 Jan 2024 09:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240110092430epoutp04d5d7076503df9fffb60566b4a4c4fca6~o8h4eBaIb2013820138epoutp045
+	for <io-uring@vger.kernel.org>; Wed, 10 Jan 2024 09:24:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240110092430epoutp04d5d7076503df9fffb60566b4a4c4fca6~o8h4eBaIb2013820138epoutp045
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1704878670;
+	bh=hsT6D1g4JFIvVfkmGFP/Iv6DgAadOcCdaVOlpdYZlUo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CfAGiVERDjmuC8AWurfvnVhqbiOLXbEdV0ciRR9/xuMN/rbi14SZimBRYRfyg6yIP
+	 g2z+TgzAKp/YyzSzQpFVOMjHNxbgSqXL0iNzvhF0cOwA//s6OQsXkbCFktlPUIBcmz
+	 ubkeFqqI9A5PHTdy8tYoOPntf7XW6eu1Oh0DOYsM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240110092429epcas5p32d7f35a663c752c1560b42c4d73c1cd7~o8h4GDnnh2952029520epcas5p3p;
+	Wed, 10 Jan 2024 09:24:29 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4T92SD32Ksz4x9Q1; Wed, 10 Jan
+	2024 09:24:28 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0F.46.10009.C426E956; Wed, 10 Jan 2024 18:24:28 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240110091327epcas5p493e0d77a122a067b6cd41ecbf92bd6eb~o8YPDMiN00474004740epcas5p4n;
+	Wed, 10 Jan 2024 09:13:27 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240110091327epsmtrp13e63a79e5ce91e2b41b4816341a182aa~o8YPBjbAm2711427114epsmtrp1Y;
+	Wed, 10 Jan 2024 09:13:27 +0000 (GMT)
+X-AuditID: b6c32a4a-261fd70000002719-10-659e624c6128
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D2.81.08755.6BF5E956; Wed, 10 Jan 2024 18:13:27 +0900 (KST)
+Received: from localhost.localdomain (unknown [109.105.118.124]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240110091325epsmtip25c47ed3fafff53ce94c4fa9bfe70a03f~o8YNthfy12061220612epsmtip2Z;
+	Wed, 10 Jan 2024 09:13:25 +0000 (GMT)
+From: Xiaobing Li <xiaobing.li@samsung.com>
+To: asml.silence@gmail.com
+Cc: axboe@kernel.dk, linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+	kun.dou@samsung.com, peiwei.li@samsung.com, joshi.k@samsung.com,
+	kundan.kumar@samsung.com, wenwen.chen@samsung.com, ruyi.zhang@samsung.com,
+	xiaobing.li@samsung.com
+Subject: Re: Re: [PATCH v6] io_uring: Statistics of the true utilization of
+ sq threads.
+Date: Wed, 10 Jan 2024 17:05:23 +0800
+Message-ID: <20240110090523.1612321-1-xiaobing.li@samsung.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <c9505525-54d9-4610-a47a-5f8d2d3f8de6@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>,
- Christian Brauner <brauner@kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring updates for 6.8-rc1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMJsWRmVeSWpSXmKPExsWy7bCmlq5P0rxUg+cLBSzmrNrGaLH6bj+b
+	xbvWcywWR/+/ZbP41X2X0WLrl6+sFpd3zWGzeLaX0+LL4e/sFmcnfGC1mLplB5NFR8tlRgce
+	j52z7rJ7XD5b6tG3ZRWjx+dNcgEsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW
+	5koKeYm5qbZKLj4Bum6ZOUCHKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKTAr0
+	ihNzi0vz0vXyUkusDA0MjEyBChOyM1507mYqmCRXsW7ZObYGxtkSXYycHBICJhKb7u5i72Lk
+	4hAS2M0oMfnEZ2YI5xOjxP+WFqjMN0aJlsbjTDAtP1d3QyX2Mkoc3HOQDcL5yiixd9FTZpAq
+	NgFtievruli7GDk4RASkJH7f5QCpYQaZ9H79GrAaYYFIic5v58GmsgioSky9vJMVxOYVsJO4
+	cOoAK8Q2eYnFO5aD1XMK2Eq0/JzMDlEjKHFy5hMWEJsZqKZ562ywuyUEOjkkZrWeY4ZodpE4
+	cOEbO4QtLPHq+BYoW0riZX8blF0scaTnOytEcwOjxPTbV6ES1hL/ruxhAfmAWUBTYv0ufYiw
+	rMTUU+uYIBbzSfT+fgINFl6JHfNgbFWJ1ZceskDY0hKvG35DxT0kNt7czQZiCwlMYJTYvCh9
+	AqPCLCT/zELyzyyEzQsYmVcxSqYWFOempxabFhjlpZbDozk5P3cTIzi1anntYHz44IPeIUYm
+	DsZDjBIczEoivAqf56QK8aYkVlalFuXHF5XmpBYfYjQFBvhEZinR5Hxgcs8riTc0sTQwMTMz
+	M7E0NjNUEud93To3RUggPbEkNTs1tSC1CKaPiYNTqoFJVKD8i/bcJVu8d790XFhc8fex4VGV
+	64HynOnN0/TalT9xTvF7G94f/PqygWzc98NrdeR5zN7XsM0zfN72SHtC6/fT/HUfpz1bwama
+	cOOFyOnNViYe/S+9BNbdaHp+Ycb/I+duzC99JjXXtEK7xPXVbANZERlxg1U7kyc3zr3R8/33
+	6k+bql0jvR6em9ptt7N69XrPpZsfqc5KnDQvv/PK2j+MOxS2t8hFHrnhume6uJFM94nPW+4I
+	tyx9In34mNzRuqN3LtYFMJ7VUt2cctyF9VCt+Ke5GtKddUW9z7VclpgxmOzqY2P7ZzCl2Wva
+	o7dXdujLMf9ePV9jQxHD/NN6jmfvVktrVHBV3Dd/pFhxT4mlOCPRUIu5qDgRAMc7vbg2BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBLMWRmVeSWpSXmKPExsWy7bCSvO72+HmpBksWM1rMWbWN0WL13X42
+	i3et51gsjv5/y2bxq/suo8XWL19ZLS7vmsNm8Wwvp8WXw9/ZLc5O+MBqMXXLDiaLjpbLjA48
+	Hjtn3WX3uHy21KNvyypGj8+b5AJYorhsUlJzMstSi/TtErgyXnTuZiqYJFexbtk5tgbG2RJd
+	jJwcEgImEj9Xd7N3MXJxCAnsZpT49+8tSxcjB1BCWuLPn3KIGmGJlf+eQ9V8ZpT4/fwoG0iC
+	TUBb4vq6LlaQehEBKYnfdzlAapgFmpgk+h41MoLUCAuESxxsvgVmswioSky9vJMVxOYVsJO4
+	cOoAK8QCeYnFO5Yzg9icArYSLT8ns4PYQgI2EnObn0DVC0qcnPmEBcRmBqpv3jqbeQKjwCwk
+	qVlIUgsYmVYxSqYWFOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgQHvpbmDsbtqz7oHWJk4mA8
+	xCjBwawkwqvweU6qEG9KYmVValF+fFFpTmrxIUZpDhYlcV7xF70pQgLpiSWp2ampBalFMFkm
+	Dk6pBqYdzkf0rWpKfpravP5nflXj+dVv1S6ZfxQ/7lJQ9r6s3pR9+c9Crg+TAiRnrZ+mEHBx
+	25/N21Vlt18SvPHdlj2+0qi3ZqM649Edf9+qpt9iqD5tdufIulqGqe7VKkmZUlE62W/eMjDt
+	vjJhStoSnVecM2V0i/c+fiTD3al76rqi57vQjWc2KD+pXr926ebqFZc+lSZdX1nos6r08a6V
+	mbcDZNjW16xyDHq+fMq2V2UdoXU8e8vtszcIGcw4VP+ej92ksvKu58SeSQ7yZ/tm7QnxkTDc
+	dP/v5SmuNjOzp98//NnLK3TzU0l//nALh9DHprYTlpXGOLm39N7t4jZ6GX4i/MkWsztF+5aL
+	lsy+Iy2nxFKckWioxVxUnAgAuLFFxOsCAAA=
+X-CMS-MailID: 20240110091327epcas5p493e0d77a122a067b6cd41ecbf92bd6eb
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240110091327epcas5p493e0d77a122a067b6cd41ecbf92bd6eb
+References: <c9505525-54d9-4610-a47a-5f8d2d3f8de6@gmail.com>
+	<CGME20240110091327epcas5p493e0d77a122a067b6cd41ecbf92bd6eb@epcas5p4.samsung.com>
 
-Hi Linus,
+On 1/5/24 04:02 AM, Pavel Begunkov wrote:
+>On 1/3/24 05:49, Xiaobing Li wrote:
+>> On 12/30/23 9:27 AM, Pavel Begunkov wrote:
+>>> Why it uses jiffies instead of some task run time?
+>>> Consequently, why it's fine to account irq time and other
+>>> preemption? (hint, it's not)
+>>>
+>>> Why it can't be done with userspace and/or bpf? Why
+>>> can't it be estimated by checking and tracking
+>>> IORING_SQ_NEED_WAKEUP in userspace?
+>>>
+>>> What's the use case in particular? Considering that
+>>> one of the previous revisions was uapi-less, something
+>>> is really fishy here. Again, it's a procfs file nobody
+>>> but a few would want to parse to use the feature.
+>>>
+>>> Why it just keeps aggregating stats for the whole
+>>> life time of the ring? If the workload changes,
+>>> that would either totally screw the stats or would make
+>>> it too inert to be useful. That's especially relevant
+>>> for long running (days) processes. There should be a
+>>> way to reset it so it starts counting anew.
+>> 
+>> Hi, Jens and Pavel,
+>> I carefully read the questions you raised.
+>> First of all, as to why I use jiffies to statistics time, it
+>> is because I have done some performance tests and found that
+>> using jiffies has a relatively smaller loss of performance
+>> than using task run time. Of course, using task run time is
+>
+>How does taking a measure for task runtime looks like? I expect it to
+>be a simple read of a variable inside task_struct, maybe with READ_ONCE,
+>in which case the overhead shouldn't be realistically measurable. Does
+>it need locking?
 
-Mostly just come fixes and cleanups, but one feature as well. In detail:
+The task runtime I am talking about is similar to this:
+start = get_system_time(current);
+do_io_part();
+sq->total_time += get_system_time(current) - start;
 
-- Harden the check for handling IOPOLL based on return (Pavel)
+Currently, it is not possible to obtain the execution time of a piece of 
+code by a simple read of a variable inside task_struct. 
+Or do you have any good ideas?
 
-- Various minor optimizations (Pavel)
+>> indeed more accurate.  But in fact, our requirements for
+>> accuracy are not particularly high, so after comprehensive
+>
+>I'm looking at it as a generic feature for everyone, and the
+>accuracy behaviour is dependent on circumstances. High load
+>networking spends quite a good share of CPU in softirq, and
+>preemption would be dependent on config, scheduling, pinning,
+>etc.
 
-- Drop remnants of SCM_RIGHTS fd passing support, now that it's no
-  longer supported since 6.7 (me)
-
-- Fix for a case where bytes_done wasn't initialized properly on a
-  failure condition for read/write requests (me)
-
-- Move the register related code to a separate file (me)
-
-- Add support for returning the provided ring buffer head (me)
-
-- Add support for adding a direct descriptor to the normal file table
-  (me, Christian Brauner)
-
-- Fix for ensuring pending task_work for a ring with DEFER_TASKRUN is
-  run even if we timeout waiting (me)
-
-Note that this has Christian's vfs.file branch pulled in, as he renamed
-__receive_fd() to receive_fd(). Sending this out now, as I saw Christian
-already included this branch in his pull requests sent out last week.
-
-Also note that this will throw a merge conflict with the block branch,
-as we killed the IORING_URING_CMD_POLLED flag and associated cookie in
-struct io_uring_cmd, and this branch moved those things to a different
-file. The resolution is to remove all of the offending hunk in
-include/linux/io_uring.h and then edit include/linux/io_uring/cmd.h,
-killing IORING_URING_CMD_POLLED in there and getting rid of the union
-and cookie field in struct io_uring_cmd. Including my resolution of the
-merge at the end of the email.
-
-Please pull!
-
-
-The following changes since commit 4e94ddfe2aab72139acb8d5372fac9e6c3f3e383:
-
-  file: remove __receive_fd() (2023-12-12 14:24:14 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/for-6.8/io_uring-2024-01-08
-
-for you to fetch changes up to 6ff1407e24e6fdfa4a16ba9ba551e3d253a26391:
-
-  io_uring: ensure local task_work is run on wait timeout (2024-01-04 12:21:08 -0700)
-
-----------------------------------------------------------------
-for-6.8/io_uring-2024-01-08
-
-----------------------------------------------------------------
-Jens Axboe (8):
-      Merge branch 'vfs.file' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs into for-6.8/io_uring
-      io_uring/openclose: add support for IORING_OP_FIXED_FD_INSTALL
-      io_uring/register: move io_uring_register(2) related code to register.c
-      io_uring/unix: drop usage of io_uring socket
-      io_uring: drop any code related to SCM_RIGHTS
-      io_uring/rw: ensure io->bytes_done is always initialized
-      io_uring/kbuf: add method for returning provided buffer ring head
-      io_uring: ensure local task_work is run on wait timeout
-
-Pavel Begunkov (5):
-      io_uring: don't check iopoll if request completes
-      io_uring: optimise ltimeout for inline execution
-      io_uring: split out cmd api into a separate header
-      io_uring/cmd: inline io_uring_cmd_do_in_task_lazy
-      io_uring/cmd: inline io_uring_cmd_get_task
-      
- MAINTAINERS                    |   1 +
- drivers/block/ublk_drv.c       |   2 +-
- drivers/nvme/host/ioctl.c      |   2 +-
- include/linux/io_uring.h       |  95 +------
- include/linux/io_uring/cmd.h   |  82 ++++++
- include/linux/io_uring_types.h |  34 ++-
- include/uapi/linux/io_uring.h  |  19 ++
- io_uring/Makefile              |   2 +-
- io_uring/filetable.c           |  11 +-
- io_uring/io_uring.c            | 663 +++-------------------------------------------
- io_uring/io_uring.h            |  19 +-
- io_uring/kbuf.c                |  26 ++
- io_uring/kbuf.h                |   1 +
- io_uring/opdef.c               |   9 +
- io_uring/openclose.c           |  44 +++
- io_uring/openclose.h           |   3 +
- io_uring/register.c            | 605 ++++++++++++++++++++++++++++++++++++++++++
- io_uring/register.h            |   8 +
- io_uring/rsrc.c                | 169 +-----------
- io_uring/rsrc.h                |  15 --
- io_uring/rw.c                  |  12 +-
- io_uring/uring_cmd.c           |  15 +-
- net/core/scm.c                 |   2 +-
- net/unix/scm.c                 |   4 +-
- security/selinux/hooks.c       |   2 +-
- security/smack/smack_lsm.c     |   2 +-
- 26 files changed, 895 insertions(+), 952 deletions(-)
- create mode 100644 include/linux/io_uring/cmd.h
- create mode 100644 io_uring/register.c
- create mode 100644 io_uring/register.h
+Yes, I quite agree that the accuracy behaviour is dependent on circumstances.
+In fact, judging from some test results we have done, the current solution 
+can basically meet everyone's requirements, and the error in the calculation 
+result of utilization is estimated to be within 0.5%.
 
 
-commit 4437f65f37924cdce96bcd687cbe225f175e70da
-Merge: aed185852af9 6ff1407e24e6
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Mon Jan 8 11:21:41 2024 -0700
+>> consideration, we finally chose to use jiffies.
+>> Of course, if you think that a little more performance loss
+>> here has no impact, I can use task run time instead, but in
+>> this case, does the way of calculating sqpoll thread timeout
+>> also need to be changed, because it is also calculated through
+>> jiffies.
+>
+>That's a good point. It doesn't have to change unless you're
+>directly inferring the idle time parameter from those two
+>time values rather than using the ratio. E.g. a simple
+>bisection of the idle time based on the utilisation metric
+>shouldn't change. But that definitely raises the question
+>what idle_time parameter should exactly mean, and what is
+>more convenient for algorithms.
 
-    Merge branch 'for-6.8/io_uring' into test
-    
-    * for-6.8/io_uring:
-      io_uring: ensure local task_work is run on wait timeout
-      io_uring/kbuf: add method for returning provided buffer ring head
-      io_uring/rw: ensure io->bytes_done is always initialized
-      io_uring: drop any code related to SCM_RIGHTS
-      io_uring/unix: drop usage of io_uring socket
-      io_uring/register: move io_uring_register(2) related code to register.c
-      io_uring/openclose: add support for IORING_OP_FIXED_FD_INSTALL
-      io_uring/cmd: inline io_uring_cmd_get_task
-      io_uring/cmd: inline io_uring_cmd_do_in_task_lazy
-      io_uring: split out cmd api into a separate header
-      io_uring: optimise ltimeout for inline execution
-      io_uring: don't check iopoll if request completes
-    
-    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+We think that idle_time represents the time spent by the sqpoll thread 
+except for submitting IO.
 
-diff --cc include/linux/io_uring/cmd.h
-index 000000000000,d69b4038aa3e..e453a997c060
-mode 000000,100644..100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@@ -1,0 -1,82 +1,77 @@@
-+ /* SPDX-License-Identifier: GPL-2.0-or-later */
-+ #ifndef _LINUX_IO_URING_CMD_H
-+ #define _LINUX_IO_URING_CMD_H
-+ 
-+ #include <uapi/linux/io_uring.h>
-+ #include <linux/io_uring_types.h>
-+ 
-+ /* only top 8 bits of sqe->uring_cmd_flags for kernel internal use */
-+ #define IORING_URING_CMD_CANCELABLE	(1U << 30)
- -#define IORING_URING_CMD_POLLED		(1U << 31)
-+ 
-+ struct io_uring_cmd {
-+ 	struct file	*file;
-+ 	const struct io_uring_sqe *sqe;
- -	union {
- -		/* callback to defer completions to task context */
- -		void (*task_work_cb)(struct io_uring_cmd *cmd, unsigned);
- -		/* used for polled completion */
- -		void *cookie;
- -	};
-++	/* callback to defer completions to task context */
-++	void (*task_work_cb)(struct io_uring_cmd *cmd, unsigned);
-+ 	u32		cmd_op;
-+ 	u32		flags;
-+ 	u8		pdu[32]; /* available inline for free use */
-+ };
-+ 
-+ static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
-+ {
-+ 	return sqe->cmd;
-+ }
-+ 
-+ #if defined(CONFIG_IO_URING)
-+ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-+ 			      struct iov_iter *iter, void *ioucmd);
-+ void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, ssize_t res2,
-+ 			unsigned issue_flags);
-+ void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
-+ 			    void (*task_work_cb)(struct io_uring_cmd *, unsigned),
-+ 			    unsigned flags);
-+ 
-+ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
-+ 		unsigned int issue_flags);
-+ 
-+ #else
-+ static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-+ 			      struct iov_iter *iter, void *ioucmd)
-+ {
-+ 	return -EOPNOTSUPP;
-+ }
-+ static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
-+ 		ssize_t ret2, unsigned issue_flags)
-+ {
-+ }
-+ static inline void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
-+ 			    void (*task_work_cb)(struct io_uring_cmd *, unsigned),
-+ 			    unsigned flags)
-+ {
-+ }
-+ static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
-+ 		unsigned int issue_flags)
-+ {
-+ }
-+ #endif
-+ 
-+ /* users must follow the IOU_F_TWQ_LAZY_WAKE semantics */
-+ static inline void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
-+ 			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
-+ {
-+ 	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, IOU_F_TWQ_LAZY_WAKE);
-+ }
-+ 
-+ static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
-+ 			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
-+ {
-+ 	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, 0);
-+ }
-+ 
-+ static inline struct task_struct *io_uring_cmd_get_task(struct io_uring_cmd *cmd)
-+ {
-+ 	return cmd_to_io_kiocb(cmd)->task;
-+ }
-+ 
-+ #endif /* _LINUX_IO_URING_CMD_H */
-
--- 
-Jens Axboe
-
+In a ring, it may take time M to submit IO, or it may not submit IO in the 
+entire cycle. Then we can optimize the efficiency of the sqpoll thread in 
+two directions. The first is to reduce the number of rings that no IO submit,
+The second is to increase the time M to increase the proportion of time 
+submitted IO in the ring.
+In order to observe the CPU ratio of sqthread's actual processing IO part, 
+we need this patch.
 

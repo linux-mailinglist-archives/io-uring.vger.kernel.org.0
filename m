@@ -1,64 +1,65 @@
-Return-Path: <io-uring+bounces-390-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-391-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE4782AFBA
-	for <lists+io-uring@lfdr.de>; Thu, 11 Jan 2024 14:33:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3077982B618
+	for <lists+io-uring@lfdr.de>; Thu, 11 Jan 2024 21:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 649F0B27051
-	for <lists+io-uring@lfdr.de>; Thu, 11 Jan 2024 13:33:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2C851F2063A
+	for <lists+io-uring@lfdr.de>; Thu, 11 Jan 2024 20:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5F12E636;
-	Thu, 11 Jan 2024 13:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E311E4A6;
+	Thu, 11 Jan 2024 20:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKt+oERI"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oK+ZHOZN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF6418025;
-	Thu, 11 Jan 2024 13:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-40e5508ecb9so27530295e9.3;
-        Thu, 11 Jan 2024 05:33:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4CD57320
+	for <io-uring@vger.kernel.org>; Thu, 11 Jan 2024 20:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7bb5be6742fso67507939f.1
+        for <io-uring@vger.kernel.org>; Thu, 11 Jan 2024 12:37:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704979994; x=1705584794; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kqv14WwxifVHNlqdhovpqHWgWDrzlQ4xda+DlJ6GdOU=;
-        b=WKt+oERII353qHUrYUk4OR2WWkBEAR+0vMXSgXkghBwwKhWIgKOb1U2JsnH8wrayAt
-         UJHaKA1zJNBoTAx+xRcU/gzKjGtLUOLcZCiVpE2W7sgDx84sescH1wMjUu+2R/2A7jG9
-         I6bwa2FyQ01XNyWMTYFu1uI+JQupRNLTzRIvXobabUjKlLRx+W+yncCui0BMKN0MHKGN
-         h3KwON/OZz3EN90Cb6SDyDWLiYPul1Vitbw7zg+J57D/Oj/mGevjJQI0pVmSM1isuR2N
-         Ys0PSY+TQbl+LhSYE3+31DFmXzWBbNxx29LdJSgtl1f4uxHmGp2/LaZvYh6Akl4nU0TR
-         fw6g==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1705005447; x=1705610247; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+JGOtMTWV3OqbcmLwDN3Bz+xOi7JRUTL3UhvMXpKgZw=;
+        b=oK+ZHOZNAcpCi0V396bzQDtEETl+7CghEHIC7VCV5XX/UZKeB4EeUHQdiSiNHbfGKr
+         iPzUofxkzxxASRqokSvzQo4Bl6vlyltrTSnWxBBGRBFv6s7eBMmUKdYGNhw6YnDjfOAn
+         1KgsYdxlBRQK0N9iP2tNDFx0Gf4EOwnp8nPhY/4kub5eW1gPx2/gAoXL0+m0ZhjYaQGq
+         YwIwZfGWEGWhC/JUpREHwqYDOrzaedDuV+2odR9O9dT/fugemKfN7YkDAWKGEBthQGPI
+         05YCmt9kvHRWJk+Y285QhX7MfiuLXicC/8k+G9Q/wrlPL8ufMgbxpkyVe1zuikgN1ySB
+         HoGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704979994; x=1705584794;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kqv14WwxifVHNlqdhovpqHWgWDrzlQ4xda+DlJ6GdOU=;
-        b=nq5ByiAKGT9XDUmAlzjMcmMW2lSSX2Q8ROhyrKK74y622PjlEQ0EAv1mQl0mUJmIBy
-         tOnr1hyu0X2JxUf1lTxExrUr0Qs42f14S0bOtqUdrAiFCyTz9YTZ3pL80hzh8ABHq3YZ
-         9P/meFgS3qMs3nxlJ6CkM7c6vcOAJeiFLMibBhCbu8EHk3J/PxSdzppGmgM03a7FBOEP
-         Tr5ZkKGOIAh6SXgUzxtB4qnSVGigcfLY8g4jjJdwV4ZytEyxopymiXlOf9K3u6E/+uXY
-         S3kdo4JuM7j6dDXqikuc7vejmxot8oS8N5XaTc6Fj7DzS0/gOu/hVxxxR62oBQlmJh3C
-         y5lw==
-X-Gm-Message-State: AOJu0YydEzOpBsPNENv0Z9A+lfVtFxPIljqm6C6AfsqWrobi0VZzh+O3
-	5LsxuiFtdIKp3OX2UKjtbE9hohNRbDQ=
-X-Google-Smtp-Source: AGHT+IHPJRETdyfUs2HnpRsF0j1ujPvPBeHr8hNSwOvWB+y9FP26oq/F4PeoGR5FgUp5JfUTs6X8VQ==
-X-Received: by 2002:a05:600c:1f17:b0:40d:8726:100a with SMTP id bd23-20020a05600c1f1700b0040d8726100amr509023wmb.22.1704979994520;
-        Thu, 11 Jan 2024 05:33:14 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::1:18af])
-        by smtp.gmail.com with ESMTPSA id v21-20020a05600c445500b0040e3bdff98asm5767226wmn.23.2024.01.11.05.33.14
+        d=1e100.net; s=20230601; t=1705005447; x=1705610247;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+JGOtMTWV3OqbcmLwDN3Bz+xOi7JRUTL3UhvMXpKgZw=;
+        b=TCKQcVmcsANjL/uSC3PH6Y7Xq2oZJXkysPOFGpesYZ8PMiUle7KKL/AvTwREls7ZeF
+         bCJQVxMLq0SthvYwNqv/yvnEBP6/lTDgu3shckmsMYTBkj27Ig7NmXB/c4MDAo1ph6lI
+         vlZJhMG8tPJQ/sow/1tYFTv3ZuNfGyQTyMPGfqU7rzo6799X9/jpsv/ZOVG7Dn/FyxMx
+         c+7F0JGOdztMqv2U8+aJzKlZL5vpfNzHk1UCmLW9i1o1F+p9y4ZnTQkxkepQ8Hi4r5qh
+         Ui4vgI/YMr8rKwaVjIey4qZJt5xyeEn0u/cflhaVl+ruhy+dRzvI81R73icfWUI9/pQj
+         WCog==
+X-Gm-Message-State: AOJu0YxqRMeO0VDBHEcbBPdid/1S72u9E/bYkA17fIdp/njwHuzsAPJi
+	/3imSePlCXBqwTcRRV39m3hFoqjySexZLPpMPRVYRx+qXAGStw==
+X-Google-Smtp-Source: AGHT+IHQHr/gslk4bzEOcLoaUz4floJqyVKZk/PHAv0TbWde++oNPyei81KZwY9xuHDZPaiyO89fDw==
+X-Received: by 2002:a6b:4f04:0:b0:7be:f413:e410 with SMTP id d4-20020a6b4f04000000b007bef413e410mr453734iob.2.1705005447122;
+        Thu, 11 Jan 2024 12:37:27 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id d25-20020a5d8899000000b007bef967dddesm427771ioo.48.2024.01.11.12.37.26
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jan 2024 05:33:14 -0800 (PST)
-Message-ID: <4b1deeeb-b5fd-481d-99b5-7d29c0edce2d@gmail.com>
-Date: Thu, 11 Jan 2024 13:23:31 +0000
+        Thu, 11 Jan 2024 12:37:26 -0800 (PST)
+Message-ID: <14052c5f-0ef7-4e19-9dbf-fdb5d8e7a557@kernel.dk>
+Date: Thu, 11 Jan 2024 13:37:25 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -66,93 +67,76 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] io_uring: Improve exception handling in
- io_ring_ctx_alloc()
 Content-Language: en-US
-To: Markus Elfring <Markus.Elfring@web.de>, io-uring@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Gabriel Krisman Bertazi <krisman@suse.de>,
- Jens Axboe <axboe@kernel.dk>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
- <aa867594-e79d-6d08-a08e-8c9e952b4724@web.de>
- <878r4xnn52.fsf@mailhost.krisman.be>
- <b9c9ba9f-459e-40b5-ae4b-703dcc03871d@web.de>
- <49ecda98-770d-455e-acd7-12d810280fdd@web.de>
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <49ecda98-770d-455e-acd7-12d810280fdd@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/rsrc: improve code generation for fixed file
+ assignment
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 1/10/24 20:50, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 10 Jan 2024 21:15:48 +0100
-> 
-> The label “err” was used to jump to a kfree() call despite of
-> the detail in the implementation of the function “io_ring_ctx_alloc”
-> that it was determined already that a corresponding variable contained
-> a null pointer because of a failed memory allocation.
+For the normal read/write path, we have already locked the ring
+submission side when assigning the file. This causes branch
+mispredictions when we then check and try and lock again in
+io_req_set_rsrc_node(). As this is a very hot path, this matters.
 
-It's _much_ simpler the way it currently is, compare it with maintaining
-a bunch of labels. That is the advantage of being able to distinguish
-un-allocated state like NULL, just kfree them and don't care about
-jumping to a wrong one or keeping them in order.
+Add a basic helper that already assumes we already have it locked,
+and use that in io_file_get_fixed().
 
-  
-> 1. Thus use more appropriate labels instead.
-> 
-> 2. Reorder jump targets at the end.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> 
-> See also:
-> https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resources
-> 
-> 
->   io_uring/io_uring.c | 15 ++++++++++-----
->   1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index c9a63c39cdd0..7727cdd505ae 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -295,12 +295,14 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
->   	hash_bits = ilog2(p->cq_entries) - 5;
->   	hash_bits = clamp(hash_bits, 1, 8);
->   	if (io_alloc_hash_table(&ctx->cancel_table, hash_bits))
-> -		goto err;
-> +		goto destroy_io_bl_xa;
-> +
->   	if (io_alloc_hash_table(&ctx->cancel_table_locked, hash_bits))
-> -		goto err;
-> +		goto free_cancel_table_hbs;
-> +
->   	if (percpu_ref_init(&ctx->refs, io_ring_ctx_ref_free,
->   			    0, GFP_KERNEL))
-> -		goto err;
-> +		goto free_cancel_table_locked_hbs;
-> 
->   	ctx->flags = p->flags;
->   	init_waitqueue_head(&ctx->sqo_sq_wait);
-> @@ -341,9 +343,12 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
->   	INIT_WQ_LIST(&ctx->submit_state.compl_reqs);
->   	INIT_HLIST_HEAD(&ctx->cancelable_uring_cmd);
->   	return ctx;
-> -err:
-> -	kfree(ctx->cancel_table.hbs);
-> +
-> +free_cancel_table_locked_hbs:
->   	kfree(ctx->cancel_table_locked.hbs);
-> +free_cancel_table_hbs:
-> +	kfree(ctx->cancel_table.hbs);
-> +destroy_io_bl_xa:
->   	xa_destroy(&ctx->io_bl_xa);
->   	kfree(ctx);
->   	return NULL;
-> --
-> 2.43.0
-> 
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 4afb911fc042..50c9f04bc193 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2000,9 +2000,10 @@ inline struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
+ 		goto out;
+ 	fd = array_index_nospec(fd, ctx->nr_user_files);
+ 	slot = io_fixed_file_slot(&ctx->file_table, fd);
+-	file = io_slot_file(slot);
++	if (!req->rsrc_node)
++		__io_req_set_rsrc_node(req, ctx);
+ 	req->flags |= io_slot_flags(slot);
+-	io_req_set_rsrc_node(req, ctx, 0);
++	file = io_slot_file(slot);
+ out:
+ 	io_ring_submit_unlock(ctx, issue_flags);
+ 	return file;
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 7238b9cfe33b..c6f199bbee28 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -102,17 +102,21 @@ static inline void io_charge_rsrc_node(struct io_ring_ctx *ctx,
+ 	node->refs++;
+ }
+ 
++static inline void __io_req_set_rsrc_node(struct io_kiocb *req,
++					  struct io_ring_ctx *ctx)
++{
++	lockdep_assert_held(&ctx->uring_lock);
++	req->rsrc_node = ctx->rsrc_node;
++	io_charge_rsrc_node(ctx, ctx->rsrc_node);
++}
++
+ static inline void io_req_set_rsrc_node(struct io_kiocb *req,
+ 					struct io_ring_ctx *ctx,
+ 					unsigned int issue_flags)
+ {
+ 	if (!req->rsrc_node) {
+ 		io_ring_submit_lock(ctx, issue_flags);
+-
+-		lockdep_assert_held(&ctx->uring_lock);
+-
+-		req->rsrc_node = ctx->rsrc_node;
+-		io_charge_rsrc_node(ctx, ctx->rsrc_node);
++		__io_req_set_rsrc_node(req, ctx);
+ 		io_ring_submit_unlock(ctx, issue_flags);
+ 	}
+ }
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

@@ -1,159 +1,193 @@
-Return-Path: <io-uring+bounces-394-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-395-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B36C82B9C4
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jan 2024 03:58:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C6282C1AF
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jan 2024 15:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE48328B231
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jan 2024 02:58:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BB061F21F28
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jan 2024 14:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60D1111A;
-	Fri, 12 Jan 2024 02:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C02E6DCF9;
+	Fri, 12 Jan 2024 14:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zkP4l4X/"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DguTXLVb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dEepbHXU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DguTXLVb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dEepbHXU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761814A17
-	for <io-uring@vger.kernel.org>; Fri, 12 Jan 2024 02:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6daf21d1d5dso808318b3a.1
-        for <io-uring@vger.kernel.org>; Thu, 11 Jan 2024 18:58:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1705028295; x=1705633095; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r7FK1ugbK12N35S5tXeTe+pTDZkhu3R71IZEsD0n/is=;
-        b=zkP4l4X/DPSbWtpj/sOYmHaw+P3ZhBw7vdS2VbkNR5QoXz8A7mq4S9zgHLk7f69wAs
-         lQyAS5/QYgwhRPHONgSTylg4Pzv3CguI/JU5IztjqON9W1i6mpiFEFU6sp907cy4rdkX
-         K2FPK+sDm+loDPzMZazuJVAVwe1gOdzxqARuFccRPKiiQ2yj9+sl+46osjsPmzioz+lz
-         SLoRiuAbN5qZjlooZz+pPGF91RltR1smRf8k+TJSwMRYAIz2E1T9xoRgkGcBRBaEoRsC
-         9fcRyYQtL/LyXKl+vAM1IJnygotQDO4C7z9/n+DMzk5cE2pKGe8/gQjlK9GVzuqh5Vnh
-         dzLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705028295; x=1705633095;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r7FK1ugbK12N35S5tXeTe+pTDZkhu3R71IZEsD0n/is=;
-        b=cHm3QVgI0urjbNRYeUnFmOfo7KihjO4RAclca8eP3bn6xA6Fx6OzWkP4lcCuA3j4dh
-         /e9FDbHmlS9Rep67qaEvwF4M7Ed/pASU6CtOVMg1bWq2YxQWR5fBfDN1xTpt31ZJhlnU
-         l9aKKYaUHNFnLV9iM5myNpxRMry9P+pZyYj4j/BUlSsM9AIwhrBffPBHH8ycOlsdFyn3
-         vMynJqshzudECybb+vrjNM5Zzwv5BxD64zBQsfMzzbm+1iwKeXgAkAfbyeCb1MXAmFVk
-         UZHzqNTpclOvKjr+M2O9DNGK6PTu/0ZTxZPM6w0ZWgOONNDEJdw6j/5gUxmA8oFyQBfr
-         taaA==
-X-Gm-Message-State: AOJu0YzKgl6PWf3VJVUonBqmwyjins8tIgeZHKluKc4nn2MxlkTr2CaH
-	Quwni7sC9zXq+yT1movJunKdHsMlMXs6+A==
-X-Google-Smtp-Source: AGHT+IESNhy5EiEhmoQxUnK707pRf9v1drw4N4jgI2UCZCjSFrmrFWUOB/cf/zlKljwHwXz9u2XPMg==
-X-Received: by 2002:a05:6a00:2d94:b0:6da:83a2:1d5e with SMTP id fb20-20020a056a002d9400b006da83a21d5emr610297pfb.2.1705028294705;
-        Thu, 11 Jan 2024 18:58:14 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id l22-20020a62be16000000b006d9b38f2e75sm2003074pff.32.2024.01.11.18.58.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jan 2024 18:58:14 -0800 (PST)
-Message-ID: <e117f6e0-a8bc-4068-8bce-65a7c4e129cf@kernel.dk>
-Date: Thu, 11 Jan 2024 19:58:12 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D306DCF2;
+	Fri, 12 Jan 2024 14:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8C6EA21D66;
+	Fri, 12 Jan 2024 14:25:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1705069551; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JbiL5Ao6ZLEFO0UlC/jQLuHCQ0ACyhnb434ykBjj5JQ=;
+	b=DguTXLVb7lRacKEy2w1aTWVnnQ1/oOUFX4v2wFm/fcmCWIfK2JA91IDahr2yWgCBRUbz1R
+	fSauMODACCzZ8WFgu24QYxQbZO5olFpZtIlJzcOk7U4nT9TEIjSyd8dl5pYTYnI/qTuC5f
+	24qL6hMCOtTuRXIqL8i8mK3jxR9QOdQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1705069551;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JbiL5Ao6ZLEFO0UlC/jQLuHCQ0ACyhnb434ykBjj5JQ=;
+	b=dEepbHXU+IuMX/l7RrPKvwXzM+GPP6I1s8SckuoYH3caBXrXu9wrFG7pWCLW4tmn7JM437
+	IAZgN9lvGa6RgsBg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1705069551; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JbiL5Ao6ZLEFO0UlC/jQLuHCQ0ACyhnb434ykBjj5JQ=;
+	b=DguTXLVb7lRacKEy2w1aTWVnnQ1/oOUFX4v2wFm/fcmCWIfK2JA91IDahr2yWgCBRUbz1R
+	fSauMODACCzZ8WFgu24QYxQbZO5olFpZtIlJzcOk7U4nT9TEIjSyd8dl5pYTYnI/qTuC5f
+	24qL6hMCOtTuRXIqL8i8mK3jxR9QOdQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1705069551;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JbiL5Ao6ZLEFO0UlC/jQLuHCQ0ACyhnb434ykBjj5JQ=;
+	b=dEepbHXU+IuMX/l7RrPKvwXzM+GPP6I1s8SckuoYH3caBXrXu9wrFG7pWCLW4tmn7JM437
+	IAZgN9lvGa6RgsBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F035713782;
+	Fri, 12 Jan 2024 14:25:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RkIVLe5LoWUWBwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Fri, 12 Jan 2024 14:25:50 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: io-uring@vger.kernel.org,  kernel-janitors@vger.kernel.org,  Jens Axboe
+ <axboe@kernel.dk>,  Pavel Begunkov <asml.silence@gmail.com>,  LKML
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] io_uring: Delete a redundant kfree() call in
+ io_ring_ctx_alloc()
+In-Reply-To: <edeafe29-2ab1-4e87-853c-912b4da06ad5@web.de> (Markus Elfring's
+	message of "Wed, 10 Jan 2024 21:48:37 +0100")
+References: <6cbcf640-55e5-2f11-4a09-716fe681c0d2@web.de>
+	<aa867594-e79d-6d08-a08e-8c9e952b4724@web.de>
+	<878r4xnn52.fsf@mailhost.krisman.be>
+	<b9c9ba9f-459e-40b5-ae4b-703dcc03871d@web.de>
+	<edeafe29-2ab1-4e87-853c-912b4da06ad5@web.de>
+Date: Fri, 12 Jan 2024 11:25:48 -0300
+Message-ID: <87jzoek4r7.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] io_uring: Statistics of the true utilization of sq
- threads.
-Content-Language: en-US
-To: Xiaobing Li <xiaobing.li@samsung.com>
-Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org, kun.dou@samsung.com, peiwei.li@samsung.com,
- joshi.k@samsung.com, kundan.kumar@samsung.com, wenwen.chen@samsung.com,
- ruyi.zhang@samsung.com
-References: <b0c67327-5131-4cde-a8bd-df69b1f300e5@kernel.dk>
- <CGME20240112012013epcas5p38c70493069fb14da02befcf25e604bc1@epcas5p3.samsung.com>
- <20240112011202.1705067-1-xiaobing.li@samsung.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240112011202.1705067-1-xiaobing.li@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Level: 
+X-Spamd-Bar: /
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=DguTXLVb;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=dEepbHXU
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.95 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 BAYES_HAM(-0.94)[86.44%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com,web.de];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCPT_COUNT_FIVE(0.00)[6];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
+	 FREEMAIL_TO(0.00)[web.de];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FREEMAIL_CC(0.00)[vger.kernel.org,kernel.dk,gmail.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Score: -0.95
+X-Rspamd-Queue-Id: 8C6EA21D66
+X-Spam-Flag: NO
 
-On 1/11/24 6:12 PM, Xiaobing Li wrote:
-> On 1/10/24 16:15 AM, Jens Axboe wrote:
->> On 1/10/24 2:05 AM, Xiaobing Li wrote:
->>> On 1/5/24 04:02 AM, Pavel Begunkov wrote:
->>>> On 1/3/24 05:49, Xiaobing Li wrote:
->>>>> On 12/30/23 9:27 AM, Pavel Begunkov wrote:
->>>>>> Why it uses jiffies instead of some task run time?
->>>>>> Consequently, why it's fine to account irq time and other
->>>>>> preemption? (hint, it's not)
->>>>>>
->>>>>> Why it can't be done with userspace and/or bpf? Why
->>>>>> can't it be estimated by checking and tracking
->>>>>> IORING_SQ_NEED_WAKEUP in userspace?
->>>>>>
->>>>>> What's the use case in particular? Considering that
->>>>>> one of the previous revisions was uapi-less, something
->>>>>> is really fishy here. Again, it's a procfs file nobody
->>>>>> but a few would want to parse to use the feature.
->>>>>>
->>>>>> Why it just keeps aggregating stats for the whole
->>>>>> life time of the ring? If the workload changes,
->>>>>> that would either totally screw the stats or would make
->>>>>> it too inert to be useful. That's especially relevant
->>>>>> for long running (days) processes. There should be a
->>>>>> way to reset it so it starts counting anew.
->>>>>
->>>>> Hi, Jens and Pavel,
->>>>> I carefully read the questions you raised.
->>>>> First of all, as to why I use jiffies to statistics time, it
->>>>> is because I have done some performance tests and found that
->>>>> using jiffies has a relatively smaller loss of performance
->>>>> than using task run time. Of course, using task run time is
->>>>
->>>> How does taking a measure for task runtime looks like? I expect it to
->>>> be a simple read of a variable inside task_struct, maybe with READ_ONCE,
->>>> in which case the overhead shouldn't be realistically measurable. Does
->>>> it need locking?
->>>
->>> The task runtime I am talking about is similar to this:
->>> start = get_system_time(current);
->>> do_io_part();
->>> sq->total_time += get_system_time(current) - start;
->>
->> Not sure what get_system_time() is, don't see that anywhere.
->>
->>> Currently, it is not possible to obtain the execution time of a piece of 
->>> code by a simple read of a variable inside task_struct. 
->>> Or do you have any good ideas?
->>
->> I must be missing something, because it seems like all you need is to
->> read task->stime? You could possible even make do with just logging busy
->> loop time, as getrusage(RUSAGE_THREAD, &stat) from userspace would then
->> give you the total time.
->>
->> stat.ru_stime would then be the total time, the thread ran, and
->> 1 - (above_busy_stime / stat.ru_stime) would give you the time the
->> percentage of time the thread ran and did useful work (eg not busy
->> looping.
-> 
-> getrusage can indeed get the total time of the thread, but this
-> introduces an extra function call, which is relatively more
-> complicated than defining a variable. In fact, recording the total
-> time of the loop and the time of processing the IO part can achieve
-> our observation purpose. Recording only two variables will have less
-> impact on the existing performance, so why not  choose a simpler and
-> effective method.
+Markus Elfring <Markus.Elfring@web.de> writes:
 
-I'm not opposed to exposing both of them, it does make the API simpler.
-If we can call it an API... I think the main point was using task->stime
-for it rather than jiffies etc.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 10 Jan 2024 20:54:43 +0100
+>
+> Another useful pointer was not reassigned to the data structure member
+> =E2=80=9Cio_bl=E2=80=9D by this function implementation.
+> Thus omit a redundant call of the function =E2=80=9Ckfree=E2=80=9D at the=
+ end.
 
--- 
-Jens Axboe
+Perhaps rewrite this to:
 
+ctx->io_bl is initialized later through IORING_OP_PROVIDE_BUFFERS or
+IORING_REGISTER_PBUF_RING later on, so there is nothing to free in the
+ctx allocation error path.
+
+Other than that, and for this patch only:
+
+Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
+
+thanks,
+
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>
+> v2:
+> A change request by Gabriel Krisman Bertazi was applied here.
+>
+>
+>  io_uring/io_uring.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 86761ec623f9..c9a63c39cdd0 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -344,7 +344,6 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(s=
+truct io_uring_params *p)
+>  err:
+>  	kfree(ctx->cancel_table.hbs);
+>  	kfree(ctx->cancel_table_locked.hbs);
+> -	kfree(ctx->io_bl);
+>  	xa_destroy(&ctx->io_bl_xa);
+>  	kfree(ctx);
+>  	return NULL;
+> --
+> 2.43.0
+>
+
+--=20
+Gabriel Krisman Bertazi
 

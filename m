@@ -1,86 +1,144 @@
-Return-Path: <io-uring+bounces-402-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-403-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288CF82D0E2
-	for <lists+io-uring@lfdr.de>; Sun, 14 Jan 2024 15:26:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1912F82D90C
+	for <lists+io-uring@lfdr.de>; Mon, 15 Jan 2024 13:49:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853DB1F2161F
-	for <lists+io-uring@lfdr.de>; Sun, 14 Jan 2024 14:26:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126A01C2128F
+	for <lists+io-uring@lfdr.de>; Mon, 15 Jan 2024 12:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F5123C2;
-	Sun, 14 Jan 2024 14:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06F41428F;
+	Mon, 15 Jan 2024 12:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JuH9bEwT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALrmMsr4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5611123BD
-	for <io-uring@vger.kernel.org>; Sun, 14 Jan 2024 14:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-5ce99e1d807so724762a12.1
-        for <io-uring@vger.kernel.org>; Sun, 14 Jan 2024 06:26:41 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A03134CA;
+	Mon, 15 Jan 2024 12:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1d542701796so44016865ad.1;
+        Mon, 15 Jan 2024 04:49:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1705242401; x=1705847201; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YgvPicHYAHMSP7JaCkgKQ3HWaYi8D+Ul7BveqF0AB+g=;
-        b=JuH9bEwT9J7AYUOuIRFPg0fmN1VRX+Fbi9up8TuEaZdGW+4SAaHi7iOd+y+fP7pV77
-         OXqXFegLgBvnvBG5yi7sPpyDbcmj1ThfTgoj0xSzCdkKq8BKYmt1ao8PD9EPZ+9YELQg
-         nnSTJS7Few22gArcFfYjw7+XyXy9N9W2C7IZxN3/hDIcEtYf7i7QivGpB6PRqP0ZzvLx
-         f2rb+847Ot4HdaHXuHyUvaRmhDOVKI9+XaeRqVv0bpkZRgzT/x4i29Z0ZMH/zic2M7/e
-         unfZAzZCANTNbsKDUtzOp9LR375gG2EDzXrn7bO15gi8oUuLWYgrk3EaP1TnoFccxbkY
-         YFvg==
+        d=gmail.com; s=20230601; t=1705322972; x=1705927772; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zAY4fhIX05imv8R3TK0HIbxeC0Nq1d7M0aRDqNU4YGc=;
+        b=ALrmMsr4AR78gpILyMraNM3HtrYpeeoDVcBb+8HZK3Eev/ne8fPxmBZCkC6Kmd05xm
+         8GCUipCaumGcAgVY39SDH4u7kofkL47JSgJSvfdJsi3vtxuMr8tpUbExtVGB4X1m19wE
+         Zm7+gaujeRLxWbC3i0jV2LTfM5quVd19oFggZhTSTCiYwlFB0THCmIR8Tii125vP22Bv
+         VUUjtJu+qljgGatJCqheGcIvK5GVOLENPXpkTWglaWYJgNDQjf2qFliYxOfHCsKA3yu5
+         GfdmJXut0xlsRFevEYZveXb6ZElFcG0s2YjwR75dmgu52VkzOzgipneAV/XOP7wYJt2Y
+         d34g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705242401; x=1705847201;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YgvPicHYAHMSP7JaCkgKQ3HWaYi8D+Ul7BveqF0AB+g=;
-        b=GI23B6j7Q5APkZk9lRfrF9Ul3fUPO1ul1wgwYICTfXG2zuklnSDFTu8M/uJ1GiOMvK
-         SiD60WHhZ2ZlzxFMtY93J7wPGxkSteI6K0ucRd5bM3q/qnVVShLtLUkYLiTr03JsDk8C
-         6Cc6mVPZ132FIbD9R0nI64cUunriMjVZYm+Be3HU9xZ1+VKhyK3T+t9vC6lTShcHz537
-         mxgppYOuQ9Y63Bv0Jh+OzB2Zfjqho6QapzvqqkuJ+KgJZQv8Mj2PPgz7F1TN/j5jpHWi
-         yBNHVE0SIqZNsschJMb/P2AwtlOKspR6JUBy8ByxCTYLTDz/OIOjYY0e7QfdS5PVGJar
-         Vlig==
-X-Gm-Message-State: AOJu0YyD0VHNL1RTtWTAMwa1cUTN+JdvtZyHScbzbG+hE4cgldr64wn9
-	3cQA3JKGa+T02xV/yb71Bks3xbOL80s7kg==
-X-Google-Smtp-Source: AGHT+IG+tMcQu41vVh0L3LIA054UD7wMMv66Ufg/tQuvhLxO/ZBv8yoj12TsjTayOaLkYMOSHf22Tg==
-X-Received: by 2002:a05:6a00:17a8:b0:6da:83a2:1f15 with SMTP id s40-20020a056a0017a800b006da83a21f15mr10128998pfg.0.1705242401255;
-        Sun, 14 Jan 2024 06:26:41 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id u20-20020a056a00099400b006da76842a66sm6055101pfg.85.2024.01.14.06.26.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Jan 2024 06:26:39 -0800 (PST)
-Message-ID: <3bf0382a-8e7f-4464-9b22-b9cf4fd37ba7@kernel.dk>
-Date: Sun, 14 Jan 2024 07:26:38 -0700
+        d=1e100.net; s=20230601; t=1705322972; x=1705927772;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zAY4fhIX05imv8R3TK0HIbxeC0Nq1d7M0aRDqNU4YGc=;
+        b=a1aolULyEnccpKa9IRJw5+SPU14+yjWjsyOpb8xNAMlYGjI0U7xBystopSXl8JSxdZ
+         8J3Dxurvg5oYmkamWGEMCdePRnNOUHhoTcmhMg8Wk5yyDAecf5YnR02sNCiqUEqS+WxS
+         Um1j9fy0wonssbG2X4RYxW181sGMG2H8UVp1wQs38OrIOVLPyTlLdlEJbhrOcfdyLypj
+         f7vPBVEW64GF0C1kHW9EFQP2I6kG5KB537lgEhFU5WOzHhUXzPNmA0POfg+FJI7FJv5D
+         43lDiucv/HZ5J8epwFTTvnrtxTP20yGRKajyoVvMRk9CxUBeobLect+dEr8T1mkvBD0p
+         k8UQ==
+X-Gm-Message-State: AOJu0Ywy125Mi0DkySUc11UMVqMnpzAAmRx66FGFPcCp//u0DEc9oOrv
+	McRMcuyfpL+eMFNNL1ka+QA=
+X-Google-Smtp-Source: AGHT+IGKYK21agVDOgrH10CE8pOjjHYxcQZgbbKAnFvJzTXK/4aUkUDQNPk9O4KJjr5LgZGiWmKmIA==
+X-Received: by 2002:a17:902:c385:b0:1d4:c1b5:7248 with SMTP id g5-20020a170902c38500b001d4c1b57248mr2941983plg.96.1705322972422;
+        Mon, 15 Jan 2024 04:49:32 -0800 (PST)
+Received: from user.. ([106.51.187.155])
+        by smtp.gmail.com with ESMTPSA id s3-20020a17090330c300b001d5b7ae4831sm3840331plc.180.2024.01.15.04.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jan 2024 04:49:32 -0800 (PST)
+From: Subramanya Swamy <subramanya.swamy.linux@gmail.com>
+To: corbet@lwn.net,
+	axboe@kernel.dk,
+	asml.silence@gmail.com,
+	ribalda@chromium.org,
+	rostedt@goodmis.org,
+	bhe@redhat.com,
+	akpm@linux-foundation.org,
+	matteorizzo@google.com,
+	subramanya.swamy.linux@gmail.com,
+	ardb@kernel.org,
+	alexghiti@rivosinc.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: [PATCH] iouring:added boundary value check for io_uring_group systl
+Date: Mon, 15 Jan 2024 12:49:25 +0000
+Message-Id: <20240115124925.1735-1-subramanya.swamy.linux@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_rw_fail
-Content-Language: en-US
-To: syzbot <syzbot+8d9c06e026c513a69f2f@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000e06949060ee528f1@google.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <000000000000e06949060ee528f1@google.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-#syz fix: io_uring/rw: ensure io->bytes_done is always initialized
+/proc/sys/kernel/io_uring_group takes gid as input
+added boundary value check to accept gid in range of
+0<=gid<=4294967294 & Documentation is updated for same
 
+Signed-off-by: Subramanya Swamy <subramanya.swamy.linux@gmail.com>
+---
+ Documentation/admin-guide/sysctl/kernel.rst | 9 ++++-----
+ io_uring/io_uring.c                         | 8 ++++++--
+ 2 files changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index 6584a1f9bfe3..3f96007aa971 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -469,11 +469,10 @@ shrinks the kernel's attack surface.
+ io_uring_group
+ ==============
+ 
+-When io_uring_disabled is set to 1, a process must either be
+-privileged (CAP_SYS_ADMIN) or be in the io_uring_group group in order
+-to create an io_uring instance.  If io_uring_group is set to -1 (the
+-default), only processes with the CAP_SYS_ADMIN capability may create
+-io_uring instances.
++When io_uring_disabled is set to 1, only processes with the
++CAP_SYS_ADMIN may create io_uring instances or process must be in the
++io_uring_group group in order to create an io_uring_instance.
++io_uring_group is set to 0.This is the default setting.
+ 
+ 
+ kexec_load_disabled
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 09b6d860deba..0ed91b69643d 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -146,7 +146,9 @@ static void io_queue_sqe(struct io_kiocb *req);
+ struct kmem_cache *req_cachep;
+ 
+ static int __read_mostly sysctl_io_uring_disabled;
+-static int __read_mostly sysctl_io_uring_group = -1;
++static unsigned int __read_mostly sysctl_io_uring_group;
++static unsigned int min_gid;
++static unsigned int max_gid  = 4294967294;  /*4294967294 is the max guid*/
+ 
+ #ifdef CONFIG_SYSCTL
+ static struct ctl_table kernel_io_uring_disabled_table[] = {
+@@ -164,7 +166,9 @@ static struct ctl_table kernel_io_uring_disabled_table[] = {
+ 		.data		= &sysctl_io_uring_group,
+ 		.maxlen		= sizeof(gid_t),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_douintvec_minmax,
++		.extra1         = &min_gid,
++		.extra2         = &max_gid,
+ 	},
+ 	{},
+ };
 -- 
-Jens Axboe
-
+2.34.1
 
 

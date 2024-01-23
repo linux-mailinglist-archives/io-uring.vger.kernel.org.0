@@ -1,71 +1,71 @@
-Return-Path: <io-uring+bounces-450-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-451-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4379E838D78
-	for <lists+io-uring@lfdr.de>; Tue, 23 Jan 2024 12:32:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877B4838D77
+	for <lists+io-uring@lfdr.de>; Tue, 23 Jan 2024 12:32:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49F44B22852
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7FD1C21AF8
 	for <lists+io-uring@lfdr.de>; Tue, 23 Jan 2024 11:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3643B5D749;
-	Tue, 23 Jan 2024 11:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2353D7B;
+	Tue, 23 Jan 2024 11:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KLyVsOHd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cc5Vx7w+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76ECC3D7B
-	for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 11:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC2A5D747
+	for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 11:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706009561; cv=none; b=jxFIaSHmCo9ggpqGvtMdBasI+lCO4P1CB94uFSe22+4mMx06OPRfNHRXLVjv89/ATNdkxi3FMUyCN5ZWvvTXKH3/a5VV8L9WwCbTe3FvclOiB6SQjOewcZ3yZFDlX/D26EjVW3hVL2ilwukqLdfkDmjX7WoSfayG8mU40Jh7yFU=
+	t=1706009562; cv=none; b=Ij+1ZnuusDx4lcn2fDZfbTeFImkMTL25lTNtpchNZPQvQM4d/A+ejPc+pD0UZmnCv6rFRmtQjikkppRLnFONbfi+/KQ7vI048wiLjZ6GQFIHWja07YJeJBk9TcxC0mGbLlQJjbvqrnDd9ob0a4/519lekd39R+b9tzbhPF4QZtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706009561; c=relaxed/simple;
-	bh=zOz4hLkdmkTYGfCt/cUwyAyL0WtERi/QQFzomtoUEos=;
+	s=arc-20240116; t=1706009562; c=relaxed/simple;
+	bh=fN/zMxdFgNeUFouHDDtugaWiWniqxZeJ5PqLCMBwqHU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eUypJbrBPaylO/Y2J/d6bhcaIJGAhy3YUPPRYhCN0NbQPqJM8bVMD1Pyjdi8+8DuqnkC420KhS6oeiM8IIXu/mgK75TqBAIGcaS7wZSrUF2cac4MUnKjo6dYdrERJHbQ8U8vOsKZWDrtEsuUS76tgUAd08PH5ufJHLDLFngfJxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KLyVsOHd; arc=none smtp.client-ip=209.85.221.49
+	 MIME-Version; b=NLrkA3ryv7uD769oi1mPAYeE5OiamUlijRqdNWDH+AcNbtqVtPW4z9aRqMwzm5GQTcyj2H6bAE4GvR4Vf7c12wHlbq15aWSvYCoPI3FDNSdHfPJcgNBU3aN/Nj/PyuNC+1jAf4tlBPxmo/RHgzDGwL+X1RdTfKxtGyTWpmZn01k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cc5Vx7w+; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-337d32cd9c1so3722255f8f.2
-        for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 03:32:39 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-40e72a567eeso50369135e9.0
+        for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 03:32:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706009557; x=1706614357; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1706009558; x=1706614358; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+oyAFKxKxw/19olhMJD22JnaO3CvIZPuaFLwbGy625I=;
-        b=KLyVsOHdisDgnZi6ilypM9fcIPVrmDXLVHPkK0+TmJ7HPYFKDKK2PEeKsFdwIO0XuS
-         0zjZjUGS03smhhiNDQCcSCNxeuSvtyU/0VsWc7R8zigZVBjLZvpv6STXAtEHZEHL2oWp
-         uf84AgHxm6/QM6f4RDups1iEdxIoOZDhbIrPqP7RUyVteaWXA1v3z3A3HgaW32aFr+Q7
-         QunIb6w3tWg6eBYO28WB6aOxEdvUSKo+Ti48zcrkNCZZdoSii5K+HyErxobtckZu7i6D
-         ADYkVL9wgRlos9mbqTbvibS2KpwdJk+fbB0OeMf9nnEqM+e0qnWxLTPlfoeM9Q+Y2xuM
-         DiUw==
+        bh=9u7g2HslwKZSytizBWPalW48FAJklGyoWzpo7dZUnHM=;
+        b=cc5Vx7w+KzGYo8MmN4B70GycqFvzsjNfc6AjNpbiOP+QDSul0MKR5gZ3XhjT5gUlIK
+         imCCsU2sfDwCa2wA0zsfH9Wef94upAwU4vFPka+651aTqYXN8aMxzM11x6xdg4KswLsc
+         Z3DV17D+um4uHbgybLgwhnGpCh1SpG5hmVwZ9fRlAfJO8H3yS+nd+mnTpt32d5rAh0iN
+         x2svlLjYSUPHROkq2ijjUF/teaTLal4Y/Dit4PIy6I9ippYqx7ijG+lYElP5pF+pTdV6
+         v+fNOOan5cv6mUniXC2QgwH7pN0JJ1C4b1RYxH377l568pLBEeb0gC5+bLllCMvm1+Ew
+         CDxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706009557; x=1706614357;
+        d=1e100.net; s=20230601; t=1706009558; x=1706614358;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+oyAFKxKxw/19olhMJD22JnaO3CvIZPuaFLwbGy625I=;
-        b=T3z95Vlbr7yYVdVlhlxBwTTOWJEuJezvr9NLs9cyxZWqYp+ra2E3n1ogHaMNOGo1s0
-         ZbolOxhtyzi0RmqgesMCz21Nh7nDh0xQAPgdmrTkoNm8zLSvaAktWvEe/yEI3KFZt/Y3
-         SudEepzoQJSttvGV5W1eMRqHt/xSwT+gMYaUE1AOmqe+7rnuE1ouOX17ig1rNRKPDVxm
-         03ga6fnfjJJ+s3COegeq+9BfJiTnWIbSPy9bSV9yz8V326yhsgTo8WUh+AtX2vPgwDe1
-         MLXsFRfi9wgZxxtEaKxGDOHJ9PISzsu0Yv4STAiE/16BnPoMDgfUQplGTyTWy5Ry0s0L
-         aDag==
-X-Gm-Message-State: AOJu0YwJkl0Vw0VNu2Jo0X64jVyVDTBpJDgprAJkq7P7IdigUEry3hri
-	s48rbb35iAnidyTaGXU2zFDyCMAmCXDX/qrctTxQ7rnKtsUIbyBJ
-X-Google-Smtp-Source: AGHT+IHBunwj7oPaXETEoDQH5etgZqyWZzuv4fMd825pWbVQkQmvkP+jrnjPoi0Q8Zdy/7VpWr+LyQ==
-X-Received: by 2002:a5d:540a:0:b0:337:2b67:25 with SMTP id g10-20020a5d540a000000b003372b670025mr2897712wrv.114.1706009557364;
-        Tue, 23 Jan 2024 03:32:37 -0800 (PST)
+        bh=9u7g2HslwKZSytizBWPalW48FAJklGyoWzpo7dZUnHM=;
+        b=HtwBD8xzxgwH2F0aoATyKyqnuUWiPxEPRxkgKdDJ0IlNIKdFHmroMkyKl/dGs09dlh
+         egc3ey1vERkwpz08Ke3qja9Mtqnu/vcfvL+leGsUplvvj9gNJyhxe3UvJTmhaMfgAcwK
+         V84h1RzqGEQrJlRYPoOUZ41Zls2Zl4/Q4bvCIvoQ/jRpqXymh9boVNhJeoDSak9UgfTY
+         r6gbnVhNeJPw5EI4cZYp8di+2XztJwOoYJ8T2agpvbubkrJeGfl8jqxlRK4xX22fTlTq
+         YN1zMlaa86kY2Sy/zNex+tOW2W3eFfty59kfkJhA6BZW7kUuVJacHhCnD0jimIuKwPhF
+         qcUQ==
+X-Gm-Message-State: AOJu0YwqDJyTlM9RKKDWO313Zb3FntnGDoQj7NNSD7VrceiBheAKizxz
+	2mP45sdcSU8/23q2HArq3wbghCVE9cx4TDvUal6B2Sq0iv7evCA/
+X-Google-Smtp-Source: AGHT+IGPl4QMm50FzSC1qrSzHO3COF7kHcI59yA/NasftSs0q2Rm+idpgAg0nooREZ50u8RnuCORcA==
+X-Received: by 2002:a05:600c:1e0f:b0:40e:becc:8938 with SMTP id ay15-20020a05600c1e0f00b0040ebecc8938mr187532wmb.98.1706009558569;
+        Tue, 23 Jan 2024 03:32:38 -0800 (PST)
 Received: from localhost.localdomain ([147.235.201.119])
-        by smtp.gmail.com with ESMTPSA id q7-20020adffec7000000b0033926505eafsm8998771wrs.32.2024.01.23.03.32.36
+        by smtp.gmail.com with ESMTPSA id q7-20020adffec7000000b0033926505eafsm8998771wrs.32.2024.01.23.03.32.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jan 2024 03:32:37 -0800 (PST)
+        Tue, 23 Jan 2024 03:32:38 -0800 (PST)
 From: Tony Solomonik <tony.solomonik@gmail.com>
 To: axboe@kernel.dk
 Cc: krisman@suse.de,
@@ -73,12 +73,13 @@ Cc: krisman@suse.de,
 	io-uring@vger.kernel.org,
 	asml.silence@gmail.com,
 	Tony Solomonik <tony.solomonik@gmail.com>
-Subject: [PATCH v2 1/2] Add __do_ftruncate that truncates a struct file*
-Date: Tue, 23 Jan 2024 13:32:23 +0200
-Message-Id: <20240123113224.79315-1-tony.solomonik@gmail.com>
+Subject: [PATCH v2 2/2] io_uring: add support for ftruncate
+Date: Tue, 23 Jan 2024 13:32:24 +0200
+Message-Id: <20240123113224.79315-2-tony.solomonik@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240123112358.78030-1-tony.solomonik@gmail.com>
+In-Reply-To: <20240123113224.79315-1-tony.solomonik@gmail.com>
 References: <20240123112358.78030-1-tony.solomonik@gmail.com>
+ <20240123113224.79315-1-tony.solomonik@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -87,111 +88,139 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-do_sys_ftruncate receives a file descriptor, fgets the struct file*, and
-finally actually truncates the file.
-
-__do_ftruncate allows for truncating a file without fgets.
+Libraries that are built on io_uring currently need to maintain a
+separate thread pool implementation when they want to truncate a file.
 ---
- fs/open.c                | 52 ++++++++++++++++++++++++----------------
- include/linux/syscalls.h |  2 ++
- 2 files changed, 33 insertions(+), 21 deletions(-)
+ include/uapi/linux/io_uring.h |  1 +
+ io_uring/Makefile             |  2 +-
+ io_uring/opdef.c              |  9 +++++++
+ io_uring/truncate.c           | 47 +++++++++++++++++++++++++++++++++++
+ io_uring/truncate.h           |  4 +++
+ 5 files changed, 62 insertions(+), 1 deletion(-)
+ create mode 100644 io_uring/truncate.c
+ create mode 100644 io_uring/truncate.h
 
-diff --git a/fs/open.c b/fs/open.c
-index 02dc608d40d8..b32ac430666c 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -154,47 +154,57 @@ COMPAT_SYSCALL_DEFINE2(truncate, const char __user *, path, compat_off_t, length
- }
- #endif
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index f1c16f817742..be682e000c94 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -253,6 +253,7 @@ enum io_uring_op {
+ 	IORING_OP_FUTEX_WAIT,
+ 	IORING_OP_FUTEX_WAKE,
+ 	IORING_OP_FUTEX_WAITV,
++	IORING_OP_FTRUNCATE,
  
--long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
-+long __do_ftruncate(struct file *file, loff_t length, int small)
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
+diff --git a/io_uring/Makefile b/io_uring/Makefile
+index e5be47e4fc3b..4f8ed6530a29 100644
+--- a/io_uring/Makefile
++++ b/io_uring/Makefile
+@@ -8,6 +8,6 @@ obj-$(CONFIG_IO_URING)		+= io_uring.o xattr.o nop.o fs.o splice.o \
+ 					statx.o net.o msg_ring.o timeout.o \
+ 					sqpoll.o fdinfo.o tctx.o poll.o \
+ 					cancel.o kbuf.o rsrc.o rw.o opdef.o \
+-					notif.o waitid.o
++					notif.o waitid.o truncate.o
+ obj-$(CONFIG_IO_WQ)		+= io-wq.o
+ obj-$(CONFIG_FUTEX)		+= futex.o
+diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+index 799db44283c7..7830d087d03f 100644
+--- a/io_uring/opdef.c
++++ b/io_uring/opdef.c
+@@ -35,6 +35,7 @@
+ #include "rw.h"
+ #include "waitid.h"
+ #include "futex.h"
++#include "truncate.h"
+ 
+ static int io_no_issue(struct io_kiocb *req, unsigned int issue_flags)
  {
- 	struct inode *inode;
- 	struct dentry *dentry;
--	struct fd f;
- 	int error;
+@@ -469,6 +470,11 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.prep			= io_eopnotsupp_prep,
+ #endif
+ 	},
++	[IORING_OP_FTRUNCATE] = {
++		.needs_file		= 1,
++		.prep			= io_ftruncate_prep,
++		.issue			= io_ftruncate,
++	},
+ };
  
--	error = -EINVAL;
--	if (length < 0)
--		goto out;
--	error = -EBADF;
--	f = fdget(fd);
--	if (!f.file)
--		goto out;
--
- 	/* explicitly opened as large or we are on 64-bit box */
--	if (f.file->f_flags & O_LARGEFILE)
-+	if (file->f_flags & O_LARGEFILE)
- 		small = 0;
+ const struct io_cold_def io_cold_defs[] = {
+@@ -704,6 +710,9 @@ const struct io_cold_def io_cold_defs[] = {
+ 	[IORING_OP_FUTEX_WAITV] = {
+ 		.name			= "FUTEX_WAITV",
+ 	},
++	[IORING_OP_FTRUNCATE] = {
++		.name			= "FTRUNCATE",
++	},
+ };
  
--	dentry = f.file->f_path.dentry;
-+	dentry = file->f_path.dentry;
- 	inode = dentry->d_inode;
- 	error = -EINVAL;
--	if (!S_ISREG(inode->i_mode) || !(f.file->f_mode & FMODE_WRITE))
--		goto out_putf;
-+	if (!S_ISREG(inode->i_mode) || !(file->f_mode & FMODE_WRITE))
-+		goto out;
- 
- 	error = -EINVAL;
- 	/* Cannot ftruncate over 2^31 bytes without large file support */
- 	if (small && length > MAX_NON_LFS)
--		goto out_putf;
-+		goto out;
- 
- 	error = -EPERM;
- 	/* Check IS_APPEND on real upper inode */
--	if (IS_APPEND(file_inode(f.file)))
--		goto out_putf;
-+	if (IS_APPEND(file_inode(file)))
-+		goto out;
- 	sb_start_write(inode->i_sb);
--	error = security_file_truncate(f.file);
-+	error = security_file_truncate(file);
- 	if (!error)
--		error = do_truncate(file_mnt_idmap(f.file), dentry, length,
--				    ATTR_MTIME | ATTR_CTIME, f.file);
-+		error = do_truncate(file_mnt_idmap(file), dentry, length,
-+				    ATTR_MTIME | ATTR_CTIME, file);
- 	sb_end_write(inode->i_sb);
--out_putf:
+ const char *io_uring_get_opcode(u8 opcode)
+diff --git a/io_uring/truncate.c b/io_uring/truncate.c
+new file mode 100644
+index 000000000000..9d160b91949c
+--- /dev/null
++++ b/io_uring/truncate.c
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/fs.h>
++#include <linux/file.h>
++#include <linux/mm.h>
++#include <linux/slab.h>
++#include <linux/syscalls.h>
++#include <linux/io_uring.h>
 +
-+out:
-+  return error;
++#include <uapi/linux/io_uring.h>
++
++#include "../fs/internal.h"
++
++#include "io_uring.h"
++#include "truncate.h"
++
++struct io_ftrunc {
++	struct file			*file;
++	loff_t				len;
++};
++
++int io_ftruncate_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	struct io_ftrunc *ft = io_kiocb_to_cmd(req, struct io_ftrunc);
++
++	if (sqe->addr || sqe->rw_flags || sqe->buf_index || sqe->splice_fd_in)
++		return -EINVAL;
++
++	ft->len = READ_ONCE(sqe->off);
++
++	req->flags |= REQ_F_FORCE_ASYNC;
++	return 0;
 +}
 +
-+long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
++int io_ftruncate(struct io_kiocb *req, unsigned int issue_flags)
 +{
-+	struct fd f;
-+	int error;
++	struct io_ftrunc *ft = io_kiocb_to_cmd(req, struct io_ftrunc);
++	int ret;
 +
-+	error = -EINVAL;
-+	if (length < 0)
-+		goto out;
-+	error = -EBADF;
-+	f = fdget(fd);
-+	if (!f.file)
-+		goto out;
++	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
 +
-+	error = __do_ftruncate(f.file, length, small);
++	ret = __do_ftruncate(req->file, ft->len, 1);
 +
- 	fdput(f);
- out:
- 	return error;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index fd9d12de7e92..e8c56986e751 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1229,6 +1229,8 @@ static inline long ksys_lchown(const char __user *filename, uid_t user,
- 			     AT_SYMLINK_NOFOLLOW);
- }
- 
-+extern long __do_ftruncate(struct file *file, loff_t length, int small);
++	io_req_set_res(req, ret, 0);
++	return IOU_OK;
++}
+diff --git a/io_uring/truncate.h b/io_uring/truncate.h
+new file mode 100644
+index 000000000000..ec088293a478
+--- /dev/null
++++ b/io_uring/truncate.h
+@@ -0,0 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
 +
- extern long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
- 
- static inline long ksys_ftruncate(unsigned int fd, loff_t length)
++int io_ftruncate_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
++int io_ftruncate(struct io_kiocb *req, unsigned int issue_flags);
 -- 
 2.34.1
 

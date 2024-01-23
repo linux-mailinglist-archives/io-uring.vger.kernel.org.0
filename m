@@ -1,159 +1,243 @@
-Return-Path: <io-uring+bounces-465-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-466-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20466839B94
-	for <lists+io-uring@lfdr.de>; Tue, 23 Jan 2024 22:57:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2460839BD6
+	for <lists+io-uring@lfdr.de>; Tue, 23 Jan 2024 23:08:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAC9E2899B4
-	for <lists+io-uring@lfdr.de>; Tue, 23 Jan 2024 21:57:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F05C28FB01
+	for <lists+io-uring@lfdr.de>; Tue, 23 Jan 2024 22:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94C34F201;
-	Tue, 23 Jan 2024 21:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33F148CC5;
+	Tue, 23 Jan 2024 22:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Fx6/qw+d"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ygmZj01n"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247504E1BC
-	for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 21:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BEB4E1BC
+	for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 22:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706047040; cv=none; b=NYCJ9yQuaB9zMkCLzrErL9qoIAceuwrJHY6vOfJSq1JLfe+E1EMVfF/qoea9tRexzEhsai1D+Mnlf5X7ZT/QXxOoVikB2Zr+fRJf/pkMVuhuyYDaG8wpcLGCpnqi3v8nlh5k6I9R6TL+yWLhDa7q+dtTFrrCqu8u3kJ240oAPmw=
+	t=1706047680; cv=none; b=lYQ9boHfW3xUiAenUswR2H01UXJZkYIjlD8UawoQjqG2VIRUTi6sn/LAkSHSHz3uMsrHLN0uGoClbeXMuGW9xsaS89s4K68KZhzyIv+hWq5z+ATaLhMZADJGv4gnuWxLHBuqN6XKMzI97N2Ewu48nlpIQ1gh7JNh6ePN0XgZtRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706047040; c=relaxed/simple;
-	bh=cszWx0o2HPusfqkpOfHXrdNctgQuMhLZAjzKhBheWSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rrBS7vI6xFSRcYiMUZFILJTpqhImWkN/9KGF6T64ZBMPPdgdUF+1DPHTdZpwx2uInxAAxMdV3J7xt3E0n7eKGCv2tbehMxgURxlM/+gUWPqCyBUx2fpZldaPMFSK1N0q2lyftX+AAGA4xr402a7W5yoLoNPntoIWbC1cYou050k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Fx6/qw+d; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dc21d7a7042so4122236276.2
-        for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 13:57:18 -0800 (PST)
+	s=arc-20240116; t=1706047680; c=relaxed/simple;
+	bh=HFR4GK6PdrW3Nf0esLFuiIChziBQRVzxihNFEvR/qSA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oXkYtBSh80yR14kd/pYUj43e04ibsmb+TB9iTqSVC/BWNCYllqJ/CYhKdyPD6Os3Fe4TLQklU2VRYS46L2sXv4tX5o0f0+O7R/UpYocik7k8x/9MvOldafU+LnyWvFX4JqedmrrORF0NU5DKHjyyWyOvLj9galidDlIzKnErrzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ygmZj01n; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6d9bd8adb9aso910142b3a.0
+        for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 14:07:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1706047038; x=1706651838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TxtwJgE4RYnu6on0jd5HbEaZUzse4dI8DHc5hHUQCOU=;
-        b=Fx6/qw+dQx4nPboaufNv8bXvEiz6Ms6TKgpOm2Iy/XB94eqAfPHoUVp6EaQ/B92X7p
-         qnqoyhpvCH0zoogw8T1US3AWnw/ED0tRx48Cy4s6Zk9W/l+ay7BYDD16rCSSxYxxXG52
-         zktIQTlZfP8aFWB01/4mEXpbv5rk2HeDdB/UINFpRkdtZMjQnmF2K4KQnBem+idyyCeo
-         ktruxnsNj/56/kA1hVwJibqN6JfMUK66EksIo3gLt6vFtCvwAntoVUmeM9rdHd6roOsj
-         YSgGL91suC46Pjs4QDCc2ZRs6lwtxnb5hvg5R13hcx/rCREY2kBfYNOi3Aq0RBgYJTwf
-         Rrjg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1706047676; x=1706652476; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rsdz5EiagkqmXiAvpv6vmZ/y9nzPFM08ELqeuarmbVw=;
+        b=ygmZj01nz/dXd77D164kll1yEpFNVt1DChXlBtjwymBEtJ57ekFP8YQ2dW8pxHUhIL
+         HhIsWHy0nVbrJY0uEmrn6fMWUAX7ODv1ZiKS/jaJ511Zi749qiWZreXMKLDSdFKM2kHv
+         rLH6/NHPY+0zPBMhjlVUFoqsUQWNoiQW8dPhOFtRNuPq2aX2PqR2govU9Jzzc7XRcAZk
+         Jq7YSoOIxtYshGuyXcnh+hqFthy9xu4qYohTZH/qpLXNc2yDiCeWyOOCKvnITS5jgSpc
+         juBoLD3pp8Tx8HmZyZVJ8BpIWTosDADbyFV8KISNU9VebVVgDywKDaaYNOhFK4QaABC1
+         mNtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706047038; x=1706651838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TxtwJgE4RYnu6on0jd5HbEaZUzse4dI8DHc5hHUQCOU=;
-        b=SloTA2N6ANwBatDe+c5/375fKBu+YSjq0ZO7bKI/Yafb/1qQcDj07R5xx/WyHl9D70
-         urFHfHa1WD46Oq9smt84zAaR8F67n8SwEwPw/gzEDPa5gvkoceeaPmBe4F+Cc4Tb2JfI
-         sa6zus8FqqX8KDDkaI/PI/J2yMWP1b58RsezO0dc0Wz2pxVTDccMqUAHj8oT26DiPV5k
-         sZlS/f87sP7DdGRZh6Wlqzlmttfr3nVMZbdSsMmeQkBNFWWcU3Mhf3eA9w4ALnbYE+ia
-         SvywWi5jlvoxZo0E8g5sC+zaYzeqCk6ZnevKM3q0c/g2TqvCsQpvagT79mgH4S+P/yrH
-         bfow==
-X-Gm-Message-State: AOJu0Yy0VPqJ7WlN+qT6EgKoMcBnGtaN+w9yqTjBSwUsMcwZMkgCK/Tw
-	WcxReetpqzMf7xRoYgr+Jo+z/Jul1uutkKRiS1ulW5suKZJvKOedICOYW7p79ggsyAxT/7lrquP
-	NG3AhAVqjv9CivDQP9DX1D4S8tJFMejc7nUeEEPevYLCABxXO5Q==
-X-Google-Smtp-Source: AGHT+IFi5/1dep4Gc28z4r+BSC3PuU3HsK/J59bSjesypTnCZF5lXu98VGDHSmsvxVeW948WwwG5Y4WrdFcAJIF6Sj8=
-X-Received: by 2002:a25:aa71:0:b0:dbd:4c39:30bf with SMTP id
- s104-20020a25aa71000000b00dbd4c3930bfmr4353836ybi.98.1706047037953; Tue, 23
- Jan 2024 13:57:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706047676; x=1706652476;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rsdz5EiagkqmXiAvpv6vmZ/y9nzPFM08ELqeuarmbVw=;
+        b=fTweFRY3M8BTNmuIatJQXSVMMohpWQHR6fgSC7gvJrz4CfcegH1slVfET0fp624RBq
+         YM3/lfE5zsG30u7U+GbDtCkiUtg2sExwCV+9A993IbZZRmAKAQtMMJc4bOum1Vo5gXeK
+         kcgGC/ZaJAutUpIlwicFwEOvQUzIqFI298bqgI6N13nBab2hvjwjvbbQonbFf0ErmtV9
+         Dhl906iv+HHjfasl7ki+K9r4/wKTqmXvF/Emj6OXeb75nasCupuoPUw8dCZliq86/ZJP
+         WrGM4yru2tj1Eur+SJdl8gjcCY/PfsPCGcrl2bZRbDHvtXGkSkuyHwIWLHIJxb5PNW7J
+         AWjw==
+X-Gm-Message-State: AOJu0Yz+9efoyyJvDCV+TSInyn8kWtbF8OJMlq4njVJnSibNOkotG1wl
+	IIqLO6WGIt++d0NOmp8v0L8lQ77KkUHK++CY4FPymnf2qI/ExktOHv/TeVn9oiI=
+X-Google-Smtp-Source: AGHT+IGiA4db8xXv9VAoGJVRVoum1VD5ymUzhfxU/VyKtRxpEgN0CDDUeO/jTa+XI/OjIwdlYGCdKA==
+X-Received: by 2002:a05:6a20:d398:b0:19b:1d4a:b94c with SMTP id iq24-20020a056a20d39800b0019b1d4ab94cmr15280399pzb.2.1706047676037;
+        Tue, 23 Jan 2024 14:07:56 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id se6-20020a17090b518600b0028aecd6b29fsm12453429pjb.3.2024.01.23.14.07.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jan 2024 14:07:55 -0800 (PST)
+Message-ID: <955c752a-7631-4f3e-a19b-e3bc8a5139f3@kernel.dk>
+Date: Tue, 23 Jan 2024 15:07:54 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240123215501.289566-2-paul@paul-moore.com>
-In-Reply-To: <20240123215501.289566-2-paul@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 23 Jan 2024 16:57:06 -0500
-Message-ID: <CAHC9VhRMsUkNHpc45H4PVnrGj77RDR_BLR9nN89Nh725ke1ECg@mail.gmail.com>
-Subject: Re: [PATCH] io_uring: enable audit and restrict cred override for IORING_OP_FIXED_FD_INSTALL
-To: io-uring@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, audit@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] Add ftruncate_file that truncates a struct file*
+Content-Language: en-US
+To: Tony Solomonik <tony.solomonik@gmail.com>
+Cc: krisman@suse.de, leitao@debian.org, io-uring@vger.kernel.org,
+ asml.silence@gmail.com
+References: <20240123113333.79503-2-tony.solomonik@gmail.com>
+ <20240123211952.32342-1-tony.solomonik@gmail.com>
+ <20240123211952.32342-2-tony.solomonik@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240123211952.32342-2-tony.solomonik@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jan 23, 2024 at 4:55=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> We need to correct some aspects of the IORING_OP_FIXED_FD_INSTALL
-> command to take into account the security implications of making an
-> io_uring-private file descriptor generally accessible to a userspace
-> task.
->
-> The first change in this patch is to enable auditing of the FD_INSTALL
-> operation as installing a file descriptor into a task's file descriptor
-> table is a security relevant operation and something that admins/users
-> may want to audit.
->
-> The second change is to disable the io_uring credential override
-> functionality, also known as io_uring "personalities", in the
-> FD_INSTALL command.  The credential override in FD_INSTALL is
-> particularly problematic as it affects the credentials used in the
-> security_file_receive() LSM hook.  If a task were to request a
-> credential override via REQ_F_CREDS on a FD_INSTALL operation, the LSM
-> would incorrectly check to see if the overridden credentials of the
-> io_uring were able to "receive" the file as opposed to the task's
-> credentials.  After discussions upstream, it's difficult to imagine a
-> use case where we would want to allow a credential override on a
-> FD_INSTALL operation so we are simply going to block REQ_F_CREDS on
-> IORING_OP_FIXED_FD_INSTALL operations.
->
-> Fixes: dc18b89ab113 ("io_uring/openclose: add support for IORING_OP_FIXED=
-_FD_INSTALL")
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+On 1/23/24 2:19 PM, Tony Solomonik wrote:
+> do_sys_ftruncate receives a file descriptor, fgets the struct file*, and
+> finally actually truncates the file.
+
+Just do struct file and get rid of '*', kernel style would otherwise
+dictate it should be struct file * but there's no point in mentioning
+this is a pointer. It's the only case that makes sense.
+
+> ftruncate_file allows for truncating a file without fgets.
+
+I'd rephrase that last sentence, as it reads as you could do this
+without holding a file reference. That is obviously not true. You
+could make it:
+
+ftruncate_file allows for passing in a file directly, with the
+caller already holding a reference to it.
+
+> 
+> Signed-off-by: Tony Solomonik <tony.solomonik@gmail.com>
 > ---
->  io_uring/opdef.c     | 1 -
->  io_uring/openclose.c | 4 ++++
->  2 files changed, 4 insertions(+), 1 deletion(-)
-
-Not having an IORING_OP_FIXED_FD_INSTALL test handy I only did some
-basic sanity tests before posting, I would appreciate it if the
-io_uring folks could run this through whatever FD_INSTALL tests you
-have.
-
-> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-> index 6705634e5f52..b1ee3a9c3807 100644
-> --- a/io_uring/opdef.c
-> +++ b/io_uring/opdef.c
-> @@ -471,7 +471,6 @@ const struct io_issue_def io_issue_defs[] =3D {
->         },
->         [IORING_OP_FIXED_FD_INSTALL] =3D {
->                 .needs_file             =3D 1,
-> -               .audit_skip             =3D 1,
->                 .prep                   =3D io_install_fixed_fd_prep,
->                 .issue                  =3D io_install_fixed_fd,
->         },
-> diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-> index 0fe0dd305546..e3357dfa14ca 100644
-> --- a/io_uring/openclose.c
-> +++ b/io_uring/openclose.c
-> @@ -277,6 +277,10 @@ int io_install_fixed_fd_prep(struct io_kiocb *req, c=
-onst struct io_uring_sqe *sq
->         if (flags & ~IORING_FIXED_FD_NO_CLOEXEC)
->                 return -EINVAL;
->
-> +       /* ensure the task's creds are used when installing/receiving fds=
- */
-> +       if (req->flags & REQ_F_CREDS)
-> +               return -EPERM;
+>  fs/internal.h |  1 +
+>  fs/open.c     | 51 ++++++++++++++++++++++++++++++---------------------
+>  2 files changed, 31 insertions(+), 21 deletions(-)
+> 
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 58e43341aebf..78a641ebd16e 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -182,6 +182,7 @@ extern struct open_how build_open_how(int flags, umode_t mode);
+>  extern int build_open_flags(const struct open_how *how, struct open_flags *op);
+>  extern struct file *__close_fd_get_file(unsigned int fd);
+>  
+> +long ftruncate_file(struct file *file, loff_t length, int small);
+>  long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
+>  int chmod_common(const struct path *path, umode_t mode);
+>  int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
+> diff --git a/fs/open.c b/fs/open.c
+> index 02dc608d40d8..0c505402e93d 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -154,47 +154,56 @@ COMPAT_SYSCALL_DEFINE2(truncate, const char __user *, path, compat_off_t, length
+>  }
+>  #endif
+>  
+> -long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
+> +long ftruncate_file(struct file *file, loff_t length, int small)
+>  {
+>  	struct inode *inode;
+>  	struct dentry *dentry;
+> -	struct fd f;
+>  	int error;
+>  
+> -	error = -EINVAL;
+> -	if (length < 0)
+> -		goto out;
+> -	error = -EBADF;
+> -	f = fdget(fd);
+> -	if (!f.file)
+> -		goto out;
+> -
+>  	/* explicitly opened as large or we are on 64-bit box */
+> -	if (f.file->f_flags & O_LARGEFILE)
+> +	if (file->f_flags & O_LARGEFILE)
+>  		small = 0;
+>  
+> -	dentry = f.file->f_path.dentry;
+> +	dentry = file->f_path.dentry;
+>  	inode = dentry->d_inode;
+>  	error = -EINVAL;
+> -	if (!S_ISREG(inode->i_mode) || !(f.file->f_mode & FMODE_WRITE))
+> -		goto out_putf;
+> +	if (!S_ISREG(inode->i_mode) || !(file->f_mode & FMODE_WRITE))
+> +		return error;
+>  
+>  	error = -EINVAL;
+>  	/* Cannot ftruncate over 2^31 bytes without large file support */
+>  	if (small && length > MAX_NON_LFS)
+> -		goto out_putf;
+> +		return error;
+>  
+>  	error = -EPERM;
+>  	/* Check IS_APPEND on real upper inode */
+> -	if (IS_APPEND(file_inode(f.file)))
+> -		goto out_putf;
+> +	if (IS_APPEND(file_inode(file)))
+> +		return error;
+>  	sb_start_write(inode->i_sb);
+> -	error = security_file_truncate(f.file);
+> +	error = security_file_truncate(file);
+>  	if (!error)
+> -		error = do_truncate(file_mnt_idmap(f.file), dentry, length,
+> -				    ATTR_MTIME | ATTR_CTIME, f.file);
+> +		error = do_truncate(file_mnt_idmap(file), dentry, length,
+> +				    ATTR_MTIME | ATTR_CTIME, file);
+>  	sb_end_write(inode->i_sb);
+> -out_putf:
 > +
->         /* default to O_CLOEXEC, disable if IORING_FIXED_FD_NO_CLOEXEC is=
- set */
->         ifi =3D io_kiocb_to_cmd(req, struct io_fixed_install);
->         ifi->o_flags =3D O_CLOEXEC;
-> --
-> 2.43.0
+> +  return error;
 
---=20
-paul-moore.com
+White space issue here with 'error'. And see below comments for error
+assignment in general.
+
+> +long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
+> +{
+> +	struct fd f;
+> +	int error;
+> +
+> +	error = -EINVAL;
+> +	if (length < 0)
+> +		goto out;
+> +	error = -EBADF;
+> +	f = fdget(fd);
+> +	if (!f.file)
+> +		goto out;
+> +
+> +	error = ftruncate_file(f.file, length, small);
+> +
+>  	fdput(f);
+>  out:
+>  	return error;
+
+No reason for the goto's here anymore, just do:
+
+long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
+{
+	struct fd f;
+	int error;
+
+	if (length < 0)
+		return -EINVAL;
+	error = -EBADF;
+	f = fdget(fd);
+	if (f.file)
+		error = ftruncate_file(f.file, length, small);
+	fdput(f);
+	return error;
+}
+
+Same for the above helper, save error for when you actually need it
+rather than do:
+
+	error = -EFOO;
+	if (some_error)
+		return error;
+
+That only really makes sense when you assign error through eg calling a
+function, not when you know what error you are returning. Makes it
+easier to read the code as well.
+
+-- 
+Jens Axboe
+
 

@@ -1,230 +1,148 @@
-Return-Path: <io-uring+bounces-463-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-464-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7019839AF4
-	for <lists+io-uring@lfdr.de>; Tue, 23 Jan 2024 22:20:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DBD839B85
+	for <lists+io-uring@lfdr.de>; Tue, 23 Jan 2024 22:55:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8AE1F2C18E
-	for <lists+io-uring@lfdr.de>; Tue, 23 Jan 2024 21:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5048A1F22660
+	for <lists+io-uring@lfdr.de>; Tue, 23 Jan 2024 21:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076802C682;
-	Tue, 23 Jan 2024 21:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA3F47F5D;
+	Tue, 23 Jan 2024 21:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCbt2fHn"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eWR5/Ay1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339A733CD2
-	for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 21:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CC745C12
+	for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 21:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706044801; cv=none; b=Ajc0hv44o57TcMN9MpbLlnSGcSXLbbM2Bs1Wm2UGT0rcneB2IwVeQ7PLim0b4BG4LLOF32yo0+H28M9N1iiTRhgGOpdCh/2apfe0s+77tOXDcbtFy7RIzgZoVRpA7ln3k8jt1SpWP4AJPf2x8PuWKtBNObqZjKGzXBPQAbUYPjQ=
+	t=1706046911; cv=none; b=MICKM1sMQpxg8TsDYFL2gMEMLp63MIiRRDk+W8BW26HOYrzHNIX21NR+WEMIGfax/OhaHhRGmBUJyEUysGFW4wN9abgb4eq1VRNfiTjOW4ErIgW3tTfU/bnE9CJ27wcAPHMk9NwVRsfAiy9O2ZTZbxxmC2Ff6tYgZ111HGTp/VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706044801; c=relaxed/simple;
-	bh=07tTn7B3o5+aXkQC1LqDUief03BXynr0E+7U0/WwOdM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JzsC0J7v+ftdonMQ/bT6mdZIr97ec8G9lnv4jNO7XFZCqGvmAw7ms/JKk8vPrID1k7KPgF05rP+3ngqg7vpi2Yg8y84K/k/HWIQh971hwvVDHMcwnG9t1JKDrNmVCxJzyKWYGNsVv/H1kLWgaAYR+fI27QfMpGcp/9IY4KH0P3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCbt2fHn; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40e9ef9853bso27368255e9.1
-        for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 13:19:59 -0800 (PST)
+	s=arc-20240116; t=1706046911; c=relaxed/simple;
+	bh=C7CYzH+xBSmnm8JMUI0gWqSLf8ydb7G+sBRYyUFAD78=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FmwyDTrOQtZERI+kwBaVVk2IK4Uwh0+u5f+arR1kd1hUnnXm0BaToF8fhzn3oe80VreIKjLkb+qW4PCEwL8iImB4nU2NAkTNnEEn2Rp0B9O9NCfUU2oc+fzT36nVAKdzgnuS+q5ryRC94IpjRRfTgo1Wf8fu78xcolA297ZsTj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eWR5/Ay1; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4bd563d0222so108711e0c.0
+        for <io-uring@vger.kernel.org>; Tue, 23 Jan 2024 13:55:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706044798; x=1706649598; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uZyvqlbqmxu9uUwpC7laVCoL48NulKhLKqFfOmt5yN8=;
-        b=NCbt2fHn5ooHOGhR9OdvW8ue7/fQBXNPgb3g4bvE+i4316knbjgksdSktD2hA0DCDE
-         QuS+m3pmbBu1nW+LfvoeDqUgmdXF0sIAz6ODg7VZrm5cpPPV45elDO2B9ldaRChzgEtw
-         MqGOr6bob1uHMVhAcScemnPpah+71PURF4dsmds13pqZNbwSUQ8BHUzU9SrO7UpEaiGf
-         aT1cooMg3hWKKGcLYzAYV1wqk213OsW1ZU2QpX66fMHIU1A5ISIvfwfbxejxeR9ephe3
-         Af3MJa06K9SP1Hup3S+M1ybXXdNk1TM0bcZdsXiPK7gl19QW217eFugGh0e7Qeu8ZBHM
-         FdWQ==
+        d=paul-moore.com; s=google; t=1706046908; x=1706651708; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b+TXC7Cl8RW7R6tVYRCFEo3eVAAYyrP4TFYZ+SMkqWQ=;
+        b=eWR5/Ay14RJdtVv6QdpEOg7cxHHS3y/P4aDE89cJLdwp77p5F20D5pxXPmAfsX+Ip0
+         4AdS0rsbrpSOkhQsdLlqUHyXA1TdUGMUfVP/YzhZVAJRWDZhwZ76eyZFsd2AuIrAnoeW
+         JSAyzmdaD3zZzMYNKGYqSjjZjaivI7xu09AophSonK0o6kdn4JAUmiYfWZ7y7pBTyI90
+         2e68JYS3SuRCvD7qUpGKFs/WmsHMQTOocHhqLOnlJFEu1e3XpZ6tHomSNMj8Hec2+Lwt
+         hkJmJHWIp/hwttxz1GWhrMpVE0pzmHEDEVzK5UokZiBu9MW8Eh30zUjd8C5F0RvjA7oC
+         GLXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706044798; x=1706649598;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uZyvqlbqmxu9uUwpC7laVCoL48NulKhLKqFfOmt5yN8=;
-        b=r/lgqGTQ+0DSljVlKLtFnxrI9KooqEwJDbCA4eSl0nBhOujDDpoj6/lYm1k74YM7hw
-         FxhauJHJy7Q3bt/x4sU+1+ZWSDugk9OKp6bN6l2PH3XRWd0vhiMgusvAFVeAaoG6msPk
-         e6n9SAIvn5wGkZ3WkIpaguOE17bk05QtZ5qmUwYP1CjbIVxgXOy2FgBF3nZFX3esjnx2
-         Znls62iC0qxptLoBayfDaqCK67+6xbNC7BtrBawl+2TGlVMXIvDJX87zjCv6+iWymAIS
-         EgyncrElLC0d0T64qW726DFdk83QJCCHSutrxa6t8g9r46xeHrjn6p96ryZ+qZ1Q2DgP
-         u/3w==
-X-Gm-Message-State: AOJu0YxemIBiYmi8GXqsJe16Wa5JUC0WVRtJRmTA+dEgApoGMVPseL9m
-	Jabf5rZ9BfxSjFtA+Zbi6mIrwlLoOcflKUpvZAjAmkLj0mYZzow5
-X-Google-Smtp-Source: AGHT+IFpFT7XFSN6DsgdNJ1htI3JwNmh8hl3EAG1gqUADlT5GJvn0iTUNtJXUdbwnNiRYGxOckgpvg==
-X-Received: by 2002:a05:600c:4c0a:b0:40e:b908:3100 with SMTP id d10-20020a05600c4c0a00b0040eb9083100mr102469wmp.107.1706044798053;
-        Tue, 23 Jan 2024 13:19:58 -0800 (PST)
-Received: from localhost.localdomain ([147.235.201.119])
-        by smtp.gmail.com with ESMTPSA id u17-20020a05600c19d100b0040e47dc2e8fsm43512169wmq.6.2024.01.23.13.19.57
+        d=1e100.net; s=20230601; t=1706046908; x=1706651708;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b+TXC7Cl8RW7R6tVYRCFEo3eVAAYyrP4TFYZ+SMkqWQ=;
+        b=cGD9MpbyuIrb+eFJBC+0D52c20Ip6R6ACfbvLh740CVW1VXDfsYcmfrDJd4crAj5Z8
+         jHPJlWq5l1ZrkiR+xKlucJmUdIj17SsTKVCCP2KI9m3D7Bh7FQJCUxU/GFmi1EsjoyXy
+         DxalxGK+dj10fikw7dg+xGpXkIQiOjq9fmetLZFnkg3yLEP60fkiO1y4ejOD4LqFBphu
+         RyE+tk30ietyftIB2TapocAMztviTumFtXzUM3PQrc/eZ3hC7xTiMrvSSE/8DBNZ2XK/
+         ciDhoz6LNgaGnzGDX+pJeruhUqCIFzsRrrbfmzfzS6UUlw9L5grsHAf7ya56lnbKh+yJ
+         D1QQ==
+X-Gm-Message-State: AOJu0Yw4ydqhrQFIucE5SLKMIqc0mhaIyAWPOXiQPxBZ/z2CbK57l+//
+	U4vrNLG4OPYZHAdpPq/YY9vnC1lL5bH60h2xJwb+5hPCj7KmnRxAcH8y5Cq8ffTtC1pw2jm1wI0
+	=
+X-Google-Smtp-Source: AGHT+IHENJcaOYD/BjnI4SGPEEQJpeJSGQ80ajTMAxZDFVY5z1j4z/4pPo4EsxQlBeCXpjC5Ohq6Iw==
+X-Received: by 2002:a05:6122:46a9:b0:4bd:5cd7:ed61 with SMTP id di41-20020a05612246a900b004bd5cd7ed61mr290859vkb.13.1706046908257;
+        Tue, 23 Jan 2024 13:55:08 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id sq9-20020a05620a4ac900b0078322b61e88sm3446592qkn.78.2024.01.23.13.55.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jan 2024 13:19:57 -0800 (PST)
-From: Tony Solomonik <tony.solomonik@gmail.com>
-To: axboe@kernel.dk
-Cc: krisman@suse.de,
-	leitao@debian.org,
-	io-uring@vger.kernel.org,
-	asml.silence@gmail.com,
-	Tony Solomonik <tony.solomonik@gmail.com>
-Subject: [PATCH v3 2/2] io_uring: add support for ftruncate
-Date: Tue, 23 Jan 2024 23:19:52 +0200
-Message-Id: <20240123211952.32342-3-tony.solomonik@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240123211952.32342-1-tony.solomonik@gmail.com>
-References: <20240123113333.79503-2-tony.solomonik@gmail.com>
- <20240123211952.32342-1-tony.solomonik@gmail.com>
+        Tue, 23 Jan 2024 13:55:08 -0800 (PST)
+From: Paul Moore <paul@paul-moore.com>
+To: io-uring@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	audit@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: enable audit and restrict cred override for IORING_OP_FIXED_FD_INSTALL
+Date: Tue, 23 Jan 2024 16:55:02 -0500
+Message-ID: <20240123215501.289566-2-paul@paul-moore.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2489; i=paul@paul-moore.com; h=from:subject; bh=C7CYzH+xBSmnm8JMUI0gWqSLf8ydb7G+sBRYyUFAD78=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBlsDW1WF6BaX5WOEzusgRno3YFlZoCzyanmrpVE hajSmWN3XyJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZbA1tQAKCRDqIPLalzeJ c70tD/9E+YEUzwQqLqdfNoOjtAonOXUS+ug1BCbir99Tq7hcZRiFnMtCUE+eQWUU9ZhJ0Mr4FER ii2b3PHs2yfF6BEJ2LOmItz4Z19z2xZBKetiaid/YwTZt5BRbe/Toz9rN8mzhWBIdJv96PidL0Y BdBCXjps8TS0Ya8AFJO4wXs2AfbjqQezBSS+t1HLn+lNj3QRdT6lEDIESzOb30tm9fcHWmRj/ak EhvNUqSMZ1Txlx9jValm+9/lAdyucwfBFw1+DmDi9Ubx7v8rmHXGG0yy2R6Ehnf+aZkQDVh8IcD 0rIhLjpk0pVquJMo7Ae77aPyFoAv1w8zi8To9vOq5bOaKpHwxQoKU5RYVavjZs7PMN0DvIoZNmd 1yhfFvp1YlKrx/w07a4yV4Yde708KjBOE1NUuCBXjspglvKfxzJGy8RRLhD03EcPGv6gJgQ9A86 4xjHeI5U/t70BKwnqC9kRl13BWSMdwJPFAzfcUJLBp2sInpbpxZ16kQG7Op7snyCprNHAcqME5c JDtQb3JrZr32wnfIQ5iPfAAKFtLl+JsQ5D4EW9iZx2Y4yalWBHY1lwrpDR+KAQo1tfxvcP6DNfD i5/dmVPvqcupwHLdxwZYqu84iXO50IX5PVPpD7QNlThfI1vhnv/Sh3ls0qk8brKqgZX0pQlQ8oa 8GFfeccE+6c1lSA==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
 Content-Transfer-Encoding: 8bit
 
-Libraries that are built on io_uring currently need to maintain a
-separate thread pool implementation when they want to truncate a file.
+We need to correct some aspects of the IORING_OP_FIXED_FD_INSTALL
+command to take into account the security implications of making an
+io_uring-private file descriptor generally accessible to a userspace
+task.
 
-Signed-off-by: Tony Solomonik <tony.solomonik@gmail.com>
+The first change in this patch is to enable auditing of the FD_INSTALL
+operation as installing a file descriptor into a task's file descriptor
+table is a security relevant operation and something that admins/users
+may want to audit.
+
+The second change is to disable the io_uring credential override
+functionality, also known as io_uring "personalities", in the
+FD_INSTALL command.  The credential override in FD_INSTALL is
+particularly problematic as it affects the credentials used in the
+security_file_receive() LSM hook.  If a task were to request a
+credential override via REQ_F_CREDS on a FD_INSTALL operation, the LSM
+would incorrectly check to see if the overridden credentials of the
+io_uring were able to "receive" the file as opposed to the task's
+credentials.  After discussions upstream, it's difficult to imagine a
+use case where we would want to allow a credential override on a
+FD_INSTALL operation so we are simply going to block REQ_F_CREDS on
+IORING_OP_FIXED_FD_INSTALL operations.
+
+Fixes: dc18b89ab113 ("io_uring/openclose: add support for IORING_OP_FIXED_FD_INSTALL")
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- include/uapi/linux/io_uring.h |  1 +
- io_uring/Makefile             |  2 +-
- io_uring/opdef.c              |  9 +++++++
- io_uring/truncate.c           | 48 +++++++++++++++++++++++++++++++++++
- io_uring/truncate.h           |  4 +++
- 5 files changed, 63 insertions(+), 1 deletion(-)
- create mode 100644 io_uring/truncate.c
- create mode 100644 io_uring/truncate.h
+ io_uring/opdef.c     | 1 -
+ io_uring/openclose.c | 4 ++++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index f1c16f817742..be682e000c94 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -253,6 +253,7 @@ enum io_uring_op {
- 	IORING_OP_FUTEX_WAIT,
- 	IORING_OP_FUTEX_WAKE,
- 	IORING_OP_FUTEX_WAITV,
-+	IORING_OP_FTRUNCATE,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-diff --git a/io_uring/Makefile b/io_uring/Makefile
-index e5be47e4fc3b..4f8ed6530a29 100644
---- a/io_uring/Makefile
-+++ b/io_uring/Makefile
-@@ -8,6 +8,6 @@ obj-$(CONFIG_IO_URING)		+= io_uring.o xattr.o nop.o fs.o splice.o \
- 					statx.o net.o msg_ring.o timeout.o \
- 					sqpoll.o fdinfo.o tctx.o poll.o \
- 					cancel.o kbuf.o rsrc.o rw.o opdef.o \
--					notif.o waitid.o
-+					notif.o waitid.o truncate.o
- obj-$(CONFIG_IO_WQ)		+= io-wq.o
- obj-$(CONFIG_FUTEX)		+= futex.o
 diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 799db44283c7..7830d087d03f 100644
+index 6705634e5f52..b1ee3a9c3807 100644
 --- a/io_uring/opdef.c
 +++ b/io_uring/opdef.c
-@@ -35,6 +35,7 @@
- #include "rw.h"
- #include "waitid.h"
- #include "futex.h"
-+#include "truncate.h"
- 
- static int io_no_issue(struct io_kiocb *req, unsigned int issue_flags)
- {
-@@ -469,6 +470,11 @@ const struct io_issue_def io_issue_defs[] = {
- 		.prep			= io_eopnotsupp_prep,
- #endif
+@@ -471,7 +471,6 @@ const struct io_issue_def io_issue_defs[] = {
  	},
-+	[IORING_OP_FTRUNCATE] = {
-+		.needs_file		= 1,
-+		.prep			= io_ftruncate_prep,
-+		.issue			= io_ftruncate,
-+	},
- };
- 
- const struct io_cold_def io_cold_defs[] = {
-@@ -704,6 +710,9 @@ const struct io_cold_def io_cold_defs[] = {
- 	[IORING_OP_FUTEX_WAITV] = {
- 		.name			= "FUTEX_WAITV",
+ 	[IORING_OP_FIXED_FD_INSTALL] = {
+ 		.needs_file		= 1,
+-		.audit_skip		= 1,
+ 		.prep			= io_install_fixed_fd_prep,
+ 		.issue			= io_install_fixed_fd,
  	},
-+	[IORING_OP_FTRUNCATE] = {
-+		.name			= "FTRUNCATE",
-+	},
- };
+diff --git a/io_uring/openclose.c b/io_uring/openclose.c
+index 0fe0dd305546..e3357dfa14ca 100644
+--- a/io_uring/openclose.c
++++ b/io_uring/openclose.c
+@@ -277,6 +277,10 @@ int io_install_fixed_fd_prep(struct io_kiocb *req, const struct io_uring_sqe *sq
+ 	if (flags & ~IORING_FIXED_FD_NO_CLOEXEC)
+ 		return -EINVAL;
  
- const char *io_uring_get_opcode(u8 opcode)
-diff --git a/io_uring/truncate.c b/io_uring/truncate.c
-new file mode 100644
-index 000000000000..4b48376149f9
---- /dev/null
-+++ b/io_uring/truncate.c
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <linux/fs.h>
-+#include <linux/file.h>
-+#include <linux/mm.h>
-+#include <linux/slab.h>
-+#include <linux/syscalls.h>
-+#include <linux/io_uring.h>
++	/* ensure the task's creds are used when installing/receiving fds */
++	if (req->flags & REQ_F_CREDS)
++		return -EPERM;
 +
-+#include <uapi/linux/io_uring.h>
-+
-+#include "../fs/internal.h"
-+
-+#include "io_uring.h"
-+#include "truncate.h"
-+
-+struct io_ftrunc {
-+	struct file			*file;
-+	loff_t				len;
-+};
-+
-+int io_ftruncate_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_ftrunc *ft = io_kiocb_to_cmd(req, struct io_ftrunc);
-+
-+	if (sqe->rw_flags || sqe->addr || sqe->len || sqe->buf_index ||
-+	    sqe->splice_fd_in || sqe->addr3)
-+		return -EINVAL;
-+
-+	ft->len = READ_ONCE(sqe->off);
-+
-+	req->flags |= REQ_F_FORCE_ASYNC;
-+	return 0;
-+}
-+
-+int io_ftruncate(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_ftrunc *ft = io_kiocb_to_cmd(req, struct io_ftrunc);
-+	int ret;
-+
-+	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
-+
-+	ret = ftruncate_file(req->file, ft->len, 0);
-+
-+	io_req_set_res(req, ret, 0);
-+	return IOU_OK;
-+}
-diff --git a/io_uring/truncate.h b/io_uring/truncate.h
-new file mode 100644
-index 000000000000..ec088293a478
---- /dev/null
-+++ b/io_uring/truncate.h
-@@ -0,0 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+int io_ftruncate_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-+int io_ftruncate(struct io_kiocb *req, unsigned int issue_flags);
+ 	/* default to O_CLOEXEC, disable if IORING_FIXED_FD_NO_CLOEXEC is set */
+ 	ifi = io_kiocb_to_cmd(req, struct io_fixed_install);
+ 	ifi->o_flags = O_CLOEXEC;
 -- 
-2.34.1
+2.43.0
 
 

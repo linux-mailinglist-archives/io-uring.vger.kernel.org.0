@@ -1,174 +1,176 @@
-Return-Path: <io-uring+bounces-489-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-490-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324E783F023
-	for <lists+io-uring@lfdr.de>; Sat, 27 Jan 2024 22:11:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE31C83FEFA
+	for <lists+io-uring@lfdr.de>; Mon, 29 Jan 2024 08:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 827261F22286
-	for <lists+io-uring@lfdr.de>; Sat, 27 Jan 2024 21:11:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E944A1C231AF
+	for <lists+io-uring@lfdr.de>; Mon, 29 Jan 2024 07:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0270B677;
-	Sat, 27 Jan 2024 21:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E682EB00;
+	Mon, 29 Jan 2024 07:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NNzcV+RS"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="E9vIl4BU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B072A1A71F
-	for <io-uring@vger.kernel.org>; Sat, 27 Jan 2024 21:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0F73C460
+	for <io-uring@vger.kernel.org>; Mon, 29 Jan 2024 07:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706389892; cv=none; b=BFcNa4AwdjrTALDbDwbUztI4CJxJ3mrPPOmp7lUxf2fUeXzjHtB6etee9T7hlG9OUjXX4UBND+Kvg6Hv/k4xF1MLPLOhtw6FJAICRYr2Ntph064qwSqmzwTetorI2lCppGETq5YCDT5MVw+O5Ywz6GDsHFAw5TIuiiXkC8/P3PU=
+	t=1706513239; cv=none; b=c4mnz3z9ffAtSIOiFvZjb3jl5W0Z/ySaph+/F8qkCD8vL+EtuH59ViRBUFYke0olhcGdbPPUvkhV+l+ZtDMkxUx1GPGyxSGxt3KjSqPM5ctlcID6X+uvYdfwMTef5cLXwTc8e7r/40gvrme/kr6VHGHH6jVm9pXojw+CUXxXyzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706389892; c=relaxed/simple;
-	bh=9zTwJy3/l3BB3jP0VtyQyw5AyuAelQt9Lj/ymYhezEw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=cK1qrHkbDu/2i9o8nTZ+Ncppn75aD18iqgpgMiYGdG3UXvKzAXpYT5Lal/VKTVW9cyp67yiCOfFGezKAcEulAgRcprN5P6oYcyx2syVheLiryoyr5VFPRspmw4WhPFBvzkXnR2vi/RfQWeglW3vZE9v+ye65+Hmty/tBR/+XEJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NNzcV+RS; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-58962bf3f89so568426a12.0
-        for <io-uring@vger.kernel.org>; Sat, 27 Jan 2024 13:11:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1706389887; x=1706994687; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EGUh2EFpapG7ptxMeypaku+HxyO/+LlIxuN0EZ3dl50=;
-        b=NNzcV+RSHZTeRVTWf3RP7ATb84tz4Jg5sgfq9bESn0yj1BMkjZHuyUqoWptOnrhleq
-         TrDW7JKzh16bBYAJ6GqG02EKcW4ipKrgVd/R2lB9ijtWxp0zW4elLZdE3+vlDGN+jPgQ
-         UD5yNkICen6VrMEDIYrVgKcY4roJ65+tJ1Dn6BQNQbs52KDg7n/bswE1d9XeRJ/9ufQc
-         VBTTgvHPCi3lpDzK+T0v+knA26rkh2WrTnGnW7oiYvQnnxX0WJgGqkMHmKuvij0s80ae
-         ZJ/gJ/gYztrS0i7lBnf9nLp1Bn+n4xZRAUE0JI3ES4wIBZyJjlsPWYs3pRPwqp0DFQEu
-         80GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706389887; x=1706994687;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EGUh2EFpapG7ptxMeypaku+HxyO/+LlIxuN0EZ3dl50=;
-        b=u6l0bW1iqcneaROdUGN6pY43cdIkCjQPCngY8A0GuyCdbRm8kRZU9GSGxYjLv9fqag
-         chtE6oKsGqsDLPxxgKHtRYTotqnJyTIZsKcPOZQDSk0IYQy8PaezuYycISkGg5fOLKja
-         xHRnMBz8SzfoR1LAuaUFRJ8KRfqiJsAbQGTIvZM6vkJuUOiOZdBbWt287b12pAdJ5Ri8
-         habs+9IqW4QizYCbLKYGUG7BIkvBJmPO3Cg0Dr81d0ksoN+Irtx5ZgZXodekAPmyke5f
-         hAtyy4BxgEnLU7RIvIoIPFTRRBZehzufhWv/NG+XsWtPzL2qZM1kp6JbX++/7hM0W2L5
-         8L9w==
-X-Gm-Message-State: AOJu0Yzzfc7jQ7lGsqjJmQqsHCsk5P3WOYT4da2TN3RGkL2/WFdxVAnf
-	j9LB5vdWsdDWeSB/keyZbIUkm79UdoVuJyA03lYsvUYc8f0mDAMOjllx0lMStBZTqcKnhPPGFcs
-	+Wh8=
-X-Google-Smtp-Source: AGHT+IFv2pneshkXor/KsNv/nMM5DiePSKw/lST72foWzopTu8F/e7n87irYPDkXELVTgM885c2i6A==
-X-Received: by 2002:a05:6a21:7886:b0:19c:9df1:e37a with SMTP id bf6-20020a056a21788600b0019c9df1e37amr3215036pzc.0.1706389886767;
-        Sat, 27 Jan 2024 13:11:26 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id l4-20020a639844000000b005d8c164fcfesm364705pgo.69.2024.01.27.13.11.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Jan 2024 13:11:25 -0800 (PST)
-Message-ID: <1ec748fe-040a-42d3-b4fc-336672953bac@kernel.dk>
-Date: Sat, 27 Jan 2024 14:11:25 -0700
+	s=arc-20240116; t=1706513239; c=relaxed/simple;
+	bh=UQg/5njUp9OZkRWZYCC4RzpOoedARfKxs5rcJ9UqsdE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=lMluimo7Gh/Lh5a8zGN5qGnIWdCZ9eojPgS+hvU6DGWX8p7dll32Xeb3FmTE+VIIUzNkhsr0x7HWvrlAEu0/lhXN2iH5xPqdGBw8t6Mc8rW0i4fPufhVq1EXAOcfI52pqnfUjZN3Ri9enAHKyclVDdpMvvTgg9glEQxzPydEuR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=E9vIl4BU; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240129072709epoutp03d8bb90a0509b7aa890ed1fd89ec9fa0e~uwL2S6_-F1535815358epoutp03K
+	for <io-uring@vger.kernel.org>; Mon, 29 Jan 2024 07:27:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240129072709epoutp03d8bb90a0509b7aa890ed1fd89ec9fa0e~uwL2S6_-F1535815358epoutp03K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1706513229;
+	bh=SlQ1IskImIa1p6m1vQ2rqgCrN2OhcIVK0Fav7DA6fWY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=E9vIl4BU/B0LE37zwdoxwMvznp5XhTPdEtVvBHEhQa/M9HzTprBRXnbP/gH3PAvpr
+	 bFnnJtaMfGQIlVpWAyJ6OMMDCkYFlE0dwOkIUal3VV7WmQ7PgR9lTkOhjvQ2sEwQ44
+	 UTEIIILDLAibQIxJpmea+bAgIIGOqS6ZdJoh5smU=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240129072708epcas5p22bcc24d03a515c53b530109181280576~uwL15IV6v1618316183epcas5p2c;
+	Mon, 29 Jan 2024 07:27:08 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4TNfy252S4z4x9Q9; Mon, 29 Jan
+	2024 07:27:06 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	75.11.09672.94357B56; Mon, 29 Jan 2024 16:27:05 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240129072655epcas5p35d140dba2234e1658b7aa40770b93314~uwLpaXhW72948229482epcas5p3J;
+	Mon, 29 Jan 2024 07:26:55 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240129072655epsmtrp2f78420a682b8202b3027a39fbfefe833~uwLpZjuDb0907209072epsmtrp2E;
+	Mon, 29 Jan 2024 07:26:55 +0000 (GMT)
+X-AuditID: b6c32a4b-39fff700000025c8-01-65b75349d03c
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8C.E4.18939.F3357B56; Mon, 29 Jan 2024 16:26:55 +0900 (KST)
+Received: from AHRE124.. (unknown [109.105.118.124]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240129072654epsmtip2bb7a2b9f5aa86d3d4f891e5c5ecf9a1c~uwLoH6Q1u0936709367epsmtip2_;
+	Mon, 29 Jan 2024 07:26:53 +0000 (GMT)
+From: Xiaobing Li <xiaobing.li@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org, kun.dou@samsung.com, peiwei.li@samsung.com,
+	joshi.k@samsung.com, kundan.kumar@samsung.com, wenwen.chen@samsung.com,
+	ruyi.zhang@samsung.com, xiaobing.li@samsung.com
+Subject: Re: Re: [PATCH v7] io_uring: Statistics of the true utilization of
+ sq threads.
+Date: Mon, 29 Jan 2024 15:18:44 +0800
+Message-Id: <20240129071844.317225-1-xiaobing.li@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <8e104175-7388-4930-b6a2-405fb9143a2d@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/rw: ensure poll based multishot read retries
- appropriately
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmpq5n8PZUgyX75S3mrNrGaLH6bj+b
+	xbvWcywWR/+/ZbP41X2X0WLrl6+sFpd3zWGzeLaX0+LL4e/sFmcnfGC1mLplB5NFR8tlRgce
+	j52z7rJ7XD5b6tG3ZRWjx+dNcgEsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW
+	5koKeYm5qbZKLj4Bum6ZOUCHKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKTAr0
+	ihNzi0vz0vXyUkusDA0MjEyBChOyM84tusxc0Mhbcaj5M1MD4xvOLkZODgkBE4lnv7tZuxi5
+	OIQEdjNKTJ/+FMr5xCjROP0VgjOx5z8TTEvb9H4miMRORonm+6/ZIZyXjBI/GvewglSxCWhL
+	XF/XBWaLCAhL7O9oZQEpYhb4yygx4eVvZpCEsECkxIKPM9hAbBYBVYkd59+ygNi8ArYSh/tO
+	s0Ksk5fYf/AsWD0nUPzojelsEDWCEidnPgGrZwaqad46mxlkgYTAX3aJtpOr2SCaXSSuL1/L
+	DmELS7w6vgXKlpL4/G4vVE2xxJGe76wQzQ3AILh9FarIWuLflT1AGziANmhKrN+lDxGWlZh6
+	ah0TxGI+id7fT6DhwiuxYx6MrSqx+tJDFghbWuJ1w2+ouIfEudYbzJDgmgAMrtZ1jBMYFWYh
+	eWgWkodmIaxewMi8ilEytaA4Nz212LTAOC+1HB7Ryfm5mxjB6VXLewfjowcf9A4xMnEwHmKU
+	4GBWEuH9qbk1VYg3JbGyKrUoP76oNCe1+BCjKTDEJzJLiSbnAxN8Xkm8oYmlgYmZmZmJpbGZ
+	oZI47+vWuSlCAumJJanZqakFqUUwfUwcnFINTMpX1Zb3TeCY9nU/i8iCl02/q4/vW/u+5bDB
+	VbNVjBf/XeNb2OzuYWM6VbHYY9YHkR31hl+N0uZ4vzU+3/p138bWMm9zL7Upx7O/mqcrN615
+	vkQrZVZE0lcpjYezivwWybaEzXv75u0VpUWvxIK9V+//cmQpbyXrY/tHkbLbptlk3a0xW5zN
+	2uN7cktHUlJYrPSZzLsnSxdMcf++0d5/810Bzjub2FibWJNu5xhcTmp0jlz8Mrsib+vnJf1+
+	+VppEev9SgIPXrwnvvRYwfIj/Samp+UPSh9PE2GaP0fF4PODeaG2e+NZdkukXXrEevXYDtm/
+	rzxYt0/YZ7fmhHPbz5oz77JO7dLby7iHfXPz9hNKLMUZiYZazEXFiQBrkeYdOAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsWy7bCSvK598PZUgwkTRC3mrNrGaLH6bj+b
+	xbvWcywWR/+/ZbP41X2X0WLrl6+sFpd3zWGzeLaX0+LL4e/sFmcnfGC1mLplB5NFR8tlRgce
+	j52z7rJ7XD5b6tG3ZRWjx+dNcgEsUVw2Kak5mWWpRfp2CVwZ5xZdZi5o5K041PyZqYHxDWcX
+	IyeHhICJRNv0fqYuRi4OIYHtjBIXHq4GcjiAEtISf/6UQ9QIS6z895wdouY5o8SXiUuZQBJs
+	AtoS19d1sYLYIkBF+ztaWUBsZoFOJonXn/VAbGGBcImVB3+A1bMIqErsOP8WrIZXwFbicN9p
+	VogF8hL7D55lBrE5geJHb0xnA7GFBGwkPj3+ygRRLyhxcuYTqPnyEs1bZzNPYBSYhSQ1C0lq
+	ASPTKkbR1ILi3PTc5AJDveLE3OLSvHS95PzcTYzggNcK2sG4bP1fvUOMTByMhxglOJiVRHh/
+	am5NFeJNSaysSi3Kjy8qzUktPsQozcGiJM6rnNOZIiSQnliSmp2aWpBaBJNl4uCUamAKKzUr
+	2LxG877Lba/myD2qyTbvJ83idzdoCZherJC/9P26I2/ZuniLC9ctNdv72Ku5NODrhMC1/zQd
+	diw5w+/mxZvRN0d7tqbV7VNrWW6He+effVIVaX5Z6VGYV+XGY9oJHw5x3n2twrZb+E4rg+Sk
+	XW6bWcLWffJV+Lai0s/1l0HLn+1Nd1+EZWZLvqg9qXZo3sSJW4QnRiRf0e9I+Xms48XepXVi
+	uzkFi6Ny37hN/Px3fXTb1c1x29vNJ1atOKTuMWmROGv/vspF/w0s2n/t/Rxte2LCFtauK1sF
+	DogwCmkvS5HnfHekLCNsDcuGmovxrvPWCIfsjax/5e2b7/PpOMdFxoi592dsuOxuErNTiaU4
+	I9FQi7moOBEA8AX/zecCAAA=
+X-CMS-MailID: 20240129072655epcas5p35d140dba2234e1658b7aa40770b93314
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240129072655epcas5p35d140dba2234e1658b7aa40770b93314
+References: <8e104175-7388-4930-b6a2-405fb9143a2d@kernel.dk>
+	<CGME20240129072655epcas5p35d140dba2234e1658b7aa40770b93314@epcas5p3.samsung.com>
 
-io_read_mshot() always relies on poll triggering retries, and this works
-fine as long as we do a retry per size of the buffer being read. The
-buffer size is given by the size of the buffer(s) in the given buffer
-group ID.
+On 1/18/24 19:34, Jens Axboe wrote:
+>> diff --git a/io_uring/sqpoll.h b/io_uring/sqpoll.h
+>> index 8df37e8c9149..c14c00240443 100644
+>> --- a/io_uring/sqpoll.h
+>> +++ b/io_uring/sqpoll.h
+>> @@ -16,6 +16,7 @@ struct io_sq_data {
+>>  	pid_t			task_pid;
+>>  	pid_t			task_tgid;
+>>  
+>> +	long long			work_time;
+>>  	unsigned long		state;
+>>  	struct completion	exited;
+>>  };
+>
+>Probably just make that an u64.
+>
+>As Pavel mentioned, I think we really need to consider if fdinfo is the
+>appropriate API for this. It's fine if you're running stuff directly and
+>you're just curious, but it's a very cumbersome API in general as you
+>need to know the pid of the task holding the ring, the fd of the ring,
+>and then you can get it as a textual description. If this is something
+>that is deemed useful, would it not make more sense to make it
+>programatically available in addition, or even exclusively?
 
-But if we're reading less than what is available, then we don't always
-get to read everything that is available. For example, if the buffers
-available are 32 bytes and we have 64 bytes to read, then we'll
-correctly read the first 32 bytes and then wait for another poll trigger
-before we attempt the next read. This next poll trigger may never
-happen, in which case we just sit forever and never make progress, or it
-may trigger at some point in the future, and now we're just delivering
-the available data much later than we should have.
+Hi, Jens and Pavel
+sorry for the late reply.
 
-io_read_mshot() could do retries itself, but that is wasteful as we'll
-be going through all of __io_read() again, and most likely in vain.
-Rather than do that, bump our poll reference count and have
-io_poll_check_events() do one more loop and check with vfs_poll() if we
-have more data to read. If we do, io_read_mshot() will get invoked again
-directly and we'll read the next chunk.
+I've tried some other methods, but overall, I haven't found a more suitable 
+method than fdinfo.
+If you think it is troublesome to obtain the PID,  then I can provide
+ a shell script to output the total_time and work_time of all sqpoll threads 
+ to the terminal, so that we do not have to manually obtain the PID of each 
+ thread (the script can be placed in tools/ include/io_uring).
 
-io_poll_multishot_retry() must only get called from inside
-io_poll_issue(), which is our multishot retry handler, as we know we
-already "own" the request at this point.
+eg:
 
-Cc: stable@vger.kernel.org
-Link: https://github.com/axboe/liburing/issues/1041
-Fixes: fc68fcda0491 ("io_uring/rw: add support for IORING_OP_READ_MULTISHOT")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+PID    WorkTime(us)   TotalTime(us)   COMMAND
+9330   1106578        2215321         iou-sqp-9329
+9454   1510658        1715321         iou-sqp-9453
+9478   165785         223219          iou-sqp-9477
+9587   106578         153217          iou-sqp-9586
 
----
-
-Wrote and committed a test case for this as well, find it here:
-
-https://git.kernel.dk/cgit/liburing/commit/?id=a8277668275e9d9bf60aa45622584a6a92039608
-
-diff --git a/io_uring/poll.h b/io_uring/poll.h
-index ff4d5d753387..bfd93e5ed3a7 100644
---- a/io_uring/poll.h
-+++ b/io_uring/poll.h
-@@ -24,6 +24,13 @@ struct async_poll {
- 	struct io_poll		*double_poll;
- };
- 
-+static inline void io_poll_multishot_retry(struct io_kiocb *req,
-+					   unsigned int issue_flags)
-+{
-+	if (issue_flags & IO_URING_F_MULTISHOT)
-+		atomic_inc(&req->poll_refs);
-+}
-+
- int io_poll_add_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_poll_add(struct io_kiocb *req, unsigned int issue_flags);
- 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 118cc9f1cf16..1e2882e144b5 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -18,6 +18,7 @@
- #include "opdef.h"
- #include "kbuf.h"
- #include "rsrc.h"
-+#include "poll.h"
- #include "rw.h"
- 
- struct io_rw {
-@@ -962,8 +963,15 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
- 		if (io_fill_cqe_req_aux(req,
- 					issue_flags & IO_URING_F_COMPLETE_DEFER,
- 					ret, cflags | IORING_CQE_F_MORE)) {
--			if (issue_flags & IO_URING_F_MULTISHOT)
-+			if (issue_flags & IO_URING_F_MULTISHOT) {
-+				/*
-+				 * Force retry, as we might have more data to
-+				 * be read and otherwise it won't get retried
-+				 * until (if ever) another poll is triggered.
-+				 */
-+				io_poll_multishot_retry(req, issue_flags);
- 				return IOU_ISSUE_SKIP_COMPLETE;
-+			}
- 			return -EAGAIN;
- 		}
- 	}
-
--- 
-Jens Axboe
-
+What do you think of this solution?
 

@@ -1,93 +1,77 @@
-Return-Path: <io-uring+bounces-493-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-494-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C0B84117A
-	for <lists+io-uring@lfdr.de>; Mon, 29 Jan 2024 19:00:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA86C841457
+	for <lists+io-uring@lfdr.de>; Mon, 29 Jan 2024 21:31:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7363A28ED5A
-	for <lists+io-uring@lfdr.de>; Mon, 29 Jan 2024 18:00:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD0D91C2410B
+	for <lists+io-uring@lfdr.de>; Mon, 29 Jan 2024 20:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7BE6F066;
-	Mon, 29 Jan 2024 18:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5780312E78;
+	Mon, 29 Jan 2024 20:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="AeVofTpH"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PFCkibL7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12A93F9DB
-	for <io-uring@vger.kernel.org>; Mon, 29 Jan 2024 18:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D5D53AA
+	for <io-uring@vger.kernel.org>; Mon, 29 Jan 2024 20:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706551241; cv=none; b=YU6kZxsdNROVNRcDLCGeCYtilTuGu+d1UKNgQfjKoXjdF9BOjJulAgz1vIHSGaSpSw7MxOVRLszhZX+lATIR9znnUUOvYZQNS//Gl10HFu4prZKOzBIPNg0lCTYG//9BVL7M6qz1dYYycR41AY+aJzibimUCIacmlkUXg4uCDpc=
+	t=1706560234; cv=none; b=GuGHXS1CuhBpHwgIpaD0Fun1LEIFRKCjoY5DwLrmrj90OlBvrt8nk+tC9Kgx6xLsHXokDQoq6j0D3uUrYaq1EN1YW2O6hkmdTfg3HfanS1loioHRTqPLtnHALgrMlB6c4j8ADMCQM7fmFgDIcGAK3I+xMQnjUfiCQVuQL3TzVhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706551241; c=relaxed/simple;
-	bh=+2/eN+UB7DM5N4Kf88sZcovmSGYJHUxZ8t0rDt3dSZE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mY2KtIql5484ECpZg3heX3Mj75GrQVfwNsev/hbfJUX3o4NDeqkQFJNHtOUGqB3pseqmokhT5AIvbl7lEfCeLOL09YwbpDmnDk0Qpb7JzcjFuCc8lh9Qebo2jJfajJPl7s/8Qauo6x7Gqd2iDX00vqF5ODGQMsAm55NAvpsuyWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=AeVofTpH; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D8B123F18A
-	for <io-uring@vger.kernel.org>; Mon, 29 Jan 2024 18:00:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1706551237;
-	bh=z/8e33kWm7ly4Fe64ik4Gfk0k1+G3TvDCuRamGvQ+i8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version;
-	b=AeVofTpHTV1TUeYBpnkSbRp8FxxiRiG+K0ryH7x0jN7ES8JbRsL4Ke2pMqJ3Jencm
-	 Dvtj3Fi7j6KDl5PLmQwB9iB2i2emxPwA8hy8PO+lM1b8oaXu7xHXRe8vaorUoDEeDh
-	 9s2XlgKv9hb7OHNdBcJmHHu/7ViMp0/hkvLDJCIIRABBnhJiyQzIc9S5kBmBvfZs8h
-	 O+Aq+X4FiZvH2g9UEq9ofJ72IzPcWCO+pLftSZ7cdG3GkueUyg9qbsjjU4pm1UCrgf
-	 WunUV8FNpH1Kv/SOejfgFlKsoecRdee9qajAZgXj5oh9Ug7uaEkrXz7oxODgaYg5fm
-	 biablW40YWNDA==
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a2bc664528fso171359966b.3
-        for <io-uring@vger.kernel.org>; Mon, 29 Jan 2024 10:00:37 -0800 (PST)
+	s=arc-20240116; t=1706560234; c=relaxed/simple;
+	bh=rtna5W2mngQDMY5fUo1xg7OtRajWoiov2CUKWbT6QYI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jukPja86roOyLHR9rNrByfSrOpStvl8ykchbVrOpjcYYQj/OYBX4ItfcEVVxZRv7aXTd9kkTWdTOdajMTpb+Xl0GmN5qjtPx9R5FPy6X6r/9DM29KjJxpD9V4NDT+lhphioL9QHJ/Pphl9/gu2BhZjuqH2YKw2dHsbckccvQgIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PFCkibL7; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7beeeb1ba87so49127939f.0
+        for <io-uring@vger.kernel.org>; Mon, 29 Jan 2024 12:30:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1706560229; x=1707165029; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UbwMv5LPvIYdmT3qQloO+hwxsGlCpbQZEopYn0536Ww=;
+        b=PFCkibL7+QjKesCKxxLa15gYnRSRv4cCu4LaiABHlaw1Dn50dds0O5BBgUa9sdCCfT
+         4NihsmDzqksOfoFzHx3uy3NsP0Z8BIpM6B+iaQMOB9UKVgf44G53L7wrQxOSQ3WciI7l
+         ob0Zv4XlOZNeKDdhFEOTBopARknT7hQJH1uhmVvfvuST2hagSnKwCs7v+K8nEcSTFxkG
+         9ydu7exQf/vmqo0VFJjkdRVIQPPccZuxRvCV5vkbBZ0qYD1muq87B4krhBpc1k0LVfsQ
+         XBIfGegnxIU9xOOoYXro1K1d1RsC63OUJV+/qNIU6NASDkmQtJwTKKR6fjg3ZXjGguWW
+         m2LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706551235; x=1707156035;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z/8e33kWm7ly4Fe64ik4Gfk0k1+G3TvDCuRamGvQ+i8=;
-        b=Lb3VyoNNCT4qJLxlcrdoXq/Hkrnq83DbhrqzXsNcK1QI2w3PBS/1GM/5rStYO5dAOK
-         713FSrk5I2IFPIz2VOFl1kB8w7PKviLBcu7+PafreS++9NGQjo0ek61Ygo3K4SSKujEf
-         RM/O2O6B8i74fnN3HXl1pt8kouYL/J6KCkjXuNiGACyzYnn/tVe0UZoq1G13OT0yV4wH
-         bR1UoxZHTPkcjC/IyTEOyJH10PjtQDYSh2pUDu+/Ul9vB3ckf+FJpUi9nnd7nNq4vX+l
-         crqne75etNFQ9Oeu/9Tf8WsgLUgG23EEVuvXCjjgmXUr0feKUMzi49K4lqJiTk6ReC76
-         mJRA==
-X-Gm-Message-State: AOJu0YzzkN8ncJk3HQnBym6Y/Ja2y66TBCcb/8gP65AI50Jtgq0ouKJi
-	OU74Lp8sUts2D8uPMpmxJ/wDpno7N3DMb5+Uc0dY04w+zw8cZz089RVifNQx9ynSiUbI6Fh/RPj
-	6vUu1K/RMhs/UKbPP4KNhbfJy64qG7h1+VtRfhX/mbbM/cVrsxh3TfYy/Zs1U6h/FEpxvxPHK
-X-Received: by 2002:a17:906:480f:b0:a35:91dd:b824 with SMTP id w15-20020a170906480f00b00a3591ddb824mr3549747ejq.56.1706551235619;
-        Mon, 29 Jan 2024 10:00:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHjepICdEjZ9sgpgf/utgdmkB4ffLgrf/oOsuPIdoXPCQXZXk/cnB662HBR3ndXC7rEEqGFOQ==
-X-Received: by 2002:a17:906:480f:b0:a35:91dd:b824 with SMTP id w15-20020a170906480f00b00a3591ddb824mr3549738ejq.56.1706551235336;
-        Mon, 29 Jan 2024 10:00:35 -0800 (PST)
-Received: from localhost.localdomain ([91.64.72.41])
-        by smtp.gmail.com with ESMTPSA id un8-20020a170907cb8800b00a2fb9c0337esm4147500ejc.112.2024.01.29.10.00.34
+        d=1e100.net; s=20230601; t=1706560229; x=1707165029;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UbwMv5LPvIYdmT3qQloO+hwxsGlCpbQZEopYn0536Ww=;
+        b=RqeUvEs43tOFBRud55oBFyJeZSsIme+qMYbAwCsnIpPoT/61chW64iYdMyd1B35FGQ
+         5uF+WucyG8uoKrrczEa48afaXzGDSyHnfWRhTYDHxYK+6urMrmTgPhot203hrNZejv3b
+         veoHKLpuypjt50lQfKOKUTlegwsXMtCBdfuKec/ELZilHCjInuzxzBaoxfSsM2az9Wf4
+         8JUhg6agU4mKpuCBbyvsFLVtuoEdqZf+uj0RbdtVR70qHuXahjlzTl/6iKvjHZIsB0nX
+         ebVsv1E/R2T12bXaCe0NY17rYeZZb8/puchqLIQWzgWI98G+s7m0WFgIGbtBNuEHdntE
+         AcZw==
+X-Gm-Message-State: AOJu0YwoaPNnwoEJJcmTJ/Qa8J41WZ0CAlAZzEDvEbdBsTySVF6xCwCp
+	L7N6LkZoqmQ0NdMIsdWaEJD69qfhS/SFm22VB0NBeZ+B4UK27zULS0p+UXpUk3WJMMAcRHfOfT7
+	yICU=
+X-Google-Smtp-Source: AGHT+IHBpunw9VFXBPzKkoTiOy1o3WcIsxxFSqJJSyunPmJYLFxF1EJ1BLN8p2B1lieF+RWJj84SCA==
+X-Received: by 2002:a6b:f814:0:b0:7bf:4758:2a12 with SMTP id o20-20020a6bf814000000b007bf47582a12mr7197960ioh.0.1706560228818;
+        Mon, 29 Jan 2024 12:30:28 -0800 (PST)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id i8-20020a05663815c800b0046e6a6482d2sm1952510jat.97.2024.01.29.12.30.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jan 2024 10:00:34 -0800 (PST)
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: brauner@kernel.org
-Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	io-uring@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] io_uring: use file_mnt_idmap helper
-Date: Mon, 29 Jan 2024 19:00:24 +0100
-Message-Id: <20240129180024.219766-2-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240129180024.219766-1-aleksandr.mikhalitsyn@canonical.com>
-References: <20240129180024.219766-1-aleksandr.mikhalitsyn@canonical.com>
+        Mon, 29 Jan 2024 12:30:28 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com
+Subject: [PATCHSET 0/4] Limit multishot receive retries
+Date: Mon, 29 Jan 2024 13:23:43 -0700
+Message-ID: <20240129203025.3214152-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -96,35 +80,28 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Let's use file_mnt_idmap() as we do that across the tree.
+Hi,
 
-No functional impact.
+If we have multiple receive multishots pending and one/several/all of
+the clients are flooding us with traffic, then we can retry each
+multishot receive many times as we keep having data available. Some
+quick testing here with 8 clients over a 10gbit link, I saw one client
+do more than 32K retries. This causes an imbalance in how we serve
+traffic like that, with the result being that each client will see
+different throughput.
 
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-Cc: <io-uring@vger.kernel.org>
-Cc: <linux-fsdevel@vger.kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- io_uring/xattr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+1-2 are just prep patches, no functional changes. Patch 3 doesn't do
+anything by itself, but it enables the fix that is in patch 4. That
+patch limits retries to 32, which should be enough to not cause any
+extra overhead, while still allowing other clients to be processed
+fairly.
 
-diff --git a/io_uring/xattr.c b/io_uring/xattr.c
-index e1c810e0b85a..44905b82eea8 100644
---- a/io_uring/xattr.c
-+++ b/io_uring/xattr.c
-@@ -112,7 +112,7 @@ int io_fgetxattr(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
- 
--	ret = do_getxattr(mnt_idmap(req->file->f_path.mnt),
-+	ret = do_getxattr(file_mnt_idmap(req->file),
- 			req->file->f_path.dentry,
- 			&ix->ctx);
- 
+ io_uring/io_uring.h |  8 +++++++-
+ io_uring/net.c      | 49 ++++++++++++++++++++++++++++++++-------------
+ io_uring/poll.c     | 49 ++++++++++++++++++++++++++-------------------
+ 3 files changed, 70 insertions(+), 36 deletions(-)
+
 -- 
-2.34.1
+Jens Axboe
 
 

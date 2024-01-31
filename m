@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-505-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-506-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5085843614
-	for <lists+io-uring@lfdr.de>; Wed, 31 Jan 2024 06:30:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3839D8445FA
+	for <lists+io-uring@lfdr.de>; Wed, 31 Jan 2024 18:22:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13ECF1C213CC
-	for <lists+io-uring@lfdr.de>; Wed, 31 Jan 2024 05:30:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970DB1F2CE68
+	for <lists+io-uring@lfdr.de>; Wed, 31 Jan 2024 17:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124B33D986;
-	Wed, 31 Jan 2024 05:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3DB12C522;
+	Wed, 31 Jan 2024 17:22:25 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BED3D982;
-	Wed, 31 Jan 2024 05:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE72B12BF33;
+	Wed, 31 Jan 2024 17:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706679046; cv=none; b=YksjGU1StC4tmwvhtIUpm6aDDVwsqiVq9RqbCoUO+9LYhDpy4h4hu9wfp5vlzysQzzxSlg1+eYKF0jj9HkhJ3AH8shqV1qOtrw2ulid8WRCszNOSGP6pC1ZLlkde7OFg/XeMd1cGy0vep0uuN9bSssgRdOBa195tFX19N1k9tf4=
+	t=1706721745; cv=none; b=k5mc0DysuB8NYjLAeT2HZ0Jw0tVAHX6nCYFRR5GCXqwOYXO4oKSANLEnu6NBZZbZHnY+GNDfP1huoL0xsdiiY7DKlmqiAOk1yXTKr6T3lBIp0OG85B/ZGhN0wgElKjo0nDY/7iEfoHXt+Mmg2R0LWEYRGyHLE6KrqNTRLR0PF24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706679046; c=relaxed/simple;
-	bh=WE9M/AjBhAp5GzzofAO+voTpnEMOXjDiOIcooPch55Q=;
+	s=arc-20240116; t=1706721745; c=relaxed/simple;
+	bh=AqXzwWxtpW91OYMl9mYz2nM7D1KFNJ/VMZ2r0CPGc3A=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rNsVMPNV3Pr/e5xrSvUDCp8aBpnRLIpHrtEDRis+2WwCTKxOpnJ0qOFf1jWK+a/5ZkShLh0J6it2fD0jNG8FgMzwMyHLgXX23NzRgCA9KcgysxM7ir2SeueYN/0xQ0FZQ7iQKh+RnQoBOPTP3jJtDvBJuvli3CjwTPasw8iuu7Q=
+	 Content-Type:MIME-Version; b=E/fWeQ89c5uDBbcsYYubN8i5j0X0TW+5JPmu16j4VD4XCalbY3a8TZPFuG2ZH1Ipn9K0qjtexTWMmT6gp5GfFbtnqt9Ru45ubcHeBXrMC0e2OtR7SdoxTvcZ1Cb1GlF1NjPoqpkLTBPjBWR3Z/JJUuRtX7ZzC02IbqsTj6+hTo8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=40488 helo=[192.168.1.177])
+Received: from [45.44.224.220] (port=57076 helo=[192.168.1.177])
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1rV3BK-0006RL-0A;
-	Wed, 31 Jan 2024 00:30:42 -0500
-Message-ID: <9a8748183fcecbe44406e93e47c47c1639871bfa.camel@trillion01.com>
+	id 1rVEI1-00029Z-0a;
+	Wed, 31 Jan 2024 12:22:21 -0500
+Message-ID: <45a21ffe4878d77acba01ec43005c80a83f0e31a.camel@trillion01.com>
 Subject: Re: [PATCH v15 0/7] io_uring: add napi busy polling support
 From: Olivier Langlois <olivier@trillion01.com>
 To: Jens Axboe <axboe@kernel.dk>, Stefan Roesch <shr@devkernel.io>, 
 	io-uring@vger.kernel.org, kernel-team@fb.com
 Cc: ammarfaizi2@gnuweeb.org, netdev@vger.kernel.org, kuba@kernel.org
-Date: Wed, 31 Jan 2024 00:30:40 -0500
+Date: Wed, 31 Jan 2024 12:22:20 -0500
 In-Reply-To: <2b238cec-ab1b-4160-8fb0-ad199e1d0306@kernel.dk>
 References: <20230608163839.2891748-1-shr@devkernel.io>
 	 <58bde897e724efd7771229734d8ad2fb58b3ca48.camel@trillion01.com>
@@ -98,12 +98,91 @@ On Tue, 2024-01-30 at 15:59 -0700, Jens Axboe wrote:
 >=20
 > https://git.kernel.dk/cgit/linux/log/?h=3Dio_uring-napi
 >=20
-Hi Jens,
 
-ok thx for the update... Since I am a big user of the io_uring napi
-busy polling, testing the official patchset is definitely something
-that I can do to help...
+test setup:
+-----------
+- kernel 6.7.2 with Jens patchset applied (It did almost work as-is
+except for modifs in io_uring/register.c that was in
+io_uring/io_uring.c in 6.7.2)
+- liburing 2.5 patched with Stefan patch after having carefully make
+sure that IORING_REGISTER_NAPI,IORING_UNREGISTER_NAPI values match the
+ones found in the kernel. (It was originally 26,27 and it is now 27,28)
+- 3 threads each having their own private io_uring ring.
 
-I should be able to report back the result of my testing in few days!
+thread 1:
+- use SQ_POLL kernel thread
+- reads data stream from 15-20 TCP connections
+- enable NAPI busy polling by calling io_uring_register_napi()
+
+[2024-01-31 08:59:55] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 3(fd 43), napi_id:31
+[2024-01-31 08:59:55] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 8(fd 38), napi_id:30
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 10(fd 36), napi_id:25
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 14(fd 32), napi_id:25
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 12(fd 34), napi_id:28
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 2(fd 44), napi_id:31
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 16(fd 30), napi_id:31
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 9(fd 37), napi_id:31
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 20(fd 26), napi_id:31
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 1(fd 45), napi_id:30
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 6(fd 40), napi_id:28
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 13(fd 33), napi_id:25
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 22(fd 22), napi_id:25
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 7(fd 39), napi_id:30
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 18(fd 28), napi_id:28
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 19(fd 27), napi_id:25
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1028
+LWS_CALLBACK_CLIENT_ESTABLISHED client 23(fd 21), napi_id:31
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 4(fd 42), napi_id:31
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 5(fd 41), napi_id:25
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 21(fd 24), napi_id:31
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 17(fd 29), napi_id:30
+[2024-01-31 08:59:56] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 15(fd 31), napi_id:28
+[2024-01-31 08:59:57] INFO WSBASE/client_established 1010
+LWS_CALLBACK_CLIENT_ESTABLISHED client 11(fd 35), napi_id:30
+[2024-01-31 09:00:14] INFO WSBASE/client_established 1031
+LWS_CALLBACK_CLIENT_ESTABLISHED client 24(fd 25), napi_id:30
+
+thread 2:
+- No SQ_POLL
+- reads data stream from 1 TCP socket
+- enable NAPI busy polling by calling io_uring_register_napi()
+
+[2024-01-31 09:01:45] INFO WSBASE/client_established 1031
+LWS_CALLBACK_CLIENT_ESTABLISHED client 25(fd 23), napi_id:31
+
+thread 3:
+- No SQ_POLL
+- No NAPI busy polling
+- read data stream from 1 TCP socket
+
+Outcome:
+--------
+
+I did not measure latency to make sure that NAPI polling was effective
+but I did ensure the stability of running the patchset by letting the
+program run for 5+ hours non stop without experiencing any glitches
+
+Tested-by: Olivier Langlois <olivier@trillion01.com>
 
 

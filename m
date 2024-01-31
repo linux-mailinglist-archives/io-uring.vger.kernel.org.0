@@ -1,116 +1,143 @@
-Return-Path: <io-uring+bounces-508-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-509-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227C68446A6
-	for <lists+io-uring@lfdr.de>; Wed, 31 Jan 2024 19:00:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE01B844818
+	for <lists+io-uring@lfdr.de>; Wed, 31 Jan 2024 20:38:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435041C22202
-	for <lists+io-uring@lfdr.de>; Wed, 31 Jan 2024 17:59:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859BF286233
+	for <lists+io-uring@lfdr.de>; Wed, 31 Jan 2024 19:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCB2131750;
-	Wed, 31 Jan 2024 17:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A2D38DED;
+	Wed, 31 Jan 2024 19:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="X86MzKWc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B6212DD8E;
-	Wed, 31 Jan 2024 17:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234E7F9F4
+	for <io-uring@vger.kernel.org>; Wed, 31 Jan 2024 19:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706723984; cv=none; b=rkLI1hV2Ct0/CuYIR4iMFMXggJcxGQuXo0dxoTB+ZazpGU2HB+FXujnAiPrzwFZY6+7qb9dqK2+IAptaTx/SpZnGEnGgTzBKl5AYB1hjtLgsgun1mC0PSc2bZAtU+QfSkaO4TTWFZsFoUw7OR0y9BLW5XVZ1qNFjNW4VnAtL+do=
+	t=1706729881; cv=none; b=U1LoDB7KTh5UTjUouWkCy+9lecToyM3UzXi9xO7ou89NbHz2bVOFejJ3h6tTVM8hxmlw4D6/+kDuyWiINk502Ep0xnzVB7Rk11fKqe2nj6NmwhH19RhbeAk5/TBvCszYleLDoLOH5mr+ZhTDjdYoap7Nl/v2+olJE3iLY32gnuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706723984; c=relaxed/simple;
-	bh=3xZvj4pissR7l2I5c3L/NGEYziQIJnqDdaA8WC0qc0U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ww3K8/KBDrbXixKO56vn/FdOBpZamJo0GF5bU2p2PQAXpMAleCstyG5cshkbrRVuD7BycVkKLZ+a85i705WhV0oervscPsD2HwvKoQlVo2w4Xs8KqNntp6sTtmDhKVqXDmFp0pa3FR+W7469grWeeN/zAduh23V0MOvSG2946RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=39684 helo=[192.168.1.177])
-	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <olivier@trillion01.com>)
-	id 1rVEs8-00036P-35;
-	Wed, 31 Jan 2024 12:59:40 -0500
-Message-ID: <34560e193660122ea142daa0fbeb381eb7b0eb6d.camel@trillion01.com>
-Subject: Re: [PATCH v15 0/7] io_uring: add napi busy polling support
-From: Olivier Langlois <olivier@trillion01.com>
-To: Jens Axboe <axboe@kernel.dk>, Stefan Roesch <shr@devkernel.io>, 
-	io-uring@vger.kernel.org, kernel-team@fb.com
-Cc: ammarfaizi2@gnuweeb.org, netdev@vger.kernel.org, kuba@kernel.org
-Date: Wed, 31 Jan 2024 12:59:39 -0500
-In-Reply-To: <b6dc538a-01eb-4f87-a9d4-dea17235ff85@kernel.dk>
-References: <20230608163839.2891748-1-shr@devkernel.io>
-	 <58bde897e724efd7771229734d8ad2fb58b3ca48.camel@trillion01.com>
-	 <2b238cec-ab1b-4160-8fb0-ad199e1d0306@kernel.dk>
-	 <45a21ffe4878d77acba01ec43005c80a83f0e31a.camel@trillion01.com>
-	 <b6dc538a-01eb-4f87-a9d4-dea17235ff85@kernel.dk>
-Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
- keydata=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
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.2 
+	s=arc-20240116; t=1706729881; c=relaxed/simple;
+	bh=X2wkaPVviVqyqbfXPgKT/+3E+kdkplDPl2MPVaNo4rE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=abJc4PkxVXsWsewAAKrRP7b5/dRo/ZNeaGS40Wgx4996MavnEj8Ha2179p/+H0z3uqHeVWZZwWv6+OAf4TnKcZspDDXUMROl9XwBeCAEFle7l8K9lnI56oSS+RzR7GrT6oYdLuLE2ZaFrUjLvZJYzkbBsWP0+dea/we/dyHbjvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=X86MzKWc; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6dde65d585bso69897b3a.0
+        for <io-uring@vger.kernel.org>; Wed, 31 Jan 2024 11:37:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1706729879; x=1707334679; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=daqNwhof1b/mE+3RQX194HBSH/1C665llJWyLuttWcw=;
+        b=X86MzKWczOaCXpb1B74wPhMCX62IS9B9uVSpdKOgFtSpVehfSdfKHtZ9AorKYfV1Le
+         RNiBeZaYxQr/QyQIMHrrPU/MEKiNogHK5/V7tnA4ynBSrtF2RqviuL5WZgY2IAP4O4J2
+         feypLTeQC5X81qS4DL8ikESzXJUIe7m6kXdfib2QNK2RKeUf5g1HW08UNMTDSQHxvleT
+         w3scK+6vaYkND9TlsTiMnRLoQEMfT21gxoJxRSSsr4354CgLFUsx4T9fFWkatmjQrnzp
+         CLioZSEJxLP/06E+dPdBtAb45HGd4anlHmXPiYEnBozyWYYZ/2l24WQVgs3utY2950yP
+         nl7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706729879; x=1707334679;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=daqNwhof1b/mE+3RQX194HBSH/1C665llJWyLuttWcw=;
+        b=WeBzfMUdTQII//484kw0yDZ02VzI345t8QhsdnIGmIDW5I7Q+iq1knjL7yRvnSJxwZ
+         qTGzinhOa2mYzhTNXB88KRB4ie3NFp7PmtBZLUwTsPZfbr9OjiKEHHHnbenbIicESDja
+         E9cOvRfunP3k9gs3G6ZZIK7Cg/pqWDcq2t4b2VrUE6YlNsiNB4XT+nk/SIMIIr2sPWnn
+         /IquOvObULhiHme0gyZgg430R2yxLCj7QhsE7o4owLhlgX9OqbGTHtA90DXdsdhdUbQb
+         yaAzPmE8iJDjNNpZ4regcxfbJnQKniZ1r9PvMQJ0QyZgYxMAg4yc4yNopoI6E097eNs0
+         PM1A==
+X-Gm-Message-State: AOJu0YxNE0SVIP09nZbJpXjfk2rThVlijtYgti831T4GU84pGXqNLaJn
+	UAa0BgLCxPPakIfSQIQ9v9tNnmBsJ8DvpTIeq2adNko+KKeN4C/02dgLsqultEhURBmMSiduHSI
+	N
+X-Google-Smtp-Source: AGHT+IHUZqTbNAQBojwLuMcRlAXcH9F3+gbvbHW0xLxrfRAsuVi+Pzx3g+jOGFVt0wlitWe/aCAnWw==
+X-Received: by 2002:a05:6a21:3511:b0:19c:b3e7:fe39 with SMTP id zc17-20020a056a21351100b0019cb3e7fe39mr3181863pzb.0.1706729879015;
+        Wed, 31 Jan 2024 11:37:59 -0800 (PST)
+Received: from localhost (fwdproxy-prn-018.fbsv.net. [2a03:2880:ff:12::face:b00c])
+        by smtp.gmail.com with ESMTPSA id mo14-20020a1709030a8e00b001d8f4c531a4sm5122085plb.70.2024.01.31.11.37.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jan 2024 11:37:58 -0800 (PST)
+From: David Wei <dw@davidwei.uk>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH v1] Add compatibility check for idtype_t
+Date: Wed, 31 Jan 2024 11:37:50 -0800
+Message-Id: <20240131193750.3440432-1-dw@davidwei.uk>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-01-31 at 10:32 -0700, Jens Axboe wrote:
->=20
-> Thanks for testing!
->=20
-> Any chance that you could run some tests with and without NAPI that
-> help
-> validate that it actually works? That part is what I'm most
-> interested
-> in, not too worried about the stability of it as I have scrutinized
-> it
-> pretty close already.
->=20
+io_uring_prep_waitid() requires idtype_t, which is not always defined on
+all platforms.
 
-There is maybe a test that I can perform. The data that I receive is
-timestamped. I have a small test program that checks the age of the
-updates on their reception...
+Add a check for the presence of idtype_t during configure, and if not
+found then add a definition in compat.h.
 
-I would expect that it should be possible to perceive the busy polling
-effect by comparing the average update age with and without the feature
-enabled...
+Signed-off-by: David Wei <dw@davidwei.uk>
+---
+ configure | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-A word of warning... The service that my client is connecting to has
-relocated recently. I used to have an RTT of about 8mSec with it to
-about 400-500 mSec today...
-
-because of the huge RTT, I am unsure that the test is going to be
-conclusive at all...
-
-However, I am also in the process of relocating my client closer to the
-service. If you can wait a week or so, I should able to do that test
-with a RTT < 1 mSec...
-
-Beside that, I could redo the same test that Stefan did with the ping
-client/server setup but would that test add any value to the current
-collective knowledge?
-
-I'll do the update age test when I restart my client and I'll report
-back the result but my expectations aren't very high that it is going
-to be conclusive due to the huge RTT.
+diff --git a/configure b/configure
+index 9d29e20..052920d 100755
+--- a/configure
++++ b/configure
+@@ -414,6 +414,22 @@ if compile_prog "" "" "futexv"; then
+ fi
+ print_config "futex waitv support" "$futexv"
+ 
++##########################################
++# Check idtype_t support
++has_idtype_t="no"
++cat > $TMPC << EOF
++#include <sys/wait.h>
++int main(void)
++{
++  idtype_t v;
++  return 0;
++}
++EOF
++if compile_prog "" "" "idtype_t"; then
++  has_idtype_t="yes"
++fi
++print_config "has_idtype_t" "$has_idtype_t"
++
+ #############################################################################
+ liburing_nolibc="no"
+ if test "$use_libc" != "yes"; then
+@@ -590,6 +606,17 @@ struct futex_waitv {
+ 	uint32_t	__reserved;
+ };
+ 
++EOF
++fi
++
++if test "$has_idtype_t" != "yes"; then
++cat >> $compat_h << EOF
++typedef enum
++{
++  P_ALL,		/* Wait for any child.  */
++  P_PID,		/* Wait for specified process.  */
++  P_PGID		/* Wait for members of process group.  */
++} idtype_t;
+ EOF
+ fi
+ cat >> $compat_h << EOF
+-- 
+2.39.3
 
 

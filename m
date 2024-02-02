@@ -1,143 +1,100 @@
-Return-Path: <io-uring+bounces-515-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-516-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 198DE8472D5
-	for <lists+io-uring@lfdr.de>; Fri,  2 Feb 2024 16:14:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5AF0847524
+	for <lists+io-uring@lfdr.de>; Fri,  2 Feb 2024 17:42:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD9AF1F2CF06
-	for <lists+io-uring@lfdr.de>; Fri,  2 Feb 2024 15:14:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C8F0290BB2
+	for <lists+io-uring@lfdr.de>; Fri,  2 Feb 2024 16:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9211474A9;
-	Fri,  2 Feb 2024 15:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PvKzQCY4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169937CF04;
+	Fri,  2 Feb 2024 16:42:02 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB906145B23
-	for <io-uring@vger.kernel.org>; Fri,  2 Feb 2024 15:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F193A14901E
+	for <io-uring@vger.kernel.org>; Fri,  2 Feb 2024 16:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706886826; cv=none; b=nlUjWP/cYO0xHyDn9nRfYM7l+o1FPb0tsbwSWEwY5AocZR8fiF8NFqPrzSWGZLwelZ8Oj89njuBQP4wI8hJLOjrBDNLP6BABVNJ7fiiqqFvbkbdgF1vtrLal9pm0cO+906nYBMaBG9ikhUO7a6vLTijg1E8F6Ttw1dBXltCuedY=
+	t=1706892122; cv=none; b=SX0M1On4wIR+87+5pDkCixpTw69mNmjaKIGWpCbDnHEz9noUI/JPuZazid2Fj6S1Dsh6JEb7Y3w979ZFUxVD6+NdMrFX9tu+8ssXzEsf0jbQTZqUvZm4LqtPN9LrWFzw2CfDda5ZHsCwOryWLYoZ8JeeYDnvgbJd+UzBCN+BxcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706886826; c=relaxed/simple;
-	bh=pxHskjfEEumtV/lUSeseT6myHcRPuw8/CU7T2UfrYh8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=SujkPcg18SgBXp7YidngB0xUpR5MEsls06Kpo1fBa9hcD7StpvTs/iSOtGnJYb8P6jqDBVy4R6bGcMNIEEYb3KpnlNuGBTftIfCBLgORE2+qlCvpLCQZK7WdcbotdBKnsD51eBwx3NIGKsyBRgBo400yiz7bKEWNGFrtljd36Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PvKzQCY4; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7bff2f6080aso20680739f.1
-        for <io-uring@vger.kernel.org>; Fri, 02 Feb 2024 07:13:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1706886820; x=1707491620; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fhVLkKT/RMNVdr7Qse18Vbg1LpZTKH/TSrUyUfKIQ8I=;
-        b=PvKzQCY4r9rgXHepbu8cMPfCdHW04sOGWL5DVPrGgJJhTbOqmd/aGhymqI0u6U/5Xk
-         g0i6Tusn1wq8JtMI/bh4rIbgalifzt+vqgb0M/raXvol/FBIm/dwhZCxuoAjZK1CGMEg
-         wTa0XFH0d8pW26nE7uWHLro7NkHS9t0W/tdBcfXv7HB6VoowvPecllzYM7Ki8rChfbKg
-         9yXirNYN+veNBhU/6iHcG19tyW61xxHNltc+8Wx052Oq4VEjt3p/H6pnHMw/Rm8U8jGB
-         JcGlxfT+oTC851fQDvP9S372yTq+VxpCu0I6CMTE3wH0SD78ILgVb3ljZUejVJGEYtNd
-         sTSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706886820; x=1707491620;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fhVLkKT/RMNVdr7Qse18Vbg1LpZTKH/TSrUyUfKIQ8I=;
-        b=EYMSVhEHPRzTKBvi1RHvgWCEsDLtQ+Q2nWKSLYiNvXp+a8476SQPQEGVFJsUsF4+Ns
-         iCVwY/QqHGrZRHqBuvft+Lb/e5Y/XbxfeyRalr4MnEr+iMpAu7ovZeI/LcNXchKF7kaZ
-         m0uDQXjTWEFq+6retPcZjQU7XFNxsQavfq1Qpiay5Ttg53ID1ZM4NELTm0zdi4C5Iv/0
-         EtY2Rg/BR2gudGCjT2Jm3vN6fTV6CXd7aRsVdvocP8LM+fqvfjG3TBBI5+1/n9zHcvBL
-         sYLdZ4YbHY54AaTcxV5ajyOFSXOR5dwO0KzN4nNqFClpimIKOgLA2svfG4fLhZV7eyE9
-         IWtw==
-X-Gm-Message-State: AOJu0Yx++t9ItdmBvkfEQgibA23Yg3vMTKTApG/aoGs5mwDH1EpdLKgF
-	an0hvGN6IQFAWYIYCmHVVCBFJqz8b7ereXPKsY2II4VSxu3fD+HMTgNy6NieXFGOc4iuq37Y40u
-	gfOc=
-X-Google-Smtp-Source: AGHT+IHCZunsMhP2KnPv8o9+1UlPzhgfDkgG1lS9e7IuUIPV92lIxe8Xb/zvz/l1TEBjb0GQoVfk5A==
-X-Received: by 2002:a05:6602:886:b0:7bf:356b:7a96 with SMTP id f6-20020a056602088600b007bf356b7a96mr8194624ioz.2.1706886820433;
-        Fri, 02 Feb 2024 07:13:40 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id j16-20020a02a690000000b0046eae1a6315sm504630jam.72.2024.02.02.07.13.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Feb 2024 07:13:39 -0800 (PST)
-Message-ID: <fd1e8ec0-a2c1-4719-a493-479f1d695f66@kernel.dk>
-Date: Fri, 2 Feb 2024 08:13:38 -0700
+	s=arc-20240116; t=1706892122; c=relaxed/simple;
+	bh=xFE8D95posObEqDGYUgMuXIb2kKk4D3lwmL0aKW740M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=C0IBW1R/MGfF6e0I185/Z9T504djpan/rszgXzaUOQ+MA37HaEIZHldm12ghfispzkJlmSCbVZw9SW+ahp96VyHg6AgG9z23lXDcDOl79ixkkBCUDD/HDwQNDhuJnZIkVjd0HO1fPTlpFaa+GDaO19Juu/PVk0gxbfbvti5Grcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=olivierlanglois.net; spf=pass smtp.mailfrom=olivierlanglois.net; arc=none smtp.client-ip=173.209.37.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=olivierlanglois.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=olivierlanglois.net
+Received: from [45.44.224.220] (port=42274 helo=[192.168.1.177])
+	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <olivier@olivierlanglois.net>)
+	id 1rVwbr-0004FC-24;
+	Fri, 02 Feb 2024 11:41:47 -0500
+Message-ID: <d78b0ed1ca8e1ff3a394bac4ae976232486a2931.camel@olivierlanglois.net>
+Subject: Re: [PATCH v9 1/4] liburing: add api to set napi busy poll settings
+From: Olivier Langlois <olivier@olivierlanglois.net>
+To: Stefan Roesch <shr@devkernel.io>, io-uring@vger.kernel.org, 
+	kernel-team@fb.com
+Cc: axboe@kernel.dk, ammarfaizi2@gnuweeb.org
+Date: Fri, 02 Feb 2024 11:41:46 -0500
+In-Reply-To: <20230425182054.2826621-2-shr@devkernel.io>
+References: <20230425182054.2826621-1-shr@devkernel.io>
+	 <20230425182054.2826621-2-shr@devkernel.io>
+Autocrypt: addr=olivier@olivierlanglois.net; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.2 
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.8-rc3
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - olivierlanglois.net
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@olivierlanglois.net
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@olivierlanglois.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Hi Linus,
+On Tue, 2023-04-25 at 11:20 -0700, Stefan Roesch wrote:
+> +
+> +int io_uring_register_napi(struct io_uring *ring, struct
+> io_uring_napi *napi)
+> +{
+> +	return __sys_io_uring_register(ring->ring_fd,
+> +				IORING_REGISTER_NAPI, napi, 0);
+> +}
+> +
+> +int io_uring_unregister_napi(struct io_uring *ring, struct
+> io_uring_napi *napi)
+> +{
+> +	return __sys_io_uring_register(ring->ring_fd,
+> +				IORING_UNREGISTER_NAPI, napi, 0);
+> +}
 
-Fixes that should go into the 6.8 kernel release, and targeted for
-stable as well. There are three parts here:
+my apologies if this is not the latest version of the patch but I think
+that it is...
 
-- Fix for missing retry for read multishot. If we trigger the execution
-  of it and there's more than one buffer to be read, then we don't
-  always read more than the first one. As it's edge triggered, this can
-  lead to stalls.
+nr_args should be 1 to match what __io_uring_register() in the current
+corresponding kernel patch expects:
 
-- Limit inline receive multishot retries for fairness reasons. If we
-  have a very bursty socket receiving data, we still need to ensure we
-  process other requests as well. This is really two minor cleanups,
-  then adding a way for poll reissue to trigger a requeue, and then
-  finally having multishot receive utilize that.
-
-- Fix for a weird corner case for non-multishot receive with MSG_WAITALL,
-  using provided buffers, and setting the length to zero (to let the
-  buffer dictate the receive size).
-
-Please pull!
-
-
-The following changes since commit 16bae3e1377846734ec6b87eee459c0f3551692c:
-
-  io_uring: enable audit and restrict cred override for IORING_OP_FIXED_FD_INSTALL (2024-01-23 15:25:14 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.8-2024-02-01
-
-for you to fetch changes up to 72bd80252feeb3bef8724230ee15d9f7ab541c6e:
-
-  io_uring/net: fix sr->len for IORING_OP_RECV with MSG_WAITALL and buffers (2024-02-01 06:42:36 -0700)
-
-----------------------------------------------------------------
-io_uring-6.8-2024-02-01
-
-----------------------------------------------------------------
-Jens Axboe (6):
-      io_uring/rw: ensure poll based multishot read retries appropriately
-      io_uring/poll: move poll execution helpers higher up
-      io_uring/net: un-indent mshot retry path in io_recv_finish()
-      io_uring/poll: add requeue return code from poll multishot handling
-      io_uring/net: limit inline multishot retries
-      io_uring/net: fix sr->len for IORING_OP_RECV with MSG_WAITALL and buffers
-
- io_uring/io_uring.h |  8 +++++++-
- io_uring/net.c      | 50 ++++++++++++++++++++++++++++++++++++--------------
- io_uring/poll.c     | 49 ++++++++++++++++++++++++++++---------------------
- io_uring/poll.h     |  9 +++++++++
- io_uring/rw.c       | 10 +++++++++-
- 5 files changed, 89 insertions(+), 37 deletions(-)
-
--- 
-Jens Axboe
+https://git.kernel.dk/cgit/linux/commit/?h=3Dio_uring-napi&id=3D787d81d3132=
+aaf4eb4a4a5f24ff949e350e537d0
 
 

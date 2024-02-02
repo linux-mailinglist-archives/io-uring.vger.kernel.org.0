@@ -1,90 +1,79 @@
-Return-Path: <io-uring+bounces-523-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-524-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED94847A76
-	for <lists+io-uring@lfdr.de>; Fri,  2 Feb 2024 21:24:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D329847AA2
+	for <lists+io-uring@lfdr.de>; Fri,  2 Feb 2024 21:43:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71B081C261DC
-	for <lists+io-uring@lfdr.de>; Fri,  2 Feb 2024 20:24:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6049B1C26634
+	for <lists+io-uring@lfdr.de>; Fri,  2 Feb 2024 20:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B8D8062A;
-	Fri,  2 Feb 2024 20:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB0A1754B;
+	Fri,  2 Feb 2024 20:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0PGFcMl"
 X-Original-To: io-uring@vger.kernel.org
-Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C28839E9
-	for <io-uring@vger.kernel.org>; Fri,  2 Feb 2024 20:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2A781725
+	for <io-uring@vger.kernel.org>; Fri,  2 Feb 2024 20:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706905439; cv=none; b=s+tEL+eSDWN7TwVtNMxGIpzUFluxyd8mjk51Qsu05LeEN+UXOXcluvBkJs8mzPkBloEtbqU74E6QR6zZCQiJXJ02I6VVMdQhxra8dV5gc19ZIOgVO3lm2WRaYpYdrEmHr3t3vgzYSY3QBC9uppSRsXy0F0Yg1kPY4mmJnzjhgkk=
+	t=1706906618; cv=none; b=Zpfj7Pby3oI0pEttYTStPEj++bWYKej+Ii7TIHUn4UCFaQeVbeJgv8Y/t5WmDUWyDQt230r/Z+gDjcG2kHGqYZMClE5S3zS6oTQAzs7hYCa82zR3LJyE1HBPPujexeCRrTEoPDZ6WT6AGT4/WKUKe+fImYbPRQw6Hi/gdWbgv4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706905439; c=relaxed/simple;
-	bh=k1JEblvUfr2KIijR75h0aYpo8u70xy32KphljU8WxKg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ExOSWBzN7RKJiiD9Sy3aPg4zJxPDhAhdEpXg31LSJnI9AcyR7ARMBT5CMgbpt+jktaigT7O82aKW/sa+d2GoCKJhbZ4RcVYOE6oElotk0O47UtqzlAeC9CZaEARfIGIyyehGyOMwUbcUF6VEPbvBGRSi1kA+5ePMNjt50cgEvoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=41066 helo=[192.168.1.177])
-	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <olivier@trillion01.com>)
-	id 1rW04q-00042q-2B;
-	Fri, 02 Feb 2024 15:23:56 -0500
-Message-ID: <a6bd8fc18d15bf1be4ccf0a8cd4f5445cd849fa2.camel@trillion01.com>
-Subject: Re: [PATCH v9 1/4] liburing: add api to set napi busy poll settings
-From: Olivier Langlois <olivier@trillion01.com>
+	s=arc-20240116; t=1706906618; c=relaxed/simple;
+	bh=4lNhg9gsa8XtlL90yJ37aSqq1Yf6iTGRo9tARtV/69Y=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HWoNi5xdve/zx6Xyc6OzhEiFd2R6hS4FK7PCiWHn//ZOkUMBxx6LvGjnGXI6MKQ1d0IJlJGjUsrSMvYhOm3beyWj9RChskzG9EjmnlGQJVakO971FDJG76/liqs6qJgFBx2AiUedsJk2++n7jiO122I5YaucFaypmFBdWNly+fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0PGFcMl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 654DAC433F1;
+	Fri,  2 Feb 2024 20:43:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706906618;
+	bh=4lNhg9gsa8XtlL90yJ37aSqq1Yf6iTGRo9tARtV/69Y=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=C0PGFcMlZMgn5xWxdVC8mMeObtT7f1dH83Sbo37fIZ5wthUxVYViXwDVA3Lru640U
+	 iAaOoysbZc0MAMjoer4Pq2Ix6hrRwdKTUPWnEbqWZvGUYA8QkLDnvOl3p0lQl5d7x9
+	 9viJl8BBhbNOcnDRgsa+43OS7KB+aQnyRpbSo4CDA6gHtXmKpii0TquZTRPcagFu/T
+	 wSyk8wmvc7TfL+M1PdxdH79lLdNIb4Wqr3wg9SkRZ8zkQIbg0yD90ML6eGtsh6Cd6p
+	 o72XbpHvhLjRB3G8uSIWD3ceBdJRQgy5YBubv9U8EWdHbEIBQ5rdf4NseW6vkqeFCe
+	 wAZjfIvDWrd7g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 53B9CC04E27;
+	Fri,  2 Feb 2024 20:43:38 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fixes for 6.8-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <fd1e8ec0-a2c1-4719-a493-479f1d695f66@kernel.dk>
+References: <fd1e8ec0-a2c1-4719-a493-479f1d695f66@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <fd1e8ec0-a2c1-4719-a493-479f1d695f66@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.8-2024-02-01
+X-PR-Tracked-Commit-Id: 72bd80252feeb3bef8724230ee15d9f7ab541c6e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 717ca0b8e55eea49c5d71c026eafbe1e64d4b556
+Message-Id: <170690661833.32059.13880888285969571887.pr-tracker-bot@kernel.org>
+Date: Fri, 02 Feb 2024 20:43:38 +0000
 To: Jens Axboe <axboe@kernel.dk>
-Cc: Stefan Roesch <shr@devkernel.io>, io-uring@vger.kernel.org, 
-	kernel-team@fb.com, ammarfaizi2@gnuweeb.org
-Date: Fri, 02 Feb 2024 15:23:55 -0500
-In-Reply-To: <07EEF558-8000-436B-B9BD-0E0BAC40C2C3@kernel.dk>
-References: <3b32446d8b259219d69bff81a6ef51c1ad0b64e3.camel@trillion01.com>
-	 <07EEF558-8000-436B-B9BD-0E0BAC40C2C3@kernel.dk>
-Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
- keydata=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
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.2 
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-On Fri, 2024-02-02 at 13:14 -0700, Jens Axboe wrote:
->=20
-> Ah gotcha, yeah that=E2=80=99s odd and could not ever have worked. I wond=
-er
-> how that was tested=E2=80=A6
->=20
-> I=E2=80=99ll setup a liburing branch as well.
->=20
-It is easy. You omit to check the function return value by telling to
-yourself that it cannot fail...
+The pull request you sent on Fri, 2 Feb 2024 08:13:38 -0700:
 
-I caught my mistake on a second pass code review...
+> git://git.kernel.dk/linux.git tags/io_uring-6.8-2024-02-01
 
-C++ has a very useful [[nodiscard]] attribute that can help to catch
-this simple error... I am not sure if there is something similar to the
-[[nodiscard]] in the ISO C standard...
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/717ca0b8e55eea49c5d71c026eafbe1e64d4b556
 
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 

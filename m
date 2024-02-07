@@ -1,75 +1,75 @@
-Return-Path: <io-uring+bounces-563-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-564-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D5B84C19D
-	for <lists+io-uring@lfdr.de>; Wed,  7 Feb 2024 02:01:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E1A84C24F
+	for <lists+io-uring@lfdr.de>; Wed,  7 Feb 2024 03:15:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1EF5B24190
-	for <lists+io-uring@lfdr.de>; Wed,  7 Feb 2024 01:01:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9D11F2430A
+	for <lists+io-uring@lfdr.de>; Wed,  7 Feb 2024 02:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710E0D2EE;
-	Wed,  7 Feb 2024 01:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1202B1078D;
+	Wed,  7 Feb 2024 02:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GB5KsEMh"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cIWe00lb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961E0D27A
-	for <io-uring@vger.kernel.org>; Wed,  7 Feb 2024 01:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C545DFC08
+	for <io-uring@vger.kernel.org>; Wed,  7 Feb 2024 02:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707267671; cv=none; b=hzYyjIwtf8QuczKeSGW3HmUah8WBy2i9qDyR/s4BpXzZRMLGt+rOzIvnVJygLSMqbamytjv2xtRDVgwybD9RqiPNEiEu+vJp+PgxlUKCpNvlUC91/f8ouPaAuVFj26KLCokt7PiV4wDYdyUOyb3nAIMfcBsbeC+yjcER+Vojz84=
+	t=1707272126; cv=none; b=BvEvHrTzKrprLRtOt4mR9yFe+ZgM7hypLRKRDWtCXUVSQ0PoHivz5YtnUOoymNYd+ZpToD6alcXbh1N0Zd+ViM1gkFSGFxSnIqnTWLNCjjYNjzKo6dr7bGzphPH3C9xETHZaRXtB3Rt48jdBbUsHSinq79kmZR61+6E5MafSxyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707267671; c=relaxed/simple;
-	bh=lsET8Bab0Yx5uv4DoxfYX/+q7mYJhIcxd3i6n1wbJrA=;
+	s=arc-20240116; t=1707272126; c=relaxed/simple;
+	bh=kJzTcej/tuCqBjM69Za/4xC0ysti1cgx6VFSiAqX3bg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AvCgD5qJ0T6NDNNisu21YV/xYREy7XEETUwLyyFeDqe7W0tC7BFqLvsSHQbK/MN0VwHgEFMR4el+aIFOkNqU2zRut9ylDKucA/kVTbg9XWWbP+7bGi8EOO6H34Jx+MmPAkdaKnGq0tcm+0Yg8VXbsxzYHU4KaWVgRJkQQDD3Qhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GB5KsEMh; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40fe03cd1caso515585e9.0
-        for <io-uring@vger.kernel.org>; Tue, 06 Feb 2024 17:01:09 -0800 (PST)
+	 In-Reply-To:Content-Type; b=SR0apIpZLADy4MLL927vW8jR1ISE08XhX6YAovg1FY56oyuzYPEUrJl7GZ1tKzEVKo5+i2IMFbV5nfEQiVTYGOm63y/XsOETwzG9u0Yrh0LLepVo8vSv4MqcihtCXOo7wKn4TqSrVfjOMFgO6h7J9cOWvloHSgaxvC3yZeX2zo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cIWe00lb; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3bc21303a35so74470b6e.0
+        for <io-uring@vger.kernel.org>; Tue, 06 Feb 2024 18:15:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707267668; x=1707872468; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1707272123; x=1707876923; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=g9Pt2eA2YOkzC/MCX309Ky7I2RWMcQdcwQoyx4kQvg8=;
-        b=GB5KsEMhq7hzap6ljveiAkrvavwLUZcyPdXL6L0DF0VF5IT4/7IXASJG9/bUNJmB8s
-         BblRjSw/eIdvLd54NqXxtkhzXE7/CM7tIniz4X0DexjlwnpTfbhCy5LT+z140tw6yzIm
-         vLbeG6EpjvI33QG5ohDqJQef/du/S6aLj5tIg3xW6WW2avF+dAnRR+wnUjwBVYetYRe0
-         ISZ3aS8oPmX3IVI5ToY+ULIfv3D0/Ji49Z6wS5N98aJyCyImT52WOs3jOAOrYtsSyrWP
-         Gu6ddDZ3hXRbTCPovKk+xIB/vVD2UHOzHepJte4ZWrmrHFLWIbOjExny+mImo2qdohA4
-         VPGw==
+        bh=OKEUVLN4f98aydvB+xzcobBJHyzc7V4a4lyxtTGZYMA=;
+        b=cIWe00lbaYxfQPH8kow21hXUu7j+soIn9lI1cPjOyb3QBQw2ukkDykjFCEEjFjKXNn
+         NhCVgVH4RSNthR4MDQhl4mMeGy6aW1Yur0HFegMv4Jr+Ho8iRLMz7yFJ3LlB8tVDS6js
+         V8kkSDdEwBQhV4brMwElx1HSGsd5lrpmCgS8fywYKeghqxhZhnGDSAD43pEmFhp8m0go
+         n7a66DdMGa2cz2TTtN4DsJY1UtwPgqo1TTbdaq7WlLOIa2Rw5uCYwk+bftXMTlF/CZUK
+         3mj2hDbQGGelOY3bZKYcMizVQyQFBm2g6nauVmD8kwBWAS7jktHM+gqu+LXWwUa651IX
+         WcFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707267668; x=1707872468;
+        d=1e100.net; s=20230601; t=1707272123; x=1707876923;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g9Pt2eA2YOkzC/MCX309Ky7I2RWMcQdcwQoyx4kQvg8=;
-        b=QWPXZEkZiZRLjVz1TsqHXlX2zSbnuoYr080GwY2GziAeXgqTHqbvPMvYdP4Yd+AtR2
-         aZK5ANXod0gPEL7FR3ZKcHg5FDm31fFkdcrJu5jsA1D+w5kuDsggbWWsKKXFXKJdMoXq
-         6+XtjZ+vngOi697E9K8cdHYwRWMoCjgnNBpRy4uOGIkQR2Tqg+un7tI5Thc8WXCehSlV
-         tasQt7ojAjZjWcdPxwRLfQpLnzHneTNaJuuk39rPdfxm4rE3dz4j4QGi0lWpvpu0ym5n
-         ysYcyuryBWxAtGOd1A5lraoFxrdncW4DxB9UgbSsqX4QKJVNkoVhNQ1UVXyHz1qn8HLM
-         OirQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7dzh8OYLkRlO7AVCeP8Vnqho+ARkXYVZQw354NCizlX2ULfAP70/o9Kf0gnideb6PLdXlxCLOuraKRHvQRgeHlZcwvVZsjP0=
-X-Gm-Message-State: AOJu0YxMNARSG75azxvQHBxWF0ODiFnn4bE75WI72vLRbsdD8kaEDNPU
-	bF8wcBWMmbdd7A2Se0h92a7laveMAGRKRTXWk2/AwYNIajjRGdgXkkDdx11F
-X-Google-Smtp-Source: AGHT+IHBxlgEX5PzkDTCXkrtWCovkVYy1d0BYj9hnqPouNJ+62bqYcHjCj7miUD1MKWebNOb4nivVw==
-X-Received: by 2002:a5d:5f4c:0:b0:33a:e739:28bd with SMTP id cm12-20020a5d5f4c000000b0033ae73928bdmr2760833wrb.59.1707267667709;
-        Tue, 06 Feb 2024 17:01:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV5w6Jjg1QdHCR7H1nOyXAV5xbA1gxJ05Y99k1LOZ2iz7+WtLNsz/TI4jdTquPwaVaiUYa3itjPJcNUHzoiKfrEwa1spVGOnPM=
-Received: from [192.168.8.100] ([85.255.236.54])
-        by smtp.gmail.com with ESMTPSA id e3-20020a5d5303000000b0033afe816977sm192884wrv.66.2024.02.06.17.01.07
+        bh=OKEUVLN4f98aydvB+xzcobBJHyzc7V4a4lyxtTGZYMA=;
+        b=gCSzB1p8YcnozW+aOaMrUNlrL/tKDV0rS33nVD0CTgWVbmjEiRlyfX4jsV6gCUFeaf
+         8e+SRX625+BD+lHZYCy+c2k7pACW5uzOSAYWXF9szvk9QVbL+erWDCmxNqlQqCSyKeuj
+         F9mrFq2O/wov/KHM1Kt8030s5yjSPjWe6KlsRcy2dRVmI5+QLF6AsRdM97hRa0ZMlGFK
+         hxJ17/LPoyFi2f6vrcqN4OvIBcbFmkgECOZWmVGN/lltS4POzXcIkFnJEvJl5m++0I90
+         KmOkNyKVhPIPwM7WsdBR5DjY6RbDtFhJ+GPaONmGjLcTFwa/nkhyeEvEwEFA7kxmRZg1
+         a6YA==
+X-Forwarded-Encrypted: i=1; AJvYcCV90dn+LvYf7fMAZQ204H0UI+IgnsMA6msS0d897kaZUqdfwvznqH3fJRhmnZmGIRT+k5xH3BLJVt6QAsJLdZlrcWsQwpy7dxI=
+X-Gm-Message-State: AOJu0YxpZBauL7WVxXJ2brd+oOvW+U2Qag2KN8fk60QTl/g2qugWAmDz
+	5PVjLddO6Zxp4XeupQZwf0Ud6sJ0WUwHmteTuPQJBVVz7zrRxrcC0/ApVwGmRtY=
+X-Google-Smtp-Source: AGHT+IEj9Ar3BXtE8RUf/+hjhIddojJaL4SR8cygwBFk4gmRpbUlQ1O7vJFeJHxH/rBo9mn93FtK9g==
+X-Received: by 2002:a05:6358:7e14:b0:178:9f1d:65ea with SMTP id o20-20020a0563587e1400b001789f1d65eamr5145604rwm.1.1707272122800;
+        Tue, 06 Feb 2024 18:15:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUbs1JZvquTTzZtM8YMyeWDIjQsptIlah2EwoQ6eLN/pdFlayeV0QDHseKZUz1Yb8XShdF515yMPXxmkIj6rSs1mSGX38o5xCg=
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id m8-20020a62f208000000b006ddc71607a7sm188449pfh.191.2024.02.06.18.15.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Feb 2024 17:01:07 -0800 (PST)
-Message-ID: <a0dce2ae-a41b-4fbb-961c-db69d8f1f17f@gmail.com>
-Date: Wed, 7 Feb 2024 00:57:34 +0000
+        Tue, 06 Feb 2024 18:15:22 -0800 (PST)
+Message-ID: <b7ef8fd0-de12-4e5e-bb8c-bfa06b2ec723@kernel.dk>
+Date: Tue, 6 Feb 2024 19:15:21 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -79,165 +79,46 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 2/6] io_uring: add io_file_can_poll() helper
 Content-Language: en-US
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <20240206162402.643507-1-axboe@kernel.dk>
  <20240206162402.643507-3-axboe@kernel.dk>
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240206162402.643507-3-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <a0dce2ae-a41b-4fbb-961c-db69d8f1f17f@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <a0dce2ae-a41b-4fbb-961c-db69d8f1f17f@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2/6/24 16:22, Jens Axboe wrote:
-> This adds a flag to avoid dipping dereferencing file and then f_op
-> to figure out if the file has a poll handler defined or not. We
-> generally call this at least twice for networked workloads.
-
-Sends are not using poll every time. For recv, we touch it
-in io_arm_poll_handler(), which is done only once, and so
-ammortised to 0 for multishots.
-
-Looking at the patch, the second time we might care about is
-in io_ring_buffer_select(), but I'd argue that it shouldn't
-be there in the first place. It's fragile, and I don't see
-why selected buffers would care specifically about polling
-but not asking more generally "can it go true async"? For
-reads you might want to also test FMODE_BUF_RASYNC.
-
-Also note that when called from recv we already know that
-it's pollable, it might be much easier to pass it in as an
-argument.
-
-
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->   include/linux/io_uring_types.h |  3 +++
->   io_uring/io_uring.c            |  2 +-
->   io_uring/io_uring.h            | 12 ++++++++++++
->   io_uring/kbuf.c                |  2 +-
->   io_uring/poll.c                |  2 +-
->   io_uring/rw.c                  |  6 +++---
->   6 files changed, 21 insertions(+), 6 deletions(-)
+On 2/6/24 5:57 PM, Pavel Begunkov wrote:
+> On 2/6/24 16:22, Jens Axboe wrote:
+>> This adds a flag to avoid dipping dereferencing file and then f_op
+>> to figure out if the file has a poll handler defined or not. We
+>> generally call this at least twice for networked workloads.
 > 
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index 5ac18b05d4ee..7f06cee02b58 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -463,6 +463,7 @@ enum io_req_flags {
->   	REQ_F_SUPPORT_NOWAIT_BIT,
->   	REQ_F_ISREG_BIT,
->   	REQ_F_POLL_NO_LAZY_BIT,
-> +	REQ_F_CAN_POLL_BIT,
->   
->   	/* not a real bit, just to check we're not overflowing the space */
->   	__REQ_F_LAST_BIT,
-> @@ -535,6 +536,8 @@ enum {
->   	REQ_F_HASH_LOCKED	= IO_REQ_FLAG(REQ_F_HASH_LOCKED_BIT),
->   	/* don't use lazy poll wake for this request */
->   	REQ_F_POLL_NO_LAZY	= IO_REQ_FLAG(REQ_F_POLL_NO_LAZY_BIT),
-> +	/* file is pollable */
-> +	REQ_F_CAN_POLL		= IO_REQ_FLAG(REQ_F_CAN_POLL_BIT),
->   };
->   
->   typedef void (*io_req_tw_func_t)(struct io_kiocb *req, struct io_tw_state *ts);
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 360a7ee41d3a..d0e06784926f 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -1969,7 +1969,7 @@ void io_wq_submit_work(struct io_wq_work *work)
->   	if (req->flags & REQ_F_FORCE_ASYNC) {
->   		bool opcode_poll = def->pollin || def->pollout;
->   
-> -		if (opcode_poll && file_can_poll(req->file)) {
-> +		if (opcode_poll && io_file_can_poll(req)) {
->   			needs_poll = true;
->   			issue_flags |= IO_URING_F_NONBLOCK;
->   		}
-> diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-> index d5495710c178..2952551fe345 100644
-> --- a/io_uring/io_uring.h
-> +++ b/io_uring/io_uring.h
-> @@ -5,6 +5,7 @@
->   #include <linux/lockdep.h>
->   #include <linux/resume_user_mode.h>
->   #include <linux/kasan.h>
-> +#include <linux/poll.h>
->   #include <linux/io_uring_types.h>
->   #include <uapi/linux/eventpoll.h>
->   #include "io-wq.h"
-> @@ -398,4 +399,15 @@ static inline size_t uring_sqe_size(struct io_ring_ctx *ctx)
->   		return 2 * sizeof(struct io_uring_sqe);
->   	return sizeof(struct io_uring_sqe);
->   }
-> +
-> +static inline bool io_file_can_poll(struct io_kiocb *req)
-> +{
-> +	if (req->flags & REQ_F_CAN_POLL)
-> +		return true;
-> +	if (file_can_poll(req->file)) {
-> +		req->flags |= REQ_F_CAN_POLL;
-> +		return true;
-> +	}
-> +	return false;
-> +}
->   #endif
-> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-> index 18df5a9d2f5e..71880615bb78 100644
-> --- a/io_uring/kbuf.c
-> +++ b/io_uring/kbuf.c
-> @@ -180,7 +180,7 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
->   	req->buf_list = bl;
->   	req->buf_index = buf->bid;
->   
-> -	if (issue_flags & IO_URING_F_UNLOCKED || !file_can_poll(req->file)) {
-> +	if (issue_flags & IO_URING_F_UNLOCKED || !io_file_can_poll(req)) {
->   		/*
->   		 * If we came in unlocked, we have no choice but to consume the
->   		 * buffer here, otherwise nothing ensures that the buffer won't
-> diff --git a/io_uring/poll.c b/io_uring/poll.c
-> index 7513afc7b702..4afec733fef6 100644
-> --- a/io_uring/poll.c
-> +++ b/io_uring/poll.c
-> @@ -727,7 +727,7 @@ int io_arm_poll_handler(struct io_kiocb *req, unsigned issue_flags)
->   
->   	if (!def->pollin && !def->pollout)
->   		return IO_APOLL_ABORTED;
-> -	if (!file_can_poll(req->file))
-> +	if (!io_file_can_poll(req))
->   		return IO_APOLL_ABORTED;
->   	if (!(req->flags & REQ_F_APOLL_MULTISHOT))
->   		mask |= EPOLLONESHOT;
-> diff --git a/io_uring/rw.c b/io_uring/rw.c
-> index d5e79d9bdc71..0fb7a045163a 100644
-> --- a/io_uring/rw.c
-> +++ b/io_uring/rw.c
-> @@ -682,7 +682,7 @@ static bool io_rw_should_retry(struct io_kiocb *req)
->   	 * just use poll if we can, and don't attempt if the fs doesn't
->   	 * support callback based unlocks
->   	 */
-> -	if (file_can_poll(req->file) || !(req->file->f_mode & FMODE_BUF_RASYNC))
-> +	if (io_file_can_poll(req) || !(req->file->f_mode & FMODE_BUF_RASYNC))
->   		return false;
->   
->   	wait->wait.func = io_async_buf_func;
-> @@ -831,7 +831,7 @@ static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
->   		 * If we can poll, just do that. For a vectored read, we'll
->   		 * need to copy state first.
->   		 */
-> -		if (file_can_poll(req->file) && !io_issue_defs[req->opcode].vectored)
-> +		if (io_file_can_poll(req) && !io_issue_defs[req->opcode].vectored)
->   			return -EAGAIN;
->   		/* IOPOLL retry should happen for io-wq threads */
->   		if (!force_nonblock && !(req->ctx->flags & IORING_SETUP_IOPOLL))
-> @@ -930,7 +930,7 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
->   	/*
->   	 * Multishot MUST be used on a pollable file
->   	 */
-> -	if (!file_can_poll(req->file))
-> +	if (!io_file_can_poll(req))
->   		return -EBADFD;
->   
->   	ret = __io_read(req, issue_flags);
+> Sends are not using poll every time. For recv, we touch it
+> in io_arm_poll_handler(), which is done only once, and so
+> ammortised to 0 for multishots.
+
+Correct
+
+> Looking at the patch, the second time we might care about is
+> in io_ring_buffer_select(), but I'd argue that it shouldn't
+> be there in the first place. It's fragile, and I don't see
+> why selected buffers would care specifically about polling
+> but not asking more generally "can it go true async"? For
+> reads you might want to also test FMODE_BUF_RASYNC.
+
+That is indeed the second case that is hit, and I don't think we can
+easily get around that which is the reason for the hint.
+
+> Also note that when called from recv we already know that
+> it's pollable, it might be much easier to pass it in as an
+> argument.
+
+I did think about that, but I don't see a clean way to do it. We could
+potentially do it as an issue flag, but that seems kind of ugly to me.
+Open to suggestions!
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

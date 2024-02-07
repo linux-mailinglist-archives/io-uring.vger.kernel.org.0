@@ -1,74 +1,75 @@
-Return-Path: <io-uring+bounces-566-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-567-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5267384C30D
-	for <lists+io-uring@lfdr.de>; Wed,  7 Feb 2024 04:23:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C37684C327
+	for <lists+io-uring@lfdr.de>; Wed,  7 Feb 2024 04:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD19CB24C50
-	for <lists+io-uring@lfdr.de>; Wed,  7 Feb 2024 03:23:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B13621F287FD
+	for <lists+io-uring@lfdr.de>; Wed,  7 Feb 2024 03:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD4EFC02;
-	Wed,  7 Feb 2024 03:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A446C12E47;
+	Wed,  7 Feb 2024 03:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBMNtwZk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4yUMsDV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4435F9F2
-	for <io-uring@vger.kernel.org>; Wed,  7 Feb 2024 03:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7F112B95
+	for <io-uring@vger.kernel.org>; Wed,  7 Feb 2024 03:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707276210; cv=none; b=aqIv4BCq0pSAM3cLiN5k9xl1UHE/glN2am0NHPmc+9wYUV0YsSFimhx+USi3yNcvpYr/sm7P7YgZuN18gBNe+YcAGZNYmRU8TR2gBPU9K/PJCUHzZWKeA7UNi4Slpgv4pfWHZFVblQS99Jm3U7EDGl4BzivLxVSWB195QpKxwg8=
+	t=1707276866; cv=none; b=g97JJ2764q5Olj8oInv4lTBgLFMs1O8/z/wAd4yU/j4yJgHOn3lfcJE5WoAQEY81wpc82XpGlXjsfFyf/70jPlto4ee+Z/zMRjdTxqClllW74bBx6UKYMfDPyEhZTcXHj90bmpnRwGiYv5a9OYe5VK0WVOLv08KXDlG8Ff9OCok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707276210; c=relaxed/simple;
-	bh=Oth6HKkQrwLt7UwP4SDEzK0wdMmXWiKfX2zv78Aivxg=;
+	s=arc-20240116; t=1707276866; c=relaxed/simple;
+	bh=HDlILBoxDDs23E2exrZYBTitTjxUSh0TBFN2G+wz6mE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=M7i8pZ171Pz9n0KfbVJWaQlB9VuZnTDA2lTiFLTumxq5BJvyaASPlNFgtSBFKhpu/tW3K4Aii3fVT1vqgPVi5ke47lavRCxjl6IBOxs1Amp5jEY99uDKZWne+eGOcMU/InG1qguaTtd/salXC9WpflAUaabOPZ31VnKAQjIT0g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBMNtwZk; arc=none smtp.client-ip=209.85.128.46
+	 In-Reply-To:Content-Type; b=IGcwcpDBL2S/VC+o5l9LmQzAOrDJiOAD7++ChnhwiW1XTjStD+JRxsupB//vzLccXoCpzMqhuO8p1uLRpj8oCiSrMdpHScau1IRxCkK6WE7rhLpL1mYhILTvoud64Hzti3WaDgPE3UC7wpaGgmsBCu35DW/WNBDxpAAsRkRwRxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4yUMsDV; arc=none smtp.client-ip=209.85.219.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-40ffd94a707so1351315e9.1
-        for <io-uring@vger.kernel.org>; Tue, 06 Feb 2024 19:23:28 -0800 (PST)
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6818aa07d81so1319386d6.0
+        for <io-uring@vger.kernel.org>; Tue, 06 Feb 2024 19:34:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707276207; x=1707881007; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=fHWdYEeEFQDrk/Nclzgv1hyODeI8VuV9Fe0i99M8iEA=;
-        b=WBMNtwZkoQglw4wQlz9GcVFS/xGDalwyip8qJ8JSwvn9t/LBd6O1jJoAxLxsQclJmU
-         abJFjcoi3xRToxy4c9PXF0GpTdc6W354n0dQ76Q15PJN98va0unJVR6dWrg3azLsChTu
-         eiSvgy6nd1f3TsvJedsDN5N3VsCFZewRjhz9NFjtbeE5b5yW6dKX0n3zL6BqocW3E/Hr
-         ardrIayCtrvrOc+2Zrwtne4TlU6MtCLGPAhVlBpNb2P4YNoJA1Nrmhjf8P53nLZFUfsK
-         4stQ6MKA0DUmjiVrAV74rMWz7/9FqxXqHEEftf+ezD0vGu2fkJgOVt2PSM47MP58QloO
-         UD2A==
+        d=gmail.com; s=20230601; t=1707276864; x=1707881664; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7kesFfbc6WRTzRs+LJZVj+C4yP6FqqWTYyaOfRw3xwo=;
+        b=b4yUMsDVDo5jBRvrojw7pbrLojHx5XcczvP9iOkOOhMF2v0gNywTDTMZKDJWu0lrDr
+         E6yq4hf0b6t7nqTpk9njDZzQjeUoLokTDc2j+Um6iRGsvi8xPy0uncceoo//8cXkfXZ1
+         sWVLLt8gJsSz5Oq80uhO2WvzHY621JBsNdEsVobjCWlYCl9bBgxTftpDZt2JUAMVjwZ8
+         rEuMQFQEYcy7v1I0WPBAMxb/IDUbe5gzpwzVe2qQ+IY1RYRx7n6zWzTfTgA+KbQo8r3+
+         NBVPQcG5+MeXBlDlYaBnzh1jDdf5nuwpNmoMi1CZQAMD5vt1kVFmwA4/L6ISiuBpO4ir
+         4JuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707276207; x=1707881007;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1707276864; x=1707881664;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fHWdYEeEFQDrk/Nclzgv1hyODeI8VuV9Fe0i99M8iEA=;
-        b=wc21+6Zz9vFfVTF9qDVEBifje/yesFTDNVyqucJlXryQYzo/a2IrxEUNlTwFvO1k9p
-         PY2GEq9JoCqTKAQjsGAMspTMkqHlArMpspM3CHwO4Zs3m8MsgVNxZioDTGwQ06wxM8wz
-         bGY6yNb2X+5v5sLhBpS8jVBWZMzai9zv0FKDRqMYKYhnIz/VruTb3rFMYHa+rHvokLFZ
-         x68RBNoknt3TrP79LM9GTlieuM5uLMsC/5WStIjgpKVPyxf6t83xrND2l/7wLUhfb9Eo
-         BO8zu9bwTlJJNa4tNqYvG39v8/khV0TM5oNXOGbS1GmmR0wqKH6cMMTAYM5wcQCPT6fp
-         IKxw==
-X-Gm-Message-State: AOJu0YxNprOzxjWsvonJemaAUp8/FdjVVXXGmyIaKf2zzZyHhEkiBoQu
-	pzlC5j1pJUYMRLrWD7/IF5m+tJENra/P2bdQ+Netb0U+vzZPFs/kLbnVsxs0
-X-Google-Smtp-Source: AGHT+IFKndXJzBvHK3hSZZFVT/Gh2i6d83k74ZJrLClfV8aKpEFdQRub3gY+3rBeZg4SwkmWgQX4QA==
-X-Received: by 2002:a05:600c:19c9:b0:410:12b3:839c with SMTP id u9-20020a05600c19c900b0041012b3839cmr10038wmq.26.1707276206886;
-        Tue, 06 Feb 2024 19:23:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUyhtt6T/ufCOURAyWg8JUeBqGfjMVbmgxg6UEh0fYnm4IPsV/TyVnl7qVI4MChf1beWKUm/9HH0FEgi6LZ8DA8emkDB5pg84o=
+        bh=7kesFfbc6WRTzRs+LJZVj+C4yP6FqqWTYyaOfRw3xwo=;
+        b=Vw5tmwnvMOqVqoHY1w9ComiYMwCkypWZzsAm+/ewQi8wUH4IcxZSDQNETvMUW61upH
+         h7RCHRkYG1J+MTtVUXOVzOVTyXXtLpPYCYa42RtbUUiMrk0/myE6VNbv1Pk/B9qCpt7R
+         gZv1zMVt2eqtTHJKmABP6v0CowK5uMOS7sO0MYA9/QdkQb4V9sI8PVNaZvlKfaUKf6Ea
+         xiBb8Wntvb2NAm8EC2a1BMaGEw8aOZSYad8J86HEGsa4Ajf3h1/5JAcl3bsskxVgL77K
+         DmFwAWrvdtr2hrxTVHvXTu0+B+VArbUduk+TaRF8gpDOwCXthkoURy48rAe70edTn47m
+         Id+A==
+X-Forwarded-Encrypted: i=1; AJvYcCW7VivsXkkh0SRpGsoqduss62C/sbcOqdfic8+iy1TogVXQiXlJytTmBIsC0JSbU2qXK0+6vbcK8HnRB/7X6/n3Wfdgm9BrScQ=
+X-Gm-Message-State: AOJu0YzW4rPlqiR2BOJO3idg/8Qy/YwncoJ5Butp4t7VOThHva1hhMGz
+	PnGefEYtPqZ8Obhl93zMS95okQJDzZnCM4xg9QogfoyAZymWOvrtwdo0zuol
+X-Google-Smtp-Source: AGHT+IGzoaKzDN5SRl0BAXT0syUkHe0i/THnGN7Vlx8T/JLuExpjsq0L1EZxioy8IYRRo455PMd6SA==
+X-Received: by 2002:a05:6214:2a82:b0:68c:9323:91d6 with SMTP id jr2-20020a0562142a8200b0068c932391d6mr4465640qvb.65.1707276863727;
+        Tue, 06 Feb 2024 19:34:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUlBSGHEyLbNYmEcLDwtgvOStBwhOT1oNIk8yUXsW/itiUValNX4RqSZZSFPAp+XVdfqm3N5fglnP2ebl3+FtF13jeXxO4JODE=
 Received: from [192.168.8.100] ([85.255.236.54])
-        by smtp.gmail.com with ESMTPSA id v16-20020a05600c445000b0040ff7e3170asm534408wmn.2.2024.02.06.19.23.26
+        by smtp.gmail.com with ESMTPSA id ph30-20020a0562144a5e00b0068c6dd9af10sm167186qvb.64.2024.02.06.19.34.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Feb 2024 19:23:26 -0800 (PST)
-Message-ID: <3a328489-0fa7-461e-a904-dff9ccef5471@gmail.com>
-Date: Wed, 7 Feb 2024 03:22:17 +0000
+        Tue, 06 Feb 2024 19:34:23 -0800 (PST)
+Message-ID: <aead9829-8b5c-43a8-be5a-a89e3ecf2308@gmail.com>
+Date: Wed, 7 Feb 2024 03:33:11 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,134 +77,60 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] io_uring: expand main struct io_kiocb flags to
- 64-bits
+Subject: Re: [PATCH 2/6] io_uring: add io_file_can_poll() helper
+Content-Language: en-US
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <20240206162402.643507-1-axboe@kernel.dk>
- <20240206162402.643507-2-axboe@kernel.dk>
- <f4e5bd14-2550-4683-bdc3-7521351f81e1@gmail.com>
- <6f55dbd7-62a3-48d0-bc5a-2ddddb69e9ac@kernel.dk>
-Content-Language: en-US
+ <20240206162402.643507-3-axboe@kernel.dk>
+ <a0dce2ae-a41b-4fbb-961c-db69d8f1f17f@gmail.com>
+ <b7ef8fd0-de12-4e5e-bb8c-bfa06b2ec723@kernel.dk>
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <6f55dbd7-62a3-48d0-bc5a-2ddddb69e9ac@kernel.dk>
+In-Reply-To: <b7ef8fd0-de12-4e5e-bb8c-bfa06b2ec723@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/7/24 02:18, Jens Axboe wrote:
-> On 2/6/24 5:43 PM, Pavel Begunkov wrote:
+On 2/7/24 02:15, Jens Axboe wrote:
+> On 2/6/24 5:57 PM, Pavel Begunkov wrote:
 >> On 2/6/24 16:22, Jens Axboe wrote:
->>> We're out of space here, and none of the flags are easily reclaimable.
->>> Bump it to 64-bits and re-arrange the struct a bit to avoid gaps.
->>>
->>> Add a specific bitwise type for the request flags, io_request_flags_t.
->>> This will help catch violations of casting this value to a smaller type
->>> on 32-bit archs, like unsigned int.
->>>
->>> No functional changes intended in this patch.
->>>
->>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>> ---
-...
->>>      typedef void (*io_req_tw_func_t)(struct io_kiocb *req, struct io_tw_state *ts);
->>> @@ -592,15 +595,14 @@ struct io_kiocb {
->>>         * and after selection it points to the buffer ID itself.
->>>         */
->>>        u16                buf_index;
->>> -    unsigned int            flags;
->>>    -    struct io_cqe            cqe;
+>>> This adds a flag to avoid dipping dereferencing file and then f_op
+>>> to figure out if the file has a poll handler defined or not. We
+>>> generally call this at least twice for networked workloads.
 >>
->> With the current layout the min number of lines we touch per
->> request is 2 (including the op specific 64B), that's includes
->> setting up cqe at init and using it for completing. Moving cqe
->> down makes it 3.
->>
->>> +    atomic_t            refs;
->>
->> We're pulling it refs, which is not touched at all in the hot
->> path. Even if there's a hole I'd argue it's better to leave it
->> at the end.
->>
->>> +
->>> +    io_req_flags_t            flags;
->>>          struct io_ring_ctx        *ctx;
->>>        struct task_struct        *task;
->>>    -    struct io_rsrc_node        *rsrc_node;
->>
->> It's used in hot paths, registered buffers/files, would be
->> unfortunate to move it to the next line.
+>> Sends are not using poll every time. For recv, we touch it
+>> in io_arm_poll_handler(), which is done only once, and so
+>> ammortised to 0 for multishots.
 > 
-> Yep I did feel a bit bad about that one... Let me take another stab at
-> it.
+> Correct
 > 
->>> -
->>>        union {
->>>            /* store used ubuf, so we can prevent reloading */
->>>            struct io_mapped_ubuf    *imu;
->>> @@ -615,18 +617,23 @@ struct io_kiocb {
->>>            struct io_buffer_list    *buf_list;
->>>        };
->>>    +    /* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
->>> +    struct hlist_node        hash_node;
->>> +
->>
->> And we're pulling hash_node into the hottest line, which is
->> used only when we arm a poll and remove poll. So, it's mostly
->> for networking, sends wouldn't use it much, and multishots
->> wouldn't normally touch it.
->>
->> As for ideas how to find space:
->> 1) iopoll_completed completed can be converted to flags2
+>> Looking at the patch, the second time we might care about is
+>> in io_ring_buffer_select(), but I'd argue that it shouldn't
+>> be there in the first place. It's fragile, and I don't see
+>> why selected buffers would care specifically about polling
+>> but not asking more generally "can it go true async"? For
+>> reads you might want to also test FMODE_BUF_RASYNC.
 > 
-> That's a good idea, but won't immediately find any space as it'd just
-> leave a hole anyway. But would be good to note in there perhaps, you
-> never know when it needs re-arranging again.
-
-struct io_kiocb {
-	unsigned flags;
-	...
-	u8 	 flags2;
-};
-
-I rather proposed to have this, which is definitely borderline
-ugly but certainly an option.
-
-
->> 2) REQ_F_{SINGLE,DOUBLE}_POLL is a weird duplication. Can
->> probably be combined into one flag, or removed at all.
->> Again, sends are usually not so poll heavy and the hot
->> path for recv is multishot.
+> That is indeed the second case that is hit, and I don't think we can
+> easily get around that which is the reason for the hint.
 > 
-> Normal receive is also a hot path, even if multishot should be preferred
-
-The degree of hotness is arguable. It's poll, which takes a
-spinlock (and disables irqs), does an indirect call, goes into
-he socket internals there touching pretty contended parts
-like sock_wq. The relative overhead of looking at f_ops should
-be nothing.
-
-But the thought was more about combining them,
-REQ_F_POLL_ACTIVE, and clear only if it's not double poll.
-
-> in general. Ditto on non-sockets but still pollable files, doing eg read
-> for example.
+>> Also note that when called from recv we already know that
+>> it's pollable, it might be much easier to pass it in as an
+>> argument.
 > 
->> 3) we can probably move req->task down and replace it with
->>
->> get_task() {
->>      if (req->ctx->flags & DEFER_TASKRUN)
->>          task = ctx->submitter_task;
->>      else
->>          task = req->task;
->> }
-> 
-> Assuming ctx flags is hot, which is would generally be, that's not a bad
-> idea at all.
+> I did think about that, but I don't see a clean way to do it. We could
+> potentially do it as an issue flag, but that seems kind of ugly to me.
+> Open to suggestions!
 
-As mentioned, task_work_add would be the main user, and
-there is already a different branch for DEFER_TASKRUN,
-to it implicitly knows that ctx->submitter_task is correct.
+I'd argue passing it as an argument is much much cleaner
+and more robust design wise, those leaked abstractions are
+always fragile and unreliable. And now there is an argument
+that it's even faster because for recv you can just pass "true".
+IOW, I'd prefer here potentially a slightly uglier but safer
+code.
 
-> I'll do another loop over this one.
+Surely it'd have been be great to move this "eject buffer"
+thing out of the selection func and let the caller decide,
+but I haven't stared at the code for long enough to say
+anything concrete.
 
 -- 
 Pavel Begunkov

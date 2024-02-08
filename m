@@ -1,117 +1,108 @@
-Return-Path: <io-uring+bounces-583-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-584-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC14D84DC49
-	for <lists+io-uring@lfdr.de>; Thu,  8 Feb 2024 10:03:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F80384E7BA
+	for <lists+io-uring@lfdr.de>; Thu,  8 Feb 2024 19:33:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D160B1C214A5
-	for <lists+io-uring@lfdr.de>; Thu,  8 Feb 2024 09:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEAE51F2C623
+	for <lists+io-uring@lfdr.de>; Thu,  8 Feb 2024 18:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2866A8B7;
-	Thu,  8 Feb 2024 09:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99E62556D;
+	Thu,  8 Feb 2024 18:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNzZe7oH"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="sjF1HrDY"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79B76A354;
-	Thu,  8 Feb 2024 09:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BED2033B
+	for <io-uring@vger.kernel.org>; Thu,  8 Feb 2024 18:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707382979; cv=none; b=bmXtePPtTNYuIluYtrLOpkwyXv1WirWuIVnzSwhrXIDRBdT229BSprkrEsQjbMp4e0sQdKbvvFDYqE67UkIYdjbVjAucuvqVdVo9REsPGm+IzLnTgcd8qII6pHat0oYlf8EH/dv46NV04l0Kk2BQF4ikVXA+IgYmhUHWslE8j3U=
+	t=1707417171; cv=none; b=c9akIID8iDis1obJ0LRWMJJY8AmD5uY7STS3tCnLX3GNMsIWFbgrU76eiip/Zvu9oK0UHVr1gZkCLDeMn4UDgVNZNn3umi3bSstmhWRdg/ZBJsTwzGY4f/Vu+Nq6YCgTNY1IDPKJVtYtaG1zhkVzhzfJxk9y/Ekq1sB2T76ALcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707382979; c=relaxed/simple;
-	bh=zLpZpsLNQEvYaAF+kQ5AZa9kkVgTiY2crC+gZ8/1q9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YaRoVWKIFAKw1QTdKR7nYvOkQE97bjTlBKATFCAtYNnhkTA+d4gxM0cMFxQc16/To0T4jRuHOy2Q949Ih7ydb4Rwizv/NtokRJPEZBv1H7jBSt53eVXTdSvg8kgw2jYfyQHj5WIIJZDbleX5ItOcA3ee702Cw/eNAnh/ma+jg7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNzZe7oH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05CE2C433F1;
-	Thu,  8 Feb 2024 09:02:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707382979;
-	bh=zLpZpsLNQEvYaAF+kQ5AZa9kkVgTiY2crC+gZ8/1q9M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cNzZe7oHDWzkcGidOFjY7sae2sK44ms00jR2FldQtLWYcHwcmhLyax8ehHm34HRer
-	 q6B3t8PBMtIqP3pNJqvS0gtvmcRnmWZrr1LP1/XPUyNCMf7RtX+Z9hdXBG3sSIXmnn
-	 x1A2BoRVGgnFdpKYJ43/YFruNjt8N23sRWaBuedIOMvnDjKLJmgh/mQhKgVZgpCZvv
-	 EZvnM+1KVgnHS/xnNJEtLUJ20dfUR6d7k+cgOgMXG8QsjdqDetkvP2HkyJ5DRjYRLi
-	 YYR5+Ma3bCv7vrHGN2uoGsssmGVFbEIlfVBzDo3gzeOXxk38X6ho+mf3gSVwF37UGF
-	 wCuzWKK4T+TEQ==
-Date: Thu, 8 Feb 2024 10:02:39 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, 
-	Jan Kara <jack@suse.cz>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Sean Christopherson <seanjc@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, David Woodhouse <dwmw2@infradead.org>, 
-	Paul Durrant <paul@xen.org>, Oded Gabbay <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>, 
-	Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>, 
-	Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Frederic Barrat <fbarrat@linux.ibm.com>, Andrew Donnellan <ajd@linux.ibm.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Eric Farman <farman@linux.ibm.com>, Matthew Rosato <mjrosato@linux.ibm.com>, 
-	Halil Pasic <pasic@linux.ibm.com>, Vineeth Vijayan <vneethv@linux.ibm.com>, 
-	Peter Oberparleiter <oberpar@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Tony Krowiak <akrowiak@linux.ibm.com>, Jason Herne <jjherne@linux.ibm.com>, 
-	Harald Freudenberger <freude@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Diana Craciun <diana.craciun@oss.nxp.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	Eric Auger <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>, Benjamin LaHaise <bcrl@kvack.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeelb@google.com>, 
-	Muchun Song <muchun.song@linux.dev>, Kirti Wankhede <kwankhede@nvidia.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fpga@vger.kernel.org, 
-	intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-usb@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, linux-aio@kvack.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] eventfd: simplify eventfd_signal()
-Message-ID: <20240208-stemmen-wohlauf-ed1b4571e9a8@brauner>
-References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
- <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
- <CABgObfaSVv=TFmwh+bxjaw3fpWAnemnf1Z5Us5kJtNN=oeGrag@mail.gmail.com>
+	s=arc-20240116; t=1707417171; c=relaxed/simple;
+	bh=woNnQGq8KF73U0rUgmmvSqIGXrgJUS6t/kmFbP8Hyh8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=b3wdhjkOrPhd66joR0X4mInjHxxvb83mcSN84vqaUxsXqQiosgwmqMETn0g9B9506V1zqYK9t5U8EuMZkixu51dKT/9NA5PYhsWBlSz7ANBSNs8vTGZR7wU+5hh7Pivp2LgDaTHHkV6DXaTAp2z/DFutB0p8lQxfGLyuN7OVRDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=sjF1HrDY; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-7bbdd28a52aso754639f.1
+        for <io-uring@vger.kernel.org>; Thu, 08 Feb 2024 10:32:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1707417169; x=1708021969; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X6dtiWjV75xos+bwFCftGuaDZ6uwiHOZu2lkmp/4iss=;
+        b=sjF1HrDY8sG/gMilcrcBWyxaMky6UUfV81BEYiudnHKBL6eFpeO3euujDrrY4+h1Mc
+         X6smgf3AL8bjCIo4TAM4uCmlLa+1rOYt8WCCG7t9XGOc6JHHASpYEVYtpwy0CYOd06x2
+         6JE1iTQPcFEFgU5Tbarr9MmHd7IAy0CTFgM4NsB2jgupOg+D7jxSoufYgCj9RS3w2G18
+         CYzV1opRh/i6rU+V2XJY2eS7jfAh8nhykIb6gqBAym6LCOWjSbrocct4AFKzCsnJZVXg
+         x11UGMtSgBdAk7Bkoi16ssJ9T214JzQYNmyYFc1TUOyYCx2hzi+ei6NnNezsnV8ukL1d
+         sFFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707417169; x=1708021969;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X6dtiWjV75xos+bwFCftGuaDZ6uwiHOZu2lkmp/4iss=;
+        b=TmpyVbKMneVuYLOGWWaSTNUHpptl4gWgI3FDT00pXXpy2KOGFdaCtPG9IxpJ2L2YnB
+         zNLmyjGVjIm5DkWFaAYYX9C3v2lxxK/cGmBq8o+GRgDW7eNmgTPKy/G7mMnlchXlEkPP
+         cZUA3tnyVoEv57HuWf1DppLwodoHkEU7p4cKQj/DPqnlG+KJrOaDJsssnWa2AX7cmLfL
+         ZvdWewW0JTfUyBhn0MyOnH+Roo4M/HcFjoG+KkS6MG63CTaI3FCDFfc0pP+fPtid82SU
+         pt6MX357BG/0MC1drQyNN05niIbWAhBXu2KJ8CRUmd3bKNwEH74XzhmLc76hY5pjyu0z
+         qOTw==
+X-Gm-Message-State: AOJu0YwhciS2Q5aSeDxRgRuvYZGLUJ1yqwZmcVo1lglzfyEQgOx4l0dk
+	dz8H9lzkNbG/3nkAPxbanFk+2RfuG7wFLobRvnAa0MhS2+QoTJW9hOS9qiTcMFE=
+X-Google-Smtp-Source: AGHT+IEQKXkAiR5J5W5468WwCC3LL3QIPk7bvGywaj7Fg8ctV7l13AgBaBz/5zKcIZpzmTfI1HVmLQ==
+X-Received: by 2002:a05:6602:164b:b0:7c4:2fdd:548a with SMTP id y11-20020a056602164b00b007c42fdd548amr133607iow.0.1707417169407;
+        Thu, 08 Feb 2024 10:32:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWCeXuMsAfVTxQW+tSaJD1qVAPpQddaLN2+5TiqhcQNeXDacDlN+e9re8GAQODK73vOqbSsXdOhHxuF82rBUbVQQvpV7xkWES9bTv/nV/eWljgJlu9XIuBAMmKwfTUIwAU=
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id t13-20020a6bdb0d000000b007c3fbe781f2sm50823ioc.5.2024.02.08.10.32.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Feb 2024 10:32:48 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: asml.silence@gmail.com, Kunwu Chan <chentao@kylinos.cn>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240130100247.81460-1-chentao@kylinos.cn>
+References: <20240130100247.81460-1-chentao@kylinos.cn>
+Subject: Re: [PATCH] io_uring: Simplify the allocation of slab caches
+Message-Id: <170741716788.1391883.13253521338686491529.b4-ty@kernel.dk>
+Date: Thu, 08 Feb 2024 11:32:47 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABgObfaSVv=TFmwh+bxjaw3fpWAnemnf1Z5Us5kJtNN=oeGrag@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-On Wed, Feb 07, 2024 at 03:34:59PM +0100, Paolo Bonzini wrote:
-> On Wed, Nov 22, 2023 at 1:49 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > Ever since the evenfd type was introduced back in 2007 in commit
-> > e1ad7468c77d ("signal/timer/event: eventfd core") the eventfd_signal()
-> > function only ever passed 1 as a value for @n. There's no point in
-> > keeping that additional argument.
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  arch/x86/kvm/hyperv.c                     |  2 +-
-> >  arch/x86/kvm/xen.c                        |  2 +-
-> >  virt/kvm/eventfd.c                        |  4 ++--
-> >  30 files changed, 60 insertions(+), 63 deletions(-)
-> 
-> For KVM:
-> 
-> Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 
-I really appreciate all of the ACKs but just fyi that this was merged
-for v6.8-rc1. Just so that there's no confusion!
+On Tue, 30 Jan 2024 18:02:47 +0800, Kunwu Chan wrote:
+> commit 0a31bd5f2bbb ("KMEM_CACHE(): simplify slab cache creation")
+> introduces a new macro.
+> Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
+> to simplify the creation of SLAB caches.
+> 
+> 
+
+Applied, thanks!
+
+[1/1] io_uring: Simplify the allocation of slab caches
+      commit: 898e3028588e3b6d789774af623d419295c75257
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 

@@ -1,111 +1,135 @@
-Return-Path: <io-uring+bounces-596-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-597-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB5F1852736
-	for <lists+io-uring@lfdr.de>; Tue, 13 Feb 2024 03:02:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03EA853A9A
+	for <lists+io-uring@lfdr.de>; Tue, 13 Feb 2024 20:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500D11F25DB5
-	for <lists+io-uring@lfdr.de>; Tue, 13 Feb 2024 02:02:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A22A2854D2
+	for <lists+io-uring@lfdr.de>; Tue, 13 Feb 2024 19:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB7D15A8;
-	Tue, 13 Feb 2024 02:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8927604C9;
+	Tue, 13 Feb 2024 19:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1XVtFpr7"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NqdD1TSK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF228138C
-	for <io-uring@vger.kernel.org>; Tue, 13 Feb 2024 02:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2855B1E0
+	for <io-uring@vger.kernel.org>; Tue, 13 Feb 2024 19:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707789757; cv=none; b=N3vMorBfnrBTuv4hI9uFIRHLvN6zfTtUUHdD5lfB1efnaTfCvqcaHIDw66TexkD1fx4D/3OfX0PxMZVCeXKODISN7jO6LYhDOjDUfraKAu9QyuXNWew8lvtyVChS8793l+SP51t9xo49iCF/+t3z01XyTrbmDzgpbqaYiGeYz38=
+	t=1707851639; cv=none; b=lmXNI2htVrrq6HBsPDZN28/lCkYzFS0ZQNklHvupS2H6iLO/F6CVPRgWFZmMEj84kPtzzc+pmTP9B8lYV5SBi4V7vYf7umee9OJTnyyfVh6mwQ/X0qvkOwnRwtYbrl8FoDNojBebWNpecjuh9v74tRk5OvtB4g25OII6UDQ81g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707789757; c=relaxed/simple;
-	bh=j3ARRqAIkeyV86TmuaAM8stACZzYzDSPxu4DRWVN9cg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=r0rptH0vy7bnzJsB6tQvwz7APilMso0bI11Y+4dMiUMUi5OndABIO4lYK7c4T02iYX8JnL/phywqsspMbPJ8STPLCPqlcuqiJ2nzPHv4b6vcDEZ3us15fN19wnp4aY3xTfU891JnRqdV8SRB6t6tl14oR6+icYqbKh/PX4h2/qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1XVtFpr7; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1707851639; c=relaxed/simple;
+	bh=S/d4yJGt5fgKJBsTCU6HJk9bwNUyH+Dw9NyqzMgnr3g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=gPcE1eFXOQFCH0fR9546+PsfhpSlmEyZ0tY0GXI1WHBs+5eSsHt3G09NqDwpVkOY87dPSQXnlSIbQV3RF6e8Z8p2OdcobrC5NnWPP9RROTLDrg/8bUse3xqK6VF01VekcSUPsqDIRIr+1akdqbwBTUQP3Rnqj8+VBul0dlg0jWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NqdD1TSK; arc=none smtp.client-ip=209.85.166.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1d987a58baaso5055875ad.1
-        for <io-uring@vger.kernel.org>; Mon, 12 Feb 2024 18:02:33 -0800 (PST)
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7bff2f6080aso22262639f.1
+        for <io-uring@vger.kernel.org>; Tue, 13 Feb 2024 11:13:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1707789752; x=1708394552; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jmC14N6nRv36D1LnPZ3pa9LkLIbeLRnRLpfPrrM3rhs=;
-        b=1XVtFpr7i8Z9Iv/nQP6LdygWrObDi8r/wXvcN8YqD4W3Xh/IuIaiqdFaC+3NQMEq3d
-         my3l6XQ5LvhHH83Tal+ufTgBarSlurYIcU8DZpTLfAyRe6+p2SXzwMfSJKtV/pi11Gpp
-         KBLw2BmlztkLsLBRiaPq51qvdVOZJpjYon5e8UE1krNu4PHgfUPzc+oUwkgltVVxMbIz
-         wlBHLeytgwrWk6Wu+36fszyy592vf97nyhH8wfSpQwaZqDsGaPd6fLchOxxn2JvKXMFK
-         pDGEq3JV4POntDCUGG0vZHALddwdhZM5dC/ySVzwQeQU1R4O4Qs0TeOow/zBFT5Qg72o
-         5AWg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1707851635; x=1708456435; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9bSLuN55NFi/xrhJrkp0ByrrXaxcJkpRUfYxfdbMrBY=;
+        b=NqdD1TSKNbCBG+TzWO+xng2fzivaU1vHMBb63/dEqzVJ0dYECl1jtewg7FoTCgYrBs
+         MPr+4RKJjW6Z7oGLNGueoBHi5J9McZPnu+l3XKEQSlQMiSqRcRajJELCUEsGCerr90nW
+         z5MWZlrV6KWOhXPcmTrdW1CG7FPxcJ3kZ/5DTKI787GXd/SAaXF4SFDJtAddAMHXMd0Z
+         cHnwzsq8iJr+zRqCYTtF4sKNqmzG5ZxfA8enCSovTBVsbZJ1Jp6sIpBQrpyoPCTCD7k0
+         65U2LzG4dcLUSVeZEnesFotucS9PvQOFexpBVIrSgh4vcOvv+ExixptwxbXWqO/dVLa+
+         oGlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707789752; x=1708394552;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jmC14N6nRv36D1LnPZ3pa9LkLIbeLRnRLpfPrrM3rhs=;
-        b=o5CixLpYRe3Gud7w6sGBlx0HSvuCXz9G7Wk4lEYIl38IvM1ilIRSD8UKGuiu0TCKL0
-         9/lLn3TXdv0F0D5Fy35+iwzY1a6tg66MyJUYyulAdynUK/jJJ0I0Tmm0em6L/H15U2Ph
-         U0NKE7tPQzWFyF1Bp0evs8/aNRpN0fzjyJ3Ec8mcVolUV/K9MOlC7gXdqRvQh24AY3AF
-         ANocK7KyssjwXGKlpfvQgkEyLhLRdtYB4YjJRC+cvZ+dstdqQf3X4ewysikqLAAmlhwM
-         mGzuLnDkkLWj8xJvcH/3b7RTVvA0ZgT0+TPFrb9fYwNFmcakwYq20NV4tHnQFNhuCEyv
-         Ppyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFkMc/YTBKUTVkG5N/p4Zy0wCtwruESYXH/qHfWWnCBDklVVsyULslHhcIH1ALlHg+GvC+meIagAc/HJgooJVIh+0pWRVlsk0=
-X-Gm-Message-State: AOJu0YyW/V6isve/x1N797TnpfFwToOsoNzlDEVeZQ6Y3rRFrUMy9Yh2
-	DrxTelpty3R1E99g/NBo2vnBy3JhU4yDMDsQO1goBWrVg5jb/pJSb/OCpbudVsudMdYRE24m9IG
-	d
-X-Google-Smtp-Source: AGHT+IFH2IqwG83Eza860nrKjxvKctWSTGw/eINns6Y1b2dBM9R7BXXh6db2vnDWzwTonplpzvRSzg==
-X-Received: by 2002:a17:902:fe18:b0:1da:2a1f:5f55 with SMTP id g24-20020a170902fe1800b001da2a1f5f55mr6114065plj.4.1707789752419;
-        Mon, 12 Feb 2024 18:02:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVcCaDsWmLeQjoGEdxES1dQt9EUKSfoibKTlaYw5vYfbPj6gUkZYZ8aPCFIueIBdvnTuY2WKpaMzpcbC2eKHrA9viZye5yNsMJRiuGhVqJsLjsB1W38FPIFN9PE
-Received: from [127.0.0.1] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id mn16-20020a1709030a5000b001d9ba3b2b33sm967427plb.163.2024.02.12.18.02.31
+        d=1e100.net; s=20230601; t=1707851635; x=1708456435;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9bSLuN55NFi/xrhJrkp0ByrrXaxcJkpRUfYxfdbMrBY=;
+        b=e/j00AnzNWK3tcMLUrwLemHT5mny+9jePWJYGsLVpRRd4gXstF9VVSOOFaYdgfivRP
+         fJS+FL94S+agrlirVd+pvR+idF/RCq0sfKTpYPvppm2n1yESvh77gW1UhWnr5apVa2vX
+         mhFwqFmudVGUOPCHiVWDqfEEML0zD1+gnmiTtAeERL9aMW+RnEb61cKJ/0aihLha4PpU
+         HByDmz0TsyFTf8dBrkXNmZZJyXok70wCqBD43JehoAd+nfiriT+jsC9Eg7b/lv0I1nbi
+         G1ppHK6m4bji/0hE+6P4aQXZUk+IGFg0UIwS117ZTWsgAI+NxU2Ikor+QOZeoc7x9AvO
+         qc5Q==
+X-Gm-Message-State: AOJu0YzMaSx4q7njr96P1ulafRyqXnUuIvnf5+LMaIVwcIb9mou2tiVv
+	EqmNz7jLs7mYOQR81YAeCo8cU3wnLO/fIOj16cRpwhSLBsygOw77nTV6YTWPwjmIgOPFGKh1UG+
+	P
+X-Google-Smtp-Source: AGHT+IHAf19tBWCgHdAZjmHGiUb+dO8gEKBxiAXQrChBQ9E+H0a1IJMx861U8EHkx9kyOQ7g8oSJMA==
+X-Received: by 2002:a5e:8c02:0:b0:7c4:6163:e62e with SMTP id n2-20020a5e8c02000000b007c46163e62emr624695ioj.1.1707851635077;
+        Tue, 13 Feb 2024 11:13:55 -0800 (PST)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id cz17-20020a0566384a1100b004713ef05d60sm2032176jab.96.2024.02.13.11.13.54
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Feb 2024 18:02:31 -0800 (PST)
+        Tue, 13 Feb 2024 11:13:54 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Kuniyuki Iwashima <kuni1840@gmail.com>, io-uring@vger.kernel.org
-In-Reply-To: <20240212234236.63714-1-kuniyu@amazon.com>
-References: <20240212234236.63714-1-kuniyu@amazon.com>
-Subject: Re: [PATCH v1] io_uring: Don't include af_unix.h.
-Message-Id: <170778975137.2228599.2845417029143556621.b4-ty@kernel.dk>
-Date: Mon, 12 Feb 2024 19:02:31 -0700
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET 0/4] Add support for batched min timeout
+Date: Tue, 13 Feb 2024 12:03:37 -0700
+Message-ID: <20240213191352.2452160-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
-On Mon, 12 Feb 2024 15:42:36 -0800, Kuniyuki Iwashima wrote:
-> Changes to AF_UNIX trigger rebuild of io_uring, but io_uring does
-> not use AF_UNIX anymore.
-> 
-> Let's not include af_unix.h and instead include necessary headers.
-> 
-> 
+Normal CQE waiting is generally either done with a timeout, or without
+one. Outside of the timeout, the other key parameter is how many events
+to wait for. If we ask for N events and we get that within the timeout,
+then we return successfully. If we do not, then we return with -ETIME
+and the application can then check how many CQEs are actually available,
+if any.
 
-Applied, thanks!
+This works fine, but we're increasingly using smaller timeouts in
+applications for targeted batch waiting. Eg "give me N requests in T
+usec". If the application has other things do do every T usec, this
+works fine. But if it's an event loop that wants to process completions
+to make progress, it's pointless to return after T usec if there's
+nothing to do. The application can't really make T bigger reliably, as
+this may be the target it has to meet at busier times of the day.
 
-[1/1] io_uring: Don't include af_unix.h.
-      commit: 3fb1764c6b57808ddab7fe7c242fa04c2479ef0a
+This patchset adds support for min timeout waiting, which adds a third
+parameter to how waits are done. The N and T timeout remain, but we add
+a min_timeout option, M. The batch is now defined by N and M. The
+application can now say "give me N requests in M usec, but if none have
+arrived, just sleep until T has passed". This allows for using a sane
+N+M, while avoid waking and returning all the time if nothing happens.
 
-Best regards,
+The semantics are as follows:
+
+- If M expires and no events are available, keep waiting until T has
+  expired. This is identical to using N+T without setting M at all,
+  except if an event arrives after M has expired, we return immediately.
+
+- If M expires and events are available, return those even if it's
+  less than N.
+
+- If N events arrive before M expires, return those events. This is
+  identical to T == M, and M not being set.
+
+There's a liburing branch with test cases here:
+
+https://git.kernel.dk/cgit/liburing/log/?h=min-wait
+
+and the patches are on top of the current for-6.9/io_uring branch. They
+can also be viewed here:
+
+https://git.kernel.dk/cgit/linux/log/?h=io_uring-min-wait
+
+ include/uapi/linux/io_uring.h |   3 +-
+ io_uring/io_uring.c           | 155 ++++++++++++++++++++++++++++------
+ io_uring/io_uring.h           |   4 +
+ 3 files changed, 133 insertions(+), 29 deletions(-)
+
 -- 
 Jens Axboe
-
-
 
 

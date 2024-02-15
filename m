@@ -1,76 +1,81 @@
-Return-Path: <io-uring+bounces-606-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-607-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4015985693D
-	for <lists+io-uring@lfdr.de>; Thu, 15 Feb 2024 17:15:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D442B856947
+	for <lists+io-uring@lfdr.de>; Thu, 15 Feb 2024 17:16:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E92351F22FD0
-	for <lists+io-uring@lfdr.de>; Thu, 15 Feb 2024 16:15:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F7CBB21BA9
+	for <lists+io-uring@lfdr.de>; Thu, 15 Feb 2024 16:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5781134724;
-	Thu, 15 Feb 2024 16:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9F713959E;
+	Thu, 15 Feb 2024 16:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="s8AwGazo"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xwyU+dEG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD5D13959C
-	for <io-uring@vger.kernel.org>; Thu, 15 Feb 2024 16:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7367C13A24E
+	for <io-uring@vger.kernel.org>; Thu, 15 Feb 2024 16:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708013409; cv=none; b=G7Tr+A7fpteBNGaHEdREU3S225aWXzNslg1WSBt1M2hA7jaR0ta7iWgMS41UzIRi1uUKzKl+kNVgFCM1/Au+/48VHMCP+S+Bn8W6+x1fmuu4rqMTYn4XzsfoxnQAXr5jCVT2Qmq1BvAPfW1+sgFQx2LFtX68gfEUigeeSdisMf8=
+	t=1708013409; cv=none; b=YPjm5nPAadTvH4qoQyHw/6XThf7Z6c6/9TcQDW30LU5b0SsprkT2eTsaKk+iJOIWu73lIlguHU19cH10+3m7Fq4O4lFxruFKbzl5WBM+ckanBsG+zGQh7jyU1b5BzhOtNvHPWlhP+rrdzjen/vXfpBqitOsAQ8RaIHaU2CoZVlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1708013409; c=relaxed/simple;
-	bh=LNmpqxV0YfHJbBxdYuunJibXydwG9f0jXBrhnN46hVI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=PdDPNf0lBBdVWU+rEic5hQ4EV7b9nZx3WmaLR3gvO6gHFBej8UQKkYFmTTb6mpfpYPzYNv8Yc3/OPHWnsorCzGjWGFacm0Kex7bDNTgoAo7R5x9FwnDgKv2ytQ/DN/3tiDvSeOrRxxWN9DsHanh+V7OjnrQKgjKmf4te2khvaYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=s8AwGazo; arc=none smtp.client-ip=209.85.166.48
+	bh=bmsxmG+OqlGTcY/3NXZ+G6esoExlSkE8JVHVGK3CfKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hsTB34FqPE3aBEGy7MQ9YVlKrOKriLcuhQ2f4ObLGlx+fQg9P9hYdq7HoCG7kHfZp957wFPXRVpcXuttmN+V81d8eYfOfVfyygGvVZZqiVWuJuHWyWs/LTnxiYXnqKvND+WzalSMn20INku/cOeq3RJkhwfOzeZnUoHuJNuPbr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xwyU+dEG; arc=none smtp.client-ip=209.85.166.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7c49c979b5dso8385039f.1
-        for <io-uring@vger.kernel.org>; Thu, 15 Feb 2024 08:10:05 -0800 (PST)
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-363acc3bbd8so535565ab.1
+        for <io-uring@vger.kernel.org>; Thu, 15 Feb 2024 08:10:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708013404; x=1708618204; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rpijjQEzBgnLD/uY93UCJeV5MDh99Jzq/Yr+mGAGQm4=;
-        b=s8AwGazowtQy+D5DoL6BwazbVwKeoFazz0Y3bmdSe0HjABLk4qjJ39unqaKXNkNw68
-         aJ7jy0VyoeB5okoeyfaUkKRrQ+L1buUGqiwfIR+3gj2z1OiA2V78br5+lcyHv42EJc/Z
-         7+OjPgSao6vbb1uuBkA92nyHawpfEbhp0n54xBeW1Q3umxlHEroEd0/amuE++Zb9Gf3r
-         1t80CaCuurO/V6JpanDIrY3OWZmEyJ7hqN/Lw6RPHJ+jZ39PS9hcd7ituTtSSadgGcj0
-         U1JkFM1kaljH886HRGTZOcC2LD/qnTxp6d4yf10uJMV9l5HScUjxhU0ueIA/7W6Pj4qU
-         7ZIw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708013406; x=1708618206; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RODZUjyaVV50YYBvMGYdEqYxM/1CrYMy8Opg6CHor5g=;
+        b=xwyU+dEGC5iQoaKmNJIoDJXupqYCY6XELsMbQp0KoLG+q3bi6II84v+j2Bu0PaFbqn
+         CUuBUj9fWfB1TUnjF9Lfshtc9GvsYvBMR4kqAIw7jcDlf8iiKo30t6epz79gLn0vkTa4
+         14eqOHWAtIwN95LmSc+hQ+HXaslMFasbTP7vIEc2BWPk+IQONCLf30p9fOVHPQJifned
+         shJ9StR7RIZ+f97GQz3TWStptI5Un1VLXRxKGLxVu3ehBLr886yMuY+W/Ij+FJxljxRm
+         as/HdMNCzib3YCuell3XHrmJfNvGGvVx+4GkqalsjdSNya3GEGHdHCRLpozwaxClDmh2
+         zB+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708013404; x=1708618204;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rpijjQEzBgnLD/uY93UCJeV5MDh99Jzq/Yr+mGAGQm4=;
-        b=O9zSAgxxtsXWMNAwyl3mgIXzlVLyZw4ocGxJKgj13ZBGVT8809mL4K2etQI0Wofvuf
-         iIn9KzwZZbKlKlig+kvyt04vLJ+p57o9Yip0zzIOOnKCa3nIuGqV8f8Z9UoyyDny4iEF
-         b/UD1SjgeWKdS2FYztGd3FejcUypOPiSxBu8kGislagBn73M70BX6J495g0moUJRVhzr
-         rRxLx5fDyZ2v18OAJw1K+GG4QHRXBj6t+L8PmwbnnetdaTUQWR6alSnDyAXkDKgRjDwc
-         kfwGIyFGQkFRZQtnlbxNtMgyguoX6FO1lI44jPYjf8LUa1KmKBYLN07QPVPYDaFZlwzO
-         wf4g==
-X-Gm-Message-State: AOJu0YyJaC1iHNQrhajqzNJ12Z2+zWpJfc5LlKl9cFWcyKSlv+ZMqHVt
-	mvJzkE1V92pw/02deD0dm13hcshnCI8ZAJbgwbxfbZ1cDSogz6gaF0oQ8XAAAj34IzQbZ1TvRbu
-	D
-X-Google-Smtp-Source: AGHT+IEMX6gag3SN8iJXXG2PEk23g9jJ/oxQkXbCeksGUv1o4W8O7kSs4uk7sbb8SR92LNPDDauZ5g==
-X-Received: by 2002:a05:6e02:1c84:b0:363:ac1d:ae0f with SMTP id w4-20020a056e021c8400b00363ac1dae0fmr2208699ill.2.1708013404569;
-        Thu, 15 Feb 2024 08:10:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708013406; x=1708618206;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RODZUjyaVV50YYBvMGYdEqYxM/1CrYMy8Opg6CHor5g=;
+        b=veMwTCBRYKkcNg8qxhBD6PNFGJzJ8yi3sW98JyikS5ME6XR9lP0/Mo4XsAWfsCBjKf
+         5uj9ZYFrMN26a4ajKFSDdorL9MsmFlYF4xanrapo311ddDvt0wjw4jnc9gvpZsR8yaEv
+         WCNOlq5gIRqDs7SoYE7wJpXO3777VPSkHiM6OP4VlP8bgMYxuMG+dLO0MrYKhvxgjTrH
+         u1KYXDk3TbsitTaY9JVcnNSMncWA34B2iwkNcLWdQGiez/VYa4O2oQYN5XdNtrloxazf
+         OTQKX7S5AOPd/ebGU+HDss05y/JivdruLk5IPbgDX4+ShIVnllnOPb3p063wht6O+s8C
+         aBag==
+X-Gm-Message-State: AOJu0YwR4Wltof2tNuTtZqaIgwlpeVjaHKsfBSgGYPAE59vrPTV5fySm
+	L01gkdcGca+XcdvBuspx114VP1zU9RZL+6ck9s1gLeyMxLMTK+xqOcO8JmqujWQDMAEfNkH1Ax9
+	4
+X-Google-Smtp-Source: AGHT+IGYV3MEI69MAMPuDiabhbXQZVf2mkXgoJNiEmmu3Crd7ms9Q5eTNs3gHkpGLdp5vNoELDWidA==
+X-Received: by 2002:a05:6e02:1d0a:b0:363:b545:3a97 with SMTP id i10-20020a056e021d0a00b00363b5453a97mr2235087ila.0.1708013406181;
+        Thu, 15 Feb 2024 08:10:06 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id x4-20020a056e02074400b0036275404ab3sm458524ils.85.2024.02.15.08.10.03
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id x4-20020a056e02074400b0036275404ab3sm458524ils.85.2024.02.15.08.10.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 15 Feb 2024 08:10:04 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
-Subject: [PATCHSET v2 0/4] Add support for batched min timeout
-Date: Thu, 15 Feb 2024 09:06:55 -0700
-Message-ID: <20240215161002.3044270-1-axboe@kernel.dk>
+Cc: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/4] io_uring: move schedule wait logic into helper
+Date: Thu, 15 Feb 2024 09:06:56 -0700
+Message-ID: <20240215161002.3044270-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240215161002.3044270-1-axboe@kernel.dk>
+References: <20240215161002.3044270-1-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -79,63 +84,78 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+In preparation for expanding how we handle waits, move the actual
+schedule and schedule_timeout() handling into a helper.
 
-Normal CQE waiting is generally either done with a timeout, or without
-one. Outside of the timeout, the other key parameter is how many events
-to wait for. If we ask for N events and we get that within the timeout,
-then we return successfully. If we do not, then we return with -ETIME
-and the application can then check how many CQEs are actually available,
-if any.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ io_uring/io_uring.c | 37 +++++++++++++++++++++----------------
+ 1 file changed, 21 insertions(+), 16 deletions(-)
 
-This works fine, but we're increasingly using smaller timeouts in
-applications for targeted batch waiting. Eg "give me N requests in T
-usec". If the application has other things do do every T usec, this
-works fine. But if it's an event loop that wants to process completions
-to make progress, it's pointless to return after T usec if there's
-nothing to do. The application can't really make T bigger reliably, as
-this may be the target it has to meet at busier times of the day.
-
-This patchset adds support for min timeout waiting, which adds a third
-parameter to how waits are done. The N and T timeout remain, but we add
-a min_timeout option, M. The batch is now defined by N and M. The
-application can now say "give me N requests in M usec, but if none have
-arrived, just sleep until T has passed". This allows for using a sane
-N+M, while avoid waking and returning all the time if nothing happens.
-
-The semantics are as follows:
-
-- If M expires and no events are available, keep waiting until T has
-  expired. This is identical to using N+T without setting M at all,
-  except if an event arrives after M has expired, we return immediately.
-
-- If M expires and events are available, return those even if it's
-  less than N.
-
-- If N events arrive before M expires, return those events. This is
-  identical to T == M, and M not being set.
-
-There's a liburing branch with test cases here:
-
-https://git.kernel.dk/cgit/liburing/log/?h=min-wait
-
-and the patches are on top of the current for-6.9/io_uring branch. They
-can also be viewed here:
-
-https://git.kernel.dk/cgit/linux/log/?h=io_uring-min-wait
-
- include/uapi/linux/io_uring.h |   3 +-
- io_uring/io_uring.c           | 156 ++++++++++++++++++++++++++++------
- io_uring/io_uring.h           |   4 +
- 3 files changed, 134 insertions(+), 29 deletions(-)
-
-Changes since v1:
-- Fix issue with both min_wait and timeout, and transitioning to the long
-  timeout. We'd add the current time potentially more than once, causing
-  much longer waits than what was asked for. Test case has been added for
-  that as well.
-
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 45a2f8f3a77c..8f52acc14ebc 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2516,22 +2516,10 @@ static bool current_pending_io(void)
+ 	return percpu_counter_read_positive(&tctx->inflight);
+ }
+ 
+-/* when returns >0, the caller should retry */
+-static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+-					  struct io_wait_queue *iowq)
++static int __io_cqring_wait_schedule(struct io_ring_ctx *ctx,
++				     struct io_wait_queue *iowq)
+ {
+-	int io_wait, ret;
+-
+-	if (unlikely(READ_ONCE(ctx->check_cq)))
+-		return 1;
+-	if (unlikely(!llist_empty(&ctx->work_llist)))
+-		return 1;
+-	if (unlikely(test_thread_flag(TIF_NOTIFY_SIGNAL)))
+-		return 1;
+-	if (unlikely(task_sigpending(current)))
+-		return -EINTR;
+-	if (unlikely(io_should_wake(iowq)))
+-		return 0;
++	int io_wait, ret = 0;
+ 
+ 	/*
+ 	 * Mark us as being in io_wait if we have pending requests, so cpufreq
+@@ -2541,7 +2529,6 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 	io_wait = current->in_iowait;
+ 	if (current_pending_io())
+ 		current->in_iowait = 1;
+-	ret = 0;
+ 	if (iowq->timeout == KTIME_MAX)
+ 		schedule();
+ 	else if (!schedule_hrtimeout(&iowq->timeout, HRTIMER_MODE_ABS))
+@@ -2550,6 +2537,24 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 	return ret;
+ }
+ 
++/* when returns >0, the caller should retry */
++static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
++					  struct io_wait_queue *iowq)
++{
++	if (unlikely(READ_ONCE(ctx->check_cq)))
++		return 1;
++	if (unlikely(!llist_empty(&ctx->work_llist)))
++		return 1;
++	if (unlikely(test_thread_flag(TIF_NOTIFY_SIGNAL)))
++		return 1;
++	if (unlikely(task_sigpending(current)))
++		return -EINTR;
++	if (unlikely(io_should_wake(iowq)))
++		return 0;
++
++	return __io_cqring_wait_schedule(ctx, iowq);
++}
++
+ /*
+  * Wait until events become available, if we don't already have some. The
+  * application must reap them itself, as they reside on the shared cq ring.
 -- 
-Jens Axboe
+2.43.0
 
 

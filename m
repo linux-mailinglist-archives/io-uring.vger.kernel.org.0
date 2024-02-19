@@ -1,174 +1,215 @@
-Return-Path: <io-uring+bounces-622-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-623-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4E0859703
-	for <lists+io-uring@lfdr.de>; Sun, 18 Feb 2024 14:00:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC17859CBA
+	for <lists+io-uring@lfdr.de>; Mon, 19 Feb 2024 08:22:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 515BE1C208CB
-	for <lists+io-uring@lfdr.de>; Sun, 18 Feb 2024 13:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1FF91C20C2D
+	for <lists+io-uring@lfdr.de>; Mon, 19 Feb 2024 07:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4DA65BD5;
-	Sun, 18 Feb 2024 13:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CBCB65A;
+	Mon, 19 Feb 2024 07:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jaeR2EcQ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fyUkx5KR"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FBD6BB51
-	for <io-uring@vger.kernel.org>; Sun, 18 Feb 2024 13:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF484653
+	for <io-uring@vger.kernel.org>; Mon, 19 Feb 2024 07:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708261243; cv=none; b=YYNZb1yOXmTzR1dVuzXyn3d325pWwhUYo5IbGIjAWYUKPyZ2TO2gZx3ukCzox1OHzZOy2lGVwtTdCOuBfyC73HJ2HsWDlkVjfMvevr42kO8eOZiXTbya16W3bTjaWJRNvC0kbFsHTzcGFVWySs9gG6iTH2PyzMQZo6NiqcSMzPM=
+	t=1708327328; cv=none; b=km/sdlcjFVIVIdFaMrHrJc/RIRVDvxUaU/8WX9sK5PZ0O4oIxHOSSW2K569suaBW0W+dphpyJ0X2IFZUWi565y8LH9dAEYip9dGHW7zH4g9amWTvPFfwPuj58CyCFZ8mwGDKwZVpg8a2d4LKxECLaD6Nxf3tYZ3jegWA4kW7W6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708261243; c=relaxed/simple;
-	bh=8OEULQsbJfHqfkXaJy2htFuiEY9YhAYuhxxZlhozNTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oZi7p1Zg93lMzcKzl4a2PXUcXojbSEz3V9+Zqdc8lwFpoZH8Iet/k7WoTDcNQkNRMA83RfNDqchELhCV0MRxVN0A4RKMBOMWkhcGwOMQxsq9mquZrCG9UOQPrFcA55xAGfjzXP2QjNk7GEPZwKDGkoGKxPSRdK+AhRmxew44/xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jaeR2EcQ; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-29593a27fcaso987880a91.1
-        for <io-uring@vger.kernel.org>; Sun, 18 Feb 2024 05:00:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708261240; x=1708866040; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RodByd/HG8871Mn03XNPX9N8h91R/e6bdUV6nucU/s0=;
-        b=jaeR2EcQ0f5a9YEbXLM2S3PBeD6qUrOzBLPfLvJIyCrUKvJsRNPRAorn07isKcJaSk
-         rEZtRHw/3E18xowGleJuM3z+sHblj0kAzRDBMfhoRQS0EIPpagv9pKhToYmX5zjuC0Sv
-         Ulrx0cJosMpltzYOlmjJJ6cG7u88fzha6zCVG5/VJssUAHloSD51ggXN4t4CNVQCOaV2
-         d4DexksgWMvu+pwOwRdgTXEcig/nHtXixLgPBJGa8ZLOCl+3CKQeMLXhV3TUdBoaGd96
-         c2MyaKRnqAyDttrcLGFHI1SVrY3U2mJdrSjggoDLR8gGLAXc7F/lrmvZKyMsw4eWZWKZ
-         5Heg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708261240; x=1708866040;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RodByd/HG8871Mn03XNPX9N8h91R/e6bdUV6nucU/s0=;
-        b=htRXbrUOW0DMONrkfIlqr1Sf2mr4S7eaUisJ9U15Uy2F5EDKDJVKfgOcjmY88XnbjO
-         iUrSsOHybYW9ZW/f0WYAUaLMNTYfz5l6XTe0DAo2GWFHWhYARCyU7CvOGuIiQxhHd8oD
-         84bTDDpm1d6+pLaeCd2u+YneXDqTTNjFRuUQ2yLFK4PDjSsuso/+m75r2YsJl25c3Jg8
-         wujYod0Vpi6CQVR8W6cBshkTq32155OytntXctZCLXolf2YC38SMJgw94+5dR8/aihTU
-         Q00teTgFb+Jj4yDpqv94uK+M8bp2NfXmWbKY+ZK4Y1B8a/IrCrYnUFeOrbRbqDVIb7wE
-         7XHg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0lLbC3xA9SBd5Oe/gUo+SZLW5jHHDHA0vuq0uWcsLyMwTVzYJzjI1H0komCuLnAqlDbMJhmKlPpfLSYXG8pK3AHE9z8zx1nI=
-X-Gm-Message-State: AOJu0Yxz2g6TtbTIr31R2njnfWFbpsja2jedNpmDZ7NCkVifptznYeFO
-	FEsQYsjYNV4t4+s/WPF4ObIWOfB7NBo/SG2O43Wb2dhNTWWucEO1zq7I9IDdmWo=
-X-Google-Smtp-Source: AGHT+IF/9MngS1gHDj2UfEL3koN32okEsAusVWjfdNuL59cquLXw8MkmbJVoODuiE5/zseUhcHfANA==
-X-Received: by 2002:a05:6a21:999c:b0:1a0:9abd:2801 with SMTP id ve28-20020a056a21999c00b001a09abd2801mr3451853pzb.3.1708261239954;
-        Sun, 18 Feb 2024 05:00:39 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id 18-20020a631052000000b005d553239b16sm2906268pgq.20.2024.02.18.05.00.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Feb 2024 05:00:39 -0800 (PST)
-Message-ID: <aba32b4b-9fb3-4d84-bdc0-633d34cf1234@kernel.dk>
-Date: Sun, 18 Feb 2024 06:00:38 -0700
+	s=arc-20240116; t=1708327328; c=relaxed/simple;
+	bh=z5gEp1g+Cx86Qj4hb2iV/fY7GbbVaIldH4c4QsjgZLg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=V0JmJwdPzXIfcabju+Xtf82MPLp4Oe6+EZrCWWMElPonZsGIui2oPHSOnbZUFuoHrkGptE3spdDmgpVzOIRjqNxUfScdJlEdGrRTga1N95T1rQfAHb9vyyeem7TyAotgafVFrHGUwW9OKPdGGNx2G78qau76XqSt1rDze35KYnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fyUkx5KR; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240219072202epoutp0249a0fd1e53dfd9219e52c50e305fd188~1MqYDUahP2990729907epoutp02A
+	for <io-uring@vger.kernel.org>; Mon, 19 Feb 2024 07:22:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240219072202epoutp0249a0fd1e53dfd9219e52c50e305fd188~1MqYDUahP2990729907epoutp02A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1708327322;
+	bh=t26mQRhskGWreQ+iBAEauW8i+bpFYE4AzVGSadA654I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fyUkx5KRH8DAdigMCft6bN5zXONj8YwzDBQyAEv37ZtqitMiF4V/11YcHFJFJFkX2
+	 gZBnf6CC1xyjgOorLr8HXHjSf2g1W5oEQQejfs/hCU1HvJIOLpsYoIbWppI/mk9yRj
+	 Zw8oej/RosobbUZj/56B4EbCSP+t+JKfNsGJ+2kY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240219072201epcas5p41fbb970f2902d04565d8dbe3888cdb98~1MqXSaSGS1847418474epcas5p4W;
+	Mon, 19 Feb 2024 07:22:01 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4TdYrR6rp0z4x9Pw; Mon, 19 Feb
+	2024 07:21:59 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A5.80.10009.79103D56; Mon, 19 Feb 2024 16:21:59 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240219031238epcas5p3aa330855093314a2c5768cf83971599c~1JQnjg2i31795817958epcas5p32;
+	Mon, 19 Feb 2024 03:12:38 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240219031238epsmtrp25ad73a7782742174d219c1a1ae1d2925~1JQnisthy1454914549epsmtrp2W;
+	Mon, 19 Feb 2024 03:12:38 +0000 (GMT)
+X-AuditID: b6c32a4a-261fd70000002719-92-65d30197bd09
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	EA.6A.08817.527C2D56; Mon, 19 Feb 2024 12:12:37 +0900 (KST)
+Received: from testpc118124.samsungds.net (unknown [109.105.118.124]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240219031236epsmtip193194b00f806aa26e158495b77512ae7~1JQmQ4xjl2613326133epsmtip1T;
+	Mon, 19 Feb 2024 03:12:36 +0000 (GMT)
+From: Xiaobing Li <xiaobing.li@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org, kun.dou@samsung.com, peiwei.li@samsung.com,
+	joshi.k@samsung.com, kundan.kumar@samsung.com, wenwen.chen@samsung.com,
+	ruyi.zhang@samsung.com, xiaobing.li@samsung.com
+Subject: Re: Re: [PATCH] liburing: add script for statistics sqpoll running
+ time.
+Date: Mon, 19 Feb 2024 11:12:32 +0800
+Message-Id: <20240219031232.203025-1-xiaobing.li@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <522c03d9-a8ba-459d-9f7c-dfbf461dcf6b@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] liburing: add script for statistics sqpoll running time.
-Content-Language: en-US
-To: Xiaobing Li <xiaobing.li@samsung.com>
-Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org, kun.dou@samsung.com, peiwei.li@samsung.com,
- joshi.k@samsung.com, kundan.kumar@samsung.com, wenwen.chen@samsung.com,
- ruyi.zhang@samsung.com
-References: <20240206024014.11412-1-xiaobing.li@samsung.com>
- <CGME20240218055959epcas5p2ac436be88fecd625f072c78ff77610ef@epcas5p2.samsung.com>
- <20240218055953.38903-1-xiaobing.li@samsung.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240218055953.38903-1-xiaobing.li@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmuu50xsupBi1fTCzmrNrGaLH6bj+b
+	xbvWcywWR/+/ZbP41X2X0WLrl6+sFpd3zWGzeLaX0+LL4e/sFmcnfGC1mLplB5NFR8tlRgce
+	j52z7rJ7XD5b6tG3ZRWjx+dNcgEsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW
+	5koKeYm5qbZKLj4Bum6ZOUCHKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKTAr0
+	ihNzi0vz0vXyUkusDA0MjEyBChOyM3Z0rWQq+CBS8XXaIcYGxj0CXYwcHBICJhJznkV1MXJx
+	CAnsZpQ4er2BCcL5xCjx7dAnKOcbo8SZyY1sXYycYB1Htk9ihEjsZZTYd/YYE0hCSOAXo0RP
+	VyKIzSagLXF9XRcriC0iICyxv6OVBaSBWeAvo8SEl7+ZQRLCAsESjQcXgjWzCKhKLNzbww5i
+	8wrYSvT/X84CsU1eYv/Bs8wgt3ICxecvM4EoEZQ4OfMJWAkzUEnz1tnMIPMlBBo5JNr2/2GF
+	6HWReHvzBSOELSzx6vgWdghbSuLzu71Q3xRLHOn5zgrR3MAoMf32Vagia4l/V/awgCxmFtCU
+	WL9LHyIsKzH11DomiMV8Er2/nzBBxHkldsyDsVUlVl96CHW/tMTrht9QcQ+J6yfesUFCbgKj
+	xKH2VywTGBVmIXloFpKHZiGsXsDIvIpRMrWgODc9tdi0wCgvtRwey8n5uZsYwYlVy2sH48MH
+	H/QOMTJxMB5ilOBgVhLhdW+6kCrEm5JYWZValB9fVJqTWnyI0RQY4BOZpUST84GpPa8k3tDE
+	0sDEzMzMxNLYzFBJnPd169wUIYH0xJLU7NTUgtQimD4mDk6pBqa21YwzYmRzZ71cHlRUMvt9
+	v86hOQ7W5RN/p+epxJ85M+fE/z17tiZd+771XRari1qlr9+7OSs02qKO2O1Yci9W64OO8Yr9
+	7Mkvu9M8jPfdkw1eveH3ym/xc88W3S5I3suaJOCc9XBmbsua6e4edfIOf7pKlqwNze82lL/w
+	8XN7QJby0z9+Nk9nV/yxzTHaK7mcUSJjxbLecxse8vXl/xIV7vi96+3VW7fCTogzzQz6XNz0
+	XuTrG9vgrTGfi9U+65+JPc1RbFOi0rDhaVAYd+uCC85XP9tsfB19xNDg+c+sh95/Ouz+nloc
+	4+Dxtvqr59nu/7luplXS6St/LlHbpmCrq3wn9LsEyxOZL8YVO7YrsRRnJBpqMRcVJwIA9Yds
+	KDUEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGLMWRmVeSWpSXmKPExsWy7bCSnK7q8UupBu/XmFvMWbWN0WL13X42
+	i3et51gsjv5/y2bxq/suo8XWL19ZLS7vmsNm8Wwvp8WXw9/ZLc5O+MBqMXXLDiaLjpbLjA48
+	Hjtn3WX3uHy21KNvyypGj8+b5AJYorhsUlJzMstSi/TtErgydnStZCr4IFLxddohxgbGPQJd
+	jJwcEgImEke2T2LsYuTiEBLYzShxYPkuti5GDqCEtMSfP+UQNcISK/89Z4eo+cEosf3vCXaQ
+	BJuAtsT1dV2sILYIUNH+jlYWEJtZoJNJ4vVnPRBbWCBQ4sarHrA4i4CqxMK9PWC9vAK2Ev3/
+	l7NALJCX2H/wLDPIXk6g+PxlJiCmkICNxKTGAohqQYmTM59ATZeXaN46m3kCo8AsJKlZSFIL
+	GJlWMUqmFhTnpucWGxYY5aWW6xUn5haX5qXrJefnbmIEB72W1g7GPas+6B1iZOJgPMQowcGs
+	JMLr3nQhVYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvt9e9KUIC6YklqdmpqQWpRTBZJg5OqQam
+	7Jw6MaVrp+9Vnu9kSr7R9HTJLJv2fWrhYk42eQEfHpxmF96l2NP08eOWt686Zk15Wf7sd+Y9
+	pSsP1c003j5c9MP7wEz+c+s8r8Xamvy4FxK16pldurdGR0rt30V2DpcnM64/X+838+yLp2fm
+	Lyp6F757Ovv/ZV+FHOp47leripekNidaHnlfwbp4msKWzlAXp5uWYk6Tk7jevZRy2f5Le00U
+	b9QBk92hW9ZlbDOJajtnEruE5fiV39N2JGzckaYk97Uk+KGTd/WN7QoTon127Vp6/cu1C4/f
+	1B7LVMtfo/FuQ9uz5MuNvsbZqU0SniI+D8PNj0ht/Pr9u8OS7Gs5m+e3vmx+tPiw2fdK9c9L
+	opRYijMSDbWYi4oTAW+dnGPpAgAA
+X-CMS-MailID: 20240219031238epcas5p3aa330855093314a2c5768cf83971599c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240219031238epcas5p3aa330855093314a2c5768cf83971599c
+References: <522c03d9-a8ba-459d-9f7c-dfbf461dcf6b@kernel.dk>
+	<CGME20240219031238epcas5p3aa330855093314a2c5768cf83971599c@epcas5p3.samsung.com>
 
-On 2/17/24 10:59 PM, Xiaobing Li wrote:
-> On 2/6/24 10:40 AM, Xiaobing Li wrote:
->> diff --git a/test/sqtimeshow.sh b/test/sqtimeshow.sh
->> new file mode 100644
->> index 0000000..e85fd2f
->> --- /dev/null
->> +++ b/test/sqtimeshow.sh
->> @@ -0,0 +1,61 @@
->> +#!/usr/bin/env bash
+On 2/18/24 06:00 AM, Jens Axboe wrote:
+>And since your Signed-off-by is here, it also does not go into the
+>commit message, which it must.
+>
+>> index 976e9500f651..18c6f4aa4a48 100644
+>> --- a/io_uring/fdinfo.c
+>> +++ b/io_uring/fdinfo.c
+>> @@ -64,6 +64,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+>>  	unsigned int sq_shift = 0;
+>>  	unsigned int sq_entries, cq_entries;
+>>  	int sq_pid = -1, sq_cpu = -1;
+>> +	u64 sq_total_time = 0, sq_work_time = 0;
+>>  	bool has_lock;
+>>  	unsigned int i;
+>>  
+>> @@ -147,10 +148,17 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+>>  
+>>  		sq_pid = sq->task_pid;
+>>  		sq_cpu = sq->sq_cpu;
+>> +		struct rusage r;
+>
+>Here, and in one other spot, you're mixing variable declarations and
+>code. Don't do that, they need to be top of that scope and before any
+>code.
+>
+>> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+>> index 65b5dbe3c850..9155fc0b5eee 100644
+>> --- a/io_uring/sqpoll.c
+>> +++ b/io_uring/sqpoll.c
+>> @@ -251,6 +251,9 @@ static int io_sq_thread(void *data)
+>>  		}
+>>  
+>>  		cap_entries = !list_is_singular(&sqd->ctx_list);
+>> +		struct rusage start, end;
 >> +
->> +UPLINE=$(tput cuu1)
+>> +		getrusage(current, RUSAGE_SELF, &start);
+>
+>Ditto, move the variables to the top of the scope.
+>
+>>  		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
+>>  			int ret = __io_sq_thread(ctx, cap_entries);
+>>  
+>> @@ -260,6 +263,11 @@ static int io_sq_thread(void *data)
+>>  		if (io_run_task_work())
+>>  			sqt_spin = true;
+>>  
+>> +		getrusage(current, RUSAGE_SELF, &end);
+>> +		if (sqt_spin == true)
+>> +			sqd->work_time += (end.ru_stime.tv_sec - start.ru_stime.tv_sec) *
+>> +					1000000 + (end.ru_stime.tv_usec - start.ru_stime.tv_usec);
 >> +
->> +function set_header() {
->> +    printf "\033[47;30m%-15s %-15s %-15s %-15s \033[0m\n" PID WorkTime\(us\) TotalTime\(us\) COMMAND
->> +}
->> +
->> +function get_time() {
->> +    pid=$1
->> +    item=$2
->> +    proc_file="/proc/$pid/fdinfo/6"
->> +    if [ ! -e $proc_file ]; then
->> +        return
->> +    fi
->> +    content=$(cat ${proc_file} | grep ${item} | awk -F" " '{print $2}')
->> +    echo ${content%us}
->> +}
->> +
->> +function show_util() {
->> +    index=0
->> +    while true
->> +    do
->> +        data=$(top -H -b -n 1 | grep iou-sqp)
->> +        if [ -z "${data}" ]; then
->> +            echo "no sq thread is running."
->> +            exit
->> +        fi 
->> +        index=0
->> +        num=$(echo $data | tr -cd R |wc -c)
->> +        arr=($data)
->> +        len=$((${#arr[@]} / ${num}))
->> +        i=0
->> +        while [ ${i} -lt ${num} ]
->> +        do
->> +            pid=${arr[${i} * ${len}]}
->> +            name=${arr[${i} * ${len} + len - 1]}
->> +            work_time=$(get_time $pid "SqWorkTime")
->> +            total_time=$(get_time $pid "SqTotalTime")
->> +            printf "%-15s %-15s %-15s %-15s\n" ${pid} ${work_time} ${total_time} ${name}
->> +            ((i++))
->> +        done
->> +        sleep 2
->> +        update=$UPLINE
->> +        for j in $(seq 1 ${num}); do
->> +            update=$update$UPLINE
->> +        done
->> +        if [ ! -z "$(top -H -b -n 1 | grep iou-sqp)" ]; then
->> +            echo "$update"
->> +        fi
->> +    done
->> +}
->> +
->> +function main() {
->> +    # set header
->> +    set_header
->> +    # show util
->> +    show_util
->> +}
->> +
->> +main
->  
-> Hi, Jens and Pavel
-> This patch is to add a script that displays the statistics of the 
-> sqpoll thread to the terminal.
+>
+>and this should go in a helper instead. It's trivial code, but the way
+>too long lines makes it hard to read. Compare the above to eg:
+>
+>static void io_sq_update_worktime(struct io_sq_data *sqd, struct rusage *start)
+>{
+>       struct rusage end;
+>
+>       getrusage(current, RUSAGE_SELF, &end);
+>       end.ru_stime.tv_sec -= start->ru_stime.tv_sec;
+>       end_ru_stime.tv_usec -= start->ru_stime.tv_usec;
+>
+>       sqd->work_time += end.ru_stime.tv_usec + end.ru_stime.tv_sec * 1000000;
+>}
+>
+>which is so much nicer to look at.
+>
+>We're already doing an sqt_spin == true check right below, here:
+>
+>>  		if (sqt_spin || !time_after(jiffies, timeout)) {
+>>  			if (sqt_spin)
+>>  				timeout = jiffies + sqd->sq_thread_idle;
+>
+>why not just put io_sq_update_worktime(sqd, &start); inside this check?
+>
+ 
+ok, I got it, I will send out a v9.
 
-No objections to this one, but it will not get applied until the kernel
-side is sorted out.
-
--- 
-Jens Axboe
-
+--
+Xiaobing Li
 

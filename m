@@ -1,152 +1,167 @@
-Return-Path: <io-uring+bounces-647-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-648-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F5385ADB3
-	for <lists+io-uring@lfdr.de>; Mon, 19 Feb 2024 22:29:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BFF385AE68
+	for <lists+io-uring@lfdr.de>; Mon, 19 Feb 2024 23:28:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29B581F2282C
-	for <lists+io-uring@lfdr.de>; Mon, 19 Feb 2024 21:29:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08E36284C43
+	for <lists+io-uring@lfdr.de>; Mon, 19 Feb 2024 22:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F5556B6E;
-	Mon, 19 Feb 2024 21:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883A0F9E0;
+	Mon, 19 Feb 2024 22:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GWNQ0WRP"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Eo7QiUrE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006BC55E47
-	for <io-uring@vger.kernel.org>; Mon, 19 Feb 2024 21:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84275676F
+	for <io-uring@vger.kernel.org>; Mon, 19 Feb 2024 22:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708378082; cv=none; b=Yc/Jzj5KqLqBebw+2aCGqYPF2CT8hYxXJ0U5JhSeN9jh+DK/h2rvjW4Rm99KCxObSLC3ybeiyUwIZP0Vd/HLL3xDyrhfKsyFhv5V31I1CWHQnveiqKbAjiedQPrQgLrlVpfwscekkWPCgmtNmhrOEVtUedA6lwpkxN3hSLGxn+4=
+	t=1708381729; cv=none; b=nuqfa/fOkCY6Y1nVl8r//IuxNv9tGfAURgwcvWEECmDpgUWFUajZbLgLEgW1su/hyNg9u1fntSWSQ7bAfRssT3p7R7GQN2qlhyJZZ6hZu4TmtPDqZMKwfs/tu0tFGysrulIMgdtouR7Wni+rx+IhIgYXf6MF5++WBEZlUCOUFH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708378082; c=relaxed/simple;
-	bh=taZLZYe9/lGhZlFpg6RgyuB6JMR1eg7+Ku/sLaHYol0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p4kyStMTirhHCceleD5dSnXrHWpCv/ddH1n1zVZJrukfdydiT9brLTxKXJH9ria/SJawPqZZVkQU3OrE1Zw5plGPppKIg1k5ifDZC0ysFkNDfpcEO29Vras1iHLO3yY8+908o+rBn2RSRolriUjBGiQgHGUFPbvNhxliwPVMoFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GWNQ0WRP; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6e4784216cbso56047b3a.0
-        for <io-uring@vger.kernel.org>; Mon, 19 Feb 2024 13:28:00 -0800 (PST)
+	s=arc-20240116; t=1708381729; c=relaxed/simple;
+	bh=69e7kVPN/Z3SH6Is7oQo68JrXDtUBF6qZahWkHqh+7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GofWtn3vXoJl10k44SRcPGRrG7jdhDsycAdSpEO1l1cZDv8gEhQsV2A5xtQa/Firh2CKfeqLwT3ze4UZiipIndUaWYgpZYPL3OGsfoqhKzRE+TaImsXJ1TsOFlgjsh51lnHDsk3VHwaa2maaXah/IoKWHUb7Lfw7m5GnB8ekdQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Eo7QiUrE; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1d94323d547so33019155ad.3
+        for <io-uring@vger.kernel.org>; Mon, 19 Feb 2024 14:28:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708378080; x=1708982880; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iQJvsw/J6sK+/X03ucFK8E4fqOrLrmHIUymPpkqPOW8=;
-        b=GWNQ0WRPnAiynwPE2axBzD/lBxW+ojw9hoK+U5lcPkueMME3ULKAvl8sq0gOBHHaIt
-         4gTQXweg8PQVtyWsLPDndTV8fakTayWSdgdvvZgUuraEH7BkxgpbGI5VP7tgP6lW6BE7
-         TKxXeKguegG6534Ktrmv/PlGRfFG+f9rY5wJyzE5l9UWHi/MN7UvI0kCGw4SxdLSkBA6
-         dINOYIOL18K7wAdA4O2rW2Rs9TEN2SMdNJ5RQJkgh5J57eKwbEcMKcwSp/+EwdDXFINn
-         wljmJTdd60DiuFiatTNtCzuRlcCDBWT26vURLEfWiLJaN5jMJj65MCVYp47VuPqIHJP9
-         acLg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1708381727; x=1708986527; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bl5GKAX3dlaK9635suuwAaWFkidsg1LZ0Wt1MsG+2JM=;
+        b=Eo7QiUrEwSYhaJWG5CYDmFY8qzWsm8HqNf9yftgk3QxW7yhgamkJs0idwtYvIx2F4O
+         RSOHv9L+OIE2wJEeSF1rigqXbk9hg26ShWyJy4wXxqoyqnW1hYErH8tKBOhW85cBAtqW
+         MKFQYzLu3nmEGiRgrTcx+goUEHIhkQ1MiE2xeSvteU63Z9a3j9MK7t46PjSPGtikCEef
+         M18272AscOXxeMR1FrTPTLX2ZO4UboMWFDlV7dUO3WFzZib63zx1h9JG2A6awBSLG4Ok
+         HvcOo/+HZh+c+XuZwVtVvlntWST77EN1XK8Pu9qevk9diZBjLj79Z8yGt18BkPepP3ii
+         aHgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708378080; x=1708982880;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iQJvsw/J6sK+/X03ucFK8E4fqOrLrmHIUymPpkqPOW8=;
-        b=V/h7TSOSbstefAycggJvXRt8z+JQfPyik/v3Q5gMHTK7OzQers0IT0XM+o0uMOACVW
-         jeJJc+3MA6vFWRqLpHEgOckvGAaB6Nc2+BxOUPFPGRMVzdSxUQTfU1vdqKvAgwcVfMQ2
-         9pP7xDh1URLQSZD0LyqcNSQ+L6lGv80qItDttoHWOcv2pI2JXwvGyXok7w6bpOMBExsC
-         IXEI51crIpw8jiZma7psD8bPJnC1MTtF+BSAXHPAUpEPXsd7trS2PBFBm7nbVuGlE62j
-         CwVS0dcHAfgL+sxk244wqMOUF62C9b3bHjQKh6ULaSSr95HP9dyclqF/vhoc4czfCZcn
-         VNmQ==
-X-Gm-Message-State: AOJu0Yzg29/PqFhAT7/nKoYoXqL3a83VLxxFUj1G0erzZVZQfV4kPPzb
-	/O3Qx9DtJEprQppS5nflBv1cQW/CQEScEV4X0jSUaE0uydgS2vDUl9qFSmytdNygvr5xrIHOv4x
-	O
-X-Google-Smtp-Source: AGHT+IFrzr9AMXwoB1VIzIWPn53A7QvxUfQvzQbiHqp+n8D0WBtDF51S3eqKkSWnvFtL8nanP5j6HQ==
-X-Received: by 2002:a05:6a00:1c88:b0:6e4:5e66:6815 with SMTP id y8-20020a056a001c8800b006e45e666815mr5148474pfw.3.1708378078847;
-        Mon, 19 Feb 2024 13:27:58 -0800 (PST)
-Received: from localhost.localdomain ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id q13-20020a056a00088d00b006e05c801748sm5279770pfj.199.2024.02.19.13.27.57
+        d=1e100.net; s=20230601; t=1708381727; x=1708986527;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bl5GKAX3dlaK9635suuwAaWFkidsg1LZ0Wt1MsG+2JM=;
+        b=Wi7uJ2dxCPHz6I6BFpdBBmDCOn1KVH++pNwExCD+oV0IRRoJ+ecuyt+e0Y1PIOmQUu
+         gJFH+ib3pUsqKHW6JA8/qfbK3PjzoYw2H7Wkze5BwksnvA+6WOLBv8+LXmZlKUvz8QrE
+         gCKAAwY2cvf8FWqGywp7n7Mm7bV36uQhBKwHwmc+cmH/va63CcEtSXsRdwKH3P6aqKMF
+         N4pOASpsoNpyws8+wyKc6eRN3y8o02Ffu+O7EDl1RksUYwX3O1G3XVCQL7ANQeqko0gN
+         zw1GP0ClIw4IiQwi3gZhZ8ZdGZRcjHeGTL1mVfbn5qpspALiineWQXol6J0nr91yh6uS
+         nlQw==
+X-Forwarded-Encrypted: i=1; AJvYcCV434bgVAV2p8PLzh7fqnZpKkPqPCq+ZxQqTazaf8oFEckD65AlJQg7grEibDLWrCe/9CiauPCELB+8TLTVb5KtIyfOmupVipU=
+X-Gm-Message-State: AOJu0Yw8DRlG+w+pH/YmdhUEUbzUtfLH+H7m07lEyOAu23ymQqj/7Q3l
+	uYDYTAWcxH2xedopEmn8ES7aPdFWJHerfBG9zH86PiyN+3qgz/hZJFe+lutlQ6M=
+X-Google-Smtp-Source: AGHT+IHlEqzTbeqGZugXvJDuwYCJATCsRA1NiGwC9reCuuiCgxtV1VeURbikH3d/YTo82RrU7aljog==
+X-Received: by 2002:a17:902:cecf:b0:1db:d66e:cd15 with SMTP id d15-20020a170902cecf00b001dbd66ecd15mr6464817plg.59.1708381727050;
+        Mon, 19 Feb 2024 14:28:47 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
+        by smtp.gmail.com with ESMTPSA id l4-20020a170902d04400b001d949e663d5sm4933240pll.31.2024.02.19.14.28.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Feb 2024 13:27:57 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/3] io_uring/net: add provided buffer support for IORING_OP_SENDMSG
-Date: Mon, 19 Feb 2024 14:25:27 -0700
-Message-ID: <20240219212748.3826830-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240219212748.3826830-1-axboe@kernel.dk>
-References: <20240219212748.3826830-1-axboe@kernel.dk>
+        Mon, 19 Feb 2024 14:28:46 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rcC7v-008o4I-26;
+	Tue, 20 Feb 2024 09:28:43 +1100
+Date: Tue, 20 Feb 2024 09:28:43 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+	jack@suse.cz, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
+	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+	io-uring@vger.kernel.org, nilay@linux.ibm.com,
+	ritesh.list@gmail.com,
+	Prasad Singamsetty <prasad.singamsetty@oracle.com>
+Subject: Re: [PATCH v4 04/11] fs: Add initial atomic write support info to
+ statx
+Message-ID: <ZdPWGwntYMvstbpc@dread.disaster.area>
+References: <20240219130109.341523-1-john.g.garry@oracle.com>
+ <20240219130109.341523-5-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240219130109.341523-5-john.g.garry@oracle.com>
 
-Adds provided buffer support for sendmsg as well, see the previous commit
-that added it to IORING_OP_SEND for a longer explanation of why this
-makes sense.
+On Mon, Feb 19, 2024 at 01:01:02PM +0000, John Garry wrote:
+> From: Prasad Singamsetty <prasad.singamsetty@oracle.com>
+> 
+> Extend statx system call to return additional info for atomic write support
+> support for a file.
+> 
+> Helper function generic_fill_statx_atomic_writes() can be used by FSes to
+> fill in the relevant statx fields.
+> 
+> Signed-off-by: Prasad Singamsetty <prasad.singamsetty@oracle.com>
+> #jpg: relocate bdev support to another patch
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/stat.c                 | 34 ++++++++++++++++++++++++++++++++++
+>  include/linux/fs.h        |  3 +++
+>  include/linux/stat.h      |  3 +++
+>  include/uapi/linux/stat.h |  9 ++++++++-
+>  4 files changed, 48 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/stat.c b/fs/stat.c
+> index 77cdc69eb422..522787a4ab6a 100644
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -89,6 +89,37 @@ void generic_fill_statx_attr(struct inode *inode, struct kstat *stat)
+>  }
+>  EXPORT_SYMBOL(generic_fill_statx_attr);
+>  
+> +/**
+> + * generic_fill_statx_atomic_writes - Fill in the atomic writes statx attributes
+> + * @stat:	Where to fill in the attribute flags
+> + * @unit_min:	Minimum supported atomic write length
+> + * @unit_max:	Maximum supported atomic write length
+> + *
+> + * Fill in the STATX{_ATTR}_WRITE_ATOMIC flags in the kstat structure from
+> + * atomic write unit_min and unit_max values.
+> + */
+> +void generic_fill_statx_atomic_writes(struct kstat *stat,
+> +				      unsigned int unit_min,
+> +				      unsigned int unit_max)
+> +{
+> +	/* Confirm that the request type is known */
+> +	stat->result_mask |= STATX_WRITE_ATOMIC;
+> +
+> +	/* Confirm that the file attribute type is known */
+> +	stat->attributes_mask |= STATX_ATTR_WRITE_ATOMIC;
+> +
+> +	if (unit_min) {
+> +		stat->atomic_write_unit_min = unit_min;
+> +		stat->atomic_write_unit_max = unit_max;
+> +		/* Initially only allow 1x segment */
+> +		stat->atomic_write_segments_max = 1;
+> +
+> +		/* Confirm atomic writes are actually supported */
+> +		stat->attributes |= STATX_ATTR_WRITE_ATOMIC;
+> +	}
+> +}
+> +EXPORT_SYMBOL(generic_fill_statx_atomic_writes);
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/net.c   | 15 ++++++++++++++-
- io_uring/opdef.c |  1 +
- 2 files changed, 15 insertions(+), 1 deletion(-)
+What units are these in? Nothing in the patch or commit description
+tells us....
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 10b6d8caf4da..30afb394efd7 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -436,6 +436,7 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
- 	struct io_async_msghdr iomsg, *kmsg;
- 	struct socket *sock;
-+	unsigned int cflags;
- 	unsigned flags;
- 	int min_ret = 0;
- 	int ret;
-@@ -458,6 +459,17 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- 	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
- 		return io_setup_async_msg(req, kmsg, issue_flags);
- 
-+	if (io_do_buffer_select(req)) {
-+		void __user *buf;
-+		size_t len = sr->len;
-+
-+		buf = io_buffer_select(req, &len, issue_flags);
-+		if (!buf)
-+			return -ENOBUFS;
-+
-+		iov_iter_ubuf(&kmsg->msg.msg_iter, ITER_SOURCE, buf, len);
-+	}
-+
- 	flags = sr->msg_flags;
- 	if (issue_flags & IO_URING_F_NONBLOCK)
- 		flags |= MSG_DONTWAIT;
-@@ -576,7 +588,8 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 		ret += sr->done_io;
- 	else if (sr->done_io)
- 		ret = sr->done_io;
--	io_req_set_res(req, ret, 0);
-+	cflags = io_put_kbuf(req, issue_flags);
-+	io_req_set_res(req, ret, cflags);
- 	return IOU_OK;
- }
- 
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 88fbe5cfd379..1f6b09e61ef8 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -139,6 +139,7 @@ const struct io_issue_def io_issue_defs[] = {
- 		.pollout		= 1,
- 		.ioprio			= 1,
- 		.manual_alloc		= 1,
-+		.buffer_select		= 1,
- #if defined(CONFIG_NET)
- 		.prep			= io_sendmsg_prep,
- 		.issue			= io_sendmsg,
+-Dave.
 -- 
-2.43.0
-
+Dave Chinner
+david@fromorbit.com
 

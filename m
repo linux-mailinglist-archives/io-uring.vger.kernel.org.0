@@ -1,135 +1,115 @@
-Return-Path: <io-uring+bounces-640-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-641-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C64F85ABEA
-	for <lists+io-uring@lfdr.de>; Mon, 19 Feb 2024 20:21:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFD585AC61
+	for <lists+io-uring@lfdr.de>; Mon, 19 Feb 2024 20:51:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BFCD1C20F59
-	for <lists+io-uring@lfdr.de>; Mon, 19 Feb 2024 19:21:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00AF1F226C9
+	for <lists+io-uring@lfdr.de>; Mon, 19 Feb 2024 19:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CAC50272;
-	Mon, 19 Feb 2024 19:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D2D56445;
+	Mon, 19 Feb 2024 19:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDI2Tw7l"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="lU3AFtEU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DCC1BF3D;
-	Mon, 19 Feb 2024 19:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD75F56448
+	for <io-uring@vger.kernel.org>; Mon, 19 Feb 2024 19:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708370478; cv=none; b=SBF0I3XXx/ucgvyIoBHQXPkIz+aL/h2rpfRYye/znGquht+KP7tOJP+n9sIfIZdCv5ge82naMRc8nK4O4SHoLQUfkYkP2axvbzGG08tBZ9QyLNbtRYK3GHdRzCDsljVKU3BaY3KpOOHWIl/Zek084+fXTmmOw3m/xPyyQBMY5tw=
+	t=1708372109; cv=none; b=jee+7gw8zEMNMjReO96xi+ZblOx+nq8Qv7N5mH35J8tZXVCV1Kyko8kGuTHwTW/zpFB6U99V/U8ne+RX6TmBtxzkvlpoRgnDnFBpZ49vs9NMf0MO7Bd5rFB9zPuYkNctfbCy0/ehjK5PN1kD0+W4WS230K2DdRnKchkmdJICITo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708370478; c=relaxed/simple;
-	bh=BU7vmtS91LW14umqdRks1US1wmoCN7BfyNRskJ+lpzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mc6sb+9HBgxmwuyl+D3F8kK0kW7JHCuVYq9kP6piFBor4padm1iphrSgCmg9epJn39UJRg4riEp68mo56byjdRtjz7C43fUxZoRFP9r7I/dME9A3YrQ6vlIiNLaXZTf/joYaCOhu6V7XTg7fqkX+b912k9VEK11b86JJOPXxmYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDI2Tw7l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5BB4C433F1;
-	Mon, 19 Feb 2024 19:21:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708370478;
-	bh=BU7vmtS91LW14umqdRks1US1wmoCN7BfyNRskJ+lpzg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rDI2Tw7lYr17vYfRVT31/CFWOTvQvw8vu8Kd10WZDkZAfAUrzH8Df4KP6kxyUwmrK
-	 rGFpMcWC60IsJ/xONKcoIBQHrAldlZdG91Eo5stQQ7g0kxVAFfd9FHlI499h6X/V9X
-	 uV3aNuG/f+xnORzGFBi12Jq9+lalxrUM0mCfg2eSqcmNxdvWWWj0HLY4KndwAixZ5R
-	 QrIt0Synm8G4YerLcrr4Ta1M2jUeYFvwJyqYGsqzjANrsTGlgG6z54InG3nSN7NzBy
-	 lWYK1LwZxKgM45/cm2HfebVej40pz17i5AFt4n/v5CPx9+emInzhElr3yhPEDIr6p7
-	 ynArQJ8jnkTMw==
-Date: Mon, 19 Feb 2024 12:21:14 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com, Alan Adamson <alan.adamson@oracle.com>
-Subject: Re: [PATCH v4 10/11] nvme: Atomic write support
-Message-ID: <ZdOqKr6Js_nlobh5@kbusch-mbp>
-References: <20240219130109.341523-1-john.g.garry@oracle.com>
- <20240219130109.341523-11-john.g.garry@oracle.com>
+	s=arc-20240116; t=1708372109; c=relaxed/simple;
+	bh=ZlovF/E6dExG0QjXH9GL3i62dvwDxWjaVwesc1GWcng=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=h8iZwteYturdVip9PQYFp5DwwPvXa6ENbQdTCqkzBpVOBGjZyid4WRP2a9SMvc5tz7KWLpz/3WbNSi7AEPEnC4AqnDf1Xu7Jm0CJduy+5ZKVqcux0zBjzwwAzgWX6OScWkj1p8A+aLINiX1UZbaOIUNmTaLgJpcYKxXJYv4OMJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=lU3AFtEU; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7c3d923f7cbso49022439f.0
+        for <io-uring@vger.kernel.org>; Mon, 19 Feb 2024 11:48:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708372105; x=1708976905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hRb77MmXkctjtDmFuDvxasWorC2l2dlu1FQdHw8/Hxc=;
+        b=lU3AFtEUcuHf5fJEqIA5HcTMlNdt5Q+ucBAPYSCG1pdwcGzKo1WpWYR3oUUScj4/mV
+         SO9x+Tg2rGuTUxfW8bios8YkGJdL7Xb2IxNXY/YqwhcV8hKONFkjspx/k5CyMgJ68nzr
+         nMxY6p04DZ2nQNND5lw6CVVTMZm+3F88w8Uw8zsuNmis4pV75i7DmvRacke1OKHT1Ntn
+         fm/Oo1C8iq6ExVAwVxaXwJp8TyxfocOQxSuJthnHE8PPfIaOUIxzJteUpJXCDd/kzpiW
+         QjPIHp9+l05/sypjMmmwvCV+z+NSWIpq7tYLxkWi+YdgqeyF3IP401ZAzP5LG2shzl0F
+         3Wag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708372105; x=1708976905;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hRb77MmXkctjtDmFuDvxasWorC2l2dlu1FQdHw8/Hxc=;
+        b=teX/K0vdf0wsngd0EIAfVJqbz568yp9ZxS3G89z8XBeqTUcom2UAGcGxPDu4a+2408
+         nQLGLMk3e3Wrf+NJpic4Rbvn4Gt5ma3zYSScVC0E+LFdWGM2hzBQFuP64WUvB6YVIw2g
+         ZX27hKpvQ8+E7yOhLT81NvwdGIJ5U0CNSOM4MDJ2wWh2H97eF2OGLMgls8y+l4aqIYSj
+         LcdqqRBR/odho2cH3FULMEsEsZraKsJ0QhHGBQN+OH5wYP5I4swYWUJTIenhfDoyIA27
+         id7Hy31HUIKafm0s7FGteNMu/5xwUYrkqcmyBWcKA9D6+jwaNoHWZX5m4ECv4SMIhs7E
+         ZJfg==
+X-Gm-Message-State: AOJu0YzC3aVQuSgB2VMUA9pa8qe2DIg0ZxObK2QBDIG5HOX5wZxAHLCe
+	QQcUhQhcEpy8Gpvudby32USOmK8hwSrT/WbkfUu6jEgfeoe8lGWGzFL0S0uP7+xc7OxYVQ2TMvZ
+	A
+X-Google-Smtp-Source: AGHT+IGmv3itBs67nnkjaPlfDp/CxFxTkDBR/r9ylmCa38HgeBvTLp//7Y2zNoec0BjF9YpXS4Sftw==
+X-Received: by 2002:a05:6e02:2144:b0:365:2f19:e58e with SMTP id d4-20020a056e02214400b003652f19e58emr3098530ilv.3.1708372105081;
+        Mon, 19 Feb 2024 11:48:25 -0800 (PST)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id j15-20020a056e02220f00b003639d3e5afdsm620302ilf.10.2024.02.19.11.48.24
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Feb 2024 11:48:24 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET 0/2] Support for provided buffers for send
+Date: Mon, 19 Feb 2024 12:42:45 -0700
+Message-ID: <20240219194754.3779108-2-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240219130109.341523-11-john.g.garry@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 19, 2024 at 01:01:08PM +0000, John Garry wrote:
-> From: Alan Adamson <alan.adamson@oracle.com>
-> 
-> Add support to set block layer request_queue atomic write limits. The
-> limits will be derived from either the namespace or controller atomic
-> parameters.
-> 
-> NVMe atomic-related parameters are grouped into "normal" and "power-fail"
-> (or PF) class of parameter. For atomic write support, only PF parameters
-> are of interest. The "normal" parameters are concerned with racing reads
-> and writes (which also applies to PF). See NVM Command Set Specification
-> Revision 1.0d section 2.1.4 for reference.
-> 
-> Whether to use per namespace or controller atomic parameters is decided by
-> NSFEAT bit 1 - see Figure 97: Identify - Identify Namespace Data Structure,
-> #NVM Command Set.
-> 
-> NVMe namespaces may define an atomic boundary, whereby no atomic guarantees
-> are provided for a write which straddles this per-lba space boundary. The
-> block layer merging policy is such that no merges may occur in which the
-> resultant request would straddle such a boundary.
-> 
-> Unlike SCSI, NVMe specifies no granularity or alignment rules. In addition,
-> again unlike SCSI, there is no dedicated atomic write command - a write
-> which adheres to the atomic size limit and boundary is implicitly atomic.
-> 
-> If NSFEAT bit 1 is set, the following parameters are of interest:
-> - NAWUPF (Namespace Atomic Write Unit Power Fail)
-> - NABSPF (Namespace Atomic Boundary Size Power Fail)
-> - NABO (Namespace Atomic Boundary Offset)
-> 
-> and we set request_queue limits as follows:
-> - atomic_write_unit_max = rounddown_pow_of_two(NAWUPF)
-> - atomic_write_max_bytes = NAWUPF
-> - atomic_write_boundary = NABSPF
-> 
-> If in the unlikely scenario that NABO is non-zero, then atomic writes will
-> not be supported at all as dealing with this adds extra complexity. This
-> policy may change in future.
-> 
-> In all cases, atomic_write_unit_min is set to the logical block size.
-> 
-> If NSFEAT bit 1 is unset, the following parameter is of interest:
-> - AWUPF (Atomic Write Unit Power Fail)
-> 
-> and we set request_queue limits as follows:
-> - atomic_write_unit_max = rounddown_pow_of_two(AWUPF)
-> - atomic_write_max_bytes = AWUPF
-> - atomic_write_boundary = 0
-> 
-> The block layer requires that the atomic_write_boundary value is a
-> power-of-2. However, it is really only required that atomic_write_boundary
-> be a multiple of atomic_write_unit_max. As such, if NABSPF were not a
-> power-of-2, atomic_write_unit_max could be reduced such that it was
-> divisible into NABSPF. However, this complexity will not be yet supported.
-> 
-> A helper function, nvme_valid_atomic_write(), is also added for the
-> submission path to verify that a request has been submitted to the driver
-> will actually be executed atomically.
+Hi,
 
-Maybe patch 11 should be folded into this one. No bigged, the series as
-a whole looks good.
+We never supported provided buffers for sends, because it didn't seem
+to make a lot of sense. But it actually does make a lot of sense! If
+an app is receiving data, doing something with it, and then sending
+either the same or another buffer out based on that, then if we use
+provided buffers for sends we can guarantee that the sends are
+serialized. This is because provided buffer rings are FIFO ordered,
+as it's a ring buffer, and hence it doesn't really matter if you
+have more than one send inflight.
 
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+This provides a nice efficiency win, but more importantly, it reduces
+the complexity in the application as it no longer needs to track a
+potential backlog of sends. The app just sets up a send based buffer
+ring, exactly like it does for incoming data. And that's it, no more
+dealing with serialized sends.
+
+In some testing with proxy [1], in basic shuffling of packets I see
+a 36% improvement with this over manually dealing with sends. That's
+a pretty big win on top of making the app simpler.
+
+This also opens the door for multishot send requests, which is an
+interesting future venue to pursue!
+
+You can also find the patches here:
+
+https://git.kernel.dk/cgit/linux/log/?h=io_uring-send-queue
+
+[1] https://git.kernel.dk/cgit/liburing/tree/examples/proxy.c
+
+-- 
+Jens Axboe
+
 

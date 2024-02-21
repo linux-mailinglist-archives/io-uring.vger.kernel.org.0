@@ -1,278 +1,238 @@
-Return-Path: <io-uring+bounces-667-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-668-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C285785B877
-	for <lists+io-uring@lfdr.de>; Tue, 20 Feb 2024 11:02:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CDC85CDD6
+	for <lists+io-uring@lfdr.de>; Wed, 21 Feb 2024 03:18:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BEFD1F2664B
-	for <lists+io-uring@lfdr.de>; Tue, 20 Feb 2024 10:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FBB11F24BBC
+	for <lists+io-uring@lfdr.de>; Wed, 21 Feb 2024 02:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7081E60881;
-	Tue, 20 Feb 2024 10:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DE2F9F6;
+	Wed, 21 Feb 2024 02:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VzUM+AdL";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="zXR52od8"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TjMhvpDx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF9A605A5;
-	Tue, 20 Feb 2024 10:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708423337; cv=fail; b=BW4mkRbRwh0gb1/woW6CEgoD4B6ex09oDYHdW9pqErBoy2ieqMe4lzr8sNqRdW9W2zHKToPYviXlpmmE9fFYb0TsH1laVcZFP8biIplOuuz9UYc+kv+N+u1wqpcG9pUBufxTVSefoCArocOHNCDnSlqjKZokOZ3v1y7EK8Wn9MQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708423337; c=relaxed/simple;
-	bh=yW9qkYciPVMmB5RyQrZi+pY7RUknx4CpRi6rI8sK0mE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nByaYw8nIX8/vlsKPX0pt0G6HrDAJd+fhyAOq62GCHRTFW0YUJAnC74GEdEKbjpl9jSO8cyH+eKMqqeTQ0CKg3tqisS67gVHufLVNL2FPelDk7bmRdllpxBxd6thjSliEtuh6KV9rRP8t0MI2f3e2RpcA3EQ0e+JuqGjtUe8vA4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=VzUM+AdL; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=zXR52od8; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41K8wwkT014820;
-	Tue, 20 Feb 2024 10:01:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=LSC6zyt48AdfAALHwmJw3TbYCQwRLt4zwvOwu1/wxBY=;
- b=VzUM+AdL1GQ+kZaAu2Qnyu9ZFrljhMTNLIWc3NnQa7Gn/V6Y0ez4x/Zc485salYgTueI
- bOjKVLYzCccoRlfx8T6wmygKSPsNwoZUMpAs64FGOvFIMaTOcpFyIVb5EaSooC/FQYAx
- SdbJWgcy72B+phKPvK443rixG6+TZYaW4NKZP2wBy82vBS+L/yXT67gp7supNs4tc9rt
- 8mV60i1EI5yah38DLLdAufceicCBxiGx7z2b4pQOBsVq1Z7BiUGr+LAl37ylJCahflq+
- tpDpVkwHvbiAxLmOgYuHnj+Diaus8JsC5uyS9utluo2U4xi4X9+aZvtODKWPD+NqqzbC 0Q== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3wak7ee849-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Feb 2024 10:01:46 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41K9Wpgd032725;
-	Tue, 20 Feb 2024 10:01:45 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3wak8717bb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Feb 2024 10:01:45 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KttJDZvNYAPsEwF5YoY5XsbmUnRceTnX5HKm/RPnKi4WmyOe6gMcrtRuu3zXM7GgLOV1v7lu0OWRtJmtn7GHyoQ7JTsRW5uwPbq3/pZAfdb7qr1HZdTngTTw6Ejqz3Sn9uPrY3IKCz6DZoGsXD1FsIR76ub4Xgtt/7wjehWAnYN+AVhmJpCnr1qhEs6PDblJqwo7bd6UpPp9hQg7f307HQKypGJ67an8L4rWBr8w82phWKKjCVc6e5WDCi7FV9BghH0XGXKvZjZQLf6dsJiiEPBkqb72A4bw2Vxsw3xeCSWWCxD61/+K/NK07KAmkhzU8O7qSCLfUT8IIh6NbQf+Rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LSC6zyt48AdfAALHwmJw3TbYCQwRLt4zwvOwu1/wxBY=;
- b=k1+DjdbvkuVV12oGEne6N+C8ycMIJEgNM/aeBXaY0N7BBNMFJQSLR3ZFwx8y7/x2aPS4WOWjTIoZYUlwjKTxso16phvZDhR8EBA2cTGvT7xltm2atKXj7NNN4e7M6GylVT4FUeYyDZ/pzNsCmBs+Q6QO1tzKS7Zs+nRm4nDNQjlWXgWLoRq9ZZ210x3KkMAAPpKZxpeqC7aIqTj8G/c56FKAM77Z5GwjoK+eGRXkXgtPL6tX+w+dJYgakGoxE1IEVFAtO6CEoyFOk5tYtAfe4b14ngZlxQ6asPcuF6pgWrh57Krv8EXOXnmB/IwxYH5DK7tbTJ+dKi7ENiLRvuI5IA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LSC6zyt48AdfAALHwmJw3TbYCQwRLt4zwvOwu1/wxBY=;
- b=zXR52od8W3U0XYMbMkXy8Bd4ap7yxUugZIg999+H87t+z+r4a5vWR/u0HuLt5D7lrDgRtXIXnj8319Bol5ZFQyxZw2tnzDl0paftgF2r9JDneKyGaRWeGZWMCGad4jFu5H4o7k0Z6QQ4yHAeEO1IWD2zNSR8pGrKrXXpIDCW2RY=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by PH7PR10MB6604.namprd10.prod.outlook.com (2603:10b6:510:208::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.39; Tue, 20 Feb
- 2024 10:01:43 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::56f9:2210:db18:61c4]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::56f9:2210:db18:61c4%4]) with mapi id 15.20.7292.036; Tue, 20 Feb 2024
- 10:01:43 +0000
-Message-ID: <f5ccbfac-e369-4371-bb7f-68bb40c47239@oracle.com>
-Date: Tue, 20 Feb 2024 10:01:38 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/11] block: Add core atomic write support
-Content-Language: en-US
-To: Dave Chinner <david@fromorbit.com>
-Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jack@suse.cz, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org,
-        linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org,
-        nilay@linux.ibm.com, ritesh.list@gmail.com
-References: <20240219130109.341523-1-john.g.garry@oracle.com>
- <20240219130109.341523-6-john.g.garry@oracle.com>
- <ZdPdHzNAVb5hqlkY@dread.disaster.area>
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <ZdPdHzNAVb5hqlkY@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LNXP123CA0012.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:d2::24) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5B7846F
+	for <io-uring@vger.kernel.org>; Wed, 21 Feb 2024 02:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708481899; cv=none; b=Il1wiGsax3091qZ7l2dnPlg2yyiu/Pm3Q1QCXmv5ZDXUTlxGJcBDGkj+rGz11VmR2o1IIKL6r/BoY4mg7Stl+yzbFrZjiFN6G7pEgb+ad530DWN8loDZgVkGlGUUBvL2+ixR/ztG2rqCctoijWHmOFSaUFuXY3E02kpOnW8P8EY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708481899; c=relaxed/simple;
+	bh=Bz65JJzzK7nAF9fUJ/FgIyuYBpMGBYPrCxeT5tLXx4w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=RZM5eR5AJspPh9JbEtBN2PUD56eGISUEjzcHVpwc9HFdbS5h6lEg6PPDTPliJbh8oe5b8qFi5Mx10m4ZzYHuwoeUgeJQpwVQBCmhNJTn9+seMM8//QluVr+En8V/LmwpXQy7GmlTzCmZvwqWN48DOCrNxgAHX9sdFXqKkY3TCA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TjMhvpDx; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240221021814epoutp033de6c9d752ef93b5b5e75b3c675b00cc~1vzsbtm9n1985319853epoutp03v
+	for <io-uring@vger.kernel.org>; Wed, 21 Feb 2024 02:18:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240221021814epoutp033de6c9d752ef93b5b5e75b3c675b00cc~1vzsbtm9n1985319853epoutp03v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1708481894;
+	bh=gIB0arhLN49n5nk6aQN47dB7qr96cHagBOiYA3JmIms=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TjMhvpDxPuVIX7+9pHGBMQqjmFqg+yfzDqTIEzvb4YIJKzxb1F3eH2yMKZtpM8qW7
+	 RN7M/VTB2YNOq1RbQIltyT+HBjhk26teuIs/7vKNtaREQI2H/H00X5AYIX2kdTGulM
+	 8JftoHWtFPKzq0bt4wwdBDQy90I2cZ8pgwrpwGq8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240221021813epcas5p2c56f1e5f4150b7a07dddf4af3a73696c~1vzsDJk6q2581825818epcas5p2v;
+	Wed, 21 Feb 2024 02:18:13 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Tfg0z532Fz4x9QL; Wed, 21 Feb
+	2024 02:18:11 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7D.A9.10009.36D55D56; Wed, 21 Feb 2024 11:18:11 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240221020432epcas5p4d3f6dcf44a4c2be392e94889786c75bc~1vnve0ayQ2500425004epcas5p4O;
+	Wed, 21 Feb 2024 02:04:32 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240221020432epsmtrp15cd8eb5bd274aed9b3747399f3a7d23d~1vnvdBtLD1595015950epsmtrp1w;
+	Wed, 21 Feb 2024 02:04:32 +0000 (GMT)
+X-AuditID: b6c32a4a-ff1ff70000002719-36-65d55d63a6cc
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9E.66.07368.03A55D56; Wed, 21 Feb 2024 11:04:32 +0900 (KST)
+Received: from testpc118124.samsungds.net (unknown [109.105.118.124]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240221020431epsmtip1cf78aebccc892023d0a43ad74eb5f2ed~1vnuARfia2355323553epsmtip1W;
+	Wed, 21 Feb 2024 02:04:31 +0000 (GMT)
+From: Xiaobing Li <xiaobing.li@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org, kun.dou@samsung.com, peiwei.li@samsung.com,
+	joshi.k@samsung.com, kundan.kumar@samsung.com, wenwen.chen@samsung.com,
+	ruyi.zhang@samsung.com, xiaobing.li@samsung.com, cliang01.li@samsung.com,
+	xue01.he@samsung.com
+Subject: Re: [PATCH v9] io_uring: Statistics of the true utilization of sq
+ threads.
+Date: Wed, 21 Feb 2024 10:04:27 +0800
+Message-Id: <20240221020427.309568-1-xiaobing.li@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240219064241.20531-1-xiaobing.li@samsung.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH7PR10MB6604:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ef4816b-7777-4d2f-cc8e-08dc31faf0ec
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	hChLBcG1RW0qWPyCkMC0lMdT4JzsnS0yF92kC6OH0DnRyePwhIa7TyWv3Dcba7yKdDDCjx/zrcUReusIPDZbKkxN/lCn7vmATaKJIXhIOh2vFCcO6cP9FZ0xM7e58qkw6PB1x/FfovyjYvQyNKUkoq7Ge8V0x7nWJ2ZRlO8gBmlJexScvoJyCtog+taZbiXxXZsfHP9bvvhwxb1aqg39Yrq4QJD7qnZb2MGjiTJKQ7ptXPiTHtfW4SYGdfJJpRfveaR7fwPzmx8YlNI4WQuOrYSGVk73alSemG9pc7+4jq3scueh5mQ4FZOl++oOyfxGtNiForWZhZah8TCbuvOjcVgBF9UhsJ6KxNLvQjglZ8EqF9lqpJVQYsPcV4N0l6jqZvju312OxpsQXtfS2m2mDRacoJVLRrpLJ4pU9oZW4dVdLlFziHNeMujQl/FGxIH9wRa308v/l8R5TMukhHGBogZxM+35dYe5tFmSlNBUcAdd9y2Wc+SpRC83tKiLyTpZAkpKwjzBCWibRk65elhWyAh2qdX+dP/XjrnRXlbwx7A=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?dFZjWldWT0U3UmhXQ0xRWHZWdEw2NXI0aS9pSWpvM0ZuUW1NOWhqd2E2MTV6?=
- =?utf-8?B?bkZyckpoVitkeW9KdkJlTWZyUUxhTm5aendWMEUzYUk2K1NWRW5BeExqMVc4?=
- =?utf-8?B?dzV3SXZrRjVoV1JKRjkwQ2lMZGxISXNVL0Z0cncwQ0R3aUw2OVRGclFxTGtL?=
- =?utf-8?B?SXA0NUtWdjI1SGdXcEk0Znp6V3ZYZitxL3g4U1d3eHRud205enRGVmxwYXdY?=
- =?utf-8?B?bzJGZ2Z6OTJMU0pWN1ZjUHNYNE9wRm1FQmhoL0hYYzNWek8vWk9JYU9LdjZN?=
- =?utf-8?B?WHJxN3M0QzlMMExpWkJJMEFDS1dYcHgzVW9JTVVncW1ibDJwUHR3TUpsUHA4?=
- =?utf-8?B?TnZPdjdqaU43aVM4b0Z2bU9CWGdBUVl6OWRtVUVBbnZNZGFYOUJuNVJLTjhk?=
- =?utf-8?B?SW0xdktWdTBKbmxwVXpCbnhMQ2N5eW04K2tFY1Vkam5YM0JGdnZacFlYYS90?=
- =?utf-8?B?MHhGbFYvWmhOeTM5cWR1N1JqN1JtUFA4cUJ6cnhZV1dTZEV2cHgxNTF5YnBM?=
- =?utf-8?B?RWF0aTBrVVBtN21vSGNDc05aZzdDbFVUTVNFT0pmTzRzZnk2RldlTWZIbHR3?=
- =?utf-8?B?RWk2NVA0YUU0Z3NoT3NPZXlyS3p5YUhoaVlMbUhJRjNuZ0VMMlN6b3ZEcTZo?=
- =?utf-8?B?UUkxTDRIK0pjczAxOUdxL2tQZVdhWUN3cnVKWlJmUk5aei9kckdkVllVWUE2?=
- =?utf-8?B?Mmg0Z1NQZzc3SjBzM3BxR1hYdkxqdW04M2lGd3UyMkgwS0JKNGl4em1tUmFV?=
- =?utf-8?B?eHNWUFlrLy9BUmczeEJiN2tONHlOSkxpb2w1TGxlMDUvc1BmK1Ewdjh2bjNQ?=
- =?utf-8?B?cGV4bmpmNnlTeUZpSUdreFYwVzhhaHo3VGFuQTFIZ0NhcmtlYzhsR3g1OGcv?=
- =?utf-8?B?VFdCSTZSY1Y3WUJqbmhhYk0vSkYyUGFiR3E4VHRXY2tYQTQwc25CMklQSUph?=
- =?utf-8?B?Y0ZyczRyVWhPYTczc0hkTFViSWFhd2cvc2ltRjViNmNiUW5KRTFPV2FOdjBy?=
- =?utf-8?B?V3BndUZneTdySE95TmpuSkxaTlg4YlErZFI2c1hsaDZwVDVYbDVod2JwcDZ6?=
- =?utf-8?B?UGo3SkI3SlJQdDAxT3c1RHc0RnVHdTZqQlc0eC9TK1RXS0NOYWNtNVNueUJ5?=
- =?utf-8?B?N1pDbTZZbFNKUUQwVUlYeHhmU1I5WFZZc3RBSjZsMUZrR2dSYWQwZ01SY05Q?=
- =?utf-8?B?OHhtLzQwbHcwT2JpS29tMlFJc0FwTSt2WVMwclBrUTU1YVFTYUI4NEx0TXAw?=
- =?utf-8?B?dDBrMWFJT1RvbkRxMzZiNFZ6emw1Y2MrZE1iVG50dlhDcE1CbUxYcVMwU2tL?=
- =?utf-8?B?aW8xTjl2TnEvRG5jOFlMb2VsbjNyNG5uclFKY1ZhQTN1VXN0cTFrazl0alQ5?=
- =?utf-8?B?T2NGazNNYklpcDhtQ2xxa2ZZRXJRNlJwZGVheURqaDgrTHZwSnZNaHBERW1s?=
- =?utf-8?B?WnF4NnFBWGY0QzFZaWNxdERzajJvbTNMRzZBL0l3eWNlQTZDYUR3RmxvMlBy?=
- =?utf-8?B?NXVPaU5kK3NZR0U3c05JRGtMcHd0YmZhOVMzd3lZTmUzaVRFQTFQakJxeTVk?=
- =?utf-8?B?YzFCdy8wVTFwWXBiZlFnazcvL0VsMjZxbmJZVU1YMzU1cit3RVJ0cm05bUNm?=
- =?utf-8?B?L2syeUJCb053Z1haNTNoV3FxRkVtUGJkM1RuQ2JEcHJ0YW5HWVVYNEROK0Nm?=
- =?utf-8?B?QlNzRTI1Zy9vdlhtQTkrdXhWZUt1LzZEU1c2R3N0cUJhcEt6NWFVUTNNQ25K?=
- =?utf-8?B?RGNJUVNxNitzN2lrcUM5Njg5UnZ4UzJhY2p6alRPTlNjTklZb2FEc3JOVi9k?=
- =?utf-8?B?NERLdU9FZjhIdStWZjR6akJtRXpKM3BQOFRZd2Z6RXRKajlmWjAzdUloandF?=
- =?utf-8?B?RXp2ZXFxa3lSUHlkUGlrT1RTbHZ3cHlNdFRkSUxCSHp2Y2RQaEhHRTBHVStM?=
- =?utf-8?B?dVhMSWN4cHVEOXhYVTduTk9VUjFrTTlzR3RPYkM5SjJQYlVnakx5b1dVcEx1?=
- =?utf-8?B?eml6L0VzVndzck5vL3hNb3VMN29RSXFFdjhjbUpSY2diOU9XVS9CQUZxT0dX?=
- =?utf-8?B?cEd4OEhmV1UwVWp2dDVjZmp4b25FWXJHTXVkRForNHJmakhVS0MzSXlkSGV2?=
- =?utf-8?B?NHhPT0ZSbUVmdVNrZnNQRkhtN3JLOFNSWTdGaFpCOVFBdiswWG8wNlJXNVJh?=
- =?utf-8?B?WXc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	KSJiw5lH6qcsA56V+JiP1wF9XuimSqNr9TV1ZZYq11G7ZGQ5KESrqETYZc5/tb1PH0LO4PB9ynJwlaN8vwKbgSY7CP1Cw9sPFAcWDXVEGx3Pj+q67KXf1VRd4Mp79rGBVJ2WpgIoac5rWQglnVY1wccXt+NM7jZwBfqh96zEJiiJ/fMndiO3j+J5ydugMAe52TyL/ugu5om65WUuTZ7Ti8S6c9YLdB6AX/LrkxJ8LUrfjheKAvtsicNPjibOVDBZkLVqvKr6UUWKeTIJxies0nmzE03qGapLQrBuxkgBReqCxt0f1RH8EvmN7WWFRogL4cd+I8x1WdEjNcuiLt1LOcpD0ZLROFBkVCU8KA1ceBSdDfsAs9BWF8XfzJZxIguGsY11//zHNZ3eU39uriMqctesDDGQg+EKkinoV1p4hGNZ13JFXzSNcOorA8gFfNe9byDJ4wxeIya90+fD0hFbQwnz+cQdyNDBjVNsFNN++lvD+Fswx1FkbQI63oRTck0bpLvAXccwXU84W7pWwaedr8RCQGYMcQvgjU+d4w4mu4Yq/OJTzSZEUCZ1N2BwvEdgCPIUCU0+63JHrjyaB7e4689mnojoZFwz4aNotklKIU0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ef4816b-7777-4d2f-cc8e-08dc31faf0ec
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2024 10:01:43.5281
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wCAMQp8W+mkKd7YXWk4dra1xQq1kk1yODkwqNlYoRsAPyEWiVPVtfngi3kaUB9u6HfqBkMf4zdtUh9i5FfXKEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6604
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-20_06,2024-02-19_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 malwarescore=0
- bulkscore=0 adultscore=0 suspectscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2402200071
-X-Proofpoint-GUID: i4jXTXRa0bSBSapiMmSdNQ3vlJcwHtBx
-X-Proofpoint-ORIG-GUID: i4jXTXRa0bSBSapiMmSdNQ3vlJcwHtBx
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHJsWRmVeSWpSXmKPExsWy7bCmlm5y7NVUg3eP1SzmrNrGaLH6bj+b
+	xem/j1ks3rWeY7E4+v8tm8Wv7ruMFlu/fGW1uLxrDpvFs72cFl8Of2e3ODvhA6vF1C07mCw6
+	Wi4zWnRdOMXmwOexc9Zddo/LZ0s9+rasYvT4vEkugCUq2yYjNTEltUghNS85PyUzL91WyTs4
+	3jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6EQlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5x
+	ia1SakFKToFJgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGps2/GAv+Slc87JzA1MDYIt7FyMkh
+	IWAicXfvAtYuRi4OIYHdjBK7rzexQzifGCXebrrEDOF8Y5RYvukYG1zLw0lsEIm9jBJHn3xm
+	gnB+MUpM7JrFBFLFJqAtcX1dFyuILSIgLLG/o5UFpIhZYB2TxKcdbewgCWGBUIknpw+D2SwC
+	qhJnzl8Ca+YVsJWYt/EwK8Q6eYn9B88C3cHBwQkUX3rQHaJEUOLkzCcsIDYzUEnz1tlgp0oI
+	TOSQuP1uKjtEr4tE3/pbTBC2sMSr41ug4lISL/vboOxiiSM931khmhsYJabfvgqVsJb4d2UP
+	C8hiZgFNifW79CHCshJTT61jgljMJ9H7+wnUfF6JHfNgbFWJ1ZceskDY0hKvG35DxT0k9h5v
+	gYbpBEaJT7c72SYwKsxC8tAsJA/NQli9gJF5FaNkakFxbnpqsWmBUV5qOTyek/NzNzGCE66W
+	1w7Ghw8+6B1iZOJgPMQowcGsJMLLUn4lVYg3JbGyKrUoP76oNCe1+BCjKTDAJzJLiSbnA1N+
+	Xkm8oYmlgYmZmZmJpbGZoZI47+vWuSlCAumJJanZqakFqUUwfUwcnFINTCyFy6/OL1Ow+FoQ
+	Nf2W5Ca/Q+ueHDR1Yshfd3m19+EdBm4/fDZE3FfrP2HzrX1HyaeJ2bvSP3O7mIjv4VjiepCJ
+	/ehfufPasqYBjRM+urFN8OBVZVi2eWFNwyvJvIOfHi5Y7rMvatLVm7zKEdYXP760//7cxy6q
+	V8jHe53fli0/HJk4HAUtQj8kVviHrD/3YPdT9+QDYYuEFGIZjjZmJMloJiW3J51XlZtforJ2
+	3/woi9St9jkXtmV8SyuN5AucsTD1xLzS7Pe7WUxulD7LFV8grrWN++WyHy7mMnVzn6uvuKdZ
+	LjdrS2/Svn1/XWZ6rdp8ZpdMn/hmL+6Ji1bNUPWQMWr5+E3Pj0NUX//LPCWW4oxEQy3mouJE
+	AMTnX6BBBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsWy7bCSnK5B1NVUgzOP9SzmrNrGaLH6bj+b
+	xem/j1ks3rWeY7E4+v8tm8Wv7ruMFlu/fGW1uLxrDpvFs72cFl8Of2e3ODvhA6vF1C07mCw6
+	Wi4zWnRdOMXmwOexc9Zddo/LZ0s9+rasYvT4vEkugCWKyyYlNSezLLVI3y6BK2PT5l+MBX+l
+	Kx52TmBqYGwR72Lk5JAQMJG4+3ASWxcjF4eQwG5GifNnVjB2MXIAJaQl/vwph6gRllj57zk7
+	iC0k8INR4mVnJYjNJqAtcX1dFyuILQJUs7+jlQVkDrPAHiaJd9M+gyWEBYIl1ja8B2tmEVCV
+	OHP+EhOIzStgKzFv42FWiAXyEvsPnmUG2csJFF960B1il43E/U1P2SDKBSVOznzCAmIzA5U3
+	b53NPIFRYBaS1CwkqQWMTKsYJVMLinPTc5MNCwzzUsv1ihNzi0vz0vWS83M3MYJjQUtjB+O9
+	+f/0DjEycTAeYpTgYFYS4WUpv5IqxJuSWFmVWpQfX1Sak1p8iFGag0VJnNdwxuwUIYH0xJLU
+	7NTUgtQimCwTB6dUAxNr8ksRzZQ9qRx6Jx7Hrmo4lbxu1V/tVp6yr3+jtuq3Zc5kPyp+UU1t
+	/Yef7lv+Vk1RbLLaOCtZ+VzZ1YC9t7JVReZ2nNZZecejSGtZ8LqUG/JPDi/2FLvT8y0lo/1u
+	wjPDnONGxhaH/TpXuxVMev79orazh7VYvr9qwb9jykEt1d2unsI7jCwTPffxeGybr33O7kLT
+	tMYJ7h/WGv3RSq5f6GrLtape+VdY/8vAZ3pTdHLPqwWmi7rbOd6u65vzkOszW07cxXlXcle/
+	5O677fTux/f4rnIR83v8H6snpiwWOBfPnP766G0G5cL5V1MEfT0MMrjcQ2f/EJd3NFQ/ta56
+	qujBkA9q4fGrryoeUWIpzkg01GIuKk4EAFbtUEn0AgAA
+X-CMS-MailID: 20240221020432epcas5p4d3f6dcf44a4c2be392e94889786c75bc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240221020432epcas5p4d3f6dcf44a4c2be392e94889786c75bc
+References: <20240219064241.20531-1-xiaobing.li@samsung.com>
+	<CGME20240221020432epcas5p4d3f6dcf44a4c2be392e94889786c75bc@epcas5p4.samsung.com>
 
-On 19/02/2024 22:58, Dave Chinner wrote:
-> On Mon, Feb 19, 2024 at 01:01:03PM +0000, John Garry wrote:
->> Add atomic write support as follows:
->> diff --git a/block/blk-merge.c b/block/blk-merge.c
->> index 74e9e775f13d..12a75a252ca2 100644
->> --- a/block/blk-merge.c
->> +++ b/block/blk-merge.c
->> @@ -18,6 +18,42 @@
->>   #include "blk-rq-qos.h"
->>   #include "blk-throttle.h"
->>   
->> +static bool rq_straddles_atomic_write_boundary(struct request *rq,
->> +					unsigned int front,
->> +					unsigned int back)
->> +{
->> +	unsigned int boundary = queue_atomic_write_boundary_bytes(rq->q);
->> +	unsigned int mask, imask;
->> +	loff_t start, end;
->> +
->> +	if (!boundary)
->> +		return false;
->> +
->> +	start = rq->__sector << SECTOR_SHIFT;
->> +	end = start + rq->__data_len;
->> +
->> +	start -= front;
->> +	end += back;
->> +
->> +	/* We're longer than the boundary, so must be crossing it */
->> +	if (end - start > boundary)
->> +		return true;
->> +
->> +	mask = boundary - 1;
->> +
->> +	/* start/end are boundary-aligned, so cannot be crossing */
->> +	if (!(start & mask) || !(end & mask))
->> +		return false;
->> +
->> +	imask = ~mask;
->> +
->> +	/* Top bits are different, so crossed a boundary */
->> +	if ((start & imask) != (end & imask))
->> +		return true;
->> +
->> +	return false;
->> +}
-> I have no way of verifying this function is doing what it is
-> supposed to because it's function is undocumented. I have no idea
-> what the front/back variables are supposed to represent, and so no
-> clue if they are being applied properly.
-
-I'll add proper function header documentation.
-
+On 2/19/24 14:42, Xiaobing Li wrote:
+>diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+>index 976e9500f651..37afc5bac279 100644
+>--- a/io_uring/fdinfo.c
+>+++ b/io_uring/fdinfo.c
+>@@ -55,6 +55,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+> 	struct io_ring_ctx *ctx = f->private_data;
+> 	struct io_overflow_cqe *ocqe;
+> 	struct io_rings *r = ctx->rings;
+>+	struct rusage sq_usage;
+> 	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
+> 	unsigned int sq_head = READ_ONCE(r->sq.head);
+> 	unsigned int sq_tail = READ_ONCE(r->sq.tail);
+>@@ -64,6 +65,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+> 	unsigned int sq_shift = 0;
+> 	unsigned int sq_entries, cq_entries;
+> 	int sq_pid = -1, sq_cpu = -1;
+>+	u64 sq_total_time = 0, sq_work_time = 0;
+> 	bool has_lock;
+> 	unsigned int i;
 > 
-> That said, it's also applying unsigned 32 bit mask variables to
-> signed 64 bit quantities and trying to do things like "high bit changed"
-> checks on the 64 bit variable. This just smells like a future
-> source of "large offsets don't work like we expected!" bugs.
-
-I'll change variables to be unsigned and also all the same size.
-
+>@@ -147,10 +149,15 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
 > 
->> diff --git a/block/blk-settings.c b/block/blk-settings.c
->> index 06ea91e51b8b..176f26374abc 100644
->> --- a/block/blk-settings.c
->> +++ b/block/blk-settings.c
->> @@ -59,6 +59,13 @@ void blk_set_default_limits(struct queue_limits *lim)
->>   	lim->zoned = false;
->>   	lim->zone_write_granularity = 0;
->>   	lim->dma_alignment = 511;
->> +	lim->atomic_write_hw_max_sectors = 0;
->> +	lim->atomic_write_max_sectors = 0;
->> +	lim->atomic_write_hw_boundary_sectors = 0;
->> +	lim->atomic_write_hw_unit_min_sectors = 0;
->> +	lim->atomic_write_unit_min_sectors = 0;
->> +	lim->atomic_write_hw_unit_max_sectors = 0;
->> +	lim->atomic_write_unit_max_sectors = 0;
->>   }
-> Seems to me this function would do better to just
+> 		sq_pid = sq->task_pid;
+> 		sq_cpu = sq->sq_cpu;
+>+		getrusage(sq->thread, RUSAGE_SELF, &sq_usage);
+>+		sq_total_time = sq_usage.ru_stime.tv_sec * 1000000 + sq_usage.ru_stime.tv_usec;
+>+		sq_work_time = sq->work_time;
+> 	}
 > 
-> 	memset(lim, 0, sizeof(*lim));
+> 	seq_printf(m, "SqThread:\t%d\n", sq_pid);
+> 	seq_printf(m, "SqThreadCpu:\t%d\n", sq_cpu);
+>+	seq_printf(m, "SqTotalTime:\t%llu\n", sq_total_time);
+>+	seq_printf(m, "SqWorkTime:\t%llu\n", sq_work_time);
+> 	seq_printf(m, "UserFiles:\t%u\n", ctx->nr_user_files);
+> 	for (i = 0; has_lock && i < ctx->nr_user_files; i++) {
+> 		struct file *f = io_file_from_index(&ctx->file_table, i);
+>diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+>index 65b5dbe3c850..006d7fc9cf92 100644
+>--- a/io_uring/sqpoll.c
+>+++ b/io_uring/sqpoll.c
+>@@ -219,10 +219,22 @@ static bool io_sqd_handle_event(struct io_sq_data *sqd)
+> 	return did_sig || test_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state);
+> }
 > 
-> and then set all the non-zero fields.
+>+static void io_sq_update_worktime(struct io_sq_data *sqd, struct rusage *start)
+>+{
+>+		struct rusage end;
+>+
+>+		getrusage(current, RUSAGE_SELF, &end);
+>+		end.ru_stime.tv_sec -= start->ru_stime.tv_sec;
+>+		end.ru_stime.tv_usec -= start->ru_stime.tv_usec;
+>+
+>+		sqd->work_time += end.ru_stime.tv_usec + end.ru_stime.tv_sec * 1000000;
+>+}
+>+
+> static int io_sq_thread(void *data)
+> {
+> 	struct io_sq_data *sqd = data;
+> 	struct io_ring_ctx *ctx;
+>+	struct rusage start;
+> 	unsigned long timeout = 0;
+> 	char buf[TASK_COMM_LEN];
+> 	DEFINE_WAIT(wait);
+>@@ -251,6 +263,7 @@ static int io_sq_thread(void *data)
+> 		}
+> 
+> 		cap_entries = !list_is_singular(&sqd->ctx_list);
+>+		getrusage(current, RUSAGE_SELF, &start);
+> 		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
+> 			int ret = __io_sq_thread(ctx, cap_entries);
+> 
+>@@ -261,8 +274,10 @@ static int io_sq_thread(void *data)
+> 			sqt_spin = true;
+> 
+> 		if (sqt_spin || !time_after(jiffies, timeout)) {
+>-			if (sqt_spin)
+>+			if (sqt_spin) {
+>+				io_sq_update_worktime(sqd, &start);
+> 				timeout = jiffies + sqd->sq_thread_idle;
+>+			}
+> 			if (unlikely(need_resched())) {
+> 				mutex_unlock(&sqd->lock);
+> 				cond_resched();
+>diff --git a/io_uring/sqpoll.h b/io_uring/sqpoll.h
+>index 8df37e8c9149..4171666b1cf4 100644
+>--- a/io_uring/sqpoll.h
+>+++ b/io_uring/sqpoll.h
+>@@ -16,6 +16,7 @@ struct io_sq_data {
+> 	pid_t			task_pid;
+> 	pid_t			task_tgid;
+> 
+>+	u64			work_time;
+> 	unsigned long		state;
+> 	struct completion	exited;
+> };
+ 
+Hi, Jens
+I have modified the code according to your suggestions.
+Do you have any other comments?
 
-Christoph responded about limits here and in 
-blk_queue_atomic_write_max_bytes(), so please let me know if still some 
-concerns.
-
-Thanks,
-John
-
+--
+Xiaobing Li
 

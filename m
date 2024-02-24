@@ -1,247 +1,154 @@
-Return-Path: <io-uring+bounces-698-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-699-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD4B8626D1
-	for <lists+io-uring@lfdr.de>; Sat, 24 Feb 2024 19:47:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4668626DA
+	for <lists+io-uring@lfdr.de>; Sat, 24 Feb 2024 19:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3882823DC
-	for <lists+io-uring@lfdr.de>; Sat, 24 Feb 2024 18:47:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5B01F21747
+	for <lists+io-uring@lfdr.de>; Sat, 24 Feb 2024 18:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819D4200A0;
-	Sat, 24 Feb 2024 18:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2621CD14;
+	Sat, 24 Feb 2024 18:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0NZp5qd"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1h8mJrGz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D403B13FF6;
-	Sat, 24 Feb 2024 18:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968692907
+	for <io-uring@vger.kernel.org>; Sat, 24 Feb 2024 18:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708800426; cv=none; b=ZHd8/RCywphZavHoXMF3RqNUNhOUYXz9xR6rigcFMHqdScXwgWqyxl5WGySCNNtGXZcwzDwsJnPF+OKQk3tzZ+UMk7QW9bjAnp7gQzUGRP8SIcNPjfaNJLe0KJURcfZKSGzF2WwSZdwKVwytJ32bVipI/m/cwz6eqsYR3Ei1qbo=
+	t=1708800697; cv=none; b=YaLI9lrXeUhcmvujQVh2NnZNkpjC7OAUIjfPOp/E8xIJj31/7pwICzXP0OS98CPZ2XkaFCYO2rMVVsKFTsAi2v1Zlv+csLLSA1PkxIujnPVKaHZtCyt5Tyd9JI0JA+p88w24Ho2Y1vAEH6fkzmb1xlffe9JvwAfbZUaMb/oWN98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708800426; c=relaxed/simple;
-	bh=8NC1pmW4SNm4uq22usE3M7/xXFJlcGLq8FI/irGyZG8=;
-	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=E/SP2VY40N1ZXsNNPOxBE1lOtB9zSnADJjFQWHA3jXoF0ulbB6914lqIzAvnFPjIdi4E2YbtVBRtLuesv1yhfwILvRbBtaM11HuPqm5RP/eZnPDNKLAgs/hFVtnZWmQHLBHWNz/RvpGKf8xsU+QK4G+9xu2fwLg573wqTXF3GsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j0NZp5qd; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6e4d869b019so981102b3a.0;
-        Sat, 24 Feb 2024 10:47:04 -0800 (PST)
+	s=arc-20240116; t=1708800697; c=relaxed/simple;
+	bh=zqRjFFSBCwwqnWWG45JWJYTbaxUKv+7ePkY/GZt86Ws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ITitFDCi8VFLqjFDe3sY8YAgyp94HDmPVUbaRQFF7tam/8BJdrp14IjUhrG7R7mALp4QQbpZAFonlj3vz3UOQjQg69oBAMWQEaOl1uJ1LvROK3dp10UmJhGo76fX1uLo/fxmfBxznXP1iX4Qd4c7/C/tbwMqFRGmRu49LFSnHrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1h8mJrGz; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-5cdbc42f5efso778946a12.0
+        for <io-uring@vger.kernel.org>; Sat, 24 Feb 2024 10:51:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708800424; x=1709405224; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=luI5LH6pYhZC/Cdk0BZ+N4QrEkQKug3aTK3kXTF38gg=;
-        b=j0NZp5qdY+gEqPiPLYFzgTUt92dYUHwYgx62WHvPSrsojSFlEfHFzF5xh5/LtrKAYE
-         XY0LC/VYtsI9IjAtk+tkmLbudgJkLaOoM7Ix/HkRPxEMBJA3OSrcoW2CuFw5X1pG7ZpR
-         GZKwGd7EkTT6YpZ1svwcAhJFQRKNmMetBBQgye9uCRYxRoL0lnVFry2b5QZN7bdCBsNc
-         uBqTor1N78mklKJc3AGglhClrt3qphjJcopql5YPIGLx+Oqi9+hcDW3GM0AN6cUzy/td
-         Y0qBlYa+J55aMTk9oVULJnDj7Yb5JhUOdhlN2divKgsJbK77ObV2VGtPxi4w6H2GYN4x
-         f/FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708800424; x=1709405224;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708800693; x=1709405493; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=luI5LH6pYhZC/Cdk0BZ+N4QrEkQKug3aTK3kXTF38gg=;
-        b=pccgMtC1U7mRGgfncMQ1Lz6iiaQHTcv5eVLYqXy4tvx3RCmMRAQaiTsERRoIDQNBT3
-         OydsuBYo5xd1rvcoQq+gvprJSgD0GO5vBFK8S5LkPc/jphFUdp8SxpdLiNRLDoCQIUl1
-         eWQSNUND2RV2pGXopsEalkOWBEoZQ/lZD5z74UEqiee5cWACx1EbsY2vjxWKdZOoNMV/
-         J70t6eoDEmpjRH1dRthsydT53Ty2Acxe2JWUhrfMTuR1P73GrlC81RT6tujUYHTPSmvr
-         fPcSd9DK3W60Qw98DZV0YWpkPNskYs+qvWJRPahmgBGTyBQaYa0NOOj0emYq6qCoqQc9
-         svcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgxlFnaArqMHt5F/MQiSXn10h5rXDDsDgln2+epphZ9O5c3M3JGv5dCPWwrfj+F6jez3rlwvR4rtz5kamNcTRjPFkyMtpIb4CMya/wJlTArM6LQYYnSUs6GjEfCkwD/o/wsC05hf2PHtVqzInCIaoySTMasAaSvSndOBoOoHXWueXRxjHTf8ps0IUS5HkdjH4wLqM27RW5uH6WEQFB1Pj/R694D2fRpGpFdB1x25acjtD1M3Zhbq6dMTxGZOJQ
-X-Gm-Message-State: AOJu0Yy8IK6ZF3mL3n3D/MEHl5cazoSgPB31y/Bm6Iez8w5WdaP443Hc
-	OlZX6I6o2s4OivK3gdU5l2Y3eMLZuQfV6meZkFeBeHV9Ilkl+3mH
-X-Google-Smtp-Source: AGHT+IE2zmchSNyxHArKwWkAWiCM6Fohd8BpReCrvkrKeVbpuW6I59xIUvFAqm+1+7Zh24+ke9Ca/A==
-X-Received: by 2002:a05:6a00:5d:b0:6e5:6d2:234b with SMTP id i29-20020a056a00005d00b006e506d2234bmr524354pfk.0.1708800424044;
-        Sat, 24 Feb 2024 10:47:04 -0800 (PST)
-Received: from dw-tp ([171.76.80.106])
-        by smtp.gmail.com with ESMTPSA id r7-20020aa78b87000000b006e48b04d8c0sm1386455pfd.64.2024.02.24.10.46.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Feb 2024 10:47:03 -0800 (PST)
-Date: Sun, 25 Feb 2024 00:16:55 +0530
-Message-Id: <87o7c51yzk.fsf@doe.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, jack@suse.cz
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org, linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org, nilay@linux.ibm.com, Prasad Singamsetty <prasad.singamsetty@oracle.com>, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH v4 04/11] fs: Add initial atomic write support info to statx
-In-Reply-To: <20240219130109.341523-5-john.g.garry@oracle.com>
+        bh=eZVY3cFTPWmQcBclN/88rkWNiNkEwIj0Z9C+57z47Z8=;
+        b=1h8mJrGzDVxTIpOezGutyc6Fl2UUQ79DrQCFCGX9sMbFokm2Yh6j0ZyXzwg/Lpobax
+         QuE7QBc6R0uAhZBF4GZketS3o4RgJUhrDhTFmG5Qcl+3ttbmYRJSqbGjNt/0HAwx+S+x
+         qRYXt/xbmQdR8HDBp+iwL50Ct5L1ALKVmPAuv9xSzMMiL8f5AbwyMDo0Cg12mEgWKOfZ
+         hsxmmKccczK4KO9ye4DTBATE5EIb5RIW2mMSgZBdQslVUk78FaETGf8vuxsCKbfMp/wz
+         qFMnHpXKTCEBWzFe6bqUIjj1T2Dw+ktv+7pA058Dlez72r6jmQk/Ab4kp4OlIRfkGOGr
+         cmuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708800693; x=1709405493;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eZVY3cFTPWmQcBclN/88rkWNiNkEwIj0Z9C+57z47Z8=;
+        b=oDykqAyjFrNOLb35vw4GC0g6n1eBu1UlzRCqS3px+LbaGCXVPj12tuyOJR1bS3nZkM
+         qUNeuRaxab4wUjfB3OSt5sM5qUQqrnYSbmwWFZQd+b8DMBOGKs5HuBmQMnbaO/7+RomF
+         z6fSI11WE07mWVqPaf76XSKB7VCO0Rr/Ro8Wbqd4LaRxwUV1v7C2kjkPjkmtGjzymHyq
+         EfmGhEr0xannacmPAdMpZsZ7JiUTU1q01cfZe8Rcz8gvCAdOSEbta17TLeTqNOJyTEGQ
+         ctfTP6FzEgg9zlsOQKIOoZsq+iWsAcH7E9JZGCNxR7FCgh4a2aLVAOhau5gawfDR73+E
+         nCgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFme5oOgtAPSBlgFJW2KYDyIBLRmVJ0u2L6wAtqp5aS5spseaSFSlAQrasAtdrLosPfQJeI+SZ8mynDbxqc9U3nTTm3+ODXLs=
+X-Gm-Message-State: AOJu0YxnPuH2ymBG8iE7mqAWnjmybRelOoc2y7JaeDTAGTpu8rOlkeJ5
+	NDvOl2Wj92GaeRIVNQeMBNgkhCrhFFh5zD+KX237bdkPPL9HZu2Pvp/+OZaV3+o=
+X-Google-Smtp-Source: AGHT+IG9me/7QOEi8EbQ/f3VJYVcy+E+eQGvcwN7nz/xpKK1m2CWSp986ThwUlQ1/T3/V5bveD/POQ==
+X-Received: by 2002:a05:6a20:94c4:b0:1a0:ea4b:1857 with SMTP id ht4-20020a056a2094c400b001a0ea4b1857mr3783668pzb.2.1708800692901;
+        Sat, 24 Feb 2024 10:51:32 -0800 (PST)
+Received: from ?IPV6:2600:380:7472:2249:6d10:d981:9c6f:5d24? ([2600:380:7472:2249:6d10:d981:9c6f:5d24])
+        by smtp.gmail.com with ESMTPSA id w8-20020a17090a15c800b00296f2c1d2c9sm3841570pjd.18.2024.02.24.10.51.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Feb 2024 10:51:32 -0800 (PST)
+Message-ID: <ce348f24-8e11-49e9-aebb-7c87f45138d0@kernel.dk>
+Date: Sat, 24 Feb 2024 11:51:30 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] io_uring: only account cqring wait time as iowait
+ if enabled for a ring
+Content-Language: en-US
+To: Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org
+References: <20240224050735.1759733-1-dw@davidwei.uk>
+ <678382b5-0448-4f4d-b7b7-8df7592d77a4@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <678382b5-0448-4f4d-b7b7-8df7592d77a4@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-John Garry <john.g.garry@oracle.com> writes:
+On 2/24/24 8:31 AM, Pavel Begunkov wrote:
+> On 2/24/24 05:07, David Wei wrote:
+>> Currently we unconditionally account time spent waiting for events in CQ
+>> ring as iowait time.
+>>
+>> Some userspace tools consider iowait time to be CPU util/load which can
+>> be misleading as the process is sleeping. High iowait time might be
+>> indicative of issues for storage IO, but for network IO e.g. socket
+>> recv() we do not control when the completions happen so its value
+>> misleads userspace tooling.
+>>
+>> This patch gates the previously unconditional iowait accounting behind a
+>> new IORING_REGISTER opcode. By default time is not accounted as iowait,
+>> unless this is explicitly enabled for a ring. Thus userspace can decide,
+>> depending on the type of work it expects to do, whether it wants to
+>> consider cqring wait time as iowait or not.
+> 
+> I don't believe it's a sane approach. I think we agree that per
+> cpu iowait is a silly and misleading metric. I have hard time to
+> define what it is, and I'm sure most probably people complaining
+> wouldn't be able to tell as well. Now we're taking that metric
+> and expose even more knobs to userspace.
 
-> From: Prasad Singamsetty <prasad.singamsetty@oracle.com>
->
-> Extend statx system call to return additional info for atomic write support
-> support for a file.
->
-> Helper function generic_fill_statx_atomic_writes() can be used by FSes to
-> fill in the relevant statx fields.
->
-> Signed-off-by: Prasad Singamsetty <prasad.singamsetty@oracle.com>
-> #jpg: relocate bdev support to another patch
+For sure, it's a stupid metric. But at the same time, educating people
+on this can be like talking to a brick wall, and it'll be years of doing
+that before we're making a dent in it. Hence I do think that just
+exposing the knob and letting the storage side use it, if they want, is
+the path of least resistance. I'm personally not going to do a crusade
+on iowait to eliminate it, I don't have the time for that. I'll educate
+people when it comes up, like I have been doing, but pulling this to
+conclusion would be 10+ years easily.
 
-^^^ miss maybe?
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/stat.c                 | 34 ++++++++++++++++++++++++++++++++++
->  include/linux/fs.h        |  3 +++
->  include/linux/stat.h      |  3 +++
->  include/uapi/linux/stat.h |  9 ++++++++-
->  4 files changed, 48 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/stat.c b/fs/stat.c
-> index 77cdc69eb422..522787a4ab6a 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -89,6 +89,37 @@ void generic_fill_statx_attr(struct inode *inode, struct kstat *stat)
->  }
->  EXPORT_SYMBOL(generic_fill_statx_attr);
->  
-> +/**
-> + * generic_fill_statx_atomic_writes - Fill in the atomic writes statx attributes
-> + * @stat:	Where to fill in the attribute flags
-> + * @unit_min:	Minimum supported atomic write length
-+ * @unit_min:	Minimum supported atomic write length in bytes
+> Another argument against is that per ctx is not the right place
+> to have it. It's a system metric, and you can imagine some system
+> admin looking for it. Even in cases when had some meaning w/o
+> io_uring now without looking at what flags io_uring has it's
+> completely meaningless, and it's too much to ask.
+> 
+> I don't understand why people freak out at seeing hi iowait,
+> IMHO it perfectly fits the definition of io_uring waiting for
+> IO / completions, but at this point it might be better to just
+> revert it to the old behaviour of not reporting iowait at all.
+> And if we want to save the cpu freq iowait optimisation, we
+> should just split notion of iowait reporting and iowait cpufreq
+> tuning.
 
+For io_uring, splitting the cpufreq from iowait is certainly the right
+approach. And then just getting rid of iowait completely on the io_uring
+side. This can be done without preaching about iowait to everyone that
+has bad metrics for their healt monitoring, which is why I like that a
+lot. I did ponder that the other day as well.
 
-> + * @unit_max:	Maximum supported atomic write length
-+ * @unit_max:	Maximum supported atomic write length in bytes
+You still kind of run into a problem with that in terms of when short vs
+long waits are expected. On the io_uring side, we use the "do I have
+any requests pending" for that, which is obviously not fine grained
+enough. We could apply it on just "do I have any requests against
+regular files" instead, which would then translate to needing further
+tracking on our side. Probably fine to just apply it for the existing
+logic, imho.
 
-mentioning unit of the length might be useful here.
+-- 
+Jens Axboe
 
-> + *
-> + * Fill in the STATX{_ATTR}_WRITE_ATOMIC flags in the kstat structure from
-> + * atomic write unit_min and unit_max values.
-> + */
-> +void generic_fill_statx_atomic_writes(struct kstat *stat,
-> +				      unsigned int unit_min,
-
-This (unit_min) can still go above in the same line.
-
-> +				      unsigned int unit_max)
-> +{
-> +	/* Confirm that the request type is known */
-> +	stat->result_mask |= STATX_WRITE_ATOMIC;
-> +
-> +	/* Confirm that the file attribute type is known */
-> +	stat->attributes_mask |= STATX_ATTR_WRITE_ATOMIC;
-> +
-> +	if (unit_min) {
-> +		stat->atomic_write_unit_min = unit_min;
-> +		stat->atomic_write_unit_max = unit_max;
-> +		/* Initially only allow 1x segment */
-> +		stat->atomic_write_segments_max = 1;
-
-Please log info about this in commit message about where this limit came
-from? Is it since we only support ubuf (which IIUC, only supports 1
-segment)? Later when we will add support for iovec, this limit can be
-lifted?
-
-> +
-> +		/* Confirm atomic writes are actually supported */
-> +		stat->attributes |= STATX_ATTR_WRITE_ATOMIC;
-> +	}
-> +}
-> +EXPORT_SYMBOL(generic_fill_statx_atomic_writes);
-> +
->  /**
->   * vfs_getattr_nosec - getattr without security checks
->   * @path: file to get attributes from
-> @@ -658,6 +689,9 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
->  	tmp.stx_mnt_id = stat->mnt_id;
->  	tmp.stx_dio_mem_align = stat->dio_mem_align;
->  	tmp.stx_dio_offset_align = stat->dio_offset_align;
-> +	tmp.stx_atomic_write_unit_min = stat->atomic_write_unit_min;
-> +	tmp.stx_atomic_write_unit_max = stat->atomic_write_unit_max;
-> +	tmp.stx_atomic_write_segments_max = stat->atomic_write_segments_max;
->  
->  	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
->  }
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 7271640fd600..531140a7e27a 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3167,6 +3167,9 @@ extern const struct inode_operations page_symlink_inode_operations;
->  extern void kfree_link(void *);
->  void generic_fillattr(struct mnt_idmap *, u32, struct inode *, struct kstat *);
->  void generic_fill_statx_attr(struct inode *inode, struct kstat *stat);
-> +void generic_fill_statx_atomic_writes(struct kstat *stat,
-> +				      unsigned int unit_min,
-> +				      unsigned int unit_max);
-
-We can make 80 col. width even with unit_min in the same first line as of *stat.
-
-
->  extern int vfs_getattr_nosec(const struct path *, struct kstat *, u32, unsigned int);
->  extern int vfs_getattr(const struct path *, struct kstat *, u32, unsigned int);
->  void __inode_add_bytes(struct inode *inode, loff_t bytes);
-> diff --git a/include/linux/stat.h b/include/linux/stat.h
-> index 52150570d37a..2c5e2b8c6559 100644
-> --- a/include/linux/stat.h
-> +++ b/include/linux/stat.h
-> @@ -53,6 +53,9 @@ struct kstat {
->  	u32		dio_mem_align;
->  	u32		dio_offset_align;
->  	u64		change_cookie;
-> +	u32		atomic_write_unit_min;
-> +	u32		atomic_write_unit_max;
-> +	u32		atomic_write_segments_max;
->  };
->  
->  /* These definitions are internal to the kernel for now. Mainly used by nfsd. */
-> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-> index 2f2ee82d5517..c0e8e10d1de6 100644
-> --- a/include/uapi/linux/stat.h
-> +++ b/include/uapi/linux/stat.h
-> @@ -127,7 +127,12 @@ struct statx {
->  	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
->  	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
->  	/* 0xa0 */
-> -	__u64	__spare3[12];	/* Spare space for future expansion */
-> +	__u32	stx_atomic_write_unit_min;
-> +	__u32	stx_atomic_write_unit_max;
-> +	__u32   stx_atomic_write_segments_max;
-
-Let's add one liner for each of these fields similar to how it was done
-for others?
-
-/* Minimum supported atomic write length in bytes */
-/* Maximum supported atomic write length in bytes */
-/* Maximum no. of segments (iovecs?) supported for atomic write */
-
-
-> +	__u32   __spare1;
-> +	/* 0xb0 */
-> +	__u64	__spare3[10];	/* Spare space for future expansion */
->  	/* 0x100 */
->  };
->  
-> @@ -155,6 +160,7 @@ struct statx {
->  #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
->  #define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
->  #define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
-> +#define STATX_WRITE_ATOMIC	0x00008000U	/* Want/got atomic_write_* fields */
->  
->  #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
->  
-> @@ -190,6 +196,7 @@ struct statx {
->  #define STATX_ATTR_MOUNT_ROOT		0x00002000 /* Root of a mount */
->  #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
->  #define STATX_ATTR_DAX			0x00200000 /* File is currently in DAX state */
-> +#define STATX_ATTR_WRITE_ATOMIC		0x00400000 /* File supports atomic write operations */
->  
->  
->  #endif /* _UAPI_LINUX_STAT_H */
-> -- 
-> 2.31.1
 

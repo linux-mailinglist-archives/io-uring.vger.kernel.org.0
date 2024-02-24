@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-688-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-689-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D028622AD
-	for <lists+io-uring@lfdr.de>; Sat, 24 Feb 2024 06:07:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CA98622AF
+	for <lists+io-uring@lfdr.de>; Sat, 24 Feb 2024 06:07:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64F3285AB0
-	for <lists+io-uring@lfdr.de>; Sat, 24 Feb 2024 05:07:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FA661C21B83
+	for <lists+io-uring@lfdr.de>; Sat, 24 Feb 2024 05:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE2B12B66;
-	Sat, 24 Feb 2024 05:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F8016429;
+	Sat, 24 Feb 2024 05:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="E3tF6ecH"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="t/+drhIz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F29C12E51
-	for <io-uring@vger.kernel.org>; Sat, 24 Feb 2024 05:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D096E13FE5
+	for <io-uring@vger.kernel.org>; Sat, 24 Feb 2024 05:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708751269; cv=none; b=pZM/goMOiCG2kbP8CzQ9qnaK7tSjCAtcPIg+wtAP0hv2/Qyr93M5H5rKU0DKQEaEIxYnEdfKQAsWfFaIH+TBiotmeeR7PQ0Gr7o+TFNTYBwsxjAzflWbbG3ukTDbZp/Ga74yre1Qt5ueOC+eTDlG3onREIECx4pmYE+mJVrDR4Q=
+	t=1708751270; cv=none; b=AMuHLOsG03m+usCnS1VGO/ZCTUMQELh3Mf7XfAEUxR0csFNjN4xvXF5IEhp6UprXG8YAdDVjwJx8Os+z3n3hXL3rZF9mxv1HeqXRUsymXYPbao5x37eQxE2/bRG9da80a+FDlAnHW5SZFJD1NarHoypu2mYtdM+AwSUXzH26P/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708751269; c=relaxed/simple;
-	bh=HTtofWdLtXwoxkpmkidgtk48vDW4ybgbqrBGySc2op8=;
+	s=arc-20240116; t=1708751270; c=relaxed/simple;
+	bh=MUCelfbEnJxFc4UHpHb7G3ylE0wMOiFfSiBd7d0DJ2A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O/pY0aIymxYjeuMBZfZhXLOKAgi8N9bg5PeujsqVF7voxFVVIakHwOmEctONxZ+0pqFFeuBr5vN2ERjbSSzYyuHCh0NoH6GjiPr6saFIJ+GrKl7Gff8LLWvheCNqxSfbsBzs9pmVHSeqEJ0ghPmGbJzTN3JBOtVJOl7BHEk1nfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=E3tF6ecH; arc=none smtp.client-ip=209.85.215.175
+	 MIME-Version; b=bdqyU9wkRM20820yPmJzJ9WI5yIm4OJwx9WvDD/JE/1J8aEWO/5rVIAl6JIZu9q6cFW3pzyNHTp0rNXHZnGKLeeUBk8GU1g2nc2/hUz0vm2/r3RNfnZKd4XAwbuwZ+5VfShBYaHEW9AupMNUS6H1eOjAwRXDhFzNtHaUFII+TGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=t/+drhIz; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-5d3912c9a83so1130871a12.3
-        for <io-uring@vger.kernel.org>; Fri, 23 Feb 2024 21:07:47 -0800 (PST)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1dbf1fe91fcso13463525ad.3
+        for <io-uring@vger.kernel.org>; Fri, 23 Feb 2024 21:07:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1708751267; x=1709356067; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1708751268; x=1709356068; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Pu+yQ8ayliskgpsY+U87x70jpuMRyp1SCw69OCNtbRo=;
-        b=E3tF6ecHd0/wgQVshDwR57s8BruJMhWWAhJjmI4zwQkvJJmwPXknDTjj4IDLMsneag
-         kjbcfyAYZPV5F7WRcm6pkB9HlpwHkbegCn9+HXDGJBXV2mdfWpkuSIlLE1a6h+AAZyq0
-         RRstJLUPZuZbjFeldKqBta0QxkoeLgPW1QOqHKi8gJ9FmItXPQcsDk6wqAnXOyRECv77
-         H3EEpcPI2QDRxbFxN6HE1t1Zvw8eoGYLf0d0DetTuTy6i5DH1Xe1X6pSeFdnJIjINNKO
-         q5IRnO6DdJaWryAm1AGB2r+A+fXo5DbkYFvdASZpLls1OD8VBfSqOt+9n3U3Aaqe8Nm/
-         jROA==
+        bh=7/8si6PIugm/jB7oq1cCOR5SjQTiCtweC1NZaO9RyUw=;
+        b=t/+drhIzf7O8IuRssSrGg/xX/azyByl9zJhPXcPbkSeO5YGPnv2XrFpzZQlxbPiWCo
+         PyHZcJhyEKaWXThmgJqBeQtONqi00qSZCZ97MpPjyVrjaqT8c9XdogaMTT6oPQ1GH6Lq
+         /AU8lDVVViQBHBwmAdMGp444nmwvPYN5d7wXgv+s8VbKLPVOkjTUVzNsaa3+ArMDwf/G
+         +jDu48XfLnSXszQxVhk/RXAFQRTekVWhPV+kfxeWr6e4VZzVl1FIbXwZoX/dGUzceoFT
+         jgxj2mHfwFhtoqBh3xl4V5Zx16t+iIIwJvetR0H0xAKfX4DKmLW27eVg7pifnWuWNPsd
+         6w4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708751267; x=1709356067;
+        d=1e100.net; s=20230601; t=1708751268; x=1709356068;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Pu+yQ8ayliskgpsY+U87x70jpuMRyp1SCw69OCNtbRo=;
-        b=MDS1m0inFPRXo+O3GlVOGfjiCnlgPp5jQNiCT3LxCjmJJfXne+nkrL3FgOrMJoOPNn
-         jsLmYbT52xafQHA0yJ5vontx5tUcCRycY/T581coJzZDjP1g2vq8W9337KkglZ82+T71
-         +65+xVBz1LgvETNvHDE8TKJg6597/TWUX900BTbHqeCYVwgxgJNnd5gjNX2nrZADurkP
-         8/HnyAmA1VFcAzqdzjP0w5re3vKW/El+sMtADPZOX6DYvCS09yypqCw+qbZPizykoZIJ
-         y+8uGNSa9Slxyq1HqJdRVXZbXrGkTCuKNzSEp3liHAdeFhbDICW5ixZT+2x7QnCs7qk9
-         rcIg==
-X-Gm-Message-State: AOJu0YyQTP3SNCbUsxYnyTEnjoYe9jNI84seKdA+B6njoMAmUVkfXBT3
-	sStaDCT/Ratxvc+lblA9iH7BL6wT577CL1rldBOs/Kzt1jkU3Utm3XhOYHn8NyTwuQeA43k+due
-	H
-X-Google-Smtp-Source: AGHT+IGItOlvDj83o2wA2R0Pi+tKpcvSo53OvRY7H+uoJFw8IQ6W55Ar/0E30AazRbxQemOUZGXf4A==
-X-Received: by 2002:a05:6a20:d046:b0:19f:ce3:5aee with SMTP id hv6-20020a056a20d04600b0019f0ce35aeemr1604447pzb.8.1708751266991;
-        Fri, 23 Feb 2024 21:07:46 -0800 (PST)
-Received: from localhost (fwdproxy-prn-006.fbsv.net. [2a03:2880:ff:6::face:b00c])
-        by smtp.gmail.com with ESMTPSA id y6-20020a62ce06000000b006e39d08cb3asm340896pfg.167.2024.02.23.21.07.46
+        bh=7/8si6PIugm/jB7oq1cCOR5SjQTiCtweC1NZaO9RyUw=;
+        b=lbxI3OhPey6rVKoxv3a9rQg2RvHCun3R0I+DRrL4M/vWzIlC3eOCs5P8GcV9ip9qYl
+         kAvhjT2BA9fTG52SBsIujiX172q9QClImH3ui3qlAffBT3Hy3cMz4cXW74qsokPJsNef
+         /uNkOUFKWtbyOrBuTT4yPEZgp9ElfWManvXH2ZVt8tlMNWHag2MsjovH9JjrG+uqMNdO
+         xADbDSoN2S/Oxlbb1CvzoJAC+2DhVk1yUHpWJkkzvQZPj8vV6gnd0vlHNO14YxKjOhtI
+         DO8q5Sst8PDkktSc90//OcVgoFOdhVIhxyLAGlq0q/Gg7hDOpGZlprczAFi0DMNa6HdI
+         5X7A==
+X-Gm-Message-State: AOJu0YzSVjh2UA6pUOfwKDStiIRpeDhXx4xzJZynZJ8Qa09rC+peCFcm
+	pqzhbjmunOHE5v/E+JEzAnQQhWSZ9KkDbKod5T1OhA+UH60Inenkdc9OUOV7BYSMKdw4FMvARwi
+	k
+X-Google-Smtp-Source: AGHT+IEeQEvl+Mp9NheHJPx3zrz3pgzqlutQxuiT0sREP9a7FR2DnCRfK4y/ewMMw+/SuLva6AGkkQ==
+X-Received: by 2002:a17:902:eb8c:b0:1d8:ee44:629d with SMTP id q12-20020a170902eb8c00b001d8ee44629dmr2367222plg.30.1708751267886;
+        Fri, 23 Feb 2024 21:07:47 -0800 (PST)
+Received: from localhost (fwdproxy-prn-000.fbsv.net. [2a03:2880:ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id z5-20020a170902ee0500b001d9620dd3fdsm259882plb.206.2024.02.23.21.07.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Feb 2024 21:07:46 -0800 (PST)
+        Fri, 23 Feb 2024 21:07:47 -0800 (PST)
 From: David Wei <dw@davidwei.uk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
 	Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH v1 2/4] liburing: add examples/proxy to .gitignore
-Date: Fri, 23 Feb 2024 21:07:33 -0800
-Message-ID: <20240224050735.1759733-2-dw@davidwei.uk>
+Subject: [PATCH v1 3/4] liburing: add helper for IORING_REGISTER_IOWAIT
+Date: Fri, 23 Feb 2024 21:07:34 -0800
+Message-ID: <20240224050735.1759733-3-dw@davidwei.uk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240224050735.1759733-1-dw@davidwei.uk>
 References: <20240224050735.1759733-1-dw@davidwei.uk>
@@ -87,31 +87,72 @@ Content-Transfer-Encoding: 8bit
 
 From: David Wei <davidhwei@meta.com>
 
-Also re-ordered to be alphabetical.
+Sync include/liburing/io_uring.h and add io_uring_register_iowait()
+helper function.
+
+Currently we unconditionally account time spent waiting for events in CQ
+ring as iowait time.
+
+Some userspace tools consider iowait time to be CPU util/load which can
+be misleading as the process is sleeping. High iowait time might be
+indicative of issues for storage IO, but for network IO e.g. socket
+recv() we do not control when the completions happen so its value
+misleads userspace tooling.
+
+Add io_uring_register_iowait() which gates the previously unconditional
+iowait accounting. By default time is not accounted as iowait, unless
+this is explicitly enabled for a ring. Thus userspace can decide,
+depending on the type of work it expects to do, whether it wants to
+consider cqring wait time as iowait or not.
 
 Signed-off-by: David Wei <davidhwei@meta.com>
 ---
- .gitignore | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ src/include/liburing.h          | 2 ++
+ src/include/liburing/io_uring.h | 3 +++
+ src/register.c                  | 6 ++++++
+ 3 files changed, 11 insertions(+)
 
-diff --git a/.gitignore b/.gitignore
-index d355c59..f08cbe9 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -21,10 +21,11 @@
- /examples/link-cp
- /examples/napi-busy-poll-client
- /examples/napi-busy-poll-server
--/examples/ucontext-cp
- /examples/poll-bench
--/examples/send-zerocopy
-+/examples/proxy
- /examples/rsrc-update-bench
-+/examples/send-zerocopy
-+/examples/ucontext-cp
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 6850fa7..5e39cc6 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -241,6 +241,8 @@ int io_uring_register_file_alloc_range(struct io_uring *ring,
+ int io_uring_register_napi(struct io_uring *ring, struct io_uring_napi *napi);
+ int io_uring_unregister_napi(struct io_uring *ring, struct io_uring_napi *napi);
  
- /test/*.t
- /test/*.dmesg
++int io_uring_register_iowait(struct io_uring *ring, int enabled);
++
+ int io_uring_get_events(struct io_uring *ring);
+ int io_uring_submit_and_get_events(struct io_uring *ring);
+ 
+diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
+index bde1199..ba94955 100644
+--- a/src/include/liburing/io_uring.h
++++ b/src/include/liburing/io_uring.h
+@@ -570,6 +570,9 @@ enum {
+ 	IORING_REGISTER_NAPI			= 27,
+ 	IORING_UNREGISTER_NAPI			= 28,
+ 
++	/* account time spent in cqring wait as iowait */
++	IORING_REGISTER_IOWAIT			= 29,
++
+ 	/* this goes last */
+ 	IORING_REGISTER_LAST,
+ 
+diff --git a/src/register.c b/src/register.c
+index f9bc52b..7f2890e 100644
+--- a/src/register.c
++++ b/src/register.c
+@@ -368,3 +368,9 @@ int io_uring_unregister_napi(struct io_uring *ring, struct io_uring_napi *napi)
+ 	return __sys_io_uring_register(ring->ring_fd,
+ 				IORING_UNREGISTER_NAPI, napi, 1);
+ }
++
++int io_uring_register_iowait(struct io_uring *ring, int enabled)
++{
++	return __sys_io_uring_register(ring->ring_fd,
++				IORING_REGISTER_IOWAIT, NULL, enabled);
++}
 -- 
 2.43.0
 

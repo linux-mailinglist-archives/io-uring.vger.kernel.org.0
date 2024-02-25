@@ -1,212 +1,196 @@
-Return-Path: <io-uring+bounces-715-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-716-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F68862ACC
-	for <lists+io-uring@lfdr.de>; Sun, 25 Feb 2024 15:46:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544AC862BCB
+	for <lists+io-uring@lfdr.de>; Sun, 25 Feb 2024 17:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19F2DB20EF4
-	for <lists+io-uring@lfdr.de>; Sun, 25 Feb 2024 14:46:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A54A6B20DE8
+	for <lists+io-uring@lfdr.de>; Sun, 25 Feb 2024 16:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F00612B71;
-	Sun, 25 Feb 2024 14:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977C6175A6;
+	Sun, 25 Feb 2024 16:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AW1Zn5Vm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="W/x5FX/l"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A959612E6A;
-	Sun, 25 Feb 2024 14:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9746812E71
+	for <io-uring@vger.kernel.org>; Sun, 25 Feb 2024 16:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708872386; cv=none; b=DGtdgtriKtg5npAzL/aUYG0499U0VCWlrXkz2QFBLLqjz11oHZKjHfkgmU4YdIqL7Tq+Rr8N10FVVbnmRX+E3vqGNzRKIRMmCYyelV+u6yZI46q/4gE0vN1D7qQXxPjMu0tni4uA7xxfQLoCoRbGk3cqWyHZI0p+uEtSEBCFz2U=
+	t=1708879200; cv=none; b=MY5ld534CztcYQIcq+3udh7ATYPsErAADcPNSKOuC8HBCSzGsg7gRyKkynTTiR5f60OvR/KwW3KeLz735tabnIOxkBHjzTrMxKwG+YqtPcCAj+7TCuZGZzuttN9jBiPDM2DfgFV8LRLBTkaogUUd6nCHLRCltL18xRw+w6Eu0fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708872386; c=relaxed/simple;
-	bh=cJxeZ9XcAyAWI/FNWJkHGSlKd1lbYW4aDtPK/n0YZ7E=;
-	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=DpKkA8IrvQd5/VKHvx8QABWq+Y514Pvkhc8WTe7KB3bw7afxuZn8MCgkJkJ6QTDifyzUVBoY0Ng8zFvQW2+yNm00ZgPw7F7VslF4RxkpzAqOw4kcrohUzjGaW04S+dW59rK+gYnP7Cp8LX4jMB8OD/LTxXWs8gB/uuZIbwB4Q/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AW1Zn5Vm; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-6e125818649so959907a34.1;
-        Sun, 25 Feb 2024 06:46:24 -0800 (PST)
+	s=arc-20240116; t=1708879200; c=relaxed/simple;
+	bh=p8FTr3UlrVsV1y0aih9b/oj3XKadBL5aC8JWsqKCsSU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Qkm4sChHotKqL66BoCzPJ63DHKtgfpCLkRdDpgKzqNMUQqErr50ZXHU5NmuasVnB69rYDCc1X6j2KBManEzM/1apjYDd2Kd7ZNRDbIs1ZpKV10u7OjEGLNCQzZPGpusexAbW50ZArvgDT/0aVhrkROD6VBr5zD+oKqivzFhyuk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=W/x5FX/l; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1dca3a5cb9eso4985ad.0
+        for <io-uring@vger.kernel.org>; Sun, 25 Feb 2024 08:39:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708872384; x=1709477184; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JpmlBduLOtP9Y7HibP2DDg1Ww/fxHjaBUbZW8bb6d/A=;
-        b=AW1Zn5VmQkfCq0cJRFVK/ELslGUJtAfKmvQOBK5n7WHRR+a8b/7QYR7++jLAEdCjzZ
-         C5EWKncnQO8/XnyF8AmwcxVw47Yp8DgMZxOWPb2GA5tvpUSy7dfeW/mv+fY6FSQ9VXv2
-         7ubgCh+NVZkYAk+VQj0q8NeWjZFf59VJg2DMSLQ5RlsxRy2InTDudd8+tnO8QU4+3Z9L
-         7oGTHEAqelz/qxKACLJuFllFQZ039n+thADhdCtK20InQCvQEA9HhHGbvKx+5iSrXBpJ
-         N4S1B2uaaxtzxF7kdtgjEmG3iqGoFXsUc6+40oHzm2JyEQlq5OB5kqPfNXFNGDwC0S2R
-         ycQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708872384; x=1709477184;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708879195; x=1709483995; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JpmlBduLOtP9Y7HibP2DDg1Ww/fxHjaBUbZW8bb6d/A=;
-        b=nVvZTENd8X0QXzA1SbAP8sG+lfcFKWGETkEOO9A6R/rQ53i4gd63v3fuoNVb2Q6Qmn
-         09xzoAfwMtLDdr0Rci78k7UVTog9xuACMLR3a6hJZX8H11voh/dJeEiskMWy9Y8u5J+P
-         oDoC+XK67xTa2nNhRP7UF9uKTGYhXLXuSQdFrHHrXSmqrR3ARcJM4ed+yVFw4gNrXN42
-         IgJroMrSrONDKA31vXF4GpoRmT2dYjXFyHaHe0uRMKQ/v4DC3la7bT7PLr3RNEgvAN9S
-         zoFtnNH9r66pY5r9wMRSEc8Ug2P6jyVpTO4eaTH46RXKUzO27yxUNoNQPBl87SZVGodz
-         UERA==
-X-Forwarded-Encrypted: i=1; AJvYcCVupIqXIoAzUuB32m8dlgAUTk/HKs0D01XcTK3TIrm0cKWR+Y8dRM+0DfZA8MUZ7Hhv6IaBjdplK/eUgtsCUKLBzJElP8bUnuymH3QLeQ0PPENlRJ0FL8cpojoCrdMPDthzqyXbL/6PcZnKJXyy/qEGJMMBj+dnPOCvHTeVySLY4+rF76ilCZRNvzf8tCfW5/jzA6zAAl0w75YgSRGkRsdTE6iqQKOenGlSSRWrOg3dikKCxVtCmnxlcH67fh/d
-X-Gm-Message-State: AOJu0YzKqICN2WK6QD0yamBIntqYUvZVSLIv81ToLIP7BOCMnTl0ZAL6
-	3YIrui6XvNf4E5ENq1RhuFSDi+ZHxi0NitG73NCRx6LuloEc6xST
-X-Google-Smtp-Source: AGHT+IHH2tg/cZwys6nguaiuLttBdJz9HIEFZ+uxlzW8VtX1+VRUmvRpyYwrqwFLixwGrsBZ7zvQBA==
-X-Received: by 2002:a05:6358:7e81:b0:179:272e:54c6 with SMTP id o1-20020a0563587e8100b00179272e54c6mr5299313rwn.25.1708872383543;
-        Sun, 25 Feb 2024 06:46:23 -0800 (PST)
-Received: from dw-tp ([171.76.80.106])
-        by smtp.gmail.com with ESMTPSA id d8-20020a056a0010c800b006e4762b5f3bsm2476163pfu.172.2024.02.25.06.46.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Feb 2024 06:46:22 -0800 (PST)
-Date: Sun, 25 Feb 2024 20:16:15 +0530
-Message-Id: <87cysk1u14.fsf@doe.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, jack@suse.cz
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org, linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org, nilay@linux.ibm.com, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH v4 07/11] block: Add fops atomic write support
-In-Reply-To: <20240219130109.341523-8-john.g.garry@oracle.com>
+        bh=px6roWKnRWepFtRhUlFIJTv2P7o70OR0jCkqCw6+4+0=;
+        b=W/x5FX/lENZ0dgWU/P5mx5Bg/T/tubEtQnsNNzqnS6jMVV0ye7EJjUdhCHAO93Hqsr
+         lTojdrd5d2Hro6mHc4eaXS9kYh5j2HbYwDNsfpuEPMlDylGI2nMEcm4G2Xe1MoKUN+gE
+         lgC4rVg1Gx9FIbXKqONAm7grovpwd6BBMRaJtoT9J8tgAX7WZN/+MNpa5JwTldQXbm3E
+         fv7NvnAhA4ENu83oMaVQDRnImmdYZQJ6zXWTPDtZBpKLro23gkoaFr98cQsUazS09XIp
+         Up0ZzP5fBi+uMt5aMLZ5z6dIUHO24ss4SWP54U6a9KzUJHLbwRuKnecMEEBIyBhD03Gk
+         /OTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708879195; x=1709483995;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=px6roWKnRWepFtRhUlFIJTv2P7o70OR0jCkqCw6+4+0=;
+        b=vXCgYtl8BunWRLx18INEQr9He6PfBAaZphjskhN6mj8VE0iEaXK27XRxtvRJkJcffz
+         dq/Uy2DUl0JivL3EyT1Rh3+wC+QqRuwOkP6EgJS0Iz7ruVSDW24M5ryiWh4DG0wwPq+y
+         7tERNnc5h2PFvCoVULJpI3MZ9ddFHlZsJxc7RrwWfzASmhYeM0RuOUP/NNhWQL17KHnP
+         012e4JgkwnY5dzbKq4TaW+NC4lzQytFaxNlCor1L2XewWjaWVnpcsdnrCIF13aoCHcZM
+         UtjrXDx9T3ZbZe1IakZbfPs25ZitFxo8EJyCPk3FmhUcB1ZiBarDf+Yk8B/jeLBNpqp3
+         eg6g==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Cb8TLmtVLE3M2qlPbSj9HojxjWoPuuYNeJEUV7oLIezNKTe4PteFwmNAVrEpHCM4q0pMdlKOfyGwxruQvH9eIF1WGkP4VLU=
+X-Gm-Message-State: AOJu0YwJjt9xGJpVZs0xcf+hDhBydam3peD34LB0hR4+UjkKDmR3yGlI
+	gjsH/gDDX/IYP0PPaLEZPUXiL7lugfq3z6kTy5sL22y2SJqJIvKfMgiOb2x3JOgR5LCIrx5Kr44
+	O
+X-Google-Smtp-Source: AGHT+IFtzYwYsZJ+Z6os7SP5/LaW87p/I/7sEdvbIp/gBOjCEUsBFzr7EwGWJEp3SND8U+nxezb5Hg==
+X-Received: by 2002:a17:902:a717:b0:1dc:a28f:646e with SMTP id w23-20020a170902a71700b001dca28f646emr508226plq.6.1708879195556;
+        Sun, 25 Feb 2024 08:39:55 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id ji15-20020a170903324f00b001db7599aba0sm2431915plb.24.2024.02.25.08.39.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Feb 2024 08:39:55 -0800 (PST)
+Message-ID: <05dc2185-2935-4eac-a8e7-f407035f9315@kernel.dk>
+Date: Sun, 25 Feb 2024 09:39:54 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] io_uring: only account cqring wait time as iowait
+ if enabled for a ring
+Content-Language: en-US
+To: Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org
+References: <20240224050735.1759733-1-dw@davidwei.uk>
+ <678382b5-0448-4f4d-b7b7-8df7592d77a4@gmail.com>
+ <ce348f24-8e11-49e9-aebb-7c87f45138d0@kernel.dk>
+ <2bdf6fa7-35d8-438b-be20-e1da78ca0151@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <2bdf6fa7-35d8-438b-be20-e1da78ca0151@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-John Garry <john.g.garry@oracle.com> writes:
+On 2/24/24 5:58 PM, Pavel Begunkov wrote:
+> On 2/24/24 18:51, Jens Axboe wrote:
+>> On 2/24/24 8:31 AM, Pavel Begunkov wrote:
+>>> On 2/24/24 05:07, David Wei wrote:
+>>>> Currently we unconditionally account time spent waiting for events in CQ
+>>>> ring as iowait time.
+>>>>
+>>>> Some userspace tools consider iowait time to be CPU util/load which can
+>>>> be misleading as the process is sleeping. High iowait time might be
+>>>> indicative of issues for storage IO, but for network IO e.g. socket
+>>>> recv() we do not control when the completions happen so its value
+>>>> misleads userspace tooling.
+>>>>
+>>>> This patch gates the previously unconditional iowait accounting behind a
+>>>> new IORING_REGISTER opcode. By default time is not accounted as iowait,
+>>>> unless this is explicitly enabled for a ring. Thus userspace can decide,
+>>>> depending on the type of work it expects to do, whether it wants to
+>>>> consider cqring wait time as iowait or not.
+>>>
+>>> I don't believe it's a sane approach. I think we agree that per
+>>> cpu iowait is a silly and misleading metric. I have hard time to
+>>> define what it is, and I'm sure most probably people complaining
+>>> wouldn't be able to tell as well. Now we're taking that metric
+>>> and expose even more knobs to userspace.
+>>
+>> For sure, it's a stupid metric. But at the same time, educating people
+>> on this can be like talking to a brick wall, and it'll be years of doing
+>> that before we're making a dent in it. Hence I do think that just
+>> exposing the knob and letting the storage side use it, if they want, is
+>> the path of least resistance. I'm personally not going to do a crusade
+>> on iowait to eliminate it, I don't have the time for that. I'll educate
+> 
+> Exactly my point but with a different conclusion. The path of least
 
-> Support atomic writes by submitting a single BIO with the REQ_ATOMIC set.
->
-> It must be ensured that the atomic write adheres to its rules, like
-> naturally aligned offset, so call blkdev_dio_invalid() ->
-> blkdev_atomic_write_valid() [with renaming blkdev_dio_unaligned() to
-> blkdev_dio_invalid()] for this purpose.
->
-> In blkdev_direct_IO(), if the nr_pages exceeds BIO_MAX_VECS, then we cannot
-> produce a single BIO, so error in this case.
+I think that's because I'm a realist, and you are an idealist ;-)
 
-BIO_MAX_VECS is 256. So around 1MB limit with 4k pagesize. 
-Any mention of why this limit for now? Is it due to code complexity that
-we only support a single bio? 
-As I see it, you have still enabled req merging in block layer for
-atomic requests. So it can essentially submit bio chains to the device
-driver? So why not support this case for user to submit a req. larger
-than 1 MB? 
+> resistance is to have io_uring not accounted to iowait. That's how
+> it was so nobody should complain about it, you don't have to care about
+> it at all, you don't have to educate people on iowait when it comes up
+> with in the context of that knob, and you don't have to educate folks
+> on what this knob is and wtf it's there, and we're not pretending that
+> it works when it's not.
 
->
-> Finally set FMODE_CAN_ATOMIC_WRITE when the bdev can support atomic writes
-> and the associated file flag is for O_DIRECT.
->
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  block/fops.c | 31 ++++++++++++++++++++++++++++---
->  1 file changed, 28 insertions(+), 3 deletions(-)
->
-> diff --git a/block/fops.c b/block/fops.c
-> index 28382b4d097a..563189c2fc5a 100644
-> --- a/block/fops.c
-> +++ b/block/fops.c
-> @@ -34,13 +34,27 @@ static blk_opf_t dio_bio_write_op(struct kiocb *iocb)
->  	return opf;
->  }
->  
-> -static bool blkdev_dio_unaligned(struct block_device *bdev, loff_t pos,
-> -			      struct iov_iter *iter)
-> +static bool blkdev_atomic_write_valid(struct block_device *bdev, loff_t pos,
-> +				      struct iov_iter *iter)
->  {
-> +	struct request_queue *q = bdev_get_queue(bdev);
-> +	unsigned int min_bytes = queue_atomic_write_unit_min_bytes(q);
-> +	unsigned int max_bytes = queue_atomic_write_unit_max_bytes(q);
-> +
-> +	return atomic_write_valid(pos, iter, min_bytes, max_bytes);
+I don't think anyone cares about iowait going away for waiting on events
+with io_uring, but some would very much care about losing the cpufreq
+connection which is why it got added in the first place. If we can
+trivially do that without iowait, then we should certainly just do that
+and call it good. THAT is the main question to answer, in form of a
+patch.
 
-generic_atomic_write_valid() would be better for this function. However,
-I have any commented about this in some previous
+>> people when it comes up, like I have been doing, but pulling this to
+>> conclusion would be 10+ years easily.
+>>
+>>> Another argument against is that per ctx is not the right place
+>>> to have it. It's a system metric, and you can imagine some system
+>>> admin looking for it. Even in cases when had some meaning w/o
+>>> io_uring now without looking at what flags io_uring has it's
+>>> completely meaningless, and it's too much to ask.
+>>>
+>>> I don't understand why people freak out at seeing hi iowait,
+>>> IMHO it perfectly fits the definition of io_uring waiting for
+>>> IO / completions, but at this point it might be better to just
+>>> revert it to the old behaviour of not reporting iowait at all.
+>>> And if we want to save the cpu freq iowait optimisation, we
+>>> should just split notion of iowait reporting and iowait cpufreq
+>>> tuning.
+>>
+>> For io_uring, splitting the cpufreq from iowait is certainly the right
+>> approach. And then just getting rid of iowait completely on the io_uring
+>> side. This can be done without preaching about iowait to everyone that
+>> has bad metrics for their healt monitoring, which is why I like that a
+>> lot. I did ponder that the other day as well.
+>>
+>> You still kind of run into a problem with that in terms of when short vs
+>> long waits are expected. On the io_uring side, we use the "do I have
+>> any requests pending" for that, which is obviously not fine grained
+>> enough. We could apply it on just "do I have any requests against
+>> regular files" instead, which would then translate to needing further
+>> tracking on our side. Probably fine to just apply it for the existing
+>> logic, imho.
+> 
+> Let's say there are two problems, one is the accounting mess, which
+> is IMHO clear. The second is the optimisation, which is not mentioned
+> in the patch and kind of an orthogonal issue. If we want a knob to
+> disable/enable the cpufreq thing, it should be separate from iowait
+> accounting, because it sounds like a really unfortunate side effect
+> when you enable the optimisation and the iowait goes pounding the roof.
+> Then people never touch it, especially in a framework, because an
+> system admin will be pretty surprised by the metric.
 
-> +}
-> +
-> +static bool blkdev_dio_invalid(struct block_device *bdev, loff_t pos,
-> +				struct iov_iter *iter, bool atomic_write)
+Fully agree, it's all about not losing the short sleep high latency
+wakeup, which is what caused the performance to drop for low QD IOs.
 
-bool "is_atomic" or "is_atomic_write" perhaps? 
-we anyway know that we only support atomic writes and RWF_ATOMIC
-operation is made -EOPNOTSUPP for reads in kiocb_set_rw_flags().
-So we may as well make it "is_atomic" for bools.
+> Not like I'm a fan of the idea of having a userspace knob for the
+> optimisation, it'd be pretty complicated to use, and hopefully there
+> is a more intelligent approach.
 
-> +{
-> +	if (atomic_write && !blkdev_atomic_write_valid(bdev, pos, iter))
-> +		return true;
-> +
->  	return pos & (bdev_logical_block_size(bdev) - 1) ||
->  		!bdev_iter_is_aligned(bdev, iter);
->  }
->  
-> +
->  #define DIO_INLINE_BIO_VECS 4
->  
->  static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
-> @@ -71,6 +85,8 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
->  	}
->  	bio.bi_iter.bi_sector = pos >> SECTOR_SHIFT;
->  	bio.bi_ioprio = iocb->ki_ioprio;
-> +	if (iocb->ki_flags & IOCB_ATOMIC)
-> +		bio.bi_opf |= REQ_ATOMIC;
->  
->  	ret = bio_iov_iter_get_pages(&bio, iter);
->  	if (unlikely(ret))
-> @@ -341,6 +357,9 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
->  		task_io_account_write(bio->bi_iter.bi_size);
->  	}
->  
-> +	if (iocb->ki_flags & IOCB_ATOMIC)
-> +		bio->bi_opf |= REQ_ATOMIC;
-> +
->  	if (iocb->ki_flags & IOCB_NOWAIT)
->  		bio->bi_opf |= REQ_NOWAIT;
->  
-> @@ -357,13 +376,14 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
->  static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  {
->  	struct block_device *bdev = I_BDEV(iocb->ki_filp->f_mapping->host);
-> +	bool atomic_write = iocb->ki_flags & IOCB_ATOMIC;
+That would certainly be nice.
 
-ditto, bool is_atomic perhaps?
+-- 
+Jens Axboe
 
->  	loff_t pos = iocb->ki_pos;
->  	unsigned int nr_pages;
->  
->  	if (!iov_iter_count(iter))
->  		return 0;
->  
-> -	if (blkdev_dio_unaligned(bdev, pos, iter))
-> +	if (blkdev_dio_invalid(bdev, pos, iter, atomic_write))
->  		return -EINVAL;
->  
->  	nr_pages = bio_iov_vecs_to_alloc(iter, BIO_MAX_VECS + 1);
-> @@ -371,6 +391,8 @@ static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  		if (is_sync_kiocb(iocb))
->  			return __blkdev_direct_IO_simple(iocb, iter, nr_pages);
->  		return __blkdev_direct_IO_async(iocb, iter, nr_pages);
-> +	} else if (atomic_write) {
-> +		return -EINVAL;
->  	}
->  	return __blkdev_direct_IO(iocb, iter, bio_max_segs(nr_pages));
->  }
-> @@ -616,6 +638,9 @@ static int blkdev_open(struct inode *inode, struct file *filp)
->  	if (bdev_nowait(handle->bdev))
->  		filp->f_mode |= FMODE_NOWAIT;
->  
-> +	if (bdev_can_atomic_write(handle->bdev) && filp->f_flags & O_DIRECT)
-> +		filp->f_mode |= FMODE_CAN_ATOMIC_WRITE;
-> +
->  	filp->f_mapping = handle->bdev->bd_inode->i_mapping;
->  	filp->f_wb_err = filemap_sample_wb_err(filp->f_mapping);
->  	filp->private_data = handle;
-> -- 
-> 2.31.1
 

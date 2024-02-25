@@ -1,130 +1,178 @@
-Return-Path: <io-uring+bounces-709-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-710-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B99A86289C
-	for <lists+io-uring@lfdr.de>; Sun, 25 Feb 2024 01:40:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C9F8628B6
+	for <lists+io-uring@lfdr.de>; Sun, 25 Feb 2024 02:15:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D35F5281B53
-	for <lists+io-uring@lfdr.de>; Sun, 25 Feb 2024 00:40:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D0A7B21429
+	for <lists+io-uring@lfdr.de>; Sun, 25 Feb 2024 01:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6577FD;
-	Sun, 25 Feb 2024 00:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F037F9;
+	Sun, 25 Feb 2024 01:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ja6c1Zqf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BC/YeXs5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CA410F4
-	for <io-uring@vger.kernel.org>; Sun, 25 Feb 2024 00:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE9F10E4
+	for <io-uring@vger.kernel.org>; Sun, 25 Feb 2024 01:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708821601; cv=none; b=uizVzAMyf6GYzEK2irlho6unqUQBCypv42qS5+YGn9luL5M5Os1GRbraJuCcx0AnTzcOlhgUgNI/WWjq02r9CpiwH5P4nJSEbrsmwsRs7Yhq6P/8Eu1twsLn6yV4Xr6BxNY6Dby9x47lTyxfzp2m0a/QlQP/OdaVSXNrtRXCa8w=
+	t=1708823744; cv=none; b=Y+T76Sy1U/fcyVeUX62RskXY2X3chs7q+K4BU4dJoxxuUfFa6IGkyiiarAUkcB+LjNeO9hM2eb1cCKPLOJJhmuprJpLwRPGOzBrF+BPMTRefgGKsP4bgFr+B6rI/aIgaQIMdF7z//1kisxrXTNmmGnGDh/z/3EEgHKZK8YQ1Aiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708821601; c=relaxed/simple;
-	bh=peO494qYRoBM2DluyJlzyCy7oFDWhquPo33wmiwRUlg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BrSKuaUIpwvmqMHs5rmPVO0X0ruq8s39t90ynmxnC2PJWqO0nzJJMqmp7jTuKbadXEHKDIn9vXtbkzegxRsBOPcqQkhQChk7ghs1iRaRN9JZP5iP/dPziJtjbsSPI1STO5sLbB+8SKqHySOEG1mFIlnd2SSXmKDLoZMF7Ju0RO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ja6c1Zqf; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-5cdbc42f5efso864009a12.0
-        for <io-uring@vger.kernel.org>; Sat, 24 Feb 2024 16:39:59 -0800 (PST)
+	s=arc-20240116; t=1708823744; c=relaxed/simple;
+	bh=e//fex00lYzOFW64Xyy7V/t1ixivnfkicU3ItrVSX2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nQk41M4XRKjfQWcCMQYLOp8dDyF3qPJePnJ1n9srG3EfYrDZ05P2ppdA5Y7HtxMMHcAjuweSZfDT+eDNAiTthBBAm9r0OH3PV+nllFFv0fHulBglojXEp6vlQRa1JmXx4x4U7zO/hDfXnOzdoP5dxbKA04HRu7cHzLNlJ1OmVDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BC/YeXs5; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a3e72ec566aso257760666b.2
+        for <io-uring@vger.kernel.org>; Sat, 24 Feb 2024 17:15:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708821599; x=1709426399; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZqgkzRD5fxa2R5gbrgNqkGIM72hLGfqmZT6jWLnrvH8=;
-        b=ja6c1ZqfXizpihLvyd7K+zRMda0fyxKSrvv4SbNcdm38lEklCK/I2vbK9vt00xlC/z
-         5YI96q5zMe2X9mVKgpZfGPq6VMJ0kdkM8dENDFJ5qVZfecIBSpVZuqTIuz/ivdttQWt7
-         RnUqjKYGOwxkytFUHv9DbZnj2Gg9S+1F+2PK3RQ4ghoGlIttciFcdqEb5X2PguKAyin3
-         tQrC0DLfitkIEs1B1es057tlecplMRFAfhnY2hRii7j/P4OQao+cbracSw7jBuXXKDq+
-         /5OsH6fEhigY7bUTDAKS98YIDO1HT+pP/aPQP00zJ79FLrlKT9ZLqT/D+IAolVubCACo
-         RjAw==
+        d=gmail.com; s=20230601; t=1708823740; x=1709428540; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Xlmspl6L1Gt/9gouRNjyAKb1plzf5SatZMqbSZXlz/c=;
+        b=BC/YeXs5CPPZ8iswDj6/LThNQMy3yVa9LVsDBjPKavKbNT5u2kVxTdmrkpWVvUZmjl
+         PNStDO5pmV/8Jd9WvXdXI9ZdngDLv3ZCp+dyEdDtlLnkdjckGsnzD6tRclaDYrUpUixE
+         gQ8fFiHLq7SYSqjUy8BG+SoOpf/oKGOanuiaD55PJQFSPO67V4/oIY0OupsfQ0lyWRwr
+         QrhlkdAqgypt7PYBHT5A8labLphO7rdb2d97x7t196FPv5WhR82DJ2oVPswkjZLNzl78
+         CK9gaNM82xHCysVsJ2HoPST0/lQMmmHrqUsQeGpTSbRucpqhSyT1tTYXaqfCXEPQgdLW
+         /YBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708821599; x=1709426399;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZqgkzRD5fxa2R5gbrgNqkGIM72hLGfqmZT6jWLnrvH8=;
-        b=cZ1ujDi2+GNgdJ+oEKFNf/rlTAM8so4ShWoXc8ygEBwK0lzdrnaMCRJxi9m/M8FXl5
-         lX0glrPFHPODrLBE/HTUHSY4TF6gFBXCVDeBkAXtrmFCeZwJOmiQ5RTSwoa63rkZqh+O
-         DKqDTp+lZdGfWGqsuHoDgqwIum1O1Om2US27xtdFaGkfN3x6+PGiemXLUocmLYJbCdFL
-         n/4x3OE7P+JsWXMoAqZqDxbV90NMcwPH9zsfuhDUUbqG3+DN/FUDSeA9Ux8ksPrPCoQs
-         PkFevfOOWy2rlYB9RG09uk0EtaBvCO5xQBHkvysWr28aqhoNGZQdyNnlu3IA9LU0Axt8
-         xO/A==
-X-Gm-Message-State: AOJu0YzIdhM9XNSGNW7fth9bTtAwfYJYxixiR1zugr7OgdMtVKD6MCGK
-	H9V1IbYuFrGrXK+Gv/ZOBBIYGoabkLakrID0DnDR4jwH+r/eetoA1toeGsRgxID46bVpOd5eywy
-	i
-X-Google-Smtp-Source: AGHT+IElM3CLEysaVY4HXkVtCTWJMxzeNVK2W+wCpCRyfIrvHo+uxy5XIbjCGyOd19Jr1iKosDRl9Q==
-X-Received: by 2002:a05:6a20:938f:b0:1a0:f897:738a with SMTP id x15-20020a056a20938f00b001a0f897738amr138488pzh.0.1708821599135;
-        Sat, 24 Feb 2024 16:39:59 -0800 (PST)
-Received: from localhost.localdomain ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id u3-20020a62d443000000b006e24991dd5bsm1716170pfl.98.2024.02.24.16.39.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Feb 2024 16:39:57 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 8/8] io_uring/net: set MSG_MORE if we're doing multishot send and have more
-Date: Sat, 24 Feb 2024 17:35:54 -0700
-Message-ID: <20240225003941.129030-9-axboe@kernel.dk>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240225003941.129030-1-axboe@kernel.dk>
-References: <20240225003941.129030-1-axboe@kernel.dk>
+        d=1e100.net; s=20230601; t=1708823740; x=1709428540;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xlmspl6L1Gt/9gouRNjyAKb1plzf5SatZMqbSZXlz/c=;
+        b=qPpLhCbcHEZru+dWzgecRKCUSWnVO3qo6MPVyBmnhggtwTdvAaKIXp6EEAQcNOwZL3
+         pN6y8BMl49sqLapAHF5BBdzvRYWplt9s3JGCy8qXW83VUf7fxublDgzM5vzaHiaJHjer
+         yefBx4D7UkV3hoU1sigk0PTMjEwl4XvYhMS2wKPr+L36d+WVKc3ce25hTO207nyG3F+A
+         OesXi6ZJLu/bPcAd9CCgqlV3RUk+ogTckm8mWprzm/F1OswEpLv2bWYOGNSMZ62rYQzA
+         W3BIAsKpwAtUmO+FSQWR5S2nvFYLnDiomUGfSH3z8a+6tWdsp0nuaUF6UC54WPO/fQ4G
+         6OYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjFcEMAJrfXefoQFdYRlUPfeV0hPVbi5dkHWQhc8yZm4Mv9n6XEPhRs+F0dSA+yS+LWTH+awX/q5cRMMhJEUVF26gNdsnEnBs=
+X-Gm-Message-State: AOJu0YxTll7Q9B9m5hVHbhPwFv0XzjM1vHSOCTW6VxgU1eQG/cFfBv1i
+	+NQZvsUIa6aq06pG30oxKHyn96owoHLDJcGMOgycC2qhkCDc/7Z3udZsk48v
+X-Google-Smtp-Source: AGHT+IHbUDTnSLWNjMREk8z65VzBtqd6YsrNVEqHRY/NqEqmP/QW6pIPl+8IdTgEHrXGV5TrptPOPw==
+X-Received: by 2002:a17:906:bc97:b0:a3e:f1c8:f5c2 with SMTP id lv23-20020a170906bc9700b00a3ef1c8f5c2mr2236474ejb.23.1708823740279;
+        Sat, 24 Feb 2024 17:15:40 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.141.140])
+        by smtp.gmail.com with ESMTPSA id s18-20020a17090699d200b00a42eb167492sm1001880ejn.116.2024.02.24.17.15.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Feb 2024 17:15:39 -0800 (PST)
+Message-ID: <2bdf6fa7-35d8-438b-be20-e1da78ca0151@gmail.com>
+Date: Sun, 25 Feb 2024 00:58:02 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] io_uring: only account cqring wait time as iowait
+ if enabled for a ring
+Content-Language: en-US
+To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org
+References: <20240224050735.1759733-1-dw@davidwei.uk>
+ <678382b5-0448-4f4d-b7b7-8df7592d77a4@gmail.com>
+ <ce348f24-8e11-49e9-aebb-7c87f45138d0@kernel.dk>
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <ce348f24-8e11-49e9-aebb-7c87f45138d0@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-If we have more data pending, we know we're going to do one more loop.
-If that's the case, then set MSG_MORE to inform the networking stack
-that there's more data coming shortly for this socket.
+On 2/24/24 18:51, Jens Axboe wrote:
+> On 2/24/24 8:31 AM, Pavel Begunkov wrote:
+>> On 2/24/24 05:07, David Wei wrote:
+>>> Currently we unconditionally account time spent waiting for events in CQ
+>>> ring as iowait time.
+>>>
+>>> Some userspace tools consider iowait time to be CPU util/load which can
+>>> be misleading as the process is sleeping. High iowait time might be
+>>> indicative of issues for storage IO, but for network IO e.g. socket
+>>> recv() we do not control when the completions happen so its value
+>>> misleads userspace tooling.
+>>>
+>>> This patch gates the previously unconditional iowait accounting behind a
+>>> new IORING_REGISTER opcode. By default time is not accounted as iowait,
+>>> unless this is explicitly enabled for a ring. Thus userspace can decide,
+>>> depending on the type of work it expects to do, whether it wants to
+>>> consider cqring wait time as iowait or not.
+>>
+>> I don't believe it's a sane approach. I think we agree that per
+>> cpu iowait is a silly and misleading metric. I have hard time to
+>> define what it is, and I'm sure most probably people complaining
+>> wouldn't be able to tell as well. Now we're taking that metric
+>> and expose even more knobs to userspace.
+> 
+> For sure, it's a stupid metric. But at the same time, educating people
+> on this can be like talking to a brick wall, and it'll be years of doing
+> that before we're making a dent in it. Hence I do think that just
+> exposing the knob and letting the storage side use it, if they want, is
+> the path of least resistance. I'm personally not going to do a crusade
+> on iowait to eliminate it, I don't have the time for that. I'll educate
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/net.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Exactly my point but with a different conclusion. The path of least
+resistance is to have io_uring not accounted to iowait. That's how
+it was so nobody should complain about it, you don't have to care about
+it at all, you don't have to educate people on iowait when it comes up
+with in the context of that knob, and you don't have to educate folks
+on what this knob is and wtf it's there, and we're not pretending that
+it works when it's not.
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 240b8eff1a78..07307dd5a077 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -519,6 +519,10 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- 	if (!io_check_multishot(req, issue_flags))
- 		return io_setup_async_msg(req, kmsg, issue_flags);
- 
-+	flags = sr->msg_flags;
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		flags |= MSG_DONTWAIT;
-+
- retry_multishot:
- 	if (io_do_buffer_select(req)) {
- 		void __user *buf;
-@@ -528,12 +532,12 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- 		if (!buf)
- 			return -ENOBUFS;
- 
-+		if ((req->flags & (REQ_F_BL_EMPTY|REQ_F_APOLL_MULTISHOT)) ==
-+				   REQ_F_APOLL_MULTISHOT)
-+			flags |= MSG_MORE;
- 		iov_iter_ubuf(&kmsg->msg.msg_iter, ITER_SOURCE, buf, len);
- 	}
- 
--	flags = sr->msg_flags;
--	if (issue_flags & IO_URING_F_NONBLOCK)
--		flags |= MSG_DONTWAIT;
- 	if (flags & MSG_WAITALL)
- 		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
- 
+> people when it comes up, like I have been doing, but pulling this to
+> conclusion would be 10+ years easily.
+> 
+>> Another argument against is that per ctx is not the right place
+>> to have it. It's a system metric, and you can imagine some system
+>> admin looking for it. Even in cases when had some meaning w/o
+>> io_uring now without looking at what flags io_uring has it's
+>> completely meaningless, and it's too much to ask.
+>>
+>> I don't understand why people freak out at seeing hi iowait,
+>> IMHO it perfectly fits the definition of io_uring waiting for
+>> IO / completions, but at this point it might be better to just
+>> revert it to the old behaviour of not reporting iowait at all.
+>> And if we want to save the cpu freq iowait optimisation, we
+>> should just split notion of iowait reporting and iowait cpufreq
+>> tuning.
+> 
+> For io_uring, splitting the cpufreq from iowait is certainly the right
+> approach. And then just getting rid of iowait completely on the io_uring
+> side. This can be done without preaching about iowait to everyone that
+> has bad metrics for their healt monitoring, which is why I like that a
+> lot. I did ponder that the other day as well.
+> 
+> You still kind of run into a problem with that in terms of when short vs
+> long waits are expected. On the io_uring side, we use the "do I have
+> any requests pending" for that, which is obviously not fine grained
+> enough. We could apply it on just "do I have any requests against
+> regular files" instead, which would then translate to needing further
+> tracking on our side. Probably fine to just apply it for the existing
+> logic, imho.
+
+Let's say there are two problems, one is the accounting mess, which
+is IMHO clear. The second is the optimisation, which is not mentioned
+in the patch and kind of an orthogonal issue. If we want a knob to
+disable/enable the cpufreq thing, it should be separate from iowait
+accounting, because it sounds like a really unfortunate side effect
+when you enable the optimisation and the iowait goes pounding the roof.
+Then people never touch it, especially in a framework, because an
+system admin will be pretty surprised by the metric.
+
+Not like I'm a fan of the idea of having a userspace knob for the
+optimisation, it'd be pretty complicated to use, and hopefully there
+is a more intelligent approach.
+
+
 -- 
-2.43.0
-
+Pavel Begunkov
 

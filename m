@@ -1,138 +1,123 @@
-Return-Path: <io-uring+bounces-729-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-730-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1341B86726F
-	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 12:00:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 295E88676BF
+	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 14:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B728728FFB7
-	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 11:00:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB9A81F220B0
+	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 13:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BCB1CFA8;
-	Mon, 26 Feb 2024 10:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCB87FBAA;
+	Mon, 26 Feb 2024 13:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRdflU6L"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="sfNPcL2v"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0672C688
-	for <io-uring@vger.kernel.org>; Mon, 26 Feb 2024 10:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED821AACC
+	for <io-uring@vger.kernel.org>; Mon, 26 Feb 2024 13:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708945168; cv=none; b=CDUDu7dSgOOBozgHbY6yOozPQENjcZoC/8XAsOherZ6Nlb4vM7mPlYxzoCf0WwMbVh55pdKV4qk4tvmSg8pv6OlcsRML+C9VTO3CjDXQXLkq42Yuv4VruT1kvPOtXkUMBhgbBT2CMfDUVTU5QdiFhYjIbMBfQJ2Ugplr/xVKFl4=
+	t=1708954693; cv=none; b=ptzq6Mr0vg2TVUoBGQBDX7eKGRJPOcQq1heYksGh/PU7Pkf0BFzTMjV0YreJhVo0T0BOWT2+kuIjVIjVZkA6FntxFD72w5Ro98aoFrkxAqf8eEPLVJ/oSLDtibEa+oKPKP6X+ZIh9Cj5LE2zLPVhXGXnIxnW7tcmXRtuhqF4yFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708945168; c=relaxed/simple;
-	bh=o2FZMCLW8eUJX7Eaveg7EIPAoiyZQyUo4bmmBkOj4pA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oxb98lNkuF/7tovjPFNwLdH9U1BrR5fMdjW9o07G7rmc3pBirC6vtFb6nN8HL50S+d+T9RYDqgrfKpfyYiwLVgqVKhvOqNmV1LbKkOqfBW/U2XwhhfqCYcgDkAp2U51tJW+8pN5OBDZSFuDRup4PlEmWfzGXUoiesR2yWBarNNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRdflU6L; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dc236729a2bso2681183276.0
-        for <io-uring@vger.kernel.org>; Mon, 26 Feb 2024 02:59:26 -0800 (PST)
+	s=arc-20240116; t=1708954693; c=relaxed/simple;
+	bh=umU7ozqlX84vE+8ekyhfBNQftPh1b0y1vjKUBvj6HGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AXw2zIAKNJO2sm7H87KnrTwdO2At/8F0MMhvWfg/UVgec8vp57dX9dCxmKkyPSozFHuY/fdFQlje8mvmWY0hinTDqJMROQo5obr2ZGOExqlLJbCezJIQVlhQukhaPNpwkqiqDN/DrDlatPRdGz7mqjtYMDfdnUcfdA0Bbri7LaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=sfNPcL2v; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-5cfcf509fbdso1503567a12.1
+        for <io-uring@vger.kernel.org>; Mon, 26 Feb 2024 05:38:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708945166; x=1709549966; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yBw404/sW7s/+gJ3+FrCUZPHPXMtZEm7u846XJB1Pd8=;
-        b=cRdflU6Lo+8eDa1D51oPWdHF4CQMZoPE3hsDxU0Nr1DanIRDVXRh9NhMzs9NqTYLA2
-         R7Ao4Mx5XLCl6Ezl0ID7t/AA6p39Bxj77ueGdbVzocM/QN2tfrJ62wRHubkzQe3DG4UK
-         WUOU7hXnE1OKfZTSgbQ/jyQ8OLmO5Q2vmQ9Lw11Taia2l2IZ2ncsmXGxSDFfqUWviUPM
-         ZY8Q9PjNqdvXw1x6y2zIt6pxjLX831BD2iDdcnFJkNWEbL9tXzTYbqwcPxiBzyw3HXMl
-         dgSM3xWHT2pQmpNklAegAIPJVmDx13u5f/ovgp4kqnaZPg8VMu+trISXXdiBTTtqI3kw
-         wIxg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708954688; x=1709559488; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y29K3a9HmK85XuwdpCfrzTUQd/fHWQnDJ6Znm1786ds=;
+        b=sfNPcL2v782O6It/17F8ADutzWoEZ77bmeExo1ILu0Ccf1qj3sBISpqeQRctvZAIRE
+         kRbNaac1BoVNZGpP911WIRgPhu66If1J0+fOKuD64KAWDVDmQFYlogs+6NhqDgXpOBgo
+         kqjs+Uc+MQ37GHJA+QM5xozS3Cos3F1TDgjToEIXC/eE1j1rFIcEHQsXjwZQlcrKumR7
+         V5rr0UyKfuaD7ZOJJl65enqiTYXpVwCWT0C/RQGaG4MRkzSsyj03j+vsDkc/3vFVuAeg
+         A09i0xcq7h5+C7K7Z+2p83SsDDaMoO0vwkSk1B0CO2/iTtdmwkD/kytU9bHNJcFwLJBU
+         H+gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708945166; x=1709549966;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yBw404/sW7s/+gJ3+FrCUZPHPXMtZEm7u846XJB1Pd8=;
-        b=PvCFqIzQk6m+2/UzDIUP8iCWCy+DP1t6DCbqN48s+NcUkKiXoAs/8aY/EjhCL5WTTU
-         VQxt9tlJI/OiOIaVlKQZKi0OFiybYF1VNB2DBqFqED7bq/pMgSoI1f5XBwhadrHta6nX
-         3/GaJ4ZbYC+V9xYEYz4r8hc0c/v/djD6WKu0kq173wwxO9Sb65LvXU2E/g7xJ0i7im4l
-         +Mxbcu1YY5aHCX8kBV4z1g4cy0TMimX4zqXzffpyNLTjWZ2m/qiNA5zJ2TJ8pJvfI8Gp
-         3F5p/uKDM5+3HhxZ3C+sMCN342X+o833SGd5ehumWkB78R/oNDmiI0Oz5/c8lC6bslIc
-         opBg==
-X-Gm-Message-State: AOJu0YyH1yiQ+LEmPQougdSt2UCybWb0XsPCG7PuYK1Oj2JMaiNpR+Ah
-	OYQH3298kQUKT7Ilt3gbWuZbl8VHN7raWLmj4LKmGNkF3NZkIwOzEcKntKiDCnRkkA8M5+GC6YI
-	ZZfn7AIeFuGEl9mxT5MGNMK/Dyo6Nr9D1k1M=
-X-Google-Smtp-Source: AGHT+IG3+u23y+MKW1q3QDHzvIfZmKmJboQZ94JhX1WddcjS3VFg4HpREeQPWkcZdWs6RvthgqQdqjPwYotgVYkx1yI=
-X-Received: by 2002:a25:7805:0:b0:dc7:4951:5f8 with SMTP id
- t5-20020a257805000000b00dc7495105f8mr4286150ybc.22.1708945165755; Mon, 26 Feb
- 2024 02:59:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708954688; x=1709559488;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y29K3a9HmK85XuwdpCfrzTUQd/fHWQnDJ6Znm1786ds=;
+        b=NAi2sjnLTAA9FeVFCoxxpZG8uLRywQ8H92yz7fNT+J6gdwvddFtsIEczR3bmCfuHPz
+         KuA+43inY9anFfXOp0N6U8nmECymtkUfjNa37H46IsylM8ro0fT1rYmvGeLRXtCL76er
+         b5qHax0Y/XySlANZCQJ3qbzVdeZWRma2N178NhCT3hGf28OS4qfyqgbIVbFhDM68HKhh
+         HVPnrac6RvlZr06/u/rano9UPa932a+Rl0DcacRmA2bUzepwSNBnUOjTSEXosKjdxoiW
+         vgElZ9zpdafeZmMjv+6V4dFikoCeiqn6jurAw3KBMSwWREO7PILHgaFS3ZZhz5+8/Hiz
+         plEg==
+X-Gm-Message-State: AOJu0YyLLN1wo2Df693Jkld9AGxOyFTiUzzz/JgfOw6FchFyJoMdoAuX
+	Sz5X+mMy23edQzutqJQYU8IFPBXWKBtpsuMw1MF2qggD3LQYgXt07pgMZZAojLB0HBMNGN2l7Pf
+	Q
+X-Google-Smtp-Source: AGHT+IHQFSF0gbolFeSKT7L230+n9VU7Lce+LkB9HH24hy+Q58xXIHBGjG+DdUVxVqkdNbli4UZUDg==
+X-Received: by 2002:a05:6a21:6d9d:b0:1a0:f8b1:5d10 with SMTP id wl29-20020a056a216d9d00b001a0f8b15d10mr4623073pzb.2.1708954688567;
+        Mon, 26 Feb 2024 05:38:08 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id jh5-20020a170903328500b001dcada71593sm1007771plb.273.2024.02.26.05.38.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Feb 2024 05:38:08 -0800 (PST)
+Message-ID: <63859888-5602-41fb-9a42-4edc6132766f@kernel.dk>
+Date: Mon, 26 Feb 2024 06:38:07 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240225003941.129030-1-axboe@kernel.dk> <20240225003941.129030-9-axboe@kernel.dk>
-In-Reply-To: <20240225003941.129030-9-axboe@kernel.dk>
-From: Dylan Yudaken <dyudaken@gmail.com>
-Date: Mon, 26 Feb 2024 10:59:16 +0000
-Message-ID: <CAO_Yeohfx1d1Hdopu=0-b3-dKVM1By=unnhHFQHsqCwH=HJSvA@mail.gmail.com>
-Subject: Re: [PATCH 8/8] io_uring/net: set MSG_MORE if we're doing multishot
- send and have more
-To: Jens Axboe <axboe@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] io_uring/net: support multishot for send
+Content-Language: en-US
+To: Dylan Yudaken <dyudaken@gmail.com>
 Cc: io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20240225003941.129030-1-axboe@kernel.dk>
+ <20240225003941.129030-7-axboe@kernel.dk>
+ <CAO_YeojZHSnx471+HKKFgRo-yy5cv=OmEg_Ri48vMUOwegvOqg@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAO_YeojZHSnx471+HKKFgRo-yy5cv=OmEg_Ri48vMUOwegvOqg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Feb 25, 2024 at 12:46=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote=
-:
->
-> If we have more data pending, we know we're going to do one more loop.
-> If that's the case, then set MSG_MORE to inform the networking stack
-> that there's more data coming shortly for this socket.
->
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  io_uring/net.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->
-> diff --git a/io_uring/net.c b/io_uring/net.c
-> index 240b8eff1a78..07307dd5a077 100644
-> --- a/io_uring/net.c
-> +++ b/io_uring/net.c
-> @@ -519,6 +519,10 @@ int io_sendmsg(struct io_kiocb *req, unsigned int is=
-sue_flags)
->         if (!io_check_multishot(req, issue_flags))
->                 return io_setup_async_msg(req, kmsg, issue_flags);
->
-> +       flags =3D sr->msg_flags;
-> +       if (issue_flags & IO_URING_F_NONBLOCK)
-> +               flags |=3D MSG_DONTWAIT;
-> +
->  retry_multishot:
->         if (io_do_buffer_select(req)) {
->                 void __user *buf;
-> @@ -528,12 +532,12 @@ int io_sendmsg(struct io_kiocb *req, unsigned int i=
-ssue_flags)
->                 if (!buf)
->                         return -ENOBUFS;
->
-> +               if ((req->flags & (REQ_F_BL_EMPTY|REQ_F_APOLL_MULTISHOT))=
- =3D=3D
-> +                                  REQ_F_APOLL_MULTISHOT)
-> +                       flags |=3D MSG_MORE;
->                 iov_iter_ubuf(&kmsg->msg.msg_iter, ITER_SOURCE, buf, len)=
-;
->         }
+On 2/26/24 3:47 AM, Dylan Yudaken wrote:
+> On Sun, Feb 25, 2024 at 12:46?AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> This works very much like the receive side, except for sends. The idea
+>> is that an application can fill outgoing buffers in a provided buffer
+>> group, and then arm a single send that will service them all. For now
+>> this variant just terminates when we are out of buffers to send, and
+>> hence the application needs to re-arm it if IORING_CQE_F_MORE isn't
+>> set, as per usual for multishot requests.
+>>
+> 
+> This feels to me a lot like just using OP_SEND with MSG_WAITALL as
+> described, unless I'm missing something?
 
-This feels racy. I don't have an exact sequence in mind, but I believe
-there are cases where between
-the two calls to __sys_sendmsg_sock, another submission could be
-issued and drain the buffer list.
-I guess the result would be that the packet is never sent out, but I
-have not followed the codepaths of MSG_MORE.
+How so? MSG_WAITALL is "send X amount of data, and if it's a short send,
+try again" where multishot is "send data from this buffer group, and
+keep sending data until it's empty". Hence it's the mirror of multishot
+on the receive side. Unless I'm misunderstanding you somehow, not sure
+it'd be smart to add special meaning to MSG_WAITALL with provided
+buffers.
 
-The obvious other way to trigger this codepath is if the user messes
-with the ring by decrementing
-the buffer counter. I do not believe there are any nefarious outcomes
-- but just to point out that
-REQ_F_BL_EMPTY is essentially user controlled.
+> I actually could imagine it being useful for the previous patches' use
+> case of queuing up sends and keeping ordering,
+> and I think the API is more obvious (rather than the second CQE
+> sending the first CQE's data). So maybe it's worth only
+> keeping one approach?
+
+And here you totally lost me :-)
+
+-- 
+Jens Axboe
+
 

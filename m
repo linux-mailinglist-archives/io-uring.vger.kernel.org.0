@@ -1,370 +1,313 @@
-Return-Path: <io-uring+bounces-748-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-754-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45ABE867EEB
-	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 18:40:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5ECE8680A2
+	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 20:15:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAF40288FB4
-	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 17:40:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C5B328E5B2
+	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 19:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFFA12D75F;
-	Mon, 26 Feb 2024 17:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C4C12F361;
+	Mon, 26 Feb 2024 19:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gV0tYsMa";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ungnzaV1"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZJwjY7Gv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1251131E26;
-	Mon, 26 Feb 2024 17:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708969058; cv=fail; b=L5z7iqp5povEeLohPfkd4TDQynTzTrrWnMpkqgdoywpOfrp5pBO113obSySV267LrRh6BsSt0zBVL9sf1LZdj1fEoos6TMQ3NIDeK9E3lY4x2L7bI+CmnxNCv1AxudAlY8TVwmvs7vAYNMnLBmGdTvf0p/h/r8pFYSIGDvEcjaM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708969058; c=relaxed/simple;
-	bh=ijYEFYFApduEOHjdwpDxBvdQjRcJGstA2L+L8N7ocp0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FkpBMWV8G4E4ukaI2sKpS8RatxuYnlxqqCkHRKwR06ScZs4erPGkZcl9RbkFRLZhEJsEtRzVtNIPkPdtjfHv3P4WV3bIOmkRqFi8mkRSafHM8BhvLJReWRVDPR8hLyD9KOd6+iam8qbowLSopAA9nO0/2A4R/C59TdeAQWuu0ck=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gV0tYsMa; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ungnzaV1; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41QGnGWX018463;
-	Mon, 26 Feb 2024 17:37:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=EHCLtQsZ7lriVd7Tl7UNkBLv7DKwpFv8w0Tmh96SCxw=;
- b=gV0tYsMagE5fARjBTKvaEBip8roafJUtLHv0lZQcXq9TxJ18YxuEX+BR6STW5WTchF9i
- IOOJjeXMq3+gxH7Ixye7i5UBiIEo0YzHGnahhWFGD1PNozn30YwQjY8bJClfG3JTge3R
- EgYWwV1F1KQW6HzH2/ngcy72vzYxBvD8+59B56Trbp0m1cRJ9ajlYCTmI6m6hjgz4T0q
- N1ntVtNZP44uzaS85sslJ0pyfULUa0ASAgCRAPHvEp/+Vk+Tay+/PdbzG+MOitvy8pJv
- GP9P3aLp3bLdakp9fVJDHNpppGu2hKFyKv2OGpbFfjmLefNLTL1Q+gHELKYDxOMxD1D0 1w== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3wf8bb52fx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 26 Feb 2024 17:37:03 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41QH1qEt022365;
-	Mon, 26 Feb 2024 17:37:02 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3wf6w61tvn-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 26 Feb 2024 17:37:02 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gTFY/3a2PNwPCmPr3KPf6a3usWAg3oxGYn4Ob5JwIjwK/YeuoNEwQRD555ZVTRkIAlD9PelkJRfag3A+avEzim/5P9WGntLwpF6Z1YE8YqadTRhs1NcJnEo289ayo4d27zqZHwTFFReLSbuQRVPe75o52H6NjE4IjcYRTxK2zkjhY6FCPDn2N+aRCwhaqsvfZdAOgMiup3jicY7vUVp5WLis0syfYqCkNayU4/4lpUfSZIvZR6NWCmbiB01OKYMiii58G4hPPZaKDeYFQxyPs9QUAaywo6LCegbreME4LJ8BmikLfu2mCDoqjEuV5jDlbyfA+IWyOP4feSFgsm1Hxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EHCLtQsZ7lriVd7Tl7UNkBLv7DKwpFv8w0Tmh96SCxw=;
- b=S4wGI4O6sv7ajAjPcNq/y7I4TnhRh9g05drunsRZHzR1BzqJForeoBiwebr3xD5gV8bGsqk/mpbfYuXCgjlcX7lV848wVJQD3V3sWKZ9L6Qz1wsUPDqs5AHMgxI46aYD7lBMww7huEYnkSNpiUxgGwEqCsXctaRAxP1KWX804g3JkT/Ymg5xe+4PGGWAuN+6wlX3VWeC34eInwbCBRrtg7OhC2IztSCs6VHppdUn9JFdPHpKwul6QII9gHObG46tX4fV4MTvmyc5cdG+edSKM3141MyBPuvdEGnxQ+P5LIKjTHQBBVYrQAtGOEUpnk584G8uoxWhzGn2kQhxEgn4Vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54086130AC1
+	for <io-uring@vger.kernel.org>; Mon, 26 Feb 2024 19:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708974717; cv=none; b=MpqQjAZs07bNtsszyDt/3Af2Ml8KWseakZIaCNX3ChDkzu7rhKfV9hVCxdmedB7m6Ysy72TJ1rrYz+67tmTbjDyL18Apha5r84nuCONkpfLU0MqDPM7JV7hA9vvOEg7KBCmBZqEnq1oZ5eWxvPpntOUHBNQqitxhUKwRHn2TuSs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708974717; c=relaxed/simple;
+	bh=oCbvh5CO9e6dZJ+KzWtlCZt3JHpbqieyaMZ6qXNzyo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IsF7VYVkQku4Rsw1rHJI5qQKASfesWOwBNNW00YePR2WN/KdYa9Vp0avr38FHzr60aHHwJ1rpUCZw3ciQ39ifbwImYVpeE1uc9kr+xcfDLDhpBGPUolYiHw7ENgRIXo6NwlDK7fc9CaCSMc5BGe3QlcDYcPwmHItaBol3e22Pv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZJwjY7Gv; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7c7b076562cso25871739f.0
+        for <io-uring@vger.kernel.org>; Mon, 26 Feb 2024 11:11:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EHCLtQsZ7lriVd7Tl7UNkBLv7DKwpFv8w0Tmh96SCxw=;
- b=ungnzaV1s+W/iP236Rx0T4blqqO3rqy6UWy60CjM9Lf0rTAV0T8ame+HGzkB1LvliofI9fuw5ZQP//1Wy7hrwQ5Tf0391La7pBKZdxLGvrU1M6OQ+9Q1LtDvJFRQweiR1jwoL76VsT5qchvHT0XM+GAlOlCpNPEp2/gBt8jc3Ic=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by MW4PR10MB6298.namprd10.prod.outlook.com (2603:10b6:303:1e3::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.34; Mon, 26 Feb
- 2024 17:37:00 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::97a0:a2a2:315e:7aff]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::97a0:a2a2:315e:7aff%3]) with mapi id 15.20.7316.034; Mon, 26 Feb 2024
- 17:37:00 +0000
-From: John Garry <john.g.garry@oracle.com>
-To: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jack@suse.cz
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
-        ojaswin@linux.ibm.com, linux-aio@kvack.org,
-        linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org,
-        nilay@linux.ibm.com, ritesh.list@gmail.com,
-        Alan Adamson <alan.adamson@oracle.com>,
-        John Garry <john.g.garry@oracle.com>
-Subject: [PATCH v5 10/10] nvme: Atomic write support
-Date: Mon, 26 Feb 2024 17:36:12 +0000
-Message-Id: <20240226173612.1478858-11-john.g.garry@oracle.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20240226173612.1478858-1-john.g.garry@oracle.com>
-References: <20240226173612.1478858-1-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PH8PR02CA0052.namprd02.prod.outlook.com
- (2603:10b6:510:2da::32) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708974711; x=1709579511; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gIRJb7Kus99iCKgL+l++hYqZBfwHdYtd2SPtrqgE0ps=;
+        b=ZJwjY7Gv1uxm+MrHuNvzJ7xPL8apGTtSptBmPKSmmweM+FqsGe30cvimF5hSuobnE8
+         b5vGSG+lJE5mrTU7KtLF5T7EKGopGqFmHDjVln204uOto5p/0LZn95jK4fVShLDRyAQY
+         FLbHYH7tdEKl9KDW/fpWfGweL2CqKi7d82MF3tfw85zPhpEstgAt0Bp4Lgf6RcocUDjT
+         D1UrUTZClEFFtaXKnIT5cKJyzQvnvLbrAvIywx8ZhS//Tyu8l7Tl67ZMuLIZmpUYpfCg
+         BMrWl06BoO3MXPn1EMr3JrCS+iuIbXohE6w4L88HEO05Xhj49gwwpV6VFMvhKT31Ihek
+         Gcow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708974711; x=1709579511;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gIRJb7Kus99iCKgL+l++hYqZBfwHdYtd2SPtrqgE0ps=;
+        b=juHufRTuGopWUQqvQ3WLjWTHdcTJXW4lsE1qaU4lUeoMgcPPIks0jFszAGGBiDS+N1
+         C4kd0p03jl8Sf6RbJqMWgfCVkP2w0Tl73q4GIBMxmAOpnnfPg8T6HpVBPxzN7ZvgHmjA
+         ClASqSt46y3gDrbceBYW5WWKDQ4qKPDZJoHVDpOI+7WgPC9tnKsu5CgKOCa77AApLIj2
+         NGpOyhGNis4kAVhNLV81F5k0QMEifiMezr0/ALSnNNzG1n5i5G8peLLtNBdKIGiS2U1X
+         pCiVVQqt6J9hYaiJLQ+0q38SXeCbT3Xye+qUm4dozCs7E7M6vgk10ulbu1vNni4K1Ll+
+         j07w==
+X-Gm-Message-State: AOJu0YzjfrCsUqmGJSrDYh8DUOMyv9AgYSXLAg+bXi/XLwJbqYZ4GNQI
+	8xEsAPN0oW0W2TnKV83JtQPicEiX5laweKDeGTfZuBuUqH0bEG14OrO90l3HohY=
+X-Google-Smtp-Source: AGHT+IFpE0bC+RVBcVnD4apMjoGniFCI2IiH5aivUkFDQJtDgFqApv3K+uRjpUXDVRiK3gQY2cPV1Q==
+X-Received: by 2002:a05:6602:2e8c:b0:7c7:b54b:19b0 with SMTP id m12-20020a0566022e8c00b007c7b54b19b0mr5746962iow.0.1708974711014;
+        Mon, 26 Feb 2024 11:11:51 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id q21-20020a0566380ed500b00473a2d3a3d7sm1358005jas.152.2024.02.26.11.11.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Feb 2024 11:11:50 -0800 (PST)
+Message-ID: <4823c201-8c5d-4a4f-a77e-bd3e6c239cbe@kernel.dk>
+Date: Mon, 26 Feb 2024 12:11:49 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|MW4PR10MB6298:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64dfa4e6-d4c4-4123-771b-08dc36f18934
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	U+C1oxC6qsTO10OEmudOx5aeM4wmWWEKRV0ZkeV/0GM61ZoDD9NpkVrxzCgDydPndFwwjvejhGQYPI99miDKi7C4H2Du54Dgq9tYwkSxHO5jgxCzjrmIKt/VbHjWUpZXEKd0q+DFgm1Zq3xgDQOpMIdpyyXD8JpN15y17GbWhdTHdEdhDyzAX8IRhLBulEl+wUu6Ym2BY4Qw2iBJ3JKH34KpzyCGMaDaSRvmcDqVzLJ+9R99yxLz5r4ZxqkiSk0w3bixHEi10oNuKSGBElbv+QOyYNmRi7L/RfVq44wmAnqKdrqDWQhAxOs/XfZ6emRdreLy96Y2B5QRGZM/VY+K0vF2kOG1+laKYJxSnW6gyZEGHKcyqPKyd5omHnff6FxJY9XzDx85fC8H/jqz44GKdGY/J6Z1cIN+VWSCa0V2YRZaS+QeefpxbtKoASUnshhbv2UwMPoXSONVYwkmOcEm/+z4rIZfMvZrg4PL8y/Yxp577wqbMACgNlQ8kwIfeqKNuBCEhq5p+QSzaRn4GRjBfWoopgjXj3wSEWflssX8f5wEiDalisp8GR3eBm9VsNj0oqU1liHlt5sJ6MrZUTYci9spf5PBAqTZeJZqdBiurwSxGxKRCYm6rvh1yZpaA+fo17dwZ0zV9Y8b6Cfrch9OcQnTvkxBZ95jb/BW7VsiPGNII7N6f2nLvThJ1Mks371cuI/K1EKMUe4N8H5W/Jqy0g==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(921011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?ZkxKQ3FSQlR3U0p4aDZ6MExPWk8wZy9MWjJKVmcrazM2VTdlbkhlUE1XeU1o?=
- =?utf-8?B?akNLQ2dkdVYzaTVCOGVsdEpnU203L0N6V3NJK2hnS21RTG1hOS90YjB3MTc1?=
- =?utf-8?B?b0J2MWtYbWFraVhqZE10YmYxQTh5aUc2Nzd0MmdsUkRZRWwxL0tkTjNEeEtu?=
- =?utf-8?B?bFBRWVZlNU8xUE5rSWswcEh4TzBPK1ltU2dIcFM1dFhlQ3ZVTFFlQVZ3NU5j?=
- =?utf-8?B?ai94SjR2cEN6T1ErVlpZSENCTzU4L25WSGFIZ2loOEx4MG9CN0gxeTNGS3p0?=
- =?utf-8?B?SFVTbDNIUjVYY3poeFdpa2hPTS8wald0cHBuK0tZM3VzT1dRVkFyZFVPVkVm?=
- =?utf-8?B?K2dLUHE1MmV6ZzBTZE5oNDFnbHdUZmZCSXF1MjlEQXkraEpvQTVReEZXOTA3?=
- =?utf-8?B?UXorVHVvUGNQVVI2TzVLUjFaOEtQRitzSWJlbmw4eS9FV3l6L0dkUDdkZzN5?=
- =?utf-8?B?OWVpd05jdDN5ZXpETm9zeHlpZUVkOHZpZ0daZW42dXhwMHZpN1VXRjdLNElK?=
- =?utf-8?B?ZDdNWG9pQmgva21oY0dYQWJyejVkT1d3UW5qWnF0bVBXcUQwY2N3SVA5UnhU?=
- =?utf-8?B?SjU2YXlNSTFNYTFSd25kNTZDLzloZGNFdkJ1a3hVSm96bzlveEdBQkJVN3gz?=
- =?utf-8?B?NVVOSkU4OVEvbGI2M0d5anFoMUxDQ2hGUVVDQTRIS2gvRVdWS3RyVkxwLzU0?=
- =?utf-8?B?dGFxVUpKbGp0N1RMUjVrTFc1ci9hbDRJK3ZpdzVxT2tGd0svc2VOM0dSbHJY?=
- =?utf-8?B?SmNWK1dXTldNMlRNOFU3NWRwRUdwWFp5V1I2MzAzOVZRVWJKM1NZNkFaVTJP?=
- =?utf-8?B?aUlGWHl2SjlXTkxYRzJlbzlrNU1GMndkL3BvVnlyOFU3aHBEakYvajgxeStV?=
- =?utf-8?B?K0xaYWtJWUNUTnRRZmlaZkJrRjBKb0d5YWw1NkxUSDlFNmhDeG9VRGtFTEVt?=
- =?utf-8?B?RG5TZEl5VHYvNVV4d21ZOGw4c0xPZGxiRkdscmpCenZ6YXUzTlRDdnV6bjk1?=
- =?utf-8?B?VUxReG5DU3ZQRmhUYytwUU5QQ1Jxc0dpekR3NDd2QkY5K1hUR1FpVGtSei9G?=
- =?utf-8?B?UFM0cm5YNVUxSDlscjVSeVkrc3RjaTBsUStQajA2OXNQVTZYS1JieHJGM0gr?=
- =?utf-8?B?ZTV2eUhhMzk3K0ZEVzI4NmJMNCs0TWE3M1VRcmV4bFZpeHBYclJySjE1dith?=
- =?utf-8?B?ZHA3VGE4U0themVLSzBEOVlReEVvUDZsUm5pYmZCR3NDdEpXMXREY091c09i?=
- =?utf-8?B?RFhWVEtObFBmYXAweGFaTDZHM01sVXhSZlZVZ2l1N254WEtVandvaFB0UUY3?=
- =?utf-8?B?bEZsbmFFZm5VZDNhR0wzMDVkcjBQb1FKUmZoeGlVVXhmcG5FNWszZXFVWkEx?=
- =?utf-8?B?NGU3czVWcjc3ZmlLYnJ4M2I2WEVLTEZBaUZLalVmeVpCbkhnOW80N0RHMW5U?=
- =?utf-8?B?TkhMN1lQdkI1bFBVeTBlY1ZqM1RNRGp0RTExNEpQSkF3K3BJdmlmNUdOL2FP?=
- =?utf-8?B?YnFFRjkzTGRGQmw0MWFIYUppSzNXR1FpVDlNejUwSmp1S1VxNzJkYndXc2k0?=
- =?utf-8?B?UmFzVmZOQUZtTGtYdFBPRzBxZDRZd1Y5RW5HbG9GbGM1T3ZqcENBK0F2bGh3?=
- =?utf-8?B?ajlmRXA0TEVPa09SV1VEamZDL3hmVkN0SVNsNWxwZmNMOHdBcEQ0b2Q5dVFY?=
- =?utf-8?B?M0lDK3gzUEtnU01LQzZWQ2NjSTBBWC9WeE44Wi85NDVZSkxCZG9ad1FYQ1FE?=
- =?utf-8?B?Z1hQRWlBSi85YjhRdkhjako4dGdSQmRUc05xa1kvSnphczUvOVNzVG1YbUtI?=
- =?utf-8?B?M0t0ckpvd2NiSXIxc3F2YmxUNzIyOEErM1YxaThqayttRTdXMjc2d0lacnZS?=
- =?utf-8?B?UXpKbWZ0SldIUXNvc1VUanZaS2NaU3luYnNobnFBaXJIemJuVXlDbWxvSHZN?=
- =?utf-8?B?OEhjcXZBTmMvc3R3NG02NkRXMGhZNWZab0h0VzNhSm5xdmRGZE4wTEhMZXph?=
- =?utf-8?B?aG96OVZiOGxnTS85bHNYYjBZQnVVMUVGSTc2TFVVc2xwNGZ2Wm5UT29YSWRw?=
- =?utf-8?B?WVRjTUtDSERsY1VCeFh6MERDcVMwV2VJQzg2V3M2aURMdURzaUVmNVFtR0V3?=
- =?utf-8?B?VjR0RHN3OFZ4RXMrdUNGNldUc3JKYWpSSWNtYjB2L0NBZlFyVXhzVGR5RDI1?=
- =?utf-8?B?YVE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	VUNxDd8TA27jIoGRA6WYBynaHKQwkKZIqIm/rR2v1665wXYWpjOKEABDSe3FUsNgjSJvCrmn8D2eupJkWMPrMoVUI8nMYdXehcUIeA4zhNxGB/ebhR6HKXCjy7npySi5lG14CKJXLL7amIUqEhJQleS9hL54Q3sPiUbAQTIqA9tn+nIPoykSqWy0REmSzwqD4/yxk2D7w5wjXEzD1oqRGQ+RGW8E6axeY678YIag/DdPsiF2A9lq4wk7sun2blcJb2BOwyETT8f/P+bTxYvp6/zM9sA1VaRCLRWMOoZ3EYrt9l1ot2IKudSIZc8IgEi/h+e5+34u094pRf7CTIb7J5zrzR0b8/7TlhT31f451pBGgi0OgSFUFdTQnWqeFTDD9rEEkM6S/81vye7A1OvdInCUd4SJ98ELnlyhzt3zbBBl8LjXAh7DYbXZok+n5h0b6TNhY9WC+p4cAj5vgBj+7ezVRsoxhd1jhY1ygYas08j+1p8+t56bdLlkAoQbCNhnQBEtgSp3CfZl0GFhoZ5y7LTYJQPuz9QtT/EVpl1kU7gI9GJf002Hl5W+fg/aKJZ3pAEjwIzc9ZKLd/i4Lz3lcBmZ4sJIVJ0/ARV+O5XKcaA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64dfa4e6-d4c4-4123-771b-08dc36f18934
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2024 17:36:59.9391
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QCTdnSx+3hZkgvowXs3mZYjocoI0Z/UBbY2lAR2IUxSL6zQi7ccH+A1OzxPbSTeSohNPW3T0Q6Up0YvrxPe0vg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB6298
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-26_11,2024-02-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 adultscore=0 mlxscore=0 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2402260134
-X-Proofpoint-GUID: RMdLPRbwlIK7S7P_wP3F92xbAzR6EV8B
-X-Proofpoint-ORIG-GUID: RMdLPRbwlIK7S7P_wP3F92xbAzR6EV8B
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] io_uring/net: support multishot for send
+Content-Language: en-US
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Dylan Yudaken <dyudaken@gmail.com>
+Cc: io-uring@vger.kernel.org
+References: <20240225003941.129030-1-axboe@kernel.dk>
+ <20240225003941.129030-7-axboe@kernel.dk>
+ <CAO_YeojZHSnx471+HKKFgRo-yy5cv=OmEg_Ri48vMUOwegvOqg@mail.gmail.com>
+ <63859888-5602-41fb-9a42-4edc6132766f@kernel.dk>
+ <CAO_YeoiTpPALaeiQiCjoW1VSr6PMPDUrH5xT3dTD19=OK1ytPg@mail.gmail.com>
+ <ecd796a4-e413-47d3-91c1-015b5c211ee2@kernel.dk>
+ <f0046836-ef9d-4b58-bfae-f2bf087233e1@gmail.com>
+ <454ef0d2-066f-4bdf-af42-52fd0c57bd56@kernel.dk>
+ <a0f62e25-f19c-44b7-bf26-4460ae01de7f@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <a0f62e25-f19c-44b7-bf26-4460ae01de7f@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Alan Adamson <alan.adamson@oracle.com>
+On 2/26/24 8:41 AM, Pavel Begunkov wrote:
+> On 2/26/24 15:16, Jens Axboe wrote:
+>> On 2/26/24 7:36 AM, Pavel Begunkov wrote:
+>>> On 2/26/24 14:27, Jens Axboe wrote:
+>>>> On 2/26/24 7:02 AM, Dylan Yudaken wrote:
+>>>>> On Mon, Feb 26, 2024 at 1:38?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>>>
+>>>>>> On 2/26/24 3:47 AM, Dylan Yudaken wrote:
+>>>>>>> On Sun, Feb 25, 2024 at 12:46?AM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>>>>>
+>>>>>>>> This works very much like the receive side, except for sends. The idea
+>>>>>>>> is that an application can fill outgoing buffers in a provided buffer
+>>>>>>>> group, and then arm a single send that will service them all. For now
+>>>>>>>> this variant just terminates when we are out of buffers to send, and
+>>>>>>>> hence the application needs to re-arm it if IORING_CQE_F_MORE isn't
+>>>>>>>> set, as per usual for multishot requests.
+>>>>>>>>
+>>>>>>>
+>>>>>>> This feels to me a lot like just using OP_SEND with MSG_WAITALL as
+>>>>>>> described, unless I'm missing something?
+>>>>>>
+>>>>>> How so? MSG_WAITALL is "send X amount of data, and if it's a short send,
+>>>>>> try again" where multishot is "send data from this buffer group, and
+>>>>>> keep sending data until it's empty". Hence it's the mirror of multishot
+>>>>>> on the receive side. Unless I'm misunderstanding you somehow, not sure
+>>>>>> it'd be smart to add special meaning to MSG_WAITALL with provided
+>>>>>> buffers.
+>>>>>>
+>>>>>
+>>>>> _If_ you have the data upfront these are very similar, and only differ
+>>>>> in that the multishot approach will give you more granular progress
+>>>>> updates. My point was that this might not be a valuable API to people
+>>>>> for only this use case.
+>>>>
+>>>> Not sure I agree, it feels like attributing a different meaning to
+>>>> MSG_WAITALL if you use a provided buffer vs if you don't. And that to me
+>>>> would seem to be confusing. Particularly when we have multishot on the
+>>>> receive side, and this is identical, just for sends. Receives will keep
+>>>> receiving as long as there are buffers in the provided group to receive
+>>>> into, and sends will keep sending for the same condition. Either one
+>>>> will terminate if we run out of buffers.
+>>>>
+>>>> If you make MSG_WAITALL be that for provided buffers + send, then that
+>>>> behaves differently than MSG_WAITALL with receive, and MSG_WAITALL with
+>>>> send _without_ provided buffers. I don't think overloading an existing
+>>>> flag for this purposes is a good idea, particularly when we already have
+>>>> the existing semantics for multishot on the receive side.
+>>>
+>>> I'm actually with Dylan on that and wonder where the perf win
+>>> could come from. Let's assume TCP, sends are usually completed
+>>> in the same syscall, otherwise your pacing is just bad. Thrift,
+>>> for example, collects sends and packs into one multi iov request
+>>> during a loop iteration. If the req completes immediately then
+>>> the userspace just wouldn't have time to push more buffers by
+>>> definition (assuming single threading).
+>>
+>> The problem only occurs when they don't complete inline, and now you get
+>> reordering. The application could of course attempt to do proper pacing
+>> and see if it can avoid that condition. If not, it now needs to
+> 
+> Ok, I admit that there are more than valid cases when artificial pacing
+> is not an option, which is why I also laid out the polling case.
+> Let's also say that limits potential perf wins to streaming and very
+> large transfers (like files), not "lots of relatively small
+> request-response" kinds of apps.
 
-Add support to set block layer request_queue atomic write limits. The
-limits will be derived from either the namespace or controller atomic
-parameters.
+I don't think that's true - if you're doing large streaming, you're more
+likely to keep the socket buffer full, whereas for smallish sends, it's
+less likely to be full. Testing with the silly proxy confirms that. And
+outside of cases where pacing just isn't feasible, it's extra overhead
+for cases where you potentially could or what. To me, the main appeal of
+this is the simplicity.
 
-NVMe atomic-related parameters are grouped into "normal" and "power-fail"
-(or PF) class of parameter. For atomic write support, only PF parameters
-are of interest. The "normal" parameters are concerned with racing reads
-and writes (which also applies to PF). See NVM Command Set Specification
-Revision 1.0d section 2.1.4 for reference.
+>> serialize sends. Using provided buffers makes this very easy, as you
+>> don't need to care about it at all, and it eliminates complexity in the
+>> application dealing with this.
+> 
+> If I'm correct the example also serialises sends(?). I don't
+> think it's that simpler. You batch, you send. Same with this,
+> but batch into a provided buffer and the send is conditional.
 
-Whether to use per namespace or controller atomic parameters is decided by
-NSFEAT bit 1 - see Figure 97: Identify – Identify Namespace Data
-Structure, NVM Command Set.
+Do you mean the proxy example? Just want to be sure we're talking about
+the same thing. Yes it has to serialize sends, because otherwise we can
+run into the condition described in the patch that adds provided buffer
+support for send. But I did bench multishot separately from there,
+here's some of it:
 
-NVMe namespaces may define an atomic boundary, whereby no atomic guarantees
-are provided for a write which straddles this per-lba space boundary. The
-block layer merging policy is such that no merges may occur in which the
-resultant request would straddle such a boundary.
+10G network, 3 hosts, 1 acting as a mirror proxy shuffling N-byte packets.
+Send ring and send multishot not used:
 
-Unlike SCSI, NVMe specifies no granularity or alignment rules, apart from
-atomic boundary rule. In addition, again unlike SCSI, there is no
-dedicated atomic write command - a write which adheres to the atomic size
-limit and boundary is implicitly atomic.
+Pkt sz | Send ring | mshot |  usec  |  QPS  |  Bw
+=====================================================
+1000   |    No	   |  No   |   437  | 1.22M | 9598M
+32     |    No	   |  No   |  5856  | 2.87M |  734M
 
-If NSFEAT bit 1 is set, the following parameters are of interest:
-- NAWUPF (Namespace Atomic Write Unit Power Fail)
-- NABSPF (Namespace Atomic Boundary Size Power Fail)
-- NABO (Namespace Atomic Boundary Offset)
+Same test, now turn on send ring:
 
-and we set request_queue limits as follows:
-- atomic_write_unit_max = rounddown_pow_of_two(NAWUPF)
-- atomic_write_max_bytes = NAWUPF
-- atomic_write_boundary = NABSPF
+Pkt sz | Send ring | mshot |  usec  |  QPS  |  Bw   | Diff
+===========================================================
+1000   |    Yes	   |  No   |   436  | 1.23M | 9620M | + 0.2%
+32     |    Yes	   |  No   |  3462  | 4.85M | 1237M | +68.5%
 
-If in the unlikely scenario that NABO is non-zero, then atomic writes will
-not be supported at all as dealing with this adds extra complexity. This
-policy may change in future.
+Same test, now turn on send mshot as well:
 
-In all cases, atomic_write_unit_min is set to the logical block size.
+Pkt sz | Send ring | mshot |  usec  |  QPS  |  Bw   | Diff
+===========================================================
+1000   |    Yes	   |  Yes  |   436  | 1.23M | 9620M | + 0.2%
+32     |    Yes	   |  Yes  |  3125  | 5.37M | 1374M | +87.2%
 
-If NSFEAT bit 1 is unset, the following parameter is of interest:
-- AWUPF (Atomic Write Unit Power Fail)
+which does show that there's another win on top for just queueing these
+sends and doing a single send to handle them, rather than needing to
+prepare a send for each buffer. Part of that may be that you simply run
+out of SQEs and then have to submit regardless of where you are at.
 
-and we set request_queue limits as follows:
-- atomic_write_unit_max = rounddown_pow_of_two(AWUPF)
-- atomic_write_max_bytes = AWUPF
-- atomic_write_boundary = 0
+> Another downside is that you need a provided queue per socket,
+> which sounds pretty expensive for 100s if not 1000s socket
+> apps.
 
-The block layer requires that the atomic_write_boundary value is a
-power-of-2. However, it is really only required that atomic_write_boundary
-be a multiple of atomic_write_unit_max. As such, if NABSPF were not a
-power-of-2, atomic_write_unit_max could be reduced such that it was
-divisible into NABSPF. However, this complexity will not be yet supported.
+That's certainly true. But either you need backlog per socket anyway in
+the app, or you only send single buffers anyway (in a typical
+request/response kind of fashion) between receives and you don't need it
+at all.
 
-A new function, nvme_valid_atomic_write(), is also called from submission
-path to verify that a request has been submitted to the driver will
-actually be executed atomically. As mentioned, there is no dedicated NVMe
-atomic write command (which may error for a command which exceeds the
-controller atomic write limits).
+>>> If you actually need to poll tx, you send a request and collect
+>>> data into iov in userspace in background. When the request
+>>> completes you send all that in batch. You can probably find
+>>> a niche example when batch=1 in this case, but I don't think
+>>> anyone would care.
+>>>
+>>> The example doesn't use multi-iov, and also still has to
+>>> serialise requests, which naturally serialises buffer consumption
+>>> w/o provided bufs.
+>>
+>> IMHO there's no reason NOT to have both a send with provided buffers and
+>> a multishot send. The alternative would be to have send-N, where you
+>> pass in N. But I don't see much point to that over "just drain the whole
+>> pending list". The obvious use case is definitely send multishot, but
+> 
+> Not sure I follow, but in all cases I was contemplating about
+> you sends everything you have at the moment.
+> 
+>> what would the reasoning be to prohibit pacing by explicitly disallowing
+>> only doing a single buffer (or a partial queue)? As mentioned earlier, I
+>> like keeping the symmetry with the receive side for multishot, and not
+>> make it any different unless there's a reason to.
+> 
+> There are different, buffer content kernel (rx) vs userspace (tx)
+> provided, provided queue / group per socket vs shared. Wake ups
+> for multishots as per below. It's not like it's a one line change,
+> so IMHO requires to be giving some benefits.
 
-Note on NABSPF:
-There seems to be some vagueness in the spec as to whether NABSPF applies
-for NSFEAT bit 1 being unset. Figure 97 does not explicitly mention NABSPF
-and how it is affected by bit 1. However Figure 4 does tell to check Figure
-97 for info about per-namespace parameters, which NABSPF is, so it is
-implied. However currently nvme_update_disk_info() does check namespace
-parameter NABO regardless of this bit.
+Are you talking about provided buffers, or multishot specifically? I
+think both are standalone pretty much as simple as they can be. And if
+the argument is "just have send with provided buffers be multishot by
+default", then that single patch is basically the two patches combined.
+There's no simplification there. Outside of a strong argument for why it
+would never make sense to do single shot send with provided buffers, I
+really don't want to combine them into one single action.
 
-Signed-off-by: Alan Adamson <alan.adamson@oracle.com>
-Reviewed-by: Keith Busch <kbusch@kernel.org>
-jpg: total rewrite
-Signed-off-by: John Garry <john.g.garry@oracle.com>
----
- drivers/nvme/host/core.c | 72 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+>>>>> You do make a good point about MSG_WAITALL though - multishot send
+>>>>> doesn't really make sense to me without MSG_WAITALL semantics. I
+>>>>> cannot imagine a useful use case where the first buffer being
+>>>>> partially sent will still want the second buffer sent.
+>>>>
+>>>> Right, and I need to tweak that. Maybe we require MSG_WAITALL, or we
+>>>> make it implied for multishot send. Currently the code doesn't deal with
+>>>> that.
+>>>>
+>>>> Maybe if MSG_WAITALL isn't set and we get a short send we don't set
+>>>> CQE_F_MORE and we just stop. If it is set, then we go through the usual
+>>>> retry logic. That would make it identical to MSG_WAITALL send without
+>>>> multishot, which again is something I like in that we don't have
+>>>> different behaviors depending on which mode we are using.
+>>>>
+>>>>>>> I actually could imagine it being useful for the previous patches' use
+>>>>>>> case of queuing up sends and keeping ordering,
+>>>>>>> and I think the API is more obvious (rather than the second CQE
+>>>>>>> sending the first CQE's data). So maybe it's worth only
+>>>>>>> keeping one approach?
+>>>>>>
+>>>>>> And here you totally lost me :-)
+>>>>>
+>>>>> I am suggesting here that you don't really need to support buffer
+>>>>> lists on send without multishot.
+>>>>
+>>>> That is certainly true, but I also don't see a reason _not_ to support
+>>>> it. Again mostly because this is how receive and everything else works.
+>>>> The app is free to issue a single SQE for send without multishot, and
+>>>> pick the first buffer and send it.
+>>>
+>>> Multishot sound interesting, but I don't see it much useful if
+>>> you terminate when there are no buffers. Otherwise, if it continues
+>>> to sit in, someone would have to wake it up
+>>
+>> I did think about the termination case, and the problem is that if there
+>> are no buffers, you need it to wake when there are buffers. And at that
+>> point you may as well just do another send, as you need the application
+>> to trigger it. The alternative would be to invent a way to trigger that
+>> wakeup, which would be send only and weird just because of that.
+> 
+> Yeah, that's the point, wake ups would be userspace driven, and how
+> to do it without heavy stuff like syscalls is not so clear.
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 0a96362912ce..13e0266b65b3 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -934,6 +934,30 @@ static inline blk_status_t nvme_setup_write_zeroes(struct nvme_ns *ns,
- 	return BLK_STS_OK;
- }
- 
-+static bool nvme_valid_atomic_write(struct request *req)
-+{
-+	struct request_queue *q = req->q;
-+	u32 boundary_bytes = queue_atomic_write_boundary_bytes(q);
-+
-+	if (blk_rq_bytes(req) > queue_atomic_write_unit_max_bytes(q))
-+		return false;
-+
-+	if (boundary_bytes) {
-+		u64 mask = boundary_bytes - 1, imask = ~mask;
-+		u64 start = blk_rq_pos(req) << SECTOR_SHIFT;
-+		u64 end = start + blk_rq_bytes(req) - 1;
-+
-+		/* If greater then must be crossing a boundary */
-+		if (blk_rq_bytes(req) > boundary_bytes)
-+			return false;
-+
-+		if ((start & imask) != (end & imask))
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
- static inline blk_status_t nvme_setup_rw(struct nvme_ns *ns,
- 		struct request *req, struct nvme_command *cmnd,
- 		enum nvme_opcode op)
-@@ -948,6 +972,12 @@ static inline blk_status_t nvme_setup_rw(struct nvme_ns *ns,
- 
- 	if (req->cmd_flags & REQ_RAHEAD)
- 		dsmgmt |= NVME_RW_DSM_FREQ_PREFETCH;
-+	/*
-+	 * Ensure that nothing has been sent which cannot be executed
-+	 * atomically.
-+	 */
-+	if (req->cmd_flags & REQ_ATOMIC && !nvme_valid_atomic_write(req))
-+		return BLK_STS_IOERR;
- 
- 	cmnd->rw.opcode = op;
- 	cmnd->rw.flags = 0;
-@@ -1960,6 +1990,45 @@ static void nvme_set_queue_limits(struct nvme_ctrl *ctrl,
- 	blk_queue_write_cache(q, vwc, vwc);
- }
- 
-+static void nvme_update_atomic_write_disk_info(struct nvme_ctrl *ctrl,
-+		 struct gendisk *disk, struct nvme_id_ns *id, u32 bs,
-+		 u32 atomic_bs)
-+{
-+	unsigned int unit_min = 0, unit_max = 0, boundary = 0, max_bytes = 0;
-+	struct request_queue *q = disk->queue;
-+
-+	if (id->nsfeat & NVME_NS_FEAT_ATOMICS && id->nawupf) {
-+		if (le16_to_cpu(id->nabspf))
-+			boundary = (le16_to_cpu(id->nabspf) + 1) * bs;
-+
-+		/*
-+		 * The boundary size just needs to be a multiple of unit_max
-+		 * (and not necessarily a power-of-2), so this could be relaxed
-+		 * in the block layer in future.
-+		 * Furthermore, if needed, unit_max could be reduced so that the
-+		 * boundary size was compliant.
-+		 */
-+		if (!boundary || is_power_of_2(boundary)) {
-+			max_bytes = atomic_bs;
-+			unit_min = bs;
-+			unit_max = rounddown_pow_of_two(atomic_bs);
-+		} else {
-+			dev_notice(ctrl->device, "Unsupported atomic write boundary (%d)\n",
-+				boundary);
-+			boundary = 0;
-+		}
-+	} else if (ctrl->subsys->awupf) {
-+		max_bytes = atomic_bs;
-+		unit_min = bs;
-+		unit_max = rounddown_pow_of_two(atomic_bs);
-+	}
-+
-+	blk_queue_atomic_write_max_bytes(q, max_bytes);
-+	blk_queue_atomic_write_unit_min_sectors(q, unit_min >> SECTOR_SHIFT);
-+	blk_queue_atomic_write_unit_max_sectors(q, unit_max >> SECTOR_SHIFT);
-+	blk_queue_atomic_write_boundary_bytes(q, boundary);
-+}
-+
- static void nvme_update_disk_info(struct nvme_ctrl *ctrl, struct gendisk *disk,
- 		struct nvme_ns_head *head, struct nvme_id_ns *id)
- {
-@@ -1990,6 +2059,9 @@ static void nvme_update_disk_info(struct nvme_ctrl *ctrl, struct gendisk *disk,
- 			atomic_bs = (1 + le16_to_cpu(id->nawupf)) * bs;
- 		else
- 			atomic_bs = (1 + ctrl->subsys->awupf) * bs;
-+
-+		nvme_update_atomic_write_disk_info(ctrl, disk, id, bs,
-+						atomic_bs);
- 	}
- 
- 	if (id->nsfeat & NVME_NS_FEAT_IO_OPT) {
+It's just not possible without eg polling, either directly or using some
+monitor/mwait arch specific thing which would be awful. Or by doing some
+manual wakeup, which would need to lookup and kick the request, which I
+bet would be worse than just re-arming the send multishot.
+
+If you could poll trigger it somehow, it also further complicates things
+as now it could potentially happen at any time. As it stands, the app
+knows when a poll multishot is armed (and submitted, or not), and can
+serialize with the outgoing buffer queue trivially.
+
 -- 
-2.31.1
+Jens Axboe
 
 

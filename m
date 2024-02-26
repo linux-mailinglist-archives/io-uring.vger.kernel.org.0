@@ -1,80 +1,80 @@
-Return-Path: <io-uring+bounces-763-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-764-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433108680F1
-	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 20:25:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9AF8680F2
+	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 20:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB7CF28988C
-	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 19:25:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86FD21F2C313
+	for <lists+io-uring@lfdr.de>; Mon, 26 Feb 2024 19:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B13712FF88;
-	Mon, 26 Feb 2024 19:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA8C12FB2A;
+	Mon, 26 Feb 2024 19:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VlC81yeZ"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="tSUbtsDA"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7614E12FF7F
-	for <io-uring@vger.kernel.org>; Mon, 26 Feb 2024 19:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639BA12FF9C
+	for <io-uring@vger.kernel.org>; Mon, 26 Feb 2024 19:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708975522; cv=none; b=eE7YijM1hw4U1Eh2i3U85NL7qS6SWefgC5ro65yPO4v58bH7VzJNYWkCDpVISiqFyTiM2DSoR+jsGDJK/1jp6llhsaL3z1DVwcaKh14SIHiZur+O2ejeDZxCx0kt7mem9ZNFi0nnVT5Le2G54g6aBXBbtAT30PUcU9g3L4UQtqA=
+	t=1708975524; cv=none; b=i2pTiY7C28Vthc4fBvSfHBYd3NmosFXo9iYb4m1VsTR/WtE+v5+ZSA/lXDxmrx+rLtSNxmrjc62BsMUw9rYLovsJRK/VoeCFjNwUMd4cSMFh53nFI7ZJixSdUIgKMPNSUJ8PYHixtsLkvP+TzAK8O/PqfixKz+pFvm0fTMOWbBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708975522; c=relaxed/simple;
-	bh=RSZ7OAR/cdx1MKHXbpc9WXDFWd/9DySwAtqKqqNeQ2E=;
+	s=arc-20240116; t=1708975524; c=relaxed/simple;
+	bh=X5JjzQ1BeSKFM9aA0ELmTfsofFkg93zHq7aQu3afbI0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hiDj0y6mHpGP3Q1OZmadbKP8lMPGiMuIW12SB2ez7oXUcCnaG4LbN6ZvJqjTL/CLr+ou8zRCkOSzmyqS/mF4W/n2FVEAbOsd7HU3hvT71O0UrjYnL9kYDZHZnwR1SlmAfspl33z8gL34O74abeTA6jOcFh+qwJWQcwg8KU/oDjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VlC81yeZ; arc=none smtp.client-ip=209.85.166.50
+	 MIME-Version; b=VXWBheUOSMfrphqt7BnLQaiXWeluQeexS+hwfIohKlMVVN1GjWzm0bfJiwVAB4u4zYM7O9phzXFmrLfqbtHDVB0hcY3dKKfBGfeIovGvUOYi86oOLJUk62DvGQOYbIfbJFAGDpAF4HgUIBRNdKO1QCXyaDV+AjREhQaojqnwUEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=tSUbtsDA; arc=none smtp.client-ip=209.85.166.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7bf3283c18dso63531839f.0
-        for <io-uring@vger.kernel.org>; Mon, 26 Feb 2024 11:25:20 -0800 (PST)
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7c45829f3b6so27408039f.1
+        for <io-uring@vger.kernel.org>; Mon, 26 Feb 2024 11:25:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708975519; x=1709580319; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708975521; x=1709580321; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vxaakl5xXGXZYuGHWx27xL1pKmhVx1dRDWD4WvDRfjo=;
-        b=VlC81yeZXWCQ65/RFtEUFkYZ5U3+p0Gm8xt7DTTY56VX1q+5q8NlrFmhsBv0t3kfbZ
-         3gqfFLQb0Pp4KFNTeq/RBXLLmZyQzUyWVS52WYweVHeQsbrqayaDER1qvkWWE0/LJ4h4
-         eIyjDRL6gelINmKSbTZKmJ/7cbBB5bcSwS5dK/jymgvLb3yzD9/PXC51dll10wTFqZ5N
-         yyucTqNvNf/O5I2/TS1UZsCwU/9GHKgDR3bCNoIN1mgRQMYRHATLRK2Y0Nw7SXxiZGu7
-         Ieozq7LPN4MSQNO4EomQ0Lzp5xeKw1dGqiubbsRoEO5S6yx0g8CbS64iEdu5SYYdKFRH
-         mG/A==
+        bh=A+1BT2SbKbFe4m/gssB3A8RiJ133+OKSUxeeTv8Ok8s=;
+        b=tSUbtsDA2xk1SCX1FOnFqHB2TA6WiPgwVywPxwogVTcVO7TP398V5DUHGQauyXDMR7
+         NlyefhwMk1gjfc6Bmb/pw8q2cORk09d+Mwv7ApBRrojREww7wevMrE2h98w14eCSyYVS
+         42WhmN3eQzzg+U+qumHqF/4TyjZYif1khV4fpqEJ/xHr1oM5yWLq5uZsXSkZG9xLB3Jl
+         Hji2LwS+IjJxy8xYxJhF41Gr6o23ysL/lLL2kTkTuomMLX1aketVDWC/nJvUSZ3sHuv/
+         BaS8X0h9QePGgq5oQcKRFL1NGQ1HGoq+abEtHq28bErvu/T5xuns+nAyj3i4Ic8e1hzd
+         CbTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708975519; x=1709580319;
+        d=1e100.net; s=20230601; t=1708975521; x=1709580321;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vxaakl5xXGXZYuGHWx27xL1pKmhVx1dRDWD4WvDRfjo=;
-        b=PMD8hNGXhhBLSWq2Nhjc1mdRz67TfNfAZKUK85A9mwxPboxjuKoauGG1MX+hnoKG4U
-         KKE/mbXrLuBz0Fw7CgWeoDK8FwlXqPmwS++GZbZbnzzmBiNJjsFX/xKsiIi1uYW9DEwi
-         GYTaGY7EzZevJh6MFDIvF1zEJihXLWWiQwcsnkY7VtZb9zOoOb1Ytn50l5K5slDq8JLl
-         knRs3dOY64NhUoD+ZYz1LwzqnR2OoeVsr3kJ0kmPNlRYjBakMKlpPpVD4ZgNxHGZ4bl7
-         nYOBz+Huc98uL8NsRb529IslXsYMWhH4z3eyEJed5+/kjx3++q+DkkZDSoL3QAQt/07k
-         khKw==
-X-Gm-Message-State: AOJu0YxybpR5q7c6QRgeJ4ITevIrm38pkLBHkyd2xsLXbMZQcYRMJ7AB
-	yWY8nntsBO6RZgSmIyce50/zhLLBeCl0+iBWsVpl6cl8In2EjpSp20QDZhmmajF5eoRlnfC/KXW
-	q
-X-Google-Smtp-Source: AGHT+IGTXLBIvrXy1bqI1legQ2mLeJvlOi2FUFMsleF1RxJPOF2QDzO9iPpTzT9G2e8/k1/O7rqTUw==
-X-Received: by 2002:a6b:6501:0:b0:7c7:7f73:d1a with SMTP id z1-20020a6b6501000000b007c77f730d1amr7442256iob.1.1708975519210;
-        Mon, 26 Feb 2024 11:25:19 -0800 (PST)
+        bh=A+1BT2SbKbFe4m/gssB3A8RiJ133+OKSUxeeTv8Ok8s=;
+        b=BZLYfgHT6kRBDhtHkUJYaFwmAMbcdqtT86QnI0igb0jebFzyjEwCXTeaPwhM6eket3
+         opMyyeGnfgrurlQe7umT5S086zSBC7cktSq4rzk98I4uuUEnqYhqgeumKW532lKQldgF
+         mB0omlOwQ5E4IRO6umfmzuPhC2XUC6thmxo84M8SyznDQL1QL0ysuxUwZZA27eeWI4oL
+         Awy862aNbGTP625EzgertxO9jot81ki/BnecHQScW7TlC35xIgciqG2QAD1ZeY8TITA+
+         F98iodvZZO7irfY44Axu3JKefXW4nj3sF8JXsNpxZp1TUnAC0VDokx9Vu7Y/ovngTm4M
+         5o7w==
+X-Gm-Message-State: AOJu0YxW/OMzBQfY41m0oLJ2W/vIhPOs15Y4iTKQrIWHEDyhNQOKRJ4x
+	yQjfhGFITKD8P656uGuFpxnIsbhl4M/pM1nD/35RqtYPsLUVG3E6H+zu2Vr1ClLxTlET8LsCUq7
+	C
+X-Google-Smtp-Source: AGHT+IGcGo0MYMOKGLfQ8uEkK7Vnm59uuAOtKzYjrWeQIPQkCMiiRPv6yth/BfLUB5zxQaRiXBuzvg==
+X-Received: by 2002:a6b:da17:0:b0:7c7:a02d:f102 with SMTP id x23-20020a6bda17000000b007c7a02df102mr7466195iob.0.1708975521016;
+        Mon, 26 Feb 2024 11:25:21 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id eh3-20020a056638298300b0047466fd3b1dsm1370484jab.22.2024.02.26.11.25.17
+        by smtp.gmail.com with ESMTPSA id eh3-20020a056638298300b0047466fd3b1dsm1370484jab.22.2024.02.26.11.25.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Feb 2024 11:25:17 -0800 (PST)
+        Mon, 26 Feb 2024 11:25:19 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	dyudaken@gmail.com,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 8/9] io_uring/net: support multishot for send
-Date: Mon, 26 Feb 2024 12:21:20 -0700
-Message-ID: <20240226192458.396832-9-axboe@kernel.dk>
+Subject: [PATCH 9/9] io_uring/net: support multishot for sendmsg
+Date: Mon, 26 Feb 2024 12:21:21 -0700
+Message-ID: <20240226192458.396832-10-axboe@kernel.dk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240226192458.396832-1-axboe@kernel.dk>
 References: <20240226192458.396832-1-axboe@kernel.dk>
@@ -86,146 +86,33 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This works very much like the receive side, except for sends. The idea
-is that an application can fill outgoing buffers in a provided buffer
-group, and then arm a single send that will service them all. For now
-this variant just terminates when we are out of buffers to send, and
-hence the application needs to re-arm it if IORING_CQE_F_MORE isn't
-set, as per usual for multishot requests.
-
-This only enables it for IORING_OP_SEND, IORING_OP_SENDMSG is coming
-in a separate patch. However, this patch does do a lot of the prep
-work that makes wiring up the sendmsg variant pretty trivial. They
-share the prep side.
-
-Enabling multishot for sends is, again, identical to the receive side.
-The app sets IORING_SEND_MULTISHOT in sqe->ioprio. This flag is also
-the same as IORING_RECV_MULTISHOT.
+Same as the IORING_OP_SEND multishot mode. Needs further work, but it's
+functional and can be tested.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/uapi/linux/io_uring.h |  8 ++++
- io_uring/net.c                | 90 ++++++++++++++++++++++++++++++-----
- 2 files changed, 86 insertions(+), 12 deletions(-)
+ io_uring/net.c | 47 +++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 33 insertions(+), 14 deletions(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 061147cdfbb0..feacc64c90a0 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -351,9 +351,17 @@ enum io_uring_op {
-  *				0 is reported if zerocopy was actually possible.
-  *				IORING_NOTIF_USAGE_ZC_COPIED if data was copied
-  *				(at least partially).
-+ *
-+ * IORING_SEND_MULTISHOT	Multishot send. Like the recv equivalent, must
-+ *				be used with provided buffers. Keeps sending
-+ *				from the given buffer group ID until it is
-+ *				empty. Sets IORING_CQE_F_MORE if more
-+ *				completions should be expected on behalf of
-+ *				the same SQE.
-  */
- #define IORING_RECVSEND_POLL_FIRST	(1U << 0)
- #define IORING_RECV_MULTISHOT		(1U << 1)
-+#define IORING_SEND_MULTISHOT		IORING_RECV_MULTISHOT
- #define IORING_RECVSEND_FIXED_BUF	(1U << 2)
- #define IORING_SEND_ZC_REPORT_USAGE	(1U << 3)
- 
 diff --git a/io_uring/net.c b/io_uring/net.c
-index 9ef11883a34a..0b990df04ac7 100644
+index 0b990df04ac7..c9d9dc611087 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
-@@ -411,6 +411,8 @@ void io_sendmsg_recvmsg_cleanup(struct io_kiocb *req)
- 	kfree(io->free_iov);
- }
- 
-+#define SENDMSG_FLAGS (IORING_RECVSEND_POLL_FIRST | IORING_SEND_MULTISHOT)
-+
- int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
+@@ -492,7 +492,6 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
  	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
-@@ -427,11 +429,17 @@ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	sr->len = READ_ONCE(sqe->len);
- 	sr->flags = READ_ONCE(sqe->ioprio);
--	if (sr->flags & ~IORING_RECVSEND_POLL_FIRST)
-+	if (sr->flags & ~SENDMSG_FLAGS)
- 		return -EINVAL;
- 	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
- 	if (sr->msg_flags & MSG_DONTWAIT)
- 		req->flags |= REQ_F_NOWAIT;
-+	if (sr->flags & IORING_SEND_MULTISHOT) {
-+		if (!(req->flags & REQ_F_BUFFER_SELECT))
-+			return -EINVAL;
-+		req->flags |= REQ_F_APOLL_MULTISHOT;
-+		sr->buf_group = req->buf_index;
-+	}
- 
- #ifdef CONFIG_COMPAT
- 	if (req->ctx->compat)
-@@ -441,6 +449,44 @@ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return 0;
- }
- 
-+static inline bool io_send_finish(struct io_kiocb *req, int *ret,
-+				  struct msghdr *msg, unsigned issue_flags)
-+{
-+	bool mshot_finished = *ret <= 0;
-+	unsigned int cflags;
-+
-+	cflags = io_put_kbuf(req, issue_flags);
-+
-+	if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
-+		io_req_set_res(req, *ret, cflags);
-+		*ret = IOU_OK;
-+		return true;
-+	}
-+
-+	if (mshot_finished || req->flags & REQ_F_BL_EMPTY)
-+		goto finish;
-+
-+	/*
-+	 * Fill CQE for this receive and see if we should keep trying to
-+	 * receive from this socket.
-+	 */
-+	if (io_fill_cqe_req_aux(req, issue_flags & IO_URING_F_COMPLETE_DEFER,
-+				*ret, cflags | IORING_CQE_F_MORE)) {
-+		io_mshot_prep_retry(req);
-+		*ret = IOU_ISSUE_SKIP_COMPLETE;
-+		return false;
-+	}
-+
-+	/* Otherwise stop multishot but use the current result. */
-+finish:
-+	io_req_set_res(req, *ret, cflags);
-+	if (issue_flags & IO_URING_F_MULTISHOT)
-+		*ret = IOU_STOP_MULTISHOT;
-+	else
-+		*ret = IOU_OK;
-+	return true;
-+}
-+
- int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
-@@ -523,7 +569,6 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 	size_t len = sr->len;
+ 	struct io_async_msghdr iomsg, *kmsg;
  	struct socket *sock;
- 	struct msghdr msg;
 -	unsigned int cflags;
  	unsigned flags;
  	int min_ret = 0;
  	int ret;
-@@ -552,10 +597,18 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
+@@ -515,6 +514,14 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
  	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
- 		return io_setup_async_addr(req, &__address, issue_flags);
+ 		return io_setup_async_msg(req, kmsg, issue_flags);
  
 +	if (!io_check_multishot(req, issue_flags))
-+		return -EAGAIN;
++		return io_setup_async_msg(req, kmsg, issue_flags);
 +
- 	sock = sock_from_file(req->file);
- 	if (unlikely(!sock))
- 		return -ENOTSOCK;
- 
 +	flags = sr->msg_flags;
 +	if (issue_flags & IO_URING_F_NONBLOCK)
 +		flags |= MSG_DONTWAIT;
@@ -233,10 +120,10 @@ index 9ef11883a34a..0b990df04ac7 100644
 +retry_multishot:
  	if (io_do_buffer_select(req)) {
  		void __user *buf;
- 
-@@ -570,19 +623,28 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 	if (unlikely(ret))
- 		return ret;
+ 		size_t len = sr->len;
+@@ -526,17 +533,25 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 		iov_iter_ubuf(&kmsg->msg.msg_iter, ITER_SOURCE, buf, len);
+ 	}
  
 -	flags = sr->msg_flags;
 -	if (issue_flags & IO_URING_F_NONBLOCK)
@@ -248,45 +135,54 @@ index 9ef11883a34a..0b990df04ac7 100644
 +	 * then we complete the multishot sequence rather than continue on.
 +	 */
 +	if (flags & MSG_WAITALL || req->flags & REQ_F_APOLL_MULTISHOT)
- 		min_ret = iov_iter_count(&msg.msg_iter);
+ 		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
  
- 	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
- 	msg.msg_flags = flags;
- 	ret = sock_sendmsg(sock, &msg);
+ 	ret = __sys_sendmsg_sock(sock, &kmsg->msg, flags);
+ 
  	if (ret < min_ret) {
 -		if (ret == -EAGAIN && (issue_flags & IO_URING_F_NONBLOCK))
--			return io_setup_async_addr(req, &__address, issue_flags);
--
+-			return io_setup_async_msg(req, kmsg, issue_flags);
 +		if (ret == -EAGAIN && (issue_flags & IO_URING_F_NONBLOCK)) {
-+			ret = io_setup_async_addr(req, &__address, issue_flags);
-+			if (ret != -EAGAIN)
-+				return ret;
-+			if (issue_flags & IO_URING_F_MULTISHOT) {
++			ret = io_setup_async_msg(req, kmsg, issue_flags);
++			if (ret == -EAGAIN && (issue_flags & IO_URING_F_MULTISHOT)) {
 +				io_kbuf_recycle(req, issue_flags);
 +				return IOU_ISSUE_SKIP_COMPLETE;
 +			}
-+			return -EAGAIN;
++			return ret;
 +		}
  		if (ret > 0 && io_net_retry(sock, flags)) {
- 			sr->len -= ret;
- 			sr->buf += ret;
-@@ -598,9 +660,13 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 		ret += sr->done_io;
- 	else if (sr->done_io)
- 		ret = sr->done_io;
--	cflags = io_put_kbuf(req, issue_flags);
--	io_req_set_res(req, ret, cflags);
--	return IOU_OK;
+ 			kmsg->msg.msg_controllen = 0;
+ 			kmsg->msg.msg_control = NULL;
+@@ -548,18 +563,22 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 			ret = -EINTR;
+ 		req_set_fail(req);
+ 	}
++	if (ret >= 0)
++		ret += sr->done_io;
++	else if (sr->done_io)
++		ret = sr->done_io;
 +	else
 +		io_kbuf_recycle(req, issue_flags);
 +
-+	if (!io_send_finish(req, &ret, &msg, issue_flags))
++	if (!io_send_finish(req, &ret, &kmsg->msg, issue_flags))
 +		goto retry_multishot;
 +
+ 	/* fast path, check for non-NULL to avoid function call */
+ 	if (kmsg->free_iov)
+ 		kfree(kmsg->free_iov);
+ 	req->flags &= ~REQ_F_NEED_CLEANUP;
+ 	io_netmsg_recycle(req, issue_flags);
+-	if (ret >= 0)
+-		ret += sr->done_io;
+-	else if (sr->done_io)
+-		ret = sr->done_io;
+-	cflags = io_put_kbuf(req, issue_flags);
+-	io_req_set_res(req, ret, cflags);
+-	return IOU_OK;
 +	return ret;
  }
  
- int io_recvmsg_prep_async(struct io_kiocb *req)
+ int io_send(struct io_kiocb *req, unsigned int issue_flags)
 -- 
 2.43.0
 

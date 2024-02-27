@@ -1,20 +1,20 @@
-Return-Path: <io-uring+bounces-777-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-776-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9790A868939
-	for <lists+io-uring@lfdr.de>; Tue, 27 Feb 2024 07:52:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 289D3868938
+	for <lists+io-uring@lfdr.de>; Tue, 27 Feb 2024 07:52:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A3E2B24C34
-	for <lists+io-uring@lfdr.de>; Tue, 27 Feb 2024 06:52:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4AEB284B8D
+	for <lists+io-uring@lfdr.de>; Tue, 27 Feb 2024 06:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4561A53818;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448615380F;
 	Tue, 27 Feb 2024 06:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
 	dkim=pass (2048-bit key) header.d=sonic.net header.i=@sonic.net header.b="nrWVfgTd"
-X-Original-To: io-uring+subscribe@vger.kernel.org
+X-Original-To: io-uring@vger.kernel.org
 Received: from c.mail.sonic.net (c.mail.sonic.net [64.142.111.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)

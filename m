@@ -1,306 +1,629 @@
-Return-Path: <io-uring+bounces-796-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-797-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B38786B5FA
-	for <lists+io-uring@lfdr.de>; Wed, 28 Feb 2024 18:29:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CAD986B613
+	for <lists+io-uring@lfdr.de>; Wed, 28 Feb 2024 18:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10796282DB4
-	for <lists+io-uring@lfdr.de>; Wed, 28 Feb 2024 17:29:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9AD1F28161
+	for <lists+io-uring@lfdr.de>; Wed, 28 Feb 2024 17:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C0E3FBA2;
-	Wed, 28 Feb 2024 17:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87D015CD6A;
+	Wed, 28 Feb 2024 17:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dK7jdwjf"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E56ayTcC"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CE434CDE
-	for <io-uring@vger.kernel.org>; Wed, 28 Feb 2024 17:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD833BBC5;
+	Wed, 28 Feb 2024 17:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709141342; cv=none; b=D9uUPBmIfxuW1FPyatkWxNG1W524IX5NUZPinFMv+KoiVRrUICRnJFSRW/7iJlXmvUG6KLKjfcsgCLR86oQcs/2mh3Zf3C1BfsoKQYh+YpqacHZsLyja9+6A+mpu8V5lLFiLc0VX7nMm/ZuqNQsplSRjf7UcXJo3FG7qV1TOyco=
+	t=1709141621; cv=none; b=aa5sWJM45HAHm10f1JYoLel/vVqmiRLjVU4IVsM/Y9jct1BmbyTp62zO7fEiwHy5LnUPXmirdOqDEJULCKMQNsKYALZ/NZshDeCawBUCsuFutw/Mb5qXLBAoUsFBV1ZPetChBj4owM6p0IuN0UoeiW4TMsShgH6tXTS3wuOw+Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709141342; c=relaxed/simple;
-	bh=fKt4B9cK7bXA5bNxctMBZrgesQFWqbPHqfjU6aKkLPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EbORVDl2AVHo89J5eEdWgWBLrt2csj1z6bwArRRbo+rfY9LB1gVic0dPJCeKRzEeeHJxQ/zvajVDAtvXT4vKEThC1WDvEQedd1ZplaSOwBV+sn/EXrUO5xpnomP/lApO1eYlG0lgKL1vS70gFhrt/zy8l8L0B9nTHYrR/8T8J/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dK7jdwjf; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-29ae0d292d4so396641a91.0
-        for <io-uring@vger.kernel.org>; Wed, 28 Feb 2024 09:28:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709141337; x=1709746137; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mWJtIJ/cpKPyz3jnqN+emvnZAuH9SZt3eHQhhPRFN0A=;
-        b=dK7jdwjf8HkakCA7YKFgDv6vT3y8xsAX8LEMOAvEeZbvG4C1hUvW+QactPoqXl0Zxv
-         MbyUmjvLUM1yUGFjMjUoZR68dqEbhronAKYsPo/POogyZLfj7YeiKx89RGFuMDhs6jPO
-         U8LYuLtWnpypl2oNH8vsE2r7bidDMy+2doCrk5ywtc0Elq29+mMzApJwSNcqeKlzX0L5
-         ZW0yfv1nQdowt05VscavmFlarEGl4bPXiccmGPudyBmbk5wWDhprYkeYoAZVeGGh8xdB
-         Bi+xsL7vxzVFWksjZtHkQKmqE/7HeyVOx4aTgjGRELAmHDmL/JoLYT5P+X6LkQVJ76Jb
-         mNBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709141337; x=1709746137;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mWJtIJ/cpKPyz3jnqN+emvnZAuH9SZt3eHQhhPRFN0A=;
-        b=i2L9lQlbIjbWWWbIrUXx/1umkk2m+PbT0OW/532AWFi7/tUkJ5SEFZDUFyAGJpBR6m
-         OMC0/AvjWZPvtwzqG4nuFXvlwd99MBZb7WGsX9iRluapWueWU3pDVNEwYaUvxw/v9hd7
-         EC0PfmXeSPZ07wOfo+z+wkpsF4HI4pNjyvkrO070DNS4rDFvdKDcrknu1D0eKCMOWiBQ
-         CFI6GdSZ5v5zZ4HANuMQBSGy1m+yYbKFAqFc3gC+GVT2iu/r9fBSKAd1CGQc5Z/tfBZA
-         Vw9N0tGjRyVQJF+7RrpDNv7J+XlPT4BhvmRFJXevpwDcnlZoD/fhlgWNXlIEFWdp2Xu/
-         mzew==
-X-Gm-Message-State: AOJu0YxXWn3PEzoB8Yud8zyhNnymFETkqa6dyC/CLhOjw7eshAm+59MN
-	dADzFSujr5OXLDPU9ncwxEHnX3ZdytrgtzBab9GK+epqZscCfOwuXjIohAZWLPg=
-X-Google-Smtp-Source: AGHT+IFPCDxX4a5gavQIR2UhNeS7C5tFvYP5gXbIITazbMRs475btHbIMG2AeNf91mtL2fofeZTsIg==
-X-Received: by 2002:a17:90a:17e4:b0:29a:4f72:28e with SMTP id q91-20020a17090a17e400b0029a4f72028emr11398358pja.2.1709141337285;
-        Wed, 28 Feb 2024 09:28:57 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id t16-20020a17090a0d1000b0029942a73eaesm2076714pja.9.2024.02.28.09.28.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Feb 2024 09:28:56 -0800 (PST)
-Message-ID: <0e02646e-589d-41da-afcb-d885150800e6@kernel.dk>
-Date: Wed, 28 Feb 2024 10:28:55 -0700
+	s=arc-20240116; t=1709141621; c=relaxed/simple;
+	bh=IObAQAPlB5UVkHsD1yKboE0g53NvGBky+it7w37Qxd0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=dgY1AWYeaqx88kn9R7soZm/mr6Hu/hyNAVuhpeYWHOzsYPGCmkTdy+K7pcNEA0OnlYjnp3SHiW7jA4mBXzS7+7M3KAv4lmqJZT2dgMshPn/mlz7hKcwKhMLEmPumyXAN+j+uYnnFcuEOIfETsLPm2GQQKh4xSfF8fE2FP8trzVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E56ayTcC; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709141618; x=1740677618;
+  h=date:from:to:cc:subject:message-id;
+  bh=IObAQAPlB5UVkHsD1yKboE0g53NvGBky+it7w37Qxd0=;
+  b=E56ayTcC3orvtJ7e2mGZc7FF/AT0WN6xPYP20ulO9GNiSxwjYUOQgclk
+   tk+RKpeP7OCBfqCPXLAcA+A3sO0bdaNoOy9QBN1HBH0IaDlJf0gv68gjY
+   y+4euJeygo2jTi0NcHtTuM1nOUsIJXoKYCgyu62zQNFp1ra8/iXPJE7Ay
+   STxIdlQ4DmOeM3MgAUbxy7lSnx/U/b4Hi3dt0k2Tsd7nT4yTxRw2yGR31
+   LTugjtUIYFc5GXzBZxNkcPbwRPeK4kHfHGTO7rmordfN4NWWsnVkiktyT
+   cRKcJcWagOQXsEBzJ1BK0OdV/YXtkCZPuU2XnaUBBLOZFSM43UMawoqxS
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10998"; a="14705993"
+X-IronPort-AV: E=Sophos;i="6.06,190,1705392000"; 
+   d="scan'208";a="14705993"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2024 09:33:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,190,1705392000"; 
+   d="scan'208";a="12225051"
+Received: from lkp-server02.sh.intel.com (HELO 3c78fa4d504c) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 28 Feb 2024 09:33:33 -0800
+Received: from kbuild by 3c78fa4d504c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rfNoA-000CHB-2Y;
+	Wed, 28 Feb 2024 17:33:30 +0000
+Date: Thu, 29 Feb 2024 01:31:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Memory Management List <linux-mm@kvack.org>,
+ dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ io-uring@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-pm@vger.kernel.org, linux-sound@vger.kernel.org,
+ mhi@lists.linux.dev, netdev@vger.kernel.org,
+ nouveau@lists.freedesktop.org, ntfs3@lists.linux.dev
+Subject: [linux-next:master] BUILD REGRESSION
+ 20af1ca418d2c0b11bc2a1fe8c0c88f67bcc2a7e
+Message-ID: <202402290145.QdPSD3XP-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] io_uring/net: support multishot for send
-Content-Language: en-US
-To: Pavel Begunkov <asml.silence@gmail.com>,
- Dylan Yudaken <dyudaken@gmail.com>
-Cc: io-uring@vger.kernel.org
-References: <20240225003941.129030-1-axboe@kernel.dk>
- <20240225003941.129030-7-axboe@kernel.dk>
- <CAO_YeojZHSnx471+HKKFgRo-yy5cv=OmEg_Ri48vMUOwegvOqg@mail.gmail.com>
- <63859888-5602-41fb-9a42-4edc6132766f@kernel.dk>
- <CAO_YeoiTpPALaeiQiCjoW1VSr6PMPDUrH5xT3dTD19=OK1ytPg@mail.gmail.com>
- <ecd796a4-e413-47d3-91c1-015b5c211ee2@kernel.dk>
- <f0046836-ef9d-4b58-bfae-f2bf087233e1@gmail.com>
- <454ef0d2-066f-4bdf-af42-52fd0c57bd56@kernel.dk>
- <a0f62e25-f19c-44b7-bf26-4460ae01de7f@gmail.com>
- <4823c201-8c5d-4a4f-a77e-bd3e6c239cbe@kernel.dk>
- <68adc174-802a-455d-b6ca-a6908e592689@gmail.com>
- <302bf59a-40e1-413a-862d-9b99c8793061@kernel.dk>
- <0d440ebb-206e-4315-a7c4-84edc73e8082@gmail.com>
- <53e69744-7165-4069-bada-8e60c2adc0c7@kernel.dk>
- <63da5078-96ea-4734-9b68-817b1be52ec6@gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <63da5078-96ea-4734-9b68-817b1be52ec6@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 2/28/24 5:39 AM, Pavel Begunkov wrote:
-> On 2/26/24 21:27, Jens Axboe wrote:
->> On 2/26/24 1:51 PM, Pavel Begunkov wrote:
->>> On 2/26/24 20:12, Jens Axboe wrote:
->>>> On 2/26/24 12:21 PM, Pavel Begunkov wrote:
->>>>> On 2/26/24 19:11, Jens Axboe wrote:
->>>>>> On 2/26/24 8:41 AM, Pavel Begunkov wrote:
->>>>>>> On 2/26/24 15:16, Jens Axboe wrote:
->>>>>>>> On 2/26/24 7:36 AM, Pavel Begunkov wrote:
->>>>>>>>> On 2/26/24 14:27, Jens Axboe wrote:
->>>>>>>>>> On 2/26/24 7:02 AM, Dylan Yudaken wrote:
->>>>>>>>>>> On Mon, Feb 26, 2024 at 1:38?PM Jens Axboe
->>> ...
->>>>>> I don't think that's true - if you're doing large streaming, you're
->>>>>> more likely to keep the socket buffer full, whereas for smallish
->>>>>> sends, it's less likely to be full. Testing with the silly proxy
->>>>>> confirms that. And
->>>>>
->>>>> I don't see any contradiction to what I said. With streaming/large
->>>>> sends it's more likely to be polled. For small sends and
->>>>> send-receive-send-... patterns the sock queue is unlikely to be full,
->>>>> in which case the send is processed inline, and so the feature
->>>>> doesn't add performance, as you agreed a couple email before.
->>>>
->>>> Gotcha, I guess I misread you, we agree that the poll side is more
->>>> likely on bigger buffers.
->>>>
->>>>>> outside of cases where pacing just isn't feasible, it's extra
->>>>>> overhead for cases where you potentially could or what.
->>>>>
->>>>> I lost it, what overhead?
->>>>
->>>> Overhead of needing to serialize the sends in the application, which may
->>>> include both extra memory needed and overhead in dealing with it.
->>>
->>> I think I misread the code. Does it push 1 request for each
->>> send buffer / queue_send() in case of provided bufs?
->>
->> Right, that's the way it's currently setup. Per send (per loop), if
->> you're using provided buffers, it'll do a send per buffer. If using
->> multishot on top of that, it'll do one send per loop regardless of the
->> number of buffers.
-> 
-> Ok, then I'd say the performance tests are misleading, at least
-> the proxy one. For selected buffers, sending tons of requests sounds
-> unnecessarily expensive, but I don't have numbers to back it. The
-> normal case must employ the natural batching it has with
-> serialisation.
-> 
-> It's important comparing programs that are optimised and close
-> to what is achievable in userspace. You wouldn't compare it with
-> 
-> while (i = 0; i < nr_bytes; i++)
->     send(data+i, bytes=1);
-> 
-> and claim that it's N times faster. Or surely we can add an
-> empty "for" loop to one side and say "users are stupid and
-> will put garbage here anyway, so fair game", but then it
-> needs a note in small font "valid only for users who can't
-> write code up to standard"
-> 
-> static void defer_send() {
->     ps = malloc(sizeof(*ps));
-> }
-> 
-> fwiw, maybe malloc is not really expensive there, but
-> that sounds like a pretty bad practice for a hi perf
-> benchmark.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 20af1ca418d2c0b11bc2a1fe8c0c88f67bcc2a7e  Add linux-next specific files for 20240228
 
-It's comparing using send using a manually managed backlog, or using
-send where you don't have to do that. I think that's pretty valid by
-itself. If you don't do that, you need to use sendmsg and append iovecs.
-Which is obviously also a very valid use case and would avoid the
-backlog, at the cost of sendmsg being more expensive than send. If done
-right, the sendmsg+append would be a lot closer to send with multishot.
+Error/Warning reports:
 
-When I have some time I can do add the append case, or feel free to do
-that yourself, and I can run some testing with that too.
+https://lore.kernel.org/oe-kbuild-all/202402281921.GR4Yw253-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202402282106.ou7DStPq-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202402282202.yV6GmMJu-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202402282343.FVkeq0Vs-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202402282356.8HzbImAg-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202402290000.tX1Ed1x7-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202402290152.FpUEAK3i-lkp@intel.com
 
->>> Anyway, the overhead of serialisation would be negligent.
->>> And that's same extra memory you keep for the provided buffer
->>> pool, and you can allocate it once. Also consider that provided
->>> buffers are fixed size and it'd be hard to resize without waiting,
->>> thus the userspace would still need to have another, userspace
->>> backlog, it can't just drop requests. Or you make provided queues
->>> extra large, but it's per socket and you'd wasting lots of memory.
->>>
->>> IOW, I don't think this overhead could anyhow close us to
->>> the understanding of the 30%+ perf gap.
->>
->> The 32-byte case is obviously somewhat pathological, as you're going to
->> be much better off having a bunch of these pipelined rather than issued
->> serially. As you can see from the 1000 byte packets, at that point it
->> doesn't matter that much. It's mostly about making it simpler at that
->> point.
->>
->>>>>> To me, the main appeal of this is the simplicity.
->>>>>
->>>>> I'd argue it doesn't seem any simpler than the alternative.
->>>>
->>>> It's certainly simpler for an application to do "add buffer to queue"
->>>> and not need to worry about managing sends, than it is to manage a
->>>> backlog of only having a single send active.
->>>
->>> They still need to manage / re-queue sends. And maybe I
->>> misunderstand the point, but it's only one request inflight
->>> per socket in either case.
->>
->> Sure, but one is a manageable condition, the other one is not. If you
->> can keep N inflight at the same time and only abort the chain in case of
->> error/short send, that's a corner case. Versus not knowing when things
->> get reordered, and hence always needing to serialize.
-> 
-> Manageable or not, you still have to implement all that, whereas
-> serialisation is not complex and I doubt it's anywhere expensive
-> enough to overturn the picture. It seems that multishot selected
-> bufs would also need serialisation, and for oneshots managing
-> multiple requests when you don't know which one sends what buffer
-> would be complicated in real scenarios.
+Error/Warning: (recently discovered and may have been fixed)
 
-What "all that"? It's pretty trivial when you have a normal abort
-condition to handle it. For the sendmsg case, you can append multiple
-iovecs, but you can still only have one sendmsg inflight. If you start
-prepping the next one before the previous one has successfully
-completed, you have the same issue again.
+drivers/gpu/drm/display/drm_dp_tunnel.c:1185: warning: expecting prototype for drm_dp_tunnel_atomic_get_allocated_bw(). Prototype was for drm_dp_tunnel_get_allocated_bw() instead
+drivers/gpu/drm/display/drm_dp_tunnel.c:1903: warning: Function parameter or struct member 'max_group_count' not described in 'drm_dp_tunnel_mgr_create'
+drivers/gpu/drm/display/drm_dp_tunnel.c:447: warning: Function parameter or struct member 'tracker' not described in 'drm_dp_tunnel_put'
+drivers/gpu/drm/display/drm_dp_tunnel.c:447: warning: Function parameter or struct member 'tunnel' not described in 'drm_dp_tunnel_put'
+drivers/gpu/drm/xe/xe_mmio.c:109:23: error: result of comparison of constant 4294967296 with expression of type 'resource_size_t' (aka 'unsigned int') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
+drivers/leds/leds-gpio-register.c:23:25: warning: attribute declaration must precede definition [-Wignored-attributes]
+drivers/power/supply/power_supply_core.c:1630:9: error: too few arguments to function 'power_supply_init_attrs'
+include/linux/dpll.h:179:1: warning: control reaches end of non-void function [-Wreturn-type]
+lib/../mm/internal.h:144:14: error: implicit declaration of function 'pte_batch_hint' [-Werror=implicit-function-declaration]
+lib/../mm/internal.h:145:50: error: implicit declaration of function 'pte_advance_pfn' [-Werror=implicit-function-declaration]
+lib/../mm/internal.h:145:50: error: incompatible type for argument 1 of '__pte_batch_clear_ignored'
+lib/../mm/internal.h:149:23: error: implicit declaration of function 'ptep_get' [-Werror=implicit-function-declaration]
+lib/../mm/internal.h:149:23: error: incompatible types when assigning to type 'pte_t' from type 'int'
+lib/../mm/internal.h:154:22: error: implicit declaration of function 'pte_same'; did you mean 'pte_page'? [-Werror=implicit-function-declaration]
+mm/internal.h:101:16: error: implicit declaration of function 'pte_wrprotect' [-Werror=implicit-function-declaration]
+mm/internal.h:101:16: error: incompatible types when returning type 'int' but 'pte_t' was expected
+mm/internal.h:101:30: error: implicit declaration of function 'pte_mkold' [-Werror=implicit-function-declaration]
+mm/internal.h:140:27: error: implicit declaration of function 'pte_present'; did you mean 'pgd_present'? [-Werror=implicit-function-declaration]
+mm/internal.h:142:49: error: implicit declaration of function 'pte_pfn' [-Werror=implicit-function-declaration]
+mm/internal.h:144:14: error: implicit declaration of function 'pte_batch_hint' [-Werror=implicit-function-declaration]
+mm/internal.h:145:50: error: implicit declaration of function 'pte_advance_pfn' [-Werror=implicit-function-declaration]
+mm/internal.h:145:50: error: incompatible type for argument 1 of '__pte_batch_clear_ignored'
+mm/internal.h:149:23: error: implicit declaration of function 'ptep_get' [-Werror=implicit-function-declaration]
+mm/internal.h:149:23: error: incompatible types when assigning to type 'pte_t' from type 'int'
+mm/internal.h:151:38: error: implicit declaration of function 'pte_write'; did you mean 'pgd_write'? [-Werror=implicit-function-declaration]
+mm/internal.h:154:22: error: implicit declaration of function 'pte_same'; did you mean 'pte_page'? [-Werror=implicit-function-declaration]
+mm/internal.h:98:23: error: implicit declaration of function 'pte_mkclean'; did you mean 'page_mkclean'? [-Werror=implicit-function-declaration]
+mm/zsmalloc.c:742:23: warning: 'get_zspage_lockless' defined but not used [-Wunused-function]
 
-Only serialization you need is to only have one inflight, which is in
-your best interest anyway as it would be more wasteful to submit several
-which both empty that particular queue.
+Error/Warning ids grouped by kconfigs:
 
->>>> What kind of batching? The batching done by the tests are the same,
->>>> regardless of whether or not send multishot is used in the sense that we
->>>
->>> You can say that, but I say that it moves into the kernel
->>> batching that can be implemented in userspace.
->>
->> And then most people get it wrong or just do the basic stuff, and
->> performance isn't very good. Getting the most out of it can be tricky
->> and require extensive testing and knowledge building. I'm confident
->> you'd be able to write an efficient version, but that's not the same as
->> saying "it's trivial to write an efficient version".
-> 
-> It actually _is_ trivial to write an efficient version for anyone
-> competent enough and having a spare day for that, which is usually
-> in a form of a library
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- alpha-randconfig-r016-20220129
+|   `-- drivers-power-supply-power_supply_core.c:error:too-few-arguments-to-function-power_supply_init_attrs
+|-- arc-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- arc-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- arc-randconfig-002-20240228
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- arm-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- arm-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- arm-randconfig-r063-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- arm-randconfig-r131-20240228
+|   `-- io_uring-io_uring.c:sparse:sparse:cast-to-restricted-io_req_flags_t
+|-- arm64-defconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- arm64-randconfig-002-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- csky-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- csky-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- csky-randconfig-r111-20240228
+|   |-- drivers-video-backlight-ktd2801-backlight.c:sparse:sparse:symbol-ktd2801_timing-was-not-declared.-Should-it-be-static
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le32
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le64
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le32-degrades-to-integer
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le64-degrades-to-integer
+|   `-- io_uring-io_uring.c:sparse:sparse:cast-to-restricted-io_req_flags_t
+|-- i386-allmodconfig
+|   |-- drivers-gpu-drm-display-drm_dp_tunnel.c:warning:Function-parameter-or-struct-member-max_group_count-not-described-in-drm_dp_tunnel_mgr_create
+|   |-- drivers-gpu-drm-display-drm_dp_tunnel.c:warning:Function-parameter-or-struct-member-tracker-not-described-in-drm_dp_tunnel_put
+|   |-- drivers-gpu-drm-display-drm_dp_tunnel.c:warning:Function-parameter-or-struct-member-tunnel-not-described-in-drm_dp_tunnel_put
+|   |-- drivers-gpu-drm-display-drm_dp_tunnel.c:warning:expecting-prototype-for-drm_dp_tunnel_atomic_get_allocated_bw().-Prototype-was-for-drm_dp_tunnel_get_allocated_bw()-instead
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- i386-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- i386-randconfig-014-20240228
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- i386-randconfig-141-20240228
+|   `-- include-linux-dpll.h:warning:control-reaches-end-of-non-void-function
+|-- loongarch-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- loongarch-defconfig
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- loongarch-loongson3_defconfig
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- loongarch-randconfig-001-20240228
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- loongarch-randconfig-002-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- loongarch-randconfig-r054-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- m68k-allmodconfig
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- m68k-allyesconfig
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- m68k-hp300_defconfig
+|   `-- mm-zsmalloc.c:warning:get_zspage_lockless-defined-but-not-used
+|-- microblaze-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- microblaze-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- mips-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- nios2-allmodconfig
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- nios2-allyesconfig
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- openrisc-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- openrisc-randconfig-r112-20240228
+|   |-- drivers-video-backlight-ktd2801-backlight.c:sparse:sparse:symbol-ktd2801_timing-was-not-declared.-Should-it-be-static
+|   `-- io_uring-io_uring.c:sparse:sparse:cast-to-restricted-io_req_flags_t
+|-- openrisc-randconfig-r122-20240228
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le32
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le64
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le32-degrades-to-integer
+|   `-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le64-degrades-to-integer
+|-- parisc-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- parisc-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- parisc-defconfig
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- parisc-randconfig-r052-20240228
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+|-- parisc-randconfig-r132-20240228
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le32
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le64
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le32-degrades-to-integer
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le64-degrades-to-integer
+|   |-- io_uring-io_uring.c:sparse:sparse:cast-to-restricted-io_req_flags_t
+|   |-- sound-core-sound_kunit.c:sparse:sparse:incorrect-type-in-argument-(different-base-types)-expected-restricted-snd_pcm_format_t-usertype-format-got-int
+|   `-- sound-core-sound_kunit.c:sparse:sparse:restricted-snd_pcm_format_t-degrades-to-integer
+|-- parisc64-defconfig
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- powerpc-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- riscv-nommu_k210_defconfig
+|   |-- mm-internal.h:error:implicit-declaration-of-function-pte_mkclean
+|   |-- mm-internal.h:error:implicit-declaration-of-function-pte_mkold
+|   |-- mm-internal.h:error:implicit-declaration-of-function-pte_pfn
+|   |-- mm-internal.h:error:implicit-declaration-of-function-pte_present
+|   |-- mm-internal.h:error:implicit-declaration-of-function-pte_write
+|   |-- mm-internal.h:error:implicit-declaration-of-function-pte_wrprotect
+|   `-- mm-internal.h:error:incompatible-types-when-returning-type-int-but-pte_t-was-expected
+|-- riscv-randconfig-r123-20240228
+|   |-- drivers-leds-flash-leds-ktd2692.c:sparse:sparse:symbol-ktd2692_timing-was-not-declared.-Should-it-be-static
+|   |-- fs-ntfs3-fslog.c:sparse:sparse:restricted-__le32-degrades-to-integer
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le32
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le64
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le32-degrades-to-integer
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le64-degrades-to-integer
+|   |-- io_uring-io_uring.c:sparse:sparse:cast-to-restricted-io_req_flags_t
+|   |-- sound-core-sound_kunit.c:sparse:sparse:incorrect-type-in-argument-(different-base-types)-expected-restricted-snd_pcm_format_t-usertype-format-got-int
+|   `-- sound-core-sound_kunit.c:sparse:sparse:restricted-snd_pcm_format_t-degrades-to-integer
+|-- s390-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- sh-allmodconfig
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- sh-allyesconfig
+|   |-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|   |-- lib-..-mm-internal.h:error:implicit-declaration-of-function-pte_advance_pfn
+|   |-- lib-..-mm-internal.h:error:implicit-declaration-of-function-pte_batch_hint
+|   |-- lib-..-mm-internal.h:error:implicit-declaration-of-function-pte_same
+|   |-- lib-..-mm-internal.h:error:implicit-declaration-of-function-ptep_get
+|   |-- lib-..-mm-internal.h:error:incompatible-type-for-argument-of-__pte_batch_clear_ignored
+|   |-- lib-..-mm-internal.h:error:incompatible-types-when-assigning-to-type-pte_t-from-type-int
+|   |-- mm-internal.h:error:implicit-declaration-of-function-pte_advance_pfn
+|   |-- mm-internal.h:error:implicit-declaration-of-function-pte_batch_hint
+|   |-- mm-internal.h:error:implicit-declaration-of-function-pte_same
+|   |-- mm-internal.h:error:implicit-declaration-of-function-ptep_get
+|   |-- mm-internal.h:error:incompatible-type-for-argument-of-__pte_batch_clear_ignored
+|   `-- mm-internal.h:error:incompatible-types-when-assigning-to-type-pte_t-from-type-int
+|-- sparc-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- sparc-randconfig-002-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- sparc-randconfig-r064-20240228
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- sparc64-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- sparc64-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- sparc64-randconfig-001-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- sparc64-randconfig-002-20240228
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- um-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- x86_64-buildonly-randconfig-001-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- x86_64-randconfig-005-20240228
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- x86_64-randconfig-015-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- x86_64-randconfig-071-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- x86_64-randconfig-123-20240228
+|   |-- drivers-leds-flash-leds-ktd2692.c:sparse:sparse:symbol-ktd2692_timing-was-not-declared.-Should-it-be-static
+|   |-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|   `-- io_uring-io_uring.c:sparse:sparse:cast-to-restricted-io_req_flags_t
+`-- xtensa-allyesconfig
+    |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+    |-- drivers-gpu-drm-xe-xe_ggtt.c:error:implicit-declaration-of-function-writeq
+    `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+clang_recent_errors
+|-- arm-defconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- arm-randconfig-003-20240228
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- arm64-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- arm64-randconfig-r113-20240228
+|   `-- io_uring-io_uring.c:sparse:sparse:cast-to-restricted-io_req_flags_t
+|-- hexagon-allmodconfig
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- hexagon-allyesconfig
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- hexagon-randconfig-002-20240228
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- i386-buildonly-randconfig-001-20240228
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- i386-buildonly-randconfig-002-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- i386-buildonly-randconfig-003-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- i386-randconfig-011-20240228
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- i386-randconfig-016-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- i386-randconfig-051-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- i386-randconfig-054-20240228
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- drivers-gpu-drm-xe-xe_ggtt.c:error:call-to-undeclared-function-writeq-ISO-C99-and-later-do-not-support-implicit-function-declarations
+|-- i386-randconfig-061-20240228
+|   |-- fs-ntfs3-fslog.c:sparse:sparse:restricted-__le32-degrades-to-integer
+|   `-- io_uring-io_uring.c:sparse:sparse:cast-to-restricted-io_req_flags_t
+|-- i386-randconfig-062-20240228
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- io_uring-io_uring.c:sparse:sparse:cast-to-restricted-io_req_flags_t
+|-- i386-randconfig-063-20240228
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le32
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le64
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le32-degrades-to-integer
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le64-degrades-to-integer
+|   `-- io_uring-io_uring.c:sparse:sparse:cast-to-restricted-io_req_flags_t
+|-- i386-randconfig-r051-20240227
+|   `-- drivers-gpu-drm-xe-xe_mmio.c:error:result-of-comparison-of-constant-with-expression-of-type-resource_size_t-(aka-unsigned-int-)-is-always-false-Werror-Wtautological-constant-out-of-range-compare
+|-- mips-bcm47xx_defconfig
+|   `-- drivers-leds-leds-gpio-register.c:warning:attribute-declaration-must-precede-definition
+|-- powerpc-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- powerpc-ppc44x_defconfig
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- powerpc-randconfig-002-20240228
+|   `-- drivers-gpu-drm-xe-xe_ggtt.c:error:call-to-undeclared-function-writeq-ISO-C99-and-later-do-not-support-implicit-function-declarations
+|-- powerpc64-randconfig-001-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- riscv-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- riscv-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- riscv-defconfig
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- s390-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- s390-randconfig-001-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- x86_64-allmodconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- x86_64-allyesconfig
+|   |-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- x86_64-buildonly-randconfig-002-20240228
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- x86_64-randconfig-006-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- x86_64-randconfig-011-20240228
+|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
+|-- x86_64-randconfig-013-20240228
+|   `-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|-- x86_64-randconfig-121-20240228
+|   |-- drivers-leds-flash-leds-ktd2692.c:sparse:sparse:symbol-ktd2692_timing-was-not-declared.-Should-it-be-static
+|   |-- fs-ntfs3-fslog.c:sparse:sparse:restricted-__le32-degrades-to-integer
+|   |-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le32
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:cast-to-restricted-__le64
+|   |-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le32-degrades-to-integer
+|   `-- include-trace-..-..-drivers-bus-mhi-host-trace.h:sparse:sparse:restricted-__le64-degrades-to-integer
+|-- x86_64-randconfig-122-20240228
+|   |-- fs-ntfs3-fslog.c:sparse:sparse:restricted-__le32-degrades-to-integer
+|   |-- io_uring-io_uring.c:sparse:sparse:cast-to-restricted-io_req_flags_t
+|   |-- sound-core-sound_kunit.c:sparse:sparse:incorrect-type-in-argument-(different-base-types)-expected-restricted-snd_pcm_format_t-usertype-format-got-int
+|   `-- sound-core-sound_kunit.c:sparse:sparse:restricted-snd_pcm_format_t-degrades-to-integer
+`-- x86_64-randconfig-161-20240228
+    |-- fs-ubifs-journal.c:warning:expecting-prototype-for-wake_up_reservation().-Prototype-was-for-add_or_start_queue()-instead
+    |-- mm-userfaultfd.c-mfill_atomic()-warn:inconsistent-returns-ctx-map_changing_lock-.
+    `-- mm-userfaultfd.c-uffd_move_lock()-error:we-previously-assumed-src_vmap-could-be-null-(see-line-)
 
-If using sendmsg.
+elapsed time: 733m
 
-> I'm a firm believer of not putting into the kernel what can
-> already be well implemented in userspace, because the next step
-> could be "firefox can be implemented in userspace, but it requires
-> knowledge building, so let's implement it in the kernel". At
-> least I recall nginx / HTTP servers not flying well
+configs tested: 179
+configs skipped: 3
 
-Sorry but that's nonsense, we add kernel features all the time that
-could be done (just less efficiently) in userspace. And the firefox
-comment is crazy hyperbole, not relevant here at all.
-
->>> In terms of "proxy", the first approximation would be to
->>> do sth like defer_send() for normal requests as well, then
->>>
->>> static void __queue_send(struct io_uring *ring, struct conn *c, int fd,
->>>               void *data, int bid, int len)
->>> {
->>>      ...
->>>
->>>      defer_send(data);
->>>
->>>      while (buf = defer_backlog.get()) {
->>>          iov[idx++] = buf;
->>>      }
->>>      msghdr->iovlen = idx;
->>>      ...
->>> }
->>
->> Yep, that's the iovec coalescing, and that could certainly be done. And
->> then you need to size the iov[] so that it's always big enough, OR
->> submit that send and still deal with managing your own backlog.
-> 
-> Which is as trivial as iov.push_back() or a couple of lines with
-> realloc, whereas for selected buffers you would likely need to
-> wait for the previous request[s] to complete, which you cannot
-> do in place.
-
-Go implement it and we can benchmark. It won't solve the sendmsg being
-slower than send situation in general, but it should certainly get a lot
-closer in terms of using sendmsg and serializing per send issue.
-
-> The point is, it seems that when you'd try to write something
-> error proof and real life ready, it wouldn't look simpler or
-> much simpler than the approach suggested, then the performance
-> is the question.
-
-The condition for sendmsg with append and send with multishot handling
-is basically the same, you need to deal checking the send result and
-restarting your send from there. Obviously in practice this will
-never/rarely happen unless the connection is aborted anyway. If you use
-send multishot with MSG_WAITALL, then if the buffer fills you'll just
-restart when it has space, nothing to handle there.
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                   randconfig-001-20240228   gcc  
+arc                   randconfig-002-20240228   gcc  
+arm                              allmodconfig   gcc  
+arm                               allnoconfig   clang
+arm                              allyesconfig   gcc  
+arm                                 defconfig   clang
+arm                          ixp4xx_defconfig   gcc  
+arm                        mvebu_v5_defconfig   gcc  
+arm                   randconfig-001-20240228   clang
+arm                   randconfig-002-20240228   clang
+arm                   randconfig-003-20240228   clang
+arm                   randconfig-004-20240228   gcc  
+arm64                            allmodconfig   clang
+arm64                             allnoconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                 randconfig-001-20240228   clang
+arm64                 randconfig-002-20240228   gcc  
+arm64                 randconfig-003-20240228   gcc  
+arm64                 randconfig-004-20240228   clang
+csky                             allmodconfig   gcc  
+csky                              allnoconfig   gcc  
+csky                             allyesconfig   gcc  
+csky                                defconfig   gcc  
+csky                  randconfig-001-20240228   gcc  
+csky                  randconfig-002-20240228   gcc  
+hexagon                          allmodconfig   clang
+hexagon                           allnoconfig   clang
+hexagon                          allyesconfig   clang
+hexagon                             defconfig   clang
+hexagon               randconfig-001-20240228   clang
+hexagon               randconfig-002-20240228   clang
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240228   clang
+i386         buildonly-randconfig-002-20240228   clang
+i386         buildonly-randconfig-003-20240228   clang
+i386         buildonly-randconfig-004-20240228   clang
+i386         buildonly-randconfig-005-20240228   gcc  
+i386         buildonly-randconfig-006-20240228   clang
+i386                                defconfig   clang
+i386                  randconfig-001-20240228   clang
+i386                  randconfig-002-20240228   clang
+i386                  randconfig-003-20240228   gcc  
+i386                  randconfig-004-20240228   clang
+i386                  randconfig-005-20240228   clang
+i386                  randconfig-006-20240228   gcc  
+i386                  randconfig-011-20240228   clang
+i386                  randconfig-012-20240228   clang
+i386                  randconfig-013-20240228   gcc  
+i386                  randconfig-014-20240228   gcc  
+i386                  randconfig-015-20240228   gcc  
+i386                  randconfig-016-20240228   clang
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch                 loongson3_defconfig   gcc  
+loongarch             randconfig-001-20240228   gcc  
+loongarch             randconfig-002-20240228   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                     cu1000-neo_defconfig   gcc  
+mips                  decstation_64_defconfig   gcc  
+mips                      maltasmvp_defconfig   gcc  
+mips                        maltaup_defconfig   clang
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+nios2                 randconfig-001-20240228   gcc  
+nios2                 randconfig-002-20240228   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                         allyesconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                           allmodconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc                randconfig-001-20240228   gcc  
+parisc                randconfig-002-20240228   gcc  
+parisc64                         alldefconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                          allyesconfig   clang
+powerpc                     ep8248e_defconfig   gcc  
+powerpc                       holly_defconfig   clang
+powerpc                  iss476-smp_defconfig   gcc  
+powerpc                 mpc836x_rdk_defconfig   clang
+powerpc                  mpc866_ads_defconfig   clang
+powerpc                      ppc44x_defconfig   clang
+powerpc               randconfig-001-20240228   clang
+powerpc               randconfig-002-20240228   clang
+powerpc               randconfig-003-20240228   gcc  
+powerpc64             randconfig-001-20240228   clang
+powerpc64             randconfig-002-20240228   clang
+powerpc64             randconfig-003-20240228   gcc  
+riscv                            allmodconfig   clang
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   clang
+riscv                               defconfig   clang
+riscv                 randconfig-001-20240228   clang
+riscv                 randconfig-002-20240228   clang
+s390                             allmodconfig   clang
+s390                              allnoconfig   clang
+s390                             allyesconfig   gcc  
+s390                                defconfig   clang
+s390                  randconfig-001-20240228   clang
+s390                  randconfig-002-20240228   gcc  
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sh                               j2_defconfig   gcc  
+sh                    randconfig-001-20240228   gcc  
+sh                    randconfig-002-20240228   gcc  
+sh                        sh7763rdp_defconfig   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                               defconfig   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+sparc64               randconfig-001-20240228   gcc  
+sparc64               randconfig-002-20240228   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                             i386_defconfig   gcc  
+um                    randconfig-001-20240228   clang
+um                    randconfig-002-20240228   clang
+um                           x86_64_defconfig   clang
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64       buildonly-randconfig-001-20240228   gcc  
+x86_64       buildonly-randconfig-002-20240228   clang
+x86_64       buildonly-randconfig-003-20240228   clang
+x86_64       buildonly-randconfig-004-20240228   gcc  
+x86_64       buildonly-randconfig-005-20240228   gcc  
+x86_64       buildonly-randconfig-006-20240228   clang
+x86_64                              defconfig   gcc  
+x86_64                randconfig-001-20240228   clang
+x86_64                randconfig-002-20240228   gcc  
+x86_64                randconfig-003-20240228   gcc  
+x86_64                randconfig-004-20240228   gcc  
+x86_64                randconfig-005-20240228   gcc  
+x86_64                randconfig-006-20240228   clang
+x86_64                randconfig-011-20240228   clang
+x86_64                randconfig-012-20240228   clang
+x86_64                randconfig-013-20240228   clang
+x86_64                randconfig-014-20240228   gcc  
+x86_64                randconfig-015-20240228   gcc  
+x86_64                randconfig-016-20240228   gcc  
+x86_64                randconfig-071-20240228   gcc  
+x86_64                randconfig-072-20240228   clang
+x86_64                randconfig-073-20240228   gcc  
+x86_64                randconfig-074-20240228   gcc  
+x86_64                randconfig-075-20240228   clang
+x86_64                randconfig-076-20240228   clang
+x86_64                          rhel-8.3-rust   clang
+xtensa                            allnoconfig   gcc  
+xtensa                randconfig-001-20240228   gcc  
+xtensa                randconfig-002-20240228   gcc  
 
 -- 
-Jens Axboe
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 

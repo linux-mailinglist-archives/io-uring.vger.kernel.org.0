@@ -1,112 +1,95 @@
-Return-Path: <io-uring+bounces-807-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-808-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF2186DA55
-	for <lists+io-uring@lfdr.de>; Fri,  1 Mar 2024 04:45:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F164586E399
+	for <lists+io-uring@lfdr.de>; Fri,  1 Mar 2024 15:43:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B6CF1F23BB3
-	for <lists+io-uring@lfdr.de>; Fri,  1 Mar 2024 03:45:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CD101C216D1
+	for <lists+io-uring@lfdr.de>; Fri,  1 Mar 2024 14:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F83716FF42;
-	Fri,  1 Mar 2024 03:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4747B1F95F;
+	Fri,  1 Mar 2024 14:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qV4ea8Vc"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="tnjThimi"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF7B46425
-	for <io-uring@vger.kernel.org>; Fri,  1 Mar 2024 03:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B688423DE;
+	Fri,  1 Mar 2024 14:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709264745; cv=none; b=Fntvl9jqutOfqEyKi5reafW+GU1tOMY2s98tXoLElGKAGe7O++JoXZzralVauY25ouWbvpgqDT1N3s51cluWXg7ptOF0vvEMPBVLhUbHG4E8Glz8BgPvAvPB8HzyUD5Fjm2VSFnW++roj6a64XXecEaU14gszDByp3t4yeQ2wDs=
+	t=1709304213; cv=none; b=c4gBPdTucYUP/iDlx13lTGrpWHQexG8hqu/XqgQB0rO50p/j3ugwrnca0pRNxF9J6kopFXgB9FWb3FiVyPvRSEq3/2UxhQj/nFizPAYVw133uFfnkeBvg3lud8n+j80ecqokOp78K38HaNPr4xiDZOAaQcGiEEYZOrV+O2JZ9g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709264745; c=relaxed/simple;
-	bh=GWg9Ph6B43PJ4z2u13UcBBvD5kSkaPCdsM4Ltp6soBI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=a8qge0M7q8jBRN3XCnUp/eIGGbcM/aXuh0/ZN5Xgr6EXPrHFvf1NdWinSF3EOV46W46g0iEaCLUhNEBHAAn0kPKki4cYjDY8j9blD1oWjv18OK4SG2dF/qY4R1hpGbf9+N4PXYcCHb3bFuMuwQLUTCAHI28omgyALJNXdQ+rgIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qV4ea8Vc; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3be110bbff9so429674b6e.1
-        for <io-uring@vger.kernel.org>; Thu, 29 Feb 2024 19:45:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709264740; x=1709869540; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+EbIhSHCE575NmleSsCYAMs8fWOG3Nl6sXfcx77q5BQ=;
-        b=qV4ea8VcANip1RO5K5nJr9lyhgzp6H3JbSSA17YMNu3vzcZxiYWSDlIKG8rQTdRWz6
-         tgVKbvK+01Y3ku+WFhVfPpoYZAjjct/GJ1GyjbszVBJWZ/vOUsTJpwkmXlulkdP8r6ae
-         QpYMNGJaRkXXTG1xs75sK8eXqGnomoPQ7HEqZ2BJZKrAcxOpK4xsjzX/2Qzrloot6JeP
-         1IYwdhVoiVezE4UojlNKfmIiBX/KxqwSaJgXb7hQfGNzTzziKmuz26yYFVs4YEV/HeIR
-         Wr8osNksKk8n0ePS8EK7uIIlQUTElOXGdJL/GsLIu78LO+2qI8g8h5YFVtrCMXLpbQpH
-         IKrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709264740; x=1709869540;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+EbIhSHCE575NmleSsCYAMs8fWOG3Nl6sXfcx77q5BQ=;
-        b=kich6WnEUm0SEWtPoCYIkIo7NvaCNmW9z235VejA1qwcG9X0OFH1XnJqEwki8F47Ls
-         mk/gyUAqVA1PHudzuqZ6f6Dy2zv+TH6s4d5UIVBx/kJ7VeWUvwAOVwsHf/BIZw/fvx3a
-         5G+dzTmOSxhKTdpIVmqSLvPAnvQgtq3EJXEgJsxw7O0iDon2YzY6KZOqpKiD+cbhnn7K
-         Y/swatBI28ZDgBN+axVBlVaKOD3YesViyPUG/518g/rVcr1T4EB3NQziPpBvTBimLsdg
-         el8GKGAZ0d9Q4dI5tZNb+SH5x/gvONEptMy4MeF1aQnwGxGFMPUR5HsweRxbYi41WaTn
-         hWQQ==
-X-Gm-Message-State: AOJu0YzqXGUWv890DQya4IE+Xn5s1cHn8+SGAwemFkyygQQvLOClDIjn
-	fcQiwgK8HKplRkyRLtHyWxf4vxqnHQyM3zvtOsx0NtXgaBW2U/XZoA6FH3emDd4=
-X-Google-Smtp-Source: AGHT+IE3EdSmR6I59tuvpaR+ZtFW1ogV3CNwhJv/Rh0kBxXqHzJY/am+xZnf8qK7N6bwbS6m7+OHAQ==
-X-Received: by 2002:a05:6870:1b89:b0:21e:be91:ae48 with SMTP id hm9-20020a0568701b8900b0021ebe91ae48mr533341oab.1.1709264740328;
-        Thu, 29 Feb 2024 19:45:40 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id u23-20020aa78497000000b006e5092fb3efsm1982407pfn.159.2024.02.29.19.45.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Feb 2024 19:45:39 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: dw@davidwei.uk
-In-Reply-To: <935d517f0e71218bfc1d40352a4754abb610176d.1709224453.git.asml.silence@gmail.com>
-References: <935d517f0e71218bfc1d40352a4754abb610176d.1709224453.git.asml.silence@gmail.com>
-Subject: Re: [PATCH] io_uring: get rid of intermediate aux cqe caches
-Message-Id: <170926473933.979762.1143968313009681859.b4-ty@kernel.dk>
-Date: Thu, 29 Feb 2024 20:45:39 -0700
+	s=arc-20240116; t=1709304213; c=relaxed/simple;
+	bh=OnTKFgas6IdFh92/KQpHTR95vTLrd8aWhLoDrIWhXy8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Bds4z7t3DDUlZpZTpQ5zH7B6k+ZzIqZhDJYoPoV0umRx3gtICvoDA6Dxdbb3PqaOUREfpPx40oNrIHnCmgpxDRQ9/XtkjDMMZ3D7QVOzqdEYrj9IQJuknpMcBEX9ikXv/Rzeu8CFLUB0V3pG3uJVi6i8eLoO+e15EU7wx1UQCQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=tnjThimi; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1709304210;
+	bh=OnTKFgas6IdFh92/KQpHTR95vTLrd8aWhLoDrIWhXy8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tnjThimieXpRL4nOo0zsMGwlIFay9Xm5OlmUmjLNGWcSHgokdjjc9caUXHWIDGrG7
+	 ngSyAK1rY1EyjDaFXXusw+/PuGXNUTPPO6Q5EU29IrKxq1K/EvrUKeEO+pH/ckes//
+	 +eFUPxkQxC2qkeMF6n97lN2+vGQ/olRAhQzUaZH7QTIeiLbJLvpsw9mvDJXuYiyOEZ
+	 IPVdzMhnqYlJ3I3t/DjqaV8n326Yuj4LmRU500cnLWJlcPcxxrK1RG14k7Qq8vGOus
+	 h27yHz2YzQ0dol8nQxGXdAaKcj5+wGafWPDcilgO1MEzveyLWkz67pQq9wClDgSzD5
+	 C1/vAcmct4GPA==
+Received: from localhost.localdomain (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B331A37803EE;
+	Fri,  1 Mar 2024 14:43:27 +0000 (UTC)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	kernel@collabora.com,
+	kernel-janitors@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH io_uring/net: correct the type of variable
+Date: Fri,  1 Mar 2024 19:43:48 +0500
+Message-Id: <20240301144349.2807544-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+Content-Transfer-Encoding: 8bit
 
+The namelen is of type int. It shouldn't be made size_t which is
+unsigned. The signed number is needed for error checking before use.
 
-On Thu, 29 Feb 2024 16:36:37 +0000, Pavel Begunkov wrote:
-> With defer taskrun we store aux cqes into a cache array and then flush
-> into the CQ, and we also maintain the ordering so aux cqes are flushed
-> before request completions. Why do we need the cache instead of pushing
-> them directly? We acutally don't, so let's kill it.
-> 
-> One nuance is synchronisation -- the path we touch here is only for
-> DEFER_TASKRUN and guaranteed to be executed in the task context, and
-> all cqe posting is serialised by that. We also don't need locks because
-> of that, see __io_cq_lock().
-> 
-> [...]
+Fixes: c55978024d12 ("io_uring/net: move receive multishot out of the generic msghdr path")
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ io_uring/net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks!
-
-[1/1] io_uring: get rid of intermediate aux cqe caches
-      commit: a7fa76c8565aa6cbeb5030a6597d85643de0a306
-
-Best regards,
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 926d1fb0335de..b4ca803d85e23 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -551,7 +551,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ static int io_recvmsg_mshot_prep(struct io_kiocb *req,
+ 				 struct io_async_msghdr *iomsg,
+-				 size_t namelen, size_t controllen)
++				 int namelen, size_t controllen)
+ {
+ 	if ((req->flags & (REQ_F_APOLL_MULTISHOT|REQ_F_BUFFER_SELECT)) ==
+ 			  (REQ_F_APOLL_MULTISHOT|REQ_F_BUFFER_SELECT)) {
 -- 
-Jens Axboe
-
-
+2.39.2
 
 

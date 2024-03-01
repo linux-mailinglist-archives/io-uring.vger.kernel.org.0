@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-812-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-813-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE44286E4C0
-	for <lists+io-uring@lfdr.de>; Fri,  1 Mar 2024 16:55:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41CE786E4C6
+	for <lists+io-uring@lfdr.de>; Fri,  1 Mar 2024 16:55:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9D061C224D3
-	for <lists+io-uring@lfdr.de>; Fri,  1 Mar 2024 15:55:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6CF51F21B8F
+	for <lists+io-uring@lfdr.de>; Fri,  1 Mar 2024 15:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0BE67E77;
-	Fri,  1 Mar 2024 15:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D1367E77;
+	Fri,  1 Mar 2024 15:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MlwjITw6"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="EjPUC1JR"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B478070030
-	for <io-uring@vger.kernel.org>; Fri,  1 Mar 2024 15:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058387003E
+	for <io-uring@vger.kernel.org>; Fri,  1 Mar 2024 15:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709308531; cv=none; b=RCLOI2lmOjaxn/knIGLzouu8IR8F8tzIOgCm4eKTKnJsNlXS360DR6gqhIpIuJsDsIrvZJs2F5JUnwu9TBfDGAGCKTw0J+6gxDvFFSHMFCgVuU124OB6obOJoArL7NSCjlqI5SWHCy5REe8dTIj0DgC59XSQL+CLSrjFOb8LOOg=
+	t=1709308537; cv=none; b=o3+du7FhrwVDVM21Xr4Q+WBKwVePwMUizDw7M7DbIR/TkCwqkCSgVGDlQLVKL4Q17SGzMNFQboBx+Gziuomga5YtdADyLgAK0sj3OC8rUylhxgaeHRP8g4iqZObtUSAOPddgeLEpP8hlgG2G7T4KgXhrF5BbbBxxgfD2W1OBGq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709308531; c=relaxed/simple;
-	bh=zi0bk5Cs+q7geBC6wE4n/dJCyCKURk4w3ELa9Zvu7s4=;
+	s=arc-20240116; t=1709308537; c=relaxed/simple;
+	bh=n9kFjYjRE3qCNfcjmWpT8lMq1zW42Y+rPlcJGtESq30=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UJjeY4leXsdHGptoY3Nit8F/03zw0j724by6QMu/XKWfubt3qKx92JIcWs820RZZ1oyyXJYjN4zDx923DlOar1IJHD90hJx++Tq5KGuCvpFyUD5dTq25NUF46SNaAYBbzflet+ijQ7efRFb8LPe+ChLheD9zcDYxOe2azuDHDkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MlwjITw6; arc=none smtp.client-ip=209.85.166.54
+	 MIME-Version:Content-Type; b=kOycOnanUfkyPhsFt4b0D9CqdwWC25P4KBUlI8jn7nQ5cX3GoVGbrX2vXtydkbxieaiS93cAJTvKk4a0RKsQFmsVxb683J/XUV+1N6x08MdraV5jahFWmVnOgD5145qa9KTKUQk4vZYapsfsMCa60uSXJdT0CK+Jr5yc2mGkU9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=EjPUC1JR; arc=none smtp.client-ip=209.85.166.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-7bf3283c18dso37153439f.0
-        for <io-uring@vger.kernel.org>; Fri, 01 Mar 2024 07:55:29 -0800 (PST)
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7bf3283c18dso37156239f.0
+        for <io-uring@vger.kernel.org>; Fri, 01 Mar 2024 07:55:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709308529; x=1709913329; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709308535; x=1709913335; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cAWTzafg6SPo4FfnmrTdAIG/dU4gxVOaqWTDkLn0alM=;
-        b=MlwjITw6m0JYmG/7UsEEleTLmVz5r1MVBbluh6b2EUW/JaYrDFf5m7IgWVOE2xSOhq
-         kNJFJEf5dZbEeJP9UhYGbmgb0zGTm98GauDHjX8igG3rQFBguS1dWH21a0IkflgzTyqL
-         YpUO/EpplNDGtjGlHBtEorWZ7Crng+VCi9QsGWlrzsNUEF1oWn65RpOr4j/5B4kRtKxl
-         t/puuCmY1NEwWodu8yvWjmVYRm5TVstQTeMdeYI76073ie63wYuDCPTwhpcaoGpNwfFr
-         RU8NjohrS1Fc7BvqNianNACPtMXGQOUcTWjpUBq6jxdOOm/7ezQ7TQeALRHpHtSe+00t
-         r3yg==
+        bh=cuy/wgcCH07hny5bXY1Sk1fYdO558cghg+HCRH9bbn8=;
+        b=EjPUC1JR7aBHxsdHTNgUQmnE+WUsZT9EEk6jUTzJ0mnuX+Ej6MzA8pusTqaeKHnQVm
+         E0nHEYADLujhM+fViHSCp2I2gMawPi++NWWeEE4+xC7FpdLX3bePZUw1+iJCKp81SMjX
+         iRGhX2zOlCPk2WX8JQz+Paq0FpjffN1ikuKTRkHqxwrsVyD6foWxcL85ajcoQFE95QJb
+         ZxGb15H7VRbz2RYCH/WUIz9q9KGDpbW1ooEz/TP5lPjl13rdfmim4I3uLQzY7oS6Lp2E
+         NwaE86V/1+5yYCxq9KcofHvsg2q1ukFBC1BTAnKCYQsReBfjWUeCdcfAqOmFQGEdS6tM
+         uoKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709308529; x=1709913329;
+        d=1e100.net; s=20230601; t=1709308535; x=1709913335;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cAWTzafg6SPo4FfnmrTdAIG/dU4gxVOaqWTDkLn0alM=;
-        b=wF2k8Ys5qh5i8ceL6MXlTXeOH6UiADH2aaB9l4A/OLAI0OTq2mxKABWSNLdLhjdwse
-         rBhGy5mccTpUkOlMxrt/tcymVrwteAJSFfIc/21K26XXDEYQBACudi+o9R1t3D/I/J+e
-         x9aofx5y6Am5rHIPV6UCN6H7o9CLx53m+5swvvZSsjJZ9JIR6iN198l6SmNRNg6imXas
-         2VweH5t/B7rk7sMpOO8U3wO2WAIqHfETnHzyaVqPVklmzwon30W5RqlvbVR7j1UyOq8g
-         hOa5OgUlXg6KTm57Y/QkT19KA3gMl9LXgcsBc4Gh3FdWORzjcRQMkD/6SAyEgVduYY9A
-         cX1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWYGnKuobiACX6Yc4A85yRI7DJDX0Dv/4mDKeM65GPfpugOerXvPwTzS3BRz5Z1T6UzuWZdNx/VCprPwM9ds9wso4/oraq4SjE=
-X-Gm-Message-State: AOJu0Yz8Xmt5bdlEZbOLdU/bqAAknpNQ75D1sx6kN9+b6A48ce5Y8xYe
-	nt94BZ312HLuh1fiyZHAM+nFHjHEygZOaAZD7dzjhSBxak5ohR7FciDNRTr7fag=
-X-Google-Smtp-Source: AGHT+IH2AOVQ8MRVaLOMNYPUdikaYE3C9/yoGEwzLVtlfctn/SxJ+c3fl6voRhYHWRtZLwheJYI/Ag==
-X-Received: by 2002:a6b:670a:0:b0:7c7:7f73:d1a with SMTP id b10-20020a6b670a000000b007c77f730d1amr1900238ioc.1.1709308528831;
-        Fri, 01 Mar 2024 07:55:28 -0800 (PST)
+        bh=cuy/wgcCH07hny5bXY1Sk1fYdO558cghg+HCRH9bbn8=;
+        b=wCONn2naGXPSJ1Yw+Myw25bYkKrx8drejrzOIovvRRMRbVltnZqkJL8K+TKd0nSySU
+         wiPjZGpvNdZ+zRLk+aGUrA7YQ17un5t3JyOCNQfrwvPHYiLvt8D3H4OqR6QXpVhBknde
+         RJ9uZUKuuiWmD6DoAsN+wDsNlnG4QPSl08NyvmXexkCd4J8wFuDQhs2Q4olZQgSCPebr
+         oNmgDXYeF8xRlNd2VDT25koG3oky3mPZveeXcD45eD4gQzy/2JudjFfU2b1DPpt4u5aK
+         4uWM0qL7S2EKpWqQNWvoHcJbExunPRMbylAO7t+aNMnJkulgD7tejL7SyA8UNVRPYFpf
+         S2LA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaHvPR1BL0xT9jci8nqS/7xqRnynXO5PU2ZBdrDRnWr5JulgkmFcfAeXEYTaNFkKZAZJPySzOcvVjqO3Qy0lAJ8XlzLipmUVI=
+X-Gm-Message-State: AOJu0YxDxX/FoNaufif9QRYPP1VmJRqKklPJFob/5blkNSadwevYoYC1
+	dUr65va/N96u2z9C/j6sKQdLhWurtxhRcL9sIG77fz5QUGqzIAFRM0J1TFfXiwZUnVcL83rbZaE
+	P
+X-Google-Smtp-Source: AGHT+IHUrApy+wOyvA8sED9sBQ8CJ/sYmaferYuZ3MvQVEiKHQQKdFnsIlVgvFZXeuJn78QW/IWMAg==
+X-Received: by 2002:a6b:730c:0:b0:7c8:2c94:90b5 with SMTP id e12-20020a6b730c000000b007c82c9490b5mr357367ioh.0.1709308535226;
+        Fri, 01 Mar 2024 07:55:35 -0800 (PST)
 Received: from [127.0.0.1] ([99.196.129.26])
-        by smtp.gmail.com with ESMTPSA id b4-20020a02c984000000b004745e754b73sm894609jap.176.2024.03.01.07.55.22
+        by smtp.gmail.com with ESMTPSA id b4-20020a02c984000000b004745e754b73sm894609jap.176.2024.03.01.07.55.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Mar 2024 07:55:27 -0800 (PST)
+        Fri, 01 Mar 2024 07:55:34 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: kernel@collabora.com, kernel-janitors@vger.kernel.org, 
+To: Dylan Yudaken <dylany@fb.com>, Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, Dylan Yudaken <dylany@fb.com>, 
  io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240301144349.2807544-1-usama.anjum@collabora.com>
-References: <20240301144349.2807544-1-usama.anjum@collabora.com>
-Subject: Re: [PATCH io_uring/net: correct the type of variable
-Message-Id: <170930852175.1084422.15074919053163753559.b4-ty@kernel.dk>
-Date: Fri, 01 Mar 2024 08:55:21 -0700
+In-Reply-To: <7f5d7887-f76e-4e68-98c2-894bfedbf292@moroto.mountain>
+References: <7f5d7887-f76e-4e68-98c2-894bfedbf292@moroto.mountain>
+Subject: Re: [PATCH 0/2] io_uring/net: fix bug in io_recvmsg_mshot_prep()
+Message-Id: <170930852923.1084422.13136941777087584791.b4-ty@kernel.dk>
+Date: Fri, 01 Mar 2024 08:55:29 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -88,16 +88,22 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.12.5-dev-2aabd
 
 
-On Fri, 01 Mar 2024 19:43:48 +0500, Muhammad Usama Anjum wrote:
-> The namelen is of type int. It shouldn't be made size_t which is
-> unsigned. The signed number is needed for error checking before use.
+On Fri, 01 Mar 2024 18:28:40 +0300, Dan Carpenter wrote:
+> The casting is problematic and could introduce an integer underflow
+> issue.
 > 
+> Dan Carpenter (2):
+>   io_uring/net: fix overflow check in io_recvmsg_mshot_prep()
+>   io_uring/net: remove unnecesary check
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] [PATCH io_uring/net: correct the type of variable
-      commit: e86b4a164fc86d224bd177e02a9c070b9f1c3db4
+[1/2] io_uring/net: fix overflow check in io_recvmsg_mshot_prep()
+      commit: a69d208854948bc8334a01bc17f13a06a5a977d2
+[2/2] io_uring/net: remove unnecessary check
+      commit: 789748af32c4a6f50db401d46e6a89ab28a6e3ac
 
 Best regards,
 -- 

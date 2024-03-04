@@ -1,305 +1,110 @@
-Return-Path: <io-uring+bounces-821-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-822-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07730870B5D
-	for <lists+io-uring@lfdr.de>; Mon,  4 Mar 2024 21:18:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25544870FD3
+	for <lists+io-uring@lfdr.de>; Mon,  4 Mar 2024 23:12:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BBB11C222E5
-	for <lists+io-uring@lfdr.de>; Mon,  4 Mar 2024 20:18:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A102CB26719
+	for <lists+io-uring@lfdr.de>; Mon,  4 Mar 2024 22:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB84B7C6C9;
-	Mon,  4 Mar 2024 20:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639CB7F499;
+	Mon,  4 Mar 2024 22:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKfbQill"
 X-Original-To: io-uring@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007EA2C840;
-	Mon,  4 Mar 2024 20:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA90C7BAFD
+	for <io-uring@vger.kernel.org>; Mon,  4 Mar 2024 22:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709583449; cv=none; b=H9skxixbhDi04ii4VhbAu21gxaTSGd4GrzUYU51ioU8m7BT9oSOi1zOzU2w7w06ImbErxuZ5ocrAQSs0c13AEulkB8RBkwwzKJwdRSb2odpq670sY42c8FO7jYcZf/SfZ4tum02XUG8RahEtv4INSV8GVm3PaClPy7GYoFOEbVs=
+	t=1709590125; cv=none; b=o04Af12Pa+nyGeFz6YQ5m7BRPB3TEs7U1o/+ii/gxYlMbtUlYxHIsEJ/K7t0uzynL8OxhBBZN1KvC0cx43dJ98Sq501F81Beyb1FL6CZTKDCTnRQLWbEiyroD+PQI61RP03Fxh5kUj8mOQsWCEYl1FAtSHR5Om5YEMLto1BFlGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709583449; c=relaxed/simple;
-	bh=clDidIhiTcDaNyPWQCdL6Rs1LruWiA738NpcAJs2/80=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fgNLZu8K7xoGjYp/tflv6lZkmF24UHRtcmOXv7yglnIcT2xzOW8yBU23blOtOqvVqfZzzAdsa4zjj+KfQGu+YqHAmgK7Y9iujimwd3o2MPv+yJEi0bco1OeABPPMVIFkBSD4lsQn0DTQ+RZP7UJWShe9/X4ZUdLcXlidjWgLnok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41B2C1576;
-	Mon,  4 Mar 2024 12:17:54 -0800 (PST)
-Received: from e133047.arm.com (unknown [10.57.95.7])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C84B13F738;
-	Mon,  4 Mar 2024 12:17:13 -0800 (PST)
-From: Christian Loehle <christian.loehle@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org,
-	juri.lelli@redhat.com,
-	mingo@redhat.com,
-	rafael@kernel.org,
-	dietmar.eggemann@arm.com,
-	vschneid@redhat.com,
-	vincent.guittot@linaro.org,
-	Johannes.Thumshirn@wdc.com,
-	adrian.hunter@intel.com,
-	ulf.hansson@linaro.org,
-	andres@anarazel.de,
-	asml.silence@gmail.com,
-	linux-pm@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	Christian Loehle <christian.loehle@arm.com>
-Subject: [RFC PATCH 2/2] cpufreq/schedutil: Remove iowait boost
-Date: Mon,  4 Mar 2024 20:16:25 +0000
-Message-Id: <20240304201625.100619-3-christian.loehle@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240304201625.100619-1-christian.loehle@arm.com>
-References: <20240304201625.100619-1-christian.loehle@arm.com>
+	s=arc-20240116; t=1709590125; c=relaxed/simple;
+	bh=AZHcEAhiLyg3KUtvQ9YTvSG6aWjSjoM0TYrHjvE+ixU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iIQ7nxXDy4KHQgKjuHL5ScH9rVuG8Pe77bLS9024FD3lKQh2gWKxu3zbf3o3qvADozWS0MsSVXUC09Uh2r1tIIeTHgP5ZxM8QiLn3b9EKcvH2vd+/w2eY1GED24vw6DI870LRnGeGDuNAx60SPg3uUxG2w1lTSjG3wETgWuCexY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KKfbQill; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-564fc495d83so6116977a12.0
+        for <io-uring@vger.kernel.org>; Mon, 04 Mar 2024 14:08:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709590122; x=1710194922; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3ZkpAhdCHxgIRoxu2meC/ZPvLNrVNc0pnlV5OyO06Ck=;
+        b=KKfbQillYdv2fgAuATmxbtya23fRlgfeIz4XVtnD6vkG2iZqxh7mwnS4WPG+uistoU
+         qx4+a6mSvALkFjBWP10zAb/vdkmIVkU4OgLXmL+UF3MDOYv8V6tdZjqJVl7MYG/ptMRi
+         Obq/g3QiUv4zm8cTqZPH2c9J8UT3Roc/MHL99q49Rgb/O6Gr0NtpknQqnPmZY9cFDg8/
+         PzbaW6/eqOncPZM9neNSOXP017QNO7HUffQTMRjSy78jStBa8EqDTYECkWDdFcnHuSao
+         d29JZLYpGW+TBHRPz/g4Y7v57dLw28Qmg8kvjq/BKmADpKq/kvsadkQYew6t1+6jzqbQ
+         PWYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709590122; x=1710194922;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ZkpAhdCHxgIRoxu2meC/ZPvLNrVNc0pnlV5OyO06Ck=;
+        b=ik7lwqq48yWkHOl/+3pogVt5uY0DWp1RQRS8EVPYgCUxf2w+RkErkq0EWEIYb2TZTD
+         UpwcJsWu1PGaVyTSsZY5hSCPG3OJmlZxWs5tu23M3Se/wwoPsUR5SrwiOGOMgjjxQyQD
+         E7SMXzIvsLwRY+AevYE7r0wNmeDvnLHG2LY5H735F1x2tz9xo7ksz9UqY3Lk9Qam9Oe8
+         gTMle2EKYWApAluU3ETqgY/bxQcPM72sjo05Yq3on8jPD4AaTxpPGWn78lm3OplzY2xw
+         QnpKL6EgYH6CpO5kYZipuFKM/24bC45mts3Fdq6D5Z7jJnNW/Tzue62qgV15Zjykl0WX
+         jXUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgSEaDExwNQkEEok6NTpV5vqld/mywTXbosj/d/csDB8X40S0THQqtdez1L5hhjlizeym443/zq5RByMLCcL1qRtKCpOFz5nc=
+X-Gm-Message-State: AOJu0Ywi8daZBa0/MJH/H1YyslmvP/1EHnSAuc6W8b+hh8+0n3QIYiP5
+	Q29CBI6tBOZM+FnFGKF8zY1lSb+ZCroN/YKVEtqwJfeC4E9mcz4u
+X-Google-Smtp-Source: AGHT+IEfG7MYp1tyt4Kqqh7qKOwACMLDi5pWjEE4Mgprr+xtj3mq960SYXnYx9UXqBb9ivHw46Ebtg==
+X-Received: by 2002:aa7:d714:0:b0:567:48a9:cf85 with SMTP id t20-20020aa7d714000000b0056748a9cf85mr2927532edq.37.1709590121856;
+        Mon, 04 Mar 2024 14:08:41 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.147.152])
+        by smtp.gmail.com with ESMTPSA id 5-20020a0564021f4500b00564d7d23919sm5043501edz.67.2024.03.04.14.08.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Mar 2024 14:08:41 -0800 (PST)
+Message-ID: <27952c09-0a9c-4c74-a2dd-8899033c3873@gmail.com>
+Date: Mon, 4 Mar 2024 22:07:43 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: get rid of intermediate aux cqe caches
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: dw@davidwei.uk
+References: <935d517f0e71218bfc1d40352a4754abb610176d.1709224453.git.asml.silence@gmail.com>
+ <1c21f708-ab56-4b5e-bca9-694b954906e5@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <1c21f708-ab56-4b5e-bca9-694b954906e5@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The previous commit provides a new cpu_util_cfs_boost_io interface for
-schedutil which uses the io boosted utilization of the per-task
-tracking strategy. Schedutil iowait boosting is therefore no longer
-necessary so remove it.
+On 3/1/24 03:45, Jens Axboe wrote:
+> On 2/29/24 9:36 AM, Pavel Begunkov wrote:
+>> With defer taskrun we store aux cqes into a cache array and then flush
+>> into the CQ, and we also maintain the ordering so aux cqes are flushed
+>> before request completions. Why do we need the cache instead of pushing
+>> them directly? We acutally don't, so let's kill it.
+>>
+>> One nuance is synchronisation -- the path we touch here is only for
+>> DEFER_TASKRUN and guaranteed to be executed in the task context, and
+>> all cqe posting is serialised by that. We also don't need locks because
+>> of that, see __io_cq_lock().
+> 
+> Nicely spotted! Looks good to me.
 
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
- kernel/sched/cpufreq_schedutil.c | 152 +------------------------------
- 1 file changed, 5 insertions(+), 147 deletions(-)
+Apparently I'm wrong as "defer" in that function is not about
+defer taskrun, but rather IO_URING_F_COMPLETE_DEFER. Jens, can
+you drop it for now?
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index cd0ca3cbd212..ed9fc88a74fc 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -6,8 +6,6 @@
-  * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-  */
- 
--#define IOWAIT_BOOST_MIN	(SCHED_CAPACITY_SCALE / 8)
--
- struct sugov_tunables {
- 	struct gov_attr_set	attr_set;
- 	unsigned int		rate_limit_us;
-@@ -42,10 +40,6 @@ struct sugov_cpu {
- 	struct sugov_policy	*sg_policy;
- 	unsigned int		cpu;
- 
--	bool			iowait_boost_pending;
--	unsigned int		iowait_boost;
--	u64			last_update;
--
- 	unsigned long		util;
- 	unsigned long		bw_min;
- 
-@@ -195,141 +189,17 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
- 	return max(min, max);
- }
- 
--static void sugov_get_util(struct sugov_cpu *sg_cpu, unsigned long boost)
-+static void sugov_get_util(struct sugov_cpu *sg_cpu)
- {
- 	unsigned long min, max, util = cpu_util_cfs_boost(sg_cpu->cpu);
- 	unsigned long io_boost = cpu_util_io_boost(sg_cpu->cpu);
- 
--	/*
--	 * XXX: This already includes io boost now, makes little sense with
--	 * sugov iowait boost on top
--	 */
- 	util = max(util, io_boost);
- 	util = effective_cpu_util(sg_cpu->cpu, util, &min, &max);
--	util = max(util, boost);
- 	sg_cpu->bw_min = min;
- 	sg_cpu->util = sugov_effective_cpu_perf(sg_cpu->cpu, util, min, max);
- }
- 
--/**
-- * sugov_iowait_reset() - Reset the IO boost status of a CPU.
-- * @sg_cpu: the sugov data for the CPU to boost
-- * @time: the update time from the caller
-- * @set_iowait_boost: true if an IO boost has been requested
-- *
-- * The IO wait boost of a task is disabled after a tick since the last update
-- * of a CPU. If a new IO wait boost is requested after more then a tick, then
-- * we enable the boost starting from IOWAIT_BOOST_MIN, which improves energy
-- * efficiency by ignoring sporadic wakeups from IO.
-- */
--static bool sugov_iowait_reset(struct sugov_cpu *sg_cpu, u64 time,
--			       bool set_iowait_boost)
--{
--	s64 delta_ns = time - sg_cpu->last_update;
--
--	/* Reset boost only if a tick has elapsed since last request */
--	if (delta_ns <= TICK_NSEC)
--		return false;
--
--	sg_cpu->iowait_boost = set_iowait_boost ? IOWAIT_BOOST_MIN : 0;
--	sg_cpu->iowait_boost_pending = set_iowait_boost;
--
--	return true;
--}
--
--/**
-- * sugov_iowait_boost() - Updates the IO boost status of a CPU.
-- * @sg_cpu: the sugov data for the CPU to boost
-- * @time: the update time from the caller
-- * @flags: SCHED_CPUFREQ_IOWAIT if the task is waking up after an IO wait
-- *
-- * Each time a task wakes up after an IO operation, the CPU utilization can be
-- * boosted to a certain utilization which doubles at each "frequent and
-- * successive" wakeup from IO, ranging from IOWAIT_BOOST_MIN to the utilization
-- * of the maximum OPP.
-- *
-- * To keep doubling, an IO boost has to be requested at least once per tick,
-- * otherwise we restart from the utilization of the minimum OPP.
-- */
--static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
--			       unsigned int flags)
--{
--	bool set_iowait_boost = flags & SCHED_CPUFREQ_IOWAIT;
--
--	/* Reset boost if the CPU appears to have been idle enough */
--	if (sg_cpu->iowait_boost &&
--	    sugov_iowait_reset(sg_cpu, time, set_iowait_boost))
--		return;
--
--	/* Boost only tasks waking up after IO */
--	if (!set_iowait_boost)
--		return;
--
--	/* Ensure boost doubles only one time at each request */
--	if (sg_cpu->iowait_boost_pending)
--		return;
--	sg_cpu->iowait_boost_pending = true;
--
--	/* Double the boost at each request */
--	if (sg_cpu->iowait_boost) {
--		sg_cpu->iowait_boost =
--			min_t(unsigned int, sg_cpu->iowait_boost << 1, SCHED_CAPACITY_SCALE);
--		return;
--	}
--
--	/* First wakeup after IO: start with minimum boost */
--	sg_cpu->iowait_boost = IOWAIT_BOOST_MIN;
--}
--
--/**
-- * sugov_iowait_apply() - Apply the IO boost to a CPU.
-- * @sg_cpu: the sugov data for the cpu to boost
-- * @time: the update time from the caller
-- * @max_cap: the max CPU capacity
-- *
-- * A CPU running a task which woken up after an IO operation can have its
-- * utilization boosted to speed up the completion of those IO operations.
-- * The IO boost value is increased each time a task wakes up from IO, in
-- * sugov_iowait_apply(), and it's instead decreased by this function,
-- * each time an increase has not been requested (!iowait_boost_pending).
-- *
-- * A CPU which also appears to have been idle for at least one tick has also
-- * its IO boost utilization reset.
-- *
-- * This mechanism is designed to boost high frequently IO waiting tasks, while
-- * being more conservative on tasks which does sporadic IO operations.
-- */
--static unsigned long sugov_iowait_apply(struct sugov_cpu *sg_cpu, u64 time,
--			       unsigned long max_cap)
--{
--	/* No boost currently required */
--	if (!sg_cpu->iowait_boost)
--		return 0;
--
--	/* Reset boost if the CPU appears to have been idle enough */
--	if (sugov_iowait_reset(sg_cpu, time, false))
--		return 0;
--
--	if (!sg_cpu->iowait_boost_pending) {
--		/*
--		 * No boost pending; reduce the boost value.
--		 */
--		sg_cpu->iowait_boost >>= 1;
--		if (sg_cpu->iowait_boost < IOWAIT_BOOST_MIN) {
--			sg_cpu->iowait_boost = 0;
--			return 0;
--		}
--	}
--
--	sg_cpu->iowait_boost_pending = false;
--
--	/*
--	 * sg_cpu->util is already in capacity scale; convert iowait_boost
--	 * into the same scale so we can compare.
--	 */
--	return (sg_cpu->iowait_boost * max_cap) >> SCHED_CAPACITY_SHIFT;
--}
--
- #ifdef CONFIG_NO_HZ_COMMON
- static bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu)
- {
-@@ -357,18 +227,12 @@ static inline bool sugov_update_single_common(struct sugov_cpu *sg_cpu,
- 					      u64 time, unsigned long max_cap,
- 					      unsigned int flags)
- {
--	unsigned long boost;
--
--	sugov_iowait_boost(sg_cpu, time, flags);
--	sg_cpu->last_update = time;
--
- 	ignore_dl_rate_limit(sg_cpu);
- 
- 	if (!sugov_should_update_freq(sg_cpu->sg_policy, time))
- 		return false;
- 
--	boost = sugov_iowait_apply(sg_cpu, time, max_cap);
--	sugov_get_util(sg_cpu, boost);
-+	sugov_get_util(sg_cpu);
- 
- 	return true;
- }
-@@ -458,7 +322,7 @@ static void sugov_update_single_perf(struct update_util_data *hook, u64 time,
- 	sg_cpu->sg_policy->last_freq_update_time = time;
- }
- 
--static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
-+static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu)
- {
- 	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
- 	struct cpufreq_policy *policy = sg_policy->policy;
-@@ -469,11 +333,8 @@ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
- 
- 	for_each_cpu(j, policy->cpus) {
- 		struct sugov_cpu *j_sg_cpu = &per_cpu(sugov_cpu, j);
--		unsigned long boost;
--
--		boost = sugov_iowait_apply(j_sg_cpu, time, max_cap);
--		sugov_get_util(j_sg_cpu, boost);
- 
-+		sugov_get_util(j_sg_cpu);
- 		util = max(j_sg_cpu->util, util);
- 	}
- 
-@@ -489,13 +350,10 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
- 
- 	raw_spin_lock(&sg_policy->update_lock);
- 
--	sugov_iowait_boost(sg_cpu, time, flags);
--	sg_cpu->last_update = time;
--
- 	ignore_dl_rate_limit(sg_cpu);
- 
- 	if (sugov_should_update_freq(sg_policy, time)) {
--		next_f = sugov_next_freq_shared(sg_cpu, time);
-+		next_f = sugov_next_freq_shared(sg_cpu);
- 
- 		if (!sugov_update_next_freq(sg_policy, time, next_f))
- 			goto unlock;
 -- 
-2.34.1
-
+Pavel Begunkov
 

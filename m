@@ -1,37 +1,38 @@
-Return-Path: <io-uring+bounces-819-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-820-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B00870B4F
-	for <lists+io-uring@lfdr.de>; Mon,  4 Mar 2024 21:17:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FEA2870B53
+	for <lists+io-uring@lfdr.de>; Mon,  4 Mar 2024 21:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42BE1C21B0C
-	for <lists+io-uring@lfdr.de>; Mon,  4 Mar 2024 20:17:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DBA0B2516F
+	for <lists+io-uring@lfdr.de>; Mon,  4 Mar 2024 20:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B4A7A71E;
-	Mon,  4 Mar 2024 20:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA90B7BAFB;
+	Mon,  4 Mar 2024 20:17:17 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F09B7A150;
-	Mon,  4 Mar 2024 20:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CB843AC3;
+	Mon,  4 Mar 2024 20:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709583432; cv=none; b=lTlJNrQeKHXMh749AAPGiwZc6bmccYVoaD14ACVy3Jgwzqscq5nrf+g/LFK2SUvTLtPzVwXGaK0RdyJ01qaZyTMNfC+9UpS8t3qcqYhNsc+MfV3opE4+i5y0b5O2iVOr0Qy2m8eDe3w85VmiUNOWotRDkYmF7LB4EgX2driig00=
+	t=1709583437; cv=none; b=hJS8TUjXpk4IQwYe+dvGdKq/O+3uFlGJO6Um0YWKXeFT7X6Q/Vmn92hYYLj4QjOoJrsV+/zplBfdLNvl9qTMc2IMdmy0Sgx3zn89YDUlVPEuQ14Fo4bJoRgqA4XTUYUshgFUezTZ0/QEFiOz5+Rce34r3zPU6w5Nvu1lRRiWcjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709583432; c=relaxed/simple;
-	bh=SlMHjZE0dLmw6SkxHSgROl2ZAtCQ7j4/V3eBjzNa6hA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WGn72lQa6RktJgkTSE9jszJ1M8TZgpmY5HyNV0MbRxQGJa2oHXs4jrbww0w4tidYQsKR1+lt1Oj5Eqb6amdSLdOwIRUkvNZbIaLumoNjTHFFy9Ibi6zxXnH2f1Quw48eOJbC3m66/iUKWYwlFuidfxAP7emGSvwxWIxlxAVUZrQ=
+	s=arc-20240116; t=1709583437; c=relaxed/simple;
+	bh=nDzguq2wc/kTCus2xPytgWUMDNinZnJBVesDHn/3zxA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HoGyBiGxlu5Df6eGl80yNtDU5HfPhl5daJixRiU/UF2939WZ9L1QWvA3FJhU7ovSt2UqD1HFsL4x6kFpwRUiq7iZo9wt9YQCWflIxL3EEaKHjWhS9xhwDTdntmHQmCx8ekUpDDGJ5lF/IqcfjO4k6eKR/YKJ/fL9oR7+5LoheaQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2FCBF2F4;
-	Mon,  4 Mar 2024 12:17:37 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAF03FEC;
+	Mon,  4 Mar 2024 12:17:45 -0800 (PST)
 Received: from e133047.arm.com (unknown [10.57.95.7])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B06613F738;
-	Mon,  4 Mar 2024 12:16:56 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4EB053F738;
+	Mon,  4 Mar 2024 12:17:05 -0800 (PST)
 From: Christian Loehle <christian.loehle@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: peterz@infradead.org,
@@ -50,10 +51,12 @@ Cc: peterz@infradead.org,
 	linux-block@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	Christian Loehle <christian.loehle@arm.com>
-Subject: [RFC PATCH 0/2] Introduce per-task io utilization boost
-Date: Mon,  4 Mar 2024 20:16:23 +0000
-Message-Id: <20240304201625.100619-1-christian.loehle@arm.com>
+Subject: [RFC PATCH 1/2] sched/fair: Introduce per-task io util boost
+Date: Mon,  4 Mar 2024 20:16:24 +0000
+Message-Id: <20240304201625.100619-2-christian.loehle@arm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240304201625.100619-1-christian.loehle@arm.com>
+References: <20240304201625.100619-1-christian.loehle@arm.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -62,252 +65,373 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is a feature inside of both schedutil and intel_pstate called
-iowait boosting which tries to prevent selecting a low frequency
-during IO workloads when it impacts throughput.
-The feature is implemented by checking for task wakeups that have
-the in_iowait flag set and boost the CPU of the rq accordingly
-(implemented through cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT)).
+Implement an io boost utilization enhancement that is tracked for each
+task_struct. Tasks that wake up from in_iowait frequently will have
+a io_boost associated with them, which counts iowait wakeups and only
+boosts when it seems to improve the per-task throughput.
 
-The necessity of the feature is argued with the potentially low
-utilization of a task being frequently in_iowait (i.e. most of the
-time not enqueued on any rq and cannot build up utilization).
+The patch is intended to replace the current iowait boosting strategy,
+implemented in both schedutil and intel_pstate which boost the CPU for
+iowait wakeups on the rq.
+The primary benefits are:
+1. EAS can take the io boost into account.
+2. Boosting is limited when it doesn't seem to improve throughput.
+3. io boost is being carried with the task when it migrates.
 
-The RFC focuses on the schedutil implementation.
-intel_pstate frequency selection isn't touched for now, suggestions are
-very welcome.
-Current schedutil iowait boosting has several issues:
-1. Boosting happens even in scenarios where it doesn't improve
-throughput. [1]
-2. The boost is not accounted for in EAS: a) feec() will only consider
- the actual utilization for task placement, but another CPU might be
- more energy-efficient at that capacity than the boosted one.)
- b) When placing a non-IO task while a CPU is boosted compute_energy()
- will not consider the (potentially 'free') boosted capacity, but the
- one it would have without the boost (since the boost is only applied
- in sugov).
-3. Actual IO heavy workloads are hardly distinguished from infrequent
-in_iowait wakeups.
-4. The boost isn't associated with a task, it therefore isn't considered
-for task placement, potentially missing out on higher capacity CPUs on
-heterogeneous CPU topologies.
-5. The boost isn't associated with a task, it therefore lingers on the
-rq even after the responsible task has migrated / stopped.
-6. The boost isn't associated with a task, it therefore needs to ramp
-up again when migrated.
-7. Since schedutil doesn't know which task is getting woken up,
-multiple unrelated in_iowait tasks might lead to boosting.
+This is implemented by observing the iowait wakeups for an interval.
+The boost is divided into 8 levels. If the task achieves the
+required number of iowait wakeups per interval it's boost level is
+increased.
+To reflect that we can't expect an increase of iowait wakeups linear
+to the applied boost (the time the task spends in iowait isn't
+decreased by boosting) we scale the intervals.
+Intervals for the lower boost levels are shorter, also allowing for
+a faster ramp up.
 
-We attempt to mitigate all of the above by reworking the way the
-iowait boosting (io boosting from here on) works in two major ways:
-- Carry the boost in task_struct, so it is a per-task attribute and
-behaves similar to utilization of the task in some ways.
-- Employ a counting-based tracking strategy that only boosts as long
-as it sees benefits and returns to no boosting dynamically.
+If multiple tasks are io-boosted their boost will be max-aggregated
+per rq. The energy calculations of EAS have been adapted to reflect
+this.
 
-Note that some the issues (1, 3) can be solved by using a
-counting-based strategy on a per-rq basis, i.e. in sugov entirely.
-Experiments with Android in particular showed that such a strategy
-(which necessarily needs longer intervals to be reasonably stable)
-is too prone to migrations to be useful generally.
-We therefore consider the additional complexity of such a per-task
-based approach like proposed to be worth it.
-
-We require a minimum of 1000 iowait wakeups per second to start
-boosting.
-This isn't too far off from what sugov currently does, since it resets
-the boost if it hasn't seen an iowait wakeup for TICK_NSEC.
-For CONFIG_HZ=1000 we are on par, for anything below we are stricter.
-We justify this by the small possible improvement by boosting in the
-first place with 'rare' few iowait wakeups.
-
-When IO even leads to a task being in iowait isn't as straightforward
-to explain.
-Of course if the issued IO can be served by the page cache (e.g. on
-reads because the pages are contained, on writes because they can be
-marked dirty and the writeback takes care of it later) the actual
-issuing task is usually not in iowait.
-We consider this the good case, since whenever the scheduler and a
-potential userspace / kernel switch is in the critical path for IO
-there is possibly overhead impacting throughput.
-We therefore focus on random read from here on, because (on synchronous
-IO [3]) this will lead to the task being set in iowait for every IO.
-This is where iowait boosting shows its biggest throughput improvement.
-From here on IOPS (IO operations per second) and iowait wakeups may
-therefore be used interchangeably.
-
-Performance:
-Throughput for random read tries to be on par with the sugov
-implementation of iowait boosting for reasonably long-lived workloads.
-See the following table for some results, values are in IOPS, the
-tests are ran for 30s with pauses in-between, results are sorted.
-
-nvme on rk3399
-[3588, 3590, 3597, 3632, 3745] sugov mainline
-[3581, 3751, 3770, 3771, 3885] per-task tracking
-[2592, 2639, 2701, 2717, 2784] sugov no iowait boost
-[3218, 3451, 3598, 3848, 3921] performance governor
-
-emmc with cqe on rk3399
-[4146, 4155, 4159, 4161, 4193] sugov mainline
-[2848, 3217, 4375, 4380, 4454] per-task tracking
-[2510, 2665, 3093, 3101, 3105] sugov no iowait boost
-[4690, 4803, 4860, 4976, 5069] performance governor
-
-sd card on rk3399
-[1777, 1780, 1806, 1827, 1850] sugov mainline
-[1470, 1476, 1507, 1534, 1586] per-task tracking
-[1356, 1372, 1373, 1377, 1416] sugov no iowait boost
-[1861, 1890, 1901, 1905, 1908] performance governor
-
-Pixel 6 ufs Android 14 (7 runs for because device showed some variance)
-[6605, 6622, 6633, 6652, 6690, 6697, 6754] sugov mainline
-[7141, 7173, 7198, 7220, 7280, 7427, 7452] per-task tracking
-[2390, 2392, 2406, 2437, 2464, 2487, 2813] sugov no iowait boost
-[7812, 7837, 7837, 7851, 7900, 7959, 7980] performance governor
-
-Apple M1 apple-nvme
-[27421, 28331, 28515, 28699, 29529] sugov mainline
-[27274, 27344, 27345, 27384, 27930] per-task tracking
-[14480, 14512, 14625, 14872, 14967] sugov no iowait boost
-[31595, 32085, 32386, 32465, 32643] performance governor
-
-Showcasing some different IO scenarios, again all random read,
-median out of 5 runs, all on rk3399 with NVMe.
-e.g. io_uring6x4 means 6 threads with 4 iodepth each, results can be
-obtained using:
-fio --minimal --time_based --name=test --filename=/dev/nvme0n1 --runtime=30 --rw=randread --bs=4k --ioengine=io_uring --iodepth=4 --numjobs=6 --group_reporting | cut -d \; -f 8
-
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|               | Sugov mainline | Per-task tracking | Sugov no boost | Performance | Powersave |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|       psyncx1 |           4073 |              3793 |           2979 |        4190 |      2788 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|       psyncx4 |          13921 |             13503 |          10635 |       13931 |     10225 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|       psyncx6 |          18473 |             17866 |          15902 |       19080 |     15789 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|       psyncx8 |          22498 |             21242 |          19867 |       22650 |     18837 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|      psyncx10 |          24801 |             23552 |          23658 |       25096 |     21474 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|      psyncx12 |          26743 |             25377 |          26372 |       26663 |     23613 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|     libaio1x1 |           4054 |              3542 |           2776 |        4055 |      2780 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|   libaio1x128 |           3959 |              3516 |           2758 |        3590 |      2560 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|   libaio4x128 |          13451 |             12517 |          10313 |       13403 |      9994 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|     libaio6x1 |          18394 |             17432 |          15340 |       18954 |     15251 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|     libaio6x4 |          18329 |             17100 |          15238 |       18623 |     15270 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|   libaio6x128 |          18066 |             16964 |          15139 |       18577 |     15192 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|   io_uring1x1 |           4043 |              3548 |           2810 |        4039 |      2689 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|  io_uring4x64 |          35790 |             32814 |          35983 |       34934 |     33254 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-| io_uring1x128 |          32651 |             30427 |          32429 |       33232 |      9973 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-| io_uring2x128 |          34928 |             32595 |          34922 |       33726 |     18790 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-| io_uring4x128 |          34414 |             32173 |          34932 |       33332 |     33005 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-|   io_uring6x4 |          31578 |             29260 |          31714 |       31399 |     31784 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-| io_uring6x128 |          34480 |             32634 |          34973 |       33390 |     36452 |
-+---------------+----------------+-------------------+----------------+-------------+-----------+
-
-Based on the above we can basically categorize these into the following
-three:
-a) boost is useful
-b) boost irrelevant (util dominates)
-c) boost is energy-inefficient (boost dominates)
-
-The aim of the patch 1/2 is to boost as much as necessary for a) while
-boosting little for c) (thus saving energy).
-
-Energy-savings:
-Regarding sugov iowait boosting problem 1 mentioned earlier,
-some improvement can be seen:
-Tested on rk3399 (LLLL)(bb) with an NVMe, 30s runtime
-CPU0 perf domain spans 0-3 with 400MHz to 1400MHz
-CPU4 perf domain spans 4-5 with 400MHz to 1800MHz
-
-io_uring6x128:
-Sugov iowait boost:
-Average frequency for CPU0 : 1.180 GHz
-Average frequency for CPU4 : 1.504 GHz
-Per-task tracking:
-Average frequency for CPU0 : 1.070 GHz
-Average frequency for CPU4 : 1.211 GHz
-
-io_uring12x128:
-Sugov iowait boost:
-Average frequency for CPU0 : 1.324 GHz
-Average frequency for CPU4 : 1.444 GHz
-Per-task tracking:
-Average frequency for CPU0 : 1.260 GHz
-Average frequency for CPU4 : 1.062 GHz
-(In both cases actually 400MHz on both perf domains is optimal, more
-fine-tuning could get us closer [2])
-
-[1]
-There are many scenarios when it doesn't, so let's start with
-explaining when it does:
-Boosting improves throughput if there is frequent IO to a device from
-one or few origins, such that the device is likely idle when the task
-is enqueued on the rq and reducing this time cuts down on the storage
-device idle time.
-This might not be true (and boosting doesn't help) if:
-- The storage device uses the idle time to actually commit the IO to
-persistent storage or do other management activity (this can be
-observed with e.g. writes to flash-based storage, which will usually
-write to cache and flush the cache when idle or necessary).
-- The device is under thermal pressure and needs idle time to cool off
-(not uncommon for e.g. nvme devices).
-Furthermore the assumption (the device being idle while task is
-enqueued) is false altogether if:
-- Other tasks use the same storage device.
-- The task uses asynchronous IO with iodepth > 1 like io_uring, the
-in_iowait is then just to fill the queue on the host again.
-- The task just sets in_iowait to signal it is waiting on io to not
-appear as system idle, it might not send any io at all (cf with
-the various occurrences of in_iowait, io_mutex_lock and io_schedule*).
-
-[3]
-Unfortunately even for asynchronous IO iowait may be set, in the case
-of io_uring this is specifically for the iowait boost to trigger, see
-commit ("8a796565cec3 io_uring: Use io_schedule* in cqring wait")
-which is why the energy-savings are so significant here, as io_uring
-load on the CPU is minimal.
-
-Problems encountered:
-- Higher cap is not always beneficial, we might place the task away
-from the CPU where the interrupt handler is running, making it run
-on an unboosted CPU which may have a bigger impact than the difference
-between the CPU's capacity the task moved to. (Of course the boost will
-then be reverted again, but a ping-pong every interval is possible).
-- [2] tracking and scaling can be improved (io_uring12x128 still shows
-boosting): Unfortunately tracking purely per-task shows some limits.
-One task might show more iowaits per second when boosted, but overall
-throughput doesn't increase => there is still some boost.
-The task throughput improvement is somewhat limited though,
-so by fine-tuning the thresholds there could be mitigations.
-
-Christian Loehle (2):
-  sched/fair: Introduce per-task io util boost
-  cpufreq/schedutil: Remove iowait boost
-
+Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+---
  include/linux/sched.h            |  15 +++
- kernel/sched/cpufreq_schedutil.c | 150 ++--------------------------
+ kernel/sched/cpufreq_schedutil.c |   6 ++
  kernel/sched/fair.c              | 165 +++++++++++++++++++++++++++++--
  kernel/sched/sched.h             |   4 +-
- 4 files changed, 182 insertions(+), 152 deletions(-)
+ 4 files changed, 181 insertions(+), 9 deletions(-)
 
---
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index ffe8f618ab86..4e0dfa6fbd65 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1547,6 +1547,21 @@ struct task_struct {
+ 	struct user_event_mm		*user_event_mm;
+ #endif
+ 
++	/* IO boost tracking */
++	u64		io_boost_timeout;
++	u64		io_boost_interval_start;
++#define IO_BOOST_INTERVAL_MSEC	25
++/* Require 1000 iowait wakeups per second to start the boosting */
++#define IO_BOOST_IOWAITS_MIN	(IO_BOOST_INTERVAL_MSEC)
++#define IO_BOOST_LEVELS		8
++/* The util boost given to the task per io boost level, account for headroom */
++#define IO_BOOST_UTIL_STEP		((unsigned long)((SCHED_CAPACITY_SCALE / 1.25) / IO_BOOST_LEVELS))
++#define IO_BOOST_IOWAITS_STEP		5
++	/* Minimum number of iowaits per interval to maintain current boost */
++	unsigned int	io_boost_threshold_down;
++	unsigned int	io_boost_level;
++	unsigned int	io_boost_curr_ios;
++
+ 	/*
+ 	 * New fields for task_struct should be added above here, so that
+ 	 * they are included in the randomized portion of task_struct.
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index eece6244f9d2..cd0ca3cbd212 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -198,7 +198,13 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
+ static void sugov_get_util(struct sugov_cpu *sg_cpu, unsigned long boost)
+ {
+ 	unsigned long min, max, util = cpu_util_cfs_boost(sg_cpu->cpu);
++	unsigned long io_boost = cpu_util_io_boost(sg_cpu->cpu);
+ 
++	/*
++	 * XXX: This already includes io boost now, makes little sense with
++	 * sugov iowait boost on top
++	 */
++	util = max(util, io_boost);
+ 	util = effective_cpu_util(sg_cpu->cpu, util, &min, &max);
+ 	util = max(util, boost);
+ 	sg_cpu->bw_min = min;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 533547e3c90a..b983e4399c53 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4959,6 +4959,11 @@ static inline void util_est_update(struct cfs_rq *cfs_rq,
+ 	trace_sched_util_est_se_tp(&p->se);
+ }
+ 
++static inline unsigned int io_boost_util(struct task_struct *p)
++{
++	return p->io_boost_level * IO_BOOST_UTIL_STEP;
++}
++
+ static inline int util_fits_cpu(unsigned long util,
+ 				unsigned long uclamp_min,
+ 				unsigned long uclamp_max,
+@@ -6695,6 +6700,137 @@ static int sched_idle_cpu(int cpu)
+ }
+ #endif
+ 
++static unsigned long io_boost_rq(struct cfs_rq *cfs_rq)
++{
++	int i;
++
++	for (i = IO_BOOST_LEVELS; i > 0; i--)
++		if (atomic_read(&cfs_rq->io_boost_tasks[i - 1]))
++			return i * IO_BOOST_UTIL_STEP;
++	return 0;
++}
++
++static inline unsigned long io_boost_interval_nsec(unsigned int io_boost_level)
++{
++	/*
++	 * We require 5 iowaits per interval increase to consider the boost
++	 * worth having, that leads to:
++	 * level 0->1:   25ms -> 200 iowaits per second increase
++	 * level 1->2:   50ms -> 125 iowaits per second increase
++	 * level 2->3:   75ms ->  66 iowaits per second increase
++	 * level 3->4:  100ms ->  50 iowaits per second increase
++	 * level 4->5:  125ms ->  40 iowaits per second increase
++	 * level 5->6:  150ms ->  33 iowaits per second increase
++	 * level 6->7:  175ms ->  28 iowaits per second increase
++	 * level 7->8:  200ms ->  25 iowaits per second increase
++	 * => level 8 can be maintained with >=1567 iowaits per second.
++	 */
++	return (io_boost_level + 1) * IO_BOOST_INTERVAL_MSEC * NSEC_PER_MSEC;
++}
++
++static inline void io_boost_scale_interval(struct task_struct *p, bool inc)
++{
++	unsigned int level = p->io_boost_level + (inc ? 1 : -1);
++
++	p->io_boost_level = level;
++	/* We change interval length, scale iowaits per interval accordingly. */
++	if (inc)
++		p->io_boost_threshold_down = (p->io_boost_curr_ios *
++			(level + 1) / level) + IO_BOOST_IOWAITS_STEP;
++	else
++		p->io_boost_threshold_down = (p->io_boost_curr_ios *
++			level / (level + 1)) - IO_BOOST_IOWAITS_STEP;
++}
++
++static void enqueue_io_boost(struct cfs_rq *cfs_rq, struct task_struct *p)
++{
++	u64 now = sched_clock();
++
++	/* Only what's necessary here because this is the critical path */
++	if (now > p->io_boost_timeout) {
++		/* Last iowait took too long, reset boost */
++		p->io_boost_interval_start = 0;
++		p->io_boost_level = 0;
++	}
++	if (p->io_boost_level)
++		atomic_inc(&cfs_rq->io_boost_tasks[p->io_boost_level - 1]);
++}
++
++static inline void io_boost_start_interval(struct task_struct *p, u64 now)
++{
++	p->io_boost_interval_start = now;
++	p->io_boost_curr_ios = 1;
++}
++
++static void dequeue_io_boost(struct cfs_rq *cfs_rq, struct task_struct *p)
++{
++	u64 now;
++
++	if (p->io_boost_level)
++		atomic_dec(&cfs_rq->io_boost_tasks[p->io_boost_level - 1]);
++
++	/*
++	 * Doing all this at dequeue instead of at enqueue might seem wrong,
++	 * but it really doesn't matter as the task won't be enqueued anywhere
++	 * anyway. At enqueue we then only need to check if the in_iowait
++	 * wasn't too long. We can then act as if the current in_iowait has
++	 * already completed 'in time'.
++	 * Doing all this at dequeue has a performance benefit as at this time
++	 * the io is issued and we aren't in the io critical path.
++	 */
++
++	if (!p->in_iowait) {
++		/* Even if no boost is active, we reset the interval */
++		p->io_boost_interval_start = 0;
++		p->io_boost_level = 0;
++		return;
++	}
++
++	/* The maximum in_iowait time we allow to continue boosting */
++	now = sched_clock();
++	p->io_boost_timeout = now + 10 * NSEC_PER_MSEC;
++
++	if (!p->io_boost_interval_start) {
++		io_boost_start_interval(p, now);
++		return;
++	}
++	p->io_boost_curr_ios++;
++
++	if (now < p->io_boost_interval_start +
++			io_boost_interval_nsec(p->io_boost_level))
++		return;
++
++	if (!p->io_boost_level) {
++		if (likely(p->io_boost_curr_ios < IO_BOOST_IOWAITS_MIN)) {
++			io_boost_start_interval(p, now);
++			return;
++		}
++		io_boost_scale_interval(p, true);
++	} else if (p->io_boost_curr_ios < IO_BOOST_IOWAITS_MIN) {
++		p->io_boost_level = 0;
++	} else if (p->io_boost_curr_ios > p->io_boost_threshold_down + IO_BOOST_IOWAITS_STEP) {
++		/* Increase boost */
++		if (p->io_boost_level < IO_BOOST_LEVELS)
++			io_boost_scale_interval(p, true);
++		else
++			p->io_boost_threshold_down =
++				p->io_boost_curr_ios - IO_BOOST_IOWAITS_STEP;
++	} else if (p->io_boost_curr_ios < p->io_boost_threshold_down) {
++		/* Reduce boost */
++		if (p->io_boost_level > 1)
++			io_boost_scale_interval(p, true);
++		else
++			p->io_boost_level = 0;
++	} else if (p->io_boost_level == IO_BOOST_LEVELS) {
++		/* Allow for reducing boost on max when conditions changed. */
++		p->io_boost_threshold_down = max(p->io_boost_threshold_down,
++				p->io_boost_curr_ios - IO_BOOST_IOWAITS_STEP);
++	}
++	/* On maintaining boost we just start a new interval. */
++
++	io_boost_start_interval(p, now);
++}
++
+ /*
+  * The enqueue_task method is called before nr_running is
+  * increased. Here we update the fair scheduling stats and
+@@ -6716,11 +6852,9 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	 */
+ 	util_est_enqueue(&rq->cfs, p);
+ 
+-	/*
+-	 * If in_iowait is set, the code below may not trigger any cpufreq
+-	 * utilization updates, so do it here explicitly with the IOWAIT flag
+-	 * passed.
+-	 */
++	if (p->in_iowait || p->io_boost_interval_start)
++		enqueue_io_boost(&rq->cfs, p);
++	/* Ensure new io boost can be applied. */
+ 	if (p->in_iowait)
+ 		cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
+ 
+@@ -6804,6 +6938,8 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 
+ 	util_est_dequeue(&rq->cfs, p);
+ 
++	dequeue_io_boost(&rq->cfs, p);
++
+ 	for_each_sched_entity(se) {
+ 		cfs_rq = cfs_rq_of(se);
+ 		dequeue_entity(cfs_rq, se, flags);
+@@ -7429,11 +7565,13 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
+ 	int fits, best_fits = 0;
+ 	int cpu, best_cpu = -1;
+ 	struct cpumask *cpus;
++	unsigned long io_boost = io_boost_util(p);
+ 
+ 	cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
+ 	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
+ 
+ 	task_util = task_util_est(p);
++	task_util = max(task_util, io_boost);
+ 	util_min = uclamp_eff_value(p, UCLAMP_MIN);
+ 	util_max = uclamp_eff_value(p, UCLAMP_MAX);
+ 
+@@ -7501,7 +7639,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ 	 */
+ 	if (sched_asym_cpucap_active()) {
+ 		sync_entity_load_avg(&p->se);
+-		task_util = task_util_est(p);
++		task_util = max(task_util_est(p), io_boost_util(p));
+ 		util_min = uclamp_eff_value(p, UCLAMP_MIN);
+ 		util_max = uclamp_eff_value(p, UCLAMP_MAX);
+ 	}
+@@ -7615,12 +7753,17 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ 	return target;
+ }
+ 
++unsigned long cpu_util_io_boost(int cpu)
++{
++	return io_boost_rq(&cpu_rq(cpu)->cfs);
++}
++
+ /**
+  * cpu_util() - Estimates the amount of CPU capacity used by CFS tasks.
+  * @cpu: the CPU to get the utilization for
+  * @p: task for which the CPU utilization should be predicted or NULL
+  * @dst_cpu: CPU @p migrates to, -1 if @p moves from @cpu or @p == NULL
+- * @boost: 1 to enable boosting, otherwise 0
++ * @boost: 1 to enable runnable boosting, otherwise 0
+  *
+  * The unit of the return value must be the same as the one of CPU capacity
+  * so that CPU utilization can be compared with CPU capacity.
+@@ -7843,8 +7986,10 @@ eenv_pd_max_util(struct energy_env *eenv, struct cpumask *pd_cpus,
+ 	for_each_cpu(cpu, pd_cpus) {
+ 		struct task_struct *tsk = (cpu == dst_cpu) ? p : NULL;
+ 		unsigned long util = cpu_util(cpu, p, dst_cpu, 1);
++		unsigned long io_boost = max(io_boost_util(p), cpu_util_io_boost(cpu));
+ 		unsigned long eff_util, min, max;
+ 
++		util = max(util, io_boost);
+ 		/*
+ 		 * Performance domain frequency: utilization clamping
+ 		 * must be considered since it affects the selection
+@@ -7970,7 +8115,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+ 	target = prev_cpu;
+ 
+ 	sync_entity_load_avg(&p->se);
+-	if (!task_util_est(p) && p_util_min == 0)
++	if (!task_util_est(p) && p_util_min == 0 && io_boost_util(p) == 0)
+ 		goto unlock;
+ 
+ 	eenv_task_busy_time(&eenv, p, prev_cpu);
+@@ -7983,6 +8128,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+ 		unsigned long cur_delta, base_energy;
+ 		int max_spare_cap_cpu = -1;
+ 		int fits, max_fits = -1;
++		unsigned long p_io_boost = io_boost_util(p);
+ 
+ 		cpumask_and(cpus, perf_domain_span(pd), cpu_online_mask);
+ 
+@@ -7999,6 +8145,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+ 
+ 		for_each_cpu(cpu, cpus) {
+ 			struct rq *rq = cpu_rq(cpu);
++			unsigned long io_boost;
+ 
+ 			eenv.pd_cap += cpu_thermal_cap;
+ 
+@@ -8009,6 +8156,8 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+ 				continue;
+ 
+ 			util = cpu_util(cpu, p, cpu, 0);
++			io_boost = max(p_io_boost, cpu_util_io_boost(cpu));
++			util = max(util, io_boost);
+ 			cpu_cap = capacity_of(cpu);
+ 
+ 			/*
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 001fe047bd5d..5f42b72b3cde 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -598,6 +598,8 @@ struct cfs_rq {
+ 	struct sched_entity	*curr;
+ 	struct sched_entity	*next;
+ 
++	atomic_t		io_boost_tasks[IO_BOOST_LEVELS];
++
+ #ifdef	CONFIG_SCHED_DEBUG
+ 	unsigned int		nr_spread_over;
+ #endif
+@@ -3039,7 +3041,7 @@ static inline unsigned long cpu_util_dl(struct rq *rq)
+ 	return READ_ONCE(rq->avg_dl.util_avg);
+ }
+ 
+-
++extern unsigned long cpu_util_io_boost(int cpu);
+ extern unsigned long cpu_util_cfs(int cpu);
+ extern unsigned long cpu_util_cfs_boost(int cpu);
+ 
+-- 
 2.34.1
 
 

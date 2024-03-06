@@ -1,134 +1,109 @@
-Return-Path: <io-uring+bounces-842-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-843-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9FA4873B63
-	for <lists+io-uring@lfdr.de>; Wed,  6 Mar 2024 16:59:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73933873BA0
+	for <lists+io-uring@lfdr.de>; Wed,  6 Mar 2024 17:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AE44B26047
-	for <lists+io-uring@lfdr.de>; Wed,  6 Mar 2024 15:59:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282E61F25722
+	for <lists+io-uring@lfdr.de>; Wed,  6 Mar 2024 16:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2989C60912;
-	Wed,  6 Mar 2024 15:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B5E1361B5;
+	Wed,  6 Mar 2024 16:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UqvZCObD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksKRsGhW"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36587130ADD
-	for <io-uring@vger.kernel.org>; Wed,  6 Mar 2024 15:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12928135401
+	for <io-uring@vger.kernel.org>; Wed,  6 Mar 2024 16:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709740774; cv=none; b=oIWed7rNeWjXM0DYvPTJKOtcLBrqmEtFxV8VIXge+kkEu2qLx1CE5/i9qpkeYD71e+KFrP81JkhoFVeNZbp77rAmZSiiDPn8SNXFKwawVb5B0ezzFYk3ly0wTUGxxdauNy1AgPS8UMqNyvNReLKdMMv3A1mAIdTLeZPv/rLV/gw=
+	t=1709741010; cv=none; b=Nip6miYdSK0zKH2Hf+IKyGddN+q+VYyHZ6VoP61aVn3KcWMS0H3Kg1ESeNK4d4Z7FO9LFcNDw/aki8BJVwomyMIYiC5juNvRYy5VsVrOUoSB/YdYCcjqqWZSneA9+GYmFuNXAXeruTuzesZMfSCLRsuAjhH47SN9JKOefFOQd+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709740774; c=relaxed/simple;
-	bh=MmNU8B5WZ1uxg9hzl7F9DTcdKIes0O/zojf1g0ttm/A=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=Y/Hojmr7XrUifIWc7BAl6K2jKqHfGKutvgfikA4OFJIKZq9l8UODL2+EjnUhCnXAsKPqTdEo1a00BQAOcu4V90a9hrKl8P+rvT8jvhQhnslYl4NunM09GzYYPMBG/Nb2Fj1D5eFsFHttzjEU31Gzdd7u6OluFL6Vl8OT52ntZV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UqvZCObD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709740770;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bH0P49jS3FWbQfHXDiYtOjvFX14vKajotnvHNPLkcuQ=;
-	b=UqvZCObDkrhwhFKstiTnR4W+zmW3qjzEDeA+0bDkGYKppPGWMTu9RpkKY+lrUOvD70cFeL
-	ExVilbixKhpTw5f2aUWjuVEP3L0I6vyzMdWQTlTs9PEAuCOCw9BuT1tjHEDUcF9LrdOYf6
-	+ly4s3TcgPb39Fcc9lIRT2Qsw3iZ6xI=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-BU_t23jiPlCKz1XRGR5__w-1; Wed,
- 06 Mar 2024 10:59:27 -0500
-X-MC-Unique: BU_t23jiPlCKz1XRGR5__w-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 931653C025B6;
-	Wed,  6 Mar 2024 15:59:26 +0000 (UTC)
-Received: from segfault.usersys.redhat.com (unknown [10.22.10.44])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 568951C060D6;
-	Wed,  6 Mar 2024 15:59:26 +0000 (UTC)
-From: Jeff Moyer <jmoyer@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Zorro Lang <zlang@kernel.org>,  fstests@vger.kernel.org,
-  io-uring@vger.kernel.org
-Subject: Re: [PATCH 3/3] common/rc: force enable io_uring in _require_io_uring
-References: <20240306091935.4090399-1-zlang@kernel.org>
-	<20240306091935.4090399-4-zlang@kernel.org>
-	<20240306154324.GZ6188@frogsfrogsfrogs>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date: Wed, 06 Mar 2024 10:59:25 -0500
-In-Reply-To: <20240306154324.GZ6188@frogsfrogsfrogs> (Darrick J. Wong's
-	message of "Wed, 6 Mar 2024 07:43:24 -0800")
-Message-ID: <x495xxzuzaa.fsf@segfault.usersys.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+	s=arc-20240116; t=1709741010; c=relaxed/simple;
+	bh=GkYsHUiZ5ZwSrAX2zlb8zWkOdJtZ7k8JzKe4a9WHhdI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GrAUSyxd61BpdMwR6lU83EQTf+DXKXrblMZJYajr9yDcvDgpN46jDx/rjpFra/LJ7g9Isz5jZ3eVpIWKTr1WunbijrrtDyvA7IWvKKCEy3s+aTPf/IQmw5zAcdSmcOiFgAxKEWv3TXEZcS8xkYZTzynjWchACEDnjP1Pzsp59wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ksKRsGhW; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-412ed3f1e3fso14029495e9.0
+        for <io-uring@vger.kernel.org>; Wed, 06 Mar 2024 08:03:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709741007; x=1710345807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a9Us87DZ/eJlaBaUUk5n9e1ujOkXx0TDGgJj/9qkmBA=;
+        b=ksKRsGhWqogh2yPSPdk4rcmj475QIqfft53SCX+rxpssKZhgM8kW2nvnc/v8AxHYv+
+         xl8uvuXGJJJBi6kabqS9cimGXenPkLr3vGtaw9wnWR5xU2Bxq4i29k8zq0h5PAHS5BL6
+         igh4IHp7cAfDP+YpaIKHieRo1rJvRDftbYQBBjwzP8+wBUI0v6JYtwsl5TWeOtm/qTxY
+         xo8LTUMOFnI6DcFdmgt9WzGXOGOqtNRc6IlHx5J8EMEc24vSkfaL2DZz3Toxe6CdHI94
+         rJJEA6/TknKYvItw8XpmobKp5xLcXvePZk/z2tNug6ltkHmq4WVRc8d2Uhp0AxLH5QVC
+         8qYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709741007; x=1710345807;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a9Us87DZ/eJlaBaUUk5n9e1ujOkXx0TDGgJj/9qkmBA=;
+        b=bEJYiByu99Zijd7qko6/t+cMLeIxuhux2d/95EoiiYuo+sJR9VOj4falls4IVx7C5E
+         7Cn7YWx9LatCqF1uxcoF2IFbk8u6c1uJhNDoDTHzmO9kkhPcBBdxN/j/iz363UwQfx7J
+         SBsS77hE/2CEDDU4EmiN8eeqDAUEwFKoMd1VFSgUqxEZQpQ0yArr1/z+WzH2xEMErIEZ
+         PKpGt9sXdvfp2vfV6KOWfuIars0NnUpIquV0ccOXawfWrTNP8PHnqxCY1rJXKupdtFBI
+         TbpnZACjXAw3fCcDmK4GtfmgvmGRhhdeBDD+n4kmueCPbgboPdELLDLIRRpOwr8/mjHI
+         C+rw==
+X-Gm-Message-State: AOJu0YwlODGQGMGW88fENxlAAlpMykHuyi4hQM8gke6W0BtgcMsu8uqo
+	wcWAKCuCm0f0HEiOfwC6TfrjhBeG3Pcd4AhFMAt7eAop3GdKKRUOSVoF+bB0aCk=
+X-Google-Smtp-Source: AGHT+IFU/PaNjmtAhcdXVJd8Z+mui4aIRT3CWa/bYsKQx9wP6BFfoIx8RsMvIdqxmkkCFdqcO+AyVg==
+X-Received: by 2002:a05:600c:a51:b0:412:fcd9:f1fc with SMTP id c17-20020a05600c0a5100b00412fcd9f1fcmr1000007wmq.22.1709741006488;
+        Wed, 06 Mar 2024 08:03:26 -0800 (PST)
+Received: from 127.0.0.1localhost ([85.255.233.174])
+        by smtp.gmail.com with ESMTPSA id n3-20020adfe783000000b0033b79d385f6sm17749796wrm.47.2024.03.06.08.03.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Mar 2024 08:03:26 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	asml.silence@gmail.com
+Subject: [PATCH 1/1] io_uring: fix mshot read defer taskrun cqe posting
+Date: Wed,  6 Mar 2024 16:02:25 +0000
+Message-ID: <6fb7cba6f5366da25f4d3eb95273f062309d97fa.1709740837.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+Content-Transfer-Encoding: 8bit
 
-"Darrick J. Wong" <djwong@kernel.org> writes:
+We can't post CQEs from io-wq with DEFER_TASKRUN set, normal completions
+are handled but aux should be explicitly disallowed by opcode handlers.
 
-> On Wed, Mar 06, 2024 at 05:19:35PM +0800, Zorro Lang wrote:
->> If kernel supports io_uring, userspace still can/might disable that
->> supporting by set /proc/sys/kernel/io_uring_disabled=2. Let's set
->> it to 0, to always enable io_uring (ignore error if there's not
->> that file).
->> 
->> Signed-off-by: Zorro Lang <zlang@kernel.org>
->> ---
->>  common/rc | 3 +++
->>  1 file changed, 3 insertions(+)
->> 
->> diff --git a/common/rc b/common/rc
->> index 50dde313..966c92e3 100644
->> --- a/common/rc
->> +++ b/common/rc
->> @@ -2317,6 +2317,9 @@ _require_aiodio()
->>  # this test requires that the kernel supports IO_URING
->>  _require_io_uring()
->>  {
->> +	# Force enable io_uring if kernel supports it
->> +	sysctl -w kernel.io_uring_disabled=0 &> /dev/null
->
-> _require_XXX functions are supposed to be predicates that _notrun the
-> test if XXX isn't configured or available.  Shouldn't this be:
->
-> 	local io_uring_knob="$(sysctl --values kernel.io_uring_disabled)"
-> 	test "$io_uring_knob" -ne 0 && _notrun "io_uring disabled by admin"
+Cc: stable@vger.kernel.org
+Fixes: fc68fcda04910 ("io_uring/rw: add support for IORING_OP_READ_MULTISHOT")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/rw.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-That sounds like a good option to me.
-
-> Alternately -- if it _is_ ok to turn this knob, then there should be a
-> cleanup method to put it back after the test.
-
-I think it would be better not to change the setting, especially if the
-admin had disabled it.
-
-Cheers,
-Jeff
-
->
-> --D
->
->> +
->>  	$here/src/feature -R
->>  	case $? in
->>  	0)
->> -- 
->> 2.43.0
->> 
->> 
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index d5e79d9bdc71..8756e367acd9 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -932,6 +932,8 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
+ 	 */
+ 	if (!file_can_poll(req->file))
+ 		return -EBADFD;
++	if (issue_flags & IO_URING_F_IOWQ)
++		return -EAGAIN;
+ 
+ 	ret = __io_read(req, issue_flags);
+ 
+-- 
+2.43.0
 
 

@@ -1,109 +1,90 @@
-Return-Path: <io-uring+bounces-855-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-856-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF67875651
-	for <lists+io-uring@lfdr.de>; Thu,  7 Mar 2024 19:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0067787585F
+	for <lists+io-uring@lfdr.de>; Thu,  7 Mar 2024 21:31:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D4928166B
-	for <lists+io-uring@lfdr.de>; Thu,  7 Mar 2024 18:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFAD4280E5E
+	for <lists+io-uring@lfdr.de>; Thu,  7 Mar 2024 20:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE49F12EBE1;
-	Thu,  7 Mar 2024 18:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCBF24A03;
+	Thu,  7 Mar 2024 20:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NDhWQ0ui"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Fq4nS4of"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5DD12FF9D
-	for <io-uring@vger.kernel.org>; Thu,  7 Mar 2024 18:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048AC23772
+	for <io-uring@vger.kernel.org>; Thu,  7 Mar 2024 20:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709837297; cv=none; b=e54wt25aVi1u+lxGVB+jnSQT8JNozSchy9zlKGyqQ80OQWNS7EdTyi616oIvTOlPQ/VQl5zk5Rx3+lGkN8AQ+hGnzbO+OVVyt87IuIQfj/ny1uvZfOy655IRBgcscb0y9iznRhrSowMW4hSZGLIrczGIU5yGeCcusbTgdpaTQ4Y=
+	t=1709843480; cv=none; b=QpHWimRNbAlZUplIa2WKXelMFWBJ6NeANSudxtfpcHVQjc3zzEh4fmyNUweK/owi9eJH4FqHG6TmEHSp90yjjX79PluiW6hRpk4oUOefIHnuXvaiI6VV6l0BZHLc+aINjqqqH9V1yU5S6DwH5BE4srekF0zEoL08VNFfM0p4r7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709837297; c=relaxed/simple;
-	bh=0Luay74zJqkyd85M8MHS2dBebrRVrQUQU4k1LBxWEMw=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=F9Ezd8IQ7FlDMXuOPOXwqUHT0pWqiYXNe+xCCevSAz7oGNnkNA7M9ufbBAotPoYGyCXx0IwBlzi3TRQXfoNvLXB0/dpUTcMLkXotUcFTc4okNeokr2cvTXz+qQ9GNvMr7/Db3xLFLD0zzwyJpA8JC7UMIwp2A6eE1dCcuyTtfQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NDhWQ0ui; arc=none smtp.client-ip=209.85.166.180
+	s=arc-20240116; t=1709843480; c=relaxed/simple;
+	bh=UIrAvTmzOYfX8oE/AbHf8ey5vR6IW2YiNw52vpI9OwA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=J1BlNJXycHrFnrmIjOxx8+bIjYtTCutbd0RQpoVVgoG1hRJcME5/8C/BqqhY8n8XCPVn6/9RKWt6NM8i1OALLdoyu9ZkfdXR0gzLpxQtPOeaP1P8qRAu4hnAbx4ydtDz3W9rAHjCZAN8AqGxzCuOd6kMsRJpngVvmWW/0EWNHmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Fq4nS4of; arc=none smtp.client-ip=209.85.166.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-365c0dfc769so1422155ab.1
-        for <io-uring@vger.kernel.org>; Thu, 07 Mar 2024 10:48:14 -0800 (PST)
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7c7ee5e2f59so4717539f.1
+        for <io-uring@vger.kernel.org>; Thu, 07 Mar 2024 12:31:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709837293; x=1710442093; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+OY3LC65T+lGHqqw2uslj05kUY5VaPnzv/z4A0X5L34=;
-        b=NDhWQ0uiXWBMXTMj5Nf7GFRZpDQR6Gpp7A+4/FPKZOx1MCUfp2Za63/8veEK7A7HiX
-         E6fjAfIgwFUInl2oBHYruSoeo6vQi4UlZbUhUSmPg9KedyonVoZcZr54RRn0LmxrOt/Q
-         Ji2B5bQA2WWZwZGgBqzRKFAseFj969QYP2vD+T3+ldzvsi5ucO+XDmWk6XgQgvXe6a6j
-         ULtXKANgFfT1nOjYOYm9KxwlcFJE+05hdG6r1yvzPwYi0gM7AUyhHE1zMFNBqpnSytkW
-         ULwIy7qJXx1UVriOXkMp+JWEWRbW1ElVHeEgWUwYVZSJZwE6zbnIUgMVgMYx5COPIxyb
-         vDEQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709843476; x=1710448276; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K62eyjPxAFSyUC0ntHOWoswx7bSCMi4v+YC63WTLwto=;
+        b=Fq4nS4ofCkl671/ebpXa3RoM/BJqvtsPV5M//iYfS7LdNcjg42Zr1R9WKkOAhSHAae
+         DM8vk1tIiIKKtU8+KwkXxixiVG9H4jk78MtFeYOEBf7Dx/WkP6VBqjh5OzoAXPuwOwt7
+         oWGat72g4iz7cb7tjqbIy4qqNvGdpvv/EIUR+/VpcTM3UwMTMJ+XE/0cGYPPizaiRpaL
+         F3kGSdgzrtZVaH9488xmVAdPPH8CLb/2iabocK6XGx/f57tVm+1TqbkixgB+lUwT+7ST
+         IsFh1ZAqvIx3tSJfFfUixKwIL38rwMCd1DeROBlkku10xKQ1DyezU/PpIw5b+LKCM6sw
+         Th+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709837293; x=1710442093;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+OY3LC65T+lGHqqw2uslj05kUY5VaPnzv/z4A0X5L34=;
-        b=eArU3NVmthMO9ytszyZ01frlxp2qwzA48d3Q62ThMbSv6WcYXbf3v0m7Nn5Uj2+Wb8
-         54ga/q72QL6B4oIlimnn/JAI8YYZ2JvDdqgjVSPb/0+jZzH40qGEKzHkT+BkrsDzqSJ/
-         623UGSX/EAbkJYxymHr5B/oFRnRT8SOLyJUTh3OWl+OkWmVUhxMMsTxBrYvbIQKxQ7EJ
-         GWzU5lDFQ0u/RJhnD6VU520QfY0f/QUE3A7+PgU3WGfpRFUHz84K97np0qpGPyKC3RGD
-         QcqT2ZsW3/LQJehRm7ZhfxJ9G9NA3DY0DDmBvPqwN7pw+5P59dYBo8qocUADaSIvJkLn
-         KgJQ==
-X-Gm-Message-State: AOJu0Yw9jF4d7UyEU/KZju9Gq9rbsSRV877wJjyWHFaQezrQnAw+U8PZ
-	ckB/SY/ClzmUjmzehPSB7B8LjfCJWGNVRdkzUd9w9KHeNMuQQOOOlVmE+HwETpc0VObA6T5cOji
-	/
-X-Google-Smtp-Source: AGHT+IG4TAOT5KrikYoMclr7RIaxi7uc6grgWueKNWko6uiK1FjNDf7rzgpz09W92lDLrALDqLHp+g==
-X-Received: by 2002:a6b:f306:0:b0:7c8:7d0e:f240 with SMTP id m6-20020a6bf306000000b007c87d0ef240mr3089854ioh.1.1709837293393;
-        Thu, 07 Mar 2024 10:48:13 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id a8-20020a02ac08000000b004769bc4c986sm684001jao.32.2024.03.07.10.48.12
+        d=1e100.net; s=20230601; t=1709843476; x=1710448276;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K62eyjPxAFSyUC0ntHOWoswx7bSCMi4v+YC63WTLwto=;
+        b=eVM4k33lF95h8MunTXeuHc4lnYE4Lxai3MiJHAgdYP1OpDTKEH/IcIDQ9QQpNLQaTg
+         ppS5dBEizgV3gfjZw+0gw3zH1ruGetC0FtBUwbu4u2Xv4z6NIPRdKvMw+A5tvPnGebpM
+         eWrPXBcjFVW5V1ZFsOYP0Iar/j0uVC99LBEvnnlRzziD8XK5DvtN50wcK5kfpSmwn7pv
+         QJda8qQCUMWxz5qpVM42+eV4iUFMFUmTbFgmpAmqsf9KZNZEWLYlM0cfKnzGe+yIK5i2
+         gT3E/VY6q9guoS/Gk/gcG4NG8FMUxhL+MmLzpwZmeGpnJ4uMhpd923D/fmQbhsm3GVTY
+         BKNg==
+X-Gm-Message-State: AOJu0YxBauc1aPJLOtPQLUhk6IUWFkHvJSHVI/R14WTipy9J3gCo9t4J
+	7R+91Y0FTelQ4tDFklsrWiOfoD8mkP/SGBNfgaVT5yjI9quoXSmjmxn4JGsgajUdn0z7CbysOtj
+	x
+X-Google-Smtp-Source: AGHT+IHWAB9sy0aJ3slgURaem5AtgIGqTiGFIgjeYA6mN3Ko09fpA7nrRVt0atVCchcJF+we/pLKpg==
+X-Received: by 2002:a6b:dd11:0:b0:7c8:718b:cff5 with SMTP id f17-20020a6bdd11000000b007c8718bcff5mr3557176ioc.2.1709843475737;
+        Thu, 07 Mar 2024 12:31:15 -0800 (PST)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id f1-20020a028481000000b0047469b04c35sm4198921jai.65.2024.03.07.12.31.15
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Mar 2024 10:48:12 -0800 (PST)
+        Thu, 07 Mar 2024 12:31:15 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <455cc49e38cf32026fa1b49670be8c162c2cb583.1709834755.git.asml.silence@gmail.com>
-References: <455cc49e38cf32026fa1b49670be8c162c2cb583.1709834755.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring: fix io_queue_proc modifying req->flags
-Message-Id: <170983729263.487614.1608581285097755405.b4-ty@kernel.dk>
-Date: Thu, 07 Mar 2024 11:48:12 -0700
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET 0/4] Misc cleanups
+Date: Thu,  7 Mar 2024 13:30:23 -0700
+Message-ID: <20240307203113.575893-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
-On Thu, 07 Mar 2024 18:06:32 +0000, Pavel Begunkov wrote:
-> With multiple poll entries __io_queue_proc() might be running in
-> parallel with poll handlers and possibly task_work, we should not be
-> carelessly modifying req->flags there. io_poll_double_prepare() handles
-> a similar case with locking but it's much easier to move it into
-> __io_arm_poll_handler().
-> 
-> 
-> [...]
+This is part of my recv/send bundle series, but they are ordered at the
+top and don't have dependencies. So sending these out separately.
 
-Applied, thanks!
-
-[1/1] io_uring: fix io_queue_proc modifying req->flags
-      commit: 1a8ec63b2b6c91caec87d4e132b1f71b5df342be
-
-Best regards,
 -- 
 Jens Axboe
-
-
 
 

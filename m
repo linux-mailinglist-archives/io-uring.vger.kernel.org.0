@@ -1,84 +1,91 @@
-Return-Path: <io-uring+bounces-880-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-881-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408A2876E02
-	for <lists+io-uring@lfdr.de>; Sat,  9 Mar 2024 00:51:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F5F876E27
+	for <lists+io-uring@lfdr.de>; Sat,  9 Mar 2024 01:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB28E283A28
-	for <lists+io-uring@lfdr.de>; Fri,  8 Mar 2024 23:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 405D52830DE
+	for <lists+io-uring@lfdr.de>; Sat,  9 Mar 2024 00:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65BD3BBDF;
-	Fri,  8 Mar 2024 23:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F41C7E5;
+	Sat,  9 Mar 2024 00:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NKQaJGor"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pw47fLOa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NmQdVxYB";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pw47fLOa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NmQdVxYB"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A223D0C6
-	for <io-uring@vger.kernel.org>; Fri,  8 Mar 2024 23:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA57627
+	for <io-uring@vger.kernel.org>; Sat,  9 Mar 2024 00:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709941867; cv=none; b=d6W1DTIApEx47T7FW9XMwYzXL2pF71Ysy6hxcYGoVQws8uofkwvdz1q4SBmNA7+yFmpe9RWx6/+5frXqyxlErU+otUyZPB57HcP161p9sNepIngZrWqea/SQK/QtmI6VO1U7CyfWEINa6u71cqu3FWDqJ851GGO0NU2N5rQxgIk=
+	t=1709944389; cv=none; b=JVXxs7NwwF+HfCMCPiriSi6NuqA1ehxvHXudxQovvdsBWDUwKmobvp8WfIahjFFA+hejmMIJpmNyKv8Jfe5vUuffMDpfnp8YQsw5qTtQrChSHtzvDpzGLL6t12Z7x2jOQO4t/RbSUdAU4N1WYRG2L3zP9MFNaVx/yGNd5H+35h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709941867; c=relaxed/simple;
-	bh=h34qolhJ4ag202048Q5TTCRyB4jy431LjVCEGGbPAsY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UXvegJ1FZDNknXRwZBz+2bUvK1hZzjr/6zzcI95cZRsHSMfRQlZITt6i3jZvcHvlczfjEnLlRdTNskeSV931uXgnsDQXlj8wisnIAvoX6lD3hjunTq/lNwQ1Xps0sXRMNnCMWCZTczFTnnZL/4/abea8bRjiGYfXtx6Zg75IFUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NKQaJGor; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-7c495be1924so38308139f.1
-        for <io-uring@vger.kernel.org>; Fri, 08 Mar 2024 15:51:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709941864; x=1710546664; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LpdR4+HAExoO+9KRr8x0nArtDVP0MJit8Bxe9BBdbrY=;
-        b=NKQaJGorB+ImO108bJHXsm8zege1rWra1ilF8XIzjdcEl9nGm9xJALlxfLceK8LmRA
-         XJQKVbdJm04P11hVz7n3hLB+qXCEZL2RsTrkJ9u8vv0E+fTK/SqNTm+aT5vjgAVSAByP
-         hAXilTwWDURA5xKyRvXdCmV5EUByulHXT/Up1NznxRxWovWEn6IiTZFGpjw7qiQZQ/fK
-         QuY/ZJ4L6k9SZN/fmLWkBHtj8QTA3OEs5NHnTmbt+scrl2GG7J3vCc3sQYcfEU7TNRnp
-         G5sMDlneM8l/79osvLweIIt+wFiNZ10Um70jTz5v7BlA5yfy72C3SW7CP7FNvlGLwtLj
-         F0/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709941864; x=1710546664;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LpdR4+HAExoO+9KRr8x0nArtDVP0MJit8Bxe9BBdbrY=;
-        b=E3O1a3YHhwlawv/k0JzANJQ/kxNiqALatwC7ZReRDy+lo934hh8bwtbCbvI6+wdNaf
-         9P5/BEgrn6lIKgTtKT3LGLD8d3mxVMbubLN7MNIu/rsCSogIj/DlsBAkhliFhYmsxe+x
-         CoUsB/qAPVNaRP8RbggbWLazRhCjJmWqy0RVpLxHccKkOhczQW+EGy3Cr3jmLas42UT9
-         ywlQWvZ8nEi4ruaJ7oUKpeGUV3gwscHfnxnIEezii1C8PUHEE36Asxa0zyqhZKwQbIZb
-         4vxhh1YCjxlJf9Xu4i78IyJrA/w8qNobxpPLZj7CTd1zfbTVB7UASj44396VJ4FQ5pvs
-         /9Vw==
-X-Gm-Message-State: AOJu0YwXSy6bxmLk/TaFVoWdtBn5vxXIcrvxusHTj3FhpvYMM1pX5SSx
-	3lM54CEjYoakGJEVwtfMsZrKWgQvgbLkVdks0QqJFZ4e5LR41+HnIO6JxJuD/oTSS5hKxMkt63h
-	N
-X-Google-Smtp-Source: AGHT+IF//929OIuifoKtd8DGkPMLmIyS4eQzyLQa9+7ifOJ82aa8E9JAk5ZalQqiaa+9NK2LL+MkbA==
-X-Received: by 2002:a5e:df01:0:b0:7c8:6f1f:d44 with SMTP id f1-20020a5edf01000000b007c86f1f0d44mr509633ioq.1.1709941864553;
-        Fri, 08 Mar 2024 15:51:04 -0800 (PST)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id a13-20020a056602208d00b007c870de3183sm94159ioa.49.2024.03.08.15.51.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Mar 2024 15:51:02 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	dyudaken@gmail.com,
-	dw@davidwei.uk,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 7/7] io_uring/net: support bundles for recv
-Date: Fri,  8 Mar 2024 16:34:12 -0700
-Message-ID: <20240308235045.1014125-8-axboe@kernel.dk>
+	s=arc-20240116; t=1709944389; c=relaxed/simple;
+	bh=QDc4/qo5pSV8mN+Wh/y4MboZsW94ipDrHbrWmz94LiQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HoxjoDeAFt5i/LUiIPJz8/wS0wx6bjuKYWLQ48Y2V/4DMB1BXcukF0amhoDMuLt+iydSTjCrJ2fTqH0WJQPnU897cKL3yfExb2iHjMU9QIS90f1zbTp7wr8yGpTptN2EoH4riBKtb/mmxbE8qGZIXbdY1DrMGcEqvB+CeW8cqtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pw47fLOa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NmQdVxYB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pw47fLOa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NmQdVxYB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 953E91F76B;
+	Sat,  9 Mar 2024 00:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709944384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=1oNGOssMz2KjqBMUjLL8d6aSRPRTEO3TW0CwgyV4KGE=;
+	b=pw47fLOaL3x8iT0bVj7CY8TkX9fWyLGlotbQet8nMqjKz7BKqsIWWfYg1s+sVEO2R2kdOg
+	/RQKBgDgHOTxmSOksBdJf5+ZRzX47bnJgVOz4pz0g0SZ8Oy+AwDAbLV/vb3jMtiEI3FL31
+	aGzig+nfhVIVwolERGwru0WhvvkudqY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709944384;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=1oNGOssMz2KjqBMUjLL8d6aSRPRTEO3TW0CwgyV4KGE=;
+	b=NmQdVxYBm5N8ASEsf5dsBPtFl+60ndsdShuXShoXIYp1T8t+Okj7XHOZdRZ9l5NNS6ASqQ
+	G5nGjmLAWP9XMjCg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709944384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=1oNGOssMz2KjqBMUjLL8d6aSRPRTEO3TW0CwgyV4KGE=;
+	b=pw47fLOaL3x8iT0bVj7CY8TkX9fWyLGlotbQet8nMqjKz7BKqsIWWfYg1s+sVEO2R2kdOg
+	/RQKBgDgHOTxmSOksBdJf5+ZRzX47bnJgVOz4pz0g0SZ8Oy+AwDAbLV/vb3jMtiEI3FL31
+	aGzig+nfhVIVwolERGwru0WhvvkudqY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709944384;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=1oNGOssMz2KjqBMUjLL8d6aSRPRTEO3TW0CwgyV4KGE=;
+	b=NmQdVxYBm5N8ASEsf5dsBPtFl+60ndsdShuXShoXIYp1T8t+Okj7XHOZdRZ9l5NNS6ASqQ
+	G5nGjmLAWP9XMjCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4CF9E133DC;
+	Sat,  9 Mar 2024 00:33:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qqLHCkCu62X8ZgAAD6G6ig
+	(envelope-from <krisman@suse.de>); Sat, 09 Mar 2024 00:33:04 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: axboe@kernel.dk
+Cc: io-uring@vger.kernel.org,
+	xiaobing.li@samsung.com,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH for-next] io_uring: Fix sqpoll utilization check racing with dying sqpoll
+Date: Fri,  8 Mar 2024 19:32:56 -0500
+Message-ID: <20240309003256.358-1-krisman@suse.de>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240308235045.1014125-1-axboe@kernel.dk>
-References: <20240308235045.1014125-1-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -86,278 +93,161 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=pw47fLOa;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=NmQdVxYB
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.51 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 RCPT_COUNT_THREE(0.00)[4];
+	 R_MISSING_CHARSET(2.50)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 BROKEN_CONTENT_TYPE(1.50)[];
+	 TO_DN_SOME(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 MID_CONTAINS_FROM(1.00)[];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Score: -1.51
+X-Rspamd-Queue-Id: 953E91F76B
+X-Spam-Flag: NO
 
-If IORING_OP_RECV is used with provided buffers, the caller may also set
-IORING_RECVSEND_BUNDLE to turn it into a multi-buffer recv. This grabs
-buffers available and receives into them, posting a single completion for
-all of it.
+Commit 3fcb9d17206e ("io_uring/sqpoll: statistics of the true
+utilization of sq threads"), currently in Jens for-next branch, peeks at
+io_sq_data->thread to report utilization statistics. But, If
+io_uring_show_fdinfo races with sqpoll terminating, even though we hold
+the ctx lock, sqd->thread might be NULL and we hit the Oops below.
 
-This can be used with multishot receive as well, or without it.
+Note that we could technically just protect the getrusage() call and the
+sq total/work time calculations.  But showing some sq
+information (pid/cpu) and not other information (utilization) is more
+confusing than not reporting anything, IMO.  So let's hide it all if we
+happen to race with a dying sqpoll.
 
-Now that both send and receive support bundles, add a feature flag for
-it as well. If IORING_FEAT_RECVSEND_BUNDLE is set after registering the
-ring, then the kernel supports bundles for recv and send.
+This can be triggered consistently in my vm setup running
+sqpoll-cancel-hang.t in a loop.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+BUG: kernel NULL pointer dereference, address: 00000000000007b0
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP NOPTI
+CPU: 0 PID: 16587 Comm: systemd-coredum Not tainted 6.8.0-rc3-g3fcb9d17206e-dirty #69
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 2/2/2022
+RIP: 0010:getrusage+0x21/0x3e0
+Code: 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 55 48 89 d1 48 89 e5 41 57 41 56 41 55 41 54 49 89 fe 41 52 53 48 89 d3 48 83 ec 30 <4c> 8b a7 b0 07 00 00 48 8d 7a 08 65 48 8b 04 25 28 00 00 00 48 89
+RSP: 0018:ffffa166c671bb80 EFLAGS: 00010282
+RAX: 00000000000040ca RBX: ffffa166c671bc60 RCX: ffffa166c671bc60
+RDX: ffffa166c671bc60 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffa166c671bbe0 R08: ffff9448cc3930c0 R09: 0000000000000000
+R10: ffffa166c671bd50 R11: ffffffff9ee89260 R12: 0000000000000000
+R13: ffff9448ce099480 R14: 0000000000000000 R15: ffff9448cff5b000
+FS:  00007f786e225900(0000) GS:ffff94493bc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000000007b0 CR3: 000000010d39c000 CR4: 0000000000750ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ ? __die_body+0x1a/0x60
+ ? page_fault_oops+0x154/0x440
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? do_user_addr_fault+0x174/0x7c0
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? exc_page_fault+0x63/0x140
+ ? asm_exc_page_fault+0x22/0x30
+ ? getrusage+0x21/0x3e0
+ ? seq_printf+0x4e/0x70
+ io_uring_show_fdinfo+0x9db/0xa10
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? vsnprintf+0x101/0x4d0
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? seq_vprintf+0x34/0x50
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? seq_printf+0x4e/0x70
+ ? seq_show+0x16b/0x1d0
+ ? __pfx_io_uring_show_fdinfo+0x10/0x10
+ seq_show+0x16b/0x1d0
+ seq_read_iter+0xd7/0x440
+ seq_read+0x102/0x140
+ vfs_read+0xae/0x320
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? __do_sys_newfstat+0x35/0x60
+ ksys_read+0xa5/0xe0
+ do_syscall_64+0x50/0x110
+ entry_SYSCALL_64_after_hwframe+0x6e/0x76
+RIP: 0033:0x7f786ec1db4d
+Code: e8 46 e3 01 00 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 80 3d d9 ce 0e 00 00 74 17 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 5b c3 66 2e 0f 1f 84 00 00 00 00 00 48 83 ec
+RSP: 002b:00007ffcb361a4b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 000055a4c8fe42f0 RCX: 00007f786ec1db4d
+RDX: 0000000000000400 RSI: 000055a4c8fe48a0 RDI: 0000000000000006
+RBP: 00007f786ecfb0b0 R08: 00007f786ecfb2a8 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f786ecfaf60
+R13: 000055a4c8fe42f0 R14: 0000000000000000 R15: 00007ffcb361a628
+ </TASK>
+Modules linked in:
+CR2: 00000000000007b0
+---[ end trace 0000000000000000 ]---
+RIP: 0010:getrusage+0x21/0x3e0
+Code: 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 55 48 89 d1 48 89 e5 41 57 41 56 41 55 41 54 49 89 fe 41 52 53 48 89 d3 48 83 ec 30 <4c> 8b a7 b0 07 00 00 48 8d 7a 08 65 48 8b 04 25 28 00 00 00 48 89
+RSP: 0018:ffffa166c671bb80 EFLAGS: 00010282
+RAX: 00000000000040ca RBX: ffffa166c671bc60 RCX: ffffa166c671bc60
+RDX: ffffa166c671bc60 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffa166c671bbe0 R08: ffff9448cc3930c0 R09: 0000000000000000
+R10: ffffa166c671bd50 R11: ffffffff9ee89260 R12: 0000000000000000
+R13: ffff9448ce099480 R14: 0000000000000000 R15: ffff9448cff5b000
+FS:  00007f786e225900(0000) GS:ffff94493bc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000000007b0 CR3: 000000010d39c000 CR4: 0000000000750ef0
+PKRU: 55555554
+Kernel panic - not syncing: Fatal exception
+Kernel Offset: 0x1ce00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+
+Fixes: 3fcb9d17206e ("io_uring/sqpoll: statistics of the true utilization of sq threads")
+Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- include/uapi/linux/io_uring.h |  15 +++--
- io_uring/io_uring.c           |   3 +-
- io_uring/net.c                | 119 ++++++++++++++++++++++++++--------
- 3 files changed, 101 insertions(+), 36 deletions(-)
+ io_uring/fdinfo.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 3a0ff6da35de..9cf6c45149dd 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -352,13 +352,13 @@ enum io_uring_op {
-  *				IORING_NOTIF_USAGE_ZC_COPIED if data was copied
-  *				(at least partially).
-  *
-- * IORING_RECVSEND_BUNDLE	Used with IOSQE_BUFFER_SELECT. If set, send will
-- *				grab as many buffers from the buffer group ID
-- *				given and send them all. The completion result
-- *				will be the number of buffers send, with the
-- *				starting buffer ID in cqe->flags as per usual
-- *				for provided buffer usage. The buffers will be
-- *				contigious from the starting buffer ID.
-+ * IORING_RECVSEND_BUNDLE	Used with IOSQE_BUFFER_SELECT. If set, send or
-+ *				recv will grab as many buffers from the buffer
-+ *				group ID given and send them all. The completion
-+ *				result 	will be the number of buffers send, with
-+ *				the starting buffer ID in cqe->flags as per
-+ *				usual for provided buffer usage. The buffers
-+ *				will be	contigious from the starting buffer ID.
-  */
- #define IORING_RECVSEND_POLL_FIRST	(1U << 0)
- #define IORING_RECV_MULTISHOT		(1U << 1)
-@@ -531,6 +531,7 @@ struct io_uring_params {
- #define IORING_FEAT_CQE_SKIP		(1U << 11)
- #define IORING_FEAT_LINKED_FILE		(1U << 12)
- #define IORING_FEAT_REG_REG_RING	(1U << 13)
-+#define IORING_FEAT_RECVSEND_BUNDLE	(1U << 14)
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index 37afc5bac279..8d444dd1b0a7 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -147,11 +147,18 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *f)
+ 	if (has_lock && (ctx->flags & IORING_SETUP_SQPOLL)) {
+ 		struct io_sq_data *sq = ctx->sq_data;
  
- /*
-  * io_uring_register(2) opcodes and arguments
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index cf348c33f485..112c21053e6f 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3982,7 +3982,8 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 			IORING_FEAT_POLL_32BITS | IORING_FEAT_SQPOLL_NONFIXED |
- 			IORING_FEAT_EXT_ARG | IORING_FEAT_NATIVE_WORKERS |
- 			IORING_FEAT_RSRC_TAGS | IORING_FEAT_CQE_SKIP |
--			IORING_FEAT_LINKED_FILE | IORING_FEAT_REG_REG_RING;
-+			IORING_FEAT_LINKED_FILE | IORING_FEAT_REG_REG_RING |
-+			IORING_FEAT_RECVSEND_BUNDLE;
- 
- 	if (copy_to_user(params, p, sizeof(*p))) {
- 		ret = -EFAULT;
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 07831e764068..c671ecb5b849 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -760,7 +760,8 @@ int io_recvmsg_prep_async(struct io_kiocb *req)
- 	return ret;
- }
- 
--#define RECVMSG_FLAGS (IORING_RECVSEND_POLL_FIRST | IORING_RECV_MULTISHOT)
-+#define RECVMSG_FLAGS (IORING_RECVSEND_POLL_FIRST | IORING_RECV_MULTISHOT | \
-+			IORING_RECVSEND_BUNDLE)
- 
- int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
-@@ -774,21 +775,14 @@ int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	sr->len = READ_ONCE(sqe->len);
- 	sr->flags = READ_ONCE(sqe->ioprio);
--	if (sr->flags & ~(RECVMSG_FLAGS))
-+	if (sr->flags & ~RECVMSG_FLAGS)
- 		return -EINVAL;
- 	sr->msg_flags = READ_ONCE(sqe->msg_flags);
- 	if (sr->msg_flags & MSG_DONTWAIT)
- 		req->flags |= REQ_F_NOWAIT;
- 	if (sr->msg_flags & MSG_ERRQUEUE)
- 		req->flags |= REQ_F_CLEAR_POLLIN;
--	if (sr->flags & IORING_RECV_MULTISHOT) {
--		if (!(req->flags & REQ_F_BUFFER_SELECT))
--			return -EINVAL;
--		if (sr->msg_flags & MSG_WAITALL)
--			return -EINVAL;
--		if (req->opcode == IORING_OP_RECV && sr->len)
--			return -EINVAL;
--		req->flags |= REQ_F_APOLL_MULTISHOT;
-+	if (req->flags & REQ_F_BUFFER_SELECT) {
- 		/*
- 		 * Store the buffer group for this multishot receive separately,
- 		 * as if we end up doing an io-wq based issue that selects a
-@@ -798,6 +792,20 @@ int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		 * restore it.
- 		 */
- 		sr->buf_group = req->buf_index;
-+		req->buf_list = NULL;
-+	}
-+	if (sr->flags & IORING_RECV_MULTISHOT) {
-+		if (!(req->flags & REQ_F_BUFFER_SELECT))
-+			return -EINVAL;
-+		if (sr->msg_flags & MSG_WAITALL)
-+			return -EINVAL;
-+		if (req->opcode == IORING_OP_RECV && sr->len)
-+			return -EINVAL;
-+		req->flags |= REQ_F_APOLL_MULTISHOT;
-+	}
-+	if (sr->flags & IORING_RECVSEND_BUNDLE) {
-+		if (req->opcode == IORING_OP_RECVMSG)
-+			return -EINVAL;
- 	}
- 
- #ifdef CONFIG_COMPAT
-@@ -818,12 +826,22 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
- 				  struct io_async_msghdr *kmsg,
- 				  bool mshot_finished, unsigned issue_flags)
- {
-+	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
- 	unsigned int cflags;
- 
--	cflags = io_put_kbuf(req, issue_flags);
-+	if (sr->flags & IORING_RECVSEND_BUNDLE)
-+		cflags = io_put_kbufs(req, io_bundle_nbufs(kmsg, *ret),
-+				      issue_flags);
-+	else
-+		cflags = io_put_kbuf(req, issue_flags);
-+
- 	if (kmsg->msg.msg_inq > 0)
- 		cflags |= IORING_CQE_F_SOCK_NONEMPTY;
- 
-+	/* bundle with no more immediate buffers, we're done */
-+	if (sr->flags & IORING_RECVSEND_BUNDLE && req->flags & REQ_F_BL_EMPTY)
-+		goto finish;
-+
- 	/*
- 	 * Fill CQE for this receive and see if we should keep trying to
- 	 * receive from this socket.
-@@ -831,14 +849,18 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
- 	if ((req->flags & REQ_F_APOLL_MULTISHOT) && !mshot_finished &&
- 	    io_fill_cqe_req_aux(req, issue_flags & IO_URING_F_COMPLETE_DEFER,
- 				*ret, cflags | IORING_CQE_F_MORE)) {
--		struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
- 		int mshot_retry_ret = IOU_ISSUE_SKIP_COMPLETE;
- 
- 		io_mshot_prep_retry(req);
- 		/* Known not-empty or unknown state, retry */
- 		if (cflags & IORING_CQE_F_SOCK_NONEMPTY || kmsg->msg.msg_inq < 0) {
--			if (sr->nr_multishot_loops++ < MULTISHOT_MAX_RETRY)
-+			if (sr->nr_multishot_loops++ < MULTISHOT_MAX_RETRY) {
-+				if (kmsg->free_iov) {
-+					kfree(kmsg->free_iov);
-+					kmsg->free_iov = NULL;
-+				}
- 				return false;
-+			}
- 			/* mshot retries exceeded, force a requeue */
- 			sr->nr_multishot_loops = 0;
- 			mshot_retry_ret = IOU_REQUEUE;
-@@ -851,6 +873,7 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
- 	}
- 
- 	/* Finish the request / stop multishot. */
-+finish:
- 	io_req_set_res(req, *ret, cflags);
- 
- 	if (issue_flags & IO_URING_F_MULTISHOT)
-@@ -1048,6 +1071,58 @@ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
- 	return ret;
- }
- 
-+static int io_recv_buf_select(struct io_kiocb *req, struct io_async_msghdr *kmsg,
-+			      size_t *len, unsigned int issue_flags)
-+{
-+	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
-+	int ret;
-+
-+	/*
-+	 * If the ring isn't locked, then don't use the peek interface
-+	 * to grab multiple buffers as we will lock/unlock between
-+	 * this selection and posting the buffers.
-+	 */
-+	if (!(issue_flags & IO_URING_F_UNLOCKED) &&
-+	    sr->flags & IORING_RECVSEND_BUNDLE) {
-+		struct iovec *iov = kmsg->fast_iov;
-+
-+		*len = 0;
-+		if (kmsg->msg.msg_inq > 0) {
-+			*len = kmsg->msg.msg_inq;
-+			if (sr->len && *len > sr->len)
-+				*len = sr->len;
+-		sq_pid = sq->task_pid;
+-		sq_cpu = sq->sq_cpu;
+-		getrusage(sq->thread, RUSAGE_SELF, &sq_usage);
+-		sq_total_time = sq_usage.ru_stime.tv_sec * 1000000 + sq_usage.ru_stime.tv_usec;
+-		sq_work_time = sq->work_time;
++		/*
++		 * sq->thread might be NULL if we raced with the sqpoll
++		 * thread termination.
++		 */
++		if (sq->thread) {
++			sq_pid = sq->task_pid;
++			sq_cpu = sq->sq_cpu;
++			getrusage(sq->thread, RUSAGE_SELF, &sq_usage);
++			sq_total_time = (sq_usage.ru_stime.tv_sec * 1000000
++					 + sq_usage.ru_stime.tv_usec);
++			sq_work_time = sq->work_time;
 +		}
-+		ret = io_buffers_peek(req, &iov, ARRAY_SIZE(kmsg->fast_iov), len);
-+		if (unlikely(ret < 0))
-+			return ret;
-+
-+		if (ret == 1) {
-+			sr->buf = iov->iov_base;
-+			sr->len = iov->iov_len;
-+			goto ubuf;
-+		}
-+		iov_iter_init(&kmsg->msg.msg_iter, ITER_DEST, iov, ret, *len);
-+		if (iov != kmsg->fast_iov)
-+			kmsg->free_iov = iov;
-+	} else {
-+		void __user *buf;
-+
-+		*len = sr->len;
-+		buf = io_buffer_select(req, len, issue_flags);
-+		if (!buf)
-+			return -ENOBUFS;
-+		sr->buf = buf;
-+		sr->len = *len;
-+ubuf:
-+		ret = import_ubuf(ITER_DEST, sr->buf, sr->len,
-+				  &kmsg->msg.msg_iter);
-+		if (unlikely(ret))
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
-@@ -1093,17 +1168,10 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 
- retry_multishot:
- 	if (io_do_buffer_select(req)) {
--		void __user *buf;
--
--		buf = io_buffer_select(req, &len, issue_flags);
--		if (!buf)
--			return -ENOBUFS;
--		sr->buf = buf;
--		sr->len = len;
--		ret = import_ubuf(ITER_DEST, sr->buf, sr->len,
--				  &kmsg->msg.msg_iter);
-+		ret = io_recv_buf_select(req, kmsg, &len, issue_flags);
- 		if (unlikely(ret))
- 			goto out_free;
-+		sr->buf = NULL;
  	}
  
- 	kmsg->msg.msg_inq = -1;
-@@ -1143,13 +1211,8 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 	else
- 		io_kbuf_recycle(req, issue_flags);
- 
--	if (!io_recv_finish(req, &ret, kmsg, ret <= 0, issue_flags)) {
--		if (kmsg->free_iov) {
--			kfree(kmsg->free_iov);
--			kmsg->free_iov = NULL;
--		}
-+	if (!io_recv_finish(req, &ret, kmsg, ret <= 0, issue_flags))
- 		goto retry_multishot;
--	}
- 
- 	io_req_msg_cleanup(req, kmsg, issue_flags);
- 	return ret;
+ 	seq_printf(m, "SqThread:\t%d\n", sq_pid);
 -- 
 2.43.0
 

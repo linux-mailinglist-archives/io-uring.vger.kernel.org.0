@@ -1,162 +1,131 @@
-Return-Path: <io-uring+bounces-889-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-890-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EAA87857C
-	for <lists+io-uring@lfdr.de>; Mon, 11 Mar 2024 17:31:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D96648788F6
+	for <lists+io-uring@lfdr.de>; Mon, 11 Mar 2024 20:32:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0CDC1C223F5
-	for <lists+io-uring@lfdr.de>; Mon, 11 Mar 2024 16:31:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16B221C20AAE
+	for <lists+io-uring@lfdr.de>; Mon, 11 Mar 2024 19:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6446241C7A;
-	Mon, 11 Mar 2024 16:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128701E884;
+	Mon, 11 Mar 2024 19:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d69weerw"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GEUK/Z3/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B45144C8C;
-	Mon, 11 Mar 2024 16:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF1654FA9
+	for <io-uring@vger.kernel.org>; Mon, 11 Mar 2024 19:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710174576; cv=none; b=t7dy7qlS7UPNTRXH/D0X1hGFd2t+Fi5AZHKt8CFhhnx1Z/JvnOC5A1zPT7PZQx6VFGvV8Xtmrx2xMsKmS0gqbyNgJbyNIMK9gYzQb2Ok2X6UlAfScp/foxqW4zJZzyAt3+3zrp7Mff2D+lyJGDRFLY/fAl8O274y01zWi0X5KtI=
+	t=1710185556; cv=none; b=cvCpe5HJQyITDHK6rhNZxgexgPVI83NNTXsMSlA2EUd5t6lLY3pBKJrEY4Y+Nfz87m5JFyQbPnb9c46XmcQcJU+6Qhc2ODcAPNaf6dYu1Q04HyEhck7qFgY6U1NfTV/RplHcjK/XmMOGGaWIunnkFGPBOq0aPUT6Sma5cBVXe/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710174576; c=relaxed/simple;
-	bh=THsWYx+8+lkJyNg9KmPY39yeXHrCWb8jvwKQufUnO7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f2zZpM4xGkoIcYpH7MQ/D4xqzIQAIYZ6J9cQWcM+7a1DF7uuFKRi6HJXIza0Lu4WtzHciIXZ2VM0UERvHLYxdouj/Rm00RXqMT7VMa1ge/x595f3FOeNrVuOOc2YJdNdyoTcp4HdZAXDZYsrIL2xvC8NJCb69EBFviNodtaBkO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d69weerw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A1DFC433C7;
-	Mon, 11 Mar 2024 16:29:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710174576;
-	bh=THsWYx+8+lkJyNg9KmPY39yeXHrCWb8jvwKQufUnO7I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d69weerw0L9P5KGTwH45n+EAYG04hNLuJqUmybB+7xCKS9FRgYmcn9UsOeR2T5t6i
-	 bd5OFKeRHy+6D7ZB0I3vuKbAAWU3JUjGvw8VqP9Dv45BpJitc9co3hMl2D8mwU3XXo
-	 /LNdwjtevgaWVp7pcaQr16KK3XLOe03JpgZwDcrA6i1j95rQSyhgLRHPzCyC1EmW8M
-	 0CwaiEb8JjrwGLu5ik8rSR9phYO1T1l3A9+/z5war3lYByxqkQ3CmO/0pPEki3E5nC
-	 eiLEK6Hh9Tgow1dp6TcBgYE4emWHRBHmZTwusPP+lGP65Mvq8aLclfjAz4tnf0pn8z
-	 3a8OOMzLtJaUQ==
-Date: Mon, 11 Mar 2024 09:29:35 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zorro Lang <zlang@kernel.org>
-Cc: fstests@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] common/rc: notrun if io_uring is disabled by
- sysctl
-Message-ID: <20240311162935.GD6188@frogsfrogsfrogs>
-References: <20240311162029.1102849-1-zlang@kernel.org>
- <20240311162029.1102849-4-zlang@kernel.org>
+	s=arc-20240116; t=1710185556; c=relaxed/simple;
+	bh=QSfCjHtyKKZyMCZTpkTB36KbJ0T2uRPP2oVG7CMNka0=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=LoDFJICT59DMeo4+WxZqYQa1mhHgHMoA7NeFjOS771FXySVn7Az96NPyXJ1hH6qagRjuy0U2XNgVSLnzdzvxgU2l5qJiWOrHCATfGD2Cgauwz8lTVsAJGCAW5gkumUmj1pOZklLkFWkDZiAFyCc9s0wpzqXWkBcVWz4JWr41mWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GEUK/Z3/; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3663903844bso3353185ab.1
+        for <io-uring@vger.kernel.org>; Mon, 11 Mar 2024 12:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710185549; x=1710790349; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IXBUVBKHD0SaepaCHuxx8wZGKhlUjhGsnYarMzQ2B40=;
+        b=GEUK/Z3/eTWh4OwS5km8B//wVCgX3YG7bcziDFwxZyASaXlySbR5asiQ7NzodlkiiD
+         llk6lBMu3vkiDXy+7RaWhzEDHjxg+6q42hoKiKldPw/uiRJUBCUc4dL0eTo1rN3aUR4F
+         PfvvnMvkcst4zruhawrgEHJgJYQXmRt738vjB1ZJQ8ZCd0W1aRxtRcIt36xpQnFLSNvk
+         wa/ZDG5f+T84lI5f5yQIXGNa+tvzBXQu5e8UcNTT8CPlhVqNZijrUUcoAg2Tlr5tcaI3
+         IppsAnh7Pg/T0R+ffnsNPyQ9Txk2riGyad3e3qUOE8B2BIFO2fkwfs7tUZFmho22lnVi
+         9L7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710185549; x=1710790349;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IXBUVBKHD0SaepaCHuxx8wZGKhlUjhGsnYarMzQ2B40=;
+        b=NtwHZ8Mnvm7F3d3z6HIwSW4No1ELrmgsyEdt1YX6PB6rdA+39GIGSXr64yBNBxVb1D
+         zwYOioihyzi/LoeIpjROC9X8Q+E8YsTaXv+YaXgN6GD+59GIRlLWVNswsp8F48+V0YTP
+         Tkuxby4aorXbx67YnBjsiMaoAQ96FqlrgixMCFkcswfIFqrrPXQH23jpaH6pk3sxir/m
+         idrT64fP1MWJ+c8kQdg0f7z3P4hnjVc+JNHSPI8QFbKQoOApH9c5i4iZUKIVPCmq6t6T
+         hM0OxPtqeLZR+t7FxbpxARBGGdmUBJ0bgHYjJRr2qQnrChlISlDVWIjA5O35oRPI0GYQ
+         g97Q==
+X-Gm-Message-State: AOJu0Yz7YElZdXGgZ9FbOnXRYoX7G/WPlcQrsVQMEGI/wPvx9N8PiIlA
+	DqSrDS/+qy32SNmU3Xbo17+k4ss9p3V4JvaTRUosVfm5Y5dX6lkC4kZ0Wlkd5928FzuHItjTbGx
+	x
+X-Google-Smtp-Source: AGHT+IFrMBsIHL1OxoKNts5k8s9ZM9+bN6OEbqe3NbB+wnIBPyk+QNLRNXBSGYEkSHnEC7qywEhVzg==
+X-Received: by 2002:a05:6602:2746:b0:7c8:789b:b3d8 with SMTP id b6-20020a056602274600b007c8789bb3d8mr56787ioe.0.1710185549242;
+        Mon, 11 Mar 2024 12:32:29 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id x26-20020a02971a000000b00476ee0fcb03sm601424jai.48.2024.03.11.12.32.28
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Mar 2024 12:32:28 -0700 (PDT)
+Message-ID: <dc29bef1-da58-420e-b88d-912f0f1047a6@kernel.dk>
+Date: Mon, 11 Mar 2024 13:32:27 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240311162029.1102849-4-zlang@kernel.org>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring: don't save/restore iowait state
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 12, 2024 at 12:20:29AM +0800, Zorro Lang wrote:
-> If kernel supports io_uring, userspace still can/might disable that
-> supporting by set /proc/sys/kernel/io_uring_disabled=2. Let's notrun
-> if io_uring is disabled by that way.
-> 
-> Signed-off-by: Zorro Lang <zlang@kernel.org>
+This kind of state is per-syscall, and since we're doing the waiting off
+entering the io_uring_enter(2) syscall, there's no way that iowait can
+already be set for this case. Simplify it by setting it if we need to,
+and always clearing it to 0 when done.
 
-Looks fine to me,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Fixes: 7b72d661f1f2 ("io_uring: gate iowait schedule on having pending requests")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
---D
+---
 
-> ---
->  README        |  6 ++++++
->  common/rc     | 10 ++++++++++
->  src/feature.c | 19 ++++++++++++-------
->  3 files changed, 28 insertions(+), 7 deletions(-)
-> 
-> diff --git a/README b/README
-> index c46690c4..477136de 100644
-> --- a/README
-> +++ b/README
-> @@ -142,6 +142,12 @@ Setup Environment
->     https://www.lscdweb.com/registered/udf_verifier.html, then copy the udf_test
->     binary to xfstests/src/.
->  
-> +8. (optional) To do io_uring related testing, please make sure below 3 things:
-> +     1) kernel is built with CONFIG_IO_URING=y
-> +     2) sysctl -w kernel.io_uring_disabled=0 (or set it to 2 to disable io_uring
-> +        testing dynamically if kernel supports)
-> +     3) install liburing development package contains liburing.h before building
-> +        fstests
->  
->  For example, to run the tests with loopback partitions:
->  
-> diff --git a/common/rc b/common/rc
-> index 50dde313..1406d8d9 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -2317,6 +2317,8 @@ _require_aiodio()
->  # this test requires that the kernel supports IO_URING
->  _require_io_uring()
->  {
-> +	local n
-> +
->  	$here/src/feature -R
->  	case $? in
->  	0)
-> @@ -2324,6 +2326,14 @@ _require_io_uring()
->  	1)
->  		_notrun "kernel does not support IO_URING"
->  		;;
-> +	2)
-> +		n=$(sysctl -n kernel.io_uring_disabled 2>/dev/null)
-> +		if [ "$n" != "0" ];then
-> +			_notrun "io_uring isn't enabled totally by admin"
-> +		else
-> +			_fail "unexpected EPERM error, please check selinux or something else"
-> +		fi
-> +		;;
->  	*)
->  		_fail "unexpected error testing for IO_URING support"
->  		;;
-> diff --git a/src/feature.c b/src/feature.c
-> index 941f96fb..7e474ce5 100644
-> --- a/src/feature.c
-> +++ b/src/feature.c
-> @@ -232,15 +232,20 @@ check_uring_support(void)
->  	int err;
->  
->  	err = io_uring_queue_init(1, &ring, 0);
-> -	if (err == 0)
-> +	switch (err) {
-> +	case 0:
->  		return 0;
-> -
-> -	if (err == -ENOSYS) /* CONFIG_IO_URING=n */
-> +	case -ENOSYS:
-> +		/* CONFIG_IO_URING=n */
->  		return 1;
-> -
-> -	fprintf(stderr, "unexpected error from io_uring_queue_init(): %s\n",
-> -		strerror(-err));
-> -	return 2;
-> +	case -EPERM:
-> +		/* Might be due to sysctl io_uring_disabled isn't 0 */
-> +		return 2;
-> +	default:
-> +		fprintf(stderr, "unexpected error from io_uring_queue_init(): %s\n",
-> +			strerror(-err));
-> +		return 100;
-> +	}
->  #else
->  	/* liburing is unavailable, assume IO_URING is unsupported */
->  	return 1;
-> -- 
-> 2.43.0
-> 
-> 
+Just a cleanup.
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index cf348c33f485..49a124daa359 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2539,7 +2539,7 @@ static bool current_pending_io(void)
+ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 					  struct io_wait_queue *iowq)
+ {
+-	int io_wait, ret;
++	int ret;
+ 
+ 	if (unlikely(READ_ONCE(ctx->check_cq)))
+ 		return 1;
+@@ -2557,7 +2557,6 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 	 * can take into account that the task is waiting for IO - turns out
+ 	 * to be important for low QD IO.
+ 	 */
+-	io_wait = current->in_iowait;
+ 	if (current_pending_io())
+ 		current->in_iowait = 1;
+ 	ret = 0;
+@@ -2565,7 +2564,7 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 		schedule();
+ 	else if (!schedule_hrtimeout(&iowq->timeout, HRTIMER_MODE_ABS))
+ 		ret = -ETIME;
+-	current->in_iowait = io_wait;
++	current->in_iowait = 0;
+ 	return ret;
+ }
+ 
+-- 
+Jens Axboe
+
 

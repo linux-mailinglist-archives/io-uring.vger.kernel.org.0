@@ -1,82 +1,86 @@
-Return-Path: <io-uring+bounces-901-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-902-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BFA879C5C
-	for <lists+io-uring@lfdr.de>; Tue, 12 Mar 2024 20:45:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02692879DB4
+	for <lists+io-uring@lfdr.de>; Tue, 12 Mar 2024 22:46:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3ACE28215C
-	for <lists+io-uring@lfdr.de>; Tue, 12 Mar 2024 19:45:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9BF62825E4
+	for <lists+io-uring@lfdr.de>; Tue, 12 Mar 2024 21:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9357B1419B0;
-	Tue, 12 Mar 2024 19:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BB6143C7B;
+	Tue, 12 Mar 2024 21:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/x0PZIn"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="flv4yFm4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F7D23A6;
-	Tue, 12 Mar 2024 19:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FEA143753
+	for <io-uring@vger.kernel.org>; Tue, 12 Mar 2024 21:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710272721; cv=none; b=Yal+5euzcac4OluY8RpL9Y1QtGSbymVOZRUA9mTw84HXSXY9VZ4Cchqn0+c23s2UIhwlwx8XIgHITgeifwgTE3I/V63JAgojRj5XhlIR6rjV0Tb39twgGWbB3WZiAGnjgj/8l4wWuRdIGz8kyuv+0PznugVbOlJ8lcD0A70VOxs=
+	t=1710279876; cv=none; b=MaqjLlXBwfw1JZ9qAtUQQMaPoQ5Zq9tIm+7BA05fzf5QCXJju089G5ELFpqQA+IK33wcXzz0h2KvXSm0/lu6PcMoqrfuXl2HJD+tyiHWPE1LBpVg2o7ht+yohhDSMzHyG23UqUa6z2VAZe9nnN/8Zc4UEzaNf9ADJuW08IUpfyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710272721; c=relaxed/simple;
-	bh=0TEKOlWNIEoKVpumYhfkr3FEIYA30xUMyr8k+EIhB5U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O/cXr5OjBtLImwsb871duGhuAQbkpS4MyN350C1Ff7fZ7SgZMWeYs3BRZ42jb6VAwXdS2uvV1JbboFGtoFihcYGrL6qbN7KgtkEfKYxPEvQQKOEDhl54V2SiQEDDr56pH27w7IVxxOtYpIjRlzyQbVWfrLX9xK8BaP3ls+92ZZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q/x0PZIn; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6e62c65865cso4952893b3a.2;
-        Tue, 12 Mar 2024 12:45:19 -0700 (PDT)
+	s=arc-20240116; t=1710279876; c=relaxed/simple;
+	bh=HbMLQ0HD1E7UHtw4VSX38KM+HT5CUH3L0YK3XDrE/18=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JWXCXvJhaHnsf+oarzYlezvNo+i9wdgynK4803/kaaaK+vAdJDzYn7wfbrcwwPEmKd/lS7u9PcUA5Vb+2k8AVd+2cDDRgnfWNoBDfokeNmkeeztWS8zFfDp+0evTtKuJXdWbGAifgW6/A9zxv5vA7ndAQJ6mrVL9+Xc1/iSzuEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=flv4yFm4; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1dd10a37d68so3422795ad.2
+        for <io-uring@vger.kernel.org>; Tue, 12 Mar 2024 14:44:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710272719; x=1710877519; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1710279874; x=1710884674; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WtzYBJnsfJmGgU1D4uIQaSy3M2tP9MG6qmljkncxzVA=;
-        b=Q/x0PZInGJcVmE9gBtDvG/xgk4Xcj2tzH5lpJyahJXIP+Ynh06kK1nmHiwW6SSYCHE
-         M+Te2kDhNsJ/JbXXm4GYIbJHZgt+v8lIjmzF8/6VvDZo3TE2iTziJRN4KhuM32kszK/A
-         Z5tilp+jUqJXd15gZUm2twnBpcuf5Ol5W1ohAKRGo8MYYEimOVi4IC/jbxUrsdmDFomR
-         JtnsvyisoG1YEOQ8jcMFq/20fB/Ld7NHkJYiyrzsIkxN4IkBYs4rEj7CFRwvigrA/2xD
-         F0lbBbKSXcYfd55yZ5bnXp39Quw/xazbbPI0GhrGykE7/+GE3GqUUYqwkuqgpoN1M4vQ
-         T07w==
+        bh=5eO8gM2RtZqrOolc6NogGR6fkDkvymdIIdLJNjiyriQ=;
+        b=flv4yFm40E4U6N+ZsvdOzskCxYQnpxUacbcyoj0qIRmkJBW9rvKK453qylFvWNkoto
+         m9pYh3kOtiV3g11jo2j6iJP5elc8SExR+S64a9gfh9TCZ86blnDbwQ8mr7cAj/b83UBH
+         AJLMe5jm3CEU4ekw2jSUUupn5PyKp66FyJEjmUhNqg0mf8Q9bdhYII1lvn/QcM0yF1A5
+         vDBx5wJ37mC3I3G/P6hLbYhrBQNiSPXlHzcL0n6DeQ4N2VG007LOCwBj/tjxSWOUvq1B
+         dX/Ha7nDnou+mK1OWztFTGwx+UCsVJVtY6UBGQBx1UQlmPXvM5B/GXnwrFfga1bDSamo
+         KGSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710272719; x=1710877519;
+        d=1e100.net; s=20230601; t=1710279874; x=1710884674;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WtzYBJnsfJmGgU1D4uIQaSy3M2tP9MG6qmljkncxzVA=;
-        b=bW6n9+ukg7WA8b3JshOYBdImfke7O3fGrrDxyCSjuBsHWl2oa8eRpVB6ZNx88b4zNn
-         5szQfnmQPOPlb/lB8ABzvGe0Ju4KXoYdJI4UaUlxYyzq50zL9Tk8FyTHT8QbnxWZ7NXs
-         miwsvUJhq0q1zYZKyLvSObRbWpiK8qwfnjCcolFe+BxJKWz87G01hRe42wqE/QwiP9tb
-         d9O0L3gst26wGanUBsR4FomvbYdjIIRdsMqd8oa42Cff/sDYff5PWuRrdsJ5ocCJJjPb
-         nZYIt0k4j/MMNmpZE5oNR7lp80JigWpgpmgbNTbCspojZaNtQpU5j3z1QHJqDynoLR2C
-         AZwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhCMspGapyNwf+EBtHpcWCQT7syX1Y9kQkgSXp402l9qaN3O+74V0hEPn+LRoGbsdbF3TD6+/WsqpKj0FPJYFsvhU1D2Xv3zXm9wf2imbRr0y/ozUrm4LbPCm1SZ4+RC87iJGZalU=
-X-Gm-Message-State: AOJu0YwTnjQSJQck0w4Z9gPzB8AkpA0tpfN/yS6QlRxjI3GCz8KwBnDe
-	QFtU7s62B5EuHPyJpKBpR62/zf7bxy0WPgdEpqDJO5JGlINIdMu8
-X-Google-Smtp-Source: AGHT+IFkylPPjxj57UvYUw8SxFXN0OslyT25c4hDJPBx7tYQg1zFyOpcTgZE5cToFg8KX4EAoeJKKQ==
-X-Received: by 2002:a05:6a20:8411:b0:1a3:15e7:e563 with SMTP id c17-20020a056a20841100b001a315e7e563mr6983154pzd.14.1710272719373;
-        Tue, 12 Mar 2024 12:45:19 -0700 (PDT)
-Received: from localhost ([45.200.107.219])
-        by smtp.gmail.com with ESMTPSA id u17-20020a170903125100b001db5fc51d71sm7142007plh.160.2024.03.12.12.45.18
+        bh=5eO8gM2RtZqrOolc6NogGR6fkDkvymdIIdLJNjiyriQ=;
+        b=bz2F6pbLhFg3b2BZFC5ciaUZVWoLs80MG9KyPzug+Rw+2J3Dk9xll5+ro2xVtdxsTT
+         2xF4w5hmHWg10aJPZ8VIt70kAEPwwL640eDyiVGD1UOteaWOMLUSuommHJQ/okItvmqz
+         b7P3Mc7fToQxvYviCFcuavIQg2et0bToojSWeHcbGTnW+cWO1EBjFaVLuhq4gU0CG5wn
+         2EaaKj9/9Jlf2/U8/4JU0Hdb+v9dqhVZL4o5nhjUYSq2bqJ/ZPUzpDWSmH+LAK4WreuL
+         /y8+V8u3g2OaWegLDKK1a+hpqdoWbSMBrlKsQwtwOw4cEH6THrEznUTAS67dhavmV+26
+         5Wnw==
+X-Gm-Message-State: AOJu0YzW9IUK2jr8bLPTv151+YWqMMHuxzuo8YpH2C/KdatWM6nRIPXd
+	l0AkhKLpZo90ZH7amY1VjTrKh9rsWWgzSIGDcbMrq9d4w5BEFG57pdkyhjvG8KK/0WQ2nYkwHtF
+	3
+X-Google-Smtp-Source: AGHT+IGUZlbyBfpryoFo8y1ZZRCIJc9MaGPPUkOazFNOkaPw8jH3LQWVOeCb8g9FlTX8rjpYBtp/ww==
+X-Received: by 2002:a17:903:110c:b0:1dc:cbaa:f5dd with SMTP id n12-20020a170903110c00b001dccbaaf5ddmr1844263plh.39.1710279873881;
+        Tue, 12 Mar 2024 14:44:33 -0700 (PDT)
+Received: from localhost (fwdproxy-prn-014.fbsv.net. [2a03:2880:ff:e::face:b00c])
+        by smtp.gmail.com with ESMTPSA id t8-20020a170902e84800b001c407fac227sm7162255plg.41.2024.03.12.14.44.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Mar 2024 12:45:19 -0700 (PDT)
-From: Xin Wang <yw987194828@gmail.com>
-X-Google-Original-From: Xin Wang <yw987194828@163.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xin Wang <yw987194828@163.com>,
-	Xin Wang <yw987194828@gmail.com>
-Subject: [PATCH] io_uring: extract the function that checks the legitimacy of sq/cq entries
-Date: Wed, 13 Mar 2024 03:44:46 +0800
-Message-Id: <20240312194446.114312-1-yw987194828@163.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 12 Mar 2024 14:44:33 -0700 (PDT)
+From: David Wei <dw@davidwei.uk>
+To: io-uring@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	David Ahern <dsahern@kernel.org>,
+	Mina Almasry <almasrymina@google.com>
+Subject: [RFC PATCH v4 00/16] Zero copy Rx using io_uring
+Date: Tue, 12 Mar 2024 14:44:14 -0700
+Message-ID: <20240312214430.2923019-1-dw@davidwei.uk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -85,71 +89,163 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the io_uring_create function, the sq_entries and cq_entries passed
-in by the user are examined. The checking logic is the same for both, so
-the common code can be extracted for reuse.
+This patchset is a proposal that adds zero copy network Rx to io_uring.
+With it, userspace can register a region of host memory for receiving
+data directly from a NIC using DMA, without needing a kernel to user
+copy.
 
-Extract the common code as io_validate_entries function.
+This is still a WIP and has a list of known issues. We're looking for
+feedback on the overall approach.
 
-Signed-off-by: Xin Wang <yw987194828@gmail.com>
----
- io_uring/io_uring.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+Full kernel tree including some out of tree BNXT changes:
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index cd9a137ad6ce..c51100f39cbf 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3819,6 +3819,18 @@ static struct file *io_uring_get_file(struct io_ring_ctx *ctx)
- 					 O_RDWR | O_CLOEXEC, NULL);
- }
- 
-+static bool io_validate_entries(unsigned int *entries, unsigned int max_entries, __u32 flags)
-+{
-+	if (!(*entries))
-+		return false;
-+	if (*entries > max_entries) {
-+		if (!(flags & IORING_SETUP_CLAMP))
-+			return false;
-+		*entries = max_entries;
-+	}
-+	return true;
-+}
-+
- static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 				  struct io_uring_params __user *params)
- {
-@@ -3827,13 +3839,8 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	struct file *file;
- 	int ret;
- 
--	if (!entries)
-+	if (!io_validate_entries(&entries, IORING_MAX_ENTRIES, p->flags))
- 		return -EINVAL;
--	if (entries > IORING_MAX_ENTRIES) {
--		if (!(p->flags & IORING_SETUP_CLAMP))
--			return -EINVAL;
--		entries = IORING_MAX_ENTRIES;
--	}
- 
- 	if ((p->flags & IORING_SETUP_REGISTERED_FD_ONLY)
- 	    && !(p->flags & IORING_SETUP_NO_MMAP))
-@@ -3854,13 +3861,8 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 		 * to a power-of-two, if it isn't already. We do NOT impose
- 		 * any cq vs sq ring sizing.
- 		 */
--		if (!p->cq_entries)
-+		if (!io_validate_entries(&(p->cq_entries), IORING_MAX_CQ_ENTRIES, p->flags))
- 			return -EINVAL;
--		if (p->cq_entries > IORING_MAX_CQ_ENTRIES) {
--			if (!(p->flags & IORING_SETUP_CLAMP))
--				return -EINVAL;
--			p->cq_entries = IORING_MAX_CQ_ENTRIES;
--		}
- 		p->cq_entries = roundup_pow_of_two(p->cq_entries);
- 		if (p->cq_entries < p->sq_entries)
- 			return -EINVAL;
+https://github.com/spikeh/linux/tree/zcrx
+
+On the userspace side, support is added to both liburing and Netbench:
+
+https://github.com/spikeh/liburing/tree/zcrx2
+https://github.com/spikeh/netbench/tree/zcrx
+
+Hardware support is added to the Broadcom BNXT driver. This patchset +
+userspace code was tested on an Intel Xeon Platinum 8321HC CPU and
+Broadcom BCM57504 NIC.
+
+Early benchmarks using this prototype, with iperf3 as a load generator,
+showed a ~50% reduction in overall system memory bandwidth as measured
+using perf counters. Note that DDIO must be disabled on Intel systems.
+Build Netbench using the modified liburing above.
+
+This patchset is based on the work by Jonathan Lemon
+<jonathan.lemon@gmail.com>:
+https://lore.kernel.org/io-uring/20221108050521.3198458-1-jonathan.lemon@gmail.com/
+
+Changes in RFC v4:
+------------------
+
+* Rebased on top of Mina Almasry's TCP devmem patchset and latest
+  net-next, now sharing common infra e.g.:
+    * netmem_t and net_iovs
+    * Page pool memory provider
+* The registered buffer (rbuf) completion queue where completions from
+  io_recvzc requests are posted is removed. Now these post into the main
+  completion queue, using big (32-byte) CQEs. The first 16 bytes is an
+  ordinary CQE, while the latter 16 bytes contain the io_uring_rbuf_cqe
+  as before. This vastly simplifies the uAPI and removes a level of
+  indirection in userspace when looking for payloads.
+  * The rbuf refill queue is still needed for userspace to return
+    buffers to kernel.
+* Simplified code and uAPI on the io_uring side, particularly
+  io_recvzc() and io_zc_rx_recv(). Many unnecessary lines were removed
+  e.g. extra msg flags, readlen, etc.
+
+Changes in RFC v3:
+------------------
+
+* Rebased on top of Jakub Kicinski's memory provider API RFC. The ZC
+  pool added is now a backend for memory provider.
+* We're also reusing ppiov infrastructure. The refcounting rules stay
+  the same but it's shifted into ppiov->refcount. That lets us to
+  flexibly manage buffer lifetimes without adding any extra code to the
+  common networking paths. It'd also make it easier to support dmabufs
+  and device memory in the future.
+  * io_uring also knows about pages, and so ppiovs might unnecessarily
+    break tools inspecting data, that can easily be solved later.
+
+Many patches are not for upstream as they depend on work in progress,
+namely from Mina:
+
+* struct netmem_t
+* Driver ndo commands for Rx queue configs
+* struct page_pool_iov and shared pp infra
+
+Changes in RFC v2:
+------------------
+
+* Added copy fallback support if userspace memory allocated for ZC Rx
+  runs out, or if header splitting or flow steering fails.
+* Added veth support for ZC Rx, for testing and demonstration. We will
+  need to figure out what driver would be best for such testing
+  functionality in the future. Perhaps netdevsim?
+* Added socket registration API to io_uring to associate specific
+  sockets with ifqs/Rx queues for ZC.
+* Added multi-socket support, such that multiple connections can be
+  steered into the same hardware Rx queue.
+* Added Netbench server/client support.
+
+Known deficiencies that we will address in a future patchset:
+
+* Proper test driver + selftests, maybe netdevsim.
+* Revisiting userspace API.
+* Multi-region support.
+* Steering setup.
+* Further optimisation work.
+* ...and more.
+
+If you would like to try out this patchset, build and run the kernel
+tree then build Netbench using liburing, all from forks above.
+
+Run setup.sh first:
+
+https://gist.github.com/isilence/e6a28ce41a545a261566672104afa461
+
+Then run the following commands:
+
+sudo ip netns exec nsserv ./netbench --server_only 1 --v6 false \
+    --rx "io_uring --provide_buffers 0 --use_zc 1 \
+    --zc_pool_pages 16384 --zc_ifname ptp-serv" --use_port 9999
+
+sudo ip netns exec nscl ./netbench --client_only 1 --v6 false \
+    --tx "epoll --threads 1 --per_thread 1 --size 2800" \
+    --host 10.10.10.20 --use_port 9999
+
+David Wei (7):
+  io_uring: introduce interface queue
+  io_uring: add mmap support for shared ifq ringbuffers
+  netdev: add XDP_SETUP_ZC_RX command
+  io_uring: setup ZC for an Rx queue when registering an ifq
+  io_uring: add zero copy buf representation and pool
+  io_uring: add io_recvzc request
+  io_uring/zcrx: add copy fallback
+
+Pavel Begunkov (9):
+  net: generalise pp provider params passing
+  io_uring: delayed cqe commit
+  net: page_pool: add ->scrub mem provider callback
+  io_uring: separate header for exported net bits
+  io_uring/zcrx: implement socket registration
+  io_uring: implement pp memory provider for zc rx
+  io_uring/zcrx: implement PP_FLAG_DMA_* handling
+  net: execute custom callback from napi
+  veth: add support for io_uring zc rx
+
+ drivers/net/veth.c             | 214 +++++++-
+ include/linux/io_uring.h       |   6 -
+ include/linux/io_uring/net.h   |  30 ++
+ include/linux/io_uring_types.h |   5 +
+ include/linux/net.h            |   2 +
+ include/linux/netdevice.h      |   6 +
+ include/net/busy_poll.h        |   7 +
+ include/net/netdev_rx_queue.h  |   3 +
+ include/net/page_pool/types.h  |   2 +
+ include/uapi/linux/io_uring.h  |  50 ++
+ io_uring/Makefile              |   3 +-
+ io_uring/io_uring.c            |  15 +-
+ io_uring/io_uring.h            |  10 +
+ io_uring/net.c                 | 108 +++-
+ io_uring/opdef.c               |  16 +
+ io_uring/register.c            |  13 +
+ io_uring/uring_cmd.c           |   1 +
+ io_uring/zc_rx.c               | 916 +++++++++++++++++++++++++++++++++
+ io_uring/zc_rx.h               |  83 +++
+ net/core/dev.c                 |  48 +-
+ net/core/page_pool.c           |   8 +-
+ net/socket.c                   |   3 +-
+ 22 files changed, 1530 insertions(+), 19 deletions(-)
+ create mode 100644 include/linux/io_uring/net.h
+ create mode 100644 io_uring/zc_rx.c
+ create mode 100644 io_uring/zc_rx.h
+
 -- 
-2.25.1
+2.43.0
 
 

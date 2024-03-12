@@ -1,143 +1,120 @@
-Return-Path: <io-uring+bounces-894-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-895-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0F3879678
-	for <lists+io-uring@lfdr.de>; Tue, 12 Mar 2024 15:35:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5537879725
+	for <lists+io-uring@lfdr.de>; Tue, 12 Mar 2024 16:07:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75B1DB25388
-	for <lists+io-uring@lfdr.de>; Tue, 12 Mar 2024 14:35:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B7D21F222A1
+	for <lists+io-uring@lfdr.de>; Tue, 12 Mar 2024 15:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEEE3D72;
-	Tue, 12 Mar 2024 14:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EE07B3F5;
+	Tue, 12 Mar 2024 15:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="groIalZQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dE9nCxP2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F55A33E5
-	for <io-uring@vger.kernel.org>; Tue, 12 Mar 2024 14:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6168478286
+	for <io-uring@vger.kernel.org>; Tue, 12 Mar 2024 15:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710254084; cv=none; b=kT3urJdZSqvi9mriahCSaHJ/6ApmK9PleaZXg1GZZMHbuQKYTQp2LGl0vVXSy6SDFKPnRBcBOldrbjsLpNtAinwbSEUPLk25gR10pktTOFBvXCGxXmBl+wAdn2ESK3ASpiNUlhHZrgVESNRmqzgp1E67XDhFeaPnJe7gUKOVj6w=
+	t=1710256070; cv=none; b=qQbLPH9H4vuly7vwa56m/ztvodPp4Hqc05P6jEPGy8OVgz1GdlELQHNGsLmOxtyZYID7Ezmy2NqrKyvJgnl0GCj1TzEOASY44Vl0ck7FmCDpPzTOsRw3Fdi3/TFburHxXcOE0jSuYsb3Hu+Hq61Nr7ociWYbkYoiUfuHUT/pRJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710254084; c=relaxed/simple;
-	bh=cXh3uEsgWMI8iZusOPz9HdPAX+leG9wjwQ9vb4XC4vE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CY4nOzf+xLtqHd3OJJNMnrp5kgeE0d1xFPKtH4ZziMt7u83kWhXMjimqsgBLDEjmhq4z0fUqsgQJXsoUdg3mOjJaKmF+IQRlHEge1oCBnvCBll8GQ5uSowAh4QEGUprsA5w9Ba+nna7qAUBr2OhlXMqXMQ4mhUcowKJHDnbOSIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=groIalZQ; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6e693adc8a2so273646b3a.1
-        for <io-uring@vger.kernel.org>; Tue, 12 Mar 2024 07:34:42 -0700 (PDT)
+	s=arc-20240116; t=1710256070; c=relaxed/simple;
+	bh=TdqiDXEWnE8SBD/0mcBgFTW1mK3vOPH8tnaR0ScU7/w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NaDzSEjSWQk/PkbfiOIcWN69/AwiH2oS3xzzTapPYs5IpzEQnTUYdKtw5uK4SoSaeYvsffdrNXPSWUrAlMYfaMiiemtFVcdDsdCiAHFAeccHAR411gNYr6oCwlOgjosexgAfus4sVdMf9TSYg9J1r5T+x6m1lrpCK3HA5f/nwNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dE9nCxP2; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-56838e00367so4959136a12.0
+        for <io-uring@vger.kernel.org>; Tue, 12 Mar 2024 08:07:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710254082; x=1710858882; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MzzmKMopoCRQwM8a7mNzAcigvxiHAg2EWip7lmqWvzY=;
-        b=groIalZQcyiVJwNREciuCO+9Sq6vGaaFVANzHujV980JGPrKTOZIzhx0SsPBP7SpBk
-         /G+WK/cBQO1i0AJveQtuzt/QfGvE7BqRExr6tIJHnh4kzqCqY/RzN1eNMbwsv80dU8oT
-         jLjWD4SziWWQdKDgXL1KsFZ9KqazFOZbgRIgQlp9KLxe7gSxR4N7KQWgjQRVjpzcRuu4
-         Q1Ffdtg7ifplLpDR0f2ezSLqjFEtBT0b5E8Y2Kz+bJpADkuWaPmcUjuKGiXhVlwasrDz
-         FsGtSW91l2ue5yNSehfO8PjJvMvIITL3VgmI9xGVdZs5MzXAtcCx45SR81DGqgcsILLJ
-         DNDQ==
+        d=gmail.com; s=20230601; t=1710256066; x=1710860866; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vFfmXKOXtpHRhC+FgxiDDeeRHGPGCzJGWPHeK9OoFow=;
+        b=dE9nCxP2erpuZI78kjUpNoRkV6GJ3a7ANoTysFqSTrW0PShxovuPkqR5AJ7t9bjmOb
+         Iafs8rjCSuK4hkOWJm9pg6mzzLTCNB2HjnWB6ToEkwm49cqpo7+hVBnrvnIzWGJI7voM
+         4ySYwmCauIsysUaYGFJdfaS0zI2EbwSTK/Az+tqVp9kq6EEIkUul+pfTXOZfQaWYbz/a
+         T50jjOtPrnglQBy7lc2e93kvsc0A/NrttNnNcebtxsV6jDKl08Vk9Am1StmHUATkwnsE
+         xFCeib0jLoRlv7zz+CbCPWO96ZmqP4HQzre530WXBDyUfQELXfcbGtH31J2oOwO/XE0R
+         E/Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710254082; x=1710858882;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MzzmKMopoCRQwM8a7mNzAcigvxiHAg2EWip7lmqWvzY=;
-        b=AUt7OcvXvwQUzXaR0+D0i73WHqaoVkyRTPPwcm7Y2YIwAkxvNQV5IvYI8BvmD5zEo8
-         u8a6+Pcj969oLOLhndA7BlMYiuVuWkojripzv+LGXb8KcKW2gFOKbXL0m3TkHkFTK1t4
-         LKo/rC00MkvBflE9FZA/DLLm+q1znp2fthIlw0NoypyW96YkoqHVJpWm08hMrBYg8PvE
-         RQLZUBgMrYYtIUxP1S/yJM8Z3wCiqfbrB7fo73YPChxEXxzUtrSUKx3gY1L6A7oHiF7/
-         TDgg4fuimrlFLpLBwgLmClqn0c59GSaUKZGjdU39+kNuw0iyPpyssUxnR3Ef+66rSdUE
-         Y7Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoEeaj75ypAaLUbkLTKLW9rj3yuqAu2nGjwBj4OCictYEgYzXqV/e8Ct1a7QTWknJsKhTykL+O1394iVlbd5W4YId1I8MHVj8=
-X-Gm-Message-State: AOJu0Yxj37K1R8tUuU6GC0iwyP6YMZCqLQKI52QiPfJld41kJJv97JEq
-	JTF2P5S//nKlwLcwbFYu1c+YL3mW3e0XYw3yFI/GP/A2+a/jA0lgmPk7TO+ry8A=
-X-Google-Smtp-Source: AGHT+IFDcI8mS2gs9NO0X5lrcuBm9Bmac4hHIKD3R57tXZnBo1tuk7q6bjTSHz+jRGAp0khnB4GNIQ==
-X-Received: by 2002:a05:6a00:2384:b0:6e6:13ec:7170 with SMTP id f4-20020a056a00238400b006e613ec7170mr12480717pfc.0.1710254081762;
-        Tue, 12 Mar 2024 07:34:41 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c085:21d6::1197? ([2620:10d:c090:400::5:d2d7])
-        by smtp.gmail.com with ESMTPSA id v129-20020a626187000000b006e6988c64a5sm3312432pfb.208.2024.03.12.07.34.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Mar 2024 07:34:41 -0700 (PDT)
-Message-ID: <8a9993c7-fd4d-44ff-8971-af59c7f3052c@kernel.dk>
-Date: Tue, 12 Mar 2024 08:34:39 -0600
+        d=1e100.net; s=20230601; t=1710256066; x=1710860866;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vFfmXKOXtpHRhC+FgxiDDeeRHGPGCzJGWPHeK9OoFow=;
+        b=n6SKvAqBEzmYVaFyKaGHXN60knUPSUVrYuM2dW9gHngrlio571rLq7HBduQ2IaFxTM
+         w9nCN1TGYExiOoOdhpcePq+EtWL/WLXy1D+sSse6qpPERYQ9DDQM5393QfZUaBeKj2P9
+         dEV04gJHcsqfBbosnW9oSPlyntSTTBkjRWUHgje/wCsE/5NmHG3oB6YTdVvPw4FW/2jw
+         1GD2aKXUTSGbXf6qhvA0ij5GyTaGANw4PpjgKDzIYBAqCvIfQXKEsDjdtmEnGMS93h1Q
+         GzLq24GXd0oPj4sZCntSNyCo0xLCt36+tXeEGbhERHtWaY4v05U29nwKAdWQ+bVyYZCU
+         wR4Q==
+X-Gm-Message-State: AOJu0YzpUqPj0xtwm6fHDaUtYeOyVhAfTieRsxJe3ZPTpD3dIkTJOw2u
+	E7Pv/7RizdGlH+pGvwXn/cdkSzvEIVxxVPnXL1P8Z5RJ/wYc0CtNxC9lRw5z
+X-Google-Smtp-Source: AGHT+IHevXyv/yHtk9JLUqNheBhPmOJlMEWIc7QuPnzNIzoqpLZl0o3Hyk6f7r6cKpDX+DFMzYsENw==
+X-Received: by 2002:a17:906:bf4c:b0:a46:4cc8:6d60 with SMTP id ps12-20020a170906bf4c00b00a464cc86d60mr511078ejb.73.1710256065885;
+        Tue, 12 Mar 2024 08:07:45 -0700 (PDT)
+Received: from 127.com ([2620:10d:c092:600::1:b00e])
+        by smtp.gmail.com with ESMTPSA id l20-20020a170906a41400b00a46163be639sm3060941ejz.12.2024.03.12.08.07.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Mar 2024 08:07:45 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	asml.silence@gmail.com
+Subject: [PATCH 1/1] io_uring: clean rings on NO_MMAP alloc fail
+Date: Tue, 12 Mar 2024 14:56:27 +0000
+Message-ID: <9ff6cdf91429b8a51699c210e1f6af6ea3f8bdcf.1710255382.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10/5.15] io_uring: fix registered files leak
-Content-Language: en-US
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alexey Khoroshilov <khoroshilov@ispras.ru>, lvc-project@linuxtesting.org,
- Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
- Roman Belyaev <belyaevrd@yandex.ru>
-References: <20240312142313.3436-1-pchelkin@ispras.ru>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240312142313.3436-1-pchelkin@ispras.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/12/24 8:23 AM, Fedor Pchelkin wrote:
-> No upstream commit exists for this patch.
-> 
-> Backport of commit 705318a99a13 ("io_uring/af_unix: disable sending
-> io_uring over sockets") introduced registered files leaks in 5.10/5.15
-> stable branches when CONFIG_UNIX is enabled.
-> 
-> The 5.10/5.15 backports removed io_sqe_file_register() calls from
-> io_install_fixed_file() and __io_sqe_files_update() so that newly added
-> files aren't passed to UNIX-related skbs and thus can't be put during
-> unregistering process. Skbs in the ring socket receive queue are released
-> but there is no skb having reference to the newly updated file.
-> 
-> In other words, when CONFIG_UNIX is enabled there would be no fput() when
-> files are unregistered for the corresponding fget() from
-> io_install_fixed_file() and __io_sqe_files_update().
-> 
-> Drop several code paths related to SCM_RIGHTS as a partial change from
-> commit 6e5e6d274956 ("io_uring: drop any code related to SCM_RIGHTS").
-> This code is useless in stable branches now, too, but is causing leaks in
-> 5.10/5.15.
-> 
-> As stated above, the affected code was removed in upstream by
-> commit 6e5e6d274956 ("io_uring: drop any code related to SCM_RIGHTS").
-> 
-> Fresher stables from 6.1 have io_file_need_scm() stub function which
-> usage is effectively equivalent to dropping most of SCM-related code.
-> 
-> 5.4 seems not to be affected with this problem since SCM-related
-> functions have been dropped there by the backport-patch.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-> 
-> Fixes: 705318a99a13 ("io_uring/af_unix: disable sending io_uring over sockets")
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-> ---
-> I feel io_uring-SCM related code should be dropped entirely from the
-> stable branches as the backports already differ greatly between versions
-> and some parts are still kept, some have been dropped in a non-consistent
-> order. Though this might contradict with stable kernel rules or be
-> inappropriate for some other reason.
+We make a few cancellation judgements based on ctx->rings, so let's
+zero it afer deallocation for IORING_SETUP_NO_MMAP just like it's
+done with the mmap case. Likely, it's not a real problem, but zeroing
+is safer and better tested.
 
-Looks fine to me, and I agree, it makes much more sense to drop it all
-from 5.10/5.15-stable as well to keep them in sync with upstream. And I
-think this is fine for stable, dropping code is always a good thing.
+Cc: stable@vger.kernel.org
+Fixes: 03d89a2de25bbc ("io_uring: support for user allocated memory for rings/sqes")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/io_uring.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 49a124daa359..e7d7a456b489 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2788,14 +2788,15 @@ static void io_rings_free(struct io_ring_ctx *ctx)
+ 	if (!(ctx->flags & IORING_SETUP_NO_MMAP)) {
+ 		io_mem_free(ctx->rings);
+ 		io_mem_free(ctx->sq_sqes);
+-		ctx->rings = NULL;
+-		ctx->sq_sqes = NULL;
+ 	} else {
+ 		io_pages_free(&ctx->ring_pages, ctx->n_ring_pages);
+ 		ctx->n_ring_pages = 0;
+ 		io_pages_free(&ctx->sqe_pages, ctx->n_sqe_pages);
+ 		ctx->n_sqe_pages = 0;
+ 	}
++
++	ctx->rings = NULL;
++	ctx->sq_sqes = NULL;
+ }
+ 
+ void *io_mem_alloc(size_t size)
 -- 
-Jens Axboe
+2.43.0
 
 

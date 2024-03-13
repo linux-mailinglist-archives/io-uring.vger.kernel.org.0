@@ -1,191 +1,156 @@
-Return-Path: <io-uring+bounces-939-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-940-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C13287B550
-	for <lists+io-uring@lfdr.de>; Thu, 14 Mar 2024 00:43:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F5D87B551
+	for <lists+io-uring@lfdr.de>; Thu, 14 Mar 2024 00:44:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0B95283C69
-	for <lists+io-uring@lfdr.de>; Wed, 13 Mar 2024 23:43:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3C541C20F0A
+	for <lists+io-uring@lfdr.de>; Wed, 13 Mar 2024 23:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0485D72B;
-	Wed, 13 Mar 2024 23:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7282260B;
+	Wed, 13 Mar 2024 23:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cWZybiFZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jH+YdP/6";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cWZybiFZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jH+YdP/6"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oyAtwuOa"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1105B20F
-	for <io-uring@vger.kernel.org>; Wed, 13 Mar 2024 23:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB134691
+	for <io-uring@vger.kernel.org>; Wed, 13 Mar 2024 23:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710373402; cv=none; b=hKsTAhVm8vJiXRsero96H80Lv6dx1SuiWfr4FyBaGKMj89b9Q9OSZ6HG9M9SM15IOGCtLXtP9XeNSjryIPSRQMT9Zn9Ro06WtQgk/RgFe1HcLxmXzLTNAsdMXpnMQvBRT+wm97xQxVNKWSGNzdwYGwuaad0oFMEkbXWW6OSXYfg=
+	t=1710373467; cv=none; b=R9PhhvEjUEPQrvyP3sCYFDdelbru8frvKvZJ1AosG4bCa5IDZKT1Aq0L3z/yjAmFGCEVFZ3+mWNxn2Wwghvgon6xNqRl96gPn3NX6wT9S5gNn/gbwy9XYf2FlkbvH50i1kHbiYD5JBAdOCXmNHP71zdufE9vBEgCQkb7v7kNaNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710373402; c=relaxed/simple;
-	bh=z62cA5DbtJRbr2Pywo2LCrXHrCaKs0QuGVoexLBDt30=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=md8DqU6O6urzagVdHYOFLGOJ+kkK+fRvvsOWKZiO8LT50Wnp7ebw6WayOwN14/6jbXs3sA/XrjXXouMS7EadofYPxlSFS0wUx3/q7wqpTOGzyZAjpUHgt+gGelOZ/bxspEDplBM3LHT93BFf4AoxEyxu1y4e+196CPVeLYpwxWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cWZybiFZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jH+YdP/6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cWZybiFZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jH+YdP/6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 078EC1F7F5;
-	Wed, 13 Mar 2024 23:43:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1710373399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tafNtRNG21c3kpe7wBxGZFVwqts6ODFCRlnCkWhyyWs=;
-	b=cWZybiFZKdM+WV+5j3Oix1MQg0+TULQJrg0AoaLMHaQKLSifqXwINaWTYoqRz9sCkk9clG
-	gu68cCM58fGf47FmaREMhrn7dpkplJsF0su+vThOQCNrl5O10UX6OHOXC05PQcs/BC5N5J
-	YRH3qitS0Pb5npCPppt4xs/bnds0yGs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1710373399;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tafNtRNG21c3kpe7wBxGZFVwqts6ODFCRlnCkWhyyWs=;
-	b=jH+YdP/67MgExLe32Xu2gJT3JTbPDSlF7cBUZBHuQPIX1CqnrpdeBhatGzAVze05nDFNY6
-	1f5LvKs9EIW5ayBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1710373399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tafNtRNG21c3kpe7wBxGZFVwqts6ODFCRlnCkWhyyWs=;
-	b=cWZybiFZKdM+WV+5j3Oix1MQg0+TULQJrg0AoaLMHaQKLSifqXwINaWTYoqRz9sCkk9clG
-	gu68cCM58fGf47FmaREMhrn7dpkplJsF0su+vThOQCNrl5O10UX6OHOXC05PQcs/BC5N5J
-	YRH3qitS0Pb5npCPppt4xs/bnds0yGs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1710373399;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tafNtRNG21c3kpe7wBxGZFVwqts6ODFCRlnCkWhyyWs=;
-	b=jH+YdP/67MgExLe32Xu2gJT3JTbPDSlF7cBUZBHuQPIX1CqnrpdeBhatGzAVze05nDFNY6
-	1f5LvKs9EIW5ayBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C16741397F;
-	Wed, 13 Mar 2024 23:43:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GHwBKRY68mX9DAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 13 Mar 2024 23:43:18 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>,  io-uring@vger.kernel.org
-Subject: Re: [PATCH 1/3] io_uring: simplify io_mem_alloc return values
-In-Reply-To: <4146d3a9-3f88-4ef5-8925-8782ae5aa90e@kernel.dk> (Jens Axboe's
-	message of "Wed, 13 Mar 2024 17:24:40 -0600")
-Organization: SUSE
-References: <cover.1710343154.git.asml.silence@gmail.com>
-	<ba1f5a30be45eec6cf73cfdbf4b4e1679a03cef8.1710343154.git.asml.silence@gmail.com>
-	<87plvxkbjp.fsf@mailhost.krisman.be>
-	<4146d3a9-3f88-4ef5-8925-8782ae5aa90e@kernel.dk>
-Date: Wed, 13 Mar 2024 19:43:17 -0400
-Message-ID: <87a5n1k8a2.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1710373467; c=relaxed/simple;
+	bh=1gluA/tWPcVKltBHzEinj54kybCbdJ3wQ3zbsngwa6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YZV326+6fDMG57Xk6brWWGhm/RDrNKhlmTfLsYTERE5oAV3x5AxrdZkIpGPLdQmdFVpKVhJKVOjPhuCqqghBuMSH2D/ewPgcVsPjfA7uHSo3QMdU6G1p3NqpjX+f+J/OCN6vQSAFFR3HfpBJkrT0Gi5/g3DYUytMS4bqCIanz64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=oyAtwuOa; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-220ce420472so116696fac.1
+        for <io-uring@vger.kernel.org>; Wed, 13 Mar 2024 16:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710373463; x=1710978263; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zzvt90LsTRyVH8nnRm1OXdQOQV3Vum7zVzHwIRErtbc=;
+        b=oyAtwuOaok0lPIVrQKEb7geN1HfCRnUNEeVg6fwgInMBGfIAnpkP5Ok20rNzqDLmX3
+         JNPKMirkdpB/JuPt/kh67mpM71yfWc8/Ohpnonvbkjc0e0iwm4/7eAqQVhVtl6Qff3vo
+         QHbxsOmmPhSsfDJ2eCBqDV/tENNiYJ1PSAz9PH8kxyxRnMhuufa2Vgud2jCbWUqOakdW
+         v6frEnrD0obejoS6luwsxhGo8WtJyaLfnCmvPUsXWWO9z6onKRMwVbChVMSIs7sbk0gN
+         KzfsTeABxio1dWxGnAA6FVY8SiEmgu4fNNaYBk5xGmsxdj6xKRq6VHUVosq9fM7fcNgQ
+         UcFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710373463; x=1710978263;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zzvt90LsTRyVH8nnRm1OXdQOQV3Vum7zVzHwIRErtbc=;
+        b=Ayk/nvjjwSUuo0RVExuwng0oU9d/TwCCoFMUPq+VxRfhmgNDGQOsRhxL7LHORbZ9Lt
+         V+4xYzoPE4jOA6V92zr7UY5ijvkR44fYSlkfc6LH8KvBHdDsujBKxxVGDWIFApmUsPXb
+         NvMgXx/kYYcyg69o1FrslGZjsVqx8F71hYg06jLM0qW3gLljM9m2SSeBZmDyXiMYKc/u
+         KgaWbjK2H7tR3Pqwrx6i/r58bRfU+nfu/NrBOQCgPTq32KZpYldLmoDEUFQ/Nq8VawJl
+         yziJboWg1F17Qe1N+Op8vyIDCM9S6bOC3CmjhOb/Gbbwgjqi6gktttcPyDDXbzAK9nwu
+         hz/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXVPU+2Re5JQaXQzjBOX4KAMklaeAhduUOVooSx0sAAD3Fj1WS+C1qqr/X09ibZX78rwQ4ud6eABlN4SW8T40V4MHDkk+Lhaww=
+X-Gm-Message-State: AOJu0Yy84OB7TA1ZTIOqdysEnFOwvnHpgOHTFfu9Pj+rjEeAj3ZBLPwX
+	4oJ1PxC2GrhVEug2grQmpHmXQthkWFU8eryVpXqWO4H/a0fJv084oWJAU9/aRwI=
+X-Google-Smtp-Source: AGHT+IF15zsh9uR9qeqAcDjP2yWzkDy/0JXp07BptN/YuT6yWDNqpNc2UWkBUxnyENb97LXZ4/DqZw==
+X-Received: by 2002:a05:6359:45a9:b0:17c:1bef:407d with SMTP id no41-20020a05635945a900b0017c1bef407dmr515170rwb.1.1710373463211;
+        Wed, 13 Mar 2024 16:44:23 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id o37-20020a634e65000000b005dc1edf7371sm196791pgl.9.2024.03.13.16.44.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Mar 2024 16:44:22 -0700 (PDT)
+Message-ID: <72ae1e88-6a62-4f81-926c-33fc906b5931@kernel.dk>
+Date: Wed, 13 Mar 2024 17:44:21 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [-0.19 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 URIBL_BLOCKED(0.00)[kernel.dk:email];
-	 FROM_HAS_DN(0.00)[];
-	 RCPT_COUNT_THREE(0.00)[3];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 TO_DN_SOME(0.00)[];
-	 HAS_ORG_HEADER(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.09)[64.60%]
-X-Spam-Score: -0.19
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] io_uring: simplify io_mem_alloc return values
+Content-Language: en-US
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1710343154.git.asml.silence@gmail.com>
+ <ba1f5a30be45eec6cf73cfdbf4b4e1679a03cef8.1710343154.git.asml.silence@gmail.com>
+ <87plvxkbjp.fsf@mailhost.krisman.be>
+ <4146d3a9-3f88-4ef5-8925-8782ae5aa90e@kernel.dk>
+ <87a5n1k8a2.fsf@mailhost.krisman.be>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <87a5n1k8a2.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Jens Axboe <axboe@kernel.dk> writes:
+On 3/13/24 5:43 PM, Gabriel Krisman Bertazi wrote:
+> Jens Axboe <axboe@kernel.dk> writes:
+> 
+>> On 3/13/24 4:32 PM, Gabriel Krisman Bertazi wrote:
+>>> Pavel Begunkov <asml.silence@gmail.com> writes:
+>>>
+>>>> io_mem_alloc() returns a pointer on success and a pointer-encoded error
+>>>> otherwise. However, it can only fail with -ENOMEM, just return NULL on
+>>>> failure. PTR_ERR is usually pretty error prone.
+>>>>
+>>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>>>> ---
+>>>>  io_uring/io_uring.c | 14 +++++---------
+>>>>  io_uring/kbuf.c     |  4 ++--
+>>>>  2 files changed, 7 insertions(+), 11 deletions(-)
+>>>>
+>>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>>>> index e7d7a456b489..1d0eac0cc8aa 100644
+>>>> --- a/io_uring/io_uring.c
+>>>> +++ b/io_uring/io_uring.c
+>>>> @@ -2802,12 +2802,8 @@ static void io_rings_free(struct io_ring_ctx *ctx)
+>>>>  void *io_mem_alloc(size_t size)
+>>>>  {
+>>>>  	gfp_t gfp = GFP_KERNEL_ACCOUNT | __GFP_ZERO | __GFP_NOWARN | __GFP_COMP;
+>>>> -	void *ret;
+>>>>  
+>>>> -	ret = (void *) __get_free_pages(gfp, get_order(size));
+>>>> -	if (ret)
+>>>> -		return ret;
+>>>> -	return ERR_PTR(-ENOMEM);
+>>>> +	return (void *) __get_free_pages(gfp, get_order(size));
+>>>>  }
+>>>>  
+>>>>  static unsigned long rings_size(struct io_ring_ctx *ctx, unsigned int sq_entries,
+>>>> @@ -3762,8 +3758,8 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
+>>>>  	else
+>>>>  		rings = io_rings_map(ctx, p->cq_off.user_addr, size);
+>>>>  
+>>>> -	if (IS_ERR(rings))
+>>>> -		return PTR_ERR(rings);
+>>>> +	if (!rings)
+>>>> +		return -ENOMEM;
+>>>>
+>>>
+>>> Sorry, I started reviewing this, got excited about the error path quick
+>>> fix, and didn't finish the review before it got it.
+>>>
+>>> I think this change is broken for the ctx->flags & IORING_SETUP_NO_MMAP
+>>> case, because io_rings_map returns ERR_PTR, and not NULL.  In addition,
+>>> io_rings_map might fail for multiple reasons, and we want to propagate
+>>> the different error codes up here.
+>>
+>> Yeah, see my reply from some hours ago. I dropped it back then.
+> 
+> ah, thanks.  I've configured lei to fetch the io_uring list every few
+> hours. This ended up fetching part of the thread at first, and I only saw
+> it dropped in the next fetch, after I sent the email. sorry for the noise.
 
-> On 3/13/24 4:32 PM, Gabriel Krisman Bertazi wrote:
->> Pavel Begunkov <asml.silence@gmail.com> writes:
->> 
->>> io_mem_alloc() returns a pointer on success and a pointer-encoded error
->>> otherwise. However, it can only fail with -ENOMEM, just return NULL on
->>> failure. PTR_ERR is usually pretty error prone.
->>>
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>> ---
->>>  io_uring/io_uring.c | 14 +++++---------
->>>  io_uring/kbuf.c     |  4 ++--
->>>  2 files changed, 7 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>> index e7d7a456b489..1d0eac0cc8aa 100644
->>> --- a/io_uring/io_uring.c
->>> +++ b/io_uring/io_uring.c
->>> @@ -2802,12 +2802,8 @@ static void io_rings_free(struct io_ring_ctx *ctx)
->>>  void *io_mem_alloc(size_t size)
->>>  {
->>>  	gfp_t gfp = GFP_KERNEL_ACCOUNT | __GFP_ZERO | __GFP_NOWARN | __GFP_COMP;
->>> -	void *ret;
->>>  
->>> -	ret = (void *) __get_free_pages(gfp, get_order(size));
->>> -	if (ret)
->>> -		return ret;
->>> -	return ERR_PTR(-ENOMEM);
->>> +	return (void *) __get_free_pages(gfp, get_order(size));
->>>  }
->>>  
->>>  static unsigned long rings_size(struct io_ring_ctx *ctx, unsigned int sq_entries,
->>> @@ -3762,8 +3758,8 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
->>>  	else
->>>  		rings = io_rings_map(ctx, p->cq_off.user_addr, size);
->>>  
->>> -	if (IS_ERR(rings))
->>> -		return PTR_ERR(rings);
->>> +	if (!rings)
->>> +		return -ENOMEM;
->>>
->> 
->> Sorry, I started reviewing this, got excited about the error path quick
->> fix, and didn't finish the review before it got it.
->> 
->> I think this change is broken for the ctx->flags & IORING_SETUP_NO_MMAP
->> case, because io_rings_map returns ERR_PTR, and not NULL.  In addition,
->> io_rings_map might fail for multiple reasons, and we want to propagate
->> the different error codes up here.
->
-> Yeah, see my reply from some hours ago. I dropped it back then.
-
-ah, thanks.  I've configured lei to fetch the io_uring list every few
-hours. This ended up fetching part of the thread at first, and I only saw
-it dropped in the next fetch, after I sent the email. sorry for the noise.
+Oh it's fine, I'd rather have one extra review than none at all :-)
 
 -- 
-Gabriel Krisman Bertazi
+Jens Axboe
+
 

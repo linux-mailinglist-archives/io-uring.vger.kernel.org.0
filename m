@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-974-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-975-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB4387D151
-	for <lists+io-uring@lfdr.de>; Fri, 15 Mar 2024 17:43:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FAC87D160
+	for <lists+io-uring@lfdr.de>; Fri, 15 Mar 2024 17:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DD781F220C3
-	for <lists+io-uring@lfdr.de>; Fri, 15 Mar 2024 16:43:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C3841F25C8D
+	for <lists+io-uring@lfdr.de>; Fri, 15 Mar 2024 16:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B7044361;
-	Fri, 15 Mar 2024 16:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D01D482FA;
+	Fri, 15 Mar 2024 16:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mjcTznr0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DuXrsHhm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C8B3FE47
-	for <io-uring@vger.kernel.org>; Fri, 15 Mar 2024 16:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7246F3BB28;
+	Fri, 15 Mar 2024 16:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710520998; cv=none; b=tXegLLgkp66JJOZ8L1kwtJ7c8526GatiDXZ6lZ2D/5fEjL9aKqjaPWv6Y8qZQpA4IehjKoUpQw9VIBkFCCQ8VNnpjnQdE311rL7gGdLDBlnfj4un4UnfX1Kr/iEL/rAsBCZrGRYHUH2tfxP+HffY9rATlWnVwHnn+oJ/9DFm2og=
+	t=1710521110; cv=none; b=p3V8ogb+1VC0+ogDa9tAjWMDyjg/SsNZFqz1q/zFECdl2dNdyjhotG8A/ws0/+TZWp3uneT/clmLHAsUZX+VawCOzgUHiYcKVgle05mktA/x3n5cqWefgj9tOpxJ9yEhvDxSNJgNuRx2U5Sc9xHcSakh9GWaDMX3XA7P7XYKQbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710520998; c=relaxed/simple;
-	bh=KL2SdFZI6xj14E9gdnKkJmRkYlKkUmM4EoGRsI93QtY=;
+	s=arc-20240116; t=1710521110; c=relaxed/simple;
+	bh=6ocWOhxuFBCbWoaCNynzwb5vX0ZTvIO65y+LKbV0DD0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DToLJ6emmcx1geA4SISHkQbGqjEH4j8yXGEgcrbrvTt7K68bgkxcg/n0agrDhKLt66MH2uRKeVe48wusCRqI8+u5dIqp0m0xko3vnXF3L25+H6r1TGxC7r19Vn/yijzT43HwuN46MkwDkPRVvG3NceH0hadJ8oc9+NLFHfUyCrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mjcTznr0; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3667b0bb83eso3086675ab.0
-        for <io-uring@vger.kernel.org>; Fri, 15 Mar 2024 09:43:14 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=PHgo8W1tLZHBtf0nqnlQx0z0sRWRg2lFlTeBX5NKPhzQdOkXqUJGiKA2sv5U3SQ6Sq5svsobvjgCcTsq669Hhc+5WN8NG7CHDUzen6H5lrsEflc2jXhGPdZO5nsJJlUpPCkAhn0NWrhMMFkc2J6AkCkvp+z6BmY+J2TLRWBesl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DuXrsHhm; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-566e869f631so2699210a12.0;
+        Fri, 15 Mar 2024 09:45:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710520994; x=1711125794; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710521107; x=1711125907; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NnYrkeEuyooTzIwqpfS+gG0pSUcxJ+MtV42LbV77NO8=;
-        b=mjcTznr0AnttCmWs8R630cdqUoVvTyRfA2XvIzaCYQalCB+oC+Dn4yVxntdM+c7K4o
-         ISpJMxFnoyZCUP3zbAPIeRcopPEjjbuBW3UDAZYZBMCZ8chnvewDkygBrQqMNmwhrtBf
-         voqsNaeq7k6ua5gktQiGIwWGBb1mjSj5T+Dw8+YifwOeTjJBlKczopztKOzh90LsLE+B
-         uzPDaBw1VXpUvU/QKmBhFj2T3IhdqczIL4IAFS+xsNjkP+BW2KfgdxgCCDX2CqErBIIt
-         xdfz66AcD2KrOH4JhCoLQTylykypZYxKLyuzRXpvlDql22u2LOknTwcwwGRYAPAH6Pt2
-         2seg==
+        bh=1Pn1N9hdh/92IjJvyEpoRwaBX67+5A1Da617ojNcO94=;
+        b=DuXrsHhm0uQE0yeIqv7CBUu8OgY/YwcDswC64kKp3kK2XE2l+QXiXkhQwNZkQzHMJ8
+         YQ6wGy7sg+BZ5Ue7rmyF74Qn9rTe1oOp89013UNYhlYsdzwBeo/oxt1qoKQ4bPDzVO5f
+         qwANQ9M+A/enBrqS+QTbJbIEKCI5l0UNELJNRGaQdoNFyXobu6KpbMVY6ujiCH78k+Jm
+         OxPunZuYmE+t1JgHQt5YAkkQWUtKlOxFyAxkNR+xMeQnAHH+xDdwZdExD9AEUtrMi8Ok
+         OBD/b24suB20bjpGH1K8jsRrXnVldCs5cKcgSINGKEgrdNeNVe09Hj+oy6ZIfb1zPs0g
+         5b1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710520994; x=1711125794;
+        d=1e100.net; s=20230601; t=1710521107; x=1711125907;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NnYrkeEuyooTzIwqpfS+gG0pSUcxJ+MtV42LbV77NO8=;
-        b=X/K6572s1jIYAbcUcSZ5JhyUhHe4co4VPXVPdb9xme+6+XXtpHnNXGdg7rokPPwuhw
-         u1xX7IMuJUTxad3N7mXMrPGwIMmx+W3lMWFpbDKoZJOspL1WrxUkHNQElfjGyfjX2Zob
-         0qByqoqMCQA+e1qiRZ+RXu5wYIsuUS+9AI83eMT1lBVl4nBtBwQuEsbcg38wJ/D0xtY3
-         G9drY/3IKcfGdXpz+D+8Qz7yXhMZkZYt2rJY5bekg49VdovlAwZRoRmWInILkt3gS7Ht
-         6S6+5HmO/C8Csyvw3mmR0koInwZdlhkc9MAaHc/J70IKNqpeGiXIZR+uyPXIh0D+yOYc
-         yYww==
-X-Forwarded-Encrypted: i=1; AJvYcCWvhFaK7QhiZ8cihreB9J0mREz3iRkGZuTz+U5HNOVPKg2tULqSGddSWIQEnlFnJ1IxlYXhm00nEgZvXHX6WB3ei2/KFlgoZ9I=
-X-Gm-Message-State: AOJu0YydryjE1ddvY9k1Y5l3Xpvigk+XMiS0pDs3NZd/k3z8Tr0Jboev
-	nHQL8BKzd1IsKGiBUWmH1xGGK173ReCqj5D18lA2BPFZ0+4timN4ERmmXEiy0PU=
-X-Google-Smtp-Source: AGHT+IHw1pzzO7Lbgj3rvUe5D+ef6Gi98W/ojPiEC7bSUDtyXI2fQLppD6zQr3heqjbpOrSMGqElPA==
-X-Received: by 2002:a05:6e02:1745:b0:366:7443:c9f7 with SMTP id y5-20020a056e02174500b003667443c9f7mr6765962ill.3.1710520993934;
-        Fri, 15 Mar 2024 09:43:13 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id a11-20020a92d34b000000b00366958eb5e8sm505837ilh.74.2024.03.15.09.43.13
+        bh=1Pn1N9hdh/92IjJvyEpoRwaBX67+5A1Da617ojNcO94=;
+        b=XzQU7wAhEr6Nth3xI5Fw26Siv71MDvQITvWQDfS+STKJz0KiVD7HF6GLSIkWQ5Cgnh
+         +81qBLz8u/ayYhWGHfGdiSGVZAfGopcSalmuqK5dRvrkbTwFLqVhlEx6+ffJYIc22O3h
+         uNL1SzG4xg59W/OKo3foO/czl8PiY/9nXoYmtClUOKNa+Enr75WzQpBiUKsdZK0m2Fhp
+         hIIynHTJfCTEw5FL/FoW8OyiLbaa3gbslcRBUMzHorc8rIgY3JIGZgXz7Es0JVSgdYmN
+         2MkYLchuJm1lCarLqJ6JiUbHVHW7ymsEHHINbvvkcHKOoWoFDRfJJoB59ub5FKTZBAMQ
+         7jcA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+sWGXv/XsV5E291JcNcE4nOYSb9SFfJ4fnfOVI8bdWAoMZfwqbCjq3NUWHsUN95IL0J0RuEdB0hkqd/Ox4W/+tMJXwqhrI1Q=
+X-Gm-Message-State: AOJu0Yw0IDo3zcJD+TMob+dzgcIrsc8lfN+QRLwuuhYU7u4yhRYJtAFu
+	TTUjrl/J2BlUwpJigK2QgRv15lMe4NSmOD2PHJJVEgGDyA0JeJnF
+X-Google-Smtp-Source: AGHT+IG533g1xrlq+qyxGCNfLR+U3QZGsTLakzHI4bemWrpGt2WXan496MoA1lwDtMDi9pxIOV2iBw==
+X-Received: by 2002:a05:6402:28cc:b0:568:b447:163d with SMTP id ef12-20020a05640228cc00b00568b447163dmr1564280edb.9.1710521106742;
+        Fri, 15 Mar 2024 09:45:06 -0700 (PDT)
+Received: from [192.168.8.100] ([148.252.141.58])
+        by smtp.gmail.com with ESMTPSA id 6-20020a0564021f4600b005682a0e915fsm1825340edz.76.2024.03.15.09.45.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Mar 2024 09:43:13 -0700 (PDT)
-Message-ID: <ed44cb26-7d23-4391-89c5-0e7b59d019f6@kernel.dk>
-Date: Fri, 15 Mar 2024 10:43:12 -0600
+        Fri, 15 Mar 2024 09:45:06 -0700 (PDT)
+Message-ID: <e40448f1-11b4-41a8-81ab-11b4ffc1b717@gmail.com>
+Date: Fri, 15 Mar 2024 16:44:01 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,34 +76,66 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: Do not break out of sk_stream_wait_memory() with
- TIF_NOTIFY_SIGNAL
+Subject: Re: [PATCH 11/11] io_uring: get rid of intermediate aux cqe caches
 Content-Language: en-US
-To: Sascha Hauer <s.hauer@pengutronix.de>, netdev@vger.kernel.org
-Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- Paolo Abeni <pabeni@redhat.com>, io-uring@vger.kernel.org
-References: <20240315100159.3898944-1-s.hauer@pengutronix.de>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240315100159.3898944-1-s.hauer@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>,
+ Ming Lei <ming.lei@redhat.com>
+References: <cover.1710514702.git.asml.silence@gmail.com>
+ <0eb3f55722540a11b036d3c90771220eb082d65e.1710514702.git.asml.silence@gmail.com>
+ <6e5d55a8-1860-468f-97f4-0bd355be369a@kernel.dk>
+ <7a6b4d7f-8bbd-4259-b1f1-e026b5183350@gmail.com>
+ <70e18e4c-6722-475d-818b-dc739d67f7e7@kernel.dk>
+ <dfdfcafe-199f-4652-9e79-7fb0e7b2ab4f@kernel.dk>
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <dfdfcafe-199f-4652-9e79-7fb0e7b2ab4f@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/15/24 4:01 AM, Sascha Hauer wrote:
-> It can happen that a socket sends the remaining data at close() time.
-> With io_uring and KTLS it can happen that sk_stream_wait_memory() bails
-> out with -512 (-ERESTARTSYS) because TIF_NOTIFY_SIGNAL is set for the
-> current task. This flag has been set in io_req_normal_work_add() by
-> calling task_work_add().
+On 3/15/24 16:27, Jens Axboe wrote:
+> On 3/15/24 10:25 AM, Jens Axboe wrote:
+>> On 3/15/24 10:23 AM, Pavel Begunkov wrote:
+>>> On 3/15/24 16:20, Jens Axboe wrote:
+>>>> On 3/15/24 9:30 AM, Pavel Begunkov wrote:
+>>>>> io_post_aux_cqe(), which is used for multishot requests, delays
+>>>>> completions by putting CQEs into a temporary array for the purpose
+>>>>> completion lock/flush batching.
+>>>>>
+>>>>> DEFER_TASKRUN doesn't need any locking, so for it we can put completions
+>>>>> directly into the CQ and defer post completion handling with a flag.
+>>>>> That leaves !DEFER_TASKRUN, which is not that interesting / hot for
+>>>>> multishot requests, so have conditional locking with deferred flush
+>>>>> for them.
+>>>>
+>>>> This breaks the read-mshot test case, looking into what is going on
+>>>> there.
+>>>
+>>> I forgot to mention, yes it does, the test makes odd assumptions about
+>>> overflows, IIRC it expects that the kernel allows one and only one aux
+>>> CQE to be overflown. Let me double check
+>>
+>> Yeah this is very possible, the overflow checking could be broken in
+>> there. I'll poke at it and report back.
 > 
-> This patch replaces signal_pending() with task_sigpending(), thus ignoring
-> the TIF_NOTIFY_SIGNAL flag.
+> It does, this should fix it:
+> 
+> 
+> diff --git a/test/read-mshot.c b/test/read-mshot.c
+> index 8fcb79857bf0..501ca69a98dc 100644
+> --- a/test/read-mshot.c
+> +++ b/test/read-mshot.c
+> @@ -236,7 +236,7 @@ static int test(int first_good, int async, int overflow)
+>   		}
+>   		if (!(cqe->flags & IORING_CQE_F_MORE)) {
+>   			/* we expect this on overflow */
+> -			if (overflow && (i - 1 == NR_OVERFLOW))
+> +			if (overflow && i >= NR_OVERFLOW)
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-
-Should probably also flag this for stable, 5.10+ I think as the task
-sigpending got backported that far.
+Which is not ideal either, e.g. I wouldn't mind if the kernel stops
+one entry before CQ is full, so that the request can complete w/o
+overflowing. Not supposing the change because it's a marginal
+case, but we shouldn't limit ourselves.
 
 -- 
-Jens Axboe
-
+Pavel Begunkov
 

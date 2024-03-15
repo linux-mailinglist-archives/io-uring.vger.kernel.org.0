@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-978-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-979-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA31D87D2C5
-	for <lists+io-uring@lfdr.de>; Fri, 15 Mar 2024 18:27:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A6C87D2E2
+	for <lists+io-uring@lfdr.de>; Fri, 15 Mar 2024 18:35:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130B41F26A2C
-	for <lists+io-uring@lfdr.de>; Fri, 15 Mar 2024 17:27:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A90282C61
+	for <lists+io-uring@lfdr.de>; Fri, 15 Mar 2024 17:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E73F3B79E;
-	Fri, 15 Mar 2024 17:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D4A4AEC6;
+	Fri, 15 Mar 2024 17:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4d0gUfE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mk9y5T8n"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5644B4AEC6;
-	Fri, 15 Mar 2024 17:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D11E4D599;
+	Fri, 15 Mar 2024 17:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710523673; cv=none; b=Hq7Nq7r8zdtS4IR5waZkHhF7rD5CQj63sD3M58CEkNV1RXr1cnVcg6CNGc+0qENf00d2vPEF8KJoT72RtsiHV421letVAO1/sp2mLHiPDAw0sXwPpUv6pd5SOA4vuhwDpZ/HEhDgB78YCPmME+cfszGyB0LveDVDDMQw86vd/0Q=
+	t=1710524134; cv=none; b=WOjMgmKfpSqxwBL/4LLAx8lm7HHb2/sYq7G3ZWaOTz/gbvVOabBpouZG2Cjm3KVDj7RRHHaTWEuVruK46FzEMjcru8D6lYMLF7hnXmugd9aVe8MKkHbdoQe+nKJqKgs+4o1BgNSiOb6CMpoZC0+ZT3g5+OVrtJ9e3cNHOdM7bx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710523673; c=relaxed/simple;
-	bh=aNTEH84txPyaDXOeeEu2URaqXrwSyYq4eQl7ZotGFvs=;
+	s=arc-20240116; t=1710524134; c=relaxed/simple;
+	bh=Y1PEXpSEK0rsDS711/gG7hMZeM0np4zytvBVm/pTdUc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dNO9lf8VDxIrkj6GvWml8yWMGla2f2JpzJV5rRNcsn+2INmlPkrSB2R9Hpa+bmMcHKYZz4WxUuKSORsMB+BklkylK5QGBYd7r3bsfJ9xlETBXqa6VrcgAmVbTkG/Jy9NEF25gdVm+4Y70ESRaMQ4vzljC+PaLEmxI41DjipWzAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4d0gUfE; arc=none smtp.client-ip=209.85.208.42
+	 In-Reply-To:Content-Type; b=IDmUxajP741vhZEZd83ZNo+KY2/Pchm/wD59+BMURgePxJznAVlDhPkaZccmGIgBK8y7uxg9aDAirvBDcfo1dX+9dTwZIz8j3lcRzVDrN0tPUY7djH5iIzUY/mgmimzxqw8+fPrPi2yQoyqMf23digVjmHJHy07CXIKgjJZbgfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mk9y5T8n; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-568b7350397so752646a12.1;
-        Fri, 15 Mar 2024 10:27:51 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-413fff2aa2aso8491945e9.2;
+        Fri, 15 Mar 2024 10:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710523669; x=1711128469; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710524131; x=1711128931; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=WGggEgdevfwKLnOQ1PP/dwEqPnd5YH/YUXOFssVPSNA=;
-        b=P4d0gUfE3Yr4hLNOmQ+yrXk77KiZMJrjP8WAmL4w4dNTbuFYa7GxWThDCjTcWR9VLT
-         Wbj8ERyVPlJlRbc+bkeK+F7z6JfLMRK8hl8sAjpMpt7IT922zkX7L+9Sddfd6Agog8Bo
-         sHy5o4ja7dPIOF6ftYIGJ2IB+jMjbmgscW1BP+9H05d6Y2MYElTZ60i3I0FFbscruljR
-         liI9IGEdOdru/8l4Vj5FGHTSK9EcJbEVquEqs8gwuw0LTT0s3ZrSKfse43vF+Q4Klwdd
-         deSGhi+OuGFOMf7jxUDHIF+NepREBHbBfpm11kFpWgzwQ2Wqwd7LUVZWuwoYmMzQpkzI
-         /EOg==
+        bh=cfpfNcyeYYbLF1S7F08Dgtx2zhwW7B2Wxc9KNT7IMbo=;
+        b=Mk9y5T8n1A6dx3RCTJ6waVVBUROdWpep3UgG0M/mIcG4wKIUNeMaIr282InAR5AxjL
+         QaNJ1z9bsVSb7MF5/yBrXgZgSVXjCeYCgPHFwV8CxtgFE+yrUvGbGk95mjB2t8iO3Dzz
+         zd2Y3UBIEleayNnOxhGu2rnukSeOUxKyLM384+Cn4USz0Z67bkPRB9cKl6YMq9CLgQYq
+         15zOQfNSpSZhSUFJxpawFNOdjcPl3E7jbp5CwvO+6Czzr0PEsQNVGm1RJE5jLTnsCGd0
+         nW8jN3FonBGaWlD055BxghRCxkbxtAAAJopkND/NmXLPPB77JJP1lXKjcbIsn3PAEYoL
+         /gQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710523669; x=1711128469;
+        d=1e100.net; s=20230601; t=1710524131; x=1711128931;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WGggEgdevfwKLnOQ1PP/dwEqPnd5YH/YUXOFssVPSNA=;
-        b=TjaO+vkHXdBNNL0R8tkeQZAgAMp4l+mq555t8PfSmGO6JXZxkVhS196iH7cn1Nhwgo
-         mbpc9Uu9Tm6bMoZGBYRa7KquXmkI6XdF/uZvtag1HTONtXfIWpvuu0Tx9X3N4Q31Ff4F
-         Sn4r6EQMdYoSgrx6qjH/SsxnPRF+kikOppzYtTEsGfkaxWxfT6CRYAJQbSZgudIGL69p
-         +ExselFMM6cq8ncE6U3PS4hmbR89BbZTgPNeckl7HqMqpFsp88s1kOCuJMbOSK1nw/rv
-         OnwI1iSkGeYjDwfzg0yLLcA8hdqwcNK2/5y/dVH4e7RqCzk1eYZ3KYKas1AZIOucmzQv
-         dsFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWj+gkviEDXBNo8WVWpCJR5T8CypvJcbptgdUHmCOC7wM5Q2+jxa/qsCjWvdUlsxztvi3blIilWYwBj5PSVCDVGNyhn8IyOL7w=
-X-Gm-Message-State: AOJu0YynxKxwUzbFGiWB797AdiepYe6UrDrpnpL4iNyaQ4QDlPTJUsHp
-	YtrmN0Sar5lyouryGPX1gFBp1HUt3QtXxmDoC4Jf46PGEjgTBeWxb4RJfEKw
-X-Google-Smtp-Source: AGHT+IEPbWIB/azYXSq7seUwpVk1tgUedRyZODmpya8nJWmzeScCgPIQPyRn0P2JOdXVHjowA0oiRw==
-X-Received: by 2002:a17:906:d8ac:b0:a46:4c8e:18a8 with SMTP id qc12-20020a170906d8ac00b00a464c8e18a8mr2795162ejb.51.1710523669310;
-        Fri, 15 Mar 2024 10:27:49 -0700 (PDT)
+        bh=cfpfNcyeYYbLF1S7F08Dgtx2zhwW7B2Wxc9KNT7IMbo=;
+        b=MFhdYOAgqDNm2AN9U47hAzenq137bqj/6c2KlEO9fwm81WHNonx+74jALpcGA5NenM
+         MWz50WKkyScAT6NafTUOtBP6vPgL/9/23GNKe2F3Df6DE+VGUyDP7ViKD9juiD0/LhQP
+         F5MiVL7sUURdwjkqnuEbETBRkG7qMp+e0AonjXR/8wDJBjv+iyC2fHdDoak9keDCjLEU
+         zoaCX/Y9N71Vd9JxWgzpi7Ps5mnM+e2XUUL3LKHZhsDKIIVepzlNVoG3Mii2THl0kN2X
+         y5bx/sA+qWHdm1KJWbW7RsjQttrWJAavIMKvQI7RSauelw02xxJvHA+JBisyxEzsskkj
+         Hd3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVWmKdzH1EBsM+hg8dVwrzhPOqIP3hAR4dQ1LJDf9UXrkE5N9SdIZvzlIf91j3GSFp1O+fWsbqVc1A5KUAGviOuV/2J1PB0kHvL3cuqIatiNJeN+R03E1ZtX45K83xVkmc=
+X-Gm-Message-State: AOJu0YyeGwN35bDvHBmGuuwsYQIqrJDCM8oWX9g9Wzpv2BbWhOyDPPUI
+	7PknAwPrjAUbR7qp7waFksCB/y9mCITi0aViH21ywtZaBv7eTECI
+X-Google-Smtp-Source: AGHT+IFKcYchHNiJVp2U2l5sbwFT4QFFnm1EDc9lywsF5tDhdHwYtFysvSsFYJLSb/susBVb24Lqwg==
+X-Received: by 2002:a5d:5383:0:b0:33d:1f11:33c1 with SMTP id d3-20020a5d5383000000b0033d1f1133c1mr3097424wrv.55.1710524130435;
+        Fri, 15 Mar 2024 10:35:30 -0700 (PDT)
 Received: from [192.168.8.100] ([148.252.141.58])
-        by smtp.gmail.com with ESMTPSA id a11-20020a170906190b00b00a44e2f3024bsm1881004eje.68.2024.03.15.10.27.48
+        by smtp.gmail.com with ESMTPSA id bv17-20020a0560001f1100b0033dd9b050f9sm3639718wrb.14.2024.03.15.10.35.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Mar 2024 10:27:49 -0700 (PDT)
-Message-ID: <d82a07b8-a65d-4551-8516-5e50e0fab2fe@gmail.com>
-Date: Fri, 15 Mar 2024 17:26:43 +0000
+        Fri, 15 Mar 2024 10:35:30 -0700 (PDT)
+Message-ID: <e646d731-dec9-4d2e-9e05-dbb9b1183a0b@gmail.com>
+Date: Fri, 15 Mar 2024 17:34:24 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,109 +76,59 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/11] io_uring: get rid of intermediate aux cqe caches
+Subject: Re: [RFC PATCH v4 13/16] io_uring: add io_recvzc request
 Content-Language: en-US
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: linux-block@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>,
- Ming Lei <ming.lei@redhat.com>
-References: <cover.1710514702.git.asml.silence@gmail.com>
- <0eb3f55722540a11b036d3c90771220eb082d65e.1710514702.git.asml.silence@gmail.com>
- <6e5d55a8-1860-468f-97f4-0bd355be369a@kernel.dk>
- <7a6b4d7f-8bbd-4259-b1f1-e026b5183350@gmail.com>
- <70e18e4c-6722-475d-818b-dc739d67f7e7@kernel.dk>
- <dfdfcafe-199f-4652-9e79-7fb0e7b2ab4f@kernel.dk>
- <e40448f1-11b4-41a8-81ab-11b4ffc1b717@gmail.com>
- <0f164d26-e4da-4e96-b413-ec66cf16e3d7@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org, netdev@vger.kernel.org
+Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
+ Mina Almasry <almasrymina@google.com>
+References: <20240312214430.2923019-1-dw@davidwei.uk>
+ <20240312214430.2923019-14-dw@davidwei.uk>
+ <7752a08c-f55c-48d5-87f2-70f248381e48@kernel.dk>
+ <4343cff7-37d9-4b78-af70-a0d7771b04bc@gmail.com>
+ <c4871911-5cb6-4237-a0a3-001ecb8bd7e5@kernel.dk>
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <0f164d26-e4da-4e96-b413-ec66cf16e3d7@kernel.dk>
+In-Reply-To: <c4871911-5cb6-4237-a0a3-001ecb8bd7e5@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/15/24 16:49, Jens Axboe wrote:
-> On 3/15/24 10:44 AM, Pavel Begunkov wrote:
->> On 3/15/24 16:27, Jens Axboe wrote:
->>> On 3/15/24 10:25 AM, Jens Axboe wrote:
->>>> On 3/15/24 10:23 AM, Pavel Begunkov wrote:
->>>>> On 3/15/24 16:20, Jens Axboe wrote:
->>>>>> On 3/15/24 9:30 AM, Pavel Begunkov wrote:
->>>>>>> io_post_aux_cqe(), which is used for multishot requests, delays
->>>>>>> completions by putting CQEs into a temporary array for the purpose
->>>>>>> completion lock/flush batching.
->>>>>>>
->>>>>>> DEFER_TASKRUN doesn't need any locking, so for it we can put completions
->>>>>>> directly into the CQ and defer post completion handling with a flag.
->>>>>>> That leaves !DEFER_TASKRUN, which is not that interesting / hot for
->>>>>>> multishot requests, so have conditional locking with deferred flush
->>>>>>> for them.
->>>>>>
->>>>>> This breaks the read-mshot test case, looking into what is going on
->>>>>> there.
->>>>>
->>>>> I forgot to mention, yes it does, the test makes odd assumptions about
->>>>> overflows, IIRC it expects that the kernel allows one and only one aux
->>>>> CQE to be overflown. Let me double check
->>>>
->>>> Yeah this is very possible, the overflow checking could be broken in
->>>> there. I'll poke at it and report back.
+On 3/14/24 16:14, Jens Axboe wrote:
+[...]
+>>>> @@ -1053,6 +1058,85 @@ struct io_zc_rx_ifq *io_zc_verify_sock(struct io_kiocb *req,
+>>>>        return ifq;
+>>>>    }
+>>>>    +int io_recvzc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>>> +{
+>>>> +    struct io_recvzc *zc = io_kiocb_to_cmd(req, struct io_recvzc);
+>>>> +
+>>>> +    /* non-iopoll defer_taskrun only */
+>>>> +    if (!req->ctx->task_complete)
+>>>> +        return -EINVAL;
 >>>
->>> It does, this should fix it:
->>>
->>>
->>> diff --git a/test/read-mshot.c b/test/read-mshot.c
->>> index 8fcb79857bf0..501ca69a98dc 100644
->>> --- a/test/read-mshot.c
->>> +++ b/test/read-mshot.c
->>> @@ -236,7 +236,7 @@ static int test(int first_good, int async, int overflow)
->>>            }
->>>            if (!(cqe->flags & IORING_CQE_F_MORE)) {
->>>                /* we expect this on overflow */
->>> -            if (overflow && (i - 1 == NR_OVERFLOW))
->>> +            if (overflow && i >= NR_OVERFLOW)
+>>> What's the reasoning behind this?
 >>
->> Which is not ideal either, e.g. I wouldn't mind if the kernel stops
->> one entry before CQ is full, so that the request can complete w/o
->> overflowing. Not supposing the change because it's a marginal
->> case, but we shouldn't limit ourselves.
+>> CQ locking, see the comment a couple lines below
 > 
-> But if the event keeps triggering we have to keep posting CQEs,
-> otherwise we could get stuck. 
+> My question here was more towards "is this something we want to do".
+> Maybe this is just a temporary work-around and it's nothing to discuss,
+> but I'm not sure we want to have opcodes only work on certain ring
+> setups.
 
-Or we can complete the request, then the user consumes CQEs
-and restarts as usual
+I don't think it's that unreasonable restricting it. It's hard to
+care about !DEFER_TASKRUN for net workloads, it makes CQE posting a bit
+cleaner, and who knows where the single task part would become handy.
+Thinking about ifq termination, which should better cancel and wait
+for all corresponding zc requests, it's should be easier without
+parallel threads. E.g. what if another thread is in the enter syscall
+using ifq, or running task_work and not cancellable. Then apart
+from (non-atomic) refcounting, we'd need to somehow wait for it,
+doing wake ups on the zc side, and so on.
 
-> As far as I'm concerned, the behavior with
-> the patch looks correct. The last CQE is overflown, and that terminates
-> it, and it doesn't have MORE set. The one before that has MORE set, but
-> it has to, unless you aborted it early. But that seems impossible,
-> because what if that was indeed the last current CQE, and we reap CQEs
-> before the next one is posted.
-> 
-> So unless I'm missing something, I don't think we can be doing any
-> better.
-
-You can opportunistically try to avoid overflows, unreliably
-
-bool io_post_cqe() {
-	// Not enough space in the CQ left, so if there is a next
-	// completion pending we'd have to overflow. Avoid that by
-	// terminating it now.
-	//
-	// If there are no more CQEs after this one, we might
-	// terminate a bit earlier, but that better because
-	// overflows are so expensive and unhandy and so on.
-	if (cq_space_left() <= 1)
-		return false;
-	fill_cqe();
-	return true;
-}
-
-some_multishot_function(req) {
-	if (!io_post_cqe(res))
-		complete_req(req, res);
-}
-
-Again, not suggesting the change for all the obvious reasons, but
-I think semantically we should be able to do it.
+The CQ side is easy to support though, put conditional locking
+around the posting like fill/post_cqe does with the todays
+patchset.
 
 -- 
 Pavel Begunkov

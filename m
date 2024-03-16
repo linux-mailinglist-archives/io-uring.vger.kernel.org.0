@@ -1,122 +1,87 @@
-Return-Path: <io-uring+bounces-1041-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1042-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27BA87DAF7
-	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 18:12:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E24A87DB01
+	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 18:18:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77CEA282316
-	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 17:12:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71E7281442
+	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 17:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC16B1BC4F;
-	Sat, 16 Mar 2024 17:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="B2wY+VNG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD87F1BDDF;
+	Sat, 16 Mar 2024 17:18:03 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB8C1BC20
-	for <io-uring@vger.kernel.org>; Sat, 16 Mar 2024 17:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C2F1BDD0
+	for <io-uring@vger.kernel.org>; Sat, 16 Mar 2024 17:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710609144; cv=none; b=h5wQgwQcV4W0jseTHM3MfNoR9Jkt+tke1A50fagXWYwPB847hDAvZ6pQ5ecBv+I7k2ywIAo3PlWg3Gy1cs/ZBkmYxTqBUEP7iBkC8zxjbpAlcCMEcE2zD4MZDilczItt1I3475l4z6XQsOkUra0X4es4eCNpXOwdkWkngFxMXik=
+	t=1710609483; cv=none; b=GxJSujT/QF65yAlPGuEgS4TNpG+I6J9vs9yjLD34P2SuAg87fhP8Y8UBusVewMgamNvxPXbDRK5Z+rCCiCWtZt0GG51j0xRkSlOFm9v04zLSx7bsZfgh5ucGpaeZrQrQtIG1IFev7nLfWszZTBv5MyKeRMaoFrDF9gmHqcQ+4kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710609144; c=relaxed/simple;
-	bh=LLWMqz81glootpZXZKWeKw/5LQ2W6L5YPKB82i53wt8=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=bA7ZTk3lITNdviMEA3vecX1HCijNvTejXGCY/9+lou/W4anLksV+KLNXl6sPn9cQN4VE2blWber+U1IubuGWJZQO0C1L/elW05xQcxfKB0iOxs9UfYhwgKr7IdYT7wt3MqRChUlIYLTQI89NtBgtBH6MC3GjgFNWhssE8PNHSMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=B2wY+VNG; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1def81ee762so2897735ad.0
-        for <io-uring@vger.kernel.org>; Sat, 16 Mar 2024 10:12:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710609141; x=1711213941; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WRbexiv25ULgYSFYMs9m7hXNCOsJlMTYYcvn3ZobuDs=;
-        b=B2wY+VNGl0INw2bR+RzbkaSYnajOiG4mQD7hd1XjqJ/d3eREX803InCoAxTuexEtq+
-         h7DjoVN2fugkIdfAQT01F3ZUhaSHiinL2GvSfChjPBThNRCmOjX84F4wVuEAVA47cSpV
-         ueA99CacFWxb/UxsaOjQMWZBcAgrJeDkPr0xT4pHGgXzJUHNVLBlua8v80wfXqTnx1Sa
-         CIMBMhfqbk1vx6PKF5u2dYg+HGOkhNiTDQ2L5xvHsdK7kOai3zWNi89fU1kWa33rPkr5
-         Uz9q1h/MOQrEYaumOb8jwz/s3cDlBIsanfatxTiAcKpsrCGn5iUbnh3ok4nSXuy+d5Vc
-         tyrQ==
+	s=arc-20240116; t=1710609483; c=relaxed/simple;
+	bh=rdXGU4H11/Rq5F0nYUcD2gQwSnehnBMG7uxvjVyx7Mw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UZD7vjwmGp3A0Nz3UoIUzAFhPRB6v0samTSTxwyeOId6vfU+CDaQHc46nq57aMFmyKyOhL67HzH5P5IrAFj4YkR8f0YM4LM9EWOa/2CCTpgmQfikasc7nAAVfxYqav1wVxAlmp+bsjSiTiPPekJcdisuCm1GXCioapGiqBOOt3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3657cf730a0so34628925ab.2
+        for <io-uring@vger.kernel.org>; Sat, 16 Mar 2024 10:18:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710609141; x=1711213941;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WRbexiv25ULgYSFYMs9m7hXNCOsJlMTYYcvn3ZobuDs=;
-        b=octpd++qTLZ2xh7fCBt5UYwcYFzlIhtQZHkyZxnAlaTrbxB0S+f2O8o3Ubsjd/yipB
-         B4zPs5oKSKxnXtCNGDQdptW7ZwelcyokZe+AKAJSlFeJOoesW+VJ12KAAP3vjPL/SaMB
-         60KK/L/Hs5DwfbNPMaUZuezu0NKU29fwKY4ywuLyR35u6QIFdaYDmAnqROMdE5M3zgnI
-         RCX4h1Bxio24vCR0/p5549C2Sv6Rm/HbFA06FEWgRVudHZ1eWpbElG0PME8qc47bsFWw
-         PW8dNfC/ArHUcC7G/lJRV9AejINRqiaI1jmvZ2U8nf2RFtEbFi6akoVAWeqRbHZHa4We
-         frIA==
-X-Gm-Message-State: AOJu0YwpYfLW989dPHD8EHzDQJeuqI6kfYVs185RqukGhQzP+LOR86+d
-	THna9EDK1QaJ+e9uJl+2hwZfhEFO9zCtLaYxKceTesV0mi5ot1eLAU3w+abUYJFczZOiRI686WG
-	4
-X-Google-Smtp-Source: AGHT+IEsScGe2wrrM6POha42gDR+KRSbhKLuzWMEd/6UvhTV9rbaOuNwpG+yJ2477eJa8UhbyIG1sA==
-X-Received: by 2002:a05:6a21:3a4a:b0:1a1:67a6:511e with SMTP id zu10-20020a056a213a4a00b001a167a6511emr9453367pzb.2.1710609140872;
-        Sat, 16 Mar 2024 10:12:20 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id gx20-20020a056a001e1400b006e6bcbccda9sm5188154pfb.59.2024.03.16.10.12.19
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Mar 2024 10:12:20 -0700 (PDT)
-Message-ID: <5eb0fff0-5357-4407-81bf-8d7698c86e8b@kernel.dk>
-Date: Sat, 16 Mar 2024 11:12:19 -0600
+        d=1e100.net; s=20230601; t=1710609481; x=1711214281;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xhM0gim6EF1YfH3MdtafDzmojNURjVNL+R2IpqotLCI=;
+        b=MFpmXNPE/20/iFRRn09XlY16QnccnKKOUTn8LSVvinJfc9f5W3LqTmEAw0QA3Ib7mC
+         gmL6aDj1yEg5C+Vwr9tw1BByslhfZXIZlj5UbUtU03qUSptcj4nEizmLpc6QT4+MTpF8
+         fonjtgnFwXFZcXq2rLODLS18lUsXeJaK2iIdbqeUqautpeI4tb/KYPSK/+dMwGz9u1fg
+         DeVRJnXCgwSegHhHOACs6W+3RxOUJ0gBHVDngYbrE4OrwDc7bNQvm2B5PUu668yYKyhx
+         h+XcWl4Z2s87NO6RMjo27gVcgi1jpUByxE9vjCRi/IXNB0hBzZ//JUwuwNCLnS47x8pp
+         obOg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1dbOOYoF6FVXtEBdP9G8zt7LyfDcL3njg6oiL0dI2yWcFczE19Be+kCgD1vVVC7VwHwvCFnR0j0tIoWCXeDNRo+rUM0MONQc=
+X-Gm-Message-State: AOJu0Yyq5KguiiF3KR3VDfkBOy5s1DDibCjRntGzEZBCjBD+fw2T2u9c
+	TmdLD8gOXeh1GtMQ0BBaZd3JvAacJqffHsrr/31RbGXKpXfvNOT+2/739B2acTVv213Bzi8NfXG
+	vRtIjAhgnomDpSEy9wqpekgFS1ddSh5kZjDBdftcyRvprmGnxYlNnleM=
+X-Google-Smtp-Source: AGHT+IGbh8CgYLlXYyb2rdwY1DPoaPJm+/aXkkT4BfWZP495D8dscBNjGHdwHaTcSCwqHIzyDWtSgRN34xGRThIX2K3Qd0gl10B7
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: remove timeout/poll specific cancelations
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:b743:0:b0:366:a4df:fc93 with SMTP id
+ c3-20020a92b743000000b00366a4dffc93mr94888ilm.6.1710609481540; Sat, 16 Mar
+ 2024 10:18:01 -0700 (PDT)
+Date: Sat, 16 Mar 2024 10:18:01 -0700
+In-Reply-To: <7c16c203-8b5f-41cd-8c86-cba36887b505@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007f33eb0613ca4e5c@google.com>
+Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_sendrecv_fail
+From: syzbot <syzbot+f8e9a371388aa62ecab4@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-For historical reasons these were special cased, as they were the only
-ones that needed cancelation. But now we handle cancelations generally,
-and hence there's no need to check for these in
-io_ring_ctx_wait_and_kill() when io_uring_try_cancel_requests() handles
-both these and the rest as well.
+Hello,
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
----
+Reported-and-tested-by: syzbot+f8e9a371388aa62ecab4@syzkaller.appspotmail.com
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 8174abb8313e..76dcb21e9318 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3069,17 +3069,8 @@ static __cold void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
- 	percpu_ref_kill(&ctx->refs);
- 	xa_for_each(&ctx->personalities, index, creds)
- 		io_unregister_personality(ctx, index);
--	if (ctx->rings)
--		io_poll_remove_all(ctx, NULL, true);
- 	mutex_unlock(&ctx->uring_lock);
- 
--	/*
--	 * If we failed setting up the ctx, we might not have any rings
--	 * and therefore did not submit any requests
--	 */
--	if (ctx->rings)
--		io_kill_timeouts(ctx, NULL, true);
--
- 	flush_delayed_work(&ctx->fallback_work);
- 
- 	INIT_WORK(&ctx->exit_work, io_ring_exit_work);
+Tested on:
 
--- 
-Jens Axboe
+commit:         ae551333 io_uring: clear opcode specific data for an e..
+git tree:       git://git.kernel.dk/linux.git io_uring-6.9
+console output: https://syzkaller.appspot.com/x/log.txt?x=12656231180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a271c5dca0ff14df
+dashboard link: https://syzkaller.appspot.com/bug?extid=f8e9a371388aa62ecab4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 

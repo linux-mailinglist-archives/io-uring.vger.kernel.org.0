@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-1033-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1034-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A8987DADC
-	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 17:38:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8020C87DADF
+	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 17:42:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 923D2281DE3
-	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 16:38:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E978281D5E
+	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 16:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF351199B4;
-	Sat, 16 Mar 2024 16:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD43D17543;
+	Sat, 16 Mar 2024 16:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KW27Xtj/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKQ8ySJl"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AEE18C36
-	for <io-uring@vger.kernel.org>; Sat, 16 Mar 2024 16:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21C61BC23
+	for <io-uring@vger.kernel.org>; Sat, 16 Mar 2024 16:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710607134; cv=none; b=PKintwvuKB/3udmckSzEEGyfIc7vty6ZvkGAfjzA7FFhY9ID95vTOB5vAA7946WkVHHANV4M4W5XmwFU0gBKRKnQS5HDSM1/7vg4WDcaZhjN5Wz5gRGeHRT/UK5fldM9FB+IdidGDcowC6//3vj3zqjvb0KPQQJCyPJJ/BEeVH4=
+	t=1710607339; cv=none; b=QLnXQ6isH5cgQ+XpR9bkdzVNhEstZljOGw/vJvBLh+8Gz1mk0hmAfnvDC4WG4yiUuA4fHl3eoKxxqhoMMaUeRgYgB3Gi69eT99lak382lP39RgvStm0VcZ3UQ4QcvosRTBz37ZjmXqJ4JExrAUrA80j4ksVs7Hg6+wzD28H1PVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710607134; c=relaxed/simple;
-	bh=3SVmCbgb2upEAImYPiCULMHEpygtX6CarTWjSzsH344=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PzK0lsHsIxCjUyUoN4jUGBX3EN3k1ezHrB+gcH1/m5FHfSxLBWNws3dorVduhHOowiG1POdseQ954uH4J8xWvk65NKoxKHLMafAiE9l1hr905QO/OdPOqaLVGhm1xe/5WTneuXSWDcWd/1TckQfYgNLvhAI8Z+P3PptUtiokYXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KW27Xtj/; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1710607339; c=relaxed/simple;
+	bh=/jq/jzBj28/RKm63QAwG8atr1j7KuxUmtg7lr6FEDkQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=XttjVaSkMnO+wNGQ12Nj/myS3Z5YXiv/nXVK85x7fPWHUvUn7SeFRQDtGfWaFaW1H7LwgYn3IZ7uhVuAWhbRLCM0jvK6KO/YjJyswl/RCNnrw4auU6AqWsOcB9V/LEUrD0cY142lAYMLbDmX6vlzpehnroCrWpfZjY7QZW6bOfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKQ8ySJl; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-33ec7e38b84so1751621f8f.1
-        for <io-uring@vger.kernel.org>; Sat, 16 Mar 2024 09:38:52 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4140844fc85so3904315e9.2
+        for <io-uring@vger.kernel.org>; Sat, 16 Mar 2024 09:42:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710607131; x=1711211931; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        d=gmail.com; s=20230601; t=1710607336; x=1711212136; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6vYnsD35mlF/IGd/xXqA65wNE3pSZGPvKHF0AQXS8GU=;
-        b=KW27Xtj/XRYrGb3sRV0YXXzUZB1VgmNkXJIXi+5xP1THVQSZSNGyJ5cXYtnRAc+8G3
-         biHmaLHghyiRRmD0Zu1dxI/P9FRTswXYN4RYoVATxQa/LtigFdD57k1FWteq/orO6OBg
-         ssU4TB2wvwG4xHZxwOklumU5FyVvBq7pMr/5LPlfH6ywK/xxxWqn4XDRC6lZVHbA6qjH
-         x5l3t48+JTTiexnBcuVwT8ScVBlaetFhCO5olRDJ6AUOLONpdN2/HbjbXTPQzKMjys1C
-         ExZTwcrOUTyRwsslGW+JPnwOveFJHLl/WkZUSXbxFWsNLiCdsi6SLzpAdwDmn2FXuBGK
-         rSFg==
+        bh=2NhJGGUlAe4L+VhIS0kXSNo8uH5yqWL1rgmJMfXNeK0=;
+        b=EKQ8ySJldRL9gvFhBMllCdBFILfYUU/wymqWbqwtvRIplgVGWWbwZwXYQaB0O8GFSv
+         Ud7Nm+ugnFX1T34+dCiYmtGbFVDpCfznzaUARtLI1At5jGgYI9B3YNo/zyfykUXtO/i9
+         eEZt5uJ/b3jYf+rHb2Cp9gGDXNSx1gQxGiFI+4JHgPSseyU5ptTTL19mul5etEBLEo+G
+         wloNZLlKzLU3+/ALJo1TPK4z4xRwuvkrRWuzbpR+7M7985HSGO8RZtTutx6/3k5cp5o+
+         J28WQoMmLx37BLoEuW5hKy3mtd/lmBiciiG76VqHKbkvtwXc4RP00583180wFk9Ex2dk
+         yVYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710607131; x=1711211931;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        d=1e100.net; s=20230601; t=1710607336; x=1711212136;
+        h=content-transfer-encoding:in-reply-to:references:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6vYnsD35mlF/IGd/xXqA65wNE3pSZGPvKHF0AQXS8GU=;
-        b=JQ8Lq8wGZ5rDJ5lW129MifG8masQdwBJ5/YaBY79Crx2WQoEjp1eah955P0Ai7F3hQ
-         Aoe5zUQRLif32vCrxx8aHYLAMUpFula39v6BLOH31fueZeJhia+d7l79afJS/HOn2CEQ
-         Sz3a5WD7QfUJSDd/sysLJjEjVLsM0K/6yqt9q2PuLFIG/rFRNo1PVfdbyP5E3/B21cNn
-         RQf6Orra8v49LpF8fVNWeFKUaQq1axMLqC8xzTk+BcbSSXxg/kRrzmrbHG48VXAOvkls
-         iROztTSJ9PqTtkJh1MrcWCiTd7+8/173UXFnXRp3DBqbGyT/mPOyAdIAKONIErsLVHjR
-         +hrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQojgQAGEVdZ+EejHYcxsZEJfJwKtJRnGUBA4Tl6HlZM+qeNIzz9nG3nI0xg4ZwSfYGs4NpxHdKYtrkVIgVuaf3VShwv6ZzWI=
-X-Gm-Message-State: AOJu0Yw+uY01JaYZdbxGPqqCkC1biYSKS+JHiXRB3diC22bd9ZxUWc2C
-	XOUOgt0R6bv/fZBzFjlLb6Q7rFNOPJuYgQBhiYHSBc7f51Nnb6EjOn2A52T4
-X-Google-Smtp-Source: AGHT+IHV2+3QSK08+gPPnSeEBjlryk2L8Eya0CRV2aVExafwLYRQArm1+QXePaY9/lOFaQFGyprzBw==
-X-Received: by 2002:adf:f6c1:0:b0:33d:5f98:82e3 with SMTP id y1-20020adff6c1000000b0033d5f9882e3mr5538179wrp.13.1710607131170;
-        Sat, 16 Mar 2024 09:38:51 -0700 (PDT)
+        bh=2NhJGGUlAe4L+VhIS0kXSNo8uH5yqWL1rgmJMfXNeK0=;
+        b=c9oHsZk3xBroevYKu0PHp5RlwoaBtM2KVNVueiwSnJqpef1fRvIihAHwkIcS+eTFo7
+         4vXBPGtx31iDe3wYKJWkRIUfrrB5FNp+c8sSRthFCsHQq9u9nhufIuzLl6W0AkHxWcOv
+         umw259WsVjeM5pWNdlEXvwC/wWw+57gGYgIbNKc4a2akieiw/cAt1AMr+9i8ofYowZzE
+         rmDgEKvuOAA0fj5LQ0CFvxLOnrlZSBnhD0HOqgU0Vq8pOg7WmTuBrjd3fPbGHrBoesNN
+         0lPSHHDv6tqX0cglgCwtx18Frb+/Eb2e/RSmr0YUju+EFQUsvYeL3PVEF8z2r8d0kCnb
+         gJSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjBV2dlLgQ9PqSkxada2SY43BH+tQNmM/Ovi9qzXSS2l1MbGAPVJzInh+jtdpYQBIDp3nCCg+En+r9ok+P9wHlP8m26PsKhPk=
+X-Gm-Message-State: AOJu0YyNClA0yPBfFC5H4Na6ob/Py8gJyaJQvpdDD2CW5D/JZixwvjn4
+	Q0aVELFTXaxtCrNzaHXaUsDIGgORDcs2zfgkEVV1yrKme0cwAvv2
+X-Google-Smtp-Source: AGHT+IFbmrlzdY+qka/sXTe51va82T0CkFDYewnr7iYISW8Xel3xWz5Rpp3q5SDF4CI2OXaDTM231g==
+X-Received: by 2002:a05:600c:b86:b0:414:a6e:219e with SMTP id fl6-20020a05600c0b8600b004140a6e219emr248969wmb.8.1710607335894;
+        Sat, 16 Mar 2024 09:42:15 -0700 (PDT)
 Received: from [192.168.8.100] ([185.69.144.99])
-        by smtp.gmail.com with ESMTPSA id v3-20020adfe4c3000000b0033e052be14fsm5722103wrm.98.2024.03.16.09.38.50
+        by smtp.gmail.com with ESMTPSA id t14-20020a05600c450e00b0041409db0349sm1055777wmo.48.2024.03.16.09.42.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Mar 2024 09:38:50 -0700 (PDT)
-Message-ID: <30535d27-7979-4aa9-b8f7-e35eb51dedb0@gmail.com>
-Date: Sat, 16 Mar 2024 16:36:52 +0000
+        Sat, 16 Mar 2024 09:42:15 -0700 (PDT)
+Message-ID: <f5be514e-4298-470a-a0af-200fef5caaad@gmail.com>
+Date: Sat, 16 Mar 2024 16:40:17 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -79,6 +79,7 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2] io_uring/net: ensure async prep handlers always
  initialize ->done_io
 Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
 To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
 References: <472ec1d4-f928-4a52-8a93-7ccc1af4f362@kernel.dk>
  <0ec91000-43f8-477e-9b61-f0a2f531e7d5@gmail.com>
@@ -91,105 +92,112 @@ References: <472ec1d4-f928-4a52-8a93-7ccc1af4f362@kernel.dk>
  <1e595d4b-6688-4193-9bf7-448590a77cdc@kernel.dk>
  <6affbea3-c723-4080-b55d-49a4fbedce70@gmail.com>
  <0224b8e1-9692-4682-8b15-16a1d422c8b2@kernel.dk>
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <0224b8e1-9692-4682-8b15-16a1d422c8b2@kernel.dk>
+ <30535d27-7979-4aa9-b8f7-e35eb51dedb0@gmail.com>
+In-Reply-To: <30535d27-7979-4aa9-b8f7-e35eb51dedb0@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/16/24 16:36, Jens Axboe wrote:
-> On 3/16/24 10:32 AM, Pavel Begunkov wrote:
->> On 3/16/24 16:31, Jens Axboe wrote:
->>> On 3/16/24 10:28 AM, Pavel Begunkov wrote:
->>>> On 3/16/24 16:14, Jens Axboe wrote:
->>>>> On 3/15/24 5:28 PM, Pavel Begunkov wrote:
->>>>>> On 3/15/24 23:25, Jens Axboe wrote:
->>>>>>> On 3/15/24 5:19 PM, Pavel Begunkov wrote:
->>>>>>>> On 3/15/24 23:13, Pavel Begunkov wrote:
->>>>>>>>> On 3/15/24 23:09, Pavel Begunkov wrote:
->>>>>>>>>> On 3/15/24 22:48, Jens Axboe wrote:
->>>>>>>>>>> If we get a request with IOSQE_ASYNC set, then we first run the prep
->>>>>>>>>>> async handlers. But if we then fail setting it up and want to post
->>>>>>>>>>> a CQE with -EINVAL, we use ->done_io. This was previously guarded with
->>>>>>>>>>> REQ_F_PARTIAL_IO, and the normal setup handlers do set it up before any
->>>>>>>>>>> potential errors, but we need to cover the async setup too.
->>>>>>>>>>
->>>>>>>>>> You can hit io_req_defer_failed() { opdef->fail(); }
->>>>>>>>>> off of an early submission failure path where def->prep has
->>>>>>>>>> not yet been called, I don't think the patch will fix the
->>>>>>>>>> problem.
->>>>>>>>>>
->>>>>>>>>> ->fail() handlers are fragile, maybe we should skip them
->>>>>>>>>> if def->prep() wasn't called. Not even compile tested:
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>>>>>>>>> index 846d67a9c72e..56eed1490571 100644
->>>>>>>>>> --- a/io_uring/io_uring.c
->>>>>>>>>> +++ b/io_uring/io_uring.c
->>>>>>>> [...]
->>>>>>>>>>               def->fail(req);
->>>>>>>>>>           io_req_complete_defer(req);
->>>>>>>>>>       }
->>>>>>>>>> @@ -2201,8 +2201,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
->>>>>>>>>>               }
->>>>>>>>>>               req->flags |= REQ_F_CREDS;
->>>>>>>>>>           }
->>>>>>>>>> -
->>>>>>>>>> -    return def->prep(req, sqe);
->>>>>>>>>> +    return 0;
->>>>>>>>>>       }
->>>>>>>>>>
->>>>>>>>>>       static __cold int io_submit_fail_init(const struct io_uring_sqe *sqe,
->>>>>>>>>> @@ -2250,8 +2249,15 @@ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
->>>>>>>>>>           int ret;
->>>>>>>>>>
->>>>>>>>>>           ret = io_init_req(ctx, req, sqe);
->>>>>>>>>> -    if (unlikely(ret))
->>>>>>>>>> +    if (unlikely(ret)) {
->>>>>>>>>> +fail:
+On 3/16/24 16:36, Pavel Begunkov wrote:
+> On 3/16/24 16:36, Jens Axboe wrote:
+>> On 3/16/24 10:32 AM, Pavel Begunkov wrote:
+>>> On 3/16/24 16:31, Jens Axboe wrote:
+>>>> On 3/16/24 10:28 AM, Pavel Begunkov wrote:
+>>>>> On 3/16/24 16:14, Jens Axboe wrote:
+>>>>>> On 3/15/24 5:28 PM, Pavel Begunkov wrote:
+>>>>>>> On 3/15/24 23:25, Jens Axboe wrote:
+>>>>>>>> On 3/15/24 5:19 PM, Pavel Begunkov wrote:
+>>>>>>>>> On 3/15/24 23:13, Pavel Begunkov wrote:
+>>>>>>>>>> On 3/15/24 23:09, Pavel Begunkov wrote:
+>>>>>>>>>>> On 3/15/24 22:48, Jens Axboe wrote:
+>>>>>>>>>>>> If we get a request with IOSQE_ASYNC set, then we first run the prep
+>>>>>>>>>>>> async handlers. But if we then fail setting it up and want to post
+>>>>>>>>>>>> a CQE with -EINVAL, we use ->done_io. This was previously guarded with
+>>>>>>>>>>>> REQ_F_PARTIAL_IO, and the normal setup handlers do set it up before any
+>>>>>>>>>>>> potential errors, but we need to cover the async setup too.
+>>>>>>>>>>>
+>>>>>>>>>>> You can hit io_req_defer_failed() { opdef->fail(); }
+>>>>>>>>>>> off of an early submission failure path where def->prep has
+>>>>>>>>>>> not yet been called, I don't think the patch will fix the
+>>>>>>>>>>> problem.
+>>>>>>>>>>>
+>>>>>>>>>>> ->fail() handlers are fragile, maybe we should skip them
+>>>>>>>>>>> if def->prep() wasn't called. Not even compile tested:
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>>>>>>>>>>> index 846d67a9c72e..56eed1490571 100644
+>>>>>>>>>>> --- a/io_uring/io_uring.c
+>>>>>>>>>>> +++ b/io_uring/io_uring.c
+>>>>>>>>> [...]
+>>>>>>>>>>>               def->fail(req);
+>>>>>>>>>>>           io_req_complete_defer(req);
+>>>>>>>>>>>       }
+>>>>>>>>>>> @@ -2201,8 +2201,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+>>>>>>>>>>>               }
+>>>>>>>>>>>               req->flags |= REQ_F_CREDS;
+>>>>>>>>>>>           }
+>>>>>>>>>>> -
+>>>>>>>>>>> -    return def->prep(req, sqe);
+>>>>>>>>>>> +    return 0;
+>>>>>>>>>>>       }
+>>>>>>>>>>>
+>>>>>>>>>>>       static __cold int io_submit_fail_init(const struct io_uring_sqe *sqe,
+>>>>>>>>>>> @@ -2250,8 +2249,15 @@ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
+>>>>>>>>>>>           int ret;
+>>>>>>>>>>>
+>>>>>>>>>>>           ret = io_init_req(ctx, req, sqe);
+>>>>>>>>>>> -    if (unlikely(ret))
+>>>>>>>>>>> +    if (unlikely(ret)) {
+>>>>>>>>>>> +fail:
+>>>>>>>>>
+>>>>>>>>> Obvious the diff is crap, but still bugging me enough to write
+>>>>>>>>> that the label should've been one line below, otherwise we'd
+>>>>>>>>> flag after ->prep as well.
 >>>>>>>>
->>>>>>>> Obvious the diff is crap, but still bugging me enough to write
->>>>>>>> that the label should've been one line below, otherwise we'd
->>>>>>>> flag after ->prep as well.
+>>>>>>>> It certainly needs testing :-)
+>>>>>>>>
+>>>>>>>> We can go either way - patch up the net thing, or do a proper EARLY_FAIL
+>>>>>>>> and hopefully not have to worry about it again. Do you want to clean it
+>>>>>>>> up, test it, and send it out?
 >>>>>>>
->>>>>>> It certainly needs testing :-)
->>>>>>>
->>>>>>> We can go either way - patch up the net thing, or do a proper EARLY_FAIL
->>>>>>> and hopefully not have to worry about it again. Do you want to clean it
->>>>>>> up, test it, and send it out?
+>>>>>>> I'd rather leave it to you, I suspect it wouldn't fix the syzbot
+>>>>>>> report w/o fiddling with done_io as in your patch.
 >>>>>>
->>>>>> I'd rather leave it to you, I suspect it wouldn't fix the syzbot
->>>>>> report w/o fiddling with done_io as in your patch.
+>>>>>> I gave this a shot, but some fail handlers do want to get called. But
 >>>>>
->>>>> I gave this a shot, but some fail handlers do want to get called. But
+>>>>> Which one and/or which part of it?
 >>>>
->>>> Which one and/or which part of it?
+>>>> send zc
 >>>
->>> send zc
+>>> I don't think so. If prep wasn't called there wouldn't be
+>>> a notif allocated, and so no F_MORE required. If you take
+>>> at the code path it's under REQ_F_NEED_CLEANUP, which is only
+>>> set by opcode handlers
 >>
->> I don't think so. If prep wasn't called there wouldn't be
->> a notif allocated, and so no F_MORE required. If you take
->> at the code path it's under REQ_F_NEED_CLEANUP, which is only
->> set by opcode handlers
+>> I'm not making this up, your test case will literally fail as it doesn't
+>> get to flag MORE for that case. FWIW, this was done with EARLY_FAIL
+>> being flagged, and failing if we fail during or before prep.
 > 
-> I'm not making this up, your test case will literally fail as it doesn't
-> get to flag MORE for that case. FWIW, this was done with EARLY_FAIL
-> being flagged, and failing if we fail during or before prep.
+> Maybe the test is too strict, but your approach is different
+> from what I mentioned yesterday
+> 
+> -    return def->prep(req, sqe);
+> +    ret = def->prep(req, sqe);
+> +    if (unlikely(ret)) {
+> +        req->flags |= REQ_F_EARLY_FAIL;
+> +        return ret;
+> +    }
+> +
+> +    return 0;
+> 
+> It should only set REQ_F_EARLY_FAIL if we fail
+> _before_ prep is called
 
-Maybe the test is too strict, but your approach is different
-from what I mentioned yesterday
+We can't post a notif unless we allocated it, which couldn't
+possibly happen without ->prep being called fist.
 
--	return def->prep(req, sqe);
-+	ret = def->prep(req, sqe);
-+	if (unlikely(ret)) {
-+		req->flags |= REQ_F_EARLY_FAIL;
-+		return ret;
-+	}
-+
-+	return 0;
-
-It should only set REQ_F_EARLY_FAIL if we fail
-_before_ prep is called
+Let's better call it UNPREPPED_FAIL or somehow more meaningfully,
+I expect a lot of confusion around "EARLY_FAIL"
 
 -- 
 Pavel Begunkov

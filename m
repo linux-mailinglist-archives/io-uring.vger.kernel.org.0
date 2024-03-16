@@ -1,149 +1,135 @@
-Return-Path: <io-uring+bounces-1005-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1006-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F2A87D7FA
-	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 03:31:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB9487D81C
+	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 03:55:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B13C282BA1
-	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 02:31:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27B8A2824A7
+	for <lists+io-uring@lfdr.de>; Sat, 16 Mar 2024 02:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D0636C;
-	Sat, 16 Mar 2024 02:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159A21C36;
+	Sat, 16 Mar 2024 02:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SJoNKoSJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LjBU9i/2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E709D641
-	for <io-uring@vger.kernel.org>; Sat, 16 Mar 2024 02:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A6D393;
+	Sat, 16 Mar 2024 02:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710556274; cv=none; b=g2Z7CL5QNNflnYS9umB8H6kYa16VwmIjcHvg5HhcJ+760T8oUYd6GKtUnoeZ3ME+5qorl38OocD8EzmaC60PI40N78gRfNryNsv2E1ucK4dlAi08zuDST2hVpjQgbH1WVS9hh9yhM0MzMcUAsO56HtbQtc64rlNixZtGIJ8YUa0=
+	t=1710557734; cv=none; b=os8pqdZKD7mvxkMaP9D5vz6CDj94mH5nv1m5kK7fBNUUrAllErPg6v5Cf+bK4kyWJWRrCTcIkpvyoLGJ44YalN0DhJ8H5t3353md4lXpB5bf03JJd6NhQbuRYuVH0R+Y/1ppaysRiWi2h7pyj8gMVRkOKPMI/c1ccpT0dve8Yys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710556274; c=relaxed/simple;
-	bh=9/jjR3U5q/i59Ny9aGyCYLFbY6vTcnXGlOKdKAfuHxI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ouje0493CbuEr1ey1cKoRflMkCHI8faEAOwaE91rDMDaGzdMdWuDw3sUQAsZ97oK8Let37S5dpHhg48JukTZkuJGMGkB0U6a5WU7wdNp4pNIha2G1XkOFHxI4YzDxFQkgThHUYC8+7AOnX0B3ivtaLz4hP8nKQetLUKYQYumVKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SJoNKoSJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710556271;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LL2aiOudT2QmtdIqb/ELukW8Oe9P5VE/7KMlCFGljw4=;
-	b=SJoNKoSJp9Jyjof2FApsqDXqLiTdRslz9r9WLKJK+5Ss35SoeuqhG1BUhGCXlsyfjlCtHd
-	0oAEIpJrRF7m2CvMYG5bODqWg2gBzwJlt3Mh5HKXywD8oqIdFFCtnVDGVcVathyNMaUYEc
-	4BMz9VNKLpjbyuTtZUdhBsIDEpJsSdw=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-489-DAfMAvfvNzK7x6xhYMY3Ag-1; Fri, 15 Mar 2024 22:31:09 -0400
-X-MC-Unique: DAfMAvfvNzK7x6xhYMY3Ag-1
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-5c683944ab0so441228a12.0
-        for <io-uring@vger.kernel.org>; Fri, 15 Mar 2024 19:31:08 -0700 (PDT)
+	s=arc-20240116; t=1710557734; c=relaxed/simple;
+	bh=/ncSNOISJXYLMQBt907owyxgmUI5ot+qzXLFZYSWwHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=io8/FGJBrvAZ2qdQWxr/yZGMghRX6zXG8mPw06+r0n+rVYE242CiiIDLXMvlpQJtJEuG1XbKBtoDNeXrqJNHTSgrx+H/77/3ZiZ67v8Z+T5CEazdPexZB4uXS+71x/O7FxO3+E397420nxD7GtU+JIKt8b9JkHNF6FTRLRhlJ4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LjBU9i/2; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-33ed7ba1a42so339171f8f.2;
+        Fri, 15 Mar 2024 19:55:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1710557731; x=1711162531; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bBeJQdj8sVU38HiwxRAqBNideRlWYRjrGmK9XL6SCio=;
+        b=LjBU9i/2ZHV6+ttimTiPTpBVTlPy6Bu96ks9IhHxl3hNoodRmWfe5crN7AlyCovozv
+         WQSyWXcrCoGfYn4OMAPIIfiqaswegTW/aUIC6eFMllOWMDtueXVfYRhM5yEkR4iqlfuo
+         2lV43eJcby/Op/cpAsVtXGgqqPtc5Rp2lAp8HSORUKxwLJGrzA1oyYWXzSl1quhcSGWh
+         woGD6s84XweSqO6jLPFcREjAzLI8aDH3+SkXL2brQWlp7cR4tdR+BaIPpWmq/VZHQGt9
+         bLxfv4be1Xj7CFpDG4AUZm29ADHNI/8T9mtpJG1B8ova4fRCQJzRlnRT/Q7i8fPbCQtP
+         YCRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710556268; x=1711161068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LL2aiOudT2QmtdIqb/ELukW8Oe9P5VE/7KMlCFGljw4=;
-        b=usdlSRh/0qrgphEwDsP7m47AU9xtkjMqzTsMrMM+y6UqRTOFPrTZnVAS6aMWnscZN3
-         4xwPK6mj8Z1Zj9aMjjzk5NgWGsBHX2ogHd3Gaq+DAuLyS6aOJ1jSKLu/w+L4rsM7BRsW
-         EexaEGv8DKHi6JTRSEIPVednXfn3dQWH3GcpkXh1WZHo0OGva3OgCoufbHfx9k7rgDgs
-         gKYpniZVTpY7IXKJuoZMMnVnUWOBSSsae3cCfRCEU2uPmlsDtRYOAtR/Jvem++yZ5JwB
-         BCLHEJQXudWHGo/clL+4xaleCyl/6Yzzel1NyYjr0t7/bGR4IAoupE4dW8HcnAs2ThQP
-         v/Ag==
-X-Gm-Message-State: AOJu0YyDgYb2NU/7rL4/MGJhkISEmAEoHZtoTJJUHrRy34vZaZkmmBKD
-	WKbPnRbWGdAY5RxxDFDgbXmQS+Svh6m52n0/FXuj6vfbtGMCjX7VjpL9EaMt7glOjL0kKPawDUx
-	5gIbexsKGekha5LBnAIgNLJV92E12QV3pAjbwe7bs0eBQDyRVHU6oYDglEMA2SoAfW2g+cyrrWW
-	vNwMRqzWvrQUM5Mp4G9UGljV8Bk/9Bkh0=
-X-Received: by 2002:a05:620a:1a27:b0:789:d106:1dae with SMTP id bk39-20020a05620a1a2700b00789d1061daemr7394678qkb.5.1710555879670;
-        Fri, 15 Mar 2024 19:24:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHykChZCjA10Rbu6b79SKOfaxiB0J3C+wqart0s2xWfsFik70q8LOk3+PFj74HrJ2XySwQA9h3yebMNvJG8A60=
-X-Received: by 2002:a05:620a:1a27:b0:789:d106:1dae with SMTP id
- bk39-20020a05620a1a2700b00789d1061daemr7394673qkb.5.1710555879326; Fri, 15
- Mar 2024 19:24:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710557731; x=1711162531;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bBeJQdj8sVU38HiwxRAqBNideRlWYRjrGmK9XL6SCio=;
+        b=eNEpQNGrT/DiDNInIWS6Bs3d4icKpPCwcxlqdYyu2MyrsSN7JrrW1Yl9w3Rud9xbeT
+         GVyjxylqVbo1mmjuq467f5knUtx2aiAXNDYuyQoFTre2VCunkIukmWAyfuXrc2Pgzcbg
+         NtIjY5vlq/UFvin3alHM1t39o9Yjx5i2SaYMVXYNvpC3qj0k9B3R1hrKfmWXKCXKkS0o
+         e+TVCcmymO2ywfRYRIWRML28F6NT+kI7lNXzdKGlmyVOTOJWsMslUUoT1Xpe4jcMHxq3
+         9UG36YHpC+/QY1sLv2YBdm8YqywEca6x0EFDLDAwRRQhNyg1EhjBek5gMF/J9Kj6CzVp
+         gPNg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4ChsQh5myCeWPBHMyYIQF+RZb5VgNqUhYELrbpuMIIVqQrcF7bburnClK4fuKRdw66kA9Ti2dP7FRjtYPaax5ha78qpZzcsicnIU=
+X-Gm-Message-State: AOJu0YzdS8gep+3y3HAnVLSEEwDyKwcXuW9ZtlOG+CKh8rwDnwIgwXmF
+	G27JgoFOuycMkXHBoiAQAQZD6jZgz/FINJ8JOefeXAmdxiRHNzW3nthLivlG
+X-Google-Smtp-Source: AGHT+IFL6G1jd0obgRCT6FHpfvsSchERX99ZLCMGeAxeC5I+xnE7tN5CnfRi2uequnzyHdfCHg12dA==
+X-Received: by 2002:a5d:5910:0:b0:33e:ce0f:5c79 with SMTP id v16-20020a5d5910000000b0033ece0f5c79mr4125247wrd.9.1710557730302;
+        Fri, 15 Mar 2024 19:55:30 -0700 (PDT)
+Received: from [192.168.8.100] ([185.69.144.99])
+        by smtp.gmail.com with ESMTPSA id n16-20020adffe10000000b0033de2f2a88dsm4366159wrr.103.2024.03.15.19.55.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Mar 2024 19:55:30 -0700 (PDT)
+Message-ID: <6dcd9e5d-f5c7-4c05-aa48-1fab7b0072ea@gmail.com>
+Date: Sat, 16 Mar 2024 02:54:19 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1710514702.git.asml.silence@gmail.com> <171054320158.386037.13510354610893597382.b4-ty@kernel.dk>
- <ZfT+CDCl+07rlRIp@fedora>
-In-Reply-To: <ZfT+CDCl+07rlRIp@fedora>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Sat, 16 Mar 2024 10:24:28 +0800
-Message-ID: <CAFj5m9LXFxaeVyWgPGMiJLaueXkpcLz=506Bp_mhpjKU59eEnw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: (subset) [PATCH 00/11] remove aux CQE caches
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>, 
-	linux-block@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+ Kanchan Joshi <joshi.k@samsung.com>
+References: <cover.1710514702.git.asml.silence@gmail.com>
+ <171054320158.386037.13510354610893597382.b4-ty@kernel.dk>
+ <ZfT+CDCl+07rlRIp@fedora>
+ <CAFj5m9LXFxaeVyWgPGMiJLaueXkpcLz=506Bp_mhpjKU59eEnw@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAFj5m9LXFxaeVyWgPGMiJLaueXkpcLz=506Bp_mhpjKU59eEnw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 16, 2024 at 10:04=E2=80=AFAM Ming Lei <ming.lei@redhat.com> wro=
-te:
->
-> On Fri, Mar 15, 2024 at 04:53:21PM -0600, Jens Axboe wrote:
-> >
-> > On Fri, 15 Mar 2024 15:29:50 +0000, Pavel Begunkov wrote:
-> > > Patch 1 is a fix.
-> > >
-> > > Patches 2-7 are cleanups mainly dealing with issue_flags conversions,
-> > > misundertsandings of the flags and of the tw state. It'd be great to =
-have
-> > > even without even w/o the rest.
-> > >
-> > > 8-11 mandate ctx locking for task_work and finally removes the CQE
-> > > caches, instead we post directly into the CQ. Note that the cache is
-> > > used by multishot auxiliary completions.
-> > >
-> > > [...]
-> >
-> > Applied, thanks!
->
-> Hi Jens and Pavel,
->
-> Looks this patch causes hang when running './check ublk/002' in blktests.
+On 3/16/24 02:24, Ming Lei wrote:
+> On Sat, Mar 16, 2024 at 10:04 AM Ming Lei <ming.lei@redhat.com> wrote:
+>>
+>> On Fri, Mar 15, 2024 at 04:53:21PM -0600, Jens Axboe wrote:
+>>>
+>>> On Fri, 15 Mar 2024 15:29:50 +0000, Pavel Begunkov wrote:
+>>>> Patch 1 is a fix.
+>>>>
+>>>> Patches 2-7 are cleanups mainly dealing with issue_flags conversions,
+>>>> misundertsandings of the flags and of the tw state. It'd be great to have
+>>>> even without even w/o the rest.
+>>>>
+>>>> 8-11 mandate ctx locking for task_work and finally removes the CQE
+>>>> caches, instead we post directly into the CQ. Note that the cache is
+>>>> used by multishot auxiliary completions.
+>>>>
+>>>> [...]
+>>>
+>>> Applied, thanks!
+>>
+>> Hi Jens and Pavel,
+>>
+>> Looks this patch causes hang when running './check ublk/002' in blktests.
+> 
+> Not take close look, and  I guess it hangs in
+> 
+> io_uring_cmd_del_cancelable() -> io_ring_submit_lock
 
-Not take close look, and  I guess it hangs in
+Thanks, the trace doesn't completely explains it, but my blind spot
+was io_uring_cmd_done() potentially grabbing the mutex. They're
+supposed to be irq safe mimicking io_req_task_work_add(), that's how
+nvme passthrough uses it as well (but at least it doesn't need the
+cancellation bits).
 
-io_uring_cmd_del_cancelable() -> io_ring_submit_lock
-
-[root@ktest-36 ~]# cat /proc/1420/stack
-[<0>] io_uring_cmd_done+0x161/0x1c0
-[<0>] ublk_stop_dev+0x10e/0x1b0 [ublk_drv]
-[<0>] ublk_ctrl_uring_cmd+0xbc9/0x11e0 [ublk_drv]
-[<0>] io_uring_cmd+0x9e/0x130
-[<0>] io_issue_sqe+0x2d3/0x730
-[<0>] io_wq_submit_work+0xd2/0x350
-[<0>] io_worker_handle_work+0x12a/0x4b0
-[<0>] io_wq_worker+0x101/0x390
-[<0>] ret_from_fork+0x31/0x50
-[<0>] ret_from_fork_asm+0x1a/0x30
-
-(gdb) l *(io_uring_cmd_done+0x161)
-0xffffffff817ed241 is in io_uring_cmd_done (./include/linux/list.h:985).
-980 return !READ_ONCE(h->first);
-981 }
-982
-983 static inline void __hlist_del(struct hlist_node *n)
-984 {
-985 struct hlist_node *next =3D n->next;
-986 struct hlist_node **pprev =3D n->pprev;
-987
-988 WRITE_ONCE(*pprev, next);
-989 if (next)
+One option is to replace it with a spinlock, the other is to delay
+the io_uring_cmd_del_cancelable() call to the task_work callback.
+The latter would be cleaner and more preferable, but I'm lacking
+context to tell if that would be correct. Ming, what do you think?
 
 
-Thanks,
-
+-- 
+Pavel Begunkov
 

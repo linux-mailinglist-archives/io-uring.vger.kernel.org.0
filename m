@@ -1,156 +1,162 @@
-Return-Path: <io-uring+bounces-1100-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1101-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3C487E99A
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 13:54:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 788AA87E9DE
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 14:09:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 226B91C212F6
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 12:54:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07C7AB2225A
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 13:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B73B2FE0F;
-	Mon, 18 Mar 2024 12:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546BF33CF1;
+	Mon, 18 Mar 2024 13:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dV19/1eF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X8ODOLD+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B9E2EAE6;
-	Mon, 18 Mar 2024 12:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5494E3BBEF
+	for <io-uring@vger.kernel.org>; Mon, 18 Mar 2024 13:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710766449; cv=none; b=m/BH5B0U2laj9BHWcGbdebBhNuKsWG2rK+xf7D3fNt0h9pI+zPYUvOCzAVCbR1TL5bzU/DTXsjZDpixxAniwKJwa6I1TC6/ApfjKRXbXxJTJWK9M46uLoG4ZjsA94LMMw6ZJgeap1IyKZubhobeL5Rjy5LncfaGAkvOvDmaBCn4=
+	t=1710767367; cv=none; b=lspgs9GMentx013JvN+SEjMYsuoiJwuI3/ZZ48/tj9WnRnSvS2nZL0uaFo+0xWYwPu9F2grVILBP80YkE1BjNCwo2pvGGfB1mXZzwNwVnnp2Gn4Lk3pjP6UTopw5vzA5IywpKNrVhit+k/QLs4l8SaQDsfwPu/Hp0D/ZQ9KZm0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710766449; c=relaxed/simple;
-	bh=I6CekvyfilkWrjsiTxEp+MC47fMF6SzWsBnv8kfBqa4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fu3S0QDWZOf3yRsAQd61exINQEE7kFO+uD/fCQzJRuG21X/+tq6W7BbkntvKVUd4uNNkiiJFh73Y5yVcOTv3TV/fzKR7kYSHPOvlOgL1LdP4txutc4xOG2lxVIWx9eqADgck+L0P8/SdXikfFOgkLiZ22DebLL4V9Zgq28LoWAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dV19/1eF; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-56b84b2c8c8so445185a12.1;
-        Mon, 18 Mar 2024 05:54:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710766446; x=1711371246; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KOb4sV67qE3Vr/DL9bumOjnuZDP6H6RIoj2joUq6fu8=;
-        b=dV19/1eFKJCNFEBGCfw4iOTblV/Wk0QFHpvRQVo7UaeK+1jJlHN2uegHCQ8wpd+kev
-         6RphBFqre3W7gfHCxAnosV6YYXpbn1Wnbki4t3SOBKeWjDhhHORWKEsbEil37bMujoOj
-         Chn0wfWkjUWxC+8AkZdMxyAceNm5wzWQOPNQGzYRQwvqssKcF8f1m2aSFaKjc9//u+ux
-         1uOL7Dfb0hQwLXnTJ4uuJX5ss41KORgjvZ6gk5/ddMDjnwIHJnwozAWyrckpTgjpNiho
-         LvMDpht20l1pr1LwlVCbMBc8uF5zaurOLxTQEcXIcxzEMBwhOORra86VHeiWwmVg5zn6
-         60qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710766446; x=1711371246;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KOb4sV67qE3Vr/DL9bumOjnuZDP6H6RIoj2joUq6fu8=;
-        b=gRcen4ZPSmacWjU6TZHfHYEBQWTUkkHg1X4bI6/hD0SLgRdXHc0oNli9naA47lNgxP
-         /ZjxQfXTFRd6SAqRQEhQAI/JaryoHl9bvVt5XSBDwN5z/RbWfkieTlonHzLQJ+dqbVK6
-         2QGD/T24qysrFB8TYEgcIubb2rFEr4izWeRvHEs3fjR+K664jf9SWIcOOunBEY30r+2P
-         de/PzMRys6CfIkZ+ToOwwHPUzTx/Ltt/uxTy3BeTk4RL81DgcySqsOWXJZKQS/MVoVQb
-         GI3olq31PpS4Z+WQ0QY663mP2sGC4OB3oFeWS3Tjg4JO7YIT2My+VZa469hz9l1cxdmW
-         46JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhb/4bBl0q8/ZHwog3HkFGWFxTG4cYPxId+QgqRCeSdc+DY5Q+0bV5nOZIaJirzt2Z3TkbMXUV70a0c72j9zc2CB6M40i73L9wnvA=
-X-Gm-Message-State: AOJu0YxsMQE8d8NpKetQJiaYfRuHxnlH6iGq/9NuvsIOjVzT7WEA5ahk
-	8Dj6tLjcLzrfwxRVE60sn4WNStfob6hkkYMBxj6m6cNyfFgK+KQx
-X-Google-Smtp-Source: AGHT+IGfT85ukna1VOzCDw1p5yOuHdVftbZj0uBO/ZYVC5Pljrt3N7BqPBxRddnZT8OzC7hL9h5xzw==
-X-Received: by 2002:a05:6402:1f4c:b0:568:b46c:c4ba with SMTP id 12-20020a0564021f4c00b00568b46cc4bamr5850373edz.30.1710766446115;
-        Mon, 18 Mar 2024 05:54:06 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::2181? ([2620:10d:c092:600::1:429a])
-        by smtp.gmail.com with ESMTPSA id u11-20020a056402110b00b00568d60cfbccsm1449520edv.42.2024.03.18.05.54.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Mar 2024 05:54:05 -0700 (PDT)
-Message-ID: <61b29658-e6a9-449f-a850-1881af1ecbee@gmail.com>
-Date: Mon, 18 Mar 2024 12:52:33 +0000
+	s=arc-20240116; t=1710767367; c=relaxed/simple;
+	bh=hJElC500Oh1Bze9bUIMFtwY5VkHf28yG0Rl9qY2GJCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XmzYcPonKMx+PTf8xWKfufRSKEhoPGcHVlJsQ+AkmHw+Z2jXHcZSA10y5aYFx03Dp6TeFtQ0Hi59qZ8v/JpuNE2fqsuR4uZ/WYW+pyM2fieDJ+SDXaoYS9t5dcqKLflR0O6IIAAZ++UZ/wnMQ1qHccE2uY5Gpn3454Sx5FnX5BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X8ODOLD+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1710767364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uY1lsgNsf7yDMTJWeqSlsz30bRR/907IGKcgLNq2lx8=;
+	b=X8ODOLD+HZHWqTiJ5jDVfEEC3ORneOmlfgfMjESFLCOY0cX9I1ejkP3tUs30+Glyde+tmN
+	HfgCW7TuUSHkVEl4OaNcHiW2KePOFblroEmk8CbNBvwZ16vWgN4EjzZ3HpdRN3+AqxQn0c
+	F4Z5JI+jE7RWFwyS7DJLry/PNxAEizM=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-195-6Hpz_UPtNLuckTpbncqqJA-1; Mon, 18 Mar 2024 09:09:18 -0400
+X-MC-Unique: 6Hpz_UPtNLuckTpbncqqJA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 417CE185A784;
+	Mon, 18 Mar 2024 13:09:18 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.15])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 2722D2166B32;
+	Mon, 18 Mar 2024 13:09:14 +0000 (UTC)
+Date: Mon, 18 Mar 2024 21:09:06 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [PATCH v2 03/14] io_uring/cmd: make io_uring_cmd_done irq safe
+Message-ID: <Zfg88tNCwevp5cHj@fedora>
+References: <cover.1710720150.git.asml.silence@gmail.com>
+ <faeec0d1e7c740a582f51f80626f61c745ed9a52.1710720150.git.asml.silence@gmail.com>
+ <Zff25z0fPGBPfJs1@fedora>
+ <4c6a5b55-2833-4ef7-a514-577fe61160dd@gmail.com>
+ <Zfgsk8mND0cah3DP@fedora>
+ <1f5c02ad-f25a-46ea-96e6-649997aea3c2@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/14] ublk: don't hard code IO_URING_F_UNLOCKED
-Content-Language: en-US
-To: Ming Lei <ming.lei@redhat.com>
-Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshi.k@samsung.com>
-References: <cover.1710720150.git.asml.silence@gmail.com>
- <a3928d3de14d2569efc2edd7fb654a4795ae7f86.1710720150.git.asml.silence@gmail.com>
- <Zff4ShMEcL1WKZ1Q@fedora>
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Zff4ShMEcL1WKZ1Q@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f5c02ad-f25a-46ea-96e6-649997aea3c2@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On 3/18/24 08:16, Ming Lei wrote:
-> On Mon, Mar 18, 2024 at 12:41:50AM +0000, Pavel Begunkov wrote:
->> uring_cmd implementations should not try to guess issue_flags, just use
->> a newly added io_uring_cmd_complete(). We're loosing an optimisation in
->> the cancellation path in ublk_uring_cmd_cancel_fn(), but the assumption
->> is that we don't care that much about it.
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> Link: https://lore.kernel.org/r/2f7bc9fbc98b11412d10b8fd88e58e35614e3147.1710514702.git.asml.silence@gmail.com
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>   drivers/block/ublk_drv.c | 18 ++++++++----------
->>   1 file changed, 8 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
->> index bea3d5cf8a83..97dceecadab2 100644
->> --- a/drivers/block/ublk_drv.c
->> +++ b/drivers/block/ublk_drv.c
->> @@ -1417,8 +1417,7 @@ static bool ublk_abort_requests(struct ublk_device *ub, struct ublk_queue *ubq)
->>   	return true;
->>   }
->>   
->> -static void ublk_cancel_cmd(struct ublk_queue *ubq, struct ublk_io *io,
->> -		unsigned int issue_flags)
->> +static void ublk_cancel_cmd(struct ublk_queue *ubq, struct ublk_io *io)
->>   {
->>   	bool done;
->>   
->> @@ -1432,15 +1431,14 @@ static void ublk_cancel_cmd(struct ublk_queue *ubq, struct ublk_io *io,
->>   	spin_unlock(&ubq->cancel_lock);
->>   
->>   	if (!done)
->> -		io_uring_cmd_done(io->cmd, UBLK_IO_RES_ABORT, 0, issue_flags);
->> +		io_uring_cmd_complete(io->cmd, UBLK_IO_RES_ABORT, 0);
->>   }
->>   
->>   /*
->>    * The ublk char device won't be closed when calling cancel fn, so both
->>    * ublk device and queue are guaranteed to be live
->>    */
->> -static void ublk_uring_cmd_cancel_fn(struct io_uring_cmd *cmd,
->> -		unsigned int issue_flags)
->> +static void ublk_uring_cmd_cancel_fn(struct io_uring_cmd *cmd)
->>   {
->>   	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
->>   	struct ublk_queue *ubq = pdu->ubq;
->> @@ -1464,7 +1462,7 @@ static void ublk_uring_cmd_cancel_fn(struct io_uring_cmd *cmd,
->>   
->>   	io = &ubq->ios[pdu->tag];
->>   	WARN_ON_ONCE(io->cmd != cmd);
->> -	ublk_cancel_cmd(ubq, io, issue_flags);
->> +	ublk_cancel_cmd(ubq, io);
+On Mon, Mar 18, 2024 at 12:46:25PM +0000, Pavel Begunkov wrote:
+> On 3/18/24 11:59, Ming Lei wrote:
+> > On Mon, Mar 18, 2024 at 11:50:32AM +0000, Pavel Begunkov wrote:
+> > > On 3/18/24 08:10, Ming Lei wrote:
+> > > > On Mon, Mar 18, 2024 at 12:41:48AM +0000, Pavel Begunkov wrote:
+> > > > > io_uring_cmd_done() is called from the irq context and is considered to
+> > > > > be irq safe, however that's not the case if the driver requires
+> > > > > cancellations because io_uring_cmd_del_cancelable() could try to take
+> > > > > the uring_lock mutex.
+> > > > > 
+> > > > > Clean up the confusion, by deferring cancellation handling to
+> > > > > locked task_work if we came into io_uring_cmd_done() from iowq
+> > > > > or other IO_URING_F_UNLOCKED path.
+> > > > > 
+> > > > > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> > > > > ---
+> > > > >    io_uring/uring_cmd.c | 24 +++++++++++++++++-------
+> > > > >    1 file changed, 17 insertions(+), 7 deletions(-)
+> > > > > 
+> > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> > > > > index ec38a8d4836d..9590081feb2d 100644
+> > > > > --- a/io_uring/uring_cmd.c
+> > > > > +++ b/io_uring/uring_cmd.c
+> > > > > @@ -14,19 +14,18 @@
+> > > > >    #include "rsrc.h"on   #include "uring_cmd.h"
+> > > > > -static void io_uring_cmd_del_cancelable(struct io_uring_cmd *cmd,
+> > > > > -		unsigned int issue_flags)
+> > > > > +static void io_uring_cmd_del_cancelable(struct io_uring_cmd *cmd)
+> > > > >    {
+> > > > >    	struct io_kiocb *req = cmd_to_io_kiocb(cmd);
+> > > > >    	struct io_ring_ctx *ctx = req->ctx;
+> > > > > +	lockdep_assert_held(&ctx->uring_lock);
+> > > > > +
+> > > > >    	if (!(cmd->flags & IORING_URING_CMD_CANCELABLE))
+> > > > >    		return;
+> > > > >    	cmd->flags &= ~IORING_URING_CMD_CANCELABLE;
+> > > > > -	io_ring_submit_lock(ctx, issue_flags);
+> > > > >    	hlist_del(&req->hash_node);
+> > > > > -	io_ring_submit_unlock(ctx, issue_flags);
+> > > > >    }
+> > > > >    /*
+> > > > > @@ -44,6 +43,9 @@ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
+> > > > >    	struct io_kiocb *req = cmd_to_io_kiocb(cmd);
+> > > > >    	struct io_ring_ctx *ctx = req->ctx;
+> > > > > +	if (WARN_ON_ONCE(ctx->flags & IORING_SETUP_IOPOLL))
+> > > > > +		return;
+> > > > > +
+> > > > 
+> > > > This way limits cancelable command can't be used in iopoll context, and
+> > > > it isn't reasonable, and supporting iopoll has been in ublk todo list,
+> > > > especially single ring context is shared for both command and normal IO.
+> > > 
+> > > That's something that can be solved when it's needed, and hence the
+> > > warning so it's not missed. That would need del_cancelable on the
+> > > ->iopoll side, but depends on the "leaving in cancel queue"
+> > > problem resolution.
+> > 
+> > The current code is actually working with iopoll, so adding the warning
+> > can be one regression. Maybe someone has been using ublk with iopoll.
 > 
-> .cancel_fn is always called with .uring_lock held, so this 'issue_flags' can't
-> be removed, otherwise double task run is caused because .cancel_fn
-> can be called multiple times if the request stays in ctx->cancelable_uring_cmd.
+> Hmm, I don't see ->uring_cmd_iopoll implemented anywhere, and w/o
+> it io_uring should fail the request:
+> 
+> int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+> {
+> 	...
+> 	if (ctx->flags & IORING_SETUP_IOPOLL) {
+> 		if (!file->f_op->uring_cmd_iopoll)
+> 			return -EOPNOTSUPP;
+> 		issue_flags |= IO_URING_F_IOPOLL;
+> 	}
+> }
+> 
+> Did I miss it somewhere?
 
-I see, that's exactly why I was asking whether it can be deferred
-to tw. Let me see if I can get by without that patch, but honestly
-it's a horrible abuse of the ring state. Any ideas how that can be
-cleaned up?
+Looks I missed the point, now the WARN() is fine.
 
--- 
-Pavel Begunkov
+
+Thanks,
+Ming
+
 

@@ -1,71 +1,71 @@
-Return-Path: <io-uring+bounces-1120-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1121-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B9A87F2D4
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 23:02:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F7687F2D5
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 23:02:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E5A9B22114
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 22:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 542192812A1
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 22:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7CD59B60;
-	Mon, 18 Mar 2024 22:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AB859B6D;
+	Mon, 18 Mar 2024 22:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VpJkYudD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jq9pgAKe"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0F859B55;
-	Mon, 18 Mar 2024 22:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568AB5A4D8;
+	Mon, 18 Mar 2024 22:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710799341; cv=none; b=r7Lx1McRLGfEeswjNjMPhDOPuarioC27j5AspnwrqXeJ/Y0QZ1gj02qHmOD5dfNwzmgmeXiN4r199eT+fU9oiCuRd8uX0BtIih1luXu3BKmNTKltEaNRNCKv1z/gZGfl+bq9Ab84li2jIMJFIMq0RkVhJ96RW1x17T842AFphvQ=
+	t=1710799343; cv=none; b=igM3/YbNNev4jRQ2RiTa0Kknc+3+wLMFFcD2ZB7XwKZ3FAo8Mv5kD4gjUbmjr9V2jVDMO2cAosMDlRutMsaUcSSdkQ9Zy+jmxJGMinzn2YHmSt/cF2yxZNiC0sUhi68dsK5MFg/DjnwL8diAMTDZ3LGmbkL3B9q+HusscN1Zat0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710799341; c=relaxed/simple;
-	bh=CqEy9YlnIJxs2HVEo6RpmOFUMTKd1shNymbvV4OtMgQ=;
+	s=arc-20240116; t=1710799343; c=relaxed/simple;
+	bh=Ae97tVzbWkRAu0LFf9aZ9RBHFn37wBgTKbXqflC4/ns=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pRbBiXJukQI84n7mwBXFvi+mFGHPJQ4enQMGT3KRly96i335cbXxuqn0yyPtootGQvWZvoo4qjb56OH/mRQISTXVCt4bCSzasxnQaxpTh39MHxdDNc1LST7LcNQW56kXiX6Ue0PBoP+61tKYHV/dYOuM19ayFV7MMomWvlrpfaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VpJkYudD; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version; b=uJV2Bb8rcDZ0SLV/4kTY4qC7dTxj3AEyI8Hy9WYfdUSU9Z/8XnW5gQdD2F7xR3Nrj8rdf+7PGTA/+XUxCb2zkmkpal25VsI15K97aVtJnIbznV1T8S74HIUK5nbSSGx/S0vAt0supXRmoEarPS3onq0wDMgr7jKQouB5SPquqeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jq9pgAKe; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-34005b5927eso1508266f8f.1;
-        Mon, 18 Mar 2024 15:02:19 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-33ed4d8e9edso2026543f8f.2;
+        Mon, 18 Mar 2024 15:02:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710799338; x=1711404138; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710799339; x=1711404139; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xk51Ayd0oOL8B8bNip0Qvci6ISd/wlEH/T4TunQP5iw=;
-        b=VpJkYudDvTP5T4S04wJUuX7wJL2y9Yw/tIN3ubAvSHW9DOXm+9Wxtt7jNm54ZlaoDV
-         lpg05NTOUtLxa/4aKaQVS6GVKwNeuXnHuyLfh5u7OagtO/kDAqO44/wSuw5h+YAJC4SZ
-         OgHv3emNtNp8uHURmuoxWnsA0+m32758e/1ticytzzVK99KFKruXKwx0ROex8CQroDTK
-         If2+G1fnXEQ6mlT8hvyvKJj6lzqAuartCxGc+u93ZbnOcT1rhySC2hzKJs3S1xS7QXn/
-         vnUDRBudUWOZNe7m1m9vfMN6XcDZ5FtUFEDkcteWidpGHmoZTDg30ZbbdGrzq+qKt+Sj
-         CL+Q==
+        bh=TcROH2LXl8gKrYr6qUKYiPVrUt+epYbzK5tF/Y3MseE=;
+        b=Jq9pgAKem6APyf9gZq2lsuYVZSEeiInBsyDv8XVP5vlVckoxiZzUorTu9/s4r6FOTB
+         S+22suEQBTkSTMp5wSTTjYvZuJizSkyyBJCwGa3BcwPjs7vG/DpmSefaPErwQfllJ3Q/
+         2X/RFQmhBPPn9FDW46gj8n34akigfLVhL4p4Pgv51vYdPjogl3ujtk9l4lkppW876Eg4
+         w6c0rKmaKsyqIfQnWXzKHwFLZJZoS9law9waqhZN+AEETYYrbP+rlzIV6nFRkgc55k4l
+         GAX6FdQo/LF/Hn80YmCyFSijrOpRZw1gwBK1wlpitQcSIjThKz0XJ2+9OHOUzzhSRU++
+         4Aog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710799338; x=1711404138;
+        d=1e100.net; s=20230601; t=1710799339; x=1711404139;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xk51Ayd0oOL8B8bNip0Qvci6ISd/wlEH/T4TunQP5iw=;
-        b=Ejj1G3XKg0YBaDMQjPN/5cmxkQZcDHekaGCY0EntDCu9iQ/5x3TkE9ZBqq/kSTd+9D
-         xfGDLyNZK/2g7j54eXGNv9qk1um+9X/tPCde7+zg3eD5ReZmK8KUoWqZTVAj+USK/VLT
-         b4d0m93KZrRFL1WiyU8/v490bdXZFSGI76q318/D31duhVnku4Z1B0rwymp3LkICxv8m
-         51lQAFpeqn1dJ6FRmIjcAmzEXUJNjHAUYqwVDMZA+iX8tLp11s5SXupuIvAEQFJAQxjs
-         x2ps/tgsyEZ7XAJeDUxWnxVK6J1PqDvYjcKFVzfghynA4TW5058Ucec1v1Y7XABbv+f8
-         DQVw==
-X-Gm-Message-State: AOJu0YwOyyiwpOTKBdsnrIznGf658XrISH3tTHhUUU6IcIqa1KSLrxVE
-	v0q9QPA1cxWzjqWlpCpk7yFu/qI8mmcry5QgpR0D38MrJr8K7+SEwh8fqpvH
-X-Google-Smtp-Source: AGHT+IEIrbrIkE/08hBiwsXKc5D/fiNXGxss0DGlADUl8m6/aSQyZCFk6tFuRpKVT0PCVLMNBTXodg==
-X-Received: by 2002:adf:f7c9:0:b0:33e:c6a2:7f6 with SMTP id a9-20020adff7c9000000b0033ec6a207f6mr9152664wrq.11.1710799337585;
-        Mon, 18 Mar 2024 15:02:17 -0700 (PDT)
+        bh=TcROH2LXl8gKrYr6qUKYiPVrUt+epYbzK5tF/Y3MseE=;
+        b=EvP7oOnMdVd3Hc5HJaSj7IHvm2xYnZQWG4sWb+KwYAD3BbwZTOlUmnLRNyhqIyVhPP
+         llKLexi9EhY+e3L3EZenZPYafiEG8tvWmsOPOQOB97QyDoQqOLSakNwDnWpov6sK1qvD
+         pwmF/mZtOCocXLdV02qcxzdVrJNahGTXG0SQzJbZCMJ2odG9Qa0qedjv8w7cFS6YPGHH
+         +hmo9gTSuWU88yx6FoUlpjbt9vFqDwtv7dN2E2PwykulmDXwWFNTU9btcaSiORS0AOsJ
+         OMUiNG3NgZIHeAPeky/iE9Jl3FyjQIVWLmQq3OyPUrrTEM0bJUsF8/0ulnq4Um8ixp5v
+         4dMQ==
+X-Gm-Message-State: AOJu0YxyIaGByqBu1NshC6E7+Y28p0BZFAmq86Wdq9ei7+Ob3hwHczvD
+	oFzk+WXJAjuOp5w/dpac1StrtF73mCf4DBfxNyduwYbvj29fDoCeYUh/kH1Z
+X-Google-Smtp-Source: AGHT+IGXgwHD5pHiwwmQT18GEQKxv6BNPQAqIYvsLZnQWeRdzzw7fpBEHTCqH4kr+zOOtQ/U8RWLxg==
+X-Received: by 2002:a5d:5051:0:b0:33e:aea8:6969 with SMTP id h17-20020a5d5051000000b0033eaea86969mr10272351wrt.27.1710799339086;
+        Mon, 18 Mar 2024 15:02:19 -0700 (PDT)
 Received: from 127.0.0.1localhost ([85.255.232.181])
-        by smtp.gmail.com with ESMTPSA id bj25-20020a0560001e1900b0033e68338fbasm2771038wrb.81.2024.03.18.15.02.16
+        by smtp.gmail.com with ESMTPSA id bj25-20020a0560001e1900b0033e68338fbasm2771038wrb.81.2024.03.18.15.02.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Mar 2024 15:02:16 -0700 (PDT)
+        Mon, 18 Mar 2024 15:02:17 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: linux-block@vger.kernel.org,
@@ -73,9 +73,9 @@ Cc: linux-block@vger.kernel.org,
 	asml.silence@gmail.com,
 	Kanchan Joshi <joshi.k@samsung.com>,
 	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH v3 06/13] io_uring/rw: avoid punting to io-wq directly
-Date: Mon, 18 Mar 2024 22:00:28 +0000
-Message-ID: <413564e550fe23744a970e1783dfa566291b0e6f.1710799188.git.asml.silence@gmail.com>
+Subject: [PATCH v3 07/13] io_uring: force tw ctx locking
+Date: Mon, 18 Mar 2024 22:00:29 +0000
+Message-ID: <6ae858f2ef562e6ed9f13c60978c0d48926954ba.1710799188.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1710799188.git.asml.silence@gmail.com>
 References: <cover.1710799188.git.asml.silence@gmail.com>
@@ -87,95 +87,70 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-kiocb_done() should care to specifically redirecting requests to io-wq.
-Remove the hopping to tw to then queue an io-wq, return -EAGAIN and let
-the core code io_uring handle offloading.
+We can run normal task_work without locking the ctx, however we try to
+lock anyway and most handlers prefer or require it locked. It might have
+been interesting to multi-submitter ring with high contention completing
+async read/write requests via task_work, however that will still need to
+go through io_req_complete_post() and potentially take the lock for
+rsrc node putting or some other case.
+
+In other words, it's hard to care about it, so alawys force the locking.
+The case described would also because of various io_uring caches.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 8 ++++----
- io_uring/io_uring.h | 1 -
- io_uring/rw.c       | 8 +-------
- 3 files changed, 5 insertions(+), 12 deletions(-)
+ io_uring/io_uring.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 6ca7f2a9c296..feff8f530c22 100644
+index feff8f530c22..66669cc9a675 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -492,7 +492,7 @@ static void io_prep_async_link(struct io_kiocb *req)
- 	}
- }
+@@ -1185,8 +1185,9 @@ struct llist_node *io_handle_tw_list(struct llist_node *node,
+ 		if (req->ctx != ctx) {
+ 			ctx_flush_and_put(ctx, &ts);
+ 			ctx = req->ctx;
+-			/* if not contended, grab and improve batching */
+-			ts.locked = mutex_trylock(&ctx->uring_lock);
++
++			ts.locked = true;
++			mutex_lock(&ctx->uring_lock);
+ 			percpu_ref_get(&ctx->refs);
+ 		}
+ 		INDIRECT_CALL_2(req->io_task_work.func,
+@@ -1447,11 +1448,9 @@ static int __io_run_local_work(struct io_ring_ctx *ctx, struct io_tw_state *ts,
  
--void io_queue_iowq(struct io_kiocb *req, struct io_tw_state *ts_dont_use)
-+static void io_queue_iowq(struct io_kiocb *req)
+ 	if (io_run_local_work_continue(ctx, ret, min_events))
+ 		goto again;
+-	if (ts->locked) {
+-		io_submit_flush_completions(ctx);
+-		if (io_run_local_work_continue(ctx, ret, min_events))
+-			goto again;
+-	}
++	io_submit_flush_completions(ctx);
++	if (io_run_local_work_continue(ctx, ret, min_events))
++		goto again;
+ 
+ 	trace_io_uring_local_work_run(ctx, ret, loops);
+ 	return ret;
+@@ -1475,14 +1474,12 @@ static inline int io_run_local_work_locked(struct io_ring_ctx *ctx,
+ 
+ static int io_run_local_work(struct io_ring_ctx *ctx, int min_events)
  {
- 	struct io_kiocb *link = io_prep_linked_timeout(req);
- 	struct io_uring_task *tctx = req->task->io_uring;
-@@ -1499,7 +1499,7 @@ void io_req_task_submit(struct io_kiocb *req, struct io_tw_state *ts)
- 	if (unlikely(req->task->flags & PF_EXITING))
- 		io_req_defer_failed(req, -EFAULT);
- 	else if (req->flags & REQ_F_FORCE_ASYNC)
--		io_queue_iowq(req, ts);
-+		io_queue_iowq(req);
- 	else
- 		io_queue_sqe(req);
- }
-@@ -2082,7 +2082,7 @@ static void io_queue_async(struct io_kiocb *req, int ret)
- 		break;
- 	case IO_APOLL_ABORTED:
- 		io_kbuf_recycle(req, 0);
--		io_queue_iowq(req, NULL);
-+		io_queue_iowq(req);
- 		break;
- 	case IO_APOLL_OK:
- 		break;
-@@ -2129,7 +2129,7 @@ static void io_queue_sqe_fallback(struct io_kiocb *req)
- 		if (unlikely(req->ctx->drain_active))
- 			io_drain_req(req);
- 		else
--			io_queue_iowq(req, NULL);
-+			io_queue_iowq(req);
- 	}
- }
+-	struct io_tw_state ts = {};
++	struct io_tw_state ts = { .locked = true };
+ 	int ret;
  
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 935d8d0747dc..0861d49e83de 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -79,7 +79,6 @@ struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
- void __io_req_task_work_add(struct io_kiocb *req, unsigned flags);
- bool io_alloc_async_data(struct io_kiocb *req);
- void io_req_task_queue(struct io_kiocb *req);
--void io_queue_iowq(struct io_kiocb *req, struct io_tw_state *ts_dont_use);
- void io_req_task_complete(struct io_kiocb *req, struct io_tw_state *ts);
- void io_req_task_queue_fail(struct io_kiocb *req, int ret);
- void io_req_task_submit(struct io_kiocb *req, struct io_tw_state *ts);
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 0585ebcc9773..576934dbf833 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -187,12 +187,6 @@ static inline loff_t *io_kiocb_update_pos(struct io_kiocb *req)
- 	return NULL;
- }
- 
--static void io_req_task_queue_reissue(struct io_kiocb *req)
--{
--	req->io_task_work.func = io_queue_iowq;
--	io_req_task_work_add(req);
--}
+-	ts.locked = mutex_trylock(&ctx->uring_lock);
++	mutex_lock(&ctx->uring_lock);
+ 	ret = __io_run_local_work(ctx, &ts, min_events);
+-	if (ts.locked)
+-		mutex_unlock(&ctx->uring_lock);
 -
- #ifdef CONFIG_BLOCK
- static bool io_resubmit_prep(struct io_kiocb *req)
- {
-@@ -405,7 +399,7 @@ static int kiocb_done(struct io_kiocb *req, ssize_t ret,
- 	if (req->flags & REQ_F_REISSUE) {
- 		req->flags &= ~REQ_F_REISSUE;
- 		if (io_resubmit_prep(req))
--			io_req_task_queue_reissue(req);
-+			return -EAGAIN;
- 		else
- 			io_req_task_queue_fail(req, final_ret);
- 	}
++	mutex_unlock(&ctx->uring_lock);
+ 	return ret;
+ }
+ 
 -- 
 2.44.0
 

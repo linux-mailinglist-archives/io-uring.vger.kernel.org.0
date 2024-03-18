@@ -1,71 +1,71 @@
-Return-Path: <io-uring+bounces-1123-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1124-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C984A87F2D9
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 23:02:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0B787F2DB
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 23:03:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA5EE1C2138A
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 22:02:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A9EE1C21149
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 22:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6759659B79;
-	Mon, 18 Mar 2024 22:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D995A0F4;
+	Mon, 18 Mar 2024 22:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1SgDkc8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWDpkAFZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8325A79D;
-	Mon, 18 Mar 2024 22:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327D759B55;
+	Mon, 18 Mar 2024 22:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710799345; cv=none; b=tkQ3iPzPIOvAY2wVH0MNW9mlwDMBpecgp7w18gwvHoo3hreFC3CL9govTrbM0IJDPtXEVuWsTHa9VfAB5RbPY5kMeuszJU9TUZeGh+1pVjtapfuQY4WrgQqsKagcMz+/0Mzc/iqaoNTOjtPGeXAsxvXxPEtoSHOtYVTPcL0o3i0=
+	t=1710799347; cv=none; b=RCL+H/zAZqyi1iIvn3U89q/V73LPJIloHbHGRPPNovdNCqg/KrN3XbV9LiAZv0dWRJ3btDG5M2NkmFV7kVyBGjwj2opUlmxQGyAachDGU7i4/PkGI8s+PFUwgJdItR0gQ+en8q+gRyawjLMDj/g+b5AnR5IcXDWa2DO1pDyAg6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710799345; c=relaxed/simple;
-	bh=7VqekwisfeZVEBvPctdmASLNCv3mAxskHtDDVKJbF80=;
+	s=arc-20240116; t=1710799347; c=relaxed/simple;
+	bh=6DyMkqr75yfWeDIM3662oU67xNgT52unN6qI7wySI0I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=urvZjJR46Pzq5Gr0mA3f0rWdF+GxYJ4v3w9We5aQLWpLtb9UtAPE1PGPoqygn3PvuztIjB8UhtNfyLX0ZHTpQp9R/yaaTnAF3zp6y3RJ2oIuBrvGXkMFoMcxa00U9cIPSZlMBlkCzF/mtyARFyYUcgE/JAMQOCnb2UQBky1+qy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J1SgDkc8; arc=none smtp.client-ip=209.85.128.51
+	 MIME-Version; b=sslbehndoyfQIjToI+GWBlaCjDeiYn20mLDHGQihPch1Z8f4KUSzi+ptjmlLuIv1LLqCR11JyinGaGzSU1JJrYIEGAJbj+/1xERCwgBVF4HkrOuLU7SzVcO0NjwgAaLO9Je7XZMi+JVFgvNeAdXPtjFbIa9mVmrkPVvKeHnhj20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWDpkAFZ; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4141156f245so9533615e9.2;
-        Mon, 18 Mar 2024 15:02:23 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-414645c349dso172205e9.1;
+        Mon, 18 Mar 2024 15:02:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710799341; x=1711404141; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710799343; x=1711404143; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xgD3bsMP0S2gpC+HqO1lBHKa+Q6P0EutKXjfqR3KaNY=;
-        b=J1SgDkc82kXlx2h5Eo5I/ECWZXUPqNNPzwhQPeT3K4Vezt41VC9E5KNQp2K6TETi9j
-         FvpNcS1z9CeXIcLdlMq+/b8jGTzJEu9TYD6cYe+vADzlFZX/sPDBGdvtXRTtjudUEC36
-         uH+rdkLf+WlEB1NEX3PpFCcpCPBmSKVJdrXkSGtDnyvtZJr36F7UkxRfobfjHfNwfstN
-         FS3eJt8MPneZ+h1x5WV4Wjjdq60miOl5opeXfA5fIfTDJqsc98y+vix0bxmDxw7x4Y/A
-         ZsH2Vuij/3XMVhtGW5zJWijC03xonlo+oUNKC/tay4WSP+DkbYFAUoXLIbxeVdgs6Taa
-         wb9Q==
+        bh=jSNiymRZGIzeU7c1VJWT/0qmrS71IrYaJn9rdaLg9SE=;
+        b=PWDpkAFZkrV5+89jlUe2OO3wpbpVGJcS0zwJbbPh07msqQyxVym6tTauQGnxE4eor8
+         1ZQozeWv00aqSQhxahlB2EVoq2voICcM27xFyZhobHUCWu3bszZjAIG3AgeKp/nQXDMC
+         kCsl7JZaDoIpbadGA1Dsq1C+xLeIw+y/mxz+0Bzy4o6qBYnlUCjte58AUbLh7T50JXz2
+         Jb21XZMbywZUkeaknAUX/PXqaLRcp7djmg9fS3jbu601awkUUAP/3leTUkzLVBxT6pDy
+         8RV8sW7txQXAOsrh42S/3b/QCO91K0CGOamL/GnlLvaVYdfgRGYmMNo23uWJL43RWVb8
+         JEQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710799341; x=1711404141;
+        d=1e100.net; s=20230601; t=1710799343; x=1711404143;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xgD3bsMP0S2gpC+HqO1lBHKa+Q6P0EutKXjfqR3KaNY=;
-        b=P+r+2Zc3hOKG54s0+C7IlQ3qK0JxTZtLptq7550Xwppt1uQ8Mp7pRuLpriz80zR09r
-         4mzxqPJUv6tlKCIOcIgjvKFLUW4JALODgHtj77Xp6FtgiJgbzkPmQWiK7ba5taV5gU3N
-         q/ATwD+R363aPFNELHmnlx8lALuifFGxcRv9XdkEg5877025LD6CrT/C1t2MV+Qx/SV2
-         e0BmAYRDbOmzj7dj1n1f8FhWiBXf8hlrgjmtiUTglrMyDuV1AYXIN+NFH0Jsewi8Wxia
-         fdbYPW7j963ltD8D4O9UibjOWagt+l202i2c0AaaFsmXtXddcZJyLKaC9kwQ7OtdiqWm
-         VEnQ==
-X-Gm-Message-State: AOJu0YzpCk255uQoW9jPg16Bi48rV7Dzk8esAv4vOqf2XfOOKHHTLTSD
-	W2Lru3Nh5ak3cMjUy9nQVHzCI0CaS6hr1wQtdeiCSMlLytR965m4OtHIevhz
-X-Google-Smtp-Source: AGHT+IGpVFNIVG/JdV3D5UBVImz15cictZpMO91uVMKgkFVvNoy6LrrsbNNbbrj9PXZ41KJgK/ZOMw==
-X-Received: by 2002:a5d:4d82:0:b0:33e:c7e3:9024 with SMTP id b2-20020a5d4d82000000b0033ec7e39024mr8761668wru.58.1710799341471;
-        Mon, 18 Mar 2024 15:02:21 -0700 (PDT)
+        bh=jSNiymRZGIzeU7c1VJWT/0qmrS71IrYaJn9rdaLg9SE=;
+        b=KiWn9JRV0L1xlMOtT9TJky2dxKNyrW9OxSe6F8vTAUYB7s+YqypL6ibWgt1ka6kbpb
+         KaEv2KvCEFbF6FVuj5qYrRaf6rSP5XR02IfZ8jndq57eIUnAJzF5+fc2VFlMV9VO8R+L
+         hwduEIVMgb+LvJ/+DhPSSnD6p+GRcmZ8qL76c3ti1EiWY6VORnmzlrCHicgj+hNGDzlR
+         1iDvj7qb8hb6wnhHBsfmThlYh4PfhSCEh7qQdlvnVSD6ouHf66Vk2NRDRRFYsQx/ZI0j
+         iPHG3AVDiS2WLN67LAyWpVn9+kb+MyVaQLgIVJEZ+N7nJcOsACXvFlckPtuVpTU20WBt
+         NaGg==
+X-Gm-Message-State: AOJu0YxDbkA+8lOIo5g3UpYjxYB2gikQ0sQKCLHdpS5Dcw0CQAhtfp6h
+	FsLlI8KSCwNul+OAlO2WioCb/4C/PUb+bX3TqNNgaor2yaWzQnJqaJoA4Gv2
+X-Google-Smtp-Source: AGHT+IGzyT+9CzTPfMvaQYGC94NAByYBy4IWyhF8w6H1tBlBz/NHLbPzKMrEoZTJqtGZ9317QQNzwg==
+X-Received: by 2002:adf:c98f:0:b0:33e:48dd:2927 with SMTP id f15-20020adfc98f000000b0033e48dd2927mr811748wrh.18.1710799342833;
+        Mon, 18 Mar 2024 15:02:22 -0700 (PDT)
 Received: from 127.0.0.1localhost ([85.255.232.181])
-        by smtp.gmail.com with ESMTPSA id bj25-20020a0560001e1900b0033e68338fbasm2771038wrb.81.2024.03.18.15.02.20
+        by smtp.gmail.com with ESMTPSA id bj25-20020a0560001e1900b0033e68338fbasm2771038wrb.81.2024.03.18.15.02.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Mar 2024 15:02:20 -0700 (PDT)
+        Mon, 18 Mar 2024 15:02:21 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: linux-block@vger.kernel.org,
@@ -73,9 +73,9 @@ Cc: linux-block@vger.kernel.org,
 	asml.silence@gmail.com,
 	Kanchan Joshi <joshi.k@samsung.com>,
 	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH v3 09/13] io_uring: refactor io_fill_cqe_req_aux
-Date: Mon, 18 Mar 2024 22:00:31 +0000
-Message-ID: <93423d106c33116c7d06bf277f651aa68b427328.1710799188.git.asml.silence@gmail.com>
+Subject: [PATCH v3 10/13] io_uring: get rid of intermediate aux cqe caches
+Date: Mon, 18 Mar 2024 22:00:32 +0000
+Message-ID: <b1d05a81fd27aaa2a07f9860af13059e7ad7a890.1710799188.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1710799188.git.asml.silence@gmail.com>
 References: <cover.1710799188.git.asml.silence@gmail.com>
@@ -87,155 +87,162 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The restriction on multishot execution context disallowing io-wq is
-driven by rules of io_fill_cqe_req_aux(), it should only be called in
-the master task context, either from the syscall path or in task_work.
-Since task_work now always takes the ctx lock implying
-IO_URING_F_COMPLETE_DEFER, we can just assume that the function is
-always called with its defer argument set to true.
+io_post_aux_cqe(), which is used for multishot requests, delays
+completions by putting CQEs into a temporary array for the purpose
+completion lock/flush batching.
 
-Kill the argument. Also rename the function for more consistency as
-"fill" in CQE related functions was usually meant for raw interfaces
-only copying data into the CQ without any locking, waking the user
-and other accounting "post" functions take care of.
+DEFER_TASKRUN doesn't need any locking, so for it we can put completions
+directly into the CQ and defer post completion handling with a flag.
+That leaves !DEFER_TASKRUN, which is not that interesting / hot for
+multishot requests, so have conditional locking with deferred flush
+for them.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 16 +++-------------
- io_uring/io_uring.h |  2 +-
- io_uring/net.c      |  6 ++----
- io_uring/poll.c     |  3 +--
- io_uring/rw.c       |  4 +---
- io_uring/timeout.c  |  2 +-
- 6 files changed, 9 insertions(+), 24 deletions(-)
+ include/linux/io_uring_types.h |  3 +-
+ io_uring/io_uring.c            | 62 +++++++---------------------------
+ io_uring/io_uring.h            |  2 +-
+ 3 files changed, 15 insertions(+), 52 deletions(-)
 
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 5a2afbc93887..ea7e5488b3be 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -205,6 +205,7 @@ struct io_submit_state {
+ 
+ 	bool			plug_started;
+ 	bool			need_plug;
++	bool			cq_flush;
+ 	unsigned short		submit_nr;
+ 	unsigned int		cqes_count;
+ 	struct blk_plug		plug;
+@@ -342,8 +343,6 @@ struct io_ring_ctx {
+ 		unsigned		cq_last_tm_flush;
+ 	} ____cacheline_aligned_in_smp;
+ 
+-	struct io_uring_cqe	completion_cqes[16];
+-
+ 	spinlock_t		completion_lock;
+ 
+ 	/* IRQ completion list, under ->completion_lock */
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 9e8afc006fc9..9a4cc46582b2 100644
+index 9a4cc46582b2..f5e2b5bef10f 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -907,40 +907,30 @@ static void __io_flush_post_cqes(struct io_ring_ctx *ctx)
- 	state->cqes_count = 0;
+@@ -630,6 +630,12 @@ static inline void __io_cq_lock(struct io_ring_ctx *ctx)
+ 		spin_lock(&ctx->completion_lock);
  }
  
--static bool __io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags,
--			      bool allow_overflow)
-+bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
++static inline void __io_cq_unlock(struct io_ring_ctx *ctx)
++{
++	if (!ctx->lockless_cq)
++		spin_unlock(&ctx->completion_lock);
++}
++
+ static inline void io_cq_lock(struct io_ring_ctx *ctx)
+ 	__acquires(ctx->completion_lock)
  {
- 	bool filled;
- 
- 	io_cq_lock(ctx);
- 	filled = io_fill_cqe_aux(ctx, user_data, res, cflags);
--	if (!filled && allow_overflow)
-+	if (!filled)
- 		filled = io_cqring_event_overflow(ctx, user_data, res, cflags, 0, 0);
- 
- 	io_cq_unlock_post(ctx);
- 	return filled;
+@@ -882,31 +888,6 @@ static bool io_fill_cqe_aux(struct io_ring_ctx *ctx, u64 user_data, s32 res,
+ 	return false;
  }
  
--bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
+-static void __io_flush_post_cqes(struct io_ring_ctx *ctx)
+-	__must_hold(&ctx->uring_lock)
 -{
--	return __io_post_aux_cqe(ctx, user_data, res, cflags, true);
+-	struct io_submit_state *state = &ctx->submit_state;
+-	unsigned int i;
+-
+-	lockdep_assert_held(&ctx->uring_lock);
+-	for (i = 0; i < state->cqes_count; i++) {
+-		struct io_uring_cqe *cqe = &ctx->completion_cqes[i];
+-
+-		if (!io_fill_cqe_aux(ctx, cqe->user_data, cqe->res, cqe->flags)) {
+-			if (ctx->lockless_cq) {
+-				spin_lock(&ctx->completion_lock);
+-				io_cqring_event_overflow(ctx, cqe->user_data,
+-							cqe->res, cqe->flags, 0, 0);
+-				spin_unlock(&ctx->completion_lock);
+-			} else {
+-				io_cqring_event_overflow(ctx, cqe->user_data,
+-							cqe->res, cqe->flags, 0, 0);
+-			}
+-		}
+-	}
+-	state->cqes_count = 0;
 -}
 -
- /*
-  * A helper for multishot requests posting additional CQEs.
-  * Should only be used from a task_work including IO_URING_F_MULTISHOT.
-  */
--bool io_fill_cqe_req_aux(struct io_kiocb *req, bool defer, s32 res, u32 cflags)
-+bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags)
+ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
+ {
+ 	bool filled;
+@@ -927,31 +908,16 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
+ bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags)
  {
  	struct io_ring_ctx *ctx = req->ctx;
- 	u64 user_data = req->cqe.user_data;
- 	struct io_uring_cqe *cqe;
+-	u64 user_data = req->cqe.user_data;
+-	struct io_uring_cqe *cqe;
++	bool posted;
  
  	lockdep_assert(!io_wq_current_is_worker());
--
--	if (!defer)
--		return __io_post_aux_cqe(ctx, user_data, res, cflags, false);
--
  	lockdep_assert_held(&ctx->uring_lock);
  
- 	if (ctx->submit_state.cqes_count == ARRAY_SIZE(ctx->completion_cqes)) {
+-	if (ctx->submit_state.cqes_count == ARRAY_SIZE(ctx->completion_cqes)) {
+-		__io_cq_lock(ctx);
+-		__io_flush_post_cqes(ctx);
+-		/* no need to flush - flush is deferred */
+-		__io_cq_unlock_post(ctx);
+-	}
+-
+-	/* For defered completions this is not as strict as it is otherwise,
+-	 * however it's main job is to prevent unbounded posted completions,
+-	 * and in that it works just as well.
+-	 */
+-	if (test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq))
+-		return false;
+-
+-	cqe = &ctx->completion_cqes[ctx->submit_state.cqes_count++];
+-	cqe->user_data = user_data;
+-	cqe->res = res;
+-	cqe->flags = cflags;
+-	return true;
++	__io_cq_lock(ctx);
++	posted = io_fill_cqe_aux(ctx, req->cqe.user_data, res, cflags);
++	ctx->submit_state.cq_flush = true;
++	__io_cq_unlock_post(ctx);
++	return posted;
+ }
+ 
+ static void __io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
+@@ -1545,9 +1511,6 @@ void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 	struct io_wq_work_node *node;
+ 
+ 	__io_cq_lock(ctx);
+-	/* must come first to preserve CQE ordering in failure cases */
+-	if (state->cqes_count)
+-		__io_flush_post_cqes(ctx);
+ 	__wq_list_for_each(node, &state->compl_reqs) {
+ 		struct io_kiocb *req = container_of(node, struct io_kiocb,
+ 					    comp_list);
+@@ -1569,6 +1532,7 @@ void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+ 		io_free_batch_list(ctx, state->compl_reqs.first);
+ 		INIT_WQ_LIST(&state->compl_reqs);
+ 	}
++	ctx->submit_state.cq_flush = false;
+ }
+ 
+ static unsigned io_cqring_events(struct io_ring_ctx *ctx)
 diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 7f921daae9c3..460290e1bdec 100644
+index 460290e1bdec..5119265a11c2 100644
 --- a/io_uring/io_uring.h
 +++ b/io_uring/io_uring.h
-@@ -67,7 +67,7 @@ int io_run_task_work_sig(struct io_ring_ctx *ctx);
- void io_req_defer_failed(struct io_kiocb *req, s32 res);
- void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags);
- bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags);
--bool io_fill_cqe_req_aux(struct io_kiocb *req, bool defer, s32 res, u32 cflags);
-+bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags);
- void __io_commit_cqring_flush(struct io_ring_ctx *ctx);
+@@ -156,7 +156,7 @@ static inline void io_req_task_work_add(struct io_kiocb *req)
+ static inline void io_submit_flush_completions(struct io_ring_ctx *ctx)
+ {
+ 	if (!wq_list_empty(&ctx->submit_state.compl_reqs) ||
+-	    ctx->submit_state.cqes_count)
++	    ctx->submit_state.cq_flush)
+ 		__io_submit_flush_completions(ctx);
+ }
  
- struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages);
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 1e7665ff6ef7..ed798e185bbf 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -706,8 +706,7 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
- 	 * receive from this socket.
- 	 */
- 	if ((req->flags & REQ_F_APOLL_MULTISHOT) && !mshot_finished &&
--	    io_fill_cqe_req_aux(req, issue_flags & IO_URING_F_COMPLETE_DEFER,
--				*ret, cflags | IORING_CQE_F_MORE)) {
-+	    io_req_post_cqe(req, *ret, cflags | IORING_CQE_F_MORE)) {
- 		struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
- 		int mshot_retry_ret = IOU_ISSUE_SKIP_COMPLETE;
- 
-@@ -1428,8 +1427,7 @@ int io_accept(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	if (ret < 0)
- 		return ret;
--	if (io_fill_cqe_req_aux(req, issue_flags & IO_URING_F_COMPLETE_DEFER,
--				ret, IORING_CQE_F_MORE))
-+	if (io_req_post_cqe(req, ret, IORING_CQE_F_MORE))
- 		goto retry;
- 
- 	io_req_set_res(req, ret, 0);
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index 8901dd118e50..5d55bbf1de15 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -322,8 +322,7 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
- 			__poll_t mask = mangle_poll(req->cqe.res &
- 						    req->apoll_events);
- 
--			if (!io_fill_cqe_req_aux(req, true, mask,
--						 IORING_CQE_F_MORE)) {
-+			if (!io_req_post_cqe(req, mask, IORING_CQE_F_MORE)) {
- 				io_req_set_res(req, mask, 0);
- 				return IOU_POLL_REMOVE_POLL_USE_RES;
- 			}
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index c7f9246ff508..35216e8adc29 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -955,9 +955,7 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
- 		cflags = io_put_kbuf(req, issue_flags);
- 		rw->len = 0; /* similarly to above, reset len to 0 */
- 
--		if (io_fill_cqe_req_aux(req,
--					issue_flags & IO_URING_F_COMPLETE_DEFER,
--					ret, cflags | IORING_CQE_F_MORE)) {
-+		if (io_req_post_cqe(req, ret, cflags | IORING_CQE_F_MORE)) {
- 			if (issue_flags & IO_URING_F_MULTISHOT) {
- 				/*
- 				 * Force retry, as we might have more data to
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index 0a48e6acd0b2..3458ca550b83 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -72,7 +72,7 @@ static void io_timeout_complete(struct io_kiocb *req, struct io_tw_state *ts)
- 	struct io_ring_ctx *ctx = req->ctx;
- 
- 	if (!io_timeout_finish(timeout, data)) {
--		if (io_fill_cqe_req_aux(req, true, -ETIME, IORING_CQE_F_MORE)) {
-+		if (io_req_post_cqe(req, -ETIME, IORING_CQE_F_MORE)) {
- 			/* re-arm timer */
- 			spin_lock_irq(&ctx->timeout_lock);
- 			list_add(&timeout->list, ctx->timeout_list.prev);
 -- 
 2.44.0
 

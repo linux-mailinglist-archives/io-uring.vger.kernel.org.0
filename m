@@ -1,107 +1,87 @@
-Return-Path: <io-uring+bounces-1105-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1106-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8B587EA46
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 14:40:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1AD87EA8E
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 15:07:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE55E1F22C2C
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 13:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47182283043
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 14:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32F2482EA;
-	Mon, 18 Mar 2024 13:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfyJODfX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256DA4A990;
+	Mon, 18 Mar 2024 14:07:45 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F8547F5F;
-	Mon, 18 Mar 2024 13:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13954E1D3;
+	Mon, 18 Mar 2024 14:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710769228; cv=none; b=h6p+eNSIs8cqd2lwVJQfxYQvwESShXMJVzmwf2rgKoN5uB4SBTnEAV/9Z+76JS8L1Bp0kjHROGCItd+irwYBSVGcEJ1ex/rm0jsQ6ejpRX9NSAf4S7D5a6ceGhXXbZu+JdZwOy4An6ARL+7E514SRm4AkoqwsM1XGOpvCuCt0OE=
+	t=1710770865; cv=none; b=IKuWOXPRORqmxcKKppSVcw98QgAG58602KMoP8zUEkLRKmsZUT/b1nHaKNTapgnQ2ZLI4qH9gw/s11xlUuQ+8n5BusrfP/D/yURrCZQZJN1bZRjSjm3cVXnYqhkgyTgAyka3nqF5BecVetj8bEIYGtaHxlXMs20CpwI4RmEqZco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710769228; c=relaxed/simple;
-	bh=i362x5cTQ4Hm1L6kYB3NzX0TXmUT2V3EIeZ+kUQ17yQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jq/WspZVS69fiaypxfsJaN4OB/MCrB6IETjzjjb7bzisyWO93Gf7Z67tcWg2PNJya8rzyzTR78rVoxp2MepeaJAW9ZwBbkZb9rdVv44IPrQDwYnTEoR7ah0+jDibJNzLZp49VKBvQJclipErPQEpgUf1q82IcNe3U3IVL6oGD8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfyJODfX; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1710770865; c=relaxed/simple;
+	bh=Wn1lQcXTqfPvFBpRxXswobUk4JknmyEX40y5OAXc5vU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CFkt+DJzgSTKj7cL6TKbHaroqJzGPkRt0wEuk5Z30WI7aBewETzOtp0iW5sYkoF3XgARW7S3DfheaXwbBX0czIENKtnPAxbDL26EFHqZaJ3+hQMuNYE2ZgMbrxBoTU8c0EDIevxVVTZ57JZ0DHVwCtJ/bayJg1bb1Brc0Er3J8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5687feeb1feso3655131a12.2;
-        Mon, 18 Mar 2024 06:40:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710769225; x=1711374025; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ouCBlKeB39kP5zLO0Dh3Jw2V/iZvzW7jVhr8PvCp8ag=;
-        b=bfyJODfXWz60e91pRlo0gw14PIAQABNIeN+Mip0CPtarJ4Sn1MyMEKYRazgyQhon7r
-         mEF8ugpBJUn/uDnBek5TCjfaf4qgIAc2XK3hmu0PXWFio8gc7LK25cw/S8xYR2fH4VZq
-         EJUBn3fCjhruqK15m2E4R7kOV3HFKCIvuiY/LotECQlsZ2Mfyvc1PS3kk87t70Gjc3D7
-         zNX4gZybf1zA2b/eA6hcHEDnLy9I4SBdaEmHH/vUByyfYMPb+HOCrLD/RcQV8++47Pt9
-         M+W6pOXa1bk6O2uK0q5EGZ+2f8RAgN2/en8PIcuCTUyroZufvxbeJ8nVxG3bFddKQAfw
-         H6kQ==
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6e677ec9508so319393a34.1;
+        Mon, 18 Mar 2024 07:07:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710769225; x=1711374025;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ouCBlKeB39kP5zLO0Dh3Jw2V/iZvzW7jVhr8PvCp8ag=;
-        b=RlbhJMd0Q7UnmxPL5oxtvDOwk2ZfV2ND6lIEKRXL7OhffQcAsYLp/PYQ25e+hdHR97
-         VrgzmrJX89u27PnJmZs8k5+IVhM6LEi55922kJ8Nh4I46rIhY5THMp/h5TydHKrUH/T7
-         AF2JwC/xVtX27g4fz8QOCNsH0sgVEZFSBeOsCW483NVobhA8HR6C9hlshFcP6rcCCCJd
-         hn7iWKo9UfFi1lcGa5vs3+QCa3cQcl8rwpLHAbAgJ/b49Y6aJmAbCl6uJt93cAk/qXjp
-         PJ7+NfZRmFEqx+ObMPrdemPE1jUW3tpJDx+nFmhC9OXSmzV0XdKDjbFtU61FCLAYNtNA
-         Xf7A==
-X-Forwarded-Encrypted: i=1; AJvYcCV5K1Ry+qj8rOT9k9sMDVXIPuE2o5HcSYCtw7Z/qaUnjUg1uDbV5UxwU1AZKZiMG2v0XUofAwe3fwSJZQ12G2TRYtNMV5Qk298=
-X-Gm-Message-State: AOJu0YwaosWcOvdh2CCWvYvClL7ph9kajLMZr52j8pdgyx8ppQkejdOP
-	j2cFwkNk419oEodaRBpSXilQFjPg5p5ofMAnRCVmZRczAUrfFz9/
-X-Google-Smtp-Source: AGHT+IEIc5hkwXpnjjPLRUhub4k8nyw8bOixZ3+/UNeK0b5DxfJ9tJ6uQtu5qHT5WDwmc0loI1ChDw==
-X-Received: by 2002:a05:6402:5d0:b0:565:6e34:da30 with SMTP id n16-20020a05640205d000b005656e34da30mr7058132edx.21.1710769225348;
-        Mon, 18 Mar 2024 06:40:25 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::2181? ([2620:10d:c092:600::1:429a])
-        by smtp.gmail.com with ESMTPSA id g38-20020a056402322600b0056b8cc4d6a7sm47915eda.43.2024.03.18.06.40.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Mar 2024 06:40:25 -0700 (PDT)
-Message-ID: <97d8e2ed-c4e3-4473-99ef-8b5d8056640d@gmail.com>
-Date: Mon, 18 Mar 2024 13:38:48 +0000
+        d=1e100.net; s=20230601; t=1710770862; x=1711375662;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wn1lQcXTqfPvFBpRxXswobUk4JknmyEX40y5OAXc5vU=;
+        b=c58Wq5mq5YMdnhj5qehoibaL31/oDzXMfx/23/KX/m2iE5igQIgLT8DyF+BU+Nrtc3
+         Hffpf0LZ+KC36b1YocDVO92RYeuuSHXa2l4MvhoDW1sImgwOw7JdipVntlHFqwahkygC
+         p3A+iW+o7nv7/s7EQltNlQJpJW75jIZlU/1tezi4hBlID6QrEWkGUR6Kk4Rd+AvywY3c
+         96feTLDG+6T5qmxaDGwyR/bIpSHCNYzRAjiEAGU6rgYdawjESo+TSFmLN/1s2XY3SbJb
+         RV8Hsf8MSjdUTL6qD37gR14Oi7z0r9alsbr2hvtVMNHmwvqDHAqeaTvwzU9cMTrSFLRk
+         OoKw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3bg087vGurN22jBdZ1VKXs9e+yB0trgcFri54pvZHb0olCgYzfNGgKxM4lmM7ESBHlKgxf3+dlHsvffakO3+CR8cxJwNovFLJJQTi2iIvhIZCdyE4SwTtnuJSL0rLOV5LToGNESSX+09smI3NibcERencNrjzZ3Gskh6h940R
+X-Gm-Message-State: AOJu0Yy/Rh2+AKB+fr7/Vki25pPY6ASsUiz6Zevint7uuibX/Sc3NING
+	oVwVVBKWq+6jbjDvGrEVGP2PfR9CWiCO36hwKQgQ9plzy4UJB9+KKYVtzfQW7uclEWNgAhirx67
+	uBqgQilaTFTAdjzgY4iY4lj2YjQA=
+X-Google-Smtp-Source: AGHT+IEnt/T+QhS18bU4bTnW0vyP35oKalbVYz3kh6c39m2U5Q/+MmVhAreB9JF1RzGRJu9CQirfKD4Z/lQSCnnsMw0=
+X-Received: by 2002:a05:6871:b28:b0:222:8a9d:d935 with SMTP id
+ fq40-20020a0568710b2800b002228a9dd935mr8792017oab.3.1710770862637; Mon, 18
+ Mar 2024 07:07:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/14] nvme/io_uring: don't hard code
- IO_URING_F_UNLOCKED
-Content-Language: en-US
-To: Kanchan Joshi <joshi.k@samsung.com>, io-uring@vger.kernel.org
-Cc: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Ming Lei <ming.lei@redhat.com>
-References: <cover.1710720150.git.asml.silence@gmail.com>
- <CGME20240318004348epcas5p43e669407fc4400bbc403c670104ba796@epcas5p4.samsung.com>
- <e2939a17b63f9347ba3c1c193c4a9306c3ba0845.1710720150.git.asml.silence@gmail.com>
- <7a89d6f5-1c8f-2549-f435-61d334837934@samsung.com>
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <7a89d6f5-1c8f-2549-f435-61d334837934@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240304201625.100619-1-christian.loehle@arm.com> <20240304201625.100619-3-christian.loehle@arm.com>
+In-Reply-To: <20240304201625.100619-3-christian.loehle@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 18 Mar 2024 15:07:31 +0100
+Message-ID: <CAJZ5v0gMni0QJTBJXoVOav=kOtQ9W--NyXAgq+dXA+m-bciG8w@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] cpufreq/schedutil: Remove iowait boost
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, juri.lelli@redhat.com, 
+	mingo@redhat.com, rafael@kernel.org, dietmar.eggemann@arm.com, 
+	vschneid@redhat.com, vincent.guittot@linaro.org, Johannes.Thumshirn@wdc.com, 
+	adrian.hunter@intel.com, ulf.hansson@linaro.org, andres@anarazel.de, 
+	asml.silence@gmail.com, linux-pm@vger.kernel.org, linux-block@vger.kernel.org, 
+	io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/18/24 13:26, Kanchan Joshi wrote:
-> On 3/18/2024 6:11 AM, Pavel Begunkov wrote:
->> uring_cmd implementations should not try to guess issue_flags, use a
->> freshly added helper io_uring_cmd_complete() instead.
-> 
-> NVMe interactions look/work fine.
-> 
-> Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
+On Mon, Mar 4, 2024 at 9:17=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> The previous commit provides a new cpu_util_cfs_boost_io interface for
+> schedutil which uses the io boosted utilization of the per-task
+> tracking strategy. Schedutil iowait boosting is therefore no longer
+> necessary so remove it.
 
-Thanks, I'll add it
+I'm wondering about the cases when schedutil is used without EAS.
 
--- 
-Pavel Begunkov
+Are they still going to be handled as before after this change?
 

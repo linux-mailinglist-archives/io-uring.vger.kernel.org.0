@@ -1,162 +1,180 @@
-Return-Path: <io-uring+bounces-1101-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1102-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788AA87E9DE
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 14:09:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7AE87E9FB
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 14:21:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07C7AB2225A
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 13:09:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14A841F22525
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 13:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546BF33CF1;
-	Mon, 18 Mar 2024 13:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7558645BEB;
+	Mon, 18 Mar 2024 13:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X8ODOLD+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlQ+c4bl"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5494E3BBEF
-	for <io-uring@vger.kernel.org>; Mon, 18 Mar 2024 13:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15674438F;
+	Mon, 18 Mar 2024 13:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710767367; cv=none; b=lspgs9GMentx013JvN+SEjMYsuoiJwuI3/ZZ48/tj9WnRnSvS2nZL0uaFo+0xWYwPu9F2grVILBP80YkE1BjNCwo2pvGGfB1mXZzwNwVnnp2Gn4Lk3pjP6UTopw5vzA5IywpKNrVhit+k/QLs4l8SaQDsfwPu/Hp0D/ZQ9KZm0o=
+	t=1710768058; cv=none; b=RRMjfuCpzA874WAZHompfdX4dNKqOwstOa+OnqJd5ELnjc2hbg35I7ZUpHdhK0gtwQwPJkFPCpeMKHwdgVGnBjxD0cthuM/uONn3kn9fHT4Em2MynzAGzP5KsBsWxpDY+QFbuY4JbwvTGEzeT0VzaOyerPr0c6zsS4DwoQH5OfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710767367; c=relaxed/simple;
-	bh=hJElC500Oh1Bze9bUIMFtwY5VkHf28yG0Rl9qY2GJCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmzYcPonKMx+PTf8xWKfufRSKEhoPGcHVlJsQ+AkmHw+Z2jXHcZSA10y5aYFx03Dp6TeFtQ0Hi59qZ8v/JpuNE2fqsuR4uZ/WYW+pyM2fieDJ+SDXaoYS9t5dcqKLflR0O6IIAAZ++UZ/wnMQ1qHccE2uY5Gpn3454Sx5FnX5BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X8ODOLD+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710767364;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uY1lsgNsf7yDMTJWeqSlsz30bRR/907IGKcgLNq2lx8=;
-	b=X8ODOLD+HZHWqTiJ5jDVfEEC3ORneOmlfgfMjESFLCOY0cX9I1ejkP3tUs30+Glyde+tmN
-	HfgCW7TuUSHkVEl4OaNcHiW2KePOFblroEmk8CbNBvwZ16vWgN4EjzZ3HpdRN3+AqxQn0c
-	F4Z5JI+jE7RWFwyS7DJLry/PNxAEizM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-195-6Hpz_UPtNLuckTpbncqqJA-1; Mon, 18 Mar 2024 09:09:18 -0400
-X-MC-Unique: 6Hpz_UPtNLuckTpbncqqJA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 417CE185A784;
-	Mon, 18 Mar 2024 13:09:18 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.15])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 2722D2166B32;
-	Mon, 18 Mar 2024 13:09:14 +0000 (UTC)
-Date: Mon, 18 Mar 2024 21:09:06 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v2 03/14] io_uring/cmd: make io_uring_cmd_done irq safe
-Message-ID: <Zfg88tNCwevp5cHj@fedora>
-References: <cover.1710720150.git.asml.silence@gmail.com>
- <faeec0d1e7c740a582f51f80626f61c745ed9a52.1710720150.git.asml.silence@gmail.com>
- <Zff25z0fPGBPfJs1@fedora>
- <4c6a5b55-2833-4ef7-a514-577fe61160dd@gmail.com>
- <Zfgsk8mND0cah3DP@fedora>
- <1f5c02ad-f25a-46ea-96e6-649997aea3c2@gmail.com>
+	s=arc-20240116; t=1710768058; c=relaxed/simple;
+	bh=Ro9DhNywcl6K5qDRLecjZIB/mP5nv+WPca/RqnMk09M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HZIOWwun8+lN98l85XYRMmVYQYYAR7Xj0TYWftt5WYkF7WR1GtwHoLWH+WsmxgcGhXwm45w39uIDQKHhH7yTboZ7M7Grz07BvR+MVm5Dqet2wfu5S1mEow8YgppGcDVahnNo/hdyYhBmRnrvJTwDHA/XbF4M3VXb8MfahNDPv7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PlQ+c4bl; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2d41d1bedc9so73982051fa.3;
+        Mon, 18 Mar 2024 06:20:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1710768055; x=1711372855; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B6f1uddVmun0jJOTXaZCQpPLYe/6XOnd9oX08SFGjC0=;
+        b=PlQ+c4bl91Dpmes14fBswcC6BcIbol49w+sQwMRe/TAeUvvaM3ac2D3bcjkLQiab3e
+         kxvAeD1ESF4SceQgKmgzJ2UA0gDA+vS5cLHgahaKEv6qs03SWOck70/XdJDI5IWog36G
+         Cc+kEbTy24WU4yCgCy+Y4HAA703c6iV7BjFvAktvlPwl0C1VqO2zid2eAmG9iHyWh/iv
+         SsvqDm1zzIKjeBUAg0lAfUvfOYrrUEsLEVsmRit3cs4k1W6IIhUbQ4Bye+krtc3Z550S
+         KEnewm6A/DwcFKXC2Vr8QdYGhMrYWiiV9BZu4obD1LP6Duww0X5bGdkL4fyHMV45JBNs
+         d6mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710768055; x=1711372855;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B6f1uddVmun0jJOTXaZCQpPLYe/6XOnd9oX08SFGjC0=;
+        b=k2jtj/y/Nc2CXNuqtZIKCbwLJ7H5zs20+up0seADMaJvYxQ8rbYg3MKRxgUUTIcfUV
+         nRupgC/BSSsU5lYl3IbCYS1pSr5g3e9ETkcQLWJ4OFdUE4XCRPQJbPS+SH+aDMypfDgs
+         xXzYP3sD0si/gFik5en7IqniCUyJN0sil25IYyFki5gLBa5mTf1HeZVbodjLo1p+FNaj
+         J0n31HArjK7r86gfTSN+H5ghZXrj+6MsMJnqF3qFwhCgCn5YIlAedi6Z9UZ8JDWXJJnl
+         4y1lW5kvmqAQK7siIrtnQAhMHsEonIrR0GRpZnzTzCdxso5uuFd/nx8tO2P6JRtT7SAI
+         HoIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+b8K65aybDDKyYXTuzO2rocOP3kcjpoyZgHHfUjkndoHF6J7zufyGTXC8F+0UM+9GsCzAyoNkWbVxz0+h9MUI/ElQHi3XdJdeqq+LErZg2ZiaduZlcN2cAlQrCN4jso248XCWhXY=
+X-Gm-Message-State: AOJu0YxDp+zm9pBLMxoc/K1SzjM4becevr4L6qgx4qcQS/V8SVg36l4B
+	LfuC9/G4otewzdSgH8auYTA1MwjV2l6sc499NO8S1papeFhZ408Z
+X-Google-Smtp-Source: AGHT+IGo7h2AxBg2UxkUko/nh1IfJYKCRKIBQwNwYP8I35nwUeXbiEw4QWW6hWgGVAaLpuqdbDqs6Q==
+X-Received: by 2002:a2e:9bcd:0:b0:2d4:5c03:5ccb with SMTP id w13-20020a2e9bcd000000b002d45c035ccbmr5121261ljj.10.1710768054395;
+        Mon, 18 Mar 2024 06:20:54 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::2181? ([2620:10d:c092:600::1:429a])
+        by smtp.gmail.com with ESMTPSA id wk18-20020a170907055200b00a46c7ecb464sm709545ejb.27.2024.03.18.06.20.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Mar 2024 06:20:54 -0700 (PDT)
+Message-ID: <0a556650-9627-48ee-9707-05d7cab33f0f@gmail.com>
+Date: Mon, 18 Mar 2024 13:19:19 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f5c02ad-f25a-46ea-96e6-649997aea3c2@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: Do not break out of sk_stream_wait_memory() with
+ TIF_NOTIFY_SIGNAL
+Content-Language: en-US
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: netdev@vger.kernel.org, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+ Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20240315100159.3898944-1-s.hauer@pengutronix.de>
+ <7b82679f-9b69-4568-a61d-03eb1e4afc18@gmail.com>
+ <ZfgvNjWP8OYMIa3Y@pengutronix.de>
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <ZfgvNjWP8OYMIa3Y@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 18, 2024 at 12:46:25PM +0000, Pavel Begunkov wrote:
-> On 3/18/24 11:59, Ming Lei wrote:
-> > On Mon, Mar 18, 2024 at 11:50:32AM +0000, Pavel Begunkov wrote:
-> > > On 3/18/24 08:10, Ming Lei wrote:
-> > > > On Mon, Mar 18, 2024 at 12:41:48AM +0000, Pavel Begunkov wrote:
-> > > > > io_uring_cmd_done() is called from the irq context and is considered to
-> > > > > be irq safe, however that's not the case if the driver requires
-> > > > > cancellations because io_uring_cmd_del_cancelable() could try to take
-> > > > > the uring_lock mutex.
-> > > > > 
-> > > > > Clean up the confusion, by deferring cancellation handling to
-> > > > > locked task_work if we came into io_uring_cmd_done() from iowq
-> > > > > or other IO_URING_F_UNLOCKED path.
-> > > > > 
-> > > > > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> > > > > ---
-> > > > >    io_uring/uring_cmd.c | 24 +++++++++++++++++-------
-> > > > >    1 file changed, 17 insertions(+), 7 deletions(-)
-> > > > > 
-> > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > > > index ec38a8d4836d..9590081feb2d 100644
-> > > > > --- a/io_uring/uring_cmd.c
-> > > > > +++ b/io_uring/uring_cmd.c
-> > > > > @@ -14,19 +14,18 @@
-> > > > >    #include "rsrc.h"on   #include "uring_cmd.h"
-> > > > > -static void io_uring_cmd_del_cancelable(struct io_uring_cmd *cmd,
-> > > > > -		unsigned int issue_flags)
-> > > > > +static void io_uring_cmd_del_cancelable(struct io_uring_cmd *cmd)
-> > > > >    {
-> > > > >    	struct io_kiocb *req = cmd_to_io_kiocb(cmd);
-> > > > >    	struct io_ring_ctx *ctx = req->ctx;
-> > > > > +	lockdep_assert_held(&ctx->uring_lock);
-> > > > > +
-> > > > >    	if (!(cmd->flags & IORING_URING_CMD_CANCELABLE))
-> > > > >    		return;
-> > > > >    	cmd->flags &= ~IORING_URING_CMD_CANCELABLE;
-> > > > > -	io_ring_submit_lock(ctx, issue_flags);
-> > > > >    	hlist_del(&req->hash_node);
-> > > > > -	io_ring_submit_unlock(ctx, issue_flags);
-> > > > >    }
-> > > > >    /*
-> > > > > @@ -44,6 +43,9 @@ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
-> > > > >    	struct io_kiocb *req = cmd_to_io_kiocb(cmd);
-> > > > >    	struct io_ring_ctx *ctx = req->ctx;
-> > > > > +	if (WARN_ON_ONCE(ctx->flags & IORING_SETUP_IOPOLL))
-> > > > > +		return;
-> > > > > +
-> > > > 
-> > > > This way limits cancelable command can't be used in iopoll context, and
-> > > > it isn't reasonable, and supporting iopoll has been in ublk todo list,
-> > > > especially single ring context is shared for both command and normal IO.
-> > > 
-> > > That's something that can be solved when it's needed, and hence the
-> > > warning so it's not missed. That would need del_cancelable on the
-> > > ->iopoll side, but depends on the "leaving in cancel queue"
-> > > problem resolution.
-> > 
-> > The current code is actually working with iopoll, so adding the warning
-> > can be one regression. Maybe someone has been using ublk with iopoll.
+On 3/18/24 12:10, Sascha Hauer wrote:
+> On Fri, Mar 15, 2024 at 05:02:05PM +0000, Pavel Begunkov wrote:
+>> On 3/15/24 10:01, Sascha Hauer wrote:
+>>> It can happen that a socket sends the remaining data at close() time.
+>>> With io_uring and KTLS it can happen that sk_stream_wait_memory() bails
+>>> out with -512 (-ERESTARTSYS) because TIF_NOTIFY_SIGNAL is set for the
+>>> current task. This flag has been set in io_req_normal_work_add() by
+>>> calling task_work_add().
+>>
+>> The entire idea of task_work is to interrupt syscalls and let io_uring
+>> do its job, otherwise it wouldn't free resources it might be holding,
+>> and even potentially forever block the syscall.
+>>
+>> I'm not that sure about connect / close (are they not restartable?),
+>> but it doesn't seem to be a good idea for sk_stream_wait_memory(),
+>> which is the normal TCP blocking send path. I'm thinking of some kinds
+>> of cases with a local TCP socket pair, the tx queue is full as well
+>> and the rx queue of the other end, and io_uring has to run to receive
+>> the data.
+
+There is another case, let's say the IO is done via io-wq
+(io_uring's worker thread pool) and hits the waiting. Now the
+request can't get cancelled, which is done by interrupting the
+task with TIF_NOTIFY_SIGNAL. User requested request cancellations
+is one thing, but we'd need to check if io_uring can ever be closed
+in this case.
+
+
+>> If interruptions are not welcome you can use different io_uring flags,
+>> see IORING_SETUP_COOP_TASKRUN and/or IORING_SETUP_DEFER_TASKRUN.
 > 
-> Hmm, I don't see ->uring_cmd_iopoll implemented anywhere, and w/o
-> it io_uring should fail the request:
+> I tried with different combinations of these flags. For example
+> IORING_SETUP_TASKRUN_FLAG | IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN
+> makes the issue less likely, but nevertheless it still happens.
 > 
-> int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
-> {
-> 	...
-> 	if (ctx->flags & IORING_SETUP_IOPOLL) {
-> 		if (!file->f_op->uring_cmd_iopoll)
-> 			return -EOPNOTSUPP;
-> 		issue_flags |= IO_URING_F_IOPOLL;
-> 	}
-> }
+> However, reading the documentation of these flags, they shall provide
+> hints to the kernel for optimizations, but it should work without these
+> flags, right?
+
+That's true, and I guess there are other cases as well, like
+io-wq and perhaps even a stray fput.
+
+
+>> Maybe I'm missing something, why not restart your syscall?
 > 
-> Did I miss it somewhere?
+> The problem comes with TLS. Normally with synchronous encryption all
+> data on a socket is written during write(). When asynchronous
+> encryption comes into play, then not all data is written during write(),
+> but instead the remaining data is written at close() time.
 
-Looks I missed the point, now the WARN() is fine.
+Was it considered to do the final cleanup in workqueue
+and only then finalising the release?
 
 
-Thanks,
-Ming
+> Here is my call stack when things go awry:
+> 
+> [  325.560946] tls_push_sg: tcp_sendmsg_locked returned -512
+> [  325.566371] CPU: 1 PID: 305 Comm: webserver_libur Not tainted 6.8.0-rc6-00022-g932acd9c444b-dirty #248
+> [  325.575684] Hardware name: NXP i.MX8MPlus EVK board (DT)
+> [  325.580997] Call trace:
+> [  325.583444]  dump_backtrace+0x90/0xe8
+> [  325.587122]  show_stack+0x18/0x24
+> [  325.590444]  dump_stack_lvl+0x48/0x60
+> [  325.594114]  dump_stack+0x18/0x24
+> [  325.597432]  tls_push_sg+0xfc/0x22c
+> [  325.600930]  tls_tx_records+0x114/0x1cc
+> [  325.604772]  tls_sw_release_resources_tx+0x3c/0x140
+> [  325.609658]  tls_sk_proto_close+0x2b0/0x3ac
+> [  325.613846]  inet_release+0x4c/0x9c
+> [  325.617341]  __sock_release+0x40/0xb4
+> [  325.621007]  sock_close+0x18/0x28
+> [  325.624328]  __fput+0x70/0x2bc
+> [  325.627386]  ____fput+0x10/0x1c
+> [  325.630531]  task_work_run+0x74/0xcc
+> [  325.634113]  do_notify_resume+0x22c/0x1310
+> [  325.638220]  el0_svc+0xa4/0xb4
+> [  325.641279]  el0t_64_sync_handler+0x120/0x12c
+> [  325.645643]  el0t_64_sync+0x190/0x194
+> 
+> As said, TLS is sending remaining data at close() time in tls_push_sg().
+> Here sk_stream_wait_memory() gets interrupted and returns -ERESTARTSYS.
+> There's no way to restart this operation, the socket is about to be
+> closed and won't accept data anymore.
 
+-- 
+Pavel Begunkov
 

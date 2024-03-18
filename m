@@ -1,71 +1,71 @@
-Return-Path: <io-uring+bounces-1126-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1127-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D6E87F2E0
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 23:03:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBEC487F2E3
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 23:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF14128114F
-	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 22:03:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CF25B22085
+	for <lists+io-uring@lfdr.de>; Mon, 18 Mar 2024 22:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CE85B20E;
-	Mon, 18 Mar 2024 22:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7075A4C7;
+	Mon, 18 Mar 2024 22:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YaHDtb9r"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COw/2wNr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5946A5B1EC;
-	Mon, 18 Mar 2024 22:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0AF5B1EE;
+	Mon, 18 Mar 2024 22:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710799348; cv=none; b=jNMEIzxbLK03ZPBH3I6vheVr85R05Rzyt85kfe01lqys+55nVtJWg2RStfQ6PdHuf/+/UEhuhSB9vVhHewQWEZ9fWLjXSNJsTJ6yyCaCGluL2cRdG7RMUgji7/qb0+kOYiIlmPy7AhOfn6ZAqwezgursnDkMflzm4nyVPCgIT1s=
+	t=1710799350; cv=none; b=R1GbibO6plblFxowFpvmLa3nJYnyJyAkpcz6ZELmowuTFooNc8BsOOoo9xBiJB8a/6gvQpZ+Y/PMY/oR/pHBhkN3vtA7FO5A8ReWra6VQwrMERq9srLMcAAsInHm9HxProUPsUZJgtLsPO6rb3dvut8ky6VrF06+ssaSGfUSdpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710799348; c=relaxed/simple;
-	bh=lR20SPFN7AEYF4hlpLAqRs9SBH6pj/xZec3GIigfjiw=;
+	s=arc-20240116; t=1710799350; c=relaxed/simple;
+	bh=hfys4+yftUF/Eg+JX7tAPxBW3SY311Y0Eg1rWS0rdiU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Rt9QnSnB+4SE+a5hm2+9L5N9SL4tcAiB/LNBeazJ81nzuhg8ELRfs7AJyehwx4codoMBKwU9f96fyS/mXv/NlNFp2L9KxNlV1mseBpMC5jHTMLIq/BuKv8GIlRYlcofGvCtfo+am5SDC78l15k23gnQIjnDbOOxj8Xla4rMnkG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YaHDtb9r; arc=none smtp.client-ip=209.85.221.52
+	 MIME-Version; b=XS1k5BbflT4xXoSOL8GeRGMIbNpSryMgqIh6OEUFc1l1dtiAxKGkphhOsa5SsyIPzYEJA05lO0Y3WQL4O8/vqoAwhfRWsccm5tANqN5SLGEJFTRqD/VCgsbZI6wBuIPC7Fmqivy2Em/SPZwd+aljJdVNasNe1c4hUBUNdnMPWlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=COw/2wNr; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-33ed5b6bf59so1985719f8f.0;
-        Mon, 18 Mar 2024 15:02:27 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4140aadfe2eso15002775e9.1;
+        Mon, 18 Mar 2024 15:02:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710799345; x=1711404145; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710799346; x=1711404146; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J2smzkL0ccPd6EW+XOKsfNYEGXriaM8JzkEqntm67yY=;
-        b=YaHDtb9r0iAg0/QGRtFi8wPztOhvk+uXcCkWv5I43CdhyDGOusUeLvi2EH2/qP/b2f
-         Duq98pz6wbwYHNZY7oaDDTX1Rht7lX98n8cvQVrKrJPvu4Vae8Fk+Iq2eMYdhmendKKq
-         yVVIYKwFjrwg0SrKz8b+z9O0YyX5iHBIq2zGBGjb9sB73smrlPvMiOqW4+3PbdorVVm/
-         bxt1+lGPV6mbslUNv8cton0FBjPHXoIVEwsnk1ZOBsZ/8PTZVOhnHhuCeb00xdIBIumR
-         1K0o7+fnpEgqVg+Cw6aPPqUolNk3QEbU98hBb4KMWbQeWAD/A6Yeb0Q/tKSizgLdrwoT
-         p4ig==
+        bh=R9xszpFpC2h6c5zr4j/9+f30Fztzglf7ofzCjanzBI4=;
+        b=COw/2wNr477/PPoU56s+BOaiP4+7UYUU/lPoYTv7VhV5MyzNMa6n5zBfWmMh95jNB3
+         I0hXaD8iC3/Zeo7Z4XGcPBhmg/YacdEZNYUIO1IRvd0fueoGQK2sP4LAQ8Thb4DCnj9K
+         90oT16ULPVMAn3+sm439LSpESK/T4eTaN7slyk5uxvyJFErAShDWUMEf/zs/Hu5PQ5r3
+         ANczJoeAhVBfjKFMJhRP1io31vngnS9PZpBSRlbWtyvXs3E2GapwnkUEqYF0/dZ2dglP
+         6aH5Huq+MBinXqCWO7G1ROWnb+QQ5H8F1DPH9yaF+oqFKwezLR99o6mNiTSKGfT/LfEK
+         8tRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710799345; x=1711404145;
+        d=1e100.net; s=20230601; t=1710799346; x=1711404146;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J2smzkL0ccPd6EW+XOKsfNYEGXriaM8JzkEqntm67yY=;
-        b=ptWlkhurhNlyMew2MnWOeja0/L8bXTJjrJnUxoVgdIVS+UooZK2FX4r/dfHTjAJBxh
-         kRlec8fz/zJbTIfBogxZygLNqAdsxvMhaDA0l6FP45ZjhKEX2TbBkr0igBVLUkhTO8vR
-         eXr7sqNY+MqoBMDO80e0FiqrgiUtDq5fn03q5oTH2oNdnsx9Q9WG3+qdsBRv1vLIWc/A
-         850OK2yaFZ9KOePU/YBPvM9jbq4hxoO13Pb4oLkHTspFNtRXz2A6RvNbafAdKYn7w3+/
-         2YZuNWGBjuzUnRbhxc7MCet5n2S7jWobMfr/Gg6u8tjJOTq1uLSPTmJGUgHPRMLt2fdC
-         hvYA==
-X-Gm-Message-State: AOJu0YyfO0c6GD/v4LLeXBmQnXRUYOYproLUV4s/HMR98lgkEKJKsHoY
-	6ikF7GBvqlsI905HFhKGBeVnLr3+4/XtrC77rdvJuu9zJSxLw+MryZ2bb0Of
-X-Google-Smtp-Source: AGHT+IHt1DQjEAjH4adUYqb6vaerxNfUMIA3bCl+8k9bzEYXFHUTDdCMfvko51IsAZ6QywtQSovnPw==
-X-Received: by 2002:adf:f3d2:0:b0:33d:b376:8a07 with SMTP id g18-20020adff3d2000000b0033db3768a07mr7879097wrp.8.1710799345172;
-        Mon, 18 Mar 2024 15:02:25 -0700 (PDT)
+        bh=R9xszpFpC2h6c5zr4j/9+f30Fztzglf7ofzCjanzBI4=;
+        b=wv+S/N6IWoBuveQpoK5BQ1SzCCDuC3nRIW5WUE5VvA0LouhsdKqDGby2sLI/zy/NRT
+         Sh04TwpH+YFNqg8UoVbbpanDQvb7+uFTLpUFZr69GbF8I4bzrsoQ/yfNe16+RXhL7ttF
+         oqDAkNGHst6q+F8vKgJAf3z+qSm0TdFKXxwJHl4vUr7RQnriybkJvhZPH10/QZtMmqzw
+         bpPklVDZgnhJ+Kxq/FCJSC6sbZZ9NQ1YO+jmuLUsM3+jH/bMRUJnpfAGATX5SGKsQVYl
+         G6yY/kINTd1eGsIlTpShP+8G1OUPYltFid8z4UoxTlPRlWu6Z90yRfSvkTAJlNV9W2QX
+         UQbA==
+X-Gm-Message-State: AOJu0Yzy962stLkOZxTNaY4ANPUb2j3T/c3RXEhwaSkg7F411cprg07V
+	STxg5tGX6MOLXZZJUcMFPoqFvpq9h+PH3qGUMIaqvIz/XhZtI6KoVgytgIEY
+X-Google-Smtp-Source: AGHT+IHyu+4co3oMLwzRvcdftxQwFCQ6jGwEcrCYjg4gnVrW7bX1akvxWlYEFdnVAn/FqcLeh5L23Q==
+X-Received: by 2002:a05:6000:2c4:b0:33e:c8a1:148b with SMTP id o4-20020a05600002c400b0033ec8a1148bmr12050383wry.42.1710799346617;
+        Mon, 18 Mar 2024 15:02:26 -0700 (PDT)
 Received: from 127.0.0.1localhost ([85.255.232.181])
-        by smtp.gmail.com with ESMTPSA id bj25-20020a0560001e1900b0033e68338fbasm2771038wrb.81.2024.03.18.15.02.24
+        by smtp.gmail.com with ESMTPSA id bj25-20020a0560001e1900b0033e68338fbasm2771038wrb.81.2024.03.18.15.02.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Mar 2024 15:02:24 -0700 (PDT)
+        Mon, 18 Mar 2024 15:02:25 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: linux-block@vger.kernel.org,
@@ -73,9 +73,9 @@ Cc: linux-block@vger.kernel.org,
 	asml.silence@gmail.com,
 	Kanchan Joshi <joshi.k@samsung.com>,
 	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH v3 12/13] io_uring: refactor io_req_complete_post()
-Date: Mon, 18 Mar 2024 22:00:34 +0000
-Message-ID: <ea19c032ace3e0dd96ac4d991a063b0188037014.1710799188.git.asml.silence@gmail.com>
+Subject: [PATCH v3 13/13] io_uring: clean up io_lockdep_assert_cq_locked
+Date: Mon, 18 Mar 2024 22:00:35 +0000
+Message-ID: <bbf33c429c9f6d7207a8fe66d1a5866ec2c99850.1710799188.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1710799188.git.asml.silence@gmail.com>
 References: <cover.1710799188.git.asml.silence@gmail.com>
@@ -87,83 +87,43 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make io_req_complete_post() to push all IORING_SETUP_IOPOLL requests
-to task_work, it's much cleaner and should normally happen. We couldn't
-do it before because there was a possibility of looping in
-
-complete_post() -> tw -> complete_post() -> ...
-
-Also, unexport the function and inline __io_req_complete_post().
+Move CONFIG_PROVE_LOCKING checks inside of io_lockdep_assert_cq_locked()
+and kill the else branch.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 29 +++++++++++------------------
- io_uring/io_uring.h |  1 -
- 2 files changed, 11 insertions(+), 19 deletions(-)
+ io_uring/io_uring.h | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 077c65757281..b07ab65591bf 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -920,11 +920,21 @@ bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags)
- 	return posted;
- }
- 
--static void __io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
-+static void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_rsrc_node *rsrc_node = NULL;
- 
-+	/*
-+	 * Handle special CQ sync cases via task_work. DEFER_TASKRUN requires
-+	 * the submitter task context, IOPOLL protects with uring_lock.
-+	 */
-+	if (ctx->task_complete || (ctx->flags & IORING_SETUP_IOPOLL)) {
-+		req->io_task_work.func = io_req_task_complete;
-+		io_req_task_work_add(req);
-+		return;
-+	}
-+
- 	io_cq_lock(ctx);
- 	if (!(req->flags & REQ_F_CQE_SKIP)) {
- 		if (!io_fill_cqe_req(ctx, req))
-@@ -968,23 +978,6 @@ static void __io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
- 	}
- }
- 
--void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
--{
--	struct io_ring_ctx *ctx = req->ctx;
--
--	if (ctx->task_complete) {
--		req->io_task_work.func = io_req_task_complete;
--		io_req_task_work_add(req);
--	} else if (!(issue_flags & IO_URING_F_UNLOCKED) ||
--		   !(ctx->flags & IORING_SETUP_IOPOLL)) {
--		__io_req_complete_post(req, issue_flags);
--	} else {
--		mutex_lock(&ctx->uring_lock);
--		__io_req_complete_post(req, issue_flags & ~IO_URING_F_UNLOCKED);
--		mutex_unlock(&ctx->uring_lock);
--	}
--}
--
- void io_req_defer_failed(struct io_kiocb *req, s32 res)
- 	__must_hold(&ctx->uring_lock)
- {
 diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 5119265a11c2..f694e7e6fb25 100644
+index f694e7e6fb25..bae8c1e937c1 100644
 --- a/io_uring/io_uring.h
 +++ b/io_uring/io_uring.h
-@@ -65,7 +65,6 @@ bool io_cqe_cache_refill(struct io_ring_ctx *ctx, bool overflow);
- void io_req_cqe_overflow(struct io_kiocb *req);
- int io_run_task_work_sig(struct io_ring_ctx *ctx);
- void io_req_defer_failed(struct io_kiocb *req, s32 res);
--void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags);
- bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags);
- bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags);
- void __io_commit_cqring_flush(struct io_ring_ctx *ctx);
+@@ -119,9 +119,9 @@ enum {
+ void io_eventfd_ops(struct rcu_head *rcu);
+ void io_activate_pollwq(struct io_ring_ctx *ctx);
+ 
+-#if defined(CONFIG_PROVE_LOCKING)
+ static inline void io_lockdep_assert_cq_locked(struct io_ring_ctx *ctx)
+ {
++#if defined(CONFIG_PROVE_LOCKING)
+ 	lockdep_assert(in_task());
+ 
+ 	if (ctx->flags & IORING_SETUP_IOPOLL) {
+@@ -140,12 +140,8 @@ static inline void io_lockdep_assert_cq_locked(struct io_ring_ctx *ctx)
+ 		else
+ 			lockdep_assert(current == ctx->submitter_task);
+ 	}
+-}
+-#else
+-static inline void io_lockdep_assert_cq_locked(struct io_ring_ctx *ctx)
+-{
+-}
+ #endif
++}
+ 
+ static inline void io_req_task_work_add(struct io_kiocb *req)
+ {
 -- 
 2.44.0
 

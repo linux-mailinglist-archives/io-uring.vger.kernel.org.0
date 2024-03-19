@@ -1,175 +1,112 @@
-Return-Path: <io-uring+bounces-1141-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1142-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73ACF88003F
-	for <lists+io-uring@lfdr.de>; Tue, 19 Mar 2024 16:09:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECF6880838
+	for <lists+io-uring@lfdr.de>; Wed, 20 Mar 2024 00:37:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C051F2331C
-	for <lists+io-uring@lfdr.de>; Tue, 19 Mar 2024 15:09:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0E3C1C2100A
+	for <lists+io-uring@lfdr.de>; Tue, 19 Mar 2024 23:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D516519D;
-	Tue, 19 Mar 2024 15:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E961E532;
+	Tue, 19 Mar 2024 23:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="UxOPFDJo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C29657AE
-	for <io-uring@vger.kernel.org>; Tue, 19 Mar 2024 15:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D872DF9F
+	for <io-uring@vger.kernel.org>; Tue, 19 Mar 2024 23:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710860943; cv=none; b=BPqHGqHH68FPyKlgtosNpDarjd/pzGiOUGwm803GB+FjzFxp46M2fy9X/fqPTpHwq0ogai+OxK0tturB6eLzp30AfjLeMiEInG6Z8/p5v1WdcteGzG69IG1oSEyw5JEFvbbgBYuAcevLhbiix2SAWCwepue2VTbgH5vMreRalUc=
+	t=1710891436; cv=none; b=ZPCRqqH6sRwnHo+XgL9SoRsM9Y4yKYrH5ZwrOKmwnZAEV/7vOdViEB8hezbz05gA2YDtobBdrOdDC/ygnEDPy6fyINjdpMM4n+EIpl8Rcvr/03LG3kmhlMaGPWzKkAudO9HpYWEr+Uhi1vPV3sWmgBQTnNbarMENnOOiMxr1MwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710860943; c=relaxed/simple;
-	bh=pWmA2TjVOlEO2nDeuR5LcVwVNFWlctcOHf43FvjyzdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A2aR6ptV5f6ipJ1N7O1MUCusshSXadQm3FuDql5fRvFAH3eVNlHHMMIKtJMo/hqjyjppEq+2ERLK5AkXEYrOsa57XOGRHInqkXEfDP8A882Dk2ORvNAMF0VWK1+OVaS7kSD+W8+eNrsPwjm0ouiQPPLXcHehoMrRxPH4y7wWj7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1rmb59-0000Nj-9F; Tue, 19 Mar 2024 16:08:51 +0100
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1rmb58-007Ifk-GO; Tue, 19 Mar 2024 16:08:50 +0100
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1rmb58-0074Jh-1M;
-	Tue, 19 Mar 2024 16:08:50 +0100
-Date: Tue, 19 Mar 2024 16:08:50 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: netdev@vger.kernel.org, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: Re: [PATCH] net: Do not break out of sk_stream_wait_memory() with
- TIF_NOTIFY_SIGNAL
-Message-ID: <ZfmqgvKqBtKr54Li@pengutronix.de>
-References: <20240315100159.3898944-1-s.hauer@pengutronix.de>
- <7b82679f-9b69-4568-a61d-03eb1e4afc18@gmail.com>
- <ZfgvNjWP8OYMIa3Y@pengutronix.de>
- <0a556650-9627-48ee-9707-05d7cab33f0f@gmail.com>
- <Zflt3EVf744LOA6i@pengutronix.de>
- <bfc6afa9-501f-40b6-929a-3aa8c0298265@gmail.com>
+	s=arc-20240116; t=1710891436; c=relaxed/simple;
+	bh=j/jzpT2R/XSq/5XZzd1z7XbZ7pBSyrVyj75vprI3RZA=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=SeY7X6Xb3atJX2ZRy/D+0WX1R0FiQPZgUTN1ti7r9mNawcmwYqxlT2CNXFsHoZH0DXfETX0tAz/I1C3vDnyNORhEkoELfm6nL3zC/L1LNz6GdNeVCmBx24d9ikKAonqEqOhioeTvm43LSJJMNAgrd9eoGb0Buzsl/sE56p7oyCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=UxOPFDJo; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6e694337fffso1529341b3a.1
+        for <io-uring@vger.kernel.org>; Tue, 19 Mar 2024 16:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710891431; x=1711496231; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ONtcVAM8ymLZmuEFfFo62IsSxljWnnDZmoY4WSuTPM8=;
+        b=UxOPFDJovfh7TIzrKGTUVG10RkgjqAd2MnFWkRbd043G27qb2wvcL5/0RI/pxC5AK3
+         joJW7IWPSrhhMRteF4XioUyr9NdWc3tD+QTkaOW6n/Fosbre7lFL37+qHlktgkqL8hh7
+         UWRrtQF49cB0qBQLnb/4UdqbmOa8xVFkoEAOt23hRaDm3rT4WUqBdPgCSnrXanaPL+dd
+         ngX9gHQDjiV798++dMQlDknpkaOyMl0EevaWv8EXa3CpywooVIjfKqOVktCWkjiFZPGV
+         eVYTzrKcv5FKoElp70nhuuWh/BuvQMxUFclX4/MBCZRHBWOZqqwvNZeymghJh80yh0Qe
+         ZWUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710891431; x=1711496231;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ONtcVAM8ymLZmuEFfFo62IsSxljWnnDZmoY4WSuTPM8=;
+        b=NctbHTzU7PH7uHOmfsaNI94YRqCzmkYcmWKgNl1+vUewd1aF4HqCOyjaXACkl7Varl
+         TOuMc+p19rg45AvgXovEFIDKTSPbMC711TK2rnsFapoJ4TOYKr5SkwMUodP7W8RQDrqN
+         ZUX1GdWK2kEeAGecel2OYKM4SPri3U6ciHxVpbXt8hAevZaiDHstp6Z4BvMVPBVJbXEe
+         XU+ZUjjk7yk4/IdEHVPuIU6PFGfJtN7BE2Im1CTCke2xdQQa/s0pL774sUszS1Vg0I3h
+         ZvRNLgkowpfSQxOy9Xdk8GEpGYoRiHIdzhb3MOXkK0QVR1J3eGeWbgLiSJJ5hH8ZL4ZW
+         QCPw==
+X-Gm-Message-State: AOJu0YyiCR2cC9MpT3EhAi4vn8tAOOUEEbKplXGuGR7tRDnCh4GZXmh9
+	rFC23BC8LWtRkxRkWsgJ8FbhJgoYi0/Z93dSaDAO1ocUvbe1ERGoX5enRgpkW71o8xyAjcBaQlv
+	M
+X-Google-Smtp-Source: AGHT+IGgTVX90lPUsiFXw2cCUnlpr7CxEDKOuOR0wB1wrSScueL/H64VWvFrcuFeJwHPfoqQBGVlVQ==
+X-Received: by 2002:a17:903:24f:b0:1dd:7d66:bfc0 with SMTP id j15-20020a170903024f00b001dd7d66bfc0mr17502387plh.4.1710891430903;
+        Tue, 19 Mar 2024 16:37:10 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id u17-20020a17090341d100b001dddb6c0971sm12119967ple.17.2024.03.19.16.37.10
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Mar 2024 16:37:10 -0700 (PDT)
+Message-ID: <7366e668-7083-4924-af43-5d5ba66fb76a@kernel.dk>
+Date: Tue, 19 Mar 2024 17:37:09 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bfc6afa9-501f-40b6-929a-3aa8c0298265@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: io-uring@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/net: drop unused 'fast_iov_one' entry
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 19, 2024 at 01:55:21PM +0000, Pavel Begunkov wrote:
-> On 3/19/24 10:50, Sascha Hauer wrote:
-> > On Mon, Mar 18, 2024 at 01:19:19PM +0000, Pavel Begunkov wrote:
-> > > On 3/18/24 12:10, Sascha Hauer wrote:
-> > > > On Fri, Mar 15, 2024 at 05:02:05PM +0000, Pavel Begunkov wrote:
-> > > > > On 3/15/24 10:01, Sascha Hauer wrote:
-> > > > > > It can happen that a socket sends the remaining data at close() time.
-> > > > > > With io_uring and KTLS it can happen that sk_stream_wait_memory() bails
-> > > > > > out with -512 (-ERESTARTSYS) because TIF_NOTIFY_SIGNAL is set for the
-> > > > > > current task. This flag has been set in io_req_normal_work_add() by
-> > > > > > calling task_work_add().
-> > > > > 
-> > > > > The entire idea of task_work is to interrupt syscalls and let io_uring
-> > > > > do its job, otherwise it wouldn't free resources it might be holding,
-> > > > > and even potentially forever block the syscall.
-> > > > > 
-> > > > > I'm not that sure about connect / close (are they not restartable?),
-> > > > > but it doesn't seem to be a good idea for sk_stream_wait_memory(),
-> > > > > which is the normal TCP blocking send path. I'm thinking of some kinds
-> > > > > of cases with a local TCP socket pair, the tx queue is full as well
-> > > > > and the rx queue of the other end, and io_uring has to run to receive
-> > > > > the data.
-> > > 
-> > > There is another case, let's say the IO is done via io-wq
-> > > (io_uring's worker thread pool) and hits the waiting. Now the
-> > > request can't get cancelled, which is done by interrupting the
-> > > task with TIF_NOTIFY_SIGNAL. User requested request cancellations
-> > > is one thing, but we'd need to check if io_uring can ever be closed
-> > > in this case.
-> > > 
-> > > 
-> > > > > If interruptions are not welcome you can use different io_uring flags,
-> > > > > see IORING_SETUP_COOP_TASKRUN and/or IORING_SETUP_DEFER_TASKRUN.
-> > > > 
-> > > > I tried with different combinations of these flags. For example
-> > > > IORING_SETUP_TASKRUN_FLAG | IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN
-> > > > makes the issue less likely, but nevertheless it still happens.
-> > > > 
-> > > > However, reading the documentation of these flags, they shall provide
-> > > > hints to the kernel for optimizations, but it should work without these
-> > > > flags, right?
-> > > 
-> > > That's true, and I guess there are other cases as well, like
-> > > io-wq and perhaps even a stray fput.
-> > > 
-> > > 
-> > > > > Maybe I'm missing something, why not restart your syscall?
-> > > > 
-> > > > The problem comes with TLS. Normally with synchronous encryption all
-> > > > data on a socket is written during write(). When asynchronous
-> > > > encryption comes into play, then not all data is written during write(),
-> > > > but instead the remaining data is written at close() time.
-> > > 
-> > > Was it considered to do the final cleanup in workqueue
-> > > and only then finalising the release?
-> > 
-> > No, but I don't really understand what you mean here. Could you
-> > elaborate?
-> 
-> The suggestion is instead of executing the release and that final
-> flush off of the context you're in, namely userspace task,
-> you can spin up a kernel task (they're not getting any signals)
-> and execute it from there.
-> 
-> void deferred_release_fn(struct work_struct *work)
-> {
-> 	do_release();
-> 	...
-> }
-> 
-> struct work_struct work;
-> INIT_WORK(&work, deferred_release_fn);
-> queue_work(system_unbound_wq, &work);
-> 
-> 
-> There is a catch. Even though close() is not obliged to close
-> the file / socket immediately, but it still not nice when you
-> drop the final ref but port and other bits are not released
-> until some time after. So, you might want to wait for that
-> deferred release to complete before returning to the
-> userspace.
-> 
-> I'm assuming it's fine to run it by a kernel task since
-> IIRC fput might delay release to it anyway, but it's better
-> to ask net maintainers. In theory it shouldn't need
-> mm,fs,etc that user task would hold.
+Doesn't really matter at this point, as the fast_iov entries dominate
+the size of io_async_msghdr. But that may not always be the case, so
+drop this unused member. It turns out it got added in a previous commit,
+but never actually used for anything.
 
-Ok, I'll have a look into it. Thanks for your input.
+Fixes: 9bb66906f23e ("io_uring: support multishot in recvmsg")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Sascha
+---
+
+diff --git a/io_uring/net.h b/io_uring/net.h
+index 191009979bcb..9d7962f65f26 100644
+--- a/io_uring/net.h
++++ b/io_uring/net.h
+@@ -10,7 +10,6 @@ struct io_async_msghdr {
+ 	union {
+ 		struct iovec		fast_iov[UIO_FASTIOV];
+ 		struct {
+-			struct iovec	fast_iov_one;
+ 			__kernel_size_t	controllen;
+ 			int		namelen;
+ 			__kernel_size_t	payloadlen;
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Jens Axboe
+
 

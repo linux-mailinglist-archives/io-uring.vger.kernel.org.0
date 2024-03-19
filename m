@@ -1,75 +1,74 @@
-Return-Path: <io-uring+bounces-1135-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1136-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A52087F560
-	for <lists+io-uring@lfdr.de>; Tue, 19 Mar 2024 03:21:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E9A87F565
+	for <lists+io-uring@lfdr.de>; Tue, 19 Mar 2024 03:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19D98B22003
-	for <lists+io-uring@lfdr.de>; Tue, 19 Mar 2024 02:21:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 950CFB21774
+	for <lists+io-uring@lfdr.de>; Tue, 19 Mar 2024 02:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927FE2F22;
-	Tue, 19 Mar 2024 02:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B4065194;
+	Tue, 19 Mar 2024 02:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="lqlk7u6r"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="BTnRu9Sa"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45BE657B7
-	for <io-uring@vger.kernel.org>; Tue, 19 Mar 2024 02:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D21264CE6
+	for <io-uring@vger.kernel.org>; Tue, 19 Mar 2024 02:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710814862; cv=none; b=hzMWohaZzMynqVkK8bKN5MdUn+GE5Xla5Yxf4ElyADEnqVwl1PMNUAz8AmbCL8n6tCtGP/jqYwD/LT+wvgLNPkrITglZ6BlRnCfQiBEmrWzRi5Jv1ElkebxTvoG+5Hn9K7PRjqf4Mb6sgILzP7e+7FejLzoY6zYgdBRDNn53xDU=
+	t=1710815105; cv=none; b=PMqZtSHsNTgRjwA87C/v0hUSiuVL59gzb1AAGIj9u8AUh61GEkK48k8/Xo5FxXcx/LQVVArs6qXJMmQEPjnAYEUsdfhf91NSUT5wWvFay8YIgc08f0otfhnzhdm8/o7b+VYAY0i6SochW6LJOcsf9fdHZUElxLj9gJL+WHtMJd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710814862; c=relaxed/simple;
-	bh=RJMCoG+gNuaOQ/fHtjYkyFp6NW0NPbP9NY+sEji0LPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=haidoJeRoe89G9O6pIMVG5hfnBzAFOw4gx8U0yZWPjgKjNEKqLR+uJ38mxMhsgglONz8a3MOgitl8gqBRUAThV31Hrnrm4jQRF/n8LMVoKpkyuqt+drlKNhwj5AZBTYGcwUJoxS5Tv2L8OccrKBk6Ca8SZRRYn6JwXnRjI51B6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=lqlk7u6r; arc=none smtp.client-ip=209.85.216.49
+	s=arc-20240116; t=1710815105; c=relaxed/simple;
+	bh=usexpfUUaOdKoscCmMPOP+9q50kn1XiUNf4aRdRUXEA=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=SBbXvT1d5U9FakbY8XS94C34TxZcgoy5sYO/r8SYnKhOw+bTqParZSvkdWs/UbqkRjOu4SVvypiptLiN9x6Q7Gg6eceH0q01/gFDqpJ0B3KnjvaHU8h/BqhYXwNTGVby+/D8SPVnEsZwabkRb5+rPBjqr7NY3aeDBAisXWKm/JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=BTnRu9Sa; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-29c572d4b84so1711480a91.1
-        for <io-uring@vger.kernel.org>; Mon, 18 Mar 2024 19:21:00 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6e6c18e9635so1316851b3a.1
+        for <io-uring@vger.kernel.org>; Mon, 18 Mar 2024 19:25:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710814860; x=1711419660; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2UTfysRerY+K+DNhqJUvMtMt7ExbS6u+xCls7XQC8Mc=;
-        b=lqlk7u6r6dRWfcJ+M1qq0ZftyIvBWqk0WgYJVQemHXtMMzcWjYiDYDV44u7J+gBux1
-         sr3juwa+kPMM/m+/XsY1RgnA9X0YJjRe6HqcFct+/kQBFvQroanSA24Ktyelpb5g6y1S
-         yTsjdsZTmTQ4xsPgumbhAYGIZlU0VzjP/QJrIvPJyt4oe7l6OjLfIu4egPw5PhwoB1LR
-         B7+h+IybEJjHVfWN/jBVyRzBgMxoZ7w+iV/oJ0AylOhAa/rUAqOBZBa+gk4x2/1WuuDU
-         MOE1OLw2zUx7RbVo0J5YwgMSBiXqSDFy01S36xFwYwDNMe8rqyWHHA+blp6qmlPRh2a8
-         qvLw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710815102; x=1711419902; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LKwbmHd9W/uIJVGtKNcEQVg+bZr0wfBME4hoGuVlY7s=;
+        b=BTnRu9Sa5NAhiofi/kdi4tPrPQUGqFPhfFmBGtvo50nV6lYaEK/Xzfipan40KdbUAH
+         E1YlWWM7r4gMZONzffbYW5rUO/3ex2695uyjHRjMTdN2BIshEAmrnsnwknPZHgdI3ToT
+         JcB+T12FgEaPDyt4I7rDgThcqeQKbaPmA16RSq7eaw/D1ZMe4YzMUCnO7VijV+JbsssX
+         05u79U2e2rLCefSivtyFpv8CBWdRFfAe1xBvT5gSmylNTKWfzI0IB55J7wGtcnThgHlm
+         WVbLmZpCGT2LkD6Pp88PYHIgGP1agc1S/SUF+GygMlQNQBNXDJSXHArt332YHZez3akL
+         F77w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710814860; x=1711419660;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2UTfysRerY+K+DNhqJUvMtMt7ExbS6u+xCls7XQC8Mc=;
-        b=vZ3JBJB+63OC1LAFXH+Th5j4VEcaNMAZhrc1uGeaAhCcZRj6RWnQ4RENjauUKhTAlj
-         Pvm8xj0JA1T3VEC+NW/DH4NExGRwyrH0LMg9FyCw5F+Q44ZKxZwnAaDsefkEQgoKG4f9
-         a6bF+J9va8rSyzFM21HNYK6u8b24C+KN3aZR6jILx/xvYebwEFe2GsZlg/2Kivoyxajg
-         5lLFI+4sJJ+ZKhum7j/efj2NWJv0NKakKhrPrrWIIfF6aiVqc0zD8wGkrDJR9MIlwb/C
-         auHNiRdzK7GDjhisMorPMManSFy0eEbmpqftTSCsuroQ9/1GeVDAU8Yatstt0qhO+mnA
-         IxNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzdThA3XyMSIoLwnHAG1kP17H4SX9/kAw0VP7EWm8Pk+o+MxFGECiAaBu5+pY4MDOFJmNjhvxRHh+snNjrgPB03gUG77fS0Uw=
-X-Gm-Message-State: AOJu0Yxb6ct1kCMLe285OtgTbLJPjl1ApsE/6/rpezgLkDklWEYE0YuE
-	LPR5l6UNEnHZyP68zgfHar421xcFIrSY2deEKgmTnwFcsQVSTFWptSQZ+2euWXi5kxXE5oRwJhw
-	w
-X-Google-Smtp-Source: AGHT+IHo9nXoCDXp4LvQz5T/ZTk0dJ6XXWHITOS+gwbbfUncxJHwywMIrB8KXWTw3apUVNaSs9bi1w==
-X-Received: by 2002:a05:6a00:4f8c:b0:6e7:2e3f:846f with SMTP id ld12-20020a056a004f8c00b006e72e3f846fmr1086518pfb.1.1710814859992;
-        Mon, 18 Mar 2024 19:20:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710815102; x=1711419902;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LKwbmHd9W/uIJVGtKNcEQVg+bZr0wfBME4hoGuVlY7s=;
+        b=M9E5T8ETSasWuSvbFvRf8H5GsSy8BSd50q82kb5cWSWn+e5/+slyxgqG8IdlSiiK92
+         MCcwpvPLdl1BNAodiqvhbgVHQzWMJGwMlZ6qaAYuW/ipqMBwkFl+LDnxtCmBQ+lFLQpB
+         et2h3lkrWq7k+txYQgGc3OcKc4g326DfIhdD7nmC52zCblPkHFTRwjqjYdd7gtdFt03z
+         qGd/rYrgP6wqhfYS5qm/y+zKM/+UNMF3EZn6HmfURxmsJ//vWH+CcXSFD5MWIoKpo/8S
+         I3d0sjzIhMgUUm0BfqELC/ITCzd6KpzaQLnFz4wZyZsD+WQgra32QdPukKDWRpbXOf6o
+         9fWA==
+X-Gm-Message-State: AOJu0YyWigDNGemtOhM/SoMitVdkkICzC1lJdP73x0G7G2bGvDib38pc
+	+5/JZQqhpO+Vf3hIXV/60c2VuxOEPZ9i26U3FsQ6j43sSQv75ivoDeNNfrnkfskgDqu7lvgbn8y
+	O
+X-Google-Smtp-Source: AGHT+IHSIiUVcEwxxBmcttFqZmq+0GVoC9dA9vekTV6PX/5+Mn0PdPEd7StWl0nbwOMJXMRL9LX8Ow==
+X-Received: by 2002:a17:902:e84a:b0:1dd:b883:3398 with SMTP id t10-20020a170902e84a00b001ddb8833398mr923910plg.4.1710815101647;
+        Mon, 18 Mar 2024 19:25:01 -0700 (PDT)
 Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id ks1-20020a056a004b8100b006e6cc458206sm8814226pfb.175.2024.03.18.19.20.59
+        by smtp.gmail.com with ESMTPSA id h14-20020a170902680e00b001dde403a060sm10130514plk.44.2024.03.18.19.25.00
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Mar 2024 19:20:59 -0700 (PDT)
-Message-ID: <0a44c466-7a0c-4959-8c21-57249a87de05@kernel.dk>
-Date: Mon, 18 Mar 2024 20:20:58 -0600
+        Mon, 18 Mar 2024 19:25:01 -0700 (PDT)
+Message-ID: <31233857-c545-4f02-af00-0eddf1e46cee@kernel.dk>
+Date: Mon, 18 Mar 2024 20:25:00 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,37 +76,51 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [bug report] Kernel panic - not syncing: Fatal hardware error!
 Content-Language: en-US
-To: Changhui Zhong <czhong@redhat.com>, io-uring@vger.kernel.org
-References: <CAGVVp+WOLnr9Hxd10Xwa8YpJ=W5Re9csPCMtNF8Ux0_zbg0ktA@mail.gmail.com>
+To: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAGVVp+WOLnr9Hxd10Xwa8YpJ=W5Re9csPCMtNF8Ux0_zbg0ktA@mail.gmail.com>
+Subject: [PATCH] io_uring/sqpoll: early exit thread if task_context wasn't
+ allocated
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 3/18/24 3:50 AM, Changhui Zhong wrote:
-> Hello,
-> 
-> found a kernel panic issue after add io_uring parameters to kernel
-> cmdline and then reboot,
-> please help check,
-> 
-> repo:https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> branch: master
-> commit HEAD:f6cef5f8c37f58a3bc95b3754c3ae98e086631ca
-> 
-> grubby --args='io_uring.enable=y' --update-kernel=/boot/vmlinuz-6.8.0+
-> grubby --args='sysctl.kernel.io_uring_disabled=0'
-> --update-kernel=/boot/vmlinuz-6.8.0+
-> reboot
+Ideally we'd want to simply kill the task rather than wake it, but for
+now let's just add a startup check that causes the thread to exit.
+This can only happen if io_uring_alloc_task_context() fails, which
+generally requires fault injection.
 
-Pretty dubious on that, should have no bearing or impact on that at
-all. Does the same sha boot just fine multiple times without the
-added parameters?
+Reported-by: Ubisectech Sirius <bugreport@ubisectech.com>
+Fixes: af5d68f8892f ("io_uring/sqpoll: manage task_work privately")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index 363052b4ea76..3983708cef5b 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -274,6 +274,10 @@ static int io_sq_thread(void *data)
+ 	char buf[TASK_COMM_LEN];
+ 	DEFINE_WAIT(wait);
+ 
++	/* offload context creation failed, just exit */
++	if (!current->io_uring)
++		goto err_out;
++
+ 	snprintf(buf, sizeof(buf), "iou-sqp-%d", sqd->task_pid);
+ 	set_task_comm(current, buf);
+ 
+@@ -371,7 +375,7 @@ static int io_sq_thread(void *data)
+ 		atomic_or(IORING_SQ_NEED_WAKEUP, &ctx->rings->sq_flags);
+ 	io_run_task_work();
+ 	mutex_unlock(&sqd->lock);
+-
++err_out:
+ 	complete(&sqd->exited);
+ 	do_exit(0);
+ }
 
 -- 
 Jens Axboe
-
 
 

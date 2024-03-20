@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-1163-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1164-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDEB8819AA
-	for <lists+io-uring@lfdr.de>; Wed, 20 Mar 2024 23:58:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0558819AB
+	for <lists+io-uring@lfdr.de>; Wed, 20 Mar 2024 23:58:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A5D4B24D7D
-	for <lists+io-uring@lfdr.de>; Wed, 20 Mar 2024 22:58:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9AE7B24C7B
+	for <lists+io-uring@lfdr.de>; Wed, 20 Mar 2024 22:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A72F85C73;
-	Wed, 20 Mar 2024 22:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1341E87E;
+	Wed, 20 Mar 2024 22:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hxZsoTlu"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="a6zILMlw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94E4381D1
-	for <io-uring@vger.kernel.org>; Wed, 20 Mar 2024 22:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034C385C65
+	for <io-uring@vger.kernel.org>; Wed, 20 Mar 2024 22:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710975480; cv=none; b=E4BUJuXNd9ENO4VkEbPvt63bWy1gsSjRrzyazgPvONJJI5PkxUIvnN37QfHdTr3pQeGjO/ZA6SmNEmGYEprQMocB/IHxanZqLIgwjLJFHm3nz1+rYPy9nT0hjFMlLGIEymijf9gW/4RjHqFh1L3OLJjObry/Q6q1HPjTqUD9IO0=
+	t=1710975481; cv=none; b=ac24oapZAPjI59O0ImqSUvE29IBecp7iRl+vfibQ/+XQV5mSo/RU4B6k/6wXKkFvoRAm7v/AclcVxgOtXE9mlAdMhjPmnAOCertINZYZNarHlYao5LLwWN609EI1IZkUBNxTmHHs6sf/4afYJv0JhUDs+cvS+Q/beLUplRyvwPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710975480; c=relaxed/simple;
-	bh=eCtxrk4Io0v+A0yq+KNK3HkUPeffwmZjof/ejs96dvE=;
+	s=arc-20240116; t=1710975481; c=relaxed/simple;
+	bh=0f6ZTCzHPr6SQVQhy1T+kZAfEPLk1THPHDAADumiOoM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AFy4629oazWhh1C99u2KURwVocI3QfiLLQFus0qHLbAkFGqxiYJhPelOJBOvxrp4cSSGvFPsrMF6D+3D6ZkQeuerHX+SRtRTpR03clRW1R/FPraHPKq4c1cFFoOK2c1AKE552e1OXlriCJBx/qI4x6F/bLDprQjGnTRafv8w8OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hxZsoTlu; arc=none smtp.client-ip=209.85.166.41
+	 MIME-Version; b=DCSaNiS0qq/Nt/wTJ3Zt2G16wtrwmZ1pzGdi7o1DwpULfPg5gwNzipxKy9yvOS6v7vAT56oqPhtMXmtb7XwT0aRKkMYrVf5c7hbvQmurPX9Y6GE6D0dssDG+41nRv6+2gUnh40rL87EJHLuHKtB0VGJMtk/c22FtmXTI0xjY0uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=a6zILMlw; arc=none smtp.client-ip=209.85.166.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7cc0e831e11so2537239f.1
-        for <io-uring@vger.kernel.org>; Wed, 20 Mar 2024 15:57:56 -0700 (PDT)
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7cc0e831e11so2537539f.1
+        for <io-uring@vger.kernel.org>; Wed, 20 Mar 2024 15:57:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710975475; x=1711580275; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710975477; x=1711580277; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xzNkNd4QmdS0zJdufPglHElSH8fOBK4QXS9P0WWmGBg=;
-        b=hxZsoTlufu41xvNUWgjlZfAnDOa8hYfQ3H6DL7SdAcQ6Tu8vI9PLRbA74xzOlaP9sA
-         c+sl4fUgnLfwjLFjO15FrkWy/HWm7ea/XzQ42YqDALNqqU4Rrg/9YSI2zpQ+M4BymEtt
-         XCj6pi/GX7xlT9hl1TCovZhqDmmqdrrrdEwnQpuZDqNramp12Yia+TGi5oiZ35sx13Aq
-         IqbO/WyPmGpDahlp9+Yk92npwm5wlt7EytL9dHZaZ3s+WDh12+uNUfF4ci0qtI4chqyb
-         7vke7SAoavszXnEBzI4/15277zkKYO+i3LXIFX5ZamdvEkK2BYyekQF5nLh+WbyXeqOP
-         r/+Q==
+        bh=3D9t78d3dIlx2g5fA/D2tgVcusYA1i2fkeNzecTe30c=;
+        b=a6zILMlwkYBa82BJP18s06uPpJYWb4n7htmAueN+7/pnw8X20OHTU0hWr7srfN3hyr
+         T6OhvDS5SWWUXhadRsfyv/Mk030NlfSUZz+v2rAoe3i/XKLwlNypO/DVD+VPqPEybDa4
+         k4BrLOn8fH4Hfo3oJINnmFuOv9SE5S4N1QQkMmP3A362QMXpWg4RNLWZKS9Jx7sxWjjS
+         WH9aWH6Fv0aqIwosFxkKlNprqxItM1wF2FPD1zUxmMYp2FeZVU/LwbMjTFZFUFm31bFb
+         g+Ge3n+Kr+KuEze3rDJqnlVanaYyZDVs5LuhoNUmzpAvuQzkzjY1Kb1Hevcp7/y+2pOi
+         9Csw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710975475; x=1711580275;
+        d=1e100.net; s=20230601; t=1710975477; x=1711580277;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xzNkNd4QmdS0zJdufPglHElSH8fOBK4QXS9P0WWmGBg=;
-        b=c7/lT1BUYbwO+bdzo3GXl6FyLS8WNCAsZYzgsn4tPk4igaSv2X/i6wqvOMj4fDtpd9
-         wRZ3ktIY/77Ko7UMVuarGg8VN0w7sboZKSkfMCJTadSRKbHc3arb+qgJunD1qWNVaVK/
-         TgZ7Eor8YUhDk865dufWFX+9vRJu+ElxKLUNbh3fYLTDztvl97HsnkLKy8gQMpzFIpw1
-         0zPedaIlOTmM4JlwJIlEOqj+1DVCmlDGQ9D75chKvmWr16Z1FIrPu7h7CXudALAXj4r4
-         wnxStoR7lgVBB3b3TycRBS0j3IW7WjegXjKpp26p+dgM/3WugluADqfQJnfBVDMxhg5e
-         vD4w==
-X-Gm-Message-State: AOJu0YwTiFXniVaHkdvCFxQxCyTbGXntzlc+6vp21mM2IeBmeanqyIb/
-	E/BHQTi71tw05vApFc9nosJxmhAbOWD92gVk8URQGTY0HOBWBVluW+GlepG0WDopsc4bYj9z6V/
-	3
-X-Google-Smtp-Source: AGHT+IEBCeNkuy4lgnLYLxgCKlReimMu/KBp0wqMZpAjqtKGlZcShBMjd1mX9z9PxrjXRrx83gRJyA==
-X-Received: by 2002:a5e:c10d:0:b0:7cf:28df:79e2 with SMTP id v13-20020a5ec10d000000b007cf28df79e2mr700529iol.1.1710975475411;
-        Wed, 20 Mar 2024 15:57:55 -0700 (PDT)
+        bh=3D9t78d3dIlx2g5fA/D2tgVcusYA1i2fkeNzecTe30c=;
+        b=l4Fa5pVd96LjBqCEDlOPuVmAj4qL6394EvhMbC1ywjk+pFJHCdaJPK9EHSPUMGJRpR
+         z/C803bsVz3Qs3rhH46qZnr2C0xg+nSnxZsT/26Gphz+5U3uruiiXwGu+T5IeCNUuXP0
+         tX3jN37LYSPf30pComRIE8K4pwgS+pi+3pBBG7w8QgfRje+MxCz/Pb8mNrk3Bd4UP9UI
+         8mxeQi8fADPAjqjdza1HJcSXYberhjfyHS7DZwcNdP4kSZVDmJuCK4A39cmFGK9POVFC
+         iJHymdpBPY38C6xNpD4kHgT9/0Tw6t2PHqgHMHdeVyumV49qCiRg/UJqIFqqnZ2SpmAU
+         wX1A==
+X-Gm-Message-State: AOJu0YysKh3tGbpB4w7AteXO4n4cjF9x40DB76z9wBgH0fVyIzfzzL+T
+	BjZbjOzjF7HuyWySUKx1D+j5eS/Nxrz0+f4iO2F9ekZYIiaJP50ODnKu9X2MT9H8ZPNyoBhZLhd
+	9
+X-Google-Smtp-Source: AGHT+IEiHOSOXosNqaOtQoJC+jhJGdNlUPli/Evog8iwLXbxFVFz8thImsXYyZAV7YUTjSz0CvIhNA==
+X-Received: by 2002:a5e:c10d:0:b0:7cf:28df:79e2 with SMTP id v13-20020a5ec10d000000b007cf28df79e2mr700581iol.1.1710975477464;
+        Wed, 20 Mar 2024 15:57:57 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id z19-20020a6b0a13000000b007cf23a498dcsm434384ioi.38.2024.03.20.15.57.53
+        by smtp.gmail.com with ESMTPSA id z19-20020a6b0a13000000b007cf23a498dcsm434384ioi.38.2024.03.20.15.57.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Mar 2024 15:57:53 -0700 (PDT)
+        Wed, 20 Mar 2024 15:57:55 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 01/17] io_uring/net: switch io_send() and io_send_zc() to using io_async_msghdr
-Date: Wed, 20 Mar 2024 16:55:16 -0600
-Message-ID: <20240320225750.1769647-2-axboe@kernel.dk>
+Subject: [PATCH 02/17] io_uring/net: switch io_recv() to using io_async_msghdr
+Date: Wed, 20 Mar 2024 16:55:17 -0600
+Message-ID: <20240320225750.1769647-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240320225750.1769647-1-axboe@kernel.dk>
 References: <20240320225750.1769647-1-axboe@kernel.dk>
@@ -85,335 +85,223 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 No functional changes in this patch, just in preparation for carrying
-more state then we have now, if necessary. While unifying some of this
-code, add a generic send setup prep handler that they can both use.
-
-This gets rid of some manual msghdr and sockaddr on the stack, and makes
-it look a bit more like the sendmsg/recvmsg variants. We can probably
-unify a bit more on top of this going forward.
+more state then we have now, if necessary.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/net.c   | 196 ++++++++++++++++++++++++-----------------------
- io_uring/opdef.c |   1 +
- 2 files changed, 103 insertions(+), 94 deletions(-)
+ io_uring/net.c   | 75 ++++++++++++++++++++++++++++++------------------
+ io_uring/net.h   |  2 +-
+ io_uring/opdef.c |  7 +++--
+ 3 files changed, 53 insertions(+), 31 deletions(-)
 
 diff --git a/io_uring/net.c b/io_uring/net.c
-index ed798e185bbf..a16838c0c837 100644
+index a16838c0c837..d571115f4909 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
-@@ -322,36 +322,25 @@ static int io_sendmsg_copy_hdr(struct io_kiocb *req,
+@@ -320,7 +320,7 @@ static int io_sendmsg_copy_hdr(struct io_kiocb *req,
+ 	return ret;
+ }
  
- int io_send_prep_async(struct io_kiocb *req)
+-int io_send_prep_async(struct io_kiocb *req)
++int io_sendrecv_prep_async(struct io_kiocb *req)
  {
--	struct io_sr_msg *zc = io_kiocb_to_cmd(req, struct io_sr_msg);
-+	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
+ 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
  	struct io_async_msghdr *io;
- 	int ret;
- 
- 	if (req_has_async_data(req))
- 		return 0;
--	zc->done_io = 0;
--	if (!zc->addr)
-+	sr->done_io = 0;
-+	if (!sr->addr)
- 		return 0;
- 	io = io_msg_alloc_async_prep(req);
- 	if (!io)
- 		return -ENOMEM;
--	ret = move_addr_to_kernel(zc->addr, zc->addr_len, &io->addr);
--	return ret;
--}
--
--static int io_setup_async_addr(struct io_kiocb *req,
--			      struct sockaddr_storage *addr_storage,
--			      unsigned int issue_flags)
--{
--	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
--	struct io_async_msghdr *io;
--
--	if (!sr->addr || req_has_async_data(req))
--		return -EAGAIN;
--	io = io_msg_alloc_async(req, issue_flags);
--	if (!io)
--		return -ENOMEM;
--	memcpy(&io->addr, addr_storage, sizeof(io->addr));
--	return -EAGAIN;
-+	memset(&io->msg, 0, sizeof(io->msg));
-+	ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len, &io->msg.msg_iter);
-+	if (unlikely(ret))
-+		return ret;
-+	io->msg.msg_name = &io->addr;
-+	io->msg.msg_namelen = sr->addr_len;
-+	return move_addr_to_kernel(sr->addr, sr->addr_len, &io->addr);
- }
- 
- int io_sendmsg_prep_async(struct io_kiocb *req)
-@@ -475,45 +464,68 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- 	return IOU_OK;
- }
- 
--int io_send(struct io_kiocb *req, unsigned int issue_flags)
-+static struct io_async_msghdr *io_send_setup(struct io_kiocb *req,
-+					     struct io_async_msghdr *stack_msg,
-+					     unsigned int issue_flags)
+@@ -705,13 +705,13 @@ static inline void io_recv_prep_retry(struct io_kiocb *req)
+  * again (for multishot).
+  */
+ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
+-				  struct msghdr *msg, bool mshot_finished,
+-				  unsigned issue_flags)
++				  struct io_async_msghdr *kmsg,
++				  bool mshot_finished, unsigned issue_flags)
  {
--	struct sockaddr_storage __address;
+ 	unsigned int cflags;
+ 
+ 	cflags = io_put_kbuf(req, issue_flags);
+-	if (msg->msg_inq > 0)
++	if (kmsg->msg.msg_inq > 0)
+ 		cflags |= IORING_CQE_F_SOCK_NONEMPTY;
+ 
+ 	/*
+@@ -725,7 +725,7 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
+ 
+ 		io_recv_prep_retry(req);
+ 		/* Known not-empty or unknown state, retry */
+-		if (cflags & IORING_CQE_F_SOCK_NONEMPTY || msg->msg_inq < 0) {
++		if (cflags & IORING_CQE_F_SOCK_NONEMPTY || kmsg->msg.msg_inq < 0) {
+ 			if (sr->nr_multishot_loops++ < MULTISHOT_MAX_RETRY)
+ 				return false;
+ 			/* mshot retries exceeded, force a requeue */
+@@ -926,7 +926,7 @@ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 	else
+ 		io_kbuf_recycle(req, issue_flags);
+ 
+-	if (!io_recv_finish(req, &ret, &kmsg->msg, mshot_finished, issue_flags))
++	if (!io_recv_finish(req, &ret, kmsg, mshot_finished, issue_flags))
+ 		goto retry_multishot;
+ 
+ 	if (mshot_finished)
+@@ -940,29 +940,42 @@ int io_recvmsg(struct io_kiocb *req, unsigned int issue_flags)
+ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ {
  	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
 -	struct msghdr msg;
--	struct socket *sock;
--	unsigned flags;
--	int min_ret = 0;
-+	struct io_async_msghdr *kmsg;
- 	int ret;
++	struct io_async_msghdr iomsg, *kmsg;
+ 	struct socket *sock;
+ 	unsigned flags;
+ 	int ret, min_ret = 0;
+ 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
+ 	size_t len = sr->len;
  
--	msg.msg_name = NULL;
--	msg.msg_control = NULL;
--	msg.msg_controllen = 0;
--	msg.msg_namelen = 0;
--	msg.msg_ubuf = NULL;
--
--	if (sr->addr) {
--		if (req_has_async_data(req)) {
--			struct io_async_msghdr *io = req->async_data;
--
--			msg.msg_name = &io->addr;
--		} else {
--			ret = move_addr_to_kernel(sr->addr, sr->addr_len, &__address);
 +	if (req_has_async_data(req)) {
 +		kmsg = req->async_data;
 +	} else {
-+		kmsg = stack_msg;
++		kmsg = &iomsg;
 +		kmsg->free_iov = NULL;
 +		kmsg->msg.msg_name = NULL;
 +		kmsg->msg.msg_namelen = 0;
 +		kmsg->msg.msg_control = NULL;
++		kmsg->msg.msg_get_inq = 1;
 +		kmsg->msg.msg_controllen = 0;
++		kmsg->msg.msg_iocb = NULL;
 +		kmsg->msg.msg_ubuf = NULL;
 +
-+		if (sr->addr) {
-+			ret = move_addr_to_kernel(sr->addr, sr->addr_len,
-+						  &kmsg->addr);
- 			if (unlikely(ret < 0))
--				return ret;
--			msg.msg_name = (struct sockaddr *)&__address;
-+				return ERR_PTR(ret);
-+			kmsg->msg.msg_name = &kmsg->addr;
-+			kmsg->msg.msg_namelen = sr->addr_len;
-+		}
-+
 +		if (!io_do_buffer_select(req)) {
-+			ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len,
++			ret = import_ubuf(ITER_DEST, sr->buf, sr->len,
 +					  &kmsg->msg.msg_iter);
 +			if (unlikely(ret))
-+				return ERR_PTR(ret);
- 		}
--		msg.msg_namelen = sr->addr_len;
- 	}
- 
++				return ret;
++		}
++	}
++
  	if (!(req->flags & REQ_F_POLLED) &&
  	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
--		return io_setup_async_addr(req, &__address, issue_flags);
-+		return ERR_PTR(io_setup_async_msg(req, kmsg, issue_flags));
-+
-+	return kmsg;
-+}
-+
-+int io_send(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
-+	struct io_async_msghdr iomsg, *kmsg;
-+	size_t len = sr->len;
-+	struct socket *sock;
-+	unsigned flags;
-+	int min_ret = 0;
-+	int ret;
+-		return -EAGAIN;
++		return io_setup_async_msg(req, kmsg, issue_flags);
  
  	sock = sock_from_file(req->file);
  	if (unlikely(!sock))
  		return -ENOTSOCK;
  
--	ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len, &msg.msg_iter);
-+	kmsg = io_send_setup(req, &iomsg, issue_flags);
-+	if (IS_ERR(kmsg))
-+		return PTR_ERR(kmsg);
-+
-+	ret = import_ubuf(ITER_SOURCE, sr->buf, len, &kmsg->msg.msg_iter);
- 	if (unlikely(ret))
- 		return ret;
- 
-@@ -521,21 +533,21 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 	if (issue_flags & IO_URING_F_NONBLOCK)
+-	msg.msg_name = NULL;
+-	msg.msg_namelen = 0;
+-	msg.msg_control = NULL;
+-	msg.msg_get_inq = 1;
+-	msg.msg_controllen = 0;
+-	msg.msg_iocb = NULL;
+-	msg.msg_ubuf = NULL;
+-
+ 	flags = sr->msg_flags;
+ 	if (force_nonblock)
  		flags |= MSG_DONTWAIT;
+@@ -976,22 +989,23 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ 			return -ENOBUFS;
+ 		sr->buf = buf;
+ 		sr->len = len;
++		ret = import_ubuf(ITER_DEST, sr->buf, sr->len,
++				  &kmsg->msg.msg_iter);
++		if (unlikely(ret))
++			goto out_free;
+ 	}
+ 
+-	ret = import_ubuf(ITER_DEST, sr->buf, len, &msg.msg_iter);
+-	if (unlikely(ret))
+-		goto out_free;
+-
+-	msg.msg_inq = -1;
+-	msg.msg_flags = 0;
++	kmsg->msg.msg_inq = -1;
++	kmsg->msg.msg_flags = 0;
+ 
  	if (flags & MSG_WAITALL)
 -		min_ret = iov_iter_count(&msg.msg_iter);
 +		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
  
- 	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
--	msg.msg_flags = flags;
--	ret = sock_sendmsg(sock, &msg);
-+	kmsg->msg.msg_flags = flags;
-+	ret = sock_sendmsg(sock, &kmsg->msg);
+-	ret = sock_recvmsg(sock, &msg, flags);
++	ret = sock_recvmsg(sock, &kmsg->msg, flags);
  	if (ret < min_ret) {
- 		if (ret == -EAGAIN && (issue_flags & IO_URING_F_NONBLOCK))
--			return io_setup_async_addr(req, &__address, issue_flags);
-+			return io_setup_async_msg(req, kmsg, issue_flags);
- 
- 		if (ret > 0 && io_net_retry(sock, flags)) {
- 			sr->len -= ret;
+ 		if (ret == -EAGAIN && force_nonblock) {
+-			if (issue_flags & IO_URING_F_MULTISHOT) {
++			ret = io_setup_async_msg(req, kmsg, issue_flags);
++			if (ret == -EAGAIN && issue_flags & IO_URING_F_MULTISHOT) {
+ 				io_kbuf_recycle(req, issue_flags);
+ 				return IOU_ISSUE_SKIP_COMPLETE;
+ 			}
+@@ -1003,12 +1017,12 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
  			sr->buf += ret;
  			sr->done_io += ret;
  			req->flags |= REQ_F_BL_NO_RECYCLE;
--			return io_setup_async_addr(req, &__address, issue_flags);
+-			return -EAGAIN;
 +			return io_setup_async_msg(req, kmsg, issue_flags);
  		}
  		if (ret == -ERESTARTSYS)
  			ret = -EINTR;
-@@ -545,6 +557,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 		ret += sr->done_io;
- 	else if (sr->done_io)
- 		ret = sr->done_io;
-+	io_req_msg_cleanup(req, kmsg, issue_flags);
- 	io_req_set_res(req, ret, 0);
- 	return IOU_OK;
- }
-@@ -1158,11 +1171,35 @@ static int io_sg_from_iter(struct sock *sk, struct sk_buff *skb,
+ 		req_set_fail(req);
+-	} else if ((flags & MSG_WAITALL) && (msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))) {
++	} else if ((flags & MSG_WAITALL) && (kmsg->msg.msg_flags & (MSG_TRUNC | MSG_CTRUNC))) {
+ out_free:
+ 		req_set_fail(req);
+ 	}
+@@ -1020,9 +1034,14 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ 	else
+ 		io_kbuf_recycle(req, issue_flags);
+ 
+-	if (!io_recv_finish(req, &ret, &msg, ret <= 0, issue_flags))
++	if (!io_recv_finish(req, &ret, kmsg, ret <= 0, issue_flags))
+ 		goto retry_multishot;
+ 
++	if (ret == -EAGAIN)
++		return io_setup_async_msg(req, kmsg, issue_flags);
++	else if (ret != IOU_OK && ret != IOU_STOP_MULTISHOT)
++		io_req_msg_cleanup(req, kmsg, issue_flags);
++
  	return ret;
  }
  
-+static int io_send_zc_import(struct io_kiocb *req, struct io_async_msghdr *kmsg)
-+{
-+	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
-+	int ret;
-+
-+	if (sr->flags & IORING_RECVSEND_FIXED_BUF) {
-+		ret = io_import_fixed(ITER_SOURCE, &kmsg->msg.msg_iter, req->imu,
-+					(u64)(uintptr_t)sr->buf, sr->len);
-+		if (unlikely(ret))
-+			return ret;
-+		kmsg->msg.sg_from_iter = io_sg_from_iter;
-+	} else {
-+		io_notif_set_extended(sr->notif);
-+		ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len, &kmsg->msg.msg_iter);
-+		if (unlikely(ret))
-+			return ret;
-+		ret = io_notif_account_mem(sr->notif, sr->len);
-+		if (unlikely(ret))
-+			return ret;
-+		kmsg->msg.sg_from_iter = io_sg_from_iter_iovec;
-+	}
-+
-+	return ret;
-+}
-+
- int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
- {
--	struct sockaddr_storage __address;
- 	struct io_sr_msg *zc = io_kiocb_to_cmd(req, struct io_sr_msg);
--	struct msghdr msg;
-+	struct io_async_msghdr iomsg, *kmsg;
- 	struct socket *sock;
- 	unsigned msg_flags;
- 	int ret, min_ret = 0;
-@@ -1173,67 +1210,37 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
- 	if (!test_bit(SOCK_SUPPORT_ZC, &sock->flags))
- 		return -EOPNOTSUPP;
+diff --git a/io_uring/net.h b/io_uring/net.h
+index 191009979bcb..5c1230f1aaf9 100644
+--- a/io_uring/net.h
++++ b/io_uring/net.h
+@@ -40,7 +40,7 @@ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags);
  
--	msg.msg_name = NULL;
--	msg.msg_control = NULL;
--	msg.msg_controllen = 0;
--	msg.msg_namelen = 0;
--
--	if (zc->addr) {
--		if (req_has_async_data(req)) {
--			struct io_async_msghdr *io = req->async_data;
--
--			msg.msg_name = &io->addr;
--		} else {
--			ret = move_addr_to_kernel(zc->addr, zc->addr_len, &__address);
--			if (unlikely(ret < 0))
--				return ret;
--			msg.msg_name = (struct sockaddr *)&__address;
--		}
--		msg.msg_namelen = zc->addr_len;
--	}
--
--	if (!(req->flags & REQ_F_POLLED) &&
--	    (zc->flags & IORING_RECVSEND_POLL_FIRST))
--		return io_setup_async_addr(req, &__address, issue_flags);
-+	kmsg = io_send_setup(req, &iomsg, issue_flags);
-+	if (IS_ERR(kmsg))
-+		return PTR_ERR(kmsg);
+ int io_send(struct io_kiocb *req, unsigned int issue_flags);
+-int io_send_prep_async(struct io_kiocb *req);
++int io_sendrecv_prep_async(struct io_kiocb *req);
  
--	if (zc->flags & IORING_RECVSEND_FIXED_BUF) {
--		ret = io_import_fixed(ITER_SOURCE, &msg.msg_iter, req->imu,
--					(u64)(uintptr_t)zc->buf, zc->len);
--		if (unlikely(ret))
--			return ret;
--		msg.sg_from_iter = io_sg_from_iter;
--	} else {
--		io_notif_set_extended(zc->notif);
--		ret = import_ubuf(ITER_SOURCE, zc->buf, zc->len, &msg.msg_iter);
-+	if (!zc->done_io) {
-+		ret = io_send_zc_import(req, kmsg);
- 		if (unlikely(ret))
- 			return ret;
--		ret = io_notif_account_mem(zc->notif, zc->len);
--		if (unlikely(ret))
--			return ret;
--		msg.sg_from_iter = io_sg_from_iter_iovec;
- 	}
- 
- 	msg_flags = zc->msg_flags | MSG_ZEROCOPY;
- 	if (issue_flags & IO_URING_F_NONBLOCK)
- 		msg_flags |= MSG_DONTWAIT;
- 	if (msg_flags & MSG_WAITALL)
--		min_ret = iov_iter_count(&msg.msg_iter);
-+		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
- 	msg_flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
- 
--	msg.msg_flags = msg_flags;
--	msg.msg_ubuf = &io_notif_to_data(zc->notif)->uarg;
--	ret = sock_sendmsg(sock, &msg);
-+	kmsg->msg.msg_flags = msg_flags;
-+	kmsg->msg.msg_ubuf = &io_notif_to_data(zc->notif)->uarg;
-+	ret = sock_sendmsg(sock, &kmsg->msg);
- 
- 	if (unlikely(ret < min_ret)) {
- 		if (ret == -EAGAIN && (issue_flags & IO_URING_F_NONBLOCK))
--			return io_setup_async_addr(req, &__address, issue_flags);
-+			return io_setup_async_msg(req, kmsg, issue_flags);
- 
--		if (ret > 0 && io_net_retry(sock, msg.msg_flags)) {
-+		if (ret > 0 && io_net_retry(sock, kmsg->msg.msg_flags)) {
- 			zc->len -= ret;
- 			zc->buf += ret;
- 			zc->done_io += ret;
- 			req->flags |= REQ_F_BL_NO_RECYCLE;
--			return io_setup_async_addr(req, &__address, issue_flags);
-+			return io_setup_async_msg(req, kmsg, issue_flags);
- 		}
- 		if (ret == -ERESTARTSYS)
- 			ret = -EINTR;
-@@ -1251,6 +1258,7 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
- 	 */
- 	if (!(issue_flags & IO_URING_F_UNLOCKED)) {
- 		io_notif_flush(zc->notif);
-+		io_netmsg_recycle(req, issue_flags);
- 		req->flags &= ~REQ_F_NEED_CLEANUP;
- 	}
- 	io_req_set_res(req, ret, IORING_CQE_F_MORE);
+ int io_recvmsg_prep_async(struct io_kiocb *req);
+ int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
 diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 9c080aadc5a6..b0a990c6bbff 100644
+index b0a990c6bbff..77131826d603 100644
 --- a/io_uring/opdef.c
 +++ b/io_uring/opdef.c
-@@ -602,6 +602,7 @@ const struct io_cold_def io_cold_defs[] = {
- 		.name			= "SEND",
- #if defined(CONFIG_NET)
+@@ -604,13 +604,16 @@ const struct io_cold_def io_cold_defs[] = {
  		.async_size		= sizeof(struct io_async_msghdr),
+ 		.cleanup		= io_sendmsg_recvmsg_cleanup,
+ 		.fail			= io_sendrecv_fail,
+-		.prep_async		= io_send_prep_async,
++		.prep_async		= io_sendrecv_prep_async,
+ #endif
+ 	},
+ 	[IORING_OP_RECV] = {
+ 		.name			= "RECV",
+ #if defined(CONFIG_NET)
++		.async_size		= sizeof(struct io_async_msghdr),
 +		.cleanup		= io_sendmsg_recvmsg_cleanup,
  		.fail			= io_sendrecv_fail,
- 		.prep_async		= io_send_prep_async,
++		.prep_async		= io_sendrecv_prep_async,
+ #endif
+ 	},
+ 	[IORING_OP_OPENAT2] = {
+@@ -687,7 +690,7 @@ const struct io_cold_def io_cold_defs[] = {
+ 		.name			= "SEND_ZC",
+ #if defined(CONFIG_NET)
+ 		.async_size		= sizeof(struct io_async_msghdr),
+-		.prep_async		= io_send_prep_async,
++		.prep_async		= io_sendrecv_prep_async,
+ 		.cleanup		= io_send_zc_cleanup,
+ 		.fail			= io_sendrecv_fail,
  #endif
 -- 
 2.43.0

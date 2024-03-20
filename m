@@ -1,128 +1,145 @@
-Return-Path: <io-uring+bounces-1161-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1162-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8EA88137E
-	for <lists+io-uring@lfdr.de>; Wed, 20 Mar 2024 15:41:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E35B8819A9
+	for <lists+io-uring@lfdr.de>; Wed, 20 Mar 2024 23:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF3971C217B8
-	for <lists+io-uring@lfdr.de>; Wed, 20 Mar 2024 14:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F200828294E
+	for <lists+io-uring@lfdr.de>; Wed, 20 Mar 2024 22:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AC947A63;
-	Wed, 20 Mar 2024 14:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943258595C;
+	Wed, 20 Mar 2024 22:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HaGsRuTy"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fYkicoxY"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC2F40BEF
-	for <io-uring@vger.kernel.org>; Wed, 20 Mar 2024 14:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3911E87E
+	for <io-uring@vger.kernel.org>; Wed, 20 Mar 2024 22:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710945672; cv=none; b=qfA4AV/XrhEYuQ63ZKw3hDKlZhsTnhPJ0a7KW/rVD4jJ6nW9XJa9isTuSH/+/EGf80Y2GTk1bQXqJujpm1IR0+Qd/DYwG+jyv5KU53tdKR+pHSCOXvmVvrAf8vJpyIAf8rk+QFq5iKpxhb786+SstlGZIlDCiJjuYUUYm6P0BaQ=
+	t=1710975478; cv=none; b=mOiY2MDv1+r8FAhJETAf12a2PCnMjTkRXQu7vUqVlgxdR9oLtI6Lf8ZORCxqIACn2vdloggmzuRZD2NwXNBaxVUFFd9yJHntRQBXVpu/LpshR6a5+cxws6NjlhappRwiQh0WhyLe8T7C/SJ1j29elMiEU07jM/rQO6rs9/XcJGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710945672; c=relaxed/simple;
-	bh=9/iT+Kh12tczix5MivN5zWvmdvs6z7jtGvkmRFeaKZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kAv+tWM+3cJZZdRq0qRj50fAMasn0uzn9OCzEt5jFDz5w3Oqr3iLas+tI+35gY+R71X8CKsr3924HeQyLOkACSUuKoar7ut3I8reBgO00yxKXhCFRWDTP9QryL2Zn3k3//c50zf5AhvPPg89QdbFgaqTVAZVjJ/OGdVbjmWnnCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HaGsRuTy; arc=none smtp.client-ip=209.85.166.47
+	s=arc-20240116; t=1710975478; c=relaxed/simple;
+	bh=P5jfpCQFUm8Xvw7UTEmp4r5yzYpq1E4359TP0l6V1rU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=rehDe63Ilit0BZ0eZz/bz+75SBsBQze0Hz8wFGDqNoij51/VdyOInF4eDsNRLaDoc5x9DTMVpSz+elqrrshqK8TXfI/2cpgXlxqbIBP4TAO8o+PvqG3VkA9OuALRNruDWr1Q5UEnNBZ4gY6I5hHK9G+NP8sNFT890tJvJdpUaoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fYkicoxY; arc=none smtp.client-ip=209.85.166.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7cc5e664d52so31525839f.0
-        for <io-uring@vger.kernel.org>; Wed, 20 Mar 2024 07:41:07 -0700 (PDT)
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7cc0e831e11so2536839f.1
+        for <io-uring@vger.kernel.org>; Wed, 20 Mar 2024 15:57:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710945667; x=1711550467; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H/6rY/awT69nq274sdrgOZc9inrvQObVNrWmY/hxh04=;
-        b=HaGsRuTyGcRHehnB6KfyQyVXdDcSC+Zn7ZZVwdtqu3ngSC3oZRCElc1c1kiVFBqfpU
-         f6ZcCwPHdmaiw8j83hz4YoVPG1HTgMxhnASt4Pem4svP48Hy3dFLMyEnjB87Vu8QOv9g
-         eBMP7XNKpxQvsL55vxi0rrsd0wYmofDWu+D0W4rAeZdXGtFyebqcDTjBe1j1+4onVVF2
-         igedTmt11JXrlpNN4ILApr/PU+QJzZ5V8SRjHB7Ct1ksOcO65C9EjmIil/KinLgzDeR4
-         oTVd0dFhbkHB2qEQnoKpHF4cO0TgXg9AygU5bWawRCGbbClieVgVI/aXiwF5IjlodAo1
-         TJPw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710975473; x=1711580273; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C3fRx3UE+JuoYbO7jg/qdr9IREDLPlXFrTilr9o5FQA=;
+        b=fYkicoxYU3c8BLm9or/3AG7aFPbd2frJzhW0AUXjlJema5UPyFXS6NjxTzgSf45lYr
+         BHaPyungdtmRdNdU/OrPsJ3P1VrY5xE3s0uzpAI4SjXrd5B9Wq+xgOZGMDaRi9agqh2D
+         6Nmkf+TrefGgjWTwzPcNuFL0nQgqdGUdcQyMhEsSftKftomzNjFvzlVThC5HdBW7njdh
+         Oe0YOMegNLXm0MMiDxC6RHma5Em3xs+VDLy3cu/8LvgBzO9E+J/nLg3oOR055tYiqs9M
+         myjPwUbslnadlmGu0BvUQIe5KhAaTnxqTv+pQDo9wYHW6K8aB+C1TNO6jJbRWFSlYvBw
+         Mi5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710945667; x=1711550467;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/6rY/awT69nq274sdrgOZc9inrvQObVNrWmY/hxh04=;
-        b=BRLJ6uW4bawWSJfpueDchQ84Xgh/2Qmfw/LeOQBVkeRhTbeWi9qiapM6rdbTAxNLW7
-         lXn46BNKc3QJ9xeN3vHDc3F7GCxR0vj1YpjjVmXIQU5sKbOMD93OHeEjzbf4eX3tFN/x
-         KxIvW3UP0Y5UgnZBx3t4ZF/meGUMbuJdWogDGNOhCGbFRpP7eHQRiTuqYbF4wY6eZAmy
-         6H4O7gRrEfsjIe/SdflaYLu7f/xu+EVvXqZCvPuIh1DqSlc4+SWp3QuEb3IksdfgXSlP
-         /lZsaFJKbZOtmDbgDo9/cdnHBzbSHr12iUwfUWHqPeZUhfTJbcdCwL9N/uuzaqRbBk8+
-         8vSQ==
-X-Gm-Message-State: AOJu0Yw4yrNhxRGP/NeZG58bMJ28GK54fvaBx+6p5ri2sIcWJ+B5H5y1
-	+kKClaK3ek1FZ2g6YhvxCTLC4Cz77gDldAL7H1MQVBOe+pfRjkaUTIYfzgqAb5YuJVcH13+MBMf
-	L
-X-Google-Smtp-Source: AGHT+IFpgj77h4tUxRSuCa456lijZHEDFWAe9mNbfN2sebZtQLJ0YtuUrpOt0O3IycGG/ywriTiA+g==
-X-Received: by 2002:a6b:5108:0:b0:7ce:f407:1edf with SMTP id f8-20020a6b5108000000b007cef4071edfmr5433659iob.0.1710945667259;
-        Wed, 20 Mar 2024 07:41:07 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id fo3-20020a056638648300b004748175344bsm3526674jab.167.2024.03.20.07.41.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Mar 2024 07:41:05 -0700 (PDT)
-Message-ID: <df071f2d-0dd1-4874-9ad7-d79389dd3084@kernel.dk>
-Date: Wed, 20 Mar 2024 08:41:04 -0600
+        d=1e100.net; s=20230601; t=1710975473; x=1711580273;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C3fRx3UE+JuoYbO7jg/qdr9IREDLPlXFrTilr9o5FQA=;
+        b=DxNYwNrpRJBExhQflncJOyxbht+7Gtd+E9zg2km51jtLzkDlITt3LvdvqEB8211ULw
+         j02iMGs+pnoSNDNAoiTA0lQ6kzQm+Bj0+Q9/ulBMqgJ0uzm+tuTDicWJW6OpQcK8mRGJ
+         yGY/TDLES7Pc/LMGR2UwquU2W3qQhc+hJUi4MWMBVjAOPWZw/5faUxLWsnbFXWl/x8VQ
+         cWh99UKeRTzH2lqZ0A+Blhf+vf1Ef45AIIAoUngVkQJd16YdTZSG1VY8uM0UWoKNSBQ5
+         9DmGsN6vrNlB+llb4PqCkaCFbK32lGpd9tspzpCQhdenrkqc2esPbxtxH0MYu6oSPDKE
+         CApA==
+X-Gm-Message-State: AOJu0Yya7Z5KYkV3HtjOTlwIbDW1h6vx28Y5BI/lNnqd3YiT7rIu48gE
+	swWZcj44AMhoarrMsJn7USiwmWAzbytyvxH3t3nAiDH+FH6m1ugeP9oRmB8um2q8pnbsbA+wZXH
+	k
+X-Google-Smtp-Source: AGHT+IHOII3JUuJ44KdWGdtgED3uMIzeuDObsfwhCG0Hl4fUB+6iWQW2z2jKyysMjOF53STAW55RvA==
+X-Received: by 2002:a5e:c10d:0:b0:7cf:28df:79e2 with SMTP id v13-20020a5ec10d000000b007cf28df79e2mr700463iol.1.1710975472963;
+        Wed, 20 Mar 2024 15:57:52 -0700 (PDT)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id z19-20020a6b0a13000000b007cf23a498dcsm434384ioi.38.2024.03.20.15.57.52
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Mar 2024 15:57:52 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET v2 0/17] Improve async state handling
+Date: Wed, 20 Mar 2024 16:55:15 -0600
+Message-ID: <20240320225750.1769647-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/net: drop unused 'fast_iov_one' entry
-Content-Language: en-US
-To: Dylan Yudaken <dyudaken@gmail.com>
-Cc: io-uring <io-uring@vger.kernel.org>
-References: <7366e668-7083-4924-af43-5d5ba66fb76a@kernel.dk>
- <CAO_YeohJmpk=5463u3APYjqfoDB75m6rDZtQ10SPaL7TLG_D8Q@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAO_YeohJmpk=5463u3APYjqfoDB75m6rDZtQ10SPaL7TLG_D8Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/20/24 7:59 AM, Dylan Yudaken wrote:
-> On Tue, Mar 19, 2024 at 11:37?PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> Doesn't really matter at this point, as the fast_iov entries dominate
->> the size of io_async_msghdr. But that may not always be the case, so
->> drop this unused member. It turns out it got added in a previous commit,
->> but never actually used for anything.
->>
->> Fixes: 9bb66906f23e ("io_uring: support multishot in recvmsg")
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>
->> ---
->>
->> diff --git a/io_uring/net.h b/io_uring/net.h
->> index 191009979bcb..9d7962f65f26 100644
->> --- a/io_uring/net.h
->> +++ b/io_uring/net.h
->> @@ -10,7 +10,6 @@ struct io_async_msghdr {
->>         union {
->>                 struct iovec            fast_iov[UIO_FASTIOV];
->>                 struct {
->> -                       struct iovec    fast_iov_one;
->>                         __kernel_size_t controllen;
->>                         int             namelen;
->>                         __kernel_size_t payloadlen;
->>
-> 
-> I "believe" this is used in the async paths, where fast_iov[0] gets
-> used (since multishot always has exactly one iovec) and so
-> fast_iov_one is just a placeholder.
-> I think that means it's not safe to remove until after your async patches.
+Hi,
 
-Oh that's nasty, no comment about that, nor any direct use of it. Poor
-shame on whoever wrote that code :-)
+This patchset gets rid of on-stack state, that is then fixed up and
+copied if we need to go async. Having to do this fixup is nasty
+business, and this is the main motivation for the change.
 
-I'll double check.
+Opcodes are converted to setting up their async context at prep time,
+which means that everything is stable beyond that. No more special
+io_req_prep_async() handling, and no more "oops we can't proceed,
+let's now allocate memory, copy state, and be ready for a retry".
+By default, opcodes are now always ready for a retry, and the issue
+path can be simplified. This is most readily apparent in the read/write
+handling, but can be seen on the net side too.
+
+Lastly, the alloc cache is rewritten to be array based rather than list
+based. List based isn't a great choice, as grabbing an element from the
+list also means you have to touch the next one.
+
+With all of that, performance is as good as before, or better, and we
+drop quite a bit of code.
+
+The diffstat reflects that, but doesn't even tell the full story. Most
+of the added lines are trivial, whereas some of the removed lines are
+pretty hairy.
+
+Changes since v1:
+- Cleanups
+- Switch connect to using io_async_msghdr, now it gets recycling
+  too
+- Avoid recycling for read/write if io-wq is used
+- Fix errant io_async_rw shadowing in io_write()
+- Change alloc_cache to be array based
+- Fix KASAN issues. Not with mem reuse, but just errors in my
+  implementation of it for the mempool.
+- Only mark iovec caching as REQ_F_NEED_CLEANUP
+- Shuffle some hunks around between patches
+- Fix an issue with send zerocopy and iovec freeing
+- Move connect to io_async_msghdr so it can tap into the recycling
+- Actually delete struct io_rw_state, not just its elements
+- Add uring_cmd optimization that avoids sqe copy unless needed
+- Rebase on for-6.10/io_uring
+
+ include/linux/io_uring_types.h |   4 +-
+ io_uring/alloc_cache.h         |  51 ++--
+ io_uring/futex.c               |  26 +-
+ io_uring/futex.h               |   5 +-
+ io_uring/io_uring.c            |  71 ++---
+ io_uring/io_uring.h            |   1 -
+ io_uring/net.c                 | 550 +++++++++++++++++----------------------
+ io_uring/net.h                 |  27 +-
+ io_uring/opdef.c               |  65 ++---
+ io_uring/opdef.h               |   9 +-
+ io_uring/poll.c                |  11 +-
+ io_uring/poll.h                |   7 +-
+ io_uring/rsrc.c                |   9 +-
+ io_uring/rsrc.h                |   5 +-
+ io_uring/rw.c                  | 570 +++++++++++++++++++++--------------------
+ io_uring/rw.h                  |  25 +-
+ io_uring/uring_cmd.c           |  75 ++++--
+ io_uring/uring_cmd.h           |   7 +-
+ 18 files changed, 707 insertions(+), 811 deletions(-)
 
 -- 
 Jens Axboe

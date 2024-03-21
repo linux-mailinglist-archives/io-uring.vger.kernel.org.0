@@ -1,215 +1,114 @@
-Return-Path: <io-uring+bounces-1180-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1181-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A6788593A
-	for <lists+io-uring@lfdr.de>; Thu, 21 Mar 2024 13:39:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D10E885B24
+	for <lists+io-uring@lfdr.de>; Thu, 21 Mar 2024 15:48:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9EDC1C20CA9
-	for <lists+io-uring@lfdr.de>; Thu, 21 Mar 2024 12:39:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32636284D85
+	for <lists+io-uring@lfdr.de>; Thu, 21 Mar 2024 14:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E5483CB4;
-	Thu, 21 Mar 2024 12:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C1584FBE;
+	Thu, 21 Mar 2024 14:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="MDPFzU9Y"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Vm2CGJbF"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7787839FF
-	for <io-uring@vger.kernel.org>; Thu, 21 Mar 2024 12:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09741E534
+	for <io-uring@vger.kernel.org>; Thu, 21 Mar 2024 14:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711024780; cv=none; b=Abs0Sq41zY/V6iEQLfop134Y4WseAerTPTWfeoNV5md+/UQ1dFQI4MRDKpiKsJ1njUvi3ArP+6tkGf44RLA7THDga3p4ArhmPXjP9hexfIN5Yb8CBMEtI/gwfOGrr89gJ3lW6C1pwTSherCVn+Ns1bMhY5rCHUOMWuA768d+NSQ=
+	t=1711032519; cv=none; b=ttbyJqzq/wAexBFaiPoLWe5WKpiMsEUonEuUDTR7X+dkzt8oGqvMbYAzGWaojiDpYSebdEZarKNKiIqONtQJ8eYlmMj0B4kQvH6x7lk0cvn8X+hnifD2M9IDvJBaR+CXvT15fG9/GXrcObk1g/V/5Kj4gRqeOiORDd02l43K74Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711024780; c=relaxed/simple;
-	bh=Kmu3zbPUyay6XlM8mJYmGLdGinxyCQPn1imK7hIxqtg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pbBa90RaIhpVsBapeDuHlDkmMpq3ExK+u7u3DUqWxlCDDZBOoB/rloM0zNoh9fbkcBmFuxL7ayVSq/+UR+JykIaaJrI4fvMHR9w8Kf3UVlRPRdnPg37b81Allm20G48CYm5mOE/tJEpvy+sZRAdmkj6JQDD5b9Rdi3DD9k1cLYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=MDPFzU9Y; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-41477211086so2301545e9.1
-        for <io-uring@vger.kernel.org>; Thu, 21 Mar 2024 05:39:38 -0700 (PDT)
+	s=arc-20240116; t=1711032519; c=relaxed/simple;
+	bh=X080L+osf6qdAVps3tPiD+s2ytyW+fr7fuM6du6dPjU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=LOnyLUl3+3aEDGy00iCyZZwezz1IeglAOYWBT2e7oAGUYdQgw0E8C6GLhnt62E+fPwfTk1o33IzkDBg8haD/tQEoZL9+1P02iCbp0SndsX+K65FfMNc9v6KT0JCL5MJyWE3PXmuO27m0WrqguB0N7AVWxLpXp6Wf9Glo+LYByf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Vm2CGJbF; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7c86e6f649aso7018739f.0
+        for <io-uring@vger.kernel.org>; Thu, 21 Mar 2024 07:48:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1711024777; x=1711629577; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNZ7vhsdbmv3tsfRVkzmFnvT+rAuDkFFXFyABvgWN9Y=;
-        b=MDPFzU9YaM+C6XhbqR3xXXjhLmOsVF9+I887J+A/xBplZIuDh6mFQqFEB3iD37Lt4p
-         uYM0JyS5Bfsbl5TVOjvIcGhwwhE8F2FDcN+5fgSwjG81XD9jPhAtPfS7wWhXFf6aHo79
-         7bSB0SfICDUTq9bEz5UVNl/XbdRWWoxc1Cv2WJtLjkCGaMRRTDCuyprUx7foY+3ApO3X
-         7kL7J6csWopnhUouhNMHLhBoaIojUZwwaz9BUVZwcvgdF+8wCJ+ZC8JABLa7Iv6M7n9w
-         dXsh5VVj1IrCpNC43Nw2VGRlZGC3wXFXU4XOn1H8sJ+EPEAIiA8pv1pN9vvf7uI6Uf+J
-         ot5g==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711032514; x=1711637314; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFS86vgVEV+hU7s5O+NaPMpakfcqr2bZCllPVSfKWNE=;
+        b=Vm2CGJbFBzBNQfhoFOB6sG/i9I/Zvf+GEH3ouh0FiDNK/okvgMx/3y2xjt1SmdklCF
+         vRvMRm3W0CV1TDU860UhTnA/3zOMyp2K50LodOpDywhZlzDHt2/aRWzHBmYorCJgP+EU
+         SOLYKqsCMqVd1ahzuigWC8eR/cPpuWD4hDyiiIA8pmFRT58aT6ym9TIscoiVFbRg0aEE
+         Drjobtr/vCHjg+K6RMnnhdWx1E0NQO+oo1iNrMyFpvDZbzErLCOXFmQefjD/YA2xDAS3
+         ExgrqoPACjQxSUj2uvgfpfRqaKCFiTOl0FqNAw7wntTST/b2mGlcZl+SLH+F46kiUWVK
+         Tb1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711024777; x=1711629577;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zNZ7vhsdbmv3tsfRVkzmFnvT+rAuDkFFXFyABvgWN9Y=;
-        b=kydnDCjnb1x1uQWqzNvyQxlvmYzmWap7yrvYXq6FHouIixK0rHFZx1Q+kHJc9Y5PzG
-         am/gBW1lq58+Aicwjm9GcB9x3Ty3VHNQHDE8+st4kENwtZk0Il49kzuNwx7iXI9XcCbq
-         8ldOdLUNrWRAKZ2LVxb3/BbsUDFY8kjv1nvz64yQndJ8M5FRKdzCgM80ljG8XpPbf1+T
-         SULvXb8fsbYSjqaEthV9QulHz6nDR9XLoJHqjZJEGakBd4onBKyKoPQxJBm+Cr7TDfcQ
-         jJo0a4manLz8aN+WjGp7EAxTO7yH56aUHBlXnZ7NBDiil1Ijk7HiMKHmeDBD1PIPT/U5
-         /JJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWM28VbwMOz9Ha+D4j1TC7dS7L0LBa4ThuflcJyTIbtFYnhrCWwxSqalJqFgT5y2709vna9KqSCS7vKomORAWzxlzbFF5ljxTs=
-X-Gm-Message-State: AOJu0YwVr8ljeYX83RJ0rTEdUZ8OIkz6ZWlybft9WRPLGpi6u7lcmVMV
-	sgjU4tTm7b0mkGTtPbAD9YjoBjLmx6aEX2H3faQnEgjHky7RFucUz205IwTO/KA=
-X-Google-Smtp-Source: AGHT+IGt57g28ARi2T1iW4asSHhR0gQbNaXQuJ3XP+Q0+k/8e4PFX+HjmNPJHcwMpW1JipVFYQAjyA==
-X-Received: by 2002:a05:600c:4254:b0:414:5e91:124f with SMTP id r20-20020a05600c425400b004145e91124fmr1979948wmm.23.1711024777073;
-        Thu, 21 Mar 2024 05:39:37 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id h13-20020a05600c314d00b004146d736fcdsm4938670wmo.36.2024.03.21.05.39.36
+        d=1e100.net; s=20230601; t=1711032514; x=1711637314;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFS86vgVEV+hU7s5O+NaPMpakfcqr2bZCllPVSfKWNE=;
+        b=Uz2cRwwDxzHErVKvXRRrDqHkv1Mv1Z1V8xnoHLMOX4p533Ck7vavd23H+fp0en1ENl
+         nnDtlm4h3TjmXzqdCO9ekPO40XWdq0dI0uPfCt/KjkIiA4PueW4BdHGxMwD5AY0HXhNz
+         zKZ98MD3wDfrrHuqhGAgtNwWVld44XOeNu0/lZd3C65aW0Ohj0t7z7a1nIJ5Bqt3RNv6
+         lvY4WCUOCllgpkzxObHEnPiryXEiPfpbLx8yOOLVlT6TaTSkRqVQaou1zxSU6Gb94eV4
+         On2mk4Eu+fhmaevImr72nVV1CdV7oNmOwoO0J5TovSM3asU+mBNTWM7ByGg7FEhDMjhi
+         APFw==
+X-Gm-Message-State: AOJu0Yz8xN5zW5lCw5oszQw0qcwXTTMkA5Mu71eO2PP0pMYGQzdYPuEd
+	TteFpdf/FVo75PNpqSox2epUxrurdZwW05YyKSNk3FMmidQhtCJODikN5vA/1qoYreAkNIsvNOU
+	V
+X-Google-Smtp-Source: AGHT+IFZ6gZttEGwDqjXmVe4XKEApxYUWwQaXCZdLDOK/eZK3i9mt2BMb4QNtggZ2/gm0478Eb7usg==
+X-Received: by 2002:a5d:9b87:0:b0:7cf:272f:a3af with SMTP id r7-20020a5d9b87000000b007cf272fa3afmr3125549iom.2.1711032514444;
+        Thu, 21 Mar 2024 07:48:34 -0700 (PDT)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id q20-20020a02c8d4000000b0047bed9ff286sm250835jao.31.2024.03.21.07.48.33
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Mar 2024 05:39:36 -0700 (PDT)
-Date: Thu, 21 Mar 2024 12:39:35 +0000
-From: Qais Yousef <qyousef@layalina.io>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: Bart Van Assche <bvanassche@acm.org>, linux-kernel@vger.kernel.org,
-	peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com,
-	rafael@kernel.org, dietmar.eggemann@arm.com, vschneid@redhat.com,
-	vincent.guittot@linaro.org, Johannes.Thumshirn@wdc.com,
-	adrian.hunter@intel.com, ulf.hansson@linaro.org, andres@anarazel.de,
-	asml.silence@gmail.com, linux-pm@vger.kernel.org,
-	linux-block@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH 0/2] Introduce per-task io utilization boost
-Message-ID: <20240321123935.zqscwi2aom7lfhts@airbuntu>
-References: <20240304201625.100619-1-christian.loehle@arm.com>
- <86f0af00-8765-4481-9245-1819fb2c6379@acm.org>
- <0dc6a839-2922-40ac-8854-2884196da9b9@arm.com>
- <c5b7fc1f-f233-4d25-952b-539607c2a0cc@acm.org>
- <2784c093-eea1-4b73-87da-1a45f14013c8@arm.com>
+        Thu, 21 Mar 2024 07:48:33 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET 0/6] Switch kbuf mappings to vm_insert_pages()
+Date: Thu, 21 Mar 2024 08:44:55 -0600
+Message-ID: <20240321144831.58602-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2784c093-eea1-4b73-87da-1a45f14013c8@arm.com>
+Content-Transfer-Encoding: 8bit
 
-(Thanks for the CC Bart)
+Hi,
 
-On 03/06/24 10:49, Christian Loehle wrote:
-> Hi Bart,
-> 
-> On 05/03/2024 18:36, Bart Van Assche wrote:
-> > On 3/5/24 01:13, Christian Loehle wrote:
-> >> On 05/03/2024 00:20, Bart Van Assche wrote:
-> >>> On 3/4/24 12:16, Christian Loehle wrote:
-> >>>> - Higher cap is not always beneficial, we might place the task away
-> >>>> from the CPU where the interrupt handler is running, making it run
-> >>>> on an unboosted CPU which may have a bigger impact than the difference
-> >>>> between the CPU's capacity the task moved to. (Of course the boost will
-> >>>> then be reverted again, but a ping-pong every interval is possible).
-> >>>
-> >>> In the above I see "the interrupt handler". Does this mean that the NVMe
-> >>> controller in the test setup only supports one completion interrupt for
-> >>> all completion queues instead of one completion interrupt per completion
-> >>> queue? There are already Android phones and developer boards available
-> >>> that support the latter, namely the boards equipped with a UFSHCI 4.0 controller.
-> >>
-> >> No, both NVMe test setups have one completion interrupt per completion queue,
-> >> so this caveat doesn't affect them, higher capacity CPU is strictly better.
-> >> The UFS and both mmc setups (eMMC with CQE and sdcard) only have one completion
-> >> interrupt (on CPU0 on my setup).
-> > 
-> > I think that measurements should be provided in the cover letter for the
-> > two types of storage controllers: one series of measurements for a
-> > storage controller with a single completion interrupt and a second
-> > series of measurements for storage controllers with one completion
-> > interrupt per CPU.
-> 
-> Of the same type of storage controller? Or what is missing for you in
-> the cover letter exactly (ufs/emmc: single completion interrupt,
-> nvme: one completion interrupt per CPU).
-> 
-> > 
-> >> FWIW you do gain an additional ~20% (in my specific setup) if you move the ufshcd
-> >> interrupt to a big CPU, too. Similarly for the mmc.
-> >> Unfortunately the infrastructure is far from being there for the scheduler to move the
-> >> interrupt to the same performance domain as the task, which is often optimal both in
-> >> terms of throughput and in terms of power.
-> >> I'll go looking for a stable testing platform with UFS as you mentioned, benefits of this
-> >> patch will of course be greatly increased.
-> > 
-> > I'm not sure whether making the completion interrupt follow the workload
-> > is a good solution. I'm concerned that this would increase energy
-> > consumption by keeping the big cores active longer than necessary. I
-> > like this solution better (improves storage performance on at least
-> > devices with a UFSHCI 3.0 controller): "[PATCH v2 0/2] sched: blk:
-> > Handle HMP systems when completing IO"
-> > (https://lore.kernel.org/linux-block/20240223155749.2958009-1-qyousef@layalina.io/).
-> 
-> That patch is good, don't get me wrong, but you still lose out by running everything
-> up to blk_mq_complete_request() on (potentially) a LITTlE (that might be run on a low OPP),
-> while having a big CPU available at a high OPP anyway ("for free").
-> It is only adjacent to the series but I've done some measurements (Pixel6 again, same device
-> as cover letter, Base is Android 6.6 mainline kernel (so without my series, but I somewhat forced
-> the effects by task pinning), Applied is with both of sched: blk: Handle HMP systems when completing IO):
+This series cleans up kbuf management a bit.
 
-So you want the hardirq to move to the big core? Unlike softirq, there will be
-a single hardirq for the controller (to my limited knowledge), so if there are
-multiple requests I'm not sure we can easily match which one relates to which
-before it triggers. So we can end up waking up the wrong core.
+First two patches get rid of our array of buffer_lists, as in my testing
+there's no discernable difference between the xarray lookup and our
+array. This also then gets rid of any difference between lower and higher
+buffer group IDs, which is nice.
 
-Generally this should be a userspace policy. If there's a scenario where the
-throughput is that important they can easily move the hardirq to the big core
-unconditionally and move it back again once this high throughput scenario is no
-longer important.
+Patch 3 starts using vmap for the non-mmap case for provided buffer
+rings, which means we can clean up the buffer indexing in
+io_ring_buffer_select() as well as there's now no difference between
+how we handle mmap vs gup versionf of buffer lists.
 
-Or where you describing a different problem?
+Patches 4 and 5 are prep patches for patch 6, which switches the mmap
+buffer_list variant away from remap_pfn_range() and uses
+vm_insert_pages() instead.
 
-Glad to see your series by the way :-) I'll get a chance to review it over the
-weekend hopefully.
+This is how it should've been done initially, and as per the diffstat,
+it's a nice reduction in code as well.
 
+ include/linux/io_uring_types.h |   4 -
+ io_uring/io_uring.c            |  32 ++---
+ io_uring/io_uring.h            |   3 -
+ io_uring/kbuf.c                | 298 ++++++++++++++---------------------------
+ io_uring/kbuf.h                |   8 +-
+ mm/nommu.c                     |   7 +
+ 6 files changed, 119 insertions(+), 233 deletions(-)
 
-Cheers
+-- 
+Jens Axboe
 
---
-Qais Yousef
-
-> 
-> Pretty numbers (IOPS):
-> Base irq@CPU0 median: 6969
-> Base irq@CPU6 median: 8407 (+20.6%)
-> Applied irq@CPU0 median: 7144 (+2.5%)
-> Applied irq@CPU6 median: 8288 (18.9%)
-> 
-> This is with psyncx1 4K Random Read again, of course anything with queue depth
-> takes advantage of batch completions to significantly reduce irq pressure.
-> 
-> Not so pretty numbers and full list commands used:
-> 
-> w/o patch:
-> irq on CPU0 (default):
-> psyncx1: 7000 6969 7025 6954 6964
-> io_uring4x128: 28766 28280 28339 28310 28349
-> irq on CPU6:
-> psyncx1: 8342 8492 8355 8407 8532
-> io_uring4x128: 28641 28356 25908 25787 25853
-> 
-> with patch:
-> irq on CPU0:
-> psyncx1: 7672 7144 7301 6976 6889
-> io_uring4x128: 28266 26314 27648 24482 25301
-> irq on CPU6:
-> psyncx1: 8208 8401 8351 8221 8288
-> io_uring4x128: 25603 25438 25453 25514 25402
-> 
-> 
-> for i in $(seq 0 4); do taskset c0 /data/local/tmp/fio_aosp_build --name=test --rw=randread --bs=4k --runtime=30 --time_based --filename=/dev/block/sda --minimal | awk -F ";" '{print $8}'; sleep 30; done
-> 
-> for i in $(seq 0 4); do taskset c0 /data/local/tmp/fio_aosp_build --name=test --rw=randread --bs=4k --runtime=30 --time_based --filename=/dev/block/sda --ioengine=io_uring --iodepth=128 --numjobs=4 --group_reporting --minimal | awk -F ";" '{print $8}'; sleep 30; done
-> 
-> echo 6 > /proc/irq/296/smp_affinity_list
-> 
-> 
-> Kind Regards,
-> Christian
 

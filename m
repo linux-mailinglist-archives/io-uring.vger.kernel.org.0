@@ -1,358 +1,194 @@
-Return-Path: <io-uring+bounces-1195-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1198-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3820F8872A4
-	for <lists+io-uring@lfdr.de>; Fri, 22 Mar 2024 19:09:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186E4887379
+	for <lists+io-uring@lfdr.de>; Fri, 22 Mar 2024 19:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C9BE1C21953
-	for <lists+io-uring@lfdr.de>; Fri, 22 Mar 2024 18:09:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 395FA1C21B3B
+	for <lists+io-uring@lfdr.de>; Fri, 22 Mar 2024 18:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CD9627EA;
-	Fri, 22 Mar 2024 18:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9B7768F4;
+	Fri, 22 Mar 2024 18:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i2M4bAgB"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ji4J6dcr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E6E626C4
-	for <io-uring@vger.kernel.org>; Fri, 22 Mar 2024 18:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D462F76906
+	for <io-uring@vger.kernel.org>; Fri, 22 Mar 2024 18:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711130952; cv=none; b=FE4NIvFJ8g2OigGkfNKHxOc5JlWZRYW1+7JJbKovaxegwgCBvkvW0j5r+heIE9iXp+EYutMoVHw+SUZmsATmJq5dOjTZVxdvxVEiMPMZcaLao5yAYBzaONQEDhlOWufTudkUXHUz24Y2v7TInmybBLG5T3rM2JnjDs81BqS4TJc=
+	t=1711133862; cv=none; b=ZdYkOWoBZfossOfGIOrNYLJbZOIN6VXkfmtJ7m8cojBqqTs8agPIdZ9fAbpcKPtbgjtumzuazZGJRna8uHl0/Sn9oAzLNPKrdW8C1s7p8yhb7r1BXy7p0MLtFM11KiFAnTT1lUqI/epw7GLQ+GVtHOaGAtUXvuCdOJAwEAGXtm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711130952; c=relaxed/simple;
-	bh=V9qH8Hqz75lvC7fcWia7IDuZ4H/IPMayPvgEtvd7OTs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LT4ABkjfYy4RM8oxFrzqXtNV+Neyd2L2qTmWJi9Aqjw9h8bpuP4S84UWI8NYS3JzHHLtNfmxEx7dCTKlzB3aRS968lLHwtvCuhayUEkZ1FmyMjq9gZEH8Bl8qBM5CtgJP/3eyDryumXAF1KkbPTMhzagZTpxzYuAbdlaLJecKb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i2M4bAgB; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-29c731ba369so1672161a91.3
-        for <io-uring@vger.kernel.org>; Fri, 22 Mar 2024 11:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711130949; x=1711735749; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zIDjLYOAoTtitEy2EbjJ+uIGL56wEX/Yq/x0rNRFB3U=;
-        b=i2M4bAgBNQxkmaX8jGphlRkkWXonoOaEDsSYqkW2jk+rT/WX3E1vhkb2kVARZlp5JJ
-         rCb1v2VRXuqjy+ech3mE0VMYbou2ueaZjI53AbialqLjR0fIQJUWDbXwOuASbVIeMzny
-         GSJGCGUgCHv5Cms28rh07Hko6oC47VjscajjOD1Gayn/ElZOeJwm2tjRmAcjKkmPyj1l
-         Eij4vNKs1cmwe4XzJCxcOgvK9+s/GREzXZAW6a0LrFgzZ/KQHtlW4lj6Ij/aGZtYo/ft
-         vFgwp4TytamQA2NzA5Pg+PsLTowGBVjt/9JAu04mczq6TVkDTu2VLaQQa5y98uwwZzYS
-         fC7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711130949; x=1711735749;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zIDjLYOAoTtitEy2EbjJ+uIGL56wEX/Yq/x0rNRFB3U=;
-        b=gR8QYvC5qjdf6pGUaMdpo6yOC3bs04xhziczCZvJmIOhPX4c7IBKwHGjGYxVKuNnAT
-         4iBzhMC12RJEjktitPHP7ogoFWWwIZx/v2OeXIUBot5yBAeN135DRw4FYQIv5rTHW3za
-         v1YDAFtsrlur112A8Gm/fq1aUG12t00GpJ//aN4KT8DqKt3oENAlE1h1FV+6Gb5IBw+Y
-         H+VCmEu8heN+TgN+EXqyj4l5kZIYKq+x68v12HgQ0YkZe34dgmDdCTCh2qP8rvfIruDw
-         L71BIStJBdJREcFN1DBJaap3QAe6Vi/bFcG7aDwwDZIypjnFidbGCXA1xEcFFMsdonyD
-         bxeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmfaW3zlowq6arjZ9OmVsn+35q1CXQkMWPGRO8dXRFqdjRXfHFbikephGUTNBdYgPxQQ1sc7keR6Ocwyi+cxIrxA2syT7b9S8=
-X-Gm-Message-State: AOJu0Yz7N2jSCWbVB/SMePLzzEUKyAvbPEzDq6R8WWwRFB6nY3O3OyWg
-	hWtYVNf1VrD2/Ahu0OrlTa0wzIT5sE1kae+qBiOG+tJ/JHsCx/0DggI4EJWTfyp3hQ9J1afHi2y
-	X9BbuNyWeouilRKIz8NKgngIdbstQzLUuD1EcOeeJyPVpxsYE
-X-Google-Smtp-Source: AGHT+IGvJlKqALa9BjwZx4qwm/OSmLcvHiP8qUMTEcDuG2KQ4oqXk1Hb1cBcfDxOS0fa1yC5aZyttjpfCb1shzfhtG4=
-X-Received: by 2002:a17:90b:37ce:b0:29b:c0a5:1143 with SMTP id
- nc14-20020a17090b37ce00b0029bc0a51143mr430917pjb.29.1711130949112; Fri, 22
- Mar 2024 11:09:09 -0700 (PDT)
+	s=arc-20240116; t=1711133862; c=relaxed/simple;
+	bh=48pCePYj4Wn+4kfxjgWMtKvFISCF5xBrRYDMznKjF0o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=N0B6NrJW6l1f8M806mbwamTlY5IVDjqgSyFNKtlvR6uR5JakRoUtHi2EF23daVJ6Ainb8FxJS6eSGpGkM3eE6QpMfjXHmUQ6UGPcWf0RY7QYnA5zIJaVC1+SLDowBfh7DqvFkseXE4vpVKBvDGs41ODpr1v6G6/Rq2t6fUnASsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ji4J6dcr; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240322185732epoutp04baeb8f95f41400182eb7064d79bab150~-Kyw3bHg92016220162epoutp04c
+	for <io-uring@vger.kernel.org>; Fri, 22 Mar 2024 18:57:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240322185732epoutp04baeb8f95f41400182eb7064d79bab150~-Kyw3bHg92016220162epoutp04c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1711133852;
+	bh=fwdrqB4Z3HAekTRf76Qr/oD9iZ1XSNsd8cRLTKNKgKE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ji4J6dcrhc0SVVtHC1f2h3aDTVskgfLo6ynr1TynlcBNCmsK1yMNyAOH9yoSo588H
+	 YkSLXr7VTHuiOtbqrUpeEuEjpRIo33K2ZA7dHCMCPAtFspZlrPiP2SSaPqW4UA2ESL
+	 xFPhK/+aD0chuGvRHtb/qzXmZkMYMw4RfUUxMmDg=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240322185731epcas5p3fb1edd06668ad2dabb0cb84aaa2c3526~-KywBJuvO1692216922epcas5p36;
+	Fri, 22 Mar 2024 18:57:31 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4V1WmB0Ppgz4x9Pq; Fri, 22 Mar
+	2024 18:57:30 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	02.A4.09666.994DDF56; Sat, 23 Mar 2024 03:57:29 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240322185729epcas5p350c5054b5b519a6aa9d1b35ba3709563~-KyuWnapL3148231482epcas5p37;
+	Fri, 22 Mar 2024 18:57:29 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240322185729epsmtrp12a6104559bd57c74c2ae60ced0bc2204~-KyuWCKIV0917909179epsmtrp1m;
+	Fri, 22 Mar 2024 18:57:29 +0000 (GMT)
+X-AuditID: b6c32a49-cefff700000025c2-36-65fdd499dad2
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C4.32.07541.994DDF56; Sat, 23 Mar 2024 03:57:29 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240322185728epsmtip1a9a7508a8ebbd9148869d9d6d9263748~-Kys-qxed2074520745epsmtip1P;
+	Fri, 22 Mar 2024 18:57:28 +0000 (GMT)
+From: Kanchan Joshi <joshi.k@samsung.com>
+To: martin.petersen@oracle.com, axboe@kernel.dk, kbusch@kernel.org,
+	hch@lst.de
+Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+	anuj1072538@gmail.com, Kanchan Joshi <joshi.k@samsung.com>
+Subject: [RFC PATCH 0/4] Read/Write with meta buffer
+Date: Sat, 23 Mar 2024 00:20:19 +0530
+Message-Id: <20240322185023.131697-1-joshi.k@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240304201625.100619-1-christian.loehle@arm.com>
-In-Reply-To: <20240304201625.100619-1-christian.loehle@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 22 Mar 2024 19:08:57 +0100
-Message-ID: <CAKfTPtDcTXBosFpu6vYW_cXLGwnqJqYCUW19XyxRmAc233irqA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] Introduce per-task io utilization boost
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, juri.lelli@redhat.com, 
-	mingo@redhat.com, rafael@kernel.org, dietmar.eggemann@arm.com, 
-	vschneid@redhat.com, Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, 
-	ulf.hansson@linaro.org, andres@anarazel.de, asml.silence@gmail.com, 
-	linux-pm@vger.kernel.org, linux-block@vger.kernel.org, 
-	io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgk+LIzCtJLcpLzFFi42LZdlhTU3fmlb+pBvdeWVh8/PqbxWL13X42
+	i5WrjzJZvGs9x2Jx9P9bNotJh64xWuy9pW2x/Pg/JgcOj52z7rJ7XD5b6rFpVSebx+6bDWwe
+	H5/eYvHo27KK0ePzJrkA9qhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE
+	3FRbJRefAF23zBygm5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BSYFesWJucWl
+	eel6eaklVoYGBkamQIUJ2Rnv/v1nKjggXLH10gzGBsa1/F2MnBwSAiYSu6ZNZuli5OIQEtjN
+	KHH39n02kISQwCdGiS83yiDsb4wSi3pMYBref/rPCBHfyygx7WEORPNnRon9LXeBEhwcbAKa
+	Ehcml4LUiAgESDz9fQ5sJrNAucSGdU0sILYw0Jz2++/B5rAIqEocevqACcTmFbCUuDO9iw1i
+	l7zEzEvf2SHighInZz5hgZgjL9G8dTYzyF4JgUfsEstvb2WCaHCR2HL1NTuELSzx6vgWKFtK
+	4mV/G5SdLHFp5jmo+hKJx3sOQtn2Eq2n+plB7mcGun/9Ln2IXXwSvb+fMIGEJQR4JTrahCCq
+	FSXuTXrKCmGLSzycsQTK9pBoeDWBCRI8sRK3+s+xT2CUm4Xkg1lIPpiFsGwBI/MqRsnUguLc
+	9NRi0wLDvNRyeEQm5+duYgQnRS3PHYx3H3zQO8TIxMF4iFGCg1lJhHfH/z+pQrwpiZVVqUX5
+	8UWlOanFhxhNgcE6kVlKNDkfmJbzSuINTSwNTMzMzEwsjc0MlcR5X7fOTRESSE8sSc1OTS1I
+	LYLpY+LglGpgSuG6d2H+xqA/DWcSvXZt+FO7dor1Cd/Ua8dWBP2v9vTnb8yXF/4skLjd10Hi
+	3II+s6fHzIK3OMvsSl1asEhbZn6MmIrQvcetjP0F0xsSvT6FHZpZIKx/0KV3uvAPhfjPv9Im
+	FMlIvm0qDV2iMitpmab641+6C69mRFr/P71j8o+ct6lRjXKvQ9eyh/LUyDCYtpsGRyzq2yDX
+	Zn1XWq3l5Z382MMqpZqfp+St2/d5d+SkFTU/FIUuGTRJSJ9LzfZ8NPv/qiNXp4hpv85Wunu7
+	YNa9PTf1DmmmtW8rVNly8dTSLWd3nU01POp+ryKRMza8tDN6atyNv6nJlov9hM+uqrkjWvps
+	+W7RYpZHjf6LlFiKMxINtZiLihMBm/vomRMEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsWy7bCSnO7MK39TDZ5PVLT4+PU3i8Xqu/1s
+	FitXH2WyeNd6jsXi6P+3bBaTDl1jtNh7S9ti+fF/TA4cHjtn3WX3uHy21GPTqk42j903G9g8
+	Pj69xeLRt2UVo8fnTXIB7FFcNimpOZllqUX6dglcGe/+/WcqOCBcsfXSDMYGxrX8XYycHBIC
+	JhLvP/1nBLGFBHYzSmy7VQERF5dovvaDHcIWllj57zmQzQVU85FR4ue5VWxdjBwcbAKaEhcm
+	l4LUiAiESCxrncAMYjMLVEv0bOxhArGFgea3338PNp9FQFXi0NMHYHFeAUuJO9O72CDmy0vM
+	vPSdHSIuKHFy5hMWiDnyEs1bZzNPYOSbhSQ1C0lqASPTKkbJ1ILi3PTcZMMCw7zUcr3ixNzi
+	0rx0veT83E2M4ODV0tjBeG/+P71DjEwcjIcYJTiYlUR4d/z/kyrEm5JYWZValB9fVJqTWnyI
+	UZqDRUmc13DG7BQhgfTEktTs1NSC1CKYLBMHp1QDU/2reZyvdn7tPtLm1NTx/Pv1k3zf+WX4
+	Jn49fPqRymrtKvHC+Nf9eXpRdkeEAt9s/7wr/XVvxHfj7LWxRgf/H+Pf8bRx946ls/hV9zrp
+	vtrxKFs342nx4VUd20Mf3PwXNTHj54xl01qZ2oNOzDKsafJaWs+R8ngDy8PETxf2OK9nTjr6
+	4dqqt9tn7J6eGLJUzXfLbEaBlZUzllu3/Nj7aF5LV99h9fm33Ux5mCfwdXjEnrr/Juhp4esX
+	RytKVr/NZFTSml8vLdLz3l7m+bZOjq4yrtWr+Wexb4qcdvPECVtX7wWFZ66cNuH4eEpg9zrb
+	oiMf1mZOPnauMC2/UHl2znYz5c6Vnv3KJ6oDNJ4lMtoosRRnJBpqMRcVJwIAfSOYLs0CAAA=
+X-CMS-MailID: 20240322185729epcas5p350c5054b5b519a6aa9d1b35ba3709563
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240322185729epcas5p350c5054b5b519a6aa9d1b35ba3709563
+References: <CGME20240322185729epcas5p350c5054b5b519a6aa9d1b35ba3709563@epcas5p3.samsung.com>
 
-Hi Christian,
+This patchset is aimed at getting the feedback on a new io_uring
+interface that userspace can use to exchange meta buffer along with
+read/write.
 
-On Mon, 4 Mar 2024 at 21:17, Christian Loehle <christian.loehle@arm.com> wrote:
->
-> There is a feature inside of both schedutil and intel_pstate called
-> iowait boosting which tries to prevent selecting a low frequency
-> during IO workloads when it impacts throughput.
-> The feature is implemented by checking for task wakeups that have
-> the in_iowait flag set and boost the CPU of the rq accordingly
-> (implemented through cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT)).
->
-> The necessity of the feature is argued with the potentially low
-> utilization of a task being frequently in_iowait (i.e. most of the
-> time not enqueued on any rq and cannot build up utilization).
->
-> The RFC focuses on the schedutil implementation.
-> intel_pstate frequency selection isn't touched for now, suggestions are
-> very welcome.
-> Current schedutil iowait boosting has several issues:
-> 1. Boosting happens even in scenarios where it doesn't improve
-> throughput. [1]
-> 2. The boost is not accounted for in EAS: a) feec() will only consider
->  the actual utilization for task placement, but another CPU might be
->  more energy-efficient at that capacity than the boosted one.)
->  b) When placing a non-IO task while a CPU is boosted compute_energy()
->  will not consider the (potentially 'free') boosted capacity, but the
->  one it would have without the boost (since the boost is only applied
->  in sugov).
-> 3. Actual IO heavy workloads are hardly distinguished from infrequent
-> in_iowait wakeups.
-> 4. The boost isn't associated with a task, it therefore isn't considered
-> for task placement, potentially missing out on higher capacity CPUs on
-> heterogeneous CPU topologies.
-> 5. The boost isn't associated with a task, it therefore lingers on the
-> rq even after the responsible task has migrated / stopped.
-> 6. The boost isn't associated with a task, it therefore needs to ramp
-> up again when migrated.
-> 7. Since schedutil doesn't know which task is getting woken up,
-> multiple unrelated in_iowait tasks might lead to boosting.
->
-> We attempt to mitigate all of the above by reworking the way the
-> iowait boosting (io boosting from here on) works in two major ways:
-> - Carry the boost in task_struct, so it is a per-task attribute and
-> behaves similar to utilization of the task in some ways.
-> - Employ a counting-based tracking strategy that only boosts as long
-> as it sees benefits and returns to no boosting dynamically.
+Two new opcodes for that: IORING_OP_READ_META and IORING_OP_WRITE_META.
+The leftover space in the SQE is used to send meta buffer pointer
+and its length. Patch #2 for this.
 
-Thanks for working on improving IO boosting. I have started to read
-your patchset and have few comments about your proposal:
+The interface is supported for block direct IO. Patch #4 for this.
+Other two are prep patches.
 
-The main one is that the io boosting decision should remain a cpufreq
-governor decision and so the io boosting value should be applied by
-the governor like in sugov_effective_cpu_perf() as an example instead
-of everywhere in the scheduler code.
+It has been tried not to touch the hot read/write path, as much as
+possible. Performance for non-meta IO is same after the patches [2].
+There is some code in the cold path (worker-based async)
+though.
 
-Then, the algorithm to track the right interval bucket and the mapping
-of intervals into utilization really looks like a policy which has
-been defined with heuristics and as a result further seems to be a
-governor decision
+Moderately tested by modifying the fio [1] to use this interface
+(only for NVMe block devices)
 
-Finally adding some atomic operation in the fast path is not really desirable
+[1] https://github.com/OpenMPDK/fio/tree/feat/test-meta
 
-I will continue to review your patchset
+[2]
+without this:
 
->
-> Note that some the issues (1, 3) can be solved by using a
-> counting-based strategy on a per-rq basis, i.e. in sugov entirely.
-> Experiments with Android in particular showed that such a strategy
-> (which necessarily needs longer intervals to be reasonably stable)
-> is too prone to migrations to be useful generally.
-> We therefore consider the additional complexity of such a per-task
-> based approach like proposed to be worth it.
->
-> We require a minimum of 1000 iowait wakeups per second to start
-> boosting.
-> This isn't too far off from what sugov currently does, since it resets
-> the boost if it hasn't seen an iowait wakeup for TICK_NSEC.
-> For CONFIG_HZ=1000 we are on par, for anything below we are stricter.
-> We justify this by the small possible improvement by boosting in the
-> first place with 'rare' few iowait wakeups.
->
-> When IO even leads to a task being in iowait isn't as straightforward
-> to explain.
-> Of course if the issued IO can be served by the page cache (e.g. on
-> reads because the pages are contained, on writes because they can be
-> marked dirty and the writeback takes care of it later) the actual
-> issuing task is usually not in iowait.
-> We consider this the good case, since whenever the scheduler and a
-> potential userspace / kernel switch is in the critical path for IO
-> there is possibly overhead impacting throughput.
-> We therefore focus on random read from here on, because (on synchronous
-> IO [3]) this will lead to the task being set in iowait for every IO.
-> This is where iowait boosting shows its biggest throughput improvement.
-> From here on IOPS (IO operations per second) and iowait wakeups may
-> therefore be used interchangeably.
->
-> Performance:
-> Throughput for random read tries to be on par with the sugov
-> implementation of iowait boosting for reasonably long-lived workloads.
-> See the following table for some results, values are in IOPS, the
-> tests are ran for 30s with pauses in-between, results are sorted.
->
-> nvme on rk3399
-> [3588, 3590, 3597, 3632, 3745] sugov mainline
-> [3581, 3751, 3770, 3771, 3885] per-task tracking
-> [2592, 2639, 2701, 2717, 2784] sugov no iowait boost
-> [3218, 3451, 3598, 3848, 3921] performance governor
->
-> emmc with cqe on rk3399
-> [4146, 4155, 4159, 4161, 4193] sugov mainline
-> [2848, 3217, 4375, 4380, 4454] per-task tracking
-> [2510, 2665, 3093, 3101, 3105] sugov no iowait boost
-> [4690, 4803, 4860, 4976, 5069] performance governor
->
-> sd card on rk3399
-> [1777, 1780, 1806, 1827, 1850] sugov mainline
-> [1470, 1476, 1507, 1534, 1586] per-task tracking
-> [1356, 1372, 1373, 1377, 1416] sugov no iowait boost
-> [1861, 1890, 1901, 1905, 1908] performance governor
->
-> Pixel 6 ufs Android 14 (7 runs for because device showed some variance)
-> [6605, 6622, 6633, 6652, 6690, 6697, 6754] sugov mainline
-> [7141, 7173, 7198, 7220, 7280, 7427, 7452] per-task tracking
-> [2390, 2392, 2406, 2437, 2464, 2487, 2813] sugov no iowait boost
-> [7812, 7837, 7837, 7851, 7900, 7959, 7980] performance governor
->
-> Apple M1 apple-nvme
-> [27421, 28331, 28515, 28699, 29529] sugov mainline
-> [27274, 27344, 27345, 27384, 27930] per-task tracking
-> [14480, 14512, 14625, 14872, 14967] sugov no iowait boost
-> [31595, 32085, 32386, 32465, 32643] performance governor
->
-> Showcasing some different IO scenarios, again all random read,
-> median out of 5 runs, all on rk3399 with NVMe.
-> e.g. io_uring6x4 means 6 threads with 4 iodepth each, results can be
-> obtained using:
-> fio --minimal --time_based --name=test --filename=/dev/nvme0n1 --runtime=30 --rw=randread --bs=4k --ioengine=io_uring --iodepth=4 --numjobs=6 --group_reporting | cut -d \; -f 8
->
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |               | Sugov mainline | Per-task tracking | Sugov no boost | Performance | Powersave |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |       psyncx1 |           4073 |              3793 |           2979 |        4190 |      2788 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |       psyncx4 |          13921 |             13503 |          10635 |       13931 |     10225 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |       psyncx6 |          18473 |             17866 |          15902 |       19080 |     15789 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |       psyncx8 |          22498 |             21242 |          19867 |       22650 |     18837 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |      psyncx10 |          24801 |             23552 |          23658 |       25096 |     21474 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |      psyncx12 |          26743 |             25377 |          26372 |       26663 |     23613 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |     libaio1x1 |           4054 |              3542 |           2776 |        4055 |      2780 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |   libaio1x128 |           3959 |              3516 |           2758 |        3590 |      2560 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |   libaio4x128 |          13451 |             12517 |          10313 |       13403 |      9994 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |     libaio6x1 |          18394 |             17432 |          15340 |       18954 |     15251 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |     libaio6x4 |          18329 |             17100 |          15238 |       18623 |     15270 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |   libaio6x128 |          18066 |             16964 |          15139 |       18577 |     15192 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |   io_uring1x1 |           4043 |              3548 |           2810 |        4039 |      2689 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |  io_uring4x64 |          35790 |             32814 |          35983 |       34934 |     33254 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> | io_uring1x128 |          32651 |             30427 |          32429 |       33232 |      9973 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> | io_uring2x128 |          34928 |             32595 |          34922 |       33726 |     18790 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> | io_uring4x128 |          34414 |             32173 |          34932 |       33332 |     33005 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> |   io_uring6x4 |          31578 |             29260 |          31714 |       31399 |     31784 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
-> | io_uring6x128 |          34480 |             32634 |          34973 |       33390 |     36452 |
-> +---------------+----------------+-------------------+----------------+-------------+-----------+
->
-> Based on the above we can basically categorize these into the following
-> three:
-> a) boost is useful
-> b) boost irrelevant (util dominates)
-> c) boost is energy-inefficient (boost dominates)
->
-> The aim of the patch 1/2 is to boost as much as necessary for a) while
-> boosting little for c) (thus saving energy).
->
-> Energy-savings:
-> Regarding sugov iowait boosting problem 1 mentioned earlier,
-> some improvement can be seen:
-> Tested on rk3399 (LLLL)(bb) with an NVMe, 30s runtime
-> CPU0 perf domain spans 0-3 with 400MHz to 1400MHz
-> CPU4 perf domain spans 4-5 with 400MHz to 1800MHz
->
-> io_uring6x128:
-> Sugov iowait boost:
-> Average frequency for CPU0 : 1.180 GHz
-> Average frequency for CPU4 : 1.504 GHz
-> Per-task tracking:
-> Average frequency for CPU0 : 1.070 GHz
-> Average frequency for CPU4 : 1.211 GHz
->
-> io_uring12x128:
-> Sugov iowait boost:
-> Average frequency for CPU0 : 1.324 GHz
-> Average frequency for CPU4 : 1.444 GHz
-> Per-task tracking:
-> Average frequency for CPU0 : 1.260 GHz
-> Average frequency for CPU4 : 1.062 GHz
-> (In both cases actually 400MHz on both perf domains is optimal, more
-> fine-tuning could get us closer [2])
->
-> [1]
-> There are many scenarios when it doesn't, so let's start with
-> explaining when it does:
-> Boosting improves throughput if there is frequent IO to a device from
-> one or few origins, such that the device is likely idle when the task
-> is enqueued on the rq and reducing this time cuts down on the storage
-> device idle time.
-> This might not be true (and boosting doesn't help) if:
-> - The storage device uses the idle time to actually commit the IO to
-> persistent storage or do other management activity (this can be
-> observed with e.g. writes to flash-based storage, which will usually
-> write to cache and flush the cache when idle or necessary).
-> - The device is under thermal pressure and needs idle time to cool off
-> (not uncommon for e.g. nvme devices).
-> Furthermore the assumption (the device being idle while task is
-> enqueued) is false altogether if:
-> - Other tasks use the same storage device.
-> - The task uses asynchronous IO with iodepth > 1 like io_uring, the
-> in_iowait is then just to fill the queue on the host again.
-> - The task just sets in_iowait to signal it is waiting on io to not
-> appear as system idle, it might not send any io at all (cf with
-> the various occurrences of in_iowait, io_mutex_lock and io_schedule*).
->
-> [3]
-> Unfortunately even for asynchronous IO iowait may be set, in the case
-> of io_uring this is specifically for the iowait boost to trigger, see
-> commit ("8a796565cec3 io_uring: Use io_schedule* in cqring wait")
-> which is why the energy-savings are so significant here, as io_uring
-> load on the CPU is minimal.
->
-> Problems encountered:
-> - Higher cap is not always beneficial, we might place the task away
-> from the CPU where the interrupt handler is running, making it run
-> on an unboosted CPU which may have a bigger impact than the difference
-> between the CPU's capacity the task moved to. (Of course the boost will
-> then be reverted again, but a ping-pong every interval is possible).
-> - [2] tracking and scaling can be improved (io_uring12x128 still shows
-> boosting): Unfortunately tracking purely per-task shows some limits.
-> One task might show more iowaits per second when boosted, but overall
-> throughput doesn't increase => there is still some boost.
-> The task throughput improvement is somewhat limited though,
-> so by fine-tuning the thresholds there could be mitigations.
->
-> Christian Loehle (2):
->   sched/fair: Introduce per-task io util boost
->   cpufreq/schedutil: Remove iowait boost
->
->  include/linux/sched.h            |  15 +++
->  kernel/sched/cpufreq_schedutil.c | 150 ++--------------------------
->  kernel/sched/fair.c              | 165 +++++++++++++++++++++++++++++--
->  kernel/sched/sched.h             |   4 +-
->  4 files changed, 182 insertions(+), 152 deletions(-)
->
-> --
-> 2.34.1
->
+taskset -c 2,5 t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -n2 -r4 /dev/nvme0n1 /dev/nvme1n1
+submitter=1, tid=2453, file=/dev/nvme1n1, node=-1
+submitter=0, tid=2452, file=/dev/nvme0n1, node=-1
+polled=1, fixedbufs=1, register_files=1, buffered=0, QD=128
+Engine=io_uring, sq_ring=128, cq_ring=128
+IOPS=10.02M, BW=4.89GiB/s, IOS/call=31/31
+IOPS=10.04M, BW=4.90GiB/s, IOS/call=31/31
+
+With this:
+taskset -c 2,5 t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -n2 -r4 /dev/nvme0n1 /dev/nvme1n1
+submitter=1, tid=2453, file=/dev/nvme1n1, node=-1
+submitter=0, tid=2452, file=/dev/nvme0n1, node=-1
+polled=1, fixedbufs=1, register_files=1, buffered=0, QD=128
+Engine=io_uring, sq_ring=128, cq_ring=128
+IOPS=10.02M, BW=4.89GiB/s, IOS/call=31/31
+IOPS=10.04M, BW=4.90GiB/s, IOS/call=31/31
+
+Anuj Gupta (3):
+  io_uring/rw: Get rid of flags field in struct io_rw
+  io_uring/rw: support read/write with metadata
+  block: modify bio_integrity_map_user to accept iov_iter as argument
+
+Kanchan Joshi (1):
+  block: add support to pass the meta buffer
+
+ block/bio-integrity.c         |  27 ++++++---
+ block/fops.c                  |   9 +++
+ block/t10-pi.c                |   6 ++
+ drivers/nvme/host/ioctl.c     |  11 +++-
+ include/linux/bio.h           |  13 +++-
+ include/linux/fs.h            |   1 +
+ include/uapi/linux/io_uring.h |   6 ++
+ io_uring/io_uring.c           |   2 +
+ io_uring/opdef.c              |  29 +++++++++
+ io_uring/rw.c                 | 108 +++++++++++++++++++++++++++++-----
+ io_uring/rw.h                 |   8 +++
+ 11 files changed, 193 insertions(+), 27 deletions(-)
+
+
+base-commit: 6f0974eccbf78baead1735722c4f1ee3eb9422cd
+-- 
+2.25.1
+
 

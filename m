@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-1210-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1211-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1AE88A9C5
-	for <lists+io-uring@lfdr.de>; Mon, 25 Mar 2024 17:42:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD0AC88A9C7
+	for <lists+io-uring@lfdr.de>; Mon, 25 Mar 2024 17:42:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 426EE1F244D7
-	for <lists+io-uring@lfdr.de>; Mon, 25 Mar 2024 16:42:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0517C1C377AD
+	for <lists+io-uring@lfdr.de>; Mon, 25 Mar 2024 16:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D797B15A4A1;
-	Mon, 25 Mar 2024 14:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE58013D8AF;
+	Mon, 25 Mar 2024 14:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="B6LLl978"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XhqVKG4K"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1A3156224
-	for <io-uring@vger.kernel.org>; Mon, 25 Mar 2024 14:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11071157A6E
+	for <io-uring@vger.kernel.org>; Mon, 25 Mar 2024 14:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711378498; cv=none; b=emVEWS65fSQkBSYPLaj9M5oKSfuZ4vEy467FprZa5JXoCNV3t+qMTgjxzLG+4yc2b4NSMZL8kXdrOMLA4aJpYitxSsup9LphYn3R6Ux4OpsFAw2XFS1wykH4lSsr4JiEAiRHmgHc9tCgqJDCrpNpjRiIEwxZKadkng71xXtn3cY=
+	t=1711378545; cv=none; b=beDUkVwDOTjYVDVF/9trmZJ4amNs1CO82TEoRcB26ZanBovKpH9fmGbJZSPMYm66Iwbsvaqf5hMX2mBIMyuubsXg/v23XlQZpixzqcf/wBWjZYx+SxVX3XLx6IUvVEwvAOjO+Mnf/YEl4i3EUStADdfopBS0PXq791KM0f/nWOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711378498; c=relaxed/simple;
-	bh=jYhI1XWQgeU7TEThxdW9IY57PTppyjqJ2QyV0ra87cM=;
+	s=arc-20240116; t=1711378545; c=relaxed/simple;
+	bh=kuOCr+GzmBuustbs/2WqMP6sPU8fgGEqKLmy0cBeU20=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tjQJUCn0cKJhoU+sCEo+YtqStOHW0/Vnp/DYQSCSk8XmTanLQQQ0adVUMuuADZzHdfhZEx5JIBDfP7Rpb9uOD5dclb9pu57wwmQmwIOrokxxI9WLkrVPuM1F8st4+ZZM4VL1fQNCLt+SIpnTf2nhOuSh8akoIqzuC+v89ff+Ow8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=B6LLl978; arc=none smtp.client-ip=209.85.166.52
+	 In-Reply-To:Content-Type; b=DsNpIZfjuWhhIB/RtrtvBIgEZTqTUoEmmIXcK75kow5sLBuiTj9CecfGmRBjGgTHIQi6IKtAacDSUWYTX6ZwgryNNyBmTji79FBGEZ9ILJj9VCcFa0FvVnnEI7Nao8mgNGhRk2Mmh9+KXMBzfXcCqRVbSKcfnElGLCG1Yx8oMLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XhqVKG4K; arc=none smtp.client-ip=209.85.166.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7cc0e831e11so75244639f.1
-        for <io-uring@vger.kernel.org>; Mon, 25 Mar 2024 07:54:54 -0700 (PDT)
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-366b8b0717cso6626915ab.1
+        for <io-uring@vger.kernel.org>; Mon, 25 Mar 2024 07:55:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711378494; x=1711983294; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711378542; x=1711983342; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UPpFVitym7hRJXbs1NBA1kCIKWBpaebenDSLj694Fgg=;
-        b=B6LLl978/SFsY8u2vIdaKGVWe8q4hiQAe1qZutc7TjqPASRVMCQvHz487pxK7l7C7A
-         vLtssbdRQPxHiOfv161lPvhI04jYbOANHx/BEeTcYIeiuEVHf0JRzK0opLWlmF6cgme+
-         RNkqNOsN4G+D+hkDVUncTUEoP7atWUUVqs0R+AlfyGCPfbRKNPIQ63UmoMomZAp1Opc3
-         c6aLFS+7yWWxhnKVNHBj7S+J0j0lqr2PIte40n1kGmfG/Ae1R6QmzL2EPP9uJHoVhjAi
-         aUGlCdYKPPVwzx5i4YrzowVVtob1ywU8vEvB2Vmk7cyei6xGx8+6DpAfGBoWQzJ7Efwh
-         5W9Q==
+        bh=YIkd7rWXShjJrE5O52rmKt1XvrbpBNDt5P03Ysl34PA=;
+        b=XhqVKG4KgfiLMATM0YLdQyJbXBVh3WXDYONIlgtbzzuSdUBgIX4Sr8jHJ5gmeu2p44
+         Jx7CSlybA/OCXmkwDvuwE2lMMsI4ie0I1gzCVhtyzVB99jl/cdvgiDCzgpGm2DsZF4yE
+         ASBqQ99azPkzKxo7fSmr8WCyc7KSs9uUh5WRvuXX2g/ai4R2dQs10CyiX8RPG5BUJh1S
+         ujkd9BvG5oVRecWhp7A0O0jJEsNHpMCo0lX/5XCrfI4MOLFf++P+yg1bOWldrQwC0Sji
+         wVkCmoEuC1ddpy9cjRIF9/38Qt4nQ4oy9THu+mM1ODNMP5SsxnErepo/Jef++jShDArn
+         qRXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711378494; x=1711983294;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1711378542; x=1711983342;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UPpFVitym7hRJXbs1NBA1kCIKWBpaebenDSLj694Fgg=;
-        b=SWlQwJ33lSZ9B3R7Jk39tKQGTXTb/4xZpzW2J0Hn+9CYOuhXDoZ54nVn81MmTgJVjl
-         NndeWbUwgC+WviZrJ7C3tvDyekQ8RIXt5RaAWRQSZ0JywSKRX6DZPuv23jWBYmV5t9Nk
-         8hpOtH6PSnoLu1xGXmP2qiX4ZQzR0uzI4U1qzk+1g34Y6jZSzHNTU2G9TdBZwSolWuMs
-         YsWnuTwmahxTZNrkmD51z+JSMh2hj1AF2Ty70KNCQqiD3SNma4HOPnAUQBJHaQ4KEXjG
-         lMnRP4m5/nA68kZDn4XIkepKauu4moLScRcxsDwTLYEF06b2S7qVbZ/ZD7ETBFj4urpP
-         Rmzg==
-X-Gm-Message-State: AOJu0YwmvlvS7RKtto884oPpPQpXbDClVhsQv98AO7EpcwhTcjZJ6BmF
-	fqiODvqySrnE4/It1USwxgCzny5QuQ88WqQy6Kqh1IZaxrukQPuo18TuC0TVk/Lv2n5n+aoLFqG
-	0
-X-Google-Smtp-Source: AGHT+IG8/Ucuyk6rVvTsAyA1S6LR5fW67PyVDs1vav258XPJZCd/5dwS+AFQNqsyI7hZZXHCAqTSCA==
-X-Received: by 2002:a05:6e02:6d0:b0:366:b0bd:3a1a with SMTP id p16-20020a056e0206d000b00366b0bd3a1amr6531110ils.1.1711378493986;
-        Mon, 25 Mar 2024 07:54:53 -0700 (PDT)
+        bh=YIkd7rWXShjJrE5O52rmKt1XvrbpBNDt5P03Ysl34PA=;
+        b=SqtBMnaCBrFB99x/8v3q/6W1No2Pxv05QUnlGYrChCr+67vVenMhzqz6QCLoxVo5S5
+         rZBTtgb2BXw32nLVKctlECUKfCJ7dEmTfGQc7xzJdj8LIxAQLTdRJRwkgS8GnPRlm7xi
+         qQ1SAij13QSAVbQhzR+ZFskl4Vp11yz57fW+byjQLmZzsbbJ4tbsQ2fky1zV/p+s8ZPJ
+         kbLnb9L8A3myHG57JDq8/SUmwPakkYXMIASqZrxLet/4F/1scs1jWmi1sL1KsG03vjTT
+         alGG2R7h0tqdQLM04Xr6dBGiJmJFwBU5TTtWnFtFDv3sR9eLTCrqshOKSeZ7wEyd1wPX
+         JPnw==
+X-Gm-Message-State: AOJu0YzcIELVVzwP9gp0rEnipLKfJaRKoXLfbx1tQnf4yjVVNxe3vZ0/
+	Y/v37P6jDvx361RXZS19T/es1gRXO1xeOZ9CWNWL0e9SZpFb+02/Zzpijfu6lnhZL2qvhYdHI7r
+	s
+X-Google-Smtp-Source: AGHT+IHKJ0UqSZNbGLY+9Tq4aQiafT1InS+RuxpdvFNTU/QhZX6DBU+A6Aw38Q7FWGoPalg8VUkmog==
+X-Received: by 2002:a05:6e02:1d84:b0:367:841f:4ea with SMTP id h4-20020a056e021d8400b00367841f04eamr8014438ila.3.1711378541956;
+        Mon, 25 Mar 2024 07:55:41 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id u8-20020a056e02080800b00366c4a8990asm2386978ilm.27.2024.03.25.07.54.52
+        by smtp.gmail.com with ESMTPSA id u8-20020a056e02080800b00366c4a8990asm2386978ilm.27.2024.03.25.07.55.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Mar 2024 07:54:53 -0700 (PDT)
-Message-ID: <502ac410-e5fa-4733-bf7a-33a8bfac537f@kernel.dk>
-Date: Mon, 25 Mar 2024 08:54:52 -0600
+        Mon, 25 Mar 2024 07:55:41 -0700 (PDT)
+Message-ID: <a02da1c0-e6ca-493d-97cf-d1190a511417@kernel.dk>
+Date: Mon, 25 Mar 2024 08:55:41 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,45 +76,105 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/17] io_uring/rw: always setup io_async_rw for
- read/write requests
+Subject: Re: [PATCH 15/17] io_uring/uring_cmd: defer SQE copying until we need
+ it
+Content-Language: en-US
 To: Anuj gupta <anuj1072538@gmail.com>
 Cc: io-uring@vger.kernel.org
 References: <20240320225750.1769647-1-axboe@kernel.dk>
- <20240320225750.1769647-11-axboe@kernel.dk>
- <CACzX3AvbFtCAH8Lr_zsNjQeMMhrRFdrmLcE=zRygWe61nL5YAA@mail.gmail.com>
-Content-Language: en-US
+ <20240320225750.1769647-16-axboe@kernel.dk>
+ <CACzX3AukJ8hZhmxuGWC_hqMVv52s=A3u8nFSrhhgPA6arMLacg@mail.gmail.com>
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CACzX3AvbFtCAH8Lr_zsNjQeMMhrRFdrmLcE=zRygWe61nL5YAA@mail.gmail.com>
+In-Reply-To: <CACzX3AukJ8hZhmxuGWC_hqMVv52s=A3u8nFSrhhgPA6arMLacg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 3/25/24 6:03 AM, Anuj gupta wrote:
->> +static int io_prep_rw_setup(struct io_kiocb *req, int ddir, bool do_import)
->> +{
->> +       struct io_async_rw *rw;
->> +       int ret;
->> +
->> +       if (io_rw_alloc_async(req))
+On 3/25/24 6:41 AM, Anuj gupta wrote:
+> On Thu, Mar 21, 2024 at 4:28?AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> The previous commit turned on async data for uring_cmd, and did the
+>> basic conversion of setting everything up on the prep side. However, for
+>> a lot of use cases, we'll get -EIOCBQUEUED on issue, which means we do
+>> not need a persistent big SQE copied.
+>>
+>> Unless we're going async immediately, defer copying the double SQE until
+>> we know we have to.
+>>
+>> This greatly reduces the overhead of such commands, as evidenced by
+>> a perf diff from before and after this change:
+>>
+>>     10.60%     -8.58%  [kernel.vmlinux]  [k] io_uring_cmd_prep
+>>
+>> where the prep side drops from 10.60% to ~2%, which is more expected.
+>> Performance also rises from ~113M IOPS to ~122M IOPS, bringing us back
+>> to where it was before the async command prep.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>
+>> ~# Last command done (1 command done):
+>> ---
+>>  io_uring/uring_cmd.c | 25 +++++++++++++++++++------
+>>  1 file changed, 19 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+>> index 9bd0ba87553f..92346b5d9f5b 100644
+>> --- a/io_uring/uring_cmd.c
+>> +++ b/io_uring/uring_cmd.c
+>> @@ -182,12 +182,18 @@ static int io_uring_cmd_prep_setup(struct io_kiocb *req,
+>>         struct uring_cache *cache;
+>>
+>>         cache = io_uring_async_get(req);
+>> -       if (cache) {
+>> -               memcpy(cache->sqes, sqe, uring_sqe_size(req->ctx));
+>> -               ioucmd->sqe = req->async_data;
+>> +       if (unlikely(!cache))
 >> +               return -ENOMEM;
 >> +
->> +       if (!do_import || io_do_buffer_select(req))
->> +               return 0;
+>> +       if (!(req->flags & REQ_F_FORCE_ASYNC)) {
+>> +               /* defer memcpy until we need it */
+>> +               ioucmd->sqe = sqe;
+>>                 return 0;
+>>         }
+>> -       return -ENOMEM;
 >> +
->> +       rw = req->async_data;
->> +       ret = io_import_iovec(ddir, req, rw, 0);
->> +       if (unlikely(ret < 0))
->> +               return ret;
+>> +       memcpy(req->async_data, sqe, uring_sqe_size(req->ctx));
+>> +       ioucmd->sqe = req->async_data;
+>> +       return 0;
+>>  }
+>>
+>>  int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>> @@ -245,8 +251,15 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+>>         }
+>>
+>>         ret = file->f_op->uring_cmd(ioucmd, issue_flags);
+>> -       if (ret == -EAGAIN || ret == -EIOCBQUEUED)
+>> -               return ret;
+>> +       if (ret == -EAGAIN) {
+>> +               struct uring_cache *cache = req->async_data;
 >> +
->> +       iov_iter_save_state(&rw->s.iter, &rw->s.iter_state);
+>> +               if (ioucmd->sqe != (void *) cache)
+>> +                       memcpy(cache, ioucmd->sqe, uring_sqe_size(req->ctx));
+>> +               return -EAGAIN;
+>> +       } else if (ret == -EIOCBQUEUED) {
+>> +               return -EIOCBQUEUED;
+>> +       }
+>>
+>>         if (ret < 0)
+>>                 req_set_fail(req);
+>> --
+>> 2.43.0
+>>
+>>
 > 
-> It seems that the state of iov_iter gets saved in the caller io_import_iovec
-> as well. Do we need to save it again here?
+> The io_uring_cmd plumbing part of this series looks good to me.
+> I tested it with io_uring nvme-passthrough on my setup with two
+> optanes and there is no drop in performance as well [1].
+> For this and the previous patch,
+> 
+> Tested-by: Anuj Gupta <anuj20.g@samsung.com>
+> Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
 
-There's probably room left for further cleaning this up, as now the
-state is always going to be known. But it isn't true right now - for
-example, __io_read() will import and not save, yet do a restore if we
-need to ensure the state is sane again.
+Thanks for reviewing and testing, will add.
 
 -- 
 Jens Axboe

@@ -1,305 +1,121 @@
-Return-Path: <io-uring+bounces-1235-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1236-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFE388CC3E
-	for <lists+io-uring@lfdr.de>; Tue, 26 Mar 2024 19:46:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81AEB88CC48
+	for <lists+io-uring@lfdr.de>; Tue, 26 Mar 2024 19:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DB4C1F833DD
-	for <lists+io-uring@lfdr.de>; Tue, 26 Mar 2024 18:46:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B33B11C61DB0
+	for <lists+io-uring@lfdr.de>; Tue, 26 Mar 2024 18:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2938513C836;
-	Tue, 26 Mar 2024 18:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834E913CF85;
+	Tue, 26 Mar 2024 18:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Dgh2WF0l"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zH5cC2ZK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A6713CA98
-	for <io-uring@vger.kernel.org>; Tue, 26 Mar 2024 18:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C281013CC50
+	for <io-uring@vger.kernel.org>; Tue, 26 Mar 2024 18:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711478789; cv=none; b=PwpXzilhuqQDN8dIjgnnPSv28uSM+4K8TJnTEoDfuEvWlIHVw8I5ioZI0Pq1gr1uhlaDjJ3KaNGqs/PWQolhr6rszCDkdwp4+PmUDqLP62xQUTC4EluvV/IhMly5SwXh8qme41dfHwEWu3QT/UKn4b47zStBvFPZTRQBlFOlB3Y=
+	t=1711478831; cv=none; b=M3/joP1sL5i4VC+DiGk6eSwE4i74r38zm2hpp0JujclUNhl+Lv2yBM7IdqA1+Ntw6RaUsVY1IQWyvsdJw0qzokLlGw1udJVBtd5RjGOyASce6SKhNnm12l1+R/EWMaPYvw5pgO+veizbg8xcO7tE2AM6zEcumoaQkgl9x/tymXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711478789; c=relaxed/simple;
-	bh=nSLlOmzfA7Cm3nJYUHKzPufzNumVqrnn2odB+zqlAmg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s9A0VqRxzoNJfRGQfUCljpu/Tom7ZBvCOi/+KRBKokJrf+R5fiB/JgkyNIawyFODNmgD6ZJPve2byEMAJukTZIGV9ok0b8gPslhDMiaYeDdHP8D6/VuE8TuLuB++Dq3Wf1Kkus1pidASqS0cR45IewpelC7D0AM/ma9rF0ZSfU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Dgh2WF0l; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1711478831; c=relaxed/simple;
+	bh=YzMmQkuUIRgzFFQAkctpRHoD6snLv9IpyoM7txuGVCE=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=nC4wSahpj7ERHqLFcqIPl9D08iOKJKpmIMFSFKfj7bxbnuKjrNF3v3azzIOtQtQepVMjffhmCxw/4SwGq+iPCWd91tFOqGTq+xeL4p1/JGwTO6JYzqyIKmklkcRmvbe2DHjcM/lnYe/gxwoaRfYSuzVAMhXGVwM82fnB+V8RLSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zH5cC2ZK; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6e694337fffso815464b3a.1
-        for <io-uring@vger.kernel.org>; Tue, 26 Mar 2024 11:46:26 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-55b5a37acb6so1075441a12.0
+        for <io-uring@vger.kernel.org>; Tue, 26 Mar 2024 11:47:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711478786; x=1712083586; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711478828; x=1712083628; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oy1+wEsVZVxa1c5Jv66XkxfdSyCZlLPbJeIh1zOl9gM=;
-        b=Dgh2WF0lBY+6XYVXp5N+hOdE49Lo2j2i1ILjKBunRxC8xVr5mJzu3yjOVEb8Z1va4y
-         XMvo2Agv9xCfZQpDS44yuw4lKq05/+Lvy/sfPP383BBKe14MM9EFq7H22qHD8wlAwla3
-         /JDjEsTumBYAGYtIg3YBeCUWKVHL94/78YKYJ4q4/pz27bYUhaSVKLcPuPUENlD4df3h
-         EFNArsmFZxYcwoJrhjuEfn8jJENbzq587zxRNzTZLBNLEIeGRUa9wQZNG2KUXdNHnGNE
-         sAIVYR8GmBfRun4s8to6L6HCpevN5YBKh+6nCQRTnrQuCLOgHEy0xO7MMZtwN1YKS85f
-         vl9g==
+        bh=yUVfQcfvwRh08AV05NkzC7lSSdaV8TwHEOpjUa0+Vxs=;
+        b=zH5cC2ZK8Ju3c+H+H08pnEK0H3ssvvkf9iowHr+4uUqYR5UNHv3VkziZIhkKfdQAw/
+         eYAEVG133/ZDiQZ+BRpC4fibS7vnkWrHFgvnIT8iXFNj/ERBQKorcK5H5UvZDjQHEu89
+         ZTPfNSPU6L5DdBgkkB6zmngBlVklZ6HWjbQHLHMqWD7H1RPKu0f+l8CSkQpm/YQt1JOg
+         nxga6fGNZWNQyAjnh3JLJoUc4/e6sjrZ7+3DegSRo/hG4k9DdTFqlOecRc28sz1hne1Z
+         BN5jl8+enmbv9X2RFbWi4ExGSudy5tFBk2veXXT8EveveMx05q7A9JzVgFQgfx3L2LUN
+         nLQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711478786; x=1712083586;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oy1+wEsVZVxa1c5Jv66XkxfdSyCZlLPbJeIh1zOl9gM=;
-        b=opOBieKhN5+aIYJfOAOTk+iELTPXHbAZ9TDklrekvQTZ4/aziKjXqZcLzgEqxqi8o4
-         CW9EAGmU0G4Pqe94AP8ccZvDm+l+5p0o9XTgn5TCwIObIYZMjjeoVCDshYdgZkSSJdMW
-         o3EEUUWBE8bY3Cv4Yddt4KRbHOYQ267l6cN3cftjuGnWq5FHsAZt6rvkf4ePP1ejE+yY
-         bvm8oZXze+iAfkIjsBrUW2uB2Il1TdpdfqklclENN2shTgzhILnMni5nK/b3+1zmmrGM
-         7G5N8JX43PYNxqFgen1qokhPasmOu8BAIpSru89E8WEGT35bue2pIohDz2lgAKwbGjfL
-         bS4w==
-X-Gm-Message-State: AOJu0YzNcjU+ASZLSZwQc91Qovqhm6hrIsl+71LQVT/PliUhtdJ1w67I
-	MmH3Cn6WA7eaLllvKyWUHuGhRehIa7hwBPZ6QvQ0qMUs/jiTHPVEs7TrWcUm512CxeR+lHYAorR
-	L
-X-Google-Smtp-Source: AGHT+IEFLjtQAVpMcxs7TIwWaepF6oirYCWqGvg7aIAUosmhFdSIiK1+p7vmmGvtEAW0rS9/Nv9RPQ==
-X-Received: by 2002:a17:902:8a83:b0:1dc:df03:ad86 with SMTP id p3-20020a1709028a8300b001dcdf03ad86mr11781585plo.2.1711478785808;
-        Tue, 26 Mar 2024 11:46:25 -0700 (PDT)
-Received: from m2max.thefacebook.com ([2620:10d:c090:600::1:163c])
-        by smtp.gmail.com with ESMTPSA id lg4-20020a170902fb8400b001dede7dd3c7sm7152833plb.111.2024.03.26.11.46.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Mar 2024 11:46:24 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/4] io_uring: switch normal task_work to io_wq_work_list
-Date: Tue, 26 Mar 2024 12:42:48 -0600
-Message-ID: <20240326184615.458820-5-axboe@kernel.dk>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240326184615.458820-1-axboe@kernel.dk>
-References: <20240326184615.458820-1-axboe@kernel.dk>
+        d=1e100.net; s=20230601; t=1711478828; x=1712083628;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yUVfQcfvwRh08AV05NkzC7lSSdaV8TwHEOpjUa0+Vxs=;
+        b=t20Li3YNhzWzfrA2yGSl9tyzkwlpW+PNIo/rxa8KzWWBUn5IOl1qbb0cTL+5sYcqDe
+         bfpOqu5q7aqRl6pxfx4BDufZ7iLZunaJ5jzxJV/aye1GnI6rUOK/bSX+BWyDJrPbHzcW
+         MCo247/GsDe6Ct0nK/g/WbC5zc/vqY2MsX9W9GUGjj59hb/kXOWM6wDQfvIVnvBh+YD8
+         0HfKArTZE8HMJAyer+F1REiW78y1fN2edcO7cm7V5Sm84Pf15JMWDlWwnfgcL0Pu8xbg
+         EweqoDi9mpxFcUcU9iyaPofUDmHet2+Ja1GDhXc6hL5kFQ1on1TyHf7wkKc0oKYtLxvg
+         OUmQ==
+X-Gm-Message-State: AOJu0YwlWKnqut3uf0JDGLUTMSFT+XXYemYcsVGtXYxD5+SouI/K7nDU
+	m27M7gAWGMeFQmyejPIm/vvAaJK9xaaQ0UL5+KJO3zOIHqTaVDKSRgNYbkqsuJ0QCP4YMkVaFKx
+	1
+X-Google-Smtp-Source: AGHT+IGU+nEe8gU1qEB9GrRPoO4YtIvq2BqUs/IIkUphrUB3avBJiQaXSJT0cw0K0+MdYV/MHdUHLg==
+X-Received: by 2002:a17:902:a601:b0:1de:ddc6:27a6 with SMTP id u1-20020a170902a60100b001deddc627a6mr11498093plq.2.1711478828536;
+        Tue, 26 Mar 2024 11:47:08 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:122::1:2343? ([2620:10d:c090:600::1:163c])
+        by smtp.gmail.com with ESMTPSA id 13-20020a170902c20d00b001dd82855d47sm7151084pll.265.2024.03.26.11.47.07
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Mar 2024 11:47:08 -0700 (PDT)
+Message-ID: <f0362cb9-f69c-4152-9299-98ee2213e49c@kernel.dk>
+Date: Tue, 26 Mar 2024 12:47:07 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/poll: shrink alloc cache size to 32
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This concludes the transition, now all times of task_work are using the
-same mechanism.
+This should be plenty, rather than the default of 128, and matches what
+we have on the rsrc and futex side as well.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/io_uring_types.h |  8 ++----
- io_uring/io_uring.c            | 50 ++++++++++++++++++++++------------
- io_uring/io_uring.h            |  4 +--
- io_uring/sqpoll.c              |  8 +++---
- io_uring/tctx.c                |  3 +-
- 5 files changed, 43 insertions(+), 30 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 2bc253f8147d..f46f871c09fe 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -95,7 +95,8 @@ struct io_uring_task {
- 	struct percpu_counter		inflight;
- 
- 	struct { /* task_work */
--		struct llist_head	task_list;
-+		struct io_wq_work_list	task_list;
-+		spinlock_t		task_lock;
- 		struct callback_head	task_work;
- 	} ____cacheline_aligned_in_smp;
- };
-@@ -561,10 +562,7 @@ enum {
- typedef void (*io_req_tw_func_t)(struct io_kiocb *req, struct io_tw_state *ts);
- 
- struct io_task_work {
--	union {
--		struct io_wq_work_node		node;
--		struct llist_node		llist_node;
--	};
-+	struct io_wq_work_node		node;
- 	io_req_tw_func_t		func;
- };
- 
+---
+
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 8d7138eaa921..e12b518e0b84 100644
+index d300362078a5..40a98f6424ab 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -1134,17 +1134,17 @@ static void ctx_flush_and_put(struct io_ring_ctx *ctx, struct io_tw_state *ts)
-  * If more entries than max_entries are available, stop processing once this
-  * is reached and return the rest of the list.
-  */
--struct llist_node *io_handle_tw_list(struct llist_node *node,
--				     unsigned int *count,
--				     unsigned int max_entries)
-+struct io_wq_work_node *io_handle_tw_list(struct io_wq_work_node *node,
-+					  unsigned int *count,
-+					  unsigned int max_entries)
- {
- 	struct io_ring_ctx *ctx = NULL;
- 	struct io_tw_state ts = { };
+@@ -307,7 +307,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	INIT_HLIST_HEAD(&ctx->io_buf_list);
+ 	ret = io_alloc_cache_init(&ctx->rsrc_node_cache, IO_NODE_ALLOC_CACHE_MAX,
+ 			    sizeof(struct io_rsrc_node));
+-	ret |= io_alloc_cache_init(&ctx->apoll_cache, IO_ALLOC_CACHE_MAX,
++	ret |= io_alloc_cache_init(&ctx->apoll_cache, IO_POLL_ALLOC_CACHE_MAX,
+ 			    sizeof(struct async_poll));
+ 	ret |= io_alloc_cache_init(&ctx->netmsg_cache, IO_ALLOC_CACHE_MAX,
+ 			    sizeof(struct io_async_msghdr));
+diff --git a/io_uring/poll.h b/io_uring/poll.h
+index 5c240f11069a..b0e3745f5a29 100644
+--- a/io_uring/poll.h
++++ b/io_uring/poll.h
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
  
- 	do {
--		struct llist_node *next = node->next;
-+		struct io_wq_work_node *next = node->next;
- 		struct io_kiocb *req = container_of(node, struct io_kiocb,
--						    io_task_work.llist_node);
-+						    io_task_work.node);
- 
- 		if (req->ctx != ctx) {
- 			ctx_flush_and_put(ctx, &ts);
-@@ -1170,15 +1170,20 @@ struct llist_node *io_handle_tw_list(struct llist_node *node,
- 
- static __cold void io_fallback_tw(struct io_uring_task *tctx, bool sync)
- {
--	struct llist_node *node = llist_del_all(&tctx->task_list);
- 	struct io_ring_ctx *last_ctx = NULL;
-+	struct io_wq_work_node *node;
- 	struct io_kiocb *req;
-+	unsigned long flags;
++#define IO_POLL_ALLOC_CACHE_MAX 32
 +
-+	spin_lock_irqsave(&tctx->task_lock, flags);
-+	node = tctx->task_list.first;
-+	INIT_WQ_LIST(&tctx->task_list);
-+	spin_unlock_irqrestore(&tctx->task_lock, flags);
- 
- 	while (node) {
--		unsigned long flags;
- 		bool do_wake;
- 
--		req = container_of(node, struct io_kiocb, io_task_work.llist_node);
-+		req = container_of(node, struct io_kiocb, io_task_work.node);
- 		node = node->next;
- 		if (sync && last_ctx != req->ctx) {
- 			if (last_ctx) {
-@@ -1202,22 +1207,24 @@ static __cold void io_fallback_tw(struct io_uring_task *tctx, bool sync)
- 	}
- }
- 
--struct llist_node *tctx_task_work_run(struct io_uring_task *tctx,
--				      unsigned int max_entries,
--				      unsigned int *count)
-+struct io_wq_work_node *tctx_task_work_run(struct io_uring_task *tctx,
-+					   unsigned int max_entries,
-+					   unsigned int *count)
- {
--	struct llist_node *node;
-+	struct io_wq_work_node *node;
- 
- 	if (unlikely(current->flags & PF_EXITING)) {
- 		io_fallback_tw(tctx, true);
- 		return NULL;
- 	}
- 
--	node = llist_del_all(&tctx->task_list);
--	if (node) {
--		node = llist_reverse_order(node);
-+	spin_lock_irq(&tctx->task_lock);
-+	node = tctx->task_list.first;
-+	INIT_WQ_LIST(&tctx->task_list);
-+	spin_unlock_irq(&tctx->task_lock);
-+
-+	if (node)
- 		node = io_handle_tw_list(node, count, max_entries);
--	}
- 
- 	/* relaxed read is enough as only the task itself sets ->in_cancel */
- 	if (unlikely(atomic_read(&tctx->in_cancel)))
-@@ -1229,8 +1236,8 @@ struct llist_node *tctx_task_work_run(struct io_uring_task *tctx,
- 
- void tctx_task_work(struct callback_head *cb)
- {
-+	struct io_wq_work_node *ret;
- 	struct io_uring_task *tctx;
--	struct llist_node *ret;
- 	unsigned int count = 0;
- 
- 	tctx = container_of(cb, struct io_uring_task, task_work);
-@@ -1284,9 +1291,16 @@ static void io_req_normal_work_add(struct io_kiocb *req)
- {
- 	struct io_uring_task *tctx = req->task->io_uring;
- 	struct io_ring_ctx *ctx = req->ctx;
-+	unsigned long flags;
-+	bool was_empty;
-+
-+	spin_lock_irqsave(&tctx->task_lock, flags);
-+	was_empty = wq_list_empty(&tctx->task_list);
-+	wq_list_add_tail(&req->io_task_work.node, &tctx->task_list);
-+	spin_unlock_irqrestore(&tctx->task_lock, flags);
- 
- 	/* task_work already pending, we're done */
--	if (!llist_add(&req->io_task_work.llist_node, &tctx->task_list))
-+	if (!was_empty)
- 		return;
- 
- 	if (ctx->flags & IORING_SETUP_TASKRUN_FLAG)
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index bb30a29d0e27..e1582529bc58 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -87,8 +87,8 @@ void io_req_task_queue(struct io_kiocb *req);
- void io_req_task_complete(struct io_kiocb *req, struct io_tw_state *ts);
- void io_req_task_queue_fail(struct io_kiocb *req, int ret);
- void io_req_task_submit(struct io_kiocb *req, struct io_tw_state *ts);
--struct llist_node *io_handle_tw_list(struct llist_node *node, unsigned int *count, unsigned int max_entries);
--struct llist_node *tctx_task_work_run(struct io_uring_task *tctx, unsigned int max_entries, unsigned int *count);
-+struct io_wq_work_node *io_handle_tw_list(struct io_wq_work_node *node, unsigned int *count, unsigned int max_entries);
-+struct io_wq_work_node *tctx_task_work_run(struct io_uring_task *tctx, unsigned int max_entries, unsigned int *count);
- void tctx_task_work(struct callback_head *cb);
- __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd);
- int io_uring_alloc_task_context(struct task_struct *task,
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 3983708cef5b..3a34b867d5c0 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -230,7 +230,7 @@ static bool io_sqd_handle_event(struct io_sq_data *sqd)
-  * than we were asked to process. Newly queued task_work isn't run until the
-  * retry list has been fully processed.
-  */
--static unsigned int io_sq_tw(struct llist_node **retry_list, int max_entries)
-+static unsigned int io_sq_tw(struct io_wq_work_node **retry_list, int max_entries)
- {
- 	struct io_uring_task *tctx = current->io_uring;
- 	unsigned int count = 0;
-@@ -246,11 +246,11 @@ static unsigned int io_sq_tw(struct llist_node **retry_list, int max_entries)
- 	return count;
- }
- 
--static bool io_sq_tw_pending(struct llist_node *retry_list)
-+static bool io_sq_tw_pending(struct io_wq_work_node *retry_list)
- {
- 	struct io_uring_task *tctx = current->io_uring;
- 
--	return retry_list || !llist_empty(&tctx->task_list);
-+	return retry_list || !wq_list_empty(&tctx->task_list);
- }
- 
- static void io_sq_update_worktime(struct io_sq_data *sqd, struct rusage *start)
-@@ -266,7 +266,7 @@ static void io_sq_update_worktime(struct io_sq_data *sqd, struct rusage *start)
- 
- static int io_sq_thread(void *data)
- {
--	struct llist_node *retry_list = NULL;
-+	struct io_wq_work_node *retry_list = NULL;
- 	struct io_sq_data *sqd = data;
- 	struct io_ring_ctx *ctx;
- 	struct rusage start;
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index c043fe93a3f2..9bc0e203b780 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -86,7 +86,8 @@ __cold int io_uring_alloc_task_context(struct task_struct *task,
- 	atomic_set(&tctx->in_cancel, 0);
- 	atomic_set(&tctx->inflight_tracked, 0);
- 	task->io_uring = tctx;
--	init_llist_head(&tctx->task_list);
-+	INIT_WQ_LIST(&tctx->task_list);
-+	spin_lock_init(&tctx->task_lock);
- 	init_task_work(&tctx->task_work, tctx_task_work);
- 	return 0;
- }
+ enum {
+ 	IO_APOLL_OK,
+ 	IO_APOLL_ABORTED,
 -- 
-2.43.0
+Jens Axboe
 
 

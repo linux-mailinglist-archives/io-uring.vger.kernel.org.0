@@ -1,75 +1,74 @@
-Return-Path: <io-uring+bounces-1252-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1253-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C543C88ECB9
-	for <lists+io-uring@lfdr.de>; Wed, 27 Mar 2024 18:35:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE95988EDF1
+	for <lists+io-uring@lfdr.de>; Wed, 27 Mar 2024 19:14:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811C329D3D1
-	for <lists+io-uring@lfdr.de>; Wed, 27 Mar 2024 17:34:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A27D29FA42
+	for <lists+io-uring@lfdr.de>; Wed, 27 Mar 2024 18:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BA6137772;
-	Wed, 27 Mar 2024 17:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4341214E2F0;
+	Wed, 27 Mar 2024 18:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="S8ZLgAyM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kRUJd+UU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E8D14C5AA
-	for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 17:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDEA14EC74
+	for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 18:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711560897; cv=none; b=LHP6asI996n5nuNjDrKI3PGrFMu5ZW/KP+Zpz7pVI9HuZH0D97CFN6elvJtr99Sb+Nfml9OfJYOpKcXzDaHY2CVyepQwFUcHpCPQAIZqb47BiqPpGv7mNyvriBNBqdAIC+JfSPIU6pOl8Gx7qeL3MN8dX+MJVHnVYJdZ9w+CEQg=
+	t=1711562991; cv=none; b=SsL8rVYKd6HOKf/EJrWIEdSDqS3YAdfDK2CtapagJ8Bmps08TdLXeTYTCZ4pkER0YI+VwIXPd88ycXy2m5SmC346E1sdLgym/9hJq3LwUnZcAqRJ12oGVrmL9KQGLupqlUvBqIbUtjqLO0u05bA7Aet7cQyKcqQBbSNRhPI21AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711560897; c=relaxed/simple;
-	bh=Mi4Qyo0CmTIxbcIb5tASsHujGumRqwyqIU/cB+pds8Q=;
+	s=arc-20240116; t=1711562991; c=relaxed/simple;
+	bh=bfOGkVr/lxalajopbdP+g1OxE/l4GQzfWebLD1pVIsc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IyMTKNLY4FZQ2pHFap9pO5Z0ix0qEtpLynI3PckJQe2BLZ5wIe61DhH07h6GT/bm6OkP6ir1ZxxPkZ/F90L3ryDxUJLIqdYywZamY9QjVXpG43niex4Yxk6MxUl4OHuriWWeYBByyjTWkiKhM+n0d/7jqkMLbPscSscCsgSwZTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=S8ZLgAyM; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1dde24ec08cso102845ad.1
-        for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 10:34:54 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=sIkbiZGh2br74DMs6O/zvWl+ZiZLr47uYt+YvZX3bVPcv7wgDENn/JmgS6D/RpVGnvwJKpO0ljtqYCw4Xl++vVA2+94d6Wau3HZ+COqXGgOd+gBnmvGBgko8nxJCbtoA5IPIdJ18MT8qgfF6WtHBvelKNE7wSn8oJf8KVzO5Vmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kRUJd+UU; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41490d05bafso1019995e9.1
+        for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 11:09:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711560894; x=1712165694; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1711562988; x=1712167788; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wk9T4tBUDgIbB9GYm0QE1l7GKckPrlTsPGwF+46eGqA=;
-        b=S8ZLgAyMEiCfdczOMI8sjQ1ydjwY0jyVk/5SSMcYzyO9XTDwFraV2UCW29/8Ueg26q
-         H8yfM0w0NDlJjG8jKZpVjWnSH94RIvlPOMuJ/1LV7ije5cU25JH2ijYXWdjMJhWFKHAm
-         ttO0ik4q+7dzGPpZK0sR5MAx6isIzaiwXT8qRy+oUsn392CAAqEXiYlPUP4xGECjCz3p
-         +6u3hK0ACyIOm7dSIAraXjMd2NHb7VRx87TPw2cJh3DezvFboj1jfl7FhRjZBhJ6FvQw
-         UmdQ0dRV3XLxkb0Hb8J0+dc1P6SmuCQlXIdFu2M0Pxpi+EdUsTf8logWNQUGCIrTGVQg
-         d/EQ==
+        bh=nGV5CjzuZD3fAHObsoLVlKsc5bWhOlYyrWXGCyaP3BQ=;
+        b=kRUJd+UUGllars5OE1kczVMhB/GKcpvvzGdS/zAcPmJraa9F084/4SOdb/HkLglyL0
+         nhbGBUYmhiSbDNIMrXk3Mt/wQkXO71qtNpB0A3X3wVqCRuYoNcS50ggcGVfsguMmUXFt
+         Nk5NnaibHce5D/fYnrlbQ2Dbh4PdciiPraYwztMOqpdZUUUDrjLlO9FceIft3opLdiXg
+         qMkqzh9nwBpixta8TWxZVl2cah27d2MENYb6/wR8NkO7Ots4V4K2A6KokvyRG33VYKfE
+         eXxENjBhKiaOYSWcbVktm1esejoDsPHDcM2ZeMYp2cTDD5L6+/4OJYr7vwpgVQNSB0/c
+         cj0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711560894; x=1712165694;
+        d=1e100.net; s=20230601; t=1711562988; x=1712167788;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wk9T4tBUDgIbB9GYm0QE1l7GKckPrlTsPGwF+46eGqA=;
-        b=cW6lAy5pDNK90Ev9PWXqRWAkP8nbODFNcGk9CPaSoNkbZYkrc14ytc4MURM7R5uf89
-         A06P8Y/H2FaR4+ZxeYiLjpqnZcTerMZzQv5GMHzHq3UBm7wpZHsVzW+61echScDc62ev
-         vHwk1K5DFJGJqsl7FBb1UovvskuIa0qhywXEwfqmHwGpLlct097/NRd7tVR3QmxYeSdI
-         UVpQK4dW+l7QNPp+fCZHpIewam6HYkGwp2dl55e1rNa6nyzTpqemrmKZyXcmnh/Cra7h
-         2qmuvuWk9BmIWEcL87nrV04sNvROaswqLvI7LxFw4OEuD/WAndRBca7cLGryUM3wKSNf
-         q5iw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+EqTeMX/Iyl8tpxDZAjsDCy8Na7Z+QXZv/yneupT4d1zwtylu6rBXiHSTysoWeQW+PPflED4JYe5JRafGwJr1KFjVIvm6wzM=
-X-Gm-Message-State: AOJu0Yzn5jYawm35BrqZuwIqtXH/frV96cyJmyjpN6M9VR2QWVxZiZAP
-	CbodNe1GG1Dn13QaSRtwH/z119N6tBb/chWgs6+xeRs6uNJmGywsPAVCwC40S/YdjB6UN7iK8LR
-	y
-X-Google-Smtp-Source: AGHT+IEcZD2VTlwISc0jX5ikcCIrzkVSrXMLKTbFsMMO4jiix3W5nLn/EQEA2m4eoJMT4B3+t0zvUg==
-X-Received: by 2002:a17:902:ee52:b0:1e0:c887:f938 with SMTP id 18-20020a170902ee5200b001e0c887f938mr359323plo.3.1711560893700;
-        Wed, 27 Mar 2024 10:34:53 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:122::1:2343? ([2620:10d:c090:600::1:bb1e])
-        by smtp.gmail.com with ESMTPSA id o21-20020a170902779500b001e132fe4cabsm1839174pll.88.2024.03.27.10.34.52
+        bh=nGV5CjzuZD3fAHObsoLVlKsc5bWhOlYyrWXGCyaP3BQ=;
+        b=btnSNy37r2IM6dbbdMO/NgMSq5mqDISa0kwZFeZs+DP/v0Bo/k3hD5O4yWFI/VjaHT
+         cG2PwzgKaXQIA0f6z+ttQ3NvgYKvXDHRuqBN3/6PCFZGAJTetUmsz0bB0J/lrEEFE0MN
+         3l4mKsQHCkNqfvLk0BbYToTIIeBNAA7ylFMe0PvzjrxqBm/U0E5JV+c6IhEQ8kcjMRpb
+         KDo34rpqA39SuIif1DDUO7bF5rGlQJUZ6OeOtAKuM22EgQVViFFuZCWlFzTqdmG3kQWA
+         f7RahHtBkOqXd/2by060SV3Kz/IDUdCSaYov3nQ5yRCdDgFJoEY2CkXQHsU/NEQaC0x4
+         8lvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDOP+XceR2+RdHpY1CM/Bf9eGi1aOYdiUvECDLLsJ8N8wVwAAe4jU7F1InQ0KZeDu82jFthcEzlXr1HbBp0sFHcbmSwi3lkw8=
+X-Gm-Message-State: AOJu0YxH3BTWgRgFT3X4fztx9sG2YsvOih53FYttl6CxCFphPczcklWO
+	Vl4G3hdm5HxgqsPy38NX3NKuaYTDdK33dWy1VS5b/mmCMTnjnQlG5yrPztwJ
+X-Google-Smtp-Source: AGHT+IGo9thdM1lAE4p7wf5oZk10zXTBUSALYe1HC2FUQUDT60wzm4/+yb/KQZu92rGOACa2WXSO5Q==
+X-Received: by 2002:adf:f0c5:0:b0:341:be17:2554 with SMTP id x5-20020adff0c5000000b00341be172554mr723482wro.36.1711562987786;
+        Wed, 27 Mar 2024 11:09:47 -0700 (PDT)
+Received: from [192.168.8.100] ([85.255.233.105])
+        by smtp.gmail.com with ESMTPSA id cl1-20020a5d5f01000000b0033e72e104c5sm14624081wrb.34.2024.03.27.11.09.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Mar 2024 10:34:53 -0700 (PDT)
-Message-ID: <95254b07-e5bc-4e63-9ff8-93848d9f87ba@kernel.dk>
-Date: Wed, 27 Mar 2024 11:34:52 -0600
+        Wed, 27 Mar 2024 11:09:47 -0700 (PDT)
+Message-ID: <38203eac-f4b9-42e3-b9cd-1d42902c1850@gmail.com>
+Date: Wed, 27 Mar 2024 18:04:22 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,52 +76,105 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] io_uring: switch deferred task_work to an
- io_wq_work_list
+Subject: Re: [PATCHSET 0/4] Use io_wq_work_list for task_work
 Content-Language: en-US
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <20240326184615.458820-1-axboe@kernel.dk>
- <20240326184615.458820-3-axboe@kernel.dk>
- <22f87633-9efa-4cd2-ab5d-e6d225b28ad5@gmail.com>
- <7662a22e-caeb-4ffd-a4ee-482ff809e628@kernel.dk>
- <bb1b7259-5112-4c9b-a5f4-b5d9d95cfe68@kernel.dk>
- <24b6c05a-dc61-48ca-a359-66910a113ec5@gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <24b6c05a-dc61-48ca-a359-66910a113ec5@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+ <03e57f18-1565-46a4-a6b1-d95be713bfb2@gmail.com>
+ <88493204-8801-4bbc-b8dc-c483e59e999e@kernel.dk>
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <88493204-8801-4bbc-b8dc-c483e59e999e@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/27/24 11:28 AM, Pavel Begunkov wrote:
-> On 3/27/24 16:37, Jens Axboe wrote:
->> On 3/27/24 9:45 AM, Jens Axboe wrote:
->>>> smp_mb(), see the comment below, and fwiw "_after_atomic" would not
->>>> work.
+On 3/27/24 16:36, Jens Axboe wrote:
+> On 3/27/24 7:33 AM, Pavel Begunkov wrote:
+>> On 3/26/24 18:42, Jens Axboe wrote:
+>>> Hi,
 >>>
->>> For this one, I think all we need to do is have the wq_list_empty()
->>> check be fully stable. If we read:
+>>> This converts the deferred, normal, and fallback task_work to use a
+>>> normal io_wq_work_list, rather than an llist.
 >>>
->>> nr_wait = atomic_read(&ctx->cq_wait_nr);
->>>
->>> right before a waiter does:
->>>
->>> atomic_set(&ctx->cq_wait_nr, foo);
->>> set_current_state(TASK_INTERRUPTIBLE);
->>>
->>> then we need to ensure that the "I have work" check in
->>> io_cqring_wait_schedule() sees the work. The spin_unlock() has release
->>> semantics, and the current READ_ONCE() for work check sbould be enough,
->>> no?
+>>> The main motivation behind this is to get rid of the need to reverse
+>>> the list once it's deleted and run. I tested this basic conversion of
+>>> just switching it from an llist to an io_wq_work_list with a spinlock,
+>>> and I don't see any benefits from the lockless list. And for cases where
+>>> we get a bursty addition of task_work, this approach is faster as it
+>>> avoids the need to iterate the list upfront while reversing it.
 >>
->> To answer my own question - no, it's not enough. Let me think about this
->> a bit.
+>> I'm curious how you benchmarked it including accounting of irq/softirq
+>> where tw add usually happens?
 > 
-> Right, to my knowledge release does nothing for write; read;
-> ordering, and all ops after can leak before the barrier.
+> Performance based and profiles. I tested send zc with small packets, as
+> that is task_work intensive and exhibits the bursty behavior I mentioned
+> in the patch / cover letter. And normal storage IO, IRQ driven.
 
-Yeah, it needs an smp_mb() before that atomic_read() on the task work
-add side.
+I assume IRQs are firing on random CPUs then unless you configured
+it. In which case it should be bouncing of the cacheline + that
+peeking at the prev also needs to fetch it from RAM / further caches.
+Unless there is enough of time for TCP to batch them.
+
+> For send zc, we're spending about 2% of the time doing list reversal,
+> and I've seen as high as 5 in other testing. And as that test is CPU
+
+I've seen similar before, but for me it was overhead shifted from
+__io_run_local_work() fetching requests into reverse touching all
+of them. There should be a change in __io_run_local_work()
+total cycles (incl children) then I assume
+
+> bound, performance is up about 2% as well.
+
+Did you count by any chance how many items there was in the
+list? Average or so
+
+> With the patches, task work adding accounts for about 0.25% of the
+> cycles, before it's about 0.66%.
+
+i.e. spinlock is faster. How come? Same cmpxchg in spinlock
+with often cache misses, but with irq on/off on top. The only
+diff I can remember is that peek into prev req.
+
+> We're spending a bit more time in __io_run_local_work(), but I think
+> that's deceptive as we have to disable/enable interrupts now. If an
+> interrupt triggers on the unlock, that time tends to be attributed there
+> in terms of cycles.
+
+Hmm, I think if run_local_work runtime doesn't change you'd
+statistically get same number of interrupts "items" hitting
+it, but the would be condensed more to irq-off. Or are you
+accounting for some irq delivery / hw differences?
+
+>> One known problem with the current list approach I mentioned several
+>> times before is that it peeks at the previous queued tw to count them.
+>> It's not nice, but that can be easily done with cmpxchg double. I
+>> wonder how much of an issue is that.
+> 
+> That's more of a wart than a real issue though, but we this approach
+
+Assuming tw add executing on random CPUs, that would be additional
+fetch every tw add, I wouldn't disregard it right away.
+
+> obviously doesn't do that. And then we can drop the rcu section around
+> adding local task_work. Not a huge deal, but still nice.
+
+I don't see how. After you queue the req it might be immediately
+executed dropping the ctx ref, which was previously protecting ctx.
+The rcu section protects ctx.
+
+>>> And this is less code and simpler, so I'd prefer to go that route.
+>>
+>> I'm not sure it's less code, if you return optimisations that I
+>> believe were killed, see comments to patch 2, it might turn out to
+>> be even bulkier and not that simpler.
+> 
+> It's still considerably less:
+> 
+>   3 files changed, 59 insertions(+), 84 deletions(-)
+> 
+> thought that isn't conclusive by itself, as eg io_llist_xchg() goes away
+> which has some comments. But I do think the resulting code is simpler
+> and more straight forward.
 
 -- 
-Jens Axboe
-
+Pavel Begunkov
 

@@ -1,73 +1,74 @@
-Return-Path: <io-uring+bounces-1269-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1270-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10C988F333
-	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 00:32:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594B988F347
+	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 00:39:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 409D2B2137B
-	for <lists+io-uring@lfdr.de>; Wed, 27 Mar 2024 23:32:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AFE11F286C7
+	for <lists+io-uring@lfdr.de>; Wed, 27 Mar 2024 23:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB5112E5B;
-	Wed, 27 Mar 2024 23:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BF2153578;
+	Wed, 27 Mar 2024 23:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="B1grv3zb"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VeDqzRFh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30CB152500
-	for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 23:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E91143C4D
+	for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 23:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711582346; cv=none; b=nuaxQYcTDmLhL8sbXGXkRDQcBFKpKXe+EDL8mAHm5vqA3Hr5elm9oQRxMBv+3GMOU8s+Di/7pws90XsorDzedAwDrQDmsqBd5lBU3xPNP6Ry1SuLVVN32ggar+yDTxKrKQxagLUUNorwoVckjPvs8Sf1CuyRkCeL5mM+bBiwZ7Y=
+	t=1711582737; cv=none; b=Kban8udhPCF6pnLkwZJ0BGtPRhZEyo4o8Yl+L/HricS78t/EWw0DaylUH8VM5wsYK3huEd7yKXU9XhSWOLWYlwGIQx2XZ3/48iv+c0sy0W+z/2AA5WdTm7ZSpVnW/l9TXImCsY3pasUTafwRTrsyvVaP6Rs6na7sH1L4XB2vIyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711582346; c=relaxed/simple;
-	bh=VmxtqgUrzE93Q/Wz1sL1pFYQgikUHYUnYZlsNQquL8A=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Kk4vP1jO6kLUODGv5FuDxDGXVHw/IEi26+GyoYD/iK09omUGJ4Iw+/ABcK1V24nqcTrhUzkrEmMMXlCnWOolUPCnbYD+UgjP/NxvMr6Sxv92GgGuL7QQ7eV11qfYp7125pw0bWGvIOteGl5cCHivKcgLyRaC5YI5J9STTIl14Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=B1grv3zb; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-368a603adc3so1242195ab.1
-        for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 16:32:23 -0700 (PDT)
+	s=arc-20240116; t=1711582737; c=relaxed/simple;
+	bh=wvSXB0knqAqJBrImaqadLtzC8HJNPGtvjBIlPI5oI8o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qJaqOHaRURRDBm0RYh64ZGJKf90djJUTSanrVXM4OyjsFJdR7iyiU7cgdz/vs1Jf3y+Y+fBb8rmt1T29nqwQMrYhyRIgDBD6CRGPI7SighkNvjENkHOYHiZK32vlLpK6OlmFK0O7Dd8p4Nj9/KxE0hg2sMY8ED6D8i0wVPcwN9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VeDqzRFh; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6e6c38be762so59381b3a.1
+        for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 16:38:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1711582343; x=1712187143; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711582734; x=1712187534; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Cd+bLnuIrzo5BL75P35HbQa9bf0AJcROp8J6EUCroDE=;
-        b=B1grv3zbrHDFhas79oUEMfE+jABAzqxXHgZkTFxsZQFfSG1qT0Jj76d/lkCi3Dchpq
-         WJ2DKxmmLCoat7rmbC004lGFGIwtEIb4a37kjFiXvXVyE/AN95Ir/RguAps4Isr12wbT
-         FlM/S+41c2lRWUnz3sMidTo3+uoMn3HcrMr34uVlJTj62/ElGo/VUf9K7JJshhT/AGwY
-         b4QfyD4/0LMsqA+iQPEu9MOunaxKxL40RLBaJc6Twmpy2AbJAzwsYCrJTi/LwatswPqT
-         qcwzYyjpASBWwQAyHusG3vupyX/zMRb12asi/c1yEbf6GIcMPzRN0YLqzOdUfi3Wleih
-         CtFw==
+        bh=f7kWfsxPD7iY+Qsk1bIPND6pnpaTaGNq4jBESxEEGlg=;
+        b=VeDqzRFhgX2vuIjrq7dPqdy4oPergAY+qJ4T04IZ6iQ2EY9PVDndbwGhCK26kWBSeX
+         cYm2fWukUi6pvsf6SJ5I9eS4GYtyarstu/s0EZBP11Wh3HaBcPXB9b16zK8HyGU5AbD4
+         YKU306qs0Yj/lABbE3He4u8e6LhbYmFKx6MrBchaX7GPLfnAxCC4tq6kEI1l2WMVM371
+         cYP5ALUzW6cYHFj9q7eaHYOACONd8gmi9FGJO1DryUk4xmxe8ZupgoooTUdR+vissWlx
+         Alhgc+yQtiTaomDPoOLwbEsL6kVoMqnr8i/C3xwbZMfZWh6HQps5+/UlS2nnVrG7rM0o
+         n3GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711582343; x=1712187143;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+        d=1e100.net; s=20230601; t=1711582734; x=1712187534;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cd+bLnuIrzo5BL75P35HbQa9bf0AJcROp8J6EUCroDE=;
-        b=Qd7kv+mrhYJtbJh+st0vT8vmuA6vgEeS7OwLJoH8zymVc7TU56m3o4oM8Gdi2HIrwS
-         zb+RZ+nMFrVz9RKt5eTjKrVb/o2ia/LvA6GN13IPucfgcvqRyFh9HKtoA2TU5zqvpE6D
-         82oVwSSM3Rr/GN/Zrk8SESq5yNeLzIQBUZQBc0yNP1Or34rStjhhpceMpPgTMTNkeEPH
-         dUXwfyRXVYlyRSnImbNC/9Vd2ml1SMhLooW1PukZfUp9fdtK4LUFzMAbhr5nKDYuKQUa
-         8xEpJjoV4fZLsIKok1FbXBpRFiO2aj4JtlQ5tpx0MxysYMJCmRmh39psugLV3i2Xi7kf
-         9VXg==
-X-Gm-Message-State: AOJu0YyFrRnqzkPwmeljhVbHafPQQOHpOy9R4pmAjHbpasSlqWeNQi2B
-	lf0JlFhH82spWRalv2uQwfiRVv+gtd68wApwwgiWRFYhPNJcL8TaPViJV79vC2g=
-X-Google-Smtp-Source: AGHT+IE03vHmTzxQG9QLpdQbmSqGVQrY7PdAbqyHjUU+tR8mWE3FVtLUmfvgcJCOs/V/EwuTnJXiBA==
-X-Received: by 2002:a92:511:0:b0:366:93eb:fbaf with SMTP id q17-20020a920511000000b0036693ebfbafmr1468432ile.11.1711582343034;
-        Wed, 27 Mar 2024 16:32:23 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1151:15:40a:5eb5:8916:33a4? ([2620:10d:c090:500::7:1d1f])
-        by smtp.gmail.com with ESMTPSA id bw28-20020a056a02049c00b005dcaa45d87esm53837pgb.42.2024.03.27.16.32.21
+        bh=f7kWfsxPD7iY+Qsk1bIPND6pnpaTaGNq4jBESxEEGlg=;
+        b=fZNGf+eTkWP58kJenxUGRIr5yu2aMWhex4mdtRb75Z4+79MuwJetBARcWSw3xf2fLU
+         GaonXwU5stH8ArAEAvHCzRKNDZKmrj+h50D3HNC+Hgt44S4VnblKLY3RQ3Ws9e0Eo3d8
+         vN1TN8oTTinoOBoImFdA43ndicnVc/00aaisuuNsWfmhXE2vA+01RsRexMyOr3lStbrh
+         YM5mjlyjMNlNZ01c9yntmXnF9eCR2clsrPTfXWUj8PRwffOfZ0D2orp1jSOwY2L9WR+C
+         YUJylSvaSAomL26LVuzyKvsvdVJYkHTLfdICMSG0Ng2YuIIP5LLiZDI8/beWTUSxe8z+
+         p6qg==
+X-Gm-Message-State: AOJu0YwCKDnZIeNmBB07xptavhfjVtAXvLcnCbvc6ZbvlWldFefPXj03
+	3XdQcBl6RFpHAL9QC9xy20qWGbb4qJFvecxKsW4oBroUWaq/cQ00g1ZvMZxB0q3MMFir/MV2Al4
+	K
+X-Google-Smtp-Source: AGHT+IHwY0YLe5mCPNW29nUnkv+uRYRKxNmvmxuH4NeFNFAYmSKwthByc0hwtOYhGcsYoPv6+MVSSg==
+X-Received: by 2002:a05:6a00:2d2a:b0:6ea:7f2e:633 with SMTP id fa42-20020a056a002d2a00b006ea7f2e0633mr1469020pfb.2.1711582734126;
+        Wed, 27 Mar 2024 16:38:54 -0700 (PDT)
+Received: from [192.168.201.244] ([50.234.116.5])
+        by smtp.gmail.com with ESMTPSA id c6-20020a62e806000000b006e6c5cbfff7sm101638pfi.169.2024.03.27.16.38.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Mar 2024 16:32:22 -0700 (PDT)
-Message-ID: <78e206c6-111f-4482-83ba-cbdd5ad8b61e@davidwei.uk>
-Date: Wed, 27 Mar 2024 16:32:21 -0700
+        Wed, 27 Mar 2024 16:38:53 -0700 (PDT)
+Message-ID: <aa6530b9-6c85-44ef-b3d7-8017655725c5@kernel.dk>
+Date: Wed, 27 Mar 2024 17:38:52 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -75,42 +76,66 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] io_uring/rw: Get rid of flags field in struct
- io_rw
-Content-Language: en-GB
-From: David Wei <dw@davidwei.uk>
+Subject: Re: [RFC PATCH 0/4] Read/Write with meta buffer
+Content-Language: en-US
 To: Kanchan Joshi <joshi.k@samsung.com>, martin.petersen@oracle.com,
- axboe@kernel.dk, kbusch@kernel.org, hch@lst.de
+ kbusch@kernel.org, hch@lst.de
 Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
- anuj1072538@gmail.com, Anuj Gupta <anuj20.g@samsung.com>
-References: <20240322185023.131697-1-joshi.k@samsung.com>
- <CGME20240322185731epcas5p20fc525f793a537310f7b3ae5ba5bc75b@epcas5p2.samsung.com>
- <20240322185023.131697-2-joshi.k@samsung.com>
- <c31b0c71-dc6a-4481-b2d2-c41f5cf6371f@davidwei.uk>
-In-Reply-To: <c31b0c71-dc6a-4481-b2d2-c41f5cf6371f@davidwei.uk>
+ anuj1072538@gmail.com
+References: <CGME20240322185729epcas5p350c5054b5b519a6aa9d1b35ba3709563@epcas5p3.samsung.com>
+ <20240322185023.131697-1-joshi.k@samsung.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240322185023.131697-1-joshi.k@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024-03-27 16:30, David Wei wrote:
-> On 2024-03-22 11:50, Kanchan Joshi wrote:
->> From: Anuj Gupta <anuj20.g@samsung.com>
->>
->> Get rid of the flags field in io_rw. Flags can be set in kiocb->flags
->> during prep rather than doing it while issuing the I/O in io_read/io_write.
->>
->> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
->> ---
->>  io_uring/rw.c | 22 +++++++++++-----------
->>  1 file changed, 11 insertions(+), 11 deletions(-)
+On 3/22/24 12:50 PM, Kanchan Joshi wrote:
+> This patchset is aimed at getting the feedback on a new io_uring
+> interface that userspace can use to exchange meta buffer along with
+> read/write.
 > 
-> This patch looks fine and is a no-op on its own, but I think there is a
-> subtle semantic change. If the rw_flags is invalid (i.e.
-> kiocb_set_rw_flags() returns an err) and prep() fails, then the
-> remaining submissions won't be submitted unless IORING_SETUP_SUBMIT_ALL
-> is set.
+> Two new opcodes for that: IORING_OP_READ_META and IORING_OP_WRITE_META.
+> The leftover space in the SQE is used to send meta buffer pointer
+> and its length. Patch #2 for this.
 > 
-> Currently if kiocb_set_rw_flags() fails in prep(), only the request will
-> fail.
+> The interface is supported for block direct IO. Patch #4 for this.
+> Other two are prep patches.
+> 
+> It has been tried not to touch the hot read/write path, as much as
+> possible. Performance for non-meta IO is same after the patches [2].
+> There is some code in the cold path (worker-based async)
+> though.
 
-Sorry, that should say fails in _issue()_.
+This patchset should look cleaner if you rebase it on top of the current
+for-6.10/io_uring branch, as it gets rid of the async nastiness. Since
+that'll need doing anyway, could you repost a v2 where it's rebased on
+top of that?
+
+Also in terms of the cover letter, would be good with a bit more of a
+description of what this enables. It's a bit scant on detail on what
+exactly this gives you.
+
+> taskset -c 2,5 t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -n2 -r4 /dev/nvme0n1 /dev/nvme1n1
+> submitter=1, tid=2453, file=/dev/nvme1n1, node=-1
+> submitter=0, tid=2452, file=/dev/nvme0n1, node=-1
+> polled=1, fixedbufs=1, register_files=1, buffered=0, QD=128
+> Engine=io_uring, sq_ring=128, cq_ring=128
+> IOPS=10.02M, BW=4.89GiB/s, IOS/call=31/31
+> IOPS=10.04M, BW=4.90GiB/s, IOS/call=31/31
+> 
+> With this:
+> taskset -c 2,5 t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1 -n2 -r4 /dev/nvme0n1 /dev/nvme1n1
+> submitter=1, tid=2453, file=/dev/nvme1n1, node=-1
+> submitter=0, tid=2452, file=/dev/nvme0n1, node=-1
+> polled=1, fixedbufs=1, register_files=1, buffered=0, QD=128
+> Engine=io_uring, sq_ring=128, cq_ring=128
+> IOPS=10.02M, BW=4.89GiB/s, IOS/call=31/31
+> IOPS=10.04M, BW=4.90GiB/s, IOS/call=31/31
+
+Not that I don't believe you, but that looks like you pasted the same
+stuff in there twice? It's the exact same perf and pids.
+
+-- 
+Jens Axboe
+
 

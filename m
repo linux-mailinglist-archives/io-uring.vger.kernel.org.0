@@ -1,74 +1,75 @@
-Return-Path: <io-uring+bounces-1251-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1252-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2DC88ECB4
-	for <lists+io-uring@lfdr.de>; Wed, 27 Mar 2024 18:33:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C543C88ECB9
+	for <lists+io-uring@lfdr.de>; Wed, 27 Mar 2024 18:35:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53FED29C9F1
-	for <lists+io-uring@lfdr.de>; Wed, 27 Mar 2024 17:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811C329D3D1
+	for <lists+io-uring@lfdr.de>; Wed, 27 Mar 2024 17:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B36136E1C;
-	Wed, 27 Mar 2024 17:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BA6137772;
+	Wed, 27 Mar 2024 17:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTo0AkpA"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="S8ZLgAyM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51911304A6
-	for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 17:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E8D14C5AA
+	for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 17:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711560809; cv=none; b=KgFpCoevMVP8CMQoayWUWtAGKbFVLcwZJtJBZhXFv4flQPJDCMM68p+UxHnga8PxYidwOMoK8QK/e/3uwssEeQYl/Dsk1BoJ2IXGRZo2oG6sZzT1UCz3eTYpTYAIG7ZxTnzs/ARM+RgFxvyCG04pdfC999+bjotGfiMBttzei3o=
+	t=1711560897; cv=none; b=LHP6asI996n5nuNjDrKI3PGrFMu5ZW/KP+Zpz7pVI9HuZH0D97CFN6elvJtr99Sb+Nfml9OfJYOpKcXzDaHY2CVyepQwFUcHpCPQAIZqb47BiqPpGv7mNyvriBNBqdAIC+JfSPIU6pOl8Gx7qeL3MN8dX+MJVHnVYJdZ9w+CEQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711560809; c=relaxed/simple;
-	bh=7VBVjIdrs24qAFMgQCtHG4Q2ng2vs607l6fKUnWpeek=;
+	s=arc-20240116; t=1711560897; c=relaxed/simple;
+	bh=Mi4Qyo0CmTIxbcIb5tASsHujGumRqwyqIU/cB+pds8Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qglBRai9HiZlIc0/rBCz15y8c3vrhpDUZazmObbvfZAs0mrm6SG4umXODAerbuhlnFOgETat7cW3LvvvxLD8SQ4pk6etDFOJL6qeg872xBvZGcqp1V3StjDjt2JZP1i265/PKkV4VPzg62WPSWQPxH8mN26DFYCcZYJ5jythwzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTo0AkpA; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-513edc88d3cso18628e87.0
-        for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 10:33:27 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=IyMTKNLY4FZQ2pHFap9pO5Z0ix0qEtpLynI3PckJQe2BLZ5wIe61DhH07h6GT/bm6OkP6ir1ZxxPkZ/F90L3ryDxUJLIqdYywZamY9QjVXpG43niex4Yxk6MxUl4OHuriWWeYBByyjTWkiKhM+n0d/7jqkMLbPscSscCsgSwZTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=S8ZLgAyM; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1dde24ec08cso102845ad.1
+        for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 10:34:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711560806; x=1712165606; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711560894; x=1712165694; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PmUiC96l+OA+p1Q4suKq4u4+70CACXjE0+E8oaYEXJ8=;
-        b=aTo0AkpAEdLuJN3BPAltoEiE75/+Ox5F0ORInzVJGTd2zsEsAwrE+r2SD5YL12vjtR
-         HE/HoZF+o9XFKszG5mDd7WBw9tZmKm8+glRSUjDxO1WCpqYKw62hymWg07LH+Zo8k6/2
-         bBOjyDmlOIGEg1Dca4kkpbP6R7GkDy6hN+ydZsJqcWau7FZEflYNNb8q+7wr3/o7FXQ5
-         A+AS+ioKhAkNPi8IUQn3eknmTFYRiGIGsmdOu7305am/obK/jUvpqdNCVkpWtmJlrmbN
-         DA/caOVg1wWnvCdJ8UmeoeE2uW2uOd8KJLdZWNo+4raNmSULPiohIA+/NPdaCIJwoL5P
-         9j1w==
+        bh=wk9T4tBUDgIbB9GYm0QE1l7GKckPrlTsPGwF+46eGqA=;
+        b=S8ZLgAyMEiCfdczOMI8sjQ1ydjwY0jyVk/5SSMcYzyO9XTDwFraV2UCW29/8Ueg26q
+         H8yfM0w0NDlJjG8jKZpVjWnSH94RIvlPOMuJ/1LV7ije5cU25JH2ijYXWdjMJhWFKHAm
+         ttO0ik4q+7dzGPpZK0sR5MAx6isIzaiwXT8qRy+oUsn392CAAqEXiYlPUP4xGECjCz3p
+         +6u3hK0ACyIOm7dSIAraXjMd2NHb7VRx87TPw2cJh3DezvFboj1jfl7FhRjZBhJ6FvQw
+         UmdQ0dRV3XLxkb0Hb8J0+dc1P6SmuCQlXIdFu2M0Pxpi+EdUsTf8logWNQUGCIrTGVQg
+         d/EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711560806; x=1712165606;
+        d=1e100.net; s=20230601; t=1711560894; x=1712165694;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PmUiC96l+OA+p1Q4suKq4u4+70CACXjE0+E8oaYEXJ8=;
-        b=BCNam4vNBUzhVKC4bAzjPSuskXfig37g6BUuP9JRGda6ICMXAYRi/h4t46kB+Zc7zr
-         OfkYAV4EHxQGJm6e4/HCU5fnYY5h2o1v2gDq58tXi2uXQlyTE9z5b0VRzSHJprVC8TPl
-         /J2FeZVccOjGxtNPdoWLkLaByb4iYwF7zIfotS8kdZw2Onwxk0kAqqxbtM3R4L0auMl7
-         EAwPg8hqWwDzaNPNfOPBeI29P2ASQ08TMETf9ADPnDqx5H+BwdIS7OOKomBf9Zu8ci5+
-         WscQI3kIDS0SkydSGHTpu246G3JbbHwWEci+H+sn2I/X04kFpoV2YJ/gvPp/CpHffTAX
-         qafg==
-X-Forwarded-Encrypted: i=1; AJvYcCXK04vVIO0ua/QsUjeSqGanUpoZBWN8PaDuugQLYdpkdiWk/eZpZIOU+mxCLoZISRvph18lngZEHv4Ti8u3HNx84TnRcKxqvI0=
-X-Gm-Message-State: AOJu0YxnpmHQQltPSZW8UJkDvux9byZnOeQeOv4aXLk+wiUveeVZspjH
-	XGX89S2F0UXeI4Gk6hxD5pM21ZjD9U35bANfQrbobarJ/7xaV50a
-X-Google-Smtp-Source: AGHT+IGKzUChd3O7tv3ywHgqLH/9Dgn7xg8rbJBVAkDN/++IH4WiW71+XEouKKGTgbxhsiKojTt6gg==
-X-Received: by 2002:a05:6512:619:b0:515:a62a:8e3d with SMTP id b25-20020a056512061900b00515a62a8e3dmr101847lfe.11.1711560805779;
-        Wed, 27 Mar 2024 10:33:25 -0700 (PDT)
-Received: from [192.168.8.100] ([85.255.233.105])
-        by smtp.gmail.com with ESMTPSA id c5-20020adfc045000000b0033e34c53354sm15488401wrf.56.2024.03.27.10.33.25
+        bh=wk9T4tBUDgIbB9GYm0QE1l7GKckPrlTsPGwF+46eGqA=;
+        b=cW6lAy5pDNK90Ev9PWXqRWAkP8nbODFNcGk9CPaSoNkbZYkrc14ytc4MURM7R5uf89
+         A06P8Y/H2FaR4+ZxeYiLjpqnZcTerMZzQv5GMHzHq3UBm7wpZHsVzW+61echScDc62ev
+         vHwk1K5DFJGJqsl7FBb1UovvskuIa0qhywXEwfqmHwGpLlct097/NRd7tVR3QmxYeSdI
+         UVpQK4dW+l7QNPp+fCZHpIewam6HYkGwp2dl55e1rNa6nyzTpqemrmKZyXcmnh/Cra7h
+         2qmuvuWk9BmIWEcL87nrV04sNvROaswqLvI7LxFw4OEuD/WAndRBca7cLGryUM3wKSNf
+         q5iw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+EqTeMX/Iyl8tpxDZAjsDCy8Na7Z+QXZv/yneupT4d1zwtylu6rBXiHSTysoWeQW+PPflED4JYe5JRafGwJr1KFjVIvm6wzM=
+X-Gm-Message-State: AOJu0Yzn5jYawm35BrqZuwIqtXH/frV96cyJmyjpN6M9VR2QWVxZiZAP
+	CbodNe1GG1Dn13QaSRtwH/z119N6tBb/chWgs6+xeRs6uNJmGywsPAVCwC40S/YdjB6UN7iK8LR
+	y
+X-Google-Smtp-Source: AGHT+IEcZD2VTlwISc0jX5ikcCIrzkVSrXMLKTbFsMMO4jiix3W5nLn/EQEA2m4eoJMT4B3+t0zvUg==
+X-Received: by 2002:a17:902:ee52:b0:1e0:c887:f938 with SMTP id 18-20020a170902ee5200b001e0c887f938mr359323plo.3.1711560893700;
+        Wed, 27 Mar 2024 10:34:53 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:122::1:2343? ([2620:10d:c090:600::1:bb1e])
+        by smtp.gmail.com with ESMTPSA id o21-20020a170902779500b001e132fe4cabsm1839174pll.88.2024.03.27.10.34.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Mar 2024 10:33:25 -0700 (PDT)
-Message-ID: <24b6c05a-dc61-48ca-a359-66910a113ec5@gmail.com>
-Date: Wed, 27 Mar 2024 17:28:05 +0000
+        Wed, 27 Mar 2024 10:34:53 -0700 (PDT)
+Message-ID: <95254b07-e5bc-4e63-9ff8-93848d9f87ba@kernel.dk>
+Date: Wed, 27 Mar 2024 11:34:52 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -79,43 +80,49 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 2/4] io_uring: switch deferred task_work to an
  io_wq_work_list
 Content-Language: en-US
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <20240326184615.458820-1-axboe@kernel.dk>
  <20240326184615.458820-3-axboe@kernel.dk>
  <22f87633-9efa-4cd2-ab5d-e6d225b28ad5@gmail.com>
  <7662a22e-caeb-4ffd-a4ee-482ff809e628@kernel.dk>
  <bb1b7259-5112-4c9b-a5f4-b5d9d95cfe68@kernel.dk>
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <bb1b7259-5112-4c9b-a5f4-b5d9d95cfe68@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <24b6c05a-dc61-48ca-a359-66910a113ec5@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <24b6c05a-dc61-48ca-a359-66910a113ec5@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 3/27/24 16:37, Jens Axboe wrote:
-> On 3/27/24 9:45 AM, Jens Axboe wrote:
->>> smp_mb(), see the comment below, and fwiw "_after_atomic" would not
->>> work.
+On 3/27/24 11:28 AM, Pavel Begunkov wrote:
+> On 3/27/24 16:37, Jens Axboe wrote:
+>> On 3/27/24 9:45 AM, Jens Axboe wrote:
+>>>> smp_mb(), see the comment below, and fwiw "_after_atomic" would not
+>>>> work.
+>>>
+>>> For this one, I think all we need to do is have the wq_list_empty()
+>>> check be fully stable. If we read:
+>>>
+>>> nr_wait = atomic_read(&ctx->cq_wait_nr);
+>>>
+>>> right before a waiter does:
+>>>
+>>> atomic_set(&ctx->cq_wait_nr, foo);
+>>> set_current_state(TASK_INTERRUPTIBLE);
+>>>
+>>> then we need to ensure that the "I have work" check in
+>>> io_cqring_wait_schedule() sees the work. The spin_unlock() has release
+>>> semantics, and the current READ_ONCE() for work check sbould be enough,
+>>> no?
 >>
->> For this one, I think all we need to do is have the wq_list_empty()
->> check be fully stable. If we read:
->>
->> nr_wait = atomic_read(&ctx->cq_wait_nr);
->>
->> right before a waiter does:
->>
->> atomic_set(&ctx->cq_wait_nr, foo);
->> set_current_state(TASK_INTERRUPTIBLE);
->>
->> then we need to ensure that the "I have work" check in
->> io_cqring_wait_schedule() sees the work. The spin_unlock() has release
->> semantics, and the current READ_ONCE() for work check sbould be enough,
->> no?
+>> To answer my own question - no, it's not enough. Let me think about this
+>> a bit.
 > 
-> To answer my own question - no, it's not enough. Let me think about this
-> a bit.
+> Right, to my knowledge release does nothing for write; read;
+> ordering, and all ops after can leak before the barrier.
 
-Right, to my knowledge release does nothing for write; read;
-ordering, and all ops after can leak before the barrier.
+Yeah, it needs an smp_mb() before that atomic_read() on the task work
+add side.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

@@ -1,217 +1,178 @@
-Return-Path: <io-uring+bounces-1271-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1272-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D596888F374
-	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 01:17:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD82B88F470
+	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 02:18:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2D4E1C25BF6
-	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 00:17:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628D6280A71
+	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 01:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34851ED8;
-	Thu, 28 Mar 2024 00:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143421804A;
+	Thu, 28 Mar 2024 01:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZiwpSW6U";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5IgW6hGf";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZiwpSW6U";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5IgW6hGf"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Vtyh7fqg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6342E193
-	for <io-uring@vger.kernel.org>; Thu, 28 Mar 2024 00:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBFB2F5B
+	for <io-uring@vger.kernel.org>; Thu, 28 Mar 2024 01:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711585032; cv=none; b=pQUr7OZXmjKlZuyipg429YCV80fmbyovgCuXTbVYKqG++FsuCP5LuIEx07RESUz9Rq7MOA7SHKJQ2GwlXE/ZT1sTw12XHTn7mS0r52E0vgYuv2mnfIEeIuS7gWhqwl/o5qWVeWbyX/6Dn+1T4aqeoHMIurEQD0Jxr2b4Alc//RM=
+	t=1711588692; cv=none; b=tvCIkiADD+mB9HdLS0YCaLa6NCqP86AwWgGch3ygii52ufPcpfVrHk126gUFCjgcQi2qa4LGHFgo9n1eIRtxyO0o6YAtZQGKWow2oypAlEGrHQSc0FkEkS6rTt9o5hDg3lg7jpusVFtaqeV5Vr43uuE8e0axRIohAttDggqnam8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711585032; c=relaxed/simple;
-	bh=tfxQcYc97pYyLNjgIe07XrjrWc4OnWbM1yGouGfOQNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iScYgwpVEbJJxxSRmq2aGEauTPJwYUpfyfi5G1UP3M2XzGA7Tt7PT1SWZH4kpPzbbE4d4zh87e6AY1hDLuj5irUQiInY+YtaQSN2ghuKyc5ZPHSqZ3tB33djTeiIZqyf2sBtzaAzdjnGQ7YWsge93dilNJ0zDz/ERTJO+v6mpaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZiwpSW6U; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5IgW6hGf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZiwpSW6U; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5IgW6hGf; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 911001FFCF;
-	Thu, 28 Mar 2024 00:17:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1711585027; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=oPircWkxUyBo0aXsToWeKEDbkHDT4K3KdTzKoqY0VlQ=;
-	b=ZiwpSW6UbPpEehxMDLsbECSUpzui85zyAQQiY6bBFDKRaUrVNQucu5VTaG9SOfY2EBsDfp
-	mDtX4l+oUXo29mS47yM4otPg+CLodSOM9SI4RQ7sLRTyi2Ma0Bh+3kg75LZa81K4jwokeL
-	FwDUJw49b9u30rIrU2WtkqVGykqRNaA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1711585027;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=oPircWkxUyBo0aXsToWeKEDbkHDT4K3KdTzKoqY0VlQ=;
-	b=5IgW6hGfJEl5rg5RGfwkaEYukYSG0jaWu/WdX8CveBS+4cnoOqKWOHMexOo6nnhpUG4l7x
-	IUzWfIAkL5E7dnAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1711585027; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=oPircWkxUyBo0aXsToWeKEDbkHDT4K3KdTzKoqY0VlQ=;
-	b=ZiwpSW6UbPpEehxMDLsbECSUpzui85zyAQQiY6bBFDKRaUrVNQucu5VTaG9SOfY2EBsDfp
-	mDtX4l+oUXo29mS47yM4otPg+CLodSOM9SI4RQ7sLRTyi2Ma0Bh+3kg75LZa81K4jwokeL
-	FwDUJw49b9u30rIrU2WtkqVGykqRNaA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1711585027;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=oPircWkxUyBo0aXsToWeKEDbkHDT4K3KdTzKoqY0VlQ=;
-	b=5IgW6hGfJEl5rg5RGfwkaEYukYSG0jaWu/WdX8CveBS+4cnoOqKWOHMexOo6nnhpUG4l7x
-	IUzWfIAkL5E7dnAA==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 5691C13AB3;
-	Thu, 28 Mar 2024 00:17:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id xonkDgO3BGY3TwAAn2gu4w
-	(envelope-from <krisman@suse.de>); Thu, 28 Mar 2024 00:17:07 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH liburing] io_uring.h: Avoid anonymous enums
-Date: Wed, 27 Mar 2024 20:16:53 -0400
-Message-ID: <20240328001653.31124-1-krisman@suse.de>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1711588692; c=relaxed/simple;
+	bh=dn2Ubg3Dk8Xfjau8Iw+DO+YblsdGozTmuehRwlAGRNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BllcAu+o9JIxX7Ol7FKM0o6WsrBEV9nUUn1rv+J5WOmug2+MUd3Zse6FVFpTtg22zSK2sSb5RS/xoA0+a7Tz0XITE9YzFnbjW6T0zD1Ts9MeQvFJAgfjRTFuDq18QIV76noyAon/Zprch96dKc6Lu4ezE4KUwURNQ9v+yNFy8Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Vtyh7fqg; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-22a1e72f683so319323fac.0
+        for <io-uring@vger.kernel.org>; Wed, 27 Mar 2024 18:18:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1711588689; x=1712193489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kQMAIZMHZqaonB1lOMUnjQXssTBiYQNYsZMxgebLgFk=;
+        b=Vtyh7fqgso+UBCeTCa0dVAtQdpZRe5yPJdvXcYy4XfiV3vbP4YMkI3p5/yy3Y8BsTf
+         qbsp+3UaGQAsNlXXbE/pIo1XuYOZHWK9RKBqo+nzmypHrV8lQXS5WNXA4kaphKXhSwPk
+         refIzbRVEbNXbDZty5nZruYq+gygPoQCHJkMTR5eC6MhFcDoHOmj2VGppaQI+W0jhUlD
+         OKDEzbRo5UFYd4wH/co07Y4ff3uT59h2osb0QA5D2d1RcpcFx7NUFoqOvppxn47i+gFc
+         HugX+wLQxvE7zqk7wnj/AjExKXygKXW5bsdFjDU/mS4YIgRCDsTcQ6JFnvhHA4ZXOSRN
+         Kymw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711588689; x=1712193489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kQMAIZMHZqaonB1lOMUnjQXssTBiYQNYsZMxgebLgFk=;
+        b=W15eelQ01a0atW+WrPBhRUTETGDiypfW9xc8iIdUMfzQXie28dfSl+lqL/bVAHslW6
+         bY19pgH5YR9eg+Pqc9THp7qLLEpnauZfsHzqYxLpAp8qdslKo35iU5IcNSrAG1bfUzsv
+         WFobq9luIKUdS5OwuU+i+cffiNOkqwWzJRer2u4Ujv4rrtSoSfdHkn4pJamlju+3JDdx
+         2fJn/Cu8T6APDSN9py4duOVtoeHnqtF5q/IOcdij3zOlfHGNLxxyJQGq0cuXOigkFy0L
+         zmcEultEXhny3yG/sQOsWEdJzP9vPET5tzzkEiB+2tAitJhzzJNMoNObDXJ3gMKmnPuS
+         dh1A==
+X-Forwarded-Encrypted: i=1; AJvYcCV2lvTPv2qkG+m0E8IGL6dvWMqoQlHfeVUMGOj9j+yVWDv8ZpWtfwA7QO6YcuvCpyho1uZpwv4zY75Bwi8r6XRmHkaYprrMaSQ=
+X-Gm-Message-State: AOJu0YzMVQmKPVWHMy5pdct/fj5xbjlih7FOjMLux89yDaUrrM8iR9IA
+	Hq9ugTdOSsnbvBeDrEh7kXQ70/g665aY0EgD8CyyQqKtpkCdFA7vvQG9i5En8qI=
+X-Google-Smtp-Source: AGHT+IHTpl6mAgSW8fTIBP+dUOM/ztz/r3gQFb/Ak+WqdhL4b1U/MHR2aFECzdEFf6RizwVZxr3V6Q==
+X-Received: by 2002:a05:6870:b523:b0:22a:97bf:366 with SMTP id v35-20020a056870b52300b0022a97bf0366mr1559595oap.13.1711588689213;
+        Wed, 27 Mar 2024 18:18:09 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-56-237.pa.nsw.optusnet.com.au. [49.181.56.237])
+        by smtp.gmail.com with ESMTPSA id g18-20020aa78192000000b006e7324d32bbsm174549pfi.122.2024.03.27.18.18.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Mar 2024 18:18:08 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rpeP8-00CXAI-04;
+	Thu, 28 Mar 2024 12:18:06 +1100
+Date: Thu, 28 Mar 2024 12:18:06 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org
+Subject: Re: [PATCH] [RFC]: fs: claw back a few FMODE_* bits
+Message-ID: <ZgTFTu8byn0fg9Ld@dread.disaster.area>
+References: <20240327-begibt-wacht-b9b9f4d1145a@brauner>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: 3.44
-X-Spamd-Result: default: False [3.44 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 RCPT_COUNT_THREE(0.00)[3];
-	 R_MISSING_CHARSET(2.50)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 BROKEN_CONTENT_TYPE(1.50)[];
-	 TO_DN_SOME(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 MID_CONTAINS_FROM(1.00)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.26)[73.65%]
-X-Spam-Level: ***
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240327-begibt-wacht-b9b9f4d1145a@brauner>
 
-anonymous enums, while valid, confuses Cython (Python to C translator),
-as reported by Ritesh (YoSTEALTH) .  Since people are using this, just
-name the existing enums.
+On Wed, Mar 27, 2024 at 05:45:09PM +0100, Christian Brauner wrote:
+> There's a bunch of flags that are purely based on what the file
+> operations support while also never being conditionally set or unset.
+> IOW, they're not subject to change for individual file opens. Imho, such
+> flags don't need to live in f_mode they might as well live in the fops
+> structs itself. And the fops struct already has that lonely
+> mmap_supported_flags member. We might as well turn that into a generic
+> fops_flags member and move a few flags from FMODE_* space into FOP_*
+> space. That gets us four FMODE_* bits back and the ability for new
+> static flags that are about file ops to not have to live in FMODE_*
+> space but in their own FOP_* space. It's not the most beautiful thing
+> ever but it gets the job done. Yes, there'll be an additional pointer
+> chase but hopefully that won't matter for these flags.
+> 
+> If this is palatable I suspect there's a few more we can move into there
+> and that we can also redirect new flag suggestions that follow this
+> pattern into the fops_flags field instead of f_mode. As of yet untested.
+> 
+> (Fwiw, FMODE_NOACCOUNT and FMODE_BACKING could live in fops_flags as
+>  well because they're also completely static but they aren't really
+>  about file operations so they're better suited for FMODE_* imho.)
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+.....
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 632653e00906..d13e21eb9a3c 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -1230,8 +1230,7 @@ xfs_file_open(
+>  {
+>  	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
+>  		return -EIO;
+> -	file->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC |
+> -			FMODE_DIO_PARALLEL_WRITE | FMODE_CAN_ODIRECT;
+> +	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
+>  	return generic_file_open(inode, file);
+>  }
+>  
+> @@ -1490,7 +1489,6 @@ const struct file_operations xfs_file_operations = {
+>  	.compat_ioctl	= xfs_file_compat_ioctl,
+>  #endif
+>  	.mmap		= xfs_file_mmap,
+> -	.mmap_supported_flags = MAP_SYNC,
+>  	.open		= xfs_file_open,
+>  	.release	= xfs_file_release,
+>  	.fsync		= xfs_file_fsync,
+> @@ -1498,6 +1496,8 @@ const struct file_operations xfs_file_operations = {
+>  	.fallocate	= xfs_file_fallocate,
+>  	.fadvise	= xfs_file_fadvise,
+>  	.remap_file_range = xfs_file_remap_range,
+> +	.fops_flags	= FOP_MMAP_SYNC | FOP_BUF_RASYNC | FOP_BUF_WASYNC |
+> +			  FOP_DIO_PARALLEL_WRITE,
+>  };
+>  
+>  const struct file_operations xfs_dir_file_operations = {
+> @@ -1510,4 +1510,6 @@ const struct file_operations xfs_dir_file_operations = {
+>  	.compat_ioctl	= xfs_file_compat_ioctl,
+>  #endif
+>  	.fsync		= xfs_dir_fsync,
+> +	.fops_flags	= FOP_MMAP_SYNC | FOP_BUF_RASYNC | FOP_BUF_WASYNC |
+> +			  FOP_DIO_PARALLEL_WRITE,
+>  };
 
-See https://github.com/cython/cython/issues/3240.
+Why do we need to set any of these for directory operations now that
+we have a clear choice? i.e. we can't mmap directories, and the rest
+of these flags are for read() and write() operations which we also
+can't do on directories...
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+....
 
----
-Do we want to sync with the kernel header?
----
- src/include/liburing/io_uring.h | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+> @@ -1024,7 +1024,7 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
+>  
+>  		/* File path supports NOWAIT for non-direct_IO only for block devices. */
+>  		if (!(kiocb->ki_flags & IOCB_DIRECT) &&
+> -			!(kiocb->ki_filp->f_mode & FMODE_BUF_WASYNC) &&
+> +			!fops_buf_wasync(kiocb->ki_filp) &&
+>  			(req->flags & REQ_F_ISREG))
+>  			goto copy_iov;
 
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index bde1199..efa3b78 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -115,7 +115,7 @@ struct io_uring_sqe {
-  */
- #define IORING_FILE_INDEX_ALLOC		(~0U)
- 
--enum {
-+enum io_uring_sqe_flag_bit {
- 	IOSQE_FIXED_FILE_BIT,
- 	IOSQE_IO_DRAIN_BIT,
- 	IOSQE_IO_LINK_BIT,
-@@ -369,7 +369,7 @@ enum io_uring_op {
- /*
-  * IORING_OP_MSG_RING command types, stored in sqe->addr
-  */
--enum {
-+enum io_uring_msg_ring_flags {
- 	IORING_MSG_DATA,	/* pass sqe->len as 'res' and off as user_data */
- 	IORING_MSG_SEND_FD,	/* send a registered fd to another ring */
- };
-@@ -420,9 +420,7 @@ struct io_uring_cqe {
- #define IORING_CQE_F_SOCK_NONEMPTY	(1U << 2)
- #define IORING_CQE_F_NOTIF		(1U << 3)
- 
--enum {
--	IORING_CQE_BUFFER_SHIFT		= 16,
--};
-+#define IORING_CQE_BUFFER_SHIFT 16
- 
- /*
-  * Magic offsets for the application to mmap the data it needs
-@@ -521,7 +519,7 @@ struct io_uring_params {
- /*
-  * io_uring_register(2) opcodes and arguments
-  */
--enum {
-+enum io_uring_register_op {
- 	IORING_REGISTER_BUFFERS			= 0,
- 	IORING_UNREGISTER_BUFFERS		= 1,
- 	IORING_REGISTER_FILES			= 2,
-@@ -578,7 +576,7 @@ enum {
- };
- 
- /* io-wq worker categories */
--enum {
-+enum io_wq_type {
- 	IO_WQ_BOUND,
- 	IO_WQ_UNBOUND,
- };
-@@ -683,7 +681,7 @@ struct io_uring_buf_ring {
-  *			IORING_OFF_PBUF_RING | (bgid << IORING_OFF_PBUF_SHIFT)
-  *			to get a virtual mapping for the ring.
-  */
--enum {
-+enum io_uring_register_pbuf_ring_flags {
- 	IOU_PBUF_RING_MMAP	= 1,
- };
- 
-@@ -714,7 +712,7 @@ struct io_uring_napi {
- /*
-  * io_uring_restriction->opcode values
-  */
--enum {
-+enum io_uring_register_restrictions {
- 	/* Allow an io_uring_register(2) opcode */
- 	IORING_RESTRICTION_REGISTER_OP		= 0,
- 
-@@ -768,7 +766,7 @@ struct io_uring_recvmsg_out {
- /*
-  * Argument for IORING_OP_URING_CMD when file is a socket
-  */
--enum {
-+enum io_uring_socket_op {
- 	SOCKET_URING_OP_SIOCINQ		= 0,
- 	SOCKET_URING_OP_SIOCOUTQ,
- 	SOCKET_URING_OP_GETSOCKOPT,
+You should probably also fix that comment - WASYNC is set when the
+filesystem supports NOWAIT for buffered writes.
+
+-Dave.
 -- 
-2.44.0
-
+Dave Chinner
+david@fromorbit.com
 

@@ -1,52 +1,53 @@
-Return-Path: <io-uring+bounces-1292-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1293-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E549890426
-	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 16:59:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D65ED890429
+	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 16:59:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6322B23A2D
-	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 15:59:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6567D1F22D7A
+	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 15:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01320131BA5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E62F131BBB;
 	Thu, 28 Mar 2024 15:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZeXxNdYd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUQN0bGo"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0A5131740;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9C2131753;
 	Thu, 28 Mar 2024 15:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711641545; cv=none; b=H5mPKrwSdTH6HWTwbVt1DTYvq8dQbJHKgzap88APujKekGVCEvwz0Pm8sm6sIK3g0CheUdOLkZeml0ULM6dBeZ0mvnBpG8ve7B1ikUXolllg0yqKx4Xnm/pS0CCtnzAjwdJ0wuJtZWEuN7m/nDrU+EHv9RXSHrByiXQz96g5Y7Y=
+	t=1711641546; cv=none; b=WebVIegxIelDSHA6/JeGj7HsypblqfTKl5qk51Mv30qAA3EfdENxVnnr0sRmRUKZt0xRLsRIo8KkdcLXTiBAdTe3fC7coDHlUbBDeXuYIyq0G9OMZx0OxB0zOHBr6C72mi8UnA37RQb/pte8H7dvUlMyy3nS6tt4rP4Av9cTQAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711641545; c=relaxed/simple;
-	bh=qoqinQw63fGFh+6IC/Y5pgVTD9GppSO7nESSrP07adE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fsWGo9rR+5XOCX5Aim42rOLO8ll4CT2hG+ctpve0TvQZimWGtBtjU8IEDauI72eCTqNfDGutXVgwb1IZE4c9SW2pZl44du9FJ8Rx/KRIm4B4R5flC/7vgWLMv1pzdv6C4FqEj44xicl1XmHVbcyDQD5yyqm1VccP3MSIjvtUbDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZeXxNdYd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3262FC433B2;
+	s=arc-20240116; t=1711641546; c=relaxed/simple;
+	bh=XGVDtIk3SPIofpG5xcrKrMNocLElzvW2jz69jdLlz3U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IzhdUilLTEqgHlmxuckdHYdK5doMPUSw7pzZ9b0PUCNI8LBdDH2A4Zd8SuDSZInjBT0P7J6xjNtJdKywnoivXH6Wf7mcpZSpSAd5eUcbVuVLWV7gCxu9W784FkrSgsSECCGaZdRfb6zPrKPnYa6aW9NY2keqzyjRiMrKgzO7pss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUQN0bGo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 693C9C43609;
 	Thu, 28 Mar 2024 15:59:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1711641545;
-	bh=qoqinQw63fGFh+6IC/Y5pgVTD9GppSO7nESSrP07adE=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=ZeXxNdYdDpyc+XN31Wm34tBo8zyeQVjgDnJmmZw7SqlPg/zj94JVdBp6iabFK0Gw2
-	 ITV4o/QB4aAtXsNpLjBnbnj2kuDX6I1b1ezlRqufzDzV165JDLOtFPbnIC11FikLCJ
-	 GAqPNRfOsmxNEYDT3tz45gmm0cFTLKOr4n3vjooe/XqU/VyHBpATYmAS+7paJezM2K
-	 9FDJEoWq38AGZ1DKjmwp613+zoL2lGeqIxkb2zRXnwlWVQFL269SZ0hQpir3GsQaC7
-	 Rk1FT4Lf1yvo+YLMWPF194Ct83ik0RLug0gOTvHd5ilV4AMRJk8qEOG7Hqpejk+g3c
-	 sE+IDJ1Ruargg==
+	bh=XGVDtIk3SPIofpG5xcrKrMNocLElzvW2jz69jdLlz3U=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=tUQN0bGoq5tVQgE5x4VbIpPXwPrsSkP71bR63Gc5+4Fur0197zZGnvNZWbYVvP5YE
+	 I/4tVIePCbTp3ZXfsfKbDrFgHjQPwRy5q37vNmyRMrRYAvnpHMHEgbc8zbdA6WYtrw
+	 A3B3MX4WRxc27ZhbEpS88msJ0R4OkV1AwLMKJPRSza/juEGCGHoig9dN/uwAK8aucA
+	 p41CSzeLUGDL14YbNiVuOhV1Df6FHSyWKcE12UQvAVwF4qoa9eTSAnXW4XaifdTsjm
+	 TICx4igfT302dBM5hEhwgTJ9liDYFFL5W3DQHjl17xuyJgfQ74FposnKAyyPpnGbwj
+	 SV3zM71Aw2NrQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F760CD1284;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4421ACD1283;
 	Thu, 28 Mar 2024 15:59:05 +0000 (UTC)
 From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
-Subject: [PATCH 0/7] sysctl: Remove sentinel elements from misc directories
-Date: Thu, 28 Mar 2024 16:57:47 +0100
-Message-Id: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
+Date: Thu, 28 Mar 2024 16:57:48 +0100
+Subject: [PATCH 1/7] memory: Remove the now superfluous sentinel element
+ from ctl_table array
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -55,9 +56,9 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHuTBWYC/x3MSQqAMAxA0atI1hZqncCriEhoo0acaIoo4t0tL
- t/i/weEPJNAkzzg6WThfYvI0gTshNtIil00GG0KnRutZhyV3GLD0ntahUK/sliFpsqGEmvnCCH
- Gh6eBr3/cdu/7AeaEmhloAAAA
+Message-Id: <20240328-jag-sysctl_remset_misc-v1-1-47c1463b3af2@samsung.com>
+References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
+In-Reply-To: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
 To: Andrew Morton <akpm@linux-foundation.org>, 
  Muchun Song <muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, 
  Naoya Horiguchi <naoya.horiguchi@nec.com>, 
@@ -80,19 +81,19 @@ Cc: Luis Chamberlain <mcgrof@kernel.org>, linux-mm@kvack.org,
  linux-arm-kernel@lists.infradead.org, 
  Joel Granados <j.granados@samsung.com>
 X-Mailer: b4 0.13-dev-2d940
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7724;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2947;
  i=j.granados@samsung.com; h=from:subject:message-id;
- bh=C5ExU42iQIATTNjm61dOO7nRB4VDW70Mylk1Ch/NE2k=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGYFk8MCISRyCsZWM39FGDZLGap6umXikDNpN
- y/UcPPR1cdsxokBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmBZPDAAoJELqXzVK3
- lkFPlNgL/iKOshbA23YN0uTNsvODr8xCuFjrnb+cdNlPZz3c0ZsZEs5Jf4Nxrtz/mlIPM5CYrgb
- tLxFHPzllWFljQyXlDt32Y6gBMKvvahcSPUMYzTREmR8avBZLhtO6IfFElpBHSjMWrkXnb0C9Ri
- PMKWSRBukVgiBwuXHUKP5CqBTyi4HiIRxR7xfZ67tjbUqXdfbYI0+VRHr3eLLxniXJpqrhfzcnE
- 0V2TanI13+QxTYeLlJPfyaUtoRpA8dD+K0fSpJjqWSSXyMg/iTgIT7LcZA5YHBiD2IkdPBpRoxO
- SiPAXXa8zmVB3zMHZSQ0Jg5pEtcpkiev1frtqj1lqKsY1UNsRbSIr8hP3CAFbTO8ueuhwNkKo6W
- E3W+KMVsmBqPCtOPOlDHiYOKMT+7xbeb+UJdmFN9o/cZ3j5KLnp/oEHmEao0VQCY6K4m9vK94UU
- kMsVPtIH5meae8MuCInGSeeP3ti3V5gT+4o+lm1hKsUJLVQHWrrUSwQjkDWS2DV8z8prsF+g6n5
- UE=
+ bh=G0BkbiS24qk3nYu5g34TDOv3csGuh2kZPaxeW+vD810=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGYFk8Nm85JUJMtVWCP7cQK3ztzb05qjvvmwk
+ T3kPJF8vCCcyIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmBZPDAAoJELqXzVK3
+ lkFPIpAL/1y2jHL0ldqx4fqCXGpuZzDqhJXCnpqihvZ32zsopWjrhi+p1ISWuGKdyIdGynRC+IV
+ Je1APUKFuRDQVYxqM1OOjB5c5leSJAk/qPnLrVpVFMjq8BMGhuRvS3XCyTX6SzTiUUgoo0506Vz
+ NdxhHpuidbjm1IXWicjzuhMbT+HeIsrG+Z/QyfDJBkzjhL5RfFK25EwE2GpcGp+W2NVEfWlgyfW
+ Yhe6qx9yVJxD7gCRqTl4VBDmd8HgbLq2WAJmj/DanH2NusT804q+smteFEkRg3A8W6U1pdDlN6O
+ f9WMoD8mGt09rh6Mn3JluYzMrRNYJYBueiePbq3oSBcYIQB8DEDuMNfJfUbRD3hBPJAI8OTijXf
+ VC2kNdiWFsnrM7+rG3oIYSGgqNY5X5fbdcKv1xIifBGJmPD1hXxWTiGxTUgsESjz6+xH0At+0cJ
+ 6Sxi6LMR4IMPjL9/EqLkXXjve+OYcbYo8A5uawCVRLr05E3l9IGfbpljEMx9fFQ7ew36yoKuYo7
+ AQ=
 X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
@@ -102,178 +103,112 @@ Reply-To: j.granados@samsung.com
 
 From: Joel Granados <j.granados@samsung.com>
 
-What?
-These commits remove the sentinel element (last empty element) from the
-sysctl arrays of all the files under the "mm/", "security/", "ipc/",
-"init/", "io_uring/", "drivers/perf/" and "crypto/" directories that
-register a sysctl array. The inclusion of [4] to mainline allows the
-removal of sentinel elements without behavioral change. This is safe
-because the sysctl registration code (register_sysctl() and friends) use
-the array size in addition to checking for a sentinel [1].
+This commit comes at the tail end of a greater effort to remove the
+empty elements at the end of the ctl_table arrays (sentinels) which will
+reduce the overall build time size of the kernel and run time memory
+bloat by ~64 bytes per sentinel (further information Link :
+https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
 
-Why?
-By removing the sysctl sentinel elements we avoid kernel bloat as
-ctl_table arrays get moved out of kernel/sysctl.c into their own
-respective subsystems. This move was started long ago to avoid merge
-conflicts; the sentinel removal bit came after Mathew Wilcox suggested
-it to avoid bloating the kernel by one element as arrays moved out. This
-patchset will reduce the overall build time size of the kernel and run
-time memory bloat by about ~64 bytes per declared ctl_table array (more
-info here [5]).
-
-When are we done?
-There are 4 patchest (25 commits [2]) that are still outstanding to
-completely remove the sentinels: files under "net/", files under
-"kernel/" dir, misc dirs (this patchset) and the final set that removes
-the unneeded check for ->procname == NULL.
-
-Testing:
-* Ran sysctl selftests (./tools/testing/selftests/sysctl/sysctl.sh)
-* Ran this through 0-day with no errors or warnings
-
-Savings in vmlinux:
-  A total of 64 bytes per sentinel is saved after removal; I measured in
-  x86_64 to give an idea of the aggregated savings. The actual savings
-  will depend on individual kernel configuration.
-    * bloat-o-meter
-        - The "yesall" config saves 963 bytes (bloat-o-meter output [6])
-        - A reduced config [3] saves 452 bytes (bloat-o-meter output [7])
-
-Savings in allocated memory:
-  None in this set but will occur when the superfluous allocations are
-  removed from proc_sysctl.c. I include it here for context. The
-  estimated savings during boot for config [3] are 6272 bytes. See [8]
-  for how to measure it.
-
-Comments/feedback greatly appreciated
-
-Best
-
-Joel
-
-[1] https://lore.kernel.org/all/20230809105006.1198165-1-j.granados@samsung.com/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/tag/?h=sysctl_remove_empty_elem_v5
-[3] https://gist.github.com/Joelgranados/feaca7af5537156ca9b73aeaec093171
-[4] https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/
-
-[5]
-Links Related to the ctl_table sentinel removal:
-* Good summaries from Luis:
-  https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/
-  https://lore.kernel.org/all/ZMFizKFkVxUFtSqa@bombadil.infradead.org/
-* Patches adjusting sysctl register calls:
-  https://lore.kernel.org/all/20230302204612.782387-1-mcgrof@kernel.org/
-  https://lore.kernel.org/all/20230302202826.776286-1-mcgrof@kernel.org/
-* Discussions about expectations and approach
-  https://lore.kernel.org/all/20230321130908.6972-1-frank.li@vivo.com
-  https://lore.kernel.org/all/20220220060626.15885-1-tangmeng@uniontech.com
-
-[6]
-add/remove: 0/0 grow/shrink: 0/16 up/down: 0/-963 (-963)
-Function                                     old     new   delta
-setup_mq_sysctls                             502     499      -3
-yama_sysctl_table                            128      64     -64
-vm_page_writeback_sysctls                    512     448     -64
-vm_oom_kill_table                            256     192     -64
-vm_compaction                                320     256     -64
-page_alloc_sysctl_table                      576     512     -64
-mq_sysctls                                   384     320     -64
-memory_failure_table                         192     128     -64
-loadpin_sysctl_table                         128      64     -64
-key_sysctls                                  448     384     -64
-kernel_io_uring_disabled_table               192     128     -64
-kern_do_mounts_initrd_table                  128      64     -64
-ipc_sysctls                                  832     768     -64
-hugetlb_vmemmap_sysctls                      128      64     -64
-hugetlb_table                                320     256     -64
-apparmor_sysctl_table                        256     192     -64
-Total: Before=440605433, After=440604470, chg -0.00%
-
-[7]
-add/remove: 0/0 grow/shrink: 0/8 up/down: 0/-452 (-452)
-Function                                     old     new   delta
-setup_ipc_sysctls                            306     302      -4
-vm_page_writeback_sysctls                    512     448     -64
-vm_oom_kill_table                            256     192     -64
-page_alloc_sysctl_table                      384     320     -64
-key_sysctls                                  384     320     -64
-kernel_io_uring_disabled_table               192     128     -64
-ipc_sysctls                                  640     576     -64
-hugetlb_table                                256     192     -64
-Total: Before=8523801, After=8523349, chg -0.01%
-
-[8]
-To measure the in memory savings apply this on top of this patchset.
-
-"
-diff --git i/fs/proc/proc_sysctl.c w/fs/proc/proc_sysctl.c
-index 37cde0efee57..896c498600e8 100644
---- i/fs/proc/proc_sysctl.c
-+++ w/fs/proc/proc_sysctl.c
-@@ -966,6 +966,7 @@ static struct ctl_dir *new_dir(struct ctl_table_set *set,
-        table[0].procname = new_name;
-        table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
-        init_header(&new->header, set->dir.header.root, set, node, table, 1);
-+       printk("%ld sysctl saved mem kzalloc\n", sizeof(struct ctl_table));
-
-        return new;
- }
-@@ -1189,6 +1190,7 @@ static struct ctl_table_header *new_links(struct ctl_dir *dir, s>
-                link_name += len;
-                link++;
-        }
-+       printk("%ld sysctl saved mem kzalloc\n", sizeof(struct ctl_table));
-        init_header(links, dir->header.root, dir->header.set, node, link_table,
-                    head->ctl_table_size);
-        links->nreg = nr_entries;
-"
-and then run the following bash script in the kernel:
-
-accum=0
-for n in $(dmesg | grep kzalloc | awk '{print $3}') ; do
-    accum=$(calc "$accum + $n")
-done
-echo $accum
+Remove sentinel from all files under mm/ that register a sysctl table.
 
 Signed-off-by: Joel Granados <j.granados@samsung.com>
-
---
-
 ---
-Joel Granados (7):
-      memory: Remove the now superfluous sentinel element from ctl_table array
-      security: Remove the now superfluous sentinel element from ctl_table array
-      crypto: Remove the now superfluous sentinel element from ctl_table array
-      initrd: Remove the now superfluous sentinel element from ctl_table array
-      ipc: Remove the now superfluous sentinel element from ctl_table array
-      io_uring: Remove the now superfluous sentinel elements from ctl_table array
-      drivers: perf: Remove the now superfluous sentinel elements from ctl_table array
+ mm/compaction.c      | 1 -
+ mm/hugetlb.c         | 1 -
+ mm/hugetlb_vmemmap.c | 1 -
+ mm/memory-failure.c  | 1 -
+ mm/oom_kill.c        | 1 -
+ mm/page-writeback.c  | 1 -
+ mm/page_alloc.c      | 1 -
+ 7 files changed, 7 deletions(-)
 
- crypto/fips.c                | 1 -
- drivers/perf/riscv_pmu_sbi.c | 1 -
- init/do_mounts_initrd.c      | 1 -
- io_uring/io_uring.c          | 1 -
- ipc/ipc_sysctl.c             | 1 -
- ipc/mq_sysctl.c              | 1 -
- mm/compaction.c              | 1 -
- mm/hugetlb.c                 | 1 -
- mm/hugetlb_vmemmap.c         | 1 -
- mm/memory-failure.c          | 1 -
- mm/oom_kill.c                | 1 -
- mm/page-writeback.c          | 1 -
- mm/page_alloc.c              | 1 -
- security/apparmor/lsm.c      | 1 -
- security/keys/sysctl.c       | 1 -
- security/loadpin/loadpin.c   | 1 -
- security/yama/yama_lsm.c     | 1 -
- 17 files changed, 17 deletions(-)
----
-base-commit: 4cece764965020c22cff7665b18a012006359095
-change-id: 20240320-jag-sysctl_remset_misc-a261f5a7ddea
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 807b58e6eb68..e8a047afca22 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -3345,7 +3345,6 @@ static struct ctl_table vm_compaction[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_ONE,
+ 	},
+-	{ }
+ };
+ 
+ static int __init kcompactd_init(void)
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 23ef240ba48a..7ac5240a197d 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5045,7 +5045,6 @@ static struct ctl_table hugetlb_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= hugetlb_overcommit_handler,
+ 	},
+-	{ }
+ };
+ 
+ static void hugetlb_sysctl_init(void)
+diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+index da177e49d956..b9a55322e52c 100644
+--- a/mm/hugetlb_vmemmap.c
++++ b/mm/hugetlb_vmemmap.c
+@@ -679,7 +679,6 @@ static struct ctl_table hugetlb_vmemmap_sysctls[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dobool,
+ 	},
+-	{ }
+ };
+ 
+ static int __init hugetlb_vmemmap_init(void)
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 9349948f1abf..6a112f9ecf91 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -141,7 +141,6 @@ static struct ctl_table memory_failure_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_ONE,
+ 	},
+-	{ }
+ };
+ 
+ /*
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 8d6a207c3c59..4d7a0004df2c 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -724,7 +724,6 @@ static struct ctl_table vm_oom_kill_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec,
+ 	},
+-	{}
+ };
+ #endif
+ 
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 3e19b87049db..fba324e1a010 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2291,7 +2291,6 @@ static struct ctl_table vm_page_writeback_sysctls[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_jiffies,
+ 	},
+-	{}
+ };
+ #endif
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 14d39f34d336..8b9820620fe3 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6211,7 +6211,6 @@ static struct ctl_table page_alloc_sysctl_table[] = {
+ 		.extra2		= SYSCTL_ONE_HUNDRED,
+ 	},
+ #endif
+-	{}
+ };
+ 
+ void __init page_alloc_sysctl_init(void)
 
-Best regards,
 -- 
-Joel Granados <j.granados@samsung.com>
+2.43.0
 
 
 

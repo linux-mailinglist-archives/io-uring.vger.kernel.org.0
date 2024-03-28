@@ -1,110 +1,120 @@
-Return-Path: <io-uring+bounces-1306-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1307-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAB5890E34
-	for <lists+io-uring@lfdr.de>; Fri, 29 Mar 2024 00:05:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CAB890E86
+	for <lists+io-uring@lfdr.de>; Fri, 29 Mar 2024 00:34:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2341F23DA0
-	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 23:05:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57043296758
+	for <lists+io-uring@lfdr.de>; Thu, 28 Mar 2024 23:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF04586269;
-	Thu, 28 Mar 2024 23:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8289080BE0;
+	Thu, 28 Mar 2024 23:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="OzJ4X764"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="02I/p4tL"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B03A60260
-	for <io-uring@vger.kernel.org>; Thu, 28 Mar 2024 23:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF51C225A8
+	for <io-uring@vger.kernel.org>; Thu, 28 Mar 2024 23:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711667125; cv=none; b=jsfwGv7Zcf2D63CcRWKRB84rhEc2MF1Z1wvLKhhaAOhEg//ZmYTsi9LPtvmt04ZXgRM3NsNf1RvcoCFaiZlOqqKT4dIHuNkoqqEO8wBlQoclgT6tP9rrdvCBU2aJAJ1bk3QkJg37rrIK/cRrBKeTM25sTsPIInEclBhdSKDrf2w=
+	t=1711668889; cv=none; b=ADiSR9spgz755DOpeYqcP4yBZTZBHSg4AEn/XH9Y6z1u2tjSOBu6ulInegnTgE3jsER6ezNjitCQIjgxa4wen7EUdR7rA9kd549/Ban3OtkdLGQdllk/8JtZ1CR7CKmDz7BEmXapmmEooAC5VBVyxtzz1kwWCQRiZ4K+tK2oLXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711667125; c=relaxed/simple;
-	bh=upoegHEPOhnTtAIMqhTxXZdb36Jc5jk9yy0qJkcSZLA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XUwNCvr4kBXYLOxpY4J+0RQZhvL7jwMeL02eliVyQt/FjbNgXKhVO3kyfVRX734BmoZKzlcjrducHJyEMGzQNJeJlPZCOcoDWlRWg3D9HXNsBjGyul9mpEu2PmCZ+ZRv/ens5s5Y3tc5hsERzz0Csu8X9Em3WHhgobfO6/DdL/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=OzJ4X764; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1711668889; c=relaxed/simple;
+	bh=xjvyxtZ+j4cPbvv+hKOL5jE3H/iCtfhUd9DsFgDbvVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b1dmdQr7Af0Dfax/xD+RPphRs87WhtySc8Vz9hFh/QxoQ3ATuBpCsq6NXNDFAL9m1izmnmilFeAhQni1Btfxg8VvLCKhOfvIoiq9t7DrInN1eJgYqToM5G7Pf6Zm4OV4Mm8V8rFDasktjKXtJ/8Nq4X6Dqp9T1NVrhGa9DF2Zt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=02I/p4tL; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6e6ca65edc9so373596b3a.0
-        for <io-uring@vger.kernel.org>; Thu, 28 Mar 2024 16:05:24 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1def81ee762so3337515ad.0
+        for <io-uring@vger.kernel.org>; Thu, 28 Mar 2024 16:34:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711667124; x=1712271924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gb/lqw0FtEKA4ZjWr924Ikq7h9RH/QqFlEqu3taDoiY=;
-        b=OzJ4X764XaS2NF3zcWgQ14idfNlu0SVMkwlRPnxu1bajWE/WRF4X5eUeMDXVNgGIa9
-         KzJZzKxJQMVxks+5SUNZTbNc0hgPI+jydO9IqPBSRkFlpETsfcaD6/i00a2kASY5BPzx
-         CLBMj04q8NgjzZ2rUxplYy9YhVtFcD0fWbAVkP92mWh934LlOKbQXQWKMA3HJEID0nRU
-         kjDXkxFG7upnsA+xWckT2YgVWhEC11yvN4h1sSlSzS9npMkPMvxYhyehz0FHhs9wgBw3
-         fyq2f2LNkrUdw548xshRvBRoqeN2xbghfQznJlKpm37OGzw8LxP9r1jFh1cvDzpms0nK
-         uaAw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711668887; x=1712273687; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0oJgXvEuwvRnZZikuFCff+M/MPajPVlsVl5ZSdawolo=;
+        b=02I/p4tLdn8ED8YLqRiWdfC3AKR6whKp8GtJFG5lU6SGN53YY2GelB8GM0xWOoByNM
+         U330o3saO2H8Un8jFVwVKY+X9861s62xzsrpXne1LTGdZOSsYk/wz8ZVRyA3g5xielVt
+         5/cQ3XbMvO35GfJXJNxWOJbFUcV5uQoW4TMxTTiNId0oZDt4G8QC4U6lajfjZ4BRoSC4
+         vr3WNyguWzFYv0/l/lpFlrrvV+eu1J0GHFCYH7hGQF+zqtOzcke8wH8gHMpFi6GBUWpM
+         EAmNa9KqovJgFChQpC4qnJ8Pvc9zFtLOJQkDE3R5fiAKWvy8YOI2x64ikjZIkAM11F1I
+         2aHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711667124; x=1712271924;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gb/lqw0FtEKA4ZjWr924Ikq7h9RH/QqFlEqu3taDoiY=;
-        b=C8CYBDvXmVNiP5oCjHGtFmw1xjcR2xUJZ9Edjnv3mYNtznXEp0DsexR5ytXjG11+DT
-         xfrmq3AYNvIFoqTbl1SXTnpHkpNrZKqtgfGaelgImMseWoXa4vHLF0vA8raNcEU1g3GF
-         0c3lpc1zPJBof90nSrngo8deQyb4fuwFpvRTF1+u0O+s8mi0FkGPUuHue/QpCRLImiiF
-         QZoVj3cv1Hn9LqSfmspIvtL9gnyvKb3sjJGEAbmE3Yvhv/juJH6lHG2RF/koLCcfm0ds
-         BoxI9HvqltHvc3AeTuuMypCDnbfkxA8+oD9V9kPDzjk5KsRlvFj4EJ6ubjQJG7pFFPeo
-         JjAA==
-X-Gm-Message-State: AOJu0YwQRToN5SIYCTTy/an562GppN/IkbPIFBUXgL2LSvFxKTdWcjPD
-	9GNgXMtfg8tVPkTD8XTR6nVFRqP98c69+23KZZ+FD7FSMek4JYjywsZwMFUJBrQ=
-X-Google-Smtp-Source: AGHT+IETwdcPYHA8vhgIpuL+3aD0yyV0TaJIugVaJ1LvwXb5roJlbbb+zUwinHeFhRIkYjAUtZBz0A==
-X-Received: by 2002:a05:6a20:728b:b0:1a3:c3e6:aef3 with SMTP id o11-20020a056a20728b00b001a3c3e6aef3mr714252pzk.2.1711667123883;
-        Thu, 28 Mar 2024 16:05:23 -0700 (PDT)
-Received: from [127.0.0.1] ([50.234.116.5])
-        by smtp.gmail.com with ESMTPSA id cx18-20020a17090afd9200b0029d7e7b7b41sm4013902pjb.33.2024.03.28.16.05.21
+        d=1e100.net; s=20230601; t=1711668887; x=1712273687;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0oJgXvEuwvRnZZikuFCff+M/MPajPVlsVl5ZSdawolo=;
+        b=uGFwvB96siHJStWhWBC6BPUOjzspNc7gaRo8YXKXvnpdt3vtRwP+5n/8V8Xi4kM7jQ
+         96kDVr7TTWjHgf+IyF1mlWIDf9V+Yoo8WusNVsvyyzRfR8paxF7zjEaIumEm6UFkqM81
+         TM7mrLGbb0o3wMzN7VmCblZzD5BogTt9UXeKveKfleGQfiGkrKTuHdhT8MutFWDV//vF
+         LYzGeg9DtY01HSqDPQ6njuwgAyr15SSPJ0JC9gkWSh0aUNpxNtgME0q31WpKL3BPbyZJ
+         cB7bKhUjCOZ8WLBxKE5pOR7Gvhfi82w5wOfJbICA2bpggAurH4s8fopnXaRNuVLc0nXQ
+         U9iQ==
+X-Gm-Message-State: AOJu0Yy/QY8dPc3o6RE0VzJMLTW0s8Z/yuDekLS1w2dEK2ot1vdNvInx
+	4G6wzFwVs9GdMVK4tMgRBcmxbvYVDUNTvTNdB435LBfLeDfPAqVEPiRW+/qovjUdTKzhYuE/Lzs
+	d
+X-Google-Smtp-Source: AGHT+IHK8JxFi0VDT6pK3hMLieTrgE0yZTd3bgFh6m4Riav3CMt+1mc7AsG81NefeJjCRXPf52FG5w==
+X-Received: by 2002:a17:902:aa85:b0:1e0:b5f2:3284 with SMTP id d5-20020a170902aa8500b001e0b5f23284mr1034693plr.0.1711668886672;
+        Thu, 28 Mar 2024 16:34:46 -0700 (PDT)
+Received: from localhost.localdomain ([50.234.116.5])
+        by smtp.gmail.com with ESMTPSA id i6-20020a170902c94600b001e0b3c9fe60sm2216981pla.46.2024.03.28.16.34.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Mar 2024 16:05:22 -0700 (PDT)
+        Thu, 28 Mar 2024 16:34:46 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-In-Reply-To: <20240328210935.25640-1-krisman@suse.de>
-References: <20240328210935.25640-1-krisman@suse.de>
-Subject: Re: (subset) [PATCH] io_uring: Avoid anonymous enums in io_uring
- uapi
-Message-Id: <171166712200.796545.5071534678593541812.b4-ty@kernel.dk>
-Date: Thu, 28 Mar 2024 17:05:22 -0600
+To: io-uring@vger.kernel.org
+Cc: hannes@cmpxchg.org
+Subject: [PATCHSET v3 0/11] Move away from remap_pfn_range()
+Date: Thu, 28 Mar 2024 17:31:27 -0600
+Message-ID: <20240328233443.797828-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+This series switches both the ring, sqes, and kbuf side away from
+using remap_pfn_range().
 
 
-On Thu, 28 Mar 2024 17:09:35 -0400, Gabriel Krisman Bertazi wrote:
-> While valid C, anonymous enums confuse Cython (Python to C translator),
-> as reported by Ritesh (YoSTEALTH) [1] .  Since people rely on it when
-> building against liburing and we want to keep this header in sync with
-> the library version, let's name the existing enums in the uapi header.
-> 
-> [1] https://github.com/cython/cython/issues/3240
-> 
-> [...]
+Patch 1 is just a prep patch, and patches 2-3 add ring support, and
+patch 4 just unifies some identical code.
 
-Applied, thanks!
+Patches 5-7 cleanup some kbuf side code, and patch 8 prepares buffer
+lists to be reference counted, and then patch 9 can finally switch
+kbuf to also use the nicer vm_insert_pages(). Patch 10 is a cleanup,
+and patch 11 moves the alloc/pin/map etc code into a separate file.
 
-[1/1] io_uring: Avoid anonymous enums in io_uring uapi
-      (no commit info)
+With this, no more remap_pfn_range(), and no more manual cleanup of
+having used it.
 
-Best regards,
+Changes since v2:
+- Simplify references on compound pages (Johannes)
+- Fix hunk of one patch being wrong (Jeff)
+- Fix typo for !CONFIG_MMU (me)
+
+ include/linux/io_uring_types.h |   4 -
+ io_uring/Makefile              |   3 +-
+ io_uring/io_uring.c            | 246 +-----------------------
+ io_uring/io_uring.h            |   5 -
+ io_uring/kbuf.c                | 291 ++++++++--------------------
+ io_uring/kbuf.h                |  11 +-
+ io_uring/memmap.c              | 333 +++++++++++++++++++++++++++++++++
+ io_uring/memmap.h              |  25 +++
+ io_uring/rsrc.c                |  37 +---
+ mm/nommu.c                     |   7 +
+ 10 files changed, 467 insertions(+), 495 deletions(-)
+
 -- 
 Jens Axboe
-
-
 
 

@@ -1,205 +1,138 @@
-Return-Path: <io-uring+bounces-1336-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1337-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8653789267F
-	for <lists+io-uring@lfdr.de>; Fri, 29 Mar 2024 22:57:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E430A892695
+	for <lists+io-uring@lfdr.de>; Fri, 29 Mar 2024 23:04:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B882C1C20FA2
-	for <lists+io-uring@lfdr.de>; Fri, 29 Mar 2024 21:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 839BA1F21E1D
+	for <lists+io-uring@lfdr.de>; Fri, 29 Mar 2024 22:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D5239FD6;
-	Fri, 29 Mar 2024 21:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E9013CAA1;
+	Fri, 29 Mar 2024 22:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jcgl+STJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="awVAF/Uo"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vhOLWXIp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NNwdDyhu"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDBE28DCA
-	for <io-uring@vger.kernel.org>; Fri, 29 Mar 2024 21:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2602C13C9D4
+	for <io-uring@vger.kernel.org>; Fri, 29 Mar 2024 22:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711749450; cv=none; b=FBwNA8lgyO3OWvkzxepIcGBWUwBZ/DPDCqco7aMP4nIWDK+IMWYFUibIBLRx7FeCm3nZ9qx8RnU3wwT1+s7iLWZed0lZVahTUhJQthzQ5xwFgL1ix+S1GhD1fBqSuAftvg/hpjvQJlxdll9bVBoHl4+C7eRoVTzjkYnzyh38eo8=
+	t=1711749878; cv=none; b=snWicLtXMFirM5TAzG/DvEG5uCiudV5IU4UdT3soKOUQEA/5nixLTP4uCb7k9kvAsc9l+N2Bd22UFpShef7dhRKEOvx+1RfmQshbIlsQpSduepg8pOXl3GSQf39wNyORPi4lTW4qw8pEjxvYeVQcfSQ+CUZ5avNihT6wnI3Olq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711749450; c=relaxed/simple;
-	bh=fSwH55OeWKbayUGTLyEhVZG3AiFUUaYkSyA3gNY16h4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TIGJmnMFrJOAMOMda03errZgoCqm7iEM80K3Nw4HKDgz5Ov5K7Vritz8aiydEzfHQpHUyfLAR+daIFeG1AuDp9XTh23AfPDl2Fc/ApP8T1lInsDp33FTSfohXrgQa0QoUqpPbiyPELgg6ljwLgj4cSqGNNf8/5VcksG9qOaabL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jcgl+STJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=awVAF/Uo; arc=none smtp.client-ip=195.135.223.130
+	s=arc-20240116; t=1711749878; c=relaxed/simple;
+	bh=mrTCUFk4a679OrUVXp/6Dsx3ZMeW4fhMWDjNWziXzuE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rXZdLqYZUxVPd/50nVT2Lq38z4GRZ8sXyg1gf7UPTtRk3npcBbho1UX2gwb7ydS0+980MnACaulVM/TmPJ3bNMWDcJsLuw3RvsV34pMEwG7HPFMVDfLpsTEV4Fdrezu4JnY4xWLVse0sGKtg62C+ef3h0H02UB1l0Jku16jmJqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vhOLWXIp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NNwdDyhu; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 23B9E35361;
-	Fri, 29 Mar 2024 21:57:26 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6307935375;
+	Fri, 29 Mar 2024 22:04:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1711749446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=6p+Y9TEfnPR2yEHKmM+vJ3AptBwPcPIFtjLLBOhO/Z0=;
-	b=Jcgl+STJFi+ZRUmepvl+uBIMP9Jtc/7qpMjeflMQo1uqdUF9dSaHLmYMyxGfRILX+wYZ2r
-	vn2P4qAthAwlK5bYNgvM45I7+A2j2MCzblURmyKAo2/afr7Ag7gcGXdQ75tiedwKCtHpcP
-	tb1YXji6OMwkeh03YCskCaqp+hGfQlw=
+	t=1711749875; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHjZM/nYyQ/w6nvsrEZmOibX9zXaPlyi2JXzlsGSuKg=;
+	b=vhOLWXIp/QB1yO7f3u4wHdf9ZQ6GdsYMq+ocHRs//8AJbxnDnWwivY/EsP3VRTHuD3CANs
+	g/K7yI17OTTWxrxgU7rTqtPNuDYcp+szlH1dW+KZuzDbuIH4hgT2DS25EMrb9ECg6oTOQM
+	ylGeBwKvcdDiCgIQz9tYiPiChfXBoDM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1711749446;
+	s=susede2_ed25519; t=1711749875;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=6p+Y9TEfnPR2yEHKmM+vJ3AptBwPcPIFtjLLBOhO/Z0=;
-	b=awVAF/UoBRDEif2lOTJFCQyCK1mfENuQtV8jtY/PzydZDoDNX7Fnpc1T1vJ8cX0wOIBgOn
-	oaLgrQHVOh7Ls+Bw==
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHjZM/nYyQ/w6nvsrEZmOibX9zXaPlyi2JXzlsGSuKg=;
+	b=NNwdDyhuLZ95P8Iju17tn1llrpgR+2hGLGHUqDxCLzE18+xG/5KCHDS4MjXS70Ox+30Vxl
+	jdmgzbeCX5zvBqAQ==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=none
+	none
 Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id DFA5513A89;
-	Fri, 29 Mar 2024 21:57:25 +0000 (UTC)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 13EDE13A89;
+	Fri, 29 Mar 2024 22:04:34 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id pY+GMEU5B2aRUgAAn2gu4w
-	(envelope-from <krisman@suse.de>); Fri, 29 Mar 2024 21:57:25 +0000
+	id vdk8NPI6B2ZwVAAAn2gu4w
+	(envelope-from <krisman@suse.de>); Fri, 29 Mar 2024 22:04:34 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH liburing] io_uring.h: Sync kernel header to fetch enum names
-Date: Fri, 29 Mar 2024 17:57:18 -0400
-Message-ID: <20240329215718.25048-1-krisman@suse.de>
-X-Mailer: git-send-email 2.44.0
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev,  llvm@lists.linux.dev,
+ io-uring@vger.kernel.org
+Subject: Re: [axboe-block:for-6.10/io_uring 42/42]
+ io_uring/register.c:175:24: warning: arithmetic between different
+ enumeration types ('enum io_uring_register_restriction_op' and 'enum
+ io_uring_register_op')
+In-Reply-To: <202403291458.6AjzdI64-lkp@intel.com> (kernel test robot's
+	message of "Fri, 29 Mar 2024 14:23:33 +0800")
+References: <202403291458.6AjzdI64-lkp@intel.com>
+Date: Fri, 29 Mar 2024 18:04:29 -0400
+Message-ID: <87h6go66fm.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Action: no action
+Content-Type: text/plain
+X-Spam-Score: -1.61
+X-Spamd-Result: default: False [-1.61 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 RCPT_COUNT_THREE(0.00)[4];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-0.999];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-0.31)[75.43%]
+X-Spam-Level: 
 X-Spam-Flag: NO
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [1.19 / 50.00];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.18)[-0.912];
-	MIME_GOOD(-0.10)[text/plain];
-	BAYES_HAM(-0.02)[52.67%];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	R_DKIM_NA(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[]
-X-Spamd-Bar: +
-X-Spam-Score: 1.19
-X-Spam-Level: *
-X-Rspamd-Queue-Id: 23B9E35361
 
-After a report by Ritesh (YoSTEALTH) on github, we named the enums in
-the io_uring uapi header.  Sync the change into liburing.
+kernel test robot <lkp@intel.com> writes:
 
-[1] https://github.com/cython/cython/issues/3240.
+[+ io_uring list ]
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+>>> io_uring/register.c:175:24: warning: arithmetic between different
+> enumeration types ('enum io_uring_register_restriction_op' and 'enum
+> io_uring_register_op') [-Wenum-enum-conversion]
+>      175 |         if (!arg || nr_args > IORING_MAX_RESTRICTIONS)
+>          |                               ^~~~~~~~~~~~~~~~~~~~~~~
+>    io_uring/register.c:31:58: note: expanded from macro 'IORING_MAX_RESTRICTIONS'
+>       31 | #define IORING_MAX_RESTRICTIONS (IORING_RESTRICTION_LAST + \
+>          |                                  ~~~~~~~~~~~~~~~~~~~~~~~ ^
+>       32 |                                  IORING_REGISTER_LAST + IORING_OP_LAST)
+>          |                                  ~~~~~~~~~~~~~~~~~~~~
+>    14 warnings generated.
 
----
-Do we want to sync with the kernel header?
----
- src/include/liburing/io_uring.h | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+hm.
 
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index bde1199..25e83e1 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -115,7 +115,7 @@ struct io_uring_sqe {
-  */
- #define IORING_FILE_INDEX_ALLOC		(~0U)
- 
--enum {
-+enum io_uring_sqe_flags_bit {
- 	IOSQE_FIXED_FILE_BIT,
- 	IOSQE_IO_DRAIN_BIT,
- 	IOSQE_IO_LINK_BIT,
-@@ -369,7 +369,7 @@ enum io_uring_op {
- /*
-  * IORING_OP_MSG_RING command types, stored in sqe->addr
-  */
--enum {
-+enum io_uring_msg_ring_flags {
- 	IORING_MSG_DATA,	/* pass sqe->len as 'res' and off as user_data */
- 	IORING_MSG_SEND_FD,	/* send a registered fd to another ring */
- };
-@@ -420,9 +420,7 @@ struct io_uring_cqe {
- #define IORING_CQE_F_SOCK_NONEMPTY	(1U << 2)
- #define IORING_CQE_F_NOTIF		(1U << 3)
- 
--enum {
--	IORING_CQE_BUFFER_SHIFT		= 16,
--};
-+#define IORING_CQE_BUFFER_SHIFT 16
- 
- /*
-  * Magic offsets for the application to mmap the data it needs
-@@ -521,7 +519,7 @@ struct io_uring_params {
- /*
-  * io_uring_register(2) opcodes and arguments
-  */
--enum {
-+enum io_uring_register_op {
- 	IORING_REGISTER_BUFFERS			= 0,
- 	IORING_UNREGISTER_BUFFERS		= 1,
- 	IORING_REGISTER_FILES			= 2,
-@@ -578,7 +576,7 @@ enum {
- };
- 
- /* io-wq worker categories */
--enum {
-+enum io_wq_type {
- 	IO_WQ_BOUND,
- 	IO_WQ_UNBOUND,
- };
-@@ -683,7 +681,7 @@ struct io_uring_buf_ring {
-  *			IORING_OFF_PBUF_RING | (bgid << IORING_OFF_PBUF_SHIFT)
-  *			to get a virtual mapping for the ring.
-  */
--enum {
-+enum io_uring_register_pbuf_ring_flags {
- 	IOU_PBUF_RING_MMAP	= 1,
- };
- 
-@@ -714,7 +712,7 @@ struct io_uring_napi {
- /*
-  * io_uring_restriction->opcode values
-  */
--enum {
-+enum io_uring_register_restriction_op {
- 	/* Allow an io_uring_register(2) opcode */
- 	IORING_RESTRICTION_REGISTER_OP		= 0,
- 
-@@ -768,7 +766,7 @@ struct io_uring_recvmsg_out {
- /*
-  * Argument for IORING_OP_URING_CMD when file is a socket
-  */
--enum {
-+enum io_uring_socket_op {
- 	SOCKET_URING_OP_SIOCINQ		= 0,
- 	SOCKET_URING_OP_SIOCOUTQ,
- 	SOCKET_URING_OP_GETSOCKOPT,
+Do we want to fix?  The arithmetic is safe here.  I actually tried
+triggering the warning with gcc, but even with -Wenum-conversion in
+gcc-12 (which is in -Wextra and we don't use in the kernel build), I
+couldn't do it.  only llvm catches this.
+
+can we explicit cast to int to silent it?
+
 -- 
-2.44.0
-
+Gabriel Krisman Bertazi
 

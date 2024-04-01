@@ -1,195 +1,195 @@
-Return-Path: <io-uring+bounces-1345-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1346-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CFBA8937D4
-	for <lists+io-uring@lfdr.de>; Mon,  1 Apr 2024 05:41:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B52894456
+	for <lists+io-uring@lfdr.de>; Mon,  1 Apr 2024 19:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1D42814A1
-	for <lists+io-uring@lfdr.de>; Mon,  1 Apr 2024 03:41:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 786BAB21C12
+	for <lists+io-uring@lfdr.de>; Mon,  1 Apr 2024 17:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1D64A3E;
-	Mon,  1 Apr 2024 03:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B907B4EB38;
+	Mon,  1 Apr 2024 17:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="Pu9OWnx7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985351362;
-	Mon,  1 Apr 2024 03:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1311B4DA05
+	for <io-uring@vger.kernel.org>; Mon,  1 Apr 2024 17:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711942883; cv=none; b=cBdL2RuEzA/koJRdUPuV6T2xqU70H2ACc/v2somBMvRqirbeRVbyER34qTexEsgTcT5fgO1Whr177Sm7mJ5gsUcKRb7jbnMOauzNAlFqDioSlqAlnkiTcYS2Pko5LNE+SsD46o3rcQmYD5RrI5M1pVE8O9jYiNhiuMvdDLxtUac=
+	t=1711992616; cv=none; b=Oi9ASdx5iUGvFN8bPYpnyYHkLicEOi6cZYn6kFQ9deGIIGmmO5ipnxCbGyaPZVLncAQHA4NlTCd8TMkDsFB3iv+YmpylmDcPVV8Hr2hI34fXTIaARXW67boQ1BniLcNR6dsJPjryuLwVHi6pAhH78VvnufuzP+Mb2vw+Seo5DRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711942883; c=relaxed/simple;
-	bh=Y+C6YOutpzawaB9+UJw3qAWVjD/gimExt0e/uFbsI/M=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=mY7Zk+TlqPu+lrZp7JFB4o4xRLuTe0T0l5lwKEyf/RlZzxfTwzOgGUlk8z4t+NoeFia2/2U+Fo20XeD6iK7KPJdITlUistow2/yNUhTmp+S6Q2SNpTnNIHVbMnJEUrRSLoNWXULJForu/DemB62v3kznoGkHCly12w2wz5N6ENM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4V7Gvt1Wpsz1xtQy;
-	Mon,  1 Apr 2024 11:39:06 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id C7BCE1A016F;
-	Mon,  1 Apr 2024 11:41:11 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 1 Apr 2024 11:41:10 +0800
-Subject: Re: [PATCH 1/7] memory: Remove the now superfluous sentinel element
- from ctl_table array
-To: <j.granados@samsung.com>
-CC: Luis Chamberlain <mcgrof@kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
-	<keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<io-uring@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, Andrew Morton
-	<akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, Naoya
- Horiguchi <naoya.horiguchi@nec.com>, John Johansen
-	<john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, James Morris
-	<jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, David Howells
-	<dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook
-	<keescook@chromium.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S.
- Miller" <davem@davemloft.net>, Jens Axboe <axboe@kernel.dk>, Pavel Begunkov
-	<asml.silence@gmail.com>, Atish Patra <atishp@atishpatra.org>, Anup Patel
-	<anup@brainfault.org>, Will Deacon <will@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
- <20240328-jag-sysctl_remset_misc-v1-1-47c1463b3af2@samsung.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <0e35e88d-3ea1-4f62-77e4-eb12e9f51583@huawei.com>
-Date: Mon, 1 Apr 2024 11:41:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1711992616; c=relaxed/simple;
+	bh=oKbiK32bRoUqO/4BX3cZeyw4EqDjkS1n3k32I1zswP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mP2KxOIxu/gyNp192pYsiG1MCnH9F6y9G7DPZZDSWxODb6v+l3e3DnhLcO8YXe6TBzgVifNReXzcRwwM9kYfMNXRob37ypEZOSweIoLK5a4ayEFqu/pe2JLFjH1OJrm1BCK2N74zFbjuL+txrYD322bGryInwipesN3bPjfeF28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=Pu9OWnx7; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6e6b6f86975so2781757b3a.1
+        for <io-uring@vger.kernel.org>; Mon, 01 Apr 2024 10:30:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1711992614; x=1712597414; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jp056mBomeeAW087Kkr99ZTHdDOW/EF0DfXMcZamcC4=;
+        b=Pu9OWnx7kmGa6kkOOle6G1YYz/GBOUUtXMNAAnjdq4l54LbOxu/Nwdeii6s4HcJrXq
+         /8nz0/YEqgqpK/GJEhNqoo/f5G58qVUaSxTCvJadc3LPtTq7B+G9yqQWDauxZfvTPwyi
+         nN8z2MZNx+u6Y0hitjexDS5SeHwoInsxrvlAptREBEDBb9Cxa/IM0323zTUUPsjzuPqu
+         OPulsTVWcyDPP56pkWHDfbu0EsMAkwuVN9w66bFwZToQy5PB8hLVhHOSJ1sfjkbFFTf3
+         0d4HcpvUP+ZmBUDdl7SecwrtmV7Ce6Mgg/PuzNn3qDcEeWNCePpWyuUVIxVE7lVAVfWV
+         60XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711992614; x=1712597414;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jp056mBomeeAW087Kkr99ZTHdDOW/EF0DfXMcZamcC4=;
+        b=j7p+ZwtadmNRG1HRda5FWsuAc1zJWHFmYTnWCklARs5Qq/b8mIROJrENoHKQynIqv+
+         FsBwDgS1dz9V37hHVaYuzGYCQSxPG1XnlgRFe2wT2cifVg8/ZR6yWx7/agTNCPqdbgse
+         fU6P8r3jBfDhFSiRiINTD2sGoBaWt4hlbQg1UHOt3boADHV3ltCITiQsHB87yxWJh+Sz
+         eiDcqvERiffCml6Unqk+nZY7CMv9+gpgXmFhPRKBBBcMUfJzLTo0jp0vJJ/0CjrpOSy7
+         sIDVuIFNpIoGKnrYsXm6rOXxKrl2V2FsSX9dBZi1cKvct002HrLM+M5rwb+SUmRKBSrJ
+         MBNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnmrKw8n9fD4SLLR4oeTT6a5VImu6sDUL/aY2QE+v1Hbnv/icbljXM4dUTQ5Azt+lEDw919hstQQZzsKG/UAP3PWZntP9fitQ=
+X-Gm-Message-State: AOJu0YylXIdIzrRSCMuxH1R/773TIQXRmgHuCchTVyorxZ/BgLDcLwga
+	cGS9JmezijrcQHjkARygduC2fyCYF4/k2ZOrZ4Z0N0KFDohlvGCiNRaL2LgheyOd2PTIOGcScip
+	m
+X-Google-Smtp-Source: AGHT+IFxQ4lNH71Av406aoOFoBXRM/jGG0FSWynRZ7IvaivBKNqdYlMpd/eyzRR7YQVp7s62SNU12A==
+X-Received: by 2002:a05:6a00:14ca:b0:6e6:9942:fd97 with SMTP id w10-20020a056a0014ca00b006e69942fd97mr12433198pfu.15.1711992614079;
+        Mon, 01 Apr 2024 10:30:14 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1256:2:c51:2090:e106:83fa? ([2620:10d:c090:500::7:95f3])
+        by smtp.gmail.com with ESMTPSA id fb7-20020a056a002d8700b006eadf879a30sm7668936pfb.179.2024.04.01.10.30.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Apr 2024 10:30:13 -0700 (PDT)
+Message-ID: <4787f55e-b9c3-46d6-a183-53ba2fd21445@davidwei.uk>
+Date: Mon, 1 Apr 2024 10:30:12 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240328-jag-sysctl_remset_misc-v1-1-47c1463b3af2@samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] io_uring: add remote task_work execution helper
+Content-Language: en-GB
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20240329201241.874888-1-axboe@kernel.dk>
+ <20240329201241.874888-2-axboe@kernel.dk>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <20240329201241.874888-2-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- canpemm500002.china.huawei.com (7.192.104.244)
 
-On 2024/3/28 23:57, Joel Granados via B4 Relay wrote:
-> From: Joel Granados <j.granados@samsung.com>
+On 2024-03-29 13:09, Jens Axboe wrote:
+> All our task_work handling is targeted at the state in the io_kiocb
+> itself, which is what it is being used for. However, MSG_RING rolls its
+> own task_work handling, ignoring how that is usually done.
 > 
-> This commit comes at the tail end of a greater effort to remove the
-> empty elements at the end of the ctl_table arrays (sentinels) which will
-> reduce the overall build time size of the kernel and run time memory
-> bloat by ~64 bytes per sentinel (further information Link :
-> https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+> In preparation for switching MSG_RING to be able to use the normal
+> task_work handling, add io_req_task_work_add_remote() which allows the
+> caller to pass in the target io_ring_ctx.
 > 
-> Remove sentinel from all files under mm/ that register a sysctl table.
-> 
-> Signed-off-by: Joel Granados <j.granados@samsung.com>
-
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
-
-Thanks.
-
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > ---
->  mm/compaction.c      | 1 -
->  mm/hugetlb.c         | 1 -
->  mm/hugetlb_vmemmap.c | 1 -
->  mm/memory-failure.c  | 1 -
->  mm/oom_kill.c        | 1 -
->  mm/page-writeback.c  | 1 -
->  mm/page_alloc.c      | 1 -
->  7 files changed, 7 deletions(-)
+>  io_uring/io_uring.c | 30 ++++++++++++++++++++++--------
+>  io_uring/io_uring.h |  2 ++
+>  2 files changed, 24 insertions(+), 8 deletions(-)
 > 
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index 807b58e6eb68..e8a047afca22 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -3345,7 +3345,6 @@ static struct ctl_table vm_compaction[] = {
->  		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_ONE,
->  	},
-> -	{ }
->  };
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index fddaefb9cbff..a311a244914b 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -1232,9 +1232,10 @@ void tctx_task_work(struct callback_head *cb)
+>  	WARN_ON_ONCE(ret);
+>  }
 >  
->  static int __init kcompactd_init(void)
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 23ef240ba48a..7ac5240a197d 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -5045,7 +5045,6 @@ static struct ctl_table hugetlb_table[] = {
->  		.mode		= 0644,
->  		.proc_handler	= hugetlb_overcommit_handler,
->  	},
-> -	{ }
->  };
+> -static inline void io_req_local_work_add(struct io_kiocb *req, unsigned flags)
+> +static inline void io_req_local_work_add(struct io_kiocb *req,
+> +					 struct io_ring_ctx *ctx,
+> +					 unsigned flags)
+>  {
+> -	struct io_ring_ctx *ctx = req->ctx;
+>  	unsigned nr_wait, nr_tw, nr_tw_prev;
+>  	struct llist_node *head;
 >  
->  static void hugetlb_sysctl_init(void)
-> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> index da177e49d956..b9a55322e52c 100644
-> --- a/mm/hugetlb_vmemmap.c
-> +++ b/mm/hugetlb_vmemmap.c
-> @@ -679,7 +679,6 @@ static struct ctl_table hugetlb_vmemmap_sysctls[] = {
->  		.mode		= 0644,
->  		.proc_handler	= proc_dobool,
->  	},
-> -	{ }
->  };
+> @@ -1300,9 +1301,10 @@ static inline void io_req_local_work_add(struct io_kiocb *req, unsigned flags)
+>  	wake_up_state(ctx->submitter_task, TASK_INTERRUPTIBLE);
+>  }
 >  
->  static int __init hugetlb_vmemmap_init(void)
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 9349948f1abf..6a112f9ecf91 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -141,7 +141,6 @@ static struct ctl_table memory_failure_table[] = {
->  		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_ONE,
->  	},
-> -	{ }
->  };
+> -static void io_req_normal_work_add(struct io_kiocb *req)
+> +static void io_req_normal_work_add(struct io_kiocb *req,
+> +				   struct task_struct *task)
+>  {
+> -	struct io_uring_task *tctx = req->task->io_uring;
+> +	struct io_uring_task *tctx = task->io_uring;
+>  	struct io_ring_ctx *ctx = req->ctx;
 >  
->  /*
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index 8d6a207c3c59..4d7a0004df2c 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -724,7 +724,6 @@ static struct ctl_table vm_oom_kill_table[] = {
->  		.mode		= 0644,
->  		.proc_handler	= proc_dointvec,
->  	},
-> -	{}
->  };
->  #endif
+>  	/* task_work already pending, we're done */
+> @@ -1321,7 +1323,7 @@ static void io_req_normal_work_add(struct io_kiocb *req)
+>  		return;
+>  	}
 >  
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 3e19b87049db..fba324e1a010 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2291,7 +2291,6 @@ static struct ctl_table vm_page_writeback_sysctls[] = {
->  		.mode		= 0644,
->  		.proc_handler	= proc_dointvec_jiffies,
->  	},
-> -	{}
->  };
->  #endif
+> -	if (likely(!task_work_add(req->task, &tctx->task_work, ctx->notify_method)))
+> +	if (likely(!task_work_add(task, &tctx->task_work, ctx->notify_method)))
+>  		return;
 >  
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 14d39f34d336..8b9820620fe3 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -6211,7 +6211,6 @@ static struct ctl_table page_alloc_sysctl_table[] = {
->  		.extra2		= SYSCTL_ONE_HUNDRED,
->  	},
->  #endif
-> -	{}
->  };
->  
->  void __init page_alloc_sysctl_init(void)
-> 
+>  	io_fallback_tw(tctx, false);
+> @@ -1331,10 +1333,22 @@ void __io_req_task_work_add(struct io_kiocb *req, unsigned flags)
+>  {
+>  	if (req->ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
+>  		rcu_read_lock();
+> -		io_req_local_work_add(req, flags);
+> +		io_req_local_work_add(req, req->ctx, flags);
+> +		rcu_read_unlock();
+> +	} else {
+> +		io_req_normal_work_add(req, req->task);
 
+Why does this not require a READ_ONCE() like
+io_req_task_work_add_remote()?
+
+> +	}
+> +}
+> +
+> +void io_req_task_work_add_remote(struct io_kiocb *req, struct io_ring_ctx *ctx,
+> +				 unsigned flags)
+> +{
+> +	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
+> +		rcu_read_lock();
+> +		io_req_local_work_add(req, ctx, flags);
+>  		rcu_read_unlock();
+>  	} else {
+> -		io_req_normal_work_add(req);
+> +		io_req_normal_work_add(req, READ_ONCE(ctx->submitter_task));
+>  	}
+>  }
+>  
+> @@ -1348,7 +1362,7 @@ static void __cold io_move_task_work_from_local(struct io_ring_ctx *ctx)
+>  						    io_task_work.node);
+>  
+>  		node = node->next;
+> -		io_req_normal_work_add(req);
+> +		io_req_normal_work_add(req, req->task);
+>  	}
+>  }
+>  
+> diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+> index 1eb65324792a..4155379ee586 100644
+> --- a/io_uring/io_uring.h
+> +++ b/io_uring/io_uring.h
+> @@ -74,6 +74,8 @@ struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
+>  			       unsigned issue_flags);
+>  
+>  void __io_req_task_work_add(struct io_kiocb *req, unsigned flags);
+> +void io_req_task_work_add_remote(struct io_kiocb *req, struct io_ring_ctx *ctx,
+> +				 unsigned flags);
+>  bool io_alloc_async_data(struct io_kiocb *req);
+>  void io_req_task_queue(struct io_kiocb *req);
+>  void io_req_task_complete(struct io_kiocb *req, struct io_tw_state *ts);
 

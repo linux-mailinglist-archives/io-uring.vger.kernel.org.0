@@ -1,155 +1,120 @@
-Return-Path: <io-uring+bounces-1343-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1344-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1077A892BBC
-	for <lists+io-uring@lfdr.de>; Sat, 30 Mar 2024 16:14:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2358937BE
+	for <lists+io-uring@lfdr.de>; Mon,  1 Apr 2024 05:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95116B2137D
-	for <lists+io-uring@lfdr.de>; Sat, 30 Mar 2024 15:14:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FBFA1F21407
+	for <lists+io-uring@lfdr.de>; Mon,  1 Apr 2024 03:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0943AEBB;
-	Sat, 30 Mar 2024 15:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDEC610E;
+	Mon,  1 Apr 2024 03:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="h1aeUoW5"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lq6Z0jMS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA3038389
-	for <io-uring@vger.kernel.org>; Sat, 30 Mar 2024 15:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25561443D
+	for <io-uring@vger.kernel.org>; Mon,  1 Apr 2024 03:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711811649; cv=none; b=UpMkIfhbNJXz7lmNB/xSkfi2xrqWoR054BN+4l30aNrslsrquG+DAuGbGdIyYTC64Md1i8+VFoMf/SfxLO5YT2V9t+IimafIe9juX7Vc/nryt6Ywf334sYKsJlAPEaqxel3g8HRGPfE+tfk7nvhPsouvh7L7VaQ1iTYVXnTy728=
+	t=1711941735; cv=none; b=aPHEMTeiX8Yr2Mneqbhm2afBT8X+p6UoX2ndZCnMwrbAjJEVM+AKf2sptsjaaz2c2/Cp3PZsiybg1Qm3EO0pYsI8GsQUIQiFTreznkJ05MSU+bnlwpQfkNo+u8tPzC1I4JuCxp9m33VcuMk8wL4Sjlgp98zQq4ZzOeVMc1jIBVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711811649; c=relaxed/simple;
-	bh=LxYGxF0bkCDvg20BPi3wGzP0iMieM7ODrwi/PWAoGGQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g8/xRXT9NMj8ISf5kAlaOmB1/UKw79Xgzi19ya023VZ/nt1AZxdLpReIPH4K+4WVKzTbHWRINCJTYYwZBCNjsjGD/J+KvOCsWlQfUkw0lrFt/uZswvUoY5q72Cqc8NkoUI7DJi7nk0+dDbQXncNn3ZXjnL+QxeNg244TN7L+zKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=h1aeUoW5; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6ea895eaaadso656829b3a.1
-        for <io-uring@vger.kernel.org>; Sat, 30 Mar 2024 08:14:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1711811645; x=1712416445; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mrRnoZyriYCPcrKBiyXGE6XIdSITfqoyfsn1F1yuDOc=;
-        b=h1aeUoW5GIqVr3tGD5VN5Q4elGKubT8jvVJte9ZGg1EYnB3grdHzQ/lRVY8KUc9Gmg
-         6LV07x0hfE/D/7/Tz6XRjB8zS0ACwAobIivJASULICojGhPhbn/lSZyDeo4fSGqaNhuM
-         k1D3mxIUJ7nhzHsQM8TlTsnQ3NdISHq9gIWqSlaxcrsNdeJk/2LKiKh+fhWyyNZZ0anm
-         jeRyTZrZLkyt2BjFM6whJ9tmiLIYMohV+0BparHpI0gdpHi9vKbLr+UrL0nBligYc+Mf
-         aZq5qE5VwrDhQv8G8Bi49YtyZ5IL0H33zrNfISKx7vnj21CqhmmqR7wHE0nkMhZ1Gnbw
-         wEtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711811645; x=1712416445;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mrRnoZyriYCPcrKBiyXGE6XIdSITfqoyfsn1F1yuDOc=;
-        b=wynYPuyF06jdY8/ZNWNSA2kOnQP1gsGAfUmRmkXUa+XCJBvhHn9FOTQOWFr+Ju1riA
-         vAlCpGm0rc8TrO0vQVJdtl4g6A1M3IbCmq5mJm31+0ZlBM7QGHSVk9MQmpC9libAf2SX
-         zrMmHA8kLCcfbFHYfUCvInGCLjxwirDgAJttdvCTbELTvc1hUCyputvxejEDKCWz4SOP
-         8BnlMgMdihw60Y2g0TmH8rYi8z5PhmshAzVMOMGMwTyrdF+ktEYOGtpMjx7vq/XSmsC3
-         FTX7Xb4Ex8qzozECZ3YBbQb05qkRIyu5P2SPnhzKo4Z3qw2DBjmelAoW5rIEw70fpaYw
-         7EoA==
-X-Gm-Message-State: AOJu0YwW8iuzwi4Da5ysQQwuBV/XzI3YuBdJzF63OUSIlD887BxOBXA0
-	lsn9iAClF+UPKCNZVSrt5pIptNbUG2/QP6RF1c/hX/WUfW4agG/AkyePT+curQk=
-X-Google-Smtp-Source: AGHT+IFyjXioQ7fckud/+7q8A49ZHKQmdDsNkgH04Y7ainLfi8T0V/u0SGeWsiKCnV2UISNcNBZqqg==
-X-Received: by 2002:a17:902:c255:b0:1de:e8ce:9d7a with SMTP id 21-20020a170902c25500b001dee8ce9d7amr5528194plg.5.1711811645417;
-        Sat, 30 Mar 2024 08:14:05 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id u14-20020a170903124e00b001e0e5722788sm5375804plh.17.2024.03.30.08.14.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Mar 2024 08:14:04 -0700 (PDT)
-Message-ID: <92e22da9-be49-4c8e-9aa3-b9f5e5fd87f3@kernel.dk>
-Date: Sat, 30 Mar 2024 09:14:02 -0600
+	s=arc-20240116; t=1711941735; c=relaxed/simple;
+	bh=bFZG8fdwOXmY5gp/Ygvlq6Ww6X3u42PHaZcD+BB2dRk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Vcuae4oW1mirm2nXYDSsQ7MStJGaWwikgi/oFcjDn9POS+FSIk0Nj6RUPIqKeGf8w32v0tPJQLD3lYW5e924YVOwl+XzxZD8VKxacin0xF/iAjk5KOJfdk+n37iVHn0K/s7dUs8hujf1118hdAYI/++RWkFiSilr4DFSAaKPPcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Lq6Z0jMS; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1711941730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bFZG8fdwOXmY5gp/Ygvlq6Ww6X3u42PHaZcD+BB2dRk=;
+	b=Lq6Z0jMSLgfpkaXPiKGWrriY+Gir/Xdh6UbGT4GOVc3DljvxjojyAz/WMXSFeg72CkUJox
+	Ryhzo98vQSuKrUnjbCYI1z1BXBJSyb0ixueDHg/Sbn+FM9pMnRQJEeyycz/xoIV6NoULX4
+	xon7jCh0byFYcLVQ0RihpPUJD9jS87E=
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] io_uring: get rid of remap_pfn_range() for mapping
- rings/sqes
-Content-Language: en-US
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org, hannes@cmpxchg.org
-References: <20240328233443.797828-1-axboe@kernel.dk>
- <20240328233443.797828-3-axboe@kernel.dk>
- <87bk6w5qfm.fsf@mailhost.krisman.be>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <87bk6w5qfm.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Subject: Re: [PATCH 1/7] memory: Remove the now superfluous sentinel element
+ from ctl_table array
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <20240328-jag-sysctl_remset_misc-v1-1-47c1463b3af2@samsung.com>
+Date: Mon, 1 Apr 2024 11:21:25 +0800
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Miaohe Lin <linmiaohe@huawei.com>,
+ Naoya Horiguchi <naoya.horiguchi@nec.com>,
+ John Johansen <john.johansen@canonical.com>,
+ Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ David Howells <dhowells@redhat.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>,
+ Kees Cook <keescook@chromium.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>,
+ Atish Patra <atishp@atishpatra.org>,
+ Anup Patel <anup@brainfault.org>,
+ Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Luis Chamberlain <mcgrof@kernel.org>,
+ linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org,
+ apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org,
+ keyrings@vger.kernel.org,
+ linux-crypto@vger.kernel.org,
+ io-uring@vger.kernel.org,
+ linux-riscv@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8E19B519-9035-42E0-92DC-7C21471543D8@linux.dev>
+References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
+ <20240328-jag-sysctl_remset_misc-v1-1-47c1463b3af2@samsung.com>
+To: j.granados@samsung.com
+X-Migadu-Flow: FLOW_OUT
 
-On 3/29/24 9:50 PM, Gabriel Krisman Bertazi wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
-> 
->> Rather than use remap_pfn_range() for this and manually free later,
->> switch to using vm_insert_pages() and have it Just Work.
->>
->> If possible, allocate a single compound page that covers the range that
->> is needed. If that works, then we can just use page_address() on that
->> page. If we fail to get a compound page, allocate single pages and use
->> vmap() to map them into the kernel virtual address space.
->>
->> This just covers the rings/sqes, the other remaining user of the mmap
->> remap_pfn_range() user will be converted separately. Once that is done,
->> we can kill the old alloc/free code.
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>  io_uring/io_uring.c | 136 +++++++++++++++++++++++++++++++++++++++++---
->>  io_uring/io_uring.h |   2 +
->>  2 files changed, 130 insertions(+), 8 deletions(-)
->>
->> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->> index 104899522bc5..982545ca23f9 100644
->> --- a/io_uring/io_uring.c
->> +++ b/io_uring/io_uring.c
->> @@ -2594,6 +2594,33 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->>  	return READ_ONCE(rings->cq.head) == READ_ONCE(rings->cq.tail) ? ret : 0;
->>  }
->>  
->> +static void io_pages_unmap(void *ptr, struct page ***pages,
->> +			   unsigned short *npages)
->> +{
->> +	bool do_vunmap = false;
->> +
->> +	if (*npages) {
->> +		struct page **to_free = *pages;
->> +		int i;
->> +
->> +		/*
->> +		 * Only did vmap for the non-compound multiple page case.
->> +		 * For the compound page, we just need to put the head.
->> +		 */
->> +		if (PageCompound(to_free[0]))
->> +			*npages = 1;
->> +		else if (*npages > 1)
->> +			do_vunmap = true;
->> +		for (i = 0; i < *npages; i++)
->> +			put_page(to_free[i]);
->> +	}
-> 
-> Hi Jens,
-> 
-> wouldn't it be simpler to handle the compound case separately as a
-> folio?  Then you folio_put the compound page here and just handle the
-> non-continuous case after.
 
-I don't think it makes sense, as we're still dealing with pages for
-insertion. Once there's some folio variant of inserting pages, then yeah
-I think it'd make sense to unify it. If not, we're doing the page <->
-folio transition in one spot anyway.
 
--- 
-Jens Axboe
+> On Mar 28, 2024, at 23:57, Joel Granados via B4 Relay =
+<devnull+j.granados.samsung.com@kernel.org> wrote:
+>=20
+> From: Joel Granados <j.granados@samsung.com>
+>=20
+> This commit comes at the tail end of a greater effort to remove the
+> empty elements at the end of the ctl_table arrays (sentinels) which =
+will
+> reduce the overall build time size of the kernel and run time memory
+> bloat by ~64 bytes per sentinel (further information Link :
+> =
+https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+>=20
+> Remove sentinel from all files under mm/ that register a sysctl table.
+>=20
+> Signed-off-by: Joel Granados <j.granados@samsung.com>
+
+Reviewed-by: Muchun Song <muchun.song@linux.dev>
+
+THanks.
 
 

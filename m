@@ -1,172 +1,194 @@
-Return-Path: <io-uring+bounces-1364-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1365-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4BF895B2C
-	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 19:54:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628F1895BD9
+	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 20:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 325FE1C20C0D
-	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 17:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E43D31F22935
+	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 18:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AB315AAC9;
-	Tue,  2 Apr 2024 17:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0731915A491;
+	Tue,  2 Apr 2024 18:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oio+C70l"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFF415AABA
-	for <io-uring@vger.kernel.org>; Tue,  2 Apr 2024 17:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5688495
+	for <io-uring@vger.kernel.org>; Tue,  2 Apr 2024 18:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712080467; cv=none; b=oTEWQBvRxCT1AWi5EUBzBcPY0w1uYw8VTmYbzHMgMMOqilMLQPdRGt/oiGcPjS+9CmVtksK+WuQN6vmlmFNJLBYKg1RntK0cn1Ld4OsjiM+Qb0caozC38qdCQIQCBCmCKlVJrrse6rMkr3U2GcVwhZOVNm3yoGo31hWCtAy1H6Y=
+	t=1712083218; cv=none; b=RyrfCzyUIlAjLcNrwzlwP5kXocUbEHE3JvSFOv2JBurL1aFbEGulSAbRcMOlrVcXx33Kxb9raCGi1WaPZzkgvQXyXb7e0apz85ngEoy78mHinORrLzkas/or0w/0ihnBHFa01zdUIUsa7a34hZZ+f2ngzyd5Tvosb8HCPTKCQIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712080467; c=relaxed/simple;
-	bh=An2Jp3BeEqpuw0kXtMrC3J6wpoU/Nui+LmIiPsH/Ax0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZetKkg0TTyWPA4o66XNT3Psq7Nkk/2Hk5/gJxHkFchX/ffWPPJdCnYOGZQJxJFZ3am8HXrXiiIKZmKpR3djYbcu+bRl/sMILPSQ0nvB7t3rN7dWIPkmIKFdlgtWmszUsiNJcklNv1inbdDnrPxYjYGSDW11tWX5dKRUxO8Wx3pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7c8742bedd4so8356039f.1
-        for <io-uring@vger.kernel.org>; Tue, 02 Apr 2024 10:54:25 -0700 (PDT)
+	s=arc-20240116; t=1712083218; c=relaxed/simple;
+	bh=jnnl4RPfOuJywggY6ZWEBSIhQje75zTwGj7C2FspMhM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=vEKJFFfQjyONqlS0GYBsouzsOC+cMz3UZ5AyR7bIy1JD5GwsqQF86jsNtDT0zUi4BThLAfmLKK+N04wV9VhOm53e6Vt3JrLWOpI523eadNGbeAzkpate8ungVTPaNQ/XQFOFsXKggsmhcFo073UUo+D808C6GD+KimmWHbAwD6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oio+C70l; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a4e39f5030dso552782666b.0
+        for <io-uring@vger.kernel.org>; Tue, 02 Apr 2024 11:40:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712083215; x=1712688015; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=eBkBi9OtAN82Hn9rYcm9XGPxG5vY4rE4LFi9tywmGAs=;
+        b=Oio+C70luABdpFqsj0EgrOQcq3UqyLXMVo7+O+TU9q5GwOQJCB45CbR2wj9bWmROvG
+         MnHBSiYbs7EJ3a7VVmMOAtn6EIirsumxKs4WvJbRUgycsduQrsYtqBAGM+Ks58ev3ClU
+         E64a5vv8SS3nWsaAyo5n8jdMQs/wbIA612mwTEfd12vbbThNaUwGpdy9g5PGuiZwzH/I
+         SMqfgazNmT8MXGgnwJyg2Let33ZPlWAHDfOEZX8X/jKBztWpmqbIsPae4bdeuG0cla4c
+         NNSrU5cNG6t/hqRMR4e7+RpGfO3zm8B44p0ObLOH6pYfRPY4z9QX9ry4RykTMhE4Ajhh
+         aCIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712080465; x=1712685265;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dneoHgsX3nsgd/CBqL8Tb4EZ1x6rRPwypobUWP/z48I=;
-        b=lLStWxqhhJ/gW8X+wY5bOeLvSWu99Yak/8SEfszbI3bOS6AoRkZF+Du3GKvrzg/7xe
-         Kd0uTKocGQc+YzTY6xWSv3FITVMU+37pQvmSAE6SXAivNun58OOyxaytgcmMIk/rwrYB
-         yksbJKN2BRYMBSyhg+vVkYkeBQ8iFPKNp4jEYn0W7pgzRWLSgZ17NqEmVcq+mN87Qian
-         gV6YmxuCzZ2PgmsZg4kdikQmDBaSAMBrROUW1o75Sm+XYutaZZOgn4M5MUoG8U0PwEHT
-         C/4RDOR4jkJIM+ppemNQQHm17e+Gd3zFxCAyez8wRISrnHUBkbSl50Ti8kwSWKkUDv6W
-         bi4A==
-X-Forwarded-Encrypted: i=1; AJvYcCV3JVbeQ9nQcjZX4r10XaNi/M6ZahHSJ1bVs7G4lnVcWn5bCA+uU4YLGdY14Q6EzffDrsSp35egerS1FAhxB35OWI/Pzjq07NE=
-X-Gm-Message-State: AOJu0Yz7uwh1xHn+JcPk4zTSOPa9v0L9ikZL5aTQo7apTxFK64ImpBZQ
-	aMed4vcfsAoOp3RqlRbaIfgteq7nUY1txDdLaaLDh6ixK6jSonmX1XOO8uklHcC2RMcp96ydsuj
-	uMFY42NT9sXgpNIetW0pUFw155Jb7iRRjO/zyQCB0UmoHpkja/Pdnywg=
-X-Google-Smtp-Source: AGHT+IFrncUXVW+v64ArE/rJ/le2TPQWM4rWPuCk1FkWHuD/NK956lQ1eZaw9GTQPH60b83cSh0aDKkzHdYNLI6OxXfRz/FFMdVr
+        d=1e100.net; s=20230601; t=1712083215; x=1712688015;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eBkBi9OtAN82Hn9rYcm9XGPxG5vY4rE4LFi9tywmGAs=;
+        b=ZQPTivdiLn76AsJwxusOxOyThyykL2yqJm0HUqKhBvFMt5vSRcBMnNQIJvdYwNGmyb
+         JRmyOZbkUxfBcPb5m8B/hVpQ+4dKyoIZn3Zyc+2EdNwkk6aofEhQnWiYYYObJGF291fB
+         LjLgcy+jWAZBu5yjqVJIpmuYIRshGD2QgPIbztXsg+P5o45W6PZSsAA/xSfgPCbr73ho
+         n1hrvrsHMC1Zuf1Me356GCxEDeuos3ags6oLtgVzq0qwP9k7hcRWIOthaD2MbRMTphO1
+         Ytx8AfGbPJSpFIr4UecPyHwVj0Y1gfBcv3MZIhZPND+kb1YLqAIg9YpmNDfM4o6YtXoO
+         +5hw==
+X-Forwarded-Encrypted: i=1; AJvYcCWW3PhMiKSVu/zWUi1EULIERCpjFStQAsg3QzdFuHnGpMXfeLyRlYHtVDLSCLPGXJ2Ijry5GLTctpQKLx4wqi99ogQeLWJthaY=
+X-Gm-Message-State: AOJu0YyyTu6R7DVAgFrirM0K2fegrHaRCXb45J+T9HcYmrgGRxU766Hk
+	eg/pf5WDKYC2jUcN9potwBijKcbOC2N9jhJpvb2j6qM6Cd8Ydqim1DsYL1oW
+X-Google-Smtp-Source: AGHT+IHUvAzmem5y24B2oXREjMVBwfYlcXzjisgSm/M7EflCGy3qex0Y1ERUF0Q9+gqhjipDf/n7lQ==
+X-Received: by 2002:a17:906:a14d:b0:a4e:982e:7766 with SMTP id bu13-20020a170906a14d00b00a4e982e7766mr496239ejb.70.1712083212974;
+        Tue, 02 Apr 2024 11:40:12 -0700 (PDT)
+Received: from [192.168.42.163] ([148.252.147.117])
+        by smtp.gmail.com with ESMTPSA id p6-20020a170906a00600b00a46d04b6117sm6856776ejy.64.2024.04.02.11.40.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Apr 2024 11:40:12 -0700 (PDT)
+Message-ID: <d9f6917a-72ad-43a0-8f8b-117284b95656@gmail.com>
+Date: Tue, 2 Apr 2024 19:40:07 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c86:b0:366:b246:2f10 with SMTP id
- w6-20020a056e021c8600b00366b2462f10mr11956ill.2.1712080465159; Tue, 02 Apr
- 2024 10:54:25 -0700 (PDT)
-Date: Tue, 02 Apr 2024 10:54:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f3f1ef061520cb6e@google.com>
-Subject: [syzbot] [io-uring?] kernel BUG in __io_remove_buffers
-From: syzbot <syzbot+beb5226eef6218124e9d@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: kill dead code in io_req_complete_post
+To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org
+References: <20240329154712.1936153-1-ming.lei@redhat.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240329154712.1936153-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 3/29/24 15:47, Ming Lei wrote:
+> Since commit 8f6c829491fe ("io_uring: remove struct io_tw_state::locked"),
+> io_req_complete_post() is only called from io-wq submit work, where the
+> request reference is guaranteed to be grabbed and won't drop to zero
+> in io_req_complete_post().
+> 
+> Kill the dead code, meantime add req_ref_put() to put the reference.
 
-syzbot found the following issue on:
+Interesting... a nice clean up. The assumption is too implicit to
+my taste, but should be just fine if we add
 
-HEAD commit:    c0b832517f62 Add linux-next specific files for 20240402
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12d5def9180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=afcaf46d374cec8c
-dashboard link: https://syzkaller.appspot.com/bug?extid=beb5226eef6218124e9d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1155ccc5180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b06795180000
+if (WARN_ON_ONCE(!(issue_flags & IO_URING_F_IOWQ)))
+	return;
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0d36ec76edc7/disk-c0b83251.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6f9bb4e37dd0/vmlinux-c0b83251.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2349287b14b7/bzImage-c0b83251.xz
+at the beginning of io_req_complete_post(), it's a slow path.
+And with this change:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+beb5226eef6218124e9d@syzkaller.appspotmail.com
-
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
-------------[ cut here ]------------
-kernel BUG at include/linux/mm.h:1135!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.9.0-rc2-next-20240402-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Workqueue: events_unbound io_ring_exit_work
-RIP: 0010:put_page_testzero include/linux/mm.h:1135 [inline]
-RIP: 0010:folio_put_testzero include/linux/mm.h:1141 [inline]
-RIP: 0010:folio_put include/linux/mm.h:1508 [inline]
-RIP: 0010:put_page include/linux/mm.h:1581 [inline]
-RIP: 0010:__io_remove_buffers+0x8ee/0x8f0 io_uring/kbuf.c:196
-Code: ff fb ff ff 48 c7 c7 3c 68 a9 8f e8 fc b6 56 fd e9 ee fb ff ff e8 12 dc f1 fc 48 89 ef 48 c7 c6 60 ff 1e 8c e8 13 20 3b fd 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
-RSP: 0018:ffffc90000117830 EFLAGS: 00010246
-RAX: 12798bbc5474ca00 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: ffffffff8bcad5c0 RDI: 0000000000000001
-RBP: ffffea0000880c40 R08: ffffffff92f3a5ef R09: 1ffffffff25e74bd
-R10: dffffc0000000000 R11: fffffbfff25e74be R12: 0000000000000008
-R13: 0000000000000002 R14: ffff88802d20d280 R15: ffffea0000880c74
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200020c4 CR3: 000000007d97a000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- io_put_bl io_uring/kbuf.c:229 [inline]
- io_destroy_buffers+0x14e/0x490 io_uring/kbuf.c:243
- io_ring_ctx_free+0x818/0xe70 io_uring/io_uring.c:2710
- io_ring_exit_work+0x7c7/0x850 io_uring/io_uring.c:2941
- process_one_work kernel/workqueue.c:3218 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3299
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3380
- kthread+0x2f0/0x390 kernel/kthread.c:388
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:put_page_testzero include/linux/mm.h:1135 [inline]
-RIP: 0010:folio_put_testzero include/linux/mm.h:1141 [inline]
-RIP: 0010:folio_put include/linux/mm.h:1508 [inline]
-RIP: 0010:put_page include/linux/mm.h:1581 [inline]
-RIP: 0010:__io_remove_buffers+0x8ee/0x8f0 io_uring/kbuf.c:196
-Code: ff fb ff ff 48 c7 c7 3c 68 a9 8f e8 fc b6 56 fd e9 ee fb ff ff e8 12 dc f1 fc 48 89 ef 48 c7 c6 60 ff 1e 8c e8 13 20 3b fd 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
-RSP: 0018:ffffc90000117830 EFLAGS: 00010246
-RAX: 12798bbc5474ca00 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: ffffffff8bcad5c0 RDI: 0000000000000001
-RBP: ffffea0000880c40 R08: ffffffff92f3a5ef R09: 1ffffffff25e74bd
-R10: dffffc0000000000 R11: fffffbfff25e74be R12: 0000000000000008
-R13: 0000000000000002 R14: ffff88802d20d280 R15: ffffea0000880c74
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f31a71870f0 CR3: 000000007930c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> Cc: Pavel Begunkov <asml.silence@gmail.com>
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>   io_uring/io_uring.c | 37 ++-----------------------------------
+>   io_uring/refs.h     |  7 +++++++
+>   2 files changed, 9 insertions(+), 35 deletions(-)
+> 
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 104899522bc5..ac2e5da4558a 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -929,7 +929,6 @@ bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags)
+>   static void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
+>   {
+>   	struct io_ring_ctx *ctx = req->ctx;
+> -	struct io_rsrc_node *rsrc_node = NULL;
+>   
+>   	/*
+>   	 * Handle special CQ sync cases via task_work. DEFER_TASKRUN requires
+> @@ -946,42 +945,10 @@ static void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
+>   		if (!io_fill_cqe_req(ctx, req))
+>   			io_req_cqe_overflow(req);
+>   	}
+> -
+> -	/*
+> -	 * If we're the last reference to this request, add to our locked
+> -	 * free_list cache.
+> -	 */
+> -	if (req_ref_put_and_test(req)) {
+> -		if (req->flags & IO_REQ_LINK_FLAGS) {
+> -			if (req->flags & IO_DISARM_MASK)
+> -				io_disarm_next(req);
+> -			if (req->link) {
+> -				io_req_task_queue(req->link);
+> -				req->link = NULL;
+> -			}
+> -		}
+> -		io_put_kbuf_comp(req);
+> -		if (unlikely(req->flags & IO_REQ_CLEAN_FLAGS))
+> -			io_clean_op(req);
+> -		io_put_file(req);
+> -
+> -		rsrc_node = req->rsrc_node;
+> -		/*
+> -		 * Selected buffer deallocation in io_clean_op() assumes that
+> -		 * we don't hold ->completion_lock. Clean them here to avoid
+> -		 * deadlocks.
+> -		 */
+> -		io_put_task_remote(req->task);
+> -		wq_list_add_head(&req->comp_list, &ctx->locked_free_list);
+> -		ctx->locked_free_nr++;
+> -	}
+>   	io_cq_unlock_post(ctx);
+>   
+> -	if (rsrc_node) {
+> -		io_ring_submit_lock(ctx, issue_flags);
+> -		io_put_rsrc_node(ctx, rsrc_node);
+> -		io_ring_submit_unlock(ctx, issue_flags);
+> -	}
+> +	/* called from io-wq submit work only, the ref won't drop to zero */
+> +	req_ref_put(req);
+>   }
+>   
+>   void io_req_defer_failed(struct io_kiocb *req, s32 res)
+> diff --git a/io_uring/refs.h b/io_uring/refs.h
+> index 1336de3f2a30..63982ead9f7d 100644
+> --- a/io_uring/refs.h
+> +++ b/io_uring/refs.h
+> @@ -33,6 +33,13 @@ static inline void req_ref_get(struct io_kiocb *req)
+>   	atomic_inc(&req->refs);
+>   }
+>   
+> +static inline void req_ref_put(struct io_kiocb *req)
+> +{
+> +	WARN_ON_ONCE(!(req->flags & REQ_F_REFCOUNT));
+> +	WARN_ON_ONCE(req_ref_zero_or_close_to_overflow(req));
+> +	atomic_dec(&req->refs);
+> +}
+> +
+>   static inline void __io_req_set_refcount(struct io_kiocb *req, int nr)
+>   {
+>   	if (!(req->flags & REQ_F_REFCOUNT)) {
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Pavel Begunkov
 

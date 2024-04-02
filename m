@@ -1,188 +1,444 @@
-Return-Path: <io-uring+bounces-1360-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1361-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B807C894DE2
-	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 10:47:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 310638950E0
+	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 12:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5FAE1C22429
-	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 08:47:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA94B286B5F
+	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 10:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A4145BF9;
-	Tue,  2 Apr 2024 08:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39395FB98;
+	Tue,  2 Apr 2024 10:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z8Adm5+W";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="loDp6aBU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83D554919
-	for <io-uring@vger.kernel.org>; Tue,  2 Apr 2024 08:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D105F873;
+	Tue,  2 Apr 2024 10:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712047654; cv=none; b=sLV7P5tc527fuZZ7HYClJAEGh9+WcFxteK4IfZ+CeYaseZ3iXZwXngKl2h2rjQ7oN26S0V2r8yY1eG4mN/hYYYkqygxAHSW7jj0L8eItKa1Xf7AojfTScqdDygRyRVY7Hwo8ENQMS6o7WfM2JgzaYThcQ9yxGJb1G0b1y06qvGg=
+	t=1712055086; cv=none; b=bp/Vot2ajrzVGB6CBoKvlQYWEsOTXyr0e4NMinpxaMoXmFCcpB91LnaSMCxhJFmqBxuMbGIylD8g83oQ6C7kk9wg7u1kDVEmcNuojUEi144DHBgVwYuXINyeFJcwB80oIW24h/CNQulZAm9giTp1vVrgMZWnAjiq7FO9XZN7sdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712047654; c=relaxed/simple;
-	bh=jEdGEcceCTXdnD5MjNTC9IVy5Ci49c298K9nYlZVnpw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HIjWy59oNHpHZ8uNmGHiZdhBJfsTg0tsJiwFShoVtsBonzQpcYyVSIEhXJVXbtuD5Q/6SodXIMhn513jTqvt+r2H4c4CBfCH/hYiK9xEU1tVfq+gJxBOtwablxfAxO861RzK6mPZqLdIbRAsJSRW9JGnT+L4YDCmUvj4Wne3IqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c8a98e52b5so413217739f.1
-        for <io-uring@vger.kernel.org>; Tue, 02 Apr 2024 01:47:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712047652; x=1712652452;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8HQuzIwBpCyt1IFYX7pol1lktCvpmrQQPU05Mw4nyFo=;
-        b=lV+m3VWuxhuoULfisfTmDKPj45qzmXJiML96IOuodAQ12guG8Tyw/Ig3/J4ddbiZMx
-         pz/SUjCMRGjtAs4DB7BU2TcIGWlZlXSciys/+9CuuERICY4RvleuLeaIoec+o+BHWWyo
-         u1j4iVXER9o6peunGOkjDz9zAl95yhtQQ6WjDv0BD5TfE1xjhFzdj5zH1rbSxT0OCfyD
-         nC3jhnhwX9qWn82QwPTp8bPiDpkeBLZ5WANLDFFNEUZgimIIJH4zA6avvwex5glM1FXG
-         bHpRdPS2lLlte5TogL8KzAM48hVPI0cf9uvzxDaX/xaVns/viSpj8qcTC9M/vHMTV30C
-         X2bA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMHTr7DtbJHmCNzHi8Z8aTaI4j6lJjP/baFis7xC3ODu2cP6M5U7dkzaJuVdEbbPlJJFtXH5f+mPWyfKrMs42xF5dlVXxw84c=
-X-Gm-Message-State: AOJu0Yz3j1EJa+9wwMffRzHmoJs6k62x3oFZJlphlRG/zaAuF98T+s8o
-	lvxHg7ybwvL6D1VHp99HLhuEjZZRSYgmcU5ctFzMyIsCEkBYaI1mBDWxz6YML+zaJVkvlV3cfCo
-	PjevXklD6CX20rrqpjhrvkJ7b2payX7JQRP7FeDZ3AISMKjIg3r4+8is=
-X-Google-Smtp-Source: AGHT+IFW5TgVQmqg/5Q+HncurZGgxitxvvZWu5wolvjJzf8f7e2Rm8bve0k9EdygoMevAlLo8/nSWGHe3LtZCGaa5HJeEZmhR6V7
+	s=arc-20240116; t=1712055086; c=relaxed/simple;
+	bh=8EPxofJKrmn27UvzvxakwQaPTnGb1vRz73yD/7QFR9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ktWODaheBd+t9+HMvMel8uF7abj1k0tVDG6oN7CSThdGmXJJZ3Bde5STLujL33vFQEPy8hWnRNwF0Cmm6gUuBdCvLSkqCjEMmyUFJuPawuGZTDapueSemSBbVMAFv3C8BNUV77caBHA8HG7FK+2/YonZg4FFus1suqtkUxWqhyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z8Adm5+W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=loDp6aBU; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 31B78345AF;
+	Tue,  2 Apr 2024 10:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1712055082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qKZccLTJaJ/+J5R+DjrdtmF1ZnxPN3VrC9yKNF8h/lg=;
+	b=z8Adm5+WK2xLi4rQIvo2Lq3i0jl0yldkD9AIRqMajZ6vB45WLq1yrqM/aUl/Y1/mbONXH/
+	xmvLqRSHs4Qt8aHSFr0FCoDMCuejtZF4DnIFp7eI1RwoLptX7tLezFHZE95A5A5cCo9Q6P
+	g3ciItSmrE/D+MTtGozR6fNj5ZHmaYA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1712055082;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qKZccLTJaJ/+J5R+DjrdtmF1ZnxPN3VrC9yKNF8h/lg=;
+	b=loDp6aBUkZy/BJSJlcNe4Wg7U4neBNC4mV7xD6CKuni4lyuPGZwDkxzHRSS/2zgtZSrujq
+	nNXqLDtnyC9sRCBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 274ED13357;
+	Tue,  2 Apr 2024 10:51:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id kmeVCSrjC2YgHQAAn2gu4w
+	(envelope-from <jack@suse.cz>); Tue, 02 Apr 2024 10:51:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C3740A0813; Tue,  2 Apr 2024 12:51:17 +0200 (CEST)
+Date: Tue, 2 Apr 2024 12:51:17 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org
+Subject: Re: [PATCH v2] fs: claw back a few FMODE_* bits
+Message-ID: <20240402105117.bkbbqvzk7eqh23wa@quack3>
+References: <20240328-gewendet-spargel-aa60a030ef74@brauner>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4094:b0:47e:c495:3a1e with SMTP id
- m20-20020a056638409400b0047ec4953a1emr884663jam.1.1712047652097; Tue, 02 Apr
- 2024 01:47:32 -0700 (PDT)
-Date: Tue, 02 Apr 2024 01:47:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002464bf06151928ef@google.com>
-Subject: [syzbot] [io-uring?] kernel BUG in put_page
-From: syzbot <syzbot+324f30025b9b5d66fab9@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240328-gewendet-spargel-aa60a030ef74@brauner>
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap2.dmz-prg2.suse.org:rdns,imap2.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Score: -2.80
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-Hello,
+On Thu 28-03-24 13:27:24, Christian Brauner wrote:
+> There's a bunch of flags that are purely based on what the file
+> operations support while also never being conditionally set or unset.
+> IOW, they're not subject to change for individual files. Imho, such
+> flags don't need to live in f_mode they might as well live in the fops
+> structs itself. And the fops struct already has that lonely
+> mmap_supported_flags member. We might as well turn that into a generic
+> fop_flags member and move a few flags from FMODE_* space into FOP_*
+> space. That gets us four FMODE_* bits back and the ability for new
+> static flags that are about file ops to not have to live in FMODE_*
+> space but in their own FOP_* space. It's not the most beautiful thing
+> ever but it gets the job done. Yes, there'll be an additional pointer
+> chase but hopefully that won't matter for these flags.
+> 
+> I suspect there's a few more we can move into there and that we can also
+> redirect a bunch of new flag suggestions that follow this pattern into
+> the fop_flags field instead of f_mode.
+> 
+> (Fwiw, FMODE_NOACCOUNT and FMODE_BACKING could live in fop_flags as
+>  well because they're also completely static but they aren't really
+>  about file operations so they're better suited for FMODE_* imho.)
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-syzbot found the following issue on:
+Looks good. Feel free to add:
 
-HEAD commit:    c0b832517f62 Add linux-next specific files for 20240402
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1737bfb1180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=afcaf46d374cec8c
-dashboard link: https://syzkaller.appspot.com/bug?extid=324f30025b9b5d66fab9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ce85b1180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=139fe0c5180000
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0d36ec76edc7/disk-c0b83251.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6f9bb4e37dd0/vmlinux-c0b83251.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2349287b14b7/bzImage-c0b83251.xz
+								Honza
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+324f30025b9b5d66fab9@syzkaller.appspotmail.com
-
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1110 [inline]
- free_unref_page+0xd3c/0xec0 mm/page_alloc.c:2617
- __folio_put_small mm/swap.c:119 [inline]
- __folio_put+0x22b/0x390 mm/swap.c:142
- io_mem_alloc_single io_uring/memmap.c:55 [inline]
- io_pages_map+0x25a/0x480 io_uring/memmap.c:76
- io_allocate_scq_urings+0x3b8/0x640 io_uring/io_uring.c:3432
- io_uring_create+0x741/0x12f0 io_uring/io_uring.c:3590
- io_uring_setup io_uring/io_uring.c:3702 [inline]
- __do_sys_io_uring_setup io_uring/io_uring.c:3729 [inline]
- __se_sys_io_uring_setup+0x2ba/0x330 io_uring/io_uring.c:3723
- do_syscall_64+0xfb/0x240
- entry_SYSCALL_64_after_hwframe+0x72/0x7a
-------------[ cut here ]------------
-kernel BUG at include/linux/mm.h:1135!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 PID: 5084 Comm: syz-executor990 Not tainted 6.9.0-rc2-next-20240402-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:put_page_testzero include/linux/mm.h:1135 [inline]
-RIP: 0010:folio_put_testzero include/linux/mm.h:1141 [inline]
-RIP: 0010:folio_put include/linux/mm.h:1508 [inline]
-RIP: 0010:put_page+0x1b6/0x260 include/linux/mm.h:1581
-Code: 00 00 e8 6d 25 61 fd 84 c0 74 6e e8 c4 a6 ed fc e9 3f ff ff ff e8 ba a6 ed fc 4c 89 f7 48 c7 c6 a0 12 1f 8c e8 bb ea 36 fd 90 <0f> 0b e8 a3 a6 ed fc e9 a1 fe ff ff 4c 89 f7 be 08 00 00 00 e8 11
-RSP: 0018:ffffc9000353fc30 EFLAGS: 00010246
-RAX: bf727e5c3e70b300 RBX: ffffea0000446034 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: ffffffff8bcad5c0 RDI: 0000000000000001
-RBP: 0000000000000000 R08: ffffffff8fa934ef R09: 1ffffffff1f5269d
-R10: dffffc0000000000 R11: fffffbfff1f5269e R12: 1ffff1100c8c9518
-R13: ffff888064636000 R14: ffffea0000446000 R15: ffff88806464a8c6
-FS:  00005555716a0380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe2349d29f0 CR3: 0000000022106000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- io_pages_unmap+0x1c0/0x320 io_uring/memmap.c:108
- io_rings_free+0xcf/0x2b0 io_uring/io_uring.c:2619
- io_allocate_scq_urings+0x41f/0x640 io_uring/io_uring.c:3437
- io_uring_create+0x741/0x12f0 io_uring/io_uring.c:3590
- io_uring_setup io_uring/io_uring.c:3702 [inline]
- __do_sys_io_uring_setup io_uring/io_uring.c:3729 [inline]
- __se_sys_io_uring_setup+0x2ba/0x330 io_uring/io_uring.c:3723
- do_syscall_64+0xfb/0x240
- entry_SYSCALL_64_after_hwframe+0x72/0x7a
-RIP: 0033:0x7fe234a0f9d9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc53bc7168 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000000000010 RCX: 00007fe234a0f9d9
-RDX: 00007fe234a0f9d9 RSI: 0000000020000000 RDI: 0000000000006839
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe234a59036
-R13: 00007ffc53bc71a0 R14: 00007ffc53bc71e0 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:put_page_testzero include/linux/mm.h:1135 [inline]
-RIP: 0010:folio_put_testzero include/linux/mm.h:1141 [inline]
-RIP: 0010:folio_put include/linux/mm.h:1508 [inline]
-RIP: 0010:put_page+0x1b6/0x260 include/linux/mm.h:1581
-Code: 00 00 e8 6d 25 61 fd 84 c0 74 6e e8 c4 a6 ed fc e9 3f ff ff ff e8 ba a6 ed fc 4c 89 f7 48 c7 c6 a0 12 1f 8c e8 bb ea 36 fd 90 <0f> 0b e8 a3 a6 ed fc e9 a1 fe ff ff 4c 89 f7 be 08 00 00 00 e8 11
-RSP: 0018:ffffc9000353fc30 EFLAGS: 00010246
-RAX: bf727e5c3e70b300 RBX: ffffea0000446034 RCX: 0000000000000001
-RDX: dffffc0000000000 RSI: ffffffff8bcad5c0 RDI: 0000000000000001
-RBP: 0000000000000000 R08: ffffffff8fa934ef R09: 1ffffffff1f5269d
-R10: dffffc0000000000 R11: fffffbfff1f5269e R12: 1ffff1100c8c9518
-R13: ffff888064636000 R14: ffffea0000446000 R15: ffff88806464a8c6
-FS:  00005555716a0380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000556f47e67058 CR3: 0000000022106000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> ---
+>  block/bdev.c         |  2 +-
+>  block/fops.c         |  1 +
+>  drivers/dax/device.c |  2 +-
+>  fs/btrfs/file.c      |  4 ++--
+>  fs/ext4/file.c       |  6 +++---
+>  fs/f2fs/file.c       |  3 ++-
+>  fs/read_write.c      |  2 +-
+>  fs/xfs/xfs_file.c    |  8 +++++---
+>  include/linux/fs.h   | 22 ++++++++++++----------
+>  io_uring/io_uring.c  |  2 +-
+>  io_uring/rw.c        |  9 +++++----
+>  mm/mmap.c            |  4 +++-
+>  12 files changed, 37 insertions(+), 28 deletions(-)
+> 
+> diff --git a/block/bdev.c b/block/bdev.c
+> index b8e32d933a63..dd26d37356aa 100644
+> --- a/block/bdev.c
+> +++ b/block/bdev.c
+> @@ -903,7 +903,7 @@ int bdev_open(struct block_device *bdev, blk_mode_t mode, void *holder,
+>  		disk_unblock_events(disk);
+>  
+>  	bdev_file->f_flags |= O_LARGEFILE;
+> -	bdev_file->f_mode |= FMODE_BUF_RASYNC | FMODE_CAN_ODIRECT;
+> +	bdev_file->f_mode |= FMODE_CAN_ODIRECT;
+>  	if (bdev_nowait(bdev))
+>  		bdev_file->f_mode |= FMODE_NOWAIT;
+>  	if (mode & BLK_OPEN_RESTRICT_WRITES)
+> diff --git a/block/fops.c b/block/fops.c
+> index 679d9b752fe8..af6c244314af 100644
+> --- a/block/fops.c
+> +++ b/block/fops.c
+> @@ -863,6 +863,7 @@ const struct file_operations def_blk_fops = {
+>  	.splice_read	= filemap_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+>  	.fallocate	= blkdev_fallocate,
+> +	.fop_flags	= FOP_BUFFER_RASYNC,
+>  };
+>  
+>  static __init int blkdev_init(void)
+> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+> index 93ebedc5ec8c..c24ef4d3cf31 100644
+> --- a/drivers/dax/device.c
+> +++ b/drivers/dax/device.c
+> @@ -377,7 +377,7 @@ static const struct file_operations dax_fops = {
+>  	.release = dax_release,
+>  	.get_unmapped_area = dax_get_unmapped_area,
+>  	.mmap = dax_mmap,
+> -	.mmap_supported_flags = MAP_SYNC,
+> +	.fop_flags = FOP_MMAP_SYNC,
+>  };
+>  
+>  static void dev_dax_cdev_del(void *cdev)
+> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> index f9d76072398d..1640c46f2153 100644
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@ -3719,8 +3719,7 @@ static int btrfs_file_open(struct inode *inode, struct file *filp)
+>  {
+>  	int ret;
+>  
+> -	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC |
+> -		        FMODE_CAN_ODIRECT;
+> +	filp->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
+>  
+>  	ret = fsverity_file_open(inode, filp);
+>  	if (ret)
+> @@ -3850,6 +3849,7 @@ const struct file_operations btrfs_file_operations = {
+>  	.compat_ioctl	= btrfs_compat_ioctl,
+>  #endif
+>  	.remap_file_range = btrfs_remap_file_range,
+> +	.fop_flags	= FOP_BUFFER_RASYNC | FOP_BUFFER_WASYNC,
+>  };
+>  
+>  int btrfs_fdatawrite_range(struct inode *inode, loff_t start, loff_t end)
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 54d6ff22585c..28c51b0cc4db 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -885,8 +885,7 @@ static int ext4_file_open(struct inode *inode, struct file *filp)
+>  			return ret;
+>  	}
+>  
+> -	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC |
+> -			FMODE_DIO_PARALLEL_WRITE;
+> +	filp->f_mode |= FMODE_NOWAIT;
+>  	return dquot_file_open(inode, filp);
+>  }
+>  
+> @@ -938,7 +937,6 @@ const struct file_operations ext4_file_operations = {
+>  	.compat_ioctl	= ext4_compat_ioctl,
+>  #endif
+>  	.mmap		= ext4_file_mmap,
+> -	.mmap_supported_flags = MAP_SYNC,
+>  	.open		= ext4_file_open,
+>  	.release	= ext4_release_file,
+>  	.fsync		= ext4_sync_file,
+> @@ -946,6 +944,8 @@ const struct file_operations ext4_file_operations = {
+>  	.splice_read	= ext4_file_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+>  	.fallocate	= ext4_fallocate,
+> +	.fop_flags	= FOP_MMAP_SYNC | FOP_BUFFER_RASYNC |
+> +			  FOP_DIO_PARALLEL_WRITE,
+>  };
+>  
+>  const struct inode_operations ext4_file_inode_operations = {
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 1761ad125f97..2b65e09822d4 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -569,7 +569,7 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+>  	if (err)
+>  		return err;
+>  
+> -	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC;
+> +	filp->f_mode |= FMODE_NOWAIT;
+>  	filp->f_mode |= FMODE_CAN_ODIRECT;
+>  
+>  	return dquot_file_open(inode, filp);
+> @@ -5045,4 +5045,5 @@ const struct file_operations f2fs_file_operations = {
+>  	.splice_read	= f2fs_file_splice_read,
+>  	.splice_write	= iter_file_splice_write,
+>  	.fadvise	= f2fs_file_fadvise,
+> +	.fop_flags	= FOP_BUFFER_RASYNC,
+>  };
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index d4c036e82b6c..2115d1f40bd5 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1685,7 +1685,7 @@ int generic_write_checks_count(struct kiocb *iocb, loff_t *count)
+>  
+>  	if ((iocb->ki_flags & IOCB_NOWAIT) &&
+>  	    !((iocb->ki_flags & IOCB_DIRECT) ||
+> -	      (file->f_mode & FMODE_BUF_WASYNC)))
+> +	      (file->f_op->fop_flags & FOP_BUFFER_WASYNC)))
+>  		return -EINVAL;
+>  
+>  	return generic_write_check_limits(iocb->ki_filp, iocb->ki_pos, count);
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 632653e00906..147439ad3581 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -1230,8 +1230,7 @@ xfs_file_open(
+>  {
+>  	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
+>  		return -EIO;
+> -	file->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC |
+> -			FMODE_DIO_PARALLEL_WRITE | FMODE_CAN_ODIRECT;
+> +	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
+>  	return generic_file_open(inode, file);
+>  }
+>  
+> @@ -1490,7 +1489,6 @@ const struct file_operations xfs_file_operations = {
+>  	.compat_ioctl	= xfs_file_compat_ioctl,
+>  #endif
+>  	.mmap		= xfs_file_mmap,
+> -	.mmap_supported_flags = MAP_SYNC,
+>  	.open		= xfs_file_open,
+>  	.release	= xfs_file_release,
+>  	.fsync		= xfs_file_fsync,
+> @@ -1498,6 +1496,8 @@ const struct file_operations xfs_file_operations = {
+>  	.fallocate	= xfs_file_fallocate,
+>  	.fadvise	= xfs_file_fadvise,
+>  	.remap_file_range = xfs_file_remap_range,
+> +	.fop_flags	= FOP_MMAP_SYNC | FOP_BUFFER_RASYNC | FOP_BUFFER_WASYNC |
+> +			  FOP_DIO_PARALLEL_WRITE,
+>  };
+>  
+>  const struct file_operations xfs_dir_file_operations = {
+> @@ -1510,4 +1510,6 @@ const struct file_operations xfs_dir_file_operations = {
+>  	.compat_ioctl	= xfs_file_compat_ioctl,
+>  #endif
+>  	.fsync		= xfs_dir_fsync,
+> +	.fop_flags	= FOP_MMAP_SYNC | FOP_BUFFER_RASYNC | FOP_BUFFER_WASYNC |
+> +			  FOP_DIO_PARALLEL_WRITE,
+>  };
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 8dfd53b52744..ece6e681ec77 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -165,9 +165,6 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+>  
+>  #define	FMODE_NOREUSE		((__force fmode_t)0x800000)
+>  
+> -/* File supports non-exclusive O_DIRECT writes from multiple threads */
+> -#define FMODE_DIO_PARALLEL_WRITE	((__force fmode_t)0x1000000)
+> -
+>  /* File is embedded in backing_file object */
+>  #define FMODE_BACKING		((__force fmode_t)0x2000000)
+>  
+> @@ -183,12 +180,6 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+>  /* File does not contribute to nr_files count */
+>  #define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
+>  
+> -/* File supports async buffered reads */
+> -#define FMODE_BUF_RASYNC	((__force fmode_t)0x40000000)
+> -
+> -/* File supports async nowait buffered writes */
+> -#define FMODE_BUF_WASYNC	((__force fmode_t)0x80000000)
+> -
+>  /*
+>   * Attribute flags.  These should be or-ed together to figure out what
+>   * has been changed!
+> @@ -2003,8 +1994,11 @@ struct iov_iter;
+>  struct io_uring_cmd;
+>  struct offset_ctx;
+>  
+> +typedef unsigned int __bitwise fop_flags_t;
+> +
+>  struct file_operations {
+>  	struct module *owner;
+> +	fop_flags_t fop_flags;
+>  	loff_t (*llseek) (struct file *, loff_t, int);
+>  	ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
+>  	ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
+> @@ -2017,7 +2011,6 @@ struct file_operations {
+>  	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+>  	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
+>  	int (*mmap) (struct file *, struct vm_area_struct *);
+> -	unsigned long mmap_supported_flags;
+>  	int (*open) (struct inode *, struct file *);
+>  	int (*flush) (struct file *, fl_owner_t id);
+>  	int (*release) (struct inode *, struct file *);
+> @@ -2048,6 +2041,15 @@ struct file_operations {
+>  				unsigned int poll_flags);
+>  } __randomize_layout;
+>  
+> +/* Supports async buffered reads */
+> +#define FOP_BUFFER_RASYNC	((__force fop_flags_t)(1 << 0))
+> +/* Supports async buffered writes */
+> +#define FOP_BUFFER_WASYNC	((__force fop_flags_t)(1 << 1))
+> +/* Supports synchronous page faults for mappings */
+> +#define FOP_MMAP_SYNC		((__force fop_flags_t)(1 << 2))
+> +/* Supports non-exclusive O_DIRECT writes from multiple threads */
+> +#define FOP_DIO_PARALLEL_WRITE	((__force fop_flags_t)(1 << 3))
+> +
+>  /* Wrap a directory iterator that needs exclusive inode access */
+>  int wrap_directory_iterator(struct file *, struct dir_context *,
+>  			    int (*) (struct file *, struct dir_context *));
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 5d4b448fdc50..d73c9ad2d2f8 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -471,7 +471,7 @@ static void io_prep_async_work(struct io_kiocb *req)
+>  
+>  		/* don't serialize this request if the fs doesn't need it */
+>  		if (should_hash && (req->file->f_flags & O_DIRECT) &&
+> -		    (req->file->f_mode & FMODE_DIO_PARALLEL_WRITE))
+> +		    (req->file->f_op->fop_flags & FOP_DIO_PARALLEL_WRITE))
+>  			should_hash = false;
+>  		if (should_hash || (ctx->flags & IORING_SETUP_IOPOLL))
+>  			io_wq_hash_work(&req->work, file_inode(req->file));
+> diff --git a/io_uring/rw.c b/io_uring/rw.c
+> index 0585ebcc9773..d9dfde1142a1 100644
+> --- a/io_uring/rw.c
+> +++ b/io_uring/rw.c
+> @@ -683,7 +683,8 @@ static bool io_rw_should_retry(struct io_kiocb *req)
+>  	 * just use poll if we can, and don't attempt if the fs doesn't
+>  	 * support callback based unlocks
+>  	 */
+> -	if (io_file_can_poll(req) || !(req->file->f_mode & FMODE_BUF_RASYNC))
+> +	if (io_file_can_poll(req) ||
+> +	    !(req->file->f_op->fop_flags & FOP_BUFFER_RASYNC))
+>  		return false;
+>  
+>  	wait->wait.func = io_async_buf_func;
+> @@ -1022,10 +1023,10 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
+>  		if (unlikely(!io_file_supports_nowait(req)))
+>  			goto copy_iov;
+>  
+> -		/* File path supports NOWAIT for non-direct_IO only for block devices. */
+> +		/* Check if we can support NOWAIT. */
+>  		if (!(kiocb->ki_flags & IOCB_DIRECT) &&
+> -			!(kiocb->ki_filp->f_mode & FMODE_BUF_WASYNC) &&
+> -			(req->flags & REQ_F_ISREG))
+> +		    !(req->file->f_op->fop_flags & FOP_BUFFER_WASYNC) &&
+> +		    (req->flags & REQ_F_ISREG))
+>  			goto copy_iov;
+>  
+>  		kiocb->ki_flags |= IOCB_NOWAIT;
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 6dbda99a47da..3490af70f259 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1294,7 +1294,9 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+>  		if (!file_mmap_ok(file, inode, pgoff, len))
+>  			return -EOVERFLOW;
+>  
+> -		flags_mask = LEGACY_MAP_MASK | file->f_op->mmap_supported_flags;
+> +		flags_mask = LEGACY_MAP_MASK;
+> +		if (file->f_op->fop_flags & FOP_MMAP_SYNC)
+> +			flags_mask |= MAP_SYNC;
+>  
+>  		switch (flags & MAP_TYPE) {
+>  		case MAP_SHARED:
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 

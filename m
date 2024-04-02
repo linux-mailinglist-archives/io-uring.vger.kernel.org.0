@@ -1,221 +1,172 @@
-Return-Path: <io-uring+bounces-1363-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1364-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A308955D4
-	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 15:53:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4BF895B2C
+	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 19:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5114D1F2333B
-	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 13:53:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 325FE1C20C0D
+	for <lists+io-uring@lfdr.de>; Tue,  2 Apr 2024 17:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B2983CC3;
-	Tue,  2 Apr 2024 13:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNsq54Yj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AB315AAC9;
+	Tue,  2 Apr 2024 17:54:27 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5069A65BBB
-	for <io-uring@vger.kernel.org>; Tue,  2 Apr 2024 13:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFF415AABA
+	for <io-uring@vger.kernel.org>; Tue,  2 Apr 2024 17:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712066034; cv=none; b=OALvTV7vDVTulz/Uim8LGKBCHFjIQcHpgD15GKOZjlDbOaVf/pSiYvt7bsxoWqbJ/GE0VqW6GhZLRcpXzC+a3PRcvIh3f53y19a1M4ykPSCNHY62JUzF/2+2jIHNvgyWMhwx6aL22wkDli8g+lkmRObGWx4RGI4EEBYhtAnsXtk=
+	t=1712080467; cv=none; b=oTEWQBvRxCT1AWi5EUBzBcPY0w1uYw8VTmYbzHMgMMOqilMLQPdRGt/oiGcPjS+9CmVtksK+WuQN6vmlmFNJLBYKg1RntK0cn1Ld4OsjiM+Qb0caozC38qdCQIQCBCmCKlVJrrse6rMkr3U2GcVwhZOVNm3yoGo31hWCtAy1H6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712066034; c=relaxed/simple;
-	bh=TYREw7ht8yrilrx21HQmkaL7CrVaSOYooeqwDn99taE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kIjvX129TyGempGAyxh6Vc0cYY7YebyUNntyNXDpSPo/Su6fU63d9VIP1qVrafegctgJLKpRcE6dbDkodcsRX3xD7jItym26ze9a7JXhxiHoD5kcUoNES12aYUnS8Toggj7SKfSmCQtBZ8o6LN3CdrukzT8lTaTAtohV6fxRxr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNsq54Yj; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-516afb04ec7so1622442e87.2
-        for <io-uring@vger.kernel.org>; Tue, 02 Apr 2024 06:53:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712066030; x=1712670830; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=wwIWllg7hfpqOMVKtjMCxgpzLfmORmrelB34xVHRpBs=;
-        b=jNsq54YjjkdLFMsq36LtCxe/GjX6XyiyGE0pVlUJE6JF3Onuwl1BG45bmnfAloZrD6
-         /Mdp1A6XsV+5qoz/bTQ/86Pop+zvb8XzgXHDn/3mSgV4AEy3cj96zK/bLW07XiamcYhc
-         K64rvlSDEmue3/N774NupmyhJEF3GE5D8rkUTiic42XqeSXwHcniC+idsNTjbCGxFC6V
-         02RfAw1xNHU4e/oFWle6PVwv9CycawlMtFceAxL6U0BO4eM7UvevkkJxrim4GEKsN1ei
-         rSsFjosE4SJNhJEHKmOuQN96WPE7fUCkEmsUnypgNnbHn7FlBsskHuWKwyq7XBKpIiNr
-         rF/g==
+	s=arc-20240116; t=1712080467; c=relaxed/simple;
+	bh=An2Jp3BeEqpuw0kXtMrC3J6wpoU/Nui+LmIiPsH/Ax0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZetKkg0TTyWPA4o66XNT3Psq7Nkk/2Hk5/gJxHkFchX/ffWPPJdCnYOGZQJxJFZ3am8HXrXiiIKZmKpR3djYbcu+bRl/sMILPSQ0nvB7t3rN7dWIPkmIKFdlgtWmszUsiNJcklNv1inbdDnrPxYjYGSDW11tWX5dKRUxO8Wx3pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7c8742bedd4so8356039f.1
+        for <io-uring@vger.kernel.org>; Tue, 02 Apr 2024 10:54:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712066030; x=1712670830;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wwIWllg7hfpqOMVKtjMCxgpzLfmORmrelB34xVHRpBs=;
-        b=TrPANHb7gT4iXS4ZFrnIax5BBCs1t/a7+k7lBt8DyJojcDyfrD0lWnM8A/t7Ne7KvB
-         XmjOwA71VZaJ3yUwXRWX17GHrATV5tj7aofhLS55VfV+3T7Nx817UflNaAB5qFqaI5F/
-         xiZt/KGjiFM5n1DdVSMDfZGfI5xv5vaWi1YX+tv971rxH0Xzpwxa+JPeIPJpLCYeFf2/
-         ZSZqOzqElTAnKkU5Rig/elkBXAuKuOqxrroNsua1tm+sO6vckc4lzHHtKYDLyQz4OFD4
-         PD143Wf8egvB7jRQoD8fwAQcx4GTxxHawvqghpPy2vvPcyKdw4xqrjPvVdsh4HAHNPYk
-         jGYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhiEro8NyN1sWJA3AVKFeCa6262R84Yqi66V63jbSNDaMP8A0I7642HYKMWrrzqI8tbBMhmevWHViJFpWtQz2XZziOKHseLBg=
-X-Gm-Message-State: AOJu0YwEF20caW7SVO9zGRIaai4bEinZMLFk92Ngpee/4UgFFOIAXoKu
-	3cALYYmohZtyNebCmK7BY7bdBFJXol6ZoVSU8+4VnuNJ5QnfYTy0mm46vnnM
-X-Google-Smtp-Source: AGHT+IGLRMcIFlYWXKV48unSWytwsq7URD2gUtsUA+H0yhWcymIBmta7w3cQP5QIaH7Q/s/bey7z5A==
-X-Received: by 2002:a05:6512:1313:b0:513:5ec6:348b with SMTP id x19-20020a056512131300b005135ec6348bmr12018231lfu.6.1712066030021;
-        Tue, 02 Apr 2024 06:53:50 -0700 (PDT)
-Received: from [192.168.42.254] ([148.252.147.117])
-        by smtp.gmail.com with ESMTPSA id 17-20020a170906301100b00a45c9945251sm6531463ejz.192.2024.04.02.06.53.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Apr 2024 06:53:49 -0700 (PDT)
-Message-ID: <2d331587-b5e3-4ca8-9de1-5fd598b5ce2e@gmail.com>
-Date: Tue, 2 Apr 2024 14:53:44 +0100
+        d=1e100.net; s=20230601; t=1712080465; x=1712685265;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dneoHgsX3nsgd/CBqL8Tb4EZ1x6rRPwypobUWP/z48I=;
+        b=lLStWxqhhJ/gW8X+wY5bOeLvSWu99Yak/8SEfszbI3bOS6AoRkZF+Du3GKvrzg/7xe
+         Kd0uTKocGQc+YzTY6xWSv3FITVMU+37pQvmSAE6SXAivNun58OOyxaytgcmMIk/rwrYB
+         yksbJKN2BRYMBSyhg+vVkYkeBQ8iFPKNp4jEYn0W7pgzRWLSgZ17NqEmVcq+mN87Qian
+         gV6YmxuCzZ2PgmsZg4kdikQmDBaSAMBrROUW1o75Sm+XYutaZZOgn4M5MUoG8U0PwEHT
+         C/4RDOR4jkJIM+ppemNQQHm17e+Gd3zFxCAyez8wRISrnHUBkbSl50Ti8kwSWKkUDv6W
+         bi4A==
+X-Forwarded-Encrypted: i=1; AJvYcCV3JVbeQ9nQcjZX4r10XaNi/M6ZahHSJ1bVs7G4lnVcWn5bCA+uU4YLGdY14Q6EzffDrsSp35egerS1FAhxB35OWI/Pzjq07NE=
+X-Gm-Message-State: AOJu0Yz7uwh1xHn+JcPk4zTSOPa9v0L9ikZL5aTQo7apTxFK64ImpBZQ
+	aMed4vcfsAoOp3RqlRbaIfgteq7nUY1txDdLaaLDh6ixK6jSonmX1XOO8uklHcC2RMcp96ydsuj
+	uMFY42NT9sXgpNIetW0pUFw155Jb7iRRjO/zyQCB0UmoHpkja/Pdnywg=
+X-Google-Smtp-Source: AGHT+IFrncUXVW+v64ArE/rJ/le2TPQWM4rWPuCk1FkWHuD/NK956lQ1eZaw9GTQPH60b83cSh0aDKkzHdYNLI6OxXfRz/FFMdVr
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] io_uring: add remote task_work execution helper
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <20240401175757.1054072-1-axboe@kernel.dk>
- <20240401175757.1054072-2-axboe@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240401175757.1054072-2-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1c86:b0:366:b246:2f10 with SMTP id
+ w6-20020a056e021c8600b00366b2462f10mr11956ill.2.1712080465159; Tue, 02 Apr
+ 2024 10:54:25 -0700 (PDT)
+Date: Tue, 02 Apr 2024 10:54:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f3f1ef061520cb6e@google.com>
+Subject: [syzbot] [io-uring?] kernel BUG in __io_remove_buffers
+From: syzbot <syzbot+beb5226eef6218124e9d@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 4/1/24 18:56, Jens Axboe wrote:
-> All our task_work handling is targeted at the state in the io_kiocb
-> itself, which is what it is being used for. However, MSG_RING rolls its
-> own task_work handling, ignoring how that is usually done.
-> 
-> In preparation for switching MSG_RING to be able to use the normal
-> task_work handling, add io_req_task_work_add_remote() which allows the
-> caller to pass in the target io_ring_ctx.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->   io_uring/io_uring.c | 30 ++++++++++++++++++++++--------
->   io_uring/io_uring.h |  2 ++
->   2 files changed, 24 insertions(+), 8 deletions(-)
-> 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 9986e9bb825a..df4d9c9aeeab 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -1232,9 +1232,10 @@ void tctx_task_work(struct callback_head *cb)
->   	WARN_ON_ONCE(ret);
->   }
->   
-> -static inline void io_req_local_work_add(struct io_kiocb *req, unsigned flags)
-> +static inline void io_req_local_work_add(struct io_kiocb *req,
-> +					 struct io_ring_ctx *ctx,
-> +					 unsigned flags)
->   {
-> -	struct io_ring_ctx *ctx = req->ctx;
->   	unsigned nr_wait, nr_tw, nr_tw_prev;
->   	struct llist_node *head;
->   
-> @@ -1300,9 +1301,10 @@ static inline void io_req_local_work_add(struct io_kiocb *req, unsigned flags)
->   	wake_up_state(ctx->submitter_task, TASK_INTERRUPTIBLE);
->   }
->   
-> -static void io_req_normal_work_add(struct io_kiocb *req)
-> +static void io_req_normal_work_add(struct io_kiocb *req,
-> +				   struct task_struct *task)
->   {
-> -	struct io_uring_task *tctx = req->task->io_uring;
-> +	struct io_uring_task *tctx = task->io_uring;
->   	struct io_ring_ctx *ctx = req->ctx;
->   
->   	/* task_work already pending, we're done */
-> @@ -1321,7 +1323,7 @@ static void io_req_normal_work_add(struct io_kiocb *req)
->   		return;
->   	}
->   
-> -	if (likely(!task_work_add(req->task, &tctx->task_work, ctx->notify_method)))
-> +	if (likely(!task_work_add(task, &tctx->task_work, ctx->notify_method)))
->   		return;
->   
->   	io_fallback_tw(tctx, false);
-> @@ -1331,10 +1333,22 @@ void __io_req_task_work_add(struct io_kiocb *req, unsigned flags)
->   {
->   	if (req->ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
->   		rcu_read_lock();
-> -		io_req_local_work_add(req, flags);
-> +		io_req_local_work_add(req, req->ctx, flags);
-> +		rcu_read_unlock();
-> +	} else {
-> +		io_req_normal_work_add(req, req->task);
-> +	}
-> +}
-> +
-> +void io_req_task_work_add_remote(struct io_kiocb *req, struct io_ring_ctx *ctx,
-> +				 unsigned flags)
-> +{
-> +	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN) {
-> +		rcu_read_lock();
+Hello,
 
-Let's move rcu section into io_req_local_work_add().
+syzbot found the following issue on:
 
-Perhaps the easiest way is to
+HEAD commit:    c0b832517f62 Add linux-next specific files for 20240402
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=12d5def9180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=afcaf46d374cec8c
+dashboard link: https://syzkaller.appspot.com/bug?extid=beb5226eef6218124e9d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1155ccc5180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b06795180000
 
-guard(rcu)();
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0d36ec76edc7/disk-c0b83251.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6f9bb4e37dd0/vmlinux-c0b83251.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2349287b14b7/bzImage-c0b83251.xz
 
-> +		io_req_local_work_add(req, ctx, flags);
->   		rcu_read_unlock();
->   	} else {
-> -		io_req_normal_work_add(req);
-> +		io_req_normal_work_add(req, READ_ONCE(ctx->submitter_task));
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+beb5226eef6218124e9d@syzkaller.appspotmail.com
 
-->submitter_task can be null.
-
-Why do you care about ->submitter_task? SINGLE_ISSUER allows
-CQE posting and all other stuff from a random context, most
-optimisations shifted into a more stricter DEFER_TASKRUN.
-
-But let's say it's queued it to a valid task. tw run kicks in,
-it splices the req, takes req->ctx, locks it and executes from
-there, at which point the callback would probably assume that
-the target ctx is locked and do all kinds of messy stuff
-without sync. Even funnier if the original ctx is DEFER_TASKRUN,
-then you have both deferred and normal tw for that ctx, and
-it should never happen.
-
-Let's not pretend that io_req_normal_work_add to a foreign
-context would work and limit io_req_task_work_add_remote()
-to !DEFER_TASKRUN?
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
+------------[ cut here ]------------
+kernel BUG at include/linux/mm.h:1135!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.9.0-rc2-next-20240402-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Workqueue: events_unbound io_ring_exit_work
+RIP: 0010:put_page_testzero include/linux/mm.h:1135 [inline]
+RIP: 0010:folio_put_testzero include/linux/mm.h:1141 [inline]
+RIP: 0010:folio_put include/linux/mm.h:1508 [inline]
+RIP: 0010:put_page include/linux/mm.h:1581 [inline]
+RIP: 0010:__io_remove_buffers+0x8ee/0x8f0 io_uring/kbuf.c:196
+Code: ff fb ff ff 48 c7 c7 3c 68 a9 8f e8 fc b6 56 fd e9 ee fb ff ff e8 12 dc f1 fc 48 89 ef 48 c7 c6 60 ff 1e 8c e8 13 20 3b fd 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
+RSP: 0018:ffffc90000117830 EFLAGS: 00010246
+RAX: 12798bbc5474ca00 RBX: 0000000000000000 RCX: 0000000000000001
+RDX: dffffc0000000000 RSI: ffffffff8bcad5c0 RDI: 0000000000000001
+RBP: ffffea0000880c40 R08: ffffffff92f3a5ef R09: 1ffffffff25e74bd
+R10: dffffc0000000000 R11: fffffbfff25e74be R12: 0000000000000008
+R13: 0000000000000002 R14: ffff88802d20d280 R15: ffffea0000880c74
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000200020c4 CR3: 000000007d97a000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ io_put_bl io_uring/kbuf.c:229 [inline]
+ io_destroy_buffers+0x14e/0x490 io_uring/kbuf.c:243
+ io_ring_ctx_free+0x818/0xe70 io_uring/io_uring.c:2710
+ io_ring_exit_work+0x7c7/0x850 io_uring/io_uring.c:2941
+ process_one_work kernel/workqueue.c:3218 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3299
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3380
+ kthread+0x2f0/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:put_page_testzero include/linux/mm.h:1135 [inline]
+RIP: 0010:folio_put_testzero include/linux/mm.h:1141 [inline]
+RIP: 0010:folio_put include/linux/mm.h:1508 [inline]
+RIP: 0010:put_page include/linux/mm.h:1581 [inline]
+RIP: 0010:__io_remove_buffers+0x8ee/0x8f0 io_uring/kbuf.c:196
+Code: ff fb ff ff 48 c7 c7 3c 68 a9 8f e8 fc b6 56 fd e9 ee fb ff ff e8 12 dc f1 fc 48 89 ef 48 c7 c6 60 ff 1e 8c e8 13 20 3b fd 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
+RSP: 0018:ffffc90000117830 EFLAGS: 00010246
+RAX: 12798bbc5474ca00 RBX: 0000000000000000 RCX: 0000000000000001
+RDX: dffffc0000000000 RSI: ffffffff8bcad5c0 RDI: 0000000000000001
+RBP: ffffea0000880c40 R08: ffffffff92f3a5ef R09: 1ffffffff25e74bd
+R10: dffffc0000000000 R11: fffffbfff25e74be R12: 0000000000000008
+R13: 0000000000000002 R14: ffff88802d20d280 R15: ffffea0000880c74
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f31a71870f0 CR3: 000000007930c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->   	}
->   }
->   
-> @@ -1348,7 +1362,7 @@ static void __cold io_move_task_work_from_local(struct io_ring_ctx *ctx)
->   						    io_task_work.node);
->   
->   		node = node->next;
-> -		io_req_normal_work_add(req);
-> +		io_req_normal_work_add(req, req->task);
->   	}
->   }
->   
-> diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-> index 1eb65324792a..4155379ee586 100644
-> --- a/io_uring/io_uring.h
-> +++ b/io_uring/io_uring.h
-> @@ -74,6 +74,8 @@ struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
->   			       unsigned issue_flags);
->   
->   void __io_req_task_work_add(struct io_kiocb *req, unsigned flags);
-> +void io_req_task_work_add_remote(struct io_kiocb *req, struct io_ring_ctx *ctx,
-> +				 unsigned flags);
->   bool io_alloc_async_data(struct io_kiocb *req);
->   void io_req_task_queue(struct io_kiocb *req);
->   void io_req_task_complete(struct io_kiocb *req, struct io_tw_state *ts);
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-Pavel Begunkov
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

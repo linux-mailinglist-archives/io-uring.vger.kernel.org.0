@@ -1,124 +1,151 @@
-Return-Path: <io-uring+bounces-1372-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1373-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE15897128
-	for <lists+io-uring@lfdr.de>; Wed,  3 Apr 2024 15:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF7F7897163
+	for <lists+io-uring@lfdr.de>; Wed,  3 Apr 2024 15:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D1641C27965
-	for <lists+io-uring@lfdr.de>; Wed,  3 Apr 2024 13:33:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAA7628C987
+	for <lists+io-uring@lfdr.de>; Wed,  3 Apr 2024 13:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828B7146D65;
-	Wed,  3 Apr 2024 13:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F631487C9;
+	Wed,  3 Apr 2024 13:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kkourt.io header.i=@kkourt.io header.b="kmlp5/pN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gJnFAYxt"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Bzl+IQGw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8040148308
-	for <io-uring@vger.kernel.org>; Wed,  3 Apr 2024 13:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7729148318
+	for <io-uring@vger.kernel.org>; Wed,  3 Apr 2024 13:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712151132; cv=none; b=N117fA1zrDirz4/+JLVT1wL8f08hSGis3Ep66t6HD7hoPRqP3Sa5Q0kwh7+nFgrG8JegEHblYDq71x+A29SQTlxYiw2P+onL+M5h7tMpIs7seyZICWANYREu9FgbJs8fr8AuFfNW9tCynuUwSsWoSRyLuF1MABeGO4eWoGGhEkc=
+	t=1712151670; cv=none; b=IfM7LCNQ9sn2+9tY67xl/ldB0wyPBkWd57S9gZR3phhkD6JPP1sa/JpY+zJtloiLx0WX2X6X0FaXJxiT59fF9vChEQ0RrHRXpO559VBMJr0OYMGIh6qGhHhx/tfsXlnaXkhOlbta4XfIEGR3dLkjweBZIQ8OM/8jVEYEuySUizY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712151132; c=relaxed/simple;
-	bh=OOzsKNSeN+UtCJeodqy9vg1bD+Tk1QlFKsob2NwZ5as=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Wpic6BdNa9YDs/daEI6ejFxRIXc4O+wDytNrcnIM/wGcTSO8NskXmW0lmOE2MPBRIir8VlmgLKJOBWxjT5SiGHKxfctOQ32o/53WN6OSKKS0LhxM4YNUWR2ugUx55e7yplmUhoB87ribCcq+kbNc6QQ5S/6BXYEnrSbFBH7s4G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kkourt.io; spf=pass smtp.mailfrom=kkourt.io; dkim=pass (2048-bit key) header.d=kkourt.io header.i=@kkourt.io header.b=kmlp5/pN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gJnFAYxt; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kkourt.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kkourt.io
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfout.nyi.internal (Postfix) with ESMTP id BC61F13800FB;
-	Wed,  3 Apr 2024 09:32:08 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 03 Apr 2024 09:32:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kkourt.io; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm2;
-	 t=1712151128; x=1712237528; bh=eAAGDtLpNk5ZrtoVruCLmCNNamwLDd62
-	si7DPz6B19w=; b=kmlp5/pN9wGT1yhZC1I+r0jzGrIIbvsHVuE1KLOHuPwMQYmn
-	O8hRFXwM2oFniZRyt6hc2SZtmPM4PWDlt0J4Apoimmw3SFnBIxQfmrbe25btla/u
-	aP7TLNvMuo4th1ZHO9G0/LXlnCQOq9uOyDHweeKgHEfESR8a5uUxIvDX/JNg94Nb
-	asg6aKeV0fW3XT7kHk3xYpWCGG/nqaEhXHgYmkHZtbgo/eIneQvt0AqjKL9NKIIH
-	VZzFENb8IN7YHNbgSJ0PWDbz78Qs8qEyP7iAKdhNR0H6cuKJukbaCiIsneErqbvP
-	Sl6kLnrkDqYNE0Gj9bRgwMLjLUCNIequv9leGw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1712151128; x=1712237528; bh=eAAGDtLpNk5ZrtoVruCLmCNNamwLDd62si7
-	DPz6B19w=; b=gJnFAYxtdZDoqpi+WH8NjpwkMrKIonCeLoSC+nmcwFfd9Ozpr04
-	wLGMmVWjUsErbAsB+cejS3QmvQpxGnauZRdYE2vJfkrtMjB1vlw7IpRJjph72Nen
-	2jSDgZ0O3p98XTMFeQx5VzYo136EGg1Q60MeMpoW4CAz46ENrt9/A+Qp/jxnusBR
-	vp1XaXPZjsbxxAg1Cxt7GdNcNfc+1YJ+qROjCfYSJSfgEsJn5TKWobC+gWQ4hpo4
-	1gKOlVYCR2fXA0daFJ2uCOAz0MrO0Su8YoVuWdx4ATes59JKlg9FqGKtN5r08etQ
-	pKM0qP9qppOXKgQzYWrlzwyCyZsKN0bAEBQ==
-X-ME-Sender: <xms:WFoNZu0VE3G5waXnMHYIIGlG6hHpw_ptUgu97JjCMw8Mcg_QmpNv6w>
-    <xme:WFoNZhFgRU_yPUscBYogBSdvMeqdWM6v0AuzSHYzSbwxyuIUQ9W55uQ2YPieySq3A
-    R6OtW50J1fe_hffNw>
-X-ME-Received: <xmr:WFoNZm6F5VniGkJxMdDCN0xrf4ySQ5d3cJYKQ2Rvmj1kl29H_oRHPemuT387DH75e0Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudefiedgvddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkgggtugesthdttddttddtvdenucfhrhhomhepmfhorhhnihhl
-    ihhoshcumfhouhhrthhishcuoehkkhhouhhrtheskhhkohhurhhtrdhioheqnecuggftrf
-    grthhtvghrnhepvdelkefhueejffejgfdtiedthefgleffhfdvuefhvdekudeuudegkeei
-    ueevtdevnecuffhomhgrihhnpehkkhhouhhrthdrihhonecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhkohhurhhtsehkkhhouhhrthdrihho
-X-ME-Proxy: <xmx:WFoNZv0P5ia6vU-45IVvYXLe9j3fsm_CmCMQoDjI-mQwHvFEfuu-Pw>
-    <xmx:WFoNZhHh0aHZIoQKYP1fRusfsOx5tyJc_bWOI1TwIIQeg7VZb3fV-g>
-    <xmx:WFoNZo-2JDG6gEKywnmoQdCuWvIQw0SOQEwDeBjjWveaZn4ZlrZXSA>
-    <xmx:WFoNZmnGF6l-ZD2BfnUu-3ABDdgwY8HE-4QuLKkJH_bsmZNjl3T7sg>
-    <xmx:WFoNZlhZasmjPqyatvSz42F7IQ9A_xTMPyFzHaMClD_7rtfpDrSzGQ5i>
-Feedback-ID: i890b436b:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Apr 2024 09:32:08 -0400 (EDT)
-Received: by tinh.kkourt.io (Postfix, from userid 1000)
-	id 8E9732540AE2; Wed, 03 Apr 2024 15:32:05 +0200 (CEST)
-Date: Wed, 3 Apr 2024 15:32:05 +0200
-From: Kornilios Kourtis <kkourt@kkourt.io>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org
-Subject: registering files returns -EBADF in 5.10.214
-Message-ID: <Zg1aVQVgBO3Rw0_4@tinh.kkourt.io>
+	s=arc-20240116; t=1712151670; c=relaxed/simple;
+	bh=GZFlQX1H6jPbzjug/cz0X/LeufVBoT/JYRIOc+xjhb8=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=Zx5cwpKYMmovqlsjORHpwpn+I3TIkCnJ1y6Dl48NKDUwfygeJZWE9lwmOTsk4v4ja7EFC+Qs9WtznGYn8T281uBc4UImNBha2JYX7fJ1ZMUMrGRV7tW/98tCeVkBMxPQEySJMRuMXdWefwcRlMvgUeaSUW7Sza4RB5Nq+XuZg+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Bzl+IQGw; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7c86e6f649aso22879239f.0
+        for <io-uring@vger.kernel.org>; Wed, 03 Apr 2024 06:41:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712151666; x=1712756466; darn=vger.kernel.org;
+        h=in-reply-to:from:references:cc:to:content-language:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zca5g4HSoqemmQFyKLyavYfNMp/ItanPMe92a1O7/GA=;
+        b=Bzl+IQGw3c2UjQ9crAd0ju3CxEVlTDn4vZgti/L0at+twIA5SiAdb4de6swcC0DD72
+         RjpssEeEavMTfBV1swnrXc3EVHBpsiZzBWLNaXj37Vy5LcxK06TlrbHe4BZ2h3FJePn5
+         WSPMEfXfUswcI8quQgs9CMrlCh4RPZBAfLlRghCk71ceI6IMRY9Efbc4myzADRPp+D9O
+         osC2aHJmsVsGlub4qpBMpBR1/MOWoleZ/volIKhgZGvLWNodM9PdS7Tl8IL561YyWWWd
+         ETdmVwMGUQnM3i/j9PCVFCQMTC1avLrQVpBeHj36QkM1eS7T3ffx+aCaTJjsQYq16g1j
+         Kv7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712151666; x=1712756466;
+        h=in-reply-to:from:references:cc:to:content-language:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zca5g4HSoqemmQFyKLyavYfNMp/ItanPMe92a1O7/GA=;
+        b=ksj7tG+cBwisRK+nz6uIo80yejRXzlHlAbaOIAsIKGooIKGVLC1MXqaMbKiwXd9vny
+         pjdxcCaxZNFLL/BovosVNqNLSZBSFDjQ6rbpbgDNqatYbOoK1e+IVVFLO7VDQcQFsaOp
+         agIi+ux9jzZvQ719aSiQ2UeHebcjVBBlFPldnFh0TcSK0IDIe4xlrJ29SgbImr1s7kIl
+         V0w9LWztXa6caAFxIMRMUk6NqhT07aYRYF/mul9LgBfthHVVHcfqJe5MqSdn4krhUVwX
+         OpwZ893mRVsWCEvHYgT6GWLsbHdGV+OkjPIatymPrdIf2IgmImwa30ZsH6d3jw/WyU2A
+         K8HA==
+X-Gm-Message-State: AOJu0Yz7unoJjfm3S/WQ+eKWnTEfMKNJqE4DIPKng01xRLP8ItF9JJOs
+	5nC2BN7m3fEFZVENQlaZbrq6bp0NQd4Jh60CQCfi2IJKULqRIoUEoEqzA/zJboVCls1PDzjSVzc
+	I
+X-Google-Smtp-Source: AGHT+IEq6lIYZTZa9N937KNxNgQIAjgijtI+mp2gJfiVuu5G4Ga5eJLPgepamkGeTZm21btyOYo5EQ==
+X-Received: by 2002:a92:cf42:0:b0:368:a917:168f with SMTP id c2-20020a92cf42000000b00368a917168fmr14670559ilr.3.1712151664036;
+        Wed, 03 Apr 2024 06:41:04 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id c10-20020a92cf4a000000b003689833dae7sm3675015ilr.87.2024.04.03.06.41.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Apr 2024 06:41:03 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------llwNpWWOSZuV7waqr0R98LWR"
+Message-ID: <7a264064-8542-4b3c-931d-82b0af002bd1@kernel.dk>
+Date: Wed, 3 Apr 2024 07:41:01 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: registering files returns -EBADF in 5.10.214
+Content-Language: en-US
+To: Kornilios Kourtis <kkourt@kkourt.io>
+Cc: io-uring@vger.kernel.org
+References: <Zg1aVQVgBO3Rw0_4@tinh.kkourt.io>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Zg1aVQVgBO3Rw0_4@tinh.kkourt.io>
 
-Hi,
+This is a multi-part message in MIME format.
+--------------llwNpWWOSZuV7waqr0R98LWR
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In 5.10.214, registering files seems to return -EBADF
+On 4/3/24 7:32 AM, Kornilios Kourtis wrote:
+> Hi,
+> 
+> In 5.10.214, registering files seems to return -EBADF
+> 
+> Running the file-register test from (latest) liburing:
+> 
+>  liburing/test# uname -r
+>  5.10.214
+>  liburing/test# ./file-register.t
+>  test_basic: register -9
+>  test_basic failed
+> 
+> The test seems to work in 5.10.211:
+> 
+>  liburing/test# uname -r
+>  5.10.211
+>  liburing/test# ./file-register.t
+>  file alloc ranges are not supported, skip
 
-Running the file-register test from (latest) liburing:
-
- liburing/test# uname -r
- 5.10.214
- liburing/test# ./file-register.t
- test_basic: register -9
- test_basic failed
-
-The test seems to work in 5.10.211:
-
- liburing/test# uname -r
- 5.10.211
- liburing/test# ./file-register.t
- file alloc ranges are not supported, skip
-
-
-Best,
-Kornilios.
+I sent in patches for this for stable, it was (unfortunately)
+an error introduced by a backport. FWIW, here's the 5.10-stable
+patch that I sent in.
 
 -- 
-https://kkourt.io/
+Jens Axboe
+
+
+--------------llwNpWWOSZuV7waqr0R98LWR
+Content-Type: text/x-patch; charset=UTF-8;
+ name="5.10-0001-io_uring-ensure-0-is-returned-on-file-registration-s.patch"
+Content-Disposition: attachment;
+ filename*0="5.10-0001-io_uring-ensure-0-is-returned-on-file-registration";
+ filename*1="-s.patch"
+Content-Transfer-Encoding: base64
+
+RnJvbSBhOGMyMjkyMWEwOGE4ZDUwYjEwZmM4MzZjZmY0MzQ4ZDVkZGUxN2UyIE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBKZW5zIEF4Ym9lIDxheGJvZUBrZXJuZWwuZGs+CkRh
+dGU6IFR1ZSwgMiBBcHIgMjAyNCAwODoyODowNCAtMDYwMApTdWJqZWN0OiBbUEFUQ0hdIGlv
+X3VyaW5nOiBlbnN1cmUgJzAnIGlzIHJldHVybmVkIG9uIGZpbGUgcmVnaXN0cmF0aW9uIHN1
+Y2Nlc3MKCkEgcHJldmlvdXMgYmFja3BvcnQgbWlzdGFrZW5seSByZW1vdmVkIGNvZGUgdGhh
+dCBjbGVhcmVkICdyZXQnIHRvIHplcm8sCmFzIHRoZSBTQ00gbG9nZ2luZyB3YXMgcGVyZm9y
+bWVkLiBGaXggdXAgdGhlIHJldHVybiB2YWx1ZSBzbyB3ZSBkb24ndApyZXR1cm4gYW4gZXJy
+YW50IGVycm9yIG9uIGZpeGVkIGZpbGUgcmVnaXN0cmF0aW9uLgoKRml4ZXM6IGE2NzcxZjM0
+M2FmOSAoImlvX3VyaW5nOiBkcm9wIGFueSBjb2RlIHJlbGF0ZWQgdG8gU0NNX1JJR0hUUyIp
+ClNpZ25lZC1vZmYtYnk6IEplbnMgQXhib2UgPGF4Ym9lQGtlcm5lbC5kaz4KLS0tCiBpb191
+cmluZy9pb191cmluZy5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCsp
+LCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvaW9fdXJpbmcvaW9fdXJpbmcuYyBiL2lv
+X3VyaW5nL2lvX3VyaW5nLmMKaW5kZXggZmM2MDM5NmM5MDM5Li45M2Y5ZWNlZGM1OWYgMTAw
+NjQ0Ci0tLSBhL2lvX3VyaW5nL2lvX3VyaW5nLmMKKysrIGIvaW9fdXJpbmcvaW9fdXJpbmcu
+YwpAQCAtODI0Nyw3ICs4MjQ3LDcgQEAgc3RhdGljIGludCBpb19zcWVfZmlsZXNfcmVnaXN0
+ZXIoc3RydWN0IGlvX3JpbmdfY3R4ICpjdHgsIHZvaWQgX191c2VyICphcmcsCiAJfQogCiAJ
+aW9fcnNyY19ub2RlX3N3aXRjaChjdHgsIE5VTEwpOwotCXJldHVybiByZXQ7CisJcmV0dXJu
+IDA7CiBvdXRfZnB1dDoKIAlmb3IgKGkgPSAwOyBpIDwgY3R4LT5ucl91c2VyX2ZpbGVzOyBp
+KyspIHsKIAkJZmlsZSA9IGlvX2ZpbGVfZnJvbV9pbmRleChjdHgsIGkpOwotLSAKMi40My4w
+Cgo=
+
+--------------llwNpWWOSZuV7waqr0R98LWR--
 

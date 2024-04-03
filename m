@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-1383-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1384-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120ED8976B8
-	for <lists+io-uring@lfdr.de>; Wed,  3 Apr 2024 19:31:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F60A8976F0
+	for <lists+io-uring@lfdr.de>; Wed,  3 Apr 2024 19:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8A9E1F2E8A9
-	for <lists+io-uring@lfdr.de>; Wed,  3 Apr 2024 17:31:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE58296738
+	for <lists+io-uring@lfdr.de>; Wed,  3 Apr 2024 17:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5B015DBBA;
-	Wed,  3 Apr 2024 17:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEB416192A;
+	Wed,  3 Apr 2024 17:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoDuaa/j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rp/Ot69v"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9240415DBAE;
-	Wed,  3 Apr 2024 17:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FC6161925;
+	Wed,  3 Apr 2024 17:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712164724; cv=none; b=J1NjF7JlVxDXAiqd2kQ75NVuQRCPi1jhkl41Bi6PI7nxk8ubFhJGaoGZnXGf+kzfw8tqzpWxG4AJMnoCii/zs7gIRDi9gi5YGFVlo4EkSTVpDQy8HJbl9vOV6PRRZywAbcbBErbRRfWwnohlwJZ1/mWxRyLrQE9XA85IyO213mA=
+	t=1712164775; cv=none; b=Fqej9b6j+OVfjph9185kqRG7npJopRVfk6b0yJBGW4RFU4z+OAaG6pPqUihe6Yc1wrhGmlyH8Hnf+u2vHWNMawaBIi5mXqZhDh4XPw+2DU/MuSzq0QsxNFQ00sfkuqqZ7UONEoZ9GTaX+wOMFYubB9od014e0TeBnM6H3C/uwOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712164724; c=relaxed/simple;
-	bh=sCi2Zjwkluq7tYcwVCzU97e+fqfE0XuBcMdfkvm6RvY=;
+	s=arc-20240116; t=1712164775; c=relaxed/simple;
+	bh=n+x5StEYqh8YD8dXWMUWdPHZZcntEZPt79LHRQAtZi0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qpAk0dLPdqyZDbeuXpmyt09BUR+Qa3THiaxtaN9Yo5D+su02EWHatC3lnSlOsmaJvPL7SLymyNYpurakujcSoddaH/4TrbMuLWaW1EMH1HiI15i0PgHme4Zddj6YtWN0e2iWICxSR0ilivfj9JLtfJ2vlkyTgOEpsjhqMqnO+DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YoDuaa/j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B88DCC433F1;
-	Wed,  3 Apr 2024 17:18:43 +0000 (UTC)
+	 MIME-Version; b=fpzhhEeiA34R1OsW+FMQVI1fHziGiGSLovQMxr4pd5csnYZWGmtjOjJauibxu9XjoP4mzDmW5F7spDyHYcS/gJ+tiE8kAycVVDW52jIEbizMLTJJtO5rsyAEtke/RntjAT+Q2N6tf6fvDn2VIfCi37xiyNHI5lg5FsgS0CMlXxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rp/Ot69v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F02DC433C7;
+	Wed,  3 Apr 2024 17:19:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712164724;
-	bh=sCi2Zjwkluq7tYcwVCzU97e+fqfE0XuBcMdfkvm6RvY=;
+	s=k20201202; t=1712164775;
+	bh=n+x5StEYqh8YD8dXWMUWdPHZZcntEZPt79LHRQAtZi0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YoDuaa/jW/462E1Mz4vNqzvtplX7CD1NZSUzawiiwzqzpg93V/fqtylrSmZwBAzCp
-	 YyGXSkPXq/o3rd4gLl034XpvcydkUbGPYR8kDtXL+RoUkx0OtwnzB4PgUtKHB2cx11
-	 XwrK8noc39LlNSYB0IceAVE9XR0PgTem6GaxXDw8DLLTH8n77gBMI9dEyDwAUXG50e
-	 K2SNSeEFN03ttVWS4MwmEjB4eoe1wSi59HsiZGQA3qaAjKS66A+QiNkp999ms7DMQ+
-	 Mwr9zVQvusE9fJqISqZ+mSW8wsptWVU7fzAGTdbgtpaM5npEuMutvqKLpbnzaWtzeb
-	 kiUz0HqqCuO7g==
+	b=Rp/Ot69vv2/90JJPfvjfTxPw2bnCit8dnViSKwUzL0eXcNbD8cUMhR33/n1ZsDp0e
+	 zWtxuwM1wHvlSM0tD6xHeyPdzNVLn/R2rkE7sZAPEMGXZI/Ycp+fq82QrXG0pO+7E8
+	 p90BFf7Z9mRVXicjv2eDgXBvbuV3sTQwljcn37AQNDpHY6a/JebJuST1QNp3aN6Jjk
+	 803s23a/EO+kl1/e9467cLafcz8OhP20DrmyVbukLRk5YAEER1F/0PQzpU6a2JF20c
+	 KqR5gpAzAvHYSykoF3eQLdhrNj/dq3Lcdu4XSgHvZeN6jWZdFai96mCYUsbWPPRcgj
+	 +F/KKIJmb59+A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -48,12 +48,12 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	syzbot+f8e9a371388aa62ecab4@syzkaller.appspotmail.com,
 	Sasha Levin <sashal@kernel.org>,
 	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 15/20] io_uring: clear opcode specific data for an early failure
-Date: Wed,  3 Apr 2024 13:17:56 -0400
-Message-ID: <20240403171815.342668-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 13/15] io_uring: clear opcode specific data for an early failure
+Date: Wed,  3 Apr 2024 13:18:57 -0400
+Message-ID: <20240403171909.345570-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240403171815.342668-1-sashal@kernel.org>
-References: <20240403171815.342668-1-sashal@kernel.org>
+In-Reply-To: <20240403171909.345570-1-sashal@kernel.org>
+References: <20240403171909.345570-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.24
+X-stable-base: Linux 6.1.84
 Content-Transfer-Encoding: 8bit
 
 From: Jens Axboe <axboe@kernel.dk>
@@ -83,10 +83,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 16 insertions(+), 9 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index ea772a02c1405..c1e411017d8af 100644
+index 35894955b4549..493b5708c662b 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -2147,6 +2147,13 @@ static void io_init_req_drain(struct io_kiocb *req)
+@@ -1992,6 +1992,13 @@ static void io_init_req_drain(struct io_kiocb *req)
  	}
  }
  
@@ -100,14 +100,14 @@ index ea772a02c1405..c1e411017d8af 100644
  static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
  		       const struct io_uring_sqe *sqe)
  	__must_hold(&ctx->uring_lock)
-@@ -2167,29 +2174,29 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+@@ -2012,29 +2019,29 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
  
  	if (unlikely(opcode >= IORING_OP_LAST)) {
  		req->opcode = 0;
 -		return -EINVAL;
 +		return io_init_fail_req(req, -EINVAL);
  	}
- 	def = &io_issue_defs[opcode];
+ 	def = &io_op_defs[opcode];
  	if (unlikely(sqe_flags & ~SQE_COMMON_FLAGS)) {
  		/* enforce forwards compatibility on users */
  		if (sqe_flags & ~SQE_VALID_FLAGS)
@@ -135,7 +135,7 @@ index ea772a02c1405..c1e411017d8af 100644
  		/* knock it to the slow queue path, will be drained there */
  		if (ctx->drain_active)
  			req->flags |= REQ_F_FORCE_ASYNC;
-@@ -2202,9 +2209,9 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+@@ -2047,9 +2054,9 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
  	}
  
  	if (!def->ioprio && sqe->ioprio)
@@ -147,7 +147,7 @@ index ea772a02c1405..c1e411017d8af 100644
  
  	if (def->needs_file) {
  		struct io_submit_state *state = &ctx->submit_state;
-@@ -2228,12 +2235,12 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+@@ -2073,12 +2080,12 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
  
  		req->creds = xa_load(&ctx->personalities, personality);
  		if (!req->creds)

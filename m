@@ -1,173 +1,136 @@
-Return-Path: <io-uring+bounces-1415-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1416-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E1489A558
-	for <lists+io-uring@lfdr.de>; Fri,  5 Apr 2024 22:04:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DBF989A5D0
+	for <lists+io-uring@lfdr.de>; Fri,  5 Apr 2024 22:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC56E1C20BD9
-	for <lists+io-uring@lfdr.de>; Fri,  5 Apr 2024 20:04:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A440C2832B4
+	for <lists+io-uring@lfdr.de>; Fri,  5 Apr 2024 20:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A514173328;
-	Fri,  5 Apr 2024 20:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763791327FD;
+	Fri,  5 Apr 2024 20:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6sendFp"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Fwzdm0vN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9052C172BD2;
-	Fri,  5 Apr 2024 20:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255531C6A8
+	for <io-uring@vger.kernel.org>; Fri,  5 Apr 2024 20:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712347476; cv=none; b=H6bcfzKy1K3/yNv0nQhdet7lMXDeCMlXUVtu1UTK0PtT6KzA5QWkXIB3Dg4eXWAgbtKB3vEmdXVe7d+oKwlqrjhCh3QIdU3p988+cxKxwJe/rCquoM8PJDvAnXnBSSJfhXMlW/YHxYKL/M7IbTlmVCFNJn5XptOqiZgyYNeUwDU=
+	t=1712350021; cv=none; b=bxwns3xehKrtZoucezlU9N00J5vq3UBfmPrfH4okaoy6q8aOES/O4UDNDtDBbsYNQdHd4zedgEe9GmuNxDwaoguVQdVgDPPDhM1yRFLszBk3geLszoYidVguW+C++G+bq/W050qM65m9jA3/0ZhKZ5s+jDSdrPU/0X+CE7B2QgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712347476; c=relaxed/simple;
-	bh=tbbi4WoC47A+bt3krfOjf71ActzV3spu8nYayJm63oA=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nxvw+N4SEVAUmSvd7M4RPnzRSeiysRLqi6MJ1Z6I2v5ii8sQ96f81BJAIBlVpk848Ab9aV9tZCUb4oqEN4CnjBPgtTI3L9D3/Tq1XX+atXSW26CeYZAUDRTbImVJ9O+Tbm+F+oMzc33Fxk53hQzVaH9Ejx2UbDgYZ/q8pgrRrFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f6sendFp; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4156c4fe401so16936345e9.1;
-        Fri, 05 Apr 2024 13:04:34 -0700 (PDT)
+	s=arc-20240116; t=1712350021; c=relaxed/simple;
+	bh=aWJGg6HJvOOMQqkaEgtKoFFJhgITUKTCMUDIkxVXFoc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=qZ46aqYHFsU+JPCT+3jkMLtjpML6bFZvdLefqwLMrBTqm6gIsX8GTzfk2do/rXM1TmvFmd5Lzp2Lv9ysjjEzo79WVGmop85fOeSoWcp+COgZz28qgVB8qSU7CSM8KdCyg6+u5NsJPevrV0s+LPijgrXzROhH3Jm9QRq8z3YKnrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Fwzdm0vN; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-789db727eddso47752785a.1
+        for <io-uring@vger.kernel.org>; Fri, 05 Apr 2024 13:46:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712347473; x=1712952273; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oNObfeJuKkZ5zVbv0of2yxi9979Q5AyU5TKw6nz/51s=;
-        b=f6sendFpi41pjEK0IF25gFpWPmgekLSEkAEQhKc+mCpYd6oiGfyD1JOuqCm+qFcIZ/
-         24H5o4N4WEPja4wA6hjg4Uzq+GHedK3PQGeOOIF2xoqokEAXO0pQd50VoKc2qGxyguQs
-         JSuk1LTCq7RPrAGyCliyyDk39kJ6dFDwcNGUC7Taj0wqZIHOpUljvHzXUZKe5+Yv7QXJ
-         ht1fmdXn4gSy3AeTlwO2d8cY0nGKJzJx34/HbyQOJQ7qWP8fFWBQfLIAUSun9iQ+CuaQ
-         tugGHUDnPU+3FKEBDFMXUhcByxRP+4PgRJTAQDPuhwvasK6bb2DOMUrFm7IMa3MabgVr
-         Dc9g==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712350017; x=1712954817; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=afFGFxtKg7DTIB3mZLaUxhofvUIHTy4KS1FNO3B8tt8=;
+        b=Fwzdm0vNwYvIYfSf8/VLdL7PFIJvx0ChC7MGgE0PblMJNdNSOhelAXo10rXhcauX9G
+         tNmJRA90dArw9/qjNS3Fl4o/TXvM+RtqTyj+rfhikUwF704NRKPfXKk4F3jGvxCk9uey
+         WMtzy++8oU4HEsMN1/RFACQPiOzd4839/Fm5cJSAERVMfHskp6hg4HlXXsmitVrs1r/x
+         kALYxGIIkOwiBmcMoeaDZY4IYDWAjxP7kMJlliqhU5QtBhfVV2oqK0/pshx3hLgGHnqp
+         A8LnQbrb2xrHtIRKZCH6bcfn5jPRCGL2DbumjWquPVpHZzhMe6cxarFQxRbkoGNr9ZkU
+         s7yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712347473; x=1712952273;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oNObfeJuKkZ5zVbv0of2yxi9979Q5AyU5TKw6nz/51s=;
-        b=Y3VvMLiL27uj3m4bH0iayBgLNUaIiEcNX3x/DtwWjW8H0xNuvirEKye4oDbW55VnrR
-         moOhxDSHlu7Q8RohpMikj81cBxB+j2uUT8itKu7qufZFaEoVDToFf/Lj7vSo4bj/1NUj
-         obkcvdo89is2HIp3wVZr4DoLMJpqt42L6izrDnjRELPVkjlmTPkM4var8JJkvysbUN1M
-         ypvuY6bHLoRyyc9KxB/RtLXh8hqS5RfaGg4gixQ2IZ72sLYGe8iG8F3pBab5AYh4/zM9
-         zIDQ6h+37vZYAp5C9sPUTI865jDtLkVL7p8tGuraidNQkK7qMNzoB5Yj6iHqGkJmDLd1
-         NNNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgBIYuFznEh2AqrghvbFgF/hSD2qskxDWfcv2tIhYgTrudlVVhIZrAQrcCsrtzAVCVxK3XXO3OWSjhvOaFUF/kISmPDv91x7RJ6ozUkxw+1XQl9wECcIOUfTAXdjVnYpm5QmsWJT8ohjrlQewvJdbpVPkst27BxUF5a3DGERobb8ClUPH5
-X-Gm-Message-State: AOJu0YxSkIv3nMDrhNiTnKscjiZuMDMS+G73xloy5AqBRzaN0tAq7dlN
-	xvL0ItTeL4J5ecUTJUSK4M0S2ojE/OcG5aSnJatZILJJ5eKN6lfSdYKuNyolekYH9zm55EriUc7
-	P0R7vWY44HFB0FGxQxE6BBeJETcQ=
-X-Google-Smtp-Source: AGHT+IFB8aEDQ/BbWb+hOhkcYe3VOfWJS6EMMeWrTqCpIDi+W6S2XSEZW4aH+5cffK/Mhx7nORN93E11StYoe/7EisE=
-X-Received: by 2002:a05:600c:a04:b0:414:1325:e8a8 with SMTP id
- z4-20020a05600c0a0400b004141325e8a8mr2043843wmp.39.1712347472797; Fri, 05 Apr
- 2024 13:04:32 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 5 Apr 2024 13:04:32 -0700
-From: Oliver Crumrine <ozlinuxc@gmail.com>
-In-Reply-To: <6850f08d-0e89-4eb3-bbfb-bdcc5d4e1b78@gmail.com>
-References: <cover.1712268605.git.ozlinuxc@gmail.com> <b1a047a1b2d55c1c245a78ca9772c31a9b3ceb12.1712268605.git.ozlinuxc@gmail.com>
- <6850f08d-0e89-4eb3-bbfb-bdcc5d4e1b78@gmail.com>
+        d=1e100.net; s=20230601; t=1712350017; x=1712954817;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=afFGFxtKg7DTIB3mZLaUxhofvUIHTy4KS1FNO3B8tt8=;
+        b=JdNjnfoHnMwkHCmSvgEmIw4GtnHxUu1bUqLmEpYUdXrbtTB8gBQNdUtc0cUpNlEvSZ
+         mc0Hhn6j0wpuQzrwe3cRRzV4H0Flub4Nq+QcrUFEouQdlOO36AaTwmYmU3IvwyQd2W7E
+         hUZHtYun9rlBFkUhM74LkM4QRjHp/z5snDf5fod3ml/FpnrN88MrP/08G8IP7X5j3QVW
+         3bkRfAebqDI11RaAjs2e+H5jySUxmJSrS/97YstlFJ2RouJBs7KMIZsMJMUGgZbesC5/
+         H6Ww2mhL+lfKmZ5m2AGddG6CBLrKaqFYyUN/AmNNimC/bFWQzwYJvdoLqJFgs4fZ8u3a
+         t6PA==
+X-Gm-Message-State: AOJu0Yx1YWXFMDvdqLHVA0oBfz0miR67XyNrlq1QsPPGm3gWNkzmMLHg
+	jzBHmlC5LWLNZf6qR3r3nwVoR4EgsVxUeONpaQaMTpTiQWNNFzV30NXtEzdc9cxh6jyJGnI51/w
+	P
+X-Google-Smtp-Source: AGHT+IGkP07f/yZV2f3ygQ1vmC+4/lHrSeQDsnlDcLkGd68MZeyKWaStn2rE4BtnG34DPvzm2IIxMg==
+X-Received: by 2002:ad4:5c44:0:b0:699:278c:af6 with SMTP id a4-20020ad45c44000000b00699278c0af6mr2503626qva.6.1712350016770;
+        Fri, 05 Apr 2024 13:46:56 -0700 (PDT)
+Received: from [172.16.25.96] ([12.168.1.234])
+        by smtp.gmail.com with ESMTPSA id do18-20020a056214097200b0069942d4cc06sm587601qvb.115.2024.04.05.13.46.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Apr 2024 13:46:55 -0700 (PDT)
+Message-ID: <ceeb1b95-070a-4812-8a43-12a638da4c94@kernel.dk>
+Date: Fri, 5 Apr 2024 14:46:55 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Fri, 5 Apr 2024 13:04:32 -0700
-Message-ID: <CAK1VsR17Ea6cmks7BcdvS4ZHQMRz_kWd1NhPh8J1fUpsgC7WFg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] io_uring: Add REQ_F_CQE_SKIP support for io_uring zerocopy
-To: Pavel Begunkov <asml.silence@gmail.com>, Oliver Crumrine <ozlinuxc@gmail.com>, axboe@kernel.dk, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	shuah@kernel.org, leitao@debian.org
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.9-rc3
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Pavel Begunkov wrote:
-> On 4/4/24 23:17, Oliver Crumrine wrote:
-> > In his patch to enable zerocopy networking for io_uring, Pavel Begunkov
-> > specifically disabled REQ_F_CQE_SKIP, as (at least from my
-> > understanding) the userspace program wouldn't receive the
-> > IORING_CQE_F_MORE flag in the result value.
->
-> No. IORING_CQE_F_MORE means there will be another CQE from this
-> request, so a single CQE without IORING_CQE_F_MORE is trivially
-> fine.
->
-> The problem is the semantics, because by suppressing the first
-> CQE you're loosing the result value. You might rely on WAITALL
-That's already happening with io_send.
-> as other sends and "fail" (in terms of io_uring) the request
-> in case of a partial send posting 2 CQEs, but that's not a great
-> way and it's getting userspace complicated pretty easily.
->
-> In short, it was left out for later because there is a
-> better way to implement it, but it should be done carefully
-Maybe we could put the return values in the notifs? That would be a
-discrepancy between io_send and io_send_zc, though.
->
->
-> > To fix this, instead of keeping track of how many CQEs have been
-> > received, and subtracting notifs from that, programs can keep track of
->
-> That's a benchmark way of doing it, more realistically
-> it'd be more like
->
-> event_loop() {
-> 	cqe = wait_cqe();
-> 	struct req *r = (struct req *)cqe->user_data;
-> 	r->callback(r, cqe);
->
->
-> send_zc_callback(req, cqe) {
-> 	if (cqe->flags & F_MORE) {
-> 		// don't free the req
-> 		// we should wait for another CQE
-> 		...
-> 	}
-> }
->
-> > how many SQEs they have issued, and if a CQE is returned with an error,
-> > they can simply subtract from how many notifs they expect to receive.
->
-> The design specifically untangles those two notions, i.e. there can
-> be a notification even when the main CQE fails (ret<0). It's safer
-> this way, even though AFAIK relying on errors would be fine with
-> current users (TCP/UDP).
->
->
-> > Signed-off-by: Oliver Crumrine <ozlinuxc@gmail.com>
-> > ---
-> >   io_uring/net.c | 6 ++----
-> >   1 file changed, 2 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/io_uring/net.c b/io_uring/net.c
-> > index 1e7665ff6ef7..822f49809b68 100644
-> > --- a/io_uring/net.c
-> > +++ b/io_uring/net.c
-> > @@ -1044,9 +1044,6 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-> >
-> >   	if (unlikely(READ_ONCE(sqe->__pad2[0]) || READ_ONCE(sqe->addr3)))
-> >   		return -EINVAL;
-> > -	/* we don't support IOSQE_CQE_SKIP_SUCCESS just yet */
-> > -	if (req->flags & REQ_F_CQE_SKIP)
-> > -		return -EINVAL;
-> >
-> >   	notif = zc->notif = io_alloc_notif(ctx);
-> >   	if (!notif)
-> > @@ -1342,7 +1339,8 @@ void io_sendrecv_fail(struct io_kiocb *req)
-> >   		req->cqe.res = sr->done_io;
-> >
-> >   	if ((req->flags & REQ_F_NEED_CLEANUP) &&
-> > -	    (req->opcode == IORING_OP_SEND_ZC || req->opcode == IORING_OP_SENDMSG_ZC))
-> > +	    (req->opcode == IORING_OP_SEND_ZC || req->opcode == IORING_OP_SENDMSG_ZC) &&
-> > +	    !(req->flags & REQ_F_CQE_SKIP))
-> >   		req->cqe.flags |= IORING_CQE_F_MORE;
-> >   }
-> >
->
-> --
-> Pavel Begunkov
+Hi Linus,
+
+Some fixes that should go into the 6.9 kernel release:
+
+- Backport of some fixes that came up during development of the 6.10
+  io_uring patches. This includes some kbuf cleanups and reference
+  fixes.
+
+- Disable multishot read if we don't have NOWAIT support on the target
+
+- Fix for a dependency issue with workqueue flushing
+
+Please pull!
+
+
+The following changes since commit 39cd87c4eb2b893354f3b850f916353f2658ae6f:
+
+  Linux 6.9-rc2 (2024-03-31 14:32:39 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.9-20240405
+
+for you to fetch changes up to 561e4f9451d65fc2f7eef564e0064373e3019793:
+
+  io_uring/kbuf: hold io_buffer_list reference over mmap (2024-04-02 19:03:27 -0600)
+
+----------------------------------------------------------------
+io_uring-6.9-20240405
+
+----------------------------------------------------------------
+Jens Axboe (7):
+      io_uring/rw: don't allow multishot reads without NOWAIT support
+      io_uring: disable io-wq execution of multishot NOWAIT requests
+      io_uring: use private workqueue for exit work
+      io_uring/kbuf: get rid of lower BGID lists
+      io_uring/kbuf: get rid of bl->is_ready
+      io_uring/kbuf: protect io_buffer_list teardown with a reference
+      io_uring/kbuf: hold io_buffer_list reference over mmap
+
+ include/linux/io_uring_types.h |   1 -
+ io_uring/io_uring.c            |  31 ++++++-----
+ io_uring/kbuf.c                | 118 ++++++++++++++---------------------------
+ io_uring/kbuf.h                |   8 +--
+ io_uring/rw.c                  |   9 +++-
+ 5 files changed, 73 insertions(+), 94 deletions(-)
+
+-- 
+Jens Axboe
+
 

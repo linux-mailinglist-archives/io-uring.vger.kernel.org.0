@@ -1,112 +1,90 @@
-Return-Path: <io-uring+bounces-1422-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1423-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C7D189A865
-	for <lists+io-uring@lfdr.de>; Sat,  6 Apr 2024 04:12:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED35C89A93E
+	for <lists+io-uring@lfdr.de>; Sat,  6 Apr 2024 08:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C8651F21723
-	for <lists+io-uring@lfdr.de>; Sat,  6 Apr 2024 02:12:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5681C20E97
+	for <lists+io-uring@lfdr.de>; Sat,  6 Apr 2024 06:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EAFF4FB;
-	Sat,  6 Apr 2024 02:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD90200DE;
+	Sat,  6 Apr 2024 06:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oYD38c4l"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="bA/MrIl1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570412F2C
-	for <io-uring@vger.kernel.org>; Sat,  6 Apr 2024 02:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3592901;
+	Sat,  6 Apr 2024 06:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712369565; cv=none; b=Yc14A5AZirxEokwPv0rAljcp+SrxBMErgF7d2b5kifRSXv2BR1dAVpRmC2ZXA60yqJUt3esNtIhnXvVn5ct668rvXzH6qqKRt7WJ+jLG6PgHkfLrA+oQnuUoX7JtyThGwetfteeK7LsZiHVE3sg1VBfMxRBWXQ9b0dUnCBaZZQs=
+	t=1712383808; cv=none; b=sPv2JB3JeiFkBHxbT1S2NswdckLMtXPZCQGeykgI5z6k8mGqW9pxnHWOCZ3yhTunw+Vg/80VQYsUDc7hJEt66DknMDGgJvxJK1+zJuVZWS381dwXDvDUkVwVZLmdBpUJHsKxitwKeSUJEjdr6lNNNV3CFU9g5t0UbC6zMl+xH/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712369565; c=relaxed/simple;
-	bh=Hv+ZBTrR3b3jkctkmpEa8+8yLhCzvjhNaQB9KIptYrQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=R4wMZTOviMzTVqJ6c93lI5Axu7DJH5L0Hei2mZcmTfkhmxrL4tU73pqFTHxjIRCvvGYD7h2H2xkgtpt6eJqw5rgH9UrfJHeHEO+0caiJ3KOkjeuP8upQseI19k7bp2RsUUH7u8aKlCix/6vPHHMgMrCz7JmnMgNVEsGZxO4KVCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=oYD38c4l; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-36a125869ddso1371445ab.0
-        for <io-uring@vger.kernel.org>; Fri, 05 Apr 2024 19:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712369563; x=1712974363; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/FyD4q6ixCjwj5yOJADA3wN1ffmgZlPVMA5sI5Y9IuE=;
-        b=oYD38c4lEawTgw3ww//itUcgJVLKm9Cvs1dHwh7hQHAI0zxv9GDU3xUEkyiosslBP+
-         XRUdH3oljJ88ZFd7xhpwxPXoNaxPrh+GImrwK4lmJUaVwHHmWQNQEoWNNGJbe47yo4da
-         qUcFVpq0DELCJsebw0ymea6cqvkpoVtFkTJpUa57DiIOD/TEwk51QMYb2UTzFiBs7xlH
-         QzCb4lY7XibyQPbCb6g/RdFRJo9Z3HLJGLqRrWKUvlOQixzNIxIWi5umw8bIJD925Khx
-         hvwk0diEcRl3GN3nrLeOCqV5OttrZL6PAwfBfAlU142aTbktyDnROkXeG7t9TE/UyJ4m
-         e3NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712369563; x=1712974363;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/FyD4q6ixCjwj5yOJADA3wN1ffmgZlPVMA5sI5Y9IuE=;
-        b=xLT/gNqKYReZkyM6ps9ag4KltA1crzNy9shOVeo7oI0/dDViwccxugiq7LZAvIODOQ
-         aA/iyIhlFEB2iLNaokYu9tmOY41o7SzNHN6kWs92FIOwvoI+KJup4n2oMus/ta16hBqU
-         ZLH/nNeiPXKKzXdRRktIyzmV0+yIWXFAJpIgxhdbfvMjb6pdWegVihuWSdFfmz3J23l0
-         nGkq2XSTb31JwzoQIp9w8IskUWuOsKniOeR5JWZTv1KUyDoTo7v8QL8NQhu9+LJZnGEj
-         UTQqbNUnNRVUARTcKz810IRIK2i8eNKpMEFUWbL8FGKQCQ1oTNt6sAyRYYXzK/oPkLUH
-         OHeA==
-X-Gm-Message-State: AOJu0YyZGpwB1GZHVQmwuLBJH0GNi7c5aIhqGvMFcTokarvEd0/7mzv+
-	aeLgQjLG7BQ+x1kOuZfDmeJRvCTM6JKkKT9KS4JIBoxLdbGdyu2jiYHepqEj0RCP8TkIsN4QE5z
-	T
-X-Google-Smtp-Source: AGHT+IHmZIAFq+z1zbUKP2CHuhmFjIrtTSEr+6GlmysPir0FD68YNc7fo2suHV9404ai4EW5LKUyUQ==
-X-Received: by 2002:a6b:760a:0:b0:7d3:5401:e4c with SMTP id g10-20020a6b760a000000b007d354010e4cmr2970405iom.1.1712369563596;
-        Fri, 05 Apr 2024 19:12:43 -0700 (PDT)
-Received: from [127.0.0.1] ([99.196.135.167])
-        by smtp.gmail.com with ESMTPSA id x3-20020a5e8f43000000b007d337022288sm810032iop.44.2024.04.05.19.12.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Apr 2024 19:12:43 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-In-Reply-To: <20240403164413.16398-1-krisman@suse.de>
-References: <20240403164413.16398-1-krisman@suse.de>
-Subject: Re: [PATCH liburing 0/2] manpage improvements
-Message-Id: <171236955955.2455605.6666388976952164773.b4-ty@kernel.dk>
-Date: Fri, 05 Apr 2024 20:12:39 -0600
+	s=arc-20240116; t=1712383808; c=relaxed/simple;
+	bh=LrjggOAkQqv1jjeTeYa3eXtR4W2xHCz30uyzsxXJzrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYz33/FPVNjj6wZaE6yEOe3vkFkCKMbo8uhmI2AaEys7un8SswyT7s0H6RvA5g+HQ2CwqsmciKif/3JLNHPcL2jv1+NJdToHmE71lQd5oa43q+BIm1jZnhslx3PECA+p6m+cCedFZzRTnSpKSPcSKguyb/uphLMnBcZLsU9hjs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=bA/MrIl1; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3nFbYDYnTI1H3VdPaJvKNd8Ntp5Zmcp9s5TsVT6v3F8=; b=bA/MrIl1lUVfUJ1RdLfXIejrJI
+	c3VPD9+mApkhC8GfGS8SNKII6nbvYnQr2QKpbO+8HdaipqTLJT67iimEWlfgOfq/nYOb9g5pPj6v8
+	6G4bbzx8zX8p0guxqrsq7sMXuiu0YPVMOsKpad2afM5rnbjg7Oa4bbRtM4sn1niugZVa4o6dU9yq2
+	PxLKKFQ3/LYHQrxfE0yjg0PgQle4VaPlEdfyqTFhZAkYvkxpFrXFxbdo0YpADtIjAPzlGouUWYBW2
+	/ww6iPWe9ItIXsAbnu+I/jYnii1Zg6TFn1ZEVPC8ggygmfLY1ghTXFFUK3vFb7Yn435U3ALK3ZDQ8
+	6kmwuUjg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rszFa-006vzB-24;
+	Sat, 06 Apr 2024 06:10:02 +0000
+Date: Sat, 6 Apr 2024 07:10:02 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org
+Subject: Re: [PATCH v2] fs: claw back a few FMODE_* bits
+Message-ID: <20240406061002.GZ538574@ZenIV>
+References: <20240328-gewendet-spargel-aa60a030ef74@brauner>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240328-gewendet-spargel-aa60a030ef74@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-
-On Wed, 03 Apr 2024 12:44:11 -0400, Gabriel Krisman Bertazi wrote:
-> Just sweeping through github issues.
+On Thu, Mar 28, 2024 at 01:27:24PM +0100, Christian Brauner wrote:
+> There's a bunch of flags that are purely based on what the file
+> operations support while also never being conditionally set or unset.
+> IOW, they're not subject to change for individual files. Imho, such
+> flags don't need to live in f_mode they might as well live in the fops
+> structs itself. And the fops struct already has that lonely
+> mmap_supported_flags member. We might as well turn that into a generic
+> fop_flags member and move a few flags from FMODE_* space into FOP_*
+> space. That gets us four FMODE_* bits back and the ability for new
+> static flags that are about file ops to not have to live in FMODE_*
+> space but in their own FOP_* space. It's not the most beautiful thing
+> ever but it gets the job done. Yes, there'll be an additional pointer
+> chase but hopefully that won't matter for these flags.
 > 
-> Gabriel Krisman Bertazi (2):
->   man/io_uring_enter.2:  Move poll update behavior to poll remove
->   man/io_uring_setup.2: Improve IORING_SETUP_REGISTERED_FD_ONLY
->     documentation
-> 
-> [...]
+> I suspect there's a few more we can move into there and that we can also
+> redirect a bunch of new flag suggestions that follow this pattern into
+> the fop_flags field instead of f_mode.
 
-Applied, thanks!
-
-[1/2] man/io_uring_enter.2: Move poll update behavior to poll remove
-      commit: 501c78df8e76f3f6350207a2a1c89814bba4eb2d
-[2/2] man/io_uring_setup.2: Improve IORING_SETUP_REGISTERED_FD_ONLY documentation
-      commit: e4cfc721761a85ea6a257c77572546292d04bf79
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+Looks sane; one suggestion, though - if we are going to try and free
+bits, etc., it might be a good idea to use e.g.
+#define FMODE_NOACCOUNT         ((__force fmode_t)BIT(29))
+instead of hex constants.  IME it's easier to keep track of, especially
+if we have comments between the definitions.
 

@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-1443-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1444-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E39C589B4CD
-	for <lists+io-uring@lfdr.de>; Mon,  8 Apr 2024 01:55:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E446289B4CE
+	for <lists+io-uring@lfdr.de>; Mon,  8 Apr 2024 01:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BF592819E7
-	for <lists+io-uring@lfdr.de>; Sun,  7 Apr 2024 23:55:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1420F1C20A28
+	for <lists+io-uring@lfdr.de>; Sun,  7 Apr 2024 23:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0590446D3;
-	Sun,  7 Apr 2024 23:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D508144C6A;
+	Sun,  7 Apr 2024 23:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yio/c0Hg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNR0xSbd"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF4444C88
-	for <io-uring@vger.kernel.org>; Sun,  7 Apr 2024 23:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB6143AC5
+	for <io-uring@vger.kernel.org>; Sun,  7 Apr 2024 23:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712534106; cv=none; b=EPlvnaYQXQTUbHml/hDYWFkxi9jGztvdld/tTuzQ669jXB153WCWILJ4tVr38s8YWjqMFVryba+POqinRIQ6oaLba9HVJ3EBsEBnZKxjNc5XJfyUusF9t3HUKfjX+9yn3QQXq+lTHYmoBYgaBMgTw4/b6tfC2XHh7jhHS+IcvPY=
+	t=1712534107; cv=none; b=og/aMtG45EoEkBWpm734KNu/wc/7+ULkWJwBGAJ5QgzCCRd4/IJFZVXL4w646qRoZcPdmInyrnW1hTYVg73tqp2GOLGPmHN+IkrUODr2aNnmU7h+g1eL8BdQO1XaAuk4PEXf6M5wHVHsDXnx3yULDCRSOkbpw/8N7gme/3DCLR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712534106; c=relaxed/simple;
-	bh=2VOPc5dxix3HCAmCWtX1QxIUysavfiS/Gs63TWKqEvY=;
+	s=arc-20240116; t=1712534107; c=relaxed/simple;
+	bh=ibQhQkYR6ZKgGp/rrp/wSsi6oPKxgYSIesY2ePMaNR4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u2h8p65ujvshcaHbAbjjB8gmlc6/p+iyo8Pq3UK9HFFkuBm3mc6WqV7KXpWI5WBemt3Y6u+aoCfyr0OH8k9wyF37BGNrsqICAVmlMdx64NrABAqbi4tfHetn7smplCcyDdH74uDL1iKSeliU70p2y/KVHQxGjw6sPwpc5L+brVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yio/c0Hg; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version; b=sY2IbYzQL/6VZ4fZRny5T+gbC5n0uF8/11pt2SEaySfheUzSAzVfNCWqKeTw3JzozeLXJ0aEX+k5MFGFicTpnTwpuHeWcq9/4elZxmAypZXEgbUlES+DWCNgIe6wcMrWZpf4C7gqa2QUPrV6eBf2lqlp/JtLh4fuGTEosckySMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNR0xSbd; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4166ccac75cso3234925e9.0
-        for <io-uring@vger.kernel.org>; Sun, 07 Apr 2024 16:55:04 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3455ff1339dso795124f8f.0
+        for <io-uring@vger.kernel.org>; Sun, 07 Apr 2024 16:55:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712534103; x=1713138903; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1712534104; x=1713138904; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m1eLuvS21CjGHStugiHE76jI4qnRjr7TejjVr4grT/8=;
-        b=Yio/c0HgMDDU5VV7RIFhY39VBQq1ge9wqfzyX+jGSfnuNxhwjibBULiyhGXKAW7RPb
-         cfNsXHVwjXrJGafC387Uh+ANx5ItxhiajNDJOZPOi6se/sYYs+Ay3TqH7NPPTYk3o70j
-         duDUzLN3J6RVYgk2Iinit3kKQeq3bkSAf+uAcnArBDfdcQKvOxvd6n4hO64lz4KX3moE
-         CufLP5RwE66JIZy0N8S1SFbckn7e0QVYFuyowcWQYufz21gxJcDDGWKO3rr+wOTa0zeW
-         fc/w4oRe0g68YnsU0z+DJca2Vhikk5VntO1eKff19tKlMxlo7DJts8vlvuK0biTaRcF/
-         jbYw==
+        bh=e3l5Vz2hQAey2d1GzWNMHldQv74X6F729DYYka07Lvw=;
+        b=hNR0xSbdZuC72zxm6p0HbPAC95cV8li98M0rXdZ1fTHrtpkuQ4Oz5dlHrSKi4xzCvE
+         n1yYm2Ta3J0rjDUbdUVWhMLdvNBeik/BVncXpCKzTJCa95ZKM8jMZO9LYSiroEwdxUH3
+         S7h2tTTWh2+vcxjY94JYdUhC0AJprb1eIfR1twjz9cRn0irHltVI/N9erApAUApaDpNo
+         f3BcKQuDrIyld07ubRb4d6nqlHGIEBriwc6yEXHgnoZgHYjFOaWyXakYC7IEoidtoXsE
+         fHlY9g4utcIi95qenj88qP6ROwGsYEjgWtQvs2EOlGH/daAXXByXVqeXYuWfCR7TvfX9
+         m/wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712534103; x=1713138903;
+        d=1e100.net; s=20230601; t=1712534104; x=1713138904;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m1eLuvS21CjGHStugiHE76jI4qnRjr7TejjVr4grT/8=;
-        b=ez1xsxMIbUGUeMtiN5w7Te/wSh7q2auFpBJx5Lyup+aS2hqKkC6D/dZVLrwBWHHq/O
-         R8hZWaV8boLerMUis8hXcCOxAnrbojITHCJSQ0sM5nt2hRPtOoP94OmioHGFsoN2Sq94
-         RRvLs+8zFv9p/XmaXlm6vXzOUIa9eYEY+06mpmikxyyxXZJLLv277H/pDiM9HJBv2Zsn
-         uc996xKHFaLdF8dgcSkMCjLtFymDhebBCwa33YxqWRZ6DlulUoECKAbPtpIrxI7SuX+t
-         VFgXvsk8orarUQY8mXMEy5lH7c548B88HIvYgq71HGlS7d5kswUkq+57qMl468KYA96R
-         OA0A==
-X-Gm-Message-State: AOJu0YzkffBBZm18PG+EGInEcaaOGp2S/yv/EQZJaTcJWEPPxM8uUhcL
-	3kr3czqNRKSSFHNyyEEeeJQWqjPR9hxrZuvFtjzTaZl6c73co8qAVDJysQOX
-X-Google-Smtp-Source: AGHT+IGLm7cdcAt5qsmxL7KYsCkpvGWghggTz1u62UarTHAeuv0Uq2RGTfrWG0rVBoZDF4YH3O4m8A==
-X-Received: by 2002:a05:600c:310d:b0:416:604a:d162 with SMTP id g13-20020a05600c310d00b00416604ad162mr1228957wmo.13.1712534103070;
+        bh=e3l5Vz2hQAey2d1GzWNMHldQv74X6F729DYYka07Lvw=;
+        b=uR4I9LdxVRfJEmwVeFCJB03AwewBxvpE7LW+3i1+/sYtvVy3e1yQ4V6nS/bcZoQgzh
+         3Rcw0rqwGHqXOur87VDHwZXi5zkX5l8P40ZuuP9g8GRCliKjxPJGtWq/LHyn9KISvGet
+         Z/0D7dTXRJH1vA2tnDvGvovBfOcmwA5o8aJtkCe4RXmDd1sWJZXvgfhsm+uiOa+IkU7g
+         ZzqrUZXc3MTXr6d8N2A+pWufs9zxM/QOFqIt79IgVDcQT8zH/87dgOMAFDx1u20Drd+5
+         Lj82b1CO1OQeD2GVgi0daJwOdCPB6kaILg2rm6eY8YfJYqtZDGlboP84Ra6wXvg5XKqC
+         eiJg==
+X-Gm-Message-State: AOJu0YxWE5ihtV0KgY7xtChQmHg8NRPIGmtLOvuKu5ka7Sf10c4WdwNU
+	CiHNF4d2JjfhtD+7TOqI8yfoN+lYRLy1mGatalAjVvrbPaNSSiaShDZVpVIo
+X-Google-Smtp-Source: AGHT+IFpcssxvjl+JBE/tD0oBmJI+bSMyz0Wv9R55hLn+IKKfpQUOWBSi/dzpcapszbTBZMdZtRZYA==
+X-Received: by 2002:a05:6000:1202:b0:343:e152:4c43 with SMTP id e2-20020a056000120200b00343e1524c43mr5459510wrx.2.1712534103637;
         Sun, 07 Apr 2024 16:55:03 -0700 (PDT)
 Received: from 127.0.0.1localhost ([85.255.235.79])
-        by smtp.gmail.com with ESMTPSA id je4-20020a05600c1f8400b004149536479esm11302917wmb.12.2024.04.07.16.55.01
+        by smtp.gmail.com with ESMTPSA id je4-20020a05600c1f8400b004149536479esm11302917wmb.12.2024.04.07.16.55.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Apr 2024 16:55:02 -0700 (PDT)
+        Sun, 07 Apr 2024 16:55:03 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
 	asml.silence@gmail.com
-Subject: [PATCH for-next 1/3] io_uring/net: merge ubuf sendzc callbacks
-Date: Mon,  8 Apr 2024 00:54:55 +0100
-Message-ID: <d44d68f6f7add33a0dcf0b7fd7b73c2dc543604f.1712534031.git.asml.silence@gmail.com>
+Subject: [PATCH for-next 2/3] io_uring/net: get rid of io_notif_complete_tw_ext
+Date: Mon,  8 Apr 2024 00:54:56 +0100
+Message-ID: <025a124a5e20e2474a57e2f04f16c422eb83063c.1712534031.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1712534031.git.asml.silence@gmail.com>
 References: <cover.1712534031.git.asml.silence@gmail.com>
@@ -84,71 +84,125 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Splitting io_tx_ubuf_callback_ext from io_tx_ubuf_callback is a pre
-mature optimisation that doesn't give us much. Merge the functions into
-one and reclaim some simplicity back.
+io_notif_complete_tw_ext() can be removed and combined with
+io_notif_complete_tw to make it simpler without sacrificing
+anything.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/notif.c | 26 ++++++++------------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
+ io_uring/net.c   | 10 +++++-----
+ io_uring/notif.c | 18 +++++-------------
+ io_uring/notif.h |  6 ++++--
+ 3 files changed, 14 insertions(+), 20 deletions(-)
 
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 27b853033d6f..f97014566b52 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -1019,8 +1019,11 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		if (zc->flags & ~IO_ZC_FLAGS_VALID)
+ 			return -EINVAL;
+ 		if (zc->flags & IORING_SEND_ZC_REPORT_USAGE) {
+-			io_notif_set_extended(notif);
+-			io_notif_to_data(notif)->zc_report = true;
++			struct io_notif_data *nd = io_notif_to_data(notif);
++
++			nd->zc_report = true;
++			nd->zc_used = false;
++			nd->zc_copied = false;
+ 		}
+ 	}
+ 
+@@ -1129,7 +1132,6 @@ static int io_send_zc_import(struct io_kiocb *req, struct io_async_msghdr *kmsg)
+ 			return ret;
+ 		kmsg->msg.sg_from_iter = io_sg_from_iter;
+ 	} else {
+-		io_notif_set_extended(sr->notif);
+ 		ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len, &kmsg->msg.msg_iter);
+ 		if (unlikely(ret))
+ 			return ret;
+@@ -1218,8 +1220,6 @@ int io_sendmsg_zc(struct io_kiocb *req, unsigned int issue_flags)
+ 	unsigned flags;
+ 	int ret, min_ret = 0;
+ 
+-	io_notif_set_extended(sr->notif);
+-
+ 	sock = sock_from_file(req->file);
+ 	if (unlikely(!sock))
+ 		return -ENOTSOCK;
 diff --git a/io_uring/notif.c b/io_uring/notif.c
-index d3e703c37aba..47ff2da8c421 100644
+index 47ff2da8c421..b561bd763435 100644
 --- a/io_uring/notif.c
 +++ b/io_uring/notif.c
-@@ -30,36 +30,24 @@ static void io_tx_ubuf_callback(struct sk_buff *skb, struct ubuf_info *uarg,
- 	struct io_notif_data *nd = container_of(uarg, struct io_notif_data, uarg);
- 	struct io_kiocb *notif = cmd_to_io_kiocb(nd);
+@@ -9,12 +9,12 @@
+ #include "notif.h"
+ #include "rsrc.h"
  
--	if (refcount_dec_and_test(&uarg->refcnt))
--		__io_req_task_work_add(notif, IOU_F_TWQ_LAZY_WAKE);
--}
--
--static void io_tx_ubuf_callback_ext(struct sk_buff *skb, struct ubuf_info *uarg,
--			     bool success)
--{
--	struct io_notif_data *nd = container_of(uarg, struct io_notif_data, uarg);
--
- 	if (nd->zc_report) {
- 		if (success && !nd->zc_used && skb)
- 			WRITE_ONCE(nd->zc_used, true);
- 		else if (!success && !nd->zc_copied)
- 			WRITE_ONCE(nd->zc_copied, true);
- 	}
--	io_tx_ubuf_callback(skb, uarg, success);
-+
-+	if (refcount_dec_and_test(&uarg->refcnt))
-+		__io_req_task_work_add(notif, IOU_F_TWQ_LAZY_WAKE);
- }
- 
- void io_notif_set_extended(struct io_kiocb *notif)
+-static void io_notif_complete_tw_ext(struct io_kiocb *notif, struct io_tw_state *ts)
++void io_notif_tw_complete(struct io_kiocb *notif, struct io_tw_state *ts)
  {
  	struct io_notif_data *nd = io_notif_to_data(notif);
+ 	struct io_ring_ctx *ctx = notif->ctx;
  
--	if (nd->uarg.callback != io_tx_ubuf_callback_ext) {
--		nd->account_pages = 0;
--		nd->zc_report = false;
--		nd->zc_used = false;
--		nd->zc_copied = false;
--		nd->uarg.callback = io_tx_ubuf_callback_ext;
--		notif->io_task_work.func = io_notif_complete_tw_ext;
--	}
-+	nd->zc_used = false;
-+	nd->zc_copied = false;
-+	notif->io_task_work.func = io_notif_complete_tw_ext;
+-	if (nd->zc_report && (nd->zc_copied || !nd->zc_used))
++	if (unlikely(nd->zc_report) && (nd->zc_copied || !nd->zc_used))
+ 		notif->cqe.res |= IORING_NOTIF_USAGE_ZC_COPIED;
+ 
+ 	if (nd->account_pages && ctx->user) {
+@@ -37,17 +37,10 @@ static void io_tx_ubuf_callback(struct sk_buff *skb, struct ubuf_info *uarg,
+ 			WRITE_ONCE(nd->zc_copied, true);
+ 	}
+ 
+-	if (refcount_dec_and_test(&uarg->refcnt))
++	if (refcount_dec_and_test(&uarg->refcnt)) {
++		notif->io_task_work.func = io_notif_tw_complete;
+ 		__io_req_task_work_add(notif, IOU_F_TWQ_LAZY_WAKE);
+-}
+-
+-void io_notif_set_extended(struct io_kiocb *notif)
+-{
+-	struct io_notif_data *nd = io_notif_to_data(notif);
+-
+-	nd->zc_used = false;
+-	nd->zc_copied = false;
+-	notif->io_task_work.func = io_notif_complete_tw_ext;
++	}
  }
  
  struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
-@@ -79,6 +67,8 @@ struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
- 	notif->io_task_work.func = io_req_task_complete;
+@@ -64,7 +57,6 @@ struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
+ 	notif->task = current;
+ 	io_get_task_refs(1);
+ 	notif->rsrc_node = NULL;
+-	notif->io_task_work.func = io_req_task_complete;
  
  	nd = io_notif_to_data(notif);
-+	nd->zc_report = false;
-+	nd->account_pages = 0;
- 	nd->uarg.flags = IO_NOTIF_UBUF_FLAGS;
- 	nd->uarg.callback = io_tx_ubuf_callback;
- 	refcount_set(&nd->uarg.refcnt, 1);
+ 	nd->zc_report = false;
+diff --git a/io_uring/notif.h b/io_uring/notif.h
+index 86d32bd9f856..52e124a9957c 100644
+--- a/io_uring/notif.h
++++ b/io_uring/notif.h
+@@ -20,7 +20,7 @@ struct io_notif_data {
+ };
+ 
+ struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx);
+-void io_notif_set_extended(struct io_kiocb *notif);
++void io_notif_tw_complete(struct io_kiocb *notif, struct io_tw_state *ts);
+ 
+ static inline struct io_notif_data *io_notif_to_data(struct io_kiocb *notif)
+ {
+@@ -33,8 +33,10 @@ static inline void io_notif_flush(struct io_kiocb *notif)
+ 	struct io_notif_data *nd = io_notif_to_data(notif);
+ 
+ 	/* drop slot's master ref */
+-	if (refcount_dec_and_test(&nd->uarg.refcnt))
++	if (refcount_dec_and_test(&nd->uarg.refcnt)) {
++		notif->io_task_work.func = io_notif_tw_complete;
+ 		__io_req_task_work_add(notif, IOU_F_TWQ_LAZY_WAKE);
++	}
+ }
+ 
+ static inline int io_notif_account_mem(struct io_kiocb *notif, unsigned len)
 -- 
 2.44.0
 

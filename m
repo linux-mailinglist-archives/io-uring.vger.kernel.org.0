@@ -1,163 +1,116 @@
-Return-Path: <io-uring+bounces-1469-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1470-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF8D89CFDC
-	for <lists+io-uring@lfdr.de>; Tue,  9 Apr 2024 03:34:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2029089D149
+	for <lists+io-uring@lfdr.de>; Tue,  9 Apr 2024 05:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027AF1F22509
-	for <lists+io-uring@lfdr.de>; Tue,  9 Apr 2024 01:34:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D73DB286E23
+	for <lists+io-uring@lfdr.de>; Tue,  9 Apr 2024 03:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D509E79F6;
-	Tue,  9 Apr 2024 01:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9370454BFD;
+	Tue,  9 Apr 2024 03:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YwYdHQJ6"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NN1YyfRr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F369063B9;
-	Tue,  9 Apr 2024 01:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8214854BEF
+	for <io-uring@vger.kernel.org>; Tue,  9 Apr 2024 03:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712626441; cv=none; b=hxfXYrtVp4+j6T6Nxu7NUOUWH/b0g+q2whdIDjXAVTm6xPgBNkj0HshDakBv9t2df3/7oPzz4yOtB1MTDsuaSxGx2rNLF0btDeMZSXoLSrTQJkJxviBCDV3j0yi9aDQmBX16oTCffwSIEMDrZPRRY7tCasLMC9h19dHsTH9wyUU=
+	t=1712634351; cv=none; b=VD9xSLdotcuEdTt8N2Yq3gFpEOUCt1mnEKo3DzV61QLW5/C6kHrzuRVyI95MHl/jrizgfeg3Jd+z2ItEBQjT1jaDy80JuZNzDNFzgEWGQViVULuYC65j8iFYe6s1z1j9300MmO1iM6CzGs32JmRErGUx3dmrZ3GUdPiUy91DrBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712626441; c=relaxed/simple;
-	bh=PPxo80tMq48XusKoYr/9kv1dS8U/O01FuT389qNTZXk=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CP3cZVZotlPghs1PVOZ6Zkk5dWHWWNQI1VRHJdLcAUr85tgBx7y6RapZbZMEmeAH8cL0hhUb4m9ZQuGwE4HoR0Hib3RPm9mciizIF2FuwpaUCkHWb/45TZnMPPkc9wrjws4h5lftTkVMObS+okeYnrJiFbhz62/daOz4cnv4xGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YwYdHQJ6; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-343c891bca5so3257614f8f.2;
-        Mon, 08 Apr 2024 18:33:59 -0700 (PDT)
+	s=arc-20240116; t=1712634351; c=relaxed/simple;
+	bh=1NxODQkY+Gv9H3Xy0rp/6meGZ3S9tLqs81CNn39f8O8=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dMoJXC8ZSgpjgXAvFaT8zVuZKNsHTGxRAnjuYCMH/lE37PaBcHBMEbUM3qWldWuoui3TCXCYz6BGdfiseZ6bagSqKEf3HvacjBDkqqevuvANTWBwLTvC3obKmFcpxLYNrkhMtiHnUQ2mrqBR8ippm72prXd+WD/QhADaA6UU9GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NN1YyfRr; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6ecf1d22d78so767659b3a.0
+        for <io-uring@vger.kernel.org>; Mon, 08 Apr 2024 20:45:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712626438; x=1713231238; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PPxo80tMq48XusKoYr/9kv1dS8U/O01FuT389qNTZXk=;
-        b=YwYdHQJ61I8pRCUyB3C1XyellJ8JYekMLfgoMsIxBhsYqLHtkKig9lNaFlSfLd9LOz
-         uGOxolACzTstL3eivIOyWOTRWK43l3PYaU0/n3PWXGTIJMgPsBvbjw/sT7NyHca9V3l6
-         JciZvAllX2xIOYf9Uaz5t9qOk1aPedDPFZbUb6tdGEBM+bZqZQ0gML+jFMieDfYYzO2L
-         oUGQI+wFlLPcHGAA53ct3DyCHly7wYnlj0qmLzGGK4BOxSO24g51K1tc+z19Co9MuzDW
-         CRKlH6dliiBIBXLYbF8sglAIuQV2tcNQfmKhnxoaVPAz+94GEyOPRXBhrWv6uyLMO6yb
-         w1dg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712634346; x=1713239146; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6ZHGGsoE1i+pQeakhOl9HR1IhFbrKzDbcOA6vTVDcrg=;
+        b=NN1YyfRr2lSbYWL5sZxnU4+O+iiSsLzL3J8JvqXFS9w95XNBmPFXrpylUIuKEVqF2u
+         JIKZ/MpSLy52MQEkvy9DFn2WhvNnJQlDxtfNnSwMHuaBokdSqkUM2htWgX/alUzpIwHU
+         1KXRdS6zW2axqotuGMKanphGJGfjsq7yscHRJ89eDGHNshVWLSInnVFtXRlFnOJxq1A5
+         RUJcOVjGJuR1gpa8O+/k6UPCGbkxwMesv+3v7FsF+3OqFJKhYZWgCEpaBhNtQfTpNYnx
+         HnJk+UzLTBJ1MFvgIwQMxgHsQTKKOpfcYLveTZ0iMpkolQPKHsaPyuERZei/OMKX7BfK
+         I5HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712626438; x=1713231238;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PPxo80tMq48XusKoYr/9kv1dS8U/O01FuT389qNTZXk=;
-        b=eTJABH0ltDubOzG3ceufw9i8erJVrjh7GptMXJjQnBv4X31ay9FDwEYSHV8YZrBw0a
-         pQIY4icmc1f3XCWnZduLDrogXTfDYvSIJ0RfsC7UFR0owc/Doc1+vjPsgcgVIYp9zZFJ
-         wmkq6g1sOjZE1pO1sz+548/crc72NG0+Hwrk09vQS980yXykb2RmR5JijhtXGkGxIVrO
-         PooBtlNhlwM5mpaH+U1pvtaWQO3js+vBDBCLAEuyTj6UcP6veCSMmKG1Bi5g6LcyIZe5
-         mWHyoSoD9h9Ut3SiT1uh20iG3zmt+BpporeJPIQ+uww1aIAwBa2ReaCEJR4tnh1DrQd9
-         WPUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUM6dn6grciiFEnso7IDZ8HdF9L//n0jxmQ9AZHFddBKzKZAf1NlLGZJKlnskjRhr8seNarSkcdaXVST5Sltwd8Kva53LZbGnsPT9Dz
-X-Gm-Message-State: AOJu0YxeWyQ9lcuuVhtactIlgeRxKXY2kDTUe6zDn6Jy5ZVTKUGP3G+y
-	YjhPdcWO+3+knH2CywIjFisk5e2LVYy63gysZmGcN+GrfVZlfSGYvAAHNK4jS1Ec57GZJuZFQNK
-	SuFX6+6oWb62rFoiMxCnmwy/LZ43mJKYU
-X-Google-Smtp-Source: AGHT+IEucF8z+p4Sz7cDqqb4vdKDhos/5GxTXMNJiXE0CjpEQsFfVP1Vgb+FSX7dZvoSIX0P5q79g+tCa7n6zNjvFzk=
-X-Received: by 2002:a5d:64ec:0:b0:343:8026:1180 with SMTP id
- g12-20020a5d64ec000000b0034380261180mr11642902wri.4.1712626438104; Mon, 08
- Apr 2024 18:33:58 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 8 Apr 2024 18:33:57 -0700
-From: Oliver Crumrine <ozlinuxc@gmail.com>
-In-Reply-To: <09f1a8e9-d9ad-4b40-885b-21e1c2ba147b@gmail.com>
-References: <cover.1712268605.git.ozlinuxc@gmail.com> <b1a047a1b2d55c1c245a78ca9772c31a9b3ceb12.1712268605.git.ozlinuxc@gmail.com>
- <6850f08d-0e89-4eb3-bbfb-bdcc5d4e1b78@gmail.com> <CAK1VsR17Ea6cmks7BcdvS4ZHQMRz_kWd1NhPh8J1fUpsgC7WFg@mail.gmail.com>
- <c2e63753-5901-47b2-8def-1a98d8fcdd41@gmail.com> <CAK1VsR210nrqtxWaVbQh00t_=7rhq9bwucFygGZaT=7N-t7E5Q@mail.gmail.com>
- <CAK1VsR1b-dbAa8pMqGvfcAAcVP3ZkTYZdyqcaK4wJdbuAZtJsA@mail.gmail.com> <09f1a8e9-d9ad-4b40-885b-21e1c2ba147b@gmail.com>
+        d=1e100.net; s=20230601; t=1712634346; x=1713239146;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6ZHGGsoE1i+pQeakhOl9HR1IhFbrKzDbcOA6vTVDcrg=;
+        b=kn6MWaBh+OhI60hY0zugRDx5a0GxQyfWyyXtBoDdUjbPLtBv7HPH/WuuM0+xPe5ELe
+         n3E81A/Ed4tQMCrHBTndUcY4uPCD1kjuB11qP03kYFj7XIJRVIaGY7ST9UaD4a4TkOn0
+         EN50ImhzAW+jcMI0x9PMB8MVMwmqiA7Vbr1vPaB1vXC9JVdVTrOkn56mHQexs517NhZw
+         MqcG9Ny5ZC48cTMN4Eu50OAP/ouVmWDxFsZYhHpTQjW+TPH7xmIBGkLRST3F0DqUb1cp
+         mBtKpH2jmus+35zf+IxkRGDAIvbv8YrzmtdJcrYQKSTZELTrQh3+tzoLvyq2c1R162qi
+         tIrg==
+X-Gm-Message-State: AOJu0YydfYz1YMZQKKTDPwSYY1Ol/m7k2ymTmGvSezDg1LlqxJJ93DZt
+	7VhkkVfOTVZY67jlaCuAdGoLRVnp0YiYGd+qkS1bm4ZZ+O0N4ojKnwL4fLWZ8sI=
+X-Google-Smtp-Source: AGHT+IGy06SIzrCZIqLMHaNfF8UPTKSI68YT6utmb02yc+KZmHVnytHQNsRH5P9cPGvEdddFk3pt9w==
+X-Received: by 2002:a05:6a00:8602:b0:6ea:6f18:887a with SMTP id hg2-20020a056a00860200b006ea6f18887amr11071508pfb.1.1712634346602;
+        Mon, 08 Apr 2024 20:45:46 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id v12-20020aa799cc000000b006ecff8dd3f3sm7131664pfi.74.2024.04.08.20.45.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Apr 2024 20:45:35 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1712594147.git.asml.silence@gmail.com>
+References: <cover.1712594147.git.asml.silence@gmail.com>
+Subject: Re: [PATCH liburing v2 0/3] improve sendzc tests
+Message-Id: <171263433514.2851061.5891322468318359362.b4-ty@kernel.dk>
+Date: Mon, 08 Apr 2024 21:45:35 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Mon, 8 Apr 2024 18:33:57 -0700
-Message-ID: <CAK1VsR3QDh3WiR+r=30f0YQkiYN3hw071Hi9=dkd_xLQ2itdvw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] io_uring: Add REQ_F_CQE_SKIP support for io_uring zerocopy
-To: Pavel Begunkov <asml.silence@gmail.com>, Oliver Crumrine <ozlinuxc@gmail.com>, axboe@kernel.dk
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-Pavel Begunkov wrote:
-> On 4/7/24 20:14, Oliver Crumrine wrote:
-> > Oliver Crumrine wrote:
-> >> Pavel Begunkov wrote:
-> >>> On 4/5/24 21:04, Oliver Crumrine wrote:
-> >>>> Pavel Begunkov wrote:
-> >>>>> On 4/4/24 23:17, Oliver Crumrine wrote:
-> >>>>>> In his patch to enable zerocopy networking for io_uring, Pavel Begunkov
-> >>>>>> specifically disabled REQ_F_CQE_SKIP, as (at least from my
-> >>>>>> understanding) the userspace program wouldn't receive the
-> >>>>>> IORING_CQE_F_MORE flag in the result value.
-> >>>>>
-> >>>>> No. IORING_CQE_F_MORE means there will be another CQE from this
-> >>>>> request, so a single CQE without IORING_CQE_F_MORE is trivially
-> >>>>> fine.
-> >>>>>
-> >>>>> The problem is the semantics, because by suppressing the first
-> >>>>> CQE you're loosing the result value. You might rely on WAITALL
-> >>>> That's already happening with io_send.
-> >>>
-> >>> Right, and it's still annoying and hard to use
-> >> Another solution might be something where there is a counter that stores
-> >> how many CQEs with REQ_F_CQE_SKIP have been processed. Before exiting,
-> >> userspace could call a function like: io_wait_completions(int completions)
-> >> which would wait until everything is done, and then userspace could peek
-> >> the completion ring.
-> >>>
-> >>>>> as other sends and "fail" (in terms of io_uring) the request
-> >>>>> in case of a partial send posting 2 CQEs, but that's not a great
-> >>>>> way and it's getting userspace complicated pretty easily.
-> >>>>>
-> >>>>> In short, it was left out for later because there is a
-> >>>>> better way to implement it, but it should be done carefully
-> >>>> Maybe we could put the return values in the notifs? That would be a
-> >>>> discrepancy between io_send and io_send_zc, though.
-> >>>
-> >>> Yes. And yes, having a custom flavour is not good. It'd only
-> >>> be well usable if apart from returning the actual result
-> >>> it also guarantees there will be one and only one CQE, then
-> >>> the userspace doesn't have to do the dancing with counting
-> >>> and checking F_MORE. In fact, I outlined before how a generic
-> >>> solution may looks like:
-> >>>
-> >>> https://github.com/axboe/liburing/issues/824
-> >>>
-> >>> The only interesting part, IMHO, is to be able to merge the
-> >>> main completion with its notification. Below is an old stash
-> >>> rebased onto for-6.10. The only thing missing is relinking,
-> >>> but maybe we don't even care about it. I need to cover it
-> >>> well with tests.
-> >> The patch looks pretty good. The only potential issue is that you store
-> >> the res of the normal CQE into the notif CQE. This overwrites the
-> >> IORING_CQE_F_NOTIF with IORING_CQE_F_MORE. This means that the notif would
-> >> indicate to userspace that there will be another CQE, of which there
-> >> won't.
-> > I was wrong here; Mixed up flags and result value.
->
-> Right, it's fine. And it's synchronised by the ubuf refcounting,
-> though it might get more complicated if I'd try out some counting
-> optimisations.
->
-> FWIW, it shouldn't give any performance wins. The heavy stuff is
-> notifications waking the task, which is still there. I can even
-> imagine that having separate CQEs might be more flexible and would
-> allow more efficient CQ batching.
-I've actaully been working on this issue for a little while now. My current
-idea is that an id is put into the optval section of the SQE, and then it
-can be used to tag that req with a certain group. When a req has a flag
-set on it, it can request for all of group's notifs to be "flushed" in one
-notif that encompasses that entire group. If the id is zero, it won't be
-associated with a group and will generate a notif. LMK if you see anything
-in here that could overcomplicate userspace. I think it's pretty simple,
-but you've had a crack at this before so I'd like to hear your opinion.
->
-> --
-> Pavel Begunkov
+
+On Mon, 08 Apr 2024 17:38:09 +0100, Pavel Begunkov wrote:
+> There is enough of special handling for DEFER_TASKRUN, so we want
+> to test sendzc with DEFER_TASKRUN as well. Apart from that, probe
+> zc support at the beginning and do some more cleanups.
+> 
+> v2: don't forget IORING_SETUP_SINGLE_ISSUER for DEFER_TASKRUN
+> 
+> Pavel Begunkov (3):
+>   test: handle test_send_faults()'s cases one by one
+>   test/sendzc: improve zc support probing
+>   io_uring/sendzc: add DEFER_TASKRUN testing
+> 
+> [...]
+
+Applied, thanks!
+
+[1/3] test: handle test_send_faults()'s cases one by one
+      commit: a305179d22f982f08a38162c13fe1f6fc8e99ab3
+[2/3] test/sendzc: improve zc support probing
+      commit: c3db7e08833abc293c50b75b14e617be5e5592e4
+[3/3] io_uring/sendzc: add DEFER_TASKRUN testing
+      commit: ef3cae5022b717ebc495e39df902d85b83f402f5
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 

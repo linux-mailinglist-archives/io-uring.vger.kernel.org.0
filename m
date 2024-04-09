@@ -1,96 +1,120 @@
-Return-Path: <io-uring+bounces-1473-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1474-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D9F89D52B
-	for <lists+io-uring@lfdr.de>; Tue,  9 Apr 2024 11:12:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4146089E0E6
+	for <lists+io-uring@lfdr.de>; Tue,  9 Apr 2024 19:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C31282652
-	for <lists+io-uring@lfdr.de>; Tue,  9 Apr 2024 09:12:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18AA28365D
+	for <lists+io-uring@lfdr.de>; Tue,  9 Apr 2024 17:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0637E794;
-	Tue,  9 Apr 2024 09:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E60155389;
+	Tue,  9 Apr 2024 16:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NE6kKh+x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aotgi/mj"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329C776020;
-	Tue,  9 Apr 2024 09:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285BB152DEB;
+	Tue,  9 Apr 2024 16:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712653969; cv=none; b=s4oAqw0/SZmMqFnhfPWnyfqJxg5kmfzSlBUs0RKw7HeDPl1921Ei7edOHGli++mV2z7tKU4AJgaxoz7IG/UisPHtNJJSvlx0vyfSTICnVuH1FU5L/syIn5R5SF1Mforn/6Bh6VtwIm8B4INmU/8tenkAXuOz2Vu8XJ6h/o7ogEY=
+	t=1712681995; cv=none; b=g7ibty6h1z9GuDiYBSd+0+zOxHuXR4ymiaoYcr56bPpzvRLE0EwxXI/LBp95BXa1NCyGFZzbxm1Zigqw9y2Me2BdfHAd4rIJUI4xvz/aLbbYPxkRhCZ453Lny0vJfFuYsvw74LomoU/U5QrXtf4MQzerLxN17g7e4eslPfjNbr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712653969; c=relaxed/simple;
-	bh=kQPF6T3t2dgBZkOXgWb9q6oOpIuyIoHqNG2JlvWDOz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TvNKBG6ZMJ5H1YxpOhGlW9CHFlhR0sgek8dz3OGxqHaLb2GZWP1xRUUemcxtydli6/FQtHDtnprqsS6ld5/y8NtYvKR1MCHkUBS8M0WJEFeCmsxxLuXCM83NazpEVCiOLhu1Hxx16cl+bmMJ+w+c7SFLxUobFERXkpIKgD8QaI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NE6kKh+x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA8DEC433C7;
-	Tue,  9 Apr 2024 09:12:45 +0000 (UTC)
+	s=arc-20240116; t=1712681995; c=relaxed/simple;
+	bh=FncKWsKbg/hFr6GnUHocdduFJVjZhPin/nlM8ZG9evk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wv3Ey/7TO3BWslQ+173irg2YxGx4VBimPA3IC65TMytW9YT5SB2NOxPpvdtaET7Gcz/Qjyj44dHN67fSZoOoH15FE2L1BMGSB+8lVvnkvKBOWr93ZQvmEHu9lS23VNx6BAak6vYW+tMvg5Agn6yeOOulpxraH4choKBzFdUqwk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aotgi/mj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65DAEC43394;
+	Tue,  9 Apr 2024 16:59:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712653968;
-	bh=kQPF6T3t2dgBZkOXgWb9q6oOpIuyIoHqNG2JlvWDOz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NE6kKh+xC25D1q84GnsBi5H+KikoYzF8OoClDoQcXD9VpTz0+SX8mQMlb0GxJP6Uw
-	 VUqbZOmdNH+0XBrCXg/v+ZCdKUC2VH+i40cDd9rPUlx6CV9d6RX6HQVq3aQGdy13Cm
-	 5jaz2gp8Zfo7WVcFLmjkzeV+7CFosjAQUFxiwMMV2MdIn2a0HOqnkXp0h4mi6CIj+b
-	 GyEW9JksqrQX4KBlvyWEm/91sH3JynRNiPFCJKmyLRIIItKYrxU9UmuHX1M8A+Ki9j
-	 nsJZy4SCfJ0NNI+OsBV8ypq78FD85eNFbk5qRxbxX2dWp8lmlZwLBOQP5Lfq4zba6D
-	 WinPa2wSrHJvg==
-Date: Tue, 9 Apr 2024 11:12:43 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH v2] fs: claw back a few FMODE_* bits
-Message-ID: <20240409-autokauf-kniebeschwerden-c0452289cc08@brauner>
-References: <20240328-gewendet-spargel-aa60a030ef74@brauner>
- <20240406061002.GZ538574@ZenIV>
- <20240406061604.GA538574@ZenIV>
+	s=k20201202; t=1712681994;
+	bh=FncKWsKbg/hFr6GnUHocdduFJVjZhPin/nlM8ZG9evk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aotgi/mjzEYHwzEVw6SPTEWRw8pgK6bl3EZbUUhiLE2wDXCzJVqGLZVPoNr/CMvgT
+	 H9TmtLLcE1bCzZaEkYCwTzITgO05jeex9m4DsVZXuD3Y8sQ+/2basDNQ+0TD4lKlCT
+	 cGAHdmD3jRpxUvKfiA6b3PdEL9gJRuNamxiGi1rNQHRm69ypMekvMNLj3gIh5DWQ+K
+	 3MQxlZl4KxdIiWu2pYBK5d2n2bQ+L9wlms3e/u5qct/dU3fuk6T1O1cYJYm9lqyMn8
+	 nlMcs3HEWsfIHLaxSP+bY9pq5qXzsIR5fa9hpFrFifzsLQ8DpGnVHFk0OV/Ayuor1W
+	 q2lPrqPTwWVxw==
+From: Will Deacon <will@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <naoya.horiguchi@nec.com>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Anup Patel <anup@brainfault.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Joel Granados <j.granados@samsung.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/7] sysctl: Remove sentinel elements from misc directories
+Date: Tue,  9 Apr 2024 17:59:35 +0100
+Message-Id: <171267686554.3168517.3836229489434629100.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
+References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240406061604.GA538574@ZenIV>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 06, 2024 at 07:16:04AM +0100, Al Viro wrote:
-> On Sat, Apr 06, 2024 at 07:10:02AM +0100, Al Viro wrote:
-> > On Thu, Mar 28, 2024 at 01:27:24PM +0100, Christian Brauner wrote:
-> > > There's a bunch of flags that are purely based on what the file
-> > > operations support while also never being conditionally set or unset.
-> > > IOW, they're not subject to change for individual files. Imho, such
-> > > flags don't need to live in f_mode they might as well live in the fops
-> > > structs itself. And the fops struct already has that lonely
-> > > mmap_supported_flags member. We might as well turn that into a generic
-> > > fop_flags member and move a few flags from FMODE_* space into FOP_*
-> > > space. That gets us four FMODE_* bits back and the ability for new
-> > > static flags that are about file ops to not have to live in FMODE_*
-> > > space but in their own FOP_* space. It's not the most beautiful thing
-> > > ever but it gets the job done. Yes, there'll be an additional pointer
-> > > chase but hopefully that won't matter for these flags.
-> > > 
-> > > I suspect there's a few more we can move into there and that we can also
-> > > redirect a bunch of new flag suggestions that follow this pattern into
-> > > the fop_flags field instead of f_mode.
-> > 
-> > Looks sane; one suggestion, though - if we are going to try and free
-> > bits, etc., it might be a good idea to use e.g.
-> > #define FMODE_NOACCOUNT         ((__force fmode_t)BIT(29))
-> > instead of hex constants.  IME it's easier to keep track of, especially
-> > if we have comments between the definitions.
+On Thu, 28 Mar 2024 16:57:47 +0100, Joel Granados wrote:
+> What?
+> These commits remove the sentinel element (last empty element) from the
+> sysctl arrays of all the files under the "mm/", "security/", "ipc/",
+> "init/", "io_uring/", "drivers/perf/" and "crypto/" directories that
+> register a sysctl array. The inclusion of [4] to mainline allows the
+> removal of sentinel elements without behavioral change. This is safe
+> because the sysctl registration code (register_sysctl() and friends) use
+> the array size in addition to checking for a sentinel [1].
 > 
-> ... or (1u << 29), for that matter; the point is that counting zeroes
-> visually is error-prone, so seeing the binary logarithm of the value
-> somewhere would be a good idea.
+> [...]
 
-Sounds good. I've converted all FMODE_* flags to use <<.
+Applied drivers/perf change to will (for-next/perf), thanks!
+
+[7/7] drivers: perf: Remove the now superfluous sentinel elements from ctl_table array
+      https://git.kernel.org/will/c/f66ae597411c
+
+Cheers,
+-- 
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 

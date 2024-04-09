@@ -1,207 +1,163 @@
-Return-Path: <io-uring+bounces-1468-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1469-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0FE89CB34
-	for <lists+io-uring@lfdr.de>; Mon,  8 Apr 2024 19:53:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF8D89CFDC
+	for <lists+io-uring@lfdr.de>; Tue,  9 Apr 2024 03:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6488288EF0
-	for <lists+io-uring@lfdr.de>; Mon,  8 Apr 2024 17:53:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027AF1F22509
+	for <lists+io-uring@lfdr.de>; Tue,  9 Apr 2024 01:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459241442F4;
-	Mon,  8 Apr 2024 17:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D509E79F6;
+	Tue,  9 Apr 2024 01:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P24GjNhM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YwYdHQJ6"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661271E489;
-	Mon,  8 Apr 2024 17:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F369063B9;
+	Tue,  9 Apr 2024 01:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712598658; cv=none; b=PuKsa9Ynp7KC0trXFVsf5BX0cCd8xm1A0ZMJaNN64CI6h6ne2lTZWzoTVR/BghlULNgempesDMHplZrMnWwYQFlD4HgbPR/R2GnsoUvHXSpsN39N7iZjSK//iOAUbVE5ywf40zvziWnkBm78QgJGgp2LMTaNz86ZckFqV3Lk/74=
+	t=1712626441; cv=none; b=hxfXYrtVp4+j6T6Nxu7NUOUWH/b0g+q2whdIDjXAVTm6xPgBNkj0HshDakBv9t2df3/7oPzz4yOtB1MTDsuaSxGx2rNLF0btDeMZSXoLSrTQJkJxviBCDV3j0yi9aDQmBX16oTCffwSIEMDrZPRRY7tCasLMC9h19dHsTH9wyUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712598658; c=relaxed/simple;
-	bh=hMSsV4hhO/Vfk3AcQkgzg1GidVri54SqYdrlQPYIQ4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s3qdd0qeuSeOS0h4COPtuL5wulu9uPMUl1JHqIBGXQ5UL1mfEs/kOKaQEgWzaJLzr6CqMyS4kMPoExkfvGkzUHN8Yz9jpGKER7LJoOD3KzyefwQOn1I5rtk42dQ0/YVdXojJoXdbJHs4mexrOa8+rK/bRI6b80Ykh7DqHfM5xGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P24GjNhM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FDDqbeNGhoXcnFk6nkXqY1HUDUdyMKYatROs/wiu+Jo=; b=P24GjNhMaw6vUYUb8COhMvk2An
-	Lxregwp4jXT0W+/9Vywm6B1WQsruBZHLSHfl8YnBTo3I3t2EHYSvS0VNaEKyU5DDytq59hbEY+afo
-	yBKy0S0uVq1MMxHzlD0160IwP4xxT1MYLGLEdvST7S+s7udgWA9n11N0txup4Aba4NfgMP6fDacZc
-	9a0gmU3xMWbWvw0UdSoSnJqr2sSv3sbKKDa7yJt+dNNw27SZqf3YpRw8RjE2K+ayOC96fQyWCZgVJ
-	iVWL56inha+/+3m7wmfgXqN6JOuz0kzM6u+OaC5I9o8JItgHwHXhpPRSwUyuKMcWM191mR4muHEUl
-	cZk8xt4A==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rtt8p-0000000GObq-3IQ1;
-	Mon, 08 Apr 2024 17:50:47 +0000
-Date: Mon, 8 Apr 2024 10:50:47 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-	axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com
-Subject: Re: [PATCH v6 00/10] block atomic writes
-Message-ID: <ZhQud1NbO4aMt0MH@bombadil.infradead.org>
-References: <20240326133813.3224593-1-john.g.garry@oracle.com>
- <ZgOXb_oZjsUU12YL@casper.infradead.org>
- <c4c0dad5-41a4-44b4-8f40-2a250571180b@oracle.com>
- <Zg7Z4aJtn3SxY5w1@casper.infradead.org>
- <f3c1d321-0dfc-466f-9f6a-fe2f0513d944@oracle.com>
+	s=arc-20240116; t=1712626441; c=relaxed/simple;
+	bh=PPxo80tMq48XusKoYr/9kv1dS8U/O01FuT389qNTZXk=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CP3cZVZotlPghs1PVOZ6Zkk5dWHWWNQI1VRHJdLcAUr85tgBx7y6RapZbZMEmeAH8cL0hhUb4m9ZQuGwE4HoR0Hib3RPm9mciizIF2FuwpaUCkHWb/45TZnMPPkc9wrjws4h5lftTkVMObS+okeYnrJiFbhz62/daOz4cnv4xGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YwYdHQJ6; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-343c891bca5so3257614f8f.2;
+        Mon, 08 Apr 2024 18:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712626438; x=1713231238; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PPxo80tMq48XusKoYr/9kv1dS8U/O01FuT389qNTZXk=;
+        b=YwYdHQJ61I8pRCUyB3C1XyellJ8JYekMLfgoMsIxBhsYqLHtkKig9lNaFlSfLd9LOz
+         uGOxolACzTstL3eivIOyWOTRWK43l3PYaU0/n3PWXGTIJMgPsBvbjw/sT7NyHca9V3l6
+         JciZvAllX2xIOYf9Uaz5t9qOk1aPedDPFZbUb6tdGEBM+bZqZQ0gML+jFMieDfYYzO2L
+         oUGQI+wFlLPcHGAA53ct3DyCHly7wYnlj0qmLzGGK4BOxSO24g51K1tc+z19Co9MuzDW
+         CRKlH6dliiBIBXLYbF8sglAIuQV2tcNQfmKhnxoaVPAz+94GEyOPRXBhrWv6uyLMO6yb
+         w1dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712626438; x=1713231238;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PPxo80tMq48XusKoYr/9kv1dS8U/O01FuT389qNTZXk=;
+        b=eTJABH0ltDubOzG3ceufw9i8erJVrjh7GptMXJjQnBv4X31ay9FDwEYSHV8YZrBw0a
+         pQIY4icmc1f3XCWnZduLDrogXTfDYvSIJ0RfsC7UFR0owc/Doc1+vjPsgcgVIYp9zZFJ
+         wmkq6g1sOjZE1pO1sz+548/crc72NG0+Hwrk09vQS980yXykb2RmR5JijhtXGkGxIVrO
+         PooBtlNhlwM5mpaH+U1pvtaWQO3js+vBDBCLAEuyTj6UcP6veCSMmKG1Bi5g6LcyIZe5
+         mWHyoSoD9h9Ut3SiT1uh20iG3zmt+BpporeJPIQ+uww1aIAwBa2ReaCEJR4tnh1DrQd9
+         WPUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUM6dn6grciiFEnso7IDZ8HdF9L//n0jxmQ9AZHFddBKzKZAf1NlLGZJKlnskjRhr8seNarSkcdaXVST5Sltwd8Kva53LZbGnsPT9Dz
+X-Gm-Message-State: AOJu0YxeWyQ9lcuuVhtactIlgeRxKXY2kDTUe6zDn6Jy5ZVTKUGP3G+y
+	YjhPdcWO+3+knH2CywIjFisk5e2LVYy63gysZmGcN+GrfVZlfSGYvAAHNK4jS1Ec57GZJuZFQNK
+	SuFX6+6oWb62rFoiMxCnmwy/LZ43mJKYU
+X-Google-Smtp-Source: AGHT+IEucF8z+p4Sz7cDqqb4vdKDhos/5GxTXMNJiXE0CjpEQsFfVP1Vgb+FSX7dZvoSIX0P5q79g+tCa7n6zNjvFzk=
+X-Received: by 2002:a5d:64ec:0:b0:343:8026:1180 with SMTP id
+ g12-20020a5d64ec000000b0034380261180mr11642902wri.4.1712626438104; Mon, 08
+ Apr 2024 18:33:58 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 8 Apr 2024 18:33:57 -0700
+From: Oliver Crumrine <ozlinuxc@gmail.com>
+In-Reply-To: <09f1a8e9-d9ad-4b40-885b-21e1c2ba147b@gmail.com>
+References: <cover.1712268605.git.ozlinuxc@gmail.com> <b1a047a1b2d55c1c245a78ca9772c31a9b3ceb12.1712268605.git.ozlinuxc@gmail.com>
+ <6850f08d-0e89-4eb3-bbfb-bdcc5d4e1b78@gmail.com> <CAK1VsR17Ea6cmks7BcdvS4ZHQMRz_kWd1NhPh8J1fUpsgC7WFg@mail.gmail.com>
+ <c2e63753-5901-47b2-8def-1a98d8fcdd41@gmail.com> <CAK1VsR210nrqtxWaVbQh00t_=7rhq9bwucFygGZaT=7N-t7E5Q@mail.gmail.com>
+ <CAK1VsR1b-dbAa8pMqGvfcAAcVP3ZkTYZdyqcaK4wJdbuAZtJsA@mail.gmail.com> <09f1a8e9-d9ad-4b40-885b-21e1c2ba147b@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f3c1d321-0dfc-466f-9f6a-fe2f0513d944@oracle.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Mime-Version: 1.0
+Date: Mon, 8 Apr 2024 18:33:57 -0700
+Message-ID: <CAK1VsR3QDh3WiR+r=30f0YQkiYN3hw071Hi9=dkd_xLQ2itdvw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] io_uring: Add REQ_F_CQE_SKIP support for io_uring zerocopy
+To: Pavel Begunkov <asml.silence@gmail.com>, Oliver Crumrine <ozlinuxc@gmail.com>, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Apr 05, 2024 at 11:06:00AM +0100, John Garry wrote:
-> On 04/04/2024 17:48, Matthew Wilcox wrote:
-> > > > The thing is that there's no requirement for an interface as complex as
-> > > > the one you're proposing here.  I've talked to a few database people
-> > > > and all they want is to increase the untorn write boundary from "one
-> > > > disc block" to one database block, typically 8kB or 16kB.
-> > > > 
-> > > > So they would be quite happy with a much simpler interface where they
-> > > > set the inode block size at inode creation time,
-> > > We want to support untorn writes for bdev file operations - how can we set
-> > > the inode block size there? Currently it is based on logical block size.
-> > ioctl(BLKBSZSET), I guess?  That currently limits to PAGE_SIZE, but I
-> > think we can remove that limitation with the bs>PS patches.
-
-I can say a bit more on this, as I explored that. Essentially Matthew,
-yes, I got that to work but it requires a set of different patches. We have
-what we tried and then based on feedback from Chinner we have a
-direction on what to try next. The last effort on that front was having the
-iomap aops for bdev be used and lifting the PAGE_SIZE limit up to the
-page cache limits. The crux on that front was that we end requiring
-disabling BUFFER_HEAD and that is pretty limitting, so my old
-implementation had dynamic aops so to let us use the buffer-head aops
-only when using filesystems which require it and use iomap aops
-otherwise. But as Chinner noted we learned through the DAX experience
-that's not a route we want to again try, so the real solution is to
-extend iomap bdev aops code with buffer-head compatibility.
-
-> We want a consistent interface for bdev and regular files, so that would
-> need to work for FSes also. FSes(XFS) work based on a homogeneous inode
-> blocksize, which is the SB blocksize.
-
-There are two aspects to this and it is important to differentiate them.
-
-1) LBA formats used
-2) When a large atomic is supported and you want to use smaller LBA formats
-
-When the LBA format, and so logical block size is say 16k, the LBS
-patches with the above mentioned patches enable IOs to the block device
-to be atomic to say 16k.
-
-But to remain flexible we want to support a world where 512 byte and 4k
-LBA formats are still used, and you *optionally* want to leverage say
-16k atomics. Today's block device topology enables this only with a knob
-to userspace to allow userspace to override the sector size for the
-filesystem. In practice today if you want to use 4k IOs you just format
-the drive to use 4k LBA format. However, an alternative at laest for
-NVMe today is to support say 16k atomic with an 4k or 512 LBA format.
-This essentially *lifts* the physical block size to 16k while keeping
-the logical block size at the LBA format, so 4k or 512 bytes. What you
-*could* do with this, from the userspace side of things is at mkfs you
-can *opt* in to use a larger sector size up to the physical block size.
-When you do this the block device still has a logical block size of the
-LBA format, but all IOs the filesystem would use use the larger sector
-size you opted in for.
-
-I suspect this is a use case where perhaps the max folio order could be
-set for the bdev in the future, the logical block size the min order,
-and max order the large atomic.
-
-> Furthermore, we would seem to be mixing different concepts here. Currently
-> in Linux we say that a logical block size write is atomic. In the block
-> layer, we split BIOs on LBS boundaries. iomap creates BIOs based on LBS
-> boundaries. But writing a FS block is not always guaranteed to be atomic, as
-> far as I'm concerned.
-
-True. To be clear above paragraph refers to LBS as logical block size.
-
-However when a filesystem sets the min order, and it should be respected.
-I agree that when you don't set the sector size to 16k you are not forcing the
-filesystem to use 16k IOs, the metadata can still be 4k. But when you
-use a 16k sector size, the 16k IOs should be respected by the
-filesystem.
-
-Do we break BIOs to below a min order if the sector size is also set to
-16k?  I haven't seen that and its unclear when or how that could happen.
-
-At least for NVMe we don't need to yell to a device to inform it we want
-a 16k IO issued to it to be atomic, if we read that it has the
-capability for it, it just does it. The IO verificaiton can be done with
-blkalgn [0].
-
-Does SCSI *require* an 16k atomic prep work, or can it be done implicitly?
-Does it need WRITE_ATOMIC_16?
-
-[0] https://github.com/dagmcr/bcc/tree/blkalgn
-
-> So just increasing the inode block size / FS block size does not
-> really change anything, in itself.
-
-If we're breaking up IOs when a min order is set for an inode, that
-would need to be looked into, but we're not seeing that.
-
-> > Do untorn writes actually exist in SCSI?  I was under the impression
-> > nobody had actually implemented them in SCSI hardware.
-> 
-> I know that some SCSI targets actually atomically write data in chunks >
-> LBS. Obviously atomic vs non-atomic performance is a moot point there, as
-> data is implicitly always atomically written.
-> 
-> We actually have an mysql/innodb port of this API working on such a SCSI
-> target.
-
-I suspect IO verification with the above tool should prove to show the
-same if you use a filesystem with a larger sector size set too, and you
-just would not have to do any changes to userspace other than the
-filesystem creation with say mkfs.xfs params of -b size=16k -s size=16k
-
-> However I am not sure about atomic write support for other SCSI targets.
-
-Good to know!
-
-> > > We saw untorn writes as not being a property of the file or even the inode
-> > > itself, but rather an attribute of the specific IO being issued from the
-> > > userspace application.
-> > The problem is that keeping track of that is expensive for buffered
-> > writes.  It's a model that only works for direct IO.  Arguably we
-> > could make it work for O_SYNC buffered IO, but that'll require some
-> > surgery.
-> 
-> To me, O_ATOMIC would be required for buffered atomic writes IO, as we want
-> a fixed-sized IO, so that would mean no mixing of atomic and non-atomic IO.
-
-Would using the same min and max order for the inode work instead?
-
-  Luis
+Pavel Begunkov wrote:
+> On 4/7/24 20:14, Oliver Crumrine wrote:
+> > Oliver Crumrine wrote:
+> >> Pavel Begunkov wrote:
+> >>> On 4/5/24 21:04, Oliver Crumrine wrote:
+> >>>> Pavel Begunkov wrote:
+> >>>>> On 4/4/24 23:17, Oliver Crumrine wrote:
+> >>>>>> In his patch to enable zerocopy networking for io_uring, Pavel Begunkov
+> >>>>>> specifically disabled REQ_F_CQE_SKIP, as (at least from my
+> >>>>>> understanding) the userspace program wouldn't receive the
+> >>>>>> IORING_CQE_F_MORE flag in the result value.
+> >>>>>
+> >>>>> No. IORING_CQE_F_MORE means there will be another CQE from this
+> >>>>> request, so a single CQE without IORING_CQE_F_MORE is trivially
+> >>>>> fine.
+> >>>>>
+> >>>>> The problem is the semantics, because by suppressing the first
+> >>>>> CQE you're loosing the result value. You might rely on WAITALL
+> >>>> That's already happening with io_send.
+> >>>
+> >>> Right, and it's still annoying and hard to use
+> >> Another solution might be something where there is a counter that stores
+> >> how many CQEs with REQ_F_CQE_SKIP have been processed. Before exiting,
+> >> userspace could call a function like: io_wait_completions(int completions)
+> >> which would wait until everything is done, and then userspace could peek
+> >> the completion ring.
+> >>>
+> >>>>> as other sends and "fail" (in terms of io_uring) the request
+> >>>>> in case of a partial send posting 2 CQEs, but that's not a great
+> >>>>> way and it's getting userspace complicated pretty easily.
+> >>>>>
+> >>>>> In short, it was left out for later because there is a
+> >>>>> better way to implement it, but it should be done carefully
+> >>>> Maybe we could put the return values in the notifs? That would be a
+> >>>> discrepancy between io_send and io_send_zc, though.
+> >>>
+> >>> Yes. And yes, having a custom flavour is not good. It'd only
+> >>> be well usable if apart from returning the actual result
+> >>> it also guarantees there will be one and only one CQE, then
+> >>> the userspace doesn't have to do the dancing with counting
+> >>> and checking F_MORE. In fact, I outlined before how a generic
+> >>> solution may looks like:
+> >>>
+> >>> https://github.com/axboe/liburing/issues/824
+> >>>
+> >>> The only interesting part, IMHO, is to be able to merge the
+> >>> main completion with its notification. Below is an old stash
+> >>> rebased onto for-6.10. The only thing missing is relinking,
+> >>> but maybe we don't even care about it. I need to cover it
+> >>> well with tests.
+> >> The patch looks pretty good. The only potential issue is that you store
+> >> the res of the normal CQE into the notif CQE. This overwrites the
+> >> IORING_CQE_F_NOTIF with IORING_CQE_F_MORE. This means that the notif would
+> >> indicate to userspace that there will be another CQE, of which there
+> >> won't.
+> > I was wrong here; Mixed up flags and result value.
+>
+> Right, it's fine. And it's synchronised by the ubuf refcounting,
+> though it might get more complicated if I'd try out some counting
+> optimisations.
+>
+> FWIW, it shouldn't give any performance wins. The heavy stuff is
+> notifications waking the task, which is still there. I can even
+> imagine that having separate CQEs might be more flexible and would
+> allow more efficient CQ batching.
+I've actaully been working on this issue for a little while now. My current
+idea is that an id is put into the optval section of the SQE, and then it
+can be used to tag that req with a certain group. When a req has a flag
+set on it, it can request for all of group's notifs to be "flushed" in one
+notif that encompasses that entire group. If the id is zero, it won't be
+associated with a group and will generate a notif. LMK if you see anything
+in here that could overcomplicate userspace. I think it's pretty simple,
+but you've had a crack at this before so I'd like to hear your opinion.
+>
+> --
+> Pavel Begunkov
 

@@ -1,120 +1,85 @@
-Return-Path: <io-uring+bounces-1511-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1512-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C118A1C9A
-	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 19:51:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE108A1CE8
+	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 19:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D61751C20F7D
-	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 17:51:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C7F1F22F6B
+	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 17:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDF4824AD;
-	Thu, 11 Apr 2024 16:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tyhicks.com header.i=@tyhicks.com header.b="LFrnW+gV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QjszwsZV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10A814286;
+	Thu, 11 Apr 2024 16:45:22 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from flow3-smtp.messagingengine.com (flow3-smtp.messagingengine.com [103.168.172.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC183D547;
-	Thu, 11 Apr 2024 16:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E06D14A83;
+	Thu, 11 Apr 2024 16:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712852967; cv=none; b=A55tMoPpAQo7vmNMoj9PHZVivSIHyVldwlNSnnkcl9BG3F7JL5W6b8CrdwD76ZRGdOVVilZ4GFmHGHvNyrheZ65ZYsvHjQtvtUEde7XDXoTuPgAs4fPv+y9n8OGCTBHxwWNnrsPlya4KUYCDDYRdM1N3ntoEWvSb9nmDC5BLfTA=
+	t=1712853922; cv=none; b=kom7tUwOW7IKkJpZnZkGRg3YRsJH/GhAGvCCY4fO1cbVj19qSbdcyXtwU7HlTaWtUziqZLqdJXPcJC01YKFGxsnXTFkSwPDBv09AKlvPfOvzopkhdso4ZjzPOXUtzygiiE2lqHuxjMCLE0ekTpz3bejm7yGWh/BzHA7R63TMYgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712852967; c=relaxed/simple;
-	bh=nG9AvDiE9iyn3GD+qkFmmatVAFhuimsNOSJez9ntW2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EwwrynCnC+ifeyEMvSA5owY4P6X8wT5+JyrNTXLsVl1jcpRozvlfzJJ4sqz/60iQh2M5pOSb+aFIj8kkzrcJBHvNUBDrh6bnQvIIa875/fijsMQHv+X0JRrRWJsDUPRXnDtjvXBoowJlBVaUtxde/SdWg4cyrKbf8QcBwFN9Mno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tyhicks.com; spf=pass smtp.mailfrom=tyhicks.com; dkim=pass (2048-bit key) header.d=tyhicks.com header.i=@tyhicks.com header.b=LFrnW+gV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QjszwsZV; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tyhicks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tyhicks.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 9DA22200367;
-	Thu, 11 Apr 2024 12:29:24 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 11 Apr 2024 12:29:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tyhicks.com; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1712852964; x=1712860164; bh=gqLmiSCFDE
-	hztj3oo+M3RvxGGuNWOcopRWr00SfiOXg=; b=LFrnW+gVLOjXO932zV8JFLHcU4
-	Z11oxiPjXEeIoTv+hRBxeNFBSHFRORV89RE+hDz8o/FNQfb0ZylM3LlaV7SfIbIh
-	Addzl5MtYd6DCOKuuPjLWJpx7oS4vGZa3oYfHS1M59LR0YuAs7ja3h2OT7vsqFfY
-	5lefW/nwLq1Gjc8RK3AO2aQKwckfEkr+nH8s5ZalQfAl92JZTgbm+Wg914c2UB5m
-	eNqrL2vxBMmvDGIaiYP6BCPQg3oUbh782W0RrfBe4O6nE4nSNjLpbLzpSB9hnFID
-	pXfng5Et+lGDZHZhWOFMibGKmgT0m+diqRUIayMGR5+j1SDWiOhyO1XbxcyQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1712852964; x=1712860164; bh=gqLmiSCFDEhztj3oo+M3RvxGGuNW
-	OcopRWr00SfiOXg=; b=QjszwsZVkv7GUJ0uc0dhoDjZrwffXdSQOTPWHmT4H3mj
-	sdeyyErO2JxiM/ZM7lw+G2Xjk+V8dzc0F0tFHdo6JHONeBT/ha7tRiMO+nyluWht
-	sCLk0CteXP+F0ciqwnwyEzKIhl9lFKOQejgIyx3d0knunefs6jkNYVEfPy6BfWky
-	My4ZuOyf7c/xkIXD1YnRECJRudPOX5hGDB9SeyTh2Mi6k0tMbZfTJvdXYfILZCyY
-	TMycg/iXXwbTaWErbdzYedwL/odNoQ4I/lF28UcD3TuK+QiDKYMU7xoQyKetNMnM
-	xrjf9RbU15ha6PRU4peAkTbO7efhDWd6dUDQ8SlhlA==
-X-ME-Sender: <xms:5A8YZul7kXoS-E9HTR43PZEfsjxiUGr6s04HTzfT7XGJQqRPvj-YWQ>
-    <xme:5A8YZl00B3abTQ5vNWSDYehm_cfFWxdUj6XlCR_XJIzyPSm5bvgogBrpmjNhj3AbY
-    YVU8tpnsP6EPyEyqaY>
-X-ME-Received: <xmr:5A8YZsoxOZ0l_g7S6OVUqYg1WXYzf7dlDHutUKObDutlAEQVsPctVQbFuHs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudehkedguddtvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvhihl
-    vghrucfjihgtkhhsuceotghouggvsehthihhihgtkhhsrdgtohhmqeenucggtffrrghtth
-    gvrhhnpedvhedvtddthfefhfdtgfelheefgefgudejueevkeduveekvdegjedttdefgfel
-    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegtoh
-    guvgesthihhhhitghkshdrtghomh
-X-ME-Proxy: <xmx:5A8YZikbMasM7VZgHvtObLV2P9GFgJ0r470-Kc7fgEo774Qvf2Oj3g>
-    <xmx:5A8YZs0qX9ZGWE_5YIJqL-CXhvqo1qiTvKUehekqralf-0nAJJfbMQ>
-    <xmx:5A8YZpsD3ILS-9-fb0yu84z7H8q2JBo_xGPFRaXTzSzJxv8tekgNbA>
-    <xmx:5A8YZoVcbJKojpd_wm4DCcLSdUivGbr5St9mLlhRB_29tXjO_qgkvA>
-    <xmx:5A8YZt4seqo2FXF3xVRK1SddDyq4KetKDKrVv1LOiQ97qa59hBpsDkJP>
-Feedback-ID: i78e14604:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 Apr 2024 12:29:22 -0400 (EDT)
-Date: Thu, 11 Apr 2024 11:29:19 -0500
-From: Tyler Hicks <code@tyhicks.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-	speakup@linux-speakup.org, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-wireless@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-afs@lists.infradead.org, ecryptfs@vger.kernel.org,
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-arch@vger.kernel.org,
-	io-uring@vger.kernel.org, cocci@inria.fr,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] treewide: Fix common grammar mistake "the the"
-Message-ID: <ZhgPuPVYT26SxgQW@sequoia>
-References: <20240411150437.496153-4-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1712853922; c=relaxed/simple;
+	bh=h/ZEohgU3P5v2a7EY1UZ9zQutp5wDrWrURUGVudi2mo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pouukBNzMyoYSIl2nZpxoLE+Wc1oWx0OksI4g+jDJ3Hai5VBHFDRnFGyOO44XVLSdzV5mQzJyaGjLkmWAawwmYX/kSbRdnTsXAEqURYyJLi3RMwzDYrcyzOPkHVMumi2CDMuu2NRvtthh3yBFe4BSY5/H5nBMSrtq6ZjJbSeUYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C52C113E;
+	Thu, 11 Apr 2024 09:45:50 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 21A953F6C4;
+	Thu, 11 Apr 2024 09:45:17 -0700 (PDT)
+Message-ID: <f2d1bb68-7ab7-4bbf-a1b1-88334ba52bab@arm.com>
+Date: Thu, 11 Apr 2024 17:45:15 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] treewide: Fix common grammar mistake "the the"
+To: Thorsten Blum <thorsten.blum@toblux.com>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-s390@vger.kernel.org, speakup@linux-speakup.org,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-wireless@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-afs@lists.infradead.org,
+ ecryptfs@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ linux-arch@vger.kernel.org, io-uring@vger.kernel.org, cocci@inria.fr,
+ linux-perf-users@vger.kernel.org
+References: <20240411150437.496153-4-thorsten.blum@toblux.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
 In-Reply-To: <20240411150437.496153-4-thorsten.blum@toblux.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024-04-11 17:04:40, Thorsten Blum wrote:
+On 11/04/2024 4:04 pm, Thorsten Blum wrote:
 > Use `find . -type f -exec sed -i 's/\<the the\>/the/g' {} +` to find all
 > occurrences of "the the" and replace them with a single "the".
 > 
-> Changes only comments and documentation - no code changes.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+[...]
+> diff --git a/arch/arm/include/asm/unwind.h b/arch/arm/include/asm/unwind.h
+> index d60b09a5acfc..a75da9a01f91 100644
+> --- a/arch/arm/include/asm/unwind.h
+> +++ b/arch/arm/include/asm/unwind.h
+> @@ -10,7 +10,7 @@
+>   
+>   #ifndef __ASSEMBLY__
+>   
+> -/* Unwind reason code according the the ARM EABI documents */
+> +/* Unwind reason code according the ARM EABI documents */
 
-Reviewed-by: Tyler Hicks <code@tyhicks.com>
+Well, that's clearly still not right... repeated words aren't *always* 
+redundant, sometimes they're meant to be other words ;)
 
-Tyler
+Thanks,
+Robin.
 

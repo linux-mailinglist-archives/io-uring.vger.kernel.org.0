@@ -1,141 +1,134 @@
-Return-Path: <io-uring+bounces-1514-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1515-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB0F8A1F18
-	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 21:08:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BAA88A2010
+	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 22:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1C2286434
-	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 19:08:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4754528AF3A
+	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 20:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8BF14286;
-	Thu, 11 Apr 2024 19:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B6617BD4;
+	Thu, 11 Apr 2024 20:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ADyqhdI3"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QMCudDh1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A943616419;
-	Thu, 11 Apr 2024 19:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0B817C6A;
+	Thu, 11 Apr 2024 20:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712862468; cv=none; b=PxOukDSlGv2paI+DZpOT4F5mqdX2fn4fLq8kn3eMycFGrnYe42zD8bt3aKVj/UxyYBspm6U7JzyG9jGxbnrcIL88awZUBbU/vktrvcBPN9bH5p3eoRJRG0dEz1T4j1eGAhSgofOPad0pqDfK56B6i/7SO+Oy2jhJZguWcM+DpHU=
+	t=1712867046; cv=none; b=IIMQHyOHU10964xjmyecUxwErI9ZpY/eI91Ixot2UDdSFdpv7jHg7H1EVzisTVU/dYlZ40M2o8xsbgGbKodzMmeTnLiqtJ82jfN9l8HVZfFgfjUEfZnGvQilGro0G5ufYaRytnNVDDzWRvtSeKYprFsYRKYgXVoIOreu3gtWaPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712862468; c=relaxed/simple;
-	bh=p3xSOxPuATlO71p9cnskaQJETJN0PeGN1xAKog1Qdp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iPnogClrvwI4Po/Gbpg0s0nvtKKBqzrE8scEHcoOj1z8BCQFOJggtvbq9sPblZoak1ugy40S/ensGwBFqiRrEzaZM6XesXqYpQOAztGIr13u4+clwZpj8xwQs/fLDfNP/x/ygJixMVmYPMF1ex/BldR/7npXXUUIXE7NucgCCzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ADyqhdI3; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PcZdbAxSEwXG3C61TyMUijUHCCvRVt8slQPN1FDjo1k=; b=ADyqhdI3aTXSxUH/1EFE7yxMaw
-	Q/QzwIQp/Krx4PAZO26/s23+4WUezyP+nlstWI47eqnw9vZDe7z/lyJIztc/96TDC49tOC1plCsR2
-	zHy/WFYe0Kw56iwPRg64drflom1IXRv9eRYpFdHBk9eGmtNolVadhrxb6suoJ0hIVGWEZhPmZTPYg
-	rosmBvK/anQCPG0g9QahmGRPMjF6Z3lCQfxGj2kLxRhSIrl9CfEqcWT6LUTPP8E9eoliydSsex3HU
-	4j7XG1TVO6TdnYQ//KK/md0lE/EhlDTciT0dgNlRVUCfFA+ZzNSkrDvXI1mmHqQlIfglCNXCKzMvH
-	IzGtMSjA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1ruzls-0000000Dp2X-0ZEf;
-	Thu, 11 Apr 2024 19:07:40 +0000
-Date: Thu, 11 Apr 2024 12:07:40 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-	axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com
-Subject: Re: [PATCH v6 00/10] block atomic writes
-Message-ID: <Zhg0_Pvlh9zy4zzG@bombadil.infradead.org>
-References: <20240326133813.3224593-1-john.g.garry@oracle.com>
- <ZgOXb_oZjsUU12YL@casper.infradead.org>
- <c4c0dad5-41a4-44b4-8f40-2a250571180b@oracle.com>
- <Zg7Z4aJtn3SxY5w1@casper.infradead.org>
- <f3c1d321-0dfc-466f-9f6a-fe2f0513d944@oracle.com>
- <ZhQud1NbO4aMt0MH@bombadil.infradead.org>
- <b0789a97-7dcf-48aa-9980-8525942dabfa@oracle.com>
+	s=arc-20240116; t=1712867046; c=relaxed/simple;
+	bh=QhmZqca6i4GwVv1XAcc9IrrgLk4abiFm/4Wl1hb/8sw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R+q9P76gGpRrO7rGHoG85kD3J5l/gsvHfEkVuueG62aNA6G1C4zDdkYK28ZIkguOhiKEKe/L2kRBWoXddGR7JsHx1jNhYT+6BVMJYCmuyDQLzw+N6Ezu3T5JAWXyM4XpHlGlQ6qQFE41Np724XIXvcodmv8Wzc+ZTMPSxT9ESbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QMCudDh1; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.18] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id v0xXr4JUAqkPUv0xYrdLi7; Thu, 11 Apr 2024 22:23:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1712867034;
+	bh=v4sYyES8feRyP/YNHQ4HOBPVocESBHJ4p6aCiQtSavI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=QMCudDh14uA+N4VCUkUhGD3njd4hP+Nm+dZR+AHIvomm17cl8lhe+OEOieTe2tfCd
+	 CSwaIP3rEU56ONRmKGTfz4ao9J8mzI9LnAVCKVmuUmS//1uy7UrVyFnucM+4esuv/T
+	 oo+W9WibJxCGBDkR1ETwHvYgNw2WqclnTcAwFFkQCDIl+7Og0xYMtfR6Ce6O1eg8Xj
+	 TprE9TDFAvWBbHv9DdeSW7gw0cL9SbIVgyxiFM+NCmvp8psAM0yRbsFF/z/qBtmvhS
+	 tk8PC6grRGcBt957JhfI8k8joswKv/XfbhH8qO5/V5krr5vlKn6DDKJ1S1Ygk95Ha3
+	 gYl5m7R2w2/OA==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 11 Apr 2024 22:23:54 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <da50e56a-cb59-4815-800d-81742e5294df@wanadoo.fr>
+Date: Thu, 11 Apr 2024 22:23:45 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0789a97-7dcf-48aa-9980-8525942dabfa@oracle.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] treewide: Fix common grammar mistake "the the"
+To: Thorsten Blum <thorsten.blum@toblux.com>, robin.murphy@arm.com
+Cc: cocci@inria.fr, dri-devel@lists.freedesktop.org,
+ ecryptfs@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, io-uring@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-afs@lists.infradead.org,
+ linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ linux-wireless@vger.kernel.org, netfs@lists.linux.dev,
+ speakup@linux-speakup.org, Randy Dunlap <rdunlap@infradead.org>,
+ Tyler Hicks <code@tyhicks.com>
+References: <f2d1bb68-7ab7-4bbf-a1b1-88334ba52bab@arm.com>
+ <20240411171145.535123-3-thorsten.blum@toblux.com>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240411171145.535123-3-thorsten.blum@toblux.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 10, 2024 at 09:34:36AM +0100, John Garry wrote:
-> On 08/04/2024 18:50, Luis Chamberlain wrote:
-> > I agree that when you don't set the sector size to 16k you are not forcing the
-> > filesystem to use 16k IOs, the metadata can still be 4k. But when you
-> > use a 16k sector size, the 16k IOs should be respected by the
-> > filesystem.
-> > 
-> > Do we break BIOs to below a min order if the sector size is also set to
-> > 16k?  I haven't seen that and its unclear when or how that could happen.
+Le 11/04/2024 à 19:11, Thorsten Blum a écrit :
+> Use `find . -type f -exec sed -i 's/\<the the\>/the/g' {} +` to find all
+> occurrences of "the the" and replace them with a single "the".
 > 
-> AFAICS, the only guarantee is to not split below LBS.
-
-It would be odd to split a BIO given a inode requirement size spelled
-out, but indeed I don't recall verifying this gaurantee.
-
-> > At least for NVMe we don't need to yell to a device to inform it we want
-> > a 16k IO issued to it to be atomic, if we read that it has the
-> > capability for it, it just does it. The IO verificaiton can be done with
-> > blkalgn [0].
-> > 
-> > Does SCSI*require*  an 16k atomic prep work, or can it be done implicitly?
-> > Does it need WRITE_ATOMIC_16?
+> In arch/arm/include/asm/unwind.h replace "the the" with "to the".
 > 
-> physical block size is what we can implicitly write atomically.
-
-Yes, and also on flash to avoid read modify writes.
-
-> So if you
-> have a 4K PBS and 512B LBS, then WRITE_ATOMIC_16 would be required to write
-> 16KB atomically.
-
-Ugh. Why does SCSI requires a special command for this?
-
-Now we know what would be needed to bump the physical block size, it is
-certainly a different feature, however I think it would be good to
-evaluate that world too. For NVMe we don't have such special write
-requirements.
-
-I put together this kludge with the last patches series of LBS + the
-bdev cache aops stuff (which as I said before needs an alternative
-solution) and just the scsi atomics topology + physical block size
-change to easily experiment to see what would break:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=20240408-lbs-scsi-kludge
-
-Using a larger sector size works but it does not use the special scsi
-atomic write.
-
-> > > To me, O_ATOMIC would be required for buffered atomic writes IO, as we want
-> > > a fixed-sized IO, so that would mean no mixing of atomic and non-atomic IO.
-> > Would using the same min and max order for the inode work instead?
+> Changes only comments and documentation - no code changes.
 > 
-> Maybe, I would need to check further.
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> Reviewed-by: Tyler Hicks <code@tyhicks.com>
 
-I'd be happy to help review too.
+...
 
-  Luis
+> --- a/drivers/scsi/isci/host.h
+> +++ b/drivers/scsi/isci/host.h
+> @@ -244,7 +244,7 @@ enum sci_controller_states {
+>   	SCIC_INITIALIZED,
+>   
+>   	/**
+> -	 * This state indicates the the controller is in the process of becoming
+
+maybe: that the?
+
+> +	 * This state indicates the controller is in the process of becoming
+>   	 * ready (i.e. starting).  In this state no new IO operations are permitted.
+>   	 * This state is entered from the INITIALIZED state.
+>   	 */
+
+...
+
+> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> index 3aa16e27f509..503244e8470a 100644
+> --- a/io_uring/kbuf.c
+> +++ b/io_uring/kbuf.c
+> @@ -731,7 +731,7 @@ struct io_buffer_list *io_pbuf_get_bl(struct io_ring_ctx *ctx,
+>   	 * going away, if someone is trying to be sneaky. Look it up under rcu
+>   	 * so we know it's not going away, and attempt to grab a reference to
+>   	 * it. If the ref is already zero, then fail the mapping. If successful,
+> -	 * the caller will call io_put_bl() to drop the the reference at at the
+> +	 * the caller will call io_put_bl() to drop the reference at at the
+
+Not strictly related to your patch, but "at at".
+
+>   	 * end. This may then safely free the buffer_list (and drop the pages)
+>   	 * at that point, vm_insert_pages() would've already grabbed the
+>   	 * necessary vma references.
+
+...
+
+CJ
+
 

@@ -1,95 +1,162 @@
-Return-Path: <io-uring+bounces-1509-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1510-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84928A19F5
-	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 18:28:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971198A1C73
+	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 19:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83FE42842E6
-	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 16:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B886E1C20F40
+	for <lists+io-uring@lfdr.de>; Thu, 11 Apr 2024 17:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D064C1BED83;
-	Thu, 11 Apr 2024 15:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B9C1A0AEC;
+	Thu, 11 Apr 2024 16:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="xaU2NKBL"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XIsGPPx3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5271BF6CC;
-	Thu, 11 Apr 2024 15:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156CA1A0AE7;
+	Thu, 11 Apr 2024 16:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712849872; cv=none; b=mjjDqrDpYXNffbR9K/hmYohjcpjYafnqAEdBeCOnVTmO7v03soVaWtxtXA7eXY9eYtFD9xDv71kf36lVuofp0m6Tfc0TRDem/GFiHIEiJYW+IYkvs2YqL448Los7kai76d9036i3eFVkzrkJm03E0wOQq5zqGc4ifx7Dhv4JSHk=
+	t=1712852604; cv=none; b=oQn7tJgrdFHQ3nqLFBhStEqjZ+u9YqToXIhcoCRtlmAxbBioEDFfAtXBbh9qpc1L0MAPgO2i9jJcbTk7a2AsNrT41MPabIZesFB+7qZV8FKqFnx2vJGq9J/swZM1uJt+7YJRWUqvBbK66Nia+B1YGPy56RwHGjGhJ8dE6kyG8uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712849872; c=relaxed/simple;
-	bh=WE1dyOcRCkdDKHVQSE8grhwnH0jVKprFA2u7hDTWTaw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VLu35FTtkolSraV1i8RltDV5hoSRbmBL7w3KUce111GrBzSmfzBXtEBl1d4kLJx0d7cnT4tXGu3Q3LRVLZPQVWQ67+AO0OlC+xzxaVc9sG1JxLATF59r97aWz+oxpK5gd0qkbSAJQ3IssufWTmvDAugY3WyCNhetNL1jjJcKNxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=xaU2NKBL; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1712852604; c=relaxed/simple;
+	bh=nN/Hr+UlT6emx/RUIJVSa74QG/O0VgJ/byKbQpUfmyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VWVaNTMrArzwXpUAPHTmX9pqckVf8Y9iEtFipuXz7cMNaIXCIqHf/GgUa7hmk+GHQ4qVqOJ2dS/2zrRgt0iPNlEDUG7Xtxh9OW7yoVsaz55FTL2ANhPZ2NsqZAxdRf+HPKGhb+VaVxmAouLKeTQP8C3h/UcUXuKOQxqloIgOpy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XIsGPPx3; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=WE1dyOcRCkdDKHVQSE8grhwnH0jVKprFA2u7hDTWTaw=;
-	t=1712849869; x=1714059469; b=xaU2NKBLgr7Yn2tBHn2ek+3yEF9AP7G0ybp9rH/bKy0MrDs
-	EakNHnrWExF3wu5+mAsO/bYs+RlbF/ypk3VKmFlsyDGTccEuCmu5mq9b3zXV5P6Rupkl9hO5aQoeV
-	AS2hYnG07ZFPQGesyfbZPKg13eQbyk+3XEj0iFBJqK/xt4DwkAWiTQa/PshMGcBTbKDVUyyqrsvCV
-	0bzqmEXkxPlzdq6cRG7OCU3ogUg2p6kA3KDnndD1P/X2oLebFI0M8027Tfmn9kR804FHBFRFE9U7N
-	Z2ptAqRr9jcIRRli1XQxtl7jx7vyHLDBVb+LTWNNiLlzJmMotq02CucNtbtfwdAA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1ruwUh-00000002nXW-0s48;
-	Thu, 11 Apr 2024 17:37:43 +0200
-Message-ID: <d2a0cf345c7e049ffd76acd315e6b377d94a344c.camel@sipsolutions.net>
-Subject: Re: [PATCH] treewide: Fix common grammar mistake "the the"
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Thorsten Blum <thorsten.blum@toblux.com>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-s390@vger.kernel.org, speakup@linux-speakup.org, 
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, linux-wireless@vger.kernel.org, 
- linux-scsi@vger.kernel.org, linux-afs@lists.infradead.org, 
- ecryptfs@vger.kernel.org, netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org,  linux-unionfs@vger.kernel.org,
- linux-arch@vger.kernel.org,  io-uring@vger.kernel.org, cocci@inria.fr,
- linux-perf-users@vger.kernel.org
-Date: Thu, 11 Apr 2024 17:37:41 +0200
-In-Reply-To: <20240411150437.496153-4-thorsten.blum@toblux.com>
-References: <20240411150437.496153-4-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=w8fDcPBM4Ze2RPgrAoXs/w5z2M5QE6GW5bGItfgRyJ8=; b=XIsGPPx3mZgUgXDqmsW3zFEUMM
+	hrAF6AwyKjg5u/7JpKuZqbRzY4v8HjoVwEuBNAQVw14POMEREkb9sOqKwAN3ZchA3+E1NH+q43G9i
+	h89UzTlMT34ILaOSNIjqzh/1hopUZTMHNrak55UHbof7sc3viEOIyBCwxIJ6BThh3W7K7EUlGy4np
+	TJb5EIRDb4TXgd7PW5tv8xQPgKoVmMRy+YgpCoXVAMMOQ9WQZGo/nl38Gs8Cc4AV4c2NEYmM7UFcA
+	N6nfqhSWnnj5rSE7+/wwPBIg+h68sSddrjQYwRJvDbTOvqfFAn0OFruiNIfUzQl1/VooT2EV9uDuG
+	6YpTaT4w==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1ruxCN-0000000D38A-1CHz;
+	Thu, 11 Apr 2024 16:22:51 +0000
+Date: Thu, 11 Apr 2024 09:22:51 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Dan Helmick <dan.helmick@samsung.com>, axboe@kernel.dk,
+	kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
+	martin.petersen@oracle.com, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+	jack@suse.cz, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
+	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+	io-uring@vger.kernel.org, nilay@linux.ibm.com,
+	ritesh.list@gmail.com, willy@infradead.org,
+	Alan Adamson <alan.adamson@oracle.com>
+Subject: Re: [PATCH v6 10/10] nvme: Atomic write support
+Message-ID: <ZhgOW8yBPuuae4ni@bombadil.infradead.org>
+References: <20240326133813.3224593-1-john.g.garry@oracle.com>
+ <20240326133813.3224593-11-john.g.garry@oracle.com>
+ <Zhcu5m8fmwD1W5bG@bombadil.infradead.org>
+ <143e3d55-773f-4fcb-889c-bb24c0acabba@oracle.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <143e3d55-773f-4fcb-889c-bb24c0acabba@oracle.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Thu, 2024-04-11 at 17:04 +0200, Thorsten Blum wrote:
-> Use `find . -type f -exec sed -i 's/\<the the\>/the/g' {} +` to find all
-> occurrences of "the the" and replace them with a single "the".
+On Thu, Apr 11, 2024 at 09:59:57AM +0100, John Garry wrote:
+> On 11/04/2024 01:29, Luis Chamberlain wrote:
+> > On Tue, Mar 26, 2024 at 01:38:13PM +0000, John Garry wrote:
+> > > From: Alan Adamson <alan.adamson@oracle.com>
+> > > 
+> > > Add support to set block layer request_queue atomic write limits. The
+> > > limits will be derived from either the namespace or controller atomic
+> > > parameters.
+> > > 
+> > > NVMe atomic-related parameters are grouped into "normal" and "power-fail"
+> > > (or PF) class of parameter. For atomic write support, only PF parameters
+> > > are of interest. The "normal" parameters are concerned with racing reads
+> > > and writes (which also applies to PF). See NVM Command Set Specification
+> > > Revision 1.0d section 2.1.4 for reference.
+> > > 
+> > > Whether to use per namespace or controller atomic parameters is decided by
+> > > NSFEAT bit 1 - see Figure 97: Identify – Identify Namespace Data
+> > > Structure, NVM Command Set.
+> > > 
+> > > NVMe namespaces may define an atomic boundary, whereby no atomic guarantees
+> > > are provided for a write which straddles this per-lba space boundary. The
+> > > block layer merging policy is such that no merges may occur in which the
+> > > resultant request would straddle such a boundary.
+> > > 
+> > > Unlike SCSI, NVMe specifies no granularity or alignment rules, apart from
+> > > atomic boundary rule.
+> > 
+> > Larger IU drives a larger alignment *preference*, and it can be multiples
+> > of the LBA format, it's called Namespace Preferred Write Granularity (NPWG)
+> > and the NVMe driver already parses it. So say you have a 4k LBA format
+> > but a 16k NPWG. I suspect this means we'd want atomics writes to align to 16k
+> > but I can let Dan confirm.
+> 
+> If we need to be aligned to NPWG, then the min atomic write unit would also
+> need to be NPWG. Any NPWG relation to atomic writes is not defined in the
+> spec, AFAICS.
 
-I estimated that this misses at least ~50 instances split across lines:
+NPWG is just a preference, not a requirement, so it is different than
+logical block size. As far as I can tell we have no block topology
+information to represent it. LBS will help users opt-in to align to
+the NPWG, and a respective NAWUPF will ensure you can also atomically
+write the respective sector size.
 
-$ git grep -ih -A1 -e 'the$'|grep -vi 'the$'|grep -E -- '^[^a-zA-Z0-9]*the =
-'|wc -l
-51
+For atomics, NABSPF is what we want to use.
 
-And a bunch that have more than one space:
+The above statement on the commit log just seems a bit misleading then.
 
-$ git grep -E '\<the\s\s+the\>'|wc -l
-20
+> We simply use the LBA data size as the min atomic unit in this patch.
 
-So not sure you should claim "all" ;-)
+I thought NABSPF is used.
 
-johannes
+> > > Note on NABSPF:
+> > > There seems to be some vagueness in the spec as to whether NABSPF applies
+> > > for NSFEAT bit 1 being unset. Figure 97 does not explicitly mention NABSPF
+> > > and how it is affected by bit 1. However Figure 4 does tell to check Figure
+> > > 97 for info about per-namespace parameters, which NABSPF is, so it is
+> > > implied. However currently nvme_update_disk_info() does check namespace
+> > > parameter NABO regardless of this bit.
+> > 
+> > Yeah that its quirky.
+> > 
+> > Also today we set the physical block size to min(npwg, atomic) and that
+> > means for a today's average 4k IU drive if they get 16k atomic the
+> > physical block size would still be 4k. As the physical block size in
+> > practice can also lift the sector size filesystems used it would seem
+> > odd only a larger npwg could lift it.
+> It seems to me that if you want to provide atomic guarantees for this large
+> "physical block size", then it needs to be based on (N)AWUPF and NPWG.
+
+For atomicity, I read it as needing to use NABSPF. Aligning to NPWG will just
+help performance.
+
+The NPWG comes from an internal mapping table constructed and kept on
+DRAM on a drive in units of an IU size [0], and so not aligning to the
+IU just causes having to work with entries in the able rather than just
+one, and also incurs a read-modify-write. Contrary to the logical block
+size, a write below NPWG but respecting the logical block size is allowed,
+its just not optimal.
+
+[0] https://kernelnewbies.org/KernelProjects/large-block-size#Indirection_Unit_size_increases
+
+  Luis
 

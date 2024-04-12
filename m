@@ -1,148 +1,141 @@
-Return-Path: <io-uring+bounces-1532-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1533-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C790A8A35AF
-	for <lists+io-uring@lfdr.de>; Fri, 12 Apr 2024 20:28:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8038A35FF
+	for <lists+io-uring@lfdr.de>; Fri, 12 Apr 2024 20:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 825092813AD
-	for <lists+io-uring@lfdr.de>; Fri, 12 Apr 2024 18:28:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E214A1F24C25
+	for <lists+io-uring@lfdr.de>; Fri, 12 Apr 2024 18:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81BD14E2ED;
-	Fri, 12 Apr 2024 18:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1B854F87;
+	Fri, 12 Apr 2024 18:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g4enleGk"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0jbqmgPo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C915514E2E0;
-	Fri, 12 Apr 2024 18:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62025502A9
+	for <io-uring@vger.kernel.org>; Fri, 12 Apr 2024 18:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712946532; cv=none; b=Yjwwik/8yFHONX3FX+7g4NNsec0lgCUQwvhuLFAM75dCsxooWBMgCygOBsV05PLOM01k4H++fTlKU3D3gq8VCMS5v1NsOfzOcMkKYQG3aGes1uPA/ZFb3c1l9/SJvA29cPGEgBuTPE84CnvRoixQeriJwmXUNrkJtl6UiW2CXlE=
+	t=1712947792; cv=none; b=sczFaxgDpqFEuhq8yoqgIkOqjlGEaskgoqM1zkXftN7MfZN8dhHK4RukmE7lblGWWLZwJth84sypYzEWiTZlYPAX/e0gJ8iWx/ViW5qccIFhThg4B/K/1JOsjedJiicUkniNsQtux8swPOIq3qBE3EuAT6kbXClBSmgH7e++x8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712946532; c=relaxed/simple;
-	bh=X9j9yFm/65nRAckgOYZMNKOekN37E9FIFTz7phVScao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VFMbdsFJLpawZEWS+H6Zz6WLBy2u42TVNfzxw0/i2Y5LDy5ZV0l6Ss2iBjFHIsnod+UE1cE/GCF5Yk2XtApUmYqSiGlZInjlcVPKULkwfUm15N2uNZ2qsVUUtozX3uBvPGbLaMUVViSQfbGik8Rbd/abymDlJfFhcG5Gs3dFDZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=g4enleGk; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=s9uyMrI2kBzD/jir8Kf5BQ4KLVX7ZmHiKzONe0aRyLQ=; b=g4enleGkCJEEwc71HQKni0x9GL
-	WQaciMczjdvFq3ggaGdSSVerJPZOnRP70tf/jJYONFwjo9AoRzjwNg1jZ9M6ngZW5iMlU+zpXLUW+
-	C9zDOOJMqEmOd6JzljE5sC7YvKO8mFIzOpi+wuvjAXUVr9SZ358OD4vWFo034mtRdmCrH29tnhQbE
-	dlN7RuMr4Fvg37WpbT3NYaYZIyDt4GuGQ41syaaAGsXyHbnvtFukS0XAo6x8EtzXWRmXwg5RtczDq
-	HV/tchkMzR/ZAUM21RhtdRQJLJo86VziZRS8/dEaVWKErEijWWzQNAFfc4tuKo+/zMQHY52RRcbZU
-	tAwukUoA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rvLdf-00000000rhY-0qAo;
-	Fri, 12 Apr 2024 18:28:39 +0000
-Date: Fri, 12 Apr 2024 11:28:39 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: John Garry <john.g.garry@oracle.com>,
-	Dan Helmick <dan.helmick@samsung.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-	axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com
-Subject: Re: [PATCH v6 00/10] block atomic writes
-Message-ID: <Zhl9VxTVxIEYc4cF@bombadil.infradead.org>
-References: <20240326133813.3224593-1-john.g.garry@oracle.com>
- <ZgOXb_oZjsUU12YL@casper.infradead.org>
- <c4c0dad5-41a4-44b4-8f40-2a250571180b@oracle.com>
- <Zg7Z4aJtn3SxY5w1@casper.infradead.org>
- <f3c1d321-0dfc-466f-9f6a-fe2f0513d944@oracle.com>
- <ZhQud1NbO4aMt0MH@bombadil.infradead.org>
- <b0789a97-7dcf-48aa-9980-8525942dabfa@oracle.com>
- <Zhg0_Pvlh9zy4zzG@bombadil.infradead.org>
- <6d8e98bb-24d1-49be-8965-b6afa97dfdaa@oracle.com>
+	s=arc-20240116; t=1712947792; c=relaxed/simple;
+	bh=XE4/Fp74w1epzGMaYIi2zdq0OoGgMk5zkjDz0OAoFN4=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=Ris0zw5mVOjKxfH6gkKQHClEWzc10rnu9DvzcJ6L0VCGPbbHAaF8r17FBpsgPBRCsdKJ+gHWxWgT5AGd4MKIrU5h8HEPLaciJ3/hVu9wGFpDULaScqK5oo2GaH4N7HrmajVEMG/2pU7INj5/bdi2ucP5lCzRUkpJzBkLj2NeR9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0jbqmgPo; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1e45f339708so2927825ad.0
+        for <io-uring@vger.kernel.org>; Fri, 12 Apr 2024 11:49:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1712947788; x=1713552588; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Lo/Zrqah9xi3DZOoi/6cvdjl6wQdRzy20qzHLShNyw=;
+        b=0jbqmgPoVc6nD5hSsH4IlkXTtAQ/l4LyCwM50y/4zNjERMIK7NDgJjeLqYbKdPsDJa
+         2xHeKkWAKawQd8e4isdeY4gpq9cX6glYO/VIppvHnyyBLhV7eCGHDuNSvHf5P6qO4QHc
+         2lY4kJfFYDmTbcPxOPv959Q+SI9crNrWfQJu4E61DgT5X1PV+P+cLkzS2IGz2mXDPlXv
+         Th6MHg4zQs6aEnjCTVZUeL2wTpU5CZMwH0xxl1OzU+u09K4O4OOztCtPBgKiHqPbJdre
+         eFLTqWWhL2qvEpvLIAO9Vba69o/4APGlv5Mf0kYRwGpz1XPv9Gxv+xrbok1pBr12wmso
+         nrpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712947788; x=1713552588;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1Lo/Zrqah9xi3DZOoi/6cvdjl6wQdRzy20qzHLShNyw=;
+        b=BmTJ7oxlSJyoxbdaeV6PQB7kbiJZ4oNegQrHWEE83hlmlVqrkrJv1IBtz2NwJZxD5K
+         BLXGI1/xFzcP+xFsuDa4RKGmiFf24IyDj2CJlyuOvqLVZoEKUosN1JR8KULA+VmfnB08
+         /2rwg82ODdhwvzQoMXY6hzfhCOxLI9xh4RdDbCiigX9OpKjP9TvEulSlwMeW3fwdIBEL
+         oVCaLu9ZzgJHGc7dpiu/szLhmnwoHRPhG9NJVhn2xmD1iv1r3xKfPptwgHJzVqDMKDBv
+         9HB8KhL2eRKzYasgyM0FR1XAB3Q7SpXEJYo+GPgn9X7deUW5P6uOpE5CsTackVD3Rk2R
+         /WXA==
+X-Gm-Message-State: AOJu0YyIkPxW6WsJHtkQ2rmcLgiCP1O64nE0TW4+oXq2sHJkgVAnEswA
+	+jfgImqv85KtuS8uSNP4zuX9sjHIUd6qEkWOMKRcGJUP3N4GR5bkMeyWWbvLfYI08XYLv2nQ2EM
+	+
+X-Google-Smtp-Source: AGHT+IGvmCD0xsR9eyQWAfMGJEcXj333IM2t16d+5kpCNe+oFUqVbOhyzfqprFnUD+U+XaRMZe0Jcg==
+X-Received: by 2002:a17:902:f685:b0:1e4:3299:2acf with SMTP id l5-20020a170902f68500b001e432992acfmr3754136plg.3.1712947787852;
+        Fri, 12 Apr 2024 11:49:47 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id f12-20020a170902684c00b001e3d2314f3csm3377308pln.141.2024.04.12.11.49.47
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Apr 2024 11:49:47 -0700 (PDT)
+Message-ID: <23b5dc5f-ddd5-465f-bbb8-c2021a5f6b61@kernel.dk>
+Date: Fri, 12 Apr 2024 12:49:46 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6d8e98bb-24d1-49be-8965-b6afa97dfdaa@oracle.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH for-next] io_uring/net: always set kmsg->msg.msg_control_user
+ before issue
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-+ Dan,
+We currently set this separately for async/sync entry, but let's just
+move it to a generic pre-issue spot and eliminate the difference
+between the two.
 
-On Fri, Apr 12, 2024 at 09:15:57AM +0100, John Garry wrote:
-> On 11/04/2024 20:07, Luis Chamberlain wrote:
-> > > So if you
-> > > have a 4K PBS and 512B LBS, then WRITE_ATOMIC_16 would be required to write
-> > > 16KB atomically.
-> > Ugh. Why does SCSI requires a special command for this?
-> 
-> The actual question from others is why does NVMe not have a dedicated
-> command for this, like:
-> https://lore.kernel.org/linux-nvme/20240129062035.GB19796@lst.de/
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Because we don't really need it for the hardware that supports it if the
-host does the respective topology checks. For instance the respective
-checks for NVMe are that atomics respect AWUN as the cap as the drive
-already can go up to AWUN, and the limit for power-fail is implicit by
-checking for AWUPF / NAWUPF. The alignment constraints can be dealt with
-by the host software.
+---
 
-> It's a data integrity feature, and we want to know if it works properly.
+This is for the 6.10 branch, was looking into dealing with the
+msg_control_user fix for 6.9 SENDMSG_ZC, and I think this is a good
+pre cleanup that just makes it easier to deal with while merging the
+sync/async paths.
 
-For drives which already support this integrity is ensured already for
-you. An NVMe specific atomic write command could be useful for for
-existing drives for other reasons or future uses but its not a requirement
-with the existing use cases if the NVMe alignment / atomic are respected by
-the host.
+diff --git a/io_uring/net.c b/io_uring/net.c
+index d095d3e48fcd..b08c0ae5951a 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -391,7 +391,6 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	if (req_has_async_data(req)) {
+ 		kmsg = req->async_data;
+-		kmsg->msg.msg_control_user = sr->msg_control;
+ 	} else {
+ 		kmsg = io_msg_alloc_async(req, issue_flags);
+ 		if (unlikely(!kmsg))
+@@ -411,6 +410,8 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (flags & MSG_WAITALL)
+ 		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
+ 
++	kmsg->msg.msg_control_user = sr->msg_control;
++
+ 	ret = __sys_sendmsg_sock(sock, &kmsg->msg, flags);
+ 
+ 	if (ret < min_ret) {
+@@ -1271,7 +1272,6 @@ int io_sendmsg_zc(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	if (req_has_async_data(req)) {
+ 		kmsg = req->async_data;
+-		kmsg->msg.msg_control_user = sr->msg_control;
+ 	} else {
+ 		kmsg = io_msg_alloc_async(req, issue_flags);
+ 		if (unlikely(!kmsg))
+@@ -1291,6 +1291,7 @@ int io_sendmsg_zc(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (flags & MSG_WAITALL)
+ 		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
+ 
++	kmsg->msg.msg_control_user = sr->msg_control;
+ 	kmsg->msg.msg_ubuf = &io_notif_to_data(sr->notif)->uarg;
+ 	kmsg->msg.sg_from_iter = io_sg_from_iter_iovec;
+ 	ret = __sys_sendmsg_sock(sock, &kmsg->msg, flags);
 
-> > Now we know what would be needed to bump the physical block size, it is
-> > certainly a different feature, however I think it would be good to
-> > evaluate that world too. For NVMe we don't have such special write
-> > requirements.
-> > 
-> > I put together this kludge with the last patches series of LBS + the
-> > bdev cache aops stuff (which as I said before needs an alternative
-> > solution) and just the scsi atomics topology + physical block size
-> > change to easily experiment to see what would break:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=20240408-lbs-scsi-kludge
-> > 
-> > Using a larger sector size works but it does not use the special scsi
-> > atomic write.
-> 
-> If you are using scsi_debug driver, then you can just pass the desired
-> physblk_exp and sector_size args - they both default to 512B. Then you don't
-> need bother with sd.c atomic stuff, which I think is what you want.
-> 
-> > 
-> > > > > To me, O_ATOMIC would be required for buffered atomic writes IO, as we want
-> > > > > a fixed-sized IO, so that would mean no mixing of atomic and non-atomic IO.
-> > > > Would using the same min and max order for the inode work instead?
-> > > Maybe, I would need to check further.
-> > I'd be happy to help review too.
-> 
-> Yeah, I'm starting to think that min and max inode would make life easier,
-> as we don't need to deal with the scenario of an atomic write to a folio >
-> atomic write size.
+-- 
+Jens Axboe
 
-And aligments constraints could be dealt with as well.
-
-  Luis
 

@@ -1,113 +1,121 @@
-Return-Path: <io-uring+bounces-1551-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1552-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F8848A52C5
-	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 16:11:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3361D8A52E6
+	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 16:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C51E286D25
-	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 14:11:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABB70B21A11
+	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 14:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9726246424;
-	Mon, 15 Apr 2024 14:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D96275818;
+	Mon, 15 Apr 2024 14:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Hcc9vUiE"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GxYCA+wE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36D474BEB
-	for <io-uring@vger.kernel.org>; Mon, 15 Apr 2024 14:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635EA74E37
+	for <io-uring@vger.kernel.org>; Mon, 15 Apr 2024 14:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713190294; cv=none; b=QG5AESQlCkHck1xhZPzkrEiSJABteUq0JLmCXgnBGDfpeAnblcyPbhmg/us4dOehzKMKXMxZ51uJYM9nmQKIRjKKPAv93jsvAAE8IxrvSkJ1zAgYoDBq48OpeMPLXmrTJKfbVbtSZ+wXT6SwCDRe7H7Ty15a9/eVG8GSdhwroa4=
+	t=1713190691; cv=none; b=ePng9gUWqDuA7RKmtDxFGJTKrYqoyMJQgeXUPvSSffoNhs2B84NV1Nl9458PDNqQ6uGXXMULq6QoLvs7gxYQn0qPvYc3vfvf24yio/1tLfJ9MJnImI3t9NvmACeDfsPUpzPlcH6rXaDHDfyx/L/ot71ZV1zwEvFctrW7uXlJN6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713190294; c=relaxed/simple;
-	bh=PGaHEmJ1pu7pc+ebv7VcmLzkXBtwTg/Xm5YzLlxalR4=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jRPOD6WVaCkz4XiGei0oo+/raWWjNwiqQ7LrFRScPYelTj7pauNJ1JTOZDdW4cU/8Su28mqVRIV5S4ytb6SxFNVuXe97MQqGX3oFwNkZLxrzJXEYKboNANGICjjNrScF7etSV/+x+/qhVRk/N2Uav/1mRIpphdjKN/s9RU4Vt8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Hcc9vUiE; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7d94fde45deso15328039f.1
-        for <io-uring@vger.kernel.org>; Mon, 15 Apr 2024 07:11:30 -0700 (PDT)
+	s=arc-20240116; t=1713190691; c=relaxed/simple;
+	bh=s7Xj9xi+J3VOaPxS9cliZyr2iTz57B5HKKp5IrSvKlo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FIfubMDxIEeDZws+24B/5ofbmt/ItEZqChkxLP3g+qZ8zy4JeHcNqkqRcC4sYxfYSQsVWO4Wta/0/0t//58IMna9HHLtxSJ6D49MJVwWV563519H8/tehM9hC48E/0XfnTb1StU+PQPFSWts4sTpmyy6PwHHRCVLGYn7KCr8BKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GxYCA+wE; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-61ad5f2c231so9366517b3.2
+        for <io-uring@vger.kernel.org>; Mon, 15 Apr 2024 07:18:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1713190290; x=1713795090; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MgiBhi8Nan5utwSTu1p0gfvjg4siZAobymDySQRUqz0=;
-        b=Hcc9vUiEXQwxjNkrw22DkJ6pRm7Ciw/ez8WYupfAa06/WZcXVe4vwA1a5J07/KnQW/
-         6MWBUUTZeWZXCQhCsUMzwMcKc3743caAxY+wuBRadZxdCGcjMZ5WDi7370jmuUH/ArAi
-         ekXvRF9pT38BFl8kMekZ8jUUaE1qYXiEMnfiA8kKgpLLydlA9A5Za6VJC9V1avz3EMHW
-         4zvBfq+d9mTyIYnbys9Eonzwlm1i9zl681tbj+wDY8AEAZZIX8DP2FSELIP4dwgz1J7q
-         yQBYyY1VQPsCfnH+VkkjGmOyEFU8kQCnjzKAD4UNG0w9KfW5oh0oDpD2A3T9l/EEBEJB
-         mQQA==
+        d=paul-moore.com; s=google; t=1713190688; x=1713795488; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mqqqjCa8OZ82zdxbWAvkpK8zvR3ppQ2NndSIF2x4rXo=;
+        b=GxYCA+wEVdEIjjWzJWYg+WtDHHIliDSd8tKsr7BV7/MNn1GAfzIGGsjaYd1K1nC47x
+         vSDYX4sAGl3dWOguqWAOzQsiR3l2a5GCXoMgNM60CbTbnQU4DYOtkdtqEGzpNJ1M0YZG
+         uQw5KNJcmYoJdcaPUXYHVNp3fe+w7CGUJ/SPJ96v3rXFwkPh6f3QXK91XZOF32M12JQC
+         Ji8q8ysobl0MyXu0MqYf8ztHm+RuXlZSrC84cqaRtpeht1x8CxcwMPIAYXaT4Z+hGC7+
+         rVG2YJ4JyNKKpzlG7HNhuL8+NZugo/5Ayugwl9nKzsB0LSuLDrRKrkXS0JcMorbjGX6N
+         OF+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713190290; x=1713795090;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1713190688; x=1713795488;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MgiBhi8Nan5utwSTu1p0gfvjg4siZAobymDySQRUqz0=;
-        b=rREChZBM62qJLbP2HTPsJ3ww7X+JE1qzmZh4uo3Ve/2aYgixnJGci5XEJ0+9YwEYCo
-         4al/6Ab5KLWy6Wfun84wRZ3syyw/0hXlE9FDih/mixIr3ky9bdxl3eyJL1sTOVrCql6o
-         dltrAqK+BsKKpRDiRaOs1GHwNgzmdFwMSHD5j+EhWCYejDYrCH0Wri6QHcXQDmAZexEx
-         Y1ibiIFwz8akE4+T067is1m2KKiDE/fs5pFX7B5EJ2hBNCv4od4AFO3dPuxkIzl0Ws74
-         VOV1P79cF3KnFy61MX1BRjcaCqMfrBVYmPNc0usRPyfFxymQvt3E/CfYhYUUWd/CvBNL
-         REBg==
-X-Gm-Message-State: AOJu0YxCp4ePaVnCjZ3v9nbUu6HQaQwmfpziik2FitOqBY7521X66qPS
-	5S8hEdtgPJLMRlEvDqHzi2B2+x6Lf/lhM5Gk5hDLwxOFzknOcVssXyZdRAdIsYU=
-X-Google-Smtp-Source: AGHT+IGrJ5VaPyeUJQ93WcFvOVpL2RXCUL+5MpZqtO44dezYvcztaLB2gf+I4agnNtoE8xi/Apw6/Q==
-X-Received: by 2002:a5d:94c3:0:b0:7d9:892f:389d with SMTP id y3-20020a5d94c3000000b007d9892f389dmr2034276ior.1.1713190289729;
-        Mon, 15 Apr 2024 07:11:29 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id j15-20020a0566022ccf00b007d6905cc017sm2581027iow.4.2024.04.15.07.11.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Apr 2024 07:11:29 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1713185320.git.asml.silence@gmail.com>
-References: <cover.1713185320.git.asml.silence@gmail.com>
-Subject: Re: [for-next 0/3] simple sendzc cleanups
-Message-Id: <171319028902.13246.4989296181535567731.b4-ty@kernel.dk>
-Date: Mon, 15 Apr 2024 08:11:29 -0600
+        bh=mqqqjCa8OZ82zdxbWAvkpK8zvR3ppQ2NndSIF2x4rXo=;
+        b=pk/RUg+mXPqu8SO+5iYksdCHRxFqkPXDdUdzFunxLKIFr0FtP86TGM5mXsg5EdEM36
+         d9qz1Lf3GH7A6MyA/duEd1ikFQwnSNEHxfnlmFo7P3cYsKI6B+oZLCcYw67WawpqtMza
+         pab22YRlgGm69kbH27afeIDj2UOxeN7bUb3Ov7QVkTAJo/yMcLqfypqwINea/UhIyw8h
+         3wT1CbiDYfm+MOLFabilDHdmGx9X67ID5lTDSIwKKe4ZBmUICCeA2w6S3GYLK2v9p8sx
+         AQT9y5mWjy35OhgghKFJq4NWLjyRSG4b6PjDN7ME+EXcrMouPMsn6BzJTUiFs05XzQ0K
+         ZkxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVS/L/shHNpYao24vHK+7ImobuRa4/RTOphM7PMP7VZOhrW6fLo7Uo5XYHw5vSYjcGUb4wIPmSUXFqsp66LffDZw7tJchDS5S0=
+X-Gm-Message-State: AOJu0YzQvewI7j7BsTLAf9A6KU1lxnsphsnz2120ZlTlEr36EynhHAmA
+	vgzWNwfSQ9dTfvTcoLQWPh+TEdDBdgVAHdtvLQZAZvMjxt7/3lbVt+t2HZMtPrZDjOQszw0q0/c
+	/j395EhuWfHDTxk+zjIahkYb8WGCXgrakdKCI
+X-Google-Smtp-Source: AGHT+IFLkqpounEUU/2bE6dJh6q9whX/HjDtCGadHGTvaVHifyPAFZys4Iq+yJ+GbVJMCc2FKsEdAoulZVngTb0CJTg=
+X-Received: by 2002:a0d:eb02:0:b0:615:3996:5c86 with SMTP id
+ u2-20020a0deb02000000b0061539965c86mr9873358ywe.21.1713190688256; Mon, 15 Apr
+ 2024 07:18:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
+ <CGME20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483@eucas1p2.samsung.com>
+ <20240328-jag-sysctl_remset_misc-v1-2-47c1463b3af2@samsung.com> <20240415134406.5l6ygkl55yvioxgs@joelS2.panther.com>
+In-Reply-To: <20240415134406.5l6ygkl55yvioxgs@joelS2.panther.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 15 Apr 2024 10:17:57 -0400
+Message-ID: <CAHC9VhTE+85xLytWD8LYrmdV8xcXdi-Tygy5fVvokaLCfk9bUQ@mail.gmail.com>
+Subject: Re: [PATCH 2/7] security: Remove the now superfluous sentinel element
+ from ctl_table array
+To: Joel Granados <j.granados@samsung.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi <naoya.horiguchi@nec.com>, 
+	John Johansen <john.johansen@canonical.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+	Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Luis Chamberlain <mcgrof@kernel.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	io-uring@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Apr 15, 2024 at 9:44=E2=80=AFAM Joel Granados <j.granados@samsung.c=
+om> wrote:
+>
+> Hey
+>
+> This is the only patch that I have not seen added to the next tree.
+> I'll put this in the sysctl-next
+> https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/log/?h=
+=3Dsysctl-next
+> for testing. Please let me know if It is lined up to be upstream through
+> another path.
 
-On Mon, 15 Apr 2024 13:50:10 +0100, Pavel Begunkov wrote:
-> Simple SENDZC notification cleanups that make sense by themselves
-> split out from the notif stacking series.
-> 
-> Pavel Begunkov (3):
->   io_uring/notif: refactor io_tx_ubuf_complete()
->   io_uring/notif: remove ctx var from io_notif_tw_complete
->   io_uring/notif: shrink account_pages to u32
-> 
-> [...]
+I was hoping to see some ACKs from the associated LSM maintainers, but
+it's minor enough I'll go ahead and pull it into the lsm/dev tree this
+week.  I'll send a note later when I do the merge.
 
-Applied, thanks!
-
-[1/3] io_uring/notif: refactor io_tx_ubuf_complete()
-      commit: 7e58d0af5a587e74f46f55b91a0197f750eba78c
-[2/3] io_uring/notif: remove ctx var from io_notif_tw_complete
-      commit: 2e730d8de45768810df4a6859cd64c5387cf0131
-[3/3] io_uring/notif: shrink account_pages to u32
-      commit: d6e295061f239bee48c9e49313f68042121e21c2
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+--=20
+paul-moore.com
 

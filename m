@@ -1,179 +1,127 @@
-Return-Path: <io-uring+bounces-1556-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1557-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48348A561A
-	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 17:15:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5681D8A570F
+	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 18:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C84AE1C22017
-	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 15:15:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD9FDB23085
+	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 16:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD467602B;
-	Mon, 15 Apr 2024 15:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751DD7F7FF;
+	Mon, 15 Apr 2024 16:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alA0Q92t"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O8xv1am3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9069763F8;
-	Mon, 15 Apr 2024 15:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055EE7F7EA
+	for <io-uring@vger.kernel.org>; Mon, 15 Apr 2024 16:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713194116; cv=none; b=hqDeLY+N2prV5vCSK1IMx6MybTKoudJJzyWFwKvX2iN+RFuuJfFb0Qi45U5EXwB+S1Meif4asRBtu1sosa+DAq53ptckAUcmv+PlNZDF2mPyQZoJKHKLF7gHrO/N71Ie8TcwRiCEFG8yk8HdP03+W4wUtPIgttD0pu6kdLNBK4g=
+	t=1713197202; cv=none; b=NM2kRk6nI1u6+FEv+IxEuc6TyUBBkyuNTDsiXCeCj5LnLQ8RUsnHG3C6TDo7RGg/X0HM+vg01ECgO1jFe/V8XbyRVgcVoqsNsVz8heS+8ts5FLN20dFMA9TW3ujdMbfT/MPdXa5NZbAJB1gDw7ABs8to3fSW//Bb6P9Y5SVDEPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713194116; c=relaxed/simple;
-	bh=vnPWNNgEeQVC8tAA1XdUrhPkeotOBtknUiV2y9Q+Io8=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=qAM7/zWnt8fwyRNO1Xow4nwCxZV+jMLRQPgjM7peeMyMe5b+He+TtNqzpg5o9104pBKbaGJNycV6s1sADRpPjGbMVXajVZuJj6S9TYkWfTxXv2t1RbJy3YO6Ga8SB+t8tBxE1HcBe5d/u2o7z+wjqpyyzdbSKtY+LlxXzBq8pUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alA0Q92t; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6964b1c529cso21797676d6.0;
-        Mon, 15 Apr 2024 08:15:14 -0700 (PDT)
+	s=arc-20240116; t=1713197202; c=relaxed/simple;
+	bh=TbkoZcrC73ReILBlLCzDk8hBya5REumqV3/XGRD0RBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7XbET735NBV4hX/BC+Rjd9FjFKY540VcYxb1AlqokU8sggVSR/DN8dkup/s6pmMbdbtgQxbF5nmA0fkmbESq07arJ7C9DUVOt/Qwg93j8dTLIyq+sjfe1wmDTXkkoQTu3F7WDxyQtX+mAbuFPm8DReJNFBRjUD2jotT3mudpJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=O8xv1am3; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-5ca29c131ebso2183030a12.0
+        for <io-uring@vger.kernel.org>; Mon, 15 Apr 2024 09:06:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713194114; x=1713798914; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YaVZDB621skKE1QNAYn4dFJzvmrboxc8hUClPoINSog=;
-        b=alA0Q92tyfKsnHuSBP1BCDZ1cWs88Z/3DHehn0NeleKBXt4IcgbrOQp7dw+y3FZn7c
-         45iHjz5OhLpcCcK662U/Zvw3lAnrdE4ZT/Z0pLi7uDK2LxHvwJ56TVJQF4vqMR+oYxYP
-         smFdJL/ppa6zIfVMFiMq1rOrPcCS7zDQ57TaIEjKsd4baOlIHRH2d2X7pgu4iHD97sjJ
-         EkiHOomRx8Jz5kisJ7HCEHFbeGI8NfQvGKkFqpA+kCSta5JjhbU7S/qSnpBuawsZAOfU
-         ob3Mydfk073gX/5QmfZopECgjQe/gTlRHH+SoiFvYFZam/g02M1feLiUVY8psKcJ3cNo
-         axKg==
+        d=chromium.org; s=google; t=1713197200; x=1713802000; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W9YkT2PBxlsTiQpc9k80Xb2w2qGzzlQLFXvx15ENFSo=;
+        b=O8xv1am3Lk+DQ59W9cNWa2OG2Fks5PZkZcv6Z6Pfi7Uv5Oy1Av7RnTmnxj3FUYOm5V
+         yx4o1he5W90asuV36XyOe0antbXBxeK6gi/EVqhCphP56lqegAsztJrs5wGp912uqAFQ
+         L131duRGarDG1vumEdOdHiU0czbOW9+JxRfTA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713194114; x=1713798914;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YaVZDB621skKE1QNAYn4dFJzvmrboxc8hUClPoINSog=;
-        b=Eo1mvKPMnFCecCNoD0LRMklBtb4C8IJZzrr/GX5ACmOk4IhWFroMeVJ9pV1zSyo1lJ
-         /3/peh5ErX0D6ISuEg331bHHa9/DqyUCVgFymjcb8csapNecpGFvlWhSUm2NUr0toz62
-         saLamAcUWbZCcBlQkWQIq19Bm6edgBI2ZnDRSCki19SpA8uEPH3FpzcNLsjUXsP6wNQT
-         nCFQmavxhFet1eOvxEF4TTid6J2zb+bkVNwHJn+8CdzEdOQI1uzuiOpSzU+4rFts7zLj
-         euOxIzD2TFHCFdZU5AgDBiL6HW3U3WyaHeemu113wlxys5KzR4Rv+VEUd24FvLosk0O+
-         Rxfw==
-X-Forwarded-Encrypted: i=1; AJvYcCXp4nHj6rueaguhQNUa9tP/js8l3jE23cjMM35nv/Fhm3/dfppJVroX+o02SPPqBPaud82A7qx9I6hxGRVnvx/5Dhg088OtMReC4opzf/5J0pITb98UvD4Ouy+G0Km64S8=
-X-Gm-Message-State: AOJu0YwNQItAwXkAfg5Htj9vlohmgIQqsgJLoywA1mby1dv5zPXzABUG
-	bAkkZcBboSpWfr7U7+i/pfJjCPCtlnEhla6+ASTAd5nWXBXt6XKC
-X-Google-Smtp-Source: AGHT+IEemzeNTWYdRaEDwl6ticDNfD2m3c0F+b/8IJIvkUjwQNJA8QwUok2wDQJ27QF5irs8f43/1g==
-X-Received: by 2002:a0c:e80b:0:b0:696:aa14:49a1 with SMTP id y11-20020a0ce80b000000b00696aa1449a1mr10996325qvn.65.1713194113726;
-        Mon, 15 Apr 2024 08:15:13 -0700 (PDT)
-Received: from localhost (73.84.86.34.bc.googleusercontent.com. [34.86.84.73])
-        by smtp.gmail.com with ESMTPSA id m8-20020ad44a08000000b0069b7eb7edebsm1135096qvz.71.2024.04.15.08.15.13
+        d=1e100.net; s=20230601; t=1713197200; x=1713802000;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W9YkT2PBxlsTiQpc9k80Xb2w2qGzzlQLFXvx15ENFSo=;
+        b=JdcIYUIyQnpj5FqU8KJl035wtYER94NPziAiJzdcmcjVoTj4nq3SFLpRGQ55e+m9+r
+         yVxfpoJSlPwtJmmoBMojTC+2EF+f1Vd/YRxPvv7/JeegdJjY+ryXCPdalnKrI2mhMNk2
+         Ji/KDBvMraH8/kPUrg90LUN4LSlAOElnkdPvyGoNGaYesGup2Of2eRS2VO2q3+64Jp/z
+         uDltKunTUbHaqF4NutSJuCdK579RuCNm4c7PG6mmsU84ng3f7qj3GDCi2CiSA2GibVb0
+         D57tr8KGfvdGxkwqdTO7fB7xa468S38VyW1ige3pNObdwLjuJRhklUNTVTRTI/deA4my
+         RImA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQFn05yZAsKot45zjpHZ1zQRTpki1QX09Cqj4VKilYRJrWvfDuqFDG9rFUACW+z1BYR3LCW/KNAbQecW7qmpJF5LB334cHMKA=
+X-Gm-Message-State: AOJu0Ywxc3HQytpzgwv09FIqJIR4WxQPCVf08Iir2wANZAR3v9rduuAo
+	vmk9iX+4MSFXj1QV9S4s26TvDysHgErCgb+aHTZj7LOVj4yELIRzk47RtjGt1Q==
+X-Google-Smtp-Source: AGHT+IEOd/x1N/CPtx25Nf+PUqf1rfZqa2mTy1XxaxcS7HXEzP+ucQDv/NhrafY/fDlqqKtbbV3LWA==
+X-Received: by 2002:a17:90b:3d3:b0:2a5:ba9d:a06b with SMTP id go19-20020a17090b03d300b002a5ba9da06bmr10113697pjb.5.1713197200332;
+        Mon, 15 Apr 2024 09:06:40 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id l6-20020a17090a49c600b002a46b925e99sm8796108pjm.18.2024.04.15.09.06.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Apr 2024 08:15:13 -0700 (PDT)
-Date: Mon, 15 Apr 2024 11:15:13 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- io-uring@vger.kernel.org, 
- netdev@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, 
- "David S . Miller" <davem@davemloft.net>, 
- Jakub Kicinski <kuba@kernel.org>, 
- David Ahern <dsahern@kernel.org>, 
- Eric Dumazet <edumazet@google.com>
-Message-ID: <661d448142aa_1073d2943a@willemb.c.googlers.com.notmuch>
-In-Reply-To: <e686d9ba-f5fc-48c7-9399-06fcbed6ebd5@gmail.com>
-References: <cover.1712923998.git.asml.silence@gmail.com>
- <3e2ef5f6d39c4631f5bae86b503a5397d6707563.1712923998.git.asml.silence@gmail.com>
- <661c0e083f05e_3e77322946e@willemb.c.googlers.com.notmuch>
- <e686d9ba-f5fc-48c7-9399-06fcbed6ebd5@gmail.com>
-Subject: Re: [RFC 6/6] io_uring/notif: implement notification stacking
+        Mon, 15 Apr 2024 09:06:39 -0700 (PDT)
+Date: Mon, 15 Apr 2024 09:06:39 -0700
+From: Kees Cook <keescook@chromium.org>
+To: j.granados@samsung.com
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <naoya.horiguchi@nec.com>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Luis Chamberlain <mcgrof@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/7] security: Remove the now superfluous sentinel
+ element from ctl_table array
+Message-ID: <202404150906.C37D8D9DA1@keescook>
+References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
+ <20240328-jag-sysctl_remset_misc-v1-2-47c1463b3af2@samsung.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240328-jag-sysctl_remset_misc-v1-2-47c1463b3af2@samsung.com>
 
-Pavel Begunkov wrote:
-> On 4/14/24 18:10, Willem de Bruijn wrote:
-> > Pavel Begunkov wrote:
-> >> The network stack allows only one ubuf_info per skb, and unlike
-> >> MSG_ZEROCOPY, each io_uring zerocopy send will carry a separate
-> >> ubuf_info. That means that send requests can't reuse a previosly
-> >> allocated skb and need to get one more or more of new ones. That's fine
-> >> for large sends, but otherwise it would spam the stack with lots of skbs
-> >> carrying just a little data each.
-> > 
-> > Can you give a little context why each send request has to be a
-> > separate ubuf_info?
-> > 
-> > This patch series aims to make that model more efficient. Would it be
-> > possible to just change the model instead? I assume you tried that and
-> > it proved unworkable, but is it easy to explain what the fundamental
-> > blocker is?
+On Thu, Mar 28, 2024 at 04:57:49PM +0100, Joel Granados via B4 Relay wrote:
+> From: Joel Granados <j.granados@samsung.com>
 > 
-> The uapi is so that you get a buffer completion (analogous to what you
-> get with recv(MSG_ERRQUEUE)) for each send request. With that, for skb
-> to serve multiple send requests it'd need to store a list of completions
-> in some way. 
-
-I probably don't know the io_uring implementation well enough yet, so
-take this with a huge grain of salt.
-
-MSG_ZEROCOPY can generate completions for multiple send calls from a
-single uarg, by virtue of completions being incrementing IDs.
-
-Is there a fundamental reason why io_uring needs a 1:1 mapping between
-request slots in the API and uarg in the datapath? Or differently, is
-there no trivial way to associate a range of completions with a single
-uarg?
-
-> One could try to track sockets, have one "active" ubuf_info
-> per socket which all sends would use, and then eventually flush the
-> active ubuf so it can post completions and create a new one.
-
-This is basically what MSG_ZEROCOPY does for TCP. It signals POLLERR
-as soon as one completion arrives. Then when a process gets around to
-calling MSG_ERRQUEUE, it returns the range of completions that have
-arrived in the meantime. A process can thus decide to postpone
-completion handling to increase batching.
-
-> but io_uring
-> wouldn't know when it needs to "flush", whenever in the net stack it
-> happens naturally when it pushes skbs from the queue. Not to mention
-> that socket tracking has its own complications.
+> This commit comes at the tail end of a greater effort to remove the
+> empty elements at the end of the ctl_table arrays (sentinels) which will
+> reduce the overall build time size of the kernel and run time memory
+> bloat by ~64 bytes per sentinel (further information Link :
+> https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
 > 
-> As for uapi, in early versions of io_uring's SEND_ZC, ubuf_info and
-> requests weren't entangled, roughly speaking, the user could choose
-> that this request should use this ubuf_info (I can elaborate if
-> interesting). It wasn't too complex, but all feedback was pointing
-> that it's much easier to use hot it is now, and honestly it does
-> buy with simplicity.
-
-I see. I suppose that answers the 1:1 mapping the ABI question I
-asked above. I should reread that patch.
-
-> I'm not sure what a different model would give. We wouldn't win
-> in efficiency comparing to this patch, I can go into details
-> how there are no extra atomics/locks/kmalloc/etc., the only bit
-> is waking up waiting tasks, but that still would need to happen.
-> I can even optimise / ammortise ubuf refcounting if that would
-> matter.
-
-Slight aside: we know that MSG_ZEROCOPY is quite inefficient for
-small sends. Very rough rule of thumb is you need around 16KB or
-larger sends for it to outperform regular copy. Part of that is the
-memory pinning. The other part is the notification handling.
-MSG_ERRQUEUE is expensive. I hope that io_uring cannot just match, but
-improve on MSG_ZEROCOPY, especially for smaller packets.
-
+> Remove the sentinel from all files under security/ that register a
+> sysctl table.
 > 
-> > MSG_ZEROCOPY uses uarg->len to identify multiple consecutive send
-> > operations that can be notified at once.
-> 
-> -- 
-> Pavel Begunkov
+> Signed-off-by: Joel Granados <j.granados@samsung.com>
 
+Acked-by: Kees Cook <keescook@chromium.org> # loadpin & yama
 
+-- 
+Kees Cook
 

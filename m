@@ -1,123 +1,98 @@
-Return-Path: <io-uring+bounces-1545-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1546-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D60C8A4E86
-	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 14:09:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA738A4FEF
+	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 14:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086EF283269
-	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 12:09:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 067441C20F6A
+	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 12:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756B76AF88;
-	Mon, 15 Apr 2024 12:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730DD1272AF;
+	Mon, 15 Apr 2024 12:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7z51ui+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g8BAxX89"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7F16E613
-	for <io-uring@vger.kernel.org>; Mon, 15 Apr 2024 12:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB4A86AE5
+	for <io-uring@vger.kernel.org>; Mon, 15 Apr 2024 12:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713182909; cv=none; b=swgzzuR/OML8Pz68sg89MFCZ/+CzEMKwx7HasT5k3HvUAXulOcCoBguLM3ZMeYv9t8pYWbuACI26n71S6eMOiWAfRmwviKaQO6BY4Xa2WohrkUU5AC93gD6OON0Lkq9wjskQdIm4X03GPv1ONnGvAkLQ4DeM6JslagKlrprxEe0=
+	t=1713185413; cv=none; b=J9ay37mAFlKSThaz263sFs86ULnIDq2Qaninq2h8gEUDk4/F9S/fcUe57MOZyHRJiD/BMKoN2ygHqEJcU1rA0LrwKWPlrN99PuOmlGdIqRBLx8Zhy5AG2Sk2B33F1Ufsc40q8KijweIVVNVvZmnUcJxYmXeZWfPZb4H0O3PlI6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713182909; c=relaxed/simple;
-	bh=HO/zKnVNmSKy3pDtY5iJOgsiPkAvPnYQv8BixOOPL7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=X8Si4BnIoUe0KQStuyQXOOSr/3VtrLLybn2j7y1nu9JEaI1uUarLZzFF42FhVEKnSHF2+YhTFV7+69OB6BWAhUEFMVBMswP4ze6DyRiD2s1xd5owKqA2Kci39d1yadqJhyeu0OpQUUjvrBOa/zgfiAG4naCB93QVwG+vcKXYd4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7z51ui+; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1713185413; c=relaxed/simple;
+	bh=VMBy32ykBU0GOfpo83TvBnSzn8qgU4VJ1KGWwE37FNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ahv+1CqvpqnRfixCl0nZoehUB0jVhRP+qAmTLRssyGmmY4A8G7MKysPuBHyZ+spWjNLA/z3iRJAnhAlk8l5dad7Hh99Ifnh3KtWmNWes4Y2aOLj1h3PB2/L1bE9MKKpI6koYTCDDhuu0UzR88DY/uzmab174DEotmaW2A/ODbwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g8BAxX89; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a52582ecde4so161179566b.0
-        for <io-uring@vger.kernel.org>; Mon, 15 Apr 2024 05:08:24 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-516d2b9cd69so3720435e87.2
+        for <io-uring@vger.kernel.org>; Mon, 15 Apr 2024 05:50:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713182902; x=1713787702; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UwahmYzc1gAw/Vz+z21rzHxWkJtchemADHCDBxsq9ew=;
-        b=G7z51ui+n8y/bSqpMcGDgkftWnymdv8q20bhunQG/guQNX0ZJsuu0rXjnfyLrEDXrs
-         1zDFWJw1q33rScl4DeZGrGm/ltagoft6CkWQj4flGC1hDT9RB3mfO0xUGcBbKdyvSdy3
-         bzohQ0niBLsty5LLPohLsjm3fOewCkhPfBbLNn2yhUgpv7hldvod4YsOeJe2RUNLI1y8
-         YaBTo0QNgPDgHTnXBsChU8hHnTzGcd9yrnTjMYT2QfbWCT7ixtYBmaP741O6IZvDW/mK
-         0L6oGEnixR1XL/Pa12hdkTrIqjl/r4JU2X1lBzmKVZSHLC97BKBdzVMElk05ENSr5P9N
-         9ANA==
+        d=gmail.com; s=20230601; t=1713185410; x=1713790210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+jqCnhI+Ec0n/cAxn3kiKtq4pZRj4GjpUjzbbntS5Q=;
+        b=g8BAxX89LB79gqPJX0Mct1OSMC6zJqeI/r2jSmZo4R/Bkc1pQsYtqTX3QZMmHBmm1v
+         NH8wQ7q+EjTakpQxH9mQAvsZkjPEUmDbSxPVcpCx23ij77Oev8sz6J1JsKOHr+6j7km1
+         /8ckdk6sXRwqhKMCC27dPy1ZP0EkVmGc4GOPfm3jL2qtgTtbufiiA5EP1w91xW61OGlu
+         HN/K3V4QeuBdkQRIjG+QyPsLLwOaRJVLSaN17cmj6FbPzCBVLn4dJtzXMdH7iBcrm0gw
+         89WQ1nUo7xUcQCH1Z0Mxv6+bpgwBZHA2Nqq94O3JXr0n4Cat+zXEM0HjCzlwM6qYw9rM
+         ghnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713182902; x=1713787702;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UwahmYzc1gAw/Vz+z21rzHxWkJtchemADHCDBxsq9ew=;
-        b=nEWu5Azea8McMeZVdCZIuwPtrqgk2BwLwy17dY61hWoT2ENZ8GJ2V0KfeHhXZNCH6D
-         g+0Bjc6FSrPJmCK6Nl0nw3flKOeTMQqDYwpE7qiPDtktW21j8aZJx4VYos2kXOWhVB9C
-         xwX+s9yB4WA6630xi3/tHfVNooQbhTJAsUpqMjlSSuuWtEDBvtHq62vvvta/eFxz0L7q
-         dGZjjMF1X8/+cA/9b6e4YVZA0yYQGtlrkO1LJEJrmkyQS1T3aCbeq4ddZ/Ixsd5S8P6D
-         /5n6i1Pd4Ch1cmyQvKFsDSbhz06upVGcdk8ASwtIc9OFuzTiuRkVDTnp7z5Q6m0/rjAX
-         50UA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoybr7kJV7nl45DWNoY503oTN08PP1nszeCU46upsfssoyYXZN6TNmypOQF1YlY8pSOwoUVZ6OdRf+UOZHEAs1ywwEahpN96M=
-X-Gm-Message-State: AOJu0Yyb3+KWFjdqeZf+rC/DjX6yE83hE6Etvh/1aX7HXf4EINTE+YuC
-	p1sQTgg2fnIdgoROZ/d7kl3QqOZuBs2Vspfv+mwCvC7+F0m/URn9Vq2MQQ==
-X-Google-Smtp-Source: AGHT+IHgbvXxJmmsdR5bBCDoIkgTUtO52N8H7Q1fFA6luLGHESIdo9CQwd7EXVWCod3obGfDc79s9Q==
-X-Received: by 2002:a17:906:134a:b0:a52:195:7090 with SMTP id x10-20020a170906134a00b00a5201957090mr5540994ejb.41.1713182902291;
-        Mon, 15 Apr 2024 05:08:22 -0700 (PDT)
-Received: from [192.168.42.108] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id l17-20020a170906079100b00a51b3c951b6sm5384141ejc.191.2024.04.15.05.08.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Apr 2024 05:08:22 -0700 (PDT)
-Message-ID: <1ddaa0bd-e72f-4eef-882c-7b8b0fb57593@gmail.com>
-Date: Mon, 15 Apr 2024 13:08:28 +0100
+        d=1e100.net; s=20230601; t=1713185410; x=1713790210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D+jqCnhI+Ec0n/cAxn3kiKtq4pZRj4GjpUjzbbntS5Q=;
+        b=Cfk1EeZ1EVthvvV/yvPyHpyGqcZQU50wQWqCJM5hLHJS1GK0IdCqT8eHMrWMd6UAI2
+         jOBcnO8ZDLe0FdcSr+8108ubqipcC78Y48FTtppawq6JoMeKlmBwARGS8OI0uNY7W2tt
+         1nhyGzcx/t3aHoFliAuSypbJ/wBukwYFPuppmX+6TPmehFbUJr4826ZHaiqB5wwlBIBN
+         bdce9+nHC92NYYKg20pQ05dDelSNV5oYl5+wEHTBlI4Bt7PdhTnZBqp/TQeLa2tLn3+b
+         ZSpr74YP7RU4SdTKx+QNZDuEh1OWsAr0BhaLvvaMGfN24wjwdtqE4JXxsWAEDW8sL2BB
+         oYNQ==
+X-Gm-Message-State: AOJu0Yz7n9otftMgi5Jd/7Geuh5e+aUGZsP230X+d/WwQRksGZkXLQB+
+	EN/DoEOIbdQMHqDP6/IKxqYFsa9w//v1WIuVj59EETH3kKvX8F9tl5Ux2A==
+X-Google-Smtp-Source: AGHT+IETf4atcALa78G1FN7b2bN7kozJXIHw7wHUQbWG7aBZ/aLMZS88rsrNLRYeDbuBEFrN3ZNhJQ==
+X-Received: by 2002:ac2:483b:0:b0:517:61b1:45a6 with SMTP id 27-20020ac2483b000000b0051761b145a6mr5514096lft.53.1713185409698;
+        Mon, 15 Apr 2024 05:50:09 -0700 (PDT)
+Received: from 127.0.0.1localhost (82-132-213-93.dab.02.net. [82.132.213.93])
+        by smtp.gmail.com with ESMTPSA id h15-20020adff4cf000000b003432ffc3aeasm12022170wrp.56.2024.04.15.05.50.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Apr 2024 05:50:09 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	asml.silence@gmail.com
+Subject: [for-next 0/3] simple sendzc cleanups
+Date: Mon, 15 Apr 2024 13:50:10 +0100
+Message-ID: <cover.1713185320.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next] io_uring: ensure overflow entries are dropped
- when ring is exiting
-To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-References: <025b6c13-98fd-4b35-be83-257fd34291bc@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <025b6c13-98fd-4b35-be83-257fd34291bc@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/12/24 20:18, Jens Axboe wrote:
-> A previous consolidation cleanup missed handling the case where the ring
-> is dying, and __io_cqring_overflow_flush() doesn't flush entries if the
-> CQ ring is already full. This is fine for the normal CQE overflow
-> flushing, but if the ring is going away, we need to flush everything,
-> even if it means simply freeing the overflown entries.
+Simple SENDZC notification cleanups that make sense by themselves
+split out from the notif stacking series.
 
-Indeed, sounds like a good idea to enable leak detection
-for my testing.
+Pavel Begunkov (3):
+  io_uring/notif: refactor io_tx_ubuf_complete()
+  io_uring/notif: remove ctx var from io_notif_tw_complete
+  io_uring/notif: shrink account_pages to u32
 
-
-> Fixes: 6c948ec44b29 ("io_uring: consolidate overflow flushing")
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> ---
-> 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index c4419eef7e63..3c9087f37c43 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -674,7 +674,8 @@ static void __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool dying)
->   
->   	lockdep_assert_held(&ctx->uring_lock);
->   
-> -	if (__io_cqring_events(ctx) == ctx->cq_entries)
-> +	/* don't abort if we're dying, entries must get freed */
-> +	if (!dying && __io_cqring_events(ctx) == ctx->cq_entries)
->   		return;
->   
->   	if (ctx->flags & IORING_SETUP_CQE32)
-> 
+ io_uring/notif.c | 14 +++++++-------
+ io_uring/notif.h |  3 ++-
+ 2 files changed, 9 insertions(+), 8 deletions(-)
 
 -- 
-Pavel Begunkov
+2.44.0
+
 

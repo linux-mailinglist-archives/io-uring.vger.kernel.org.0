@@ -1,107 +1,133 @@
-Return-Path: <io-uring+bounces-1554-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1555-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7D68A55C3
-	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 16:58:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC5C8A5602
+	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 17:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29A691F22DC5
-	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 14:58:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 087301C2219A
+	for <lists+io-uring@lfdr.de>; Mon, 15 Apr 2024 15:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46122757FC;
-	Mon, 15 Apr 2024 14:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22213762E0;
+	Mon, 15 Apr 2024 15:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLTvyBIq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="afcYw8qV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B8314265;
-	Mon, 15 Apr 2024 14:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECEE762D0;
+	Mon, 15 Apr 2024 15:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713193052; cv=none; b=caUR1kGq0iWSYEyCUNRCkVAkzWNXdR8ai1jXlX1ZxNtka0lPX95uHSS0hjs1vGapyfcdv3sC+RLThAMxdv+H+L1HGYL78su/LL6T3mrcowg0nKrOudxoUAuNeBYPG5Qrg+qBhFFxdTW5JxFpBlp0l42eAhj4EOvnmX+ufBkLp+w=
+	t=1713193616; cv=none; b=sHFyYQui/JXiEyLwWCSfUDMuEZFB3aBC7VutXY3z636Au81ZdNqpXA2MS23SRc+h03sK90KJ3Dff0WGFtxQbXTk3+Beml9QvM4/p38cMuAVtm/8f4RzluPKEMSqFffdPWcKn92ggS+02fEEADJ+9gzoT50WkvLUVjMW5A09GGtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713193052; c=relaxed/simple;
-	bh=it8vL95SeO1Kze2kPrYp/vf3C/bUFowyLoc95jrBu04=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ka4h18IZc3Ge8e24k+44TuCy4d/BEkrUaDXJX9+cqFDaJz8YqcqjFetu+KUu2C+6zvyBV0eFwTSJ9av9N69vq4sI0URGucQC6CTPwhzggGdY/gRcePMbn6YxV76f44IKpGkot6N7GXSiAEa8q1sUG/59AoYoXpAHnVUnQ76Y4Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gLTvyBIq; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1713193616; c=relaxed/simple;
+	bh=fo9y5t172LfDuFmPfvG8nPyZgXk8vePbKgvHaewlI+s=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=UAai+KPcvuIkKSTXMkvQ+umh5dRo2kEjqigfaHgOy90au5sf5lK5zBOKcgJhscBfJ4sZTLQhY5rh4bKyoDzD4cLmXj5LDs9eRlDcatsH9xQkCt+vbnkAORt9kjI2Q+b2+JZnZQxeZF5u9wL9haJ/baQdTVTtAqk8yhTtq3gwKTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=afcYw8qV; arc=none smtp.client-ip=209.85.222.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-418671bac0aso4604165e9.1;
-        Mon, 15 Apr 2024 07:57:30 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-78d778e6d3cso304664085a.3;
+        Mon, 15 Apr 2024 08:06:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713193049; x=1713797849; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n6XiDaUHJc2KqHPIUYapgvvVLyg/91OK3jfwQB5JqD8=;
-        b=gLTvyBIq3Xb2e/3D5HpmRV9bTZBxU9pOvDXKDpG+exxpUHBEBctszPoHqseEIr18pI
-         xdBDka4Lg8PmuHG45nIqGsOcX1Vr7kwCTKX8M25FKltOWy26RlLtITos8Yovk99oyAaZ
-         5wkgOhAetHtAq362kFbJpSFv9DHTYXHByUKK6wAq9jOJ6nxmnNBsW7oiO7qH9MD14Ess
-         nM4HQRLxlvclhqr+JIWC0tYLEIASGCR2XDBiF/wbjAOMPxR//wHNkFhlIAvzjv6OSK4c
-         0NG3E3tJEg0D3dGlNmat/m4XRH6Is3JIbShWcQWve4MDPcMJ9TAmHU4yC1eWI1Kwqhwd
-         HEtg==
+        d=gmail.com; s=20230601; t=1713193613; x=1713798413; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qggmMOwxDeK7hvmgMXReK9EVETMDWVfdWiCof6KB3Ks=;
+        b=afcYw8qV33rbgXQDaHWYtrlFMv/rnJjBNiO4hXFTnKT9o8/NAOuVwOBZGS3Kwk9eHG
+         SXEzPFBZNMf2Pj0GFm9Tw3g5eh79CyFOiPOrkdevX8WvFRBCk+EOdw1K8Pyl9Q5QgAKF
+         wyWmZE5QMbEyThDG7nfI+uCsE70Vf8UnvDhG/4BU6mrlr00HiAwUMQRd8c2MdvNM6BoH
+         w0DkZ0dqnp2mxmbxGAVjpsmShx+OzICiRH35hEHyWa6wjivDCkdBYwvbZK1H86kZd3vr
+         GXvkcDG99wanxf05ovwV3TrnGK2AeBEmw53BAYctYWzazETNxLZH92cQSBuZTZSX09gO
+         H9sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713193049; x=1713797849;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n6XiDaUHJc2KqHPIUYapgvvVLyg/91OK3jfwQB5JqD8=;
-        b=dZIjG1h40qHoKdSb1vowxkye82iAX6gZ7NndFRaDxqz3bPUdQ3r5iGwx2+gNcYbwpM
-         5n5ewpovFErDGo52eXfYja+Vn6C3U13PXMguWftHtxBygfwu7yAKujQTyw79VB9UM2MQ
-         RmKxrYXRlLsvmOnj7cM0h7zoDicutjT2nRZfkImzQhIuGO24XuUoKOS03GZ4cnOE2DUX
-         k6m5qvwagtHPsQvxX880P7T1DQvsbQtUc8aJRhwiYLpC0wldKLsj3VcqYHw8lShXTbnI
-         Q/U8PdU5ZUl/l/8dDUgX+DbN8OmXxWNVW+35CRQTuJPefNTzH6P5WcfK9DexU2G5YoKr
-         Z8pw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1DyIlvQFrfORW4olUlJRnJWz0JFCn7psT57gWw1U5h+IuTckboRVn2jZ6tw+5UIX2lKFBxQs/38K3lnfOANU0lUkhnCC5Qp5pFFqY0qnH/g0hWIRHJ3MuWY99blGq51x3EOEv78dmrbXKhVWanHEXvGmLyfgBLpKIwy/LX7JwRth5zC3B
-X-Gm-Message-State: AOJu0YxqlemfQ86txLSeDJdrupPbA8ZPVCcj/XLOATiuIMtXcpZhTUZF
-	8OlbaIXnIhEIsNWXTqazMqkoADCyjSc4+MTkwZZzFY7yxcdrG8GR
-X-Google-Smtp-Source: AGHT+IGTqgGcDxnillobZL+k23P7Mv6jGmBPtXSM+MvlpKvc7MbGFzp1V2apgyhUcEcUgPNQcHYDgg==
-X-Received: by 2002:a05:600c:3148:b0:418:4303:65e5 with SMTP id h8-20020a05600c314800b00418430365e5mr3595304wmo.38.1713193048803;
-        Mon, 15 Apr 2024 07:57:28 -0700 (PDT)
-Received: from [192.168.42.203] (82-132-213-93.dab.02.net. [82.132.213.93])
-        by smtp.gmail.com with ESMTPSA id bi27-20020a05600c3d9b00b004187c57e161sm1377859wmb.0.2024.04.15.07.57.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Apr 2024 07:57:28 -0700 (PDT)
-Message-ID: <d019fca3-0dc5-4569-847f-13800519fdc1@gmail.com>
-Date: Mon, 15 Apr 2024 15:57:34 +0100
+        d=1e100.net; s=20230601; t=1713193613; x=1713798413;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qggmMOwxDeK7hvmgMXReK9EVETMDWVfdWiCof6KB3Ks=;
+        b=JBXu3Jw39pyQu+pNZ25xLvKIH/XK3T2DfHk3o99j11z0Mt9oMQWx9fTRmZXDK7ohnB
+         Tx9hc7qtQq/zVmdCHPUqXA9jbjsaL1QD8lgitKjPH+RtbeW1KMF60mKHU1B4HYPFre8k
+         ULdmmrZMjUZYjLlf8LSEhbZA9yBpto013PNR661GI8kuJBbyD89vdZv8tcWWMEORlnLV
+         P/M8AWvwIDvkh7qoczl9uyCqUhpZqeze0B1slwToQEcuNodPgN69gC3OmDYHgvGO5nLl
+         yFgND98+frgHkna7qonrV+pYQk+CQN0G0UfYU5FOldu1Kl2hrlfon+h3fnsmd8IMu/Yt
+         a8Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCWesVK31qRn6PLJKvEPPdlfme1D62TUtvv1CXG3GItTZlZEw3UMIA9hehmCGTChQ/DTJ7icWP4Hr74WVdr4ZHkgi5C9MTqCelfC5BnCruNhXcFJJr0Nik+inaqq5Z1xP74=
+X-Gm-Message-State: AOJu0YyUZGLN/sRaXnU65RBB4OUYulWRKJMJnWSMM51JQW1rrmJQkrQM
+	D1O6ooED/ugqvHmixywezsc316Oqf1OCu/pR6hRgangDD6rZtav6
+X-Google-Smtp-Source: AGHT+IGXgC4EJp/WqobAe9u/lgLjL9nefw0n8pKO+M6oFtRpiEDLzrZOmmw+BMtvmzqBi8yiesVPTw==
+X-Received: by 2002:a05:620a:671:b0:789:df6e:c412 with SMTP id a17-20020a05620a067100b00789df6ec412mr10938653qkh.24.1713193613548;
+        Mon, 15 Apr 2024 08:06:53 -0700 (PDT)
+Received: from localhost (73.84.86.34.bc.googleusercontent.com. [34.86.84.73])
+        by smtp.gmail.com with ESMTPSA id i10-20020a05620a144a00b0078d5fdc929fsm6443442qkl.104.2024.04.15.08.06.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Apr 2024 08:06:52 -0700 (PDT)
+Date: Mon, 15 Apr 2024 11:06:52 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ io-uring@vger.kernel.org, 
+ netdev@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>, 
+ "David S . Miller" <davem@davemloft.net>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ David Ahern <dsahern@kernel.org>, 
+ Eric Dumazet <edumazet@google.com>
+Message-ID: <661d428c4c454_1073d2945f@willemb.c.googlers.com.notmuch>
+In-Reply-To: <8b329b39-f601-436b-8a17-6873b6e73f91@gmail.com>
+References: <cover.1712923998.git.asml.silence@gmail.com>
+ <62a4e09968a9a0f73780876dc6fb0f784bee5fae.1712923998.git.asml.silence@gmail.com>
+ <661c0d589f493_3e773229421@willemb.c.googlers.com.notmuch>
+ <8b329b39-f601-436b-8a17-6873b6e73f91@gmail.com>
+Subject: Re: [RFC 1/6] net: extend ubuf_info callback to ops structure
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [fs?] [io-uring?] general protection fault in
- __ep_remove
-To: Jens Axboe <axboe@kernel.dk>,
- syzbot <syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, io-uring@vger.kernel.org, jack@suse.cz,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <0000000000002d631f0615918f1e@google.com>
- <a81c7a79-44ce-44fb-8b33-4753d491bcec@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <a81c7a79-44ce-44fb-8b33-4753d491bcec@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
 
-On 4/15/24 15:31, Jens Axboe wrote:
-> This isn't related to io_uring at all, not sure why syzbot has this idea
-> that anything that involves task_work is iouring.
-
-The repro does send an IORING_OP_READ, but I haven't looked deeper
-to say if it's anything meaningful.
-
-
-> #syz set subsystems: fs
+Pavel Begunkov wrote:
+> On 4/14/24 18:07, Willem de Bruijn wrote:
+> > Pavel Begunkov wrote:
+> >> We'll need to associate additional callbacks with ubuf_info, introduce
+> >> a structure holding ubuf_info callbacks. Apart from a more smarter
+> >> io_uring notification management introduced in next patches, it can be
+> >> used to generalise msg_zerocopy_put_abort() and also store
+> >> ->sg_from_iter, which is currently passed in struct msghdr.
+> > 
+> > This adds an extra indirection for all other ubuf implementations.
+> > Can that be avoided?
 > 
+> It could be fitted directly into ubuf_info, but that doesn't feel
+> right. It should be hot, so does it even matter?
 
--- 
-Pavel Begunkov
+That depends on the workload (working set size)?
+
+> On the bright side,
+> with the patch I'll also ->sg_from_iter from msghdr into it, so it
+> doesn't have to be in the generic path.
+
+I don't follow this: is this suggested future work?
+
+> 
+> I think it's the right approach, but if you have a strong opinion
+> I can fit it as a new field in ubuf_info.
+
+If there is a significant cost, I suppose we could use
+INDIRECT_CALL or go one step further and demultiplex
+based on the new ops
+
+    if (uarg->ops == &msg_zerocopy_ubuf_ops)
+        msg_zerocopy_callback(..);
+
+
 

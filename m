@@ -1,190 +1,214 @@
-Return-Path: <io-uring+bounces-1569-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1570-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D3D8A61B2
-	for <lists+io-uring@lfdr.de>; Tue, 16 Apr 2024 05:29:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA4118A65CC
+	for <lists+io-uring@lfdr.de>; Tue, 16 Apr 2024 10:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC7241F2289A
-	for <lists+io-uring@lfdr.de>; Tue, 16 Apr 2024 03:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60D2128145E
+	for <lists+io-uring@lfdr.de>; Tue, 16 Apr 2024 08:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F3B179B7;
-	Tue, 16 Apr 2024 03:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034EF12837B;
+	Tue, 16 Apr 2024 08:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DNUCv+K9"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DjfBfnCe"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC98617550
-	for <io-uring@vger.kernel.org>; Tue, 16 Apr 2024 03:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889CD8665B;
+	Tue, 16 Apr 2024 08:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713238165; cv=none; b=U+tk0F+qcHXedkwlskGM1sGvkiKn7HU1xpUtGoBg8sNHH9xdFCu5ZAy0uxzgREL6QCarHJRGiWEcM+weL65AXyJdLklp9hrtBK8s6iNwO73ADB5CmdGiQ4JMg1b2DAv3bTfO8DyTcLUkwUqUwkrzNCrOWD356El0PRw/Qok0LXI=
+	t=1713255235; cv=none; b=Bo/VO32gKEp/cQNXWiOm70qcDMlA02cenALcE6z6l2oQq1bn8M0loXAOsQkcvLLCNhQWf17j2nMruLHfHxedMt9sENrLUe+88n6R+ELmzat6/l3rncBx3nfmmZW4llL3weF7YqcnQo00IlGcIvPC165G7yKRDcrCuTVElOAvP8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713238165; c=relaxed/simple;
-	bh=A93IO4HvdgpfXsS09klQBOToK+dCufMV0aKRWmW7s0s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nWZz430e8ETXxxeElb0Bp+htIbylqIShOksUoSJhCCc0IAKefUi9SMfDZZiKJLXIkaj9ZX19aNPlUALn6L0gr2ItwjR9Q1AaLK4jkxKFjFkrElFsVpXZoHILRFu3TsEt0R85F/GAR63dgGTCCMsAmeCPsjldIxc1TbPoooIWK1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DNUCv+K9; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-61acfd3fd3fso19082977b3.1
-        for <io-uring@vger.kernel.org>; Mon, 15 Apr 2024 20:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1713238163; x=1713842963; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BGU3riBnl9ZTwSW5EEFvJ7BCn2g6uO4o7k4olkwpexs=;
-        b=DNUCv+K9ZvZFidPv16bFz44ON4WtnDn0yHYaeZPHD298x06F48wnI3n6KcWFZtZqWo
-         xTvXdeVsnaKmGOTwTSRaccyBpud0PndjqoyAZ6Ibx2Hf+teKkrBHdDH46L/OVBevfVoA
-         W8JB7MjVLgxwuWA2UdzLbQ4oxWN2t2kqK+d64VGlQuFX3FPuoEqmEenFfYCAiIO834qa
-         bArkkswvq3ovaZEnoNU/4TN6xo74DadyVAXED3Yy/mRddGedBgTOef668wQeZmfwvpSz
-         k78cV8MAvoJ3gRIcIhEThvqBwFIR8jQ8kfPjqAbw9ydh6/HczxL638LT1trBBkJWfgER
-         Q8RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713238163; x=1713842963;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BGU3riBnl9ZTwSW5EEFvJ7BCn2g6uO4o7k4olkwpexs=;
-        b=KHWi8eEgFEhPSv5m5gNB7RdB9zqA34n2uNcSPDblW0QGnUpZLUJXHrb7gm2KBGSb/0
-         Wg1osooL8sOxCJZim7hjPMBcQxf3y+KYGY1FveK6efuvGapdyl/JLafnFdX7taupH0MZ
-         BolYauxVmptR5qelGtOzkZGQ16ZZVWww/8LrQURtHiji0JQ6+xL06EnHdNEAzBTivkjN
-         oeLLPUd+9ouOFxRjX4iB3alYjpyygWKOozDoRTuOQiOb33kr9yBpQvv619Q20aX/PoYr
-         lMzRSYHn6tboT2eGWyxThX0zlmlhr/e0NSaGkJt5rlv4mr1IzsM279eH120yALrFTpfw
-         4f7A==
-X-Gm-Message-State: AOJu0YwiG6rqN5khuATe1ednO4W3TPqqCOdOM9WUBPxZ7mVUX5+hCmam
-	Tnr43B21yL64FN/R0Q8ovxwbV9RjFEeHUyqs57Ph5ktWCN5GCq+rNgearKO4S4G8tiGkXn7ZYvq
-	QuLJqN4rzIErIbQX92bDt0tsswjOlmKfFIAnO
-X-Google-Smtp-Source: AGHT+IFoeZvlkKM52OEEsMkrF2vtc+mcmOAsIupUvt5STjHaZfym7Opuj1v4/lXlp9MJVtwnwQjL4IPFECAFjA7yzXU=
-X-Received: by 2002:a81:4884:0:b0:615:2d5a:e398 with SMTP id
- v126-20020a814884000000b006152d5ae398mr11832089ywa.21.1713238162641; Mon, 15
- Apr 2024 20:29:22 -0700 (PDT)
+	s=arc-20240116; t=1713255235; c=relaxed/simple;
+	bh=YqgOG9P2hP+Vazd20A7MBz6h2MRJHFt4LF2ghAPYO2E=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=k21OssrUmmuuo1y9eotbeHsjvdyJUkxEdiQ8UBShV4sw94s4UGOCFhnw3oRXRtKujCnYTzPAnMxWjwin+unHVYl5rbHJhOdR3sAQDpGbgV1dwEHq2/ggtoCBQIfO1cnPytLQtA6087WaK6+RbW28B0PjgLxiZYE6KpZ8mvaF6hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DjfBfnCe; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240416081348euoutp01e986ae0c0420cbaa6fc619f69deca38c~GtI2QdGVB1646716467euoutp01L;
+	Tue, 16 Apr 2024 08:13:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240416081348euoutp01e986ae0c0420cbaa6fc619f69deca38c~GtI2QdGVB1646716467euoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1713255228;
+	bh=bIsb30PZaSLB5OiZcM1+QbJIYYQGcYX6Ld4HuDawoik=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=DjfBfnCeczMwC9VGzREMUcny6hjKUIOJoo9UY/piJvcw7sh4r6U0qajsOpPBvf5/a
+	 Am3tENqHGcwHVkdAyNnMNbfN0nb5zgR2HXcAz+cdr5eruKji3XZlXhuBFe53cTSFKr
+	 W7mDC4fAmyjv0YJa7FWCt6cSAqXOWsc+9rtiMLp4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240416081348eucas1p21cb60b08f416405e6a309e4ef595fa28~GtI1_WOdJ1606116061eucas1p26;
+	Tue, 16 Apr 2024 08:13:48 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id D9.06.09620.B333E166; Tue, 16
+	Apr 2024 09:13:47 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240416081347eucas1p2328252cc35f468c42c0954eaa09d59eb~GtI1f3yuF1895218952eucas1p2U;
+	Tue, 16 Apr 2024 08:13:47 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240416081347eusmtrp140e4080a0a0dac1890e78f8bb14248ff~GtI1dsrEb2457724577eusmtrp1W;
+	Tue, 16 Apr 2024 08:13:47 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-a1-661e333b54e0
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 18.75.09010.B333E166; Tue, 16
+	Apr 2024 09:13:47 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240416081347eusmtip12c7c7c247154a41e8dc385754f42215a~GtI1M5Wo13269232692eusmtip1G;
+	Tue, 16 Apr 2024 08:13:47 +0000 (GMT)
+Received: from localhost (106.210.248.128) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Tue, 16 Apr 2024 09:13:46 +0100
+Date: Tue, 16 Apr 2024 09:53:36 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Paul Moore <paul@paul-moore.com>
+CC: Andrew Morton <akpm@linux-foundation.org>, Muchun Song
+	<muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi
+	<naoya.horiguchi@nec.com>, John Johansen <john.johansen@canonical.com>,
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Kees Cook <keescook@chromium.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Jens Axboe <axboe@kernel.dk>, Pavel
+	Begunkov <asml.silence@gmail.com>, Atish Patra <atishp@atishpatra.org>, Anup
+	Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Luis
+	Chamberlain <mcgrof@kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
+	<keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<io-uring@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/7] security: Remove the now superfluous sentinel
+ element from ctl_table array
+Message-ID: <20240416075336.stuemtkatjdz4rqe@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0cea7b29-5c31-409a-a8d3-de53c7ce40eb@linux.microsoft.com>
-In-Reply-To: <0cea7b29-5c31-409a-a8d3-de53c7ce40eb@linux.microsoft.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 15 Apr 2024 23:29:11 -0400
-Message-ID: <CAHC9VhTWbFu8vbapWG5ndt=r-y5SkSSe=AA3YEufreYtjPMrUw@mail.gmail.com>
-Subject: Re: io_uring: worker thread NULL dereference during openat op
-To: Dan Clash <daclash@linux.microsoft.com>
-Cc: io-uring@vger.kernel.org, audit@vger.kernel.org, 
-	Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="zfniyufgrrisfuqi"
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhT1ykCKnijSbsgPXO9o-5_LHAtSm=q=cdQ8N9QH+WA+tw@mail.gmail.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA1WTfVBUVRjGO/eevXdBgctHcUCzXKQUFGyIPKOSMCrdP/zDoqYxJnODKzDC
+	wuyKkdEItNIuH4Igs7au8ikou4EtsCpiEQlCIggkrMQugW7Fp8iHRNtgbBfL/vs97/s8M897
+	Zo6QdHlCeQpjJIc5qUQcK6LsoaFloWPTtoA1Bzf/2rcFa6p1FJZPTQpwnVVN49SWIgHWVBoA
+	VnSEYq0ph8KaTjnEk2lWiDNHV+PJ4x0Q5y3kAlxVXUrg1tnjFG7PjMN1A2kUVs6fh1h/v1eA
+	B80LBG643gZxT72GwmbdEwE2zMgpPJU1TOHzfV0ENuZaAC6/OgRxV2ojwCM9WSROVzvhn/NU
+	EHfe6aCxfCAweC2rO6cDbK/iG8gWWNshq07JptgzKV2QHR8ZgWztxXsE+4Nilmavqk00a2j0
+	Znuv7WPlNyYEbM/tRFZfqaRY/XQezbaetsK9Hh/Yb4/kYmOOcFL/Nw/YR2dOyImEbKeka3Ny
+	IgVMr8wAdkLEvI7qzUoyA9gLXZgLAPW1DVO8mAWoK/Ux5MUMQH+11hBPI/ON3TS/qABo4Pb3
+	1L+umeIbAl7UAVSY3QJtEch4o0nDCGljitmIOscH/mE3Zh0qtVQDG5NMoR1q/jrGxq4Mh+aV
+	nZSNHZhgpMo9KeDZGbV99QDy/iR0vfn+EguXeBWqWBTa0I55G/2RxfBFvVDacJmA58/Rj7X9
+	hK0aYk6tQKbC9OXFLpR71wh5dkWjN2tpnlejW/lZkA/kA/Td4hTNCy1A5alzy2+xDcl/erCc
+	CEE5f+oEthaIcUTGCWe+pyPKM6hIfuyAFOkuvPsVpDWPw1zgpX7mMvUzl6n/u4zHDai63v9/
+	U5vZF5UXj5E8B6GqqoewCNCVwJ1LlMVFcbIACfeJn0wcJ0uURPlFxMfpwdK/uLV4c+4KuDD6
+	yK8JEELQBNYthYcvae8ATyiJl3AiNwe564sHXRwixZ8e5aTxH0kTYzlZE1glhCJ3B+/IlzgX
+	Jkp8mDvEcQmc9OmWENp5phDvzEZt3Kr9bZNkopjMnJ0ym77ITl5vfW775SBL6bHwiApLWdDY
+	LxEPvUK6Q5nPRkP0ycSXDW2qoaEwUcKezYPRRSWPj5xs1pcwZFpTXfDLpNZpPGil4/r3usL0
+	SBYWSM1EtkV/23k3y/joqNKDe0twdj51Q8jg1v72feFKY8GhAxMnnqeNSWaf0/kvSKpMOwfm
+	h/yDfUtO0GyY3bvuY9M71vQrM1pnYk7VuJ/dD+5d7rAPf0M4new4/THrI67Z0uMbVBX1amhE
+	Q5/zlWiPvTpF/Ic7QsMvWQJ81Wuz2/cPZ2pWuDlfVHkk7vp99zFloDWnSEmY4lRJBbsrFf5N
+	ZcXv7+kWQVm0+DUfUioT/w3sC6XnkgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA2WSbUxTVxiAc3pvb1szxl0p41iVQQXNYBRaKB6QEseSefWHDMiybMBYA7eA
+	0hb74cY2F8TCgGJWiAbXNcKGhYEEhEAjc4sMFxSElo+AcxQWUDBFRJxExAqs0C0z2b/nvB/P
+	++bkZWNcM8Fn5yq1tFopyxMQ2/Bb6zcmw/ZH+ssjOs74IXNrM4H0S4tM1OkysdCp3lomMjdZ
+	ASq1vYsuTX5DILNdj6PFIheODPM70WKxDUdVq0aAWlrrGOjmcjGBBgwK1OkoIlDZigVH7XfH
+	mejPqVUG+vmXPhyN/mQm0FTzBhNZn+gJtFQxQyDL7WEG+t04C1B91zSOhk91A+QcrcBQickb
+	TVRV48g+ZGMhvUNyIJBqvtAMqPHSNpw65xrAKVPhGYL6rnAYpxacTpzqaLzDoK6XLrOoLtMk
+	i7J2B1PjVz+k9L89ZFKjgzqqvamMoNr/qmJRN8+78Pe2fySMU6t0WjogR6XRSgWpIiQWimKQ
+	UBwVIxRF7kuPFUsE4fFxWXRe7glaHR7/iTDn/rVFLN/g/VlXDa8QLL1SDjhsSEbBle4RVjnY
+	xuaSFgBLr/YRnsRO2LY8xvSwD3wxXk54ih4DOL1mwjyPTgAnvl7GN6twMhguWp3YJhPkW9C+
+	4NhiHhkE62ZbwWYDRtZw4IOuwS2tD0nDlTL71jgv8gCsNlYyPdZ6DLZ1FgJP4jXY9+29rQkY
+	eQL2N/e4rWw374AN6+xN5JBJ8FkF6dl0NyyaufjP1ifhk7U5YAQ+ppdEppdEpv9EnvBe+OLC
+	yP/DobD++weYh6WwpeURXgtYTYBH6zSKbIVGLNTIFBqdMluYqVK0A/dpWntXO66AxvnHwh7A
+	YIMeEOTunLl8aQjwcaVKSQt4XnqfXXKuV5as4HNarcpQ6/JoTQ+QuH+xEuP7Zqrcd67UZoii
+	IySiqOiYCElMdKTAz+tQfqmMS2bLtPQxms6n1f/2MdgcfiGjZuRgdpyjsvaN7csnMx3Pn6XP
+	cVPuWn9th0cXDtZZshpe95N4BdhW9xy22YPjGMf0az8MKnM+vciXPsJ2DIWNpHGS/phZOU7a
+	05PW/davBDSk7sl2vb+voqVE0ZtQHHtt/5Gze2efHr8/JZYaePKVRE7o6YxkueOGI7ZoY+rj
+	8FjX00NBIe8UXLeGGjZWv8q99eVt//w034LGkqW0DNv0wFD887bilIcVvBFHSpOxNbkkskr2
+	BU8eVkl3wMRX55x3TGNs/5AsnU9CdbX6vNXCCowXefu+3S8/fMTCT3pzgnfUeU6qTZQuGO71
+	X07OEvYOnN7N25UwJk6dPzv945T5g0ABrsmRiUIwtUb2Ny6p+ksvBAAA
+X-CMS-MailID: 20240416081347eucas1p2328252cc35f468c42c0954eaa09d59eb
+X-Msg-Generator: CA
+X-RootMTR: 20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483
+References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
+	<CGME20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483@eucas1p2.samsung.com>
+	<20240328-jag-sysctl_remset_misc-v1-2-47c1463b3af2@samsung.com>
+	<20240415134406.5l6ygkl55yvioxgs@joelS2.panther.com>
+	<CAHC9VhTE+85xLytWD8LYrmdV8xcXdi-Tygy5fVvokaLCfk9bUQ@mail.gmail.com>
+	<CAHC9VhT1ykCKnijSbsgPXO9o-5_LHAtSm=q=cdQ8N9QH+WA+tw@mail.gmail.com>
+
+--zfniyufgrrisfuqi
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 15, 2024 at 7:26=E2=80=AFPM Dan Clash <daclash@linux.microsoft.=
-com> wrote:
->
-> Below is a test program that causes multiple io_uring worker threads to
-> hit a NULL dereference while executing openat ops.
->
-> The test program hangs forever in a D state.  The test program can be
-> run again after the NULL dereferences.  However, there are long delays
-> at reboot time because the io_uring_cancel() during do_exit() attempts
-> to wake the worker threads.
->
-> The test program is single threaded but it queues multiple openat and
-> close ops with IOSQE_ASYNC set before waiting for completions.
->
-> I collected trace with /sys/kernel/tracing/events/io_uring/enable
-> enabled if that is helpful.
->
-> The test program reproduces similar problems in the following releases.
->
-> mainline v6.9-rc3
-> stable 6.8.5
-> Ubuntu 6.5.0-1018-azure
->
-> The test program does not reproduce the problem in Ubuntu
-> 5.15.0-1052-azure, which does not have the io_uring audit changes.
->
-> The following is the first io_uring worker thread backtrace in the repro
-> against v6.9-rc3.
->
-> BUG: kernel NULL pointer dereference, address: 0000000000000000
-> #PF: supervisor read access in kernel mode
-> #PF: error_code(0x0000) - not-present page
-> PGD 0 P4D 0
-> Oops: 0000 [#1] SMP PTI
-> CPU: 0 PID: 4628 Comm: iou-wrk-4605 Not tainted 6.9.0-rc3 #2
-> Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine,
-> BIOS Hyper-V UEFI Release v4.1 11/28/2023
-> RIP: 0010:strlen (lib/string.c:402)
-> Call Trace:
->   <TASK>
-> ? show_regs (arch/x86/kernel/dumpstack.c:479)
-> ? __die (arch/x86/kernel/dumpstack.c:421 arch/x86/kernel/dumpstack.c:434)
-> ? page_fault_oops (arch/x86/mm/fault.c:713)
-> ? do_user_addr_fault (arch/x86/mm/fault.c:1261)
-> ? exc_page_fault (./arch/x86/include/asm/irqflags.h:37
-> ./arch/x86/include/asm/irqflags.h:72 arch/x86/mm/fault.c:1513
-> arch/x86/mm/fault.c:1563)
-> ? asm_exc_page_fault (./arch/x86/include/asm/idtentry.h:623)
-> ? __pfx_strlen (lib/string.c:402)
-> ? parent_len (kernel/auditfilter.c:1284).
-> __audit_inode (kernel/auditsc.c:2381 (discriminator 4))
+On Mon, Apr 15, 2024 at 03:02:43PM -0400, Paul Moore wrote:
+> On Mon, Apr 15, 2024 at 10:17=E2=80=AFAM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> > On Mon, Apr 15, 2024 at 9:44=E2=80=AFAM Joel Granados <j.granados@samsu=
+ng.com> wrote:
+> > >
+> > > Hey
+> > >
+> > > This is the only patch that I have not seen added to the next tree.
+> > > I'll put this in the sysctl-next
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/log=
+/?h=3Dsysctl-next
+> > > for testing. Please let me know if It is lined up to be upstream thro=
+ugh
+> > > another path.
+> >
+> > I was hoping to see some ACKs from the associated LSM maintainers, but
+> > it's minor enough I'll go ahead and pull it into the lsm/dev tree this
+> > week.  I'll send a note later when I do the merge.
+>=20
+> ... and now it's merged, it should be in the next cut of the
+> linux-next tree.  Thanks!
 
-Thanks for the well documented bug report!
+Awesome. I'll remove it from sysctl-next then to avoid any potential
+crashes.
 
-That's interesting, it looks like audit_inode() is potentially being
-passed a filename struct with a NULL name field (filename::name =3D=3D
-NULL).  Given the IOSQE_ASYNC and what looks like io_uring calling
-getname() from within the __io_openat_prep() function, I suspect the
-issue is that we aren't associating the filename information we
-collect in getname() with the proper audit_context().  In other words,
-we do the getname() in one context, and then the actual open operation
-in another, and the audit filename info is lost in the switch.
-
-I think this is related to another issue that Jens and I have been
-discussing relating to connect() and sockaddrs.  We had been hoping
-that the issue we were seeing with sockaddrs was just a special case
-with connect, but it doesn't look like that is the case.
-
-I'm going to be a bit busy this week with conferences, but given the
-previous discussions with Jens as well as this new issue, I suspect
-that we are going to need to do some work to support creation of a
-thin, or lazily setup, audit_context that we can initialize in the
-io_uring prep routines for use by getname(), move_addr_to_kernel(),
-etc., store in the io_kiocb struct, and then fully setup in
-audit_uring_entry().
-
-> ? link_path_walk.part.0.constprop.0 (fs/namei.c:2324)
-> path_openat (fs/namei.c:3550 fs/namei.c:3796)
-> do_filp_open (fs/namei.c:3826)
-> ? alloc_fd (./arch/x86/include/asm/paravirt.h:589 (discriminator 10)
-> ./arch/x86/include/asm/qspinlock.h:57 (discriminator 10)
-> ./include/linux/spinlock.h:204 (discriminator 10)
-> ./include/linux/spinlock_api_smp.h:142 (discriminator 10)
-> ./include/linux/spinlock.h:391 (discriminator 10) fs/file.c:553
-> (discriminator 10))
-> io_openat2 (io_uring/openclose.c:140)
-> io_openat (io_uring/openclose.c:178)
-> io_issue_sqe (io_uring/io_uring.c:1897)
-> io_wq_submit_work (io_uring/io_uring.c:2006)
-> io_worker_handle_work (io_uring/io-wq.c:540 io_uring/io-wq.c:597)
-> io_wq_worker (io_uring/io-wq.c:258 io_uring/io-wq.c:648)
-> ? __pfx_io_wq_worker (io_uring/io-wq.c:627)
-> ? raw_spin_rq_unlock (./arch/x86/include/asm/paravirt.h:589
-> ./arch/x86/include/asm/qspinlock.h:57 ./include/linux/spinlock.h:204
-> ./include/linux/spinlock_api_smp.h:142 kernel/sched/core.c:603)
-> ? finish_task_switch.isra.0 (./arch/x86/include/asm/irqflags.h:42
-> ./arch/x86/include/asm/irqflags.h:77 kernel/sched/sched.h:1397
-> kernel/sched/core.c:5163 kernel/sched/core.c:5281)
-> ? __pfx_io_wq_worker (io_uring/io-wq.c:627)
-> ret_from_fork (arch/x86/kernel/process.c:156)
-> ? __pfx_io_wq_worker (io_uring/io-wq.c:627)
-> ret_from_fork_asm (arch/x86/entry/entry_64.S:256)
+Thx
 
 --=20
-paul-moore.com
+
+Joel Granados
+
+--zfniyufgrrisfuqi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmYeLoAACgkQupfNUreW
+QU+Ongv9G1IzPsRmO5Fp8LNQGL3RVW2HEJRFRdhkpCF3CIV4X8DYxzsnolosycOY
+2BNak77S7o9TcL6MXnhQXS2tS8WNNdo1Yk9lpBb7Y1YlZhkjpXgaVj0lhoJiLskG
+tuFbgn+QlMbWUmTPbHcX5Y0ZMp/zA28aWtUEY7b3UD1o7RzOvio6Im7IchVCl3Mw
+xFsdxWtgzXO4dEsrwNg8RczshBE2lKLAiHAo5l8/EOw0bvdl8EtWP4wHnDlIWnkQ
+p6Ms7mmp/iSOogETWZ9pxejUaZvcnX1mL2TBTAKnsqw9/JNA5vOjgdrP1O37DEs1
+iUIVKlY8UqoUBYskAzCfwJFe5O5Unl4Y/hzWTTu0Vq75ZfkD9RN09R/ZUem1NxrZ
+5rZ5yYTloIANF7PhUkTmYQKqoNInjtY1m3VUdw9rypOjJQ80cdwOOpYdE5xMS1O9
+g+Ad9WDVhpCWhCsjONZ+GrRodtRsMlzOpQEd5HRqFWD8ciyCtWbcHgCBCffWLU0D
+R6qovg//
+=QO0O
+-----END PGP SIGNATURE-----
+
+--zfniyufgrrisfuqi--
 

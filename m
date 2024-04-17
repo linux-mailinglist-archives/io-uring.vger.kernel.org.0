@@ -1,102 +1,115 @@
-Return-Path: <io-uring+bounces-1581-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1582-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 709628A85F3
-	for <lists+io-uring@lfdr.de>; Wed, 17 Apr 2024 16:29:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3C88A85F4
+	for <lists+io-uring@lfdr.de>; Wed, 17 Apr 2024 16:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B891282E54
-	for <lists+io-uring@lfdr.de>; Wed, 17 Apr 2024 14:29:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 564382826F2
+	for <lists+io-uring@lfdr.de>; Wed, 17 Apr 2024 14:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FD61411EE;
-	Wed, 17 Apr 2024 14:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C4614036F;
+	Wed, 17 Apr 2024 14:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="aMMgJ+QN"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="eIjrsjY8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1356F141995
-	for <io-uring@vger.kernel.org>; Wed, 17 Apr 2024 14:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5046E13D290
+	for <io-uring@vger.kernel.org>; Wed, 17 Apr 2024 14:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713364178; cv=none; b=pO0G38NFJZHLUxIX0iG9S8bxwT/ZFEzHOfo0Kk6FOX6XC/Wrr4EllbxpeY6bqESV5J1ZUtfs6tWjcR18RVLAD/AkgXMYZWrB7SlYDO/UtTyMPGaPUclGTV1D5I8urUhfswsqWJQqeZX9v3JZe5pkx0RV0aPPUbimy2MHopT2LmY=
+	t=1713364197; cv=none; b=EtIG0sNOq8zTqtqUWVHqKZiwEYbXH34B3ig+TJVIDhZpwTeBlGXw4ymFCdkkXaVo1boWVDDmPhfy2XfpqH0f5fWl5OJVN2q2lB5wZckyUKb3G2xLoHi3TV9Bnwwx3YgJQXonAmTv3Zl5YWjQS0/KMxwkkF6XJqzMWLLJCmxOWJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713364178; c=relaxed/simple;
-	bh=gsYJCOiVUe5elGsoQjeHcvnGTNG66kad0sKx19MtyA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sItL86DfcJDkuSlwymP4Vc2qvsi7BUGwCF/ZxWl0t2W1Uy2p9TzuxyHHGBo8DRsDXcLEsoLJ5X7w0YqCnx7Ajjx/czYg9PLPtgVpSYABrWY4OPOmmEWGObh/zAsao4LZP3nAuodygxCr3DO4yV4VzJ3nhUQE3XPdCln6CFsq3ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=aMMgJ+QN; arc=none smtp.client-ip=209.85.166.49
+	s=arc-20240116; t=1713364197; c=relaxed/simple;
+	bh=piV1HZtuIHqItUFq/E8AVj7NeWKDbWYTD2HzdYNZ53E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PuTvAM+1nnO9AeC7j7eMBC3FqsuaWZv26nYAPutPtA0eynnkyLfU1SNRio2QcTJAKPYvZcJ0NlOvyStGYSFsTSi7evR57LKBbubbHSGmXAzQllJ4us50/xpga5W0Qpzjy8AORwRfqaJtH9LBLFNlQ/BUvUHO1zRolCJ3fkgDtJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=eIjrsjY8; arc=none smtp.client-ip=209.85.166.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7d9f3704154so5497839f.3
-        for <io-uring@vger.kernel.org>; Wed, 17 Apr 2024 07:29:36 -0700 (PDT)
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7d9a64f140dso24479839f.1
+        for <io-uring@vger.kernel.org>; Wed, 17 Apr 2024 07:29:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1713364176; x=1713968976; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5a9vPPJyMn8oxgKdl/CvCQnt2UwRYN3jvuRtkeCoRx0=;
-        b=aMMgJ+QN48nZzHdejUEoWMAzG/S8gZiG2OVEBmx9Gn4AIHZ70j75AVbUJgtFxjipBM
-         h26+MJuSDkQFhB+f0zyioO55d+Sy9IoWb6kVon9JG4k7lyffSQWEVTqRDyl+YmLQh0Xb
-         hfWP5SMCBiNA0klKy5NEMr+k/rWy53Q3ybX8qrNUh+Nvtl46zAQhg7VKmka3GMIBS1PD
-         ksoflY1bswJk7iIwgDs7P+H8KRWeSVwRH00yYluVyMc1EcTytDDTchLwu2GZsxqcUZzM
-         eq/CONSg7mY1ymUcpyDXzV5uBRXozozDCAaw1EUShDgU/DYqRHxdys+HBNG2f8k6xz1/
-         tlJQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1713364195; x=1713968995; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vipV28Yr5zjBGOpRyyxn1dyQMVr/kIJxwtZLX30eHGc=;
+        b=eIjrsjY8gB6/HqoWm62GDZO7KoTFiYPuQFslD1uscXPUeRHJsdH5vOhK748O8gsmhr
+         YlriKdM2SxkH7+aw4g5kmkPkW5XXqH8TJ/twCoHRpTv5LQehXN1417Zbrg2SgTEhSr6m
+         r7nWmLGOzs/JlHJDWyq59pcKgF6cB00nwGQ4e65gXNgjSmKkfSCS2ptSYcy/Rke6mrTA
+         kS2ThdXdBwnWTSeQNLAg3o7Arc+TZDyDwWzVL8+KxKzuL+ULqZ9Tl3WUtlGO+XSjuKPx
+         sU7sjhG47+YK8paMT4Hku05aBLA5MT6f0y/inLGIhvrDyfSVM+7HroCSOv9sPuPA0CD0
+         c2Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713364176; x=1713968976;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5a9vPPJyMn8oxgKdl/CvCQnt2UwRYN3jvuRtkeCoRx0=;
-        b=sueoNf/otswiL4nBKX2SdMp2yREDROdHa3bAIFfufbNlfCNO8I9krnKagdxN581Bc6
-         EV3QlrPsZKBehTzr4aXmnSzfKGfpDrtVMZFVbI+if/HIrL6Wiow++fZ1xHFartHylTvF
-         L4J+Rer4g7srycLeMiU6iDJuqEL7jhGG1ItZYidcGzWGlTYB6TGCE0r115q8i5kNN8aP
-         wPmRdhB6SP4+XpSHAkD23y6XsDD7xCllXnZu1BzMONJh9q/6ojzfTiQZBpuCJSMCVEaV
-         IP3YWS+XgbuW38zHoyjypSBhoKe0FhuxLLuquR9NvM/WAHVWLSl7lE1FB8c2aHE3v+Ew
-         tVbw==
-X-Gm-Message-State: AOJu0YwNF3p7F6DmiegfMziRYvzO6b4KYTgS/r7DYuYtM06xTfyLgwHM
-	TXsn6Hz3uKKLJ5UPn/p3tQ1ysFlspkJ9hAmmvtahkFWY+CPbRhIpHjdHuAlnv8gxo3W1wn4+sm1
-	I
-X-Google-Smtp-Source: AGHT+IH4JVeCGCYX2kxUYUw7ezKVLUvrvIHGVg30Ees54jbQpMcCS6YJei5GHp9R7BRFXM+U8vN01Q==
-X-Received: by 2002:a6b:5b10:0:b0:7d0:bd2b:43ba with SMTP id v16-20020a6b5b10000000b007d0bd2b43bamr17992001ioh.0.1713364175902;
-        Wed, 17 Apr 2024 07:29:35 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id y14-20020a05663824ce00b00482cebcd13bsm4378309jat.142.2024.04.17.07.29.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Apr 2024 07:29:35 -0700 (PDT)
-Message-ID: <5e04bbf4-a434-4fe6-ba2a-efdb0ede60d8@kernel.dk>
-Date: Wed, 17 Apr 2024 08:29:34 -0600
+        d=1e100.net; s=20230601; t=1713364195; x=1713968995;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vipV28Yr5zjBGOpRyyxn1dyQMVr/kIJxwtZLX30eHGc=;
+        b=VKoHY2P+chbQDMK7k/bC8g4tIxdey0KTvndH70/5+HZLy31YutfQ6YFuhrBPOTRgQG
+         ZgqNATdSUFvnQFLHB1lFc6fjs3AGtWHRWgZXljeroEhMtIefR1uD98OLE3uH4vhNDKpl
+         vk6xygnOThpZPyF3fgqYylK6XiITJG1DAsmnQEO95Rtinp4qOMADbZR4EmF32Eqf9bqu
+         igHl/cF/VheUJidR1HrTi0RDc3UeVVix3PMy00pJetkgIo9OHzNOV3tQ/1J+yvbu2OHq
+         2/m5QEs8dqOB/GxO3TEZz85B6FSTVmel59SZ+cYu9U5DTfvuDAnPRz/HBip8W7NNIO/0
+         +rTQ==
+X-Gm-Message-State: AOJu0YziKSIndmCYPJh5DBPz8pwxFuDzHv/YtaKC0HIGs2YV+ep4Ggcp
+	FVG/gWel2gOV9UuBcQvm1saLgKXVf5qhcfy/udkGrQkmBO7hbbAmaef2ct/CkAQKSdLdQksoH2M
+	V
+X-Google-Smtp-Source: AGHT+IHykh7EdOOKYxbJtgq8HNv2Ptef1Q3rOWPXaik/v/5XugxMWN1YGlBhiLVNAcBLSglzE6WNLg==
+X-Received: by 2002:a92:b102:0:b0:36b:2ff9:9275 with SMTP id t2-20020a92b102000000b0036b2ff99275mr4751157ilh.2.1713364195440;
+        Wed, 17 Apr 2024 07:29:55 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id f6-20020a056638168600b00482cd74e958sm4454864jat.85.2024.04.17.07.29.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Apr 2024 07:29:55 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: io-uring@vger.kernel.org
+In-Reply-To: <20240416021054.3940-1-krisman@suse.de>
+References: <20240416021054.3940-1-krisman@suse.de>
+Subject: Re: [PATCH 0/2] io-wq: cancelation race fix and small cleanup in
+ io-wq
+Message-Id: <171336419491.150319.6267913495904795358.b4-ty@kernel.dk>
+Date: Wed, 17 Apr 2024 08:29:54 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] io-wq: cancelation race fix and small cleanup in
- io-wq
-Content-Language: en-US
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-References: <20240416021054.3940-1-krisman@suse.de>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240416021054.3940-1-krisman@suse.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-On 4/15/24 8:10 PM, Gabriel Krisman Bertazi wrote:
-> Hi Jens,
-> 
+
+On Mon, 15 Apr 2024 22:10:52 -0400, Gabriel Krisman Bertazi wrote:
 > Two small fixes to the wq path, closing a small race of cancelation with
 > wq work removal for execution.
+> 
+> Thank you,
+> 
+> Gabriel Krisman Bertazi (2):
+>   io-wq: write next_work before dropping acct_lock
+>   io-wq: Drop intermediate step between pending list and active work
+> 
+> [...]
 
-Looks good, and cleans it up nicely. Thanks!
+Applied, thanks!
 
+[1/2] io-wq: write next_work before dropping acct_lock
+      commit: 068c27e32e51e94e4a9eb30ae85f4097a3602980
+[2/2] io-wq: Drop intermediate step between pending list and active work
+      commit: 24c3fc5c75c5b9d471783b4a4958748243828613
+
+Best regards,
 -- 
 Jens Axboe
+
 
 
 

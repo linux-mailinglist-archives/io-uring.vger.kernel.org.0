@@ -1,127 +1,102 @@
-Return-Path: <io-uring+bounces-1580-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1581-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226A88A7622
-	for <lists+io-uring@lfdr.de>; Tue, 16 Apr 2024 23:11:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 709628A85F3
+	for <lists+io-uring@lfdr.de>; Wed, 17 Apr 2024 16:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43981F22F4F
-	for <lists+io-uring@lfdr.de>; Tue, 16 Apr 2024 21:11:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B891282E54
+	for <lists+io-uring@lfdr.de>; Wed, 17 Apr 2024 14:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2B45B699;
-	Tue, 16 Apr 2024 21:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FD61411EE;
+	Wed, 17 Apr 2024 14:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e/VN90jy"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="aMMgJ+QN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08915A4CF;
-	Tue, 16 Apr 2024 21:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1356F141995
+	for <io-uring@vger.kernel.org>; Wed, 17 Apr 2024 14:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713301871; cv=none; b=KHmkV4StHvAcVJ7aj4cYEFBCRNniO4LCJCvCJpw5EcbNv06FVon5tKRuvN7j/bjs2+PWjsHh5IUt86Byq6k0iQS/Ycgok8tF5YjlfONXeyqS8kF9afSYQxeayJtLNkJee8jsviGH/DgoqLgxJvvwWyC5MxFOCk+a0WrTOZZRhis=
+	t=1713364178; cv=none; b=pO0G38NFJZHLUxIX0iG9S8bxwT/ZFEzHOfo0Kk6FOX6XC/Wrr4EllbxpeY6bqESV5J1ZUtfs6tWjcR18RVLAD/AkgXMYZWrB7SlYDO/UtTyMPGaPUclGTV1D5I8urUhfswsqWJQqeZX9v3JZe5pkx0RV0aPPUbimy2MHopT2LmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713301871; c=relaxed/simple;
-	bh=8FNV3zbi4W0+s5iELgnOQOr6ZJQLzz3pHFBU0pDSGJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J1n/8/c3XiYz9hEBVubiDSH96+nPSyQ8y/7ZbvectoBIahUA2m5Wu/nUZ3eTcwDIlw3vFXL6/6L+tGuwdx3x5ogjiYDzxD3K7wXgGuv+lnytbxlLmvu0p7CfcmJUdljUMemf6SbdRCaJfjsG9L9GCi1H6KqHPb8w+9U7rBx3s2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e/VN90jy; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FRN0S0UrdEiWG4B5xuc/QvC+4jIMUlM9ivvZ43mxxCA=; b=e/VN90jySWq7d6XlyBQgn7rs3s
-	AB6sQMjNqGP7kHOZRUxvLv1PlxeTKJU1QlDocHcG7Sk6ezLyKIZLtFc1Kv01cBGJCYbKrkBGhppnz
-	RdCDVzplL6GgCvgY9WxCkdNOk0db7H9pR5PCWaG6viMfEi/NWo9vYJsHICdP1374dGYBb+Hg9zg7C
-	d/c7mYXYvYTX+uzESF+M4iIf4TzuqsN9oBNYY40MhgyypVIlbBZLLJS2v99LboMM3MKOcQi9Uq07T
-	3WhvCC9iOEV0Un8JNpAiRR7JMuzQRPCufe7TnGJPkZPUHXDDn8KP75jb+dXzq/DYlmzLcSVrvkCpI
-	DBZ09n7A==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rwq4z-0000000Dp1F-3nSD;
-	Tue, 16 Apr 2024 21:11:01 +0000
-Date: Tue, 16 Apr 2024 14:11:01 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: John Garry <john.g.garry@oracle.com>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-	axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com
-Subject: Re: [PATCH v6 00/10] block atomic writes
-Message-ID: <Zh7pZUwmQXF-qC6D@bombadil.infradead.org>
-References: <20240326133813.3224593-1-john.g.garry@oracle.com>
- <ZgOXb_oZjsUU12YL@casper.infradead.org>
- <c4c0dad5-41a4-44b4-8f40-2a250571180b@oracle.com>
- <Zg7Z4aJtn3SxY5w1@casper.infradead.org>
- <f3c1d321-0dfc-466f-9f6a-fe2f0513d944@oracle.com>
- <ZhQud1NbO4aMt0MH@bombadil.infradead.org>
- <ZhYQANQATz82ytl1@casper.infradead.org>
- <ZhxBiLSHuW35aoLB@bombadil.infradead.org>
- <Zh2ZptLxnwa_jtSk@casper.infradead.org>
+	s=arc-20240116; t=1713364178; c=relaxed/simple;
+	bh=gsYJCOiVUe5elGsoQjeHcvnGTNG66kad0sKx19MtyA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sItL86DfcJDkuSlwymP4Vc2qvsi7BUGwCF/ZxWl0t2W1Uy2p9TzuxyHHGBo8DRsDXcLEsoLJ5X7w0YqCnx7Ajjx/czYg9PLPtgVpSYABrWY4OPOmmEWGObh/zAsao4LZP3nAuodygxCr3DO4yV4VzJ3nhUQE3XPdCln6CFsq3ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=aMMgJ+QN; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7d9f3704154so5497839f.3
+        for <io-uring@vger.kernel.org>; Wed, 17 Apr 2024 07:29:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1713364176; x=1713968976; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5a9vPPJyMn8oxgKdl/CvCQnt2UwRYN3jvuRtkeCoRx0=;
+        b=aMMgJ+QN48nZzHdejUEoWMAzG/S8gZiG2OVEBmx9Gn4AIHZ70j75AVbUJgtFxjipBM
+         h26+MJuSDkQFhB+f0zyioO55d+Sy9IoWb6kVon9JG4k7lyffSQWEVTqRDyl+YmLQh0Xb
+         hfWP5SMCBiNA0klKy5NEMr+k/rWy53Q3ybX8qrNUh+Nvtl46zAQhg7VKmka3GMIBS1PD
+         ksoflY1bswJk7iIwgDs7P+H8KRWeSVwRH00yYluVyMc1EcTytDDTchLwu2GZsxqcUZzM
+         eq/CONSg7mY1ymUcpyDXzV5uBRXozozDCAaw1EUShDgU/DYqRHxdys+HBNG2f8k6xz1/
+         tlJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713364176; x=1713968976;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5a9vPPJyMn8oxgKdl/CvCQnt2UwRYN3jvuRtkeCoRx0=;
+        b=sueoNf/otswiL4nBKX2SdMp2yREDROdHa3bAIFfufbNlfCNO8I9krnKagdxN581Bc6
+         EV3QlrPsZKBehTzr4aXmnSzfKGfpDrtVMZFVbI+if/HIrL6Wiow++fZ1xHFartHylTvF
+         L4J+Rer4g7srycLeMiU6iDJuqEL7jhGG1ItZYidcGzWGlTYB6TGCE0r115q8i5kNN8aP
+         wPmRdhB6SP4+XpSHAkD23y6XsDD7xCllXnZu1BzMONJh9q/6ojzfTiQZBpuCJSMCVEaV
+         IP3YWS+XgbuW38zHoyjypSBhoKe0FhuxLLuquR9NvM/WAHVWLSl7lE1FB8c2aHE3v+Ew
+         tVbw==
+X-Gm-Message-State: AOJu0YwNF3p7F6DmiegfMziRYvzO6b4KYTgS/r7DYuYtM06xTfyLgwHM
+	TXsn6Hz3uKKLJ5UPn/p3tQ1ysFlspkJ9hAmmvtahkFWY+CPbRhIpHjdHuAlnv8gxo3W1wn4+sm1
+	I
+X-Google-Smtp-Source: AGHT+IH4JVeCGCYX2kxUYUw7ezKVLUvrvIHGVg30Ees54jbQpMcCS6YJei5GHp9R7BRFXM+U8vN01Q==
+X-Received: by 2002:a6b:5b10:0:b0:7d0:bd2b:43ba with SMTP id v16-20020a6b5b10000000b007d0bd2b43bamr17992001ioh.0.1713364175902;
+        Wed, 17 Apr 2024 07:29:35 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id y14-20020a05663824ce00b00482cebcd13bsm4378309jat.142.2024.04.17.07.29.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Apr 2024 07:29:35 -0700 (PDT)
+Message-ID: <5e04bbf4-a434-4fe6-ba2a-efdb0ede60d8@kernel.dk>
+Date: Wed, 17 Apr 2024 08:29:34 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zh2ZptLxnwa_jtSk@casper.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] io-wq: cancelation race fix and small cleanup in
+ io-wq
+Content-Language: en-US
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: io-uring@vger.kernel.org
+References: <20240416021054.3940-1-krisman@suse.de>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240416021054.3940-1-krisman@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 15, 2024 at 10:18:30PM +0100, Matthew Wilcox wrote:
-> On Sun, Apr 14, 2024 at 01:50:16PM -0700, Luis Chamberlain wrote:
-> > On Wed, Apr 10, 2024 at 05:05:20AM +0100, Matthew Wilcox wrote:
-> > > Have you tried just using the buffer_head code?  I think you heard bad
-> > > advice at last LSFMM.  Since then I've landed a bunch of patches which
-> > > remove PAGE_SIZE assumptions throughout the buffer_head code, and while
-> > > I haven't tried it, it might work.  And it might be easier to make work
-> > > than adding more BH hacks to the iomap code.
-> > 
-> > I have considered it but the issue is that *may work* isn't good enough and
-> > without a test plan for buffer-heads on a real filesystem this may never
-> > suffice. Addressing a buffere-head iomap compat for the block device cache
-> > is less error prone here for now.
+On 4/15/24 8:10 PM, Gabriel Krisman Bertazi wrote:
+> Hi Jens,
 > 
-> Is it really your position that testing the code I already wrote is
-> harder than writing and testing some entirely new code?  Surely the
-> tests are the same for both.
+> Two small fixes to the wq path, closing a small race of cancelation with
+> wq work removal for execution.
 
-The compat code would only allow large folios for iomap, and use
-buffer-heads for non-large folios, so nothing much would change except
-a special wrapper.
+Looks good, and cleans it up nicely. Thanks!
 
-> Besides, we aren't talking about a filesystem on top of the bdev here.
-> We're talking about accessing the bdev's page cache directly.
+-- 
+Jens Axboe
 
-Sure, but my concern was the lack of testing for buffer-head large
-folios. While for iomap we'd at least have done the ton of work to
-stress test testing large folios while testing XFS with it.
 
-While the block device cache is not a proper full blown filesystem,
-it just means since no filesystem has been tested with buffer heads with
-large folios its a possible minefield waiting to explode due to lack of
-testing.
-
-Is writing a proper test plan for the block device cache code with
-buffer-heads with large folios less work than writing the compat code
-for the block device cache? I concede that I'm not sure.
-
-I'm happy to try it out to see what blows up.
-
-  Luis
 

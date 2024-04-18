@@ -1,165 +1,221 @@
-Return-Path: <io-uring+bounces-1583-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1584-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632818A92C6
-	for <lists+io-uring@lfdr.de>; Thu, 18 Apr 2024 08:07:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1573F8AA100
+	for <lists+io-uring@lfdr.de>; Thu, 18 Apr 2024 19:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CDF8281EEB
-	for <lists+io-uring@lfdr.de>; Thu, 18 Apr 2024 06:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E77285F78
+	for <lists+io-uring@lfdr.de>; Thu, 18 Apr 2024 17:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98D058129;
-	Thu, 18 Apr 2024 06:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B098E171092;
+	Thu, 18 Apr 2024 17:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B60hEjle"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="B2MJr1BW";
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="mRCGCpFQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFD360260
-	for <io-uring@vger.kernel.org>; Thu, 18 Apr 2024 06:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713420468; cv=none; b=Yt8l7c9sj+xMTDLJcniBlDgw3PLJoB7qUcBcYlPaWsFbhcSCQrUWX+wbLbeHc4Hdi604/GHRSWSXeTiiJ21Um/GNWtJMQ/cKiorhnD6MmQ9EkSvVAo+rVzu6LnS04kWKiR94UgQ4sLT9TKDBE2ovaVqZS7/Jfdzgn8jrph0gJro=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713420468; c=relaxed/simple;
-	bh=2zbeNB4UEUSv0tRdWxRl7JgDBqxdn92aemf8vhXkIyo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=DAqMfW8SUIebA8pebaF+1dRQpUayFEdqF/MQSGaXk+UIdxui3M2sD1bncjAFMv9A2bgsKbqZGSSO4qIgX4635z9UFW7HTCJD04FSWjkUawYTPKa8LlMc0/mbNq5SlahWESshCVvrXUyHlNXGgdbFEUAOWliPGG8L6uCF/DJ5+m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=B60hEjle; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240418060738epoutp022595b39d3eda101d86e50d69a65b8cce~HStQgvMQI3159431594epoutp022
-	for <io-uring@vger.kernel.org>; Thu, 18 Apr 2024 06:07:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240418060738epoutp022595b39d3eda101d86e50d69a65b8cce~HStQgvMQI3159431594epoutp022
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1713420458;
-	bh=GARoinIZn0P9UkofwovI5gzz4zQlePWSAFAbJWwKGwk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B60hEjle2QHMbK9t8u5XPWMEv6AoP3LB8PFijgmJZyvLMeaeTwQIiErDbs/TSUwl4
-	 uuVAwTz9rDlCXT/eeAkSX/QJINNmPT81ljZYMWRO7tT9qolJL0+JRsqE8ZqWVWKxoy
-	 Q2nlDQJj/lp7M9CNWUOpt7f6F7PDaoxlQHIhAujU=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240418060737epcas5p1fd7b9cd84d6a53c2996885ed4cee9040~HStPnoAo72391223912epcas5p1s;
-	Thu, 18 Apr 2024 06:07:37 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4VKnPM6ZvDz4x9Q1; Thu, 18 Apr
-	2024 06:07:35 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	25.04.09666.7A8B0266; Thu, 18 Apr 2024 15:07:35 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240418060723epcas5p148ac18fa70b10a2bbbde916130277a18~HStCdsCfo1391213912epcas5p1k;
-	Thu, 18 Apr 2024 06:07:23 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240418060723epsmtrp21425e576dd6f78b4d02b3d2cbd6be9c7~HStCcmzRq2659726597epsmtrp2n;
-	Thu, 18 Apr 2024 06:07:23 +0000 (GMT)
-X-AuditID: b6c32a49-cefff700000025c2-13-6620b8a7bc3b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	17.8C.08390.A98B0266; Thu, 18 Apr 2024 15:07:22 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240418060721epsmtip16446b4b5e8d6538138e0e7eb9b9a2033~HStA4c-XM2182521825epsmtip1g;
-	Thu, 18 Apr 2024 06:07:21 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: anuj20.g@samsung.com, asml.silence@gmail.com, cliang01.li@samsung.com,
-	io-uring@vger.kernel.org, joshi.k@samsung.com, kundan.kumar@samsung.com,
-	linux-kernel@vger.kernel.org, peiwei.li@samsung.com, ruyi.zhang@samsung.com,
-	wenwen.chen@samsung.com, xiaobing.li@samsung.com, xue01.he@samsung.com
-Subject: Re: Re: io_uring: releasing CPU resources when polling.
-Date: Thu, 18 Apr 2024 14:07:16 +0800
-Message-Id: <20240418060716.1210421-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <f7f547aa-998f-4e9f-89e1-1b10f83912d6@kernel.dk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE8915E20F
+	for <io-uring@vger.kernel.org>; Thu, 18 Apr 2024 17:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.153.233
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713461080; cv=fail; b=MJio1AVyKK46wHyOfJvxbhbVH5TIyuYe2FAEQviGd0XtHeIwezRRjOYWJtSlJqp/38NPd/6lPgv9avkyI0YlpuVIrzC01i7QOwwc8uSsd+jNQH+3d1Ljv9pPpgYYqs8dK87fqRN5qnLKNTV0/vxNKXC06r7jryBrtOMZaRnPm4c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713461080; c=relaxed/simple;
+	bh=vKEtk++QwduCGKSY/e0uMoZMrW5nT677dhASNd0+Ehk=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=GNjOHVRLicL1okxXd+Ay+Q4AGjDUBXM6/RzNKGOOd1N74LbuJxOAFVQ3wEVCDZb+gHYljdX+zEVDNnr2OsIMfQVlFyK0GbKD7iHhOqSeohO4AjTa5QbfO/XiZbWfDZXjB1N0ESiEedE/m52+8BP0AgmrKD2T7jlV6s90UCU+CwM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=B2MJr1BW; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=mRCGCpFQ; arc=fail smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1713461078; x=1744997078;
+  h=from:to:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=vKEtk++QwduCGKSY/e0uMoZMrW5nT677dhASNd0+Ehk=;
+  b=B2MJr1BWG6alqRon0HvfD7K31FdHNjotZf4443Rf15kCA0FDr9HkyTtC
+   s0dFajKzSal4eia1WmBrqun3XDEaLifLcU5/2mSeU/aoVDSQaru0U4eMu
+   eMp1cagtmVNN2GXGblF+nfuYG9bVSq01X2HzND8qiiCBPMCvNtST9JGsk
+   Z3CAwK6Tofkwpbh0pinlXM4pHXOwngodOE6Whmnn5l4CJUJQDCs/hC6WO
+   WT4p6O1+4pFsaKg2oWeth4nUeI2o3PwNLxOk0MkzPe4SiXidmU68lk1LW
+   v1YHZeg5/xoB7HbiTZA7jK2H8B3ptwY3KgRyAA4441bpVY8htEHKQY7fx
+   w==;
+X-CSE-ConnectionGUID: BgV7Vaw4RQ6vIKQu8KPLpA==
+X-CSE-MsgGUID: 3KMDKn6OTliS3H4SP+iBhA==
+X-IronPort-AV: E=Sophos;i="6.07,212,1708412400"; 
+   d="scan'208";a="23656422"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Apr 2024 10:24:37 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 18 Apr 2024 10:24:21 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (10.10.215.250)
+ by email.microchip.com (10.10.87.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Thu, 18 Apr 2024 10:24:21 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=b/06MOUDWFqtfWbqRfwqiLrF1NgJ/p0rqb8Vh4dteebPgBEH0shopuJBxWVNFtkHF/VyIhlO5uS1mOoBM9ycAzjpQV5KS1Z/8HBQTM4q+oBJocW6I/nAe4UAHIHP9vfRbdOLfle7NbKsGzqJ6Tb28ZDUJ21ZAxr450FsUqy/Nh/GB4fP1zpCxtA586NlnT2AA3KJeGAm9p1tzZ7gcEQ16+ZK9kaGWn2eK+aHUrom2Eg5oQE80lTT77x2NQYtoVHjvFpn1xbm9GSFw0ubVK145XrNCCQrntsEOG/bxDh5IZJMRnj1sO7XH//60NfgAgaZjA2Q/DxH5VkXnt2onC6Tfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5OUVGeaLkF69GtZFNNiKidJa247Y+PWdlmN/qQ/xLMk=;
+ b=i0JslWektM7eEQuvc8AHtbskjVbZD6XcEUNmRTQCX3mqzqIWz0NWtx5GS4FrxGf/8TqvLWjH4ZQO47gRDVXSxxr9nzz3XaQQGHi6FKuH8dJEeKU94Mf9kqFPqA+FkmWA6zLVEqFHPLmrDyf74evKJ9Z2t87w2vr/1jrMuypWezNWhRYvOWwLMWhWpWrsUDNqUpZ8vFkZghSq7fl++TAgKP99cFm3FuMGqcwb0lquglg7LXWGVOHUSOV4dzK+19ORytlC+IpUnk5+Z5ZycWMulGImUP1x/npfK/OCJo6ZPLCad+EzpEAjDrYrIGWh0Ay2tjYbPomRSLUeqg4I60SQwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5OUVGeaLkF69GtZFNNiKidJa247Y+PWdlmN/qQ/xLMk=;
+ b=mRCGCpFQ6QgyrBWlRlM01YYWWVfycufwx1Q2PUD6MaxHqVURYX0v+5+nb0CfIZP5M3PN4IhySk5X61hA9qvJa/qjULEXgnl+XcFntQ2ZUdSJXZB+1vmFEmfu6xY1q5ddUkvXgWxuqz0pQi309ohWbZGahP4JV5cmDFgyayYh1o3vodTkfyvmD0sVZP7Lkj4fFQ0dWpJ5yeL1CgEEyTwuLd4mVKHVjgi3HNt9FFYlsLIhHYZR73Cb0EwXbS6nJ3e1NilkH+1L+TVV3fh+/IKu0vViLPjlf79kJ4nBtRLusd4Z55QxGBD4CIhiwWhajrwoym3+vxqixuv/DydgSgivAQ==
+Received: from DM8PR11MB5717.namprd11.prod.outlook.com (2603:10b6:8:30::9) by
+ DM6PR11MB4611.namprd11.prod.outlook.com (2603:10b6:5:2a5::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7472.31; Thu, 18 Apr 2024 17:24:16 +0000
+Received: from DM8PR11MB5717.namprd11.prod.outlook.com
+ ([fe80::7c41:8e7d:960:c82a]) by DM8PR11MB5717.namprd11.prod.outlook.com
+ ([fe80::7c41:8e7d:960:c82a%5]) with mapi id 15.20.7472.027; Thu, 18 Apr 2024
+ 17:24:15 +0000
+From: <Doug.Coatney@microchip.com>
+To: <io-uring@vger.kernel.org>
+Subject: VU NVMe commadns with io_uring? NVME_URING_CMD_IO
+Thread-Topic: VU NVMe commadns with io_uring? NVME_URING_CMD_IO
+Thread-Index: AdqRtNy83lG+DxLASMmd4HKHRVBhng==
+Date: Thu, 18 Apr 2024 17:24:15 +0000
+Message-ID: <DM8PR11MB5717EA70F88545314961D862810E2@DM8PR11MB5717.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM8PR11MB5717:EE_|DM6PR11MB4611:EE_
+x-ms-office365-filtering-correlation-id: 1ad933ee-8c4b-4702-bfa1-08dc5fcc5f77
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: s2EC6/CV3Xy+IfHHc8Y9522sJ94f2h/qRYKjwamTBOZ87AOgOyDw17uDu0bqmPBzo/zduyZjeSFU9eviruG4Kvo00eviDFpBbkOwwPx7wKFA9mmkY5UHxi4yNMqq3T8xzuQokJyNvULbVc6WaV9flwgqhLVUDItBxJF7+ZLs7PZhIGwHZ40Dx1913zYGOTgw3OvwgidI7ezBzS/7xOBIW5V7dIWT74MpcDfdmdAenQ26PV3QpbOa7EPNaM0TcP1u3wRmam3OWyagYIhiGI/Xvvmyyx1wqmkOVix+NY7rSgZE4sLO36e7Q5JUi/9j0rd/2x8u4fRLknShC4kfaiwd/T4gPGqv+puO53jueLpJUg2gAsJEh3oyZ2JaftH1hbWR/sHFSRjoyHL6zhh99cFOaCSj86TWnLMd1FtcXQ8U9BAIZILkCo1QPRpevar7BPSIkxrH5Ebjuw8TZd0mogWgXh2qawqbtkn1GqOQCWTt59/wqwDsYlozRpn3LttQ5VgEueMLXNNG2y0naConSYNYK388Pv/Ub7uctQXYrdBwtS8pJ4+6bF8glChhdeFSVVUZ1A7xj+VW4jezLyEqdObFcVDXq9lO43Iqx4xBM9eZJ2rATjfoWeGZAPRXbOWyKH/LjI9IbbIzzd7XBD9lirsIi5bTozHADMvHYsCentPR5dbaliQE68qAUyXLIoCFZ/2hailc+tFMS1xAuh+1amLsrEdPez/bAmA/UBHdfAEa+Fs=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR11MB5717.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?99vwPm4nO16yiaG/EmQPMt8VFYhnd7RctHWQKqmqOatIsl0hMVPwOYdio8?=
+ =?iso-8859-1?Q?IO4vbUPUDSbfUP78ow6l5HRubVGTPHkrRrGjpwLxxk2PiKKGmT75ol/FDN?=
+ =?iso-8859-1?Q?fEs25HmyZqzKVGGWxLGSzqlp7EhlmOQuhuHOZPJFRicRmi1drsGcFkuSv3?=
+ =?iso-8859-1?Q?l3HPnOI5fQAo5lUj0vi674Eysoq69dzkTL+WzA0KEPuNxg3cLezUhgWhZv?=
+ =?iso-8859-1?Q?dLJaUQbFUrkYHBskOt6luaU+UEKZy2JzbnaZi9jLjh3ISnt//HnDPBfSob?=
+ =?iso-8859-1?Q?8tWHGh0M0gckMi9C143g1kXsz0mxAH+/4tSZAVBb0xnIbiFhAkRhYP7Knm?=
+ =?iso-8859-1?Q?AEDu6I91cNPHMWrvIHhx6eLo9tmAFYmG2jv00XXhor4MjcpYL6syYVmwju?=
+ =?iso-8859-1?Q?0SIwRO+AANa6LDe+LV5sx5Iafelz+daeE6qlEXJ3TC+egsKDsAaILROfu7?=
+ =?iso-8859-1?Q?dm5siZOdHaNHYovqbEpPmYVE6Jqh9Gsy5wXjpDfMqXPJrCcsZ0L3TMGLg6?=
+ =?iso-8859-1?Q?SOCLj+x6IDtx3MsxcV3x6kmBYjneObYz7KOFoob5XTD6+5DyUMJi1K5hJl?=
+ =?iso-8859-1?Q?f9nAc6QSIRjou92fIlgg68JxiEeWz643Kx4oA++uqc7OBMRI3DJfRewOVU?=
+ =?iso-8859-1?Q?rE+3kF7uXDWMJeO5NloVSBYkgz7J/a+iipgynRDBfuSker8W9O3K3zdPZ4?=
+ =?iso-8859-1?Q?4W7bgJ7yE0x5EoVU1/cjs+gaGpgaG69D+RHmoOaCw2FHsCuJtpZSTtFBBJ?=
+ =?iso-8859-1?Q?WNRRC9HYMJgAZP43Tok+BR6nf1iqaspjkww5zIvhb4aoevBEpAX+wqJHqy?=
+ =?iso-8859-1?Q?c/ZJ8r4jYa8x+8YMVQbYzlhvHRc/pNvr/YhVW8ggEsOBCZ8qnra2PjWCEf?=
+ =?iso-8859-1?Q?AHChpleYcoBQDmKWKCToyWdZTT4IZ3ywMLffUmDjvdGFp6kvfCWNFVtwVy?=
+ =?iso-8859-1?Q?pnd0IsaZPAsqVDUdLO+7SkR6Zol8HfsLtpKUSx19MpabeEGezzGCCBmzEs?=
+ =?iso-8859-1?Q?ncE6tUBC3hBuHP/D/YGG2FCyiPyjjcUHXj2Rp+MAX3YZ7VejaT8cQfXxmo?=
+ =?iso-8859-1?Q?fX8lKWXCYeExkEY6oIDJ2FOOfF/dnN5YaZXXX4ukFdoQRdIAbszYsKZ9+Y?=
+ =?iso-8859-1?Q?52nU75jnzQeDvPyuQD4GLoCkZLqw6Gi2O3iBdSwVNlFfGsHd0strXf1gbP?=
+ =?iso-8859-1?Q?ZmSI/ySZLc4Thfv6qhcY3X3NgW8AGoSuyElFcnahBJarvXPLrdhNW/S1G4?=
+ =?iso-8859-1?Q?rASzVYX8U0Rr0pzvPa3ONBD5vOMklhD7bE6QY7T+enXk16JFK4IWreG0JA?=
+ =?iso-8859-1?Q?zBIyWRCoStI88PzLkavhP4tS16qmSKyH3QDhMYqmpk7ovsLJxe89yEYYGF?=
+ =?iso-8859-1?Q?FCK4lWP/JwIkiGNVGwoehN7jlNIaEww3D7SckAyPUcqBSm0iPbYcuHHuYi?=
+ =?iso-8859-1?Q?ZSBG74IamRZtBB8LWT0XuTWPCnAA8n/L745rONj1SWhgxctKWgt0LejyVK?=
+ =?iso-8859-1?Q?yDEkZdTvxBdvNrljRWFwEc+c4NpZiYDWUsAbhnsI1V9M3iELzfqI9bzo5c?=
+ =?iso-8859-1?Q?scCQku6ls3q294D2iLNY6z226D7klDW95/Zv3EHbVhbjMg4CYnh4zFD6AP?=
+ =?iso-8859-1?Q?qcmiXC4YdESgFi0GNzURtmso3guv2TKHN9?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmpu7yHQppBu+uG1s0TfjLbDFn1TZG
-	i9V3+9ksTv99zGLxrvUci8XR/2/ZLH5132W02PrlK6vF5V1z2Cye7eW0+HL4O7vF2QkfWC2m
-	btnBZNHRcpnRouvCKTYHfo+ds+6ye1w+W+rRt2UVo8fnTXIBLFHZNhmpiSmpRQqpecn5KZl5
-	6bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAdyoplCXmlAKFAhKLi5X07WyK8ktL
-	UhUy8otLbJVSC1JyCkwK9IoTc4tL89L18lJLrAwNDIxMgQoTsjOmtf1gKrjOXdE+v4+pgXE2
-	ZxcjJ4eEgInEhp4HzCC2kMBuRolJE526GLmA7E+MEqsfXGSFcL4xSuzceZ8FpmPW9qVQib2M
-	EntmdjJBOD8YJe5v/84KUsUmoCSxf8sHRhBbREBYYn9HKwtIEbPAWiaJjbfPMoEkhAUcJK51
-	NLKD2CwCqhLrbswDa+YVsJaYcOAZE8Q6eYmbXfvBDuQUsJU42L2LCaJGUOLkzCdgJzED1TRv
-	nc0MskBCYCaHxIXHc5khml0k7hyZwwZhC0u8Or6FHcKWkvj8bi9UPF9i8vf1jBB2jcS6ze+g
-	/rSW+HdlD5DNAbRAU2L9Ln2IsKzE1FPrmCD28kn0/n4CdSevxI55MLaSxJIjK6BGSkj8nrCI
-	FcL2kPi8p4sFEloTGCW+PfrPOoFRYRaSf2Yh+WcWwuoFjMyrGCVTC4pz01OLTQsM81LL4dGc
-	nJ+7iRGceLU8dzDeffBB7xAjEwfjIUYJDmYlEd4WYdk0Id6UxMqq1KL8+KLSnNTiQ4ymwACf
-	yCwlmpwPTP15JfGGJpYGJmZmZiaWxmaGSuK8r1vnpggJpCeWpGanphakFsH0MXFwSjUwec1c
-	8eyirVT6AUGHPaz9q7uTpARnrXl3bMrbpKgdF+4GvbpjsM9ol2TQlaKC48uPJDnd52LOMNl+
-	XPzG5w/J2wOn+nAXLOLd/1vu1vHZzq8di89XeBisWxh90OHumkdTGRKjEi4GblqtvZH7Vova
-	nYUzV8fy+71dstlMNP26W84K3nAl3q/cH1MVkzOTO8UjYyLaNXiaoly+bbxfI/684fIyjaUT
-	L/877GJkohr1+eBx85lfS1f/ErA1MplqLD95vdL+VLd0tQ+K5vJsC5lq1hc2cxZ0N28VZvj5
-	YkaAdnZM2rWqs9v9XpetF7LQD/6yYlOIQwkTs+EmTwOGyJiqNRZn11QY9u9lK4/oT5RSYinO
-	SDTUYi4qTgQAVOeKUkUEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsWy7bCSnO6sHQppBpvPWlg0TfjLbDFn1TZG
-	i9V3+9ksTv99zGLxrvUci8XR/2/ZLH5132W02PrlK6vF5V1z2Cye7eW0+HL4O7vF2QkfWC2m
-	btnBZNHRcpnRouvCKTYHfo+ds+6ye1w+W+rRt2UVo8fnTXIBLFFcNimpOZllqUX6dglcGdPa
-	fjAVXOeuaJ/fx9TAOJuzi5GTQ0LARGLW9qWsXYxcHEICuxklmneeY4ZISEjsePSHFcIWllj5
-	7zk7RNE3Rom5p18wgSTYBJQk9m/5wAhiiwAV7e9oZQEpYhbYyyRx/8N1sCJhAQeJax2N7CA2
-	i4CqxLob88Cm8gpYS0w48IwJYoO8xM2u/WCbOQVsJQ527wKKcwBts5F4flocolxQ4uTMJywg
-	NjNQefPW2cwTGAVmIUnNQpJawMi0ilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjODK0
-	tHYw7ln1Qe8QIxMH4yFGCQ5mJRHeFmHZNCHelMTKqtSi/Pii0pzU4kOM0hwsSuK83173pggJ
-	pCeWpGanphakFsFkmTg4pRqYti1ofaX2Q447esIGy67P7Fn60yI2hkyI2sKp/tTo1xKDZXbb
-	dp0XNq38f/UBT3CC9cS9cnfjOnaVuJz657bebaqp1FxxubVsTtH1n9y/eugqVphsPb/yxdwd
-	9QZpU95pFbxL7To8yTlow0PZae1RrNpZCrfSEyfPUJto+J/fODzm837GLKFtPR6P92wvOx3L
-	rXru6pTQhyH5Baumf8zQy2aVVQ64unfDU+2LO659bp/bGXa5Pd4u4eCF4p1TjA/48aXMNTP+
-	veZ9zgKz+PQJf44xzbXNiJjG6e3z6bX6i0lvz+zfLSdowhEZ4XPpyKX0F+wPTULtF67omBKs
-	/oJx2f/u2OfWW778Tn+qz5o/Q4mlOCPRUIu5qDgRALrD0Tj7AgAA
-X-CMS-MailID: 20240418060723epcas5p148ac18fa70b10a2bbbde916130277a18
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240418060723epcas5p148ac18fa70b10a2bbbde916130277a18
-References: <f7f547aa-998f-4e9f-89e1-1b10f83912d6@kernel.dk>
-	<CGME20240418060723epcas5p148ac18fa70b10a2bbbde916130277a18@epcas5p1.samsung.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5717.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ad933ee-8c4b-4702-bfa1-08dc5fcc5f77
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2024 17:24:15.9001
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Y3qERPaj3TiUOwU6P+hOxmLupT7SVt/1bGBVp0Jq1neMaqDLZCv2PH89OKGu+u4xBWVUD3U6dJJ989skLX45xomg3yIAhLFwjIrvE15r5CU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4611
 
-On 3/26/24  3:39, Jens Axboe wrote:
->On 3/25/24 9:23 PM, Xue wrote:
->> Hi,
->> 
->> I hope this message finds you well.
->> 
->> I'm waiting to follow up on the patch I submitted on 3.18,
->> titled "io_uring: releasing CPU resources when polling".
->> 
->> I haven't received feedback yet and wondering if you had
->> a chance to look at it. Any guidance or suggestions you could
->> provide would be greatly appreciated.
->
->I did take a look at it, and I have to be honest - I don't like it at
->all. It's a lot of expensive code in the fast path, for a problem that
->should not really exist. The system is misconfigured if you're doing
->polled IO for devices that don't have a poll queue. At some point the
->block layer returned -EOPNOTSUPP for that, and honestly I think that's a
->MUCH better solution than adding expensive code in the fast path for
->something that is really a badly configured setup.
+HI Folks!
 
-Sorry for my late reply, if you think that the scenario where if you're 
-doing polled IO for devices that don't have a poll queue is just a 
-misconfigured and does not need to be changed too much, then I'm inclined
-to extend this scenario to all devices, I think it's an effective way to
-release CPU resources, and I verified this and found that it does have a
-very good benefit. At the same time I have reduce the code in the fast
-path. I will release the v2 version of the code with my test results,
-and please reconsider the feasibility of this solution.
+Trying to send down some vendor unique NVMe commands with io_uring and fixe=
+d buffers via NVME_URING_CMD_IO.=20
 
---
-Xue
+I have no issues sending standard NVMe read/write requests, but we are work=
+ing on some VU commands which have
+buffer and length in different command payload offsets. So I'm trying to fi=
+nd where io_uring populates the NVMe cmd=20
+payload for a "write" (outbound) or "read" inbound request.=20
+
+This percolates into drivers/nvme/host/ioctl.c: nvme_uring_cmd_io() as expe=
+cted where io_uring_cmd points to the=20
+expected cmd payload and a local struct nvme_command is created to be encod=
+ed into a user request via=20
+nvme_alloc_user_request() call.=20
+
+Within the nvme_alloc_user_request() call nvme_init_request() is called whi=
+ch performs a=20
+memcpy(nvme_req(req)->cmd,cmd, sizeof(*cmd));  which is basically copying t=
+he local=20
+struct nvme_command to the request structure. The issue though is the buffe=
+r and length=20
+are not populated in the cmd payload at this time.=20
+
+Instead this happens somewhere else at I/O processing time which I haven't =
+found yet.=20
+I'm trying to track that location down and was wondering if I'm on the righ=
+t path here or not.=20
+Any suggestions on where this update occurs would be incredibly useful. Als=
+o we're hoping=20
+to have multiple fixed buffers for a specific command specified within the =
+cmd payload=20
+In order to provide for extended key data on the commands. Essentially prov=
+iding KV support=20
+for store/retrieve of keys larger than what can fit in the command payload.=
+=20
+
+We're on a path to use fixed buffers and to be able to map them on demand f=
+or the VU=20
+commands, but inserting them into the command payload is the missing point =
+at present.=20
+
+Also are there any future plans to support VU commands within io_uring? Try=
+ing to get the=20
+infrastructure in place to allow that now. The long term goal would be to s=
+upport a KV=20
+command set effectively in io_uring, but in the meantime provide it via the=
+ passthru capability.=20
+
+Thanks!
+Doug
+
+
+Doug Coatney
+Associate Technical Fellow
+Data Center Solutions Engineering
+=A0
+MICROCHIP
+408.888.0105 Mobile Phone
+doug.coatney@microchip.com
+=A0=A0
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0
+
+
+
+
 

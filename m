@@ -1,53 +1,68 @@
-Return-Path: <io-uring+bounces-1585-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1586-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416678AA1EB
-	for <lists+io-uring@lfdr.de>; Thu, 18 Apr 2024 20:17:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C0C88AA663
+	for <lists+io-uring@lfdr.de>; Fri, 19 Apr 2024 02:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4706B238CE
-	for <lists+io-uring@lfdr.de>; Thu, 18 Apr 2024 18:17:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46C7B282733
+	for <lists+io-uring@lfdr.de>; Fri, 19 Apr 2024 00:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47546174EF9;
-	Thu, 18 Apr 2024 18:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1D165C;
+	Fri, 19 Apr 2024 00:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFUydNOC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P2tdAHNd"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BB316FF48
-	for <io-uring@vger.kernel.org>; Thu, 18 Apr 2024 18:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CD7387
+	for <io-uring@vger.kernel.org>; Fri, 19 Apr 2024 00:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713464244; cv=none; b=PI6jQBZBANsi52+9hMh3R1fmofxMB1c1PWDl479+fZLHZ8JBVdWe1fKBDjV+67R8dmINjSd8I51ZkjXx/46ggqnOuzZxS3GW4vzkxysEAVVM4OyVT24VwYrkChvOZHRPU7DEpcHDMI29HjdgiJmGlg0mv2DEjVSAYJlDpbtT6zU=
+	t=1713488136; cv=none; b=ci16zg5G0ZdDSP6YiSXDueHFbdQQI7bWvnDibphdSHJ+7+MNRKnBu/DJd7QMkrpDmTZag6u3+vxhG7+X8l9XmGrJrI2c1pMY8t4LU6z8X9MReO6kswBmuIxZsHnFosrsl9MKi85ET2jNzZaWsWM8m2lHdio/6UWYygam21RdJJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713464244; c=relaxed/simple;
-	bh=vmvbVo8iX63SlO/Ic14Z7CqMFz4M3AiUoEU3eNFUoSg=;
+	s=arc-20240116; t=1713488136; c=relaxed/simple;
+	bh=ehpO5fG2BSF+1lugs8ItCmF5LmwD7qIsCroqaCt6VqU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXlVcVshDyJ6fCkl5/sUptxtDBZxGgvG/CF83pWj+k4u1p7UVxRlZvXueDrEBMUw1j0T4t1ffYB/YS/WYJl5DTQWlglwi/XgWsvnbwGKSlPNdkdFz2HL5qHqefhqLcsCca56lwWsYxHUnPX7ABYEgNkY+fswyJey8lEivZL6faI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFUydNOC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7366BC113CC;
-	Thu, 18 Apr 2024 18:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713464243;
-	bh=vmvbVo8iX63SlO/Ic14Z7CqMFz4M3AiUoEU3eNFUoSg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cFUydNOCAtV6XKRgnTRbwLP+8NQujtn8cySOeemJK1lkW88+MeWgCOLhVm+Sg7zTh
-	 13OXacSJSNUl1UO6pTt10AGkRm9Wuu0kDbIR7Iuhid0VDCN1m65OLTaWnhENaPDyn1
-	 uB7cydrPokVi35iAxoLZJmeLvcGosbkkwwWMjuE1rNlHnbXisbYldBBi1YzcPXPO1x
-	 ueFAUx2RaUXuB2NrfTLe02ZF9AO0ZrDG40MiRSzeMCO2sqX76uZ5+5Haj/9avkoSid
-	 cS/CsdreHHuAtiiFA9KQH+k/V5v9gh8EzVoEOipkjPqjM4uN54qJpoOyQASjSjvhIz
-	 n5/XI+GncWyPA==
-Date: Thu, 18 Apr 2024 12:17:20 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Doug.Coatney@microchip.com
-Cc: io-uring@vger.kernel.org
-Subject: Re: VU NVMe commadns with io_uring? NVME_URING_CMD_IO
-Message-ID: <ZiFjsICii8guw5rP@kbusch-mbp>
-References: <DM8PR11MB5717EA70F88545314961D862810E2@DM8PR11MB5717.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RoY6kF3n1LbrIpT8h2AZT7xFovfwcUbpGbmvKBRyZcUzyYsPwf6Ccc7huKAO5BkRpZEaRYs8Jj/RCte1JYe/ri1xCAxJXVZWXO855lOai1kgbp/cGnXZp6o/PRQDRg4EMUduVZFg8CtMSJCeYNU0/9QPcIw63RmUOIX1AXRhJzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P2tdAHNd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713488133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nWxMOFlJzgP0C20kJOnoeu6yGkyD+A/iEAYOmCMiLrQ=;
+	b=P2tdAHNdha3SqB7P047S3AAIR55fzRqdWgKcGoiWWLnkMzIGiQ6Kky3n2JjoYJDYEutps9
+	aWDcOpy/S4GrYEJijbdMS8ElIpRQckQAQ29GRcmcGOvZtgZF+auOnmbmDJvwySbCdqScj8
+	mN1RVaGJzsz8SIRajr6IG+ugjYGRlLs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-193-hjxNktGTP-KOdvBqf6dUpg-1; Thu, 18 Apr 2024 20:55:30 -0400
+X-MC-Unique: hjxNktGTP-KOdvBqf6dUpg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BC5BC18065B3;
+	Fri, 19 Apr 2024 00:55:29 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.23])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id A79A82166B32;
+	Fri, 19 Apr 2024 00:55:26 +0000 (UTC)
+Date: Fri, 19 Apr 2024 08:55:22 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+	Kevin Wolf <kwolf@redhat.com>
+Subject: Re: [RFC PATCH 0/9] io_uring: support sqe group and provide group
+ kbuf
+Message-ID: <ZiHA+pN28hRdprhX@fedora>
+References: <20240408010322.4104395-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -56,42 +71,42 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM8PR11MB5717EA70F88545314961D862810E2@DM8PR11MB5717.namprd11.prod.outlook.com>
+In-Reply-To: <20240408010322.4104395-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On Thu, Apr 18, 2024 at 05:24:15PM +0000, Doug.Coatney@microchip.com wrote:
-> HI Folks!
+On Mon, Apr 08, 2024 at 09:03:13AM +0800, Ming Lei wrote:
+> Hello,
 > 
-> Trying to send down some vendor unique NVMe commands with io_uring and fixed buffers via NVME_URING_CMD_IO. 
+> This patch adds sqe user ext flags, generic sqe group usage, and
+> provide group kbuf based on sqe group. sqe group provides one efficient
+> way to share resource among one group of sqes, such as, it can be for
+> implementing multiple copying(copy data from single source to multiple
+> destinations) via single syscall.
 > 
-> I have no issues sending standard NVMe read/write requests, but we are working on some VU commands which have
-> buffer and length in different command payload offsets. So I'm trying to find where io_uring populates the NVMe cmd 
-> payload for a "write" (outbound) or "read" inbound request. 
+> Finally implements provide group kbuf for uring command, and ublk use this
+> for supporting zero copy, and actually this feature can be used to support
+> generic device zero copy.
 > 
-> This percolates into drivers/nvme/host/ioctl.c: nvme_uring_cmd_io() as expected where io_uring_cmd points to the 
-> expected cmd payload and a local struct nvme_command is created to be encoded into a user request via 
-> nvme_alloc_user_request() call. 
+> The last liburing patch adds helpers for using sqe group, also adds
+> tests for sqe group. 
 > 
-> Within the nvme_alloc_user_request() call nvme_init_request() is called which performs a 
-> memcpy(nvme_req(req)->cmd,cmd, sizeof(*cmd));  which is basically copying the local 
-> struct nvme_command to the request structure. The issue though is the buffer and length 
-> are not populated in the cmd payload at this time. 
->
-> Instead this happens somewhere else at I/O processing time which I haven't found yet. 
-> I'm trying to track that location down and was wondering if I'm on the right path here or not. 
+> ublksrv userspace implements zero copy by sqe group & provide group
+> kbuf:
+> 
+> 	https://github.com/ublk-org/ublksrv/commits/group-provide-buf/
+> 	git clone https://github.com/ublk-org/ublksrv.git -b group-provide-buf
+> 
+> 	make test T=loop/009:nbd/061:nbd/062	#ublk zc tests
+> 
+> Any comments are welcome!
 
-Right after nvme_init_request(), the data payload is attached to the
-struct request in nvme_map_user_request(), which works for both fixed
-and unregistered buffers.
+Hello Jens and Guys,
 
-The payload gets attached to the nvme command later after dispatching
-the request through the block layer. Assuming your nvme is PCI, that
-happens in nvme_map_data().
+Any comments on this patchset?
 
-> Any suggestions on where this update occurs would be incredibly useful. Also we're hoping 
-> to have multiple fixed buffers for a specific command specified within the cmd payload 
-> In order to provide for extended key data on the commands. Essentially providing KV support 
-> for store/retrieve of keys larger than what can fit in the command payload. 
-> 
-> We're on a path to use fixed buffers and to be able to map them on demand for the VU 
-> commands, but inserting them into the command payload is the missing point at present. 
+
+
+thanks,
+Ming
+
 

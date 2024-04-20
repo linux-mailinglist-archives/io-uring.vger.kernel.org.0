@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-1600-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1601-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC218ABBBB
-	for <lists+io-uring@lfdr.de>; Sat, 20 Apr 2024 15:33:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A088ABBBD
+	for <lists+io-uring@lfdr.de>; Sat, 20 Apr 2024 15:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F296C1C20833
-	for <lists+io-uring@lfdr.de>; Sat, 20 Apr 2024 13:33:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47A041C20987
+	for <lists+io-uring@lfdr.de>; Sat, 20 Apr 2024 13:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C618C10;
-	Sat, 20 Apr 2024 13:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0971D680;
+	Sat, 20 Apr 2024 13:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0YjdolPA"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="eOBXJQK/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F852030A
-	for <io-uring@vger.kernel.org>; Sat, 20 Apr 2024 13:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A12F168DC
+	for <io-uring@vger.kernel.org>; Sat, 20 Apr 2024 13:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713619978; cv=none; b=DAxrfJY4ghAabXhu4TeVMNUYuUax/vEQ07qPd3G8MiY93r6pdVLeRB0e52Ay8L3S5de6dlh8hS6ppaNC+3GcDhyUq+kWZBwrKw/WADlqV8QQMUuSdo1nJHfMwWH1ehGZXwAYug0dlzzsW32Sls4VfjdRszR4Hal9p/vSCXeRX+o=
+	t=1713619980; cv=none; b=Xsk8madW2iZlenqj1B045kqDUaUt//NgjvMa2FBwQkEPQ4lqTKHzNX5DWQySgsZ9C0CGubXGlogwgY2kmJMq/EXQrf1aKFYfTkKkuXbhXvXoDpBHV2pSXsxhc6WSjQKdR5Z9YevOllHH9eqeKAgnccOZU37Uf9+ni98VefzEk5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713619978; c=relaxed/simple;
-	bh=rh9/Yc4BzJju/X1Nc2UlrWMhtpQ0YUYUlogRFwI0T5Q=;
+	s=arc-20240116; t=1713619980; c=relaxed/simple;
+	bh=cYya2fnpl8JJZQozQ8SNJnqY12zRBXux2HWOKUgYteA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rb1Uy2aef418RA/YBRd2hrs0pXc+W+7yhlUu2Hlb/3s4vKOtNRB/aFfwS3BDA4wzZtNmQt3FE3XrLr3TanXXtMOwDp80UQxS7CpX4/myGrguBY4h8+VbK2pEuDznt7MUgAPmOg59ki2UYO5qNciq6pImXSEW7y9F8Q31nhVn5nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0YjdolPA; arc=none smtp.client-ip=209.85.216.51
+	 MIME-Version; b=o31C2Uboxk1UdFCmWG6DTi9lr6TFAxfIWs0w8CYmf9Z22JxETaS3yV077J41v9qsWXrfb7xuOmtvGKIliBdjjpjEo6Frk0yZ+AOMlmdinxV6+l+JV8NiE1c1+La2pESsM5oGMB4xsV5gm0H4KYBAYrH8zLCSje6rRIYRq9tD+bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=eOBXJQK/; arc=none smtp.client-ip=209.85.166.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2a58d2e5be8so723566a91.0
-        for <io-uring@vger.kernel.org>; Sat, 20 Apr 2024 06:32:56 -0700 (PDT)
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-36b2e3b1f34so226615ab.3
+        for <io-uring@vger.kernel.org>; Sat, 20 Apr 2024 06:32:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1713619975; x=1714224775; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1713619977; x=1714224777; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P/x/G1anmqCIrevrbLW+K8zTuG2c46uBjTz0TJFDREw=;
-        b=0YjdolPAuA6rfpt20H+3DefgNhQRn4Nfr5y7d/HMIkEY5HL1HWQi/oWzJov0RX/K22
-         0zaVcr0iC5eNEaLwopAAMVDeTwkDaurz9GFLY+YQ0nVIaCkKTz3cY50smuyRpD2aKNtV
-         L1rKB4tjaYP0KOmd2pYZP4vrKOPiHArbTQ0CexkwpxwRsHrUBaCIadRo9QcOP7rIGbmK
-         P5jlICUIaXV/qVuMjUsSS7mkhZjVD+r7VgoLnoWkcWheinMg4gJFsKY+P8vlGGOc4UYr
-         T9R7n44mw02VSwrcCr8bkv63JP1Yk8s0KEeNOxKFr6V+qbITOFePZJ6otNUgY7ABLp3r
-         iRLA==
+        bh=9aPxa/LSmY4yNZ59jGCA1Lruzf3dDnvJMOq+tmBjLZU=;
+        b=eOBXJQK/wlRWRtcyPyvuhuZ1qLKQUN6cKf9B+Je3mK9B75dNwYiIVhUj68W5TsFO44
+         lPkOwH+Q+ESD25j4ASBJNnRs49ZAjrBKD5qFkva7gZkuMgpD4QN6nMUplsV3QBzHfBNK
+         6Co1p5IGF+LmbWuLhPYBo7hX899PM1+xBnyKMIkVZpRvMciTpdz5LI1GJ3p5HeWbJVks
+         QTH7hLer5IasbRIXZN/PRdeD0Evb0nIE2wLbDr+5WskEpzqLLuTYFVZOpHwGF0wcBMsl
+         wraPwD/tVjcEZSHRVl44fdxAkwJRfp+8sVa6pqZA1moYcnM4v+gSUHKIcOEUmjOcaaeV
+         ICkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713619975; x=1714224775;
+        d=1e100.net; s=20230601; t=1713619977; x=1714224777;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P/x/G1anmqCIrevrbLW+K8zTuG2c46uBjTz0TJFDREw=;
-        b=HXfPhJHYhe5jYYh8MELoZHOUYhoB+V6sR/qUZm2pPUA2f4Rc6ej12n3axjNg2tpE+T
-         IVAssOYjcuU5g5JK3txIRRVLkETEHstFVeJn4ydJN9hgfo1sr695uXoF9ObiaYFGkw9y
-         /ElmFGMptCWIq+4K8qempL2ZfAKKvkP22smW7aufGIPlAsMKyya0TpLsYGjXBzSMDD6x
-         FzoTBOJJcXaaAw5xzzCBpHCL8hxTzQ3swaw6osl7GWsjOEOVMXV9WB5UrmgC46eac74V
-         Zrf80L7sGvu2ljBItom+0xJlLf2P89NiP+ZZuUSdEQL6bi7eCJZrGFkVHl6wX1lisezf
-         gKHg==
-X-Gm-Message-State: AOJu0Yzw86n6t9oqw/xEZubwwVf8j6ZTvkgDNTBa0XLDk6QPsOTtIGop
-	23rxZkkBrRItsPjysxyz0oTYMiIKVrA+GyatOmJBV8Opzd5IHz82PDgLLPyyQsL054bzFn45w7V
-	9
-X-Google-Smtp-Source: AGHT+IEbQRzcHe7HsiWUfL7o1QthQWEVPoddAMVinYDN9KB3woUSvhW1i/M50FYp3RdmEyKYKs2nVw==
-X-Received: by 2002:a05:6a21:60a:b0:1ac:ef54:91da with SMTP id ll10-20020a056a21060a00b001acef5491damr1661882pzb.1.1713619974840;
-        Sat, 20 Apr 2024 06:32:54 -0700 (PDT)
+        bh=9aPxa/LSmY4yNZ59jGCA1Lruzf3dDnvJMOq+tmBjLZU=;
+        b=bCfGxYrMgvabjm3hO9ODn/WiZ+5OLpOrGPa6ZNQgRvlV3tIdjUbOmy4mkgAGN3l4wU
+         LToKHJTl6bqgArhluuYeXDV+zqw2QAhiLEeRIOlSEZZBoiNDvVWDM4lEHY6vg81aTtR+
+         09g71ScUSHD3W6Wj57e3nWH+UzotdSqzcxHG6BAXzZsJg/8AS+d5qyUHobheo2t+JMDH
+         w8/iA1J9+bQWV6DhkjcoEGv30FeX35EUEEV5hnHwEmIALOpUiOUrlcxs3RPuX+tB2Hli
+         vx4YI/myI4G0HAprXj6sRVyo3HUpuEDsTIij4NEvqB1bjqv4KAjmbo37AmV5rux0nQ0j
+         M4uw==
+X-Gm-Message-State: AOJu0YxAZ8vq25MXzgAWC56qaNtV+NzOSoaKtFm8UTM7AT5rVw8F0s8G
+	dS+/jlGogo3fmB8OY0bcXBk25eO1olE0K6UVje/vJ8NnSrMZJnXzOE6g8mcBkqUjdlCqSwIssps
+	x
+X-Google-Smtp-Source: AGHT+IFdHgvO5sTfWScobAo2iiKU4eVtXXsJHY4u8/kleAykkjxtzYd+qYSY5JXS3JLjCNIzcgSzHg==
+X-Received: by 2002:a92:c241:0:b0:36b:2a68:d7ee with SMTP id k1-20020a92c241000000b0036b2a68d7eemr6158301ilo.1.1713619976912;
+        Sat, 20 Apr 2024 06:32:56 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id k5-20020a6568c5000000b005f7ba54e499sm2926610pgt.87.2024.04.20.06.32.52
+        by smtp.gmail.com with ESMTPSA id k5-20020a6568c5000000b005f7ba54e499sm2926610pgt.87.2024.04.20.06.32.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Apr 2024 06:32:53 -0700 (PDT)
+        Sat, 20 Apr 2024 06:32:55 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/5] io_uring/kbuf: add helpers for getting/peeking multiple buffers
-Date: Sat, 20 Apr 2024 07:29:45 -0600
-Message-ID: <20240420133233.500590-5-axboe@kernel.dk>
+Subject: [PATCH 4/5] io_uring/net: support bundles for send
+Date: Sat, 20 Apr 2024 07:29:46 -0600
+Message-ID: <20240420133233.500590-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240420133233.500590-2-axboe@kernel.dk>
 References: <20240420133233.500590-2-axboe@kernel.dk>
@@ -84,359 +84,256 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Our provided buffer interface only allows selection of a single buffer.
-Add an API that allows getting/peeking multiple buffers at the same time.
+If IORING_OP_SEND is used with provided buffers, the caller may also
+set IORING_RECVSEND_BUNDLE to turn it into a multi-buffer send. The idea
+is that an application can fill outgoing buffers in a provided buffer
+group, and then arm a single send that will service them all. Once
+there are no more buffers to send, or if the requested length has
+been sent, the request posts a single completion for all the buffers.
 
-This is only implemented for the ring provided buffers. It could be added
-for the legacy provided buffers as well, but since it's strongly
-encouraged to use the new interface, let's keep it simpler and just
-provide it for the new API. The legacy interface will always just select
-a single buffer.
-
-There are two new main functions:
-
-io_buffers_select(), which selects up as many buffers as it can. The
-caller supplies the iovec array, and io_buffers_select() may allocate a
-bigger array if the 'out_len' being passed in is non-zero and bigger
-than what fits in the provided iovec. Buffers grabbed with this helper
-are permanently assigned.
-
-io_buffers_peek(), which works like io_buffers_select(), except they can
-be recycled, if needed. Callers using either of these functions should
-call io_put_kbufs() rather than io_put_kbuf() at completion time. The
-peek interface must be called with the ctx locked from peek to
-completion.
-
-This add a bit state for the request:
-
-- REQ_F_BUFFERS_COMMIT, which means that the the buffers have been
-  peeked and should be committed to the buffer ring head when they are
-  put as part of completion. Prior to this, req->buf_list was cleared to
-  NULL when committed.
+This only enables it for IORING_OP_SEND, IORING_OP_SENDMSG is coming
+in a separate patch. However, this patch does do a lot of the prep
+work that makes wiring up the sendmsg variant pretty trivial. They
+share the prep side.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/io_uring_types.h |   3 +
- io_uring/kbuf.c                | 157 ++++++++++++++++++++++++++++++++-
- io_uring/kbuf.h                |  53 +++++++++--
- 3 files changed, 201 insertions(+), 12 deletions(-)
+ include/uapi/linux/io_uring.h |   9 +++
+ io_uring/net.c                | 145 ++++++++++++++++++++++++++++++----
+ 2 files changed, 137 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index c47f412cf18e..7a6b190c7da7 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -472,6 +472,7 @@ enum {
- 	REQ_F_CAN_POLL_BIT,
- 	REQ_F_BL_EMPTY_BIT,
- 	REQ_F_BL_NO_RECYCLE_BIT,
-+	REQ_F_BUFFERS_COMMIT_BIT,
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index a7f847543a7f..7f583927c908 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -351,11 +351,20 @@ enum io_uring_op {
+  *				0 is reported if zerocopy was actually possible.
+  *				IORING_NOTIF_USAGE_ZC_COPIED if data was copied
+  *				(at least partially).
++ *
++ * IORING_RECVSEND_BUNDLE	Used with IOSQE_BUFFER_SELECT. If set, send will
++ *				grab as many buffers from the buffer group ID
++ *				given and send them all. The completion result
++ *				will be the number of buffers send, with the
++ *				starting buffer ID in cqe->flags as per usual
++ *				for provided buffer usage. The buffers will be
++ *				contigious from the starting buffer ID.
+  */
+ #define IORING_RECVSEND_POLL_FIRST	(1U << 0)
+ #define IORING_RECV_MULTISHOT		(1U << 1)
+ #define IORING_RECVSEND_FIXED_BUF	(1U << 2)
+ #define IORING_SEND_ZC_REPORT_USAGE	(1U << 3)
++#define IORING_RECVSEND_BUNDLE		(1U << 4)
  
- 	/* not a real bit, just to check we're not overflowing the space */
- 	__REQ_F_LAST_BIT,
-@@ -550,6 +551,8 @@ enum {
- 	REQ_F_BL_EMPTY		= IO_REQ_FLAG(REQ_F_BL_EMPTY_BIT),
- 	/* don't recycle provided buffers for this request */
- 	REQ_F_BL_NO_RECYCLE	= IO_REQ_FLAG(REQ_F_BL_NO_RECYCLE_BIT),
-+	/* buffer ring head needs incrementing on put */
-+	REQ_F_BUFFERS_COMMIT	= IO_REQ_FLAG(REQ_F_BUFFERS_COMMIT_BIT),
- };
- 
- typedef void (*io_req_tw_func_t)(struct io_kiocb *req, struct io_tw_state *ts);
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 3846a055df44..d2945c9c812b 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -117,6 +117,27 @@ static void __user *io_provided_buffer_select(struct io_kiocb *req, size_t *len,
- 	return NULL;
- }
- 
-+static int io_provided_buffers_select(struct io_kiocb *req, size_t *len,
-+				      struct io_buffer_list *bl,
-+				      struct iovec *iov)
-+{
-+	void __user *buf;
-+
-+	buf = io_provided_buffer_select(req, len, bl);
-+	if (unlikely(!buf))
-+		return -ENOBUFS;
-+
-+	iov[0].iov_base = buf;
-+	iov[0].iov_len = *len;
-+	return 0;
-+}
-+
-+static struct io_uring_buf *io_ring_head_to_buf(struct io_uring_buf_ring *br,
-+						__u16 head, __u16 mask)
-+{
-+	return &br->bufs[head & mask];
-+}
-+
- static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
- 					  struct io_buffer_list *bl,
- 					  unsigned int issue_flags)
-@@ -132,11 +153,10 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
- 	if (head + 1 == tail)
- 		req->flags |= REQ_F_BL_EMPTY;
- 
--	head &= bl->mask;
--	buf = &br->bufs[head];
-+	buf = io_ring_head_to_buf(br, head, bl->mask);
- 	if (*len == 0 || *len > buf->len)
- 		*len = buf->len;
--	req->flags |= REQ_F_BUFFER_RING;
-+	req->flags |= REQ_F_BUFFER_RING | REQ_F_BUFFERS_COMMIT;
- 	req->buf_list = bl;
- 	req->buf_index = buf->bid;
- 
-@@ -151,6 +171,7 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
- 		 * the transfer completes (or if we get -EAGAIN and must poll of
- 		 * retry).
- 		 */
-+		req->flags &= ~REQ_F_BUFFERS_COMMIT;
- 		req->buf_list = NULL;
- 		bl->head++;
- 	}
-@@ -177,6 +198,136 @@ void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
+ /*
+  * cqe.res for IORING_CQE_F_NOTIF if
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 13685d133582..3e326576254b 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -57,7 +57,7 @@ struct io_sr_msg {
+ 		struct user_msghdr __user	*umsg;
+ 		void __user			*buf;
+ 	};
+-	unsigned			len;
++	int				len;
+ 	unsigned			done_io;
+ 	unsigned			msg_flags;
+ 	unsigned			nr_multishot_loops;
+@@ -389,6 +389,8 @@ static int io_sendmsg_prep_setup(struct io_kiocb *req, int is_msg)
  	return ret;
  }
  
-+/* cap it at a reasonable 256, will be one page even for 4K */
-+#define PEEK_MAX_IMPORT		256
++#define SENDMSG_FLAGS (IORING_RECVSEND_POLL_FIRST | IORING_RECVSEND_BUNDLE)
 +
-+static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
-+				struct io_buffer_list *bl)
-+{
-+	struct io_uring_buf_ring *br = bl->buf_ring;
-+	struct iovec *iov = arg->iovs;
-+	int nr_iovs = arg->nr_iovs;
-+	__u16 nr_avail, tail, head;
-+	struct io_uring_buf *buf;
-+
-+	tail = smp_load_acquire(&br->tail);
-+	head = bl->head;
-+	nr_avail = min_t(__u16, tail - head, UIO_MAXIOV);
-+	if (unlikely(!nr_avail))
-+		return -ENOBUFS;
-+
-+	buf = io_ring_head_to_buf(br, head, bl->mask);
-+	if (arg->max_len) {
-+		int needed;
-+
-+		needed = (arg->max_len + buf->len - 1) / buf->len;
-+		needed = min(needed, PEEK_MAX_IMPORT);
-+		if (nr_avail > needed)
-+			nr_avail = needed;
+ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
+@@ -407,11 +409,20 @@ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	sr->umsg = u64_to_user_ptr(READ_ONCE(sqe->addr));
+ 	sr->len = READ_ONCE(sqe->len);
+ 	sr->flags = READ_ONCE(sqe->ioprio);
+-	if (sr->flags & ~IORING_RECVSEND_POLL_FIRST)
++	if (sr->flags & ~SENDMSG_FLAGS)
+ 		return -EINVAL;
+ 	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
+ 	if (sr->msg_flags & MSG_DONTWAIT)
+ 		req->flags |= REQ_F_NOWAIT;
++	if (sr->flags & IORING_RECVSEND_BUNDLE) {
++		if (req->opcode == IORING_OP_SENDMSG)
++			return -EINVAL;
++		if (!(req->flags & REQ_F_BUFFER_SELECT))
++			return -EINVAL;
++		sr->msg_flags |= MSG_WAITALL;
++		sr->buf_group = req->buf_index;
++		req->buf_list = NULL;
 +	}
+ 
+ #ifdef CONFIG_COMPAT
+ 	if (req->ctx->compat)
+@@ -427,6 +438,79 @@ static void io_req_msg_cleanup(struct io_kiocb *req,
+ 	io_netmsg_recycle(req, issue_flags);
+ }
+ 
++/*
++ * For bundle completions, we need to figure out how many segments we consumed.
++ * A bundle could be using a single ITER_UBUF if that's all we mapped, or it
++ * could be using an ITER_IOVEC. If the latter, then if we consumed all of
++ * the segments, then it's a trivial questiont o answer. If we have residual
++ * data in the iter, then loop the segments to figure out how much we
++ * transferred.
++ */
++static int io_bundle_nbufs(struct io_async_msghdr *kmsg, int ret)
++{
++	struct iovec *iov;
++	int nbufs;
++
++	/* no data is always zero segments, and a ubuf is always 1 segment */
++	if (ret <= 0)
++		return 0;
++	if (iter_is_ubuf(&kmsg->msg.msg_iter))
++		return 1;
++
++	iov = kmsg->free_iov;
++	if (!iov)
++		iov = &kmsg->fast_iov;
++
++	/* if all data was transferred, it's basic pointer math */
++	if (!iov_iter_count(&kmsg->msg.msg_iter))
++		return iter_iov(&kmsg->msg.msg_iter) - iov;
++
++	/* short transfer, count segments */
++	nbufs = 0;
++	do {
++		int this_len = min_t(int, iov[nbufs].iov_len, ret);
++
++		nbufs++;
++		ret -= this_len;
++	} while (ret);
++
++	return nbufs;
++}
++
++static inline bool io_send_finish(struct io_kiocb *req, int *ret,
++				  struct io_async_msghdr *kmsg,
++				  unsigned issue_flags)
++{
++	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
++	bool bundle_finished = *ret <= 0;
++	unsigned int cflags;
++
++	if (!(sr->flags & IORING_RECVSEND_BUNDLE)) {
++		cflags = io_put_kbuf(req, issue_flags);
++		goto finish;
++	}
++
++	cflags = io_put_kbufs(req, io_bundle_nbufs(kmsg, *ret), issue_flags);
++
++	if (bundle_finished || req->flags & REQ_F_BL_EMPTY)
++		goto finish;
 +
 +	/*
-+	 * only alloc a bigger array if we know we have data to map, eg not
-+	 * a speculative peek operation.
++	 * Fill CQE for this receive and see if we should keep trying to
++	 * receive from this socket.
 +	 */
-+	if (arg->mode & KBUF_MODE_EXPAND && nr_avail > nr_iovs && arg->max_len) {
-+		iov = kmalloc_array(nr_avail, sizeof(struct iovec), GFP_KERNEL);
-+		if (unlikely(!iov))
-+			return -ENOMEM;
-+		if (arg->mode & KBUF_MODE_FREE)
-+			kfree(arg->iovs);
-+		arg->iovs = iov;
-+		nr_iovs = nr_avail;
-+	} else if (nr_avail < nr_iovs) {
-+		nr_iovs = nr_avail;
++	if (io_req_post_cqe(req, *ret, cflags | IORING_CQE_F_MORE)) {
++		io_mshot_prep_retry(req, kmsg);
++		return false;
 +	}
 +
-+	/* set it to max, if not set, so we can use it unconditionally */
-+	if (!arg->max_len)
-+		arg->max_len = INT_MAX;
-+
-+	req->buf_index = buf->bid;
-+	do {
-+		/* truncate end piece, if needed */
-+		if (buf->len > arg->max_len)
-+			buf->len = arg->max_len;
-+
-+		iov->iov_base = u64_to_user_ptr(buf->addr);
-+		iov->iov_len = buf->len;
-+		iov++;
-+
-+		arg->out_len += buf->len;
-+		arg->max_len -= buf->len;
-+		if (!arg->max_len)
-+			break;
-+
-+		buf = io_ring_head_to_buf(br, ++head, bl->mask);
-+	} while (--nr_iovs);
-+
-+	if (head == tail)
-+		req->flags |= REQ_F_BL_EMPTY;
-+
-+	req->flags |= REQ_F_BUFFER_RING;
-+	req->buf_list = bl;
-+	return iov - arg->iovs;
++	/* Otherwise stop bundle and use the current result. */
++finish:
++	io_req_set_res(req, *ret, cflags);
++	*ret = IOU_OK;
++	return true;
 +}
 +
-+int io_buffers_select(struct io_kiocb *req, struct buf_sel_arg *arg,
-+		      unsigned int issue_flags)
-+{
-+	struct io_ring_ctx *ctx = req->ctx;
-+	struct io_buffer_list *bl;
-+	int ret = -ENOENT;
+ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
+@@ -482,7 +566,6 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
+ 	struct io_async_msghdr *kmsg = req->async_data;
+ 	struct socket *sock;
+-	unsigned int cflags;
+ 	unsigned flags;
+ 	int min_ret = 0;
+ 	int ret;
+@@ -495,21 +578,47 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
+ 		return -EAGAIN;
+ 
++	flags = sr->msg_flags;
++	if (issue_flags & IO_URING_F_NONBLOCK)
++		flags |= MSG_DONTWAIT;
 +
-+	io_ring_submit_lock(ctx, issue_flags);
-+	bl = io_buffer_get_list(ctx, req->buf_index);
-+	if (unlikely(!bl))
-+		goto out_unlock;
++retry_bundle:
+ 	if (io_do_buffer_select(req)) {
+-		size_t len = sr->len;
+-		void __user *buf;
++		struct buf_sel_arg arg = {
++			.iovs = &kmsg->fast_iov,
++			.max_len = min_not_zero(sr->len, INT_MAX),
++			.nr_iovs = 1,
++			.mode = KBUF_MODE_EXPAND,
++		};
 +
-+	if (bl->is_buf_ring) {
-+		ret = io_ring_buffers_peek(req, arg, bl);
-+		/*
-+		 * Don't recycle these buffers if we need to go through poll.
-+		 * Nobody else can use them anyway, and holding on to provided
-+		 * buffers for a send/write operation would happen on the app
-+		 * side anyway with normal buffers. Besides, we already
-+		 * committed them, they cannot be put back in the queue.
-+		 */
-+		if (ret > 0) {
-+			req->flags |= REQ_F_BL_NO_RECYCLE;
-+			req->buf_list->head += ret;
++		if (kmsg->free_iov) {
++			arg.nr_iovs = kmsg->free_iov_nr;
++			arg.iovs = kmsg->free_iov;
++			arg.mode |= KBUF_MODE_FREE;
 +		}
-+	} else {
-+		ret = io_provided_buffers_select(req, &arg->out_len, bl, arg->iovs);
-+	}
-+out_unlock:
-+	io_ring_submit_unlock(ctx, issue_flags);
+ 
+-		buf = io_buffer_select(req, &len, issue_flags);
+-		if (unlikely(!buf))
+-			return -ENOBUFS;
+-		sr->buf = buf;
+-		sr->len = len;
++		if (!(sr->flags & IORING_RECVSEND_BUNDLE))
++			arg.nr_iovs = 1;
++
++		ret = io_buffers_select(req, &arg, issue_flags);
++		if (unlikely(ret < 0))
++			return ret;
++
++		sr->len = arg.out_len;
++		iov_iter_init(&kmsg->msg.msg_iter, ITER_SOURCE, arg.iovs, ret,
++				arg.out_len);
++		if (arg.iovs != &kmsg->fast_iov && arg.iovs != kmsg->free_iov) {
++			kmsg->free_iov_nr = ret;
++			kmsg->free_iov = arg.iovs;
++		}
+ 	}
+ 
+-	flags = sr->msg_flags;
+-	if (issue_flags & IO_URING_F_NONBLOCK)
+-		flags |= MSG_DONTWAIT;
+-	if (flags & MSG_WAITALL)
++	/*
++	 * If MSG_WAITALL is set, or this is a bundle send, then we need
++	 * the full amount. If just bundle is set, if we do a short send
++	 * then we complete the bundle sequence rather than continue on.
++	 */
++	if (flags & MSG_WAITALL || sr->flags & IORING_RECVSEND_BUNDLE)
+ 		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
+ 
+ 	flags &= ~MSG_INTERNAL_SENDMSG_FLAGS;
+@@ -534,10 +643,12 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 		ret += sr->done_io;
+ 	else if (sr->done_io)
+ 		ret = sr->done_io;
++
++	if (!io_send_finish(req, &ret, kmsg, issue_flags))
++		goto retry_bundle;
++
+ 	io_req_msg_cleanup(req, issue_flags);
+-	cflags = io_put_kbuf(req, issue_flags);
+-	io_req_set_res(req, ret, cflags);
+-	return IOU_OK;
 +	return ret;
-+}
-+
-+int io_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg)
-+{
-+	struct io_ring_ctx *ctx = req->ctx;
-+	struct io_buffer_list *bl;
-+	int ret;
-+
-+	lockdep_assert_held(&ctx->uring_lock);
-+
-+	bl = io_buffer_get_list(ctx, req->buf_index);
-+	if (unlikely(!bl))
-+		return -ENOENT;
-+
-+	if (bl->is_buf_ring) {
-+		ret = io_ring_buffers_peek(req, arg, bl);
-+		if (ret > 0)
-+			req->flags |= REQ_F_BUFFERS_COMMIT;
-+		return ret;
-+	}
-+
-+	/* don't support multiple buffer selections for legacy */
-+	return io_provided_buffers_select(req, &arg->max_len, bl, arg->iovs);
-+}
-+
- static int __io_remove_buffers(struct io_ring_ctx *ctx,
- 			       struct io_buffer_list *bl, unsigned nbufs)
- {
-diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index 5a9635ee0217..b90aca3a57fa 100644
---- a/io_uring/kbuf.h
-+++ b/io_uring/kbuf.h
-@@ -41,8 +41,26 @@ struct io_buffer {
- 	__u16 bgid;
- };
- 
-+enum {
-+	/* can alloc a bigger vec */
-+	KBUF_MODE_EXPAND	= 1,
-+	/* if bigger vec allocated, free old one */
-+	KBUF_MODE_FREE		= 2,
-+};
-+
-+struct buf_sel_arg {
-+	struct iovec *iovs;
-+	size_t out_len;
-+	size_t max_len;
-+	int nr_iovs;
-+	int mode;
-+};
-+
- void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
- 			      unsigned int issue_flags);
-+int io_buffers_select(struct io_kiocb *req, struct buf_sel_arg *arg,
-+		      unsigned int issue_flags);
-+int io_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg);
- void io_destroy_buffers(struct io_ring_ctx *ctx);
- 
- int io_remove_buffers_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-@@ -75,7 +93,7 @@ static inline bool io_kbuf_recycle_ring(struct io_kiocb *req)
- 	 */
- 	if (req->buf_list) {
- 		req->buf_index = req->buf_list->bgid;
--		req->flags &= ~REQ_F_BUFFER_RING;
-+		req->flags &= ~(REQ_F_BUFFER_RING|REQ_F_BUFFERS_COMMIT);
- 		return true;
- 	}
- 	return false;
-@@ -99,11 +117,16 @@ static inline bool io_kbuf_recycle(struct io_kiocb *req, unsigned issue_flags)
- 	return false;
  }
  
--static inline void __io_put_kbuf_ring(struct io_kiocb *req)
-+static inline void __io_put_kbuf_ring(struct io_kiocb *req, int nr)
- {
--	if (req->buf_list) {
--		req->buf_index = req->buf_list->bgid;
--		req->buf_list->head++;
-+	struct io_buffer_list *bl = req->buf_list;
-+
-+	if (bl) {
-+		if (req->flags & REQ_F_BUFFERS_COMMIT) {
-+			bl->head += nr;
-+			req->flags &= ~REQ_F_BUFFERS_COMMIT;
-+		}
-+		req->buf_index = bl->bgid;
- 	}
- 	req->flags &= ~REQ_F_BUFFER_RING;
- }
-@@ -112,7 +135,7 @@ static inline void __io_put_kbuf_list(struct io_kiocb *req,
- 				      struct list_head *list)
- {
- 	if (req->flags & REQ_F_BUFFER_RING) {
--		__io_put_kbuf_ring(req);
-+		__io_put_kbuf_ring(req, 1);
- 	} else {
- 		req->buf_index = req->kbuf->bgid;
- 		list_add(&req->kbuf->list, list);
-@@ -130,8 +153,8 @@ static inline void io_kbuf_drop(struct io_kiocb *req)
- 	__io_put_kbuf_list(req, &req->ctx->io_buffers_comp);
- }
- 
--static inline unsigned int io_put_kbuf(struct io_kiocb *req,
--				       unsigned issue_flags)
-+static inline unsigned int __io_put_kbufs(struct io_kiocb *req, int nbufs,
-+					  unsigned issue_flags)
- {
- 	unsigned int ret;
- 
-@@ -140,9 +163,21 @@ static inline unsigned int io_put_kbuf(struct io_kiocb *req,
- 
- 	ret = IORING_CQE_F_BUFFER | (req->buf_index << IORING_CQE_BUFFER_SHIFT);
- 	if (req->flags & REQ_F_BUFFER_RING)
--		__io_put_kbuf_ring(req);
-+		__io_put_kbuf_ring(req, nbufs);
- 	else
- 		__io_put_kbuf(req, issue_flags);
- 	return ret;
- }
-+
-+static inline unsigned int io_put_kbuf(struct io_kiocb *req,
-+				       unsigned issue_flags)
-+{
-+	return __io_put_kbufs(req, 1, issue_flags);
-+}
-+
-+static inline unsigned int io_put_kbufs(struct io_kiocb *req, int nbufs,
-+					unsigned issue_flags)
-+{
-+	return __io_put_kbufs(req, nbufs, issue_flags);
-+}
- #endif
+ static int io_recvmsg_mshot_prep(struct io_kiocb *req,
 -- 
 2.43.0
 

@@ -1,132 +1,151 @@
-Return-Path: <io-uring+bounces-1617-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1618-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B8F8AE8F6
-	for <lists+io-uring@lfdr.de>; Tue, 23 Apr 2024 16:02:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294A28AFD6D
+	for <lists+io-uring@lfdr.de>; Wed, 24 Apr 2024 02:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE65A1C22220
-	for <lists+io-uring@lfdr.de>; Tue, 23 Apr 2024 14:02:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBA87B22033
+	for <lists+io-uring@lfdr.de>; Wed, 24 Apr 2024 00:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F602136E2F;
-	Tue, 23 Apr 2024 14:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BB323BE;
+	Wed, 24 Apr 2024 00:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqMi1mje"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hg8uUM4s"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60081136E16
-	for <io-uring@vger.kernel.org>; Tue, 23 Apr 2024 14:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C749D4A1A
+	for <io-uring@vger.kernel.org>; Wed, 24 Apr 2024 00:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713880829; cv=none; b=jtol5Vu6VIXHa2L599o3cRnJrY1PH/uvKLkp6uYVBPiIKnxxidaqLMYknQA2S/Yw7bXZkaZGDIA+y3G1qggs8aV4XbrSE0d9runhIWRFJ8tS85GVjwJ93vIfy0aZ1aSOMZQQBvGumqo2+sw/FqiU5Yy8tRMUgPxncwy/8dsFsIU=
+	t=1713919615; cv=none; b=j1JtLb7TzjrhWj0ZPmUbIKAjLJB1QZVr7oC6Zvr1GfsB5By/aqmKFkyH+aGdmZPhDk+f6mGqcbA6gpQe6lgnUtZIL40+K6upaAzBTqCuXHsOL3CXxM4fntjPvtyXVaSlQUh7Ex8Bg3mAI8yNLkV/RVxP6b856yeQBwwutcatQ+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713880829; c=relaxed/simple;
-	bh=fdG0lUycG4+G0NJGzuHGQBcXFgunv41aUBJuRHuolF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u5pV5LyITbKStcDZGrOFNSfJ4ViwjCtk56wrtcIUnWwEzzctz9pFGftpe7IEBpmhm5Th1WOeJZZ+lPWgYlyOB8s0t+/5Mfjh2IwzEi1cevOuIHRrqlRYkQaIu3XRi8Guou7oyjymVzbWEJqw2iPAJ68NasJnqFU2tMwMQSn8h6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqMi1mje; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a58872c07d8so37890166b.0
-        for <io-uring@vger.kernel.org>; Tue, 23 Apr 2024 07:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713880826; x=1714485626; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vyhe52+b5Mb9L3zncfxvKgt3H9MsSKPyrO4DPzjlvhI=;
-        b=JqMi1mjewuJ3eYFhA3/4J0Mh749cgIXMIDnvB+YZjuxPdKEBdSB7Zuq87RkQv/9mS7
-         5mL/ZZP0JRUj+eSNUcb6mRxmTI5ctTG4boiJyziStOx2twxH6XTN/UiMpVdKaux7XjB9
-         /cmxucAjSWc61DF4jLsbPeNbF+po5xRwV9I9KELEf3aZ7OUimIfzVFAhIuM9JhZnS6yQ
-         9GTRohiCouyxuXGvGcw9eY+9wuQloIolO9P3tcs8UTKIpIe8wbYn3OQ8MsSWl3ymSaus
-         KEw/AyiPurLyFWvIn8G+vDqRnGEMKe357Ijn9JDYi+QAyoHBviTtw8OaR9i00+ChnFAv
-         Oldw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713880826; x=1714485626;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vyhe52+b5Mb9L3zncfxvKgt3H9MsSKPyrO4DPzjlvhI=;
-        b=GT4AnvUY0giCxezFr8UDgofkxCJFPpy1Q6GZXN/QdBrprRB/M3VfMgeBrSZ+g9oG7M
-         8KBoeokEY3qt/qx2qq7rAxOONLQq4P2tEEJqNI3GWnzh6TSeeE+4UoMQXBxVneEI6A+f
-         RRPRo8fTxUf6gthVZiEFJve38jYacUhshyRqZubZrkV3uQa02lfcUHewSCaiIJwYE+ZI
-         ooQdbH2XyqgVSJ4Lbx3Zo+evxpRS3OuxQgMlJIVjGLMA3os8UkY95CQHeLQRrFIkSRBm
-         aFqY/4cj3buBNoaMR9WCArIhBLVIYU4x3NjChvtWAuwo92H8zsBi8UENp4Nvdyu3l+dQ
-         J3Gg==
-X-Gm-Message-State: AOJu0YwKn8NTLmNVkN9QovexDCigZGX0a6LxRHANZSCKEENFY5yCCPvm
-	QVQRRS7dBUtniQ54rwyFP73XZk+/aRZ1MfLLsn91PgQiCpnXU6nYZYIOlg==
-X-Google-Smtp-Source: AGHT+IH4P+HW8Jfa1UY8DrC7HE9ogH/1EgeJllSn0xSVtpyLDsK4t8xrxRsnYNxOyGYoTjFEBDlIaQ==
-X-Received: by 2002:a17:906:c248:b0:a58:7bc5:26c0 with SMTP id bl8-20020a170906c24800b00a587bc526c0mr2203059ejb.30.1713880825345;
-        Tue, 23 Apr 2024 07:00:25 -0700 (PDT)
-Received: from [192.168.42.88] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id jp4-20020a170906f74400b00a4734125fd2sm7106659ejb.31.2024.04.23.07.00.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Apr 2024 07:00:25 -0700 (PDT)
-Message-ID: <be81e7b5-06b4-463e-85cf-acee80c452d4@gmail.com>
-Date: Tue, 23 Apr 2024 15:00:29 +0100
+	s=arc-20240116; t=1713919615; c=relaxed/simple;
+	bh=tYlbw/pKwD/r8Gw5MGbGl8jMwfpelqNv+nZ80pbXq88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ebalnJ/Hu2PpPLK6rTykGWRC/Xun2mceMdSCCwlNe7TEveKnRIEgZr1Lq0m9FbPh8pDmSVkqAT8WPxfOC+wehKRmdfh+Odm4o0Pc0j71/Llv6dNxseXWSvKCX8t9YplHhmdQtsWjU6DDnxJAo8IvjNSoYUvKsjLXmuaRxHcocc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hg8uUM4s; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713919612;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3j5Urzh+140KLZbwLI03YxQoR4KLY5IJrkFu8L5hfkg=;
+	b=hg8uUM4s4HB3HIBR3tjmupuE6egGSZ+YLjO86yIK0D4aurwR69lBpJLhgo417Gi3eEcMYu
+	TJNqIuNr+hmcLHmyTIivYWqo1BK5SqNHPlaKWpRXg1YpykWeRhBOnWvPFNCucOzzih8B9H
+	Q55eceUAhWdRZ3uaNIcBmo1tqUkywKg=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-288-rImn7pH6MKayPPuZ6_dZ_g-1; Tue,
+ 23 Apr 2024 20:46:49 -0400
+X-MC-Unique: rImn7pH6MKayPPuZ6_dZ_g-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E32103C0008F;
+	Wed, 24 Apr 2024 00:46:48 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.33])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id E9CEF3543A;
+	Wed, 24 Apr 2024 00:46:45 +0000 (UTC)
+Date: Wed, 24 Apr 2024 08:46:41 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Kevin Wolf <kwolf@redhat.com>
+Subject: Re: [PATCH 5/9] io_uring: support SQE group
+Message-ID: <ZihWcV8+3rfyYxGI@fedora>
+References: <20240408010322.4104395-1-ming.lei@redhat.com>
+ <20240408010322.4104395-6-ming.lei@redhat.com>
+ <e36cc8de-3726-4479-8fbd-f54fd21465a2@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rw: ensure retry isn't lost for write
-To: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk
-Cc: io-uring@vger.kernel.org, anuj1072538@gmail.com
-References: <CGME20240422134215epcas5p4b5dcd1a5cd0308be5e43f691d7f92947@epcas5p4.samsung.com>
- <20240422133517.2588-1-anuj20.g@samsung.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240422133517.2588-1-anuj20.g@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e36cc8de-3726-4479-8fbd-f54fd21465a2@kernel.dk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On 4/22/24 14:35, Anuj Gupta wrote:
-> In case of write, the iov_iter gets updated before retry kicks in.
-> Restore the iov_iter before retrying. It can be reproduced by issuing
-> a write greater than device limit.
+On Mon, Apr 22, 2024 at 12:27:28PM -0600, Jens Axboe wrote:
+> On 4/7/24 7:03 PM, Ming Lei wrote:
+> > SQE group is defined as one chain of SQEs starting with the first sqe that
+> > has IOSQE_EXT_SQE_GROUP set, and ending with the first subsequent sqe that
+> > doesn't have it set, and it is similar with chain of linked sqes.
+> > 
+> > The 1st SQE is group leader, and the other SQEs are group member. The group
+> > leader is always freed after all members are completed. Group members
+> > aren't submitted until the group leader is completed, and there isn't any
+> > dependency among group members, and IOSQE_IO_LINK can't be set for group
+> > members, same with IOSQE_IO_DRAIN.
+> > 
+> > Typically the group leader provides or makes resource, and the other members
+> > consume the resource, such as scenario of multiple backup, the 1st SQE is to
+> > read data from source file into fixed buffer, the other SQEs write data from
+> > the same buffer into other destination files. SQE group provides very
+> > efficient way to complete this task: 1) fs write SQEs and fs read SQE can be
+> > submitted in single syscall, no need to submit fs read SQE first, and wait
+> > until read SQE is completed, 2) no need to link all write SQEs together, then
+> > write SQEs can be submitted to files concurrently. Meantime application is
+> > simplified a lot in this way.
+> > 
+> > Another use case is to for supporting generic device zero copy:
+> > 
+> > - the lead SQE is for providing device buffer, which is owned by device or
+> >   kernel, can't be cross userspace, otherwise easy to cause leak for devil
+> >   application or panic
+> > 
+> > - member SQEs reads or writes concurrently against the buffer provided by lead
+> >   SQE
 > 
-> Fixes: df604d2ad480 (io_uring/rw: ensure retry condition isn't lost)
+> In concept, this looks very similar to "sqe bundles" that I played with
+> in the past:
 > 
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> ---
->   io_uring/rw.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+> https://git.kernel.dk/cgit/linux/log/?h=io_uring-bundle
+
+Indeed, so looks it is something which io_uring needs.
+
 > 
-> diff --git a/io_uring/rw.c b/io_uring/rw.c
-> index 4fed829fe97c..9fadb29ec34f 100644
-> --- a/io_uring/rw.c
-> +++ b/io_uring/rw.c
-> @@ -1035,8 +1035,10 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
->   	else
->   		ret2 = -EINVAL;
->   
-> -	if (req->flags & REQ_F_REISSUE)
-> +	if (req->flags & REQ_F_REISSUE) {
-> +		iov_iter_restore(&io->iter, &io->iter_state);
->   		return IOU_ISSUE_SKIP_COMPLETE;
+> Didn't look too closely yet at the implementation, but in spirit it's
+> about the same in that the first entry is processed first, and there's
+> no ordering implied between the test of the members of the bundle /
+> group.
 
-That's races with resubmission of the request, if it can happen from
-io-wq that'd corrupt the iter. Nor I believe that the fix that this
-patch fixes is correct, see
+Yeah.
 
-https://lore.kernel.org/linux-block/Zh505790%2FoufXqMn@fedora/T/#mb24d3dca84eb2d83878ea218cb0efaae34c9f026
+> 
+> I do think that's a flexible thing to support, particularly if:
+> 
+> 1) We can do it more efficiently than links, which are pretty horrible.
 
-Jens, I'd suggest to revert "io_uring/rw: ensure retry condition
-isn't lost". I don't think we can sanely reissue from the callback
-unless there are better ownership rules over kiocb and iter, e.g.
-never touch the iter after calling the kiocb's callback.
+Agree, link is hard to use in async/.await of modern language per my
+experience.
 
-> +	}
->   
->   	/*
->   	 * Raw bdev writes will return -EOPNOTSUPP for IOCB_NOWAIT. Just
+Also sqe group won't break link, and the group is thought as a whole
+wrt. linking.
 
--- 
-Pavel Begunkov
+> 2) It enables new worthwhile use cases
+> 3) It's done cleanly 
+> 4) It's easily understandable and easy to document, so that users will
+>    actually understand what this is and what use cases it enable. Part
+>    of that is actually naming, it should be readily apparent what a
+>    group is, what the lead is, and what the members are. Using your
+>    terminology here, definitely worth spending some time on that to get
+>    it just right and self evident.
+
+All are nice suggestions, and I will follow above and make them in V2.
+
+
+Thanks,
+Ming
+
 

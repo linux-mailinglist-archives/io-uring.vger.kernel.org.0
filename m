@@ -1,244 +1,356 @@
-Return-Path: <io-uring+bounces-1627-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1628-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3CF8B24DB
-	for <lists+io-uring@lfdr.de>; Thu, 25 Apr 2024 17:16:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5068B2857
+	for <lists+io-uring@lfdr.de>; Thu, 25 Apr 2024 20:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 294DC1F215D9
-	for <lists+io-uring@lfdr.de>; Thu, 25 Apr 2024 15:16:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5224281D7A
+	for <lists+io-uring@lfdr.de>; Thu, 25 Apr 2024 18:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFF03BBE5;
-	Thu, 25 Apr 2024 15:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A715112C559;
+	Thu, 25 Apr 2024 18:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0vCN5OI7"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QdNVJyGe"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AB437152
-	for <io-uring@vger.kernel.org>; Thu, 25 Apr 2024 15:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E1A12C463
+	for <io-uring@vger.kernel.org>; Thu, 25 Apr 2024 18:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714058201; cv=none; b=n9fI3rvaRWrfv8zJe61O3kU6UQyPkCfEfM1ZefP9O4bdUL/YBMoXzNg0HQl448FbHVB5WWxTMeRNS5R9n9ZrSYmMaPrh9ic3GF33RlEOvlOwY8Za05r4tW4RpRa7ZUTEdJJ/SSocujer/nPdMoYMwqqMSrvAUcy060uqtPPDph0=
+	t=1714070823; cv=none; b=h2U/c/5zFgm+5dVyE51bdA7Z1SslqIFqepaEJw1MA+FZ3CW9uAGzHo1RvQDGJvVzEjfVR80+ArCxcIkWyWZ9rJCJdP2mbvK7XSdOBdQ9RvwFN/k2MxLRdmWRUWg4gh3or01Aa4P30Qd5MMD109sO9lBs/cZxVg8YTLfRxF40jLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714058201; c=relaxed/simple;
-	bh=O24RCIdmgaSw8A83ApoPGk7xnERRIUHWEwKoKKxDHOs=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=aVBiXKjsrmrbctePwG8PC0jmv7zdkBiXoYdBPiIcEiqfBouTfJUceXDVTn6J16DwUGp+pNWBieojwrlZfuqD3nSBWQZV+yUsu1p3ljXqTaSvK0g+UWTGA6C14BMuszGCubTEONoLd7YL4TxLrepAnCPjje4U9jGbcrY2rlfF6b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0vCN5OI7; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7de9c791a26so6572439f.1
-        for <io-uring@vger.kernel.org>; Thu, 25 Apr 2024 08:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1714058197; x=1714662997; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dloQR773UbUq+vMLAd1SwoCkzZOd9x/cRnuJPpkszsk=;
-        b=0vCN5OI7/gLOG/bkpSpgLLZ/fjOZFilCFtwYkfsF1DOsV/3fscpZYDDAvTHXvt30Ws
-         1MLKGsMDRdHrigKM7lbZSfy1cYs4D9q3AJspvdsUZpYJ9eBbAe+p0I117TAtKhkX3DXG
-         BWPk30QKguolBmENgcrODSMGlvkQINn57mTH83Axc8jZElTVKfpCVluKgjud+UN3+bpk
-         JyfUGD7HTgESY2wD01Y22nbDsgTBDDFoIap1sCU96e56XKfcgXeCLj+/pws1M1SvGr1i
-         b1zIDZ3oWj5T7AVr6pYbUIhb5LfPL+jkD/BrnQKOfrxtPqSpZex+kIdDK77m39NvHwuy
-         GCeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714058197; x=1714662997;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dloQR773UbUq+vMLAd1SwoCkzZOd9x/cRnuJPpkszsk=;
-        b=q35mZTvtlcH8l0JyIJF+Wl3tgI39BFKz3TaAdE3jfpkNgGx8Ph9FKqyMw+N+qBb3PS
-         eKHxlGiyRXfC4jj7EI7GWFBp7A5k8xGueHfeKraI8ctR03ppSKj1OTk9VNr5agnCDCrc
-         i/ou0dVgyGFN0eDQqFkByoY2Uh004LD6JkXpwHuN/S43M1JwDHq9uZVsMbMo8VGHq0kN
-         +6XsZNhpI+Ck/Qw/okNy7pDkYeQYQ1Tmjl/xLf2lgckezX9TxCIDvEmMJiAzvgcUkxxN
-         OGtjziRm892AlEw8aCkJCfMqq8jNXdDGfp6xFQz1oXSxmtG6TfNQ6cjc4QIe36LWbxtN
-         i8QQ==
-X-Gm-Message-State: AOJu0Yzn2Qi1rAXDUz3ugg9ExU5LHfkCO9EAme6MhBMAJtGE00gCzwhc
-	tsxbwYKPS0s9QMlGyhSh+8OnLXcp+zGR998f8ms1oTkLcjoNnjD8VlH08EyH1jeySzqKv3PQFj3
-	y
-X-Google-Smtp-Source: AGHT+IGszkTSvDKQGOGGF5VggdTgZhZ2yY1LnbZfFAwixqvEVGC2KeYysSL0oaZS2XZeVq53xMrd7A==
-X-Received: by 2002:a5d:954f:0:b0:7da:7278:be09 with SMTP id a15-20020a5d954f000000b007da7278be09mr6815578ios.2.1714058197418;
-        Thu, 25 Apr 2024 08:16:37 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id l10-20020a05663814ca00b0048485c3d865sm4940972jak.101.2024.04.25.08.16.36
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Apr 2024 08:16:37 -0700 (PDT)
-Message-ID: <8e74cff8-2a7f-4883-9bff-1fbc22570a47@kernel.dk>
-Date: Thu, 25 Apr 2024 09:16:36 -0600
+	s=arc-20240116; t=1714070823; c=relaxed/simple;
+	bh=h/g7SrCdBNJfFbgaS9xsbVkJ2hSGYvQP2fdZoqHUugU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=Ak9VFY+85yhe4u2DphVzoIXUdrKUfUYwmHFbcOTHKkHvnsG2t/wg9BTBvb9XMWCtYWNy9/unqp4aeuNZJMniVTvCUkCXi74EomTY7Cqb/R8nE2CM4MipoNGIXp/acntrpQjwsFanIm6+U/ijL2TAGz5otVQWfPM6srTRFVxIIjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QdNVJyGe; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240425184652epoutp03bd4f0d5b060b2765492c7e1ef6d3e2ca~JmlJ0SitS2203222032epoutp03Z
+	for <io-uring@vger.kernel.org>; Thu, 25 Apr 2024 18:46:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240425184652epoutp03bd4f0d5b060b2765492c7e1ef6d3e2ca~JmlJ0SitS2203222032epoutp03Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1714070812;
+	bh=TDCdrILbFtttdG8lji0oxmKuVLyeKWNP7JmMpo2fgk0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=QdNVJyGeaYAcCTTJbq3KE32DKw75kYsk7f22VL3rEYALQR+LDjceiMcQTNLdNM/FK
+	 QvG6Iem/6zuqK/L6tXKSwTK50o22DNpUq4Xz8K6b2+FsRKh1ICVIWzqRzi86u0gQWk
+	 MoUXu8oeCHOpT5a3lHAXJZW7GmyitzaXBCF6mRMI=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240425184651epcas5p499b39d72a9156fecd9f95d89172ff94b~JmlJVZGeC1507915079epcas5p4X;
+	Thu, 25 Apr 2024 18:46:51 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4VQPwB28tDz4x9Pq; Thu, 25 Apr
+	2024 18:46:50 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4C.AC.09688.A15AA266; Fri, 26 Apr 2024 03:46:50 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240425184649epcas5p42f6ddbfb1c579f043a919973c70ebd03~JmlH0KWwt1507515075epcas5p4T;
+	Thu, 25 Apr 2024 18:46:49 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240425184649epsmtrp29af0648699d87d5f21516132f3c20000~JmlHzctEY0239002390epsmtrp2X;
+	Thu, 25 Apr 2024 18:46:49 +0000 (GMT)
+X-AuditID: b6c32a4a-5dbff700000025d8-db-662aa51a4f8f
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4E.D7.08924.915AA266; Fri, 26 Apr 2024 03:46:49 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240425184648epsmtip144b385e99aad1a1a23a04047950fa823~JmlGBoP2v2930429304epsmtip1e;
+	Thu, 25 Apr 2024 18:46:47 +0000 (GMT)
+From: Kanchan Joshi <joshi.k@samsung.com>
+To: axboe@kernel.dk, martin.petersen@oracle.com, kbusch@kernel.org,
+	hch@lst.de, brauner@kernel.org
+Cc: asml.silence@gmail.com, dw@davidwei.uk, io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, Kanchan Joshi <joshi.k@samsung.com>
+Subject: [PATCH 00/10] Read/Write with meta/integrity
+Date: Fri, 26 Apr 2024 00:09:33 +0530
+Message-Id: <20240425183943.6319-1-joshi.k@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/rw: reinstate thread check for retries
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmuq7UUq00gxVXuC3mrNrGaLH6bj+b
+	xevDnxgtXs1Yy2Zx88BOJouVq48yWbxrPcdicfT/WzaLSYeuMVrsvaVtMX/ZU3aL5cf/MTnw
+	eFybMZHFY+esu+wel8+Wemxa1cnmsXlJvcfumw1sHh+f3mLx6NuyitHj8ya5AM6obJuM1MSU
+	1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoIOVFMoSc0qBQgGJ
+	xcVK+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZu6dsYi/Y
+	a1lxYP09tgbG+WpdjJwcEgImEm//zGDuYuTiEBLYzSjR+WwpI4TziVFi2+lVUM43RolzS74y
+	w7TsvLcWKrGXUWLD7+esEM5nRomz1yaydTFycLAJaEpcmFwK0iAikCLxat1rsAZmgQOMEoue
+	P2EDSQgLmEqcWfYCbCqLgKrE9+0HwOK8AuYS5zdfg9omLzHz0nd2iLigxMmZT1hAbGagePPW
+	2WCHSwj0ckgcuvYCqsFFYu29ZlYIW1ji1fEt7BC2lMTnd3vZIOxkiUszzzFB2CUSj/cchLLt
+	JVpP9TODPMAM9MD6XfoQu/gken8/YQIJSwjwSnS0CUFUK0rcm/QUapO4xMMZS6BsD4neT7MY
+	QWwhgViJyW8+M01glJuF5INZSD6YhbBsASPzKkbJ1ILi3PTUYtMCo7zUcnhkJufnbmIEp1Ut
+	rx2MDx980DvEyMTBeIhRgoNZSYT35keNNCHelMTKqtSi/Pii0pzU4kOMpsBgncgsJZqcD0zs
+	eSXxhiaWBiZmZmYmlsZmhkrivK9b56YICaQnlqRmp6YWpBbB9DFxcEo1MKVvMn1kUzy/U+SZ
+	n/KNg07Kd95umV8RxaLlv6LSInTpU5mjQf5nGBhn6P1QCfFlEC7sulv5irfsmn/Sa6bPNv0B
+	vWfUzx49V719RpbNoc2njCf6W0ib/vn2ZIb6Vq7WaeWmn1dPPOtWPvPMzMMn/B30pEUMVJUF
+	/U961z/V/dPiVfEyr/yAr/DeNw6GLYdnm04sOpc1Z6OSffeEhOPLTr9dpjZllo5ctO4JfbtC
+	6+Q1uwTMH599IK6WuG52xCTFyGuXkncVrF+9bfaeohWPrn6z+MBh/lB9hmjwfV6TecbHbyfM
+	YhP/t6+pVJ35yG+3sHO5qu6li6eub6pV2OP+Xq3AXVZyLWdT69ykJb8XrFViKc5INNRiLipO
+	BABgwEvfNAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJLMWRmVeSWpSXmKPExsWy7bCSnK7kUq00gwuNRhZzVm1jtFh9t5/N
+	4vXhT4wWr2asZbO4eWAnk8XK1UeZLN61nmOxOPr/LZvFpEPXGC323tK2mL/sKbvF8uP/mBx4
+	PK7NmMjisXPWXXaPy2dLPTat6mTz2Lyk3mP3zQY2j49Pb7F49G1ZxejxeZNcAGcUl01Kak5m
+	WWqRvl0CV8buKZvYC/ZaVhxYf4+tgXG+WhcjJ4eEgInEzntrGbsYuTiEBHYzShxsPcwCkRCX
+	aL72gx3CFpZY+e85O0TRR0aJi+17mLsYOTjYBDQlLkwuBakREciS2Nt/BayGWeAEo8Sh+YfB
+	moUFTCXOLHvBDGKzCKhKfN9+gA3E5hUwlzi/+RozxAJ5iZmXvrNDxAUlTs58AnYEM1C8eets
+	5gmMfLOQpGYhSS1gZFrFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7iREc+lqaOxi3r/qg
+	d4iRiYPxEKMEB7OSCO/NjxppQrwpiZVVqUX58UWlOanFhxilOViUxHnFX/SmCAmkJ5akZqem
+	FqQWwWSZODilGpi01M7ut5r8/+GDD/5LYrZM/dDKt6Fflidw7+TEqZVJK+/trrxxrkfNyO5q
+	fv/8rcXLcpz5c8SNn/1TE/uSKxwb8vCXfHe3X8/mf958T/tsDi/1yTlnzRrxL1FlW6/sDfVt
+	/QxGzJdyZ+8PDTSRqttcZXCsPn9SddLuys99UzZ91X6xXNHNurxs76uAK8Ycq2vCxbb+DXxR
+	/zlo9cv0wxxnWK5lN3L+Sf/t+td8gUrUweBoL3azezO/7Y2Xj50qL8R0QLE0L1+HK7siQ8fR
+	vHHdlL+ql8pPMsQ4P99dbdNXUdz1iO88Q3qw6M1DX3/2vOtxvFY3+YSc0Y//FnP2lJhJW9/k
+	urjznICnhvDmI0osxRmJhlrMRcWJACHLJVbsAgAA
+X-CMS-MailID: 20240425184649epcas5p42f6ddbfb1c579f043a919973c70ebd03
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240425184649epcas5p42f6ddbfb1c579f043a919973c70ebd03
+References: <CGME20240425184649epcas5p42f6ddbfb1c579f043a919973c70ebd03@epcas5p4.samsung.com>
 
-Allowing retries for everything is arguably the right thing to do, now
-that every command type is async read from the start. But it's exposed a
-few issues around missing check for a retry (which cca6571381a0 exposed),
-and the fixup commit for that isn't necessarily 100% sound in terms of
-iov_iter state.
+This adds a new io_uring interface to specify meta along with
+read/write. Beyond reading/writing meta, the interface also enables
+(a) flags to control data-integrity checks, (b) application tag.
 
-For now, just revert these two commits. This unfortunately then re-opens
-the fact that -EAGAIN can get bubbled to userspace for some cases where
-the kernel very well could just sanely retry them. But until we have all
-the conditions covered around that, we cannot safely enable that.
+Block path (direct IO) and NVMe driver are modified to support
+this.
 
-This reverts commit df604d2ad480fcf7b39767280c9093e13b1de952.
-This reverts commit cca6571381a0bdc88021a1f7a4c2349df21279f7.
+First 5 patches are enhancements/fixes in the block/nvme so that user meta buffer
+(mostly when it gets split) is handled correctly.
+Patch 8 adds the io_uring support.
+Patch 9 adds the support for block direct IO, and patch 10 for NVMe.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Interface:
+Two new opcodes in io_uring: IORING_OP_READ/WRITE_META.
+The leftover space in SQE is used to send meta buffer, its length,
+apptag, and meta flags (guard/reftag/apptag check for now). Example
+program on how to use the interface is appended below [1]
 
----
+Another design choice will be not to introduce the new opcodes, and add
+new RWF_META flag instead. Open to that in next version.
+As for new meta flags, RWF_* seemed a bit precious to use. Hence took the route
+to carve those within the SQE itself.
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 64845634d89f..2675cffbd9a4 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -527,19 +527,6 @@ static void io_queue_iowq(struct io_kiocb *req)
- 		io_queue_linked_timeout(link);
- }
- 
--static void io_tw_requeue_iowq(struct io_kiocb *req, struct io_tw_state *ts)
--{
--	req->flags &= ~REQ_F_REISSUE;
--	io_queue_iowq(req);
--}
--
--void io_tw_queue_iowq(struct io_kiocb *req)
--{
--	req->flags |= REQ_F_REISSUE | REQ_F_BL_NO_RECYCLE;
--	req->io_task_work.func = io_tw_requeue_iowq;
--	io_req_task_work_add(req);
--}
--
- static __cold void io_queue_deferred(struct io_ring_ctx *ctx)
- {
- 	while (!list_empty(&ctx->defer_list)) {
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index b83a719c5443..624ca9076a50 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -75,7 +75,6 @@ struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
- void __io_req_task_work_add(struct io_kiocb *req, unsigned flags);
- bool io_alloc_async_data(struct io_kiocb *req);
- void io_req_task_queue(struct io_kiocb *req);
--void io_tw_queue_iowq(struct io_kiocb *req);
- void io_req_task_complete(struct io_kiocb *req, struct io_tw_state *ts);
- void io_req_task_queue_fail(struct io_kiocb *req, int ret);
- void io_req_task_submit(struct io_kiocb *req, struct io_tw_state *ts);
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 4fed829fe97c..a6bf2ea8db91 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -396,9 +396,16 @@ static inline loff_t *io_kiocb_update_pos(struct io_kiocb *req)
- 	return NULL;
- }
- 
-+#ifdef CONFIG_BLOCK
-+static void io_resubmit_prep(struct io_kiocb *req)
-+{
-+	struct io_async_rw *io = req->async_data;
-+
-+	iov_iter_restore(&io->iter, &io->iter_state);
-+}
-+
- static bool io_rw_should_reissue(struct io_kiocb *req)
- {
--#ifdef CONFIG_BLOCK
- 	umode_t mode = file_inode(req->file)->i_mode;
- 	struct io_ring_ctx *ctx = req->ctx;
- 
-@@ -414,11 +421,23 @@ static bool io_rw_should_reissue(struct io_kiocb *req)
- 	 */
- 	if (percpu_ref_is_dying(&ctx->refs))
- 		return false;
-+	/*
-+	 * Play it safe and assume not safe to re-import and reissue if we're
-+	 * not in the original thread group (or in task context).
-+	 */
-+	if (!same_thread_group(req->task, current) || !in_task())
-+		return false;
- 	return true;
-+}
- #else
-+static void io_resubmit_prep(struct io_kiocb *req)
-+{
-+}
-+static bool io_rw_should_reissue(struct io_kiocb *req)
-+{
- 	return false;
--#endif
- }
-+#endif
- 
- static void io_req_end_write(struct io_kiocb *req)
- {
-@@ -455,7 +474,7 @@ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
- 			 * current cycle.
- 			 */
- 			io_req_io_end(req);
--			io_tw_queue_iowq(req);
-+			req->flags |= REQ_F_REISSUE | REQ_F_BL_NO_RECYCLE;
- 			return true;
- 		}
- 		req_set_fail(req);
-@@ -521,7 +540,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
- 		io_req_end_write(req);
- 	if (unlikely(res != req->cqe.res)) {
- 		if (res == -EAGAIN && io_rw_should_reissue(req)) {
--			io_tw_queue_iowq(req);
-+			req->flags |= REQ_F_REISSUE | REQ_F_BL_NO_RECYCLE;
- 			return;
- 		}
- 		req->cqe.res = res;
-@@ -583,10 +602,8 @@ static int kiocb_done(struct io_kiocb *req, ssize_t ret,
- 	}
- 
- 	if (req->flags & REQ_F_REISSUE) {
--		struct io_async_rw *io = req->async_data;
--
- 		req->flags &= ~REQ_F_REISSUE;
--		iov_iter_restore(&io->iter, &io->iter_state);
-+		io_resubmit_prep(req);
- 		return -EAGAIN;
- 	}
- 	return IOU_ISSUE_SKIP_COMPLETE;
-@@ -839,8 +856,7 @@ static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
- 	ret = io_iter_do_read(rw, &io->iter);
- 
- 	if (ret == -EAGAIN || (req->flags & REQ_F_REISSUE)) {
--		if (req->flags & REQ_F_REISSUE)
--			return IOU_ISSUE_SKIP_COMPLETE;
-+		req->flags &= ~REQ_F_REISSUE;
- 		/* If we can poll, just do that. */
- 		if (io_file_can_poll(req))
- 			return -EAGAIN;
-@@ -1035,8 +1051,10 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
- 	else
- 		ret2 = -EINVAL;
- 
--	if (req->flags & REQ_F_REISSUE)
--		return IOU_ISSUE_SKIP_COMPLETE;
-+	if (req->flags & REQ_F_REISSUE) {
-+		req->flags &= ~REQ_F_REISSUE;
-+		ret2 = -EAGAIN;
-+	}
- 
- 	/*
- 	 * Raw bdev writes will return -EOPNOTSUPP for IOCB_NOWAIT. Just
+Performance:
+of non-meta io is not affected due to these patches.
 
+Testing:
+has been done by modifying fio to use this interface.
+https://github.com/SamsungDS/fio/commits/feat/test-meta-v2
+
+Changes since RFC:
+- modify io_uring plumbing based on recent async handling state changes
+- fixes/enhancements to correctly handle the split for meta buffer
+- add flags to specify guard/reftag/apptag checks
+- add support to send apptag
+
+[1]
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <linux/io_uring.h>
+#include <linux/types.h>
+#include "liburing.h"
+
+/* write data/meta. read both. compare. send apptag too.
+* prerequisite:
+* unprotected xfer: format namespace with 4KB + 8b, pi_type = 0
+* protected xfer: format namespace with 4KB + 8b, pi_type = 1
+*/
+
+#define DATA_LEN 4096
+#define META_LEN 8
+
+struct t10_pi_tuple {
+        __be16  guard;
+        __be16  apptag;
+        __be32  reftag;
+};
+
+int main(int argc, char *argv[])
+{
+         struct io_uring ring;
+         struct io_uring_sqe *sqe = NULL;
+         struct io_uring_cqe *cqe = NULL;
+         void *wdb,*rdb;
+         char wmb[META_LEN], rmb[META_LEN];
+         char *data_str = "data buffer";
+         char *meta_str = "meta";
+         int fd, ret, blksize;
+         struct stat fstat;
+         unsigned long long offset = DATA_LEN;
+         struct t10_pi_tuple *pi;
+
+         if (argc != 2) {
+                 fprintf(stderr, "Usage: %s <block-device>", argv[0]);
+                 return 1;
+         };
+
+         if (stat(argv[1], &fstat) == 0) {
+                 blksize = (int)fstat.st_blksize;
+         } else {
+                 perror("stat");
+                 return 1;
+         }
+
+         if (posix_memalign(&wdb, blksize, DATA_LEN)) {
+                 perror("posix_memalign failed");
+                 return 1;
+         }
+         if (posix_memalign(&rdb, blksize, DATA_LEN)) {
+                 perror("posix_memalign failed");
+                 return 1;
+         }
+
+         strcpy(wdb, data_str);
+         strcpy(wmb, meta_str);
+
+         fd = open(argv[1], O_RDWR | O_DIRECT);
+         if (fd < 0) {
+                 printf("Error in opening device\n");
+                 return 0;
+         }
+
+         ret = io_uring_queue_init(8, &ring, 0);
+         if (ret) {
+                 fprintf(stderr, "ring setup failed: %d\n", ret);
+                 return 1;
+         }
+
+         /* write data + meta-buffer to device */
+         sqe = io_uring_get_sqe(&ring);
+         if (!sqe) {
+                 fprintf(stderr, "get sqe failed\n");
+                 return 1;
+         }
+
+         io_uring_prep_write(sqe, fd, wdb, DATA_LEN, offset);
+         sqe->opcode = IORING_OP_WRITE_META;
+         sqe->meta_addr = (__u64)wmb;
+         sqe->meta_len = META_LEN;
+         /* flags to ask for guard/reftag/apptag*/
+         sqe->meta_flags = META_CHK_APPTAG;
+         sqe->apptag = 0x1234;
+
+         pi = (struct t10_pi_tuple *)wmb;
+         pi->apptag = 0x3412;
+
+         ret = io_uring_submit(&ring);
+         if (ret <= 0) {
+                 fprintf(stderr, "sqe submit failed: %d\n", ret);
+                 return 1;
+         }
+
+         ret = io_uring_wait_cqe(&ring, &cqe);
+         if (!cqe) {
+                 fprintf(stderr, "cqe is NULL :%d\n", ret);
+                 return 1;
+         }
+         if (cqe->res < 0) {
+                 fprintf(stderr, "write cqe failure: %d", cqe->res);
+                 return 1;
+         }
+
+         io_uring_cqe_seen(&ring, cqe);
+
+         /* read data + meta-buffer back from device */
+         sqe = io_uring_get_sqe(&ring);
+         if (!sqe) {
+                 fprintf(stderr, "get sqe failed\n");
+                 return 1;
+         }
+
+         io_uring_prep_read(sqe, fd, rdb, DATA_LEN, offset);
+         sqe->opcode = IORING_OP_READ_META;
+         sqe->meta_addr = (__u64)rmb;
+         sqe->meta_len = META_LEN;
+         sqe->meta_flags = META_CHK_APPTAG;
+         sqe->apptag = 0x1234;
+
+         ret = io_uring_submit(&ring);
+         if (ret <= 0) {
+                 fprintf(stderr, "sqe submit failed: %d\n", ret);
+                 return 1;
+         }
+
+         ret = io_uring_wait_cqe(&ring, &cqe);
+         if (!cqe) {
+                 fprintf(stderr, "cqe is NULL :%d\n", ret);
+                 return 1;
+         }
+
+         if (cqe->res < 0) {
+                 fprintf(stderr, "read cqe failure: %d", cqe->res);
+                 return 1;
+         }
+         io_uring_cqe_seen(&ring, cqe);
+
+         if (strncmp(wmb, rmb, META_LEN))
+                 printf("Failure: meta mismatch!, wmb=%s, rmb=%s\n", wmb, rmb);
+
+         if (strncmp(wdb, rdb, DATA_LEN))
+                 printf("Failure: data mismatch!\n");
+
+         io_uring_queue_exit(&ring);
+         free(rdb);
+         free(wdb);
+         return 0;
+}
+
+
+Anuj Gupta (6):
+  block: set bip_vcnt correctly
+  block: copy bip_max_vcnt vecs instead of bip_vcnt during clone
+  block: copy result back to user meta buffer correctly in case of split
+  block: avoid unpinning/freeing the bio_vec incase of cloned bio
+  block: modify bio_integrity_map_user argument
+  io_uring/rw: add support to send meta along with read/write
+
+Kanchan Joshi (4):
+  block, nvme: modify rq_integrity_vec function
+  block: define meta io descriptor
+  block: add support to send meta buffer
+  nvme: add separate handling for user integrity buffer
+
+ block/bio-integrity.c         | 69 +++++++++++++++++++++++--------
+ block/fops.c                  |  9 +++++
+ block/t10-pi.c                |  6 +++
+ drivers/nvme/host/core.c      | 36 ++++++++++++++++-
+ drivers/nvme/host/ioctl.c     | 11 ++++-
+ drivers/nvme/host/pci.c       |  9 +++--
+ include/linux/bio.h           | 23 +++++++++--
+ include/linux/blk-integrity.h | 13 +++---
+ include/linux/fs.h            |  1 +
+ include/uapi/linux/io_uring.h | 15 +++++++
+ io_uring/io_uring.c           |  4 ++
+ io_uring/opdef.c              | 30 ++++++++++++++
+ io_uring/rw.c                 | 76 +++++++++++++++++++++++++++++++++--
+ io_uring/rw.h                 | 11 ++++-
+ 14 files changed, 276 insertions(+), 37 deletions(-)
+
+
+base-commit: 24c3fc5c75c5b9d471783b4a4958748243828613
 -- 
-Jens Axboe
+2.25.1
 
 

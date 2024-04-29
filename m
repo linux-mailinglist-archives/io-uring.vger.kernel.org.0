@@ -1,344 +1,156 @@
-Return-Path: <io-uring+bounces-1661-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1662-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F242D8B4FD6
-	for <lists+io-uring@lfdr.de>; Mon, 29 Apr 2024 05:35:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB498B55EA
+	for <lists+io-uring@lfdr.de>; Mon, 29 Apr 2024 12:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2051F21C33
-	for <lists+io-uring@lfdr.de>; Mon, 29 Apr 2024 03:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FAAD1C2329E
+	for <lists+io-uring@lfdr.de>; Mon, 29 Apr 2024 10:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102CD8BEE;
-	Mon, 29 Apr 2024 03:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B8A3A8EF;
+	Mon, 29 Apr 2024 10:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JyzkeLto"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ng3MPmLx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08AD6FD0
-	for <io-uring@vger.kernel.org>; Mon, 29 Apr 2024 03:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656E9BA2E
+	for <io-uring@vger.kernel.org>; Mon, 29 Apr 2024 10:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714361695; cv=none; b=PbdQSq2355Oqa+/FhzkNXrBmz1hwYQM/W7JP+uCzr2mZ2BYrT/72u+HZdxUZ52e68LdGgGmVi4hnselFINNAVc6qCpcsvZm4hWLd819D1tki4mkDF/i5bQmmIBCGmw5VByv5rAakA6/nQiiXQUE4TTJcg37UtM1Tcgo1VdSKgQQ=
+	t=1714388387; cv=none; b=EwVe71iO1d650GF1Ny8hWD67THq1sT2a619R6tSZl8T79cv8mXhWxaX0z4Xbhc8eU/GW/a0MlyA5KBkDE9ogHMMnTo6PqWoa8mlCzEjtvgxLNvhdvcQQWofiePnnT8mnae1xe3ex57mN1PryFzrsyOrpWeei03dQ3GJZ23/zU80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714361695; c=relaxed/simple;
-	bh=LxthhLxzO2kTLDmlyYpAZObraORksN6oY+oP6KXE0Gs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DaSEcLh9vAMAFR0gTp0SippSekGGeGSbF/OTLVcUlsEVBNpJN8fLjso0l+MxVKCOWAIzSAy8DI0BWWuYiU6OVdOawRaep/6R9U2yl71gye0puQNgs4A5+g3YrHtPh9pXOHBNqeN+owcm0fsITCgt+xp1wrQe2yX/N9tuUTIhnqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JyzkeLto; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714361692;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kTvuL3F/wAJQQ074PTCMtQJCAe+KtnuNruQ2BXvYDUc=;
-	b=JyzkeLtoolS4b4TuD1jQVsShmr0bRh8MEy0Ybd7Lu3d9iNgqPNWNAjhU+UstkMbB45VbR+
-	f0xac8xe37kzwujCTk01tD7LpVrfI73zHgJXmazkFSGmBqjJau6xrUdaCUyL9zAktSOb99
-	XlQaN55+4flxUTyd+0yEH+NaacZKd6s=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-RkhtQ9oOMDeEirdh2ST1Tw-1; Sun,
- 28 Apr 2024 23:34:50 -0400
-X-MC-Unique: RkhtQ9oOMDeEirdh2ST1Tw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9A4763C02780;
-	Mon, 29 Apr 2024 03:34:50 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.36])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 77E68EC680;
-	Mon, 29 Apr 2024 03:34:46 +0000 (UTC)
-Date: Mon, 29 Apr 2024 11:34:42 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Kevin Wolf <kwolf@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	Pavel Begunkov <asml.silence@gmail.com>, ming.lei@redhat.com
-Subject: Re: [PATCH 5/9] io_uring: support SQE group
-Message-ID: <Zi8VUmNWaEAS6nyE@fedora>
-References: <20240408010322.4104395-1-ming.lei@redhat.com>
- <20240408010322.4104395-6-ming.lei@redhat.com>
- <e36cc8de-3726-4479-8fbd-f54fd21465a2@kernel.dk>
- <Ziey53aADgxDrXZw@redhat.com>
- <Zihi3nDAJg1s7Cws@fedora>
- <ZioiBLWuPMQ6ywW5@redhat.com>
- <ZitdhYFsLmZ9YKFU@fedora>
- <ZivezbdBK0ys-5gY@redhat.com>
+	s=arc-20240116; t=1714388387; c=relaxed/simple;
+	bh=yAB3+LWej9MKVKpCtFaho06TLU9/GZ2naH/2mASmXPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=KnCo//YXJNM36mDWG1EALg8cHXBe8HzQuGz/VJOLKUhtem4eWkkK8YE6WEyTe7zgCsm5mCdhwlSKFfYESHMgB6fBrL3LhipaOHPsUAOHES+qrEdpxPO+nrbBqF5sKS+VSg90gUB7Ek9oE9bQ8q8GQRx/xlJ7aPlcHNmF9VI3/lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ng3MPmLx; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240429105936epoutp018a0be70424eb766362a521d4685de5cb~KuyUYMTtW3000930009epoutp01E
+	for <io-uring@vger.kernel.org>; Mon, 29 Apr 2024 10:59:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240429105936epoutp018a0be70424eb766362a521d4685de5cb~KuyUYMTtW3000930009epoutp01E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1714388376;
+	bh=Az+hRiv5av28fx/NMox4ku8zhbC9n/++KSpp75bjFT8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=ng3MPmLxV/sEyqlNUj42GGAua8XRgEzOmi6yY4bUogxWit5aLQInBEvSUIjE5pWi5
+	 Gexpj1MzBuL+4ViOMbyomXNiBbcKw9XbDMb8gTXS207mqn6e0g2pTc8Cp0tnVK7gXv
+	 kYIomg+cATYt5W26qHRoJ2ncjunE14rX+v3Ue3lY=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240429105935epcas5p3c89a15e085f6801054e7b7694902dbe7~KuyTzmNpC1482714827epcas5p3w;
+	Mon, 29 Apr 2024 10:59:35 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4VSgM96YZ2z4x9Pv; Mon, 29 Apr
+	2024 10:59:33 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4A.5E.09665.59D7F266; Mon, 29 Apr 2024 19:59:33 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240429105933epcas5p271bec7690d5e6e2e9264754fab4a7b3d~KuyR2RPLB0104201042epcas5p2p;
+	Mon, 29 Apr 2024 10:59:33 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240429105933epsmtrp145532c8f3c6f5865a68786f88cd3c04b~KuyRxgbZJ0970609706epsmtrp1V;
+	Mon, 29 Apr 2024 10:59:33 +0000 (GMT)
+X-AuditID: b6c32a4b-829fa700000025c1-9c-662f7d954ace
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F4.28.08390.59D7F266; Mon, 29 Apr 2024 19:59:33 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240429105931epsmtip1cc615a2ad8041ab968fb6c42a7a1c350~KuyQCkEtc2520925209epsmtip1Y;
+	Mon, 29 Apr 2024 10:59:31 +0000 (GMT)
+Message-ID: <53be2abc-5a46-fef6-1cb3-cd791e3f42be@samsung.com>
+Date: Mon, 29 Apr 2024 16:29:30 +0530
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZivezbdBK0ys-5gY@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+	Gecko/20100101 Thunderbird/91.13.1
+Subject: Re: [PATCH 01/10] block: set bip_vcnt correctly
+Content-Language: en-US
+To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: axboe@kernel.dk, martin.petersen@oracle.com, brauner@kernel.org,
+	asml.silence@gmail.com, dw@davidwei.uk, io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <Zi0I1Aa7mIJ9tOht@kbusch-mbp.mynextlight.net>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKJsWRmVeSWpSXmKPExsWy7bCmlu7UWv00g7aJxhZNE/4yW8xZtY3R
+	YvXdfjaL14c/MVq8mrGWzeLmgZ1MFitXH2WyeNd6jsVi0qFrjBZ7b2lbzF/2lN1i+fF/TA48
+	HtdmTGTx2DnrLrvH5bOlHptWdbJ5bF5S77H7ZgObx8ent1g8+rasYvT4vEkugDMq2yYjNTEl
+	tUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6GAlhbLEnFKgUEBi
+	cbGSvp1NUX5pSapCRn5xia1SakFKToFJgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGzhmvWAo2
+	sVb8/rOWtYFxBUsXIyeHhICJxJUv+5lAbCGB3YwSK17zdjFyAdmfGCUu/uxihnC+MUpceHuR
+	Dabj1OrNUIm9jBKLp29mgnDeMko83LGOHaSKV8BO4tSpncwgNouAqsTivvfMEHFBiZMzn4Dt
+	FhVIlvjZdQBsqrCAhcSuf7/B4swC4hK3nswHu0lEwFnib+95sAXMAo1MEhtenAdq4OBgE9CU
+	uDC5FKSGU8BKoqVzKitEr7zE9rdzwK6TEDjDITHvQjc7xNkuEifWToCyhSVeHd8CZUtJvOxv
+	g7KTJS7NPMcEYZdIPN5zEMq2l2g91c8MspcZaO/6XfoQu/gken8/YQIJSwjwSnS0CUFUK0rc
+	m/SUFcIWl3g4YwmU7SHx9/gORkhYdTBJzF62iG0Co8IspGCZheT9WUjemYWweQEjyypGydSC
+	4tz01GLTAuO81HJ4hCfn525iBKdnLe8djI8efNA7xMjEwXiIUYKDWUmEd9Mc7TQh3pTEyqrU
+	ovz4otKc1OJDjKbA+JnILCWanA/MEHkl8YYmlgYmZmZmJpbGZoZK4ryvW+emCAmkJ5akZqem
+	FqQWwfQxcXBKNTA95voZ2jxjjVHYvPJP1rHs+ZHbHFasmrrtuP/jb9GFM/KecLXmvdZYx/NO
+	m786kT1S+liQkMZ0y3lr7Yva83yOyF3LX77+l7tMmI/9v118Rn5qpc++hsev2/s2Z887d8m7
+	JytTejTen4639L6pdVvzX3TAUr2stBNWH5POyGlISPtq8lrsK9La7jPp16b8vwrbvgpZZ1zf
+	6m52+dGsjBKHWWZLfWscXCZX5JXeu+Vn/Gvv6ZDfv6KXrC/evoRL79Gnf3GpK9cuNJi19u3K
+	8PsRdwR5tISyD14+NklL/muCxB/+CUrVd2zLZyx+9Oeb2OcfbvO/cj85wM256o3Ss2DO0Jrn
+	3duKPd8lvlA+GPZMiaU4I9FQi7moOBEANCsywlgEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsWy7bCSnO7UWv00g2+3+SyaJvxltpizahuj
+	xeq7/WwWrw9/YrR4NWMtm8XNAzuZLFauPspk8a71HIvFpEPXGC323tK2mL/sKbvF8uP/mBx4
+	PK7NmMjisXPWXXaPy2dLPTat6mTz2Lyk3mP3zQY2j49Pb7F49G1ZxejxeZNcAGcUl01Kak5m
+	WWqRvl0CV8bOGa9YCjaxVvz+s5a1gXEFSxcjJ4eEgInEqdWbmUFsIYHdjBK/dxhAxMUlmq/9
+	YIewhSVW/nsOZHMB1bxmlOhZM5UNJMErYCdx6tROsGYWAVWJxX3vmSHighInZz4BWyAqkCzx
+	8s9EsEHCAhYSu/79BoszAy249WQ+E4gtIuAs8bf3PBPIAmaBRiaJpQvmsEBc1MEk8fmMcBcj
+	BwebgKbEhcmlIGFOASuJls6prBBzzCS6tnYxQtjyEtvfzmGewCg0C8kZs5Csm4WkZRaSlgWM
+	LKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYIjUUtrB+OeVR/0DjEycTAeYpTgYFYS
+	4d00RztNiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+3170pQgLpiSWp2ampBalFMFkmDk6pBqYA
+	643qJq/CrzDFcr8L3hq38+dJh7TmLxMsT21SuRsWLdllffjRxMlr3c91pgdttpzQv3uS6q6f
+	ifcFmBdJ/Syye6GtFKTFvHHzPd6v3obPdKb8X6h59AvPPvVsa8NtmZtjKuL3rDjyLK6dM/hN
+	JP9UEW/tCVrWxVm/1JS8Agz7FnHyp9XKGvgu2BZ976uZUflyqSN2K3/rJp1I/OrMOVOe8w6z
+	ic17Y/7coOMb/J43qix+Lb/j+KZbU6YrPbg4R/3i8vssH/V/yltMNVP29+bZLPnqU0O+1QGt
+	NZ2zBLWt2OL+p/B23qzf0FRnI/7+sfGZJ78XcbOy3uX8VC6foWnvkZu/Y7Z59pZ/zy+ZSSqx
+	FGckGmoxFxUnAgAEw6XRMwMAAA==
+X-CMS-MailID: 20240429105933epcas5p271bec7690d5e6e2e9264754fab4a7b3d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240425184651epcas5p3404f2390d6cf05148eb96e1af093e7bc
+References: <20240425183943.6319-1-joshi.k@samsung.com>
+	<CGME20240425184651epcas5p3404f2390d6cf05148eb96e1af093e7bc@epcas5p3.samsung.com>
+	<20240425183943.6319-2-joshi.k@samsung.com> <20240427070214.GA3873@lst.de>
+	<Zi0I1Aa7mIJ9tOht@kbusch-mbp.mynextlight.net>
 
-On Fri, Apr 26, 2024 at 07:05:17PM +0200, Kevin Wolf wrote:
-> Am 26.04.2024 um 09:53 hat Ming Lei geschrieben:
-> > On Thu, Apr 25, 2024 at 11:27:32AM +0200, Kevin Wolf wrote:
-> > > Am 24.04.2024 um 03:39 hat Ming Lei geschrieben:
-> > > > On Tue, Apr 23, 2024 at 03:08:55PM +0200, Kevin Wolf wrote:
-> > > > > When I first read this patch, I wondered if it wouldn't make sense to
-> > > > > allow linking a group with subsequent requests, e.g. first having a few
-> > > > > requests that run in parallel and once all of them have completed
-> > > > > continue with the next linked one sequentially.
-> > > > > 
-> > > > > For SQE bundles, you reused the LINK flag, which doesn't easily allow
-> > > > > this. Ming's patch uses a new flag for groups, so the interface would be
-> > > > > more obvious, you simply set the LINK flag on the last member of the
-> > > > > group (or on the leader, doesn't really matter). Of course, this doesn't
-> > > > > mean it has to be implemented now, but there is a clear way forward if
-> > > > > it's wanted.
-> > > > 
-> > > > Reusing LINK for bundle breaks existed link chains (BUNDLE linked to
-> > > > existed link chain), so I think it may not work.
-> > > 
-> > > You can always extend things *somehow*, but it wouldn't fit very
-> > > naturally. That's why I feel your approach on this detail is a little
-> > > better.
-> > 
-> > Linking group in traditionally way is real use case, please see
-> > ublk-nbd's zero copy implementation.
-> > 
-> > https://github.com/ublk-org/ublksrv/blob/group-provide-buf/nbd/tgt_nbd.cpp
+On 4/27/2024 7:46 PM, Keith Busch wrote:
+>> Looks good:
+>>
+>> Reviewed-by: Christoph Hellwig<hch@lst.de>
+>>
+>> Please add a Fixes tag and submit it separately from the features.
+>>
+>> I'm actually kinda surprised the direct user mapping of integrity data
+>> survived so far without this.
+> The only existing use case for user metadata is REQ_OP_DRV_IN/OUT, which
+> never splits, so these initial fixes only really matter after this
+> series adds new usage for generic READ/WRITE.
 > 
-> I'm not sure what you're trying to argue, I agreed with you twice?
-> 
-> I don't think Jens's bundles break existing users of links because the
-> special meaning is only triggered with IORING_OP_BUNDLE. But obviously
-> they don't allow linking a bundle with something else after it, which
-> feels more limiting than necessary.
 
-OK.
-
-> 
-> > > > The link rule is explicit for sqe group:
-> > > > 
-> > > > - only group leader can set link flag, which is applied on the whole
-> > > > group: the next sqe in the link chain won't be started until the
-> > > > previous linked sqe group is completed
-> > > > 
-> > > > - link flag can't be set for group members
-> > > > 
-> > > > Also sqe group doesn't limit async for both group leader and member.
-> > > > 
-> > > > sqe group vs link & async is covered in the last liburing test code.
-> > > 
-> > > Oh right, I didn't actually notice that you already implement what I
-> > > proposed!
-> > > 
-> > > I was expecting the flag on the last SQE and I saw in the code that this
-> > > isn't allowed, but I completely missed your comment that explicitly
-> > > states that it's the group leader that gets the link flag. Of course,
-> > > this is just as good.
-> > > 
-> > > > > The part that looks a bit arbitrary in Ming's patch is that the group
-> > > > > leader is always completed before the rest starts. It makes perfect
-> > > > > sense in the context that this series is really after (enabling zero
-> > > > > copy for ublk), but it doesn't really allow the case you mention in the
-> > > > > SQE bundle commit message, running everything in parallel and getting a
-> > > > > single CQE for the whole group.
-> > > > 
-> > > > I think it should be easy to cover bundle in this way, such as add one
-> > > > new op IORING_OP_BUNDLE as Jens did, and implement the single CQE for
-> > > > whole group/bundle.
-> > > 
-> > > This requires an extra SQE compared to just creating the group with
-> > > flags, but I suppose this is not a big problem. An alternative might be
-> > > sending the CQE for the group leader only after the whole group has
-> > > completed if we're okay with userspace never knowing when the leader
-> > > itself completed.
-> > > 
-> > > However, assuming an IORING_OP_BUNDLE command, if this command only
-> > > completes after the whole group, doesn't that conflict with the
-> > 
-> > Here the completion means committing CQE to userspace ring.
-> > 
-> > > principle that all other commands are only started after the first one
-> > > has completed?
-> > 
-> > I meant IORING_OP_BUNDLE is the group leader, and the first one is the
-> > the leader.
-> > 
-> > The member requests won't be started until the leader is completed, and
-> > here the completion means that the request is completed from subsystem
-> > (FS, netowork, ...), so there isn't conflict, but yes, we need to
-> > describe the whole ideas/terms more carefully.
-> 
-> Is there precedence for requests that are completed, but don't result in
-> a CQE immediately? But yes, it's the same as I had in mind above when I
-> was talking about completing the leader only after the whole group has
-> completed.
-> 
-> > > Maybe we shouldn't wait for the whole group leader request to complete,
-> > > but just give the group leader a chance to prepare the group before all
-> > > requests in the group (including the leader itself) are run in parallel.
-> > > Maybe io_issue_sqe() could just start the rest of the group somewhere
-> > > after calling def->issue() for the leader. Then you can't prepare the
-> > > group buffer asynchronously, but I don't think this is needed, right?
-> > 
-> > That isn't true, if leader request is one network RX, we need to wait
-> > until the recv is done, then the following member requests can be
-> > started for consuming the received data.
-> > 
-> > Same example with the multiple copy one in last patch.
-> 
-> I don't see a group kernel buffer in the last patch at all? It seems to
-> use userspace buffers. In which case the read doesn't have to be part of
-> the group at all: You can have a read and link that with a group of
-> writes. Then you have the clear semantics of link = sequential,
-> group = parallel again.
-> 
-> But let's assume that the read actually did provide a group buffer.
-> 
-> What this example showed me is that grouping requests for parallel
-> submission is logically independent from grouping requests for sharing a
-> buffer. For full flexibility, they would probably have to be separate
-> concepts. You could then have the same setup as before (read linked to a
-> group of writes), but still share a group kernel buffer for the whole
-> sequence.
-
-kernel buffer lifetime is aligned with the whole group lifetime, that is why
-the leader can't be moved out of group. Otherwise the two groups are
-actually same, but still lots of things are in common, such as, how to handle
-link for whole group, and the implementation should share most of
-code, same with the group concept.
-
-> 
-> However, it's not clear if that the full flexibility is needed, and it
-> would probably complicate the implementation a bit.
-> 
-> > > Your example with one read followed by multiple writes would then have
-> > > to be written slightly differently: First the read outside of the group,
-> > > linked to a group of writes. I honestly think this makes more sense as
-> > > an interface, too, because then links are for sequential things and
-> > > groups are (only) for parallel things. This feels clearer than having
-> > > both a sequential and a parallel element in groups.
-> > 
-> > Group also implements 1:N dependency, in which N members depends on
-> > single group leader, meantime there isn't any dependency among each
-> > members. That is something the current io_uring is missing.
-> 
-> Dependencies are currently expressed with links, which is why I felt
-> that it would be good to use them in this case, too. Groups that only
-> include parallel requests and can be part of a link chain even provide
-> N:M dependencies, so are even more powerful than the fixed 1:N of your
-> groups.
-> 
-> The only thing that doesn't work as nicely then is sharing the buffer as
-> long as it's not treated as a separate concept.
-
-Right, kernel buffer lifetime is really one hard problem, aligning it
-with group lifetime simplifies a lot for zero copy problem.
-
-> 
-> > > > > I suppose you could hack around the sequential nature of the first
-> > > > > request by using an extra NOP as the group leader - which isn't any
-> > > > > worse than having an IORING_OP_BUNDLE really, just looks a bit odd - but
-> > > > > the group completion would still be missing. (Of course, removing the
-> > > > > sequential first operation would mean that ublk wouldn't have the buffer
-> > > > > ready any more when the other requests try to use it, so that would
-> > > > > defeat the purpose of the series...)
-> > > > > 
-> > > > > I wonder if we can still combine both approaches and create some
-> > > > > generally useful infrastructure and not something where it's visible
-> > > > > that it was designed mostly for ublk's special case and other use cases
-> > > > > just happened to be enabled as a side effect.
-> > > > 
-> > > > sqe group is actually one generic interface, please see the multiple
-> > > > copy( copy one file to multiple destinations in single syscall for one
-> > > > range) example in the last patch
-> > > 
-> > > Yes, that's an example that happens to work well with the model that you
-> > > derived from ublk.
-> > 
-> > Not only for ublk and device zero copy, it also have the multiple copy example.
-> 
-> This is what I replied to. Yes, it's an example where the model works
-> fine. This is not evidence that the model is as generic as it could be,
-> just that it's an example that fits it.
-> 
-> > > If you have the opposite case, reading a buffer that is spread across
-> > > multiple files and then writing it to one target (i.e. first step
-> > > parallel, second step sequential), you can't represent this well
-> > > currently. You could work around it by having a NOP leader, but that's
-> > > not very elegant.
-> > 
-> > Yeah, linking the group(nop & reads) with the following write does
-> > work for the above copy case, :-)
-> > 
-> > > 
-> > > This asymmetry suggests that it's not the perfect interface yet.
-> > 
-> > 1:N dependency requires the asymmetry, an nothing in this world is perfect, :-)
-> > But we can try to make it better.
-> 
-> The asymmetry doesn't contribute anything to the 1:N dependency. As
-> discussed above, normal links combined with fully parallel (and
-> therefore symmetrical) groups provide this functionality, too.
-> 
-> The only real reason I see for justifying it is the group kernel buffer.
-
-Yes, but that is also exactly what the N depends on.
-
-> 
-> > > If the whole group runs in parallel instead, including the leader, then
-> > > both examples become symmetrical. You have a group for the parallel I/O
-> > > and a linked single request for the other operation.
-> > > 
-> > > Or if both steps are parallel, you can just have two linked groups.
-> > 
-> > I think sqe group can be extended to this way easily by one new flag if
-> > there is such real use case. We still can use leader's link flag for
-> > same purpose, an only advance the linking chain until the whole group
-> > is done. 
-> > 
-> > Then sqe group just degrades to single link group without 1:N dependency
-> > covered and leader is just for providing group link flag, looks it can be
-> > well defined and documented, and could be useful too, IMO.
-> 
-> If you're willing to introduce a second flag, then I'd consider using
-> that flag to define buffer sharing groups independently of groups for
-> parallel execution.
-> 
-> I think it's usually preferable to build the semantics you need by
-> combining flags that provide independent building blocks with a
-> straightforward meaning than having a single complex building block and
-> then flags that modify the way the complex concept works.
-
-This way is fine.
-
-> 
-> > > > and it can support generic device zero copy: any device internal
-> > > > buffer can be linked with io_uring operations in this way, which can't
-> > > > be done by traditional splice/pipe.
-> > > 
-> > > Is this actually implemented or is it just a potential direction for the
-> > > future?
-> > 
-> > It is potential direction since sqe group & provide buffer provides one
-> > generic framework to export device internal buffer for further consuming
-> > in zero copy & non-mmap way.
-> 
-> I see. This contributes a bit to the impression that much of the design
-> is driven by ublk alone, because it's the only thing that seems to make
-> use of group buffers so far.
-> 
-> Anyway, I'm just throwing in a few thoughts and ideas from outside. In
-> the end, Jens and you need to agree on something.
-
-Your thoughts and ideas are really helpful, thanks!
-
-
-Thanks,
-Ming
+Yes. It did not seem that there is any harm due to these missing pieces 
+(first 6 patches).
+Therefore, "Fixes" tag is not there, and patches were not sent 
+separately from the features.
 
 

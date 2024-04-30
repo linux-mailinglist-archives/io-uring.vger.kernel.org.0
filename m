@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-1683-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1684-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874538B7513
-	for <lists+io-uring@lfdr.de>; Tue, 30 Apr 2024 14:00:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B80B8B75B3
+	for <lists+io-uring@lfdr.de>; Tue, 30 Apr 2024 14:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F31D51F22FBB
-	for <lists+io-uring@lfdr.de>; Tue, 30 Apr 2024 12:00:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530442849C8
+	for <lists+io-uring@lfdr.de>; Tue, 30 Apr 2024 12:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0087132808;
-	Tue, 30 Apr 2024 12:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B23C140384;
+	Tue, 30 Apr 2024 12:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ja+zeHMx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FyY8zYc+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1BC12D741;
-	Tue, 30 Apr 2024 12:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8803D1422B6;
+	Tue, 30 Apr 2024 12:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714478417; cv=none; b=JL3X2kmG61WL/ZT8nu1WIixzoq/6fbGdP4SxjcgxF2RCUepeHJQmu++XUl3lmMUGX39xd5blUFS25XESZHbia/P8X3ixzv+Nl34ir76Otf4sNv74IYzCptGyZXLkW7tE5XPIP8GePA4BYgPw6zgIBGF2Is0dgMyB7VQ8Xm6ZTHg=
+	t=1714480017; cv=none; b=XTvwv2xZHKOcCkZuDBKc/2tgjTPT8TO18KautYQ+wjxcQiCWyZKO2GcrjgyCkCaP40HcGvANJ354hAJJ+WEFCplmnRlgFt2MwXJkfm0S2y30sw/kRsc8c5S/yUM1jsO3+TevWOL1cu8SMs08M2GvSTpEd8z++a9IMab6S8TcWdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714478417; c=relaxed/simple;
-	bh=BSh9NGc/mQsL8gDMq6Tv3RcdflHNyBd72gHnKSXRn6o=;
+	s=arc-20240116; t=1714480017; c=relaxed/simple;
+	bh=0Zyxhv6pS0P27aRvASAOqpM/yAyHjaYQOtXcWkJaOSE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g3hOqQW7Ji1fEmw6uFRjrTK8oonz7Yd+q7P8kFMB3iez8e8XgQqIry21yaUDzNgmz5R8Y4hn/eN7pPCua93D87aljYjZ10L/d8AKpRnH8xHzAXOCjmuTSnY+LQSO3cYUaSx/Q9jy9cvkZSDjVMAlOUvm6nz126YFqIhcpGQjOos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ja+zeHMx; arc=none smtp.client-ip=209.85.167.43
+	 In-Reply-To:Content-Type; b=ZgqQFOgvChI5agDo0tYITpa05fLsbym5vMOvUKhRiX7OX4G2w+P/xtcaUJ6GURvyd1KrqOwRjNSZd/ido54sJb9QZkfbRx9ImWKw9vd/f5loyyLDL6g/w6lpomfXlwbAwSf2ZqsjdSWEDYHio7qDZMZA2X3Y9ZDLjmU2uvHqQK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FyY8zYc+; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-518a56cdbcfso8902155e87.2;
-        Tue, 30 Apr 2024 05:00:15 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a58872c07d8so1154365266b.0;
+        Tue, 30 Apr 2024 05:26:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714478414; x=1715083214; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714480014; x=1715084814; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6wrsZKdSKAtNQDB064U7j9lty8GA8lRB060N34oQaaM=;
-        b=Ja+zeHMxFYZGqXFfqBOVWdZg0I/7XfM1THnQFNmAevmKXCwe+Hin1qVkWPEuli+Mpm
-         IsZ5O0jLZt1NhNnAW7hzZ/jHzV9hlKHoB5FfefaR1T7PsrECInssQlx1BDPZYtwW6zle
-         8yaNONsiLul/kB1SlkpK7dn1bhy4LK3Ez1PptOoEy+0mErCP/7ntkr2kzRErOUk8d7np
-         tHwtzVJzr6w2nMzdYVlNwchVmrTRPj85cBz1f8O2zGvokb5OTb8LHsMZTMpmR/GLurY9
-         6n2myLtCzTbQ7mwgHnhj1mcmB6o1OOSYedBbH1nwwYFGvmxKvkJ2kn29dEOB6OSNzpYG
-         c0JQ==
+        bh=0KbVgk44J6oLC+bEtlvbjHVyuPnoUIfIAwUbxuS8USw=;
+        b=FyY8zYc+K8fItcBDtuISyMdFbr9jDUg8GnV+1xuSk1ZA3sIOcki5+rYe8s1NvAhDlP
+         dVN/PYsE5dGbmTs09rwxkgoz5lsNWMtRaQJ+mpZAt2fao29+wA64XmW8HWw4SXilNSKk
+         A1/PXQj21DcON5LdZOy09m9pOfVmo/vvWBFhAwIwUhoKCC8UUYsw+KarO4hsyxNdxsLm
+         v/rfwmruQawhcjRb06vYBrcTpO9yQdZWWE0IvUAG9Rh5lREzWDR8RAKdpG3s6pHW/+/Y
+         aYoUofBr2coeKICRS+tstmGoSJZOVdbz6VnkKtztUHsOahzplDbKDUld1uQs4IZlhk75
+         CUIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714478414; x=1715083214;
+        d=1e100.net; s=20230601; t=1714480014; x=1715084814;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6wrsZKdSKAtNQDB064U7j9lty8GA8lRB060N34oQaaM=;
-        b=Q7cqeCrXr9FfGPp69hV4uOhBt/NHiPB4cwb7zflgygbZfIE2YtHMGa41F9K6eRVqzS
-         CI4EO0Wrg4ooV6JEWcMt5w62OE9vh0RwW1eUYOKjtYENr9JntBtqfNrUO9JoI9ebMruj
-         02R/5xYSFmDK3FTdve5kWttsHRQ7F0jG9j6nPub/MbgxMx0qC278IHlTmUmjrxWNtUiN
-         o/d/xiiDXSBltOr/cyygvT/9lHl+5P4BNxfHa3f3Twt3vR44HKVkGhfq9eJr/9UJcsA0
-         GpcoXOoSeiqGP9D26w7hw6K/dKqAsUpX5jUklInR03sm4HJo782CibAQei0dw1DDZX0V
-         fJ5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXV9Z5pFwcMFpNYQ76X2/68cCS1mvWPiTEfsDXSoGG2AZFwkdAKNbhAQoFI/cYxVRUyfU6cclYmnt3zIQlB3O4d6vOSTcD1zIwQEgt5jPFekVOibZDYKDzScjwkPqL8FMVzjF7lGg==
-X-Gm-Message-State: AOJu0YxYjWuocT0a9kgkw4/3gPo5AiHcJHlTWl+BkzT6z9oYezEYJrY3
-	li4k3RM3E61PwNE4+BYgpEQRnKO8tKnwsefrqDQhQy62Zv9ysne+0oBslQ==
-X-Google-Smtp-Source: AGHT+IGl+7zlnRmNB7zHxYUznLxVcOl2Yek3qycj3dsGlL5IERowmduUwFCOGRNUNa9MTCZa+76q2Q==
-X-Received: by 2002:ac2:421a:0:b0:51a:e2a2:7262 with SMTP id y26-20020ac2421a000000b0051ae2a27262mr10721892lfh.8.1714478413988;
-        Tue, 30 Apr 2024 05:00:13 -0700 (PDT)
+        bh=0KbVgk44J6oLC+bEtlvbjHVyuPnoUIfIAwUbxuS8USw=;
+        b=Lb6XkOCu3yQ4DR26kcg/5qT44ERDquS4ZsQhazhN6oUo3TLmZrwL3Q7de6+vrcKYDd
+         QFO7rlPE1v0DBFKOBcIXAu/LPfislDnMwNYw8lmp1WuGXo01sQNuJB1xYR7P7EHIHSeT
+         wNd+/r36Vtc/625TcPPOiHNV0PJb+QljZh/qQ6xgAxkcOX9tUuAqEtbB5WfQhLYa7iXK
+         UDuVCuxWLFI9kSBCWP5CIHfB6xsbyRABUHuY/+CVLrUGMqmZsV2BWEhEBcwV5Dld1c2z
+         XXeFY59psex7xr6E5AFpazVKHwKE0w1+KTAZhYyP3NOLWvPPQpCOIaT5At4P9v4YNIeD
+         cnpA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4KVPo43xlvXbg/PXS5v6LGqxN/G+7DIIjTmG1On9cCYgexB64SJEwTgaHqT9LUWDSSVUfKChQhMoyABQajtGdwpRfJtlRV1jlWHEaJiU38g66rjkuL5zohPgKFXECpETgVqzfTA==
+X-Gm-Message-State: AOJu0Yy3DgxkSxAIy/7IlO9Di7q6xiuoOy95B1OMcW3eTr0uoOM7qvSr
+	Sk2RvZPQ/pOns3aDAjMeoqzyhrS4Vf1//snVKHBAZdwtd1434boW
+X-Google-Smtp-Source: AGHT+IH6bVV01DREWAn8oSlZJkuLd3/G09AfNsJScey8YtX7GhGCl+Bjg0Y5JG/WMCYEmQhXt9jIpw==
+X-Received: by 2002:a17:906:41b:b0:a58:de92:5daf with SMTP id d27-20020a170906041b00b00a58de925dafmr2553884eja.3.1714480013551;
+        Tue, 30 Apr 2024 05:26:53 -0700 (PDT)
 Received: from [192.168.42.150] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id dk21-20020a170907941500b00a55aee4bf74sm11109225ejc.79.2024.04.30.05.00.13
+        by smtp.gmail.com with ESMTPSA id kn9-20020a170906aa4900b00a534000d525sm15080060ejb.158.2024.04.30.05.26.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Apr 2024 05:00:13 -0700 (PDT)
-Message-ID: <81bc860f-0801-478b-adba-ea2a90cfe69e@gmail.com>
-Date: Tue, 30 Apr 2024 13:00:30 +0100
+        Tue, 30 Apr 2024 05:26:53 -0700 (PDT)
+Message-ID: <0f142448-3702-4be9-aad4-7ae6e1e5e785@gmail.com>
+Date: Tue, 30 Apr 2024 13:27:10 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,134 +76,157 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] io_uring: support user sqe ext flags
+Subject: Re: [PATCH 5/9] io_uring: support SQE group
 To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
- linux-block@vger.kernel.org, Kevin Wolf <kwolf@redhat.com>
+Cc: Kevin Wolf <kwolf@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org, linux-block@vger.kernel.org
 References: <20240408010322.4104395-1-ming.lei@redhat.com>
- <20240408010322.4104395-3-ming.lei@redhat.com>
- <89dac454-6521-4bd8-b8aa-ad329b887396@kernel.dk> <Zie+RlbtckZJVE2J@fedora>
- <e0d52e3f-f599-42c8-b9f0-8242961291d0@gmail.com> <ZjBozhXCCs46OeWK@fedora>
+ <20240408010322.4104395-6-ming.lei@redhat.com>
+ <e36cc8de-3726-4479-8fbd-f54fd21465a2@kernel.dk>
+ <Ziey53aADgxDrXZw@redhat.com>
+ <6077165e-a127-489e-9e47-6ec10b9d85d4@gmail.com> <ZjBffAzunso3lhsJ@fedora>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZjBozhXCCs46OeWK@fedora>
+In-Reply-To: <ZjBffAzunso3lhsJ@fedora>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 4/30/24 04:43, Ming Lei wrote:
-> On Mon, Apr 29, 2024 at 04:24:54PM +0100, Pavel Begunkov wrote:
->> On 4/23/24 14:57, Ming Lei wrote:
->>> On Mon, Apr 22, 2024 at 12:16:12PM -0600, Jens Axboe wrote:
+On 4/30/24 04:03, Ming Lei wrote:
+> On Mon, Apr 29, 2024 at 04:32:35PM +0100, Pavel Begunkov wrote:
+>> On 4/23/24 14:08, Kevin Wolf wrote:
+>>> Am 22.04.2024 um 20:27 hat Jens Axboe geschrieben:
 >>>> On 4/7/24 7:03 PM, Ming Lei wrote:
->>>>> sqe->flags is u8, and now we have used 7 bits, so take the last one for
->>>>> extending purpose.
+>>>>> SQE group is defined as one chain of SQEs starting with the first sqe that
+>>>>> has IOSQE_EXT_SQE_GROUP set, and ending with the first subsequent sqe that
+>>>>> doesn't have it set, and it is similar with chain of linked sqes.
 >>>>>
->>>>> If bit7(IOSQE_HAS_EXT_FLAGS_BIT) is 1, it means this sqe carries ext flags
->>>>> from the last byte(.ext_flags), or bit23~bit16 of sqe->uring_cmd_flags for
->>>>> IORING_OP_URING_CMD.
+>>>>> The 1st SQE is group leader, and the other SQEs are group member. The group
+>>>>> leader is always freed after all members are completed. Group members
+>>>>> aren't submitted until the group leader is completed, and there isn't any
+>>>>> dependency among group members, and IOSQE_IO_LINK can't be set for group
+>>>>> members, same with IOSQE_IO_DRAIN.
 >>>>>
->>>>> io_slot_flags() return value is converted to `ULL` because the affected bits
->>>>> are beyond 32bit now.
+>>>>> Typically the group leader provides or makes resource, and the other members
+>>>>> consume the resource, such as scenario of multiple backup, the 1st SQE is to
+>>>>> read data from source file into fixed buffer, the other SQEs write data from
+>>>>> the same buffer into other destination files. SQE group provides very
+>>>>> efficient way to complete this task: 1) fs write SQEs and fs read SQE can be
+>>>>> submitted in single syscall, no need to submit fs read SQE first, and wait
+>>>>> until read SQE is completed, 2) no need to link all write SQEs together, then
+>>>>> write SQEs can be submitted to files concurrently. Meantime application is
+>>>>> simplified a lot in this way.
+>>>>>
+>>>>> Another use case is to for supporting generic device zero copy:
+>>>>>
+>>>>> - the lead SQE is for providing device buffer, which is owned by device or
+>>>>>     kernel, can't be cross userspace, otherwise easy to cause leak for devil
+>>>>>     application or panic
+>>>>>
+>>>>> - member SQEs reads or writes concurrently against the buffer provided by lead
+>>>>>     SQE
 >>>>
->>>> If we're extending flags, which is something we arguably need to do at
->>>> some point, I think we should have them be generic and not spread out.
+>>>> In concept, this looks very similar to "sqe bundles" that I played with
+>>>> in the past:
+>>>>
+>>>> https://git.kernel.dk/cgit/linux/log/?h=io_uring-bundle
+>>>>
+>>>> Didn't look too closely yet at the implementation, but in spirit it's
+>>>> about the same in that the first entry is processed first, and there's
+>>>> no ordering implied between the test of the members of the bundle /
+>>>> group.
 >>>
->>> Sorry, maybe I don't get your idea, and the ext_flag itself is always
->>> initialized in io_init_req(), like normal sqe->flags, same with its
->>> usage.
+>>> When I first read this patch, I wondered if it wouldn't make sense to
+>>> allow linking a group with subsequent requests, e.g. first having a few
+>>> requests that run in parallel and once all of them have completed
+>>> continue with the next linked one sequentially.
 >>>
->>>> If uring_cmd needs specific flags and don't have them, then we should
->>>> add it just for that.
->>>
->>> The only difference is that bit23~bit16 of sqe->uring_cmd_flags is
->>> borrowed for uring_cmd's ext flags, because sqe byte0~47 have been taken,
->>> and can't be reused for generic flag. If we want to use byte48~63, it has
->>> to be overlapped with uring_cmd's payload, and it is one generic sqe
->>> flag, which is applied on uring_cmd too.
+>>> For SQE bundles, you reused the LINK flag, which doesn't easily allow
+>>> this. Ming's patch uses a new flag for groups, so the interface would be
+>>> more obvious, you simply set the LINK flag on the last member of the
+>>> group (or on the leader, doesn't really matter). Of course, this doesn't
+>>> mean it has to be implemented now, but there is a clear way forward if
+>>> it's wanted.
 >>
->> Which is exactly the mess nobody would want to see. And I'd also
+>> Putting zc aside, links, graphs, groups, it all sounds interesting in
+>> concept but let's not fool anyone, all the different ordering
+>> relationships between requests proved to be a bad idea.
 > 
-> The trouble is introduced by supporting uring_cmd, and solving it by setting
-> ext flags for uring_cmd specially by liburing helper is still reasonable or
-> understandable, IMO.
+> As Jens mentioned, sqe group is very similar with bundle:
 > 
->> argue 8 extra bits is not enough anyway, otherwise the history will
->> repeat itself pretty soon
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=io_uring-bundle
 > 
-> It is started with 8 bits, now doubled when io_uring is basically
-> mature, even though history might repeat, it will take much longer time
+> which is really something io_uring is missing.
 
-You're mistaken, only 7 bits are taken not because there haven't been
-ideas and need to use them, but because we're out of space and we've
-been saving it for something that might be absolutely necessary.
+One could've said same about links, retrospectively I argue that it
+was a mistake, so I pretty much doubt arguments like "io_uring is
+missing it". Another thing is that zero copy, which is not possible
+to implement by returning to the userspace.
 
-POLL_FIRST IMHO should've been a generic feature, but it worked around
-being a send/recv specific flag, same goes for the use of registered
-buffers, not to mention ideas for which we haven't had enough flag space.
-
->>> That is the only way I thought of, or any other suggestion for extending sqe
->>> flags generically?
->>
->> idea 1: just use the last bit. When we need another one it'd be time
->> to think about a long overdue SQE layout v2, this way we can try
->> to make flags u32 and clean up other problems.
+>> I can complaint for long, error handling is miserable, user handling
+>> resubmitting a part of a link is horrible, the concept of errors is
+>> hard coded (time to appreciate "beautifulness" of IOSQE_IO_HARDLINK
+>> and the MSG_WAITALL workaround). The handling and workarounds are
+>> leaking into generic paths, e.g. we can't init files when it's the most
+>> convenient. For cancellation we're walking links, which need more care
+>> than just looking at a request (is cancellation by user_data of a
+>> "linked" to a group request even supported?). The list goes on
 > 
-> It looks over-kill to invent SQE v2 just for solving the trouble in
-> uring_cmd, and supporting two layouts can be new trouble for io_uring.
-
-Sounds too uring_cmd centric, it's not specifically for uring_cmd, it's
-just one of reasons. As for overkill, that's why I'm not telling you
-to change the layour, but suggesting to take the last bit for the
-group flag and leave future problems for the future.
-
-
-> Also I doubt the problem can be solved in layout v2:
+> Only the group leader is linked, if the group leader is canceled, all
+> requests in the whole group will be canceled.
 > 
-> - 64 byte is small enough to support everything, same for v2
+> But yes, cancelling by user_data for group members can't be supported,
+> and it can be documented clearly, since user still can cancel the whole
+> group with group leader's user_data.
+
+Which means it'd break the case REQ_F_INFLIGHT covers, and you need
+to disallow linking REQ_F_INFLIGHT marked requests.
+
+>> And what does it achieve? The infra has matured since early days,
+>> it saves user-kernel transitions at best but not context switching
+>> overhead, and not even that if you do wait(1) and happen to catch
+>> middle CQEs. And it disables LAZY_WAKE, so CQ side batching with
+>> timers and what not is effectively useless with links.
 > 
-> - uring_cmd has only 16 bytes payload, taking any byte from
-> the payload may cause trouble for drivers
+> Not only the context switch, it supports 1:N or N:M dependency which
+
+I completely missed, how N:M is supported? That starting to sound
+terrifying.
+
+> is missing in io_uring, but also makes async application easier to write by
+> saving extra context switches, which just adds extra intermediate states for
+> application.
+
+You're still executing requests (i.e. ->issue) primarily from the
+submitter task context, they would still fly back to the task and
+wake it up. You may save something by completing all of them
+together via that refcounting, but you might just as well try to
+batch CQ, which is a more generic issue. It's not clear what
+context switches you save then.
+
+As for simplicity, using the link example and considering error
+handling, it only complicates it. In case of an error you need to
+figure out a middle req failed, collect all failed CQEs linked to
+it and automatically cancelled (unless SKIP_COMPLETE is used), and
+then resubmit the failed. That's great your reads are idempotent
+and presumably you don't have to resubmit half a link, but in the
+grand picture of things it's rather one of use cases where a generic
+feature can be used.
+
+>> So, please, please! instead of trying to invent a new uber scheme
+>> of request linking, which surely wouldn't step on same problems
+>> over and over again, and would definitely be destined to overshadow
+>> all previous attempts and finally conquer the world, let's rather
+>> focus on minimasing the damage from this patchset's zero copy if
+>> it's going to be taken.
 > 
-> - the only possible change could still be to suppress bytes for OP
-> specific flags, but it might cause trouble for some OPs, such as
-> network.
+> One key problem for zero copy is lifetime of the kernel buffer, which
+> can't cross OPs, that is why sqe group is introduced, for aligning
+> kernel buffer lifetime with the group.
 
-Look up sqe's __pad1, for example
-
-
->> idea 2: the group assembling flag can move into cmds. Very roughly:
->>
->> io_cmd_init() {
->> 	ublk_cmd_init();
->> }
->>
->> ublk_cmd_init() {
->> 	io_uring_start_grouping(ctx, cmd);
->> }
->>
->> io_uring_start_grouping(ctx, cmd) {
->> 	ctx->grouping = true;
->> 	ctx->group_head = cmd->req;
->> }
-> 
-> How can you know one group is starting without any flag? Or you still
-> suggest the approach taken in fused command?
-
-That would be ublk's business, e.g. ublk or cmds specific flag
-
-
->> submit_sqe() {
->> 	if (ctx->grouping) {
->> 		link_to_group(req, ctx->group_head);
->> 		if (!(req->flags & REQ_F_LINK))
->> 			ctx->grouping = false;
->> 	}
->> }
-> 
-> The group needs to be linked to existed link chain, so reusing REQ_F_LINK may
-> not doable.
-
-Would it break zero copy feature if you cant?
+Right, which is why I'm saying if we're leaving groups with zero
+copy, let's rather try to make them simple and not intrusive as
+much as possible, instead of creating an unsupportable overarching
+beast out of it, which would fail as a generic feature.
 
 -- 
 Pavel Begunkov

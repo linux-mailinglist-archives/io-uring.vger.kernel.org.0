@@ -1,164 +1,246 @@
-Return-Path: <io-uring+bounces-1700-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1701-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D4E8B8ADB
-	for <lists+io-uring@lfdr.de>; Wed,  1 May 2024 15:03:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 326828B90DB
+	for <lists+io-uring@lfdr.de>; Wed,  1 May 2024 22:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEE251F22B1D
-	for <lists+io-uring@lfdr.de>; Wed,  1 May 2024 13:03:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55FC41C21DA8
+	for <lists+io-uring@lfdr.de>; Wed,  1 May 2024 20:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD9612BEBE;
-	Wed,  1 May 2024 13:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82410165FA5;
+	Wed,  1 May 2024 20:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ShtHTO3w"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Krk3oecz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ROmaX73C";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="arrltBac";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MWgX5hr4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6D748CE0
-	for <io-uring@vger.kernel.org>; Wed,  1 May 2024 13:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65A11649A8
+	for <io-uring@vger.kernel.org>; Wed,  1 May 2024 20:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714568581; cv=none; b=cZE5wNYcYPHUVbtzxkUAO1bX4DtXVtUAyqMNu5kJXZOlgUTCf3B9iIHgNw0ctapo7RLsPTOMFwbQkypz9CHSnojaeMeAu//JXLXuh0HCycBR/5FUYceBFL6KUqmqoOJZobvlwL9jTNHf4k88zxrLA1VLWLFw/RUJkqILiMbng+g=
+	t=1714596481; cv=none; b=Awz52yjgFCbFofUJjUnW3WhoFHfZgPs/e+2l7vXB8puuX/F4Yej+4zX4n/4I1EcA+E5hYvKUAsvULgxi3QRRAMu7izOe9pVA3OWRWzQJt3/k5iwXk+Kc8NUTkuyg2htH9jXcDhMXqPLarJfpBVWzXa8xmIaYjTfRQSTrNfdSCM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714568581; c=relaxed/simple;
-	bh=e7WlsEVs8y9JfMrLTeMdhRqa3HnHxQwE2pnPEj/p5Fc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=YqRe7JkJ2G8ql2SQM1lhZj0XUCpuoRvBm/ks1X8tn+pI/xwEn8E6UnVVwyrddQ2NYeJTSm4td40cc4LPiDY9cfu8eP8QWQkZvDT/VBDqSp0kMcpupUxVoxG3b6m33VeWSYBRPc6dgOK1acszTfU+ThcVz0oio9vU2JCu3sPB/CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ShtHTO3w; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240501130250epoutp045a60482e3b3bcab2792f0fec77e702b4~LXwfZ7CgY3164431644epoutp04W
-	for <io-uring@vger.kernel.org>; Wed,  1 May 2024 13:02:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240501130250epoutp045a60482e3b3bcab2792f0fec77e702b4~LXwfZ7CgY3164431644epoutp04W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1714568570;
-	bh=ts5/PQQxoYzCnt9UpQpvjostlawKW54bYVKKXkC70bw=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=ShtHTO3wH5mjc/BOM+3BArrQbkYdxhyQtFrc72cfWIKf2JXUY8VGSCSrGiK7yHtxH
-	 5GUPv0tHuklwMVohhMSZ5xe0OgJCfszt1V5/ddL3FAudn8IL0NPJNfsNOLupeFqQ2B
-	 irDM+JdsOVjlAl3oTmz9w+YG3uSe2q+3EQqMwrek=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240501130249epcas5p4ef1abcc4e2285904cb8902d940320aeb~LXwe7qO1z3209832098epcas5p4e;
-	Wed,  1 May 2024 13:02:49 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4VTy0S1swlz4x9Pt; Wed,  1 May
-	2024 13:02:48 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4B.72.09665.87D32366; Wed,  1 May 2024 22:02:48 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240501130247epcas5p3e44f8af41cdf1767853e0f4e6985e013~LXwc_VT7b0981309813epcas5p3A;
-	Wed,  1 May 2024 13:02:47 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240501130247epsmtrp1da9d19b03103afb9e8c6ef249ecd5dcf~LXwc9NDGS2658926589epsmtrp1U;
-	Wed,  1 May 2024 13:02:47 +0000 (GMT)
-X-AuditID: b6c32a4b-5cdff700000025c1-a6-66323d78d635
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4B.08.07541.77D32366; Wed,  1 May 2024 22:02:47 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240501130245epsmtip112ff708b1ba8feb4c8b34c6907ecf4f4~LXwbO3r731216112161epsmtip1b;
-	Wed,  1 May 2024 13:02:45 +0000 (GMT)
-Message-ID: <ebeca5f1-8d80-e4d4-cf45-9a14ef1413a5@samsung.com>
-Date: Wed, 1 May 2024 18:32:45 +0530
+	s=arc-20240116; t=1714596481; c=relaxed/simple;
+	bh=SPvnVrg/4ijdQSOPfgboaUcdqbCQG3bq44rRcMZhoN4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NpkapduYNSdWNMsyVuQiLdS9UrSCbzkGTs5lmGwyIvhB/IJEQdKrg/GOQNNHKeBY2GmHuJKSXhyTq6NpKbQdnvCu3bT6QbH0rKZoo6oArd4Jgd5yq7D6OGMX3Ozj9czOqYNrlbh470vCay5FBzgm2YsHrzkqXHdAELRd4IJLtqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Krk3oecz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ROmaX73C; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=arrltBac; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MWgX5hr4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DA46B1F898;
+	Wed,  1 May 2024 20:47:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1714596478; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EQmmwt4H1xTfaABf3orZYJBwC6H+grpqLC8mXAUxr1g=;
+	b=Krk3oeczy8oWxWZjcBNUoFGve4ACT7Fm+n+WOLEmr50YLz74HzwmLQ+LDC8o9uEQ/vUw6A
+	uReyjxySp89zcbVAW1huLje7G3eHKCL0slTNh4THLPenNyoJD78VOxdEA889ppdLviwdAR
+	hTw3fphi48PNmNBxOV8eSMIoEP7zi0A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1714596478;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EQmmwt4H1xTfaABf3orZYJBwC6H+grpqLC8mXAUxr1g=;
+	b=ROmaX73CE5gclCYgPpnk5crPOoRFlKp87/31qK6wpsirEMPq9StdnDN5E6NQztt/j5osii
+	SJ4MJhjLwn9TzNBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1714596477; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EQmmwt4H1xTfaABf3orZYJBwC6H+grpqLC8mXAUxr1g=;
+	b=arrltBacuyNe+v5BylP2vy6LXWPG/V8lGdxaxFUfhn3cMBiK08QW885zZorA97JxMa554J
+	4/8iY2fkC3epLQB5Zw7b8LWQqKQwYjd2wgXBERz66xTToKAl4NSXo2SZFbyHEEVv04tCwl
+	Oc8ZHb14wDU8y4VNFmhfctf0IrCmq0M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1714596477;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EQmmwt4H1xTfaABf3orZYJBwC6H+grpqLC8mXAUxr1g=;
+	b=MWgX5hr46yosAGV0vxjhxYKZANPeGCxOf8CW4qGWKN2Wto0pKrR9UgvHruIB6o4NiCvn6b
+	bjKlJQveOXL87/DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9D4E013942;
+	Wed,  1 May 2024 20:47:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dqseIH2qMmarKgAAD6G6ig
+	(envelope-from <krisman@suse.de>); Wed, 01 May 2024 20:47:57 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org
+Subject: Re: [PATCH] io_uring: Require zeroed sqe->len on provided-buffers send
+In-Reply-To: <909e44a9-c9e2-45aa-9eba-fcf10904e503@kernel.dk> (Jens Axboe's
+	message of "Tue, 30 Apr 2024 07:02:01 -0600")
+Organization: SUSE
+References: <20240429181556.31828-1-krisman@suse.de>
+	<909e44a9-c9e2-45aa-9eba-fcf10904e503@kernel.dk>
+Date: Wed, 01 May 2024 16:47:52 -0400
+Message-ID: <878r0tz2br.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-	Gecko/20100101 Thunderbird/91.13.1
-Subject: Re: [PATCH 04/10] block: avoid unpinning/freeing the bio_vec incase
- of cloned bio
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>
-Cc: axboe@kernel.dk, martin.petersen@oracle.com, kbusch@kernel.org,
-	brauner@kernel.org, asml.silence@gmail.com, dw@davidwei.uk,
-	io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-block@vger.kernel.org, gost.dev@samsung.com, Anuj Gupta
-	<anuj20.g@samsung.com>
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20240429170929.GB31337@lst.de>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCJsWRmVeSWpSXmKPExsWy7bCmlm6FrVGaQe8CboumCX+ZLeas2sZo
-	sfpuP5vF68OfGC1ezVjLZnHzwE4mi5WrjzJZvGs9x2Ix6dA1Rou9t7Qt5i97ym6x/Pg/Jgce
-	j2szJrJ47Jx1l93j8tlSj02rOtk8Ni+p99h9s4HN4+PTWywefVtWMXp83iQXwBmVbZORmpiS
-	WqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdLCSQlliTilQKCCx
-	uFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITvj+7sTrAVP
-	OCom7jvD0sD4na2LkYNDQsBEYu7qsC5GLg4hgd2MEutv/2KHcD4xSkxcvI0ZwvnGKLFvwkbG
-	LkZOsI4Xr2awgdhCAnsZJZ5ciYEoesso8fLFMhaQBK+AncTEnm6wIhYBFYlHiw8yQ8QFJU7O
-	fAJWIyqQLPGz6wBYjbBAjMT219PB4swC4hK3nsxnArFFBJQknr46ywiygFlgGpPE2p6pLCB3
-	swloSlyYXApSwymgI9F45wobRK+8xPa3c8CulhA4wyFx5fVJVoirXSSWrdgLZQtLvDq+hR3C
-	lpJ42d8GZSdLXJp5jgnCLpF4vOcglG0v0XqqnxlkLzPQ3vW79CF28Un0/n7CBAlGXomONiGI
-	akWJe5OeQm0Sl3g4YwmU7SHx89FEaOiuZ5LYcu0N0wRGhVlIwTILyfuzkLwzC2HzAkaWVYyS
-	qQXFuempxaYFxnmp5fD4Ts7P3cQITs5a3jsYHz34oHeIkYmD8RCjBAezkgjvlIX6aUK8KYmV
-	ValF+fFFpTmpxYcYTYHxM5FZSjQ5H5gf8kriDU0sDUzMzMxMLI3NDJXEeV+3zk0REkhPLEnN
-	Tk0tSC2C6WPi4JRqYLo5+6BUqUTENcmcWP+pKmdkz+c0lGiJLBd8tXlq9hndrr+n+A69uGWo
-	k1bOVefYcHzOjvlT/r+rumu6+ebkCVckV5aHRzpOYam95abrK20V2Cszo/TjxLu33eetXyVt
-	rSI93zlKVvttoKjakzfCHZtiM+IuVxecVWh7ITt5a9jVmsL5Aiu6vzP/rAl3cK6YGRUuslV6
-	YZ54XHb2P2e7uL+XndN83vDNZrpxWpLTYkqvvpVtRdSuih+CIowT+g65vGEXf1l3xDHL23P1
-	2j/Ghn+22biH3noicyD//YWPB7ZOfHjrsIHoD54p2z/rHGaMLO1cH3FD7qGdY6/q74w9Dwy1
-	f/VZe7pLSUTvfPhMSYmlOCPRUIu5qDgRAADO+rFXBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWy7bCSnG65rVGawdttOhZNE/4yW8xZtY3R
-	YvXdfjaL14c/MVq8mrGWzeLmgZ1MFitXH2WyeNd6jsVi0qFrjBZ7b2lbzF/2lN1i+fF/TA48
-	HtdmTGTx2DnrLrvH5bOlHptWdbJ5bF5S77H7ZgObx8ent1g8+rasYvT4vEkugDOKyyYlNSez
-	LLVI3y6BK+P7uxOsBU84KibuO8PSwPidrYuRk0NCwETixasZQDYXh5DAbkaJzVN2sUMkxCWa
-	r/2AsoUlVv57zg5R9JpR4uytG8wgCV4BO4mJPd1gk1gEVCQeLT4IFReUODnzCQuILSqQLPHy
-	z0SwQcICMRLbX08HizMDLbj1ZD4TiC0ioCTx9NVZRpAFzALTmCT6f25mhdi2nkni0pLlQB0c
-	HGwCmhIXJpeCNHAK6Eg03rnCBjHITKJraxcjhC0vsf3tHOYJjEKzkNwxC8m+WUhaZiFpWcDI
-	sopRMrWgODc9N9mwwDAvtVyvODG3uDQvXS85P3cTIzgatTR2MN6b/0/vECMTB+MhRgkOZiUR
-	3ikL9dOEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xrOmJ0iJJCeWJKanZpakFoEk2Xi4JRqYCq4
-	OeFNUnliAc/qq1X15xe8SefS2L63KW8pP8udmHMTHLNXaAtdC5hUwcI8cVOH2cG0pytfn1bM
-	PHFHehXX1hUS9UGy4q4dM871yDdUL9rfY3DWtm9tyATGmtPTd+2pS3nrxhtQy6Nxbfb+BwI2
-	uy/Ky6neZo/o8NrlUieybHHxYnbbrX3BPCfXreQ1uhO1x3TW/7o7Lz3F9j2YFf+F7fCNe1Ub
-	fwtYmW9ateZPt8ma/S15jm/v32maYjb7xeqEScxZcZkMPxocI1+0mnCu41ZP+WMtZTTLa03m
-	FY8f2gvDQg/qrAwTuHfWNengHIut9v0ui2q12ZtP+F++tZu72mJKsHlF+HXP8Ov6F1sF3iqx
-	FGckGmoxFxUnAgDCrl8xNQMAAA==
-X-CMS-MailID: 20240501130247epcas5p3e44f8af41cdf1767853e0f4e6985e013
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240425184658epcas5p2adb6bf01a5c56ffaac3a55ab57afaf8e
-References: <20240425183943.6319-1-joshi.k@samsung.com>
-	<CGME20240425184658epcas5p2adb6bf01a5c56ffaac3a55ab57afaf8e@epcas5p2.samsung.com>
-	<20240425183943.6319-5-joshi.k@samsung.com> <20240427070508.GD3873@lst.de>
-	<03cb6ac3-595f-abb1-324b-647ed84cfe6b@samsung.com>
-	<20240429170929.GB31337@lst.de>
+Content-Type: text/plain
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCPT_COUNT_TWO(0.00)[2];
+	HAS_ORG_HEADER(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On 4/29/2024 10:39 PM, Christoph Hellwig wrote:
-> On Mon, Apr 29, 2024 at 05:10:59PM +0530, Kanchan Joshi wrote:
->>> This feels wrong.  I suspect the problem is that BIP_COPY_USER is
->>> inherited for clone bios while it shouldn't.
->>>
->>
->> But BIP_COPY_USER flag is really required in the clone bio. So that we
->> can copy the subset of the metadata back (from kernel bounce buffer to
->> user space pinned buffer) in case of read io.
->>
->> Overall, copy-back will happen in installments (for each cloned bio),
->> while the unpin will happen in one shot (for the source bio).
-> 
-> That seems a bit odd compared to the bio data path.  If you think this
-> is better than the version used in the data path let's convert the
-> data path to this scheme first to make sure we don't diverge and get
-> the far better testing on the main data map side.
-> 
+Jens Axboe <axboe@kernel.dk> writes:
 
-Can you please tell what function(s) in bio data path that need this 
-conversion?
-To me data path handling seems similar. Each cloned bio will lead to 
-some amount of data transfer to pinned user-memory. The same is 
-happening for meta transfer here.
+> On 4/29/24 12:15 PM, Gabriel Krisman Bertazi wrote:
+>> When sending from a provided buffer, we set sr->len to be the smallest
+>> between the actual buffer size and sqe->len.  But, now that we
+>> disconnect the buffer from the submission request, we can get in a
+>> situation where the buffers and requests mismatch, and only part of a
+>> buffer gets sent.  Assume:
+>> 
+>> * buf[1]->len = 128; buf[2]->len = 256
+>> * sqe[1]->len = 128; sqe[2]->len = 256
+>> 
+>> If sqe1 runs first, it picks buff[1] and it's all good. But, if sqe[2]
+>> runs first, sqe[1] picks buff[2], and the last half of buff[2] is
+>> never sent.
+>> 
+>> While arguably the use-case of different-length sends is questionable,
+>> it has already raised confusion with potential users of this
+>> feature. Let's make the interface less tricky by forcing the length to
+>> only come from the buffer ring entry itself.
+>> 
+>> Fixes: ac5f71a3d9d7 ("io_uring/net: add provided buffer support for IORING_OP_SEND")
+>> Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+>> ---
+>>  io_uring/net.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>> 
+>> diff --git a/io_uring/net.c b/io_uring/net.c
+>> index 51c41d771c50..ffe37dd77a74 100644
+>> --- a/io_uring/net.c
+>> +++ b/io_uring/net.c
+>> @@ -423,6 +423,8 @@ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>  		sr->buf_group = req->buf_index;
+>>  		req->buf_list = NULL;
+>>  	}
+>> +	if (req->flags & REQ_F_BUFFER_SELECT && sr->len)
+>> +		return -EINVAL;
+>>  
+>>  #ifdef CONFIG_COMPAT
+>>  	if (req->ctx->compat)
+>
+> Why not put it in io_send(), under io_do_buffer_select()? Then
+> you can get rid of the:
+>
+> .max_len = min_not_zero(sr->len, INT_MAX),
+>
+> and just do
+>
+> .max_len = INT_MAX,
+>
+
+Mostly because I'd expect this kind of validation of userspace data to
+be done early in ->prep, when we are consuming the sqe.  But more
+importantly, if I read the code correctly, doing it under
+io_do_buffer_select() in io_send() is more convoluted because we have
+that backward jump in case we don't send the full set of buffers in the
+bundle case, and we dirty sr->len with the actual returned buffer length.
+
+since we already checked in prep, we can safely ignore it in the
+io_do_buffer_select, anyway. What do you think of the below?
+
+-- >8 --
+Subject: [PATCH] io_uring: Require zeroed sqe->len on provided-buffers send
+
+When sending from a provided buffer, we set sr->len to be the smallest
+between the actual buffer size and sqe->len.  But, now that we
+disconnect the buffer from the submission request, we can get in a
+situation where the buffers and requests mismatch, and only part of a
+buffer gets sent.  Assume:
+
+* buf[1]->len = 128; buf[2]->len = 256
+* sqe[1]->len = 128; sqe[2]->len = 256
+
+If sqe1 runs first, it picks buff[1] and it's all good. But, if sqe[2]
+runs first, sqe[1] picks buff[2], and the last half of buff[2] is
+never sent.
+
+While arguably the use-case of different-length sends is questionable,
+it has already raised confusion with potential users of this
+feature. Let's make the interface less tricky by forcing the length to
+only come from the buffer ring entry itself.
+
+Fixes: ac5f71a3d9d7 ("io_uring/net: add provided buffer support for IORING_OP_SEND")
+Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+
+---
+v2:
+  - Disregard sr->len when selecting buffer in io_send()
+---
+ io_uring/net.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 51c41d771c50..cf43053a25b7 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -423,6 +423,8 @@ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		sr->buf_group = req->buf_index;
+ 		req->buf_list = NULL;
+ 	}
++	if (req->flags & REQ_F_BUFFER_SELECT && sr->len)
++		return -EINVAL;
+ 
+ #ifdef CONFIG_COMPAT
+ 	if (req->ctx->compat)
+@@ -586,7 +588,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (io_do_buffer_select(req)) {
+ 		struct buf_sel_arg arg = {
+ 			.iovs = &kmsg->fast_iov,
+-			.max_len = min_not_zero(sr->len, INT_MAX),
++			.max_len = INT_MAX,
+ 			.nr_iovs = 1,
+ 			.mode = KBUF_MODE_EXPAND,
+ 		};
+-- 
+2.44.0
+
 

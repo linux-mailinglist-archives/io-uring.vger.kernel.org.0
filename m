@@ -1,76 +1,76 @@
-Return-Path: <io-uring+bounces-1742-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1743-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FBF68BB85F
-	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 01:41:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CA78BB889
+	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 01:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8153A1C21799
-	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 23:41:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553EE1F24476
+	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 23:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A667B84D03;
-	Fri,  3 May 2024 23:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7D884DF9;
+	Fri,  3 May 2024 23:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TBq5xg1s"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZGjV9bOJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C09359B71
-	for <io-uring@vger.kernel.org>; Fri,  3 May 2024 23:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D359D5A110
+	for <io-uring@vger.kernel.org>; Fri,  3 May 2024 23:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714779700; cv=none; b=aLnR4pUNeTIHK5tx+XuUh28ud7ovBYNbOrpWxxN6eghLYU9/AgpfKA1qKDJ6f+Qh8bPHmGsrEORxj1mK9Mk0AMumoGuicCJ4VnbSJTKylOaDxMsmNgGetKDIZhvmZ+WhTzHB8lK6oD41v3hF8d5k8aku6gVtutnyDwcYDsgg52M=
+	t=1714780506; cv=none; b=rKaqUzq7gZEX5s8oZrzD9qgTqY4hTdGWCNyeVB33V9GEn5VDi0TD3zllf/mCc5YfJdnLHo9uvWFmLKF3r6/s8jMg7LnVWkGHzE3PzyXwtlX0lec+1Sa+7M+Cy9sSohdc/XafvEVUgCsrVam2aThPP3qfQ7CAzohXvT/skH/0T74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714779700; c=relaxed/simple;
-	bh=MSsbpnKLBIIDiyb/Z/B6yI6NHQlm2qNPMZwpsoocZ+I=;
+	s=arc-20240116; t=1714780506; c=relaxed/simple;
+	bh=tf8gPRKnHuj1S8RN72oCYha0zRiI+Zqb52T37Eym2SU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tXwQGvQ2Up30ZfZVirWWoxpAmLD95lXX8GAmqerch0/nlQnVmozUps5teFjMklZmwFCdtVf7SQ+IzoBWX/wnPiU0ERLbrIlwrugE2h4jcangbwM9j88/dtEem9vY6q/tobjenChbdQkOcMgvJUKPdg0Rdsi0slCXhHZq9spZsvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TBq5xg1s; arc=none smtp.client-ip=209.85.208.171
+	 To:Cc:Content-Type; b=W0NqODA3tS9RS8eIsy7/vRgcUS3hB6xulrCuduglM+4rOOjdmV0HJZ/LgOZfmMTYcNo0xKfNnNsrIWAZHLef7ljM17VZmmOUjxml7rtmjbozTkzofQGk/+cgAIh7y7W0M8hMDMxyKHKtRuOBXqS6fMAJyUENTmO3y46h3Df5vaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZGjV9bOJ; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2db101c11beso2373711fa.0
-        for <io-uring@vger.kernel.org>; Fri, 03 May 2024 16:41:38 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a524ecaf215so25681166b.2
+        for <io-uring@vger.kernel.org>; Fri, 03 May 2024 16:55:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1714779697; x=1715384497; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1714780503; x=1715385303; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ap01jwoCR0DRWLobuG8Czpgd5Vwn2tKoOeVWkObJWkg=;
-        b=TBq5xg1sBA8zV/mvmOtoPryVJZTi1gB6j+vWmIwg2mEE/pSua3tBUv1us7XB29RnWw
-         tO3hPqZl9jXu58oSPTQz5waCBbsxXHKxVPXBISdIW55YhIZRm4XspJxonoxzkfJh/U2y
-         jk39reGIDIaKeKhO7uFyt9Wk7pkjLAnOWM51c=
+        bh=NxPhlO3npeMKaw71dXY38r1VkXmdKnYRPE7+RntnY6E=;
+        b=ZGjV9bOJtsx4vpIPOC+jl/xOHEhJ7ml4JgIzgS1AsIh9S5KtVKfqLKs5lLGdXsqdqf
+         rWkxV9dUaT0DUgXtI/DlRGk7Nc6D3XFWtZVWDF3oll1MHPi3o8BiJMn9wp/AQUXXjouJ
+         RyC5Ror5S88Byqw9QIUO/60WEA9J8Zz0r3ca4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714779697; x=1715384497;
+        d=1e100.net; s=20230601; t=1714780503; x=1715385303;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ap01jwoCR0DRWLobuG8Czpgd5Vwn2tKoOeVWkObJWkg=;
-        b=knsXdEcwB0YAgIYpiVQK/d4Uv5D8F/Kl5Utow3m6IYgc2YwwfTr4FShKjSA85rHig2
-         xlwdLhzDX54I8rPqYlGy+q8xfdh4DCzT0taJLuY7OVRmUvhR+ji8wuwME+KrF7s5Cqqu
-         52rWjNbdPC9JbYEqrh0HRTKjtjIb7MLhHTm/BLE2c5alQX/wT074Rj/3fzDDlimjvGJQ
-         yxg4PdjfHe0ocevLY7KD3TFuDr3YaZcCCB03LXe511xQQiw6kyB9SLorj9iUCdUf9xgA
-         1AJCwb6e7wjXHtKIRp+hFPR3lzQ2va76MIPWJR9sVrZKHXi62z96SG+Cgub24CD8Kj9z
-         PVQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUARAbo7QFMc58zxJdzFa3f5rBGRAJ4aTLLWacia7QmW3DIU46JbjP+V50hnf0W7VJYgNZR4+YNz/O9ID17GMs6FWCv/Vg5je0=
-X-Gm-Message-State: AOJu0Yxha896SbEMbhOqjIdoj+I/d81ScrR4Lf7n/leLKB7Pw5ksUlEp
-	1wXAj+n0RV7ky3m8Z6FxLtySjltgNG4TcIbpLlgFB6zuyEf/RQjedg1yZljmVLssYVMZ2jYbc0S
-	DoLwDCg==
-X-Google-Smtp-Source: AGHT+IF+v+d6r1nhqTkxlG0gTHj6dh32daSVGBepJiVGBtgEzwRIuxPZi4hqpQHeVBpO+1qpgowHAw==
-X-Received: by 2002:ac2:5dd3:0:b0:51e:ef7f:4e89 with SMTP id x19-20020ac25dd3000000b0051eef7f4e89mr2639305lfq.6.1714779696688;
-        Fri, 03 May 2024 16:41:36 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id b26-20020a056512025a00b0051f026412b5sm693258lfo.141.2024.05.03.16.41.36
+        bh=NxPhlO3npeMKaw71dXY38r1VkXmdKnYRPE7+RntnY6E=;
+        b=VEPu60bo3fANF/55jxMRr1fY5HfZ2G4PdTv1o8OsJrtpqkjaG2PSDxZcfP01q19dDO
+         CCOUxg4sr3lBGjFrgAEnlEvSF5OTUhq+E21hGNM4oIdVQhSmo+8cdDqcUL9IlKVdbmA/
+         uRB4RRAg1G2UDjL8sdeMobgpZNl1m6jYwfFt8LJkTPNIZQstHyLz+izVIHld7xOuE4d9
+         b2pW0OTlQqCl3zmruns5+RMiLGZL9LFu7zyCkF50luVTvgWsChJ53fm3XV9HoBU4Qw1F
+         y+3U0TfMb10GTJrdFxzaf+cCb2SKxb073EmaqfPh2hsTvM7FspBwYHSVw4RvRaBjFU5F
+         K5sg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrywCxW+R33p4b/3C8cVlrGd0RJRiuTpscjuHbUw0oSeeNZsqa8tVfwVcBTx+BEf+rhaiK28FJca5j/L4/nNRvy3m4DPEs8og=
+X-Gm-Message-State: AOJu0YyaLqiYSLe8o4jYnA3uPVt9I5qI5dVD8DGkVMYcg6hyJi1C8ivE
+	diq8Z+kjhZc7FghuH8mvuOtEvXID7OnShObTvf1Lt3ENOWSFCJ5td5tSLtWKMGRVbULe8VBQY6Y
+	nkFTubA==
+X-Google-Smtp-Source: AGHT+IHDHYqgP/kAa3EqTpthB/lulFmUmu8m1Vp/BBPBmAue2iVt8C2Uo34yp7qoMeBhlyjQqQF8BA==
+X-Received: by 2002:a17:906:448:b0:a58:cd39:d154 with SMTP id e8-20020a170906044800b00a58cd39d154mr2507403eja.11.1714780503198;
+        Fri, 03 May 2024 16:55:03 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id jw24-20020a17090776b800b00a599b64c09dsm874854ejc.128.2024.05.03.16.55.02
         for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 May 2024 16:41:36 -0700 (PDT)
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-518931f8d23so173850e87.3
-        for <io-uring@vger.kernel.org>; Fri, 03 May 2024 16:41:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX7jQjrot2x/uAwNZ44p4nZGiekzeTW57TpcX1rN0R4rvGkuFIxljCz1hUrl3PpfZzGyomA/IK4n3R8HZc1ps9T+dNRNkLI4MU=
-X-Received: by 2002:ac2:488d:0:b0:51b:fc6c:cbf6 with SMTP id
- x13-20020ac2488d000000b0051bfc6ccbf6mr2434386lfc.16.1714779695990; Fri, 03
- May 2024 16:41:35 -0700 (PDT)
+        Fri, 03 May 2024 16:55:02 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a524ecaf215so25679266b.2
+        for <io-uring@vger.kernel.org>; Fri, 03 May 2024 16:55:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXy4Sp/yw5OJFkG3tTTNSBfpfGZmmyNz0u2TbrVqfX0+Ur2d1vx/x8bWCbfX3cUd/glPhrokhh6enR3jY23zIJVqmcy+7pIRhw=
+X-Received: by 2002:a17:906:3e4e:b0:a59:a64c:9a26 with SMTP id
+ t14-20020a1709063e4e00b00a59a64c9a26mr202788eji.23.1714780501707; Fri, 03 May
+ 2024 16:55:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,15 +80,16 @@ MIME-Version: 1.0
 References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
  <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
  <20240503214531.GB2118490@ZenIV> <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
- <202405031529.2CD1BFED37@keescook> <20240503230318.GF2118490@ZenIV> <202405031616.793DF7EEE@keescook>
-In-Reply-To: <202405031616.793DF7EEE@keescook>
+ <20240503220145.GD2118490@ZenIV> <20240503220744.GE2118490@ZenIV>
+ <CAHk-=whULchE1i5LA2Fa=ZndSAzPXGWh_e5+a=YV3qT1BEST7w@mail.gmail.com> <20240503233900.GG2118490@ZenIV>
+In-Reply-To: <20240503233900.GG2118490@ZenIV>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 3 May 2024 16:41:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjoXgm=j=vt9S2dcMk3Ws6Z8ukibrEncFZcxh5n77F6Dg@mail.gmail.com>
-Message-ID: <CAHk-=wjoXgm=j=vt9S2dcMk3Ws6Z8ukibrEncFZcxh5n77F6Dg@mail.gmail.com>
+Date: Fri, 3 May 2024 16:54:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjjjsm=f+ZJRe3dXebBQS8PzpYmHjAJnk-9-2FAj3-QoQ@mail.gmail.com>
+Message-ID: <CAHk-=wjjjsm=f+ZJRe3dXebBQS8PzpYmHjAJnk-9-2FAj3-QoQ@mail.gmail.com>
 Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-To: Kees Cook <keescook@chromium.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, axboe@kernel.dk, brauner@kernel.org, 
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: keescook@chromium.org, axboe@kernel.dk, brauner@kernel.org, 
 	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
 	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
 	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
@@ -98,40 +99,42 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>, axboe@kernel.dk, brauner@kernel.org,
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 3 May 2024 at 16:23, Kees Cook <keescook@chromium.org> wrote:
+On Fri, 3 May 2024 at 16:39, Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> static bool __must_check get_dma_buf_unless_doomed(struct dma_buf *dmabuf)
-> {
->         return atomic_long_inc_not_zero(&dmabuf->file->f_count) != 0L;
-> }
->
-> If we end up adding epi_fget(), we'll have 2 cases of using
-> "atomic_long_inc_not_zero" for f_count. Do we need some kind of blessed
-> helper to live in file.h or something, with appropriate comments?
+> *IF* those files are on purely internal filesystem, that's probably
+> OK; do that with something on something mountable (char device,
+> sysfs file, etc.) and you have a problem with filesystem staying
+> busy.
 
-I wonder if we could try to abstract this out a bit more.
+Yeah, I agree, it's a bit annoying in general. That said, it's easy to
+do: stash a file descriptor in a unix domain socket, and that's
+basically exactly what you have: a random reference to a 'struct file'
+that will stay around for as long as you just keep that socket around,
+long after the "real" file descriptor has been closed, and entirely
+separately from it.
 
-These games with non-ref-counted file structures *feel* a bit like the
-games we play with non-ref-counted (aka "stashed") 'struct dentry'
-that got fairly recently cleaned up with path_from_stashed() when both
-nsfs and pidfs started doing the same thing.
+And yes, that's exactly why unix domain socket transfers have caused
+so many problems over the years, with both refcount overflows and
+nasty garbage collection issues.
 
-I'm not loving the TTM use of this thing, but at least the locking and
-logic feels a lot more straightforward (ie the
-atomic_long_inc_not_zero() here is clealy under the 'prime->mutex'
-lock
+So randomly taking references to file descriptors certainly isn't new.
 
-IOW, the tty use looks correct to me, and it has fairly simple locking
-and is just catching the the race between 'fput()' decrementing the
-refcount and and 'file->f_op->release()' doing the actual release.
+In fact, it's so common that I find the epoll pattern annoying, in
+that it does something special and *not* taking a ref - and it does
+that special thing to *other* ("innocent") file descriptors. Yes,
+dma-buf is a bit like those unix domain sockets in that it can keep
+random references alive for random times, but at least it does it just
+to its own file descriptors, not random other targets.
 
-You are right that it's similar to the epoll thing in that sense, it
-just looks a _lot_ more straightforward to me (and, unlike epoll,
-doesn't look actively buggy right now).
+So the dmabuf thing is very much a "I'm a special file that describes
+a dma buffer", and shouldn't really affect anything outside of active
+dmabuf uses (which admittedly is a large portion of the GPU drivers,
+and has been expanding from there...). I
 
-Could we abstract out this kind of "stashed file pointer" so that we'd
-have a *common* form for this? Not just the inc_not_zero part, but the
-locking rule too?
+So the reason I'm annoyed at epoll in this case is that I think epoll
+triggered the bug in some entirely innocent subsystem. dma-buf is
+doing something differently odd, yes, but at least it's odd in a "I'm
+a specialized thing" sense, not in some "I screw over others" sense.
 
-              Linus
+             Linus
 

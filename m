@@ -1,104 +1,117 @@
-Return-Path: <io-uring+bounces-1730-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1731-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F738BB65D
-	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 23:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 050E68BB66A
+	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 23:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF98A280CBE
-	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 21:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B533C281041
+	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 21:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BCF59161;
-	Fri,  3 May 2024 21:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45E738DDD;
+	Fri,  3 May 2024 21:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="LBITSpJY"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="huuBMvIb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15B958AC4;
-	Fri,  3 May 2024 21:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3C3210FB
+	for <io-uring@vger.kernel.org>; Fri,  3 May 2024 21:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714772742; cv=none; b=Wes5WWDUT25GfLUX5I9hkAeipwq9C0nZBf4Z2886fo+s2T6InXmjXKwU5z7QV85SPZpBa9ofAp1g+gj7HYXyPiAsK+oZpR97btQxuIDiZ0r9HolAF/cOyYABdodKPGTCz7yXdFWF9C8evE3dq6wPKuqTqxzr/jB1Hj+AB05XA+s=
+	t=1714773179; cv=none; b=OdtKroY8LjRF6lcoPpIZmMuA92Y8CNNSjrj+J+cxQwcfi3x+YKwrSyENailiup2f4J7A8U17DHBbgIKBO334ZJqpRBucPTmn6Ey3Tp5C2vqekteBxmXAzAXrtTHr/DddD5wksx5saQ1CMPQc3Ps0hEgmxb5+aPFxovDiqQ8T1yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714772742; c=relaxed/simple;
-	bh=lOYEhpsDzSYPAdQ3BrBv0vEy/GPofPZX+8B5tDMr4Qo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PsaOIklf60V4xlXoSOn3/3itSDzse/Mc2dps0S0BPukCzQ9KxLffEguyl34LRb3MTsEBN26t8S62H+pjnapS4hwBGHVE7tDmbFIlPXxD6pEfiuJeGrauS2vm7uS0lFCIlPaHT9lBn9VTftrhu+PjOtk1Sq/q7cc72Mex3BnWQgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=LBITSpJY; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3lCoy8uzoX7QQd8eqESv9U82+gq2FTw7cMvL87kLhkY=; b=LBITSpJYboAcmP2sLMLog8nydW
-	mt/eEb1k1RxaC/1rf9axcfr3DpdDFVZWBzSM5oiyiRFUxSmSTNk7S/pL3r/LyK0sUx0B7ulVQ3JNQ
-	r6F9ALR0ltwB+yhzi14FlChXAh3y8p88L3KhQBzlGvQE9Qyjmf9GyQKp0ImLKiTti9oHi8k3hRvo3
-	wVh2ps6XnwBsfVzZeN71mN1klcTNC+Iw2ovocjktngU/aRLmD9i2C0kfkNl/XDxg43VHY7LcXvmHW
-	cP5n8cc1rlrFA4QbwGKtuB0RilMr6TQXDJT8CFkSL/wplslwGYSr1h0+/PUFgSGJlDgXOv0RWp+HJ
-	KdWj72Tw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s30ih-00B9OV-2B;
-	Fri, 03 May 2024 21:45:31 +0000
-Date: Fri, 3 May 2024 22:45:31 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: keescook@chromium.org, axboe@kernel.dk, brauner@kernel.org,
-	christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name,
-	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org,
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <20240503214531.GB2118490@ZenIV>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+	s=arc-20240116; t=1714773179; c=relaxed/simple;
+	bh=d5soG/vdOcHc+T4G2kOCRoZhsfh2zUDag1A1J17X/z0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mmp5AgQ4aBcIedSIAgJY/OoxUADuNQSntor49QQtrjrNRwHg/wgJMk1BHdNF5W6nrm4GJ+1BnIXnRFjhITWj7voaI+7S+rrS2Mp9AA5Z0iLx0amAuovsTSunKcc/qw4YE9gbFasQ4MUQgJNh5c2LqdLdbLsiJIyfZgekRogY0t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=huuBMvIb; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a599af16934so17664766b.1
+        for <io-uring@vger.kernel.org>; Fri, 03 May 2024 14:52:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1714773176; x=1715377976; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=A7KwjGqB6cN3Dl955k2+YGPiXLoEdjHxOLmUV0m+ZBo=;
+        b=huuBMvIbJRnhXNGnfhWTl/8RmzkvVfAA/eyOTiGwbrJpFW1AMRk4T2gc6j+pnbqa4g
+         qkD29080e6P3DhOf0a4zzVcKj0oTS0l19mdgaBNgdbXLxQnAZ4vnD+aOs5IsnaDHcATT
+         gZQ4zEBUYQFaZvFKsi4yYIvc0vm8F9Ue44vTo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714773176; x=1715377976;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A7KwjGqB6cN3Dl955k2+YGPiXLoEdjHxOLmUV0m+ZBo=;
+        b=ntp6bvhEvd6YnN2wVMpSDxV5S2RIK/2uWvrYNj84kJQtsGxeBFTLJOCMv7/RnanaC3
+         lUoVTijwT5ui7FQhOF/Jp4jujhz8TeTX43EEvQnr1C0FP1awvy8Nm4EdSQZvvV6F983W
+         Hl7R5v0wFPL9XNiGUp2uaVw4yqAsWdQo9WY3PMdbvvIMpYQPlTRDgKAqGvD+WMPwEl6T
+         L4t/MMMJ3cenUzTxgg3UchsbyVrI9BWSTK4dUjfcB00zfzpZeR7DDzB4LcMguSkf6Gl7
+         Rz/8FIUs1de7mUmEX4wiAJ6Roi2gU+vH0Ls+oaojATzowU/vAsXozk7XffzptXsJaXAl
+         aOCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLUW1CVCE9lUXIwOdLP/SAQc184kxKP+upfw9Gh9VWuW7PI2tGsobfFCm2d4QVVGdlB8zEL2tFz5FE+W1X54dDujdGbU8LSYs=
+X-Gm-Message-State: AOJu0YwriB4/o9gBsrlOS+aGdiIQPxB7YDfrA4OS/k1IGt/Xt9rwixLR
+	eKetbJebRo+4+uvogNMfgZ8eLd9d+MJ5WXjagaCd8R4KUh9hH4TLhy6v7GBo3SAhwwFTF5SpKS4
+	vG8pL+w==
+X-Google-Smtp-Source: AGHT+IH6Ru84Y1JINkyMiMz429dIETDgmR1EukqPW4m0GygJCCf7tcPwQm4ZpYDkaBQZfHZp3zYaOQ==
+X-Received: by 2002:a17:906:7fcb:b0:a58:bb3e:937b with SMTP id r11-20020a1709067fcb00b00a58bb3e937bmr2700337ejs.63.1714773176166;
+        Fri, 03 May 2024 14:52:56 -0700 (PDT)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id nc8-20020a1709071c0800b00a5974b95c31sm1774136ejc.103.2024.05.03.14.52.55
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 May 2024 14:52:55 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a599af16934so17660866b.1
+        for <io-uring@vger.kernel.org>; Fri, 03 May 2024 14:52:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUu8r+ezkoRqPauA2grJXixf5U02F0ewx8qqE9GS8X4FBOLPtM+Vpe+ut3VDYZO2qQFC+Dbt6ivlnMLTVZZ3ElEeP2P5D22S70=
+X-Received: by 2002:a17:906:eca8:b0:a58:c639:9518 with SMTP id
+ qh8-20020a170906eca800b00a58c6399518mr2622517ejb.76.1714773175036; Fri, 03
+ May 2024 14:52:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240503214531.GB2118490@ZenIV>
+In-Reply-To: <20240503214531.GB2118490@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 3 May 2024 14:52:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
+Message-ID: <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: keescook@chromium.org, axboe@kernel.dk, brauner@kernel.org, 
+	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 03, 2024 at 02:33:37PM -0700, Linus Torvalds wrote:
+On Fri, 3 May 2024 at 14:45, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> How do you get through eventpoll_release_file() while someone
+> has entered ep_item_poll()?
 
-> Look at the hack in __ep_remove(): if it is concurrent with
-> eventpoll_release_file(), it will hit this code
-> 
->         spin_lock(&file->f_lock);
->         if (epi->dying && !force) {
->                 spin_unlock(&file->f_lock);
->                 return false;
->         }
-> 
-> and not free the epi.
+Doesn't matter.
 
-What does that have to do with ep_item_poll()?
+Look, it's enough that the file count has gone down to zero. You may
+not even have gotten to eventpoll_release_file() yet - the important
+part is that you're on your *way* to it.
 
-eventpoll_release_file() itself calls __ep_remove().  Have that
-happen while ep_item_poll() is running in another thread and
-you've got a problem.
+That means that the file will be released - and it means that you have
+violated all the refcounting rules for poll().
 
-AFAICS, exclusion is on ep->mtx.  Callers of ep_item_poll() are
-* __ep_eventpoll_poll() - grabs ->mtx
-* ep_insert() - called under ->mtx
-* ep_modify() - calls are under ->mtx
-* ep_send_events() - grabs ->mtx
+So I think you're barking up the wrong tree.
 
-and eventpoll_release_file() grabs ->mtx around __ep_remove().
-
-How do you get through eventpoll_release_file() while someone
-has entered ep_item_poll()?
+                  Linus
 

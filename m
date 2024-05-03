@@ -1,90 +1,71 @@
-Return-Path: <io-uring+bounces-1740-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1741-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E318BB828
-	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 01:23:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3E78BB857
+	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 01:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B07F286107
-	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 23:23:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEDCC1C21447
+	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 23:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E2A83CD8;
-	Fri,  3 May 2024 23:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A7682D68;
+	Fri,  3 May 2024 23:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QgbhR5TG"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="q9II9mXc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045305CDE6
-	for <io-uring@vger.kernel.org>; Fri,  3 May 2024 23:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF0280038;
+	Fri,  3 May 2024 23:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714778616; cv=none; b=eezTcFf8Kikl/DjDEfehI9SCG+soHEQVKJFmteEGzW00vDQYCnOJ2eDneTziJH1N7AG7M4pPwL+p2CHos4oUuRWZ8c3HGa+QXWnxULdKqFSF/4dcrdDXhvT4pIKNc84Bamqwc4P19jyUGJqxLMYeyFCBMXZE5j1gRzbESMp4zYg=
+	t=1714779551; cv=none; b=WsHWaFaan2lXuEcx+XJ6V9xQtOoJjRxP2FJPt7XDHOxj2OiOr+2uhK1MrwZgkIQTlkrxq4OX4V+pDLXqk24xXCMx5r5NpnwenXT4SXnbQzGd4/1AVa6HQ4LCjtyrGDgwHThYNnkK7yri84CnYL+qkUs7nekdrf+jnyOMIbVj7XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714778616; c=relaxed/simple;
-	bh=zTpIfqRQDzdzVfUsy6l5qLMI78ldTHEPUTPdLY17JIM=;
+	s=arc-20240116; t=1714779551; c=relaxed/simple;
+	bh=6bbQiD7Gb4UlTZVxIV+PWj8d+j+sms0A1F+r6wyCi14=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3eJ/mDhVMVZzS7FYDiFFYEIAiCD31IdN61pTZdIOvFnQFKryS4Mj6Tewiy2ZHwTAXz++L6CbHXI8gEPZ0ay7PbvX+JkR6NvGS127TPmopG42+B6RBD4xYbbeCn1S/X9rW3vZ49gPFkLW2pRvfla+dOEfpFfErEpaMD7z5cbFmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QgbhR5TG; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ec486198b6so1373785ad.1
-        for <io-uring@vger.kernel.org>; Fri, 03 May 2024 16:23:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1714778614; x=1715383414; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VUA37CihXVg7mm5FxSpz/CzjnHfbPR2trIEY0fDnh+Q=;
-        b=QgbhR5TGzckPzZKG39guSJM+khq955ZxBWGEAq0fY52fc//uRlCu4dqNh8ggEc62Zc
-         Vdd5iECV2R8RjmhJhKBVj0c+bd1l+dF9HPBZomRJmiJXJtNkcie5MbtnDa6iiew+wIii
-         EBRNqwd/Wqpe7a4gS1eB3ujq8jMj6CFLDRrcQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714778614; x=1715383414;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VUA37CihXVg7mm5FxSpz/CzjnHfbPR2trIEY0fDnh+Q=;
-        b=TCjmJvtjV/7EqlwwDcdgP1ZLXN9rFUydrYFfXXggPvgliv22tpxdkdjZ1NgxvkEUvg
-         vA/JVTL3vNKv3OmFPFrAtOmJSgkKr9I0KFQb8KOtNOhKpsRzLrXbQrYmi7SCqF3XOovn
-         +gqI6EtWImakLJe4EPap85LbY8R28Luo3FlmC5utxkOhIYQZME5lEguRZsJoGudUy6rC
-         Hyb9HBySwaTIPCXJRcR0mtIg/n+JtoVnWlhWv1hLI6wrdrjWCN9hxarAz3exFNSMrY0i
-         cyjcPpQrY2fRzQNCRUwv9IXDIeZMa7FGZcKD/uV/cVYrIJnDLP0H06bd2Ra/pYr8/5sA
-         mfAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqlJarvE0CEB0SfLfRzuJCg1alAhLT+r7KQNm2QXio92TTZo1jCsQaU391QHQLXo8qsbroUColaDPewGKAIhcjMMBSrFUUt9Q=
-X-Gm-Message-State: AOJu0YyuPpyToe3GKItQt4xIx0J39Ni9j5zcn1eDwl9VSiZz0N11B/h/
-	PlJCT2/d+j7U0yXeusGJJcR4OGMZBzOHxSTEofZC2TYZ/HQ2Ay0E3nW3nXXFag==
-X-Google-Smtp-Source: AGHT+IGYEU76uRUVHu3t+p2cOz6G2yu0aNydyl6VPEopXdNsv2Uoe1Hs5RLUXZ183qrKjCrJ/IlslQ==
-X-Received: by 2002:a17:903:1c2:b0:1e4:6243:8543 with SMTP id e2-20020a17090301c200b001e462438543mr4608970plh.5.1714778614174;
-        Fri, 03 May 2024 16:23:34 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id b11-20020a170902d50b00b001eb2f4648d3sm3793511plg.228.2024.05.03.16.23.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 May 2024 16:23:33 -0700 (PDT)
-Date: Fri, 3 May 2024 16:23:33 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, axboe@kernel.dk,
-	brauner@kernel.org, christian.koenig@amd.com,
-	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
-	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
-	sumit.semwal@linaro.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRZSmgsao134fqp165DU6tpQTY+MH1x/htJ+ZUXQ0HR8xi1yiRSfytoZZjghHN2cmd2O4Nl5NAuO7wylS0JpOasIw5txF6vtK0AOzOFXxHOI+5ptRx+/94EYe5vafnxEpAPeGdvtWAsfiyLn8o/9zidEe0WtsF3JFlAwECcAyIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=q9II9mXc; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WAsHHyyLON6bH8kMNcqPvKu+nLtQfBaFyUzhN8/fmXI=; b=q9II9mXcxby6lVXHsG0JVrkTJT
+	TbnocjCJurqmvStTQbv944nSP6uYVmbtKY8TuAIqJWuFuYMBM6uSKLCHaXf7YAJTamWF8AZlFwhBd
+	DdsNEgsrfspvlmCfg4xJufBuXxSVe9MpcRIvGsC9KG0PLWPnWS1+PDRTYHiOYD6STZ8q1UBLB4u0D
+	uS3Sm/j31Dc0E4LJEai6HSyOQqGvvpgo6kBBURsydLKEF5K4A5j7XCAClx9B9/J6zWoohYOKVzV1h
+	WhiylI9wqnNhkDsYA9X7ophPs2Yf0JPspgd4a3QjJkdSGwQlQpe81inObgOvhP4wK099OCZRkf9SW
+	1dBGEOkg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s32UW-00BGUG-0X;
+	Fri, 03 May 2024 23:39:00 +0000
+Date: Sat, 4 May 2024 00:39:00 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: keescook@chromium.org, axboe@kernel.dk, brauner@kernel.org,
+	christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name,
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org,
 	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
 	syzkaller-bugs@googlegroups.com
 Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <202405031616.793DF7EEE@keescook>
+Message-ID: <20240503233900.GG2118490@ZenIV>
 References: <202405031110.6F47982593@keescook>
  <20240503211129.679762-2-torvalds@linux-foundation.org>
  <20240503212428.GY2118490@ZenIV>
  <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
  <20240503214531.GB2118490@ZenIV>
  <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
- <202405031529.2CD1BFED37@keescook>
- <20240503230318.GF2118490@ZenIV>
+ <20240503220145.GD2118490@ZenIV>
+ <20240503220744.GE2118490@ZenIV>
+ <CAHk-=whULchE1i5LA2Fa=ZndSAzPXGWh_e5+a=YV3qT1BEST7w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -93,72 +74,49 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240503230318.GF2118490@ZenIV>
+In-Reply-To: <CAHk-=whULchE1i5LA2Fa=ZndSAzPXGWh_e5+a=YV3qT1BEST7w@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, May 04, 2024 at 12:03:18AM +0100, Al Viro wrote:
-> On Fri, May 03, 2024 at 03:46:25PM -0700, Kees Cook wrote:
-> > On Fri, May 03, 2024 at 02:52:38PM -0700, Linus Torvalds wrote:
-> > > That means that the file will be released - and it means that you have
-> > > violated all the refcounting rules for poll().
-> > 
-> > I feel like I've been looking at this too long. I think I see another
-> > problem here, but with dmabuf even when epoll is fixed:
-> > 
-> > dma_buf_poll()
-> > 	get_file(dmabuf->file)		/* f_count + 1 */
-> > 	dma_buf_poll_add_cb()
-> > 		dma_resv_for_each_fence ...
-> > 			dma_fence_add_callback(fence, ..., dma_buf_poll_cb)
-> > 
-> > dma_buf_poll_cb()
-> > 	...
-> >         fput(dmabuf->file);		/* f_count - 1 ... for each fence */
-> > 
-> > Isn't it possible to call dma_buf_poll_cb() (and therefore fput())
-> > multiple times if there is more than 1 fence? Perhaps I've missed a
-> > place where a single struct dma_resv will only ever signal 1 fence? But
-> > looking through dma_fence_signal_timestamp_locked(), I don't see
-> > anything about resv nor somehow looking into other fence cb_list
-> > contents...
+On Fri, May 03, 2024 at 04:16:15PM -0700, Linus Torvalds wrote:
+> On Fri, 3 May 2024 at 15:07, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > Suppose your program calls select() on a pipe and dmabuf, sees data to be read
+> > from pipe, reads it, closes both pipe and dmabuf and exits.
+> >
+> > Would you expect that dmabuf file would stick around for hell knows how long
+> > after that?  I would certainly be very surprised by running into that...
 > 
-> At a guess,
->                 r = dma_fence_add_callback(fence, &dcb->cb, dma_buf_poll_cb);
-> 		if (!r)
-> 			return true;
+> Why?
 > 
-> prevents that - it returns 0 on success and -E... on error;
-> insertion into the list happens only when it's returning 0,
-> so...
+> That's the _point_ of refcounts. They make the thing they refcount
+> stay around until it's no longer referenced.
+> 
+> Now, I agree that dmabuf's are a bit odd in how they use a 'struct
+> file' *as* their refcount, but hey, it's a specialty use. Unusual
+> perhaps, but not exactly wrong.
+> 
+> I suspect that if you saw a dmabuf just have its own 'refcount_t' and
+> stay around until it was done, you wouldn't bat an eye at it, and it's
+> really just the "it uses a struct file for counting" that you are
+> reacting to.
 
-Yes; thank you. I *have* been looking at it all too long. :)
+*IF* those files are on purely internal filesystem, that's probably
+OK; do that with something on something mountable (char device,
+sysfs file, etc.) and you have a problem with filesystem staying
+busy.
 
+I'm really unfamiliar with the subsystem; it might be OK with all
+objects that use that for ->poll(), but that's definitely not a good
+thing to see in ->poll() instance in general.  And code gets copied,
+so there really should be a big fat comment about the reasons why
+it's OK in this particular case.
 
-The last related thing is the drivers/gpu/drm/vmwgfx/ttm_object.c case:
-
-/**
- * get_dma_buf_unless_doomed - get a dma_buf reference if possible.
- *
- * @dmabuf: Non-refcounted pointer to a struct dma-buf.
- *
- * Obtain a file reference from a lookup structure that doesn't refcount
- * the file, but synchronizes with its release method to make sure it
- * has
- * not been freed yet. See for example kref_get_unless_zero
- * documentation.
- * Returns true if refcounting succeeds, false otherwise.
- *
- * Nobody really wants this as a public API yet, so let it mature here
- * for some time...
- */
-static bool __must_check get_dma_buf_unless_doomed(struct dma_buf *dmabuf)
-{
-        return atomic_long_inc_not_zero(&dmabuf->file->f_count) != 0L;
-}
-
-If we end up adding epi_fget(), we'll have 2 cases of using
-"atomic_long_inc_not_zero" for f_count. Do we need some kind of blessed
-helper to live in file.h or something, with appropriate comments?
-
--- 
-Kees Cook
+Said that, it seems that a better approach might be to have
+their ->release() cancel callbacks and drop fence references.
+Note that they *do* have refcounts - on fences.  The file
+(well, dmabuf, really) is pinned only to protect against the
+situation when pending callback is still around.  And Kees'
+observation about multiple fences is also interesting - we don't
+get extra fput(), but only because we get events only from one
+fence, which does look fishy...
 

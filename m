@@ -1,105 +1,107 @@
-Return-Path: <io-uring+bounces-1721-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1722-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB898BB537
-	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 23:05:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD84C8BB545
+	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 23:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76F46282F36
-	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 21:05:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1561C20B61
+	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 21:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63381EA87;
-	Fri,  3 May 2024 21:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335E4482EE;
+	Fri,  3 May 2024 21:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O/54DxdD"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Rs9B3xI+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0183E134B1
-	for <io-uring@vger.kernel.org>; Fri,  3 May 2024 21:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A5341746;
+	Fri,  3 May 2024 21:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714770354; cv=none; b=WvaicAaAVU3VTachTyAUjGPUBnxlzrtBR+xTaqzIfK7I2roBt+d/KUXOAQoCTtur9sBEUlOx+6oHm/xUP3RZ0RrgseUORGrEDGCyK7qTdkMothe2/+kkqzjzWotXPjPpx7qzpVLzcL/fD0URd9tDmFQe4agi9vfoZxVIjucjR8g=
+	t=1714770681; cv=none; b=hYSoo5VppYtLtSnFe0b5JYEbsOzi0YpdGota5peXEnsoDee0BS1ARUTrZiBPWGxI2CAIEUrdYkP1MtNlg2hH6Ttmu/DoSRsXA2fXwd2AOoAnQlLzCyACIXvoExA1gNjEfQhW1XPB/ifd2Yt9vBn1kRcEsVfVxD9Q1h0Ch44Jc9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714770354; c=relaxed/simple;
-	bh=BRTTM808LyLJDWB7mFF14X4AB1fddYDAEns7VnsAA/g=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Jdo0+ArogNJ3+JGb2Hjb1J0vN7GvnonDEbLWqp5bl4pLVuIDsWAhSvZrxi0zrTQQQY1SlTR8hKOdTL76SE5ewKaVkEtPBV4BJqTS+FOtMzKztVcCEwHeX4AgnxS4fEOoCkumXk9rOOisVfzUGaCWMiqXvZJjK2nifsCClViG5Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O/54DxdD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714770351;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=22XUfJytmrtrjXGHeWb7o/ZQTLhKZb5rocdce6TXnYk=;
-	b=O/54DxdDY7l+ZF8SxVsLnzGFqP2hIe10PPvw5Z0rsjM/E9kyFn2qPNEO4rcE7xz23MTqNg
-	FmwYbvvPg+HnS+Vp09Bp2B1GEWXtQqKmlwMqQW82ZbMiDu5EzOrgXv7We3z5PSKSWDz3sV
-	FnvBotnnzTXGeNY27ElLofpuihWtjWo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-146-SK2C_zxXMYe9d9NFd7Q_Bw-1; Fri, 03 May 2024 17:05:50 -0400
-X-MC-Unique: SK2C_zxXMYe9d9NFd7Q_Bw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 010C38943A1
-	for <io-uring@vger.kernel.org>; Fri,  3 May 2024 21:05:50 +0000 (UTC)
-Received: from segfault.usersys.redhat.com (unknown [10.22.16.155])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id D3FAD2166B31
-	for <io-uring@vger.kernel.org>; Fri,  3 May 2024 21:05:49 +0000 (UTC)
-From: Jeff Moyer <jmoyer@redhat.com>
-To: io-uring@vger.kernel.org
-Subject: [patch liburing v2] man: fix IORING_REGISTER_RING_FDS docs
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date: Fri, 03 May 2024 17:05:49 -0400
-Message-ID: <x49bk5mehci.fsf@segfault.usersys.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+	s=arc-20240116; t=1714770681; c=relaxed/simple;
+	bh=ir4jVAwHqZZPJB/DE9uWzxgHlCj8HSje/nWd9XFDyhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/2br5Z+mvgfi+nJgRC8/+n6F3fzgUJOBSVgagc1/SC0AhUuP7gHGeDjW9TIl2OIDUyIiRxx0owzJdTEJStOCyyJfkif54BA5xaxAZEUYiR/mHnQIX4lzzd52/Pb4IjuylT4lfppqkvE5IcmymX6ciw3G/lDMf+tlQRnqe/0/dA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Rs9B3xI+; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NY7dpnWNXhQQKVFdAJPJlG4e4ZXMaDmQRQbDTVWLCeE=; b=Rs9B3xI+XdmJK5vPYQK8J22QKS
+	EgQQjCflBDYUtxW7SIX67RGaVIh3sQxNGH90bxispPeYAm3Rch22e5sDAaxhSEmNW2ySJllWffdb5
+	a4oV0hJkK1wMLB0wsYYYxmpIJp7sPoevLWMdPWdjnwETEp1S5NfsIj1h0wJX1d3jNqehubjWUYPn+
+	7uDmwbVMNILcV4WyvLYqHObXMuav53kC37sidi15Uw1VLUrj5+Sngx5+0djz5feXF5HjHfmThe2Wn
+	SpKgjexjGpBfd+US1tn2T08npPs/aGPCeX21rEsxXS0Wot3Ugzg/2Yns9RIFdjTU5nMXuJMK+yyG7
+	QAAoXHQQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1s30BR-00B72n-1X;
+	Fri, 03 May 2024 21:11:09 +0000
+Date: Fri, 3 May 2024 22:11:09 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Kees Cook <keescook@chromium.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Bui Quang Minh <minhquangbui99@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	syzbot <syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>,
+	io-uring@vger.kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, Laura Abbott <laura@labbott.name>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: get_file() unsafe under epoll (was Re: [syzbot] [fs?]
+ [io-uring?] general protection fault in __ep_remove)
+Message-ID: <20240503211109.GX2118490@ZenIV>
+References: <0000000000002d631f0615918f1e@google.com>
+ <7c41cf3c-2a71-4dbb-8f34-0337890906fc@gmail.com>
+ <202405031110.6F47982593@keescook>
+ <64b51cc5-9f5b-4160-83f2-6d62175418a2@kernel.dk>
+ <202405031207.9D62DA4973@keescook>
+ <d6285f19-01aa-49c8-8fef-4b5842136215@kernel.dk>
+ <202405031237.B6B8379@keescook>
+ <202405031325.B8979870B@keescook>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202405031325.B8979870B@keescook>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The documentation for the 'arg' parameter is incorrect.  Fix it.
+On Fri, May 03, 2024 at 01:28:37PM -0700, Kees Cook wrote:
+> 
+> Is this the right approach? It still feels to me like get_file() needs
+> to happen much earlier...
 
-Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
----
-v2: fix up IORING_UNREGISTER_RING_FDS as well
+I don't believe it needs to happen at all.  The problem is not that
+->release() can be called during ->poll() - it can't and it doesn't.
+It's that this instance of ->poll() is trying to extend the lifetime
+of that struct file, when it might very well be past the point of no
+return.
 
-diff --git a/man/io_uring_register.2 b/man/io_uring_register.2
-index fbfae2a..4590588 100644
---- a/man/io_uring_register.2
-+++ b/man/io_uring_register.2
-@@ -528,8 +528,8 @@ of the ring file descriptor itself. This reduces the overhead of the
- system call.
- 
- .I arg
--must be set to an unsigned int pointer to an array of type
--.I struct io_uring_rsrc_register
-+must be set to a pointer to an array of type
-+.I struct io_uring_rsrc_update
- of
- .I nr_args
- number of entries. The
-@@ -570,8 +570,8 @@ Unregister descriptors previously registered with
- .B IORING_REGISTER_RING_FDS.
- 
- .I arg
--must be set to an unsigned int pointer to an array of type
--.I struct io_uring_rsrc_register
-+must be set to a pointer to an array of type
-+.I struct io_uring_rsrc_update
- of
- .I nr_args
- number of entries. Only the
+What we need is
+	* promise that ep_item_poll() won't happen after eventpoll_release_file().
+AFAICS, we do have that.
+	* ->poll() not playing silly buggers.
 
+As it is, dma_buf ->poll() is very suspicious regardless of that
+mess - it can grab reference to file for unspecified interval.
+Have that happen shortly before reboot and you are asking for failing
+umount.
+
+->poll() must be refcount-neutral wrt file passed to it.  I'm seriously
+tempted to make ->poll() take const struct file * and see if there's
+anything else that would fall out.
 

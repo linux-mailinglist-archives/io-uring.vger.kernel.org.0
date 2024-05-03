@@ -1,156 +1,242 @@
-Return-Path: <io-uring+bounces-1709-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1710-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA2E8BADE6
-	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 15:41:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D198C8BB1DC
+	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 19:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4B411F21176
-	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 13:41:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4C4EB20B5A
+	for <lists+io-uring@lfdr.de>; Fri,  3 May 2024 17:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B81414A0AB;
-	Fri,  3 May 2024 13:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7938E157E87;
+	Fri,  3 May 2024 17:37:18 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1691139CF8
-	for <io-uring@vger.kernel.org>; Fri,  3 May 2024 13:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA061EA87;
+	Fri,  3 May 2024 17:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714743690; cv=none; b=CqjDV0QpEeN6cV5N3+Wju5jnRgDMIzELf+MB4Z1ZtOXkaO9eFlGEV+1SbV5KhJjoyXn5t8WpNtoC3srOh3v7HAUvwOEO+lWhzBW6YzTE3ypzp0FmNW4r2r3eMW6N9rcMSp57U/HuZCYPwIeZIyWqxSFfI+vKKnpBtisVuMjgtRw=
+	t=1714757838; cv=none; b=MtAMXTtr9VoICg+go8fnHlqeWobnv9eH1AFBC9E/+5a1iL058VCzPUTdtJseaSLv2uxHzWlyxJWJl4ajdav+PruvhPKQxtqo7LT0L69UY9uXmTVsDnnNge7P3bVHPJHSphvsPKmopP0dbDC+SBf1nFRagFpAEeZZ5BNBz9XXPGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714743690; c=relaxed/simple;
-	bh=YzBsIJFXDqLgDA3FCpHuVIFrGfe1FFzjhQ/UF8NhHI0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=a3BGXVYNDMtORysPA42JEaCRD0qWIXtGIIEsB6yiZCW+LXX2RKyaqC729ohMNuc4siODhpmjN2IqJ+CNE9EU4FricVVz826D7nO++GAsvRVYAQIA5As4Q7gvNC1fCluvIVTpH+ZoNvU88xLQ8wrfD0bNnsQsO55JsqD2usuIfiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7def44d6078so141393839f.1
-        for <io-uring@vger.kernel.org>; Fri, 03 May 2024 06:41:28 -0700 (PDT)
+	s=arc-20240116; t=1714757838; c=relaxed/simple;
+	bh=ffYdlFU2N5khAncz7FuZgYdmuPobYWJIuub4Tfx5sHo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ozhDSE7UvFzpk/N+51j4BZYCgqlvfG+EFS6dWuhiXIL0lJoGk8XSH8kDpPAjU7GW5txj8+eVn/E2CN+1cxNA3M6iKqiFo02zjm/qQ1A1+Ma9h0BD4zFaYoQZe4s3wbkXaYci087FcKab2nHxrA2Uaz/aWIzZKiLP5DDnlVAlGxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a597de5a715so375339466b.2;
+        Fri, 03 May 2024 10:37:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714743688; x=1715348488;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pHF73fXV9YBzhlAyLN1LlD3cj+yK8oEXzez72G9MWbY=;
-        b=f25DNvM7AHS83eD3Y0i9TArDYw25/MfpMwO2OmxH+SN3rkMElkcCPw5TcIejdiQo0x
-         tVXBB8PjdLIwtNAV3Y4bNQ9y8m7zSuw0DUY7MxNmMgc4kH4T9hsmM7ao/XyLiiHkZyJI
-         bhsJn7Gdexg3Hl5X6kU6YbLLroa1KNpOneZrkaQvsyrZ9bS1MLZX7HsZBkQXpwbsiwHo
-         78nnUFNQifP5+kkUfOrCtu4bGhm9GExmMQtF3tEYtH2D3SX20iSwRUgwIwIKc+rGmym4
-         hwk5BuNMZhRSO8AFm2JeHxbMVqDleaz8JtuPnYdaL5NDwXXUhaqFO9YtM4N6O7045I/a
-         LtaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2aH6wsH2buET0cRQKnfDkTmKXtKb1VPCLPYX4x5tBwNIYutNLdoeTZTYwo1arZQl2KHwEw7aKDK0krRXJLngMyeP3wahv7Mk=
-X-Gm-Message-State: AOJu0YyNI6gp/wo3aVak5gS9Gaq0f9zaTmE00iuD40IIrHxt8yzxJvQ4
-	Xa/mg38A4c4qp1JPOh5CPpKFSNwVklkgbI0ZtXWa6ym+zQeIB7P9J8WKR+UqOMcxnv9oQFwVmjG
-	sG5otaRFr6AoqVxgPOFiplQSLJuf4CJQx8hYYtLcJTtYXjtglOWOKSdo=
-X-Google-Smtp-Source: AGHT+IGNaS7EuIrM/DtrBgMbQOBFKh5oHIf0eww9bEoUDBoVGZqDbHtx1ynsMXbVfoU1F/2kzogv+fEmPyn/TGBu7pAX2+QVf8Lk
+        d=1e100.net; s=20230601; t=1714757835; x=1715362635;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oNeVP55/tYBUCC+buHTeImb1VCQfKz88JDpcLuFeZ/o=;
+        b=GgamD9GHYH+/7G27RE62qZr6Ap3baVNTX7KuH9FOzXW9tEOOC6q70S4Zo6ovtdBUkE
+         dWbIUacqk4cbHGAWY99qzXXIO0X1jLV/R6e8sJSKl4xZgPZqTdxwc4cW4qmGWdDrDlQc
+         3XV9jnG2NzdMKZvB+rbAng7d6xWhRE6fH5vikCusHdMdFelVSxxouW3CifrImVk18tpA
+         pvG/3jgRnU8qYtpu54fT4gZRIbouLEHCnoy9Wu29sqNg9SMdf1mfw3lhoqBS75Zy4rg7
+         1HTDwH57+oWjx5jZKvG3ocH2DX/H11J7oQ4+eX1Tw3Qkw6IbaO6lhxsGplsF7WxOJpuA
+         NwLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcxCIkpD8bvy3BrV3b0I3BnazsgYiLRqm3QDVu+rcKk1DbEoGSe0GSJHQTprUd0C81AfW70vtFo89NiHERDzobKRnTnBdQIqG+/y3VR73bDAWhrZR+UkbYR4fF7q+9Ptx/vGVWCOA=
+X-Gm-Message-State: AOJu0YwSFkbL1MtMet/cOJlecRQqQ/NHARmcyZ+IUeyp392Xt+HoCAte
+	/HsOzP+TE+EBAg+uqYD59J2dz8fFU72JF/j26gKGlp76A5ZXYohQ
+X-Google-Smtp-Source: AGHT+IGxbYhbo2Veue9D5d8wb+mVQIddhXM7E8yN0+5L7O2LS65Hy3dC8giBiuBD49/EIHMSDMVpTQ==
+X-Received: by 2002:a50:9b55:0:b0:572:a123:5ed0 with SMTP id a21-20020a509b55000000b00572a1235ed0mr2039453edj.21.1714757834740;
+        Fri, 03 May 2024 10:37:14 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-117.fbsv.net. [2a03:2880:30ff:75::face:b00c])
+        by smtp.gmail.com with ESMTPSA id ec43-20020a0564020d6b00b00572dea90dabsm242515edb.63.2024.05.03.10.37.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 May 2024 10:37:14 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: leit@meta.com,
+	io-uring@vger.kernel.org (open list:IO_URING),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] io_uring/io-wq: Use set_bit() and test_bit() at worker->flags
+Date: Fri,  3 May 2024 10:37:11 -0700
+Message-ID: <20240503173711.2211911-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1389:b0:36c:4c3c:e16 with SMTP id
- d9-20020a056e02138900b0036c4c3c0e16mr93724ilo.2.1714743688106; Fri, 03 May
- 2024 06:41:28 -0700 (PDT)
-Date: Fri, 03 May 2024 06:41:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006923bb06178ce04a@google.com>
-Subject: [syzbot] [mm?] [io-uring?] WARNING in hpage_collapse_scan_pmd (2)
-From: syzbot <syzbot+5ea2845f44caa77f5543@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Utilize set_bit() and test_bit() on worker->flags within io_uring/io-wq
+to address potential data races.
 
-syzbot found the following issue on:
+The structure io_worker->flags may be accessed through parallel data
+paths, leading to concurrency issues. When KCSAN is enabled, it reveals
+data races occurring in io_worker_handle_work and
+io_wq_activate_free_worker functions.
 
-HEAD commit:    e67572cd2204 Linux 6.9-rc6
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1067d2f8980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3310e643b6ef5d69
-dashboard link: https://syzkaller.appspot.com/bug?extid=5ea2845f44caa77f5543
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10874a40980000
+	 BUG: KCSAN: data-race in io_worker_handle_work / io_wq_activate_free_worker
+	 write to 0xffff8885c4246404 of 4 bytes by task 49071 on cpu 28:
+	 io_worker_handle_work (io_uring/io-wq.c:434 io_uring/io-wq.c:569)
+	 io_wq_worker (io_uring/io-wq.c:?)
+<snip>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d3c4905a7f32/disk-e67572cd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9e4d1fc8f9c1/vmlinux-e67572cd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4616b77edaee/bzImage-e67572cd.xz
+	 read to 0xffff8885c4246404 of 4 bytes by task 49024 on cpu 5:
+	 io_wq_activate_free_worker (io_uring/io-wq.c:? io_uring/io-wq.c:285)
+	 io_wq_enqueue (io_uring/io-wq.c:947)
+	 io_queue_iowq (io_uring/io_uring.c:524)
+	 io_req_task_submit (io_uring/io_uring.c:1511)
+	 io_handle_tw_list (io_uring/io_uring.c:1198)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5ea2845f44caa77f5543@syzkaller.appspotmail.com
+Line numbers against commit 18daea77cca6 ("Merge tag 'for-linus' of
+git://git.kernel.org/pub/scm/virt/kvm/kvm").
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5288 at arch/x86/include/asm/pgtable.h:403 pte_uffd_wp arch/x86/include/asm/pgtable.h:403 [inline]
-WARNING: CPU: 1 PID: 5288 at arch/x86/include/asm/pgtable.h:403 hpage_collapse_scan_pmd+0xd32/0x14c0 mm/khugepaged.c:1316
-Modules linked in:
-CPU: 1 PID: 5288 Comm: syz-executor.4 Not tainted 6.9.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:pte_uffd_wp arch/x86/include/asm/pgtable.h:403 [inline]
-RIP: 0010:hpage_collapse_scan_pmd+0xd32/0x14c0 mm/khugepaged.c:1316
-Code: 90 90 e9 4b f6 ff ff 4c 8b 64 24 48 e8 f7 ee 9e ff 31 ff 4c 89 ee e8 fd e9 9e ff 4d 85 ed 0f 84 b5 01 00 00 e8 df ee 9e ff 90 <0f> 0b 90 41 be 09 00 00 00 0f b6 6c 24 47 48 8b 5c 24 10 e9 fb fa
-RSP: 0018:ffffc90003abf9b0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff88807a402000 RCX: ffffffff81eed643
-RDX: ffff888021ddbc00 RSI: ffffffff81eed651 RDI: 0000000000000007
-RBP: 000000006897fc67 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000002 R12: 0000000020800000
-R13: 0000000000000002 R14: 0000000000000400 R15: ffff88801e4dcc00
-FS:  00007fd661dde6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7e57ed9ba1 CR3: 0000000025328000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- madvise_collapse+0x738/0xb10 mm/khugepaged.c:2761
- madvise_vma_behavior+0x202/0x1b20 mm/madvise.c:1074
- madvise_walk_vmas+0x1cf/0x2c0 mm/madvise.c:1248
- do_madvise+0x309/0x640 mm/madvise.c:1428
- __do_sys_madvise mm/madvise.c:1441 [inline]
- __se_sys_madvise mm/madvise.c:1439 [inline]
- __x64_sys_madvise+0xa9/0x110 mm/madvise.c:1439
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd66227dea9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fd661dde0c8 EFLAGS: 00000246 ORIG_RAX: 000000000000001c
-RAX: ffffffffffffffda RBX: 00007fd6623ac050 RCX: 00007fd66227dea9
-RDX: 0000000000000019 RSI: 00000000dfc3efff RDI: 00000000203c1000
-RBP: 00007fd6622ca4a4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007fd6623ac050 R15: 00007ffd98c8dfa8
- </TASK>
+These races involve writes and reads to the same memory location by
+different tasks running on different CPUs. To mitigate this, refactor
+the code to use atomic operations such as set_bit(), test_bit(), and
+clear_bit() instead of basic "and" and "or" operations. This ensures
+thread-safe manipulation of worker flags.
 
-
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ io_uring/io-wq.c | 37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index 522196dfb0ff..6712d70d1f18 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -44,7 +44,7 @@ enum {
+  */
+ struct io_worker {
+ 	refcount_t ref;
+-	unsigned flags;
++	unsigned long flags;
+ 	struct hlist_nulls_node nulls_node;
+ 	struct list_head all_list;
+ 	struct task_struct *task;
+@@ -165,7 +165,7 @@ static inline struct io_wq_acct *io_work_get_acct(struct io_wq *wq,
+ 
+ static inline struct io_wq_acct *io_wq_get_acct(struct io_worker *worker)
+ {
+-	return io_get_acct(worker->wq, worker->flags & IO_WORKER_F_BOUND);
++	return io_get_acct(worker->wq, test_bit(IO_WORKER_F_BOUND, &worker->flags));
+ }
+ 
+ static void io_worker_ref_put(struct io_wq *wq)
+@@ -225,7 +225,7 @@ static void io_worker_exit(struct io_worker *worker)
+ 	wait_for_completion(&worker->ref_done);
+ 
+ 	raw_spin_lock(&wq->lock);
+-	if (worker->flags & IO_WORKER_F_FREE)
++	if (test_bit(IO_WORKER_F_FREE, &worker->flags))
+ 		hlist_nulls_del_rcu(&worker->nulls_node);
+ 	list_del_rcu(&worker->all_list);
+ 	raw_spin_unlock(&wq->lock);
+@@ -410,7 +410,7 @@ static void io_wq_dec_running(struct io_worker *worker)
+ 	struct io_wq_acct *acct = io_wq_get_acct(worker);
+ 	struct io_wq *wq = worker->wq;
+ 
+-	if (!(worker->flags & IO_WORKER_F_UP))
++	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
+ 		return;
+ 
+ 	if (!atomic_dec_and_test(&acct->nr_running))
+@@ -430,8 +430,8 @@ static void io_wq_dec_running(struct io_worker *worker)
+  */
+ static void __io_worker_busy(struct io_wq *wq, struct io_worker *worker)
+ {
+-	if (worker->flags & IO_WORKER_F_FREE) {
+-		worker->flags &= ~IO_WORKER_F_FREE;
++	if (test_bit(IO_WORKER_F_FREE, &worker->flags)) {
++		clear_bit(IO_WORKER_F_FREE, &worker->flags);
+ 		raw_spin_lock(&wq->lock);
+ 		hlist_nulls_del_init_rcu(&worker->nulls_node);
+ 		raw_spin_unlock(&wq->lock);
+@@ -444,8 +444,8 @@ static void __io_worker_busy(struct io_wq *wq, struct io_worker *worker)
+ static void __io_worker_idle(struct io_wq *wq, struct io_worker *worker)
+ 	__must_hold(wq->lock)
+ {
+-	if (!(worker->flags & IO_WORKER_F_FREE)) {
+-		worker->flags |= IO_WORKER_F_FREE;
++	if (!test_bit(IO_WORKER_F_FREE, &worker->flags)) {
++		set_bit(IO_WORKER_F_FREE, &worker->flags);
+ 		hlist_nulls_add_head_rcu(&worker->nulls_node, &wq->free_list);
+ 	}
+ }
+@@ -631,7 +631,8 @@ static int io_wq_worker(void *data)
+ 	bool exit_mask = false, last_timeout = false;
+ 	char buf[TASK_COMM_LEN];
+ 
+-	worker->flags |= (IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
++	set_bit(IO_WORKER_F_UP, &worker->flags);
++	set_bit(IO_WORKER_F_RUNNING, &worker->flags);
+ 
+ 	snprintf(buf, sizeof(buf), "iou-wrk-%d", wq->task->pid);
+ 	set_task_comm(current, buf);
+@@ -695,11 +696,11 @@ void io_wq_worker_running(struct task_struct *tsk)
+ 
+ 	if (!worker)
+ 		return;
+-	if (!(worker->flags & IO_WORKER_F_UP))
++	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
+ 		return;
+-	if (worker->flags & IO_WORKER_F_RUNNING)
++	if (test_bit(IO_WORKER_F_RUNNING, &worker->flags))
+ 		return;
+-	worker->flags |= IO_WORKER_F_RUNNING;
++	set_bit(IO_WORKER_F_RUNNING, &worker->flags);
+ 	io_wq_inc_running(worker);
+ }
+ 
+@@ -713,12 +714,12 @@ void io_wq_worker_sleeping(struct task_struct *tsk)
+ 
+ 	if (!worker)
+ 		return;
+-	if (!(worker->flags & IO_WORKER_F_UP))
++	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
+ 		return;
+-	if (!(worker->flags & IO_WORKER_F_RUNNING))
++	if (!test_bit(IO_WORKER_F_RUNNING, &worker->flags))
+ 		return;
+ 
+-	worker->flags &= ~IO_WORKER_F_RUNNING;
++	clear_bit(IO_WORKER_F_RUNNING, &worker->flags);
+ 	io_wq_dec_running(worker);
+ }
+ 
+@@ -732,7 +733,7 @@ static void io_init_new_worker(struct io_wq *wq, struct io_worker *worker,
+ 	raw_spin_lock(&wq->lock);
+ 	hlist_nulls_add_head_rcu(&worker->nulls_node, &wq->free_list);
+ 	list_add_tail_rcu(&worker->all_list, &wq->all_list);
+-	worker->flags |= IO_WORKER_F_FREE;
++	set_bit(IO_WORKER_F_FREE, &worker->flags);
+ 	raw_spin_unlock(&wq->lock);
+ 	wake_up_new_task(tsk);
+ }
+@@ -838,7 +839,7 @@ static bool create_io_worker(struct io_wq *wq, int index)
+ 	init_completion(&worker->ref_done);
+ 
+ 	if (index == IO_WQ_ACCT_BOUND)
+-		worker->flags |= IO_WORKER_F_BOUND;
++		set_bit(IO_WORKER_F_BOUND, &worker->flags);
+ 
+ 	tsk = create_io_thread(io_wq_worker, worker, NUMA_NO_NODE);
+ 	if (!IS_ERR(tsk)) {
+@@ -924,8 +925,8 @@ static bool io_wq_work_match_item(struct io_wq_work *work, void *data)
+ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+ {
+ 	struct io_wq_acct *acct = io_work_get_acct(wq, work);
++	unsigned long work_flags = work->flags;
+ 	struct io_cb_cancel_data match;
+-	unsigned work_flags = work->flags;
+ 	bool do_create;
+ 
+ 	/*
+-- 
+2.43.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 

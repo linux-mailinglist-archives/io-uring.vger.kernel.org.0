@@ -1,67 +1,61 @@
-Return-Path: <io-uring+bounces-1746-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1747-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D092C8BBA39
-	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 11:19:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9118BBA4D
+	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 11:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BC6F1F22272
-	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 09:19:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFF66B21336
+	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 09:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A279C1429E;
-	Sat,  4 May 2024 09:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F1211C83;
+	Sat,  4 May 2024 09:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcnyJ70+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMavHk//"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDE863A5;
-	Sat,  4 May 2024 09:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB315221;
+	Sat,  4 May 2024 09:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714814355; cv=none; b=QeFaThp+so6i6YUG4uqAXh+OZmqWDP6uSBnFZVkEB6c8KGG9bbseXzMM9cLo1ih7cDCuld4du5QkFcOr9XDzHkv8+gUzfuoFqVinMjH0PwD7KPkCVMMn+D7y7caJyEwm/k63l738U1w4C8wQNZ6KbR41ezI4b2sGLiWPQOXNRWI=
+	t=1714815458; cv=none; b=ZhDE/acWuc9YzLR0FpIauf0YtgwjwU2zS5OdNLnVO0aMBOsVd9styMdgtynPrro4ZlEnPjcpatzK6/FALw9RUzuOUm3Rh42XAvF0iaFAx4FYz6ua97d49HkqkW8DRcXYDGGRTo3JOL5LE66jTG7h3SJ3wa9KwMr7XymSUYg+3qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714814355; c=relaxed/simple;
-	bh=pIwJZ1VsyyitpQ3+UHGFYiivhVpEez/xWNzoLxCtMqc=;
+	s=arc-20240116; t=1714815458; c=relaxed/simple;
+	bh=iBRxGQJjRoROFxKq58LLxfgM50Q+YDQejQATifgx5Mg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VG9CspSbVUWm+O4ixuDATbW5JoLyxLvzRl1UOTrkVR4v7TYRH0gs+Hkv385kAmQRt+sBXXod0/fONNANJxPGUM23647AjhkWDe7b7aCUoOIZCNvHulp821/xKjV8oohVClo+GrwXTScv4srLtGdkiSMTTp65ne8lTfy2JFjyDAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcnyJ70+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26FE0C072AA;
-	Sat,  4 May 2024 09:19:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hRBAYuHAzvS9zoPgNbI4V1erLg+gSjqb6p3iBo1Ut5mrtkxz8ncsrZqQwnQ+k40280FC0m52exyBSBPOinbK2NpSjFi2VBnJV/JP76p7PYlU1bBmUqfT+UMmY/keWzf+4QZ8eQ4AnNRBTrm+9HyRNv9uSXLmpSwHBKwZxweeYhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMavHk//; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A037C072AA;
+	Sat,  4 May 2024 09:37:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714814355;
-	bh=pIwJZ1VsyyitpQ3+UHGFYiivhVpEez/xWNzoLxCtMqc=;
+	s=k20201202; t=1714815458;
+	bh=iBRxGQJjRoROFxKq58LLxfgM50Q+YDQejQATifgx5Mg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZcnyJ70+mGZmEpcFtCrdDNK2gUkMdCD80W9jLCJy1lLImlz2hwL+78p9lG2MZIpPT
-	 L8qL+btsjQbyCZgHhWpYVAx3GhyG7otgDT5oIT2+B1EzIPFS5QOrXubzps13+ksvIO
-	 ijyyViCv5jzhPRI8UCyGmQY2NwmPMM3nMPoPhaId/8y63145jrkq32DEKtNZmlxl0F
-	 2tVcMdXbKRjcP7KvQ8Zg+yskxSCxsy8xMXQDHTKILuarxTf09JAJ8e8l0JBcCJKiL6
-	 wxNNhlZi/U/n17GkUcJpjdEyIXCCqUWr+SGkl2x8Jf0Hy8+Ts5+IsumVsB1jcaUWXc
-	 D9hxvDG3tc8Iw==
-Date: Sat, 4 May 2024 11:19:08 +0200
+	b=uMavHk//UYBlcW8RF+QF3+ZaD+R7GOT79sK90E6pyBxxoEp742dLivqK3dkPq715a
+	 dU8PE7fABkGVbY8i1D8DCAoPk5gogBaWjAaUK707J9DXBS4Oge68+2bgVfN3lyfivp
+	 OIS5ZtNlbDvXRdQivUMKYhbZ1F7HohjvG2fS3YqHE11Kl23ulvUw3LELqAfcmZgxE9
+	 +IcZDIyYUvoI2NiQZGo+g79bnPNlMYTRFgki6Xyt7dbB3KHA0omA07pvxCT5rFfzTv
+	 tWqFqvW309XZ7kIR0csaSLmkTuYfL1c2OLLbOglGYu9QyHzC9UOVwJ7VT0zi5KkgTt
+	 fe/wh2z4c+AEQ==
+Date: Sat, 4 May 2024 11:37:31 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
 	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
 	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
 	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
 	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
 Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <20240504-fotowettbewerb-dornen-8a297cec3cfc@brauner>
+Message-ID: <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
 References: <202405031110.6F47982593@keescook>
  <20240503211129.679762-2-torvalds@linux-foundation.org>
  <20240503212428.GY2118490@ZenIV>
  <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240503214531.GB2118490@ZenIV>
- <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
- <202405031529.2CD1BFED37@keescook>
- <20240503230318.GF2118490@ZenIV>
- <202405031616.793DF7EEE@keescook>
- <CAHk-=wjoXgm=j=vt9S2dcMk3Ws6Z8ukibrEncFZcxh5n77F6Dg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -70,81 +64,92 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjoXgm=j=vt9S2dcMk3Ws6Z8ukibrEncFZcxh5n77F6Dg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
 
-On Fri, May 03, 2024 at 04:41:19PM -0700, Linus Torvalds wrote:
-> On Fri, 3 May 2024 at 16:23, Kees Cook <keescook@chromium.org> wrote:
+On Fri, May 03, 2024 at 02:33:37PM -0700, Linus Torvalds wrote:
+> On Fri, 3 May 2024 at 14:24, Al Viro <viro@zeniv.linux.org.uk> wrote:
 > >
-> > static bool __must_check get_dma_buf_unless_doomed(struct dma_buf *dmabuf)
-> > {
-> >         return atomic_long_inc_not_zero(&dmabuf->file->f_count) != 0L;
-> > }
-> >
-> > If we end up adding epi_fget(), we'll have 2 cases of using
-> > "atomic_long_inc_not_zero" for f_count. Do we need some kind of blessed
-> > helper to live in file.h or something, with appropriate comments?
+> > Can we get to ep_item_poll(epi, ...) after eventpoll_release_file()
+> > got past __ep_remove()?  Because if we can, we have a worse problem -
+> > epi freed under us.
 > 
-> I wonder if we could try to abstract this out a bit more.
+> Look at the hack in __ep_remove(): if it is concurrent with
+> eventpoll_release_file(), it will hit this code
 > 
-> These games with non-ref-counted file structures *feel* a bit like the
-> games we play with non-ref-counted (aka "stashed") 'struct dentry'
-> that got fairly recently cleaned up with path_from_stashed() when both
-> nsfs and pidfs started doing the same thing.
+>         spin_lock(&file->f_lock);
+>         if (epi->dying && !force) {
+>                 spin_unlock(&file->f_lock);
+>                 return false;
+>         }
 > 
-> I'm not loving the TTM use of this thing, but at least the locking and
-> logic feels a lot more straightforward (ie the
-> atomic_long_inc_not_zero() here is clealy under the 'prime->mutex'
-> lock
-
-The TTM stuff is somewhat wild though and I've commented on that in
-https://lore.kernel.org/r/20240503-mitmachen-redakteur-2707ab0cacc3@brauner
-another thread that it can just use get_active_file().
-
-Afaict, there's dma_buf_export() that allocates a new file and sets:
-
-file->private_data = dmabuf;
-dmabuf->file = file;
-dentry->d_fsdata = dmabuf;
-
-The file has f_op->release::dma_buf_file_release() as it's f_op->release
-method. When that's called the file's refcount is already zero but the
-file has not been freed yet. This will remove the dmabuf from some
-public list but it won't free it.
-
-dmabuf dentries have dma_buf_dentry_ops which use
-dentry->d_release::dma_buf_release() to release the actual dmabuf
-stashed in dentry->d_fsdata.
-
-So that ends up with:
-
-__fput()
--> f_op->release::dma_buf_file_release() // handles file specific freeing
--> dput()
-   -> d_op->d_release::dma_buf_release() // handles dmabuf freeing
-                                         // including the driver specific stuff.
-
-If you fput() the file then the dmabuf will be freed as well immediately
-after it when the dput() happens in __fput().
-
-So that TTM thing does something else then in ttm_object_device_init().
-It copies the dma_buf_ops into tdev->ops and replaces the dma_buf_ops
-release method with it's own ttm_prime_dmabuf_release() and stashes the
-old on in tdev->dma_buf_release.
-
-And it uses that to hook into the release path so that @dmabuf will
-still be valid for get_dma_buf_unless_doomed() under prime->mutex.
-
-But again, get_dma_buf_unless_doomed() can just be replaced with
-get_active_file() and then we're done with that part.
-
-> IOW, the tty use looks correct to me, and it has fairly simple locking
-> and is just catching the the race between 'fput()' decrementing the
-> refcount and and 'file->f_op->release()' doing the actual release.
+> and not free the epi.
 > 
-> You are right that it's similar to the epoll thing in that sense, it
-> just looks a _lot_ more straightforward to me (and, unlike epoll,
-> doesn't look actively buggy right now).
+> But as far as I can tell, almost nothing else cares about the f_lock
+> and dying logic.
+> 
+> And in fact, I don't think doing
+> 
+>         spin_lock(&file->f_lock);
+> 
+> is even valid in the places that look up file through "epi->ffd.file",
+> because the lock itself is inside the thing that you can't trust until
+> you've taken the lock...
+> 
+> So I agree with Kees about the use of "atomic_dec_not_zero()" kind of
+> logic - but it also needs to be in an RCU-readlocked region, I think.
 
-It's not buggy afaict. It literally can just switch to get_active_file()
-instead of open-coding it and we're done imho.
+Why isn't it enough to just force dma_buf_poll() to use
+get_file_active()? Then that whole problem goes away afaict.
+
+So the fix I had yesterday before I had to step away from the computer
+was literally just that [1]. It currently uses two atomic incs
+potentially but that can probably be fixed by the dma folks to be
+smarter about when they actually need to take a file reference.
+
+> 
+> I wish epoll() just took the damn file ref itself. But since it relies
+> on the file refcount to release the data structure, that obviously
+> can't work.
+> 
+>                 Linus
+
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index 8fe5aa67b167..7149c45976e1 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -244,13 +244,18 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
+        if (!dmabuf || !dmabuf->resv)
+                return EPOLLERR;
+
++       if (!get_file_active(&dmabuf->file))
++               return EPOLLERR;
++
+        resv = dmabuf->resv;
+
+        poll_wait(file, &dmabuf->poll, poll);
+
+        events = poll_requested_events(poll) & (EPOLLIN | EPOLLOUT);
+-       if (!events)
++       if (!events) {
++               fput(file);
+                return 0;
++       }
+
+        dma_resv_lock(resv, NULL);
+
+@@ -268,7 +273,6 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
+                if (events & EPOLLOUT) {
+                        /* Paired with fput in dma_buf_poll_cb */
+                        get_file(dmabuf->file);
+-
+                        if (!dma_buf_poll_add_cb(resv, true, dcb))
+                                /* No callback queued, wake up any other waiters */
+                                dma_buf_poll_cb(NULL, &dcb->cb);
+@@ -301,6 +305,7 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
+        }
+
+        dma_resv_unlock(resv);
++       fput(file);
+        return events;
+ }
 

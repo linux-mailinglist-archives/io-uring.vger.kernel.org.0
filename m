@@ -1,77 +1,76 @@
-Return-Path: <io-uring+bounces-1744-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1745-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F488BB914
-	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 03:19:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA3CD8BB91D
+	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 03:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A11DAB22E55
-	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 01:19:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C3371F2289E
+	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 01:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065C315C0;
-	Sat,  4 May 2024 01:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04555CA1;
+	Sat,  4 May 2024 01:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GFG7wG0Q"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I6ezqv9G"
 X-Original-To: io-uring@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD643139E
-	for <io-uring@vger.kernel.org>; Sat,  4 May 2024 01:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE9C1865
+	for <io-uring@vger.kernel.org>; Sat,  4 May 2024 01:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714785585; cv=none; b=PxkcGNFHc7BsPIOAcFOuU/gnhJBzjt7vD+RtKAbzTQNmsyqJ89v3eEG5TAEYpttZrX03TIQKlrxfmXdbv6LkW+jKwrjIlo6jdGWv5G6aLc1oSPXY0ST3MaO2sJQ0WF1U3MOy0Zfu4DkmvMmI1R5TRaHn29HaAXKYuvPATQA96hE=
+	t=1714787821; cv=none; b=ftySMfWhV9m7cVK395vmmz2Ep1+GnrQgENwd3vLJ9oqvyHXFFF3aT73jC/gMwRMA7xDh0YIYT0cSOS2aShv6bKmCzpSv6J410Aj3da3HcAVe0xo+dwUCQvYwnxt5v5GZY9gyCNtUrseW65jj+0sja8eLYvlgg8H/3O3L8yDb+U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714785585; c=relaxed/simple;
-	bh=8R7bLvp6SmWYeumlnjk9rgOK9N2ozltEC3uGrH0WkLY=;
+	s=arc-20240116; t=1714787821; c=relaxed/simple;
+	bh=Otj5m9PELif+eknMroD8AlUjhGarUNwe1B1KREke5zg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HjdJG4MGGIDyTD5wk02xJzkv5w4GEEWz6+3vqyUneGen7mR/wepn6fGg50gycEEY1eqo0w6U0Di/80BnT6LAGPl2hiXbcmwb8zduhLhrmDXhUxc7OGGCh+eCd6CmQG6fyJqyrLQBubMo+eoBXLQGJH9gWNUSx00CHS7/FapQ56I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GFG7wG0Q; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=lAZcWL5xQuTrVCuMszw3GQjYgM4EH1tU01cGHrfGM7VkAhGke1XWz+BV0C5JiJ2o+nS0CpfiA3WpCXWlRKHXwTaS97ig+ft+BjqqQIupF9J0z+vh+phncb/jqc6hcyiW8DtzrrphG1ZCm48LoWund9tO3cr+2FcrcRBRFkhhmE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I6ezqv9G; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714785582;
+	s=mimecast20190719; t=1714787818;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7XFxXMieZEFKI8RQ3dfmX12FU4/jhdaY0yr1YAamom0=;
-	b=GFG7wG0Q5XE6+95bUzdouK4Jx+gqv9UIZ5Ifv5tsPTS7iNgO8v3XHu1EOBlXLatIBplH5/
-	vnXxjTOJAG69d0lGzFX7BoML8emINibciqSheVqeONxKePN4VkRDL0X3egqPWP0c3POB3k
-	cdztgIAOYOIUyzHoShysjI0HCx4jFYs=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-47-FcabrenzP_6kseKgKcWX5A-1; Fri,
- 03 May 2024 21:19:41 -0400
-X-MC-Unique: FcabrenzP_6kseKgKcWX5A-1
+	bh=g0TuD2A3tYS9B09zg7n93UlzeI+QL2fGwuxvtZ42VxI=;
+	b=I6ezqv9G81J69PMWBqYLHeoIKcxEiPC2APWJqwVKB7Sb9m6P01e7Ch+/5JujB4oWBCKwQ5
+	5HnZpRQxt9tUKu1+bvcJXR+v1N796ucL+MRK7DaFaUl7qfdITpn43uQ06JXQjy3GzNBVBP
+	TSGJakPHzfYD8x2IQIJCGQkvV7X6lmI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-527-TSpxQC0rPei-F_xVqqZfLg-1; Fri, 03 May 2024 21:56:56 -0400
+X-MC-Unique: TSpxQC0rPei-F_xVqqZfLg-1
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C72861C02D24;
-	Sat,  4 May 2024 01:19:40 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0400B1005055;
+	Sat,  4 May 2024 01:56:56 +0000 (UTC)
 Received: from fedora (unknown [10.72.116.15])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id B2A04EC680;
-	Sat,  4 May 2024 01:19:35 +0000 (UTC)
-Date: Sat, 4 May 2024 09:19:31 +0800
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 0AEDFEC682;
+	Sat,  4 May 2024 01:56:51 +0000 (UTC)
+Date: Sat, 4 May 2024 09:56:47 +0800
 From: Ming Lei <ming.lei@redhat.com>
 To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, Kevin Wolf <kwolf@redhat.com>,
+Cc: Kevin Wolf <kwolf@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	io-uring@vger.kernel.org, linux-block@vger.kernel.org,
 	ming.lei@redhat.com
-Subject: Re: [PATCH 2/9] io_uring: support user sqe ext flags
-Message-ID: <ZjT6WVhqoiUG/3s/@fedora>
-References: <20240408010322.4104395-3-ming.lei@redhat.com>
- <89dac454-6521-4bd8-b8aa-ad329b887396@kernel.dk>
- <Zie+RlbtckZJVE2J@fedora>
- <e0d52e3f-f599-42c8-b9f0-8242961291d0@gmail.com>
- <ZjBozhXCCs46OeWK@fedora>
- <81bc860f-0801-478b-adba-ea2a90cfe69e@gmail.com>
- <ZjDqb80OTfb6WzBp@fedora>
- <1b5007d4-2cac-4bbb-beb5-a1bad8be918e@gmail.com>
- <ZjESSsaDQ7aOploz@fedora>
- <e6f4e83d-3369-48ea-ab8d-615a3cbe6619@gmail.com>
+Subject: Re: [PATCH 5/9] io_uring: support SQE group
+Message-ID: <ZjWV32Atf2D8Z+pu@fedora>
+References: <20240408010322.4104395-1-ming.lei@redhat.com>
+ <20240408010322.4104395-6-ming.lei@redhat.com>
+ <e36cc8de-3726-4479-8fbd-f54fd21465a2@kernel.dk>
+ <Ziey53aADgxDrXZw@redhat.com>
+ <6077165e-a127-489e-9e47-6ec10b9d85d4@gmail.com>
+ <ZjBffAzunso3lhsJ@fedora>
+ <0f142448-3702-4be9-aad4-7ae6e1e5e785@gmail.com>
+ <ZjEHhRoGP8z4syuP@fedora>
+ <bc3f89dd-fa94-4f0f-b7e9-d6ac37a7c185@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,269 +79,271 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e6f4e83d-3369-48ea-ab8d-615a3cbe6619@gmail.com>
+In-Reply-To: <bc3f89dd-fa94-4f0f-b7e9-d6ac37a7c185@gmail.com>
 X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On Thu, May 02, 2024 at 03:22:10PM +0100, Pavel Begunkov wrote:
-> On 4/30/24 16:46, Ming Lei wrote:
-> > On Tue, Apr 30, 2024 at 03:10:01PM +0100, Pavel Begunkov wrote:
-> > > On 4/30/24 13:56, Ming Lei wrote:
-> > > > On Tue, Apr 30, 2024 at 01:00:30PM +0100, Pavel Begunkov wrote:
-> > > > > On 4/30/24 04:43, Ming Lei wrote:
-> > > > > > On Mon, Apr 29, 2024 at 04:24:54PM +0100, Pavel Begunkov wrote:
-> > > > > > > On 4/23/24 14:57, Ming Lei wrote:
-> > > > > > > > On Mon, Apr 22, 2024 at 12:16:12PM -0600, Jens Axboe wrote:
-> > > > > > > > > On 4/7/24 7:03 PM, Ming Lei wrote:
-> > > > > > > > > > sqe->flags is u8, and now we have used 7 bits, so take the last one for
-> > > > > > > > > > extending purpose.
-> > > > > > > > > > 
-> > > > > > > > > > If bit7(IOSQE_HAS_EXT_FLAGS_BIT) is 1, it means this sqe carries ext flags
-> > > > > > > > > > from the last byte(.ext_flags), or bit23~bit16 of sqe->uring_cmd_flags for
-> > > > > > > > > > IORING_OP_URING_CMD.
-> > > > > > > > > > 
-> > > > > > > > > > io_slot_flags() return value is converted to `ULL` because the affected bits
-> > > > > > > > > > are beyond 32bit now.
-> > > > > > > > > 
-> > > > > > > > > If we're extending flags, which is something we arguably need to do at
-> > > > > > > > > some point, I think we should have them be generic and not spread out.
+On Thu, May 02, 2024 at 03:09:13PM +0100, Pavel Begunkov wrote:
+> On 4/30/24 16:00, Ming Lei wrote:
+> > On Tue, Apr 30, 2024 at 01:27:10PM +0100, Pavel Begunkov wrote:
+> > > On 4/30/24 04:03, Ming Lei wrote:
+> > > > On Mon, Apr 29, 2024 at 04:32:35PM +0100, Pavel Begunkov wrote:
+> > > > > On 4/23/24 14:08, Kevin Wolf wrote:
+> > > > > > Am 22.04.2024 um 20:27 hat Jens Axboe geschrieben:
+> > > > > > > On 4/7/24 7:03 PM, Ming Lei wrote:
+> > > > > > > > SQE group is defined as one chain of SQEs starting with the first sqe that
+> > > > > > > > has IOSQE_EXT_SQE_GROUP set, and ending with the first subsequent sqe that
+> > > > > > > > doesn't have it set, and it is similar with chain of linked sqes.
 > > > > > > > > 
-> > > > > > > > Sorry, maybe I don't get your idea, and the ext_flag itself is always
-> > > > > > > > initialized in io_init_req(), like normal sqe->flags, same with its
-> > > > > > > > usage.
+> > > > > > > > The 1st SQE is group leader, and the other SQEs are group member. The group
+> > > > > > > > leader is always freed after all members are completed. Group members
+> > > > > > > > aren't submitted until the group leader is completed, and there isn't any
+> > > > > > > > dependency among group members, and IOSQE_IO_LINK can't be set for group
+> > > > > > > > members, same with IOSQE_IO_DRAIN.
 > > > > > > > > 
-> > > > > > > > > If uring_cmd needs specific flags and don't have them, then we should
-> > > > > > > > > add it just for that.
+> > > > > > > > Typically the group leader provides or makes resource, and the other members
+> > > > > > > > consume the resource, such as scenario of multiple backup, the 1st SQE is to
+> > > > > > > > read data from source file into fixed buffer, the other SQEs write data from
+> > > > > > > > the same buffer into other destination files. SQE group provides very
+> > > > > > > > efficient way to complete this task: 1) fs write SQEs and fs read SQE can be
+> > > > > > > > submitted in single syscall, no need to submit fs read SQE first, and wait
+> > > > > > > > until read SQE is completed, 2) no need to link all write SQEs together, then
+> > > > > > > > write SQEs can be submitted to files concurrently. Meantime application is
+> > > > > > > > simplified a lot in this way.
 > > > > > > > > 
-> > > > > > > > The only difference is that bit23~bit16 of sqe->uring_cmd_flags is
-> > > > > > > > borrowed for uring_cmd's ext flags, because sqe byte0~47 have been taken,
-> > > > > > > > and can't be reused for generic flag. If we want to use byte48~63, it has
-> > > > > > > > to be overlapped with uring_cmd's payload, and it is one generic sqe
-> > > > > > > > flag, which is applied on uring_cmd too.
+> > > > > > > > Another use case is to for supporting generic device zero copy:
+> > > > > > > > 
+> > > > > > > > - the lead SQE is for providing device buffer, which is owned by device or
+> > > > > > > >      kernel, can't be cross userspace, otherwise easy to cause leak for devil
+> > > > > > > >      application or panic
+> > > > > > > > 
+> > > > > > > > - member SQEs reads or writes concurrently against the buffer provided by lead
+> > > > > > > >      SQE
 > > > > > > > 
-> > > > > > > Which is exactly the mess nobody would want to see. And I'd also
-> > > > > > 
-> > > > > > The trouble is introduced by supporting uring_cmd, and solving it by setting
-> > > > > > ext flags for uring_cmd specially by liburing helper is still reasonable or
-> > > > > > understandable, IMO.
-> > > > > > 
-> > > > > > > argue 8 extra bits is not enough anyway, otherwise the history will
-> > > > > > > repeat itself pretty soon
-> > > > > > 
-> > > > > > It is started with 8 bits, now doubled when io_uring is basically
-> > > > > > mature, even though history might repeat, it will take much longer time
-> > > > > 
-> > > > > You're mistaken, only 7 bits are taken not because there haven't been
-> > > > > ideas and need to use them, but because we're out of space and we've
-> > > > > been saving it for something that might be absolutely necessary.
-> > > > > 
-> > > > > POLL_FIRST IMHO should've been a generic feature, but it worked around
-> > > > > being a send/recv specific flag, same goes for the use of registered
-> > > > > buffers, not to mention ideas for which we haven't had enough flag space.
-> > > > 
-> > > > OK, but I am wondering why not extend flags a bit so that io_uring can
-> > > > become extendable, just like this patch.
-> > > 
-> > > That would be great if can be done cleanly. Even having it
-> > > non contig with the first 8bits is fine, but not conditional
-> > > depending on opcode is too much.
-> > 
-> > byte56~63 is used for uring_cmd payload, and it can't be done without
-> > depending on uring_cmd op.
-> > 
-> > The patch is simple, and this usage can be well-documented. In
-> > userspace, just one special helper is needed for setting uring_cmd
-> > ext_flags only.
-> 
-> One simple helper here, one simple helper there, one line in man
-> in some other place, in the end it'll turn to be a horrible mess.
-> 
-> It's not even a question when we'd see people asking "I used
-> set_ext_flags but why it doesn't work" from people missing a
-> separate cmd flag. Or just to be sure they would call both,
-> such things happen even with more straightforward APIs, and it's
-> just one problem.
-> 
-> > Except for this simple way, I don't see other approaches to extend sqe flags.
-> 
-> Well, that's why I described below how exactly it can be done
-> cleanly in a long run.
-
-OK, then looks io_uring isn't extendable wrt. sqe->flags in long run.
-
-> 
-> > > > > > > > That is the only way I thought of, or any other suggestion for extending sqe
-> > > > > > > > flags generically?
+> > > > > > > In concept, this looks very similar to "sqe bundles" that I played with
+> > > > > > > in the past:
 > > > > > > > 
-> > > > > > > idea 1: just use the last bit. When we need another one it'd be time
-> > > > > > > to think about a long overdue SQE layout v2, this way we can try
-> > > > > > > to make flags u32 and clean up other problems.
-> > > > > > 
-> > > > > > It looks over-kill to invent SQE v2 just for solving the trouble in
-> > > > > > uring_cmd, and supporting two layouts can be new trouble for io_uring.
-> > > > > 
-> > > > > Sounds too uring_cmd centric, it's not specifically for uring_cmd, it's
-> > > > > just one of reasons. As for overkill, that's why I'm not telling you
-> > > > > to change the layour, but suggesting to take the last bit for the
-> > > > > group flag and leave future problems for the future.
-> > > > 
-> > > > You mentioned 8bit flag is designed from beginning just for saving
-> > > > space, so SQE V2 may not help us at all.
-> > > 
-> > > Not sure what you mean. Retrospectively speaking, u8 for flags was
-> > > an oversight
-> > 
-> > You mentioned that:
-> > 
-> > 	You're mistaken, only 7 bits are taken not because there haven't been
-> > 	ideas and need to use them, but because we're out of space and we've
-> > 	been saving it for something that might be absolutely necessary.
-> > 
-> > Nothing is changed since then, so where to find more free space from
-> > 64 bytes for sqe flags now?
-> 
-> ditto
-> 
-> > > > If the last bit can be reserved for extend flag, it is still possible
-> > > > to extend sqe flags a bit, such as this patch. Otherwise, we just lose
-> > > > chance to extend sqe flags in future.
-> > > 
-> > > That's why I mentioned SQE layout v2, i.e. a ctx flag which reshuffles
-> > > sqe fields in a better way. Surely there will be a lot of headache with
-> > > such a migration, but you can make flags a u32 then if you find space
-> > > and wouldn't even need and extending flag.
-> > 
-> > It is one hard problem, and it may not be answered in short time, cause all
-> > use cases need to be covered, meantime 3 extra bytes are saved from the
-> > reshuffling, with alignment respected meantime.
-> > 
-> > Also it isn't worth of layout v2 just for extending sqe flags.
-> 
-> Not just, by opting to the pain of migration to a new SQE layout
-> we can revise more API decisions. It's a separate topic for
-> discussion, and the latter it's done the better because we'd
-> collect more design mistakes that can be fixed.
-> 
-> Reiterating again, you're not blocked by it.
-> 
-> > > > Jens, can you share your idea/option wrt. extending sqe flags?
-> > > > 
-> > > > > 
-> > > > > 
-> > > > > > Also I doubt the problem can be solved in layout v2:
-> > > > > > 
-> > > > > > - 64 byte is small enough to support everything, same for v2
-> > > > > > 
-> > > > > > - uring_cmd has only 16 bytes payload, taking any byte from
-> > > > > > the payload may cause trouble for drivers
-> > > > > > 
-> > > > > > - the only possible change could still be to suppress bytes for OP
-> > > > > > specific flags, but it might cause trouble for some OPs, such as
-> > > > > > network.
-> > > > > 
-> > > > > Look up sqe's __pad1, for example
-> > > > 
-> > > > Suppose it is just for uring_cmd, '__pad1' is shared with cmd_op, which is aligned
-> > > > with ioctl cmd and is supposed to be 32bit.
-> > > 
-> > > It's not shared with cmd_op, it's in a struct with it, unless you
-> > > use a u32 part of ->addr2/off, it's just that, a completely
-> > > unnecessary created padding. There was also another field left,
-> > > at least in case for nvme.
-> > 
-> > OK, __pad1 is available for uring_cmd, and it could be better to use
-> > __pad1 for uring_cmd ext flags, but it still depends on uring_cmd, and
-> > now ext_flags can be u16 or more, :-)
-> > 
-> > Thanks for sharing this point.
-> > 
-> > > 
-> > > > Same with 'off' which is used in rw at least, if sqe group is to be
-> > > > generic flag.
-> > > > 
-> > > > > 
-> > > > > 
-> > > > > > > idea 2: the group assembling flag can move into cmds. Very roughly:
+> > > > > > > https://git.kernel.dk/cgit/linux/log/?h=io_uring-bundle
 > > > > > > > 
-> > > > > > > io_cmd_init() {
-> > > > > > > 	ublk_cmd_init();
-> > > > > > > }
-> > > > > > > 
-> > > > > > > ublk_cmd_init() {
-> > > > > > > 	io_uring_start_grouping(ctx, cmd);
-> > > > > > > }
-> > > > > > > 
-> > > > > > > io_uring_start_grouping(ctx, cmd) {
-> > > > > > > 	ctx->grouping = true;
-> > > > > > > 	ctx->group_head = cmd->req;
-> > > > > > > }
+> > > > > > > Didn't look too closely yet at the implementation, but in spirit it's
+> > > > > > > about the same in that the first entry is processed first, and there's
+> > > > > > > no ordering implied between the test of the members of the bundle /
+> > > > > > > group.
 > > > > > > 
-> > > > > > How can you know one group is starting without any flag? Or you still
-> > > > > > suggest the approach taken in fused command?
-> > > > > 
-> > > > > That would be ublk's business, e.g. ublk or cmds specific flag
-> > > > 
-> > > > Then it becomes dedicated fused command actually, and last year's main
-> > > > concern is that the approach isn't generic.
-> > > 
-> > > My concern is anything leaking into hot paths, even if it's a
-> > > generic feature (and I wouldn't call it that). The question is
-> > > rather at what degree. I wouldn't call groups in isolation
-> > > without zc exciting, and making it to look like a generic feature
-> > > just for the sake of it might even be worse than having it opcode
-> > > specific.
-> > > 
-> > > Regardless, this approach doesn't forbid some other opcode from
-> > > doing ctx->grouping = true based on some other opcode specific
-> > > flag, doesn't necessarily binds it to cmds/ublk.
-> > 
-> > Yes.
-> > 
-> > > 
-> > > > > > > submit_sqe() {
-> > > > > > > 	if (ctx->grouping) {
-> > > > > > > 		link_to_group(req, ctx->group_head);
-> > > > > > > 		if (!(req->flags & REQ_F_LINK))
-> > > > > > > 			ctx->grouping = false;
-> > > > > > > 	}
-> > > > > > > }
+> > > > > > When I first read this patch, I wondered if it wouldn't make sense to
+> > > > > > allow linking a group with subsequent requests, e.g. first having a few
+> > > > > > requests that run in parallel and once all of them have completed
+> > > > > > continue with the next linked one sequentially.
 > > > > > > 
-> > > > > > The group needs to be linked to existed link chain, so reusing REQ_F_LINK may
-> > > > > > not doable.
+> > > > > > For SQE bundles, you reused the LINK flag, which doesn't easily allow
+> > > > > > this. Ming's patch uses a new flag for groups, so the interface would be
+> > > > > > more obvious, you simply set the LINK flag on the last member of the
+> > > > > > group (or on the leader, doesn't really matter). Of course, this doesn't
+> > > > > > mean it has to be implemented now, but there is a clear way forward if
+> > > > > > it's wanted.
 > > > > > 
-> > > > > Would it break zero copy feature if you cant?
+> > > > > Putting zc aside, links, graphs, groups, it all sounds interesting in
+> > > > > concept but let's not fool anyone, all the different ordering
+> > > > > relationships between requests proved to be a bad idea.
 > > > > 
-> > > > The whole sqe group needs to be linked to existed link chain, so we
-> > > > can't reuse REQ_F_LINK here.
+> > > > As Jens mentioned, sqe group is very similar with bundle:
+> > > > 
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=io_uring-bundle
+> > > > 
+> > > > which is really something io_uring is missing.
 > > > 
-> > > Why though? You're passing a buffer from the head to all group-linked
-> > > requests, how do normal links come into the picture?
+> > > One could've said same about links, retrospectively I argue that it
+> > > was a mistake, so I pretty much doubt arguments like "io_uring is
+> > > missing it". Another thing is that zero copy, which is not possible
+> > > to implement by returning to the userspace.
+> > > 
+> > > > > I can complaint for long, error handling is miserable, user handling
+> > > > > resubmitting a part of a link is horrible, the concept of errors is
+> > > > > hard coded (time to appreciate "beautifulness" of IOSQE_IO_HARDLINK
+> > > > > and the MSG_WAITALL workaround). The handling and workarounds are
+> > > > > leaking into generic paths, e.g. we can't init files when it's the most
+> > > > > convenient. For cancellation we're walking links, which need more care
+> > > > > than just looking at a request (is cancellation by user_data of a
+> > > > > "linked" to a group request even supported?). The list goes on
+> > > > 
+> > > > Only the group leader is linked, if the group leader is canceled, all
+> > > > requests in the whole group will be canceled.
+> > > > 
+> > > > But yes, cancelling by user_data for group members can't be supported,
+> > > > and it can be documented clearly, since user still can cancel the whole
+> > > > group with group leader's user_data.
+> > > 
+> > > Which means it'd break the case REQ_F_INFLIGHT covers, and you need
+> > > to disallow linking REQ_F_INFLIGHT marked requests.
 > > 
-> > For example of ublk-nbd, tcp send requests have to be linked, and each
-> > send request belongs to one group in case of zero copy.
+> > Both io_match_linked() and io_match_task() only iterates over req's
+> > link chain, and only the group leader can appear in this link chain,
+> > which is exactly the usual handling.
+> > 
+> > So care to explain it a bit what the real link issue is about sqe group?
 > 
-> "Linked" like in "add to a group"? Or in terms of traditional
-> IOSQE_IO_LINK links? Because if it's about groups you don't need
+> Because of ref deps when a task exits it has to cancel REQ_F_INFLIGHT
+> requests, and therefore they should be discoverable. The flag is only
+> for POLL_ADD requests polling io_uring fds, should be good enough if
+> you disallow such requests from grouping.
 
-It is IOSQE_IO_LINK.
+The group leader is always marked as REQ_F_INFLIGHT and discoverable,
+and the cancel code path cancels group leader request which will
+guarantees that all group members are canceled, so I think this change
+isn't needed.
 
-Here one group is just for handling zero copy IO, such as handling one
-ublk block request, but there can be lots of such groups, each group
-needs to be linked with another group, because it is tcp send.
+But io_get_sequence() needs to take it into account, such as:
 
-There are more such examples, such as normal IO depending on meta IO by
-IOSQE_IO_LINK.
+@@ -1680,8 +1846,12 @@ static u32 io_get_sequence(struct io_kiocb *req)
+        struct io_kiocb *cur;
 
-You are suggesting to reuse IOSQE_IO_LINK, then this inter-group linking
-or meta IO linking with normal group is simply non working.
+        /* need original cached_sq_head, but it was increased for each req */
+-       io_for_each_link(cur, req)
+-               seq--;
++       io_for_each_link(cur, req) {
++               if (req_is_group_lead(cur))
++                       seq -= atomic_read(&cur->grp_refs);
++               else
++                       seq--;
++       }
 
-> IOSQE_IO_LINK. And if it's IOSQE_IO_LINK linking, then same
-> is supposedly can be done in userspace.
+> 
+> > > > > And what does it achieve? The infra has matured since early days,
+> > > > > it saves user-kernel transitions at best but not context switching
+> > > > > overhead, and not even that if you do wait(1) and happen to catch
+> > > > > middle CQEs. And it disables LAZY_WAKE, so CQ side batching with
+> > > > > timers and what not is effectively useless with links.
+> > > > 
+> > > > Not only the context switch, it supports 1:N or N:M dependency which
+> > > 
+> > > I completely missed, how N:M is supported? That starting to sound
+> > > terrifying.
+> > 
+> > N:M is actually from Kevin's idea.
+> > 
+> > sqe group can be made to be more flexible by:
+> > 
+> >      Inside the group, all SQEs are submitted in parallel, so there isn't any
+> >      dependency among SQEs in one group.
+> >      The 1st SQE is group leader, and the other SQEs are group member. The whole
+> >      group share single IOSQE_IO_LINK and IOSQE_IO_DRAIN from group leader, and
+> >      the two flags can't be set for group members.
+> >      When the group is in one link chain, this group isn't submitted until
+> >      the previous SQE or group is completed. And the following SQE or group
+> >      can't be started if this group isn't completed.
+> >      When IOSQE_IO_DRAIN is set for group leader, all requests in this group
+> >      and previous requests submitted are drained. Given IOSQE_IO_DRAIN can
+> >      be set for group leader only, we respect IO_DRAIN for SQE group by
+> >      always completing group leader as the last on in the group.
+> >      SQE group provides flexible way to support N:M dependency, such as:
+> >      - group A is chained with group B together by IOSQE_IO_LINK
+> >      - group A has N SQEs
+> >      - group B has M SQEs
+> >      then M SQEs in group B depend on N SQEs in group A.
+> 
+> In other words, linking groups together with basically no extra rules.
+> Fwiw, sounds generic, but if there are complications with IOSQE_IO_DRAIN
+> that I don't immediately see, it'd be more reasonable to just disable it.
 
-Yes, it can work by forcing to replace IOSQE_IO_LINK with one extra
-io_uring_enter() in userspace, together with extra overhead, and more complexity.
+The only change on IO_DRAIN is on io_get_sequence() for taking leader->grp_refs
+into account, and leader->grp_refs covers all requests in this group.
 
-That is why I think disallowing generic feature of IOSQE_IO_LINK isn't one
-wise option. Is there any other OP or example which doesn't support IOSQE_IO_LINK?
+And my local patchset passes all related sqe->flags combination(DRAIN, LINKING,
+ASYNC) on both single group or linked groups, meantime with extra change
+of sharing same FORCE_ASYNC for both leader and members.
+
+> 
+> > > > is missing in io_uring, but also makes async application easier to write by
+> > > > saving extra context switches, which just adds extra intermediate states for
+> > > > application.
+> > > 
+> > > You're still executing requests (i.e. ->issue) primarily from the
+> > > submitter task context, they would still fly back to the task and
+> > > wake it up. You may save something by completing all of them
+> > > together via that refcounting, but you might just as well try to
+> > > batch CQ, which is a more generic issue. It's not clear what
+> > > context switches you save then.
+> > 
+> > Wrt. the above N:M example, one io_uring_enter() is enough, and
+> > it can't be done in single context switch without sqe group, please
+> > see the liburing test code:
+> > 
+> > https://lore.kernel.org/io-uring/ZiHA+pN28hRdprhX@fedora/T/#ma755c500eab0b7dc8c1473448dd98f093097e066
+> > 
+> > > 
+> > > As for simplicity, using the link example and considering error
+> > > handling, it only complicates it. In case of an error you need to
+> > > figure out a middle req failed, collect all failed CQEs linked to
+> > > it and automatically cancelled (unless SKIP_COMPLETE is used), and
+> > > then resubmit the failed. That's great your reads are idempotent
+> > > and presumably you don't have to resubmit half a link, but in the
+> > > grand picture of things it's rather one of use cases where a generic
+> > > feature can be used.
+> > 
+> > SQE group doesn't change the current link implementation, and N:M
+> > dependency is built over IOSQE_IO_LINK actually.
+> > 
+> > > 
+> > > > > So, please, please! instead of trying to invent a new uber scheme
+> > > > > of request linking, which surely wouldn't step on same problems
+> > > > > over and over again, and would definitely be destined to overshadow
+> > > > > all previous attempts and finally conquer the world, let's rather
+> > > > > focus on minimasing the damage from this patchset's zero copy if
+> > > > > it's going to be taken.
+> > > > 
+> > > > One key problem for zero copy is lifetime of the kernel buffer, which
+> > > > can't cross OPs, that is why sqe group is introduced, for aligning
+> > > > kernel buffer lifetime with the group.
+> > > 
+> > > Right, which is why I'm saying if we're leaving groups with zero
+> > > copy, let's rather try to make them simple and not intrusive as
+> > > much as possible, instead of creating an unsupportable overarching
+> > > beast out of it, which would fail as a generic feature.
+> > 
+> > Then it degraded to the original fused command, :-)
+> 
+> I'm not arguing about restricting it to 1 request in a group apart
+> from the master/leader/etc., if that's what you mean. The argument
+> is rather to limit the overhead and abstraction leakage into hot
+> paths.
+> 
+> For example that N:M, all that sounds great on paper until it sees
+> the harsh reality. And instead of linking groups together, you
+> can perfectly fine be sending one group at a time and queuing the
+> next group from the userspace when the previous completes. And
+> that would save space in io_kiocb, maybe(?) a flag, maybe something
+> else.
+
+Yes, it can be done with userspace, with cost of one extra io_uring_enter()
+for handling two depended groups in userspace.
+
+io_uring excellent performance is attributed to great batch processing,
+if group linking is done in per-IO level, this way could degrade
+performance a lot. And we know io_uring may perform worse in QD=1.
+
+And the introduced 12 bytes doesn't add extra l1 cacheline, and won't
+be touched in code path without using group.
+
+> 
+> Regardless of interoperability with links, I'd also prefer it to
+> be folded into the link code structure and state machine, so
+> it's not all over in the submission/completion paths adding
+> overhead for one narrow feature, including un-inlining the
+> entire submission path.
+
+I can work toward this direction if the idea of sqe group may be accepted
+but the biggest blocker could be where to allocate the extra SQE_GROUP
+flag.
+
+> 
+> E.g. there should be no separate hand coded duplicated SQE
+> / request assembling like in io_init_req_group(). Instead
+> it should be able to consume SQEs and requests it's given
+> from submit_sqes(), and e.g. process grouping in
+> io_submit_sqe() around the place requests are linked.
+
+Yeah, IOSQE_IO_LINK sort of handling could be needed for processing
+requests in group.
+
 
 Thanks,
 Ming

@@ -1,107 +1,174 @@
-Return-Path: <io-uring+bounces-1750-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1751-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81AF8BBA8F
-	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 12:44:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A3D8BBCB7
+	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 17:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2C8D1C210A1
-	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 10:44:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 075841C209BB
+	for <lists+io-uring@lfdr.de>; Sat,  4 May 2024 15:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07D61AACA;
-	Sat,  4 May 2024 10:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060C13FE5D;
+	Sat,  4 May 2024 15:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIVHK8rJ"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="f/fJiU4L"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8343F18C3D;
-	Sat,  4 May 2024 10:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0483BBF1
+	for <io-uring@vger.kernel.org>; Sat,  4 May 2024 15:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714819475; cv=none; b=f9FlggnLAClQYuUGve9GDh9aVbeFY/wd5AcE5/Kri/xHMqsQPDU5rpO4fHJk3F7Ei3cpKwl9q895vRz9ZAkOWN/5IlarNWYLJ+qGn32SSZbgUwEmCxqyppGNISmL9EXa10/tyJv+vGPf7TthJfFt0uvNnsMYO0OZ/ZAlziPt11o=
+	t=1714836747; cv=none; b=ks2/d6L0/8E35dTW22si5XVuuvduhaaKiExhjHsC+CCliWZbMClkN//jMd0coR2i/Kr5sCElFNS7fM/tQUR+Jc2DSvIenUK6sIlp5Si22FWwWhxCUs95BISDseZ+NkWghUgVZ1ZciDFL/NKcnnlZWh7khcWnBNwTEpghHtFYf9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714819475; c=relaxed/simple;
-	bh=BLItYotWYbyfjyaUpV2xQFYIZr6/mKHn7Hcq1DddZd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TemzpVE/UgkgN5DQgxQFuvb96KDELhEpvlfQdVso2SBFgj5XMQ17B+eSLWxCvl3RjepZm8TQ1/paDpdIXdeohFGFQEjeAEEk0qn+OKzDGNLYhb6r1WZF5d6iERXLreqLGcOoXLZM2WRlCCCCmKFBqnxH9xHzSJ1VatCR468qBhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIVHK8rJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3E0C072AA;
-	Sat,  4 May 2024 10:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714819475;
-	bh=BLItYotWYbyfjyaUpV2xQFYIZr6/mKHn7Hcq1DddZd4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gIVHK8rJGTpZuS9PubMDG4bY2YumcGjk6TzRhJqqAh/plbNUsquxQFGCUWECGrJRE
-	 EzEvSIxTo4EYaTNfUE2NBTtvQOeoS6PxKjWcxkktWj4E/WHJr8O8fAnG3sfoTBN/4+
-	 G8i9tDMgpoyUa85xPHmgl+X+CQSc0wuLRN7dziptjOtID8DTpn20rQzI5uVZV/AEjb
-	 4Ape1g8W24bX7M1DAREc4k2jprCEjKPolqNkqjfYm83hFYMcF9DEBJfSs+DW6g3CfW
-	 1/6/xZZebHis+jmMY6X8+A/X1qDg3q6lPjUs79o8NavTNxTFe91+9fo0VupPerS0F3
-	 7PiA+rIodq4lg==
-Date: Sat, 4 May 2024 12:44:28 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <20240504-chatten-unbelastet-b308db41727c@brauner>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240503214531.GB2118490@ZenIV>
- <CAHk-=wgC+QpveKCJpeqsaORu7htoNNKA8mp+d9mvJEXmSKjhbw@mail.gmail.com>
- <20240503220145.GD2118490@ZenIV>
- <20240503220744.GE2118490@ZenIV>
- <CAHk-=whULchE1i5LA2Fa=ZndSAzPXGWh_e5+a=YV3qT1BEST7w@mail.gmail.com>
- <20240503233900.GG2118490@ZenIV>
+	s=arc-20240116; t=1714836747; c=relaxed/simple;
+	bh=dmLzNSiqTCKSgtEtdi4RT/LW9OkahTnAY3Pn0EDC+4E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R9UMMgXcSaQub4U2G99YjmuXUZlbvs1klnlcww//lKoy02DxucsyyERs7iGz3dHdxmX9d+xoDeKO++VXMHbrniY66u9oFy261+bcsPQy6TqDiy4DVOzRBS/9UoH3Fb1gWJZYRMARWsuHIDDddPFQlWEIMk+SfF7RY6ItUmPSTIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=f/fJiU4L; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a556d22fa93so118637166b.3
+        for <io-uring@vger.kernel.org>; Sat, 04 May 2024 08:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1714836744; x=1715441544; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BF+X0IVed+h7jlJZMJqRgUDnAGAy0IxXXOyqwBdkEc0=;
+        b=f/fJiU4LHyGtFV9UlcTICC2xvhZyDCOnV/Vg/WOk1CZ5uhcQWKlMvgV4f4kTCXyOQf
+         +tEGGQ/zAIjkNPJMJqfOPAjXaJ70kf/vgQ98zRoFH5swOwszOALS2IHCt2lm3wPzC9c2
+         aXvqbmkbnHCwpnjfddbYX5hW4Gz6nlabdy6Uw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714836744; x=1715441544;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BF+X0IVed+h7jlJZMJqRgUDnAGAy0IxXXOyqwBdkEc0=;
+        b=TH+ar7xfjziQ3NTIg/bWFlv56gmWPaPvt5SdEDuZkZYgmIn8rce1FIoqDj108wVtHo
+         G+6dCg34Rc4e6ev7qFUrLLII6QkdkXBvh5J90A8Y0wKAkEaZz/14lbYP+12kEqabG3RL
+         5Hpo1gNKZgLk1ZX/9whH2vML9FDkifLYS2ELMvkRsMeMMOqs9Mj/NnpRq0s1n9d36EVx
+         UE0Z38os0q9TqT52HqyfNrh7GI90q/Syek8e9cxHOZcoqyzWVhX/w7kke6NWRBtnuKQn
+         m72IOAfVJYBraHKCERaVFarfNsu5PiA3o11sAjQdI+6W7m63toACmLzAGOYlRyyRURa8
+         ZPYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHer/vgcqHD1EGullGAW4aaPYhNA6yXhtKVMltPIlQenXFAbNzaTEssodEpINrPhYLXd05xztCmVn0hxGz+sSoy14Krj8OXlQ=
+X-Gm-Message-State: AOJu0Yw6yJPzCeVbYTGw9K/tPh6BYfn+tm3I1MQNC1s1NEfHA5qznaVI
+	0bgHkSdyqdZEdqZCUYf9I4gIBIg7DQZzwRzthCl7LfgtFoCk3C52/j4f7CmnuF4+dQxEbDJBq//
+	FjOtE1A==
+X-Google-Smtp-Source: AGHT+IHyKPLSIog3XQZklNJTDolg7zhJijAXOAqu4B3joMX/urbphNPJHOWC6JlS5OEQI8LMxQkcBw==
+X-Received: by 2002:a17:906:1555:b0:a51:8d60:215a with SMTP id c21-20020a170906155500b00a518d60215amr3597487ejd.27.1714836743885;
+        Sat, 04 May 2024 08:32:23 -0700 (PDT)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id xo16-20020a170907bb9000b00a55b1253fe5sm3043697ejc.194.2024.05.04.08.32.22
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 May 2024 08:32:22 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59a0168c75so122140266b.1
+        for <io-uring@vger.kernel.org>; Sat, 04 May 2024 08:32:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVE2mQCUWuJ9QlqbImUvBIlc+kMNJmMf37fnU5R5JBJQ0NWXWFRJYGFA80WYZVRr0qiVwXY26nAPoIMk08GSOnyef55SBlcC80=
+X-Received: by 2002:a17:906:5fd5:b0:a59:9e55:748d with SMTP id
+ k21-20020a1709065fd500b00a599e55748dmr2287623ejv.35.1714836742417; Sat, 04
+ May 2024 08:32:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240503233900.GG2118490@ZenIV>
+References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+In-Reply-To: <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 4 May 2024 08:32:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+Message-ID: <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, 
+	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, May 04, 2024 at 12:39:00AM +0100, Al Viro wrote:
-> On Fri, May 03, 2024 at 04:16:15PM -0700, Linus Torvalds wrote:
-> > On Fri, 3 May 2024 at 15:07, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > Suppose your program calls select() on a pipe and dmabuf, sees data to be read
-> > > from pipe, reads it, closes both pipe and dmabuf and exits.
-> > >
-> > > Would you expect that dmabuf file would stick around for hell knows how long
-> > > after that?  I would certainly be very surprised by running into that...
-> > 
-> > Why?
-> > 
-> > That's the _point_ of refcounts. They make the thing they refcount
-> > stay around until it's no longer referenced.
-> > 
-> > Now, I agree that dmabuf's are a bit odd in how they use a 'struct
-> > file' *as* their refcount, but hey, it's a specialty use. Unusual
-> > perhaps, but not exactly wrong.
-> > 
-> > I suspect that if you saw a dmabuf just have its own 'refcount_t' and
-> > stay around until it was done, you wouldn't bat an eye at it, and it's
-> > really just the "it uses a struct file for counting" that you are
-> > reacting to.
-> 
-> *IF* those files are on purely internal filesystem, that's probably
-> OK; do that with something on something mountable (char device,
-> sysfs file, etc.) and you have a problem with filesystem staying
-> busy.
+On Sat, 4 May 2024 at 02:37, Christian Brauner <brauner@kernel.org> wrote:
+>
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -244,13 +244,18 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
+>         if (!dmabuf || !dmabuf->resv)
+>                 return EPOLLERR;
+>
+> +       if (!get_file_active(&dmabuf->file))
+> +               return EPOLLERR;
+[...]
 
-In this instance it is ok because dma-buf is an internal fs. I had the
-exact same reaction you had initially but it doesn't matter for dma-buf
-afaict as that thing can never be unmounted.
+I *really* don't think anything that touches dma-buf.c can possibly be right.
+
+This is not a dma-buf.c bug.
+
+This is purely an epoll bug.
+
+Lookie here, the fundamental issue is that epoll can call '->poll()'
+on a file descriptor that is being closed concurrently.
+
+That means that *ANY* driver that relies on *any* data structure that
+is managed by the lifetime of the 'struct file' will have problems.
+
+Look, here's sock_poll():
+
+    static __poll_t sock_poll(struct file *file, poll_table *wait)
+    {
+        struct socket *sock = file->private_data;
+
+and that first line looks about as innocent as it possibly can, right?
+
+Now, imagine that this is called from 'epoll' concurrently with the
+file being closed for the last time (but it just hasn't _quite_
+reached eventpoll_release() yet).
+
+Now, imagine that the kernel is built with preemption, and the epoll
+thread gets preempted _just_ before it loads 'file->private_data'.
+
+Furthermore, the machine is under heavy load, and it just stays off
+its CPU a long time.
+
+Now, during this TOTALLY INNOCENT sock_poll(), in another thread, the
+file closing completes, eventpoll_release() finishes, and the
+preemption of the poll() thing just takes so long that you go through
+an RCU period too, so that the actual file has been released too.
+
+So now that totally innoced file->private_data load in the poll() is
+probably going to get random data.
+
+Yes, the file is allocated as SLAB_TYPESAFE_BY_RCU, so it's probably
+still a file. Not guaranteed, even the slab will get fully free'd in
+some situations. And yes, the above case is impossible to hit in
+practice. You have to hit quite the small race window with an
+operation that practically never happens in the first place.
+
+But my point is that the fact that the problem with file->f_count
+lifetimes happens for that dmabuf driver is not the fault of the
+dmabuf code. Not at all.
+
+It is *ENTIRELY* a bug in epoll, and the dmabuf code is probably just
+easier to hit because it has a poll() function that does things that
+have longer lifetimes than most things, and interacts more directly
+with that f_count.
+
+So I really don't understand why Al thinks this is "dmabuf does bad
+things with f_count". It damn well does not. dma-buf is the GOOD GUY
+here. It's doing things *PROPERLY*. It's taking refcounts like it damn
+well should.
+
+The fact that it takes ref-counts on something that the epoll code has
+messed up is *NOT* its fault.
+
+                Linus
 

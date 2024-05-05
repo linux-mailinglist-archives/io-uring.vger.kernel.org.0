@@ -1,148 +1,154 @@
-Return-Path: <io-uring+bounces-1755-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1756-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E108BC01F
-	for <lists+io-uring@lfdr.de>; Sun,  5 May 2024 12:50:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5F28BC28E
+	for <lists+io-uring@lfdr.de>; Sun,  5 May 2024 18:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E30C61F2141A
-	for <lists+io-uring@lfdr.de>; Sun,  5 May 2024 10:50:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248EE1C209DF
+	for <lists+io-uring@lfdr.de>; Sun,  5 May 2024 16:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF621173F;
-	Sun,  5 May 2024 10:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2179437141;
+	Sun,  5 May 2024 16:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5L3jU3F"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Jh0m25dd"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696ED6FBE;
-	Sun,  5 May 2024 10:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251971E52A
+	for <io-uring@vger.kernel.org>; Sun,  5 May 2024 16:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714906229; cv=none; b=soJMdOjZaGwMhR4aqiM5629NXU4eYLHED5bodNQIz69nUENirRuyO0dFVxwgwiijGeJggsyXG5kK4K2/uCuFO//+2bHVSt2w+YFphrPY33Mw2nZOuhycEAAWaeg1KN4QFZI2qS9ql2PKdHZscKenKgE2p7wsJLUWjbCLHAw/gBo=
+	t=1714927588; cv=none; b=i6V38/ZfqEE6pQwQWFSPV4kJEZvAGB5tmf5fQcb2j4XdbeXW9xQ+n/Y76qIQ1mDwtJQer64z1twlebJZYkEt/ZqKSjxAZCLRs2Db4DgiTmzlxDIY0xQIxqnYyNW8srOf6krolDutTkBi50+Ij2Mr3GMvwNzVjdO1tuzPTjWE3Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714906229; c=relaxed/simple;
-	bh=A0pA9gFmx/KX+0Pa4DEPpSZCbQRPr/bicmqz+Fp/D+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vn6SduIsAEwIq2fkHskltkNzBVbzydb3invgGkOlo0yOJYb2GIMcBpODNVNi4YjD8xHoYzY4Z9vuuJpo9Ukzpj0MNi3Hzoc9F4lmXF6U11YQSvJDlX4yB/KW8mlcRBaMb79Gnv00ljRD1/9hX/JqFREx+m7thY9FFHnatZYaCSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5L3jU3F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B1EC113CC;
-	Sun,  5 May 2024 10:50:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714906228;
-	bh=A0pA9gFmx/KX+0Pa4DEPpSZCbQRPr/bicmqz+Fp/D+U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e5L3jU3FZTdPXwhW7v4hVB9ximQhq8UCZ0c9TGS4U1UkDy9SoEAFc5NcwjdpsIkoS
-	 y5500oXQvODSiP70b98akmj6jmj+4sIElipq9Sppz0r6ueMZ5+eoTun24p+V22Tcsc
-	 HaEAjxcM6qfbfzwdvMKKH0Bzaupg7FpgBHRmFAtU8wyAoJkMIQ+EcEkI2ftcOlZkWI
-	 aYekeYbhJGpP03mC0HcdhmtZ5hdyxwJFb24ZNgDWJ/rfxASaSIkLf4OS9WJJBKMSOh
-	 qzzyyX+Lq+QiMQ+t6jgW/KeVXyFOY4AUvFgw8NNBYWWqzu+JmgCOPLMaezQ+o0HooC
-	 CPk8Qe18RVxwQ==
-Date: Sun, 5 May 2024 12:50:21 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Message-ID: <20240505-gelehnt-anfahren-8250b487da2c@brauner>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
+	s=arc-20240116; t=1714927588; c=relaxed/simple;
+	bh=CLhNByDrSyy3KlkeokG4swipYxw1p9LkQ6WM4wj072Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ui1HaqqxnTt3u3uHJN6zWMlVxb/WyRtHrw665z5DlaaS4sm1g+KF7GaUqyHYM7iioNItGzjp8H4s3Qke3wxS3CzYZ7CXCsVJbaC4xGL/+6rFBJAY+qZrQJTD88VnVsPTQJkaaNAIX2e+gAJIvqj4y/4BOleMf6EEKdGXPWXCF/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Jh0m25dd; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59b81d087aso171537366b.3
+        for <io-uring@vger.kernel.org>; Sun, 05 May 2024 09:46:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1714927584; x=1715532384; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aYdtp3YANTth8Vi9S+yHKBJaPcPwhcLOgY9vMAI/QdY=;
+        b=Jh0m25ddNdP2B2AMRer6g2SsW4aWlFV4wvbACB4nQ9lt2L9qHjX30wG6XAmXRJqb9b
+         cnDKyodeqsI4AtByabWH8SPehOzuKTxu659W1aKn8zxvej/pit6U6xPJg7vIiRNCPxJT
+         Pmhip1fNYVkrmjHVLDxwcOUHdbIpck4jh1lVc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714927584; x=1715532384;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aYdtp3YANTth8Vi9S+yHKBJaPcPwhcLOgY9vMAI/QdY=;
+        b=A/o0METYS1A9xJNmlj8byKFDrdvF4ksvXyFGT6YZZTU4AB44icW3Zewfw9xI+DUB6k
+         FtWXpruQZtCTi+ux1InAcQpRyff3BHV+Yyd1iCDgEBkBoXLbh7yKbQJonJc9FngM9Yeo
+         OC/1L7gOOcdWoH+v4JBZXuMpYYWFgP91Ju8JyVV9S9eKFFoi8+5lDf6OdkIBiHdEHWUg
+         COdzDbxekQ3pu/ulgW8VIhXxvQImrOoaVyYs+LXtAagiBwDl7UoQLrx8aOoC0wa97Lss
+         PMvdFJ0PqRnIs/7JlOe4sVLjWBblSaDFYVIVqnFQnP+IDMUrddq0CwyOS0lfoQO23zum
+         L7hw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvQphsVpqvT5zShzs7U/wIvbXxaXaANv+NCnJpyevK5r6dinN9yVY0vJsTq9VrGnFvqWkvzARWwTUHSw1Y8tHzQqKUyJ20HC0=
+X-Gm-Message-State: AOJu0YzQ2pdxU4RfFcz7IGCFiRAL96kgIbQa9i5RbMVMpo5nRbTBVOQN
+	c0uMzIFcaKRxeKmPHSlBN5sdGatw5Z/PtGmOm6QAPfClVr824jhz/w4OEfUCPqRcCp/8ibEAXIv
+	ZTmMvnA==
+X-Google-Smtp-Source: AGHT+IGHj3Ol+fin1RvhRuyT7z24bxw4fHGOdEIxOTHSWXXe/nSQlHql4DuyRVLpxOHsvjuVotypGA==
+X-Received: by 2002:a17:906:4948:b0:a59:a18e:3fd4 with SMTP id f8-20020a170906494800b00a59a18e3fd4mr4385089ejt.31.1714927584378;
+        Sun, 05 May 2024 09:46:24 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id jl24-20020a17090775d800b00a599acaff03sm2888640ejc.19.2024.05.05.09.46.22
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 May 2024 09:46:23 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a5200afe39eso281494166b.1
+        for <io-uring@vger.kernel.org>; Sun, 05 May 2024 09:46:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVA1L0XcidfDRAU50DT7STUvBUFUQsMUEMA/dbNFkObkv8aD3YK6/WTLEzGn2sorDA5HgtLyDVPk6W8c8Z19di8cGzUa8Lcug8=
+X-Received: by 2002:a17:907:3f9a:b0:a59:c5c2:a31c with SMTP id
+ hr26-20020a1709073f9a00b00a59c5c2a31cmr2077374ejc.33.1714927582181; Sun, 05
+ May 2024 09:46:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
+References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com> <20240505-gelehnt-anfahren-8250b487da2c@brauner>
+In-Reply-To: <20240505-gelehnt-anfahren-8250b487da2c@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 5 May 2024 09:46:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+Message-ID: <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
+Subject: Re: [PATCH] epoll: try to be a _bit_ better about file lifetimes
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, 
+	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, May 04, 2024 at 08:40:25AM -0700, Linus Torvalds wrote:
-> On Sat, 4 May 2024 at 08:32, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Now, during this TOTALLY INNOCENT sock_poll(), in another thread, the
-> > file closing completes, eventpoll_release() finishes [..]
-> 
-> Actually, Al is right that ep_item_poll() should be holding the
-> ep->mtx, so eventpoll_release() -> eventpoll_release_file_file() ->
-> mutex_lock(&ep->mtx) should block and the file doesn't actually get
-> released.
+On Sun, 5 May 2024 at 03:50, Christian Brauner <brauner@kernel.org> wrote:
+>
+> And I agree with you that for some instances it's valid to take another
+> reference to a file from f_op->poll() but then they need to use
+> get_file_active() imho and simply handle the case where f_count is zero.
 
-So I know you've seen it yourself but for my own peace of mind I've said
-that in the other mail and in the other thread already that all callers
-of ep_item_poll() do already hold the ep->mtx:
+I think this is
 
-do_epoll_ctl()
--> epoll_mutex_lock(&ep->mtx)
--> ep_insert()
-   -> ep_item_poll()
+ (a) practically impossible to find (since most f_count updates are in
+various random helpers)
 
-do_epoll_ctl()
--> epoll_mutex_lock(&ep->mtx)
--> ep_modify()
-   -> ep_item_poll()
+ (b) not tenable in the first place, since *EVERYBODY* does a f_count
+update as part of the bog-standard pollwait
 
-ep_send_events()
--> mutex_lock(&ep->mtx)
--> ep_item_poll()
+So (b) means that the notion of "warn if somebody increments f_count
+from zero" is broken to begin with - but it's doubly broken because it
+wouldn't find anything *anyway*, since this never happens in any
+normal situation.
 
-/* nested; and all callers of ep_item_poll() already hold ep->mtx */
-__ep_eventpoll_poll()
--> mutex_lock_nested(&ep->mtx, wait)
--> ep_item_poll()
+And (a) means that any non-automatic finding of this is practically impossible.
 
-So it's simply not possible to end up with a UAF in f_op->poll() because
-eventpoll_release_file_file() serializes on ep->mtx as well:
+> And we need to document that in Documentation/filesystems/file.rst or
+> locking.rst.
 
-__fput()
--> eventpoll_release()
-   -> eventpoll_release_file()
-      {
-              // @file->f_count is zero _but file is not freed_
-              // so taking file->f_lock is absolutely fine
-              spin_lock(&file->f_lock);
-              // mark as dying
+WHY?
 
-              // serialzed on ep->mtx
-              mutex_lock(&ep->mtx);
-              __ep_rmove(ep, epi);
-              ...
+Why cannot you and Al just admit that the problem is in epoll. Always
+has been, always will be.
 
-      }
-      -> mutex_lock(&ep->mtx)
+The fact is, it's not dma-buf that is violating any rules. It's epoll.
+It's calling out to random driver functions with a file pointer that
+is no longer valid.
 
--> f_op->release()
--> kfree(file)
+It really is that simple.
 
-So afaict it's simply not possible to end up with a UAF in f_op->poll().
+I don't see why you are arguing for "unknown number of drivers - we
+know at least *one* - have to be fixed for a bug that is in epoll".
 
-And I agree with you that for some instances it's valid to take another
-reference to a file from f_op->poll() but then they need to use
-get_file_active() imho and simply handle the case where f_count is zero.
-And we need to document that in Documentation/filesystems/file.rst or
-locking.rst.
+If it was *easy* to fix, and if it was *easy* to validate, then  sure.
+But that just isn't the case.
 
-But if it's simply just dma buf that cares about that long-term
-reference then really we should just force them to take the reference
-like I suggested but don't penalize everyone else. When I took a glance
-at all f_op->poll() implementations I didn't spot one that did take
-extra references.
+In contrast, in epoll it's *trivial* to fix the one case where it does
+a VFS call-out, and just say "you have to follow the rules".
 
-But if you absolutely want to have epoll take the reference before it
-calls into f_op->poll() that's fine with me as well. But we might end up
-forcing epoll to do a lot of final fput()s which I'm not sure is all
-that desirable.
+So explain to me again why you want to mess up the driver interface
+and everybody who has a '.poll()' function, and not just fix the ONE
+clearly buggy piece of code.
+
+Because dammit,. epoll is clearly buggy. It's not enough to say "the
+file allocation isn't going away", and claim that that means that it's
+not buggy - when the file IS NO LONGER VALID!
+
+                      Linus
 

@@ -1,60 +1,60 @@
-Return-Path: <io-uring+bounces-1789-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1790-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3FE8BD2A1
-	for <lists+io-uring@lfdr.de>; Mon,  6 May 2024 18:24:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F6B28BD29F
+	for <lists+io-uring@lfdr.de>; Mon,  6 May 2024 18:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0247B22B15
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA0DB2832ED
 	for <lists+io-uring@lfdr.de>; Mon,  6 May 2024 16:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121DC155A55;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DFE156669;
 	Mon,  6 May 2024 16:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MM/LkG4y"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S6UTGiEQ"
 X-Original-To: io-uring@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A01E156669
-	for <io-uring@vger.kernel.org>; Mon,  6 May 2024 16:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0BA156885
+	for <io-uring@vger.kernel.org>; Mon,  6 May 2024 16:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715012624; cv=none; b=X+n10PXv7gheC7tzMDaMcpeagVuZ8iw+/txpKIxYCfJTL/fuTb77AfOkmoQTyH3FLNQwLrAo8WhOfbEFLhOkN/YNg6UXIiF7j4EPY0wKrGQ4TgRSxSjMf6dmS7BzNOOyaPqwrF4uWrRFFfM2T/eluZDq3nOuXc2f6YC8pNoPqQc=
+	t=1715012624; cv=none; b=GSFeEipAgew1qcRqvjvn8ZuXSd5Jjfnvb5lpGBcpEKQ2fER7MTLlBaEde/VmNUiI11BRVpKg/Ofj3eh5W+7XTzkLycP6IATB/0I+zMDWGfXErILFlPKO0NNkmj7sWtCEgw6ESSrAZS+ZdK36XROM2LshhN7P4R8SSo7XZndGQAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715012624; c=relaxed/simple;
-	bh=F2lYvY+5SE+Jkx0odMLihfOXhmxv+pI56/mI1nfw53U=;
+	bh=uqiWEE+g2e893eZ5m7HVM4TTP4rnwxy9m3/vjntXpos=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QjcktQVs9sgG1o9unuWcYpFga9OGzesDzmpHsDJ9s01jwlH1gXICa072pO7Za9zRSe1Eouq/fvv3EqUO94GHegD0ZbtZmDu2GnenGmnAgED/UeJ0OnyA2fB5WCSe1gQrs8yJ7wcWLx9lHiSQuqz8v0jWL1Gh0DHTQnIDoH5dNN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MM/LkG4y; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=pfjdaqefVRRfNPlQ/YzVZWFbZ6zReLbW6jMfULe8Svxho+y54XKKW2jwGXR0nNwKmZp+iFohhNmxtkcOFobar+ZX/gBy0Lr1zStLnf+zDHrlDxUfoop7p2pSbjdHeTzGVTTJ6Aki1AGQETgwKMiRr9PHoC66Osss6Sa1/d8N2kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S6UTGiEQ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715012620;
+	s=mimecast20190719; t=1715012621;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=P/uPU1PZkJrKUxtyLt7k8LKrI2JUUc/DXMGKwGvSTgA=;
-	b=MM/LkG4ykjRv0CSwsn6jLqa/RpCl0IeC1NOUYi5IXUMusmdc4c+QjJjAYlFhwIPE9hXRtf
-	mcjp6nc2ydpUpaEaWecaA/I/HYChWQa4MqdOuhzAEkqZOV9V3VD+WhlqwxpKradKvAD+oZ
-	eejDs3ZAd0ACEsPrX+YrXwrCJW5Y8Jk=
+	bh=4sNwpvnlQcBOroJF12pnS1iYrtU7tkg5q6PQFeRALmw=;
+	b=S6UTGiEQ9pc9HPP9j/E3ghQa92rUvOKEF8lU7Y6BB28BDyhrXtxwSe6liemfymGH0aBGCq
+	qXhoVH+9QbkBPiFt0hS6WnrPXY3qTkktOwLGzoZ5lB/YynllGGQKjfccZw5pqfJOF7gQZe
+	nhi/oZyHzXbH3fekdL21oJG5wz5NOH8=
 Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-121-w7qsXptbOOyxuUGmPgsOaA-1; Mon,
- 06 May 2024 12:23:36 -0400
-X-MC-Unique: w7qsXptbOOyxuUGmPgsOaA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-423-nG96bdDDPpaj3H1faPAJNw-1; Mon,
+ 06 May 2024 12:23:40 -0400
+X-MC-Unique: nG96bdDDPpaj3H1faPAJNw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 098C03C025C2;
-	Mon,  6 May 2024 16:23:36 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BB7721C05139;
+	Mon,  6 May 2024 16:23:39 +0000 (UTC)
 Received: from localhost (unknown [10.72.116.15])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 1898DEC682;
-	Mon,  6 May 2024 16:23:34 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 72D1D1121306;
+	Mon,  6 May 2024 16:23:38 +0000 (UTC)
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	io-uring@vger.kernel.org
@@ -62,9 +62,9 @@ Cc: linux-block@vger.kernel.org,
 	Pavel Begunkov <asml.silence@gmail.com>,
 	Kevin Wolf <kwolf@redhat.com>,
 	Ming Lei <ming.lei@redhat.com>
-Subject: [RFC PATCH V2 6/9] io_uring: support sqe group with members depending on leader
-Date: Tue,  7 May 2024 00:22:42 +0800
-Message-ID: <20240506162251.3853781-7-ming.lei@redhat.com>
+Subject: [RFC PATCH V2 7/9] io_uring: support providing sqe group buffer
+Date: Tue,  7 May 2024 00:22:43 +0800
+Message-ID: <20240506162251.3853781-8-ming.lei@redhat.com>
 In-Reply-To: <20240506162251.3853781-1-ming.lei@redhat.com>
 References: <20240506162251.3853781-1-ming.lei@redhat.com>
 Precedence: bulk
@@ -74,141 +74,463 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-Generic sqe group provides flexible way for supporting N:M dependency
-between groups.
+SQE group with REQ_F_SQE_GROUP_DEP introduces one new mechanism to share
+resource among one group of requests, and all member requests can consume
+the resource provided by group lead efficiently in parallel.
 
-However, some resource can't cross OPs, such as kernel buffer, otherwise
-the buffer may be leaked easily in case that any OP failure or application
-panic.
+This patch uses the added sqe group feature REQ_F_SQE_GROUP_DEP to share
+kernel buffer in sqe group:
 
-Add flag REQ_F_SQE_GROUP_DEP for allowing members to depend on group leader,
-so that group members won't be queued until the leader request is completed,
-and we still commit leader's CQE after all members CQE are posted. With this
-way, the kernel resource lifetime can be aligned with group leader or group,
-one typical use case is to support zero copy for device internal buffer.
+- the group lead provides kernel buffer to member requests
 
-This use case may not be generic enough, so set it only for specific OP which
-can serve as group leader, meantime we have run out of sqe flags.
+- member requests use the provided buffer to do FS or network IO, or more
+operations in future
+
+- this kernel buffer is returned back after member requests use it up
+
+This way looks a bit similar with kernel's pipe/splice, but there are some
+important differences:
+
+- splice is for transferring data between two FDs via pipe, and fd_out can
+only read data from pipe; this feature can borrow buffer from group lead to
+members, so member request can write data to this buffer if the provided
+buffer is allowed to write to.
+
+- splice implements data transfer by moving pages between subsystem and
+pipe, that means page ownership is transferred, and this way is one of the
+most complicated thing of splice; this patch supports scenarios in which
+the buffer can't be transferred, and buffer is only borrowed to member
+requests, and is returned back after member requests consume the provided
+buffer, so buffer lifetime is simplified a lot. Especially the buffer is
+guaranteed to be returned back.
+
+- splice can't run in async way basically
+
+It can help to implement generic zero copy between device and related
+operations, such as ublk, fuse, vdpa, even network receive or whatever.
 
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- include/linux/io_uring_types.h |  3 +++
- io_uring/io_uring.c            | 36 +++++++++++++++++++++++++---------
- io_uring/io_uring.h            |  3 +++
- 3 files changed, 33 insertions(+), 9 deletions(-)
+ include/linux/io_uring_types.h | 33 +++++++++++++++++++
+ io_uring/io_uring.c            | 10 +++++-
+ io_uring/io_uring.h            |  5 +++
+ io_uring/kbuf.c                | 60 ++++++++++++++++++++++++++++++++++
+ io_uring/kbuf.h                | 13 ++++++++
+ io_uring/net.c                 | 31 +++++++++++++++++-
+ io_uring/opdef.c               |  5 +++
+ io_uring/opdef.h               |  2 ++
+ io_uring/rw.c                  | 20 +++++++++++-
+ 9 files changed, 176 insertions(+), 3 deletions(-)
 
 diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 62311b0f0e0b..5cbc9d3346a7 100644
+index 5cbc9d3346a7..e414c3544f72 100644
 --- a/include/linux/io_uring_types.h
 +++ b/include/linux/io_uring_types.h
-@@ -477,6 +477,7 @@ enum {
- 	REQ_F_BL_NO_RECYCLE_BIT,
+@@ -6,6 +6,7 @@
+ #include <linux/task_work.h>
+ #include <linux/bitmap.h>
+ #include <linux/llist.h>
++#include <linux/bvec.h>
+ #include <uapi/linux/io_uring.h>
+ 
+ enum {
+@@ -39,6 +40,26 @@ enum io_uring_cmd_flags {
+ 	IO_URING_F_COMPAT		= (1 << 12),
+ };
+ 
++struct io_uring_kernel_buf;
++typedef void (io_uring_buf_giveback_t) (const struct io_uring_kernel_buf *);
++
++/* buffer provided from kernel */
++struct io_uring_kernel_buf {
++	unsigned long		len;
++	unsigned short		nr_bvecs;
++	unsigned char		dir;	/* ITER_SOURCE or ITER_DEST */
++
++	/* offset in the 1st bvec */
++	unsigned int		offset;
++	const struct bio_vec	*bvec;
++
++	/* called when we are done with this buffer */
++	io_uring_buf_giveback_t	*grp_kbuf_ack;
++
++	/* private field, user don't touch it */
++	struct bio_vec		__bvec[];
++};
++
+ struct io_wq_work_node {
+ 	struct io_wq_work_node *next;
+ };
+@@ -478,6 +499,7 @@ enum {
  	REQ_F_BUFFERS_COMMIT_BIT,
  	REQ_F_SQE_GROUP_LEADER_BIT,
-+	REQ_F_SQE_GROUP_DEP_BIT,
+ 	REQ_F_SQE_GROUP_DEP_BIT,
++	REQ_F_GROUP_KBUF_BIT,
  
  	/* not a real bit, just to check we're not overflowing the space */
  	__REQ_F_LAST_BIT,
-@@ -561,6 +562,8 @@ enum {
- 	REQ_F_BUFFERS_COMMIT	= IO_REQ_FLAG(REQ_F_BUFFERS_COMMIT_BIT),
- 	/* sqe group lead */
+@@ -564,6 +586,8 @@ enum {
  	REQ_F_SQE_GROUP_LEADER	= IO_REQ_FLAG(REQ_F_SQE_GROUP_LEADER_BIT),
-+	/* sqe group with members depending on leader */
-+	REQ_F_SQE_GROUP_DEP	= IO_REQ_FLAG(REQ_F_SQE_GROUP_DEP_BIT),
+ 	/* sqe group with members depending on leader */
+ 	REQ_F_SQE_GROUP_DEP	= IO_REQ_FLAG(REQ_F_SQE_GROUP_DEP_BIT),
++	/* group lead provides kbuf for members, set for both lead and member */
++	REQ_F_GROUP_KBUF	= IO_REQ_FLAG(REQ_F_GROUP_KBUF_BIT),
  };
  
  typedef void (*io_req_tw_func_t)(struct io_kiocb *req, struct io_tw_state *ts);
+@@ -647,6 +671,15 @@ struct io_kiocb {
+ 		 * REQ_F_BUFFER_RING is set.
+ 		 */
+ 		struct io_buffer_list	*buf_list;
++
++		/*
++		 * store kernel buffer provided by sqe group lead, valid
++		 * IFF REQ_F_GROUP_KBUF
++		 *
++		 * The buffer meta is immutable since it is shared by
++		 * all member requests
++		 */
++		const struct io_uring_kernel_buf *grp_kbuf;
+ 	};
+ 
+ 	union {
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 465f4244fa0b..236765bc786c 100644
+index 236765bc786c..48108c6f9a7f 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -936,7 +936,14 @@ static __always_inline void io_req_commit_cqe(struct io_kiocb *req,
+@@ -114,7 +114,7 @@
  
- static inline bool need_queue_group_members(struct io_kiocb *req)
+ #define IO_REQ_CLEAN_FLAGS (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP | \
+ 				REQ_F_POLLED | REQ_F_INFLIGHT | REQ_F_CREDS | \
+-				REQ_F_ASYNC_DATA)
++				REQ_F_ASYNC_DATA | REQ_F_GROUP_KBUF)
+ 
+ #define IO_REQ_CLEAN_SLOW_FLAGS (REQ_F_REFCOUNT | REQ_F_LINK | REQ_F_HARDLINK |\
+ 				 IO_REQ_CLEAN_FLAGS)
+@@ -380,6 +380,11 @@ static bool req_need_defer(struct io_kiocb *req, u32 seq)
+ 
+ static void io_clean_op(struct io_kiocb *req)
  {
--	return req_is_group_leader(req) && !!req->grp_link;
-+	if (likely(!(req->flags & REQ_F_SQE_GROUP)))
-+		return false;
++	/* GROUP_KBUF is only available for REQ_F_SQE_GROUP_DEP */
++	if ((req->flags & (REQ_F_GROUP_KBUF | REQ_F_SQE_GROUP_DEP)) ==
++			(REQ_F_GROUP_KBUF | REQ_F_SQE_GROUP_DEP))
++		io_group_kbuf_drop(req);
 +
-+	if (!(req->flags & REQ_F_SQE_GROUP_LEADER) ||
-+			(req->flags & REQ_F_SQE_GROUP_DEP))
-+		return false;
-+
-+	return !!req->grp_link;
- }
+ 	if (req->flags & REQ_F_BUFFER_SELECTED) {
+ 		spin_lock(&req->ctx->completion_lock);
+ 		io_kbuf_drop(req);
+@@ -984,9 +989,12 @@ void io_queue_group_members(struct io_kiocb *req, bool async)
+ 		return;
  
- /* Can only be called after this request is issued */
-@@ -969,7 +976,7 @@ static void io_fail_group_members(struct io_kiocb *req)
- 	req->grp_link = NULL;
- }
- 
--static void io_queue_group_members(struct io_kiocb *req, bool async)
-+void io_queue_group_members(struct io_kiocb *req, bool async)
- {
- 	struct io_kiocb *member = req->grp_link;
- 
-@@ -980,13 +987,20 @@ static void io_queue_group_members(struct io_kiocb *req, bool async)
+ 	while (member) {
++		const struct io_issue_def *def = &io_issue_defs[member->opcode];
  		struct io_kiocb *next = member->grp_link;
  
  		member->grp_link = req;
--		trace_io_uring_submit_req(member);
--		if (async)
--			member->flags |= REQ_F_FORCE_ASYNC;
--		if (member->flags & REQ_F_FORCE_ASYNC)
--			io_req_task_queue(member);
--		else
--			io_queue_sqe(member);
-+
-+		/* members have to be failed if they depends on leader */
-+		if (unlikely((req->flags & REQ_F_FAIL) &&
-+			     (req->flags & REQ_F_SQE_GROUP_DEP))) {
-+			io_req_task_queue_fail(member, -ECANCELED);
-+		} else {
-+			trace_io_uring_submit_req(member);
-+			if (async)
-+				member->flags |= REQ_F_FORCE_ASYNC;
-+			if (member->flags & REQ_F_FORCE_ASYNC)
-+				io_req_task_queue(member);
-+			else
-+				io_queue_sqe(member);
-+		}
- 		member = next;
- 	}
- 	req->grp_link = NULL;
-@@ -1065,6 +1079,10 @@ static void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
- 		return;
- 	}
++		if ((req->flags & REQ_F_GROUP_KBUF) && def->accept_group_kbuf)
++			member->flags |= REQ_F_GROUP_KBUF;
  
-+	/* now queue members if they depends on this leader */
-+	if (req_is_group_leader(req) && (req->flags & REQ_F_SQE_GROUP_DEP))
-+		io_queue_group_members(req, true);
-+
- 	io_cq_lock(ctx);
- 	if (!(req->flags & REQ_F_CQE_SKIP))
- 		io_req_commit_cqe(req, false);
+ 		/* members have to be failed if they depends on leader */
+ 		if (unlikely((req->flags & REQ_F_FAIL) &&
 diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 416c14c6f050..6cf27204503a 100644
+index 6cf27204503a..be6755b5cec1 100644
 --- a/io_uring/io_uring.h
 +++ b/io_uring/io_uring.h
-@@ -69,6 +69,7 @@ bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags);
- void __io_commit_cqring_flush(struct io_ring_ctx *ctx);
- bool __io_complete_group_req(struct io_kiocb *req,
- 			     struct io_kiocb *lead);
-+void io_queue_group_members(struct io_kiocb *req, bool async);
- 
- struct file *io_file_get_normal(struct io_kiocb *req, int fd);
- struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
-@@ -374,6 +375,8 @@ static inline void io_req_complete_defer(struct io_kiocb *req)
- 	if (likely(!req_is_group_leader(req)) ||
- 	    __io_complete_group_req(req, req))
- 		wq_list_add_tail(&req->comp_list, &state->compl_reqs);
-+	else if (req_is_group_leader(req) && (req->flags & REQ_F_SQE_GROUP_DEP))
-+		io_queue_group_members(req, false);
+@@ -355,6 +355,11 @@ static inline bool req_is_group_member(struct io_kiocb *req)
+ 	return !req_is_group_leader(req) && (req->flags & REQ_F_SQE_GROUP);
  }
  
- static inline void io_commit_cqring_flush(struct io_ring_ctx *ctx)
++static inline bool req_support_group_dep(struct io_kiocb *req)
++{
++	return req_is_group_leader(req) && (req->flags & REQ_F_SQE_GROUP_DEP);
++}
++
+ /*
+  * Don't complete immediately but use deferred completion infrastructure.
+  * Protected by ->uring_lock and can only be used either with
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index d2945c9c812b..4293bed374b7 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -823,3 +823,63 @@ int io_pbuf_mmap(struct file *file, struct vm_area_struct *vma)
+ 	io_put_bl(ctx, bl);
+ 	return ret;
+ }
++
++int io_provide_group_kbuf(struct io_kiocb *req,
++		const struct io_uring_kernel_buf *grp_kbuf)
++{
++	if (unlikely(!req_support_group_dep(req)))
++		return -EINVAL;
++
++	/*
++	 * Borrow this buffer from one kernel subsystem, and return them
++	 * by calling `grp_kbuf_ack` when the group lead is freed.
++	 *
++	 * Not like pipe/splice, this kernel buffer is always owned by the
++	 * provider, and has to be returned back.
++	 */
++	req->grp_kbuf = grp_kbuf;
++	req->flags |= REQ_F_GROUP_KBUF;
++
++	return 0;
++}
++
++int io_import_group_kbuf(struct io_kiocb *req, unsigned long buf_off,
++		unsigned int len, int dir, struct iov_iter *iter)
++{
++	struct io_kiocb *lead = req->grp_link;
++	const struct io_uring_kernel_buf *kbuf;
++	unsigned long offset;
++
++	WARN_ON_ONCE(!(req->flags & REQ_F_GROUP_KBUF));
++
++	if (!req_is_group_member(req))
++		return -EINVAL;
++
++	if (!lead || !req_support_group_dep(lead) || !lead->grp_kbuf)
++		return -EINVAL;
++
++	/* req->fused_cmd_kbuf is immutable */
++	kbuf = lead->grp_kbuf;
++	offset = kbuf->offset;
++
++	if (!kbuf->bvec)
++		return -EINVAL;
++
++	if (dir != kbuf->dir)
++		return -EINVAL;
++
++	if (unlikely(buf_off > kbuf->len))
++		return -EFAULT;
++
++	if (unlikely(len > kbuf->len - buf_off))
++		return -EFAULT;
++
++	/* don't use io_import_fixed which doesn't support multipage bvec */
++	offset += buf_off;
++	iov_iter_bvec(iter, dir, kbuf->bvec, kbuf->nr_bvecs, offset + len);
++
++	if (offset)
++		iov_iter_advance(iter, offset);
++
++	return 0;
++}
+diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
+index b90aca3a57fa..2e1b7f91efb6 100644
+--- a/io_uring/kbuf.h
++++ b/io_uring/kbuf.h
+@@ -82,6 +82,11 @@ struct io_buffer_list *io_pbuf_get_bl(struct io_ring_ctx *ctx,
+ 				      unsigned long bgid);
+ int io_pbuf_mmap(struct file *file, struct vm_area_struct *vma);
+ 
++int io_provide_group_kbuf(struct io_kiocb *req,
++		const struct io_uring_kernel_buf *grp_kbuf);
++int io_import_group_kbuf(struct io_kiocb *req, unsigned long buf_off,
++		unsigned int len, int dir, struct iov_iter *iter);
++
+ static inline bool io_kbuf_recycle_ring(struct io_kiocb *req)
+ {
+ 	/*
+@@ -180,4 +185,12 @@ static inline unsigned int io_put_kbufs(struct io_kiocb *req, int nbufs,
+ {
+ 	return __io_put_kbufs(req, nbufs, issue_flags);
+ }
++
++static inline void io_group_kbuf_drop(struct io_kiocb *req)
++{
++	const struct io_uring_kernel_buf *gbuf = req->grp_kbuf;
++
++	if (gbuf && gbuf->grp_kbuf_ack)
++		gbuf->grp_kbuf_ack(gbuf);
++}
+ #endif
+diff --git a/io_uring/net.c b/io_uring/net.c
+index b0bf8471ecb7..34da6b5a31fb 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -78,6 +78,13 @@ struct io_sr_msg {
+  */
+ #define MULTISHOT_MAX_RETRY	32
+ 
++#define user_ptr_to_u64(x) (		\
++{					\
++	typecheck(void __user *, (x));	\
++	(u64)(unsigned long)(x);	\
++}					\
++)
++
+ int io_shutdown_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_shutdown *shutdown = io_kiocb_to_cmd(req, struct io_shutdown);
+@@ -364,7 +371,7 @@ static int io_send_setup(struct io_kiocb *req)
+ 		kmsg->msg.msg_name = &kmsg->addr;
+ 		kmsg->msg.msg_namelen = sr->addr_len;
+ 	}
+-	if (!io_do_buffer_select(req)) {
++	if (!io_do_buffer_select(req) && !(req->flags & REQ_F_GROUP_KBUF)) {
+ 		ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len,
+ 				  &kmsg->msg.msg_iter);
+ 		if (unlikely(ret < 0))
+@@ -584,6 +591,15 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (issue_flags & IO_URING_F_NONBLOCK)
+ 		flags |= MSG_DONTWAIT;
+ 
++	if (req->flags & REQ_F_GROUP_KBUF) {
++		ret = io_import_group_kbuf(req,
++					user_ptr_to_u64(sr->buf),
++					sr->len, ITER_SOURCE,
++					&kmsg->msg.msg_iter);
++		if (unlikely(ret))
++			return ret;
++	}
++
+ retry_bundle:
+ 	if (io_do_buffer_select(req)) {
+ 		struct buf_sel_arg arg = {
+@@ -1131,6 +1147,11 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ 		if (unlikely(ret))
+ 			goto out_free;
+ 		sr->buf = NULL;
++	} else if (req->flags & REQ_F_GROUP_KBUF) {
++		ret = io_import_group_kbuf(req, user_ptr_to_u64(sr->buf),
++				sr->len, ITER_DEST, &kmsg->msg.msg_iter);
++		if (unlikely(ret))
++			goto out_free;
+ 	}
+ 
+ 	kmsg->msg.msg_inq = -1;
+@@ -1333,6 +1354,14 @@ static int io_send_zc_import(struct io_kiocb *req, struct io_async_msghdr *kmsg)
+ 		if (unlikely(ret))
+ 			return ret;
+ 		kmsg->msg.sg_from_iter = io_sg_from_iter;
++	} else if (req->flags & REQ_F_GROUP_KBUF) {
++		struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
++
++		ret = io_import_group_kbuf(req, user_ptr_to_u64(sr->buf),
++				sr->len, ITER_SOURCE, &kmsg->msg.msg_iter);
++		if (unlikely(ret))
++			return ret;
++		kmsg->msg.sg_from_iter = io_sg_from_iter;
+ 	} else {
+ 		ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len, &kmsg->msg.msg_iter);
+ 		if (unlikely(ret))
+diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+index 2de5cca9504e..92b657a063a0 100644
+--- a/io_uring/opdef.c
++++ b/io_uring/opdef.c
+@@ -246,6 +246,7 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.ioprio			= 1,
+ 		.iopoll			= 1,
+ 		.iopoll_queue		= 1,
++		.accept_group_kbuf	= 1,
+ 		.async_size		= sizeof(struct io_async_rw),
+ 		.prep			= io_prep_read,
+ 		.issue			= io_read,
+@@ -260,6 +261,7 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.ioprio			= 1,
+ 		.iopoll			= 1,
+ 		.iopoll_queue		= 1,
++		.accept_group_kbuf	= 1,
+ 		.async_size		= sizeof(struct io_async_rw),
+ 		.prep			= io_prep_write,
+ 		.issue			= io_write,
+@@ -282,6 +284,7 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.audit_skip		= 1,
+ 		.ioprio			= 1,
+ 		.buffer_select		= 1,
++		.accept_group_kbuf	= 1,
+ #if defined(CONFIG_NET)
+ 		.async_size		= sizeof(struct io_async_msghdr),
+ 		.prep			= io_sendmsg_prep,
+@@ -297,6 +300,7 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.buffer_select		= 1,
+ 		.audit_skip		= 1,
+ 		.ioprio			= 1,
++		.accept_group_kbuf	= 1,
+ #if defined(CONFIG_NET)
+ 		.async_size		= sizeof(struct io_async_msghdr),
+ 		.prep			= io_recvmsg_prep,
+@@ -424,6 +428,7 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.pollout		= 1,
+ 		.audit_skip		= 1,
+ 		.ioprio			= 1,
++		.accept_group_kbuf	= 1,
+ #if defined(CONFIG_NET)
+ 		.async_size		= sizeof(struct io_async_msghdr),
+ 		.prep			= io_send_zc_prep,
+diff --git a/io_uring/opdef.h b/io_uring/opdef.h
+index 7ee6f5aa90aa..a53970655c82 100644
+--- a/io_uring/opdef.h
++++ b/io_uring/opdef.h
+@@ -29,6 +29,8 @@ struct io_issue_def {
+ 	unsigned		iopoll_queue : 1;
+ 	/* vectored opcode, set if 1) vectored, and 2) handler needs to know */
+ 	unsigned		vectored : 1;
++	/* opcodes which accept provided group kbuf */
++	unsigned		accept_group_kbuf : 1;
+ 
+ 	/* size of async data needed, if any */
+ 	unsigned short		async_size;
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index a6bf2ea8db91..4ae3ab9f2160 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -235,7 +235,8 @@ static int io_prep_rw_setup(struct io_kiocb *req, int ddir, bool do_import)
+ 	if (io_rw_alloc_async(req))
+ 		return -ENOMEM;
+ 
+-	if (!do_import || io_do_buffer_select(req))
++	if (!do_import || io_do_buffer_select(req) ||
++	    (req->flags & REQ_F_GROUP_KBUF))
+ 		return 0;
+ 
+ 	rw = req->async_data;
+@@ -620,11 +621,16 @@ static inline loff_t *io_kiocb_ppos(struct kiocb *kiocb)
+  */
+ static ssize_t loop_rw_iter(int ddir, struct io_rw *rw, struct iov_iter *iter)
+ {
++	struct io_kiocb *req = cmd_to_io_kiocb(rw);
+ 	struct kiocb *kiocb = &rw->kiocb;
+ 	struct file *file = kiocb->ki_filp;
+ 	ssize_t ret = 0;
+ 	loff_t *ppos;
+ 
++	/* group buffer is kernel buffer and doesn't have userspace addr */
++	if (req->flags & REQ_F_GROUP_KBUF)
++		return -EOPNOTSUPP;
++
+ 	/*
+ 	 * Don't support polled IO through this interface, and we can't
+ 	 * support non-blocking either. For the latter, this just causes
+@@ -830,6 +836,11 @@ static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 		ret = io_import_iovec(ITER_DEST, req, io, issue_flags);
+ 		if (unlikely(ret < 0))
+ 			return ret;
++	} else if (req->flags & REQ_F_GROUP_KBUF) {
++		ret = io_import_group_kbuf(req, rw->addr, rw->len, ITER_DEST,
++				&io->iter);
++		if (unlikely(ret))
++			return ret;
+ 	}
+ 
+ 	ret = io_rw_init_file(req, FMODE_READ);
+@@ -1012,6 +1023,13 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ 	ssize_t ret, ret2;
+ 	loff_t *ppos;
+ 
++	if (req->flags & REQ_F_GROUP_KBUF) {
++		ret = io_import_group_kbuf(req, rw->addr, rw->len, ITER_SOURCE,
++				&io->iter);
++		if (unlikely(ret))
++			return ret;
++	}
++
+ 	ret = io_rw_init_file(req, FMODE_WRITE);
+ 	if (unlikely(ret))
+ 		return ret;
 -- 
 2.42.0
 

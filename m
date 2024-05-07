@@ -1,115 +1,105 @@
-Return-Path: <io-uring+bounces-1812-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1813-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1B58BEABB
-	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 19:45:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8A58BEB0D
+	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 20:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 872B6286076
-	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 17:45:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2276D28243E
+	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 18:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE26016C849;
-	Tue,  7 May 2024 17:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365B216C870;
+	Tue,  7 May 2024 18:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWis6Nuk"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="eo+YnCWO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174A5165FCF;
-	Tue,  7 May 2024 17:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ED2165FCF
+	for <io-uring@vger.kernel.org>; Tue,  7 May 2024 18:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715103908; cv=none; b=cWPs+Wo/U8UVspkKJbOuNEymw92P27p0rsUKLPaxoXSqSajxLhIF6YaJY6cu79ErAP9uyu6cmmjZxnX0d7amxsZYmpEYNeF5OdNaLsuPxUjLQoWy91qKZmTlM+ikmIOeHxV2EGdcuiZj0lNPm8C9Ar+iL+gcc6G62Z9X4zUqd8E=
+	t=1715105067; cv=none; b=i4bt4W7poBnw0RmanApt63YfFZjwVJQxI/9uGt/DBhiCmruyrRdE1Ibf7KEQBzRT2eHxSttDnZrVF+qbucqa45kFrBld4J2o/FNcU3B8oo07U+TFyaORD/NMvaBIZGQJNXNNalBa+9i08XPEhGqNEhrg80ApPqybmKbOyCR8xQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715103908; c=relaxed/simple;
-	bh=Umv70e0c6nv8fGGaeErTB90Fn15g5pIK9CSartcaWHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pEwHLdyhiXz/ksGGnJRGN/Ma0Ufo1bfG2GCaNKZpzDj80uE3DI+66agA39nnhC8kDAqDwol6e1vAN79FQOPsSOZCLpmsXUzaMQhZ+7wfaB3aI9W6D5J1fChCFQMpEHjVxZXdZB61Pb+vOmnhlLVCSpUjcOzseIVlr5BF52pPcDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWis6Nuk; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41b79451153so27918995e9.2;
-        Tue, 07 May 2024 10:45:06 -0700 (PDT)
+	s=arc-20240116; t=1715105067; c=relaxed/simple;
+	bh=bAeC75xvNb+JauaCbjaxHSxSCPq7tnqY5BqL0SZHYRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Id/ecTtLnkDdg46VDhv1Lo/LSKQeHEeT97kFV5aty8G0kvSfmQRe1m1/8XYWJI8zTuu4UiX9QQAb7EGdxkRIf5M2vjhhFwVHGST1nBlFKE44UgAteCOv9m3cRrpAqHB0ONy5sOh7h8LF2zvlVcd5aher6SpqUn7L1OWsLERhzpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=eo+YnCWO; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3c96ef6bda1so103466b6e.0
+        for <io-uring@vger.kernel.org>; Tue, 07 May 2024 11:04:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715103905; x=1715708705; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Z39aNp6ho/cansGz6z4As7qPLlCotOLLvlN9d9rLPQI=;
-        b=YWis6NukXYhibzoqhRIV43bGUst5Jax//GdGntfRqalyjxvff+CtK0oXTRlsQSbZKp
-         LsE43eZIIUkvCIu7Yh2UCeBTYa5ia2C+2hKWIkm60bkEBidO4GttRuwTj48WP0kuGBMi
-         LxewzZGdrEhk5Y53fAC1vI14XWPMkKMaN0rGCEp8tMix/F+uXObBi0K1gIaEMF12qTtY
-         zNvSS+nYjf66S3l0BRTCXXkmEPMizcriljHobEhf7WGC23K2CkSpCU344KzWXe4ipdlV
-         VBsyRyYA6Z4bvErsZEAQp1xCTaUgJLd0GZBZyn1Vp4QZ7DB36HAfh0k2P5ZtyXIWZQ+Q
-         RH9Q==
+        d=ffwll.ch; s=google; t=1715105065; x=1715709865; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YmWheXdPpQuPLWl1RiMEbt0Eg1z181/dlD8IMNrkg1o=;
+        b=eo+YnCWOylpYuKvM7GG0ZejU8v4QEDQ1r73vBdA99OHLl2GcaygX80XSd9UDYeJfvk
+         3sDUd7+rkuhuYRoyrZ7S9Gw/e7g3GEgmha28eVvySJRUQiF3GIXqcuEPD2tknRAKTjIV
+         YAuGOVeB9P/q7P5b3e00HC/xqHRlFGb2HMO08=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715103905; x=1715708705;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z39aNp6ho/cansGz6z4As7qPLlCotOLLvlN9d9rLPQI=;
-        b=FBbuWDqTOnLaRQWSmeZuX5flKFK8innoGy3ulUrC+IbtSBrQOnkj6ZgxjAV83hdqwN
-         gM7nKgLYdkErOI9JIOjm+Y1l3vY5o5p7dTUX67n74Lhq+MusEUDcDUIVGh1m+GW1d8Lj
-         FQd8Jd58oYc/jyW4BEpDA+EhKAlrzHBJxtaCfMgvlqK9ePNkhHDTpkObYXi5mjI1MwLh
-         WxYFWHr9TsiurdU8jwimY3Xx8jiJfvxVuFN/NZrpZemPhN5YG6gKtiuPZjjihyrGXtoW
-         64WTAWVQgck8wwno17SU2AbH22IS9zOC+KYrJhAG1gr6ncnTou2PGiZrMZC9ZRtGd6h6
-         YqXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXClNEhaL/8uwpvhUt5O0lyRdbJWI6tEyI9U7dctLxHNtKJOAQJY3RpCJwmVb96oE5BmYyYOHHTZpBhU/YslMh5dSae6eF4qM4gI8tGkpYPhnquIWcfYD2V5TsoaTPi82JOgLaod8Cynv8g0CHdLWFLdlA/lIsChqW5rw559Ex7FL5woFaXrHkl0CZK0TlmegCjc4Pd9F2CBgl5H/KfQ7Tky9M=
-X-Gm-Message-State: AOJu0YwVnNnINz/Kshlm/ySz1r2posjyb3vu85jdcnGLcM58Q5e779tf
-	E3iR7jGreHcLsVVcYX8Le3DU/P25QwAV4P3FHOMcSTZ9qaBiHZ25
-X-Google-Smtp-Source: AGHT+IEeIO2faXt4HPtaKPSv53LPLgfetsgWUZ2rrUB+vNo+nARJS5K74POuW8sS151Q2FCZsZtlxw==
-X-Received: by 2002:a05:600c:458d:b0:41c:503:9a01 with SMTP id 5b1f17b1804b1-41f71ecb256mr3191275e9.25.1715103905216;
-        Tue, 07 May 2024 10:45:05 -0700 (PDT)
-Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
-        by smtp.gmail.com with ESMTPSA id l8-20020a05600c4f0800b0041bfa349cadsm23910612wmq.16.2024.05.07.10.45.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 10:45:04 -0700 (PDT)
-Message-ID: <d68417df-1493-421a-8558-879abe36d6fa@gmail.com>
-Date: Tue, 7 May 2024 19:45:02 +0200
+        d=1e100.net; s=20230601; t=1715105065; x=1715709865;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YmWheXdPpQuPLWl1RiMEbt0Eg1z181/dlD8IMNrkg1o=;
+        b=QzoihdFzG7v41ZCSSMYAriZkzq6CZOtdyMsVfACXIx7UeNbQluW42LeBf+nYsV8MGD
+         P1BgWL6ZLKPakXOK1FNjv/0PKpa1Fvdbu2KtAHaJPGKBM8006AUu6WSlflfMHtTxKxTr
+         bZCFd5XxxxxfJtMDdSST5p+EK4m2rWVGhvBTrseap1vkHVY7BSr5qhPVsGaXHg7RUKJA
+         zIbfjx5qhUpUqnw7WVEgbtBjZlzpzd/cCfaF/cIgKwxIr42CgAzxHKa++adlEEc5wNgh
+         XkbcwHz2dhMrOS6vyfHmlnOcVdHF8Uj+fqBObF9f7YhczvadrXcwtZ6QSnZ8+Iynvl0w
+         2O0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUmKe5M3OP8MWZcZU0lJaUVAU6E3kXa99ebaqLX/hwdxWxjwFMUC+v+wluTwUgBuu37OR2fFDTcAxhZNEzPsp30hyR1r08Ha6E=
+X-Gm-Message-State: AOJu0YzBX9fMMHTSryce0dZ33xpynn9Kg1RsIaVNuLhVTd33zfssgNbb
+	9owA/55dZh10/bI4PTUjqP73j80xZtAER4g7I0rNkcq7wOeaiIFvX24XbKQ7cNknRuMFLk6SZPU
+	M923QrtgbBZ9hORPbCDHbx4FrjOzK+6+CSS886A==
+X-Google-Smtp-Source: AGHT+IHmrwrHAXCxOJC+DssE4b3IrYE7fedfWDlb1+phM010DsU5X6/lJatnzj106ycVmmtXnenEsbtAWj3Yy2ck3IU=
+X-Received: by 2002:a05:6870:239a:b0:22e:dfbc:4aae with SMTP id
+ 586e51a60fabf-240980ba70cmr376610fac.2.1715105064951; Tue, 07 May 2024
+ 11:04:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+ <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+In-Reply-To: <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Tue, 7 May 2024 20:04:13 +0200
+Message-ID: <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
 Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
  file lifetimes
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com,
- dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz,
- laura@labbott.name, linaro-mm-sig@lists.linaro.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, minhquangbui99@gmail.com,
- sumit.semwal@linaro.org,
- syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
- <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Linus Torvalds <torvalds@linux-foundation.org>, Simon Ser <contact@emersion.fr>, 
+	Pekka Paalanen <pekka.paalanen@collabora.com>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
+	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Am 07.05.24 um 18:46 schrieb Linus Torvalds:
+On Tue, May 07, 2024 at 09:46:31AM -0700, Linus Torvalds wrote:
 > On Tue, 7 May 2024 at 04:03, Daniel Vetter <daniel@ffwll.ch> wrote:
->> It's really annoying that on some distros/builds we don't have that, and
->> for gpu driver stack reasons we _really_ need to know whether a fd is the
->> same as another, due to some messy uniqueness requirements on buffer
->> objects various drivers have.
+> >
+> > It's really annoying that on some distros/builds we don't have that, and
+> > for gpu driver stack reasons we _really_ need to know whether a fd is the
+> > same as another, due to some messy uniqueness requirements on buffer
+> > objects various drivers have.
+>
 > It's sad that such a simple thing would require two other horrid
 > models (EPOLL or KCMP).
 >
@@ -136,50 +126,57 @@ Am 07.05.24 um 18:46 schrieb Linus Torvalds:
 > Because dammit, it's *so* easy to do. You could just add a core DRM
 > ioctl for it. Literally just
 >
->          struct fd f1 = fdget(fd1);
->          struct fd f2 = fdget(fd2);
->          int same;
+>         struct fd f1 = fdget(fd1);
+>         struct fd f2 = fdget(fd2);
+>         int same;
 >
->          same = f1.file && f1.file == f2.file;
->          fdput(fd1);
->          fdput(fd2);
->          return same;
+>         same = f1.file && f1.file == f2.file;
+>         fdput(fd1);
+>         fdput(fd2);
+>         return same;
 >
 > where the only question is if you also woudl want to deal with O_PATH
 > fd's, in which case the "fdget()" would be "fdget_raw()".
 >
 > Honestly, adding some DRM ioctl for this sounds hacky, but it sounds
 > less hacky than relying on EPOLL or KCMP.
->
+
+Well, in slightly more code (because it's part of the "import this
+dma-buf/dma-fence/whatever fd into a driver object" ioctl) this is what we
+do.
+
+The issue is that there's generic userspace (like compositors) that sees
+these things fly by and would also like to know whether the other side
+they receive them from is doing nasty stuff/buggy/evil. And they don't
+have access to the device drm fd (since those are a handful of layers away
+behind the opengl/vulkan userspace drivers even if the compositor could get
+at them, and in some cases not even that).
+
+So if we do this in drm we'd essentially have to create a special
+drm_compare_files chardev, put the ioctl there and then tell everyone to
+make that thing world-accessible.
+
+Which is just too close to a real syscall that it's offensive, and hey
+kcmp does what we want already (but unfortunately also way more). So we
+rejected adding that to drm. But we did think about it.
+
 > I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
 > too, if this is possibly a more common thing. and not just DRM wants
 > it.
 >
 > Would something like that work for you?
 
-Well the generic approach yes, the DRM specific one maybe. IIRC we need 
-to be able to compare both DRM as well as DMA-buf file descriptors.
+Yes.
 
-The basic problem userspace tries to solve is that drivers might get the 
-same fd through two different code paths.
+Adding Simon and Pekka as two of the usual suspects for this kind of
+stuff. Also example code (the int return value is just so that callers know
+when kcmp isn't available, they all only care about equality):
 
-For example application using OpenGL/Vulkan for rendering and VA-API for 
-video decoding/encoding at the same time.
+https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/util/os_file.c#L239
+-Sima
 
-Both APIs get a fd which identifies the device to use. It can be the 
-same, but it doesn't have to.
-
-If it's the same device driver connection (or in kernel speak underlying 
-struct file) then you can optimize away importing and exporting of 
-buffers for example.
-
-Additional to that it makes cgroup accounting much easier because you 
-don't count things twice because they are shared etc...
-
-Regards,
-Christian.
-
->
->                   Linus
-
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 

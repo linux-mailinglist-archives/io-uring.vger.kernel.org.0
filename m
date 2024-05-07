@@ -1,74 +1,40 @@
-Return-Path: <io-uring+bounces-1806-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1807-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1C08BE707
-	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 17:10:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B6E8BE753
+	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 17:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C3951C2325E
-	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 15:10:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E188B26752
+	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 15:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B111B1635D5;
-	Tue,  7 May 2024 15:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="sv8TdImZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853751635C0;
+	Tue,  7 May 2024 15:19:32 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6551635C2
-	for <io-uring@vger.kernel.org>; Tue,  7 May 2024 15:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCBE1635AD;
+	Tue,  7 May 2024 15:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715094575; cv=none; b=TVsP4BLKz2mw47Tcw6YDDMEAdfDEdg69a9XivNDwiUO17DSc+KnLKTrR3JZb13Eau9Ittjz7sbJDFg7Mo1dcDmn2Y5nQbHwBSKTn7rH3zelEckZyekX0A3Mu9eNWLg6/WWkn8JQ1xCcfKUeM85nBGWf0lEXIqIY2xVRA6TueP+E=
+	t=1715095172; cv=none; b=MUa9YvvciFrYdGvDrmrrCwvZs945sKL2JNHkYabz/18ZOWq1kxbc9jxNZTzo3BiPK4ZgaIsrrwDgX2DI3J3AiOVkaYrtvGS3CjfBiLskfAnR8anPqQcfElkKXsB22jDLuD1JSXXeD/ihJsbbOB4W4Tsho+y4zMwUutzBjokUzrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715094575; c=relaxed/simple;
-	bh=eQZdBa//GiiwWU5saLscyQ/eNFxlEase1Y9Rz4G07L0=;
+	s=arc-20240116; t=1715095172; c=relaxed/simple;
+	bh=HCiNuMOgUWLAa2QGV+NRM5PIIgw4/qkm4rQshhilttE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e8G+ZJbwsKNM6G6GAfCd0SydzK7jASuxuGlK2RziTg78qkXTs11FjnPdmrRJzouWwHWvm79K2+wHDENT0MbrWx7E2PkxMJN+c0g/vkR2ev9RbShBxRrb4cA0bqvYKM1t4AyGO0qY2CNGp7l+dNmDWy0WK3RRwke7sMbwBFi+SGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=sv8TdImZ; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7e186367651so6214939f.1
-        for <io-uring@vger.kernel.org>; Tue, 07 May 2024 08:09:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715094572; x=1715699372; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E3D/yzAnQonQm6YpOqNskMzHHJ7JMLgQ77zwyP/bNEI=;
-        b=sv8TdImZqS6aZsCrKHrNTlU7Fe+I6yid9cgMoyhGjULwNIrBIa3xpBG3I872GA88Qt
-         WthjiA9yRZ5G7cIQ0PI7Z3EEsIjYR+HHRe1MCYTB7eFOhxrEy+L720ggO27rJ5PdU6Uo
-         LFsHRA2Cn9D3U9XLCZUFoKAxSw4Cg9arTbVyy5+EaBrO/WUd8RjfqaLzcJogT5X+GBcq
-         X2kGH9/8FKXl/2tAwQEr7EhvgdBJY+iV3nPiEbnNQYGNzF0opdz9NMaYwd0ELtsV+6Fw
-         bljQ/wRGHsS9bGllkPlgKhDwjgR5UmaKCe/cwM6TLNE+ip8u0TxK50Q89KOKBDX+heDE
-         l1Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715094572; x=1715699372;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E3D/yzAnQonQm6YpOqNskMzHHJ7JMLgQ77zwyP/bNEI=;
-        b=H3vfIZvtAhU/TyzxffGHCMLMDEUql3v16hNmNymnVXbAYyEZiCs03rQutpjIwKDbfr
-         dL6kc2RkwkZmc3lHu5vGUioNwnYwr/emnuHALD3DrWY9xvLQp8XSQfeQ/0TP3K677RPW
-         CNpIuw4oORfS45JnubgJdxpWV86jGLBcTVOZgb3AQ+/0++rKIF41xkddczT1nBzRNAIA
-         IT+OrEphAJzG+U2eYiJhojp8SvhrMq+orZWCEOubgJXWBe+uvQF7ZLV4yfrS8fOQFtWv
-         PXpjrHZ/jeYMQyrfrfobVdQTUgKFejkUG6iMYW0hXFc8hEfNxfbjCBeF8nDRvRqQ5rIq
-         cItw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdhxaoYUXDTmz8dIvukWDiXalYRHpIqMdMuz/Lpi4RFWYaUUxSRzuIK6gY9IZCqPFMzAdwPSmQ8WamINqQnhBaQe+en8esJho=
-X-Gm-Message-State: AOJu0YxCC7OGr8MRVgVNXQvT3ffuHFLBVk5+Tr3JdMKHEKXAqkmLmT33
-	QfEUnm1D1gmslyr2eRgWaFfHhlzRGiGXeVjdPK98Dal1dKmXroElN5q1GRG5mnI=
-X-Google-Smtp-Source: AGHT+IH/xpJNOj9b9GueLYwJ09ytVaIiUnOPLZsziqVJEzXxE/krpfrw37GQ1qd29ae0cQaKRTT7Tw==
-X-Received: by 2002:a05:6602:3f48:b0:7e1:8bc8:8228 with SMTP id en8-20020a0566023f4800b007e18bc88228mr963919iob.0.1715094571886;
-        Tue, 07 May 2024 08:09:31 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id r20-20020a056638131400b00488609cd945sm1915683jad.20.2024.05.07.08.09.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 08:09:31 -0700 (PDT)
-Message-ID: <d7d87db7-af34-4d48-8e26-ac13b5abced9@kernel.dk>
-Date: Tue, 7 May 2024 09:09:30 -0600
+	 In-Reply-To:Content-Type; b=hFq+e7vbzuhUL183fepk5cpq+0/21LRea4QI6SFqHRoYaNjJngwtzu88a9FJ4rA/Voa8ZXmrb/mMYPcZ+c6LXyRtZTN8sp2f6VqD4XiwNxfG5Ut/hs11QH5vOcCR0TduimtFjg5jwlspHjLGPiqGWg4it7fwRiahaHVXL0vW11k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1F1A1063;
+	Tue,  7 May 2024 08:19:51 -0700 (PDT)
+Received: from [10.1.34.28] (e133047.arm.com [10.1.34.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F3D23F587;
+	Tue,  7 May 2024 08:19:22 -0700 (PDT)
+Message-ID: <80da988f-899e-4b93-a648-ffd0680d4000@arm.com>
+Date: Tue, 7 May 2024 16:19:20 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,34 +42,103 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] io_uring/io-wq: Use set_bit() and test_bit() at
- worker->flags
-To: Breno Leitao <leitao@debian.org>, Pavel Begunkov <asml.silence@gmail.com>
-Cc: christophe.jaillet@wanadoo.fr,
- "open list:IO_URING" <io-uring@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240507150506.1748059-1-leitao@debian.org>
+Subject: Re: [RFC PATCH 2/2] cpufreq/schedutil: Remove iowait boost
+To: Qais Yousef <qyousef@layalina.io>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+ peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com,
+ dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org,
+ Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
+ andres@anarazel.de, asml.silence@gmail.com, linux-pm@vger.kernel.org,
+ linux-block@vger.kernel.org, io-uring@vger.kernel.org
+References: <20240304201625.100619-1-christian.loehle@arm.com>
+ <20240304201625.100619-3-christian.loehle@arm.com>
+ <CAJZ5v0gMni0QJTBJXoVOav=kOtQ9W--NyXAgq+dXA+m-bciG8w@mail.gmail.com>
+ <5060c335-e90a-430f-bca5-c0ee46a49249@arm.com>
+ <CAJZ5v0janPrWRkjcLkFeP9gmTC-nVRF-NQCh6CTET6ENy-_knQ@mail.gmail.com>
+ <20240325023726.itkhlg66uo5kbljx@airbuntu>
+ <d99fd27a-dac5-4c71-b644-1213f51f2ba0@arm.com>
+ <20240429111816.mqok5biihvy46eba@airbuntu>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240507150506.1748059-1-leitao@debian.org>
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240429111816.mqok5biihvy46eba@airbuntu>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/7/24 9:05 AM, Breno Leitao wrote:
-> @@ -631,7 +631,7 @@ static int io_wq_worker(void *data)
->  	bool exit_mask = false, last_timeout = false;
->  	char buf[TASK_COMM_LEN];
->  
-> -	worker->flags |= (IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
-> +	set_mask_bits(&worker->flags, 0, IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
+On 29/04/2024 12:18, Qais Yousef wrote:
+> On 04/19/24 14:42, Christian Loehle wrote:
+> 
+>>> I think the major thing we need to be careful about is the behavior when the
+>>> task is sleeping. I think the boosting will be removed when the task is
+>>> dequeued and I can bet there will be systems out there where the BLOCK softirq
+>>> being boosted when the task is sleeping will matter.
+>>
+>> Currently I see this mainly protected by the sugov rate_limit_us.
+>> With the enqueue's being the dominating cpufreq updates it's not really an
+>> issue, the boost is expected to survive the sleep duration, during which it
+>> wouldn't be active.
+>> I did experiment with some sort of 'stickiness' of the boost to the rq, but
+>> it is somewhat of a pain to deal with if we want to remove it once enqueued
+>> on a different rq. A sugov 1ms timer is much simpler of course.
+>> Currently it's not necessary IMO, but for the sake of being future-proof in
+>> terms of more frequent freq updates I might include it in v2.
+> 
+> Making sure things work with purpose would be really great. This implicit
+> dependency is not great IMHO and make both testing and reasoning about why
+> things are good or bad harder when analysing real workloads. Especially by non
+> kernel developers.
 
-This takes a mask, no? I think this should be:
+Agreed.
+Even without your proposed changes [1] relying on sugov rate_limit_us is
+unfortunate.
+There is a problem with an arbitrarily low rate_limit_us more generally, not
+just because we kind of rely on the CPU being boosted right before the task is
+actually enqueued (for the interrupt/softirq part of it), but also because of
+the latency from requested frequency improvement to actually running on that
+frequency. If the task is 90% done by the time it sees the improvement and
+the frequency will be updated (back to a lower one) before the next enqueue,
+then that's hardly worth the effort.
+Currently this is covered by rate_limit_us probabillistically and that seems
+to be good enough in practice, but it's not very pleasing (and also EAS can't
+take it into consideration).
+That's not just exclusive for iowait wakeup tasks of course, but in theory any
+that is off the rq frequently (and still requests a higher frequency than it can
+realistically build up through util_avg like through uclamp_min).
 
-set_mask_bits(&worker->flags, 0, BIT(IO_WORKER_F_UP) | BIT(IO_WORKER_F_RUNNING);
+>>>
+>>> FWIW I do have an implementation for per-task iowait boost where I went a step
+>>> further and converted intel_pstate too and like Christian didn't notice
+>>> a regression. But I am not sure (rather don't think) I triggered this use case.
+>>> I can't tell when the systems truly have per-cpu cpufreq control or just appear
+>>> so and they are actually shared but not visible at linux level.
+>>
+>> Please do share your intel_pstate proposal!
+> 
+> This is what I had. I haven't been working on this for the past few months, but
+> I remember tried several tests on different machines then without a problem.
+> I tried to re-order patches at some point though and I hope I didn't break
+> something accidentally and forgot the state.
+> 
+> https://github.com/torvalds/linux/compare/master...qais-yousef:linux:uclamp-max-aggregation
+> 
 
-Hmm?
+Thanks for sharing, that looks reasonable with consolidating it into uclamp_min.
+Couple of thoughts on yours, I'm sure you're aware, but consider it me thinking out
+loud:
+- iowait boost is taken into consideration for task placement, but with just the
+4 steps that made it more aggressive on HMP. (Potentially 2-3 consecutive iowait
+wakeups to land on the big instead of running at max OPP of a LITTLE).
+- If the current iowait boost decay is sensible is questionable, but there should
+probably be some decay. Taken to the extreme this would mean something
+like blk_wait_io() demands 1024 utilization, if it waits for a very long time.
+Repeating myself here, but iowait wakeups itself is tricky to work with (and I
+try to work around that).
+- The intel_pstate solution will increase boost even if
+previous_wakeup->iowait_boost > current->iowait_boost
+right? But using current->iowait_boost is a clever idea.
 
--- 
-Jens Axboe
+[1]
+https://lore.kernel.org/lkml/ZgKFT5b423hfQdl9@gmail.com/T/
 
+Kind Regards,
+Christian
 

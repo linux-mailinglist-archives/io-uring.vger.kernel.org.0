@@ -1,139 +1,374 @@
-Return-Path: <io-uring+bounces-1816-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1817-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545288BEE84
-	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 23:03:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D558BEFDE
+	for <lists+io-uring@lfdr.de>; Wed,  8 May 2024 00:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0813C286075
-	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 21:03:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22B0286632
+	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 22:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FF971B3B;
-	Tue,  7 May 2024 21:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422727CF30;
+	Tue,  7 May 2024 22:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzecXbN5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F7E58AB8
-	for <io-uring@vger.kernel.org>; Tue,  7 May 2024 21:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AAC78C76;
+	Tue,  7 May 2024 22:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115804; cv=none; b=dzwMUgId4nohFciGzSlFwDDyq0JJqUPMTSwm8HnwPhqe9yOLGny7djx1XszLwPBQ62HTKAc3N61UNccJ2qX2RIIxa6aHJxOU0F1l4EmH1DXy4dVeCBZT0pW/C1ewo5rY5bVlZmY6a1E5FFhO1gQXpQktbIw9Bb3WHtPjriGwJeY=
+	t=1715121525; cv=none; b=jC/MsOTVt5c3ANjJ31X079GI2iG+7CEQuGjh5qR8no3eYZZe2Qdlyy8vRjOvNZvsvuK793YYkcKXomuWwRlOjpuxXBpjZqY+xp7A7RpE4g282AAceVH/nu1yeTuJFKkvjn1jgxwb3zafpS84JxF8jHsmv3P/qGrWe4+1M0sJEEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115804; c=relaxed/simple;
-	bh=3rX9T5lNLNXBgcO0+M3qrprf2vCsbTOm/nlDTBm/9Cg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=tYEYQaRd1S2eiy+pFfPKAmCKpfH7YXudr00xWlvvSXDPORUc9jQPQxhNa/11bX8uKRmafXClwT7BXz/2cGP7yAuKvfZ04mnTvArnaLCovvDhEIfdqifwa6vlt57eDT6tVzMtx5EccoljzwD/PseQ+uR/F1ESfJXCKlhJAyOAyc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-48-bRehh-PWPia-pmBo6oqoQQ-1; Tue, 07 May 2024 22:03:13 +0100
-X-MC-Unique: bRehh-PWPia-pmBo6oqoQQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 7 May
- 2024 22:02:42 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Tue, 7 May 2024 22:02:42 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Christian Brauner' <brauner@kernel.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>
-CC: Al Viro <viro@zeniv.linux.org.uk>, "keescook@chromium.org"
-	<keescook@chromium.org>, "axboe@kernel.dk" <axboe@kernel.dk>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, "jack@suse.cz"
-	<jack@suse.cz>, "laura@labbott.name" <laura@labbott.name>,
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"minhquangbui99@gmail.com" <minhquangbui99@gmail.com>,
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com"
-	<syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>,
-	"syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
-Subject: RE: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Thread-Topic: [PATCH] epoll: try to be a _bit_ better about file lifetimes
-Thread-Index: AQHan5G+Cj1Mu87oOkmAjOj4WUTDELGMO/+w
-Date: Tue, 7 May 2024 21:02:41 +0000
-Message-ID: <052a735f433348b48a53b3d15183398a@AcuMS.aculab.com>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wirxPSQgRV1u7t4qS1t4ED7w7OeehdUSC-LYZXspqa49w@mail.gmail.com>
- <20240505-gelehnt-anfahren-8250b487da2c@brauner>
- <CAHk-=wgMzzfPwKc=8yBdXwSkxoZMZroTCiLZTYESYD3BC_7rhQ@mail.gmail.com>
- <20240506-injizieren-administration-f5900157566a@brauner>
-In-Reply-To: <20240506-injizieren-administration-f5900157566a@brauner>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1715121525; c=relaxed/simple;
+	bh=r7nYzwtLtpZilFBSUJuGG5VDQQ6NTdsBK6gY8BnVINo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=mBKquzIABU+vBFMPH12seL93g0uhXTrJsyd+sYakb2vAY/xrQZARHU4mhkHp/6EhFGMkqdoVccutlg2JyrpYlNXSqarwZGvNU4Dvln4UVLLob4ghx9KDFP47wOQ0Tk6HiNGHHRDORLhFJh/gmyRXbvuZHvNgZEicQBhwyAKrJKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzecXbN5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24DD7C2BBFC;
+	Tue,  7 May 2024 22:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715121524;
+	bh=r7nYzwtLtpZilFBSUJuGG5VDQQ6NTdsBK6gY8BnVINo=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=bzecXbN5aDtNAEhSWxdtKdmkSbAAkhjrxUY71lK8wN+gKkGTUDaTwBJWBnjCfKyP1
+	 27QgoFtmy3lICA3OJ78VZPqLMwDG9TcBMIMpZ3KwYXNGqLcATLC5gcHlP+VhEcDXbR
+	 R/vmBS2hjbP8Fkg5oCZidVqNEOyLIfC/BW5PSWJFTm6FdPKOE8FlZAkAvh7GZHg/o6
+	 hlY8qLeJ4Scb24HcdBd8/5fJxvPtgZpFMX9u8mMOPqSXP2Kms/krw8tGWThed7w9yv
+	 59s2zhzWlIf7nr2ByWAIQ3DS1UCG+Tat3VgnaLW42WY6ywgYIWe23I1jQzWYd60wvs
+	 om1y7k4qausfw==
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Date: Wed, 08 May 2024 01:38:37 +0300
+Message-Id: <D13RU3UPQVOW.3FM4GX4JHGLJJ@kernel.org>
+Cc: <Liam.Howlett@oracle.com>, <bp@alien8.de>, <bpf@vger.kernel.org>,
+ <broonie@kernel.org>, <christophe.leroy@csgroup.eu>,
+ <dan.j.williams@intel.com>, <dave.hansen@linux.intel.com>,
+ <debug@rivosinc.com>, <hpa@zytor.com>, <io-uring@vger.kernel.org>,
+ <keescook@chromium.org>, <kirill.shutemov@linux.intel.com>,
+ <linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-s390@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+ <luto@kernel.org>, <mingo@redhat.com>, <nvdimm@lists.linux.dev>,
+ <peterz@infradead.org>, <sparclinux@vger.kernel.org>, <tglx@linutronix.de>,
+ <x86@kernel.org>
+Subject: Re: [PATCH] mm: Remove mm argument from mm_get_unmapped_area()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Rick Edgecombe" <rick.p.edgecombe@intel.com>,
+ <akpm@linux-foundation.org>
+X-Mailer: aerc 0.17.0
+References: <20240506160747.1321726-1-rick.p.edgecombe@intel.com>
+In-Reply-To: <20240506160747.1321726-1-rick.p.edgecombe@intel.com>
 
-RnJvbTogQ2hyaXN0aWFuIEJyYXVuZXINCj4gU2VudDogMDYgTWF5IDIwMjQgMDk6NDUNCj4gDQo+
-ID4gVGhlIGZhY3QgaXMsIGl0J3Mgbm90IGRtYS1idWYgdGhhdCBpcyB2aW9sYXRpbmcgYW55IHJ1
-bGVzLiBJdCdzIGVwb2xsLg0KPiANCj4gSSBhZ3JlZSB0aGF0IGVwb2xsKCkgbm90IHRha2luZyBh
-IHJlZmVyZW5jZSBvbiB0aGUgZmlsZSBpcyBhdCBsZWFzdA0KPiB1bmV4cGVjdGVkIGFuZCBjb250
-cmFkaWN0cyB0aGUgdXN1YWwgY29kZSBwYXR0ZXJucyBmb3IgdGhlIHNha2Ugb2YNCj4gcGVyZm9y
-bWFuY2UgYW5kIHRoYXQgaXQgdmVyeSBsaWtlbHkgaXMgdGhlIGNhc2UgdGhhdCBtb3N0IGNhbGxl
-cnMgb2YNCj4gZl9vcC0+cG9sbCgpIGRvbid0IGtub3cgdGhpcy4NCj4gDQo+IE5vdGUsIEkgY2xl
-YXJ5IHdyb3RlIHVwdGhyZWFkIHRoYXQgSSdtIG9rIHRvIGRvIGl0IGxpa2UgeW91IHN1Z2dlc3Rl
-ZA0KPiBidXQgcmFpc2VkIHR3byBjb25jZXJucyBhKSB0aGVyZSdzIGN1cnJlbnRseSBvbmx5IG9u
-ZSBpbnN0YW5jZSBvZg0KPiBwcm9sb25nZWQgQGZpbGUgbGlmZXRpbWUgaW4gZl9vcC0+cG9sbCgp
-IGFmYWljdCBhbmQgYikgdGhhdCB0aGVyZSdzDQo+IHBvc3NpYmx5IGdvaW5nIHRvIGJlIHNvbWUg
-cGVyZm9ybWFuY2UgaW1wYWN0IG9uIGVwb2xsKCkuDQo+IA0KPiBTbyBpdCdzIGF0IGxlYXN0IHdv
-cnRoIGRpc2N1c3Npbmcgd2hhdCdzIG1vcmUgaW1wb3J0YW50IGJlY2F1c2UgZXBvbGwoKQ0KPiBp
-cyB2ZXJ5IHdpZGVseSB1c2VkIGFuZCBpdCdzIG5vdCB0aGF0IHdlIGhhdmVuJ3QgZmF2b3JlZCBw
-ZXJmb3JtYW5jZQ0KPiBiZWZvcmUuDQo+IA0KPiBCdXQgeW91J3ZlIGFscmVhZHkgc2FpZCB0aGF0
-IHlvdSBhcmVuJ3QgY29uY2VybmVkIHdpdGggcGVyZm9ybWFuY2Ugb24NCj4gZXBvbGwoKSB1cHRo
-cmVhZC4gU28gYWZhaWN0IHRoZW4gdGhlcmUncyByZWFsbHkgbm90IGEgbG90IG1vcmUgdG8NCj4g
-ZGlzY3VzcyBvdGhlciB0aGFuIHRha2UgdGhlIHBhdGNoIGFuZCBzZWUgd2hldGhlciB3ZSBnZXQg
-YW55IGNvbXBsYWludHMuDQoNClN1cmVseSB0aGVyZSBpc24ndCBhIHByb2JsZW0gd2l0aCBlcG9s
-bCBob2xkaW5nIGEgcmVmZXJlbmNlIHRvIHRoZSBmaWxlDQpzdHJ1Y3R1cmUgLSBpdCBpc24ndCBy
-ZWFsbHkgYW55IGRpZmZlcmVudCB0byBhIGR1cCgpLg0KDQonQWxsJyB0aGF0IG5lZWRzIHRvIGhh
-cHBlbiBpcyB0aGF0IHRoZSAnbWFnaWMnIHRoYXQgbWFrZXMgZXBvbGwoKSByZW1vdmUNCmZpbGVz
-IG9uIHRoZSBsYXN0IGZwdXQgaGFwcGVuIHdoZW4gdGhlIGNsb3NlIGlzIGRvbmUuDQpJJ20gc3Vy
-ZSB0aGVyZSBhcmUgaG9ycmlkIGxvY2tpbmcgaXNzdWVzIGl0IHRoYXQgY29kZSAoc2VwYXJhdGUg
-ZnJvbQ0KaXQgY2FsbGluZyAtPnBvbGwoKSBhZnRlciAtPnJlbGVhc2UoKSkgZWcgaWYgeW91IGNh
-bGwgY2xvc2UoKSBjb25jdXJyZW50bHkNCndpdGggRVBPTExfQ1RMX0FERC4NCg0KSSdtIG5vdCBh
-dCBhbGwgc3VyZSBpdCB3b3VsZCBoYXZlIG1hdHRlcmVkIGlmIGVwb2xsIGtlcHQgdGhlIGZpbGUg
-b3Blbi4NCkJ1dCBpdCBjYW4ndCBkbyB0aGF0IGJlY2F1c2UgaXQgaXMgZG9jdW1lbnRlZCBub3Qg
-dG8uDQpBcyB3ZWxsIGFzIHBvbGwvc2VsZWN0IGhvbGRpbmcgYSByZWZlcmVuY2UgdG8gYWxsIHRo
-ZWlyIGZkIGZvciB0aGUgZHVyYXRpb24NCm9mIHRoZSBzeXN0ZW0gY2FsbCwgYSBzdWNjZXNzZnVs
-IG1tYXAoKSBob2xkcyBhIHJlZmVyZW5jZSB1bnRpbCB0aGUgcGFnZXMNCmFyZSBhbGwgdW5tYXBw
-ZWQgLSB1c3VhbGx5IGJ5IHByb2Nlc3MgZXhpdC4NCg0KV2UgKGRheWpvYikgaGF2ZSBjb2RlIHRo
-YXQgdXNlcyBlcG9sbCgpIHRvIG1vbml0b3IgbGFyZ2UgbnVtYmVycyBvZiBVRFANCnNvY2tldHMu
-IEkgd2FzIGRvaW5nIHNvbWUgdGVzdHMgKHRyeWluZyB0bykgcmVjZWl2ZSBSVFAgKGF1ZGlvKSBk
-YXRhDQpjb25jdXJyZW50bHkgb24gMTAwMDAgc29ja2V0cyB3aXRoIHR5cGljYWxseSBvbmUgcGFj
-a2V0IGV2ZXJ5IDIwbXMuDQpUaGVyZSBhcmUgMTAwMDAgYXNzb2NpYXRlZCBSQ1RQIHNvY2tldHMg
-dGhhdCBhcmUgdXN1YWxseSBpZGxlLg0KQSBtb3JlIG5vcm1hbCBsaW1pdCB3b3VsZCBiZSAxMDAw
-IFJUUCBzb2NrZXRzLg0KQWxsIHRoZSBkYXRhIG5lZWRzIHRvIGdvIGludG8gYSBzaW5nbGUgKG11
-bHRpdGhyZWFkZWQpIHByb2Nlc3MuDQpKdXN0IGdldHRpbmcgYWxsIHRoZSBwYWNrZXRzIHF1ZXVl
-ZCBvbiB0aGUgc29ja2V0cyB3YXMgbm9uLXRyaXZpYWwuDQplcG9sbCBpcyBhYm91dCB0aGUgb25s
-eSB3YXkgdG8gYWN0dWFsbHkgcmVhZCB0aGUgZGF0YS4NCihUaGF0IG5lZWRlZCBtdWx0aXBsZSBl
-cG9sbCBmZCBzbyBlYWNoIHRocmVhZCBjb3VsZCBwcm9jZXNzIGFsbA0KdGhlIGV2ZW50cyBmcm9t
-IG9uZSBlcG9sbCBmZCB0aGVuIGxvb2sgZm9yIGFub3RoZXIgdW5wcm9jZXNzZWQgZmQuKQ0KDQoJ
-RGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1v
-dW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEz
-OTczODYgKFdhbGVzKQ0K
+On Mon May 6, 2024 at 7:07 PM EEST, Rick Edgecombe wrote:
+> Recently the get_unmapped_area() pointer on mm_struct was removed in
+> favor of direct callable function that can determines which of two
+> handlers to call based on an mm flag. This function,
+> mm_get_unmapped_area(), checks the flag of the mm passed as an argument.
+>
+> Dan Williams pointed out (see link) that all callers pass curret->mm, so
+> the mm argument is unneeded. It could be conceivable for a caller to want
+> to pass a different mm in the future, but in this case a new helper could
+> easily be added.
+>
+> So remove the mm argument, and rename the function
+> current_get_unmapped_area().
+>
+> Fixes: 529ce23a764f ("mm: switch mm->get_unmapped_area() to a flag")
+> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Link: https://lore.kernel.org/lkml/6603bed6662a_4a98a2949e@dwillia2-mobl3=
+.amr.corp.intel.com.notmuch/
+> ---
+> Based on linux-next.
+> ---
+>  arch/sparc/kernel/sys_sparc_64.c |  9 +++++----
+>  arch/x86/kernel/cpu/sgx/driver.c |  2 +-
+>  drivers/char/mem.c               |  2 +-
+>  drivers/dax/device.c             |  6 +++---
+>  fs/proc/inode.c                  |  2 +-
+>  fs/ramfs/file-mmu.c              |  2 +-
+>  include/linux/sched/mm.h         |  6 +++---
+>  io_uring/memmap.c                |  2 +-
+>  kernel/bpf/arena.c               |  2 +-
+>  kernel/bpf/syscall.c             |  2 +-
+>  mm/mmap.c                        | 11 +++++------
+>  mm/shmem.c                       |  9 ++++-----
+>  12 files changed, 27 insertions(+), 28 deletions(-)
+>
+> diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_spa=
+rc_64.c
+> index d9c3b34ca744..cf0b4ace5bf9 100644
+> --- a/arch/sparc/kernel/sys_sparc_64.c
+> +++ b/arch/sparc/kernel/sys_sparc_64.c
+> @@ -220,7 +220,7 @@ unsigned long get_fb_unmapped_area(struct file *filp,=
+ unsigned long orig_addr, u
+> =20
+>  	if (flags & MAP_FIXED) {
+>  		/* Ok, don't mess with it. */
+> -		return mm_get_unmapped_area(current->mm, NULL, orig_addr, len, pgoff, =
+flags);
+> +		return current_get_unmapped_area(NULL, orig_addr, len, pgoff, flags);
+>  	}
+>  	flags &=3D ~MAP_SHARED;
+> =20
+> @@ -233,8 +233,9 @@ unsigned long get_fb_unmapped_area(struct file *filp,=
+ unsigned long orig_addr, u
+>  		align_goal =3D (64UL * 1024);
+> =20
+>  	do {
+> -		addr =3D mm_get_unmapped_area(current->mm, NULL, orig_addr,
+> -					    len + (align_goal - PAGE_SIZE), pgoff, flags);
+> +		addr =3D current_get_unmapped_area(NULL, orig_addr,
+> +						 len + (align_goal - PAGE_SIZE),
+> +						 pgoff, flags);
+>  		if (!(addr & ~PAGE_MASK)) {
+>  			addr =3D (addr + (align_goal - 1UL)) & ~(align_goal - 1UL);
+>  			break;
+> @@ -252,7 +253,7 @@ unsigned long get_fb_unmapped_area(struct file *filp,=
+ unsigned long orig_addr, u
+>  	 * be obtained.
+>  	 */
+>  	if (addr & ~PAGE_MASK)
+> -		addr =3D mm_get_unmapped_area(current->mm, NULL, orig_addr, len, pgoff=
+, flags);
+> +		addr =3D current_get_unmapped_area(NULL, orig_addr, len, pgoff, flags)=
+;
+> =20
+>  	return addr;
+>  }
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/d=
+river.c
+> index 22b65a5f5ec6..5f7bfd9035f7 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver.c
+> @@ -113,7 +113,7 @@ static unsigned long sgx_get_unmapped_area(struct fil=
+e *file,
+>  	if (flags & MAP_FIXED)
+>  		return addr;
+> =20
+> -	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags)=
+;
+> +	return current_get_unmapped_area(file, addr, len, pgoff, flags);
+>  }
+> =20
+>  #ifdef CONFIG_COMPAT
+> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+> index 7c359cc406d5..a29c4bd506d5 100644
+> --- a/drivers/char/mem.c
+> +++ b/drivers/char/mem.c
+> @@ -546,7 +546,7 @@ static unsigned long get_unmapped_area_zero(struct fi=
+le *file,
+>  	}
+> =20
+>  	/* Otherwise flags & MAP_PRIVATE: with no shmem object beneath it */
+> -	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags)=
+;
+> +	return current_get_unmapped_area(file, addr, len, pgoff, flags);
+>  #else
+>  	return -ENOSYS;
+>  #endif
+> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+> index eb61598247a9..c379902307b7 100644
+> --- a/drivers/dax/device.c
+> +++ b/drivers/dax/device.c
+> @@ -329,14 +329,14 @@ static unsigned long dax_get_unmapped_area(struct f=
+ile *filp,
+>  	if ((off + len_align) < off)
+>  		goto out;
+> =20
+> -	addr_align =3D mm_get_unmapped_area(current->mm, filp, addr, len_align,
+> -					  pgoff, flags);
+> +	addr_align =3D current_get_unmapped_area(filp, addr, len_align,
+> +					       pgoff, flags);
+>  	if (!IS_ERR_VALUE(addr_align)) {
+>  		addr_align +=3D (off - addr_align) & (align - 1);
+>  		return addr_align;
+>  	}
+>   out:
+> -	return mm_get_unmapped_area(current->mm, filp, addr, len, pgoff, flags)=
+;
+> +	return current_get_unmapped_area(filp, addr, len, pgoff, flags);
+>  }
+> =20
+>  static const struct address_space_operations dev_dax_aops =3D {
+> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+> index d19434e2a58e..24a6aeac3de5 100644
+> --- a/fs/proc/inode.c
+> +++ b/fs/proc/inode.c
+> @@ -455,7 +455,7 @@ pde_get_unmapped_area(struct proc_dir_entry *pde, str=
+uct file *file, unsigned lo
+>  		return pde->proc_ops->proc_get_unmapped_area(file, orig_addr, len, pgo=
+ff, flags);
+> =20
+>  #ifdef CONFIG_MMU
+> -	return mm_get_unmapped_area(current->mm, file, orig_addr, len, pgoff, f=
+lags);
+> +	return current_get_unmapped_area(file, orig_addr, len, pgoff, flags);
+>  #endif
+> =20
+>  	return orig_addr;
+> diff --git a/fs/ramfs/file-mmu.c b/fs/ramfs/file-mmu.c
+> index b45c7edc3225..85f57de31102 100644
+> --- a/fs/ramfs/file-mmu.c
+> +++ b/fs/ramfs/file-mmu.c
+> @@ -35,7 +35,7 @@ static unsigned long ramfs_mmu_get_unmapped_area(struct=
+ file *file,
+>  		unsigned long addr, unsigned long len, unsigned long pgoff,
+>  		unsigned long flags)
+>  {
+> -	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags)=
+;
+> +	return current_get_unmapped_area(file, addr, len, pgoff, flags);
+>  }
+> =20
+>  const struct file_operations ramfs_file_operations =3D {
+> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+> index 91546493c43d..c67c7de05c7a 100644
+> --- a/include/linux/sched/mm.h
+> +++ b/include/linux/sched/mm.h
+> @@ -187,9 +187,9 @@ arch_get_unmapped_area_topdown(struct file *filp, uns=
+igned long addr,
+>  			  unsigned long len, unsigned long pgoff,
+>  			  unsigned long flags);
+> =20
+> -unsigned long mm_get_unmapped_area(struct mm_struct *mm, struct file *fi=
+lp,
+> -				   unsigned long addr, unsigned long len,
+> -				   unsigned long pgoff, unsigned long flags);
+> +unsigned long current_get_unmapped_area(struct file *filp, unsigned long=
+ addr,
+> +					unsigned long len, unsigned long pgoff,
+> +					unsigned long flags);
+> =20
+>  unsigned long
+>  arch_get_unmapped_area_vmflags(struct file *filp, unsigned long addr,
+> diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+> index 4785d6af5fee..1aaea32c797c 100644
+> --- a/io_uring/memmap.c
+> +++ b/io_uring/memmap.c
+> @@ -305,7 +305,7 @@ unsigned long io_uring_get_unmapped_area(struct file =
+*filp, unsigned long addr,
+>  #else
+>  	addr =3D 0UL;
+>  #endif
+> -	return mm_get_unmapped_area(current->mm, filp, addr, len, pgoff, flags)=
+;
+> +	return current_get_unmapped_area(filp, addr, len, pgoff, flags);
+>  }
+> =20
+>  #else /* !CONFIG_MMU */
+> diff --git a/kernel/bpf/arena.c b/kernel/bpf/arena.c
+> index 4a1be699bb82..054486f7c453 100644
+> --- a/kernel/bpf/arena.c
+> +++ b/kernel/bpf/arena.c
+> @@ -314,7 +314,7 @@ static unsigned long arena_get_unmapped_area(struct f=
+ile *filp, unsigned long ad
+>  			return -EINVAL;
+>  	}
+> =20
+> -	ret =3D mm_get_unmapped_area(current->mm, filp, addr, len * 2, 0, flags=
+);
+> +	ret =3D current_get_unmapped_area(filp, addr, len * 2, 0, flags);
+>  	if (IS_ERR_VALUE(ret))
+>  		return ret;
+>  	if ((ret >> 32) =3D=3D ((ret + len - 1) >> 32))
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 2222c3ff88e7..d9ff2843f6ef 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -992,7 +992,7 @@ static unsigned long bpf_get_unmapped_area(struct fil=
+e *filp, unsigned long addr
+>  	if (map->ops->map_get_unmapped_area)
+>  		return map->ops->map_get_unmapped_area(filp, addr, len, pgoff, flags);
+>  #ifdef CONFIG_MMU
+> -	return mm_get_unmapped_area(current->mm, filp, addr, len, pgoff, flags)=
+;
+> +	return current_get_unmapped_area(filp, addr, len, pgoff, flags);
+>  #else
+>  	return addr;
+>  #endif
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 83b4682ec85c..4e98a907c53d 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1901,16 +1901,15 @@ __get_unmapped_area(struct file *file, unsigned l=
+ong addr, unsigned long len,
+>  	return error ? error : addr;
+>  }
+> =20
+> -unsigned long
+> -mm_get_unmapped_area(struct mm_struct *mm, struct file *file,
+> -		     unsigned long addr, unsigned long len,
+> -		     unsigned long pgoff, unsigned long flags)
+> +unsigned long current_get_unmapped_area(struct file *file, unsigned long=
+ addr,
+> +					unsigned long len, unsigned long pgoff,
+> +					unsigned long flags)
+>  {
+> -	if (test_bit(MMF_TOPDOWN, &mm->flags))
+> +	if (test_bit(MMF_TOPDOWN, &current->mm->flags))
+>  		return arch_get_unmapped_area_topdown(file, addr, len, pgoff, flags);
+>  	return arch_get_unmapped_area(file, addr, len, pgoff, flags);
+>  }
+> -EXPORT_SYMBOL(mm_get_unmapped_area);
+> +EXPORT_SYMBOL(current_get_unmapped_area);
+> =20
+>  /**
+>   * find_vma_intersection() - Look up the first VMA which intersects the =
+interval
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index f5d60436b604..c0acd7db93c8 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2276,8 +2276,7 @@ unsigned long shmem_get_unmapped_area(struct file *=
+file,
+>  	if (len > TASK_SIZE)
+>  		return -ENOMEM;
+> =20
+> -	addr =3D mm_get_unmapped_area(current->mm, file, uaddr, len, pgoff,
+> -				    flags);
+> +	addr =3D current_get_unmapped_area(file, uaddr, len, pgoff, flags);
+> =20
+>  	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+>  		return addr;
+> @@ -2334,8 +2333,8 @@ unsigned long shmem_get_unmapped_area(struct file *=
+file,
+>  	if (inflated_len < len)
+>  		return addr;
+> =20
+> -	inflated_addr =3D mm_get_unmapped_area(current->mm, NULL, uaddr,
+> -					     inflated_len, 0, flags);
+> +	inflated_addr =3D current_get_unmapped_area(NULL, uaddr,
+> +						  inflated_len, 0, flags);
+>  	if (IS_ERR_VALUE(inflated_addr))
+>  		return addr;
+>  	if (inflated_addr & ~PAGE_MASK)
+> @@ -4799,7 +4798,7 @@ unsigned long shmem_get_unmapped_area(struct file *=
+file,
+>  				      unsigned long addr, unsigned long len,
+>  				      unsigned long pgoff, unsigned long flags)
+>  {
+> -	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags)=
+;
+> +	return current_get_unmapped_area(file, addr, len, pgoff, flags);
+>  }
+>  #endif
+> =20
+>
+> base-commit: 9221b2819b8a4196eecf5476d66201be60fbcf29
 
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+BR, Jarkko
 

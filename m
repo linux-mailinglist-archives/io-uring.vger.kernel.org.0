@@ -1,280 +1,185 @@
-Return-Path: <io-uring+bounces-1810-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1812-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31DE8BEA20
-	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 19:12:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB1B58BEABB
+	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 19:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0903B213B0
-	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 17:00:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 872B6286076
+	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 17:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FC7B672;
-	Tue,  7 May 2024 17:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE26016C849;
+	Tue,  7 May 2024 17:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWis6Nuk"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092E144C6F;
-	Tue,  7 May 2024 17:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174A5165FCF;
+	Tue,  7 May 2024 17:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715101223; cv=none; b=ibnScLM+98R8zpXKIVz+LntGeQQFff5BbqFGTOs16F/e7TQqSquG2Dix/6ZQwUlhqgWJs4n2Nz/2R+C0ZJiDghOw6xDcxIScpMqj08gMccMFm8XSWGNlDZ6896uMCgns8R7hv2VavDvxmBpYvsihntQs4Ve1Hgp+apFxVNgHTMk=
+	t=1715103908; cv=none; b=cWPs+Wo/U8UVspkKJbOuNEymw92P27p0rsUKLPaxoXSqSajxLhIF6YaJY6cu79ErAP9uyu6cmmjZxnX0d7amxsZYmpEYNeF5OdNaLsuPxUjLQoWy91qKZmTlM+ikmIOeHxV2EGdcuiZj0lNPm8C9Ar+iL+gcc6G62Z9X4zUqd8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715101223; c=relaxed/simple;
-	bh=t1RIG4lFlJ2bVFn7HFt/zInC8yyYV3aSCcHDk0NkM5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lT1lEBJet+8Tcr3Y75snDQCqiXaJiBsUWEbWXg1BlcKDDiGEk1FVdSo3hdwDlubBs90ANp56XRToAhXpv91Krj+JrbiY40i8UqrI2MHOZM120Fduc8HD2jAZqy1a02mMJWDgAppFDDWYq1CmYH9+pfYrAXEvk+/AkzIlt3rLyJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1715103908; c=relaxed/simple;
+	bh=Umv70e0c6nv8fGGaeErTB90Fn15g5pIK9CSartcaWHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pEwHLdyhiXz/ksGGnJRGN/Ma0Ufo1bfG2GCaNKZpzDj80uE3DI+66agA39nnhC8kDAqDwol6e1vAN79FQOPsSOZCLpmsXUzaMQhZ+7wfaB3aI9W6D5J1fChCFQMpEHjVxZXdZB61Pb+vOmnhlLVCSpUjcOzseIVlr5BF52pPcDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWis6Nuk; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e3fa13f018so10802851fa.3;
-        Tue, 07 May 2024 10:00:21 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41b79451153so27918995e9.2;
+        Tue, 07 May 2024 10:45:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715103905; x=1715708705; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Z39aNp6ho/cansGz6z4As7qPLlCotOLLvlN9d9rLPQI=;
+        b=YWis6NukXYhibzoqhRIV43bGUst5Jax//GdGntfRqalyjxvff+CtK0oXTRlsQSbZKp
+         LsE43eZIIUkvCIu7Yh2UCeBTYa5ia2C+2hKWIkm60bkEBidO4GttRuwTj48WP0kuGBMi
+         LxewzZGdrEhk5Y53fAC1vI14XWPMkKMaN0rGCEp8tMix/F+uXObBi0K1gIaEMF12qTtY
+         zNvSS+nYjf66S3l0BRTCXXkmEPMizcriljHobEhf7WGC23K2CkSpCU344KzWXe4ipdlV
+         VBsyRyYA6Z4bvErsZEAQp1xCTaUgJLd0GZBZyn1Vp4QZ7DB36HAfh0k2P5ZtyXIWZQ+Q
+         RH9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715101220; x=1715706020;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LItJ7IjSKA5TzTyJS4gjTEq76An66N3HomKKKz8MeuA=;
-        b=YQajUb+8LrSoddlNecbdjMX/qSO0ZNfAc29Jw7n5eP4ET8HWjyyEfpQCO2mCjTPDxr
-         H2yyV2Un/EjPjfHRRjvi0jCmdOEkMI4c7OzNseym4JNdBcigFGETu9U7Wv7vQbZU8DLz
-         a5rle25jm4V0U8J4yuOpltJrKj0LEA5nii4bm7goV9Zq+yrTyYkOTMuO7oDpG8Wkoxe4
-         /2PPnWuOCQ7T0F34BZQ1cYhPVVnOQ30WJnO3DwJ4kEW105rUuUsLAFIIYhRetklS7X7U
-         W2LbP32Q9uzpKGgxjlqzgMCgkMDOOO/HS3MZGxyIWKT3o4a0TOgeJNPv/Jq2xXQ+R8yS
-         m7Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCVU8tP2qIzSyuFK4/8VPYa69bkfagR5IGSWuQzKrBlkywQ06bUT4teMtXVd4YJ2aAw1CJGuPWSyYLL7GqlKjnop2M2cjKZBPh05KBituBQeou/Udqj5ACt/VfZx0JQFvJ/r4aIgbFE=
-X-Gm-Message-State: AOJu0YzTSh+ohIuT7M4HBT9NGEPeR9ry52q8vHoA+tTH8yzaTSBatjym
-	UTYuJwwuJxb4iGcmRn2vIcyNodZS/79NwudV9HW8Z5FUIRP4+UFf
-X-Google-Smtp-Source: AGHT+IHnC7yjAY4z54ZWvxpVYv0mtgDIh5GTyFxC3vHHPoxRa/lBuvTBxApS3uWYctsKvE8dQmpjVw==
-X-Received: by 2002:a19:ee14:0:b0:520:76d0:b054 with SMTP id 2adb3069b0e04-5217cd4b0d8mr69069e87.57.1715101219912;
-        Tue, 07 May 2024 10:00:19 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
-        by smtp.gmail.com with ESMTPSA id l20-20020aa7cad4000000b00572e91cf988sm3771430edt.93.2024.05.07.10.00.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 10:00:19 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: christophe.jaillet@wanadoo.fr,
-	paulmck@kernel.org,
-	io-uring@vger.kernel.org (open list:IO_URING),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] io_uring/io-wq: Use set_bit() and test_bit() at worker->flags
-Date: Tue,  7 May 2024 10:00:01 -0700
-Message-ID: <20240507170002.2269003-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1715103905; x=1715708705;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z39aNp6ho/cansGz6z4As7qPLlCotOLLvlN9d9rLPQI=;
+        b=FBbuWDqTOnLaRQWSmeZuX5flKFK8innoGy3ulUrC+IbtSBrQOnkj6ZgxjAV83hdqwN
+         gM7nKgLYdkErOI9JIOjm+Y1l3vY5o5p7dTUX67n74Lhq+MusEUDcDUIVGh1m+GW1d8Lj
+         FQd8Jd58oYc/jyW4BEpDA+EhKAlrzHBJxtaCfMgvlqK9ePNkhHDTpkObYXi5mjI1MwLh
+         WxYFWHr9TsiurdU8jwimY3Xx8jiJfvxVuFN/NZrpZemPhN5YG6gKtiuPZjjihyrGXtoW
+         64WTAWVQgck8wwno17SU2AbH22IS9zOC+KYrJhAG1gr6ncnTou2PGiZrMZC9ZRtGd6h6
+         YqXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXClNEhaL/8uwpvhUt5O0lyRdbJWI6tEyI9U7dctLxHNtKJOAQJY3RpCJwmVb96oE5BmYyYOHHTZpBhU/YslMh5dSae6eF4qM4gI8tGkpYPhnquIWcfYD2V5TsoaTPi82JOgLaod8Cynv8g0CHdLWFLdlA/lIsChqW5rw559Ex7FL5woFaXrHkl0CZK0TlmegCjc4Pd9F2CBgl5H/KfQ7Tky9M=
+X-Gm-Message-State: AOJu0YwVnNnINz/Kshlm/ySz1r2posjyb3vu85jdcnGLcM58Q5e779tf
+	E3iR7jGreHcLsVVcYX8Le3DU/P25QwAV4P3FHOMcSTZ9qaBiHZ25
+X-Google-Smtp-Source: AGHT+IEeIO2faXt4HPtaKPSv53LPLgfetsgWUZ2rrUB+vNo+nARJS5K74POuW8sS151Q2FCZsZtlxw==
+X-Received: by 2002:a05:600c:458d:b0:41c:503:9a01 with SMTP id 5b1f17b1804b1-41f71ecb256mr3191275e9.25.1715103905216;
+        Tue, 07 May 2024 10:45:05 -0700 (PDT)
+Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
+        by smtp.gmail.com with ESMTPSA id l8-20020a05600c4f0800b0041bfa349cadsm23910612wmq.16.2024.05.07.10.45.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 10:45:04 -0700 (PDT)
+Message-ID: <d68417df-1493-421a-8558-879abe36d6fa@gmail.com>
+Date: Tue, 7 May 2024 19:45:02 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
+ file lifetimes
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com,
+ dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz,
+ laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+ sumit.semwal@linaro.org,
+ syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
+ <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+ <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+In-Reply-To: <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Utilize set_bit() and test_bit() on worker->flags within io_uring/io-wq
-to address potential data races.
+Am 07.05.24 um 18:46 schrieb Linus Torvalds:
+> On Tue, 7 May 2024 at 04:03, Daniel Vetter <daniel@ffwll.ch> wrote:
+>> It's really annoying that on some distros/builds we don't have that, and
+>> for gpu driver stack reasons we _really_ need to know whether a fd is the
+>> same as another, due to some messy uniqueness requirements on buffer
+>> objects various drivers have.
+> It's sad that such a simple thing would require two other horrid
+> models (EPOLL or KCMP).
+>
+> There'[s a reason that KCMP is a config option - *some* of that is
+> horrible code - but the "compare file descriptors for equality" is not
+> that reason.
+>
+> Note that KCMP really is a broken mess. It's also a potential security
+> hole, even for the simple things, because of how it ends up comparing
+> kernel pointers (ie it doesn't just say "same file descriptor", it
+> gives an ordering of them, so you can use KCMP to sort things in
+> kernel space).
+>
+> And yes, it orders them after obfuscating the pointer, but it's still
+> not something I would consider sane as a baseline interface. It was
+> designed for checkpoint-restore, it's the wrong thing to use for some
+> "are these file descriptors the same".
+>
+> The same argument goes for using EPOLL for that. Disgusting hack.
+>
+> Just what are the requirements for the GPU stack? Is one of the file
+> descriptors "trusted", IOW, you know what kind it is?
+>
+> Because dammit, it's *so* easy to do. You could just add a core DRM
+> ioctl for it. Literally just
+>
+>          struct fd f1 = fdget(fd1);
+>          struct fd f2 = fdget(fd2);
+>          int same;
+>
+>          same = f1.file && f1.file == f2.file;
+>          fdput(fd1);
+>          fdput(fd2);
+>          return same;
+>
+> where the only question is if you also woudl want to deal with O_PATH
+> fd's, in which case the "fdget()" would be "fdget_raw()".
+>
+> Honestly, adding some DRM ioctl for this sounds hacky, but it sounds
+> less hacky than relying on EPOLL or KCMP.
+>
+> I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
+> too, if this is possibly a more common thing. and not just DRM wants
+> it.
+>
+> Would something like that work for you?
 
-The structure io_worker->flags may be accessed through various data
-paths, leading to concurrency issues. When KCSAN is enabled, it reveals
-data races occurring in io_worker_handle_work and
-io_wq_activate_free_worker functions.
+Well the generic approach yes, the DRM specific one maybe. IIRC we need 
+to be able to compare both DRM as well as DMA-buf file descriptors.
 
-	 BUG: KCSAN: data-race in io_worker_handle_work / io_wq_activate_free_worker
-	 write to 0xffff8885c4246404 of 4 bytes by task 49071 on cpu 28:
-	 io_worker_handle_work (io_uring/io-wq.c:434 io_uring/io-wq.c:569)
-	 io_wq_worker (io_uring/io-wq.c:?)
-<snip>
+The basic problem userspace tries to solve is that drivers might get the 
+same fd through two different code paths.
 
-	 read to 0xffff8885c4246404 of 4 bytes by task 49024 on cpu 5:
-	 io_wq_activate_free_worker (io_uring/io-wq.c:? io_uring/io-wq.c:285)
-	 io_wq_enqueue (io_uring/io-wq.c:947)
-	 io_queue_iowq (io_uring/io_uring.c:524)
-	 io_req_task_submit (io_uring/io_uring.c:1511)
-	 io_handle_tw_list (io_uring/io_uring.c:1198)
-<snip>
+For example application using OpenGL/Vulkan for rendering and VA-API for 
+video decoding/encoding at the same time.
 
-Line numbers against commit 18daea77cca6 ("Merge tag 'for-linus' of
-git://git.kernel.org/pub/scm/virt/kvm/kvm").
+Both APIs get a fd which identifies the device to use. It can be the 
+same, but it doesn't have to.
 
-These races involve writes and reads to the same memory location by
-different tasks running on different CPUs. To mitigate this, refactor
-the code to use atomic operations such as set_bit(), test_bit(), and
-clear_bit() instead of basic "and" and "or" operations. This ensures
-thread-safe manipulation of worker flags.
+If it's the same device driver connection (or in kernel speak underlying 
+struct file) then you can optimize away importing and exporting of 
+buffers for example.
 
-Also, move `create_index` to avoid holes in the structure.
+Additional to that it makes cgroup accounting much easier because you 
+don't count things twice because they are shared etc...
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-v3:
-  * Use BIT() helpers when calling set_mask_bits()
-v2:
-  * Moved `create_index` to avoid holes in the struct.
-  * Use set_mask_bits() as suggested by Christophe JAILLET.
-  * https://lore.kernel.org/all/20240507150506.1748059-1-leitao@debian.org/
-v1:
-  * https://lore.kernel.org/all/20240503173711.2211911-1-leitao@debian.org/
+Regards,
+Christian.
 
----
- io_uring/io-wq.c | 47 ++++++++++++++++++++++++-----------------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
-
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index d7fc6f6d4477..d1c47a9d9215 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -25,10 +25,10 @@
- #define WORKER_IDLE_TIMEOUT	(5 * HZ)
- 
- enum {
--	IO_WORKER_F_UP		= 1,	/* up and active */
--	IO_WORKER_F_RUNNING	= 2,	/* account as running */
--	IO_WORKER_F_FREE	= 4,	/* worker on free list */
--	IO_WORKER_F_BOUND	= 8,	/* is doing bounded work */
-+	IO_WORKER_F_UP		= 0,	/* up and active */
-+	IO_WORKER_F_RUNNING	= 1,	/* account as running */
-+	IO_WORKER_F_FREE	= 2,	/* worker on free list */
-+	IO_WORKER_F_BOUND	= 3,	/* is doing bounded work */
- };
- 
- enum {
-@@ -44,7 +44,8 @@ enum {
-  */
- struct io_worker {
- 	refcount_t ref;
--	unsigned flags;
-+	int create_index;
-+	unsigned long flags;
- 	struct hlist_nulls_node nulls_node;
- 	struct list_head all_list;
- 	struct task_struct *task;
-@@ -57,7 +58,6 @@ struct io_worker {
- 
- 	unsigned long create_state;
- 	struct callback_head create_work;
--	int create_index;
- 
- 	union {
- 		struct rcu_head rcu;
-@@ -164,7 +164,7 @@ static inline struct io_wq_acct *io_work_get_acct(struct io_wq *wq,
- 
- static inline struct io_wq_acct *io_wq_get_acct(struct io_worker *worker)
- {
--	return io_get_acct(worker->wq, worker->flags & IO_WORKER_F_BOUND);
-+	return io_get_acct(worker->wq, test_bit(IO_WORKER_F_BOUND, &worker->flags));
- }
- 
- static void io_worker_ref_put(struct io_wq *wq)
-@@ -224,7 +224,7 @@ static void io_worker_exit(struct io_worker *worker)
- 	wait_for_completion(&worker->ref_done);
- 
- 	raw_spin_lock(&wq->lock);
--	if (worker->flags & IO_WORKER_F_FREE)
-+	if (test_bit(IO_WORKER_F_FREE, &worker->flags))
- 		hlist_nulls_del_rcu(&worker->nulls_node);
- 	list_del_rcu(&worker->all_list);
- 	raw_spin_unlock(&wq->lock);
-@@ -409,7 +409,7 @@ static void io_wq_dec_running(struct io_worker *worker)
- 	struct io_wq_acct *acct = io_wq_get_acct(worker);
- 	struct io_wq *wq = worker->wq;
- 
--	if (!(worker->flags & IO_WORKER_F_UP))
-+	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
- 		return;
- 
- 	if (!atomic_dec_and_test(&acct->nr_running))
-@@ -429,8 +429,8 @@ static void io_wq_dec_running(struct io_worker *worker)
-  */
- static void __io_worker_busy(struct io_wq *wq, struct io_worker *worker)
- {
--	if (worker->flags & IO_WORKER_F_FREE) {
--		worker->flags &= ~IO_WORKER_F_FREE;
-+	if (test_bit(IO_WORKER_F_FREE, &worker->flags)) {
-+		clear_bit(IO_WORKER_F_FREE, &worker->flags);
- 		raw_spin_lock(&wq->lock);
- 		hlist_nulls_del_init_rcu(&worker->nulls_node);
- 		raw_spin_unlock(&wq->lock);
-@@ -443,8 +443,8 @@ static void __io_worker_busy(struct io_wq *wq, struct io_worker *worker)
- static void __io_worker_idle(struct io_wq *wq, struct io_worker *worker)
- 	__must_hold(wq->lock)
- {
--	if (!(worker->flags & IO_WORKER_F_FREE)) {
--		worker->flags |= IO_WORKER_F_FREE;
-+	if (!test_bit(IO_WORKER_F_FREE, &worker->flags)) {
-+		set_bit(IO_WORKER_F_FREE, &worker->flags);
- 		hlist_nulls_add_head_rcu(&worker->nulls_node, &wq->free_list);
- 	}
- }
-@@ -632,7 +632,8 @@ static int io_wq_worker(void *data)
- 	bool exit_mask = false, last_timeout = false;
- 	char buf[TASK_COMM_LEN];
- 
--	worker->flags |= (IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
-+	set_mask_bits(&worker->flags, 0,
-+		      BIT(IO_WORKER_F_UP) | BIT(IO_WORKER_F_RUNNING));
- 
- 	snprintf(buf, sizeof(buf), "iou-wrk-%d", wq->task->pid);
- 	set_task_comm(current, buf);
-@@ -696,11 +697,11 @@ void io_wq_worker_running(struct task_struct *tsk)
- 
- 	if (!worker)
- 		return;
--	if (!(worker->flags & IO_WORKER_F_UP))
-+	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
- 		return;
--	if (worker->flags & IO_WORKER_F_RUNNING)
-+	if (test_bit(IO_WORKER_F_RUNNING, &worker->flags))
- 		return;
--	worker->flags |= IO_WORKER_F_RUNNING;
-+	set_bit(IO_WORKER_F_RUNNING, &worker->flags);
- 	io_wq_inc_running(worker);
- }
- 
-@@ -714,12 +715,12 @@ void io_wq_worker_sleeping(struct task_struct *tsk)
- 
- 	if (!worker)
- 		return;
--	if (!(worker->flags & IO_WORKER_F_UP))
-+	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
- 		return;
--	if (!(worker->flags & IO_WORKER_F_RUNNING))
-+	if (!test_bit(IO_WORKER_F_RUNNING, &worker->flags))
- 		return;
- 
--	worker->flags &= ~IO_WORKER_F_RUNNING;
-+	clear_bit(IO_WORKER_F_RUNNING, &worker->flags);
- 	io_wq_dec_running(worker);
- }
- 
-@@ -733,7 +734,7 @@ static void io_init_new_worker(struct io_wq *wq, struct io_worker *worker,
- 	raw_spin_lock(&wq->lock);
- 	hlist_nulls_add_head_rcu(&worker->nulls_node, &wq->free_list);
- 	list_add_tail_rcu(&worker->all_list, &wq->all_list);
--	worker->flags |= IO_WORKER_F_FREE;
-+	set_bit(IO_WORKER_F_FREE, &worker->flags);
- 	raw_spin_unlock(&wq->lock);
- 	wake_up_new_task(tsk);
- }
-@@ -839,7 +840,7 @@ static bool create_io_worker(struct io_wq *wq, int index)
- 	init_completion(&worker->ref_done);
- 
- 	if (index == IO_WQ_ACCT_BOUND)
--		worker->flags |= IO_WORKER_F_BOUND;
-+		set_bit(IO_WORKER_F_BOUND, &worker->flags);
- 
- 	tsk = create_io_thread(io_wq_worker, worker, NUMA_NO_NODE);
- 	if (!IS_ERR(tsk)) {
-@@ -925,8 +926,8 @@ static bool io_wq_work_match_item(struct io_wq_work *work, void *data)
- void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
- {
- 	struct io_wq_acct *acct = io_work_get_acct(wq, work);
-+	unsigned long work_flags = work->flags;
- 	struct io_cb_cancel_data match;
--	unsigned work_flags = work->flags;
- 	bool do_create;
- 
- 	/*
--- 
-2.43.0
+>
+>                   Linus
 
 

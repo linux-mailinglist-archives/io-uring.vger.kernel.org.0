@@ -1,158 +1,280 @@
-Return-Path: <io-uring+bounces-1809-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1810-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FB478BE9A5
-	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 18:49:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E31DE8BEA20
+	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 19:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0B231F213A8
-	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 16:49:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0903B213B0
+	for <lists+io-uring@lfdr.de>; Tue,  7 May 2024 17:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB25316C684;
-	Tue,  7 May 2024 16:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cQ+n6tQ0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FC7B672;
+	Tue,  7 May 2024 17:00:23 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B054F16C69C
-	for <io-uring@vger.kernel.org>; Tue,  7 May 2024 16:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092E144C6F;
+	Tue,  7 May 2024 17:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715100413; cv=none; b=F4eJG3/aECcx3K9fRtxxtH0l9ys+m7ZHDLShQWAST6HxsoS2O4kmUNHOM5u65vXQZsGmBhCJM7XWrp9jKBHn63iDfeENU/w15gNvytwKuUyIbci8H/VIqnZxL9K7owiJOKzx+GoSftoskse/ufosHBF2pffLNjl5uEZh5yOx6gQ=
+	t=1715101223; cv=none; b=ibnScLM+98R8zpXKIVz+LntGeQQFff5BbqFGTOs16F/e7TQqSquG2Dix/6ZQwUlhqgWJs4n2Nz/2R+C0ZJiDghOw6xDcxIScpMqj08gMccMFm8XSWGNlDZ6896uMCgns8R7hv2VavDvxmBpYvsihntQs4Ve1Hgp+apFxVNgHTMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715100413; c=relaxed/simple;
-	bh=VcUsDxZUpDGF/2Z4CuONrG7q84Dnoj3KVEQQuxcgc5k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=ghDzE3QE6BF9ejeLcTKMAbI1QiOoJVZt0CKFNqcRZ7DUjjedfmxYgbY5Cwa6SH/mtZ0xYMqEw4vIv6bVYVDkRtmMBnCBQ/zfCSw1Cqs2zhMqM1dfuXqwHyNgXDGtuF3mcoNIoOXsfFu3n/+QGyDZ8kwXPGWNqpKaHHMwrDri6o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cQ+n6tQ0; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59a0168c75so874830166b.1
-        for <io-uring@vger.kernel.org>; Tue, 07 May 2024 09:46:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715100410; x=1715705210; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x+/m+VOoT4mV8mZDo3MLSD/vsCL7+IgmGDq9kgXSLzI=;
-        b=cQ+n6tQ0C/iwgjO1DCCkyO6Zli2FF54s75zk7WPwgFKsMQN1BdMdnSIST4IQdqWRfp
-         iY9JdHQL2svDWbeyB5KQxLJgdCi4UbSqqmv33aZGGRYbQVJGsGYVCaPM88WMc1JAusM0
-         tL/pikxtX6xM8b6Rj1UzOrKSMP6s8+fFBSV9g=
+	s=arc-20240116; t=1715101223; c=relaxed/simple;
+	bh=t1RIG4lFlJ2bVFn7HFt/zInC8yyYV3aSCcHDk0NkM5E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lT1lEBJet+8Tcr3Y75snDQCqiXaJiBsUWEbWXg1BlcKDDiGEk1FVdSo3hdwDlubBs90ANp56XRToAhXpv91Krj+JrbiY40i8UqrI2MHOZM120Fduc8HD2jAZqy1a02mMJWDgAppFDDWYq1CmYH9+pfYrAXEvk+/AkzIlt3rLyJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e3fa13f018so10802851fa.3;
+        Tue, 07 May 2024 10:00:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715100410; x=1715705210;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x+/m+VOoT4mV8mZDo3MLSD/vsCL7+IgmGDq9kgXSLzI=;
-        b=QXiIKyc0Mm77Vo4nq4P3RPn0RzwKZTQ+7iwW+GHO+W4jagS4i6eCO3LoKxy6GdaPmj
-         qFxhKwAwWWRx5eRmzXpvnJhbzalSQAN9mN+lxPCOaN/XXeGqdsx7CbzM0wDwSMGV+HRZ
-         LS3Z9bx2Mdm2QLBWfC3pELVoMvTV2qXtOakN4hBh22nkvvkH+51R6CPdRO63+Ohc7E6K
-         xfV/mFMyi+BaJ7jx39Ru3/jA0s+HFjOxx9nQvMG4RQswpjTc78vuTAqMOP8Pf+TxsYBc
-         y3PCfA2dW0bn9x60ThWtcnRQRpTiWMiEYYaWuCvblHNg7CQf9SF8Yxu8MvL6oXxp464t
-         o7GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8t4n59lWCF6i3b3GXFvxKBPbyll/bd1vWXxIcR9kfjJAEV8L4kZNxJHelAXpMTaMzKMxYFC7j3o/0FjafDRrLPVAeRmNWFk8=
-X-Gm-Message-State: AOJu0Yw8PNfwj8E/46MHMxG0B0OSjUfW1mx2R8NYt5tnYJ6LKjHoRuqc
-	jAhVh5jZeWKWemfv+n2OmSclvyLBydh4y/4iMt2iQLA+GojyBUefoejtvv149jZkSUOcUNDmGTK
-	gmQmOmw==
-X-Google-Smtp-Source: AGHT+IEkaxu6tV0BL3AfOiQeqnSR2gCOr1dinm2og2Zw0QJvWi2/TpCxhV5XhSR9Dpijbyu8tChpEw==
-X-Received: by 2002:a17:906:7f0d:b0:a59:c319:f1e3 with SMTP id a640c23a62f3a-a59fb94ba87mr2205166b.12.1715100408920;
-        Tue, 07 May 2024 09:46:48 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id rh12-20020a17090720ec00b00a59a0cbf048sm4892005ejb.13.2024.05.07.09.46.48
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 09:46:48 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59b58fe083so536195866b.0
-        for <io-uring@vger.kernel.org>; Tue, 07 May 2024 09:46:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWNMV5Tg22ag7/h8vhOldltwvnwpExn5dxK5xFVr4wxU6Wc2yb+yYt50dZ8pBpcwMfhXvItv8kjp0zWzuJ4XyIKKYmTBG7zh+8=
-X-Received: by 2002:a17:906:d148:b0:a59:b099:1544 with SMTP id
- a640c23a62f3a-a59fb96bda9mr1610066b.42.1715100407952; Tue, 07 May 2024
- 09:46:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715101220; x=1715706020;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LItJ7IjSKA5TzTyJS4gjTEq76An66N3HomKKKz8MeuA=;
+        b=YQajUb+8LrSoddlNecbdjMX/qSO0ZNfAc29Jw7n5eP4ET8HWjyyEfpQCO2mCjTPDxr
+         H2yyV2Un/EjPjfHRRjvi0jCmdOEkMI4c7OzNseym4JNdBcigFGETu9U7Wv7vQbZU8DLz
+         a5rle25jm4V0U8J4yuOpltJrKj0LEA5nii4bm7goV9Zq+yrTyYkOTMuO7oDpG8Wkoxe4
+         /2PPnWuOCQ7T0F34BZQ1cYhPVVnOQ30WJnO3DwJ4kEW105rUuUsLAFIIYhRetklS7X7U
+         W2LbP32Q9uzpKGgxjlqzgMCgkMDOOO/HS3MZGxyIWKT3o4a0TOgeJNPv/Jq2xXQ+R8yS
+         m7Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVU8tP2qIzSyuFK4/8VPYa69bkfagR5IGSWuQzKrBlkywQ06bUT4teMtXVd4YJ2aAw1CJGuPWSyYLL7GqlKjnop2M2cjKZBPh05KBituBQeou/Udqj5ACt/VfZx0JQFvJ/r4aIgbFE=
+X-Gm-Message-State: AOJu0YzTSh+ohIuT7M4HBT9NGEPeR9ry52q8vHoA+tTH8yzaTSBatjym
+	UTYuJwwuJxb4iGcmRn2vIcyNodZS/79NwudV9HW8Z5FUIRP4+UFf
+X-Google-Smtp-Source: AGHT+IHnC7yjAY4z54ZWvxpVYv0mtgDIh5GTyFxC3vHHPoxRa/lBuvTBxApS3uWYctsKvE8dQmpjVw==
+X-Received: by 2002:a19:ee14:0:b0:520:76d0:b054 with SMTP id 2adb3069b0e04-5217cd4b0d8mr69069e87.57.1715101219912;
+        Tue, 07 May 2024 10:00:19 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id l20-20020aa7cad4000000b00572e91cf988sm3771430edt.93.2024.05.07.10.00.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 10:00:19 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: christophe.jaillet@wanadoo.fr,
+	paulmck@kernel.org,
+	io-uring@vger.kernel.org (open list:IO_URING),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3] io_uring/io-wq: Use set_bit() and test_bit() at worker->flags
+Date: Tue,  7 May 2024 10:00:01 -0700
+Message-ID: <20240507170002.2269003-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
-In-Reply-To: <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 7 May 2024 09:46:31 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
-Message-ID: <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
- file lifetimes
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, 
-	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
-	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 7 May 2024 at 04:03, Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> It's really annoying that on some distros/builds we don't have that, and
-> for gpu driver stack reasons we _really_ need to know whether a fd is the
-> same as another, due to some messy uniqueness requirements on buffer
-> objects various drivers have.
+Utilize set_bit() and test_bit() on worker->flags within io_uring/io-wq
+to address potential data races.
 
-It's sad that such a simple thing would require two other horrid
-models (EPOLL or KCMP).
+The structure io_worker->flags may be accessed through various data
+paths, leading to concurrency issues. When KCSAN is enabled, it reveals
+data races occurring in io_worker_handle_work and
+io_wq_activate_free_worker functions.
 
-There'[s a reason that KCMP is a config option - *some* of that is
-horrible code - but the "compare file descriptors for equality" is not
-that reason.
+	 BUG: KCSAN: data-race in io_worker_handle_work / io_wq_activate_free_worker
+	 write to 0xffff8885c4246404 of 4 bytes by task 49071 on cpu 28:
+	 io_worker_handle_work (io_uring/io-wq.c:434 io_uring/io-wq.c:569)
+	 io_wq_worker (io_uring/io-wq.c:?)
+<snip>
 
-Note that KCMP really is a broken mess. It's also a potential security
-hole, even for the simple things, because of how it ends up comparing
-kernel pointers (ie it doesn't just say "same file descriptor", it
-gives an ordering of them, so you can use KCMP to sort things in
-kernel space).
+	 read to 0xffff8885c4246404 of 4 bytes by task 49024 on cpu 5:
+	 io_wq_activate_free_worker (io_uring/io-wq.c:? io_uring/io-wq.c:285)
+	 io_wq_enqueue (io_uring/io-wq.c:947)
+	 io_queue_iowq (io_uring/io_uring.c:524)
+	 io_req_task_submit (io_uring/io_uring.c:1511)
+	 io_handle_tw_list (io_uring/io_uring.c:1198)
+<snip>
 
-And yes, it orders them after obfuscating the pointer, but it's still
-not something I would consider sane as a baseline interface. It was
-designed for checkpoint-restore, it's the wrong thing to use for some
-"are these file descriptors the same".
+Line numbers against commit 18daea77cca6 ("Merge tag 'for-linus' of
+git://git.kernel.org/pub/scm/virt/kvm/kvm").
 
-The same argument goes for using EPOLL for that. Disgusting hack.
+These races involve writes and reads to the same memory location by
+different tasks running on different CPUs. To mitigate this, refactor
+the code to use atomic operations such as set_bit(), test_bit(), and
+clear_bit() instead of basic "and" and "or" operations. This ensures
+thread-safe manipulation of worker flags.
 
-Just what are the requirements for the GPU stack? Is one of the file
-descriptors "trusted", IOW, you know what kind it is?
+Also, move `create_index` to avoid holes in the structure.
 
-Because dammit, it's *so* easy to do. You could just add a core DRM
-ioctl for it. Literally just
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+v3:
+  * Use BIT() helpers when calling set_mask_bits()
+v2:
+  * Moved `create_index` to avoid holes in the struct.
+  * Use set_mask_bits() as suggested by Christophe JAILLET.
+  * https://lore.kernel.org/all/20240507150506.1748059-1-leitao@debian.org/
+v1:
+  * https://lore.kernel.org/all/20240503173711.2211911-1-leitao@debian.org/
 
-        struct fd f1 = fdget(fd1);
-        struct fd f2 = fdget(fd2);
-        int same;
+---
+ io_uring/io-wq.c | 47 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 24 insertions(+), 23 deletions(-)
 
-        same = f1.file && f1.file == f2.file;
-        fdput(fd1);
-        fdput(fd2);
-        return same;
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index d7fc6f6d4477..d1c47a9d9215 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -25,10 +25,10 @@
+ #define WORKER_IDLE_TIMEOUT	(5 * HZ)
+ 
+ enum {
+-	IO_WORKER_F_UP		= 1,	/* up and active */
+-	IO_WORKER_F_RUNNING	= 2,	/* account as running */
+-	IO_WORKER_F_FREE	= 4,	/* worker on free list */
+-	IO_WORKER_F_BOUND	= 8,	/* is doing bounded work */
++	IO_WORKER_F_UP		= 0,	/* up and active */
++	IO_WORKER_F_RUNNING	= 1,	/* account as running */
++	IO_WORKER_F_FREE	= 2,	/* worker on free list */
++	IO_WORKER_F_BOUND	= 3,	/* is doing bounded work */
+ };
+ 
+ enum {
+@@ -44,7 +44,8 @@ enum {
+  */
+ struct io_worker {
+ 	refcount_t ref;
+-	unsigned flags;
++	int create_index;
++	unsigned long flags;
+ 	struct hlist_nulls_node nulls_node;
+ 	struct list_head all_list;
+ 	struct task_struct *task;
+@@ -57,7 +58,6 @@ struct io_worker {
+ 
+ 	unsigned long create_state;
+ 	struct callback_head create_work;
+-	int create_index;
+ 
+ 	union {
+ 		struct rcu_head rcu;
+@@ -164,7 +164,7 @@ static inline struct io_wq_acct *io_work_get_acct(struct io_wq *wq,
+ 
+ static inline struct io_wq_acct *io_wq_get_acct(struct io_worker *worker)
+ {
+-	return io_get_acct(worker->wq, worker->flags & IO_WORKER_F_BOUND);
++	return io_get_acct(worker->wq, test_bit(IO_WORKER_F_BOUND, &worker->flags));
+ }
+ 
+ static void io_worker_ref_put(struct io_wq *wq)
+@@ -224,7 +224,7 @@ static void io_worker_exit(struct io_worker *worker)
+ 	wait_for_completion(&worker->ref_done);
+ 
+ 	raw_spin_lock(&wq->lock);
+-	if (worker->flags & IO_WORKER_F_FREE)
++	if (test_bit(IO_WORKER_F_FREE, &worker->flags))
+ 		hlist_nulls_del_rcu(&worker->nulls_node);
+ 	list_del_rcu(&worker->all_list);
+ 	raw_spin_unlock(&wq->lock);
+@@ -409,7 +409,7 @@ static void io_wq_dec_running(struct io_worker *worker)
+ 	struct io_wq_acct *acct = io_wq_get_acct(worker);
+ 	struct io_wq *wq = worker->wq;
+ 
+-	if (!(worker->flags & IO_WORKER_F_UP))
++	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
+ 		return;
+ 
+ 	if (!atomic_dec_and_test(&acct->nr_running))
+@@ -429,8 +429,8 @@ static void io_wq_dec_running(struct io_worker *worker)
+  */
+ static void __io_worker_busy(struct io_wq *wq, struct io_worker *worker)
+ {
+-	if (worker->flags & IO_WORKER_F_FREE) {
+-		worker->flags &= ~IO_WORKER_F_FREE;
++	if (test_bit(IO_WORKER_F_FREE, &worker->flags)) {
++		clear_bit(IO_WORKER_F_FREE, &worker->flags);
+ 		raw_spin_lock(&wq->lock);
+ 		hlist_nulls_del_init_rcu(&worker->nulls_node);
+ 		raw_spin_unlock(&wq->lock);
+@@ -443,8 +443,8 @@ static void __io_worker_busy(struct io_wq *wq, struct io_worker *worker)
+ static void __io_worker_idle(struct io_wq *wq, struct io_worker *worker)
+ 	__must_hold(wq->lock)
+ {
+-	if (!(worker->flags & IO_WORKER_F_FREE)) {
+-		worker->flags |= IO_WORKER_F_FREE;
++	if (!test_bit(IO_WORKER_F_FREE, &worker->flags)) {
++		set_bit(IO_WORKER_F_FREE, &worker->flags);
+ 		hlist_nulls_add_head_rcu(&worker->nulls_node, &wq->free_list);
+ 	}
+ }
+@@ -632,7 +632,8 @@ static int io_wq_worker(void *data)
+ 	bool exit_mask = false, last_timeout = false;
+ 	char buf[TASK_COMM_LEN];
+ 
+-	worker->flags |= (IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
++	set_mask_bits(&worker->flags, 0,
++		      BIT(IO_WORKER_F_UP) | BIT(IO_WORKER_F_RUNNING));
+ 
+ 	snprintf(buf, sizeof(buf), "iou-wrk-%d", wq->task->pid);
+ 	set_task_comm(current, buf);
+@@ -696,11 +697,11 @@ void io_wq_worker_running(struct task_struct *tsk)
+ 
+ 	if (!worker)
+ 		return;
+-	if (!(worker->flags & IO_WORKER_F_UP))
++	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
+ 		return;
+-	if (worker->flags & IO_WORKER_F_RUNNING)
++	if (test_bit(IO_WORKER_F_RUNNING, &worker->flags))
+ 		return;
+-	worker->flags |= IO_WORKER_F_RUNNING;
++	set_bit(IO_WORKER_F_RUNNING, &worker->flags);
+ 	io_wq_inc_running(worker);
+ }
+ 
+@@ -714,12 +715,12 @@ void io_wq_worker_sleeping(struct task_struct *tsk)
+ 
+ 	if (!worker)
+ 		return;
+-	if (!(worker->flags & IO_WORKER_F_UP))
++	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
+ 		return;
+-	if (!(worker->flags & IO_WORKER_F_RUNNING))
++	if (!test_bit(IO_WORKER_F_RUNNING, &worker->flags))
+ 		return;
+ 
+-	worker->flags &= ~IO_WORKER_F_RUNNING;
++	clear_bit(IO_WORKER_F_RUNNING, &worker->flags);
+ 	io_wq_dec_running(worker);
+ }
+ 
+@@ -733,7 +734,7 @@ static void io_init_new_worker(struct io_wq *wq, struct io_worker *worker,
+ 	raw_spin_lock(&wq->lock);
+ 	hlist_nulls_add_head_rcu(&worker->nulls_node, &wq->free_list);
+ 	list_add_tail_rcu(&worker->all_list, &wq->all_list);
+-	worker->flags |= IO_WORKER_F_FREE;
++	set_bit(IO_WORKER_F_FREE, &worker->flags);
+ 	raw_spin_unlock(&wq->lock);
+ 	wake_up_new_task(tsk);
+ }
+@@ -839,7 +840,7 @@ static bool create_io_worker(struct io_wq *wq, int index)
+ 	init_completion(&worker->ref_done);
+ 
+ 	if (index == IO_WQ_ACCT_BOUND)
+-		worker->flags |= IO_WORKER_F_BOUND;
++		set_bit(IO_WORKER_F_BOUND, &worker->flags);
+ 
+ 	tsk = create_io_thread(io_wq_worker, worker, NUMA_NO_NODE);
+ 	if (!IS_ERR(tsk)) {
+@@ -925,8 +926,8 @@ static bool io_wq_work_match_item(struct io_wq_work *work, void *data)
+ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+ {
+ 	struct io_wq_acct *acct = io_work_get_acct(wq, work);
++	unsigned long work_flags = work->flags;
+ 	struct io_cb_cancel_data match;
+-	unsigned work_flags = work->flags;
+ 	bool do_create;
+ 
+ 	/*
+-- 
+2.43.0
 
-where the only question is if you also woudl want to deal with O_PATH
-fd's, in which case the "fdget()" would be "fdget_raw()".
-
-Honestly, adding some DRM ioctl for this sounds hacky, but it sounds
-less hacky than relying on EPOLL or KCMP.
-
-I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
-too, if this is possibly a more common thing. and not just DRM wants
-it.
-
-Would something like that work for you?
-
-                 Linus
 

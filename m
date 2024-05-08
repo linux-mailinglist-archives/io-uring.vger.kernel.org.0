@@ -1,87 +1,66 @@
-Return-Path: <io-uring+bounces-1819-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1820-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870A38BF5C3
-	for <lists+io-uring@lfdr.de>; Wed,  8 May 2024 07:55:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C4758BF7BA
+	for <lists+io-uring@lfdr.de>; Wed,  8 May 2024 09:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D3FF285E36
-	for <lists+io-uring@lfdr.de>; Wed,  8 May 2024 05:55:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ACA61C20E41
+	for <lists+io-uring@lfdr.de>; Wed,  8 May 2024 07:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E718E175BF;
-	Wed,  8 May 2024 05:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543EA3A8EF;
+	Wed,  8 May 2024 07:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyI3Q/ax"
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="KvvUOWbo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE4514AB0;
-	Wed,  8 May 2024 05:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCA836B00;
+	Wed,  8 May 2024 07:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715147713; cv=none; b=qLgYvedKfO+uDb9jYN4fHylA7vjKeIi8LZilJPc1xAyn1IOgNv6FtFr7/MxHQAsK2kYQdZV+nvzbkmkXPF8jKsxBZyFd7w6ofnDcYcFMp5LqFhnr17eFum499KoE+2c2PKvcaTloyOWPtlK9yOvWPKUhQ6ixpEnikJCHP96IeIQ=
+	t=1715154695; cv=none; b=O+7TnW4TsVOpk4IImZW2Nh+qJjeZLu9/46iYWBLwRhdfgO+IqdqmBTGrbeqThf61WdX+vNyR5tAp7R1/bXX2eNOo4ydQQH0XrrjnGcahk2EwQHrw+KvioeLF0tyCo/vC62Hm3jM36/PvKearCRtqXiH0P8fYeDxLaK98DC0Z7E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715147713; c=relaxed/simple;
-	bh=lO89aVQfFs/6jUDErPkGkXAH9K4sksZShIR9DhCcgkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e8ERk4tuTpXzhE1rxChbn9HTVjBW6sAzcLAoqwDNp+LahrWhXC9o6/SiW/MzOT9SLaaHQedggA3+j4son6fVBJrHgv1vrHOZOmqK4iDeu8kEzYMwxprbexTWF4perfXpnfBnjoNMUvWA7rdZDYRKD2wrmSK0uPy9bvIwWe+QJ2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyI3Q/ax; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-34da04e44a2so2220844f8f.1;
-        Tue, 07 May 2024 22:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715147710; x=1715752510; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2kECfVH61gVXoLyEKuVmIWZjf9iy/udsb4pKdELyNgI=;
-        b=TyI3Q/axaPMnsKWjrLW1k5s+i7XNf++8A5vw98l7hRFVSEHJclBPqXh3gF2ae4iN8y
-         X6llgcEJpqI+aVujppjMwj4twoMI5TtXBxQMV2J0nnX2wObShvSYk/wPLINjMsSCZIy0
-         lRPlrtQZB5OdN8TbbIeT5injUDcAkYp7zFa/pJEcWzZZbTFrtkMRd1OCIX8ILuLs9ys6
-         IMEATsFeifo/PK2wiORJY3VsCwtM78LIUKvdCEnrtjNbDxiKnuGpcTkz2Dxkgy/zbCgW
-         hHf4TZ8LsDwzCLNSP8hAXuoHvasnwemDFCeRLoOuk0X31x1H7Zz1jRFYceZtiExDRe3A
-         zpbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715147710; x=1715752510;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2kECfVH61gVXoLyEKuVmIWZjf9iy/udsb4pKdELyNgI=;
-        b=aZuA6OsLh1yxlQBhwiEJbnzz8Q3CC/ef0ClhaR/hzZQqLcVSgN3lNCZjZmZoDfOpM7
-         JSwnWX9KEDFkHtemw6L9rvCi5KGyozGgiYkE3uCAUQRUv3Q6dxy/C8ZE1J43V2pcL8AE
-         5Q4gZdrcS2oiUO5lXW4hpMtJjYskoz2lqs+Iwid/LDQsGAZyi+23vng08/RK6IkgHVAj
-         h/ic733Mo1rE/CIY3TzUGLoOh8pOb/Q75jV1VCqQvsz1BNrONfodtViSlFcBNyizIVjy
-         x60WHrptoNYwmRmAaZzjSolRWiAioegqzFIVTLfOly7z8OEir0zddSK5dU230p3M1U8F
-         wUQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1A/o+3RGzPCNj1u5vkAz6k2z0VU3LrjfCmua/6s++RXjGrUbrvzSXwW7I+tzZtW5v74eZmxqO8QHq3/uqDFAbGTlVjomFzWzE7rnGsxO1no5QF/57Tas58ZC9ONhMRQ766G0xMmDtTfHN4puQGdqdtbQdefnqWSWNs5JIGFoDPrYdnJ/mn4VMJ8cV8jqSPhnB+jfRQVAqsei22XZwPmI6uE4=
-X-Gm-Message-State: AOJu0Yyy5ToTFjfHvkWiPD20ZN5dhpEpHL5YHMXJ0fos+0bQK6e3iW8F
-	QAhTILDBkfPZlTREGOx6+3CpEfvxN+lcI0/pil2nPq2vedUD/KX8
-X-Google-Smtp-Source: AGHT+IGmRYQwYE5GKCP4nHrkMb9CRMRKCaP4q6oTy76fGgGdxl/Be2mRpgRLYl8OhhNTkkldystArg==
-X-Received: by 2002:adf:f0c8:0:b0:34e:3cb3:6085 with SMTP id ffacd0b85a97d-34fca81043amr1370408f8f.62.1715147710492;
-        Tue, 07 May 2024 22:55:10 -0700 (PDT)
-Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
-        by smtp.gmail.com with ESMTPSA id w6-20020adfcd06000000b0034dcb22d82fsm14415768wrm.20.2024.05.07.22.55.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 22:55:10 -0700 (PDT)
-Message-ID: <040b32b8-c4df-4121-bb0d-f0c6ee9e123d@gmail.com>
-Date: Wed, 8 May 2024 07:55:08 +0200
+	s=arc-20240116; t=1715154695; c=relaxed/simple;
+	bh=o2qpCjMzog+vEoHz/oDlZEdsgwifD8WLuTbmMXmjILQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=d3h/DpMIFyVtBiU/fFyz2TZPyy9BGI2bdKUwKlPNxJXv9k0BTM84ATtZ0MRdKOP/VAPa40cXGOzBbzXXEY7lToIFZbT3Uw7v7PyI7QKawmw2MIkEtSEUoEE4vhXIUjecow+2s4DNAfsdOQYqAPxT7SZnggHjgdb1w9n26ibUX0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=KvvUOWbo; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4VZ6lv0ll0z9spf;
+	Wed,  8 May 2024 09:51:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1715154683;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=seqGXW7fWjnxdTfmzUCRIjDohlKE9YFEMwzBlrsD9vw=;
+	b=KvvUOWboNt1gLqyxi7HHWFVIEJEoREy4Lyw3eNMtTycPAtUOHCKfylR/+SGakz9tQsRsWj
+	P5tdtWoHN3mZ4L/NQTCVQa3mG5vjEz4jbPWHB/sqrRy8ELoCb1EAgTWP7hmfdHWAL9EK4V
+	dWkU3/NeXvdZO0C0UsKdYxJp7/KLHWuVnUPXWUr6nJzRlTsxW6wxGitGktjUkB7GGf1KSM
+	WX9tC592UcG5FQ9+Uj+dVzh9Z5Vb+UVwMNji89xLZm2LbzW+SxD9jYstAM50q722ksvZLv
+	r7Kd89iS+1Zta7mZzfExJBUH7c4xj99CxFMonw/Rclw83vRIBF+eYqtbkSrKcA==
+Message-ID: <36169520-56e4-4a01-a467-051a94c7f810@mailbox.org>
+Date: Wed, 8 May 2024 09:51:19 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
 Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
  file lifetimes
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Daniel Vetter <daniel@ffwll.ch>
-Cc: Simon Ser <contact@emersion.fr>,
- Pekka Paalanen <pekka.paalanen@collabora.com>,
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
  Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
  keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com,
  dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz,
@@ -101,44 +80,60 @@ References: <202405031110.6F47982593@keescook>
  <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
  <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
  <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
- <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <d68417df-1493-421a-8558-879abe36d6fa@gmail.com>
+From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
+Content-Language: en-CA, de-CH-frami
+In-Reply-To: <d68417df-1493-421a-8558-879abe36d6fa@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 9swp1jw5c6zi83pbktm1xw4d3s3f1o5r
+X-MBO-RS-ID: b22b617ddbdc3eec153
 
-Am 07.05.24 um 21:07 schrieb Linus Torvalds:
-> On Tue, 7 May 2024 at 11:04, Daniel Vetter <daniel@ffwll.ch> wrote:
->> On Tue, May 07, 2024 at 09:46:31AM -0700, Linus Torvalds wrote:
+On 2024-05-07 19:45, Christian König wrote:
+> Am 07.05.24 um 18:46 schrieb Linus Torvalds:
 >>
->>> I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
->>> too, if this is possibly a more common thing. and not just DRM wants
->>> it.
->>>
->>> Would something like that work for you?
->> Yes.
+>> Just what are the requirements for the GPU stack? Is one of the file
+>> descriptors "trusted", IOW, you know what kind it is?
 >>
->> Adding Simon and Pekka as two of the usual suspects for this kind of
->> stuff. Also example code (the int return value is just so that callers know
->> when kcmp isn't available, they all only care about equality):
+>> Because dammit, it's *so* easy to do. You could just add a core DRM
+>> ioctl for it. Literally just
 >>
->> https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/util/os_file.c#L239
-> That example thing shows that we shouldn't make it a FISAME ioctl - we
-> should make it a fcntl() instead, and it would just be a companion to
-> F_DUPFD.
->
-> Doesn't that strike everybody as a *much* cleaner interface? I think
-> F_ISDUP would work very naturally indeed with F_DUPFD.
->
-> Yes? No?
+>>          struct fd f1 = fdget(fd1);
+>>          struct fd f2 = fdget(fd2);
+>>          int same;
+>>
+>>          same = f1.file && f1.file == f2.file;
+>>          fdput(fd1);
+>>          fdput(fd2);
+>>          return same;
+>>
+>> where the only question is if you also woudl want to deal with O_PATH
+>> fd's, in which case the "fdget()" would be "fdget_raw()".
+>>
+>> Honestly, adding some DRM ioctl for this sounds hacky, but it sounds
+>> less hacky than relying on EPOLL or KCMP.
+>>
+>> I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
+>> too, if this is possibly a more common thing. and not just DRM wants
+>> it.
+>>
+>> Would something like that work for you?
+> 
+> Well the generic approach yes, the DRM specific one maybe. IIRC we need to be able to compare both DRM as well as DMA-buf file descriptors.
+> 
+> The basic problem userspace tries to solve is that drivers might get the same fd through two different code paths.
+> 
+> For example application using OpenGL/Vulkan for rendering and VA-API for video decoding/encoding at the same time.
+> 
+> Both APIs get a fd which identifies the device to use. It can be the same, but it doesn't have to.
+> 
+> If it's the same device driver connection (or in kernel speak underlying struct file) then you can optimize away importing and exporting of buffers for example.
 
-Sounds absolutely sane to me.
+It's not just about optimization. Mesa needs to know this for correct tracking of GEM handles. If it guesses incorrectly, there can be misbehaviour.
 
-Christian.
 
->
->                         Linus
+-- 
+Earthling Michel Dänzer            |                  https://redhat.com
+Libre software enthusiast          |         Mesa and Xwayland developer
 
 

@@ -1,151 +1,189 @@
-Return-Path: <io-uring+bounces-1835-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1836-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB458C02D0
-	for <lists+io-uring@lfdr.de>; Wed,  8 May 2024 19:15:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B708C09D4
+	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 04:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C90D288DFE
-	for <lists+io-uring@lfdr.de>; Wed,  8 May 2024 17:15:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 845B8B20A37
+	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 02:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A66127B5D;
-	Wed,  8 May 2024 17:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558545D74C;
+	Thu,  9 May 2024 02:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Cv6UD24J"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U0kx2v/m"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED56481C7
-	for <io-uring@vger.kernel.org>; Wed,  8 May 2024 17:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAC581745
+	for <io-uring@vger.kernel.org>; Thu,  9 May 2024 02:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715188506; cv=none; b=JclGLzAM+vWbH5t0rdtWt9a/UoMwA2oUi2M0bZz2cRgo7NcxNc9Q0+gI1ItnMIxR2aq/WWiD+aAhDlrF21SYeUsLe0ZuWa82qeuNGfItXNnfGmycaWkuyH+MdgwaStSBCdkBZeL7yjcrSrgWwUhNcpRC38t5UbM+4nHIWZu+j2o=
+	t=1715222072; cv=none; b=NrbacdkvXAW6FHAxZwVcWcf+n3grYDZENC1N9wj8uzPeBpqgBvVgk+ZvbKulLIM3d/vYA3GSo1nHLek4LNWrXRhMqxoHCEN4uOoRfplUe4VF2C55CBS5UNVxQd0+lyFZe/hFAX4nSRPkrWfH2/A779L8X36VkHUAuoG1+yC1uuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715188506; c=relaxed/simple;
-	bh=V0bpsJ67PmT0LSDQg/VjFC4vr5TTFXyb2cnSJu3RiIc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=csDuQS2PrG3LIHQPP/vXmBe28z6H/ZCrP79iyX/cuVuCcQg4TC2goOyumvjb3f10PRL9aaIXMMCcvnfZd1UrIrCfVWC1z6t0Yn5nordk8McZRSczm1W3CA/qFRozlr2IUnYjQG0swVQlRZAooSrWAQZxPOx3Aj+YQpFXDXyD2cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Cv6UD24J; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59cc765c29so885962466b.3
-        for <io-uring@vger.kernel.org>; Wed, 08 May 2024 10:15:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715188502; x=1715793302; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/4yjhmm7i2TdW/kF2dab+x944KGHXX8XGDp8OQOwgM=;
-        b=Cv6UD24J5wKIdhHmqRTF5/X9o9DqZMt24lEr/LCYzj505BVVu1eMgEjUDPfqss7qWh
-         HfRtz5NHYZej8VEhNSEitQTr5MUKqCUCJ7KV2/6MLOpvYOhAeDo1yMDsGZ/ClQKnIW7d
-         E0PASep9jgR9/1yOy8ob94tnVpaNqLEY55+mQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715188502; x=1715793302;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U/4yjhmm7i2TdW/kF2dab+x944KGHXX8XGDp8OQOwgM=;
-        b=W3TSJIPzIp2QmPITvRsQ/BGtPI/xBVnvLeN+ADoAymMvALWMNsA/muyHOp5XisVEto
-         mr9/JYvynHHjHp3137plCgZMRXGrdVqFE7Ewzjg+Ypsn2eyJfqjydmWoBf/+rXJthIkS
-         f3kT/2zFowm4d/3tKJR8A+jfxhmM54cpJjMBuJOvWITTQLuxPN3Jj9IUNem8KTownjk0
-         yHxnndhK9dNnBuYta7vumAp2eAlHv70oAt8w3yElx23F0Hqbzq5XhWTwQtQ9HtMW0w6D
-         ndvjfGZnbZJmdiEj+Qti+akXsFfqggUhTw1D9SP0KdOZIhSemGYz2nfkU/VI8xZgBqbP
-         olFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUs6NW2r1wwjX4nt+PbJb+9Zv6MmZT+apvuBfK+8pshp3FqB2LMK5j48jMsfV6O+UMFg3jguL5nVGTvvglhEE9InUjmIwmjCpM=
-X-Gm-Message-State: AOJu0YzTqyVfrwSYwO5ImQE8YWFSA+DLP8bHytf4R3fg9Htjk5AhGf8J
-	MdrtgD7Xz0L0K9ClvwkaAB4LzxdHY62tDKMc2BHak6gYyGQtYzGUR3Gkq3rVq94OYNvNnc6EWse
-	Okwl/Zw==
-X-Google-Smtp-Source: AGHT+IHKxYaj+zFHOtcUfWhzSf+wJM37oe62ahcHlbkR8sCS980vWbH8eivXtfXNmVGXMZ2Ey38QrA==
-X-Received: by 2002:a17:906:ad6:b0:a59:c367:560c with SMTP id a640c23a62f3a-a59fb9dc564mr185128866b.60.1715188502324;
-        Wed, 08 May 2024 10:15:02 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id ze15-20020a170906ef8f00b00a59ae3efb03sm5429930ejb.3.2024.05.08.10.15.01
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 10:15:01 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a59a17fcc6bso1092724566b.1
-        for <io-uring@vger.kernel.org>; Wed, 08 May 2024 10:15:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVWtnWelx8S6F88zw4i44QagaATcD5YGhqGNPSEdvFjPnNfJ9DqCuMnB44koN4b/ePWkq/Wt37Tj/cW97zA8v2PqteStcDe5V8=
-X-Received: by 2002:a17:906:a996:b0:a59:ca9c:4de9 with SMTP id
- a640c23a62f3a-a59fb9f5184mr235459866b.76.1715188500986; Wed, 08 May 2024
- 10:15:00 -0700 (PDT)
+	s=arc-20240116; t=1715222072; c=relaxed/simple;
+	bh=vGNoHyHJseiyhKnl3EWcZ/z41J2GY8esazGaZBnsPQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G012tAhPhefLciUwsRMMJB26i3mFLzIZVtochj7J3Zr5+mvz+ZdKNjpkKaDMAzDyYzvskRi+fmJn8utXO6BaW4XL2wHYtnqCZp+5AWQcNOf7GpOOm02xXF//Cp9e/G6l/LmS/v7sOu6/ZiWd7rudaAFv9WD7siRqG+8+jt1S+Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U0kx2v/m; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715222069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5O6je1yiZ59pdVq7gg7eVQ61QPBnyuz/RYvdiYxGIuM=;
+	b=U0kx2v/mkfDtivENkYxadJ4gJfrNpcfihw5epluz5+ev7wxGcKee2L8QZTBeHiJA/R8SHA
+	nkLvoYrXaZOnAzMaBARm8t2DfQT9Bvf9q4UTbxaAbnbcMNYyj79OIVoU4kRK4iDzV6+xbI
+	WQs47pHGnzlFrAvYXBVIIZxaVuYvRkw=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-329-nAfT9nPYNFG63WMWBK4Jcw-1; Wed,
+ 08 May 2024 22:34:25 -0400
+X-MC-Unique: nAfT9nPYNFG63WMWBK4Jcw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A225F3C00097;
+	Thu,  9 May 2024 02:34:24 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.32])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 1D2103C25;
+	Thu,  9 May 2024 02:34:22 +0000 (UTC)
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	io-uring@vger.kernel.org
+Cc: Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH] io_uring: add IORING_OP_NOP_FAIL
+Date: Thu,  9 May 2024 10:34:13 +0800
+Message-ID: <20240509023413.4124075-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202405031110.6F47982593@keescook> <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV> <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner> <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
- <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com> <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
-In-Reply-To: <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 8 May 2024 10:14:44 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjmC+coFdA_k6_JODD8_bvad=H4pn4yGREqOTm+eMB+rg@mail.gmail.com>
-Message-ID: <CAHk-=wjmC+coFdA_k6_JODD8_bvad=H4pn4yGREqOTm+eMB+rg@mail.gmail.com>
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
- file lifetimes
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Simon Ser <contact@emersion.fr>, Pekka Paalanen <pekka.paalanen@collabora.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
-	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On Wed, 8 May 2024 at 09:19, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> So since we already have two versions of F_DUPFD (the other being
-> F_DUPFD_CLOEXEC) I decided that the best thing to do is to just extend
-> on that existing naming pattern, and called it F_DUPFD_QUERY instead.
->
-> I'm not married to the name, so if somebody hates it, feel free to
-> argue otherwise.
+Add IORING_OP_NOP_FAIL so that it is easy to inject failure from
+userspace.
 
-Side note: with this patch, doing
+Like IORING_OP_NOP, the main use case is test, and it is very helpful
+for covering failure handling code in io_uring core change.
 
-   ret = fcntl(fd1, F_DUPFD_QUERY, fd2);
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ include/uapi/linux/io_uring.h |  2 ++
+ io_uring/nop.c                | 27 +++++++++++++++++++++++++++
+ io_uring/nop.h                |  3 +++
+ io_uring/opdef.c              |  9 +++++++++
+ 4 files changed, 41 insertions(+)
 
-will result in:
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 922f29b07ccc..18e58477e0f0 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -72,6 +72,7 @@ struct io_uring_sqe {
+ 		__u32		waitid_flags;
+ 		__u32		futex_flags;
+ 		__u32		install_fd_flags;
++		__s32		nop_fail_res;
+ 	};
+ 	__u64	user_data;	/* data to be passed back at completion time */
+ 	/* pack this to avoid bogus arm OABI complaints */
+@@ -259,6 +260,7 @@ enum io_uring_op {
+ 	IORING_OP_FUTEX_WAITV,
+ 	IORING_OP_FIXED_FD_INSTALL,
+ 	IORING_OP_FTRUNCATE,
++	IORING_OP_NOP_FAIL,
+ 
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
+diff --git a/io_uring/nop.c b/io_uring/nop.c
+index d956599a3c1b..c30547e53b5c 100644
+--- a/io_uring/nop.c
++++ b/io_uring/nop.c
+@@ -10,6 +10,12 @@
+ #include "io_uring.h"
+ #include "nop.h"
+ 
++struct io_nop_fail {
++	/* NOTE: kiocb has the file as the first member, so don't do it here */
++	struct file	*file;
++	int		res;
++};
++
+ int io_nop_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	return 0;
+@@ -23,3 +29,24 @@ int io_nop(struct io_kiocb *req, unsigned int issue_flags)
+ 	io_req_set_res(req, 0, 0);
+ 	return IOU_OK;
+ }
++
++int io_nop_fail_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	struct io_nop_fail *nf = io_kiocb_to_cmd(req, struct io_nop_fail);
++
++	nf->res = READ_ONCE(sqe->nop_fail_res);
++	return 0;
++}
++
++/*
++ * IORING_OP_NOP just posts a completion event, nothing else.
++ */
++int io_nop_fail(struct io_kiocb *req, unsigned int issue_flags)
++{
++	struct io_nop_fail *nf = io_kiocb_to_cmd(req, struct io_nop_fail);
++
++	if (nf->res < 0)
++		req_set_fail(req);
++	io_req_set_res(req, nf->res, 0);
++	return IOU_OK;
++}
+diff --git a/io_uring/nop.h b/io_uring/nop.h
+index 97f1535c9dec..ef40d3b15899 100644
+--- a/io_uring/nop.h
++++ b/io_uring/nop.h
+@@ -2,3 +2,6 @@
+ 
+ int io_nop_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_nop(struct io_kiocb *req, unsigned int issue_flags);
++
++int io_nop_fail_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
++int io_nop_fail(struct io_kiocb *req, unsigned int issue_flags);
+diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+index 92b657a063a0..eadc5a12ee06 100644
+--- a/io_uring/opdef.c
++++ b/io_uring/opdef.c
+@@ -56,6 +56,12 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.prep			= io_nop_prep,
+ 		.issue			= io_nop,
+ 	},
++	[IORING_OP_NOP_FAIL] = {
++		.audit_skip		= 1,
++		.iopoll			= 1,
++		.prep			= io_nop_fail_prep,
++		.issue			= io_nop_fail,
++	},
+ 	[IORING_OP_READV] = {
+ 		.needs_file		= 1,
+ 		.unbound_nonreg_file	= 1,
+@@ -506,6 +512,9 @@ const struct io_cold_def io_cold_defs[] = {
+ 	[IORING_OP_NOP] = {
+ 		.name			= "NOP",
+ 	},
++	[IORING_OP_NOP_FAIL] = {
++		.name			= "NOP_FAIL",
++	},
+ 	[IORING_OP_READV] = {
+ 		.name			= "READV",
+ 		.cleanup		= io_readv_writev_cleanup,
+-- 
+2.44.0
 
- -1 (EBADF): 'fd1' is not a valid file descriptor
- -1 (EINVAL): old kernel that doesn't support F_DUPFD_QUERY
- 0: fd2 does not refer to the same file as fd1
- 1: fd2 is the same 'struct file' as fd1
-
-and it might be worth noting a couple of things here:
-
- (a) fd2 being an invalid file descriptor does not cause EBADF, it
-just causes "does not match".
-
- (b) we *could* use more bits for more equality
-
-IOW, it would possibly make sense to extend the 0/1 result to be
-
-- bit #0: same file pointer
-- bit #1: same path
-- bit #2: same dentry
-- bit #3: same inode
-
-which are all different levels of "sameness".
-
-Does anybody care? Do we want to extend on this "sameness"? I'm not
-convinced, but it might be a good idea to document this as a possibly
-future extension, ie *if* what you care about is "same file pointer",
-maybe you should make sure to only look at bit #0.
-
-               Linus
 

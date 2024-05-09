@@ -1,127 +1,125 @@
-Return-Path: <io-uring+bounces-1840-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1841-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC9778C0EEC
-	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 13:39:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA4C8C10C3
+	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 16:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64BE1B2117A
-	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 11:39:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781F2282D5F
+	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 14:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FE313172D;
-	Thu,  9 May 2024 11:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBAD315B57A;
+	Thu,  9 May 2024 14:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6oJLrKg"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="00VbKfdj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2FE13172A;
-	Thu,  9 May 2024 11:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0671215B556
+	for <io-uring@vger.kernel.org>; Thu,  9 May 2024 14:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715254740; cv=none; b=uYETSHc9rDQvRAGBPG/o40TiMZYqmgct1PPk0rHL8Rt8YRWH04ega2ewlHAv38r0ytSpKFTrRnOORkBt5uEQNwFQoqeLCseZR35x91mmUTmDpNziPXkD8LKtyu9UKVzStRvm/QtEtYd0EiReaHQfn4MaOkpbz7VELXJfKYx32sM=
+	t=1715263355; cv=none; b=VNg5qx+fU2qWwjwy/99ZTkuzjisQsFarwjje3cROjzBzfV9glucNIrzSKd8oC+w/+qGYoLCpJdtTmzRwncpTl2CBFkH35GWEe8KrG8scZDWAziRs0m8IUL7K4eYn80bcqpQUuy4b6DuiC57DWtDcIiMXavxIry3dqhDhdiBd9S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715254740; c=relaxed/simple;
-	bh=ziw08gHcd8mjdUarjJlC5MxDSSrwq+SNZaIBS6tHOrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ffRKvGTVlcCsQiihZM2sSUHmCNytRGVi39D9cO/+PgivZBPyhFawMCEvcPSLiEX4bsi0ARjGRa+SaNhDH/ztQLOpXOJxzdSz4mKuYft2TidT8VQnZjWLOHZXXQX1vRXYIrZTK17Qp4Z2QRjlh7rzcfoR9RpIfeqT+lerMLK1D4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6oJLrKg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E980C116B1;
-	Thu,  9 May 2024 11:38:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715254740;
-	bh=ziw08gHcd8mjdUarjJlC5MxDSSrwq+SNZaIBS6tHOrk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b6oJLrKgWptVKfS1b1DJld2kF473qcRQlYA9NcglxVQ3muP9XFveN76SPmN4h0W/q
-	 NtuRMy302BNatpVrMjzy+J4i2PGajKdd8X7yLnVS5aPgyB9cB3k2SQlym7AmJBtxVJ
-	 KwZKFNH1145vKFZGaBVPfwBsQtQqbJPwX0vrIbL1M6b9L/9vg3XpgjB5Ecpu6Wn0qs
-	 n5S+yKpK5ZdFiq8Ms5VkVDikYeWo+2/jla9RqHZA9C3ODKbkhq6tc8y2/ZU9HpzQBU
-	 MAP4RUarW1r2oACdn0WMre9CPv0H5pS1yjNETR0xZt45kIBnasjBrwt5ML1ySGfTnS
-	 S7pDSxU6Dq/eA==
-Date: Thu, 9 May 2024 13:38:52 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Simon Ser <contact@emersion.fr>, 
-	Pekka Paalanen <pekka.paalanen@collabora.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
- about file lifetimes
-Message-ID: <20240509-kutschieren-tacker-c3968b8d3853@brauner>
-References: <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
- <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
- <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
- <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
- <CAHk-=wjmC+coFdA_k6_JODD8_bvad=H4pn4yGREqOTm+eMB+rg@mail.gmail.com>
+	s=arc-20240116; t=1715263355; c=relaxed/simple;
+	bh=J/4CoO/cE3YT4ZlZcc9PLOaC0qzwXov0buB2ChLQI50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EPnxTd+6OaOh2A7um/uDuC9UOQkSmoqOYXPLPJykkssmRk4xvXsRAAX8d8HMytjWZzzNlbZkDceEOqWBqgGTVLDWdDOm+bCsDgr+pOnkZ2RYXg4xk6bTasnStA8sj3VtdrbS9Hbq+cnLANkAy3Jnwb+Vb8pvdC7Z9T1iTXDTblM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=00VbKfdj; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-36c86ad15caso885425ab.2
+        for <io-uring@vger.kernel.org>; Thu, 09 May 2024 07:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715263352; x=1715868152; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Jk6Y3LPp6pG1saX8FdM1yjsulHIvf5O8mkhAYY5EMoQ=;
+        b=00VbKfdjceAJ+IjFiBVbZ4w4zDj2/bYpl1jLG39iguEFVJuK4DA4SlRWXv8CWH1YMC
+         JdU9hR6cgxHIXtFsAA18flUVopMSYbVCv+vlQt0ax/yRWUulDQfsWXfDfAZdwPHLLrlq
+         FkOwQOZnua/0DWu7WDDFru2IQMH5ML0XE9HQ1KiftCorjSbnPX5eKKCq3/Tgn7GcqNt7
+         f6E/LeA0pZR2kikHSa9Y/End9SeLBbhHx1bUlxUf1XFPr+HpoUJCgyz9a2xrMN7CAa6n
+         P5JjSCteYdZK60fsBlRc511tC15Xz5jDqKpCcWMdOnsei97cYf1W+vFfMggBRZjaOmjB
+         mRIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715263352; x=1715868152;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jk6Y3LPp6pG1saX8FdM1yjsulHIvf5O8mkhAYY5EMoQ=;
+        b=hOeYjA7qik8lvVAoW7U8V8buhJT+1+QelF1Nu7VRFtf4Gbu6caHli7ML9sWAl+LC9r
+         bgtelqbih7iniEYuNRpdCec6zA6E8dlMIJR48i7fxie+WNCKnJwk/6cDauzk5DARSwal
+         mbnRKO3JWd9SvaESUI2orXAS2rODUpIM2ioHltu8LQr0xd+j8rr18GqWAwZ09c7I1pkB
+         NVKJfWNubdKnf/mELPhiEC5RsqHyewCNlwJQ3/oT5p6QcK+p0Fwf+nrq6RJvQBuDEUVz
+         989d0fqzF96XY+CKnhtWY9Lh5MBwdT+YsvX6JbZqxGqOiiq9tVDjrRHjhgBUkhpM+xZr
+         Fmrg==
+X-Gm-Message-State: AOJu0YzRQ7EFNwFlaLf+iz+kbIPUYOCQErEn6VRqLTQA6CK1EeghMvhk
+	Y+hlujyUic2gAZEWZPvRFOYqpmFP5QTbGWhranZC+xxfYgal5KXFagGWA++gwj8=
+X-Google-Smtp-Source: AGHT+IFP0Ehth61IwqAU/CIMreYMy+dvJlAKgsbeyUjqY1TMkpjfEKLaRO3DGoaS+vvAoip79Q0Xyw==
+X-Received: by 2002:a5e:c247:0:b0:7de:f48e:36c3 with SMTP id ca18e2360f4ac-7e18fbcfea1mr596995539f.0.1715263351962;
+        Thu, 09 May 2024 07:02:31 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376dcbfasm369193173.132.2024.05.09.07.02.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 07:02:31 -0700 (PDT)
+Message-ID: <bc1750a4-10a4-463c-b5d1-600b385525f1@kernel.dk>
+Date: Thu, 9 May 2024 08:02:30 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjmC+coFdA_k6_JODD8_bvad=H4pn4yGREqOTm+eMB+rg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: add IORING_OP_NOP_FAIL
+To: Ming Lei <ming.lei@redhat.com>
+Cc: io-uring@vger.kernel.org
+References: <20240509023413.4124075-1-ming.lei@redhat.com>
+ <1f411b88-f597-40b0-b4c9-257b029d3c9e@kernel.dk> <Zjw9jIHtan4FAc9D@fedora>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Zjw9jIHtan4FAc9D@fedora>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 08, 2024 at 10:14:44AM -0700, Linus Torvalds wrote:
-> On Wed, 8 May 2024 at 09:19, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > So since we already have two versions of F_DUPFD (the other being
-> > F_DUPFD_CLOEXEC) I decided that the best thing to do is to just extend
-> > on that existing naming pattern, and called it F_DUPFD_QUERY instead.
-> >
-> > I'm not married to the name, so if somebody hates it, feel free to
-> > argue otherwise.
+On 5/8/24 9:05 PM, Ming Lei wrote:
+> On Wed, May 08, 2024 at 08:55:09PM -0600, Jens Axboe wrote:
+>> On 5/8/24 8:34 PM, Ming Lei wrote:
+>>> Add IORING_OP_NOP_FAIL so that it is easy to inject failure from
+>>> userspace.
+>>>
+>>> Like IORING_OP_NOP, the main use case is test, and it is very helpful
+>>> for covering failure handling code in io_uring core change.
+>>
+>> Rather than use a new opcode for this, why don't we just add it to
+>> the existing NOP? I know we don't check for flags in currently, so
+>> you would not know if it worked, but we could add that and just
+>> backport that one-liner as well.
 > 
-> Side note: with this patch, doing
-> 
->    ret = fcntl(fd1, F_DUPFD_QUERY, fd2);
-> 
-> will result in:
-> 
->  -1 (EBADF): 'fd1' is not a valid file descriptor
->  -1 (EINVAL): old kernel that doesn't support F_DUPFD_QUERY
->  0: fd2 does not refer to the same file as fd1
->  1: fd2 is the same 'struct file' as fd1
-> 
-> and it might be worth noting a couple of things here:
-> 
->  (a) fd2 being an invalid file descriptor does not cause EBADF, it
-> just causes "does not match".
-> 
->  (b) we *could* use more bits for more equality
-> 
-> IOW, it would possibly make sense to extend the 0/1 result to be
-> 
-> - bit #0: same file pointer
-> - bit #1: same path
-> - bit #2: same dentry
-> - bit #3: same inode
-> 
-> which are all different levels of "sameness".
+> Yeah, it is just for avoiding to break existed tests which may not build
+> over liburing.
 
-Not worth it without someone explaining in detail why imho. First pass
-should be to try and replace kcmp() in scenarios where it's obviously
-not needed or overkill.
+Don't think that's a huge risk, if someone is using the raw interface
+and just not clearing, they would run into issues with mixed command
+usage anyway. And a pure nop test would be fine anyway, as everything
+starts out cleared.
 
-I've added a CLASS(fd_raw) in a preliminary patch since we'll need that
-anyway which means that your comparison patch becomes even simpler imho.
-I've also added a selftest patch:
+> I will switch to this way, looks one-line backporting can solve it.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.misc
+Exactly, thanks!
 
-?
+>> And if we had such a flag, the fail res could be passed in as well.
+> 
+> We can just pass the 'injected_fail_res' via sqe->len, meantime keep
+> 'nop_flags' for error injection and future extension.
+
+Precisely.
+
+-- 
+Jens Axboe
+
 

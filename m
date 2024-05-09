@@ -1,132 +1,158 @@
-Return-Path: <io-uring+bounces-1842-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1843-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEFA68C1234
-	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 17:48:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE3D8C1475
+	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 20:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0CF41C21252
-	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 15:48:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A4AB219CF
+	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 18:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C0216F824;
-	Thu,  9 May 2024 15:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD857770FF;
+	Thu,  9 May 2024 18:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FKLtlobq"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dVBrBlMx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA2E16F0F9
-	for <io-uring@vger.kernel.org>; Thu,  9 May 2024 15:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E6C74BED
+	for <io-uring@vger.kernel.org>; Thu,  9 May 2024 18:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715269721; cv=none; b=J8ApmU8Ln1Ml9llif0GRNYi/DBbgsZORvqrL4AYlL8ZZZ/sw7CI34shr2vgkqPfVDdNKF04YbVvw8Ibo2qJxsieL/8yBcmsJd1u9ZZduDtWlbzZ6zBn6fBQ4DBzSgLN2Te4WARIJKOYaaIt8eckLaJO2pSbfFmg0xflhDhHiuR8=
+	t=1715277993; cv=none; b=FXx9sKx9fZokXb6CIVDCmBJ67r/XQJ/gYMMvYH7Bvcj1rpTfBpqcCLf/Z5QqZuuJQTlaN94eYdpB945y9TQAxtQsow5Mi6/24JBDZwIFpdXtFE8TEJ7/yd4Qk2ex9bcVJwUTENOIXsqFgr+RH/DPVxQM6hmEXDidjUiLzy4nPsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715269721; c=relaxed/simple;
-	bh=mA/fCF0Hyf2s0C0NAXcut1RdJ0/A1Vl70kRKZc0yNVY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dcvKXfal2AzqVmtk7lVbKEdJXi5br7uF7JpAxBCHdGe6x95RbiAE5MQYJRZg1qkxAWntblYMM9HLQunRJGwtNagG9EkZ+VeHCmBnbQgjWmpF2se52L6Z6yVvDlpc6djDrK/v/Wy0mVW7iQNyRqtwvBgL6Cxktzr8bH0MDm1nnpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FKLtlobq; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a609dd3fso181314566b.0
-        for <io-uring@vger.kernel.org>; Thu, 09 May 2024 08:48:39 -0700 (PDT)
+	s=arc-20240116; t=1715277993; c=relaxed/simple;
+	bh=nJvf0+19Ak6nMFO86nEpkL3u66B7rYi6FXxb2XlHaao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OnyEumzHwqxx6enT194Gvf5q/jDcgdvgdSw/emrLTFOTdgHg1NihE2w2t5b/1J75VA3naLHDG7vE2bqkxK2CS7rcv06CA6OXXtbJ1eP5k8NPoMtYaLsUs9n97pEqJgCCLaxr/01OjULYosbG8X4NbON0dcm1SHCq15FJEk778ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dVBrBlMx; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7e18fe3164eso9758639f.2
+        for <io-uring@vger.kernel.org>; Thu, 09 May 2024 11:06:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715269718; x=1715874518; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=38BuvpIpkB3oaxq+zw4VsWBKcS3P81IEjFcYuWVYCpU=;
-        b=FKLtlobq4c6hJOYoFGwAOWHfvoVBC1mWG916sFHcipx/7mLXaSKcHIKMpEFA9F06In
-         JE5Rz3OadyS6/dUEr5bGb91Xfqgn5TZlShcu9qkb9y3zlOezbiC3z4YXBJ/vCrRxmZ6E
-         RNui+TVxmHxWodFoZX3cCZcChPXt7pFjcPnfI=
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715277990; x=1715882790; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VuaEukQr5J4tL+gRi+BGlLSodzKp68yXFmo7ZSi6OlQ=;
+        b=dVBrBlMxIfqzqYKy+8TEMlw8Dn8xKwX1nMAggEsR3C8S0MowieY/yiQp7Xefmu95Lb
+         98ZbwJr88ZgMeMdFGshcjb+hplSpBPY1qW8pe2QNf3ijgSz9yhmsTkrharFJcTtwZTBf
+         vBo3hDaeAMC0IaDySp24hQpZNw+b/oKhFEWVKebSRUUPEz2M2SyeJpkPDYNn1HylppzG
+         bh6uhSvcKpzZUgokNelbnQSS6ns50KohOLKhCY+h6/Az4OA0f/7dLX2rGR9j89uta58h
+         uGqPLN14yimIfzxn7/uuYmbxrLSTe5U7IhLlG67T62hGyFzkEBq9JZfN2WcOSp1ElkBR
+         Euhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715269718; x=1715874518;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1715277990; x=1715882790;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=38BuvpIpkB3oaxq+zw4VsWBKcS3P81IEjFcYuWVYCpU=;
-        b=i7QrRItfDvBq3BhBFB2GFVkfyEcdFSSOAkDu5NqwoLI0sWVZuW/T3p+J96uPMloC5W
-         16fu5ukLa+Nl4RMOnzjKy6XhJLQy6HvWDdLm+g8Icea/2/jBTEZEfaVeiQsFHT2O5Em8
-         ID8HZz0L/QupSmJz2sHG9A/xrgofz2NVU8SAec35EAimXb4Rcibp35IqEzcAidw27YbJ
-         iAz5+gtVWj1luNZ4OgewI1BSVSejG6n2uKrRYsHXgBHZIuHxsRKrTTh4J8A0kp+P4FcY
-         hLZhwz2/+OEHssAvl0cvMIT0+Mqqom+muEGRDEF4a5Ldoy0TfYtp8DFPDiIjVKXkpyKL
-         d4Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfnG6qXh+UN/PoiWyMyJ4pr88EIfPLTOoT8AJ70cQ3vjIavjqz3elM/nc1axScojDJ8kuWZHFsoWMa8IAUA4JzxxivxspTpkY=
-X-Gm-Message-State: AOJu0Yy/LsPE59tXR9NKhTNR/jwXX8K8TL8BnygyIx/yzTuCvV9y2wFo
-	3mo7SwAiG2EzVXPop013M79CWZqJUO8N2ZYDh+Laf1YVTN5PUqJsWDR59HqT+GhifA13B6x0JaS
-	/Q7BLzw==
-X-Google-Smtp-Source: AGHT+IFF1dxpdWghkEvfiXgVD/7VDmSsH1NvR0XZ0HYXCJ0PfFVCVtj5Vr6/Q2tk0C+lqEuuVBRRuw==
-X-Received: by 2002:a17:907:86a9:b0:a5a:24ab:f5e with SMTP id a640c23a62f3a-a5a2d27d8bcmr5853966b.25.1715269717915;
-        Thu, 09 May 2024 08:48:37 -0700 (PDT)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d5f9sm87870266b.17.2024.05.09.08.48.36
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 08:48:37 -0700 (PDT)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-573137ba8d7so3958436a12.0
-        for <io-uring@vger.kernel.org>; Thu, 09 May 2024 08:48:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXX+mOT8QUvVeCMxV32Z9ddZw00JVQKRGojJcX0mqXYIQbxgbW0mp2rQs+yob0OA5jHVXizcmE5i9IIyJc2+CXKaKggoe7cF8M=
-X-Received: by 2002:a17:906:19d0:b0:a59:fb06:5d35 with SMTP id
- a640c23a62f3a-a5a1156665fmr240732966b.8.1715269716628; Thu, 09 May 2024
- 08:48:36 -0700 (PDT)
+        bh=VuaEukQr5J4tL+gRi+BGlLSodzKp68yXFmo7ZSi6OlQ=;
+        b=jn7OYt7YU1D1L0gqXtCP9ai7UdDZp8wIV5FzNOdDg753B25GWh8vizMp8i8GdJGRg7
+         eVZdBtgPAAsOi84QGyFo1MJIHK6//2bQFw9KB3xuH2ivPTgdGeDtdKNLjDiVhKagk1p5
+         xa6eQoVPSiFCgRCrzoOp2u4qERO/uXCFHzgsZMQbsvqL8wt2/YdOfAX+85e1SDUVHZYf
+         xdh91l9tnYB7c2jKYXfHgwkRdo6BQWLBNYeq3EJz1fcmh4tAvQjcoc+l7KNLytL9tD8L
+         t8L+FXRZlRsNWruJeyoEVjkTHDOkJkp5vPqMo0IyGycBXGQQTmzgptNqziXKcHmrMScR
+         rR2w==
+X-Gm-Message-State: AOJu0YxHWD3DrxKoEK4h1mD//Keaq9iv2qmW9k/m7NR/kjbXm80B4tZ5
+	p5GY5CnyQshtN/melD0KenaAZ+F2bLWCV+mcjHWGXowePeA4SayHCyACBdjOJbaAx1c1lLJ89UR
+	r
+X-Google-Smtp-Source: AGHT+IGlgkx997Vi/uU0WCbQDYcHNPDaGv6PRCSt8JvQCfR93Xc8AcpWOapgSvjFHzDeEcG2Y2vj0g==
+X-Received: by 2002:a6b:d203:0:b0:7de:e04b:42c3 with SMTP id ca18e2360f4ac-7e1b5022577mr62443939f.0.1715277989657;
+        Thu, 09 May 2024 11:06:29 -0700 (PDT)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7e1b23ab4f6sm19468739f.50.2024.05.09.11.06.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 11:06:29 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: kuba@kernel.org
+Subject: [PATCHSET RFC 0/4] Propagate back queue status on accept
+Date: Thu,  9 May 2024 12:00:25 -0600
+Message-ID: <20240509180627.204155-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
- <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
- <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
- <CAHk-=wjmC+coFdA_k6_JODD8_bvad=H4pn4yGREqOTm+eMB+rg@mail.gmail.com> <20240509-kutschieren-tacker-c3968b8d3853@brauner>
-In-Reply-To: <20240509-kutschieren-tacker-c3968b8d3853@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 9 May 2024 08:48:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgKdWwdVUvjSNLL-ne9ezQN=BrwN34Kq38_=9yF8c03uA@mail.gmail.com>
-Message-ID: <CAHk-=wgKdWwdVUvjSNLL-ne9ezQN=BrwN34Kq38_=9yF8c03uA@mail.gmail.com>
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
- file lifetimes
-To: Christian Brauner <brauner@kernel.org>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Simon Ser <contact@emersion.fr>, 
-	Pekka Paalanen <pekka.paalanen@collabora.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, 
-	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
-	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 9 May 2024 at 04:39, Christian Brauner <brauner@kernel.org> wrote:
->
-> Not worth it without someone explaining in detail why imho. First pass
-> should be to try and replace kcmp() in scenarios where it's obviously
-> not needed or overkill.
+Hi,
 
-Ack.
+With io_uring, one thing we can do is tell userspace whether or not
+there's more data left in a socket after a receive is done. This is
+useful for applications to now, and it also helps make multishot receive
+requests more efficient by eliminating that last failed retry when the
+socket has no more data left. This is propagated by setting the
+IORING_CQE_F_SOCK_NONEMPTY flag, and is driven by setting
+msghdr->msg_get_inq and having the protocol fill out msghdr->msg_inq in
+that case.
 
-> I've added a CLASS(fd_raw) in a preliminary patch since we'll need that
-> anyway which means that your comparison patch becomes even simpler imho.
-> I've also added a selftest patch:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.misc
+For accept, there's a similar issue in that we'd like to know if there
+are more connections to accept after the current one has been accepted.
+Both because we can tell userspace about it, but also to drive multishot
+accept retries more efficiently, similar to recv/recvmsg.
 
-LGTM.
+This series starts by changing the proto/proto_ops accept prototypes
+to eliminate flags/errp/kern and replace it with a structure that
+encompasses all of them.
 
-Maybe worth adding an explicit test for "open same file, but two
-separate opens, F_DUPFD_QUERY returns 0? Just to clarify the "it's not
-testing the file on the filesystem for equality, but the file pointer
-itself".
+Then patch 2 changes do_accept(), which io_uring uses, to take that
+as well.
 
-             Linus
+Patch 3 finally adds the basic is_empty argument to the struct,
+and fills it in for TCP.
+
+And finally patch 4 adds support for this in io_uring.
+
+Comments welcome! Patchset is against current -git, with the io_uring
+and net-next changes for 6.10 merged in. Branch can be found here:
+
+https://git.kernel.dk/cgit/linux/log/?h=net-accept-more
+
+ crypto/af_alg.c                    | 11 ++++++-----
+ crypto/algif_hash.c                | 10 +++++-----
+ drivers/xen/pvcalls-back.c         |  6 +++++-
+ fs/ocfs2/cluster/tcp.c             |  5 ++++-
+ include/crypto/if_alg.h            |  3 ++-
+ include/linux/net.h                |  4 +++-
+ include/linux/socket.h             |  3 ++-
+ include/net/inet_common.h          |  4 ++--
+ include/net/inet_connection_sock.h |  2 +-
+ include/net/sock.h                 | 13 ++++++++++---
+ io_uring/net.c                     | 26 ++++++++++++++++++++------
+ net/atm/svc.c                      |  8 ++++----
+ net/ax25/af_ax25.c                 |  6 +++---
+ net/bluetooth/iso.c                |  4 ++--
+ net/bluetooth/l2cap_sock.c         |  4 ++--
+ net/bluetooth/rfcomm/sock.c        |  6 +++---
+ net/bluetooth/sco.c                |  4 ++--
+ net/core/sock.c                    |  4 ++--
+ net/ipv4/af_inet.c                 | 10 +++++-----
+ net/ipv4/inet_connection_sock.c    |  7 ++++---
+ net/llc/af_llc.c                   |  7 +++----
+ net/mptcp/protocol.c               |  8 ++++----
+ net/netrom/af_netrom.c             |  6 +++---
+ net/nfc/llcp_sock.c                |  4 ++--
+ net/phonet/pep.c                   | 12 ++++++------
+ net/phonet/socket.c                |  7 +++----
+ net/rds/tcp_listen.c               |  6 +++++-
+ net/rose/af_rose.c                 |  6 +++---
+ net/sctp/socket.c                  |  8 ++++----
+ net/smc/af_smc.c                   |  6 +++---
+ net/socket.c                       | 15 ++++++++++-----
+ net/tipc/socket.c                  | 10 ++++------
+ net/unix/af_unix.c                 | 10 +++++-----
+ net/vmw_vsock/af_vsock.c           |  6 +++---
+ net/x25/af_x25.c                   |  4 ++--
+ 35 files changed, 147 insertions(+), 108 deletions(-)
+
+-- 
+Jens Axboe
+
+
 

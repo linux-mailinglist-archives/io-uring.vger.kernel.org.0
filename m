@@ -1,80 +1,81 @@
-Return-Path: <io-uring+bounces-1846-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1847-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B60E8C147A
-	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 20:07:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A688C147D
+	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 20:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467D5281E83
-	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 18:06:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 079041F2120E
+	for <lists+io-uring@lfdr.de>; Thu,  9 May 2024 18:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F64A79DD4;
-	Thu,  9 May 2024 18:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7087D07D;
+	Thu,  9 May 2024 18:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xydpmjmj"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NtGb5EZV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A6577111
-	for <io-uring@vger.kernel.org>; Thu,  9 May 2024 18:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E55F79945
+	for <io-uring@vger.kernel.org>; Thu,  9 May 2024 18:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715277996; cv=none; b=Ckjm0Mts5BoI2/yax4wb55rJ2AaEyS4EoDJWMbq+Od8PTZlz1yKHpPE5pdvpLWgTxgOyk1zmfFzGr6iKKgKwpT0o7zTeRTpQ8SWXB0dFiUE/vdPsuHw2LnJVwzxfjq5jWgeLJQvsB56ED7LlBMJK4OUXH+b/WOAPXSdVJRAnHVQ=
+	t=1715277997; cv=none; b=VdRuk8X5vIl3uzTE1Kd2t/5Sil+LZmWrfFquMmQNwv1HTHzs3X4Nkj9ptmlmSVMTMYKJ9GT7po31dXMjVQ9/6mOMzfPXnuveUhjvrgqK5MJJRhhXYO5LXf6yKjCzOnij7atkldVmxZwaiMtd9P4yc9VhXx2wOUGi1SZBzgm1xAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715277996; c=relaxed/simple;
-	bh=vPmIWHubhu7Zl0d01VwRt7I+baEGbnPcd0yn2/Lwkk0=;
+	s=arc-20240116; t=1715277997; c=relaxed/simple;
+	bh=mI2DXhRy+LzwZaVX3tUqLGuGMOzxYes5GXyAfXEo5t8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dGn9Lo1ceNr+wlQKuefxuSw86QeSblReoNUqL8z8nugJKr+3zqLxa/rf5xw6D877ki1Y/6ws47LFE/SIQ7U8CwXmYN1pSM+mb/CN0nnsYG1rutCj1IBTtvh150cwjpzs6FuYNGOErBVnlUqOCfL2xWcVB5WQkMF0sD23cfRo2Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xydpmjmj; arc=none smtp.client-ip=209.85.166.46
+	 MIME-Version; b=NeDuqydjaKzp0V3TN38R/Tq95wZMXBoawhpk/zTt+yFa7XVZpO2wEWfAueO8l4LwhvStzb6vMlnpFK+z54RD1w9ArhQg8+RrcZEXBO8byR/SPRFQ2RyDOQg5dxlpz+VdeIhisVDiHqwjY8zf5iTfqEs0Z9ekjMzebL+vUiqAnRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NtGb5EZV; arc=none smtp.client-ip=209.85.166.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7d9c78d7f97so9591939f.3
-        for <io-uring@vger.kernel.org>; Thu, 09 May 2024 11:06:34 -0700 (PDT)
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-36c0d2b0fdeso992555ab.1
+        for <io-uring@vger.kernel.org>; Thu, 09 May 2024 11:06:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715277993; x=1715882793; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715277995; x=1715882795; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=woL79JgKr8Y9h00YCvcVbTNbbJLO4CTevYvzKXjXf/4=;
-        b=xydpmjmjO7jcwlN1Bky83EuM+NLjFVRxHg17DTzeLpEvKevgMGi8pjaSMH55dAAFeV
-         AT42FSV4vj3CrzA/j2x3Zqlz+Ye1bAU9YtmdbuN7nQdRKJJm1pvoSl2ls84hmDxn7jFL
-         USer8jM/g+os1B1jIIsXvlC9zQ6paTd4euY+NroljpLR0Ii23usbC/kP66xMrQTTsBKB
-         MoyxcgI5n1oNmlqZv+zxsjVAkk69WdPyBYe9CM+RqF0ZcLSp/phtniOP2bcq+ESv0kdi
-         5f2qVlTqlWjSpQ4IYQBz1BQs2Iz/rGORG6WE/P61T30u1SIuJhjbWzLigspUiUxt08LM
-         6xZg==
+        bh=woNeZ/GAdNm5Q3tFonAdPP3oRXvlWSqAWe77jsuw0ho=;
+        b=NtGb5EZVmL5fgie0+Auiq8h+XqPxweMdqlycDhlZeGqD/UHGbdvXxTdYS58pBpwTO9
+         JaQDrcDj6cWHSWVoQi0/S06vdy+jrv4MOe4FnUeqrz4Uiqgur8R2ssMFLMFU5kpUzipr
+         jxdgAMa2zll4t6VLAnrBRdkKembPGmD6CyD6feehvfOKEF3HU9WagNeGqntLteUR/o8g
+         3A8MROaGbjS0+/PUPDdxCd5s9hE7ueaQlNz7azlwi/4etnf58Bvbdq4Fm6J/pTJVH5YA
+         ZA/oUWcf/iz+3eGocxRRXpHhwQDCrN2UVcVbPrE9sb3pu6AHEZwIOeLD9C5qS+hCMsbC
+         dcYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715277993; x=1715882793;
+        d=1e100.net; s=20230601; t=1715277995; x=1715882795;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=woL79JgKr8Y9h00YCvcVbTNbbJLO4CTevYvzKXjXf/4=;
-        b=J9VtwkOJFPAFBNX3Pvd7gkMObkh6F02vcknxVp5bc3XSSjCupwZaS2brvHv69z/QPN
-         JbdI9XG1zxaucwzTjrVSvYGjJJ4CFRh8toHHdB5VWdg+F2lAFOUm8itxvNSkGzqcdpds
-         W1tZYpJQKivMyLgVpn1Q2g+ORx10/k9xX5rKADV8Qe3ThZzYgqdTWrNRqptEANnLmngb
-         y5IGEVIrn+PS8FfbQzWqp2LpISjpGrf5GbsHvYksmlPyHkE8WUyeq6kIHDo2Nx+4uVKD
-         yT23ZIsm3lSutLDenaCysiFvcboYjy9fXP9pyXdN6XcedTK1WE+c+Y19LEofG6T+x10X
-         Ct/A==
-X-Gm-Message-State: AOJu0Yzmdw2MTXo79l816mS9XH7ub6Md8+mUPYUMHdQKZpf2yWepSJOR
-	1eq/RfekvRWrdPp4I7/Ajk4/2/DIgwvO3lLNQ0Pr2/PvY7X3jwAIxNujPpAzCjv+DEyMhecdLHB
-	U
-X-Google-Smtp-Source: AGHT+IHHk9CMFgrN7YmHE1Q93UOE+0GqmqHF82gJ3R5zu9Sf64SNoxrovkAd+Giu2qp+US10oNOy2A==
-X-Received: by 2002:a6b:d203:0:b0:7de:e04b:42c3 with SMTP id ca18e2360f4ac-7e1b5022577mr62466739f.0.1715277993703;
-        Thu, 09 May 2024 11:06:33 -0700 (PDT)
+        bh=woNeZ/GAdNm5Q3tFonAdPP3oRXvlWSqAWe77jsuw0ho=;
+        b=aWfDCNkcGnh19JTGdx4iBQmjzh8RkGlydwdQMZeXIjNbd0oYR7dAek3HbNKvyLpBft
+         4dv2As7PJqjSLCKXox9yTz64WhjARjpIgk97FTsIx/yO3tPrjviPEOKMItPbMCCusbbZ
+         PWyDpaK97QOjVS+uM9xoqUboqUfdtd22ImHysP/T1oxeCEZmdkz/dmKsbcLKFQl7fFel
+         L2v3S7OPdzfMxEQlCD5gZn75oJMWNVYZ5yRYGSf6K9jJ6CxMIuG5aBHmX/nbPI2gXEiK
+         vgtZ3CfZlMOPzTNbnF7dmqHvQhu+r3KnCdvSvaiXq2XNvBdh86L4VOMazanq61YAlnN/
+         0VQw==
+X-Gm-Message-State: AOJu0Yx0gGtOgPlJGFj6UuipBBc9Wy/7cSQWgfwmEdOkj26zwnGxGvqv
+	7/ZrIWv1BV5cnNu67XqRgJWwKX49m++K6LQ1GsVaAwyxicpe1bYExWiOKJ95n03kaWx8aGDOaQN
+	3
+X-Google-Smtp-Source: AGHT+IGtEFIZoN+P/68u1ejqC1yJS/4MN5eomDTbwrNfqvBRAv/QgjRoJ+mL9ZoMCqL4cSpBBsGo1Q==
+X-Received: by 2002:a5d:8c8e:0:b0:7de:f48e:36c3 with SMTP id ca18e2360f4ac-7e1b500fbb0mr59902339f.0.1715277994988;
+        Thu, 09 May 2024 11:06:34 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7e1b23ab4f6sm19468739f.50.2024.05.09.11.06.32
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7e1b23ab4f6sm19468739f.50.2024.05.09.11.06.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 11:06:32 -0700 (PDT)
+        Thu, 09 May 2024 11:06:34 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org,
 	netdev@vger.kernel.org
 Cc: kuba@kernel.org,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/4] net: pass back whether socket was empty post accept
-Date: Thu,  9 May 2024 12:00:28 -0600
-Message-ID: <20240509180627.204155-4-axboe@kernel.dk>
+	Jens Axboe <axboe@kernel.dk>,
+	Norman Maurer <norman_maurer@apple.com>
+Subject: [PATCH 4/4] io_uring/net: wire up IORING_CQE_F_SOCK_NONEMPTY for accept
+Date: Thu,  9 May 2024 12:00:29 -0600
+Message-ID: <20240509180627.204155-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240509180627.204155-1-axboe@kernel.dk>
 References: <20240509180627.204155-1-axboe@kernel.dk>
@@ -86,48 +87,74 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds an 'is_empty' argument to struct proto_accept_arg, which can
-be used to pass back information on whether or not the given socket has
-more connections to accept post the one just accepted.
+If the given protocol supports passing back whether or not we had more
+pending accept post this one, pass back this information to userspace.
+This is done by setting IORING_CQE_F_SOCK_NONEMPTY in the CQE flags,
+just like we do for recv/recvmsg if there's more data available post
+a receive operation.
 
-To utilize this information, the caller should initialize the 'is_empty'
-field to, eg, -1 and then check for 0/1 after the accept. If the field
-has been set, the caller knows whether there are more pending connections
-or not. If the field remains -1 after the accept call, the protocol
-doesn't support passing back this information.
+We can also use this information to be smarter about multishot retry,
+as we don't need to do a pointless retry if we know for a fact that
+there aren't any more connections to accept.
 
-This patch wires it up for ipv4/6 TCP.
-
+Suggested-by: Norman Maurer <norman_maurer@apple.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/net/sock.h              | 1 +
- net/ipv4/inet_connection_sock.c | 1 +
- 2 files changed, 2 insertions(+)
+ io_uring/net.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/include/net/sock.h b/include/net/sock.h
-index 217079b3e3e8..5f4d0629348f 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -1197,6 +1197,7 @@ static inline void sk_prot_clear_nulls(struct sock *sk, int size)
- struct proto_accept_arg {
- 	int flags;
- 	int err;
-+	int is_empty;
- 	bool kern;
- };
+diff --git a/io_uring/net.c b/io_uring/net.c
+index d4d1fc93635c..0a48596429d9 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -1533,6 +1533,7 @@ int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+ 		.flags = force_nonblock ? O_NONBLOCK : 0,
+ 	};
+ 	struct file *file;
++	unsigned cflags;
+ 	int ret, fd;
  
-diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
-index 7734d189c66b..d81f74ce0f02 100644
---- a/net/ipv4/inet_connection_sock.c
-+++ b/net/ipv4/inet_connection_sock.c
-@@ -692,6 +692,7 @@ struct sock *inet_csk_accept(struct sock *sk, struct proto_accept_arg *arg)
- 			goto out_err;
+ 	if (!(req->flags & REQ_F_POLLED) &&
+@@ -1545,6 +1546,8 @@ int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+ 		if (unlikely(fd < 0))
+ 			return fd;
  	}
- 	req = reqsk_queue_remove(queue, sk);
-+	arg->is_empty = reqsk_queue_empty(queue);
- 	newsk = req->sk;
++	arg.err = 0;
++	arg.is_empty = -1;
+ 	file = do_accept(req->file, &arg, accept->addr, accept->addr_len,
+ 			 accept->flags);
+ 	if (IS_ERR(file)) {
+@@ -1573,17 +1576,26 @@ int io_accept(struct io_kiocb *req, unsigned int issue_flags)
+ 						accept->file_slot);
+ 	}
  
- 	if (sk->sk_protocol == IPPROTO_TCP &&
++	cflags = 0;
++	if (!arg.is_empty)
++		cflags |= IORING_CQE_F_SOCK_NONEMPTY;
++
+ 	if (!(req->flags & REQ_F_APOLL_MULTISHOT)) {
+-		io_req_set_res(req, ret, 0);
++		io_req_set_res(req, ret, cflags);
+ 		return IOU_OK;
+ 	}
+ 
+ 	if (ret < 0)
+ 		return ret;
+-	if (io_req_post_cqe(req, ret, IORING_CQE_F_MORE))
+-		goto retry;
++	if (io_req_post_cqe(req, ret, cflags | IORING_CQE_F_MORE)) {
++		if (cflags & IORING_CQE_F_SOCK_NONEMPTY || arg.is_empty == -1)
++			goto retry;
++		if (issue_flags & IO_URING_F_MULTISHOT)
++			return IOU_ISSUE_SKIP_COMPLETE;
++		return -EAGAIN;
++	}
+ 
+-	io_req_set_res(req, ret, 0);
++	io_req_set_res(req, ret, cflags);
+ 	return IOU_STOP_MULTISHOT;
+ }
+ 
 -- 
 2.43.0
 

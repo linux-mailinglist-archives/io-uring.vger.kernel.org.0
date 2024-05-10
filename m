@@ -1,113 +1,138 @@
-Return-Path: <io-uring+bounces-1856-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1857-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463238C2515
-	for <lists+io-uring@lfdr.de>; Fri, 10 May 2024 14:50:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 057D68C263C
+	for <lists+io-uring@lfdr.de>; Fri, 10 May 2024 16:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1DB8285DAE
-	for <lists+io-uring@lfdr.de>; Fri, 10 May 2024 12:50:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F792842DE
+	for <lists+io-uring@lfdr.de>; Fri, 10 May 2024 14:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4E13FB87;
-	Fri, 10 May 2024 12:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765D312C7FB;
+	Fri, 10 May 2024 14:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="INb+Ccmg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VAGoeDeO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EEC7BB17
-	for <io-uring@vger.kernel.org>; Fri, 10 May 2024 12:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CC712C7E8
+	for <io-uring@vger.kernel.org>; Fri, 10 May 2024 14:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715345425; cv=none; b=QcMSGkG6/SFXktSPJNgtakiwPOOt6cz/XhcNbsRUPGUMlSpyR4M3KenL+6g5rnwCUgh6aY9AOoc100JwOmSr6GiOrgNecKNuQz4AOk3pJG45Qw+j/pERhhqT0Mu08HXVx0MJ5ve+BCyE0Pjv/j+OrWSzlL9PbcRPk998BsE8/OA=
+	t=1715349744; cv=none; b=teexzT7pA0Dfws78Bysed6eduWsKCTN41cFFRD2Yr2jfet4r+2c1GwTeyFoq9X9k863fERyHqa5VBSrBC+hnVWJ3AxvCspYrQtmDhKBzBbYWd3pOUeZMfnqy0t2+8O2AKSxDmIG/xhk+nMmd/DP6oXXHt1tCpIzkcPwCeZkJHZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715345425; c=relaxed/simple;
-	bh=PP0KcKNoIJ5NCoNdtR20RN/tQQdYE5yYaNNti4GdALQ=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LPVcIJjTIYaJIWS6/DJvrrma1WqRwynb0m4qM95TnuuIi99A8q+K9FoB7EuklPyK3epsFZVRglDPO727j3u6lIYs0qEs0ow+TQGRTTP7M1jVU1bCYzdbO7lOgZ9N2TxPyVZ7x7wp4jB4OruzuIC5p5ZA1nzBc4mGJfIlvGWPB88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=INb+Ccmg; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2b6215bcd03so537892a91.1
-        for <io-uring@vger.kernel.org>; Fri, 10 May 2024 05:50:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715345422; x=1715950222; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R00U+8EtvjIQ03TgPDpl2lGC7lwhUTTq2NMFtkLe+G8=;
-        b=INb+CcmgGr7Q2eXXi+QzL1d6jR9z1Jp5BN4vzTGenQ0tmCcwBPmKCTUpR9SmYlt63g
-         3b2g07C9DJ8oMP2OU42ddftykdYHpJI5zBpe6vNkhLV8XxuwiYyklj3fCcw2D0ulBo6R
-         b5JBQYJLeMP5IUc9BxJnNI9nGmNs0bJpiImX8sXaLEYHq1m7OA3GG7xguos33JhfAYPg
-         t+Yl8HwUoIFlULO+sxVV/OuWnha/0imvlf04Iur9omy1ThvFHv4DgTk9s8/uRd9QDHUI
-         FQgMt6tyglEqTr+nC4NgqPemSQslI1xcOH1926CTtl0zoyNm/n1fT4UXg9Y5/KrFYXCn
-         9f7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715345422; x=1715950222;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R00U+8EtvjIQ03TgPDpl2lGC7lwhUTTq2NMFtkLe+G8=;
-        b=QzTDrEw5XYSEgSfxVAItsblisl+k7a7bHwwrBnvY2ScSjaG4KSE3PskVe4cYvtFwPc
-         Px8h8nXwCDVPREOTO3Z8qHNXQ4XmniYMVD/tnXa+vSzqZPKmQCfF8Fnz3IS6wtRCB1js
-         TjEkMunK/WUlhTanmFIuWqV5uH9JYBZmYpzIJvAIRAX31iQCuYAGGHhba+sYtn4icZ08
-         GJGr7Qx+4YxakrQlUwzp88xpNmrrnjbimqv50J1Q0OWJ1UMMa1ONSg/6HfDLvZI7khp3
-         W2+NYsrbCnGuU1p6RD8DZBPaQqMLrWYJiedCpUpaVxJsN6/RH5H8Ldv2xcjHP9KDzbsO
-         9EhQ==
-X-Gm-Message-State: AOJu0YxbRT7S5jdSW+3oqippoZw2mZyg+Kc2ONI/RmkuxADN0M2Yhfdc
-	/FTszLlFizYCl6HO7ecYQI7bIOpcan0D8MFo8U/dYLTL0Jceh9XB937fTz+JGVU=
-X-Google-Smtp-Source: AGHT+IExnUVeU+lG2zPrcaefU+kzVp56I2T8Ax7QAE/PzJQX2uzOElrby2CXAiVewN6Wr1yl524eFA==
-X-Received: by 2002:a05:6a20:3c87:b0:1af:d057:af9d with SMTP id adf61e73a8af0-1afde23034amr2989153637.4.1715345422485;
-        Fri, 10 May 2024 05:50:22 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a666f9sm2861677b3a.21.2024.05.10.05.50.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 05:50:21 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
-In-Reply-To: <20240510035031.78874-1-ming.lei@redhat.com>
-References: <20240510035031.78874-1-ming.lei@redhat.com>
-Subject: Re: [PATCH V2 0/2] io_uring: support to inject result for NOP
-Message-Id: <171534542167.317865.8875772583199413242.b4-ty@kernel.dk>
-Date: Fri, 10 May 2024 06:50:21 -0600
+	s=arc-20240116; t=1715349744; c=relaxed/simple;
+	bh=qNrQblarQm/eAKeHXbimZo9JwH2CpESovcKUE0JuP/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i7w9ORFJbI/lTOti6ScZNoBapjehrVWNU+tl6s7PlgirzPdbOoAjvJN5G9gp7x7UKZJ5NC27OwjpMHV4rf4/uD4qbOGPeMnnUtq8XttjnsKC0L9DsK1GbB4QGH5kYZ6tUIcSHAFvaeslYuYEKJP3a5tLqH2SmvaAXy35kBirpuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VAGoeDeO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715349741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D1dqZxcbBRaFgQ3CYFJI1laffgSrUenXWyya9D4bc6s=;
+	b=VAGoeDeOqUa9mouhuA4QKh+LfXPPdJnVk2+G+zvhGHsq0mZGJGBaUmqXhZtDTVScYIhmoQ
+	3CzvhuPwiJgCVTdRRSFRtr8IaHlR9ZXXZgz7Nttg1dDdBlgyuRUmRXLs0Wyv2OhNTukAfl
+	8n+GBerCvqld29B/Yz7el8QX4ANEEcE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-112-_mDPlR_MNkaHfJKcasvu6w-1; Fri, 10 May 2024 10:02:19 -0400
+X-MC-Unique: _mDPlR_MNkaHfJKcasvu6w-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3BD578016FA;
+	Fri, 10 May 2024 14:02:19 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.93])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 2A1641D6946B;
+	Fri, 10 May 2024 14:02:15 +0000 (UTC)
+Date: Fri, 10 May 2024 22:02:12 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+	Kevin Wolf <kwolf@redhat.com>
+Subject: Re: [RFC PATCH V2 0/9] io_uring: support sqe group and provide group
+ kbuf
+Message-ID: <Zj4o5LjuLo6fGeDd@fedora>
+References: <20240506162251.3853781-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240506162251.3853781-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-
-On Fri, 10 May 2024 11:50:26 +0800, Ming Lei wrote:
-> The two patches add nop_flags for supporting to inject result on NOP.
+On Tue, May 07, 2024 at 12:22:36AM +0800, Ming Lei wrote:
+> Hello,
+> 
+> The 1st 4 patches are cleanup, and prepare for adding sqe group.
+> 
+> The 5th patch supports generic sqe group which is like link chain, but
+> allows each sqe in group to be issued in parallel, so N:M dependency can be
+> supported with sqe group & io link together.
+> 
+> The 6th patch supports one variant of sqe group: allow members to depend
+> on group leader, so that kernel resource lifetime can be aligned with
+> group leader or group, then any kernel resource can be shared in this
+> sqe group, and can be used in generic device zero copy.
+> 
+> The 7th & 8th patches supports providing sqe group buffer via the sqe
+> group variant.
+> 
+> The 9th patch supports ublk zero copy based on io_uring providing sqe
+> group buffer.
+> 
+> Tests:
+> 
+> 1) pass liburing test
+> - make runtests
+> 
+> 2) write/pass two sqe group test cases:
+> 
+> https://github.com/axboe/liburing/compare/master...ming1:liburing:sqe_group_v2
+> 
+> covers related sqe flags combination and linking groups, both nop and
+> one multi-destination file copy.
+> 
+> 3) ublksrv zero copy:
+> 
+> ublksrv userspace implements zero copy by sqe group & provide group
+> kbuf:
+> 
+> 	git clone https://github.com/ublk-org/ublksrv.git -b group-provide-buf_v2
+> 	make test T=loop/009:nbd/061:nbd/062	#ublk zc tests
+> 
+> When running 64KB block size test on ublk-loop('ublk add -t loop --buffered_io -f $backing'),
+> it is observed that perf can be doubled.
+> 
+> Any comments are welcome!
 > 
 > V2:
-> 	- add patch1 for backport, suggested by Jens
-> 
-> 
-> Ming Lei (2):
->   io_uring: fail NOP if non-zero op flags is passed in
->   io_uring: support to inject result for NOP
-> 
-> [...]
+> 	- add generic sqe group, suggested by Kevin Wolf
+> 	- add REQ_F_SQE_GROUP_DEP which is based on IOSQE_SQE_GROUP, for sharing
+> 	  kernel resource in group wide, suggested by Kevin Wolf
+> 	- remove sqe ext flag, and use the last bit for IOSQE_SQE_GROUP(Pavel),
+> 	in future we still can extend sqe flags with one uring context flag
+> 	- initialize group requests via submit state pattern, suggested by Pavel
+> 	- all kinds of cleanup & bug fixes
 
-Applied, thanks!
-
-[1/2] io_uring: fail NOP if non-zero op flags is passed in
-      (no commit info)
-[2/2] io_uring: support to inject result for NOP
-      (no commit info)
-
-Best regards,
--- 
-Jens Axboe
+Please ignore V2, and will send V3 with simplification & cleanup, and
+many fixes on error handling code path.
 
 
+Thanks,
+Ming
 
 

@@ -1,86 +1,113 @@
-Return-Path: <io-uring+bounces-1855-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1856-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273FC8C2292
-	for <lists+io-uring@lfdr.de>; Fri, 10 May 2024 12:55:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 463238C2515
+	for <lists+io-uring@lfdr.de>; Fri, 10 May 2024 14:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCEF71F229A1
-	for <lists+io-uring@lfdr.de>; Fri, 10 May 2024 10:55:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1DB8285DAE
+	for <lists+io-uring@lfdr.de>; Fri, 10 May 2024 12:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3601916D317;
-	Fri, 10 May 2024 10:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4E13FB87;
+	Fri, 10 May 2024 12:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZ16glye"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="INb+Ccmg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B1816C873;
-	Fri, 10 May 2024 10:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EEC7BB17
+	for <io-uring@vger.kernel.org>; Fri, 10 May 2024 12:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715338516; cv=none; b=oFW/2uqlF31qhqaTAVzLSV3zXhA7nB51FUe+hd+Zio44ILnmnA6GycruOXbL3GPxsCLbAPLsxILspB4OY1tkWF7INY0D/Qt6MzZdaRs+64V4grlSDRe6ZKP9sFTSiO1m45g+v8tC73Qg5pY/ubl8oTG3gA6BtUpJTKHtRpwPbe0=
+	t=1715345425; cv=none; b=QcMSGkG6/SFXktSPJNgtakiwPOOt6cz/XhcNbsRUPGUMlSpyR4M3KenL+6g5rnwCUgh6aY9AOoc100JwOmSr6GiOrgNecKNuQz4AOk3pJG45Qw+j/pERhhqT0Mu08HXVx0MJ5ve+BCyE0Pjv/j+OrWSzlL9PbcRPk998BsE8/OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715338516; c=relaxed/simple;
-	bh=Yg72rzmx+bcTPUq2wGuL/cZ1uSAABSmBZuLsh72n3GA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJ6niPS+Eq0pQiIUq74vSRKqb0qeL404ZcAOFD2jb+VrQuSsKA2pYtJQekpwhvB3nrKhzWF/mG5MaHYirs/MybyFRdh7qVBQwWS6reoAyFwBYCtrIYEbbkrmcCd2AwDGytkLENRg4+H9MqnvoZWtU3ilkpDWiDDTSnY2lNoceJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZ16glye; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA6CBC113CC;
-	Fri, 10 May 2024 10:55:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715338514;
-	bh=Yg72rzmx+bcTPUq2wGuL/cZ1uSAABSmBZuLsh72n3GA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IZ16glyeUoEcw9bvLXvZyE6xpgHtADMx321GfnN0BHALFchlZSBq/fK4KF9b5Vq7h
-	 MN1lPeoAgCcojfCacXEZ3oUgkHjP6AqL7aJIiKfq7nArCv1Sqzay+3peXRW7zvHLED
-	 uBTZDCEcefInuP73Npox6kTo4di4WbMnD/NRY9011QMdLz34aE3feX0I2oQs+3g0h+
-	 m5kSagyGxw5VAGQdLCVlWKPi99HWJrGP46LMxQdj2jdhdDOctRZFpDeEzSulU05vzm
-	 V5x9L3RjmbW0zGRujXz0ojFm3N/C5Yh7q5TejagGWpEkhrrJhRtOpwxw/cmKQW7iqG
-	 9vrh1c5+2TFVw==
-Date: Fri, 10 May 2024 12:55:07 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
- about file lifetimes
-Message-ID: <20240510-duzen-uhrmacher-141c9331f1bf@brauner>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
- <20240508-risse-fehlpass-895202f594fd@brauner>
- <ZjueITUy0K8TP1WO@phenom.ffwll.local>
+	s=arc-20240116; t=1715345425; c=relaxed/simple;
+	bh=PP0KcKNoIJ5NCoNdtR20RN/tQQdYE5yYaNNti4GdALQ=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=LPVcIJjTIYaJIWS6/DJvrrma1WqRwynb0m4qM95TnuuIi99A8q+K9FoB7EuklPyK3epsFZVRglDPO727j3u6lIYs0qEs0ow+TQGRTTP7M1jVU1bCYzdbO7lOgZ9N2TxPyVZ7x7wp4jB4OruzuIC5p5ZA1nzBc4mGJfIlvGWPB88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=INb+Ccmg; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2b6215bcd03so537892a91.1
+        for <io-uring@vger.kernel.org>; Fri, 10 May 2024 05:50:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715345422; x=1715950222; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R00U+8EtvjIQ03TgPDpl2lGC7lwhUTTq2NMFtkLe+G8=;
+        b=INb+CcmgGr7Q2eXXi+QzL1d6jR9z1Jp5BN4vzTGenQ0tmCcwBPmKCTUpR9SmYlt63g
+         3b2g07C9DJ8oMP2OU42ddftykdYHpJI5zBpe6vNkhLV8XxuwiYyklj3fCcw2D0ulBo6R
+         b5JBQYJLeMP5IUc9BxJnNI9nGmNs0bJpiImX8sXaLEYHq1m7OA3GG7xguos33JhfAYPg
+         t+Yl8HwUoIFlULO+sxVV/OuWnha/0imvlf04Iur9omy1ThvFHv4DgTk9s8/uRd9QDHUI
+         FQgMt6tyglEqTr+nC4NgqPemSQslI1xcOH1926CTtl0zoyNm/n1fT4UXg9Y5/KrFYXCn
+         9f7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715345422; x=1715950222;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R00U+8EtvjIQ03TgPDpl2lGC7lwhUTTq2NMFtkLe+G8=;
+        b=QzTDrEw5XYSEgSfxVAItsblisl+k7a7bHwwrBnvY2ScSjaG4KSE3PskVe4cYvtFwPc
+         Px8h8nXwCDVPREOTO3Z8qHNXQ4XmniYMVD/tnXa+vSzqZPKmQCfF8Fnz3IS6wtRCB1js
+         TjEkMunK/WUlhTanmFIuWqV5uH9JYBZmYpzIJvAIRAX31iQCuYAGGHhba+sYtn4icZ08
+         GJGr7Qx+4YxakrQlUwzp88xpNmrrnjbimqv50J1Q0OWJ1UMMa1ONSg/6HfDLvZI7khp3
+         W2+NYsrbCnGuU1p6RD8DZBPaQqMLrWYJiedCpUpaVxJsN6/RH5H8Ldv2xcjHP9KDzbsO
+         9EhQ==
+X-Gm-Message-State: AOJu0YxbRT7S5jdSW+3oqippoZw2mZyg+Kc2ONI/RmkuxADN0M2Yhfdc
+	/FTszLlFizYCl6HO7ecYQI7bIOpcan0D8MFo8U/dYLTL0Jceh9XB937fTz+JGVU=
+X-Google-Smtp-Source: AGHT+IExnUVeU+lG2zPrcaefU+kzVp56I2T8Ax7QAE/PzJQX2uzOElrby2CXAiVewN6Wr1yl524eFA==
+X-Received: by 2002:a05:6a20:3c87:b0:1af:d057:af9d with SMTP id adf61e73a8af0-1afde23034amr2989153637.4.1715345422485;
+        Fri, 10 May 2024 05:50:22 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a666f9sm2861677b3a.21.2024.05.10.05.50.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 05:50:21 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
+In-Reply-To: <20240510035031.78874-1-ming.lei@redhat.com>
+References: <20240510035031.78874-1-ming.lei@redhat.com>
+Subject: Re: [PATCH V2 0/2] io_uring: support to inject result for NOP
+Message-Id: <171534542167.317865.8875772583199413242.b4-ty@kernel.dk>
+Date: Fri, 10 May 2024 06:50:21 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZjueITUy0K8TP1WO@phenom.ffwll.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-> For the uapi issue you describe below my take would be that we should just
-> try, and hope that everyone's been dutifully using O_CLOEXEC. But maybe
-> I'm biased from the gpu world, where we've been hammering it in that
-> "O_CLOEXEC or bust" mantra since well over a decade. Really the only valid
 
-Oh, we're very much on the same page. All new file descriptor types that
-I've added over the years are O_CLOEXEC by default. IOW, you need to
-remove O_CLOEXEC explicitly (see pidfd as an example). And imho, any new
-fd type that's added should just be O_CLOEXEC by default.
+On Fri, 10 May 2024 11:50:26 +0800, Ming Lei wrote:
+> The two patches add nop_flags for supporting to inject result on NOP.
+> 
+> V2:
+> 	- add patch1 for backport, suggested by Jens
+> 
+> 
+> Ming Lei (2):
+>   io_uring: fail NOP if non-zero op flags is passed in
+>   io_uring: support to inject result for NOP
+> 
+> [...]
+
+Applied, thanks!
+
+[1/2] io_uring: fail NOP if non-zero op flags is passed in
+      (no commit info)
+[2/2] io_uring: support to inject result for NOP
+      (no commit info)
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 

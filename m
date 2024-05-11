@@ -1,231 +1,344 @@
-Return-Path: <io-uring+bounces-1872-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1873-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E94C8C2FD9
-	for <lists+io-uring@lfdr.de>; Sat, 11 May 2024 08:31:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 800748C31BC
+	for <lists+io-uring@lfdr.de>; Sat, 11 May 2024 16:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54936283F37
-	for <lists+io-uring@lfdr.de>; Sat, 11 May 2024 06:31:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE22282013
+	for <lists+io-uring@lfdr.de>; Sat, 11 May 2024 14:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86062ECF;
-	Sat, 11 May 2024 06:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF80548E7;
+	Sat, 11 May 2024 14:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="O9GbEOA/"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KyTEQyJo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7D8380
-	for <io-uring@vger.kernel.org>; Sat, 11 May 2024 06:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8D76FC6
+	for <io-uring@vger.kernel.org>; Sat, 11 May 2024 14:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715409060; cv=none; b=tJDhoIYBPJiIVcwaYqR3IsZJRVm09bl+0S7KECXfa+UcqD8sCN88xZG9bN/lvWQt2Hcloahq0aViBd6owRVO48aITnpWbGqLHcagC7fhsOxe4LVZellJnLvdwkJbOp/TLf+86ydVRkb8RBycxXLOqXqLkSDLvGaP8rm/FycLPe8=
+	t=1715436182; cv=none; b=Q9TA75HWPxkb9eGmiZwwiqOOMz6+GeDPqoyL6Pkpl9aETzbTYzj2xwZ3X9L7mZfIkntcB+gQtWFK48ZGtgY8SBwLg5hqBB6Qih927Ywly+gysQ6AtYpdQqktmc4/LgmhAhGVD47WY7k5AII34WC6KVjj/Bki9HfzpVViCC+YQR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715409060; c=relaxed/simple;
-	bh=RKNM6mcKJHQrN1gXAWf9OWz2eNKa20RONK4dATr/IHA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=mIbKQ8kV++jxIiGAfTPhf0v6GF68kdG+E5fPL2LnnqA+B9Ze1Et90myi1VjcmONH5PKsuKl1YksxSwkkNwcrurp1+4dYFQ6p9HyCWOagjAuWGVWUsb7IWmWE8Rs6vlAgDMQokKKqjcueRwMwE9GUc4RnAWW3w6ZR5SHt8hU8KkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=O9GbEOA/; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240511063050epoutp04ca91251544d7c9735d9ef2680ed6ba7c~OW3FJK3JT1078310783epoutp04z
-	for <io-uring@vger.kernel.org>; Sat, 11 May 2024 06:30:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240511063050epoutp04ca91251544d7c9735d9ef2680ed6ba7c~OW3FJK3JT1078310783epoutp04z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1715409050;
-	bh=1gUqNGiqVvQbEYPG08LCY1EgsRDR8KnwG+EpwqPYvBk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=O9GbEOA/bpO8uNT7vyqxscsQPN7gOzV53RYcbLUYzM2bI/TpUa4XdZq5fDZbMCcN5
-	 yj5DMF6+cvAlrJFIlT0SrDxhp6ucspftV0XBKCjX0daKje3kQDvCRjQoXyawkljIrL
-	 WfXmkN5mX3BKqdvr+Ri9/7aFztrLFVuGcuQHpd6k=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240511063049epcas5p2598bb35194851823a5c227a1225c6541~OW3ExPuIE3223532235epcas5p2P;
-	Sat, 11 May 2024 06:30:49 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4VbwqX0PSxz4x9Pw; Sat, 11 May
-	2024 06:30:48 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FF.F5.09666.7901F366; Sat, 11 May 2024 15:30:47 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240511055248epcas5p287b7dfdab3162033744badc71fd084e1~OWV4dsZC73263732637epcas5p2z;
-	Sat, 11 May 2024 05:52:48 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240511055248epsmtrp1c6501a09b228020dc84989394e2f0a69~OWV4c-VeE2071620716epsmtrp1U;
-	Sat, 11 May 2024 05:52:48 +0000 (GMT)
-X-AuditID: b6c32a49-cefff700000025c2-0a-663f10976a5f
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8A.C2.19234.0B70F366; Sat, 11 May 2024 14:52:48 +0900 (KST)
-Received: from testpc118124.samsungds.net (unknown [109.105.118.124]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240511055247epsmtip125b36d14c4052d72974b983be33ad514~OWV3iXHCO0364503645epsmtip1d;
-	Sat, 11 May 2024 05:52:47 +0000 (GMT)
-From: Chenliang Li <cliang01.li@samsung.com>
-To: axboe@kernel.dk, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org, peiwei.li@samsung.com, joshi.k@samsung.com,
-	kundan.kumar@samsung.com, gost.dev@samsung.com, Chenliang Li
-	<cliang01.li@samsung.com>
-Subject: [PATCH v2 4/4] io_uring/rsrc: enable multi-hugepage buffer
- coalescing
-Date: Sat, 11 May 2024 13:52:29 +0800
-Message-Id: <20240511055229.352481-5-cliang01.li@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240511055229.352481-1-cliang01.li@samsung.com>
+	s=arc-20240116; t=1715436182; c=relaxed/simple;
+	bh=ueWuZRywM35d/JtJsFMt1yGfbJpGeN4q7Ci+auAKGKw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Ps7n6X1/GpQWZc01eFi/QHINMDL5Qd5D+axNUt6tA16a0gTrMhZz+3LgxMGxdyyx16iqJ2+ycN0EyllmvKu/sqsQjJvB5lflpgrhu5My3oa6vk+K5sDT+Ks5P/gNnwC/XLfImlIpFjeUgyG2gtn/T6Dvi/Rtte2GRm+j7bUkt7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KyTEQyJo; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2b4b30702a5so774629a91.1
+        for <io-uring@vger.kernel.org>; Sat, 11 May 2024 07:02:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715436177; x=1716040977; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=plHrfRTJ3W7ZexmCWQBOAGh/CW3PwuWRKgoDY4jVMs8=;
+        b=KyTEQyJoAEfdC2JxAXXUIjD+SFocUgrwvw6jB6lVOruCCk4GV46kQ7qwGsbfnJuPFT
+         TB28Y7dVFiP6ju2WMnBIzIeGvcJobk6IttGoruChLm6heTrhmrMHOv6L0GIJrUPMohIK
+         DWhqnKMSaaLor4VfbK3epW/VjqBR/wmsVH2YRFHJCMwUel7yzl+C1Kl0IhGdIIO1WVZF
+         ZhZZht4RCvsskdpSOZo6e4JlWtOgzncGJ4KXty5GjQOXboyyGQmtfHMh6jNj+T77FKKO
+         SQCHfIdI7T3LXhx/zy7eAHajnyAZvXORukFQLC/zqWuvZnmYWjkHAqx4OUiaU2TsIhM/
+         ccLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715436177; x=1716040977;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=plHrfRTJ3W7ZexmCWQBOAGh/CW3PwuWRKgoDY4jVMs8=;
+        b=Gat3A1rYSb5HdyKPhdiSNHKWMqUMJLppz8aQu22dZjdeaz3HUaI6LtAXe+guGtgNL2
+         U+u+2JXQTL9UoNHMqYIy7ZL4BFqV5s3WydQJOv9DZlI+djqYrV0NBM1+EqqWIHNGuctC
+         wf7rY8WYnn2o1nGymC9pk/642Knho//sL175IqSzP+oclaiBoPCJwGMNqRBxjOuA4wHA
+         MxcUeSk10VcM20qH/5t+VByiXSMUlLUdoBzez7fZbLMex95wQ3lEnYKLQM9nNhY7CDjJ
+         4kpxvDt2dn8APTfIIzUx0RFk8vTccWhAdPNjtGPb2Spep3T8u5jqO++WsKGMyMAeqlza
+         xisw==
+X-Gm-Message-State: AOJu0Yz9uQOBf506RU3sCsW4Ho1LkE+SkRESUL/EMEK4jceK4vePlt3k
+	92maK3VOVSFLyZQPo2Fc8nDG3GD4K4iQS4AYqfvUwg6cSCVHgdCB+ryCnz4sIQ2BHArTU34G+Lx
+	9
+X-Google-Smtp-Source: AGHT+IF+c6JIBIL4VLaTO1va15vgPQui7364HgrkdAqJG22lgjG9eeNIjsBeV8cMX1xrDZu8igu7tg==
+X-Received: by 2002:a05:6a20:3ca9:b0:1af:aeb7:7a10 with SMTP id adf61e73a8af0-1afde07d850mr6690174637.1.1715436176958;
+        Sat, 11 May 2024 07:02:56 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340a6327e8sm4777854a12.8.2024.05.11.07.02.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 May 2024 07:02:56 -0700 (PDT)
+Message-ID: <fef75ea0-11b4-4815-8c66-7b19555b279d@kernel.dk>
+Date: Sat, 11 May 2024 08:02:55 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJJsWRmVeSWpSXmKPExsWy7bCmlu50Afs0g0sfrCzmrNrGaLH6bj+b
-	xem/j1ksbh7YyWTxrvUci8XR/2/ZLH5132W02PrlK6vFs72cFmcnfGB14PLYOesuu8fls6Ue
-	fVtWMXp83iQXwBKVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+Ti
-	E6DrlpkDdI6SQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1
-	xMrQwMDIFKgwITvjzMEmloLHkhX777WyNTAeFe5i5OSQEDCR2DhnPnsXIxeHkMBuRolv274z
-	QjifGCX+fznMBue8eLiVFaZlzoXnrBCJnYwSC9cuhKr6xSjx+3QTI0gVm4COxO8Vv1hAbBEB
-	bYnXj6eygBQxCyxhlNjVuRysSFggQOLgwg9A3RwcLAKqEoeeWoOEeQVsJW6u3cgGsU1eYv/B
-	s8wgNqeAncThl+1sEDWCEidnPgGbzwxU07x1NjPIfAmBt+wSU349YoRodpHoaLjPAmELS7w6
-	voUdwpaSeNnfxg6yV0KgWGLZOjmI3hZGiffv5kD1Wkv8u7KHBaSGWUBTYv0ufYiwrMTUU+uY
-	IPbySfT+fsIEEeeV2DEPxlaVuHBwG9QqaYm1E7YyQ9geEt/ubYIG9kRGiSOnGpgmMCrMQvLP
-	LCT/zEJYvYCReRWjZGpBcW56arFpgWFeajk8mpPzczcxgtOolucOxrsPPugdYmTiYDzEKMHB
-	rCTCW1VjnSbEm5JYWZValB9fVJqTWnyI0RQY3hOZpUST84GJPK8k3tDE0sDEzMzMxNLYzFBJ
-	nPd169wUIYH0xJLU7NTUgtQimD4mDk6pBqaQC4575qZk1X8qvO8fvi3inVwf43Tfug+1Kco8
-	K3qWrZnllF54XebEz4XLd+/asG6J21eXuxlVpzfElJ9+avP03ZyryZdcQm7nx6xwV0tvby6/
-	eMHeMfOjy27lk29Xzj7951ST2ye2GWXPBRkts/Lv5R174t/+uW2h37Q/5WpG+yQndK9N4TW+
-	Ond1Fefx2DlMK9/GXeVe3m7+/Bdj+Y0CrikOVyvVje6fP7v5we+dXabcKXeOq80+KyCqMD/p
-	jPr2LytrzrJ2NN/N/GT4YcvfFc2f4k50i8+RSJZ3np/scXLZaQ7nl9szS10edf9VPdnUmdcV
-	ym1ldkfcKKiCKfz2exXR6petan5pbUYBW+cpsRRnJBpqMRcVJwIA6WiGniwEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsWy7bCSnO4Gdvs0g3/XdC3mrNrGaLH6bj+b
-	xem/j1ksbh7YyWTxrvUci8XR/2/ZLH5132W02PrlK6vFs72cFmcnfGB14PLYOesuu8fls6Ue
-	fVtWMXp83iQXwBLFZZOSmpNZllqkb5fAlXHmYBNLwWPJiv33WtkaGI8KdzFyckgImEjMufCc
-	tYuRi0NIYDujxMMjG1khEtISHYda2SFsYYmV/54D2RxART8YJS4ogITZBHQkfq/4xQISFhHQ
-	lWi8qwAyhllgFaPE1fftYGOEBfwk2h8fYwapYRFQlTj01BokzCtgK3Fz7UY2iOnyEvsPnmUG
-	sTkF7CQOv2wHiwsB1ZyaeoYZol5Q4uTMJywgNjNQffPW2cwTGAVmIUnNQpJawMi0ilE0taA4
-	Nz03ucBQrzgxt7g0L10vOT93EyM4sLWCdjAuW/9X7xAjEwfjIUYJDmYlEd6qGus0Id6UxMqq
-	1KL8+KLSnNTiQ4zSHCxK4rzKOZ0pQgLpiSWp2ampBalFMFkmDk6pBiZfj57wPUHPXeZZaj/w
-	8pwQ135ufsTlz+FbHeTe9Ew/ZhJ8VLm6XKi3cvE/xWdzim/6vvM6rbLq06wKD60nbmoru4W5
-	jhfX3rxx9ubRDVv589qcHuw5uFP4dkvWsTvme0JSF4btnnyfuSmrpaPsTMaPuPefnxzo+j4/
-	KYqP88W101JSMwW1s6U9T0Tm9h2xXrv+gpd+85wnoQ+m7PknaVcdHZW7vlq4R/hPh1dVh8Ze
-	s5OamWuXTsrtNno7n2G2rseGFQG8hekpsnUpT68/WKFh1t/0fupxd649IteD5xXlpvBs3imm
-	yRb1zj1d9VCkO+eWaoa6vliFuUtUxU8dKZDlyRMxfnw3Ve7O7DZRRyWW4oxEQy3mouJEAEOI
-	YK/bAgAA
-X-CMS-MailID: 20240511055248epcas5p287b7dfdab3162033744badc71fd084e1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240511055248epcas5p287b7dfdab3162033744badc71fd084e1
-References: <20240511055229.352481-1-cliang01.li@samsung.com>
-	<CGME20240511055248epcas5p287b7dfdab3162033744badc71fd084e1@epcas5p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring updates for 6.10-rc1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch depends on patch 1, 2, 3. It modifies the original buffer
-registration path to expand the one-hugepage coalescing feature to
-work with multi-hugepage buffers. Separated from previous patches to
-make it more easily reviewed.
+Hi Linus,
 
-Signed-off-by: Chenliang Li <cliang01.li@samsung.com>
----
- io_uring/rsrc.c | 44 ++++++++------------------------------------
- 1 file changed, 8 insertions(+), 36 deletions(-)
+Here are the io_uring updates and fixes for the 6.10 kernel merge
+window. This pull request contains:
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 7f95eba72f1c..70acc76ff27c 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -1044,7 +1044,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- 	unsigned long off;
- 	size_t size;
- 	int ret, nr_pages, i;
--	struct folio *folio = NULL;
-+	struct io_imu_folio_data data;
- 
- 	*pimu = (struct io_mapped_ubuf *)&dummy_ubuf;
- 	if (!iov->iov_base)
-@@ -1059,30 +1059,11 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- 		goto done;
- 	}
- 
--	/* If it's a huge page, try to coalesce them into a single bvec entry */
--	if (nr_pages > 1) {
--		folio = page_folio(pages[0]);
--		for (i = 1; i < nr_pages; i++) {
--			/*
--			 * Pages must be consecutive and on the same folio for
--			 * this to work
--			 */
--			if (page_folio(pages[i]) != folio ||
--			    pages[i] != pages[i - 1] + 1) {
--				folio = NULL;
--				break;
--			}
--		}
--		if (folio) {
--			/*
--			 * The pages are bound to the folio, it doesn't
--			 * actually unpin them but drops all but one reference,
--			 * which is usually put down by io_buffer_unmap().
--			 * Note, needs a better helper.
--			 */
--			unpin_user_pages(&pages[1], nr_pages - 1);
--			nr_pages = 1;
--		}
-+	/* If it's huge page(s), try to coalesce them into fewer bvec entries */
-+	if (io_sqe_buffer_try_coalesce(pages, nr_pages, &data)) {
-+		ret = io_coalesced_imu_alloc(ctx, iov, pimu, last_hpage,
-+						pages, &data);
-+		goto done;
- 	}
- 
- 	imu = kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
-@@ -1106,10 +1087,6 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- 	*pimu = imu;
- 	ret = 0;
- 
--	if (folio) {
--		bvec_set_page(&imu->bvec[0], pages[0], size, off);
--		goto done;
--	}
- 	for (i = 0; i < nr_pages; i++) {
- 		size_t vec_len;
- 
-@@ -1215,23 +1192,18 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
- 		 * we know that:
- 		 *
- 		 * 1) it's a BVEC iter, we set it up
--		 * 2) all bvecs are PAGE_SIZE in size, except potentially the
-+		 * 2) all bvecs are the same in size, except potentially the
- 		 *    first and last bvec
- 		 *
- 		 * So just find our index, and adjust the iterator afterwards.
- 		 * If the offset is within the first bvec (or the whole first
- 		 * bvec, just use iov_iter_advance(). This makes it easier
- 		 * since we can just skip the first segment, which may not
--		 * be PAGE_SIZE aligned.
-+		 * be folio_size aligned.
- 		 */
- 		const struct bio_vec *bvec = imu->bvec;
- 
- 		if (offset < bvec->bv_len) {
--			/*
--			 * Note, huge pages buffers consists of one large
--			 * bvec entry and should always go this way. The other
--			 * branch doesn't expect non PAGE_SIZE'd chunks.
--			 */
- 			iter->bvec = bvec;
- 			iter->nr_segs = bvec->bv_len;
- 			iter->count -= offset;
+- Greatly improve send zerocopy performance, by enabling coalescing of
+  sent buffers. MSG_ZEROCOPY already does this with send(2) and
+  sendmsg(2), but the io_uring side did not. In local testing, the
+  crossover point for send zerocopy being faster is now around 3000 byte
+  packets, and it performs better than the sync syscall variants as
+  well. This feature relies on a shared branch with net-next, which was
+  pulled into both branches.
+
+- Unification of how async preparation is done across opcodes.
+  Previously, opcodes that required extra memory for async retry would
+  allocate that as needed, using on-stack state until that was the case.
+  If async retry was needed, the on-stack state was adjusted
+  appropriately for a retry and then copied to the allocated memory.
+  This led to some fragile and ugly code, particularly for read/write
+  handling, and made storage retries more difficult than they needed to
+  be. Allocate the memory upfront, as it's cheap from our pools, and use
+  that state consistently both initially and also from the retry side.
+
+- Move away from using remap_pfn_range() for mapping the rings. This is
+  really not the right interface to use and can cause lifetime issues or
+  leaks. Additionally, it means the ring sq/cq arrays need to be
+  physically contigious, which can cause problems in production with
+  larger rings when services are restarted, as memory can be very
+  fragmented at that point. Move to using vm_insert_page(s) for the ring
+  sq/cq arrays, and apply the same treatment to mapped ring provided
+  buffers. This also helps unify the code we have dealing with
+  allocating and mapping memory. Hard to see in the diffstat as we're
+  adding a few features as well, but this kills about ~400 lines of code
+  from the codebase as well.
+
+- Add support for bundles for send/recv. When used with provided
+  buffers, bundles support sending or receiving more than one buffer at
+  the time, improving the efficiency by only needing to call into the
+  networking stack once for multiple sends or receives.
+
+- Tweaks for our accept operations, supporting both a DONTWAIT flag for
+  skipping poll arm and retry if we can, and a POLLFIRST flag that the
+  application can use to skip the initial accept attempt and rely purely
+  on poll for triggering the operation. Both of these have identical
+  flags on the receive side already.
+
+- Make the task_work ctx locking unconditional. We had various code
+  paths here that would do a mix of lock/trylock and set the task_work
+  state to whether or not it was locked. All of that goes away, we lock
+  it unconditionally and get rid of the state flag indicating whether
+  it's locked or not. The state struct still exists as an empty type,
+  can go away in the future.
+
+- Add support for specifying NOP completion values, allowing it to be
+  used for error handling testing.
+
+- Use set/test bit for io-wq worker flags. Not strictly needed, but also
+  doesn't hurt and helps silence a KCSAN warning.
+
+- Cleanups for io-wq locking and work assignments, closing a tiny race
+  where cancelations would not be able to find the work item reliably.
+
+- Misc fixes, cleanups, and improvements.
+
+Please pull!
+
+
+The following changes since commit 0bbac3facb5d6cc0171c45c9873a2dc96bea9680:
+
+  Linux 6.9-rc4 (2024-04-14 13:38:39 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/for-6.10/io_uring-20240511
+
+for you to fetch changes up to deb1e496a83557896fe0cca0b8af01c2a97c0dc6:
+
+  io_uring: support to inject result for NOP (2024-05-10 06:09:45 -0600)
+
+----------------------------------------------------------------
+for-6.10/io_uring-20240511
+
+----------------------------------------------------------------
+Breno Leitao (1):
+      io_uring/io-wq: Use set_bit() and test_bit() at worker->flags
+
+Gabriel Krisman Bertazi (4):
+      io_uring: Avoid anonymous enums in io_uring uapi
+      io-wq: write next_work before dropping acct_lock
+      io-wq: Drop intermediate step between pending list and active work
+      io_uring: Require zeroed sqe->len on provided-buffers send
+
+Jens Axboe (52):
+      nvme/io_uring: use helper for polled completions
+      io_uring: flush delayed fallback task_work in cancelation
+      io_uring: remove timeout/poll specific cancelations
+      io_uring/alloc_cache: shrink default max entries from 512 to 128
+      io_uring/net: switch io_send() and io_send_zc() to using io_async_msghdr
+      io_uring/net: switch io_recv() to using io_async_msghdr
+      io_uring/net: unify cleanup handling
+      io_uring/net: always setup an io_async_msghdr
+      io_uring/net: always set kmsg->msg.msg_control_user before issue
+      io_uring/net: get rid of ->prep_async() for receive side
+      io_uring/net: get rid of ->prep_async() for send side
+      io_uring: kill io_msg_alloc_async_prep()
+      io_uring/net: remove (now) dead code in io_netmsg_recycle()
+      io_uring/net: add iovec recycling
+      io_uring/net: drop 'kmsg' parameter from io_req_msg_cleanup()
+      io_uring/rw: always setup io_async_rw for read/write requests
+      io_uring: get rid of struct io_rw_state
+      io_uring/rw: cleanup retry path
+      io_uring/rw: add iovec recycling
+      io_uring/net: move connect to always using async data
+      io_uring/uring_cmd: switch to always allocating async data
+      io_uring/uring_cmd: defer SQE copying until it's needed
+      io_uring: drop ->prep_async()
+      io_uring/alloc_cache: switch to array based caching
+      io_uring/poll: shrink alloc cache size to 32
+      io_uring: refill request cache in memory order
+      io_uring: re-arrange Makefile order
+      io_uring: use the right type for work_llist empty check
+      mm: add nommu variant of vm_insert_pages()
+      io_uring: get rid of remap_pfn_range() for mapping rings/sqes
+      io_uring: use vmap() for ring mapping
+      io_uring: unify io_pin_pages()
+      io_uring/kbuf: vmap pinned buffer ring
+      io_uring/kbuf: use vm_insert_pages() for mmap'ed pbuf ring
+      io_uring: use unpin_user_pages() where appropriate
+      io_uring: move mapping/allocation helpers to a separate file
+      io_uring: fix warnings on shadow variables
+      io_uring/kbuf: remove dead define
+      io_uring: ensure overflow entries are dropped when ring is exiting
+      io_uring/sqpoll: work around a potential audit memory leak
+      io_uring/rw: ensure retry condition isn't lost
+      io_uring/net: add generic multishot retry helper
+      io_uring/net: add provided buffer support for IORING_OP_SEND
+      io_uring/kbuf: add helpers for getting/peeking multiple buffers
+      io_uring/net: support bundles for send
+      io_uring/net: support bundles for recv
+      Merge branch 'for-uring-ubufops' of git://git.kernel.org/pub/scm/linux/kernel/git/kuba/linux into for-6.10/io_uring
+      io_uring/rw: reinstate thread check for retries
+      io_uring/msg_ring: cleanup posting to IOPOLL vs !IOPOLL ring
+      io_uring/filetable: don't unnecessarily clear/reset bitmap
+      io_uring/net: add IORING_ACCEPT_DONTWAIT flag
+      io_uring/net: add IORING_ACCEPT_POLL_FIRST flag
+
+Jiapeng Chong (1):
+      io_uring: Remove unused function
+
+Joel Granados (1):
+      io_uring: Remove the now superfluous sentinel elements from ctl_table array
+
+Ming Lei (4):
+      io_uring: kill dead code in io_req_complete_post
+      io_uring: return void from io_put_kbuf_comp()
+      io_uring: fail NOP if non-zero op flags is passed in
+      io_uring: support to inject result for NOP
+
+Pavel Begunkov (33):
+      io_uring/cmd: move io_uring_try_cancel_uring_cmd()
+      io_uring/cmd: kill one issue_flags to tw conversion
+      io_uring/cmd: fix tw <-> issue_flags conversion
+      io_uring/cmd: document some uring_cmd related helpers
+      io_uring/rw: avoid punting to io-wq directly
+      io_uring: force tw ctx locking
+      io_uring: remove struct io_tw_state::locked
+      io_uring: refactor io_fill_cqe_req_aux
+      io_uring: get rid of intermediate aux cqe caches
+      io_uring: remove current check from complete_post
+      io_uring: refactor io_req_complete_post()
+      io_uring: clean up io_lockdep_assert_cq_locked
+      io_uring: turn implicit assumptions into a warning
+      io_uring: remove async request cache
+      io_uring: remove io_req_put_rsrc_locked()
+      io_uring/net: merge ubuf sendzc callbacks
+      io_uring/net: get rid of io_notif_complete_tw_ext
+      io_uring/net: set MSG_ZEROCOPY for sendzc in advance
+      io_uring: separate header for exported net bits
+      io_uring: unexport io_req_cqe_overflow()
+      io_uring: remove extra SQPOLL overflow flush
+      io_uring: open code io_cqring_overflow_flush()
+      io_uring: always lock __io_cqring_overflow_flush
+      io_uring: consolidate overflow flushing
+      io_uring/notif: refactor io_tx_ubuf_complete()
+      io_uring/notif: remove ctx var from io_notif_tw_complete
+      io_uring/notif: shrink account_pages to u32
+      net: extend ubuf_info callback to ops structure
+      net: add callback for setting a ubuf_info to skb
+      io_uring/notif: simplify io_notif_flush()
+      io_uring/notif: implement notification stacking
+      io_uring/net: fix sendzc lazy wake polling
+      io_uring/notif: disable LAZY_WAKE for linked notifs
+
+Ruyi Zhang (1):
+      io_uring/timeout: remove duplicate initialization of the io_timeout list.
+
+linke li (1):
+      io_uring/msg_ring: reuse ctx->submitter_task read using READ_ONCE instead of re-reading it
+
+ drivers/net/tap.c                   |   2 +-
+ drivers/net/tun.c                   |   2 +-
+ drivers/net/xen-netback/common.h    |   5 +-
+ drivers/net/xen-netback/interface.c |   2 +-
+ drivers/net/xen-netback/netback.c   |  11 +-
+ drivers/nvme/host/ioctl.c           |  15 +-
+ drivers/vhost/net.c                 |   8 +-
+ include/linux/io_uring.h            |   6 -
+ include/linux/io_uring/cmd.h        |  24 +
+ include/linux/io_uring/net.h        |  18 +
+ include/linux/io_uring_types.h      |  19 +-
+ include/linux/skbuff.h              |  21 +-
+ include/uapi/linux/io_uring.h       |  38 +-
+ io_uring/Makefile                   |  15 +-
+ io_uring/alloc_cache.h              |  59 ++-
+ io_uring/cancel.c                   |   4 +-
+ io_uring/fdinfo.c                   |   4 +-
+ io_uring/filetable.c                |   4 +-
+ io_uring/futex.c                    |  30 +-
+ io_uring/futex.h                    |   5 +-
+ io_uring/io-wq.c                    |  67 +--
+ io_uring/io_uring.c                 | 665 +++++-----------------------
+ io_uring/io_uring.h                 |  33 +-
+ io_uring/kbuf.c                     | 318 ++++++++------
+ io_uring/kbuf.h                     |  64 ++-
+ io_uring/memmap.c                   | 336 ++++++++++++++
+ io_uring/memmap.h                   |  25 ++
+ io_uring/msg_ring.c                 |  12 +-
+ io_uring/net.c                      | 852 +++++++++++++++++++++---------------
+ io_uring/net.h                      |  29 +-
+ io_uring/nop.c                      |  26 +-
+ io_uring/notif.c                    | 108 +++--
+ io_uring/notif.h                    |  13 +-
+ io_uring/opdef.c                    |  65 ++-
+ io_uring/opdef.h                    |   9 +-
+ io_uring/poll.c                     |  15 +-
+ io_uring/poll.h                     |   9 +-
+ io_uring/refs.h                     |   7 +
+ io_uring/register.c                 |   3 +-
+ io_uring/rsrc.c                     |  47 +-
+ io_uring/rsrc.h                     |  13 +-
+ io_uring/rw.c                       | 585 ++++++++++++-------------
+ io_uring/rw.h                       |  25 +-
+ io_uring/sqpoll.c                   |   8 +
+ io_uring/timeout.c                  |   9 +-
+ io_uring/uring_cmd.c                | 122 +++++-
+ io_uring/uring_cmd.h                |   8 +-
+ io_uring/waitid.c                   |   2 +-
+ mm/nommu.c                          |   7 +
+ net/core/skbuff.c                   |  36 +-
+ net/socket.c                        |   2 +-
+ 51 files changed, 2050 insertions(+), 1762 deletions(-)
+ create mode 100644 include/linux/io_uring/net.h
+ create mode 100644 io_uring/memmap.c
+ create mode 100644 io_uring/memmap.h
+
 -- 
-2.34.1
+Jens Axboe
 
 

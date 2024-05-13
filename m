@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-1888-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1887-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DAD8C3D54
-	for <lists+io-uring@lfdr.de>; Mon, 13 May 2024 10:34:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946C98C3D31
+	for <lists+io-uring@lfdr.de>; Mon, 13 May 2024 10:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0263C1F21E5D
-	for <lists+io-uring@lfdr.de>; Mon, 13 May 2024 08:34:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45F282827D4
+	for <lists+io-uring@lfdr.de>; Mon, 13 May 2024 08:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7161474CB;
-	Mon, 13 May 2024 08:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAD51474BF;
+	Mon, 13 May 2024 08:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vh6Nn3wf"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Yk8h64Rh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6CA1482FE
-	for <io-uring@vger.kernel.org>; Mon, 13 May 2024 08:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FEF1474B8
+	for <io-uring@vger.kernel.org>; Mon, 13 May 2024 08:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715589202; cv=none; b=G1/A/z/hX8eHn6sswOtJW3u1pvbJH7DpJjH4aZjrc953atpKpnV15xm2JseNOvXYCALd45RNFlCdPNMxMs/dmpQzRN6s1+p4M16y5WW2Kbnfty4EMqg7GwyznqhlipuCcMEa7cSgZRbYsx5d+a5b70Te9puFNlUIQ6YjU6vjgzA=
+	t=1715588994; cv=none; b=gtJeIBWL0uHBG+hCpAtIkLYk1gx8Wwwo9jc7UBVk+X86lmaoftU5LPAYCTvGqntZzF0eQWPapNHstJTZDhC6kqr3NsAA3my51idMHybxWJaf1mvGmOJLnkU4As3Q5kPwaXGQEL2twWD4XMebQRryviVexnWhzbQU15yauJvz8ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715589202; c=relaxed/simple;
-	bh=x1lM9kZ9BGnwdm1+MInf5Pe+/XsY67EMndVqggG8gr0=;
+	s=arc-20240116; t=1715588994; c=relaxed/simple;
+	bh=RsIuGX5WN/HtIDzBQRHz23ESiivoJG7bJjYvkqY+Rvg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=rTCHqOtp/EWZ0LogE4xFTSJ+1QtkvEOqMHjBTid15XA9v1xf9K5+4Vh7GlSxgsdKFJA02rbKQ/X3PMqHdN8xYd3uCfi8Hh/vDmbr+KClrN0Z1DecoRcdObbFuE4viD0g8BKC+hjNqsWHOk+RTni0ydFCqLe0X093IPGdnZrznQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vh6Nn3wf; arc=none smtp.client-ip=203.254.224.34
+	 Content-Type:References; b=is8T/aCr8rTn8qn4YIQnJjAD/8vbXsnYk4VyrqgxH3maeBRfr5ukPtXV0bZfHjjzXoM4dit6m7uLyFa0M/iX2KiIJqCPU2v4sDt3vF6ylEDO8eGlNT8qHbpX4/GquyReXu3UUU1vcH7C3eMQDFmiJngVkj2q5mBlDRf+gQGwHx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Yk8h64Rh; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240513083315epoutp04e351f265cc1d1b99d55c9fdcb9c867d4~O-0iHRfq11434114341epoutp042
-	for <io-uring@vger.kernel.org>; Mon, 13 May 2024 08:33:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240513083315epoutp04e351f265cc1d1b99d55c9fdcb9c867d4~O-0iHRfq11434114341epoutp042
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240513082947epoutp03fd717ae62c14c46eda40acf9f8460c43~O-xgqYlqc2099120991epoutp03Q
+	for <io-uring@vger.kernel.org>; Mon, 13 May 2024 08:29:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240513082947epoutp03fd717ae62c14c46eda40acf9f8460c43~O-xgqYlqc2099120991epoutp03Q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1715589195;
-	bh=v+WaDfn/RpYboI5Yj9LJJNwQgkVytlZFrMVuD73n/0I=;
+	s=mail20170921; t=1715588987;
+	bh=O5AQlYRpYZGPgRa5PdwrIVzhA8/wXpy8vWaqjRaCDMk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vh6Nn3wfWu+IKelfJLV3TqsniNwSUKoO8duvyCRcvSwenKqhWUt/Ze2mSSnABuf6Y
-	 9v2OPBy3JOF3cYFuJ6/7UvTCY9aIBYjB5PuplmMpnR3mxEd0Qlii70smE16VBFRIyS
-	 I3DFpoK/EorU7SKUhutTh9yttDy9Ja87dguzfwvc=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	b=Yk8h64RhXS1Xeg8y6bPifF+VP/h8TDsDfzJvNlJf/ykMLSz8Rh4jHnsha94G+8f5Z
+	 IPUbAPwAHAouVSUip+aQZHqlCdaR7EXb4e+24sDMpc/FUvIqi9s+Er7XLvdoryQQPK
+	 VtWNJibNZVPFbWECVd8uEtNn9yoSzA34FiSLsshc=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
 	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240513083314epcas5p27a08524ef77f627f7da46e75c61461d1~O-0hmoRud2904529045epcas5p2_;
-	Mon, 13 May 2024 08:33:14 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4VdCRr5KFnz4x9QJ; Mon, 13 May
-	2024 08:33:12 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	2B.02.09665.840D1466; Mon, 13 May 2024 17:33:12 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240513082313epcas5p2a781d3393e4bf92d13d04ac62bb28fb7~O-rxpcuJ22123521235epcas5p2Q;
-	Mon, 13 May 2024 08:23:13 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240513082313epsmtrp1a9380dc713c4cfd1b446392d7b647a0b~O-rxnxfX61295312953epsmtrp1g;
-	Mon, 13 May 2024 08:23:13 +0000 (GMT)
-X-AuditID: b6c32a4b-829fa700000025c1-b8-6641d048970b
+	20240513082946epcas5p201718fa46699cdfe188994d8c99a9d06~O-xgUxdnJ2028620286epcas5p2T;
+	Mon, 13 May 2024 08:29:46 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4VdCMs1K3lz4x9Pr; Mon, 13 May
+	2024 08:29:45 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	3F.B3.09666.97FC1466; Mon, 13 May 2024 17:29:45 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240513082314epcas5p309fa70575596792b5c9923ce76a3778f~O-rzNiBop2725827258epcas5p3e;
+	Mon, 13 May 2024 08:23:14 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240513082314epsmtrp278845615213ca1252df3c529eb31a824~O-rzMygWQ1459414594epsmtrp2J;
+	Mon, 13 May 2024 08:23:14 +0000 (GMT)
+X-AuditID: b6c32a49-cefff700000025c2-e8-6641cf7931f6
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B9.AB.19234.1FDC1466; Mon, 13 May 2024 17:23:13 +0900 (KST)
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F0.7C.08390.2FDC1466; Mon, 13 May 2024 17:23:14 +0900 (KST)
 Received: from testpc118124.samsungds.net (unknown [109.105.118.124]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240513082312epsmtip2add8b99aa1bf7445aaaa0113f8a58d50~O-rwmIjEU1126111261epsmtip2z;
-	Mon, 13 May 2024 08:23:12 +0000 (GMT)
+	20240513082313epsmtip20c9e5f86e0da51704fb9ff9c0c9bb9a9~O-ryIsfUZ0931209312epsmtip2a;
+	Mon, 13 May 2024 08:23:13 +0000 (GMT)
 From: Chenliang Li <cliang01.li@samsung.com>
 To: axboe@kernel.dk, asml.silence@gmail.com
 Cc: io-uring@vger.kernel.org, peiwei.li@samsung.com, joshi.k@samsung.com,
 	kundan.kumar@samsung.com, gost.dev@samsung.com, Chenliang Li
 	<cliang01.li@samsung.com>
-Subject: [PATCH v3 4/5] io_uring/rsrc: enable multi-hugepage buffer
- coalescing
-Date: Mon, 13 May 2024 16:22:59 +0800
-Message-Id: <20240513082300.515905-5-cliang01.li@samsung.com>
+Subject: [PATCH v3 5/5] liburing: add test cases for hugepage registered
+ buffers
+Date: Mon, 13 May 2024 16:23:00 +0800
+Message-Id: <20240513082300.515905-6-cliang01.li@samsung.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240513082300.515905-1-cliang01.li@samsung.com>
 Precedence: bulk
@@ -86,145 +86,317 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJJsWRmVeSWpSXmKPExsWy7bCmhq7HBcc0g3V3NSzmrNrGaLH6bj+b
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOJsWRmVeSWpSXmKPExsWy7bCmpm7lecc0g80fWC3mrNrGaLH6bj+b
 	xem/j1ksbh7YyWTxrvUci8XR/2/ZLH5132W02PrlK6vFs72cFmcnfGB14PLYOesuu8fls6Ue
 	fVtWMXp83iQXwBKVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+Ti
 	E6DrlpkDdI6SQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1
-	xMrQwMDIFKgwITuj7fF1toKdkhV9c++xNDAuEe5i5OSQEDCRODN7MmMXIxeHkMBuRonmT2fY
-	IZxPjBKbFtxhgXNebv7FDtOy7sVKZojETkaJ69/XQDm/GCVOHjnIClLFJqAj8XvFLxYQW0RA
-	W+L146lgo5gFljBK7OpczgiSEBYIkJg5bQkbiM0ioCqx4VAD2ApeAVuJna2rWSHWyUvsP3iW
-	GcTmFLCT2LnnDzNEjaDEyZlPwBYwA9U0b50NdoWEwFt2iTUX3jBBNLtINP1sZoOwhSVeHd8C
-	9YOUxMv+NiCbA8gulli2Tg6it4VR4v27OYwQNdYS/67sYQGpYRbQlFi/Sx8iLCsx9dQ6Joi9
-	fBK9v59AreKV2DEPxlaVuHBwG9QqaYm1E7YyQ6zykDjUng0JrImMEl9mNrFPYFSYheSdWUje
-	mYWweQEj8ypGydSC4tz01GLTAuO81HJ4NCfn525iBKdRLe8djI8efNA7xMjEwXiIUYKDWUmE
-	16HQPk2INyWxsiq1KD++qDQntfgQoykwvCcyS4km5wMTeV5JvKGJpYGJmZmZiaWxmaGSOO/r
-	1rkpQgLpiSWp2ampBalFMH1MHJxSDUzLf/DEc3VeExcUkmx+ZjtdpVMvfOc7h/kCT4Q2hUac
-	TnyquD2g/I+67f3T5+YLJmxwm7xfv/CzlElYK3/FkukHtY/ofl6s/vfe54qbQaF/97k8YX+W
-	HsL5a23Q0vneZxbXN8ponmB50W/DK/1lTWTXibA2TotXWkmyRsrpvh0lFz7/FK1TcTymXHf9
-	633Znw8KtR98KTp98sotJ2PHc+FPvf97z/yZeq1J6HPLU7F7jw7N7je7bRX5z2GnYruVtPJN
-	ZfUPLWJ9u8Q0eY0knrb+dVF929QSxCVYLi2X5fBuwz+jT9VuS25YTEp+4FQQ9eh567ZPDZqp
-	j6ccl320+nJ9x7YaQZW1K6rOCnJGeSixFGckGmoxFxUnAgCxR3IrLAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsWy7bCSvO7Hs45pBlM2cVnMWbWN0WL13X42
-	i9N/H7NY3Dywk8niXes5Fouj/9+yWfzqvstosfXLV1aLZ3s5Lc5O+MDqwOWxc9Zddo/LZ0s9
-	+rasYvT4vEkugCWKyyYlNSezLLVI3y6BK6Pt8XW2gp2SFX1z77E0MC4R7mLk5JAQMJFY92Il
-	cxcjF4eQwHZGiQUnNjFDJKQlOg61skPYwhIr/z0Hs4UEfjBKnD4kBGKzCehI/F7xi6WLkYND
-	REBXovGuAsgcZoFVjBJX37ezgtQIC/hJrH/TC2azCKhKbDjUADaHV8BWYmfralaI+fIS+w+e
-	BdvLKWAnsXPPH2aIXbYSpw5vZoOoF5Q4OfMJC4jNDFTfvHU28wRGgVlIUrOQpBYwMq1iFE0t
-	KM5Nz00uMNQrTswtLs1L10vOz93ECA5uraAdjMvW/9U7xMjEwXiIUYKDWUmE16HQPk2INyWx
-	siq1KD++qDQntfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomDU6qBqf/1Po+Da0Sj1a2k
-	8iutTyfdDNgSI9pwgd/00qRls5w16i/M4Cj2lTCa+zJeccHabXedpBX57lfvdYjmEI/VOCN/
-	083l0Yb/NbkaVQfmWjkxLmldlZE0wahZ9oDr7zzrUi3N9bZ7Dp8Mi3Xhbb4kl+/gbtvtatN1
-	WCM0b6Wb/hpbyz8bFiistqma6NOc25Z7nWsaz81u22LBOUsDOx38trTfmV7xRSY80Ntzf6o4
-	78WTbneNw2qb7cQU/3PnJkW9PKuaxmm/6XCItrX+9wcic0wWnr94n39R9FsL392H9E0/qhpP
-	fXf5dPk5m92Cmk8tNfOzNrPXyHZZuPUv8l/dXrqgIOS2tZzg160P5JRYijMSDbWYi4oTAbNo
-	r+bdAgAA
-X-CMS-MailID: 20240513082313epcas5p2a781d3393e4bf92d13d04ac62bb28fb7
+	xMrQwMDIFKgwITtj9qyFjAVbjSrurn7A1MD4QL2LkZNDQsBEYs3Hc8wgtpDAbkaJQxeLIOxP
+	jBK/N0p3MXIB2d8YJbrnT2OCaeh4NJ8FIrGXUaLv/zRGiI5fjBI901JBbDYBHYnfK36xgNgi
+	AtoSrx9PBWtgFljCKLGrczlYg7BAkMTKM4vZQGwWAVWJSf+/gJ3BK2ArsfDlJFaIbfIS+w+e
+	BYtzCthJ7NzzB6pGUOLkzCdgC5iBapq3zmYGWSAh8JNd4mDjDzaIZheJCyf3sEDYwhKvjm9h
+	h7ClJD6/2wtUwwFkF0ssWycH0dvCKPH+3RxGiBpriX9XQHo5gBZoSqzfpQ8RlpWYemodE8Re
+	Pone30+gocIrsWMejK0qceHgNqhV0hJrJ2xlhrA9JN4sugsNuYmMEqs/nWSfwKgwC8k/s5D8
+	Mwth9QJG5lWMkqkFxbnpqcWmBYZ5qeXwSE7Oz93ECE6hWp47GO8++KB3iJGJg/EQowQHs5II
+	r0OhfZoQb0piZVVqUX58UWlOavEhRlNggE9klhJNzgcm8bySeEMTSwMTMzMzE0tjM0Mlcd7X
+	rXNThATSE0tSs1NTC1KLYPqYODilGpj4bihtuvFjw5SG5UV8YQFFelpfcmx3Cs196D/zgvGn
+	W7MC/zdIHFTj/vHK96vYrM2uIbGijcLOmu3d/Mab/O4dXvz4q0Don6mbpOv/PvpkeDPmwaeJ
+	SxTjKw90PgjQb7wpKfJTx++F3TvuuTI/vYXsHx7bdeHwtUydiOvbQoVuXrqx55a6oVXg50sN
+	e7d++W31npt5goinuI5RxtGkPFl5fia3F4+Fn95MWyfxeUu6cdzb1i0tzg+3rFqfF8uhKyGz
+	JI6x4n+w16IFWzjMzk+Z9cm5afvRF5wNFx1ONm3p/fD81+e3tx7d/ugZ55G56lnTEWWf3K33
+	fIrNrcM+l845ohCb9n2m82rJmNd82vdmK7EUZyQaajEXFScCABGgs0YqBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPLMWRmVeSWpSXmKPExsWy7bCSvO6ns45pBu0r9S3mrNrGaLH6bj+b
+	xem/j1ksbh7YyWTxrvUci8XR/2/ZLH5132W02PrlK6vFs72cFmcnfGB14PLYOesuu8fls6Ue
+	fVtWMXp83iQXwBLFZZOSmpNZllqkb5fAlTF71kLGgq1GFXdXP2BqYHyg3sXIySEhYCLR8Wg+
+	SxcjF4eQwG5GiUP3V7JDJKQlOg61QtnCEiv/PWeHKPrBKLHh9GMmkASbgI7E7xW/gLo5OEQE
+	dCUa7yqA1DALrGKUuPq+nRWkRlggQOLMiXksIDaLgKrEpP9fmEFsXgFbiYUvJ7FCLJCX2H/w
+	LFicU8BOYueeP2C2EFDNqcOb2SDqBSVOznwCNocZqL5562zmCYwCs5CkZiFJLWBkWsUomVpQ
+	nJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERzmWlo7GPes+qB3iJGJg/EQowQHs5IIr0OhfZoQ
+	b0piZVVqUX58UWlOavEhRmkOFiVx3m+ve1OEBNITS1KzU1MLUotgskwcnFINTFwqQcdPx0+e
+	v8uckelm2F/2hRzc8lWr35RpKNh17fvFfX+hgfbkjTYtH0uvVK5rlgpjfJUSP/V2UpZg+Gul
+	i1z8LQLLn/1Iy5HQXDdjGrME94SZJlf438QtYtQsvzPjgtukKsbFtgKOYXOd8g/d4nr0Tqjo
+	wvNrFSuXdN8M19IXWjBt+dwpZw777P94NHim5SrVtvqI6qqYl2/5dzxVaPtxVYn9uzlb1I0r
+	LidKH8967pLx2zb0ue/Wv29WJC9N+SXb+Or84mW9xqd7zNqrXr0zuVK2blU3m42O8+LHFzfF
+	9Vw93bcv7CLnRGf5tMvCcnO23vjJK2aqzb/64KOFeS2fsj5e5E25NP1Qi8sfm3wlluKMREMt
+	5qLiRACb0a8e4gIAAA==
+X-CMS-MailID: 20240513082314epcas5p309fa70575596792b5c9923ce76a3778f
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240513082313epcas5p2a781d3393e4bf92d13d04ac62bb28fb7
+X-CMS-RootMailID: 20240513082314epcas5p309fa70575596792b5c9923ce76a3778f
 References: <20240513082300.515905-1-cliang01.li@samsung.com>
-	<CGME20240513082313epcas5p2a781d3393e4bf92d13d04ac62bb28fb7@epcas5p2.samsung.com>
+	<CGME20240513082314epcas5p309fa70575596792b5c9923ce76a3778f@epcas5p3.samsung.com>
 
-Modify the original buffer registration path to expand the
-one-hugepage coalescing feature to work with multi-hugepage
-buffers. Separated from previous patches to make it more
-easily reviewed.
+Add a test file for hugepage registered buffers, to make sure the
+fixed buffer coalescing feature works safe and soundly.
+
+Testcases include reading/writing with single/multiple hugepage buffers.
 
 Signed-off-by: Chenliang Li <cliang01.li@samsung.com>
 ---
- io_uring/rsrc.c | 44 ++++++++------------------------------------
- 1 file changed, 8 insertions(+), 36 deletions(-)
+ test/Makefile         |   1 +
+ test/fixed-hugepage.c | 236 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 237 insertions(+)
+ create mode 100644 test/fixed-hugepage.c
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 53fac5f27bbf..5e5c1d6f3501 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -1047,7 +1047,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- 	unsigned long off;
- 	size_t size;
- 	int ret, nr_pages, i;
--	struct folio *folio = NULL;
-+	struct io_imu_folio_data data;
- 
- 	*pimu = (struct io_mapped_ubuf *)&dummy_ubuf;
- 	if (!iov->iov_base)
-@@ -1062,30 +1062,11 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- 		goto done;
- 	}
- 
--	/* If it's a huge page, try to coalesce them into a single bvec entry */
--	if (nr_pages > 1) {
--		folio = page_folio(pages[0]);
--		for (i = 1; i < nr_pages; i++) {
--			/*
--			 * Pages must be consecutive and on the same folio for
--			 * this to work
--			 */
--			if (page_folio(pages[i]) != folio ||
--			    pages[i] != pages[i - 1] + 1) {
--				folio = NULL;
--				break;
--			}
--		}
--		if (folio) {
--			/*
--			 * The pages are bound to the folio, it doesn't
--			 * actually unpin them but drops all but one reference,
--			 * which is usually put down by io_buffer_unmap().
--			 * Note, needs a better helper.
--			 */
--			unpin_user_pages(&pages[1], nr_pages - 1);
--			nr_pages = 1;
--		}
-+	/* If it's huge page(s), try to coalesce them into fewer bvec entries */
-+	if (io_sqe_buffer_try_coalesce(pages, nr_pages, &data)) {
-+		ret = io_coalesced_imu_alloc(ctx, iov, pimu, last_hpage,
-+						pages, &data);
-+		goto done;
- 	}
- 
- 	imu = kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
-@@ -1109,10 +1090,6 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, struct iovec *iov,
- 	*pimu = imu;
- 	ret = 0;
- 
--	if (folio) {
--		bvec_set_page(&imu->bvec[0], pages[0], size, off);
--		goto done;
--	}
- 	for (i = 0; i < nr_pages; i++) {
- 		size_t vec_len;
- 
-@@ -1218,23 +1195,18 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
- 		 * we know that:
- 		 *
- 		 * 1) it's a BVEC iter, we set it up
--		 * 2) all bvecs are PAGE_SIZE in size, except potentially the
-+		 * 2) all bvecs are the same in size, except potentially the
- 		 *    first and last bvec
- 		 *
- 		 * So just find our index, and adjust the iterator afterwards.
- 		 * If the offset is within the first bvec (or the whole first
- 		 * bvec, just use iov_iter_advance(). This makes it easier
- 		 * since we can just skip the first segment, which may not
--		 * be PAGE_SIZE aligned.
-+		 * be folio_size aligned.
- 		 */
- 		const struct bio_vec *bvec = imu->bvec;
- 
- 		if (offset < bvec->bv_len) {
--			/*
--			 * Note, huge pages buffers consists of one large
--			 * bvec entry and should always go this way. The other
--			 * branch doesn't expect non PAGE_SIZE'd chunks.
--			 */
- 			iter->bvec = bvec;
- 			iter->nr_segs = bvec->bv_len;
- 			iter->count -= offset;
+diff --git a/test/Makefile b/test/Makefile
+index 94bdc25..364514d 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -88,6 +88,7 @@ test_srcs := \
+ 	file-update.c \
+ 	file-verify.c \
+ 	fixed-buf-iter.c \
++	fixed-hugepage.c \
+ 	fixed-link.c \
+ 	fixed-reuse.c \
+ 	fpos.c \
+diff --git a/test/fixed-hugepage.c b/test/fixed-hugepage.c
+new file mode 100644
+index 0000000..4fe45a2
+--- /dev/null
++++ b/test/fixed-hugepage.c
+@@ -0,0 +1,236 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Test fixed buffers consisting of hugepages.
++ */
++#include <stdio.h>
++#include <string.h>
++#include <fcntl.h>
++#include <stdlib.h>
++#include <sys/mman.h>
++
++#include "liburing.h"
++#include "helpers.h"
++
++#define PAGE_SIZE	4096
++#define HUGEPAGE_SIZE	(512 * PAGE_SIZE)
++#define NR_BUFS		1
++#define IN_FD		"/dev/urandom"
++#define OUT_FD		"/dev/zero"
++
++static int open_files(int *fd_in, int *fd_out)
++{
++	*fd_in = open(IN_FD, O_RDONLY, 0644);
++	if (*fd_in < 0) {
++		perror("open in");
++		return 1;
++	}
++
++	*fd_out = open(OUT_FD, O_RDWR, 0644);
++	if (*fd_out < 0) {
++		perror("open out");
++		return 1;
++	}
++
++	return 0;
++}
++
++static int mmap_hugebufs(struct iovec *iov, int nr_bufs, size_t buf_size)
++{
++	int i;
++
++	for (i = 0; i < nr_bufs; i++) {
++		void *base = NULL;
++
++		base = mmap(NULL, buf_size, PROT_READ | PROT_WRITE,
++				MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
++		if (!base || base == MAP_FAILED) {
++			fprintf(stderr, "Error in mmapping the %dth buffer", i);
++			return 1;
++		}
++
++		iov[i].iov_base = base;
++		iov[i].iov_len = buf_size;
++		memset(iov[i].iov_base, 0, buf_size);
++	}
++
++	return 0;
++}
++
++static int do_read(struct io_uring *ring, int fd, struct iovec *iov,
++				int nr_bufs, size_t buf_size)
++{
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++	int i, ret;
++
++	for (i = 0; i < nr_bufs; i++) {
++		sqe = io_uring_get_sqe(ring);
++		if (!sqe) {
++			fprintf(stderr, "Could not get SQE.\n");
++			return 1;
++		}
++
++		io_uring_prep_read_fixed(sqe, fd, iov[i].iov_base, buf_size, 0, i);
++		io_uring_submit(ring);
++
++		ret = io_uring_wait_cqe(ring, &cqe);
++		if (ret < 0) {
++			fprintf(stderr, "Error waiting for completion: %s\n", strerror(-ret));
++			return 1;
++		}
++
++		if (cqe->res < 0) {
++			fprintf(stderr, "Error in async operation: %s\n", strerror(-cqe->res));
++			return 1;
++		}
++
++		io_uring_cqe_seen(ring, cqe);
++	}
++
++	return 0;
++}
++
++static int do_write(struct io_uring *ring, int fd, struct iovec *iov,
++				int nr_bufs, size_t buf_size)
++{
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++	int i, ret;
++
++	for (i = 0; i < nr_bufs; i++) {
++		sqe = io_uring_get_sqe(ring);
++		if (!sqe) {
++			fprintf(stderr, "Could not get SQE.\n");
++			return 1;
++		}
++
++		io_uring_prep_write_fixed(sqe, fd, iov[i].iov_base, buf_size, 0, i);
++		io_uring_submit(ring);
++
++		ret = io_uring_wait_cqe(ring, &cqe);
++		if (ret < 0) {
++			fprintf(stderr, "Error waiting for completion: %s\n", strerror(-ret));
++			return 1;
++		}
++
++		if (cqe->res < 0) {
++			fprintf(stderr, "Error in async operation: %s\n", strerror(-cqe->res));
++			return 1;
++		}
++
++		io_uring_cqe_seen(ring, cqe);
++	}
++
++	return 0;
++}
++
++static int test_one_hugepage(struct io_uring *ring, int fd_in, int fd_out)
++{
++	struct iovec iov[NR_BUFS];
++	int ret;
++	size_t buf_size = HUGEPAGE_SIZE;
++
++	ret = mmap_hugebufs(iov, NR_BUFS, buf_size);
++	if (ret) {
++		fprintf(stderr, "Buffer allocating for one hugepage failed.");
++		return 1;
++	}
++
++	ret = io_uring_register_buffers(ring, iov, NR_BUFS);
++	if (ret) {
++		fprintf(stderr, "Error registering buffers for one hugepage test: %s", strerror(-ret));
++		return 1;
++	}
++
++	ret = do_read(ring, fd_in, iov, NR_BUFS, buf_size);
++	if (ret) {
++		fprintf(stderr, "One hugepage read test failed");
++		return ret;
++	}
++
++	ret = do_write(ring, fd_out, iov, NR_BUFS, buf_size);
++	if (ret) {
++		fprintf(stderr, "One hugepages write test failed");
++		return ret;
++	}
++
++	ret = io_uring_unregister_buffers(ring);
++	if (ret) {
++		fprintf(stderr, "Error unregistering buffers for one hugepage test: %s", strerror(-ret));
++		return 1;
++	}
++
++	return 0;
++}
++
++static int test_multi_hugepages(struct io_uring *ring, int fd_in, int fd_out)
++{
++	struct iovec iov[NR_BUFS];
++	int ret;
++	size_t buf_size = 4 * HUGEPAGE_SIZE;
++
++	ret = mmap_hugebufs(iov, NR_BUFS, buf_size);
++	if (ret) {
++		fprintf(stderr, "mmap multi hugepages failed.");
++		return 1;
++	}
++
++	ret = io_uring_register_buffers(ring, iov, NR_BUFS);
++	if (ret) {
++		fprintf(stderr, "Error registering buffers for multi hugepages test: %s", strerror(-ret));
++		return 1;
++	}
++
++	ret = do_read(ring, fd_in, iov, NR_BUFS, buf_size);
++	if (ret) {
++		fprintf(stderr, "multi hugepages read test failed");
++		return ret;
++	}
++
++	ret = do_write(ring, fd_out, iov, NR_BUFS, buf_size);
++	if (ret) {
++		fprintf(stderr, "multi hugepages write test failed");
++		return ret;
++	}
++
++	ret = io_uring_unregister_buffers(ring);
++	if (ret) {
++		fprintf(stderr, "Error unregistering buffers for multi hugepages test: %s", strerror(-ret));
++		return 1;
++	}
++
++	return 0;
++}
++
++int main(int argc, char *argv[])
++{
++	struct io_uring ring;
++	int ret, fd_in, fd_out;
++
++	if (argc > 1)
++		return T_EXIT_SKIP;
++
++	if (open_files(&fd_in, &fd_out))
++		return T_EXIT_FAIL;
++
++	ret = t_create_ring(8, &ring, 0);
++	if (ret == T_SETUP_SKIP)
++		return T_EXIT_SKIP;
++	else if (ret < 0)
++		return T_EXIT_FAIL;
++
++	ret = test_one_hugepage(&ring, fd_in, fd_out);
++	if (ret) {
++		fprintf(stderr, "Test one hugepage failed");
++		return T_EXIT_FAIL;
++	}
++
++	ret = test_multi_hugepages(&ring, fd_in, fd_out);
++	if (ret) {
++		fprintf(stderr, "Test multi hugepages failed");
++		return T_EXIT_FAIL;
++	}
++
++	io_uring_queue_exit(&ring);
++	return T_EXIT_PASS;
++}
+
+base-commit: 23b43f44f882e48a725ad87f8f22722c40743dec
 -- 
 2.34.1
 

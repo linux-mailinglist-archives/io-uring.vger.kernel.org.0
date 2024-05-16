@@ -1,172 +1,223 @@
-Return-Path: <io-uring+bounces-1905-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1906-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B008C7057
-	for <lists+io-uring@lfdr.de>; Thu, 16 May 2024 04:38:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84128C7833
+	for <lists+io-uring@lfdr.de>; Thu, 16 May 2024 16:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77AEC1F23194
-	for <lists+io-uring@lfdr.de>; Thu, 16 May 2024 02:38:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D281C22AC8
+	for <lists+io-uring@lfdr.de>; Thu, 16 May 2024 14:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832C963A;
-	Thu, 16 May 2024 02:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8F514900B;
+	Thu, 16 May 2024 14:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="O2pAWbeM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nq+OOXuZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7169A15A4
-	for <io-uring@vger.kernel.org>; Thu, 16 May 2024 02:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941AD14B97B
+	for <io-uring@vger.kernel.org>; Thu, 16 May 2024 14:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715827134; cv=none; b=cMQZ/pFxRimbIPpQofxnAWm9Ls96scx0XY1umi3sux0OlwquzTwPQ+424KTuDwOaVSbdynz8g3R+6iahILTWlRJO1tHOFRmyNyM/R5ILkIxJYXdIL5EvktqrH5aQEt1cw71y4oL1x3dUTzsbcfRr0hh8fCnfIRzsrGAc+3PWAXA=
+	t=1715868159; cv=none; b=gnlqYEWLQO1LCLO5GKAmsZod7CNn/lvD1fEJ15PS4LJg0IQyndCHI4n6NvRDb6DIIfN1Mkb5A5qofMSCQAVFg1kpddTZ0w+6bNKa4nerZiPd+f5oKydfDPZqtjJlXWwxGL58ml7fwh57tik4jSmhUWlCT1rTL3/RZIIjR7xl75M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715827134; c=relaxed/simple;
-	bh=O0qatsONYd9VR8mWX4/rx8ERRwhr1IC13TezxLYKNao=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=ItKRGrP4IZdCOXdJhSxaAh8rhJphSSLBaSWeyqe1USa7fZEaaDlBixsoGNrhhLHQtc0bEqBVWt3F7lw04rQ/XoHtZPSeJbHBwRyKC0fxj1S/5n5xwsOdn9inkvOpxw4R9vIRKYppIDZ3mp6gFnGOop73ewvvj2jK9s0tOq6yNwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=O2pAWbeM; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b2dd35212fso593960eaf.3
-        for <io-uring@vger.kernel.org>; Wed, 15 May 2024 19:38:52 -0700 (PDT)
+	s=arc-20240116; t=1715868159; c=relaxed/simple;
+	bh=8FOhLzyhxO8vH5XeYxdb43OT/QgSJwu9Qpov5SSUKGQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CE7DCwiWishPFiPqUQCPFYsrnv7IEaboAydaYpprXt3u2DnEOd5m8bB8/QKUFHjiIDuWwYGeWeC4KF2wyUcrhwpvkBhWkOwFAEHPrlDp/NYnYU+PV2M/XvMoMG7Rux4l209VOXrexN8lBW1LZN3IrRJWJGoQlB8nC4c+JddCWz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nq+OOXuZ; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5b279e04391so138855eaf.3
+        for <io-uring@vger.kernel.org>; Thu, 16 May 2024 07:02:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715827131; x=1716431931; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1715868156; x=1716472956; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=K+SuRTZse4lz6//skPKIvTsSLuGULSSe5dVLzTLbORA=;
-        b=O2pAWbeMfQSUtc58CzDWmgihRncctf/gzPaxVn/b9G0342b14E0QxL0/QIyE9DS4MK
-         gZpGTrzye8zV1UNQPTW5GDpNizgXX4XMAug7Bt183dpfsbQMGUhzVRynNwQpi0Nv57oe
-         kDmYkFO7jguDkvMXHFCvY5fZnjCAJVEyP8F9qrip3w/CkYt+2HgXqxyIYXiFX9uwYIma
-         Exy5iNgFMdwX1KMrN+OgNU2b7EsFDNdPGXdMY9S3j9Kmn/A5hG9eVktrNO4x7OCcko8f
-         QFmSUpfg3J19jkDdjvwZMyiI62K/eMxvjyx+s0hSs2UnavbW7J+2jzFfBhC/zjtZ7gZM
-         jDHQ==
+        bh=6dFWk5ZMAtsa/oQVA3t20hYNOMr1pefF8T6nvU3fAio=;
+        b=nq+OOXuZ+14O17ss27CvEmz8Bba0nQQkF6HgEnhkAeCJtC8gsoMcHHzQQOI5SqRZuv
+         OOOPrCBeztR6vLU6FJcSZssg764tLKACEcxConN/Yw+MefNtgoGeTgO4JafRJP9gBnhJ
+         r29c3rk6fpuw0OxO6OwoiIBgFLutJLi+Iy8nMk4GDMPYVfdMBcgubnF8sblo0507FvBX
+         ToQKyUJrn7fvsfdWgnQlo/7pNX97QQBP9cWWkqewvORRNtTYwn0vVZf6ng5on+XLIrlO
+         FjRc8UY2ePGbhT/y57z1rCud/r+nwpBQ/nL2tg00p/SPCK0E85wVoxeaObAKRL/OzQp3
+         0WvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715827131; x=1716431931;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=K+SuRTZse4lz6//skPKIvTsSLuGULSSe5dVLzTLbORA=;
-        b=ejaGDSNsOHznKYHE2c0u4Xo5aRDf83CeeIIxRhPsrBnwTR5dUWS12ELWlUbVWPPU/x
-         ggoeV5i5VSwPF9pqtIVY8sOb3/mDJhd/DQmIE9ZL9rpEdDsB9BNDwMShs2bn05P/XYWA
-         Ctxw4SM1lwtyOd2Ibiv+c2WrPKRTc3zMDztao8Q3XOdF4ROB2J7fe/ogK99ZIJoJvgmn
-         Vm7gJLhJjfW8tn0st3kMB5hoSs/om8I3xP95SduLKmrwSau4as7Wma/DW+eN7anzHnCv
-         JTRW0IgabDQtsjw1BP/O/WXs/QuzJUL0g5cp8bO/v8R8gqMfUn46u77Vxm3vHzif/iVs
-         HPvA==
-X-Gm-Message-State: AOJu0YyF4380tZf8boDMlYSiyPe1KRdEQWWpbNjZjYem7LTI74GgcXU5
-	ZjLYjY2B+W2vBv+mKM2qRzDenqFCxVgJP8Ec5yt6DlGJX4re0/Xi29rGVdNGyTCpBmYzzzi+5D8
-	J
-X-Google-Smtp-Source: AGHT+IH36yKo1Q1FVbTBqRDfsTnRQXt9/O+mR4szSehvGMKI5EeiK+2eGs8/x1VSf8tCZIAVoAlCDg==
-X-Received: by 2002:a4a:de14:0:b0:5aa:3e4f:f01e with SMTP id 006d021491bc7-5b28193cc74mr18702902eaf.1.1715827131390;
-        Wed, 15 May 2024 19:38:51 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ade2besm12213380b3a.98.2024.05.15.19.38.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 May 2024 19:38:50 -0700 (PDT)
-Message-ID: <8c707a5f-2e33-4f5a-99a0-89a194625bcc@kernel.dk>
-Date: Wed, 15 May 2024 20:38:49 -0600
+        d=1e100.net; s=20230601; t=1715868156; x=1716472956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6dFWk5ZMAtsa/oQVA3t20hYNOMr1pefF8T6nvU3fAio=;
+        b=mJrI51xYHOMgexH0pNaPzhx/doUiSxPNGHye00/5k2Ytjbe5sNPQn7OqEd5lfWRs2c
+         CdhgGfZ4vp0bAqTlkjXO/gg8sk8wI9oPXWv23jN829y2NpWmcaM8oJCgs8Gia9F+oQXg
+         huYE+lGkdwYTq/oAgvL7znZpRNNbxJ+GPK5CxuNXJ9uWTkpM5vW7hPZ01S/DsfR5rZQu
+         GvGITg/QlM3DAGFqCMbNsktuPVLbd3J48q/jpUUKCGPdAzkjFZSFnhgfEBS+r+qHcfT0
+         Be2awHMRXKfMuCgOamTWeLbxL40qW+3VWNtCDqGnWBYs61Fq88fZxT1moQ/gyxZxueIa
+         4Lkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVncKWFSkw6unEU0mdbUUPROj50uaFev4kfTIP3hFLXFPt6C+MUnwVlueFR8MdXOd7FbUbBS7fJausD6WVKQT710JqWWmeM4lA=
+X-Gm-Message-State: AOJu0YyU/MQmLZljKDurMbweZgi7MvG0ri4j0p+YdPSsvde7JAir4U+d
+	JxbXyQ4fCbVpHZKmtjYYCJPZm/sKbZHNoO4TRAe5+eT8rVw9FvojPo3QVj7SldF6LnFrKf5fgf7
+	AHq8fX2olplRNXN3j4o6N0xbV/Q==
+X-Google-Smtp-Source: AGHT+IEe8ln1EhxNJAjHiu419y6tdAXuekIeTyfgIIdsijgURvUK3GGGursXnxBxJcAkmWNA+dViRXkDySD1QOYmZG0=
+X-Received: by 2002:a05:6358:7245:b0:186:5f1:3827 with SMTP id
+ e5c5f4694b2df-193bb64d559mr2362262855d.18.1715868156300; Thu, 16 May 2024
+ 07:02:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] Enable IORING_CQE_F_SOCK_NONEMPTY for accept requests
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- netdev <netdev@vger.kernel.org>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CGME20240514075453epcas5p17974fb62d65a88b1a1b55b97942ee2be@epcas5p1.samsung.com>
+ <20240514075444.590910-1-cliang01.li@samsung.com>
+In-Reply-To: <20240514075444.590910-1-cliang01.li@samsung.com>
+From: Anuj gupta <anuj1072538@gmail.com>
+Date: Thu, 16 May 2024 19:31:59 +0530
+Message-ID: <CACzX3AvTUJqmtD+qDhLimGde2WZUuSVa=sY+jYJ8-OB43TkoWw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] io_uring/rsrc: coalescing multi-hugepage
+ registered buffers
+To: Chenliang Li <cliang01.li@samsung.com>
+Cc: axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org, 
+	peiwei.li@samsung.com, joshi.k@samsung.com, kundan.kumar@samsung.com, 
+	anuj20.g@samsung.com, gost.dev@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Tue, May 14, 2024 at 1:25=E2=80=AFPM Chenliang Li <cliang01.li@samsung.c=
+om> wrote:
+>
+> Registered buffers are stored and processed in the form of bvec array,
+> each bvec element typically points to a PAGE_SIZE page but can also work
+> with hugepages. Specifically, a buffer consisting of a hugepage is
+> coalesced to use only one hugepage bvec entry during registration.
+> This coalescing feature helps to save both the space and DMA-mapping time=
+.
+>
+> However, currently the coalescing feature doesn't work for multi-hugepage
+> buffers. For a buffer with several 2M hugepages, we still split it into
+> thousands of 4K page bvec entries while in fact, we can just use a
+> handful of hugepage bvecs.
+>
+> This patch series enables coalescing registered buffers with more than
+> one hugepages. It optimizes the DMA-mapping time and saves memory for
+> these kind of buffers.
+>
+> Testing:
+>
+> The hugepage fixed buffer I/O can be tested using fio without
+> modification. The fio command used in the following test is given
+> in [1]. There's also a liburing testcase in [2]. Also, the system
+> should have enough hugepages available before testing.
+>
+> Perf diff of 8M(4 * 2M hugepages) fio randread test:
+>
+> Before          After           Symbol
+> .....................................................
+> 4.68%                           [k] __blk_rq_map_sg
+> 3.31%                           [k] dma_direct_map_sg
+> 2.64%                           [k] dma_pool_alloc
+> 1.09%                           [k] sg_next
+>                 +0.49%          [k] dma_map_page_attrs
+>
+> Perf diff of 8M fio randwrite test:
+>
+> Before          After           Symbol
+> ......................................................
+> 2.82%                           [k] __blk_rq_map_sg
+> 2.05%                           [k] dma_direct_map_sg
+> 1.75%                           [k] dma_pool_alloc
+> 0.68%                           [k] sg_next
+>                 +0.08%          [k] dma_map_page_attrs
+>
+> First three patches prepare for adding the multi-hugepage coalescing
+> into buffer registration, the 4th patch enables the feature.
+>
+> -----------------
+> Changes since v3:
+>
+> - Delete unnecessary commit message
+> - Update test command and test results
+>
+> v3 : https://lore.kernel.org/io-uring/20240514001614.566276-1-cliang01.li=
+@samsung.com/T/#t
+>
+> Changes since v2:
+>
+> - Modify the loop iterator increment to make code cleaner
+> - Minor fix to the return procedure in coalesced buffer account
+> - Correct commit messages
+> - Add test cases in liburing
+>
+> v2 : https://lore.kernel.org/io-uring/20240513020149.492727-1-cliang01.li=
+@samsung.com/T/#t
+>
+> Changes since v1:
+>
+> - Split into 4 patches
+> - Fix code style issues
+> - Rearrange the change of code for cleaner look
+> - Add speciallized pinned page accounting procedure for coalesced
+>   buffers
+> - Reordered the newly add fields in imu struct for better compaction
+>
+> v1 : https://lore.kernel.org/io-uring/20240506075303.25630-1-cliang01.li@=
+samsung.com/T/#u
+>
+> [1]
+> fio -iodepth=3D64 -rw=3Drandread(-rw=3Drandwrite) -direct=3D1 -ioengine=
+=3Dio_uring \
+> -bs=3D8M -numjobs=3D1 -group_reporting -mem=3Dshmhuge -fixedbufs -hugepag=
+e-size=3D2M \
+> -filename=3D/dev/nvme0n1 -runtime=3D10s -name=3Dtest1
+>
+> [2]
+> https://lore.kernel.org/io-uring/20240514051343.582556-1-cliang01.li@sams=
+ung.com/T/#u
+>
+> Chenliang Li (4):
+>   io_uring/rsrc: add hugepage buffer coalesce helpers
+>   io_uring/rsrc: store folio shift and mask into imu
+>   io_uring/rsrc: add init and account functions for coalesced imus
+>   io_uring/rsrc: enable multi-hugepage buffer coalescing
+>
+>  io_uring/rsrc.c | 217 +++++++++++++++++++++++++++++++++++++++---------
+>  io_uring/rsrc.h |  12 +++
+>  2 files changed, 191 insertions(+), 38 deletions(-)
+>
+>
+> base-commit: 59b28a6e37e650c0d601ed87875b6217140cda5d
+> --
+> 2.34.1
+>
+>
 
-This one was deferred, as it both depended on the net branch and the
-io_uring changes for 6.10. Sending it now as both have landed.
+I tested this series by registering multi-hugepage buffers. The coalescing =
+helps
+saving dma-mapping time. This is the gain observed on my setup, while runni=
+ng
+the fio workload shared here.
 
-This adds support for IORING_CQE_F_SOCK_NONEMPTY for io_uring accept
-requests. This is very similar to previous work that enabled the same
-hint for doing receives on sockets. By far the majority of the work here
-is refactoring to enable the networking side to pass back whether or not
-the socket had more pending requests after accepting the current one,
-the last patch just wires it up for io_uring.
+RandomRead:
+Baseline        DeltaAbs        Symbol
+.....................................................
+3.89%            -3.62%            [k] blk_rq_map_sg
+3.58%            -3.23%            [k] dma_direct_map_sg
+2.25%            -2.23%            [k] sg_next
 
-Not only does this enable applications to know whether there are more
-connections to accept right now, it also enables smarter logic for
-io_uring multishot accept on whether to retry immediately or wait for a
-poll trigger.
+RandomWrite:
+Baseline        DeltaAbs        Symbol
+.....................................................
+2.46%            -2.31%            [k] dma_direct_map_sg
+2.06%            -2.05%            [k] sg_next
+2.08%            -1.80%            [k] blk_rq_map_sg
 
-Please pull!
+The liburing test case shared works fine too on my setup.
 
-
-The following changes since commit cddd2dc6390b90e62cec2768424d1d90f6d04161:
-
-  Merge branch '40GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/next-queue (2024-05-10 19:33:52 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/net-accept-more-20240515
-
-for you to fetch changes up to ac287da2e0ea5be2523222981efec86f0ca977cd:
-
-  io_uring/net: wire up IORING_CQE_F_SOCK_NONEMPTY for accept (2024-05-13 18:19:23 -0600)
-
-----------------------------------------------------------------
-net-accept-more-20240515
-
-----------------------------------------------------------------
-Jens Axboe (6):
-      Merge branch 'for-6.10/io_uring' into net-accept-more
-      Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next into net-accept-more
-      net: change proto and proto_ops accept type
-      net: have do_accept() take a struct proto_accept_arg argument
-      net: pass back whether socket was empty post accept
-      io_uring/net: wire up IORING_CQE_F_SOCK_NONEMPTY for accept
-
- crypto/af_alg.c                    | 11 ++++++-----
- crypto/algif_hash.c                | 10 +++++-----
- drivers/xen/pvcalls-back.c         |  6 +++++-
- fs/ocfs2/cluster/tcp.c             |  5 ++++-
- include/crypto/if_alg.h            |  3 ++-
- include/linux/net.h                |  4 +++-
- include/linux/socket.h             |  3 ++-
- include/net/inet_common.h          |  4 ++--
- include/net/inet_connection_sock.h |  2 +-
- include/net/sock.h                 | 13 ++++++++++---
- io_uring/net.c                     | 26 ++++++++++++++++++++------
- net/atm/svc.c                      |  8 ++++----
- net/ax25/af_ax25.c                 |  6 +++---
- net/bluetooth/iso.c                |  4 ++--
- net/bluetooth/l2cap_sock.c         |  4 ++--
- net/bluetooth/rfcomm/sock.c        |  6 +++---
- net/bluetooth/sco.c                |  4 ++--
- net/core/sock.c                    |  4 ++--
- net/ipv4/af_inet.c                 | 10 +++++-----
- net/ipv4/inet_connection_sock.c    |  7 ++++---
- net/iucv/af_iucv.c                 |  4 ++--
- net/llc/af_llc.c                   |  7 +++----
- net/mptcp/protocol.c               | 11 +++++------
- net/netrom/af_netrom.c             |  6 +++---
- net/nfc/llcp_sock.c                |  4 ++--
- net/phonet/pep.c                   | 12 ++++++------
- net/phonet/socket.c                |  7 +++----
- net/rds/tcp_listen.c               |  6 +++++-
- net/rose/af_rose.c                 |  6 +++---
- net/sctp/socket.c                  |  8 ++++----
- net/smc/af_smc.c                   |  6 +++---
- net/socket.c                       | 15 ++++++++++-----
- net/tipc/socket.c                  | 13 +++++--------
- net/unix/af_unix.c                 | 21 ++++++++++-----------
- net/vmw_vsock/af_vsock.c           |  6 +++---
- net/x25/af_x25.c                   |  4 ++--
- 36 files changed, 156 insertions(+), 120 deletions(-)
-
--- 
-Jens Axboe
-
+Feel free to add:
+Tested-by: Anuj Gupta <anuj20.g@samsung.com>
+--
+Anuj Gupta
 

@@ -1,210 +1,241 @@
-Return-Path: <io-uring+bounces-1909-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1910-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC5D8C7849
-	for <lists+io-uring@lfdr.de>; Thu, 16 May 2024 16:10:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B09A8C78CD
+	for <lists+io-uring@lfdr.de>; Thu, 16 May 2024 16:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2FF71F22FA4
-	for <lists+io-uring@lfdr.de>; Thu, 16 May 2024 14:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B70012841A7
+	for <lists+io-uring@lfdr.de>; Thu, 16 May 2024 14:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89751487F2;
-	Thu, 16 May 2024 14:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062961E491;
+	Thu, 16 May 2024 14:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nm7nwfs/"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xaubJDsB"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F216314A4E5
-	for <io-uring@vger.kernel.org>; Thu, 16 May 2024 14:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E578C26ACA
+	for <io-uring@vger.kernel.org>; Thu, 16 May 2024 14:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715868605; cv=none; b=epgLVNg7tCRg0dYU7Dpz9Uv8oxa9NtuKbCzWmSyFG9fMtIJutAmxwIDXRwberFdDTUNgXrxGtQuQZyi2KK2zDvXhy/zSsXO6XIocYKedaa7BmCtgd9B4pmG7bJmxJB8p9oz2XFxMWWq0A4VvPNvFobwuQjTPvuw9By4oY5163kw=
+	t=1715871489; cv=none; b=KGx+HiST2SpG4Dnt8cnokw6m4siWqbrrGMDeHL3MUMXJB5GGZ3dE/o/CqmayZpGVcKiD4+UXeUILR7p8PqN/C3Ao42+gk/a+/MvBkhzvxpqsJ0hSFotUNaMJ8iz+xyfHyzuChBW/CPxYOz0VCG2K4KFUI/BqqqPJi3JeQgV9Ffs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715868605; c=relaxed/simple;
-	bh=ln2Ar5+YNwXgZqYG+hq+pg87IaUMPiYi+nFZTXNnYK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mCCEVENFNqTR/dQXlfq+HpUQl1GpFgi+wxywQ8uYOqFeCKiVvSDBPl4tgXDFt5Lzic+mSyyBEkOkbnbj4fnOpe7OSi08Hz2PKmg0KpEjWB40vLf5OoJlO/l3JM5hSTqBE09T+M9eCP4lgBcv47lJ4YI9/OJ8mZ23pQ+f+tECJnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nm7nwfs/; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-792bdf626beso743135785a.1
-        for <io-uring@vger.kernel.org>; Thu, 16 May 2024 07:10:03 -0700 (PDT)
+	s=arc-20240116; t=1715871489; c=relaxed/simple;
+	bh=G2M1ZNz8TeABHM6N66RwUVX4vjSA+XLg7ApOA4W24Qw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LVdQ5jIKy3kmauaRr+1soPripuXLjWEGm2OweDAEnKLoCGIoV4zvMD2W8lvaLbn4OEaNhzw5RBJLCW3RuZcrSI4wUPsufqY7sJI3/jmv7Uun1viot91jCWyi/rzvRAEHHPzlWAOWfbhOSHLpQHWsKE8V3nGX0s2u2NZds1anPuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xaubJDsB; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7e1fb2a81fdso4265739f.1
+        for <io-uring@vger.kernel.org>; Thu, 16 May 2024 07:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715868603; x=1716473403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VCVee+x8S7DZWEoAXOAefjjymIod8VPgf0GaQBTWIKU=;
-        b=Nm7nwfs/oDvi+f65MG4r0HoiJfK9MZeEG9/TKxkLOW/3fut+yJ4qmiBm71oYl6YgPG
-         b+ywQQF1WfGchaa3DrzvcitY7bh7RZn/bEaEnbLGGefSzMwFJh8LhOAKwmTcFbAl+4rE
-         nuW6ls+R6HBqFRSWBv9K7Z269EBrjbvJYxdHoHQItPbaR7yBv+22BDP4n0hXSWLK5iK2
-         aMneAwiIFqyoXaH1TAqzAEA6mAaRcDuRo5v5H9SpMXY26f3SmkLQ4DdDrrBDrQK9Q1wv
-         hf6k/8lRCml6s3ZP1gpqYM6Yuh+WUPj3D0cDoc/qxh+XeMO9Icx/2JzrpBaNQhyhOUYI
-         yxgw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715871485; x=1716476285; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w2yBFtN2JfPYfTtvkmeAOQH5S0c+hEbimpGgkq7JKJE=;
+        b=xaubJDsBg+OHXH07wsRR1vE43itx57mDebn6HC9fyM0oZgEhyu40EbjkjmJYbPx4t0
+         tX8PBUBpSRgH3A6zja+A+9tjfm4MHK5W78nghk13wsM2UhtO7lu+UN8B15F/Ol/sZezW
+         KK/5SbINlv+n/ykINYz+xCtYAp/M51uC2zvNW9ntZyLIvYaUIFtYfIVUgWOfPh32Gh/P
+         QwXe7sOCaO1d/cvFwbNePb9UAeZO7uuolBQHCDa0E7Z3xNJxjf7b4e9hNuEEkuu3iKJI
+         EAAM9YF5T8AblmkbtpmlYORa8mFUS+lZZxzUuPZnPOC19NgoNn57Iy4tyBsmJ/bO8g5D
+         LqHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715868603; x=1716473403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VCVee+x8S7DZWEoAXOAefjjymIod8VPgf0GaQBTWIKU=;
-        b=HqOBxCU18go0cPZtLSH0CLcnBQqs8qEL+9ZpV+yIiWNy6uP7t0XcvrfEoYAOcqdc2b
-         jD+WooHsJ+GSFvPiRjVxGFC1+bGNXfOw29dhRu3lissYIGOTQgfRGIPvYHj+29Eg0MDK
-         YQMow+J4hovC8HWBxpJldvhq6vsT1Z0FEMdYEIMl9nqJgXq99Clp6JjUXTSkltOhnxRx
-         sWQp+HZgRZMmiffE5kcAXHCafYGcMo9w5/w7r23OMxtevFkkD4E1Fbs7+GRvB+cliApJ
-         vtUb5CJStn2l58hIvCwVtTsWZB50hZqGF9dplQdcFxb6lClJv24DozMM1z3NymZrKEk3
-         hQyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMYqldeuBtAuyu3ZJRAhYwKhamJ1YqBzLJhsiSxKIffnLrp2yNMVACizT0k6T5goR7I8jGQhu6rdTViu+22G98smxL9depBkM=
-X-Gm-Message-State: AOJu0YwMDHsw3lfe1hdSFEmmUZZGOHpmmXeiD+gd5s7KcsxQ8Vrc38VB
-	hCENIbDOPK+aW0LNkEMH3HJuh3XFkdhUIc/V7HK+0yH9u6iFydJw1Ge73EArQAYxmQfWX75u+mc
-	8NiATYPvczrka4dtF5CMnCUAKGA==
-X-Google-Smtp-Source: AGHT+IFrQ1vacp9mrZxIFH5pO7p/pYMkvn2nICazeqUATbMNYuf0SyCfrB/A84K9zPckZT2bnLLoWmrbch6quGC+RFI=
-X-Received: by 2002:a05:620a:248c:b0:790:c15b:e192 with SMTP id
- af79cd13be357-792bbe66992mr3782809685a.32.1715868602733; Thu, 16 May 2024
- 07:10:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715871485; x=1716476285;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w2yBFtN2JfPYfTtvkmeAOQH5S0c+hEbimpGgkq7JKJE=;
+        b=uoR8JTsxHu8jQiU86cLM6fCdjyFaMhSDGx6td/W/VDLKXA0j7Rysh43yFn2wmHR1Bg
+         Toi0oayN7cUElQDHXtEbGFK2UgpxIaCXzkb6LVKEW0+JeJpkoa11G/kVB6TPvao5LXmZ
+         Vq32JnO8+anxJ12N652rhYXCJygQX3H5CJWeBy+DwMo4b6B7ELqhZdqDzANj388ROtPB
+         v4r0jNBnWIxfOp0wBwetO1O8Ky7A7fZyd56MOBXiF/QaQD5zuEqFVuHctxSpUeSgfI+F
+         oHI2OpE9NPFhdBMzSLfKh/cdXXQ/kzo9VXp/rT+Pox1NmK5kN6Wb2vywLkdb/M6E3XLE
+         kLwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSbe579KrBV5Vn9T2odUWFUeymoVCliuv88YQdZx+xZVTja821h5ARKJmPq7/+pwd06B2pd8u+yCTWqqsTjqS4ZzuxZnqVibU=
+X-Gm-Message-State: AOJu0YwTJwIjgO2DC3c9i8dXt4fBfwCNpr+w7JM71XWztSPOHI7/7pZs
+	ELxEUn9/KFG9sxbte+62Ti0blJbDkTbXX1RdT8ns66TudHffr8Vd5l2Y6X2nPPs=
+X-Google-Smtp-Source: AGHT+IF8ZtqYHTVbu4IQWyfsygl1+ooZh/vXzXPKwJZAlvxTyaUf44TzAJ2DG9c8PTHM0cF2vFAyHA==
+X-Received: by 2002:a5e:8704:0:b0:7de:e495:42bf with SMTP id ca18e2360f4ac-7e1b51f3e6amr1940740039f.1.1715871484555;
+        Thu, 16 May 2024 07:58:04 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4893700e498sm4060857173.32.2024.05.16.07.58.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 07:58:04 -0700 (PDT)
+Message-ID: <c99eb326-0b36-4587-b8a2-8956852309be@kernel.dk>
+Date: Thu, 16 May 2024 08:58:03 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240514075502epcas5p10be6bef71d284a110277575d6008563d@epcas5p1.samsung.com>
- <20240514075444.590910-1-cliang01.li@samsung.com> <20240514075444.590910-5-cliang01.li@samsung.com>
-In-Reply-To: <20240514075444.590910-5-cliang01.li@samsung.com>
-From: Anuj gupta <anuj1072538@gmail.com>
-Date: Thu, 16 May 2024 19:39:26 +0530
-Message-ID: <CACzX3AuG4A7jfN8xtcT3FZFvPp_FZTW1vozqgAkdZvF=ZZPpcA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] io_uring/rsrc: enable multi-hugepage buffer coalescing
-To: Chenliang Li <cliang01.li@samsung.com>
-Cc: axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org, 
-	peiwei.li@samsung.com, joshi.k@samsung.com, kundan.kumar@samsung.com, 
-	anuj20.g@samsung.com, gost.dev@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] io_uring/rsrc: coalescing multi-hugepage
+ registered buffers
+To: Anuj gupta <anuj1072538@gmail.com>, Chenliang Li <cliang01.li@samsung.com>
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org, peiwei.li@samsung.com,
+ joshi.k@samsung.com, kundan.kumar@samsung.com, anuj20.g@samsung.com,
+ gost.dev@samsung.com
+References: <CGME20240514075453epcas5p17974fb62d65a88b1a1b55b97942ee2be@epcas5p1.samsung.com>
+ <20240514075444.590910-1-cliang01.li@samsung.com>
+ <CACzX3AvTUJqmtD+qDhLimGde2WZUuSVa=sY+jYJ8-OB43TkoWw@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CACzX3AvTUJqmtD+qDhLimGde2WZUuSVa=sY+jYJ8-OB43TkoWw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 14, 2024 at 1:25=E2=80=AFPM Chenliang Li <cliang01.li@samsung.c=
-om> wrote:
->
-> Modify the original buffer registration and enable the coalescing for
-> buffers with more than one hugepages.
->
-> Signed-off-by: Chenliang Li <cliang01.li@samsung.com>
-> ---
->  io_uring/rsrc.c | 44 ++++++++------------------------------------
->  1 file changed, 8 insertions(+), 36 deletions(-)
->
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 53fac5f27bbf..5e5c1d6f3501 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -1047,7 +1047,7 @@ static int io_sqe_buffer_register(struct io_ring_ct=
-x *ctx, struct iovec *iov,
->         unsigned long off;
->         size_t size;
->         int ret, nr_pages, i;
-> -       struct folio *folio =3D NULL;
-> +       struct io_imu_folio_data data;
->
->         *pimu =3D (struct io_mapped_ubuf *)&dummy_ubuf;
->         if (!iov->iov_base)
-> @@ -1062,30 +1062,11 @@ static int io_sqe_buffer_register(struct io_ring_=
-ctx *ctx, struct iovec *iov,
->                 goto done;
->         }
->
-> -       /* If it's a huge page, try to coalesce them into a single bvec e=
-ntry */
-> -       if (nr_pages > 1) {
-> -               folio =3D page_folio(pages[0]);
-> -               for (i =3D 1; i < nr_pages; i++) {
-> -                       /*
-> -                        * Pages must be consecutive and on the same foli=
-o for
-> -                        * this to work
-> -                        */
-> -                       if (page_folio(pages[i]) !=3D folio ||
-> -                           pages[i] !=3D pages[i - 1] + 1) {
-> -                               folio =3D NULL;
-> -                               break;
-> -                       }
-> -               }
-> -               if (folio) {
-> -                       /*
-> -                        * The pages are bound to the folio, it doesn't
-> -                        * actually unpin them but drops all but one refe=
-rence,
-> -                        * which is usually put down by io_buffer_unmap()=
-.
-> -                        * Note, needs a better helper.
-> -                        */
-> -                       unpin_user_pages(&pages[1], nr_pages - 1);
-> -                       nr_pages =3D 1;
-> -               }
-> +       /* If it's huge page(s), try to coalesce them into fewer bvec ent=
-ries */
-> +       if (io_sqe_buffer_try_coalesce(pages, nr_pages, &data)) {
-> +               ret =3D io_coalesced_imu_alloc(ctx, iov, pimu, last_hpage=
-,
-> +                                               pages, &data);
-> +               goto done;
->         }
->
->         imu =3D kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
-> @@ -1109,10 +1090,6 @@ static int io_sqe_buffer_register(struct io_ring_c=
-tx *ctx, struct iovec *iov,
->         *pimu =3D imu;
->         ret =3D 0;
->
-> -       if (folio) {
-> -               bvec_set_page(&imu->bvec[0], pages[0], size, off);
-> -               goto done;
-> -       }
->         for (i =3D 0; i < nr_pages; i++) {
->                 size_t vec_len;
->
-> @@ -1218,23 +1195,18 @@ int io_import_fixed(int ddir, struct iov_iter *it=
-er,
->                  * we know that:
->                  *
->                  * 1) it's a BVEC iter, we set it up
-> -                * 2) all bvecs are PAGE_SIZE in size, except potentially=
- the
-> +                * 2) all bvecs are the same in size, except potentially =
-the
->                  *    first and last bvec
->                  *
->                  * So just find our index, and adjust the iterator afterw=
-ards.
->                  * If the offset is within the first bvec (or the whole f=
-irst
->                  * bvec, just use iov_iter_advance(). This makes it easie=
-r
->                  * since we can just skip the first segment, which may no=
-t
-> -                * be PAGE_SIZE aligned.
-> +                * be folio_size aligned.
->                  */
->                 const struct bio_vec *bvec =3D imu->bvec;
->
->                 if (offset < bvec->bv_len) {
-> -                       /*
-> -                        * Note, huge pages buffers consists of one large
-> -                        * bvec entry and should always go this way. The =
-other
-> -                        * branch doesn't expect non PAGE_SIZE'd chunks.
-> -                        */
->                         iter->bvec =3D bvec;
->                         iter->nr_segs =3D bvec->bv_len;
->                         iter->count -=3D offset;
-> --
-> 2.34.1
->
->
-Looks good.
-Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
---
-Anuj Gupta
+On 5/16/24 8:01 AM, Anuj gupta wrote:
+> On Tue, May 14, 2024 at 1:25?PM Chenliang Li <cliang01.li@samsung.com> wrote:
+>>
+>> Registered buffers are stored and processed in the form of bvec array,
+>> each bvec element typically points to a PAGE_SIZE page but can also work
+>> with hugepages. Specifically, a buffer consisting of a hugepage is
+>> coalesced to use only one hugepage bvec entry during registration.
+>> This coalescing feature helps to save both the space and DMA-mapping time.
+>>
+>> However, currently the coalescing feature doesn't work for multi-hugepage
+>> buffers. For a buffer with several 2M hugepages, we still split it into
+>> thousands of 4K page bvec entries while in fact, we can just use a
+>> handful of hugepage bvecs.
+>>
+>> This patch series enables coalescing registered buffers with more than
+>> one hugepages. It optimizes the DMA-mapping time and saves memory for
+>> these kind of buffers.
+>>
+>> Testing:
+>>
+>> The hugepage fixed buffer I/O can be tested using fio without
+>> modification. The fio command used in the following test is given
+>> in [1]. There's also a liburing testcase in [2]. Also, the system
+>> should have enough hugepages available before testing.
+>>
+>> Perf diff of 8M(4 * 2M hugepages) fio randread test:
+>>
+>> Before          After           Symbol
+>> .....................................................
+>> 4.68%                           [k] __blk_rq_map_sg
+>> 3.31%                           [k] dma_direct_map_sg
+>> 2.64%                           [k] dma_pool_alloc
+>> 1.09%                           [k] sg_next
+>>                 +0.49%          [k] dma_map_page_attrs
+>>
+>> Perf diff of 8M fio randwrite test:
+>>
+>> Before          After           Symbol
+>> ......................................................
+>> 2.82%                           [k] __blk_rq_map_sg
+>> 2.05%                           [k] dma_direct_map_sg
+>> 1.75%                           [k] dma_pool_alloc
+>> 0.68%                           [k] sg_next
+>>                 +0.08%          [k] dma_map_page_attrs
+>>
+>> First three patches prepare for adding the multi-hugepage coalescing
+>> into buffer registration, the 4th patch enables the feature.
+>>
+>> -----------------
+>> Changes since v3:
+>>
+>> - Delete unnecessary commit message
+>> - Update test command and test results
+>>
+>> v3 : https://lore.kernel.org/io-uring/20240514001614.566276-1-cliang01.li@samsung.com/T/#t
+>>
+>> Changes since v2:
+>>
+>> - Modify the loop iterator increment to make code cleaner
+>> - Minor fix to the return procedure in coalesced buffer account
+>> - Correct commit messages
+>> - Add test cases in liburing
+>>
+>> v2 : https://lore.kernel.org/io-uring/20240513020149.492727-1-cliang01.li@samsung.com/T/#t
+>>
+>> Changes since v1:
+>>
+>> - Split into 4 patches
+>> - Fix code style issues
+>> - Rearrange the change of code for cleaner look
+>> - Add speciallized pinned page accounting procedure for coalesced
+>>   buffers
+>> - Reordered the newly add fields in imu struct for better compaction
+>>
+>> v1 : https://lore.kernel.org/io-uring/20240506075303.25630-1-cliang01.li@samsung.com/T/#u
+>>
+>> [1]
+>> fio -iodepth=64 -rw=randread(-rw=randwrite) -direct=1 -ioengine=io_uring \
+>> -bs=8M -numjobs=1 -group_reporting -mem=shmhuge -fixedbufs -hugepage-size=2M \
+>> -filename=/dev/nvme0n1 -runtime=10s -name=test1
+>>
+>> [2]
+>> https://lore.kernel.org/io-uring/20240514051343.582556-1-cliang01.li@samsung.com/T/#u
+>>
+>> Chenliang Li (4):
+>>   io_uring/rsrc: add hugepage buffer coalesce helpers
+>>   io_uring/rsrc: store folio shift and mask into imu
+>>   io_uring/rsrc: add init and account functions for coalesced imus
+>>   io_uring/rsrc: enable multi-hugepage buffer coalescing
+>>
+>>  io_uring/rsrc.c | 217 +++++++++++++++++++++++++++++++++++++++---------
+>>  io_uring/rsrc.h |  12 +++
+>>  2 files changed, 191 insertions(+), 38 deletions(-)
+>>
+>>
+>> base-commit: 59b28a6e37e650c0d601ed87875b6217140cda5d
+>> --
+>> 2.34.1
+>>
+>>
+> 
+> I tested this series by registering multi-hugepage buffers. The coalescing helps
+> saving dma-mapping time. This is the gain observed on my setup, while running
+> the fio workload shared here.
+> 
+> RandomRead:
+> Baseline        DeltaAbs        Symbol
+> .....................................................
+> 3.89%            -3.62%            [k] blk_rq_map_sg
+> 3.58%            -3.23%            [k] dma_direct_map_sg
+> 2.25%            -2.23%            [k] sg_next
+> 
+> RandomWrite:
+> Baseline        DeltaAbs        Symbol
+> .....................................................
+> 2.46%            -2.31%            [k] dma_direct_map_sg
+> 2.06%            -2.05%            [k] sg_next
+> 2.08%            -1.80%            [k] blk_rq_map_sg
+> 
+> The liburing test case shared works fine too on my setup.
+> 
+> Feel free to add:
+> Tested-by: Anuj Gupta <anuj20.g@samsung.com>
+
+It's even more dramatic here, excerpt from profiles:
+
+    32.16%    -25.46%  [kernel.kallsyms]  [k] bio_split_rw
+     8.92%     -8.38%  [kernel.kallsyms]  [k] iov_iter_is_aligned
+     6.85%     -4.31%  [nvme]             [k] nvme_prep_rq.part.0
+    14.71%             [kernel.kallsyms]  [k] __blk_rq_map_sg
+     9.49%             [kernel.kallsyms]  [k] dma_direct_map_sg
+     8.50%             [kernel.kallsyms]  [k] sg_next
+
+some of it just shifted, but definitely a huge win. This is just using
+a single drive, doing about 7GB/sec.
+
+The change looks pretty reasonable to me. I'd love for the test cases to
+try and hit corner cases, as it's really more of a functionality test
+right now. We should include things like one-off huge pages, ensure we
+don't coalesce where we should not, etc.
+
+This is obviously too late for the 6.10 merge window, so there's plenty
+of time to get this 100% sorted before the next kernel release.
+
+-- 
+Jens Axboe
+
 

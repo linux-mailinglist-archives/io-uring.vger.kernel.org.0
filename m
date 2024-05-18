@@ -1,102 +1,170 @@
-Return-Path: <io-uring+bounces-1932-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1933-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D948C9005
-	for <lists+io-uring@lfdr.de>; Sat, 18 May 2024 10:32:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 207258C9077
+	for <lists+io-uring@lfdr.de>; Sat, 18 May 2024 13:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC101F2122D
-	for <lists+io-uring@lfdr.de>; Sat, 18 May 2024 08:32:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B7471F214A1
+	for <lists+io-uring@lfdr.de>; Sat, 18 May 2024 11:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D73B1094E;
-	Sat, 18 May 2024 08:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XBcW6gyz"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1611BC59;
+	Sat, 18 May 2024 11:00:46 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E25F79F5
-	for <io-uring@vger.kernel.org>; Sat, 18 May 2024 08:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3F71B95B
+	for <io-uring@vger.kernel.org>; Sat, 18 May 2024 11:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716021105; cv=none; b=hFzf/dNcnzOFP4JY1NE6PUO3ejrgv6AogFpUzyoAokHDpoWecbjB9Kqlx5/9GQHVhi8+EdVOWQWYRxNV7YK4D014Bmax+AguYqPnFnbwdUaMzJ/40AihjGq7eOoAdZXUHoQfXF9dEHnp22EOojgWJa0qeW+1IrDZBIywdw28wdk=
+	t=1716030046; cv=none; b=fWkN7wgexqAP4gg1pwiyyrzNcsfTnyJirDndk31m4mReM0mIxyPPk0Zbba1BRs7UBAjLg3nHz3243YGBzaZ511dGH/+a1dfATfqDiM7gjfMYnVWsQOMO331u1nOiyKJ3hn1ehxXLjo49UObj5y5mUysY0AV4LI70hlnk8ckdZ+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716021105; c=relaxed/simple;
-	bh=Lch0CTBgRocbTF3rEdXszR12O4GrBMzi+xNuvAXtOY4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j97ctgq9Ff8BP4TORGuz8Qdtf1auMuagRZro0M6bQfMONMWgywuQbnFQcdn/hhErxiJmLxm/u9BP0LxjcfjNWdeYUw24mHfBnansLgwlBLSi27p1gGa6c2hLGX/t89cPqZt8ERweVkLRRDJ/D2jZQXT56TSWlmcD2jjhG2uhavM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=XBcW6gyz; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1716021101; x=1716280301;
-	bh=Lch0CTBgRocbTF3rEdXszR12O4GrBMzi+xNuvAXtOY4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=XBcW6gyzEL5dVI/Xl/upVwzqPYhqv703F/YBanepKcvo5IofbWGTaWpEvbqd/RloR
-	 xOFWGklLdCR/CLav/d0Irx52niTtDOeQsQ++n85X24B260x+PfENtDxjh9UMgiLfiG
-	 rg8ig4VzT4Xu6FnlHehD7/CP57ek7DcafUfTNmHKOD82t4mMgh6aVxsWlE9BBvQmdn
-	 QrPh5tRxKKIh7Xhja4DXYIpvCidAQthCzqG3X0L8AiSlqU72INWHUMj546RzjrlaJs
-	 NMPI/yK8KJ6DXSaZFKUPSY/efnqQZqMA5yH8ZjoCENR1rbDouGjY66jtlxdOm072CE
-	 T5gXkaidomvmQ==
-Date: Sat, 18 May 2024 08:31:36 +0000
-To: David Wei <dw@davidwei.uk>
-From: Mathieu Masson <mathieu.kernel@proton.me>
-Cc: Jens Axboe <axboe@kernel.dk>, Gabriel Krisman Bertazi <krisman@suse.de>, io-uring@vger.kernel.org
-Subject: Re: [Announcement] io_uring Discord chat
-Message-ID: <ZkhnYZ28Fl3SkB_N@cave.home>
-In-Reply-To: <740aed6f-2ebc-4ad8-807b-bf1cef719313@davidwei.uk>
-References: <8734qguv98.fsf@mailhost.krisman.be> <f7367e15-150f-4fbb-b026-73d9407fd863@kernel.dk> <ZkfZIgwD3OgPSJ8d@cave.home> <740aed6f-2ebc-4ad8-807b-bf1cef719313@davidwei.uk>
-Feedback-ID: 50044778:user:proton
-X-Pm-Message-ID: c790a05889ba030cf53cbb2a93253ea499d3a58e
+	s=arc-20240116; t=1716030046; c=relaxed/simple;
+	bh=01QUKvrdwJTuoYK+gwIGlmtvVCFNyjDaVEgOgqt4fkE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XQaimpHO7DXLQY2pDHILiPsNHW/KVQyLgyu5OBElJIK29u+Ov8F9+pgLRhGvYazRiZYntQ7Q3WZ3cHzQpSPp9ngr7DRk7V/1TrqRTJyynXzRozQwHmjsBNwqd+JB15P9kWtWrlRDVwh7JSU6up9lx8T05pCeOCmxLxRqLHMIwlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e1c22e7280so994921139f.0
+        for <io-uring@vger.kernel.org>; Sat, 18 May 2024 04:00:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716030044; x=1716634844;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c7VRjhcyzcSvtEIoOWjsOxVgYE5qtyU969WvVg3AWFM=;
+        b=ZiqhNii7A6rn5cWg2NO2eSeI61Hgll+moqayzg4ekl1ANdqgo6lcKvZHr0luJrc2d9
+         gGsuryasbOq6cUFcpcwyqw4CH0TbKZRSv6GrgFQ6R7eDhprZI1JEjHpQ4H4cD6sUJLb8
+         nCKPn/6Ox5D+S2edNOSQi+nWHkZQPE0t532d0E0EmZMHEelTrf0w7F3jO2l0tFkgLLKR
+         bNBHahyvXadW8dWh5TFNKQw7BM/TD1Dx0SaojjX1iontJXEYl+Q0RPriBT3NAB+YGsdg
+         6UaW0JBFzmNjtHhpXGsHY8ba27ERrfDYA+4NyGQkJzA1HmFthRJZjHMQ0N2iGEvT/Dis
+         xUPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcX/0cmrGLqaP5MiefIHOvbCqwgcFLFlO2wy9R4Xf8kKqq19LyDdfU2JZIP0Beb0z6Z4MX0kjJYhWdt/hur6O7VUYvXM9jZu4=
+X-Gm-Message-State: AOJu0YyOv6cW+8vEpKbTLsS6mejAd/0E2TLKQCT/ByXzuNegdep8nngV
+	KWYRBRj8ULKb4EFNt6HwCsNMSz8z5avaFuTlLeEgcjeyEEP0F4KbMnOMV5SHsrVElhOzJbb1Sp7
+	jIcGiYrevcbyw3kLbeQ4FG6cmVQplCsfHw5XiWEtdad+O4Q2sJsUxiHI=
+X-Google-Smtp-Source: AGHT+IGAmpYUZypH6Vql6YxSOpKBdK47XJmujqCxpAUlVuUUIqnpFPydIvqbyacFQlyTF+38Yq7tAYYNIythqQ0H6GOIf8AePV/N
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6638:248e:b0:488:7f72:b3ac with SMTP id
+ 8926c6da1cb9f-489585764d4mr1405056173.2.1716030044397; Sat, 18 May 2024
+ 04:00:44 -0700 (PDT)
+Date: Sat, 18 May 2024 04:00:44 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003870370618b861cc@google.com>
+Subject: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_cqe_overflow (2)
+From: syzbot <syzbot+97d8b31fbab9db1efe55@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 17 mai 17:52, David Wei wrote:
-> On 2024-05-17 15:24, Mathieu Masson wrote:
-> [...]
-> > Not to start any form of chat platform war, but the rust-for-linux comm=
-unity has
-> > been using Zulip for a while now. At some point they made the full mess=
-age
-> > history live accessible without an account :
-> >
-> > https://rust-for-linux.zulipchat.com/
->=20
-> This looks and feels more like a chat/forum hybrid with discussion
-> threads etc. I strictly prefer chat's lower friction but understand that
-> it makes it difficult to archive vs threads.
->=20
-> How are the threads created? Is it done at the start by the author? Or
-> can someone just type and start a convo in a generic stream e.g.
-> Filesystems, then an admin later groups the discussion?
->=20
+Hello,
 
-Yes that is exactly like that. It's a forum hybrid, akin to what Teams is
-nowadays, all conversation are tied under a topic. It's at the start of a
-conversation that an author starts a thread yeah, by choosing a title for i=
-t and
-the stream in which it'll take place. This seems to be the trend among chat
-platforms nowadays, to have everything under threads. Not that I particular=
-y
-like it but it has its advantages. If you want a more broader view, you can
-combine streams, and there is even a "recent conversation" view that combin=
-es
-unseen conversations from all streams.=20
+syzbot found the following issue on:
 
-I guess discord originating more in the gaming world kept the pure chat
-approach. If we want something more lower friction discord is the way to go=
-.
-(I'd say IRC but I see in another message Jens said it's a no go).
+HEAD commit:    a5131c3fdf26 Merge tag 'x86-shstk-2024-05-13' of git://git..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=156ebcf4980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=64e100d74625a6a5
+dashboard link: https://syzkaller.appspot.com/bug?extid=97d8b31fbab9db1efe55
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1124b5b8980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=155aa55c980000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/81edac548743/disk-a5131c3f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/42f67aa888e5/vmlinux-a5131c3f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2e5cf5b3704d/bzImage-a5131c3f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+97d8b31fbab9db1efe55@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in io_req_cqe_overflow+0x193/0x1c0 io_uring/io_uring.c:810
+ io_req_cqe_overflow+0x193/0x1c0 io_uring/io_uring.c:810
+ __io_submit_flush_completions+0x7eb/0x1be0 io_uring/io_uring.c:1464
+ io_submit_flush_completions io_uring/io_uring.h:148 [inline]
+ io_submit_state_end io_uring/io_uring.c:2234 [inline]
+ io_submit_sqes+0x2b30/0x2f10 io_uring/io_uring.c:2350
+ __do_sys_io_uring_enter io_uring/io_uring.c:3246 [inline]
+ __se_sys_io_uring_enter+0x40f/0x3c80 io_uring/io_uring.c:3183
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3183
+ x64_sys_call+0x2c0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ io_req_set_res io_uring/io_uring.h:215 [inline]
+ io_recv_finish+0xf10/0x1560 io_uring/net.c:861
+ io_recv+0x12ec/0x1ea0 io_uring/net.c:1175
+ io_issue_sqe+0x429/0x22c0 io_uring/io_uring.c:1751
+ io_queue_sqe io_uring/io_uring.c:1965 [inline]
+ io_submit_sqe io_uring/io_uring.c:2220 [inline]
+ io_submit_sqes+0x1266/0x2f10 io_uring/io_uring.c:2335
+ __do_sys_io_uring_enter io_uring/io_uring.c:3246 [inline]
+ __se_sys_io_uring_enter+0x40f/0x3c80 io_uring/io_uring.c:3183
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3183
+ x64_sys_call+0x2c0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3877 [inline]
+ slab_alloc_node mm/slub.c:3918 [inline]
+ __do_kmalloc_node mm/slub.c:4038 [inline]
+ __kmalloc+0x6e4/0x1060 mm/slub.c:4052
+ kmalloc include/linux/slab.h:632 [inline]
+ io_alloc_async_data+0xc0/0x220 io_uring/io_uring.c:1662
+ io_msg_alloc_async io_uring/net.c:166 [inline]
+ io_recvmsg_prep_setup io_uring/net.c:725 [inline]
+ io_recvmsg_prep+0xbe8/0x1a20 io_uring/net.c:806
+ io_init_req io_uring/io_uring.c:2135 [inline]
+ io_submit_sqe io_uring/io_uring.c:2182 [inline]
+ io_submit_sqes+0x1135/0x2f10 io_uring/io_uring.c:2335
+ __do_sys_io_uring_enter io_uring/io_uring.c:3246 [inline]
+ __se_sys_io_uring_enter+0x40f/0x3c80 io_uring/io_uring.c:3183
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3183
+ x64_sys_call+0x2c0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 PID: 5042 Comm: syz-executor135 Not tainted 6.9.0-syzkaller-01768-ga5131c3fdf26 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

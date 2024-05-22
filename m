@@ -1,73 +1,74 @@
-Return-Path: <io-uring+bounces-1951-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1952-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12368CB461
-	for <lists+io-uring@lfdr.de>; Tue, 21 May 2024 21:43:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45EB78CC56E
+	for <lists+io-uring@lfdr.de>; Wed, 22 May 2024 19:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E0A21F22CAA
-	for <lists+io-uring@lfdr.de>; Tue, 21 May 2024 19:43:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFF42B219D8
+	for <lists+io-uring@lfdr.de>; Wed, 22 May 2024 17:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A1814885C;
-	Tue, 21 May 2024 19:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C1E770E4;
+	Wed, 22 May 2024 17:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Q/x459tT"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Grz3bgVm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BC614884F
-	for <io-uring@vger.kernel.org>; Tue, 21 May 2024 19:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442C57580D
+	for <io-uring@vger.kernel.org>; Wed, 22 May 2024 17:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716320634; cv=none; b=KU/mCJ7mBHO+iHipnVTh5iJc7FxW5xbo1S24b4Vfx1HWcIChj7ieZ6M0D4Dly+m6CHUZ/xGmrFxNLNl+hJyl1SruXRuZGd2zsG87whd+SMirOeAcxfkjgTN9YcSuuAs+cr6WBGo33TXA1wYYEdcKAp5+2MtFRlOEfEpneQZ1jRI=
+	t=1716398344; cv=none; b=mMuTItvFtMJZXjG20PIdRuoEX/eGUszS7EqDwRZaWiqxlT7TVV/wM8Cx7XELUmpyEuhzKzoDNjrrcTl3jbGFW+fTQ7jyPShiIOfr3gBVjMLSoNm0KtLYsWjdo3EjoNzL+Uu9r4VhdsQXronC4zjPaxQaFlrJGMIeHJ2basMs40M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716320634; c=relaxed/simple;
-	bh=gaIkoP5Tt9ptNy9eqUxDwFHSVRdtXZdNQxS3gSxXieM=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=g/8jkVOwbG15NZZ75HTC/Dfc8RLdXo+ufUTtRf0leBrGhctRXfFOQcPJHuIp8HY9Wrch47B9oRjqZL6/m5CaK8aKCXZAQ7dCknHsT8yf8O7aMN+fNs+3QQ7EyZpc+3NjnHZ+NbtSEtGyK2eC5F75Apq4KjVZCYUl/lUQ5sCjIp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Q/x459tT; arc=none smtp.client-ip=209.85.166.48
+	s=arc-20240116; t=1716398344; c=relaxed/simple;
+	bh=r+LvFti7Juqi7+oEUIUNMgbcb5I55AfhfeCE8OXGT0k=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=UOPh5gWW9h9smk95IfppiFLwPBU6Nkiz/pHXTUIISbM8rh5r4WaYSiCx47DJbjUZyP/lCQCO4ThD6KGYiFJ/sOhKa2mX6hKKc0Ya50POtS+HU6o5SXjPy/baaL1KSCJHSs9hw7s5w8lklbJ3NnfphGpqAiCTesZrRMsyEf3Mb+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Grz3bgVm; arc=none smtp.client-ip=209.85.166.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7e1b8606bfdso19766539f.3
-        for <io-uring@vger.kernel.org>; Tue, 21 May 2024 12:43:52 -0700 (PDT)
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-36da87c973cso2550435ab.0
+        for <io-uring@vger.kernel.org>; Wed, 22 May 2024 10:19:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716320631; x=1716925431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716398340; x=1717003140; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T4xIoHSMmGrzeSfhPivp04fPK+A8FmMUIxCHFcE1zPo=;
-        b=Q/x459tTR9ak5EYWL/Ygb8HtLydtfqDpakjjofFDUwlF24E3mxFim/Nnw4x9AEj/vO
-         Nw0e7YouxTiSj9kxnTdLpVz9LuTMJxvPohmoXfgI9ReSCIJ1I95Dn70CZ1CiQW8bsad1
-         /7LdSpIPqGK1OCnLphDgXdqqyBn/URkVCoVovoxwhWgmDm4DwKMePqCdecoZ/M/o9zr5
-         yEPrJag55yEmCVL6Rfezs07paFsHgHAiX55syf6xBBP2ghaH18+oB8oeeHfbCnHxunNc
-         cTL4mATn49cvERCj4GYxEZWnSB/KVSJw2TQbs8VyyLJauzMx4Jk5S/lrhsMzDolCajWj
-         /Tyw==
+        bh=waXHV/hV/Kcmxilqn0tBGRu1dIQQdRBbsbAsl2mCb6M=;
+        b=Grz3bgVmPwimubHMnX4aKxsGUYjJ2B9+6x4L65M4kcywdLbcWqw+nbmh9hogChpPdL
+         HdVvYKCHz4SVbyxD/bS0TfMj35PnL6xY5zfdlsDbyCJNUAvRMrkQvSuGlChG+tcpeBnh
+         kVDTSoWILxGTm1BPyV6cpx5FVsl778JXnIb/p7i2tFf6SWmMeprSMXhMvAL2ddk1uksW
+         GgBCHAHd5150qLDPdqwVQP0FpYQ8WrKjj8TWfiLfP6l/h9709LEyHV9WEIdfdYnU1/Eh
+         6cXelozADN0NjUdvOLJTj0UFATloRlmfKuNp5Ilgbgd6v+Uc2feXy3UVR5iJ0IjgLcPf
+         1f3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716320631; x=1716925431;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
+        d=1e100.net; s=20230601; t=1716398340; x=1717003140;
+        h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=T4xIoHSMmGrzeSfhPivp04fPK+A8FmMUIxCHFcE1zPo=;
-        b=W1PQkCljf2qgJy1vEyfE6GT8FahYvbyD7b8TGqRMKaqyAI6lt9kofryakDyC3RKSSQ
-         FZsB+Gx9RQEUu40SOMfUjZQegR+zKaojOx6wtx37pRW85eJG4oNto15sFFfJQSwyKuyN
-         p61QuElnpiAFyaT2QpK3M3NctjaTKRzT+DhJ4+cK1Py69C+ZCqQiaCMgtkIycVWtaUWF
-         evEF260Bry0bjSBbdVfuDaic9WhdvMo2p8c726hK/Bu1CkRs3pGoxkNEHWPQlMmyxzRw
-         zZLB6bwYwQjFAJ6/O0m04m/74Qx1TvUSmx++KafWS0Mn2iVq7rbg/2gPYjLdH/wOoIVf
-         637Q==
-X-Gm-Message-State: AOJu0YyFIIKlIrtLfYpArCPZCQ5Jzozh7A3dzTYrVMDbjr9u4nAs/Wp7
-	ixCpJUwEr1gVybpU68+EwAaRu/9iGdFdgduROcwRveqm10je+a40D0fqv3ilzfyy0QQWWxpTXCD
-	P
-X-Google-Smtp-Source: AGHT+IHIvD2vBkh0fv6wTvoSX5+gjdHhX2Vpo1oJeclj6etBfpIA8v5xmG1uQE1/CW5TRH1jaVRaqw==
-X-Received: by 2002:a05:6e02:148d:b0:36d:cdc1:d76c with SMTP id e9e14a558f8ab-371f617e0c6mr462975ab.0.1716320630872;
-        Tue, 21 May 2024 12:43:50 -0700 (PDT)
+        bh=waXHV/hV/Kcmxilqn0tBGRu1dIQQdRBbsbAsl2mCb6M=;
+        b=Ixr1/8lNR7YKwMnWtW0NZn/Edqax/DZhsGjuVlUeH1dsKg/BEgjO2VTjGUKIObUKHF
+         qu+pwXH+QXZqPtwGVg3JsjSl3xpeIU/Dlw34yj+aJSFfxPHilCOZby/dnP+BKhyl70cU
+         ZwemRASWH1H+VTnb3HGwKecD423xkPRQKVR0nEgdllR95vXsYUshcuKtxZfVQSl7w7Rt
+         KgoX5p7nMpJ+hEZacrWxSJ8PVQOEc/KwcYQr50ngb2Yn1wfdsKUDV+pd2ivHQe419LFd
+         xiupEajB5ctrevrQYgXzt9dqq/HY7fZOwak6FptAk6N+qgYvFe73QqR+ZIHt5f3dAUT2
+         vk+w==
+X-Gm-Message-State: AOJu0YyGPA4JoAClTb4dKfDni+nRtWeP4KduahSxkCPNQZ74Ghvm4WJZ
+	C4OsMc0hkz7YG0Y44YiLzkRmIqiLWbDlvKXJqygP7jBtKuagbFWItTVrekYGuj8HoRv5zS8Huti
+	6
+X-Google-Smtp-Source: AGHT+IE3SlaLmiroW90n8smvZ+FDPZfzGwdIbLyQRnEwAVEyB+jK1WVuKYohdRbSuGcLwtE/bqdddQ==
+X-Received: by 2002:a05:6e02:1447:b0:36c:3856:4386 with SMTP id e9e14a558f8ab-371f92ff411mr34165655ab.3.1716398339795;
+        Wed, 22 May 2024 10:18:59 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-36cb9d3f219sm66602285ab.12.2024.05.21.12.43.49
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-37195389d91sm6960235ab.7.2024.05.22.10.18.59
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 12:43:49 -0700 (PDT)
-Message-ID: <45f46362-7dc2-4ab5-ab49-0f3cac1d58fb@kernel.dk>
-Date: Tue, 21 May 2024 13:43:48 -0600
+        Wed, 22 May 2024 10:18:59 -0700 (PDT)
+Message-ID: <01bb19f4-fb38-4a3b-a0e3-c0ee6c6ea805@kernel.dk>
+Date: Wed, 22 May 2024 11:18:58 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -78,53 +79,39 @@ User-Agent: Mozilla Thunderbird
 Content-Language: en-US
 To: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v2] io_uring/sqpoll: ensure that normal task_work is also run
- timely
-Cc: Christian Heusel <christian@heusel.eu>, Andrew Udvare <audvare@gmail.com>
+Subject: [PATCH] io_uring: remove checks for NULL 'sq_offset'
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-With the move to private task_work, SQPOLL neglected to also run the
-normal task_work, if any is pending. This will eventually get run, but
-we should run it with the private task_work to ensure that things like
-a final fput() is processed in a timely fashion.
+Since the 5.12 kernel release, nobody has been passing NULL as the
+sq_offset pointer. Remove the checks for it being NULL or not, it will
+always be valid.
 
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/313824bc-799d-414f-96b7-e6de57c7e21d@gmail.com/
-Reported-by: Andrew Udvare <audvare@gmail.com>
-Fixes: af5d68f8892f ("io_uring/sqpoll: manage task_work privately")
-Tested-by: Christian Heusel <christian@heusel.eu>
-Tested-by: Andrew Udvare <audvare@gmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 ---
 
-V2: move the task_work_run() section so we're always guaranteed it
-    runs after any task_work. Ran the previous test cases again, both
-    the yarn based one and the liburing test case, and they still work
-    as they should. Previously, if we had a retry condition due to being
-    flooded with task_work, then we'd not run the kernel side task_work.
-
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 554c7212aa46..b3722e5275e7 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -238,11 +238,13 @@ static unsigned int io_sq_tw(struct llist_node **retry_list, int max_entries)
- 	if (*retry_list) {
- 		*retry_list = io_handle_tw_list(*retry_list, &count, max_entries);
- 		if (count >= max_entries)
--			return count;
-+			goto out;
- 		max_entries -= count;
- 	}
--
- 	*retry_list = tctx_task_work_run(tctx, max_entries, &count);
-+out:
-+	if (task_work_pending(current))
-+		task_work_run();
- 	return count;
- }
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 86fd72f6a1c2..816e93e7f949 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2597,13 +2597,11 @@ static unsigned long rings_size(struct io_ring_ctx *ctx, unsigned int sq_entries
+ #endif
  
+ 	if (ctx->flags & IORING_SETUP_NO_SQARRAY) {
+-		if (sq_offset)
+-			*sq_offset = SIZE_MAX;
++		*sq_offset = SIZE_MAX;
+ 		return off;
+ 	}
+ 
+-	if (sq_offset)
+-		*sq_offset = off;
++	*sq_offset = off;
+ 
+ 	sq_array_size = array_size(sizeof(u32), sq_entries);
+ 	if (sq_array_size == SIZE_MAX)
+
 -- 
 Jens Axboe
 

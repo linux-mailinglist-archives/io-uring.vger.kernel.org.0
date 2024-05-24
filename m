@@ -1,268 +1,285 @@
-Return-Path: <io-uring+bounces-1956-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1957-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8BD8CDC48
-	for <lists+io-uring@lfdr.de>; Thu, 23 May 2024 23:46:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846048CDFEE
+	for <lists+io-uring@lfdr.de>; Fri, 24 May 2024 05:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D299D1C22902
-	for <lists+io-uring@lfdr.de>; Thu, 23 May 2024 21:46:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B51F2B228E5
+	for <lists+io-uring@lfdr.de>; Fri, 24 May 2024 03:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22ABC84DE2;
-	Thu, 23 May 2024 21:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC7C2D638;
+	Fri, 24 May 2024 03:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zNwSvOMK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/IVbyZyh";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RLLie8sG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="U6YEaLfy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HcvoD2Og"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0440212839E
-	for <io-uring@vger.kernel.org>; Thu, 23 May 2024 21:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620B71C17
+	for <io-uring@vger.kernel.org>; Fri, 24 May 2024 03:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716500744; cv=none; b=FbgtaKGdCIr+wt32Lzn+/Fr2hc/ntF1VNvotqEfFD8kozM8BXgPtbwc12yfNxAVUxr3A+r1LPofxFMnd1hKAi9XnZdSTHMbov52SiIPdGb5+poUcqq+M99zHbo1WhNUsGHosAbLZkRftoO8b5aRF1hjwzMhA0c2PAddHB8gCnP4=
+	t=1716522596; cv=none; b=nCLJ0iqgqSMvrVovB4sbkb6yB609VHavr+V9N99g0aoRy6OWkUzZd8gF5ffLGtxDlUBvkc9Jw1CanIXvQPrKVgFBh9h4Uc4eV9nIx51GPh9+lEZ+DXNUhnuJCBOzLlRZEzROtuUHOB8rvA6C+9zNbUNw25taSysBI8FkLWPNTYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716500744; c=relaxed/simple;
-	bh=TxQRxS8X/03briVa2udum2GE1r/KdNob982WwPGwtpU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N7xEN/JoV+uuOLZR6JXINds7BJGQ5NeUbf843k4ViX//nybsEXR4m26rNdo04uCDxAnhq+FbvJI78TAXPKPc5rcMoSn4r5t0S09P/hQcNiosIgoEHk/g/UlSKyQ57dNAjWEZy7cC4BKvkbbMneifCkfv6w9HUHdFOEy2EeIsmSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zNwSvOMK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/IVbyZyh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RLLie8sG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=U6YEaLfy; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2DA1820527;
-	Thu, 23 May 2024 21:45:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716500740; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=PamAmXDsW+KYUr5r2h71AzoDE2JzN+s30VJRtBm+BDQ=;
-	b=zNwSvOMKw//A2DCzFD2Lmw0qnLcEWVy4HBJGsMowlJgK4210b8OFwn/SFxDfJpl+Rz3p8O
-	2+zldSxAS3wZlIOrdaogTc4E9JQ79fpez/qcFCHh+hFLWNA4g6LqO0vJ713/1pHEeDMQxR
-	3UHG1IMoKejTL2udw19LGKFnQ1c5tio=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716500740;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=PamAmXDsW+KYUr5r2h71AzoDE2JzN+s30VJRtBm+BDQ=;
-	b=/IVbyZyhWuZGDpfm8t3SxJYIAj/OxM2cKSX5iJ7FMtKbJh7OSJgWyx/xOFWjHWvJ/WVsUB
-	vrrUDLH/mZY5njAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RLLie8sG;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=U6YEaLfy
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716500739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=PamAmXDsW+KYUr5r2h71AzoDE2JzN+s30VJRtBm+BDQ=;
-	b=RLLie8sGftddjeaiGmIYMDifPsshqkay5Fg+FAnaIbYyEYiFDiUirN7lqSKWKrdFJwcjty
-	+CQGfqoTWeMQVHt4x6/zc9A8NAkFklMoHOYjK2ySqhi2I3JVyhWY8XBTWxKGuibUtAf3Tw
-	+YAHo01Sf8z+9OMCT4cEMHyhlTNYVG4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716500739;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=PamAmXDsW+KYUr5r2h71AzoDE2JzN+s30VJRtBm+BDQ=;
-	b=U6YEaLfy7zzAlxniZ/TEN5XhI4zV/nkWRRTavT39Ooj6TrDmLHHDqoZAdPMckWL5+NrDxH
-	lQBroQ0rSeSVxTCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E9C6C13A6C;
-	Thu, 23 May 2024 21:45:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uDMLMwK5T2b4PwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Thu, 23 May 2024 21:45:38 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH] io_uring/rsrc: Drop io_copy_iov in favor of iovec API
-Date: Thu, 23 May 2024 17:45:35 -0400
-Message-ID: <20240523214535.31890-1-krisman@suse.de>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1716522596; c=relaxed/simple;
+	bh=l6Xob5QDK5tpeJPp9s/d9svEDmEA/JMDGro82O0hrY0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=BA8mJ5lJUDK/eHiyeYfydrqXsj/1G9mMLOd0iSvCKYxOaasoRwHG3GLcECY0vKv7ByZAGLo7fvvlFfA+T7PTzekTmjYeGrUoPPlr/RZxf2lR0ygkbajI9uQZrhcxkNBbNk3XSw0IHFy1DHX32/mNLPq/X949mnlZ7G2mInnMA2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HcvoD2Og; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716522593;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SW7PnDv+qXOv7Q+AP1YCRKO3K28HjKgWz5Vf2KgrQiI=;
+	b=HcvoD2OgIKdSyWxjSdB77AaaSoFuxe3xVkFxnP9BG6iYl079Qy5c7OClUXSBHpsQ48c8jl
+	YLwIQb7GmwssDXE5tI3o4YWTlRF4Cs20DYvIc6mGm+pS/qRAypr+Gk9nUo4uNK/KpK7BqM
+	eQ85kUw8QbfWnDT3PaZwI7sDhEYsa2E=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-360-8dHFIumgMXe7ZFJWgkOjXg-1; Thu, 23 May 2024 23:49:48 -0400
+X-MC-Unique: 8dHFIumgMXe7ZFJWgkOjXg-1
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6f8e9870f3fso541696b3a.1
+        for <io-uring@vger.kernel.org>; Thu, 23 May 2024 20:49:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716522586; x=1717127386;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SW7PnDv+qXOv7Q+AP1YCRKO3K28HjKgWz5Vf2KgrQiI=;
+        b=DerdnNXPbag4xhXqylQZzKYt9Y5tfPbK1oQnOVcJD5l2vPUGqerpOKtxphh8G1FrDV
+         Mqt8EkZZbDIiWwKBfY13T89jbNHs0x5dKUXD1R4AbQs1IopqmNjvG7Ee7okBUvVyb95P
+         ACRZnPXLY60M2chPniaKkKyAnnH/W4H5L2wS7kJ6sYp6wQN5rJgt39GEdg9ve1x7U7Kg
+         wqNR0PH6CQWO8lBHZAW37fBhUMLgBa6kVZy5TVY1zRIyeNp5Jovz34BPU/57WeQ13PUN
+         7Emot3b2lueSnb2iyn9FKICogSKHaTTVWG+3kZMPBo706zpoVb+vwVAIjT0pGWDozGjc
+         Q2oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVc7OzfW93fJBz9ZvcWKc+x1bZTLZURMi926nWhtryJeDVP6k9YnRDTLsxhLxQVlLApmwQPqRr6QxIT6Zbwo7AhQy0GZfNjVR4=
+X-Gm-Message-State: AOJu0YxY9oAmv6p8NzEry6ui1K1loiHAhvPMC+UQI6UpdqZFYvVK45bd
+	vApy3fTlrhPrTL93nhcoYLmK7V/EflFT1yGtNGUH2WvUFZLR7LLxYWyrG8f/ie5SQL+/3G86pXn
+	MLTev3/MUmYhwX4z9JeXZtS4GaHoDyOtWOJCqi1bWQizsJEzL0zVgRJbzfn9f6COTzwQX0ruQXP
+	wKfIwr/TryOb5RHz5Br0nLfetlEmiHiS0=
+X-Received: by 2002:a05:6a00:2786:b0:6ed:cbe2:3bc8 with SMTP id d2e1a72fcca58-6f8f3f9082emr1244280b3a.22.1716522586185;
+        Thu, 23 May 2024 20:49:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHcaHDoyiiZkKQdBA9se1W7XilmiZnmc58yZF1/5ur3xzt3l1tnXwkID0S7LwbzUQX/q5mp8kUucaaBAmJPi9s=
+X-Received: by 2002:a05:6a00:2786:b0:6ed:cbe2:3bc8 with SMTP id
+ d2e1a72fcca58-6f8f3f9082emr1244269b3a.22.1716522585730; Thu, 23 May 2024
+ 20:49:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 2DA1820527
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+From: Changhui Zhong <czhong@redhat.com>
+Date: Fri, 24 May 2024 11:49:34 +0800
+Message-ID: <CAGVVp+UvLiS+bhNXV-h2icwX1dyybbYHeQUuH7RYqUvMQf6N3w@mail.gmail.com>
+Subject: [bug report] WARNING: CPU: 2 PID: 3445306 at drivers/block/ublk_drv.c:2633
+ ublk_ctrl_start_recovery.constprop.0+0x74/0x180
+To: Linux Block Devices <linux-block@vger.kernel.org>, io-uring@vger.kernel.org
+Cc: Ming Lei <ming.lei@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Instead of open coding an io_uring function to copy iovs from userspace,
-rely on the existing iovec_from_user function.  While there, avoid
-repeatedly zeroing the iov in the !arg case for io_sqe_buffer_register.
+Hello,
 
-tested with liburing testsuite.
+I hit the kernel panic when running test ubdsrv  generic/005=EF=BC=8C
+please help check it and let me know if you need any info/testing for
+it, thanks.
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
- io_uring/rsrc.c | 60 +++++++++++++++++--------------------------------
- 1 file changed, 21 insertions(+), 39 deletions(-)
+repo:https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
+branch:for-next
+commit: b785211c726fbe77ff559f0241aab8d3dadd9988
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 65417c9553b1..338e771bcafb 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -85,31 +85,6 @@ static int io_account_mem(struct io_ring_ctx *ctx, unsigned long nr_pages)
- 	return 0;
- }
- 
--static int io_copy_iov(struct io_ring_ctx *ctx, struct iovec *dst,
--		       void __user *arg, unsigned index)
--{
--	struct iovec __user *src;
--
--#ifdef CONFIG_COMPAT
--	if (ctx->compat) {
--		struct compat_iovec __user *ciovs;
--		struct compat_iovec ciov;
--
--		ciovs = (struct compat_iovec __user *) arg;
--		if (copy_from_user(&ciov, &ciovs[index], sizeof(ciov)))
--			return -EFAULT;
--
--		dst->iov_base = u64_to_user_ptr((u64)ciov.iov_base);
--		dst->iov_len = ciov.iov_len;
--		return 0;
--	}
--#endif
--	src = (struct iovec __user *) arg;
--	if (copy_from_user(dst, &src[index], sizeof(*dst)))
--		return -EFAULT;
--	return 0;
--}
--
- static int io_buffer_validate(struct iovec *iov)
- {
- 	unsigned long tmp, acct_len = iov->iov_len + (PAGE_SIZE - 1);
-@@ -419,8 +394,9 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
- 				   struct io_uring_rsrc_update2 *up,
- 				   unsigned int nr_args)
- {
-+	struct iovec __user *uvec = u64_to_user_ptr(up->data);
- 	u64 __user *tags = u64_to_user_ptr(up->tags);
--	struct iovec iov, __user *iovs = u64_to_user_ptr(up->data);
-+	struct iovec fast_iov, *iov;
- 	struct page *last_hpage = NULL;
- 	__u32 done;
- 	int i, err;
-@@ -434,21 +410,23 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
- 		struct io_mapped_ubuf *imu;
- 		u64 tag = 0;
- 
--		err = io_copy_iov(ctx, &iov, iovs, done);
--		if (err)
-+		iov = iovec_from_user(&uvec[done], 1, 1, &fast_iov, ctx->compat);
-+		if (IS_ERR(iov)) {
-+			err = PTR_ERR(iov);
- 			break;
-+		}
- 		if (tags && copy_from_user(&tag, &tags[done], sizeof(tag))) {
- 			err = -EFAULT;
- 			break;
- 		}
--		err = io_buffer_validate(&iov);
-+		err = io_buffer_validate(iov);
- 		if (err)
- 			break;
--		if (!iov.iov_base && tag) {
-+		if (!iov->iov_base && tag) {
- 			err = -EINVAL;
- 			break;
- 		}
--		err = io_sqe_buffer_register(ctx, &iov, &imu, &last_hpage);
-+		err = io_sqe_buffer_register(ctx, iov, &imu, &last_hpage);
- 		if (err)
- 			break;
- 
-@@ -970,8 +948,9 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
- {
- 	struct page *last_hpage = NULL;
- 	struct io_rsrc_data *data;
-+	struct iovec fast_iov, *iov = &fast_iov;
-+	const struct iovec __user *uvec = (struct iovec * __user) arg;
- 	int i, ret;
--	struct iovec iov;
- 
- 	BUILD_BUG_ON(IORING_MAX_REG_BUFFERS >= (1u << 16));
- 
-@@ -988,24 +967,27 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
- 		return ret;
- 	}
- 
-+	if (!arg)
-+		memset(iov, 0, sizeof(*iov));
-+
- 	for (i = 0; i < nr_args; i++, ctx->nr_user_bufs++) {
- 		if (arg) {
--			ret = io_copy_iov(ctx, &iov, arg, i);
--			if (ret)
-+			iov = iovec_from_user(&uvec[i], 1, 1, &fast_iov, ctx->compat);
-+			if (IS_ERR(iov)) {
-+				ret = PTR_ERR(iov);
- 				break;
--			ret = io_buffer_validate(&iov);
-+			}
-+			ret = io_buffer_validate(iov);
- 			if (ret)
- 				break;
--		} else {
--			memset(&iov, 0, sizeof(iov));
- 		}
- 
--		if (!iov.iov_base && *io_get_tag_slot(data, i)) {
-+		if (!iov->iov_base && *io_get_tag_slot(data, i)) {
- 			ret = -EINVAL;
- 			break;
- 		}
- 
--		ret = io_sqe_buffer_register(ctx, &iov, &ctx->user_bufs[i],
-+		ret = io_sqe_buffer_register(ctx, iov, &ctx->user_bufs[i],
- 					     &last_hpage);
- 		if (ret)
- 			break;
--- 
-2.44.0
+dmesg log=EF=BC=9A
+[ 7203.196155] ------------[ cut here ]------------
+[ 7203.200779] WARNING: CPU: 2 PID: 3445306 at
+drivers/block/ublk_drv.c:2633
+ublk_ctrl_start_recovery.constprop.0+0x74/0x180
+[ 7203.211732] Modules linked in: ext4 mbcache jbd2 raid10 raid1 raid0
+dm_raid raid456 async_raid6_recov async_memcpy async_pq async_xor xor
+async_tx raid6_pq loop nf_tables nfnetlink tls rpcsec_gss_krb5
+auth_rpcgss nfsv4 dns_resolver nfs lockd grace netfs rfkill sunrpc
+vfat fat dm_multipath intel_rapl_msr intel_rapl_common
+intel_uncore_frequency intel_uncore_frequency_common i10nm_edac nfit
+libnvdimm x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel
+ipmi_ssif kvm mgag200 dax_hmem iTCO_wdt i2c_algo_bit rapl
+iTCO_vendor_support cxl_acpi drm_shmem_helper intel_cstate cxl_core
+drm_kms_helper acpi_power_meter mei_me dcdbas dell_smbios i2c_i801
+intel_uncore einj isst_if_mmio isst_if_mbox_pci ipmi_si
+dell_wmi_descriptor wmi_bmof pcspkr mei i2c_smbus isst_if_common
+acpi_ipmi intel_vsec intel_pch_thermal ipmi_devintf ipmi_msghandler
+drm fuse xfs libcrc32c sd_mod t10_pi sg ahci libahci crct10dif_pclmul
+crc32_pclmul crc32c_intel libata tg3 ghash_clmulni_intel wmi dm_mirror
+dm_region_hash dm_log dm_mod
+[ 7203.211779]  [last unloaded: null_blk]
+[ 7203.303523] CPU: 2 PID: 3445306 Comm: iou-wrk-3445292 Not tainted 6.9.0+=
+ #1
+[ 7203.310482] Hardware name: Dell Inc. PowerEdge R650xs/0PPTY2, BIOS
+1.4.4 10/07/2021
+[ 7203.318135] RIP: 0010:ublk_ctrl_start_recovery.constprop.0+0x74/0x180
+[ 7203.324573] Code: 00 0f 84 9e 00 00 00 45 31 f6 bd ff ff ff ff 44
+89 f3 41 0f af 5d 10 49 03 5d 08 48 8b 7b 10 48 85 ff 74 06 f6 47 2c
+04 75 02 <0f> 0b 31 d2 4c 8d 47 28 89 e8 66 89 53 38 f0 0f c1 47 28 83
+f8 01
+[ 7203.343319] RSP: 0018:ff59ae67453ffce0 EFLAGS: 00010246
+[ 7203.348544] RAX: 0000000000000002 RBX: ff2fabb3b5682000 RCX: 00000000000=
+00000
+[ 7203.355678] RDX: ff2fabb261e18000 RSI: ffffffffa324ee00 RDI: 00000000000=
+00000
+[ 7203.362812] RBP: 00000000ffffffff R08: 0000000000000000 R09: ffffffffa36=
+e33e0
+[ 7203.369943] R10: 0000000000000000 R11: 0000000000000000 R12: ff2fabb3ae4=
+4a468
+[ 7203.377078] R13: ff2fabb3ae44a000 R14: 0000000000000000 R15: ff2fabb3ce1=
+50080
+[ 7203.384210] FS:  00007fbed107c740(0000) GS:ff2fabb5af700000(0000)
+knlGS:0000000000000000
+[ 7203.392294] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 7203.398041] CR2: 00007f4428078584 CR3: 000000011baa0004 CR4: 00000000007=
+71ef0
+[ 7203.405174] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[ 7203.412308] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[ 7203.419441] PKRU: 55555554
+[ 7203.422151] Call Trace:
+[ 7203.424605]  <TASK>
+[ 7203.426713]  ? __warn+0x7f/0x120
+[ 7203.429943]  ? ublk_ctrl_start_recovery.constprop.0+0x74/0x180
+[ 7203.435778]  ? report_bug+0x18a/0x1a0
+[ 7203.439445]  ? handle_bug+0x3c/0x70
+[ 7203.442943]  ? exc_invalid_op+0x14/0x70
+[ 7203.446782]  ? asm_exc_invalid_op+0x16/0x20
+[ 7203.450970]  ? ublk_ctrl_start_recovery.constprop.0+0x74/0x180
+[ 7203.456802]  ublk_ctrl_uring_cmd+0x4f7/0x6c0
+[ 7203.461075]  ? pick_next_task_idle+0x26/0x40
+[ 7203.465347]  io_uring_cmd+0x9a/0x1b0
+[ 7203.468929]  io_issue_sqe+0x193/0x3f0
+[ 7203.472602]  io_wq_submit_work+0x9b/0x390
+[ 7203.476613]  io_worker_handle_work+0x165/0x360
+[ 7203.481059]  io_wq_worker+0xcb/0x2f0
+[ 7203.484640]  ? finish_task_switch.isra.0+0x203/0x290
+[ 7203.489608]  ? finish_task_switch.isra.0+0x203/0x290
+[ 7203.494572]  ? __pfx_io_wq_worker+0x10/0x10
+[ 7203.498758]  ret_from_fork+0x2d/0x50
+[ 7203.502338]  ? __pfx_io_wq_worker+0x10/0x10
+[ 7203.506523]  ret_from_fork_asm+0x1a/0x30
+[ 7203.510451]  </TASK>
+[ 7203.512643] ---[ end trace 0000000000000000 ]---
+[ 7203.517263] BUG: kernel NULL pointer dereference, address: 0000000000000=
+028
+[ 7203.524220] #PF: supervisor write access in kernel mode
+[ 7203.529445] #PF: error_code(0x0002) - not-present page
+[ 7203.534584] PGD 2761af067 P4D 442db4067 PUD 1727a2067 PMD 0
+[ 7203.540244] Oops: Oops: 0002 [#1] PREEMPT SMP NOPTI
+[ 7203.545123] CPU: 2 PID: 3445306 Comm: iou-wrk-3445292 Tainted: G
+    W          6.9.0+ #1
+[ 7203.553556] Hardware name: Dell Inc. PowerEdge R650xs/0PPTY2, BIOS
+1.4.4 10/07/2021
+[ 7203.561208] RIP: 0010:ublk_ctrl_start_recovery.constprop.0+0x82/0x180
+[ 7203.567647] Code: ff 44 89 f3 41 0f af 5d 10 49 03 5d 08 48 8b 7b
+10 48 85 ff 74 06 f6 47 2c 04 75 02 0f 0b 31 d2 4c 8d 47 28 89 e8 66
+89 53 38 <f0> 0f c1 47 28 83 f8 01 0f 84 b5 00 00 00 85 c0 0f 8e b7 00
+00 00
+[ 7203.586395] RSP: 0018:ff59ae67453ffce0 EFLAGS: 00010246
+[ 7203.591622] RAX: 00000000ffffffff RBX: ff2fabb3b5682000 RCX: 00000000000=
+00000
+[ 7203.598755] RDX: 0000000000000000 RSI: ffffffffa324ee00 RDI: 00000000000=
+00000
+[ 7203.605886] RBP: 00000000ffffffff R08: 0000000000000028 R09: ffffffffa36=
+e33e0
+[ 7203.613020] R10: 0000000000000000 R11: 0000000000000000 R12: ff2fabb3ae4=
+4a468
+[ 7203.620153] R13: ff2fabb3ae44a000 R14: 0000000000000000 R15: ff2fabb3ce1=
+50080
+[ 7203.627284] FS:  00007fbed107c740(0000) GS:ff2fabb5af700000(0000)
+knlGS:0000000000000000
+[ 7203.635371] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 7203.641117] CR2: 0000000000000028 CR3: 000000011baa0004 CR4: 00000000007=
+71ef0
+[ 7203.648248] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[ 7203.655383] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[ 7203.662514] PKRU: 55555554
+[ 7203.665227] Call Trace:
+[ 7203.667681]  <TASK>
+[ 7203.669785]  ? __die+0x20/0x70
+[ 7203.672845]  ? page_fault_oops+0x75/0x170
+[ 7203.676860]  ? exc_page_fault+0x64/0x140
+[ 7203.680785]  ? asm_exc_page_fault+0x22/0x30
+[ 7203.684969]  ? ublk_ctrl_start_recovery.constprop.0+0x82/0x180
+[ 7203.690804]  ublk_ctrl_uring_cmd+0x4f7/0x6c0
+[ 7203.695076]  ? pick_next_task_idle+0x26/0x40
+[ 7203.699350]  io_uring_cmd+0x9a/0x1b0
+[ 7203.702927]  io_issue_sqe+0x193/0x3f0
+[ 7203.706595]  io_wq_submit_work+0x9b/0x390
+[ 7203.710607]  io_worker_handle_work+0x165/0x360
+[ 7203.715054]  io_wq_worker+0xcb/0x2f0
+[ 7203.718633]  ? finish_task_switch.isra.0+0x203/0x290
+[ 7203.723597]  ? finish_task_switch.isra.0+0x203/0x290
+[ 7203.728564]  ? __pfx_io_wq_worker+0x10/0x10
+[ 7203.732749]  ret_from_fork+0x2d/0x50
+[ 7203.736330]  ? __pfx_io_wq_worker+0x10/0x10
+[ 7203.740514]  ret_from_fork_asm+0x1a/0x30
+[ 7203.744441]  </TASK>
+[ 7203.746634] Modules linked in: ext4 mbcache jbd2 raid10 raid1 raid0
+dm_raid raid456 async_raid6_recov async_memcpy async_pq async_xor xor
+async_tx raid6_pq loop nf_tables nfnetlink tls rpcsec_gss_krb5
+auth_rpcgss nfsv4 dns_resolver nfs lockd grace netfs rfkill sunrpc
+vfat fat dm_multipath intel_rapl_msr intel_rapl_common
+intel_uncore_frequency intel_uncore_frequency_common i10nm_edac nfit
+libnvdimm x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel
+ipmi_ssif kvm mgag200 dax_hmem iTCO_wdt i2c_algo_bit rapl
+iTCO_vendor_support cxl_acpi drm_shmem_helper intel_cstate cxl_core
+drm_kms_helper acpi_power_meter mei_me dcdbas dell_smbios i2c_i801
+intel_uncore einj isst_if_mmio isst_if_mbox_pci ipmi_si
+dell_wmi_descriptor wmi_bmof pcspkr mei i2c_smbus isst_if_common
+acpi_ipmi intel_vsec intel_pch_thermal ipmi_devintf ipmi_msghandler
+drm fuse xfs libcrc32c sd_mod t10_pi sg ahci libahci crct10dif_pclmul
+crc32_pclmul crc32c_intel libata tg3 ghash_clmulni_intel wmi dm_mirror
+dm_region_hash dm_log dm_mod
+[ 7203.746668]  [last unloaded: null_blk]
+[ 7203.838416] CR2: 0000000000000028
+[ 7203.841734] ---[ end trace 0000000000000000 ]---
+[ 7203.919227] RIP: 0010:ublk_ctrl_start_recovery.constprop.0+0x82/0x180
+[ 7203.925673] Code: ff 44 89 f3 41 0f af 5d 10 49 03 5d 08 48 8b 7b
+10 48 85 ff 74 06 f6 47 2c 04 75 02 0f 0b 31 d2 4c 8d 47 28 89 e8 66
+89 53 38 <f0> 0f c1 47 28 83 f8 01 0f 84 b5 00 00 00 85 c0 0f 8e b7 00
+00 00
+[ 7203.944417] RSP: 0018:ff59ae67453ffce0 EFLAGS: 00010246
+[ 7203.949646] RAX: 00000000ffffffff RBX: ff2fabb3b5682000 RCX: 00000000000=
+00000
+[ 7203.956778] RDX: 0000000000000000 RSI: ffffffffa324ee00 RDI: 00000000000=
+00000
+[ 7203.963909] RBP: 00000000ffffffff R08: 0000000000000028 R09: ffffffffa36=
+e33e0
+[ 7203.971042] R10: 0000000000000000 R11: 0000000000000000 R12: ff2fabb3ae4=
+4a468
+[ 7203.978174] R13: ff2fabb3ae44a000 R14: 0000000000000000 R15: ff2fabb3ce1=
+50080
+[ 7203.985307] FS:  00007fbed107c740(0000) GS:ff2fabb5af700000(0000)
+knlGS:0000000000000000
+[ 7203.993395] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 7203.999139] CR2: 0000000000000028 CR3: 000000011baa0004 CR4: 00000000007=
+71ef0
+[ 7204.006274] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
+00000
+[ 7204.013405] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
+00400
+[ 7204.020537] PKRU: 55555554
+[ 7204.023250] Kernel panic - not syncing: Fatal exception
+[ 7204.028542] Kernel Offset: 0x20a00000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[ 7204.110552] ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+--
+Best Regards,
+     Changhui
 
 

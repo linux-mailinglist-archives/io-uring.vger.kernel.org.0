@@ -1,128 +1,159 @@
-Return-Path: <io-uring+bounces-1969-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1970-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6528B8CF3A3
-	for <lists+io-uring@lfdr.de>; Sun, 26 May 2024 11:51:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824C78D0143
+	for <lists+io-uring@lfdr.de>; Mon, 27 May 2024 15:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95CD41C21260
-	for <lists+io-uring@lfdr.de>; Sun, 26 May 2024 09:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377A1283430
+	for <lists+io-uring@lfdr.de>; Mon, 27 May 2024 13:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0308F12BF1A;
-	Sun, 26 May 2024 09:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SrnsrqtR"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB3015EFAD;
+	Mon, 27 May 2024 13:22:30 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0B117BA5;
-	Sun, 26 May 2024 09:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5673B15ECF9
+	for <io-uring@vger.kernel.org>; Mon, 27 May 2024 13:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716716598; cv=none; b=MroehK0ZgiUay9yxcCe8mlyokeLW0zwzSnGDbUz8wPkjf74LmZqyV42D49cUuUSjsUskVxMiMAELekgGt7ft2QJJRVW2cQxqD7zvy/cHPbUd/wc7QlDrfiE8QlbkZPmHmkAyKgBUK1sFoJxDgZO8YyYaQxBFc/+0B2B9GG8cUMg=
+	t=1716816150; cv=none; b=ojHZ+PNq3afxWlYJ0srLqAEcS2ptt0EtEmW55QF765DcdF0w+96Qqx+1U+8GXGvYLa8Wp+0cJ+1xVgqpcegOwoECcOw7YHC1lJQLCEa9lcssZjwv/vqYUQOvQsB3G+3I5+uuKQOghI6Ac0KGk2YjbXg0eK93YU6u9+kistxwwGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716716598; c=relaxed/simple;
-	bh=gU7mQeVUwW72BejA8LdWOpIivkX5q+fyzHkWGx5c1PU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tx25M1fPfVADXLZVLnoy5w3IouJe7mIqQu7JZtfnbYu/+S563qepyE77JujMgda6xI003bwCQ/GtYISe8XMMeP1ttrh0eK2xwqQsU+FOD/mb9divnT4hoAtuaKsZg+E27dvs9WFIewruxSAQwfgKIQltbUgw5KL8VDChOqPHxEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SrnsrqtR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15836C2BD10;
-	Sun, 26 May 2024 09:43:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716716598;
-	bh=gU7mQeVUwW72BejA8LdWOpIivkX5q+fyzHkWGx5c1PU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SrnsrqtRtyK5jj7R1xM/tPrByOeDYLjcu2QsfDqfk/JcNDOriXBdK1stZjXp9LjQE
-	 CzEi3NDGfsQjtyWkY9gSP88euogzVUD/22LFTJ5bax9dM4UTpy74dUfWbG169+yc9T
-	 w8GTvmGIAT/+ujz/v2IOKHQGw9CEQ2FSBtXIScrn9yihjPu9BV639aNesKcDj8LLQ0
-	 3rCKirR1kaIzAlZ9d/Lzf5vvbfZNWouMQeYnnQIt9W1yptOT2v2r1P2WG1jUNH2Wxt
-	 Qjb+TMITcZP0bcioI/1m167BTji9ff9c3rpA1b0khkzHC0C7b1BGYZq4oDttf7rs//
-	 tC1U1qfgNKyMg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 4/9] io_uring/sqpoll: work around a potential audit memory leak
-Date: Sun, 26 May 2024 05:43:05 -0400
-Message-ID: <20240526094312.3413460-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240526094312.3413460-1-sashal@kernel.org>
-References: <20240526094312.3413460-1-sashal@kernel.org>
+	s=arc-20240116; t=1716816150; c=relaxed/simple;
+	bh=l4cYYvTuGJTCQAXcG6jFJSb2OefKYqz1SCBoseZVUns=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XGUjY6Y0yfz8MBcTXOC/Nj/IuhX2WbDeIyZ5IUzpulhOK5tRfy7SoDUqxV8xdVRySXRFfz5nL4AmBhqhJYR5OREtrFdRwiiZKfmz2Dxp6OasN+o8LiDYf+35wAoOJEkLquzhaE/NZ4DZtb2a3dXOeu4MdyvFHGyh3BKu9cJit5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e8e7707356so368820839f.3
+        for <io-uring@vger.kernel.org>; Mon, 27 May 2024 06:22:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716816148; x=1717420948;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/qhmbTQ4F0jLVtDtoVk681gByJJZtXvPAOYim6+cLZE=;
+        b=soe1GLEliK/faSq/qm5LqAt/8huYEHPzaXk7mF3WHc9W6uUwlcG8SRzy+K13a16mUW
+         BvldzAAA4KRjp4elBZdgBVPVVXA2ejX9G5uJ5mZX7kZPf3OUbE+htVDPCyn1pw1owix2
+         c8NYlsEsufUNt2mMUYcrj6KDSfTaPsAOrzBktUYc9MB6uvFRq/iqhjEY0jhDMhBGETPa
+         AS3gCBKOsDz2E7Whb0v+WFNV3wNPgTXW3qpfhkqcuMxR/FG1P9PUFe98LiYJQCUKHC9F
+         k5Plr6S1R23IWWiwKddqo6CnXfPguAIgFY+0dFU3XBvOwL7VxYlqFA31U5ban2VhAx8H
+         /nyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCxFC8DX2Uw/y5rkht9UzRj1x31seYWqJnVN0mlqKy8kGWlpL0ywOUe5kSAgmBMn1hsGReKKUtP+qz3IRVFdWQNVTXXOxLXGU=
+X-Gm-Message-State: AOJu0YzGfoAEcXMB4QM1he1oZ6yVj0xf7hdHnv+4kR3htr1Cg/Ee5LEg
+	QLPdF+tuEANtPkG3xj5nOGFk5ejtzyLRY2cSrX05qp4DKxIHSCvAF9/1AfI8wjVm+KXWLpIIOyc
+	vQK5nk1tQBC6yw+TRCgFCBfE60cITi+FsJUVOBDa4QGuPKm0ky0xM+PU=
+X-Google-Smtp-Source: AGHT+IEWiodKgU8o7O1h9yGWtTo/R1nGfBJ3VP+NBaqZy7bxNCatxqKr698IrVTTW8Zz1Lpq5lic2HoFa0yiw29chSGTWr3ilD7J
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.91
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:216e:b0:36b:2731:4084 with SMTP id
+ e9e14a558f8ab-3737b2bdafemr5797905ab.2.1716816148564; Mon, 27 May 2024
+ 06:22:28 -0700 (PDT)
+Date: Mon, 27 May 2024 06:22:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ae186106196f6894@google.com>
+Subject: [syzbot] [io-uring?] KMSAN: uninit-value in io_issue_sqe
+From: syzbot <syzbot+b1647099e82b3b349fbf@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Jens Axboe <axboe@kernel.dk>
+Hello,
 
-[ Upstream commit c4ce0ab27646f4206a9eb502d6fe45cb080e1cae ]
+syzbot found the following issue on:
 
-kmemleak complains that there's a memory leak related to connect
-handling:
+HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11b9b972980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+dashboard link: https://syzkaller.appspot.com/bug?extid=b1647099e82b3b349fbf
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-unreferenced object 0xffff0001093bdf00 (size 128):
-comm "iou-sqp-455", pid 457, jiffies 4294894164
-hex dump (first 32 bytes):
-02 00 fa ea 7f 00 00 01 00 00 00 00 00 00 00 00  ................
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-backtrace (crc 2e481b1a):
-[<00000000c0a26af4>] kmemleak_alloc+0x30/0x38
-[<000000009c30bb45>] kmalloc_trace+0x228/0x358
-[<000000009da9d39f>] __audit_sockaddr+0xd0/0x138
-[<0000000089a93e34>] move_addr_to_kernel+0x1a0/0x1f8
-[<000000000b4e80e6>] io_connect_prep+0x1ec/0x2d4
-[<00000000abfbcd99>] io_submit_sqes+0x588/0x1e48
-[<00000000e7c25e07>] io_sq_thread+0x8a4/0x10e4
-[<00000000d999b491>] ret_from_fork+0x10/0x20
+Unfortunately, I don't have any reproducer for this issue yet.
 
-which can can happen if:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
 
-1) The command type does something on the prep side that triggers an
-   audit call.
-2) The thread hasn't done any operations before this that triggered
-   an audit call inside ->issue(), where we have audit_uring_entry()
-   and audit_uring_exit().
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b1647099e82b3b349fbf@syzkaller.appspotmail.com
 
-Work around this by issuing a blanket NOP operation before the SQPOLL
-does anything.
+=====================================================
+BUG: KMSAN: uninit-value in io_req_cqe_overflow io_uring/io_uring.c:810 [inline]
+BUG: KMSAN: uninit-value in io_req_complete_post io_uring/io_uring.c:937 [inline]
+BUG: KMSAN: uninit-value in io_issue_sqe+0x1f1b/0x22c0 io_uring/io_uring.c:1763
+ io_req_cqe_overflow io_uring/io_uring.c:810 [inline]
+ io_req_complete_post io_uring/io_uring.c:937 [inline]
+ io_issue_sqe+0x1f1b/0x22c0 io_uring/io_uring.c:1763
+ io_wq_submit_work+0xa17/0xeb0 io_uring/io_uring.c:1860
+ io_worker_handle_work+0xc04/0x2000 io_uring/io-wq.c:597
+ io_wq_worker+0x447/0x1410 io_uring/io-wq.c:651
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Uninit was stored to memory at:
+ io_req_set_res io_uring/io_uring.h:215 [inline]
+ io_recv_finish+0xf10/0x1560 io_uring/net.c:861
+ io_recv+0x12ec/0x1ea0 io_uring/net.c:1175
+ io_issue_sqe+0x429/0x22c0 io_uring/io_uring.c:1751
+ io_wq_submit_work+0xa17/0xeb0 io_uring/io_uring.c:1860
+ io_worker_handle_work+0xc04/0x2000 io_uring/io-wq.c:597
+ io_wq_worker+0x447/0x1410 io_uring/io-wq.c:651
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3877 [inline]
+ slab_alloc_node mm/slub.c:3918 [inline]
+ __do_kmalloc_node mm/slub.c:4038 [inline]
+ __kmalloc+0x6e4/0x1060 mm/slub.c:4052
+ kmalloc include/linux/slab.h:632 [inline]
+ io_alloc_async_data+0xc0/0x220 io_uring/io_uring.c:1662
+ io_msg_alloc_async io_uring/net.c:166 [inline]
+ io_recvmsg_prep_setup io_uring/net.c:725 [inline]
+ io_recvmsg_prep+0xbe8/0x1a20 io_uring/net.c:806
+ io_init_req io_uring/io_uring.c:2135 [inline]
+ io_submit_sqe io_uring/io_uring.c:2182 [inline]
+ io_submit_sqes+0x1135/0x2f10 io_uring/io_uring.c:2335
+ __do_sys_io_uring_enter io_uring/io_uring.c:3246 [inline]
+ __se_sys_io_uring_enter+0x40f/0x3c80 io_uring/io_uring.c:3183
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3183
+ x64_sys_call+0x2c0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 PID: 7410 Comm: iou-wrk-7408 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+=====================================================
+
+
 ---
- io_uring/sqpoll.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 7b6facf529b8d..11610a70573ab 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -235,6 +235,14 @@ static int io_sq_thread(void *data)
- 		set_cpus_allowed_ptr(current, cpu_online_mask);
- 	current->flags |= PF_NO_SETAFFINITY;
- 
-+	/*
-+	 * Force audit context to get setup, in case we do prep side async
-+	 * operations that would trigger an audit call before any issue side
-+	 * audit has been done.
-+	 */
-+	audit_uring_entry(IORING_OP_NOP);
-+	audit_uring_exit(true, 0);
-+
- 	mutex_lock(&sqd->lock);
- 	while (1) {
- 		bool cap_entries, sqt_spin = false;
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

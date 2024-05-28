@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-1980-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-1981-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7E28D21F8
-	for <lists+io-uring@lfdr.de>; Tue, 28 May 2024 18:50:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2678D22E1
+	for <lists+io-uring@lfdr.de>; Tue, 28 May 2024 20:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15EEF1C22F76
-	for <lists+io-uring@lfdr.de>; Tue, 28 May 2024 16:50:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2B881C22D73
+	for <lists+io-uring@lfdr.de>; Tue, 28 May 2024 18:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E0A172BC2;
-	Tue, 28 May 2024 16:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF3F45957;
+	Tue, 28 May 2024 17:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBiN6DGH"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="gYqa68B9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43AA171E44
-	for <io-uring@vger.kernel.org>; Tue, 28 May 2024 16:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8580482FE
+	for <io-uring@vger.kernel.org>; Tue, 28 May 2024 17:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716915027; cv=none; b=BvuG9haU7UcZU1C4re9J6EE7AqjBzwLuQj+ljfXsUNSvoSOzypW+To2sf/c6CTieeyU5TNOawXdTpnLZ0Tk25Fj2S6JjPkiUtcUHCiZQG/EKCNkibswvS1IdxmrlbJeX+3eQlnn0/GwGdhc38b2v2uoGnlmPnfvjcwwNygS7+ek=
+	t=1716919193; cv=none; b=fv1lmSkLuM0pOJWYI/5Rorz4ml5Y/Tn55CNfXPEiWqPpYEAOGS3V2QubluOEMdwT5cRHNl/uuUnsQWhQGflU4hPsdaJQYNegqzwlOUtKmzYAjhWv+f+4Pd0+aJglEmfZOoH9bWJea5x5CqWd06lzbAOWyNoR/xOgmS/lhq3BzQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716915027; c=relaxed/simple;
-	bh=/1E5koQTESPOgu1wututwKU+m34VG+2q3t3o8UMQjpY=;
+	s=arc-20240116; t=1716919193; c=relaxed/simple;
+	bh=iFsG9Vxx1t4Xf2S/qBbmwmEXs9uCX9zpUyOCrMCudeU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Q2aGQgm1LOO+fDCt0xoqoBw2GyWDuhqGDP4dO9s+ir3RevKjYf5QCL5ieCsoU0P9v1Nklc7s/doA3GsSYcFPpIEilmVyzIEnCz9DHM1v8vFTdNM1oT70RaR0YD1dRkSgaDtN1PCXwWFLedmQQf52phZYt5XwdIsTSBGHGvi7SHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBiN6DGH; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6265d47c61so115805366b.0
-        for <io-uring@vger.kernel.org>; Tue, 28 May 2024 09:50:25 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=hZa8HqxE23/DBMuCXh6Mc908dBr2Jgs3DxKPiUwNqqo8rBazRGKEXPWGoMr8p4Mp2K3YlKeeR4ug9PB9V3udRwS8asayp4AUArTUSkPosq0UXZKpD/xWjwEzYBlgsY0Qg8oIJeCPn0+0xwUqXXdsW/8GnG+E8IbRXQMvJqyKlNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=gYqa68B9; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-698ef41ed78so75397a12.1
+        for <io-uring@vger.kernel.org>; Tue, 28 May 2024 10:59:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716915024; x=1717519824; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716919190; x=1717523990; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=r43k8ATIHSQ2xGAHQ2xPnzJyXaSz1UMHRaK8lVFZmPQ=;
-        b=MBiN6DGHEEAuwGdMkcoyXMj/73W9xsBhnfbxJ4FwuTnj8J3xhuIc29FHPQZEw80zGm
-         ZL9R1aMQ6s+qwH69rZza7rExa+gBTgPtylvpAnhrQncutQp1x+lo6SA6Jt5BnKg8Qtvo
-         lF0DpIvyec4+e3vEbvk+VV9TwIzifiA6T2XuEA080xze6PL957FKRRHbHEw0B1QtZdZd
-         eFx1tn88/35tUCS0BRObpL8dcrNA6MSmJ+BP/te/mWwGm/aRryCzFqq1Bk3CGQebRPd8
-         RS9snodtBPUZnAD4BCOPbzZ9RsSmGTeBMzwpPzmgulJZrv/cD/TG2RB3roz6agonzTgt
-         cadQ==
+        bh=oJmSuOKbu0fCb60M9pRep7C024tzJRVtaPbaZOS/Pkg=;
+        b=gYqa68B9qaCsLD70b+chFRuiPIIdLnzuFi5FiHfcm0IBrr03dgDt82zlVij45GU2Dq
+         vFe7/qdSKC6YDxtZsBGCUbQJwTi9RzYcLpv1Tf48epzgcfWAtymw8Wyp5yzZxSEQYhLw
+         BcLbJhwtU5027iiTi9wwvYwFIk0b04PapTbZ8MHAQLrxrSJHmjaFg3L3woYRDDGKlMB/
+         8ozyMbtkJUd6vUM9JGq9Bczk8bQHKBozpmdZqsgY1D1wZK4EKARXhHfGU7BbnBe4/w9J
+         zlWTQoknOL6DKTeB0JHQ4tc2Ul8lkuaunUyCaj5GzKFFrag4KAazvPYAXH3B87mV+VyO
+         J9qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716915024; x=1717519824;
+        d=1e100.net; s=20230601; t=1716919190; x=1717523990;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r43k8ATIHSQ2xGAHQ2xPnzJyXaSz1UMHRaK8lVFZmPQ=;
-        b=mqeQNlaTEIH+AyFA/UE+epcgaU837LSTHV8LihjjBl2xswYFzDW1MQM9m6NCB7GhEA
-         2Lt207LNxrd3Clx2di1TQoMWlm8vBOi5OJGjkD2JGoxsRxbkP3HAsDwsJsaqxRkjrWy+
-         BGLMmIDOD2XTRm4Lb9NtoNAVXYkjlCfNiS9joQiW8kwxi80ovD+O9sfkvHByTEdv2Q+u
-         3cIP72Nch7JKj9R5kMZhACrc46ZETPZWrsIi9MD5JCo5ZLRBvldJ8WFY05TkbsVPNBFk
-         FrMjcYwPRfyhOiOX9hDV+TT+qfaFo02ZHIwcpR6kvP5tFww1oRCHYPLepGQXdcTo58Ml
-         YSnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOsj70Nff6VBU+HUDFkVNQMUjG/bBDTcwa7ZOeg4+5WcBzewztWPIAW+dmhYK5I/Iw5c6YXxXeMK2lCp1tl8XvaGdEIoySqXg=
-X-Gm-Message-State: AOJu0Yx6+nePjsnFRAKI+Rahn4g5a9sWwuIdzPX1QQtR8ghjH9QOT6iX
-	Dme901GiLhhTWg4ve2QmrC5jR6n+cUjJjBZyrBDSuiNt8s5akXOJKZFOOw==
-X-Google-Smtp-Source: AGHT+IGsuAPl5Dn0RwdT7z/Q3iCfBH7/sQpRTMsCe8fXQB5ZBbvxtVYNh5pKlUDcCoE/A53Z6+fSJQ==
-X-Received: by 2002:a17:906:f204:b0:a63:a6bc:fc76 with SMTP id a640c23a62f3a-a63a6bcfd8dmr14699666b.8.1716915023381;
-        Tue, 28 May 2024 09:50:23 -0700 (PDT)
-Received: from [192.168.42.198] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a635238fcc3sm55600766b.63.2024.05.28.09.50.23
+        bh=oJmSuOKbu0fCb60M9pRep7C024tzJRVtaPbaZOS/Pkg=;
+        b=H9ZPTRRI1ZkMwO85vzH/ubp4UQOYGe6TYYEli+Cnm+YHnPvy2l51xQI6Ltth5S1r+g
+         nMN4VlQ7cfwtyR0+U5e3Zv/JYEWvZB5QaE+TVuJGJHKxCYP4WxypYSDf25+o3E+VUgtk
+         T+zFbwHNzBnXPRWTdRdv6nuiueECA2/6CaM7OVJ64j3aAtiIKOi2UhaW/Xew0q7NASZw
+         uz6wmIdMUKt2G8I6RrrlNkuJLolhFyhPsaSmFbb8FWcuME6k4LxeuvVrOoIuPp2UVh0I
+         SzxEpgGaZ1A5d/llkwZEVaeK/JVu6Wpn3nvZqbCP4VnS2iEDw3odfyEBDhWLm45YQBIj
+         pZeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwGSJlgRe5E0DkvZ9Pnl1VdUDCif0KmB2+KcuRccK/wTlLYHm2MDBuCv3ItPg6oFr2PikmyIv7tlJDA8kJ+tBZstt7diphfCI=
+X-Gm-Message-State: AOJu0YyrDl6gmm9JHsK0GoNlG59n8yfF7PSLdBK1u8uZYLEz5tJBiBcD
+	Htawsgx79DiKaypsz/W8y4KCNV/G9J5iCETRgZXIx5xPh0ytyINMlu+C/XDox9A=
+X-Google-Smtp-Source: AGHT+IGt+QtjbA/TIy5HZHz9+1qRxtIPxAuadnjeUn+sB6hs52L1G30XYr+b/RQAQu64m755sleYxw==
+X-Received: by 2002:a05:6a20:9759:b0:1af:ce9c:6421 with SMTP id adf61e73a8af0-1b212b6f694mr11955665637.0.1716919189844;
+        Tue, 28 May 2024 10:59:49 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c085:21e1::14ae? ([2620:10d:c090:400::5:29f9])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bf5f987a73sm8014105a91.37.2024.05.28.10.59.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 09:50:23 -0700 (PDT)
-Message-ID: <d3d8363e-280d-41f4-94ac-8b7bb0ce16a9@gmail.com>
-Date: Tue, 28 May 2024 17:50:27 +0100
+        Tue, 28 May 2024 10:59:49 -0700 (PDT)
+Message-ID: <1fde3564-eb2e-4c7e-8d7d-4cd4f0a8533d@kernel.dk>
+Date: Tue, 28 May 2024 11:59:47 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,186 +76,78 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET 0/3] Improve MSG_RING SINGLE_ISSUER performance
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: Re: [PATCH 2/3] io_uring/msg_ring: avoid double indirection task_work
+ for data messages
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 References: <20240524230501.20178-1-axboe@kernel.dk>
- <3571192b-238b-47a3-948d-1ecff5748c01@gmail.com>
- <94e3df4c-2dd3-4b8d-a65f-0db030276007@kernel.dk>
+ <20240524230501.20178-3-axboe@kernel.dk>
+ <d0ea0826-2929-4a52-86b1-788a521a6356@gmail.com>
+ <c0dedf57-26b4-4b29-acbf-6624d89bd0ac@kernel.dk>
+ <8566094d-0bcb-4280-b179-a5c273e8e182@gmail.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <94e3df4c-2dd3-4b8d-a65f-0db030276007@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <8566094d-0bcb-4280-b179-a5c273e8e182@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/28/24 15:34, Jens Axboe wrote:
-> On 5/28/24 7:31 AM, Pavel Begunkov wrote:
->> On 5/24/24 23:58, Jens Axboe wrote:
->>> Hi,
+On 5/28/24 10:23 AM, Pavel Begunkov wrote:
+> On 5/28/24 15:23, Jens Axboe wrote:
+>> On 5/28/24 7:32 AM, Pavel Begunkov wrote:
+>>> On 5/24/24 23:58, Jens Axboe wrote:
+>>>> If IORING_SETUP_SINGLE_ISSUER is set, then we can't post CQEs remotely
+>>>> to the target ring. Instead, task_work is queued for the target ring,
+>>>> which is used to post the CQE. To make matters worse, once the target
+>>>> CQE has been posted, task_work is then queued with the originator to
+>>>> fill the completion.
+>>>>
+>>>> This obviously adds a bunch of overhead and latency. Instead of relying
+>>>> on generic kernel task_work for this, fill an overflow entry on the
+>>>> target ring and flag it as such that the target ring will flush it. This
+>>>> avoids both the task_work for posting the CQE, and it means that the
+>>>> originator CQE can be filled inline as well.
+>>>>
+>>>> In local testing, this reduces the latency on the sender side by 5-6x.
+>>>>
+>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>> ---
+>>>>    io_uring/msg_ring.c | 77 +++++++++++++++++++++++++++++++++++++++++++--
+>>>>    1 file changed, 74 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
+>>>> index feff2b0822cf..3f89ff3a40ad 100644
+>>>> --- a/io_uring/msg_ring.c
+>>>> +++ b/io_uring/msg_ring.c
+>>>> @@ -123,6 +123,69 @@ static void io_msg_tw_complete(struct callback_head *head)
+>>>>        io_req_queue_tw_complete(req, ret);
+>>>>    }
+>>>>    +static struct io_overflow_cqe *io_alloc_overflow(struct io_ring_ctx *target_ctx)
+>>>> +{
+>>>> +    bool is_cqe32 = target_ctx->flags & IORING_SETUP_CQE32;
+>>>> +    size_t cqe_size = sizeof(struct io_overflow_cqe);
+>>>> +    struct io_overflow_cqe *ocqe;
+>>>> +
+>>>> +    if (is_cqe32)
+>>>> +        cqe_size += sizeof(struct io_uring_cqe);
+>>>> +
+>>>> +    ocqe = kmalloc(cqe_size, GFP_ATOMIC | __GFP_ACCOUNT);
 >>>
->>> A ring setup with with IORING_SETUP_SINGLE_ISSUER, which is required to
+>>> __GFP_ACCOUNT looks painful
 >>
->> IORING_SETUP_SINGLE_ISSUER has nothing to do with it, it's
->> specifically an IORING_SETUP_DEFER_TASKRUN optimisation.
+>> It always is - I did add the usual alloc cache for this after posting
+>> this series, which makes it a no-op basically:
 > 
-> Right, I should change that in the commit message. It's task_complete
-> driving it, which is tied to DEFER_TASKRUN.
-> 
->>> use IORING_SETUP_DEFER_TASKRUN, will need two round trips through
->>> generic task_work. This isn't ideal. This patchset attempts to rectify
->>> that, taking a new approach rather than trying to use the io_uring
->>> task_work infrastructure to handle it as in previous postings.
->>
->> Not sure why you'd want to piggyback onto overflows, it's not
->> such a well made and reliable infra, whereas the DEFER_TASKRUN
->> part of the task_work approach was fine.
-> 
-> It's not right now, because it's really a "don't get into this
-> condition, if you do, things are slower". And this series doesn't really
-> change that, and honestly it doesn't even need to. It's still way better
-> than what we had before in terms of DEFER_TASKRUN and messages.
+> Simple ring private cache wouldn't work so well with non
+> uniform transfer distributions. One way messaging, userspace
+> level batching, etc., but the main question is in the other
+> email, i.e. maybe it's better to go with the 2 tw hop model,
+> which returns memory back where it came from.
 
-Better than how it is now or comparing to the previous attempt?
-I think the one using io_uring's tw infra was better, which is
-where all wake ups and optimisations currently consolidate.
-
-> We could certainly make the messages a subset of real overflow if we
-> wanted, but honestly it looks decent enough as-is with the changes that
-> I'm not hugely motivated to do that.
-
-Not sure what you mean here, but not really suggesting refactoring
-overflows. Taking the tw based patches should be easy, it only
-needs killing !DEFER_TASKRUN changes from there.
-
-
->> The completion path doesn't usually look at the overflow list
->> but on cached cqe pointers showing the CQ is full, that means
->> after you queue an overflow someone may post a CQE in the CQ
->> in the normal path and you get reordering. Not that bad
->> considering it's from another ring, but a bit nasty and surely
->> will bite us back in the future, it always does.
-> 
-> This is true, but generally true as well as completions come in async.
-> You don't get to control the exact order on a remote ring. Messages
-> themselves will be ordered when posted, which should be the important
-> aspect here. Order with locally posted completions I don't see why you'd
-> care, that's a timing game that you cannot control.
-
-True for a single request, but in a more complex system
-sender's ordering will affect the order on the receiving side.
-
-ring1: msg_ring(); write(pipe)
-ring2: read(pipe)
-
-The user would definitely think that the other ring will
-first get a msg_ring CQE and then an CQE from the read, but as
-always it's hard to predict all repercussions.
-
->> That's assuming you decide io_msg_need_remote() solely based
->> ->task_complete and remove
->>
->>      return current != target_ctx->submitter_task;
->>
->> otherwise you can get two linked msg_ring target CQEs reordered.
-> 
-> Good point, since it'd now be cheap enough, would probably make sense to
-> simply gate it on task_complete alone. I even toyed with the idea of
-> just using this approach for any ring type and kill some code in there,
-> but didn't venture that far yet.
-
-That task check doesn't make any real difference. If it's the
-same thread you can skip io_uring all together.
-
->> It's also duplicating that crappy overflow code nobody cares
->> much about, and it's still a forced wake up with no batching,
->> circumventing the normal wake up path, i.e. io_uring tw.
-> 
-> Yes, since this is v1 I didn't bother to integrate more tightly with the
-> generic overflows, that should obviously be done by first adding a
-> helper for this. I consider that pretty minor.
-
-My problem is not duplication of code base but rather
-extending the internal user base of it. You can say that
-msg_ring can easily become a hot path for some, and
-then we'll be putting efforts both into overflows and
-task_work when in essence they solve quite a similar
-problem here.
-
->> I don't think we should care about the request completion
->> latency (sender latency), people should be more interested
->> in the reaction speed (receiver latency), but if you care
->> about it for a reason, perhaps you can just as well allocate
->> a new request and complete the previous one right away.
-> 
-> I know the numbers I posted was just sender side improvements on that
-> particular box, however that isn't really the case for others. Here's on
-> an another test box:
-> 
-> axboe@r7525 ~> ./msg-lat
-> init_flags=3000
-> Wait on startup
-> 802775: my fd 3, other 4
-> 802776: my fd 4, other 3
-> Latencies for: Receiver
->      percentiles (nsec):
->       |  1.0000th=[ 4192],  5.0000th=[ 4320], 10.0000th=[ 4448],
->       | 20.0000th=[ 4576], 30.0000th=[ 4704], 40.0000th=[ 4832],
->       | 50.0000th=[ 4960], 60.0000th=[ 5088], 70.0000th=[ 5216],
->       | 80.0000th=[ 5344], 90.0000th=[ 5536], 95.0000th=[ 5728],
->       | 99.0000th=[ 6176], 99.5000th=[ 7136], 99.9000th=[19584],
->       | 99.9500th=[20352], 99.9900th=[28288]
-> Latencies for: Sender
->      percentiles (nsec):
->       |  1.0000th=[ 6560],  5.0000th=[ 6880], 10.0000th=[ 7008],
->       | 20.0000th=[ 7264], 30.0000th=[ 7456], 40.0000th=[ 7712],
->       | 50.0000th=[ 8032], 60.0000th=[ 8256], 70.0000th=[ 8512],
->       | 80.0000th=[ 8640], 90.0000th=[ 8896], 95.0000th=[ 9152],
->       | 99.0000th=[ 9792], 99.5000th=[11584], 99.9000th=[23168],
->       | 99.9500th=[28032], 99.9900th=[40192]
-> 
-> and after:
-> 
-> axboe@r7525 ~> ./msg-lat                                                       1.776s
-> init_flags=3000
-> Wait on startup
-> 3767: my fd 3, other 4
-> 3768: my fd 4, other 3
-> Latencies for: Sender
->      percentiles (nsec):
->       |  1.0000th=[  740],  5.0000th=[  748], 10.0000th=[  756],
->       | 20.0000th=[  764], 30.0000th=[  764], 40.0000th=[  772],
->       | 50.0000th=[  772], 60.0000th=[  780], 70.0000th=[  780],
->       | 80.0000th=[  860], 90.0000th=[  892], 95.0000th=[  900],
->       | 99.0000th=[ 1224], 99.5000th=[ 1368], 99.9000th=[ 1656],
->       | 99.9500th=[ 1976], 99.9900th=[ 3408]
-> Latencies for: Receiver
->      percentiles (nsec):
->       |  1.0000th=[ 2736],  5.0000th=[ 2736], 10.0000th=[ 2768],
->       | 20.0000th=[ 2800], 30.0000th=[ 2800], 40.0000th=[ 2800],
->       | 50.0000th=[ 2832], 60.0000th=[ 2832], 70.0000th=[ 2896],
->       | 80.0000th=[ 2928], 90.0000th=[ 3024], 95.0000th=[ 3120],
->       | 99.0000th=[ 4080], 99.5000th=[15424], 99.9000th=[18560],
->       | 99.9500th=[21632], 99.9900th=[58624]
-> 
-> Obivously some variation in runs in general, but it's most certainly
-> faster in terms of receiving too. This test case is fixed at doing 100K
-> messages per second, didn't do any peak testing. But I strongly suspect
-> you'll see very nice efficiency gains here too, as doing two TWA_SIGNAL
-> task_work is pretty sucky imho.
-
-Sure, you mentioned wins on the receiver side, I consider it
-to be the main merit (latency and throughput)
-
-> You could just make it io_kiocb based, but I did not want to get into
-> foreign requests on remote rings. What would you envision with that
-> approach, using our normal ring task_work for this instead? That would
-
-It was buggy in the !DEFER_TASKRUN path. Fortunately, you don't care
-about it because it just does it all under ->completion_lock, which
-is why you shouldn't have ever hit the problem in testing.
-
-> be an approach, obviously this one took a different path from the
-> previous task_work driven approach.
+The cache is local to the ring, so anyone that sends messages to that
+ring gets to use it. So I believe it should in fact work really well. If
+messaging is bidirectional, then caching on the target will apply in
+both directions.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

@@ -1,96 +1,130 @@
-Return-Path: <io-uring+bounces-2026-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2027-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920FC8D52E8
-	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 22:10:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526528D5403
+	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 22:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA0F1C20BB7
-	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 20:10:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD252B23D85
+	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 20:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B902255885;
-	Thu, 30 May 2024 20:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41A284D2A;
+	Thu, 30 May 2024 20:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CJ2HtA/T"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="ezf8+Yt7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427C44D8BF
-	for <io-uring@vger.kernel.org>; Thu, 30 May 2024 20:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8CD18756A
+	for <io-uring@vger.kernel.org>; Thu, 30 May 2024 20:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717099816; cv=none; b=XyTHCWgxG7s4svN3KjuPfWZHLmdEtNUMgEEIJnXitf6njBAX3z1AqhqssjUOk12dEtSdwc2xhL2kGLBHJPXUH5MZqeZ6Mfq8BAnqHlg6YgVFwEit9iulYUlYMbX+zFMTxJn7LQj8IUrXWZoXuca6PQYdmBFd8tswjkSrMqDyEk4=
+	t=1717102060; cv=none; b=Hydx2KNsLk2H5YlNHFkrgO2z0JOdCTSvqpPUvLEmj5C87xs0vQgH8sznMYjDEISMBim1jMqbpHaBwh2qJeHq2LvToZS5qisiFWBzwge+WkzODaPI83BwP0zMRmcAw44b/8lfXRz6wJsT2bBdQ8yq0OVZorkFfvT6FMgf73MZ1pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717099816; c=relaxed/simple;
-	bh=1uhCyqyd6OfBJhLOomRnqKGxLhqaf3SVuyATwGnDEOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=S3D3ieC5UnoYa9+5akaEdt5DhrZG3ugl66SpJ5yuo1bA7wwxD+iB04LXAbO/Iz+1CJtjonL92Gv/tJWsZH3uvYCGxavYaTgpdTWlEuolNoLPJRuxgTCWs9Rq+LKA8nC4fUdZA1r5HoLFHfkZ3MgYLUYesD5M3FR7WRj/uMTdJoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CJ2HtA/T; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5b97f09cde3so196207eaf.0
-        for <io-uring@vger.kernel.org>; Thu, 30 May 2024 13:10:15 -0700 (PDT)
+	s=arc-20240116; t=1717102060; c=relaxed/simple;
+	bh=6/UQ6VPfkMRwnmDBG6S+OaVpBStKl1/nQtfKY8q8Q9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9zN1n0BZckcItVFgxkESxRS2GrBccRA9iA2lCdROc8V1eCAu99R7tK05CGkStPDX5Py0XQuqzCOjT+c13gW1OTT22kQH951pNChFgYqpkgEAbrB803zGbavwA01VVLJQEuWKOzB8VN0L8nl2kejMHEGO9nSZ1MwXzJA8aDH0+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=ezf8+Yt7; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6ad74e5afeaso8675176d6.0
+        for <io-uring@vger.kernel.org>; Thu, 30 May 2024 13:47:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717099814; x=1717704614; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zGOf4m18QTtHJvMQUoDQufLKLE25S3D0AAB4RUkeJfc=;
-        b=CJ2HtA/TQbQLHoY6Q3Q2jSESKaN8LF7RG9OU5RJrawdojER2cxmfylj9Sgb/1tx+1E
-         kQJq18HwPu15UOj72BE94UVY4NC7d+FMA5DJN3HEkLTLOzQN2bbK4sUM4TyVhgdgPZ2G
-         koRe56afcmpSLjUmalD+HeuXlQMLQgxSmbuiZpiA/J2aY9j1Gf23er77EpU0o8dpeFVl
-         cfmiNT2IsYZYUjHFg33fAC9pb/NcCBDz49d03j11rsbyn/srpCiVP8GeieBKhBDsMRVm
-         WaYnNuiHgIkl7xbR9lg/hiaCaCzBBx8Jc5erOddawndf3pzNQP+qN4SvItUvqHYIb5P4
-         KOgA==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1717102058; x=1717706858; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Ga1Yixe/s4ryLMU9oA1rEgCpWnaYwXalqsXklj5AYA=;
+        b=ezf8+Yt7+1CVv8vuHSuHkQ6VLIRaGh5l9Ba2UpQ40Ltz9CT2X/TCPbb4KOlUtBD9ob
+         UWSZ35HNw4ecyGvxbZwuKP5L9gZ24my0lwmx+R+9pH0aW7ppHyRTzVBxIvb5peJ6sVaH
+         7qW2kdPJhWPoUUgNSSU0dVxVO35UZAjkVIG30gQ+fbfLJJBazyj7Ag9cv9L3xRbSlZA2
+         2O3BwK2KpaJFZ4Xk8+JkSS2rvZ/inGkv4him9xfx5/BLjMiQl+xCFCySk5Un7MpvfY96
+         ijSsFmmweetqe9Hgs+MGkjDq528m7j810dQ009r7iX8aYc281UjSFq6CXP+9tmviZQNe
+         H+6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717099814; x=1717704614;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zGOf4m18QTtHJvMQUoDQufLKLE25S3D0AAB4RUkeJfc=;
-        b=iCxKXOGbhz8L6lj0/MqSyqRC8w75j1gOPwMHqgJfg9XuG1uCPNuYJoIvfB/fqRsbfC
-         u/GvoB6OqaEVUF/F+/vW8X9eDJo+3JKuVylnYLgObLYWJKmEJjq/fBRq7XhB7AbgIJfx
-         MugDjEVn2aUV4/ht2rP0YybJxxFTf5ZSwpmacLFguLN45/trZp7RUf0C0jwkdlKbNDY6
-         8c9Syr7NSbMVjS2PupzIze0QgH6o8YLa4d+0zuAA3BlTXXPCSJerXdTvzpuDgEtnwkRH
-         kzEZOZqn9Juk3vU8s6MqdOKUawhXJG5/mLR/Wuse8W+dM3kW2mTA8bZLuCYnenKNGZmT
-         cF3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWqgaVZ8t8Z9EGItyHNYJ3AiX6Kax0en2c4BC3tSGdnZHiEb7pjaIeO8M+3oefS2beJbsoc2bPVGxcG3Y3XrjbL+cHaiZ7IWuo=
-X-Gm-Message-State: AOJu0YyJxbxJr+yhqKca2m2QOhzGAyeC5gx5yBMrPbmSkLqyijRgpBvU
-	U50tYvDIPAu23XpEz5+yacXlqPqnEMLlkxBnNAsk9431BcbwzofuXYP6V3gfMWc=
-X-Google-Smtp-Source: AGHT+IFxtfSha2bFV9Bllh6KjryMKTM6ysYjJaNmwUmfLWw/8WlLkOhLC3srNxELNjFhlNeK1I/WBA==
-X-Received: by 2002:a05:6808:18a5:b0:3d1:d35b:8174 with SMTP id 5614622812f47-3d1dcca6715mr3424509b6e.2.1717099814399;
-        Thu, 30 May 2024 13:10:14 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d1e1a4637esm74809b6e.36.2024.05.30.13.10.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 13:10:13 -0700 (PDT)
-Message-ID: <ecb2472e-b505-42bf-8c02-66567d8c4277@kernel.dk>
-Date: Thu, 30 May 2024 14:10:11 -0600
+        d=1e100.net; s=20230601; t=1717102058; x=1717706858;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Ga1Yixe/s4ryLMU9oA1rEgCpWnaYwXalqsXklj5AYA=;
+        b=BeYOwrLALtaAH3bj4ChgxeaiMVr8Gesx1ZHBBEE5pX7Itf3vPWPoYSE0HqcfZcLH/2
+         C/UoQt7BTPYDeVhpOCnBesFHAyLKlnDU1CXBR5Q0dU73u9L0I/MrzgssKDCp6AeTU7/o
+         iIK8HO8LM6+GIExpbtvJyBeM+/oxOF3E96HkcLm6mKf+fKdcnhoX8ASRjIDl60NslyOL
+         N/LNAu6AmOFsIvWAqAIvE/PV7gfWvg9q2IWk1ytKzAzujtVY/EbPIAoU5h4uJjzzdRx1
+         49E07i4V/l+aX24b5tpQ8ezC2l5loTlLcFzunEwIqbP6fQa6HRsRLSeDyC31kF0UFtnW
+         yQcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyfvVfSIUS793sHE2sGxke8kWCupanGi8IE3UA/UaVWD/Lb9iy338sXOX9/j61e3UfjOvTW9KUMLuEXFj2WEYeN1alsDMNl24=
+X-Gm-Message-State: AOJu0YwXhNFzbjUwFsBGw9vQ1jYrycvXfUiS6igfScd4vKcw6RDqkGSa
+	hihygeaXHW8lfu+ISmCiGdCAaNoHwVQTMu8UpLFHbz2sDdRLxqTbdmXACWpFLLw=
+X-Google-Smtp-Source: AGHT+IGLu7Utvn4d35cKADWO6xyI2iy9v6hacZFhv3Dr/b0t0erkbT0o+o7A9sG+I16KFAv8qHzmlw==
+X-Received: by 2002:a05:6214:b61:b0:6ad:657d:9d47 with SMTP id 6a1803df08f44-6ae0e87f2bfmr56543066d6.14.1717102058329;
+        Thu, 30 May 2024 13:47:38 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ae4a74770dsm1587556d6.30.2024.05.30.13.47.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 13:47:37 -0700 (PDT)
+Date: Thu, 30 May 2024 16:47:36 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
+Message-ID: <20240530204736.GH2210558@perftesting>
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_cqe_overflow
- (2)
-To: syzbot <syzbot+97d8b31fbab9db1efe55@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <0000000000003870370618b861cc@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <0000000000003870370618b861cc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
 
-#syz dup: [syzbot] [io-uring?] KMSAN: uninit-value in io_issue_sqe
+On Wed, May 29, 2024 at 08:00:35PM +0200, Bernd Schubert wrote:
+> From: Bernd Schubert <bschubert@ddn.com>
+> 
+> This adds support for uring communication between kernel and
+> userspace daemon using opcode the IORING_OP_URING_CMD. The basic
+> appraoch was taken from ublk.  The patches are in RFC state,
+> some major changes are still to be expected.
+> 
 
--- 
-Jens Axboe
+First, thanks for tackling this, this is a pretty big project and pretty
+important, you've put a lot of work into this and it's pretty great.
 
+A few things that I've pointed out elsewhere, but bear repeating and keeping in
+mind for the entire patch series.
+
+1. Make sure you've got changelogs.  There's several patches that just don't
+   have changelogs.  I get things where it's like "add a mmap interface", but it
+   would be good to have an explanation as to why you're adding it and what we
+   hope to get out of that change.
+
+2. Again as I stated elsewhere, you add a bunch of structs and stuff that aren't
+   related to the current patch, which makes it difficult for me to work out
+   what's needed or how it's used, so I go back and forth between the code and
+   the patch a lot, and I've probably missed a few things.
+
+3. Drop the CPU scheduling changes for this first pass.  The performance
+   optimizations are definitely worth pursuing, but I don't want to get hung up
+   in waiting on the scheduler dependencies to land.  Additionally what looks
+   like it works in your setup may not necessarily be good for everybody's
+   setup.  Having the baseline stuff in and working well, and then providing
+   patches to change the CPU stuff in a way that we can test in a variety of
+   different environments to validate the wins would be better.  As someone who
+   has to regularly go figure out what in the scheduler changed to make all of
+   our metrics look bad again, I'm very wary of changes that make CPU selection
+   policy decisions in a way that aren't changeable without changing the code.
+
+Thanks,
+
+Josef
 

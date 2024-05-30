@@ -1,112 +1,236 @@
-Return-Path: <io-uring+bounces-1999-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2000-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B3178D4E2B
-	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 16:39:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6428F8D4E6C
+	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 16:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1CCB1F222DE
-	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 14:39:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86EC11C2145A
+	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 14:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B2317F502;
-	Thu, 30 May 2024 14:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24425143C40;
+	Thu, 30 May 2024 14:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ooajDnRj"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QI6zsrEC"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A20717D342
-	for <io-uring@vger.kernel.org>; Thu, 30 May 2024 14:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3D3186E38
+	for <io-uring@vger.kernel.org>; Thu, 30 May 2024 14:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717079919; cv=none; b=TeHeECE8lVigTveJnH1VOq6Yscx6DdxY733aFkYT6jtj4p8EMXRXlhGrPu4rX3ssHLLR85OjiIEKo0jDykY2Oyxg3HGGCmbnmpwrRcmojB+qyuN0teqayOASbBXDq30M6ZDXexY72UlE0F4Ayg9c2SyHvgXCMENPpwP4oIo1Z80=
+	t=1717080699; cv=none; b=dUfIkVQ8p7Sr9zuE2PIyIWvcIwlD07rEpUzlhuqasmw2UgqYeYX5mNfqufP6yg7JerpW5xAcnF69dLTRveDYL7bUqm3druUwVM8wNWe1dD3lalJUotetnQ38M9SWmZ2x7qOyMlg3R/fJ1NDNIlDY5xb5uRkASRZ6Q/6ETEoVuWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717079919; c=relaxed/simple;
-	bh=rmd9pEkZZkA58dCEx0iuoWDdo80Ziwi7JYACy68wpuY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FDmhrD6OcI8/ZyTigvrt7AyF3W8ARCvMOo4utZsmV5rfXA9j0HOZWha2jPnmvvecqgze2MGN7DzPtcANicH2F6qSCLpXz/xeAqH5ttAKhtUL9ouH2hAmptJHzjtqrMJFMwkHhqb3QeO/z4AMOa6SCsgjm3sNL8afFnbf+RcmnGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ooajDnRj; arc=none smtp.client-ip=209.85.167.176
+	s=arc-20240116; t=1717080699; c=relaxed/simple;
+	bh=nhAdl/mjm0foBJdzB17DgyIYjponnam78bYXksNa7pw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OE8CV6epty4W77peaUI/PXCL6OF2UuT/tO57z2UAC/CF4IhGXKeBKzsYqO+JW2SFpFbyEeXxrBBN6M6SE8P26FOFYFS/4bs0+0S5fLpZUYZI/W0GhwEJpCP19qY/XXOsg1V1Ntv3SC02IsF30C43pkO3azgapsVNHvCWg0v3f7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QI6zsrEC; arc=none smtp.client-ip=209.85.161.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3c9bcd57524so85904b6e.3
-        for <io-uring@vger.kernel.org>; Thu, 30 May 2024 07:38:36 -0700 (PDT)
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5b3364995b4so154752eaf.0
+        for <io-uring@vger.kernel.org>; Thu, 30 May 2024 07:51:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717079915; x=1717684715; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vW0pwIYQgwhobA7Ixk7v6IauNiL+EOvg9nYymfAgbb4=;
-        b=ooajDnRj6K9jtPN26Fy9q5dK50MDV/MIoogmsLa4dHuYY66tZbY4KsG5yj8VtDEVnW
-         IQ9zgQHrK8/BvnP0LAxvIQRR2h3fKMI9/vii/Es/cCYVthJfCg8nadPrn5aWIAnwNrvb
-         cDNlxREsa8YS0YZpF0+vGIzpY15V8E8F6OhTwDE8EzmttRnriurE5dQ4qvkMWnVDuDHW
-         ErVKNsPQh0+YVih4yI549fYSc4t6aONw4VMmVWTcL/6rOLBvPbvKP9RU0DV9YYWzjTbv
-         LeEfg9im6nZ3H3Aq6LAy8PZxPQLzEf3lJJtkqCRS0ZHUWrSB+3yckArWwPTtYCCnJCfh
-         JpJg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717080696; x=1717685496; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WYp5fgircLVzy+Cvy20cshUUYPB+ifdVkSzY1yjHuXM=;
+        b=QI6zsrECiCG+G1POkyvprJVv4lTOotBtKJl1284OYpKmDI+BSEr176UHDSKsnGSR2P
+         HOqrXSoaie4gLbLfw2tudGFmgW7d24WnBzrWz1wa2vZ77kuWIt6d3rgjhygWD8UjLbp4
+         VIrHFwKLHEmJ5qlSmZQJBa0NqoGIYsXVUCpQlgx8PdF7MP4n049Qe30gup7EqhZdJKJb
+         PUvseJoBlkhyjwCVcMpTvz8HOGVnzeuOgpKj3Asx+/mz7I1o+CkS6bn+2s/faBnNShqS
+         r+GT0ewQnf5A+JXoFreEWzajkO6NILNkszPz+5kszGQZb8cvQHD1C+1+Q5twrrIPObAq
+         biuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717079915; x=1717684715;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vW0pwIYQgwhobA7Ixk7v6IauNiL+EOvg9nYymfAgbb4=;
-        b=xJ8jxgbYHsqPT/H3GQxTTxhDOc2V336aWJaPmPe461z4qBkmU3IkZqDyrtTg6KhIG6
-         2GVK1kmC/uaOtcFT3Y5nlQkSkuaWhHBzO6qFp21gxNqXuQeFwj1iW7/KfHw432De6URZ
-         yR7ZF5FSPnCOXgM0sv/7SxMqyPC+2Dt1xP1l5lvH8CeEbKEqukl+y+iWmX+yjqR1s/Qz
-         vdC0jhM7/trW1ezekRhg+Lkvw7Gm22n9g88nBBRidui5OYvm9iqxPCB1b3M7rn/UaVx2
-         D/umKmGLRLqLPEu36J5ehq4gsYhhQlcZnrD9FhJ911MMDZ5i90ukBLeqGCUcB4o27rXM
-         hVow==
-X-Forwarded-Encrypted: i=1; AJvYcCVjW0XF6YFWy6Kl8rGXt6VuCszL/xNorRztskLRsInDJYiLaHLJKjV6ltxg7vD4ZUgjkvGrIvF0CEXeblSTkki81iMB77MTjwY=
-X-Gm-Message-State: AOJu0YzPN6UvWYyyU1CruVhrajRsC3OtADTqrFRU1YnMoXaeAgRaBXrz
-	+qkdjUD3u69Le5QEzjdKuTFvzU9meJBbByCT6hXyvdK73ukNodIBOOfoNV/vBzMkZV3+/oHjM94
-	e
-X-Google-Smtp-Source: AGHT+IGnpi2ad8K8urnHtPt8UyiK1mRhPi+UP24KEtxd03LWVUtuUqED9tg6oEeYjmLoe7AETXX4Tw==
-X-Received: by 2002:a05:6870:f152:b0:250:6be3:3406 with SMTP id 586e51a60fabf-2506be351f0mr1768209fac.3.1717079915145;
-        Thu, 30 May 2024 07:38:35 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-24ca1ff7c8esm3650660fac.22.2024.05.30.07.38.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 07:38:34 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Breno Leitao <leitao@debian.org>
-Cc: leit@meta.com, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240530142340.1248216-1-leitao@debian.org>
-References: <20240530142340.1248216-1-leitao@debian.org>
-Subject: Re: [PATCH] io_uring/rw: Free iovec before cleaning async data
-Message-Id: <171707991426.532351.6222913434182120695.b4-ty@kernel.dk>
-Date: Thu, 30 May 2024 08:38:34 -0600
+        d=1e100.net; s=20230601; t=1717080696; x=1717685496;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WYp5fgircLVzy+Cvy20cshUUYPB+ifdVkSzY1yjHuXM=;
+        b=Ez8FEdXiKURjSEb0yh1g5ZZNfX+z2mOngHQNMbNUhGvHY4xxq5N64vG1asEp86cTj1
+         y7CuLtKRYZbyYN6bWN2BwM+Po/LB9klKzVDRSS5oCDV6QLjwITfOQVF8w39V8f1/Y3CJ
+         4y1xTixWLIoBYHSESLME97PcZSnq0YlKCnt8SFBadgNYNbvoIww7tcNlfCfytgBTlBrX
+         28wVX4ZA5XMYdRlVT1NNUQpqVD2/gZ/S+wTQVz1rGDgwqNDpdg/d2r8iBiEYJGuXP/Ng
+         OjNMZClWP4+XytSbrRsZDRce5kE0H70q1CjAtMHns6ePH78Pm8rNEy5Hz/RIn3gmLUg+
+         HIzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxQECs7//mCqo2AfuPRxvQyA4F7ex1wSMDQvS6W8EddfpWIJNwY48cciMMsO6e1Z9LlvQ55fqQeZGQswIGw89Is+5U00AHU3o=
+X-Gm-Message-State: AOJu0Yzc3yPXcr140/AO09QltqGahoVyWnyZsmsJGnz30Me+9tppKKvz
+	GPpNiBlLaEDNeOUP0wOE9RbiO6OCUXkuMttdCCw6RRuxvjPQCzQXmTGaWBZ/2Ko=
+X-Google-Smtp-Source: AGHT+IEbf51a0Lez3VZgOhMIi0TTMUwx/lW+MYbzmBRzwh35ZsJrESThAlwZE9SUVfChhiwRpZMzfQ==
+X-Received: by 2002:a05:6820:408c:b0:5b2:7e47:e914 with SMTP id 006d021491bc7-5b9ebadc61emr2859280eaf.0.1717080696358;
+        Thu, 30 May 2024 07:51:36 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5b96c6dd119sm3158142eaf.42.2024.05.30.07.51.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 07:51:35 -0700 (PDT)
+Message-ID: <301ba50b-5015-46d0-a7a9-48692be7dfa0@kernel.dk>
+Date: Thu, 30 May 2024 08:51:34 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH liburing v2] test: add test cases for hugepage registered
+ buffers
+To: Chenliang Li <cliang01.li@samsung.com>
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org, peiwei.li@samsung.com,
+ joshi.k@samsung.com, kundan.kumar@samsung.com, anuj20.g@samsung.com,
+ gost.dev@samsung.com
+References: <CGME20240530031555epcas5p352110986064e3d9bcd31683fe59188ee@epcas5p3.samsung.com>
+ <20240530031548.1401768-1-cliang01.li@samsung.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240530031548.1401768-1-cliang01.li@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
 
-
-On Thu, 30 May 2024 07:23:39 -0700, Breno Leitao wrote:
-> kmemleak shows that there is a memory leak in io_uring read operation,
-> where a buffer is allocated at iovec import, but never de-allocated.
+On 5/29/24 9:15 PM, Chenliang Li wrote:
+> Add a test file for hugepage registered buffers, to make sure the
+> fixed buffer coalescing feature works safe and soundly.
 > 
-> The memory is allocated at io_async_rw->free_iovec, but, then
-> io_async_rw is kfreed, taking the allocated memory with it. I saw this
-> happening when the read operation fails with -11 (EAGAIN).
-> 
-> [...]
+> Testcases include read/write with single/multiple/unaligned/non-2MB
+> hugepage fixed buffers, and also a should-not coalesce case where
+> buffer is a mixture of different size'd pages.
 
-Applied, thanks!
+Thanks for improving the test case. Note on the commit message - use
+'---' as the separator, not a random number of '-' as it would otherwise
+need hand editing after being applied.
 
-[1/1] io_uring/rw: Free iovec before cleaning async data
-      commit: e112311615a24e1618a591c73506571dc304eb8d
+This is against a really old base, can you resend it so it applies to
+the current tree? Would not be hard to hand apply, but it's a bit
+worrying if your tree is that old.
 
-Best regards,
+Outside of that, if you get ENOMEM on mmap'ing a huge page because the
+system doesn't have huge pages allocated (quite common), the test case
+should print an information message and return T_EXIT_SKIP to skip the
+test case rather than hard failing.
+
+A few other comments below.
+
+> diff --git a/test/fixed-hugepage.c b/test/fixed-hugepage.c
+> new file mode 100644
+> index 0000000..a5a0947
+> --- /dev/null
+> +++ b/test/fixed-hugepage.c
+> @@ -0,0 +1,391 @@
+> +/* SPDX-License-Identifier: MIT */
+> +/*
+> + * Test fixed buffers consisting of hugepages.
+> + */
+> +#include <stdio.h>
+> +#include <string.h>
+> +#include <fcntl.h>
+> +#include <stdlib.h>
+> +#include <errno.h>
+> +#include <sys/mman.h>
+> +#include <linux/mman.h>
+> +#include <sys/shm.h>
+> +
+> +#include "liburing.h"
+> +#include "helpers.h"
+> +
+> +/*
+> + * Before testing
+> + * echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
+> + * echo always > /sys/kernel/mm/transparent_hugepage/hugepages-16kB/enabled
+> + *
+> + * Not 100% guaranteed to get THP-backed memory, but in general it does.
+> + */
+> +#define MTHP_16KB	(16UL * 1024)
+> +#define HUGEPAGE_SIZE	(2UL * 1024 * 1024)
+> +#define NR_BUFS		1
+> +#define IN_FD		"/dev/urandom"
+> +#define OUT_FD		"/dev/zero"
+> +
+> +static int open_files(int *fd_in, int *fd_out)
+> +{
+> +	*fd_in = open(IN_FD, O_RDONLY, 0644);
+> +	if (*fd_in < 0) {
+> +		perror("open in");
+> +		return -1;
+> +	}
+> +
+> +	*fd_out = open(OUT_FD, O_RDWR, 0644);
+> +	if (*fd_out < 0) {
+> +		perror("open out");
+> +		return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void unmap(struct iovec *iov, int nr_bufs, size_t offset)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < nr_bufs; i++)
+> +		munmap(iov[i].iov_base - offset, iov[i].iov_len + offset);
+> +
+> +	return;
+> +}
+
+Don't need a return, just remove that.
+
+> +static int mmap_hugebufs(struct iovec *iov, int nr_bufs, size_t buf_size, size_t offset)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < nr_bufs; i++) {
+> +		void *base = NULL;
+> +
+> +		base = mmap(NULL, buf_size, PROT_READ | PROT_WRITE,
+> +				MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+> +		if (!base || base == MAP_FAILED) {
+> +			fprintf(stderr, "Error in mmapping the %dth buffer: %s\n", i, strerror(errno));
+> +			unmap(iov, i, offset);
+> +			return -1;
+> +		}
+
+You just need to check MAP_FAILED here.
+
+> +/* map a hugepage and smaller page to a contiguous memory */
+> +static int mmap_mixture(struct iovec *iov, int nr_bufs, size_t buf_size)
+> +{
+> +	int i;
+> +	void *small_base = NULL, *huge_base = NULL, *start = NULL;
+> +	size_t small_size = buf_size - HUGEPAGE_SIZE;
+> +	size_t seg_size = ((buf_size / HUGEPAGE_SIZE) + 1) * HUGEPAGE_SIZE;
+> +
+> +	start = mmap(NULL, seg_size * nr_bufs, PROT_NONE, 
+
+Trailing whitespace here after "PROT_NONE,".
+
+> +static void free_bufs(struct iovec *iov, int nr_bufs, size_t offset)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < nr_bufs; i++)
+> +		free(iov[i].iov_base - offset);
+> +
+> +	return;
+> +}
+
+Redundant return again.
+
+> +int main(int argc, char *argv[])
+> +{
+> +	struct io_uring ring;
+> +	int ret, fd_in, fd_out;
+> +
+> +	if (argc > 1)
+> +		return T_EXIT_SKIP;
+
+Since it just takes a generic input file, you could have the test case
+use argv[1] as the input file to read from rather than just skip if one
+is provided.
+
 -- 
 Jens Axboe
-
-
 
 

@@ -1,139 +1,173 @@
-Return-Path: <io-uring+bounces-2023-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2024-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C3A8D52CD
-	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 22:05:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85E48D52D2
+	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 22:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6319A28791F
-	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 20:05:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08D4C1C24526
+	for <lists+io-uring@lfdr.de>; Thu, 30 May 2024 20:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF654D8DA;
-	Thu, 30 May 2024 20:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038F14D8DD;
+	Thu, 30 May 2024 20:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CFML5l7C"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cQg+dKW0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61804D8BF
-	for <io-uring@vger.kernel.org>; Thu, 30 May 2024 20:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6311614BF89
+	for <io-uring@vger.kernel.org>; Thu, 30 May 2024 20:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717099522; cv=none; b=IWOny3Er31e5DVHOL/5VGHcUCiksv4NzUO6haJ/MYYdhNu019gtSr0Huh+vV02RdlXuKj/N7jVO9gT0n9ZFy+sgnfOoHKOsuCwWtSBRro2eJzggSvi7Tl2REVKO/XGgmxIYMflDK6p0v1+FTDLlLtNe//HS2Sixz3m9r7zSpO9Y=
+	t=1717099551; cv=none; b=YbCn77SY04fAUqvzpbqvDOUyNeW2Iwao4JJlR/f0ubQSRVaCesXX5d3hP0eeTdaJ9NKHV9F29AcUCG8ntNQrvk372LaBEyjk7HKajizLuVOQ2koSeaEzEySKhBbJPVQ+tXO9Kd2inGAUwKml7EzcOX9Rp5kXD/ft/ZrZVOAegr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717099522; c=relaxed/simple;
-	bh=jfZjH7dPEZxsZkGq0Zc2HutaVqt4Wmi6QmjVBkp2ahw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9uWJyyDe/LJcs+vi3AURUoH+MOntZfTvVzcQGcgNHyPu7QZpCQFxxK63+2BMTfFA8GS4I/gnDHlWwkVd4Lo3C/1o2N2cseofy8zN1C1DLWdDo/vtki0BzlZ+tgJ9siUkOVdsizo0GoyfwWrhuzMfC5irShbBzRaGUtvPGU+d7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CFML5l7C; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: josef@toxicpanda.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717099516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YpFa3Bx0Tf5ODURqiaCwQwbuuk80x2jm9JeNzuE+FHQ=;
-	b=CFML5l7CVOz1FXmbeETe96hrRrhe/PJtIKJsSTChVh39w4jduf8c/47tK1+T73RK0dv2wx
-	SEgPlBbaXiqxTEoMNxn1LGta3shETyBcQHP5W8ke/pxY+c6XWvNgJE1sAmJPzG87v3hOZN
-	KxS7ZI1aS1ORKvOITQKMETs+oHdI5yc=
-X-Envelope-To: bernd.schubert@fastmail.fm
-X-Envelope-To: bschubert@ddn.com
-X-Envelope-To: miklos@szeredi.hu
-X-Envelope-To: amir73il@gmail.com
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: mingo@redhat.com
-X-Envelope-To: peterz@infradead.org
-X-Envelope-To: avagin@google.com
-X-Envelope-To: io-uring@vger.kernel.org
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: ming.lei@redhat.com
-X-Envelope-To: asml.silence@gmail.com
-Date: Thu, 30 May 2024 16:05:12 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org, 
-	Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
-Message-ID: <xzg5nck7x3yv3tfabwcoht4rdab3i5ddjyo3ti7myihmw5b2yy@kus54abrdfm4>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <5mimjjxul2sc2g7x6pttnit46pbw3astwj2giqfr4xayp63el2@fb5bgtiavwgv>
- <8c3548a9-3b15-49c4-9e38-68d81433144a@fastmail.fm>
- <owccqrazlyfo2zcsprxr7bhpgjrh4km3xlc4ku2aqhqhlqhtyj@djlwwccmlwhw>
- <fe874c55-a26f-413f-9719-9cf59b1a3d28@fastmail.fm>
- <20240530190941.GA2210558@perftesting>
+	s=arc-20240116; t=1717099551; c=relaxed/simple;
+	bh=lB+E1cKRxUg+pV6eKF80NLNzhhUX47cyJnHvWLnNyqs=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=dh4HfZn93EO1DW1m3IVxOekv5uYi6JYl88l0+lXr4LY/fLjdz8T+Fw/A3KSozXXGnQaSdvAYezJydmNuYDpbZcLgtqeODP90Ze82u91jm6JVlEYmXk3s/JxKlW56xqII4tG5IihhNffxuGQFLGh26gvbPhJ6HyMGAjQY8QnoD4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cQg+dKW0; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b3356fd4f3so183168eaf.1
+        for <io-uring@vger.kernel.org>; Thu, 30 May 2024 13:05:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717099546; x=1717704346; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AVygp+5SOh4n5WFolw32HoP+ARGvDvMNAkk7oB6rlh4=;
+        b=cQg+dKW0QvSYvQkEm3iHZW6sJJvQOimxV6gMRpb2/ssLj82YCMn7Rfm7url9BSyWFP
+         B7KKqhiYRl3YGXMNtZyXxXBHBEY+2fxWOdD6SB1GmY+Pm0fBV+wRuFiglwyM9izqp1rV
+         qrNAAjMFQcprUN/wSsJoEFYGei3bEaAIWmB9lhaTtF86FuywzT6+nTyGNdDJ2ZTRCQBg
+         iP7Zox8Z4mlAIl28lSfb19IrKrFF84uytTlaHMOXd2PhhqY8QPTG1RyDAmZCum7dyJZW
+         Uw/ymcCOZYUprTHG+nPNR1BDVTtN6BwDQ8WuEhSoJhURTvZ0n/OVihFv19DSqo28w2mH
+         qHFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717099546; x=1717704346;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AVygp+5SOh4n5WFolw32HoP+ARGvDvMNAkk7oB6rlh4=;
+        b=FQhDFzxZHybK6HPzyQDPrUxxL8O9KDwg6uABWcHZ+p8QmKVex4sjTRtTEVX0uXr8hJ
+         DlOeMqKL4uo5kekywmWacRkwWTgie47+qyZEEOCFSkCS4kCiba6ZxOWLuBcJPlqrYbBn
+         qMqUquU2kOJ3fvOc7MUveJhLWE7tnISnxFykyKRMGLdy2luFkbJV5uNow/wUPQstIaiq
+         4VV5NbEdSy5EEZ0/tSaQv2zaMecQKNK8aWDc/9B9foYjigCFD47qZvMcUsJ27Bc9yCiM
+         qifFkszpGGxm5j97D6Ex+RAm+leV0IToAOjuEcngzotmorNcfUTosGV+w/F75c+MC59L
+         tpzg==
+X-Gm-Message-State: AOJu0Yx3B5DY10fHUMEoAEHz/6w9fFpTX+GQrcG6rnTAZfKM/3q0hCU0
+	Q7p1ZcRqsmojiXsPD7nS1JIkzee0Z5yVHUzukeCKtXP1zn+vEqvLvhM9g4cTjiR+w/AO2tC34nU
+	R
+X-Google-Smtp-Source: AGHT+IHeTBMYUki7KK06HoQREybrp7sSeck9qlCvcTpmGWUpwHIaxDdmW/OJmd6rEwAbw2tYbuDW7A==
+X-Received: by 2002:a05:6871:3329:b0:24f:c164:2cd7 with SMTP id 586e51a60fabf-25060e93b4dmr3600825fac.4.1717099546429;
+        Thu, 30 May 2024 13:05:46 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f9105231absm83431a34.11.2024.05.30.13.05.45
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 13:05:45 -0700 (PDT)
+Message-ID: <c52d9b19-7fd7-4fb1-b396-632b9f0f612d@kernel.dk>
+Date: Thu, 30 May 2024 14:05:44 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530190941.GA2210558@perftesting>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/net: assign kmsg inq/flags before buffer selection
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 30, 2024 at 03:09:41PM -0400, Josef Bacik wrote:
-> On Thu, May 30, 2024 at 06:17:29PM +0200, Bernd Schubert wrote:
-> > 
-> > 
-> > On 5/30/24 18:10, Kent Overstreet wrote:
-> > > On Thu, May 30, 2024 at 06:02:21PM +0200, Bernd Schubert wrote:
-> > >> Hmm, initially I had thought about writing my own ring buffer, but then 
-> > >> io-uring got IORING_OP_URING_CMD, which seems to have exactly what we
-> > >> need? From interface point of view, io-uring seems easy to use here, 
-> > >> has everything we need and kind of the same thing is used for ublk - 
-> > >> what speaks against io-uring? And what other suggestion do you have?
-> > >>
-> > >> I guess the same concern would also apply to ublk_drv. 
-> > >>
-> > >> Well, decoupling from io-uring might help to get for zero-copy, as there
-> > >> doesn't seem to be an agreement with Mings approaches (sorry I'm only
-> > >> silently following for now).
-> > >>
-> > >> From our side, a customer has pointed out security concerns for io-uring. 
-> > >> My thinking so far was to implemented the required io-uring pieces into 
-> > >> an module and access it with ioctls... Which would also allow to
-> > >> backport it to RHEL8/RHEL9.
-> > > 
-> > > Well, I've been starting to sketch out a ringbuffer() syscall, which
-> > > would work on any (supported) file descriptor and give you a ringbuffer
-> > > for reading or writing (or call it twice for both).
-> > > 
-> > > That seems to be what fuse really wants, no? You're already using a file
-> > > descriptor and your own RPC format, you just want a faster
-> > > communications channel.
-> > 
-> > Fine with me, if you have something better/simpler with less security
-> > concerns - why not. We just need a community agreement on that.
-> > 
-> > Do you have something I could look at?
-> 
-> FWIW I have no strong feelings between using iouring vs any other ringbuffer
-> mechanism we come up with in the future.
-> 
-> That being said iouring is here now, is proven to work, and these are good
-> performance improvements.  If in the future something else comes along that
-> gives us better performance then absolutely we should explore adding that
-> functionality.  But this solves the problem today, and I need the problem solved
-> yesterday, so continuing with this patchset is very much a worthwhile
-> investment, one that I'm very happy you're tackling Bernd instead of me ;).
-> Thanks,
+syzbot reports that recv is using an uninitialized value:
 
-I suspect a ringbuffer syscall will actually be simpler than switching
-to io_uring. Let me see if I can cook something up quickly - there's no
-rocket science here and this all stuff we've done before so it shouldn't
-take too long (famous last works...)
+=====================================================
+BUG: KMSAN: uninit-value in io_req_cqe_overflow io_uring/io_uring.c:810 [inline]
+BUG: KMSAN: uninit-value in io_req_complete_post io_uring/io_uring.c:937 [inline]
+BUG: KMSAN: uninit-value in io_issue_sqe+0x1f1b/0x22c0 io_uring/io_uring.c:1763
+ io_req_cqe_overflow io_uring/io_uring.c:810 [inline]
+ io_req_complete_post io_uring/io_uring.c:937 [inline]
+ io_issue_sqe+0x1f1b/0x22c0 io_uring/io_uring.c:1763
+ io_wq_submit_work+0xa17/0xeb0 io_uring/io_uring.c:1860
+ io_worker_handle_work+0xc04/0x2000 io_uring/io-wq.c:597
+ io_wq_worker+0x447/0x1410 io_uring/io-wq.c:651
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was stored to memory at:
+ io_req_set_res io_uring/io_uring.h:215 [inline]
+ io_recv_finish+0xf10/0x1560 io_uring/net.c:861
+ io_recv+0x12ec/0x1ea0 io_uring/net.c:1175
+ io_issue_sqe+0x429/0x22c0 io_uring/io_uring.c:1751
+ io_wq_submit_work+0xa17/0xeb0 io_uring/io_uring.c:1860
+ io_worker_handle_work+0xc04/0x2000 io_uring/io-wq.c:597
+ io_wq_worker+0x447/0x1410 io_uring/io-wq.c:651
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3877 [inline]
+ slab_alloc_node mm/slub.c:3918 [inline]
+ __do_kmalloc_node mm/slub.c:4038 [inline]
+ __kmalloc+0x6e4/0x1060 mm/slub.c:4052
+ kmalloc include/linux/slab.h:632 [inline]
+ io_alloc_async_data+0xc0/0x220 io_uring/io_uring.c:1662
+ io_msg_alloc_async io_uring/net.c:166 [inline]
+ io_recvmsg_prep_setup io_uring/net.c:725 [inline]
+ io_recvmsg_prep+0xbe8/0x1a20 io_uring/net.c:806
+ io_init_req io_uring/io_uring.c:2135 [inline]
+ io_submit_sqe io_uring/io_uring.c:2182 [inline]
+ io_submit_sqes+0x1135/0x2f10 io_uring/io_uring.c:2335
+ __do_sys_io_uring_enter io_uring/io_uring.c:3246 [inline]
+ __se_sys_io_uring_enter+0x40f/0x3c80 io_uring/io_uring.c:3183
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3183
+ x64_sys_call+0x2c0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+which appears to be io_recv_finish() reading kmsg->msg.msg_inq to decide
+if it needs to set IORING_CQE_F_SOCK_NONEMPTY or not. If the recv is
+entered with buffer selection, but no buffer is available, then we jump
+error path which calls io_recv_finish() without having assigned
+kmsg->msg_inq. This might cause an errant setting of the NONEMPTY flag
+for a request get gets errored with -ENOBUFS.
+
+Reported-by: syzbot+b1647099e82b3b349fbf@syzkaller.appspotmail.com
+Fixes: 4a3223f7bfda ("io_uring/net: switch io_recv() to using io_async_msghdr")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 0a48596429d9..7c98c4d50946 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -1127,6 +1127,9 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ 		flags |= MSG_DONTWAIT;
+ 
+ retry_multishot:
++	kmsg->msg.msg_inq = -1;
++	kmsg->msg.msg_flags = 0;
++
+ 	if (io_do_buffer_select(req)) {
+ 		ret = io_recv_buf_select(req, kmsg, &len, issue_flags);
+ 		if (unlikely(ret))
+@@ -1134,9 +1137,6 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ 		sr->buf = NULL;
+ 	}
+ 
+-	kmsg->msg.msg_inq = -1;
+-	kmsg->msg.msg_flags = 0;
+-
+ 	if (flags & MSG_WAITALL)
+ 		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
+ 
+-- 
+Jens Axboe
+
 

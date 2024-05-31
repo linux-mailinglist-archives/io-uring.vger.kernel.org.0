@@ -1,895 +1,566 @@
-Return-Path: <io-uring+bounces-2030-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2031-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872C58D5928
-	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 05:54:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3460E8D59E2
+	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 07:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1228B1F245C0
-	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 03:54:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B35E1C21776
+	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 05:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4F03B79C;
-	Fri, 31 May 2024 03:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4DE208B0;
+	Fri, 31 May 2024 05:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fx3C8QP4"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZwiSC9xF"
 X-Original-To: io-uring@vger.kernel.org
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A90FD51E
-	for <io-uring@vger.kernel.org>; Fri, 31 May 2024 03:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D929F380
+	for <io-uring@vger.kernel.org>; Fri, 31 May 2024 05:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717127640; cv=none; b=T4N6MXOBsEQZn4EOydZVJPwHwN6FzPmm1afA0LMCbtgig5oUUyWKXOiQuCyjHTfcLk+Qp+mtgrXWHEkm9nW6b9/nfn2fVqKI7Lzck8spAnvvq9I9IbPOTexNDx1k99saA8FD+ufvOvXTmwikAoEUxW90bCHx0b4Am4tzNmGk5n0=
+	t=1717133718; cv=none; b=Qa1AMEx1DHCn0nS1y20ootSlubR/csY9rK37jm0JBTXmGQUJVAw/KIXqJGLP5BQZvkLlTpnosgE02AMt8ZxDSrdMQ3NKyuPPbySgHkc6pap53GozNjezYUw7pGxvakjzWrScs0tPCv0EkbngSmMMli3SIuOBsR9xqo689G+MVyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717127640; c=relaxed/simple;
-	bh=gnks7OwAzc91drebCgibduBU0KOaUdki7hsFWSlPw4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pGwvDWbzFghDyEyYmohe3oJUIcri1SbqKvHv/JflfsUHMDupq6ElYzXqISYb74a5NguWCgrSd6jydQMLiEmnPrm7MvdSXJwurW1KHkj6x9tCSsST/krzQKXYEuu6cLaCR17QN7zgF6pQMGFlbWd2Da93rmJeQW2ipH27CCMTDsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fx3C8QP4; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: bernd.schubert@fastmail.fm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717127634;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Q5205RitZvtxxsySDbK6v2N+MvxOAuX2elEr7D8Pgg=;
-	b=fx3C8QP4DxT3YGDf7on+LqNmyRSLIkR24ZrZ1Jxy8RgukWonrmxOjb9aUzvcaYu8IpF1OD
-	MIl4yUg1VcUROZQUfmxZc5o51LeZmka3RtmcqCSJLr5R/8aLe/4vADdGXLcKHHw8dpTcD8
-	v338HVajJdaBEvrdRuF0GDUClb0mlXE=
-X-Envelope-To: bschubert@ddn.com
-X-Envelope-To: miklos@szeredi.hu
-X-Envelope-To: amir73il@gmail.com
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: mingo@redhat.com
-X-Envelope-To: peterz@infradead.org
-X-Envelope-To: avagin@google.com
-X-Envelope-To: io-uring@vger.kernel.org
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: ming.lei@redhat.com
-X-Envelope-To: asml.silence@gmail.com
-X-Envelope-To: josef@toxicpanda.com
-Date: Thu, 30 May 2024 23:53:49 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org, 
-	Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH] fs: sys_ringbuffer() (WIP)
-Message-ID: <ytprj7mx37dna3n3kbiskgvris4nfvv63u3v7wogdrlzbikkmt@chgq5hw3ny3r>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <5mimjjxul2sc2g7x6pttnit46pbw3astwj2giqfr4xayp63el2@fb5bgtiavwgv>
- <8c3548a9-3b15-49c4-9e38-68d81433144a@fastmail.fm>
- <owccqrazlyfo2zcsprxr7bhpgjrh4km3xlc4ku2aqhqhlqhtyj@djlwwccmlwhw>
- <fe874c55-a26f-413f-9719-9cf59b1a3d28@fastmail.fm>
+	s=arc-20240116; t=1717133718; c=relaxed/simple;
+	bh=CzeH/4DiqPAnDb2cgWzwTFATkvWrN8d1fE18u9RXV08=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=anTtzsZK/Hj2BehGgVaOviEqokq3eqoDfgumDt9C260GLfhQsWn91J4ERA64bUqPS1MuAVdMT61I6NaUIbb1tti//sCPWA2agBKG759v0Ky3NJn3sTqhUVGHtvXvLmwcLS2p9UQe+GKjv31qjs5s/UV4fXPTl/ARYpmU2CC74VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZwiSC9xF; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240531053504epoutp03bc4edcc0b45782d14ee0556ff6cab02d~UfAG5ie8t0733707337epoutp03H
+	for <io-uring@vger.kernel.org>; Fri, 31 May 2024 05:35:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240531053504epoutp03bc4edcc0b45782d14ee0556ff6cab02d~UfAG5ie8t0733707337epoutp03H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717133704;
+	bh=q4+EAQh1pltkQEMof7XH8V7zKS43/4lyaptNkZDS5D0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ZwiSC9xFOMZ+GRG9ypEy4Fbn6m7VIIw5Wu/OhwkYRIxh0xsGT8GQj1StgDshsKszc
+	 5JzuUdMmUUBufsnfdrQAnEKphXaJPNLNCq7YCUh27x0nM3DMZFMyHTDyLXWHCEJGX6
+	 GsWyJ/aFYGpyPS0qpSxmVdbsEbTBYjadR6EN1BYw=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240531053504epcas5p208c2c48b3b8c5e42dc5a174c449c92cf~UfAGfSlbC2622726227epcas5p2f;
+	Fri, 31 May 2024 05:35:04 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4VrBdy51mLz4x9Q8; Fri, 31 May
+	2024 05:35:02 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8B.7B.19174.68169566; Fri, 31 May 2024 14:35:02 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240531052031epcas5p3730deb2a19b401e1f772be633b4c6288~UezZTDp7k1610716107epcas5p3Y;
+	Fri, 31 May 2024 05:20:31 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240531052031epsmtrp15d1280fc45c1546e52d09aeb6074dbfa~UezZRR5Pa0157601576epsmtrp1S;
+	Fri, 31 May 2024 05:20:31 +0000 (GMT)
+X-AuditID: b6c32a50-b33ff70000004ae6-79-665961864686
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A3.B8.07412.E1E59566; Fri, 31 May 2024 14:20:30 +0900 (KST)
+Received: from testpc118124.samsungds.net (unknown [109.105.118.124]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240531052029epsmtip118b9acd9f04677a9d632a7884b269028~UezYBgSs40358303583epsmtip1C;
+	Fri, 31 May 2024 05:20:29 +0000 (GMT)
+From: Chenliang Li <cliang01.li@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org, peiwei.li@samsung.com,
+	joshi.k@samsung.com, kundan.kumar@samsung.com, anuj20.g@samsung.com,
+	gost.dev@samsung.com, Chenliang Li <cliang01.li@samsung.com>
+Subject: [PATCH liburing v3] test: add test cases for hugepage registered
+ buffers
+Date: Fri, 31 May 2024 13:20:23 +0800
+Message-Id: <20240531052023.1446914-1-cliang01.li@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe874c55-a26f-413f-9719-9cf59b1a3d28@fastmail.fm>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmpm5bYmSawYWdChZNE/4yW8xZtY3R
+	YvXdfjaL038fs1jcPLCTyeJd6zkWi6P/37JZ/Oq+y2ix9ctXVotnezktzk74wOrA7bFz1l12
+	j8tnSz36tqxi9Pi8SS6AJSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8x
+	N9VWycUnQNctMwfoJiWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgUmBXnFibnFp
+	XrpeXmqJlaGBgZEpUGFCdkbzs3/sBVOiKxacamVsYDzr0cXIySEhYCLx4/Juxi5GLg4hgT2M
+	EqfaDzFDOJ8YJZYf+M8C4XxjlJh95h87TMvkNa9ZIRJ7GSXOXtzABuH8YpSYeHMCE0gVm4CO
+	xO8Vv1hAbBEBYYn9Ha1go5gFLjFK/H+ylg0kISwQLPFg6kKwBhYBVYmmo4fBGngF7CSOzTzI
+	CLFOXmL/wbPMEHFBiZMzn4DVMAPFm7fOBjtWQuARu8SH2/uZIRpcJB5134FqFpZ4dXwL1N1S
+	Ei/724BsDiC7WGLZOjmI3hZGiffv5kDVW0v8u7KHBaSGWUBTYv0ufYiwrMTUU+uYIPbySfT+
+	fsIEEeeV2DEPxlaVuHBwG9QqaYm1E7ZCneMhcXfZJ1YQW0ggVuLKoxamCYzys5C8MwvJO7MQ
+	Ni9gZF7FKJVaUJybnppsWmCom5daDo/b5PzcTYzg1KkVsINx9Ya/eocYmTgYDzFKcDArifD+
+	So9IE+JNSaysSi3Kjy8qzUktPsRoCgzkicxSosn5wOSdVxJvaGJpYGJmZmZiaWxmqCTO+7p1
+	boqQQHpiSWp2ampBahFMHxMHp1QD07RHzFY2qtYdXEq/mDKX/oqbkmWddn/vyffPdn4/f8/S
+	zM+tX/jTGt/ZmoGyQr0zHz6LlH9jpH33mgdLafe2h+yO1v57Ft5Vjj3LfMGtZcKU1FfG/Eba
+	B2+117qY/N3RJtIQYHmcg6n1ZUTd7rZ/heHpbe2chyblRhttz29dyHI54Lh334znSzfu4N/V
+	JXYkU+5E3g2LutV8h73rJ/Ny60RwnNbvlHq2fkZIe+lTz0cN/5dc+1D19e2RazW/41utmqri
+	Z4ZPb+HfIMi81F2Ptc9lc6Xfq1tRu0qZ9/9Vb3TXiliR+ClyQsj0r53CjakxW5OVpp7ba7Vc
+	XD+6Y97eK1v++xf7bOAVPMYnPmmiEktxRqKhFnNRcSIAkMLVCSYEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLLMWRmVeSWpSXmKPExsWy7bCSnK5cXGSawbvLVhZNE/4yW8xZtY3R
+	YvXdfjaL038fs1jcPLCTyeJd6zkWi6P/37JZ/Oq+y2ix9ctXVotnezktzk74wOrA7bFz1l12
+	j8tnSz36tqxi9Pi8SS6AJYrLJiU1J7MstUjfLoEro/nZP/aCKdEVC061MjYwnvXoYuTkkBAw
+	kZi85jVrFyMXh5DAbkaJiZePM0MkpCU6DrWyQ9jCEiv/PWeHKPrBKHHszi5WkASbgI7E7xW/
+	WEBsEaCi/R2tLCBFzAJ3GCXunn8P1i0sECjx6fJLRhCbRUBVounoYbAGXgE7iWMzDzJCbJCX
+	2H/wLDNEXFDi5MwnYDXMQPHmrbOZJzDyzUKSmoUktYCRaRWjZGpBcW56brJhgWFearlecWJu
+	cWleul5yfu4mRnAIa2nsYLw3/5/eIUYmDsZDjBIczEoivL/SI9KEeFMSK6tSi/Lji0pzUosP
+	MUpzsCiJ8xrOmJ0iJJCeWJKanZpakFoEk2Xi4JRqYEqP7N4jP3XS7+jT+uE2a+/1vAr/+Evr
+	ouZk10fnnwV/661eM8lt7tXyVTtXdP95tOEGT+oFceaMrw8X5sRPZdASOv5aS2X6k7msK86m
+	6nf/X3/7eKZGyt3JNYH+s9ZO5ZhU3+GZcVPqp+EqrdkdBs4HOoQ85TYbyGXLzMsxOLiicXbH
+	5I8bt2Qea++ddmCye1SS+lfhb1uC38R2iF//UfNebneGtVvTocqzUy3NdZfs8HoodsL7hVdU
+	ybx+lidfk8UtAtJbFjWuWh+UfVli4yOjfVtmLThw7rfLT6c/zoIyPYFdK8VORH9ft/DF3hVz
+	tjy816jRdY/7+v3d+nevzhQrVnj82cBqt8BHwWt6VpNfKbEUZyQaajEXFScCABQortbQAgAA
+X-CMS-MailID: 20240531052031epcas5p3730deb2a19b401e1f772be633b4c6288
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240531052031epcas5p3730deb2a19b401e1f772be633b4c6288
+References: <CGME20240531052031epcas5p3730deb2a19b401e1f772be633b4c6288@epcas5p3.samsung.com>
 
-On Thu, May 30, 2024 at 06:17:29PM +0200, Bernd Schubert wrote:
-> 
-> 
-> On 5/30/24 18:10, Kent Overstreet wrote:
-> > On Thu, May 30, 2024 at 06:02:21PM +0200, Bernd Schubert wrote:
-> >> Hmm, initially I had thought about writing my own ring buffer, but then 
-> >> io-uring got IORING_OP_URING_CMD, which seems to have exactly what we
-> >> need? From interface point of view, io-uring seems easy to use here, 
-> >> has everything we need and kind of the same thing is used for ublk - 
-> >> what speaks against io-uring? And what other suggestion do you have?
-> >>
-> >> I guess the same concern would also apply to ublk_drv. 
-> >>
-> >> Well, decoupling from io-uring might help to get for zero-copy, as there
-> >> doesn't seem to be an agreement with Mings approaches (sorry I'm only
-> >> silently following for now).
-> >>
-> >> From our side, a customer has pointed out security concerns for io-uring. 
-> >> My thinking so far was to implemented the required io-uring pieces into 
-> >> an module and access it with ioctls... Which would also allow to
-> >> backport it to RHEL8/RHEL9.
-> > 
-> > Well, I've been starting to sketch out a ringbuffer() syscall, which
-> > would work on any (supported) file descriptor and give you a ringbuffer
-> > for reading or writing (or call it twice for both).
-> > 
-> > That seems to be what fuse really wants, no? You're already using a file
-> > descriptor and your own RPC format, you just want a faster
-> > communications channel.
-> 
-> Fine with me, if you have something better/simpler with less security
-> concerns - why not. We just need a community agreement on that.
-> 
-> Do you have something I could look at?
+Add a test file for hugepage registered buffers, to make sure the
+fixed buffer coalescing feature works safe and soundly.
 
-Here you go. Not tested yet, but all the essentials should be there.
+Testcases include read/write with single/multiple/unaligned/non-2MB
+hugepage fixed buffers, and also a should-not coalesce case where
+buffer is a mixture of different size'd pages.
 
-there's something else _really_ slick we should be able to do with this:
-add support to pipes, and then - if both ends of a pipe ask for a
-ringbuffer, map them the _same_ ringbuffer, zero copy and completely
-bypassing the kernel and neither end has to know if the other end
-supports ringbuffers or just normal pipes.
-
--- >8 --
-Add new syscalls for generic ringbuffers that can be attached to
-arbitrary (supporting) file descriptors.
-
-A ringbuffer consists of:
- - a single page for head/tail pointers, size/mask, and other ancilliary
-   metadata, described by 'struct ringbuffer_ptrs'
- - a data buffer, consisting of one or more pages mapped at
-   'ringbuffer_ptrs.data_offset' above the address of 'ringbuffer_ptrs'
-
-The data buffer is always a power of two size. Head and tail pointers
-are u32 byte offsets, and they are stored unmasked (i.e., they use the
-full 32 bit range) - they must be masked for reading.
-
-- ringbuffer(int fd, int rw, u32 size, ulong *addr)
-
-Create or get address of an existing ringbuffer for either reads or
-writes, of at least size bytes, and attach it to the given file
-descriptor; the address of the ringbuffer is returned via addr.
-
-Since files can be shared between processes in different address spaces
-a ringbuffer may be mapped into multiple address spaces via this
-syscall.
-
-- ringbuffer_wait(int fd, int rw)
-
-Wait for space to be availaable (on a ringbuffer for writing), or data
-to be available (on a ringbuffer for writing).
-
-todo: add parameters for timeout, minimum amount of data/space to wait for
-
-- ringbuffer_wakeup(int fd, int rw)
-
-Required after writing to a previously empty ringbuffer, or reading from
-a previously full ringbuffer to notify waiters on the other end
-
-todo - investigate integrating with futexes?
-todo - add extra fields to ringbuffer_ptrs for waiting on a minimum
-amount of data/space, i.e. to signal when a wakeup is required
-
-Kernel interfaces:
- - To indicate that ringbuffers are supported on a file, set
-   FOP_RINGBUFFER_READ and/or FOP_RINGBUFFER_WRITE in your
-   file_operations.
- - To read or write to a file's associated ringbuffers
-   (file->f_ringbuffer), use ringbuffer_read() or ringbuffer_write().
-
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+Signed-off-by: Chenliang Li <cliang01.li@samsung.com>
 ---
- arch/x86/entry/syscalls/syscall_32.tbl |   3 +
- arch/x86/entry/syscalls/syscall_64.tbl |   3 +
- fs/Makefile                            |   1 +
- fs/file_table.c                        |   2 +
- fs/ringbuffer.c                        | 478 +++++++++++++++++++++++++
- include/linux/fs.h                     |  14 +
- include/linux/mm_types.h               |   4 +
- include/linux/ringbuffer_sys.h         |  15 +
- include/uapi/linux/ringbuffer_sys.h    |  38 ++
- init/Kconfig                           |   8 +
- kernel/fork.c                          |   1 +
- 11 files changed, 567 insertions(+)
- create mode 100644 fs/ringbuffer.c
- create mode 100644 include/linux/ringbuffer_sys.h
- create mode 100644 include/uapi/linux/ringbuffer_sys.h
+Changes since v2:
+- Return T_EXIT_SKIP for mmap/posix_memalign failures;
+- Rebased to the newest commit;
+- Code style issues.
+v2: https://lore.kernel.org/io-uring/20240531014131.1441446-1-cliang01.li@samsung.com/T/#t
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 7fd1f57ad3d3..2385359eaf75 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -467,3 +467,6 @@
- 460	i386	lsm_set_self_attr	sys_lsm_set_self_attr
- 461	i386	lsm_list_modules	sys_lsm_list_modules
- 462	i386	mseal 			sys_mseal
-+463	i386	ringbuffer		sys_ringbuffer
-+464	i386	ringbuffer_wait		sys_ringbuffer_wait
-+465	i386	ringbuffer_wakeup	sys_ringbuffer_wakeup
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index a396f6e6ab5b..942602ece075 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -384,6 +384,9 @@
- 460	common	lsm_set_self_attr	sys_lsm_set_self_attr
- 461	common	lsm_list_modules	sys_lsm_list_modules
- 462 	common  mseal			sys_mseal
-+463	common	ringbuffer		sys_ringbuffer
-+464	common	ringbuffer_wait		sys_ringbuffer_wait
-+465	common	ringbuffer_wakeup	sys_ringbuffer_wakeup
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/fs/Makefile b/fs/Makefile
-index 6ecc9b0a53f2..48e54ac01fb1 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_TIMERFD)		+= timerfd.o
- obj-$(CONFIG_EVENTFD)		+= eventfd.o
- obj-$(CONFIG_USERFAULTFD)	+= userfaultfd.o
- obj-$(CONFIG_AIO)               += aio.o
-+obj-$(CONFIG_RINGBUFFER)        += ringbuffer.o
- obj-$(CONFIG_FS_DAX)		+= dax.o
- obj-$(CONFIG_FS_ENCRYPTION)	+= crypto/
- obj-$(CONFIG_FS_VERITY)		+= verity/
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 4f03beed4737..9675f22d6615 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -25,6 +25,7 @@
- #include <linux/sysctl.h>
- #include <linux/percpu_counter.h>
- #include <linux/percpu.h>
-+#include <linux/ringbuffer_sys.h>
- #include <linux/task_work.h>
- #include <linux/swap.h>
- #include <linux/kmemleak.h>
-@@ -412,6 +413,7 @@ static void __fput(struct file *file)
- 	 */
- 	eventpoll_release(file);
- 	locks_remove_file(file);
-+	ringbuffer_file_exit(file);
- 
- 	security_file_release(file);
- 	if (unlikely(file->f_flags & FASYNC)) {
-diff --git a/fs/ringbuffer.c b/fs/ringbuffer.c
+Changes since v1:
+- Added unaligned/non-2MB hugepage/page mixture testcases.
+- Rearranged the code.
+v1: https://lore.kernel.org/io-uring/20240514051343.582556-1-cliang01.li@samsung.com/T/#u
+
+ test/Makefile         |   1 +
+ test/fixed-hugepage.c | 389 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 390 insertions(+)
+ create mode 100644 test/fixed-hugepage.c
+
+diff --git a/test/Makefile b/test/Makefile
+index fcf6554..c40d590 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -94,6 +94,7 @@ test_srcs := \
+ 	file-verify.c \
+ 	fixed-buf-iter.c \
+ 	fixed-buf-merge.c \
++	fixed-hugepage.c \
+ 	fixed-link.c \
+ 	fixed-reuse.c \
+ 	fpos.c \
+diff --git a/test/fixed-hugepage.c b/test/fixed-hugepage.c
 new file mode 100644
-index 000000000000..cef8ca8b9416
+index 0000000..396fe43
 --- /dev/null
-+++ b/fs/ringbuffer.c
-@@ -0,0 +1,478 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/darray.h>
-+#include <linux/file.h>
-+#include <linux/fs.h>
-+#include <linux/init.h>
++++ b/test/fixed-hugepage.c
+@@ -0,0 +1,389 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Test fixed buffers consisting of hugepages.
++ */
++#include <stdio.h>
++#include <string.h>
++#include <fcntl.h>
++#include <stdlib.h>
++#include <sys/mman.h>
 +#include <linux/mman.h>
-+#include <linux/mount.h>
-+#include <linux/mutex.h>
-+#include <linux/pagemap.h>
-+#include <linux/pseudo_fs.h>
-+#include <linux/ringbuffer_sys.h>
-+#include <uapi/linux/ringbuffer_sys.h>
-+#include <linux/syscalls.h>
 +
-+#define RINGBUFFER_FS_MAGIC			0xa10a10a2
-+
-+static DEFINE_MUTEX(ringbuffer_lock);
-+
-+static struct vfsmount *ringbuffer_mnt;
-+
-+struct ringbuffer_mapping {
-+	ulong			addr;
-+	struct mm_struct	*mm;
-+};
-+
-+struct ringbuffer {
-+	wait_queue_head_t	wait[2];
-+	spinlock_t		lock;
-+	int			rw;
-+	u32			size;	/* always a power of two */
-+	u32			mask;	/* size - 1 */
-+	struct file		*io_file;
-+	/* hidden internal file for the mmap */
-+	struct file		*rb_file;
-+	struct ringbuffer_ptrs	*ptrs;
-+	void			*data;
-+	DARRAY(struct ringbuffer_mapping) mms;
-+};
-+
-+static const struct address_space_operations ringbuffer_aops = {
-+	.dirty_folio	= noop_dirty_folio,
-+#if 0
-+	.migrate_folio	= ringbuffer_migrate_folio,
-+#endif
-+};
-+
-+#if 0
-+static int ringbuffer_mremap(struct vm_area_struct *vma)
-+{
-+	struct file *file = vma->vm_file;
-+	struct mm_struct *mm = vma->vm_mm;
-+	struct kioctx_table *table;
-+	int i, res = -EINVAL;
-+
-+	spin_lock(&mm->ioctx_lock);
-+	rcu_read_lock();
-+	table = rcu_dereference(mm->ioctx_table);
-+	if (!table)
-+		goto out_unlock;
-+
-+	for (i = 0; i < table->nr; i++) {
-+		struct kioctx *ctx;
-+
-+		ctx = rcu_dereference(table->table[i]);
-+		if (ctx && ctx->ringbuffer_file == file) {
-+			if (!atomic_read(&ctx->dead)) {
-+				ctx->user_id = ctx->mmap_base = vma->vm_start;
-+				res = 0;
-+			}
-+			break;
-+		}
-+	}
-+
-+out_unlock:
-+	rcu_read_unlock();
-+	spin_unlock(&mm->ioctx_lock);
-+	return res;
-+}
-+#endif
-+
-+static const struct vm_operations_struct ringbuffer_vm_ops = {
-+#if 0
-+	.mremap		= ringbuffer_mremap,
-+#endif
-+#if IS_ENABLED(CONFIG_MMU)
-+	.fault		= filemap_fault,
-+	.map_pages	= filemap_map_pages,
-+	.page_mkwrite	= filemap_page_mkwrite,
-+#endif
-+};
-+
-+static int ringbuffer_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	vm_flags_set(vma, VM_DONTEXPAND);
-+	vma->vm_ops = &ringbuffer_vm_ops;
-+	return 0;
-+}
-+
-+static const struct file_operations ringbuffer_fops = {
-+	.mmap = ringbuffer_mmap,
-+};
-+
-+static void ringbuffer_free(struct ringbuffer *rb)
-+{
-+	rb->io_file->f_ringbuffers[rb->rw] = NULL;
-+
-+	darray_for_each(rb->mms, map)
-+		darray_for_each_reverse(map->mm->ringbuffers, rb2)
-+			if (rb == *rb2)
-+				darray_remove_item(&map->mm->ringbuffers, rb2);
-+
-+	if (rb->rb_file) {
-+		/* Kills mapping: */
-+		truncate_setsize(file_inode(rb->rb_file), 0);
-+
-+		/* Prevent further access to the kioctx from migratepages */
-+		struct address_space *mapping = rb->rb_file->f_mapping;
-+		spin_lock(&mapping->i_private_lock);
-+		mapping->i_private_data = NULL;
-+		spin_unlock(&mapping->i_private_lock);
-+
-+		fput(rb->rb_file);
-+	}
-+
-+	free_pages((ulong) rb->data, get_order(rb->size));
-+	free_page((ulong) rb->ptrs);
-+	kfree(rb);
-+}
-+
-+static int ringbuffer_map(struct ringbuffer *rb, ulong *addr)
-+{
-+	struct mm_struct *mm = current->mm;
-+
-+	int ret = darray_make_room(&rb->mms, 1) ?:
-+		darray_make_room(&mm->ringbuffers, 1);
-+	if (ret)
-+		return ret;
-+
-+	ret = mmap_write_lock_killable(mm);
-+	if (ret)
-+		return ret;
-+
-+	ulong unused;
-+	struct ringbuffer_mapping map = {
-+		.addr = do_mmap(rb->rb_file, 0, rb->size + PAGE_SIZE,
-+				PROT_READ|PROT_WRITE,
-+				MAP_SHARED, 0, 0, &unused, NULL),
-+		.mm = mm,
-+	};
-+	mmap_write_unlock(mm);
-+
-+	ret = PTR_ERR_OR_ZERO((void *) map.addr);
-+	if (ret)
-+		return ret;
-+
-+	ret =   darray_push(&mm->ringbuffers, rb) ?:
-+		darray_push(&rb->mms, map);
-+	BUG_ON(ret); /* we preallocated */
-+
-+	*addr = map.addr;
-+	return 0;
-+}
-+
-+static int ringbuffer_get_addr_or_map(struct ringbuffer *rb, ulong *addr)
-+{
-+	struct mm_struct *mm = current->mm;
-+
-+	darray_for_each(rb->mms, map)
-+		if (map->mm == mm) {
-+			*addr = map->addr;
-+			return 0;
-+		}
-+
-+	return ringbuffer_map(rb, addr);
-+}
-+
-+static struct ringbuffer *ringbuffer_alloc(struct file *file, int rw, u32 size,
-+					   ulong *addr)
-+{
-+	unsigned order = get_order(size);
-+	size = PAGE_SIZE << order;
-+
-+	struct ringbuffer *rb = kzalloc(sizeof(*rb), GFP_KERNEL);
-+	if (!rb)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init_waitqueue_head(&rb->wait[READ]);
-+	init_waitqueue_head(&rb->wait[WRITE]);
-+	spin_lock_init(&rb->lock);
-+	rb->rw		= rw;
-+	rb->size	= size;
-+	rb->mask	= size - 1;
-+	rb->io_file	= file;
-+
-+	rb->ptrs = (void *) __get_free_page(GFP_KERNEL|__GFP_ZERO);
-+	rb->data = (void *) __get_free_pages(GFP_KERNEL|__GFP_ZERO, order);
-+	if (!rb->ptrs || !rb->data)
-+		goto err;
-+
-+	rb->ptrs->size	= size;
-+	rb->ptrs->mask	= size - 1;
-+	rb->ptrs->data_offset = PAGE_SIZE;
-+
-+	struct inode *inode = alloc_anon_inode(ringbuffer_mnt->mnt_sb);
-+	int ret = PTR_ERR_OR_ZERO(inode);
-+	if (ret)
-+		goto err;
-+
-+	inode->i_mapping->a_ops = &ringbuffer_aops;
-+	inode->i_mapping->i_private_data = rb;
-+	inode->i_size = size;
-+
-+	rb->rb_file = alloc_file_pseudo(inode, ringbuffer_mnt, "[ringbuffer]",
-+				     O_RDWR, &ringbuffer_fops);
-+	ret = PTR_ERR_OR_ZERO(rb->rb_file);
-+	if (ret)
-+		goto err_iput;
-+
-+	ret = filemap_add_folio(rb->rb_file->f_mapping,
-+				page_folio(virt_to_page(rb->ptrs)),
-+				0, GFP_KERNEL);
-+	if (ret)
-+		goto err;
-+
-+	/* todo - implement a fallback when high order allocation fails */
-+	ret = filemap_add_folio(rb->rb_file->f_mapping,
-+				page_folio(virt_to_page(rb->data)),
-+				1, GFP_KERNEL);
-+	if (ret)
-+		goto err;
-+
-+	ret = ringbuffer_map(rb, addr);
-+	if (ret)
-+		goto err;
-+
-+	return rb;
-+err_iput:
-+	iput(inode);
-+err:
-+	ringbuffer_free(rb);
-+	return ERR_PTR(ret);
-+}
-+
-+/* file is going away, tear down ringbuffers: */
-+void ringbuffer_file_exit(struct file *file)
-+{
-+	mutex_lock(&ringbuffer_lock);
-+	for (unsigned i = 0; i < ARRAY_SIZE(file->f_ringbuffers); i++)
-+		if (file->f_ringbuffers[i])
-+			ringbuffer_free(file->f_ringbuffers[i]);
-+	mutex_unlock(&ringbuffer_lock);
-+}
++#include "liburing.h"
++#include "helpers.h"
 +
 +/*
-+ * XXX: we require synchronization when killing a ringbuffer (because no longer
-+ * mapped anywhere) to a file that is still open (and in use)
++ * Before testing
++ * echo (>=4) > /proc/sys/vm/nr_hugepages
++ * echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
++ * echo always > /sys/kernel/mm/transparent_hugepage/hugepages-16kB/enabled
++ *
++ * Not 100% guaranteed to get THP-backed memory, but in general it does.
 + */
-+static void ringbuffer_mm_drop(struct mm_struct *mm, struct ringbuffer *rb)
++#define MTHP_16KB	(16UL * 1024)
++#define HUGEPAGE_SIZE	(2UL * 1024 * 1024)
++#define NR_BUFS		1
++#define IN_FD		"/dev/urandom"
++#define OUT_FD		"/dev/zero"
++
++static int open_files(char *fname_in, int *fd_in, int *fd_out)
 +{
-+	darray_for_each_reverse(rb->mms, map)
-+		if (mm == map->mm)
-+			darray_remove_item(&rb->mms, map);
-+
-+	if (!rb->mms.nr)
-+		ringbuffer_free(rb);
-+}
-+
-+void ringbuffer_mm_exit(struct mm_struct *mm)
-+{
-+	mutex_lock(&ringbuffer_lock);
-+	darray_for_each_reverse(mm->ringbuffers, rb)
-+		ringbuffer_mm_drop(mm, *rb);
-+	mutex_unlock(&ringbuffer_lock);
-+
-+	darray_exit(&mm->ringbuffers);
-+}
-+
-+SYSCALL_DEFINE4(ringbuffer, unsigned, fd, int, rw, u32, size, ulong __user *, ringbufferp)
-+{
-+	ulong rb_addr;
-+
-+	int ret = get_user(rb_addr, ringbufferp);
-+	if (unlikely(ret))
-+		return ret;
-+
-+	if (unlikely(rb_addr || !size || rw > WRITE))
-+		return -EINVAL;
-+
-+	struct fd f = fdget(fd);
-+	if (!f.file)
-+		return -EBADF;
-+
-+	if (!(f.file->f_op->fop_flags & (rw == READ ? FOP_RINGBUFFER_READ : FOP_RINGBUFFER_WRITE))) {
-+		ret = -EOPNOTSUPP;
-+		goto err;
++	*fd_in = open(fname_in, O_RDONLY, 0644);
++	if (*fd_in < 0) {
++		printf("open %s failed\n", fname_in);
++		return -1;
 +	}
 +
-+	mutex_lock(&ringbuffer_lock);
-+	struct ringbuffer *rb = f.file->f_ringbuffers[rw];
-+	if (rb) {
-+		ret = ringbuffer_get_addr_or_map(rb, &rb_addr);
-+		if (ret)
-+			goto err_unlock;
++	*fd_out = open(OUT_FD, O_RDWR, 0644);
++	if (*fd_out < 0) {
++		printf("open %s failed\n", OUT_FD);
++		return -1;
++	}
 +
-+		ret = put_user(rb_addr, ringbufferp);
-+	} else {
-+		rb = ringbuffer_alloc(f.file, rw, size, &rb_addr);
-+		ret = PTR_ERR_OR_ZERO(rb);
-+		if (ret)
-+			goto err_unlock;
++	return 0;
++}
 +
-+		ret = put_user(rb_addr, ringbufferp);
-+		if (ret) {
-+			ringbuffer_free(rb);
-+			goto err_unlock;
++static void unmap(struct iovec *iov, int nr_bufs, size_t offset)
++{
++	int i;
++
++	for (i = 0; i < nr_bufs; i++)
++		munmap(iov[i].iov_base - offset, iov[i].iov_len + offset);
++}
++
++static int mmap_hugebufs(struct iovec *iov, int nr_bufs, size_t buf_size, size_t offset)
++{
++	int i;
++
++	for (i = 0; i < nr_bufs; i++) {
++		void *base = NULL;
++
++		base = mmap(NULL, buf_size, PROT_READ | PROT_WRITE,
++				MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
++		if (base == MAP_FAILED) {
++			printf("Unable to map hugetlb page. Try increasing the "
++				"value in /proc/sys/vm/nr_hugepages\n");
++			unmap(iov, i, offset);
++			return -1;
 +		}
 +
-+		f.file->f_ringbuffers[rw] = rb;
-+	}
-+err_unlock:
-+	mutex_unlock(&ringbuffer_lock);
-+err:
-+	fdput(f);
-+	return ret;
-+}
-+
-+static bool __ringbuffer_read(struct ringbuffer *rb, void **data, size_t *len,
-+			       bool nonblocking, size_t *ret)
-+{
-+	u32 head = rb->ptrs->head;
-+	u32 tail = rb->ptrs->tail;
-+
-+	if (head == tail)
-+		return 0;
-+
-+	ulong flags;
-+	spin_lock_irqsave(&rb->lock, flags);
-+	/* Multiple consumers - recheck under lock: */
-+	tail = rb->ptrs->tail;
-+
-+	while (*len && tail != head) {
-+		u32 tail_masked = tail & rb->mask;
-+		u32 b = min(*len,
-+			min(head - tail,
-+			    rb->size - tail_masked));
-+
-+		memcpy(*data, rb->data + tail_masked, b);
-+		tail	+= b;
-+		*data	+= b;
-+		*len	-= b;
-+		*ret	+= b;
++		memset(base, 0, buf_size);
++		iov[i].iov_base = base + offset;
++		iov[i].iov_len = buf_size - offset;
 +	}
 +
-+	smp_store_release(&rb->ptrs->tail, tail);
-+	spin_unlock_irqrestore(&rb->lock, flags);
-+
-+	return !*len || nonblocking;
-+}
-+
-+size_t ringbuffer_read(struct ringbuffer *rb, void *data, size_t len, bool nonblocking)
-+{
-+	size_t ret = 0;
-+	wait_event(rb->wait[READ], __ringbuffer_read(rb, &data, &len, nonblocking, &ret));
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(ringbuffer_read);
-+
-+static bool __ringbuffer_write(struct ringbuffer *rb, void **data, size_t *len,
-+			       bool nonblocking, size_t *ret)
-+{
-+	u32 head = rb->ptrs->head;
-+	u32 tail = rb->ptrs->tail;
-+
-+	if (head - tail >= rb->size)
-+		return 0;
-+
-+	ulong flags;
-+	spin_lock_irqsave(&rb->lock, flags);
-+	/* Multiple producers - recheck under lock: */
-+	head = rb->ptrs->head;
-+
-+	while (*len && head - tail < rb->size) {
-+		u32 head_masked = head & rb->mask;
-+		u32 b = min(*len,
-+			min(tail + rb->size - head,
-+			    rb->size - head_masked));
-+
-+		memcpy(rb->data + head_masked, *data, b);
-+		head	+= b;
-+		*data	+= b;
-+		*len	-= b;
-+		*ret	+= b;
-+	}
-+
-+	smp_store_release(&rb->ptrs->head, head);
-+	spin_unlock_irqrestore(&rb->lock, flags);
-+
-+	return !*len || nonblocking;
-+}
-+
-+size_t ringbuffer_write(struct ringbuffer *rb, void *data, size_t len, bool nonblocking)
-+{
-+	size_t ret = 0;
-+	wait_event(rb->wait[WRITE], __ringbuffer_write(rb, &data, &len, nonblocking, &ret));
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(ringbuffer_write);
-+
-+SYSCALL_DEFINE2(ringbuffer_wait, unsigned, fd, int, rw)
-+{
-+	int ret = 0;
-+
-+	if (rw > WRITE)
-+		return -EINVAL;
-+
-+	struct fd f = fdget(fd);
-+	if (!f.file)
-+		return -EBADF;
-+
-+	struct ringbuffer *rb = f.file->f_ringbuffers[rw];
-+	if (!rb) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
-+	struct ringbuffer_ptrs *rp = rb->ptrs;
-+	wait_event(rb->wait[rw], rw == READ
-+		   ? rp->head != rp->tail
-+		   : rp->head - rp->tail < rb->size);
-+err:
-+	fdput(f);
-+	return ret;
-+}
-+
-+SYSCALL_DEFINE2(ringbuffer_wakeup, unsigned, fd, int, rw)
-+{
-+	int ret = 0;
-+
-+	if (rw > WRITE)
-+		return -EINVAL;
-+
-+	struct fd f = fdget(fd);
-+	if (!f.file)
-+		return -EBADF;
-+
-+	struct ringbuffer *rb = f.file->f_ringbuffers[rw];
-+	if (!rb) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
-+	wake_up(&rb->wait[rw]);
-+err:
-+	fdput(f);
-+	return ret;
-+}
-+
-+static int ringbuffer_init_fs_context(struct fs_context *fc)
-+{
-+	if (!init_pseudo(fc, RINGBUFFER_FS_MAGIC))
-+		return -ENOMEM;
-+	fc->s_iflags |= SB_I_NOEXEC;
 +	return 0;
 +}
 +
-+static int __init ringbuffer_setup(void)
++/* map a hugepage and smaller page to a contiguous memory */
++static int mmap_mixture(struct iovec *iov, int nr_bufs, size_t buf_size)
 +{
-+	static struct file_system_type ringbuffer_fs = {
-+		.name		= "ringbuffer",
-+		.init_fs_context = ringbuffer_init_fs_context,
-+		.kill_sb	= kill_anon_super,
-+	};
-+	ringbuffer_mnt = kern_mount(&ringbuffer_fs);
-+	if (IS_ERR(ringbuffer_mnt))
-+		panic("Failed to create ringbuffer fs mount.");
++	int i;
++	void *small_base = NULL, *huge_base = NULL, *start = NULL;
++	size_t small_size = buf_size - HUGEPAGE_SIZE;
++	size_t seg_size = ((buf_size / HUGEPAGE_SIZE) + 1) * HUGEPAGE_SIZE;
++
++	start = mmap(NULL, seg_size * nr_bufs, PROT_NONE,
++			MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
++	if (start == MAP_FAILED) {
++		printf("Unable to preserve the page mixture memory. "
++			"Try increasing the RLIMIT_MEMLOCK resource limit\n");
++		return -1;
++	}
++
++	for (i = 0; i < nr_bufs; i++) {
++		huge_base = mmap(start, HUGEPAGE_SIZE, PROT_READ | PROT_WRITE,
++				MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_FIXED, -1, 0);
++		if (huge_base == MAP_FAILED) {
++			printf("Unable to map hugetlb page in the page mixture. "
++				"Try increasing the value in /proc/sys/vm/nr_hugepages\n");
++			unmap(iov, nr_bufs, 0);
++			return -1;
++		}
++
++		small_base = mmap(start + HUGEPAGE_SIZE, small_size, PROT_READ | PROT_WRITE,
++				MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
++		if (small_base == MAP_FAILED) {
++			printf("Unable to map small page in the page mixture. "
++				"Try increasing the RLIMIT_MEMLOCK resource limit\n");
++			unmap(iov, nr_bufs, 0);
++			return -1;
++		}
++
++		memset(huge_base, 0, buf_size);
++		iov[i].iov_base = huge_base;
++		iov[i].iov_len = buf_size;
++		start += seg_size;
++	}
++
 +	return 0;
 +}
-+__initcall(ringbuffer_setup);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 0283cf366c2a..ba30fdfff5cb 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -978,6 +978,8 @@ static inline int ra_has_index(struct file_ra_state *ra, pgoff_t index)
- 		index <  ra->start + ra->size);
- }
- 
-+struct ringbuffer;
 +
- /*
-  * f_{lock,count,pos_lock} members can be highly contended and share
-  * the same cacheline. f_{lock,mode} are very frequently used together
-@@ -1024,6 +1026,14 @@ struct file {
- 	struct address_space	*f_mapping;
- 	errseq_t		f_wb_err;
- 	errseq_t		f_sb_err; /* for syncfs */
++static void free_bufs(struct iovec *iov, int nr_bufs, size_t offset)
++{
++	int i;
 +
-+#ifdef CONFIG_RINGBUFFER
-+	/*
-+	 * Ringbuffers for reading/writing without syncall overhead, created by
-+	 * ringbuffer(2)
-+	 */
-+	struct ringbuffer	*f_ringbuffers[2];
-+#endif
- } __randomize_layout
-   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
- 
-@@ -2051,6 +2061,10 @@ struct file_operations {
- #define FOP_DIO_PARALLEL_WRITE	((__force fop_flags_t)(1 << 3))
- /* Contains huge pages */
- #define FOP_HUGE_PAGES		((__force fop_flags_t)(1 << 4))
-+/* Supports read ringbuffers */
-+#define FOP_RINGBUFFER_READ	((__force fop_flags_t)(1 << 5))
-+/* Supports write ringbuffers */
-+#define FOP_RINGBUFFER_WRITE	((__force fop_flags_t)(1 << 6))
- 
- /* Wrap a directory iterator that needs exclusive inode access */
- int wrap_directory_iterator(struct file *, struct dir_context *,
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 24323c7d0bd4..6e412718ce7e 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -5,6 +5,7 @@
- #include <linux/mm_types_task.h>
- 
- #include <linux/auxvec.h>
-+#include <linux/darray_types.h>
- #include <linux/kref.h>
- #include <linux/list.h>
- #include <linux/spinlock.h>
-@@ -911,6 +912,9 @@ struct mm_struct {
- 		spinlock_t			ioctx_lock;
- 		struct kioctx_table __rcu	*ioctx_table;
- #endif
-+#ifdef CONFIG_RINGBUFFER
-+		DARRAY(struct ringbuffer *)	ringbuffers;
-+#endif
- #ifdef CONFIG_MEMCG
- 		/*
- 		 * "owner" points to a task that is regarded as the canonical
-diff --git a/include/linux/ringbuffer_sys.h b/include/linux/ringbuffer_sys.h
-new file mode 100644
-index 000000000000..e9b3d0a0910f
---- /dev/null
-+++ b/include/linux/ringbuffer_sys.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_RINGBUFFER_SYS_H
-+#define _LINUX_RINGBUFFER_SYS_H
++	for (i = 0; i < nr_bufs; i++)
++		free(iov[i].iov_base - offset);
++}
 +
-+struct file;
-+void ringbuffer_file_exit(struct file *file);
++static int get_mthp_bufs(struct iovec *iov, int nr_bufs, size_t buf_size,
++		size_t alignment, size_t offset)
++{
++	int i;
 +
-+struct mm_struct;
-+void ringbuffer_mm_exit(struct mm_struct *mm);
++	for (i = 0; i < nr_bufs; i++) {
++		void *base = NULL;
 +
-+struct ringbuffer;
-+size_t ringbuffer_read(struct ringbuffer *rb, void *data, size_t len, bool nonblocking);
-+size_t ringbuffer_write(struct ringbuffer *rb, void *data, size_t len, bool nonblocking);
++		if (posix_memalign(&base, alignment, buf_size)) {
++			printf("Unable to allocate mthp pages. "
++				"Try increasing the RLIMIT_MEMLOCK resource limit\n");
++			free_bufs(iov, i, offset);
++			return -1;
++		}
 +
-+#endif /* _LINUX_RINGBUFFER_SYS_H */
-diff --git a/include/uapi/linux/ringbuffer_sys.h b/include/uapi/linux/ringbuffer_sys.h
-new file mode 100644
-index 000000000000..d7a3af42da91
---- /dev/null
-+++ b/include/uapi/linux/ringbuffer_sys.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _UAPI_LINUX_RINGBUFFER_SYS_H
-+#define _UAPI_LINUX_RINGBUFFER_SYS_H
++		memset(base, 0, buf_size);
++		iov[i].iov_base = base + offset;
++		iov[i].iov_len = buf_size - offset;
++	}
 +
-+/*
-+ * ringbuffer_ptrs - head and tail pointers for a ringbuffer, mappped to
-+ * userspace:
-+ */
-+struct ringbuffer_ptrs {
-+	/*
-+	 * We use u32s because this type is shared between the kernel and
-+	 * userspace - ulong/size_t won't work here, we might be 32bit userland
-+	 * and 64 bit kernel, and u64 would be preferable (reduced probability
-+	 * of ABA) but not all architectures can atomically read/write to a u64;
-+	 * we need to avoid torn reads/writes.
-+	 *
-+	 * head and tail pointers are incremented and stored without masking;
-+	 * this is to avoid ABA and differentiate between a full and empty
-+	 * buffer - they must be masked with @mask to get an actual offset into
-+	 * the data buffer.
-+	 *
-+	 * All units are in bytes.
-+	 *
-+	 * Data is emitted at head, consumed from tail.
-+	 */
-+	u32		head;
-+	u32		tail;
-+	u32		size;	/* always a power of two */
-+	u32		mask;	/* size - 1 */
++	return 0;
++}
 +
-+	/*
-+	 * Starting offset of data buffer, from the start of this struct - will
-+	 * always be PAGE_SIZE.
-+	 */
-+	u32		data_offset;
-+};
++static int do_read(struct io_uring *ring, int fd, struct iovec *iov, int nr_bufs)
++{
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++	int i, ret;
 +
-+#endif /* _UAPI_LINUX_RINGBUFFER_SYS_H */
-diff --git a/init/Kconfig b/init/Kconfig
-index 72404c1f2157..1ff8eaa43e2f 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1673,6 +1673,14 @@ config IO_URING
- 	  applications to submit and complete IO through submission and
- 	  completion rings that are shared between the kernel and application.
- 
-+config RINGBUFFER
-+	bool "Enable ringbuffer() syscall" if EXPERT
-+	default y
-+	help
-+	  This option adds support for generic ringbuffers, which can be
-+	  attached to any (supported) file descriptor, allowing for reading and
-+	  writing without syscall overhead.
++	for (i = 0; i < nr_bufs; i++) {
++		sqe = io_uring_get_sqe(ring);
++		if (!sqe) {
++			fprintf(stderr, "Could not get SQE.\n");
++			return -1;
++		}
 +
- config ADVISE_SYSCALLS
- 	bool "Enable madvise/fadvise syscalls" if EXPERT
- 	default y
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 99076dbe27d8..ea160a9abd60 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1340,6 +1340,7 @@ static inline void __mmput(struct mm_struct *mm)
- 	VM_BUG_ON(atomic_read(&mm->mm_users));
- 
- 	uprobe_clear_state(mm);
-+	ringbuffer_mm_exit(mm);
- 	exit_aio(mm);
- 	ksm_exit(mm);
- 	khugepaged_exit(mm); /* must run before exit_mmap */
++		io_uring_prep_read_fixed(sqe, fd, iov[i].iov_base, iov[i].iov_len, 0, i);
++		io_uring_submit(ring);
++
++		ret = io_uring_wait_cqe(ring, &cqe);
++		if (ret < 0) {
++			fprintf(stderr, "Error waiting for completion: %s\n", strerror(-ret));
++			return -1;
++		}
++
++		if (cqe->res < 0) {
++			fprintf(stderr, "Error in async read operation: %s\n", strerror(-cqe->res));
++			return -1;
++		}
++		if (cqe->res != iov[i].iov_len) {
++			fprintf(stderr, "cqe res: %d, expected: %lu\n", cqe->res, iov[i].iov_len);
++			return -1;
++		}
++
++		io_uring_cqe_seen(ring, cqe);
++	}
++
++	return 0;
++}
++
++static int do_write(struct io_uring *ring, int fd, struct iovec *iov, int nr_bufs)
++{
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++	int i, ret;
++
++	for (i = 0; i < nr_bufs; i++) {
++		sqe = io_uring_get_sqe(ring);
++		if (!sqe) {
++			fprintf(stderr, "Could not get SQE.\n");
++			return -1;
++		}
++
++		io_uring_prep_write_fixed(sqe, fd, iov[i].iov_base, iov[i].iov_len, 0, i);
++		io_uring_submit(ring);
++
++		ret = io_uring_wait_cqe(ring, &cqe);
++		if (ret < 0) {
++			fprintf(stderr, "Error waiting for completion: %s\n", strerror(-ret));
++			return -1;
++		}
++
++		if (cqe->res < 0) {
++			fprintf(stderr, "Error in async write operation: %s\n", strerror(-cqe->res));
++			return -1;
++		}
++		if (cqe->res != iov[i].iov_len) {
++			fprintf(stderr, "cqe res: %d, expected: %lu\n", cqe->res, iov[i].iov_len);
++			return -1;
++		}
++
++		io_uring_cqe_seen(ring, cqe);
++	}
++
++	return 0;
++}
++
++static int register_submit(struct io_uring *ring, struct iovec *iov,
++						int nr_bufs, int fd_in, int fd_out)
++{
++	int ret;
++
++	ret = io_uring_register_buffers(ring, iov, nr_bufs);
++	if (ret) {
++		fprintf(stderr, "Error registering buffers: %s\n", strerror(-ret));
++		return ret;
++	}
++
++	ret = do_read(ring, fd_in, iov, nr_bufs);
++	if (ret) {
++		fprintf(stderr, "Read test failed\n");
++		return ret;
++	}
++
++	ret = do_write(ring, fd_out, iov, nr_bufs);
++	if (ret) {
++		fprintf(stderr, "Write test failed\n");
++		return ret;
++	}
++
++	ret = io_uring_unregister_buffers(ring);
++	if (ret) {
++		fprintf(stderr, "Error unregistering buffers for one hugepage test: %s", strerror(-ret));
++		return ret;
++	}
++
++	return 0;
++}
++
++static int test_one_hugepage(struct io_uring *ring, int fd_in, int fd_out)
++{
++	struct iovec iov[NR_BUFS];
++	size_t buf_size = HUGEPAGE_SIZE;
++	int ret;
++
++	if (mmap_hugebufs(iov, NR_BUFS, buf_size, 0))
++		return T_EXIT_SKIP;
++
++	ret = register_submit(ring, iov, NR_BUFS, fd_in, fd_out);
++	unmap(iov, NR_BUFS, 0);
++	return ret ? T_EXIT_FAIL : T_EXIT_PASS;
++}
++
++static int test_multi_hugepages(struct io_uring *ring, int fd_in, int fd_out)
++{
++	struct iovec iov[NR_BUFS];
++	size_t buf_size = 4 * HUGEPAGE_SIZE;
++	int ret;
++
++	if (mmap_hugebufs(iov, NR_BUFS, buf_size, 0))
++		return T_EXIT_SKIP;
++
++	ret = register_submit(ring, iov, NR_BUFS, fd_in, fd_out);
++	unmap(iov, NR_BUFS, 0);
++	return ret ? T_EXIT_FAIL : T_EXIT_PASS;
++}
++
++static int test_unaligned_hugepage(struct io_uring *ring, int fd_in, int fd_out)
++{
++	struct iovec iov[NR_BUFS];
++	size_t buf_size = 3 * HUGEPAGE_SIZE;
++	size_t offset = 0x1234;
++	int ret;
++
++	if (mmap_hugebufs(iov, NR_BUFS, buf_size, offset))
++		return T_EXIT_SKIP;
++
++	ret = register_submit(ring, iov, NR_BUFS, fd_in, fd_out);
++	unmap(iov, NR_BUFS, offset);
++	return ret ? T_EXIT_FAIL : T_EXIT_PASS;
++}
++
++static int test_multi_unaligned_mthps(struct io_uring *ring, int fd_in, int fd_out)
++{
++	struct iovec iov[NR_BUFS];
++	int ret;
++	size_t buf_size = 3 * MTHP_16KB;
++	size_t offset = 0x1234;
++
++	if (get_mthp_bufs(iov, NR_BUFS, buf_size, MTHP_16KB, offset))
++		return T_EXIT_SKIP;
++
++	ret = register_submit(ring, iov, NR_BUFS, fd_in, fd_out);
++	free_bufs(iov, NR_BUFS, offset);
++	return ret ? T_EXIT_FAIL : T_EXIT_PASS;
++}
++
++/* Should not coalesce */
++static int test_page_mixture(struct io_uring *ring, int fd_in, int fd_out)
++{
++	struct iovec iov[NR_BUFS];
++	size_t buf_size = HUGEPAGE_SIZE + MTHP_16KB;
++	int ret;
++
++	if (mmap_mixture(iov, NR_BUFS, buf_size))
++		return T_EXIT_SKIP;
++
++	ret = register_submit(ring, iov, NR_BUFS, fd_in, fd_out);
++	unmap(iov, NR_BUFS, 0);
++	return ret ? T_EXIT_FAIL : T_EXIT_PASS;
++}
++
++int main(int argc, char *argv[])
++{
++	struct io_uring ring;
++	int ret, fd_in, fd_out;
++	char *fname_in;
++
++	if (argc > 1)
++		fname_in = argv[1];
++	else
++		fname_in = IN_FD;
++
++	if (open_files(fname_in, &fd_in, &fd_out))
++		return T_EXIT_SKIP;
++
++	ret = t_create_ring(8, &ring, 0);
++	if (ret == T_SETUP_SKIP)
++		return T_EXIT_SKIP;
++	else if (ret < 0)
++		return T_EXIT_FAIL;
++
++	ret = test_one_hugepage(&ring, fd_in, fd_out);
++	if (ret != T_EXIT_PASS) {
++		if (ret != T_EXIT_SKIP)
++			fprintf(stderr, "Test one hugepage failed.\n");
++		return ret;
++	}
++
++	ret = test_multi_hugepages(&ring, fd_in, fd_out);
++	if (ret != T_EXIT_PASS) {
++		if (ret != T_EXIT_SKIP)
++			fprintf(stderr, "Test multi hugepages failed.\n");
++		return ret;
++	}
++
++	ret = test_unaligned_hugepage(&ring, fd_in, fd_out);
++	if (ret != T_EXIT_PASS) {
++		if (ret != T_EXIT_SKIP)
++			fprintf(stderr, "Test unaligned hugepage failed.\n");
++		return ret;
++	}
++
++	ret = test_multi_unaligned_mthps(&ring, fd_in, fd_out);
++	if (ret != T_EXIT_PASS) {
++		if (ret != T_EXIT_SKIP)
++			fprintf(stderr, "Test unaligned multi-size'd THPs failed.\n");
++		return ret;
++	}
++
++	ret = test_page_mixture(&ring, fd_in, fd_out);
++	if (ret != T_EXIT_PASS) {
++		if (ret != T_EXIT_SKIP)
++			fprintf(stderr, "Test huge small page mixture failed.\n");
++		return ret;
++	}
++
++	io_uring_queue_exit(&ring);
++	return T_EXIT_PASS;
++}
+
+base-commit: 3df984a28a28014a060157d90f3e46e657c04314
 -- 
-2.45.1
+2.34.1
 
 

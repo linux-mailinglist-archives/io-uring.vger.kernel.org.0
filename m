@@ -1,204 +1,104 @@
-Return-Path: <io-uring+bounces-2043-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2044-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094F58D6B5C
-	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 23:15:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93CD8D6B8B
+	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 23:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF5031F2AD5D
-	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 21:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 145C91C25552
+	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 21:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079E98248C;
-	Fri, 31 May 2024 21:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7814624B4A;
+	Fri, 31 May 2024 21:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ClFa7+sj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C8F823AC;
-	Fri, 31 May 2024 21:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDD0182B9
+	for <io-uring@vger.kernel.org>; Fri, 31 May 2024 21:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717190018; cv=none; b=tFjQJpS9vrebmFi5B081E4kkt2IcqhIxkOISPAmjMToq/m08ZHmkt+/zoLNxgsYwG2Dp/yM8zmpXk22dxx26armhEptC92GEj7wM2wpA0Toiz5pzdnsdkJ9zRxxYMlYY5t1eNlM9Fan4/shInNTnc+/aQZAXVs1AdxpGgUyBPhk=
+	t=1717191024; cv=none; b=gO94j0l9uOjOuVl/kqIV0zW9bYj9XIQBDwgcD+wfTrvqLX4OzFscV0BpJqyQ283fYSXQhpTUMX1kTgCelZQcMVm7vmGrq1vlVxGHZ0s30U/qII69cClsOkl4unTcYT/5WBRqnI6X7IwuxwXewXaKcur/SZ09Oyq8K267SYB7fms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717190018; c=relaxed/simple;
-	bh=iYC2RM9s4UFMlkKNvkzOEVzmmoU8jDCrIh59wCBa/vE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cOzzDJtoui+lM0j27bWfgqZ9+l/eWEoIXvh6LL4ezpXSSrkK4dOj1POrTOqidhowxhIvbHr8KxVfmFEv+ZlrvTFXW5p7XBuE3Pi41AhKXXExbgxyaReiFrwL1PEoIpBx8q+y4t2pdv7E9homZmGdkjBVAuAlaJCcRRcqZsh8qXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E4BB11F396;
-	Fri, 31 May 2024 21:13:35 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AB695137C3;
-	Fri, 31 May 2024 21:13:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id L/S6I389WmbEagAAD6G6ig
-	(envelope-from <krisman@suse.de>); Fri, 31 May 2024 21:13:35 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH 5/5] io_uring: Introduce IORING_OP_LISTEN
-Date: Fri, 31 May 2024 17:12:11 -0400
-Message-ID: <20240531211211.12628-6-krisman@suse.de>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240531211211.12628-1-krisman@suse.de>
-References: <20240531211211.12628-1-krisman@suse.de>
+	s=arc-20240116; t=1717191024; c=relaxed/simple;
+	bh=LKl0W6th+BKERbSY8pZEAnqVLHuG94KuZoojRceouWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=deZJ6bAAzPqMXpiVc1uSxrRts+vlC+nEBcYi05EN0aPuqekiBNjcbvRyN5sRlfc0XjFXsbdF3DoxtLl9v62dptfcwoV6loKgnsF89u/RCOO97ojrI2F1CHSNzN9Ri0fBUeB/MR1JdTO9MB3iryMvpaXUGSpjo9o4Lfu638A9KNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ClFa7+sj; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-64ecc2f111dso290642a12.2
+        for <io-uring@vger.kernel.org>; Fri, 31 May 2024 14:30:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717191021; x=1717795821; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Sy5IKBWMM2shXUBddUnGfO8egM0wSf++SsNLF8eClc8=;
+        b=ClFa7+sj9J2ZBmmqVKsOulQ0JRdf1ZnFCK+csgmpEWOk7y98LD654UgVd1xrEurMYy
+         VKqacGUa8/9K7GYdOKbyJk2ARisceJcdtJzn8vGvQ3OxvJ8GjwGEmQcEw3HWrq5VEeaN
+         cJxIkZ1WuBbQ8NTdzqt+43r/kP1fgBuNu/L6xePbyltLFtAYBEt+IdNdo3hV9ciV+zQE
+         Fi006QdHjuNP6bpFgO2MB1uVzzy+2h40UKDpY31pMBuk65aT1Av1PzxQSQaIATTo6BFV
+         AbOAxRMyxzEuPHwRFX2E5XciurHqcTgUPFHto90JoxHG2opv+9AiC6rmh/QIRgH3E3RU
+         T07w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717191021; x=1717795821;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sy5IKBWMM2shXUBddUnGfO8egM0wSf++SsNLF8eClc8=;
+        b=ZZjKLGmpomMJmLdyAhk1VgR0YyDOU9ZVw7RptPcovCzxjt0YvdfgTUM3h/3OY9xeNa
+         sEaJVrcQAHyH/nVfycOc1zjxOsMyw704txtAsgYNhaLoNB/QDL1SYs4pY5rZGYku+37u
+         6O8Z3Yu9FDcGXOgan3bUR+mfpZHA+HTpUb41IT0BX5XpdyNV4Y5e1inxN1Gy/nQIMP3/
+         qQ1FMGDaIiL+LlWD3s7Mv8QMapmPiFI23wP3klaT1VqjCpvv4/Jm6z0CkmOMKv0f/8zp
+         2ZXdmmDL7BREa+GwCvL20ycXRRfp8z69u28I93FUWLKIgdy0RQKAoIVHpMpgBOTrtmLA
+         9rxQ==
+X-Gm-Message-State: AOJu0YwKFPhCNQ7oOCYCcpCbmWrpE+0q2POVHRuRhHwfJd/BLh1nh4vr
+	YWFSIaF4DB4k+fmAKBEPV6bZH4zhwEV5/OjjMdLX4Ypo8WoPZGqfSUFhpK3M+fA=
+X-Google-Smtp-Source: AGHT+IFqsWKRD5IpXEQFjVYHf5HDjhMvFO15Bcat/fj7davM/2CbtZpYSR8STPWmmeoVJkIK3b16iQ==
+X-Received: by 2002:a05:6a20:3ca4:b0:1af:93b0:efff with SMTP id adf61e73a8af0-1b26f1468e3mr3734473637.2.1717191021022;
+        Fri, 31 May 2024 14:30:21 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242b2f706sm1800399b3a.207.2024.05.31.14.30.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 14:30:20 -0700 (PDT)
+Message-ID: <d071a3f8-c4af-48ef-adae-385ea8705377@kernel.dk>
+Date: Fri, 31 May 2024 15:30:19 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: E4BB11F396
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] io_uring: Fix leak of async data when connect prep
+ fails
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org
+References: <20240531211211.12628-1-krisman@suse.de>
+ <20240531211211.12628-2-krisman@suse.de>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240531211211.12628-2-krisman@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-IORING_OP_LISTEN provides the semantic of listen(2) via io_uring.  While
-this is an essentially synchronous system call, the main point is to
-enable a network path to execute fully with io_uring registered and
-descriptorless files.
+On 5/31/24 3:12 PM, Gabriel Krisman Bertazi wrote:
+> move_addr_to_kernel can fail, like if the user provides a bad sockaddr
+> pointer. In this case where the failure happens on ->prep() we don't
+> have a chance to clean the request later, so handle it here.
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
- include/uapi/linux/io_uring.h |  1 +
- io_uring/net.c                | 30 ++++++++++++++++++++++++++++++
- io_uring/net.h                |  3 +++
- io_uring/opdef.c              | 13 +++++++++++++
- 4 files changed, 47 insertions(+)
+Hmm, that should still get freed in the cleanup path? It'll eventually
+go on the compl_reqs list, and it has REQ_F_ASYNC_DATA set. Yes it'll
+be slower than the recycling it, but that should not matter as it's
+an erred request.
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 4ef153d95c87..2aaf7ee256ac 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -258,6 +258,7 @@ enum io_uring_op {
- 	IORING_OP_FIXED_FD_INSTALL,
- 	IORING_OP_FTRUNCATE,
- 	IORING_OP_BIND,
-+	IORING_OP_LISTEN,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 1ac193f92ff6..e39754b5278f 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -56,6 +56,11 @@ struct io_bind {
- 	int				addr_len;
- };
- 
-+struct io_listen {
-+	struct file			*file;
-+	int				backlog;
-+};
-+
- struct io_sr_msg {
- 	struct file			*file;
- 	union {
-@@ -1761,6 +1766,31 @@ int io_bind(struct io_kiocb *req, unsigned int issue_flags)
- 	return 0;
- }
- 
-+int io_listen_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_listen *listen = io_kiocb_to_cmd(req, struct io_listen);
-+
-+	if (sqe->addr || sqe->buf_index || sqe->rw_flags || sqe->splice_fd_in || sqe->addr2)
-+		return -EINVAL;
-+
-+	listen->backlog = READ_ONCE(sqe->len);
-+
-+	return 0;
-+}
-+
-+int io_listen(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_listen *listen = io_kiocb_to_cmd(req, struct io_listen);
-+	int ret;
-+
-+	ret = __sys_listen_socket(sock_from_file(req->file), listen->backlog);
-+	if (ret < 0)
-+		req_set_fail(req);
-+	io_req_set_res(req, ret, 0);
-+
-+	return 0;
-+}
-+
- void io_netmsg_cache_free(const void *entry)
- {
- 	struct io_async_msghdr *kmsg = (struct io_async_msghdr *) entry;
-diff --git a/io_uring/net.h b/io_uring/net.h
-index 49f9a7bc1113..52bfee05f06a 100644
---- a/io_uring/net.h
-+++ b/io_uring/net.h
-@@ -52,6 +52,9 @@ void io_send_zc_cleanup(struct io_kiocb *req);
- int io_bind_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_bind(struct io_kiocb *req, unsigned int issue_flags);
- 
-+int io_listen_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-+int io_listen(struct io_kiocb *req, unsigned int issue_flags);
-+
- void io_netmsg_cache_free(const void *entry);
- #else
- static inline void io_netmsg_cache_free(const void *entry)
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 19ee9445f024..7d5c51fb8e6e 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -503,6 +503,16 @@ const struct io_issue_def io_issue_defs[] = {
- 		.async_size		= sizeof(struct io_async_msghdr),
- #else
- 		.prep			= io_eopnotsupp_prep,
-+#endif
-+	},
-+	[IORING_OP_LISTEN] = {
-+#if defined(CONFIG_NET)
-+		.needs_file		= 1,
-+		.prep			= io_listen_prep,
-+		.issue			= io_listen,
-+		.async_size		= sizeof(struct io_async_msghdr),
-+#else
-+		.prep			= io_eopnotsupp_prep,
- #endif
- 	},
- };
-@@ -724,6 +734,9 @@ const struct io_cold_def io_cold_defs[] = {
- 	[IORING_OP_BIND] = {
- 		.name			= "BIND",
- 	},
-+	[IORING_OP_LISTEN] = {
-+		.name			= "LISTEN",
-+	},
- };
- 
- const char *io_uring_get_opcode(u8 opcode)
 -- 
-2.44.0
+Jens Axboe
+
 
 

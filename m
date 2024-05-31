@@ -1,159 +1,133 @@
-Return-Path: <io-uring+bounces-2032-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2033-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B65B8D628A
-	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 15:13:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E50868D6487
+	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 16:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D3531C25155
-	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 13:13:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D902CB21FA2
+	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 14:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF2815921B;
-	Fri, 31 May 2024 13:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5ACC1CAB7;
+	Fri, 31 May 2024 14:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e4DKkVwb"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ETRuQvzY"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FA4158DC3;
-	Fri, 31 May 2024 13:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971731B812
+	for <io-uring@vger.kernel.org>; Fri, 31 May 2024 14:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717161138; cv=none; b=Vu1o8cTfD+LU+NVAaqZCAn3LSw1Gu+FNk1tdUQHB6kpRbp4E9CCPeav5PRMgc/xMpzKWmT4qcWwQIU9mVXK0U2y1mqPwjlTvWxTTkRlonWd7bIV67lIJYlPJQE+WYPWeN/xkofH7fYuKgmyRufHN/dfRU1oBkquqwvsQnepR9bc=
+	t=1717165796; cv=none; b=sTgeRmUMR/19nKFtLIPrHewuGC3Ii9x01Ic/kHe29rMFI+HpVvVgOSJFO7gVhcKT4RiEE6j9TQV49u9R5jqlVAL8W8EaN316genwdoTk0Zx/4bLmsjo2rfAbQRrLmXj4wDq/uwrpiTW5fsqKyANAyBfiSGADUlhjsdEeI+hiyAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717161138; c=relaxed/simple;
-	bh=25Z6DAQycunMds44dtwFH80eMUBSwTTavxBmP3PpFeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pV0sov+zuW5WhcLYn3ouBWvQYHgww7LiXVAWkNaPtB5uFsdg98Uw4QIlh76oP9QVhHylqkSHvMgyJiyGGBNE/V1nzDBiwFs7SWV8/SQsv6cH/Vtuy/dEdwTTSs1AEOXH0JNTUljh3XyBzNeoye2399mJJNTf1bYimXWRXkHmx+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e4DKkVwb; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717161136; x=1748697136;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=25Z6DAQycunMds44dtwFH80eMUBSwTTavxBmP3PpFeQ=;
-  b=e4DKkVwbEcGz1F/4cj+qUHRC2l+HBJncZuVlcb1k7bCKNV8vuvMJr8gi
-   RR1SH64qkPjt9bGiRxhiNSOBZ1KtkyWUwQWMQIqJ23rFkv+9cCZCfMJU5
-   nFXlYp2/GvoGGZ68SNUat41mjqSYsGNbX52yUCvQDjRIaPOyBj3jg4T/I
-   gvRShphA7Nrc+/V62aoRachM8cvt8X0pDaxiMVSt+RoivSmI0JiRHZILU
-   cSeEMhI/Out8G7vuCS4CFEwhVwAGOar9Fs6W+A2A5tDhqJBY1nZ5NtVla
-   /xW/isO5NlYb8B6Ot/hj7gP09TpVZZxUEKOaAeNXCz14yvB+FANwAljXh
-   w==;
-X-CSE-ConnectionGUID: WXmEGQFaS3qSX59WpJJbJg==
-X-CSE-MsgGUID: 00NsbryXT72KY09ZdrVaVw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11088"; a="13462654"
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="13462654"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2024 06:12:15 -0700
-X-CSE-ConnectionGUID: jo99xN1lTV+hw4hFYdn9bg==
-X-CSE-MsgGUID: 5/w1+c2oRuW19KyNsIJ5RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,204,1712646000"; 
-   d="scan'208";a="41081267"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 31 May 2024 06:12:11 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sD235-000H7l-2o;
-	Fri, 31 May 2024 13:12:03 +0000
-Date: Fri, 31 May 2024 21:11:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: oe-kbuild-all@lists.linux.dev, Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [PATCH] fs: sys_ringbuffer() (WIP)
-Message-ID: <202405312050.MkVo7MG8-lkp@intel.com>
-References: <ytprj7mx37dna3n3kbiskgvris4nfvv63u3v7wogdrlzbikkmt@chgq5hw3ny3r>
+	s=arc-20240116; t=1717165796; c=relaxed/simple;
+	bh=/XB2ANRpWpPqzviDRm7sfkmQ3coSVfSB0BPLj0vVgSk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=fXgCloC+ee2KJnICDP02m/7pVz/gbg3XbgfBax+BeqJAcxDBZlZVsu4laF/OFwa9Jn9YSvzKofabqg1ziJJW41mCr0nMcclMYtit+hvIhD/kUiEkZUeNDuBFNZbEC8ytJgrtrj6FVSHk7sBGMxpmI/9sTqvaiHfgT5j6LuiiIR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ETRuQvzY; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6f8d3e7729aso34973a34.3
+        for <io-uring@vger.kernel.org>; Fri, 31 May 2024 07:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717165792; x=1717770592; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fZ4C3W0XI2JnSUack5Vkx9/BXhja4JTMM+Ai27g8Jx4=;
+        b=ETRuQvzYuiMcpM1LlelxqmDIEkXxd4znc63GS7b3GyrTfznFl58yAAUJ5x5nSqxy51
+         YbJstwLQMHnaUmwNlftxXtPEqf9rqKlM3SSjIqU3Hlo5NhQMRfZWw1EF7TtMp0Skw6Dg
+         sfqcFl+OSaC3ltGhQkZOUKQbli391RVDUKMDxjk0alHnDxgy/nObYv56B6sP+9hSCEA6
+         GzmMdIMZbHY1vVB7M/h+0mGnn3JL1gl1rylsoPumc9LCCmx9JzBFk2iyBZ8ip/Z3bIrU
+         foNvClmTtMdAJ9mvzY9takECFlGm8zrjB6gYc31+V7Kdwxg1lSo7NWhF3ZlT3IRqOzvF
+         IXpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717165792; x=1717770592;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fZ4C3W0XI2JnSUack5Vkx9/BXhja4JTMM+Ai27g8Jx4=;
+        b=nDMYE8S35sUP3s2RtKMNViweHQC5uqTpCVNPEucYu2bWia/MwqxAzRyDTDVta8JiTH
+         tgYqaGyc5beARyVD/g6+2D1O3jyQbjbeVmZPOZM7cGdSyie5rawqXQxF8Uxe6Z4NR9Ee
+         DFZB1U9ZEPySPT17RyOIeFBe7gTv/QaeFvvaejXRb2vo3CNIMqoAj00igB5pap8eolw7
+         6KdGF/JweNfAEKDAxfm36fZOmyzwW6/3D/aUX36/+LAvtcD1Ih09sANZ9/q3sHjF6tqM
+         XC1vdqlZhcn9ncGb8vZt18luV8Q0G1CWEyT1hVMO4GyfXcGV3BvsfRlNt5dqAuHnRG8B
+         PUNA==
+X-Gm-Message-State: AOJu0YwogIFEdjEjZJ+LOv6CP7bc2ifyAlInDoiMn7dnUb69FxXy2SuJ
+	XpRUJhZf7zocqhPek9LjeLF1e6yX+ljjQ7PFG6bn5tuZJeeJFtJZqNckPb9the1xSTrwso30S60
+	q
+X-Google-Smtp-Source: AGHT+IHb4JQx3gS51kXuxoLaxZTue53W27P2n2ifYUWtIA5HWTBEKPOVyTehk5V2ygN4EcuRNC5tng==
+X-Received: by 2002:a9d:7e97:0:b0:6f1:20c0:9389 with SMTP id 46e09a7af769-6f911fc46b4mr2222804a34.3.1717165792198;
+        Fri, 31 May 2024 07:29:52 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f91054f6c5sm347197a34.38.2024.05.31.07.29.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 07:29:51 -0700 (PDT)
+Message-ID: <d59d3b10-823d-460b-bad5-fae40b43e14f@kernel.dk>
+Date: Fri, 31 May 2024 08:29:50 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ytprj7mx37dna3n3kbiskgvris4nfvv63u3v7wogdrlzbikkmt@chgq5hw3ny3r>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.10-rc2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Kent,
+Hi Linus,
 
-kernel test robot noticed the following build errors:
+A couple of minor fixes for issues introduced in the 6.10 merge window:
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.10-rc1]
-[cannot apply to tip/x86/asm next-20240531]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+- Ensure that all read/write ops have an appropriate cleanup handler set
+  (Breno)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kent-Overstreet/fs-sys_ringbuffer-WIP/20240531-115626
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/ytprj7mx37dna3n3kbiskgvris4nfvv63u3v7wogdrlzbikkmt%40chgq5hw3ny3r
-patch subject: [PATCH] fs: sys_ringbuffer() (WIP)
-config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240531/202405312050.MkVo7MG8-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240531/202405312050.MkVo7MG8-lkp@intel.com/reproduce)
+- Regression for applications still doing multiple mmaps even if
+  FEAT_SINGLE_MMAP is set (me)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405312050.MkVo7MG8-lkp@intel.com/
+- Move kmsg inquiry setting above any potential failure point, avoiding
+  a spurious NONEMPTY flag setting on early error (me)
 
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/sched/signal.h:14,
-                    from include/linux/ptrace.h:7,
-                    from arch/openrisc/kernel/asm-offsets.c:28:
->> include/linux/mm_types.h:8:10: fatal error: linux/darray_types.h: No such file or directory
-       8 | #include <linux/darray_types.h>
-         |          ^~~~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
-   make[3]: *** [scripts/Makefile.build:117: arch/openrisc/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1208: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:240: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:240: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
+Please pull!
 
 
-vim +8 include/linux/mm_types.h
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-     6	
-     7	#include <linux/auxvec.h>
-   > 8	#include <linux/darray_types.h>
-     9	#include <linux/kref.h>
-    10	#include <linux/list.h>
-    11	#include <linux/spinlock.h>
-    12	#include <linux/rbtree.h>
-    13	#include <linux/maple_tree.h>
-    14	#include <linux/rwsem.h>
-    15	#include <linux/completion.h>
-    16	#include <linux/cpumask.h>
-    17	#include <linux/uprobes.h>
-    18	#include <linux/rcupdate.h>
-    19	#include <linux/page-flags-layout.h>
-    20	#include <linux/workqueue.h>
-    21	#include <linux/seqlock.h>
-    22	#include <linux/percpu_counter.h>
-    23	
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.10-20240530
+
+for you to fetch changes up to 18414a4a2eabb0281d12d374c92874327e0e3fe3:
+
+  io_uring/net: assign kmsg inq/flags before buffer selection (2024-05-30 14:04:37 -0600)
+
+----------------------------------------------------------------
+io_uring-6.10-20240530
+
+----------------------------------------------------------------
+Breno Leitao (1):
+      io_uring/rw: Free iovec before cleaning async data
+
+Jens Axboe (2):
+      io_uring: don't attempt to mmap larger than what the user asks for
+      io_uring/net: assign kmsg inq/flags before buffer selection
+
+ io_uring/memmap.c | 5 +++--
+ io_uring/net.c    | 6 +++---
+ io_uring/opdef.c  | 5 +++++
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jens Axboe
+
 

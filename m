@@ -1,205 +1,167 @@
-Return-Path: <io-uring+bounces-2037-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2038-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE378D6972
-	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 21:11:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F8F8D6B52
+	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 23:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 220BE284298
-	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 19:11:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B122B21606
+	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 21:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B227C158D9C;
-	Fri, 31 May 2024 19:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153A47D40E;
+	Fri, 31 May 2024 21:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MS9rPDWx"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tRpw4fYY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sj2SZszh";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tRpw4fYY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sj2SZszh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C62A15AD93
-	for <io-uring@vger.kernel.org>; Fri, 31 May 2024 19:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CC77D071;
+	Fri, 31 May 2024 21:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717182655; cv=none; b=RTP0gJVJcdmeRBc3sw3kbRYIvIdZe/Y64XCYdlcSVGaIVwVr+hbkF5i5F55Co1A+/Rd2jKJDFGUFgxMnMN+e2expkmdrJPH4JvdFwYZa0o8P12MKIPuTxEa0RZ+EN3XnQcdhnILxnMEG88IE62IXvIdbyRgZmgO//+w3YzdO3BE=
+	t=1717190006; cv=none; b=BMpcqf5EQsGL9m3jXOP/pg0KkIrrCS9LdyuWo/WjaLYk2nXaTGEA/V9t5whYGSPzhxpVmguDDmB8miFengtOzLun7uCYeu+CBkl17rrgj3+uSvm/K3HjJy+jCd15LuTe5If6gvDIRd2PI1mXJeIr9SGHLesyVXTIZqVwsHobIgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717182655; c=relaxed/simple;
-	bh=1dudp+Dca+UU1IewyMXGzTACJ0D9g1SIjy9XEflX+ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V67YPgtA0pyMNICep4P+RIR1p/zWjrBB0xVG9Mr7iz5DuADfh0R781UWpuKju0Eos/PK9Xkf5JdRnUq96xVALCGEQPmHEWXFM68bgFb8WflSD6kMd+qZGum3ROZrMkXGWs0sRWT5FldCbGeaeyE/5ywgI+I8ZlcWUp+ZkbG3jo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MS9rPDWx; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-64ecc2f111dso270218a12.2
-        for <io-uring@vger.kernel.org>; Fri, 31 May 2024 12:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717182651; x=1717787451; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nesPb3ikOdykWdzBTsuyXBWRTSA6l9jG6DEva+E2AsA=;
-        b=MS9rPDWxIqvEBJsQPHNcOvKc2kF/nf02yHACyI+CnGmz2ojoEcvpfU7vIgUDg1N168
-         THnwhhouvMhnXG3o0fa6DRJcHGaEM8elDz1qPdmqNrSDwTarktTPzSixGp5eMxn4Snsl
-         rSQIRlpRAnlJGnvv0YF3Jy6uTiQWseU1R6zvw+oQlRqWDVeAmqUh5T+HMMJf6yJ2MnOU
-         QClTB/xAMRsSK/gzAH8LtVMypgAUfoR2XIfZrL7ZpWOz8fPHiVxCPjIUDjjZSf31CLcb
-         olbvDkU2rumCK+JO3yWvfgvAI3OKBcyFxnLkRglT9xk21AvPOD5dw/hg6qYSiUVV1gat
-         AVrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717182651; x=1717787451;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nesPb3ikOdykWdzBTsuyXBWRTSA6l9jG6DEva+E2AsA=;
-        b=RB2otdpe3URB+qRhQDTnnx9E1dUErsDj0X5B6WmB5WdVXYLdox4xK/cJkCffTnJseS
-         SGN7v6WAd4A3BGKUdldGqc1vsRtiFfMzLAj2+l+8FBl09MxrYE6OaMPr5Z3l41x+UYsw
-         YaiI4pbnc0JzYYaZ0nv11e+NtYppE8ErdlkvAj6L2O47ETVNVc5GLMnEwyqZcIJIqnwY
-         DdJkD2uc//2f4Gt9+XT491OpXQqJJSGLgtVUUL1R9xFALNXqmhYFQJVSodE9n0NARNtN
-         8L/48fFGMX7bliPyosJ1rBSJK1+9Bv4PgclrnPMML0hBxOCS4jqx+XvugSdbs6rnYL37
-         j6Pg==
-X-Gm-Message-State: AOJu0YyFwJCurc1pamn4gdPWAWlazroYUNvd/3oBV9DaCma7cZMjD+cG
-	iAWGPfjA1x6GM2/E3nJ+ViHQu+M/EgT37WvLDV318qxv6pwMmzy0Wtq9UavjmgE=
-X-Google-Smtp-Source: AGHT+IHWFk+srywj1XgbKk4pALN2Vbw6fh0959m0ZBqz29FdQa3ULjNg0yP3f2lWosybEoMXx7h5JA==
-X-Received: by 2002:a05:6a00:6585:b0:701:bde7:c857 with SMTP id d2e1a72fcca58-702478c7471mr2802070b3a.3.1717182650720;
-        Fri, 31 May 2024 12:10:50 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702425d8a5fsm1705830b3a.76.2024.05.31.12.10.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 12:10:50 -0700 (PDT)
-Message-ID: <30513e0e-6af5-4b1a-9963-f6e1ae20a2ea@kernel.dk>
-Date: Fri, 31 May 2024 13:10:48 -0600
+	s=arc-20240116; t=1717190006; c=relaxed/simple;
+	bh=Oi5tGAiTcfFHWAkH7ifIo54KftIVZ90oLtsiLPHaDCc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FWmkNocI4DKPDNcihfWT9bqE6GEcNZUoQJuz8H0SbQISVqwSVhoWUzFOgjuwMoJa5e94WtFKJIfcS2TEMhAMd/zYqh67NlPxlcoA0bxHNgHVYoRYsFY/5xkdPQfpM1PaL5ykjGDwo7EqvYyBbl6JVjU04+cahmwNgUPeMDLlkBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tRpw4fYY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sj2SZszh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tRpw4fYY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sj2SZszh; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1FDA11F397;
+	Fri, 31 May 2024 21:13:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717190000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=U4OJ2EIk9PTfEXMCvOcROVoGTceO00/WVwlKGUhZTx4=;
+	b=tRpw4fYY1nbBGx6B+W71wJkCOxYl/24XXbc75d9moR7UXxpCtVYAKyufHX1FjyAHdFlkUQ
+	9z0RAOUdSsxU6K00/o9HoN4q3KhWyJuvpx+WoLBpZLQUvR/G9bySk3dj0gCYUpOskAI02H
+	FAB3UOmLuZH45b+6vLh1byXLljt47/c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717190000;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=U4OJ2EIk9PTfEXMCvOcROVoGTceO00/WVwlKGUhZTx4=;
+	b=sj2SZszh9D203YYIwYydrUG7GMMr4irLvdnQSWOKXMNznCOKzPNKJtPymrQ9wYZT9DqZhD
+	1CROps1YzlxGLjDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717190000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=U4OJ2EIk9PTfEXMCvOcROVoGTceO00/WVwlKGUhZTx4=;
+	b=tRpw4fYY1nbBGx6B+W71wJkCOxYl/24XXbc75d9moR7UXxpCtVYAKyufHX1FjyAHdFlkUQ
+	9z0RAOUdSsxU6K00/o9HoN4q3KhWyJuvpx+WoLBpZLQUvR/G9bySk3dj0gCYUpOskAI02H
+	FAB3UOmLuZH45b+6vLh1byXLljt47/c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717190000;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=U4OJ2EIk9PTfEXMCvOcROVoGTceO00/WVwlKGUhZTx4=;
+	b=sj2SZszh9D203YYIwYydrUG7GMMr4irLvdnQSWOKXMNznCOKzPNKJtPymrQ9wYZT9DqZhD
+	1CROps1YzlxGLjDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D6B05137C3;
+	Fri, 31 May 2024 21:13:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ExX7LW89WmaragAAD6G6ig
+	(envelope-from <krisman@suse.de>); Fri, 31 May 2024 21:13:19 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: axboe@kernel.dk
+Cc: io-uring@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH 0/5] io_uring: support IORING_OP_BIND and IORING_OP_LISTEN
+Date: Fri, 31 May 2024 17:12:06 -0400
+Message-ID: <20240531211211.12628-1-krisman@suse.de>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 19/19] fuse: {uring} Optimize async sends
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Amir Goldstein <amir73il@gmail.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "bernd.schubert@fastmail.fm" <bernd.schubert@fastmail.fm>
-Cc: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <20240529-fuse-uring-for-6-9-rfc2-out-v1-19-d149476b1d65@ddn.com>
- <ee075116-5ed0-4ad7-9db2-048b14655d42@kernel.dk>
- <870c28bd-1921-4e00-9898-1d93b031c465@ddn.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <870c28bd-1921-4e00-9898-1d93b031c465@ddn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.13 / 50.00];
+	BAYES_HAM(-2.33)[96.90%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.13
+X-Spam-Flag: NO
 
-On 5/31/24 11:36 AM, Bernd Schubert wrote:
-> On 5/31/24 18:24, Jens Axboe wrote:
->> On 5/29/24 12:00 PM, Bernd Schubert wrote:
->>> This is to avoid using async completion tasks
->>> (i.e. context switches) when not needed.
->>>
->>> Cc: io-uring@vger.kernel.org
->>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
->>
->> This patch is very confusing, even after having pulled the other
->> changes. In general, would be great if the io_uring list was CC'ed on
-> 
-> Hmm, let me try to explain. And yes, I definitely need to add these details 
-> to the commit message
-> 
-> Without the patch:
-> 
-> <sending a struct fuse_req> 
-> 
-> fuse_uring_queue_fuse_req
->     fuse_uring_send_to_ring
->         io_uring_cmd_complete_in_task
->         
-> <async task runs>
->     io_uring_cmd_done()
+Following a discussion at LSFMM, this patchset introduces two new
+io_uring operations for bind(2) and listen(2).
 
-And this is a worthwhile optimization, you always want to complete it
-line if at all possible. But none of this logic or code belongs in fuse,
-it really should be provided by io_uring helpers.
+The goal is to provide functional parity of registered files and direct
+file descriptors with regular fds for io_uring network operations.  The
+cool outcome is that we can kickstart a network server solely with
+io_uring operations.
 
-I would just drop this patch for now and focus on the core
-functionality. Send out a version with that, and then we'll be happy to
-help this as performant as it can be. This is where the ask on "how to
-reproduce your numbers" comes from - with that, it's usually trivial to
-spot areas where things could be improved. And I strongly suspect that
-will involve providing you with the right API to use here, and perhaps
-refactoring a bit on the fuse side. Making up issue_flags is _really_
-not something a user should do.
+This feature has been requested several times in the past, including
+at:
 
-> 1) (current == queue->server_task)
-> fuse_uring_cmd (IORING_OP_URING_CMD) received a completion for a 
-> previous fuse_req, after completion it fetched the next fuse_req and 
-> wants to send it - for 'current == queue->server_task' issue flags
-> got stored in struct fuse_ring_queue::uring_cmd_issue_flags
+  https://github.com/axboe/liburing/issues/941
 
-And queue->server_task is the owner of the ring? Then yes that is safe
-> 
-> 2) 'else if (current->io_uring)'
-> 
-> (actually documented in the code)
-> 
-> 2.1 This might be through IORING_OP_URING_CMD as well, but then server 
-> side uses multiple threads to access the same ring - not nice. We only
-> store issue_flags into the queue for 'current == queue->server_task', so
-> we do not know issue_flags - sending through task is needed.
+Regarding parameter organization within the SQE, specifically for
+bind(2), I'm following the implementation of IO_RING_CONECT.  So, even
+though addr_len is expected to be an integer in the original syscall, I
+pass it through addr2, to match IO_RING_CONNECT.  Other than that, the
+implementation is quite straightforward.
 
-What's the path leading to you not having the issue_flags?
+Patchset 1 fixes a memleak in IO_RING_CONNECT that you might want to
+apply ahead of the rest of the patchset; Patches 2 and 3 adapt the net/
+side in preparation to support invocations from io_uring; patch 4 and 5
+add the io_uring boilerplate.
 
-> 2.2 This might be an application request through the mount point, through
-> the io-uring interface. We do know issue flags either.
-> (That one was actually a surprise for me, when xfstests caught it.
-> Initially I had a condition to send without the extra task then lockdep
-> caught that.
+I wrote liburing support, including tests. I'll follow with those
+patches shortly.
 
-In general, if you don't know the context (eg you don't have issue_flags
-passed in), you should probably assume the only way is to sanely proceed
-is to have it processed by the task itself.
+Gabriel Krisman Bertazi (5):
+  io_uring: Fix leak of async data when connect prep fails
+  net: Split a __sys_bind helper for io_uring
+  net: Split a __sys_listen helper for io_uring
+  io_uring: Introduce IORING_OP_BIND
+  io_uring: Introduce IORING_OP_LISTEN
 
-> 
-> In both cases it has to use a tasks.
-> 
-> 
-> My question here is if 'current->io_uring' is reliable.
-
-Yes that will be reliable in the sense that it tells you that the
-current task has (at least) one io_uring context setup. But it doesn't
-tell you anything beyond that, like if it's the owner of this request.
-
-> 3) everything else
-> 
-> 3.1) For async requests, interesting are cached reads and writes here. At a minimum
-> writes a holding a spin lock and that lock conflicts with the mutex io-uring is taking - 
-> we need a task as well
-> 
-> 3.2) sync - no lock being hold, it can send without the extra task.
-
-As mentioned, let's drop this patch 19 for now. Send out what you have
-with instructions on how to test it, and I'll give it a spin and see
-what we can do about this.
-
->> Outside of that, would be super useful to include a blurb on how you set
->> things up for testing, and how you run the testing. That would really
->> help in terms of being able to run and test it, and also to propose
->> changes that might make a big difference.
->>
-> 
-> Will do in the next version. 
-> You basically need my libfuse uring branch
-> (right now commit history is not cleaned up) and follow
-> instructions in <libfuse>/xfstests/README.md how to run xfstests.
-> Missing is a slight patch for that dir to set extra daemon parameters,
-> like direct-io (fuse' FOPEN_DIRECT_IO) and io-uring. Will add that libfuse
-> during the next days.
-
-I'll leave the xfstests to you for now, but running some perf testing
-just to verify how it's being used would be useful and help improve it
-for sure.
+ include/linux/socket.h        |  3 ++
+ include/uapi/linux/io_uring.h |  2 +
+ io_uring/net.c                | 78 ++++++++++++++++++++++++++++++++++-
+ io_uring/net.h                |  6 +++
+ io_uring/opdef.c              | 26 ++++++++++++
+ net/socket.c                  | 48 +++++++++++++--------
+ 6 files changed, 144 insertions(+), 19 deletions(-)
 
 -- 
-Jens Axboe
+2.44.0
 
 

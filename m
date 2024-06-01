@@ -1,174 +1,274 @@
-Return-Path: <io-uring+bounces-2057-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2058-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 866958D70FD
-	for <lists+io-uring@lfdr.de>; Sat,  1 Jun 2024 17:51:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464DE8D7123
+	for <lists+io-uring@lfdr.de>; Sat,  1 Jun 2024 18:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34EE4282E71
-	for <lists+io-uring@lfdr.de>; Sat,  1 Jun 2024 15:51:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B40681F21108
+	for <lists+io-uring@lfdr.de>; Sat,  1 Jun 2024 16:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1020DB66F;
-	Sat,  1 Jun 2024 15:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5461534F9;
+	Sat,  1 Jun 2024 16:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=s.muenzel.net header.i=@s.muenzel.net header.b="Pn6RQ94l"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="OdBmf0bE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XDhKGhNH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+Received: from wfhigh5-smtp.messagingengine.com (wfhigh5-smtp.messagingengine.com [64.147.123.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014BD13ACC
-	for <io-uring@vger.kernel.org>; Sat,  1 Jun 2024 15:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DDA1527A0;
+	Sat,  1 Jun 2024 16:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717257111; cv=none; b=OE/Cgc8MSyQf78QfZFmYXt6RburtS0gqWmlTrVUcemtXYJnozizSEtQia62313erFd0nCFXEOc9+orIIWNC6hjYwd7j3BUxqW/yelKaoRYV6cBZ5qVHjeInsMcEkPEjfSqTIg6NS0UeboMdrLGi4KsT4q/J2bVTqa1VoKSYSybE=
+	t=1717259827; cv=none; b=JszTZMuUfccblbPa7s5pkEqT5hVd1fyLsY+RHX0FE3CiHAkkP9lmBI9p7LeQq55oZslqL0/DYPgjprZqn7xCePvsNwYYSlELxAP83hDlVQ7uMRZm0ZgyU6qvvTwmTqVYgwBkd+LRkxg3WwRli1KwthuQk+iCIepeKS8n7zY1Mps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717257111; c=relaxed/simple;
-	bh=dM7ViKGAc+uOkd3WcrhD9Fi7DS2YrcYV+le0IZlpzYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=r3gZrDeC3fRIDxL87wI5u0kSE7H/XU4Ijlrz7b2KfcnumeZn5TgL9gsKCEBOHZLJAZIO1vhNI6i+7+4l7IFsfCaNdk58KMiHAKg3mYlJ+sZ3PLWTt5K200gF9ghP9giV6XJhTQxrgTN9QNxhYbBBpyUnxGrtFqMQYCgfMB+50Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=s.muenzel.net; spf=pass smtp.mailfrom=s.muenzel.net; dkim=pass (1024-bit key) header.d=s.muenzel.net header.i=@s.muenzel.net header.b=Pn6RQ94l; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=s.muenzel.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=s.muenzel.net
-X-Envelope-To: axboe@kernel.dk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=s.muenzel.net;
-	s=default; t=1717257105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SFcYYorS/2meGxirNoXlc1/EcCpTEQipgkqGI73UEfE=;
-	b=Pn6RQ94l3i6oAg4zsBpVm34RlOnW1JCv0HKGpZeCFEAjs44sLx0o7B362HQP6ytvpT3KCf
-	gz5AsZ5mRcrjAOR1EpCVshIykOBoblRankhQJIgzHMPpVtxO2H6o6JBqzXjr3Gdhc91l67
-	KHthU3GMwmSZI9sSdyVmRMAPpFbJK4o=
-X-Envelope-To: io-uring@vger.kernel.org
-Message-ID: <8b08398d-a66d-42ad-a776-78b52d5231c4@s.muenzel.net>
-Date: Sat, 1 Jun 2024 17:51:55 +0200
+	s=arc-20240116; t=1717259827; c=relaxed/simple;
+	bh=oPjEGtuCnl3oOkJ8SYZPw38/qjvrGbG5My4Ptz2AsQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p+vc8ZiylwIajsMa1vEp1U/N+3IZFHkZiQ6S3immNhS6GVab+rmkbOO76KhIwVGXXHV2CjDjEGqD6OjtqH5QLdCKCgfbTlh51VHrzZCq7ilyh+kjaOqrkKRaLMreBLNvK5fA82lyMLRCQFOWHevvvxUoqjMFRzK0VQ+ixgOCdlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=OdBmf0bE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XDhKGhNH; arc=none smtp.client-ip=64.147.123.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 9F24D18000BE;
+	Sat,  1 Jun 2024 12:37:04 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Sat, 01 Jun 2024 12:37:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1717259824;
+	 x=1717346224; bh=/WTJVG/atiInOMnbemzoIZEREJMQF4GBHpdxb8pWuwI=; b=
+	OdBmf0bEx3XWop5sjrA1t30qfkR6iKogkY0plxm6z+9JSKei+XXiMqsbxOeaIKyQ
+	DmrLs7200BzuarNWwvT7ORflZegtr/+Ovwk/3QK/Re9BPGzZFiXKe8DLZGDpo/8w
+	Xo62rWrrM32kQriekKaBvkgFFmeZVx5D4JkBOMBLoeS5BS1rNbFEwVzeLqfEKTiT
+	ErA2WPyTW2/PCxyg3b4UH8EQWzHtJJhEKRd2AI/9dguxtnPl4qmGxsDTqFMVSpLq
+	mfB0W7B8gptwJNBWG3ikKlKaf+uGt0ZkBfmE71/0R6T/xjBAXpwTPZZ3WTLFTH7F
+	htzyHfg+38XQJ17ru/Q+ww==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717259824; x=
+	1717346224; bh=/WTJVG/atiInOMnbemzoIZEREJMQF4GBHpdxb8pWuwI=; b=X
+	DhKGhNHLA3EgXzHD+UoCV0v40c05KDobEshEuVmROI86O557T0UD4gELz/ApXKBD
+	skZHpIvNLSh22et1qBo54/LmDA8fiDE+m3XhDXwDg/CyuFE+gx97X9u+PHPWeV3X
+	mo7Do18NStokiROYJ8GMvzFhVKXbQCvHNOA+5IN9uscwBMZjSNwTGy4LO/C9Ldy4
+	RDVsFYfUiW3A+/ot5egZoLZuMT98Fd7PPt0KBQjtdKvCufqrAukB3na38+FqTG+H
+	W38bPmE21PZRbumF+Aj/gBZKp5Nd3u4waMae0KRBBaohnl5u5icHF4aZVVJrJ41y
+	DH7wR+A3c6LaQafSbWyKQ==
+X-ME-Sender: <xms:L05bZkI5ZunA-rdk2m0mTmalbZdfEIXLfnbBQ6Z780pCs-8rpLpWXA>
+    <xme:L05bZkLJxYTlfnjpG9UjmXqmq7zHUgE1kO0n3WBhHaYqrz8uv2JWIre2sg5KKdhGs
+    1dflfBzYqOeCXNc>
+X-ME-Received: <xmr:L05bZktVQPeknp7p8GXSJCDmSZKSAD6Dl61-t8aUiLW4LzRgMzcq2fN5Qbh5ppa7w6v_twBYAE9WhFI3EIEo6nUi-zveDqFDcRaaotcCwcfqTNRrnaMW>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekkedguddtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegv
+    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
+    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddugfdtgfegleefvdehfeei
+    veejieefveeiteeggffggfeulefgjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhl
+    rdhfmh
+X-ME-Proxy: <xmx:L05bZhYfDQMZ6l2ScRBedtgye8j19NbLuDA9v7yjv4jPvDvkVqNk8g>
+    <xmx:L05bZrbEDw8C7gxtXpZhYDrjA8KZn11xvyv-lMu0hfudHPiV_FPegQ>
+    <xmx:L05bZtDhIEGkFbSfCmgZwSdlI5SsDHI8zIvKBNNfv35xtpFBaw8j1A>
+    <xmx:L05bZhaXPkQzZJuOrH5ejiadV6205tyxwkdVJCwoylvu-ZY94ismgA>
+    <xmx:ME5bZgNzvGxnEtNsJOycKku2eahw63ejfxIDCBiPfY5bh65NKnrhS3y9>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 1 Jun 2024 12:37:02 -0400 (EDT)
+Message-ID: <7cdf0cd9-e078-410b-9762-f29b2f140176@fastmail.fm>
+Date: Sat, 1 Jun 2024 18:37:01 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: madvise/fadvise 32-bit length
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <bc92a2fa-4400-4c3a-8766-c2e346113ea7@s.muenzel.net>
- <db4d32d6-cc71-4903-92cf-b1867b8c7d12@kernel.dk>
- <2d4d3434-401c-42c2-b450-40dec4689797@kernel.dk>
- <c9059b69-96d0-45e6-8d05-e44298d7548e@s.muenzel.net>
- <d6e2f493-87ca-4203-8d23-2ced10d47d02@kernel.dk>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Stefan <source@s.muenzel.net>
-In-Reply-To: <d6e2f493-87ca-4203-8d23-2ced10d47d02@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 19/19] fuse: {uring} Optimize async sends
+To: Jens Axboe <axboe@kernel.dk>, Bernd Schubert <bschubert@ddn.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Cc: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+ <20240529-fuse-uring-for-6-9-rfc2-out-v1-19-d149476b1d65@ddn.com>
+ <ee075116-5ed0-4ad7-9db2-048b14655d42@kernel.dk>
+ <870c28bd-1921-4e00-9898-1d93b031c465@ddn.com>
+ <30513e0e-6af5-4b1a-9963-f6e1ae20a2ea@kernel.dk>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <30513e0e-6af5-4b1a-9963-f6e1ae20a2ea@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 1/6/2024 17:35, Jens Axboe wrote:
-> On 6/1/24 9:22 AM, Stefan wrote:
->> On 1/6/2024 17:05, Jens Axboe wrote:
->>> On 6/1/24 8:19 AM, Jens Axboe wrote:
->>>> On 6/1/24 3:43 AM, Stefan wrote:
->>>>> io_uring uses the __u32 len field in order to pass the length to
->>>>> madvise and fadvise, but these calls use an off_t, which is 64bit on
->>>>> 64bit platforms.
->>>>>
->>>>> When using liburing, the length is silently truncated to 32bits (so
->>>>> 8GB length would become zero, which has a different meaning of "until
->>>>> the end of the file" for fadvise).
->>>>>
->>>>> If my understanding is correct, we could fix this by introducing new
->>>>> operations MADVISE64 and FADVISE64, which use the addr3 field instead
->>>>> of the length field for length.
+
+
+On 5/31/24 21:10, Jens Axboe wrote:
+> On 5/31/24 11:36 AM, Bernd Schubert wrote:
+>> On 5/31/24 18:24, Jens Axboe wrote:
+>>> On 5/29/24 12:00 PM, Bernd Schubert wrote:
+>>>> This is to avoid using async completion tasks
+>>>> (i.e. context switches) when not needed.
 >>>>
->>>> We probably just want to introduce a flag and ensure that older stable
->>>> kernels check it, and then use a 64-bit field for it when the flag is
->>>> set.
+>>>> Cc: io-uring@vger.kernel.org
+>>>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 >>>
->>> I think this should do it on the kernel side, as we already check these
->>> fields and return -EINVAL as needed. Should also be trivial to backport.
->>> Totally untested... Might want a FEAT flag for this, or something where
->>> it's detectable, to make the liburing change straight forward.
->>>
->>>
->>> diff --git a/io_uring/advise.c b/io_uring/advise.c
->>> index 7085804c513c..cb7b881665e5 100644
->>> --- a/io_uring/advise.c
->>> +++ b/io_uring/advise.c
->>> @@ -17,14 +17,14 @@
->>>    struct io_fadvise {
->>>        struct file            *file;
->>>        u64                offset;
->>> -    u32                len;
->>> +    u64                len;
->>>        u32                advice;
->>>    };
->>>      struct io_madvise {
->>>        struct file            *file;
->>>        u64                addr;
->>> -    u32                len;
->>> +    u64                len;
->>>        u32                advice;
->>>    };
->>>    @@ -33,11 +33,13 @@ int io_madvise_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>    #if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_MMU)
->>>        struct io_madvise *ma = io_kiocb_to_cmd(req, struct io_madvise);
->>>    -    if (sqe->buf_index || sqe->off || sqe->splice_fd_in)
->>> +    if (sqe->buf_index || sqe->splice_fd_in)
->>>            return -EINVAL;
->>>          ma->addr = READ_ONCE(sqe->addr);
->>> -    ma->len = READ_ONCE(sqe->len);
->>> +    ma->len = READ_ONCE(sqe->off);
->>> +    if (!ma->len)
->>> +        ma->len = READ_ONCE(sqe->len);
->>>        ma->advice = READ_ONCE(sqe->fadvise_advice);
->>>        req->flags |= REQ_F_FORCE_ASYNC;
->>>        return 0;
->>> @@ -78,11 +80,13 @@ int io_fadvise_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>    {
->>>        struct io_fadvise *fa = io_kiocb_to_cmd(req, struct io_fadvise);
->>>    -    if (sqe->buf_index || sqe->addr || sqe->splice_fd_in)
->>> +    if (sqe->buf_index || sqe->splice_fd_in)
->>>            return -EINVAL;
->>>          fa->offset = READ_ONCE(sqe->off);
->>> -    fa->len = READ_ONCE(sqe->len);
->>> +    fa->len = READ_ONCE(sqe->addr);
->>> +    if (!fa->len)
->>> +        fa->len = READ_ONCE(sqe->len);
->>>        fa->advice = READ_ONCE(sqe->fadvise_advice);
->>>        if (io_fadvise_force_async(fa))
->>>            req->flags |= REQ_F_FORCE_ASYNC;
->>>
+>>> This patch is very confusing, even after having pulled the other
+>>> changes. In general, would be great if the io_uring list was CC'ed on
+>>
+>> Hmm, let me try to explain. And yes, I definitely need to add these details 
+>> to the commit message
+>>
+>> Without the patch:
+>>
+>> <sending a struct fuse_req> 
+>>
+>> fuse_uring_queue_fuse_req
+>>     fuse_uring_send_to_ring
+>>         io_uring_cmd_complete_in_task
+>>         
+>> <async task runs>
+>>     io_uring_cmd_done()
+> 
+> And this is a worthwhile optimization, you always want to complete it
+> line if at all possible. But none of this logic or code belongs in fuse,
+> it really should be provided by io_uring helpers.
+> 
+> I would just drop this patch for now and focus on the core
+> functionality. Send out a version with that, and then we'll be happy to
+> help this as performant as it can be. This is where the ask on "how to
+> reproduce your numbers" comes from - with that, it's usually trivial to
+> spot areas where things could be improved. And I strongly suspect that
+> will involve providing you with the right API to use here, and perhaps
+> refactoring a bit on the fuse side. Making up issue_flags is _really_
+> not something a user should do.
+
+Great that you agree, I don't like the issue_flag handling in fuse code either. 
+I will also follow your suggestion to drop this patch. 
+
+
+> 
+>> 1) (current == queue->server_task)
+>> fuse_uring_cmd (IORING_OP_URING_CMD) received a completion for a 
+>> previous fuse_req, after completion it fetched the next fuse_req and 
+>> wants to send it - for 'current == queue->server_task' issue flags
+>> got stored in struct fuse_ring_queue::uring_cmd_issue_flags
+> 
+> And queue->server_task is the owner of the ring? Then yes that is safe
+
+Yeah, it is the thread that submits SQEs - should be the owner of the ring, 
+unless daemon side does something wrong (given that there are several
+userspace implementation and not a single libfuse only, we need to expect
+and handle implementation errors, though).
+
+>>
+>> 2) 'else if (current->io_uring)'
+>>
+>> (actually documented in the code)
+>>
+>> 2.1 This might be through IORING_OP_URING_CMD as well, but then server 
+>> side uses multiple threads to access the same ring - not nice. We only
+>> store issue_flags into the queue for 'current == queue->server_task', so
+>> we do not know issue_flags - sending through task is needed.
+> 
+> What's the path leading to you not having the issue_flags?
+
+We get issue flags here, but I want to keep changes to libfuse small and want
+to avoid changing non uring related function signatures. Which is the the
+why we store issue_flags for the presumed ring owner thread in the queue data
+structure, but we don't have it for possible other threads then
+
+Example:
+
+IORING_OP_URING_CMD
+   fuse_uring_cmd
+       fuse_uring_commit_and_release
+           fuse_uring_req_end_and_get_next --> until here issue_flags passed
+               fuse_request_end -> generic fuse function,  issue_flags not passed
+                   req->args->end() / fuse_writepage_end
+                       fuse_simple_background
+                           fuse_request_queue_background
+                               fuse_request_queue_background_uring
+                                   fuse_uring_queue_fuse_req
+                                       fuse_uring_send_to_ring
+                                           io_uring_cmd_done
+                   
+      
+I.e. we had issue_flags up to fuse_uring_req_end_and_get_next(), but then
+call into generic fuse functions and stop passing through issue_flags.
+For the ring-owner we take issue flags stored by fuse_uring_cmd()
+into struct fuse_ring_queue, but if daemon side uses multiple threads to
+access the ring we won't have that. Well, we could allow it and store
+it into an array or rb-tree, but I don't like that multiple threads access
+something that is optimized to have a thread per core already.
+
+> 
+>> 2.2 This might be an application request through the mount point, through
+>> the io-uring interface. We do know issue flags either.
+>> (That one was actually a surprise for me, when xfstests caught it.
+>> Initially I had a condition to send without the extra task then lockdep
+>> caught that.
+> 
+> In general, if you don't know the context (eg you don't have issue_flags
+> passed in), you should probably assume the only way is to sanely proceed
+> is to have it processed by the task itself.
+> 
+>>
+>> In both cases it has to use a tasks.
 >>
 >>
->> If we want to have the length in the same field in both *ADVISE
->> operations, we can put a flag in splice_fd_in/optlen.
+>> My question here is if 'current->io_uring' is reliable.
 > 
-> I don't think that part matters that much.
+> Yes that will be reliable in the sense that it tells you that the
+> current task has (at least) one io_uring context setup. But it doesn't
+> tell you anything beyond that, like if it's the owner of this request.
+
+Yeah, you can see that it just checks for current->io_uring and then
+uses a task.
+
 > 
->> Maybe the explicit flag is a bit clearer for users of the API
->> compared to the implicit flag when setting sqe->len to zero?
+>> 3) everything else
+>>
+>> 3.1) For async requests, interesting are cached reads and writes here. At a minimum
+>> writes a holding a spin lock and that lock conflicts with the mutex io-uring is taking - 
+>> we need a task as well
+>>
+>> 3.2) sync - no lock being hold, it can send without the extra task.
 > 
-> We could go either way. The unused fields returning -EINVAL if set right
-> now can serve as the flag field - if you have it set, then that is your
-> length. If not, then the old style is the length. That's the approach I
-> took, rather than add an explicit flag to it. Existing users that would
-> set the 64-bit length fields would get -EINVAL already. And since the
-> normal flags field is already used for advice flags, I'd prefer just
-> using the existing 64-bit zero fields for it rather than add a flag in
-> an odd location. Would also make for an easier backport to stable.
+> As mentioned, let's drop this patch 19 for now. Send out what you have
+> with instructions on how to test it, and I'll give it a spin and see
+> what we can do about this.
 > 
-> But don't feel that strongly about that part.
+>>> Outside of that, would be super useful to include a blurb on how you set
+>>> things up for testing, and how you run the testing. That would really
+>>> help in terms of being able to run and test it, and also to propose
+>>> changes that might make a big difference.
+>>>
+>>
+>> Will do in the next version. 
+>> You basically need my libfuse uring branch
+>> (right now commit history is not cleaned up) and follow
+>> instructions in <libfuse>/xfstests/README.md how to run xfstests.
+>> Missing is a slight patch for that dir to set extra daemon parameters,
+>> like direct-io (fuse' FOPEN_DIRECT_IO) and io-uring. Will add that libfuse
+>> during the next days.
 > 
-> Attached kernel patch with FEAT added, and liburing patch with 64
-> versions added.
+> I'll leave the xfstests to you for now, but running some perf testing
+> just to verify how it's being used would be useful and help improve it
+> for sure.
 > 
 
-Sounds good!
-Do we want to do anything about the current (32-bit) functions in 
-liburing? They silently truncate the user's values, so either marking 
-them deprecated or changing the type of length in the arguments to a 
-__u32 could help.
+Ah you meant performance tests. I used libfuse/example/passthrough_hp from
+my uring branch and then fio on top of that for reads/writes and mdtest from
+the ior repo for metadata. Maybe I should upload my scripts somewhere.
+
+
+Thanks,
+Beernd
 

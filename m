@@ -1,79 +1,72 @@
-Return-Path: <io-uring+bounces-2051-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2052-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C228D6CF1
-	for <lists+io-uring@lfdr.de>; Sat,  1 Jun 2024 01:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9708D6F2E
+	for <lists+io-uring@lfdr.de>; Sat,  1 Jun 2024 11:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F6D71C23072
-	for <lists+io-uring@lfdr.de>; Fri, 31 May 2024 23:41:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67EAE1C210EB
+	for <lists+io-uring@lfdr.de>; Sat,  1 Jun 2024 09:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C01812FB02;
-	Fri, 31 May 2024 23:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCD514EC43;
+	Sat,  1 Jun 2024 09:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjFE0gqY"
+	dkim=pass (1024-bit key) header.d=s.muenzel.net header.i=@s.muenzel.net header.b="pTgImWLm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D1B12F5B1
-	for <io-uring@vger.kernel.org>; Fri, 31 May 2024 23:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C2925569
+	for <io-uring@vger.kernel.org>; Sat,  1 Jun 2024 09:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717198832; cv=none; b=Slx/CIJ655jELYuN7EUJ8SOx/PuLPWH+PZlacsSFT/K4xXWV34Fdsti9YA7g+QZfkTJM73d0ut5Z0fRMAsFDs6o2xmofY19luAuwywaH41wO5dxH/cPLUvmX+MLxzoWzLrUbTTQmDCMOjPtM/gOKz962NSRqm9Oum4pKV/a2fDY=
+	t=1717235015; cv=none; b=F1D84pdmiOL7wVyQt4mj8MeDGw/TyRj6CToWSb7shYXNA7XI+lnepq6PFsq0KM8csF+YYCpLmqbh/pkz9ncdHbmIKyGAi9ZltZ2Q3UkJ1lcam7gj9lIFa4QAEavdTX8Mdd0j2i1p40kwH6E+OaI6OOnXr+V84pe7WlDI4m+uUJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717198832; c=relaxed/simple;
-	bh=N4D6Z3hRVVP0fPA2kxaSgzuf8B7CH0LHo4TUNYlb1y8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=U8FEPIAt5w6YjuaZWXdQiBIUuzFNk3NXEYyeBZL5XmQohh5gALmqmKXvBIxYv1Aay1wMyvAEDy7un8le1GfzU+Z2R6w8CBbXSi+3gTSqK9t1kT7ldBySp8R11L6PUq5Notzek3a4/RVE15FBu3QSU9G59bjuxNVglLDp0K/81ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjFE0gqY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5C89AC116B1;
-	Fri, 31 May 2024 23:40:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717198832;
-	bh=N4D6Z3hRVVP0fPA2kxaSgzuf8B7CH0LHo4TUNYlb1y8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=WjFE0gqYNlJFYGGgFpoBzaaNUg31evd+1s1uwJ2e29ORtt1fVjiSJ2txJ5013cwx2
-	 fUOJSc7HACHWNT9UdQQC1Ng30eEm2KJLvb5MR61HAsVdvTJpuKsTDXURhT81bkefzS
-	 71Vuevb6JSq5FhPuuv0/46wAPxPK0w3l1juv9d8ka4ioERTtzFAZKPxERn2OhdFcU2
-	 Vd9TavUjFH3kIYthnaQgFG/eFw07Fe2kDIlLHwtPOfuEqtViXMUrz5AyuXhg8WlC6F
-	 jTWACYLLvFX2C0MYAG1lgVzkoFP6MVahe/Lfc3/4pIR+AkRtaS9KLeutjcK5OnYZ0s
-	 0oxNHfcpg11ng==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 52F96C4361B;
-	Fri, 31 May 2024 23:40:32 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 6.10-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <d59d3b10-823d-460b-bad5-fae40b43e14f@kernel.dk>
-References: <d59d3b10-823d-460b-bad5-fae40b43e14f@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <d59d3b10-823d-460b-bad5-fae40b43e14f@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.10-20240530
-X-PR-Tracked-Commit-Id: 18414a4a2eabb0281d12d374c92874327e0e3fe3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6d541d6672eeaf526d67b67b5407f48fe0522c6d
-Message-Id: <171719883233.1891.18283403183126827243.pr-tracker-bot@kernel.org>
-Date: Fri, 31 May 2024 23:40:32 +0000
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+	s=arc-20240116; t=1717235015; c=relaxed/simple;
+	bh=CcU9We3FxegU7MVEU0LzkRwpdNRKtomJ8lIadMRIwx8=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=arUOmuO0wIxZu2G5G1XubC9IPnSOVyS/GSuMKQmcA6HWAnb6Lw7qxJwruwURw1ulokp4c5KNC37lcF3cLPoBCAF1/5nnL2SzvPY0GsmS6zAgkIUX8iS7vBUdpw4BIWkujFZLj/EZ9mZZ1Mm+vBNDRrfiA5yqMzv+tIbfjDe9y44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=s.muenzel.net; spf=pass smtp.mailfrom=s.muenzel.net; dkim=pass (1024-bit key) header.d=s.muenzel.net header.i=@s.muenzel.net header.b=pTgImWLm; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=s.muenzel.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=s.muenzel.net
+X-Envelope-To: io-uring@vger.kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=s.muenzel.net;
+	s=default; t=1717235010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=L/zxPThXgp0VFG5RnhLmHG4J+FwwU6CH9UEE7fOkC8w=;
+	b=pTgImWLm9gBVAMJc0LfDfg8xTVbhABG+sfywsPFzXfXSDwku1W2H2hWQjJTMgv0kSoULly
+	cH//DpfHvPJtfpkyFlaLexCPPI1a1ObSYtMZXqEOBBSFm342p/MR5IhvdVIuAqO/Juomjv
+	lOPTbiJKMMPalqYVy9+0CfqM3P0yiYs=
+Message-ID: <bc92a2fa-4400-4c3a-8766-c2e346113ea7@s.muenzel.net>
+Date: Sat, 1 Jun 2024 11:43:41 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Language: en-US
+To: io-uring@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Stefan <source@s.muenzel.net>
+Subject: madvise/fadvise 32-bit length
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-The pull request you sent on Fri, 31 May 2024 08:29:50 -0600:
+io_uring uses the __u32 len field in order to pass the length to madvise 
+and fadvise, but these calls use an off_t, which is 64bit on 64bit 
+platforms.
 
-> git://git.kernel.dk/linux.git tags/io_uring-6.10-20240530
+When using liburing, the length is silently truncated to 32bits (so 8GB 
+length would become zero, which has a different meaning of "until the 
+end of the file" for fadvise).
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6d541d6672eeaf526d67b67b5407f48fe0522c6d
+If my understanding is correct, we could fix this by introducing new 
+operations MADVISE64 and FADVISE64, which use the addr3 field instead of 
+the length field for length.
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 

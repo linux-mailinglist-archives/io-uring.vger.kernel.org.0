@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-2059-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2060-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BB78D7184
-	for <lists+io-uring@lfdr.de>; Sat,  1 Jun 2024 20:30:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C468D7185
+	for <lists+io-uring@lfdr.de>; Sat,  1 Jun 2024 20:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD2A281DD0
-	for <lists+io-uring@lfdr.de>; Sat,  1 Jun 2024 18:30:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AB521F2184E
+	for <lists+io-uring@lfdr.de>; Sat,  1 Jun 2024 18:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A86727711;
-	Sat,  1 Jun 2024 18:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4491B1D6AA;
+	Sat,  1 Jun 2024 18:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rtDC4a75"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0KnP/84M"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4940C14267
-	for <io-uring@vger.kernel.org>; Sat,  1 Jun 2024 18:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB6314267
+	for <io-uring@vger.kernel.org>; Sat,  1 Jun 2024 18:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717266638; cv=none; b=E649Ix90PTC7zidx3ghv2oncTQfbY1MdZKypNEOnkbFbl4byZiiJd0z/96Z/dCf/vkfrZ9dsNs1XTtpmnJHCxCR7PiMrggL9gx1HDL0wSXnc3ap3BJHDvhkecgAnLuEQjybtysBuBr8aEb7uAQrqCDkgw0cxzAafcXa5C9LUMVg=
+	t=1717266792; cv=none; b=iEULhCMHZGV8RG9mHqwOTLiNa3x74McOCgmjZSvsUf4AgWwFd/zt2ioMQSIQd1/DB3kM6idJOFn0CIkOyof6HNF08ytPm8QS6bB75tVZVTCuqtG/UVEzhBVWafnSCH8W4ug3TudyuKH3tE7Q8jesVXpd8Swr27wCjLb6KKI03YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717266638; c=relaxed/simple;
-	bh=Vs7kJvC9IMnmv4E4YhgrhS/FzkzmPqXq5Ytm+zp8NYc=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=RQf21p2Ia4MJKMJZ1ujCjOucVTNZ0YvwSyxmRNNEgncwT58qETw0XhuRZ4xZDGNAtKsIYSiWSCpEn+UqeZ8SjDNrT7kqrKRLLY07bo3CEeZOiYZSPlPG272zHIoNWyBfonJGbMwcrBw2v/WwhsiTnF5ApMyJyRGi6qZbun67t5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rtDC4a75; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1717266792; c=relaxed/simple;
+	bh=qYfHJpJLTr8TLyuKoD5FAPfltNd6fHQozIHFBPgHSbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AH6irIoZ5u5cqD14LCs1MMznPoga+3mkt3jtriczV3pacynFAlMVMG/SiMjf8uVjpyuSC7UQR+vPgdFlFzgs3jYluGosLQYeqOq5aWCQSafeYVXatEgKVDjvFH43rEozPeGoKfKZ40WThet/owmAe/gXQhGSk1pMmTs3nwJLjd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0KnP/84M; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f64b60a937so210005ad.3
-        for <io-uring@vger.kernel.org>; Sat, 01 Jun 2024 11:30:34 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f61cca4a17so1300105ad.2
+        for <io-uring@vger.kernel.org>; Sat, 01 Jun 2024 11:33:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717266634; x=1717871434; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AgVxrWRj8eyWjfJK85Ymv4mdOX8ZYQM5HBUnBETONXI=;
-        b=rtDC4a75cOhOHbsnfLzGdxyE3j8s7cNUMQyjpNvxA2CoOXSIImv1nRizInbyKo/H4A
-         9DbMcKtY93DDEEAir6OND6O5f83SfpagapBThjccrXtOuzg0Je9HfUo3KPIG4Wlm/PXx
-         2MkJqvbTcGSN9Nw2a8q2Doai6tAAbimW8AWSvq7D3eLhFt0KYwPXD00qDEMn1fX4vHc2
-         OEA5r0hux9WmBqP7W/VEaw/G4rKWu4ete8iipZMP2beY4Pe9vtclJL+udXlocJ8tO7Lt
-         Gb7lZSwjcZUYofEmfUWBoU7nlr55rXKw/0iDoA3S9aW+UJYSlPrgaDr21VpiZl0Zm3lw
-         4dDQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717266788; x=1717871588; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=wDlTxqQodG+OTPLxL8e147DvNSWbxId9ZMwCfC5emQo=;
+        b=0KnP/84M7XlWRCgLVDGVsfmxtAAvw3vBY6UIDvPOFPPJiWE6tvxR9+RuoT5anq7rdj
+         DtvGhIXCGQlt4sbubKJDTHQ0aLMfxrUgx9tUXKIZh9Dx1wapLKf+ku7sg8hTXudSSUK7
+         fbRUYJhw8xztQe8l9+pxRSd7hce4b5goeApmV2W+HbOuBPlfp6rUQXuFtd0TA+gWEN5F
+         +DndaNxz7Bbv/eku5QKQUNueEy4iy+ieTCQz66w4d9WpsRdAm/RwCdSSFF12tozqwfD+
+         d3+6413sm3tkJCcActUfcKunlDaJAeSnJHXh2vLOCyy73CYo0OGtQ0Om5X+sWYGki2W3
+         6vUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717266634; x=1717871434;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AgVxrWRj8eyWjfJK85Ymv4mdOX8ZYQM5HBUnBETONXI=;
-        b=lq/Reu2e2LRfUvfy6XbQLklmQAKJAT5/M4vY5/s1w7jzkr72fVsBc6fbRthxv+Fcl2
-         uj34st4Hzg2Y9Xzd2L0C8YokF2QwFdMcJxBPffhWQ9PURNXzFuIsT1IbX/jQe93+K1o0
-         iI2lZBIV7PQKpbW3qb9Lp7eS3vBgRgZNxQDfEp4l9Enr6QXtWNDEI6DsdkfO+EKp+6Y/
-         2tnBKfxDQlSFh2tUDvd8q4e97j2eDPrcTKZx20znxpUEn7NHm9lNsXb+k8SXie4eC2jN
-         JfDuvcNM9dfo9dmwzHoKBXrp2WSVTbyq9kCowMiSKtOO96aY80qOMJayL9aNZi/sGc9B
-         +7Bg==
-X-Gm-Message-State: AOJu0Yw0WmkCYwNIZA2J1Moa7Y/R18IEiQlGjlshaJO1A2ZMdkykRanA
-	y268yXnbYNNFMO6lA8wNaLz8lPjt7I2L7zZEIVkBtWc3YLnFe1aTM9iyOohkw1RScOzraLPjxY6
-	I
-X-Google-Smtp-Source: AGHT+IHorK18aNf+eusGWoCfmdIBwwHl9nCNXoIAdnJRr2xpp6+DVANqTfGjEXL/LZiYsh4PTY8saQ==
-X-Received: by 2002:a17:902:db08:b0:1f2:efdf:a400 with SMTP id d9443c01a7336-1f6371d193fmr57375765ad.5.1717266633431;
-        Sat, 01 Jun 2024 11:30:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717266788; x=1717871588;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wDlTxqQodG+OTPLxL8e147DvNSWbxId9ZMwCfC5emQo=;
+        b=Z3dh7yRCj6a0gOaDiFHW573NYKN8es+uSPrYXh0kLD7sj2X3OXrO3FgSJTxCFaGNye
+         DgYYVHv8A8Bp2w1LkCb1YTG6m5AEjmaoJvoyNAabOJs1UNeQlraTGceyDFZEz/Knt0+0
+         szrplPsipHGsZVOkfrdzLAqnz0jW9TxqHEeTYDtGdPRpBQPw2oO2KG4fJ5kU2QtQO7Qk
+         RDu1dcG2GstWXbXdQmIIo1Izbs5+T9W9H2PNGO8/HlH+r2pjn7KxgUMnbqBWDdOgxWpp
+         BzraqpMxYb109ipk83/aaPOBPSy1hllsIrEoOMJVuvMlxako/kqflcDCF+/w5ejJ7IH+
+         vv1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUW2oeKP4ykZXQ+SN4T98PtgIvBpjmH32PjF+/YcE+QrRj0m4hg9ZQW5HBBCkx3nHqX0XcLivVM232zIEnUcZzTWQHp18bRc9c=
+X-Gm-Message-State: AOJu0YxfWp02KPY8oL59kYpoVSgbycK9lEiJcjt+8Qxo6PlGnMyapQvL
+	BF+iUJ2S6I5mI3rxuWmcNGe4U/kPHvlvD8l7dVXjOW0bOsYiy9R3EiKli1YF9J4=
+X-Google-Smtp-Source: AGHT+IGuk380ui2h/45f4aRZjBjWKL8Kb8LwY/TqlXaWUeJtDKthIUw5rXeizyTsiebW9utzkX3ilA==
+X-Received: by 2002:a05:6a21:271c:b0:1b0:219d:79a6 with SMTP id adf61e73a8af0-1b26f30e7cbmr5015277637.5.1717266787823;
+        Sat, 01 Jun 2024 11:33:07 -0700 (PDT)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63235f88dsm36352675ad.88.2024.06.01.11.30.32
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702437b5c3esm3031184b3a.121.2024.06.01.11.33.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Jun 2024 11:30:32 -0700 (PDT)
-Message-ID: <d79f05cf-af34-43a3-a922-63a523050216@kernel.dk>
-Date: Sat, 1 Jun 2024 12:30:31 -0600
+        Sat, 01 Jun 2024 11:33:07 -0700 (PDT)
+Message-ID: <c6c149ac-ce0e-4c21-b235-03b5d8250d86@kernel.dk>
+Date: Sat, 1 Jun 2024 12:33:06 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,81 +76,133 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: madvise/fadvise 32-bit length
+To: Stefan <source@s.muenzel.net>, io-uring@vger.kernel.org
+References: <bc92a2fa-4400-4c3a-8766-c2e346113ea7@s.muenzel.net>
+ <db4d32d6-cc71-4903-92cf-b1867b8c7d12@kernel.dk>
+ <2d4d3434-401c-42c2-b450-40dec4689797@kernel.dk>
+ <c9059b69-96d0-45e6-8d05-e44298d7548e@s.muenzel.net>
+ <d6e2f493-87ca-4203-8d23-2ced10d47d02@kernel.dk>
+ <8b08398d-a66d-42ad-a776-78b52d5231c4@s.muenzel.net>
 Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: check for non-NULL file pointer in
- io_file_can_poll()
+In-Reply-To: <8b08398d-a66d-42ad-a776-78b52d5231c4@s.muenzel.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-In earlier kernels, it was possible to trigger a NULL pointer
-dereference off the forced async preparation path, if no file had
-been assigned. The trace leading to that looks as follows:
+On 6/1/24 9:51 AM, Stefan wrote:
+> On 1/6/2024 17:35, Jens Axboe wrote:
+>> On 6/1/24 9:22 AM, Stefan wrote:
+>>> On 1/6/2024 17:05, Jens Axboe wrote:
+>>>> On 6/1/24 8:19 AM, Jens Axboe wrote:
+>>>>> On 6/1/24 3:43 AM, Stefan wrote:
+>>>>>> io_uring uses the __u32 len field in order to pass the length to
+>>>>>> madvise and fadvise, but these calls use an off_t, which is 64bit on
+>>>>>> 64bit platforms.
+>>>>>>
+>>>>>> When using liburing, the length is silently truncated to 32bits (so
+>>>>>> 8GB length would become zero, which has a different meaning of "until
+>>>>>> the end of the file" for fadvise).
+>>>>>>
+>>>>>> If my understanding is correct, we could fix this by introducing new
+>>>>>> operations MADVISE64 and FADVISE64, which use the addr3 field instead
+>>>>>> of the length field for length.
+>>>>>
+>>>>> We probably just want to introduce a flag and ensure that older stable
+>>>>> kernels check it, and then use a 64-bit field for it when the flag is
+>>>>> set.
+>>>>
+>>>> I think this should do it on the kernel side, as we already check these
+>>>> fields and return -EINVAL as needed. Should also be trivial to backport.
+>>>> Totally untested... Might want a FEAT flag for this, or something where
+>>>> it's detectable, to make the liburing change straight forward.
+>>>>
+>>>>
+>>>> diff --git a/io_uring/advise.c b/io_uring/advise.c
+>>>> index 7085804c513c..cb7b881665e5 100644
+>>>> --- a/io_uring/advise.c
+>>>> +++ b/io_uring/advise.c
+>>>> @@ -17,14 +17,14 @@
+>>>>    struct io_fadvise {
+>>>>        struct file            *file;
+>>>>        u64                offset;
+>>>> -    u32                len;
+>>>> +    u64                len;
+>>>>        u32                advice;
+>>>>    };
+>>>>      struct io_madvise {
+>>>>        struct file            *file;
+>>>>        u64                addr;
+>>>> -    u32                len;
+>>>> +    u64                len;
+>>>>        u32                advice;
+>>>>    };
+>>>>    @@ -33,11 +33,13 @@ int io_madvise_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>>>    #if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_MMU)
+>>>>        struct io_madvise *ma = io_kiocb_to_cmd(req, struct io_madvise);
+>>>>    -    if (sqe->buf_index || sqe->off || sqe->splice_fd_in)
+>>>> +    if (sqe->buf_index || sqe->splice_fd_in)
+>>>>            return -EINVAL;
+>>>>          ma->addr = READ_ONCE(sqe->addr);
+>>>> -    ma->len = READ_ONCE(sqe->len);
+>>>> +    ma->len = READ_ONCE(sqe->off);
+>>>> +    if (!ma->len)
+>>>> +        ma->len = READ_ONCE(sqe->len);
+>>>>        ma->advice = READ_ONCE(sqe->fadvise_advice);
+>>>>        req->flags |= REQ_F_FORCE_ASYNC;
+>>>>        return 0;
+>>>> @@ -78,11 +80,13 @@ int io_fadvise_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>>>>    {
+>>>>        struct io_fadvise *fa = io_kiocb_to_cmd(req, struct io_fadvise);
+>>>>    -    if (sqe->buf_index || sqe->addr || sqe->splice_fd_in)
+>>>> +    if (sqe->buf_index || sqe->splice_fd_in)
+>>>>            return -EINVAL;
+>>>>          fa->offset = READ_ONCE(sqe->off);
+>>>> -    fa->len = READ_ONCE(sqe->len);
+>>>> +    fa->len = READ_ONCE(sqe->addr);
+>>>> +    if (!fa->len)
+>>>> +        fa->len = READ_ONCE(sqe->len);
+>>>>        fa->advice = READ_ONCE(sqe->fadvise_advice);
+>>>>        if (io_fadvise_force_async(fa))
+>>>>            req->flags |= REQ_F_FORCE_ASYNC;
+>>>>
+>>>
+>>>
+>>> If we want to have the length in the same field in both *ADVISE
+>>> operations, we can put a flag in splice_fd_in/optlen.
+>>
+>> I don't think that part matters that much.
+>>
+>>> Maybe the explicit flag is a bit clearer for users of the API
+>>> compared to the implicit flag when setting sqe->len to zero?
+>>
+>> We could go either way. The unused fields returning -EINVAL if set right
+>> now can serve as the flag field - if you have it set, then that is your
+>> length. If not, then the old style is the length. That's the approach I
+>> took, rather than add an explicit flag to it. Existing users that would
+>> set the 64-bit length fields would get -EINVAL already. And since the
+>> normal flags field is already used for advice flags, I'd prefer just
+>> using the existing 64-bit zero fields for it rather than add a flag in
+>> an odd location. Would also make for an easier backport to stable.
+>>
+>> But don't feel that strongly about that part.
+>>
+>> Attached kernel patch with FEAT added, and liburing patch with 64
+>> versions added.
+>>
+> 
+> Sounds good!
+> Do we want to do anything about the current (32-bit) functions in
+> liburing? They silently truncate the user's values, so either marking
+> them deprecated or changing the type of length in the arguments to a
+> __u32 could help.
 
-BUG: kernel NULL pointer dereference, address: 00000000000000b0
-PGD 0 P4D 0
-Oops: 0000 [#1] PREEMPT SMP
-CPU: 67 PID: 1633 Comm: buf-ring-invali Not tainted 6.8.0-rc3+ #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS unknown 2/2/2022
-RIP: 0010:io_buffer_select+0xc3/0x210
-Code: 00 00 48 39 d1 0f 82 ae 00 00 00 48 81 4b 48 00 00 01 00 48 89 73 70 0f b7 50 0c 66 89 53 42 85 ed 0f 85 d2 00 00 00 48 8b 13 <48> 8b 92 b0 00 00 00 48 83 7a 40 00 0f 84 21 01 00 00 4c 8b 20 5b
-RSP: 0018:ffffb7bec38c7d88 EFLAGS: 00010246
-RAX: ffff97af2be61000 RBX: ffff97af234f1700 RCX: 0000000000000040
-RDX: 0000000000000000 RSI: ffff97aecfb04820 RDI: ffff97af234f1700
-RBP: 0000000000000000 R08: 0000000000200030 R09: 0000000000000020
-R10: ffffb7bec38c7dc8 R11: 000000000000c000 R12: ffffb7bec38c7db8
-R13: ffff97aecfb05800 R14: ffff97aecfb05800 R15: ffff97af2be5e000
-FS:  00007f852f74b740(0000) GS:ffff97b1eeec0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000000b0 CR3: 000000016deab005 CR4: 0000000000370ef0
-Call Trace:
- <TASK>
- ? __die+0x1f/0x60
- ? page_fault_oops+0x14d/0x420
- ? do_user_addr_fault+0x61/0x6a0
- ? exc_page_fault+0x6c/0x150
- ? asm_exc_page_fault+0x22/0x30
- ? io_buffer_select+0xc3/0x210
- __io_import_iovec+0xb5/0x120
- io_readv_prep_async+0x36/0x70
- io_queue_sqe_fallback+0x20/0x260
- io_submit_sqes+0x314/0x630
- __do_sys_io_uring_enter+0x339/0xbc0
- ? __do_sys_io_uring_register+0x11b/0xc50
- ? vm_mmap_pgoff+0xce/0x160
- do_syscall_64+0x5f/0x180
- entry_SYSCALL_64_after_hwframe+0x46/0x4e
-RIP: 0033:0x55e0a110a67e
-Code: ba cc 00 00 00 45 31 c0 44 0f b6 92 d0 00 00 00 31 d2 41 b9 08 00 00 00 41 83 e2 01 41 c1 e2 04 41 09 c2 b8 aa 01 00 00 0f 05 <c3> 90 89 30 eb a9 0f 1f 40 00 48 8b 42 20 8b 00 a8 06 75 af 85 f6
+I like changing it to an __u32, and then we'll add a note to the man
+page for them as well (with references to the 64-bit variants).
 
-because the request is marked forced ASYNC and has a bad file fd, and
-hence takes the forced async prep path.
-
-Current kernels with the request async prep cleaned up can no longer hit
-this issue, but for ease of backporting, let's add this safety check in
-here too as it really doesn't hurt. For both cases, this will inevitably
-end with a CQE posted with -EBADF.
-
-Cc: stable@vger.kernel.org
-Fixes: a76c0b31eef5 ("io_uring: commit non-pollable provided mapped buffers upfront")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 624ca9076a50..726e6367af4d 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -433,7 +433,7 @@ static inline bool io_file_can_poll(struct io_kiocb *req)
- {
- 	if (req->flags & REQ_F_CAN_POLL)
- 		return true;
--	if (file_can_poll(req->file)) {
-+	if (req->file && file_can_poll(req->file)) {
- 		req->flags |= REQ_F_CAN_POLL;
- 		return true;
- 	}
+I still need to write a test and actually test the patches, but I'll get
+to that Monday. If you want to write a test case that checks the 64-bit
+range, then please do!
 
 -- 
 Jens Axboe

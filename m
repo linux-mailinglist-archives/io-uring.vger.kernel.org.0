@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-2065-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2067-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EA8E8D75F3
-	for <lists+io-uring@lfdr.de>; Sun,  2 Jun 2024 16:11:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68DDE8D7600
+	for <lists+io-uring@lfdr.de>; Sun,  2 Jun 2024 16:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857951F21FB1
-	for <lists+io-uring@lfdr.de>; Sun,  2 Jun 2024 14:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E943E1F221A7
+	for <lists+io-uring@lfdr.de>; Sun,  2 Jun 2024 14:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551C257C9A;
-	Sun,  2 Jun 2024 14:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8503FE2A;
+	Sun,  2 Jun 2024 14:12:09 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047C740861;
-	Sun,  2 Jun 2024 14:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08481E501;
+	Sun,  2 Jun 2024 14:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717337430; cv=fail; b=d0x6ta5YuOPxbRlmntraLb7On9TISc1eFBd0AT+i43s+dqMok61rEy/a2uJvWS4SvbZNTEFABp5Vf4TDjSm4r1mYxgD8qdsCl7yCvC975Swkcjf/wAtmC1dcVq+dt0d+D15Qd9B+6cjIZb6vyUhw4UruNgB7z60dGHARr3m2IXU=
+	t=1717337529; cv=fail; b=Rnln46b7FzjoLQKz6Lf4AtrFVH7a/hKcpw1rdyt/0cLD4XBGxq1QW5cCWQPF4hVvcQbQBZ6Mjvi31KByfaZ83MmYRMglF4LlCmN3hJL3Qp+hqVWBVVb5Te2N3GAwresIpYlAdQlKccqAS5dMuuN948vZiez/yzgWbI7F0m4qZso=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717337430; c=relaxed/simple;
-	bh=R36bax9aDLUanI5xVDnThFLhPtFRZWJmr5/8ECTae8w=;
+	s=arc-20240116; t=1717337529; c=relaxed/simple;
+	bh=iki/1NYZ9YoGpsiuRdEgpVnO8uPeskpeOIqE392MusA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=M2M3tp2YOOXTOu/GdTbwMZOk5rL4UefmF/N90v4HEFaIko86ds1MdHdiohLlAmSpC/qsvSbUw+TvNk0PZMY+4zlFHTE5jXA5JH/nzU4oxIssDG68XC17g8wqC4GVLyqpZL1vUliDeP6l3vm/CzP774uaywS5e+nHjmfdQot+0hg=
+	 Content-Type:MIME-Version; b=UwBg7chmQZ94bXTdaWjbWhuHwo0JWc99K2GXRBN/1p3RHKX7B3VOXGlql8U4a/hiAOdRgZDAAKCvrqc+y0cSRKOrNtYVCVVtHk1L1Fe8MnUUuLwRvJ2uUm5O0K1zv9bF32fX70VreQRJ1iSkrRUFtRhW+m2SNnQAGHVuhBfWmkI=
 ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=fail smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4522EeaI010178;
-	Sun, 2 Jun 2024 14:09:55 GMT
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4526h02i027447;
+	Sun, 2 Jun 2024 14:09:56 GMT
 DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
  =?UTF-8?Q?=3Dcc:content-transfer-encoding:content-type:date:from:in-reply?=
  =?UTF-8?Q?-to:message-id:mime-version:references:subject:to;_s=3Dcorp-202?=
- =?UTF-8?Q?3-11-20;_bh=3Dp9eg8fdWXMhNGFlIiazULYvvLmp/RlUKAMPSz6Wp/aY=3D;_b?=
- =?UTF-8?Q?=3DBi4Rl3kNoUqFl3668YzuQn3nuE3T1z6m9aip/z62k5Qo6mVRGMhA6/QVlg/l?=
- =?UTF-8?Q?CRLZTM6w_TsUM/d5UFEyjuKgG2MO/n66wYlY0T7xEpsbcuDmYH5G4pLr/sDd1t9?=
- =?UTF-8?Q?1rBIres3gPe2Ha_HM1mzGEsEkLDAGCbqt278QEwUeptFDBwpB8oWNlp8pv24ujg?=
- =?UTF-8?Q?zPif+dHRZ8pe9P29/I/a_Dtp8JuivvcP6lll8J4Bd0hM79Ocmq/ZuIjSq2rQLVz?=
- =?UTF-8?Q?YvRIrZVgZLFvfTuCmzaWK5RFfe_zsfaf7tzugNEyMqveHZj2UACv1PXzThwUhes?=
- =?UTF-8?Q?YhyQLN0FH156ESuUbRQSjp3cjsaEsi2o_9Q=3D=3D_?=
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yfuvvscne-1
+ =?UTF-8?Q?3-11-20;_bh=3DIzYMElQdoafm/KOiCJoqkqo8DHg2mUS9JMz/MJ0HTqY=3D;_b?=
+ =?UTF-8?Q?=3Dg2iZR+YwuB3+lMC6gVdw7mN96JrGDh7pr3jtH86kD8xe5gPaQ8etjrXaoquL?=
+ =?UTF-8?Q?mzSQOONA_jyBQLpsQIkDCID0xkpBE9lolMkyjAa+6AQRxJ+IFxQg29M+L4EDDPT?=
+ =?UTF-8?Q?BzG9c/ghyhOrFG_/Jwur23sX8gMmz7g4IpeH4KgphAnx6UCKMwvcsiviJhlBjRs?=
+ =?UTF-8?Q?x5XuL4+AGeYTBDlmxcqv_sHCzyRKAI8gUC2ZOrBC1yyPpd1CjlsQKvR408JVXdS?=
+ =?UTF-8?Q?hG5TPia12b54AfrX6c0YNekTVC_FBXqabSwbl3KhqKY2UZ7x8G6Sg3+bXchB5zT?=
+ =?UTF-8?Q?eV1fgqmLy6/HgGgSJbg3D1lJSe7RIQ4W_0Q=3D=3D_?=
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yfuyu1cm3-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 02 Jun 2024 14:09:54 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 452CDYta037809;
-	Sun, 2 Jun 2024 14:09:53 GMT
+	Sun, 02 Jun 2024 14:09:56 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 452CPWHx003823;
+	Sun, 2 Jun 2024 14:09:55 GMT
 Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrja1h81-4
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrquhb53-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 02 Jun 2024 14:09:53 +0000
+	Sun, 02 Jun 2024 14:09:55 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i+0B+7xeixop9kSwLn6GfdjfTqlTRbC4Fgs+DuxMwWxZIJoDdcyn1dba6S+2jZRlwhwbzBQ9v09fkdAefsFe5TM6AnnWYeqTbybQEzWoz5kTtIIzrrwuTIs+xNjmRiCh+qW4BWk3OxMr1LZFePD/kCkjzikBhPD0oo1lwJyCsNfRGhK0iDcCZ5N6nv2SgcoVoiuuy3MLteuNjptN2C0bfXng6/urU0W6I1CL+BDJmk2Eic/fgr7YnEWINlA7o1SgUC7EKsEAZLjSDAwdWGm8VAy56ZU3dZBGDKc5KQWTfKSnas9eKyy1Id3epkD9bN9Wooc0jI6lhBSa14HbJBhPSg==
+ b=FbOUvnktf7G36RymcpekUwQgST1bFiio7alGrMFOcTID+P+W1oyWGs1nbJdwlA8eXuqNCf2aGZo6WVy44Doi4kC67gQaOQyI3LKLs84PQXoSowJva5V42zxT1qIlHDSuEZugQaml5H7G1VLJ8a6O1m6qwSXjkDSIq0M/QKhkTR0NSLJEIE1VelCSCxXuz+NrkyIDXTwQt0/g9pxyRTWEXkp2kL3q6X+ZYFZUkbTHnU0pK0UfQlu9HdMWCP+9y5g+0EqAKgYNCQh8pSL2fD9/YAUVvgg9f+fkeL2U8MX7KP6TqauPLfOIqVB7ot0hgkgEyORQPRB2AGiEhw8ca5cCnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p9eg8fdWXMhNGFlIiazULYvvLmp/RlUKAMPSz6Wp/aY=;
- b=cikbOspfoevZWGRC1rzyESMH4sj8wYOrXu7lhYyn7bHKZjeM43a2FDLW2Nomh5nWAq3vQg6sKXUH5hJhEZrnhUqVPtA3fvEsci5632M032u8fkgLQwMggbIdShwRZ0561GSKXNXlea0ZX31bhlC9gc7bvHyS5kRoSngcWK2XafOIqxouKLD7sYR9jNOnLeWvWUjt5SzTv5VHKrX/CwfYTyVypWOGSdV04vrwgLfjZUzsbujS+D1LkRhewOpEBAN4nUSQ+zyzdkrTWIs3QpxWopMQFwOYHJKzCnrLRAez9Eh5QRBXnK3MEn8M5qUvbxNOn2xyEKfIQz5qL2xDSmk9aw==
+ bh=IzYMElQdoafm/KOiCJoqkqo8DHg2mUS9JMz/MJ0HTqY=;
+ b=jk1TtawiAwT/otFziZOEHetoS1Dtz1Mj/rSQutuCX5BbVcusSOTBHB9d+1xMDEseP4leMtbbMyTKoewRAfWv7w61BihyE1bPbMajf4OzYRs8vSmtl4wPtJvfhh4vRJZbwPCA84i2d3abNe5D2i9NosqtEF9isRdO6gEMdVo9GllwduMgd21pq+AgCDPi3dNToTmIQnWp2X9Yp4Gpl0tBDoEsq9ltSy5qkQUnPo/0KevKOqYKAx5dV7UFh+5iY4sk1zo38UHgTCnlVez5fwOdtGkIm7fmGlVzF3Bxb68qxSHAv/BpY6YxvmnaiAKNXnIf2SHrKfyzTfLUS6VWFsMgjA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p9eg8fdWXMhNGFlIiazULYvvLmp/RlUKAMPSz6Wp/aY=;
- b=xMCIg/l+P0gIqB2mdKFE8qwNXhRbl116lb4aCaHPy3eL6Yd6d1q0DnvC8oOjWVGKCLDfiLri2H6seJgRVQIe2BQj1gv/uN/goP3XRxC3i234zVny9pdb1GKzDOy+4V2jkuiid8ZFwcNxelVFBACmyYEx1sFSaOG6+ZEYD6DCTNU=
+ bh=IzYMElQdoafm/KOiCJoqkqo8DHg2mUS9JMz/MJ0HTqY=;
+ b=OmEhPEEAVxq5He0Q4lZfiXFQg+YIdqYhpjpoOrVA3uvEpL8g8H0Yj5RNcywBMQjajH+xi1XjmvTG5qXPRFXcZcw/JPM8JBIKG8kNPNwWApX48gIqdsP3xUhT+VW1gwUVCg3C2KvxVVVn1WSUSI33x8yT9G5rnGES/9RWB9/S5mo=
 Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
  by DS0PR10MB8078.namprd10.prod.outlook.com (2603:10b6:8:1fd::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.25; Sun, 2 Jun
- 2024 14:09:51 +0000
+ 2024 14:09:54 +0000
 Received: from DM6PR10MB4313.namprd10.prod.outlook.com
  ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
  ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.7633.018; Sun, 2 Jun 2024
- 14:09:51 +0000
+ 14:09:54 +0000
 From: John Garry <john.g.garry@oracle.com>
 To: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
         jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
@@ -88,17 +88,18 @@ Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         ojaswin@linux.ibm.com, linux-aio@kvack.org,
         linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org,
         nilay@linux.ibm.com, ritesh.list@gmail.com, willy@infradead.org,
+        Alan Adamson <alan.adamson@oracle.com>,
         John Garry <john.g.garry@oracle.com>
-Subject: [PATCH v7 8/9] scsi: scsi_debug: Atomic write support
-Date: Sun,  2 Jun 2024 14:09:11 +0000
-Message-Id: <20240602140912.970947-9-john.g.garry@oracle.com>
+Subject: [PATCH v7 9/9] nvme: Atomic write support
+Date: Sun,  2 Jun 2024 14:09:12 +0000
+Message-Id: <20240602140912.970947-10-john.g.garry@oracle.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20240602140912.970947-1-john.g.garry@oracle.com>
 References: <20240602140912.970947-1-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR08CA0006.namprd08.prod.outlook.com
- (2603:10b6:208:239::11) To DM6PR10MB4313.namprd10.prod.outlook.com
+X-ClientProxiedBy: MN2PR03CA0014.namprd03.prod.outlook.com
+ (2603:10b6:208:23a::19) To DM6PR10MB4313.namprd10.prod.outlook.com
  (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -108,1167 +109,260 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS0PR10MB8078:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4dbbc4e4-83d5-42fe-ee9c-08dc830dab52
+X-MS-Office365-Filtering-Correlation-Id: 28bb8fa2-7cc0-45f5-0ec8-08dc830dacec
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230031|366007|7416005|1800799015|376005|921011;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?s8906YVGFoOtYFpxITxaEsipLwhBuGnxciqYfvkcIzNWYfclMWyzhzSmzP5n?=
- =?us-ascii?Q?3cPYbhQ6jgjD63OKREzeTbwbZcNIsPXeRtPNHzs9Jk3LOLRLxNWttGJ8zNnV?=
- =?us-ascii?Q?4id5ZnRwbYDxkYYlF+ZvebHlU8Y16TkvTC+tnGJy7lCqzPh5HCZY88SQhaS3?=
- =?us-ascii?Q?yTVD6qwNsQP4NevPEwF7v14Fl01I2bijdKNmdOSU74oz7fwo1FxLd2ScZAod?=
- =?us-ascii?Q?VGcJX/j4GwAYob57YGp2u4L3cPsQhkdIhFtVfF44UaKdmGNbn2aO4+ieiOUK?=
- =?us-ascii?Q?kOKRz6aovRbucl6xZIKvrNdkHd8f05jNwFrqonkLEs16moIjA0JO3mDRnusd?=
- =?us-ascii?Q?+fCOZFf+Pd+BrIYMj0zv3Ba+lxNdEmS6FF9zmz7/hd24AGeZuG3HN5Qnz1VR?=
- =?us-ascii?Q?7GLJyj0d4joYStWs2b74HaU/4U+LllfiyOHEiP8hp7OJ4xox2ZvL9xl6GFbB?=
- =?us-ascii?Q?gUrpl/yO3uKtS8hEzFAzWqMQ5zhJVB7JuyUM5st0csj04330XpXV57CDCSi9?=
- =?us-ascii?Q?1PbJ1X+6nOZydo2WRQjT8bCeMBkKkMzLrRaxYZG4HUOWFWCUUXu/kww4sqNw?=
- =?us-ascii?Q?wM44dDSYECUe27dziDClueSi6thfTivx6ASmhbY8q9i0T4lLtKKs9KHne6To?=
- =?us-ascii?Q?EgEvoPPnpknShxWRmIJiWbDP32q57VnAtKjonLRNDdcXcLqBf0nz1/kx/ARR?=
- =?us-ascii?Q?w+cboRBQOOm2eMViYWTLR51aXJ0mGtbuxv4Mj3VHiAKbFWETQt5ovrgema3w?=
- =?us-ascii?Q?rFFEf7zqYBYJKstyKSao2PpSf3/W6ACxB8Q2PAdDg4qQhFI/LIzWkF35RY+8?=
- =?us-ascii?Q?nBOsQqeqlOOps4B6xHFsrYYRw4QylT/NRxKyMx60EWFbGvSO6iuYiIKUIdsF?=
- =?us-ascii?Q?QWiu1DnEri7UKqLYcYiSFzj1aDFEOM79c6uY8c+0r7Mt105gf7Duv59Iq4vF?=
- =?us-ascii?Q?E5l7BA4YHbpz0qfhaW0tKD9jMxfuYvMxbWMp+vOJheUSPwZh2ynOWCj+bgQ1?=
- =?us-ascii?Q?Mz4vqNVLHlQS7OvW2aYxLAcdZgNPOHyaoICMmoCNs8cFIJDuMtCNtkr3yVgE?=
- =?us-ascii?Q?3A+0U2vFw2BwozDWsJNGp405F1NZfByWSg5Asi8/zmaAHXBPpAH4APjwjiZl?=
- =?us-ascii?Q?2CajN0X011LLyzIun2fYYsLQO2eIzPWz6rwQJk2b5Ypnas6cYilhULCjFTUX?=
- =?us-ascii?Q?7IGm64LIaJkp4Yt7tlK50v/H6h9lgLaTnAhCfXFKxaXASgg+xaoisEQEzoev?=
- =?us-ascii?Q?ksHTbr+m1m86ijcjcN1moZgoN7fsRWtJZQN7eUVyBHUQSuSM9CZ5PxbQ10ug?=
- =?us-ascii?Q?HJ1FKgqz4OyDG4LxgLS34opX?=
+	=?utf-8?B?bzRKUWwzYkdrU0VZVElqNm9yUEJSU21nWVV6OXRYeTAzVlNUUTk2QzUrd3lY?=
+ =?utf-8?B?LzUrc3RabVMwRWN5VmpRVmVVNmFCVU9YajdJN0xUc3p2anJka2tlSldYQTVE?=
+ =?utf-8?B?aGZnSnViMk5COXhpNk5jS08rV01lS3BkUFNjYWtQVnQvZFU2bFpPZjNaWlF6?=
+ =?utf-8?B?ZlJQUENBcjN6VzBobGNMekVTTkQvaXdiV2czY1hwUVQ2NFZsK2dUWE5CNTFS?=
+ =?utf-8?B?RlNBVlBOaTIyZlJTaW11K1NkekkrbVdvS3FmRkFEZ2tvM0x5T1MwYUhqV3pi?=
+ =?utf-8?B?NDVFRlU4S05ibWNONFMwdmlCOG9rdmdoUGYySEhTSkdpaFdpYms1SlArVDdB?=
+ =?utf-8?B?M3o4Z3haaS9tQ3NpT0licU9pUE1ER3RvdHE1dHlKTlB3REVTdUZUVU9BWm1G?=
+ =?utf-8?B?M3pHMkUrVzRONVNJWk0zWW0zbm01dlJ4WGhlU1prUE5Wbm1CcFM3UUIzU1hp?=
+ =?utf-8?B?VU44Lys3eStRTkZLTlVSL2d6UE5iakxqeTBFcnZ4QlY0M0pnQ3RrRDhLeDQr?=
+ =?utf-8?B?RmV4NEtQcDJqeHdjbHNPMkt2a3g5bE0vQWhRc3Q2ZTNJbVJwQUU2aXdpSjZJ?=
+ =?utf-8?B?UFNNQVZvM1YvVkozMlEzKysyVFpJQjJQZDRYY3FvakVpQ0ZoTnZDRCt2Qjkw?=
+ =?utf-8?B?VXFHeE1uQm9VNTRlcWQ0NFNTN0g0TEdVcC9ETVB3S0hiV3NhQncvTExTeFdB?=
+ =?utf-8?B?QW5jc0o4Qlh4Mk5Qc3d3YmZWNXpOYXNLRzVjMTNRY05OZ3FUWWErWWg4bnlG?=
+ =?utf-8?B?dEQ1cklkTTFnR1k1TmtDb1pnRU50MTJGK1k1cWg0bWdaY2hwWVdCdG1yb2R4?=
+ =?utf-8?B?aXdrZEZhRFVNN1N3NExzNnZFT1g1TDhiVURFaElCS3FMa0xBUkYwVGlQWmtm?=
+ =?utf-8?B?ZHF5RTlCTmt0Y0g4dktaZkp0K3dsbk1qUityZHpkYk01clhkckNMc054SE1G?=
+ =?utf-8?B?UGhDdFNBWXRGRmN0Tk9LdkxZbEU4djQ5NnBHUzltSnhjUXhzTEpaUHdGdldY?=
+ =?utf-8?B?ck5id0FIeVVCSmNJRGpLV0FKYkI0RkFubnBKeThuRzBIamRiUTRzbDlCTGJO?=
+ =?utf-8?B?RENpWDg1V2tzY1FSeW1oWE9WbU05SUh5K3pQYXd6Z1BFWi95S3M5cmJHVUxI?=
+ =?utf-8?B?NEhpMW9rbHgvWDdJQmFpWjNxL1EwU3ZnaHV1bXJJREM2dzRnUVRFOGt4cGtr?=
+ =?utf-8?B?Sk96U2poU1RhVzltbGlIcjc3KzlZWm5QUE1VSm0va0gwVjdvSnN4MkVFeFk3?=
+ =?utf-8?B?aDVTNkFlVWxRNzRJUWNURHV1RU9sVU5QRHpCOVRJZmE1UTNrNFlXb0pvSVhM?=
+ =?utf-8?B?Z3hhMkduY0lrUWpZc3R0b1BYVVJRNndzOFFvY0xRMWxkN09hS0w4RHFPdTc3?=
+ =?utf-8?B?QWxraVkrZmlaMzFQaEZlSTBXbjgxWmswQ3Q4LzA4SytTdm5YdkRxZUtMZmlN?=
+ =?utf-8?B?RFRoUnZ2TFRiajgvSlk4dGgxRXJlWCtySWQ1ZmdzRDRudXljNVVTSEFjbHlJ?=
+ =?utf-8?B?RGFkRUtZTXVBOERXVzdqbjhwdzJOQzNUMms1cHFXUDVHV2pJRm42am9hMEZE?=
+ =?utf-8?B?Um10TE9Cbmpzb3k5WUdHVGd1aFVDa2N2ZzJmMHQxTnc4WlZ1SDRJcFdOVkFm?=
+ =?utf-8?B?cUVTK1NlbG1sVWxpaVdNU3lqdGR0SHBpb0NkanFOSUtaMGw0RTBtK1ZtRjJh?=
+ =?utf-8?B?ZitNS3U3cmVHcGNOK0xoR1I3MUJvdExscFFrQVlvVVA5cDBleDZsellpZmFM?=
+ =?utf-8?Q?bJRIVh658g/EhX5Q26CZk/sc22D7ewhitV47O9/?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(1800799015)(376005)(921011);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?Cvj889BnWUovb9MMNrPptI1Ebyjr0F/Mvo6KGvquKA88ksg+KYuv82iFaSlj?=
- =?us-ascii?Q?wwPfDC6nWuSEtI4Z/7hfwpR+AOi6N06KSRI6FHL/yUD+WBF2dcagxsjhCUcO?=
- =?us-ascii?Q?+GJiDjCU2NKaK8IE1M2RNtbkhXyP8aejjPtcwc2y0v1FqmwvtVsc2XomAfVB?=
- =?us-ascii?Q?gjHPWI8ZCmH1daCRaEytbMyIUDakr8/+mRIkSwKVebuFmNa80NY9fvYJjxy/?=
- =?us-ascii?Q?8rNz3HFfnMLIJBuHkrU3y9yml4NqJFSFaoI4Gl9iV4EKqM7tkB7VevN8yHV3?=
- =?us-ascii?Q?p8wOVz+56V7dAH2a66JaNwWkjewJHatMmHdMSOXKZai8CKyx/EKjyerX8u9s?=
- =?us-ascii?Q?04gEV5Ze1LrNbZbMz1L24sLvpxXFCMaBpgFaRtT2WwGwvTP+H+Oe+V18+XLg?=
- =?us-ascii?Q?/bIgsY9Pu1jUItuae6V79MdOvluPxGZrToohJaFGkBEwTRxRV/JfM2mNxQLS?=
- =?us-ascii?Q?9wJMda9N0NDsMFZSjrWqaqPHj7/X0dKAHRHneWC+/vrPOZfgrxa4QAo10xCS?=
- =?us-ascii?Q?WkCRf2w1JZJQXpvoDNJbjoQZKlKWtkCvOuhHF6iEdha5EPTufLwozz4t3CBc?=
- =?us-ascii?Q?bi4XQVw9wKwG0GRvruvI6V5x4T+LoogMBO395JM4x8qo0h7C5X8Pi7o9T4BM?=
- =?us-ascii?Q?GCBRJ3RUQ7ex3aPer4NV2dWd3hNK4ksV0JelPPEPzfsQ++64QgaL3FjgV01a?=
- =?us-ascii?Q?7CrEhd00qGd+/mn6F1nASpUKkJY+hYaKalXBIfHfAyObttCoqWxIogqgoxV/?=
- =?us-ascii?Q?QnU1rIB3m0HooyXt/Sypw2Y281JnKpz+gjWr6rsRi4qAzLfz/D+DvafB4pFj?=
- =?us-ascii?Q?e4wzUwJ/05Vco0tObpgvFVeL553od5pHyhTTTronJKpqUimN9iIr5SLo3+2D?=
- =?us-ascii?Q?pS9PkJRtQfLs63aZtuvmwamjdfJTUdqMkpz0gGyivdZJAAwH8sP9Hzak6jTW?=
- =?us-ascii?Q?5pq7X7lujF6/946No2sPetpjReBkhBZZkSI+UO6upT8ACr+Wtp12mYJ2SsOi?=
- =?us-ascii?Q?V6+zE9eT0MPWm6C89nMetaWNdSIxcTqIueUPouiJi13uTWfypA/KdKhvU4Fd?=
- =?us-ascii?Q?RML8L5LAzI3fiNTIg7Tgkcbcva4mfD3wp3vg/MTVB1gaNrYKscU7ibF607RD?=
- =?us-ascii?Q?Jc/ASmMSgjHDEYFXU9/P0xfzZcy4cCkJcFfPo+4582BbPI5NFZgcZ1U7MwNF?=
- =?us-ascii?Q?Jmw4+rPkwlWMWve+BG6SckLgMosibvuY0Vn4OW8dipB62Ouxfv7GqmxqD3pv?=
- =?us-ascii?Q?53cfwTDR4F8uQBpVQ/P4d2uVpsN+t9ufoM9q+dV8OvIv/qvqksrwJSUzIEy5?=
- =?us-ascii?Q?CCB/meQmHr28xgrASzWYD9+084926ganBlLpWM3YUY9cpuvdHPg0rud0VCYL?=
- =?us-ascii?Q?RHl5MhujvKtFp2Gv29YPv2r2PqyNDt3LDw7H549AecJTCismkS3QHnutGXa1?=
- =?us-ascii?Q?/QHcgighb0gXnV9diFfp+23GH4bV3jg/WvZyDPaYYROe8eJXJBMTS2XlymtE?=
- =?us-ascii?Q?gsT+110rhVXf5WNfXMFonGFMZsY+Q/gAol/Elx9+K0n6LTweS3U/Fx74VClF?=
- =?us-ascii?Q?wTsFDck8b6Yu8FXMR6dkIgQqes12GHZvdVlub7/PCMvCbYdJXv1tQsMMV7pK?=
- =?us-ascii?Q?sw=3D=3D?=
+	=?utf-8?B?dENjZTZxR0Y4S0IxVSt0RDllc0d2R0JLVmV4bjdDMGdVK2g0a2J3Nm14UWlk?=
+ =?utf-8?B?S281Y2Ixck14cDAwYnhIcTRoZXRLdy9mWkRRRVdlK29jbjE3bnpjcGZ0Vnh2?=
+ =?utf-8?B?TDd3ZGtYdkpzSEJ5d2ZxK0oxS2cxcVFOWEo1TXNPbFlKZUJscHVPdDZkV3I5?=
+ =?utf-8?B?WXFEYXRHWUpVOTlsN2VCRGVTRjRDNnFCa2NPLzJ6YndSRXk4Z2tzdlR3ZGhh?=
+ =?utf-8?B?cEQ1RUM3b0ZKZFpIZHBkUGFWNU0zdmlyMWVRRFZyOUZXQnNBWHg0MEJnSkhJ?=
+ =?utf-8?B?ZjAwVENySHZjUUxvcDBlLzNXdXZ4U2NJSHJ0VFlyeXdlUUVyaldNQ1FsVTdq?=
+ =?utf-8?B?ODFJSHhjMzY3ZDJvVGlDR3JMMW9WNVlXakpMR21NWkRJM1dDRGhKdVVSMFN2?=
+ =?utf-8?B?WEE5UFl3cXB5QTRhbVBoM3p4S3dLSnpWd1B0enhVNEE0NnMvZEg0ZVhvemJt?=
+ =?utf-8?B?bkp5bTJoYjlHNGhWUlRuelQzTlJHY1MyZU8yeXEyY0RGV3JaYXFTZDlrYUwr?=
+ =?utf-8?B?ZTV6NjJTVFRvQ25SaUtPeDdmV3ZVaG00WWVRTU95RzNiWWgwY2QzWG5OVTJW?=
+ =?utf-8?B?UjFXZXNzRmMrVFVEZXhMWUNBY3hKZHM4eEtMc2oxVy9wenRkbUo5akF0Slk5?=
+ =?utf-8?B?d05qVFBkV09XdkpJcFJ0cVM4V0RXNFFqNDcvaUhyYmZGMnRTSGdaMVJYZFNo?=
+ =?utf-8?B?dmpVZS9XbGdDeWdrRGs2dU5Hc0E3TTUrUkdiKzYwN1NqekVsY1JiV2JzekJW?=
+ =?utf-8?B?Q1N4WldzVEZpM3p5aVQzMFpobU4zTEd5NE9TWXg0VHVWeWlIQUNmNk9WSmVR?=
+ =?utf-8?B?bWpuU2ZSTGl0SnB6Mkt2WVdQMC84QkhLTWJDdGVlNWNUbUdKY3ZJdDNZNEZD?=
+ =?utf-8?B?Y0gwTVZkRmdjZGxoQURMcFoyK082T3RmdUc3azQ3VFBlVWtFYmNad0VUdkw5?=
+ =?utf-8?B?SXVadnRPN3k0akhwd1FHQThFZm8zenROVDZ1Ym83WVg4cjBhVnlkTEEyRlpC?=
+ =?utf-8?B?TFpXbEF3NkpaQW9IMmRDbWZ0NVZwVTVkaHNYRk9XeUJCVElkV0VoVHFiMER6?=
+ =?utf-8?B?K0o3OFhtMlY3aWxqc2IzUGRUQnh0YlJlRzNvYm1hSUhyL1hDbVJsT213TjVZ?=
+ =?utf-8?B?K3d4bjJ4N0RNZWNHamxQK2FQWVJzTGZKQ3NtQWpOdHFONkU3eGdkNUJ1Mmc0?=
+ =?utf-8?B?TURlN0Q2Z2pXcUh1bzVMTUdKK1F6ekpLaHJEYmQ3dVdlTDZ0SzFkcVdZVFdw?=
+ =?utf-8?B?WmdZa2JNWmFDYktlSVQzQmRWdEd4UTQ4Y0VuVjJKcG9YbmRVVVovU3NlQUc5?=
+ =?utf-8?B?M3JIdDBSREpkSjFKWFhRL2xzV2FuN0dKWVc1SUdsMlQ0L3Z4L0lwQkxaQ25P?=
+ =?utf-8?B?T1ZFL0NjcTZzL2VBQUR2a0x2aTdPSUFOUTJ0MVJRejlyekZSdVI0dng1R0dy?=
+ =?utf-8?B?U3dJRGlVaDQ2YkdZYlB0OWg3R2ZVOFNVcVNEQ2RzdzdEeUhUWGo4VzhQMzBR?=
+ =?utf-8?B?OVpwdXZBRG84QVJ6dU8vSzFTckxSam80NnZtQzIzcTFkaGREMUQxVXZwaW1a?=
+ =?utf-8?B?WnZEVDkwTm8reWNDS1JWYmErc09hK0Q1WjBCb3ArSStmVzdONlRqNzg4OTZH?=
+ =?utf-8?B?NGtvMm14UTBWYnlNQmdaU0xlNm9NWVNpMGgxK0Q0MitaQm4rWGlDVnhVN2FR?=
+ =?utf-8?B?ZzJLL1BZMUxGYklCV09ETW40M2xxaGFjNk9Ra1hxSi9rcFR0UXNRaWZROExX?=
+ =?utf-8?B?eTRpcXpLZk5OaklFMWdUODFQSVRyUi83UElkTTY0ckJ2Q0FQdkxtL1BSUGhE?=
+ =?utf-8?B?U3hkREppazAwUG5Dd1hFNVh3bzVzbkxrMmFiMStUQ0R4YzR4V1RxYk52M09M?=
+ =?utf-8?B?Q0pGUWhRZmJnWlF3dDhXVDJPMzY4N0R0UzAwZS9xTlhjalI5T1JXdmVucEh5?=
+ =?utf-8?B?UC92L25RaUFVdEF6UUFLdVVqWFJzVTI5Mm5aT0FicmpQY0tOT1lqNHhya2w5?=
+ =?utf-8?B?dUNKQXRIeHpkcWthdjg0NG11bzQ5TGVObnpjS2I4Rk5IM05LemRRb2h2R1pv?=
+ =?utf-8?B?bUpYaTNDV0NoZXkrZFdhQUJDbHRXeFhTQTZvMCtHUVRyQThPTnZXMVkxOFBN?=
+ =?utf-8?B?R1lPdGpTR1RuTktsL3QrRXpYVGJTUFZOWDFnR01BQVNQQ2tTRE0yK216eHgx?=
+ =?utf-8?B?c2c9PQ==?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	RgYZMJJClyJhYF51podhxuE6XH1FXooFe09Amq1akO8PGdEF31FdXW+lK9OljOO97lpJUiifcSThI4gGDB1SA8/MFrn7v+U5Ra6cpNLRhUdBwT7Ncxi8KPtgefXbK/+C13erCi3ofuJUvjA0qJR+oVKXTmJcGHNqp9ZTL6AtGGB9w/gzVpvC8MalR3kbYDKmdTTfdvMwU5tikd2+F9A5GalIwMYCq4knVyLDeLzXi+st4NnVlcSFhTxbLUVOclY+aA+OgdRLo6FbToSR6YN7Dv7Q4IS+I5Dgq+tfvkKZ4lRlxTYsiGbX10rFctDr87K4Cu84jaQRPB3xP7x5te6noDPwTey7U/Ms4dwKPjtmffjmTuFWVE6VV0vkq5pAJiRhNKEdlTpgwzzRcRBw/QdvxlqpoE2sFg8QxD2F+8TEIXoOjiMjwVEDlzC7cMMM9xKJqwo9OAdcmIFYqsjuKpCdqtsJiGdiHWH1dWKseQuNQ73mKyI6aGHO/bs9au6JuAA2Ziy24DKo71Aa2Ryg/axlsCSxzCLXoBqh1Xszw0fGH3LiNRskWcxefDMsS9ejsYuRKUH3VU/+tOHB94Bv+/ubPgVbX7Et/IdUA2vUio3v0CE=
+	x3MUx3tISAv8l5+iePx285wQnWl5oZGNY5usGGCzvVjFm+TnFxDmWD4sslg5WBWGV2xt91K1I3kGtt2ro1Owb+LfOREKtsgofD1UxYNt96FlWL7gi8yy09Ceffyj/IIqiInBbuMQmKU3o3kNlkg/osSQVZqwyZvbS07s/pv7715zj7JZbhMjIEl0peH6ByUNySTy+StLsA75XeOc/V+D26FpdHNOAJ2eYqH0vCv0UIBrv+QkeuXM6gjPofayrr+W8tbzgNFESkphliZ/4sJysd2Mk3eTQoYimdYwcUUa4IINmjTIHuIbF7dYY9HzE65T4seeawdJKAs9cbLmOpKZstGUZoqqJzdjS7S4EZ61QlnXZ0vtIap+te1Nh/jSrHc4BWN6umz7HwCY3/MQzWn8A4LqeowMVJlKLK7EGhuEyM3QQRo/MnQOS/EO6qjHH3ywsKicEmYOndGHMCPMYjt+lRLJKi9ioEgu2U2T76/YR0kI9yTYKjKvqx6sTvsA2MlB0hDhFp2asLN/YP9y8qMzEJSxH2CMwTa+Lq1nVdIM32CVzEqTc31HQR/bxdAEg/ybPhdJ942SVTLWcjr8Ly1qqH/Rr73d/LxDcKNLeYDpX9I=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4dbbc4e4-83d5-42fe-ee9c-08dc830dab52
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28bb8fa2-7cc0-45f5-0ec8-08dc830dacec
 X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2024 14:09:51.3251
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2024 14:09:53.9974
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s1M3pirdT824yEWse0FXeaIPa2NfTb7t9qV3dn5awTZjfLBM8N/nJNmYSTSMaVtN64hZde1V8UgQ5TVDOkwMYQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: sY8NSjkF2Qo2ntBgspVJEXqJ8kwdPGb4LNkgBHi9mL+2TJW4b4KQ2vm6bD+gYry3JAfHZVJpnXXsPkUWwsxiRQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB8078
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-06-02_08,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406020122
-X-Proofpoint-GUID: IueZQNTdBakFGtvpNIEX07BlQ75ZR_hv
-X-Proofpoint-ORIG-GUID: IueZQNTdBakFGtvpNIEX07BlQ75ZR_hv
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
+ phishscore=0 suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406020122
+X-Proofpoint-GUID: 87tPnG2vNzXvKEi1UDE8LyV5AhLh4oIS
+X-Proofpoint-ORIG-GUID: 87tPnG2vNzXvKEi1UDE8LyV5AhLh4oIS
 
-Add initial support for atomic writes.
+From: Alan Adamson <alan.adamson@oracle.com>
 
-As is standard method, feed device properties via modules param, those
-being:
-- atomic_max_size_blks
-- atomic_alignment_blks
-- atomic_granularity_blks
-- atomic_max_size_with_boundary_blks
-- atomic_max_boundary_blks
+Add support to set block layer request_queue atomic write limits. The
+limits will be derived from either the namespace or controller atomic
+parameters.
 
-These just match sbc4r22 section 6.6.4 - Block limits VPD page.
+NVMe atomic-related parameters are grouped into "normal" and "power-fail"
+(or PF) class of parameter. For atomic write support, only PF parameters
+are of interest. The "normal" parameters are concerned with racing reads
+and writes (which also applies to PF). See NVM Command Set Specification
+Revision 1.0d section 2.1.4 for reference.
 
-We just support ATOMIC WRITE (16).
+Whether to use per namespace or controller atomic parameters is decided by
+NSFEAT bit 1 - see Figure 97: Identify – Identify Namespace Data
+Structure, NVM Command Set.
 
-The major change in the driver is how we lock the device for RW accesses.
+NVMe namespaces may define an atomic boundary, whereby no atomic guarantees
+are provided for a write which straddles this per-lba space boundary. The
+block layer merging policy is such that no merges may occur in which the
+resultant request would straddle such a boundary.
 
-Currently the driver uses a per-device lock for accessing device metadata
-and "media" data (calls to do_device_access()) atomically for the duration
-of the whole read/write command.
+Unlike SCSI, NVMe specifies no granularity or alignment rules, apart from
+atomic boundary rule. In addition, again unlike SCSI, there is no
+dedicated atomic write command - a write which adheres to the atomic size
+limit and boundary is implicitly atomic.
 
-This should not suit verifying atomic writes. Reason being that currently
-all reads/writes are atomic, so using atomic writes does not prove
-anything.
+If NSFEAT bit 1 is set, the following parameters are of interest:
+- NAWUPF (Namespace Atomic Write Unit Power Fail)
+- NABSPF (Namespace Atomic Boundary Size Power Fail)
+- NABO (Namespace Atomic Boundary Offset)
 
-Change device access model to basis that regular writes only atomic on a
-per-sector basis, while reads and atomic writes are fully atomic.
+and we set request_queue limits as follows:
+- atomic_write_unit_max = rounddown_pow_of_two(NAWUPF)
+- atomic_write_max_bytes = NAWUPF
+- atomic_write_boundary = NABSPF
 
-As mentioned, since accessing metadata and device media is atomic,
-continue to have regular writes involving metadata - like discard or PI -
-as atomic. We can improve this later.
+If in the unlikely scenario that NABO is non-zero, then atomic writes will
+not be supported at all as dealing with this adds extra complexity. This
+policy may change in future.
 
-Currently we only support model where overlapping going reads or writes
-wait for current access to complete before commencing an atomic write.
-This is described in 4.29.3.2 section of the SBC. However, we simplify,
-things and wait for all accesses to complete (when issuing an atomic
-write).
+In all cases, atomic_write_unit_min is set to the logical block size.
 
+If NSFEAT bit 1 is unset, the following parameter is of interest:
+- AWUPF (Atomic Write Unit Power Fail)
+
+and we set request_queue limits as follows:
+- atomic_write_unit_max = rounddown_pow_of_two(AWUPF)
+- atomic_write_max_bytes = AWUPF
+- atomic_write_boundary = 0
+
+A new function, nvme_valid_atomic_write(), is also called from submission
+path to verify that a request has been submitted to the driver will
+actually be executed atomically. As mentioned, there is no dedicated NVMe
+atomic write command (which may error for a command which exceeds the
+controller atomic write limits).
+
+Note on NABSPF:
+There seems to be some vagueness in the spec as to whether NABSPF applies
+for NSFEAT bit 1 being unset. Figure 97 does not explicitly mention NABSPF
+and how it is affected by bit 1. However Figure 4 does tell to check Figure
+97 for info about per-namespace parameters, which NABSPF is, so it is
+implied. However currently nvme_update_disk_info() does check namespace
+parameter NABO regardless of this bit.
+
+Signed-off-by: Alan Adamson <alan.adamson@oracle.com>
+Reviewed-by: Keith Busch <kbusch@kernel.org>
+jpg: total rewrite
 Signed-off-by: John Garry <john.g.garry@oracle.com>
 ---
- drivers/scsi/scsi_debug.c | 588 +++++++++++++++++++++++++++++---------
- 1 file changed, 454 insertions(+), 134 deletions(-)
+ drivers/nvme/host/core.c | 49 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 7f340a59fdc5..fcc9640fa18a 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -69,6 +69,8 @@ static const char *sdebug_version_date = "20210520";
- 
- /* Additional Sense Code (ASC) */
- #define NO_ADDITIONAL_SENSE 0x0
-+#define OVERLAP_ATOMIC_COMMAND_ASC 0x0
-+#define OVERLAP_ATOMIC_COMMAND_ASCQ 0x23
- #define LOGICAL_UNIT_NOT_READY 0x4
- #define LOGICAL_UNIT_COMMUNICATION_FAILURE 0x8
- #define UNRECOVERED_READ_ERR 0x11
-@@ -103,6 +105,7 @@ static const char *sdebug_version_date = "20210520";
- #define READ_BOUNDARY_ASCQ 0x7
- #define ATTEMPT_ACCESS_GAP 0x9
- #define INSUFF_ZONE_ASCQ 0xe
-+/* see drivers/scsi/sense_codes.h */
- 
- /* Additional Sense Code Qualifier (ASCQ) */
- #define ACK_NAK_TO 0x3
-@@ -152,6 +155,12 @@ static const char *sdebug_version_date = "20210520";
- #define DEF_VIRTUAL_GB   0
- #define DEF_VPD_USE_HOSTNO 1
- #define DEF_WRITESAME_LENGTH 0xFFFF
-+#define DEF_ATOMIC_WR 0
-+#define DEF_ATOMIC_WR_MAX_LENGTH 8192
-+#define DEF_ATOMIC_WR_ALIGN 2
-+#define DEF_ATOMIC_WR_GRAN 2
-+#define DEF_ATOMIC_WR_MAX_LENGTH_BNDRY (DEF_ATOMIC_WR_MAX_LENGTH)
-+#define DEF_ATOMIC_WR_MAX_BNDRY 128
- #define DEF_STRICT 0
- #define DEF_STATISTICS false
- #define DEF_SUBMIT_QUEUES 1
-@@ -374,7 +383,9 @@ struct sdebug_host_info {
- 
- /* There is an xarray of pointers to this struct's objects, one per host */
- struct sdeb_store_info {
--	rwlock_t macc_lck;	/* for atomic media access on this store */
-+	rwlock_t macc_data_lck;	/* for media data access on this store */
-+	rwlock_t macc_meta_lck;	/* for atomic media meta access on this store */
-+	rwlock_t macc_sector_lck;	/* per-sector media data access on this store */
- 	u8 *storep;		/* user data storage (ram) */
- 	struct t10_pi_tuple *dif_storep; /* protection info */
- 	void *map_storep;	/* provisioning map */
-@@ -398,12 +409,20 @@ struct sdebug_defer {
- 	enum sdeb_defer_type defer_t;
- };
- 
-+struct sdebug_device_access_info {
-+	bool atomic_write;
-+	u64 lba;
-+	u32 num;
-+	struct scsi_cmnd *self;
-+};
-+
- struct sdebug_queued_cmd {
- 	/* corresponding bit set in in_use_bm[] in owning struct sdebug_queue
- 	 * instance indicates this slot is in use.
- 	 */
- 	struct sdebug_defer sd_dp;
- 	struct scsi_cmnd *scmd;
-+	struct sdebug_device_access_info *i;
- };
- 
- struct sdebug_scsi_cmd {
-@@ -463,7 +482,8 @@ enum sdeb_opcode_index {
- 	SDEB_I_PRE_FETCH = 29,		/* 10, 16 */
- 	SDEB_I_ZONE_OUT = 30,		/* 0x94+SA; includes no data xfer */
- 	SDEB_I_ZONE_IN = 31,		/* 0x95+SA; all have data-in */
--	SDEB_I_LAST_ELEM_P1 = 32,	/* keep this last (previous + 1) */
-+	SDEB_I_ATOMIC_WRITE_16 = 32,
-+	SDEB_I_LAST_ELEM_P1 = 33,	/* keep this last (previous + 1) */
- };
- 
- 
-@@ -497,7 +517,8 @@ static const unsigned char opcode_ind_arr[256] = {
- 	0, 0, 0, SDEB_I_VERIFY,
- 	SDEB_I_PRE_FETCH, SDEB_I_SYNC_CACHE, 0, SDEB_I_WRITE_SAME,
- 	SDEB_I_ZONE_OUT, SDEB_I_ZONE_IN, 0, 0,
--	0, 0, 0, 0, 0, 0, SDEB_I_SERV_ACT_IN_16, SDEB_I_SERV_ACT_OUT_16,
-+	0, 0, 0, 0,
-+	SDEB_I_ATOMIC_WRITE_16, 0, SDEB_I_SERV_ACT_IN_16, SDEB_I_SERV_ACT_OUT_16,
- /* 0xa0; 0xa0->0xbf: 12 byte cdbs */
- 	SDEB_I_REPORT_LUNS, SDEB_I_ATA_PT, 0, SDEB_I_MAINT_IN,
- 	     SDEB_I_MAINT_OUT, 0, 0, 0,
-@@ -547,6 +568,7 @@ static int resp_write_buffer(struct scsi_cmnd *, struct sdebug_dev_info *);
- static int resp_sync_cache(struct scsi_cmnd *, struct sdebug_dev_info *);
- static int resp_pre_fetch(struct scsi_cmnd *, struct sdebug_dev_info *);
- static int resp_report_zones(struct scsi_cmnd *, struct sdebug_dev_info *);
-+static int resp_atomic_write(struct scsi_cmnd *, struct sdebug_dev_info *);
- static int resp_open_zone(struct scsi_cmnd *, struct sdebug_dev_info *);
- static int resp_close_zone(struct scsi_cmnd *, struct sdebug_dev_info *);
- static int resp_finish_zone(struct scsi_cmnd *, struct sdebug_dev_info *);
-@@ -788,6 +810,11 @@ static const struct opcode_info_t opcode_info_arr[SDEB_I_LAST_ELEM_P1 + 1] = {
- 	    resp_report_zones, zone_in_iarr, /* ZONE_IN(16), REPORT ZONES) */
- 		{16,  0x0 /* SA */, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
- 		 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xbf, 0xc7} },
-+/* 31 */
-+	{0, 0x0, 0x0, F_D_OUT | FF_MEDIA_IO,
-+	    resp_atomic_write, NULL, /* ATOMIC WRITE 16 */
-+		{16,  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-+		 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff} },
- /* sentinel */
- 	{0xff, 0, 0, 0, NULL, NULL,		/* terminating element */
- 	    {0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} },
-@@ -835,6 +862,13 @@ static unsigned int sdebug_unmap_granularity = DEF_UNMAP_GRANULARITY;
- static unsigned int sdebug_unmap_max_blocks = DEF_UNMAP_MAX_BLOCKS;
- static unsigned int sdebug_unmap_max_desc = DEF_UNMAP_MAX_DESC;
- static unsigned int sdebug_write_same_length = DEF_WRITESAME_LENGTH;
-+static unsigned int sdebug_atomic_wr = DEF_ATOMIC_WR;
-+static unsigned int sdebug_atomic_wr_max_length = DEF_ATOMIC_WR_MAX_LENGTH;
-+static unsigned int sdebug_atomic_wr_align = DEF_ATOMIC_WR_ALIGN;
-+static unsigned int sdebug_atomic_wr_gran = DEF_ATOMIC_WR_GRAN;
-+static unsigned int sdebug_atomic_wr_max_length_bndry =
-+			DEF_ATOMIC_WR_MAX_LENGTH_BNDRY;
-+static unsigned int sdebug_atomic_wr_max_bndry = DEF_ATOMIC_WR_MAX_BNDRY;
- static int sdebug_uuid_ctl = DEF_UUID_CTL;
- static bool sdebug_random = DEF_RANDOM;
- static bool sdebug_per_host_store = DEF_PER_HOST_STORE;
-@@ -1188,6 +1222,11 @@ static inline bool scsi_debug_lbp(void)
- 		(sdebug_lbpu || sdebug_lbpws || sdebug_lbpws10);
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index f5d150c62955..91001892f60b 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -927,6 +927,30 @@ static inline blk_status_t nvme_setup_write_zeroes(struct nvme_ns *ns,
+ 	return BLK_STS_OK;
  }
  
-+static inline bool scsi_debug_atomic_write(void)
++static bool nvme_valid_atomic_write(struct request *req)
 +{
-+	return sdebug_fake_rw == 0 && sdebug_atomic_wr;
++	struct request_queue *q = req->q;
++	u32 boundary_bytes = queue_atomic_write_boundary_bytes(q);
++
++	if (blk_rq_bytes(req) > queue_atomic_write_unit_max_bytes(q))
++		return false;
++
++	if (boundary_bytes) {
++		u64 mask = boundary_bytes - 1, imask = ~mask;
++		u64 start = blk_rq_pos(req) << SECTOR_SHIFT;
++		u64 end = start + blk_rq_bytes(req) - 1;
++
++		/* If greater then must be crossing a boundary */
++		if (blk_rq_bytes(req) > boundary_bytes)
++			return false;
++
++		if ((start & imask) != (end & imask))
++			return false;
++	}
++
++	return true;
 +}
 +
- static void *lba2fake_store(struct sdeb_store_info *sip,
- 			    unsigned long long lba)
- {
-@@ -1815,6 +1854,14 @@ static int inquiry_vpd_b0(unsigned char *arr)
- 	/* Maximum WRITE SAME Length */
- 	put_unaligned_be64(sdebug_write_same_length, &arr[32]);
+ static inline blk_status_t nvme_setup_rw(struct nvme_ns *ns,
+ 		struct request *req, struct nvme_command *cmnd,
+ 		enum nvme_opcode op)
+@@ -941,6 +965,12 @@ static inline blk_status_t nvme_setup_rw(struct nvme_ns *ns,
  
-+	if (sdebug_atomic_wr) {
-+		put_unaligned_be32(sdebug_atomic_wr_max_length, &arr[40]);
-+		put_unaligned_be32(sdebug_atomic_wr_align, &arr[44]);
-+		put_unaligned_be32(sdebug_atomic_wr_gran, &arr[48]);
-+		put_unaligned_be32(sdebug_atomic_wr_max_length_bndry, &arr[52]);
-+		put_unaligned_be32(sdebug_atomic_wr_max_bndry, &arr[56]);
-+	}
-+
- 	return 0x3c; /* Mandatory page length for Logical Block Provisioning */
- }
- 
-@@ -3377,16 +3424,238 @@ static inline struct sdeb_store_info *devip2sip(struct sdebug_dev_info *devip,
- 	return xa_load(per_store_ap, devip->sdbg_host->si_idx);
- }
- 
-+static inline void
-+sdeb_read_lock(rwlock_t *lock)
-+{
-+	if (sdebug_no_rwlock)
-+		__acquire(lock);
-+	else
-+		read_lock(lock);
-+}
-+
-+static inline void
-+sdeb_read_unlock(rwlock_t *lock)
-+{
-+	if (sdebug_no_rwlock)
-+		__release(lock);
-+	else
-+		read_unlock(lock);
-+}
-+
-+static inline void
-+sdeb_write_lock(rwlock_t *lock)
-+{
-+	if (sdebug_no_rwlock)
-+		__acquire(lock);
-+	else
-+		write_lock(lock);
-+}
-+
-+static inline void
-+sdeb_write_unlock(rwlock_t *lock)
-+{
-+	if (sdebug_no_rwlock)
-+		__release(lock);
-+	else
-+		write_unlock(lock);
-+}
-+
-+static inline void
-+sdeb_data_read_lock(struct sdeb_store_info *sip)
-+{
-+	BUG_ON(!sip);
-+
-+	sdeb_read_lock(&sip->macc_data_lck);
-+}
-+
-+static inline void
-+sdeb_data_read_unlock(struct sdeb_store_info *sip)
-+{
-+	BUG_ON(!sip);
-+
-+	sdeb_read_unlock(&sip->macc_data_lck);
-+}
-+
-+static inline void
-+sdeb_data_write_lock(struct sdeb_store_info *sip)
-+{
-+	BUG_ON(!sip);
-+
-+	sdeb_write_lock(&sip->macc_data_lck);
-+}
-+
-+static inline void
-+sdeb_data_write_unlock(struct sdeb_store_info *sip)
-+{
-+	BUG_ON(!sip);
-+
-+	sdeb_write_unlock(&sip->macc_data_lck);
-+}
-+
-+static inline void
-+sdeb_data_sector_read_lock(struct sdeb_store_info *sip)
-+{
-+	BUG_ON(!sip);
-+
-+	sdeb_read_lock(&sip->macc_sector_lck);
-+}
-+
-+static inline void
-+sdeb_data_sector_read_unlock(struct sdeb_store_info *sip)
-+{
-+	BUG_ON(!sip);
-+
-+	sdeb_read_unlock(&sip->macc_sector_lck);
-+}
-+
-+static inline void
-+sdeb_data_sector_write_lock(struct sdeb_store_info *sip)
-+{
-+	BUG_ON(!sip);
-+
-+	sdeb_write_lock(&sip->macc_sector_lck);
-+}
-+
-+static inline void
-+sdeb_data_sector_write_unlock(struct sdeb_store_info *sip)
-+{
-+	BUG_ON(!sip);
-+
-+	sdeb_write_unlock(&sip->macc_sector_lck);
-+}
-+
-+/*
-+ * Atomic locking:
-+ * We simplify the atomic model to allow only 1x atomic write and many non-
-+ * atomic reads or writes for all LBAs.
-+
-+ * A RW lock has a similar bahaviour:
-+ * Only 1x writer and many readers.
-+
-+ * So use a RW lock for per-device read and write locking:
-+ * An atomic access grabs the lock as a writer and non-atomic grabs the lock
-+ * as a reader.
-+ */
-+
-+static inline void
-+sdeb_data_lock(struct sdeb_store_info *sip, bool atomic)
-+{
-+	if (atomic)
-+		sdeb_data_write_lock(sip);
-+	else
-+		sdeb_data_read_lock(sip);
-+}
-+
-+static inline void
-+sdeb_data_unlock(struct sdeb_store_info *sip, bool atomic)
-+{
-+	if (atomic)
-+		sdeb_data_write_unlock(sip);
-+	else
-+		sdeb_data_read_unlock(sip);
-+}
-+
-+/* Allow many reads but only 1x write per sector */
-+static inline void
-+sdeb_data_sector_lock(struct sdeb_store_info *sip, bool do_write)
-+{
-+	if (do_write)
-+		sdeb_data_sector_write_lock(sip);
-+	else
-+		sdeb_data_sector_read_lock(sip);
-+}
-+
-+static inline void
-+sdeb_data_sector_unlock(struct sdeb_store_info *sip, bool do_write)
-+{
-+	if (do_write)
-+		sdeb_data_sector_write_unlock(sip);
-+	else
-+		sdeb_data_sector_read_unlock(sip);
-+}
-+
-+static inline void
-+sdeb_meta_read_lock(struct sdeb_store_info *sip)
-+{
-+	if (sdebug_no_rwlock) {
-+		if (sip)
-+			__acquire(&sip->macc_meta_lck);
-+		else
-+			__acquire(&sdeb_fake_rw_lck);
-+	} else {
-+		if (sip)
-+			read_lock(&sip->macc_meta_lck);
-+		else
-+			read_lock(&sdeb_fake_rw_lck);
-+	}
-+}
-+
-+static inline void
-+sdeb_meta_read_unlock(struct sdeb_store_info *sip)
-+{
-+	if (sdebug_no_rwlock) {
-+		if (sip)
-+			__release(&sip->macc_meta_lck);
-+		else
-+			__release(&sdeb_fake_rw_lck);
-+	} else {
-+		if (sip)
-+			read_unlock(&sip->macc_meta_lck);
-+		else
-+			read_unlock(&sdeb_fake_rw_lck);
-+	}
-+}
-+
-+static inline void
-+sdeb_meta_write_lock(struct sdeb_store_info *sip)
-+{
-+	if (sdebug_no_rwlock) {
-+		if (sip)
-+			__acquire(&sip->macc_meta_lck);
-+		else
-+			__acquire(&sdeb_fake_rw_lck);
-+	} else {
-+		if (sip)
-+			write_lock(&sip->macc_meta_lck);
-+		else
-+			write_lock(&sdeb_fake_rw_lck);
-+	}
-+}
-+
-+static inline void
-+sdeb_meta_write_unlock(struct sdeb_store_info *sip)
-+{
-+	if (sdebug_no_rwlock) {
-+		if (sip)
-+			__release(&sip->macc_meta_lck);
-+		else
-+			__release(&sdeb_fake_rw_lck);
-+	} else {
-+		if (sip)
-+			write_unlock(&sip->macc_meta_lck);
-+		else
-+			write_unlock(&sdeb_fake_rw_lck);
-+	}
-+}
-+
- /* Returns number of bytes copied or -1 if error. */
- static int do_device_access(struct sdeb_store_info *sip, struct scsi_cmnd *scp,
--			    u32 sg_skip, u64 lba, u32 num, bool do_write,
--			    u8 group_number)
-+			    u32 sg_skip, u64 lba, u32 num, u8 group_number,
-+			    bool do_write, bool atomic)
- {
- 	int ret;
--	u64 block, rest = 0;
-+	u64 block;
- 	enum dma_data_direction dir;
- 	struct scsi_data_buffer *sdb = &scp->sdb;
- 	u8 *fsp;
-+	int i;
-+
+ 	if (req->cmd_flags & REQ_RAHEAD)
+ 		dsmgmt |= NVME_RW_DSM_FREQ_PREFETCH;
 +	/*
-+	 * Even though reads are inherently atomic (in this driver), we expect
-+	 * the atomic flag only for writes.
++	 * Ensure that nothing has been sent which cannot be executed
++	 * atomically.
 +	 */
-+	if (!do_write && atomic)
-+		return -1;
++	if (req->cmd_flags & REQ_ATOMIC && !nvme_valid_atomic_write(req))
++		return BLK_STS_INVAL;
  
- 	if (do_write) {
- 		dir = DMA_TO_DEVICE;
-@@ -3406,21 +3675,26 @@ static int do_device_access(struct sdeb_store_info *sip, struct scsi_cmnd *scp,
- 	fsp = sip->storep;
- 
- 	block = do_div(lba, sdebug_store_sectors);
--	if (block + num > sdebug_store_sectors)
--		rest = block + num - sdebug_store_sectors;
- 
--	ret = sg_copy_buffer(sdb->table.sgl, sdb->table.nents,
-+	/* Only allow 1x atomic write or multiple non-atomic writes at any given time */
-+	sdeb_data_lock(sip, atomic);
-+	for (i = 0; i < num; i++) {
-+		/* We shouldn't need to lock for atomic writes, but do it anyway */
-+		sdeb_data_sector_lock(sip, do_write);
-+		ret = sg_copy_buffer(sdb->table.sgl, sdb->table.nents,
- 		   fsp + (block * sdebug_sector_size),
--		   (num - rest) * sdebug_sector_size, sg_skip, do_write);
--	if (ret != (num - rest) * sdebug_sector_size)
--		return ret;
--
--	if (rest) {
--		ret += sg_copy_buffer(sdb->table.sgl, sdb->table.nents,
--			    fsp, rest * sdebug_sector_size,
--			    sg_skip + ((num - rest) * sdebug_sector_size),
--			    do_write);
-+		   sdebug_sector_size, sg_skip, do_write);
-+		sdeb_data_sector_unlock(sip, do_write);
-+		if (ret != sdebug_sector_size) {
-+			ret += (i * sdebug_sector_size);
-+			break;
-+		}
-+		sg_skip += sdebug_sector_size;
-+		if (++block >= sdebug_store_sectors)
-+			block = 0;
+ 	cmnd->rw.opcode = op;
+ 	cmnd->rw.flags = 0;
+@@ -1921,6 +1951,23 @@ static void nvme_configure_metadata(struct nvme_ctrl *ctrl,
  	}
-+	ret = num * sdebug_sector_size;
-+	sdeb_data_unlock(sip, atomic);
- 
- 	return ret;
- }
-@@ -3596,70 +3870,6 @@ static int prot_verify_read(struct scsi_cmnd *scp, sector_t start_sec,
- 	return ret;
  }
  
--static inline void
--sdeb_read_lock(struct sdeb_store_info *sip)
--{
--	if (sdebug_no_rwlock) {
--		if (sip)
--			__acquire(&sip->macc_lck);
--		else
--			__acquire(&sdeb_fake_rw_lck);
--	} else {
--		if (sip)
--			read_lock(&sip->macc_lck);
--		else
--			read_lock(&sdeb_fake_rw_lck);
--	}
--}
--
--static inline void
--sdeb_read_unlock(struct sdeb_store_info *sip)
--{
--	if (sdebug_no_rwlock) {
--		if (sip)
--			__release(&sip->macc_lck);
--		else
--			__release(&sdeb_fake_rw_lck);
--	} else {
--		if (sip)
--			read_unlock(&sip->macc_lck);
--		else
--			read_unlock(&sdeb_fake_rw_lck);
--	}
--}
--
--static inline void
--sdeb_write_lock(struct sdeb_store_info *sip)
--{
--	if (sdebug_no_rwlock) {
--		if (sip)
--			__acquire(&sip->macc_lck);
--		else
--			__acquire(&sdeb_fake_rw_lck);
--	} else {
--		if (sip)
--			write_lock(&sip->macc_lck);
--		else
--			write_lock(&sdeb_fake_rw_lck);
--	}
--}
--
--static inline void
--sdeb_write_unlock(struct sdeb_store_info *sip)
--{
--	if (sdebug_no_rwlock) {
--		if (sip)
--			__release(&sip->macc_lck);
--		else
--			__release(&sdeb_fake_rw_lck);
--	} else {
--		if (sip)
--			write_unlock(&sip->macc_lck);
--		else
--			write_unlock(&sdeb_fake_rw_lck);
--	}
--}
--
- static int resp_read_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- {
- 	bool check_prot;
-@@ -3669,6 +3879,7 @@ static int resp_read_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 	u64 lba;
- 	struct sdeb_store_info *sip = devip2sip(devip, true);
- 	u8 *cmd = scp->cmnd;
-+	bool meta_data_locked = false;
- 
- 	switch (cmd[0]) {
- 	case READ_16:
-@@ -3727,6 +3938,10 @@ static int resp_read_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		atomic_set(&sdeb_inject_pending, 0);
- 	}
- 
-+	/*
-+	 * When checking device access params, for reads we only check data
-+	 * versus what is set at init time, so no need to lock.
-+	 */
- 	ret = check_device_access_params(scp, lba, num, false);
- 	if (ret)
- 		return ret;
-@@ -3746,29 +3961,33 @@ static int resp_read_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		return check_condition_result;
- 	}
- 
--	sdeb_read_lock(sip);
-+	if (sdebug_dev_is_zoned(devip) ||
-+	    (sdebug_dix && scsi_prot_sg_count(scp)))  {
-+		sdeb_meta_read_lock(sip);
-+		meta_data_locked = true;
-+	}
- 
- 	/* DIX + T10 DIF */
- 	if (unlikely(sdebug_dix && scsi_prot_sg_count(scp))) {
- 		switch (prot_verify_read(scp, lba, num, ei_lba)) {
- 		case 1: /* Guard tag error */
- 			if (cmd[1] >> 5 != 3) { /* RDPROTECT != 3 */
--				sdeb_read_unlock(sip);
-+				sdeb_meta_read_unlock(sip);
- 				mk_sense_buffer(scp, ABORTED_COMMAND, 0x10, 1);
- 				return check_condition_result;
- 			} else if (scp->prot_flags & SCSI_PROT_GUARD_CHECK) {
--				sdeb_read_unlock(sip);
-+				sdeb_meta_read_unlock(sip);
- 				mk_sense_buffer(scp, ILLEGAL_REQUEST, 0x10, 1);
- 				return illegal_condition_result;
- 			}
- 			break;
- 		case 3: /* Reference tag error */
- 			if (cmd[1] >> 5 != 3) { /* RDPROTECT != 3 */
--				sdeb_read_unlock(sip);
-+				sdeb_meta_read_unlock(sip);
- 				mk_sense_buffer(scp, ABORTED_COMMAND, 0x10, 3);
- 				return check_condition_result;
- 			} else if (scp->prot_flags & SCSI_PROT_REF_CHECK) {
--				sdeb_read_unlock(sip);
-+				sdeb_meta_read_unlock(sip);
- 				mk_sense_buffer(scp, ILLEGAL_REQUEST, 0x10, 3);
- 				return illegal_condition_result;
- 			}
-@@ -3776,8 +3995,9 @@ static int resp_read_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		}
- 	}
- 
--	ret = do_device_access(sip, scp, 0, lba, num, false, 0);
--	sdeb_read_unlock(sip);
-+	ret = do_device_access(sip, scp, 0, lba, num, 0, false, false);
-+	if (meta_data_locked)
-+		sdeb_meta_read_unlock(sip);
- 	if (unlikely(ret == -1))
- 		return DID_ERROR << 16;
- 
-@@ -3967,6 +4187,7 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 	u64 lba;
- 	struct sdeb_store_info *sip = devip2sip(devip, true);
- 	u8 *cmd = scp->cmnd;
-+	bool meta_data_locked = false;
- 
- 	switch (cmd[0]) {
- 	case WRITE_16:
-@@ -4025,10 +4246,17 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 				    "to DIF device\n");
- 	}
- 
--	sdeb_write_lock(sip);
-+	if (sdebug_dev_is_zoned(devip) ||
-+	    (sdebug_dix && scsi_prot_sg_count(scp)) ||
-+	    scsi_debug_lbp())  {
-+		sdeb_meta_write_lock(sip);
-+		meta_data_locked = true;
-+	}
 +
- 	ret = check_device_access_params(scp, lba, num, true);
- 	if (ret) {
--		sdeb_write_unlock(sip);
-+		if (meta_data_locked)
-+			sdeb_meta_write_unlock(sip);
- 		return ret;
- 	}
- 
-@@ -4037,22 +4265,22 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		switch (prot_verify_write(scp, lba, num, ei_lba)) {
- 		case 1: /* Guard tag error */
- 			if (scp->prot_flags & SCSI_PROT_GUARD_CHECK) {
--				sdeb_write_unlock(sip);
-+				sdeb_meta_write_unlock(sip);
- 				mk_sense_buffer(scp, ILLEGAL_REQUEST, 0x10, 1);
- 				return illegal_condition_result;
- 			} else if (scp->cmnd[1] >> 5 != 3) { /* WRPROTECT != 3 */
--				sdeb_write_unlock(sip);
-+				sdeb_meta_write_unlock(sip);
- 				mk_sense_buffer(scp, ABORTED_COMMAND, 0x10, 1);
- 				return check_condition_result;
- 			}
- 			break;
- 		case 3: /* Reference tag error */
- 			if (scp->prot_flags & SCSI_PROT_REF_CHECK) {
--				sdeb_write_unlock(sip);
-+				sdeb_meta_write_unlock(sip);
- 				mk_sense_buffer(scp, ILLEGAL_REQUEST, 0x10, 3);
- 				return illegal_condition_result;
- 			} else if (scp->cmnd[1] >> 5 != 3) { /* WRPROTECT != 3 */
--				sdeb_write_unlock(sip);
-+				sdeb_meta_write_unlock(sip);
- 				mk_sense_buffer(scp, ABORTED_COMMAND, 0x10, 3);
- 				return check_condition_result;
- 			}
-@@ -4060,13 +4288,16 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		}
- 	}
- 
--	ret = do_device_access(sip, scp, 0, lba, num, true, group);
-+	ret = do_device_access(sip, scp, 0, lba, num, group, true, false);
- 	if (unlikely(scsi_debug_lbp()))
- 		map_region(sip, lba, num);
-+
- 	/* If ZBC zone then bump its write pointer */
- 	if (sdebug_dev_is_zoned(devip))
- 		zbc_inc_wp(devip, lba, num);
--	sdeb_write_unlock(sip);
-+	if (meta_data_locked)
-+		sdeb_meta_write_unlock(sip);
-+
- 	if (unlikely(-1 == ret))
- 		return DID_ERROR << 16;
- 	else if (unlikely(sdebug_verbose &&
-@@ -4176,7 +4407,8 @@ static int resp_write_scat(struct scsi_cmnd *scp,
- 		goto err_out;
- 	}
- 
--	sdeb_write_lock(sip);
-+	/* Just keep it simple and always lock for now */
-+	sdeb_meta_write_lock(sip);
- 	sg_off = lbdof_blen;
- 	/* Spec says Buffer xfer Length field in number of LBs in dout */
- 	cum_lb = 0;
-@@ -4219,7 +4451,11 @@ static int resp_write_scat(struct scsi_cmnd *scp,
- 			}
- 		}
- 
--		ret = do_device_access(sip, scp, sg_off, lba, num, true, group);
-+		/*
-+		 * Write ranges atomically to keep as close to pre-atomic
-+		 * writes behaviour as possible.
-+		 */
-+		ret = do_device_access(sip, scp, sg_off, lba, num, group, true, true);
- 		/* If ZBC zone then bump its write pointer */
- 		if (sdebug_dev_is_zoned(devip))
- 			zbc_inc_wp(devip, lba, num);
-@@ -4258,7 +4494,7 @@ static int resp_write_scat(struct scsi_cmnd *scp,
- 	}
- 	ret = 0;
- err_out_unlock:
--	sdeb_write_unlock(sip);
-+	sdeb_meta_write_unlock(sip);
- err_out:
- 	kfree(lrdp);
- 	return ret;
-@@ -4277,14 +4513,16 @@ static int resp_write_same(struct scsi_cmnd *scp, u64 lba, u32 num,
- 						scp->device->hostdata, true);
- 	u8 *fs1p;
- 	u8 *fsp;
-+	bool meta_data_locked = false;
- 
--	sdeb_write_lock(sip);
-+	if (sdebug_dev_is_zoned(devip) || scsi_debug_lbp()) {
-+		sdeb_meta_write_lock(sip);
-+		meta_data_locked = true;
-+	}
- 
- 	ret = check_device_access_params(scp, lba, num, true);
--	if (ret) {
--		sdeb_write_unlock(sip);
--		return ret;
--	}
-+	if (ret)
-+		goto out;
- 
- 	if (unmap && scsi_debug_lbp()) {
- 		unmap_region(sip, lba, num);
-@@ -4295,6 +4533,7 @@ static int resp_write_same(struct scsi_cmnd *scp, u64 lba, u32 num,
- 	/* if ndob then zero 1 logical block, else fetch 1 logical block */
- 	fsp = sip->storep;
- 	fs1p = fsp + (block * lb_size);
-+	sdeb_data_write_lock(sip);
- 	if (ndob) {
- 		memset(fs1p, 0, lb_size);
- 		ret = 0;
-@@ -4302,8 +4541,8 @@ static int resp_write_same(struct scsi_cmnd *scp, u64 lba, u32 num,
- 		ret = fetch_to_dev_buffer(scp, fs1p, lb_size);
- 
- 	if (-1 == ret) {
--		sdeb_write_unlock(sip);
--		return DID_ERROR << 16;
-+		ret = DID_ERROR << 16;
-+		goto out;
- 	} else if (sdebug_verbose && !ndob && (ret < lb_size))
- 		sdev_printk(KERN_INFO, scp->device,
- 			    "%s: %s: lb size=%u, IO sent=%d bytes\n",
-@@ -4320,10 +4559,12 @@ static int resp_write_same(struct scsi_cmnd *scp, u64 lba, u32 num,
- 	/* If ZBC zone then bump its write pointer */
- 	if (sdebug_dev_is_zoned(devip))
- 		zbc_inc_wp(devip, lba, num);
-+	sdeb_data_write_unlock(sip);
-+	ret = 0;
- out:
--	sdeb_write_unlock(sip);
--
--	return 0;
-+	if (meta_data_locked)
-+		sdeb_meta_write_unlock(sip);
-+	return ret;
- }
- 
- static int resp_write_same_10(struct scsi_cmnd *scp,
-@@ -4466,25 +4707,30 @@ static int resp_comp_write(struct scsi_cmnd *scp,
- 		return check_condition_result;
- 	}
- 
--	sdeb_write_lock(sip);
--
- 	ret = do_dout_fetch(scp, dnum, arr);
- 	if (ret == -1) {
- 		retval = DID_ERROR << 16;
--		goto cleanup;
-+		goto cleanup_free;
- 	} else if (sdebug_verbose && (ret < (dnum * lb_size)))
- 		sdev_printk(KERN_INFO, scp->device, "%s: compare_write: cdb "
- 			    "indicated=%u, IO sent=%d bytes\n", my_name,
- 			    dnum * lb_size, ret);
-+
-+	sdeb_data_write_lock(sip);
-+	sdeb_meta_write_lock(sip);
- 	if (!comp_write_worker(sip, lba, num, arr, false)) {
- 		mk_sense_buffer(scp, MISCOMPARE, MISCOMPARE_VERIFY_ASC, 0);
- 		retval = check_condition_result;
--		goto cleanup;
-+		goto cleanup_unlock;
- 	}
-+
-+	/* Cover sip->map_storep (which map_region()) sets with data lock */
- 	if (scsi_debug_lbp())
- 		map_region(sip, lba, num);
--cleanup:
--	sdeb_write_unlock(sip);
-+cleanup_unlock:
-+	sdeb_meta_write_unlock(sip);
-+	sdeb_data_write_unlock(sip);
-+cleanup_free:
- 	kfree(arr);
- 	return retval;
- }
-@@ -4528,7 +4774,7 @@ static int resp_unmap(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 
- 	desc = (void *)&buf[8];
- 
--	sdeb_write_lock(sip);
-+	sdeb_meta_write_lock(sip);
- 
- 	for (i = 0 ; i < descriptors ; i++) {
- 		unsigned long long lba = get_unaligned_be64(&desc[i].lba);
-@@ -4544,7 +4790,7 @@ static int resp_unmap(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 	ret = 0;
- 
- out:
--	sdeb_write_unlock(sip);
-+	sdeb_meta_write_unlock(sip);
- 	kfree(buf);
- 
- 	return ret;
-@@ -4702,12 +4948,13 @@ static int resp_pre_fetch(struct scsi_cmnd *scp,
- 		rest = block + nblks - sdebug_store_sectors;
- 
- 	/* Try to bring the PRE-FETCH range into CPU's cache */
--	sdeb_read_lock(sip);
-+	sdeb_data_read_lock(sip);
- 	prefetch_range(fsp + (sdebug_sector_size * block),
- 		       (nblks - rest) * sdebug_sector_size);
- 	if (rest)
- 		prefetch_range(fsp, rest * sdebug_sector_size);
--	sdeb_read_unlock(sip);
-+
-+	sdeb_data_read_unlock(sip);
- fini:
- 	if (cmd[1] & 0x2)
- 		res = SDEG_RES_IMMED_MASK;
-@@ -4866,7 +5113,7 @@ static int resp_verify(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		return check_condition_result;
- 	}
- 	/* Not changing store, so only need read access */
--	sdeb_read_lock(sip);
-+	sdeb_data_read_lock(sip);
- 
- 	ret = do_dout_fetch(scp, a_num, arr);
- 	if (ret == -1) {
-@@ -4888,7 +5135,7 @@ static int resp_verify(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		goto cleanup;
- 	}
- cleanup:
--	sdeb_read_unlock(sip);
-+	sdeb_data_read_unlock(sip);
- 	kfree(arr);
- 	return ret;
- }
-@@ -4934,7 +5181,7 @@ static int resp_report_zones(struct scsi_cmnd *scp,
- 		return check_condition_result;
- 	}
- 
--	sdeb_read_lock(sip);
-+	sdeb_meta_read_lock(sip);
- 
- 	desc = arr + 64;
- 	for (lba = zs_lba; lba < sdebug_capacity;
-@@ -5032,11 +5279,70 @@ static int resp_report_zones(struct scsi_cmnd *scp,
- 	ret = fill_from_dev_buffer(scp, arr, min_t(u32, alloc_len, rep_len));
- 
- fini:
--	sdeb_read_unlock(sip);
-+	sdeb_meta_read_unlock(sip);
- 	kfree(arr);
- 	return ret;
- }
- 
-+static int resp_atomic_write(struct scsi_cmnd *scp,
-+			     struct sdebug_dev_info *devip)
++static void nvme_update_atomic_write_disk_info(struct nvme_ns *ns,
++			struct nvme_id_ns *id, struct queue_limits *lim,
++			u32 bs, u32 atomic_bs)
 +{
-+	struct sdeb_store_info *sip;
-+	u8 *cmd = scp->cmnd;
-+	u16 boundary, len;
-+	u64 lba, lba_tmp;
-+	int ret;
++	unsigned int boundary = 0;
 +
-+	if (!scsi_debug_atomic_write()) {
-+		mk_sense_invalid_opcode(scp);
-+		return check_condition_result;
++	if (id->nsfeat & NVME_NS_FEAT_ATOMICS && id->nawupf) {
++		if (le16_to_cpu(id->nabspf))
++			boundary = (le16_to_cpu(id->nabspf) + 1) * bs;
 +	}
-+
-+	sip = devip2sip(devip, true);
-+
-+	lba = get_unaligned_be64(cmd + 2);
-+	boundary = get_unaligned_be16(cmd + 10);
-+	len = get_unaligned_be16(cmd + 12);
-+
-+	lba_tmp = lba;
-+	if (sdebug_atomic_wr_align &&
-+	    do_div(lba_tmp, sdebug_atomic_wr_align)) {
-+		/* Does not meet alignment requirement */
-+		mk_sense_buffer(scp, ILLEGAL_REQUEST, INVALID_FIELD_IN_CDB, 0);
-+		return check_condition_result;
-+	}
-+
-+	if (sdebug_atomic_wr_gran && len % sdebug_atomic_wr_gran) {
-+		/* Does not meet alignment requirement */
-+		mk_sense_buffer(scp, ILLEGAL_REQUEST, INVALID_FIELD_IN_CDB, 0);
-+		return check_condition_result;
-+	}
-+
-+	if (boundary > 0) {
-+		if (boundary > sdebug_atomic_wr_max_bndry) {
-+			mk_sense_invalid_fld(scp, SDEB_IN_CDB, 12, -1);
-+			return check_condition_result;
-+		}
-+
-+		if (len > sdebug_atomic_wr_max_length_bndry) {
-+			mk_sense_invalid_fld(scp, SDEB_IN_CDB, 12, -1);
-+			return check_condition_result;
-+		}
-+	} else {
-+		if (len > sdebug_atomic_wr_max_length) {
-+			mk_sense_invalid_fld(scp, SDEB_IN_CDB, 12, -1);
-+			return check_condition_result;
-+		}
-+	}
-+
-+	ret = do_device_access(sip, scp, 0, lba, len, 0, true, true);
-+	if (unlikely(ret == -1))
-+		return DID_ERROR << 16;
-+	if (unlikely(ret != len * sdebug_sector_size))
-+		return DID_ERROR << 16;
-+	return 0;
++	lim->atomic_write_hw_max = atomic_bs;
++	lim->atomic_write_hw_boundary = boundary;
++	lim->atomic_write_hw_unit_min = bs;
++	lim->atomic_write_hw_unit_max = rounddown_pow_of_two(atomic_bs);
 +}
 +
- /* Logic transplanted from tcmu-runner, file_zbc.c */
- static void zbc_open_all(struct sdebug_dev_info *devip)
+ static u32 nvme_max_drv_segments(struct nvme_ctrl *ctrl)
  {
-@@ -5063,8 +5369,7 @@ static int resp_open_zone(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		mk_sense_invalid_opcode(scp);
- 		return check_condition_result;
- 	}
--
--	sdeb_write_lock(sip);
-+	sdeb_meta_write_lock(sip);
- 
- 	if (all) {
- 		/* Check if all closed zones can be open */
-@@ -5113,7 +5418,7 @@ static int resp_open_zone(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 
- 	zbc_open_zone(devip, zsp, true);
- fini:
--	sdeb_write_unlock(sip);
-+	sdeb_meta_write_unlock(sip);
- 	return res;
- }
- 
-@@ -5140,7 +5445,7 @@ static int resp_close_zone(struct scsi_cmnd *scp,
- 		return check_condition_result;
- 	}
- 
--	sdeb_write_lock(sip);
-+	sdeb_meta_write_lock(sip);
- 
- 	if (all) {
- 		zbc_close_all(devip);
-@@ -5169,7 +5474,7 @@ static int resp_close_zone(struct scsi_cmnd *scp,
- 
- 	zbc_close_zone(devip, zsp);
- fini:
--	sdeb_write_unlock(sip);
-+	sdeb_meta_write_unlock(sip);
- 	return res;
- }
- 
-@@ -5212,7 +5517,7 @@ static int resp_finish_zone(struct scsi_cmnd *scp,
- 		return check_condition_result;
- 	}
- 
--	sdeb_write_lock(sip);
-+	sdeb_meta_write_lock(sip);
- 
- 	if (all) {
- 		zbc_finish_all(devip);
-@@ -5241,7 +5546,7 @@ static int resp_finish_zone(struct scsi_cmnd *scp,
- 
- 	zbc_finish_zone(devip, zsp, true);
- fini:
--	sdeb_write_unlock(sip);
-+	sdeb_meta_write_unlock(sip);
- 	return res;
- }
- 
-@@ -5292,7 +5597,7 @@ static int resp_rwp_zone(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		return check_condition_result;
- 	}
- 
--	sdeb_write_lock(sip);
-+	sdeb_meta_write_lock(sip);
- 
- 	if (all) {
- 		zbc_rwp_all(devip);
-@@ -5320,7 +5625,7 @@ static int resp_rwp_zone(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 
- 	zbc_rwp_zone(devip, zsp);
- fini:
--	sdeb_write_unlock(sip);
-+	sdeb_meta_write_unlock(sip);
- 	return res;
- }
- 
-@@ -6284,6 +6589,7 @@ module_param_named(lbprz, sdebug_lbprz, int, S_IRUGO);
- module_param_named(lbpu, sdebug_lbpu, int, S_IRUGO);
- module_param_named(lbpws, sdebug_lbpws, int, S_IRUGO);
- module_param_named(lbpws10, sdebug_lbpws10, int, S_IRUGO);
-+module_param_named(atomic_wr, sdebug_atomic_wr, int, S_IRUGO);
- module_param_named(lowest_aligned, sdebug_lowest_aligned, int, S_IRUGO);
- module_param_named(lun_format, sdebug_lun_am_i, int, S_IRUGO | S_IWUSR);
- module_param_named(max_luns, sdebug_max_luns, int, S_IRUGO | S_IWUSR);
-@@ -6318,6 +6624,11 @@ module_param_named(unmap_alignment, sdebug_unmap_alignment, int, S_IRUGO);
- module_param_named(unmap_granularity, sdebug_unmap_granularity, int, S_IRUGO);
- module_param_named(unmap_max_blocks, sdebug_unmap_max_blocks, int, S_IRUGO);
- module_param_named(unmap_max_desc, sdebug_unmap_max_desc, int, S_IRUGO);
-+module_param_named(atomic_wr_max_length, sdebug_atomic_wr_max_length, int, S_IRUGO);
-+module_param_named(atomic_wr_align, sdebug_atomic_wr_align, int, S_IRUGO);
-+module_param_named(atomic_wr_gran, sdebug_atomic_wr_gran, int, S_IRUGO);
-+module_param_named(atomic_wr_max_length_bndry, sdebug_atomic_wr_max_length_bndry, int, S_IRUGO);
-+module_param_named(atomic_wr_max_bndry, sdebug_atomic_wr_max_bndry, int, S_IRUGO);
- module_param_named(uuid_ctl, sdebug_uuid_ctl, int, S_IRUGO);
- module_param_named(virtual_gb, sdebug_virtual_gb, int, S_IRUGO | S_IWUSR);
- module_param_named(vpd_use_hostno, sdebug_vpd_use_hostno, int,
-@@ -6361,6 +6672,7 @@ MODULE_PARM_DESC(lbprz,
- MODULE_PARM_DESC(lbpu, "enable LBP, support UNMAP command (def=0)");
- MODULE_PARM_DESC(lbpws, "enable LBP, support WRITE SAME(16) with UNMAP bit (def=0)");
- MODULE_PARM_DESC(lbpws10, "enable LBP, support WRITE SAME(10) with UNMAP bit (def=0)");
-+MODULE_PARM_DESC(atomic_write, "enable ATOMIC WRITE support, support WRITE ATOMIC(16) (def=0)");
- MODULE_PARM_DESC(lowest_aligned, "lowest aligned lba (def=0)");
- MODULE_PARM_DESC(lun_format, "LUN format: 0->peripheral (def); 1 --> flat address method");
- MODULE_PARM_DESC(max_luns, "number of LUNs per target to simulate(def=1)");
-@@ -6392,6 +6704,11 @@ MODULE_PARM_DESC(unmap_alignment, "lowest aligned thin provisioning lba (def=0)"
- MODULE_PARM_DESC(unmap_granularity, "thin provisioning granularity in blocks (def=1)");
- MODULE_PARM_DESC(unmap_max_blocks, "max # of blocks can be unmapped in one cmd (def=0xffffffff)");
- MODULE_PARM_DESC(unmap_max_desc, "max # of ranges that can be unmapped in one cmd (def=256)");
-+MODULE_PARM_DESC(atomic_wr_max_length, "max # of blocks can be atomically written in one cmd (def=8192)");
-+MODULE_PARM_DESC(atomic_wr_align, "minimum alignment of atomic write in blocks (def=2)");
-+MODULE_PARM_DESC(atomic_wr_gran, "minimum granularity of atomic write in blocks (def=2)");
-+MODULE_PARM_DESC(atomic_wr_max_length_bndry, "max # of blocks can be atomically written in one cmd with boundary set (def=8192)");
-+MODULE_PARM_DESC(atomic_wr_max_bndry, "max # boundaries per atomic write (def=128)");
- MODULE_PARM_DESC(uuid_ctl,
- 		 "1->use uuid for lu name, 0->don't, 2->all use same (def=0)");
- MODULE_PARM_DESC(virtual_gb, "virtual gigabyte (GiB) size (def=0 -> use dev_size_mb)");
-@@ -7563,6 +7880,7 @@ static int __init scsi_debug_init(void)
- 			return -EINVAL;
- 		}
- 	}
+ 	return ctrl->max_hw_sectors / (NVME_CTRL_PAGE_SIZE >> SECTOR_SHIFT) + 1;
+@@ -1967,6 +2014,8 @@ static bool nvme_update_disk_info(struct nvme_ns *ns, struct nvme_id_ns *id,
+ 			atomic_bs = (1 + le16_to_cpu(id->nawupf)) * bs;
+ 		else
+ 			atomic_bs = (1 + ns->ctrl->subsys->awupf) * bs;
 +
- 	xa_init_flags(per_store_ap, XA_FLAGS_ALLOC | XA_FLAGS_LOCK_IRQ);
- 	if (want_store) {
- 		idx = sdebug_add_store();
-@@ -7770,7 +8088,9 @@ static int sdebug_add_store(void)
- 			map_region(sip, 0, 2);
++		nvme_update_atomic_write_disk_info(ns, id, lim, bs, atomic_bs);
  	}
  
--	rwlock_init(&sip->macc_lck);
-+	rwlock_init(&sip->macc_data_lck);
-+	rwlock_init(&sip->macc_meta_lck);
-+	rwlock_init(&sip->macc_sector_lck);
- 	return (int)n_idx;
- err:
- 	sdebug_erase_store((int)n_idx, sip);
+ 	if (id->nsfeat & NVME_NS_FEAT_IO_OPT) {
 -- 
 2.31.1
 

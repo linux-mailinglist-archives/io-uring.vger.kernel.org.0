@@ -1,230 +1,143 @@
-Return-Path: <io-uring+bounces-2072-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2073-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B888D766F
-	for <lists+io-uring@lfdr.de>; Sun,  2 Jun 2024 16:49:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534478D7942
+	for <lists+io-uring@lfdr.de>; Mon,  3 Jun 2024 02:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2709B2826DB
-	for <lists+io-uring@lfdr.de>; Sun,  2 Jun 2024 14:49:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80A69B20FAF
+	for <lists+io-uring@lfdr.de>; Mon,  3 Jun 2024 00:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A0B219E7;
-	Sun,  2 Jun 2024 14:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F35619E;
+	Mon,  3 Jun 2024 00:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="H+ixJDwD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bv2dz5tJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3247543AA3
-	for <io-uring@vger.kernel.org>; Sun,  2 Jun 2024 14:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA4717C
+	for <io-uring@vger.kernel.org>; Mon,  3 Jun 2024 00:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717339763; cv=none; b=dKEcm11Ct69bqFNtbMV/Iqbln5jnYF1L/1KVJZ5thceHnyvGpnf7g4vjbhmvpZTw07roOiPP3D7I1pMpcAqzSB7Nz3bcI1QEJ7J45B7DyashFrWhmoK36TXSsrI4pHQ9BhLyQWOZB64OaKaO3JmxeM04zKXNZKZ1mLDZCmkk1mE=
+	t=1717373130; cv=none; b=XYx4RI7UicY+4kR/5ycfIyD/0hmVzunyGVgq3RnzQwCA2Wek7KOr2YH9/C8M7Rs/DKHT8eerd9aEZzQRg/ECNSWZShwZr9oYgyBbsR7YGa10oxMCLOnfD+H3YPrGknbMhCp+4sVHtxisEQY0e0zTBYiVtLfIiD89ZJo9SXquLR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717339763; c=relaxed/simple;
-	bh=X1ysY1fl8w4n8UIyGUfHP3/8dLqgH/REqLKL8d2iEBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YWM5BtjfxPxnJ4rKoPLCxJtmOeUE7rcsMfHuhf1r145swCnhoZ9NUH2FkSpDbc/52/7+BcClMMFB5I7d+cmMUjHoeOiuP/13x4l09QXKl+u/qa30Vo/LmdmsmCdDNotNU8jhQzDlvWkdu+lNA70bTLqcc4e8BqfGtT3XjLitITk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=H+ixJDwD; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5b3364995b4so586778eaf.0
-        for <io-uring@vger.kernel.org>; Sun, 02 Jun 2024 07:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717339758; x=1717944558; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Yr2qvHkl2o9C/hV5YcATVDSeA3UBC+4aN42jXOFySR4=;
-        b=H+ixJDwDQbcaxcaGAVNH+tUjfZmNjmpCe/C8vD+g2LWGPAARrsrTGgnUiOuoEMLthF
-         pUaFIaVBdhnESOY58W7NmgHdfapb475kI6h99xAXDGDT7I+/lVTV2MpXPHl5kYMpuQFC
-         G6FHiyj/DZS8brtMgSDDfAlK8qan57j75ucrooQmkjyxx2i4U1oi4VSaWv+8c1rtSwmS
-         zeRDQp0oQwnELWgBhjlba693HhZZbv6Ys4UsFt6PAOUf33JOpcjiDtQXymwlWyUNDYl6
-         0oN8/s6r7aZKJDc720UwAoOG1E6ND9Unh6+L3HjOJF+fsm53SfWsKFmF5azu8SoC12ir
-         3SZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717339758; x=1717944558;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yr2qvHkl2o9C/hV5YcATVDSeA3UBC+4aN42jXOFySR4=;
-        b=WUc9FrKZGVWhFY6oU769vPMJkxjczsF20OZhsodlSrzAp53i60x/Mmge99CxW8efYH
-         M4j4BIRXD1xb9l291yowlGncjlE31uK/uaSKXBm/yNMBSsLhz4D/TjJRGmfM/faIZ2uQ
-         qA9Tzl+sDzFgg+vAVinm+kQBpEjgAJeOOUpoGGldM6lNkuzdwSbTeffmFnWFedCtuR1O
-         YodTslJn5fd7KnTBTJaZRfbUFtvA7yVZRCIS3MPFPENZZuX6gdM2NcrgPoZuUzaCAwYr
-         cHYIEFHHA8t89w3p+0E3tHfwGBxu6mXNZqqBycDA5Utsns6hWg1RvQdIINhrHBfbiHbY
-         JNJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgGK6QfXkOHoBl+WwncoCWl/RAjeSZEDGjQm5gnBKVcocR+wptoHe65mjjIhpKgkjo1V1/V8vM+nlqXqSXwJoUU8MOK3vrhFo=
-X-Gm-Message-State: AOJu0YyCE869bboY7g+j3wbcYWj1nbkU8Ea6oLY2l2FulRHh1K5WXg/T
-	wT+INq7yxFIu6C8qow+wbzoDF/fcoq9zTmzi/3zwwOpSPgBE3Y8VGkqPRafcL0K/nHAuIXFqV5c
-	L
-X-Google-Smtp-Source: AGHT+IHEEXfAqWoSqXAdAvad/TfRqy26ImxjVlmyCodZKLobq0TxFXXUsw0bw+GTF4KIacuX5d33Ag==
-X-Received: by 2002:a05:6358:5284:b0:199:2ca6:a10f with SMTP id e5c5f4694b2df-19b48d50182mr774878855d.1.1717339757601;
-        Sun, 02 Jun 2024 07:49:17 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6cb90510a45sm753800a12.29.2024.06.02.07.49.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Jun 2024 07:49:16 -0700 (PDT)
-Message-ID: <70ac49de-f753-486f-b68e-60f08c652195@kernel.dk>
-Date: Sun, 2 Jun 2024 08:49:15 -0600
+	s=arc-20240116; t=1717373130; c=relaxed/simple;
+	bh=6r7z1Yttg9lTfJLTYa91j1L8sLxPnz6zalqk5ZRVS3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HGJhrWoMGAOC7bAH2TotSJlTnUlILO1P+l2YMGWOwPW5W9IsgYs4HJcdYVQ+H1D5j8F/tpRhMvX+2JuOKQsdw91fBLItwO7Ppr8vPpRkmIgpQYkiw0O2r3f7yJSqNe3XmilPT/+yxhpnYLCPw5JztfFPLUoQfYHCdQ756hjm7Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bv2dz5tJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717373127;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FQHZIgaB+fIyyxbrWLwLAjk5CP7G3CWBw1Ys6rmC1iM=;
+	b=Bv2dz5tJLuFuB4iDT3C6EYQ819jBUfF/6L30LqZjtAyThwpMNNpp1RnMhmK0MuybMGsdZS
+	F2ACF+S+fJzIiP+ZJvpdLS4UGAeMuuJKG6brqDL68ocHOTQMyuggWwiZf/A77tcxmXKFbN
+	+qpD2WHpOj7aKZqJDAyoykOvoscFpzU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-688-95tzrdCAMRCyHOP1qkNXsg-1; Sun, 02 Jun 2024 20:05:24 -0400
+X-MC-Unique: 95tzrdCAMRCyHOP1qkNXsg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DD03D85A58C;
+	Mon,  3 Jun 2024 00:05:23 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.18])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 92D841054824;
+	Mon,  3 Jun 2024 00:05:20 +0000 (UTC)
+Date: Mon, 3 Jun 2024 08:05:16 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+	Kevin Wolf <kwolf@redhat.com>, Hollin Liu <hollinisme@gmail.com>
+Subject: Re: [PATCH V3 0/9] io_uring: support sqe group and provide group kbuf
+Message-ID: <Zl0IvMTuFfDOu3Gj@fedora>
+References: <20240511001214.173711-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: madvise/fadvise 32-bit length
-To: Stefan <source@s.muenzel.net>, io-uring@vger.kernel.org
-References: <bc92a2fa-4400-4c3a-8766-c2e346113ea7@s.muenzel.net>
- <db4d32d6-cc71-4903-92cf-b1867b8c7d12@kernel.dk>
- <2d4d3434-401c-42c2-b450-40dec4689797@kernel.dk>
- <c9059b69-96d0-45e6-8d05-e44298d7548e@s.muenzel.net>
- <d6e2f493-87ca-4203-8d23-2ced10d47d02@kernel.dk>
- <8b08398d-a66d-42ad-a776-78b52d5231c4@s.muenzel.net>
- <c6c149ac-ce0e-4c21-b235-03b5d8250d86@kernel.dk>
- <b7fd035e-6ec2-4482-93e9-acb7436ca07e@s.muenzel.net>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <b7fd035e-6ec2-4482-93e9-acb7436ca07e@s.muenzel.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240511001214.173711-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-On 6/2/24 2:58 AM, Stefan wrote:
-> On 1/6/2024 20:33, Jens Axboe wrote:
->> On 6/1/24 9:51 AM, Stefan wrote:
->>> On 1/6/2024 17:35, Jens Axboe wrote:
->>>> On 6/1/24 9:22 AM, Stefan wrote:
->>>>> On 1/6/2024 17:05, Jens Axboe wrote:
->>>>>> On 6/1/24 8:19 AM, Jens Axboe wrote:
->>>>>>> On 6/1/24 3:43 AM, Stefan wrote:
->>>>>>>> io_uring uses the __u32 len field in order to pass the length to
->>>>>>>> madvise and fadvise, but these calls use an off_t, which is 64bit on
->>>>>>>> 64bit platforms.
->>>>>>>>
->>>>>>>> When using liburing, the length is silently truncated to 32bits (so
->>>>>>>> 8GB length would become zero, which has a different meaning of "until
->>>>>>>> the end of the file" for fadvise).
->>>>>>>>
->>>>>>>> If my understanding is correct, we could fix this by introducing new
->>>>>>>> operations MADVISE64 and FADVISE64, which use the addr3 field instead
->>>>>>>> of the length field for length.
->>>>>>>
->>>>>>> We probably just want to introduce a flag and ensure that older stable
->>>>>>> kernels check it, and then use a 64-bit field for it when the flag is
->>>>>>> set.
->>>>>>
->>>>>> I think this should do it on the kernel side, as we already check these
->>>>>> fields and return -EINVAL as needed. Should also be trivial to backport.
->>>>>> Totally untested... Might want a FEAT flag for this, or something where
->>>>>> it's detectable, to make the liburing change straight forward.
->>>>>>
->>>>>>
->>>>>> diff --git a/io_uring/advise.c b/io_uring/advise.c
->>>>>> index 7085804c513c..cb7b881665e5 100644
->>>>>> --- a/io_uring/advise.c
->>>>>> +++ b/io_uring/advise.c
->>>>>> @@ -17,14 +17,14 @@
->>>>>>     struct io_fadvise {
->>>>>>         struct file            *file;
->>>>>>         u64                offset;
->>>>>> -    u32                len;
->>>>>> +    u64                len;
->>>>>>         u32                advice;
->>>>>>     };
->>>>>>       struct io_madvise {
->>>>>>         struct file            *file;
->>>>>>         u64                addr;
->>>>>> -    u32                len;
->>>>>> +    u64                len;
->>>>>>         u32                advice;
->>>>>>     };
->>>>>>     @@ -33,11 +33,13 @@ int io_madvise_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>>>>     #if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_MMU)
->>>>>>         struct io_madvise *ma = io_kiocb_to_cmd(req, struct io_madvise);
->>>>>>     -    if (sqe->buf_index || sqe->off || sqe->splice_fd_in)
->>>>>> +    if (sqe->buf_index || sqe->splice_fd_in)
->>>>>>             return -EINVAL;
->>>>>>           ma->addr = READ_ONCE(sqe->addr);
->>>>>> -    ma->len = READ_ONCE(sqe->len);
->>>>>> +    ma->len = READ_ONCE(sqe->off);
->>>>>> +    if (!ma->len)
->>>>>> +        ma->len = READ_ONCE(sqe->len);
->>>>>>         ma->advice = READ_ONCE(sqe->fadvise_advice);
->>>>>>         req->flags |= REQ_F_FORCE_ASYNC;
->>>>>>         return 0;
->>>>>> @@ -78,11 +80,13 @@ int io_fadvise_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>>>>     {
->>>>>>         struct io_fadvise *fa = io_kiocb_to_cmd(req, struct io_fadvise);
->>>>>>     -    if (sqe->buf_index || sqe->addr || sqe->splice_fd_in)
->>>>>> +    if (sqe->buf_index || sqe->splice_fd_in)
->>>>>>             return -EINVAL;
->>>>>>           fa->offset = READ_ONCE(sqe->off);
->>>>>> -    fa->len = READ_ONCE(sqe->len);
->>>>>> +    fa->len = READ_ONCE(sqe->addr);
->>>>>> +    if (!fa->len)
->>>>>> +        fa->len = READ_ONCE(sqe->len);
->>>>>>         fa->advice = READ_ONCE(sqe->fadvise_advice);
->>>>>>         if (io_fadvise_force_async(fa))
->>>>>>             req->flags |= REQ_F_FORCE_ASYNC;
->>>>>>
->>>>>
->>>>>
->>>>> If we want to have the length in the same field in both *ADVISE
->>>>> operations, we can put a flag in splice_fd_in/optlen.
->>>>
->>>> I don't think that part matters that much.
->>>>
->>>>> Maybe the explicit flag is a bit clearer for users of the API
->>>>> compared to the implicit flag when setting sqe->len to zero?
->>>>
->>>> We could go either way. The unused fields returning -EINVAL if set right
->>>> now can serve as the flag field - if you have it set, then that is your
->>>> length. If not, then the old style is the length. That's the approach I
->>>> took, rather than add an explicit flag to it. Existing users that would
->>>> set the 64-bit length fields would get -EINVAL already. And since the
->>>> normal flags field is already used for advice flags, I'd prefer just
->>>> using the existing 64-bit zero fields for it rather than add a flag in
->>>> an odd location. Would also make for an easier backport to stable.
->>>>
->>>> But don't feel that strongly about that part.
->>>>
->>>> Attached kernel patch with FEAT added, and liburing patch with 64
->>>> versions added.
->>>>
->>>
->>> Sounds good!
->>> Do we want to do anything about the current (32-bit) functions in
->>> liburing? They silently truncate the user's values, so either marking
->>> them deprecated or changing the type of length in the arguments to a
->>> __u32 could help.
->>
->> I like changing it to an __u32, and then we'll add a note to the man
->> page for them as well (with references to the 64-bit variants).
->>
->> I still need to write a test and actually test the patches, but I'll get
->> to that Monday. If you want to write a test case that checks the 64-bit
->> range, then please do!
->>
+On Sat, May 11, 2024 at 08:12:03AM +0800, Ming Lei wrote:
+> Hello,
 > 
-> Maybe something like the following for madvise?
-> Create an 8GB file initialized with 0xaa, punch a (8GB - page_size)
-> hole using MADV_REMOVE, and check the contents. It requires support
-> for FALLOC_FL_PUNCH_HOLE in the filesystem.
+> The 1st 4 patches are cleanup, and prepare for adding sqe group.
+> 
+> The 5th patch supports generic sqe group which is like link chain, but
+> allows each sqe in group to be issued in parallel and the group shares
+> same IO_LINK & IO_DRAIN boundary, so N:M dependency can be supported with
+> sqe group & io link together. sqe group changes nothing on
+> IOSQE_IO_LINK.
+> 
+> The 6th patch supports one variant of sqe group: allow members to depend
+> on group leader, so that kernel resource lifetime can be aligned with
+> group leader or group, then any kernel resource can be shared in this
+> sqe group, and can be used in generic device zero copy.
+> 
+> The 7th & 8th patches supports providing sqe group buffer via the sqe
+> group variant.
+> 
+> The 9th patch supports ublk zero copy based on io_uring providing sqe
+> group buffer.
+> 
+> Tests:
+> 
+> 1) pass liburing test
+> - make runtests
+> 
+> 2) write/pass two sqe group test cases:
+> 
+> https://github.com/axboe/liburing/compare/master...ming1:liburing:sqe_group_v2
+> 
+> - covers related sqe flags combination and linking groups, both nop and
+> one multi-destination file copy.
+> 
+> - cover failure handling test: fail leader IO or member IO in both single
+>   group and linked groups, which is done in each sqe flags combination
+>   test
+> 
+> 3) ublksrv zero copy:
+> 
+> ublksrv userspace implements zero copy by sqe group & provide group
+> kbuf:
+> 
+> 	git clone https://github.com/ublk-org/ublksrv.git -b group-provide-buf_v2
+> 	make test T=loop/009:nbd/061:nbd/062	#ublk zc tests
+> 
+> When running 64KB block size test on ublk-loop('ublk add -t loop --buffered_io -f $backing'),
+> it is observed that perf is doubled.
+> 
+> Any comments are welcome!
+> 
+> V3:
+> 	- add IORING_FEAT_SQE_GROUP
+> 	- simplify group completion, and minimize change on io_req_complete_defer()
+> 	- simplify & cleanup io_queue_group_members()
+> 	- fix many failure handling issues
+> 	- cover failure handling code in added liburing tests
+> 	- remove RFC
 
-I think that looks very reasonable, and it's better than the DONTNEED
-and timings, it was always a pretty shitty test. We just need to ensure
-that we return T_EXIT_SKIP if the fs it's being run on doesn't support
-punching holes.
+Hello Jens and Pavel,
 
-FWIW, I did put the liburing changes in an 'advise' branch, so you could
-generate a patch against that. Once we're happy with it, it can get
-pulled into master.
+V3 should address all your comments, would you mind to take a look at
+this version?
 
--- 
-Jens Axboe
+Thanks,
+Ming
 
 

@@ -1,150 +1,165 @@
-Return-Path: <io-uring+bounces-2082-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2083-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6349A8D8AAD
-	for <lists+io-uring@lfdr.de>; Mon,  3 Jun 2024 22:01:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90B18FA6C1
+	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 02:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5882810F1
-	for <lists+io-uring@lfdr.de>; Mon,  3 Jun 2024 20:01:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FB56285A63
+	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 00:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A930B3F9EC;
-	Mon,  3 Jun 2024 20:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93177182;
+	Tue,  4 Jun 2024 00:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="svY0nSEa"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NO+XPkv2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zKe9g8kc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NO+XPkv2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zKe9g8kc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B7246A4
-	for <io-uring@vger.kernel.org>; Mon,  3 Jun 2024 20:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C6D20E3
+	for <io-uring@vger.kernel.org>; Tue,  4 Jun 2024 00:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717444871; cv=none; b=G7DHEQ5+sQx8b2dxcJJZfACt1Pxxe822V2iBT8fLaPXn8Aue5XrfSiI1oeOVqpxH7QR28J12wyoCnA/8f1r/7tWZWVzInNfcRnlc2760VXsips3EwYuSqowk2ipVwwDwNjGr5Exij2UAnVd/auk/BrukFeJZINecuueBzCcmqIE=
+	t=1717459470; cv=none; b=Co86l4gQ1Q2/7U0dY4B2gywDZwQ/NkUp+RIB2ZcToWvFWa/xZz9Yhhisaa+PqD89lhrIOe8LaHQI38TJG2CG0pq4WOVgk4OGR2YeNOe4ykdzWALgN1OTItIdsCNrwIK3Uqw1PVs548VIWUEIkUVeaUH+ZsuQggF6nlImRe6UIEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717444871; c=relaxed/simple;
-	bh=SnzdjsNmn1/HjJ+xsXFSLtJPQTa078gCsoklUNrfFqw=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=D0V349ZuGdi/uX0/vJlnEreKFmLapoUNYfANtScFD3oIQvl3wmQaCqYa2PwBM8/wh5ACC0fqn+LcT7KnnBdgg/ymIcwSknyufG6GEy8D8Lowa573GcPceFoh5hyxRa4tfRff+wwLwqv9OkBsbgSgV3HNXgVx19YDY6u8Hru/jtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=svY0nSEa; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6f8efa3140dso151392a34.3
-        for <io-uring@vger.kernel.org>; Mon, 03 Jun 2024 13:01:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717444863; x=1718049663; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XPbPUlLWRVZkHsMcBI6EenjE9qpLowAJxWeE6lDTLA4=;
-        b=svY0nSEa3fGE5cfQGcPd9S+PC8Ct7sT4rcq13iwCHSwfrVxA1ZTrEmqeL1u/xyUN7p
-         t0x8FGdGlQnCiFm5FBfqAa2skvi9F4bDn0Pc4qPqw1TFeXgVO+fzfjI1RMaJ66X7zPih
-         IOcgl3IqgNKcGrZxcjv7qmp5zMWaqbH5lx0nWcSkuAQ5R5JP0NlznG3gCKNJJBddKKOJ
-         OOg1U52+PHph+OWonbj1PR0SooALQaMgUJFGVPWw+zPdjS3ow8gWj3+I03z9fS25b6BD
-         kSFL+lSlKCYS9coeCWrWQa38u4JHEs4WRL4Yo4A/qBgmDWTz070HN+JasRlkG+e6XqGI
-         81xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717444863; x=1718049663;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XPbPUlLWRVZkHsMcBI6EenjE9qpLowAJxWeE6lDTLA4=;
-        b=gb2TwLAeIgYLcD3SepaOw1QMmV6iT01bvuvzQoD+aQdRqyWNWKe5YdyqdFtNPBOYme
-         Vi1rot7bhUJQRjAVCPf7YJESEYIovfpdcLtwPqZbOiYhPtytsU3w62dVDCRCt/ICtQn9
-         e2rRV6lgYWdWHUoA7ekt8AeTX8CGJ5Z1HRtsoB1G6onUz8rE6Fmz0nUhK8ogfvD85rrQ
-         eW/pFj3kvNT2eqHOfEkcK5WVS4x10VOCh8skLGCVOiaOofzbJ5DvTFZFlhCSeKey9znp
-         zjd6MDrEnY3MQrpO/E4HLe6uPLeZNPLwoSzSIe19lpuY5FSNJKEe5ybT2iAzjUrGC78h
-         zMDQ==
-X-Gm-Message-State: AOJu0Ywnz7EvXvzBTmfm2JUkQ8dYhjYuYkhK+WGLnYy9EZ0xovkpRXr6
-	dcRktmpAILsibP9aHcjAVq+EebMn3jvqxoOpo59u6uyLZlhbxDPXGJmGXhCn50cVzSJocKWy4qF
-	x
-X-Google-Smtp-Source: AGHT+IEuwT8RvaCc9CZIFb9/8pA477tIWhRQn2uHcn/6z5AlCPIccwnxT8p25PX3srfNDLSOCKj/EQ==
-X-Received: by 2002:a9d:3e4c:0:b0:6f0:e4d4:b57d with SMTP id 46e09a7af769-6f93815a1camr344443a34.1.1717444862566;
-        Mon, 03 Jun 2024 13:01:02 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f9105a805bsm1573858a34.65.2024.06.03.13.01.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 13:01:02 -0700 (PDT)
-Message-ID: <f8e7d8b2-82d0-438e-886e-2d81bc68924c@kernel.dk>
-Date: Mon, 3 Jun 2024 14:01:01 -0600
+	s=arc-20240116; t=1717459470; c=relaxed/simple;
+	bh=PUHhAPdHZnVCAisyRA5rjs4GHhqfTk9lveNiXXLxuLM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l5561jmwBQXb21iPFxTuLL7kcYSvVVu1n9P2i3E8MmTu83ZklWhVliqiC5T0Y0hSyQDwyvNoZ6m0qtD5XFKkm6PnfkknkP3gMBSOQ6paom2e5cH0ecjOOW+4jb/lX+f1y+G7ZRp+orJN5P+ZJXBuaKDhO3TpNZi8XjD+zkKbwOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NO+XPkv2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zKe9g8kc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NO+XPkv2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zKe9g8kc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1AFE4219EA;
+	Tue,  4 Jun 2024 00:04:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717459466; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=HpVwnpGFwX6F8uLo9r/P9p+kOFbUNq7zwkNnw394O8M=;
+	b=NO+XPkv2ij0C/mvWVRQk/+Fvb8ast6tbRHToEqX4kDJxOupe22AlTfsC1K8ZZC9QgexesQ
+	1N9ttYC0I0T4XT2iQk0iJbrjWd6kIeXfqeBVjUM+dDSUh4Lo+9Sq7fLvkKn1XiDBedqYuV
+	gbIeEPqU7mWDqvRtKUebES+VPTSwlKU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717459466;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=HpVwnpGFwX6F8uLo9r/P9p+kOFbUNq7zwkNnw394O8M=;
+	b=zKe9g8kcgO2uXTBU19pNwIIPtXP7j/hVSRfm0bOztpO1ePoBR4PK0SeSNODHWxUhPRRp9V
+	qn39BnmoEyBtvNBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NO+XPkv2;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zKe9g8kc
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717459466; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=HpVwnpGFwX6F8uLo9r/P9p+kOFbUNq7zwkNnw394O8M=;
+	b=NO+XPkv2ij0C/mvWVRQk/+Fvb8ast6tbRHToEqX4kDJxOupe22AlTfsC1K8ZZC9QgexesQ
+	1N9ttYC0I0T4XT2iQk0iJbrjWd6kIeXfqeBVjUM+dDSUh4Lo+9Sq7fLvkKn1XiDBedqYuV
+	gbIeEPqU7mWDqvRtKUebES+VPTSwlKU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717459466;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=HpVwnpGFwX6F8uLo9r/P9p+kOFbUNq7zwkNnw394O8M=;
+	b=zKe9g8kcgO2uXTBU19pNwIIPtXP7j/hVSRfm0bOztpO1ePoBR4PK0SeSNODHWxUhPRRp9V
+	qn39BnmoEyBtvNBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D47AB13A92;
+	Tue,  4 Jun 2024 00:04:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id df0HLglaXmZ1CwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 04 Jun 2024 00:04:25 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: axboe@kernel.dk
+Cc: io-uring@vger.kernel.org,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [RFC liburing 0/5] IORING_OP_BIND/LISTEN support
+Date: Mon,  3 Jun 2024 20:04:12 -0400
+Message-ID: <20240604000417.16137-1-krisman@suse.de>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/napi: fix timeout calculation
-Cc: Lewis Baker <lewissbaker@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.89
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 1AFE4219EA
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.89 / 50.00];
+	BAYES_HAM(-2.88)[99.49%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-Not quite sure what __io_napi_adjust_timeout() was attemping to do, it's
-adjusting both the NAPI timeout and the general overall timeout, and
-calculating a value that is never used. The overall timeout is a super
-set of the NAPI timeout, and doesn't need adjusting. The only thing we
-really need to care about is that the NAPI timeout doesn't exceed the
-overall timeout. If a user asked for a timeout of eg 5 usec and NAPI
-timeout is 10 usec, then we should not spin for 10 usec.
+Hi,
 
-Hence the only case we need to care about is if the NAPI timeout is
-larger than the overall timeout. If it is, cap the NAPI timeout at what
-the overall timeout is.
+As promised, this is the userspace side of the IORING_OP_BIND/LISTEN
+patches.
 
-Cc: stable@vger.kernel.org
-Fixes: 8d0c12a80cde ("io-uring: add napi busy poll support")
-Reported-by: Lewis Baker <lewissbaker@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+I decided to write a separate test instead of integrating in
+i.e. socket.c Let me know if you prefer I merge it to some existing
+testcase.
 
----
+Keeping as an RFC for now, until we have the kernel side ready.
 
-diff --git a/io_uring/napi.c b/io_uring/napi.c
-index 883a1a665907..804f6ba79ca9 100644
---- a/io_uring/napi.c
-+++ b/io_uring/napi.c
-@@ -261,12 +261,14 @@ int io_unregister_napi(struct io_ring_ctx *ctx, void __user *arg)
- }
- 
- /*
-- * __io_napi_adjust_timeout() - Add napi id to the busy poll list
-+ * __io_napi_adjust_timeout() - adjust busy loop timeout
-  * @ctx: pointer to io-uring context structure
-  * @iowq: pointer to io wait queue
-  * @ts: pointer to timespec or NULL
-  *
-  * Adjust the busy loop timeout according to timespec and busy poll timeout.
-+ * If the specified NAPI timeout is bigger than the wait timeout, then adjust
-+ * the NAPI timeout accordingly.
-  */
- void __io_napi_adjust_timeout(struct io_ring_ctx *ctx, struct io_wait_queue *iowq,
- 			      struct timespec64 *ts)
-@@ -274,16 +276,12 @@ void __io_napi_adjust_timeout(struct io_ring_ctx *ctx, struct io_wait_queue *iow
- 	unsigned int poll_to = READ_ONCE(ctx->napi_busy_poll_to);
- 
- 	if (ts) {
--		struct timespec64 poll_to_ts = ns_to_timespec64(1000 * (s64)poll_to);
-+		struct timespec64 poll_to_ts;
- 
--		if (timespec64_compare(ts, &poll_to_ts) > 0) {
--			*ts = timespec64_sub(*ts, poll_to_ts);
--		} else {
--			u64 to = timespec64_to_ns(ts);
--
--			do_div(to, 1000);
--			ts->tv_sec = 0;
--			ts->tv_nsec = 0;
-+		poll_to_ts = ns_to_timespec64(1000 * (s64)poll_to);
-+		if (timespec64_compare(ts, &poll_to_ts) < 0) {
-+			poll_to = timespec64_to_ns(ts);
-+			do_div(poll_to, 1000);
- 		}
- 	}
- 
+Gabriel Krisman Bertazi (5):
+  liburing: Add helper to prepare IORING_OP_BIND command
+  liburing: Add helper to prepare IORING_OP_LISTEN command
+  tests: Add test for bind/listen commands
+  man/io_uring_prep_bind.3: Document the IORING_OP_BIND operation
+  man/io_uring_prep_listen.3: Document IORING_OP_LISTEN operation
+
+ man/io_uring_prep_bind.3        |  54 ++++++++
+ man/io_uring_prep_listen.3      |  52 +++++++
+ src/include/liburing.h          |  13 ++
+ src/include/liburing/io_uring.h |   2 +
+ test/Makefile                   |   1 +
+ test/bind-listen.c              | 231 ++++++++++++++++++++++++++++++++
+ 6 files changed, 353 insertions(+)
+ create mode 100644 man/io_uring_prep_bind.3
+ create mode 100644 man/io_uring_prep_listen.3
+ create mode 100644 test/bind-listen.c
+
 -- 
-Jens Axboe
+2.44.0
 
 

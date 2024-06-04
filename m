@@ -1,93 +1,104 @@
-Return-Path: <io-uring+bounces-2083-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2084-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90B18FA6C1
-	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 02:04:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7081B8FA6C2
+	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 02:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FB56285A63
-	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 00:04:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F4E286221
+	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 00:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93177182;
-	Tue,  4 Jun 2024 00:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC278182;
+	Tue,  4 Jun 2024 00:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NO+XPkv2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zKe9g8kc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NO+XPkv2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zKe9g8kc"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j6ve/mf4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="az7zux5W";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j6ve/mf4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="az7zux5W"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C6D20E3
-	for <io-uring@vger.kernel.org>; Tue,  4 Jun 2024 00:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB7637C
+	for <io-uring@vger.kernel.org>; Tue,  4 Jun 2024 00:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717459470; cv=none; b=Co86l4gQ1Q2/7U0dY4B2gywDZwQ/NkUp+RIB2ZcToWvFWa/xZz9Yhhisaa+PqD89lhrIOe8LaHQI38TJG2CG0pq4WOVgk4OGR2YeNOe4ykdzWALgN1OTItIdsCNrwIK3Uqw1PVs548VIWUEIkUVeaUH+ZsuQggF6nlImRe6UIEE=
+	t=1717459475; cv=none; b=mB8SchVR3WGsmy8J+6nr8N2/KCbDTeIeamXc02acBXPMRSztBTb30FVTq982sRwFZuQxta/RZX/raHW8FDylaQoj72PpPv7GtRP2cfQRD5VAdR2H9BCkAdwnOxHCxc+v/JVDw7mAI66HAzTJJ8atehC/RVwqpzP8qy7xy6VpQXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717459470; c=relaxed/simple;
-	bh=PUHhAPdHZnVCAisyRA5rjs4GHhqfTk9lveNiXXLxuLM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l5561jmwBQXb21iPFxTuLL7kcYSvVVu1n9P2i3E8MmTu83ZklWhVliqiC5T0Y0hSyQDwyvNoZ6m0qtD5XFKkm6PnfkknkP3gMBSOQ6paom2e5cH0ecjOOW+4jb/lX+f1y+G7ZRp+orJN5P+ZJXBuaKDhO3TpNZi8XjD+zkKbwOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NO+XPkv2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zKe9g8kc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NO+XPkv2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zKe9g8kc; arc=none smtp.client-ip=195.135.223.130
+	s=arc-20240116; t=1717459475; c=relaxed/simple;
+	bh=v/XzqDYU3QJ3QLcQjzFB+MNngNS8WDtkdBulHItyEBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WOml1M0sEaFesWf0CCixJ5plBLqLa9YMUqOksfWmGzPvpDzu5zYowdeQk8RPBzm+FoMwez97Pw2gyTSkYmv5TYSJPvZQ0zIAxNvrdW0jzSNwNTEYL1J4r/e3eJI5qGXojMVjp+GGuUm/2HqgIh5IaSR2T/+B3FPIx+8p6HP3Wy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j6ve/mf4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=az7zux5W; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j6ve/mf4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=az7zux5W; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1AFE4219EA;
-	Tue,  4 Jun 2024 00:04:26 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E0D4B21982;
+	Tue,  4 Jun 2024 00:04:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717459466; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=HpVwnpGFwX6F8uLo9r/P9p+kOFbUNq7zwkNnw394O8M=;
-	b=NO+XPkv2ij0C/mvWVRQk/+Fvb8ast6tbRHToEqX4kDJxOupe22AlTfsC1K8ZZC9QgexesQ
-	1N9ttYC0I0T4XT2iQk0iJbrjWd6kIeXfqeBVjUM+dDSUh4Lo+9Sq7fLvkKn1XiDBedqYuV
-	gbIeEPqU7mWDqvRtKUebES+VPTSwlKU=
+	t=1717459471; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NCbhk9G2oaoBxNVS3a2NgF5lzZaGKlq3XLjb+9OD8KM=;
+	b=j6ve/mf4Px0q9m8sXi+Fja9Ut/OUzxYAMvNR0zCrknxjzuZ6NcR9XaKfJXCkfG4Rt0tmh4
+	rfkWULmZHMFS/eqLBNxFU+X8g1JK7iOfKTfSW9mshFVud4zbADyTt3BMQgWKlDsz8Y2NIn
+	aLKKQ2FvB77g6ZlSkGNXvZZVoAldtTw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717459466;
+	s=susede2_ed25519; t=1717459471;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=HpVwnpGFwX6F8uLo9r/P9p+kOFbUNq7zwkNnw394O8M=;
-	b=zKe9g8kcgO2uXTBU19pNwIIPtXP7j/hVSRfm0bOztpO1ePoBR4PK0SeSNODHWxUhPRRp9V
-	qn39BnmoEyBtvNBA==
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NCbhk9G2oaoBxNVS3a2NgF5lzZaGKlq3XLjb+9OD8KM=;
+	b=az7zux5WAd0RwOFist8KqDZttnJ7R7M3ETHukpU2D33xgHp4ibYUG0Rx9m/bHXVMWH7KZi
+	hGJVI9+/ng9w1+Dg==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NO+XPkv2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zKe9g8kc
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="j6ve/mf4";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=az7zux5W
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717459466; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=HpVwnpGFwX6F8uLo9r/P9p+kOFbUNq7zwkNnw394O8M=;
-	b=NO+XPkv2ij0C/mvWVRQk/+Fvb8ast6tbRHToEqX4kDJxOupe22AlTfsC1K8ZZC9QgexesQ
-	1N9ttYC0I0T4XT2iQk0iJbrjWd6kIeXfqeBVjUM+dDSUh4Lo+9Sq7fLvkKn1XiDBedqYuV
-	gbIeEPqU7mWDqvRtKUebES+VPTSwlKU=
+	t=1717459471; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NCbhk9G2oaoBxNVS3a2NgF5lzZaGKlq3XLjb+9OD8KM=;
+	b=j6ve/mf4Px0q9m8sXi+Fja9Ut/OUzxYAMvNR0zCrknxjzuZ6NcR9XaKfJXCkfG4Rt0tmh4
+	rfkWULmZHMFS/eqLBNxFU+X8g1JK7iOfKTfSW9mshFVud4zbADyTt3BMQgWKlDsz8Y2NIn
+	aLKKQ2FvB77g6ZlSkGNXvZZVoAldtTw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717459466;
+	s=susede2_ed25519; t=1717459471;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=HpVwnpGFwX6F8uLo9r/P9p+kOFbUNq7zwkNnw394O8M=;
-	b=zKe9g8kcgO2uXTBU19pNwIIPtXP7j/hVSRfm0bOztpO1ePoBR4PK0SeSNODHWxUhPRRp9V
-	qn39BnmoEyBtvNBA==
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NCbhk9G2oaoBxNVS3a2NgF5lzZaGKlq3XLjb+9OD8KM=;
+	b=az7zux5WAd0RwOFist8KqDZttnJ7R7M3ETHukpU2D33xgHp4ibYUG0Rx9m/bHXVMWH7KZi
+	hGJVI9+/ng9w1+Dg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D47AB13A92;
-	Tue,  4 Jun 2024 00:04:25 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9D89913A92;
+	Tue,  4 Jun 2024 00:04:31 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id df0HLglaXmZ1CwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 04 Jun 2024 00:04:25 +0000
+	id p1BGIA9aXmZ+CwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 04 Jun 2024 00:04:31 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: axboe@kernel.dk
 Cc: io-uring@vger.kernel.org,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [RFC liburing 0/5] IORING_OP_BIND/LISTEN support
-Date: Mon,  3 Jun 2024 20:04:12 -0400
-Message-ID: <20240604000417.16137-1-krisman@suse.de>
+Subject: [PATCH liburing 1/5] liburing: Add helper to prepare IORING_OP_BIND command
+Date: Mon,  3 Jun 2024 20:04:13 -0400
+Message-ID: <20240604000417.16137-2-krisman@suse.de>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240604000417.16137-1-krisman@suse.de>
+References: <20240604000417.16137-1-krisman@suse.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -95,14 +106,9 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.89
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 1AFE4219EA
 X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.89 / 50.00];
-	BAYES_HAM(-2.88)[99.49%];
+X-Spamd-Result: default: False [-5.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
 	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -111,54 +117,65 @@ X-Spamd-Result: default: False [-4.89 / 50.00];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+];
-	FROM_EQ_ENVFROM(0.00)[];
 	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: E0D4B21982
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -5.01
 
-Hi,
+Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+---
+ src/include/liburing.h          | 7 +++++++
+ src/include/liburing/io_uring.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-As promised, this is the userspace side of the IORING_OP_BIND/LISTEN
-patches.
-
-I decided to write a separate test instead of integrating in
-i.e. socket.c Let me know if you prefer I merge it to some existing
-testcase.
-
-Keeping as an RFC for now, until we have the kernel side ready.
-
-Gabriel Krisman Bertazi (5):
-  liburing: Add helper to prepare IORING_OP_BIND command
-  liburing: Add helper to prepare IORING_OP_LISTEN command
-  tests: Add test for bind/listen commands
-  man/io_uring_prep_bind.3: Document the IORING_OP_BIND operation
-  man/io_uring_prep_listen.3: Document IORING_OP_LISTEN operation
-
- man/io_uring_prep_bind.3        |  54 ++++++++
- man/io_uring_prep_listen.3      |  52 +++++++
- src/include/liburing.h          |  13 ++
- src/include/liburing/io_uring.h |   2 +
- test/Makefile                   |   1 +
- test/bind-listen.c              | 231 ++++++++++++++++++++++++++++++++
- 6 files changed, 353 insertions(+)
- create mode 100644 man/io_uring_prep_bind.3
- create mode 100644 man/io_uring_prep_listen.3
- create mode 100644 test/bind-listen.c
-
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 0a02364..818e27c 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -669,6 +669,13 @@ IOURINGINLINE void io_uring_prep_connect(struct io_uring_sqe *sqe, int fd,
+ 	io_uring_prep_rw(IORING_OP_CONNECT, sqe, fd, addr, 0, addrlen);
+ }
+ 
++IOURINGINLINE void io_uring_prep_bind(struct io_uring_sqe *sqe, int fd,
++				      struct sockaddr *addr,
++				      socklen_t addrlen)
++{
++	io_uring_prep_rw(IORING_OP_BIND, sqe, fd, addr, 0, addrlen);
++}
++
+ IOURINGINLINE void io_uring_prep_files_update(struct io_uring_sqe *sqe,
+ 					      int *fds, unsigned nr_fds,
+ 					      int offset)
+diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
+index 9330733..177ace6 100644
+--- a/src/include/liburing/io_uring.h
++++ b/src/include/liburing/io_uring.h
+@@ -257,6 +257,7 @@ enum io_uring_op {
+ 	IORING_OP_FUTEX_WAITV,
+ 	IORING_OP_FIXED_FD_INSTALL,
+ 	IORING_OP_FTRUNCATE,
++	IORING_OP_BIND,
+ 
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
 -- 
 2.44.0
 

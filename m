@@ -1,132 +1,112 @@
-Return-Path: <io-uring+bounces-2090-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2091-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC628FB326
-	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 15:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ADDD8FB3DD
+	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 15:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA817282573
-	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 13:05:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A52282BA6
+	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 13:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05F7146016;
-	Tue,  4 Jun 2024 13:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E40B1E519;
+	Tue,  4 Jun 2024 13:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="s8RLdmUb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vcx3iuGx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212A9144D2E;
-	Tue,  4 Jun 2024 13:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ED61E49B
+	for <io-uring@vger.kernel.org>; Tue,  4 Jun 2024 13:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717506337; cv=none; b=WXQsVMYZN47uAiYNcMTS+J1rgddn3hxcVDmayuNZQscvM//8NPP6jzLWfhfmkypIwLjHFCBfcgC1I9iy+bfMIVkeBC38guHCkbHgvaUpYoQbMqeojXAURgGnvHRvbSmpHRqT55qdxvsfS1JnmI9xO7s9u0BHXdpqHi8i9RkjxF8=
+	t=1717508022; cv=none; b=LGRmJ5GiTJV+r6RO2ZjPH07O3XbNhqXbrWOS0K91nBreEFyh7TMuOMYDVMhWIcvGroRZIXYbdcl6h6OekKrknoFqHnUmPztp81QGDmULQ5Ta7LEJHakEpv9fHnDsbAjTwcaLVYTdXXYjoAkTgh8WrT8wOlQ6b2xH3nfpQQW29BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717506337; c=relaxed/simple;
-	bh=w4G3vk3yGRoYokSs4XfRHyLnA6vOC8gki8MNmf6avxg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E6oMJMAY7dwsMcc4/kKyEOp4UGyE1DWKq63I9IUs5fPgkj82dcm3VtyVvYd20cnw+pKCqwl6Ehdqqu+Esr8KdHvSOZLwP+5SDlgLWEk66YKeQBgSnCjwDHRvKseDiT3hmF9iVS2BrATJvj594XgWbreyeIGhTpHvoLgiQ4mziNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=s8RLdmUb; arc=none smtp.client-ip=72.21.196.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1717508022; c=relaxed/simple;
+	bh=IvX5mJkqROIQOibcUrt+aye6rYPh/NGQgC0Q9hOQYuE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ek1ElFwjPHcs0xl9pDENo7dCg8O+EkI5uK4thARh6Qtlc+W8g7UMqNa+9WdkDLyxVWiaUqFLlA5PTCtCHPVLqB/WYTvVzVLcfITy3XsVpS0GD5fEplEUsEtQ1eUCrmpwQhjIMl1pzXw5K1AusHApN/haUX6AfOWIaBAkaIr4+XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vcx3iuGx; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d1c051a9e7so2386350b6e.0
+        for <io-uring@vger.kernel.org>; Tue, 04 Jun 2024 06:33:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1717506336; x=1749042336;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tNtONfHPFlDZf3t3YUJODvwLfbp2sSOE5aYh5N9nCfk=;
-  b=s8RLdmUbHYxHgJ/TFPUIWY8Bsb5CwucPerKPzslBipBJoNT3ryw0GpeJ
-   2XR7jCd4qL+odWU/Ng8xWPniC36HwoKc5ogBGScn6OTkfJfJ35cDRxMh7
-   RXnMFPT2Rq/JQJUS6Ik6ycTRA+u0yC2JPhgWyhb4yfjOBxuIB38cszFiI
-   A=;
-X-IronPort-AV: E=Sophos;i="6.08,213,1712620800"; 
-   d="scan'208";a="405516568"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 13:05:33 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.17.79:9945]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.23:2525] with esmtp (Farcaster)
- id 5fb5735b-b0c2-43e5-8e58-813e3c2a75b8; Tue, 4 Jun 2024 13:05:31 +0000 (UTC)
-X-Farcaster-Flow-ID: 5fb5735b-b0c2-43e5-8e58-813e3c2a75b8
-Received: from EX19D002EUA004.ant.amazon.com (10.252.50.181) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Tue, 4 Jun 2024 13:05:31 +0000
-Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
- EX19D002EUA004.ant.amazon.com (10.252.50.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 4 Jun 2024 13:05:31 +0000
-Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
- (10.253.65.58) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Tue, 4 Jun 2024 13:05:30 +0000
-Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
-	id 569ED20C69; Tue,  4 Jun 2024 13:05:30 +0000 (UTC)
-From: Hagar Hemdan <hagarhem@amazon.com>
-To:
-CC: Maximilian Heyne <mheyne@amazon.de>, Norbert Manthey <nmanthey@amazon.de>,
-	Hagar Hemdan <hagarhem@amazon.com>, Jens Axboe <axboe@kernel.dk>, "Pavel
- Begunkov" <asml.silence@gmail.com>, <io-uring@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] io_uring: fix possible deadlock in io_register_iowq_max_workers()
-Date: Tue, 4 Jun 2024 13:05:27 +0000
-Message-ID: <20240604130527.3597-1-hagarhem@amazon.com>
-X-Mailer: git-send-email 2.40.1
+        d=gmail.com; s=20230601; t=1717508020; x=1718112820; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IvX5mJkqROIQOibcUrt+aye6rYPh/NGQgC0Q9hOQYuE=;
+        b=Vcx3iuGx5a59DIVaJ9NVFcGI97l1HJkdjwtCluZex20ULi/uSrllheQx/4TTCPqgKr
+         3PmJ3hBR2GbOo6aCiR8eJ87BZfZe6GzW6nSan5n8Nn9vFlIl3CmeurnGm7ccfeDnksPY
+         N4qfHDQ3wW9E0GahvMIcenb3t7QKhlXTDg/XSqgzG+GCD+zIVqzIAVPYU/gfWqVSpVxf
+         2lBUaRnao9sRgK5xCyBSlu0uELP8kGR6AISoG0skCyp+T2Awppqh/n/xjuQAbK8+brDe
+         RcxeeWGfdPfJTSiAuRaAFP37AMaC6xM8GA4+FTcECZSU0Dk0R5dcM5u1fwz1ZOYeb1r/
+         WLGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717508020; x=1718112820;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IvX5mJkqROIQOibcUrt+aye6rYPh/NGQgC0Q9hOQYuE=;
+        b=miCnChk7wsQ7+4jFqdZqUq/+TXHfuKzyOrcViLlzuArH/nKvYj48EkcNZHYtHnmMWP
+         pjnYmMfP8EC5NsXSybf1EWcGFoKlnCiogGDNhvO/yYxl+59nNxRoi0Qz0autmcWqfLRW
+         LiJ0KJ4ko8fA+HzjXwpFuh//NV5J5vdchZ+Xjq77EVAhpVO5j8tI7wbpnemz3MXhhrC1
+         NXzSyWclJ3Q/5o0uVWNkiMJBz2CKZd6b53hzXYH404EC5RktbyRZwdq3D23ilbzZocUe
+         3llAI7CH8FngXEwV/EMcE2ANK/lNqS9DnJjQjY0fHGubpAz+eYgi/W6sh9Sf+4Q6GJ3I
+         m3jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcxjshiTDENfvREq6O+/coSrzAZrHUAZeziof45Qd7CHU+B1OpzVQ4l6579SZPobgM4do2gMM25Qb2pamgpSiQcsOYkvAe8+Y=
+X-Gm-Message-State: AOJu0YzQOxvxalWpSx87ezfeuqBogZlGLck0aGkAMLD0/XsjONjiiLgK
+	DMCkXBWDS/Y49CUhVhT8QHlnQFmRNUtjwJLpnu5efEUP1iBnPjfwYWN5d/Y2+BkS0DZ/WUsjL9X
+	TKh70AtzQReR2fSPZS5ey0N732A==
+X-Google-Smtp-Source: AGHT+IFKJ9q5C0qxwPOaYCu12xTHoF/R1aHsgkBjqrYEzWlOSNGIG8fW5gaZT/t2Nw+1C6ilGtV8bW21T8izNCzLBME=
+X-Received: by 2002:a05:6808:10d2:b0:3c9:9379:e833 with SMTP id
+ 5614622812f47-3d1e35b90e7mr15115081b6e.40.1717508019548; Tue, 04 Jun 2024
+ 06:33:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <CGME20240530051050epcas5p122f30aebcf99e27a8d02cc1318dbafc8@epcas5p1.samsung.com>
+ <c99eb326-0b36-4587-b8a2-8956852309be@kernel.dk> <20240530051044.1405410-1-cliang01.li@samsung.com>
+In-Reply-To: <20240530051044.1405410-1-cliang01.li@samsung.com>
+From: Anuj gupta <anuj1072538@gmail.com>
+Date: Tue, 4 Jun 2024 19:03:02 +0530
+Message-ID: <CACzX3Atk2hHpc9FdOcVT57+6Eyka0GeUxcNBy7upgy9sEc47ng@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] io_uring/rsrc: coalescing multi-hugepage
+ registered buffers
+To: Chenliang Li <cliang01.li@samsung.com>
+Cc: axboe@kernel.dk, anuj20.g@samsung.com, asml.silence@gmail.com, 
+	gost.dev@samsung.com, io-uring@vger.kernel.org, joshi.k@samsung.com, 
+	kundan.kumar@samsung.com, peiwei.li@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The io_register_iowq_max_workers() function calls io_put_sq_data(),
-which acquires the sqd->lock without releasing the uring_lock.
-Similar to the commit 009ad9f0c6ee ("io_uring: drop ctx->uring_lock
-before acquiring sqd->lock"), this can lead to a potential deadlock
-situation.
+On Thu, May 30, 2024 at 10:41=E2=80=AFAM Chenliang Li <cliang01.li@samsung.=
+com> wrote:
+>
+> On Thu, 16 May 2024 08:58:03 -0600, Jens Axboe wrote:
+> > The change looks pretty reasonable to me. I'd love for the test cases t=
+o
+> > try and hit corner cases, as it's really more of a functionality test
+> > right now. We should include things like one-off huge pages, ensure we
+> > don't coalesce where we should not, etc.
+>
+> Hi Jens, the testcases are updated here:
+> https://lore.kernel.org/io-uring/20240530031548.1401768-1-cliang01.li@sam=
+sung.com/T/#u
+> Add several corner cases this time, works fine. Please take a look.
 
-To resolve this issue, the uring_lock is released before calling
-io_put_sq_data(), and then it is re-acquired after the function call.
+The additional test cases shared here [1], works fine too on my setup.
+Tested-by: Anuj Gupta <anuj20.g@samsung.com>
 
-This change ensures that the locks are acquired in the correct
-order, preventing the possibility of a deadlock.
+[1] https://lore.kernel.org/io-uring/20240531052023.1446914-1-cliang01.li@s=
+amsung.com/
 
-Suggested-by: Maximilian Heyne <mheyne@amazon.de>
-Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
----
-only compile tested.
----
- io_uring/register.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/io_uring/register.c b/io_uring/register.c
-index ef8c908346a4..c0010a66a6f2 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -355,8 +355,10 @@ static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
- 	}
- 
- 	if (sqd) {
-+		mutex_unlock(&ctx->uring_lock);
- 		mutex_unlock(&sqd->lock);
- 		io_put_sq_data(sqd);
-+		mutex_lock(&ctx->uring_lock);
- 	}
- 
- 	if (copy_to_user(arg, new_count, sizeof(new_count)))
-@@ -380,8 +382,10 @@ static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
- 	return 0;
- err:
- 	if (sqd) {
-+		mutex_unlock(&ctx->uring_lock);
- 		mutex_unlock(&sqd->lock);
- 		io_put_sq_data(sqd);
-+		mutex_lock(&ctx->uring_lock);
- 	}
- 	return ret;
- }
--- 
-2.40.1
-
+Thanks,
+Anuj Gupta
 

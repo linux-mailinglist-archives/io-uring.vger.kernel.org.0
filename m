@@ -1,112 +1,165 @@
-Return-Path: <io-uring+bounces-2091-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2092-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADDD8FB3DD
-	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 15:33:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D368FB3E4
+	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 15:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A52282BA6
-	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 13:33:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82923B21275
+	for <lists+io-uring@lfdr.de>; Tue,  4 Jun 2024 13:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E40B1E519;
-	Tue,  4 Jun 2024 13:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC93146A8C;
+	Tue,  4 Jun 2024 13:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vcx3iuGx"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="M+odHtK8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ED61E49B
-	for <io-uring@vger.kernel.org>; Tue,  4 Jun 2024 13:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388E41E49B
+	for <io-uring@vger.kernel.org>; Tue,  4 Jun 2024 13:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717508022; cv=none; b=LGRmJ5GiTJV+r6RO2ZjPH07O3XbNhqXbrWOS0K91nBreEFyh7TMuOMYDVMhWIcvGroRZIXYbdcl6h6OekKrknoFqHnUmPztp81QGDmULQ5Ta7LEJHakEpv9fHnDsbAjTwcaLVYTdXXYjoAkTgh8WrT8wOlQ6b2xH3nfpQQW29BY=
+	t=1717508164; cv=none; b=WzhNFKldF/dSSbFqP8G5Zq5+fL94Uke8pGPgkPc53C3/hzJxc5GSS+8X1BJMRFFyQULuJRdZqsJGiUzgZLrFcIzulHljbSwYTZr7hmg9eh3srzxTaNRSEpcVTE//TZz0FJKymKK3X/2SN7wBd5TmMQz1RBh777yEwNtMwtKAtjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717508022; c=relaxed/simple;
-	bh=IvX5mJkqROIQOibcUrt+aye6rYPh/NGQgC0Q9hOQYuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ek1ElFwjPHcs0xl9pDENo7dCg8O+EkI5uK4thARh6Qtlc+W8g7UMqNa+9WdkDLyxVWiaUqFLlA5PTCtCHPVLqB/WYTvVzVLcfITy3XsVpS0GD5fEplEUsEtQ1eUCrmpwQhjIMl1pzXw5K1AusHApN/haUX6AfOWIaBAkaIr4+XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vcx3iuGx; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d1c051a9e7so2386350b6e.0
-        for <io-uring@vger.kernel.org>; Tue, 04 Jun 2024 06:33:40 -0700 (PDT)
+	s=arc-20240116; t=1717508164; c=relaxed/simple;
+	bh=PHqdzPe+YVlVlc2fd9sWnYMMRuPmbX7M0MfTXs/Vgpc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=MnnMnB+C+TAQnqHUhVdFiwoFyv9boDeswmc044wjQACyiB3s5vHzFzZDhPo5AnrFrAfE6GLZVbEoNpKDGvVS5K3oTAd5QmN/y1OazNIAozQsv4WSUUFGC2qxGgSZCOC/V9YzMgAX+zq7o6cM1znenffmOf1PiVbpjwd0rxZhsCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=M+odHtK8; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-6c87835b8c5so227351a12.1
+        for <io-uring@vger.kernel.org>; Tue, 04 Jun 2024 06:35:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717508020; x=1718112820; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717508158; x=1718112958; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IvX5mJkqROIQOibcUrt+aye6rYPh/NGQgC0Q9hOQYuE=;
-        b=Vcx3iuGx5a59DIVaJ9NVFcGI97l1HJkdjwtCluZex20ULi/uSrllheQx/4TTCPqgKr
-         3PmJ3hBR2GbOo6aCiR8eJ87BZfZe6GzW6nSan5n8Nn9vFlIl3CmeurnGm7ccfeDnksPY
-         N4qfHDQ3wW9E0GahvMIcenb3t7QKhlXTDg/XSqgzG+GCD+zIVqzIAVPYU/gfWqVSpVxf
-         2lBUaRnao9sRgK5xCyBSlu0uELP8kGR6AISoG0skCyp+T2Awppqh/n/xjuQAbK8+brDe
-         RcxeeWGfdPfJTSiAuRaAFP37AMaC6xM8GA4+FTcECZSU0Dk0R5dcM5u1fwz1ZOYeb1r/
-         WLGw==
+        bh=uZOYE8CGFBHTDkkR6ogbVemC9XgbOZqWrTG+qqsRwB8=;
+        b=M+odHtK8NK8So2W//u+Cg+hQaPO61tIGCROPyL2xHN1sYCabiZ/QcFtxn+sziunVMu
+         jiUlDswZZocUrOKtWuptljW6j6R7cbOBGd8aTcsYlTwB6oWBvt3G0KcwZt10efHDDM9P
+         wZGV+eRI8VJ6Db4H3cJEu76lKQwrkLT94X65J1EYrCZKPim3tLU+xbxtpC/Fi4bZJDsH
+         0uQePEFQSpjJmZnY5XUChnKqr0zOwya3Cn4CaeuwftW5sQm5Wtqy/pbN0BiuJRAKufeu
+         NkRa04B8OdP0fzfqFJ2TN6NjZi8+fMFgR8qmBadglPc1rrVEV03PXVdVcSG5W+/me1RK
+         xAlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717508020; x=1718112820;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IvX5mJkqROIQOibcUrt+aye6rYPh/NGQgC0Q9hOQYuE=;
-        b=miCnChk7wsQ7+4jFqdZqUq/+TXHfuKzyOrcViLlzuArH/nKvYj48EkcNZHYtHnmMWP
-         pjnYmMfP8EC5NsXSybf1EWcGFoKlnCiogGDNhvO/yYxl+59nNxRoi0Qz0autmcWqfLRW
-         LiJ0KJ4ko8fA+HzjXwpFuh//NV5J5vdchZ+Xjq77EVAhpVO5j8tI7wbpnemz3MXhhrC1
-         NXzSyWclJ3Q/5o0uVWNkiMJBz2CKZd6b53hzXYH404EC5RktbyRZwdq3D23ilbzZocUe
-         3llAI7CH8FngXEwV/EMcE2ANK/lNqS9DnJjQjY0fHGubpAz+eYgi/W6sh9Sf+4Q6GJ3I
-         m3jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcxjshiTDENfvREq6O+/coSrzAZrHUAZeziof45Qd7CHU+B1OpzVQ4l6579SZPobgM4do2gMM25Qb2pamgpSiQcsOYkvAe8+Y=
-X-Gm-Message-State: AOJu0YzQOxvxalWpSx87ezfeuqBogZlGLck0aGkAMLD0/XsjONjiiLgK
-	DMCkXBWDS/Y49CUhVhT8QHlnQFmRNUtjwJLpnu5efEUP1iBnPjfwYWN5d/Y2+BkS0DZ/WUsjL9X
-	TKh70AtzQReR2fSPZS5ey0N732A==
-X-Google-Smtp-Source: AGHT+IFKJ9q5C0qxwPOaYCu12xTHoF/R1aHsgkBjqrYEzWlOSNGIG8fW5gaZT/t2Nw+1C6ilGtV8bW21T8izNCzLBME=
-X-Received: by 2002:a05:6808:10d2:b0:3c9:9379:e833 with SMTP id
- 5614622812f47-3d1e35b90e7mr15115081b6e.40.1717508019548; Tue, 04 Jun 2024
- 06:33:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717508158; x=1718112958;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uZOYE8CGFBHTDkkR6ogbVemC9XgbOZqWrTG+qqsRwB8=;
+        b=iAePHRMtZjVtweRUqdvtFyLmqmz0OI6UUeF3gIgpKl4K+oDOVaVDXPdqU+pHH2JoWp
+         x6++SQhJxsNaIEr5t5hs/OBC+xkKAOyZjW8sHRBf02rQtrVyPS/1MioWDu+V+n/Od1sg
+         D8A7cLZ1nS5DUDWj/54m+pa+pk02reSjlq6ZEEDPh1xcIFUbiwdE3e7oN1xDK1THuCCt
+         OGVR5AQCkeKQASr+iBwXdGDPn0YX8//rrkPpHAtEPhgr1Lij1CuNnjsjtydB+1AiQIEV
+         B+PHB6VfwMF8EGtBMNuL/DneFSOjBDvPTk5pduyb3Ff2inxWKDUHN5D9hzhwzSy8R8gL
+         7ZnA==
+X-Gm-Message-State: AOJu0YzBn1BDtmeii+DzxmlZHuX0fo4p66RZ6lm9XqEsMdgzt0AdV7Vm
+	HtgKtgjyNrvahm/EjEefarqsAH7eamHOI6DqR1JfN1MUwAudPi6AI8ciSFwBL6r6Fwm1QGhCleT
+	8
+X-Google-Smtp-Source: AGHT+IEk/C7Fmmx6MTPItjNWGuim9QbBFSE8JIOQNxjMtGCX3G1pbtCNttlzLRBDL2XPsHDYoIS4rw==
+X-Received: by 2002:a05:6a20:3d85:b0:1af:cc80:57b6 with SMTP id adf61e73a8af0-1b26f2871a1mr13751808637.3.1717508157790;
+        Tue, 04 Jun 2024 06:35:57 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702423cce7asm7029317b3a.40.2024.06.04.06.35.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 06:35:57 -0700 (PDT)
+Message-ID: <b606e824-7bb0-4aae-989c-3e7f11ec5953@kernel.dk>
+Date: Tue, 4 Jun 2024 07:35:56 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240530051050epcas5p122f30aebcf99e27a8d02cc1318dbafc8@epcas5p1.samsung.com>
- <c99eb326-0b36-4587-b8a2-8956852309be@kernel.dk> <20240530051044.1405410-1-cliang01.li@samsung.com>
-In-Reply-To: <20240530051044.1405410-1-cliang01.li@samsung.com>
-From: Anuj gupta <anuj1072538@gmail.com>
-Date: Tue, 4 Jun 2024 19:03:02 +0530
-Message-ID: <CACzX3Atk2hHpc9FdOcVT57+6Eyka0GeUxcNBy7upgy9sEc47ng@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] io_uring/rsrc: coalescing multi-hugepage
- registered buffers
-To: Chenliang Li <cliang01.li@samsung.com>
-Cc: axboe@kernel.dk, anuj20.g@samsung.com, asml.silence@gmail.com, 
-	gost.dev@samsung.com, io-uring@vger.kernel.org, joshi.k@samsung.com, 
-	kundan.kumar@samsung.com, peiwei.li@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+Cc: Lewis Baker <lewissbaker@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH v2] io_uring/napi: fix timeout calculation
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 30, 2024 at 10:41=E2=80=AFAM Chenliang Li <cliang01.li@samsung.=
-com> wrote:
->
-> On Thu, 16 May 2024 08:58:03 -0600, Jens Axboe wrote:
-> > The change looks pretty reasonable to me. I'd love for the test cases t=
-o
-> > try and hit corner cases, as it's really more of a functionality test
-> > right now. We should include things like one-off huge pages, ensure we
-> > don't coalesce where we should not, etc.
->
-> Hi Jens, the testcases are updated here:
-> https://lore.kernel.org/io-uring/20240530031548.1401768-1-cliang01.li@sam=
-sung.com/T/#u
-> Add several corner cases this time, works fine. Please take a look.
+Not quite sure what __io_napi_adjust_timeout() was attemping to do, it's
+adjusting both the NAPI timeout and the general overall timeout, and
+calculating a value that is never used. The overall timeout is a super
+set of the NAPI timeout, and doesn't need adjusting. The only thing we
+really need to care about is that the NAPI timeout doesn't exceed the
+overall timeout. If a user asked for a timeout of eg 5 usec and NAPI
+timeout is 10 usec, then we should not spin for 10 usec.
 
-The additional test cases shared here [1], works fine too on my setup.
-Tested-by: Anuj Gupta <anuj20.g@samsung.com>
+While in there, sanitize the time checking a bit. If we have a negative
+value in the passed in timeout, discard it. Round up the value as well,
+so we don't end up with a NAPI timeout for the majority of the wait,
+with only a tiny sleep value at the end.
 
-[1] https://lore.kernel.org/io-uring/20240531052023.1446914-1-cliang01.li@s=
-amsung.com/
+Hence the only case we need to care about is if the NAPI timeout is
+larger than the overall timeout. If it is, cap the NAPI timeout at what
+the overall timeout is.
 
-Thanks,
-Anuj Gupta
+Cc: stable@vger.kernel.org
+Fixes: 8d0c12a80cde ("io-uring: add napi busy poll support")
+Reported-by: Lewis Baker <lewissbaker@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+v2:
+	- Handle negative timeout while in there
+	- Round up to avoid potentially tiny worthless sleep at the end
+	- Fix asm-generic division complaint
+
+diff --git a/io_uring/napi.c b/io_uring/napi.c
+index 883a1a665907..8c18ede595c4 100644
+--- a/io_uring/napi.c
++++ b/io_uring/napi.c
+@@ -261,12 +261,14 @@ int io_unregister_napi(struct io_ring_ctx *ctx, void __user *arg)
+ }
+ 
+ /*
+- * __io_napi_adjust_timeout() - Add napi id to the busy poll list
++ * __io_napi_adjust_timeout() - adjust busy loop timeout
+  * @ctx: pointer to io-uring context structure
+  * @iowq: pointer to io wait queue
+  * @ts: pointer to timespec or NULL
+  *
+  * Adjust the busy loop timeout according to timespec and busy poll timeout.
++ * If the specified NAPI timeout is bigger than the wait timeout, then adjust
++ * the NAPI timeout accordingly.
+  */
+ void __io_napi_adjust_timeout(struct io_ring_ctx *ctx, struct io_wait_queue *iowq,
+ 			      struct timespec64 *ts)
+@@ -274,16 +276,16 @@ void __io_napi_adjust_timeout(struct io_ring_ctx *ctx, struct io_wait_queue *iow
+ 	unsigned int poll_to = READ_ONCE(ctx->napi_busy_poll_to);
+ 
+ 	if (ts) {
+-		struct timespec64 poll_to_ts = ns_to_timespec64(1000 * (s64)poll_to);
+-
+-		if (timespec64_compare(ts, &poll_to_ts) > 0) {
+-			*ts = timespec64_sub(*ts, poll_to_ts);
+-		} else {
+-			u64 to = timespec64_to_ns(ts);
+-
+-			do_div(to, 1000);
+-			ts->tv_sec = 0;
+-			ts->tv_nsec = 0;
++		struct timespec64 poll_to_ts;
++
++		poll_to_ts = ns_to_timespec64(1000 * (s64)poll_to);
++		if (timespec64_compare(ts, &poll_to_ts) < 0) {
++			s64 poll_to_ns = timespec64_to_ns(ts);
++			if (poll_to_ns > 0) {
++				u64 val = poll_to_ns + 999;
++				do_div(val, (s64) 1000);
++				poll_to = val;
++			}
+ 		}
+ 	}
+ 
+-- 
+Jens Axboe
+
 

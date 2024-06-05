@@ -1,75 +1,75 @@
-Return-Path: <io-uring+bounces-2131-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2132-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE25B8FD69E
-	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 21:36:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027198FD6A0
+	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 21:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEFE31C22269
-	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 19:36:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4051F26D40
+	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 19:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7471B1514D2;
-	Wed,  5 Jun 2024 19:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D415152DFA;
+	Wed,  5 Jun 2024 19:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HwU7jKxM"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="B3qzt5h/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081B01514E6
-	for <io-uring@vger.kernel.org>; Wed,  5 Jun 2024 19:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8D91527B9
+	for <io-uring@vger.kernel.org>; Wed,  5 Jun 2024 19:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717616200; cv=none; b=boJb1nbm6RlmjTLCT8Rg3p8+WPdMdQUabTZmtNUrCnzpBuJP/zeLebjTNqbzgqbSy7qgy5YWryH9VyudSbK1gTi2hhMEHHL72RqwyBXt3h55CeTrJujl7P47Zbe0JdS5blZ+I2rYDqtliH7Q4QNnw+Cirr8Ez1JqgjkemorY/Yg=
+	t=1717616344; cv=none; b=mq5Iwb5GnkbKIGUeKctqKRr0BuYFb6EuM+Npp3y7bq4CAM3ZHIAYEP0p9Ma6iMVvVa6ND8vEqde1gyO1SpZ5AoV9BX77N3OM3XLfOrko+JYfv2chg/ZGMxYHaXWZXIokNN+kH/SjDW3L9SU6Xux/k5ePDDJ0j8Jvq4SYyzlss4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717616200; c=relaxed/simple;
-	bh=vS7npmT6KX0w2F+7R/og1G8aMIM/7lQ5Op7KWO0cst0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=X/lWf+prTS9B+6u9AO+6LVlvnjr2bpdTdC1ra77tnXAvjZQP8XoITEnDe1GGSS0FhFvPzZlnDGVHskz5cpkKMG0zabmCzpLCr5sfVyjChuBFsyamD2Y471wkXB38Qgo/VygukTb2Oke4QZDBiT/GKPd7OlTaMtdjJJn3JCVOq+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HwU7jKxM; arc=none smtp.client-ip=209.85.167.182
+	s=arc-20240116; t=1717616344; c=relaxed/simple;
+	bh=sXsIY3eWhb5qaiL0vff0J6Eito7BK9qvOgaDJOxdtQU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=bQg395O4lEH7/mMYwYibWmhap2Bkh14OXdYkOOKW0txW4DvBRhl4V0XiI+9wY8ICvbeZr+a/TouSXuqGFr/r4hcuDoZEeurBUDuOPn7DnCo7MLuGlC/Bsx5RlMVNB+mHl9ojxbhJrbUVbArQhvw0372DtgkFeUynkR+qlpc9mUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=B3qzt5h/; arc=none smtp.client-ip=209.85.210.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d1fc46a23cso5299b6e.3
-        for <io-uring@vger.kernel.org>; Wed, 05 Jun 2024 12:36:37 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6f94a070d09so12049a34.3
+        for <io-uring@vger.kernel.org>; Wed, 05 Jun 2024 12:39:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717616197; x=1718220997; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=1OS5mxGMpOsHdVRQtaO20JZTurCKXl0TfsMKwlv9F7U=;
-        b=HwU7jKxMyZZ3cE/2fiLJRl+ZqKP4g2wx+mthy1NgQEgE5lGmb/h5No7U9ReDxMk3rI
-         BdbK0eqhcNiQlmpl8hd9JZUGHwJlWisyj6N711CX+8qzVtgFXD3hAi62P6eL/tJuHCll
-         B7g9ixE2IjV0idseBQ/i9MpTiFztGn7ywmRmtWAtkHUCwJ0UG79uSArC3sfgVSfa/h3L
-         x2IP2olkoVOGm9GuYo4u1dEAvS7ZilbnOr06u8PDggxGAYUVbqhYyr5fpb2oUsUtGt6C
-         bZuwsz/eioM3BjJW5WLmWF4jmrJ9uYmD5M+CAD5oUDxGW8Cy2DmapTWCT08WE/7vgE5I
-         Z48Q==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717616342; x=1718221142; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XlflBXXO0avF9haRe+wgGW+1eN5YskuRnrUMKYzCfeQ=;
+        b=B3qzt5h/C1OTiY5VtDNospaB0s6S8VLa7uA8thSiCc4lKN7AsoEc4Pnn1u0o1WNvAL
+         UCe0tfms+JyLQAysdpQuKDRu3aIvi9bk0PO6P7hh6hFdttR4MLT/pllF5sr4L6ISduPx
+         9CyCvTWPY4mHVleHGUlFk/T76IRRg+RK6v5ntLkCbFuQ4LIhZ+/KCbFIJq/ffHpGcsmE
+         TrdlDY6HYuP+bhvfVjJ2ieKTXSzczl4Wx1QvgYAQWoNekKDOAvvNmkQooFDJhjIa02Nl
+         /O+i4JXbiV8uiRS4lZwHoSRCCkbaFtvXiSqRnkDFZfSHBpCMZK1ENdPcCWMx3CDvXccN
+         iFGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717616197; x=1718220997;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1717616342; x=1718221142;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1OS5mxGMpOsHdVRQtaO20JZTurCKXl0TfsMKwlv9F7U=;
-        b=PQE4CF3YT0sH9EYxLcHdJKB38Mp/1xncmdmHOIq1NFQJcPX/wwZFxF3vqSKFYAXLwU
-         eosVRIWOWiveJrvz1tfpyc5KwU9E8opbdeprr1TS35gvsSloKyOVyW/TiEFtsf34oM93
-         YTKRkXtQcDyzHIikSecBZFHghb428/CAjS2L5bG3lsNOA4ZSs9Q/1ERR8A21Wbf1kOf8
-         qEOd82j/mGWARB/zl2pCgQjlvWgNYKhYPUiKr0DMXRnx3HQ7XMGdx8nLAdxb0Goj6jd2
-         TGqRKk8rthAhxLQPLRC2z6MqyBsQ1kxMpkFTRxS/V/OvW6b7ZgEIh5brjewNsN/6XLXQ
-         eb0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWSDY0Dx8h9t+qi8IGDrsQ6iB8fIxWH0HqCSwakkFyAau4689JUzjlg7KePKRtJqGPkcw5RKjb+ummi0kYk5+VRI5hp6kdd/bw=
-X-Gm-Message-State: AOJu0Yyy+0G5vplzlaL3KZp9tTXcGb36lJy0U9wt6aHuCr0EAiOu5qxV
-	jcZt23Zpt6PYISjL36euzMBPxeeWy2nluYhQmNhoKcvQgU3UpGLwCCP0eXgsi+EYiK+k+m45qaw
-	k
-X-Google-Smtp-Source: AGHT+IEAqPzfWHmfJ0YoWBU91OsD5wM+/M8IF8QOa8/6JbGJ/zNfGBVz6uS9524lQyUWtlvfg/rbgQ==
-X-Received: by 2002:a05:6808:1794:b0:3c8:2af6:1125 with SMTP id 5614622812f47-3d204261742mr3289631b6e.1.1717616196461;
-        Wed, 05 Jun 2024 12:36:36 -0700 (PDT)
+        bh=XlflBXXO0avF9haRe+wgGW+1eN5YskuRnrUMKYzCfeQ=;
+        b=YQSW+U4gFb/akxq+ebPRN2Wr0hEfnMmFv8/y1YkJt3wvhAR3IdzW9D/ZOG6Nb5EiQl
+         YNhNHNjHo6+4KZ3hv0DCT+1GmMIlFs1wew3L1azdEBG9hXji1daWAzjzBxMw3RmuDRWc
+         MXBIfxo/4omg8RaK+CdEU8Ew0JgcHj8/vzuX5rvRvfjmAl9zObR9zZ4vzJ8P9OID4T0z
+         LLzn0I3mfi81JvcO0ZkxZzGvBQI5br0U1kXX8JG/tqNAl5yA7QxEqA8kkL7e4Wi6dNao
+         +CG1LHqLCW0WeUgAfn8jeoXOOgLAvO0kZoWpt8qjWMlj7196TiqoxMaLmIn6C3u0/3tb
+         FpvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbvBQnqsONUZL2wbX9CTKHWRFHwoeJjRzk4YQ2tQORBMwmqzKYqNZBL2Nr0eePO5lwxnBrspT9Rj3Y/FXCAwpjH2rcfbPXyco=
+X-Gm-Message-State: AOJu0Yyfkq54X+2EnMSJsxoG0Z7qQPEEkneZE8/xfKEFA6bOFHdcyVog
+	Q1QcZeDYqiWJeeX8b/ptaGHErHQLVTL5nOrglyNUaZqD6mYNdWcdeLN37XkU03gqG8w4U0xWYtz
+	s
+X-Google-Smtp-Source: AGHT+IECnA4VSfSDBgUD0f2vsR8vWsOdlcKagFzzD0mKiG/t+tSPOUHFaB5a/RAn8Za5nlrj7IMQDw==
+X-Received: by 2002:a9d:6f92:0:b0:6f0:3cf3:fb35 with SMTP id 46e09a7af769-6f94b72e9b2mr941661a34.1.1717616342462;
+        Wed, 05 Jun 2024 12:39:02 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d1e1a45d5esm2289185b6e.43.2024.06.05.12.36.35
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f91053a82esm2497658a34.30.2024.06.05.12.39.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 12:36:35 -0700 (PDT)
-Message-ID: <e7ea61b8-a65b-461b-a927-e85f47918cbe@kernel.dk>
-Date: Wed, 5 Jun 2024 13:36:34 -0600
+        Wed, 05 Jun 2024 12:39:01 -0700 (PDT)
+Message-ID: <31d4919f-09af-412f-b43c-c926b9d73b97@kernel.dk>
+Date: Wed, 5 Jun 2024 13:39:00 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,73 +77,55 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v2 0/7] Improve MSG_RING DEFER_TASKRUN performance
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <20240530152822.535791-2-axboe@kernel.dk>
- <32ee0379-b8c7-4c34-8c3a-7901e5a78aa2@gmail.com>
- <656d487c-f0d8-401e-9154-4d01ef34356c@kernel.dk>
- <6c8ca196-2444-4c82-a8c0-a93f45fe47da@gmail.com>
- <e89d6035-8a96-413b-9d80-f4092d18738a@kernel.dk>
- <2027706f-971f-4552-aa0a-95c1db675cb2@gmail.com>
-Content-Language: en-US
+Subject: Re: [PATCH 3/5] io_uring: move to using private ring references
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <2027706f-971f-4552-aa0a-95c1db675cb2@gmail.com>
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <20240604191314.454554-1-axboe@kernel.dk>
+ <20240604191314.454554-4-axboe@kernel.dk>
+ <138bf208-dbfa-4d56-b3fe-ff23c59af294@gmail.com>
+ <7ac50791-031d-453f-9722-8c7235573a21@gmail.com>
+ <04539e03-da04-47d9-9363-59c2f4ba0b03@gmail.com>
+ <9514cccc-791e-4cd3-be55-3381092d8167@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <9514cccc-791e-4cd3-be55-3381092d8167@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/5/24 1:20 PM, Pavel Begunkov wrote:
-> On 6/5/24 17:41, Jens Axboe wrote:
->> On 6/5/24 9:50 AM, Pavel Begunkov wrote:
->>> On 6/4/24 19:57, Jens Axboe wrote:
->>>> On 6/3/24 7:53 AM, Pavel Begunkov wrote:
->>>>> On 5/30/24 16:23, Jens Axboe wrote:
->>>>>> Hi,
->>>>>>
->>>>>> For v1 and replies to that and tons of perf measurements, go here:
+On 6/5/24 1:29 PM, Jens Axboe wrote:
+> On 6/5/24 1:13 PM, Pavel Begunkov wrote:
+>> On 6/5/24 17:31, Pavel Begunkov wrote:
+>>> On 6/5/24 16:11, Pavel Begunkov wrote:
+>>>> On 6/4/24 20:01, Jens Axboe wrote:
+>>>>> io_uring currently uses percpu refcounts for the ring reference. This
+>>>>> works fine, but exiting a ring requires an RCU grace period to lapse
+>>>>> and this slows down ring exit quite a lot.
 >>>>>
->>>>> I'd really prefer the task_work version rather than carving
->>>>> yet another path specific to msg_ring. Perf might sounds better,
->>>>> but it's duplicating wake up paths, not integrated with batch
->>>>> waiting, not clear how affects different workloads with target
->>>>> locking and would work weird in terms of ordering.
+>>>>> Add a basic per-cpu counter for our references instead, and use that.
 >>>>
->>>> The duplication is really minor, basically non-existent imho. It's a
->>>> wakeup call, it's literally 2 lines of code. I do agree on the batching,
+>>>> All the synchronisation heavy lifting is done by RCU, what
+>>>> makes it safe to read other CPUs counters in
+>>>> io_ring_ref_maybe_done()?
 >>>
->>> Well, v3 tries to add msg_ring/nr_overflow handling to local
->>> task work, that what I mean by duplicating paths, and we'll
->>> continue gutting the hot path for supporting msg_ring in
->>> this way.
+>>> Other options are expedited RCU (Paul saying it's an order of
+>>> magnitude faster), or to switch to plain atomics since it's cached,
+>>> but it's only good if submitter and waiter are the same task. Paul
 >>
->> No matter how you look at it, there will be changes to the hot path
->> regardless of whether we use local task_work like in the original, or do
->> the current approach.
+>> I mixed it with task refs, ctx refs should be cached well
+>> for any configuration as they're bound to requests (and req
+>> caches).
 > 
-> The only downside for !msg_ring paths in the original was
-> un-inlining of local tw_add().
+> That's a good point, maybe even our current RCU approach is overkill
+> since we do the caching pretty well. Let me run a quick test, just
+> switching this to a basic atomic_t. The dead mask can just be the 31st
+> bit.
 
-You're comparing an incomplete RFC to a more complete patchset, that
-will not be the only downside once you're done with the local task_work
-approach when the roundtrip is avoided. And that is my comparison base,
-not some half finished POC that I posted for comments.
+Well, the exception is non-local task_work, we still grab and put a
+reference on the ctx for each context while iterating.
 
->>> Does it work with eventfd? I can't find any handling, so next
->>> you'd be adding:
->>>
->>> io_commit_cqring_flush(ctx);
->>
->> That's merely because the flagging should be done in io_defer_wake(),
->> moving that code to the common helper as well.
-> 
-> Flagging? If you mean io_commit_cqring_flush() then no,
-> it shouldn't and cannot be there. It's called strictly after
-> posting a CQE (or queuing an overflow), which is after tw
-> callback execution.
-
-I meant the SQ ring flagging and eventfd signaling, which is currently
-done in local work adding. That should go in io_defer_wake().
+Outside of that, the request pre-alloc takes care of the rest.
 
 -- 
 Jens Axboe
+
 
 

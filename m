@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-2113-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2114-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01EE28FD0B3
-	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 16:20:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5908FD0E8
+	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 16:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E99C2888BB
-	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 14:20:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82513B2D6B3
+	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 14:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9901A291;
-	Wed,  5 Jun 2024 14:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A2B1B95B;
+	Wed,  5 Jun 2024 14:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SwDFbvOG"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HvZYE6zE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538192837A
-	for <io-uring@vger.kernel.org>; Wed,  5 Jun 2024 14:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148D0199A2
+	for <io-uring@vger.kernel.org>; Wed,  5 Jun 2024 14:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717597187; cv=none; b=bkSzNALpLZ8BoBHhIRiopGXvm7C35YPKDkDd6RwxPqQ4sljIe+wpPB5I+XYuuDGK0j58Kv7baNmQxgv6G/0mNtlotR7o6IqULLQyVhXnwTPZuxWv+MqwKHHj16u2simWlg3ZbJcgbLXFi/0t3PwTIcmyzp+nDlXvOxXk53oCHXE=
+	t=1717597188; cv=none; b=V2DGlvMePRooO4MQSDBhNHSLEC2fP4+VPqzV1ljS3vGYTNFPX/QzBAGnLZpCUT6fOXO2JpKZvpsrvgeS7U1gOo5PHV2x6eZ6DzbdOuYD8qFPQLEWgHWpmIsnQZ6/A91rDc95bCmpb44Sk8sA176IDn0VCSs8OL6BB1rP8GXaJgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717597187; c=relaxed/simple;
-	bh=+jLUBktFTPJ7GG9oqx0iEin3WExYTbOfnclwL0wT+gs=;
+	s=arc-20240116; t=1717597188; c=relaxed/simple;
+	bh=vHYUrcMtnuCg2wrAbOmWy2FCmOHpz5C0fyDjYykFbj0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MJ/CzlLVG3NNfl0DwkttRVmXGQOhU/CrXDdWs6bAy7KRpZU7KqCdF+C3S2y/+iWkk0oE1HHo/jHr+8/5p5uFJeMbljKB47NoGQJ/4XktDqRSI4ENEEZGU8gJnkOIChhEM3W3ZRxWqlBLVmQcfCz2rvuOMPRO4owmQWZTCZ/S61w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SwDFbvOG; arc=none smtp.client-ip=209.85.167.182
+	 MIME-Version; b=hRPizw29YX0eTYpCQ88Aqxv3VdSyHJkfpduAVufRIP5l6uwhXpVE9D3P6RYA81QpbNi2qJmc5nEMASqo5Wlp6Ag6xI0/h/vwdfUYrwkta8Na/GtezAf+BslC7hGdvnHciMLIn2Spw2q+EpEfBagY4vnyfGRX8MRDv6Ac5GqE7Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HvZYE6zE; arc=none smtp.client-ip=209.85.160.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d1ffa160b8so254290b6e.1
-        for <io-uring@vger.kernel.org>; Wed, 05 Jun 2024 07:19:45 -0700 (PDT)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-24c582673a5so193707fac.2
+        for <io-uring@vger.kernel.org>; Wed, 05 Jun 2024 07:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717597184; x=1718201984; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717597186; x=1718201986; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0Pr/GgWGhD1e0y7bJe1ugy4uzP4rrsfTEk9Z0eKw/mo=;
-        b=SwDFbvOGkrrmyxKFRN8JvCEtuMXDtRJdsro7V/FRMquKQ0KmgLUAMHyUoAHSfzZMtL
-         gFOmd2nVN6ru24jl6vQrgk7Kv4V0CLRnL3g3Ui+McmnuWOLtdMJsM+z3/XzpVtSLMYWN
-         nsTYptQNaimLkzgt8OMy+O6swWcnf4EyblzZLSIslAPDimfoNK92KpdIqzYwsygSJBXV
-         g9wXa7EO85zeu0+DBywbFW6PwFZiGarvW/IEiWWwuX5GcetT1hFRGXhwqKVrc6Rl1+Lf
-         yqbyaQcZxG0SWUeKJI65BxrqCHO4F1LtPxDbtALtxlepA8FNrNfosSlK/5FKcV2UZuWH
-         4+TQ==
+        bh=ET9g4vu0P/A3wT5hqKQuO00wFCpSRk4smWZdVZtC6W0=;
+        b=HvZYE6zEs2PxK1A3Axdqv/o8/GzhLxWwdnkjTJ+ssPo7AqyaaNcZp5xLKBtNEJuG4b
+         tOhTX47/pMbRjhsHsxsTFQXlt9EO/dpPyc9JsWV30bqtDeqVH2OI9pd//ZHOkWyjiQmE
+         Hlg/14bywvyJMv5JiCSxwdXM5cKVEt5JcFnlCydSeTEM12vJpPXkjL9T+/I/b8q84ulh
+         lDBOIUUaqGxqqZDaG9HZC5RzaoyY4EPptv0mzagmqiFT6FINKxik5z89Wq2Hr8YOD5ys
+         j4M9CG7/s0D3UuA+OLl/hmH+caxkM8oGrUocTVxMK1pHWiS1O4MYBrpj5JB6ncxVOBYu
+         /r0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717597184; x=1718201984;
+        d=1e100.net; s=20230601; t=1717597186; x=1718201986;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0Pr/GgWGhD1e0y7bJe1ugy4uzP4rrsfTEk9Z0eKw/mo=;
-        b=G+ZPkCVtPHjf2XqkpBTAb+QrgswqO6gGOlXuemffMUEfSpYXOjIbvq6rp7EgWhFLKr
-         wOoJ+kHrx7C58qhgMqOdBR60BS805iJyq1EDWiUbm3VWUDMyMhljHhTXsHtHQTTQjBDN
-         pLUZpxTBke9bInW+Yz2wF5Hqf6LMipx1xiYt7pyfeSkgBWj3hZnFopzldEXtglNZxVst
-         ppdOb3HXJobTg7+/0BZlrraOIQYlRFgxQ2sc/cvCVYCXGCG23GZG1hVNWjV4ZZO16KIS
-         GJc/oRLKIoJhBt1FzuQvMji1lNGrLyoAk7IjQZ/utzylkhWQuAixtodhqTVGfBZqm/eG
-         SMUg==
-X-Gm-Message-State: AOJu0Yz37DVbVzs+7A4pgCFyLL201RJo2UqqEHOSy5BAcDPceGBhZfOf
-	y0sBwcS7eBsk2vhMyewfGesFe66LVuGbCMmKqrOyKjRU+tNmEhzmk0YWfuh3QyVEJYaKNwvMNuK
-	s
-X-Google-Smtp-Source: AGHT+IHv9C+08cTmcfHjGY1m9OiVLlNxxtb6bBKkIFIYxI2aFDVrHK7rWPWoDUv4oPAFUEMyHvyeeg==
-X-Received: by 2002:a05:6870:4d18:b0:24c:b092:fd38 with SMTP id 586e51a60fabf-25121cf42eamr3315507fac.1.1717597183583;
-        Wed, 05 Jun 2024 07:19:43 -0700 (PDT)
+        bh=ET9g4vu0P/A3wT5hqKQuO00wFCpSRk4smWZdVZtC6W0=;
+        b=obfssl+1BnkMYK0ld6CvG/PG2dHlIxoyLvytv8BRHmZ9gD1IHAM8daCuPsYCJ3X5p2
+         3rXADmvCnJS6Rk9+H4IvMMmuu1iq6cbg3oVtfP/1xY/uLWh3m9zy8rouH2Xex2t/EJ5a
+         6piBfx9HfPL4hxUsBbIS2p2Hk72FqXlisEECh/2lfomfOUh7ugVIgzZfSEGuhU278CsM
+         /CMpTdCGjPsAYuxFP6hG9occQSuCBBgqDwouGEYUQ9weGS5y5E08cc1sg76eWPs1VWAh
+         mXOt1aUn0alVLZA9joeoBpEoaC/1VuXRCiGnZhJOj5SEWJY8g/MVQaYVMNxK57LBH53j
+         6RJA==
+X-Gm-Message-State: AOJu0YznfEq7yH7DQwspfU84p+wh+VcusLnyIbPIXmtk3NZ6e7h1f/jv
+	X6X3r/jnHC2cSVyeVPW1pDrFPZBKUN+LB1rZ6fiVC4rXnTMpp/XNHSn5qjM6lu3xqJ9NHfhqGa1
+	z
+X-Google-Smtp-Source: AGHT+IFC3CEAmLGrbI6oTWiB6bqIVyxAr09Sz8ovhGrAiTjOOVn7rqYj2Ouhgk2uNCgdPd1vpq3Nuw==
+X-Received: by 2002:a05:6871:2882:b0:250:826d:5202 with SMTP id 586e51a60fabf-25122078d9amr2800548fac.3.1717597185473;
+        Wed, 05 Jun 2024 07:19:45 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-250853ca28esm4048918fac.55.2024.06.05.07.19.42
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-250853ca28esm4048918fac.55.2024.06.05.07.19.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 07:19:43 -0700 (PDT)
+        Wed, 05 Jun 2024 07:19:44 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/9] io_uring: abstract out helpers for DEFER_TASKRUN wakeup batching
-Date: Wed,  5 Jun 2024 07:51:11 -0600
-Message-ID: <20240605141933.11975-4-axboe@kernel.dk>
+Subject: [PATCH 4/9] io_uring/msg_ring: avoid double indirection task_work for data messages
+Date: Wed,  5 Jun 2024 07:51:12 -0600
+Message-ID: <20240605141933.11975-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240605141933.11975-1-axboe@kernel.dk>
 References: <20240605141933.11975-1-axboe@kernel.dk>
@@ -85,118 +85,137 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for being able to use these two elsewhere, factor out
-the helpers that io_req_local_work_add() uses to do wakeup batching.
+If IORING_SETUP_DEFER_TASKRUN is set, then we can't post CQEs remotely
+to the target ring. Instead, task_work is queued for the target ring,
+which is used to post the CQE. To make matters worse, once the target
+CQE has been posted, task_work is then queued with the originator to
+fill the completion.
+
+This obviously adds a bunch of overhead and latency. Instead of relying
+on generic kernel task_work for this, fill an overflow entry on the
+target ring and flag it as such that the target ring will flush it. This
+avoids both the task_work for posting the CQE, and it means that the
+originator CQE can be filled inline as well.
+
+In local testing, this reduces the latency on the sender side by 5-6x.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c | 24 +++---------------------
- io_uring/io_uring.h | 44 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 47 insertions(+), 21 deletions(-)
+ io_uring/msg_ring.c | 88 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 56 insertions(+), 32 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 94af56dd5344..499255ef62c7 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1103,7 +1103,7 @@ void tctx_task_work(struct callback_head *cb)
- static inline void io_req_local_work_add(struct io_kiocb *req, unsigned flags)
+diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
+index 9fdb0cc19bfd..2b649087fe5c 100644
+--- a/io_uring/msg_ring.c
++++ b/io_uring/msg_ring.c
+@@ -87,38 +87,62 @@ static int io_msg_exec_remote(struct io_kiocb *req, task_work_func_t func)
+ 	return IOU_ISSUE_SKIP_COMPLETE;
+ }
+ 
+-static void io_msg_tw_complete(struct callback_head *head)
++static struct io_overflow_cqe *io_alloc_overflow(struct io_ring_ctx *target_ctx)
  {
- 	struct io_ring_ctx *ctx = req->ctx;
--	unsigned nr_wait, nr_tw, nr_tw_prev;
-+	unsigned nr_tw, nr_tw_prev;
- 	struct llist_node *head;
- 
- 	/* See comment above IO_CQ_WAKE_INIT */
-@@ -1116,19 +1116,8 @@ static inline void io_req_local_work_add(struct io_kiocb *req, unsigned flags)
- 	if (req->flags & (REQ_F_LINK | REQ_F_HARDLINK))
- 		flags &= ~IOU_F_TWQ_LAZY_WAKE;
- 
--	head = READ_ONCE(ctx->work_llist.first);
- 	do {
--		nr_tw_prev = 0;
--		if (head) {
--			struct io_kiocb *first_req = container_of(head,
--							struct io_kiocb,
--							io_task_work.node);
--			/*
--			 * Might be executed at any moment, rely on
--			 * SLAB_TYPESAFE_BY_RCU to keep it alive.
--			 */
--			nr_tw_prev = READ_ONCE(first_req->nr_tw);
--		}
-+		head = io_defer_tw_count(ctx, &nr_tw_prev);
- 
- 		/*
- 		 * Theoretically, it can overflow, but that's fine as one of
-@@ -1158,14 +1147,7 @@ static inline void io_req_local_work_add(struct io_kiocb *req, unsigned flags)
- 			io_eventfd_signal(ctx);
- 	}
- 
--	nr_wait = atomic_read(&ctx->cq_wait_nr);
--	/* not enough or no one is waiting */
--	if (nr_tw < nr_wait)
--		return;
--	/* the previous add has already woken it up */
--	if (nr_tw_prev >= nr_wait)
--		return;
--	wake_up_state(ctx->submitter_task, TASK_INTERRUPTIBLE);
-+	io_defer_wake(ctx, nr_tw, nr_tw_prev);
- }
- 
- static void io_req_normal_work_add(struct io_kiocb *req)
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index cd43924eed04..fdcf1a2a6b8a 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -444,4 +444,48 @@ static inline bool io_has_work(struct io_ring_ctx *ctx)
- 	return test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq) ||
- 	       !llist_empty(&ctx->work_llist);
- }
+-	struct io_msg *msg = container_of(head, struct io_msg, tw);
+-	struct io_kiocb *req = cmd_to_io_kiocb(msg);
+-	struct io_ring_ctx *target_ctx = req->file->private_data;
+-	int ret = 0;
+-
+-	if (current->flags & PF_EXITING) {
+-		ret = -EOWNERDEAD;
+-	} else {
+-		u32 flags = 0;
+-
+-		if (msg->flags & IORING_MSG_RING_FLAGS_PASS)
+-			flags = msg->cqe_flags;
+-
+-		/*
+-		 * If the target ring is using IOPOLL mode, then we need to be
+-		 * holding the uring_lock for posting completions. Other ring
+-		 * types rely on the regular completion locking, which is
+-		 * handled while posting.
+-		 */
+-		if (target_ctx->flags & IORING_SETUP_IOPOLL)
+-			mutex_lock(&target_ctx->uring_lock);
+-		if (!io_post_aux_cqe(target_ctx, msg->user_data, msg->len, flags))
+-			ret = -EOVERFLOW;
+-		if (target_ctx->flags & IORING_SETUP_IOPOLL)
+-			mutex_unlock(&target_ctx->uring_lock);
++	bool is_cqe32 = target_ctx->flags & IORING_SETUP_CQE32;
++	size_t cqe_size = sizeof(struct io_overflow_cqe);
++	struct io_overflow_cqe *ocqe;
++
++	if (is_cqe32)
++		cqe_size += sizeof(struct io_uring_cqe);
++
++	ocqe = kmalloc(cqe_size, GFP_ATOMIC | __GFP_ACCOUNT);
++	if (!ocqe)
++		return NULL;
++
++	if (is_cqe32)
++		ocqe->cqe.big_cqe[0] = ocqe->cqe.big_cqe[1] = 0;
++
++	return ocqe;
++}
 +
 +/*
-+ * Return first request nr_tw field. Only applicable for users of
-+ * ctx->work_llist, which is DEFER_TASKRUN. Must be called with the RCU read
-+ * lock held. Returns the current task_work count and head of list, if any.
++ * Entered with the target uring_lock held, and will drop it before
++ * returning. Adds a previously allocated ocqe to the overflow list on
++ * the target, and marks it appropriately for flushing.
 + */
-+static inline struct llist_node *io_defer_tw_count(struct io_ring_ctx *ctx,
-+						   unsigned *nr_tw_prev)
++static void io_msg_add_overflow(struct io_msg *msg,
++				struct io_ring_ctx *target_ctx,
++				struct io_overflow_cqe *ocqe, int ret,
++				u32 flags)
++	__releases(&target_ctx->completion_lock)
 +{
-+	struct llist_node *head = READ_ONCE(ctx->work_llist.first);
-+
-+	*nr_tw_prev = 0;
-+	if (head) {
-+		struct io_kiocb *first;
-+
-+		first = container_of(head, struct io_kiocb, io_task_work.node);
-+		/*
-+		 * Might be executed at any moment, rely on
-+		 * SLAB_TYPESAFE_BY_RCU to keep it alive.
-+		 */
-+		*nr_tw_prev = READ_ONCE(first->nr_tw);
-+	}
-+
-+	return head;
++	if (list_empty(&target_ctx->cq_overflow_list)) {
++		set_bit(IO_CHECK_CQ_OVERFLOW_BIT, &target_ctx->check_cq);
++		atomic_or(IORING_SQ_TASKRUN, &target_ctx->rings->sq_flags);
+ 	}
+ 
+-	if (ret < 0)
+-		req_set_fail(req);
+-	io_req_queue_tw_complete(req, ret);
++	ocqe->cqe.user_data = msg->user_data;
++	ocqe->cqe.res = ret;
++	ocqe->cqe.flags = flags;
++	target_ctx->nr_overflow++;
++	list_add_tail(&ocqe->list, &target_ctx->cq_overflow_list);
++	spin_unlock(&target_ctx->completion_lock);
++	wake_up_state(target_ctx->submitter_task, TASK_INTERRUPTIBLE);
 +}
 +
-+static inline void io_defer_wake(struct io_ring_ctx *ctx, unsigned nr_tw,
-+				 unsigned nr_tw_prev)
++static int io_msg_fill_remote(struct io_msg *msg, unsigned int issue_flags,
++			      struct io_ring_ctx *target_ctx, u32 flags)
 +{
-+	struct task_struct *task = READ_ONCE(ctx->submitter_task);
-+	unsigned nr_wait;
++	struct io_overflow_cqe *ocqe;
 +
-+	/* add pending overflows, for MSG_RING */
-+	nr_tw += READ_ONCE(ctx->nr_overflow);
++	ocqe = io_alloc_overflow(target_ctx);
++	if (!ocqe)
++		return -ENOMEM;
 +
-+	nr_wait = atomic_read(&ctx->cq_wait_nr);
-+	/* not enough or no one is waiting */
-+	if (nr_tw < nr_wait)
-+		return;
-+	/* the previous add has already woken it up */
-+	if (nr_tw_prev >= nr_wait)
-+		return;
-+	wake_up_state(task, TASK_INTERRUPTIBLE);
-+}
- #endif
++	spin_lock(&target_ctx->completion_lock);
++	io_msg_add_overflow(msg, target_ctx, ocqe, msg->len, flags);
++	return 0;
+ }
+ 
+ static int io_msg_ring_data(struct io_kiocb *req, unsigned int issue_flags)
+@@ -135,12 +159,12 @@ static int io_msg_ring_data(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (target_ctx->flags & IORING_SETUP_R_DISABLED)
+ 		return -EBADFD;
+ 
+-	if (io_msg_need_remote(target_ctx))
+-		return io_msg_exec_remote(req, io_msg_tw_complete);
+-
+ 	if (msg->flags & IORING_MSG_RING_FLAGS_PASS)
+ 		flags = msg->cqe_flags;
+ 
++	if (io_msg_need_remote(target_ctx))
++		return io_msg_fill_remote(msg, issue_flags, target_ctx, flags);
++
+ 	ret = -EOVERFLOW;
+ 	if (target_ctx->flags & IORING_SETUP_IOPOLL) {
+ 		if (unlikely(io_double_lock_ctx(target_ctx, issue_flags)))
 -- 
 2.43.0
 

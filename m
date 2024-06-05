@@ -1,75 +1,75 @@
-Return-Path: <io-uring+bounces-2126-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2127-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADDB8FD30F
-	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 18:41:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CF98FD580
+	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 20:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38F631F222E4
-	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 16:41:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0F6528862B
+	for <lists+io-uring@lfdr.de>; Wed,  5 Jun 2024 18:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D5E1527B5;
-	Wed,  5 Jun 2024 16:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171F43D66;
+	Wed,  5 Jun 2024 18:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="C27rIDcj"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ylR7LkpA"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C652837A
-	for <io-uring@vger.kernel.org>; Wed,  5 Jun 2024 16:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CFD624
+	for <io-uring@vger.kernel.org>; Wed,  5 Jun 2024 18:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717605696; cv=none; b=k5yrK6TvA16eQGWNy98KNnYdD+SN5SMmRiGHHztQe6q41685I5xXp95y2zldGiIDZJaaZzyLeJBEDz5NVHTghO6LeDzC/YzSE7An79t9BdMlz6+wVqKXbdTAPmUAT0Y6UAFIkbbcbRow9ad4nR9l6bf6vJ5Fd5THaZ7CvjqwsLA=
+	t=1717610919; cv=none; b=ezmiIw4r7nog2boopmAdL2npjwgVy7ursU9XPUKLSnRbLPdQm0yFLOvly04x1QuyXyTJoPpEyHPjHKUX/rZ2eAlo6lIUPcH5qoDmj35/Fm48iu3H/qTau6nd5JvtMN4P4LLfe8LhKVTYBhgUnkXxcCFiOc736W77qdlJzxk2FEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717605696; c=relaxed/simple;
-	bh=dLaDhSynmuwI9YLX0T4z28Qj6zqmkaFho3WGD9hlvdI=;
+	s=arc-20240116; t=1717610919; c=relaxed/simple;
+	bh=Ul5SlcXbBSD/oTuJXVxqmBhLKYhHYarSgPwIi/+RUDU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IdfXMI/BiPG2MNnsAk5b21CnR1d47vCaY6I+thw2F/UYKcXQL9lfYG7MsRnId7AkqgR41Hgxp0GEFTD48HpNieaUTJnAHjgJYAIRXqBvCUaEYnnlGhgJyHlwGp0R/YZL7aauMTZgNW4nqbcz0WO8CLG8HCOdfUBoC5S8ERI4dw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=C27rIDcj; arc=none smtp.client-ip=209.85.167.172
+	 In-Reply-To:Content-Type; b=fklydz9GriFk7WqsJGCWy1i+KjaCFcmcK4MuAaQkK+ayK/Kwt0dpZ2jY0cKp2shA4STOEWpEMyvRZKzBKVAUozd6I8S28V4XsJFcboXYSq2Y1pNI3BeTvEnuaMgKRNsGp/ornTWuUHSC1OqJYArGlodHA97M+9LhEBdE78Vcpck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ylR7LkpA; arc=none smtp.client-ip=209.85.210.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d1fd5fd4e9so285926b6e.1
-        for <io-uring@vger.kernel.org>; Wed, 05 Jun 2024 09:41:33 -0700 (PDT)
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-6f93a6d5d70so410a34.2
+        for <io-uring@vger.kernel.org>; Wed, 05 Jun 2024 11:08:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717605693; x=1718210493; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717610913; x=1718215713; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=yWu8iluWE1DO36YdJsykDTeO8JOeRlkf5HxPSTPylb4=;
-        b=C27rIDcjC7f3omp8KZ1RPCZViryLH7bmgco9OuRxEXu8IJxB/lBjgXihpeYqkT1BI0
-         MUSNhneKpTjlAjhdMP2MyELfKPGhAStsR0sY0sEluliHs/0iOSbrcvToOO8mSvlPaiJz
-         fp2PMm2T1r/SNMvs8Y79i+9/EIVmZ0Q8atfGCIGJemPVMCOD/AgkvMRtji9gCVFqis02
-         oG7aGlD9EqZKklC9+qtLE2vDAW2E2Ngor1LftOM5zkrDuj1eA496MzLJ++O8I7QncZ57
-         z5RRmSlyjqtKsJaryM2ojCh+AfqSQqkTjwWM+8nFyZsJ81MVzEX+q/gYFfKEmp9L0pBM
-         sZAg==
+        bh=JRzaN5sZFSegMf6pQo5Rt6wJQS24Jscg6qfOTaYVkPw=;
+        b=ylR7LkpA9uqKN29tITDAOTtw8SEAWpbgZ5HH+36jfQGTDRg5LSa/Q1wmDILjpuQkmO
+         VvvsgGmaxavQ0lVBWcm3ekJEPLQUJY/g3dAv+P/wy1HPstTbiYyqDUlA1b17ZTZFd6/E
+         eJOm6NpRNOB8Gq1EhBVVWOu2jkVj6X/Q1rXAvv7xFa58xUc6D031fAdzjY7qwu/bxBLE
+         5/3hovu3NAr+eTKc4usVjIsSEt3TCcAEu3VhIPNXgOyL1z597OeiI9HgcsX1AAQbyl8N
+         GQLOAkW1M07ip96HDxW406dfp/XbnjOxVuDU37uIH94RBc8fhIH+e7UJi3D05ASCxioA
+         hPdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717605693; x=1718210493;
+        d=1e100.net; s=20230601; t=1717610913; x=1718215713;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yWu8iluWE1DO36YdJsykDTeO8JOeRlkf5HxPSTPylb4=;
-        b=Dp1x0Cr05pRBZ3IJ89BNMHFppfcrFHcbML6lJ8PqkLh0fuGeaqKZLY79GQ12e+5npD
-         7W0T2NEFqh/O4zG7YGGP5rZ12R/Kx4I/+5KQQTo8nGqvxv9nK9E9Zp1Mkv5lMPUZwuNr
-         4eVMh8OZ4vWgwZ7n4FezEgczM7wxOAobXhp+Ka3sHwS9hfukx0Dve8Gw6M+HKerYodbn
-         6g6GAsJcZZ9/ZzQ9u5DURJ4kdzhrn+HTL5ejKK4XXNS649toymHcJnk1RfDLZ9qJbe7i
-         NdR/C1sfZgf9+XDC90A2uvJ8SRd9lmVZryCNOwTlnDR2h0SGMTeKfXshy2SaK/Eza9oY
-         5tcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtmqaqFe0v2vDXddB+1r2XC4jdOso9oFmswSYdkljyuqEaz/JpWVTp0KvEIHB+x6yY4q39rB9dpZrhSSvmLaq3ihC8CwVO5FU=
-X-Gm-Message-State: AOJu0YwVHk/aSaHQcxFTkXjLqSa0UT2raIiYtJlsTg4rVE2MDEF1pika
-	ZuKB9u4989dGIQd8zdE36+taIcPhq+nnyqPHZ8mB9sYDbqj21ZwWjDqcaoXg39/tIjiYbJs0ag2
-	B
-X-Google-Smtp-Source: AGHT+IGWFBEVF7DZaYpIQvI6gGYAXILKVgspog8R5P5tuWhPdL3OJ59IEMKbo/zQ1vXCqWbr400ieg==
-X-Received: by 2002:a05:6808:1786:b0:3d2:368:9288 with SMTP id 5614622812f47-3d20425e4abmr3589484b6e.1.1717605692450;
-        Wed, 05 Jun 2024 09:41:32 -0700 (PDT)
+        bh=JRzaN5sZFSegMf6pQo5Rt6wJQS24Jscg6qfOTaYVkPw=;
+        b=ssd6cxUAaGfolwUaPaR71Vm6hBijnf4V6S+RmVbiyLkB+eqYbZbjAHXvG4ntSUPDe2
+         5sK9AUs5i7WjHAqwfgaqdZKN7z60HVgXHodOBH625SacKJXwRGC6hrWOS6dy9dB2iJP0
+         DO8xGvQblFHx+VQVwuqLJ0CqZQ0CrUP6hD9abhfWKSMplgOnSyC93uMHQ+EtvW3PBzfF
+         0txvD4uQBH0u58tT/baCJ4Zrc4e4rQ02WVEn6hXPmqsyNe+s7cR+c9FomnzoOgWJdHba
+         r1KeYSk8x6yBbCLesEuZJZ0mVBmoeKwg4tFsTXwdV2AooW85ct2gx2Ue5GRRX4VTNSBQ
+         UZ9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVURe1yEqRlV9c1bunSaLgqXlVYhDz10KSlWsU8pqbBzxdQn1Zff6oaQfRyr04daLs69eLwrdA6JNQLwcrw/Hz5zfPryGGYjyg=
+X-Gm-Message-State: AOJu0Yx7A2ljX8ZtQxeLqrsY11Yfq/50G/g+W/rzd50/BvHiZzZ7XGa1
+	kMent+5SdTTLdjirkRtGZT6DF7fvUPgemVnSW1BaatyHO7I5IjHaM3t1iaQjf7DL3rOhbj3YENN
+	5
+X-Google-Smtp-Source: AGHT+IHOzUT4KGuRd4roNSkC9fH+vaK3ZFy6C92QG6EZ7/IQDmpSk9GZJmCaATUmpbfZMIUH7zTQ+A==
+X-Received: by 2002:a05:6830:7203:b0:6f0:e529:4f0d with SMTP id 46e09a7af769-6f943433009mr3803004a34.1.1717610913538;
+        Wed, 05 Jun 2024 11:08:33 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d20672451bsm222804b6e.8.2024.06.05.09.41.31
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f923758b1bsm1765509a34.21.2024.06.05.11.08.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 09:41:31 -0700 (PDT)
-Message-ID: <e89d6035-8a96-413b-9d80-f4092d18738a@kernel.dk>
-Date: Wed, 5 Jun 2024 10:41:30 -0600
+        Wed, 05 Jun 2024 11:08:32 -0700 (PDT)
+Message-ID: <7401642d-3d29-4949-a10d-76868991d32c@kernel.dk>
+Date: Wed, 5 Jun 2024 12:08:31 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,133 +77,43 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v2 0/7] Improve MSG_RING DEFER_TASKRUN performance
+Subject: Re: [PATCH 2/5] io_uring: mark exit side kworkers as task_work
+ capable
 To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <20240530152822.535791-2-axboe@kernel.dk>
- <32ee0379-b8c7-4c34-8c3a-7901e5a78aa2@gmail.com>
- <656d487c-f0d8-401e-9154-4d01ef34356c@kernel.dk>
- <6c8ca196-2444-4c82-a8c0-a93f45fe47da@gmail.com>
+References: <20240604191314.454554-1-axboe@kernel.dk>
+ <20240604191314.454554-3-axboe@kernel.dk>
+ <a9d5af1e-533a-46c9-9a74-41998eb75288@gmail.com>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <6c8ca196-2444-4c82-a8c0-a93f45fe47da@gmail.com>
+In-Reply-To: <a9d5af1e-533a-46c9-9a74-41998eb75288@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/5/24 9:50 AM, Pavel Begunkov wrote:
-> On 6/4/24 19:57, Jens Axboe wrote:
->> On 6/3/24 7:53 AM, Pavel Begunkov wrote:
->>> On 5/30/24 16:23, Jens Axboe wrote:
->>>> Hi,
->>>>
->>>> For v1 and replies to that and tons of perf measurements, go here:
->>>
->>> I'd really prefer the task_work version rather than carving
->>> yet another path specific to msg_ring. Perf might sounds better,
->>> but it's duplicating wake up paths, not integrated with batch
->>> waiting, not clear how affects different workloads with target
->>> locking and would work weird in terms of ordering.
->>
->> The duplication is really minor, basically non-existent imho. It's a
->> wakeup call, it's literally 2 lines of code. I do agree on the batching,
+On 6/5/24 9:01 AM, Pavel Begunkov wrote:
+>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>> index 96f6da0bf5cd..3ad915262a45 100644
+>> --- a/io_uring/io_uring.c
+>> +++ b/io_uring/io_uring.c
+>> @@ -234,6 +234,20 @@ static inline void io_req_add_to_cache(struct io_kiocb *req, struct io_ring_ctx
+>>       wq_stack_add_head(&req->comp_list, &ctx->submit_state.free_list);
+>>   }
+>>   +static __cold void io_kworker_tw_start(void)
+>> +{
+>> +    if (WARN_ON_ONCE(!(current->flags & PF_NO_TASKWORK)))
+>> +        return;
+>> +    current->flags &= ~PF_NO_TASKWORK;
+>> +}
+>> +
+>> +static __cold void io_kworker_tw_end(void)
+>> +{
+>> +    while (task_work_pending(current))
+>> +        task_work_run();
 > 
-> Well, v3 tries to add msg_ring/nr_overflow handling to local
-> task work, that what I mean by duplicating paths, and we'll
-> continue gutting the hot path for supporting msg_ring in
-> this way.
+> Clear TIF_NOTIFY_SIGNAL/RESUME? Maybe even retrying task_work_run()
+> after and looping around if there are items to execute.
 
-No matter how you look at it, there will be changes to the hot path
-regardless of whether we use local task_work like in the original, or do
-the current approach.
-
-> Does it work with eventfd? I can't find any handling, so next
-> you'd be adding:
-> 
-> io_commit_cqring_flush(ctx);
-
-That's merely because the flagging should be done in io_defer_wake(),
-moving that code to the common helper as well.
-
-> Likely draining around cq_extra should also be patched.
-> Yes, fixable, but it'll be a pile of fun, and without many
-> users, it'll take time to discover it all.
-
-Yes that may need tweaking indeed. But this is a bit of a chicken and
-egg problem - there are not many users of it, because it currently
-sucks. We have to make it better, and there's already one user lined up
-because of these changes.
-
-We can't just let MSG_RING linger. It's an appealing interface for
-message passing where you are using rings on both sides, but it's
-currently pretty much useless exactly for the case that we care about
-the most - DEFER_TASKRUN. So right now you are caught between a rock and
-a hard place, where you want to use DEFER_TASKRUN because it's a lot
-better for the things that people care about, but if you need message
-passing, then it doesn't work very well.
-
->> though I don't think that's really a big concern as most usage I'd
->> expect from this would be sending single messages. You're not batch
->> waiting on those. But there could obviously be cases where you have a
->> lot of mixed traffic, and for those it would make sense to have the
->> batch wakeups.
->>
->> What I do like with this version is that we end up with just one method
->> for delivering the CQE, rather than needing to split it into two. And it
->> gets rid of the uring_lock double locking for non-SINGLE_ISSUER. I know
-> 
-> You can't get rid of target locking for fd passing, the file tables
-> are sync'ed by the lock. Otherwise it's only IOPOLL, because with
-> normal rings it can and IIRC does take the completion_lock for CQE
-> posting. I don't see a problem here, unless you care that much about
-> IOPOLL?
-
-Right, fd passing still needs to grab the lock, and it still does with
-the patchset. We can't really get around it for fd passing, at least not
-without further work (of which I have no current plans to do). I don't
-care about IOPOLL in particular for message passing, I don't think there
-are any good use cases there. It's more of a code hygiene thing, the
-branches are still there and do exist.
-
->> we always try and push people towards DEFER_TASKRUN|SINGLE_ISSUER, but
->> that doesn't mean we should just ignore the cases where that isn't true.
->> Unifying that code and making it faster all around is a worthy goal in
->> and of itself. The code is CERTAINLY a lot cleaner after the change than
->> all the IOPOLL etc.
->>
->>> If the swing back is that expensive, another option is to
->>> allocate a new request and let the target ring to deallocate
->>> it once the message is delivered (similar to that overflow
->>> entry).
->>
->> I can give it a shot, and then run some testing. If we get close enough
->> with the latencies and performance, then I'd certainly be more amenable
->> to going either route.
->>
->> We'd definitely need to pass in the required memory and avoid the return
-> 
-> Right, same as with CQEs
-> 
->> round trip, as that basically doubles the cost (and latency) of sending
-> 
-> Sender's latency, which is IMHO not important at all
-
-But it IS important. Not because of the latency itself, that part is
-less important, but because of the added overhead of bouncing from ring1
-to ring2, and then back from ring2 to ring1. The reduction in latency is
-a direct reflecting of the reduction of overhead.
-
->> a message. The downside of what you suggest here is that while that
->> should integrate nicely with existing local task_work, it'll also mean
->> that we'll need hot path checks for treating that request type as a
->> special thing. Things like req->ctx being not local, freeing the request
->> rather than recycling, etc. And that'll need to happen in multiple
->> spots.
-> 
-> I'm not suggesting feeding that request into flush_completions()
-> and common completion infra, can be killed right in the tw callback.
-
-Right, so you need to special case these requests when you run the local
-task_work. Which was my point above, you're going to need to accept hot
-path additions regardless of the approach.
+Yeah good point, it should handle clear the notifiers too. Will make
+that change.
 
 -- 
 Jens Axboe

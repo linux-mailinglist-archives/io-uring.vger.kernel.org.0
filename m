@@ -1,265 +1,170 @@
-Return-Path: <io-uring+bounces-2190-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2191-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C05E7905743
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 17:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF4690577C
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 17:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A811F2803C
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 15:46:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 827731F28AEC
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 15:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87B9208CE;
-	Wed, 12 Jun 2024 15:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E927017FAA4;
+	Wed, 12 Jun 2024 15:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A7xCF2Wy"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tBfOSzNs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18C11C6BD;
-	Wed, 12 Jun 2024 15:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFD517F505
+	for <io-uring@vger.kernel.org>; Wed, 12 Jun 2024 15:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718207201; cv=none; b=GSxtz80cwKtPyptmp7KspnsEcDFDrnbij/Gceus8gpxsNIMr2mXjpAXMvuQqVO9gxKj7pseRtHfEebelP2Xp1Ueyb6hGf0Wojvsqz7BFXNq1qN2mQiCFvKuQtk4Ysb9qrtUHiBDA6i2cddYuw3AyLfp8nLNF9evwZfDCj6Ym4Cg=
+	t=1718207712; cv=none; b=mmUIqQpy3xskAaqVmVjS1Sb0rCr9h//vLMqIQkFMsAM0PwUKhCXwLJBLYLiPgy5tPsia+AI+5OQPjZiT3yaXprvme3RSLDRtfB4Wh7qSePCSu3TIfNl1tAnPsrg0wYg31vqUzW27Oy+U5KocpIx1lSE5ofyBvHe77XgZ1C/TfEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718207201; c=relaxed/simple;
-	bh=pwyXV2gqwAitEUVkBUVsSUVYSSTgx/UCYaTnnIaHQ8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=pskcxRlKoo/JyheRsg+Uiz3vtqqkD2maLwsln6QD0D7Le16gXlA44szd0Dk4mfKN3QcW/a+aenfbUAya/iKdPoys3TkQ0G2MLOQ7dVBrRmQhDGyg9oUKmJM6Pry88fsiEmAm/ieDH5rNV6Y+RuqIpZ3TJxDj5T/Hp4G2k1O3zbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A7xCF2Wy; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-627ebbefd85so81287457b3.3;
-        Wed, 12 Jun 2024 08:46:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718207199; x=1718811999; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PwyckEkEliCj8lDpHS+Ob3WHasbxDcvL14yeYreRWFw=;
-        b=A7xCF2Wy5rfg1lBBr4vAESoChNqR5an0O7hE7MDlXIu+ggUWVcY+Xb0dIJs8tmw0Gp
-         V6wRtk6PV2emcSJWIhtPEkF2cYHqRyhdP51JQvzKwltdakwagXsrUe5rrju4nkFJMkAn
-         AgT/MxSWK86AlRHEdUDtmNL9x6KLVT6wiep92uC4NLsaSZtswDgHvwS/9w9aLfWRv5kP
-         jwhVjKrBQ73Q7mFMUk9XCbEd1WHhOrVaBxV3PFOWjYIUmrFtxktHorQmyCOls2BdqEcq
-         I6BD0ekJXlCxlw5R97WI4aX1DCMmJEjDyD3GDK00AQenuGsWFnJb8BGEpsXvzKnMkycM
-         zWWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718207199; x=1718811999;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PwyckEkEliCj8lDpHS+Ob3WHasbxDcvL14yeYreRWFw=;
-        b=r6e/8IIGTV/JDj3wLze/m+qAatXys1+ePLsbNgBZKeCqwW1DlwhjYVMamJdiVzrklJ
-         sapn3YMSZS5b0invAa4c3SyRTiplogLrSDYXinOBrA3d7EykXf5awu1cBIzNyGPgO2YY
-         bjkllBM4QESSN9duEcU07qmg2EVxEmA9KGec7KTAusyNvsbi+PsaqHFmawWo5oPMzF7i
-         8qYhH/Y+4teh9DP1CMpZjB5o5/gGgYhrBa5uAWFbeuWC1AkFrlGsUuJwkvUwZCoZC2ct
-         4DQgtfKbvOhmoEshQIiiGrJXTKqhQ2ydqpCVlZKQniCwd6DhXWcGaOtHOD8/yLZgQL4Q
-         +bDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVgn3SxjYM1BBMoK6oM48/wXDqaqsoNa8kkRvZarcIGjHjbjcMIaZoHOfaWUjmgoQaBngIJa0GN3kXe2/VRUGgCTM+AHiC8bVSUbx77fl1wG7ZNGHJcoKWxLZEaVSrs75HeSXTQJk=
-X-Gm-Message-State: AOJu0Yx9ygg6npd6LuCZJyAVloH7GV0OFC+YIXnVRpORKt5NBUjYOjPI
-	6GJ/MXggAniiyeSdxmZZLzVBCRkrYmVf5xTvgYwMJXEdtUe/h6CTnZQM844+mJT1SDgM0USiD1i
-	dRoxDmmFaB7NBI6MfliRBZus22gWzHRyUn0c=
-X-Google-Smtp-Source: AGHT+IGjQ3bMnaoz14Ziqp08zGvMzQCqh0n9PJaygB1It1xMzxUvIdJW08/jr16vIotLNiQydeZzTqLOoDtFAgrFuLQ=
-X-Received: by 2002:a0d:c0c4:0:b0:62d:315:2a7d with SMTP id
- 00721157ae682-62fbdba8ab0mr19639417b3.51.1718207198877; Wed, 12 Jun 2024
- 08:46:38 -0700 (PDT)
+	s=arc-20240116; t=1718207712; c=relaxed/simple;
+	bh=tQ6eaUMy/U4jhIuannuweep0uBcOKLnG1LqdwHEAHeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qd07USDww8IedLdoTWZLmBZWH1yphZ97Qx2kbyvv4N1YHKwImffr01cYtA1CYCc8YMGRkX2+er2z3j1CGNLyuJDOdcmN371XOqRXBfX2FYJpPcuX6uUgqrtclP0OilHGk+foP80IAKnOHV0FxmOkPasNxu2rL/8wj/IEmzjmY44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tBfOSzNs; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: bschubert@ddn.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718207708;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AvL1Mr0Fm0dZcOgqN+9E74/tJ0v+sK2Qs50nD6yxG/I=;
+	b=tBfOSzNsZtHuam2LcfyThM1Q7QYdjTEHsJ+upKwR+o01BtIwjefYnW2l8sf0lsdEvqF4n9
+	qheOfzV5uZffa+YyyKdgv7hc8pkSAp+UaKILQWP4YSRBhhSHszgcqN0NHEQaUSWace0JSo
+	pSarQHVvr7YBAoBr/hL2cMkf4WQk+sE=
+X-Envelope-To: bernd.schubert@fastmail.fm
+X-Envelope-To: miklos@szeredi.hu
+X-Envelope-To: amir73il@gmail.com
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: mingo@redhat.com
+X-Envelope-To: peterz@infradead.org
+X-Envelope-To: avagin@google.com
+X-Envelope-To: io-uring@vger.kernel.org
+Date: Wed, 12 Jun 2024 11:55:03 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>, 
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
+Message-ID: <hhkehi7qlcjulhyvtd5j25cl3xw764cjk7tbsakf3ueerdhp3j@6d2nka5oalzn>
+References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
+ <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
+ <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
+ <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
+ <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
+ <im6hqczm7qpr3oxndwupyydnclzne6nmpidln6wee4cer7i6up@hmpv4juppgii>
+ <a5ab3ea8-f730-4087-a9ea-b3ac4c8e7919@fastmail.fm>
+ <olaitdmh662osparvdobr267qgjitygkl7lt7zdiyyi6ee6jlc@xaashssdxwxm>
+ <4e5a84ab-4aa5-4d8b-aa12-625082d92073@ddn.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CADZouDR_Qz7dNVDsJyVSK8HfeSPpoO2ts=C-VbzhvHs3xE53AA@mail.gmail.com>
- <24c12c7d-71fd-4ff8-b67b-20cdfb67bd86@gmail.com>
-In-Reply-To: <24c12c7d-71fd-4ff8-b67b-20cdfb67bd86@gmail.com>
-From: chase xd <sl1589472800@gmail.com>
-Date: Wed, 12 Jun 2024 17:46:29 +0200
-Message-ID: <CADZouDSYKVjDry_w535s8d8+3eXyLnMdrnOtbeYSMYWqxFkKbA@mail.gmail.com>
-Subject: Re: [io-uring] WARNING in io_issue_sqe
-To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4e5a84ab-4aa5-4d8b-aa12-625082d92073@ddn.com>
+X-Migadu-Flow: FLOW_OUT
 
-here you go
+On Wed, Jun 12, 2024 at 03:40:14PM GMT, Bernd Schubert wrote:
+> On 6/12/24 16:19, Kent Overstreet wrote:
+> > On Wed, Jun 12, 2024 at 03:53:42PM GMT, Bernd Schubert wrote:
+> >> I will definitely look at it this week. Although I don't like the idea
+> >> to have a new kthread. We already have an application thread and have
+> >> the fuse server thread, why do we need another one?
+> > 
+> > Ok, I hadn't found the fuse server thread - that should be fine.
+> > 
+> >>>
+> >>> The next thing I was going to look at is how you guys are using splice,
+> >>> we want to get away from that too.
+> >>
+> >> Well, Ming Lei is working on that for ublk_drv and I guess that new approach
+> >> could be adapted as well onto the current way of io-uring.
+> >> It _probably_ wouldn't work with IORING_OP_READV/IORING_OP_WRITEV.
+> >>
+> >> https://lore.gnuweeb.org/io-uring/20240511001214.173711-6-ming.lei@redhat.com/T/
+> >>
+> >>>
+> >>> Brian was also saying the fuse virtio_fs code may be worth
+> >>> investigating, maybe that could be adapted?
+> >>
+> >> I need to check, but really, the majority of the new additions
+> >> is just to set up things, shutdown and to have sanity checks.
+> >> Request sending/completing to/from the ring is not that much new lines.
+> > 
+> > What I'm wondering is how read/write requests are handled. Are the data
+> > payloads going in the same ringbuffer as the commands? That could work,
+> > if the ringbuffer is appropriately sized, but alignment is a an issue.
+> 
+> That is exactly the big discussion Miklos and I have. Basically in my
+> series another buffer is vmalloced, mmaped and then assigned to ring entries.
+> Fuse meta headers and application payload goes into that buffer.
+> In both kernel/userspace directions. io-uring only allows 80B, so only a
+> really small request would fit into it.
 
-```
-# {Threaded:false Repeat:true RepeatTimes:0 Procs:1 Slowdown:1
-Sandbox: SandboxArg:0 Leak:false NetInjection:false NetDevices:false
-NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false
-KCSAN:false DevlinkPCI:false NicVF:false USB:false VhciInjection:false
-Wifi:false IEEE802154:false Sysctl:false Swap:false UseTmpDir:false
-HandleSegv:true Repro:false Trace:false LegacyOptions:{Collide:false
-Fault:false FaultCall:0 FaultNth:0}}
-r0 =3D syz_io_uring_setup(0x4d84, &(0x7f0000000000)=3D{0x0, 0x649b, 0x80,
-0x0, 0x4315}, &(0x7f0000000080)=3D<r1=3D>0x0, &(0x7f00000000c0)=3D<r2=3D>0x=
-0)
-open(&(0x7f0000000100)=3D'./file0\x00', 0x214400, 0x84)
-r3 =3D open$dir(&(0x7f0000000140)=3D'./file0\x00', 0x0, 0x0)
-r4 =3D socket(0x2a, 0x80800, 0x4)
-epoll_create1(0x0)
-eventfd2(0xffffffff, 0x100800)
-io_uring_register$IORING_UNREGISTER_IOWQ_AFF(r0, 0x12, 0x0, 0x0)
-syz_io_uring_submit(r1, r2, &(0x7f00000001c0)=3D@IORING_OP_ACCEPT=3D{0xd,
-0x10, 0x1, @sock=3Dr4, &(0x7f0000000200)=3D0x80,
-&(0x7f0000000240)=3D@tipc=3D@name, 0x0, 0x800})
-io_uring_enter(r0, 0x1, 0x1, 0x9, 0x0, 0x0)
-syz_io_uring_complete(r1, &(0x7f0000000380))
-io_uring_register$IORING_REGISTER_PROBE(r0, 0x8,
-&(0x7f0000002900)=3D{0x0, 0x0, 0x0, '\x00', [{}, {}, {}, {}, {}, {}, {},
-{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},
-{}, {}, {}, {}, {}]}, 0x2e)
-clock_gettime(0x0, 0x0)
-syz_io_uring_submit(r1, r2, 0x0)
-syz_io_uring_submit(r1, r2,
-&(0x7f0000001680)=3D@IORING_OP_SYMLINKAT=3D{0x26, 0x22, 0x0, @fd_dir=3Dr3,
-&(0x7f0000000180)=3D'./file0\x00', &(0x7f0000000380)=3D'./file0\x00'})
-syz_io_uring_submit(r1, r2,
-&(0x7f0000002a80)=3D@IORING_OP_ASYNC_CANCEL=3D{0xe, 0x0, 0x0, 0x0, 0x0,
-0x0, 0x0, 0x4, 0x1})
-syz_io_uring_submit(r1, r2,
-&(0x7f0000002ac0)=3D@IORING_OP_ASYNC_CANCEL=3D{0xe, 0x0, 0x0, 0x0, 0x0,
-0x0, 0x0, 0x10, 0x1})
-io_uring_enter(r0, 0x4, 0x4, 0x5, 0x0, 0x0)
-syz_io_uring_complete(r1, 0x0)
-```
+Well, the generic ringbuffer would lift that restriction.
 
+> Legacy /dev/fuse has an alignment issue as payload follows directly as the fuse
+> header - intrinsically fixed in the ring patches.
 
-On Wed, Jun 12, 2024 at 5:41=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> On 6/12/24 15:29, chase xd wrote:
-> > Hi,
-> >
-> > Syzkaller hits a new bug in branch 6.10.0-rc1-00004-gff802a9f35cf-dirty=
- #7.
-> > Note: this is also not a reliable repro, might need to try more times
->
-> Do you have a syz repro? It's easier to understand what it's doing,
-> which request types are used and such.
->
->
-> >
-> > ```
-> >
-> > [  153.857557][T21250] apt-get (21250) used greatest stack depth:
-> > 22240 bytes left
-> > [  249.711259][T57846] ------------[ cut here ]------------
-> > [  249.711626][T57846] WARNING: CPU: 1 PID: 57846 at
-> > io_uring/refs.h:38 io_issue_sqe+0x10dc/0x1720
-> > [  249.712188][T57846] Modules linked in:
-> > [  249.712431][T57846] CPU: 1 PID: 57846 Comm: iou-wrk-57845 Not
-> > tainted 6.10.0-rc1-00004-gff802a9f35cf-dirty #7
-> > [  249.713020][T57846] Hardware name: QEMU Standard PC (i440FX + PIIX,
-> > 1996), BIOS 1.15.0-1 04/01/2014
-> > [  249.713566][T57846] RIP: 0010:io_issue_sqe+0x10dc/0x1720
-> > [  249.713894][T57846] Code: fc ff df 4c 89 e2 48 c1 ea 03 80 3c 02 00
-> > 0f 85 c6 05 00 00 49 89 1c 24 49f
-> > [  249.715023][T57846] RSP: 0018:ffffc9000e84fc00 EFLAGS: 00010293
-> > [  249.715389][T57846] RAX: 0000000000000000 RBX: 0000000000000000
-> > RCX: ffffffff84139c3c
-> > [  249.715855][T57846] RDX: ffff88801eaad640 RSI: ffffffff8413a70b
-> > RDI: 0000000000000007
-> > [  249.716300][T57846] RBP: ffffc9000e84fc80 R08: 0000000000000007
-> > R09: 0000000000000000
-> > [  249.716676][T57846] R10: 0000000000000000 R11: 0000000000000000
-> > R12: ffff8880001c3a00
-> > [  249.717042][T57846] R13: 0000000000000000 R14: ffff888010600040
-> > R15: ffff8880001c3a48
-> > [  249.717428][T57846] FS:  00007f58ce931800(0000)
-> > GS:ffff88807ec00000(0000) knlGS:0000000000000000
-> > [  249.717837][T57846] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003=
-3
-> > [  249.718135][T57846] CR2: 00007f58ce932128 CR3: 000000001b08a000
-> > CR4: 00000000000006f0
-> > [  249.718497][T57846] Call Trace:
-> > [  249.718668][T57846]  <TASK>
-> > [  249.718810][T57846]  ? __warn+0xc7/0x2f0
-> > [  249.719003][T57846]  ? io_issue_sqe+0x10dc/0x1720
-> > [  249.719233][T57846]  ? report_bug+0x347/0x410
-> > [  249.719451][T57846]  ? handle_bug+0x3d/0x80
-> > [  249.719654][T57846]  ? exc_invalid_op+0x18/0x50
-> > [  249.719872][T57846]  ? asm_exc_invalid_op+0x1a/0x20
-> > [  249.720127][T57846]  ? io_issue_sqe+0x60c/0x1720
-> > [  249.720420][T57846]  ? io_issue_sqe+0x10db/0x1720
-> > [  249.720711][T57846]  ? io_issue_sqe+0x10dc/0x1720
-> > [  249.721012][T57846]  ? __fget_files+0x1bc/0x3d0
-> > [  249.722194][T57846]  ? io_wq_submit_work+0x264/0xcb0
-> > [  249.722521][T57846]  io_wq_submit_work+0x264/0xcb0
-> > [  249.722826][T57846]  io_worker_handle_work+0x97e/0x1790
-> > [  249.723159][T57846]  io_wq_worker+0x38e/0xe50
-> > [  249.723435][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.723687][T57846]  ? ret_from_fork+0x16/0x70
-> > [  249.723907][T57846]  ? __pfx_lock_release+0x10/0x10
-> > [  249.724139][T57846]  ? do_raw_spin_lock+0x12c/0x2b0
-> > [  249.724392][T57846]  ? __pfx_do_raw_spin_lock+0x10/0x10
-> > [  249.724706][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.725015][T57846]  ret_from_fork+0x2f/0x70
-> > [  249.725300][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.725603][T57846]  ret_from_fork_asm+0x1a/0x30
-> > [  249.725897][T57846]  </TASK>
-> > [  249.726083][T57846] Kernel panic - not syncing: kernel: panic_on_war=
-n set ...
-> > [  249.726521][T57846] CPU: 1 PID: 57846 Comm: iou-wrk-57845 Not
-> > tainted 6.10.0-rc1-00004-gff802a9f35cf-dirty #7
-> > [  249.727110][T57846] Hardware name: QEMU Standard PC (i440FX + PIIX,
-> > 1996), BIOS 1.15.0-1 04/01/2014
-> > [  249.727647][T57846] Call Trace:
-> > [  249.727842][T57846]  <TASK>
-> > [  249.728018][T57846]  panic+0x4fa/0x5a0
-> > [  249.728252][T57846]  ? __pfx_panic+0x10/0x10
-> > [  249.728516][T57846]  ? show_trace_log_lvl+0x284/0x390
-> > [  249.728832][T57846]  ? io_issue_sqe+0x10dc/0x1720
-> > [  249.729120][T57846]  check_panic_on_warn+0x61/0x80
-> > [  249.729416][T57846]  __warn+0xd3/0x2f0
-> > [  249.729650][T57846]  ? io_issue_sqe+0x10dc/0x1720
-> > [  249.729941][T57846]  report_bug+0x347/0x410
-> > [  249.730206][T57846]  handle_bug+0x3d/0x80
-> > [  249.730460][T57846]  exc_invalid_op+0x18/0x50
-> > [  249.730730][T57846]  asm_exc_invalid_op+0x1a/0x20
-> > [  249.731031][T57846] RIP: 0010:io_issue_sqe+0x10dc/0x1720
-> > [  249.731365][T57846] Code: fc ff df 4c 89 e2 48 c1 ea 03 80 3c 02 00
-> > 0f 85 c6 05 00 00 49 89 1c 24 49f
-> > [  249.732508][T57846] RSP: 0018:ffffc9000e84fc00 EFLAGS: 00010293
-> > [  249.732873][T57846] RAX: 0000000000000000 RBX: 0000000000000000
-> > RCX: ffffffff84139c3c
-> > [  249.733351][T57846] RDX: ffff88801eaad640 RSI: ffffffff8413a70b
-> > RDI: 0000000000000007
-> > [  249.733822][T57846] RBP: ffffc9000e84fc80 R08: 0000000000000007
-> > R09: 0000000000000000
-> > [  249.734285][T57846] R10: 0000000000000000 R11: 0000000000000000
-> > R12: ffff8880001c3a00
-> > [  249.734757][T57846] R13: 0000000000000000 R14: ffff888010600040
-> > R15: ffff8880001c3a48
-> > [  249.735236][T57846]  ? io_issue_sqe+0x60c/0x1720
-> > [  249.735529][T57846]  ? io_issue_sqe+0x10db/0x1720
-> > [  249.735825][T57846]  ? __fget_files+0x1bc/0x3d0
-> > [  249.736116][T57846]  ? io_wq_submit_work+0x264/0xcb0
-> > [  249.736428][T57846]  io_wq_submit_work+0x264/0xcb0
-> > [  249.736731][T57846]  io_worker_handle_work+0x97e/0x1790
-> > [  249.737061][T57846]  io_wq_worker+0x38e/0xe50
-> > [  249.737353][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.737646][T57846]  ? ret_from_fork+0x16/0x70
-> > [  249.737861][T57846]  ? __pfx_lock_release+0x10/0x10
-> > [  249.738091][T57846]  ? do_raw_spin_lock+0x12c/0x2b0
-> > [  249.738398][T57846]  ? __pfx_do_raw_spin_lock+0x10/0x10
-> > [  249.738729][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.739033][T57846]  ret_from_fork+0x2f/0x70
-> > [  249.739308][T57846]  ? __pfx_io_wq_worker+0x10/0x10
-> > [  249.739617][T57846]  ret_from_fork_asm+0x1a/0x30
-> > [  249.739913][T57846]  </TASK>
-> > [  249.740236][T57846] Kernel Offset: disabled
-> > [  249.740518][T57846] Rebooting in 86400 seconds..
-> >
-> > ```
-> >
-> > crepro is in attachments.
-> >
-> > Regards
->
-> --
-> Pavel Begunkov
+*nod*
+
+That's the big question, put the data inline (with potential alignment
+hassles) or manage (and map) a separate data structure.
+
+Maybe padding could be inserted to solve alignment?
+
+A separate data structure would only really be useful if it enabled zero
+copy, but that should probably be a secondary enhancement.
+
+> I will now try without mmap and just provide a user buffer as pointer in the 80B
+> section.
+> 
+> 
+> > 
+> > We just looked up the device DMA requirements and with modern NVME only
+> > 4 byte alignment is required, but the block layer likely isn't set up to
+> > handle that.
+> 
+> I think existing fuse headers have and their data have a 4 byte alignment.
+> Maybe even 8 byte, I don't remember without looking through all request types.
+> If you try a simple O_DIRECT read/write to libfuse/example_passthrough_hp
+> without the ring patches it will fail because of alignment. Needs to be fixed
+> in legacy fuse and would also avoid compat issues we had in libfuse when the
+> kernel header was updated.
+> 
+> > 
+> > So - prearranged buffer? Or are you using splice to get pages that
+> > userspace has read into into the kernel pagecache?
+> 
+> I didn't even try to use splice yet, because for the DDN (my employer) use case
+> we cannot use  zero copy, at least not without violating the rule that one
+> cannot access the application buffer in userspace.
+
+DDN - lustre related?
+
+> 
+> I will definitely look into Mings work, as it will be useful for others.
+> 
+> 
+> Cheers,
+> Bernd
 

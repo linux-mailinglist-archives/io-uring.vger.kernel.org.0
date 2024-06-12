@@ -1,89 +1,74 @@
-Return-Path: <io-uring+bounces-2180-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2181-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBCD905410
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 15:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0540905430
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 15:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84EE61C22D36
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 13:47:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399A0285435
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 13:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DEA17DE25;
-	Wed, 12 Jun 2024 13:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB98517D896;
+	Wed, 12 Jun 2024 13:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="PfdQ4BgC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ayM4U6eK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfKfh0B1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FBC17CA07;
-	Wed, 12 Jun 2024 13:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCF317DE34;
+	Wed, 12 Jun 2024 13:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718200006; cv=none; b=QD19wrwCRgPrsDJzSc9RIke845idrXNOj+cXgOUTOgHv5I9GJdrbgnJLV00Xwhm+U3UeqMBSHIUUzS+0Agn6CaWXgsj3Fqd+D9Jaz56E93BEqqd42Y+GTL+Ik6DavuUSTg9uXeq3+M851LshhvyUwP76HiTpeiy0CHLc1J4qAXo=
+	t=1718200349; cv=none; b=GCdf6RXvQKn4dRzVGRIVUGzueL/3BK4tJMrRtnGM4KjsYRj+tr7jJ9+584+m9J4926B/0dRlCZjCg35x6deIObpq1d7gUnMxZKwc+oZeNoiFr/GxkxJJYAupdTzJPpVZsEkPDIHivivEAmC7hFuoh85m6ZdGv/0AyYvcxN147qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718200006; c=relaxed/simple;
-	bh=xM2mkgCYXY3LW4Gkd+ntoO/HJ+6A/plCYS7Ibh5SWu4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PXzVqI384DDxuGFlzNbgPqow8BEyxGYLDsWUZ0jrPudIYbxygDLYLHnilEaW1R0SBWvYPHsI6u2yZTLrtRBX9tZ3ECHKy2qFVlrZqHO9xGLi1JgthHrxqp5oTJMUy5Lgz+CGStA2X6kQ3WLrErd7DSW4tWqhvVQkgeiwsihFzeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=PfdQ4BgC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ayM4U6eK; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 6F0111140150;
-	Wed, 12 Jun 2024 09:46:43 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Wed, 12 Jun 2024 09:46:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1718200003;
-	 x=1718286403; bh=9Gox+jN/71my3TOsF6ZDOvg8wmlhZO67uf48HwSqNWQ=; b=
-	PfdQ4BgC+n1qUiSSGVFI2rgrHt28OBsKJcaSPLf5aMC4d+MSSmRMSEBbWZ5YyY5I
-	8SkvO9KqdJSSO32O0OjzhCyPY3UG0PPYS90Jkj0kXpV+S5dzYPeWPkkYwOq2BTYa
-	EhV0aHGWC/bcr52RyS1CqgfPNIGbBXTZOFtGPQzgMZT8JaHHGmD7SoZCJTQeWxBe
-	+jpHScF73lQX1UGgMBGD424wdVBbFH2IvhJgSYDKK2HiPDdpFJpllLNKuoFu0rvY
-	ctN7ojcdllsVjPmj9kai05uKW5bxOpbPjoUfWgjkth/WcbA4KgcXi7zm+QFcCd4o
-	KklnSbBOauR1vcyUVES0yg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718200003; x=
-	1718286403; bh=9Gox+jN/71my3TOsF6ZDOvg8wmlhZO67uf48HwSqNWQ=; b=a
-	yM4U6eKarymhG+Spu+gnmFOG22w4gWtVsWcS+cf+6lkSNxY5QErHkxwty7ucgkLb
-	b5zRYlmbuB+qdlw2jTtFBhgSB3TzdVLJD2pERY9s7xZWW0nFjK43B8SmXiiaeevB
-	p2MlVqIYLik+3zZWAOMEI8H94tzz7O4Uc028b74H+UMQbclNUYwVtSCi3wnZQfrJ
-	WxzQf/eq0DslTTEe6UO64T/MY3NhkOFeRBLFUtsVBOv6Ka/ZtYBWoV1wnEUQx3x9
-	mR1dscUydEqNnb3s+JmtMqe7D/jAzcCsxAXgLMNoYVDnfQww/iXYhVxq4UC+W4Fl
-	cn10tRkm/YnFIrivGF8Qw==
-X-ME-Sender: <xms:wqZpZqGwUxiWUYLLhiu9iaSfxpmD0AqUevgmd4OjlSG7oDOSOU3sIw>
-    <xme:wqZpZrX2tEbASKYc_Zaa9JIrIenbi9BldEYJVNPRwRQHAy8vSwvgC3ju4qzXi8bBy
-    670FErpIubhl-4F>
-X-ME-Received: <xmr:wqZpZkIB8AyIBXBiYujqxJzHVrdkcDBhKhawkb14c_PVHMzN6s_S0vhKG2jgNKUVLg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedgieejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
-    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:wqZpZkFBDc1bBVDorJ5bBj8njkAik0_6wuaB_zFvPWOJ-n32rigkBQ>
-    <xmx:wqZpZgXzdPl7md2UpwSI9Jvt3-Egbh9Q6ipucKwGY3iw83Ns6fdmpQ>
-    <xmx:wqZpZnOTpCjaq3gXpeWEicpjfS6SbnmJSInYMDj1rn-MUbomJK5bSA>
-    <xmx:wqZpZn2rLUUp6vUImNy1uuZ5Jh_0tsINej7wZLKsbUurJI-i6Ha69w>
-    <xmx:w6ZpZvNoosnWCu2UcXknQ6W27s7cPVMmMGS1Q24x6ySCUxsj4unU1Jfw>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Jun 2024 09:46:41 -0400 (EDT)
-Message-ID: <1a5c214c-db14-42a4-8415-ab2c90a04917@fastmail.fm>
-Date: Wed, 12 Jun 2024 15:46:40 +0200
+	s=arc-20240116; t=1718200349; c=relaxed/simple;
+	bh=UqMzqbXKOkO76fD/Q0Ho9aIFw47zcnwUeK/a7nuXcys=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=bBlXBX1OblPMh7FMjunwaLXt1KCNdUIEPNSkxyD6StZlookqS8pirPVXOlJHZQXPb9DS6nVTktxoevKL9hlVm+lll5XD37ORnJOUj7MjjjS184ru4nJS1sxHoRKm7HqsYO7WnhZFRjqGHjcVcYTGMsjcNWRgZWPg+6yDkzFNXLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GfKfh0B1; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6e349c0f2bso685678566b.2;
+        Wed, 12 Jun 2024 06:52:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718200346; x=1718805146; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2bc6XZQC+pu8/aGiFTyN2/kmoeF3F+5LCRlKYM1dDFw=;
+        b=GfKfh0B1RI9idRtXh/NWHf5qqx43k14hmVSO92Ai928hkYrXN7Qm5Rg/kEJZU2kCe+
+         4paKLy5A4dDPG1nZqMhdy+U5560l1ibGFNKa9OJZuab2vmpWWVj7TChk0nyXItSb+oQR
+         HSg415xweozuWB27+GMHMMhq1BMk0VTPtg2WvgqrsMPmqC8ADs2XzZphoTxtlNQ/vR2I
+         oBiZVi54hq1txaKIAZBAaaovgL2gi8bILUuBVFu/D8L0viT/ijP3RmQApyCHiHyySGsN
+         bsGjl8UeMp7FuLPRXigAetnRWIdPH72hw9oZhTawBKnp9T2fkixLoMv06t92a3X9umMo
+         0LAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718200346; x=1718805146;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2bc6XZQC+pu8/aGiFTyN2/kmoeF3F+5LCRlKYM1dDFw=;
+        b=HeZBKoCmNFYQZWjeChXvM7WhbO+QL9QSlnpYb+ENvV1B8uoHqPRjJqi2D9GeF5xwf4
+         PzC22zG9tcIL7xXNMOz7IIF61T4rh2yLiWyliotUd36xp7scv8QgZYWhzGePIswLp+Pu
+         b3LnNeDKBfhU84561/tT2sWOasiDynEXN+hTUW3i6t5QcJjb01ydXTpNy49kZ8nlKqYy
+         2W2aZuX0GJxWSCvZXBHX8uvgz2WaJFqGuj4GMc721aDAoHRyH6eJvNsNjkapB9jYEecS
+         XGTnFpXwd1AQTxGT3vQ1D8DsxBXm+jgcdbT4ABA2psZ6XP7YxaWtcdyY7CrGM3hG60R8
+         ppCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFS6c0LFOT73p+asa2F7BIY6CT/P3efBlEXmcA2L9sc5YQtvCLkMm7jIBbtiMWGGt6Ca+Q7f/pJwNGOncKHBk/1nV/SMPdjwaw6epzvefifR9bkzzNt3X5nKMwKLYCM9VZOsrV+Os=
+X-Gm-Message-State: AOJu0YxGXVQ388FMKTUYjg2KrUKS98WHdA4311WNohq/2EWEU0BgEWZl
+	D0OaWeDnuP26Ld0YUQxxC5WAytXEgT0zf8Bssd7P+AHAVLtHYMHX
+X-Google-Smtp-Source: AGHT+IH4+PnjnbHt0mgvZsrG7K9UPD2r6mRESXcYAmGipdFzcoLKhlQxEtiFTEiuyrSjX5dge4cgog==
+X-Received: by 2002:a17:907:2d21:b0:a6f:147f:7d06 with SMTP id a640c23a62f3a-a6f480288d6mr123721566b.77.1718200346217;
+        Wed, 12 Jun 2024 06:52:26 -0700 (PDT)
+Received: from [192.168.42.148] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f0b5371d2sm574318766b.39.2024.06.12.06.52.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 06:52:25 -0700 (PDT)
+Message-ID: <8431d920-ab84-447d-84fc-eb7904b1c733@gmail.com>
+Date: Wed, 12 Jun 2024 14:52:34 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -91,41 +76,96 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
- <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
- <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
- <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
- <CAJfpegsq06UZSPCDB=0Q3OPoH+c3is4A_d2oFven3Ebou8XPOw@mail.gmail.com>
- <0615e79d-9397-48eb-b89e-f0be1d814baf@ddn.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Subject: Re: [io-uring] WARNING in io_fill_cqe_req_aux
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: chase xd <sl1589472800@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CADZouDQx4tqCfCfmCHjUp9nhAJ8_qTX=cCYOFzMYiQQwtsNuag@mail.gmail.com>
+ <4fd9cd27-487d-4a23-b17a-aa9dcb09075f@gmail.com>
+ <CADZouDSyJVR=WX-X46QCUZeUz=7DHg_9=e5y=N7Wb+zMQ_dGtQ@mail.gmail.com>
+ <6213cf3d-b114-4c27-b9c5-6339b9f363aa@gmail.com>
 Content-Language: en-US
-In-Reply-To: <0615e79d-9397-48eb-b89e-f0be1d814baf@ddn.com>
+In-Reply-To: <6213cf3d-b114-4c27-b9c5-6339b9f363aa@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+On 6/12/24 13:35, Pavel Begunkov wrote:
+> On 6/12/24 08:10, chase xd wrote:
+>> Sorry now I'm also a bit confused by the branch choosing. I checked
+>> out branch "for-6.9/io_uring" and started testing on that branch. I
+>> assume that was the latest version of io_uring at that time, even now
+>> I check out that branch and the bug still exists. How should I know
+>> whether the branch will be merged, and which branch do you think I
+>> should test on? Thanks.
+> 
+> # git show a69d20885494:io_uring/io_uring.c | grep -A 13 io_fill_cqe_req_aux
+> bool io_fill_cqe_req_aux(struct io_kiocb *req, bool defer, s32 res, u32 cflags)
+> {
+>          struct io_ring_ctx *ctx = req->ctx;
+>          u64 user_data = req->cqe.user_data;
+> 
+>          if (!defer)
+>                  return __io_post_aux_cqe(ctx, user_data, res, cflags, false);
+> 
+>          lockdep_assert_held(&ctx->uring_lock);
+>          io_lockdep_assert_cq_locked(ctx);
+> 
+>          ctx->submit_state.flush_cqes = true;
+>          return io_fill_cqe_aux(ctx, user_data, res, cflags);
+> }
+> 
+> That's the buggy version from the hash you're testing, IIRC it
+> was in the tree for longer than necessary, presumably which is
+> why you found it, but it was never sent to Linus. Below is
+> current state of for-6.9 and what it was replaced with
+> respectively. Let me separately check for-6.9/io_uring if you're
+> concerned about it.
+
+In other words, it happens that bugs appear in the branches
+but get rooted out before it gets anywhere. The main confusion
+is that the version you're looking at was fixed up back somewhere
+in March. That's fine, I'd just recommend fetch the repo and
+update your base.
+
+I can't hit the problem with for-6.9/io_uring, which make sense
+because it's lacking the patch I'd blame it to. I'm confused
+how you see it there.
 
 
-
-On 6/12/24 15:32, Bernd Schubert wrote:
-> On 6/12/24 09:39, Miklos Szeredi wrote:
->>> Personally I don't see anything twisted here, one just needs to
->>> understand that IORING_OP_URING_CMD was written for that reverse order.
->>
->> That's just my gut feeling.   fuse/dev_uring.c is 1233 in this RFC.
->> And that's just the queuing.
+> # git show for-6.9/io_uring:io_uring/io_uring.c | grep -A 30 io_fill_cqe_req_aux
+> bool io_fill_cqe_req_aux(struct io_kiocb *req, bool defer, s32 res, u32 cflags)
+> {
+>          struct io_ring_ctx *ctx = req->ctx;
+>          u64 user_data = req->cqe.user_data;
+>          struct io_uring_cqe *cqe;
+> 
+>          lockdep_assert(!io_wq_current_is_worker());
+> 
+>          if (!defer)
+>                  return __io_post_aux_cqe(ctx, user_data, res, cflags, false);
+> 
+>          lockdep_assert_held(&ctx->uring_lock);
+> 
+>          if (ctx->submit_state.cqes_count == ARRAY_SIZE(ctx->completion_cqes)) {
+> ...
+> 
+> # git show origin/for-6.10/io_uring:io_uring/io_uring.c | grep -A 13 io_req_post_cqe
+> bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags)
+> {
+>          struct io_ring_ctx *ctx = req->ctx;
+>          bool posted;
+> 
+>          lockdep_assert(!io_wq_current_is_worker());
+>          lockdep_assert_held(&ctx->uring_lock);
+> 
+>          __io_cq_lock(ctx);
+>          posted = io_fill_cqe_aux(ctx, req->cqe.user_data, res, cflags);
+>          ctx->submit_state.cq_flush = true;
+>          __io_cq_unlock_post(ctx);
+>          return posted;
+> }
 > 
 
-
-Btw, counting lines, majority of that is not queuing and handling requests,
-but setting up things, shutdown (start/stop is already almost half of the file)
-and then and doing sanity checks, as in fuse_uring_get_verify_queue().
+-- 
+Pavel Begunkov
 

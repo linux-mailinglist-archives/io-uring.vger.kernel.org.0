@@ -1,124 +1,346 @@
-Return-Path: <io-uring+bounces-2196-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2197-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515FD905B9D
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 21:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 639A7905D25
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 22:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A851C21C04
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 19:02:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60EA31C21BAD
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 20:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F230E7CF1F;
-	Wed, 12 Jun 2024 19:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4A584E07;
+	Wed, 12 Jun 2024 20:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Cet2BGJd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCENvW0G"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47111C14
-	for <io-uring@vger.kernel.org>; Wed, 12 Jun 2024 19:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF7743144;
+	Wed, 12 Jun 2024 20:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718218963; cv=none; b=IooejkiNKb1Cw+Zh04IaWPekyjorymyU/YGK+wALS8H0ChptSo/4d3azzv16TOuylz7FQAsnA2Vscxjfzpr8evwptJ3n7CyL9uYVfcik1WLYatOJZX4gFBZEOng4owFabvKuIOt8AH/uiPKODw8m9gOOVs3hiuoRn4O3WwMvcnw=
+	t=1718225463; cv=none; b=bNrEs1BmdHu+Q3r6FFWwix9UtUDJtzvB7m89Fg4RVH8a7iUSkxWm7a0ZvNNJsSCiJYQqlo46l7mXJ+KJ6ySCPSiT2Xuxk21679vypK8g+ZowFcl0Yu/8fflwdLOj4dtCbalgcW6aQ58QMzfeO+nDetyu6juqi1KWOmsO41R7dhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718218963; c=relaxed/simple;
-	bh=0Hb5sKC0H1KXhLwy447YjjF/Zl7QiNlFuZjhzm7z8TY=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=n41zynOHc//+xZIlmFWoWgujgJiMyBB6cR/Pj2K4E8GkJ4z898lPMFU86GKSqRh4YfDvv1THJwrSWMMcFsfHH21sPU2TAD9GHA89Wodnrp5ZCpA8wXoQS8lxuO/5tsAH0YvlRZJ0iF0HozwL7rhzhhnx6P18YaDrCg6S/SFPaus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Cet2BGJd; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d21a80b8ceso8727b6e.3
-        for <io-uring@vger.kernel.org>; Wed, 12 Jun 2024 12:02:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718218959; x=1718823759; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ArlGUkzh+3jQsYWK1Fh0I06nwWSly40SZGgiBcghKVU=;
-        b=Cet2BGJdzlDvbD4QP/nPLesVVrsvIfzZAJqRwfWln/ztTCcG/UszdOgRLwqeIlKzyx
-         aPIgSJHhK8q90o61RbUruiIg1GYDT17kzEE6FDvy9+QOC0OrZ0c4NyRWCD3/l5Jqgy4b
-         lqGl+x+BkuzAfoRDIsw5Br25U4WBITu20pBSiypRTQXNkTo8XUrTlaI5kjbbux8h+Yrm
-         0ZVGtzlmS6lNj87LHKDRjsFmHMcpnCUpkFvzFEm3QVAnw+vQ9pi21aj5VyGJlcLA+DJN
-         2MV/gatwl1B52M49BbTUkdqc8+SY5SFW/u9UtotgJ3uzyFqeyqy/Act+F7NjOeNE/Uvt
-         HhHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718218959; x=1718823759;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ArlGUkzh+3jQsYWK1Fh0I06nwWSly40SZGgiBcghKVU=;
-        b=Gs3riAEE1D5F24SDZKemGlcAFOADxm/OzpfRC36u9tr6fw+EKpJjYQRFomfL0f9J9Z
-         z942aM8UKQ1Pa484xww53D7e+9radyxuCzNSNCBLEd1dF6A2h0zP2qXOBga5R8UVqfi9
-         7DqD4vDZypxXYLIz73Z7Wg/62q4kCX8QcKSgIekjYEmYb2r4NGKjtfEZCS8Gfz1rpUaJ
-         HIqLlCjR/IK2qRmEy8FeUdME7drUhQKGku5Ne6svRdXoh0BkKOUC2v0Xiodjr01CnfpD
-         X9R5ZiluwN98RXR1NfSGbUVxKmq9PogRvQmRvXjx9+myKURhD7mfk0L9nPolIj/dC53O
-         lQwQ==
-X-Gm-Message-State: AOJu0Yxb64OMxi8aCGI90V2K5UKffB5AgnM+/ErQ7sMfXvClHxbCDAkO
-	R34Y3ZYy6v+3sRKssz4ZKushS9lCybbp9arTK5ee73oz5FFPbXgO+NWp/l3Tc//CFP050WdPSfU
-	/
-X-Google-Smtp-Source: AGHT+IHt7rYK2QsEzc8ZKMN7RLf4zuNIwdBy7Sth0q3SfvV9BccKNtWwb5FWEfs9oCnF1sHF0vt+Vg==
-X-Received: by 2002:a9d:7598:0:b0:6f9:8f84:9bcd with SMTP id 46e09a7af769-6fa1be4199bmr2905897a34.1.1718218959218;
-        Wed, 12 Jun 2024 12:02:39 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fa50fb74fcsm254366a34.43.2024.06.12.12.02.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 12:02:38 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <77966bc104e25b0534995d5dbb152332bc8f31c0.1718196953.git.asml.silence@gmail.com>
-References: <77966bc104e25b0534995d5dbb152332bc8f31c0.1718196953.git.asml.silence@gmail.com>
-Subject: Re: [PATCH] io_uring/rsrc: don't lock while !TASK_RUNNING
-Message-Id: <171821895843.90478.1098881039048016326.b4-ty@kernel.dk>
-Date: Wed, 12 Jun 2024 13:02:38 -0600
+	s=arc-20240116; t=1718225463; c=relaxed/simple;
+	bh=qec7j+ugewcloFLvMaArPIx31fouyUzkqT5sKaBT1O0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqeQfd04hki3oDmGEJ5xf3PW36Ony70VBWjIlzO7EipTgXd9W7Mqm1rPjQnXDJtGbAPPMsDIKstVBATAJ1ddazGS9XGanBn+A6d37zz7H9DqNW3uvS60J5Ggw+Ev0lPTJqWEXmOW2mZXathu3K4SJAYLsfVpS5G6qT3VIr5E9Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCENvW0G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25A2C116B1;
+	Wed, 12 Jun 2024 20:51:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718225462;
+	bh=qec7j+ugewcloFLvMaArPIx31fouyUzkqT5sKaBT1O0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UCENvW0G3cYGlTa6fqJarMiS5zDLyanxMgNjucmmKeIrMKC857trSKlpeTQdE9tAV
+	 eglVW1Strq5Ihqysy1fAfi2+fyRosi8ElSkWfhZ5JvDquhRgjb6GZU+erYSkFVvHhw
+	 RuMN9IHofeEEHh6YYWzcxfsOVEVAtKOMfw9/+u0QHdXuVNSOz5MEWRnTzzXFt3bk+t
+	 QfRyr2697zE54bXmuGneWX9s4vnQp+qqJ4MstJlV++rLRKO4jyOdHGLJeKhQwQRYsf
+	 1DqUCPnDwb22zl2dy+TTvWxAWKhQLZmqZddBjIAtm/0txsw5EwdZIroeeaBddAeRm9
+	 RlIaLnGdQ2ueQ==
+Date: Wed, 12 Jun 2024 13:51:02 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+	jack@suse.cz, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
+	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+	io-uring@vger.kernel.org, nilay@linux.ibm.com,
+	ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
+	snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev,
+	hare@suse.de, Prasad Singamsetty <prasad.singamsetty@oracle.com>
+Subject: Re: [PATCH v8 03/10] fs: Initial atomic write support
+Message-ID: <20240612205102.GB2764780@frogsfrogsfrogs>
+References: <20240610104329.3555488-1-john.g.garry@oracle.com>
+ <20240610104329.3555488-4-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610104329.3555488-4-john.g.garry@oracle.com>
 
-
-On Wed, 12 Jun 2024 13:56:38 +0100, Pavel Begunkov wrote:
-> There is a report of io_rsrc_ref_quiesce() locking a mutex while not
-> TASK_RUNNING, which is due to forgetting restoring the state back after
-> io_run_task_work_sig() and attempts to break out of the waiting loop.
+On Mon, Jun 10, 2024 at 10:43:22AM +0000, John Garry wrote:
+> From: Prasad Singamsetty <prasad.singamsetty@oracle.com>
 > 
-> do not call blocking ops when !TASK_RUNNING; state=1 set at
-> [<ffffffff815d2494>] prepare_to_wait+0xa4/0x380
-> kernel/sched/wait.c:237
-> WARNING: CPU: 2 PID: 397056 at kernel/sched/core.c:10099
-> __might_sleep+0x114/0x160 kernel/sched/core.c:10099
-> RIP: 0010:__might_sleep+0x114/0x160 kernel/sched/core.c:10099
-> Call Trace:
->  <TASK>
->  __mutex_lock_common kernel/locking/mutex.c:585 [inline]
->  __mutex_lock+0xb4/0x940 kernel/locking/mutex.c:752
->  io_rsrc_ref_quiesce+0x590/0x940 io_uring/rsrc.c:253
->  io_sqe_buffers_unregister+0xa2/0x340 io_uring/rsrc.c:799
->  __io_uring_register io_uring/register.c:424 [inline]
->  __do_sys_io_uring_register+0x5b9/0x2400 io_uring/register.c:613
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xd8/0x270 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+> An atomic write is a write issued with torn-write protection, meaning
+> that for a power failure or any other hardware failure, all or none of the
+> data from the write will be stored, but never a mix of old and new data.
 > 
-> [...]
+> Userspace may add flag RWF_ATOMIC to pwritev2() to indicate that the
+> write is to be issued with torn-write prevention, according to special
+> alignment and length rules.
+> 
+> For any syscall interface utilizing struct iocb, add IOCB_ATOMIC for
+> iocb->ki_flags field to indicate the same.
+> 
+> A call to statx will give the relevant atomic write info for a file:
+> - atomic_write_unit_min
+> - atomic_write_unit_max
+> - atomic_write_segments_max
+> 
+> Both min and max values must be a power-of-2.
+> 
+> Applications can avail of atomic write feature by ensuring that the total
+> length of a write is a power-of-2 in size and also sized between
+> atomic_write_unit_min and atomic_write_unit_max, inclusive. Applications
+> must ensure that the write is at a naturally-aligned offset in the file
+> wrt the total write length. The value in atomic_write_segments_max
+> indicates the upper limit for IOV_ITER iovcnt.
+> 
+> Add file mode flag FMODE_CAN_ATOMIC_WRITE, so files which do not have the
+> flag set will have RWF_ATOMIC rejected and not just ignored.
+> 
+> Add a type argument to kiocb_set_rw_flags() to allows reads which have
+> RWF_ATOMIC set to be rejected.
+> 
+> Helper function generic_atomic_write_valid() can be used by FSes to verify
+> compliant writes. There we check for iov_iter type is for ubuf, which
+> implies iovcnt==1 for pwritev2(), which is an initial restriction for
+> atomic_write_segments_max. Initially the only user will be bdev file
+> operations write handler. We will rely on the block BIO submission path to
+> ensure write sizes are compliant for the bdev, so we don't need to check
+> atomic writes sizes yet.
+> 
+> Signed-off-by: Prasad Singamsetty <prasad.singamsetty@oracle.com>
+> jpg: merge into single patch and much rewrite
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 
-Applied, thanks!
+Seems fine to me, though clearly others have had much stronger opinions
+in the past so:
+Acked-by: Darrick J. Wong <djwong@kernel.org>
 
-[1/1] io_uring/rsrc: don't lock while !TASK_RUNNING
-      commit: 54559642b96116b45e4b5ca7fd9f7835b8561272
+--D
 
-Best regards,
--- 
-Jens Axboe
-
-
-
+> ---
+>  fs/aio.c                |  8 ++++----
+>  fs/btrfs/ioctl.c        |  2 +-
+>  fs/read_write.c         | 18 +++++++++++++++++-
+>  include/linux/fs.h      | 17 +++++++++++++++--
+>  include/uapi/linux/fs.h |  5 ++++-
+>  io_uring/rw.c           |  9 ++++-----
+>  6 files changed, 45 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 57c9f7c077e6..93ef59d358b3 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -1516,7 +1516,7 @@ static void aio_complete_rw(struct kiocb *kiocb, long res)
+>  	iocb_put(iocb);
+>  }
+>  
+> -static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb)
+> +static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb, int rw_type)
+>  {
+>  	int ret;
+>  
+> @@ -1542,7 +1542,7 @@ static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb)
+>  	} else
+>  		req->ki_ioprio = get_current_ioprio();
+>  
+> -	ret = kiocb_set_rw_flags(req, iocb->aio_rw_flags);
+> +	ret = kiocb_set_rw_flags(req, iocb->aio_rw_flags, rw_type);
+>  	if (unlikely(ret))
+>  		return ret;
+>  
+> @@ -1594,7 +1594,7 @@ static int aio_read(struct kiocb *req, const struct iocb *iocb,
+>  	struct file *file;
+>  	int ret;
+>  
+> -	ret = aio_prep_rw(req, iocb);
+> +	ret = aio_prep_rw(req, iocb, READ);
+>  	if (ret)
+>  		return ret;
+>  	file = req->ki_filp;
+> @@ -1621,7 +1621,7 @@ static int aio_write(struct kiocb *req, const struct iocb *iocb,
+>  	struct file *file;
+>  	int ret;
+>  
+> -	ret = aio_prep_rw(req, iocb);
+> +	ret = aio_prep_rw(req, iocb, WRITE);
+>  	if (ret)
+>  		return ret;
+>  	file = req->ki_filp;
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index efd5d6e9589e..6ad524b894fc 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -4627,7 +4627,7 @@ static int btrfs_ioctl_encoded_write(struct file *file, void __user *argp, bool
+>  		goto out_iov;
+>  
+>  	init_sync_kiocb(&kiocb, file);
+> -	ret = kiocb_set_rw_flags(&kiocb, 0);
+> +	ret = kiocb_set_rw_flags(&kiocb, 0, WRITE);
+>  	if (ret)
+>  		goto out_iov;
+>  	kiocb.ki_pos = pos;
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index ef6339391351..285b0f5a9a9c 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -730,7 +730,7 @@ static ssize_t do_iter_readv_writev(struct file *filp, struct iov_iter *iter,
+>  	ssize_t ret;
+>  
+>  	init_sync_kiocb(&kiocb, filp);
+> -	ret = kiocb_set_rw_flags(&kiocb, flags);
+> +	ret = kiocb_set_rw_flags(&kiocb, flags, type);
+>  	if (ret)
+>  		return ret;
+>  	kiocb.ki_pos = (ppos ? *ppos : 0);
+> @@ -1736,3 +1736,19 @@ int generic_file_rw_checks(struct file *file_in, struct file *file_out)
+>  
+>  	return 0;
+>  }
+> +
+> +bool generic_atomic_write_valid(struct iov_iter *iter, loff_t pos)
+> +{
+> +	size_t len = iov_iter_count(iter);
+> +
+> +	if (!iter_is_ubuf(iter))
+> +		return false;
+> +
+> +	if (!is_power_of_2(len))
+> +		return false;
+> +
+> +	if (!IS_ALIGNED(pos, len))
+> +		return false;
+> +
+> +	return true;
+> +}
+> \ No newline at end of file
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 0283cf366c2a..e049414bef7d 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -125,8 +125,10 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+>  #define FMODE_EXEC		((__force fmode_t)(1 << 5))
+>  /* File writes are restricted (block device specific) */
+>  #define FMODE_WRITE_RESTRICTED	((__force fmode_t)(1 << 6))
+> +/* File supports atomic writes */
+> +#define FMODE_CAN_ATOMIC_WRITE	((__force fmode_t)(1 << 7))
+>  
+> -/* FMODE_* bits 7 to 8 */
+> +/* FMODE_* bit 8 */
+>  
+>  /* 32bit hashes as llseek() offset (for directories) */
+>  #define FMODE_32BITHASH         ((__force fmode_t)(1 << 9))
+> @@ -317,6 +319,7 @@ struct readahead_control;
+>  #define IOCB_SYNC		(__force int) RWF_SYNC
+>  #define IOCB_NOWAIT		(__force int) RWF_NOWAIT
+>  #define IOCB_APPEND		(__force int) RWF_APPEND
+> +#define IOCB_ATOMIC		(__force int) RWF_ATOMIC
+>  
+>  /* non-RWF related bits - start at 16 */
+>  #define IOCB_EVENTFD		(1 << 16)
+> @@ -351,6 +354,7 @@ struct readahead_control;
+>  	{ IOCB_SYNC,		"SYNC" }, \
+>  	{ IOCB_NOWAIT,		"NOWAIT" }, \
+>  	{ IOCB_APPEND,		"APPEND" }, \
+> +	{ IOCB_ATOMIC,		"ATOMIC"}, \
+>  	{ IOCB_EVENTFD,		"EVENTFD"}, \
+>  	{ IOCB_DIRECT,		"DIRECT" }, \
+>  	{ IOCB_WRITE,		"WRITE" }, \
+> @@ -3403,7 +3407,8 @@ static inline int iocb_flags(struct file *file)
+>  	return res;
+>  }
+>  
+> -static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+> +static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags,
+> +				     int rw_type)
+>  {
+>  	int kiocb_flags = 0;
+>  
+> @@ -3422,6 +3427,12 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+>  			return -EOPNOTSUPP;
+>  		kiocb_flags |= IOCB_NOIO;
+>  	}
+> +	if (flags & RWF_ATOMIC) {
+> +		if (rw_type != WRITE)
+> +			return -EOPNOTSUPP;
+> +		if (!(ki->ki_filp->f_mode & FMODE_CAN_ATOMIC_WRITE))
+> +			return -EOPNOTSUPP;
+> +	}
+>  	kiocb_flags |= (__force int) (flags & RWF_SUPPORTED);
+>  	if (flags & RWF_SYNC)
+>  		kiocb_flags |= IOCB_DSYNC;
+> @@ -3613,4 +3624,6 @@ extern int vfs_fadvise(struct file *file, loff_t offset, loff_t len,
+>  extern int generic_fadvise(struct file *file, loff_t offset, loff_t len,
+>  			   int advice);
+>  
+> +bool generic_atomic_write_valid(struct iov_iter *iter, loff_t pos);
+> +
+>  #endif /* _LINUX_FS_H */
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index 45e4e64fd664..191a7e88a8ab 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -329,9 +329,12 @@ typedef int __bitwise __kernel_rwf_t;
+>  /* per-IO negation of O_APPEND */
+>  #define RWF_NOAPPEND	((__force __kernel_rwf_t)0x00000020)
+>  
+> +/* Atomic Write */
+> +#define RWF_ATOMIC	((__force __kernel_rwf_t)0x00000040)
+> +
+>  /* mask of flags supported by the kernel */
+>  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+> -			 RWF_APPEND | RWF_NOAPPEND)
+> +			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC)
+>  
+>  /* Pagemap ioctl */
+>  #define PAGEMAP_SCAN	_IOWR('f', 16, struct pm_scan_arg)
+> diff --git a/io_uring/rw.c b/io_uring/rw.c
+> index 1a2128459cb4..c004d21e2f12 100644
+> --- a/io_uring/rw.c
+> +++ b/io_uring/rw.c
+> @@ -772,7 +772,7 @@ static bool need_complete_io(struct io_kiocb *req)
+>  		S_ISBLK(file_inode(req->file)->i_mode);
+>  }
+>  
+> -static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+> +static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
+>  {
+>  	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+>  	struct kiocb *kiocb = &rw->kiocb;
+> @@ -787,7 +787,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+>  		req->flags |= io_file_get_flags(file);
+>  
+>  	kiocb->ki_flags = file->f_iocb_flags;
+> -	ret = kiocb_set_rw_flags(kiocb, rw->flags);
+> +	ret = kiocb_set_rw_flags(kiocb, rw->flags, rw_type);
+>  	if (unlikely(ret))
+>  		return ret;
+>  	kiocb->ki_flags |= IOCB_ALLOC_CACHE;
+> @@ -832,8 +832,7 @@ static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
+>  		if (unlikely(ret < 0))
+>  			return ret;
+>  	}
+> -
+> -	ret = io_rw_init_file(req, FMODE_READ);
+> +	ret = io_rw_init_file(req, FMODE_READ, READ);
+>  	if (unlikely(ret))
+>  		return ret;
+>  	req->cqe.res = iov_iter_count(&io->iter);
+> @@ -1013,7 +1012,7 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
+>  	ssize_t ret, ret2;
+>  	loff_t *ppos;
+>  
+> -	ret = io_rw_init_file(req, FMODE_WRITE);
+> +	ret = io_rw_init_file(req, FMODE_WRITE, WRITE);
+>  	if (unlikely(ret))
+>  		return ret;
+>  	req->cqe.res = iov_iter_count(&io->iter);
+> -- 
+> 2.31.1
+> 
+> 
 

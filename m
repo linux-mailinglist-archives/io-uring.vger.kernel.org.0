@@ -1,231 +1,124 @@
-Return-Path: <io-uring+bounces-2195-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2196-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4856D905913
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 18:45:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 515FD905B9D
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 21:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A86E11F22A9B
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 16:45:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A851C21C04
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 19:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF54181B91;
-	Wed, 12 Jun 2024 16:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F230E7CF1F;
+	Wed, 12 Jun 2024 19:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="4XUItZ5a";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z4wh9ljO"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Cet2BGJd"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8A716C878;
-	Wed, 12 Jun 2024 16:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47111C14
+	for <io-uring@vger.kernel.org>; Wed, 12 Jun 2024 19:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718210698; cv=none; b=eOKhlXeVeUtwPtqlEku1JIhOfP/ggt6ODC7Bb24id6xOeQ7BzIbYspZ/weQVtyX7p8VUA4d7yuzazToi2wIKtBUZRJzt8TzHTngwnnJFVFkiR0+yD8PGekIkAfpzgTtLsfK5HdkC71OU+eEBx0d7eBaX4HBGbP6wnyobWlXZNjA=
+	t=1718218963; cv=none; b=IooejkiNKb1Cw+Zh04IaWPekyjorymyU/YGK+wALS8H0ChptSo/4d3azzv16TOuylz7FQAsnA2Vscxjfzpr8evwptJ3n7CyL9uYVfcik1WLYatOJZX4gFBZEOng4owFabvKuIOt8AH/uiPKODw8m9gOOVs3hiuoRn4O3WwMvcnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718210698; c=relaxed/simple;
-	bh=W370/b3sRJA8rRIniDdp4JJ0ZMfMcdXK67Tg2C071Tc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lu2c8HFdhY1B8oN4hi+MnMBd3DkOiSbfDkR7bW3zATDu9rpybIzqSJJrfJRT6a1x8Hk3lEbXobjpatmcA8QWZuksem9eZov5vrMn8KCaULi5mlnJUVJuc8TB4cZDTbxZK0z9EBZ0JexRHwcCG1uFXm98mtgAwH+YlEy9VBe/qtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=4XUItZ5a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z4wh9ljO; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 0AA6913801BA;
-	Wed, 12 Jun 2024 12:44:56 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 12 Jun 2024 12:44:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1718210696;
-	 x=1718297096; bh=D55YX+W40OzYpbYOsRCkEGZUBWknjhYT4/HuwuDHGQs=; b=
-	4XUItZ5a/XsoqAwUARxsDySMX+lfsq5z0LNZG7EclcpqTfvBVlzbAAAy9PvyWfko
-	cvwB7JnBAmY68BtFqW9GvPBR/XduzufPjmEjY518+X/4IzXRnP6YoTB+kf2yuJNF
-	0RT6egN2+p8bxZkEw7bByzHC1/0Camxx332Nk2HKSzvRpIc7C9p/4p3rj9WZ69YY
-	mZWoseye8r6ziyyZiR+5GfeIVjAYh51c2S1ATVsZBR1b5JrqiqG6Cob7bUCq+Xli
-	cbYoTLRHJ77GaAShHipR7VTHpZTruyG9GilsBAL6nAQ6IY8MTk/+vxAQnM2umi2Q
-	lW2mAHpepqtbajtggnG3mw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718210696; x=
-	1718297096; bh=D55YX+W40OzYpbYOsRCkEGZUBWknjhYT4/HuwuDHGQs=; b=Z
-	4wh9ljOGLsoXz0/LQXg/4U/RG5W/7yAI5aL5GeWHWkFOIRgOpeImN+o7Q6wSwNNs
-	ViH52oIZhIHb8JM7gFeuIjLS5cqKl1EGpovg3nBexcwxKuRkmJlnKp6/RNKG7xx5
-	WWGZNr75BZW4X6OkuSpnzxwtmt3WKh7z4vRh5sDVtWa8u/ON2EzwhslWqsYFrw2B
-	9K+Vc5QJSkYLcfcHM4wdOCSkQy9aYAw20bSxMXS57+g2tf0+6PQlskiX60NsjU2n
-	0U527baPDmrPUGg+GisbGeggfeRaangXKsO+yO1oDrXtznSqtHyJHc8aF63r0TdS
-	qYCqY01BXJNL2WYVFIPeA==
-X-ME-Sender: <xms:h9BpZoPL4WnoO2OTrCiH_T-V6wwgtNMdboPNYz3S-w_0SKChp-dPMQ>
-    <xme:h9BpZu90tXDgYicc3sBtEQkMQeHvKe1wrzkG2AYRhsB1oMWpXHOgmiwzfIpMvTvev
-    HKFDBcGu-jbM8Np>
-X-ME-Received: <xmr:h9BpZvTbBQprntHl-kQ2LFAzTnYNQpsVoipafYfEVqftwBrwvxgCuZi99uexE9LahQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedguddtfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegv
-    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
-    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeetteejudevudefffdutefgledvvdfgtdel
-    ueeifeegudehkeelkeeffedvieehkeenucffohhmrghinhepghhnuhifvggvsgdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghr
-    nhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:h9BpZgtL7ymPOnbnQcSxtgXfCpi6a0wKAdutgajGQpJZbkxYaOCQ9g>
-    <xmx:h9BpZgeatsxt_nyTcj6HNrilQgr7dbrdtBOkz-Cd1mAhD3BgQaaC7A>
-    <xmx:h9BpZk17fMkVKJsW844Kz8n_6lDNJYVqSXtigkUfBIGN_QuqzHOJgg>
-    <xmx:h9BpZk8_YYQX93LMDyHaknlvkWLQi2rauBz76H-qM4Zuf2Pb13TKkw>
-    <xmx:iNBpZk37Cx_Pc0EuY8ZOJyxbXet_l6ClNWbsuO7KcBH7hq4Jkub87JCH>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Jun 2024 12:44:54 -0400 (EDT)
-Message-ID: <8d270a22-edf4-4e38-8b62-6504c4101c6a@fastmail.fm>
-Date: Wed, 12 Jun 2024 18:44:53 +0200
+	s=arc-20240116; t=1718218963; c=relaxed/simple;
+	bh=0Hb5sKC0H1KXhLwy447YjjF/Zl7QiNlFuZjhzm7z8TY=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=n41zynOHc//+xZIlmFWoWgujgJiMyBB6cR/Pj2K4E8GkJ4z898lPMFU86GKSqRh4YfDvv1THJwrSWMMcFsfHH21sPU2TAD9GHA89Wodnrp5ZCpA8wXoQS8lxuO/5tsAH0YvlRZJ0iF0HozwL7rhzhhnx6P18YaDrCg6S/SFPaus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Cet2BGJd; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d21a80b8ceso8727b6e.3
+        for <io-uring@vger.kernel.org>; Wed, 12 Jun 2024 12:02:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718218959; x=1718823759; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ArlGUkzh+3jQsYWK1Fh0I06nwWSly40SZGgiBcghKVU=;
+        b=Cet2BGJdzlDvbD4QP/nPLesVVrsvIfzZAJqRwfWln/ztTCcG/UszdOgRLwqeIlKzyx
+         aPIgSJHhK8q90o61RbUruiIg1GYDT17kzEE6FDvy9+QOC0OrZ0c4NyRWCD3/l5Jqgy4b
+         lqGl+x+BkuzAfoRDIsw5Br25U4WBITu20pBSiypRTQXNkTo8XUrTlaI5kjbbux8h+Yrm
+         0ZVGtzlmS6lNj87LHKDRjsFmHMcpnCUpkFvzFEm3QVAnw+vQ9pi21aj5VyGJlcLA+DJN
+         2MV/gatwl1B52M49BbTUkdqc8+SY5SFW/u9UtotgJ3uzyFqeyqy/Act+F7NjOeNE/Uvt
+         HhHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718218959; x=1718823759;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ArlGUkzh+3jQsYWK1Fh0I06nwWSly40SZGgiBcghKVU=;
+        b=Gs3riAEE1D5F24SDZKemGlcAFOADxm/OzpfRC36u9tr6fw+EKpJjYQRFomfL0f9J9Z
+         z942aM8UKQ1Pa484xww53D7e+9radyxuCzNSNCBLEd1dF6A2h0zP2qXOBga5R8UVqfi9
+         7DqD4vDZypxXYLIz73Z7Wg/62q4kCX8QcKSgIekjYEmYb2r4NGKjtfEZCS8Gfz1rpUaJ
+         HIqLlCjR/IK2qRmEy8FeUdME7drUhQKGku5Ne6svRdXoh0BkKOUC2v0Xiodjr01CnfpD
+         X9R5ZiluwN98RXR1NfSGbUVxKmq9PogRvQmRvXjx9+myKURhD7mfk0L9nPolIj/dC53O
+         lQwQ==
+X-Gm-Message-State: AOJu0Yxb64OMxi8aCGI90V2K5UKffB5AgnM+/ErQ7sMfXvClHxbCDAkO
+	R34Y3ZYy6v+3sRKssz4ZKushS9lCybbp9arTK5ee73oz5FFPbXgO+NWp/l3Tc//CFP050WdPSfU
+	/
+X-Google-Smtp-Source: AGHT+IHt7rYK2QsEzc8ZKMN7RLf4zuNIwdBy7Sth0q3SfvV9BccKNtWwb5FWEfs9oCnF1sHF0vt+Vg==
+X-Received: by 2002:a9d:7598:0:b0:6f9:8f84:9bcd with SMTP id 46e09a7af769-6fa1be4199bmr2905897a34.1.1718218959218;
+        Wed, 12 Jun 2024 12:02:39 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fa50fb74fcsm254366a34.43.2024.06.12.12.02.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 12:02:38 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <77966bc104e25b0534995d5dbb152332bc8f31c0.1718196953.git.asml.silence@gmail.com>
+References: <77966bc104e25b0534995d5dbb152332bc8f31c0.1718196953.git.asml.silence@gmail.com>
+Subject: Re: [PATCH] io_uring/rsrc: don't lock while !TASK_RUNNING
+Message-Id: <171821895843.90478.1098881039048016326.b4-ty@kernel.dk>
+Date: Wed, 12 Jun 2024 13:02:38 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Amir Goldstein <amir73il@gmail.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-References: <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
- <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
- <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
- <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
- <im6hqczm7qpr3oxndwupyydnclzne6nmpidln6wee4cer7i6up@hmpv4juppgii>
- <a5ab3ea8-f730-4087-a9ea-b3ac4c8e7919@fastmail.fm>
- <olaitdmh662osparvdobr267qgjitygkl7lt7zdiyyi6ee6jlc@xaashssdxwxm>
- <4e5a84ab-4aa5-4d8b-aa12-625082d92073@ddn.com>
- <hhkehi7qlcjulhyvtd5j25cl3xw764cjk7tbsakf3ueerdhp3j@6d2nka5oalzn>
- <d5f61930-beb5-495b-9227-4531de98dae8@fastmail.fm>
- <3bh7pncpg3qpeia5m7kgtolbvxwe2u46uwfixjhb5dcgni5k4m@kqode5qrywls>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US
-In-Reply-To: <3bh7pncpg3qpeia5m7kgtolbvxwe2u46uwfixjhb5dcgni5k4m@kqode5qrywls>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
 
-
-On 6/12/24 18:24, Kent Overstreet wrote:
-> On Wed, Jun 12, 2024 at 06:15:57PM GMT, Bernd Schubert wrote:
->>
->>
->> On 6/12/24 17:55, Kent Overstreet wrote:
->>> On Wed, Jun 12, 2024 at 03:40:14PM GMT, Bernd Schubert wrote:
->>>> On 6/12/24 16:19, Kent Overstreet wrote:
->>>>> On Wed, Jun 12, 2024 at 03:53:42PM GMT, Bernd Schubert wrote:
->>>>>> I will definitely look at it this week. Although I don't like the idea
->>>>>> to have a new kthread. We already have an application thread and have
->>>>>> the fuse server thread, why do we need another one?
->>>>>
->>>>> Ok, I hadn't found the fuse server thread - that should be fine.
->>>>>
->>>>>>>
->>>>>>> The next thing I was going to look at is how you guys are using splice,
->>>>>>> we want to get away from that too.
->>>>>>
->>>>>> Well, Ming Lei is working on that for ublk_drv and I guess that new approach
->>>>>> could be adapted as well onto the current way of io-uring.
->>>>>> It _probably_ wouldn't work with IORING_OP_READV/IORING_OP_WRITEV.
->>>>>>
->>>>>> https://lore.gnuweeb.org/io-uring/20240511001214.173711-6-ming.lei@redhat.com/T/
->>>>>>
->>>>>>>
->>>>>>> Brian was also saying the fuse virtio_fs code may be worth
->>>>>>> investigating, maybe that could be adapted?
->>>>>>
->>>>>> I need to check, but really, the majority of the new additions
->>>>>> is just to set up things, shutdown and to have sanity checks.
->>>>>> Request sending/completing to/from the ring is not that much new lines.
->>>>>
->>>>> What I'm wondering is how read/write requests are handled. Are the data
->>>>> payloads going in the same ringbuffer as the commands? That could work,
->>>>> if the ringbuffer is appropriately sized, but alignment is a an issue.
->>>>
->>>> That is exactly the big discussion Miklos and I have. Basically in my
->>>> series another buffer is vmalloced, mmaped and then assigned to ring entries.
->>>> Fuse meta headers and application payload goes into that buffer.
->>>> In both kernel/userspace directions. io-uring only allows 80B, so only a
->>>> really small request would fit into it.
->>>
->>> Well, the generic ringbuffer would lift that restriction.
->>
->> Yeah, kind of. Instead allocating the buffer in fuse, it would be now allocated
->> in that code. At least all that setup code would be moved out of fuse. I will
->> eventually come to your patches today.
->> Now we only need to convince Miklos that your ring is better ;)
->>
->>>
->>>> Legacy /dev/fuse has an alignment issue as payload follows directly as the fuse
->>>> header - intrinsically fixed in the ring patches.
->>>
->>> *nod*
->>>
->>> That's the big question, put the data inline (with potential alignment
->>> hassles) or manage (and map) a separate data structure.
->>>
->>> Maybe padding could be inserted to solve alignment?
->>
->> Right now I have this struct:
->>
->> struct fuse_ring_req {
->> 	union {
->> 		/* The first 4K are command data */
->> 		char ring_header[FUSE_RING_HEADER_BUF_SIZE];
->>
->> 		struct {
->> 			uint64_t flags;
->>
->> 			/* enum fuse_ring_buf_cmd */
->> 			uint32_t in_out_arg_len;
->> 			uint32_t padding;
->>
->> 			/* kernel fills in, reads out */
->> 			union {
->> 				struct fuse_in_header in;
->> 				struct fuse_out_header out;
->> 			};
->> 		};
->> 	};
->>
->> 	char in_out_arg[];
->> };
->>
->>
->> Data go into in_out_arg, i.e. headers are padded by the union.
->> I actually wonder if FUSE_RING_HEADER_BUF_SIZE should be page size
->> and not a fixed 4K.
+On Wed, 12 Jun 2024 13:56:38 +0100, Pavel Begunkov wrote:
+> There is a report of io_rsrc_ref_quiesce() locking a mutex while not
+> TASK_RUNNING, which is due to forgetting restoring the state back after
+> io_run_task_work_sig() and attempts to break out of the waiting loop.
 > 
-> I would make the commands variable sized, so that commands with no data
-> buffers don't need padding, and then when you do have a data command you
-> only pad out that specific command so that the data buffer starts on a
-> page boundary.
+> do not call blocking ops when !TASK_RUNNING; state=1 set at
+> [<ffffffff815d2494>] prepare_to_wait+0xa4/0x380
+> kernel/sched/wait.c:237
+> WARNING: CPU: 2 PID: 397056 at kernel/sched/core.c:10099
+> __might_sleep+0x114/0x160 kernel/sched/core.c:10099
+> RIP: 0010:__might_sleep+0x114/0x160 kernel/sched/core.c:10099
+> Call Trace:
+>  <TASK>
+>  __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+>  __mutex_lock+0xb4/0x940 kernel/locking/mutex.c:752
+>  io_rsrc_ref_quiesce+0x590/0x940 io_uring/rsrc.c:253
+>  io_sqe_buffers_unregister+0xa2/0x340 io_uring/rsrc.c:799
+>  __io_uring_register io_uring/register.c:424 [inline]
+>  __do_sys_io_uring_register+0x5b9/0x2400 io_uring/register.c:613
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xd8/0x270 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] io_uring/rsrc: don't lock while !TASK_RUNNING
+      commit: 54559642b96116b45e4b5ca7fd9f7835b8561272
+
+Best regards,
+-- 
+Jens Axboe
 
 
-The same buffer is used for kernel to userspace and the other way around 
-- it is attached to the ring entry. Either direction will always have
-data, where would a dynamic sizing then be useful?
 
-Well, some "data" like the node id don't need to be aligned - we could 
-save memory for that. I still would like to have some padding so that
-headers could be grown without any kind of compat issues. Though almost 
-4K is probably too much for that.
-
-Thanks for pointing it out, will improve it!
-
-Cheers,
-Bernd
 

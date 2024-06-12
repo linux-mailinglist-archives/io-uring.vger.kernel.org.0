@@ -1,204 +1,160 @@
-Return-Path: <io-uring+bounces-2174-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2175-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3028904CEB
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 09:40:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4424905295
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 14:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298DF1F23846
-	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 07:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 507461F21B18
+	for <lists+io-uring@lfdr.de>; Wed, 12 Jun 2024 12:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA376F513;
-	Wed, 12 Jun 2024 07:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8123C16FF55;
+	Wed, 12 Jun 2024 12:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="m1DrhvWa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZggQePO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA2616B729
-	for <io-uring@vger.kernel.org>; Wed, 12 Jun 2024 07:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA1F16D4F6;
+	Wed, 12 Jun 2024 12:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718178012; cv=none; b=RECpqjFx0wQBZGlNgzb/snyADVG0QGiv58WdGWUcM0HdJx7O+g7CLikzLI04eFl7esmqF2gBpu/AqX84ZzAM+Jpm4VKu4KN1HSE+Zq3GeUYTbz77x2qNnipdKhSF6P5sX8/PTLwWOWSBZXyzUQxT3TqwgzRotgkXESy8SEEJSvU=
+	t=1718195746; cv=none; b=Qfe9cwXYoEagCSjv5YA1mphPw+Cm4G7bIBLVfu9zlivVztc13xRZv+9gOs8exSAzHLHzNJW3HRXv5DtImUvlLWVwH/lGWYdEkSoJOKaJksSpj+Efot0Ni+lkBTuCGLv3BqY7zH1Y319wd9VZqcgWcvACD1mXDY/y93EkHtrTm3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718178012; c=relaxed/simple;
-	bh=SHhjjQf+XCiZG5//svZCudcWMjc3JF2y5+r1zKFDWBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a3ZbGcJTuWVF1Km1Ce/OFUb/v2F7aCPCkgJD5yHLuJ6CB6kO+GkeIoexBrdEUJXD7f63gw1yLtYAi64pbt8esBOSXJkNMfZFfXWElNH/3SQVdKq9q2h6JnDfp6m14vZXo/EKhqT4OmKRIoT7O8DNpha6Wnbpco1FuMWNfCNHDbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=m1DrhvWa; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a6f13dddf7eso426852166b.0
-        for <io-uring@vger.kernel.org>; Wed, 12 Jun 2024 00:40:09 -0700 (PDT)
+	s=arc-20240116; t=1718195746; c=relaxed/simple;
+	bh=75aY26XuMuHZAMH1H77DDXsruluFV5/Q1HkpU9UlInU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=WlxjkKPb1Zznz0/5GlmXrvOgwjjK0WSt+O/LyS+lwVkgigfcx5J7drK1DUSvbdu76UiaCDoY7pUXXLNQXiWWSVp25pM7rEmupl0lACn5386K6NzU7fxyDEXSTi3EYBUvCJabAJ9AxlPNpO1YOoGejVgSIPKmzzVn1ze/dAiowGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZggQePO; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57c72d6d5f3so5267067a12.1;
+        Wed, 12 Jun 2024 05:35:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1718178008; x=1718782808; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+QSosQqQLy64+Tlgv470e85em5LRwQwoSTGn3Q1iK/g=;
-        b=m1DrhvWa+IGqpiaPH9Kq7EKcFQA9Q5HPDdfYlJt4DqGLLFqECaXmjJcx0K7gbkyRje
-         ShnXJxm0G/VzssZygfRcnJT6SpKwOGjEZwAcllar8BcNvKgUwdkak/Y9MeLdiYMaHBXZ
-         ZJGmisH4LnzMDlIG5y+o5LDFvRB4C3240ot9I=
+        d=gmail.com; s=20230601; t=1718195743; x=1718800543; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=KRmihzRKsZKPXkmImPA2PJdwqrzPV0j1SUb1OGAaqoc=;
+        b=UZggQePODzwNyl/i3peyhVVQa8LCk5pnQ+TK46s5ck7aHiM7g/Do3msJrhS3pKtO3E
+         79lGyPQxLUjj3YrNcgT9vcTaA8vpJloTWPSlmN37mRGgSOwsXdU45XETcPsn+9wys5NV
+         oyQV8C74Qlk2VfgNO/omr8pBgEYUYgiVjWMQvz4uHTt7EoE+ATUnIR2o5w5WE3b5uQTi
+         9Tqn06t1g31slmlDPiXEjlDxY1yuzgoYSGm4b9F2SLrK5Fm90/xqXEA00cKZBKyvr51R
+         xb+CljHeZNnq+erIZVjHZAbW5o2sD7jJx1QTuAwbN5L1YhQQnLCkdD0euc7kmlsKt1hX
+         Y5vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718178008; x=1718782808;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+QSosQqQLy64+Tlgv470e85em5LRwQwoSTGn3Q1iK/g=;
-        b=HSuSiE2WKPaeDR6Kdoxu4pNmrxzwlLwlMh/sbEkQtsTvspqVbNph9sQ30H08UAtYVK
-         aXr7VO9leFd0lFO1xG3IkrNtnougY12dtyU6BefkScCR6iuJmfl+/Asd1oA6Dmfp+rby
-         XF40gFUjh3Xvxiz1uE/fw7ddlhVyfm8fUcyj8FerHDeNT5+PdmKJw5ERJJmqkeZeCrH4
-         1KlRtcjtExrarWrUeCCEpqxO2o0GxYKKFQqh075sNdaKzoAdqMDgW2JtgOTnnWp75Cu+
-         MWYCWF9EmoPPsesLXvmfPDTat8AKEX0h40MHXD5Sodm2tCXUVqGRyHFWs2B211uQLLvE
-         OkdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYIkZ2JoV1tsaZYk51ImPYh5B+O/fnM/W4J50TwEgU5jQ0vEoQW0ipzMHVRYivREjk4b4bRJooStye5l4LHPv791ovGHHBvZQ=
-X-Gm-Message-State: AOJu0YzgLj0xWW1lr6SXI7SxxeS4TS/1hnaUgexND47n2aoVk6UTUa4q
-	yKwin+nD7o+vyPl/o9RC97uvFIZDeQ4hL+xwiOqeWC2p6nzcJno0NGeut5kmc/n8dQdiu6kMtfk
-	83x2L9Dm4od2lZMIXMGvg8tt5fw54SeWNcCVyaQ==
-X-Google-Smtp-Source: AGHT+IHBlOirImqV0ywldrD6heA5rRT/yeHkVra4yo2c9+kHD7C+vJadXIrbCeB1ZgdxilgFkjhV/mtFePl8gIIao/8=
-X-Received: by 2002:a17:906:2712:b0:a6f:1c81:e220 with SMTP id
- a640c23a62f3a-a6f47f52ec1mr60243766b.13.1718178008049; Wed, 12 Jun 2024
- 00:40:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718195743; x=1718800543;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KRmihzRKsZKPXkmImPA2PJdwqrzPV0j1SUb1OGAaqoc=;
+        b=ZOJe2vJVgNTxzETN5WHzNoEMCfgeXMeYqqZldYkIcIQqa97sMAEVoptsemHJXF5x4T
+         hIzjtUC45vdDX9l/LmQATO93U/tMxqv2chYQbiGIP9pWdWxmg/a3Qrckc0gGR/cEmPMW
+         P9puwze6hIK2sSAhtIPMZe5nMcV1PNT49VLUZDmE+bNcpvNHlLNe4htt2T5PmqSABtV3
+         ZSJmdyqJ8sZ7NbqvqVhpkhIDXiNcyYsDnhhDRZ33iiDzzjQpqJIazRaLgvqWNlpdE7FC
+         yKC+BXHMew3OrdwgSwYpA7WT3unkqEOJTCqMXmaMHMoehNljcMVuqG08IJeGwx52j324
+         dzXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWm5VJXA1Y+7lj78ak71ZzvCSmyhS7bzxXkFLGTwDg/kjds08pDZBPhQSPOiiWAK462XwO5CC4z6cWD3PcvYRZ2IshFZ8YdQR5MJEEDirmnhyLVUyM6xmIG2ITgkXFMyKdn15puqaM=
+X-Gm-Message-State: AOJu0YxYVcXw2RKAWF6Oyo8UUEnXhf63YGwZ/jEhBwUcgIfRWa6RpzKU
+	/KGYMSbfwAzE7a9sW1lqqVgIQocjMT1WtDGc9MmNYB5vHL2Vx+9qPF1iCg==
+X-Google-Smtp-Source: AGHT+IGD0yDtfu7JBxBoQrITgVlvHEvwGIrCaQ0jIW2iRXWNcl1eNmoadDqoSgoNRaVbxiE6xRrYPg==
+X-Received: by 2002:a17:906:355b:b0:a6f:4e02:ce55 with SMTP id a640c23a62f3a-a6f4e0323e1mr31088866b.53.1718195742741;
+        Wed, 12 Jun 2024 05:35:42 -0700 (PDT)
+Received: from [192.168.42.244] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8072a101sm879776266b.201.2024.06.12.05.35.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 05:35:42 -0700 (PDT)
+Message-ID: <6213cf3d-b114-4c27-b9c5-6339b9f363aa@gmail.com>
+Date: Wed, 12 Jun 2024 13:35:50 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
- <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm> <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
- <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
-In-Reply-To: <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 12 Jun 2024 09:39:56 +0200
-Message-ID: <CAJfpegsq06UZSPCDB=0Q3OPoH+c3is4A_d2oFven3Ebou8XPOw@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Bernd Schubert <bschubert@ddn.com>, Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrei Vagin <avagin@google.com>, io-uring@vger.kernel.org, 
-	Kent Overstreet <kent.overstreet@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [io-uring] WARNING in io_fill_cqe_req_aux
+To: chase xd <sl1589472800@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CADZouDQx4tqCfCfmCHjUp9nhAJ8_qTX=cCYOFzMYiQQwtsNuag@mail.gmail.com>
+ <4fd9cd27-487d-4a23-b17a-aa9dcb09075f@gmail.com>
+ <CADZouDSyJVR=WX-X46QCUZeUz=7DHg_9=e5y=N7Wb+zMQ_dGtQ@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CADZouDSyJVR=WX-X46QCUZeUz=7DHg_9=e5y=N7Wb+zMQ_dGtQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 11 Jun 2024 at 19:37, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+On 6/12/24 08:10, chase xd wrote:
+> Sorry now I'm also a bit confused by the branch choosing. I checked
+> out branch "for-6.9/io_uring" and started testing on that branch. I
+> assume that was the latest version of io_uring at that time, even now
+> I check out that branch and the bug still exists. How should I know
+> whether the branch will be merged, and which branch do you think I
+> should test on? Thanks.
 
-> > So I don't think it matters to performance whether there's a combined
-> > WRITEV + READV (or COMMIT + FETCH) op or separate ops.
->
-> This has to be performance proven and is no means what I'm seeing. How
-> should io-uring improve performance if you have the same number of
-> system calls?
+# git show a69d20885494:io_uring/io_uring.c | grep -A 13 io_fill_cqe_req_aux
+bool io_fill_cqe_req_aux(struct io_kiocb *req, bool defer, s32 res, u32 cflags)
+{
+         struct io_ring_ctx *ctx = req->ctx;
+         u64 user_data = req->cqe.user_data;
 
-The ops can be queued together and submitted together.  Two separate
-(but possibly linked) ops should result in exactly the same number of
-syscalls as a single combined op.
+         if (!defer)
+                 return __io_post_aux_cqe(ctx, user_data, res, cflags, false);
 
-> Also, if you are using IORING_OP_READV/IORING_OP_WRITEV, nothing would
-> change in fuse kernel? I.e. IOs would go via fuse_dev_read()?
-> I.e. we would not have encoded in the request which queue it belongs to?
+         lockdep_assert_held(&ctx->uring_lock);
+         io_lockdep_assert_cq_locked(ctx);
 
-The original idea was to use the cloned /dev/fuse fd to sort requests
-into separate queues.  That was only half finished: the input queue is
-currently shared by all clones, but once a request is read by the
-server from a particular clone it is put into a separate processing
-queue.   Adding separate input queues to each clone should also be
-possible.
+         ctx->submit_state.flush_cqes = true;
+         return io_fill_cqe_aux(ctx, user_data, res, cflags);
+}
 
-I'm not saying this is definitely the direction we should be taking,
-but it's something to consider.
+That's the buggy version from the hash you're testing, IIRC it
+was in the tree for longer than necessary, presumably which is
+why you found it, but it was never sent to Linus. Below is
+current state of for-6.9 and what it was replaced with
+respectively. Let me separately check for-6.9/io_uring if you're
+concerned about it.
 
-> > The advantage of separate ops is more flexibility and less complexity
-> > (do only one thing in an op)
->
-> Did you look at patch 12/19? It just does
-> fuse_uring_req_end_and_get_next(). That part isn't complex, imho.
 
-That function name indicates that this is too complex: it is doing two
-independent things (ending one request and fetching the next).
 
-Fine if it's a valid optimization, but I'm saying that it likely isn't.
 
-> > The major difference between your idea of a fuse_uring and the
-> > io_uring seems to be that you place not only the request on the shared
-> > buffer, but the data as well.   I don't think this is a good idea,
-> > since it will often incur one more memory copy.  Otherwise the idea
-> > itself seems sound.
->
-> Coud you explain what you mean with "one more memory copy"?
+# git show for-6.9/io_uring:io_uring/io_uring.c | grep -A 30 io_fill_cqe_req_aux
+bool io_fill_cqe_req_aux(struct io_kiocb *req, bool defer, s32 res, u32 cflags)
+{
+         struct io_ring_ctx *ctx = req->ctx;
+         u64 user_data = req->cqe.user_data;
+         struct io_uring_cqe *cqe;
 
-If the filesystem is providing the result of a READ request as a
-pointer to a buffer (which can be the case with fuse_reply_data()),
-then that buffer will need to be copied to the shared buffer, and from
-the shared buffer to the read destination.
+         lockdep_assert(!io_wq_current_is_worker());
 
-That first copy is unnecessary if the kernel receives the pointer to
-the userspace buffer and copies the data directly to the destination.
+         if (!defer)
+                 return __io_post_aux_cqe(ctx, user_data, res, cflags, false);
 
-> > So I think either better integration with io_uring is needed with
-> > support for "reverse submission" or a new interface.
->
-> Well, that is exactly what IORING_OP_URING_CMD is for, afaik. And
-> ublk_drv  also works exactly that way. I had pointed it out before,
-> initially I had considered to write a reverse io-uring myself and then
-> exactly at that time ublk came up.
+         lockdep_assert_held(&ctx->uring_lock);
 
-I'm just looking for answers why this architecture is the best.  Maybe
-it is, but I find it too complex and can't explain why it's going to
-perform better than a much simpler single ring model.
+         if (ctx->submit_state.cqes_count == ARRAY_SIZE(ctx->completion_cqes)) {
+...
 
-> The interface of that 'reverse io' to io-uring is really simple.
->
-> 1) Userspace sends a IORING_OP_URING_CMD SQE
-> 2) That CMD gets handled/queued by struct file_operations::uring_cmd /
-> fuse_uring_cmd(). fuse_uring_cmd() returns -EIOCBQUEUED and queues the
-> request
-> 3) When fuse client has data to complete the request, it calls
-> io_uring_cmd_done() and fuse server receives a CQE with the fuse request.
->
-> Personally I don't see anything twisted here, one just needs to
-> understand that IORING_OP_URING_CMD was written for that reverse order.
+# git show origin/for-6.10/io_uring:io_uring/io_uring.c | grep -A 13 io_req_post_cqe
+bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags)
+{
+         struct io_ring_ctx *ctx = req->ctx;
+         bool posted;
 
-That's just my gut feeling.   fuse/dev_uring.c is 1233 in this RFC.
-And that's just the queuing.
+         lockdep_assert(!io_wq_current_is_worker());
+         lockdep_assert_held(&ctx->uring_lock);
 
-> (There came up a light twisting when io-uring introduced issue_flags -
-> that is part of discussion of patch 19/19 with Jens in the series. Jens
-> suggested to work on io-uring improvements once the main series is
-> merged. I.e. patch 19/19 will be dropped in RFCv3 and I'm going to ask
-> Jens for help once the other parts are merged. Right now that easy to
-> work around by always submitting with an io-uring task).
->
-> Also, that simplicity is the reason why I'm hesitating a bit to work on
-> Kents new ring, as io-uring already has all what we need and with a
-> rather simple interface.
+         __io_cq_lock(ctx);
+         posted = io_fill_cqe_aux(ctx, req->cqe.user_data, res, cflags);
+         ctx->submit_state.cq_flush = true;
+         __io_cq_unlock_post(ctx);
+         return posted;
+}
 
-I'm in favor of using io_uring, if possible.
-
-I'm also in favor of a single shared buffer (ring) if possible.  Using
-cloned fd + plain READV / WRITEV ops is one possibility.
-
-But I'm not opposed to IORING_OP_URING_CMD either.   Btw, fuse reply
-could be inlined in the majority of cases into that 80 byte free space
-in the sqe.  Also might consider an extended cqe mode, where short
-fuse request could be inlined as well (e.g. IORING_SETUP_CQE128 -> 112
-byte payload).
-
-> To be honest, I wonder how you worked around scheduler issues on waking
-> up the application thread. Did you core bind application threads as well
-> (I mean besides fuse server threads)? We now have this (unexported)
-> wake_on_current_cpu. Last year that still wasn't working perfectly well
-> and  Hillf Danton has suggested the 'seesaw' approach. And with that the
-> scheduler was working very well. You could get the same with application
-> core binding, but with 512 CPUs that is certainly not done manually
-> anymore. Did you use a script to bind application threads or did you
-> core bind from within the application?
-
-Probably, I don't remember anymore.
-
-Thanks,
-Miklos
+-- 
+Pavel Begunkov
 

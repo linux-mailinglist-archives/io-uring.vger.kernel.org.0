@@ -1,67 +1,66 @@
-Return-Path: <io-uring+bounces-2202-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2203-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66AB90798A
-	for <lists+io-uring@lfdr.de>; Thu, 13 Jun 2024 19:18:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1668A907CBA
+	for <lists+io-uring@lfdr.de>; Thu, 13 Jun 2024 21:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A2241F23287
-	for <lists+io-uring@lfdr.de>; Thu, 13 Jun 2024 17:18:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901701F24E48
+	for <lists+io-uring@lfdr.de>; Thu, 13 Jun 2024 19:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAED71311A1;
-	Thu, 13 Jun 2024 17:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9843137758;
+	Thu, 13 Jun 2024 19:38:28 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C43A12D76D
-	for <io-uring@vger.kernel.org>; Thu, 13 Jun 2024 17:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175F614D2B7
+	for <io-uring@vger.kernel.org>; Thu, 13 Jun 2024 19:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299102; cv=none; b=Ql3Ql/uyrKA1hzZ16MBBQW53eFXoUh58KvjE6DYbcztJawImlGdSXkxl2ZkNYHynp7Ps5OAK/bMJ7NY3PJf2z3YgIXMdaUkc2jT4tQDbtOKLfRjVg044m7A5r9Jb4Qvec75ZA2xJT4Sb4HChg4uMWNQGb0TTf+GIjLs+mD3rQAI=
+	t=1718307508; cv=none; b=QzOYRFtsk+oALx/NB47NWnNbypAVtLlV1CGEYBn93LldcphX0PO0z6LVRwhmFhEu7wx6khq+10MUa13ONdZ6Ved1ZkxdwUWCBiIbNhJpjbIYJOnZ4WUtkcxDJ6fNFgMbaZQgC08MyQGa+MPRJrUxZq9Ib5KvGjEKojTrrXv7egc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299102; c=relaxed/simple;
-	bh=7jW1Pjc0lYkk43DI+WoCur/w2gyoKI27QU6xxfYjpj0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JsIi+NHGwP78gtOS7On9xVBkXFfogU09Qx+a9esVIYF8C/dvb6wQde2TuP59pTz4SiWNUqXrcd55NOBFHfZtSzQ3TZCr2Qf1EZbJfLsE1lJNKZSPtzrQsTjz/p9Dl09AJULG4hwPXTusAMHtxKt2YUwy0M5SrDTVBLxOTeVmibA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+	s=arc-20240116; t=1718307508; c=relaxed/simple;
+	bh=6aypa/TFn6vR7GekpQf4/xcU4O9K8Fca3MiDire0XIs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=D2SiMesXxjzvHELZ8BcyjeAhnFiBWBmSJKl3gjByXCsWrGkYC+4udDBC5I6qeZjZtTIjvhtkCzRED2l17Q5pthCzXg2llBieK9lLoiYlfi5X0+iA0IcpKGqM3EaMLJgebl7A/4Sxrh3BruG54wJLJqfMsMNOFv5tNuDerPd2E2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e8e5d55441so115022439f.1
-        for <io-uring@vger.kernel.org>; Thu, 13 Jun 2024 10:18:21 -0700 (PDT)
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eb861e964cso143525539f.1
+        for <io-uring@vger.kernel.org>; Thu, 13 Jun 2024 12:38:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718299100; x=1718903900;
+        d=1e100.net; s=20230601; t=1718307506; x=1718912306;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tMgu8aQxVMZ+LMmv02oVIsIixRIQXNFQ7WAWbWC/Z2I=;
-        b=UNuu8jDwu3SzujfBdVu+nLXfcauzS7/5PbY86fG4uCD9SjIJzuRy/Ip/IYLaOs1QVt
-         6uyCZVXGwVDCTb3lBUisLb+rfuXG3YEwGK5Irshlas/s51ONkS6hqqhBt3AvK4AAWh3B
-         LZkBkLz0eb5sz1ln+YtpDxpvLMoO6NZCKzGfr/2hloJvPVaqvhD0q2EwMzopUXVqnzHj
-         LnVLBGKF8jQsHlT9wthTZGMoGhUx3/EX1XUY7a8UJtyOM5cqy4tJLZDHkRxWuu5SHFU6
-         zDVuiOepNZiOWg2755ybRmTkZNEdv564YCJbrKBoSQIZ9Ewno5Ik4VaWVToeEQ7dltSS
-         xEGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXp6JPllIu1yddbqsXMh3bmWTrbmTIFlXlVELdBcXHB3LlQaC3/UdYFzZh42atBjQ/SnhdZvyjLMTN6iQPbYmg7zlYY0jVDWHg=
-X-Gm-Message-State: AOJu0Yyw2hQ9Z/5OxKCCs54RsxFr69WJJK6HNldknxQsN3TSTXsfRTLn
-	ovdrbVvEgqfyea5GSbKkd7KsGap+Y/D2FAJKuDio3SZ1bvqygIiIsJQpe7iRUrSwOyHmZN2Hhe4
-	s93AihMVdBfqqLGM/ib2cdtrNveKfhfmkBD1wkTUMQHTVRRJl2/pLH3Y=
-X-Google-Smtp-Source: AGHT+IH2MxsFbswtsyJvkjbZKpQ/wbCZB871HvQ5mhsuwt1H+N0druZrE9vERzAJP64WWvL8YD9u95bAXThAlr7P3HAMal1VBBuW
+        bh=MLJJOWCX65rxIwkhEm2uOMKY3r7EFZtqKAwAdHzJM9g=;
+        b=ByKXhUAbCk57R0dBQQ4JWl+9DnglDqKl8diNse+3I8FP8tN9sB/Uxoh+VnFCQuPKq9
+         p5QUkPd39pWfTWEt7FjgSFuG8KKEKW9IHHb1bQpzz5S2lAll/01AxHTYT9qrBBkNuOgh
+         /MKobXB8/l+1k2g6js+1xwhkWoeQcirr9QFc8mTzVE3lYGswOkdv+yie0MQMUNl4IUR0
+         OQY/URr679kbr+EjTmdxH7OmCxnWQDpDRMHcNyeM+L/Epo9khrj1dW3+jAhL6Hz7xUkk
+         /Ceq2cz1yH1wwITguzXgpSY/iESn8BLJwGR66FGdt4XP81MqsswNPLHkNpMmR2F/8ZR2
+         kOwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXf5Fhum/QbekelCFjiD8Xp5gABeUKExTZCHt3XyOqdC5DOXT5O7lISMmX2OJen5XnZ6lYGyRMd/vZPQ5T5wff0Jcy6YCytJNw=
+X-Gm-Message-State: AOJu0YyyV7YCP+J+mStMFymllNLf8ZkljrlVKbH1c+1mcl02D1qofbvF
+	QqahDVOGjtn3uvcBUkTY+Gv2cjy4uyxXW61//RIX4nV4bs3r2z8FhKlyk4Arpj4GyycgLMtkTSX
+	oR7V1S5yD65orYVyp0XxyDmDGg3yeAzDcf6JEi8h3uKulN70QaQjErsI=
+X-Google-Smtp-Source: AGHT+IHzIrUbSrbDOTpr6qQydzMSs7GCZvTCI9PQnIbCAKH2f2LdyUAT50wUuyIqvD2skpvH/Siu5CXVvClMaLe1skIHINU42xbE
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:194f:b0:375:9522:1831 with SMTP id
- e9e14a558f8ab-375e108aa71mr89975ab.4.1718299100493; Thu, 13 Jun 2024 10:18:20
+X-Received: by 2002:a05:6638:841f:b0:4b7:ca3d:c0dd with SMTP id
+ 8926c6da1cb9f-4b96417f130mr5610173.6.1718307506165; Thu, 13 Jun 2024 12:38:26
  -0700 (PDT)
-Date: Thu, 13 Jun 2024 10:18:20 -0700
+Date: Thu, 13 Jun 2024 12:38:26 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000080cb46061ac8afe3@google.com>
-Subject: [syzbot] [io-uring?] KCSAN: data-race in io_worker_handle_work /
- io_wq_worker_cancel (3)
-From: syzbot <syzbot+90b0e38244e035ec327c@syzkaller.appspotmail.com>
+Message-ID: <000000000000852fce061acaa456@google.com>
+Subject: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_cqe_overflow (3)
+From: syzbot <syzbot+e6616d0dc8ded5dc56d6@syzkaller.appspotmail.com>
 To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
@@ -70,58 +69,89 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1408060e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=68336ea4b6f4fc09
-dashboard link: https://syzkaller.appspot.com/bug?extid=90b0e38244e035ec327c
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=12980e41980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+dashboard link: https://syzkaller.appspot.com/bug?extid=e6616d0dc8ded5dc56d6
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13526ca2980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=144e5256980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/26ed33651516/disk-2ccbdf43.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3c0b763ac146/vmlinux-2ccbdf43.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/be99b90037ed/bzImage-2ccbdf43.xz
+disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+90b0e38244e035ec327c@syzkaller.appspotmail.com
+Reported-by: syzbot+e6616d0dc8ded5dc56d6@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KCSAN: data-race in io_worker_handle_work / io_wq_worker_cancel
-
-read-write to 0xffff8881070473d8 of 4 bytes by task 24619 on cpu 0:
- __io_wq_worker_cancel io_uring/io-wq.c:993 [inline]
- io_wq_worker_cancel+0x70/0x140 io_uring/io-wq.c:1010
- io_wq_for_each_worker+0x116/0x200 io_uring/io-wq.c:874
- io_wq_cancel_running_work io_uring/io-wq.c:1080 [inline]
- io_wq_cancel_cb+0x10d/0x190 io_uring/io-wq.c:1111
- io_async_cancel_one io_uring/cancel.c:87 [inline]
- __io_async_cancel+0x176/0x270 io_uring/cancel.c:187
- __io_sync_cancel io_uring/cancel.c:261 [inline]
- io_sync_cancel+0x5a6/0x6d0 io_uring/cancel.c:325
- __io_uring_register io_uring/register.c:543 [inline]
- __do_sys_io_uring_register io_uring/register.c:616 [inline]
- __se_sys_io_uring_register+0x504/0x1190 io_uring/register.c:577
- __x64_sys_io_uring_register+0x55/0x70 io_uring/register.c:577
- x64_sys_call+0x2c2/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:428
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+=====================================================
+BUG: KMSAN: uninit-value in io_req_cqe_overflow+0x193/0x1c0 io_uring/io_uring.c:810
+ io_req_cqe_overflow+0x193/0x1c0 io_uring/io_uring.c:810
+ __io_submit_flush_completions+0x7eb/0x1be0 io_uring/io_uring.c:1464
+ io_submit_flush_completions io_uring/io_uring.h:148 [inline]
+ ctx_flush_and_put+0x16c/0x360 io_uring/io_uring.c:1055
+ io_handle_tw_list+0x58b/0x5c0 io_uring/io_uring.c:1095
+ tctx_task_work_run+0xf8/0x3d0 io_uring/io_uring.c:1155
+ tctx_task_work+0x6d/0xc0 io_uring/io_uring.c:1173
+ task_work_run+0x268/0x310 kernel/task_work.c:180
+ ptrace_notify+0x304/0x320 kernel/signal.c:2404
+ ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+ syscall_exit_work+0x14e/0x3e0 kernel/entry/common.c:173
+ syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+ syscall_exit_to_user_mode+0x135/0x160 kernel/entry/common.c:218
+ do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-read to 0xffff8881070473d8 of 4 bytes by task 24621 on cpu 1:
- io_get_work_hash io_uring/io-wq.c:454 [inline]
- io_worker_handle_work+0x41a/0x9a0 io_uring/io-wq.c:591
- io_wq_worker+0x286/0x820 io_uring/io-wq.c:651
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Uninit was stored to memory at:
+ io_req_set_res io_uring/io_uring.h:215 [inline]
+ io_recv_finish+0xf10/0x1560 io_uring/net.c:861
+ io_recv+0x12ec/0x1ea0 io_uring/net.c:1175
+ io_issue_sqe+0x429/0x22c0 io_uring/io_uring.c:1751
+ io_poll_issue+0x32/0x40 io_uring/io_uring.c:1782
+ io_poll_check_events io_uring/poll.c:331 [inline]
+ io_poll_task_func+0x5f9/0x14d0 io_uring/poll.c:357
+ io_handle_tw_list+0x23a/0x5c0 io_uring/io_uring.c:1083
+ tctx_task_work_run+0xf8/0x3d0 io_uring/io_uring.c:1155
+ tctx_task_work+0x6d/0xc0 io_uring/io_uring.c:1173
+ task_work_run+0x268/0x310 kernel/task_work.c:180
+ ptrace_notify+0x304/0x320 kernel/signal.c:2404
+ ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+ syscall_exit_work+0x14e/0x3e0 kernel/entry/common.c:173
+ syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+ syscall_exit_to_user_mode+0x135/0x160 kernel/entry/common.c:218
+ do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-value changed: 0x00000000 -> 0x00000001
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3877 [inline]
+ slab_alloc_node mm/slub.c:3918 [inline]
+ __do_kmalloc_node mm/slub.c:4038 [inline]
+ __kmalloc+0x6e4/0x1060 mm/slub.c:4052
+ kmalloc include/linux/slab.h:632 [inline]
+ io_alloc_async_data+0xc0/0x220 io_uring/io_uring.c:1662
+ io_msg_alloc_async io_uring/net.c:166 [inline]
+ io_recvmsg_prep_setup io_uring/net.c:725 [inline]
+ io_recvmsg_prep+0xbe8/0x1a20 io_uring/net.c:806
+ io_init_req io_uring/io_uring.c:2135 [inline]
+ io_submit_sqe io_uring/io_uring.c:2182 [inline]
+ io_submit_sqes+0x1135/0x2f10 io_uring/io_uring.c:2335
+ __do_sys_io_uring_enter io_uring/io_uring.c:3246 [inline]
+ __se_sys_io_uring_enter+0x40f/0x3c80 io_uring/io_uring.c:3183
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3183
+ x64_sys_call+0x2c0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 24621 Comm: iou-wrk-24619 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+CPU: 1 PID: 5049 Comm: syz-executor107 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-==================================================================
+=====================================================
 
 
 ---
@@ -134,6 +164,10 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem

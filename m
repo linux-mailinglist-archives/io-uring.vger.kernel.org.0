@@ -1,111 +1,127 @@
-Return-Path: <io-uring+bounces-2210-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2211-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1492908B58
-	for <lists+io-uring@lfdr.de>; Fri, 14 Jun 2024 14:14:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C1C908F9C
+	for <lists+io-uring@lfdr.de>; Fri, 14 Jun 2024 18:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12B8E1C22515
-	for <lists+io-uring@lfdr.de>; Fri, 14 Jun 2024 12:14:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFCCBB21E23
+	for <lists+io-uring@lfdr.de>; Fri, 14 Jun 2024 16:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6ECF144D37;
-	Fri, 14 Jun 2024 12:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE772146A96;
+	Fri, 14 Jun 2024 16:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fDMGReku"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Cz+hpwGU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A07812F5A0
-	for <io-uring@vger.kernel.org>; Fri, 14 Jun 2024 12:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD242B9A5
+	for <io-uring@vger.kernel.org>; Fri, 14 Jun 2024 16:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718367256; cv=none; b=bbl+35qDFHOv2A7ZysdW4StpfVaA31PbZfolB5MFFGs2u6erjLciWey1LR+SvZ3iSi/qfRb1sfWawIaEpzlUK6R4qjxfIwP6GOJk0ZRI4nkf8O5ucxsTgSgzK95PiLNgPGLCh7hVwQsMGB/a14EHWQ8b0gUi7qFdNjuW/AucwKo=
+	t=1718381182; cv=none; b=porVTsdIW4bpMIboyBninwlaAuTkf4/7XLgT46Aa0A1qGOywbHXRgnxCG4ZqW4eq60+VjgI2sfwedVrrQPDJf1/+JFhJN/JvXUv4cFHZ0S2Y7ZGvdougFbmOKMspzRvMJFwMsMgefc9qXr6ZASUjGlDjoENLtxfLA8LDRx4d050=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718367256; c=relaxed/simple;
-	bh=TLDIzCRgmbkpjtjvz74rOgmiHVLw73LEwRH8VMvqxCA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=B3hgtrbahBF9FMGpm/BXHVxHTH2TCeMUw2pH9ZO7lQtqBLkLRy0o0VlGP4p5dZkkct/Ggvz+rHwjuSMGEEg0+Dj6qSWmkBjBwTxkrbD16TmiOlKH+kDtLjoCbNj3nElQM6f+zrVoAiy0LlbqjSsz0TJyyTqvH/0W5Gx1qsmOiG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fDMGReku; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1718381182; c=relaxed/simple;
+	bh=eJe++GPJbuFK+mYJ7YFUxqfqZvP2JxU8mC0PsqpZZ6w=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=YlcvfFyylMc+2sA7NJGlLBvEaGYDZ+lo4TiDw0Wf5LAHA9PZ/B6g/VULTwGRV2t/GUyAkpN/tn+n2yN5r6NUVxDGOUom6Crs0hjO+Z1BEpg1BKX7cLup/0mLA56gVR9lD9hKZmW59xqrCxivn5ALLInK4G/Wa/wEt0rw02pRhlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Cz+hpwGU; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c2c1473f73so350248a91.3
-        for <io-uring@vger.kernel.org>; Fri, 14 Jun 2024 05:14:11 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7041bc85bafso103475b3a.0
+        for <io-uring@vger.kernel.org>; Fri, 14 Jun 2024 09:06:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718367251; x=1718972051; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718381181; x=1718985981; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qlZVzroua8VbSRTrsLKkRwsBDlG6gGsTg/noTWqQGuM=;
-        b=fDMGRekuDea8MiAnEUA7AXSJ4w3y5+70YU9j1PjRzS6obXO3JaaQ/TGB/3ZfvyNITE
-         4UVYvZOYrgRpL+I3MfSUJQnjcYM5nbVwFn62KuugnwIm6JiWhccj76wX0qQRk2G+K2u2
-         NSUyy+43u5BSFAygfJvdvxdCvwQOCZbpgF8Ftsh0PKmSNG9mE/PdUGEKBGW+5onWWY2R
-         y2ySxtuKZt4KNiA/3WjAi+1hmPqladUgLv3zMq/klWqjm/N2kRQ5Da/74nwdAz/mFSiD
-         gw7ZE35T73p1WbR2Op8VEMRh/3mERJnXVFgMNTrUKS44+1ZK2tNlVBPiJzyBIcb6Oua1
-         bEvA==
+        bh=szaHrCf2bXBCHMz7h+GZTOvBrquvHTtd7WnBEx5l8GA=;
+        b=Cz+hpwGUpBjYrvFrcU2t0OIahzRX7VBx+A8Ux992AlwC7xSnOA7/kTHbw96IEkSA3N
+         uqZfXXAZHt6Y/CbO+ixcpqipR+pqFi4Hs70A0BBeQYua8B0+6ksAwmXOh8RQuwMvh0p8
+         iq/WeECWplLh31K7U7nF2uNLL0YOjVdDZtXS6//YdYeFEtyy3MhIK/tC8CsZJUKxwAq/
+         bbfVed/oUnw57y19EK/H082tf6e7bc+tOaAAG7dbmSqvoQOttAyKx3YT6TQ8v2zg8t3t
+         cwp4icncQE09NkurvPcrx/vMp6dg7OACzEaDGj4jpnjdRv9owV5rAUS2XP5ET+P5vimG
+         41NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718367251; x=1718972051;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qlZVzroua8VbSRTrsLKkRwsBDlG6gGsTg/noTWqQGuM=;
-        b=LCcSD6G4zUokGQlzoekrjQOPo5GZiPOZZXfD0yawwuLxOgVMQTKgvtZxP/uOwd+IGu
-         IxognxTVJ0L0mseGoqScVC9g9NZvre8HPc9uN888Fv0bq63F0mXof5xvNKIZBFqqQHsh
-         LWueXNWjj6icwXCUGXB436pmnCk838ZUlRSwdqEdeExo+VCeIBZ3J9WWlm/Ryr8E05Qt
-         5VuQCnsPphVPDRLSk5KNTt+woUXqR1tSGgUFKQjxIhGD+XgmzZFozQjAjCTl2+Fme2BU
-         A1UsXZCovHWPSjwmkogDuxYGccrTWLJ4ft0ZqxaMyRXbzYZemvFfO1xnRN12XNRJhq2V
-         XBpA==
-X-Gm-Message-State: AOJu0YyrizuGUbE0v5Ips9nx/lp7nWif+HaxNXTRVmz64va0TZq+PdXY
-	byNYC/edQa0GE0k10SFMriaIR4ae5D4+jaFVlMse/tCtpLTVs7JwlumMxEuiQEc=
-X-Google-Smtp-Source: AGHT+IEZaf0HN3d/a8yzW8L0D0TBNZEf/XjhyA4tth2Tw/Zv7jPafXDmhDEyP8DFIgeN7ln42oj2UQ==
-X-Received: by 2002:a17:90a:aa87:b0:2c2:c967:3e56 with SMTP id 98e67ed59e1d1-2c4dc031ca4mr2605435a91.4.1718367250653;
-        Fri, 14 Jun 2024 05:14:10 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a75d205asm5969881a91.4.2024.06.14.05.14.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 05:14:09 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: Li Shi <sl1589472800@gmail.com>
-In-Reply-To: <6827b129f8f0ad76fa9d1f0a773de938b240ffab.1718323430.git.asml.silence@gmail.com>
-References: <6827b129f8f0ad76fa9d1f0a773de938b240ffab.1718323430.git.asml.silence@gmail.com>
-Subject: Re: [PATCH] io_uring: fix cancellation overwriting req->flags
-Message-Id: <171836724941.222205.7286563058347838008.b4-ty@kernel.dk>
-Date: Fri, 14 Jun 2024 06:14:09 -0600
+        d=1e100.net; s=20230601; t=1718381181; x=1718985981;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=szaHrCf2bXBCHMz7h+GZTOvBrquvHTtd7WnBEx5l8GA=;
+        b=pmbSiszL+XTOa8M9KlIAbpJ9Tt0ECXNS3PCm7o1DiIvb32FRPZhUwgRWTA6H2G9rt5
+         q0zIp2+/+znoaUMpkKiGaWIDvrMDbHJaXpUG/GS3XveqV9VRa30ge6NoZv3FrMM+kz0Q
+         P6HvxDVZfyF/T+QPg+UNA4iMRj163GqUTh9Okyb6nnv5jly2YHLkG0g+KFq03kDzBMDv
+         ZZJcrn2/vn+qVM1Q4oMX06OWSdbgq9LERFBNcvzTB9Fots+EhrJ5IPyWcxcosyjAuNWt
+         H+bjIxRIWEpfj6t8y8mNkjrSVna/8YNYucamacgpX9PbeaGJw7XJyEA+Lj63Tzr3hDuq
+         0Juw==
+X-Gm-Message-State: AOJu0Yx35ED7dGQ3GzJytXJPj5f1ZWa6m/rC/t0Qg7WTm5wOYA5tFDYv
+	bjizCzZSYVLjOtJeUCzfgxZie2QDwr5zqzuq7pqiuZ9UaOrxN6IVjjAbnrrozbs=
+X-Google-Smtp-Source: AGHT+IHgc8Og1fY+OsO9b0JsSQg3LcUVSPKKy14T9FQoOeXeJPwhfS/0/3Xg6gnXrbxW+Tf9nbjWEw==
+X-Received: by 2002:a05:6a21:6d9e:b0:1af:cd45:59a9 with SMTP id adf61e73a8af0-1bae7e1cf3emr3915796637.2.1718381180510;
+        Fri, 14 Jun 2024 09:06:20 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc91dc67sm3230939b3a.2.2024.06.14.09.06.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 09:06:19 -0700 (PDT)
+Message-ID: <ae3d160d-6886-47a3-9179-de6becf0af38@kernel.dk>
+Date: Fri, 14 Jun 2024 10:06:19 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.10-rc4
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+
+Hi Linus,
+
+Two fixes from Pavel headed to stable:
+
+- Ensure that the task state is correct before attempting to grab a
+  mutex
+
+- Split cancel sequence flag into a separate variable, as it can get set
+  by someone not owning the request (but holding the ctx lock)
+
+Please pull!
 
 
-On Fri, 14 Jun 2024 01:04:29 +0100, Pavel Begunkov wrote:
-> Only the current owner of a request is allowed to write into req->flags.
-> Hence, the cancellation path should never touch it. Add a new field
-> instead of the flag, move it into the 3rd cache line because it should
-> always be initialised. poll_refs can move further as polling is an
-> involved process anyway.
-> 
-> It's a minimal patch, in the future we can and should find a better
-> place for it and remove now unused REQ_F_CANCEL_SEQ.
-> 
-> [...]
+The following changes since commit 73254a297c2dd094abec7c9efee32455ae875bdf:
 
-Applied, thanks!
+  io_uring: fix possible deadlock in io_register_iowq_max_workers() (2024-06-04 07:39:17 -0600)
 
-[1/1] io_uring: fix cancellation overwriting req->flags
-      commit: f4a1254f2a076afb0edd473589bf40f9b4d36b41
+are available in the Git repository at:
 
-Best regards,
+  git://git.kernel.dk/linux.git tags/io_uring-6.10-20240614
+
+for you to fetch changes up to f4a1254f2a076afb0edd473589bf40f9b4d36b41:
+
+  io_uring: fix cancellation overwriting req->flags (2024-06-13 19:25:28 -0600)
+
+----------------------------------------------------------------
+io_uring-6.10-20240614
+
+----------------------------------------------------------------
+Pavel Begunkov (2):
+      io_uring/rsrc: don't lock while !TASK_RUNNING
+      io_uring: fix cancellation overwriting req->flags
+
+ include/linux/io_uring_types.h | 3 ++-
+ io_uring/cancel.h              | 4 ++--
+ io_uring/io_uring.c            | 1 +
+ io_uring/rsrc.c                | 1 +
+ 4 files changed, 6 insertions(+), 3 deletions(-)
+
 -- 
 Jens Axboe
-
-
 
 

@@ -1,221 +1,128 @@
-Return-Path: <io-uring+bounces-2222-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2223-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 272C9909438
-	for <lists+io-uring@lfdr.de>; Sat, 15 Jun 2024 00:47:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C48E909505
+	for <lists+io-uring@lfdr.de>; Sat, 15 Jun 2024 02:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D19B1F22182
-	for <lists+io-uring@lfdr.de>; Fri, 14 Jun 2024 22:47:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6424F1F21A53
+	for <lists+io-uring@lfdr.de>; Sat, 15 Jun 2024 00:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41AD1836E1;
-	Fri, 14 Jun 2024 22:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933CC623;
+	Sat, 15 Jun 2024 00:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="taUckVY6"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yoMB8Eib"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF22C2F50;
-	Fri, 14 Jun 2024 22:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BFE10F7
+	for <io-uring@vger.kernel.org>; Sat, 15 Jun 2024 00:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718405220; cv=none; b=NjbjXLyY29G4uFrAXN9bywBCbJ7fjGIKYkRNcUAzLAA2K3IAmGBCpmKiGHuHn0i7+0QWLkjZcApEjVL7b4RK5iTqaTQKVCd0I/0S6iZF2QPgcf864jvrlgdQ5xMPv3OiNqdvSyrrxhLEnOGRy/EGPSqsM02mq+/4NPUX+Wu0pPM=
+	t=1718410985; cv=none; b=GVB5hQbVyi2fBGj+DXBnZUrr8R6og8wxzcd74yzY++8hJn+tQ4AyAlIFhJkw4jNkromw5O3TWUYhlRoOG5490v7qYG62vNtcdBC5uDgc92q4mVOW8snJESf3ip+6QJFE+HCpEvCIhQAd8uPnV0MZQmnAaMdOak9RgZ21w2f7bL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718405220; c=relaxed/simple;
-	bh=HWlbewA4hydtcQCRdUsjlTiEV+RHfYFKlFQGQhWV8lA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hfk/jKXbhFXu2ao0wp5JS2SaHtmmrLAwT2ih6ww8bEyNZ50FECmJefQbGhRdUqchovf6zjoP5pht1LZs6/8gmB9OCLmoJksrF+9mQma7iWAGFNHzZ0+2SvBA9fgWH8uogRzjS5b8Tx/yodvkmdF45E0OGevaGLkrr+UBexhWjQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=taUckVY6; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1718410985; c=relaxed/simple;
+	bh=7lbsOhmL6p69TZ7S1n8TOOfncXpG9udWytreeNTWz3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vo+Nv0b5EiRQm1loOBH9mCCxXpW1LnPauIuba2Xz4Ik0RHe3oPt0OTvTZM48qiUnMiQn7auFHOG11c4o47hnMobGVRUw3bOn8IeVNJcV/LesDhBbhkMJsX5ue07gKphdwOmqXSZBczjAhAb872SPU337wXNFATQm5qKmC7EgYhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yoMB8Eib; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2c1b39ba2afso462917a91.2
+        for <io-uring@vger.kernel.org>; Fri, 14 Jun 2024 17:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1718405219; x=1749941219;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NHNS0L8Psnke3c21PKb1PEPVjFN4REnVGQ5ZTqSNQII=;
-  b=taUckVY6VpM2ZrPkSZujaC3kwkbDMxvsKFGaW8sfYJJ8dfGSmMeFHHhx
-   290q8FgxODtRlPPl2E0WKuQQsgyOp0A3HYrkly8QTrHQmTw+I/pqHZK0s
-   KbxmebdNJOnSddd3kBdw80zs247FavL3igufUDk5sBhpLub4//t0bAZo9
-   o=;
-X-IronPort-AV: E=Sophos;i="6.08,239,1712620800"; 
-   d="scan'208";a="639498337"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 22:46:54 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:2135]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.60.144:2525] with esmtp (Farcaster)
- id f6398825-ab3d-4355-bd1d-91155fc3f29c; Fri, 14 Jun 2024 22:46:53 +0000 (UTC)
-X-Farcaster-Flow-ID: f6398825-ab3d-4355-bd1d-91155fc3f29c
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 14 Jun 2024 22:46:52 +0000
-Received: from 88665a182662.ant.amazon.com.com (10.106.100.24) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 14 Jun 2024 22:46:51 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <krisman@suse.de>
-CC: <axboe@kernel.dk>, <io-uring@vger.kernel.org>, <netdev@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] io_uring: Introduce IORING_OP_BIND
-Date: Fri, 14 Jun 2024 15:46:43 -0700
-Message-ID: <20240614224643.21456-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240614163047.31581-3-krisman@suse.de>
-References: <20240614163047.31581-3-krisman@suse.de>
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718410980; x=1719015780; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bTzYGT3AelkUuTDJMOfOtlwLUm+xa6Xo4LR+c4zH88U=;
+        b=yoMB8Eibhqx/pTmm5fZ0FeSboe6+U7OlMY93JTxeKlIj8Px838eBApmgnDOsbX9c1w
+         bIhtcWMzjmirMhrWOg9PS8WtPFWkRd9swetUZYproHgKa2ME3NOD1H334FJYrE9VOY+7
+         L2gvl7z8B5iPgOwOwWtoMWtVniWU2UXsZnoYOP65yp68fpwXfgozNiZ3DAgC/7sLYC/G
+         5J4r2jYM5dLWS++9qFvo0L/XTh8y9zGdvNbXJcc1RTXqa1e/N5jmYmitA+O+8PvDx+DA
+         5osDQFOGv+vI8CgZMYiHBgSpCzxPZ4jDPBYS1k0uVQbGHcU4Cq3KLO+LBuEzApnRq4CR
+         vJog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718410980; x=1719015780;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bTzYGT3AelkUuTDJMOfOtlwLUm+xa6Xo4LR+c4zH88U=;
+        b=Axp8m/P0LeIt1WcHKbfwxF4YAsBeaYQ5n0RFxvkZ6lHet+wi3b7Fm2t+vvbo24Pc/E
+         XugyfvEfRif2v2sy32KlIL4EntfJl6+1GVpkRnXLxEc+7vu/YF1xBHQ4x/2MQ2lARlzD
+         LuZWQ7gpPjyn7s2yd+ex2iHvgsoVmwmY2r5Gyz20FPIjJy4IxDB0Ps9C8v46F6bt9RjF
+         ptS2XXLkmvn6+uOMnKWhncdSKooM330ulI0mHFm71kO578glRi2mhujETu6Z1kYNJ/EF
+         Jl2cGGGPcrVDjn5TzTKoyqlVQCPR/FV9ftYh/iuX3fAPmAUXDKrrarMOWyW6EeCD2NoS
+         4uGw==
+X-Gm-Message-State: AOJu0YypdVmW+g7dsmi/0okm9I/pozdIZfDw2HaCgLNAo722F80p9ZCc
+	B9tD8hw53QEhr8ParS944VAgn9PSj1KCNfl1KjszscMzr+dOHqMPETbFBWIE3Ac=
+X-Google-Smtp-Source: AGHT+IGaY+vgDWvbFuANjMxAkF6yiIx8lNrRziHACe+DV6S2rS2NnqfRaT38MCKuV8Uy+htt/ch8hg==
+X-Received: by 2002:a05:6a21:9988:b0:1b8:622a:cf74 with SMTP id adf61e73a8af0-1bae8414973mr4744838637.6.1718410980434;
+        Fri, 14 Jun 2024 17:23:00 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855ee83cesm38310975ad.133.2024.06.14.17.22.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 17:22:59 -0700 (PDT)
+Message-ID: <8058db6a-4255-4843-8b7f-8c30aa277b26@kernel.dk>
+Date: Fri, 14 Jun 2024 18:22:58 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D032UWA004.ant.amazon.com (10.13.139.56) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] io_uring fixes for 6.10-rc4
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+References: <ae3d160d-6886-47a3-9179-de6becf0af38@kernel.dk>
+ <CAHk-=wiMPR5nuVp416xpwFFBb_wcdg-eRDsGQpkDv91bQkMoTQ@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAHk-=wiMPR5nuVp416xpwFFBb_wcdg-eRDsGQpkDv91bQkMoTQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-Date: Fri, 14 Jun 2024 12:30:46 -0400
-> IORING_OP_BIND provides the semantic of bind(2) via io_uring.  While
-> this is an essentially synchronous system call, the main point is to
-> enable a network path to execute fully with io_uring registered and
-> descriptorless files.
+On 6/14/24 12:29 PM, Linus Torvalds wrote:
+> On Fri, 14 Jun 2024 at 09:06, Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> - Ensure that the task state is correct before attempting to grab a
+>>   mutex
 > 
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+> This code is horrid.
 > 
-> ---
-> changes since v1:
-> - drop explocit error handling for move_addr_to_kernel (jens)
-> - Remove empty line ahead of return;
-> ---
->  include/uapi/linux/io_uring.h |  1 +
->  io_uring/net.c                | 36 +++++++++++++++++++++++++++++++++++
->  io_uring/net.h                |  3 +++
->  io_uring/opdef.c              | 13 +++++++++++++
->  4 files changed, 53 insertions(+)
+> That code *also* does
 > 
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 994bf7af0efe..4ef153d95c87 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -257,6 +257,7 @@ enum io_uring_op {
->  	IORING_OP_FUTEX_WAITV,
->  	IORING_OP_FIXED_FD_INSTALL,
->  	IORING_OP_FTRUNCATE,
-> +	IORING_OP_BIND,
->  
->  	/* this goes last, obviously */
->  	IORING_OP_LAST,
-> diff --git a/io_uring/net.c b/io_uring/net.c
-> index 0a48596429d9..8cbc29aff15c 100644
-> --- a/io_uring/net.c
-> +++ b/io_uring/net.c
-> @@ -51,6 +51,11 @@ struct io_connect {
->  	bool				seen_econnaborted;
->  };
->  
-> +struct io_bind {
-> +	struct file			*file;
-> +	int				addr_len;
-> +};
-> +
->  struct io_sr_msg {
->  	struct file			*file;
->  	union {
-> @@ -1715,6 +1720,37 @@ int io_connect(struct io_kiocb *req, unsigned int issue_flags)
->  	return IOU_OK;
->  }
->  
-> +int io_bind_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-> +{
-> +	struct io_bind *bind = io_kiocb_to_cmd(req, struct io_bind);
-> +	struct sockaddr __user *uaddr;
-> +	struct io_async_msghdr *io;
-> +
-> +	if (sqe->len || sqe->buf_index || sqe->rw_flags || sqe->splice_fd_in)
-> +		return -EINVAL;
-> +
-> +	uaddr = u64_to_user_ptr(READ_ONCE(sqe->addr));
-> +	bind->addr_len =  READ_ONCE(sqe->addr2);
-                        ^^
-nit: double space
+>                 schedule();
+>                 __set_current_state(TASK_RUNNING);
+> 
+> which makes no sense at all. If you just returned from schedule(), you
+> *will* be running.
 
+Yeah agree, not sure why that __set_current_state() is after schedule(),
+that's obviously not needed.
 
-> +
-> +	io = io_msg_alloc_async(req);
-> +	if (unlikely(!io))
-> +		return -ENOMEM;
-> +	return move_addr_to_kernel(uaddr, bind->addr_len, &io->addr);
-> +}
-> +
-> +int io_bind(struct io_kiocb *req, unsigned int issue_flags)
-> +{
-> +	struct io_bind *bind = io_kiocb_to_cmd(req, struct io_bind);
-> +	struct io_async_msghdr *io = req->async_data;
-> +	int ret;
-> +
-> +	ret = __sys_bind_socket(sock_from_file(req->file),  &io->addr, bind->addr_len);
-                                                          ^^
-ditto
+> The reason you need that
+> 
+>                         __set_current_state(TASK_RUNNING);
+> 
+> in the *other* place is the very fact that you didn't call schedule at
+> all after doing a
+> 
+>                 prepare_to_wait(&ctx->rsrc_quiesce_wq, &we, TASK_INTERRUPTIBLE);
+> 
+> So the bug was that the code had the __set_current_state() in exactly
+> the wrong place.
+> 
+> But the fix didn't remove the bogus one, so it all looks entirely like
+> voodoo.
 
+I'll kill that other redundant one.
 
-> +	if (ret < 0)
-> +		req_set_fail(req);
-> +	io_req_set_res(req, ret, 0);
-> +	return 0;
-> +}
-> +
->  void io_netmsg_cache_free(const void *entry)
->  {
->  	struct io_async_msghdr *kmsg = (struct io_async_msghdr *) entry;
-> diff --git a/io_uring/net.h b/io_uring/net.h
-> index 0eb1c1920fc9..49f9a7bc1113 100644
-> --- a/io_uring/net.h
-> +++ b/io_uring/net.h
-> @@ -49,6 +49,9 @@ int io_sendmsg_zc(struct io_kiocb *req, unsigned int issue_flags);
->  int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
->  void io_send_zc_cleanup(struct io_kiocb *req);
->  
-> +int io_bind_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-> +int io_bind(struct io_kiocb *req, unsigned int issue_flags);
-> +
->  void io_netmsg_cache_free(const void *entry);
->  #else
->  static inline void io_netmsg_cache_free(const void *entry)
-> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-> index 2de5cca9504e..19ee9445f024 100644
-> --- a/io_uring/opdef.c
-> +++ b/io_uring/opdef.c
-> @@ -495,6 +495,16 @@ const struct io_issue_def io_issue_defs[] = {
->  		.prep			= io_ftruncate_prep,
->  		.issue			= io_ftruncate,
->  	},
-> +	[IORING_OP_BIND] = {
-> +#if defined(CONFIG_NET)
-> +		.needs_file		= 1,
-> +		.prep			= io_bind_prep,
-> +		.issue			= io_bind,
-> +		.async_size		= sizeof(struct io_async_msghdr),
-> +#else
-> +		.prep			= io_eopnotsupp_prep,
-> +#endif
-> +	},
->  };
->  
->  const struct io_cold_def io_cold_defs[] = {
-> @@ -711,6 +721,9 @@ const struct io_cold_def io_cold_defs[] = {
->  	[IORING_OP_FTRUNCATE] = {
->  		.name			= "FTRUNCATE",
->  	},
-> +	[IORING_OP_BIND] = {
-> +		.name			= "BIND",
-> +	},
->  };
->  
->  const char *io_uring_get_opcode(u8 opcode)
-> -- 
-> 2.45.2
+-- 
+Jens Axboe
+
 

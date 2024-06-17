@@ -1,73 +1,73 @@
-Return-Path: <io-uring+bounces-2233-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2234-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D1790A2CF
-	for <lists+io-uring@lfdr.de>; Mon, 17 Jun 2024 05:16:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C2190A2D0
+	for <lists+io-uring@lfdr.de>; Mon, 17 Jun 2024 05:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC6C01F2115F
-	for <lists+io-uring@lfdr.de>; Mon, 17 Jun 2024 03:16:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998CB2812B0
+	for <lists+io-uring@lfdr.de>; Mon, 17 Jun 2024 03:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06632525D;
-	Mon, 17 Jun 2024 03:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCA7525D;
+	Mon, 17 Jun 2024 03:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oERNdLdZ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cA3BMNKQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B78256A
-	for <io-uring@vger.kernel.org>; Mon, 17 Jun 2024 03:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201E3256A
+	for <io-uring@vger.kernel.org>; Mon, 17 Jun 2024 03:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718594196; cv=none; b=je3RGYChvfXboK4YyJUYj22oaSyG4A741ecK5N4mc9lXI8HdilCZcOzmGX1Y5QaXn+KWvY3LYKj/OuWXbldbZbPptdgdGFdQX1RtpP9CGNMugTWDnc+D04E2h/I0+WH4g1Pddj0izL8DU//N3QoZjkz6BT6BXMkLc+hKhJ0+qt0=
+	t=1718594203; cv=none; b=kxZFpoXmJcVYQPQEIfpZMJiBLjTEOPcaER5NfuaOoP59TuoO2FQXNre3gLcqznYVtxpbpZ1Ck1NLZfEz6WFpTOSylKAiQ02WNPdX6cHPfsyDkkyv8eaRmAuL0w4tcj5kHwJ1+3b1KcagElmUOc3mbs1iVaw9ScbQ9JBifYebDdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718594196; c=relaxed/simple;
-	bh=g9zaBj2zhQik/5yzLI8Jyr+VmfqBAKY47xR9q0d1lsw=;
+	s=arc-20240116; t=1718594203; c=relaxed/simple;
+	bh=psj0/OpVPny2Ca/lnAkPNQPD1gN5JP1vGro2vVLh2zw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=iovxloWLwgU5eE8l8DjmGXCihvPrmkJJ+7aWGvelGQWht+J4J6+ctZZCRpf6PnPLgSNbx0jHoJdYRTtPOldjQpc7jClCeFJwUxcEExYH2yzEKA3MPrO13p14z0Za2u4vieHBdI31UA9bY4iCtcXCYEJ+42XcnLJEVmFtNYTTze4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oERNdLdZ; arc=none smtp.client-ip=203.254.224.33
+	 Content-Type:References; b=I6CXkigA8Szh6sTDLjjhHng9oGxpUeyO/su123yhBYZ2qvRZy33FxIptKB/1pmf6tB7iPAPhywcOxUe0J/wRz4vGBlB8RcJZ2gZGLoTC3LlfN3+hd+EIjIPk5UiizW/uYfXs4RVoBWoxRs5C/7GiXWyczptjgrdgFSpLeenubIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cA3BMNKQ; arc=none smtp.client-ip=203.254.224.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240617031625epoutp03fafc749afe1e06425e4dacc0f390e96c~ZrE523tW32826528265epoutp03b
-	for <io-uring@vger.kernel.org>; Mon, 17 Jun 2024 03:16:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240617031625epoutp03fafc749afe1e06425e4dacc0f390e96c~ZrE523tW32826528265epoutp03b
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240617031631epoutp04386ee9baba5505e0ffb4616caaede82f~ZrE-lemAM1939719397epoutp04w
+	for <io-uring@vger.kernel.org>; Mon, 17 Jun 2024 03:16:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240617031631epoutp04386ee9baba5505e0ffb4616caaede82f~ZrE-lemAM1939719397epoutp04w
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718594185;
-	bh=h9ljNTblHVXKnGQV83m4IXZJazINXn2mD2pXdxXrtDw=;
+	s=mail20170921; t=1718594192;
+	bh=bKFcEzQRCKwGUXQTmpho/uKWMkGdiKHg9I8J9VKLIw0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oERNdLdZM2VoKaUXxc4gK5Dhd1XhfSq52Wt97qg8yuVdgG7MVCWYIl/2/+wPvWGqx
-	 O+m9NnVL1v9ilPKWtxJooW3zSSrJZBZe5Xt2m8k/zMR0jWqAzZ9BuFBn9xOuBwXx56
-	 R2YDGrW54hgD2NsR0dZOUhI2ESt3g5H76jWRuqOI=
+	b=cA3BMNKQgFsBzf6tYXOgPDauYFPtAHWVts1i82HtKUSYxeCxYgIYlePpQmQ22UPRI
+	 xkOBDt32yFz/FHl4WBBWEThJAkCAfO+TRJGCZyweZ7TgZvvBBpox2S3IYQmNjQs2hX
+	 chR/xECxv9WeEbSZkFOuxdhIGr8xjoOi6Gvf+rUs=
 Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240617031625epcas5p346f3c67c481a954e2e669b4748c47e60~ZrE5UsqA-2285622856epcas5p3-;
-	Mon, 17 Jun 2024 03:16:25 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4W2Zm71qR4z4x9Pv; Mon, 17 Jun
-	2024 03:16:23 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	87.4E.06857.78AAF666; Mon, 17 Jun 2024 12:16:23 +0900 (KST)
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240617031631epcas5p1a958a146430b4d0184d06cfea32c621a~ZrE-CCXTn0532505325epcas5p1W;
+	Mon, 17 Jun 2024 03:16:31 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4W2ZmF3j5vz4x9Pt; Mon, 17 Jun
+	2024 03:16:29 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2E.E5.09989.D8AAF666; Mon, 17 Jun 2024 12:16:29 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240617031218epcas5p4f706f53094ed8650a2b59b2006120956~ZrBTwFgGT0238802388epcas5p4V;
-	Mon, 17 Jun 2024 03:12:18 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240617031611epcas5p26e5c5f65a182af069427b1609f01d1d0~ZrEsjRCcA0580805808epcas5p2E;
+	Mon, 17 Jun 2024 03:16:11 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240617031218epsmtrp1d8cdd2c8dab8e9baa67c064dfd1c8dc2~ZrBTvNros3263832638epsmtrp1a;
-	Mon, 17 Jun 2024 03:12:18 +0000 (GMT)
-X-AuditID: b6c32a4b-88bff70000021ac9-b9-666faa87ec98
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1D.44.07412.299AF666; Mon, 17 Jun 2024 12:12:18 +0900 (KST)
+	20240617031611epsmtrp1d907d520e85d02f336eb41b26e82f663~ZrEsicnho0216202162epsmtrp1R;
+	Mon, 17 Jun 2024 03:16:11 +0000 (GMT)
+X-AuditID: b6c32a4a-e57f970000002705-17-666faa8d430d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8C.99.19057.B7AAF666; Mon, 17 Jun 2024 12:16:11 +0900 (KST)
 Received: from lcl-Standard-PC-i440FX-PIIX-1996.. (unknown
-	[109.105.118.124]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240617031217epsmtip1a47fe3b351b70da0fe059aa884e6c93b~ZrBSmXBGm2392423924epsmtip1t;
-	Mon, 17 Jun 2024 03:12:17 +0000 (GMT)
+	[109.105.118.124]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240617031610epsmtip2ec6bc81bd21230edce307ba3ff0e9b0a~ZrErQwmxU1234812348epsmtip2u;
+	Mon, 17 Jun 2024 03:16:10 +0000 (GMT)
 From: Chenliang Li <cliang01.li@samsung.com>
 To: asml.silence@gmail.com
 Cc: anuj20.g@samsung.com, axboe@kernel.dk, cliang01.li@samsung.com,
@@ -75,10 +75,10 @@ Cc: anuj20.g@samsung.com, axboe@kernel.dk, cliang01.li@samsung.com,
 	kundan.kumar@samsung.com, peiwei.li@samsung.com
 Subject: Re: [PATCH v2 0/4] io_uring/rsrc: coalescing multi-hugepage
  registered buffers
-Date: Mon, 17 Jun 2024 11:12:10 +0800
-Message-Id: <20240617031210.2325-1-cliang01.li@samsung.com>
+Date: Mon, 17 Jun 2024 11:16:05 +0800
+Message-Id: <20240617031605.2337-1-cliang01.li@samsung.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <1233b470-c190-4b8f-873d-dfbf31b6874d@gmail.com>
+In-Reply-To: <bc9ae109-090c-4669-9be1-11ed6a6d39aa@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -86,130 +86,77 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmpm77qvw0gxnNHBZNE/4yW8xZtY3R
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmlm7vqvw0g3UPpS2aJvxltpizahuj
+	xeq7/WwWp/8+ZrG4eWAnk8W71nMsFkf/v2Wz+NV9l9Fi65evrBbP9nJanJ3wgdWB22PnrLvs
+	HpfPlnr0bVnF6PF5k1wAS1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5i
+	bqqtkotPgK5bZg7QTUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScApMCveLE3OLS
+	vHS9vNQSK0MDAyNToMKE7IzpC2+zF3xhrTj8YQZLA+NDli5GTg4JAROJKa+eMHYxcnEICexm
+	lHj39QQ7hPOJUWLDwUuMIFVCAt8YJW7Nzofp+PfwPAtE0V5GiT/PWpggnCYmiVdL/7CBVLEJ
+	6Ej8XvELqIqDQ0RASuL3XQ6QGmaBPYwSGxcvYgOJCwtESrw7mwdSziKgKtF2eAbYSbwC1hL7
+	27dDnScvsf/gWWYQm1PAVuLTsktQNYISJ2c+AbOZgWqat85mhqj/yy6xdkEWhO0i0X/3FVRc
+	WOLV8S3sELaUxMv+NnaQEyQEiiWWrZMDOU1CoIVR4v27OYwQNdYS/67sATufWUBTYv0ufYiw
+	rMTUU+uYINbySfT+fsIEEeeV2DEPxlaVuHBwG9QqaYm1E7ZCneAhsXDaJ2i4TWCUOPDgIvME
+	RoVZSN6ZheSdWQirFzAyr2KUTC0ozk1PLTYtMMpLLYfHcXJ+7iZGcCrV8trB+PDBB71DjEwc
+	jIcYJTiYlUR4nablpQnxpiRWVqUW5ccXleakFh9iNAWG90RmKdHkfGAyzyuJNzSxNDAxMzMz
+	sTQ2M1QS533dOjdFSCA9sSQ1OzW1ILUIpo+Jg1OqgWmlkufh9yYObbvS2rNsMxV1vobW2RdM
+	fzr16peUs0K3NeeZGIacszvTVxlabxHg6BjvVWgVeeeImM7vvRYxn1X6eSauYM59uvzLjzl+
+	10M4FD5y1PFIP9GPNmPkX1p5tixGan04o/BO5Zkai8u1vmWz31yTYH9Ps1XEXnvpkUvzreuc
+	LIIkjFuntl481WprsffLnusfFM8pyMXPfL75wrQrbK1mK7yOXPq8Q2kzq6E9v9/WJxy+Ck8F
+	E3/+Pa9+9oWhs1OU6Nzn545M/JkuGXzcwTvryoXEbKf+g6rn/B/lqv13vfT5gatG0erTk7QY
+	FOUEriaZPL/yuufHmqU/ajovTZOd5RDLxRbw60zkMiWW4oxEQy3mouJEANv3DPIuBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsWy7bCSvG71qvw0g/bdEhZNE/4yW8xZtY3R
 	YvXdfjaL038fs1jcPLCTyeJd6zkWi6P/37JZ/Oq+y2ix9ctXVotnezktzk74wOrA7bFz1l12
-	j8tnSz36tqxi9Pi8SS6AJSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8x
-	N9VWycUnQNctMwfoJiWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgUmBXnFibnFp
-	XrpeXmqJlaGBgZEpUGFCdsarli7GgmfiFTuvzmFqYGwX7mLk5JAQMJE4fuo1axcjF4eQwG5G
-	idkXO9kgnE+MEpOnrmGEcL4xSpz6/I4ZpuXqv8VQLXsZJc5Ne8YE4TQxSdz+NYsNpIpNQEfi
-	94pfLF2MHBwiAlISv+9ygNQwC+xhlNi4eBEbSFxYIFLi3dk8kHIWAVWJPW0rmUDCvALWEtNf
-	ikPskpfYf/As2F5OAVuJN5vnM4HYvAKCEidnPmEBsZmBapq3zmYGGS8h0MghcWvFaSaIZheJ
-	s3N2skHYwhKvjm9hh7ClJF72t7GD7JIQKJZYtk4OoreFUeL9uzmMEDXWEv+u7AE7n1lAU2L9
-	Ln2IsKzE1FPrmCD28kn0/n4CtYpXYsc8GFtV4sLBbVCrpCXWTtgKDTcPiQXPrkEDdAKjRPvl
-	ZsYJjAqzkPwzC8k/sxBWL2BkXsUomVpQnJueWmxaYJyXWg6P5OT83E2M4GSq5b2D8dGDD3qH
-	GJk4GA8xSnAwK4nwOk3LSxPiTUmsrEotyo8vKs1JLT7EaAoM74nMUqLJ+cB0nlcSb2hiaWBi
-	ZmZmYmlsZqgkzvu6dW6KkEB6YklqdmpqQWoRTB8TB6dUA9OLg3NKWOvEMuwqpRxVXs8OC2lf
-	P21vVc6f45VrZfdv2cbxvzTbSMlhA8/sOW/y7T/YVNjlKiRzb+1Mm7jo/NWSjBVFWSbBDXfX
-	z8iaqWTVPXPPFb0928u3Nbj190VuTFxbb+Xz9Rlj3YmDcprHyzWFe9dFcIm0v70qy3nO3ujN
-	0fzygwvOX0nf6Zv33cbnxKbZtu+fz4rkC7OaPrl44hcGhROHCxU3ZDGvM5tX/kV+/YOVcimH
-	WncmyvdxfwmomX5SZM628vk1fnEsU4sFhQX1H7HF2YZkFXodvXZpxSoJ04jDs0zaUwRbHq//
-	GXJ2ffGdSsO9s00qWPbMvsyw2uf0g6Z9m+QjYqfnHz4lUKnEUpyRaKjFXFScCAC3UCHuLwQA
-	AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMLMWRmVeSWpSXmKPExsWy7bCSnO6klflpBpvOq1g0TfjLbDFn1TZG
-	i9V3+9ksTv99zGJx88BOJot3redYLI7+f8tm8av7LqPF1i9fWS2e7eW0ODvhA6sDt8fOWXfZ
-	PS6fLfXo27KK0ePzJrkAligum5TUnMyy1CJ9uwSujFctXYwFz8Qrdl6dw9TA2C7cxcjJISFg
-	InH132LWLkYuDiGB3YwSjxaeZ4NISEt0HGplh7CFJVb+e84OUdTAJPHjwHQmkASbgI7E7xW/
-	WLoYOThEBKQkft/lAKlhFjjGKDHj210WkBphgXCJPSuegdWzCKhK7GlbyQRSzytgLTH9pTjE
-	fHmJ/QfPMoPYnAK2Em82zwcrFxKwkTjw8jyYzSsgKHFy5hOwkcxA9c1bZzNPYBSYhSQ1C0lq
-	ASPTKkbJ1ILi3PTcZMMCw7zUcr3ixNzi0rx0veT83E2M4HDX0tjBeG/+P71DjEwcjIcYJTiY
-	lUR4nablpQnxpiRWVqUW5ccXleakFh9ilOZgURLnNZwxO0VIID2xJDU7NbUgtQgmy8TBKdXA
-	pCcoLL84dNKb73G1S5+zlFw80FjZfM9V5sMvBUmWHd+ySlWX1xX8W7bjUdOXLB9njRAXWwWX
-	HLnV7s5T1n44envLo8oVzZ+dpy17KthTcL//h2W0xvMfx/ts1aLXCR/cKuh49VJ7hmZ3yQHj
-	L+XBnzeKWLWl/wl5K2av3Cd5+svzNu9pNUfdJbcc3iL4+fBEW6kbH//GzlhtsPaCy+HPx+c6
-	ruQ8kNDfoDH7+zbbjU3KzJW1hdfVnq+Isnku1HHcsPNzzfqMJN6QC3tD/3XVrXubX1906v+5
-	86+PVb0+IXx3b+uBJx3Ja44pdntKTeA5I3Xypp43b2ealm+Mp+PEFMHuh3ts9wg6XeKZV62X
-	pcRSnJFoqMVcVJwIADWE0z7mAgAA
-X-CMS-MailID: 20240617031218epcas5p4f706f53094ed8650a2b59b2006120956
+	j8tnSz36tqxi9Pi8SS6AJYrLJiU1J7MstUjfLoErY/rC2+wFX1grDn+YwdLA+JCli5GTQ0LA
+	ROLfw/NANheHkMBuRonVf6azQySkJToOtULZwhIr/z1nhyhqYJJY3nSNGSTBJqAj8XvFL6Bu
+	Dg4RASmJ33c5QGqYBY4xSsz4dhdsg7BAuMSeFc+YQGwWAVWJtsMzwOK8AtYS+9u3Q10hL7H/
+	4FmwmZwCthKfll0CiwsJ2EhcWbeRFaJeUOLkzCdgcWag+uats5knMArMQpKahSS1gJFpFaNk
+	akFxbnpusWGBUV5quV5xYm5xaV66XnJ+7iZGcMBrae1g3LPqg94hRiYOxkOMEhzMSiK8TtPy
+	0oR4UxIrq1KL8uOLSnNSiw8xSnOwKInzfnvdmyIkkJ5YkpqdmlqQWgSTZeLglGpgiozlu1e8
+	8cr+/V+fJ1oYPtfbHKRtt7yW/dr7qM9tGmlrv33gzpz7ydn3moD74b7T+77v3pZh/k3q2ZqK
+	GTtvR8/55PTv7w453a77eX8kKwMWP3k0UURq4a7L9cxJv5a/WnTlfgj3gnl3ub3ucYYVcv9e
+	Uq1xsv4L73o5rtsf+u/f/+kSslJ3SlbGsSPXOW1Tt9c/n5jtyKFcnNGu/W9PaLaK0bS7AqGL
+	I37aHEjj+varOG9WpqMyh8gmJ7lpDVLH5s7wYJj//96bNxP6tNY91oxb4Hr9sfPqonoBscu3
+	3F++e7OlItk70OV48rx7Ha2FIjMb2evtWbabLhBZkMadze6qsTj9/LRIrldy51t2f1diKc5I
+	NNRiLipOBAD0KoDw5wIAAA==
+X-CMS-MailID: 20240617031611epcas5p26e5c5f65a182af069427b1609f01d1d0
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240617031218epcas5p4f706f53094ed8650a2b59b2006120956
-References: <1233b470-c190-4b8f-873d-dfbf31b6874d@gmail.com>
-	<CGME20240617031218epcas5p4f706f53094ed8650a2b59b2006120956@epcas5p4.samsung.com>
+X-CMS-RootMailID: 20240617031611epcas5p26e5c5f65a182af069427b1609f01d1d0
+References: <bc9ae109-090c-4669-9be1-11ed6a6d39aa@gmail.com>
+	<CGME20240617031611epcas5p26e5c5f65a182af069427b1609f01d1d0@epcas5p2.samsung.com>
 
-On Sun, 16 Jun 2024 19:04:38 +0100, Pavel Begunkov wrote:
-> On 5/14/24 08:54, Chenliang Li wrote:
->> Introduce helper functions to check whether a buffer can
->> be coalesced or not, and gather folio data for later use.
->> 
->> The coalescing optimizes time and space consumption caused
->> by mapping and storing multi-hugepage fixed buffers.
->> 
->> A coalescable multi-hugepage buffer should fully cover its folios
->> (except potentially the first and last one), and these folios should
->> have the same size. These requirements are for easier later process,
->> also we need same size'd chunks in io_import_fixed for fast iov_iter
->> adjust.
->> 
->> Signed-off-by: Chenliang Li <cliang01.li@samsung.com>
->> ---
->>   io_uring/rsrc.c | 78 +++++++++++++++++++++++++++++++++++++++++++++++++
->>   io_uring/rsrc.h | 10 +++++++
->>   2 files changed, 88 insertions(+)
->> 
->> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
->> index 65417c9553b1..d08224c0c5b0 100644
->> --- a/io_uring/rsrc.c
->> +++ b/io_uring/rsrc.c
->> @@ -871,6 +871,84 @@ static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page **pages,
->>   	return ret;
->>   }
->>   
->> +static bool __io_sqe_buffer_try_coalesce(struct page **pages, int nr_pages,
->> +					 struct io_imu_folio_data *data)
-> io_can_coalesce_buffer(), you're not actually trying to
-> do it here.
+Actually here it does account an entire folio. The j is just
+array index.
 
-Will change it.
+> It seems like you can just call io_buffer_account_pin()
+> instead.
+>
+> On that note, you shouldn't duplicate code in either case,
+> just treat the normal discontig pages case as folios of
+> shift=PAGE_SHIFT.
+>
+> Either just plain reuse or adjust io_buffer_account_pin()
+> instead of io_coalesced_buffer_account_pin().
+> io_coalesced_imu_alloc() should also go away.
+>
+> io_sqe_buffer_register() {
+> 	struct io_imu_folio_data data;
+>
+>	if (!io_sqe_buffer_try_coalesce(pages, folio_data)) {
+>		folio_data.shift = PAGE_SHIFT;
+>		...
+>	}
+>	
+>	io_buffer_account_pin(pages, &data);
+>	imu->data = uaddr;
+>	...
+> }
 
->> +static bool io_sqe_buffer_try_coalesce(struct page **pages, int nr_pages,
->> +				       struct io_imu_folio_data *data)
->> +{
->> +	int i, j;
->> +
->> +	if (nr_pages <= 1 ||
->> +		!__io_sqe_buffer_try_coalesce(pages, nr_pages, data))
->> +		return false;
->> +
->> +	/*
->> +	 * The pages are bound to the folio, it doesn't
->> +	 * actually unpin them but drops all but one reference,
->> +	 * which is usually put down by io_buffer_unmap().
->> +	 * Note, needs a better helper.
->> +	 */
->> +	if (data->nr_pages_head > 1)
->> +		unpin_user_pages(&pages[1], data->nr_pages_head - 1);
-> Should be pages[0]. page[1] can be in another folio, and even
-> though data->nr_pages_head > 1 protects against touching it,
-> it's still flimsy.
-
-But here it is unpinning the tail pages inside those coalesceable folios,
-I think we only unpin pages[0] when failure, am I right? And in
-__io_sqe_buffer_try_coalesce we have ensured that pages[1:nr_head_pages] are
-in same folio and contiguous.
-
->> +
->> +	j = data->nr_pages_head;
->> +	nr_pages -= data->nr_pages_head;
->> +	for (i = 1; i < data->nr_folios; i++) {
->> +		unsigned int nr_unpin;
->> +
->> +		nr_unpin = min_t(unsigned int, nr_pages - 1,
->> +					data->nr_pages_mid - 1);
->> +		if (nr_unpin == 0)
->> +			break;
->> +		unpin_user_pages(&pages[j+1], nr_unpin);
-> same
->> +		j += data->nr_pages_mid;
-> And instead of duplicating this voodoo iteration later,
-> please just assemble a new compacted ->nr_folios sized
-> page array.
-
-Indeed, a new page array would make things a lot easier.
-If alloc overhead is not a concern here, then yeah I'll change it.
+Will remove them.
 
 Thanks,
 Chenliang Li

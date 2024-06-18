@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-2259-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2260-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0066E90DC03
-	for <lists+io-uring@lfdr.de>; Tue, 18 Jun 2024 20:56:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D2E990DC04
+	for <lists+io-uring@lfdr.de>; Tue, 18 Jun 2024 20:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 199D81C2303E
-	for <lists+io-uring@lfdr.de>; Tue, 18 Jun 2024 18:56:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFDA9B22355
+	for <lists+io-uring@lfdr.de>; Tue, 18 Jun 2024 18:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1058F15ECE0;
-	Tue, 18 Jun 2024 18:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5055715ECCE;
+	Tue, 18 Jun 2024 18:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="d7Q545mf"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VbNfz30o"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E7E15ECE3
-	for <io-uring@vger.kernel.org>; Tue, 18 Jun 2024 18:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FB615ECDE
+	for <io-uring@vger.kernel.org>; Tue, 18 Jun 2024 18:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718737004; cv=none; b=NEFnrdRtCMUvSYijui/pquZQJNTNFAyykfeuJX7f/4h8dlo5lDbwrevM2rG3854+UgVFGLVyKRr/aYGZIhXQtMcBqfZjM7kByHaSOUgZ1TRP7fN7tpLgfW/Lj66CVekH7RXIjndRn4qdiQ4X1HW/wFF/DLsQIWuKnfZnISyMC3c=
+	t=1718737006; cv=none; b=sTahrzpUQL3ixfTFLFTOxcdV5aD3BWUC1V80kv5ZiWDh7nUgiSjhaqiTuEqhurQHkrVlpw/+DF0Ur7ZoUCOZHTf1mxLyjxvpVohhGAgrYH0f5+MV84B/RVm0X2MMpJcBL5sE1l00ki6WC7NniqhrgMlAuNQkIxCmFVo2TvrinZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718737004; c=relaxed/simple;
-	bh=tU23bRJ3dVyD1aJPTclIDtk2SIjAEcnouQm0D7I2J0k=;
+	s=arc-20240116; t=1718737006; c=relaxed/simple;
+	bh=WEDhBoYN5pLLdRV/+qAT7wA3ka28+zo2raRt0QVG6Hk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cRfYa9CeINEImUcWsUSuZmw1uYQ4BPUVUXtMO38jhNQIK3MTpPxyJraDIAQlI1EbE2BFQY+JZrbRHPZxHen+af5oJ2jBK1dVnpBRFyMwe4VFhOIcIIIZeJBOUifnqdRAT/yktOWeeiIlB3y/484jwbmH7Nb7fxRa+r7XI1HXHsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=d7Q545mf; arc=none smtp.client-ip=209.85.160.44
+	 MIME-Version; b=LXWqi3CA4kyI7zgAz9V6ppyDXd1SOVzmv4xTp7/JjAw360UrN9BgATxruY+i9kf45n2hoSf17Sp/qRxQ5eAOm10o9BjPCO2ezAhNQhAu9ALhmwfLrf8dZ2O8oXyJwrH4m8fJfAMn4Djmd2uxG8xS8b4vY4Tay6cEtZZ0zD+waDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VbNfz30o; arc=none smtp.client-ip=209.85.160.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-25c98395938so7520fac.3
-        for <io-uring@vger.kernel.org>; Tue, 18 Jun 2024 11:56:43 -0700 (PDT)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-25075f3f472so798356fac.2
+        for <io-uring@vger.kernel.org>; Tue, 18 Jun 2024 11:56:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718737002; x=1719341802; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718737003; x=1719341803; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BIasNGfmpgFLYp8BWXtQg7WqBx1vlCg1C/16+esEzSY=;
-        b=d7Q545mfZmBN3f6QtF/W/I3OAbu59CofZcKR0T17U/Cc6BO8/FQg4+FQ90hW+66Ocf
-         lGJsTbdIulANA51HyQaYMjngO87G/H2szKkvaFX4Ph6rRAPDc5MTTQTk4Zfil+g+4FYr
-         YOvnAwbaoX+wyVyLzh0G5mjCd3ZsdTCNBOi+jz3cT8MNHYVhS4l5jMzMuTsBxZiFiKYg
-         /dWRNmHNndpF2UmqtygY21nWhJSfKGNsbuDZsXb5qTjtBvryTkCZFI+RqNWpDPsvKqv7
-         EQJXCjgLTMN8qwRU7ELTjk1q0fQJbNRksIaH/N/oKYWWJEZd3AG38NiJvoimiV4GEEQq
-         ZKiQ==
+        bh=PXJyIJemjNC4yU1UV6G6l8eOfwcbX9iQfdK4+39fx6Q=;
+        b=VbNfz30oSgYKD42AtwOkWs5kthv80Clss3q+sjpb9HZWLo8CkwxFMtwjJybZCoEpqb
+         qIQ9UrG/OFaFWWhc4jdmThajddqJ2w71IEt7vcSrcwFuE1wZvwmCPSoDsUcsajIe0Qkx
+         ejD6EQg7zyQnX0YvTcscchTR8l6xDOfdQjXWmM/XWOUXfmW5svDmR1jsmOFomR+vlGtI
+         7fneCcIwpG+x8B7zOzJchFhe5GHhoJHWVnW2TK8kQjY7RV9vHmzmsIUBUZfX8qYHvh2f
+         logwZ3H2uY3apwBfpmwWS2qReAubD/iq0qAmmqRIQ0yYbJJt0J0ZOlQJkrioI3LwHWrb
+         SShw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718737002; x=1719341802;
+        d=1e100.net; s=20230601; t=1718737003; x=1719341803;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BIasNGfmpgFLYp8BWXtQg7WqBx1vlCg1C/16+esEzSY=;
-        b=rQJ85X2oDaoIGE2ggYZhQRX6opkZrPkErZuJ/qpsXttdTM1AZWlSoIObD+udATSRWZ
-         uv+uGVT/abOAnJj058rSF9F2fj8Pk8B7mVzDO1ZwasYgd8yQ/wS4Vzao/VyZw4R7HLly
-         UABEdc3imzBUG77tsxuJQX25fW4F8HCxDYzWDyCKueNWbRZNWbwvX/WGJCJmZX32X7YN
-         Z8BMOE7SraLtqMZ0UZ4J3vOIPXofX4K9qp+VicxUfhKKisP9xmBb4lvupswb4vjgEGiy
-         2GQum7Y4qLN8YOINnLI+lc4PSPiu/TKeuZxLvlT1zoZYOZENdlqJgm0qg+GF0uKf51tk
-         Sa/A==
-X-Gm-Message-State: AOJu0Yz58FWKYVYi5v0UVJ8GcvE+9pHk6RDcHgUx5BU6S5aUvrTTFPlL
-	k+pnMrnEJ97nJ3cUe+nSEjowne8FryWCiC51qau5JsQj2joHlkQZfN3Bm5hjPVkA+HCNqKOAygG
-	D
-X-Google-Smtp-Source: AGHT+IEIveQUz5X9WkVpqscuNZzgHgQjow5mb24Qtlnd92BEahMFUNUauWgYvhwqp4b4bnoBrx9eEg==
-X-Received: by 2002:a05:6870:d1c9:b0:259:8928:85ec with SMTP id 586e51a60fabf-25c9496379bmr751910fac.2.1718737002120;
-        Tue, 18 Jun 2024 11:56:42 -0700 (PDT)
+        bh=PXJyIJemjNC4yU1UV6G6l8eOfwcbX9iQfdK4+39fx6Q=;
+        b=RZIUiznX9TBj2Ag/LYmO5YaMKFfl7rKmPd4ja3KtMW33LSpUK3VS/SMlIhjp1BhpP6
+         H3ivF07DriL5pwp6lgO1gSCIdbuFjzAKvr8L795yJnalPT+jHdRPS4KP3ouR3xg6wiHs
+         ZcP0P7gxQAYpKhEbAAhFiXOJNbLwWMT8PQp1BFpRXaxjiffl9RYTqPgbZTAjXDrxQeD0
+         vghbPOZgdVNbzSzuHTv5suKt8P7BwcyLlEXMiGBJCUS93MDKo7ePvNf9qdsdR7ttxStx
+         xHLrVAeR1BodI5qCBpPRVUpA4Bv3wPadCjqV/ZJOkLZ4oNO1LJOnhFgGXWvQXU5X808D
+         OLnw==
+X-Gm-Message-State: AOJu0Yzma+dzfn5/nQAM4gtv+IEncBwrmvKOmRRLz2D9VzQTb0BYqb2g
+	reYIQaDk9uGjK2RzGFb4siqthjvTF/H4kcrYx3wn/XIB4lnJd5TugDvl7eypF6aJxj8wh15H7bF
+	p
+X-Google-Smtp-Source: AGHT+IFnG9Qpqarvqyd8b59T09u0HxIYK1LWUKhFkxwOXUp6jee4erPuKg8LqqewlNFmZNGF0Jbo9w==
+X-Received: by 2002:a05:6870:a2cc:b0:254:affe:5a08 with SMTP id 586e51a60fabf-25c94983780mr709673fac.2.1718737003295;
+        Tue, 18 Jun 2024 11:56:43 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2567a9f7d6fsm3255492fac.20.2024.06.18.11.56.40
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2567a9f7d6fsm3255492fac.20.2024.06.18.11.56.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 11:56:40 -0700 (PDT)
+        Tue, 18 Jun 2024 11:56:42 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/5] io_uring/msg_ring: improve handling of target CQE posting
-Date: Tue, 18 Jun 2024 12:48:43 -0600
-Message-ID: <20240618185631.71781-5-axboe@kernel.dk>
+Subject: [PATCH 5/5] io_uring/msg_ring: add an alloc cache for io_kiocb entries
+Date: Tue, 18 Jun 2024 12:48:44 -0600
+Message-ID: <20240618185631.71781-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240618185631.71781-1-axboe@kernel.dk>
 References: <20240618185631.71781-1-axboe@kernel.dk>
@@ -85,160 +85,149 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the exported helper for queueing task_work for message passing,
-rather than rolling our own.
-
-Note that this is only done for strict data messages for now, file
-descriptor passing messages still rely on the kernel task_work. It could
-get converted at some point if it's performance critical.
-
-This improves peak performance of message passing by about 5x in some
-basic testing, with 2 threads just sending messages to each other.
-Before this change, it was capped at around 700K/sec, with the change
-it's at over 4M/sec.
+With slab accounting, allocating and freeing memory has considerable
+overhead. Add a basic alloc cache for the io_kiocb allocations that
+msg_ring needs to do. Unlike other caches, this one is used by the
+sender, grabbing it from the remote ring. When the remote ring gets
+the posted completion, it'll free it locally. Hence it is separately
+locked, using ctx->msg_lock.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/msg_ring.c | 90 +++++++++++++++++++++++----------------------
- 1 file changed, 47 insertions(+), 43 deletions(-)
+ include/linux/io_uring_types.h |  3 +++
+ io_uring/io_uring.c            |  6 ++++++
+ io_uring/msg_ring.c            | 31 +++++++++++++++++++++++++++++--
+ io_uring/msg_ring.h            |  1 +
+ 4 files changed, 39 insertions(+), 2 deletions(-)
 
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 1052a68fd68d..ede42dce1506 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -397,6 +397,9 @@ struct io_ring_ctx {
+ 	struct callback_head		poll_wq_task_work;
+ 	struct list_head		defer_list;
+ 
++	struct io_alloc_cache		msg_cache;
++	spinlock_t			msg_lock;
++
+ #ifdef CONFIG_NET_RX_BUSY_POLL
+ 	struct list_head	napi_list;	/* track busy poll napi_id */
+ 	spinlock_t		napi_lock;	/* napi_list lock */
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index cdeb94d2a26b..7ed1e009aaec 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -95,6 +95,7 @@
+ #include "futex.h"
+ #include "napi.h"
+ #include "uring_cmd.h"
++#include "msg_ring.h"
+ #include "memmap.h"
+ 
+ #include "timeout.h"
+@@ -315,6 +316,9 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 			    sizeof(struct io_async_rw));
+ 	ret |= io_alloc_cache_init(&ctx->uring_cache, IO_ALLOC_CACHE_MAX,
+ 			    sizeof(struct uring_cache));
++	spin_lock_init(&ctx->msg_lock);
++	ret |= io_alloc_cache_init(&ctx->msg_cache, IO_ALLOC_CACHE_MAX,
++			    sizeof(struct io_kiocb));
+ 	ret |= io_futex_cache_init(ctx);
+ 	if (ret)
+ 		goto err;
+@@ -351,6 +355,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
+ 	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
+ 	io_alloc_cache_free(&ctx->uring_cache, kfree);
++	io_alloc_cache_free(&ctx->msg_cache, io_msg_cache_free);
+ 	io_futex_cache_free(ctx);
+ 	kfree(ctx->cancel_table.hbs);
+ 	kfree(ctx->cancel_table_locked.hbs);
+@@ -2599,6 +2604,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
+ 	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
+ 	io_alloc_cache_free(&ctx->uring_cache, kfree);
++	io_alloc_cache_free(&ctx->msg_cache, io_msg_cache_free);
+ 	io_futex_cache_free(ctx);
+ 	io_destroy_buffers(ctx);
+ 	mutex_unlock(&ctx->uring_lock);
 diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-index 9fdb0cc19bfd..ad7d67d44461 100644
+index ad7d67d44461..47a754e83b49 100644
 --- a/io_uring/msg_ring.c
 +++ b/io_uring/msg_ring.c
-@@ -13,7 +13,6 @@
+@@ -11,6 +11,7 @@
+ #include "io_uring.h"
+ #include "rsrc.h"
  #include "filetable.h"
++#include "alloc_cache.h"
  #include "msg_ring.h"
  
--
  /* All valid masks for MSG_RING */
- #define IORING_MSG_RING_MASK		(IORING_MSG_RING_CQE_SKIP | \
- 					IORING_MSG_RING_FLAGS_PASS)
-@@ -71,54 +70,43 @@ static inline bool io_msg_need_remote(struct io_ring_ctx *target_ctx)
- 	return target_ctx->task_complete;
+@@ -75,7 +76,13 @@ static void io_msg_tw_complete(struct io_kiocb *req, struct io_tw_state *ts)
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 
+ 	io_add_aux_cqe(ctx, req->cqe.user_data, req->cqe.res, req->cqe.flags);
+-	kmem_cache_free(req_cachep, req);
++	if (spin_trylock(&ctx->msg_lock)) {
++		if (io_alloc_cache_put(&ctx->msg_cache, req))
++			req = NULL;
++		spin_unlock(&ctx->msg_lock);
++	}
++	if (req)
++		kfree(req);
+ 	percpu_ref_put(&ctx->refs);
  }
  
--static int io_msg_exec_remote(struct io_kiocb *req, task_work_func_t func)
-+static void io_msg_tw_complete(struct io_kiocb *req, struct io_tw_state *ts)
- {
--	struct io_ring_ctx *ctx = req->file->private_data;
--	struct io_msg *msg = io_kiocb_to_cmd(req, struct io_msg);
--	struct task_struct *task = READ_ONCE(ctx->submitter_task);
--
--	if (unlikely(!task))
--		return -EOWNERDEAD;
-+	struct io_ring_ctx *ctx = req->ctx;
+@@ -91,6 +98,19 @@ static void io_msg_remote_post(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	io_req_task_work_add_remote(req, ctx, IOU_F_TWQ_LAZY_WAKE);
+ }
  
--	init_task_work(&msg->tw, func);
--	if (task_work_add(task, &msg->tw, TWA_SIGNAL))
--		return -EOWNERDEAD;
-+	io_add_aux_cqe(ctx, req->cqe.user_data, req->cqe.res, req->cqe.flags);
++static struct io_kiocb *io_msg_get_kiocb(struct io_ring_ctx *ctx)
++{
++	struct io_kiocb *req = NULL;
++
++	if (spin_trylock(&ctx->msg_lock)) {
++		req = io_alloc_cache_get(&ctx->msg_cache);
++		spin_unlock(&ctx->msg_lock);
++	}
++	if (req)
++		return req;
++	return kmem_cache_alloc(req_cachep, GFP_KERNEL | __GFP_NOWARN);
++}
++
+ static int io_msg_data_remote(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *target_ctx = req->file->private_data;
+@@ -98,7 +118,7 @@ static int io_msg_data_remote(struct io_kiocb *req)
+ 	struct io_kiocb *target;
+ 	u32 flags = 0;
+ 
+-	target = kmem_cache_alloc(req_cachep, GFP_KERNEL);
++	target = io_msg_get_kiocb(req->ctx);
+ 	if (unlikely(!target))
+ 		return -ENOMEM;
+ 
+@@ -296,3 +316,10 @@ int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags)
+ 	io_req_set_res(req, ret, 0);
+ 	return IOU_OK;
+ }
++
++void io_msg_cache_free(const void *entry)
++{
++	struct io_kiocb *req = (struct io_kiocb *) entry;
++
 +	kmem_cache_free(req_cachep, req);
-+	percpu_ref_put(&ctx->refs);
 +}
- 
--	return IOU_ISSUE_SKIP_COMPLETE;
-+static void io_msg_remote_post(struct io_ring_ctx *ctx, struct io_kiocb *req,
-+			       int res, u32 cflags, u64 user_data)
-+{
-+	req->cqe.user_data = user_data;
-+	io_req_set_res(req, res, cflags);
-+	percpu_ref_get(&ctx->refs);
-+	req->ctx = ctx;
-+	req->task = READ_ONCE(ctx->submitter_task);
-+	req->io_task_work.func = io_msg_tw_complete;
-+	io_req_task_work_add_remote(req, ctx, IOU_F_TWQ_LAZY_WAKE);
- }
- 
--static void io_msg_tw_complete(struct callback_head *head)
-+static int io_msg_data_remote(struct io_kiocb *req)
- {
--	struct io_msg *msg = container_of(head, struct io_msg, tw);
--	struct io_kiocb *req = cmd_to_io_kiocb(msg);
- 	struct io_ring_ctx *target_ctx = req->file->private_data;
--	int ret = 0;
--
--	if (current->flags & PF_EXITING) {
--		ret = -EOWNERDEAD;
--	} else {
--		u32 flags = 0;
--
--		if (msg->flags & IORING_MSG_RING_FLAGS_PASS)
--			flags = msg->cqe_flags;
--
--		/*
--		 * If the target ring is using IOPOLL mode, then we need to be
--		 * holding the uring_lock for posting completions. Other ring
--		 * types rely on the regular completion locking, which is
--		 * handled while posting.
--		 */
--		if (target_ctx->flags & IORING_SETUP_IOPOLL)
--			mutex_lock(&target_ctx->uring_lock);
--		if (!io_post_aux_cqe(target_ctx, msg->user_data, msg->len, flags))
--			ret = -EOVERFLOW;
--		if (target_ctx->flags & IORING_SETUP_IOPOLL)
--			mutex_unlock(&target_ctx->uring_lock);
--	}
-+	struct io_msg *msg = io_kiocb_to_cmd(req, struct io_msg);
-+	struct io_kiocb *target;
-+	u32 flags = 0;
- 
--	if (ret < 0)
--		req_set_fail(req);
--	io_req_queue_tw_complete(req, ret);
-+	target = kmem_cache_alloc(req_cachep, GFP_KERNEL);
-+	if (unlikely(!target))
-+		return -ENOMEM;
-+
-+	if (msg->flags & IORING_MSG_RING_FLAGS_PASS)
-+		flags = msg->cqe_flags;
-+
-+	io_msg_remote_post(target_ctx, target, msg->len, flags, msg->user_data);
-+	return 0;
- }
- 
- static int io_msg_ring_data(struct io_kiocb *req, unsigned int issue_flags)
-@@ -136,7 +124,7 @@ static int io_msg_ring_data(struct io_kiocb *req, unsigned int issue_flags)
- 		return -EBADFD;
- 
- 	if (io_msg_need_remote(target_ctx))
--		return io_msg_exec_remote(req, io_msg_tw_complete);
-+		return io_msg_data_remote(req);
- 
- 	if (msg->flags & IORING_MSG_RING_FLAGS_PASS)
- 		flags = msg->cqe_flags;
-@@ -216,6 +204,22 @@ static void io_msg_tw_fd_complete(struct callback_head *head)
- 	io_req_queue_tw_complete(req, ret);
- }
- 
-+static int io_msg_fd_remote(struct io_kiocb *req)
-+{
-+	struct io_ring_ctx *ctx = req->file->private_data;
-+	struct io_msg *msg = io_kiocb_to_cmd(req, struct io_msg);
-+	struct task_struct *task = READ_ONCE(ctx->submitter_task);
-+
-+	if (unlikely(!task))
-+		return -EOWNERDEAD;
-+
-+	init_task_work(&msg->tw, io_msg_tw_fd_complete);
-+	if (task_work_add(task, &msg->tw, TWA_SIGNAL))
-+		return -EOWNERDEAD;
-+
-+	return IOU_ISSUE_SKIP_COMPLETE;
-+}
-+
- static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_ring_ctx *target_ctx = req->file->private_data;
-@@ -238,7 +242,7 @@ static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
- 	}
- 
- 	if (io_msg_need_remote(target_ctx))
--		return io_msg_exec_remote(req, io_msg_tw_fd_complete);
-+		return io_msg_fd_remote(req);
- 	return io_msg_install_complete(req, issue_flags);
- }
- 
+diff --git a/io_uring/msg_ring.h b/io_uring/msg_ring.h
+index 3987ee6c0e5f..3030f3942f0f 100644
+--- a/io_uring/msg_ring.h
++++ b/io_uring/msg_ring.h
+@@ -3,3 +3,4 @@
+ int io_msg_ring_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags);
+ void io_msg_ring_cleanup(struct io_kiocb *req);
++void io_msg_cache_free(const void *entry);
 -- 
 2.43.0
 

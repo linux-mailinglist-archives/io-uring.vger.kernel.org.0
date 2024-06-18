@@ -1,94 +1,101 @@
-Return-Path: <io-uring+bounces-2249-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2250-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA67990DA8B
-	for <lists+io-uring@lfdr.de>; Tue, 18 Jun 2024 19:25:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F8190DBD6
+	for <lists+io-uring@lfdr.de>; Tue, 18 Jun 2024 20:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D5F9282582
-	for <lists+io-uring@lfdr.de>; Tue, 18 Jun 2024 17:25:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0D9D284735
+	for <lists+io-uring@lfdr.de>; Tue, 18 Jun 2024 18:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382B213DB8D;
-	Tue, 18 Jun 2024 17:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B3A14F9E6;
+	Tue, 18 Jun 2024 18:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/glrhDY"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="17XPRY9q"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEC92139DD;
-	Tue, 18 Jun 2024 17:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A341171C
+	for <io-uring@vger.kernel.org>; Tue, 18 Jun 2024 18:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718731534; cv=none; b=LFZLaEpcbdOynF2a4T2bY7xrgAwdXy/yQtXph5bWT2VwhlVeuAQn/5cOVcB2v/EE39RixHlav5lr/gDxi1CFUxu55kcnHbnh2Pqlcyekzxt3UaHAeRs8q0M9a6VyseLpEpz9L4AFuQZnq02H72IuO/MM1aaWHa4UO3F7zDC2vSk=
+	t=1718736420; cv=none; b=G1NzUHG8AnPNM21eM8R2u/KE6kvWkZ9ViJeOqW+7zIsnP1NTkUW+cUxr1hbHBIXaiapWXmfwR7lmZbJjh/0JnPSEvqIcHgi4kpMQeyYqt6gWeO/f1bY94eg1Oc/V6h3v5mL+nMaphmLavTZLGKJ4CmN35KIRqFYVVulpz0vSgoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718731534; c=relaxed/simple;
-	bh=9WtmB9Bn0bftxKxvR8395pd356hshFubR0WI4s7a7NQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dbTxXiAhiy1mt+13cWbSEofpHoU1BTJi4zMLCiPJWBS/SzDNAJPPjxUMCsRn45iFYacSKU2IE99ehUjfO3AeVTMrXA/hBEy7HAOVPX+uFj9HfGXaGqHbkccLVFVVPoiidh0lxGwkw2eJN911DfySQzd0oUOGxIkRBn/WC+q0Ylk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/glrhDY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FC4AC3277B;
-	Tue, 18 Jun 2024 17:25:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718731533;
-	bh=9WtmB9Bn0bftxKxvR8395pd356hshFubR0WI4s7a7NQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L/glrhDYm4sY+aW6Z7pWsticv8PewU9RhtaYYM2XXCXyQ7dJn+bapDjh1iVAIjRrm
-	 piW4D1gKTzDt5/l4zvkKQZd0ituyOTiYFBFUrZj3cl3kj9qCzTOuKdBYTrjdfDqvHf
-	 nw2tYUPmW/v+qurual1veLYcOf4R5ngMB1OFAzv5aGGzHXY83G9L75JQT5CeaVBtod
-	 2vadkoi5t1N78i5jAUnEDEN/yOnXJn4a4rZtBDP63+dfj4QXWar7NBEGVqaB3yJ/I/
-	 UbiWMjl6sosNLYMm1qGpqwcWgkWXMfAe7m8B6h7YzteDo5W9fG1kRjVrdUPgtl0jbw
-	 nYq5nfgtQA4zA==
-Date: Tue, 18 Jun 2024 11:25:29 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, sagi@grimberg.me,
-	jejb@linux.ibm.com, martin.petersen@oracle.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, djwong@kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
-	snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev,
-	hare@suse.de, Himanshu Madhani <himanshu.madhani@oracle.com>
-Subject: Re: [PATCH v8 05/10] block: Add core atomic write support
-Message-ID: <ZnHDCYiRA9EvuLTc@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240610104329.3555488-1-john.g.garry@oracle.com>
- <20240610104329.3555488-6-john.g.garry@oracle.com>
- <ZnCGwYomCC9kKIBY@kbusch-mbp.dhcp.thefacebook.com>
- <20240618065112.GB29009@lst.de>
- <91e9bbe3-75cf-4874-9d64-0785f7ea21d9@oracle.com>
+	s=arc-20240116; t=1718736420; c=relaxed/simple;
+	bh=qc+1HGFpfJL/Wknb4BblstV9QAFxrOc224wL7UUT2yI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Udt/CuA1aZX3UsO6nqbGhuGmN6p8ZimtTgyaSh5eLpGTL+2MJn41Ys1W/1hX+1Xdr7Jll2xueCRww4d8y9dbXzp4KgVQI3AjiWAr2uegBI1rno3wFBqsUHvtzLkvBy3jhqJcpmauXGw544+3WirPTBc/jmmlu9m0DkY6qqiI8dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=17XPRY9q; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3d1b6b6b2c5so218370b6e.0
+        for <io-uring@vger.kernel.org>; Tue, 18 Jun 2024 11:46:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718736415; x=1719341215; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gPWnOQT8PxiAuIaOunKL4XepfKhGVzy+4mOjTdDY0sU=;
+        b=17XPRY9q/551FDvTFKJ7dXKSgQ7GwCSkOiGS/hqI0CbktvdvOyInJufhBe1bsCheUm
+         zKfrU6nWhFuthW7XyOfqsJXMMMfvdQ6J1jW6cY6MvzjHCAMvEJFw58aYhEhNFIjC3/ct
+         Pnernqct0BzD3e7pEji61pHFM7FW+RwUMtBYUgbc6Z3I7eeobGjRJdWYX/X3DEDdbTRt
+         pYg2a/DaM5uIT1aKzxOQXpLU9LAUsE0RsSRFfRtJRhS5GXmH7f5W1gTHLHyc41uzC9X9
+         iADSjbSVuizBmbPSBRMg/fAKjFSlLCTRuyGJHdLpmfvf09kVcqiRLs/gC2uNp7hiyIAm
+         4uWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718736415; x=1719341215;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gPWnOQT8PxiAuIaOunKL4XepfKhGVzy+4mOjTdDY0sU=;
+        b=JvFXWUt+xkM/Vs5AoGRSpXh0ILcX0Efs6TC0oYHK8MeMr9AUTDBhnmYdmgQzXQiMzU
+         kU3Mz3PsHoXNN6sRxa53b13rTOEkQXO1KeudG2Mde8fWQPT3yXiVGTO+KCj0s77SC2x7
+         if3YztijHD+0rJTyZlDyE3kdX5c5Minu4vivMW4zbQPeXP1VOrrvIoVHz8zkryq3dHZd
+         ad4fCFcbiZnozNLaGMm98qfeaSomfV+LAeLE4XP+6x2gMMFCvP33ac2WL7oDXXZWpXh8
+         YYLmYZ5RKjfUwT8Alzh8/Vu2ncJo4aQ+gpzjf4xn9iQOdxqnstXFxv3l/Or8QnGs46LB
+         60Vw==
+X-Gm-Message-State: AOJu0YxK2IJwzkwQ8vnM6DVQS+xlCv55yohxsIUutHDYbrK82n6ZRimh
+	WB84P/n8/ATBaSIgqV+Pbtg1C/0UewlbIlk4W/CDbTp9JUuRZbPx46b3/s/X1rYMsrmP3Ma9uWG
+	g
+X-Google-Smtp-Source: AGHT+IH4mL3TXwUZbNLMx1+MK1cHY8CQPbkJCg6lNbuesReXNbETPB1dD6b2FpqPZHXGasIS14SVcQ==
+X-Received: by 2002:a05:6870:6490:b0:254:7dbe:1b89 with SMTP id 586e51a60fabf-25c948c42c8mr723055fac.1.1718736415026;
+        Tue, 18 Jun 2024 11:46:55 -0700 (PDT)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2567aa5e68asm3297475fac.30.2024.06.18.11.46.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 11:46:54 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com
+Subject: [PATCH for-next 0/3] Misc fixes and cleanups
+Date: Tue, 18 Jun 2024 12:43:50 -0600
+Message-ID: <20240618184652.71433-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <91e9bbe3-75cf-4874-9d64-0785f7ea21d9@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 18, 2024 at 08:46:31AM +0100, John Garry wrote:
-> 
-> About NVMe, the spec says that NABSN and NOIOB may not be related to one
-> another (command set spec 1.0d 5.8.2.1), but I am wondering if people really
-> build HW which would have different NABSN/NABSPF and NOIOB. I don't know.
+Hi,
 
-The history of NOIOB is from an nvme drive that had two back-end
-controllers with their own isolated storage, and then striped together
-on the front end for the host to see. A command crossing the stripe
-boundary takes a slow path to split it for each backend controller's
-portion and merge the results. Subsequent implementations may have
-different reasons for advertising this boundary, but that was the
-original.
+No real theme to these patches, but sending them out together to make
+my life a bit easier.
 
-Anyway, there was an idea that the stripe size could be user
-configurable, though that never shipped as far as I know. If it had,
-then the optimal NOIOB could be made larger, but the atomic write size
-doesn't change.
+Patch 1 is just a cleanup.
+
+Patch 2 moves io-wq work struct flags to atomics. Again no real reason
+to do this outside of making KxSAN happier, but it's prudent to do and
+has no real downside.
+
+Patch 3 cleans up a fix that went into 6.10-rc, removing a
+__set_current_state() that is bogus and fixing up the additional one to
+simply use the usual finish_wait() helper.
+
+-- 
+Jens Axboe
+
 

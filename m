@@ -1,73 +1,75 @@
-Return-Path: <io-uring+bounces-2283-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2284-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DAD90F358
-	for <lists+io-uring@lfdr.de>; Wed, 19 Jun 2024 17:59:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E744490F387
+	for <lists+io-uring@lfdr.de>; Wed, 19 Jun 2024 18:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 545F11C21A7C
-	for <lists+io-uring@lfdr.de>; Wed, 19 Jun 2024 15:59:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6088DB287FF
+	for <lists+io-uring@lfdr.de>; Wed, 19 Jun 2024 16:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C28E156653;
-	Wed, 19 Jun 2024 15:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCA014C580;
+	Wed, 19 Jun 2024 15:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/UQQWIC"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JcyNo0Ud"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073DD47779
-	for <io-uring@vger.kernel.org>; Wed, 19 Jun 2024 15:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9D014F9C4
+	for <io-uring@vger.kernel.org>; Wed, 19 Jun 2024 15:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812071; cv=none; b=Rod6qG0Xx6PMuu/jaLQbgbUchdD3Yq4G4FS2N0x5dMPZT3wN89Xglzr/yWm1WEJoUUHIwQ7zYMSXsfRCSh3NbL+2CLV4+QjvHK5MfZM4IIBV0URyGHKSASzO/yDXy+MpSss9Q2kUbgR2TC1mg+KTp4ky0IgW4aqfNIJZIKY3nVA=
+	t=1718812293; cv=none; b=ZQuOF23zSo7eKfVIKca6DRsBgXDqSljPIHVdtJ0JNRtNvDSRsZOQKMtz1BNPtQ4z3MOsin8sz6viPgZ/TKtOJLBRb26gwwFYgWqk+LlrXIZs0iwwZx+7J0tayxlJYcPwanOgMbJRpe7YSUIz4wt6+T6dEC/wNWvOVKGe/Bx/FD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812071; c=relaxed/simple;
-	bh=wTeoZDSwDT1Ktztzn+SmR2arbV9o2yCoTnV2mHh+zjQ=;
+	s=arc-20240116; t=1718812293; c=relaxed/simple;
+	bh=22Pp9746fqe+xb8Vx606N6eQFqXubN8aYhh8I9/nH3U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UGMmXRi3yYKRuf/sbrzMUvzwQJUlqI6O/k/XY6fOOJYJ/xQUdwl3dAVd4lrcF8yHH300NhPHRsN3LB3T9+MLn5RXr2b22bTwNK5tKZFpkBxtbKAzViXROO8z3wi3k1WddZsgovH4MQMtE2aHho+yoFAgJyI7rtAYIF5zcrKt1pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g/UQQWIC; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2c7c61f7ee3so589161a91.1
-        for <io-uring@vger.kernel.org>; Wed, 19 Jun 2024 08:47:49 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=ssvN5zvfsxJUFdeht9Igzb1G7eU4JCJPXIyfT3gc73pnYdIG8NMeQw5fXiMSxZ/KITaWUY7j/5ETu3I5OwxGQ8O5H1+5Y+HNhbtBXmtZqGIon8PUKrUFgiU5UwiI9BdodeytrVWcJ1K9aLZVvlfZQFBuDghP5tDHiRg0ZCfaP7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=JcyNo0Ud; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6e9a52a302dso339185a12.1
+        for <io-uring@vger.kernel.org>; Wed, 19 Jun 2024 08:51:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718812069; x=1719416869; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UIYHc/satjCtXbc1TAmT38ok0FcTH2r0ZP/WYHetLlY=;
-        b=g/UQQWICjcFlj0+ZRHkJGTJxQRKIormkrDqR3TdNAAvo16iRu7ibdxwJc7JBZ55FlG
-         YKeqF63LbNa+LHHFj1S++PkK1JaCewW6uNS4+cfAB6l5oT3BzM4db8OUiow/pashjE5L
-         1iVu7EeWru6Ujfrl6NWKRpFt0jNucp9zfrfFqe6BIvVt0XR557UJu0y1gZHOWIUlz6Mj
-         2hDdG5NSunchG85O+u3aRIqQmGvtOShIPAxkQphPvhFbF117zR0uH8SKSpNcI1fXXQMk
-         yBMXwuKUFIc4TtPq5U1WBqO8dnmbEASztT3eUdzMJI+Hyzq+fc1/3yGnD5iFaJUMxmC+
-         3Z0A==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718812291; x=1719417091; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SRh2qBjBno25fyOZvYEcCWdKsE/a2pTFCtImaQJAP4U=;
+        b=JcyNo0Ud9AkNcwytLv7pd8dxVghAkp1d9nG9f9w6Bpr0AuZ9gFB/ef8TEv7Maee8D5
+         0BlO4XYIMD1xtG9M3NAwSf56T1PEmn+RYhgA7rZKtGUGGOCqUe1uGhXYJlJiUArMYSjo
+         Leqqg1lCgAtemk/+gG9P47tos4W49tksrkS9VAgzIEzZXVmrW8U8Q7Z/nnbkcWuxcke/
+         hiUb9PVV5G9cwsG9WhPyfgAVb48t4XimsVzNF+PDf4G2+rwgiE4vwAFcscQBD7I6iL8V
+         gMJiFwsnLF5YvWgSTPHSLB/KVpJ/+9yaLnfnst2V3m+2PBqQvAf1+vfQcsaStDiUkZew
+         ykpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718812069; x=1719416869;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UIYHc/satjCtXbc1TAmT38ok0FcTH2r0ZP/WYHetLlY=;
-        b=hKJ/dUCIIbmOlW5K9szklsxtCLWGJhd5NJ5UZK0Z09X2WbCifMiUtTik+DGHdHX3rY
-         M9CXcmmCodO6NC4xoYJP2xffaF4bja/n9ATFDUIjiRHHi9XEKlqos44a0JiiYUPsDIvS
-         B6lm5LzpVJg7H+dP8smVMJ0djIig12Oh9k5dqavCCCMytv0NagR476SLVQa2QUHxDZkH
-         vp9GlFuxpb6nYqvjcevBQZP+7iAcHHbQpAk4ka25seV9MYGo2w6fSe/e86+vTg6QLObi
-         63odLjXqF82CKniaS7ccyoJmxKqEbLm8L1nvFxK0c8AeaeDxyKcgD0MlJib+FNXPu1z0
-         OhmA==
-X-Gm-Message-State: AOJu0Yy/sLbR+w9qmKE93C1c8sq4aDVJSYZIreFXcNppVD84XotecaUP
-	TZluSHvpo8m5edIW2IR4XlA2+cJWUTAgU5ocDbEkksLgwyGIPFeB
-X-Google-Smtp-Source: AGHT+IGWkwulzgVUkQKMwl7vRWLRZ7rXKtgL1e4rJy3DFbQy6lnF4tQTZN/mZAHn4XHKFjKlnrnfzA==
-X-Received: by 2002:a17:90a:c384:b0:2c7:7708:f633 with SMTP id 98e67ed59e1d1-2c7b5b3268bmr2903165a91.13.1718812068973;
-        Wed, 19 Jun 2024 08:47:48 -0700 (PDT)
-Received: from [192.168.0.107] ([123.139.19.126])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4c4671209sm13019228a91.39.2024.06.19.08.47.44
+        d=1e100.net; s=20230601; t=1718812291; x=1719417091;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SRh2qBjBno25fyOZvYEcCWdKsE/a2pTFCtImaQJAP4U=;
+        b=EodkxmpIrroM/UUm7QvFGFarUgkzpgjStmv5BfD+jPegFKIcbWgnaEAH7O3IngWJso
+         nEUsf4tUDMFtZRQxt7HxHtqb0gIAgaocbpF+8Ys35gIF6ndpg3/VpIshkuEvnpFFy/wG
+         tnwaK6PALRj+fTlRBtp8Oki+NSh2dGmDQA1RJFlAzB4it/IezRPqOhifxlyGDoEVY2SP
+         waHqjgvzxsGc7P39+/0Gme4TV7+Yuflfi7iUbIUja5/Mudr/nab7m4rhcLVoldlUWQIE
+         iMSJ18VC3EvIDZ8LANb6IR7WSzRYXi8/wHAedMNLoXHQf4yy5vcr5l1hgFR1PX+uKbii
+         EjQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzYuuqrY8bhgVgqKpSPKWsV5GEy/ZBG2pLIh9fwd1zoDxTLODNlrbzNlkLYLZIM3XdmxnxERBUtyQPo89T81G+yVnEyaByGc0=
+X-Gm-Message-State: AOJu0Yxo/a403Sj1f65kEGSb5FoDOwPIY/uFLSoXJcWTKj+wwPJ2glQN
+	mFgEepMzSZH5oGhKBQuXDJ4/udMTHhHW7Btczi1TMlACEFs0QQC9xK3EpiHK98YVYulIEolK9Zy
+	Z
+X-Google-Smtp-Source: AGHT+IEeGRimURdWTiJcHH8MZs1FtHI2wgZpmcKVNRznQgoxss+Le4aXnsvAGiS9ArRp4dzntU5Law==
+X-Received: by 2002:a17:902:d503:b0:1f7:1bb7:39db with SMTP id d9443c01a7336-1f9aa870f6amr29410245ad.5.1718812290685;
+        Wed, 19 Jun 2024 08:51:30 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f4d13esm118447065ad.287.2024.06.19.08.51.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 08:47:48 -0700 (PDT)
-Message-ID: <05758c01-265e-4567-8f68-8fbafec1631a@gmail.com>
-Date: Wed, 19 Jun 2024 23:47:41 +0800
+        Wed, 19 Jun 2024 08:51:30 -0700 (PDT)
+Message-ID: <5146c97b-912e-41e3-bea9-547b0881707a@kernel.dk>
+Date: Wed, 19 Jun 2024 09:51:29 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -75,55 +77,94 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rsrc: fix incorrect assignment of iter->nr_segs
- in io_import_fixed
-To: Pavel Begunkov <asml.silence@gmail.com>,
- Chenliang Li <cliang01.li@samsung.com>, axboe@kernel.dk
-Cc: io-uring@vger.kernel.org, peiwei.li@samsung.com, joshi.k@samsung.com,
- kundan.kumar@samsung.com, anuj20.g@samsung.com, gost.dev@samsung.com
-References: <CGME20240619063825epcas5p26224fc244b0ff14899731dea6d5a674b@epcas5p2.samsung.com>
- <20240619063819.2445-1-cliang01.li@samsung.com>
- <b51fe1ca-5a3f-46e1-a33e-a3c91ce9ad6c@gmail.com>
-From: Chenliang Li <lcljoric@gmail.com>
-In-Reply-To: <b51fe1ca-5a3f-46e1-a33e-a3c91ce9ad6c@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v5] Subject: io_uring: releasing CPU resources when
+ polling
+To: hexue <xue01.he@samsung.com>
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CGME20240619071833epcas5p274ddb249a75e4b3006b48d1378071923@epcas5p2.samsung.com>
+ <20240619071826.1553543-1-xue01.he@samsung.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240619071826.1553543-1-xue01.he@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 6/19/24 1:18 AM, hexue wrote:
+> io_uring use polling mode could improve the IO performence, but it will
+> spend 100% of CPU resources to do polling.
+> 
+> This set a signal "IORING_SETUP_HY_POLL" to application, aim to provide
+> a interface for user to enable a new hybrid polling at io_uring level.
+> 
+> A new hybrid poll is implemented on the io_uring layer. Once IO issued,
+> it will not polling immediately, but block first and re-run before IO
+> complete, then poll to reap IO. This poll function could keep polling
+> high performance and free up some CPU resources.
+> 
+> we considered about complex situations, such as multi-concurrency,
+> different processing speed of multi-disk, etc.
+> 
+> Test results:
+> set 8 poll queues, fio-3.35, Gen5 SSD, 8 CPU VM
+> 
+> per CPU utilization:
+>     read(128k, QD64, 1Job)     53%   write(128k, QD64, 1Job)     45%
+>     randread(4k, QD64, 16Job)  70%   randwrite(4k, QD64, 16Job)  16%
+> performance reduction:
+>     read  0.92%     write  0.92%    randread  1.61%    randwrite  0%
 
-在 2024/6/19 22:27, Pavel Begunkov 写道:
-> On 6/19/24 07:38, Chenliang Li wrote:
->> In io_import_fixed when advancing the iter within the first bvec, the
->> iter->nr_segs is set to bvec->bv_len. nr_segs should be the number of
->> bvecs, plus we don't need to adjust it here, so just remove it.
->
-> Good catch, quite old. It's our luck that bvec iteration
-> honours the length and doesn't step outside of the first entry.
->
->> Fixes: b000ae0ec2d7 ("io_uring/rsrc: optimise single entry advance")
->> Signed-off-by: Chenliang Li <cliang01.li@samsung.com>
->> ---
->>   io_uring/rsrc.c | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
->> index 60c00144471a..a860516bf448 100644
->> --- a/io_uring/rsrc.c
->> +++ b/io_uring/rsrc.c
->> @@ -1049,7 +1049,6 @@ int io_import_fixed(int ddir, struct iov_iter 
->> *iter,
->>                * branch doesn't expect non PAGE_SIZE'd chunks.
->>                */
->>               iter->bvec = bvec;
->> -            iter->nr_segs = bvec->bv_len;
->
-> iter->nr_segs = 1, please
-Why 1? There could be multiple bvecs.
->
->
->>               iter->count -= offset;
->>               iter->iov_offset = offset;
->>           } else {
->>
->> base-commit: 3b87184f7eff27fef7d7ee18b65f173152e1bb81
->
+Haven't tried this on slower storage yet, but my usual 122M IOPS polled
+test case (24 drives, each using a single thread to load up a drive)
+yields the following with hybrid polling enabled:
+
+IOPS=57.08M, BW=27.87GiB/s, IOS/call=32/31
+IOPS=56.91M, BW=27.79GiB/s, IOS/call=32/32
+IOPS=57.93M, BW=28.29GiB/s, IOS/call=31/31
+IOPS=57.82M, BW=28.23GiB/s, IOS/call=32/32
+
+which is even slower than IRQ driven.
+
+It does use less cpu, about 1900% compared to 2400% before as it's
+polling. And obviously this is not the best case for this scenario, as
+these devices have low latencies. Like I predicted in earlier replies,
+most of the added overhead here is TSC reading, outside of the obvious
+one of now having wakeups and context switches, about 1M/sec of the
+latter for this test.
+
+If we move to regular flash, here's another box I have with 32 flash
+drives in it. For a similar test, we get:
+
+IOPS=104.01M, BW=50.78GiB/s, IOS/call=31/31
+IOPS=103.92M, BW=50.74GiB/s, IOS/call=31/31
+IOPS=103.99M, BW=50.78GiB/s, IOS/call=31/31
+IOPS=103.97M, BW=50.77GiB/s, IOS/call=31/31
+IOPS=104.01M, BW=50.79GiB/s, IOS/call=31/31
+IOPS=104.02M, BW=50.79GiB/s, IOS/call=31/31
+IOPS=103.62M, BW=50.59GiB/s, IOS/call=31/31
+
+using 3200% CPU (32 drives, 32 threads polling) with regular polling,
+and enabling hybrid polling:
+
+IOPS=53.62M, BW=26.18GiB/s, IOS/call=32/32
+IOPS=53.37M, BW=26.06GiB/s, IOS/call=31/31
+IOPS=53.45M, BW=26.10GiB/s, IOS/call=32/31
+IOPS=53.43M, BW=26.09GiB/s, IOS/call=32/32
+IOPS=53.11M, BW=25.93GiB/s, IOS/call=32/32
+
+and again a lot of tsc overhead (> 10%), overhead from your extra
+allocations (8%).
+
+If we just do a single flash drive, it'll do 3.25M with 100% with normal
+polling, and 2.0M with 50% CPU usage with hybrid polling.
+
+While I do suspect there are cases where hybrid polling will be more
+efficient, not sure there are many of them. And you're most likely
+better off just doing IRQ driven IO at that point? Particularly with the
+fairly substantial overhead of maintaining the data you need, and time
+querying.
+
+-- 
+Jens Axboe
+
 

@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-2302-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2303-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93CD491126B
-	for <lists+io-uring@lfdr.de>; Thu, 20 Jun 2024 21:46:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A5791127E
+	for <lists+io-uring@lfdr.de>; Thu, 20 Jun 2024 21:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C57461C228EC
-	for <lists+io-uring@lfdr.de>; Thu, 20 Jun 2024 19:46:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAEBDB26131
+	for <lists+io-uring@lfdr.de>; Thu, 20 Jun 2024 19:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA2C3C6AC;
-	Thu, 20 Jun 2024 19:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1FC47A7C;
+	Thu, 20 Jun 2024 19:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMsWWz6m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iF7Jf0V6"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCF813AF9;
-	Thu, 20 Jun 2024 19:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5100B43156;
+	Thu, 20 Jun 2024 19:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718912768; cv=none; b=ZXHDojFegC4w8MnzpYml5puz/GmX6DdMj5+0ASvG1+jX9zMFDV6gU7yxctN/5sQcU9BNlzkkdgujnRiipPdu84GHDh6pJGKhIwBKzNBZ9nxZINpD8qQYzLUSQ3ZlSI5pQ+waunUbCv/ZP4CGQN6nPnvhpevBNOy57NctdNmbn4s=
+	t=1718912807; cv=none; b=QzrFgoXJiFyIZBnsyZeTY48xHNFVvrQkKW7/UMq9N4R6aftIHPXC7A/FqtN48sdlOfwUAyqDLiue2iLJ1+KDqKRyQJdbVjJMikcHRgao6AbypL4ZXzH5Aq08zokj80WAmy0YkLgJUI8NAjHTmZfTduJ/l2WMfxGzVvGK6un3lPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718912768; c=relaxed/simple;
-	bh=kMxWNABFITruZw+TUT+s054RLNenCGCKbp9bHivL/B8=;
+	s=arc-20240116; t=1718912807; c=relaxed/simple;
+	bh=NOXrZZ78IGZVhFJah42haGiQhcKtgPlchliubLibNbQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifgLHOwRxISx0/KJqkjCevthzHDL8unClaJuvDE4whX5pZoaPY7dljVzqpESHEScN863IDFgBSYGGWNGzjkR3qgovkCdMGwepER/uAvWpB20SySxYOizB39qV0EPQzeG31W04rxHTULh57jEcZbGLhLSdRjexUkVGwfmFMdw/f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMsWWz6m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C76FC2BD10;
-	Thu, 20 Jun 2024 19:46:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=q2uEVNB7LWxOpMk7t9EiACMxIKJV97ACnBn0XfK342r+p+S+kXS/ni1wGNLYtfSlwnRyP2W021zXy5hwmh0kUN0QsFE7DENeH0VdchtUrc4Dc+5mD1V167HUo9rPMwDF19YsEapnaKEeagIUXS6TQFl8KUZLtq3VdMi+QJaCP58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iF7Jf0V6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D58F6C2BD10;
+	Thu, 20 Jun 2024 19:46:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718912768;
-	bh=kMxWNABFITruZw+TUT+s054RLNenCGCKbp9bHivL/B8=;
+	s=k20201202; t=1718912805;
+	bh=NOXrZZ78IGZVhFJah42haGiQhcKtgPlchliubLibNbQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EMsWWz6mmR4aR426mOwSJxZM5BkplVD6O6Y1Ze4cOA5gwtHhAXvPMTol9dAiFKn9D
-	 5gOTo4hDvm2DXlnDGMvSjzz05Aj3kLdFYbRm5iPAUYVXYqMoqwUfNg1jUusILc+FHA
-	 dIWaQtKsiTPy/AU5LZx/rsQzK7g7IavkLhftxgjIx3cZCRrO2/lM/9kqU8of2BmuwU
-	 vwZyjS5mgn+7hl1L2Ixu5x1vFSPXbJsHGzgD+uAH7/ycqMqZpXWU20JkG4FVB/Izt6
-	 zWwYiFlZ9qHGHk5yuRgSeoEX/ljehr2wNVy6Sib65ImiOem5a74PoDoHGBAew5MCRY
-	 IguOii3yzi4Sw==
-Date: Thu, 20 Jun 2024 13:46:04 -0600
+	b=iF7Jf0V6MxMlfrr5Rgpz7hsN47YbOthkjXFvJso/wh76d7mGGy7OuHpHvTuiSXzQx
+	 dv//qW5Xxsd3CpYXOBgfZznlroKttBOwPJz3r47EHcsL5cF8eRuK5Tfcas30TmFyls
+	 Tr1uUb5KjKCdnNO3zm0C254rZFe5QeK7ngeONnl5FwUln1Rwst9PvqjEIUxUfrZL+3
+	 993k0ImdQ8LalafeFDgz8knEEnBOIMMFVeUvuJvGZSSFhb+80jqfB/o02kb959m/fm
+	 N6rEEvbwS5SAkyii0YsbFb3yNNkDWCmwwMitjTkHXxIJKPomps4I11fbaW0rfb18Tj
+	 6aCxakGyMlmAA==
+Date: Thu, 20 Jun 2024 13:46:41 -0600
 From: Keith Busch <kbusch@kernel.org>
 To: John Garry <john.g.garry@oracle.com>
 Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
@@ -55,11 +55,11 @@ Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
 	io-uring@vger.kernel.org, nilay@linux.ibm.com,
 	ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
 	snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev,
-	hare@suse.de, Prasad Singamsetty <prasad.singamsetty@oracle.com>
-Subject: Re: [Patch v9 06/10] block: Add atomic write support for statx
-Message-ID: <ZnSG_G9PGSUeQ78-@kbusch-mbp.dhcp.thefacebook.com>
+	hare@suse.de
+Subject: Re: [Patch v9 07/10] block: Add fops atomic write support
+Message-ID: <ZnSHIWVeMlpZ-OJb@kbusch-mbp.dhcp.thefacebook.com>
 References: <20240620125359.2684798-1-john.g.garry@oracle.com>
- <20240620125359.2684798-7-john.g.garry@oracle.com>
+ <20240620125359.2684798-8-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -68,13 +68,22 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620125359.2684798-7-john.g.garry@oracle.com>
+In-Reply-To: <20240620125359.2684798-8-john.g.garry@oracle.com>
 
-On Thu, Jun 20, 2024 at 12:53:55PM +0000, John Garry wrote:
-> From: Prasad Singamsetty <prasad.singamsetty@oracle.com>
+On Thu, Jun 20, 2024 at 12:53:56PM +0000, John Garry wrote:
+> Support atomic writes by submitting a single BIO with the REQ_ATOMIC set.
 > 
-> Extend statx system call to return additional info for atomic write support
-> support if the specified file is a block device.
+> It must be ensured that the atomic write adheres to its rules, like
+> naturally aligned offset, so call blkdev_dio_invalid() ->
+> blkdev_atomic_write_valid() [with renaming blkdev_dio_unaligned() to
+> blkdev_dio_invalid()] for this purpose. The BIO submission path currently
+> checks for atomic writes which are too large, so no need to check here.
+> 
+> In blkdev_direct_IO(), if the nr_pages exceeds BIO_MAX_VECS, then we cannot
+> produce a single BIO, so error in this case.
+> 
+> Finally set FMODE_CAN_ATOMIC_WRITE when the bdev can support atomic writes
+> and the associated file flag is for O_DIRECT.
 
 Looks good.
 

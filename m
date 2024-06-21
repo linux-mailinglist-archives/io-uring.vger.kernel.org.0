@@ -1,79 +1,168 @@
-Return-Path: <io-uring+bounces-2322-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2323-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E2B6912F3A
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jun 2024 23:09:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6C4912F6D
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jun 2024 23:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85BB3B25376
-	for <lists+io-uring@lfdr.de>; Fri, 21 Jun 2024 21:09:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A28288BE8
+	for <lists+io-uring@lfdr.de>; Fri, 21 Jun 2024 21:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF58617B42D;
-	Fri, 21 Jun 2024 21:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1893D156F2E;
+	Fri, 21 Jun 2024 21:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPstFIMM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIjoAo9d"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7B416DED5
-	for <io-uring@vger.kernel.org>; Fri, 21 Jun 2024 21:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD52D4A3F;
+	Fri, 21 Jun 2024 21:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719004150; cv=none; b=CGK9EHhsnF5iUXOaSBObdCzWcEU+32zyYUvjopTHktShtFkunkrS9JTe28KjGL/SecpfRiu8U2sHxPZDGJyI1N3nrh3O3iIElmXIshOelQLFpUcTw4RIEcsvm8EwZaGTLD8syaycsS2tJyM4AzVXPENf6vXlXggYPnfH49hJrZo=
+	t=1719005002; cv=none; b=YU+BxoZn1K6sxyI/7Ma29Z9wo0h2PJQVq1+0W2dqeWUajwVvXrpSU+TZCJTL9RkxhXbiatqiEWmgyCXmiUhBhGZJR8nfsBpgkOYfk3x2a00j7TsEu1uXDO3NdrqQivAq5t65WP/oyOzDKNTQ3CMJ5ltAABg4yTU3io7dCyiewbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719004150; c=relaxed/simple;
-	bh=ObzMml0YDcojm1qUBSmAavSD1vEBMrc8kC/6xNfthE8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=RxVHRVslktUgVKcwCz7tuwwxtGqD6nmzzZBzD/f2aZXSUZM61vzuFbu+tDmeawaiDHp3z+02yOZLH5Gmgbtq/Qtw5zkktOS56DfRy924kQvr5AgHwB9EsNmQEL7jvwki0vKJAvHZvLFBOojn54KNWu5rdqtnxb53Qepytb6ZkCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPstFIMM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 50BD4C2BBFC;
-	Fri, 21 Jun 2024 21:09:09 +0000 (UTC)
+	s=arc-20240116; t=1719005002; c=relaxed/simple;
+	bh=N4ivVfcXJIy+QZ0gUdEeSMav33R3fT7xLRRwMgFHS5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tLfjNcD60yOIApyoRlTz4LMauwUZqmDE3f0q09H33ae+0p7Y+6vN6dHS4BrJ9QyJCgxeTRaArtQQzDqz5P1JPYRKHcr4ytLeqGNMvUsob/cjTkLvOdDDN7f3/LQ12LHrezBXSJ+p/TzP4lykAjrqHDiWFryOpn3Zy9tOnJpEUSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIjoAo9d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D506C2BBFC;
+	Fri, 21 Jun 2024 21:23:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719004149;
-	bh=ObzMml0YDcojm1qUBSmAavSD1vEBMrc8kC/6xNfthE8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=qPstFIMM8GqYAh+PFhk1jkxngijp1+FZISwVlky5evrTVZSY5JtQXxt7iwfbduE8s
-	 zg3HX5yd8hrJZPoANVTluTlLeOgUZJL0615iM2nlXmJRpSKbwgg4dFNVtqWCj18nHc
-	 dR+pne77zZBfMSRgcScxkAEQUyzLfP5zKbjWypkLBsPYI8lKFpQyHofTK/bM00DxCH
-	 58KRnngzEO3BpZuV/uXgVzVwmMSolNsoRol2/dcTEiO6ErCLzhtB7ac0dxS/XPuiqI
-	 +wnkYyy2lIIP99QJ+ARB2WIkQck/PEI2/6nwPFfhUkTQ6v9Alug4T8ET6TU0vhIOhO
-	 YPbRE5OSP+N8w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 47413CF3B94;
-	Fri, 21 Jun 2024 21:09:09 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fix for 6.10-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <83d246af-25b2-4ac4-a7f6-57988e6ed145@kernel.dk>
-References: <83d246af-25b2-4ac4-a7f6-57988e6ed145@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <83d246af-25b2-4ac4-a7f6-57988e6ed145@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.10-20240621
-X-PR-Tracked-Commit-Id: a23800f08a60787dfbf2b87b2e6ed411cb629859
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a502e727965dbd735145cff7ec84ad0a6060f9d2
-Message-Id: <171900414928.4758.9192568178231047537.pr-tracker-bot@kernel.org>
-Date: Fri, 21 Jun 2024 21:09:09 +0000
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+	s=k20201202; t=1719005001;
+	bh=N4ivVfcXJIy+QZ0gUdEeSMav33R3fT7xLRRwMgFHS5Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KIjoAo9dVPq/wWSw7vIa+LUCdLv/cy0F+UpK0V0o6GG4XtJGpPyWD7XS6VYSOCLbE
+	 96RxruHq6fyaGWj3Fcup4m2H2zjHCiaQsk2cwLejwCGTDk1h+CDL9GsEpDBeR+358D
+	 eVikhWol4HvrtRbxIVuPnG8/eXP7DgKHQJuJc+DHT3QbmE/Ug77DxemimyxG+bwVLd
+	 ayCRr4u6b+0c/fvSbv7PmeG3MeTeJovAWkBSk4O562mzy8+vpo9vIy6eLQV2Tb8vex
+	 6s75hABhrSF177DZx/ED7ySzT1gVAEo80N7qgJFHW46uWn0nuJwTC9rbYIeMvVkLYN
+	 /Y3Eol8tZh44w==
+Date: Fri, 21 Jun 2024 14:23:20 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Hannes Reinecke <hare@suse.de>, axboe@kernel.dk, kbusch@kernel.org,
+	hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
+	martin.petersen@oracle.com, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
+	ojaswin@linux.ibm.com, linux-aio@kvack.org,
+	linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org,
+	nilay@linux.ibm.com, ritesh.list@gmail.com, willy@infradead.org,
+	agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
+	dm-devel@lists.linux.dev
+Subject: Re: [Patch v9 07/10] block: Add fops atomic write support
+Message-ID: <20240621212320.GE103020@frogsfrogsfrogs>
+References: <20240620125359.2684798-1-john.g.garry@oracle.com>
+ <20240620125359.2684798-8-john.g.garry@oracle.com>
+ <680ce641-729b-4150-b875-531a98657682@suse.de>
+ <d3332752-52b1-4d24-88cf-3b5e7aa4b74a@oracle.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d3332752-52b1-4d24-88cf-3b5e7aa4b74a@oracle.com>
 
-The pull request you sent on Fri, 21 Jun 2024 10:12:52 -0600:
+On Fri, Jun 21, 2024 at 01:02:34PM +0100, John Garry wrote:
+> On 21/06/2024 07:13, Hannes Reinecke wrote:
+> > On 6/20/24 14:53, John Garry wrote:
+> > > Support atomic writes by submitting a single BIO with the REQ_ATOMIC set.
+> > > 
+> > > It must be ensured that the atomic write adheres to its rules, like
+> > > naturally aligned offset, so call blkdev_dio_invalid() ->
+> > > blkdev_atomic_write_valid() [with renaming blkdev_dio_unaligned() to
+> > > blkdev_dio_invalid()] for this purpose. The BIO submission path currently
+> > > checks for atomic writes which are too large, so no need to check here.
+> > > 
+> > > In blkdev_direct_IO(), if the nr_pages exceeds BIO_MAX_VECS, then we
+> > > cannot
+> > > produce a single BIO, so error in this case.
+> > > 
+> > > Finally set FMODE_CAN_ATOMIC_WRITE when the bdev can support atomic
+> > > writes
+> > > and the associated file flag is for O_DIRECT.
+> > > 
+> > > Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
+> > > ---
+> > >   block/fops.c | 20 +++++++++++++++++---
+> > >   1 file changed, 17 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/block/fops.c b/block/fops.c
+> > > index 376265935714..be36c9fbd500 100644
+> > > --- a/block/fops.c
+> > > +++ b/block/fops.c
+> > > @@ -34,9 +34,12 @@ static blk_opf_t dio_bio_write_op(struct kiocb *iocb)
+> > >       return opf;
+> > >   }
+> > > -static bool blkdev_dio_unaligned(struct block_device *bdev, loff_t pos,
+> > > -                  struct iov_iter *iter)
+> > > +static bool blkdev_dio_invalid(struct block_device *bdev, loff_t pos,
+> > > +                struct iov_iter *iter, bool is_atomic)
+> > >   {
+> > > +    if (is_atomic && !generic_atomic_write_valid(iter, pos))
+> > > +        return true;
+> > > +
+> > >       return pos & (bdev_logical_block_size(bdev) - 1) ||
+> > >           !bdev_iter_is_aligned(bdev, iter);
+> > >   }
+> > > @@ -72,6 +75,8 @@ static ssize_t __blkdev_direct_IO_simple(struct
+> > > kiocb *iocb,
+> > >       bio.bi_iter.bi_sector = pos >> SECTOR_SHIFT;
+> > >       bio.bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
+> > >       bio.bi_ioprio = iocb->ki_ioprio;
+> > > +    if (iocb->ki_flags & IOCB_ATOMIC)
+> > > +        bio.bi_opf |= REQ_ATOMIC;
+> > >       ret = bio_iov_iter_get_pages(&bio, iter);
+> > >       if (unlikely(ret))
+> > > @@ -343,6 +348,9 @@ static ssize_t __blkdev_direct_IO_async(struct
+> > > kiocb *iocb,
+> > >           task_io_account_write(bio->bi_iter.bi_size);
+> > >       }
+> > > +    if (iocb->ki_flags & IOCB_ATOMIC)
+> > > +        bio->bi_opf |= REQ_ATOMIC;
+> > > +
+> > >       if (iocb->ki_flags & IOCB_NOWAIT)
+> > >           bio->bi_opf |= REQ_NOWAIT;
+> > > @@ -359,12 +367,13 @@ static ssize_t __blkdev_direct_IO_async(struct
+> > > kiocb *iocb,
+> > >   static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct
+> > > iov_iter *iter)
+> > >   {
+> > >       struct block_device *bdev = I_BDEV(iocb->ki_filp->f_mapping->host);
+> > > +    bool is_atomic = iocb->ki_flags & IOCB_ATOMIC;
+> > >       unsigned int nr_pages;
+> > >       if (!iov_iter_count(iter))
+> > >           return 0;
+> > > -    if (blkdev_dio_unaligned(bdev, iocb->ki_pos, iter))
+> > > +    if (blkdev_dio_invalid(bdev, iocb->ki_pos, iter, is_atomic))
+> > 
+> > Why not passing in iocb->ki_flags here?
+> > Or, indeed, the entire iocb?
+> 
+> We could (pass the iocb), but we only need to look up one thing - ki_pos. We
+> already have is_atomic local. I am just trying to make things as efficient
+> as possible. If you really think it's better (to pass iocb), then it can be
+> changed.
 
-> git://git.kernel.dk/linux.git tags/io_uring-6.10-20240621
+I certainly do. ;)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a502e727965dbd735145cff7ec84ad0a6060f9d2
+https://lore.kernel.org/linux-xfs/20240620212401.GA3058325@frogsfrogsfrogs/
 
-Thank you!
+--D
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> Thanks,
+> John
+> 
+> 
 

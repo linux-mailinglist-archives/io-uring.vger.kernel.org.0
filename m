@@ -1,61 +1,62 @@
-Return-Path: <io-uring+bounces-2334-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2335-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5185D9168C2
-	for <lists+io-uring@lfdr.de>; Tue, 25 Jun 2024 15:24:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FF09168CD
+	for <lists+io-uring@lfdr.de>; Tue, 25 Jun 2024 15:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E1051C217D7
-	for <lists+io-uring@lfdr.de>; Tue, 25 Jun 2024 13:24:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A2ECB243EC
+	for <lists+io-uring@lfdr.de>; Tue, 25 Jun 2024 13:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24D315A86D;
-	Tue, 25 Jun 2024 13:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6554C15AD8B;
+	Tue, 25 Jun 2024 13:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="cOtuOETZ"
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="nCSv7Ege"
 X-Original-To: io-uring@vger.kernel.org
 Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354A81509A2;
-	Tue, 25 Jun 2024 13:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1875E132111;
+	Tue, 25 Jun 2024 13:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719321883; cv=none; b=jfy/4SzNEDCEqUi5NOe9IFaWnBsh+8Izt2quACb+O1L1fmd0nPqwno2Oq5HnTxE/jVLDZCSdKzGx2xO7e6J2EWDMY2UCJL2pcHh5Mam8+oVqwVfluqTOW/ZWTLpvXnCiZ/4UHSgqCaKSEQz+DEcVCOxme3LgzCym6ECQUmNARYk=
+	t=1719322103; cv=none; b=WAIXZbKLrtga3dxmtQgRISVw96v6pIiKOMk54JgcEwEgnXimCPP27Bf0QkVmVj7U5kfZvvfAA6SCFT8YUd6rZKRuPF8AIX3lnN4DmXhZqY0bCD1ULS9X82cSh+Sn73qi2f/dMKMk0Tkoo8X2UhQzkov7g8LUERi+x43oyjUo0zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719321883; c=relaxed/simple;
-	bh=lvJBkVKspbfH8LvAiHXE/YRiBjcdn5hLmqAnrMqJHPc=;
+	s=arc-20240116; t=1719322103; c=relaxed/simple;
+	bh=Ro4BBFa+Qwg8DrQxdRw5gbUQFYO14MzqTqWpByRnoxU=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ad2iFG2BrwH7Kz8sa/pmtrB8L0Vq19D05uNFALMJ7NY9fOM3dOa0WLNmmO5d8tOmt+nxe48FKIc+m/6BTZqluiUXOKL+Gt+BFGz7M6NNyNJDC7eb9/lUbQuAf5Fsv8fnNZIOFOX+h592/4FxVS9qd0H59wK8SgTiYW5wwdVlm64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=cOtuOETZ; arc=none smtp.client-ip=89.208.246.23
+	 Content-Type:MIME-Version; b=YO3Dg4Q/obKhIthgysVfVoy3xyaRuY1JnGkhCgSj9UvqIJkNHP6xxT08nJ6L/F4QyHW2C1BZhbEj8HxPvHlmIAlg3KWfqyrwK6HNpxTJ3I8V13spFIvrS4QQb8U76adkEIGg6pH+8rCg3+Mvr2ebZ7cU7Bc6I9U57KE9kSg9/x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=nCSv7Ege; arc=none smtp.client-ip=89.208.246.23
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1719321880;
-	bh=lvJBkVKspbfH8LvAiHXE/YRiBjcdn5hLmqAnrMqJHPc=;
+	s=default; t=1719322100;
+	bh=Ro4BBFa+Qwg8DrQxdRw5gbUQFYO14MzqTqWpByRnoxU=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=cOtuOETZvbD25N8NNfc0QadAiAJPTLKGcnawNx1NRy76Qp4zpFz05UOlwvAIF+zi+
-	 5QQn/5kJpUr7lpXayCFYhJSJj0fKQGi8qc4iXdm7F6Mk24Xorf+kaPkUZunW7vuSKg
-	 ALiHGiwTw8z6PtNqZQsUznBjlJja1jeKl7yJsYHc=
+	b=nCSv7Egem1y/1EEW2UGinuPnR77/Dy1oBhyBKH937gaowacLX/x4xzIwOk5OuxvMS
+	 vm8nsvPQWCnoHBJDJ1xDj801fGF5sdeWt/FVE4pxW00enX1v0Z9IiKQqERSYpl3uEI
+	 8C7Hlo0dREx+hkwAfogcwcQkv5+aTiOBqejTK850=
 Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384))
 	(Client did not present a certificate)
 	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id EDFB11A3F32;
-	Tue, 25 Jun 2024 09:24:35 -0400 (EDT)
-Message-ID: <fa1a8a0b01cd8c53d290cf431b9c1ffc6305ef0d.camel@xry111.site>
+	by xry111.site (Postfix) with ESMTPSA id D32031A3FCE;
+	Tue, 25 Jun 2024 09:28:16 -0400 (EDT)
+Message-ID: <a28d27816a2c5dfab3093a2ba79d5681e927e703.camel@xry111.site>
 Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
 From: Xi Ruoyao <xry111@xry111.site>
 To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, axboe@kernel.dk, 
 	torvalds@linux-foundation.org, loongarch@lists.linux.dev
-Date: Tue, 25 Jun 2024 21:24:32 +0800
-In-Reply-To: <20240625110029.606032-3-mjguzik@gmail.com>
+Date: Tue, 25 Jun 2024 21:28:14 +0800
+In-Reply-To: <fa1a8a0b01cd8c53d290cf431b9c1ffc6305ef0d.camel@xry111.site>
 References: <20240625110029.606032-1-mjguzik@gmail.com>
 	 <20240625110029.606032-3-mjguzik@gmail.com>
+	 <fa1a8a0b01cd8c53d290cf431b9c1ffc6305ef0d.camel@xry111.site>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.52.2 
@@ -66,40 +67,27 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2024-06-25 at 13:00 +0200, Mateusz Guzik wrote:
-> +	if (flags =3D=3D AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
+On Tue, 2024-06-25 at 21:24 +0800, Xi Ruoyao wrote:
+> On Tue, 2024-06-25 at 13:00 +0200, Mateusz Guzik wrote:
+> > +	if (flags =3D=3D AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
+>=20
+> Could it be
+>=20
+> if ((flags & AT_EMPTY_PATH) && vfs_empty_path(dfd, filename))
+>=20
+> instead?
+>=20
+> When fstatat is implemented with statx AT_NO_AUTOMOUNT is needed, or at
+> least Glibc developers think it's needed:
 
-Could it be
+/* snip */
 
-if ((flags & AT_EMPTY_PATH) && vfs_empty_path(dfd, filename))
+> I was just surprised when I saw a 100%+ improve for statx("",
+> AT_EMPTY_PATH) but not stat on the Loongson machine.
+                         ^^^^ fstat
 
-instead?
+I cannot type :(
 
-When fstatat is implemented with statx AT_NO_AUTOMOUNT is needed, or at
-least Glibc developers think it's needed:
-
-#if FSTATAT_USE_STATX
-
-static inline int=20
-fstatat64_time64_statx (int fd, const char *file, struct __stat64_t64 *buf,
-            int flag)
-{
-  /* 32-bit kABI with default 64-bit time_t, e.g. arc, riscv32.   Also
-     64-bit time_t support is done through statx syscall.  */
-  struct statx tmp;
-  int r =3D INTERNAL_SYSCALL_CALL (statx, fd, file, AT_NO_AUTOMOUNT | flag,
-                 STATX_BASIC_STATS, &tmp);
-
-so "flags =3D=3D AT_EMPTY_PATH" won't be true if Glibc implements fstatat
-and fstat via statx (on LoongArch and 32-bit platforms).
-
-I was just surprised when I saw a 100%+ improve for statx("",
-AT_EMPTY_PATH) but not stat on the Loongson machine.
-
-> +		return do_statx_fd(dfd, flags, mask, buffer);
-> +
-> =C2=A0	name =3D getname_flags(filename, getname_statx_lookup_flags(flags)=
-, NULL);
 
 --=20
 Xi Ruoyao <xry111@xry111.site>

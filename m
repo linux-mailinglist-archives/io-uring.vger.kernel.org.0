@@ -1,82 +1,81 @@
-Return-Path: <io-uring+bounces-2352-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2353-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2549918006
-	for <lists+io-uring@lfdr.de>; Wed, 26 Jun 2024 13:43:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFDC918008
+	for <lists+io-uring@lfdr.de>; Wed, 26 Jun 2024 13:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01BD41C239A7
-	for <lists+io-uring@lfdr.de>; Wed, 26 Jun 2024 11:43:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6E71C235F4
+	for <lists+io-uring@lfdr.de>; Wed, 26 Jun 2024 11:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5786517FAB4;
-	Wed, 26 Jun 2024 11:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC7317F50F;
+	Wed, 26 Jun 2024 11:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TWQdpJWS"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DvznAlIs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0C817FAA9
-	for <io-uring@vger.kernel.org>; Wed, 26 Jun 2024 11:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32F817FAD7
+	for <io-uring@vger.kernel.org>; Wed, 26 Jun 2024 11:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719402185; cv=none; b=hf4T5uLhPU8F0nLWMe7eCDADRguR3FORAoDD9YSVNlValGYWwYAyzFcdAfAg7y/ZWt7eIFjWbStj7d29PwN+jlurj41OHj/r1L9TQGZcnZo6o3h9wEo283L3v/AV1ivMIkj6DCRs3V+QU7FLOtCvoF8iJloWVP9Bj4N8rShbzU8=
+	t=1719402187; cv=none; b=q8WsnrnwrBWZCSHpk2jXHqAacroT8wXkMUHx5sgCj60kkEUYv6970bART0azJlVx3+Kr6Xhqdbv+7Cvy+iVmJri1PkUDW/Cvvva41oGj/TG5WDxfzNCU45prdU61+KW71DAiXJK+tFvduGupobJjjoVLmM5SrZDGy0EL8DG1xsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719402185; c=relaxed/simple;
-	bh=5jIjcP8xRXDjWvr2WGjD3BoRgUVdc77PFesx1qBBvyI=;
+	s=arc-20240116; t=1719402187; c=relaxed/simple;
+	bh=BR6YcHCHB1ivRnqbuz3YxQ4s/sYhuuun8DuDqSP5tr4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=XkilnDKjwmtXSE3290o3JqH4vSqoKNfw1TxoeFNU22LdgMQunUUGxG9cANQnQz2cOcggV7I0X9/oMvJmp0RYNb4ux12BUeT1NNzorTnnPdGFXX3MgLA5RgOfX1TySOQsR6NsZ6dlbpWwXGJtoPifgQgKsjwzEg/G/lNESQHk2hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TWQdpJWS; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=oaUHDKvvCVs5PuEZjMA5zC+S1ZNldsdZn8/YST0NgULe3Vd/nIIH2Ze18tVqU7xHRG37erel5yQhPSJb+aVbm9uyhYdHk8u2gp0ARb99rvRAKDHK+dilrHZTmEyNzdqIlsOMbMFMVo+dHzl8Mp/x0ljAHeD5a35oQHdPZ2KczYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DvznAlIs; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240626114300epoutp0258629d0601d98268de61ee7e83b2ec8f~ciyxal1ot0308303083epoutp02D
-	for <io-uring@vger.kernel.org>; Wed, 26 Jun 2024 11:43:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240626114300epoutp0258629d0601d98268de61ee7e83b2ec8f~ciyxal1ot0308303083epoutp02D
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240626114303epoutp038e96f1e95d1952a82ec86fae56bb5b32~ciy0NkAyW0792607926epoutp03X
+	for <io-uring@vger.kernel.org>; Wed, 26 Jun 2024 11:43:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240626114303epoutp038e96f1e95d1952a82ec86fae56bb5b32~ciy0NkAyW0792607926epoutp03X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1719402180;
-	bh=Ms96jkmQ0kuaCcPQfmnfod94T8OohipgnI02PQvTjo0=;
+	s=mail20170921; t=1719402183;
+	bh=8L/mX8O6BFJO/aguMkBtonWEoWBnd7DsBSRj6RxPZwA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TWQdpJWSVXt6fwQA668mibYDtcPydd+2U1afNb6JaAAtiQ6PAgYRl7GzYoOEq7EVN
-	 jy6Q8RFKI4aDUCDClVHhnYMlXFzDtLMW2jjyLNcEDvIIRsIgD3w+ecY1W0oJ4OCpnP
-	 fGR6rcqssCgZIvHfRWfzsLnQcNpRtQe96NAVWWLU=
+	b=DvznAlIs9UqqQJ6VYiRGTQeuIL+sVKtUYCJn325AgNl/3rUvDhWUoEgTdONJwJK9g
+	 NHH12vhlGL0LSeZ8iw+Q56J2uwbzP1blJsEUYHIriTl3Jvk3Y5lXiF2JOe4oMBVl5U
+	 AFfaDVFAg09iwDtAo74Asv1fz6G+3KduFpGCl2sE=
 Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240626114259epcas5p1b6818f7576e9665da59304f5e9b015e4~ciyw6V50m1003510035epcas5p1q;
-	Wed, 26 Jun 2024 11:42:59 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4W8KZV1NqTz4x9Pq; Wed, 26 Jun
-	2024 11:42:58 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	36.48.09989.2CEFB766; Wed, 26 Jun 2024 20:42:58 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240626101527epcas5p23e10a6701f552d16bd6a999418009ba0~chmVION0E2207822078epcas5p2-;
-	Wed, 26 Jun 2024 10:15:27 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240626101527epsmtrp19e14a3ce1656ea45bee13c5af862a824~chmVGgijU1052710527epsmtrp1H;
-	Wed, 26 Jun 2024 10:15:27 +0000 (GMT)
-X-AuditID: b6c32a4a-e57f970000002705-a4-667bfec2bc8f
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240626114302epcas5p35cf1dce423571350bd5b717f6e19a8e8~ciyzyVQun2534525345epcas5p3F;
+	Wed, 26 Jun 2024 11:43:02 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4W8KZY09f7z4x9Px; Wed, 26 Jun
+	2024 11:43:01 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BD.95.19174.4CEFB766; Wed, 26 Jun 2024 20:43:00 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240626101529epcas5p49976c46701337830c400cefd8f074b40~chmW58ILl2295722957epcas5p45;
+	Wed, 26 Jun 2024 10:15:29 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240626101529epsmtrp284792c42758cdf9b87c024ce28673c1a~chmW5ITko1237112371epsmtrp2i;
+	Wed, 26 Jun 2024 10:15:29 +0000 (GMT)
+X-AuditID: b6c32a50-87fff70000004ae6-41-667bfec42212
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5B.6A.19057.F3AEB766; Wed, 26 Jun 2024 19:15:27 +0900 (KST)
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	67.04.07412.14AEB766; Wed, 26 Jun 2024 19:15:29 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.99.41.245]) by
 	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240626101525epsmtip1585e16aa5c4eb50dd6c82ce8c3bc9c15~chmTc1YNM0324303243epsmtip16;
-	Wed, 26 Jun 2024 10:15:25 +0000 (GMT)
+	20240626101527epsmtip1f357ba9816aaf746029621e642cca8bf~chmVN_59n0370603706epsmtip1I;
+	Wed, 26 Jun 2024 10:15:27 +0000 (GMT)
 From: Anuj Gupta <anuj20.g@samsung.com>
 To: asml.silence@gmail.com, mpatocka@redhat.com, axboe@kernel.dk,
 	hch@lst.de, kbusch@kernel.org, martin.petersen@oracle.com
 Cc: io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-block@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>, Anuj Gupta
-	<anuj20.g@samsung.com>
-Subject: [PATCH v2 09/10] block: add support to pass user meta buffer
-Date: Wed, 26 Jun 2024 15:36:59 +0530
-Message-Id: <20240626100700.3629-10-anuj20.g@samsung.com>
+	linux-block@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+Subject: [PATCH v2 10/10] nvme: add handling for user integrity buffer
+Date: Wed, 26 Jun 2024 15:37:00 +0530
+Message-Id: <20240626100700.3629-11-anuj20.g@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240626100700.3629-1-anuj20.g@samsung.com>
 Precedence: bulk
@@ -86,275 +85,180 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmpu6hf9VpBoc/sVg0TfjLbDFn1TZG
-	i9V3+9ksVq4+ymTxrvUci8XR/2/ZLCYdusZosfeWtsX8ZU/ZLZYf/8dkMbHjKpMDt8fOWXfZ
-	PS6fLfXYtKqTzWPzknqP3Tcb2Dw+Pr3F4vF+31U2j74tqxg9Pm+SC+CMyrbJSE1MSS1SSM1L
-	zk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAbpVSaEsMacUKBSQWFyspG9n
-	U5RfWpKqkJFfXGKrlFqQklNgUqBXnJhbXJqXrpeXWmJlaGBgZApUmJCdsfFNSEGHRcW2N3uY
-	Ghi36HYxcnJICJhILL25h7mLkYtDSGA3o8SbOZ+YQBJCAp8YJW7+04JIfGOUmNv7nQWm4+m7
-	1SwQib2MElvfzWOCcD4zSnx+fJ8NpIpNQF3iyPNWRhBbRKBWYmXrdHaQImaBpYwSB3atB0sI
-	C7hKLLm6iB3EZhFQlXg3/yXQIRwcvAKWEnPuOUBsk5eYeek7WAknUPjO5u1grbwCghInZz4B
-	u4gZqKZ562ywHyQE5nJIzFt4hwVkjoSAi8TNUwEQc4QlXh3fwg5hS0m87G+DstMlflx+ygRh
-	F0g0H9vHCGHbS7Se6gc7h1lAU2L9Ln2IsKzE1FPrmCDW8kn0/n4C1corsWMejK0k0b5yDpQt
-	IbH3XAOU7SGxc+YpVkhY9TBK7OxdyTqBUWEWkndmIXlnFsLqBYzMqxglUwuKc9NTi00LjPJS
-	y+FxnJyfu4kRnHq1vHYwPnzwQe8QIxMH4yFGCQ5mJRHe0JKqNCHelMTKqtSi/Pii0pzU4kOM
-	psDgnsgsJZqcD0z+eSXxhiaWBiZmZmYmlsZmhkrivK9b56YICaQnlqRmp6YWpBbB9DFxcEo1
-	MHk29GfXT59gG7df0KAxYW92ObOA7radX2651iaeqdK5fOdAzldh+eYvleXbj99o974a9ffy
-	qn8R0s9XX4rLXiK9odDeK2PiFokJF252+y7iW9D1L8laP9N39Qoz+VvXPQ70iBlOaDPhs5S6
-	ut3z3r+cn0nl4asXZdxYLLySN6456+Peu/8qQjinRRQvn6armF7/c9fzetUdzxYwXz30Qrd5
-	xrxHdRmuq9e0toW9W+fdf/+UwrnO1o3snU/0W9yE5/83WX6jxUbpUSPP/TMNYa0GH+fteZhS
-	HMaqO6/2vOPds7Xf+mW19KRVGbh2PrKdNH3mxulNuyWkooIa4hXUdVzNXA+wX+sSv+t34FTq
-	HSWW4oxEQy3mouJEADwhZYNGBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsWy7bCSnK79q+o0g97jnBZNE/4yW8xZtY3R
-	YvXdfjaLlauPMlm8az3HYnH0/1s2i0mHrjFa7L2lbTF/2VN2i+XH/zFZTOy4yuTA7bFz1l12
-	j8tnSz02repk89i8pN5j980GNo+PT2+xeLzfd5XNo2/LKkaPz5vkAjijuGxSUnMyy1KL9O0S
-	uDI2vgkp6LCo2PZmD1MD4xbdLkZODgkBE4mn71azgNhCArsZJU7PMoWIS0icermMEcIWllj5
-	7zk7RM1HRomDv2tAbDYBdYkjz1uBarg4RARaGSUOTG0Bc5gFVgI5HefBOoQFXCWWXF0EZrMI
-	qEq8m/+SuYuRg4NXwFJizj0HiAXyEjMvfQcr4QQK39m8nRFimYXEg+fNrCA2r4CgxMmZT8AO
-	ZQaqb946m3kCo8AsJKlZSFILGJlWMUqmFhTnpucWGxYY5aWW6xUn5haX5qXrJefnbmIER4eW
-	1g7GPas+6B1iZOJgPMQowcGsJMIbWlKVJsSbklhZlVqUH19UmpNafIhRmoNFSZz32+veFCGB
-	9MSS1OzU1ILUIpgsEwenVAPTlPyVX7+fPbac321yaWjX/Rtvzs+KvPN5dpvHd1EWWdlvs8pD
-	RD1yXE6p2v58oB7g5jPzxQpV9/ccU8pmNyzY27bR4qnZvqIXa7sWPNc0W8M624Nh8o9tal+3
-	yZycJMVyYZFXohNfDdvHHwyXt4mc2D2vui1YRf5Lc/PPN5sctjX+XbVMQ6GNaekhteMbvlr1
-	2B36Fhmm7540+cML153rZ8ncyGdKMXFqMGE9s/qffcXpjV9ZlFqduaUj/llc9wrLa7w9Y4fv
-	t+zr0gccXzBn5U999VJpsuocjpOn8948d18qr/Mq7WLvquMHLmzfe0bgYnfbavf/X1sWJXSZ
-	XL/ziWvjpIb9NsYpEV/nHvPZLaXEUpyRaKjFXFScCACHBxPA/QIAAA==
-X-CMS-MailID: 20240626101527epcas5p23e10a6701f552d16bd6a999418009ba0
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIJsWRmVeSWpSXmKPExsWy7bCmlu6Rf9VpBu37zC3mrNrGaLH6bj+b
+	xcrVR5ks3rWeY7E4+v8tm8WkQ9cYLfbe0raYv+wpu8Xy4/+YLCZ2XGVy4PLYOesuu8fls6Ue
+	m1Z1snlsXlLvsftmA5vHx6e3WDze77vK5tG3ZRWjx+dNcgGcUdk2GamJKalFCql5yfkpmXnp
+	tkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUBnKimUJeaUAoUCEouLlfTtbIryS0tS
+	FTLyi0tslVILUnIKTAr0ihNzi0vz0vXyUkusDA0MjEyBChOyMx7vO8hYcFexYumEjSwNjE3S
+	XYycHBICJhJP995nA7GFBPYwSqxq5upi5AKyPzFKNK25zgbhfGOU+PzmJzNMx7tZfewQib2M
+	Er/e/WaFcD4zSsya8oUJpIpNQF3iyPNWRhBbRKBWYmXrdLAOZoEGRonuCd/ZQRLCAm4SPb+m
+	gTWwCKhKzN+wFijOwcErYClxar4cxDZ5iZmXIMo5gcJ3Nm8Hm8krIChxcuYTFhCbGaimeets
+	ZpD5EgIzOSTuN/5hgWh2kbj+5RPU2cISr45vYYewpSQ+v9vLBmGnS/y4/JQJwi6QaD62jxHC
+	tpdoPdXPDHIPs4CmxPpd+hBhWYmpp9YxQezlk+j9/QSqlVdixzwYW0mifeUcKFtCYu+5Bijb
+	Q2L26VVMkMDqYZQ4MOs74wRGhVlI/pmF5J9ZCKsXMDKvYpRKLSjOTU9NNi0w1M1LLYdHc3J+
+	7iZGcNrVCtjBuHrDX71DjEwcjIcYJTiYlUR4Q0uq0oR4UxIrq1KL8uOLSnNSiw8xmgIDfCKz
+	lGhyPjDx55XEG5pYGpiYmZmZWBqbGSqJ875unZsiJJCeWJKanZpakFoE08fEwSnVwLT83P47
+	r/qXX3u2tO/NxFuSAQXbT38399B+yqh3Y6/L0ZbsF6HFm/pDkyq+ZlaWZT+c68Mk7rqueibL
+	wtmWHOffnXpfXWjm+Xdicq9KqHGivnD/m6YZ87I3vbURnPpl/pk80bX7vZSa5c9cCnF6oKRd
+	emWN2PRN5xnmK39wUs9I0b5tdGbZHOb9eyreSTzRNtIX9Xu9/7ntl5fqhkIvZKR6zSZyfujZ
+	9iZO4ea7Q4uOcTMK3/E61m0n38Zp4Wla75T+ij9UI+9/mde6yS6b7m4RjnV988zS0+VRzmv/
+	r1WHAjf8e94pss1wlcLDF4Zz97vw/HyV2vZ0j2Da85WWIh0HDjOIaOhmXWSRDQvalqLEUpyR
+	aKjFXFScCADXjF6dRAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOLMWRmVeSWpSXmKPExsWy7bCSnK7jq+o0g8UvWC3mrNrGaLH6bj+b
+	xcrVR5ks3rWeY7E4+v8tm8WkQ9cYLfbe0raYv+wpu8Xy4/+YLCZ2XGVy4PLYOesuu8fls6Ue
+	m1Z1snlsXlLvsftmA5vHx6e3WDze77vK5tG3ZRWjx+dNcgGcUVw2Kak5mWWpRfp2CVwZj/cd
+	ZCy4q1ixdMJGlgbGJukuRk4OCQETiXez+ti7GLk4hAR2M0r0zO1jgkhISJx6uYwRwhaWWPnv
+	OTuILSTwkVFi2y1VEJtNQF3iyPNWRpBmEYFWRokDU1vAHGaBFkaJua0tYB3CAm4SPb+mgU1l
+	EVCVmL9hLVCcg4NXwFLi1Hw5iAXyEjMvfQcr5wQK39m8nRFimYXEg+fNrCA2r4CgxMmZT1hA
+	bGag+uats5knMArMQpKahSS1gJFpFaNkakFxbnpusmGBYV5quV5xYm5xaV66XnJ+7iZGcFxo
+	aexgvDf/n94hRiYOxkOMEhzMSiK8oSVVaUK8KYmVValF+fFFpTmpxYcYpTlYlMR5DWfMThES
+	SE8sSc1OTS1ILYLJMnFwSjUw2R/25Axlbgir05tkbcTxea630w3WYBPZGl6Jc/se9wfM+rLy
+	7lPLciPnFu9tDpU5i2sOzrsl8UJrfdmv1gkPZqkYPRU/8e/kpKmxt9i23Lbe6b/RZOcduQdP
+	yk6GRjlpPHGLiJtWIL/3o6CWJKdHp8apM4mK86R2VQil76pM67/FNWNx+b3LJ7ayfHYsZw/7
+	UuxZ3eQdKFVW3CkmPf/ozzOXJv9NnNKZmNS7Z4v3jl9KJzjDL9defbf75IzpC/OTtkqe5A2+
+	EcrbHxgxh+mxuojIj8yrs+YzPtK8FeBknTLT19tYsVd8o/Tq0pxPpiH79uhdM/vMvs7jPnea
+	woRJ6w2Pdi1PSHquOlXk7vwzSizFGYmGWsxFxYkA2SNuovoCAAA=
+X-CMS-MailID: 20240626101529epcas5p49976c46701337830c400cefd8f074b40
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240626101527epcas5p23e10a6701f552d16bd6a999418009ba0
+X-CMS-RootMailID: 20240626101529epcas5p49976c46701337830c400cefd8f074b40
 References: <20240626100700.3629-1-anuj20.g@samsung.com>
-	<CGME20240626101527epcas5p23e10a6701f552d16bd6a999418009ba0@epcas5p2.samsung.com>
+	<CGME20240626101529epcas5p49976c46701337830c400cefd8f074b40@epcas5p4.samsung.com>
 
 From: Kanchan Joshi <joshi.k@samsung.com>
 
-If iocb contains the meta, extract that and prepare the bip.
-Extend bip so that can it can carry three new integrity-check flags
-and application tag.
+Create a new helper that contains the handling for both kernel and user
+generated integrity buffer.
+For user provided integrity buffer, convert bip flags
+(guard/reftag/apptag checks) to protocol specific flags. Also pass
+apptag and reftag down.
 
-Make sure that ->prepare_fn and ->complete_fn are skipped for
-user-owned meta buffer.
-
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 ---
- block/bio-integrity.c | 44 +++++++++++++++++++++++++++++++++++++++++++
- block/fops.c          | 28 ++++++++++++++++++++++++++-
- block/t10-pi.c        |  6 ++++++
- include/linux/bio.h   | 10 ++++++++++
- 4 files changed, 87 insertions(+), 1 deletion(-)
+ drivers/nvme/host/core.c | 85 ++++++++++++++++++++++++++++------------
+ 1 file changed, 60 insertions(+), 25 deletions(-)
 
-diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-index 38418be07139..599f39999174 100644
---- a/block/bio-integrity.c
-+++ b/block/bio-integrity.c
-@@ -12,6 +12,7 @@
- #include <linux/bio.h>
- #include <linux/workqueue.h>
- #include <linux/slab.h>
-+#include <uapi/linux/io_uring.h>
- #include "blk.h"
- 
- static struct kmem_cache *bip_slab;
-@@ -337,6 +338,49 @@ static unsigned int bvec_from_pages(struct bio_vec *bvec, struct page **pages,
- 	return nr_bvecs;
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index ab0429644fe3..d17428a2b1dd 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -870,6 +870,13 @@ static blk_status_t nvme_setup_discard(struct nvme_ns *ns, struct request *req,
+ 	return BLK_STS_OK;
  }
  
-+static void bio_uio_meta_to_bip(struct bio *bio, struct uio_meta *meta)
++static void nvme_set_app_tag(struct nvme_command *cmnd, u16 apptag)
 +{
-+	struct bio_integrity_payload *bip = bio_integrity(bio);
-+	u16 bip_flags = 0;
-+
-+	if (meta->flags & INTEGRITY_CHK_GUARD)
-+		bip_flags |= BIP_USER_CHK_GUARD;
-+	if (meta->flags & INTEGRITY_CHK_APPTAG)
-+		bip_flags |= BIP_USER_CHK_APPTAG;
-+	if (meta->flags & INTEGRITY_CHK_REFTAG)
-+		bip_flags |= BIP_USER_CHK_REFTAG;
-+
-+	bip->bip_flags |= bip_flags;
-+	bip->apptag = meta->apptag;
++	cmnd->rw.apptag = cpu_to_le16(apptag);
++	/* use 0xfff as mask so that apptag is used in entirety*/
++	cmnd->rw.appmask = cpu_to_le16(0xffff);
 +}
 +
-+int bio_integrity_map_iter(struct bio *bio, struct uio_meta *meta)
+ static void nvme_set_ref_tag(struct nvme_ns *ns, struct nvme_command *cmnd,
+ 			      struct request *req)
+ {
+@@ -927,6 +934,55 @@ static inline blk_status_t nvme_setup_write_zeroes(struct nvme_ns *ns,
+ 	return BLK_STS_OK;
+ }
+ 
++static blk_status_t nvme_setup_rw_meta(struct nvme_ns *ns, struct request *req,
++				      struct nvme_command *cmnd, u16 *control,
++				      enum nvme_opcode op)
 +{
-+	struct blk_integrity *bi = blk_get_integrity(bio->bi_bdev->bd_disk);
-+	unsigned int integrity_bytes;
-+	int ret;
-+	struct iov_iter it;
++	struct bio_integrity_payload *bip = bio_integrity(req->bio);
 +
-+	if (!bi)
-+		return -EINVAL;
-+	/*
-+	 * original meta iterator can be bigger.
-+	 * process integrity info corresponding to current data buffer only.
-+	 */
-+	it = meta->iter;
-+	integrity_bytes = bio_integrity_bytes(bi, bio_sectors(bio));
-+	if (it.count < integrity_bytes)
-+		return -EINVAL;
-+
-+	it.count = integrity_bytes;
-+	ret = bio_integrity_map_user(bio, &it, 0);
-+	if (!ret) {
-+		bio_uio_meta_to_bip(bio, meta);
-+		iov_iter_advance(&meta->iter, integrity_bytes);
-+	}
-+	return ret;
-+}
-+
- int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter,
- 			   u32 seed)
- {
-diff --git a/block/fops.c b/block/fops.c
-index be36c9fbd500..6477424b4ebc 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -126,12 +126,13 @@ static void blkdev_bio_end_io(struct bio *bio)
- {
- 	struct blkdev_dio *dio = bio->bi_private;
- 	bool should_dirty = dio->flags & DIO_SHOULD_DIRTY;
-+	bool is_async = !(dio->flags & DIO_IS_SYNC);
- 
- 	if (bio->bi_status && !dio->bio.bi_status)
- 		dio->bio.bi_status = bio->bi_status;
- 
- 	if (atomic_dec_and_test(&dio->ref)) {
--		if (!(dio->flags & DIO_IS_SYNC)) {
-+		if (is_async) {
- 			struct kiocb *iocb = dio->iocb;
- 			ssize_t ret;
- 
-@@ -154,6 +155,9 @@ static void blkdev_bio_end_io(struct bio *bio)
- 		}
- 	}
- 
-+	if (is_async && (dio->iocb->ki_flags & IOCB_HAS_META))
-+		bio_integrity_unmap_free_user(bio);
-+
- 	if (should_dirty) {
- 		bio_check_pages_dirty(bio);
- 	} else {
-@@ -231,6 +235,16 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 			}
- 			bio->bi_opf |= REQ_NOWAIT;
- 		}
-+		if (!is_sync && unlikely(iocb->ki_flags & IOCB_HAS_META)) {
-+			ret = bio_integrity_map_iter(bio, iocb->private);
-+			if (unlikely(ret)) {
-+				bio_release_pages(bio, false);
-+				bio_clear_flag(bio, BIO_REFFED);
-+				bio_put(bio);
-+				blk_finish_plug(&plug);
-+				return ret;
-+			}
++	if (!bip || !(bip->bip_flags & BIP_INTEGRITY_USER)) {
++		/*
++		 * If formated with metadata, the block layer always provides a
++		 * metadata buffer if CONFIG_BLK_DEV_INTEGRITY is enabled.  Else
++		 * we enable the PRACT bit for protection information or set the
++		 * namespace capacity to zero to prevent any I/O.
++		 */
++		if (!blk_integrity_rq(req)) {
++			if (WARN_ON_ONCE(!nvme_ns_has_pi(ns->head)))
++				return BLK_STS_NOTSUPP;
++			*control |= NVME_RW_PRINFO_PRACT;
 +		}
- 
- 		if (is_read) {
- 			if (dio->flags & DIO_SHOULD_DIRTY)
-@@ -288,6 +302,9 @@ static void blkdev_bio_end_io_async(struct bio *bio)
- 		ret = blk_status_to_errno(bio->bi_status);
- 	}
- 
-+	if (unlikely(iocb->ki_flags & IOCB_HAS_META))
-+		bio_integrity_unmap_free_user(bio);
 +
- 	iocb->ki_complete(iocb, ret);
++		switch (ns->head->pi_type) {
++		case NVME_NS_DPS_PI_TYPE3:
++			*control |= NVME_RW_PRINFO_PRCHK_GUARD;
++			break;
++		case NVME_NS_DPS_PI_TYPE1:
++		case NVME_NS_DPS_PI_TYPE2:
++			*control |= NVME_RW_PRINFO_PRCHK_GUARD |
++					NVME_RW_PRINFO_PRCHK_REF;
++			if (op == nvme_cmd_zone_append)
++				*control |= NVME_RW_APPEND_PIREMAP;
++			nvme_set_ref_tag(ns, cmnd, req);
++			break;
++		}
++	} else {
++		unsigned short bip_flags = bip->bip_flags;
++
++		if (bip_flags & BIP_USER_CHK_GUARD)
++			*control |= NVME_RW_PRINFO_PRCHK_GUARD;
++		if (bip_flags & BIP_USER_CHK_REFTAG) {
++			*control |= NVME_RW_PRINFO_PRCHK_REF;
++			nvme_set_ref_tag(ns, cmnd, req);
++		}
++		if (bip_flags & BIP_USER_CHK_APPTAG) {
++			*control |= NVME_RW_PRINFO_PRCHK_APP;
++			nvme_set_app_tag(cmnd, bip->apptag);
++		}
++	}
++	return 0;
++}
++
+ /*
+  * NVMe does not support a dedicated command to issue an atomic write. A write
+  * which does adhere to the device atomic limits will silently be executed
+@@ -963,6 +1019,7 @@ static inline blk_status_t nvme_setup_rw(struct nvme_ns *ns,
+ {
+ 	u16 control = 0;
+ 	u32 dsmgmt = 0;
++	blk_status_t ret;
  
- 	if (dio->flags & DIO_SHOULD_DIRTY) {
-@@ -348,6 +365,15 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
- 		task_io_account_write(bio->bi_iter.bi_size);
- 	}
+ 	if (req->cmd_flags & REQ_FUA)
+ 		control |= NVME_RW_FUA;
+@@ -990,31 +1047,9 @@ static inline blk_status_t nvme_setup_rw(struct nvme_ns *ns,
+ 	cmnd->rw.appmask = 0;
  
-+	if (unlikely(iocb->ki_flags & IOCB_HAS_META)) {
-+		ret = bio_integrity_map_iter(bio, iocb->private);
-+		WRITE_ONCE(iocb->private, NULL);
-+		if (unlikely(ret)) {
-+			bio_put(bio);
+ 	if (ns->head->ms) {
+-		/*
+-		 * If formated with metadata, the block layer always provides a
+-		 * metadata buffer if CONFIG_BLK_DEV_INTEGRITY is enabled.  Else
+-		 * we enable the PRACT bit for protection information or set the
+-		 * namespace capacity to zero to prevent any I/O.
+-		 */
+-		if (!blk_integrity_rq(req)) {
+-			if (WARN_ON_ONCE(!nvme_ns_has_pi(ns->head)))
+-				return BLK_STS_NOTSUPP;
+-			control |= NVME_RW_PRINFO_PRACT;
+-		}
+-
+-		switch (ns->head->pi_type) {
+-		case NVME_NS_DPS_PI_TYPE3:
+-			control |= NVME_RW_PRINFO_PRCHK_GUARD;
+-			break;
+-		case NVME_NS_DPS_PI_TYPE1:
+-		case NVME_NS_DPS_PI_TYPE2:
+-			control |= NVME_RW_PRINFO_PRCHK_GUARD |
+-					NVME_RW_PRINFO_PRCHK_REF;
+-			if (op == nvme_cmd_zone_append)
+-				control |= NVME_RW_APPEND_PIREMAP;
+-			nvme_set_ref_tag(ns, cmnd, req);
+-			break;
+-		}
++		ret = nvme_setup_rw_meta(ns, req, cmnd, &control, op);
++		if (unlikely(ret))
 +			return ret;
-+		}
-+	}
-+
- 	if (iocb->ki_flags & IOCB_ATOMIC)
- 		bio->bi_opf |= REQ_ATOMIC;
+ 	}
  
-diff --git a/block/t10-pi.c b/block/t10-pi.c
-index cd7fa60d63ff..38c3da245b11 100644
---- a/block/t10-pi.c
-+++ b/block/t10-pi.c
-@@ -131,6 +131,8 @@ static void t10_pi_type1_prepare(struct request *rq)
- 		/* Already remapped? */
- 		if (bip->bip_flags & BIP_MAPPED_INTEGRITY)
- 			break;
-+		if (bip->bip_flags & BIP_INTEGRITY_USER)
-+			break;
- 
- 		bip_for_each_vec(iv, bip, iter) {
- 			unsigned int j;
-@@ -180,6 +182,8 @@ static void t10_pi_type1_complete(struct request *rq, unsigned int nr_bytes)
- 		struct bio_vec iv;
- 		struct bvec_iter iter;
- 
-+		if (bip->bip_flags & BIP_INTEGRITY_USER)
-+			break;
- 		bip_for_each_vec(iv, bip, iter) {
- 			unsigned int j;
- 			void *p;
-@@ -305,6 +309,8 @@ static void ext_pi_type1_prepare(struct request *rq)
- 		/* Already remapped? */
- 		if (bip->bip_flags & BIP_MAPPED_INTEGRITY)
- 			break;
-+		if (bip->bip_flags & BIP_INTEGRITY_USER)
-+			break;
- 
- 		bip_for_each_vec(iv, bip, iter) {
- 			unsigned int j;
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 966e22a04996..ff22b627906d 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -330,6 +330,9 @@ enum bip_flags {
- 	BIP_INTEGRITY_USER	= 1 << 5, /* Integrity payload is user address */
- 	BIP_COPY_USER		= 1 << 6, /* Kernel bounce buffer in use */
- 	BIP_CLONED		= 1 << 7, /* Indicates that bip is cloned */
-+	BIP_USER_CHK_GUARD	= 1 << 8,
-+	BIP_USER_CHK_APPTAG	= 1 << 9,
-+	BIP_USER_CHK_REFTAG	= 1 << 10,
- };
- 
- struct uio_meta {
-@@ -349,6 +352,7 @@ struct bio_integrity_payload {
- 	unsigned short		bip_vcnt;	/* # of integrity bio_vecs */
- 	unsigned short		bip_max_vcnt;	/* integrity bio_vec slots */
- 	unsigned short		bip_flags;	/* control flags */
-+	u16			apptag;		/* apptag */
- 
- 	struct bvec_iter	bio_iter;	/* for rewinding parent bio */
- 
-@@ -738,6 +742,7 @@ static inline bool bioset_initialized(struct bio_set *bs)
- 		bip_for_each_vec(_bvl, _bio->bi_integrity, _iter)
- 
- int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter, u32 seed);
-+int bio_integrity_map_iter(struct bio *bio, struct uio_meta *meta);
- void bio_integrity_unmap_free_user(struct bio *bio);
- extern struct bio_integrity_payload *bio_integrity_alloc(struct bio *, gfp_t, unsigned int);
- extern int bio_integrity_add_page(struct bio *, struct page *, unsigned int, unsigned int);
-@@ -817,6 +822,11 @@ static inline int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter,
- 	return -EINVAL;
- }
- 
-+static inline int bio_integrity_map_iter(struct bio *bio, struct uio_meta *meta)
-+{
-+	return -EINVAL;
-+}
-+
- static inline void bio_integrity_unmap_free_user(struct bio *bio)
- {
- }
+ 	cmnd->rw.control = cpu_to_le16(control);
 -- 
 2.25.1
 

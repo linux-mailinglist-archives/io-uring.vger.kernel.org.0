@@ -1,73 +1,73 @@
-Return-Path: <io-uring+bounces-2379-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2380-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4232591C45D
-	for <lists+io-uring@lfdr.de>; Fri, 28 Jun 2024 19:04:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605D691C468
+	for <lists+io-uring@lfdr.de>; Fri, 28 Jun 2024 19:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C6C2816F9
-	for <lists+io-uring@lfdr.de>; Fri, 28 Jun 2024 17:04:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4A561F22B9D
+	for <lists+io-uring@lfdr.de>; Fri, 28 Jun 2024 17:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB4D1C6896;
-	Fri, 28 Jun 2024 17:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CFE1CB31D;
+	Fri, 28 Jun 2024 17:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yu/4oIfu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqKgZln1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA901CD15;
-	Fri, 28 Jun 2024 17:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A651C8FAC;
+	Fri, 28 Jun 2024 17:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719594237; cv=none; b=f1bHu67EyYBc4eA27M+J/FBgAncRwwOMXrIsCgCCY7U3EZ0FfS+YzvuB9CC9gH4AQkfJ2pBfwf7DzykO4JoWuxQaQgM5W3tf72mpn7Uez3Bths0KbLBrzskiHWJFiLTjA4VMDENHH0+e2cnZrknR2oVnIFV71M7hHvTHiuFEg3k=
+	t=1719594374; cv=none; b=EsgTQtxjOtsSrIbNn+2UKAMFmAMqH1ELgfnUJCWtjIMsnKEGn202nlFp5b69GmqWYFd6Lcbrk0xP1z7b1t9l7dPn40x6ZCiT92wFL5F8dYM0oPzV3xRrnULz95Pq5emfNNDIbiBICRT+Njm+DtTcbjPmXnVlau789EUMNGG3zFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719594237; c=relaxed/simple;
-	bh=Z+1nSjx5df6B3GxvFHdjo4RmU660+fuN8prgJvDaecc=;
+	s=arc-20240116; t=1719594374; c=relaxed/simple;
+	bh=gXoJVXrNRt1XSWpMc1PQ4ligQNMz7PkriCf1kZ0RAOY=;
 	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=LN248pLlFBKml8yZYUkLqJIL8dEPIamNGAeq0LvJWQiBEIeWWV9Ncp92PtfrMH+V+eF0jWaRSsiGtbIRRrlzk7KRCPjowzgqrFQpvZIs+FAJOuUWH3NLepSAjm5u9Ma4gTAVEeEVjG2Bv5APXDZdKgFdv3N5QiRSNybc2Qc5vcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yu/4oIfu; arc=none smtp.client-ip=209.85.219.42
+	 Mime-Version:Content-Type; b=ss3pkw9mur8T1fDGrviCuXTPAb18dqzMqNKaphH5wJ7k5+8nzNvzRnHip8/ANqrecP3aG2r2fElAadxMsnKahKYxClIE53cdHU/l4nrHPII8GtBbim8PRNfTmM2gmI5tQkjnKiweN8e7ePDaCnR38421rcjc7O4pO0t4Gi5aFZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqKgZln1; arc=none smtp.client-ip=209.85.160.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b56000f663so4055526d6.1;
-        Fri, 28 Jun 2024 10:03:56 -0700 (PDT)
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4463b71d5b0so7200251cf.1;
+        Fri, 28 Jun 2024 10:06:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719594235; x=1720199035; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719594372; x=1720199172; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:subject:references
          :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2YV8YNmXHr3Soxj4acZQlBarHinHioDKRKUv49Xn8zg=;
-        b=Yu/4oIfuhYLj/PL0QdFA5qui21BeQKzjkM3swCEhTGMjPwkoXVBZAc61eqYANtX1vT
-         tLsl0AkBRRTuO/m7J2duFtjWSVvzXrz1PwKEOWbrtO53oImMTqRSjMIzZ9Ogk8/sAd8m
-         E5HkK15dvA+hFqBWtU3gZCIse8KedXagGF+etmpS7DIiuePXT+22IiVEOjfRfT4jSv42
-         phz17EceVzl97eNfXQE6qKjuH3ap6quXDGgL/Q67C0EQhLu/X4VOXHBi6Dm23HKqPJsl
-         udDYC7XzyUZyLNFYu5PV4xM7mbDBceLSJCFAPqjPCWb5PJYTv0tLL0+ttJ3zE/XQaamo
-         HBXg==
+        bh=2eAP/3di2Yz9vLyRnezp3gLROdvAFX1rwp7gVglmA2Y=;
+        b=mqKgZln1ZneVPEvzk18Bmg6DzIIsM++UhWQQz+8P2d6JPbxoCzjxxDrF12vhiG9XJY
+         wLC0RwATyoOYdbzV/CVw2IR33qeIw55Y581UWcZ7LBqHYrCVRXBqFDKU7Ka5/llHHaGn
+         JF6ZVDouyCOhceT4ZtuYndeEPxzJnqSDyykDVP0H4trSH6QRE4tAz9XeVzBxYu05dSKq
+         IgA8XTv1DpdLU7BJPHo1Itw2AEba8/1z2HsHSsx3SyG+w9sndv6apHkFSxcQaS/fjs8O
+         STHux+idvL7nlbj6sEtFQSxl/aarraymB1oOEs/rM6BNmzKXfNDhr7egovohdm4Hl6zJ
+         I09Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719594235; x=1720199035;
+        d=1e100.net; s=20230601; t=1719594372; x=1720199172;
         h=content-transfer-encoding:mime-version:subject:references
          :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=2YV8YNmXHr3Soxj4acZQlBarHinHioDKRKUv49Xn8zg=;
-        b=ha43aa/pjnDxVshaOVXWj5XmMMr4f+6Z6ipQTTVwBdgo1hcWllzeYRmyL6XHRA0a0I
-         yCLJUnNBv5cC2nHlh+d6uTJLXV+mVCs4Rx/EsCyFMJyZaVNODWrYoDRy5ftVyL+FtFl1
-         6mkW/g8T+Byz1NNflKLCUU5kLt2a637mcPAhWhZVvhcPdrTLCCDfd9Wgc/ftClPJRpGB
-         hQB3Hwj3lPxs49pZwjpl1/yZ+2LHsdHndiu0lxGe3CJbw0fQXCB50PmdhPRuKOToebmU
-         RPcq991CS7zAh/RTMVk/NkjWiYe7I3cOAI2+1/DYYrwwZFGZT/Ks3yaPHXJJFxHgAwJu
-         kMIg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7WBwD+tFx0grRAjynoaB0IkxqVJutoe3oVppuWJ3LvCaLdEfaoP2aVG+zkrZLAEaJFBplxolT04bukCKQZ4xmd5JxI4Fi4//VMoNxPUDtLr5xstDaajONWHk2onQoCK4=
-X-Gm-Message-State: AOJu0Yyf5u23JY2VDXZ51h9sww1rxH8JHbei9/QtDyXR+caxuOpssIa4
-	6Ma6Hdamsc/qZ+p6fNYfUUjK6iAiS645glGlWDMOWCH8X4lwkOqC
-X-Google-Smtp-Source: AGHT+IHYABkLuOzdNK2uCdOx796LHPLBOc0YPOixhkyMY3ZXUApL9sC18PGVyQfko3C0eVVqjzvoXQ==
-X-Received: by 2002:a05:6214:29e2:b0:6b5:4249:7c0 with SMTP id 6a1803df08f44-6b54249125fmr208270706d6.5.1719594234720;
-        Fri, 28 Jun 2024 10:03:54 -0700 (PDT)
+        bh=2eAP/3di2Yz9vLyRnezp3gLROdvAFX1rwp7gVglmA2Y=;
+        b=KI32uhmqnZ27XvEbVK8cvkVyEGPO5Ij5D1sW+7bi6db1Ymv/EuwccvcDJu5xOIRCsd
+         IJQs3b+YjZiSv5G6s4TCkp7cCUPUMMq/6qpXat0wcKTGUvAay91S8Z+e3ny1QctHJS/m
+         zbHcCRe6FAmrILX212pth4TnXlMTlGr63c9GQlyHvo8IpsxWz9ye5TmcHCItSU6xS0uU
+         1THr4Tmm6xT4NzR5de2HPznKLX5NIUAHeXmCv5P3lTKa58R2V4wwDdQGxixXb0EoJwBy
+         ZCzXygZD8v4iHmE4QN3ivOg5NTVg10FLnF0BQuER4XjsQGOAoxy5ZfG+SVCP/bSTmePp
+         79Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCWVVDQmCRYhnrVN3GwerR+y1z2mMGt53aXmei0p5B+sJiyIhW/jn3dr9OpYf71ApPZkPVNwWnYDCP3dY+OU4EORDhHkFwJvio1wLlxtdae2+C4v9SKDDQFxVBX5TV9/a78=
+X-Gm-Message-State: AOJu0YxyFxYWro2siF8hFsQnhEHnDjB1NfZy/l03A7oAkuxR+BWXwEZA
+	XXCqYXBTYyvu3EeFbcLV7nzN94DAbuJUyQV69iy76d/46O0IjOvZ
+X-Google-Smtp-Source: AGHT+IEY19D7pPO10t/O+dRdYMk7NqQAUcOrIComPVc74I1hBqAGqXByqbdKTPVY9AXDHQu605IQkw==
+X-Received: by 2002:ac8:5d42:0:b0:445:41e:2e97 with SMTP id d75a77b69052e-4465561b0dbmr41468431cf.3.1719594372098;
+        Fri, 28 Jun 2024 10:06:12 -0700 (PDT)
 Received: from localhost (56.148.86.34.bc.googleusercontent.com. [34.86.148.56])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e563230sm9433006d6.35.2024.06.28.10.03.54
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-446513dba45sm8730981cf.6.2024.06.28.10.06.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 10:03:54 -0700 (PDT)
-Date: Fri, 28 Jun 2024 13:03:54 -0400
+        Fri, 28 Jun 2024 10:06:11 -0700 (PDT)
+Date: Fri, 28 Jun 2024 13:06:11 -0400
 From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
 To: Pavel Begunkov <asml.silence@gmail.com>, 
  io-uring@vger.kernel.org, 
@@ -79,11 +79,12 @@ Cc: Jens Axboe <axboe@kernel.dk>,
  David Ahern <dsahern@kernel.org>, 
  Eric Dumazet <edumazet@google.com>, 
  Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Message-ID: <667eecfa17379_2185b294cc@willemb.c.googlers.com.notmuch>
-In-Reply-To: <e128f814a989914c27318dcbd8f8c7406c9b9fd3.1719190216.git.asml.silence@gmail.com>
+Message-ID: <667eed8350f89_2185b294e2@willemb.c.googlers.com.notmuch>
+In-Reply-To: <a916f99aa91bc9066411015835cadd5677a454fb.1719190216.git.asml.silence@gmail.com>
 References: <cover.1719190216.git.asml.silence@gmail.com>
- <e128f814a989914c27318dcbd8f8c7406c9b9fd3.1719190216.git.asml.silence@gmail.com>
-Subject: Re: [PATCH net-next 2/5] net: split __zerocopy_sg_from_iter()
+ <a916f99aa91bc9066411015835cadd5677a454fb.1719190216.git.asml.silence@gmail.com>
+Subject: Re: [PATCH net-next 3/5] net: batch zerocopy_fill_skb_from_iter
+ accounting
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -95,12 +96,94 @@ Content-Type: text/plain;
 Content-Transfer-Encoding: 7bit
 
 Pavel Begunkov wrote:
-> Split a function out of __zerocopy_sg_from_iter() that only cares about
-> the traditional path with refcounted pages and doesn't need to know
-> about ->sg_from_iter. A preparation patch, we'll improve on the function
-> later.
+> Instead of accounting every page range against the socket separately, do
+> it in batch based on the change in skb->truesize. It's also moved into
+> __zerocopy_sg_from_iter(), so that zerocopy_fill_skb_from_iter() is
+> simpler and responsible for setting frags but not the accounting.
 > 
 > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
 Reviewed-by: Willem de Bruijn <willemb@google.com>
+
+> ---
+>  net/core/datagram.c | 31 ++++++++++++++++++-------------
+>  1 file changed, 18 insertions(+), 13 deletions(-)
+> 
+> diff --git a/net/core/datagram.c b/net/core/datagram.c
+> index 7f7d5da2e406..2b24d69b1e94 100644
+> --- a/net/core/datagram.c
+> +++ b/net/core/datagram.c
+> @@ -610,7 +610,7 @@ int skb_copy_datagram_from_iter(struct sk_buff *skb, int offset,
+>  }
+>  EXPORT_SYMBOL(skb_copy_datagram_from_iter);
+>  
+> -static int zerocopy_fill_skb_from_iter(struct sock *sk, struct sk_buff *skb,
+> +static int zerocopy_fill_skb_from_iter(struct sk_buff *skb,
+>  					struct iov_iter *from, size_t length)
+>  {
+>  	int frag = skb_shinfo(skb)->nr_frags;
+> @@ -621,7 +621,6 @@ static int zerocopy_fill_skb_from_iter(struct sock *sk, struct sk_buff *skb,
+>  		int refs, order, n = 0;
+>  		size_t start;
+>  		ssize_t copied;
+> -		unsigned long truesize;
+>  
+>  		if (frag == MAX_SKB_FRAGS)
+>  			return -EMSGSIZE;
+
+Does the existing code then incorrectly not unwind sk_wmem_queued_add
+and sk_mem_charge if returning with error from the second or later
+loop..
+
+> @@ -633,17 +632,9 @@ static int zerocopy_fill_skb_from_iter(struct sock *sk, struct sk_buff *skb,
+>  
+>  		length -= copied;
+>  
+> -		truesize = PAGE_ALIGN(copied + start);
+>  		skb->data_len += copied;
+>  		skb->len += copied;
+> -		skb->truesize += truesize;
+> -		if (sk && sk->sk_type == SOCK_STREAM) {
+> -			sk_wmem_queued_add(sk, truesize);
+> -			if (!skb_zcopy_pure(skb))
+> -				sk_mem_charge(sk, truesize);
+> -		} else {
+> -			refcount_add(truesize, &skb->sk->sk_wmem_alloc);
+> -		}
+> +		skb->truesize += PAGE_ALIGN(copied + start);
+>  
+>  		head = compound_head(pages[n]);
+>  		order = compound_order(head);
+> @@ -691,10 +682,24 @@ int __zerocopy_sg_from_iter(struct msghdr *msg, struct sock *sk,
+>  			    struct sk_buff *skb, struct iov_iter *from,
+>  			    size_t length)
+>  {
+> +	unsigned long orig_size = skb->truesize;
+> +	unsigned long truesize;
+> +	int ret;
+> +
+>  	if (msg && msg->msg_ubuf && msg->sg_from_iter)
+>  		return msg->sg_from_iter(sk, skb, from, length);
+> -	else
+> -		return zerocopy_fill_skb_from_iter(sk, skb, from, length);
+> +
+> +	ret = zerocopy_fill_skb_from_iter(skb, from, length);
+> +	truesize = skb->truesize - orig_size;
+> +
+> +	if (sk && sk->sk_type == SOCK_STREAM) {
+> +		sk_wmem_queued_add(sk, truesize);
+> +		if (!skb_zcopy_pure(skb))
+> +			sk_mem_charge(sk, truesize);
+> +	} else {
+> +		refcount_add(truesize, &skb->sk->sk_wmem_alloc);
+> +	}
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL(__zerocopy_sg_from_iter);
+>  
+> -- 
+> 2.44.0
+> 
+
+
 

@@ -1,113 +1,123 @@
-Return-Path: <io-uring+bounces-2385-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2386-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE3791C76B
-	for <lists+io-uring@lfdr.de>; Fri, 28 Jun 2024 22:36:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902CA91C76F
+	for <lists+io-uring@lfdr.de>; Fri, 28 Jun 2024 22:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 489991F21A74
-	for <lists+io-uring@lfdr.de>; Fri, 28 Jun 2024 20:36:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE61B1C22D86
+	for <lists+io-uring@lfdr.de>; Fri, 28 Jun 2024 20:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027B577103;
-	Fri, 28 Jun 2024 20:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA2F78286;
+	Fri, 28 Jun 2024 20:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yNUB2Ncs"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="b2zqS4+S"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823B07D06B
-	for <io-uring@vger.kernel.org>; Fri, 28 Jun 2024 20:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B5A4D8BC
+	for <io-uring@vger.kernel.org>; Fri, 28 Jun 2024 20:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719606971; cv=none; b=lfBmr/TYK6MDlJYODqRSg7Sd8WKvuane/LCMeEwWM+pgWFp3Fw3c/FL5GNTkndUDmFmFw3B5x4YN+3zn4eGMI9o6lUw+pZYdmwgdptuf7tSWxIP6ZzzIswomANsxxfi1fJoD0phpAocfYCs88eVKjtuVZZ63npKFiy79W+eQO2Y=
+	t=1719607265; cv=none; b=D8czTAHavxVIw75PlR5m3f1d4j7+WvwWLXcUMM7U0avWAg/9APODvGELW76rfY1XofVbVQO4bidKUFtL6S8I+YRzAyrlyRk62uC1FhOIpVIAR89XIPwVVU5yPiF/raf2g+cJYdRJ+BpJ1KCMQml2z6iIG8/oCV9RXKc68d3JUqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719606971; c=relaxed/simple;
-	bh=2K3dQB3zpbRSQ4zNsm2kr2egLTbsrKEaC+HcN9qfUYY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ljbP/xNkAHjywfE7YmRoSxIFq7tGv4f97a9vF3GSmwEkTGcNzBNrIBkRN+zaeW0X+zkXwkduLSbTIwuPMpZOWvoZB/I5Fhk3I9K3cxIoaiexiVrUM2whlbxvt3OFTW8kPyVNwU5s9GtQLWJiqGzYBTmYn1lfHYPYKYxqISLnfhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yNUB2Ncs; arc=none smtp.client-ip=209.85.161.47
+	s=arc-20240116; t=1719607265; c=relaxed/simple;
+	bh=fHnQaHhbvVYwukowvzyMTqQ/4nywo2XtLLUCkd1xTGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dmlLmcq7KJbbwPDH8yWh6GsKoQtf5HZiuR4Ws/7kqpu/8JKMKtzp4AKovhB+Iy+oJnLRmNohuw6gz5rda0bgDmXFyScqbuWSwMIhkFTTficHvMUCuVZc6aqxgbYGJzHEZoCOdHbHaZTgG/tIbWf3rTESEKUchIdw7kezcNoTi4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=b2zqS4+S; arc=none smtp.client-ip=209.85.160.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5c41104e447so55118eaf.2
-        for <io-uring@vger.kernel.org>; Fri, 28 Jun 2024 13:36:10 -0700 (PDT)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-254925e6472so107901fac.0
+        for <io-uring@vger.kernel.org>; Fri, 28 Jun 2024 13:41:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719606969; x=1720211769; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5l0qovf4jTVxYzo2d0+ddTKgfILRCCXgo0o1Ulo6Ekk=;
-        b=yNUB2NcsuUo9AAjBGJ30Z/C5gP4BG/PE2245Bc4XiMD1X4HPlihN/4UgsNhUezL4rW
-         QAbNjahKDm2mv+U64uMrNxRuIWrxFd68XF7rZR3KyKc8IT/thloY8VDYOqyYKynHDk95
-         KHR1ZEdtaluaq3qQ/zsHx5vpLOFXuQJudp8C/C81/TgJo10wh6o9AqZZaAlUU+Wyyc9w
-         VFjk5NlgHYFgdStBK5JfJpMJy8y8BnFAC6E3yNPik0aJNO0Ml6At3GgMVMJyZRUOXgCN
-         Fs5HRHMCQUmtlctRZq07LBsXe53/QrfjatQWDRYIuaVYRq1N6vPL7ujXBfhCUNkbHcti
-         9j4w==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719607263; x=1720212063; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=h/rUVUWSsqzH+BwyS/RRWB/P23DUfU4JVXChiPPIMqo=;
+        b=b2zqS4+SPROCwQXFh11p5Zjq9c0VrXTMrZ4tHHyd7Qlkyu5GF9c1CQA3u0TJHlyTxb
+         X2BtKT0eoxef9CbPRSZzXAHarUDZUF/255gH1nUoxjuezRoSwmj/AoRJ4DAlwgh9+67M
+         d02yAlL7r/jgdAYgpM2C6OZc8x7lT7fmwvnghO50E4WO+BL/OqiJIq3rObUHNmX7G4oS
+         /zBQ0+gWLZYEkXW0hltHLnNMEWzUs/WdI4gY+eVuxLybmTrzltZi+lqqnXQC1q8IF8/K
+         y/P/4dLJyYQfGvNfDjJ33UdkXu7e9E3Pdu/Lub3CkZA3o272LAqOyEytEH1+z2brPmxJ
+         lpnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719606969; x=1720211769;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5l0qovf4jTVxYzo2d0+ddTKgfILRCCXgo0o1Ulo6Ekk=;
-        b=bwXh2OaLRLKV1Ba4Mn2vsBtfIwpRRJ4+pwL7fA1NVP8NXWdel16wqCdqrm4a+yQQ/8
-         Q1GGqMCVQmIpdHlYccTzsBKaSCq3ys9tgi+gKfbSDXnF3hKxMNNoSRPEYs2r00Uqqn63
-         oOYZzQvJyF9FlrXQLsMEHuULNGf4Sz8/X2PxvPLRAHDbdTlJQxJLv8GqBKoDwdfktCdT
-         b3OnNHRodTS6TdSQxII94MAWTsP52UgTBfFccsGI6yVU8RdcJYx7+I7I3Smwc9TMm0p7
-         hPpLLBACDUs7+VRI8qJdWcXvcOBNuhlt81BJBeIwTrUt3RcSuQ+tdT0DUb8U4YZHCIHX
-         jR4g==
-X-Gm-Message-State: AOJu0Yyq0yjTBUm7gdwWzouxNTIIu3WsOgA4zrCMrNC4byL+zjlmbju+
-	rDsnb7qxL1rzjrN5XaW9O+gt7yKLtuMYYm1h8x8WHlx1w8Xz8W5zSw4hAEXxFr0=
-X-Google-Smtp-Source: AGHT+IH4WazrWMA1Jhl7+Mv0AnHm21EMJQcJF3b3HRLS4CUfPejixBcFUyOtlBC/ESyNwt5bq0+QDw==
-X-Received: by 2002:a4a:c186:0:b0:5c2:25cb:e6c6 with SMTP id 006d021491bc7-5c225cbe811mr7965464eaf.0.1719606969571;
-        Fri, 28 Jun 2024 13:36:09 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c4149c37c4sm367003eaf.42.2024.06.28.13.36.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 13:36:08 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: asml.silence@gmail.com, mpatocka@redhat.com, hch@lst.de, 
- kbusch@kernel.org, martin.petersen@oracle.com, 
- Anuj Gupta <anuj20.g@samsung.com>
-Cc: io-uring@vger.kernel.org, linux-nvme@lists.infradead.org, 
- linux-block@vger.kernel.org
-In-Reply-To: <20240626100700.3629-1-anuj20.g@samsung.com>
-References: <CGME20240626101415epcas5p3b06a963aa0b0196d6599fb86c90bc38c@epcas5p3.samsung.com>
- <20240626100700.3629-1-anuj20.g@samsung.com>
-Subject: Re: (subset) [PATCH v2 00/10] Read/Write with meta/integrity
-Message-Id: <171960696798.897195.9522006867615686131.b4-ty@kernel.dk>
-Date: Fri, 28 Jun 2024 14:36:07 -0600
+        d=1e100.net; s=20230601; t=1719607263; x=1720212063;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h/rUVUWSsqzH+BwyS/RRWB/P23DUfU4JVXChiPPIMqo=;
+        b=iBO8iezPg80k4pURWxtPg4OTDb1CD5pXNi8ku9ocQ2qrdEHa5SxWbGIjWg75Q56euT
+         f8Ri4hvw7nFR8p4yabMDnstDdBxD1iscnD/9YLG6HVbEOPs9/Uw9PVTOi1faQ1s8xCTX
+         Bz7sV8e/wJQR9ER+3Rlrtepcd64KZ0aa1y4sFaGGnqZxQYoIDkCpfHsvmVwGMnbf6UMC
+         g+eHIlfEwq2Z2WYMTNOlb/4H1TH34MF3SFfybhBgeS8W06i/sQ1ZG6kBgsh8VE7zZUWP
+         TLe+Ak4BsDUbw9ODSzi9fB3F7BoqZxbCHV4CzTgGE/jmm5OgW5J5bpw72QHTPcb+CQ9f
+         Pk7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUjx0dL2hrnOLOyd9359CO3sdcNXGSvQ7Iu98T4fl53XrpmO6Ka6sxFMBZi7a9JVyFgs1MOuP/1cazbfCGZTeLTqU31MeywMLo=
+X-Gm-Message-State: AOJu0YwzZfLe2Yz9eO8hrxh0NXZLbpimURKjI/XclFvkvhiYhWIe5eR9
+	4hqCbyQLS2mw7MW0xWAkJgElGaasHFtgfFqtJZeIwF/l7RRHlmWgeS8pOtaRsRQ=
+X-Google-Smtp-Source: AGHT+IHzIw2ax1G02UjYSR0YVWZnApYeGUjzjAj0KGPvETJECW1JgcPGPnjXfe84BRsFEiRcUejzRg==
+X-Received: by 2002:a05:6808:1484:b0:3d5:4213:82dd with SMTP id 5614622812f47-3d542139c8fmr21229204b6e.4.1719607262618;
+        Fri, 28 Jun 2024 13:41:02 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d62f9e9b20sm427802b6e.25.2024.06.28.13.41.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 13:41:01 -0700 (PDT)
+Message-ID: <dc126f39-e5a1-4ebe-98ed-ec615f553bb4@kernel.dk>
+Date: Fri, 28 Jun 2024 14:41:00 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] Monthly io-uring report (Jun 2024)
+To: syzbot <syzbot+list9762eac493f50a993bbb@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <00000000000051e313061bf00dcb@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <00000000000051e313061bf00dcb@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
 
-
-On Wed, 26 Jun 2024 15:36:50 +0530, Anuj Gupta wrote:
-> This adds a new io_uring interface to exchange meta along with read/write.
+On 6/28/24 3:41 AM, syzbot wrote:
+> Hello io-uring maintainers/developers,
 > 
-> Interface:
-> Meta information is represented using a newly introduced 'struct io_uring_meta'.
-> Application sets up a SQE128 ring, and prepares io_uring_meta within unused
-> portion of SQE. Application populates 'struct io_uring_meta' fields as below:
+> This is a 31-day syzbot report for the io-uring subsystem.
+> All related reports/information can be found at:
+> https://syzkaller.appspot.com/upstream/s/io-uring
 > 
-> [...]
+> During the period, 3 new issues were detected and 1 were fixed.
+> In total, 6 issues are still open and 94 have been fixed so far.
+> 
+> Some of the still happening issues:
+> 
+> Ref Crashes Repro Title
+> <1> 3582    Yes   general protection fault in try_to_wake_up (2)
+>                   https://syzkaller.appspot.com/bug?extid=b4a81dc8727e513f364d
+> <2> 16      Yes   KMSAN: uninit-value in io_req_cqe_overflow (3)
+>                   https://syzkaller.appspot.com/bug?extid=e6616d0dc8ded5dc56d6
+> <3> 2       No    KCSAN: data-race in io_worker_handle_work / io_wq_worker_cancel (3)
+>                   https://syzkaller.appspot.com/bug?extid=90b0e38244e035ec327c
 
-Applied, thanks!
+None of these should be valid anymore. 1 is ancient, and all the more
+recent testing and reports I see of this are not even related to
+io_uring, or the original report.
 
-[02/10] block: set bip_vcnt correctly
-        commit: 3991657ae7074c3c497bf095093178bed37ea1b4
+2 should be fixed Linus's tree, and 3 was fixed for 6.11 as it isn't
+really important. But my two attempts at getting a re-run of those had a
+failure on the syzbot side.
 
-Best regards,
+Please close them, thanks.
+
 -- 
 Jens Axboe
-
-
 
 

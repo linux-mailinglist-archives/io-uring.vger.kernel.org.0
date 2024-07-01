@@ -1,166 +1,132 @@
-Return-Path: <io-uring+bounces-2399-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2400-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A176B91E037
-	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 15:06:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61C991E1E5
+	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 16:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6232C285085
-	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 13:06:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E57821C22F0F
+	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 14:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F74215A87C;
-	Mon,  1 Jul 2024 13:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72D41607A1;
+	Mon,  1 Jul 2024 14:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3rWn+98"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E52+c2QV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C754A158D9F
-	for <io-uring@vger.kernel.org>; Mon,  1 Jul 2024 13:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EAE43144;
+	Mon,  1 Jul 2024 14:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719839174; cv=none; b=MMYVrR6iUJGfqpthp9htz46MgI+vtZtVC9yOWrrQJcX5DJeYIooo3L5Kx09NuEyx7WJ4W0YCd9Eb1zPbinv8v6s1mfE2kQCGCRc6ejOsiVp49C/5xQxPr5tn77AOLN8sbgOSaMs8ourpf5mf+fITtnA7YomZ22qXZkKPPEr0Wp8=
+	t=1719842997; cv=none; b=loBR0oxIaMSoPzLfz03AMImg0tbFdQb+ZO80kfm212QBXl247YMVedtklGVfgD1qWrGGgp4MMOJH/STs52G6N9C6xQcYj0TguPskDzHMToXSa/+Qc968kjA+z2dZ8UA+bWMFIpvtmHBdbE04PKUpDjSZ3AP7K03DE5USGa1SIlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719839174; c=relaxed/simple;
-	bh=e9fmKiipX8LCcYp7gI5T7gb9wezZoRd85FeZ/eUNvmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ZUuucFe7q1EcwVbqWW7nnTCoXiFsdRectDrZj9uEW/YD5ortlCPQE6t5msPhq1GLBBuDZLQcC/ybaPI3Cr/dEbdrr42Sh6bOuHGoGxI/i6eKbXj2E8MYK8vGOXwW4QMUG6N7jN3qMjYhxBzRKZXsFj7USy3dQaY10ikk9aX+qnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3rWn+98; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1719842997; c=relaxed/simple;
+	bh=Mu557jmbD+ExV7JJyBBnKegVQdOMCnuxP9X7vG5s8WM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i43LtQFBi/zJXTkYO22G97WHAi4EAngOLt5Ufmk6oXyHFXODxZJxxH3o6mgMuh/QlruK9IunRdXp9EhgDDQwRkN/XyS1y8RCsQUJWBW0kD7Bo1lnxhRV6SomcIqCKVMN8sF2LoY3LYUNwpsxylVLB9vhnihTrgUJEm4rc3ITKTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E52+c2QV; arc=none smtp.client-ip=209.85.161.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57d06101d76so232633a12.3
-        for <io-uring@vger.kernel.org>; Mon, 01 Jul 2024 06:06:12 -0700 (PDT)
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5c444e7d18fso615050eaf.3;
+        Mon, 01 Jul 2024 07:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719839171; x=1720443971; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=E/o8ImH9R7txIe3wpkdOGe7ZTkeBANZx0gumFohQTJ8=;
-        b=k3rWn+98o3ybr864I0A0xvlvgVHdBVB0ZEPylg2dQfhsMfTUuuyxlDnAH2lEKyb3yr
-         3LGA1m9GViQPSKEJyyEfose6eJjJpoRZOs2L5D7DjtHBR9Elqa5YKvBJUgcPrXqirlT4
-         T35C6Hnr0xYs6mnKBp65yNyDTZIyUOKcVrn7EGI/LF6knJxtmCDIs3WIhMj+zwNQOxqT
-         sk3KY1W/IUZbz9bN5/tPLWLQlyQd+aCo05/si+LZ/+zvLj84u3fIO2cT398ue9qzFTkn
-         rNCwmZAxL/qi7yLslBw3hPxHaBpF8Fcpl7ZgClhd2Kk70aqFd+aNCECTIHjG1ACk2Rjl
-         SQRQ==
+        d=gmail.com; s=20230601; t=1719842995; x=1720447795; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lQHiKheUZkHn50AxjZouoKLxa6g4cpujt17k/BC4nOw=;
+        b=E52+c2QVHTaHYP9bfC1Rc0CewUEE4YIidAG7qZHmMARs1ZgX5CCSfb1a7TFWzzTVEO
+         4EX3Dc4GYp8FR1WioFO/qudUCRE4/AUAnViwmTd/XNgZhICAI+WUWCd4LA7GW9uccYUF
+         bhwaLNEyLu8i8eAP9O8ejQAHJuESFf/Fv71AADhHYyhqLgyNYdVaUchKBnZJhWBajdoy
+         X3rpBsLE86TKYqYSWly0p9NSKY0uJICVycekC0JA7YpAlKytZnG4lRHmSMr+IM61t/Xn
+         K5HvskV8eRoRGSvp15VooOZxVg5Gevuko/gtU46tQvcfvDcBC+kag86p4Xg2MPtXOgp8
+         Qu6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719839171; x=1720443971;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E/o8ImH9R7txIe3wpkdOGe7ZTkeBANZx0gumFohQTJ8=;
-        b=AZJy2X8kLfelDwi+5hpuBgGDvR0wNkqjdmv5GJdFKteEolYW9sRRz0FbKV7nrQzwo6
-         cA4h2k9Lei7A7og6eQMMLFHKkzdofnllPmkcLuyIDMP/ZusP9trwxvqpsht8+6ep+MVt
-         XQVD6EvAgGZZC1p0C7/S6o7UBYAPgchRbWqc3EKHHcPeK7O4VcSmnXkAbtz/Z0bldoig
-         i+d592WKHKAP4Wrb1k7MJ/jYZIJu/W26dnIlesC2ASi1bLHNqHtGLHUeq2Xeh+QYIyal
-         vtiG+0heWsMLLLFpkP3lFWazwfAIJ/V8hOG4CTTLSLdEuHveUwAUt0pQuWBoBOezDtrL
-         S89A==
-X-Forwarded-Encrypted: i=1; AJvYcCVU1tshaF64fg5yqvnbnFxD39GjlC/liSnF4xYeX+sP7VeXd0Rz8nM5L3Bk1e2EKgV8mGbNvJAOsPGpxj5EI9v3fPLADS1VxtU=
-X-Gm-Message-State: AOJu0Yx1K649gvI/M657BPdW603RxeusGeyR9oVHSfqprNKlInyMLzIZ
-	8QofOxLoC6KzUY3a/gDqwJUXOl/oB3pj/sKCJLhFx4RZISfo3FKpnS+WSA==
-X-Google-Smtp-Source: AGHT+IFT/XN03uHXA2vno4hkKz46U5lhEAjljEb1AFRTAyKe9iJu3NmmnGpdK4ddS5LnJwGJWDSloQ==
-X-Received: by 2002:a05:6402:5203:b0:585:3a33:9de0 with SMTP id 4fb4d7f45d1cf-587a0bfc64cmr4252838a12.26.1719839170697;
-        Mon, 01 Jul 2024 06:06:10 -0700 (PDT)
-Received: from [192.168.42.232] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58614d50b27sm4386971a12.70.2024.07.01.06.06.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 06:06:10 -0700 (PDT)
-Message-ID: <097a2a9c-a1b3-4fdb-b097-2c82375c1eb3@gmail.com>
-Date: Mon, 1 Jul 2024 14:06:22 +0100
+        d=1e100.net; s=20230601; t=1719842995; x=1720447795;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lQHiKheUZkHn50AxjZouoKLxa6g4cpujt17k/BC4nOw=;
+        b=RGD0zt+967Pin2Mj0qfTIioBXwU5zvA2/5jNnEGiZdFSV0NIfFlNwveCjvvjtceUwi
+         hM/1xEm+R0V/4txZZ2PNlrANyOrFyzaAW/exOj4wldXw3wZv7g9wLigpcLieFYvvLYhq
+         ANdUyD4hSMRDQF1yEhPVKtX/zbxw3fiNYx1ykATNMez2TsjNN/rPqhYI07eK72WfUApI
+         LSHi0dpPU5KvmNIHPqVDgLS373Rw5i5rKS3flddNzYoHVsp9K+/QNrsFLFN0qkCVCbwU
+         7yib/btv+ZKiDOE1f2yL64ve/6PFuo4fGrNQ+VzLqI8pyQ6aATIjvODZcj09wZ3m1ZU+
+         jbBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxmiQsfc2ENCgtIX+zjqDjMcfM1FDeC58HQWezP6GomJXL8Wwlgg3AtShL1JZN/vlNjjFDXt4IAoCNeS/I4mB+SGs2O2HVsivkG6cUayt7o6UqHRnwO82Eg2S0vCVzBWlF7J2/mw==
+X-Gm-Message-State: AOJu0YzmksxyhxNKlhAmsO4jJXhdo02nyxXc6A8r4S7gG5qvGdCCc2wr
+	Yh6L/PWOqg6v0U+8VXtngJHXIWYTCZBb+9s+FvtO3Hj6Eyp2jaUa4C+qR9od57ka3O+l3XJ2N4o
+	ZG2WkywF64+CezY02xJ4wnNhpMz0J8kk=
+X-Google-Smtp-Source: AGHT+IE8TG4svOSi6+jhYYnyW+u67ovSQnNVXF3NuZm79i2x0GD967K06PjxyjiYGXymjIv5LSLiODSMfh0keRpyC1E=
+X-Received: by 2002:a05:6358:2910:b0:1a6:a960:4787 with SMTP id
+ e5c5f4694b2df-1a6acf43eb3mr630619755d.20.1719842994996; Mon, 01 Jul 2024
+ 07:09:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] io_uring/msg_ring: improve handling of target CQE
- posting
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <20240618185631.71781-1-axboe@kernel.dk>
- <20240618185631.71781-5-axboe@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240618185631.71781-5-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240626100700.3629-1-anuj20.g@samsung.com> <CGME20240626101525epcas5p4dbcef84714e4e9214b951fe2ff649521@epcas5p4.samsung.com>
+ <20240626100700.3629-9-anuj20.g@samsung.com> <87y16rmxnb.fsf@mailhost.krisman.be>
+In-Reply-To: <87y16rmxnb.fsf@mailhost.krisman.be>
+From: Anuj gupta <anuj1072538@gmail.com>
+Date: Mon, 1 Jul 2024 19:39:17 +0530
+Message-ID: <CACzX3AtdWHCp7hCCMKyb-qkxFLZKFPn3qiib5W-=0-qtKSgbxw@mail.gmail.com>
+Subject: Re: [PATCH v2 08/10] io_uring/rw: add support to send meta along with read/write
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: Anuj Gupta <anuj20.g@samsung.com>, asml.silence@gmail.com, mpatocka@redhat.com, 
+	axboe@kernel.dk, hch@lst.de, kbusch@kernel.org, martin.petersen@oracle.com, 
+	io-uring@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-block@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/18/24 19:48, Jens Axboe wrote:
-> Use the exported helper for queueing task_work for message passing,
-> rather than rolling our own.
-> 
-> Note that this is only done for strict data messages for now, file
-> descriptor passing messages still rely on the kernel task_work. It could
-> get converted at some point if it's performance critical.
-> 
-> This improves peak performance of message passing by about 5x in some
-> basic testing, with 2 threads just sending messages to each other.
-> Before this change, it was capped at around 700K/sec, with the change
-> it's at over 4M/sec.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->   io_uring/msg_ring.c | 90 +++++++++++++++++++++++----------------------
->   1 file changed, 47 insertions(+), 43 deletions(-)
-> 
-> diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-> index 9fdb0cc19bfd..ad7d67d44461 100644
-> --- a/io_uring/msg_ring.c
-> +++ b/io_uring/msg_ring.c
-> @@ -13,7 +13,6 @@
->   #include "filetable.h"
->   #include "msg_ring.h"
->   
-> -
->   /* All valid masks for MSG_RING */
->   #define IORING_MSG_RING_MASK		(IORING_MSG_RING_CQE_SKIP | \
->   					IORING_MSG_RING_FLAGS_PASS)
-> @@ -71,54 +70,43 @@ static inline bool io_msg_need_remote(struct io_ring_ctx *target_ctx)
->   	return target_ctx->task_complete;
->   }
->   
-> -static int io_msg_exec_remote(struct io_kiocb *req, task_work_func_t func)
-> +static void io_msg_tw_complete(struct io_kiocb *req, struct io_tw_state *ts)
->   {
-> -	struct io_ring_ctx *ctx = req->file->private_data;
-> -	struct io_msg *msg = io_kiocb_to_cmd(req, struct io_msg);
-> -	struct task_struct *task = READ_ONCE(ctx->submitter_task);
+On Wed, Jun 26, 2024 at 10:47=E2=80=AFPM Gabriel Krisman Bertazi
+<krisman@suse.de> wrote:
+>
+> Anuj Gupta <anuj20.g@samsung.com> writes:
+>
+> >  static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe =
+*sqe,
+> >                     int ddir, bool do_import)
+> >  {
+> > @@ -269,11 +307,16 @@ static int io_prep_rw(struct io_kiocb *req, const=
+ struct io_uring_sqe *sqe,
+> >               rw->kiocb.ki_ioprio =3D get_current_ioprio();
+> >       }
+> >       rw->kiocb.dio_complete =3D NULL;
+> > +     rw->kiocb.ki_flags =3D 0;
+> >
+> >       rw->addr =3D READ_ONCE(sqe->addr);
+> >       rw->len =3D READ_ONCE(sqe->len);
+> >       rw->flags =3D READ_ONCE(sqe->rw_flags);
+> > -     return io_prep_rw_setup(req, ddir, do_import);
+> > +     ret =3D io_prep_rw_setup(req, ddir, do_import);
+> > +
+> > +     if (unlikely(req->ctx->flags & IORING_SETUP_SQE128 && !ret))
+> > +             ret =3D io_prep_rw_meta(req, sqe, rw, ddir);
+> > +     return ret;
+>
+> Would it be useful to have a flag to differentiate a malformed SQE from
+> a SQE with io_uring_meta, instead of assuming sqe->cmd has it? We don't
+> check for addr3 at the moment and differently from uring_cmd, userspace
+> will be mixing writes commands with and without metadata to different
+> files, so it would be useful to catch that.
+>
+Yes, but I couldn't find a good place to keep that flag. sqe->rw_flags are =
+RWF
+flags and are meant for generic read/write. sqe->flags are generic io_uring
+flags and are not opcode specific. Do you see a place where this flag
+could fit in?
 
-Not about this series particularly, but sounds like msg requests
-should be REQ_F_INFLIGHT, but there is a chance lazy file assignment
-is enough.
-
-> -
-> -	if (unlikely(!task))
-> -		return -EOWNERDEAD;
-> +	struct io_ring_ctx *ctx = req->ctx;
->   
-> -	init_task_work(&msg->tw, func);
-> -	if (task_work_add(task, &msg->tw, TWA_SIGNAL))
-> -		return -EOWNERDEAD;
-> +	io_add_aux_cqe(ctx, req->cqe.user_data, req->cqe.res, req->cqe.flags);
-> +	kmem_cache_free(req_cachep, req);
-> +	percpu_ref_put(&ctx->refs);
-> +}
->   
-> -	return IOU_ISSUE_SKIP_COMPLETE;
-> +static void io_msg_remote_post(struct io_ring_ctx *ctx, struct io_kiocb *req,
-> +			       int res, u32 cflags, u64 user_data)
-> +{
-> +	req->cqe.user_data = user_data;
-> +	io_req_set_res(req, res, cflags);
-> +	percpu_ref_get(&ctx->refs);
-> +	req->ctx = ctx;
-> +	req->task = READ_ONCE(ctx->submitter_task);
-
-Missing a null check, apart from that the patchset looks right
-
-> +	req->io_task_work.func = io_msg_tw_complete;
-> +	io_req_task_work_add_remote(req, ctx, IOU_F_TWQ_LAZY_WAKE);
->   }
-
--- 
-Pavel Begunkov
+> --
+> Gabriel Krisman Bertazi
+>
+--
+Anuj Gupta
 

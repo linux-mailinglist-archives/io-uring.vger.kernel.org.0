@@ -1,147 +1,140 @@
-Return-Path: <io-uring+bounces-2397-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2398-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F45A91DD94
-	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 13:11:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACEFD91DE8F
+	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 14:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD68C1F22ADB
-	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 11:11:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 615841F23AD4
+	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 12:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9359A12E1EE;
-	Mon,  1 Jul 2024 11:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1286514B08A;
+	Mon,  1 Jul 2024 11:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MU2WkEcC"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VC66qgtq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pXCT8ZF7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA6A376E7;
-	Mon,  1 Jul 2024 11:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7992114AD3A;
+	Mon,  1 Jul 2024 11:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719832266; cv=none; b=QUZhlIxQM9YOrZetYLubXRLo3uWwV+ZHqS9c4UFOqX8EWMB8FR2S2E5t1CfY++cr5ogIFOhA+vQyLX6KX8Nk1MjTHABCmFXaUB28iQ816XZ82HrZdAXSk1IowANHSrao/s6YzYTsIuNl4kKqfVYBDy7aJ9J/S5MS9A+u7F1TjNg=
+	t=1719835176; cv=none; b=I6stQIWbPa8tvQlmaEryUCafs5hIBUDydTLvNzblwt1DASGZAsRFL0swsxiguZxOWoA7zY+5raPkVrDyBO2x+bbvb0T84hh7AbvaAfmfBihK7qQbRSwQ9G/ZZRQ9T4dwkUiyDtsjxDjDXUNZq/KO5cgu8KlmrCgxaXEaeRq00/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719832266; c=relaxed/simple;
-	bh=mXctZR48kdVKq2W8ysVP5W4s8u6d5ubyVj16x7g6GAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fqe/74uLq/WBTme4CtTjWHLzIf4db5DhBQ+nnz7evnNjDlQul+DnFlGYCMl5Ile2QifOjpipYBwY/BXfa1x1E2+pUD+BYkJM1mLNIjKZlUloONCErtL4E3mh8Zuxw9udeo/fNu5AqRJq//Uv+sG9//yeemhNmC0JS3RDNywxpZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MU2WkEcC; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ccc40e72eso2027324e87.3;
-        Mon, 01 Jul 2024 04:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719832263; x=1720437063; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vFmtlIZ0j1iiZbJIziUHbym8bzY7eoHRHb5V7Y9FQZA=;
-        b=MU2WkEcCbcvv78N40jsZBMTumP73IOd9qaNWCabSJSm3BU7QSY3bHhPDidIV8XzytQ
-         YipNsRxARbmnkNazbVIgTTrEzWh2M/keQO6bPkQzihmCAbpcBo2locOEM9hoR51pufEG
-         7hifKttpiOPD3B1zayfiGqbECVXpmxXSLxjxSsW5wylpDOwwD98CsY6SThHlbGSJDabm
-         4HzzZXt+aoQMwPHc3YRDybX++zS431IgQDYSrYboUnphGnGrYlTdrllHCmZmC5MHWRs1
-         i3x74IvIZEu9QMqksQuzSliYudcd0ycf7X2NXx7blLaxtfzbLLkP+QougeL3WBp+qlgT
-         AkzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719832263; x=1720437063;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vFmtlIZ0j1iiZbJIziUHbym8bzY7eoHRHb5V7Y9FQZA=;
-        b=ExC7OpLPev1AYXRoNYw5+zMPc8tqP06wgIemT/vk+smL/SskZ715JDP2i3dBWNEYhQ
-         PVWVO9jUt1fzmg+Of4EKHnhtRwHW/0Y9vODiYsrMVlAIpr9bbUux6f5C1d0pj5i0oeXv
-         IFGAHsuVUWgj/LTrJMDSoj+EkW0Eg/bFKL5NdoRSkYMrE8+XDfmePgAcO5amofsX+It1
-         VXnUB4bnylZJXx9CmZ8djFeWBO6P/cz779LoNuNq7RPN2rRPrgIKHs+oReupjhXSxBzy
-         134X8QZyi7Y1Pjb+cdQ8Yc6dG/pTXwK1fl1WarXo55Y77AFEUmxKyPSVGL0cLigcuujG
-         m2bw==
-X-Forwarded-Encrypted: i=1; AJvYcCXuhlVweqMqzSRA6271SVpTv8NTMtNWtQ/YtgD0rGPmEh1RL49gZljNO3wb75pT+poNtEumHK1+8rYiw1ajLd++muu8lPQ5I/cyB/RdVjlqV3JgrfU9fi7u0OPKCiEjkBM=
-X-Gm-Message-State: AOJu0Yyj9PzhZt/iyEg+NbzaOq585hueP2Mq0ROCDsrxoUpZMLVm1rrx
-	RCjp76aszWdhm30a7DpKelBHB1JFgajPbtkynHMyXJT3QRkAt0Mu
-X-Google-Smtp-Source: AGHT+IF2phb79FDLw20KVr7LF4eR7Bgul9QTnbcOTTgFCXe82zMP4UAG31RWnW+py3PWYDn1lLA4pA==
-X-Received: by 2002:a05:6512:39c5:b0:52c:842b:c276 with SMTP id 2adb3069b0e04-52e8270914amr4513816e87.53.1719832261886;
-        Mon, 01 Jul 2024 04:11:01 -0700 (PDT)
-Received: from [192.168.42.253] (82-132-220-46.dab.02.net. [82.132.220.46])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af59732sm148347685e9.11.2024.07.01.04.11.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 04:11:01 -0700 (PDT)
-Message-ID: <330dbf5b-4022-4ceb-a658-a182c16f9f59@gmail.com>
-Date: Mon, 1 Jul 2024 12:11:12 +0100
+	s=arc-20240116; t=1719835176; c=relaxed/simple;
+	bh=0ku05XJrAjTZTejqmaVQxaIEziireIHvW6LnDpuxlec=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=AY0PW+fHn+wsUAFyJ2XJ7zvHj2BexQSsYSwpsdok/y/MpYZ4EcoZPMQU6JfRYH7SCe2sjGVWgV4KJbQye8RURTItLWwk9vZG1pra98jpZp6c+hnHHd9EXGt7qlWKBGMsRKdjC01tY7jX7cnL4FRYqdfr8ZEr9uzL2l3S16yuPwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VC66qgtq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pXCT8ZF7; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id A13A211401FA;
+	Mon,  1 Jul 2024 07:59:34 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 01 Jul 2024 07:59:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1719835174;
+	 x=1719921574; bh=3pqX5jXkyZwQM2k8YThla4nhvHoVmaxSyoEecqI36uo=; b=
+	VC66qgtqdG7LsO8I8ky+Ow6RnM72z/T/P9hFSisalIKxoC+s7mMlhwIk949lBwzo
+	gjer10Q060g4z6PVOux0cYv65fJW1XbvYkSBTsn6Ahji63YzCsoG89liw6Cmm7S1
+	C8TPzthfzFhJg0YyE9YXZWzREZ8IQai/MpJfMSQ8n70RF8yVpoVBUSaoUCcODAmT
+	nIQw12/Q4SSjN2lIuI5LEpFePPw9KXlQT0/KljFT1YwofwhhcwzpPz8owaF0gnXG
+	wPZGHa78hI12ZMQiOi5LRJJD9IkblQgG9UWURYw+YScpq0RSAh4PysH1UufZeVgX
+	JjcA6HcURbJLp1bqeuAN+A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719835174; x=
+	1719921574; bh=3pqX5jXkyZwQM2k8YThla4nhvHoVmaxSyoEecqI36uo=; b=p
+	XCT8ZF7nFeaNlv5oLGXxNzvIrIysC8liKEXqVh/izOHe6r/jyFCbxmP/1Qqdt/MY
+	JCuZQMQLHiPrGVbpTBw0ng73OUZ6m0YJ7mJuKGaqzLqzhvqn2+1ZN6q3hibFpD4w
+	YuucA1kQUfSSk71wSa/+NMRCzd/CF/067pdJ1EoUtBK/aI6YitZAmoGP5WpMHrdU
+	f40jbYLzTe38iSR2brVQT+amt+hPsKpg9tipVR0l9lwGF9Ytcs5YL5mwVJdQwZec
+	EpKTDyje2i+zxvr18Sb6EIXpCsjyynxMXCRuC5vsqc5jIJsOHhNdt2ibstNWE8IA
+	hkhacZeD4fcrt86wQSYQA==
+X-ME-Sender: <xms:JZqCZsxcJE6FkhmOhZHd60Sz4T-1KYZNMPNXoZBrw8VIYTh3jKhKBw>
+    <xme:JZqCZgTn4KyprCTX4Vk75aLRQ2iHLnnAjHnQtAP1KfoN3AxpreIWJKjWkMRD1CBH7
+    uqEQTPiAdOGEbNXdG0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgdegiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
+    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:JZqCZuVMYBIkXDD6oqFUlgu0zfkT6NuqzYHPRTGV-E1jCOquhBiKTg>
+    <xmx:JZqCZqjnFRZ0Lq5R_gmXB84igaHpPBscWooKrLDpOkjRwc1b7kS3cw>
+    <xmx:JZqCZuBWmJCkkLCr9xwq5G2VUaTAAkNNYwQpIUuGY2zDqWpc5iDU9Q>
+    <xmx:JZqCZrLZUEbVnk0OoDZPYzwfP9wuAah9JriHZoGlC0GoqY80MFvePg>
+    <xmx:JpqCZvK8eB-kPZWbt1OPrao0nZt_7tAwaeT78MbUZezNbhdLaLolBCi_>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 9D034B6008D; Mon,  1 Jul 2024 07:59:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 3/5] net: batch zerocopy_fill_skb_from_iter
- accounting
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- io-uring@vger.kernel.org, netdev@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, "David S . Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, David Ahern <dsahern@kernel.org>,
- Eric Dumazet <edumazet@google.com>
-References: <cover.1719190216.git.asml.silence@gmail.com>
- <a916f99aa91bc9066411015835cadd5677a454fb.1719190216.git.asml.silence@gmail.com>
- <667eed8350f89_2185b294e2@willemb.c.googlers.com.notmuch>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <667eed8350f89_2185b294e2@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-Id: <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+In-Reply-To: <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+References: <20240625110029.606032-1-mjguzik@gmail.com>
+ <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+Date: Mon, 01 Jul 2024 13:59:12 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Xi Ruoyao" <xry111@xry111.site>, "Huacai Chen" <chenhuacai@kernel.org>
+Cc: "Mateusz Guzik" <mjguzik@gmail.com>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, "Jens Axboe" <axboe@kernel.dk>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 6/28/24 18:06, Willem de Bruijn wrote:
-> Pavel Begunkov wrote:
->> Instead of accounting every page range against the socket separately, do
->> it in batch based on the change in skb->truesize. It's also moved into
->> __zerocopy_sg_from_iter(), so that zerocopy_fill_skb_from_iter() is
->> simpler and responsible for setting frags but not the accounting.
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> 
-> Reviewed-by: Willem de Bruijn <willemb@google.com>
+On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
+> On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
+>> >=20
+>> > Yes, both Linus and Christian hates introducing a new AT_ flag for
+>> > this.
+>> >=20
+>> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
+>> > like
+>> > statx(fd, "", AT_EMPTY_PATH, ...) instead.=C2=A0 NULL avoids the
+>> > performance
+>> > issue and it's also audit-able by seccomp BPF.
+>> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
+>> even if statx() becomes audit-able, it is still blacklisted now.
+>
+> Then patch the sandbox to allow it.
+>
+> The sandbox **must** be patched anyway or it'll be broken on all 32-bit
+> systems after 2037.  [Unless they'll unsupport all 32-bit systems befo=
+re
+> 2037.]
 
-Thanks for reviews!
+More importantly, the sandbox won't be able to support any 32-bit
+targets that support running after 2037, regardless of how long
+the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
+in order to be sure those don't get called by accident, the
+fallback is immediately broken.
 
->> ---
->>   net/core/datagram.c | 31 ++++++++++++++++++-------------
->>   1 file changed, 18 insertions(+), 13 deletions(-)
->>
->> diff --git a/net/core/datagram.c b/net/core/datagram.c
->> index 7f7d5da2e406..2b24d69b1e94 100644
->> --- a/net/core/datagram.c
->> +++ b/net/core/datagram.c
->> @@ -610,7 +610,7 @@ int skb_copy_datagram_from_iter(struct sk_buff *skb, int offset,
->>   }
->>   EXPORT_SYMBOL(skb_copy_datagram_from_iter);
->>   
->> -static int zerocopy_fill_skb_from_iter(struct sock *sk, struct sk_buff *skb,
->> +static int zerocopy_fill_skb_from_iter(struct sk_buff *skb,
->>   					struct iov_iter *from, size_t length)
->>   {
->>   	int frag = skb_shinfo(skb)->nr_frags;
->> @@ -621,7 +621,6 @@ static int zerocopy_fill_skb_from_iter(struct sock *sk, struct sk_buff *skb,
->>   		int refs, order, n = 0;
->>   		size_t start;
->>   		ssize_t copied;
->> -		unsigned long truesize;
->>   
->>   		if (frag == MAX_SKB_FRAGS)
->>   			return -EMSGSIZE;
-> 
-> Does the existing code then incorrectly not unwind sk_wmem_queued_add
-> and sk_mem_charge if returning with error from the second or later
-> loop..
-
-As long as ->truesize matches what's accounted to the socket,
-kfree_skb() -> sock_wfree()/->destructor() should take care of it.
-With sk_mem_charge() I assume __zerocopy_sg_from_iter -> ___pskb_trim()
-should do it, need to look it up, but if not, it sounds like a temporary
-over estimation until the skb is put down. I don't see anything
-concerning. Is that the scenario you're worried about?
-
--- 
-Pavel Begunkov
+      Arnd
 

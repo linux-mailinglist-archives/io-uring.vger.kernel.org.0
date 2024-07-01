@@ -1,154 +1,143 @@
-Return-Path: <io-uring+bounces-2405-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2406-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D6E91E76C
-	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 20:28:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 366B291E9D0
+	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 22:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387E21F220DA
-	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 18:28:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E700E283217
+	for <lists+io-uring@lfdr.de>; Mon,  1 Jul 2024 20:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEE916EC0B;
-	Mon,  1 Jul 2024 18:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrF80tO+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AF316DEC0;
+	Mon,  1 Jul 2024 20:50:23 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4909616E898;
-	Mon,  1 Jul 2024 18:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6A21366
+	for <io-uring@vger.kernel.org>; Mon,  1 Jul 2024 20:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719858483; cv=none; b=LnfNtk3H+icgkzmJ0c5gaC2Xj3TEPERrCaQMlZjkwh8SGnTs0MdGSzAMa8bBh/8uTrb6U4ce+XqqRE0w+AevMy1XSDhX6LRhP7hcgD7kyfSG2K/rUEaEQ5kaHa4AKq4nmOUWoKSTuwF6U+9WHbUSfjtHtB4hdAWhR9rSJaFn9jo=
+	t=1719867023; cv=none; b=Xq4QZkIG+nNuJD/K+ujJESZ9W/P+WtRiVrKxG/aIvMCUPJ+NQe4favKPwAsS4krONhPpLNdDHIS9R8U4eujZmfdVqf4YavRXj2CepUA5dBQj78hrSxZ6Q5MxNdhJ5KDQZuie10OKOciCej2RAxCKASKegYXMK7tl50AJaddrVvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719858483; c=relaxed/simple;
-	bh=wM4Slqs4VxfOf76vbRhq1KoayyAF+k6Lwllcv5RuEFM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=io0GRVoxyXv6pyFgOPrWXHZGyljjLqjvAgCJ7Fb2FCZ9zqcIzW3eSOrR2N9QQ79dp298eX6ntMTW5NZG/ZvtDRQS67LJlNdIIYJOfu3ktGMVGUW7BvPKgkATD3B/GoMtdx9e8h225n+3uHCVJbVShTPp6OHrIpyPtB+B8buI+V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DrF80tO+; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-79c076c0e1aso201165485a.2;
-        Mon, 01 Jul 2024 11:28:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719858481; x=1720463281; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6oSp3l4wwYQ26AYzu7qjLI3czOigk340zazQ1P36CGo=;
-        b=DrF80tO+rWoBAQ6n6YYysvj7Xh3iO4HyEH75pQahxckZdeuP8nKyEv/la/lC1jQZ3L
-         Qe+TBRwIlevbZ2Rl4JFXRKvLW0NnxjVGXTk/guCKWGZn61EzBWGACgWzplvrmUyrYLrK
-         oUsEzo/WMjKG2NYjUrQBXhfAUksWNMQG36ONQEv5RUos9SRJgF6XXPY++WGbpoH1Foak
-         IThELt09TPLFzKZnSfO9lewuk3Biy//XwpVKtIb3kWjRia87tMDPZKRetW9j2ikzLZnJ
-         7t6QoTZ9XdW+olUEVt5uczBuOFu6kN7onokM/fMwOUSpPCMhaIvW+sIX6gn2mG+vjlFS
-         vMdg==
+	s=arc-20240116; t=1719867023; c=relaxed/simple;
+	bh=sDzE7YpPHR3LR6h3gGbdoVVS/FgXk55Zx2hqr+8phRA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=B8w1GeIxqiohZ6qrltM3TJadFxZEgLlDCVGKo/32aFyFDb21ZMPT3MZlpxLAnPtoMDXIHv2OTTJv1SxFJuF8plpVxCK9cswLkVuSJBQoerixjK2EuObLc3K5Pm7jNWPk3ljU0wWg+rdTUI7++M8sg3LtRHOiQ5KzzI24BjDObj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f3c9b72aebso368592539f.3
+        for <io-uring@vger.kernel.org>; Mon, 01 Jul 2024 13:50:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719858481; x=1720463281;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6oSp3l4wwYQ26AYzu7qjLI3czOigk340zazQ1P36CGo=;
-        b=FpsJMetEgM+XK+qZkM70i795mlDx3+tjjYGYV7S5YnGHsDMw8iSjuCTUBG1txfDIan
-         C1n6f2bk1oLiS29js9sZqCJSsDil0aUjxTyxSAA27c3MIaYn4t+OMb8iZhVqduUzIYS0
-         mzwM2Dz9cAJsfpZvoPZXaOlTPmcZrexuOwHsI4b5zO5nwWkXKQ9ecB/ZbxPRxX2xB7DT
-         rCO3mnvcF0BWS9MHCKvEVAzClPmMCUoIuIkWhiYZ284CjYi7UFgIS8Ybhd2nqvfE9M3I
-         i/XAxXP1uDiLd7lZTsCg/WSKeYxTg6IVenGrd1KsCyXr/SrmOcDAFNHm4OKqx6KV1DaR
-         UGLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXy/NPoyE5uqQRYC7eCu7fruGEocsjZvYGOY+MvzdrWzn8qzqH+abfRzZXio01M7haalTtgf4WLOhojlT9RvjKACE27Q7Ypl6nhVfM6zPUEEyrR9IQaGeLKMCZnZSboUY0=
-X-Gm-Message-State: AOJu0YzwcfQ8hBvbIhYY1Rml/G9vRp68lccf3bKZMWvUAsfATpMB5ubU
-	eudv6ZPT5woxgLPkC9xnEqFYwzTQ9xRX1U2oN8icklyU875mJH93
-X-Google-Smtp-Source: AGHT+IH0XXpVfAMfbw7Nlxwcrwpa4nXmY/qrHWExNG0IApOFkD4wwXF/vFpWs2GbZv8b3SYg4AtzPQ==
-X-Received: by 2002:a05:620a:e10:b0:79d:5c93:4bd with SMTP id af79cd13be357-79d7bac3fd2mr726497485a.74.1719858480714;
-        Mon, 01 Jul 2024 11:28:00 -0700 (PDT)
-Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d6927a828sm372322685a.38.2024.07.01.11.28.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 11:28:00 -0700 (PDT)
-Date: Mon, 01 Jul 2024 14:27:59 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- io-uring@vger.kernel.org, 
- netdev@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, 
- "David S . Miller" <davem@davemloft.net>, 
- Jakub Kicinski <kuba@kernel.org>, 
- David Ahern <dsahern@kernel.org>, 
- Eric Dumazet <edumazet@google.com>
-Message-ID: <6682f52fd5a96_4208e294c8@willemb.c.googlers.com.notmuch>
-In-Reply-To: <330dbf5b-4022-4ceb-a658-a182c16f9f59@gmail.com>
-References: <cover.1719190216.git.asml.silence@gmail.com>
- <a916f99aa91bc9066411015835cadd5677a454fb.1719190216.git.asml.silence@gmail.com>
- <667eed8350f89_2185b294e2@willemb.c.googlers.com.notmuch>
- <330dbf5b-4022-4ceb-a658-a182c16f9f59@gmail.com>
-Subject: Re: [PATCH net-next 3/5] net: batch zerocopy_fill_skb_from_iter
- accounting
+        d=1e100.net; s=20230601; t=1719867021; x=1720471821;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sgcjFW3XYMXRUsUyvo0nFUiGW8OYCo7Qnh7ViycLBS8=;
+        b=KJG1deAgNfzF1kbcz7xr3gdJHZLdvu+Xd2FZyATNvD7oB6UEE9YNRPorqIbwixgmlz
+         auBJyp7hpgUVMAjFiTsQCLJIDqiaXsV6b/I/W2GSoclefZL7foxLE9dpgmyJD+LGe5Y1
+         Q/pL36mWTS1/XyzadUUwlAAL8Csz1NbDgp0jPlWAQCzJvkhy8l8AOFbly5TbLRsQi9jw
+         nzkWjYKWeiSQWnC8Z1zwBNFI51QhPbrM3QdpV+P56eDIaBnQAwoGcA4uLf+VFT0JeTT2
+         NsCUPxUbgnOkZUxhlf1s/lfBmtouNzITgCxb2u+MtwdijXjHaPrWiZP3H0K/vF37QQCl
+         1Iwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBC/ACEKw1jrUlwDYkn5wT0uas7GntkKxs4Me+wwcC/AxE2onn5IT3obrqBBBJU8v6+HRL7Vu8dNzpdkfUjBVxSFxthUrJX5E=
+X-Gm-Message-State: AOJu0YxO3RTFJz2XUU192le6qP8QeyIj/I4WCx9eBBbLZTDoCX+MKdbw
+	yxNlTCJoeBbE9KHPV+PGTaii65ufkM1G9g+JgAqiyN8qT7RzYS00LfdbTNond7hFSQw80qmX3h5
+	VJJrgEDBCgDKkRqtJS2if4rtJ0yRHEU5V36x98BIo14xwU/4Fu8cVty0=
+X-Google-Smtp-Source: AGHT+IECcA58JwTwKmPW9w3HsnoyKI8G9uHOhq/XgpAkFMrQg6ZCHsi88IFMOAM21hc/20xUT6xj6kmkBEKV/rbQxil0vQ9sdD3N
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:3426:b0:7f6:1f4c:96b6 with SMTP id
+ ca18e2360f4ac-7f62ee9d66emr47517939f.3.1719867020939; Mon, 01 Jul 2024
+ 13:50:20 -0700 (PDT)
+Date: Mon, 01 Jul 2024 13:50:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d82187061c35bef8@google.com>
+Subject: [syzbot] [io-uring?] WARNING in io_cqring_event_overflow (2)
+From: syzbot <syzbot+f7f9c893345c5c615d34@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Pavel Begunkov wrote:
-> On 6/28/24 18:06, Willem de Bruijn wrote:
-> > Pavel Begunkov wrote:
-> >> Instead of accounting every page range against the socket separately, do
-> >> it in batch based on the change in skb->truesize. It's also moved into
-> >> __zerocopy_sg_from_iter(), so that zerocopy_fill_skb_from_iter() is
-> >> simpler and responsible for setting frags but not the accounting.
-> >>
-> >> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> > 
-> > Reviewed-by: Willem de Bruijn <willemb@google.com>
-> 
-> Thanks for reviews!
-> 
-> >> ---
-> >>   net/core/datagram.c | 31 ++++++++++++++++++-------------
-> >>   1 file changed, 18 insertions(+), 13 deletions(-)
-> >>
-> >> diff --git a/net/core/datagram.c b/net/core/datagram.c
-> >> index 7f7d5da2e406..2b24d69b1e94 100644
-> >> --- a/net/core/datagram.c
-> >> +++ b/net/core/datagram.c
-> >> @@ -610,7 +610,7 @@ int skb_copy_datagram_from_iter(struct sk_buff *skb, int offset,
-> >>   }
-> >>   EXPORT_SYMBOL(skb_copy_datagram_from_iter);
-> >>   
-> >> -static int zerocopy_fill_skb_from_iter(struct sock *sk, struct sk_buff *skb,
-> >> +static int zerocopy_fill_skb_from_iter(struct sk_buff *skb,
-> >>   					struct iov_iter *from, size_t length)
-> >>   {
-> >>   	int frag = skb_shinfo(skb)->nr_frags;
-> >> @@ -621,7 +621,6 @@ static int zerocopy_fill_skb_from_iter(struct sock *sk, struct sk_buff *skb,
-> >>   		int refs, order, n = 0;
-> >>   		size_t start;
-> >>   		ssize_t copied;
-> >> -		unsigned long truesize;
-> >>   
-> >>   		if (frag == MAX_SKB_FRAGS)
-> >>   			return -EMSGSIZE;
-> > 
-> > Does the existing code then incorrectly not unwind sk_wmem_queued_add
-> > and sk_mem_charge if returning with error from the second or later
-> > loop..
-> 
-> As long as ->truesize matches what's accounted to the socket,
-> kfree_skb() -> sock_wfree()/->destructor() should take care of it.
-> With sk_mem_charge() I assume __zerocopy_sg_from_iter -> ___pskb_trim()
-> should do it, need to look it up, but if not, it sounds like a temporary
-> over estimation until the skb is put down. I don't see anything
-> concerning. Is that the scenario you're worried about?
+Hello,
 
-Oh indeed. Thanks. I don't see ___pskb_trim adjusting except for the
-cases where it calls skb_condese, but neither does it adjust truesize.
-So indeed a temporary over estimation until e.g., tcp_wmem_free_skb.
-Sounds fine.
+syzbot found the following issue on:
+
+HEAD commit:    74564adfd352 Add linux-next specific files for 20240701
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=135c21d1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=111e4e0e6fbde8f0
+dashboard link: https://syzkaller.appspot.com/bug?extid=f7f9c893345c5c615d34
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/04b8d7db78fb/disk-74564adf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d996f4370003/vmlinux-74564adf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6e7e630054e7/bzImage-74564adf.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f7f9c893345c5c615d34@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5145 at io_uring/io_uring.c:703 io_cqring_event_overflow+0x442/0x660 io_uring/io_uring.c:703
+Modules linked in:
+CPU: 0 UID: 0 PID: 5145 Comm: kworker/0:4 Not tainted 6.10.0-rc6-next-20240701-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: events io_fallback_req_func
+RIP: 0010:io_cqring_event_overflow+0x442/0x660 io_uring/io_uring.c:703
+Code: 0f 95 c0 48 83 c4 20 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 ed ae ed fc 90 0f 0b 90 e9 c5 fc ff ff e8 df ae ed fc 90 <0f> 0b 90 e9 6e fc ff ff e8 d1 ae ed fc c6 05 f6 ea f3 0a 01 90 48
+RSP: 0018:ffffc900040d7a08 EFLAGS: 00010293
+RAX: ffffffff84a5cf11 RBX: 0000000000000000 RCX: ffff8880299bbc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff84a5cb74 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffffff84a9f5d0 R12: ffff888021d0a000
+R13: 0000000000000000 R14: ffff888021d0a000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4e669ff800 CR3: 000000002a360000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __io_post_aux_cqe io_uring/io_uring.c:816 [inline]
+ io_add_aux_cqe+0x27c/0x320 io_uring/io_uring.c:837
+ io_msg_tw_complete+0x9d/0x4d0 io_uring/msg_ring.c:78
+ io_fallback_req_func+0xce/0x1c0 io_uring/io_uring.c:256
+ process_one_work kernel/workqueue.c:3224 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3305
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3383
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:144
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

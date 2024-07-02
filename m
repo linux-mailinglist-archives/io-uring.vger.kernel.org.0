@@ -1,110 +1,117 @@
-Return-Path: <io-uring+bounces-2413-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2414-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D409692422F
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 17:19:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC737924285
+	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 17:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9041728859F
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 15:19:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A9FB1C21092
+	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 15:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3861BC06F;
-	Tue,  2 Jul 2024 15:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08CB1BC062;
+	Tue,  2 Jul 2024 15:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="y6lMOMq1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsAWtP/5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1971BBBC8
-	for <io-uring@vger.kernel.org>; Tue,  2 Jul 2024 15:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A8D1BBBF7;
+	Tue,  2 Jul 2024 15:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719933520; cv=none; b=IGmu0VVSAqj36CXLbYap5IpuEZ0Q1KL6y01IKctk7c9z6Ak4yKyx7KNqt5x/GywI993kB35aEWe6bhsUm2vdURfC2RN41dHYwU2TK3kikzt+rFuF3GxKjUlPLseR5/QwPfKlQ3FWrt7fewOog5wRaS0s5AL5UhA/PsamqnZrUQY=
+	t=1719934624; cv=none; b=eUBPLUmIvqa//154zDuBlHHv3QyANVdjZAiI0MDkDY+OLRPcWuUCyCDsm2iIINnlqRumNEiDG1m3CnjXNQrUfujZzRkBxcKHr2fAtMbWipIAn4gTfvWjp0/9I/sBnRuAiljpHCvqwNXF4wLcY//mpb4sVtAuwtqMpo83O4qfxrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719933520; c=relaxed/simple;
-	bh=8VyXqx9GoXMMipDgvyuDBT0CVy5/gYZk4Lf1pNHBxTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cYMJT9IqkQ3FIhYAuxjizPsHaN4BoQz10Vx8UZl15tIaGpW2rqdq+2MCgwFFZIDSlAW0D4jLVfyDgZufpciWLjFs/E3lQWSGvAkkLym1+Mif2ztVSh6xt7bLCImML1ij40hs3F8q1k/SRfQw3ECBQJnJv6wRsFFtauQpNQL3Alw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=y6lMOMq1; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-24c582673a5so561522fac.2
-        for <io-uring@vger.kernel.org>; Tue, 02 Jul 2024 08:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719933517; x=1720538317; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=//QX2V50H9V2wWizm5y5foBrm6VcvlW47rr2j1EQtE0=;
-        b=y6lMOMq13jRpxfPeJRE17e3v5iEfJ+gpO5gI8TakZqJhJXf03+87xP5qVbCvu/oXMB
-         ZP5n5AKYgaTjvNPPrkKjBibWIzDcq5f3eCWH+IewqGi+z6ivLaG6X8L2G6DA14ZbSaol
-         LH3kzXgRRP+5pCI9N8ZO9dKDaEFuh7km5IF89+vrFGvATCRgAGboiJS/GxU1BHVjJRpq
-         dOcjdtjEhwBOW4xZsF9BV5QHBw3fE1IXSLwOvH7Kiw6/cJjCA8Rvuy5WV65eaFl6qCY1
-         6C7lmcAIUQMIC92CF2JGif9hpUVon0Z5GU55H4+pQgSxrk0eqICoFS5gy98XcYNlcSuk
-         Vdew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719933517; x=1720538317;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=//QX2V50H9V2wWizm5y5foBrm6VcvlW47rr2j1EQtE0=;
-        b=kPn7mEtDRvC8nCVNPG9kItSvop1LcpGcB1FR9y1qP8AN9ox8/1romcR4qexexsRDlX
-         RnPeZFYYqstNNAc5sdBxEZ9OryyScVfNffGTlXm9iCqPCigczMmJ76GvGXSkL7YwGW76
-         8EnfR8RB8ApBS2D++dB6ROFVXSARpiK0vaAce+bPzPxnCPUn6sQ/nCWM+A43JnXBSSLq
-         ipE+sjP6HSBDptSXE0Dd6yNc4Ii8klSbG13VbQ8NaLVzS0032qSCxLae/xY48xtoNrb0
-         E29t1iZRzkMC4FhysNELOabsLFXrMaOE2aeIxGu1DQtJQhAr9PgUc3nOHCXbGiKbzB1A
-         7G+w==
-X-Gm-Message-State: AOJu0YxMBK/IwH5AA3nm1UGKD+XIKeqvsWSNpg3IWD4ZPat8Gi1P6pAZ
-	PXtXol6h4HBwfp7Y1kFD9KKHJyVVoL4i8tYeuHUHioW7RMyU006z2x1j/+y979g=
-X-Google-Smtp-Source: AGHT+IFo22yVwfF/lSG5ZdmPxk1LQ8GGm67egABzuuIJHx5kn+RBBTkNW1Ek5F2mLCQYw0XHNdmXUw==
-X-Received: by 2002:a05:6870:3c0d:b0:254:7e18:7e1a with SMTP id 586e51a60fabf-25db36bd873mr9153324fac.5.1719933517437;
-        Tue, 02 Jul 2024 08:18:37 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25d8e3a05f4sm2231820fac.58.2024.07.02.08.18.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 08:18:37 -0700 (PDT)
-Message-ID: <4490ecbb-8ec5-463f-aab5-b638acc2e120@kernel.dk>
-Date: Tue, 2 Jul 2024 09:18:36 -0600
+	s=arc-20240116; t=1719934624; c=relaxed/simple;
+	bh=WTGvOz3HRhLyyqq4Zh1ZbWhG2m2SzbOevLYrkdYK0Ac=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AEGpQwFeFge0kf/r6gcobrxHVsc7991C2sonuDYo/Y2L0CmqpNyStzgAhmKX/ca7Qntp3qV7Le317wz3sa6qufvA66yrgl1PEkMiem5kZHE5RXhLtAMYFrc2irQ9OTaHmXb35SfggXFm1HUkDRrQUlPgC9n0Ufw6dqNB1REbH1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsAWtP/5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30631C4AF07;
+	Tue,  2 Jul 2024 15:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719934624;
+	bh=WTGvOz3HRhLyyqq4Zh1ZbWhG2m2SzbOevLYrkdYK0Ac=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IsAWtP/5sywxnJ3K4GhdvT0CoKl6Wx7LlTBWBtriyGsqNoyMg7IhVmk61VqdXFky0
+	 T1tgw6GnFa/6AW67rk6Zv5of+0v/ZWvtFtybMOJo5nr9OjNIvvWiphf6h6o1wCpwW3
+	 fDnjF7GyUgnYd+W69xW1jKWfQ6lbEv/iYecBfpwh0q2GEG0xqRMlfmxaXx6EBVFOky
+	 KLswnROVOBB+nkybbNu8+0OjcDlue3n+kDKRk4zehl49xBfWElFENxsVl2reH2kWvQ
+	 ghJ7NPLIAls8pIe2zFxf/JYmZFhJ2pwBw5gp4rJ+xfb3RkpRumMpOS1c1QFHGYSaBW
+	 vlP8gw1m8b9MA==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a754746f3easo84863466b.0;
+        Tue, 02 Jul 2024 08:37:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWHrx04RCxaQCulqu03/KMyZg+ucrhs7rGOWL48R4HmxZDhBXqhYx35ATCBSJQvP87dC1OO0HXxfui/7sAp1p1IwGLuqsU6JjmFn3fyB7ZWN+2YVV9/K6XghzPXmQOIYNM3NeTL1Z0jv/fcpS+x9wa8a6TW6jSHJesmP9Adwb5kOmFx4N/H
+X-Gm-Message-State: AOJu0Yy+WUbNJoRVJbJvOMaqFwS9d/W8XINWd6jBOtDjUky4LuOptxww
+	qFYin6g2OoAq2+7hkFtPLKCOvZW69NoR4Tv2y3//QwH8NdhaEOHKJGW4LUCodTmY4gtBZGP6RyY
+	P7nQhP2D2OXk3+MPMNYyvNkJAvW4=
+X-Google-Smtp-Source: AGHT+IHbRwTQFTOsGOu8dsXrAJCptQY1MXaOy1rNd3Y3lFjz+6X1PC/qmnx2H22UI1+PZJ+qeXsVVq8MLpI02IBHqk0=
+X-Received: by 2002:a17:907:86a0:b0:a5c:eafb:5288 with SMTP id
+ a640c23a62f3a-a751448a596mr822072466b.31.1719934622768; Tue, 02 Jul 2024
+ 08:37:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] io_uring/msg_ring: use kmem_cache_free() to free
- request
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org, asml.silence@gmail.com
-References: <20240701144908.19602-1-axboe@kernel.dk>
- <20240701144908.19602-3-axboe@kernel.dk> <87ikxnzuug.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <87ikxnzuug.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site> <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+In-Reply-To: <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 2 Jul 2024 23:36:50 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+Message-ID: <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Xi Ruoyao <xry111@xry111.site>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/2/24 9:17 AM, Gabriel Krisman Bertazi wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
-> 
->> The change adding caching around the request allocated and freed for
->> data messages changed a kmem_cache_free() to a kfree(), which isn't
->> correct as the request came from slab in the first place. Fix that up
->> and use the right freeing function if the cache is already at its limit.
->>
->> Fixes: 50cf5f3842af ("io_uring/msg_ring: add an alloc cache for io_kiocb entries")
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> Fwiw, kfree works fine for kmem_cache_alloc objects since 6.4, when SLOB
-> was removed.  Either way, it doesn't harm.
+Hi, Arnd,
 
-Right, it's more for consistency sake, it's not fixing a real bug.
+On Mon, Jul 1, 2024 at 7:59=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
+> > On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
+> >> >
+> >> > Yes, both Linus and Christian hates introducing a new AT_ flag for
+> >> > this.
+> >> >
+> >> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
+> >> > like
+> >> > statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the
+> >> > performance
+> >> > issue and it's also audit-able by seccomp BPF.
+> >> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
+> >> even if statx() becomes audit-able, it is still blacklisted now.
+> >
+> > Then patch the sandbox to allow it.
+> >
+> > The sandbox **must** be patched anyway or it'll be broken on all 32-bit
+> > systems after 2037.  [Unless they'll unsupport all 32-bit systems befor=
+e
+> > 2037.]
+>
+> More importantly, the sandbox won't be able to support any 32-bit
+> targets that support running after 2037, regardless of how long
+> the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
+> in order to be sure those don't get called by accident, the
+> fallback is immediately broken.
+Would you mind if I restore newstat for LoongArch64 even if this patch exis=
+t?
 
--- 
-Jens Axboe
+Huacai
 
-
+>
+>       Arnd
 

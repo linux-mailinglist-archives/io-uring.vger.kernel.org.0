@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-2415-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2416-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71EDE92429A
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 17:42:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C92C9242A5
+	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 17:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A36591C2286F
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 15:42:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E3F31C23B67
+	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 15:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E3C16C69A;
-	Tue,  2 Jul 2024 15:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7B814D42C;
+	Tue,  2 Jul 2024 15:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="e295RM+H"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="db/6pgi3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F3D14D42C
-	for <io-uring@vger.kernel.org>; Tue,  2 Jul 2024 15:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9841BC062
+	for <io-uring@vger.kernel.org>; Tue,  2 Jul 2024 15:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934929; cv=none; b=eTE+VrBqszZGoc/HD4hb9mmZ4SFmFoh5TVoLghyWUeMyTR8eIGKyjQv6N/Ao8TCFKs9mS2i33RupNSTA9y945R4n9w0m1EzWt7t8VbsPz2mN4XL5c62hw/nS6iILOZq9+kT7HRN3g7nVIaDC4tFvbgcNHIalBkQxk0ukKYPP44s=
+	t=1719934978; cv=none; b=R9Y9oFyzqv737Q9jemOT9nmSnQ9IXFGqSHSaFDGAemt9L5X1gPRbGQNC3i/P9ygGB6nKdgXr29RWeQE9FaGD3eEkP2xcdrSnQbEE16iARMuIXLrrxUGq7sL3x+lRWJYdzD/w/JoQZJ0FtYBW9MHxIAYwUV2JbM8MbDV1YZ/21qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934929; c=relaxed/simple;
-	bh=nX/rvwTgcJlHFj7S4CZ35ZoROLoXlqTj1rLFvAZoLHw=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=SklcPoF2M0BDK30lRTDvjbbV1igzmN7kZ1dy4/PKxXBc/zBD1N5umXKtttfYetjaVLo1PBOO3SHtz1cZFmSawLxNINv9AG6jyOTPgAh8BnzLsjJAjiHddhSfg/aptn+9f4JcL/KvPkJI33tiA5pYazWrIT9gff1dtQiduaZNbMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=e295RM+H; arc=none smtp.client-ip=209.85.161.49
+	s=arc-20240116; t=1719934978; c=relaxed/simple;
+	bh=svm3+lq6j9SChtLfjLdJYZdt8Lk6vxcGf6h7W/ryAdM=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=mNh0BRKtUGGv7kbG8G0KwE6ASnlpZtPuKYXVCV6qXrIHkTFxA7O+GeVyc32fv0gZH7PKBeKqU+kRuuXaFIcp0n9jpbHPWWznj7adFm97CcJpXgYDQNlBHIbPy9gbMMfja1aEG1xMy/gIk+Fp27OPpG6B/fCGdZVXkUWVnksr2Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=db/6pgi3; arc=none smtp.client-ip=209.85.210.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5c451f68160so34707eaf.0
-        for <io-uring@vger.kernel.org>; Tue, 02 Jul 2024 08:42:05 -0700 (PDT)
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-700cee3c5f6so78885a34.1
+        for <io-uring@vger.kernel.org>; Tue, 02 Jul 2024 08:42:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719934923; x=1720539723; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719934974; x=1720539774; darn=vger.kernel.org;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ylYcHoZzWdtP9PF9CSLizWHwLceShucGyMIUKBGy03o=;
-        b=e295RM+HJ6KmtNP6Xc18noII0z/sYXOwUesNgGj9h+FmbAR67GRlvEy8OflYciJt3Y
-         ky1boQtB8DD3Qz2VeJ8myw8RnX4ALDNdWJ370bOJf9uVheBozKhsMhaJTRD0VhwP/+LX
-         1LU2EJL0MV7dyLFAWeTlezU2hAaBb4e9mmw+Gr/2tEnCvC65IBFMbV3HG0NJbS8FVkma
-         Ut97jWaoDcv4X1S+ekFdWs+2MfJ5Ayx40CfFA8ZNzsXQzou6oTR/ld2UYCa+GQHF+vrj
-         H+tNmy5RGKDOuzK4PvlPqFbhQ8a46BTgyxXS1L+CzJWS5izwybHobLri+Bm6gE4WnNTF
-         pSvA==
+        bh=o/z6a98yV7xkl1eyYXRXKo2VKH1LeqvoRbCjJUHkgIY=;
+        b=db/6pgi3ZSGt5SrBXTXIKndP4zk+kcECT1pYSiVYEwH7Y+P2ClGcthkm/T1H6yhJMS
+         ZxBhudl+bGzNzcsuU6aFQ94UVOgF7PLrXz02lBUsZyY7H4sF1sNqn6mYkTfzfUw68+xa
+         xK5AxhWGV+zZK26ADhextr+jTuYv2q7f29uMvLHPaEG/LcmljCkOYzCf4F+o8OEIvRQ7
+         qajSXaTexS7m+cPlL95K1vmDckKSqYlDfDcpuO9fzyulU8Vty3zykcjEmSYEf26F8gD6
+         /c0D968w+4exkivShu9dqJkCdrahI80UEn20fmbYWkSEYOSPX3Pq5PrFCqPubb8SW/TD
+         xgpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719934923; x=1720539723;
+        d=1e100.net; s=20230601; t=1719934974; x=1720539774;
         h=content-transfer-encoding:subject:from:to:content-language
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=ylYcHoZzWdtP9PF9CSLizWHwLceShucGyMIUKBGy03o=;
-        b=KM55u97/Y8Cf/Gn8RBxDfBrlBcUCeVcm7eUUKI2+bYGsNnE0WbmVm5A2eG7+Cu7ab0
-         ouiYST15T5DbefJCIE3bXeVsVdOdK4q3gjyyZRakZ2FOptm91M9jvdri6ZzgmsGITY5+
-         ugdKMg3EU58GtzPTebkRFCrzlV+hPO90z790SAopdYBOfWn6ow0A/S3HS4cw4hstaD8w
-         PLb60vq3P69G+3NPdyCBwr7pBFogVCtKcwh7xb/j0GF9uJ0g4/8kACtP8k87iSUJEnio
-         1bsIq6hwIJ7O0psb3CKCDCZUjJrUtermQeu43JZ3AZ0jxpDyuwzKxLa1ni4f6gvd2l0t
-         9ADQ==
-X-Gm-Message-State: AOJu0YzUKmOgoUOsiUL7dbns8DuRK/wakZVAQdifuYw9evgP6ZomEzA9
-	in0QZ4cS67k4xKEosxHmXu2lGlYW0+Ib1UhBtR4n3H8OlNokcf5F1kuoQq3x+9Jr9YCjbC/NIZ/
-	asxQ=
-X-Google-Smtp-Source: AGHT+IHn3H88ox7bB/NhJjry87xL/MIbCvhGeubayLwKGsAnfLxMkFJzPfznDpydwgu6hx4LJh0GfA==
-X-Received: by 2002:a4a:b3c4:0:b0:5c2:20aa:db25 with SMTP id 006d021491bc7-5c438e43fa9mr8596448eaf.1.1719934923357;
-        Tue, 02 Jul 2024 08:42:03 -0700 (PDT)
+        bh=o/z6a98yV7xkl1eyYXRXKo2VKH1LeqvoRbCjJUHkgIY=;
+        b=jQ3ogrZrp3c7invp8BE/F9KuvoeYqLmHO8DWAnNet68gFJaKT0B1YgsNtSVPZyyW45
+         E7sEa0TvlXeJeOfeARy6VjMF1Z6Z4M9VXdvTK3oxSiOqtGHvrIdPKkIOUNfovlua89LC
+         Glppr3gQX5PeuMFmKAGHjRBUBENh6gL7HmS00htVcGs/JS72zQQHSxiAsuXZK9GxkwVO
+         g2iN8tynlmi3G82wrqe7o7GvTRr84TtSlc5DCq9zc/8Q8/0yeeLy3LpolYV6lL3DXKxW
+         jSo+keKiujdyFlZGD4Vgldbf612EfqICXswI6m1BOVusadCgYUeaqf42dIYvHhjJczJ2
+         gP9w==
+X-Gm-Message-State: AOJu0Yyu4JeKB7969psw+eYMauhIV5cLu/yRziEQdzbHZbGn+LsKV1XZ
+	aic7btJ4JoDyfN5fLSwFwiUmgwgCkzCjjLuLXrjJV230OreJJdxHr9RR/KxV8827izL/ODvqiMT
+	dxPc=
+X-Google-Smtp-Source: AGHT+IG1xzJUxsxDnShwmTVA477aBCvtWq7O/gxro3imJazb+vwP0V9qP9X937GoG1P2AqvadnYZnQ==
+X-Received: by 2002:a9d:65c5:0:b0:700:ca13:30bc with SMTP id 46e09a7af769-70207763b58mr9275914a34.2.1719934974446;
+        Tue, 02 Jul 2024 08:42:54 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c414835d09sm1330332eaf.11.2024.07.02.08.42.02
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-701f7acbb20sm1709729a34.42.2024.07.02.08.42.53
         for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 08:42:02 -0700 (PDT)
-Message-ID: <28765b7a-20e6-427f-a18e-5f0e605ed403@kernel.dk>
-Date: Tue, 2 Jul 2024 09:42:02 -0600
+        Tue, 02 Jul 2024 08:42:54 -0700 (PDT)
+Message-ID: <26770f6d-efd8-4173-8ac7-110523bd8805@kernel.dk>
+Date: Tue, 2 Jul 2024 09:42:53 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -79,59 +79,55 @@ User-Agent: Mozilla Thunderbird
 Content-Language: en-US
 To: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/net: don't clear msg_inq before io_recv_buf_select()
- needs it
+Subject: [PATCH for-next] io_uring/net: cleanup io_recv_finish() bundle
+ handling
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-For bundle receives to function properly, the previous iteration msg_inq
-value is needed to make a judgement call on how much data there is to
-receive. A previous fix ended up clearing it earlier as an error case
-would potentially errantly set IORING_CQE_F_SOCK_NONEMPTY if the request
-got failed.
+Combine the two cases that check for whether or not this is a bundle,
+rather than having them as separate checks. This is easier to reduce,
+and it reduces the text associated with it as well.
 
-Move the assignment to post assigning buffers for the receive, but
-ensure that it's cleared for the buffer selection error case. With that,
-buffer selection has the right msg_inq value and can correctly bundle
-receives as designed.
-
-Noticed while testing where it was apparent than more than 1 buffer was
-never received. After fix was in place, multiple buffers are correctly
-picked for receive. This provides a 10x speedup for the test case, as
-the buffer size used was 64b.
-
-Fixes: 18414a4a2eab ("io_uring/net: assign kmsg inq/flags before buffer selection")
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
 ---
 
 diff --git a/io_uring/net.c b/io_uring/net.c
-index 7c98c4d50946..cf742bdd2a93 100644
+index db4a4a03ce3a..25223e11958f 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
-@@ -1127,16 +1127,18 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 		flags |= MSG_DONTWAIT;
- 
- retry_multishot:
--	kmsg->msg.msg_inq = -1;
--	kmsg->msg.msg_flags = 0;
+@@ -827,20 +827,20 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
+ 				  bool mshot_finished, unsigned issue_flags)
+ {
+ 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
+-	unsigned int cflags;
 -
- 	if (io_do_buffer_select(req)) {
- 		ret = io_recv_buf_select(req, kmsg, &len, issue_flags);
--		if (unlikely(ret))
-+		if (unlikely(ret)) {
-+			kmsg->msg.msg_inq = -1;
- 			goto out_free;
-+		}
- 		sr->buf = NULL;
- 	}
+-	if (sr->flags & IORING_RECVSEND_BUNDLE)
+-		cflags = io_put_kbufs(req, io_bundle_nbufs(kmsg, *ret),
+-				      issue_flags);
+-	else
+-		cflags = io_put_kbuf(req, issue_flags);
++	unsigned int cflags = 0;
  
-+	kmsg->msg.msg_flags = 0;
-+	kmsg->msg.msg_inq = -1;
-+
- 	if (flags & MSG_WAITALL)
- 		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
+ 	if (kmsg->msg.msg_inq > 0)
+ 		cflags |= IORING_CQE_F_SOCK_NONEMPTY;
  
+-	/* bundle with no more immediate buffers, we're done */
+-	if (sr->flags & IORING_RECVSEND_BUNDLE && req->flags & REQ_F_BL_EMPTY)
+-		goto finish;
++	if (sr->flags & IORING_RECVSEND_BUNDLE) {
++		cflags |= io_put_kbufs(req, io_bundle_nbufs(kmsg, *ret),
++				      issue_flags);
++		/* bundle with no more immediate buffers, we're done */
++		if (req->flags & REQ_F_BL_EMPTY)
++			goto finish;
++	} else {
++		cflags |= io_put_kbuf(req, issue_flags);
++	}
+ 
+ 	/*
+ 	 * Fill CQE for this receive and see if we should keep trying to
+
 -- 
 Jens Axboe
 

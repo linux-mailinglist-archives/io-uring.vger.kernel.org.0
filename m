@@ -1,171 +1,110 @@
-Return-Path: <io-uring+bounces-2412-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2413-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8D7924225
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 17:18:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D409692422F
+	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 17:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508DF2887C2
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 15:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9041728859F
+	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 15:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236E61BA883;
-	Tue,  2 Jul 2024 15:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3861BC06F;
+	Tue,  2 Jul 2024 15:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GcdNhdy1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2NgjuchW";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="njiU7C+b";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Rc3iR1CM"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="y6lMOMq1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DB61BB6BE
-	for <io-uring@vger.kernel.org>; Tue,  2 Jul 2024 15:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1971BBBC8
+	for <io-uring@vger.kernel.org>; Tue,  2 Jul 2024 15:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719933477; cv=none; b=aIBXdYTQp8wnbgJxd1yIxVlXr2g1klhxEPNxE7u3i2mw672dZjIg3nlwZnCUc2gZkjCDpaIZf+L9NBzNp7Zsx+TTJecKw6kLK2yanY3vlFGcIbMm/Nt8OlJkmF7RTqC3ojIofxld92d25t+vbGyBHnq10PgP4wu2SYT6OLHZpts=
+	t=1719933520; cv=none; b=IGmu0VVSAqj36CXLbYap5IpuEZ0Q1KL6y01IKctk7c9z6Ak4yKyx7KNqt5x/GywI993kB35aEWe6bhsUm2vdURfC2RN41dHYwU2TK3kikzt+rFuF3GxKjUlPLseR5/QwPfKlQ3FWrt7fewOog5wRaS0s5AL5UhA/PsamqnZrUQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719933477; c=relaxed/simple;
-	bh=+gsCZoT8mffJVsgGx5+3rt7QuLaf9fHGSjGwephCHuI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=t35y/Cx69JKYLkNLDqcLPIbnQ2po8ZTbXxR8jjaC19Z+K//44W5h/KVJqbAlAxXg4O4SfXG2p5/VmSJS3tKMpUzwnuNflDq3XjdpPs/8kNpWMr3bAWrV7F4fxeOfCqUxqUm4/WN5HzssUcxsULzWmYKHSB2bsgtekLNUa3NZ77w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GcdNhdy1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2NgjuchW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=njiU7C+b; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Rc3iR1CM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7D89821B63;
-	Tue,  2 Jul 2024 15:17:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719933473; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BzPPcLBsR1J+DD2KpWlzeMwTFzSpKzcm1GvuDUllJzY=;
-	b=GcdNhdy1KVr93LyKfeoSryKFoo3epobtTI7PCqHlEEsziCCjesC3G9WkeUeWJwNUoVdr+M
-	AD0PszLgky3HgyVGhrdt6RHFMbzbvpPRsi9C5VF7mIVrpMSOmYipr32I8e7rq6GWGgfTjo
-	IwEKoX+72wseIdlgUzRR1DTIYaYAn8I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719933473;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BzPPcLBsR1J+DD2KpWlzeMwTFzSpKzcm1GvuDUllJzY=;
-	b=2NgjuchWYKtTH8RzSTpzt2vG1FrKhT2yK6rkL/sH67sa4wJze4iLFMgvNDOA2FGcpFGYlp
-	HkHupN3Io3TIVPBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=njiU7C+b;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Rc3iR1CM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719933472; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BzPPcLBsR1J+DD2KpWlzeMwTFzSpKzcm1GvuDUllJzY=;
-	b=njiU7C+bXnppbpRQxhqBOwwmczJhu83YSWVX2vhi5N8nTyQLkay/iKjVwjdxhwSiEJczxQ
-	vnpvi73mVQ6yxxm1FRok4bAxNTleAh6dhJFPIVjZt1s1CFFCsBaxLBcU4VoJ2COhsgjMnw
-	sbE8VH47yH1e7+TLocFEms126Y2/+XY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719933472;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BzPPcLBsR1J+DD2KpWlzeMwTFzSpKzcm1GvuDUllJzY=;
-	b=Rc3iR1CMzccr4q39MHSW6UGl0ujQz3GouYI523Qx+dA6bmhdeRHN4nzV9i1qkNudCUvjrV
-	HwvyknYeq+LCO3DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4469A1395F;
-	Tue,  2 Jul 2024 15:17:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cjhwCiAahGbuIwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 02 Jul 2024 15:17:52 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org,  asml.silence@gmail.com
-Subject: Re: [PATCH 2/2] io_uring/msg_ring: use kmem_cache_free() to free
- request
-In-Reply-To: <20240701144908.19602-3-axboe@kernel.dk> (Jens Axboe's message of
-	"Mon, 1 Jul 2024 08:48:00 -0600")
-References: <20240701144908.19602-1-axboe@kernel.dk>
-	<20240701144908.19602-3-axboe@kernel.dk>
-Date: Tue, 02 Jul 2024 11:17:43 -0400
-Message-ID: <87ikxnzuug.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1719933520; c=relaxed/simple;
+	bh=8VyXqx9GoXMMipDgvyuDBT0CVy5/gYZk4Lf1pNHBxTI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cYMJT9IqkQ3FIhYAuxjizPsHaN4BoQz10Vx8UZl15tIaGpW2rqdq+2MCgwFFZIDSlAW0D4jLVfyDgZufpciWLjFs/E3lQWSGvAkkLym1+Mif2ztVSh6xt7bLCImML1ij40hs3F8q1k/SRfQw3ECBQJnJv6wRsFFtauQpNQL3Alw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=y6lMOMq1; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-24c582673a5so561522fac.2
+        for <io-uring@vger.kernel.org>; Tue, 02 Jul 2024 08:18:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719933517; x=1720538317; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=//QX2V50H9V2wWizm5y5foBrm6VcvlW47rr2j1EQtE0=;
+        b=y6lMOMq13jRpxfPeJRE17e3v5iEfJ+gpO5gI8TakZqJhJXf03+87xP5qVbCvu/oXMB
+         ZP5n5AKYgaTjvNPPrkKjBibWIzDcq5f3eCWH+IewqGi+z6ivLaG6X8L2G6DA14ZbSaol
+         LH3kzXgRRP+5pCI9N8ZO9dKDaEFuh7km5IF89+vrFGvATCRgAGboiJS/GxU1BHVjJRpq
+         dOcjdtjEhwBOW4xZsF9BV5QHBw3fE1IXSLwOvH7Kiw6/cJjCA8Rvuy5WV65eaFl6qCY1
+         6C7lmcAIUQMIC92CF2JGif9hpUVon0Z5GU55H4+pQgSxrk0eqICoFS5gy98XcYNlcSuk
+         Vdew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719933517; x=1720538317;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=//QX2V50H9V2wWizm5y5foBrm6VcvlW47rr2j1EQtE0=;
+        b=kPn7mEtDRvC8nCVNPG9kItSvop1LcpGcB1FR9y1qP8AN9ox8/1romcR4qexexsRDlX
+         RnPeZFYYqstNNAc5sdBxEZ9OryyScVfNffGTlXm9iCqPCigczMmJ76GvGXSkL7YwGW76
+         8EnfR8RB8ApBS2D++dB6ROFVXSARpiK0vaAce+bPzPxnCPUn6sQ/nCWM+A43JnXBSSLq
+         ipE+sjP6HSBDptSXE0Dd6yNc4Ii8klSbG13VbQ8NaLVzS0032qSCxLae/xY48xtoNrb0
+         E29t1iZRzkMC4FhysNELOabsLFXrMaOE2aeIxGu1DQtJQhAr9PgUc3nOHCXbGiKbzB1A
+         7G+w==
+X-Gm-Message-State: AOJu0YxMBK/IwH5AA3nm1UGKD+XIKeqvsWSNpg3IWD4ZPat8Gi1P6pAZ
+	PXtXol6h4HBwfp7Y1kFD9KKHJyVVoL4i8tYeuHUHioW7RMyU006z2x1j/+y979g=
+X-Google-Smtp-Source: AGHT+IFo22yVwfF/lSG5ZdmPxk1LQ8GGm67egABzuuIJHx5kn+RBBTkNW1Ek5F2mLCQYw0XHNdmXUw==
+X-Received: by 2002:a05:6870:3c0d:b0:254:7e18:7e1a with SMTP id 586e51a60fabf-25db36bd873mr9153324fac.5.1719933517437;
+        Tue, 02 Jul 2024 08:18:37 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25d8e3a05f4sm2231820fac.58.2024.07.02.08.18.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 08:18:37 -0700 (PDT)
+Message-ID: <4490ecbb-8ec5-463f-aab5-b638acc2e120@kernel.dk>
+Date: Tue, 2 Jul 2024 09:18:36 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 7D89821B63
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] io_uring/msg_ring: use kmem_cache_free() to free
+ request
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: io-uring@vger.kernel.org, asml.silence@gmail.com
+References: <20240701144908.19602-1-axboe@kernel.dk>
+ <20240701144908.19602-3-axboe@kernel.dk> <87ikxnzuug.fsf@mailhost.krisman.be>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <87ikxnzuug.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Jens Axboe <axboe@kernel.dk> writes:
+On 7/2/24 9:17 AM, Gabriel Krisman Bertazi wrote:
+> Jens Axboe <axboe@kernel.dk> writes:
+> 
+>> The change adding caching around the request allocated and freed for
+>> data messages changed a kmem_cache_free() to a kfree(), which isn't
+>> correct as the request came from slab in the first place. Fix that up
+>> and use the right freeing function if the cache is already at its limit.
+>>
+>> Fixes: 50cf5f3842af ("io_uring/msg_ring: add an alloc cache for io_kiocb entries")
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> Fwiw, kfree works fine for kmem_cache_alloc objects since 6.4, when SLOB
+> was removed.  Either way, it doesn't harm.
 
-> The change adding caching around the request allocated and freed for
-> data messages changed a kmem_cache_free() to a kfree(), which isn't
-> correct as the request came from slab in the first place. Fix that up
-> and use the right freeing function if the cache is already at its limit.
->
-> Fixes: 50cf5f3842af ("io_uring/msg_ring: add an alloc cache for io_kiocb entries")
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
-Fwiw, kfree works fine for kmem_cache_alloc objects since 6.4, when SLOB
-was removed.  Either way, it doesn't harm.
-
-> ---
->  io_uring/msg_ring.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-> index c2171495098b..29fa9285a33d 100644
-> --- a/io_uring/msg_ring.c
-> +++ b/io_uring/msg_ring.c
-> @@ -82,7 +82,7 @@ static void io_msg_tw_complete(struct io_kiocb *req, struct io_tw_state *ts)
->  		spin_unlock(&ctx->msg_lock);
->  	}
->  	if (req)
-> -		kfree(req);
-> +		kmem_cache_free(req_cachep, req);
->  	percpu_ref_put(&ctx->refs);
->  }
+Right, it's more for consistency sake, it's not fixing a real bug.
 
 -- 
-Gabriel Krisman Bertazi
+Jens Axboe
+
+
 

@@ -1,117 +1,138 @@
-Return-Path: <io-uring+bounces-2414-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2415-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC737924285
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 17:37:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71EDE92429A
+	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 17:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A9FB1C21092
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 15:37:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A36591C2286F
+	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 15:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08CB1BC062;
-	Tue,  2 Jul 2024 15:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E3C16C69A;
+	Tue,  2 Jul 2024 15:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsAWtP/5"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="e295RM+H"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A8D1BBBF7;
-	Tue,  2 Jul 2024 15:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F3D14D42C
+	for <io-uring@vger.kernel.org>; Tue,  2 Jul 2024 15:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934624; cv=none; b=eUBPLUmIvqa//154zDuBlHHv3QyANVdjZAiI0MDkDY+OLRPcWuUCyCDsm2iIINnlqRumNEiDG1m3CnjXNQrUfujZzRkBxcKHr2fAtMbWipIAn4gTfvWjp0/9I/sBnRuAiljpHCvqwNXF4wLcY//mpb4sVtAuwtqMpo83O4qfxrw=
+	t=1719934929; cv=none; b=eTE+VrBqszZGoc/HD4hb9mmZ4SFmFoh5TVoLghyWUeMyTR8eIGKyjQv6N/Ao8TCFKs9mS2i33RupNSTA9y945R4n9w0m1EzWt7t8VbsPz2mN4XL5c62hw/nS6iILOZq9+kT7HRN3g7nVIaDC4tFvbgcNHIalBkQxk0ukKYPP44s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934624; c=relaxed/simple;
-	bh=WTGvOz3HRhLyyqq4Zh1ZbWhG2m2SzbOevLYrkdYK0Ac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AEGpQwFeFge0kf/r6gcobrxHVsc7991C2sonuDYo/Y2L0CmqpNyStzgAhmKX/ca7Qntp3qV7Le317wz3sa6qufvA66yrgl1PEkMiem5kZHE5RXhLtAMYFrc2irQ9OTaHmXb35SfggXFm1HUkDRrQUlPgC9n0Ufw6dqNB1REbH1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsAWtP/5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30631C4AF07;
-	Tue,  2 Jul 2024 15:37:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719934624;
-	bh=WTGvOz3HRhLyyqq4Zh1ZbWhG2m2SzbOevLYrkdYK0Ac=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IsAWtP/5sywxnJ3K4GhdvT0CoKl6Wx7LlTBWBtriyGsqNoyMg7IhVmk61VqdXFky0
-	 T1tgw6GnFa/6AW67rk6Zv5of+0v/ZWvtFtybMOJo5nr9OjNIvvWiphf6h6o1wCpwW3
-	 fDnjF7GyUgnYd+W69xW1jKWfQ6lbEv/iYecBfpwh0q2GEG0xqRMlfmxaXx6EBVFOky
-	 KLswnROVOBB+nkybbNu8+0OjcDlue3n+kDKRk4zehl49xBfWElFENxsVl2reH2kWvQ
-	 ghJ7NPLIAls8pIe2zFxf/JYmZFhJ2pwBw5gp4rJ+xfb3RkpRumMpOS1c1QFHGYSaBW
-	 vlP8gw1m8b9MA==
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a754746f3easo84863466b.0;
-        Tue, 02 Jul 2024 08:37:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWHrx04RCxaQCulqu03/KMyZg+ucrhs7rGOWL48R4HmxZDhBXqhYx35ATCBSJQvP87dC1OO0HXxfui/7sAp1p1IwGLuqsU6JjmFn3fyB7ZWN+2YVV9/K6XghzPXmQOIYNM3NeTL1Z0jv/fcpS+x9wa8a6TW6jSHJesmP9Adwb5kOmFx4N/H
-X-Gm-Message-State: AOJu0Yy+WUbNJoRVJbJvOMaqFwS9d/W8XINWd6jBOtDjUky4LuOptxww
-	qFYin6g2OoAq2+7hkFtPLKCOvZW69NoR4Tv2y3//QwH8NdhaEOHKJGW4LUCodTmY4gtBZGP6RyY
-	P7nQhP2D2OXk3+MPMNYyvNkJAvW4=
-X-Google-Smtp-Source: AGHT+IHbRwTQFTOsGOu8dsXrAJCptQY1MXaOy1rNd3Y3lFjz+6X1PC/qmnx2H22UI1+PZJ+qeXsVVq8MLpI02IBHqk0=
-X-Received: by 2002:a17:907:86a0:b0:a5c:eafb:5288 with SMTP id
- a640c23a62f3a-a751448a596mr822072466b.31.1719934622768; Tue, 02 Jul 2024
- 08:37:02 -0700 (PDT)
+	s=arc-20240116; t=1719934929; c=relaxed/simple;
+	bh=nX/rvwTgcJlHFj7S4CZ35ZoROLoXlqTj1rLFvAZoLHw=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=SklcPoF2M0BDK30lRTDvjbbV1igzmN7kZ1dy4/PKxXBc/zBD1N5umXKtttfYetjaVLo1PBOO3SHtz1cZFmSawLxNINv9AG6jyOTPgAh8BnzLsjJAjiHddhSfg/aptn+9f4JcL/KvPkJI33tiA5pYazWrIT9gff1dtQiduaZNbMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=e295RM+H; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5c451f68160so34707eaf.0
+        for <io-uring@vger.kernel.org>; Tue, 02 Jul 2024 08:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719934923; x=1720539723; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ylYcHoZzWdtP9PF9CSLizWHwLceShucGyMIUKBGy03o=;
+        b=e295RM+HJ6KmtNP6Xc18noII0z/sYXOwUesNgGj9h+FmbAR67GRlvEy8OflYciJt3Y
+         ky1boQtB8DD3Qz2VeJ8myw8RnX4ALDNdWJ370bOJf9uVheBozKhsMhaJTRD0VhwP/+LX
+         1LU2EJL0MV7dyLFAWeTlezU2hAaBb4e9mmw+Gr/2tEnCvC65IBFMbV3HG0NJbS8FVkma
+         Ut97jWaoDcv4X1S+ekFdWs+2MfJ5Ayx40CfFA8ZNzsXQzou6oTR/ld2UYCa+GQHF+vrj
+         H+tNmy5RGKDOuzK4PvlPqFbhQ8a46BTgyxXS1L+CzJWS5izwybHobLri+Bm6gE4WnNTF
+         pSvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719934923; x=1720539723;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ylYcHoZzWdtP9PF9CSLizWHwLceShucGyMIUKBGy03o=;
+        b=KM55u97/Y8Cf/Gn8RBxDfBrlBcUCeVcm7eUUKI2+bYGsNnE0WbmVm5A2eG7+Cu7ab0
+         ouiYST15T5DbefJCIE3bXeVsVdOdK4q3gjyyZRakZ2FOptm91M9jvdri6ZzgmsGITY5+
+         ugdKMg3EU58GtzPTebkRFCrzlV+hPO90z790SAopdYBOfWn6ow0A/S3HS4cw4hstaD8w
+         PLb60vq3P69G+3NPdyCBwr7pBFogVCtKcwh7xb/j0GF9uJ0g4/8kACtP8k87iSUJEnio
+         1bsIq6hwIJ7O0psb3CKCDCZUjJrUtermQeu43JZ3AZ0jxpDyuwzKxLa1ni4f6gvd2l0t
+         9ADQ==
+X-Gm-Message-State: AOJu0YzUKmOgoUOsiUL7dbns8DuRK/wakZVAQdifuYw9evgP6ZomEzA9
+	in0QZ4cS67k4xKEosxHmXu2lGlYW0+Ib1UhBtR4n3H8OlNokcf5F1kuoQq3x+9Jr9YCjbC/NIZ/
+	asxQ=
+X-Google-Smtp-Source: AGHT+IHn3H88ox7bB/NhJjry87xL/MIbCvhGeubayLwKGsAnfLxMkFJzPfznDpydwgu6hx4LJh0GfA==
+X-Received: by 2002:a4a:b3c4:0:b0:5c2:20aa:db25 with SMTP id 006d021491bc7-5c438e43fa9mr8596448eaf.1.1719934923357;
+        Tue, 02 Jul 2024 08:42:03 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c414835d09sm1330332eaf.11.2024.07.02.08.42.02
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 08:42:02 -0700 (PDT)
+Message-ID: <28765b7a-20e6-427f-a18e-5f0e605ed403@kernel.dk>
+Date: Tue, 2 Jul 2024 09:42:02 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
- <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
- <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
- <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
- <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site> <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
-In-Reply-To: <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 2 Jul 2024 23:36:50 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
-Message-ID: <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Xi Ruoyao <xry111@xry111.site>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/net: don't clear msg_inq before io_recv_buf_select()
+ needs it
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Arnd,
+For bundle receives to function properly, the previous iteration msg_inq
+value is needed to make a judgement call on how much data there is to
+receive. A previous fix ended up clearing it earlier as an error case
+would potentially errantly set IORING_CQE_F_SOCK_NONEMPTY if the request
+got failed.
 
-On Mon, Jul 1, 2024 at 7:59=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
-> > On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
-> >> >
-> >> > Yes, both Linus and Christian hates introducing a new AT_ flag for
-> >> > this.
-> >> >
-> >> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
-> >> > like
-> >> > statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the
-> >> > performance
-> >> > issue and it's also audit-able by seccomp BPF.
-> >> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
-> >> even if statx() becomes audit-able, it is still blacklisted now.
-> >
-> > Then patch the sandbox to allow it.
-> >
-> > The sandbox **must** be patched anyway or it'll be broken on all 32-bit
-> > systems after 2037.  [Unless they'll unsupport all 32-bit systems befor=
-e
-> > 2037.]
->
-> More importantly, the sandbox won't be able to support any 32-bit
-> targets that support running after 2037, regardless of how long
-> the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
-> in order to be sure those don't get called by accident, the
-> fallback is immediately broken.
-Would you mind if I restore newstat for LoongArch64 even if this patch exis=
-t?
+Move the assignment to post assigning buffers for the receive, but
+ensure that it's cleared for the buffer selection error case. With that,
+buffer selection has the right msg_inq value and can correctly bundle
+receives as designed.
 
-Huacai
+Noticed while testing where it was apparent than more than 1 buffer was
+never received. After fix was in place, multiple buffers are correctly
+picked for receive. This provides a 10x speedup for the test case, as
+the buffer size used was 64b.
 
->
->       Arnd
+Fixes: 18414a4a2eab ("io_uring/net: assign kmsg inq/flags before buffer selection")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 7c98c4d50946..cf742bdd2a93 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -1127,16 +1127,18 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
+ 		flags |= MSG_DONTWAIT;
+ 
+ retry_multishot:
+-	kmsg->msg.msg_inq = -1;
+-	kmsg->msg.msg_flags = 0;
+-
+ 	if (io_do_buffer_select(req)) {
+ 		ret = io_recv_buf_select(req, kmsg, &len, issue_flags);
+-		if (unlikely(ret))
++		if (unlikely(ret)) {
++			kmsg->msg.msg_inq = -1;
+ 			goto out_free;
++		}
+ 		sr->buf = NULL;
+ 	}
+ 
++	kmsg->msg.msg_flags = 0;
++	kmsg->msg.msg_inq = -1;
++
+ 	if (flags & MSG_WAITALL)
+ 		min_ret = iov_iter_count(&kmsg->msg.msg_iter);
+ 
+-- 
+Jens Axboe
+
 

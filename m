@@ -1,123 +1,171 @@
-Return-Path: <io-uring+bounces-2411-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2412-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04955924142
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 16:49:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A8D7924225
+	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 17:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6FF1F241F5
-	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 14:49:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508DF2887C2
+	for <lists+io-uring@lfdr.de>; Tue,  2 Jul 2024 15:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222BE1BB680;
-	Tue,  2 Jul 2024 14:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236E61BA883;
+	Tue,  2 Jul 2024 15:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MeQ1pD44"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GcdNhdy1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2NgjuchW";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="njiU7C+b";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Rc3iR1CM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506151BA888
-	for <io-uring@vger.kernel.org>; Tue,  2 Jul 2024 14:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DB61BB6BE
+	for <io-uring@vger.kernel.org>; Tue,  2 Jul 2024 15:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719931738; cv=none; b=G0Dkzm59H67KRXDJaS93iEat0WP2CqUx1FtHHrTnaOO4TFTW232K818+uRdXV3q/ZbVDsmUtVtqFE14xWPwQdnzthJSDvM6RBXHyYGweSusoomb9Ui51WmrmYsooemAfJkmmEARI4snwXr0xcQwtgZC/EfKRCdcXYwny04wskMw=
+	t=1719933477; cv=none; b=aIBXdYTQp8wnbgJxd1yIxVlXr2g1klhxEPNxE7u3i2mw672dZjIg3nlwZnCUc2gZkjCDpaIZf+L9NBzNp7Zsx+TTJecKw6kLK2yanY3vlFGcIbMm/Nt8OlJkmF7RTqC3ojIofxld92d25t+vbGyBHnq10PgP4wu2SYT6OLHZpts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719931738; c=relaxed/simple;
-	bh=kE2EMoMVi5HFrE1nPBPZXOK1mFJQfnUdd2goohl2xjg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Ty4/2msl1yCfZpF1r4G8m+1ifaEVczMUruy6xbKfAfA8zgH3EgKAlKLGnnw/Al1zkJ7ofYX03vNDSQUYpAYVTfwp8ce0nkey2zzanOtLy44eIB9uTDoZNL+qViaxqyVyDSGkG26rI4YRyiZD2k0uT9pNDbJRog9RZcSIexd9Ay8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MeQ1pD44; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d1b6b6b2c5so257955b6e.0
-        for <io-uring@vger.kernel.org>; Tue, 02 Jul 2024 07:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719931734; x=1720536534; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NS5FFp2fM85P9s0J5QJSSVoTtjXmywpLZYR8ZikQajc=;
-        b=MeQ1pD445o24BLdlbDGx7b9fWB3xxOL99uFzA7dogfgP6jA4zSZrIukJ9M195AgPgb
-         l/ExoTTF54BQAnzqPMieLmKS3pnqmCofpRPwOQEHcsqK4ROekwcrUE7xbVQpSnfXiM6e
-         bhBaps7U4a5aBMKAihUyGUefzVuAMsyWo5cC3a5m6sDV4fYY8/O6vVNO4p9mS4IhqGnT
-         Z6MliiswOC61yT3x6MU2szt57mCH+Za8BDjlqm+xFHh9DWvobMOsRSnR+ZdrFBUyD2Eh
-         RTGz5+9Ar5147Y+G7vjmgRIMxehlsBnwE18DA3Fyyb7zX0b6BzMIIgbBTWA5AlFe6UOF
-         OMFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719931734; x=1720536534;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NS5FFp2fM85P9s0J5QJSSVoTtjXmywpLZYR8ZikQajc=;
-        b=Hn1a5QFCYg+Izk/kPVR3Qj69XFc7497JOHIQatFnByNikNa2uoxvoy/enCCxj/a+nB
-         2FkMR5ON4iudu6BhQtOLK1db0V5vMtUjfoE7LYNXgXr6yNeDG+yJceBNiBH2uKCz4i/7
-         YVzdZOdBHB5D/wKZM9N4m0J1udczWZ9/9lWjIAsn3qXjW17hF+TRQn1SNQm/qAayNRqc
-         g89H+5+TYjJU1mupsoE+7/gF4o8c1zqZ/A3ysFguVGYOkbjY5tvKXdjPGS71iFxdTwP9
-         x8R1+IKjPDSiJ54+klYoUnzbB9Tkw6WRKnc5xlN0BqD+LXmMsgdDZy9yxeiPBXCL2xxo
-         Lo9A==
-X-Gm-Message-State: AOJu0YyTlzOp5uzss7ALMW+KMbQCJGqXh9J+y4w/PfkDqw22g87/kywl
-	DYDB9DHgLYmit/0DBl7r6WoHSo+2NpbkwbWTy9ebs2HghqC5p3yjxVusJaMzqjj1NcZFQUPBhms
-	P2dA=
-X-Google-Smtp-Source: AGHT+IE5ELaoUG+USWAoIxcm0aSzaXm1EKkjahyCsmYFjuYgDqxmzRUHY/XgJxT4TQATgnt5MuvmjA==
-X-Received: by 2002:a05:6808:1a2a:b0:3d5:65c7:c26c with SMTP id 5614622812f47-3d6b549a9fcmr9990952b6e.4.1719931733854;
-        Tue, 02 Jul 2024 07:48:53 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d62f9b9029sm1743041b6e.5.2024.07.02.07.48.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 07:48:52 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: syzbot+f7f9c893345c5c615d34@syzkaller.appspotmail.com
-In-Reply-To: <c7350d07fefe8cce32b50f57665edbb6355ea8c1.1719927398.git.asml.silence@gmail.com>
-References: <c7350d07fefe8cce32b50f57665edbb6355ea8c1.1719927398.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring/msg_ring: fix overflow posting
-Message-Id: <171993173213.106736.16405833046614898902.b4-ty@kernel.dk>
-Date: Tue, 02 Jul 2024 08:48:52 -0600
+	s=arc-20240116; t=1719933477; c=relaxed/simple;
+	bh=+gsCZoT8mffJVsgGx5+3rt7QuLaf9fHGSjGwephCHuI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=t35y/Cx69JKYLkNLDqcLPIbnQ2po8ZTbXxR8jjaC19Z+K//44W5h/KVJqbAlAxXg4O4SfXG2p5/VmSJS3tKMpUzwnuNflDq3XjdpPs/8kNpWMr3bAWrV7F4fxeOfCqUxqUm4/WN5HzssUcxsULzWmYKHSB2bsgtekLNUa3NZ77w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GcdNhdy1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2NgjuchW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=njiU7C+b; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Rc3iR1CM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7D89821B63;
+	Tue,  2 Jul 2024 15:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719933473; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BzPPcLBsR1J+DD2KpWlzeMwTFzSpKzcm1GvuDUllJzY=;
+	b=GcdNhdy1KVr93LyKfeoSryKFoo3epobtTI7PCqHlEEsziCCjesC3G9WkeUeWJwNUoVdr+M
+	AD0PszLgky3HgyVGhrdt6RHFMbzbvpPRsi9C5VF7mIVrpMSOmYipr32I8e7rq6GWGgfTjo
+	IwEKoX+72wseIdlgUzRR1DTIYaYAn8I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719933473;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BzPPcLBsR1J+DD2KpWlzeMwTFzSpKzcm1GvuDUllJzY=;
+	b=2NgjuchWYKtTH8RzSTpzt2vG1FrKhT2yK6rkL/sH67sa4wJze4iLFMgvNDOA2FGcpFGYlp
+	HkHupN3Io3TIVPBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=njiU7C+b;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Rc3iR1CM
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719933472; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BzPPcLBsR1J+DD2KpWlzeMwTFzSpKzcm1GvuDUllJzY=;
+	b=njiU7C+bXnppbpRQxhqBOwwmczJhu83YSWVX2vhi5N8nTyQLkay/iKjVwjdxhwSiEJczxQ
+	vnpvi73mVQ6yxxm1FRok4bAxNTleAh6dhJFPIVjZt1s1CFFCsBaxLBcU4VoJ2COhsgjMnw
+	sbE8VH47yH1e7+TLocFEms126Y2/+XY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719933472;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BzPPcLBsR1J+DD2KpWlzeMwTFzSpKzcm1GvuDUllJzY=;
+	b=Rc3iR1CMzccr4q39MHSW6UGl0ujQz3GouYI523Qx+dA6bmhdeRHN4nzV9i1qkNudCUvjrV
+	HwvyknYeq+LCO3DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4469A1395F;
+	Tue,  2 Jul 2024 15:17:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cjhwCiAahGbuIwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 02 Jul 2024 15:17:52 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org,  asml.silence@gmail.com
+Subject: Re: [PATCH 2/2] io_uring/msg_ring: use kmem_cache_free() to free
+ request
+In-Reply-To: <20240701144908.19602-3-axboe@kernel.dk> (Jens Axboe's message of
+	"Mon, 1 Jul 2024 08:48:00 -0600")
+References: <20240701144908.19602-1-axboe@kernel.dk>
+	<20240701144908.19602-3-axboe@kernel.dk>
+Date: Tue, 02 Jul 2024 11:17:43 -0400
+Message-ID: <87ikxnzuug.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+Content-Type: text/plain
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TAGGED_RCPT(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 7D89821B63
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Spam-Level: 
 
+Jens Axboe <axboe@kernel.dk> writes:
 
-On Tue, 02 Jul 2024 14:38:11 +0100, Pavel Begunkov wrote:
-> The caller of io_cqring_event_overflow() should be holding the
-> completion_lock, which is violated by io_msg_tw_complete. There
-> is only one caller of io_add_aux_cqe(), so just add locking there
-> for now.
-> 
-> WARNING: CPU: 0 PID: 5145 at io_uring/io_uring.c:703 io_cqring_event_overflow+0x442/0x660 io_uring/io_uring.c:703
-> RIP: 0010:io_cqring_event_overflow+0x442/0x660 io_uring/io_uring.c:703
->  <TASK>
->  __io_post_aux_cqe io_uring/io_uring.c:816 [inline]
->  io_add_aux_cqe+0x27c/0x320 io_uring/io_uring.c:837
->  io_msg_tw_complete+0x9d/0x4d0 io_uring/msg_ring.c:78
->  io_fallback_req_func+0xce/0x1c0 io_uring/io_uring.c:256
->  process_one_work kernel/workqueue.c:3224 [inline]
->  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3305
->  worker_thread+0x86d/0xd40 kernel/workqueue.c:3383
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:144
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
-> 
-> [...]
+> The change adding caching around the request allocated and freed for
+> data messages changed a kmem_cache_free() to a kfree(), which isn't
+> correct as the request came from slab in the first place. Fix that up
+> and use the right freeing function if the cache is already at its limit.
+>
+> Fixes: 50cf5f3842af ("io_uring/msg_ring: add an alloc cache for io_kiocb entries")
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Applied, thanks!
+Fwiw, kfree works fine for kmem_cache_alloc objects since 6.4, when SLOB
+was removed.  Either way, it doesn't harm.
 
-[1/1] io_uring/msg_ring: fix overflow posting
-      commit: 3b7c16be30e35ec035b2efcc0f7d7b368789c443
+> ---
+>  io_uring/msg_ring.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
+> index c2171495098b..29fa9285a33d 100644
+> --- a/io_uring/msg_ring.c
+> +++ b/io_uring/msg_ring.c
+> @@ -82,7 +82,7 @@ static void io_msg_tw_complete(struct io_kiocb *req, struct io_tw_state *ts)
+>  		spin_unlock(&ctx->msg_lock);
+>  	}
+>  	if (req)
+> -		kfree(req);
+> +		kmem_cache_free(req_cachep, req);
+>  	percpu_ref_put(&ctx->refs);
+>  }
 
-Best regards,
 -- 
-Jens Axboe
-
-
-
+Gabriel Krisman Bertazi
 

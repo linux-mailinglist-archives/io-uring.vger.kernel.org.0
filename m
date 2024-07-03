@@ -1,123 +1,79 @@
-Return-Path: <io-uring+bounces-2429-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2430-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E865926724
-	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 19:30:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFCA8926735
+	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 19:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32615B20DD4
-	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 17:30:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BBE7B21C87
+	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 17:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3097184136;
-	Wed,  3 Jul 2024 17:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F928185E52;
+	Wed,  3 Jul 2024 17:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="gPv9gp6I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4W8apJi"
 X-Original-To: io-uring@vger.kernel.org
-Received: from xry111.site (xry111.site [89.208.246.23])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449BD17556B;
-	Wed,  3 Jul 2024 17:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01F3185E4B
+	for <io-uring@vger.kernel.org>; Wed,  3 Jul 2024 17:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720027821; cv=none; b=mhx6s89+Y5zCQYMtLyrPyE92GO7TKKGo5rCrhwWxLfzw9K3gLOww4mvzKPsbS6WB2Nn9vm5efdYpIm+NVo8MUBgIt4mMmvlAAeC3IMvhxjamHGyFZvA8w74xyrV4sPvgpKvTWv7LELLSzA1l44JG043MPncD6Z1VmI2Bo1NXiNE=
+	t=1720027924; cv=none; b=RuUPcriL0vNiEt4HhHKZI2SuAVMjeBqj1MizlXqZjqfbDcFCmf9LEBF5iTUKsFj1JDOyOuOPRqpFauHbJtTSWgVXxjryB9FNFfs7ZTJ6P955MONxECCAxgflwTnVFo6R4o7FRNO/b7f75cszttXu6nZk9WYH3kbuhbvfage08R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720027821; c=relaxed/simple;
-	bh=AegVO+tUySKhRPn+emoRbtM2je4QWC7tk7WKV2tGqaY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Q25xzY0P08Kbp1iEns3dVNKUJHHE2Trk9tibC+8vbahStoRL/8x6QmNccI+GVX1i13V0UWLlEq1nxo2+oqqZ7kFmU5ohYiWPcSb8zqQdAlPJhWUTYVmlSFURKhjCCKNJt9OaiqlGI8hdFh5x04i0+Ic1uB96BTh9kzf61gB9qkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=gPv9gp6I; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1720027818;
-	bh=AegVO+tUySKhRPn+emoRbtM2je4QWC7tk7WKV2tGqaY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=gPv9gp6IoHjLGVuhcyl/sAdDgBtygPOnWSitN3Bs6ZL4Dro7IZ7P8TmqvP3U7Ds49
-	 gu8rxRaDFmMphgbFw2miMmX3G2RNFwxBr22DZsFsDcggjlh+0BiCAuRYuUrv5AQBln
-	 g6yCiupGs3md42rwgYizpRydFc2qTUMKwHqBfDO0=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id E7CD01A40AA;
-	Wed,  3 Jul 2024 13:30:15 -0400 (EDT)
-Message-ID: <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, libc-alpha@sourceware.org, 
- "Andreas K. Huettel"
-	 <dilfridge@gentoo.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen
-	 <chenhuacai@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, Alexander Viro
-	 <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	loongarch@lists.linux.dev
-Date: Thu, 04 Jul 2024 01:30:14 +0800
-In-Reply-To: <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
-References: <20240625110029.606032-1-mjguzik@gmail.com>
-	 <20240625110029.606032-3-mjguzik@gmail.com>
-	 <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
-	 <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
-	 <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
-	 <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
-	 <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
-	 <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
-	 <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
-	 <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
-	 <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
-	 <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
-	 <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1720027924; c=relaxed/simple;
+	bh=uWEjbdo+KyxxXuxmMRfXrAzJdp2YZ4yrTyV4MFakoVY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=hODPyQm8mw8SngNSb4YT2xoYHdF/T61CxoY2YKcjOGFu05V/GPB8CJIY0Lq39c4nigu125ZzFOIWZJ9/kPh02jz+5t7FMRcTuVdStlinzT8M89VJymcoEQbjwH5R1Tas7HQTibVS1OLTS34xtrnc2pvVYFsIsfQggVoN/AemOlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4W8apJi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7322EC2BD10;
+	Wed,  3 Jul 2024 17:32:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720027923;
+	bh=uWEjbdo+KyxxXuxmMRfXrAzJdp2YZ4yrTyV4MFakoVY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=s4W8apJivtWUc4anZoVa87/hDtjy8CprT+CohxnVSyEcMxUgB+P4uEUDEOh5tj92W
+	 ZLc0ksySZF0X+Wsxh+lCmCGoOGa9gu16gfVlXGSGL/rk+hsoh2fdbhw3LMflkMbIxl
+	 rBaE+njmkDWVwW8kjgbFk/AHjQOt7OTWQ57jdyxWWSASzIMua42iQWyC5VMfrds0QF
+	 nm9mDrdOsfmBGrBtkDcc3T0YjntHxjAxqyvJSXsbIUQQsziK53U6BQVvej9Bxifq90
+	 WpYT0L3hJAvkePzQd5Y3q2NBnnLZeTqRGs6Pp9lVNpL1HEVZAZMyp62fWaaIrDirmS
+	 l0pE3TXAMwFsg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6936EC433A2;
+	Wed,  3 Jul 2024 17:32:03 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fix for 6.10-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <d55b363d-2bd4-48c9-b2e5-92fbae147cb7@kernel.dk>
+References: <d55b363d-2bd4-48c9-b2e5-92fbae147cb7@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <d55b363d-2bd4-48c9-b2e5-92fbae147cb7@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.10-20240703
+X-PR-Tracked-Commit-Id: 6e92c646f5a4230d939a0882f879fc50dfa116c5
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8a9c6c40432e265600232b864f97d7c675e8be52
+Message-Id: <172002792342.9712.4832414241469308982.pr-tracker-bot@kernel.org>
+Date: Wed, 03 Jul 2024 17:32:03 +0000
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring <io-uring@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
 
-On Wed, 2024-07-03 at 10:09 -0700, Linus Torvalds wrote:
-> > And should we add stat_time64, fstat_time64, and fstatat_time64 to stop
-> > using statx on 32-bit platforms too as it's disgusting?
->=20
-> We already have 'stat64' for 32-bit platforms. We have had it for over
-> 25 years - it predates not only the kernel git tree, it predates the
-> BK tree too.
->=20
-> I think stat64 was introduced in 2.3.34. That is literally last century.
+The pull request you sent on Wed, 3 Jul 2024 07:49:54 -0600:
 
-struct stat64 {
+> git://git.kernel.dk/linux.git tags/io_uring-6.10-20240703
 
-// ...
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8a9c6c40432e265600232b864f97d7c675e8be52
 
-    int     st_atime;   /* Time of last access.  */
-    unsigned int    st_atime_nsec;
-    int     st_mtime;   /* Time of last modification.  */
-    unsigned int    st_mtime_nsec;
-    int     st_ctime;   /* Time of last status change.  */
-    unsigned int    st_ctime_nsec;
-    unsigned int    __unused4;
-    unsigned int    __unused5;
-};
+Thank you!
 
-> Anybody who tries to make this about 2037 is being actively dishonest.
-
-> Why are people even discussing this pointless thing?
-
-So are we going to drop 32-bit support before 2037?  Then yes it'd be
-pointless and I can live (even easier) without 32-bit things.
-
-Otherwise, we still have 13 years before 2037 but this does not render
-the thing pointless.  We still have to provide a 64-bit time stamp soon
-or later.
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 

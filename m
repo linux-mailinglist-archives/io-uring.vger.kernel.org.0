@@ -1,164 +1,132 @@
-Return-Path: <io-uring+bounces-2418-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2419-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586E5924CDA
-	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 02:48:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92A4692524E
+	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 06:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7361C2215E
-	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 00:48:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12CC01F231F7
+	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 04:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5754E7E6;
-	Wed,  3 Jul 2024 00:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C742260C;
+	Wed,  3 Jul 2024 04:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQ72qP6L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CayMUGTL"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27691361;
-	Wed,  3 Jul 2024 00:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836641863F;
+	Wed,  3 Jul 2024 04:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719967711; cv=none; b=noVRyG36B21hXmI0vhxYGZfOgJW69HybDtdukTnZ/tZUbydzsBDQvQmSC/sz461W5lLpeoBnH1TfDqBdxaG1P6wOQcVuW4lFYdKM7FqYWEdKVlivz3KbwhctQNvJqyOan0GXDCwGDF+thlqDa558gPibleWDU0mJcC+Q2/Rh0xQ=
+	t=1719981020; cv=none; b=ViwAzOhVyH9D7Sqxs+RN7cktEM6b4kfGYz14zpYHDZZy+YKtv2TnZxqtFYH3OxubArgzjsFbFaelEzSz36SVU0D6ROPegzeHaeU2eyVpMyk99f/pfy4vZ94OIxqGfKPIN3D/1Ct/hY4osxNrDdHsDG3dkuRzA6AgFN/ybaDcL8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719967711; c=relaxed/simple;
-	bh=oWYSMtuZp1pdNBxCN7ttoYHwMtat4dDaIgcJ9Igj9CU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hyC30FdYXQoobYY66zhp9UylVJ5jtEEnPAD2l36ZYWAhSaETEjpSlCARe8SZumYNlleqkVkPoLXjhEqJlrKsH86CF/mJ/OjTJGEtdtTyiwKgCW7Gli/WHOy8mD3Uk3RDziPyDpsBnEgPZMCQWpgaRLjFRpv95jEiTGLCPxLTThU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQ72qP6L; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7021dffc628so1032943a34.2;
-        Tue, 02 Jul 2024 17:48:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719967709; x=1720572509; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Li3K3Uue/qNEmAx8woj0qwPhTqO5rT3fVLroOQjerg=;
-        b=jQ72qP6Lk4gGXhJVBbiy/VBm2zc0oOfXDO2b92UzG+QjTtBkKKYGbAukx+32h2p2kH
-         4fNjy6I2/9v+o46FmQh6x/RK2/V5IvSDC+wNXWj/z7yTAbxZ5n/AaFs6e6N6AoYb5qpQ
-         d/tMq6Dr9X94osTuVEP9XfoRKPU8971oO3VkBd9ZC5N3WS+zBrBLv9nWHwE+cY8oEekD
-         mjqHzmOyFo//+nPpqg6uwUai4usUJK1NsiWLOO2SJeVoqu6nP2yEF3IX8vtLxDCVZMUv
-         VKyQ8Zt52OKnokfprUDzc3b9SMS8iJZUQNlU7yfGXtpknfdOAvJobXg32790+dbpQn3+
-         0vLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719967709; x=1720572509;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5Li3K3Uue/qNEmAx8woj0qwPhTqO5rT3fVLroOQjerg=;
-        b=LF5nCczfaemnsVXAkDBe5UuiIT5kbMxW34L3Speu+tL9MpKWg3KNwftQCprDUKMWSk
-         5R3GZPvJv9qcB2E2DySucalT5rTiniYfGfCz+Lt4GW32O4UjvFJS2gdRcpsXQH08/REh
-         ssDeZgDcSxNJWIByA3Bvb/CWazyHWLcScFPguggir4S9XM/PjQb3XnyrlgkO9KHF9T0g
-         kQemoPugobGPmgL14Jzmx7K5YGXP07haN6AfWBso7/RLiTtQJIHLXSlnPAEHIszBuIrB
-         YOHH8gUycA+w4t+SZzj9k3oelFRGdmA8Qr4ed2ztEcIipcTdZmLJel/v7XPlUAv9wCF7
-         2uVw==
-X-Forwarded-Encrypted: i=1; AJvYcCX77KztmkwAY5eumN43RmmuHh/WY2W9eyXFsCLj/le3U+CdY5pdEgwopMWAviQF+q/3r+gyq01FyQCzYux7mXiAqiKN3uaMjP9OYhRq
-X-Gm-Message-State: AOJu0Ywhq/xF8yA8W0At4hL0rEWmqyAcBJV/YG53ZrOkgdW7gR5I+PxC
-	XeTWa8n9gC8/xZwBqZqMMHZc3EHMY7Peqvq8K9qbAc9/IxUig4OZ
-X-Google-Smtp-Source: AGHT+IGE37cgZq3LE0NZaCz+m7LS6PUY2cEAveg7UCUE4CXD/YmIbu7cgbbVm4lju8pbSA4JGkdBDA==
-X-Received: by 2002:a05:6830:2056:b0:702:1de0:9a4a with SMTP id 46e09a7af769-7021de0a7f6mr5366692a34.29.1719967708719;
-        Tue, 02 Jul 2024 17:48:28 -0700 (PDT)
-Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70208090725sm1273321a34.39.2024.07.02.17.48.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 17:48:28 -0700 (PDT)
-From: Pei Li <peili.dev@gmail.com>
-Date: Tue, 02 Jul 2024 17:48:27 -0700
-Subject: [PATCH] io_uring: Fix WARNING in io_cqring_event_overflow
+	s=arc-20240116; t=1719981020; c=relaxed/simple;
+	bh=2GKTIpADWW0/pDL96WDokG2gG49SMgT/xmRpLpMnRDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ECccSkASobapAZtIXuOBz8tWp+oZ/lvGezlX6QCCdfGQX3+tjOUIe7P+Wps6RwTdNqE9pBPGon2ypMe7x4S35wG6UoxVmeHECXgidyObQZvUdU19HrmckOutPYkCVscUNxpVI2VJr/+ybo1CvtDK3gk/x3zWA59cakomM/shT+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CayMUGTL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE12C4AF0E;
+	Wed,  3 Jul 2024 04:30:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719981020;
+	bh=2GKTIpADWW0/pDL96WDokG2gG49SMgT/xmRpLpMnRDY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CayMUGTLU1i1ROVcvt5KpmQQwruF+enT8ZTnXHZtajN3U5UmZgqpXr7WDzAuRtAZt
+	 uP2GU6OpTGGO6GHAU+5sIlPvMBxf6tFX3J5UOsoM52UZDddtc3Jeqw+OeZl4U2ierS
+	 c6CGmHATYvDK+XX2nXe2ef4wa00z/pUr4C6OCj0d8WqDpR8MK69Ou23/XYMaLNvEM7
+	 GoH5RWJF/rDcLLFWQZvhBCcbUSxgQusTPOglHJlHsP1kIFmr7fNPDt1LpWoI/g0jfF
+	 jGxY/NvBhZroRaVCg4VBOt3KgMK9r7dux0ZzI86aWoU1xyR5Er6rlFoVTPVegs/Nnf
+	 fmOsYxCeuQEgA==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7241b2fe79so538352566b.1;
+        Tue, 02 Jul 2024 21:30:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXVy69laUqtKZZesHGgVz7FGYagIKIU3dpIl0OxhTQv0YmLssiIZGBxQtoKr9Y7Xx0nBKkHlwwnn6UaiX1JhEgWRu42fqFTQOKlnuk8N7b8OH8joqmrf3XPgiyOCUb0TA4vApaQMxH34BsjdlYt1qOZ/CsMbnx11oYjfwK++z6P1VTAL4Qj
+X-Gm-Message-State: AOJu0Ywseed8t+91haM1SWBpRkWTCGvKOVNb+scXDWCaxmJyvP50xGfu
+	K3uG8a1RfXLZ2xPhn0JSTEK+NhZQyQ/kmsuVzdtk1GgZcq8QU8eHrt4qNFwmDqTi5czJPAAT5/3
+	1BQ/34dnp6UAjsJmczn0k5/rC9tg=
+X-Google-Smtp-Source: AGHT+IFeHMEPJPUo7fR+P58Lug7AIm6CszZI8bK6+5jFh43ov7CVbuKnr6u7wq/pWCfOZMagNaZ95cTwMd8UQq17QmU=
+X-Received: by 2002:a17:906:fccc:b0:a72:548a:6f42 with SMTP id
+ a640c23a62f3a-a751445451dmr664805266b.18.1719981018671; Tue, 02 Jul 2024
+ 21:30:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240702-bug9-v1-1-475cb52d3ee6@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANqfhGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDcwMj3aTSdEvdxBSLRGMzMwvDVKMUJaDSgqLUtMwKsDHRsbW1AN+eV1p
- WAAAA
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
- skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com, 
- linux-kernel-mentees@lists.linuxfoundation.org, 
- syzbot+f7f9c893345c5c615d34@syzkaller.appspotmail.com, 
- Pei Li <peili.dev@gmail.com>
-X-Mailer: b4 0.15-dev-13183
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719967707; l=2240;
- i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
- bh=oWYSMtuZp1pdNBxCN7ttoYHwMtat4dDaIgcJ9Igj9CU=;
- b=2CTRcQ59Jslvl+23lIw2OKiISOO9WIwUSDXNtWtmPaj+xHfnXlASeBeCMeVeuBYShg9TeHBp2
- jWp00+/6ZKGBVpFs/19fR+hino0mbkb7//PSP31OjHtZ5912tcbwIQR
-X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
- pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
+References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+ <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com> <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+ <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
+In-Reply-To: <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Wed, 3 Jul 2024 12:30:06 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5n-6AjPuMj6sH0T2uSy97LMy3qkimUT13S2Fi-p-6Nug@mail.gmail.com>
+Message-ID: <CAAhV-H5n-6AjPuMj6sH0T2uSy97LMy3qkimUT13S2Fi-p-6Nug@mail.gmail.com>
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Xi Ruoyao <xry111@xry111.site>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Acquire ctx->completion_lock in io_add_aux_cqe().
+On Wed, Jul 3, 2024 at 1:07=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Tue, Jul 2, 2024, at 17:36, Huacai Chen wrote:
+> > On Mon, Jul 1, 2024 at 7:59=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wr=
+ote:
+> >> On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
+> >> > On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
+> >> >> >
+> >> >> > Yes, both Linus and Christian hates introducing a new AT_ flag fo=
+r
+> >> >> > this.
+> >> >> >
+> >> >> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
+> >> >> > like
+> >> >> > statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the
+> >> >> > performance
+> >> >> > issue and it's also audit-able by seccomp BPF.
+> >> >> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
+> >> >> even if statx() becomes audit-able, it is still blacklisted now.
+> >> >
+> >> > Then patch the sandbox to allow it.
+> >> >
+> >> > The sandbox **must** be patched anyway or it'll be broken on all 32-=
+bit
+> >> > systems after 2037.  [Unless they'll unsupport all 32-bit systems be=
+fore
+> >> > 2037.]
+> >>
+> >> More importantly, the sandbox won't be able to support any 32-bit
+> >> targets that support running after 2037, regardless of how long
+> >> the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
+> >> in order to be sure those don't get called by accident, the
+> >> fallback is immediately broken.
+> > Would you mind if I restore newstat for LoongArch64 even if this patch =
+exist?
+>
+> I still prefer not add newstat back: it's easier to
+> get applications to correctly implement the statx() code
+> path if there are more architectures that only have that.
+Yes, we need statx-only architecures to improve statx(), and so this
+patch got upstream. But I'm considering bidirectional compatibility,
+which means the kernel should work with future patched and existing
+un-patched sandboxes. So I think now is the correct time to add
+newstat back for LoongArch --- statx() has been improved, and existing
+applications want to work on LoongArch.
 
-syzbot reports a warning message in io_cqring_event_overflow(). We were
-supposed to hold ctx->completion_lock before entering this function, but
-instead we did not.
+Huacai
 
-This patch acquires and releases ctx->completion_lock when entering and
-exiting io_add_aux_cqe().
-
-Fixes: f33096a3c99c ("io_uring: add io_add_aux_cqe() helper")
-Reported-by: syzbot+f7f9c893345c5c615d34@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f7f9c893345c5c615d34
-Signed-off-by: Pei Li <peili.dev@gmail.com>
----
-syzbot reports a warning message in io_cqring_event_overflow(). We were
-supposed to hold ctx->completion_lock before entering this function, but
-instead we did not.
-
-The call stack is as follows:
-
-Call Trace:
- <TASK>
- __io_post_aux_cqe io_uring/io_uring.c:816 [inline]
- io_add_aux_cqe+0x27c/0x320 io_uring/io_uring.c:837
- io_msg_tw_complete+0x9d/0x4d0 io_uring/msg_ring.c:78
- io_fallback_req_func+0xce/0x1c0 io_uring/io_uring.c:256
- process_one_work kernel/workqueue.c:3224 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3305
- worker_thread+0x86d/0xd40 kernel/workqueue.c:3383
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:144
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-In io_add_aux_cqe(), we should acquire this lock beforehead.
-
-This patch acquires and releases ctx->completion_lock when entering and
-exiting io_add_aux_cqe().
----
- io_uring/io_uring.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 4e2836c9b7bf..0f62332e95ff 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -834,8 +834,10 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
-  */
- void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
- {
-+	io_cq_lock(ctx);
- 	__io_post_aux_cqe(ctx, user_data, res, cflags);
- 	ctx->submit_state.cq_flush = true;
-+	io_cq_unlock_post(ctx);
- }
- 
- /*
-
----
-base-commit: 74564adfd3521d9e322cfc345fdc132df80f3c79
-change-id: 20240702-bug9-ad8a36681e2d
-
-Best regards,
--- 
-Pei Li <peili.dev@gmail.com>
-
+>
+>        Arnd
 

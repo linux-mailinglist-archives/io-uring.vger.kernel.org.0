@@ -1,122 +1,143 @@
-Return-Path: <io-uring+bounces-2425-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2426-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E9F92662C
-	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 18:32:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84BC1926671
+	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 18:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FEDC2830EA
-	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 16:32:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0F04B211E0
+	for <lists+io-uring@lfdr.de>; Wed,  3 Jul 2024 16:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED241822D8;
-	Wed,  3 Jul 2024 16:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB954184136;
+	Wed,  3 Jul 2024 16:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bs+wDda4"
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="b6bNx6+a"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA59180A73
-	for <io-uring@vger.kernel.org>; Wed,  3 Jul 2024 16:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6941718410F;
+	Wed,  3 Jul 2024 16:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720024321; cv=none; b=oRjfIA33lcRYUEVL+BNNb0frmXc1t86ET0jlIUkJrc3FqCWjuE0zsWl2QbkKQ93ucDRGW9euQ1Ge1N5psXzL9n7I7J3DCcDgGwf2mrb+A4qC2BXVJnk6+jtkCN8M38xVLvpooTwxdJluJGMVj4j9/tQHyd8HaK14idbbfxwgPCw=
+	t=1720025693; cv=none; b=mcd+HOc6RXeYVku8xnSHTcpUCdl4k4JMZCOm1eMmuzVAYknT0rIjXS3EFQLeAxWwCBFcnoRgALFu3YKvx4U6TJ5Xu8LQai6ctu8s0kg5q7Lja/m8tfEVvDQLvc3aoZUN5laS2BdnILYpocNpuqVERXFHqDvo2NDc6QErt3At+0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720024321; c=relaxed/simple;
-	bh=aX/dntK47yBZoBKXBogHtsXyVUj/EEsdEqcWuVR2MNY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H9RaOecy94uXdyKZAyLcnlznH5bw7m25XICLWq7SGUtgxToLV7OVHASUpKDcAsB/de1mYk9xNX/4nWwck3T7IrD6cheWzZRm5Uo67Cst3KB299eX7rgfEjxYEvLvFhnGCSVvJzXdv5h4Dgj1RzixdZTTv+Uft7/AZlx11kgOU6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bs+wDda4; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58b0dddab8cso4415216a12.0
-        for <io-uring@vger.kernel.org>; Wed, 03 Jul 2024 09:31:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1720024318; x=1720629118; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iyado1sFM+cGedSAqHu7B/wZSU2t+kg2eHyPGnCfXa8=;
-        b=bs+wDda48syzyChkks6dx2nG/8wmx1+r30qz4JTQM6yEum559qqWXCpo32lGEL2KmU
-         bRcA9Ds1Arxl7QZTpO58M43tshRVek2Mb6WOCrQ1x0CPXxIQ3dnAnAXaXmgP27pz906J
-         kIeOsJ3DcXx9JrP54t7do7syEgvA+2ydh4QfM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720024318; x=1720629118;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iyado1sFM+cGedSAqHu7B/wZSU2t+kg2eHyPGnCfXa8=;
-        b=nbK5YWYlLGBI3kY2BDXJyX6t2HIBIKsCV+kPm39qxPc/vCf/t825nIANgaL+S2Dzf7
-         7AwPeB9H2yyoD4ZPk/OL+uYSEEpbHEwcZBX1MyLPGz02fHBi6cz9+m1fZSk1gusrIgsq
-         kQNtUFPfkuvEJ5P5L5TvxL0L8srYj2TqNJ6aqAsqT7jSls/f7kYZ0xjBH9HLw/4HGVrG
-         NqTbHsMaqZ4FeLZQ1d1nwBYDZJcQzy7YJjZ7eX7O6VQF9efDoWdavCdif2g8xdN9UtQJ
-         L1bb8OxSWAw7nM0oDEPaqorWXjKcWEOzBJAZ8P/n3K6Izq/plrkl7xzSbOTC7k6mfDKi
-         oNFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGmvyTdqPnU+xXRWFerAQVPvhu3GZS3Gg6Rud0qaw8eFVG+jyaPNt/cixCyDT3As7gxkdLuNWdWgiWOkgktjN+w3tg3SAFsGQ=
-X-Gm-Message-State: AOJu0YzI/knfx4bxKpH8YcuIeh3oSBx0f/vmwlGEZnEu1tik3ZFBmlC+
-	df6CTCsNuuFUdtOX0GAq9Jxq24mgMfL1Q1z8FIXeg+FQgM81BSxPX8spDPtIXnRBXYJTEO6kEpD
-	oysYAQQ==
-X-Google-Smtp-Source: AGHT+IG0gGsgOPrgyIDlpss8U5bgXD8JMvFq2x9P0CV9H5O/klpHpUlNy05AMVIDbZ1rS0jfuyztTA==
-X-Received: by 2002:a05:6402:518e:b0:58d:5562:2c36 with SMTP id 4fb4d7f45d1cf-58d55622cc2mr1042533a12.0.1720024317797;
-        Wed, 03 Jul 2024 09:31:57 -0700 (PDT)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c835dfsm7217049a12.20.2024.07.03.09.31.56
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 09:31:56 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7523f0870cso460296766b.3
-        for <io-uring@vger.kernel.org>; Wed, 03 Jul 2024 09:31:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWhxYEs4pRXoUl9+7Mp7GoNo8NOcRtCo2j5MKemiNCucF6IQAS5biQXXILj0FGFhPty4N5OzcJpgheilwrYEgbYPPPZSDOQV0Q=
-X-Received: by 2002:a17:907:368a:b0:a75:3f38:e0a4 with SMTP id
- a640c23a62f3a-a753f38e1a0mr459327066b.47.1720024316186; Wed, 03 Jul 2024
- 09:31:56 -0700 (PDT)
+	s=arc-20240116; t=1720025693; c=relaxed/simple;
+	bh=ytPD61FrFhwUADWR7wdjMAPmOxv/bqXPWvtuuRwDlvs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SBu3w02XZJCGFhqXs5N4tuZcG/T49bPBNNod2U5aRYwn9NtfVAmLRVjzKgKetMqY9M3FB8Hku/PasxnxvlRknx0T3BfolTXB2fBm5ideXaM8bIOvt2uk4QQpZwST0n1yEEKdqbluBmelOFtPUP2RuTGiNqP+YMsB4jFKjbMLcqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=b6bNx6+a; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1720025690;
+	bh=ytPD61FrFhwUADWR7wdjMAPmOxv/bqXPWvtuuRwDlvs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=b6bNx6+awULwq7oXzBgaNpvxIuB3ezmNqIpxqTLdXA6b0z3tnu8olBFYfPG/dD4ZS
+	 tpvsPOwpvgqvZFgxK9OCZxUkvfPF8rXmYtObTlvGoCIopnY4Shv02773MIffF+ETXH
+	 gditMPVnkQjKiSrGa732UKDyPF/ACCI4azoLLRJI=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 5A0F61A409D;
+	Wed,  3 Jul 2024 12:54:47 -0400 (EDT)
+Message-ID: <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+From: Xi Ruoyao <xry111@xry111.site>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner
+	 <brauner@kernel.org>
+Cc: libc-alpha@sourceware.org, "Andreas K. Huettel" <dilfridge@gentoo.org>, 
+ Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@kernel.org>, Mateusz
+ Guzik <mjguzik@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan
+ Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org,  io-uring@vger.kernel.org, Jens Axboe
+ <axboe@kernel.dk>,  loongarch@lists.linux.dev
+Date: Thu, 04 Jul 2024 00:54:45 +0800
+In-Reply-To: <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
+References: <20240625110029.606032-1-mjguzik@gmail.com>
+	 <20240625110029.606032-3-mjguzik@gmail.com>
+	 <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+	 <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+	 <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+	 <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+	 <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+	 <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+	 <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
+	 <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
+	 <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
- <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
- <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
- <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
- <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
- <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com> <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
- <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com> <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
-In-Reply-To: <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 3 Jul 2024 09:31:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
-Message-ID: <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-To: Christian Brauner <brauner@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@kernel.org>, Xi Ruoyao <xry111@xry111.site>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 3 Jul 2024 at 01:46, Christian Brauner <brauner@kernel.org> wrote:
->
-> We've now added AT_EMPTY_PATH support with NULL names because we want to
-> allow that generically. But I clearly remember that this was requested
-> to make statx() work with these sandboxes. So the kernel has done its
-> part. Now it's for the sandbox to allow statx() with NULL paths and
-> AT_EMPTY_PATH but certainly not for the kernel to start reenabling old
-> system calls.
+On Wed, 2024-07-03 at 09:31 -0700, Linus Torvalds wrote:
+> On Wed, 3 Jul 2024 at 01:46, Christian Brauner <brauner@kernel.org>
+> wrote:
+> >=20
+> > We've now added AT_EMPTY_PATH support with NULL names because we
+> > want to
+> > allow that generically. But I clearly remember that this was
+> > requested
+> > to make statx() work with these sandboxes. So the kernel has done
+> > its
+> > part. Now it's for the sandbox to allow statx() with NULL paths and
+> > AT_EMPTY_PATH but certainly not for the kernel to start reenabling
+> > old
+> > system calls.
+>=20
+> Those old system calls are still used.
+>=20
+> Just enable them.
+>=20
+> statx isn't the promised land. Existing applications matter. And there
+> is absolutely nothing wrong with plain old 'stat' (well, we call it
+> "newstat" in the kernel for historical reasons) on 64-bit
+> architectures.
+>=20
+> Honestly, 'statx' is disgusting. I don't understand why anybody pushes
+> that thing that nobody actually uses or cares about.
 
-Those old system calls are still used.
+Hmm why it was added in the first place then?  Why not just NAK it?  If
+someone tries to add a "seccomp sandbox" into my project I'll
+immediately NAK it anyway :).
 
-Just enable them.
+And should we add stat_time64, fstat_time64, and fstatat_time64 to stop
+using statx on 32-bit platforms too as it's disgusting?
 
-statx isn't the promised land. Existing applications matter. And there
-is absolutely nothing wrong with plain old 'stat' (well, we call it
-"newstat" in the kernel for historical reasons) on 64-bit
-architectures.
+Also some bad news: Glibc has this:
 
-Honestly, 'statx' is disgusting. I don't understand why anybody pushes
-that thing that nobody actually uses or cares about.
+#if (__WORDSIZE =3D=3D 32 \
+     && (!defined __SYSCALL_WORDSIZE || __SYSCALL_WORDSIZE =3D=3D 32)) \
+    || defined STAT_HAS_TIME32 \
+    || (!defined __NR_newfstatat && !defined __NR_fstatat64)
+# define FSTATAT_USE_STATX 1
+#else
+# define FSTATAT_USE_STATX 0
+#endif
 
-                Linus
+So if a LoongArch Glibc is built with Linux kernel headers >=3D 6.11,
+it'll use fstatat **even configured --with-kernel=3D5.19** and fail to run
+on Linux kernel <=3D 6.10.  This will immediately blow up building Linux
+From Scratch on a host distro with an "old" kernel.
+
+<sarcasm>Alright, some Google project matters but Glibc does not matter
+because it uses a disgusting syscall in the first place.</sarcasm>
+
+We have to add some __ASSUME_blah_blah here now.
+
+To make things worse Glibc 2.40 is being frozen today :(.  Copying to
+libc-alpha and the RM.
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 

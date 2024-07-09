@@ -1,72 +1,72 @@
-Return-Path: <io-uring+bounces-2473-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2474-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F7592BCDE
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jul 2024 16:27:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1F992BCE3
+	for <lists+io-uring@lfdr.de>; Tue,  9 Jul 2024 16:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D9B3B2306F
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jul 2024 14:27:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB56DB25C31
+	for <lists+io-uring@lfdr.de>; Tue,  9 Jul 2024 14:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2DE1940B2;
-	Tue,  9 Jul 2024 14:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D283219CCF1;
+	Tue,  9 Jul 2024 14:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cldCYRWS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bviWYE9l"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069D515279B;
-	Tue,  9 Jul 2024 14:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3473A15749F;
+	Tue,  9 Jul 2024 14:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535239; cv=none; b=T+LP2QPCCMj/Ga7wEBYF+xepYhowro8HHe6Bwuo/XpzoFlGvwcUw8qcMD76xt7ur5F7t6wXAxE9PxYEdVUNhuIcA0cjrYZgC81/JCM4FjSuTdyVHYUvZ6cwdXrZljOfS3YwZJ6XQg4oQul930E3TqfI5X6f5G0wTNV2ACYtC4Ts=
+	t=1720535240; cv=none; b=KfhwWn/+tH8+1XQS9PKYQCtLpKe3iWTk7bpQHf77hCYjN73J4hj4zoCFlS6Kk9FQ6OMjRfgjFr5at2m92LpiOTPKJh36+buO8d8pv2TM0o/WQUW/lVLnpNjkRhLKhPdE7gFut6EGi+DmE91m8iPDLwq0sL3JjDhqyr6IsupGklA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535239; c=relaxed/simple;
-	bh=P+TJsos0wRuICzWhaMFgjmN4/yDzbtZJ6N0VJY3WNCs=;
+	s=arc-20240116; t=1720535240; c=relaxed/simple;
+	bh=a5wfalHAVGimjhym+BEhPFIfP/IfIqtQ3vq9UUG4wYE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RvdtDkYW2/EGoPB8p/IRrXEVzob/XD8h5P92cgHrfTxVyxXWbUkFRY8hhZZFJuuZ3qIdQSXcCTTxR9bLROkHbNJGocyN6Cf2f2oaWcajSlNuwuxUw17pQTKXOVniJzt2+wR9IOa3xi+srA3f8k0nJ8z9X0yGqqsQLPcw9CpR5jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cldCYRWS; arc=none smtp.client-ip=209.85.218.42
+	 MIME-Version; b=Pwsycs0EZFPYGRsXazSRg7wa+T3ZS3ogRNQrycTPROAGchkKHjC2V6rpczLNPxeVuwE+3Gr+pNrCWZnKIXvUwLsRRIxJEAOtkdGNUd4z2d+WEKX9kPUbYkTBLbBerM8blVLgbW5H61R4j4PLxbAJNrziTMd5eqXStRm8jZ4sPVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bviWYE9l; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77baa87743so564723266b.3;
-        Tue, 09 Jul 2024 07:27:17 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a77e6dd7f72so349236166b.3;
+        Tue, 09 Jul 2024 07:27:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720535236; x=1721140036; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720535237; x=1721140037; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ttgYBK7CIbyCBuvHefwURr58xYqG6L2p5WKp4rRTzQk=;
-        b=cldCYRWSoM/cbqcQ1kJaku6kEA6nXuQAeQVKRoI30PxzX6st9//03XoKAfcEx5bJqB
-         UeWzsquVh2pmNeS0D43fJlIbYHuwm6h7iVzm1ZgMkP5n+eTSCcA0HDeUJFlkqhOgAgOx
-         XEcqjYwZ+VJaWnVs9QDtbroVBoPf8jCaX4nuCiOH9Us5bESP2yvN/qVtP2jy8whWK6tP
-         wuQLdlx6mYVW6NIkfenQw2exFK5tmB+aHvmcxig5nQpRQqrhn1MX3Xyk/okG4iNiHOaa
-         IX3Wlee/Il0zSuTPkEi62+e7/gBy72k6AtiLZOyhgJBL6Xp/QiLsVK734Rgz2PWCkiQ0
-         dT1g==
+        bh=viZ30E1hmv8p2AGmlt9wLyrt+Ui8LZLR4LApZyGXPD0=;
+        b=bviWYE9lwny0UillwQeXbDbFq2ioso+cludnrdSJm5vfnPWkjWgofcVwkdWDudzm0G
+         h7hyiLIbYSljAD24aLGSVNJHqHpGZMjawW8JBX60GuaQbmwL89ZlRFOlmlPgTy+MArp4
+         HS0yWwYmfjCSxU/0EVouLFz1BhJAponqo4qZY6nTY4n23UKDG8DzYo7eqSEKMDJq1tRt
+         oGATreh3PDxcr0fKF4l7a382+ytLtd9IBxy3ipRdUsPDlHtHPhxjCUXRPFD/pzxBooQ5
+         D+pHvoizm0s0lS63cgNhti+//sLVkoWNb714YFNOWs8/+ixJ/cEMCTD7zIYvVXs4IRZ/
+         WZFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720535236; x=1721140036;
+        d=1e100.net; s=20230601; t=1720535237; x=1721140037;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ttgYBK7CIbyCBuvHefwURr58xYqG6L2p5WKp4rRTzQk=;
-        b=XtLUCqM2pOZBvQDHn+5dvPomkFBI1N69bRagLn/70rGrZ0cVts5BFMD+JWbq6Gzvgf
-         nZy7ZKuqGj/4A3OzswwvizfKdD5AMIyGkHY/NrUUEgDbblAk96ax/K6r6OkgeoQYRuk4
-         c3HkyhcSRdDadjf/2CcGazD7yXh6FzLcUbceO6Lt4h2ur0uK9p8YFNuJAdYoBtU1JFql
-         ulNIwPze5OGpu/23x5yy3+oq7CTtm13VRvMJoGnlTy2aI75ljD3rIMTIoQl6p11wa1X+
-         C774af78p4Sj9LS+12qI1yCbxzUiQanqc152pyFyqCLP+JbkBWXXAG/0qGIBNenasI6f
-         dKCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPKzoaVM4DmfXxWrSINWctvBfdOq4A/Cyng47rZeN3agI6OIl+he81eYyZIXcjwXKQbUyeBBrWF7nGmuwZUPqPVjqJx7CfVdayMhqi
-X-Gm-Message-State: AOJu0Yy8DfZS/haf3Yj/gW5VGL2+dL6g4qQzR50+ylbw1lqZnE520KN1
-	e45b1Oxund0v1QXj6DH1ScbWncmNGPH8gLTxCec5EQN3rGrmzNCm35Nfhw==
-X-Google-Smtp-Source: AGHT+IFnaWqj+voLe/snIcMHRpZCxkD5hkOP3UTwoJHVMVHj1VnGQCWk96AVVhz1D3MWRARgpRaikQ==
-X-Received: by 2002:a17:906:f592:b0:a77:cf9d:f495 with SMTP id a640c23a62f3a-a780b7010a0mr304952766b.40.1720535235827;
-        Tue, 09 Jul 2024 07:27:15 -0700 (PDT)
+        bh=viZ30E1hmv8p2AGmlt9wLyrt+Ui8LZLR4LApZyGXPD0=;
+        b=II+YKaNYjLIWtP5KW7ocDKKY4DM5UYvgTff/R+z4NpJVB3H1Ov2lyN/RBYMeJI8fY5
+         T/17AMEE/or/EHwe8siahlvHqKM5BplZmyPcwDq1lVXiQHdTHxjSGD8FcjATBB4IxOuB
+         KOXTXDWCeyDDnVk+XLKALBR7g+4R8Ai9jJkc2+naYR6Z0Sfc1MeLrB9I/cn/ga+prH0M
+         Xd1wprRV9aJKyLK/DOrSsbIB/woeWa+FIPhm5/0BrnBF77mx2vQt9Cu0PCOi67c3GnXl
+         BXMlXbT0BIIzBvahJUevJwdAO2i4f0Akj71iS4Jei4Y9IXUNbrC88+a3Hu2CZsSaUXL9
+         mrUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrb+WrUWLyLRq8H/7gwHVIL4I1pliEN+uf7eMOCriCYxohgAMg9kiwtPLUBIj7gNKTKti8X1YElrJA6ZQBKKaazxWzdwSwwKjdjE8A
+X-Gm-Message-State: AOJu0YxeLXPfypdhDq78GT6uJ0tg5QpYEEgsHRGGAav1XJAcDl9haAVk
+	BTAxsioAWSHX4Fv+Sd7+ZrzAkq/Bc/AqgDa/PPmd57zlnP/b+JY+mO0rqA==
+X-Google-Smtp-Source: AGHT+IGV2zjagwFScIaii8oEBTXuSEkflfr03lA7nPMekPBzQqC61H7lwsUbothjZVZc8YCRRCr4ng==
+X-Received: by 2002:a17:906:3416:b0:a72:88e2:c327 with SMTP id a640c23a62f3a-a780b6fef62mr170714266b.38.1720535237035;
+        Tue, 09 Jul 2024 07:27:17 -0700 (PDT)
 Received: from 127.0.0.1localhost ([163.114.131.193])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff21esm80649966b.135.2024.07.09.07.27.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 07:27:15 -0700 (PDT)
+        Tue, 09 Jul 2024 07:27:16 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
@@ -80,9 +80,9 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	Julian Orth <ju.orth@gmail.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH v2 1/2] io_uring/io-wq: limit retrying worker initialisation
-Date: Tue,  9 Jul 2024 15:27:18 +0100
-Message-ID: <1af2a697b568f8cf77c5d527d183fa0ffe8fd9cc.1720534425.git.asml.silence@gmail.com>
+Subject: [PATCH v2 2/2] kernel: rerun task_work while freezing in get_signal()
+Date: Tue,  9 Jul 2024 15:27:19 +0100
+Message-ID: <149ff5a762997c723880751e8a4019907a0b6457.1720534425.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1720534425.git.asml.silence@gmail.com>
 References: <cover.1720534425.git.asml.silence@gmail.com>
@@ -94,80 +94,40 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If io-wq worker creation fails, we retry it by queueing up a task_work.
-tasK_work is needed because it should be done from the user process
-context. The problem is that retries are not limited, and if queueing a
-task_work is the reason for the failure, we might get into an infinite
-loop.
-
-It doesn't seem to happen now but it will with the following patch
-executing task_work in the freezing loop. For now, arbitrarily limit the
-number of attempts to create a worker.
+io_uring can asynchronously add a task_work while the task is getting
+freezed. TIF_NOTIFY_SIGNAL will prevent the task from sleeping in
+do_freezer_trap(), and since the get_signal()'s relock loop doesn't
+retry task_work, the task will spin there not being able to sleep
+until the freezing is cancelled / the task is killed / etc.
 
 Cc: stable@vger.kernel.org
-Fixes: 3146cba99aa28 ("io-wq: make worker creation resilient against signals")
+Link: https://github.com/systemd/systemd/issues/33626
+Fixes: 12db8b690010c ("entry: Add support for TIF_NOTIFY_SIGNAL")
 Reported-by: Julian Orth <ju.orth@gmail.com>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io-wq.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ kernel/signal.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index 913c92249522..f1e7c670add8 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -23,6 +23,7 @@
- #include "io_uring.h"
- 
- #define WORKER_IDLE_TIMEOUT	(5 * HZ)
-+#define WORKER_INIT_LIMIT	3
- 
- enum {
- 	IO_WORKER_F_UP		= 0,	/* up and active */
-@@ -58,6 +59,7 @@ struct io_worker {
- 
- 	unsigned long create_state;
- 	struct callback_head create_work;
-+	int init_retries;
- 
- 	union {
- 		struct rcu_head rcu;
-@@ -745,7 +747,7 @@ static bool io_wq_work_match_all(struct io_wq_work *work, void *data)
- 	return true;
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 1f9dd41c04be..60c737e423a1 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2600,6 +2600,14 @@ static void do_freezer_trap(void)
+ 	spin_unlock_irq(&current->sighand->siglock);
+ 	cgroup_enter_frozen();
+ 	schedule();
++
++	/*
++	 * We could've been woken by task_work, run it to clear
++	 * TIF_NOTIFY_SIGNAL. The caller will retry if necessary.
++	 */
++	clear_notify_signal();
++	if (unlikely(task_work_pending(current)))
++		task_work_run();
  }
  
--static inline bool io_should_retry_thread(long err)
-+static inline bool io_should_retry_thread(struct io_worker *worker, long err)
- {
- 	/*
- 	 * Prevent perpetual task_work retry, if the task (or its group) is
-@@ -753,6 +755,8 @@ static inline bool io_should_retry_thread(long err)
- 	 */
- 	if (fatal_signal_pending(current))
- 		return false;
-+	if (worker->init_retries++ >= WORKER_INIT_LIMIT)
-+		return false;
- 
- 	switch (err) {
- 	case -EAGAIN:
-@@ -779,7 +783,7 @@ static void create_worker_cont(struct callback_head *cb)
- 		io_init_new_worker(wq, worker, tsk);
- 		io_worker_release(worker);
- 		return;
--	} else if (!io_should_retry_thread(PTR_ERR(tsk))) {
-+	} else if (!io_should_retry_thread(worker, PTR_ERR(tsk))) {
- 		struct io_wq_acct *acct = io_wq_get_acct(worker);
- 
- 		atomic_dec(&acct->nr_running);
-@@ -846,7 +850,7 @@ static bool create_io_worker(struct io_wq *wq, int index)
- 	tsk = create_io_thread(io_wq_worker, worker, NUMA_NO_NODE);
- 	if (!IS_ERR(tsk)) {
- 		io_init_new_worker(wq, worker, tsk);
--	} else if (!io_should_retry_thread(PTR_ERR(tsk))) {
-+	} else if (!io_should_retry_thread(worker, PTR_ERR(tsk))) {
- 		kfree(worker);
- 		goto fail;
- 	} else {
+ static int ptrace_signal(int signr, kernel_siginfo_t *info, enum pid_type type)
 -- 
 2.44.0
 

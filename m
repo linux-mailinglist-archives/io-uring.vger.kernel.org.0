@@ -1,193 +1,113 @@
-Return-Path: <io-uring+bounces-2471-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2472-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E3E092BC72
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jul 2024 16:05:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2815592BCDC
+	for <lists+io-uring@lfdr.de>; Tue,  9 Jul 2024 16:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15BB11C21010
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jul 2024 14:05:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C70281CD8
+	for <lists+io-uring@lfdr.de>; Tue,  9 Jul 2024 14:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7934E19B5B7;
-	Tue,  9 Jul 2024 14:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F6B18F2CA;
+	Tue,  9 Jul 2024 14:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/p/WvO/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hn9XRD3Z"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5E5154BF0;
-	Tue,  9 Jul 2024 14:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C672A28E3;
+	Tue,  9 Jul 2024 14:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720533916; cv=none; b=TgVvIGwf1D4aKRonnsivVrV/jXkKQJNO7xgSoxsifNMVZ2jpIeMo2xOeADr0bclnLFJNZF/d1wXzsU27NFqBLIm6I/lH/ayUw86g5O0gNaLm2TECF6jgd5yvHY2T/Blu0IHlLi3o64Jb99t3TwqQrwN7nqimdWz4W9uONIZOURU=
+	t=1720535239; cv=none; b=ulzCXJB9/ro7cL8NaifrV+anrWN9pDULCVjk2U6Yy1nEGk4q3gNx1IMqGr26sbEILknCNqzDZXzegLjX3ijX1Pipj4h3xko5Y3ebmQOa4Hrtz32DRxjfae5k51gcpy4ZjEAmG/iS6lwdTariwUfDJND2NzADimwT/H9wLS/N9BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720533916; c=relaxed/simple;
-	bh=oqvO4keAigILRKoADfBFYu3hAGj3/wdIa/oLCwjA/9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ge/9MyV0m+4gR5o0fi+YCVM6P6B74D2nvGIhe7n540l3sdGIa9sChh1mGbmA6o8V/naeEpOX8tw+ZWQtG9zTmTbkJjijMpBW1Let7xU9pimqs+a3DhWZo4Aq+o2sdGNBiw6dcby5fZTXHInCGIBPXWc32NPCjzg8fObde57rgPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/p/WvO/; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1720535239; c=relaxed/simple;
+	bh=bHNv1krS9O5CIeSOoJnUpX6Ug1/E9aV2zd53v+b/avU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N+Nm6Jvo8Ix7J4yOuIQZlfjcQmaGjLSeCu1ZN6nKmruPNWfv18LYNk6eL+Ir3WPc9AAET8PuvNhKWzBLzy6oooutpVtBmTivnm62FRXeeaC6URvRpED95KvsVTFJcJ3V0ZGDni7uqcmiteaOuf90sQ1EgPNGYooM73pYR+2zKlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hn9XRD3Z; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58b447c511eso6467947a12.2;
-        Tue, 09 Jul 2024 07:05:14 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a77cc73d35fso674195766b.0;
+        Tue, 09 Jul 2024 07:27:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720533913; x=1721138713; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kMRvSct0lY9z/NoSUo1v54IeShU8S8Pa37iemae3ynQ=;
-        b=i/p/WvO/sLgHTiX9nXKQth9O9Y8NQPWTGctNOqvWf2+3LQ6rJCr3ySaV+NLbHkTghc
-         OHk9/VOzSvg4wdOwBcXGHX5HyRLz6OlTz7zBtekCFLJPmMxpHISBjKGFIA86e9KQkNfE
-         qEr8C8bNsIuqdDpELoyzQx6WenNvuf15VZWr1RttMHEphZEqcHgMZBm/dhG4d2ucuwU8
-         a0iN7CIJLddLSLm9QZmZkssH+kqyXAjsF8YI572kIJWQBN1RmBLYSB4u00+JNSpxr/RB
-         ZTNWMuAAi/hE/KvO/drHS6j1vH2rJ740YQ7Q96k0eltbrzje+S1yrB0nv+yM/7aWCPrJ
-         DkbQ==
+        d=gmail.com; s=20230601; t=1720535235; x=1721140035; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9QclN47byu9Xsdx9H2EcxAZbTcZCWWyzPecO9Rq5PJc=;
+        b=Hn9XRD3Z2VSIHymu2qSDXAmEP6OJYU03NdEuFf/tNJai/bVY8ROb2Y4Zr1JzQtCsWs
+         Fi63Cvha1tWSRQz691wMdRfOSyTmCpGt32zgJ0EED2ppcwWrqSjoJzMnK81/mqTr5e1R
+         E1t89RMp8ZIlBFq1Cv4VvKLoVoXdSgGXHzf2M0vbJfhqDXf+mi5glRpjQknIL23DPiyh
+         DfBRw+lkyuEsZibx9ZuCDGrmQGodz3eXfCbuiI4K5CpxULwAHa9vtpPEJ3xJ+xO4sj2c
+         7wVxNLiRYxqgazhlBoEvk6fTFQ/Li56v2vBFA01O0+gBdP0vrAjXw2bPmcnVyZStSSxx
+         KtXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720533913; x=1721138713;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kMRvSct0lY9z/NoSUo1v54IeShU8S8Pa37iemae3ynQ=;
-        b=SG5UGmCiMAwUkFYygNAbvu9gB4TgLtra/radwzFD588v6Fw5Qg7e20uwAvGCI1xV1G
-         LlZbRhXMR44VM0bpZh85/z1ipGFrXjGcf3wzQD/5ASHtp72i7hpKkrOYVE3C5YSOuxrq
-         tpS5R4uMJLpvXLjUECrczH4jYdnPvFIWf0JuP8N5Up7HP+O68MdqAeEsLuDrGWcBO+nC
-         6mRhaCT0WXSVGBIResnfi8+B2La0G5U1fJfgPCA2MxqRsJklxbIFCCAjL7h8j0Wtj0tD
-         MONoxPZVqvBOuOMxwJ3wWDVgkAHOY7YHoJzxMepQsWjahkqhpfywP1OtFwjYsRpQ4RMO
-         bJAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbpSWxD7TNEp8Q2E8PB3DtliUV8C1EjQ/AYZSPPOZGe36nvIk3LTYXnoD4dDQw8TC22E8swyKWn3HGya4iYhg0avsXB+gXSGdNt4b2
-X-Gm-Message-State: AOJu0YyAab/0O7Hr6/4TStD/e4Oz4rvdSlVNfg3jYPZeBRKwfSN/F/dg
-	ZmDbeCKa+JxreL93pO6vVFl0lM4tXwgXYm6ryz42GCQSswau3kOD
-X-Google-Smtp-Source: AGHT+IG3BjNIVmMYpuvl3fYCgUGix6nCBcluBpFeqb72PFJUpbosIet4/3KiWZHgriXRnsmdz6d0Mg==
-X-Received: by 2002:a17:906:68c9:b0:a77:e48d:bb2 with SMTP id a640c23a62f3a-a780b6b17cfmr211654866b.17.1720533912844;
-        Tue, 09 Jul 2024 07:05:12 -0700 (PDT)
-Received: from [192.168.42.197] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff7c7sm79796666b.100.2024.07.09.07.05.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 07:05:12 -0700 (PDT)
-Message-ID: <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
-Date: Tue, 9 Jul 2024 15:05:21 +0100
+        d=1e100.net; s=20230601; t=1720535235; x=1721140035;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9QclN47byu9Xsdx9H2EcxAZbTcZCWWyzPecO9Rq5PJc=;
+        b=aa/VaJkAHWFQi7XXi8imDKknAxstTL47PjJqPyT3sVLsOxrMVctMRWncKPykcnuc/n
+         t/oh80fb8nJlK2fsqS8Evxjq23K7v9cTlh704iZwrGAYyehxeLvUIeqDpX5i+RbgRxs5
+         1sQYidi80d+zdpXF1/5d0C9E3HKM/eryhsyPtTm148Szc5hz6qs1pCIcxy9vsQibbXww
+         AitYa2TyGMqPQku84xEBg50cmwhLqEyXEAHSDj6VBP65gjnW5aJv3qts4mjpkAwQnmv3
+         Y58MnHYdkMZ7vms9KrPkdzXJ8crIQJZZpCFOY7Gq9GNECBl2Vf6pLd0XRSie3fSMMoOB
+         lUxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ7hN3wG7pC/wPkYNuSLiofAWDBJy9BjyyEmojw7oVpCTKx8ijduTWN1zMLexdll6cC2HHGiPTtrN4mn6ZHvlScfZJrUYnyIhOZO94
+X-Gm-Message-State: AOJu0Yw7wKxZdUf8qTtBkdCQ//kmf1ix2GAhDgd5a2Lh+dlNiRfYxAaI
+	Uij6W69HMwb9R9jd60eQav789H0Q+hCBgxHZhkPBkxoZdO3ILITDysW6dw==
+X-Google-Smtp-Source: AGHT+IH1y3e4HfEfqP5LJUiu4bOdu+aOc2qNqQ3met9dnj/nm8W4IDL/dWaG26JTKatlGgZw6e2FCw==
+X-Received: by 2002:a17:906:f74e:b0:a77:dd70:a161 with SMTP id a640c23a62f3a-a780d22e117mr193894366b.10.1720535235197;
+        Tue, 09 Jul 2024 07:27:15 -0700 (PDT)
+Received: from 127.0.0.1localhost ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff21esm80649966b.135.2024.07.09.07.27.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 07:27:15 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	asml.silence@gmail.com,
+	Oleg Nesterov <oleg@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Tycho Andersen <tandersen@netflix.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	Julian Orth <ju.orth@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH v2 0/2] fix task_work interation with freezing
+Date: Tue,  9 Jul 2024 15:27:17 +0100
+Message-ID: <cover.1720534425.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
- get_signal()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>,
- Tycho Andersen <tandersen@netflix.com>, Thomas Gleixner
- <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- Julian Orth <ju.orth@gmail.com>, Tejun Heo <tj@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-References: <cover.1720368770.git.asml.silence@gmail.com>
- <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
- <20240708104221.GA18761@redhat.com>
- <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
- <20240709103617.GB28495@redhat.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240709103617.GB28495@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/9/24 11:36, Oleg Nesterov wrote:
-> On 07/08, Pavel Begunkov wrote:
->>
->> On 7/8/24 11:42, Oleg Nesterov wrote:
->>> I don't think we should blame io_uring even if so far it is the only user
->>> of TWA_SIGNAL.
->>
->> And it's not entirely correct even for backporting purposes,
->> I'll pin it to when freezing was introduced then.
-> 
-> This is another problem introduced by 12db8b690010 ("entry: Add support for
-> TIF_NOTIFY_SIGNAL")
+It's reported [1] that a task_work queued at a wrong time can prevent
+freezing and make the tasks to spin in get_signal() taking 100%
+of CPU. Patch 1 is a preparation. Patch 2 addresses the issue.
 
-Ah, yes, I forgot NOTIFY_SIGNAL was split out of SIGPENDING
+[1] https://github.com/systemd/systemd/issues/33626
 
-> We need much more changes. Say, zap_threads() does the same and assumes
-> that only SIGKILL or freezeing can make dump_interrupted() true.
-> 
-> There are more similar problems. I'll try to think, so far I do not see
-> a simple solution...
+v2: move task_work_run() into do_freezer_trap()
+    change Fixes tag
 
-Thanks. And there was some patching done before against dumping
-being interrupted by task_work, indeed a reoccurring issue.
+Pavel Begunkov (2):
+  io_uring/io-wq: limit retrying worker initialisation
+  kernel: rerun task_work while freezing in get_signal()
 
-
-> As for this particular problem, I agree it needs a simple/backportable fix.
-> 
->>>>   relock:
->>>> +	clear_notify_signal();
->>>> +	if (unlikely(task_work_pending(current)))
->>>> +		task_work_run();
->>>> +
->>>>   	spin_lock_irq(&sighand->siglock);
->>>
->>> Well, but can't we kill the same code at the start of get_signal() then?
->>> Of course, in this case get_signal() should check signal_pending(), not
->>> task_sigpending().
->>
->> Should be fine,
-> 
-> Well, not really at least performance-wise... get_signal() should return
-> asap if TIF_NOTIFY_SIGNAL was the only reason to call get_signal().
-> 
->> but I didn't want to change the
->> try_to_freeze() -> __refrigerator() path, which also reschedules.
-> 
-> Could you spell please?
-
-Let's say it calls get_signal() for freezing with a task_work pending.
-Currently, it executes task_work and calls try_to_freeze(), which
-puts the task to sleep. If we remove that task_work_run() before
-try_to_freeze(), it would not be able to sleep. Sounds like it should
-be fine, it races anyway, but I'm trying to avoid side effect for fixes.
-
->>> Or perhaps something like the patch below makes more sense? I dunno...
->>
->> It needs a far backporting, I'd really prefer to keep it
->> lean and without more side effects if possible, unless
->> there is a strong opinion on that.
-> 
-> Well, I don't think my patch is really worse in this sense. Just it
-> is buggy ;) it needs another recalc_sigpending() before goto start,
-> so lets forget it.
-> 
-> So I am starting to agree with your change as a workaround until we
-> find a clean solution (if ever ;).
-> 
-> But can I ask you to add this additional clear_notify_signal() +
-> task_work_run() to the end of do_freezer_trap() ? get_signal() is
-> already a mess...
-
-Will change
-
-> -----------------------------------------------------------------------
-> Either way I have no idea whether a cgroup_task_frozen() task should
-> react to task_work_add(TWA_SIGNAL) or not.
-> 
-> Documentation/admin-guide/cgroup-v2.rst says
-> 
-> 	Writing "1" to the file causes freezing of the cgroup and all
-> 	descendant cgroups. This means that all belonging processes will
-> 	be stopped and will not run until the cgroup will be explicitly
-> 	unfrozen.
-> 
-> AFAICS this is not accurate, they can run but can't return to user-mode.
-> So I guess task_work_run() is fine.
-
-IIUC it's a user facing doc, so maybe it's accurate enough from that
-perspective. But I do agree that the semantics around task_work is
-not exactly clear.
+ io_uring/io-wq.c | 10 +++++++---
+ kernel/signal.c  |  8 ++++++++
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
 -- 
-Pavel Begunkov
+2.44.0
+
 

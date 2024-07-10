@@ -1,140 +1,133 @@
-Return-Path: <io-uring+bounces-2480-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2481-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B677492C42A
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jul 2024 21:55:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1672B92C7B4
+	for <lists+io-uring@lfdr.de>; Wed, 10 Jul 2024 02:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78061C222C7
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jul 2024 19:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9B81F23A98
+	for <lists+io-uring@lfdr.de>; Wed, 10 Jul 2024 00:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40E9182A78;
-	Tue,  9 Jul 2024 19:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BF923A0;
+	Wed, 10 Jul 2024 00:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYi8hbCM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/c3f2v0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C184182A74;
-	Tue,  9 Jul 2024 19:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0345E4A04;
+	Wed, 10 Jul 2024 00:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720554938; cv=none; b=U1yJRUWSU2ykYAbHk2sVq3lDMLaPzISkHCq/cb/eLjiHHoTSjmARHgy3WOFsISAcEsjITsXnPyt82KyyVa0UrZy+dCl44QqSznuUv4fNjm/2MvNwsJBEXkd3TC7gfW5P57/PtPuYrRbYjkbgS0daLDDxxFNV7yVYa+oB2b1BQ4Q=
+	t=1720572859; cv=none; b=qgFP6FpxxXlDfBnhr9vikkvWaWNx7V2JM+xZtjVxgg/IiWRmweGxlKGoOQ/JN16CxTfzl7p/0eyBMsO8tDT4nkFnH5YEGvvp+P/FI8BiClx/mT15va5V91xLN9l4yPt8V5sSZtRDqIGhqVAxnUA3Gq6VaWIMrTHfb8pVxbMDp2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720554938; c=relaxed/simple;
-	bh=fX/KQ+mAl0LS1uvwZ5S2iSk6vGVLpLkxqGmAAdu8FJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gPGEHdiAoTPjmzCkUKh9VfQnM+4/V0duG1uJ5GrsjLkwNCOJxsdNSbcQrDA0mhX6KB9fzq2OvE8n/UY9ck4AqTns3svDtVtMZ2UYR7xLCnUGV3H1ujrzEjA55YhMu939ctaIZcB4eV43lN0Tqyd1r7Sj75pDujIL8KjC/huW4RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UYi8hbCM; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1720572859; c=relaxed/simple;
+	bh=zVstIod5DFgflvwMw3bTwrGFdUGTgZoMa0CVYXFwc7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PaHh1hKVN8sA6lWZcQ64ZUPOP4u14E7T6TxHz3EFP0/AERas9eNWXR3T63CDC118a3LFjYsP3XOe/FQZI+0XU0N1fgtrLfSnydt8Ue6BRSaN57N1sMF0gy/9zJq7fmOZeQMVoonIKdRmBZCR+361+MjgWjGPHM697Jk2zbmailQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/c3f2v0; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-36798779d75so4864006f8f.3;
-        Tue, 09 Jul 2024 12:55:36 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fb4fa1bb34so22269025ad.0;
+        Tue, 09 Jul 2024 17:54:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720554935; x=1721159735; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tj8SXQ2T3v0Iau1Rc6pv6fU6a86nQKAkdshKGb1RYAY=;
-        b=UYi8hbCMvA5lDAFSbgSv+0MRCPSuADFKiAw/0FR0bXVGG8LygoDrznTWlcAz9P7yzd
-         njuk3OG9R8zvHKbgI5m29CB5ULLxYAew7llAJaSnyAqZ82FJCvmvbAfo7dvsHBL1v6/f
-         PYx42onVwxrI/ZLhiNCwvE8tavbc05uHvKWXQO0f4Z+ueHUVhX64S2Tz49oIOJALdLqm
-         Pi1geTD55SFcOric3s8O8TsIdnDHJdcGE8J1Zwk+6z/VzItgFhME/nWhh5ZTUtKwVXUT
-         SQqndF1EgnPGxqe6FmPtF/XUe0p8p7xoMeM4lKNCiHRFuIRj+4JsNfCisz4VZ/U/ME9H
-         6b5g==
+        d=gmail.com; s=20230601; t=1720572857; x=1721177657; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nXUrbASi2IHeT51ZFvr1RaL7wSf24sZ/lvgPjV6K3jg=;
+        b=a/c3f2v0hZT8Xn8yiseqhrxEqRvcqdCEEjGJZvuNDwH6fna2EsG4Gvi5QTgQ4sizph
+         xhgP0gfe8sLrCRs0bv2zQZeXffI0G6M5Ni7fYXQk6jEcAmod7SDB2TDWz78pp+qD7oJ5
+         Pi/n0sh5N6tGNFCJ9l8Kbm2ThWgsVrdC8eJ9G9ZU59pDWs4VJn+V0oi3s+wUjrkCB1NY
+         oSrPM8ncUWfMkm5xjtrBB3Kb5Px7FeSG7S7sOYE6jW7MMRhJk8r3LcclTa3kZDMuRjzk
+         vBzNPeZ6zbCG0RY9ka8fd2RzBb713o/UgvpYgU2o5nOmtDuxkMontxqupGJ9WtoDtsUd
+         +89Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720554935; x=1721159735;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tj8SXQ2T3v0Iau1Rc6pv6fU6a86nQKAkdshKGb1RYAY=;
-        b=s1fp6nPLuh8ip9d//4ezzdMbCNXu2akOttel9k6WMDmypP2s5f/bXMMOFAQ8io/x4N
-         3jFqqNcAbB4SYxq3kAVu/FembDq9pjGqrmpcBHJFAYhrOdGdbBcEJsoQXQjoeBKaqJsz
-         leXH9mprg7lUAX5Aav8RmGostQyvT9FOgCObl4oVLEbiZXo6GF0SNLF76bkPylt9mXt/
-         6EWAnBeY3X4MPxuO1GdioGj9bwjqOSjpKTuGKqm1SWiCR1z2LxAyQk9ho1hFwnsBdGOI
-         3z+bebbKUMCcEt4q9ICQHA2hd5bS5vZBcIH+N6MpB879Gq3THqMHt0ww9bzl9tzEI/9O
-         Af9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWwo3Q8ebEsdfW71R0rgU84DXJsgTRCUJrW4Ba4s0LPurNk8ywm4NrolSDCA22IVa1HX6T2WY/5J116G7dR2K85sJ1RzBKAefhqLWQfktcUOc9gARN2Ba2Fa/79Whf6RgHaEZfJbvA=
-X-Gm-Message-State: AOJu0YxmaOIe4ei/N6sbATqnGChyNZEv2ds0rjB+E0u6LVSqsQDjCZWE
-	SJIFaKiXS3IEYaAyGmsqsfWlyZuzCknQuVDGafUnwpxOBiYu+/GZSGzx6A==
-X-Google-Smtp-Source: AGHT+IGuTvXzsHmHxXkl4S3WCqh+kTVelQjxbW/kK1xkaXuhWYCJfRW9rmD5vFzeiqnd56AGP6+eKQ==
-X-Received: by 2002:a05:6000:a8f:b0:366:f74f:abf0 with SMTP id ffacd0b85a97d-367cea67d3cmr3007527f8f.16.1720554935214;
-        Tue, 09 Jul 2024 12:55:35 -0700 (PDT)
-Received: from [192.168.42.222] ([148.252.145.239])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7e192sm3429120f8f.9.2024.07.09.12.55.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 12:55:34 -0700 (PDT)
-Message-ID: <d9c00f01-576c-46cd-a88c-76e244460dac@gmail.com>
-Date: Tue, 9 Jul 2024 20:55:43 +0100
+        d=1e100.net; s=20230601; t=1720572857; x=1721177657;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nXUrbASi2IHeT51ZFvr1RaL7wSf24sZ/lvgPjV6K3jg=;
+        b=fpou/kH2XnGUIWCYc7aSfTguG8gSlRKFQd6bx1ZZIgqWhePKblVqTeZh+aDR1QE56E
+         ZlG4lqDgPU/ZAa6U2qCbSHG/H2mXw3QSYhb3jlDy0X6SoscRbqH9Oa92OG6SWY3bxil2
+         wTMjZf31vaVfMDSEgGcmih/qx7ol3zZ+fznSZkge2X2rUzj1Jj81kGBrMo7XrNqmrM8l
+         JFiN6eGBJ3lawghYGJQU1kbuZR+onhyR8c9XLl20aJMeguDa9CnrZcudh8rLLVMmyzGR
+         7kLSxe8NracvlvbP2Nc6CD8WwRp1+12wKIpsWp+cCkoMo+ehqbup8asgRBLs6+KtdxQn
+         pR0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVKNiqsKhXuUYoJfkcsiVTokPTjONzl/XQCccOhhYhlSOMOv5RQfM0dXIDgCjWWqQfbbk7U5yziNqz47e36Ncljx/7PGs760r7KXUdhHRsRyXFMC0fXohWu4lEHY3Cve/W60MqeusQ=
+X-Gm-Message-State: AOJu0Yy4pM+6MhfbNZXXdfcXKRLcjyFXyjTBXN7LSh6t/g+kqGbgqTvZ
+	XZKDKpGtI9Q+/ej1qy9F0S4t6ZfFX6aqioSRGSZ11Tjr+WlXd4b/si27Tg==
+X-Google-Smtp-Source: AGHT+IGx8b2K1cJ63oWhRAKsYzusq0dlwFUIXqyO/bqi1don2eRv6BVoEA3wWBv50LhEKzpLIV2mjA==
+X-Received: by 2002:a17:902:e802:b0:1fa:acf0:72c8 with SMTP id d9443c01a7336-1fbb6ce11ccmr34449645ad.18.1720572857083;
+        Tue, 09 Jul 2024 17:54:17 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab7c66sm21898105ad.121.2024.07.09.17.54.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 17:54:16 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 9 Jul 2024 14:54:15 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, io-uring@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Tycho Andersen <tandersen@netflix.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Julian Orth <ju.orth@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
+ get_signal()
+Message-ID: <Zo3bt3AJHSG5rVnZ@slm.duckdns.org>
+References: <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
+ <20240708104221.GA18761@redhat.com>
+ <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
+ <20240709103617.GB28495@redhat.com>
+ <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
+ <Zo1ntduTPiF8Gmfl@slm.duckdns.org>
+ <20240709190743.GB3892@redhat.com>
+ <d2667002-1631-4f42-8aad-a9ea56c0762b@gmail.com>
+ <20240709193828.GC3892@redhat.com>
+ <d9c00f01-576c-46cd-a88c-76e244460dac@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
- get_signal()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, io-uring@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>,
- Tycho Andersen <tandersen@netflix.com>, Thomas Gleixner
- <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- Julian Orth <ju.orth@gmail.com>, Peter Zijlstra <peterz@infradead.org>
-References: <cover.1720368770.git.asml.silence@gmail.com>
- <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
- <20240708104221.GA18761@redhat.com>
- <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
- <20240709103617.GB28495@redhat.com>
- <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
- <Zo1ntduTPiF8Gmfl@slm.duckdns.org> <20240709190743.GB3892@redhat.com>
- <d2667002-1631-4f42-8aad-a9ea56c0762b@gmail.com>
- <20240709193828.GC3892@redhat.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240709193828.GC3892@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d9c00f01-576c-46cd-a88c-76e244460dac@gmail.com>
 
-On 7/9/24 20:38, Oleg Nesterov wrote:
-> On 07/09, Pavel Begunkov wrote:
->>
->> On 7/9/24 20:07, Oleg Nesterov wrote:
->>> Hi Tejun,
->>>
->>> Thanks for looking at this, can you review this V2 patch from Pavel?
-> 
-> Just in case, I obviously meant our next (V2) patch
-> 
-> [PATCH v2 2/2] kernel: rerun task_work while freezing in get_signal()
-> https://lore.kernel.org/all/149ff5a762997c723880751e8a4019907a0b6457.1720534425.git.asml.silence@gmail.com/
-> 
->>> Well, I don't really understand what can snapshot/restore actually mean...
->>
->> CRIU, I assume. I'll try it ...
-> 
-> Than I think we can forget about task_works and this patch. CRIU dumps
-> the tasks in TASK_TRACED state.
+Hello,
 
-And would be hard to test, io_uring (the main source of task_work)
-is not supported
-
-(00.466022) Error (criu/proc_parse.c:477): Unknown shit 600 (anon_inode:[io_uring])
+On Tue, Jul 09, 2024 at 08:55:43PM +0100, Pavel Begunkov wrote:
 ...
-(00.467642) Unfreezing tasks into 1
-(00.467656)     Unseizing 15488 into 1
-(00.468149) Error (criu/cr-dump.c:2111): Dumping FAILED.
-
-
->> ... but I'm inclined to think the patch makes sense regardless,
->> we're replacing an infinite loop with wait-wake-execute-wait.
+> > > CRIU, I assume. I'll try it ...
+> > 
+> > Than I think we can forget about task_works and this patch. CRIU dumps
+> > the tasks in TASK_TRACED state.
 > 
-> Agreed.
+> And would be hard to test, io_uring (the main source of task_work)
+> is not supported
+> 
+> (00.466022) Error (criu/proc_parse.c:477): Unknown shit 600 (anon_inode:[io_uring])
+> ...
+> (00.467642) Unfreezing tasks into 1
+> (00.467656)     Unseizing 15488 into 1
+> (00.468149) Error (criu/cr-dump.c:2111): Dumping FAILED.
+
+Yeah, the question is: If CRIU is to use cgroup freezer to freeze the tasks
+and then go around tracing each to make dump, would the freezer be enough in
+avoiding interim state changes? Using CRIU implementation is a bit arbitrary
+but I think checkpoint-restart is a useful bar to measure what should stay
+stable while a cgroup is frozen.
+
+Thanks.
 
 -- 
-Pavel Begunkov
+tejun
 

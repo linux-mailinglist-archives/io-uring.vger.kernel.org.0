@@ -1,123 +1,112 @@
-Return-Path: <io-uring+bounces-2482-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2483-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED22292C7B9
-	for <lists+io-uring@lfdr.de>; Wed, 10 Jul 2024 02:57:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA0892C7BE
+	for <lists+io-uring@lfdr.de>; Wed, 10 Jul 2024 03:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29E4C1C21BA4
-	for <lists+io-uring@lfdr.de>; Wed, 10 Jul 2024 00:57:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 589B9283A6A
+	for <lists+io-uring@lfdr.de>; Wed, 10 Jul 2024 01:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2677A23A0;
-	Wed, 10 Jul 2024 00:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CD753AC;
+	Wed, 10 Jul 2024 01:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtxNH/Ic"
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="VkkZlJLj"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05164A07;
-	Wed, 10 Jul 2024 00:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1971392
+	for <io-uring@vger.kernel.org>; Wed, 10 Jul 2024 01:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720573049; cv=none; b=b87q6TiYAmwERkfFD9ZkGOR+qAIyTrkG//eXLzSpG8VfnYVV00tu1jATn9e/8MbcmAsBFSDEphU1toZF7UjULLAHHzNs70m6mMOeNycUlsqBPiJEkSGdKJnT1DHo/2fa8JVuHqAWs2glQgELkJa3NhNDwkB6HJS089yT4jwDnjk=
+	t=1720573556; cv=none; b=TahKNqFfnnftOLH6g9g05Z2GRjwMd2O7PAUMIaEicxLYGJMy4EwaqlzPUXjLU4pLpBOVxwoAGgRobdQL+IVT6u4846LZelThWp6v+rM8DF1wIJsN3qh/+uvGpxfnP9nxEWNrcvIqitvRhX/3t6E60xYvEtHauDaB9YSpbNlPDrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720573049; c=relaxed/simple;
-	bh=B2IJUWG+gIY1F0/nl3PBsnRoD1Lqo2RSfjArrbG8HaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jC/ziSWjCQUjxs01FbjGrCWoS+UQGerTJ25t6OiLXpKzOJUiZlaGcw/HoLYnqti2mPrFw//ykdAN7NMz1yp2RHPe4gm6DbPlK9Zve/jJw2b1YBjjjJJrR6bhkecCkEdZthThnlKsWCRysYnSZNrU0a9kUW+9LHg6NsztnBTbv3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtxNH/Ic; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7036815bde7so1764372a34.3;
-        Tue, 09 Jul 2024 17:57:26 -0700 (PDT)
+	s=arc-20240116; t=1720573556; c=relaxed/simple;
+	bh=I1f4+j4VisWyCO8PAlPOE6YvEt3S5WJBq4/Lkq0Ma0E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LAoQQAwkJphqBMHFOuclUeclhhT2EF658tJw/vx98otgC1QZ3jtUHwhoW1GIr1P28NWTbGk/XBzUBin2xCUVbFUSPRCNnpsUYLpD6YkHRcwG1HS+n9pZ+6pe/Mg/3Ecd5tVCDckK7F6ap7rHJHHJIBe8WfrNrXN3idfpgMiaReo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=VkkZlJLj; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58be2b8b6b2so7229700a12.3
+        for <io-uring@vger.kernel.org>; Tue, 09 Jul 2024 18:05:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720573045; x=1721177845; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2YqcG/O7UO17pKVeqS9vSTR5z7c3JMkKO7hnG3tldC4=;
-        b=dtxNH/IcflGUjibj8v5KNdAAa8moMxLqmGzniUtyEy+mc341k0Q4xZdRlrw9gommVe
-         H85eLboWFDkB4bxKvZ6VzMUMHJdibrQbcmJymDLBfTcAUl36ruILpnYRraBNgTI2OCxU
-         JrnsylFTP7wNaOVxC1fjXLwl/aSYkHMlxaBf8556sAuk+9ejtF35TvJ2lEDYiOo3PHVE
-         NIFe87cybBZIAyBZB5jF0F+6XfD90yR296Qoq1A3B3rQ6iK5OBHGsUbym0wJCBtL5Qik
-         5dCjPMtkZJ3k8wwHp/iatBCz9s0kiA2stk5n7c2GdtywVI9fkTskLUSsmfmd4JaMAItb
-         I+nA==
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1720573553; x=1721178353; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wZBbgYfrOWaQkS2J4LZroamEeK4UJ6L3MdngZigAzGk=;
+        b=VkkZlJLj0PmMz0GvhHFYhXMc1kV1BF5S6SOhDwEsFpeQx9/cbWsNwLwpREerx0xwqs
+         v0iKQiySkxmISN6ZrFgDDA0d7VWNySpt3Tq7UuAPqXI5Po0ktWD5uCZUJG+J/TTH1ddw
+         j64DElYMUmtASBZ95QOSaMofpT0iHU0YzXlf3XcpXmMfvbdm38yycfKVf48m/Fy0utYE
+         qmI1t3KsNUN5nIG5UMm7FLbSA5QvLHLwKIUtDL9ZHljM4/PK+ZIwqUM9jnuwRpr953p0
+         bTsRyli3dZZJYuZ4KzNLP46E7VPMV/RRjER9qcBYm9p/Zfz/QtBY6XMQ3JnAikd//cLh
+         L0ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720573045; x=1721177845;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2YqcG/O7UO17pKVeqS9vSTR5z7c3JMkKO7hnG3tldC4=;
-        b=eysRH6HjzLzluBYmsF0hA0s2v6hbT9jVu7WndOqiaq3J+10ZhY+dJPGknt1/pObp49
-         V3I+2zqgIJoSMPOqz3cDfWdMqnC1svgA9S0wOJXzG7VHj8BKrMIASJIoJY9EPFnqgEkW
-         gODatId87czaL50qSgc/ZeplQsLlcT8uBWBgU6EDPM6JPafihZ9HPAwjh+M+1xF71ArT
-         dvmny2XDhZ6MVO6BQJx+hWiFaljtYp7aQQZr0EXMmMOZUwY68Wcv4oksIWRTnscFNe9H
-         GZEs9FZX+RrITuwdAONS7OLzSJ1lncgj09WtqNP8lxBu+i28+UMYPuPJb2WKZxjLUtAv
-         LYMw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9o9QQCClpcHwIKO6YdXLaO75o7B4ZIroQVjHtUIoPI810EWpmxTbqcZ22bCEihVoOxmIaK6pTq6ZyuWVD7lTw9+5tnV8AbYR4oYSq
-X-Gm-Message-State: AOJu0YydSTC5TC6XFo9yUz/bw9tQyAZ/wC29WHSIUgv2aAkgeEkIllDW
-	X8HGeQVs5DfRsA3Yb9ASzC1ZF0/TiMpr+lh5/NIBANyHg0n4477q
-X-Google-Smtp-Source: AGHT+IGCdW4ebx+zL0Pukp6i4b9YkL+Fx//qJ6Wqq2XyXbYfl7OoNWXIXyjdewNDL0PDLXDB5jkExw==
-X-Received: by 2002:a05:6830:1648:b0:704:4938:e4fb with SMTP id 46e09a7af769-7044938e726mr933070a34.24.1720573045525;
-        Tue, 09 Jul 2024 17:57:25 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b438c70a4sm2467638b3a.83.2024.07.09.17.57.24
+        d=1e100.net; s=20230601; t=1720573553; x=1721178353;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wZBbgYfrOWaQkS2J4LZroamEeK4UJ6L3MdngZigAzGk=;
+        b=HU4mIgbAXLZbMTrvFUGVebppAstmwNJFJK/l2RU9C+N66SNQXH9hbKkryY3kHjaWw8
+         Ebn3fBwAFfbOQS3Z3R1bcEgZWx/avIfYjwcuXeQRX941gzhfg69Cy2DkzTS8BuF34rBS
+         PCUxAoETvBRE3M70jATCYC3pNDNPLYUHyZ2h0RNRkcoRdBU0Midrr1yB9KFUJPUNWlAW
+         Gq/X3D5IllOFxMoqFPswN/N0VpxZC/WFeTfguKl5COBpLO7wkDO865HdHjT2cSZwn2/A
+         68x1RARypBq7hB2WLLjril94eTFou5wINO7c8F/vNIfWVJFfbEEK0d8nbvTX9+mgCk1m
+         /jgA==
+X-Gm-Message-State: AOJu0YydWHgebThW6mtWN5Ks7Kg/YhzGQ6GM2RBkx+NSbgOBuwthFZ5W
+	bnMCmiK0YN+WjDpI5nNEQcJAIw7OzuTIduJl3DdVmG2QBlfi3vWxv/r20j9F8r0=
+X-Google-Smtp-Source: AGHT+IEUZiU9U3tjKwZHU6jK9LXVcFiV2eMAM+tftl8C+0qpsA+pViZFKnH+2vEYoDdFVGAkUjkINA==
+X-Received: by 2002:a05:6402:288d:b0:58e:2f0a:d5c8 with SMTP id 4fb4d7f45d1cf-594bcab1593mr2124090a12.38.1720573552910;
+        Tue, 09 Jul 2024 18:05:52 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-224.dynamic.mnet-online.de. [82.135.80.224])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bd459aafsm1625844a12.78.2024.07.09.18.05.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 17:57:25 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 9 Jul 2024 14:57:24 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Tycho Andersen <tandersen@netflix.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Julian Orth <ju.orth@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 2/2] kernel: rerun task_work while freezing in
- get_signal()
-Message-ID: <Zo3cdEMZVOJcseWm@slm.duckdns.org>
-References: <cover.1720534425.git.asml.silence@gmail.com>
- <149ff5a762997c723880751e8a4019907a0b6457.1720534425.git.asml.silence@gmail.com>
+        Tue, 09 Jul 2024 18:05:52 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: axboe@kernel.dk,
+	asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] io_uring/napi: Remove unnecessary s64 cast
+Date: Wed, 10 Jul 2024 03:05:21 +0200
+Message-ID: <20240710010520.384009-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <149ff5a762997c723880751e8a4019907a0b6457.1720534425.git.asml.silence@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 09, 2024 at 03:27:19PM +0100, Pavel Begunkov wrote:
-> io_uring can asynchronously add a task_work while the task is getting
-> freezed. TIF_NOTIFY_SIGNAL will prevent the task from sleeping in
-> do_freezer_trap(), and since the get_signal()'s relock loop doesn't
-> retry task_work, the task will spin there not being able to sleep
-> until the freezing is cancelled / the task is killed / etc.
-> 
-> Cc: stable@vger.kernel.org
-> Link: https://github.com/systemd/systemd/issues/33626
-> Fixes: 12db8b690010c ("entry: Add support for TIF_NOTIFY_SIGNAL")
-> Reported-by: Julian Orth <ju.orth@gmail.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Since the do_div() macro casts the divisor to u32 anyway, remove the
+unnecessary s64 cast and fix the following Coccinelle/coccicheck
+warning reported by do_div.cocci:
 
-I haven't looked at the signal code for too long to be all that useful but
-the problem described and the patch does make sense to me. FWIW,
+  WARNING: do_div() does a 64-by-32 division, please consider using div64_s64 instead
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ io_uring/napi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Maybe note that this is structured specifically to ease backport and we need
-further cleanups? It's not great that this is special cased in
-do_freezer_trap() instead of being integrated into the outer loop.
-
-Thanks.
-
+diff --git a/io_uring/napi.c b/io_uring/napi.c
+index 8c18ede595c4..762254a7ff3f 100644
+--- a/io_uring/napi.c
++++ b/io_uring/napi.c
+@@ -283,7 +283,7 @@ void __io_napi_adjust_timeout(struct io_ring_ctx *ctx, struct io_wait_queue *iow
+ 			s64 poll_to_ns = timespec64_to_ns(ts);
+ 			if (poll_to_ns > 0) {
+ 				u64 val = poll_to_ns + 999;
+-				do_div(val, (s64) 1000);
++				do_div(val, 1000);
+ 				poll_to = val;
+ 			}
+ 		}
 -- 
-tejun
+2.45.2
+
 

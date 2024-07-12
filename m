@@ -1,204 +1,144 @@
-Return-Path: <io-uring+bounces-2501-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2502-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191CD92F521
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jul 2024 07:43:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0326D92F6D9
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jul 2024 10:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D6561C21FF8
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jul 2024 05:43:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2FC32834E7
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jul 2024 08:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD88DFC12;
-	Fri, 12 Jul 2024 05:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F44713DDBA;
+	Fri, 12 Jul 2024 08:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ElmsGjYT"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="f4X13abJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7960518037
-	for <io-uring@vger.kernel.org>; Fri, 12 Jul 2024 05:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3133C13D509
+	for <io-uring@vger.kernel.org>; Fri, 12 Jul 2024 08:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720763024; cv=none; b=hWpBegQF7cCmSuJeq/6vWQ3dQFs3YWVQUNFBGMO1NPEew/NJ1J9iiyN2A+N1tsxDtAY8ZRyyT5CI/blIeFPmnk8l8A59mYGtQcwe5fNqXEAgrqCtZ5Fplt/MavUK2hZ16UKEKCUS+jpjnMCYU6O+n6vPvawcjbNQP2WwGOz054A=
+	t=1720772606; cv=none; b=PmYrMMsoiUU7BnwV9CFC86Pv1/VQg4KDa8DDLYKEC+OcjGIOPAn1XkpudhLxwaDNFL/FRruYch1XZ4rBeIVvb+x+5Rm/Z2IBc9A9WkoRuHRcKmM6uZVL6euDcJa05pERZTpLmxvqAchaXS4GCgB06xiIKW3ZaDbJu898/PCl82c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720763024; c=relaxed/simple;
-	bh=84roCgwq53QLWK8CFR5bmLMO4WAvQazzcA+cDmkleW0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=GOwyHQ1DaXJTreq+mpb0HrdgSNqMdXlgGGgu+T0cnB9tcdxF3UQ25HovTRUYlOBk5URybws4x4d1cWOrQkorATgnz1EHs+CkANw6AUONbhQz3HcLnhZjJFq7LtoBFz0OwCLBS3p1is5hiMMJFwFl+hPkUWqREx7TuRzPqqeCHpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ElmsGjYT; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e9d61a4b4so256562e87.3
-        for <io-uring@vger.kernel.org>; Thu, 11 Jul 2024 22:43:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1720763018; x=1721367818; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FUU/YtzkDnki6k2q7yxeYF3IthKrAb3+ThSO0uPkeiM=;
-        b=ElmsGjYTBsHecFmFmlSb6NWyJZ7Wn7JVh98vy193OFplmOCQibxP/cnx6if1uqhHh6
-         frNDKBHElEzh8TDL1xGqMX5lwKxoe5Pxenpi+mKfUZ25yhSAbjf5deATq9sZW8QtFLWX
-         DLhGo/DNm8vsXs5cUsUVeYYPIm1BO/Ot+TxYP8LfQycUlx5ludahYfs+9xvg4x9JelrN
-         gHaHX6iyZo2s6is0uOjEZe8+W/lx5YtUyL4Iv0Ozd1QNe0BLXq3+1GldWs1epW5CRR7G
-         pWzmZblY33ptLxtw6fOmt3G+RR+wpYJXtV/nIe2arlwQYyftRQlTVkVwi9jPH6bjURdu
-         KEGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720763018; x=1721367818;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FUU/YtzkDnki6k2q7yxeYF3IthKrAb3+ThSO0uPkeiM=;
-        b=qf0dGV7V8RKdNwWNTBXg68kRkQHs6iJpX8cL1hOC/zcMOJILGlLfOc8xA29ATr0kNF
-         XZR6NuKhUuWZVkh1VZLUcFGCqt/PsdodTn4F3JTd8p06qZN2ITFJbPQjJb7UnE+6I40d
-         RW1BEZRydMTSjCMStHTR9b//ffF+2RFPmHpRuC8KA7GF7/pK5raZXBGn7GixOMwymGT+
-         ATiWzJhz5gvWMoHwVTlHnpjmYZUaO8DKhY1TnuWCLaIC6BgFJsP+LFk+ByKRrbbY/uwt
-         iitO7VVibsnAQmGkHIkZW9Ql0T8vuFlAhu0619i+OtDobQcIkPvtAuHZTE+mlnDMaFon
-         cmyg==
-X-Gm-Message-State: AOJu0YwbNq2EYrvRMtqIbLSMDnH6AGDscpvNCf6nSp4/qpbHUlN+tvRo
-	ut88QPKYWI3Js7+AGMGToVumrGsLALwles/dEH70PGGZYtXQxM+xKC1HuIHONWWnalOVj3ekCt7
-	n6OHKtXaJ
-X-Google-Smtp-Source: AGHT+IE70lVmzrSqlpGtxTcUjIZZbRB4o7YpkAa6PaHrBwAlJj+AJMc0R+HiiJq+UWxMJwTm8ufJzg==
-X-Received: by 2002:a2e:bc04:0:b0:2ec:16c4:ead5 with SMTP id 38308e7fff4ca-2eeb31bbf8bmr70876321fa.2.1720763018123;
-        Thu, 11 Jul 2024 22:43:38 -0700 (PDT)
-Received: from [192.168.1.68] (87-52-80-167-dynamic.dk.customer.tdc.net. [87.52.80.167])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eeb3421e05sm10443421fa.33.2024.07.11.22.43.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 22:43:37 -0700 (PDT)
-Message-ID: <5e5b2431-dd9b-488e-a0c9-578008e14208@kernel.dk>
-Date: Thu, 11 Jul 2024 23:43:36 -0600
+	s=arc-20240116; t=1720772606; c=relaxed/simple;
+	bh=k4DqjM+f2mpsIHVU3sYPFhWs1zxrgHI2U6K0amjP790=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=XuzjgRny/E9iluhXXTwYCjB3U4Ek5OQM/KeguvYcwq1SQf5C4evwkPNadtBKAzp1Cqe5kvLCc55kK3PRVpK4jJ52JXekePzoD3oQwZET9CC1Ss3mHSJcyWG7VDJWJ/r2IqP/myqgU/4ZoImkgavSxJdkQAqcWHCX3+dOZr/SPqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=f4X13abJ; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240712082316epoutp0112031d69334aa3caea7b82d4e3778cb2~haY84NBKP1966819668epoutp01K
+	for <io-uring@vger.kernel.org>; Fri, 12 Jul 2024 08:23:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240712082316epoutp0112031d69334aa3caea7b82d4e3778cb2~haY84NBKP1966819668epoutp01K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720772596;
+	bh=EN2jPuqsDevY28zpnNxB4ovNHRij5bWkyvMEhUSw2Sg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=f4X13abJ596q46JWe9vPb+8ZFybe1rCxJUe78G/h2H8VtbWZLiSTPScQ+98d1Xzdj
+	 szrn025sLmd32gTAVUj8Hls0hwKsni6FlT3vfwDR/PqI4B0vqLYK+gqYLR+zExPDv1
+	 gMRIFRbJTzuB0l8wnPJRfivaagY2ukZASE8KTySg=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240712082316epcas5p35604a34dfcf2354a6b13fe6b8b4a5fc2~haY8obsCL2635226352epcas5p36;
+	Fri, 12 Jul 2024 08:23:16 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WL4Nf14bWz4x9Q2; Fri, 12 Jul
+	2024 08:23:14 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6D.C7.19174.AE7E0966; Fri, 12 Jul 2024 17:23:06 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240712065750epcas5p2149131922a27554e6a40313e5c73699e~hZOXCVf222681526815epcas5p2B;
+	Fri, 12 Jul 2024 06:57:50 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240712065750epsmtrp2ca7a7789bd9d3112d069765defcde925~hZOXA82723072830728epsmtrp2N;
+	Fri, 12 Jul 2024 06:57:50 +0000 (GMT)
+X-AuditID: b6c32a50-87fff70000004ae6-88-6690e7eafd35
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BF.FC.18846.EE3D0966; Fri, 12 Jul 2024 15:57:50 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240712065749epsmtip163077e8f8b8a31d4f3c51eb31c04eb76~hZOWAz0Y31597715977epsmtip1W;
+	Fri, 12 Jul 2024 06:57:49 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: hch@infradead.org
+Cc: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xue01.he@samsung.com
+Subject: Re: Re: [PATCH v2] io_uring: Avoid polling configuration errors
+Date: Fri, 12 Jul 2024 14:57:45 +0800
+Message-Id: <20240712065745.808422-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <ZpC9HxJnokkbjKAO@infradead.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring updates for 6.11-rc1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmlu6r5xPSDBbPUrGYs2obo8Xqu/1s
+	FqcnLGKyeNd6jsXiV/ddRovLu+awWZyd8IHVouvCKTYHDo+ds+6ye2xeoeVx+WypR9+WVYwe
+	nzfJBbBGZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXm
+	AF2ipFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwKdArTswtLs1L18tLLbEyNDAw
+	MgUqTMjOOD69j6mgn6Vi39HEBsZFzF2MHBwSAiYS2x74djFycQgJ7GGUePHrHwuE84lR4kn7
+	eyY45++3L0AZTrCO9Tf2QiV2Mkq0TWtmhHB+MEo03WhiBqliE1CS2L/lAyOILSIgKnFv+hUw
+	m1mgWuL/sh52EFtYwENiwrvVYFNZBFQlvnzdDlbDK2AlsWv+enaIbfISN7v2g83kFNCVaDh1
+	mA2iRlDi5MwnLBAz5SWat85mBjlCQuARu8TViR+ZIZpdJFY3/GKCsIUlXh3fAjVUSuLzu71s
+	EHa+xOTv6xkh7BqJdZvfQb1pLfHvyh4WUCAxC2hKrN+lDxGWlZh6ah0TxF4+id7fT6DG80rs
+	mAdjK0ksObICaqSExO8Ji1ghbA+J3T2rmCGB1cAosW7bJ/YJjAqzkPwzC8k/sxBWL2BkXsUo
+	lVpQnJuemmxaYKibl1oOj+Xk/NxNjODUqRWwg3H1hr96hxiZOBgPMUpwMCuJ8Hqe7U8T4k1J
+	rKxKLcqPLyrNSS0+xGgKDPGJzFKiyfnA5J1XEm9oYmlgYmZmZmJpbGaoJM77unVuipBAemJJ
+	anZqakFqEUwfEwenVAPT7iiTHc8MgvcK8i19MGlmSr/zltyc6XkR1UwPvHYK1SXGTNawOXxr
+	z+1+z8Rp+hlv7946dWmP1s05s+dpWzTNK9NtPLL41dFTH15d5fiyX/Hp/S+NcsvDOQ/cfeMv
+	fGC9rWF68xejvknB4pNNSxLfc09vOv+06nlYkbe68pKrHgmHDO7nv7NPYJ6e66G49MKx6TFB
+	2mrHLp4p2vYpwPXC3jBFA3MR9soLDbfksiamaq8z1p2acJnVZmZ6ZeDWTcpXM0z4NV1n/Qp2
+	2t5iI1j4Y4PjYjmhCas01u+tUOorW8AqPHvp47dTJgiHya0y3qT5bAWzlOqke8eecH0wf6P8
+	cvaZ/ROvL3o7/9ll4ZU7pymxFGckGmoxFxUnAgDI/fY8JgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsWy7bCSnO67yxPSDCZ0K1jMWbWN0WL13X42
+	i9MTFjFZvGs9x2Lxq/suo8XlXXPYLM5O+MBq0XXhFJsDh8fOWXfZPTav0PK4fLbUo2/LKkaP
+	z5vkAlijuGxSUnMyy1KL9O0SuDKOT+9jKuhnqdh3NLGBcRFzFyMnh4SAicT6G3uZuhi5OIQE
+	tjNK/Ns7mQ0iISGx49EfVghbWGLlv+fsEEXfGCUuXGlkBEmwCShJ7N/yAcwWERCVuDf9CiNI
+	EbNAI6PE8h0HWUASwgIeEhPerQazWQRUJb583Q7WwCtgJbFr/np2iA3yEje79oOdxCmgK9Fw
+	6jDYFUICOhLLbjayQtQLSpyc+QRsDjNQffPW2cwTGAVmIUnNQpJawMi0ilE0taA4Nz03ucBQ
+	rzgxt7g0L10vOT93EyM4qLWCdjAuW/9X7xAjEwfjIUYJDmYlEV7Ps/1pQrwpiZVVqUX58UWl
+	OanFhxilOViUxHmVczpThATSE0tSs1NTC1KLYLJMHJxSDUwTtxiG79Fzlgwqz2E49KGv4fsU
+	GyP/hXP59VgOF4gHSDG9vPa4S+aj/Za1zGFOq74cNlh6RTx1g9Aew93ljcpni13+MDw7FcfI
+	+t66+UXr+eqqk480H/kceGdt1iTnVp1THb7k5ONdgSmf1mjscd9x8cOCqIYrfgom8yxElP6s
+	lbDPelBbdVMpIYFN07vQr8iK79/aR+ejbucF/gleyHo8MHfBJttmV2333uTzkvcN56mvfCL2
+	VMvbYK/R4U+z2T2qPtzZ5a359M2f7XN0gzWenOx1DvG86eMv5zvXpubc0a2BXQyJuob/S+9J
+	tGV1JE9+GlWdcz/+1PPXXwvclpS77JzBf/fWGV5ZTQ13BSWW4oxEQy3mouJEALsA1vvZAgAA
+X-CMS-MailID: 20240712065750epcas5p2149131922a27554e6a40313e5c73699e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240712065750epcas5p2149131922a27554e6a40313e5c73699e
+References: <ZpC9HxJnokkbjKAO@infradead.org>
+	<CGME20240712065750epcas5p2149131922a27554e6a40313e5c73699e@epcas5p2.samsung.com>
 
-Hi Linus,
+>This is wrong for multiple reasons.  One is that we can't simply poke
+>into block device internals like this in a higher layer like io_uring.
+>Second blkdev_get_no_open is in no way available for use outside the
+>block layer.  The fact that the even exist as separate helpers that
+>aren't entirely hidden is a decade old layering violation in blk-cgroup.
 
-Sending this one early as I'm out on vacation.
+Got it, thanks.
 
-Here are the io_uring updates queued up for the 6.11 merge window.
-Nothing major this time around, various minor improvements and
-cleanups/fixes. This pull request contains:
+>If you want to advertize this properly we'll need a flag in struct
+>file or something similar.
 
-- Add bind/listen opcodes. Main motivation is to support direct
-  descriptors, to avoid needing a regular fd just for doing these two
-  operations (Gabriel)
+Thanks, I will try to do this.
 
-- Probe fixes (Gabriel)
-
-- Treat io-wq work flags as atomics. Not fixing a real issue, but may
-  as well and it silences a KCSAN warning (me)
-
-- Cleanup of rsrc __set_current_state() usage (me)
-
-- Add 64-bit for {m,f}advise operations (me)
-
-- Improve performance of data ring messages (me)
-
-- Fix for ring message overflow posting (Pavel)
-
-- Fix for freezer interaction with TWA_NOTIFY_SIGNAL. Not strictly an
-  io_uring thing, but since TWA_NOTIFY_SIGNAL was originally added for
-  faster task_work signaling for io_uring, bundling it with this pull.
-  (Pavel)
-
-- Add Pavel as a co-maintainer
-
-- Various cleanups (me, Thorsten)
-
-Please pull!
-
-
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
-
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/for-6.11/io_uring-20240711
-
-for you to fetch changes up to 943ad0b62e3c21f324c4884caa6cb4a871bca05c:
-
-  kernel: rerun task_work while freezing in get_signal() (2024-07-11 01:51:44 -0600)
-
-----------------------------------------------------------------
-for-6.11/io_uring-20240711
-
-----------------------------------------------------------------
-Gabriel Krisman Bertazi (8):
-      io_uring: Drop per-ctx dummy_ubuf
-      io_uring/rsrc: Drop io_copy_iov in favor of iovec API
-      net: Split a __sys_bind helper for io_uring
-      net: Split a __sys_listen helper for io_uring
-      io_uring: Introduce IORING_OP_BIND
-      io_uring: Introduce IORING_OP_LISTEN
-      io_uring: Fix probe of disabled operations
-      io_uring: Allocate only necessary memory in io_probe
-
-Jens Axboe (15):
-      io_uring/eventfd: move to more idiomatic RCU free usage
-      io_uring/eventfd: move eventfd handling to separate file
-      io_uring: use 'state' consistently
-      io_uring/io-wq: make io_wq_work flags atomic
-      io_uring/rsrc: remove redundant __set_current_state() post schedule()
-      io_uring/advise: support 64-bit lengths
-      io_uring/msg_ring: tighten requirement for remote posting
-      io_uring: add remote task_work execution helper
-      io_uring: add io_add_aux_cqe() helper
-      io_uring/msg_ring: improve handling of target CQE posting
-      io_uring/msg_ring: add an alloc cache for io_kiocb entries
-      io_uring/msg_ring: check for dead submitter task
-      io_uring/msg_ring: use kmem_cache_free() to free request
-      MAINTAINERS: change Pavel Begunkov from io_uring reviewer to maintainer
-      io_uring/net: cleanup io_recv_finish() bundle handling
-
-Pavel Begunkov (3):
-      io_uring/msg_ring: fix overflow posting
-      io_uring/io-wq: limit retrying worker initialisation
-      kernel: rerun task_work while freezing in get_signal()
-
-Thorsten Blum (1):
-      io_uring/napi: Remove unnecessary s64 cast
-
- MAINTAINERS                    |   2 +-
- include/linux/io_uring_types.h |  14 ++--
- include/linux/socket.h         |   3 +
- include/uapi/linux/io_uring.h  |   2 +
- io_uring/Makefile              |   6 +-
- io_uring/advise.c              |  16 +++--
- io_uring/eventfd.c             | 160 +++++++++++++++++++++++++++++++++++++++++
- io_uring/eventfd.h             |   8 +++
- io_uring/io-wq.c               |  29 ++++----
- io_uring/io-wq.h               |   2 +-
- io_uring/io_uring.c            | 150 ++++++++++++++------------------------
- io_uring/io_uring.h            |   9 +--
- io_uring/msg_ring.c            | 122 +++++++++++++++++++------------
- io_uring/msg_ring.h            |   1 +
- io_uring/napi.c                |   2 +-
- io_uring/net.c                 |  84 +++++++++++++++++++---
- io_uring/net.h                 |   6 ++
- io_uring/opdef.c               |  34 +++++++++
- io_uring/opdef.h               |   4 +-
- io_uring/register.c            |  65 ++---------------
- io_uring/rsrc.c                |  63 ++++++----------
- kernel/signal.c                |   8 +++
- net/socket.c                   |  48 ++++++++-----
- 23 files changed, 528 insertions(+), 310 deletions(-)
- create mode 100644 io_uring/eventfd.c
- create mode 100644 io_uring/eventfd.h
-
--- 
-Jens Axboe
-
+--
+hexue
 

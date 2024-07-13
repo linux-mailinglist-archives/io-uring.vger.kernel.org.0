@@ -1,104 +1,111 @@
-Return-Path: <io-uring+bounces-2506-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2507-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7933F93059B
-	for <lists+io-uring@lfdr.de>; Sat, 13 Jul 2024 14:39:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FBE93059E
+	for <lists+io-uring@lfdr.de>; Sat, 13 Jul 2024 14:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5531F21AE2
-	for <lists+io-uring@lfdr.de>; Sat, 13 Jul 2024 12:39:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A4BE1C20C8E
+	for <lists+io-uring@lfdr.de>; Sat, 13 Jul 2024 12:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EE3130A40;
-	Sat, 13 Jul 2024 12:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CBC130A40;
+	Sat, 13 Jul 2024 12:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Sx9WZETm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="BocKxkQ/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD72212E1D2
-	for <io-uring@vger.kernel.org>; Sat, 13 Jul 2024 12:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A924C8E
+	for <io-uring@vger.kernel.org>; Sat, 13 Jul 2024 12:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720874345; cv=none; b=X8q4bmbdJbtuH+bBUtvZ8T27aF8FoFaC2lcH0LIB4U1QWKOsnI3NdpADJoedpUWt6CeTSDe00aw68nOYgDaE7W9yMGcOofkKRY48k3r1umt6Kus/LdEGge6L81eHqtjhw4nB5Wqzw19gC+oQIXgNYMesUCl+lQZhAVsGtcFnGe8=
+	t=1720874453; cv=none; b=pBymH3/k06GGh4iUA5JDTD4PI1h8MuL1kcThGF0awmJHphznas9ovdVexaEEaobZo8BTjhmybWnN5lvL0c3HYSEmYvYv6vSZcTEjFiLZTg8ZDO3SEK3x41eCQuJ39udvXkAuMcszgisHiqdiN8QUBaoPrgKvQbDaVpKEr0fNVJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720874345; c=relaxed/simple;
-	bh=4+95kjVIjtlcszRvAKuUnMD1B3e2E+wMO/ciEz+40YI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WAMhHRGrEZP7zROmoZsjDpkM2xBVZb82boWXq3dljYKLizKWWxMr8y36Gr3F3ZFkhf4kUtKB2u6i/b+i5oKxj4jmBBMmj6vOUTnG42DKuFE/ibIhfwFt1eEvWyWC63i4QJojOjX8fpVLNEOSPek0BHYEBR/4wq+uYXkdlhHOJDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Sx9WZETm; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1720874453; c=relaxed/simple;
+	bh=4yFSu7XXmhJSzSwUYrnLbemHBPSoslS8OR1+wHBffNg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=idF1+zB9SGiQvwg2in9Xc8h/Ha++3o68vdsl6GReYR6ZrQL+0onrB+sKqpz/h5JJ7PGw9yKjz0mx9KpUPa3twZUc74CtOIH7CpjOw3wercAWRCeg4jlZvv6DbdWgvb+6H3LbMUHfO0Se9VKyndOrdh2LO+PyuzWoce+gB59u7to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=BocKxkQ/; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-584e3442410so489154a12.3
-        for <io-uring@vger.kernel.org>; Sat, 13 Jul 2024 05:39:03 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ee9bca8652so3577651fa.3
+        for <io-uring@vger.kernel.org>; Sat, 13 Jul 2024 05:40:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1720874342; x=1721479142; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u8hkhdHmp9Cd52s/KNQtC+KUQpLlcR8ECOfdL5ZTCiU=;
-        b=Sx9WZETmQE5lwyaVI826BgQHQfwXxae6v71Vms9/wQMcmLGeQl83xqFcHDGLw2o4F7
-         P5gE3h+JIuJWOVAS0SBiekb2JVV/8ikPv9av/WYBFHU53++Fk/gY1R7oz1h3Z0L2Qg5U
-         2dE2fWbSmDz+s50Te0P+sizMDQMH+p9jMSbukWGTYpMv248jVQAuFKE/4PYY82jbxN1w
-         +A84n3F1n64McNEISGUVFUJVZzq7vKlrBqpZRa38Rv8ND1+DfZmKrNA2DPQ934vW8ZDy
-         UqmzMBqLDKy/DOeIMV3li3BxqonynEh0lqP8NNmQ0FtOKbUmKa7juilKWaCF5P3qj/fM
-         D0ow==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1720874449; x=1721479249; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ev9MEMcim44wSH4EZqGa+LQX0BIyzafscHDCWffwRWI=;
+        b=BocKxkQ/HzQcpANfCO5t4JmrzMAHxH5Y8yw7LEbnv7wVQima6z1FIJR6H+I5VFLKxj
+         b1jqpKCNgZrgrG+vE5qZiKP+PvkXJZRmxm4OSP8p8dKsUntHjoID36zdfWHGg7gpqKG3
+         3Zw9H51p7SanxmuulCVD2Yp9Yv/tRLAgxYtwEKQvgmr3h/eniyCHBa1OmaG/z1mFT4HJ
+         P+AGsaTT14W/vIE5FBI/Qz4+RDHvFCLyHwdX0YBBHZ8gtxk9sm+SW1RscVs4DlrDn0Qc
+         S++NoikIXvnNIXQFStEEsWx0MxMM2yHF08D6MWCplKmbLXzepz3H8c5Gggf8MGfMXTSs
+         MC5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720874342; x=1721479142;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u8hkhdHmp9Cd52s/KNQtC+KUQpLlcR8ECOfdL5ZTCiU=;
-        b=ebHvnVfVLPQyVieW8SVPjI873oyZ28cY9683gmH12t5EpxVE1WVf9eAZNrDIrZL4eK
-         ZeRlphnUfr/w55FAz95abafn0mi0t9eBUSWnP1GnXiyNnCQmDEiKdx39aFPH0XCCpU8B
-         JWadt6puMWqGthbzsUCnvwt387iZKuifdd3rW3ER/Rek+1PYTvXmdAN3Idwwlf+MWf0g
-         7MgkyCNEYeshWfalUkyGUp1xyE2dIwpj+izBPnPhRybEPpgXO0yhQVVIUb1U2ei2vJNU
-         LUPKUVrJob868nH7Jokl6QsOc/HFeqM6bI6WcfQzzxmY7L3igKiqWU6iIZ3LNuTxH3PN
-         d2wA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6BC/BGIaV/OJXbrtrB8lE/NGmWEoFvAAVarJQMV0xVvUgSuRrmMMo0grZJgV62SymKcuMFoVCQNFojRlcfji1J8dXtzHPJ9I=
-X-Gm-Message-State: AOJu0Yxv/D3I9XxAo1V1G/+PVtgntkN0LFV/q78b7havza19CRsI+i6N
-	mSi1GBnY9a90NwOWOtvFNxHaApqk88l8Gzx6p402k3joCzKEg10HINOaDMqCwSk=
-X-Google-Smtp-Source: AGHT+IHyCFkgxA6T9OzJ7BZMsLeqWafRuWRco2VTLlq/+AX/e6UKF0v+jmeU9JYYH/Mvg952m9fn6Q==
-X-Received: by 2002:a17:906:5a52:b0:a77:af07:b97e with SMTP id a640c23a62f3a-a780b683d00mr811317666b.2.1720874341628;
-        Sat, 13 Jul 2024 05:39:01 -0700 (PDT)
-Received: from ?IPV6:2a02:aa7:464b:1644:7862:56e0:794e:2? ([2a02:aa7:464b:1644:7862:56e0:794e:2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc820d52sm47609466b.214.2024.07.13.05.38.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Jul 2024 05:39:00 -0700 (PDT)
-Message-ID: <7ca9cfc8-3423-476f-b768-8f089dae140a@kernel.dk>
-Date: Sat, 13 Jul 2024 06:38:58 -0600
+        d=1e100.net; s=20230601; t=1720874449; x=1721479249;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ev9MEMcim44wSH4EZqGa+LQX0BIyzafscHDCWffwRWI=;
+        b=w2lRZYfC32zQyjX4C9OMS9sdn8DcS1ab3P6JGrNkQbQwd57Y11pL+Z/sBmhkm6RsdF
+         CDkVcJ9QZHUHaCoG84Q/OrcE8kTyjD75flDmyX41582863ZdrSFkpGG1i+4Z4QbGzpKY
+         Rb/bZbmIYHeJWCOp8UNxwnIvMBy6s8qmZv6l1J2w4e9Tu1ncxgB5oqn1cekem38q8wjg
+         JEQLjbZ+luLtUf2YmDtNGeaTpsYTURdzTp5NMmf0xlvxiUcw63dyYcref+xWI16G7sbC
+         RmWAVFCrNEsYKZ3KqcmMSxDlV4McAu25bt3cy26N3allvIM+aLQ/ypElLP7SMkTDx9VF
+         3H6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWanNXdgo5wfQjw5nlaxLoHpX3iy4pmk3V3vshIIMLaKutATnJZFQ4TKgWfg0ZGvQCCqhi8j2tnDJTs7YQaEqeZj/9wmP5HoCs=
+X-Gm-Message-State: AOJu0YyJ4p/grmcT5OIgVuZJfiycSQPxMx55/AgQN9vM/XldkbWVgQBt
+	N51nzas/UGoAKSu42X4QLqtBkNyiN+pFMlIRh0Dihtpo3IFyU+rAA1NCNRYzU5c=
+X-Google-Smtp-Source: AGHT+IEDmDpZI2HOW9VBq0n2GsPSGvdL5UM+HjYSsiEoOGG4Tzgtwq9ejM87FCvZTWOzaPyOAXNkUQ==
+X-Received: by 2002:ac2:5b04:0:b0:52c:dc76:4876 with SMTP id 2adb3069b0e04-52ec3faf952mr3591414e87.6.1720874449263;
+        Sat, 13 Jul 2024 05:40:49 -0700 (PDT)
+Received: from [127.0.0.1] ([2a02:aa7:464b:1644:7862:56e0:794e:2])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed252d6a1sm177225e87.175.2024.07.13.05.40.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jul 2024 05:40:48 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: syzbot <syzbot+1e811482aa2c70afa9a0@syzkaller.appspotmail.com>, 
+ io-uring@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+ Pavel Begunkov <asml.silence@gmail.com>, 
+ Gabriel Krisman Bertazi <krisman@suse.de>, 
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <903da529-eaa3-43ef-ae41-d30f376c60cc@I-love.SAKURA.ne.jp>
+References: <0000000000007b7ce6061d1caec0@google.com>
+ <903da529-eaa3-43ef-ae41-d30f376c60cc@I-love.SAKURA.ne.jp>
+Subject: Re: [PATCH] io_uring: Check socket is valid in
+ io_bind()/io_listen()
+Message-Id: <172087444804.7272.17982342612300126690.b4-ty@kernel.dk>
+Date: Sat, 13 Jul 2024 06:40:48 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: Check socket is valid in io_bind()/io_listen()
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- syzbot <syzbot+1e811482aa2c70afa9a0@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- Pavel Begunkov <asml.silence@gmail.com>,
- Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: linux-kernel@vger.kernel.org
-References: <0000000000007b7ce6061d1caec0@google.com>
- <903da529-eaa3-43ef-ae41-d30f376c60cc@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <903da529-eaa3-43ef-ae41-d30f376c60cc@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-On 7/13/24 4:05 AM, Tetsuo Handa wrote:
+
+On Sat, 13 Jul 2024 19:05:02 +0900, Tetsuo Handa wrote:
 > We need to check that sock_from_file(req->file) != NULL.
+> 
+> 
 
-Yep indeed, that was missed. Thanks, I'll apply this, just moving
-the assignment to where the NULL check is for consistency's sake.
+Applied, thanks!
 
+[1/1] io_uring: Check socket is valid in io_bind()/io_listen()
+      commit: ad00e629145b2b9f0d78aa46e204a9df7d628978
+
+Best regards,
 -- 
 Jens Axboe
+
 
 
 

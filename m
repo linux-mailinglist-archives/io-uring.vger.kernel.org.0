@@ -1,111 +1,214 @@
-Return-Path: <io-uring+bounces-2507-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2508-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FBE93059E
-	for <lists+io-uring@lfdr.de>; Sat, 13 Jul 2024 14:40:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6E09308EF
+	for <lists+io-uring@lfdr.de>; Sun, 14 Jul 2024 09:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A4BE1C20C8E
-	for <lists+io-uring@lfdr.de>; Sat, 13 Jul 2024 12:40:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11B06B212FD
+	for <lists+io-uring@lfdr.de>; Sun, 14 Jul 2024 07:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CBC130A40;
-	Sat, 13 Jul 2024 12:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139D110958;
+	Sun, 14 Jul 2024 07:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="BocKxkQ/"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pzAi5Npm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A924C8E
-	for <io-uring@vger.kernel.org>; Sat, 13 Jul 2024 12:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5391625761
+	for <io-uring@vger.kernel.org>; Sun, 14 Jul 2024 07:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720874453; cv=none; b=pBymH3/k06GGh4iUA5JDTD4PI1h8MuL1kcThGF0awmJHphznas9ovdVexaEEaobZo8BTjhmybWnN5lvL0c3HYSEmYvYv6vSZcTEjFiLZTg8ZDO3SEK3x41eCQuJ39udvXkAuMcszgisHiqdiN8QUBaoPrgKvQbDaVpKEr0fNVJ8=
+	t=1720943424; cv=none; b=RuFKwtTlnirTlc31ZK/JCsm/ZEozRDVou5HUyC6hGtkzLkVd7D+6jbB89S8HGyAqwpl9CrI0izHjzv/7KIalpZ64tAtsDPmoRBF8OfVYHS/2QIRFilLFOXT4JzdVMFr5Kw8XnxdFjt3azPE4KRxbmyJZ8kAoaD2AMLpVGetM8Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720874453; c=relaxed/simple;
-	bh=4yFSu7XXmhJSzSwUYrnLbemHBPSoslS8OR1+wHBffNg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=idF1+zB9SGiQvwg2in9Xc8h/Ha++3o68vdsl6GReYR6ZrQL+0onrB+sKqpz/h5JJ7PGw9yKjz0mx9KpUPa3twZUc74CtOIH7CpjOw3wercAWRCeg4jlZvv6DbdWgvb+6H3LbMUHfO0Se9VKyndOrdh2LO+PyuzWoce+gB59u7to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=BocKxkQ/; arc=none smtp.client-ip=209.85.208.174
+	s=arc-20240116; t=1720943424; c=relaxed/simple;
+	bh=/oLxtDl4Yk0M8+/He+4G8AaatQ/Pbr1nFKit8rWDPBY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gR7HEJdD34+OA0DTPFSlxS/FamfWJsP5QA+s1eDF6l8vPse0+ZYoQsUpClcxP30jRyKE9A/xE6k99Xb1tQ+kVf2NKqOvTd3aiyiEKtS7Si8Yth1xTrJs6bhT4NSXSD7Ck8gPbPuLqmtK1FV+/Kxkgg3jaM2XXeRXZFfnhudOtkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pzAi5Npm; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ee9bca8652so3577651fa.3
-        for <io-uring@vger.kernel.org>; Sat, 13 Jul 2024 05:40:50 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-59adf476c9dso150043a12.1
+        for <io-uring@vger.kernel.org>; Sun, 14 Jul 2024 00:50:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1720874449; x=1721479249; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ev9MEMcim44wSH4EZqGa+LQX0BIyzafscHDCWffwRWI=;
-        b=BocKxkQ/HzQcpANfCO5t4JmrzMAHxH5Y8yw7LEbnv7wVQima6z1FIJR6H+I5VFLKxj
-         b1jqpKCNgZrgrG+vE5qZiKP+PvkXJZRmxm4OSP8p8dKsUntHjoID36zdfWHGg7gpqKG3
-         3Zw9H51p7SanxmuulCVD2Yp9Yv/tRLAgxYtwEKQvgmr3h/eniyCHBa1OmaG/z1mFT4HJ
-         P+AGsaTT14W/vIE5FBI/Qz4+RDHvFCLyHwdX0YBBHZ8gtxk9sm+SW1RscVs4DlrDn0Qc
-         S++NoikIXvnNIXQFStEEsWx0MxMM2yHF08D6MWCplKmbLXzepz3H8c5Gggf8MGfMXTSs
-         MC5w==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1720943418; x=1721548218; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cYHB98M1MaUdcSL6GDcZ4ARPQl+R/zPbF/ZKr4YI7Yg=;
+        b=pzAi5NpmmVsJxwNNiDjjIfqFaJ47dzJwVv1+cVmC/Xhx17idYC8hEqXfIFJYFDxxYq
+         gI2Du65Lp9RscWns8FGGhUFF3qAKsetKACoyHGaR2tGNekt/bnNx0e5miaVOrhM4CPeJ
+         IoyxGURSxulhMC7e5ZiHhumKZ8GynMrx0F0yIy7/97pRi49ZPalunLjzlQnKZoqaz3Bb
+         Hnc2T/OyclPOX+dbcFXkTuQxNSUw3unl23xW7Qo6IwWgf2faek2IC6mVtw9ZJG1TdPL/
+         RP2PchwsN9L1W9Z7Hj53Y/Id1R3TIq32qmwtIFAKXX78zNVmVzVMMcpA+i0EXnXW5oda
+         x3sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720874449; x=1721479249;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ev9MEMcim44wSH4EZqGa+LQX0BIyzafscHDCWffwRWI=;
-        b=w2lRZYfC32zQyjX4C9OMS9sdn8DcS1ab3P6JGrNkQbQwd57Y11pL+Z/sBmhkm6RsdF
-         CDkVcJ9QZHUHaCoG84Q/OrcE8kTyjD75flDmyX41582863ZdrSFkpGG1i+4Z4QbGzpKY
-         Rb/bZbmIYHeJWCOp8UNxwnIvMBy6s8qmZv6l1J2w4e9Tu1ncxgB5oqn1cekem38q8wjg
-         JEQLjbZ+luLtUf2YmDtNGeaTpsYTURdzTp5NMmf0xlvxiUcw63dyYcref+xWI16G7sbC
-         RmWAVFCrNEsYKZ3KqcmMSxDlV4McAu25bt3cy26N3allvIM+aLQ/ypElLP7SMkTDx9VF
-         3H6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWanNXdgo5wfQjw5nlaxLoHpX3iy4pmk3V3vshIIMLaKutATnJZFQ4TKgWfg0ZGvQCCqhi8j2tnDJTs7YQaEqeZj/9wmP5HoCs=
-X-Gm-Message-State: AOJu0YyJ4p/grmcT5OIgVuZJfiycSQPxMx55/AgQN9vM/XldkbWVgQBt
-	N51nzas/UGoAKSu42X4QLqtBkNyiN+pFMlIRh0Dihtpo3IFyU+rAA1NCNRYzU5c=
-X-Google-Smtp-Source: AGHT+IEDmDpZI2HOW9VBq0n2GsPSGvdL5UM+HjYSsiEoOGG4Tzgtwq9ejM87FCvZTWOzaPyOAXNkUQ==
-X-Received: by 2002:ac2:5b04:0:b0:52c:dc76:4876 with SMTP id 2adb3069b0e04-52ec3faf952mr3591414e87.6.1720874449263;
-        Sat, 13 Jul 2024 05:40:49 -0700 (PDT)
-Received: from [127.0.0.1] ([2a02:aa7:464b:1644:7862:56e0:794e:2])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed252d6a1sm177225e87.175.2024.07.13.05.40.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 05:40:48 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: syzbot <syzbot+1e811482aa2c70afa9a0@syzkaller.appspotmail.com>, 
- io-uring@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
- Pavel Begunkov <asml.silence@gmail.com>, 
- Gabriel Krisman Bertazi <krisman@suse.de>, 
- Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <903da529-eaa3-43ef-ae41-d30f376c60cc@I-love.SAKURA.ne.jp>
-References: <0000000000007b7ce6061d1caec0@google.com>
- <903da529-eaa3-43ef-ae41-d30f376c60cc@I-love.SAKURA.ne.jp>
-Subject: Re: [PATCH] io_uring: Check socket is valid in
- io_bind()/io_listen()
-Message-Id: <172087444804.7272.17982342612300126690.b4-ty@kernel.dk>
-Date: Sat, 13 Jul 2024 06:40:48 -0600
+        d=1e100.net; s=20230601; t=1720943418; x=1721548218;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cYHB98M1MaUdcSL6GDcZ4ARPQl+R/zPbF/ZKr4YI7Yg=;
+        b=nABS2HaPo7t/32SR4rE6Whyeh4dgYZziUTHKwKu9EgqSrOTIfEdQdD3FfShxK0AU1F
+         X/HLGahsXZI1Rj0ju+yJR6tWItia3FaulgTH4E3e1IoES8DK5CDGKtXkWoNhuSfJdT99
+         eFFTSSafzCWVY7iUsDOICylP8PL2xn08os4719B95DtSA7C4TZP4Qo8Ko/0ssr9lvziw
+         phGwMqTgKI5WqeqiNZoZGFNE9O8JJXR4ZTML65+/LdBeO8lHoMnpzDFIvHYIxdq6K88L
+         eBiR3oX9i2mjN+EUlyZYetHJBgywo6b7r4FNmhY12bd8/+PI65mJ+/dJaZ/L6AGBkrgB
+         Q2lQ==
+X-Gm-Message-State: AOJu0YxbrleFxhJO5A4XQa19CmfgVhHdG+gXNTltjDWJSKFy0g/F3vrE
+	l7eUWARIMx+liu77/J5J1dKpJTCovoTuWjUlnhvNBU7VVg7t6UVeyiAgxCAUcvvrXN/5AN/dmpj
+	2mW9VUY+7
+X-Google-Smtp-Source: AGHT+IH6046nHPEGTZ4gsDzLJ2xIa1Mo1MCg3w6hsUcbnIiI+7OHXUn9jYEDf5meO1mBzyDHz//w6g==
+X-Received: by 2002:a17:906:795:b0:a72:b5c7:d635 with SMTP id a640c23a62f3a-a798b511715mr422796566b.4.1720943418197;
+        Sun, 14 Jul 2024 00:50:18 -0700 (PDT)
+Received: from ?IPV6:2a02:aa7:464b:1644:7862:56e0:794e:2? ([2a02:aa7:464b:1644:7862:56e0:794e:2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5b8366sm106249066b.61.2024.07.14.00.50.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 14 Jul 2024 00:50:17 -0700 (PDT)
+Message-ID: <5808867d-c2dc-4c34-a14c-ece564b28cc2@kernel.dk>
+Date: Sun, 14 Jul 2024 01:50:16 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] io_uring updates for 6.11-rc1
+From: Jens Axboe <axboe@kernel.dk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+References: <5e5b2431-dd9b-488e-a0c9-578008e14208@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <5e5b2431-dd9b-488e-a0c9-578008e14208@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
 
-
-On Sat, 13 Jul 2024 19:05:02 +0900, Tetsuo Handa wrote:
-> We need to check that sock_from_file(req->file) != NULL.
+On 7/11/24 11:43 PM, Jens Axboe wrote:
+> Hi Linus,
 > 
+> Sending this one early as I'm out on vacation.
 > 
+> Here are the io_uring updates queued up for the 6.11 merge window.
+> Nothing major this time around, various minor improvements and
+> cleanups/fixes. This pull request contains:
+> 
+> - Add bind/listen opcodes. Main motivation is to support direct
+>   descriptors, to avoid needing a regular fd just for doing these two
+>   operations (Gabriel)
+> 
+> - Probe fixes (Gabriel)
+> 
+> - Treat io-wq work flags as atomics. Not fixing a real issue, but may
+>   as well and it silences a KCSAN warning (me)
+> 
+> - Cleanup of rsrc __set_current_state() usage (me)
+> 
+> - Add 64-bit for {m,f}advise operations (me)
+> 
+> - Improve performance of data ring messages (me)
+> 
+> - Fix for ring message overflow posting (Pavel)
+> 
+> - Fix for freezer interaction with TWA_NOTIFY_SIGNAL. Not strictly an
+>   io_uring thing, but since TWA_NOTIFY_SIGNAL was originally added for
+>   faster task_work signaling for io_uring, bundling it with this pull.
+>   (Pavel)
+> 
+> - Add Pavel as a co-maintainer
+> 
+> - Various cleanups (me, Thorsten)
+> 
+> Please pull!
 
-Applied, thanks!
+Added one more patch to fix an issue with the bind/listen additions
+mentioned above, otherwise no other changes. Updated git pull request
+details below:
+ 
+The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
 
-[1/1] io_uring: Check socket is valid in io_bind()/io_listen()
-      commit: ad00e629145b2b9f0d78aa46e204a9df7d628978
+  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
 
-Best regards,
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/for-6.11/io_uring-20240714
+
+for you to fetch changes up to ad00e629145b2b9f0d78aa46e204a9df7d628978:
+
+  io_uring/net: check socket is valid in io_bind()/io_listen() (2024-07-13 06:40:15 -0600)
+
+----------------------------------------------------------------
+for-6.11/io_uring-20240714
+
+----------------------------------------------------------------
+Gabriel Krisman Bertazi (8):
+      io_uring: Drop per-ctx dummy_ubuf
+      io_uring/rsrc: Drop io_copy_iov in favor of iovec API
+      net: Split a __sys_bind helper for io_uring
+      net: Split a __sys_listen helper for io_uring
+      io_uring: Introduce IORING_OP_BIND
+      io_uring: Introduce IORING_OP_LISTEN
+      io_uring: Fix probe of disabled operations
+      io_uring: Allocate only necessary memory in io_probe
+
+Jens Axboe (15):
+      io_uring/eventfd: move to more idiomatic RCU free usage
+      io_uring/eventfd: move eventfd handling to separate file
+      io_uring: use 'state' consistently
+      io_uring/io-wq: make io_wq_work flags atomic
+      io_uring/rsrc: remove redundant __set_current_state() post schedule()
+      io_uring/advise: support 64-bit lengths
+      io_uring/msg_ring: tighten requirement for remote posting
+      io_uring: add remote task_work execution helper
+      io_uring: add io_add_aux_cqe() helper
+      io_uring/msg_ring: improve handling of target CQE posting
+      io_uring/msg_ring: add an alloc cache for io_kiocb entries
+      io_uring/msg_ring: check for dead submitter task
+      io_uring/msg_ring: use kmem_cache_free() to free request
+      MAINTAINERS: change Pavel Begunkov from io_uring reviewer to maintainer
+      io_uring/net: cleanup io_recv_finish() bundle handling
+
+Pavel Begunkov (3):
+      io_uring/msg_ring: fix overflow posting
+      io_uring/io-wq: limit retrying worker initialisation
+      kernel: rerun task_work while freezing in get_signal()
+
+Tetsuo Handa (1):
+      io_uring/net: check socket is valid in io_bind()/io_listen()
+
+Thorsten Blum (1):
+      io_uring/napi: Remove unnecessary s64 cast
+
+ MAINTAINERS                    |   2 +-
+ include/linux/io_uring_types.h |  14 ++--
+ include/linux/socket.h         |   3 +
+ include/uapi/linux/io_uring.h  |   2 +
+ io_uring/Makefile              |   6 +-
+ io_uring/advise.c              |  16 +++--
+ io_uring/eventfd.c             | 160 +++++++++++++++++++++++++++++++++++++++++
+ io_uring/eventfd.h             |   8 +++
+ io_uring/io-wq.c               |  29 ++++----
+ io_uring/io-wq.h               |   2 +-
+ io_uring/io_uring.c            | 150 ++++++++++++++------------------------
+ io_uring/io_uring.h            |   9 +--
+ io_uring/msg_ring.c            | 122 +++++++++++++++++++------------
+ io_uring/msg_ring.h            |   1 +
+ io_uring/napi.c                |   2 +-
+ io_uring/net.c                 |  94 +++++++++++++++++++++---
+ io_uring/net.h                 |   6 ++
+ io_uring/opdef.c               |  34 +++++++++
+ io_uring/opdef.h               |   4 +-
+ io_uring/register.c            |  65 ++---------------
+ io_uring/rsrc.c                |  63 ++++++----------
+ kernel/signal.c                |   8 +++
+ net/socket.c                   |  48 ++++++++-----
+ 23 files changed, 538 insertions(+), 310 deletions(-)
+ create mode 100644 io_uring/eventfd.c
+ create mode 100644 io_uring/eventfd.h
+
 -- 
 Jens Axboe
-
-
 
 

@@ -1,145 +1,120 @@
-Return-Path: <io-uring+bounces-2509-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2510-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67080930CE7
-	for <lists+io-uring@lfdr.de>; Mon, 15 Jul 2024 05:03:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C8B9312B1
+	for <lists+io-uring@lfdr.de>; Mon, 15 Jul 2024 13:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10517281370
-	for <lists+io-uring@lfdr.de>; Mon, 15 Jul 2024 03:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2BB28405F
+	for <lists+io-uring@lfdr.de>; Mon, 15 Jul 2024 11:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9104C79F0;
-	Mon, 15 Jul 2024 03:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F38E1891BC;
+	Mon, 15 Jul 2024 10:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="t8Al8rEU"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SFkJT8lh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D44A95E
-	for <io-uring@vger.kernel.org>; Mon, 15 Jul 2024 03:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4866188CCF
+	for <io-uring@vger.kernel.org>; Mon, 15 Jul 2024 10:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721012617; cv=none; b=d78retANuGih0T0HVxQZI9F8S8s4V3fFNgs8n5KAQcT+aRMJbYN9Ww/5LtDy+Yo6megvrweoivF7/a52qNj/fX/UsMHbSTgoWE8E9I6bThO4yE3fGeZ0aQt8/ZiGohn642UVAPiaO/pJCejalmO6llUI2IMP/Wj7UUj7RkO8kq4=
+	t=1721041192; cv=none; b=gSyzyy4hM8xC6U0zo+uTvDZaj8HyZFSBOVA4trtE7nioZUEQAlyGGb2ltR6vsLs1Ovf7hF4j4MSar9QeHPLnmRqsEp4Ri9P6rstycSyoCVMMYMQhp6MRcxiOe4ZoU1ra4Ku0BbvU11l2uexbxGvbltwVNsoCkQkdiGsGb3gKMjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721012617; c=relaxed/simple;
-	bh=cNPLygRRwTIu66cd/nVFWcNAuVbNA5tBwUY2iWU9j7w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=gD1LSN/6vMgtoWP5en83eF+k7OZ+b6T1/dzIi2uSf86m8V0gnelVjnLNxHL7C5tFCcZlQkqCmJfvgdUDyl6XD8TU9tMSaPskofvjatxbH+3fwPw34Bgl4gsKTjUZIyQSN+em0Rbq4kg2viqWIxyN1EYNqCvVFQLWw1sOUH+Y4zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=t8Al8rEU; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240715030326epoutp01e7627b801c6df08b59d3482213b9a8d0~iQ9jqsWGB3191231912epoutp01W
-	for <io-uring@vger.kernel.org>; Mon, 15 Jul 2024 03:03:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240715030326epoutp01e7627b801c6df08b59d3482213b9a8d0~iQ9jqsWGB3191231912epoutp01W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721012606;
-	bh=cNPLygRRwTIu66cd/nVFWcNAuVbNA5tBwUY2iWU9j7w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=t8Al8rEUOKzHb/DfRQA9di8sx0A7QOTqx+7eaMQbg5QcesHHhwXcmk3qzmtRNrXts
-	 gNEJCAKsXXqhlpoO8+RU3w9tyM7RumgMLT7hCpT0xHeI1UwFOQ7UHEeiMk2keRs8kF
-	 l5YEhiA5v1ZFQIXs0XAS/WByALrg12mNbqHcQ0K4=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240715030326epcas5p3b2cd769c2922a05bc94ecb95e97330cd~iQ9jaqWIa0512305123epcas5p3P;
-	Mon, 15 Jul 2024 03:03:26 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4WMn8D57qKz4x9Pt; Mon, 15 Jul
-	2024 03:03:24 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	05.E1.07307.67194966; Mon, 15 Jul 2024 12:03:18 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04~iQoVnRHJ62003220032epcas5p1d;
-	Mon, 15 Jul 2024 02:39:08 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240715023908epsmtrp2e9a0f21ebec19b8850d1b801685c4bae~iQoVmYJj21973619736epsmtrp25;
-	Mon, 15 Jul 2024 02:39:08 +0000 (GMT)
-X-AuditID: b6c32a44-18dff70000011c8b-36-6694917692c7
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	77.7C.19057.CCB84966; Mon, 15 Jul 2024 11:39:08 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240715023907epsmtip2f6218aa8eecc031fb29114da76ad582c~iQoUlIdhE0963209632epsmtip2h;
-	Mon, 15 Jul 2024 02:39:07 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, hch@infradead.org, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v2] io_uring: Avoid polling configuration errors
-Date: Mon, 15 Jul 2024 10:39:02 +0800
-Message-Id: <20240715023902.1105124-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <db1816bc-c3f4-41c0-8946-f8d4a260216a@kernel.dk>
+	s=arc-20240116; t=1721041192; c=relaxed/simple;
+	bh=TGvaJd9WyaOil5oDlMjA/Puyx5M+Vj53+Vr2/OxGVEA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S0hJxHiLBkMK78YGEQdSErk7kKMJu5D23hyT+3WA5uzbunoO7R7Gm6USnJmy97rUZy9Ty+Sdfd4WYLCbP8gK1Kb8IxHJm1YCzA5Z2xUTsm7+pCMAkN5r10EjCtMDFXbmzyKtWIZQPnaPlh8jrRztvBo5DFVEgOIl9kG2tRIjiMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SFkJT8lh; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a754752c0efso33624866b.1
+        for <io-uring@vger.kernel.org>; Mon, 15 Jul 2024 03:59:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1721041187; x=1721645987; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FDqeqb8+3xFLDAZH/IuJmseCLMJFmvqH6g6Q9Vg9+y4=;
+        b=SFkJT8lhKdX+XYwqJDZ2JzNEGgCFYmkHZSpICW1g7MmRn21I6cvaOb4fegsmhusEDv
+         12i+ne7ya0zHCRmEHYFEk8z5XVDCynB4rnvObYrOX4qac1Slo2v/Jw4HepEMiPU87oAU
+         86gguBixteIa4DuNhz/L5uu/TxsnEurTuKcVOGHef2BapTCU5oCcVa6/opRdzM2k/t9z
+         8W3deEn7K9N/ZtE0ARaIHyJC49Q/E+V6N7gZCg5ZUpl3c4band4urBaMZhR/IKkTmfdd
+         RcAbr6k0fd8EplYpnYVXQYgKMuAC0EBcUnkIEKJN3jNtpQ0jmdUGpjsR23KUiuEmXQ9H
+         xJ6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721041187; x=1721645987;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FDqeqb8+3xFLDAZH/IuJmseCLMJFmvqH6g6Q9Vg9+y4=;
+        b=vHxVF+NAkjbnnzr1dPTirXBO6hRrUYGCF/y1iLG0rcUK/wvUiEF836sLTD+sSBp82o
+         zUZaVInpOPe6Oj5Ic/hQ2YAw93fpBfCTrJvL/YSMsa9qBkBuepeKOf6zrRBQZDx1rAPG
+         txG2v+gtBAIR7bh0gLDw8tcWrJvU/av7J7tFHmv8BR2mS3EKqek9RfGBIp/uvZMvtXv8
+         ax/yczcc5rPfrcMwsnrtstpmQFs+G0dE+f6P8bWbJHdTeSHfH23a/7xYAw/ycYQL9l1h
+         pEUOLRT45vUIc3DoshLFnysiU9/zndx5578fh/GFYx+bZRJUabRWWoOb5rK3ZppnwErR
+         bFnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXF95V8pAchYGKpRghhJ/sK2bJlZy+pxxzOZYmGxElggnewYw+ZfK6IsYohG1p9S+wwcvsuLm/ygCoI7c4XWOcIbps9nTLzJM0=
+X-Gm-Message-State: AOJu0Ywyi1zEqYG5keuxaNyEEudL6dyjnt1hbWgiAupQeMpJDTH+82Dh
+	Nf0CZ48Bt5HdR8VYpu9YXmWHpTVPeuQP7gFaBjRaw6zHMDDSp2t3TEEqlqwztgE=
+X-Google-Smtp-Source: AGHT+IHw8mPSy2Du1t8p/m0WGzNi83QMPBpCH/cSl35fk77jmrXNLqKLl47AT+G/foq42WzUhk93lg==
+X-Received: by 2002:a17:906:5a52:b0:a77:af07:b97e with SMTP id a640c23a62f3a-a780b683d00mr989663466b.2.1721041186562;
+        Mon, 15 Jul 2024 03:59:46 -0700 (PDT)
+Received: from [192.168.1.123] ([80.208.65.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc800d6bsm200032266b.182.2024.07.15.03.59.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 03:59:45 -0700 (PDT)
+Message-ID: <7aba7c09-9c21-46cc-95fc-d2b9b5bbcd3b@kernel.dk>
+Date: Mon, 15 Jul 2024 04:59:44 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjk+LIzCtJLcpLzFFi42LZdlhTXbds4pQ0gwVPZC3mrNrGaLH6bj+b
-	xekJi5gs3rWeY7H41X2X0eLyrjlsFmcnfGB1YPfYOesuu8fmFVoel8+WevRtWcXo8XmTXABr
-	VLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtARSgpl
-	iTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwCkwK94sTc4tK8dL281BIrQwMDI1OgwoTs
-	jLfTPjIV3GKt+HjpLVMD416WLkZODgkBE4mJ008ydzFycQgJ7GaU2HnkLRuE84lRYsmJGUwQ
-	zjdGiYXvbrHCtPSdfgSV2MsocWbZVnYI5wejxKEXc9lAqtgElCT2b/nACGKLCAhL7O9oBVrI
-	wcEskC7R9sILJCws4CEx4d1qsDtYBFQltq9ZxAxi8wpYS5xresMEsUxe4mbXfrA4p4CtxPpD
-	TWwQNYISJ2c+AetlBqpp3job7AcJgXvsEu/bDjBCNLtIzGm7xwZhC0u8Or6FHcKWkvj8bi9U
-	PF9i8vf1UPU1Eus2v4MGjLXEvyt7oG7WlFi/Sx8iLCsx9dQ6Joi9fBK9v59A3ckrsWMejK0k
-	seTICqiREhK/JyyCBpyHxP3js1kgYTWBUWLOq40sExgVZiH5ZxaSf2YhrF7AyLyKUTK1oDg3
-	PTXZtMAwL7UcHsvJ+bmbGMEJU8tlB+ON+f/0DjEycTAeYpTgYFYS4V3JMjFNiDclsbIqtSg/
-	vqg0J7X4EKMpMMAnMkuJJucDU3ZeSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWp
-	RTB9TBycUg1MwbtWcU89+WFZ49XQX0aTrW5dNTjgGHGsmPnZllOfVmp1S71z+++x/tM/95Ob
-	wqcfEKoxEtMPjpDZVx60f7fpHRmu/gO/PztlH+4VDjp365PTLXmxd4UzHFSrflfwGudKF/Xk
-	fTYWse2/6PizQ+b+pcoEH/4W96u5qs+lld7tnbKx60tESlR45K2lz2cbafwJ8/5xrOZtpcX/
-	6vz6FaXdF41j4n708W7d0JUmL1xkVjNdWHzqEjHBY3V2FnseFr0zyc6etc++V0vZ8fjshZ8T
-	Yr7VXdfacv7MSYu5C33eG/l37RGvWPTlqfDyXVzWSc/PvRf8FVwlfG7T68/qyy5lmZvblmS3
-	8xjdd+Zy7rZQYinOSDTUYi4qTgQA3d6YtSEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCLMWRmVeSWpSXmKPExsWy7bCSvO6Z7ilpBi8W8VvMWbWN0WL13X42
-	i9MTFjFZvGs9x2Lxq/suo8XlXXPYLM5O+MDqwO6xc9Zddo/NK7Q8Lp8t9ejbsorR4/MmuQDW
-	KC6blNSczLLUIn27BK6Mt9M+MhXcYq34eOktUwPjXpYuRk4OCQETib7Tj5i6GLk4hAR2M0oc
-	mruGESIhIbHj0R9WCFtYYuW/5+wQRd8YJVb9vAqWYBNQkti/5QNYgwhQ0f6OVrCpzALZEntn
-	XQOrERbwkJjwbjVYnEVAVWL7mkXMIDavgLXEuaY3TBAL5CVudu0Hi3MK2EqsP9TE1sXIAbTM
-	RmLRAgGIckGJkzOfQI2Xl2jeOpt5AqPALCSpWUhSCxiZVjFKphYU56bnFhsWGOWllusVJ+YW
-	l+al6yXn525iBAe0ltYOxj2rPugdYmTiYDzEKMHBrCTCu5JlYpoQb0piZVVqUX58UWlOavEh
-	RmkOFiVx3m+ve1OEBNITS1KzU1MLUotgskwcnFINTJJbpDwCj+zcbn847fqVz6+en/jaLbew
-	pmVRubdXi47Uqc49Mk8Mivl+ivvL9Jy3OFvMu2Ky21nGVes8dnQlCxc5JSy/9OC5XuROMZHP
-	ExzLnV+W2BtX7/F4/jnCW6lFRaaoNKnr5ScjJ/X44nvXV+6webXTdltrnE/eKfak8AlmzEoX
-	F3rkC1Vz3FdZqyykVJR7zOvRlIerj7Q09wf/CyzZqcY18/a82L2KU1z3TCtiPZVv/V/OwtU2
-	yI+H/0gyT9tU/S/33d9J1//3E97zMPzq1n9fuZJX5edp7jqR9fOtmNDC7GnBq/33b2XvmLH4
-	w1PVvJfJWs/vFKZHVLz+kMl6vUfa1PabWH7TI113JZbijERDLeai4kQA1U54GdcCAAA=
-X-CMS-MailID: 20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] io_uring: Avoid polling configuration errors
+To: hexue <xue01.he@samsung.com>
+Cc: asml.silence@gmail.com, hch@infradead.org, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 References: <db1816bc-c3f4-41c0-8946-f8d4a260216a@kernel.dk>
-	<CGME20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04@epcas5p1.samsung.com>
+ <CGME20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04@epcas5p1.samsung.com>
+ <20240715023902.1105124-1-xue01.he@samsung.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240715023902.1105124-1-xue01.he@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
->My stance is still the same - why add all of this junk just to detect a
->misuse of polled IO? It doesn't make sense to me, it's the very
->definition of "doctor it hurts when I do this" - don't do it.
+On 7/14/24 8:39 PM, hexue wrote:
+>> My stance is still the same - why add all of this junk just to detect a
+>> misuse of polled IO? It doesn't make sense to me, it's the very
+>> definition of "doctor it hurts when I do this" - don't do it.
+> 
+>> So unless this has _zero_ overhead or extra code, which obviously isn't
+>> possible, or extraordinary arguments exists for why this should be
+>> added, I don't see this going anywhere.
+> 
+> Actually, I just want users to know why they got wrong data, just a
+> warning of an error, like doctor tell you why you do this will hurt. I
+> think it's helpful for users to use tools accurately. and yes, this
+> should be as simple as possible, I'll working on it. I'm not sure if I
+> made myself clear and make sense to you?
 
->So unless this has _zero_ overhead or extra code, which obviously isn't
->possible, or extraordinary arguments exists for why this should be
->added, I don't see this going anywhere.
+Certainly agree that that is an issue and a much more worthy reason for
+the addition. It's the main reason why -EOPNOTSUPP return would be more
+useful, and I'd probably argue the better way then to do it. It may
+indeed break existing use cases, but probably only because they are
+misconfigured.
 
-Actually, I just want users to know why they got wrong data, just a warning of an error,
-like doctor tell you why you do this will hurt. I think it's helpful for users to use tools
-accurately.
-and yes, this should be as simple as possible, I'll working on it. I'm not sure if I made
-myself clear and make sense to you?
+That then means that it'd be saner to do this on the block layer side,
+imho, as that's when the queue is resolved anyway, rather than attempt
+to hack around this on the issuing side.
 
---
-hexue
+-- 
+Jens Axboe
+
 

@@ -1,74 +1,52 @@
-Return-Path: <io-uring+bounces-2510-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2511-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C8B9312B1
-	for <lists+io-uring@lfdr.de>; Mon, 15 Jul 2024 13:00:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78560931571
+	for <lists+io-uring@lfdr.de>; Mon, 15 Jul 2024 15:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2BB28405F
-	for <lists+io-uring@lfdr.de>; Mon, 15 Jul 2024 11:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAAD21C216E9
+	for <lists+io-uring@lfdr.de>; Mon, 15 Jul 2024 13:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F38E1891BC;
-	Mon, 15 Jul 2024 10:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B9618C34F;
+	Mon, 15 Jul 2024 13:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SFkJT8lh"
+	dkim=pass (2048-bit key) header.d=stuba.sk header.i=@stuba.sk header.b="yRdfuyUk"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-out.cvt.stuba.sk (smtp-out.cvt.stuba.sk [147.175.1.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4866188CCF
-	for <io-uring@vger.kernel.org>; Mon, 15 Jul 2024 10:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3016E18D4C1;
+	Mon, 15 Jul 2024 13:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.175.1.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721041192; cv=none; b=gSyzyy4hM8xC6U0zo+uTvDZaj8HyZFSBOVA4trtE7nioZUEQAlyGGb2ltR6vsLs1Ovf7hF4j4MSar9QeHPLnmRqsEp4Ri9P6rstycSyoCVMMYMQhp6MRcxiOe4ZoU1ra4Ku0BbvU11l2uexbxGvbltwVNsoCkQkdiGsGb3gKMjo=
+	t=1721049071; cv=none; b=fLVAWrBCYpapmQObrG7anPasg1vD6EJ5FfWMN4BXsuhGiC95CR+zIZUNynmzb9JMcuLKoMNcNy1h0Ug0AgA97N4XTl/NuaPo4Kk7YiRTlWTsbFNuyn0KryND/TQdV5zsMa2mLQoTPzILUFACqmkYGkReSR80ggld5FOgXz/ZfJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721041192; c=relaxed/simple;
-	bh=TGvaJd9WyaOil5oDlMjA/Puyx5M+Vj53+Vr2/OxGVEA=;
+	s=arc-20240116; t=1721049071; c=relaxed/simple;
+	bh=UBfgy5+0l8x+M07N7A4Dki6luKXzyCWR4r70sFx/1SY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S0hJxHiLBkMK78YGEQdSErk7kKMJu5D23hyT+3WA5uzbunoO7R7Gm6USnJmy97rUZy9Ty+Sdfd4WYLCbP8gK1Kb8IxHJm1YCzA5Z2xUTsm7+pCMAkN5r10EjCtMDFXbmzyKtWIZQPnaPlh8jrRztvBo5DFVEgOIl9kG2tRIjiMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SFkJT8lh; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a754752c0efso33624866b.1
-        for <io-uring@vger.kernel.org>; Mon, 15 Jul 2024 03:59:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1721041187; x=1721645987; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FDqeqb8+3xFLDAZH/IuJmseCLMJFmvqH6g6Q9Vg9+y4=;
-        b=SFkJT8lhKdX+XYwqJDZ2JzNEGgCFYmkHZSpICW1g7MmRn21I6cvaOb4fegsmhusEDv
-         12i+ne7ya0zHCRmEHYFEk8z5XVDCynB4rnvObYrOX4qac1Slo2v/Jw4HepEMiPU87oAU
-         86gguBixteIa4DuNhz/L5uu/TxsnEurTuKcVOGHef2BapTCU5oCcVa6/opRdzM2k/t9z
-         8W3deEn7K9N/ZtE0ARaIHyJC49Q/E+V6N7gZCg5ZUpl3c4band4urBaMZhR/IKkTmfdd
-         RcAbr6k0fd8EplYpnYVXQYgKMuAC0EBcUnkIEKJN3jNtpQ0jmdUGpjsR23KUiuEmXQ9H
-         xJ6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721041187; x=1721645987;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FDqeqb8+3xFLDAZH/IuJmseCLMJFmvqH6g6Q9Vg9+y4=;
-        b=vHxVF+NAkjbnnzr1dPTirXBO6hRrUYGCF/y1iLG0rcUK/wvUiEF836sLTD+sSBp82o
-         zUZaVInpOPe6Oj5Ic/hQ2YAw93fpBfCTrJvL/YSMsa9qBkBuepeKOf6zrRBQZDx1rAPG
-         txG2v+gtBAIR7bh0gLDw8tcWrJvU/av7J7tFHmv8BR2mS3EKqek9RfGBIp/uvZMvtXv8
-         ax/yczcc5rPfrcMwsnrtstpmQFs+G0dE+f6P8bWbJHdTeSHfH23a/7xYAw/ycYQL9l1h
-         pEUOLRT45vUIc3DoshLFnysiU9/zndx5578fh/GFYx+bZRJUabRWWoOb5rK3ZppnwErR
-         bFnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXF95V8pAchYGKpRghhJ/sK2bJlZy+pxxzOZYmGxElggnewYw+ZfK6IsYohG1p9S+wwcvsuLm/ygCoI7c4XWOcIbps9nTLzJM0=
-X-Gm-Message-State: AOJu0Ywyi1zEqYG5keuxaNyEEudL6dyjnt1hbWgiAupQeMpJDTH+82Dh
-	Nf0CZ48Bt5HdR8VYpu9YXmWHpTVPeuQP7gFaBjRaw6zHMDDSp2t3TEEqlqwztgE=
-X-Google-Smtp-Source: AGHT+IHw8mPSy2Du1t8p/m0WGzNi83QMPBpCH/cSl35fk77jmrXNLqKLl47AT+G/foq42WzUhk93lg==
-X-Received: by 2002:a17:906:5a52:b0:a77:af07:b97e with SMTP id a640c23a62f3a-a780b683d00mr989663466b.2.1721041186562;
-        Mon, 15 Jul 2024 03:59:46 -0700 (PDT)
-Received: from [192.168.1.123] ([80.208.65.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc800d6bsm200032266b.182.2024.07.15.03.59.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 03:59:45 -0700 (PDT)
-Message-ID: <7aba7c09-9c21-46cc-95fc-d2b9b5bbcd3b@kernel.dk>
-Date: Mon, 15 Jul 2024 04:59:44 -0600
+	 In-Reply-To:Content-Type; b=sookpNAuyUJLYdswfRzgMCfE8lTQgmGKrIwrsyBRUa/49SXmWiAq9VJEIhaG/e4kuxQnjQu/qnciIKnc2twRlSkfLkH66pIhXFIUQ2YdGc40VoU/7Hl8dRpP6b8Wuw+twJqhVJZHcpD6trQklSXOAyzP2buU1dtyY7K8b9Ns7uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stuba.sk; spf=pass smtp.mailfrom=stuba.sk; dkim=pass (2048-bit key) header.d=stuba.sk header.i=@stuba.sk header.b=yRdfuyUk; arc=none smtp.client-ip=147.175.1.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stuba.sk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stuba.sk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=stuba.sk;
+	s=20180406; h=Content-Transfer-Encoding:Content-Type:From:To:Subject:
+	MIME-Version:Date:Message-ID; bh=hPXmEGrpNCxQtlE+7MmiOVH/DDCPb8s47qf1vlPNH8Y=
+	; t=1721049068; x=1721481068; b=yRdfuyUka8R8o/yS9lizhVwyr0ygk5Wde5XqpaziEQpOp
+	j1O7FP/gSubqEyJ6/+7NWKmQeGS3K2wpxTQkKnzyWSEDnzagJF0sqCFSpLb7D0nUHnJUfW4WSSvGR
+	SU1o1LEdZMM4NF4htQGocy9AjBNIrLp1lXn7cQPWF1BVsq/87g8mhbHvXRY/nQh6CKpNNj5p1iTq4
+	yB8dWUshaa+TyyUHM2vkXiDGhhBx5ycWvi1zKQwKqGdJqHXgfgYHqUy1YvHV7m/jOJyg7EZNQW1Gu
+	gpUkjMSYm56MDGKnTQYo0apIxf6QzSJn0+oPMHxi5SYjlIzPHAnBii2daofaJGpgGA==;
+X-STU-Diag: 0488aa0426ae2156 (auth)
+Received: from ellyah.uim.fei.stuba.sk ([147.175.106.89])
+	by mx1.stuba.sk (Exim4) with esmtpsa (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+	(envelope-from <matus.jokay@stuba.sk>)
+	id 1sTL8u-000000003nF-2IVT;
+	Mon, 15 Jul 2024 14:49:24 +0200
+Message-ID: <498a6aad-3b53-4918-975e-3827f8230bd0@stuba.sk>
+Date: Mon, 15 Jul 2024 14:49:24 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,45 +54,51 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] io_uring: Avoid polling configuration errors
-To: hexue <xue01.he@samsung.com>
-Cc: asml.silence@gmail.com, hch@infradead.org, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <db1816bc-c3f4-41c0-8946-f8d4a260216a@kernel.dk>
- <CGME20240715023908epcas5p1e16b2ac82c7f61edf44bfd874c920f04@epcas5p1.samsung.com>
- <20240715023902.1105124-1-xue01.he@samsung.com>
+Subject: Re: [PATCH v2 1/4] net: Split a __sys_bind helper for io_uring
+To: Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>, io-uring@vger.kernel.org,
+ netdev@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20240614163047.31581-1-krisman@suse.de>
+ <20240618174953.5efda404@kernel.org>
+ <68b482cd-4516-4e00-b540-4f9ee492d6e3@kernel.dk>
+ <20240619080447.6ad08fea@kernel.org>
+ <8002392e-5246-4d3e-8c8a-70ccffe39a08@kernel.dk>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240715023902.1105124-1-xue01.he@samsung.com>
+From: Matus Jokay <matus.jokay@stuba.sk>
+In-Reply-To: <8002392e-5246-4d3e-8c8a-70ccffe39a08@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/14/24 8:39 PM, hexue wrote:
->> My stance is still the same - why add all of this junk just to detect a
->> misuse of polled IO? It doesn't make sense to me, it's the very
->> definition of "doctor it hurts when I do this" - don't do it.
+On 19. 6. 2024 17:06, Jens Axboe wrote:
+> On 6/19/24 9:04 AM, Jakub Kicinski wrote:
+>> On Wed, 19 Jun 2024 07:40:40 -0600 Jens Axboe wrote:
+>>> On 6/18/24 6:49 PM, Jakub Kicinski wrote:
+>>>> On Fri, 14 Jun 2024 12:30:44 -0400 Gabriel Krisman Bertazi wrote:  
+>>>>> io_uring holds a reference to the file and maintains a
+>>>>> sockaddr_storage address.  Similarly to what was done to
+>>>>> __sys_connect_file, split an internal helper for __sys_bind in
+>>>>> preparation to supporting an io_uring bind command.
+>>>>>
+>>>>> Reviewed-by: Jens Axboe <axboe@kernel.dk>
+>>>>> Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>  
+>>>>
+>>>> Acked-by: Jakub Kicinski <kuba@kernel.org>  
+>>>
+>>> Are you fine with me queueing up 1-2 via the io_uring branch?
+>>> I'm guessing the risk of conflict should be very low, so doesn't
+>>> warrant a shared branch.
+>>
+>> Yup, exactly, these can go via io_uring without branch juggling.
 > 
->> So unless this has _zero_ overhead or extra code, which obviously isn't
->> possible, or extraordinary arguments exists for why this should be
->> added, I don't see this going anywhere.
+> Great thanks!
 > 
-> Actually, I just want users to know why they got wrong data, just a
-> warning of an error, like doctor tell you why you do this will hurt. I
-> think it's helpful for users to use tools accurately. and yes, this
-> should be as simple as possible, I'll working on it. I'm not sure if I
-> made myself clear and make sense to you?
+Please fix io_bind and io_listen to not pass NULL ptr to related helpers
+__sys_bind_socket and __sys_listen_socket. The first helper's argument
+shouldn't be NULL, as related security hooks expect a valid socket object.
 
-Certainly agree that that is an issue and a much more worthy reason for
-the addition. It's the main reason why -EOPNOTSUPP return would be more
-useful, and I'd probably argue the better way then to do it. It may
-indeed break existing use cases, but probably only because they are
-misconfigured.
+See the syzkaller's bug report:
+https://lore.kernel.org/linux-security-module/0000000000007b7ce6061d1caec0@google.com/
 
-That then means that it'd be saner to do this on the block layer side,
-imho, as that's when the queue is resolved anyway, rather than attempt
-to hack around this on the issuing side.
-
--- 
-Jens Axboe
-
+Thanks,
+mY
 

@@ -1,82 +1,79 @@
-Return-Path: <io-uring+bounces-2518-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2519-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9AEE93211F
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jul 2024 09:22:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0AF932FA8
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jul 2024 20:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91750282087
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jul 2024 07:22:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE5B1C21DD2
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jul 2024 18:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C1C22619;
-	Tue, 16 Jul 2024 07:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B697D1A01A0;
+	Tue, 16 Jul 2024 18:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aM3iVPmz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6fZS2IR"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A0124B29
-	for <io-uring@vger.kernel.org>; Tue, 16 Jul 2024 07:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A051A01B7
+	for <io-uring@vger.kernel.org>; Tue, 16 Jul 2024 18:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721114538; cv=none; b=a6+Ecqpu58FekBlIOsjHM6Y/KysBPux2o5E4vPbohai8KNXRcQvWQekDAEjtNb4VQneMUz1fP19RtWwYisdh1oVDdaGF7U8qQjz3WdYLN5HSbk4ehe+mKEb+FG4tbObJMGOXkTO0dBhpJx0kMOKgzHiO78kdasjMMs8F/vhmqn4=
+	t=1721153131; cv=none; b=QxmoFlm4CJUOoanC74+WsrcSWWk7B87pPI668Jt7QJyEHLdkfwPtJI2zIXzHcbG/7mW1taL7YOg2PNYV4eWN6j/vFPtkmRpTWC0cpML/O/RL507zZ6+WPTdeJxr8i9ggTjfdB0Be20zJmwZEp6EwxLXAdy636zzHfs9m+3aKhSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721114538; c=relaxed/simple;
-	bh=CYWFic7WpGeIaUQ5kese89wQm1aU8AJ7EQWqzIEeaR8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=md8JGH9kFUCg7Czd/EPzaFPkZ1xcbxORNYuYruf+dhQZBFsso3DZJDIpQNA/X1at8kpPvx6AqwXo0hu9hOrIEnW6OlA0g7yHnPpmpKOEU9gzqQ35EaMRkTaRvTRnHdlxnyD44PQR5HNG7Jhmh7GQOZrdj5vRqEA2SK0S0gB4sxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=aM3iVPmz; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240716072212epoutp034e1829ea5f64cc889c990509abee4c9c~ioIxv80YF0816708167epoutp03Y
-	for <io-uring@vger.kernel.org>; Tue, 16 Jul 2024 07:22:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240716072212epoutp034e1829ea5f64cc889c990509abee4c9c~ioIxv80YF0816708167epoutp03Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721114532;
-	bh=CYWFic7WpGeIaUQ5kese89wQm1aU8AJ7EQWqzIEeaR8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aM3iVPmz3j5pFGpPZjWmUQPyq9pJMsQ7pIMYvNQVjstngD6ibnFUhtkbZ2FVfJIuT
-	 1EiRCkNy5A0V/zJbQgNL+WCNS7/69BqwmHtuQl/q1McxcYmT74wPov7ilWkbQEV1W6
-	 A+t1PLqeUI9cYkyIzeY/B46ByXpY9/TsL8x11KME=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240716072212epcas5p1e1dfdece1dfb2c80241fbddaa6c6db28~ioIxLREl-2819828198epcas5p1E;
-	Tue, 16 Jul 2024 07:22:12 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WNVrL15Fzz4x9QB; Tue, 16 Jul
-	2024 07:22:10 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9B.88.19174.F9F16966; Tue, 16 Jul 2024 16:22:07 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240716071617epcas5p11b0423d0ee1c66167f7658c071384586~ioDm-qNF01664316643epcas5p1d;
-	Tue, 16 Jul 2024 07:16:17 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240716071617epsmtrp2126ec89d386b07c493af9e4281c57279~ioDm_9GPf2573425734epsmtrp2a;
-	Tue, 16 Jul 2024 07:16:17 +0000 (GMT)
-X-AuditID: b6c32a50-b33ff70000004ae6-96-66961f9ff557
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	06.98.18846.14E16966; Tue, 16 Jul 2024 16:16:17 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240716071616epsmtip1afd89d557540acaaf08f5a0cce4915f2~ioDlvjpSE0109101091epsmtip1p;
-	Tue, 16 Jul 2024 07:16:16 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, hch@infradead.org, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] io_uring: Avoid polling configuration errors
-Date: Tue, 16 Jul 2024 15:16:12 +0800
-Message-Id: <20240716071612.1503734-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <7aba7c09-9c21-46cc-95fc-d2b9b5bbcd3b@kernel.dk>
+	s=arc-20240116; t=1721153131; c=relaxed/simple;
+	bh=sMmskaeiD/LK3PzOk4kdLKNAGIHIkh3e/dvrYnKl0cI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dQFqf7hG/AHRaVZ4zqBlIBBpXC4W3dkv81L16kWo6s/Pn2jI9eeb7X5Xs4KnayTd1b+Fj+7eWbJMEbem8guymUCwq6dpX83eM7SH9qD9Cvcm40VljYA+EnTQDKDdG19l0HtCtQviSzofh57yKX5W5WtKh9c4jskxEus5oBl3Kgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6fZS2IR; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4266182a9d7so37692265e9.0
+        for <io-uring@vger.kernel.org>; Tue, 16 Jul 2024 11:05:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721153128; x=1721757928; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xAV+vfiqGI7yXcxC0oMBDM51qylCIOWuLizSxGCFKyE=;
+        b=g6fZS2IRcHd3WopbdDgfbklX/8ierEM2WPMpbiOcQOUjJZqviXs+t4BXSeIEYwV4Xr
+         VaCdaT9c9jH2J3CiX/xsymPRnIceDHcTvjyUcC+W5zzi6qhqrm3INMHMOK6PmFV3ZP+I
+         KHL48s8yLepsReNjtUq6+taIb6uaK1cgZdoBmLSQ9N48207q1TqlH6Ttn82xXVp1VV+d
+         bCnLtZeQtkISYazGGmintdLtVxcjC76onjWbdiRt7PyArwRvpFSRf0IZIq+OybG1ws7X
+         Nf4F6uKOu+09W5sbg08ap2eymyCWradmWb3Fww3SWjjWpgbtsfSnmi8aSOxkdeKCetxL
+         EWSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721153128; x=1721757928;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xAV+vfiqGI7yXcxC0oMBDM51qylCIOWuLizSxGCFKyE=;
+        b=uz67g4s8wfsQqRUUadLxS+U1NqKa7sYCYEj0IXJMMHFEqBgWdxyJw7iKTkalJvFUxM
+         iQ5pY0ZRgjV2ofIhPmOCp0ZV1xmN+H4wtVJMrHeGAEdHb0OerpzF6WKT4S0y59VAZVbR
+         g9SaLZlu0BdZ1utG5rE14/Ck226rQ0Bxip5FjNfsBsqYvHHE8Yo/nIp9j/cetmY19Xuh
+         j0ga4ftXJirI4CZb2C09owCLe8BrsIskOxthoo5KPljhKmkIaw2+mCf0/DDp36YVJkA9
+         aU6TZRTYkpTdSDHlYT1FKLQQZYlLfgOZofSTPhn9iqwTxaHA+/Ut+tgeiUWQ7qaeAxhs
+         0XVQ==
+X-Gm-Message-State: AOJu0YxR32OZ6KoE0trixJT+owVboJ7bhtupPOc+pzDf+PvyW9MJAab3
+	L8rYPYt3mmfnZyDg9l9dEnQzAJ4UImsQs61rRukza1OnrruoWL7aRka5FR1i
+X-Google-Smtp-Source: AGHT+IGqDCIhl7HWtfee+X0/TA9yMchgH4bqcAl6+NL4uA2edElP8CyZWU0VtEcFyWz4pMH2YlLltA==
+X-Received: by 2002:a05:600c:1e11:b0:426:67f0:b4eb with SMTP id 5b1f17b1804b1-427ba655311mr19169015e9.2.1721153127784;
+        Tue, 16 Jul 2024 11:05:27 -0700 (PDT)
+Received: from 127.0.0.1localhost ([85.255.233.104])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e983e7sm136369295e9.23.2024.07.16.11.05.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 11:05:27 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	asml.silence@gmail.com,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Breno Leitao <leitao@debian.org>
+Subject: [PATCH 1/1] io_uring: fix lost getsockopt completions
+Date: Tue, 16 Jul 2024 19:05:46 +0100
+Message-ID: <ff349cf0654018189b6077e85feed935f0f8839e.1721149870.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -84,75 +81,46 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPKsWRmVeSWpSXmKPExsWy7bCmlu58+WlpBvt3ClrMWbWN0WL13X42
-	i9MTFjFZvGs9x2JxedccNgdWj52z7rJ7bF6h5XH5bKnH501yASxR2TYZqYkpqUUKqXnJ+SmZ
-	eem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QFuVFMoSc0qBQgGJxcVK+nY2Rfml
-	JakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZzSuvsxR84K64uGwjWwPj
-	Ds4uRk4OCQETie+72xm7GLk4hAT2MEosv7iaDcL5xCixqKWfFc7Zs/ApM0zLjFPTmSASOxkl
-	Hh17CtXyg1Hi1f4XbCBVbAJKEvu3fGAEsUUEhCX2d7SydDFycDALpEu0vfACCQsLuEhc7FrP
-	AmKzCKhKvLr/FKycV8Ba4mDfRXaIZfISN7v2gy3mFLCVaO2YzQpRIyhxcuYTsF5moJrmrbOZ
-	QW6QENjHLjGjcysjyC4JoAVn+pQg5ghLvDq+BWqmlMTnd3vZIOx8icnf1zNC2DUS6za/Y4Gw
-	rSX+XdkDdbKmxPpd+hBhWYmpp9YxQazlk+j9/YQJIs4rsWMejK0kseTICqiREhK/JyxihbA9
-	JH7OPsMOCaoJjBKnGxexTWBUmIXknVlI3pmFsHoBI/MqRqnUguLc9NRk0wJD3bzUcngsJ+fn
-	bmIEp0StgB2Mqzf81TvEyMTBeIhRgoNZSYR3AuO0NCHelMTKqtSi/Pii0pzU4kOMpsAAn8gs
-	JZqcD0zKeSXxhiaWBiZmZmYmlsZmhkrivK9b56YICaQnlqRmp6YWpBbB9DFxcEo1MPG35Qo6
-	VK0/O2n9VruEhds+npqvXLVKfaqMU1n1va47Zssun5eauODvidzEE8pzvp5/8dHwYrJn7tZ3
-	F5encHmutpzHWSq021pVlqmAb+rXDBu9h+w3hK9Z2s6VFlgxP3EFy1yvwq6nL45n6eWq/TwS
-	ZiLqoMC626p7SlHbs4CtB7i1lW6WLEp5uXP5zVdyu9Nmv/SZZNvUbyE93SAgN+7D+QINfsmo
-	rSYXytlPrZmnlRH/wiL8X4A6/8HZWS/YIoXrH+dfupXNLHC88OW9hqvqZmZhM+4cMTQ+LnBJ
-	xvZhwFLVTxEvX8w9E7NPQLE05vmjtZPjrOLtGHLW7LbMspXbduHb0eAA5wu1R7Md1ymxFGck
-	GmoxFxUnAgCx0nQGEgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSnK6j3LQ0g+3dYhZzVm1jtFh9t5/N
-	4vSERUwW71rPsVhc3jWHzYHVY+esu+wem1doeVw+W+rxeZNcAEsUl01Kak5mWWqRvl0CV0bz
-	yussBR+4Ky4u28jWwLiDs4uRk0NCwERixqnpTCC2kMB2Romfc3gh4hISOx79YYWwhSVW/nvO
-	DlHzjVHi4FJREJtNQEli/5YPjCC2CFDN/o5WFhCbWSBbYu+sa2C9wgIuEhe71oPFWQRUJV7d
-	fwpWzytgLXGw7yI7xHx5iZtd+5lBbE4BW4nWjtmsELtsJI482ssEUS8ocXLmE6j58hLNW2cz
-	T2AUmIUkNQtJagEj0ypG0dSC4tz03OQCQ73ixNzi0rx0veT83E2M4EDVCtrBuGz9X71DjEwc
-	jIcYJTiYlUR4JzBOSxPiTUmsrEotyo8vKs1JLT7EKM3BoiTOq5zTmSIkkJ5YkpqdmlqQWgST
-	ZeLglGpgMur/esojWXfBnpv+0noFm6r3Rq3cemu7937GrbUPDJp9euRijm0zTnxyMiPpVn3t
-	4js1Jsev1Cj4WSv6dQaWFOhlHS/PrfwVLLrZ7bnsjIONq/qWW8nGpcrnFMQ4nbaxlbsqs7w6
-	kjFx706m21v7TPsT9R5a8u9q8StoeTTlzZV7V36znCh5rMiySvX4s7nCU2qWOYfrn/w1PcDN
-	8X7w/4m7Sw7M3HxnQceeVIMVv9KmTVZdEse2/dc2lnSDt3a7ci6vai33jyydaVzg3FHxVX2f
-	llfeTQsXjQXLJV7PCGF60RGxkod/p6ZS9Revhe1bf+ecWTM5/vzZX5xm/vM+RYtc6OzT+bFk
-	XTXLwx2hSizFGYmGWsxFxYkAtEay5cMCAAA=
-X-CMS-MailID: 20240716071617epcas5p11b0423d0ee1c66167f7658c071384586
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240716071617epcas5p11b0423d0ee1c66167f7658c071384586
-References: <7aba7c09-9c21-46cc-95fc-d2b9b5bbcd3b@kernel.dk>
-	<CGME20240716071617epcas5p11b0423d0ee1c66167f7658c071384586@epcas5p1.samsung.com>
 
-On 7/15/24 10:59 AM, Jens Axboe wrote:
->On 7/14/24 8:39 PM, hexue wrote:
->>> My stance is still the same - why add all of this junk just to detect a
->>> misuse of polled IO? It doesn't make sense to me, it's the very
->>> definition of "doctor it hurts when I do this" - don't do it.
->>>
->>> So unless this has _zero_ overhead or extra code, which obviously isn't
->>> possible, or extraordinary arguments exists for why this should be
->>> added, I don't see this going anywhere.
->>
->> Actually, I just want users to know why they got wrong data, just a
->> warning of an error, like doctor tell you why you do this will hurt. I
->> think it's helpful for users to use tools accurately. and yes, this
->> should be as simple as possible, I'll working on it. I'm not sure if I
->> made myself clear and make sense to you?
->
->Certainly agree that that is an issue and a much more worthy reason for
->the addition. It's the main reason why -EOPNOTSUPP return would be more
->useful, and I'd probably argue the better way then to do it. It may
->indeed break existing use cases, but probably only because they are
->misconfigured.
->
->That then means that it'd be saner to do this on the block layer side,
->imho, as that's when the queue is resolved anyway, rather than attempt
->to hack around this on the issuing side.
+There is a report that iowq executed getsockopt never completes. The
+reason being that io_uring_cmd_sock() can return a positive result, and
+io_uring_cmd() propagates it back to core io_uring, instead of IOU_OK.
+In case of io_wq_submit_work(), the request will be dropped without
+completing it.
 
-Implementing it at the block layer is indeed more reasonable, thanks for
-your affirmation and suggestion, I will look for an appropriate place in
-the path to perform the check. Thanks.
+The offending code was introduced by a hack in
+a9c3eda7eada9 ("io_uring: fix submission-failure handling for uring-cmd"),
+however it was fine until getsockopt was introduced and started
+returning positive results.
+
+The right solution is to always return IOU_OK, since
+e0b23d9953b0c ("io_uring: optimise ltimeout for inline execution"),
+we should be able to do it without problems, however for the sake of
+backporting and minimising side effects, let's keep returning negative
+return codes and otherwise do IOU_OK.
+
+Link: https://github.com/axboe/liburing/issues/1181
+Cc: stable@vger.kernel.org
+Fixes: 8e9fad0e70b7b ("io_uring: Add io_uring command support for sockets")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/uring_cmd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 21ac5fb2d5f0..a54163a83968 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -265,7 +265,7 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+ 		req_set_fail(req);
+ 	io_req_uring_cleanup(req, issue_flags);
+ 	io_req_set_res(req, ret, 0);
+-	return ret;
++	return ret < 0 ? ret : IOU_OK;
+ }
+ 
+ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+-- 
+2.44.0
+
 

@@ -1,99 +1,124 @@
-Return-Path: <io-uring+bounces-2520-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2521-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB479330A2
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jul 2024 20:48:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CADC933C8A
+	for <lists+io-uring@lfdr.de>; Wed, 17 Jul 2024 13:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBA681F239B1
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jul 2024 18:48:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34E701F21D20
+	for <lists+io-uring@lfdr.de>; Wed, 17 Jul 2024 11:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E708B18059;
-	Tue, 16 Jul 2024 18:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5BC18003B;
+	Wed, 17 Jul 2024 11:49:58 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A4C1643A
-	for <io-uring@vger.kernel.org>; Tue, 16 Jul 2024 18:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1D717FAA9;
+	Wed, 17 Jul 2024 11:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721155690; cv=none; b=YPxkfWur1pl/rrFq2kNR4MCOzCM7DDRSBua2TlmwKF1Zw0WY183UYwzHua5Be96uFHqG1Mz3fIw2dBZyAQphZGN++O6Qec4eudYMc7iGk/9K2hjvOvVzKGyhR0wGM9lVEFeH6naLYyPD/RNOaDShybcv0zTkiQAAZQC0OQc2m0Y=
+	t=1721216998; cv=none; b=ZgEKiXMaVf3ZeTqqzAoVsSSFCzIQOycoAB5fF1CGeoqvqle3CieEkp47QgqsNWYvUvBhuPOaAZUHa8hWj7kV6J011WIV3bimZpKs5Yi8X/uYi5WLnW2GBIkcclYsWfLJukBz+rQZIpgR13D76JKAqtp+z7D5x3ZS/8HRfnnBczg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721155690; c=relaxed/simple;
-	bh=lwz8LqtRjITK5DSC7RPwPF0lEJsOhjI3QWln4RlQysE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZjAG1xxD/q8VvGM7zemJkshpvMLE+mZ0tzFY+HFx9MHipXo7XpAgtD01fdTmMty2jP3MQxScLC/fjH5APIEp/CikEeIoynbwkXeAsapkMAOm2N+W2Dpf6w+O1+F3Dca9CHmNwD+kW7YjB1svQlR5EqenMKwA6x55M/W7qKLkvhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58b966b4166so6458279a12.1
-        for <io-uring@vger.kernel.org>; Tue, 16 Jul 2024 11:48:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721155687; x=1721760487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rO3c9KqX0x45zX78u+ER7Rz5Dz9NX292WgeA8/7D3mY=;
-        b=rBNc/t3r3alSboOdVKFaXXmC/Ce76qixh/C2XQmrgM408OCyBvpA/v+ajjayxN55Ya
-         yd1FgdDXVqsDMJiZmG5oxJTjsnT/uDnL5i7tIB9kjgWiO9QBWS2NYzzwA6aF6ewuw4ce
-         XTiW9XoCUX/WUmuz9VT7KWRk+2nVKaOwHGBoTfgygZKVQZh0xoT0EPU8G54AiQBfPpcH
-         gGhjR7QAK6NhFpBsVC6+aLO29hd3HQ2IjR7WVnmQpbpjymcNIbqst0+KsxKTr1Og8cZU
-         vWQxNuzEj7IKHrOB9meLuprpm4jVZe89Y69RxZ2RqlwRAJ8sY0G7b1VvGHkAsYdlgrPi
-         kJSA==
-X-Gm-Message-State: AOJu0Yz6mqePrOlNFATsldu3UpCpH/JswejeJms+Zm5SpMTEWdnlhW1c
-	rhpBo+uU4CevJx43z4NvJZOtpoYo3t+1RBDDFiPydlsXkvXshJTW
-X-Google-Smtp-Source: AGHT+IG7CX0rU4cHi3y5sV2qdO41woN6kNPMi35HDpiawkEdYzIX/NijR861DqY5MzkTmWoMpaUo/A==
-X-Received: by 2002:a17:907:e8d:b0:a77:e55a:9e79 with SMTP id a640c23a62f3a-a79ea3ea44cmr245195566b.4.1721155687036;
-        Tue, 16 Jul 2024 11:48:07 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5b8366sm342121966b.61.2024.07.16.11.48.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 11:48:06 -0700 (PDT)
-Date: Tue, 16 Jul 2024 11:48:04 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH 1/1] io_uring: fix lost getsockopt completions
-Message-ID: <ZpbAZB+InQKJlSVZ@gmail.com>
-References: <ff349cf0654018189b6077e85feed935f0f8839e.1721149870.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1721216998; c=relaxed/simple;
+	bh=n3+YoDS+Xgfj3kY/YCOeRAIa9f+VPaDv3q5QYO/6YpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qHIWJPMkwZQ93QsdSddh//dyWqFbv42+FOgptIwq9ZvGfnP3W8ozAWUIBaNxUOaV1CTqizB0xr4bICvxPwKJ4fz6YKF2TTANK8qTH03wCErWeYhEK98st11wG61rH4R7ZZEfoZn82JiozU1lKYEB/naotjTX2rp793B6dQGYJjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WPDdJ3nf4zxWSK;
+	Wed, 17 Jul 2024 19:45:08 +0800 (CST)
+Received: from dggpemd200001.china.huawei.com (unknown [7.185.36.224])
+	by mail.maildlp.com (Postfix) with ESMTPS id 766191800A1;
+	Wed, 17 Jul 2024 19:49:51 +0800 (CST)
+Received: from [10.174.178.209] (10.174.178.209) by
+ dggpemd200001.china.huawei.com (7.185.36.224) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 17 Jul 2024 19:49:51 +0800
+Message-ID: <18634c7e-b234-ac02-20f8-4d5426733679@huawei.com>
+Date: Wed, 17 Jul 2024 19:49:50 +0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff349cf0654018189b6077e85feed935f0f8839e.1721149870.git.asml.silence@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: CVE-2024-41001: io_uring/sqpoll: work around a potential audit
+ memory leak
+To: <cve@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cve-announce@vger.kernel.org>, <axboe@kernel.dk>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<io-uring@vger.kernel.org>
+References: <2024071253-CVE-2024-41001-7879@gregkh>
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+In-Reply-To: <2024071253-CVE-2024-41001-7879@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemd200001.china.huawei.com (7.185.36.224)
 
-On Tue, Jul 16, 2024 at 07:05:46PM +0100, Pavel Begunkov wrote:
-> There is a report that iowq executed getsockopt never completes. The
-> reason being that io_uring_cmd_sock() can return a positive result, and
-> io_uring_cmd() propagates it back to core io_uring, instead of IOU_OK.
-> In case of io_wq_submit_work(), the request will be dropped without
-> completing it.
-> 
-> The offending code was introduced by a hack in
-> a9c3eda7eada9 ("io_uring: fix submission-failure handling for uring-cmd"),
-> however it was fine until getsockopt was introduced and started
-> returning positive results.
-> 
-> The right solution is to always return IOU_OK, since
-> e0b23d9953b0c ("io_uring: optimise ltimeout for inline execution"),
-> we should be able to do it without problems, however for the sake of
-> backporting and minimising side effects, let's keep returning negative
-> return codes and otherwise do IOU_OK.
-> 
-> Link: https://github.com/axboe/liburing/issues/1181
-> Cc: stable@vger.kernel.org
-> Fixes: 8e9fad0e70b7b ("io_uring: Add io_uring command support for sockets")
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Hello,
 
-Reviewed-by: Breno Leitao <leitao@debian.org>
+I was confused when reviewing the fix for CVE-2024-41001.
+To better understand the issue and the proposed solution, I would
+greatly appreciate your help in clarifying the following points:
 
-Thanks for the fix.
+1. What was the original patch that introduced this issue (any Fixes tag)?
+2. Is the leaking variable member the "context->sockaddr"?
+3. Could you shed some light on how the reference to the leaked memory is
+    lost during the transition from the prep phase to the issue phase?
+4. The fix introduces a NOP operation "before the SQPOLL does anything."
+    How does this addition of a NOP operation prevent the memory leak from
+    occurring?
+
+Thank you in advance for taking the time to address my questions. Your
+insights will help me better understand this fix.
+
+Best regards,
+Wang Zhaolong
+
+> Description
+> ===========
+> 
+> In the Linux kernel, the following vulnerability has been resolved:
+> 
+> io_uring/sqpoll: work around a potential audit memory leak
+> 
+> kmemleak complains that there's a memory leak related to connect
+> handling:
+> 
+> unreferenced object 0xffff0001093bdf00 (size 128):
+> comm "iou-sqp-455", pid 457, jiffies 4294894164
+> hex dump (first 32 bytes):
+> 02 00 fa ea 7f 00 00 01 00 00 00 00 00 00 00 00  ................
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> backtrace (crc 2e481b1a):
+> [<00000000c0a26af4>] kmemleak_alloc+0x30/0x38
+> [<000000009c30bb45>] kmalloc_trace+0x228/0x358
+> [<000000009da9d39f>] __audit_sockaddr+0xd0/0x138
+> [<0000000089a93e34>] move_addr_to_kernel+0x1a0/0x1f8
+> [<000000000b4e80e6>] io_connect_prep+0x1ec/0x2d4
+> [<00000000abfbcd99>] io_submit_sqes+0x588/0x1e48
+> [<00000000e7c25e07>] io_sq_thread+0x8a4/0x10e4
+> [<00000000d999b491>] ret_from_fork+0x10/0x20
+> 
+> which can can happen if:
+> 
+> 1) The command type does something on the prep side that triggers an
+>     audit call.
+> 2) The thread hasn't done any operations before this that triggered
+>     an audit call inside ->issue(), where we have audit_uring_entry()
+>     and audit_uring_exit().
+> 
+> Work around this by issuing a blanket NOP operation before the SQPOLL
+> does anything.
+> 
+> The Linux kernel CVE team has assigned CVE-2024-41001 to this issue.
+
 

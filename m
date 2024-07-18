@@ -1,139 +1,170 @@
-Return-Path: <io-uring+bounces-2523-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2524-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1C8934B71
-	for <lists+io-uring@lfdr.de>; Thu, 18 Jul 2024 12:02:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED810934F41
+	for <lists+io-uring@lfdr.de>; Thu, 18 Jul 2024 16:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC0A81C21911
-	for <lists+io-uring@lfdr.de>; Thu, 18 Jul 2024 10:02:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C2B01F235A4
+	for <lists+io-uring@lfdr.de>; Thu, 18 Jul 2024 14:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15FA12D76F;
-	Thu, 18 Jul 2024 10:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EvvCop/Q"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960A3143C55;
+	Thu, 18 Jul 2024 14:41:44 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDCA8286D
-	for <io-uring@vger.kernel.org>; Thu, 18 Jul 2024 10:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEC712C7FB;
+	Thu, 18 Jul 2024 14:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721296945; cv=none; b=giKTa7RDaRWrmZFQElCnAWZ0i7Mn77Pymq8Um9S8iK7djT046QQRm4QxrbFX94bUAlSvyESs0mDtHdy91oYuCqpgZ3OuB34h3RZ8NC6kc7orG1ESqOldSeoUC9MN0yphuFoUXsoRkikzUDoaRlX327PaxzLGVuS7yFhmlgPVkEs=
+	t=1721313704; cv=none; b=JZKZ5Gn6LCcgheuffTNv9cRrpMnb5nqT2dflzZ22rjBBh+zr+dGdu/eX1eG7AV8dY5eceijBpDqptoFwLOwryMj7mdKl7FrvveJvvonAgFOU1/FL8EBLtW6hBROOUzgI4YRl3q98521WzQEA394TSLL9URPp6ESozRE3tMuXBzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721296945; c=relaxed/simple;
-	bh=E4WObEXdg2x+zMuBUTWmGjfhILP+Bo+7aUXRUvh2dx0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=t9UkYKNBLghZzxkGm/NCQA/qstjDmQvnBO1Y+arzHFYMmWBn/52D9Ce3SQ4Ktyp9UoP3gwOPu0dIWyMHNsxSxEVLIu2v+6b4K5NlP1QI/oYdwd4ZGiwNjfjnEf/P6caf2zsO37O40IJAh856nZ9jrPgSBcaBR99iCicloXJEvj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EvvCop/Q; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240718100215epoutp0183cce0b9da682eb86c0dd4a42c59591e~jRnFeu5fY2438124381epoutp01V
-	for <io-uring@vger.kernel.org>; Thu, 18 Jul 2024 10:02:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240718100215epoutp0183cce0b9da682eb86c0dd4a42c59591e~jRnFeu5fY2438124381epoutp01V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721296935;
-	bh=E4WObEXdg2x+zMuBUTWmGjfhILP+Bo+7aUXRUvh2dx0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EvvCop/QBEjNNCp4xE7TQLbSqNWPuqnwbHhQXoyQVAadfOl+r+seF3yZwRXcBUz6b
-	 Du0uL4MEp2oK66L3TewbpEYWaz/4B5p5N6SeV5edQkp0pL8gQJST2yCtwWg201ngWU
-	 O3V6ozhgTIvTWwKS9s2D9fhZqi5OAuIBV32Aps3I=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240718100215epcas5p2329a43fef460ce02ae36677320a3b115~jRnFOhtNU3088330883epcas5p21;
-	Thu, 18 Jul 2024 10:02:15 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4WPpJ534fRz4x9Pr; Thu, 18 Jul
-	2024 10:02:13 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	AC.37.06857.528E8966; Thu, 18 Jul 2024 19:02:13 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240718100113epcas5p255acf51a58cf410d5d0e8cffbca41994~jRmLhVOjY1158311583epcas5p2N;
-	Thu, 18 Jul 2024 10:01:13 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240718100113epsmtrp25e4ee2f08258ba8f315e77dd36a4900c~jRmLgc8mG1042010420epsmtrp24;
-	Thu, 18 Jul 2024 10:01:13 +0000 (GMT)
-X-AuditID: b6c32a4b-ae9fa70000021ac9-d5-6698e825e12e
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	74.7D.19057.8E7E8966; Thu, 18 Jul 2024 19:01:12 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240718100112epsmtip2886cec36726a0e511aa6eee8b330094c~jRmKl736_0213902139epsmtip2C;
-	Thu, 18 Jul 2024 10:01:11 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V6] io_uring: releasing CPU resources when polling
-Date: Thu, 18 Jul 2024 18:01:07 +0800
-Message-Id: <20240718100107.1135964-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240709092944.3208051-1-xue01.he@samsung.com>
+	s=arc-20240116; t=1721313704; c=relaxed/simple;
+	bh=iXzyFsVsJ6bOJ/aYkV/P6u+K+L2f9NSjbK9pGavbBIM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=ucw4gNiH4re51MxeDQAOPWxGjMC1yPJVgTGcPNspJmJBVtl7hQRvTXXCv1j5ERYbBnQD3fvol9nuvFxyadRBfgdOfWQjID6shZiI9t1SEkzn67jQWbr3kmgP8HghjjPShoqcm+5nu3fQ3vU+tG3eKDoGp//HXdKAMQsMfafHI9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WPwPn1y2DzQlmF;
+	Thu, 18 Jul 2024 22:37:33 +0800 (CST)
+Received: from dggpemd200001.china.huawei.com (unknown [7.185.36.224])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1570F18009D;
+	Thu, 18 Jul 2024 22:41:38 +0800 (CST)
+Received: from [10.174.178.209] (10.174.178.209) by
+ dggpemd200001.china.huawei.com (7.185.36.224) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 18 Jul 2024 22:41:37 +0800
+Message-ID: <4457af52-01a2-be1b-9d13-486b6bd8e579@huawei.com>
+Date: Thu, 18 Jul 2024 22:41:37 +0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: CVE-2024-41001: io_uring/sqpoll: work around a potential audit
+ memory leak
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+To: <cve@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cve-announce@vger.kernel.org>, <axboe@kernel.dk>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<io-uring@vger.kernel.org>
+References: <2024071253-CVE-2024-41001-7879@gregkh>
+ <18634c7e-b234-ac02-20f8-4d5426733679@huawei.com>
+In-Reply-To: <18634c7e-b234-ac02-20f8-4d5426733679@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdlhTS1f1xYw0gz/N4hZzVm1jtFh9t5/N
-	4l3rORaLX913GS0u75rDZnF2wgdWBzaPnbPusntcPlvq0bdlFaPH501yASxR2TYZqYkpqUUK
-	qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QLuVFMoSc0qBQgGJxcVK
-	+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZL78vYCn4wFTR
-	deYDawPjCqYuRk4OCQETiXkTW4BsLg4hgd2MEotXTWeHcD4xShzdtY4ZwvnGKLFxfhMjTEvz
-	+ZVQLXsZJS7v6mODcH4wSuy6fosdpIpNQEli/5YPYB0iAsIS+ztaWboYOTiYBUIkbp6JAAkL
-	C7hJXJh5ng0kzCKgKrFnSjyIyStgLfFruTjEKnmJm137mUFsTgEbiadHl7CC2LwCghInZz5h
-	AbGZgWqat84Gu1NC4BK7xOc1k5ghml0kTtx9yQJhC0u8Or6FHcKWkvj8bi8bhJ0vMfn7eqi/
-	aiTWbX4HVW8t8e/KHqiLNSXW79KHCMtKTD21jgliL59E7+8n0FDkldgxD8ZWklhyZAXUSAmJ
-	3xMWsULYHhIvLv0CGy8k0M8osaxBeQKjwiwk78xC8s4shM0LGJlXMUqmFhTnpqcWmxYY56WW
-	w6M4OT93EyM4MWp572B89OCD3iFGJg7GQ4wSHMxKIrwTGKelCfGmJFZWpRblxxeV5qQWH2I0
-	BYb2RGYp0eR8YGrOK4k3NLE0MDEzMzOxNDYzVBLnfd06N0VIID2xJDU7NbUgtQimj4mDU6qB
-	qXjHmfQ8F5MNlqv5L/w7y7/31Aq37Mp8n1860x4eX1eytzzWZt5+T9WnB2Wf3NC5tt5iq3nK
-	aYmC6vLjrVsm7gl7/oAvoL9A5nuvxCdFq3N1xYvK7jfZywle37v7XfjP45lXzb2KQiQe5KZ+
-	4Sref/yeTzDTNl7bXNepn3pD3r2rsZhb2HWubP7Og1PDJxioPgsx6oxNXb117eV0l/1z78sy
-	88Rm99wIn/W4IK34zq39a7dGlB3t/Sm9fEb18V/Hd+3zuOd95WnL3j0sUTPc78alGu7tN+y8
-	JW76gPO1uuuDirsnrv3rmjKfMeDr9W6hKK1IO/npHn135pw31J5RNyGMV/iNm05BCMN8KW5G
-	UyWW4oxEQy3mouJEAPXBjVwVBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsWy7bCSvO6L5zPSDH7+s7GYs2obo8Xqu/1s
-	Fu9az7FY/Oq+y2hxedccNouzEz6wOrB57Jx1l93j8tlSj74tqxg9Pm+SC2CJ4rJJSc3JLEst
-	0rdL4Mp4+X0BS8EHpoquMx9YGxhXMHUxcnJICJhINJ9fCWRzcQgJ7GaUaPp9kQ0iISGx49Ef
-	VghbWGLlv+fsEEXfGCU+b9wLlmATUJLYv+UDI4gtAlS0v6OVBcRmFgiT6NpxBqxGWMBN4sLM
-	80BDOThYBFQl9kyJBzF5Bawlfi0XhxgvL3Gzaz8ziM0pYCPx9OgSsE4hoJKZS7+AxXkFBCVO
-	znwCNV1eonnrbOYJjAKzkKRmIUktYGRaxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kR
-	HLxaWjsY96z6oHeIkYmD8RCjBAezkgjvBMZpaUK8KYmVValF+fFFpTmpxYcYpTlYlMR5v73u
-	TRESSE8sSc1OTS1ILYLJMnFwSjUwnY4One4SHFNUeL1m7Vs9V9cq1691Jww37LHc2HDpF+tU
-	Yb7Jpck+jK9cd5S/3yV+pb/pDdc/1dsNDqfKetNe5G+euGfDX+5lDaXieeXG274eXv3w37kS
-	Te6NXw/kiBa2l6d1n2Ot+jprOUsfv+L8Xb9+rBF7IDlrtunkNuPcl2ynJ8Vtec9ao7I3fbnu
-	WTUTUxWlVZMvv37EpxEazSTauWf3rb7dBt8sdjKtFAg+tmjl52kvrr+e+on9RtOKEzOUJ6zg
-	sT1QsouPQ9NY9CCThOeyNaVBfvwP3JqtO350nPmu/Sxys9wdVmF3+eBXKxj+26lEysXPO8g4
-	Z9VE+8VCH/g4Iusir7Fsr7/1RqRxmxJLcUaioRZzUXEiACQOB/bNAgAA
-X-CMS-MailID: 20240718100113epcas5p255acf51a58cf410d5d0e8cffbca41994
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240718100113epcas5p255acf51a58cf410d5d0e8cffbca41994
-References: <20240709092944.3208051-1-xue01.he@samsung.com>
-	<CGME20240718100113epcas5p255acf51a58cf410d5d0e8cffbca41994@epcas5p2.samsung.com>
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemd200001.china.huawei.com (7.185.36.224)
 
-On 09/07/24 9:29AM, hexue wrote:
->io_uring use polling mode could improve the IO performence, but it will
->spend 100% of CPU resources to do polling.
->
->This set a signal "IORING_SETUP_HY_POLL" to application, aim to provide
->a interface for user to enable a new hybrid polling at io_uring level.
+Hello,
 
-Hi, just a gentle ping. Any coments on this patch?
---
-hexue
+I think a possible reason for the leak scenario is:
+
+When `audit_context->dummy` is 0. __audit_sockaddr() allocates sockaddr.
+
+In the below process, audit_reset_context() return early. ctx->sockaddr
+is not released.
+
+   io_issue_sqe
+     audit_uring_entry
+       __audit_uring_entry
+         ctx->dummy -- set dummy as non-zero
+     def->issue()
+     audit_uring_exit
+       __audit_uring_exit
+         audit_reset_context
+
+static void audit_reset_context(struct audit_context *ctx)
+{
+     ......
+     /* if ctx is non-null, reset the "ctx->context" regardless */
+     ctx->context = AUDIT_CTX_UNUSED;
+     if (ctx->dummy)
+         return;
+
+     ......
+     kfree(ctx->sockaddr);
+     ......
+}
+
+The `audit_uring_entry(IORING_OP_NOP);` statement initializes the 'dummy' once at the
+beginning to ensure that ctx->sockaddr is allocated and deallocated in pairs later
+in the process.
+
+According to the above analysis, I think the fixes tag should be
+5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
+Is my understanding correct?
+
+I look forward to hearing back.
+
+Best regards,
+Wang Zhaolong
+
+> Hello,
+> 
+> I was confused when reviewing the fix for CVE-2024-41001.
+> To better understand the issue and the proposed solution, I would
+> greatly appreciate your help in clarifying the following points:
+> 
+> 1. What was the original patch that introduced this issue (any Fixes tag)?
+> 2. Is the leaking variable member the "context->sockaddr"?
+> 3. Could you shed some light on how the reference to the leaked memory is
+>     lost during the transition from the prep phase to the issue phase?
+> 4. The fix introduces a NOP operation "before the SQPOLL does anything."
+>     How does this addition of a NOP operation prevent the memory leak from
+>     occurring?
+> 
+> Thank you in advance for taking the time to address my questions. Your
+> insights will help me better understand this fix.
+> 
+> Best regards,
+> Wang Zhaolong
+> 
+>> Description
+>> ===========
+>>
+>> In the Linux kernel, the following vulnerability has been resolved:
+>>
+>> io_uring/sqpoll: work around a potential audit memory leak
+>>
+>> kmemleak complains that there's a memory leak related to connect
+>> handling:
+>>
+>> unreferenced object 0xffff0001093bdf00 (size 128):
+>> comm "iou-sqp-455", pid 457, jiffies 4294894164
+>> hex dump (first 32 bytes):
+>> 02 00 fa ea 7f 00 00 01 00 00 00 00 00 00 00 00  ................
+>> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>> backtrace (crc 2e481b1a):
+>> [<00000000c0a26af4>] kmemleak_alloc+0x30/0x38
+>> [<000000009c30bb45>] kmalloc_trace+0x228/0x358
+>> [<000000009da9d39f>] __audit_sockaddr+0xd0/0x138
+>> [<0000000089a93e34>] move_addr_to_kernel+0x1a0/0x1f8
+>> [<000000000b4e80e6>] io_connect_prep+0x1ec/0x2d4
+>> [<00000000abfbcd99>] io_submit_sqes+0x588/0x1e48
+>> [<00000000e7c25e07>] io_sq_thread+0x8a4/0x10e4
+>> [<00000000d999b491>] ret_from_fork+0x10/0x20
+>>
+>> which can can happen if:
+>>
+>> 1) The command type does something on the prep side that triggers an
+>>     audit call.
+>> 2) The thread hasn't done any operations before this that triggered
+>>     an audit call inside ->issue(), where we have audit_uring_entry()
+>>     and audit_uring_exit().
+>>
+>> Work around this by issuing a blanket NOP operation before the SQPOLL
+>> does anything.
+>>
+>> The Linux kernel CVE team has assigned CVE-2024-41001 to this issue.
+> 
+
 

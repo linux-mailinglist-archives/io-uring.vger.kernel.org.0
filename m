@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-2531-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2532-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD26A9377F3
-	for <lists+io-uring@lfdr.de>; Fri, 19 Jul 2024 14:49:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2C3937CD0
+	for <lists+io-uring@lfdr.de>; Fri, 19 Jul 2024 21:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7241C21358
-	for <lists+io-uring@lfdr.de>; Fri, 19 Jul 2024 12:49:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B572D1F2177D
+	for <lists+io-uring@lfdr.de>; Fri, 19 Jul 2024 19:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E3A84D04;
-	Fri, 19 Jul 2024 12:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1EB148304;
+	Fri, 19 Jul 2024 19:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d+BDvzqx"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QJFsuFpM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89FF39FF3;
-	Fri, 19 Jul 2024 12:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F3D147C89
+	for <io-uring@vger.kernel.org>; Fri, 19 Jul 2024 19:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721393345; cv=none; b=ogzgDpSTF/KNVpGhCb0piyzCbkNemOl6jyHm8RqMnn5/F2tuTNEHElh+tvR+17gYrv5e8+fRlYRkbeVzbLHlvrRKGcL3hQFc0gkFiiEqGKgIrFqyExdhi8PRT4bKPagEGDKW6B61tQgJv3STHwt8gPh8i2qPiW0T3DWlGSEdNGQ=
+	t=1721415817; cv=none; b=X/DAjQrdjV6EQai7z2XBvjURr7vBlFh0+Lw4e8noFGpWTYCQqS82n3YGuRff0f8yz+dTF1ajB3KladFC6JwbJ79y7bsQUnOdo4fuicv6aRoXJYcGmauXoZEh9fmbqTs4kKJ3Fc/WO++YulMQYpaXXABtD3H0caYFrFfIZwChyeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721393345; c=relaxed/simple;
-	bh=CR547d0HU3Yr1vkRs5KLOoYxVdbGwaxCEvBo7DQcwjQ=;
+	s=arc-20240116; t=1721415817; c=relaxed/simple;
+	bh=pMTDfzpCZXPgz5OqREcL7RtcEB8BhQFFrXJAqdK98nk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=foSXvybeEUpGL0oWlKpqqJe3nboU85pMfMjG4ZYx6PpEq9Zcuj82Rmj9rGSy9GPyqZCvQf/qW+wIZLVj2RzZhid1KGh7E5AaUQYR/udK06Pso71j77Kp1srLXUPHn/DXicYKRwc/wB2kkR25DJsvNh+NstTzr9/Nss11PvXfGxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d+BDvzqx; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6694b50a937so8353367b3.0;
-        Fri, 19 Jul 2024 05:49:03 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=nAkHzmcWzPKOUR3KhRU9tidasGU2Mn95OCEo4yEAMrxlAQaaMppBLloU94bo/nb4R94NGfXaPABGDev9NI9/Sw9NYMerWPjZiJTU1eDVI65ld3SECRMPZLnEyfoSxYN7FgUUqC70pj+T7DebbdtMQzaYnEuVD0jngla8q0vHEn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QJFsuFpM; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-810ca166fd4so10771639f.1
+        for <io-uring@vger.kernel.org>; Fri, 19 Jul 2024 12:03:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721393343; x=1721998143; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1721415814; x=1722020614; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1zOiWf4HUZC9iZgipXdXMnDc6Pes1HPab9Jv7CaWdn0=;
-        b=d+BDvzqxz9zeVogqZ0XCOfzIh4ld9ewB4N7vuiHF3WcqxFO1JzAoX3w4ef7PwOKZn2
-         12hBD2Gw/641fQbmE/WISzhV3MPcapfjVeN9YEFrYMtsV998AvmAghqlF+2OSP/Tu/sA
-         nGAFnvVAJz0Xb8uOvXVWAtsDS1746KR++cSgy8VuAG2Wma9mfaAGCV7216SGhq4L4FS9
-         JOhXYywnnqJxazzyrDp+Wc94vNHZ28LyZmbDeWlnQlpKkT15KzG0AKjKbR0IhTtE3gjp
-         TtszG89uldM/715/5/rPYzOR5SjlFPKvflP9gmLU42QclZXxhakCQ69iwmsBuL3Dp4D6
-         OWJg==
+        bh=1cJ3nujP92wGCaS8wrcvZLk7tX2f2wnmqeR4tNSdaew=;
+        b=QJFsuFpMie1ybm0JYWzjyBEnt/TfBX6oksdD/ALfWTkxyWAgdTaMaSzzVMUVmf08OQ
+         U48Rm6xZ6kOYMxE2dQAta3eKNi7o2LTAQZ8QcfU7E0tJ30DfX5+kcevA2NaipdllZdh+
+         jrgIH8fxd7Y/kxyNappjc8rOQ2ayCqhvxxPopuOSy36gTcpPdBMv+mpKBHLS8mjpCbad
+         l/uRJY81/awyLyO7cEuFSEJDDXbovv+trj1/5Sm8uqOiv9Df9p7LP4S4hxbDPt+toib4
+         KNJqOtf2l3EO/lQRA5DG5eHjs+mrkYz+ShnhVaJVr7u64rVSP4SgI/jqNo8ISmVn5wSr
+         DmLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721393343; x=1721998143;
+        d=1e100.net; s=20230601; t=1721415814; x=1722020614;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1zOiWf4HUZC9iZgipXdXMnDc6Pes1HPab9Jv7CaWdn0=;
-        b=pAuQ70w/R5HPqHjqVy9ccNTGRAICx5B8gf/B9lKCYjZgL0+Bcm3hesomjHR+skDSPi
-         qbwg56CN+ixU+gfjPGUIcCiBfSsUt+TY2IKxh3SteXjXFMDXVWGWFeBswMKMX+gQZZcI
-         Gvro1W06DmvhRr5ivT846nuLmpvkrwfIZoZtZjRQ6xzgayzxRl7nraVWjrEg8vt1Dr3p
-         MjmKTmm6wuSoXyLmB2Hzq2pFKW9GIJEK5tNK8qGJlS81zKH7zvyl00ReWpNYhKvFJR4D
-         MfKV+EZ7VEOQdfgcru+2DwJnoSVqaiS4X7WS/RUrz7d75SMFDPAlEIS3Co5pgoGdsGKn
-         60fg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcGn95S12YdY3BwdpaTYx565aQY1+ngupGcZv5n6PsT9Gaq9YerChyjHkUnu2lMEZQEgONsDI5sNNVjbDmZsTvJAGmv8V58FM=
-X-Gm-Message-State: AOJu0YxyFD/AwU+qAEoFKCZ6IPH2eSEvqIp2vfLVA0rMZ/leP6cHiIaD
-	mCITDDh+cTtYAaTRJFbU8K+JWMDjC3b9uKtMS9Af7agaibuWsLmtMZRIZAtI
-X-Google-Smtp-Source: AGHT+IE6y9RT84bevPH+bDmcrPYHaGvxqxjMhsoRM8WPSbnHFvTBIz+bG2/79Orvn2hk1sDK0gnyKw==
-X-Received: by 2002:a0d:f345:0:b0:664:7b3d:a53f with SMTP id 00721157ae682-66603ce747dmr53801157b3.45.1721393342682;
-        Fri, 19 Jul 2024 05:49:02 -0700 (PDT)
-Received: from [192.168.42.233] ([50.239.92.83])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-66953fc8571sm4585977b3.104.2024.07.19.05.49.01
+        bh=1cJ3nujP92wGCaS8wrcvZLk7tX2f2wnmqeR4tNSdaew=;
+        b=LYoxjcSKS43XQlXfe2VVjvJiGBgm2LlptxIrUHYDglW2104GIYaYxlvfL1C4qi+6R1
+         8pY7j4f38X5aniih9E4/ajZR6EPn4mQp3eqyAbH/3qKWH4wdYLCaN+aVJ3fJkRj/19cT
+         arKpEO4rnSqStp5iZs1PSzAnvKz0ZnVkP4sLw+5po2krWtuX4iXhlDae2r2XtdZ5hCyD
+         hVcwTMqpddk3OBRgnpUqNEacokj/ZBqWloIUisIpwLh21wy1H2m2GiXgzDYQccy2NSkc
+         NDlRyJCBKwSSUY04MK8t2iVQAByrC0lPfeUemI1UrzTjobLmJRionpUWfS5ZiJI93T2L
+         x9IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX//LmkxuBRfWonHzJxm8AvKNu6dWXRIrTD5tUZieAZyPR8qdm6c7hCPuRv4rl5nGKmdIxY5uQvah4nfBfEm41JKkcst1CjWyc=
+X-Gm-Message-State: AOJu0YwCiGYdTm0S+1AxODrSZtEaOxlp4u2IuiuPo29SzPm6RSgXNz16
+	aEugJ6glbyYAwqMdgYcUYKGzz6/NUdBvA9ZGpOu6C4FYHH3NLwRLRlL2zVe4Wys=
+X-Google-Smtp-Source: AGHT+IHW9lEL+oRST+LKLcLCjBpQgopnnESxVZwRdkHitdIZv7jCpbyhIgblbVfAYqK749KnBZNyHw==
+X-Received: by 2002:a05:6e02:1a6e:b0:397:75a:39bd with SMTP id e9e14a558f8ab-398e67c4942mr4414845ab.3.1721415814111;
+        Fri, 19 Jul 2024 12:03:34 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-79f0bb06d1asm620203a12.53.2024.07.19.12.03.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 05:49:02 -0700 (PDT)
-Message-ID: <ef46054d-e657-4c8b-a9dd-c61dcca8ed45@gmail.com>
-Date: Fri, 19 Jul 2024 13:49:26 +0100
+        Fri, 19 Jul 2024 12:03:33 -0700 (PDT)
+Message-ID: <2ee61a18-595e-4dda-a8c4-061c5a4803e0@kernel.dk>
+Date: Fri, 19 Jul 2024 13:03:31 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,31 +76,70 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 0/8] io_uring: support sqe group and provide group kbuf
-To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
- io-uring@vger.kernel.org
-Cc: linux-block@vger.kernel.org
-References: <20240706031000.310430-1-ming.lei@redhat.com>
- <Zpm7fLVsZHpFRWPq@fedora>
+Subject: Re: CVE-2024-41001: io_uring/sqpoll: work around a potential audit
+ memory leak
+To: Wang Zhaolong <wangzhaolong1@huawei.com>, cve@kernel.org,
+ linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, io-uring@vger.kernel.org
+References: <2024071253-CVE-2024-41001-7879@gregkh>
+ <18634c7e-b234-ac02-20f8-4d5426733679@huawei.com>
+ <4457af52-01a2-be1b-9d13-486b6bd8e579@huawei.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Zpm7fLVsZHpFRWPq@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <4457af52-01a2-be1b-9d13-486b6bd8e579@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/19/24 02:03, Ming Lei wrote:
-> On Sat, Jul 06, 2024 at 11:09:50AM +0800, Ming Lei wrote:
->> Hello,
->>...
+On 7/18/24 8:41 AM, Wang Zhaolong wrote:
+> Hello,
 > 
-> Hello Pavel, Jens and Guys,
+> I think a possible reason for the leak scenario is:
 > 
-> Gentle ping...
+> When `audit_context->dummy` is 0. __audit_sockaddr() allocates sockaddr.
+> 
+> In the below process, audit_reset_context() return early. ctx->sockaddr
+> is not released.
+> 
+>   io_issue_sqe
+>     audit_uring_entry
+>       __audit_uring_entry
+>         ctx->dummy -- set dummy as non-zero
+>     def->issue()
+>     audit_uring_exit
+>       __audit_uring_exit
+>         audit_reset_context
+> 
+> static void audit_reset_context(struct audit_context *ctx)
+> {
+>     ......
+>     /* if ctx is non-null, reset the "ctx->context" regardless */
+>     ctx->context = AUDIT_CTX_UNUSED;
+>     if (ctx->dummy)
+>         return;
+> 
+>     ......
+>     kfree(ctx->sockaddr);
+>     ......
+> }
+> 
+> The `audit_uring_entry(IORING_OP_NOP);` statement initializes the 'dummy' once at the
+> beginning to ensure that ctx->sockaddr is allocated and deallocated in pairs later
+> in the process.
+> 
+> According to the above analysis, I think the fixes tag should be
+> 5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
 
-Hi Ming,
+It was introduced with the changes to the above commit, where you could
+end up calling prep (which does the move_addr_to_kernel()) before audit
+was ready for it. This is the call trace shown in the commit as well.
+Which I _think_ is:
 
-I'm currently away, will give it a look when I'm back next week.
+Fixes: f482aa986527 ("audit, io_uring, io-wq: Fix memory leak in io_sq_thread() and io_wqe_worker()")
+
+but I'd have to double check. In any case, it's a leak on the audit
+side.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

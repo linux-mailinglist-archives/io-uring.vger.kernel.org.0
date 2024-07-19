@@ -1,121 +1,151 @@
-Return-Path: <io-uring+bounces-2529-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2530-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA29C935273
-	for <lists+io-uring@lfdr.de>; Thu, 18 Jul 2024 22:34:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25CC19371BF
+	for <lists+io-uring@lfdr.de>; Fri, 19 Jul 2024 03:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19BA11C20C11
-	for <lists+io-uring@lfdr.de>; Thu, 18 Jul 2024 20:34:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D7A1C21436
+	for <lists+io-uring@lfdr.de>; Fri, 19 Jul 2024 01:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2783A143C54;
-	Thu, 18 Jul 2024 20:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DAF1B86DD;
+	Fri, 19 Jul 2024 01:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="tdhoEoL9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IqpEV2Lb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888E5144D29
-	for <io-uring@vger.kernel.org>; Thu, 18 Jul 2024 20:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32262184D
+	for <io-uring@vger.kernel.org>; Fri, 19 Jul 2024 01:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721334876; cv=none; b=AXi+YLgm2yuu5h9SM1AlkwKwxEm3OHgcI/BZMttuXzVlgAN5mZBMmhlb6ImLJaGjDTKeutoCvKe9R0nLn0aoaGTKhtlBwlFE7W9H1O0v00hIiTC7W3aJaKn4o5bEScFUGiLW2dSBj6hKf9meXoWczVVQJU3yYoiyF54pMWFMbk4=
+	t=1721351055; cv=none; b=qGygrDhzpYrF8lQ6OEEyKSkk7zrmKCoYrSksD7QaRj4qiYCWiYhJOjuOtEYKrlAcCqDyRLfTdm82hgX1nV35kIwBE80mF6YY8UM9m2GYDOYzf89HTF3Eu9n7rbJ0UF/BQYiq92vHrlAqG2DftVWb77xPyn9KDqzpPkkbTA4z1KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721334876; c=relaxed/simple;
-	bh=AcZEU/t9N/ACz7uzWRjgxaPFH24UxbYW+PjW8kT7dAw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Z2l6tkrTz3uRh2YBmX5yILM4SyMv5cHNvkKcrTpzR38u2Yk/f35ZOU2h0KYH6FktoBrTIEZNnTR0Cxq0fdzJen+kiExs+uiCmtHohA0/tZv/1oTVWXJv1G4iWl20j+vN5xAu7FwiAKewkit0eq6d+G7mpvzx5Uy1vZf2/9s8bQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=tdhoEoL9; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2cb4c2d13a0so97893a91.0
-        for <io-uring@vger.kernel.org>; Thu, 18 Jul 2024 13:34:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1721334870; x=1721939670; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AzmFoWayG9UQCU9QGqdMxoxqLOmGwHOfnqfZaompIl0=;
-        b=tdhoEoL9KNkDlHHmoge9dTLsDEs/FiuVFim31ns+/pI/x7G1ezdOdOZ99M1k/57wEL
-         VCV4BmGUA2dIlBxfVgAQSTM6NSWUhwZrQ9vwmO4zKZLq167cptlJI9MapoV0dQ0qnsnG
-         v3R/LK5c+DgfL0RKF76VBR3nIOQzdZd1dKsDjls4S9j/exiUqyz1gHSOv/Krjt4ROBn7
-         QFunCj7jcHmKO0e3XpN+f/xUZBRulaLH1EF+Re9ao3Rimm3HLRDmF29HOM6WeAwV1Fcs
-         ZNQ9CzH4Wf0bKe2ebc736p9Ij+LbvKscy0rkIT2S+yaulB4R/XWIdqjRxoso8fsV9w01
-         2ruQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721334870; x=1721939670;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AzmFoWayG9UQCU9QGqdMxoxqLOmGwHOfnqfZaompIl0=;
-        b=H+xmNJTO4DiLkUEmVyTV8Ynfvce+wUxGYVI+hOe4hqVrWK5+lm2jRUrKUrt8yC/+Ev
-         7cjf/VUmxc0F2OciceMU43OMG0AHPggjGhFqGaarCEJwCc50UdmJEPjIDxuBO0/XXZkE
-         8FMCJdwzpxZwa6gZTF/HWapAUHGx/YD6kktaC+GdaZP/mEGK7ZTi9L3MWRaCbTNRVw2t
-         hJX3EmGEaLNr8Eo2fvSd4j7LRIIoTc3nBvu88rXipyfjRHQ+IvMocWQ6LSCblj0CrwY7
-         Ov1IdFnHkZVZUPAutdop6H8/X12IvRI7qBpUuM9a+goX4JjE5CoB0CPa9t/kost03/BL
-         InaA==
-X-Gm-Message-State: AOJu0YyYSRabtt/asJlPzLjkHPyzM/kkzpcCItAvLr7+tP4QjtgiuEjt
-	FU2XMOhDf7Gd5minWwQLzTt3diJlKC61BRKfw3rrVMZR61SFDR8oXaUx3nFEMGjrrS3TgStXVYV
-	zLBO7eg==
-X-Google-Smtp-Source: AGHT+IFuSzb4M9zNShrQq4sT2jQHS7qVLreY2N5f3GNVwQpCRByPNPL/saM65LLhbwb2HCanIQxAqw==
-X-Received: by 2002:a17:90a:df95:b0:2cb:4382:99eb with SMTP id 98e67ed59e1d1-2ccef91eac4mr513281a91.6.1721334870011;
-        Thu, 18 Jul 2024 13:34:30 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf7b30f35sm37236a91.11.2024.07.18.13.34.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 13:34:28 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: syzbot+2074b1a3d447915c6f1c@syzkaller.appspotmail.com
-In-Reply-To: <c5f9df20560bd9830401e8e48abc029e7cfd9f5e.1721329239.git.asml.silence@gmail.com>
-References: <c5f9df20560bd9830401e8e48abc029e7cfd9f5e.1721329239.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring: fix error pbuf checking
-Message-Id: <172133486834.46273.15978838697580136389.b4-ty@kernel.dk>
-Date: Thu, 18 Jul 2024 14:34:28 -0600
+	s=arc-20240116; t=1721351055; c=relaxed/simple;
+	bh=xoVkdnLCPDYd+igZTdcJKttbVbNiO2wwJ2WdEWrv6f4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uK8X9qKn4rmAuITblUq2Y7lHkQWS1irHzPuF0YUPIe+ZJbY8IiSdGLHlexc4yuucbkFRGSnMHiY9m5Y5kDGSS2cauflqTql7AlC4Y67FWIpJk+IjEiTx+H4Z4sljkUjBc8ZE0b5r5+O3N68uwAl2JVqBpYuU2fSgIGF6GBTlKf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IqpEV2Lb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721351052;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0/+m/ahUJGV3RhkazPV+AXppEPQ0PlekRSmpcfSfqXQ=;
+	b=IqpEV2LbBVzEq7j47jU/e1q9cN0XuzTswAjSMc/hcpbuc+6f0V6Q8hv28+Y0Teo6RMuclL
+	xVYwdevlFme2+mlIcoY9LDer2h4rYJD0bM9g4MHF0LS2J4eDgfGG1kfc0ACGXcliMC7Nr/
+	cLPsVGkLRmwvmZb8V2PqDl49mvd6K/c=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-260-LKFZxmK4PPOKPqarqu-NVQ-1; Thu,
+ 18 Jul 2024 21:04:07 -0400
+X-MC-Unique: LKFZxmK4PPOKPqarqu-NVQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 01DD419560AA;
+	Fri, 19 Jul 2024 01:04:06 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.76])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13ACB195605A;
+	Fri, 19 Jul 2024 01:04:01 +0000 (UTC)
+Date: Fri, 19 Jul 2024 09:03:56 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+	ming.lei@redhat.com
+Subject: Re: [PATCH V4 0/8] io_uring: support sqe group and provide group kbuf
+Message-ID: <Zpm7fLVsZHpFRWPq@fedora>
+References: <20240706031000.310430-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240706031000.310430-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-
-On Thu, 18 Jul 2024 20:00:53 +0100, Pavel Begunkov wrote:
-> Syz reports a problem, which boils down to NULL vs IS_ERR inconsistent
-> error handling in io_alloc_pbuf_ring().
+On Sat, Jul 06, 2024 at 11:09:50AM +0800, Ming Lei wrote:
+> Hello,
 > 
-> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> RIP: 0010:__io_remove_buffers+0xac/0x700 io_uring/kbuf.c:341
-> Call Trace:
->  <TASK>
->  io_put_bl io_uring/kbuf.c:378 [inline]
->  io_destroy_buffers+0x14e/0x490 io_uring/kbuf.c:392
->  io_ring_ctx_free+0xa00/0x1070 io_uring/io_uring.c:2613
->  io_ring_exit_work+0x80f/0x8a0 io_uring/io_uring.c:2844
->  process_one_work kernel/workqueue.c:3231 [inline]
->  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
->  worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> The 1st 3 patches are cleanup, and prepare for adding sqe group.
 > 
-> [...]
+> The 4th patch supports generic sqe group which is like link chain, but
+> allows each sqe in group to be issued in parallel and the group shares
+> same IO_LINK & IO_DRAIN boundary, so N:M dependency can be supported with
+> sqe group & io link together. sqe group changes nothing on
+> IOSQE_IO_LINK.
+> 
+> The 5th patch supports one variant of sqe group: allow members to depend
+> on group leader, so that kernel resource lifetime can be aligned with
+> group leader or group, then any kernel resource can be shared in this
+> sqe group, and can be used in generic device zero copy.
+> 
+> The 6th & 7th patches supports providing sqe group buffer via the sqe
+> group variant.
+> 
+> The 8th patch supports ublk zero copy based on io_uring providing sqe
+> group buffer.
+> 
+> Tests:
+> 
+> 1) pass liburing test
+> - make runtests
+> 
+> 2) write/pass two sqe group test cases:
+> 
+> https://github.com/axboe/liburing/compare/master...ming1:liburing:sqe_group_v2
+> 
+> - covers related sqe flags combination and linking groups, both nop and
+> one multi-destination file copy.
+> 
+> - cover failure handling test: fail leader IO or member IO in both single
+>   group and linked groups, which is done in each sqe flags combination
+>   test
+> 
+> 3) ublksrv zero copy:
+> 
+> ublksrv userspace implements zero copy by sqe group & provide group
+> kbuf:
+> 
+> 	git clone https://github.com/ublk-org/ublksrv.git -b group-provide-buf_v2
+> 	make test T=loop/009:nbd/061	#ublk zc tests
+> 
+> When running 64KB/512KB block size test on ublk-loop('ublk add -t loop --buffered_io -f $backing'),
+> it is observed that perf is doubled.
+> 
+> Any comments are welcome!
+> 
+> V4:
+> 	- address most comments from Pavel
+> 	- fix request double free
+> 	- don't use io_req_commit_cqe() in io_req_complete_defer()
+> 	- make members' REQ_F_INFLIGHT discoverable
+> 	- use common assembling check in submission code path
+> 	- drop patch 3 and don't move REQ_F_CQE_SKIP out of io_free_req()
+> 	- don't set .accept_group_kbuf for net send zc, in which members
+> 	  need to be queued after buffer notification is got, and can be
+> 	  enabled in future
+> 	- add .grp_leader field via union, and share storage with .grp_link
+> 	- move .grp_refs into one hole of io_kiocb, so that one extra
+> 	cacheline isn't needed for io_kiocb
+> 	- cleanup & document improvement
 
-Applied, thanks!
+Hello Pavel, Jens and Guys,
 
-[1/1] io_uring: fix error pbuf checking
-      commit: 77feb9505ce67fc609b1e7b6b27b41995370498f
-
-Best regards,
--- 
-Jens Axboe
+Gentle ping...
 
 
+thanks,
+Ming
 
 

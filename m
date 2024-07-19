@@ -1,74 +1,75 @@
-Return-Path: <io-uring+bounces-2532-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2533-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2C3937CD0
-	for <lists+io-uring@lfdr.de>; Fri, 19 Jul 2024 21:03:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411CE937CD7
+	for <lists+io-uring@lfdr.de>; Fri, 19 Jul 2024 21:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B572D1F2177D
-	for <lists+io-uring@lfdr.de>; Fri, 19 Jul 2024 19:03:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB304B21DCC
+	for <lists+io-uring@lfdr.de>; Fri, 19 Jul 2024 19:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1EB148304;
-	Fri, 19 Jul 2024 19:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231641482F8;
+	Fri, 19 Jul 2024 19:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QJFsuFpM"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jGBOiDuo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F3D147C89
-	for <io-uring@vger.kernel.org>; Fri, 19 Jul 2024 19:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647CD1482F0
+	for <io-uring@vger.kernel.org>; Fri, 19 Jul 2024 19:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721415817; cv=none; b=X/DAjQrdjV6EQai7z2XBvjURr7vBlFh0+Lw4e8noFGpWTYCQqS82n3YGuRff0f8yz+dTF1ajB3KladFC6JwbJ79y7bsQUnOdo4fuicv6aRoXJYcGmauXoZEh9fmbqTs4kKJ3Fc/WO++YulMQYpaXXABtD3H0caYFrFfIZwChyeo=
+	t=1721415914; cv=none; b=Cl2bIPii538t6CGm6bHy195+vQ21eZJea8dWwvK3VQuJa5lQxsQHr+2P0SHBIeB3rxVuSM1r/RXZ8YcABCnCb4J6OFgiBozzhDxh0N1m8juOfgpH2RUOLq13kj1CUV4W1PX0LmDKPN7lB/skWkvkiFORAzvQHjr5PNE2ZYWd8qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721415817; c=relaxed/simple;
-	bh=pMTDfzpCZXPgz5OqREcL7RtcEB8BhQFFrXJAqdK98nk=;
+	s=arc-20240116; t=1721415914; c=relaxed/simple;
+	bh=yBKphk+kO34RoHjQgFpte2hSaIa0wA3auRo+TLhJx8o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nAkHzmcWzPKOUR3KhRU9tidasGU2Mn95OCEo4yEAMrxlAQaaMppBLloU94bo/nb4R94NGfXaPABGDev9NI9/Sw9NYMerWPjZiJTU1eDVI65ld3SECRMPZLnEyfoSxYN7FgUUqC70pj+T7DebbdtMQzaYnEuVD0jngla8q0vHEn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QJFsuFpM; arc=none smtp.client-ip=209.85.166.45
+	 In-Reply-To:Content-Type; b=rt+0OtEqE8aHa6KTKa0Cuj5ogFQoGX8lJWhz4Nqacta1gxE93biBuOnLMSnAffC/p8cR7svcBZGXsZ5JpLWGD9ufmrR18rK/SMvLuWk+cRBeK4RbL2BA+8gjWpJH6uo3EQzZLJF4t6625gV4mUw2HIyFBpvKcW9LnDlP8XmxhJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jGBOiDuo; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-810ca166fd4so10771639f.1
-        for <io-uring@vger.kernel.org>; Fri, 19 Jul 2024 12:03:34 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-6c386a3ac43so306492a12.0
+        for <io-uring@vger.kernel.org>; Fri, 19 Jul 2024 12:05:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1721415814; x=1722020614; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1721415912; x=1722020712; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1cJ3nujP92wGCaS8wrcvZLk7tX2f2wnmqeR4tNSdaew=;
-        b=QJFsuFpMie1ybm0JYWzjyBEnt/TfBX6oksdD/ALfWTkxyWAgdTaMaSzzVMUVmf08OQ
-         U48Rm6xZ6kOYMxE2dQAta3eKNi7o2LTAQZ8QcfU7E0tJ30DfX5+kcevA2NaipdllZdh+
-         jrgIH8fxd7Y/kxyNappjc8rOQ2ayCqhvxxPopuOSy36gTcpPdBMv+mpKBHLS8mjpCbad
-         l/uRJY81/awyLyO7cEuFSEJDDXbovv+trj1/5Sm8uqOiv9Df9p7LP4S4hxbDPt+toib4
-         KNJqOtf2l3EO/lQRA5DG5eHjs+mrkYz+ShnhVaJVr7u64rVSP4SgI/jqNo8ISmVn5wSr
-         DmLw==
+        bh=+nx9OdCwMEY2JRvD0bOdHslpOXnBey2t65szlXZcXug=;
+        b=jGBOiDuoRicy9n9YSOQdMhAhSmdJViuPq/z1Wri3hDJPCOaUnIWinuw3Rs+UneidjC
+         Y48jRZUDk3/pHgqLMHZcvekr0/WXPTmdkeI03oq8qQFAyMj4Y4cA8IMJOthhyv08aOh5
+         AWgWLR5ihs7XmQgrrIiXPBEC2CdwTGNWzJecfbhNdQZJFF2eeqwXXZ0MR1Tt7ImsC6My
+         atRt4QzH7ozr4pCmVrPDcyNBeympt5r1yzHd5G5PQnyis0WWbEhHQIdw1h4o0QZ9ijaX
+         aEfOH3hx+l3N4YnyMZnTTcCi8GmggfxLuG4VWCi7g3hVsH+Ge7aSe9JNgn/GMD7I1DPV
+         y7Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721415814; x=1722020614;
+        d=1e100.net; s=20230601; t=1721415912; x=1722020712;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1cJ3nujP92wGCaS8wrcvZLk7tX2f2wnmqeR4tNSdaew=;
-        b=LYoxjcSKS43XQlXfe2VVjvJiGBgm2LlptxIrUHYDglW2104GIYaYxlvfL1C4qi+6R1
-         8pY7j4f38X5aniih9E4/ajZR6EPn4mQp3eqyAbH/3qKWH4wdYLCaN+aVJ3fJkRj/19cT
-         arKpEO4rnSqStp5iZs1PSzAnvKz0ZnVkP4sLw+5po2krWtuX4iXhlDae2r2XtdZ5hCyD
-         hVcwTMqpddk3OBRgnpUqNEacokj/ZBqWloIUisIpwLh21wy1H2m2GiXgzDYQccy2NSkc
-         NDlRyJCBKwSSUY04MK8t2iVQAByrC0lPfeUemI1UrzTjobLmJRionpUWfS5ZiJI93T2L
-         x9IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX//LmkxuBRfWonHzJxm8AvKNu6dWXRIrTD5tUZieAZyPR8qdm6c7hCPuRv4rl5nGKmdIxY5uQvah4nfBfEm41JKkcst1CjWyc=
-X-Gm-Message-State: AOJu0YwCiGYdTm0S+1AxODrSZtEaOxlp4u2IuiuPo29SzPm6RSgXNz16
-	aEugJ6glbyYAwqMdgYcUYKGzz6/NUdBvA9ZGpOu6C4FYHH3NLwRLRlL2zVe4Wys=
-X-Google-Smtp-Source: AGHT+IHW9lEL+oRST+LKLcLCjBpQgopnnESxVZwRdkHitdIZv7jCpbyhIgblbVfAYqK749KnBZNyHw==
-X-Received: by 2002:a05:6e02:1a6e:b0:397:75a:39bd with SMTP id e9e14a558f8ab-398e67c4942mr4414845ab.3.1721415814111;
-        Fri, 19 Jul 2024 12:03:34 -0700 (PDT)
+        bh=+nx9OdCwMEY2JRvD0bOdHslpOXnBey2t65szlXZcXug=;
+        b=CKhBjay6S6jyoe/Vj4LbkWu1O0URSMcrgdoYRVHrMplXjGyCxCaakjl9wwnO5Rg7Ww
+         Bg+xZzV6rPyksd3nwFXCeT/zNSqIhFRzqxzY1hDNMriVXWZj5Vm3zZubAJwvth1EDsoT
+         WfrvS6o4ZUfZ4Ec1JfgZTWRE2AnWVIogakEz6RKA5MX/fHkLuqKfGGieiO1hx6osALQI
+         wagXblyA97xfZXlVyyZVVz1W5y2e+c3PFvdGbcZzlUNhAb23ruZVB3ofe1LTH3A2U1Fy
+         xMpzlKYft2RfdBtd8k0wmm7I25XMdQB+GTwp6RmJciY6eba2DXKTFCa6z4I8poXXyKKv
+         Fgpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfTBgx1elcZG8kzNwv8l7SSRUjrkPUdYjqCsNjf49GuKeqyoE61XApgYnSXxViENtcaZut6z2wjXX/Ky0OMS+wWZC/sY1wdrE=
+X-Gm-Message-State: AOJu0Yyyc0aNkaMAhSgCT5wN96AuVf/AOuYqZZbmxPRsxOzx0puZkT7a
+	Qhq6vzdvOP2b1Fhh/HzTegA4kbTZ8vf7PBWN2Fn7SCe2dKvndzAuVr++hyMTM/vGHulQsWCn3L+
+	dFsQ=
+X-Google-Smtp-Source: AGHT+IGdhsJWDxm7pZKeryvCYAK1+cTyIo63zWdJkrvVVhI7KSLmqHOJHPUVumTVMUg6S1EE6FkwVw==
+X-Received: by 2002:a17:902:cecb:b0:1fd:6d4c:24cf with SMTP id d9443c01a7336-1fd74573b0amr5601685ad.5.1721415911589;
+        Fri, 19 Jul 2024 12:05:11 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-79f0bb06d1asm620203a12.53.2024.07.19.12.03.32
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f299651sm8374115ad.104.2024.07.19.12.05.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jul 2024 12:03:33 -0700 (PDT)
-Message-ID: <2ee61a18-595e-4dda-a8c4-061c5a4803e0@kernel.dk>
-Date: Fri, 19 Jul 2024 13:03:31 -0600
+        Fri, 19 Jul 2024 12:05:10 -0700 (PDT)
+Message-ID: <5aeac0c6-9658-4845-81bf-8bede181767d@kernel.dk>
+Date: Fri, 19 Jul 2024 13:05:09 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,68 +77,33 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: CVE-2024-41001: io_uring/sqpoll: work around a potential audit
- memory leak
-To: Wang Zhaolong <wangzhaolong1@huawei.com>, cve@kernel.org,
- linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, io-uring@vger.kernel.org
-References: <2024071253-CVE-2024-41001-7879@gregkh>
- <18634c7e-b234-ac02-20f8-4d5426733679@huawei.com>
- <4457af52-01a2-be1b-9d13-486b6bd8e579@huawei.com>
+Subject: Re: [PATCH V6] io_uring: releasing CPU resources when polling
+To: hexue <xue01.he@samsung.com>
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240709092944.3208051-1-xue01.he@samsung.com>
+ <CGME20240718100113epcas5p255acf51a58cf410d5d0e8cffbca41994@epcas5p2.samsung.com>
+ <20240718100107.1135964-1-xue01.he@samsung.com>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <4457af52-01a2-be1b-9d13-486b6bd8e579@huawei.com>
+In-Reply-To: <20240718100107.1135964-1-xue01.he@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/18/24 8:41 AM, Wang Zhaolong wrote:
-> Hello,
+On 7/18/24 4:01 AM, hexue wrote:
+> On 09/07/24 9:29AM, hexue wrote:
+>> io_uring use polling mode could improve the IO performence, but it will
+>> spend 100% of CPU resources to do polling.
+>>
+>> This set a signal "IORING_SETUP_HY_POLL" to application, aim to provide
+>> a interface for user to enable a new hybrid polling at io_uring level.
 > 
-> I think a possible reason for the leak scenario is:
-> 
-> When `audit_context->dummy` is 0. __audit_sockaddr() allocates sockaddr.
-> 
-> In the below process, audit_reset_context() return early. ctx->sockaddr
-> is not released.
-> 
->   io_issue_sqe
->     audit_uring_entry
->       __audit_uring_entry
->         ctx->dummy -- set dummy as non-zero
->     def->issue()
->     audit_uring_exit
->       __audit_uring_exit
->         audit_reset_context
-> 
-> static void audit_reset_context(struct audit_context *ctx)
-> {
->     ......
->     /* if ctx is non-null, reset the "ctx->context" regardless */
->     ctx->context = AUDIT_CTX_UNUSED;
->     if (ctx->dummy)
->         return;
-> 
->     ......
->     kfree(ctx->sockaddr);
->     ......
-> }
-> 
-> The `audit_uring_entry(IORING_OP_NOP);` statement initializes the 'dummy' once at the
-> beginning to ensure that ctx->sockaddr is allocated and deallocated in pairs later
-> in the process.
-> 
-> According to the above analysis, I think the fixes tag should be
-> 5bd2182d58e9 ("audit,io_uring,io-wq: add some basic audit support to io_uring")
+> Hi, just a gentle ping. Any coments on this patch?
 
-It was introduced with the changes to the above commit, where you could
-end up calling prep (which does the move_addr_to_kernel()) before audit
-was ready for it. This is the call trace shown in the commit as well.
-Which I _think_ is:
-
-Fixes: f482aa986527 ("audit, io_uring, io-wq: Fix memory leak in io_sq_thread() and io_wqe_worker()")
-
-but I'd have to double check. In any case, it's a leak on the audit
-side.
+It's merge window and vacation time, and related to the former of those
+two, any changes for this would have to be targeted to the next kernel
+release. So it'll get looked at once things settle a bit, there's no
+rush as the 6.11 merge window is already in progress.
 
 -- 
 Jens Axboe

@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-2535-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2536-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BCBB93862A
-	for <lists+io-uring@lfdr.de>; Sun, 21 Jul 2024 23:21:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D55938F18
+	for <lists+io-uring@lfdr.de>; Mon, 22 Jul 2024 14:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1871B280FFB
-	for <lists+io-uring@lfdr.de>; Sun, 21 Jul 2024 21:21:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2191C21101
+	for <lists+io-uring@lfdr.de>; Mon, 22 Jul 2024 12:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83760D268;
-	Sun, 21 Jul 2024 21:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270A916A94A;
+	Mon, 22 Jul 2024 12:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Q4fZxlU+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMWgq8Yv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6B42C95
-	for <io-uring@vger.kernel.org>; Sun, 21 Jul 2024 21:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5460216415;
+	Mon, 22 Jul 2024 12:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721596883; cv=none; b=jTop6E7cIjYIt1IbwapIa+RoOVr9ZkB4f8K9DyUllYqMsn13fkKeMIirnkIAtuDSkdc681Fh6r1tl+HAvAOxFDZ7oiyDUSakiZMX+InXdp/qKhzo7rHVh5NjjGXewiFD3jHN4nySvhZ97yMXtVsw8VSdrHO6GZaQfgBBHvupx0M=
+	t=1721651442; cv=none; b=cyHyGggoxtrI9opAD0YOABpdCVnhdrrKei8KSi1wgRP3G1UJ6kzaKvrfovKQAFZcx6LFnQccI17Hdr3RbtvNa4gpOi9/501ZqSUEVtJTBaVthMnJndAIL/f1XvO9y3mG5lqNnY5xS7ybgy7ZeHQXyvZmby0FU3btJWJF70zREVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721596883; c=relaxed/simple;
-	bh=UoynDLM2LbDe0X1r4BpWtwV7Plhb+O1ewVITw9MDdAQ=;
+	s=arc-20240116; t=1721651442; c=relaxed/simple;
+	bh=a3uw0GVgBFz5Uu3CthKf4SZG+vNQXvq8b9msqSOJ+uM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AqSgLBDY8u3FBVRM3WawrvVvXTiCj3UxGfHYektstnrBmQy2tt3FjLCNA48ptR2DY6Yk40q93sKxG3AWqj636ENKm9oFhtFBmyHo0FjnUvgpGzDg2bAvuDQianbcPK7U8nEz+yjlktGfiglkEhpvIEio+ESg9IBqTopOv92tgEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Q4fZxlU+; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2cb4c2d13a0so565344a91.0
-        for <io-uring@vger.kernel.org>; Sun, 21 Jul 2024 14:21:20 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=R158AFBgGuO9ADndsYC4wNRvXl5wwGUjYKWnOvfbzM0VebD+Nk6UowehLcKLqrATDeNNtz5zlHYTucO838TEGIhSOGgNK+fiK39wkVf357Am701k4ke849oiZT3wNGODX8qESF1r1z1hUHIfbERFgcmgUKh0YSYoYkM1lgcfxSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMWgq8Yv; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52f01993090so1535347e87.2;
+        Mon, 22 Jul 2024 05:30:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1721596880; x=1722201680; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721651438; x=1722256238; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hwoi+xnqOza0tGjPU6DkYcikvADWlzsV5Kz6p1lQE7M=;
-        b=Q4fZxlU+oD9nLfqj+vEKf5njE8VSofxCvrvXNsL/BMJtUHU0rrZTLUA6aTzCwyu1YC
-         GWFZg+y3bhLPZLFRsDMddVNUWZO2m6CzmjUzpNdxxCli+q2lk1H6u+HDr0ibnM7wgMFt
-         cXVtk07uljnKgpxPrX42IuPiGNoM4rjAVJUcvhgOt+M1Qzi99frvb3yQl3pnx/QSc1zf
-         y6y8e+qqAyt/5o4AnCxlcNABKoyfmC4mp4pJRI80n2aL5DJyhOqzD6o1IY9Rg0wqVt9u
-         tX1y8KNUwZIX+bu/AtMw2pWAh+WbziZlabWeDGEq3/p1Acx3aGJDgpzaB62aTG/FNj1b
-         mVXw==
+        bh=eptFeU8CJqEx351tabLE2guumHvDrPbBEYemGsbHeAw=;
+        b=CMWgq8YvXLXaxYFawjB0hxjjOHlfC0otdqWlCzs5v8nfyrbvS8sQgD8NLrRRuUB4sJ
+         ondIfIAYH9tvLsF6enu7E1XrRIOFf+bRf2kuJXn6s+m6Apo2MjETMNiu41sI4HwIBjOc
+         c3kfeDY8oQQsoxyK0NGqsOBe961AkgLvJCRB1EOP1FITa6RQG8J+0QHoSBjI9EAdIiaw
+         +spyOhPAuUti/aejOSTVXvTFwlNyCPoFcq4ZPs4IKAHwRcxUXMCmiWawRrPp5TJBs1gc
+         aSvY1us619H9gmHUdllxbjiOggdtqr8R4gzzf3LM03rV82s0cwl+AMI8NUcAPtUMSdE3
+         n1Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721596880; x=1722201680;
+        d=1e100.net; s=20230601; t=1721651438; x=1722256238;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hwoi+xnqOza0tGjPU6DkYcikvADWlzsV5Kz6p1lQE7M=;
-        b=xSq+cFc5daq1VYc5S4Tm1vsH8YZAVEtOhoeqwL+K1WBkaT8xBnTX473xLuX/gZnI1t
-         feAiWSEoxL3WR8vl8KeU4oL1gXi8rqquZ8BTJGdZw9FWmjoMaFhHO8sLDdSXN7mXgwOl
-         nlrb1MydEutVwpA+VELo99/xyK3YlHtrT8ZNrWCRethwtW2E4mESKeM55buK7zrxPMe8
-         wKhNOYWUQmsjP6M5moEPoVvonAxpjg/C3V+0QAk8ZrPrAuzs1uWsTf9G+1GgiDWDJyoB
-         MpEQh9vScA399Kgal5munDcvs8PWals/7qTkObhHzN2Dtjvm1mgDcBSgXSQ/UsreMQ1p
-         7o4g==
-X-Gm-Message-State: AOJu0YzE4aOIDMrhJnsym7LfO4xJiRiLFoKx/XGKSVZ1T+lzKbVRTFl1
-	Dll30OgG2ctFPDIQb0o1SyWWBDgzTCEWvphS2Eg8KGuzWNw4MRPdenJ+rQeXpK/Evsui9umCN1L
-	cvlM=
-X-Google-Smtp-Source: AGHT+IFgaz/TYVXfr9KJ6WL8UbcjGJLPCMLdVw+skoW6wIXNGCCTqghUUAsp/+MNcW2Cxsxi6V6gOg==
-X-Received: by 2002:a17:903:1ca:b0:1fc:5b41:bb1b with SMTP id d9443c01a7336-1fd74560aa8mr50182645ad.4.1721596879718;
-        Sun, 21 Jul 2024 14:21:19 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f3181ffsm40884015ad.155.2024.07.21.14.21.18
+        bh=eptFeU8CJqEx351tabLE2guumHvDrPbBEYemGsbHeAw=;
+        b=mjZ6Km9wgjLm+XSzEiwbJUnhUHVmJz39Hbt5xhKrlbGBPhY+6qQvDaybz0mArsjkIi
+         58/tdUlpzF26R8aNZxx/9oUJecmvw8HSQGmtVIeRmdSRMTmpGqRkBkt6ZxoQuAO1T3ok
+         23sOOI+LAdcx7dvQMcMb2NpJWtz69mUIcVSRafNXM8qiqeChsKNBPctD0fXWU4aPvm7H
+         WxwfZOFPJmV7LSanvND84XQm6pDQcgJzmxxmIt1RONsC6w6cZ+dXX7SsXZnorGKCN3UR
+         deF2eSMiWJE0P1apno0g9RLrzxMxpaCLCk1pig7iEw3bdTpWIcTIqK3fAyqGkKVIMgku
+         hgkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdy25BFEfEmBcOx9U7SO1zgksRJ5l3ApqCd+kWevQubgnyWf5ZIgxNIQSjHszUS3pnqxP2mC2WW2vO5Pgt0IniPTwQFmJl3Y+WyKM/
+X-Gm-Message-State: AOJu0YxJk1evgh9AHWcsgK6lADFyP2ERzjKAfasVIuRtEvF3EUmGDzIE
+	Else/Dt2sdAjGQXvfxqy3WdT24MbI2ovRr3sq+UsBGtJlzXHTdR+
+X-Google-Smtp-Source: AGHT+IHfBGCsUGlWcxXpDH//Hdu/An4ggrc6YusD9TiHaUYb4RxNEcCbwk4td1ScSnWnNGfhVZUe0Q==
+X-Received: by 2002:a05:6512:4009:b0:52c:dd0c:4c57 with SMTP id 2adb3069b0e04-52efb74cf2emr4287191e87.27.1721651438007;
+        Mon, 22 Jul 2024 05:30:38 -0700 (PDT)
+Received: from [192.168.42.33] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c7be7fdsm422418566b.86.2024.07.22.05.30.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Jul 2024 14:21:19 -0700 (PDT)
-Message-ID: <3e1cdd67-22e2-4706-a581-2e05d174d2f2@kernel.dk>
-Date: Sun, 21 Jul 2024 15:21:18 -0600
+        Mon, 22 Jul 2024 05:30:37 -0700 (PDT)
+Message-ID: <822ea7ba-5199-44bc-a976-0ba55509c909@gmail.com>
+Date: Mon, 22 Jul 2024 13:31:04 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,160 +76,101 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing 3/5] tests: Add test for bind/listen commands
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-References: <20240604000417.16137-1-krisman@suse.de>
- <20240604000417.16137-4-krisman@suse.de>
+Subject: Re: [PATCH v6 RESEND] io_uring: releasing CPU resources when polling
+To: hexue <xue01.he@samsung.com>, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20240709092951epcas5p24783c3bb5c23277cf23a72a6e1855751@epcas5p2.samsung.com>
+ <20240709092944.3208051-1-xue01.he@samsung.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240604000417.16137-4-krisman@suse.de>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240709092944.3208051-1-xue01.he@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/3/24 6:04 PM, Gabriel Krisman Bertazi wrote:
-> +static void *do_server(void *data)
+On 7/9/24 10:29, hexue wrote:
+> io_uring use polling mode could improve the IO performence, but it will
+> spend 100% of CPU resources to do polling.
+> 
+> This set a signal "IORING_SETUP_HY_POLL" to application, aim to provide
+> a interface for user to enable a new hybrid polling at io_uring level.
+> 
+> A new hybrid poll is implemented on the io_uring layer. Once IO issued,
+> it will not polling immediately, but block first and re-run before IO
+> complete, then poll to reap IO. This poll function could be a suboptimal
+> solution when running on a single thread, it offers the performance lower
+> than regular polling but higher than IRQ, and CPU utilization is also lower
+> than polling.
+> 
+> Test Result
+> fio-3.35, Gen 4 device
+> -------------------------------------------------------------------------------------
+> Performance
+> -------------------------------------------------------------------------------------
+>                    write          read           randwrite       randread
+> regular poll    BW=3939MiB/s    BW=6596MiB/s    IOPS=190K       IOPS=526K
+> IRQ             BW=3927MiB/s    BW=6567MiB/s    IOPS=181K       IOPS=216K
+> hybrid poll     BW=3933MiB/s    BW=6600MiB/s    IOPS=190K       IOPS=390K(suboptimal)
+> -------------------------------------------------------------------------------------
+> CPU Utilization
+> -------------------------------------------------------------------------------------
+>                  write   read    randwrite       randread
+> regular poll    100%    100%    100%            100%
+> IRQ             38%     53%     100%            100%
+> hybrid poll     76%     32%     70%              85%
+> -------------------------------------------------------------------------------------
+> 
+> --
+...
+> diff --git a/io_uring/rw.c b/io_uring/rw.c
+> index 1a2128459cb4..5505f4292ce5 100644
+> --- a/io_uring/rw.c
+> +++ b/io_uring/rw.c
+> +static int io_uring_hybrid_poll(struct io_kiocb *req,
+> +				struct io_comp_batch *iob, unsigned int poll_flags)
 > +{
-> +	struct srv_data *rd = data;
-> +
-> +	struct io_uring_params p = { };
-> +	struct __kernel_timespec ts;
-> +	struct io_uring_sqe *sqe;
-> +	struct io_uring_cqe *cqe;
-> +	struct io_uring ring;
-> +	int ret, conn, sock_index;
-> +	unsigned head;
-> +	int fd, val;
-> +	char buf[1024];
-> +
-> +	ret = t_create_ring_params(4, &ring, &p);
-> +	if (ret < 0) {
-> +		fprintf(stderr, "queue_init: %s\n", strerror(-ret));
-> +		goto err;
-> +	}
-> +
-> +	ret = io_uring_register_files(&ring, &fd, 1);
-> +	if (ret) {
-> +		fprintf(stderr, "file register %d\n", ret);
-> +		goto err;
-> +	}
-> +
-> +	memset(&server_addr, 0, sizeof(struct sockaddr_in));
-> +	server_addr.sin_family = AF_INET;
-> +	server_addr.sin_port = htons(8000);
-> +	server_addr.sin_addr.s_addr = htons(INADDR_ANY);
-> +
-> +	sock_index = 0;
-> +	sqe = io_uring_get_sqe(&ring);
-> +	io_uring_prep_socket_direct(sqe, AF_INET, SOCK_STREAM, 0,
-> +				    sock_index, 0);
-> +
-> +	sqe = io_uring_get_sqe(&ring);
-> +	val = 1;
-> +	io_uring_prep_cmd_sock(sqe, SOCKET_URING_OP_SETSOCKOPT, 0,
-> +			       SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
-> +	sqe->flags |= IOSQE_FIXED_FILE | IOSQE_IO_LINK;
-> +
-> +	sqe = io_uring_get_sqe(&ring);
-> +	io_uring_prep_bind(sqe, sock_index, (struct sockaddr *) &server_addr,
-> +			   sizeof(struct sockaddr_in));
-> +	sqe->flags |= IOSQE_FIXED_FILE | IOSQE_IO_LINK;
-> +
-> +	sqe = io_uring_get_sqe(&ring);
-> +	io_uring_prep_listen(sqe, sock_index, 1);
-> +	sqe->flags |= IOSQE_FIXED_FILE | IOSQE_IO_LINK;
-> +
-> +	ret = io_uring_submit(&ring);
-> +	if (ret < 0) {
-> +		printf("submission failed. %d\n", ret);
-> +		goto err;
-> +	}
-
-Did you test this on older kernels? I suspect they will fail without
-IORING_SETUP_SUBMIT_ALL set, and they will fail even if set for kernels
-that don't support bind/listen.
-
-We need to reliably return T_EXIT_SKIP for kernels that don't support
-this feature.
-
-> +static int do_client()
-> +{
-> +	struct io_uring_sqe *sqe;
-> +	struct io_uring_cqe *cqe;
-> +	struct sockaddr_in peer_addr;
-> +	socklen_t addr_len = sizeof(peer_addr);
-> +	struct io_uring ring;
-> +	int ret, fd = -1, sock_index;
-> +	int i;
-> +
-> +	ret = io_uring_queue_init(3, &ring, 0);
-> +	if (ret < 0) {
-> +		fprintf(stderr, "queue_init: %s\n", strerror(-ret));
-> +		return -1;
-> +	}
-> +
-> +	ret = io_uring_register_files(&ring, &fd, 1);
-> +	if (ret) {
-> +		fprintf(stderr, "file register %d\n", ret);
-> +		goto err;
-> +	}
-> +
-> +
-> +	peer_addr.sin_family = AF_INET;
-> +	peer_addr.sin_port = server_addr.sin_port;
-> +	peer_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-> +
-> +	sock_index = 0;
-> +	sqe = io_uring_get_sqe(&ring);
-> +	io_uring_prep_socket_direct(sqe, AF_INET, SOCK_STREAM, 0,
-> +				    sock_index, 0);
-> +
-> +	sqe = io_uring_get_sqe(&ring);
-> +	io_uring_prep_connect(sqe, sock_index, (struct sockaddr*) &peer_addr, addr_len);
-> +	sqe->flags |= IOSQE_FIXED_FILE | IOSQE_IO_LINK;
-> +
-> +	sqe = io_uring_get_sqe(&ring);
-> +
-> +	io_uring_prep_send(sqe, sock_index, magic, strlen(magic), 0);
-> +	sqe->flags |= IOSQE_FIXED_FILE | IOSQE_IO_LINK;
-> +
-> +	io_uring_submit(&ring);
-> +	io_uring_wait_cqe_nr(&ring, &cqe, 3);
-
-Ditto for these, if socket/connect/send aren't supported.
-
-> +
-> +	io_uring_for_each_cqe(&ring, i, cqe) {
-> +		if (cqe->res < 0) {
-> +			printf("client cqe. idx=%d, %d\n", i, cqe->res);
-> +		}
-> +	}
-> +	io_uring_cq_advance(&ring, 2);
-> +
-> +	return 0;
-> +err:
-> +	return -1;
-> +}
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +	pthread_mutexattr_t attr;
-> +	pthread_t srv_thread;
-> +	struct srv_data srv_data;
+> +	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+> +	struct io_ring_ctx *ctx = req->ctx;
 > +	int ret;
-> +	void *retval;
+> +	u64 runtime, sleep_time;
 > +
-> +	if (argc > 1)
+> +	sleep_time = io_delay(ctx, req);
+> +
+> +	/* it doesn't implement with io_uring passthrough now */
+> +	ret = req->file->f_op->iopoll(&rw->kiocb, iob, poll_flags);
+
+->iopoll vs ->uring_cmd_iopoll, same comment as in my
+previous review
+
+
+> +
+> +	req->iopoll_end = ktime_get_ns();
+> +	runtime = req->iopoll_end - req->iopoll_start - sleep_time;
+> +	if (runtime < 0)
 > +		return 0;
 > +
-> +	pthread_mutexattr_init(&attr);
-> +	pthread_mutexattr_setpshared(&attr, 1);
-> +	pthread_mutex_init(&srv_data.mutex, &attr);
-> +	pthread_mutex_lock(&srv_data.mutex);
-
-Probably be better with a barrier rather than a mutex?
+> +	/* use minimize sleep time if there are different speed
+> +	 * drivers, it could get more completions from fast one
+> +	 */
+> +	if (ctx->available_time > runtime)
+> +		ctx->available_time = runtime;
+> +	return ret;
+> +}
+> +
+>   int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+>   {
+>   	struct io_wq_work_node *pos, *start, *prev;
+> @@ -1133,7 +1203,9 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+>   		if (READ_ONCE(req->iopoll_completed))
+>   			break;
+>   
+> -		if (req->opcode == IORING_OP_URING_CMD) {
+> +		if (ctx->flags & IORING_SETUP_HY_POLL) {
+> +			ret = io_uring_hybrid_poll(req, &iob, poll_flags);
+> +		} else if (req->opcode == IORING_OP_URING_CMD) {
+>   			struct io_uring_cmd *ioucmd;
+>   
+>   			ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
 
 -- 
-Jens Axboe
-
+Pavel Begunkov
 

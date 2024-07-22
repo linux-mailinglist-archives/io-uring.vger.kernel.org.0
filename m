@@ -1,52 +1,73 @@
-Return-Path: <io-uring+bounces-2537-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2538-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53504938F26
-	for <lists+io-uring@lfdr.de>; Mon, 22 Jul 2024 14:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63EA6938FB0
+	for <lists+io-uring@lfdr.de>; Mon, 22 Jul 2024 15:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFF771F21C31
-	for <lists+io-uring@lfdr.de>; Mon, 22 Jul 2024 12:38:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D81501F21E43
+	for <lists+io-uring@lfdr.de>; Mon, 22 Jul 2024 13:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D923316C863;
-	Mon, 22 Jul 2024 12:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D946D16D312;
+	Mon, 22 Jul 2024 13:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stuba.sk header.i=@stuba.sk header.b="H+vDKdwy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TlMR7wl4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out.cvt.stuba.sk (smtp-out.cvt.stuba.sk [147.175.1.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ED816CD16;
-	Mon, 22 Jul 2024 12:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.175.1.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4212816C86C
+	for <io-uring@vger.kernel.org>; Mon, 22 Jul 2024 13:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721651885; cv=none; b=Nyy6T3VSYs5GjvI7F7PzyBVbu4+50DbQ32PbscB7PrOw5Yha4jsMgYkH9M08AtEyaKVx+uvtdcPa5D9BZDUdcEigP12rlzcuI+/8TYpGUsiNR5eKk+6tzeWDrtRqNFVoDo/L4kuOj6VsErPGfdOUvk1xEqrdN1YGYm7MlfHNNmo=
+	t=1721653944; cv=none; b=hYDH6IfRcjm5Hc4/I4czpGnnWP0LieW075hIzsVN90JuXlpJGOrV+PoHeoMqYUOA2ApAVA23D7G8E3Ms/RHJ8knPsIIUL08/TlLumpTfyB9B4KVbsGMGE0tbVYVo42oNjpP0ncWrH1tPIbXy1AgzhnFv9/aJSMyJwPtm89xWyoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721651885; c=relaxed/simple;
-	bh=eTg5NAhjkg+X6jjYwP1XPcO3kFbYYOFgrmRWIhOoUU4=;
+	s=arc-20240116; t=1721653944; c=relaxed/simple;
+	bh=ZDpW46zYYmcXYXi1gs6sVxILHI+ntzVjWJUY4JL4vXg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GhiICaugOCCJudpq6Zk+QwggvRdZRQijQeV+eQ4/iiSK+nEKvjl7D6adrbwU28O2zZwvJJ+j05alStVnQ5AL5PW+QDda4ELhotuitQc0w9oKJ2YRKeBWckd/g2lfYJK7MmG9yIPLP3QJsk2ig40aXp07KNxB20ZL/RbHjKgB6RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stuba.sk; spf=pass smtp.mailfrom=stuba.sk; dkim=pass (2048-bit key) header.d=stuba.sk header.i=@stuba.sk header.b=H+vDKdwy; arc=none smtp.client-ip=147.175.1.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stuba.sk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stuba.sk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=stuba.sk;
-	s=20180406; h=Content-Transfer-Encoding:Content-Type:From:To:Subject:
-	MIME-Version:Date:Message-ID; bh=seaaaDrmsxI8CHZMu8BAxDgz1W7j+k0jOcWgowxaoEc=
-	; t=1721651883; x=1722083883; b=H+vDKdwyR3z0DJr/vX0DTqoap/fdQPdPKSqw/KHOybZyE
-	s/pce2VpbaCPfqN1tCNNXnvuLgtWeyjeqVZ/ujbakDYneigOfwPn001hHMz6+bX4uX1CWwf2RBEu8
-	cqRAmcW9tKP/XFhgWDQlJH2Oh1goEP5/pa7UlSRpPJDUo8PT2M6jPGIGnCW1iEkV6b1/t6mB67Esb
-	Ylq323k/+bcZQ4TOgtNIEfkBAOz6Ix94K6mu7htIiojpCvfvzPyisZ+7f0RuOngXQzixvoAmhQZwz
-	jzB/hhHeNBGpX2fzQXLisB1nSolo1JoHsBZ3Ezl2POB2mEUx2VvCPZZBrVgK9ElrKg==;
-X-STU-Diag: ddbf88033a8394d7 (auth)
-Received: from ellyah.uim.fei.stuba.sk ([147.175.106.89])
-	by mx1.stuba.sk (Exim4) with esmtpsa (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-	(envelope-from <matus.jokay@stuba.sk>)
-	id 1sVsIi-000000007GU-0deN;
-	Mon, 22 Jul 2024 14:38:00 +0200
-Message-ID: <bcbb8961-392c-431b-8199-673bbb80af3a@stuba.sk>
-Date: Mon, 22 Jul 2024 14:37:59 +0200
+	 In-Reply-To:Content-Type; b=ffPEnEDEGY/NXDw050ELUH8aCNoh0BHVMVG1WFCa2ZoDQOqY/x9erdxJWSygrWRvVYvaydbAVxEoz4+W+x901O32WfuPf3D7k4V6b4i3cFfsX6VijvHISqCghYYhNdE3XohXF6bP07iPMZ1Zf3nY2ze6nI/1y77o+X0E3UUl3mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TlMR7wl4; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77d85f7fa3so689933266b.0
+        for <io-uring@vger.kernel.org>; Mon, 22 Jul 2024 06:12:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721653942; x=1722258742; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZaA7ELYfCBytGBHycZn/0maI9XaR98EbBKpXVQ28XuM=;
+        b=TlMR7wl4emgZjOTO/nbNiKwOeg259TYomhaQNSt4aeLI7QS+lprN/csvpXcFaVAdiZ
+         mBJuPl51dCnC33chlwoHaK1Ci43rsq389PjTqY0BpeqiPhi6ybdKGX7wAJ28dkWmexPN
+         FQwWorGXTfETX12rJh/EFeuEzUeIedu1zBfG72gSgtmvqDD8yC0Ak+bBhBV95dkEUysr
+         C6Fio8ffIByn1WUwahDG4djLA1H8hw79OFCD+bZ3rBT/7JWLQlXXydKji9iNi9TZRbTc
+         MoxMsboS+CzfdC5/IDz6JCOSzysqGVy5qxW/goTg+AX8IWGiuJM+LNvNAwhHbo1iA8Xf
+         WY4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721653942; x=1722258742;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZaA7ELYfCBytGBHycZn/0maI9XaR98EbBKpXVQ28XuM=;
+        b=aW42gEAymqQ6twiB8K0GjsXf5bdhGu+ujq0bU608aZRzjfaw+iIUk5QDv8EoXM8gaR
+         dvwoNmEr90rUcETauriSIGYvXjN/IqyCLz+aaimC8DrxVtpOBCsSQCs+cHrxzNaOY60l
+         MHwCfCScWMvSuvksXLsHYBs798OhR8NtFYLBy7TiZks9EBxBvYXs+VFOsdwv2a4Byd8K
+         R92PMeMkDJb+RyIaEmhrleVLByfzwDBP0Pt9QDF/CXZjOac4Y0hBzDx+Vq1KkVqr1W7P
+         AVQ/OzQpRDrvnfNeehPcE/WVf/9qnT2rGtok8op1RAy26s358FSGKJQyMx/D2hwpKWw0
+         fKSw==
+X-Gm-Message-State: AOJu0YyulgXE1E7nI7ieLNxvvkpJNk9Ljg98v4wXgGIj/IQq+Qrf/0l2
+	GWB0JCzFQcMkbssHNKD7XH7fIOieUNQtWHt0Ht3M5G6wpja7oFihnpPBpg==
+X-Google-Smtp-Source: AGHT+IEtzooKjVnJW5AZ3JliYoJv0B+HIuh+H4iHeTO0CnT1lpVwmGFZXo8ATLXmj3Doyclkx37mHw==
+X-Received: by 2002:a17:906:c142:b0:a6f:996f:23ea with SMTP id a640c23a62f3a-a7a41b87dbemr742163766b.15.1721653941396;
+        Mon, 22 Jul 2024 06:12:21 -0700 (PDT)
+Received: from [192.168.42.33] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a84bbfd99sm2607566b.94.2024.07.22.06.12.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 06:12:21 -0700 (PDT)
+Message-ID: <ec03c78a-98a6-414c-a8ac-b1c5498101b5@gmail.com>
+Date: Mon, 22 Jul 2024 14:12:48 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -54,40 +75,105 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] net: Split a __sys_bind helper for io_uring
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20240614163047.31581-1-krisman@suse.de>
- <20240618174953.5efda404@kernel.org>
- <68b482cd-4516-4e00-b540-4f9ee492d6e3@kernel.dk>
- <20240619080447.6ad08fea@kernel.org>
- <8002392e-5246-4d3e-8c8a-70ccffe39a08@kernel.dk>
- <498a6aad-3b53-4918-975e-3827f8230bd0@stuba.sk>
- <01ef97b5-33a5-4c79-a0cf-4655881f106c@I-love.SAKURA.ne.jp>
+Subject: Re: [PATCH v6 2/2] io_uring/rsrc: enable multi-hugepage buffer
+ coalescing
+To: Chenliang Li <cliang01.li@samsung.com>, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, peiwei.li@samsung.com, joshi.k@samsung.com,
+ kundan.kumar@samsung.com, anuj20.g@samsung.com, gost.dev@samsung.com
+References: <20240716060807.2707-1-cliang01.li@samsung.com>
+ <CGME20240716060819epcas5p3387922a068b65eca1b3ab65effcf586e@epcas5p3.samsung.com>
+ <20240716060807.2707-3-cliang01.li@samsung.com>
 Content-Language: en-US
-From: Matus Jokay <matus.jokay@stuba.sk>
-In-Reply-To: <01ef97b5-33a5-4c79-a0cf-4655881f106c@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240716060807.2707-3-cliang01.li@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 15. 7. 2024 15:59, Tetsuo Handa wrote:
-> On 2024/07/15 21:49, Matus Jokay wrote:
->> Please fix io_bind and io_listen to not pass NULL ptr to related helpers
->> __sys_bind_socket and __sys_listen_socket. The first helper's argument
->> shouldn't be NULL, as related security hooks expect a valid socket object.
->>
->> See the syzkaller's bug report:
->> https://lore.kernel.org/linux-security-module/0000000000007b7ce6061d1caec0@google.com/
+On 7/16/24 07:08, Chenliang Li wrote:
+> Add support for checking and coalescing multi-hugepage-backed fixed
+> buffers. The coalescing optimizes both time and space consumption caused
+> by mapping and storing multi-hugepage fixed buffers.
 > 
-> That was already fixed.
+> A coalescable multi-hugepage buffer should fully cover its folios
+> (except potentially the first and last one), and these folios should
+> have the same size. These requirements are for easier processing later,
+> also we need same size'd chunks in io_import_fixed for fast iov_iter
+> adjust.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-next&id=ad00e629145b2b9f0d78aa46e204a9df7d628978
-> 
-> 
-Tetsuo, you are very fast ;)
-Thank you!
-mY
+> Signed-off-by: Chenliang Li <cliang01.li@samsung.com>
+> ---
 
+The series looks good apart from the comment below, I'll run some
+tests this week, I think you sent something for liburing/test
+
+> +static bool io_try_coalesce_buffer(struct page ***pages, int *nr_pages,
+> +					 struct io_imu_folio_data *data)
+> +{
+> +	struct page **page_array = *pages;
+> +	struct folio *folio = page_folio(page_array[0]);
+> +	unsigned int count = 1, nr_folios = 1;
+> +	int i;
+> +
+> +	if (*nr_pages <= 1)
+> +		return false;
+> +
+> +	data->nr_pages_mid = folio_nr_pages(folio);
+> +	if (data->nr_pages_mid == 1)
+> +		return false;
+> +
+> +	data->folio_shift = folio_shift(folio);
+> +	/*
+> +	 * Check if pages are contiguous inside a folio, and all folios have
+> +	 * the same page count except for the head and tail.
+> +	 */
+> +	for (i = 1; i < *nr_pages; i++) {
+> +		if (page_folio(page_array[i]) == folio &&
+> +			page_array[i] == page_array[i-1] + 1) {
+> +			count++;
+> +			continue;
+> +		}
+> +
+> +		if (nr_folios == 1) {
+> +			if (folio_page_idx(folio, page_array[i-1])
+> +				!= data->nr_pages_mid - 1)
+
+Code style, comparison (i.e. "!=") should be on the previous line
+
+> +				return false;
+> +
+> +			data->nr_pages_head = count;
+> +		} else if (count != data->nr_pages_mid) {
+> +			return false;
+> +		}
+> +
+> +		folio = page_folio(page_array[i]);
+> +		if (folio_size(folio) != (1UL << data->folio_shift) ||
+> +			folio_page_idx(folio, page_array[i]) != 0)
+> +			return false;
+> +
+> +		count = 1;
+> +		nr_folios++;
+> +	}
+> +	if (nr_folios == 1) {
+> +		if (folio_page_idx(folio, page_array[i-1])
+> +			!= data->nr_pages_mid - 1)
+
+That's too restrictive and would be a regression. We currently allow
+registrations fully falling under a single huge page but not matching
+the right side. E.g. for a [N; M) huge page, you're allowed to register
+[N + 4KB, M - 4KB). We should just remove this check.
+
+And same comment about code style.
+
+
+> +			return false;
+> +
+> +		data->nr_pages_head = count;
+> +	}
+> +
+> +	return io_do_coalesce_buffer(pages, nr_pages, data, nr_folios);
+> +}
+> +
+-- 
+Pavel Begunkov
 

@@ -1,128 +1,132 @@
-Return-Path: <io-uring+bounces-2574-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2575-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1334A93B6E0
-	for <lists+io-uring@lfdr.de>; Wed, 24 Jul 2024 20:38:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F73693B71B
+	for <lists+io-uring@lfdr.de>; Wed, 24 Jul 2024 20:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73802854F6
-	for <lists+io-uring@lfdr.de>; Wed, 24 Jul 2024 18:38:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B801C21742
+	for <lists+io-uring@lfdr.de>; Wed, 24 Jul 2024 18:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F1A1591F3;
-	Wed, 24 Jul 2024 18:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rLYrBZPN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E42E16A95B;
+	Wed, 24 Jul 2024 18:59:06 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2DA15F3EF
-	for <io-uring@vger.kernel.org>; Wed, 24 Jul 2024 18:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84A915F41D
+	for <io-uring@vger.kernel.org>; Wed, 24 Jul 2024 18:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721846243; cv=none; b=PIpZlK2mezHpKc0d9KAOToRDAEJ78oSlN2kXLRMEQ71Nxhe7FBzqkJA5IP1iQYtSq/2ocwFq1+NxwOdq30S5iwqlU+CZJAhMk8D7QC53I+emaW97Tl8fVzuDfzf8Rh8gj8P751Zte6Wy1/Lg/+VbOFPYuhx5tPDRNhISn5q+hHk=
+	t=1721847546; cv=none; b=pkhjtLZePPgx2UEmnCdzWSF/o5i+l6Ih57u1ogyl56KSkFJA+giQXLwFmNRH/C9HgSGVtdGGfW2e+quAHKHh6R3QcSGD0jIm2fIVIMle2BjUYM/VI9XIKF8aYL+nsLYcycGxwjRt3HwYU7B2mn7BD+HnU6Y0LrlpH1SaxnZzUCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721846243; c=relaxed/simple;
-	bh=t1Uq83j0GcvlWHYQheNUu02IHAWHu8FAUO8HAIkr/mI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=Zf81YRCMZvIyAhymLLw4RQnhsMAAHvcsIT7qXYdSiSaaNh3+Acs2hD+HsrN+RnPsHCc4Buh+FG51omyr1gHuc6w4VJQA/c1qojPGCAEsaa4ojqMy8Gbrs89dyt7leTtuf6du33joyqq23GfZi4BK/cy9bPvrkFtR2Z3qdc68QBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rLYrBZPN; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7092f277242so3731a34.3
-        for <io-uring@vger.kernel.org>; Wed, 24 Jul 2024 11:37:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1721846239; x=1722451039; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mwvs0Pg/CWzw7pNw0vEO0JSCGTQ/xOWqXNs4xnG2Mgc=;
-        b=rLYrBZPNfBuV5NRueG8dm/RG/6aD5SNSwMvwYAgeXBDOUptb7z8hzWzLG2DgodYnDO
-         puxlQ8TisO23RukVtehIoOQlzJVOINMrzYbSZsk7h12n9qNs6yWKaDdnTS51xcMQkSgV
-         +hbSqPkAr7EJKucoZhkAi3AzXRzom8JPUyrTUsqKG7z1a7I6YVC7xzCk1pSAX7A8b+ad
-         wT+E3KLLVSZMXoUHJZfqiI8c8a1CuiakQ5zX0Pu9zy5haSh9rLejnl/K3mRPvKGrUlye
-         GK5AixK5edbPdE0MWPhj+WOhTibxo9/SgX+xnZDhdADAxwX6VmX489YBmtsPOmVmBeTP
-         iuAg==
+	s=arc-20240116; t=1721847546; c=relaxed/simple;
+	bh=7f7FtSv7nnQZMtXVfJa0ePVsJHkIWzVFFZA8MEbsHLE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lVkhRLhVodVQy3B5CaaPYpY1atbjHPvB1LLofLF3RK5Nc+Ws7u5iLJt+i3oBtIdA2hnkbE4B8fX6iIIGlBZGH0naDXJyMLEqLOg+70wSZ6MfYZkS4OA3cVkSfH1v9cDwWUo0XOi0aXufAR5jWHPE53vSefDGSvvyHypKXvjfrwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-397052a7bcbso594005ab.2
+        for <io-uring@vger.kernel.org>; Wed, 24 Jul 2024 11:59:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721846239; x=1722451039;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1721847544; x=1722452344;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mwvs0Pg/CWzw7pNw0vEO0JSCGTQ/xOWqXNs4xnG2Mgc=;
-        b=BDM1oz/UBEeuhVJr+hN6HBJnrGYaBEjBMEm7n0X5Ff1HlAhbMf4tJKIg5pP6fPv52g
-         EcV+quVaWCld+e5awVLOSMVD2PzPglQvVR+CikOcNk0XlSqHffC9wF5W0wJN8CPmAr2t
-         glrxFkECaknsR5ikUHpt/IJWco6I3Ls702xWByXtUQZZlTVeNVHJdLDxnmVmlGMJp9a2
-         JWTtxFjW/2Mf7ntNqrdQcqdSusNATEk4OunnX2T5YxiP1yk0lq29L+r/zv43UYSLDtyE
-         07Rvu9FO5CaQKal6PMDcnm+BIl+xfPKUBPCmObUTzSmrTNlyixPaKM8KoUeedyxBcywV
-         qS8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVumjuB1Bo8JZ71yhp/ikcTdBc2uqRh4HJBjDuhQ3RlofYbAySj9gPIctRd8MFinJlBfph5erJAYQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAbLTT45KSiwExyR/6j2mxUS4PaUaRuoJ+aBufeFoCz50TJ8PT
-	TWx5BHXfIOMwggYn/zPbWEjgQtGTc7cVSA0aIJQ5VFC9i1HxW8XSvR46JQ4BEAM=
-X-Google-Smtp-Source: AGHT+IEWRY324XaCLYmUaTmaEPj0uTQobnb2PV1RlylCK5ZjvJLU7A0K7vZ4iuDj5jyWnQqqe1xo9g==
-X-Received: by 2002:a05:6830:1212:b0:708:b80d:f3f with SMTP id 46e09a7af769-7092fb252f6mr82039a34.4.1721846239224;
-        Wed, 24 Jul 2024 11:37:19 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f60d7529sm2603690a34.40.2024.07.24.11.37.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jul 2024 11:37:18 -0700 (PDT)
-Message-ID: <18c54a21-184c-4cde-811c-48c5c0e34f9b@kernel.dk>
-Date: Wed, 24 Jul 2024 12:37:17 -0600
+        bh=wfdzvacuDV3CcT26JJD9v7jns+NQq86w7tti0drlXpY=;
+        b=QnrFvaecG4+tem5gziFhl0cAlZUnnoW6wuYvXUZ3RhyrOhTmXXzqLi0GYvVBX0Yezg
+         5vWWAs155aoERXB1LUZd0YLfL3IVz99VYpC3KHMF6hmTf/obxR4jncX71vyk8IznKy2Z
+         eluOriyJbAB9szM3H++f+1Dn22U3HrZtOIv1dCbYRFUVvIcwivmULrDKBBUaOpknByLE
+         +ldL+Hdug+k9Ajw68xpLg5KnW/QYOb2AqE1l012ewd3kEVmgao8AwcOFfNkT1heLcoA3
+         vZKvJStzWBJxxjKNx0nArjuXTwKPAoUa3U7wt+w6bzN0aDiQw4UW4QDm7Pkn1VOOR0sO
+         K49A==
+X-Forwarded-Encrypted: i=1; AJvYcCV8iPfBIO2YmKeLdFYn7GjJBee0m9JQypd73w6oOJOVcOK+HDIZ/JFZ3o38Espk8q3StKPuKhJf95S173sCxM+t7nVBTB+1wxU=
+X-Gm-Message-State: AOJu0Yzz466Jas0bcuR/11gxH+Sl067aP65RZdKYM9GfHM0a8tRXbLsX
+	sw5mcMYLSF13tkZSGu6iBDm6oFxBYfrBnFNQsHDDJUMwOreNK/Uy8GtvU741p4X3JWGZzOHosgr
+	rMYFXLAV/4l4S0wtEz+yhbSEUdy45kQcod77nAGhokxhd1CDY7J5/svM=
+X-Google-Smtp-Source: AGHT+IG0R1Og+dysLDHe5d/3/YBqGbJ+pY6Rqqiy5laFYf0wseOpwhzCIZGio6wZe5pmnw8vWceoXY/k+ubnGByr/mg786J2rbX7
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in
- io_req_task_work_add_remote
-To: syzbot <syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000fd3d8d061dfc0e4a@google.com>
-Content-Language: en-US
-In-Reply-To: <000000000000fd3d8d061dfc0e4a@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a2e:b0:397:3e38:eb30 with SMTP id
+ e9e14a558f8ab-39a2182abaemr382345ab.3.1721847543887; Wed, 24 Jul 2024
+ 11:59:03 -0700 (PDT)
+Date: Wed, 24 Jul 2024 11:59:03 -0700
+In-Reply-To: <18c54a21-184c-4cde-811c-48c5c0e34f9b@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000360ee4061e02dffe@google.com>
+Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_task_work_add_remote
+From: syzbot <syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/24/24 4:51 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    933069701c1b Merge tag '6.11-rc-smb3-server-fixes' of git:..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=16e38d5e980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c062b3d00b275b52
-> dashboard link: https://syzkaller.appspot.com/bug?extid=82609b8937a4458106ca
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149e5245980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1388c55e980000
+Hello,
 
-#syz test
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in io_req_task_work_add_remote
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 2626424f5d73..1aaab21e1574 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1137,9 +1137,10 @@ static inline void io_req_local_work_add(struct io_kiocb *req,
- 	BUILD_BUG_ON(IO_CQ_WAKE_FORCE <= IORING_MAX_CQ_ENTRIES);
- 
- 	/*
--	 * We don't know how many reuqests is there in the link and whether
--	 * they can even be queued lazily, fall back to non-lazy.
-+	 * We don't know how many requests are in the link and whether they can
-+	 * even be queued lazily, fall back to non-lazy.
- 	 */
-+	req->nr_tw = 0;
- 	if (req->flags & (REQ_F_LINK | REQ_F_HARDLINK))
- 		flags &= ~IOU_F_TWQ_LAZY_WAKE;
- 
+=====================================================
+BUG: KMSAN: uninit-value in io_req_local_work_add io_uring/io_uring.c:1193 [inline]
+BUG: KMSAN: uninit-value in io_req_task_work_add_remote+0x592/0x5e0 io_uring/io_uring.c:1241
+ io_req_local_work_add io_uring/io_uring.c:1193 [inline]
+ io_req_task_work_add_remote+0x592/0x5e0 io_uring/io_uring.c:1241
+ io_msg_remote_post io_uring/msg_ring.c:102 [inline]
+ io_msg_data_remote io_uring/msg_ring.c:133 [inline]
+ io_msg_ring_data io_uring/msg_ring.c:152 [inline]
+ io_msg_ring+0x1c38/0x1ef0 io_uring/msg_ring.c:305
+ io_issue_sqe+0x383/0x22c0 io_uring/io_uring.c:1711
+ io_queue_sqe io_uring/io_uring.c:1925 [inline]
+ io_submit_sqe io_uring/io_uring.c:2181 [inline]
+ io_submit_sqes+0x1259/0x2f20 io_uring/io_uring.c:2296
+ __do_sys_io_uring_enter io_uring/io_uring.c:3206 [inline]
+ __se_sys_io_uring_enter+0x40c/0x3ca0 io_uring/io_uring.c:3143
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3143
+ x64_sys_call+0x2d82/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
--- 
-Jens Axboe
+Uninit was created at:
+ __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4719
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page mm/slub.c:2321 [inline]
+ allocate_slab+0x203/0x1220 mm/slub.c:2484
+ new_slab mm/slub.c:2537 [inline]
+ ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3723
+ __kmem_cache_alloc_bulk mm/slub.c:4759 [inline]
+ kmem_cache_alloc_bulk_noprof+0x486/0x1330 mm/slub.c:4831
+ __io_alloc_req_refill+0x84/0x560 io_uring/io_uring.c:940
+ io_alloc_req io_uring/io_uring.h:393 [inline]
+ io_submit_sqes+0x171b/0x2f20 io_uring/io_uring.c:2285
+ __do_sys_io_uring_enter io_uring/io_uring.c:3206 [inline]
+ __se_sys_io_uring_enter+0x40c/0x3ca0 io_uring/io_uring.c:3143
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3143
+ x64_sys_call+0x2d82/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 5924 Comm: syz.0.16 Not tainted 6.10.0-syzkaller-12268-g7a3fad30fd8b-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+=====================================================
+
+
+Tested on:
+
+commit:         7a3fad30 Merge tag 'random-6.11-rc1-for-linus' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a6fa19980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f26f43c6f7db5ad2
+dashboard link: https://syzkaller.appspot.com/bug?extid=82609b8937a4458106ca
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=178ca779980000
 
 

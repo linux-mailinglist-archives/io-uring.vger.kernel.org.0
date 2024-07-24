@@ -1,67 +1,67 @@
-Return-Path: <io-uring+bounces-2562-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2563-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4577493B031
-	for <lists+io-uring@lfdr.de>; Wed, 24 Jul 2024 13:16:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428A193B032
+	for <lists+io-uring@lfdr.de>; Wed, 24 Jul 2024 13:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFC901F21640
-	for <lists+io-uring@lfdr.de>; Wed, 24 Jul 2024 11:16:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1AE91F216C8
+	for <lists+io-uring@lfdr.de>; Wed, 24 Jul 2024 11:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6C7156F40;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66C9156F5D;
 	Wed, 24 Jul 2024 11:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F5O3VOhB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bOXvp2QS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001A41514D1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FFD155C88
 	for <io-uring@vger.kernel.org>; Wed, 24 Jul 2024 11:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721819767; cv=none; b=OePL5rQHz69ENRIR/Ii1MwqMNVe3V5m33mcAkHfJ12GCkPOvwmyKzKI8uEHfZ9hQj4rKeGy330Y4Ry8AAZJBdQ3m0zDPtHT5WYtlpNCOz8eK9WAgzZtXOaBn5VZ39cgCGxR1BSJ7OpJyZZ88isJtrhOa2XPZJPOs8DL7neIEx1w=
+	t=1721819767; cv=none; b=WrELCfoX7Qcvr+r4+VJv+uionlz6jJ3yIJO1nqdVfqXtNrODOYp+T1Pzw20bzr+KtqXXgkYlzbNx2iTl8ONpRiTxx08+jcsNrnYgncz+RO4m4Prsf1NHZlxEw75LVaeWzXXao45SbqM0vjS+xKxqfUXdqkMCsSAAbrx3G5JEhno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721819767; c=relaxed/simple;
-	bh=iG65+nAGu0sNmZ5b7VnU6xMDRHf+//JiPwt1wQ3bvIQ=;
+	bh=05EpxvT1cTYIgY/t9g4gbpe2wKiIfso/7xdZWHyZpBk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LjCx/cgerRXJeW+TykJCvWgQpnK2z2XQxcAGBuLEEe+ahDfYC1zi6VQzFzcjaaa3l+WCFH1V8XzumMrPcIVE9fqnEslJ/OGjxRyP4VNkG3wleAPcvgyXKox3uiVs/fGOdSFuM7xdVHqEma207yHOEM8u8AVM9n+ihsozTTkHmyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F5O3VOhB; arc=none smtp.client-ip=209.85.208.52
+	 MIME-Version; b=AoH0ViQhf2EDDKtqngWr4mAyb/tAmpFxQlufW8tPB/WoVg2hT8rmY8qzD3CACam95nPfaMTpAI/7UQIrtoP+Q+6wSuFyF/X2VLWBJ5TQ2fCuq0rborK4H2lkQKiWKu1YaDjD1j0F+v2shTrLqiQQRkSkIiytP8KRs7Bkv2FBXbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bOXvp2QS; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a88be88a3aso3377855a12.3
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so5892971a12.3
         for <io-uring@vger.kernel.org>; Wed, 24 Jul 2024 04:16:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721819763; x=1722424563; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721819764; x=1722424564; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cEKh47UkaXuj2JEDyxIJELJBdvBHFKRpFhvKFN8rQ6c=;
-        b=F5O3VOhBiAazdEMixraA8wKom5Tmvz18AfLjTNLGPTs7h89kB/eR9RiR0BHR5qQxrR
-         JLmXNLCVnM2Ee92G7uaBxYsGjifyqdGT5g4bjzcskFHphJ1HYaYvwbGhrOfa31/gFLoL
-         rafoEUFcWAT37V3Bl4N4zlWw/XhTSiKMDQdCWhORuV2Ngnm4X2Bjn3Q0ktwuTR4B6760
-         DlhifvjkuTNKVbnEQvoQRSYrfJEWLDpOHvXCRLURYpaVh1R+b70HVTSHqMjS57G4qkGR
-         ja0MKXJ5BkZtMfAsSyfheDr9XxNlWeFXFGsgFIVgiWR9iuPFOOwE1lmQLkdn3E2BMZpO
-         Ywnw==
+        bh=0gOWOrFeYLgn3gX7zaNQQ941x9glpLybPAboBIfEaVg=;
+        b=bOXvp2QSoFERMxthHeaM2BhrL2wvzcV964ziGhwgdl0oXk8VozzXFJPVrJPZWTCEKd
+         J9TVFaakbma83nZYmGiQv5rv1RYTfFvnYBaqxA+QofcUKTiLNAYHc4ZAZVDHPHO0VuV4
+         YplLmYf+r8+LfRWNp1m25jhaPeFgwCtO2xtHTOiWyBLj1I6Jr2sHdFspmoAcliZ7lQ5y
+         B4X8HH3rSuRLxQCDwfS5T0GE1SwQcIRXpUCHs1F6ajVXa27mm4Q9bPwqGji/nl4TVX1O
+         D9vcG6f3hqujmm8OLlqlM2HYxRPeF+oM7w29ZyvMbhn9U77wGS4yHd/5QK4j6KKcmzZD
+         J7OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1721819764; x=1722424564;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cEKh47UkaXuj2JEDyxIJELJBdvBHFKRpFhvKFN8rQ6c=;
-        b=CfD4/nC9wJDBtNjtwBIDCCMqsFVCJzjEeniG4faOEJgqjGhr4OjVBvgH87ybSTQnUd
-         ULOCie9uLFZHs9fR0/tQmE0ZGAIHk28JLRY/1t47Q7hWY3jknL58jzgAM0hguA/kThya
-         TklC9IgOGtqR1Uy8bWizcKg+wCv8IshGfy8GHY5tJfwUGF0BWym9xSQjNHGQ3GWoTZCM
-         bjkrnF/awhSWgdlJeIlIlZ8Q+kfOBlOU9v4JWO+tQ1/CulSm69E+X+VZI82PFv0ZAgCX
-         l/x/lqdpi+2C8jRvLaeaCaeIgYwmGKmt5NC81Sbmyrzd5Sm/6vMZ/qKwN3PNI7EgncoT
-         nDdA==
-X-Gm-Message-State: AOJu0Yyi9CJ71RM2l+s4XbMKq99qogzE+yzKZtAII6yVellWO2edtor9
-	ovjNZYGtXMGWYiMsHeJYcsxcc90d0vaKRqcER77Ga7vo+XKh6gj+J0SUUg==
-X-Google-Smtp-Source: AGHT+IHmKQhxQhwAf1/1ocmmeyE1A2GQoZ/LPgTq23xnLudN444MRte9AQ3mU0WNXnExDCEJ6njXfg==
-X-Received: by 2002:a05:6402:4302:b0:5a1:3b03:d0cb with SMTP id 4fb4d7f45d1cf-5a47ab120ffmr11833462a12.32.1721819763532;
-        Wed, 24 Jul 2024 04:16:03 -0700 (PDT)
+        bh=0gOWOrFeYLgn3gX7zaNQQ941x9glpLybPAboBIfEaVg=;
+        b=jaCN2daSiFxsJeiN1/jSr6Hsygx3vmlFfc3nJglLPs0vfvpI60WqcLmnzoX2EiBzYS
+         w1gkTknVp+khx+v9C4+7iZxSz6XJqSpbRkWbX4jRMbRx/CNl23I4m3nuknmo3JwwV2vF
+         EjQ7nxpq2oNzpDcNeCsoAJdrFSictMgOyiXUHct/UwQZH/7zAnGnFoJzHLGXDurrPeuC
+         Z2te/bY1ZiNLfwl1B1vUJnFs8jcTojvKBc1VwD3yWozGGyHOILQOb1bQTXaqPWhDxcDN
+         jFAg45rdhkEdhvZTOKwwFj3ezIzPClYJVMoImg0blUiyFxWbcF/wLs1K/IC7QgYVAxwY
+         YweA==
+X-Gm-Message-State: AOJu0YzxTM/Iq6mYnkwpFPKkvbywXivtKu+zeheR6vCkhjGSGxArlU1V
+	9YZm9BDo7dC6VQI+AR3KZ1LULjX2L0vxfK6XI7pABh9IS1NTCLl+Ufl+Xg==
+X-Google-Smtp-Source: AGHT+IFrmRRvnjKmcNxIc2XRzV44esAikkNrC4VT2HD6OJRaqVy36LPyLno09N7FadspzKpmr2cg0w==
+X-Received: by 2002:a50:931a:0:b0:5aa:32bb:146 with SMTP id 4fb4d7f45d1cf-5aa32bb1193mr2490845a12.38.1721819764129;
+        Wed, 24 Jul 2024 04:16:04 -0700 (PDT)
 Received: from 127.0.0.1localhost ([163.114.131.193])
         by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a745917f82sm5006310a12.85.2024.07.24.04.16.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
@@ -70,9 +70,9 @@ From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
 	asml.silence@gmail.com
-Subject: [PATCH 1/6] io_uring: tighten task exit cancellations
-Date: Wed, 24 Jul 2024 12:16:16 +0100
-Message-ID: <acac7311f4e02ce3c43293f8f1fda9c705d158f1.1721819383.git.asml.silence@gmail.com>
+Subject: [PATCH 2/6] io_uring: don't allow netpolling with SETUP_IOPOLL
+Date: Wed, 24 Jul 2024 12:16:17 +0100
+Message-ID: <1e7553aee0a8ae4edec6742cd6dd0c1e6914fba8.1721819383.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1721819383.git.asml.silence@gmail.com>
 References: <cover.1721819383.git.asml.silence@gmail.com>
@@ -84,47 +84,30 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-io_uring_cancel_generic() should retry if any state changes like a
-request is completed, however in case of a task exit it only goes for
-another loop and avoids schedule() if any tracked (i.e. REQ_F_INFLIGHT)
-request got completed.
-
-Let's assume we have a non-tracked request executing in iowq and a
-tracked request linked to it. Let's also assume
-io_uring_cancel_generic() fails to find and cancel the request, i.e.
-via io_run_local_work(), which may happen as io-wq has gaps.
-Next, the request logically completes, io-wq still hold a ref but queues
-it for completion via tw, which happens in
-io_uring_try_cancel_requests(). After, right before prepare_to_wait()
-io-wq puts the request, grabs the linked one and tries executes it, e.g.
-arms polling. Finally the cancellation loop calls prepare_to_wait(),
-there are no tw to run, no tracked request was completed, so the
-tctx_inflight() check passes and the task is put to indefinite sleep.
+IORING_SETUP_IOPOLL rings don't have any netpoll handling, let's fail
+attempts to register netpolling in this case, there might be people who
+will mix up IOPOLL and netpoll.
 
 Cc: stable@vger.kernel.org
-Fixes: 3f48cf18f886c ("io_uring: unify files and task cancel")
+Fixes: ef1186c1a875b ("io_uring: add register/unregister napi function")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ io_uring/napi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 8e6faa942a6f..10c409e56241 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3031,8 +3031,11 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
- 		bool loop = false;
+diff --git a/io_uring/napi.c b/io_uring/napi.c
+index 762254a7ff3f..327e5f3a8abe 100644
+--- a/io_uring/napi.c
++++ b/io_uring/napi.c
+@@ -222,6 +222,8 @@ int io_register_napi(struct io_ring_ctx *ctx, void __user *arg)
+ 	};
+ 	struct io_uring_napi napi;
  
- 		io_uring_drop_tctx_refs(current);
-+		if (!tctx_inflight(tctx, !cancel_all))
-+			break;
-+
- 		/* read completions before cancelations */
--		inflight = tctx_inflight(tctx, !cancel_all);
-+		inflight = tctx_inflight(tctx, false);
- 		if (!inflight)
- 			break;
- 
++	if (ctx->flags & IORING_SETUP_IOPOLL)
++		return -EINVAL;
+ 	if (copy_from_user(&napi, arg, sizeof(napi)))
+ 		return -EFAULT;
+ 	if (napi.pad[0] || napi.pad[1] || napi.pad[2] || napi.resv)
 -- 
 2.44.0
 

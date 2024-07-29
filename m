@@ -1,44 +1,44 @@
-Return-Path: <io-uring+bounces-2594-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2595-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4819403F9
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 03:46:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88BB39403FA
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 03:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B53C1C21D07
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 01:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD0B28330C
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 01:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6DE4683;
-	Tue, 30 Jul 2024 01:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF724683;
+	Tue, 30 Jul 2024 01:46:14 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34E629AF
-	for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 01:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206D829AF
+	for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 01:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722303965; cv=none; b=M0IzAN5+eAPM2qT1KHZue78rYZEy/fE3ggo3QTCjAUUiMkvAd24BHhrGKUzmPmHreXVe9L6K+f1oOZ3bZA2+HKF+xaLRm097dBiOdwlOOyPX+OLFW+fJrTlnwHARb7msyLLbv18W/KJc00tAayAPeob7aH3gWGMTc3quur7t4SI=
+	t=1722303974; cv=none; b=KhhN2MKGAiP9+xArgW+LPVdJGuBcrFPx16uOqVPEMy9gIZ1fkz5BD+xi09iDmyHn0QqXQNk1DP9ghYvRdXRcFfB0PYjpaXX2BTgHXl+clMhagahFzwBuH30DLE9oREDCc5daS7/FuafvRHq5tb/U0whbGoEYmsZfl8h1O0ecFyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722303965; c=relaxed/simple;
-	bh=ISpBmPkVCqfk4/6Gf5fG+ORd8orlPJ5nbudX10JqGDs=;
-	h=From:Message-ID:To:Date:Subject; b=Ai1n1RVpauhR0F4RAOSLLOdhn/0ZaC+fdG1uA5/MLN6W9KMm8N3evR4Yb/hCWMOlSmXb/9eJoW2OCnDD4ZzqiUVTdEkoYdK09s3f1TMFL6JyBRajLF9W246BjsZ/Sz8PaIwJ4xkfjBLwqqhgfd80EAm/hC2IcnxnzW21gM36D5M=
+	s=arc-20240116; t=1722303974; c=relaxed/simple;
+	bh=6iwhVKoZzNTduhQqzHcOrq5LyyOLnhmZQeyqro3XkK4=;
+	h=From:Message-ID:To:Date:Subject; b=gvz7OVHsBw4pmmF6xzwFXB+HbuczBJrIr9UzuQrmz9eZjUYLVSJ/87FuqUv8GJOzMitauFHD97pQBFZZV+q+Yw+6NwfPlzVD7dyX+FNWTHGBthQ0nVEJ9Fe32Q8eMu7AtUCzezEst5s2fR9OToG/WY4xUgZcYfPItG6T6GE1oY4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=37486 helo=localhost)
+Received: from [45.44.224.220] (port=51612 helo=localhost)
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1sYbwA-00044p-0w;
-	Mon, 29 Jul 2024 21:46:02 -0400
+	id 1sYbwK-00045O-06;
+	Mon, 29 Jul 2024 21:46:12 -0400
 From: Olivier Langlois <olivier@trillion01.com>
-Message-ID: <0fe61a019ec61e5708cd117cb42ed0dab95e1617.1722294646.git.olivier@trillion01.com>
+Message-ID: <0a0ae3e955aed0f3e3d29882fb3d3cb575e0009b.1722294947.git.olivier@trillion01.com>
 To: Jens Axboe <axboe@kernel.dk>,Pavel Begunkov <asml.silence@gmail.com>,io-uring@vger.kernel.org
-Date: Mon, 29 Jul 2024 19:03:33 -0400
-Subject: [PATCH] io_uring: keep multishot request NAPI timeout fresh
+Date: Mon, 29 Jul 2024 19:13:35 -0400
+Subject: [PATCH] io_uring: remove unused local list heads in NAPI functions
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -55,34 +55,33 @@ List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 
-this refresh statement was originally present in the original patch:
-https://lore.kernel.org/netdev/20221121191437.996297-2-shr@devkernel.io/
-
-it has been removed with no explanation in v6:
-https://lore.kernel.org/netdev/20230201222254.744422-2-shr@devkernel.io/
-
-it is important to make the refresh for multishot request because if no
-new requests using the same NAPI device are added to the ring, the entry
-will become stall and be removed silently and the unsuspecting user will
-not know that his ring made busy polling for only 60 seconds.
+remove 2 unused local variables
 
 Signed-off-by: Olivier Langlois <olivier@trillion01.com>
 ---
- io_uring/poll.c | 1 +
- 1 file changed, 1 insertion(+)
+ io_uring/napi.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index 0a8e02944689..1f63b60e85e7 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -347,6 +347,7 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
- 		v &= IO_POLL_REF_MASK;
- 	} while (atomic_sub_return(v, &req->poll_refs) & IO_POLL_REF_MASK);
+diff --git a/io_uring/napi.c b/io_uring/napi.c
+index 4fd6bb331e1e..a3dc3762008f 100644
+--- a/io_uring/napi.c
++++ b/io_uring/napi.c
+@@ -205,7 +205,6 @@ void io_napi_init(struct io_ring_ctx *ctx)
+ void io_napi_free(struct io_ring_ctx *ctx)
+ {
+ 	struct io_napi_entry *e;
+-	LIST_HEAD(napi_list);
+ 	unsigned int i;
  
-+	io_napi_add(req);
- 	return IOU_POLL_NO_ACTION;
- }
+ 	spin_lock(&ctx->napi_lock);
+@@ -315,7 +314,6 @@ void __io_napi_busy_loop(struct io_ring_ctx *ctx, struct io_wait_queue *iowq)
+  */
+ int io_napi_sqpoll_busy_poll(struct io_ring_ctx *ctx)
+ {
+-	LIST_HEAD(napi_list);
+ 	bool is_stale = false;
  
+ 	if (!READ_ONCE(ctx->napi_busy_poll_dt))
 -- 
 2.45.2
 

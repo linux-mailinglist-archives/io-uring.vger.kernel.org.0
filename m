@@ -1,44 +1,44 @@
-Return-Path: <io-uring+bounces-2593-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2594-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 088A09403F8
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 03:45:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A4819403F9
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 03:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39A921C21F9C
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 01:45:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B53C1C21D07
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 01:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035444683;
-	Tue, 30 Jul 2024 01:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6DE4683;
+	Tue, 30 Jul 2024 01:46:05 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B93129AF
-	for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 01:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34E629AF
+	for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 01:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722303954; cv=none; b=fz5HpwtA0fV2Jix3gejueAo81VYbDUVPO3bq6z4LnFJ5W2+73soMWmMq1agZk14KRMjJ6t9nwgtSHzXyPSmxg8zH03HFklnsCRRLW3xy9N2egWwd57oJkMoO+LO5W67m6n89pz70hR7v4IVjKERW8eWzkU0nDQXBJVXJAMsmfDM=
+	t=1722303965; cv=none; b=M0IzAN5+eAPM2qT1KHZue78rYZEy/fE3ggo3QTCjAUUiMkvAd24BHhrGKUzmPmHreXVe9L6K+f1oOZ3bZA2+HKF+xaLRm097dBiOdwlOOyPX+OLFW+fJrTlnwHARb7msyLLbv18W/KJc00tAayAPeob7aH3gWGMTc3quur7t4SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722303954; c=relaxed/simple;
-	bh=qWJaIHxsU0PUq+AWsEzcutdlGs5V41DzgPJMSbfq9uY=;
-	h=From:Message-ID:To:Date:Subject; b=CR6aQv/nhT5OXpnYu4mT30N+UstqiTC1bFZdB9rru3WjAGmGjYvXErEpyw+5WUotVofEi7IP1y/ytTyqaMtQSZ6y4owSkw6hQXWjtuRA7jDdMDhEiitrJ4KHoJZ13VRn7WWixNq6KCdua8LfEEWreqKJUvEfQVt/Po6bZXmOSHE=
+	s=arc-20240116; t=1722303965; c=relaxed/simple;
+	bh=ISpBmPkVCqfk4/6Gf5fG+ORd8orlPJ5nbudX10JqGDs=;
+	h=From:Message-ID:To:Date:Subject; b=Ai1n1RVpauhR0F4RAOSLLOdhn/0ZaC+fdG1uA5/MLN6W9KMm8N3evR4Yb/hCWMOlSmXb/9eJoW2OCnDD4ZzqiUVTdEkoYdK09s3f1TMFL6JyBRajLF9W246BjsZ/Sz8PaIwJ4xkfjBLwqqhgfd80EAm/hC2IcnxnzW21gM36D5M=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=49762 helo=localhost)
+Received: from [45.44.224.220] (port=37486 helo=localhost)
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1sYbvz-000441-1a;
-	Mon, 29 Jul 2024 21:45:51 -0400
+	id 1sYbwA-00044p-0w;
+	Mon, 29 Jul 2024 21:46:02 -0400
 From: Olivier Langlois <olivier@trillion01.com>
-Message-ID: <bb184f8b62703ddd3e6e19eae7ab6c67b97e1e10.1722293317.git.olivier@trillion01.com>
+Message-ID: <0fe61a019ec61e5708cd117cb42ed0dab95e1617.1722294646.git.olivier@trillion01.com>
 To: Jens Axboe <axboe@kernel.dk>,Pavel Begunkov <asml.silence@gmail.com>,io-uring@vger.kernel.org
-Date: Mon, 29 Jul 2024 18:38:33 -0400
-Subject: [PATCH] io_uring: add napi busy settings to the fdinfo output
+Date: Mon, 29 Jul 2024 19:03:33 -0400
+Subject: [PATCH] io_uring: keep multishot request NAPI timeout fresh
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -55,101 +55,34 @@ List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 
-this info may be useful when attempting to debug a problem
-involving a ring using the feature.
+this refresh statement was originally present in the original patch:
+https://lore.kernel.org/netdev/20221121191437.996297-2-shr@devkernel.io/
 
-Here is an example of the output:
-ip-172-31-39-89 /proc/772/fdinfo # cat 14
-pos:	0
-flags:	02000002
-mnt_id:	16
-ino:	10243
-SqMask:	0xff
-SqHead:	633
-SqTail:	633
-CachedSqHead:	633
-CqMask:	0x3fff
-CqHead:	430250
-CqTail:	430250
-CachedCqTail:	430250
-SQEs:	0
-CQEs:	0
-SqThread:	885
-SqThreadCpu:	0
-SqTotalTime:	52793826
-SqWorkTime:	3590465
-UserFiles:	0
-UserBufs:	0
-PollList:
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=6, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=6, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-  op=10, task_works=0
-CqOverflowList:
-NAPI:	enabled
-napi_busy_poll_to:	1
-napi_prefer_busy_poll:	true
+it has been removed with no explanation in v6:
+https://lore.kernel.org/netdev/20230201222254.744422-2-shr@devkernel.io/
+
+it is important to make the refresh for multishot request because if no
+new requests using the same NAPI device are added to the ring, the entry
+will become stall and be removed silently and the unsuspecting user will
+not know that his ring made busy polling for only 60 seconds.
 
 Signed-off-by: Olivier Langlois <olivier@trillion01.com>
 ---
- io_uring/fdinfo.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ io_uring/poll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index b1e0e0d85349..3ba42e136a40 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -221,7 +221,18 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
- 			   cqe->user_data, cqe->res, cqe->flags);
+diff --git a/io_uring/poll.c b/io_uring/poll.c
+index 0a8e02944689..1f63b60e85e7 100644
+--- a/io_uring/poll.c
++++ b/io_uring/poll.c
+@@ -347,6 +347,7 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
+ 		v &= IO_POLL_REF_MASK;
+ 	} while (atomic_sub_return(v, &req->poll_refs) & IO_POLL_REF_MASK);
  
- 	}
--
-+#ifdef CONFIG_NET_RX_BUSY_POLL
-+	if (ctx->napi_enabled) {
-+		seq_puts(m, "NAPI:\tenabled\n");
-+		seq_printf(m, "napi_busy_poll_dt:\t%llu\n", ctx->napi_busy_poll_dt);
-+		if (ctx->napi_prefer_busy_poll)
-+			seq_puts(m, "napi_prefer_busy_poll:\ttrue\n");
-+		else
-+			seq_puts(m, "napi_prefer_busy_poll:\tfalse\n");
-+	} else {
-+		seq_puts(m, "NAPI:\tdisabled\n");
-+	}
-+#endif
- 	spin_unlock(&ctx->completion_lock);
++	io_napi_add(req);
+ 	return IOU_POLL_NO_ACTION;
  }
- #endif
+ 
 -- 
 2.45.2
 

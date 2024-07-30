@@ -1,137 +1,159 @@
-Return-Path: <io-uring+bounces-2610-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2611-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FBB942149
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 22:06:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEA1294218F
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 22:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 573EB1C22E43
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 20:05:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93FE828419E
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 20:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE1518C909;
-	Tue, 30 Jul 2024 20:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E8518CC0A;
+	Tue, 30 Jul 2024 20:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbDXEimg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16433FE4;
-	Tue, 30 Jul 2024 20:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7C518CC1E;
+	Tue, 30 Jul 2024 20:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722369955; cv=none; b=D8YjHOTX9dVLz0rUgF2t+QOdRwrYhIII2i5U+TwRat/8RIz2hVizUku3xOrfAElDpwdhwLMxVsOn1g/sAoyvCkueyoXSICVcNWzsA4ZGKDn6RyLS1W0NyXrkb/hwKIX+4b+XahQiJQ1hBl8GxpcVv5NrD7Ea6tMQYeyJg/AUzn8=
+	t=1722371130; cv=none; b=bP/K8g3SwfbaLSRNjxkD74JztXQoTyzmPuDukj2n60hr9042BinuGrcoqhTbEVaYpim7KllvELdaVo0VY7ssta+Wjkf7dYQPkbSfwgRXFSLeQv7xon7UBoR/ph24BZpuwie6LM+i+vPQ28VscnPIkw5P5GZwebzt48IgmPDFHTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722369955; c=relaxed/simple;
-	bh=08Y5t+/8N2aBquIamx/IrSUR1vWd4M2XUzBHr2851tk=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=Jy7r8m1dH+E4nEC2CY+d2fkrARQmMk2vahnWeukhxvv1S1ui4q8D3eSO03ug53PJLRpScnUtjSUGMsNW4VbJDp0GbHrb+uT3jyXyl8cAIRO7ftRhtfBL4iJgWFEyOk+lcZazf9Y+Tg5YVqfLbb0JTFAI37TjiQtbsHl8c9rFvw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=53656 helo=[192.168.1.177])
-	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <olivier@trillion01.com>)
-	id 1sYt6W-0000cG-2X;
-	Tue, 30 Jul 2024 16:05:52 -0400
-Message-ID: <b1ad0ab3a7e70b72aa73b0b7cab83273358b2e1d.camel@trillion01.com>
-Subject: io_uring NAPI busy poll RCU is causing 50 context switches/second
- to my sqpoll thread
-From: Olivier Langlois <olivier@trillion01.com>
-To: io-uring@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Date: Tue, 30 Jul 2024 16:05:52 -0400
-Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
- keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
- 5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
- g5nV/401re30kRfA8OPivpnj6mZhU/9RTwjbVPPb8dPlm2gFLXwGPeDITgSRs+KJ0mM37fW8EatJs
- 0a8J1Nk8wBvT7ce+S2lOrxDItra9pW3ukze7LMirwvdMRC5bdlw2Lz03b5NrOUq+Wxv7szn5Xr9f/
- HdaCH7baWNAO6H/O5LbJ3zndewokEmKk+oCIcXjaH0U6QK5gJoO+3Yt5dcTo92Vm3VMxzK2NPFXgp
- La7lR9Ei0hzQ0zptyFFyftt9uV71kMHldaQaSfUTsu9dJbnS2kI/j+F2S1q6dgKi3DEm0ZRGvjsSG
- rkgPJ5T16GI1cS2iQntawdr0A1vfXiB9xZ1SMGxL/l6js9BVlIx/CBGOJ4L190QmxJlcAZ2VnQzrl
- ramRUv01xb00IPJ5TBft5IJ+SY0FnY9pIERIl6w9khwLt/oGuKNmUHmzJGYoJHYfh72Mm8RQ1R/JS
- o6v85ULBGdEC3pQq1j//OPyH3egiXIwFq6BtULH5CvsxQkSqgj1MpjwfgVJ8VbjNwqwBXHjooEORj
- vFQqWQki6By3QARAQABtDJPbGl2aWVyIExhbmdsb2lzIChNeSBrZXkpIDxvbGl2aWVyQHRyaWxsaW
- 9uMDEuY29tPokCNwQTAQgAIQUCVh3TJwIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRBlaka
- GGsWHEI1AD/9sbj+vnFU29WemVqB4iW+9RrHIcbXI4Jg8WaffTQ8KvVeCJ4otzgVT2nHC2A82t4PF
- 0tp21Ez17CKDNilMvOt8zq6ZHx36CPjoqUVjAdozOiBDpC4qB6ZKYn+gqSENO4hqmmaOW57wT9vII
- v6mtHmnFvgpOEJl6wbs8ArHDt0BLSjc8QQfvBhoKoWs+ijQTyvFGlQl0oWxEbUkR1J3gdft9Oj9xQ
- G4OFo73WaSEK/L9IalU2ulCBC+ucSP9McoDxy1i1u8HUDrV5wBY1zafc9zVBcMNH6+ZjxwQmZXqtz
- ATzB3RbSFHAdmvxl8q6MeS2yx7Atk0CXgW9z5k2KeuZhz5rVV5A+D19SSGzW11uYXsibZx/Wjr9xB
- KHB6U7qh5sRHaQS191NPonKcsXXAziR+vxwQTP7ZKfy+g5N/e6uivoUnQrl9uvUDDPXEpwVNSoVws
- Vn4tNyrGEdN11pHDbH5fSGzdpbY8+yczUoxMmsEQe/fpVwRBZUqafRn2TVUhV0qqzsUuQcTNw1zIZ
- JgvkqrHgd4ivd2b1bXBczmu/wMGpEnF6cWzSQDiwC1NF3i+gHCuD8IX1ujThWtzXsn0VtrMkrRCbn
- ponVQ6HcbRYYXPuK0HRRjCSuAKo5porVONepiOSmu0FBrpGqBkpBtLrzKXoi1yt/7a/wGdMcVhYGg
- vA==
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1722371130; c=relaxed/simple;
+	bh=pFghqGCwi9GVvsa1byGymLUEjccvQihFcKXgKFH7FUs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dO5Fj0TmjNViOys4DBsO22cl49IWA2tIEe8cG1dbw7lUVEOiZXk0eXfBoNd3R9XcdViWUQQYsMgRRly4Z+e29uuwfv9YdCQyL5JiAeRP3jvVlZlO7eYMZIeabs4mYU9CcRWxK+l7utzuwO/JtyFKtq3eHZXJcOfWw9mG3Ai0rcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbDXEimg; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-428085a3ad1so31444565e9.1;
+        Tue, 30 Jul 2024 13:25:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722371126; x=1722975926; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mu0A8I/a0mxq+DH13s2tKTCQz+serozmbBC+eEPyZFs=;
+        b=UbDXEimgMskN97cLIRxT6grvIqS4/Jykd36d6lLATfd345s9hB0jjA1+HHazErbK5S
+         ITTSD1Emy8fD7iMWJM4jr10orPtqEL9qDSTIhMMDoxURqzSKy2rdA4GycyfT8L4Fld9S
+         kmxZDjy7fm5tTEzvU84LOak6U4Xpgia/kWFeXXKJzhEmb9pIvU0KYSN09omzOSN9U0/I
+         GT0LHjpo1R1Pn2OznFTajuMry8lCuj+tvHyn5QUYgar1Mg/+LihgD4ktp+V80k4JaAnd
+         UckKCF7gWBUuQ/jthaZL6+QV0Jca0pMkNp95ygqUunlBJWTJZChKQ/UZ4EWAr4jFMap6
+         Zpsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722371126; x=1722975926;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mu0A8I/a0mxq+DH13s2tKTCQz+serozmbBC+eEPyZFs=;
+        b=W+98QNK+H98Q4pHPCxMRYgMVyI+4P/NeMdXQgHGqsTXAHA7IP7aZm+I806V7563wnJ
+         6czVR+/dTK9RuveuINN5kbIKRcPCQ9vOmUjBp9gX+eCP40e+mEOnh49/GVVh2UlA3Og4
+         ElUXPnpzChjU2fuFV3o+vCjiAJGm7Hy5U/1SjQfpvnkAihwhRLJYhmJOkoCB56Pc+Bn2
+         lOvygKnz4588vBmZ5C3pREIc2c2HLD+FdP46mjjD0x5g41jprS4zKB5Tq34ur8HpyTgz
+         0BC2pM9FHxl3ePGDKJ7Pn+wVdFYDX91135yYVPhmbl/PqP6eVEgYdV7NuxK9jeXI9J1n
+         irHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2bTZE6tZ5qaCeOMHbrSc9EqCtY2Mww5LIwkhXf2xUWKU5qkbY/eAVnq6IPgi3r35LE0kGSuww3WFruImfU557IGHcDjw1ow8=
+X-Gm-Message-State: AOJu0YyKrfRcV5SU+iu6IwZ4O/Zc9nw2wDXX0Z9j/qF14m4z4SRpLUwT
+	VfSXwOUBo6I6v6NKDC74ZUUWlo1v425SArhndSftu+ci+waf5U16t0jtnw==
+X-Google-Smtp-Source: AGHT+IEJvY6uFlWkWJygSkxD4nIZqzriJKPf+Sv7ZTpQ1o510qkypdwVmwV5ehyKPzNa5ODOwJpKKA==
+X-Received: by 2002:a05:600c:5124:b0:426:6921:e3e5 with SMTP id 5b1f17b1804b1-42811dcd2a9mr79398295e9.24.1722371126061;
+        Tue, 30 Jul 2024 13:25:26 -0700 (PDT)
+Received: from [192.168.8.113] ([85.255.235.94])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428057a6307sm227163525e9.36.2024.07.30.13.25.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 13:25:25 -0700 (PDT)
+Message-ID: <00918946-253e-43c9-a635-c91d870407b7@gmail.com>
+Date: Tue, 30 Jul 2024 21:25:58 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: io_uring NAPI busy poll RCU is causing 50 context switches/second
+ to my sqpoll thread
+To: Olivier Langlois <olivier@trillion01.com>, io-uring@vger.kernel.org
+Cc: netdev@vger.kernel.org
+References: <b1ad0ab3a7e70b72aa73b0b7cab83273358b2e1d.camel@trillion01.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <b1ad0ab3a7e70b72aa73b0b7cab83273358b2e1d.camel@trillion01.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-if you are interested into all the details,
+On 7/30/24 21:05, Olivier Langlois wrote:
+> if you are interested into all the details,
+> 
+> they are all here:
+> https://github.com/axboe/liburing/issues/1190
+> 
+> it seems like I like to write a lot when I am investigating a problem.
+> Pavel has been a great help in assisting me understanding what was
+> happening.
+> 
+> Next, I came to question where the integration of RCU came from and I
+> have found this:
+> https://lore.kernel.org/all/89ef84bf-48c2-594c-cc9c-f796adcab5e8@kernel.dk/
+> 
+> I guess that in some use-case being able to dynamically manage hundreds
+> of NAPI devices automatically that can suddenly all be swepted over
+> during a device reconfiguration is something desirable to have for
+> some...
+> 
+> but in my case, this is an excessively a high price to pay for a
+> flexibility that I do not need at all.
 
-they are all here:
-https://github.com/axboe/liburing/issues/1190
+Removing an entry or two once every minute is definitely not
+going to take 50% CPU, RCU machinery is running in background
+regardless of whether io_uring uses it or not, and it's pretty
+cheap considering ammortisation.
 
-it seems like I like to write a lot when I am investigating a problem.
-Pavel has been a great help in assisting me understanding what was
-happening.
+If anything it more sounds from your explanation like the
+scheduler makes a wrong decision and schedules out the sqpoll
+thread even though it could continue to run, but that's need
+a confirmation. Does the CPU your SQPOLL is pinned to stays
+100% utilised?
 
-Next, I came to question where the integration of RCU came from and I
-have found this:
-https://lore.kernel.org/all/89ef84bf-48c2-594c-cc9c-f796adcab5e8@kernel.dk/
 
-I guess that in some use-case being able to dynamically manage hundreds
-of NAPI devices automatically that can suddenly all be swepted over
-during a device reconfiguration is something desirable to have for
-some...
+> I have a single NAPI device. Once I know what it is, it will pratically
+> remain immutable until termination.
+> 
+> For that reason, I am thinking that offering some sort of polymorphic
+> NAPI device tracking strategy customization would be desirable.
+> 
+> The current one, the RCU one, I would call it the
+> 
+> dynamic_napi_tracking (rcu could be peppered in the name somewhere so
+> people know what the strategy is up to)
+> 
+> where as the new one that I am imagining would be called
+> 
+> static_napi_tracking.
+> 
+> NAPI devices would be added/removed by the user manually through an
+> extended registration function.
+> 
+> for the sake of conveniance, a clear_list operation could even be
+> offered.
+> 
+> The benefits of this new static tracking strategy would be numerous:
+> - this removes the need to invoke the heavy duty RCU cavalry
+> - no need to scan the list to remove stall devices
+> - no need to search the list at each SQE submission to update the
+> device timeout value
+> 
+> So is this a good idea in your opinion?
 
-but in my case, this is an excessively a high price to pay for a
-flexibility that I do not need at all.
+I believe that's a good thing, I've been prototyping a similar
+if not the same approach just today, i.e. user [un]registers
+napi instance by id you can get with SO_INCOMING_NAPI_ID.
 
-I have a single NAPI device. Once I know what it is, it will pratically
-remain immutable until termination.
-
-For that reason, I am thinking that offering some sort of polymorphic
-NAPI device tracking strategy customization would be desirable.
-
-The current one, the RCU one, I would call it the
-
-dynamic_napi_tracking (rcu could be peppered in the name somewhere so
-people know what the strategy is up to)
-
-where as the new one that I am imagining would be called
-
-static_napi_tracking.
-
-NAPI devices would be added/removed by the user manually through an
-extended registration function.
-
-for the sake of conveniance, a clear_list operation could even be
-offered.
-
-The benefits of this new static tracking strategy would be numerous:
-- this removes the need to invoke the heavy duty RCU cavalry
-- no need to scan the list to remove stall devices
-- no need to search the list at each SQE submission to update the
-device timeout value
-
-So is this a good idea in your opinion?
-
+-- 
+Pavel Begunkov
 

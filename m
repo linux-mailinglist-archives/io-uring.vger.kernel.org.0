@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-2597-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2598-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A4D694102D
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 13:04:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7587094103D
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 13:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D060D284878
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 11:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310322821BB
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 11:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16AB194A63;
-	Tue, 30 Jul 2024 11:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD53A18FDD7;
+	Tue, 30 Jul 2024 11:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKx2F8Sd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GrElaXxN"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1E540BF2
-	for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 11:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FE818EFE0
+	for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 11:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722337486; cv=none; b=CmAstQ4z7GbKUXfcwyX8a5JguVY5EQfKJIlWMx0+J8nReLoj//krHFo434dko4VQstwd1/xdFlQTzJ7j4p9LoYydeTUFEyP7pX1lcC9JT/VTWp0v79QMKQkKLttVpnMrJxuY33unVvh7zdmuUvIJxdWc9c5uk5RphRINtaYeb/8=
+	t=1722337692; cv=none; b=CIw2IazVjkNT9f4RlWlsN1asuM1H+mQF4Sv7PylV/rje24qxZVIG7HSVuWmnYBnusW98q/OgAteldFqAcGRW9RNCfuDMdjqnkJEKjfFm/QRyht9Cc/LhtxxlyRWOhIGA/x6qOQThEnzHZPSjokBAKQpUhs0EY1sdcK3926RFOBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722337486; c=relaxed/simple;
-	bh=xBSzvctDSNPVhb2dfcsWe6THv0sSAkyXO13BXZNY2q4=;
+	s=arc-20240116; t=1722337692; c=relaxed/simple;
+	bh=yg7/Ma8QeBcAZaIcrIaTvWGDwPWlI9g0KP+EYdHg+vg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BUbXfVictNJHQHFqWimropjx1cBoKwlBtzvL9kCBvY3X2tr6QHV9TJ2ijMIU3hbbPA/mH6f+VKE1hOSkqpE1pUg1wVX0pKIdb/vM6ckjOgsStusGpiQoltjPcSgB8qzFjLLzU2F5W8G0sYWJjrnVfg6cm61GDuYXE32rhgmNffs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKx2F8Sd; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:Content-Type; b=GSVFtTtusHnr9/6lpEcSI51BF/7Ceu+H39hX1XHaMmfhrYSH3wuz2dn1C24/r3f6Ekfu1GcAc5V1fsACOydECalm6nTltT07cNe5vw9saIJqwk69cajme80L5R33b5PnFJK/Vmz815HRMJjzLzTdlYh1ktk3byIihUDt35Y/+oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GrElaXxN; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4280c55e488so16837505e9.0
-        for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 04:04:44 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3685afd0c56so2095985f8f.1
+        for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 04:08:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722337483; x=1722942283; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722337689; x=1722942489; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=VwHTLSM2XviPwU+8/OjOC/zLDxRRFIw/64VnrQLzKxo=;
-        b=EKx2F8Sdb1BWtHrKc3pMBOyPwwzdsB1dcip/XDxz7PXq4KqeTg1zhDqhg0qE6Xv9Fd
-         3r2txT7y0d0LKYqzTeoKQwweE21O8nd31mwO9HOD8LxISPvBFHh0GiZgvfkIhiUwdget
-         GrH2QRJarOYWyMvtHU1kRC140tenG5/0IkSc7Xl48jqH8kjYVlgFLzdPtcl8pYwhxfgs
-         eRVyVVayyk1YjeZr90dG9obKueERpwJonvbdUeg54cLjOejLBk5uY+X5kKa32m4x+1Hs
-         GgUUmePhjescOp8l3ExzkMBGV4q7sDspPdIc/ZLzUqCnXnXCGKGQjrvUojjH7BPE4RIi
-         Awfw==
+        bh=NWVOq7R4VQflhc2aMBEeKJOjX2DAQZWRdDwSSzg3C8U=;
+        b=GrElaXxNlFJ2eq3blFA5rSu6+fjDFmMr1ypZlh8oo/OKNSF/VE6TwbHngpZPs88MR/
+         rE0grRdhyxdXOELAk2D/9rI2duZpQRQecArfIQbOWEVSOEbZo2ETMiBZPCKESMgTCVKj
+         C1yyncVW5WkeImHZJzX8/4gyh/aIOddJSdpOYm2V6RIWdiMJ4VnkBfnq+LoN9xdA5aEk
+         OyDsB8nwKEgtqQ9JxDECjY1O2mJmQ3aBPMS1n094IhFyHj6JX+ufSMnGMO0qs+VA6f52
+         3aGqF7uuGqfvDlAbBky3NKcftPII6e7DD9uFnq7yn1tNyWj6YAtk8YvG2ZG4qErLWfUS
+         toJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722337483; x=1722942283;
+        d=1e100.net; s=20230601; t=1722337689; x=1722942489;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VwHTLSM2XviPwU+8/OjOC/zLDxRRFIw/64VnrQLzKxo=;
-        b=Gp3v68Jdgln58rfziZvbRpdbCFMqmCxZybQqD3zGDFujt6rD1nEGDzhNxAf7nUSuyX
-         2boeG7swTlD9kdOezpKRcefHmFEmRUdBbFHwFEONk62iHidH6+T+Ga1bSm4XeuH7mP/q
-         uCK2qmQM0vCrmpKw4yxzyH4lniLXaTJ5UuYZ/0PXmzu9mlsPg20DIs+nZ799NFR8KwhF
-         7kXRn8tiF9Bpnff/AUSuilbtkiU49+23TsKi+xT/O4QWG+ozwjwh+pCqV4Vll0B+a82b
-         H0cPCGxM8eURnvYPqqbkqNT+6DzB7+I7CCH9qsWD/Re8RxkTydOIaTeOiPFDC9tvy7Wu
-         gJ9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXdyJKYbMBkOh/SVx2EPPa76TkJHFT9Qng1toe6sZvWfTMpmzxfONaXJR9ORgi7Nh0gumG/CtZcfmWXS9d1erUKlEKoSOlw2Ws=
-X-Gm-Message-State: AOJu0YxuRy0vxoP/7BsjY7vycpADUBupeN4z9l9d3ZGTvy4c1/+BVNA8
-	PXZGqty1mMbDO8QkB7PLU28OK5LowQiaYFJNXxT6LE9Xxfc4z66+
-X-Google-Smtp-Source: AGHT+IHlK4XfHJ0X3kgyRju/+fGAPecGGRFZ0IRyKyISrQ+oGx0Uz/S2USE/VGrQbEd47kHLUD5uiQ==
-X-Received: by 2002:a05:600c:474b:b0:428:b4a:7001 with SMTP id 5b1f17b1804b1-4282445c599mr10304995e9.15.1722337483171;
-        Tue, 30 Jul 2024 04:04:43 -0700 (PDT)
+        bh=NWVOq7R4VQflhc2aMBEeKJOjX2DAQZWRdDwSSzg3C8U=;
+        b=kGCQUEViG666Ual6ipH2v4sN9TzmrACy1xol1TJL2PtZeG3wcutPFvmk42IU+VIu/0
+         bRiANBj+qtJkt3jZbx2ip3PIIrUb4X19usCVOxBJP220+a/LMtMdwYT83bM/fM8xONJs
+         paxyrVBCQegQgN4Lz8AJI9oD74a6LNR231BfvDAYZTn7eAw914FYgheeP8NPt82+YbhC
+         psoHrB4BVLsDHRnuzfEWTFOv2ZcJJurE30boBYYlF6N6YTASk2MwaL7FekOmFbilgNUy
+         90w4ecdkuZuD9a3H849qQyuGS5E6HMs0ruU1SpEoiRP+382z514AQf5rRYoRTvoLp5RJ
+         tSgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWh4xfblyByCyJnNZLIgA1StybuzXdU5I3EUvZ8HOMW9pu9vqks8e6ioljAWxs+ZGYcVHVTNtp6zmqv6574mFtyVThkIq+WQVs=
+X-Gm-Message-State: AOJu0YzT1ISU9uBBM3OZZeyD7WHflCsrORIwee7gb/Jh3+YaC+wQ5qGK
+	r5HcRIWoJ4JkYztD0ArnRC48ZJBgNlBVN88WJCWSZH1gvmVx1ealLzixsw==
+X-Google-Smtp-Source: AGHT+IGve6NVrHWL2h5AcQGUbZ0KNirg+3vX7ZyUR1qIGPF+ANUPM76U2Wujj5TleAidk4fLD5cGMQ==
+X-Received: by 2002:a5d:5888:0:b0:368:4e86:14cc with SMTP id ffacd0b85a97d-36b5cefd6aemr10207222f8f.10.1722337689035;
+        Tue, 30 Jul 2024 04:08:09 -0700 (PDT)
 Received: from [192.168.42.104] (82-132-222-76.dab.02.net. [82.132.222.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428175e60b7sm106070545e9.42.2024.07.30.04.04.42
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367fc6adsm14381807f8f.51.2024.07.30.04.08.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 04:04:42 -0700 (PDT)
-Message-ID: <99aa340f-2379-4bdb-9a7d-941eee4bf3bf@gmail.com>
-Date: Tue, 30 Jul 2024 12:05:13 +0100
+        Tue, 30 Jul 2024 04:08:08 -0700 (PDT)
+Message-ID: <f10f8c6b-5858-42ac-a784-d09de2b2d886@gmail.com>
+Date: Tue, 30 Jul 2024 12:08:39 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,62 +76,56 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: add napi busy settings to the fdinfo output
+Subject: Re: [PATCH] io_uring: keep multishot request NAPI timeout fresh
 To: Olivier Langlois <olivier@trillion01.com>, Jens Axboe <axboe@kernel.dk>,
  io-uring@vger.kernel.org
-References: <bb184f8b62703ddd3e6e19eae7ab6c67b97e1e10.1722293317.git.olivier@trillion01.com>
+References: <0fe61a019ec61e5708cd117cb42ed0dab95e1617.1722294646.git.olivier@trillion01.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <bb184f8b62703ddd3e6e19eae7ab6c67b97e1e10.1722293317.git.olivier@trillion01.com>
+In-Reply-To: <0fe61a019ec61e5708cd117cb42ed0dab95e1617.1722294646.git.olivier@trillion01.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/29/24 23:38, Olivier Langlois wrote:
-> this info may be useful when attempting to debug a problem
-> involving a ring using the feature.
+On 7/30/24 00:03, Olivier Langlois wrote:
+> this refresh statement was originally present in the original patch:
+> https://lore.kernel.org/netdev/20221121191437.996297-2-shr@devkernel.io/
+> 
+> it has been removed with no explanation in v6:
+> https://lore.kernel.org/netdev/20230201222254.744422-2-shr@devkernel.io/
+> 
+> it is important to make the refresh for multishot request because if no
+> new requests using the same NAPI device are added to the ring, the entry
+> will become stall and be removed silently and the unsuspecting user will
+> not know that his ring made busy polling for only 60 seconds.
 
-Apart from a comment below,
+we probably need a new update helper in the future, but good
+enough for now.
 
 Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
-Maybe, Jens would be willing to move the block after the spin_unlock
-while applying.
+Should also have:
+
+Fixes: 8d0c12a80cdeb ("io-uring: add napi busy poll support")
+Cc: stable@vger.kernel.org
 
 
 > Signed-off-by: Olivier Langlois <olivier@trillion01.com>
 > ---
->   io_uring/fdinfo.c | 13 ++++++++++++-
->   1 file changed, 12 insertions(+), 1 deletion(-)
+>   io_uring/poll.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-> index b1e0e0d85349..3ba42e136a40 100644
-> --- a/io_uring/fdinfo.c
-> +++ b/io_uring/fdinfo.c
-> @@ -221,7 +221,18 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
->   			   cqe->user_data, cqe->res, cqe->flags);
+> diff --git a/io_uring/poll.c b/io_uring/poll.c
+> index 0a8e02944689..1f63b60e85e7 100644
+> --- a/io_uring/poll.c
+> +++ b/io_uring/poll.c
+> @@ -347,6 +347,7 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
+>   		v &= IO_POLL_REF_MASK;
+>   	} while (atomic_sub_return(v, &req->poll_refs) & IO_POLL_REF_MASK);
 >   
->   	}
-> -
-> +#ifdef CONFIG_NET_RX_BUSY_POLL
-> +	if (ctx->napi_enabled) {
-> +		seq_puts(m, "NAPI:\tenabled\n");
-> +		seq_printf(m, "napi_busy_poll_dt:\t%llu\n", ctx->napi_busy_poll_dt);
-> +		if (ctx->napi_prefer_busy_poll)
-> +			seq_puts(m, "napi_prefer_busy_poll:\ttrue\n");
-> +		else
-> +			seq_puts(m, "napi_prefer_busy_poll:\tfalse\n");
-> +	} else {
-> +		seq_puts(m, "NAPI:\tdisabled\n");
-> +	}
-> +#endif
->   	spin_unlock(&ctx->completion_lock);
-
-That doesn't need to be under completion_lock, it should move outside
-of the spin section.
-
-
+> +	io_napi_add(req);
+>   	return IOU_POLL_NO_ACTION;
 >   }
->   #endif
+>   
 
 -- 
 Pavel Begunkov

@@ -1,50 +1,46 @@
-Return-Path: <io-uring+bounces-2609-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2610-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0DC5942047
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 21:05:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FBB942149
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 22:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1DA71C22E3E
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 19:05:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 573EB1C22E43
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 20:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8951AA3C7;
-	Tue, 30 Jul 2024 19:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE1518C909;
+	Tue, 30 Jul 2024 20:05:56 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053F21AA3C5
-	for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 19:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16433FE4;
+	Tue, 30 Jul 2024 20:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722366312; cv=none; b=KDkzVr3LFJjFEjFpFU+CevRxBSW/exPqGRWdDpox81g7J/X8i5Rtqfxv3+wJvy6MakpqZulxlY1oxk2ECFC7eFays/Z+hFieQhx8EGG3SiVS4L3l2lbDeBYcM/V7htVUcpv9c6PV+XzPG8xeZDt8EXWKPBZPlkQOPR5uTBNP3Xo=
+	t=1722369955; cv=none; b=D8YjHOTX9dVLz0rUgF2t+QOdRwrYhIII2i5U+TwRat/8RIz2hVizUku3xOrfAElDpwdhwLMxVsOn1g/sAoyvCkueyoXSICVcNWzsA4ZGKDn6RyLS1W0NyXrkb/hwKIX+4b+XahQiJQ1hBl8GxpcVv5NrD7Ea6tMQYeyJg/AUzn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722366312; c=relaxed/simple;
-	bh=diDoPhxgOj6bZ51kFoRTCVrMhC5onP0wuHwvUZ8f5OA=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Q+PtqKuoTUbfyZKsJFlo76dJVAX1UCyjtsQ0UGPN+g+hxxyHqBljNBxENTR3wE8ReZCkPc3oyS1WvWmqaPfn5sq/iZRrnC7zfUMYny8GuTGJXS+Encr1AfIGZZJ6vK2OwPviiVcziFC4vitqLyvI5cy45O2lSri0JEZ0l/qMaus=
+	s=arc-20240116; t=1722369955; c=relaxed/simple;
+	bh=08Y5t+/8N2aBquIamx/IrSUR1vWd4M2XUzBHr2851tk=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=Jy7r8m1dH+E4nEC2CY+d2fkrARQmMk2vahnWeukhxvv1S1ui4q8D3eSO03ug53PJLRpScnUtjSUGMsNW4VbJDp0GbHrb+uT3jyXyl8cAIRO7ftRhtfBL4iJgWFEyOk+lcZazf9Y+Tg5YVqfLbb0JTFAI37TjiQtbsHl8c9rFvw4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=57816 helo=[192.168.1.177])
+Received: from [45.44.224.220] (port=53656 helo=[192.168.1.177])
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1sYs9k-0005YJ-0K;
-	Tue, 30 Jul 2024 15:05:08 -0400
-Message-ID: <4ed03237edd1c04f025065bba87f78a2059890ec.camel@trillion01.com>
-Subject: Re: [PATCH] io_uring: add napi busy settings to the fdinfo output
+	id 1sYt6W-0000cG-2X;
+	Tue, 30 Jul 2024 16:05:52 -0400
+Message-ID: <b1ad0ab3a7e70b72aa73b0b7cab83273358b2e1d.camel@trillion01.com>
+Subject: io_uring NAPI busy poll RCU is causing 50 context switches/second
+ to my sqpoll thread
 From: Olivier Langlois <olivier@trillion01.com>
-To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-	io-uring@vger.kernel.org
-Date: Tue, 30 Jul 2024 15:05:07 -0400
-In-Reply-To: <08e5c092-a7c4-47ca-8e4b-44acb741d1f9@gmail.com>
-References: 
-	<bb184f8b62703ddd3e6e19eae7ab6c67b97e1e10.1722293317.git.olivier@trillion01.com>
-	 <08e5c092-a7c4-47ca-8e4b-44acb741d1f9@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Date: Tue, 30 Jul 2024 16:05:52 -0400
 Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
  keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
  5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
@@ -88,26 +84,54 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-On Tue, 2024-07-30 at 16:33 +0100, Pavel Begunkov wrote:
-> On 7/29/24 23:38, Olivier Langlois wrote:
-> > this info may be useful when attempting to debug a problem
-> > involving a ring using the feature.
->=20
-> While on the topic of busy polling, there is a function
-> io_napi_adjust_timeout(), it ensures that we don't busy poll for
-> longer
-> than the passed wait timeout.
->=20
-> Do you use it? I have some doubts in regards to its usefulness, and
-> would prefer to try get rid of it if there are no users since it's a
-> hustle.
->=20
-I am not because I use NAPI busy poll exclusively from SQPOLL thread
-which in this context all that matters is that the feature is enabled
-or not.
+if you are interested into all the details,
 
-For users doing the polling through the io_uring syscall if the
-precision of the timeout is important for them, it might serve that
-purpose.
+they are all here:
+https://github.com/axboe/liburing/issues/1190
+
+it seems like I like to write a lot when I am investigating a problem.
+Pavel has been a great help in assisting me understanding what was
+happening.
+
+Next, I came to question where the integration of RCU came from and I
+have found this:
+https://lore.kernel.org/all/89ef84bf-48c2-594c-cc9c-f796adcab5e8@kernel.dk/
+
+I guess that in some use-case being able to dynamically manage hundreds
+of NAPI devices automatically that can suddenly all be swepted over
+during a device reconfiguration is something desirable to have for
+some...
+
+but in my case, this is an excessively a high price to pay for a
+flexibility that I do not need at all.
+
+I have a single NAPI device. Once I know what it is, it will pratically
+remain immutable until termination.
+
+For that reason, I am thinking that offering some sort of polymorphic
+NAPI device tracking strategy customization would be desirable.
+
+The current one, the RCU one, I would call it the
+
+dynamic_napi_tracking (rcu could be peppered in the name somewhere so
+people know what the strategy is up to)
+
+where as the new one that I am imagining would be called
+
+static_napi_tracking.
+
+NAPI devices would be added/removed by the user manually through an
+extended registration function.
+
+for the sake of conveniance, a clear_list operation could even be
+offered.
+
+The benefits of this new static tracking strategy would be numerous:
+- this removes the need to invoke the heavy duty RCU cavalry
+- no need to scan the list to remove stall devices
+- no need to search the list at each SQE submission to update the
+device timeout value
+
+So is this a good idea in your opinion?
 
 

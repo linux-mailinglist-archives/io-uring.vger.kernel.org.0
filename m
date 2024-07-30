@@ -1,78 +1,82 @@
-Return-Path: <io-uring+bounces-2612-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2613-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEEE094219C
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 22:29:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C99394219E
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 22:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65BD61F255CE
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 20:29:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02D86B22DC7
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jul 2024 20:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A067D18DF7E;
-	Tue, 30 Jul 2024 20:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A9418A6C8;
+	Tue, 30 Jul 2024 20:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzJI0f2P"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gx/kbh4u"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD8C18CC1E
-	for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 20:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C0718CC1F
+	for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 20:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722371366; cv=none; b=G4sYOQJ/jYklcefXF+cxbjtCnpnRgUutWY2hp5KepQAVCa54nFvL6mdlpy9aC7lS5jAXXgTDh/t8M5cZj3C3VUzGiGKIbN/uknR6UiBn+pfIxsvgpD+Fl1wFHSkJ+UBDzt7NDc5ofyCOSChRRGOcyWj8wMAxo7fXjhG1oGJDEno=
+	t=1722371367; cv=none; b=i7/FvORK8ldm+R+1/qgu+8Q+EE0Pxnq4pu0m6n+NivCrNqF5Ogynt6i/Qc8AcVuTjdI7eIuDK9wuMAsIMdbuZ6MNARz8SD10Berg4vt+8b92XSxVoh1WItFLiUSiaVaPwY8Gey9Y6d5kfWOVpib540tjg5Opbn/bw5nhFIgoT0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722371366; c=relaxed/simple;
-	bh=c3801jLdH/1RbBABKsaSiWaWIvp5PrQ5FvH8vDiIjIk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QlLNqgwVB8rMaBIkKSTM4Yy0AYtJ3S4bxfGZmw3GvNx2iz2NeaBzkr0CInCURyYBIqsrJaZDm2umW2KVGoQXFYDWrxRer6CvVaXX/YvtVCUqn1lcmxvzqiyACGaRx173Yj5fXt4cSWYCOlTOUusGqNu1vFYQT6a+XnKsuY6lOmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KzJI0f2P; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1722371367; c=relaxed/simple;
+	bh=yMnMp6sYGz4/6Z7wV25uL/n2ygpp95FpW6CIeQqXrF8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dHQ28em/yOn9ZnrSCbQTaLA4Srzcgc47Uv6wHw47IgYPwX9ilmaiqJs+RdeZ3jDPGCLwY3PAURA5KJy0U/c+sJTD0zKzMgQlshki9kk6SzCKSxMnEGtx2G+tFHMeApI6AkY9WufErQuzBLaE5w9lZz2BaJESqRUgNbc8axpRn4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gx/kbh4u; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-427b1d4da32so1410735e9.0
-        for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 13:29:24 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42808071810so31122055e9.1
+        for <io-uring@vger.kernel.org>; Tue, 30 Jul 2024 13:29:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722371362; x=1722976162; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4sHjJzHlm5Y8LAQhsTsASgjiaAZ1/NqQKB6IobJPuGo=;
-        b=KzJI0f2Pd6DIeCqPAmIetjjXbg0qyPvbD3yWhVVRWGwvbIIC2eYR78V+Jlnge/Ag/L
-         89EbgYtHxY3uXzoChXJD8sFaGIVLTMIkteqBsvOiepF4VQfCmOhz1Bgdh10b9Vje1R0C
-         PATMHEWzc6yLnK1qz+h9U0pbyNzMkMWQ5ggoujtMeYbMbHrMLEVst+FSnO9nlJw3z+e5
-         xHve6owjJQ+ymvj9cLM9RTDY6648kK9v68cDjVMQt09z2r+AsKhaDyE+zK1NFmzkzwPT
-         wCCWwgZomRqJ678JluTiqrAV0I+IJnSiUS0Bw4pvsOr6FhrjS/hfH7eruc+ibA5/LUA2
-         8rsg==
+        d=gmail.com; s=20230601; t=1722371363; x=1722976163; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aCDFSYLRz664AJ+uUNg7sg3G8Ma7AxzpoUVwna2Z1b0=;
+        b=Gx/kbh4uNzrDgx1w4dQkdHjkOB76F2NtwtWaqBJMJms5sEVj9iGFMUp3joXjziUeK4
+         fFoLYUc/k9J8CTpHEMeVAPrk3DVsnLCOcZvymngeXUJ0u+pkJUMiss69rxmtflOb/Ce2
+         SeiF0VimHtxa74aFdJ6KmnHL/jN10c81Grp39G6ZygyVcfZRfsuAW1+4zvG/EYhk95x9
+         EXgjxKpCUW8CxO7dfeIDS1xmtZDWEsmyJxxrHjsohfIyYFtQQX7HXbQb2LnBdCl+7y2H
+         fge3QS+bUY3Xkgk18YglMAsDU1kI/aeHW/JNabyRopxeRMXvKGVNcUZciDM11A5OCMLp
+         NAKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722371362; x=1722976162;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4sHjJzHlm5Y8LAQhsTsASgjiaAZ1/NqQKB6IobJPuGo=;
-        b=BFnl2umFT/2Ov0unCiuA4sD+/Nh1duOwsW+r3LEBbsDdtbonSQdsUS1SFDvuL2gS7F
-         kYwqBUb6oZzYYszf41c/kx3iWajsgrgs1J3QXq+aHBzKI4yWRpsfNDgf2gf47dgstuPW
-         VulS/K9PxBbOTFc4AqaBGaq1yrYzM+eYjIe1AlY4CR/jCxYSdFGGhPFDwy5ln92DdgqA
-         JR6gDkwmbDTWZ/uI+d/iN/cPu1wW7TJPuUKzr3oszruinV4m4Q/pc2EPHYYX516LDrGh
-         AFFnRIbcENFex4To93qP4sssxqH2VovGc56g/91Zq+5Y387QC1AVNBl0f5AqF8WF1T2h
-         Fp+A==
-X-Gm-Message-State: AOJu0YySzjt8rxPmLUJ1J5fWTnCSq/JwdXMkNhx4BnkWHnDO835RhrR4
-	Xy1DSfW6lQ+9PrKlIra1+DQdiiqOaAnd5N1NzTvmE0V0I47K9ky4pMwl4g==
-X-Google-Smtp-Source: AGHT+IGgfCo6veuX3qjGxiCPXC4XkUnIMatt/jHdJoUDtV9WuPYzWfqw+4avRn1P88Yvrs8mvwfVHQ==
-X-Received: by 2002:a05:600c:198a:b0:426:5fa7:b495 with SMTP id 5b1f17b1804b1-42824423ba0mr20340145e9.15.1722371362011;
+        d=1e100.net; s=20230601; t=1722371363; x=1722976163;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aCDFSYLRz664AJ+uUNg7sg3G8Ma7AxzpoUVwna2Z1b0=;
+        b=wsXKwSbDOSddvTlcNTSMMC89qTJmcWJk8so4Gz4QJxlw+e5HjvUCsfN+JaFxqLckXN
+         DLprsJPYZnk1ILgGGQeQ2kxYzVstIDQTIHzbuFb04CzWAp0A7f0VE6R//oZjqMJEebeu
+         JiUeCp9XNKkUB4c49V4Gks+2Gl7cztV7UEjqCtXt0NsbMnuDSSJlRhYAqs4fpTTGfF7L
+         z/HxQ5Y9CkY+Syj7GOtFhDc24G4LeL3QOUClL5gZTzkof2Tq368zeQ08wwMM6Y7JtsQg
+         rD9DpsY9sBFX7XUp7Nla8+gCsuakPnoZqhY2Mdm4BIcfMsOK7WQiCsCia4ECShZe/y3d
+         6Y5A==
+X-Gm-Message-State: AOJu0YxQ8+Zm/Ubx4qlwyDz32YIKP0LwML7YL2KEbrjRbPoqvVQSmCdb
+	L/x+vIWYkYHtf6oChbjxDsKHV7NgRGwAt1rBQPWxKNSAGKNHYWJ/LwPYgg==
+X-Google-Smtp-Source: AGHT+IHUhBZQXAYok0Vt9EZ5vQ0hNJz0JyYRgiOvPbcYkfYDFTgOXVIVEWdXKVzRDZkpspENfdjmqw==
+X-Received: by 2002:a05:600c:6c4c:b0:426:5f06:5462 with SMTP id 5b1f17b1804b1-42811e422e4mr71058665e9.37.1722371362714;
         Tue, 30 Jul 2024 13:29:22 -0700 (PDT)
 Received: from 127.0.0.1localhost ([85.255.235.94])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42808457c7fsm214488065e9.32.2024.07.30.13.29.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42808457c7fsm214488065e9.32.2024.07.30.13.29.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 13:29:21 -0700 (PDT)
+        Tue, 30 Jul 2024 13:29:22 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
 	asml.silence@gmail.com,
 	Lewis Baker <lewissbaker@gmail.com>
-Subject: [PATCH 0/3] Implement absolute value wait timeouts
-Date: Tue, 30 Jul 2024 21:29:41 +0100
-Message-ID: <cover.1722357468.git.asml.silence@gmail.com>
+Subject: [PATCH 1/3] io_uring/napi: refactor __io_napi_busy_loop()
+Date: Tue, 30 Jul 2024 21:29:42 +0100
+Message-ID: <b4296a2b49770886cb759d7ae267f0e2f5e2f55c.1722357468.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1722357468.git.asml.silence@gmail.com>
+References: <cover.1722357468.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,28 +85,33 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Patches 1-2 are cleaning up timing adjustments for napi busy
-polling, and Patch 3 implements the feature.
+we don't need to set ->napi_prefer_busy_poll if we're not going to poll,
+do the checks first and all polling preparation after.
 
-Note, if we proceed with removing the busy polling adjustments
-by the wait timeout, it'd make sense to merge that first and
-then I'll resend the series.
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/napi.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Some tests I'll be sending later are here:
-
-https://github.com/isilence/liburing.git abs-timeout
-
-Pavel Begunkov (3):
-  io_uring/napi: refactor __io_napi_busy_loop()
-  io_uring/napi: delay napi timeout adjustment
-  io_uring: add absolute mode wait timeouts
-
- include/uapi/linux/io_uring.h |  1 +
- io_uring/io_uring.c           | 14 ++++++-------
- io_uring/napi.c               | 37 ++++++++++-------------------------
- io_uring/napi.h               | 16 ---------------
- 4 files changed, 18 insertions(+), 50 deletions(-)
-
+diff --git a/io_uring/napi.c b/io_uring/napi.c
+index 4fd6bb331e1e..a670f49e30ef 100644
+--- a/io_uring/napi.c
++++ b/io_uring/napi.c
+@@ -301,10 +301,11 @@ void __io_napi_adjust_timeout(struct io_ring_ctx *ctx, struct io_wait_queue *iow
+  */
+ void __io_napi_busy_loop(struct io_ring_ctx *ctx, struct io_wait_queue *iowq)
+ {
+-	iowq->napi_prefer_busy_poll = READ_ONCE(ctx->napi_prefer_busy_poll);
++	if ((ctx->flags & IORING_SETUP_SQPOLL) || !ctx->napi_enabled)
++		return;
+ 
+-	if (!(ctx->flags & IORING_SETUP_SQPOLL) && ctx->napi_enabled)
+-		io_napi_blocking_busy_loop(ctx, iowq);
++	iowq->napi_prefer_busy_poll = READ_ONCE(ctx->napi_prefer_busy_poll);
++	io_napi_blocking_busy_loop(ctx, iowq);
+ }
+ 
+ /*
 -- 
 2.45.2
 

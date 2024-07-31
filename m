@@ -1,73 +1,73 @@
-Return-Path: <io-uring+bounces-2626-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2627-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED6EC943930
-	for <lists+io-uring@lfdr.de>; Thu,  1 Aug 2024 01:09:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18647943941
+	for <lists+io-uring@lfdr.de>; Thu,  1 Aug 2024 01:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A551F21D0C
-	for <lists+io-uring@lfdr.de>; Wed, 31 Jul 2024 23:09:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77B31F22B6A
+	for <lists+io-uring@lfdr.de>; Wed, 31 Jul 2024 23:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E13016D4D2;
-	Wed, 31 Jul 2024 23:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE29816DC3F;
+	Wed, 31 Jul 2024 23:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJX6JWZW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jEVAJVOO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6255F16D4CE
-	for <io-uring@vger.kernel.org>; Wed, 31 Jul 2024 23:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3429C16DC31
+	for <io-uring@vger.kernel.org>; Wed, 31 Jul 2024 23:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722467340; cv=none; b=Sgdg+ZkJaq7x2z6ucZuItnvHuW6/mAOXj/ePBqJswrTi44L1bs9lTuBDQPP64QUpJJNz5G6ZID8ppiURsj9jW3w9pyalYCZcIGsRcbXz3uC0eHWriz4dbN8C/Y0YgS7uIORI83apgfrL/n2hJAfzznYZg0ch/Et2MXpsYJ1w0OA=
+	t=1722467560; cv=none; b=K/CTBZvj7+6MpWaqGlrr8LsKnY1lE2c3b+N4qMEfQqW9xdoACH5xRIupLWJ+vac0hP8TCwqCeAAjYVh/b1skXkJ6+tObrpMJV4gEhY/r6bW6y5cM+4+xHsugiKNf8jJdOs8f/cIjqXbu3VCkPV01lJCjuwZ16a/ZKKQEwd2opUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722467340; c=relaxed/simple;
-	bh=Bl5NMZggLJjvv1m1ENmjqQtmZ0N14/cHIvtqEZV0+WY=;
+	s=arc-20240116; t=1722467560; c=relaxed/simple;
+	bh=+b5FKwRyKcoQDLHLplcPc2abjR7YuDO+xdig04hRJzs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m3KKRtjO0XosTtbd8so0BahS4t1DKXjhC1rj24/IUxJHYrr5PJvBhkU8QlMQcIE88KEK4buLLvTGbvld32zXu02ahacN14ytMwdV4ufRJgRp5BUtNwQVATEvxghnYT9AA9fY5kJUZfKgB2lodTRN9fmF5hrlZKhlF4UOgnkHPqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJX6JWZW; arc=none smtp.client-ip=209.85.167.43
+	 In-Reply-To:Content-Type; b=QEzj+AeV5cb4+Dspj2uLccG39XXzS0u1HJMllSrdjRCYGfDXNfGvpuu6inFuyj0WNhuaJ1cCC2wBiPFwrB1SLc5RZexWbJEWVmnu9+kBODMyBlwwOqILnd4M7A9ehWW5yCw1oj3iF8lfBiLyIXksg4EiKfQUuapEFonnFa/+wT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jEVAJVOO; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52fc14d6689so6732176e87.1
-        for <io-uring@vger.kernel.org>; Wed, 31 Jul 2024 16:08:58 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a8e73b29cso519457566b.3
+        for <io-uring@vger.kernel.org>; Wed, 31 Jul 2024 16:12:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722467336; x=1723072136; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722467557; x=1723072357; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gXA3D9Hyt8EzO/k2qrmzTBjIEXGZL88cdL63N70tGw8=;
-        b=OJX6JWZWVIYJokXrinAO9HVnJR5bVE0vWVdFwXI0VBollWGyPQn0yxOvgn73C3A3KD
-         jZdZ0Zzz/NNDWTdPg2tq4l+I51dHPhcoQkaXZyXxu1FnfeRsKlDtc2IYLqweMwvT7F8n
-         N2oantl/z9fLQ9Ynaltdm8c16GBIT5+69kg5JwhClgyNFGNDHG9AGevxIHdWu+rs5csp
-         WFWxb6RJJyuIzXtBuhWSR2reMZnXVJJsiLSWzKf7TZ9WYg1MWjbteoRS/MWN1jxfugc/
-         NEgvI7g9JzQlIW4+ZSR5cL3NQniDaiYz6SMe1p6y+g0NaxHR9rCLgZ0AwDne29qoHZJZ
-         iaIQ==
+        bh=l7Ujxn6a9i7nfZSI0EbXAwQJP046tm0fW+Sb1JxMgqs=;
+        b=jEVAJVOOO3datkNpQXB9BuqAG7arxB9VH4V4gyJ7o8pvs4CLsg0Z1A2YLSI/sKpiXL
+         mHCH7xyj9duAouFohmjc4pBuAgClS9bRf/iw+I7IPkpij1FidaRNdZa7XXpg5mOewqjm
+         Hh7ahrrbioRv+8SoZ7NYYefwkB+/CBfyPP5rp6xFZJKOEOcpY7r2q0/0zfgkbWvv197o
+         bAxAPFzn0HdhmcvuBqilBUo700xuGqPeBo1VddOB+s/WluWSs4XjU4LhJTLpYyWLrbfK
+         JG4TVPwwb33UvaUtRiQS14IOv+qey9w2JsI2ikw5tfUWQy5sRSfhHQYPTOlJ9O0gYazp
+         iZyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722467336; x=1723072136;
+        d=1e100.net; s=20230601; t=1722467557; x=1723072357;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gXA3D9Hyt8EzO/k2qrmzTBjIEXGZL88cdL63N70tGw8=;
-        b=g/LxoJlfA8Utt42BJeDpzjdf0dvN9W+918xST+vJ5723kKTjjKGUghnDeigz0Sg4y2
-         7ZF6IPeFi2IEm8N6W7re+PUAvQsi1Selnuw7LV+Zn20xnk7VuddJhzEqcNbYSE1uUfdW
-         ImCxB6t6TegN4uWRvkC9FBYHbOxbBiGFgyOkrk0cDb++kdiRyUXchGZaj8BsuQrOtPoR
-         xK/3Fp+wLkXd52IBMn3VBXUWxPt0zelFhI4ETG9iphwrODfcEQU6JdggXDBTtieZqT8i
-         3yWPFFUum5Dl+1tKxLVjcQNJIMs1JQF4tHNnh0jwEOBjFxRg/M/IpCAhVXJ6u8+2gkxy
-         AFCg==
-X-Gm-Message-State: AOJu0YwMYxKGbiHSUkc/harBbpTmLH7xjzC/GhqASJDGAGCt/GwKwCGn
-	nxg0mNOBsww7hVy7zMZsAIxYhY5YbKpRSl+1Wk4El0G0kNrgMmdr
-X-Google-Smtp-Source: AGHT+IE991vAdDyvtr61jYzx9gdNtObldgXNLVBrHuRk1iLFz47iXg5mF6NJnRoAcjNBKhrCjvUA2w==
-X-Received: by 2002:a05:6512:3f02:b0:52e:9b9e:a6cb with SMTP id 2adb3069b0e04-530b61af262mr329966e87.15.1722467336070;
-        Wed, 31 Jul 2024 16:08:56 -0700 (PDT)
+        bh=l7Ujxn6a9i7nfZSI0EbXAwQJP046tm0fW+Sb1JxMgqs=;
+        b=wIsUYMVe0gdeauo+Rsmen/psQSdzCiFPMslBBjA8Hkh0Y+OZngQctqvZO14USlvnFY
+         FX40icTUiuv5wVUxApsqmsN65d4NyTL0ZSxi5Z2JbHmcA2gsgwGTXZvXXFTeCEN4MgwZ
+         RnAOp3nZzy8HJE3Lh5MZdZ9NaOkDkCDcHs/SPsXGKyF/Xx0dOHTMC5jD5Dg04eV7wKe7
+         YHH7d/PZylTPRUN4ay6x/0uzmxf6MdREAaQVrZfvaiurOoXF774a1LpZau725wflUxm2
+         fDCfUq5DLiQXjjuf2f/qgOjOsbWBJHGUqVrf8jwXV2o9DPEfNbR1L1LLSMJl0y7yCkwI
+         d2XA==
+X-Gm-Message-State: AOJu0YyBCNouX2AvSQzqB6P4txOA/w8rjCcYP1y41yAjGpYhpW1GceMD
+	ghbZvSX/hQZzctkhT2ManVMDmus8pYjm4mBIeYhk9dWxlQOSOMUu
+X-Google-Smtp-Source: AGHT+IF4vaSVA3bBaEUMcxhvpxWBqDo1f/6BuqOsVitjXAfwJVewY0AIW7Wd5J+e/XpjV9NavXCFgA==
+X-Received: by 2002:a17:907:9488:b0:a77:e55a:9e8c with SMTP id a640c23a62f3a-a7daf65a041mr43786466b.47.1722467557057;
+        Wed, 31 Jul 2024 16:12:37 -0700 (PDT)
 Received: from [192.168.42.198] ([148.252.147.239])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63590d81sm9338585a12.23.2024.07.31.16.08.55
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb8044sm814989666b.198.2024.07.31.16.12.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 16:08:55 -0700 (PDT)
-Message-ID: <59b96d52-126e-417b-93c9-a2588138fd43@gmail.com>
-Date: Thu, 1 Aug 2024 00:09:29 +0100
+        Wed, 31 Jul 2024 16:12:36 -0700 (PDT)
+Message-ID: <2b0e7ae1-ac02-4661-b362-8229cc68abb8@gmail.com>
+Date: Thu, 1 Aug 2024 00:13:10 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -75,32 +75,31 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/2] io_uring/rsrc: enable multi-hugepage buffer
- coalescing
+Subject: Re: [PATCH liburing v3] test: add test cases for hugepage registered
+ buffers
 To: Chenliang Li <cliang01.li@samsung.com>, axboe@kernel.dk
 Cc: io-uring@vger.kernel.org, peiwei.li@samsung.com, joshi.k@samsung.com,
  kundan.kumar@samsung.com, anuj20.g@samsung.com, gost.dev@samsung.com
-References: <20240731090133.4106-1-cliang01.li@samsung.com>
- <CGME20240731090145epcas5p459f36e03c78655d92b5bd4aca85b1d68@epcas5p4.samsung.com>
- <20240731090133.4106-3-cliang01.li@samsung.com>
+References: <CGME20240531052031epcas5p3730deb2a19b401e1f772be633b4c6288@epcas5p3.samsung.com>
+ <20240531052023.1446914-1-cliang01.li@samsung.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240731090133.4106-3-cliang01.li@samsung.com>
+In-Reply-To: <20240531052023.1446914-1-cliang01.li@samsung.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/31/24 10:01, Chenliang Li wrote:
-> Add support for checking and coalescing multi-hugepage-backed fixed
-> buffers. The coalescing optimizes both time and space consumption caused
-> by mapping and storing multi-hugepage fixed buffers.
+On 5/31/24 06:20, Chenliang Li wrote:
+> Add a test file for hugepage registered buffers, to make sure the
+> fixed buffer coalescing feature works safe and soundly.
 > 
-> A coalescable multi-hugepage buffer should fully cover its folios
-> (except potentially the first and last one), and these folios should
-> have the same size. These requirements are for easier processing later,
-> also we need same size'd chunks in io_import_fixed for fast iov_iter
-> adjust.
+> Testcases include read/write with single/multiple/unaligned/non-2MB
+> hugepage fixed buffers, and also a should-not coalesce case where
+> buffer is a mixture of different size'd pages.
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+lgtm, would be even better if you can add another patch
+testing adding a small buffer on the left size of a hugepage,
+i.e. like mmap_mixutre() but the small buffer is on the other
+side.
 
 -- 
 Pavel Begunkov

@@ -1,106 +1,247 @@
-Return-Path: <io-uring+bounces-2627-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2628-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18647943941
-	for <lists+io-uring@lfdr.de>; Thu,  1 Aug 2024 01:13:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D386C943C25
+	for <lists+io-uring@lfdr.de>; Thu,  1 Aug 2024 02:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77B31F22B6A
-	for <lists+io-uring@lfdr.de>; Wed, 31 Jul 2024 23:13:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E1561C21D6C
+	for <lists+io-uring@lfdr.de>; Thu,  1 Aug 2024 00:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE29816DC3F;
-	Wed, 31 Jul 2024 23:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFDA1A4F31;
+	Thu,  1 Aug 2024 00:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jEVAJVOO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPPE5x0K"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3429C16DC31
-	for <io-uring@vger.kernel.org>; Wed, 31 Jul 2024 23:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E111A4F2A;
+	Thu,  1 Aug 2024 00:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722467560; cv=none; b=K/CTBZvj7+6MpWaqGlrr8LsKnY1lE2c3b+N4qMEfQqW9xdoACH5xRIupLWJ+vac0hP8TCwqCeAAjYVh/b1skXkJ6+tObrpMJV4gEhY/r6bW6y5cM+4+xHsugiKNf8jJdOs8f/cIjqXbu3VCkPV01lJCjuwZ16a/ZKKQEwd2opUQ=
+	t=1722471389; cv=none; b=s0Zb9tOe49hMVvhaU4r+8R079dnQ9iheKrFnvUGlZD2dbaxLgR1nGw1OUTIIL5YT9DTF1y/tvOCWbhjC3rAUfl8NU5aVQWITp6908VhNhFUF7ZQZuYiZJyLtklUnDUpTU+IooSH2djilWfbvBAd+gdwohq9FS1sXNh0H5OyyD5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722467560; c=relaxed/simple;
-	bh=+b5FKwRyKcoQDLHLplcPc2abjR7YuDO+xdig04hRJzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QEzj+AeV5cb4+Dspj2uLccG39XXzS0u1HJMllSrdjRCYGfDXNfGvpuu6inFuyj0WNhuaJ1cCC2wBiPFwrB1SLc5RZexWbJEWVmnu9+kBODMyBlwwOqILnd4M7A9ehWW5yCw1oj3iF8lfBiLyIXksg4EiKfQUuapEFonnFa/+wT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jEVAJVOO; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a8e73b29cso519457566b.3
-        for <io-uring@vger.kernel.org>; Wed, 31 Jul 2024 16:12:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722467557; x=1723072357; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l7Ujxn6a9i7nfZSI0EbXAwQJP046tm0fW+Sb1JxMgqs=;
-        b=jEVAJVOOO3datkNpQXB9BuqAG7arxB9VH4V4gyJ7o8pvs4CLsg0Z1A2YLSI/sKpiXL
-         mHCH7xyj9duAouFohmjc4pBuAgClS9bRf/iw+I7IPkpij1FidaRNdZa7XXpg5mOewqjm
-         Hh7ahrrbioRv+8SoZ7NYYefwkB+/CBfyPP5rp6xFZJKOEOcpY7r2q0/0zfgkbWvv197o
-         bAxAPFzn0HdhmcvuBqilBUo700xuGqPeBo1VddOB+s/WluWSs4XjU4LhJTLpYyWLrbfK
-         JG4TVPwwb33UvaUtRiQS14IOv+qey9w2JsI2ikw5tfUWQy5sRSfhHQYPTOlJ9O0gYazp
-         iZyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722467557; x=1723072357;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l7Ujxn6a9i7nfZSI0EbXAwQJP046tm0fW+Sb1JxMgqs=;
-        b=wIsUYMVe0gdeauo+Rsmen/psQSdzCiFPMslBBjA8Hkh0Y+OZngQctqvZO14USlvnFY
-         FX40icTUiuv5wVUxApsqmsN65d4NyTL0ZSxi5Z2JbHmcA2gsgwGTXZvXXFTeCEN4MgwZ
-         RnAOp3nZzy8HJE3Lh5MZdZ9NaOkDkCDcHs/SPsXGKyF/Xx0dOHTMC5jD5Dg04eV7wKe7
-         YHH7d/PZylTPRUN4ay6x/0uzmxf6MdREAaQVrZfvaiurOoXF774a1LpZau725wflUxm2
-         fDCfUq5DLiQXjjuf2f/qgOjOsbWBJHGUqVrf8jwXV2o9DPEfNbR1L1LLSMJl0y7yCkwI
-         d2XA==
-X-Gm-Message-State: AOJu0YyBCNouX2AvSQzqB6P4txOA/w8rjCcYP1y41yAjGpYhpW1GceMD
-	ghbZvSX/hQZzctkhT2ManVMDmus8pYjm4mBIeYhk9dWxlQOSOMUu
-X-Google-Smtp-Source: AGHT+IF4vaSVA3bBaEUMcxhvpxWBqDo1f/6BuqOsVitjXAfwJVewY0AIW7Wd5J+e/XpjV9NavXCFgA==
-X-Received: by 2002:a17:907:9488:b0:a77:e55a:9e8c with SMTP id a640c23a62f3a-a7daf65a041mr43786466b.47.1722467557057;
-        Wed, 31 Jul 2024 16:12:37 -0700 (PDT)
-Received: from [192.168.42.198] ([148.252.147.239])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb8044sm814989666b.198.2024.07.31.16.12.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 16:12:36 -0700 (PDT)
-Message-ID: <2b0e7ae1-ac02-4661-b362-8229cc68abb8@gmail.com>
-Date: Thu, 1 Aug 2024 00:13:10 +0100
+	s=arc-20240116; t=1722471389; c=relaxed/simple;
+	bh=QLcTNm+RBtlSWiQhNrt10XbpFP9m/MvdWMz1GAJ+/ts=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OFEJyNdeocEYVwhNBE8ieUzUEjTUPNdrIXUy7LqUJRily6/KIuzjQ7Fbyb50UmOJu2uKXmjQgbLz9PphZ8CxjIFAgA0V5A2jBxnM3X+s+X3pMH7YoCGoEBVFBCVJFuqrtVZ+eL2PZK0ePThWW9Pae2Rt/dPa+K0R/Ok2Oii01X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPPE5x0K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68F31C116B1;
+	Thu,  1 Aug 2024 00:16:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722471389;
+	bh=QLcTNm+RBtlSWiQhNrt10XbpFP9m/MvdWMz1GAJ+/ts=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dPPE5x0KclP6YB+czP4L/kJ/4gjUCkiJ17fPym51sR8en3EIhlHbpKIdtvr2/KOUQ
+	 cdNnnEdBdky2okMvFXYvqmOTrFLO+2OV3ZFWcodem3EuKNbOitYgu76MqszbvLUV/1
+	 n+xoPto+FLxivfjjLbBwWgVEHCBIO+MRkUvqoVxYtEt4qT8kOUOL8iDSFOBOeCFZlQ
+	 d6b8cetyfKA4vGhj94xjfXFZqiaaTHwJF/+2gEDa758DXuiMsCwS/fiEAXANteg326
+	 p+pzz1bTxzoKURndUR7FEHR/5WzoReoiesp7OIm+EF7Uf33zcfJTmASSWK44nEUQ24
+	 gPdikcT2oaw+w==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Jens Axboe <axboe@r7625.kernel.dk>,
+	Jens Axboe <axboe@kernel.dk>,
+	Sasha Levin <sashal@kernel.org>,
+	asml.silence@gmail.com,
+	io-uring@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.10 082/121] io_uring/io-wq: make io_wq_work flags atomic
+Date: Wed, 31 Jul 2024 20:00:20 -0400
+Message-ID: <20240801000834.3930818-82-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240801000834.3930818-1-sashal@kernel.org>
+References: <20240801000834.3930818-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing v3] test: add test cases for hugepage registered
- buffers
-To: Chenliang Li <cliang01.li@samsung.com>, axboe@kernel.dk
-Cc: io-uring@vger.kernel.org, peiwei.li@samsung.com, joshi.k@samsung.com,
- kundan.kumar@samsung.com, anuj20.g@samsung.com, gost.dev@samsung.com
-References: <CGME20240531052031epcas5p3730deb2a19b401e1f772be633b4c6288@epcas5p3.samsung.com>
- <20240531052023.1446914-1-cliang01.li@samsung.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240531052023.1446914-1-cliang01.li@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.2
+Content-Transfer-Encoding: 8bit
 
-On 5/31/24 06:20, Chenliang Li wrote:
-> Add a test file for hugepage registered buffers, to make sure the
-> fixed buffer coalescing feature works safe and soundly.
-> 
-> Testcases include read/write with single/multiple/unaligned/non-2MB
-> hugepage fixed buffers, and also a should-not coalesce case where
-> buffer is a mixture of different size'd pages.
+From: Jens Axboe <axboe@r7625.kernel.dk>
 
-lgtm, would be even better if you can add another patch
-testing adding a small buffer on the left size of a hugepage,
-i.e. like mmap_mixutre() but the small buffer is on the other
-side.
+[ Upstream commit 3474d1b93f897ab33ce160e759afd47d5f412de4 ]
 
+The work flags can be set/accessed from different tasks, both the
+originator of the request, and the io-wq workers. While modifications
+aren't concurrent, it still makes KMSAN unhappy. There's no real
+downside to just making the flag reading/manipulation use proper
+atomics here.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/linux/io_uring_types.h |  2 +-
+ io_uring/io-wq.c               | 19 ++++++++++---------
+ io_uring/io-wq.h               |  2 +-
+ io_uring/io_uring.c            | 12 ++++++------
+ 4 files changed, 18 insertions(+), 17 deletions(-)
+
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 7abdc09271245..abf5c6622af6d 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -50,7 +50,7 @@ struct io_wq_work_list {
+ 
+ struct io_wq_work {
+ 	struct io_wq_work_node list;
+-	unsigned flags;
++	atomic_t flags;
+ 	/* place it here instead of io_kiocb as it fills padding and saves 4B */
+ 	int cancel_seq;
+ };
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index 7d3316fe9bfc4..913c92249522e 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -159,7 +159,7 @@ static inline struct io_wq_acct *io_get_acct(struct io_wq *wq, bool bound)
+ static inline struct io_wq_acct *io_work_get_acct(struct io_wq *wq,
+ 						  struct io_wq_work *work)
+ {
+-	return io_get_acct(wq, !(work->flags & IO_WQ_WORK_UNBOUND));
++	return io_get_acct(wq, !(atomic_read(&work->flags) & IO_WQ_WORK_UNBOUND));
+ }
+ 
+ static inline struct io_wq_acct *io_wq_get_acct(struct io_worker *worker)
+@@ -451,7 +451,7 @@ static void __io_worker_idle(struct io_wq *wq, struct io_worker *worker)
+ 
+ static inline unsigned int io_get_work_hash(struct io_wq_work *work)
+ {
+-	return work->flags >> IO_WQ_HASH_SHIFT;
++	return atomic_read(&work->flags) >> IO_WQ_HASH_SHIFT;
+ }
+ 
+ static bool io_wait_on_hash(struct io_wq *wq, unsigned int hash)
+@@ -592,8 +592,9 @@ static void io_worker_handle_work(struct io_wq_acct *acct,
+ 
+ 			next_hashed = wq_next_work(work);
+ 
+-			if (unlikely(do_kill) && (work->flags & IO_WQ_WORK_UNBOUND))
+-				work->flags |= IO_WQ_WORK_CANCEL;
++			if (do_kill &&
++			    (atomic_read(&work->flags) & IO_WQ_WORK_UNBOUND))
++				atomic_or(IO_WQ_WORK_CANCEL, &work->flags);
+ 			wq->do_work(work);
+ 			io_assign_current_work(worker, NULL);
+ 
+@@ -891,7 +892,7 @@ static bool io_wq_worker_wake(struct io_worker *worker, void *data)
+ static void io_run_cancel(struct io_wq_work *work, struct io_wq *wq)
+ {
+ 	do {
+-		work->flags |= IO_WQ_WORK_CANCEL;
++		atomic_or(IO_WQ_WORK_CANCEL, &work->flags);
+ 		wq->do_work(work);
+ 		work = wq->free_work(work);
+ 	} while (work);
+@@ -926,7 +927,7 @@ static bool io_wq_work_match_item(struct io_wq_work *work, void *data)
+ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+ {
+ 	struct io_wq_acct *acct = io_work_get_acct(wq, work);
+-	unsigned long work_flags = work->flags;
++	unsigned int work_flags = atomic_read(&work->flags);
+ 	struct io_cb_cancel_data match = {
+ 		.fn		= io_wq_work_match_item,
+ 		.data		= work,
+@@ -939,7 +940,7 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+ 	 * been marked as one that should not get executed, cancel it here.
+ 	 */
+ 	if (test_bit(IO_WQ_BIT_EXIT, &wq->state) ||
+-	    (work->flags & IO_WQ_WORK_CANCEL)) {
++	    (work_flags & IO_WQ_WORK_CANCEL)) {
+ 		io_run_cancel(work, wq);
+ 		return;
+ 	}
+@@ -982,7 +983,7 @@ void io_wq_hash_work(struct io_wq_work *work, void *val)
+ 	unsigned int bit;
+ 
+ 	bit = hash_ptr(val, IO_WQ_HASH_ORDER);
+-	work->flags |= (IO_WQ_WORK_HASHED | (bit << IO_WQ_HASH_SHIFT));
++	atomic_or(IO_WQ_WORK_HASHED | (bit << IO_WQ_HASH_SHIFT), &work->flags);
+ }
+ 
+ static bool __io_wq_worker_cancel(struct io_worker *worker,
+@@ -990,7 +991,7 @@ static bool __io_wq_worker_cancel(struct io_worker *worker,
+ 				  struct io_wq_work *work)
+ {
+ 	if (work && match->fn(work, match->data)) {
+-		work->flags |= IO_WQ_WORK_CANCEL;
++		atomic_or(IO_WQ_WORK_CANCEL, &work->flags);
+ 		__set_notify_signal(worker->task);
+ 		return true;
+ 	}
+diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
+index 2b2a6406dd8ee..b3b004a7b6252 100644
+--- a/io_uring/io-wq.h
++++ b/io_uring/io-wq.h
+@@ -56,7 +56,7 @@ bool io_wq_worker_stopped(void);
+ 
+ static inline bool io_wq_is_hashed(struct io_wq_work *work)
+ {
+-	return work->flags & IO_WQ_WORK_HASHED;
++	return atomic_read(&work->flags) & IO_WQ_WORK_HASHED;
+ }
+ 
+ typedef bool (work_cancel_fn)(struct io_wq_work *, void *);
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index c326e2127dd4d..846c1cecdb0aa 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -461,9 +461,9 @@ static void io_prep_async_work(struct io_kiocb *req)
+ 	}
+ 
+ 	req->work.list.next = NULL;
+-	req->work.flags = 0;
++	atomic_set(&req->work.flags, 0);
+ 	if (req->flags & REQ_F_FORCE_ASYNC)
+-		req->work.flags |= IO_WQ_WORK_CONCURRENT;
++		atomic_or(IO_WQ_WORK_CONCURRENT, &req->work.flags);
+ 
+ 	if (req->file && !(req->flags & REQ_F_FIXED_FILE))
+ 		req->flags |= io_file_get_flags(req->file);
+@@ -479,7 +479,7 @@ static void io_prep_async_work(struct io_kiocb *req)
+ 			io_wq_hash_work(&req->work, file_inode(req->file));
+ 	} else if (!req->file || !S_ISBLK(file_inode(req->file)->i_mode)) {
+ 		if (def->unbound_nonreg_file)
+-			req->work.flags |= IO_WQ_WORK_UNBOUND;
++			atomic_or(IO_WQ_WORK_UNBOUND, &req->work.flags);
+ 	}
+ }
+ 
+@@ -519,7 +519,7 @@ static void io_queue_iowq(struct io_kiocb *req)
+ 	 * worker for it).
+ 	 */
+ 	if (WARN_ON_ONCE(!same_thread_group(req->task, current)))
+-		req->work.flags |= IO_WQ_WORK_CANCEL;
++		atomic_or(IO_WQ_WORK_CANCEL, &req->work.flags);
+ 
+ 	trace_io_uring_queue_async_work(req, io_wq_is_hashed(&req->work));
+ 	io_wq_enqueue(tctx->io_wq, &req->work);
+@@ -1813,14 +1813,14 @@ void io_wq_submit_work(struct io_wq_work *work)
+ 	io_arm_ltimeout(req);
+ 
+ 	/* either cancelled or io-wq is dying, so don't touch tctx->iowq */
+-	if (work->flags & IO_WQ_WORK_CANCEL) {
++	if (atomic_read(&work->flags) & IO_WQ_WORK_CANCEL) {
+ fail:
+ 		io_req_task_queue_fail(req, err);
+ 		return;
+ 	}
+ 	if (!io_assign_file(req, def, issue_flags)) {
+ 		err = -EBADF;
+-		work->flags |= IO_WQ_WORK_CANCEL;
++		atomic_or(IO_WQ_WORK_CANCEL, &work->flags);
+ 		goto fail;
+ 	}
+ 
 -- 
-Pavel Begunkov
+2.43.0
+
 

@@ -1,52 +1,53 @@
-Return-Path: <io-uring+bounces-2634-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2635-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9219C945466
-	for <lists+io-uring@lfdr.de>; Fri,  2 Aug 2024 00:02:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3B39454B9
+	for <lists+io-uring@lfdr.de>; Fri,  2 Aug 2024 01:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B73B282F12
-	for <lists+io-uring@lfdr.de>; Thu,  1 Aug 2024 22:02:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89681B22775
+	for <lists+io-uring@lfdr.de>; Thu,  1 Aug 2024 23:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE26713E04C;
-	Thu,  1 Aug 2024 22:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F1914B075;
+	Thu,  1 Aug 2024 23:05:38 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBE914AA9;
-	Thu,  1 Aug 2024 22:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719FAD2F5;
+	Thu,  1 Aug 2024 23:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722549773; cv=none; b=YUDqTlcfZZ8KbF9UY1iF4aFDr3xCRBI0TDvDvYrDCb3NrSdjx4L9H08xLgwP+B4AUn2p2fKWqis75twfMKOGPgL5EXIa/prGHge4JZlQeLY65byc3ZgVI4o0bIcb2yFKvY+zeEUbYY8GWFg4U4lNdLQmkC7260xRdkx+B1dvthg=
+	t=1722553538; cv=none; b=hBmANzPKVB/azsXEl/5o1FMKnhrLdbd5l4lDLAHWfZn/3Ox/gtWX/1M5FOMaYVEAN+6fCpkrvq5Q9swq96pIkFdLVVnj7u6mfYW8QAcei9PDMeEa/IrzvCoxxiXNI0E+fzheE6+4OajH//nPYbwMy9xq+R83us8vFo2TdXB8Z3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722549773; c=relaxed/simple;
-	bh=l3ySH+k8H2oB483V9c0B34KU0g3LpC/pefj6/z+V7bo=;
+	s=arc-20240116; t=1722553538; c=relaxed/simple;
+	bh=PtPKb/3gkGJs5E7KLeHnbriRs21F34tPsu6+uWzyok8=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c8KAqnlmqBCcpY9+clQJ6ujoBn6YRFS6vc5aUL5tynC4yJHwhlEgqV+n1vQYokwVDwKLftd+D/yHIizxCquxTfKV3Czuu1SI9NXng+PkdYOEdkN2auNzh1olkjNJsE6F/mxnzQuL0TV9Ton6OMd9cf+2RsGGR13816KmcM5hYvk=
+	 Content-Type:MIME-Version; b=HPie7saUjKhwneXlQG8IflRtruv2bUk17cKJ/+/H7HPrzxohErx/4LowULD5fWW1PSyNUDeLhojygNLl75hvOnP+RQv2wTjfjkFco0MENoCJcUtqiOSjm3EvAWoSQa8gVjzn37nndq+4/2muaJMCOClfwHDKgjz+OfgQUDnncYw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=48282 helo=[192.168.1.177])
+Received: from [45.44.224.220] (port=59976 helo=[192.168.1.177])
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1sZdso-0001tj-1R;
-	Thu, 01 Aug 2024 18:02:50 -0400
-Message-ID: <4dbbd36aa7ecd1ce7a6289600b5655563e4a5a74.camel@trillion01.com>
+	id 1sZerX-0005bl-0H;
+	Thu, 01 Aug 2024 19:05:35 -0400
+Message-ID: <9ba345b74c19fec2c19f05d2887c6315b0855a75.camel@trillion01.com>
 Subject: Re: io_uring NAPI busy poll RCU is causing 50 context
  switches/second to my sqpoll thread
 From: Olivier Langlois <olivier@trillion01.com>
 To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 Cc: netdev@vger.kernel.org
-Date: Thu, 01 Aug 2024 18:02:49 -0400
-In-Reply-To: <43c27aa1-d955-4375-8d96-cd4201aecf50@gmail.com>
+Date: Thu, 01 Aug 2024 19:05:34 -0400
+In-Reply-To: <66f7bc8a-e4a9-4912-9ea7-c88dbb6fb999@gmail.com>
 References: <b1ad0ab3a7e70b72aa73b0b7cab83273358b2e1d.camel@trillion01.com>
 	 <00918946-253e-43c9-a635-c91d870407b7@gmail.com>
 	 <bcd3b198697e16059ec69566251ad23c4c78e7a7.camel@trillion01.com>
 	 <43c27aa1-d955-4375-8d96-cd4201aecf50@gmail.com>
+	 <66f7bc8a-e4a9-4912-9ea7-c88dbb6fb999@gmail.com>
 Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
  keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
  5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
@@ -90,74 +91,56 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-On Wed, 2024-07-31 at 01:33 +0100, Pavel Begunkov wrote:
+On Wed, 2024-07-31 at 02:00 +0100, Pavel Begunkov wrote:
 >=20
-> You're seeing something that doesn't make much sense to me, and we
-> need
-> to understand what that is. There might be a bug _somewhere_, that's
-> always a possibility, but before saying that let's get a bit more
-> data.
+> I forgot to add, ~50 switches/second for relatively brief RCU
+> handling
+> is not much, not enough to take 50% of a CPU. I wonder if sqpoll was
+> still running but napi busy polling time got accounted to softirq
+> because of disabled bh and you didn't include it, hence asking CPU
+> stats. Do you see any latency problems for that configuration?
 >=20
-> While the app is working, can you grab a profile and run mpstat for
-> the
-> CPU on which you have the SQPOLL task?
->=20
-> perf record -g -C <CPU number> --all-kernel &
-> mpstat -u -P <CPU number> 5 10 &
->=20
-> And then as usual, time it so that you have some activity going on,
-> mpstat interval may need adjustments, and perf report it as before.
->=20
-First thing first.
+Pavel,
 
-The other day, I did put my foot in my mouth by saying the NAPI busy
-poll was adding 50 context switches/second.
+I am not sure if I will ever discover what this 50% CPU usage drop was
+exactly.
 
-I was responsible for that behavior with the rcu_nocb_poll boot kernel
-param. I have removed the option and the context switches went away...
+when I did test
+https://lore.kernel.org/io-uring/382791dc97d208d88ee31e5ebb5b661a0453fb79.1=
+722374371.git.olivier@trillion01.com/T/#u
 
-I am clearly outside my comfort zone with this project, I am trying
-things without fully understand what I am doing and I am making errors
-and stuff that is incorrect.
+from this custom setup:
+https://github.com/axboe/liburing/issues/1190#issuecomment-2258632731
 
-On top of that, before mentioning io_uring RCU usage, I did not realize
-that net/core was already massively using RCU, including in
-napi_busy_poll, therefore, that io_uring is using rcu before calling
-napi_busy_poll, the point does seem very moot.
+iou-sqp task cpu usage went back to 100%...
 
-this is what I did the other day and I wanted to apologize to have said
-something incorrect.
+there was also my busy_poll config numbers that were inadequate.
 
-that being said, it does not remove the possible merit of what I did
-propose.
+I went from:
+echo 1000 > /sys/class/net/enp39s0/napi_defer_hard_irqs
+echo 500 > /sys/class/net/enp39s0/gro_flush_timeout
 
-I really think that the current io_uring implemention of the napi
-device tracking strategy is overkill for a lot of scenarios...
+to:
+echo 5000 > /sys/class/net/enp39s0/napi_defer_hard_irqs
+# gro_flush_timeout unit is nanoseconds
+echo 100000 > /sys/class/net/enp39s0/gro_flush_timeout
 
-if some sort of abstract interface like a mini struct net_device_ops
-with 3-4 function pointers where the user could select between the
-standard dynamic tracking or a manual lightweight tracking was present,
-that would be very cool... so cool...
+ksoftirqd has stopped being awakening to service NET SOFTIRQS but I
+would that this might not be the cause neither
 
-I am definitely interested in running the profiler tools that you are
-proposing... Most of my problems are resolved...
+I have no more latency issues. After a lot of efforts during the last 7
+days, my system latency have improved by a good 10usec on average over
+what it was last week...
 
-- I got rid of 99.9% if the NET_RX_SOFTIRQ
-- I have reduced significantly the number of NET_TX_SOFTIRQ
-  https://github.com/amzn/amzn-drivers/issues/316
-- No more rcu context switches
-- CPU2 is now nohz_full all the time
-- CPU1 local timer interrupt is raised once every 2-3 seconds for an
-unknown origin. Paul E. McKenney did offer me his assistance on this
-issue
+but knowing that it can be even better is stopping me from letting
+go...
+
+the sporadic CPU1 interrupt can introduce a 27usec delay and this is
+the difference between a win or a loss that is at stake...
 https://lore.kernel.org/rcu/367dc07b740637f2ce0298c8f19f8aec0bdec123.camel@=
-trillion01.com/t/#u
+trillion01.com/T/#m5abf9aa02ec7648c615885a6f8ebdebc57935c35
 
-I am going to give perf record a second chance... but just keep in
-mind, that it is not because it is not recording much, it is not
-because nothing is happening. if perf relies on interrupts to properly
-operate, there is close to 0 on my nohz_full CPU...
-
-thx a lot for your help Pavel!
+I want to get rid of that interrupt so hard that is going to provide a
+great satidfaction when I will have finally found the cause...
 
 

@@ -1,123 +1,175 @@
-Return-Path: <io-uring+bounces-2642-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2643-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5200945F51
-	for <lists+io-uring@lfdr.de>; Fri,  2 Aug 2024 16:22:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2323094605E
+	for <lists+io-uring@lfdr.de>; Fri,  2 Aug 2024 17:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1A821C20947
-	for <lists+io-uring@lfdr.de>; Fri,  2 Aug 2024 14:22:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BAD5B2524C
+	for <lists+io-uring@lfdr.de>; Fri,  2 Aug 2024 15:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9821EA0B3;
-	Fri,  2 Aug 2024 14:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE63A13632B;
+	Fri,  2 Aug 2024 15:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZhWwvlhU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DF81E675E
-	for <io-uring@vger.kernel.org>; Fri,  2 Aug 2024 14:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D31136329;
+	Fri,  2 Aug 2024 15:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722608538; cv=none; b=dQs2Kz1T/v4dQfX9uU4za/OlsLNP12AAWptiG1ZIE3ktc9j09rSxofpvjpOv4bBnvx5uXdQ9UmSIZwxM1Sl/CaAQ3UZQ6egQH984UtrVMiA6Tyw2TWlsc8TPv4RViAjW+88ghfxN/l24x10qH3+PBpVvYvzEDoqxvSdrj2jOrYw=
+	t=1722612128; cv=none; b=sFNaj6LQ7CaLIftK08d764Gv+M7eNTVKUKLJQxN3EJZgK9RS0rxB5B0UsgitPlgMac5kd/LP2j85TIGWAjymr2E9ZYud+dAFC5h5R50Rp1gPABA7wGK0xwLguGtIOcxlo0fLkQrKcgubmNeokX9FFF/lzmeZa9adHlFUvvl1eHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722608538; c=relaxed/simple;
-	bh=kQX0ld6tICjFtpI6H03omYURyGkfcjCF9Kd4FHr1r+4=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UcqowvIERy4vitByUkT56xUllzIN9bSHB5QZa7cwoMHlt2VkZUegxDoeLt5CeILRix6NmeRfS+cDw1MsGvvvppmziDseqwCTpYg4evvLj3pJpXYfCXGLv7Gcfn5lunzeA7Za3ApboxKti8Z3rGlxEFVGCavUuA3cnPHfwlYA2Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=54322 helo=[192.168.1.177])
-	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <olivier@trillion01.com>)
-	id 1sZtAd-0000UE-0L;
-	Fri, 02 Aug 2024 10:22:15 -0400
-Message-ID: <88b3d7be16b7e4fe788730347dd1b902a75423f0.camel@trillion01.com>
-Subject: Re: [PATCH 2/2] io_uring: do the sqpoll napi busy poll outside the
- submission block
-From: Olivier Langlois <olivier@trillion01.com>
-To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-	io-uring@vger.kernel.org
-Date: Fri, 02 Aug 2024 10:22:14 -0400
-In-Reply-To: <eba4f346-ede3-4d1e-b33d-f07227982355@gmail.com>
-References: <cover.1722374370.git.olivier@trillion01.com>
-	 <382791dc97d208d88ee31e5ebb5b661a0453fb79.1722374371.git.olivier@trillion01.com>
-	 <eba4f346-ede3-4d1e-b33d-f07227982355@gmail.com>
-Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
- keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
- 5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
- g5nV/401re30kRfA8OPivpnj6mZhU/9RTwjbVPPb8dPlm2gFLXwGPeDITgSRs+KJ0mM37fW8EatJs
- 0a8J1Nk8wBvT7ce+S2lOrxDItra9pW3ukze7LMirwvdMRC5bdlw2Lz03b5NrOUq+Wxv7szn5Xr9f/
- HdaCH7baWNAO6H/O5LbJ3zndewokEmKk+oCIcXjaH0U6QK5gJoO+3Yt5dcTo92Vm3VMxzK2NPFXgp
- La7lR9Ei0hzQ0zptyFFyftt9uV71kMHldaQaSfUTsu9dJbnS2kI/j+F2S1q6dgKi3DEm0ZRGvjsSG
- rkgPJ5T16GI1cS2iQntawdr0A1vfXiB9xZ1SMGxL/l6js9BVlIx/CBGOJ4L190QmxJlcAZ2VnQzrl
- ramRUv01xb00IPJ5TBft5IJ+SY0FnY9pIERIl6w9khwLt/oGuKNmUHmzJGYoJHYfh72Mm8RQ1R/JS
- o6v85ULBGdEC3pQq1j//OPyH3egiXIwFq6BtULH5CvsxQkSqgj1MpjwfgVJ8VbjNwqwBXHjooEORj
- vFQqWQki6By3QARAQABtDJPbGl2aWVyIExhbmdsb2lzIChNeSBrZXkpIDxvbGl2aWVyQHRyaWxsaW
- 9uMDEuY29tPokCNwQTAQgAIQUCVh3TJwIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRBlaka
- GGsWHEI1AD/9sbj+vnFU29WemVqB4iW+9RrHIcbXI4Jg8WaffTQ8KvVeCJ4otzgVT2nHC2A82t4PF
- 0tp21Ez17CKDNilMvOt8zq6ZHx36CPjoqUVjAdozOiBDpC4qB6ZKYn+gqSENO4hqmmaOW57wT9vII
- v6mtHmnFvgpOEJl6wbs8ArHDt0BLSjc8QQfvBhoKoWs+ijQTyvFGlQl0oWxEbUkR1J3gdft9Oj9xQ
- G4OFo73WaSEK/L9IalU2ulCBC+ucSP9McoDxy1i1u8HUDrV5wBY1zafc9zVBcMNH6+ZjxwQmZXqtz
- ATzB3RbSFHAdmvxl8q6MeS2yx7Atk0CXgW9z5k2KeuZhz5rVV5A+D19SSGzW11uYXsibZx/Wjr9xB
- KHB6U7qh5sRHaQS191NPonKcsXXAziR+vxwQTP7ZKfy+g5N/e6uivoUnQrl9uvUDDPXEpwVNSoVws
- Vn4tNyrGEdN11pHDbH5fSGzdpbY8+yczUoxMmsEQe/fpVwRBZUqafRn2TVUhV0qqzsUuQcTNw1zIZ
- JgvkqrHgd4ivd2b1bXBczmu/wMGpEnF6cWzSQDiwC1NF3i+gHCuD8IX1ujThWtzXsn0VtrMkrRCbn
- ponVQ6HcbRYYXPuK0HRRjCSuAKo5porVONepiOSmu0FBrpGqBkpBtLrzKXoi1yt/7a/wGdMcVhYGg
- vA==
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1722612128; c=relaxed/simple;
+	bh=w7jHXFzuZUNLzlt3vckGyTI+i0LMaKmdzdx6Oqj8rWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G2Y1IRUbRzxsS+EW5xEptl7y4glmSCRhuM6bjRJYVcXoo38C2sx1N4j7es8f33vHDqZAPxJ1VCNXOqGSeA7F81FKi5NtzEqMKJ/6XHOSIxS4d6VClRayO3s3vh3PMSLYVzJB3ML5cEtybI5H6dCrLvK5O089nbaD+3jsX4oKfGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZhWwvlhU; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7aa4bf4d1eso185421266b.0;
+        Fri, 02 Aug 2024 08:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722612125; x=1723216925; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HHq5n4pOvIBj0IwJkG9wUTHb160eU569skCvZMsn1SA=;
+        b=ZhWwvlhUhxrXYQ5yeUFF2v9397MABzUSRi9Tr/p0BP0H4Zol5l8Vhm93q5zvsldpC7
+         cq+vqkYP3unZg94bi8GGVGOJ//uEFRYySVlFImfbW3TMtXbSFSzfyczBkQq3TXEpEcgq
+         rg3n4VkU4I6B3sSJ3mMOCHayU+L+VPorFbG3zvBoe5o4tle2s78YvN1rSNZxIM6cRomA
+         9bdXxTvM2Y74Mvz7NFnih3S0NB7CKcWpGBsGOeBrMktpkL+zm8htJpM6doyYyXWmXEXs
+         TfOr0BI5mf/Wmutr/03gsPcwnLX7YRm0+NATuRcaheTjWhHekvGOyuEa7yi3vXXLRwVa
+         1aTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722612125; x=1723216925;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HHq5n4pOvIBj0IwJkG9wUTHb160eU569skCvZMsn1SA=;
+        b=P9vTt5QYIHCNG04WMX14Ekx4JDlASxiYetzT5Jm2EprzPoeIl5HvlxV+unHZ8btlNm
+         crg0f0CKSrnZ7Oo5/6XR04xDg2IG4XxyW5hZUv34cUpysDKX3PL8WH1GTu9iatkpBPzA
+         OxKnrBurKBstNqc3RNzVyfJgWUIiqVhuCpxtzZLVKnOIN76Iaf1pSKx8MVw9JSCeSuAw
+         P02+h12dpS0QusY3gg4QQyOYXtGi+hr1mRW463oJCvk/jrWYssGSrzzh2Lsp59lw9FI7
+         wq4op+EjzSPh+AD2jtGq7UWczmQ9vvJxnUhIPQWd2Z7my/kNFtjpTcBwkH3mqN7c3ps7
+         Tu9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVNk5XeeTnVtx6VXAB4rGU8zsCzTvKvzwOgxFkSOTYT3n2EKYiAJUwAz5HqaBQjYZ6z6CPd+VDfptLSvnPZKWYNkTCsQYBI/zI=
+X-Gm-Message-State: AOJu0Yy3fcTXsHXk0f+PKHV+odpI0k0Q3al/V0rQDcgJrW05iO1GQDqR
+	1nreodtFg4tekjgiGELsrVpS0ci2iIt8gf0YjxTw7r0Vn0wjYG3AmS8nGw==
+X-Google-Smtp-Source: AGHT+IEIiamWmpPeaP5QLw613ukzHxEzdmQQc8SDYi0N4OQCmCymjoH54KcfzMrRH1SF/8KyZRYJrg==
+X-Received: by 2002:a17:907:d92:b0:a7a:b9dd:7757 with SMTP id a640c23a62f3a-a7dc4fd8a6cmr364696466b.12.1722612124776;
+        Fri, 02 Aug 2024 08:22:04 -0700 (PDT)
+Received: from [192.168.42.144] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e8c732sm110830766b.187.2024.08.02.08.22.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Aug 2024 08:22:04 -0700 (PDT)
+Message-ID: <93b294fc-c4e8-4f1f-8abb-ebcea5b8c3a1@gmail.com>
+Date: Fri, 2 Aug 2024 16:22:37 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: io_uring NAPI busy poll RCU is causing 50 context switches/second
+ to my sqpoll thread
+To: Olivier Langlois <olivier@trillion01.com>, io-uring@vger.kernel.org
+Cc: netdev@vger.kernel.org
+References: <b1ad0ab3a7e70b72aa73b0b7cab83273358b2e1d.camel@trillion01.com>
+ <00918946-253e-43c9-a635-c91d870407b7@gmail.com>
+ <bcd3b198697e16059ec69566251ad23c4c78e7a7.camel@trillion01.com>
+ <43c27aa1-d955-4375-8d96-cd4201aecf50@gmail.com>
+ <4dbbd36aa7ecd1ce7a6289600b5655563e4a5a74.camel@trillion01.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <4dbbd36aa7ecd1ce7a6289600b5655563e4a5a74.camel@trillion01.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2024-08-02 at 12:14 +0100, Pavel Begunkov wrote:
->=20
-> io_do_sqpoll_napi() returns 1 as long as there are napis in the list,
-> iow even if there is no activity it'll spin almost forever (60s is
-> forever) bypassing sq_thread_idle.
->=20
-> Let's not update sqt_spin here, if the user wants it to poll for
-> longer it can pass a larger SQPOLL idle timeout value.
->=20
->=20
->=20
-fair enough...
+On 8/1/24 23:02, Olivier Langlois wrote:
+> On Wed, 2024-07-31 at 01:33 +0100, Pavel Begunkov wrote:
+>>
+>> You're seeing something that doesn't make much sense to me, and we
+>> need
+>> to understand what that is. There might be a bug _somewhere_, that's
+>> always a possibility, but before saying that let's get a bit more
+>> data.
+>>
+>> While the app is working, can you grab a profile and run mpstat for
+>> the
+>> CPU on which you have the SQPOLL task?
+>>
+>> perf record -g -C <CPU number> --all-kernel &
+>> mpstat -u -P <CPU number> 5 10 &
+>>
+>> And then as usual, time it so that you have some activity going on,
+>> mpstat interval may need adjustments, and perf report it as before.
+>>
+> First thing first.
+> 
+> The other day, I did put my foot in my mouth by saying the NAPI busy
+> poll was adding 50 context switches/second.
+> 
+> I was responsible for that behavior with the rcu_nocb_poll boot kernel
+> param. I have removed the option and the context switches went away...
+> 
+> I am clearly outside my comfort zone with this project, I am trying
+> things without fully understand what I am doing and I am making errors
+> and stuff that is incorrect.
+> 
+> On top of that, before mentioning io_uring RCU usage, I did not realize
+> that net/core was already massively using RCU, including in
+> napi_busy_poll, therefore, that io_uring is using rcu before calling
+> napi_busy_poll, the point does seem very moot.
+> 
+> this is what I did the other day and I wanted to apologize to have said
+> something incorrect.
 
-in that case, maybe the man page SQPOLL idle timeout description should
-include the mention that if NAPI busy loop is used, the idle timeout
-should be at least as large as gro_flush_timeout to meet NAPI
-requirement to not generate interrupts as described in
+No worries at all, you're pushing your configuration to extremes,
+anyone would get lost in the options, and I'm getting curious what
+you can squeeze from it. That's true that the current tracking
+scheme might be an overkill but not because of mild RCU use.
 
-Documentation/networking/napi.rst
-section "Software IRQ coalescing"
+> that being said, it does not remove the possible merit of what I did
+> propose.
+> 
+> I really think that the current io_uring implemention of the napi
+> device tracking strategy is overkill for a lot of scenarios...
+> 
+> if some sort of abstract interface like a mini struct net_device_ops
+> with 3-4 function pointers where the user could select between the
+> standard dynamic tracking or a manual lightweight tracking was present,
+> that would be very cool... so cool...
+> 
+> I am definitely interested in running the profiler tools that you are
+> proposing... Most of my problems are resolved...
+> 
+> - I got rid of 99.9% if the NET_RX_SOFTIRQ
+> - I have reduced significantly the number of NET_TX_SOFTIRQ
+>    https://github.com/amzn/amzn-drivers/issues/316
+> - No more rcu context switches
+> - CPU2 is now nohz_full all the time
+> - CPU1 local timer interrupt is raised once every 2-3 seconds for an
+> unknown origin. Paul E. McKenney did offer me his assistance on this
+> issue
+> https://lore.kernel.org/rcu/367dc07b740637f2ce0298c8f19f8aec0bdec123.camel@trillion01.com/t/#u
 
-I have discovered this fact the hard way by having spent days to figure
-out how to do busy poll the right way.
+And I was just going to propose to ask Paul, but great to
+see you beat me on that
 
-this simple mention could save the trouble to many new users of the
-feature.
+> I am going to give perf record a second chance... but just keep in
+> mind, that it is not because it is not recording much, it is not
+> because nothing is happening. if perf relies on interrupts to properly
+> operate, there is close to 0 on my nohz_full CPU...
+> 
+> thx a lot for your help Pavel!
+> 
 
-I'll rework the patch and send a new version in the few days.
-
-Greetings,
-
+-- 
+Pavel Begunkov
 

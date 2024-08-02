@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-2637-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2638-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB73945D0A
-	for <lists+io-uring@lfdr.de>; Fri,  2 Aug 2024 13:14:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F15AC945D15
+	for <lists+io-uring@lfdr.de>; Fri,  2 Aug 2024 13:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA79C1F21D7B
-	for <lists+io-uring@lfdr.de>; Fri,  2 Aug 2024 11:14:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB001F226A6
+	for <lists+io-uring@lfdr.de>; Fri,  2 Aug 2024 11:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4044B146D4C;
-	Fri,  2 Aug 2024 11:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822201DE876;
+	Fri,  2 Aug 2024 11:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJDvUzuh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2jHWev0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74210487B0
-	for <io-uring@vger.kernel.org>; Fri,  2 Aug 2024 11:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C333215AD9C
+	for <io-uring@vger.kernel.org>; Fri,  2 Aug 2024 11:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722597293; cv=none; b=BZ7WX0vYahom3eQ/5/5dNPRb9nlTFTFfO+0tiM+y83KNvBRXiF4IcrFXP9U175GKD/D3LMq1jWZD8ckJrmLwj3lAxVb6eR5imVnQoT9TjWqKHbNtqZMSXSD8S9tX0BeftnI7x0bxyOQIukN0Xx3g8w9MLiMXTZDLRT/1lWEOxVU=
+	t=1722597438; cv=none; b=r9Lrhmxgnm9qeshX0SIh1RRtKnKdzx98Jk7537HHBH9l1IaKXmoE4Mflcpibic9HBplGZuv0DI89c9myQAQe/1tNLjppTrgFWhx8d/HCRVRI6CLj3jxjACF308y6Oh63BHaOHB6A/frDVT8icl9+npPuTAXGgZPBlVmbRKYO7J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722597293; c=relaxed/simple;
-	bh=exxUYNcSQJIH2/F/lI/Q5U/cCgoOnpEYJvdU6Jc2JQQ=;
+	s=arc-20240116; t=1722597438; c=relaxed/simple;
+	bh=TrNxREV2G3Fvv2hoSWi53L5ZpBLHs+8hDkDf/Lo+lFs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bhxcQodTlfBvurBCo7O/VGT4b7KP9gEByFBkTp+xjj1uIG/kP6cff0s6mwD/A6fYD9a2XM2VdpoGPqC1pZelYr3HoWuZs2Ppt71OxcZNMnih6XvD+z3A9i8MdUBhpo9X0suGoLEusBG0jhr3gKrZkXc3Zpoe4obrvek9uIgJuhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJDvUzuh; arc=none smtp.client-ip=209.85.221.41
+	 In-Reply-To:Content-Type; b=VNGsNfxxYxAYAEj2mFORp4R2l/TRhjGcEeelf5vzIbNSiOoS/JTPHD7A/rRnzBvkiLFEebb2Fbg7PHiHDiJ7Y0HMyN3dxBoMy2ZH6R1R72Pl4pi+yAadEA4pIyXdxN3LT9r9YDQ9DZHlLYGlxXOSHT7+YJRbRiPAcHGh4b7Le6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2jHWev0; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-36887ca3da2so3720455f8f.2
-        for <io-uring@vger.kernel.org>; Fri, 02 Aug 2024 04:14:51 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f149845fbaso44571881fa.3
+        for <io-uring@vger.kernel.org>; Fri, 02 Aug 2024 04:17:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722597290; x=1723202090; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722597435; x=1723202235; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=oeLsk86q/jp6EBacPBsya97/KxIz2njnQlKyq/w99rs=;
-        b=dJDvUzuhjLn5Ompxb1rC1LW4xQiTnq/MT99WYhqw76cK34fLimj8LlArEKxIskwu4B
-         dieDo11C+yVnTS3v8DsLxJPZtivtdBk3G3148kc+dMCZhO2BV/crSEfWoCjtc6zB6bQU
-         SEELoaROtIRuYKW4VuKOBArxeTmQSCopNLFfX23X493iwnOUmZ3/of8nzB3JyBZgvmT1
-         GvUvt3XW8uNN1qxnSWEpWdAOpzHAHJaI1oggUShHsjJ7JnIxPfrg/qGbOAhyXh9RGDJK
-         V6CXEUXodKaUj4iPe8W5uwSo4KcX6pp21q75tAuA8oR8BCmzRlKUDEiDEd0g+kHv/26t
-         ylZA==
+        bh=EzvCbXgl3zCnkI4NQ841vaJDCaDC9jhpiXD5l8QF0TQ=;
+        b=G2jHWev0KLjQ6Z3Ge7cYHf0bwbHMnHwmx/Hd/Klz6rOShQtens7YF1KM+lGIut5XG6
+         aOIsW972NYsfbNhPuHegG5Fbl/V6PsAKDJYYfim7eIgyM6GS1Ogmtdn2nlWYWiacnyxV
+         EjCp5U5YEoHyDyf2/rGKiMhWM/NxXLGuc5TvRk95Dk4rgRPajn9liPk5W093D/NMgXy3
+         0BXDB4OSnUpXbtYOzlBzdNTVG24/KboHqXUGNDNos7eVWo/iicTtQYDXA2T7/n6TmFBB
+         4frMGDtbi1CdLzRDGx/0Z5y+/uzPC22KFgL5sFVdmrqQ9uSLXPZdLi3Xk9NiOULzCASn
+         wjhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722597290; x=1723202090;
+        d=1e100.net; s=20230601; t=1722597435; x=1723202235;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oeLsk86q/jp6EBacPBsya97/KxIz2njnQlKyq/w99rs=;
-        b=vUvfHRynvDcokDzOp5CRfWnKK/6cds8nQuV9lZqdFj/AbcM6mXlwHAkmUSCHXCQqNd
-         aTIEYkrVoLKkdmmM2ZRdPb3lpbZOr8LChScxm18C5HM5xcds7ahqutJGqGAi0tJWy26q
-         ReVr4x+ViNAlVApH5mWdB08yvKXMNOuj98ObudXXDdKgYQMfxNF9fyDdDbXmVrk4VnP/
-         cDjsJ4AEAodV8O4ylh3SCVZ3n/SkIwgSYgCPJ9JAR+kcch38JjI/WLX06uTOpetX/oQd
-         1U6T3snrTFll3rvj+q690s5DQaOgwikJc4wpi5LPNh6NwUEScoTSatU1lfC4StYStVKH
-         J2RA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBDzxD2ClwFXW95AKatu3Ottf++aYeWDyBkw9I4e7wGYBBDouJjXWSMckKd9+LPziv6nu33JAkG+Eu3sr93ZG1+WKjtjPdn+U=
-X-Gm-Message-State: AOJu0YxQ8OhL48+h579TzJMEQDo+y0n1u2Fw6PIqKWOrHdF6xD3shleD
-	680OCXYf5heAY49l1xcsYSUuLRcT477jbAj+OOOH9x//wh34LhOA
-X-Google-Smtp-Source: AGHT+IEqw+UlxzgxIHwbT9o8OVeO1G5excZDqTzuG7pqj5AcmaQpMsu9Vy8whWy7sT42ZMHG8gTFHg==
-X-Received: by 2002:a5d:4d47:0:b0:36b:3535:a9c4 with SMTP id ffacd0b85a97d-36bbc1cea9cmr2129334f8f.51.1722597259925;
-        Fri, 02 Aug 2024 04:14:19 -0700 (PDT)
+        bh=EzvCbXgl3zCnkI4NQ841vaJDCaDC9jhpiXD5l8QF0TQ=;
+        b=m2W+HtIUsFmzGWIaNx18COGnj8tgijUxuLRszST+IbaYO8V0372JxEsTZLgS2O+yfa
+         zK5XWJhRO744g97VgdICgtjVMnB/DzSKY9LzrJiX1pCbdZN4TJKOnmNDu8izVYNwWRao
+         ZRqB5Y6+ZqX0fUBA3hmVysT/yaX4+WFbENlWdrk/1mLfYYFASYLgLgXcDXO01s8gHxot
+         ZXfM9C3uq1IWy87OIAGpZskpHE/rezp/OnRfnYoAIc/SmKERLyj9zQEQdrU7HblAoFZM
+         A93h/u49ajsbdQb3rXA3IDaSPmFQMrsuFhODRX3KNGEjZKZ9kbOkH4awv2EdFjv7TVH/
+         heoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXR3EeCJabKlVihDnVi05HT4vI5PCOHCVdyGKcxcGh3tehY5nUi7Nj7MXV9FGh8tzDd3j/b263jkKrV7+A2AJFqOJuaS+dwOfA=
+X-Gm-Message-State: AOJu0YzR0ZnbX2ALaPupFxMrrZ1hu1XncIG8JOpXKdvVPLqzkoo2q0tc
+	3CxGKenJs4gFXZmnBAXpuJFo+C34N0TlGkpD34FAiL4tKfXgR7Q8
+X-Google-Smtp-Source: AGHT+IH+nW1hh+gYesJx2rbrWpSSKeXwaQvcQK3Hlm16Xb/KnxhFKjQ5fpOaqhLDuc1MjMBRsPbpPQ==
+X-Received: by 2002:a2e:824b:0:b0:2ef:2e6b:4105 with SMTP id 38308e7fff4ca-2f15aaf662cmr21961471fa.34.1722597434090;
+        Fri, 02 Aug 2024 04:17:14 -0700 (PDT)
 Received: from [192.168.42.220] (82-132-220-64.dab.02.net. [82.132.220.64])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd01ab49sm1719551f8f.40.2024.08.02.04.14.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bab9f7esm87675845e9.21.2024.08.02.04.17.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Aug 2024 04:14:19 -0700 (PDT)
-Message-ID: <eba4f346-ede3-4d1e-b33d-f07227982355@gmail.com>
-Date: Fri, 2 Aug 2024 12:14:52 +0100
+        Fri, 02 Aug 2024 04:17:13 -0700 (PDT)
+Message-ID: <4404dcee-9479-4340-8b88-bc4554f57fe2@gmail.com>
+Date: Fri, 2 Aug 2024 12:17:46 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,98 +76,49 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] io_uring: do the sqpoll napi busy poll outside the
- submission block
+Subject: Re: [PATCH 1/2] io_uring: micro optimization of __io_sq_thread()
+ condition
 To: Olivier Langlois <olivier@trillion01.com>, Jens Axboe <axboe@kernel.dk>,
  io-uring@vger.kernel.org
 References: <cover.1722374370.git.olivier@trillion01.com>
- <382791dc97d208d88ee31e5ebb5b661a0453fb79.1722374371.git.olivier@trillion01.com>
+ <052ca60b5c49e7439e4b8bd33bfab4a09d36d3d6.1722374371.git.olivier@trillion01.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <382791dc97d208d88ee31e5ebb5b661a0453fb79.1722374371.git.olivier@trillion01.com>
+In-Reply-To: <052ca60b5c49e7439e4b8bd33bfab4a09d36d3d6.1722374371.git.olivier@trillion01.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/30/24 22:10, Olivier Langlois wrote:
-> there are many small reasons justifying this change.
+On 7/30/24 21:56, Olivier Langlois wrote:
+> reverse the order of the element evaluation in an if statement.
 > 
-> 1. busy poll must be performed even on rings that have no iopoll and no
->     new sqe. It is quite possible that a ring configured for inbound
->     traffic with multishot be several hours without receiving new request
->     submissions
-> 2. NAPI busy poll does not perform any credential validation
-> 3. If the thread is awaken by task work, processing the task work is
->     prioritary over NAPI busy loop. This is why a second loop has been
->     created after the io_sq_tw() call instead of doing the busy loop in
->     __io_sq_thread() outside its credential acquisition block.
+> for many users that are not using iopoll, the iopoll_list will always
+> evaluate to false after having made a memory access whereas to_submit is
+> very likely already loaded in a register.
 
-That patch should be first as it's a fix we care to backport.
-It's also
+doubt it'd make any difference, but it might be useful if sqpoll
+submits requests often enough.
 
-Fixes: 8d0c12a80cdeb ("io-uring: add napi busy poll support")
-Cc: stable@vger.kernel.org
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
 
-And a comment below
 
-> 
 > Signed-off-by: Olivier Langlois <olivier@trillion01.com>
 > ---
->   io_uring/napi.h   | 9 +++++++++
->   io_uring/sqpoll.c | 7 ++++---
->   2 files changed, 13 insertions(+), 3 deletions(-)
+>   io_uring/sqpoll.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/io_uring/napi.h b/io_uring/napi.h
-> index 88f1c21d5548..5506c6af1ff5 100644
-> --- a/io_uring/napi.h
-> +++ b/io_uring/napi.h
-> @@ -101,4 +101,13 @@ static inline int io_napi_sqpoll_busy_poll(struct io_ring_ctx *ctx)
->   }
->   #endif /* CONFIG_NET_RX_BUSY_POLL */
->   
-> +static inline int io_do_sqpoll_napi(struct io_ring_ctx *ctx)
-> +{
-> +	int ret = 0;
-> +
-> +	if (io_napi(ctx))
-> +		ret = io_napi_sqpoll_busy_poll(ctx);
-> +	return ret;
-> +}
-> +
->   #endif
 > diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-> index cc4a25136030..ec558daa0331 100644
+> index b3722e5275e7..cc4a25136030 100644
 > --- a/io_uring/sqpoll.c
 > +++ b/io_uring/sqpoll.c
-> @@ -195,9 +195,6 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
->   			ret = io_submit_sqes(ctx, to_submit);
->   		mutex_unlock(&ctx->uring_lock);
+> @@ -176,7 +176,7 @@ static int __io_sq_thread(struct io_ring_ctx *ctx, bool cap_entries)
+>   	if (cap_entries && to_submit > IORING_SQPOLL_CAP_ENTRIES_VALUE)
+>   		to_submit = IORING_SQPOLL_CAP_ENTRIES_VALUE;
 >   
-> -		if (io_napi(ctx))
-> -			ret += io_napi_sqpoll_busy_poll(ctx);
-> -
->   		if (to_submit && wq_has_sleeper(&ctx->sqo_sq_wait))
->   			wake_up(&ctx->sqo_sq_wait);
->   		if (creds)
-> @@ -322,6 +319,10 @@ static int io_sq_thread(void *data)
->   		if (io_sq_tw(&retry_list, IORING_TW_CAP_ENTRIES_VALUE))
->   			sqt_spin = true;
+> -	if (!wq_list_empty(&ctx->iopoll_list) || to_submit) {
+> +	if (to_submit || !wq_list_empty(&ctx->iopoll_list)) {
+>   		const struct cred *creds = NULL;
 >   
-> +		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-> +			if (io_do_sqpoll_napi(ctx))
-> +				sqt_spin = true;
-
-io_do_sqpoll_napi() returns 1 as long as there are napis in the list,
-iow even if there is no activity it'll spin almost forever (60s is
-forever) bypassing sq_thread_idle.
-
-Let's not update sqt_spin here, if the user wants it to poll for
-longer it can pass a larger SQPOLL idle timeout value.
-
-
-> +		}
->   		if (sqt_spin || !time_after(jiffies, timeout)) {
->   			if (sqt_spin) {
->   				io_sq_update_worktime(sqd, &start);
+>   		if (ctx->sq_creds != current_cred())
 
 -- 
 Pavel Begunkov

@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-2650-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2651-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1C2946A8C
-	for <lists+io-uring@lfdr.de>; Sat,  3 Aug 2024 18:51:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 766BB946B2F
+	for <lists+io-uring@lfdr.de>; Sat,  3 Aug 2024 23:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74C851F215BB
-	for <lists+io-uring@lfdr.de>; Sat,  3 Aug 2024 16:51:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 342EA1F21E2F
+	for <lists+io-uring@lfdr.de>; Sat,  3 Aug 2024 21:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBA6B67E;
-	Sat,  3 Aug 2024 16:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD144204E;
+	Sat,  3 Aug 2024 21:37:40 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C71F4C7B
-	for <io-uring@vger.kernel.org>; Sat,  3 Aug 2024 16:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE0CB653
+	for <io-uring@vger.kernel.org>; Sat,  3 Aug 2024 21:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722703868; cv=none; b=bJZz2xx5rVoIWEOu3FVZciCpIWUJ488Hv7WWJyozqpBghQmNKd7BmC/CREHUjsOYlatsMdgBLc3LwJmqCNfBzY+dAYkDGswhStYZWTitN82ZkIrtcrxxPLQ8li9ASaaELlK/EOXQRXrbRhEBe0YMFwIBfXJexOW9wbEAjJcZikg=
+	t=1722721060; cv=none; b=V9rx4Qe99Ubs7Kx3cqA/cDFTasP77EZwD2lNmC4L8OzfvSn5h8EbG6cWdGEONU2uCciJE4QQZm4j0oxMRwZtvAS+1ijjLDIPJodh7wFPrgOnlxM6Ggs/IYGgKh7vBmvL4IvfowzhcerifZ2N/9BoEY2g8t6t+tYy85oOrwrzS9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722703868; c=relaxed/simple;
-	bh=nrvZki7Fta7W7HrPrexI0Z7GZ+jlqt0afb70shnGfL8=;
+	s=arc-20240116; t=1722721060; c=relaxed/simple;
+	bh=iv0fZ+1N6pBOA2R+P/saUsFiXlW8BUGvbcz4CGm2Pm4=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=N8F6E6zR7Ib/eAjuQVdsFG8dVAY8vdWmwjzN1Y+DtqNqDsb9JtPJ6VTZ55dHwH40ZYKw06bZMgL8JIpjpITM2GvCgK12A3YkE+Bm0udfATSupF8ydJnN8f0X4VSQGyxL6BtkZ0Q3dkEa2BSo2kwaGcZqt2WLST6s22MjcWfFttY=
+	 Content-Type:MIME-Version; b=dXmE3NdRg5n9S5D2sxt/lngi0IfhyVK52taWXWK5BudUS87OO0LtYYL45Ct2S+6737tCSMNnLckP3PPBnHCQtFSXLj9iRw28LxQX4DeiYCx/a/fV12YvLoDdzsYZ0rrL652rx9P0+Z2IRu+8vL8V/ZMRSbmikA2xnuRcBYesMOo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=40776 helo=[192.168.1.177])
+Received: from [45.44.224.220] (port=47976 helo=[192.168.1.177])
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1saHy6-00041x-1F;
-	Sat, 03 Aug 2024 12:50:58 -0400
-Message-ID: <ca8c2c60e3deeecec14820c422dfeae841ec7ea8.camel@trillion01.com>
+	id 1saMRU-0004Qe-2e;
+	Sat, 03 Aug 2024 17:37:36 -0400
+Message-ID: <1be64672f22be44fbe1540053427d978c0224dfc.camel@trillion01.com>
 Subject: Re: io_uring NAPI busy poll RCU is causing 50 context
  switches/second to my sqpoll thread
 From: Olivier Langlois <olivier@trillion01.com>
 To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
 	io-uring@vger.kernel.org
-Date: Sat, 03 Aug 2024 12:50:57 -0400
+Date: Sat, 03 Aug 2024 17:37:36 -0400
 In-Reply-To: <a428d20d-8c14-465c-89ef-52aa8fc67970@kernel.dk>
 References: <b1ad0ab3a7e70b72aa73b0b7cab83273358b2e1d.camel@trillion01.com>
 	 <00918946-253e-43c9-a635-c91d870407b7@gmail.com>
@@ -95,6 +95,7 @@ X-Source-Args:
 X-Source-Dir: 
 
 On Sat, 2024-08-03 at 08:36 -0600, Jens Axboe wrote:
+>=20
 > You can check the mappings in /sys/kernel/debug/block/<device>/
 >=20
 > in there you'll find a number of hctxN folders, each of these is a
@@ -132,31 +133,35 @@ p
 > If IO is queued on hctx1, then it should complete on the interrupt
 > vector associated with nvme0q2.
 >=20
-Jens,
+I have entered hacking territory but I did not find any other way to do
+it...
 
-I knew there were nvme experts here!
-thx for your help.
+drivers/nvme/host/pci.c
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 6cd9395ba9ec..70b7ca84ee21 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2299,7 +2299,7 @@ static unsigned int nvme_max_io_queues(struct
+nvme_dev *dev)
+         */
+        if (dev->ctrl.quirks & NVME_QUIRK_SHARED_TAGS)
+                return 1;
+-       return num_possible_cpus() + dev->nr_write_queues + dev-
+>nr_poll_queues;
++       return 1 + dev->nr_write_queues + dev->nr_poll_queues;
+ }
+=20
+ static int nvme_setup_io_queues(struct nvme_dev *dev)
 
-# ls nvme0n1/hctx0/
-active  busy  cpu0  cpu1  ctx_map  dispatch  dispatch_busy  flags=20
-sched_tags  sched_tags_bitmap  state  tags  tags_bitmap  type
+it works. I have no more IRQ on cpu1 as I wanted
 
-it means that some I/O that I am unaware of is initiated either from
-cpu0-cpu1...
+ 63:          9          0          0          0  PCI-MSIX-0000:00:04.0
+0-edge      nvme0q0
+ 64:          0          0          0       7533  PCI-MSIX-0000:00:04.0
+1-edge      nvme0q1
 
-It seems like nvme number of queues is configurable... I'll try to find
-out how to reduce it to 1...
-
-but my real problem is not really which I/O queue is assigned to a
-request. It is the irq affinity assigned to the queues...
-
-I have found the function:
-nvme_setup_irqs() where the assignations happen.
-
-Considering that I have the bootparams irqaffinity=3D3
-
-I do not understand how the admin queue and hctx0 irqs can be assigned
-to the cpu 0 and 1. It is as-if the irqaffinity param had no effect on=20
-MSIX interrupts affinity masks...
+# ls /sys/kernel/debug/block/nvme0n1/hctx0/
+active  busy  cpu0  cpu1  cpu2  cpu3  ctx_map  dispatch  dispatch_busy
+flags  sched_tags  sched_tags_bitmap  state  tags  tags_bitmap  type
 
 

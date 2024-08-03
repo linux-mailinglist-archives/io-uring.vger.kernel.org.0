@@ -1,194 +1,162 @@
-Return-Path: <io-uring+bounces-2649-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2650-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E35946A20
-	for <lists+io-uring@lfdr.de>; Sat,  3 Aug 2024 16:36:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF1C2946A8C
+	for <lists+io-uring@lfdr.de>; Sat,  3 Aug 2024 18:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC3CCB2107B
-	for <lists+io-uring@lfdr.de>; Sat,  3 Aug 2024 14:36:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74C851F215BB
+	for <lists+io-uring@lfdr.de>; Sat,  3 Aug 2024 16:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9BC14E2FC;
-	Sat,  3 Aug 2024 14:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KV398DC2"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBA6B67E;
+	Sat,  3 Aug 2024 16:51:08 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2F314EC48
-	for <io-uring@vger.kernel.org>; Sat,  3 Aug 2024 14:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C71F4C7B
+	for <io-uring@vger.kernel.org>; Sat,  3 Aug 2024 16:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722695779; cv=none; b=Iq6cBOfwJ/N/swpTZoBrc40wCjkvl1R3fTLz3TZ45n/LyH1BTczKkhV1v+Zb8czfg3uWPSxSwX/A9IdpEI/a88Ofn9ocDAIKUCv95Zvx1VpIG8JCrzZYlruNtmPM2e8QpXQQ6EQb901CqR8jiaJ5COSAURY9g/EXNIv4jSAoSwE=
+	t=1722703868; cv=none; b=bJZz2xx5rVoIWEOu3FVZciCpIWUJ488Hv7WWJyozqpBghQmNKd7BmC/CREHUjsOYlatsMdgBLc3LwJmqCNfBzY+dAYkDGswhStYZWTitN82ZkIrtcrxxPLQ8li9ASaaELlK/EOXQRXrbRhEBe0YMFwIBfXJexOW9wbEAjJcZikg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722695779; c=relaxed/simple;
-	bh=yftr8daBEqTwAQqGhxql0VwP2UBCSQDD5dbRkuiWPkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=iJMpGHl8rQzJPnx8coJGuI/AmLv3Aia6S0L2L9nM1vPF6CfHQMGcDhbPnuQGB3KzkOT/p/P1kDOvV8jdoF55eWfYRIb49aeeWFoaLqz9mYCxALgtZvyaVvtwz7akjbzRC/x9cs4aKQvVfcgHQpYDvKEQnq4F5sLfIYVTFAsdGAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KV398DC2; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d2879bfb0so925107b3a.0
-        for <io-uring@vger.kernel.org>; Sat, 03 Aug 2024 07:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1722695774; x=1723300574; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xHGICDoTrkz09FMxHlMY4eLRRcpJcG4L4mJZZgN6BZk=;
-        b=KV398DC2GOJL6NMU2ARP4Ll3FPJ9yok84KX+qid1tmSQ55DS+3CD8Jdrby9w8QJxKB
-         iL2MmctDd5THBPwYXMkOQyi8U2FgQqALDcL4ZBtcNuyvRJXosA9kDxmX9RRwYyHYd8EP
-         by0zCM9calVp91ZTnPzRXtvlL6qB6+RHx814lpSb9+ooKPna1MuwakJCD3c0Ajc9Hdq5
-         XEG4t7YY7cOlyatz/SsoTBJWNSxoiYcCTZhYtFrh98UwWybBsB1ti6DzGFBPhK+Ly26+
-         StGKOsE6mdGtt9S1lKgUsoTKDnKJcziMPhtPuoV7+w+PsH2a8gMKnQVzXKQggl3iOCsF
-         XWuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722695774; x=1723300574;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xHGICDoTrkz09FMxHlMY4eLRRcpJcG4L4mJZZgN6BZk=;
-        b=i6FU7QgentSa7VzkdtydCmPb3WNxq3qX4PmuKPOa6gU8faSZeIueIvCjFGdB4TD4m9
-         EF3KqlIM/9rb9t3KDoolTs0oxVb6QPOC9owtxududIxGB0gEnmatp7NW/5JXFYvCuxwa
-         KMkGSXdquwUPxUpJGA6nWCFQ3N8iylqThiyPmTaqGEjacPv3fayUCMUZ5rUctg4NAYpw
-         6ZHL/sLvhCQz2SLei9ZcrjvauGSjQ46JezcWjy11YSJq9I6IFttaE7rYKR+bkq8YyEKG
-         ddzCej2gQptBaFRLoncaIxwfDmcBdbH9aS/fJ4g5mox7Eo/O3jq4zsnmcQMol9yfFEdy
-         UPqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWw7rLauqUGkW2IF1lQ6H1fpv9QwBwBNX5Xn+Pwr1+Pk8C74WtRte6OLZTmKtEh7kgLxr+1Shy1mY5YVV7B8hoRA0bNQAp+OYE=
-X-Gm-Message-State: AOJu0YzKGnJI1HScD7CzEeo06ZRV90ZVBwCGLgYyKin7XBPH+ms6hFFM
-	sFEHsYbZu7LWOYcYzwPgITyQCiftwZ4Ed0cDN9U0q4yMQPov16fCLeJC6rZ8Jqo=
-X-Google-Smtp-Source: AGHT+IF9P2wt+ygc/ynh4YBA81/9fudqClnPxDeRWKExkZcHITHbmV9wd5pdPvIy8DmMiI6VZKCHhA==
-X-Received: by 2002:a17:903:2312:b0:1fc:4377:afa4 with SMTP id d9443c01a7336-1ff5755a488mr53982255ad.8.1722695774140;
-        Sat, 03 Aug 2024 07:36:14 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59054759sm35480225ad.150.2024.08.03.07.36.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 03 Aug 2024 07:36:13 -0700 (PDT)
-Message-ID: <a428d20d-8c14-465c-89ef-52aa8fc67970@kernel.dk>
-Date: Sat, 3 Aug 2024 08:36:12 -0600
+	s=arc-20240116; t=1722703868; c=relaxed/simple;
+	bh=nrvZki7Fta7W7HrPrexI0Z7GZ+jlqt0afb70shnGfL8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=N8F6E6zR7Ib/eAjuQVdsFG8dVAY8vdWmwjzN1Y+DtqNqDsb9JtPJ6VTZ55dHwH40ZYKw06bZMgL8JIpjpITM2GvCgK12A3YkE+Bm0udfATSupF8ydJnN8f0X4VSQGyxL6BtkZ0Q3dkEa2BSo2kwaGcZqt2WLST6s22MjcWfFttY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
+Received: from [45.44.224.220] (port=40776 helo=[192.168.1.177])
+	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <olivier@trillion01.com>)
+	id 1saHy6-00041x-1F;
+	Sat, 03 Aug 2024 12:50:58 -0400
+Message-ID: <ca8c2c60e3deeecec14820c422dfeae841ec7ea8.camel@trillion01.com>
+Subject: Re: io_uring NAPI busy poll RCU is causing 50 context
+ switches/second to my sqpoll thread
+From: Olivier Langlois <olivier@trillion01.com>
+To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+	io-uring@vger.kernel.org
+Date: Sat, 03 Aug 2024 12:50:57 -0400
+In-Reply-To: <a428d20d-8c14-465c-89ef-52aa8fc67970@kernel.dk>
+References: <b1ad0ab3a7e70b72aa73b0b7cab83273358b2e1d.camel@trillion01.com>
+	 <00918946-253e-43c9-a635-c91d870407b7@gmail.com>
+	 <bcd3b198697e16059ec69566251ad23c4c78e7a7.camel@trillion01.com>
+	 <43c27aa1-d955-4375-8d96-cd4201aecf50@gmail.com>
+	 <4dbbd36aa7ecd1ce7a6289600b5655563e4a5a74.camel@trillion01.com>
+	 <93b294fc-c4e8-4f1f-8abb-ebcea5b8c3a1@gmail.com>
+	 <7edc139bd159764075923e75ffb646e7313c7864.camel@trillion01.com>
+	 <a428d20d-8c14-465c-89ef-52aa8fc67970@kernel.dk>
+Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
+ keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
+ 5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
+ g5nV/401re30kRfA8OPivpnj6mZhU/9RTwjbVPPb8dPlm2gFLXwGPeDITgSRs+KJ0mM37fW8EatJs
+ 0a8J1Nk8wBvT7ce+S2lOrxDItra9pW3ukze7LMirwvdMRC5bdlw2Lz03b5NrOUq+Wxv7szn5Xr9f/
+ HdaCH7baWNAO6H/O5LbJ3zndewokEmKk+oCIcXjaH0U6QK5gJoO+3Yt5dcTo92Vm3VMxzK2NPFXgp
+ La7lR9Ei0hzQ0zptyFFyftt9uV71kMHldaQaSfUTsu9dJbnS2kI/j+F2S1q6dgKi3DEm0ZRGvjsSG
+ rkgPJ5T16GI1cS2iQntawdr0A1vfXiB9xZ1SMGxL/l6js9BVlIx/CBGOJ4L190QmxJlcAZ2VnQzrl
+ ramRUv01xb00IPJ5TBft5IJ+SY0FnY9pIERIl6w9khwLt/oGuKNmUHmzJGYoJHYfh72Mm8RQ1R/JS
+ o6v85ULBGdEC3pQq1j//OPyH3egiXIwFq6BtULH5CvsxQkSqgj1MpjwfgVJ8VbjNwqwBXHjooEORj
+ vFQqWQki6By3QARAQABtDJPbGl2aWVyIExhbmdsb2lzIChNeSBrZXkpIDxvbGl2aWVyQHRyaWxsaW
+ 9uMDEuY29tPokCNwQTAQgAIQUCVh3TJwIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRBlaka
+ GGsWHEI1AD/9sbj+vnFU29WemVqB4iW+9RrHIcbXI4Jg8WaffTQ8KvVeCJ4otzgVT2nHC2A82t4PF
+ 0tp21Ez17CKDNilMvOt8zq6ZHx36CPjoqUVjAdozOiBDpC4qB6ZKYn+gqSENO4hqmmaOW57wT9vII
+ v6mtHmnFvgpOEJl6wbs8ArHDt0BLSjc8QQfvBhoKoWs+ijQTyvFGlQl0oWxEbUkR1J3gdft9Oj9xQ
+ G4OFo73WaSEK/L9IalU2ulCBC+ucSP9McoDxy1i1u8HUDrV5wBY1zafc9zVBcMNH6+ZjxwQmZXqtz
+ ATzB3RbSFHAdmvxl8q6MeS2yx7Atk0CXgW9z5k2KeuZhz5rVV5A+D19SSGzW11uYXsibZx/Wjr9xB
+ KHB6U7qh5sRHaQS191NPonKcsXXAziR+vxwQTP7ZKfy+g5N/e6uivoUnQrl9uvUDDPXEpwVNSoVws
+ Vn4tNyrGEdN11pHDbH5fSGzdpbY8+yczUoxMmsEQe/fpVwRBZUqafRn2TVUhV0qqzsUuQcTNw1zIZ
+ JgvkqrHgd4ivd2b1bXBczmu/wMGpEnF6cWzSQDiwC1NF3i+gHCuD8IX1ujThWtzXsn0VtrMkrRCbn
+ ponVQ6HcbRYYXPuK0HRRjCSuAKo5porVONepiOSmu0FBrpGqBkpBtLrzKXoi1yt/7a/wGdMcVhYGg
+ vA==
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: io_uring NAPI busy poll RCU is causing 50 context switches/second
- to my sqpoll thread
-To: Olivier Langlois <olivier@trillion01.com>,
- Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <b1ad0ab3a7e70b72aa73b0b7cab83273358b2e1d.camel@trillion01.com>
- <00918946-253e-43c9-a635-c91d870407b7@gmail.com>
- <bcd3b198697e16059ec69566251ad23c4c78e7a7.camel@trillion01.com>
- <43c27aa1-d955-4375-8d96-cd4201aecf50@gmail.com>
- <4dbbd36aa7ecd1ce7a6289600b5655563e4a5a74.camel@trillion01.com>
- <93b294fc-c4e8-4f1f-8abb-ebcea5b8c3a1@gmail.com>
- <7edc139bd159764075923e75ffb646e7313c7864.camel@trillion01.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <7edc139bd159764075923e75ffb646e7313c7864.camel@trillion01.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 8/3/24 8:15 AM, Olivier Langlois wrote:
-> On Fri, 2024-08-02 at 16:22 +0100, Pavel Begunkov wrote:
->>>
->>> I am definitely interested in running the profiler tools that you
->>> are
->>> proposing... Most of my problems are resolved...
->>>
->>> - I got rid of 99.9% if the NET_RX_SOFTIRQ
->>> - I have reduced significantly the number of NET_TX_SOFTIRQ
->>>    https://github.com/amzn/amzn-drivers/issues/316
->>> - No more rcu context switches
->>> - CPU2 is now nohz_full all the time
->>> - CPU1 local timer interrupt is raised once every 2-3 seconds for
->>> an
->>> unknown origin. Paul E. McKenney did offer me his assistance on
->>> this
->>> issue
->>> https://lore.kernel.org/rcu/367dc07b740637f2ce0298c8f19f8aec0bdec123.camel@trillion01.com/t/#u
->>
->> And I was just going to propose to ask Paul, but great to
->> see you beat me on that
->>
-> My investigation has progressed... my cpu1 interrupts are nvme block
-> device interrupts.
-> 
-> I feel that for questions about block device drivers, this time, I am
-> ringing at the experts door!
-> 
-> What is the meaning of a nvme interrupt?
-> 
-> I am assuming that this is to signal the completing of writing blocks
-> in the device...
-> I am currently looking in the code to find the answer for this.
-> 
-> Next, it seems to me that there is an odd number of interrupts for the
-> device:
->  63:         12          0          0          0  PCI-MSIX-0000:00:04.0
-> 0-edge      nvme0q0
->  64:          0      23336          0          0  PCI-MSIX-0000:00:04.0
-> 1-edge      nvme0q1
->  65:          0          0          0      33878  PCI-MSIX-0000:00:04.0
-> 2-edge      nvme0q2
-> 
-> why 3? Why not 4? one for each CPU...
-> 
-> If there was 4, I would have concluded that the driver has created a
-> queue for each CPU...
-> 
-> How are the queues associated to certain request/task?
-> 
-> The file I/O is made by threads running on CPU3, so I find it
-> surprising that nvmeq1 is choosen...
-> 
-> One noteworthy detail is that the process main thread is on CPU1. In my
-> flawed mental model of 1 queue per CPU, there could be some sort of
-> magical association with a process file descriptors table and the
-> choosen block device queue but this idea does not hold... What would
-> happen to processes running on CPU2...
+On Sat, 2024-08-03 at 08:36 -0600, Jens Axboe wrote:
+> You can check the mappings in /sys/kernel/debug/block/<device>/
+>=20
+> in there you'll find a number of hctxN folders, each of these is a
+> hardware queue. hcxt0/type tells you what kind of queue it is, and
+> inside the directory, you'll find which CPUs this queue is mapped to.
+> Example:
+>=20
+> root@r7625 /s/k/d/b/nvme0n1# cat hctx1/type=20
+> default
+>=20
+> "default" means it's a read/write queue, so it'll handle both reads
+> and
+> writes.
+>=20
+> root@r7625 /s/k/d/b/nvme0n1# ls hctx1/
+> active=A0 cpu11/=A0=A0 dispatch=A0=A0=A0=A0=A0=A0 sched_tags=A0=A0=A0=A0=
+=A0=A0=A0=A0 tags
+> busy=A0=A0=A0 cpu266/=A0 dispatch_busy=A0 sched_tags_bitmap=A0 tags_bitma=
+p
+> cpu10/=A0 ctx_map=A0 flags=A0=A0=A0=A0=A0=A0=A0=A0=A0 state=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0 type
+>=20
+> and we can see this hardware queue is mapped to cpu 10/11/266.
+>=20
+> That ties into how these are mapped. It's pretty simple - if a task
+> is
+> running on cpu 10/11/266 when it's queueing IO, then it'll use hw
+> queue
+> 1. This maps to the interrupts you found, but note that the admin
+> queue
+> (which is not listed these directories, as it's not an IO queue) is
+> the
+> first one there. hctx0 is nvme0q1 in your /proc/interrupts list.
+>=20
+> If IO is queued on hctx1, then it should complete on the interrupt
+> vector associated with nvme0q2.
+>=20
+Jens,
 
-The cpu <-> hw queue mappings for nvme devices depend on the topology of
-the machine (number of CPUs, relation between thread siblings, number of
-nodes, etc) and the number of queue available on the device in question.
-If you have as many (or more) device side queues available as number of
-CPUs, then you'll have a queue per CPU. If you have less, then multiple
-CPUs will share a queue.
+I knew there were nvme experts here!
+thx for your help.
 
-You can check the mappings in /sys/kernel/debug/block/<device>/
+# ls nvme0n1/hctx0/
+active  busy  cpu0  cpu1  ctx_map  dispatch  dispatch_busy  flags=20
+sched_tags  sched_tags_bitmap  state  tags  tags_bitmap  type
 
-in there you'll find a number of hctxN folders, each of these is a
-hardware queue. hcxt0/type tells you what kind of queue it is, and
-inside the directory, you'll find which CPUs this queue is mapped to.
-Example:
+it means that some I/O that I am unaware of is initiated either from
+cpu0-cpu1...
 
-root@r7625 /s/k/d/b/nvme0n1# cat hctx1/type 
-default
+It seems like nvme number of queues is configurable... I'll try to find
+out how to reduce it to 1...
 
-"default" means it's a read/write queue, so it'll handle both reads and
-writes.
+but my real problem is not really which I/O queue is assigned to a
+request. It is the irq affinity assigned to the queues...
 
-root@r7625 /s/k/d/b/nvme0n1# ls hctx1/
-active  cpu11/   dispatch       sched_tags         tags
-busy    cpu266/  dispatch_busy  sched_tags_bitmap  tags_bitmap
-cpu10/  ctx_map  flags          state              type
+I have found the function:
+nvme_setup_irqs() where the assignations happen.
 
-and we can see this hardware queue is mapped to cpu 10/11/266.
+Considering that I have the bootparams irqaffinity=3D3
 
-That ties into how these are mapped. It's pretty simple - if a task is
-running on cpu 10/11/266 when it's queueing IO, then it'll use hw queue
-1. This maps to the interrupts you found, but note that the admin queue
-(which is not listed these directories, as it's not an IO queue) is the
-first one there. hctx0 is nvme0q1 in your /proc/interrupts list.
-
-If IO is queued on hctx1, then it should complete on the interrupt
-vector associated with nvme0q2.
-
--- 
-Jens Axboe
+I do not understand how the admin queue and hctx0 irqs can be assigned
+to the cpu 0 and 1. It is as-if the irqaffinity param had no effect on=20
+MSIX interrupts affinity masks...
 
 

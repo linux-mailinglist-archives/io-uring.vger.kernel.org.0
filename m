@@ -1,158 +1,241 @@
-Return-Path: <io-uring+bounces-2653-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2654-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD56947598
-	for <lists+io-uring@lfdr.de>; Mon,  5 Aug 2024 08:53:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A193D947791
+	for <lists+io-uring@lfdr.de>; Mon,  5 Aug 2024 10:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B493280E7A
-	for <lists+io-uring@lfdr.de>; Mon,  5 Aug 2024 06:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA66280C15
+	for <lists+io-uring@lfdr.de>; Mon,  5 Aug 2024 08:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDED9145345;
-	Mon,  5 Aug 2024 06:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73FF13DDC2;
+	Mon,  5 Aug 2024 08:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="J1XAhZtC"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4E513D26B
-	for <io-uring@vger.kernel.org>; Mon,  5 Aug 2024 06:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5431713D503
+	for <io-uring@vger.kernel.org>; Mon,  5 Aug 2024 08:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722840798; cv=none; b=JxUQNW1AyKpmKmfOaU0WxnqjzdEuYX8wJTPp+PRqVo0wP2Xf6PhPYgaVIGZvrQuirwtvjmanDHFwytaLeKg9DzI63Omc+485fzgC9FqF53XOOqKh5j9SpK6DsFU3SWaflUZCiSatcQsqh4/1XqdjRcEnNTwFTf1bpFbgtNFrOMg=
+	t=1722848035; cv=none; b=Z6QaHD+cMzo0RhKRvPMMyQ9/xK9Yj0O0U3CqV1miHWh0icX0ovykOHlZoF7gjAxNenV9iCFBugicz8hO0X8Zk65OtEn7LdPZEWBHnahWkbE33cvlGqCWqvjemAAsfiD5zi1cwJ3a3kjg21XCCt3j5KmgetwQXycw25bh13rjWvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722840798; c=relaxed/simple;
-	bh=6tskoPbUuaVcd4fKsAnhVf0sXnpg+uCfl8yU7hFLvrM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jkBoputlI/PGaGksGDqfT+wGuQq9L1pWah+dCnFM+2+s8EVcWkhBqFpN/uXsyKElej3/pRuU0GfsAygXlJb8j1grWO8juH5AYxXbsK4vjOCNe8JBWlFOBciU2roqwcdc/YdCJ3puGuFvKSrdjVOHhzpf0idZyJ2vNeLU+fdJxkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39b28ea6f37so37003305ab.1
-        for <io-uring@vger.kernel.org>; Sun, 04 Aug 2024 23:53:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722840796; x=1723445596;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hMZaB1KHBAmqQpT5jdBBE4OUcF/kZf96Fj+w3n+d4pQ=;
-        b=SD66Ogyfw6Ti6zEDsFrTLC/afj/yRA6hAToe/dfribOuulz+uNJv+ZowewlxXVCwij
-         XwDP1LcFYA1d62U2jFT3NPxFWj9LGkJi593uoQvb2923P/1l99TqMSNU1pzJpycMTtk5
-         u6eErsTvmvpst4wKEg2W4kbr0vP8hg83uYz2Njn/jby/404nSJ8QWkq38iEBckcIdnNH
-         5md5q2ZM7lkEUauSaZtfT3rtlrjo88FIX4gEzzNA3omXnwrPQVC1CSwJe8GSAgk+yF1R
-         37gGDQUl1FuVgSembvNvpwYEEKVxXYtmNQWlZDCIdviCyE9qY+KflQz2/UKmbIfHtzW6
-         Y44Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVk2XTK/F3Y7LAUpQUaN/zGPDZ55oYniZRurVlG0wzp3AHaidZw6mrxi32/qM+ihqEfGpGwDkMEZsU9LbkOzW07CpSeJ4DjT8s=
-X-Gm-Message-State: AOJu0Yz1tp5qNKPguoW332C/PRdnBlEUCMog3wSZaqrFEl2miQIc8M8I
-	dOSLX6vQHKP5DrNziNgJDxMc47yNyOtC0RCKUaHAnmhBqOK90u+HiZV5PneoFrTrZ1SiXwCQzGH
-	2E77v+ohOPsb04w7pAH17D0sxh6vhoC6MyFhQ4tWuiMoab4T+dfHdhog=
-X-Google-Smtp-Source: AGHT+IEVIyNoz1NmttlE1YPg9GPAPhJ8Uhjr5qp8eurleKf2ZpNne3GGPIPlAWuoEwyJUAEcBlK3nJbTpnjRh5brgRZDsIjqK+27
+	s=arc-20240116; t=1722848035; c=relaxed/simple;
+	bh=n9r8UsQXxeUvA0twrQXXvlKdoKo6AiUtzrrDkYlZVAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=U8oyvPSfdCCAOhLvAO0/DgRSYsCK7j4AAWb6bCpO0sXIhxHYlUa9rP5XOhyyrVkxFaiXmrZXP0rEgDQiEXPL071ErxWC85/pScjVwfrn+Ed5tkn4hcAKezueOj8jlaO8YPoyIamFOoTYkV/HCFD5AVhqRF651p8vjWdJzmP0tbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=J1XAhZtC; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240805084700epoutp02a2e2d3e6c759f5da5cae34cb1f7bbf82~oyMhO8Y8r1140811408epoutp02S
+	for <io-uring@vger.kernel.org>; Mon,  5 Aug 2024 08:47:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240805084700epoutp02a2e2d3e6c759f5da5cae34cb1f7bbf82~oyMhO8Y8r1140811408epoutp02S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722847620;
+	bh=uetkEzag5r5fl+Eg++G6xmeLHwKeW0WAmvfJ1f0LGaw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=J1XAhZtCZHULHWdqniIX0jdLBZ/p2WfUAwugE850tpAjJTLgJ1PtvkMlnKLH6MFlC
+	 x5mtrJ5IZrJ2Hdzphy54qOKdCzNr7bV6PSKuxG1NejlKs5JgEh3STdh9zbtzEavqU2
+	 DbgLcQZ74VtDVoMUmQKV8EIgDnHIFZjwZqwdr6qA=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240805084659epcas5p29c6a08817975aeac2cdec89abc65b427~oyMg8icwd0400604006epcas5p22;
+	Mon,  5 Aug 2024 08:46:59 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Wcqmx5W8Kz4x9Pv; Mon,  5 Aug
+	2024 08:46:57 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2E.64.08855.18190B66; Mon,  5 Aug 2024 17:46:57 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240805084453epcas5p363b93b10eaf53df5725417d3d7fbcca0~oyKq9TrsC2891328913epcas5p3S;
+	Mon,  5 Aug 2024 08:44:53 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240805084453epsmtrp20a2591099eeae2b43e11113a2cb8e6b0~oyKq8qqTa0718807188epsmtrp2S;
+	Mon,  5 Aug 2024 08:44:53 +0000 (GMT)
+X-AuditID: b6c32a44-107ff70000002297-46-66b091817ebd
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E2.DE.19367.40190B66; Mon,  5 Aug 2024 17:44:52 +0900 (KST)
+Received: from lcl-Standard-PC-i440FX-PIIX-1996.. (unknown
+	[109.105.118.124]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240805084452epsmtip24329fcf418638d83100b29def362b046~oyKqBGFMV1151611516epsmtip2p;
+	Mon,  5 Aug 2024 08:44:52 +0000 (GMT)
+From: Chenliang Li <cliang01.li@samsung.com>
+To: axboe@kernel.dk, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, gost.dev@samsung.com, Chenliang Li
+	<cliang01.li@samsung.com>
+Subject: [PATCH liburing] test/fixed-hugepage: Add small-huge page mixture
+ testcase
+Date: Mon,  5 Aug 2024 16:44:42 +0800
+Message-Id: <20240805084442.4494-1-cliang01.li@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a6f:b0:398:b1d3:7c9d with SMTP id
- e9e14a558f8ab-39b1fc1fd7dmr8328715ab.3.1722840796508; Sun, 04 Aug 2024
- 23:53:16 -0700 (PDT)
-Date: Sun, 04 Aug 2024 23:53:16 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ae429e061eea2157@google.com>
-Subject: [syzbot] [io-uring?] KCSAN: data-race in __flush_work / __flush_work (2)
-From: syzbot <syzbot+b3e4f2f51ed645fd5df2@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLKsWRmVeSWpSXmKPExsWy7bCmlm7jxA1pBpc3qlvMWbWN0WL13X42
+	i9N/H7NY3Dywk8niXes5Fotf3XcZLc5O+MDqwO6xc9Zddo/LZ0s9+rasYvT4vEkugCUq2yYj
+	NTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6AAlhbLEnFKg
+	UEBicbGSvp1NUX5pSapCRn5xia1SakFKToFJgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGyktb
+	2QtmKVQ0/jjK3MD4TLKLkZNDQsBEYvqaJlYQW0hgN6PEnDPBXYxcQPYnRomDZ7axwTlnO7oY
+	YTqWnVjCBJHYCVQ18Sc7hNPEJLHv0Xs2kCo2AR2J3yt+sYDYIgLaEq8fTwWzmQViJH5eeABW
+	IywQKvFlRh87iM0ioCrx6cUpsBpeAWuJ249uM0Nsk5fYf/AsM0RcUOLkzCdQc+QlmrfOZgZZ
+	LCFwjF1i6eVdbBANLhK9LStYIWxhiVfHt7BD2FISn9/tBarhALKLJZatk4PobWGUeP9uDtRr
+	1hL/ruxhAalhFtCUWL9LHyIsKzH11DomiL18Er2/nzBBxHkldsyDsVUlLhzcBrVKWmLthK1Q
+	93tInFmylRESvrESty8/ZZ3AKD8LyTuzkLwzC2HzAkbmVYySqQXFuempyaYFhnmp5fCITc7P
+	3cQITodaLjsYb8z/p3eIkYmD8RCjBAezkghvV+mGNCHelMTKqtSi/Pii0pzU4kOMpsAwnsgs
+	JZqcD0zIeSXxhiaWBiZmZmYmlsZmhkrivK9b56YICaQnlqRmp6YWpBbB9DFxcEo1MKXFFwf5
+	cnNkBJztqv9zcMbx1WJ1L6b456rk6j0T+e0QrRKbWN/e4LowvOHhvu29H53+q9i8mxszd03n
+	KjMZiVr3t39avC0m/Oo2WXdHcPPnSXaLX6bFeE9XvKF9U9v8UvCBCXc2aTpu52a9IrPhZ7dT
+	wDP2xp02S0rFslfNi1sjrLG73P/B396p7Jkl7eumO1/P0VFiVV0clfFA59/R5r1vcmLlFZ6d
+	5HDqjdnk6hP4aO+JsI1CTBUuUakz7sr21Nzjvn/80Lu2qVE7H2p6fC5O/zNL+Mc5RY+fLZ0e
+	3IZ+IsGh5kvDeuO9/BS3rdr745VB0g+PSRe/r3djnPvpStnHt3bra/ecD+hazahzUomlOCPR
+	UIu5qDgRAKbz/O8QBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCLMWRmVeSWpSXmKPExsWy7bCSvC7LxA1pBmcvWFvMWbWN0WL13X42
+	i9N/H7NY3Dywk8niXes5Fotf3XcZLc5O+MDqwO6xc9Zddo/LZ0s9+rasYvT4vEkugCWKyyYl
+	NSezLLVI3y6BK2Plpa3sBbMUKhp/HGVuYHwm2cXIySEhYCKx7MQSpi5GLg4hge2MErdnNbFB
+	JKQlOg61skPYwhIr/z1nhyhqYJKY9+oPM0iCTUBH4veKXyxdjBwcIgK6Eo13FUDCzAJxEiuf
+	n2YFsYUFgiU2zJvCCGKzCKhKfHpxigXE5hWwlrj96DYzxHx5if0HzzJDxAUlTs58wgIxR16i
+	eets5gmMfLOQpGYhSS1gZFrFKJpaUJybnptcYKhXnJhbXJqXrpecn7uJERyQWkE7GJet/6t3
+	iJGJg/EQowQHs5IIb1fphjQh3pTEyqrUovz4otKc1OJDjNIcLErivMo5nSlCAumJJanZqakF
+	qUUwWSYOTqkGpi4/500qjzL0/sbx/d0rarRuMcvkpQ07L598oK+8wmXyjU2Nq+/7bgt53eia
+	e2SD6rVHa1c9Nc1P9LV2rHt837j3+ma139N3F2mfvMum/CZPsaDbkk3LvN74+8OP3/KtNu/s
+	FEtwXLvtruzd1vLdp75vrL2ivTB6UUGsO8O6zsXtXEffa5otiAtzfaF04e+izTP+P/0ixV2j
+	xrxkRtLrySnLZ0zydn0XP+ViXZbmsTde57x/ni17L/dWvmHWl+lf2B8EZG6Jltv2+57v57tt
+	IW8qy+Kj6vrsV9mau11fVLX0qfCi2XKhfs/fWu2+liSeovMxVa3+3KKva1IWcm7ef+Rq8efq
+	80wvy2YWRby2W6mixFKckWioxVxUnAgADHe+97cCAAA=
+X-CMS-MailID: 20240805084453epcas5p363b93b10eaf53df5725417d3d7fbcca0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240805084453epcas5p363b93b10eaf53df5725417d3d7fbcca0
+References: <CGME20240805084453epcas5p363b93b10eaf53df5725417d3d7fbcca0@epcas5p3.samsung.com>
 
-Hello,
+Add a test case where a fixed buffer is composed of a small page and
+a huge page, and begins with the small page. Originally we have huge-small
+test case where the buffer begins with the huge page, add this one to
+cover more should-not-coalesce scenarios.
 
-syzbot found the following issue on:
-
-HEAD commit:    a5dbd76a8942 Merge tag 'x86-urgent-2024-08-04' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13d5a373980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d16924117a4f7e9
-dashboard link: https://syzkaller.appspot.com/bug?extid=b3e4f2f51ed645fd5df2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ba663ad5dbf5/disk-a5dbd76a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/226a427d6581/vmlinux-a5dbd76a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9f982777516a/bzImage-a5dbd76a.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b3e4f2f51ed645fd5df2@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in __flush_work / __flush_work
-
-write to 0xffff8881223aa3e8 of 8 bytes by task 3998 on cpu 0:
- instrument_write include/linux/instrumented.h:41 [inline]
- ___set_bit include/asm-generic/bitops/instrumented-non-atomic.h:28 [inline]
- insert_wq_barrier kernel/workqueue.c:3790 [inline]
- start_flush_work kernel/workqueue.c:4142 [inline]
- __flush_work+0x30b/0x570 kernel/workqueue.c:4178
- flush_work kernel/workqueue.c:4229 [inline]
- flush_delayed_work+0x66/0x70 kernel/workqueue.c:4251
- io_fallback_tw+0x24b/0x320 io_uring/io_uring.c:1087
- tctx_task_work_run+0xd1/0x1b0 io_uring/io_uring.c:1099
- tctx_task_work+0x40/0x80 io_uring/io_uring.c:1124
- task_work_run+0x13a/0x1a0 kernel/task_work.c:228
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0x5dd/0x1720 kernel/exit.c:882
- do_group_exit+0x102/0x150 kernel/exit.c:1031
- get_signal+0xf2f/0x1080 kernel/signal.c:2917
- arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
- do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-read to 0xffff8881223aa3e8 of 8 bytes by task 50 on cpu 1:
- __flush_work+0x42a/0x570 kernel/workqueue.c:4188
- flush_work kernel/workqueue.c:4229 [inline]
- flush_delayed_work+0x66/0x70 kernel/workqueue.c:4251
- io_uring_try_cancel_requests+0x35b/0x370 io_uring/io_uring.c:3000
- io_ring_exit_work+0x148/0x500 io_uring/io_uring.c:2779
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3312
- worker_thread+0x526/0x700 kernel/workqueue.c:3390
- kthread+0x1d1/0x210 kernel/kthread.c:389
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-value changed: 0x0000000000400000 -> 0xffff88810006c00d
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 50 Comm: kworker/u8:3 Not tainted 6.11.0-rc1-syzkaller-00334-ga5dbd76a8942 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: iou_exit io_ring_exit_work
-==================================================================
-
-
+Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Chenliang Li <cliang01.li@samsung.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ test/fixed-hugepage.c | 42 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 32 insertions(+), 10 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/test/fixed-hugepage.c b/test/fixed-hugepage.c
+index 67a3fa0..b455d9f 100644
+--- a/test/fixed-hugepage.c
++++ b/test/fixed-hugepage.c
+@@ -76,10 +76,11 @@ static int mmap_hugebufs(struct iovec *iov, int nr_bufs, size_t buf_size, size_t
+ }
+ 
+ /* map a hugepage and smaller page to a contiguous memory */
+-static int mmap_mixture(struct iovec *iov, int nr_bufs, size_t buf_size)
++static int mmap_mixture(struct iovec *iov, int nr_bufs, size_t buf_size, bool huge_on_left)
+ {
+ 	int i;
+-	void *small_base = NULL, *huge_base = NULL, *start = NULL;
++	void *small_base = NULL, *huge_base = NULL, *start = NULL,
++	     *huge_start = NULL, *small_start = NULL;
+ 	size_t small_size = buf_size - HUGEPAGE_SIZE;
+ 	size_t seg_size = ((buf_size / HUGEPAGE_SIZE) + 1) * HUGEPAGE_SIZE;
+ 
+@@ -92,7 +93,15 @@ static int mmap_mixture(struct iovec *iov, int nr_bufs, size_t buf_size)
+ 	}
+ 
+ 	for (i = 0; i < nr_bufs; i++) {
+-		huge_base = mmap(start, HUGEPAGE_SIZE, PROT_READ | PROT_WRITE,
++		if (huge_on_left) {
++			huge_start = start;
++			small_start = start + HUGEPAGE_SIZE;
++		} else {
++			huge_start = start + HUGEPAGE_SIZE;
++			small_start = start + HUGEPAGE_SIZE - small_size;
++		}
++
++		huge_base = mmap(huge_start, HUGEPAGE_SIZE, PROT_READ | PROT_WRITE,
+ 				MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_FIXED, -1, 0);
+ 		if (huge_base == MAP_FAILED) {
+ 			printf("Unable to map hugetlb page in the page mixture. "
+@@ -101,7 +110,7 @@ static int mmap_mixture(struct iovec *iov, int nr_bufs, size_t buf_size)
+ 			return -1;
+ 		}
+ 
+-		small_base = mmap(start + HUGEPAGE_SIZE, small_size, PROT_READ | PROT_WRITE,
++		small_base = mmap(small_start, small_size, PROT_READ | PROT_WRITE,
+ 				MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
+ 		if (small_base == MAP_FAILED) {
+ 			printf("Unable to map small page in the page mixture. "
+@@ -110,8 +119,14 @@ static int mmap_mixture(struct iovec *iov, int nr_bufs, size_t buf_size)
+ 			return -1;
+ 		}
+ 
+-		memset(huge_base, 0, buf_size);
+-		iov[i].iov_base = huge_base;
++		if (huge_on_left) {
++			iov[i].iov_base = huge_base;
++			memset(huge_base, 0, buf_size);
++		}
++		else {
++			iov[i].iov_base = small_base;
++			memset(small_base, 0, buf_size);
++		}
+ 		iov[i].iov_len = buf_size;
+ 		start += seg_size;
+ 	}
+@@ -315,13 +330,13 @@ static int test_multi_unaligned_mthps(struct io_uring *ring, int fd_in, int fd_o
+ }
+ 
+ /* Should not coalesce */
+-static int test_page_mixture(struct io_uring *ring, int fd_in, int fd_out)
++static int test_page_mixture(struct io_uring *ring, int fd_in, int fd_out, int huge_on_left)
+ {
+ 	struct iovec iov[NR_BUFS];
+ 	size_t buf_size = HUGEPAGE_SIZE + MTHP_16KB;
+ 	int ret;
+ 
+-	if (mmap_mixture(iov, NR_BUFS, buf_size))
++	if (mmap_mixture(iov, NR_BUFS, buf_size, huge_on_left))
+ 		return T_EXIT_SKIP;
+ 
+ 	ret = register_submit(ring, iov, NR_BUFS, fd_in, fd_out);
+@@ -377,10 +392,17 @@ int main(int argc, char *argv[])
+ 		return ret;
+ 	}
+ 
+-	ret = test_page_mixture(&ring, fd_in, fd_out);
++	ret = test_page_mixture(&ring, fd_in, fd_out, true);
++	if (ret != T_EXIT_PASS) {
++		if (ret != T_EXIT_SKIP)
++			fprintf(stderr, "Test huge small page mixture (start with huge) failed.\n");
++		return ret;
++	}
++
++	ret = test_page_mixture(&ring, fd_in, fd_out, false);
+ 	if (ret != T_EXIT_PASS) {
+ 		if (ret != T_EXIT_SKIP)
+-			fprintf(stderr, "Test huge small page mixture failed.\n");
++			fprintf(stderr, "Test huge small page mixture (start with small) failed.\n");
+ 		return ret;
+ 	}
+ 
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+base-commit: 118622a3188e637d66ddec386b22e86fa8c01700
+-- 
+2.34.1
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 

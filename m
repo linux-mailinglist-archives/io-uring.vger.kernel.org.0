@@ -1,175 +1,192 @@
-Return-Path: <io-uring+bounces-2659-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2660-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7D79492FC
-	for <lists+io-uring@lfdr.de>; Tue,  6 Aug 2024 16:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EFF949717
+	for <lists+io-uring@lfdr.de>; Tue,  6 Aug 2024 19:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E095B1C21974
-	for <lists+io-uring@lfdr.de>; Tue,  6 Aug 2024 14:28:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B50561C209FD
+	for <lists+io-uring@lfdr.de>; Tue,  6 Aug 2024 17:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F6616B741;
-	Tue,  6 Aug 2024 14:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE3846444;
+	Tue,  6 Aug 2024 17:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VhNCerMZ"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="BbmBjwyx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A00617ADF7
-	for <io-uring@vger.kernel.org>; Tue,  6 Aug 2024 14:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCE12A1C5
+	for <io-uring@vger.kernel.org>; Tue,  6 Aug 2024 17:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722954511; cv=none; b=IgCK8lJEZDfRT6EyEDIIHsGvSm+AaTzRBOzJedEEpJu/yKEu+ejDL1AtYLWWLXldqL1I5WmBStbRQ3xzFskz4HxfbWAuP5TxxfgP5rfanJQlSzd3JOWxMZjWTbQ1URt8PQNA4jk98k17Ydq8GMuvsW9D+uY9urbx4WggwXYGW/g=
+	t=1722966578; cv=none; b=EoCoD86WpxcRT7mwbmO+NXF04d7U3cIDCyTh9ChEKnZGpSmvXO3c/EF9qYQKLFc2ISZD6FpPHEzMtEFG2NwhUzRXjBjrFfWXDq2ka3AIqq/VSzYXvVo7ix9N8dPozWbHH7gC2c6+d6ovx3BYPVE+0XeHUVtjBxghUnflEopPDP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722954511; c=relaxed/simple;
-	bh=SaP5cRy/OYC03xi1zF6CDYg2u9FOuHqEgz8RDz62tMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YAtpnPHoSRkEGrX+ifJ7oR2WNooaQh+T3IbWM2Nw0/jDd+QMInHWMmOD0hzOZ+hFb3HDZ8L5mkVVLWMq2YHwqQU9T5nmWlf77tD7+ubt+PyKFZr+YGGXKquFTo1rKRATKTnyru39hfEJYgEHXD3HHMGx+Xk2MZsfLhrO9GM39fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VhNCerMZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722954509;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WNQmn+tRRoRyrDQG+lSCrdnCGsmPfdPEgFqSTU9jbvg=;
-	b=VhNCerMZZkt0qCjkczeeBwDeFv+Cg50Lh66L8nX4VTAFhu6ym9uH4h169T1VKN65CmtCAb
-	VcmFOO1ZFuaZWZq47zs4GqhzIwzq3kHbNw2u9bDQyA9D4xamjnnFkR9Utja7UsbbQojimn
-	qDNMY5wJnG75H3VERovCirb2ErRzgAY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-684-i-G5OndxPNmiStgky985Uw-1; Tue,
- 06 Aug 2024 10:28:26 -0400
-X-MC-Unique: i-G5OndxPNmiStgky985Uw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CE8AF1914193;
-	Tue,  6 Aug 2024 14:27:38 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.14])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C2BA1956046;
-	Tue,  6 Aug 2024 14:26:56 +0000 (UTC)
-Date: Tue, 6 Aug 2024 22:26:50 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, Kevin Wolf <kwolf@redhat.com>,
-	ming.lei@redhat.com
-Subject: Re: [PATCH V4 4/8] io_uring: support SQE group
-Message-ID: <ZrIyqrnc15PSRrCz@fedora>
-References: <20240706031000.310430-1-ming.lei@redhat.com>
- <20240706031000.310430-5-ming.lei@redhat.com>
- <fa5e8098-f72f-43c1-90c1-c3eaebfea3d5@gmail.com>
- <Zp+/hBwCBmKSGy5K@fedora>
- <0fa0c9b9-cfb9-4710-85d0-2f6b4398603c@gmail.com>
- <ZqIp7/Ci+abGcZLG@fedora>
- <5fd602d8-0c0b-418a-82bc-955ab0444b1e@gmail.com>
- <ZrHg8LUOeM23318x@fedora>
+	s=arc-20240116; t=1722966578; c=relaxed/simple;
+	bh=b+OYpCJYzdsKLx+xRUrn4Ae8k0h3waFilEH/87838zQ=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=PN7hlIS60jSEmt6BUQnTBupk2wW892lsLWovK10WKshFgjYjhZ+wg58QyAU1GNSVBg+n4ukDVOn3+Uy7o/g1QxkRXU5FPqRqEEsy5Ru50eC1dXHr3+j1TuDknwjXslFNYxixuv4WV4oxfvd+H427rxlGY0hvWaFtXUXnBCQW3Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=BbmBjwyx; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cdba658093so227681a91.1
+        for <io-uring@vger.kernel.org>; Tue, 06 Aug 2024 10:49:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1722966573; x=1723571373; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ka5wPBf5hAs117sDIFXIP/0JgnmbjnHdzqu+ri8uRT4=;
+        b=BbmBjwyxALawq9IqrqX8SZLEIK0Q0A/xPK0QCG+Q1Lw9n88Vb85kpDuNQpN1Z3g6Mh
+         hiYJryz5RL1Ted9XzU9CSUcNtAq4b4U2fJH5T90BEsfa7q1lADsj0Wx98BhJFDH3WO95
+         3PD+QUoJE918xpMW9VxfPTNbSNBjZMxd00qlKzvmBwKNmlEdRLaUFLY5l4ceTAJtU785
+         Lhoflhx7uiLBNEg45reZqK5ed5tmas8JL2Em9kIfhc3w2RQWVnjFhIVC/SQmyIVuLxRu
+         kQm3uhxurhzQJdHADQ30hcEyIGTGWzvKWme5nLOwlZlTUp+qmJQ8gjN/vrJLzQpUNBYV
+         /XBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722966573; x=1723571373;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ka5wPBf5hAs117sDIFXIP/0JgnmbjnHdzqu+ri8uRT4=;
+        b=w679OtDatk78uyxukWJnoGxSHQ4MWyzUCygutjP33OgoaGZo6xj1ImbiZ7NTFfZ125
+         h1akZ8Bu05j93orPvSLN4m2ybiphF8pPZ2HN5jCRXOpfk41pAbJdZZKGvFgd/Pin5KAO
+         mGcQjjeMgazutCdr6GfcRGIAu3+1jqYD32tgHeoRWAxOun9jZgvY/oUiEaav74hbSQV/
+         XsiypOCt5W/SBipBinc67yKUCgWk85DlZ9lCdUTl2MVhlHO4dVO0pbiphpciZqrgBWCP
+         rl/MVA4r80buKKrm2BV6RidkcFOhyuIFUOGIXIQKTRWfF9r+ApEtQvahAf9F4FZS5yAo
+         5zVw==
+X-Gm-Message-State: AOJu0YxIf6N8pDmg/FYR0ZA0/vU6S32AQvH52v8GqW/An+qJHcgx5kkZ
+	g9BfSYIOlVAU+7TiLYnItNb1K/FMqqV7q5AzUo3T+ncugkCCI5q/x+RUiRo+sn9JC2+jLUerZ98
+	v
+X-Google-Smtp-Source: AGHT+IGoerw1UoRqRlGuM+LC1jWZz0/ihWlr5ckxsP7bR7L9V2Q+c6iDLs9+Qb1C4+B/gpu5LmLVqw==
+X-Received: by 2002:a17:90a:630b:b0:2cd:8fcd:8474 with SMTP id 98e67ed59e1d1-2cff9599f55mr11024104a91.5.1722966572904;
+        Tue, 06 Aug 2024 10:49:32 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cffb38d3fcsm9390988a91.50.2024.08.06.10.49.32
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 10:49:32 -0700 (PDT)
+Message-ID: <5fa6fc2f-b39f-4327-a195-61997d36b0e8@kernel.dk>
+Date: Tue, 6 Aug 2024 11:49:31 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrHg8LUOeM23318x@fedora>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/net: allow opportunistic initial bundle recv
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 04:38:08PM +0800, Ming Lei wrote:
-> On Mon, Jul 29, 2024 at 02:58:58PM +0100, Pavel Begunkov wrote:
-> > On 7/25/24 11:33, Ming Lei wrote:
-> > > On Wed, Jul 24, 2024 at 02:41:38PM +0100, Pavel Begunkov wrote:
-> > > > On 7/23/24 15:34, Ming Lei wrote:
-> > ...
-> > > > > But grp_refs is dropped after io-wq request reference drops to
-> > > > > zero, then both io-wq and nor-io-wq code path can be unified
-> > > > > wrt. dealing with grp_refs, meantime it needn't to be updated
-> > > > > in extra(io-wq) context.
-> > > > 
-> > > > Let's try to describe how it can work. First, I'm only describing
-> > > > the dep mode for simplicity. And for the argument's sake we can say
-> > > > that all CQEs are posted via io_submit_flush_completions.
-> > > > 
-> > > > io_req_complete_post() {
-> > > > 	if (flags & GROUP) {
-> > > > 		req->io_task_work.func = io_req_task_complete;
-> > > > 		io_req_task_work_add(req);
-> > > > 		return;
-> > > > 	}
-> > > > 	...
-> > > > }
-> > > 
-> > > OK.
-> > > 
-> > > io_wq_free_work() still need to change to not deal with
-> > > next link & ignoring skip_cqe, because group handling(
-> > 
-> > No, it doesn't need to know about all that.
-> > 
-> > > cqe posting, link advance) is completely moved into
-> > > io_submit_flush_completions().
-> > 
-> > It has never been guaranteed that io_req_complete_post()
-> > will be the one completing the request,
-> > io_submit_flush_completions() can always happen.
-> > 
-> > 
-> > struct io_wq_work *io_wq_free_work(struct io_wq_work *work)
-> > {
-> > 	...
-> > 	if (req_ref_put_and_test(req)) {
-> > 		nxt = io_req_find_next(req);
-> > 		io_free_req();
-> > 	}
-> > }
-> > 
-> > We queue linked requests only when all refs are dropped, and
-> > the group handling in my snippet is done before we drop the
-> > owner's reference.
-> > 
-> > IOW, you won't hit io_free_req() in io_wq_free_work() for a
-> > leader unless all members in its group got completed and
-> > the leader already went through the code dropping those shared
-> > ublk buffers.
-> 
-> If io_free_req() won't be called for leader, leader won't be added
-> to ->compl_reqs, and it has to be generated when all members are
-> completed in __io_submit_flush_completions().
-> 
-> For !io_wq, we can align to this way by not completing leader in
-> io_req_complete_defer().
-> 
-> The above implementation looks simpler, and more readable.
+For bundles, the initial recv operation is always just a single buffer,
+as we don't yet know how much data is available in the socket. However,
+this can lead to a somewhat imbalanced string of receives, where the
+first recv gets a single buffer and the second gets a bunch.
 
-Thinking of this issue further, looks the above is still not doable:
+Allow the initial peek operation to get up to 4 buffers, taking
+advantage of the fact that there may be more data available, rather
+than just doing a single buffer. This has been shown to work well across
+a variety of recv workloads, as it's still cheap enough to do, while
+ensuring that we do get to amortize the cost of traversing the network
+stack and socket operations.
 
-1) for avoiding to hit io_free_req(), extra req->refs has to be grabbed,
-then the leader's completion may not be notified.
+Link: https://github.com/axboe/liburing/issues/1197
+Fixes: 2f9c9515bdfd ("io_uring/net: support bundles for recv")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-2) 1) may be avoided by holding one leader's refcount for each member,
-and call req_ref_put_and_test(leader) when leader or member is
-completed, and post leader's CQE when leader's refs drops to zero.
-But there are other issues:
+---
 
-	- other req_ref_inc_not_zero() or req_ref_get() may cause leader's
-	CQE post missed
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index c95dc1736dd9..2c052996c9bf 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -209,6 +209,7 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
+ 	int nr_iovs = arg->nr_iovs;
+ 	__u16 nr_avail, tail, head;
+ 	struct io_uring_buf *buf;
++	int needed = 0;
+ 
+ 	tail = smp_load_acquire(&br->tail);
+ 	head = bl->head;
+@@ -218,19 +219,22 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
+ 
+ 	buf = io_ring_head_to_buf(br, head, bl->mask);
+ 	if (arg->max_len) {
+-		int needed;
+-
+ 		needed = (arg->max_len + buf->len - 1) / buf->len;
+ 		needed = min(needed, PEEK_MAX_IMPORT);
+-		if (nr_avail > needed)
+-			nr_avail = needed;
++	} else if (arg->max_vecs) {
++		needed = arg->max_vecs;
+ 	}
+ 
++	if (nr_avail > needed)
++		nr_avail = needed;
++
+ 	/*
+-	 * only alloc a bigger array if we know we have data to map, eg not
+-	 * a speculative peek operation.
++	 * Alloc a bigger array if we know we have data to map, or if a
++	 * a speculative peek operation tries to map more than what is
++	 * available.
+ 	 */
+-	if (arg->mode & KBUF_MODE_EXPAND && nr_avail > nr_iovs && arg->max_len) {
++	if (arg->mode & KBUF_MODE_EXPAND && nr_avail > nr_iovs &&
++	    (arg->max_len || arg->max_vecs)) {
+ 		iov = kmalloc_array(nr_avail, sizeof(struct iovec), GFP_KERNEL);
+ 		if (unlikely(!iov))
+ 			return -ENOMEM;
+@@ -238,7 +242,7 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
+ 			kfree(arg->iovs);
+ 		arg->iovs = iov;
+ 		nr_iovs = nr_avail;
+-	} else if (nr_avail < nr_iovs) {
++	} else if (nr_iovs > nr_avail) {
+ 		nr_iovs = nr_avail;
+ 	}
+ 
+diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
+index b90aca3a57fa..8248ffda3a43 100644
+--- a/io_uring/kbuf.h
++++ b/io_uring/kbuf.h
+@@ -53,7 +53,8 @@ struct buf_sel_arg {
+ 	size_t out_len;
+ 	size_t max_len;
+ 	int nr_iovs;
+-	int mode;
++	unsigned short mode;
++	unsigned short max_vecs;
+ };
+ 
+ void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 594490a1389b..48667f3a2388 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -1076,8 +1076,14 @@ static int io_recv_buf_select(struct io_kiocb *req, struct io_async_msghdr *kmsg
+ 			arg.mode |= KBUF_MODE_FREE;
+ 		}
+ 
++		/*
++		 * Use the passed back residual if we have it, if not allow
++		 * peeking of up to 4 buffers.
++		 */
+ 		if (kmsg->msg.msg_inq > 0)
+ 			arg.max_len = min_not_zero(sr->len, kmsg->msg.msg_inq);
++		else
++			arg.max_vecs = 4;
+ 
+ 		ret = io_buffers_peek(req, &arg);
+ 		if (unlikely(ret < 0))
 
-	- the req_ref_put_and_test() in io_free_batch_list() can be called
-	on group leader unexpectedly.
-
-both 1) and 2) need to touch io_req_complete_defer() for completing group
-leader
-
-
-
-Thanks,
-Ming
+-- 
+Jens Axboe
 
 

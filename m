@@ -1,34 +1,34 @@
-Return-Path: <io-uring+bounces-2678-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2679-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B2694C2B2
-	for <lists+io-uring@lfdr.de>; Thu,  8 Aug 2024 18:25:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ECBF94C2B3
+	for <lists+io-uring@lfdr.de>; Thu,  8 Aug 2024 18:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97B881F21750
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5DD2814EF
 	for <lists+io-uring@lfdr.de>; Thu,  8 Aug 2024 16:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093FB2107;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BDA18F2FE;
 	Thu,  8 Aug 2024 16:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gp9L7tDO"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HKsG4jJs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D176A18F2FE
-	for <io-uring@vger.kernel.org>; Thu,  8 Aug 2024 16:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27E9154C17
+	for <io-uring@vger.kernel.org>; Thu,  8 Aug 2024 16:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723134339; cv=none; b=H3BuresBDqJPrtEZYt2kKDp0Kowwp41ghTWL2trt5vJSl5QgBAteti7LMYngP85WD3NCRHsjMBnymq4j9dePsizOB/4fOLAGUDRhhxGKq3nSDWOGIXgVAVy1IvCH1v3nUEEmZTgq7hwFgn7w0+KYLHiLtKOdDsHAD9N+TKIxR8c=
+	t=1723134340; cv=none; b=c7ZTGUcvqIpyhb0JiYipQUkzKmd3qk4m2eD4sG4XXjOIHC8qXcttHJtqSG01kiM32RfLtyBkBiwAjFFtOfJ5jkp1rSZKjxOK7wAd2yhYV3RxROlralTPgcDJ2WAaFkwlDipu3LCoS/zyGe7FpuDoXGdStei/7mrF+luREdEUzMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723134339; c=relaxed/simple;
-	bh=M15keNOZWkylkuT8P9xWax45gEkfnhnIeay54+2397M=;
+	s=arc-20240116; t=1723134340; c=relaxed/simple;
+	bh=6jRTkA7NE2gy0TH8+LtPFYsg5kPC89nx5OP10TUsXjs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RBGZOZ0XVF2PHm0zW3ASN24MBUUKD6j3vMCkboSVS7nhDQa20wDDxdswCb7/Ki9w094CLJjrE2w1vg7uJFfcKk2ltIM+BghRWNk/51IbMv6kuZJCIGSUn+gfUtOatM/tmJTTodQFbxrcdLTbMa3wvD7djWdkpUgtrVj1gxkw5DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gp9L7tDO; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=oNng0MWijiptjOK1Cz3j4NB9uI3eX+yGi1wLgplu3+iunzET5y7W4hH6fjlUF33kHVqdwz8mvlwsZfbPQ6tebKTsojAbBWiRvly53WeGxgIV1TO9jb2ttsZqXNf8L7RXSquJ9AjE7ULXYVfU0iqHUcrfQNGxvBscHCijMmlU8ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HKsG4jJs; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
@@ -37,35 +37,34 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=W5l5c9DiFiqbLD+3hiaJnwnOvAlDSMk9iXp3a/bnjw8=;
-	b=gp9L7tDOLZwr0zDGtDhZZynnimtMbaC0sF6/1Lv/8/BL4smLUPFh8E7gNMti6HAUzwzBV2
-	dda7jMnbVxjbeCpYzMoRVHLVAz8VgJFuKCzhvq01G+kwqHvv85KXcPShsjizcuGdkNx1Op
-	25vI4wCS+wzkkpvaLnhn671zH5WnNTU=
+	bh=whNq6N/CVp43KwtlK6MlFmaDo3qzPu/mXyExiz9JuFw=;
+	b=HKsG4jJsygh7xxOlEJCAzruq6baz1ny5ngJzDKUrH2/Wwf2qSM2J+qQM16MawpME2ZPG0f
+	6voSmSGXDPtImeiNYi5Psyt6k+U40cH2h9u/VXeiJRNtk2YOmNi6L/qBzT94sN4dyaLVHh
+	bR+dwTRiUozO7DZXDff7dE0fdL/DOpw=
 Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-424-lAjP-g_ONNOGWg6pz43PhA-1; Thu,
- 08 Aug 2024 12:25:32 -0400
-X-MC-Unique: lAjP-g_ONNOGWg6pz43PhA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-117-gZ-tBcolM9KLi_QSYI4CZQ-1; Thu,
+ 08 Aug 2024 12:25:36 -0400
+X-MC-Unique: gZ-tBcolM9KLi_QSYI4CZQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 636221944AB4;
-	Thu,  8 Aug 2024 16:25:31 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 908D01944B29;
+	Thu,  8 Aug 2024 16:25:35 +0000 (UTC)
 Received: from localhost (unknown [10.72.116.29])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5A7DC19560A3;
-	Thu,  8 Aug 2024 16:25:29 +0000 (UTC)
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 802FF195916B;
+	Thu,  8 Aug 2024 16:25:34 +0000 (UTC)
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	io-uring@vger.kernel.org,
 	linux-block@vger.kernel.org,
 	Pavel Begunkov <asml.silence@gmail.com>
-Cc: Ming Lei <ming.lei@redhat.com>,
-	Kevin Wolf <kwolf@redhat.com>
-Subject: [PATCH V5 4/8] io_uring: support SQE group
-Date: Fri,  9 Aug 2024 00:24:53 +0800
-Message-ID: <20240808162503.345913-5-ming.lei@redhat.com>
+Cc: Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V5 5/8] io_uring: support sqe group with members depending on leader
+Date: Fri,  9 Aug 2024 00:24:54 +0800
+Message-ID: <20240808162503.345913-6-ming.lei@redhat.com>
 In-Reply-To: <20240808162503.345913-1-ming.lei@redhat.com>
 References: <20240808162503.345913-1-ming.lei@redhat.com>
 Precedence: bulk
@@ -75,599 +74,70 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-SQE group is defined as one chain of SQEs starting with the first SQE that
-has IOSQE_SQE_GROUP set, and ending with the first subsequent SQE that
-doesn't have it set, and it is similar with chain of linked SQEs.
+IOSQE_SQE_GROUP just starts to queue members after the leader is completed,
+which way is just for simplifying implementation, and this behavior is never
+part of UAPI, and it may be relaxed and members can be queued concurrently
+with leader in future.
 
-Not like linked SQEs, each sqe is issued after the previous one is
-completed. All SQEs in one group can be submitted in parallel. To simplify
-the implementation from beginning, all members are queued after the leader
-is completed, however, this way may be changed and leader and members may
-be issued concurrently in future.
+However, some resource can't cross OPs, such as kernel buffer, otherwise
+the buffer may be leaked easily in case that any OP failure or application
+panic.
 
-The 1st SQE is group leader, and the other SQEs are group member. The whole
-group share single IOSQE_IO_LINK and IOSQE_IO_DRAIN from group leader, and
-the two flags can't be set for group members.
+Add flag REQ_F_SQE_GROUP_DEP for allowing members to depend on group leader
+explicitly, so that group members won't be queued until the leader request is
+completed, and we still commit leader's CQE after all members CQE are posted.
+With this way, the kernel resource lifetime can be aligned with group leader
+or group, one typical use case is to support zero copy for device internal
+buffer.
 
-When the group is in one link chain, this group isn't submitted until the
-previous SQE or group is completed. And the following SQE or group can't
-be started if this group isn't completed. Failure from any group member will
-fail the group leader, then the link chain can be terminated.
-
-When IOSQE_IO_DRAIN is set for group leader, all requests in this group and
-previous requests submitted are drained. Given IOSQE_IO_DRAIN can be set for
-group leader only, we respect IO_DRAIN by always completing group leader as
-the last one in the group. Meantime it is natural to post leader's CQE
-as the last one from application viewpoint.
-
-Working together with IOSQE_IO_LINK, SQE group provides flexible way to
-support N:M dependency, such as:
-
-- group A is chained with group B together
-- group A has N SQEs
-- group B has M SQEs
-
-then M SQEs in group B depend on N SQEs in group A.
-
-N:M dependency can support some interesting use cases in efficient way:
-
-1) read from multiple files, then write the read data into single file
-
-2) read from single file, and write the read data into multiple files
-
-3) write same data into multiple files, and read data from multiple files and
-compare if correct data is written
-
-Also IOSQE_SQE_GROUP takes the last bit in sqe->flags, but we still can
-extend sqe->flags with one uring context flag, such as use __pad3 for
-non-uring_cmd OPs and part of uring_cmd_flags for uring_cmd OP.
-
-Suggested-by: Kevin Wolf <kwolf@redhat.com>
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- include/linux/io_uring_types.h |  18 +++
- include/uapi/linux/io_uring.h  |   4 +
- io_uring/io_uring.c            | 282 +++++++++++++++++++++++++++++++--
- io_uring/io_uring.h            |   6 +
- io_uring/timeout.c             |   2 +
- 5 files changed, 297 insertions(+), 15 deletions(-)
+ include/linux/io_uring_types.h | 3 +++
+ io_uring/io_uring.c            | 8 +++++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 3315005df117..c5250e585289 100644
+index c5250e585289..d0972e2a098f 100644
 --- a/include/linux/io_uring_types.h
 +++ b/include/linux/io_uring_types.h
-@@ -202,6 +202,8 @@ struct io_submit_state {
- 	/* batch completion logic */
- 	struct io_wq_work_list	compl_reqs;
- 	struct io_submit_link	link;
-+	/* points to current group */
-+	struct io_submit_link	group;
- 
- 	bool			plug_started;
- 	bool			need_plug;
-@@ -435,6 +437,7 @@ enum {
- 	REQ_F_FORCE_ASYNC_BIT	= IOSQE_ASYNC_BIT,
- 	REQ_F_BUFFER_SELECT_BIT	= IOSQE_BUFFER_SELECT_BIT,
- 	REQ_F_CQE_SKIP_BIT	= IOSQE_CQE_SKIP_SUCCESS_BIT,
-+	REQ_F_SQE_GROUP_BIT	= IOSQE_SQE_GROUP_BIT,
- 
- 	/* first byte is taken by user flags, shift it to not overlap */
- 	REQ_F_FAIL_BIT		= 8,
-@@ -465,6 +468,7 @@ enum {
- 	REQ_F_BL_EMPTY_BIT,
+@@ -469,6 +469,7 @@ enum {
  	REQ_F_BL_NO_RECYCLE_BIT,
  	REQ_F_BUFFERS_COMMIT_BIT,
-+	REQ_F_SQE_GROUP_LEADER_BIT,
+ 	REQ_F_SQE_GROUP_LEADER_BIT,
++	REQ_F_SQE_GROUP_DEP_BIT,
  
  	/* not a real bit, just to check we're not overflowing the space */
  	__REQ_F_LAST_BIT,
-@@ -488,6 +492,8 @@ enum {
- 	REQ_F_BUFFER_SELECT	= IO_REQ_FLAG(REQ_F_BUFFER_SELECT_BIT),
- 	/* IOSQE_CQE_SKIP_SUCCESS */
- 	REQ_F_CQE_SKIP		= IO_REQ_FLAG(REQ_F_CQE_SKIP_BIT),
-+	/* IOSQE_SQE_GROUP */
-+	REQ_F_SQE_GROUP		= IO_REQ_FLAG(REQ_F_SQE_GROUP_BIT),
- 
- 	/* fail rest of links */
- 	REQ_F_FAIL		= IO_REQ_FLAG(REQ_F_FAIL_BIT),
-@@ -543,6 +549,8 @@ enum {
- 	REQ_F_BL_NO_RECYCLE	= IO_REQ_FLAG(REQ_F_BL_NO_RECYCLE_BIT),
- 	/* buffer ring head needs incrementing on put */
+@@ -551,6 +552,8 @@ enum {
  	REQ_F_BUFFERS_COMMIT	= IO_REQ_FLAG(REQ_F_BUFFERS_COMMIT_BIT),
-+	/* sqe group lead */
-+	REQ_F_SQE_GROUP_LEADER	= IO_REQ_FLAG(REQ_F_SQE_GROUP_LEADER_BIT),
+ 	/* sqe group lead */
+ 	REQ_F_SQE_GROUP_LEADER	= IO_REQ_FLAG(REQ_F_SQE_GROUP_LEADER_BIT),
++	/* sqe group with members depending on leader */
++	REQ_F_SQE_GROUP_DEP	= IO_REQ_FLAG(REQ_F_SQE_GROUP_DEP_BIT),
  };
  
  typedef void (*io_req_tw_func_t)(struct io_kiocb *req, struct io_tw_state *ts);
-@@ -648,6 +656,8 @@ struct io_kiocb {
- 	void				*async_data;
- 	/* linked requests, IFF REQ_F_HARDLINK or REQ_F_LINK are set */
- 	atomic_t			poll_refs;
-+	/* reference for group leader requests */
-+	int				grp_refs;
- 	struct io_kiocb			*link;
- 	/* custom credentials, valid IFF REQ_F_CREDS is set */
- 	const struct cred		*creds;
-@@ -657,6 +667,14 @@ struct io_kiocb {
- 		u64			extra1;
- 		u64			extra2;
- 	} big_cqe;
-+
-+	union {
-+		/* links all group members for leader */
-+		struct io_kiocb			*grp_link;
-+
-+		/* points to group leader for member */
-+		struct io_kiocb			*grp_leader;
-+	};
- };
- 
- struct io_overflow_cqe {
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 2aaf7ee256ac..e6d321b3add7 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -124,6 +124,7 @@ enum io_uring_sqe_flags_bit {
- 	IOSQE_ASYNC_BIT,
- 	IOSQE_BUFFER_SELECT_BIT,
- 	IOSQE_CQE_SKIP_SUCCESS_BIT,
-+	IOSQE_SQE_GROUP_BIT,
- };
- 
- /*
-@@ -143,6 +144,8 @@ enum io_uring_sqe_flags_bit {
- #define IOSQE_BUFFER_SELECT	(1U << IOSQE_BUFFER_SELECT_BIT)
- /* don't post CQE if request succeeded */
- #define IOSQE_CQE_SKIP_SUCCESS	(1U << IOSQE_CQE_SKIP_SUCCESS_BIT)
-+/* defines sqe group */
-+#define IOSQE_SQE_GROUP		(1U << IOSQE_SQE_GROUP_BIT)
- 
- /*
-  * io_uring_setup() flags
-@@ -542,6 +545,7 @@ struct io_uring_params {
- #define IORING_FEAT_LINKED_FILE		(1U << 12)
- #define IORING_FEAT_REG_REG_RING	(1U << 13)
- #define IORING_FEAT_RECVSEND_BUNDLE	(1U << 14)
-+#define IORING_FEAT_SQE_GROUP		(1U << 15)
- 
- /*
-  * io_uring_register(2) opcodes and arguments
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index f112e9fa90d8..45a292445b18 100644
+index 45a292445b18..b4f5dac85fa4 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -111,13 +111,15 @@
- 			  IOSQE_IO_HARDLINK | IOSQE_ASYNC)
+@@ -982,7 +982,13 @@ static void io_complete_group_leader(struct io_kiocb *req)
+ 	req->grp_refs -= 1;
+ 	WARN_ON_ONCE(req->grp_refs == 0);
  
- #define SQE_VALID_FLAGS	(SQE_COMMON_FLAGS | IOSQE_BUFFER_SELECT | \
--			IOSQE_IO_DRAIN | IOSQE_CQE_SKIP_SUCCESS)
-+			IOSQE_IO_DRAIN | IOSQE_CQE_SKIP_SUCCESS | \
-+			IOSQE_SQE_GROUP)
- 
- #define IO_REQ_CLEAN_FLAGS (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP | \
- 				REQ_F_POLLED | REQ_F_INFLIGHT | REQ_F_CREDS | \
- 				REQ_F_ASYNC_DATA)
- 
- #define IO_REQ_CLEAN_SLOW_FLAGS (REQ_F_REFCOUNT | REQ_F_LINK | REQ_F_HARDLINK |\
-+				 REQ_F_SQE_GROUP | REQ_F_SQE_GROUP_LEADER | \
- 				 IO_REQ_CLEAN_FLAGS)
- 
- #define IO_TCTX_REFS_CACHE_NR	(1U << 10)
-@@ -875,6 +877,116 @@ static __always_inline void io_req_commit_cqe(struct io_ring_ctx *ctx,
- 	}
- }
- 
-+/* Can only be called after this request is issued */
-+static inline struct io_kiocb *get_group_leader(struct io_kiocb *req)
-+{
-+	if (req->flags & REQ_F_SQE_GROUP) {
-+		if (req_is_group_leader(req))
-+			return req;
-+		return req->grp_leader;
-+	}
-+	return NULL;
-+}
-+
-+void io_cancel_group_members(struct io_kiocb *req, bool ignore_cqes)
-+{
-+	struct io_kiocb *member = req->grp_link;
-+
-+	while (member) {
-+		struct io_kiocb *next = member->grp_link;
-+
-+		if (ignore_cqes)
-+			member->flags |= REQ_F_CQE_SKIP;
-+		if (!(member->flags & REQ_F_FAIL)) {
-+			req_set_fail(member);
-+			io_req_set_res(member, -ECANCELED, 0);
-+		}
-+		member = next;
-+	}
-+}
-+
-+static void io_queue_group_members(struct io_kiocb *req)
-+{
-+	struct io_kiocb *member = req->grp_link;
-+
-+	if (!member)
-+		return;
-+
-+	req->grp_link = NULL;
-+	while (member) {
-+		struct io_kiocb *next = member->grp_link;
-+
-+		member->grp_leader = req;
-+		if (unlikely(member->flags & REQ_F_FAIL)) {
-+			io_req_task_queue_fail(member, member->cqe.res);
-+		} else if (unlikely(req->flags & REQ_F_FAIL)) {
-+			io_req_task_queue_fail(member, -ECANCELED);
-+		} else {
-+			io_req_task_queue(member);
-+		}
-+		member = next;
-+	}
-+}
-+
-+static inline bool __io_complete_group_member(struct io_kiocb *req,
-+			     struct io_kiocb *lead)
-+{
-+	if (WARN_ON_ONCE(lead->grp_refs <= 0))
-+		return false;
-+
-+	req->flags &= ~REQ_F_SQE_GROUP;
+-	/* TODO: queue members with leader in parallel */
 +	/*
-+	 * Set linked leader as failed if any member is failed, so
-+	 * the remained link chain can be terminated
++	 * TODO: queue members with leader in parallel
++	 *
++	 * So far, REQ_F_SQE_GROUP_DEP depends that members are queued
++	 * after leader is completed, which may be changed in future,
++	 * then REQ_F_SQE_GROUP_DEP has to be respected in another way.
 +	 */
-+	if (unlikely((req->flags & REQ_F_FAIL) &&
-+		     ((lead->flags & IO_REQ_LINK_FLAGS) && lead->link)))
-+		req_set_fail(lead);
-+	return !--lead->grp_refs;
-+}
-+
-+static inline bool leader_is_the_last(struct io_kiocb *lead)
-+{
-+	return lead->grp_refs == 1 && (lead->flags & REQ_F_SQE_GROUP);
-+}
-+
-+static void io_complete_group_member(struct io_kiocb *req)
-+{
-+	struct io_kiocb *lead = get_group_leader(req);
-+
-+	if (WARN_ON_ONCE(!(req->flags & REQ_F_SQE_GROUP)))
-+		return;
-+
-+	/* member CQE needs to be posted first */
-+	if (!(req->flags & REQ_F_CQE_SKIP))
-+		io_req_commit_cqe(req->ctx, req);
-+
-+	if (__io_complete_group_member(req, lead)) {
-+		/*
-+		 * SQE_GROUP flag is kept for the last member, so the leader
-+		 * can be retrieved & freed from this last member
-+		 */
-+		req->flags |= REQ_F_SQE_GROUP;
-+		if (!(lead->flags & REQ_F_CQE_SKIP))
-+			io_req_commit_cqe(lead->ctx, lead);
-+	} else if (leader_is_the_last(lead)) {
-+		/* leader will degenerate to plain req if it is the last */
-+		lead->flags &= ~(REQ_F_SQE_GROUP | REQ_F_SQE_GROUP_LEADER);
-+	}
-+}
-+
-+static void io_complete_group_leader(struct io_kiocb *req)
-+{
-+	WARN_ON_ONCE(req->grp_refs <= 0);
-+	req->flags &= ~REQ_F_SQE_GROUP;
-+	req->grp_refs -= 1;
-+	WARN_ON_ONCE(req->grp_refs == 0);
-+
-+	/* TODO: queue members with leader in parallel */
-+	if (req->grp_link)
-+		io_queue_group_members(req);
-+}
-+
- static void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
-@@ -890,7 +1002,8 @@ static void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
- 	 * Handle special CQ sync cases via task_work. DEFER_TASKRUN requires
- 	 * the submitter task context, IOPOLL protects with uring_lock.
- 	 */
--	if (ctx->task_complete || (ctx->flags & IORING_SETUP_IOPOLL)) {
-+	if (ctx->task_complete || (ctx->flags & IORING_SETUP_IOPOLL) ||
-+	    req_is_group_leader(req)) {
- 		req->io_task_work.func = io_req_task_complete;
- 		io_req_task_work_add(req);
- 		return;
-@@ -1388,11 +1501,33 @@ static void io_free_batch_list(struct io_ring_ctx *ctx,
- 						    comp_list);
- 
- 		if (unlikely(req->flags & IO_REQ_CLEAN_SLOW_FLAGS)) {
-+			if (req->flags & (REQ_F_SQE_GROUP |
-+					  REQ_F_SQE_GROUP_LEADER)) {
-+				struct io_kiocb *leader;
-+
-+				/* Leader is freed via the last member */
-+				if (req_is_group_leader(req)) {
-+					node = req->comp_list.next;
-+					continue;
-+				}
-+
-+				/*
-+				 * Only the last member keeps GROUP flag,
-+				 * free leader and this member together
-+				 */
-+				leader = get_group_leader(req);
-+				leader->flags &= ~REQ_F_SQE_GROUP_LEADER;
-+				req->flags &= ~REQ_F_SQE_GROUP;
-+				wq_stack_add_head(&leader->comp_list,
-+						  &req->comp_list);
-+			}
-+
- 			if (req->flags & REQ_F_REFCOUNT) {
- 				node = req->comp_list.next;
- 				if (!req_ref_put_and_test(req))
- 					continue;
- 			}
-+
- 			if ((req->flags & REQ_F_POLLED) && req->apoll) {
- 				struct async_poll *apoll = req->apoll;
- 
-@@ -1427,8 +1562,19 @@ void __io_submit_flush_completions(struct io_ring_ctx *ctx)
- 		struct io_kiocb *req = container_of(node, struct io_kiocb,
- 					    comp_list);
- 
--		if (!(req->flags & REQ_F_CQE_SKIP))
--			io_req_commit_cqe(ctx, req);
-+		if (unlikely(req->flags & (REQ_F_CQE_SKIP | REQ_F_SQE_GROUP))) {
-+			if (req->flags & REQ_F_SQE_GROUP) {
-+				if (req_is_group_leader(req))
-+					io_complete_group_leader(req);
-+				else
-+					io_complete_group_member(req);
-+				continue;
-+			}
-+
-+			if (req->flags & REQ_F_CQE_SKIP)
-+				continue;
-+		}
-+		io_req_commit_cqe(ctx, req);
- 	}
- 	__io_cq_unlock_post(ctx);
- 
-@@ -1638,8 +1784,12 @@ static u32 io_get_sequence(struct io_kiocb *req)
- 	struct io_kiocb *cur;
- 
- 	/* need original cached_sq_head, but it was increased for each req */
--	io_for_each_link(cur, req)
--		seq--;
-+	io_for_each_link(cur, req) {
-+		if (req_is_group_leader(cur))
-+			seq -= cur->grp_refs;
-+		else
-+			seq--;
-+	}
- 	return seq;
+ 	if (req->grp_link)
+ 		io_queue_group_members(req);
  }
- 
-@@ -2101,6 +2251,62 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	return def->prep(req, sqe);
- }
- 
-+static struct io_kiocb *io_group_sqe(struct io_submit_link *group,
-+				     struct io_kiocb *req)
-+{
-+	/*
-+	 * Group chain is similar with link chain: starts with 1st sqe with
-+	 * REQ_F_SQE_GROUP, and ends with the 1st sqe without REQ_F_SQE_GROUP
-+	 */
-+	if (group->head) {
-+		struct io_kiocb *lead = group->head;
-+
-+		/* members can't be in link chain, can't be drained */
-+		if (req->flags & (IO_REQ_LINK_FLAGS | REQ_F_IO_DRAIN))
-+			req_fail_link_node(lead, -EINVAL);
-+
-+		lead->grp_refs += 1;
-+		group->last->grp_link = req;
-+		group->last = req;
-+
-+		if (req->flags & REQ_F_SQE_GROUP)
-+			return NULL;
-+
-+		req->grp_link = NULL;
-+		req->flags |= REQ_F_SQE_GROUP;
-+		group->head = NULL;
-+		if (lead->flags & REQ_F_FAIL) {
-+			io_queue_sqe_fallback(lead);
-+			return NULL;
-+		}
-+		return lead;
-+	} else if (req->flags & REQ_F_SQE_GROUP) {
-+		group->head = req;
-+		group->last = req;
-+		req->grp_refs = 1;
-+		req->flags |= REQ_F_SQE_GROUP_LEADER;
-+		return NULL;
-+	} else {
-+		return req;
-+	}
-+}
-+
-+static __cold struct io_kiocb *io_submit_fail_group(
-+		struct io_submit_link *link, struct io_kiocb *req)
-+{
-+	struct io_kiocb *lead = link->head;
-+
-+	/*
-+	 * Instead of failing eagerly, continue assembling the group link
-+	 * if applicable and mark the leader with REQ_F_FAIL. The group
-+	 * flushing code should find the flag and handle the rest
-+	 */
-+	if (lead && (lead->flags & IO_REQ_LINK_FLAGS) && !(lead->flags & REQ_F_FAIL))
-+		req_fail_link_node(lead, -ECANCELED);
-+
-+	return io_group_sqe(link, req);
-+}
-+
- static __cold int io_submit_fail_link(struct io_submit_link *link,
- 				      struct io_kiocb *req, int ret)
- {
-@@ -2139,11 +2345,18 @@ static __cold int io_submit_fail_init(const struct io_uring_sqe *sqe,
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_submit_link *link = &ctx->submit_state.link;
-+	struct io_submit_link *group = &ctx->submit_state.group;
- 
- 	trace_io_uring_req_failed(sqe, req, ret);
- 
- 	req_fail_link_node(req, ret);
- 
-+	if (group->head || (req->flags & REQ_F_SQE_GROUP)) {
-+		req = io_submit_fail_group(group, req);
-+		if (!req)
-+			return 0;
-+	}
-+
- 	/* cover both linked and non-linked request */
- 	return io_submit_fail_link(link, req, ret);
- }
-@@ -2187,11 +2400,28 @@ static struct io_kiocb *io_link_sqe(struct io_submit_link *link,
- 	return req;
- }
- 
-+static inline bool io_group_assembling(const struct io_submit_state *state,
-+				       const struct io_kiocb *req)
-+{
-+	if (state->group.head || req->flags & REQ_F_SQE_GROUP)
-+		return true;
-+	return false;
-+}
-+
-+static inline bool io_link_assembling(const struct io_submit_state *state,
-+				      const struct io_kiocb *req)
-+{
-+	if (state->link.head || (req->flags & (IO_REQ_LINK_FLAGS |
-+				 REQ_F_FORCE_ASYNC | REQ_F_FAIL)))
-+		return true;
-+	return false;
-+}
-+
- static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 			 const struct io_uring_sqe *sqe)
- 	__must_hold(&ctx->uring_lock)
- {
--	struct io_submit_link *link = &ctx->submit_state.link;
-+	struct io_submit_state *state = &ctx->submit_state;
- 	int ret;
- 
- 	ret = io_init_req(ctx, req, sqe);
-@@ -2200,11 +2430,18 @@ static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 
- 	trace_io_uring_submit_req(req);
- 
--	if (unlikely(link->head || (req->flags & (IO_REQ_LINK_FLAGS |
--				    REQ_F_FORCE_ASYNC | REQ_F_FAIL)))) {
--		req = io_link_sqe(link, req);
--		if (!req)
--			return 0;
-+	if (unlikely(io_link_assembling(state, req) ||
-+		     io_group_assembling(state, req))) {
-+		if (io_group_assembling(state, req)) {
-+			req = io_group_sqe(&state->group, req);
-+			if (!req)
-+				return 0;
-+		}
-+		if (io_link_assembling(state, req)) {
-+			req = io_link_sqe(&state->link, req);
-+			if (!req)
-+				return 0;
-+		}
- 	}
- 	io_queue_sqe(req);
- 	return 0;
-@@ -2217,8 +2454,22 @@ static void io_submit_state_end(struct io_ring_ctx *ctx)
- {
- 	struct io_submit_state *state = &ctx->submit_state;
- 
--	if (unlikely(state->link.head))
--		io_queue_sqe_fallback(state->link.head);
-+	if (unlikely(state->group.head || state->link.head)) {
-+		/* the last member must set REQ_F_SQE_GROUP */
-+		if (state->group.head) {
-+			struct io_kiocb *lead = state->group.head;
-+
-+			state->group.last->grp_link = NULL;
-+			if (lead->flags & IO_REQ_LINK_FLAGS)
-+				io_link_sqe(&state->link, lead);
-+			else
-+				io_queue_sqe_fallback(lead);
-+		}
-+
-+		if (unlikely(state->link.head))
-+			io_queue_sqe_fallback(state->link.head);
-+	}
-+
- 	/* flush only after queuing links as they can generate completions */
- 	io_submit_flush_completions(ctx);
- 	if (state->plug_started)
-@@ -2236,6 +2487,7 @@ static void io_submit_state_start(struct io_submit_state *state,
- 	state->submit_nr = max_ios;
- 	/* set only head, no need to init link_last in advance */
- 	state->link.head = NULL;
-+	state->group.head = NULL;
- }
- 
- static void io_commit_sqring(struct io_ring_ctx *ctx)
-@@ -3564,7 +3816,7 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 			IORING_FEAT_EXT_ARG | IORING_FEAT_NATIVE_WORKERS |
- 			IORING_FEAT_RSRC_TAGS | IORING_FEAT_CQE_SKIP |
- 			IORING_FEAT_LINKED_FILE | IORING_FEAT_REG_REG_RING |
--			IORING_FEAT_RECVSEND_BUNDLE;
-+			IORING_FEAT_RECVSEND_BUNDLE | IORING_FEAT_SQE_GROUP;
- 
- 	if (copy_to_user(params, p, sizeof(*p))) {
- 		ret = -EFAULT;
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index c2acf6180845..0125daa8dfe7 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -68,6 +68,7 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
- void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags);
- bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags);
- void __io_commit_cqring_flush(struct io_ring_ctx *ctx);
-+void io_cancel_group_members(struct io_kiocb *req, bool ignore_cqes);
- 
- struct file *io_file_get_normal(struct io_kiocb *req, int fd);
- struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
-@@ -339,6 +340,11 @@ static inline void io_tw_lock(struct io_ring_ctx *ctx, struct io_tw_state *ts)
- 	lockdep_assert_held(&ctx->uring_lock);
- }
- 
-+static inline bool req_is_group_leader(struct io_kiocb *req)
-+{
-+	return req->flags & REQ_F_SQE_GROUP_LEADER;
-+}
-+
- /*
-  * Don't complete immediately but use deferred completion infrastructure.
-  * Protected by ->uring_lock and can only be used either with
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index 9973876d91b0..671d6093bf36 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -168,6 +168,8 @@ static void io_fail_links(struct io_kiocb *req)
- 			link->flags |= REQ_F_CQE_SKIP;
- 		else
- 			link->flags &= ~REQ_F_CQE_SKIP;
-+		if (req_is_group_leader(link))
-+			io_cancel_group_members(link, ignore_cqes);
- 		trace_io_uring_fail_link(req, link);
- 		link = link->link;
- 	}
 -- 
 2.42.0
 

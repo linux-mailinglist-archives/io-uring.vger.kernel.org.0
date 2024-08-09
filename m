@@ -1,137 +1,123 @@
-Return-Path: <io-uring+bounces-2685-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2686-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3006C94C98D
-	for <lists+io-uring@lfdr.de>; Fri,  9 Aug 2024 07:18:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A383B94D2AA
+	for <lists+io-uring@lfdr.de>; Fri,  9 Aug 2024 16:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D93DC1F23C65
-	for <lists+io-uring@lfdr.de>; Fri,  9 Aug 2024 05:18:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E72628156C
+	for <lists+io-uring@lfdr.de>; Fri,  9 Aug 2024 14:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3700D16B75F;
-	Fri,  9 Aug 2024 05:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF643193090;
+	Fri,  9 Aug 2024 14:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J/f7lkwr"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ft1L96PQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D18167265;
-	Fri,  9 Aug 2024 05:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B8C19755A
+	for <io-uring@vger.kernel.org>; Fri,  9 Aug 2024 14:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723180729; cv=none; b=R5DEmCzqv2nmgSqZvIdDEUdojxmskA9P8Hnfi3ZhdywA85ivao9f9e7zZN2RV+t3ADw94V7XQLf16pHE6YtZRpaJmxw3NzhnzvK4hFlh0a5iOsSY48m3rfa1AVjZTdHDST9lG1BTCbPaF4454ZIHENG8lnvM7RDCqQtCCyoaZ8s=
+	t=1723215197; cv=none; b=TuFRWev6y0J/tNewG9WfS5cpM/b9JNZ7et7j7H4pdbxHk1a2w0g6QPSONuQVYdel8zKint2Pe3h4IG+ntC2qUZKOMnDRAaploZfByA1ArikQOJ6Kv8bYbHFwpc8gNRJA1iLAKlK3YxLeM65gZ9bgSoxkzc8uor+m5gak7AUxoEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723180729; c=relaxed/simple;
-	bh=3mXoSfd6SeRX1psM4eVeRTQ7fvXYaRo7W/A8xAyA5oI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fve0tXjFDtned86VtEECWbWuOATGzHGZ5x7y7EZ2reGEZErKWXxHq5sms0kbVjIaU3Aaxdm7ZQvHFpPZtgxFVzU9Zv7zyTuQvZlhq6uC4kMtD1OwLqxYH5+TxaWl1aQNJ20PYgFqrEKPR9n8QPZLHBzu2wsNOBgX7d1HgWpJeB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J/f7lkwr; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723180728; x=1754716728;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3mXoSfd6SeRX1psM4eVeRTQ7fvXYaRo7W/A8xAyA5oI=;
-  b=J/f7lkwrwiQT2qYukiP91xGZ4Zc7p0DjZIQPz5LFbeD8bsCCBiMiDs/s
-   SKAPiPlWu1qWvGI10H3BuJ5JI52TqFltqP7HwaUTwQFiARc408Q/1ZrMS
-   FBQ+MoVJJDS4gqkF37H16dhBZU0zFi6ShCXJi8ojZQbKaybpeFyihXrFt
-   ubMSVVC2XuqHC0NhV/ERILIQk7jZmt84myYymC219KlTbhEqqBBjXP8GL
-   +arb0PXN9tIEd28IrG41Y1TzHGKLJpraoSYJ5EjK9CcFsHPrhT6MxoV/W
-   EIvOvGrAvVyqtSs99WO3NLcSmcJAqGkAImWtsC9+p4R00m7rhGg0rzVa2
-   A==;
-X-CSE-ConnectionGUID: 5tFlssK+Q3alnM8S0RnTLw==
-X-CSE-MsgGUID: bhnKzdi2Qxyj12DM0RIINg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21481676"
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="21481676"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 22:18:47 -0700
-X-CSE-ConnectionGUID: CVkkeCoKQgu4HTmHYfAxeg==
-X-CSE-MsgGUID: jibG+sskQ/KHz+pGXoK10g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="62293005"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 08 Aug 2024 22:18:45 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scI1S-0006rS-1y;
-	Fri, 09 Aug 2024 05:18:42 +0000
-Date: Fri, 9 Aug 2024 13:17:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: hexue <xue01.he@samsung.com>, axboe@kernel.dk, asml.silence@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hexue <xue01.he@samsung.com>
-Subject: Re: [PATCH v7 RESENT] io_uring: releasing CPU resources when polling
-Message-ID: <202408091329.zC0XSfdm-lkp@intel.com>
-References: <20240808071712.2429842-1-xue01.he@samsung.com>
+	s=arc-20240116; t=1723215197; c=relaxed/simple;
+	bh=Bh2fMDBqjEztdOwpfHZ23ytOBO3oNUpMDv0ENs/q87A=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=mZvy7JiDslCqTl1e0XTDp6wi3fTeRVLlQDbc9vqP5uTI9KbQMPatMKAuKSLHJj02yPFpsoi3u4YG/ptzJ1aX7NKfxCyVDO4NZa+j4/hwlg65ywDFHhYpSDYwk6wy3m1oQatNbG/Se+sXdG+NDlwq80MLPkqbqj3m3GyjOAC8poI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ft1L96PQ; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39b37e5f8fdso1011295ab.1
+        for <io-uring@vger.kernel.org>; Fri, 09 Aug 2024 07:53:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723215194; x=1723819994; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bcYrkWmTbfIa4zDbA15mdDV8dBScHHSHm52QwMl52P0=;
+        b=ft1L96PQ7Mg3C9HK6ErhOqJlmhpBRad/mfGKvlwr2Kz8mJxr+LkPp+QQjfyoBamkLM
+         YbqQGyS19AEkAUVIAQ++3xwAEIgcnLA1DQQc+6v7bea51GYXgC96+scTbuMk0l0m0N2s
+         LxP7uXnWzEEdzbjUYja7soSHuCyd8vAj9XLCaNbdH9e6JBFxc/0rCae+4WZWKVfcgiy5
+         SiV33P1AtbICuzg9ngjpRMsfC0r7TV85DTXKG5GvWjXK6Co/Rb6D4tTbgsf9vBy9p091
+         14PCbjRJexOMuk9AbaASVTxLAlhBSaKKCLsPEi1QvYd9DcmJxpkeWOi30femfnNOW/1U
+         iTbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723215194; x=1723819994;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bcYrkWmTbfIa4zDbA15mdDV8dBScHHSHm52QwMl52P0=;
+        b=j/OwQq1lK1n5WkPdDlfRqLnkfXsSlJMhc+Dk/PIIECY+DM0sB9rkLf8/nj0zv38ctQ
+         GcJWEdvwicdwJXpxvQ9Z/NTF9fsjMm2F4wogmWY76CzB+yc8zf74FO+7KmFO4krizBbS
+         KkghV4TMTtlDUXsiATxI4zeSfiTNtmBBmHfhS/sdCUlHYegNjBuKW5KPncFFQWRD2waz
+         fzfQzpxWoWPMR7rXE3fX8AU6ZMponY+EvoIDlkPmeWhU6h+hQrKCKCblqK+v2C/ILobI
+         e3m+qTqqa0uoI3wCTQZTUbJeS1B9csmXnh+whTKC0Fl+p848wyeUB9VRPmjB14gUstDi
+         fMlA==
+X-Gm-Message-State: AOJu0YwkH8tuGkWQ73mKi6XIZCHqSU8Jtf6uqLU3IgyOxV6/UWiZikos
+	iKTxSzJ8mZMsn5TsesSfSj50E//V27TwapmemXUiV2U2PApUB+wXr8DTS6pXQd83PsZLJ4vbh2E
+	Z
+X-Google-Smtp-Source: AGHT+IF7mU6YWBZbykFqf9YFmGii0mDNuusdmavPjCEmLZ6NsPxVNWxGtWmLsnNUc3BvioXmGx1ZEg==
+X-Received: by 2002:a05:6e02:1387:b0:39a:f126:9d86 with SMTP id e9e14a558f8ab-39b6c22a24fmr14923685ab.0.1723215193827;
+        Fri, 09 Aug 2024 07:53:13 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39b4fc00218sm29454965ab.64.2024.08.09.07.53.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 07:53:13 -0700 (PDT)
+Message-ID: <92988daa-9b80-4d1d-9433-0f153dc71ae9@kernel.dk>
+Date: Fri, 9 Aug 2024 08:53:12 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808071712.2429842-1-xue01.he@samsung.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.11-rc3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi hexue,
+Hi Linus,
 
-kernel test robot noticed the following build warnings:
+Nothing major in here, just two fixes for ensuring that bundle recv/send
+requests always get marked for cleanups, and a single fix for ensuring
+that sends with provided buffers only pick a single buffer unless the
+bundle option has been enabled.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.11-rc2 next-20240808]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Please pull!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/hexue/io_uring-releasing-CPU-resources-when-polling/20240808-153455
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240808071712.2429842-1-xue01.he%40samsung.com
-patch subject: [PATCH v7 RESENT] io_uring: releasing CPU resources when polling
-config: x86_64-randconfig-161-20240809 (https://download.01.org/0day-ci/archive/20240809/202408091329.zC0XSfdm-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408091329.zC0XSfdm-lkp@intel.com/
+The following changes since commit c3fca4fb83f7c84cd1e1aa9fe3a0e220ce8f30fb:
 
-smatch warnings:
-io_uring/rw.c:1183 io_uring_hybrid_poll() warn: unsigned 'runtime' is never less than zero.
+  io_uring: remove unused local list heads in NAPI functions (2024-07-30 06:20:20 -0600)
 
-vim +/runtime +1183 io_uring/rw.c
+are available in the Git repository at:
 
-  1171	
-  1172	static int io_uring_hybrid_poll(struct io_kiocb *req,
-  1173					struct io_comp_batch *iob, unsigned int poll_flags)
-  1174	{
-  1175		struct io_ring_ctx *ctx = req->ctx;
-  1176		int ret;
-  1177		u64 runtime, sleep_time;
-  1178	
-  1179		sleep_time = io_delay(ctx, req);
-  1180		ret = io_uring_classic_poll(req, iob, poll_flags);
-  1181		req->iopoll_end = ktime_get_ns();
-  1182		runtime = req->iopoll_end - req->iopoll_start - sleep_time;
-> 1183		if (runtime < 0)
-  1184			return 0;
-  1185	
-  1186		/* use minimize sleep time if there are different speed
-  1187		 * drivers, it could get more completions from fast one
-  1188		 */
-  1189		if (ctx->available_time > runtime)
-  1190			ctx->available_time = runtime;
-  1191		return ret;
-  1192	}
-  1193	
+  git://git.kernel.dk/linux.git tags/io_uring-6.11-20240809
+
+for you to fetch changes up to 8fe8ac24adcd76b12edbfdefa078567bfff117d4:
+
+  io_uring/net: don't pick multiple buffers for non-bundle send (2024-08-07 15:20:52 -0600)
+
+----------------------------------------------------------------
+io_uring-6.11-20240809
+
+----------------------------------------------------------------
+Jens Axboe (3):
+      io_uring/net: ensure expanded bundle recv gets marked for cleanup
+      io_uring/net: ensure expanded bundle send gets marked for cleanup
+      io_uring/net: don't pick multiple buffers for non-bundle send
+
+ io_uring/net.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jens Axboe
+
 

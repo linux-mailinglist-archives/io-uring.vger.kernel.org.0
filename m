@@ -1,79 +1,93 @@
-Return-Path: <io-uring+bounces-2687-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2688-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8BC194D578
-	for <lists+io-uring@lfdr.de>; Fri,  9 Aug 2024 19:32:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E2894DF76
+	for <lists+io-uring@lfdr.de>; Sun, 11 Aug 2024 03:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27B4B1C21452
-	for <lists+io-uring@lfdr.de>; Fri,  9 Aug 2024 17:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D3481C2094A
+	for <lists+io-uring@lfdr.de>; Sun, 11 Aug 2024 01:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930C426AFA;
-	Fri,  9 Aug 2024 17:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31004689;
+	Sun, 11 Aug 2024 01:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="erZn2UPK"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="IqnK3oGl"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1BA15E5CE
-	for <io-uring@vger.kernel.org>; Fri,  9 Aug 2024 17:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DA14A18
+	for <io-uring@vger.kernel.org>; Sun, 11 Aug 2024 01:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723224693; cv=none; b=f3ZiwRlF7r0dJqi7J8h4derlTCO8kqyaMiJr0QABR2yY+lTEspYd4JifQMgZfUmFwcyXV0CmVy+HgokqKMwxOwbDFaO82snvMWAAsE7Enxk0K5raPxqSlopWqTlXp5r+V0I+m5EcYbVrL3u2F7xbCC3KHVGZ1QcS6JxtNCAxklE=
+	t=1723340047; cv=none; b=UFMZ04eGcK3cxl+0DbJ1CROGemWp9Pl8fyoVNaBu4dbeQMQhYlHDLYrTnTPoAT4lJ7evmLn+lPfHjRuR2FPtA9hRjDRdJxitV9AX00qexTT1F07lXo7jPEpIHryYA8NBxrkOaTIDYYqjakzcWsekjqwxzFwx43dyoNFqNajKV1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723224693; c=relaxed/simple;
-	bh=GDYQ7LByub6Oi0IkPDw0wBoX8EgCxWG9GAUkX4OyTfo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=XEmIZZTUVtw+DGYScTTVNn1Rjnm3roeUFJiFmeL8VhNxqZxycFxcJ4u5SsaCBQ68tPVyPSmF71XxLL+F0y1BdaKFqH87u5vuBWc4tDLNm+lJJSCIHR0CHP2obbBcPng6YizUC3EYDlzdkt1eq5ir8wQpDbQY+XPImNrMoYoF/Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=erZn2UPK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D91C32782;
-	Fri,  9 Aug 2024 17:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723224693;
-	bh=GDYQ7LByub6Oi0IkPDw0wBoX8EgCxWG9GAUkX4OyTfo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=erZn2UPKVMygA8Qs7famn9YBsZbuvex/ZRGdafmmK/sTGGUw3VTJRSfQstPKLPMxH
-	 M4MPt/RU3+zanNBYkj0WwmW92XZxxLAIOjytP9r4LxqwZbv/R74tzmbky1iGYwfmPY
-	 ILVZ3m/IbpgcNyymFom7Z5u/kmJADhTzQQ+cHjynA00C8udJm1s9lobvKzFBPQqasH
-	 5M61RxhzQJACk9cKgemsN491pVRKZEn2Ct382LH5E83bOYkZ+oATSwFwGqMK5G5uRM
-	 BIR/r3AY4G/JIUlPXsB5+7mhphxJkbW7tm8kFYbpMaOKZ3phLLjP/gMTqdngBN0SsT
-	 r1k8xDPY7LZKA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C50382333D;
-	Fri,  9 Aug 2024 17:31:33 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 6.11-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <92988daa-9b80-4d1d-9433-0f153dc71ae9@kernel.dk>
-References: <92988daa-9b80-4d1d-9433-0f153dc71ae9@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <92988daa-9b80-4d1d-9433-0f153dc71ae9@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.11-20240809
-X-PR-Tracked-Commit-Id: 8fe8ac24adcd76b12edbfdefa078567bfff117d4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8828729c4435b85844a3b6da19cc7c148c59ec43
-Message-Id: <172322469180.3855220.1981802189293399948.pr-tracker-bot@kernel.org>
-Date: Fri, 09 Aug 2024 17:31:31 +0000
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+	s=arc-20240116; t=1723340047; c=relaxed/simple;
+	bh=Krab8o4nZ/XoIDPca0J5UYW5MBYqhYlnEVRyv7fxXLY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=C36UUYRkdrXM0N1Y4E7U43yy5rRhkWTzhqdz/BEPUri0Ou1Pc8vystUj7+UtXf4Xdn9zlv/1MMvVC5nXtzIhxQQZG6RZflCkwmZgozqLn9ytMkoOkh2lxOwdDfe3ZFgqEIfIRItKtx/BhDSxHseJM39Qmctrp6hBgrHBLF9eVFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=IqnK3oGl; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-81fdcd41e4cso10759439f.0
+        for <io-uring@vger.kernel.org>; Sat, 10 Aug 2024 18:34:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723340042; x=1723944842; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AD0qOE0C4ijAtdRoM4tfqBAYlYiQnwPi2JOGjzKsZRE=;
+        b=IqnK3oGlAME+hJDoiu2WQgpO5IOl7c5pfFpe8DTmJdI7GyCzLzXC0ME0JN/sZKz9uU
+         qjMtixoTpqnaOL3m0Se+83yNLBUvvhpRwUOYJJk179Bv0qFX6Ux95kMuYmJbVegQ7VHv
+         wfH67FEcuecEEuK2GoebTATnsQZJJ5G4+zjh7wa1tpolxZtpILN8cqooqDfGDgc87BrZ
+         wk+7qzT52Fb+RUePdVpDYpj9fEmVmn5tSWDVGg/TMnUkCWexbCPVj+2w2W4eGGx5VDDO
+         WgIZ34GCL+SSmXOEYXHHzFaa7plj8A2/MfQUWGT4vfttFNvXXw/FNYiO62FjVXhsOwLp
+         pe2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723340042; x=1723944842;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AD0qOE0C4ijAtdRoM4tfqBAYlYiQnwPi2JOGjzKsZRE=;
+        b=uwfg1K8W9vilpT0Q4yKaSl01mP8bQXYLACzsDf6MZIs3QPTXRSvE9v+mkpUMscreYE
+         eTo3InHMPCWoh4ICtQPsrd93ETU5dFrTsf1d4oi7+jLFqSGHeYBxbMr1U5EgzFmjfs04
+         R+23cB0Bta3aF6bU11uYa8+7iaPwnvBFepHtopb/b7F5yMre16w1EIvR2RJtNGkuZdeD
+         Mfkj3EkmUKVian8mxHav3/myc7jiCJEyXuRpIzvrPfKum9jzYOY/hDivmzQjhlrnk/TR
+         KD5EVGTu6XKfmu0jBF8JGy7F4tS4B9BmeZEwQKYEYMZfCIf8MqCeiGRcUCyFFFtACI9x
+         NuRQ==
+X-Gm-Message-State: AOJu0YxD0PXiUuBOccIf/ZOeQAdpWFq+oZXml0PWKOPKOdpJ0k4dgoUU
+	q628+XkCyybk1DQQbnCJC2bcUMCNl5ZTrs6U9oXJU0OFMyG3AOKC1SOPHcY8wybiY6rvyK4TAjN
+	W
+X-Google-Smtp-Source: AGHT+IFQzt5X+EgjQWZ9swM1rvbY4S/kDWCjzZSotLcz5Q8zTR0eXF63U31HWQcz52v+RECo9XTfgQ==
+X-Received: by 2002:a05:6e02:1aa1:b0:375:a202:253b with SMTP id e9e14a558f8ab-39b86f65c70mr44362875ab.3.1723340041840;
+        Sat, 10 Aug 2024 18:34:01 -0700 (PDT)
+Received: from localhost.localdomain ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c3dbea4389sm1852477a12.84.2024.08.10.18.34.00
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Aug 2024 18:34:01 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET for-next 0/3] Misc cleanups and improvements
+Date: Sat, 10 Aug 2024 19:32:57 -0600
+Message-ID: <20240811013359.7112-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Fri, 9 Aug 2024 08:53:12 -0600:
+Hi,
 
-> git://git.kernel.dk/linux.git tags/io_uring-6.11-20240809
+Patch 1+3 are just cleanups found while doing other work, and patch 2
+enables ITER_UBUF for provided buffer send mappings similar to what
+we do on the receive side.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8828729c4435b85844a3b6da19cc7c148c59ec43
-
-Thank you!
+None of these should have functional changes.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jens Axboe
+
 

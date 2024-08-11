@@ -1,108 +1,110 @@
-Return-Path: <io-uring+bounces-2695-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2696-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAEE94E3AD
-	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 00:31:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB52A94E3B4
+	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 00:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 639F3B21E03
-	for <lists+io-uring@lfdr.de>; Sun, 11 Aug 2024 22:31:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8037281119
+	for <lists+io-uring@lfdr.de>; Sun, 11 Aug 2024 22:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE9C158536;
-	Sun, 11 Aug 2024 22:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA0015C127;
+	Sun, 11 Aug 2024 22:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2YRREAa5"
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="H2YF5rrm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE3018E06
-	for <io-uring@vger.kernel.org>; Sun, 11 Aug 2024 22:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC3818E06
+	for <io-uring@vger.kernel.org>; Sun, 11 Aug 2024 22:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723415488; cv=none; b=cmr4iOey8ftTN3rCRnUKc0iHW4AOPsrnTDdp1Z3FnQMe1YmcKOlG8g8xiKVqjmZVXdOdW++Praq8w7YBYPwIi700VOFyBdUwOZ+HSeK0UHzN0Xn5w/OHEhKEU9SJsagLGYhp7qat2f/voabUE/gyLj/Wga7rdbfqGZw41vwqn+w=
+	t=1723415843; cv=none; b=tQWdPyvfMyHAKQ5NKzfdufuUFWMhcQxS1yi/FoB+wkJ5QO6JCk+iB5pfmX2r189zdGccHZ90+DzXax/AThBFIjZKwTQGObRI4mRiACIc2k98Z8jEBtqXyvyOqj07lTuETm/j655fenTgr70Wm3M4USDcsJ1QjtPNZXb8nGbOPAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723415488; c=relaxed/simple;
-	bh=+OfdfTWrZamD35pL9yYktI+Dt5/eUQ9Fm82jA9qASaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uYeH7UPgCfuCiE9D7+B0mOtXKdjF5SSU90Yp/62oNY/Tn/dk9jLjXsFcuV8jHifwEIH8qaaScv3jl3CKBrW/sWXscukvWwJ7iTrRIHsyLN73gUoYrSYf7nPWYq21fcAub2mhGsTbgwyzpGv3F9Kc9XZDjibM2XuHT7+BgvPrYs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2YRREAa5; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb4e1dca7aso779099a91.0
-        for <io-uring@vger.kernel.org>; Sun, 11 Aug 2024 15:31:26 -0700 (PDT)
+	s=arc-20240116; t=1723415843; c=relaxed/simple;
+	bh=VNedpA4qJyxdOa/OoIKqQQ1QCHz+IPqidyYDOR5Lur0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=fNdr7rOmk90AkgzhBkArA2VU8yhI9tx4/TFEfLuFASbKVWrP15pK/ZF/nN4h0oAzOhSs47uJeLNVxtojVZskxRgHgIxh25tuIO43N1kgZEkvJaJCTviWNV8bLHbFpfmnqJK33JrLgDLnRAR3n/ugV0A4uujzUJNL6JWCqtdCxVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=H2YF5rrm; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a843bef98so368474166b.2
+        for <io-uring@vger.kernel.org>; Sun, 11 Aug 2024 15:37:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723415485; x=1724020285; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7af1Z8J1ZYV7CqYMAIhhKthQdQLBBbwUtlUS/K7Ttwk=;
-        b=2YRREAa5RtGY4ZgkcUy8zXfROXC1nordwhFC6XNUqFrn6cB8ZHtKx+DIYr0UWD/9St
-         FjyajqA2pdPuJXmtMXAY75hAvYvl3yIIVuYEw5QPnteONTTInTWQvM6lPI6DqfiM6vFu
-         7szgxMfnKXaXbU+wO32NPU/lywW966HjMEZbR+nucKB85IulWOc5tGi4eySWAB09lHbs
-         uMtJqsDFWImTKldvxP2Vhfj20OH5yQBJCdNeDefBjkqXV5LahLMkygLwO1Z6Ua6fl/Bb
-         qUYRkDKS+b95dTb0sM0X0I7qp+XNtdOIIqOu8oZ4N0iYQ3saarZ8trw62RTNJw4ED764
-         GfTQ==
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723415840; x=1724020640; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fi3DHiW7tdtkLQ371tUkhEhPUFfPzDV98R5yjeFOGsg=;
+        b=H2YF5rrmjtirUXaNQTjrcvp+GjhIdfVQ9s78uAd5N+OwMgfYQ+D3xOselDYamm+GFU
+         6A41RY6puJqGhg0zYvwFrVzv4XmcgHfRo/VQYcvthS0h8i2FcnIUN/wFZinKGrW7pXTa
+         nx61uyqo7tvcm+d7gWiifEsWI+3BbUWyLNk4Qg/QRFQ3BySg8GdhAl0PSSDFDjzSZlmR
+         2YO9YN8u2jgsTYk9XymBWwEDTTYGAGt0f5u1jqd4cTO9TzSocwqnIJIjILf45pi4e5t5
+         qAQm/qDJqdQtcX3rtQwMbubWmcfHjMEmc89sP/LBV1R0FzK0JCiG2Ro7i5/rRhKcf8lr
+         D58w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723415485; x=1724020285;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7af1Z8J1ZYV7CqYMAIhhKthQdQLBBbwUtlUS/K7Ttwk=;
-        b=xGjHKuijGyQO6MU/VN6Sedj+Qxh8hFT22Qz/vmVfIrc7I6Xj2sT6ei8Nubsd5zJz6q
-         v/kDvhidOBGIUbxYBns1YmpiIbBS4Mm2bGniwq6N1dKXJJjPZdyEOAcqfKRhymW635hO
-         ONnlUg9OlAFd4BqRsn7RbUQZVWbDlBWbltm/4Ak+uIfrgxuW6/pkcZkA+tyrWYxTqk7q
-         GaECXh4GtY3iUQDDlcUpdAK5BHukNwyIy85i88XhO+6A5PBdboCCDudYOPUdcbw99ygv
-         Cdlcd05XrSqaUafum4H4BFug02NFvc1ysPliTJuPpwAY2LacsfVq0n4sFjGwMyJz5e9w
-         BjhQ==
-X-Gm-Message-State: AOJu0Ywwfy+hjSncNuQ1Qfmha4NVI9iAVUYA4E0CGpEU3jlmgY7QLnAn
-	uP4mn9H+uZrfrhWW52YbiYemRMB0XdAFyONuHFoqy5ciY9qeIHQDE50TKhi29W4=
-X-Google-Smtp-Source: AGHT+IF1MMidK6QQRpKC6RqrJWEuJ46WY0ivcHc1VEvrmSGeMYZFhKc5OEo5DEy4elsAcIrheg1QfQ==
-X-Received: by 2002:a17:902:e884:b0:1fd:d740:b1c4 with SMTP id d9443c01a7336-200ae50e1a4mr62708625ad.2.1723415485466;
-        Sun, 11 Aug 2024 15:31:25 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb9feaa4sm26429095ad.213.2024.08.11.15.31.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Aug 2024 15:31:24 -0700 (PDT)
-Message-ID: <1207e17b-7a32-42b1-8047-b01e221ab3a9@kernel.dk>
-Date: Sun, 11 Aug 2024 16:31:23 -0600
+        d=1e100.net; s=20230601; t=1723415840; x=1724020640;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fi3DHiW7tdtkLQ371tUkhEhPUFfPzDV98R5yjeFOGsg=;
+        b=W1AAf9/Re5I4Dymxawg6bcQVNwR8S+2F8vu7bScS+bMLc6eos4safI2Ke8lLDo+H+A
+         afrXIjeHNh3FXYRT+l173/kHNSrfJJbpgJ7mUy4OjuIVQYfCPvnTNU4L4fym2RcWWTjs
+         Z5R9QVAogzUi+fR0PfuYp9G0aalDQLtiCXBxHcFtAgdAqZInsRGs1C9+1EKlUDaEt11K
+         r637/S88ZAmMzBGambBGLkzwEnO+M91WfSvw2mzgMjcvey4QiJHKfJbT2PJyg8xeGcXP
+         NbvPFfPHT3ShGus423ijtfs77EHnyJUybQdyehgRJsZXNeTZxAmG1Hk8kj4D82rgIwTs
+         n5FA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5aw/RTvNotpdnDks3aLdCNCqZFcPgzQr2Nfc/cX1rWiXI6wjEftd3ZhhS90n9bbWLOVFb89r4fQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1IkzVz0F+Zf5pkdY28LLczBZaPAb2VLYTNqcd4eVnmQUJhVUv
+	Mx7UP2OESPzwz/mP6zvFq4I7SU9D1XpfMcrz+Fsxih3UY76v8lcopEI82r4MOi4=
+X-Google-Smtp-Source: AGHT+IEq9adQCPBN7DOtu1DPOBaYf9dbn+FDu75Q2/UoCbCIcoeuLyh5lb0NYVemT8mR4c4sd1/wMg==
+X-Received: by 2002:a17:907:972a:b0:a72:8296:ca1f with SMTP id a640c23a62f3a-a80aa654af1mr622357066b.50.1723415839916;
+        Sun, 11 Aug 2024 15:37:19 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:a92:ee01:95ad:df39:6ff7:9997])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb0e1355sm177268166b.74.2024.08.11.15.37.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Aug 2024 15:37:19 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
 Subject: Re: [PATCH] io_uring/net: Remove unneeded if check in
  io_net_vec_assign()
-To: Thorsten Blum <thorsten.blum@toblux.com>, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240811222638.24464-2-thorsten.blum@toblux.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240811222638.24464-2-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset=UTF-8
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <1207e17b-7a32-42b1-8047-b01e221ab3a9@kernel.dk>
+Date: Mon, 12 Aug 2024 00:37:08 +0200
+Cc: asml.silence@gmail.com,
+ io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
+Message-Id: <57E4D3C3-5960-4F71-9391-C480E9FD310F@toblux.com>
+References: <20240811222638.24464-2-thorsten.blum@toblux.com>
+ <1207e17b-7a32-42b1-8047-b01e221ab3a9@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-On 8/11/24 4:26 PM, Thorsten Blum wrote:
-> kfree() already checks if its argument is NULL. Remove the unneeded if
-> check and fix the following Coccinelle/coccicheck warning reported by
-> ifnullfree.cocci:
+On 12. Aug 2024, at 00:31, Jens Axboe <axboe@kernel.dk> wrote:
+> On 8/11/24 4:26 PM, Thorsten Blum wrote:
+>> kfree() already checks if its argument is NULL. Remove the unneeded if
+>> check and fix the following Coccinelle/coccicheck warning reported by
+>> ifnullfree.cocci:
+>> 
+>>  WARNING: NULL check before some freeing functions is not needed
 > 
->   WARNING: NULL check before some freeing functions is not needed
+> Yes it's not needed, but the NULL check is done after a function call.
+> For the hot path, it's FASTER to check if it's NULL or not.
+> 
+> I can put a comment on these, but honestly I wish the ifnullfree
+> thing would just go away as it's hardly useful for anything. It's
+> not like it's a bug to check for NULL first, or that it would find
+> something useful.
 
-Yes it's not needed, but the NULL check is done after a function call.
-For the hot path, it's FASTER to check if it's NULL or not.
-
-I can put a comment on these, but honestly I wish the ifnullfree
-thing would just go away as it's hardly useful for anything. It's
-not like it's a bug to check for NULL first, or that it would find
-something useful.
-
--- 
-Jens Axboe
-
-
+Ok, thanks for explaining.
 

@@ -1,55 +1,51 @@
-Return-Path: <io-uring+bounces-2727-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2728-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CA394F913
-	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 23:46:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBAB294F921
+	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 23:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E2D9B2229F
-	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 21:46:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AB071C202F5
+	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 21:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA211957E9;
-	Mon, 12 Aug 2024 21:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12FB170A0F;
+	Mon, 12 Aug 2024 21:50:25 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810B94D112
-	for <io-uring@vger.kernel.org>; Mon, 12 Aug 2024 21:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BF51586D3
+	for <io-uring@vger.kernel.org>; Mon, 12 Aug 2024 21:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723499161; cv=none; b=ggRopbCEn9yAjCM6BAQs5LkDC/s3JyP9lCUSOZFj2KSlHg3d5ONqLW9oBuoFgqZnC548cV2mm50lNWm4zsPprnH0w7K2yxJiyY31AIm5o1yR2bCYNdYkDkVJB8m3NktCn9rq+++RkQDGwyNiXBzjxmoKfxu88mMQrOkbaa9B1gg=
+	t=1723499425; cv=none; b=dDHquZoB5s8n5x+Hk9PVfXJ91MbPkiZ2pHzPZjM3mzQSHTrVTYcJ/4w9Y7k12UWg9FV0sQZNe+In5bo5WKp6OPEnTywsF5SGX/DooNTNAFZsXcmRGBSMpgg4HMzFiDPXqK69Ol0nQiTLdZT9MjpM5HTU6d2ZeNTi77IymAknZb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723499161; c=relaxed/simple;
-	bh=96H/cCKyEgSBimeiZA594WjOl2rvn65nAEPYx2Tmxnw=;
+	s=arc-20240116; t=1723499425; c=relaxed/simple;
+	bh=mpGIuF/5zIvGdK/NRoHCN0vD17sq25jHQWo6e6zh1AA=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g32Aln4MQNzQBpy777MhhAhpmrDjJI2kNSIPNhYXGO6tqgciHJjemogmBzvE16mQoLubFwJNXRcxzXijfg45eSRtmLkzRki0CRj1Rpg1TzS96PzY3JtvFY4iiXj3lG7CCLYnW/eWvvyr6yZg5oS+EBySOxxfnIAd0AKhkgDBazE=
+	 Content-Type:MIME-Version; b=YFBHb3EYhvu17xa/3Jqr88IjHMy5EB243cMoQRRJsxLUc7BlTbmDUb2B/RESJrzoxp0+4gI7tOsoMAkAgGUKVNI1KgYbeCuXz0JjbXCfWEBcHZNCn3u/AvQvsr5AwMq6pONzkVY9P8v+mfIr7zRW3w7rH4ISKBSt178h1PrAMUk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=54090 helo=[192.168.1.177])
+Received: from [45.44.224.220] (port=52442 helo=[192.168.1.177])
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1sdcrU-0007Kw-0i;
-	Mon, 12 Aug 2024 17:45:56 -0400
-Message-ID: <64d635e9bf39878d21f9b9a7a5d6e74614ad7c66.camel@trillion01.com>
-Subject: Re: [PATCH] io_uring/napi: remove duplicate io_napi_entry timeout
- assignation
+	id 1sdcvm-0007c7-1s;
+	Mon, 12 Aug 2024 17:50:22 -0400
+Message-ID: <c1a333db6bce30ac770a590f80f3d26e945c5065.camel@trillion01.com>
+Subject: Re: [PATCH v2] io_uring: do the sqpoll napi busy poll outside the
+ submission block
 From: Olivier Langlois <olivier@trillion01.com>
 To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
 	io-uring@vger.kernel.org
-Date: Mon, 12 Aug 2024 17:45:55 -0400
-In-Reply-To: <5730c0c1-73cb-42b5-8af3-afe60529f57d@kernel.dk>
+Date: Mon, 12 Aug 2024 17:50:21 -0400
+In-Reply-To: <402e9573-2616-4cd9-8566-e7d99fe1ab53@kernel.dk>
 References: 
-	<145b54ff179f87609e20dffaf5563c07cdbcad1a.1723423275.git.olivier@trillion01.com>
-	 <05255cc5136254574b884b5e10aae7cf8301662a.camel@trillion01.com>
-	 <8c1ee6ab-8425-4d13-80f5-ff085d12dc91@kernel.dk>
-	 <f1397b51-8d41-4f91-aa25-37f771fe4e13@kernel.dk>
-	 <8887f2d97c1dafb6ceaf9f5c492457f642f532dd.camel@trillion01.com>
-	 <5730c0c1-73cb-42b5-8af3-afe60529f57d@kernel.dk>
+	<44a520930ff8ad2445fc6b5adddb71e464df0e65.1722727456.git.olivier@trillion01.com>
+	 <402e9573-2616-4cd9-8566-e7d99fe1ab53@kernel.dk>
 Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
  keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
  5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
@@ -93,42 +89,40 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-On Mon, 2024-08-12 at 14:40 -0600, Jens Axboe wrote:
+On Mon, 2024-08-12 at 14:31 -0600, Jens Axboe wrote:
+> On 7/30/24 3:10 PM, Olivier Langlois wrote:
+> > diff --git a/io_uring/napi.h b/io_uring/napi.h
+> > index 88f1c21d5548..5506c6af1ff5 100644
+> > --- a/io_uring/napi.h
+> > +++ b/io_uring/napi.h
+> > @@ -101,4 +101,13 @@ static inline int
+> > io_napi_sqpoll_busy_poll(struct io_ring_ctx *ctx)
+> > =A0}
+> > =A0#endif /* CONFIG_NET_RX_BUSY_POLL */
+> > =A0
+> > +static inline int io_do_sqpoll_napi(struct io_ring_ctx *ctx)
+> > +{
+> > +	int ret =3D 0;
+> > +
+> > +	if (io_napi(ctx))
+> > +		ret =3D io_napi_sqpoll_busy_poll(ctx);
+> > +	return ret;
+> > +}
+> > +
 >=20
-> @@ -174,9 +174,8 @@ static void io_napi_blocking_busy_loop(struct
-> io_ring_ctx *ctx,
-> =A0	do {
-> =A0		is_stale =3D __io_napi_do_busy_loop(ctx,
-> loop_end_arg);
-> =A0	} while (!io_napi_busy_loop_should_end(iowq, start_time) &&
-> !loop_end_arg);
-> -	rcu_read_unlock();
-> -
-> =A0	io_napi_remove_stale(ctx, is_stale);
-> +	rcu_read_unlock();
-> =A0}
+> static inline int io_do_sqpoll_napi(struct io_ring_ctx *ctx)
+> {
+> 	if (io_napi(ctx))
+> 		return io_napi_sqpoll_busy_poll(ctx);
+> 	return 0;
+> }
 >=20
-> @@ -309,9 +309,8 @@ int io_napi_sqpoll_busy_poll(struct io_ring_ctx
-> *ctx)
-> =A0
-> =A0	rcu_read_lock();
-> =A0	is_stale =3D __io_napi_do_busy_loop(ctx, NULL);
-> -	rcu_read_unlock();
-> -
-> =A0	io_napi_remove_stale(ctx, is_stale);
-> +	rcu_read_unlock();
-> =A0	return 1;
-> =A0}
-> =A0
->=20
-Jens,
+> is a less convoluted way of doing the same.
 
-I have big doubts that moving the rcu_read_unlock() call is correct.
-The read-only list access if performed by the busy loops block.
+I agree. but if I am to produce a 3rd version. How about even not
+returning anything at all since the caller ignores the return value?
 
-io_napi_remove_stale() is then modifying the list after having acquired
-the spinlock. IMHO, you should not hold the RCU read lock when you are
-updating the data. I even wonder is this could not be a possible
-livelock cause...
+I was hesitating about doing this but I did figure that a reviewer
+would point it out if it was the right thing to do...
 
 

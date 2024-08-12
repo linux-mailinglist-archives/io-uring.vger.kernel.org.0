@@ -1,121 +1,138 @@
-Return-Path: <io-uring+bounces-2703-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2704-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61CD94F136
-	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 17:03:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C2A94F245
+	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 18:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 454D8B25BBA
-	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 15:03:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8934C2826EE
+	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 16:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3B1153BF6;
-	Mon, 12 Aug 2024 15:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E617183CA6;
+	Mon, 12 Aug 2024 16:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3CdMYtw"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="a4IISM3L"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFC91E504;
-	Mon, 12 Aug 2024 15:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDBF1EA8D
+	for <io-uring@vger.kernel.org>; Mon, 12 Aug 2024 16:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723475004; cv=none; b=YMbztLkFK3nA874KchpOz2ISlZSiShfpJNiO3by/+/j91TDwLci6Gl9afqnGs72wd2bIRGGXk02QXI3n0tzL4As/nCRl7e4qHWfWTqMe+VwY/pixkVZMbNGaC1O4zP1rv6gFXpSnkGDFHBhvmwcfn9u019gwVWtQIGuhOCzBLpM=
+	t=1723478507; cv=none; b=PBmud/l0zc436T00DkmNr3zyqT8TLqeNNoY/o0gEpATTfyScshSdzY8YdaERxa92YZhD1+nprzu340xcy2da8lBf5aAJGEouwikAi7p+L9vfLM0s0ZhoIYBkrKN5uWElIOAk5+tdy3lpTyOKVUlBvKO+s27l/VGgYr8EEBSRywY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723475004; c=relaxed/simple;
-	bh=QwP0vGEK4sodQeENKkw2OjgxGCSKK/RmzQvfNDTIaQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nc8eojbH+AAmI8SnavgjqHdLiO7bkAdm5kPP0ZqTexUpBC3RPekwmcVdPKVsFsjQUha2Npj8myU6XmlyJQdpt148MYLnskyrVYCFxH09avt4WPzEaAGQ17dycKfX0A/yTTFgKXkhjl52hwq47NsuP4LQY+LIUyxLlT3oauaUFZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3CdMYtw; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42816ca782dso34102035e9.2;
-        Mon, 12 Aug 2024 08:03:22 -0700 (PDT)
+	s=arc-20240116; t=1723478507; c=relaxed/simple;
+	bh=idxi3DVrC/UkJ03AyJNxeVwStbbwgH0EfNELskrJWn0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=fk++cxny1CvM6enMN92CYa3RNjHTOpkb8AYXQygPplGDrbVx6FgMZxKImkzLpMknA8vL9lvsRFLFOWvDT2rWfk13QAtWFE/QjsR9sKmNriKPJKZcQHEh1HHlboh3Rr3FWnxk6EPwCiuPsGIvl83011uYYC2JzD6aY/lv9T4yhQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=a4IISM3L; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc4e010efdso976915ad.3
+        for <io-uring@vger.kernel.org>; Mon, 12 Aug 2024 09:01:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723475001; x=1724079801; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JtvyEdKnl129bGdPA8p9XAq76/4RIujBwi8fVV3N7ko=;
-        b=A3CdMYtwwoSthjApoFOHSkbSeygcUiMlpRxzqdr/fOlbRY3NeUmZZY0MUmlwzI8Vij
-         eYHu6TnLNQ00K4AmKfg7/CSljKjF673uRrJZFPtZ5ZOeLpzotpksYVh9RhftiLY1iIp4
-         mnHHKvc76qYZLBH44UPw0ROTP3IsgduYkgBczV/bKPQlFIzd/+BzBLCMMCW/WYKZPgsk
-         Tl0EFUhu0m367cL5lHbqcHuM2xt/uHyCt/BsUTHvlBDaCdZbFQlqZrzCkD7A0rD5F68b
-         spA0XmRnAwO8TUeFNUyckIj8NujdDQbHlcmj5vHm1gF09eSf6fh53uY+cYJbjGQ1o+Od
-         BuoA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723478502; x=1724083302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+zYkozzIV5E++q8oMG6WK4QghL6A306K6fkD7lkD9l4=;
+        b=a4IISM3LQBq2e7iUBPhyqVmtdw10sOv+ftwtITxos88dp3b8TrJCLGbLmXML1twcbc
+         PIq48lhnCWSRXF8b3SFuFEfulWaM6wz7/jtSG3wfl/JsjC+YqKKh+cXJ+2Fs194/dfJT
+         Gr+cAk67xUZ/qRT6bR/XKxlxzd87UqrsSYGnLOW043l9cpVjJjgYSw6iLInH0vubU4mZ
+         9o3tKevNJbeh/7w+AHIuHRIHKFcj4npkFIK8bkgoSSQr1M2ZN0C3hEcM0ytltsRUTI+V
+         y8ZiozJ0EdCC/PyBkGWF2JA6hT7GoeKGds6shw2b/kuFUL/zaVOzYtknF5mCZSBW8l/j
+         mVNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723475001; x=1724079801;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JtvyEdKnl129bGdPA8p9XAq76/4RIujBwi8fVV3N7ko=;
-        b=rETiRnemtmmYfWOc3Uon5d4ztb5OSnStjgjZ97f9zu1dgv8c4VYLWcohbjyK8VA+Wk
-         P27zLlDkHXFvuePAxkverMMQHCaPaAK2+MQGd51mE0O3WthPVWyQ4mpIlWnXT7VFCxFj
-         TfsXVgku1gvCxfkY+zciOS4KpZ16XCLmjlNrJhtsmBi4+hKyHresL2ztlgjka1wTnjEu
-         Q4Igc4Im6NdwmAtwgamq7wUhIiyTTqlfHT7gEDZJYwlI0Q6G41aO7OFEKH9m2QI4qyb9
-         ABi9TMZqfhOe9mjg0L49YWkrRaHqYKIHauO96DkqDODn2WWMOrNt3owLAHYZHEVj0U63
-         es4w==
-X-Forwarded-Encrypted: i=1; AJvYcCV3XVYw01AjdrpPyijynNBlcIYuFNt2eY092C1zaPmReKdn80qMi9Drnf1s8SU5qdrjNEc20tYz4Xo+3RW21K5xtm0nPLBrGtM=
-X-Gm-Message-State: AOJu0YxBbHoTnAR9CalOATz22PKa4fUv57qTg0MH2EQA4OsbzGcAzIzC
-	oQ5xTznJL8n09EMl2Sb7cVtceu5Ia2Vk3HvJQu0tOhk7Ht4DVIzk0VMD8mUU
-X-Google-Smtp-Source: AGHT+IFVGL89yyQWV91H1VKNCyGPDmxSxPR8YjhTs/YbqMc6TP8W39+rrnwvolD9NRYXHYpYu461mQ==
-X-Received: by 2002:a5d:694f:0:b0:367:8876:68e6 with SMTP id ffacd0b85a97d-3716cd1fe1amr358504f8f.48.1723475000675;
-        Mon, 12 Aug 2024 08:03:20 -0700 (PDT)
-Received: from [192.168.42.116] ([85.255.232.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c93833asm7784641f8f.41.2024.08.12.08.03.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 08:03:20 -0700 (PDT)
-Message-ID: <899fdd00-a3ab-43df-8f4a-04b36fdcddb4@gmail.com>
-Date: Mon, 12 Aug 2024 16:03:50 +0100
+        d=1e100.net; s=20230601; t=1723478502; x=1724083302;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+zYkozzIV5E++q8oMG6WK4QghL6A306K6fkD7lkD9l4=;
+        b=cWoQkczi6rHf+Mm6KAfjqTO6dZoRv1IemkLx+ETQbclLWQb1Y1T3fH1A75F3y425hI
+         XepbEsVF/w8RLPdunhctj8PksEUXvqEy5giKpXY7oNjGks9Tp/TepFv1L1vdeZo+1YAk
+         mD+u6Y3KboeUOytfuS9z//SbUU5XGuSZbmhj/FRuzeLgKT0YV2gr+8vHY56bVwxzWQAE
+         pG0KKR1yds39NiKuYHTbKHyh6VpitkGFWzDmc9MMpH+/W/kI+1WeuutiIlYpUTmXb+lN
+         tmDGG+Db6y8CWHt5jrkCDPyt2jCHTcIV+HPL4EORI+gRG130cFQs1vnohnGXRLSb7M0X
+         CtNQ==
+X-Gm-Message-State: AOJu0YzB37kBMtcMZ5+5S4okKnugQyzQl14jzXFcZVo7j3pi4xHn3ks/
+	Y0VjnT+GMgEHwuSudJahZsG6LfrUqn5/BaOJLCuDe9mV15mt9OgH5i6epWB4Q9sre7J3bx/gyHB
+	I
+X-Google-Smtp-Source: AGHT+IFDBvDX9G2RnMdJw7BzIu2XMqcS8JB0tXbyxAVWc3PHr3o4CB93+IiSxoDZdNMEpREcgXHCBA==
+X-Received: by 2002:a17:902:f0cb:b0:1fb:1cc3:647b with SMTP id d9443c01a7336-201ca180742mr5064335ad.5.1723478501634;
+        Mon, 12 Aug 2024 09:01:41 -0700 (PDT)
+Received: from localhost.localdomain ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb8f7546sm39749705ad.77.2024.08.12.09.01.40
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 09:01:41 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Subject: [PATCHSET RFC 0/3] Add support for incremental buffer consumption
+Date: Mon, 12 Aug 2024 09:51:11 -0600
+Message-ID: <20240812160129.90546-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: add io_uring interface for encoded reads
-To: Mark Harmstone <maharmstone@meta.com>,
- Christoph Hellwig <hch@infradead.org>
-Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
- Jens Axboe <axboe@kernel.dk>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-References: <20240809173552.929988-1-maharmstone@fb.com>
- <Zrnxgu7vkVDgI6VU@infradead.org>
- <ac79ec76-200e-44bd-80fc-08ca38c565d0@meta.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ac79ec76-200e-44bd-80fc-08ca38c565d0@meta.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/12/24 15:46, Mark Harmstone wrote:
-> On 12/8/24 12:26, Christoph Hellwig wrote:
->> What is the point if this doesn't actually do anything but returning
->> -EIOCBQUEUED?
-> 
-> It returns EIOCBQUEUED to say that io_uring has queued the request, and
-> adds the task to io_uring's thread pool for it to be completed.
+Hi,
 
-No, it doesn't. With your patch it'll be executed by the
-task submitting the request and seemingly get blocked,
-which is not how an async interface can work.
+The recommended way to use io_uring for networking workloads is to use
+ring provided buffers. The application sets up a ring (or several) for
+buffers, and puts buffers for receiving data into them. When a recv
+completes, the completion contains information on which buffer data was
+received into. You can even use bundles with receive, and receive data
+into multiple buffers at the same time.
 
-I'll comment on the main patch.
+This all works fine, but has some limitations in that a buffer is always
+fully consumed. This patchset adds support for partial consumption of
+a buffer. This, in turn, allows an application to supply fewer buffers
+for receives, but of a much larger size. For example, rather than add
+a ton of 1500b buffers for receiving data, the application can just add
+one large buffer. Whenever data is received, only the current head part
+of the buffer is consumed and used. This leads to less iteration of
+buffers, and also eliminates any potential wasteage of memory if some
+of the receives only partially fill a provided buffer.
 
+Patchset is lightly tested, passes current tests and also the new test
+cases I wrote for it. The liburing 'pbuf-ring-inc' branch has extra
+tests and support for this.
 
->> Note that that the internals of the btrfs encoded read is built
->> around kiocbs anyway, so you might as well turn things upside down,
->> implement a real async io_uring cmd and just wait for it to complete
->> to implement the existing synchronous ioctl.
-> 
-> I'd have to look into it, but that sounds like it could be an
-> interesting future refactor.
-> 
-> Mark
+Using incrementally consumed buffers from an application point of view
+is fairly trivial. Just pass the flag IOU_PBUF_RING_INC to
+io_uring_setup_buf_ring(), and this marks this buffer group ID as being
+incrementally consumed. Outside of that, the application just needs to
+keep track of where the current read/recv point is at. See patch 3
+for details.
+
+Patch 1+2 are just basic prep patches, patch 3 is the meat of it. But
+still pretty darn simple. Note that this feature ONLY works with ring
+provide buffers, not with legacy/classic provided buffers. Code can also
+be found here, along with some other patches on top which aren't strictly
+related:
+
+https://git.kernel.dk/cgit/linux/log/?h=io_uring-net-coalesce
+
+and it's based on 6.11-rc3 with the pending 6.12 io_uring patches pulled
+in first.
+
+Comments/reviews welcome! I'll add support for this to examples/proxy
+in the liburing repo, and can provide some performance results post
+that.
+
+ include/uapi/linux/io_uring.h |  8 ++++++
+ io_uring/io_uring.c           |  2 +-
+ io_uring/kbuf.c               | 28 +++++++++---------
+ io_uring/kbuf.h               | 54 ++++++++++++++++++++++++++---------
+ io_uring/net.c                |  8 +++---
+ io_uring/rw.c                 |  8 +++---
+ 6 files changed, 71 insertions(+), 37 deletions(-)
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

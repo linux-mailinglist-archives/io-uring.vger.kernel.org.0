@@ -1,53 +1,50 @@
-Return-Path: <io-uring+bounces-2722-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2723-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B94E94F808
-	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 22:15:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70BE94F835
+	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 22:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA791F2144F
-	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 20:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54BEF1F2288D
+	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 20:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6392183CA5;
-	Mon, 12 Aug 2024 20:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C08B186E30;
+	Mon, 12 Aug 2024 20:29:17 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA0F15C143
-	for <io-uring@vger.kernel.org>; Mon, 12 Aug 2024 20:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365A316C854
+	for <io-uring@vger.kernel.org>; Mon, 12 Aug 2024 20:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723493754; cv=none; b=oVblsk59kzNQoIN3vyMsMdNQc/b2fka6jWOOZORoZpiJ0lMLWe5ql9HgpvvzZnrm0okHfVXG5fut5lco1+aIZkZqkSU8/jPL5uV+dQFsrTu/QThmKNyiRcrl4ccCB3A0YBFuMIh0/l5cMNqI4U0W21ZbiPqtsfM43ZvF/HpN9tQ=
+	t=1723494557; cv=none; b=I2KEnRq2N9DbYVV2+7HWnc9GaPT4/qy8D+PRdG09u+Jubn0wkmR5PtwJwGD4NtJGXZtBct26kk4c4UakW1QZqfQ35CCryZHjhYqG0nVDmdCz2mIxrTibTgt9QLfBN2Zyp6LoOxXvvZ/3VdIKK4LZJzdAHGRIGWmoCMbm4aqBdbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723493754; c=relaxed/simple;
-	bh=lgzBobEMMlCeH7Sm5AT9WbuZVom2P0On/nya7F+Xzyo=;
+	s=arc-20240116; t=1723494557; c=relaxed/simple;
+	bh=ZNHyRNvGB7jr+ikDaK8n2TqQPyhOgSEG1FH9rMvthfA=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qBxl6w/xarDZDFL/nRw213erZ2CAsDiYVs1fdE62mYuH5Srmt07Nn2FPrmLAZm87ABqu4nCgWL5oFAt4ZHK0WupzjFWZHWEu6Euou6PCAjxQ8VM3nePPUOMbJbGZdB3OxFKmD3gOMHExLrS08FvsXGItXi97PX78/dG1LsonRq4=
+	 Content-Type:MIME-Version; b=lGcJvDUgkPLY2ac8UhCEFj3T0MpttkvrLapprg6NMSZzrdbOGjcov9P1qCoVTl4HFON8vQmVPMjDAWZUMkOIFOEeysT+q642Ud72wO4EITV1myJX0AnrurnVqI/+UtYwanfvtDEjS/+ROOs6QVcR2ZGUpoYahZgdDsMQZudmxzQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=44638 helo=[192.168.1.177])
+Received: from [45.44.224.220] (port=41174 helo=[192.168.1.177])
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1sdbSC-00022h-1i;
-	Mon, 12 Aug 2024 16:15:44 -0400
-Message-ID: <8887f2d97c1dafb6ceaf9f5c492457f642f532dd.camel@trillion01.com>
-Subject: Re: [PATCH] io_uring/napi: remove duplicate io_napi_entry timeout
- assignation
+	id 1sdbfF-0002rj-2F;
+	Mon, 12 Aug 2024 16:29:13 -0400
+Message-ID: <cfc648a82ca633af4c1566447195b955d901777b.camel@trillion01.com>
+Subject: Re: [PATCH v2] io_uring: do the sqpoll napi busy poll outside the
+ submission block
 From: Olivier Langlois <olivier@trillion01.com>
 To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
 	io-uring@vger.kernel.org
-Date: Mon, 12 Aug 2024 16:15:43 -0400
-In-Reply-To: <f1397b51-8d41-4f91-aa25-37f771fe4e13@kernel.dk>
+Date: Mon, 12 Aug 2024 16:29:12 -0400
+In-Reply-To: <44a520930ff8ad2445fc6b5adddb71e464df0e65.1722727456.git.olivier@trillion01.com>
 References: 
-	<145b54ff179f87609e20dffaf5563c07cdbcad1a.1723423275.git.olivier@trillion01.com>
-	 <05255cc5136254574b884b5e10aae7cf8301662a.camel@trillion01.com>
-	 <8c1ee6ab-8425-4d13-80f5-ff085d12dc91@kernel.dk>
-	 <f1397b51-8d41-4f91-aa25-37f771fe4e13@kernel.dk>
+	<44a520930ff8ad2445fc6b5adddb71e464df0e65.1722727456.git.olivier@trillion01.com>
 Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
  keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
  5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
@@ -91,93 +88,77 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-On Mon, 2024-08-12 at 12:11 -0600, Jens Axboe wrote:
-> On 8/12/24 12:10 PM, Jens Axboe wrote:
-> > On 8/11/24 7:00 PM, Olivier Langlois wrote:
-> > > On Sun, 2024-08-11 at 20:34 -0400, Olivier Langlois wrote:
-> > > > io_napi_entry() has 2 calling sites. One of them is unlikely to
-> > > > find
-> > > > an
-> > > > entry and if it does, the timeout should arguable not be
-> > > > updated.
-> > > >=20
-> > > > The other io_napi_entry() calling site is overwriting the
-> > > > update made
-> > > > by io_napi_entry() so the io_napi_entry() timeout value update
-> > > > has no
-> > > > or
-> > > > little value and therefore is removed.
-> > > >=20
-> > > > Signed-off-by: Olivier Langlois <olivier@trillion01.com>
-> > > > ---
-> > > > =A0io_uring/napi.c | 1 -
-> > > > =A01 file changed, 1 deletion(-)
-> > > >=20
-> > > > diff --git a/io_uring/napi.c b/io_uring/napi.c
-> > > > index 73c4159e8405..1de1d4d62925 100644
-> > > > --- a/io_uring/napi.c
-> > > > +++ b/io_uring/napi.c
-> > > > @@ -26,7 +26,6 @@ static struct io_napi_entry
-> > > > *io_napi_hash_find(struct hlist_head *hash_list,
-> > > > =A0	hlist_for_each_entry_rcu(e, hash_list, node) {
-> > > > =A0		if (e->napi_id !=3D napi_id)
-> > > > =A0			continue;
-> > > > -		e->timeout =3D jiffies + NAPI_TIMEOUT;
-> > > > =A0		return e;
-> > > > =A0	}
-> > > > =A0
-> > > I am commenting my own patch because I found something curious
-> > > that I
-> > > was not sure about when I was reviewing the code.
-> > >=20
-> > > Should the remaining e->timeout assignation be wrapped with a
-> > > WRITE_ONCE() macro to ensure an atomic store?
-> >=20
-> > I think that makes sense to do as lookup can be within rcu, and
-> > hence we have nothing serializing it. Not for torn writes, but to
-> > ensure that the memory sanitizer doesn't complain. I can just make
-> > this change while applying, or send a v2.
+On Tue, 2024-07-30 at 17:10 -0400, Olivier Langlois wrote:
+> there are many small reasons justifying this change.
 >=20
-> As a separate patch I mean, not a v2. That part can wait until 6.12.
+> 1. busy poll must be performed even on rings that have no iopoll and
+> no
+> =A0=A0 new sqe. It is quite possible that a ring configured for inbound
+> =A0=A0 traffic with multishot be several hours without receiving new
+> request
+> =A0=A0 submissions
+> 2. NAPI busy poll does not perform any credential validation
+> 3. If the thread is awaken by task work, processing the task work is
+> =A0=A0 prioritary over NAPI busy loop. This is why a second loop has been
+> =A0=A0 created after the io_sq_tw() call instead of doing the busy loop
+> in
+> =A0=A0 __io_sq_thread() outside its credential acquisition block.
 >=20
-ok. np. I'll look into it soon.
+> Signed-off-by: Olivier Langlois <olivier@trillion01.com>
+> ---
+> =A0io_uring/napi.h=A0=A0 | 9 +++++++++
+> =A0io_uring/sqpoll.c | 6 +++---
+> =A02 files changed, 12 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/io_uring/napi.h b/io_uring/napi.h
+> index 88f1c21d5548..5506c6af1ff5 100644
+> --- a/io_uring/napi.h
+> +++ b/io_uring/napi.h
+> @@ -101,4 +101,13 @@ static inline int
+> io_napi_sqpoll_busy_poll(struct io_ring_ctx *ctx)
+> =A0}
+> =A0#endif /* CONFIG_NET_RX_BUSY_POLL */
+> =A0
+> +static inline int io_do_sqpoll_napi(struct io_ring_ctx *ctx)
+> +{
+> +	int ret =3D 0;
+> +
+> +	if (io_napi(ctx))
+> +		ret =3D io_napi_sqpoll_busy_poll(ctx);
+> +	return ret;
+> +}
+> +
+> =A0#endif
+> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+> index cc4a25136030..7f4ed7920a90 100644
+> --- a/io_uring/sqpoll.c
+> +++ b/io_uring/sqpoll.c
+> @@ -195,9 +195,6 @@ static int __io_sq_thread(struct io_ring_ctx
+> *ctx, bool cap_entries)
+> =A0			ret =3D io_submit_sqes(ctx, to_submit);
+> =A0		mutex_unlock(&ctx->uring_lock);
+> =A0
+> -		if (io_napi(ctx))
+> -			ret +=3D io_napi_sqpoll_busy_poll(ctx);
+> -
+> =A0		if (to_submit && wq_has_sleeper(&ctx->sqo_sq_wait))
+> =A0			wake_up(&ctx->sqo_sq_wait);
+> =A0		if (creds)
+> @@ -322,6 +319,9 @@ static int io_sq_thread(void *data)
+> =A0		if (io_sq_tw(&retry_list,
+> IORING_TW_CAP_ENTRIES_VALUE))
+> =A0			sqt_spin =3D true;
+> =A0
+> +		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
+> +			io_do_sqpoll_napi(ctx);
+> +		}
+> =A0		if (sqt_spin || !time_after(jiffies, timeout)) {
+> =A0			if (sqt_spin) {
+> =A0				io_sq_update_worktime(sqd, &start);
 
-In the meantime, I have detected few suspicious things in the napi
-code.
+any updates on this patch rework sent more than a week ago?
 
-I am reporting them here to have few extra eye balls looking at them to
-be sure that everything is fine or not.
-
-1. in __io_napi_remove_stale(),
-
-is it ok to use hash_for_each() instead of hash_for_each_safe()?
-
-it might be ok because it is a hash_del_rcu() and not a simple
-hash_del() but I have little experience with possible RCU shortcuts so
-I am unsure on this one...
-
-2. in io_napi_free()
-
-list_del(&e->list); is not called. Can the only reason be that
-io_napi_free() is called as part of the ring destruction so it is an
-optimization to not clear the list since it is not expected to be
-reused?
-
-would calling INIT_LIST_HEAD() before exiting as an extra precaution to
-make the function is future proof in case it is reused in another
-context than the ring destruction be a good idea?
-
-3. I am surprised to notice that in __io_napi_do_busy_loop(),
-list_for_each_entry_rcu() is called to traverse the list but the
-regular methods list_del() and list_add_tail() are called to update the
-list instead of their RCU variant.
-
-Is this ok?
-
-if it is, the only plausible explanation that can think of is that it
-is paired with another RCU hash table update... I guess maybe this is a
-common RCU idiom that I am unaware of and this is why this is even not
-derserving a small comment to address this point, I would think that
-this might deserve one. This setup leaves me perplexed...
+on my side, it has been abundantly tested and I am currently using it
+on my prod setup...
 
 

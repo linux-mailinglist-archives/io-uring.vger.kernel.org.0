@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-2726-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2727-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ABB494F907
-	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 23:39:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5CA394F913
+	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 23:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9971BB2223B
-	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 21:39:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E2D9B2229F
+	for <lists+io-uring@lfdr.de>; Mon, 12 Aug 2024 21:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C63194A49;
-	Mon, 12 Aug 2024 21:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA211957E9;
+	Mon, 12 Aug 2024 21:46:01 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6E614EC59
-	for <io-uring@vger.kernel.org>; Mon, 12 Aug 2024 21:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810B94D112
+	for <io-uring@vger.kernel.org>; Mon, 12 Aug 2024 21:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723498787; cv=none; b=nntFkwhi/oBtJcz2hH6K0x9CEpH+vSmG1aYYX/5ADLST4ZNS564FH5gpjMx8bvaIx0VL4mbw48SfjCx/yg1zIkCdVx2YDdm588/2V4E/ecHQFah8OfJL/eaCZmkTD47WE+PfoLa7RxJ1CID2UohCLI9B2iZJuj2gEveyffMg9Fw=
+	t=1723499161; cv=none; b=ggRopbCEn9yAjCM6BAQs5LkDC/s3JyP9lCUSOZFj2KSlHg3d5ONqLW9oBuoFgqZnC548cV2mm50lNWm4zsPprnH0w7K2yxJiyY31AIm5o1yR2bCYNdYkDkVJB8m3NktCn9rq+++RkQDGwyNiXBzjxmoKfxu88mMQrOkbaa9B1gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723498787; c=relaxed/simple;
-	bh=UfuYOVysLEJ1HjT4Erh8ZMOuc3CXzl0pswdY7k9+D9U=;
+	s=arc-20240116; t=1723499161; c=relaxed/simple;
+	bh=96H/cCKyEgSBimeiZA594WjOl2rvn65nAEPYx2Tmxnw=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bF2mtwzdx31OwFxjrZbpheKNfFra3RJKxxZgF3t9oyXG5PxH/Sp6vmrr7flgsJM3C4eKy62lsxUu8LyUueYR/4j400VTzSbjzB8iUHNCNUu2AlMw/1V3CEBilTP6KKXRc02jxXRlEABG0+4FD+lKsPLGLbko3e1l6GzNg5N9NVE=
+	 Content-Type:MIME-Version; b=g32Aln4MQNzQBpy777MhhAhpmrDjJI2kNSIPNhYXGO6tqgciHJjemogmBzvE16mQoLubFwJNXRcxzXijfg45eSRtmLkzRki0CRj1Rpg1TzS96PzY3JtvFY4iiXj3lG7CCLYnW/eWvvyr6yZg5oS+EBySOxxfnIAd0AKhkgDBazE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=52594 helo=[192.168.1.177])
+Received: from [45.44.224.220] (port=54090 helo=[192.168.1.177])
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1sdclU-0006zE-0r;
-	Mon, 12 Aug 2024 17:39:44 -0400
-Message-ID: <01e64ae408b55f2c35e2ae7229e2af8ddde220d7.camel@trillion01.com>
+	id 1sdcrU-0007Kw-0i;
+	Mon, 12 Aug 2024 17:45:56 -0400
+Message-ID: <64d635e9bf39878d21f9b9a7a5d6e74614ad7c66.camel@trillion01.com>
 Subject: Re: [PATCH] io_uring/napi: remove duplicate io_napi_entry timeout
  assignation
 From: Olivier Langlois <olivier@trillion01.com>
 To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
 	io-uring@vger.kernel.org
-Date: Mon, 12 Aug 2024 17:39:43 -0400
+Date: Mon, 12 Aug 2024 17:45:55 -0400
 In-Reply-To: <5730c0c1-73cb-42b5-8af3-afe60529f57d@kernel.dk>
 References: 
 	<145b54ff179f87609e20dffaf5563c07cdbcad1a.1723423275.git.olivier@trillion01.com>
@@ -95,105 +95,40 @@ X-Source-Dir:
 
 On Mon, 2024-08-12 at 14:40 -0600, Jens Axboe wrote:
 >=20
-> >=20
-> > 1. in __io_napi_remove_stale(),
-> >=20
-> > is it ok to use hash_for_each() instead of hash_for_each_safe()?
-> >=20
-> > it might be ok because it is a hash_del_rcu() and not a simple
-> > hash_del() but I have little experience with possible RCU shortcuts
-> > so
-> > I am unsure on this one...
+> @@ -174,9 +174,8 @@ static void io_napi_blocking_busy_loop(struct
+> io_ring_ctx *ctx,
+> =A0	do {
+> =A0		is_stale =3D __io_napi_do_busy_loop(ctx,
+> loop_end_arg);
+> =A0	} while (!io_napi_busy_loop_should_end(iowq, start_time) &&
+> !loop_end_arg);
+> -	rcu_read_unlock();
+> -
+> =A0	io_napi_remove_stale(ctx, is_stale);
+> +	rcu_read_unlock();
+> =A0}
 >=20
-> Should use hash_for_each_rcu(), and I think for good measure, we
-> sould
-> just keep it inside the RCU region. Then we know for a fact that the
-> deletion doesn't run.
-
-ok, after confirming that it was NOT paranoia, I did push further the
-investigation.
-
-hash_for_each_rcu() is meant for the readers. A writer can modify the
-container as long as it protects the container against concurrent
-writes with locks.
-
-in include/linux/hashtable.h:
-static inline void hash_del_rcu(struct hlist_node *node)
-{
-	hlist_del_init_rcu(node);
-}
-
-in include/linux/rculist.h:
-static inline void hlist_del_init_rcu(struct hlist_node *n)
-{
-        if (!hlist_unhashed(n)) {
-                __hlist_del(n);
-                WRITE_ONCE(n->pprev, NULL);
-        }
-}
-
-in include/linux/list.h:
-static inline void __hlist_del(struct hlist_node *n)
-{
-	struct hlist_node *next =3D n->next;
-	struct hlist_node **pprev =3D n->pprev;
-
-	WRITE_ONCE(*pprev, next);
-	if (next)
-		WRITE_ONCE(next->pprev, pprev);
-}
-
-it seems we are ok since the deleted node next pointer is not reset.
-the problem might arise if the next action after removing the node is
-to kfree it. we are fine because kfree_rcu() must be defering the
-actual free.
-
-That being said, I recommend to replace hash_for_each_rcu() with
-hash_for_each_safe() to make everyone sleep better at night...
-
-based on this new info, I'll let you decide which macro to use and I
-volunteer to make that change.
-
+> @@ -309,9 +309,8 @@ int io_napi_sqpoll_busy_poll(struct io_ring_ctx
+> *ctx)
+> =A0
+> =A0	rcu_read_lock();
+> =A0	is_stale =3D __io_napi_do_busy_loop(ctx, NULL);
+> -	rcu_read_unlock();
+> -
+> =A0	io_napi_remove_stale(ctx, is_stale);
+> +	rcu_read_unlock();
+> =A0	return 1;
+> =A0}
+> =A0
 >=20
-> > 2. in io_napi_free()
-> >=20
-> > list_del(&e->list); is not called. Can the only reason be that
-> > io_napi_free() is called as part of the ring destruction so it is
-> > an
-> > optimization to not clear the list since it is not expected to be
-> > reused?
-> >=20
-> > would calling INIT_LIST_HEAD() before exiting as an extra
-> > precaution to
-> > make the function is future proof in case it is reused in another
-> > context than the ring destruction be a good idea?
->=20
-> I think that's just an oversight, and doesn't matter since it's all
-> going away anyway. But it would be prudent to delete it regardless!
+Jens,
 
-ok. I did ask because I am in the process of adding a call to
-io_napi_free() in the context of a super new cool patch that I am
-working on.. I'll call INIT_LIST_HEAD() to reset the list (or its RCU
-variant if it exists).
->=20
-> > 3. I am surprised to notice that in __io_napi_do_busy_loop(),
-> > list_for_each_entry_rcu() is called to traverse the list but the
-> > regular methods list_del() and list_add_tail() are called to update
-> > the
-> > list instead of their RCU variant.
->=20
-> Should all just use rcu variants.
->=20
-> Here's a mashup of the changes. Would be great if you can test - I'll
-> do
-> some too, but always good with more than one person testing as it
-> tends
-> to hit more cases.
+I have big doubts that moving the rcu_read_unlock() call is correct.
+The read-only list access if performed by the busy loops block.
 
-I am so glag to have asked. It is going to be a pleasure to test this
-and report back the result.
-
-but it appears that my napi_list is very *static* (wink, wink)
-
+io_napi_remove_stale() is then modifying the list after having acquired
+the spinlock. IMHO, you should not hold the RCU read lock when you are
+updating the data. I even wonder is this could not be a possible
+livelock cause...
 
 

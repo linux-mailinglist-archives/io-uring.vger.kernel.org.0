@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-2745-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2746-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0F59504C1
-	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 14:17:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5AE8950643
+	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 15:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F17281759
-	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 12:17:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 244F61C21BFF
+	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 13:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB12B1CF9A;
-	Tue, 13 Aug 2024 12:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A19519ADAD;
+	Tue, 13 Aug 2024 13:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2+T+IJ1v"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MXKiW91z"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5D92557F
-	for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 12:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CA619B3C4;
+	Tue, 13 Aug 2024 13:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723551459; cv=none; b=BCemSgGcSTAXWlXt9UdJHDM0GgRDO0TMXPrBQ6QBSe3Ynx1pXZCSkYvrxBZHkvMIv8ubeVFb8JB8n5yVdfhRVNlio1e3FxnND0vTfjmAEsiI++EDdMgHKFwotZlg7ZDZhiz8Wp3BafbcXxDc4Ot2GM8IFATTzUJpmKv8UJWY1wc=
+	t=1723555137; cv=none; b=ikaj0mevCauwFbJYIQX3vxK5i0iIOvEshMWRJTeEHevzR96G1+2uORb5n+8AJycIPRoHgc+3ojHgFKc3dP0lMi5jCy57YWw9wtAOQ2+YCOVfywS0imJr7R6vnxDljvr2SuaPLkEiRRrtJKDi2upORps3w4QjGkFP6KRlV8FOQno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723551459; c=relaxed/simple;
-	bh=20FuJZqZU0Ph8ExU2jUwYBH21k+3ur7ISxJL49WUtxE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FJ6BoBK/5KcqDoDp+l5bWq/N6xpqD4iBtVEZyAkZKFo9A1nX/q1jJl/4D87u+NhZgIb6lFPKHLM3OvjI95sRwGAwVSPmRQyKeZMiZ+t+O3ppG0IWJrscK49F1+NkP9iBnJw6wurxslbAxDchgnS7KwOjvChzYqi4csl0zQQD+JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2+T+IJ1v; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d1876e748so270884b3a.1
-        for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 05:17:37 -0700 (PDT)
+	s=arc-20240116; t=1723555137; c=relaxed/simple;
+	bh=nj9WIj9PsaDS9hjlGSd2Xp2zVfSnB703wX0ciFGOUWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MQ6bcFTPXO6doV06nC5DkDZm2mnjpxdr5IecsuahcKwmnvFbj2gvpKaiBwY9/SHkMmEUiA7mGcb3A4vcm7TvfcEKZgi5BypHrP/E5QS+hUspmVsoP+vvh1bCTzm2ueXQG3/TAkMDlgrBfJDsSVR/0kJVK3hz0nK09le0zH4q89s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MXKiW91z; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so414963966b.1;
+        Tue, 13 Aug 2024 06:18:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723551457; x=1724156257; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=J8RqIpTGrf2gyiod7MNhBZs1nyq4ZQwSLchxqQSof6s=;
-        b=2+T+IJ1vMDPHQ5V5+nPa8LM3R8oVE3e6HmBT/Q/pvkMb8psY5xETpcE8eSzHiCqzWq
-         r8D7eBlEw7uaK76KIim26Pcmi0BMdote6B4a5O8y3vZ1wL2LnhfXEqJQiG3q9wQ7Q1cV
-         0oLEC+ns/aHuGDinn07nPpALanaZeGpcJ6JC245if1itwGTuDTtb7MLWz1QzkJ7CLLOb
-         IT8JCMSVAd+6jD+zAUiV7AutExcXgOoYAjH6b+vNuF3YRJ51fnZMNBMzHbdnWnwrJCF2
-         tPWuZb/i7id76wK7lOWniDS/k8MxpA3EQO8as8WU2BArpibEJlkpthy9SOdApBWYfV9e
-         3UBw==
+        d=gmail.com; s=20230601; t=1723555134; x=1724159934; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HPR5mlciumKWlIa6TShcrh39dYVxLo3iT9ymS47VzxA=;
+        b=MXKiW91z8YL5Om9ZGRfna1RlXO6SI/DQel26TmspBI7egqQaHwfvidWoSyqRCfFYaa
+         BX93WNf7lG1unwIju9hvy1Tfd+G7kOPWgf4XalT1LClGkEvpsUBGLS/hydpty/6RRcN8
+         h74nuf26WxKdBUdQjaBGTBsBJsfVOoV5/ekkYyCNpxZkJPPrqv/EtVt4Yv60mZLufToI
+         q1jZ2bPM77UEkoUOuKB2w0vQGKuvLIVJPD7rC0YObTuceBxA5Fld4jU6GFJcjJjCywkV
+         F9Shp6iKRbSphZ3xhHbsaP0w/ns0Fuq+sXfz651A8cxJ0QMo03qxSUqBcylMUnhGkCyT
+         2Ubw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723551457; x=1724156257;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1723555134; x=1724159934;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J8RqIpTGrf2gyiod7MNhBZs1nyq4ZQwSLchxqQSof6s=;
-        b=twordek/1h8IKHDooPjGbSjIxDdhe6bHbV4ojmLBqYNvvh6v+5o5XeaW6lr4+M5+Nw
-         STqqD1Ov63CobvnLpKxbcOHiBJYdj8+OMNyaZtf/h3Ht1Mu09ge3MVt0k6CAUzdcXWOY
-         ZYy7xFhUcoz1ls8W2yn6jXTvv8e+CXPJ0aMhjrfE7ajPoqTB/F0FzCMJmOYnh6P99LAq
-         S74FF3+sISXLu+gEe7liZEmgTARxnSdR/RtMDLPKEw30O08WXC9+zc87c/lMiL6Hl0Dc
-         oRWibHr40ad7gV7KEqpNDbpLuEzC/VjjLaoTb3Iy4QgJLQ/jcDyH67ce31YAs95fS6vU
-         G1Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVb6j3AxHb7vsaSi+JW1ArCBKkRxt1is0kjdwz4NyUodq7l7ngPMwKa+yx/onf5wV+ScSNJCzkHrg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVh/Vrk1yX1YGDj4xF+j0BzBt7luc9Djvi91iYwyvDIEKk5h5t
-	IZVKpXu4vVP687x/nAaOrSvqEar5I29ubLWga8um/Sa+9uP1dVxkhEVYFmrnPJs=
-X-Google-Smtp-Source: AGHT+IGlebUB9AQq9a/zXCjz7V8Rarc7LS76Mgpv5RIaUd+rYf6nEOYx9bh/ZXMiGo+wk09qxWqkLA==
-X-Received: by 2002:a05:6a00:6f25:b0:70d:2c09:45ff with SMTP id d2e1a72fcca58-71258cea2afmr1550111b3a.4.1723551457205;
-        Tue, 13 Aug 2024 05:17:37 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58ca6a3sm5743352b3a.90.2024.08.13.05.17.36
+        bh=HPR5mlciumKWlIa6TShcrh39dYVxLo3iT9ymS47VzxA=;
+        b=aQJoobUh9CM1vCm6tpvnwA4Imi2dpSJfCyDdxFkEGAVecLkuxscFsf1pYiAkZIFgLp
+         yEnJsl2SBhT3DHGwUwzsTYt/bxP9Ff4A7cpQCrkCxfW5GMPX4XMxiS3JtSr9OxxzUQfC
+         axUF/AuyVTE2E5yTv+ivIkazj07ctjqcrQ6Dsbp3OoHBwmM5CmarYV8DZgZlGQa+HA5x
+         wA9Jc8v7AxKBPfC1JnIQhq6GVKUIe/e+nM1TjfweAT4PXiWtfByoJTmyjAVYz0XNwwvp
+         lF49aJ4bbTQMfwWYMnvviqxkzxAJOspECb0D25KkjPAXwzjlogus6c8IGrgj4qrryza0
+         QndQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1TOvr58N6ljJF4ky9VcBhWS+SKs8zpjG1owPTx3U5zU1lJybSNXjWnGL44K5C9ENmgUGeBRUu3iMt31ZCg+W1CIscH3HAIWUxiTnq
+X-Gm-Message-State: AOJu0Yxvt1ljLDYE3+1q15RVMDJTtZSXLuXv7N/ZXw0a8IPBaLrNUteE
+	A1kxvF4s1GEnIIPPSpho5z9kPyV56KoK1Tpf/OohCrB+FreZgVfE60CLwtzf
+X-Google-Smtp-Source: AGHT+IHoLmtgT5Yu34k1+GShoPzKAE2DGAvgrCYcNGWnM5grTF+T4PiXT4JKlYQocF33z60HaLNczg==
+X-Received: by 2002:a17:907:d15:b0:a7a:93c9:3925 with SMTP id a640c23a62f3a-a80ed1aafd5mr283462766b.6.1723555133306;
+        Tue, 13 Aug 2024 06:18:53 -0700 (PDT)
+Received: from [192.168.42.52] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411aee8sm68807966b.138.2024.08.13.06.18.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 05:17:36 -0700 (PDT)
-Message-ID: <d3cc7fd4-b787-457a-9d90-7db14700a319@kernel.dk>
-Date: Tue, 13 Aug 2024 06:17:35 -0600
+        Tue, 13 Aug 2024 06:18:53 -0700 (PDT)
+Message-ID: <e23dd6a3-fe1f-48e0-8d05-2b5c1e87f3a3@gmail.com>
+Date: Tue, 13 Aug 2024 14:19:22 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,72 +76,93 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [syzbot] [io-uring?] KCSAN: data-race in io_sq_thread /
- io_sq_thread_park (9)
-To: syzbot <syzbot+2b946a3fd80caf971b21@syzkaller.appspotmail.com>
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <43b7c2c4-9bba-444a-ba27-9a8f3623a953@kernel.dk>
- <0000000000009063fb061f8f8e5c@google.com>
+Subject: Re: [PATCH] io_uring/fdinfo: add timeout_list to fdinfo
+To: Ruyi Zhang <ruyi.zhang@samsung.com>, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peiwei.li@samsung.com
+References: <CGME20240812020140epcas5p3431842ed5508ffb5ae9f1d1812cae4d5@epcas5p3.samsung.com>
+ <20240812020052.8763-1-ruyi.zhang@samsung.com>
 Content-Language: en-US
-In-Reply-To: <0000000000009063fb061f8f8e5c@google.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240812020052.8763-1-ruyi.zhang@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 13, 2024 at 6:14?AM syzbot <syzbot+2b946a3fd80caf971b21@syzkaller.appspotmail.com> wrote:
->
-> > On 8/13/24 2:50 AM, syzbot wrote:
-> >> Hello,
-> >>
-> >> syzbot found the following issue on:
-> >>
-> >> HEAD commit:    6a0e38264012 Merge tag 'for-6.11-rc2-tag' of git://git.ker..
-> >> git tree:       upstream
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=1019759d980000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=cb57e6ebf675f9d2
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=2b946a3fd80caf971b21
-> >> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> >>
-> >> Unfortunately, I don't have any reproducer for this issue yet.
-> >>
-> >> Downloadable assets:
-> >> disk image: https://storage.googleapis.com/syzbot-assets/753a842a966b/disk-6a0e3826.raw.xz
-> >> vmlinux: https://storage.googleapis.com/syzbot-assets/e12e23519777/vmlinux-6a0e3826.xz
-> >> kernel image: https://storage.googleapis.com/syzbot-assets/bce0584a8cb4/bzImage-6a0e3826.xz
-> >>
-> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> >> Reported-by: syzbot+2b946a3fd80caf971b21@syzkaller.appspotmail.com
-> >>
-> >> ==================================================================
-> >> BUG: KCSAN: data-race in io_sq_thread / io_sq_thread_park
-> >>
-> >> write to 0xffff888111459638 of 8 bytes by task 10761 on cpu 1:
-> >>  io_sq_thread+0xdab/0xff0 io_uring/sqpoll.c:383
-> >>  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
-> >>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> >>
-> >> read to 0xffff888111459638 of 8 bytes by task 10329 on cpu 0:
-> >>  io_sq_thread_park+0x1b/0x80 io_uring/sqpoll.c:47
-> >>  io_ring_exit_work+0x197/0x500 io_uring/io_uring.c:2786
-> >>  process_one_work kernel/workqueue.c:3231 [inline]
-> >>  process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3312
-> >>  worker_thread+0x526/0x700 kernel/workqueue.c:3390
-> >>  kthread+0x1d1/0x210 kernel/kthread.c:389
-> >>  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
-> >>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> >>
-> >> value changed: 0xffff8881223d0000 -> 0x0000000000000000
-> >
-> > It's just a debug check.
-> >
-> > #syz test
->
-> This crash does not have a reproducer. I cannot test it.
+On 8/12/24 03:00, Ruyi Zhang wrote:
+> io_uring fdinfo contains most of the runtime information,
+> which is helpful for debugging io_uring applications;
+> However, there is currently a lack of timeout-related
+> information, and this patch adds timeout_list information.
+> 
+> Signed-off-by: Ruyi Zhang <ruyi.zhang@samsung.com>
+> ---
+>   io_uring/fdinfo.c  | 16 ++++++++++++++--
+>   io_uring/timeout.c | 12 ------------
+>   io_uring/timeout.h | 12 ++++++++++++
+>   3 files changed, 26 insertions(+), 14 deletions(-)
+> 
+> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+> index b1e0e0d85349..33c3efd79f98 100644
+> --- a/io_uring/fdinfo.c
+> +++ b/io_uring/fdinfo.c
+> @@ -14,6 +14,7 @@
+>   #include "fdinfo.h"
+>   #include "cancel.h"
+>   #include "rsrc.h"
+> +#include "timeout.h"
+>   
+>   #ifdef CONFIG_PROC_FS
+>   static __cold int io_uring_show_cred(struct seq_file *m, unsigned int id,
+> @@ -54,6 +55,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
+>   {
+>   	struct io_ring_ctx *ctx = file->private_data;
+>   	struct io_overflow_cqe *ocqe;
+> +	struct io_timeout *timeout;
+>   	struct io_rings *r = ctx->rings;
+>   	struct rusage sq_usage;
+>   	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
+> @@ -219,9 +221,19 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
+>   
+>   		seq_printf(m, "  user_data=%llu, res=%d, flags=%x\n",
+>   			   cqe->user_data, cqe->res, cqe->flags);
+> -
+>   	}
+> -
+>   	spin_unlock(&ctx->completion_lock);
+> +
+> +	seq_puts(m, "TimeoutList:\n");
+> +	spin_lock(&ctx->timeout_lock);
 
-#syz fix: io_uring/sqpoll: annotate debug task == current with data_race()
+_irq
+
+> +	list_for_each_entry(timeout, &ctx->timeout_list, list) {
+> +		struct io_kiocb *req = cmd_to_io_kiocb(timeout);
+> +		struct io_timeout_data *data = req->async_data;
+> +
+
+I'd argue we don't want it, there should be better way for
+reflection.
+
+And we also don't want to walk a potentially very long list
+under spinlock without IRQs, especially from procfs path,
+and even more so with seq_printf in there doing a lot of
+work. Yes, we already walk the list like that for cancellation,
+but it's lighter than seq_printf, and we should be moving in
+the direction of improving it, not aggravating the situation.
+
+
+> +		seq_printf(m, "  off=%d, target_seq=%d, repeats=%x,  ts.tv_sec=%lld, ts.tv_nsec=%ld\n",
+> +			   timeout->off, timeout->target_seq, timeout->repeats,
+> +			   data->ts.tv_sec, data->ts.tv_nsec);
+
+We should be deprecating sequences, i.e. target_seq, not exposing
+it further to the user.
+
+> +	}
+> +	spin_unlock(&ctx->timeout_lock);
+>   }
+>   #endif
 
 -- 
-Jens Axboe
-
+Pavel Begunkov
 

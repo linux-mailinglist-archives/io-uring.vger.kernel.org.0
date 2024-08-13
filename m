@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-2753-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2754-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24514950F23
-	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 23:25:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79986950F2E
+	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 23:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A47281598
-	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 21:25:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81AF1C218B2
+	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 21:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D72B43155;
-	Tue, 13 Aug 2024 21:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2925613AA4E;
+	Tue, 13 Aug 2024 21:34:34 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0CA1EA84
-	for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 21:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4B617CC
+	for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 21:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723584354; cv=none; b=cnHOs6AAKSzeezjH1lSQeXPS6IIjRV1FryiY71tKSf4Ka6pBE+e3A4Qik8OA/66Fgw3pb0kfhg4A4t6v5z2k6yfqpI1L00fa5+CUKCjrgPIBeKFsHwjNLKntgH0u+a8iDIaRD3KeFlLAqrNGqnaa4TJy+06zYNPXMH3q1xBvopc=
+	t=1723584874; cv=none; b=k32CUtVVyhJoJX+wRrmDlngTs6iFtC25Nw2d99bjM2VnjuzFro82LM9klsKNQhE/HcchhN7vALNSM84IRMb5nk14HVVjuBwtvw2szWqm1l5z1KCBzQxIekSEuI7r4+n7WH7sMN2x9q1vVNhJXrfo+qoD9RVRI9btP5tohnpC9CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723584354; c=relaxed/simple;
-	bh=xTJUiyNDRZERn7EjV6toWu7ACH3l+nGaWP43OCy1ZXg=;
+	s=arc-20240116; t=1723584874; c=relaxed/simple;
+	bh=yZGYAJ1kCjayOGosw0khwnt6sGQwYHzsnrW03dOTHrQ=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V3F8jKN7OOcXvFINNHD4oTxU/4n1DCdjcY2114ODOU4rx7uRboxpfoAyZ0il6R6RYBebIR+m3gRkMbgYYe7LiZyrzl82NzD1s34116KHsTLbhs6dQA0BxoLK+8FLFViQSwpmrV5YtM4B1d89qAI3ZgZYLfCcpWMlvTRV1rr8zyk=
+	 Content-Type:MIME-Version; b=qJvU+dNyGDsrIz92UFqN1S6t4fYp748uNODWOhu0K0xwtuUMM9SRbF8FCxl63x3zFXTztkDk+xvaAjkGv9VpEsiMQXd/8DMX+zw40Dxadj8X2tKCtEaQEmCjvbou1guTJoyu5tzU7f49xw4qRra44t5DdcJpkEMhQFICHLRlDmY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=33394 helo=[192.168.1.177])
+Received: from [45.44.224.220] (port=54982 helo=[192.168.1.177])
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1sdz1U-0002F6-2D;
-	Tue, 13 Aug 2024 17:25:44 -0400
-Message-ID: <a818bc04dfdcdbacf7cc6bf90c03b8a81d051328.camel@trillion01.com>
+	id 1sdz9y-0002t0-1m;
+	Tue, 13 Aug 2024 17:34:30 -0400
+Message-ID: <a825ae96ea73b74ffd278ba33fa513a6914ec828.camel@trillion01.com>
 Subject: Re: [PATCH 0/2] abstract napi tracking strategy
 From: Olivier Langlois <olivier@trillion01.com>
 To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
 	io-uring@vger.kernel.org
-Date: Tue, 13 Aug 2024 17:25:43 -0400
+Date: Tue, 13 Aug 2024 17:34:29 -0400
 In-Reply-To: <c614ee28-eeb2-43bd-ae06-cdde9fd6fee2@kernel.dk>
 References: <cover.1723567469.git.olivier@trillion01.com>
 	 <c614ee28-eeb2-43bd-ae06-cdde9fd6fee2@kernel.dk>
@@ -122,25 +122,14 @@ On Tue, 2024-08-13 at 12:33 -0600, Jens Axboe wrote:
 > because
 > of the above reasons.
 >=20
-ok. Do you have a reference explaining this?
-and what type of construct would you use instead?
+if indirection is a very big deal, it might be possible to remove one
+level of indirection.
 
-AFAIK, a big performance killer is the branch mispredictions coming
-from big switch/case or if/else if/else blocks and it was precisely the
-reason why you removed the big switch/case io_uring was having with
-function pointers in io_issue_def...
+I did entertain the idea of making copies of the io_napi_tracking_ops
+structs instead of storing their addresses. I did not kept this option
+because of the way that I did implement io_napi_get_tracking()...
 
-I consumme an enormous amount of programming learning material daily
-and this is the first time that I am hearing this.
-
-If there was a performance concern about this type of construct and
-considering that my main programming language is C++, I am bit
-surprised that I have not seen anything about some problems with C++
-vtbls...
-
-but oh well, I am learning new stuff everyday, so please share the
-references you have about the topic so that I can perfect my knowledge.
-
-thank you,
+but if this would be an acceptable compromise, this is definitely
+something possible.
 
 

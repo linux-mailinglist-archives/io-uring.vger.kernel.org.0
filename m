@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-2748-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2749-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B161E950B3C
-	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 19:11:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7913950B3D
+	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 19:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69B8C284DDE
-	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 17:11:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB4351C22FBE
+	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 17:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAB9198A3D;
-	Tue, 13 Aug 2024 17:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251B41A0710;
+	Tue, 13 Aug 2024 17:11:19 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC0B1A2561
-	for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 17:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D501A01C5
+	for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 17:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723569059; cv=none; b=MjxvTYR8qV2JU8PWUq/mCjlOX9cJ2xlfjgkGgUH1pHQiupGYUiNpYUb8bGnGfjgpyeRmnJlUDdY+9/YJzLQLgDO2CHESVZkGvilnRMT4Pku6/Rk17HGt8fO60D2RMZv6+zosMQerswLj8qb1ke1ap463Vxqr82mZB9dyezN+pqE=
+	t=1723569079; cv=none; b=GPq5qDW3Vu9gBQFZRl/02BpHkGyHLJQ3VRlraduA3mXJcFcD7ZlOKMmCFs6s2KwCuladxMOIS1A8ha5gebuUdidQ9SiTrYsqOmb4tIuJI9rNZAOnwO5fkmoKLcNqWhYtaZ2FkC3xc9gZRuzynIZbsV/FvmpL0YWvptkTDzzs4gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723569059; c=relaxed/simple;
-	bh=KmlziorRbtH0yTQFUtVB/oebTsE5wXOJwyMw3hcqvRg=;
-	h=From:Date:Message-ID:In-Reply-To:References:To:Subject; b=kUTCV50iyMx1PkUdc9RubbXFlDTMp9q3G9kZqPG5tHfxNxb9KVr4So9LZ05fTJ95z4An4krVVcjn5DwzYOi3rS4THB8GI8LWbm8ScvXdQeGnQea5WHa3TMWwzA7er32Bh/Y/oew038MNaBIMNVIuR1hiAnZBkVDpBlqH3knz324=
+	s=arc-20240116; t=1723569079; c=relaxed/simple;
+	bh=7VlJ3hzXXkjKVOelB8jrZM6KiDBsAPTNOzsNv7kTZZM=;
+	h=From:Date:Message-ID:In-Reply-To:References:To:Subject; b=Gi6eVbNtROyA9cMcN1xtC7VvAr3pufvKJ9XhXhcwi9Ar0pgM2H190LktZ+8PU1mDxxE07OaAditz13xg7XcHGSBTHlfkGzicWOhFR36UZMFCBUs5Am4TAVIj36vHBZSGBuDjBZCzxEG0yHTnyspmkqezukwC201lupCV7J7DS8Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=43132 helo=localhost)
+Received: from [45.44.224.220] (port=48534 helo=localhost)
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1sdv2u-0003I8-0I;
-	Tue, 13 Aug 2024 13:10:56 -0400
+	id 1sdv3D-0003JO-14;
+	Tue, 13 Aug 2024 13:11:15 -0400
 From: Olivier Langlois <olivier@trillion01.com>
-Date: Tue, 13 Aug 2024 13:10:55 -0400
-Message-ID: <bfbb03a7ad6256b68d08429c0888a05032a1b182.1723567469.git.olivier@trillion01.com>
+Date: Tue, 13 Aug 2024 13:11:14 -0400
+Message-ID: <5fc9dd07e48a7178f547ed1b2aaa0814607fa246.1723567469.git.olivier@trillion01.com>
 In-Reply-To: <cover.1723567469.git.olivier@trillion01.com>
 References: <cover.1723567469.git.olivier@trillion01.com>
 To: Jens Axboe <axboe@kernel.dk>,Pavel Begunkov <asml.silence@gmail.com>,io-uring@vger.kernel.org
-Subject: [PATCH 1/2] io_uring/napi: Introduce io_napi_tracking_ops
+Subject: [PATCH 2/2] io_uring/napi: add static napi tracking strategy
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -57,234 +57,321 @@ List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 
-The long term goal is to lay out a framework to be able to offer
-different napi tracking strategies to the user. The obvious first
-alternative strategy is the static tracking where the user would update
-manually the napi_list to remove the overhead made by io_uring managing the
-list dynamically.
+add the static napi tracking strategy that allows the user to manually
+manage the napi ids list to busy poll and offload the ring from
+dynamically update the list.
 
 Signed-off-by: Olivier Langlois <olivier@trillion01.com>
 ---
- include/linux/io_uring_types.h | 12 +++++-
- io_uring/fdinfo.c              |  4 ++
- io_uring/napi.c                | 76 ++++++++++++++++++++++++++++++----
- io_uring/napi.h                | 11 +----
- 4 files changed, 86 insertions(+), 17 deletions(-)
+ include/uapi/linux/io_uring.h |  30 ++++++-
+ io_uring/napi.c               | 162 ++++++++++++++++++++++++++++------
+ 2 files changed, 163 insertions(+), 29 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 3315005df117..c1d1b28f8cca 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -217,6 +217,16 @@ struct io_alloc_cache {
- 	size_t			elem_size;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 2aaf7ee256ac..f72471b19af2 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -728,12 +728,38 @@ struct io_uring_buf_status {
+ 	__u32	resv[8];
  };
  
-+#ifdef CONFIG_NET_RX_BUSY_POLL
-+struct io_napi_tracking_ops {
-+	void (*add_id)(struct io_kiocb *req);
-+	bool (*do_busy_loop)(struct io_ring_ctx *ctx,
-+			     void *loop_end_arg);
-+	void (*show_fdinfo)(struct io_ring_ctx *ctx,
-+			    struct seq_file *m);
++enum io_uring_napi_op {
++	/* register/ungister backward compatible opcode */
++	IO_URING_NAPI_REGISTER_OP = 0,
++
++	/* opcodes to update napi_list when static tracking is used */
++	IO_URING_NAPI_STATIC_ADD_ID = 1,
++	IO_URING_NAPI_STATIC_DEL_ID = 2
 +};
-+#endif
 +
- struct io_ring_ctx {
- 	/* const or read-mostly hot data */
- 	struct {
-@@ -402,11 +412,11 @@ struct io_ring_ctx {
- #ifdef CONFIG_NET_RX_BUSY_POLL
- 	struct list_head	napi_list;	/* track busy poll napi_id */
- 	spinlock_t		napi_lock;	/* napi_list lock */
-+	struct io_napi_tracking_ops *napi_ops;
- 
- 	/* napi busy poll default timeout */
- 	ktime_t			napi_busy_poll_dt;
- 	bool			napi_prefer_busy_poll;
--	bool			napi_enabled;
- 
- 	DECLARE_HASHTABLE(napi_ht, 4);
- #endif
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index b1e0e0d85349..fa773687a684 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -223,5 +223,9 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
- 	}
- 
- 	spin_unlock(&ctx->completion_lock);
-+#ifdef CONFIG_NET_RX_BUSY_POLL
-+	ctx->napi_ops->show_fdinfo(ctx, m);
-+#endif
++enum io_uring_napi_tracking_strategy {
++	IO_URING_NAPI_TRACKING_DYNAMIC = 0,
++	IO_URING_NAPI_TRACKING_STATIC = 1
++};
 +
- }
- #endif
+ /* argument for IORING_(UN)REGISTER_NAPI */
+ struct io_uring_napi {
+ 	__u32	busy_poll_to;
+ 	__u8	prefer_busy_poll;
+-	__u8	pad[3];
+-	__u64	resv;
++
++	/* a io_uring_napi_op value */
++	__u8	opcode;
++	__u8	pad[2];
++
++	/*
++	 * for IO_URING_NAPI_REGISTER_OP, it is a
++	 * io_uring_napi_tracking_strategy value.
++	 *
++	 * for IO_URING_NAPI_STATIC_ADD_ID/IO_URING_NAPI_STATIC_DEL_ID
++	 * it is the napi id to add/del from napi_list.
++	 */
++	__u32	op_param;
++	__u32	resv;
+ };
+ 
+ /*
 diff --git a/io_uring/napi.c b/io_uring/napi.c
-index 1de1d4d62925..75ac850af0c0 100644
+index 75ac850af0c0..b66ff15fcc72 100644
 --- a/io_uring/napi.c
 +++ b/io_uring/napi.c
-@@ -38,7 +38,7 @@ static inline ktime_t net_to_ktime(unsigned long t)
+@@ -38,37 +38,29 @@ static inline ktime_t net_to_ktime(unsigned long t)
  	return ns_to_ktime(t << 10);
  }
  
--void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
-+static inline void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
+-static inline void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
++static int __io_napi_add_id(struct io_ring_ctx *ctx, unsigned int napi_id)
  {
  	struct hlist_head *hash_list;
- 	unsigned int napi_id;
-@@ -136,8 +136,52 @@ static bool io_napi_busy_loop_should_end(void *data,
- 	return false;
- }
+-	unsigned int napi_id;
+-	struct sock *sk;
+ 	struct io_napi_entry *e;
  
--static bool __io_napi_do_busy_loop(struct io_ring_ctx *ctx,
--				   void *loop_end_arg)
-+/*
-+ * does not perform any busy polling but still check if list entries are
-+ * stalled if the list is not empty. This could happen by unregistering
-+ * napi after having enabled it for some time.
-+ */
-+static bool no_tracking_do_busy_loop(struct io_ring_ctx *ctx,
-+				     void *loop_end_arg)
-+{
-+	struct io_napi_entry *e;
-+	bool is_stale = false;
+-	sk = sock->sk;
+-	if (!sk)
+-		return;
+-
+-	napi_id = READ_ONCE(sk->sk_napi_id);
+-
+ 	/* Non-NAPI IDs can be rejected. */
+ 	if (napi_id < MIN_NAPI_ID)
+-		return;
++		return -EINVAL;
+ 
+ 	hash_list = &ctx->napi_ht[hash_min(napi_id, HASH_BITS(ctx->napi_ht))];
+ 
+ 	rcu_read_lock();
+ 	e = io_napi_hash_find(hash_list, napi_id);
+ 	if (e) {
+-		e->timeout = jiffies + NAPI_TIMEOUT;
++		WRITE_ONCE(e->timeout, jiffies + NAPI_TIMEOUT);
+ 		rcu_read_unlock();
+-		return;
++		return -EEXIST;
+ 	}
+ 	rcu_read_unlock();
+ 
+ 	e = kmalloc(sizeof(*e), GFP_NOWAIT);
+ 	if (!e)
+-		return;
++		return -ENOMEM;
+ 
+ 	e->napi_id = napi_id;
+ 	e->timeout = jiffies + NAPI_TIMEOUT;
+@@ -77,23 +69,62 @@ static inline void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
+ 	if (unlikely(io_napi_hash_find(hash_list, napi_id))) {
+ 		spin_unlock(&ctx->napi_lock);
+ 		kfree(e);
+-		return;
++		return -EEXIST;
+ 	}
+ 
+ 	hlist_add_tail_rcu(&e->node, hash_list);
+-	list_add_tail(&e->list, &ctx->napi_list);
++	list_add_tail_rcu(&e->list, &ctx->napi_list);
+ 	spin_unlock(&ctx->napi_lock);
++	return 0;
++}
 +
-+	list_for_each_entry_rcu(e, &ctx->napi_list, list) {
-+		if (time_after(jiffies, e->timeout))
-+			is_stale = true;
++static int __io_napi_del_id(struct io_ring_ctx *ctx, unsigned int napi_id)
++{
++	struct hlist_head *hash_list;
++	struct io_napi_entry *e;
++
++	/* Non-NAPI IDs can be rejected. */
++	if (napi_id < MIN_NAPI_ID)
++		return -EINVAL;
++
++	hash_list = &ctx->napi_ht[hash_min(napi_id, HASH_BITS(ctx->napi_ht))];
++	spin_lock(&ctx->napi_lock);
++	e = io_napi_hash_find(hash_list, napi_id);
++	if (unlikely(!e)) {
++		spin_unlock(&ctx->napi_lock);
++		return -ENOENT;
 +	}
 +
-+	return is_stale;
++	list_del_rcu(&e->list);
++	hash_del_rcu(&e->node);
++	kfree_rcu(e, rcu);
++	spin_unlock(&ctx->napi_lock);
++	return 0;
 +}
 +
-+static void no_tracking_show_fdinfo(struct io_ring_ctx *ctx,
-+				    struct seq_file *m)
++static inline void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
 +{
-+	seq_puts(m, "NAPI:\tdisabled\n");
-+}
++	unsigned int napi_id;
++	struct sock *sk;
 +
-+/*
-+ * default ops for a newly created ring for which NAPI busy poll is not enabled
-+ */
-+static struct io_napi_tracking_ops no_tracking_ops = {
-+	.add_id = NULL,
-+	.do_busy_loop = no_tracking_do_busy_loop,
-+	.show_fdinfo = no_tracking_show_fdinfo,
-+};
++	sk = sock->sk;
++	if (!sk)
++		return;
 +
-+static void dynamic_tracking_add_id(struct io_kiocb *req)
-+{
-+	struct io_ring_ctx *ctx = req->ctx;
-+	struct socket *sock;
-+
-+	sock = sock_from_file(req->file);
-+	if (sock)
-+		__io_napi_add(ctx, sock);
-+}
-+
-+static bool dynamic_tracking_do_busy_loop(struct io_ring_ctx *ctx,
-+					  void *loop_end_arg)
++	napi_id = READ_ONCE(sk->sk_napi_id);
++	__io_napi_add_id(ctx, napi_id);
+ }
+ 
+ static void __io_napi_remove_stale(struct io_ring_ctx *ctx)
  {
++	struct hlist_node *tmp;
  	struct io_napi_entry *e;
- 	bool (*loop_end)(void *, unsigned long) = NULL;
-@@ -157,6 +201,23 @@ static bool __io_napi_do_busy_loop(struct io_ring_ctx *ctx,
+ 	unsigned int i;
+ 
+ 	spin_lock(&ctx->napi_lock);
+-	hash_for_each(ctx->napi_ht, i, e, node) {
++	hash_for_each_safe(ctx->napi_ht, i, tmp, e, node) {
+ 		if (time_after(jiffies, e->timeout)) {
+-			list_del(&e->list);
++			list_del_rcu(&e->list);
+ 			hash_del_rcu(&e->node);
+ 			kfree_rcu(e, rcu);
+ 		}
+@@ -201,23 +232,68 @@ static bool dynamic_tracking_do_busy_loop(struct io_ring_ctx *ctx,
  	return is_stale;
+ }
+ 
+-static void dynamic_tracking_show_fdinfo(struct io_ring_ctx *ctx,
+-					 struct seq_file *m)
++static void common_tracking_show_fdinfo(struct io_ring_ctx *ctx,
++					struct seq_file *m,
++					const char *tracking_strategy)
+ {
+ 	seq_puts(m, "NAPI:\tenabled\n");
+-	seq_printf(m, "napi_busy_poll_to:\t%u\n", ctx->napi_busy_poll_to);
++	seq_printf(m, "napi tracking:\t%s\n", tracking_strategy);
++	seq_printf(m, "napi_busy_poll_to:\t%llu\n", ctx->napi_busy_poll_dt);
+ 	if (ctx->napi_prefer_busy_poll)
+ 		seq_puts(m, "napi_prefer_busy_poll:\ttrue\n");
+ 	else
+ 		seq_puts(m, "napi_prefer_busy_poll:\tfalse\n");
  }
  
 +static void dynamic_tracking_show_fdinfo(struct io_ring_ctx *ctx,
 +					 struct seq_file *m)
 +{
-+	seq_puts(m, "NAPI:\tenabled\n");
-+	seq_printf(m, "napi_busy_poll_to:\t%u\n", ctx->napi_busy_poll_to);
-+	if (ctx->napi_prefer_busy_poll)
-+		seq_puts(m, "napi_prefer_busy_poll:\ttrue\n");
-+	else
-+		seq_puts(m, "napi_prefer_busy_poll:\tfalse\n");
++	common_tracking_show_fdinfo(ctx, m, "dynamic");
 +}
 +
-+static struct io_napi_tracking_ops dynamic_tracking_ops = {
-+	.add_id = dynamic_tracking_add_id,
-+	.do_busy_loop = dynamic_tracking_do_busy_loop,
-+	.show_fdinfo = dynamic_tracking_show_fdinfo,
+ static struct io_napi_tracking_ops dynamic_tracking_ops = {
+ 	.add_id = dynamic_tracking_add_id,
+ 	.do_busy_loop = dynamic_tracking_do_busy_loop,
+-	.show_fdinfo = dynamic_tracking_show_fdinfo,
++	.show_fdinfo  = dynamic_tracking_show_fdinfo,
 +};
++
++/*
++ * never report stale entries
++ */
++static bool static_tracking_do_busy_loop(struct io_ring_ctx *ctx,
++					 void *loop_end_arg)
++{
++	struct io_napi_entry *e;
++	bool (*loop_end)(void *, unsigned long) = NULL;
++
++	if (loop_end_arg)
++		loop_end = io_napi_busy_loop_should_end;
++
++	list_for_each_entry_rcu(e, &ctx->napi_list, list) {
++		napi_busy_loop_rcu(e->napi_id, loop_end, loop_end_arg,
++				   ctx->napi_prefer_busy_poll, BUSY_POLL_BUDGET);
++	}
++
++	return false;
++}
++
++static void static_tracking_show_fdinfo(struct io_ring_ctx *ctx,
++					struct seq_file *m)
++{
++	common_tracking_show_fdinfo(ctx, m, "static");
++}
++
++static struct io_napi_tracking_ops static_tracking_ops = {
++	.add_id = NULL,
++	.do_busy_loop = static_tracking_do_busy_loop,
++	.show_fdinfo = static_tracking_show_fdinfo,
+ };
+ 
++static inline u32 io_napi_get_tracking(struct io_ring_ctx *ctx)
++{
++	return ctx->napi_ops == &static_tracking_ops;
++}
 +
  static void io_napi_blocking_busy_loop(struct io_ring_ctx *ctx,
  				       struct io_wait_queue *iowq)
  {
-@@ -172,7 +233,7 @@ static void io_napi_blocking_busy_loop(struct io_ring_ctx *ctx,
+@@ -273,9 +349,30 @@ void io_napi_free(struct io_ring_ctx *ctx)
+ 		hash_del_rcu(&e->node);
+ 		kfree_rcu(e, rcu);
+ 	}
++	INIT_LIST_HEAD_RCU(&ctx->napi_list);
+ 	spin_unlock(&ctx->napi_lock);
+ }
  
- 	rcu_read_lock();
- 	do {
--		is_stale = __io_napi_do_busy_loop(ctx, loop_end_arg);
-+		is_stale = ctx->napi_ops->do_busy_loop(ctx, loop_end_arg);
- 	} while (!io_napi_busy_loop_should_end(iowq, start_time) && !loop_end_arg);
- 	rcu_read_unlock();
++static int io_napi_register_napi(struct io_ring_ctx *ctx,
++				 struct io_uring_napi *napi)
++{
++	switch (napi->op_param) {
++	case IO_URING_NAPI_TRACKING_DYNAMIC:
++		WRITE_ONCE(ctx->napi_ops, &dynamic_tracking_ops);
++		break;
++	case IO_URING_NAPI_TRACKING_STATIC:
++		WRITE_ONCE(ctx->napi_ops, &static_tracking_ops);
++		/* clean the napi list for manual setup */
++		io_napi_free(ctx);
++		break;
++	default:
++		return -EINVAL;
++	}
++	WRITE_ONCE(ctx->napi_busy_poll_dt, napi->busy_poll_to * NSEC_PER_USEC);
++	WRITE_ONCE(ctx->napi_prefer_busy_poll, !!napi->prefer_busy_poll);
++	return 0;
++}
++
+ /*
+  * io_napi_register() - Register napi with io-uring
+  * @ctx: pointer to io-uring context structure
+@@ -287,7 +384,8 @@ int io_register_napi(struct io_ring_ctx *ctx, void __user *arg)
+ {
+ 	const struct io_uring_napi curr = {
+ 		.busy_poll_to 	  = ktime_to_us(ctx->napi_busy_poll_dt),
+-		.prefer_busy_poll = ctx->napi_prefer_busy_poll
++		.prefer_busy_poll = ctx->napi_prefer_busy_poll,
++		.op_param	  = io_napi_get_tracking(ctx)
+ 	};
+ 	struct io_uring_napi napi;
  
-@@ -193,6 +254,7 @@ void io_napi_init(struct io_ring_ctx *ctx)
- 	spin_lock_init(&ctx->napi_lock);
- 	ctx->napi_prefer_busy_poll = false;
- 	ctx->napi_busy_poll_dt = ns_to_ktime(sys_dt);
-+	ctx->napi_ops = &no_tracking_ops;
+@@ -295,16 +393,26 @@ int io_register_napi(struct io_ring_ctx *ctx, void __user *arg)
+ 		return -EINVAL;
+ 	if (copy_from_user(&napi, arg, sizeof(napi)))
+ 		return -EFAULT;
+-	if (napi.pad[0] || napi.pad[1] || napi.pad[2] || napi.resv)
++	if (napi.pad[0] || napi.pad[1] || napi.resv)
+ 		return -EINVAL;
+ 
+ 	if (copy_to_user(arg, &curr, sizeof(curr)))
+ 		return -EFAULT;
+ 
+-	WRITE_ONCE(ctx->napi_busy_poll_dt, napi.busy_poll_to * NSEC_PER_USEC);
+-	WRITE_ONCE(ctx->napi_prefer_busy_poll, !!napi.prefer_busy_poll);
+-	WRITE_ONCE(ctx->napi_ops, &dynamic_tracking_ops);
+-	return 0;
++	switch (napi.opcode) {
++	case IO_URING_NAPI_REGISTER_OP:
++		return io_napi_register_napi(ctx, &napi);
++	case IO_URING_NAPI_STATIC_ADD_ID:
++		if (curr.op_param != IO_URING_NAPI_TRACKING_STATIC)
++			return -EINVAL;
++		return __io_napi_add_id(ctx, napi.op_param);
++	case IO_URING_NAPI_STATIC_DEL_ID:
++		if (curr.op_param != IO_URING_NAPI_TRACKING_STATIC)
++			return -EINVAL;
++		return __io_napi_del_id(ctx, napi.op_param);
++	default:
++		return -EINVAL;
++	}
  }
  
  /*
-@@ -241,7 +303,7 @@ int io_register_napi(struct io_ring_ctx *ctx, void __user *arg)
- 
- 	WRITE_ONCE(ctx->napi_busy_poll_dt, napi.busy_poll_to * NSEC_PER_USEC);
- 	WRITE_ONCE(ctx->napi_prefer_busy_poll, !!napi.prefer_busy_poll);
--	WRITE_ONCE(ctx->napi_enabled, true);
-+	WRITE_ONCE(ctx->napi_ops, &dynamic_tracking_ops);
- 	return 0;
- }
- 
-@@ -265,7 +327,7 @@ int io_unregister_napi(struct io_ring_ctx *ctx, void __user *arg)
- 
- 	WRITE_ONCE(ctx->napi_busy_poll_dt, 0);
- 	WRITE_ONCE(ctx->napi_prefer_busy_poll, false);
--	WRITE_ONCE(ctx->napi_enabled, false);
-+	WRITE_ONCE(ctx->napi_ops, &no_tracking_ops);
- 	return 0;
- }
- 
-@@ -321,7 +383,7 @@ int io_napi_sqpoll_busy_poll(struct io_ring_ctx *ctx)
- 		return 0;
- 
- 	rcu_read_lock();
--	is_stale = __io_napi_do_busy_loop(ctx, NULL);
-+	is_stale = ctx->napi_ops->do_busy_loop(ctx, NULL);
- 	rcu_read_unlock();
- 
- 	io_napi_remove_stale(ctx, is_stale);
-diff --git a/io_uring/napi.h b/io_uring/napi.h
-index 27b88c3eb428..3d68d8e7b108 100644
---- a/io_uring/napi.h
-+++ b/io_uring/napi.h
-@@ -15,8 +15,6 @@ void io_napi_free(struct io_ring_ctx *ctx);
- int io_register_napi(struct io_ring_ctx *ctx, void __user *arg);
- int io_unregister_napi(struct io_ring_ctx *ctx, void __user *arg);
- 
--void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock);
--
- void __io_napi_adjust_timeout(struct io_ring_ctx *ctx,
- 		struct io_wait_queue *iowq, ktime_t to_wait);
- void __io_napi_busy_loop(struct io_ring_ctx *ctx, struct io_wait_queue *iowq);
-@@ -53,14 +51,9 @@ static inline void io_napi_busy_loop(struct io_ring_ctx *ctx,
- static inline void io_napi_add(struct io_kiocb *req)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
--	struct socket *sock;
--
--	if (!READ_ONCE(ctx->napi_enabled))
--		return;
- 
--	sock = sock_from_file(req->file);
--	if (sock)
--		__io_napi_add(ctx, sock);
-+	if (ctx->napi_ops->add_id)
-+		ctx->napi_ops->add_id(req);
- }
- 
- #else
 -- 
 2.46.0
 

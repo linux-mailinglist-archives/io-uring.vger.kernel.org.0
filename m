@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-2756-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2757-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA308950F40
-	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 23:45:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDBB950FCD
+	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 00:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 057221C21EA9
-	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 21:45:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 826A9B21B0D
+	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 22:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E25198A2F;
-	Tue, 13 Aug 2024 21:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7D313635D;
+	Tue, 13 Aug 2024 22:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="tolv8h94"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrAcvfO4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB831E498
-	for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 21:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A38370
+	for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 22:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723585529; cv=none; b=kHe4kOrckArT5CWHRUV3zNxxMVrcDEy1TI5zxtsP5foCzdyoXTmrvnRW+yQA0lFgkyeQM7T5YSKh2AC8/IKgE/9UrANIVSqDOWcIpIcaxIg4zgygVtNAx2RI/FDUqdC0MaaKmLBSPPNykj1yWQlq6VwESr/yURkI2Abd1/sLOAg=
+	t=1723588535; cv=none; b=FqzHXOq9dbW3xDPuW3gFAU3M2Ok5+RWnZzuwm0M2f4mOK2GGNWoU6+l2jXEIWj6Q+Eg3ctIkZHhzfTHk2sOdpggnpzr0ZEKtPAARdaW1AeHqXD1C+OCaRs630fwEyWCroG+XNSaAY83+tZR8jl08kebQUpXYtlhiCFhqJqbzJxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723585529; c=relaxed/simple;
-	bh=ZPSed74eIxvtsiZxQ1cHvk5tof6hAO7AlAbhl9FUw2A=;
+	s=arc-20240116; t=1723588535; c=relaxed/simple;
+	bh=77496m2abrxEQVmRZIZWUjDUrlNjeSLEdYlATnxGszU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=coOMS40Z84wegGHHwUE63PjXpUvKanx3PtieX897R0KsYJQU6X4xnzeD0vuagNFl94rCqwSagS4zKYjoRFX1+R1e6p9y0KFBGK7lD/JE0AdN4SzdRKAxz4S+XWaKtdOs1n/dfXh7PGafDPfIH2AFSMeb0vyjHdgUcNrX/VxvRCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=tolv8h94; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7c3d415f85eso2381a12.0
-        for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 14:45:26 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=YIi5Oo1LlQruxBaokN+NbGxlJ+tOiSOosgeyN2hAMpPhraYt+nDNN1Jl8Ba1Rn1kG/+R1og4MRw59gLjR+xeXT149nDiFF6Pl5JmQBjjHu6Ylg2j5U86YgUZOg9geGXfnYQmWTZHDCMNG9fszN7xRanUMEUJig0KLzGkCwYovLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SrAcvfO4; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-530c2e5f4feso6140052e87.0
+        for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 15:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723585526; x=1724190326; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723588531; x=1724193331; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=eFmOBK+KHjdqqXEAyv3wDgbDNcnein+cwz+yHJTrexg=;
-        b=tolv8h94nUarQzTaavV3bo3wRUg+Dnelo6sX2Sz5srL7yU9d99yWMfTHE26fUo09nb
-         BPeLblsAsCEnf2xo5nin1awrJ6xsAajoShiw2SmqJh/RD7BwMi7+Q9yNRqS5uOLuzBxF
-         UpMOuQu5KvMHvEI99h15cy8ccGzfwM/cuv8yVdGt9hbIm3D5ak9zQibXVt/ZdSJl4N2I
-         wSyT+FAaKBAhEJHmjYYasqUfTGeqmo1Rb9nftR5cKFhJ0URw5pjwT2oOqFYq+dy6kyRk
-         IQ4vEyoYxsdnfY5NWL3iR3qakarvlm23wWl/UCSOrM7V5wiCXsB0xGGFAwcbBcku253a
-         JQBA==
+        bh=47x11KgbZEARAnGZBQ+LaTRjIinzqaQ7vbKlWxtgyJA=;
+        b=SrAcvfO4q9hnRazZrsLLqY40s8Ps8FPe5XEt8LGAo3FwT61FF7elRP2Z8X78ylL6sy
+         E2Jsrgskj3mM0z7jNQNdYs8KeJyCau5kiy6R/j5p43K7U5IYVjBe1qJex9GjWQab0+RS
+         FhbblctzgiCE4q4p+4fCaONdZZMId9CE3LrKsekLg8OprKZECphjxUYyudbnumi4cf/k
+         A6BVQD4PizWVcZnc8dW8LkQb8mFO82qqa8ud4gUZCtNzC1qqDurG/cEzK9p6yNTA83Av
+         ydjYfVGF5m+TiMWcn0ERxOc4Y5ywgyGQ+y+uH1rGKo9rx8pXOMy9VRjnC3s6uuIVVMXy
+         VswA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723585526; x=1724190326;
+        d=1e100.net; s=20230601; t=1723588531; x=1724193331;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eFmOBK+KHjdqqXEAyv3wDgbDNcnein+cwz+yHJTrexg=;
-        b=FjxIukzL8F0/x/7dDSXydY2tU/7lebmRKoJZvdWb7uWL0J0ZqnHmbXK/t330RXPtdZ
-         DWIkbMJkRTUnAeXRBdtd6Y9ryzRxHWlMeIZN3GVqhS8xzfFMoFTmCci5TWdZSjQ51ax0
-         Km7Lv/zCZ/+4pBejnG47T8rkhakg6dzr3FKzMT027u3XVVdKq6YllXYqRc29gNZky+pf
-         d2s/gQzCLq/vp+MrCdeSdwWZSL8w5gUdEP/aMTHsQRIQ5trCjzw0Kfb4VMYvVLJ/dwGO
-         HrQ5K+V5l+QH9ls2QaTuilvO2RYXDCNtbyLBhX6bUdmFRRquC9Jsdmm2Z8+AMdshDwXp
-         dK2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVtZLgJppdsA/Eg/pPiz+ncgpJf+Kr0jgGajb3gfm5W7SP1TvfpQ8wiWMoVawJrxxFA+QFH7Sgr0LZ2hd5f7gAUImzg7KqSn+I=
-X-Gm-Message-State: AOJu0Yx9Q3NpcBEZYmIrqhoBVxiq5S6hyq8ISVjnKl6gfy8YxFcyJlNv
-	ch4KXnsQeIRSbAmJFWAEHQhVK6URz6AaSCigN+Q50f7OqVQBmwHp3wvmJNI+7uU=
-X-Google-Smtp-Source: AGHT+IH3gENS5X9E75U+qK1Is8Dqs/1qtfmQC6C3PEJ6RiDjXm5PizoXUsJYUguW7ijuvhYXaISzWQ==
-X-Received: by 2002:a05:6a20:6a28:b0:1c6:bed1:bbd0 with SMTP id adf61e73a8af0-1c8ead660e3mr806420637.0.1723585525636;
-        Tue, 13 Aug 2024 14:45:25 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5a435b9sm6221090b3a.117.2024.08.13.14.45.24
+        bh=47x11KgbZEARAnGZBQ+LaTRjIinzqaQ7vbKlWxtgyJA=;
+        b=WNMF+62p2e9VV1GBrZRIVTCTF3UWDcHh88YziXg3F/eXYQLwKcCOIuFjivz4gdRJ5+
+         M99Kg+CVUKzVGeJg9Xue58662tTG3i7LQXI/7fabYxgyNUd8cVmmraseK551Afuee5oM
+         y4xJ57hXbol7LIT4F1dkKjvEp1wqYg/fe8OqE1MRdIoTQ5eI6W86McZOhm4nXFfFJPom
+         8/ZXHtmSPtAispyNvsKA+JnCA4tJhVSnD6pMf2tej7gVl+d1RvUNlhe9C2BhzIBvDdcD
+         J2L0QCcPAngaC5SrwjSKtMmOmWC0T6fvSkQ/5n0EiR/laUU+EznFnicdmmMvrgQKRF20
+         ZUvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwHTpOzDfnUjezUL4iLKCYesIFyoV2D+eNzH4YIUFkWMBlI5lilRr1EQTHif5Xy3Ax4mzTkTpCkKPtCPGdDJ2vG3Q+CppDa6s=
+X-Gm-Message-State: AOJu0Yz6jzcwIqsaL+WTCeQS6CsDxdKjHmuJVdCi4moXuAxB+a42WN/2
+	drbocqHopT6wm/rBKKwQu7XebRICywyVx3n13JaZw9cKBCa7f4Yu
+X-Google-Smtp-Source: AGHT+IGvour3g7/jrTeZ0ARGxFsVe5xenIei7LauVP//uha54SwYQSBBu2/vgHiFoN8stEBEnO5rPA==
+X-Received: by 2002:a05:6512:398a:b0:52e:9ecd:3465 with SMTP id 2adb3069b0e04-532edbcf258mr402215e87.57.1723588530845;
+        Tue, 13 Aug 2024 15:35:30 -0700 (PDT)
+Received: from [192.168.42.69] ([148.252.132.251])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411b578sm105054766b.142.2024.08.13.15.35.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 14:45:25 -0700 (PDT)
-Message-ID: <661dcdfc-faa0-4324-aa3f-1f88536e562b@kernel.dk>
-Date: Tue, 13 Aug 2024 15:45:24 -0600
+        Tue, 13 Aug 2024 15:35:30 -0700 (PDT)
+Message-ID: <70c5f2ff-d134-4e90-8e3d-e9f06ba8f407@gmail.com>
+Date: Tue, 13 Aug 2024 23:36:06 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,18 +77,18 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 0/2] abstract napi tracking strategy
-To: Olivier Langlois <olivier@trillion01.com>,
- Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+To: Olivier Langlois <olivier@trillion01.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org
 References: <cover.1723567469.git.olivier@trillion01.com>
  <c614ee28-eeb2-43bd-ae06-cdde9fd6fee2@kernel.dk>
- <a825ae96ea73b74ffd278ba33fa513a6914ec828.camel@trillion01.com>
+ <a818bc04dfdcdbacf7cc6bf90c03b8a81d051328.camel@trillion01.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <a825ae96ea73b74ffd278ba33fa513a6914ec828.camel@trillion01.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <a818bc04dfdcdbacf7cc6bf90c03b8a81d051328.camel@trillion01.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/13/24 3:34 PM, Olivier Langlois wrote:
+On 8/13/24 22:25, Olivier Langlois wrote:
 > On Tue, 2024-08-13 at 12:33 -0600, Jens Axboe wrote:
 >> On 8/13/24 10:44 AM, Olivier Langlois wrote:
 >>> the actual napi tracking strategy is inducing a non-negligeable
@@ -124,23 +124,37 @@ On 8/13/24 3:34 PM, Olivier Langlois wrote:
 >> because
 >> of the above reasons.
 >>
-> if indirection is a very big deal, it might be possible to remove one
-> level of indirection.
-
-It's not that it's a huge deal, it's just more that if we're dealing
-with a single abstraction, then I think it's somewhat overdesigning for
-the use case. And I'd prefer to avoid that.
-
-> I did entertain the idea of making copies of the io_napi_tracking_ops
-> structs instead of storing their addresses. I did not kept this option
-> because of the way that I did implement io_napi_get_tracking()...
+> ok. Do you have a reference explaining this?
+> and what type of construct would you use instead?
 > 
-> but if this would be an acceptable compromise, this is definitely
-> something possible.
+> AFAIK, a big performance killer is the branch mispredictions coming
+> from big switch/case or if/else if/else blocks and it was precisely the
+> reason why you removed the big switch/case io_uring was having with
+> function pointers in io_issue_def...
 
-Doesn't really change it, I think. See above.
+Compilers can optimise switch-case very well, look up what jump
+tables is, often works even better than indirect functions even
+without mitigations. And it wasn't converted because of performance,
+it was a nice efficient jump table before.
+
+And not like compilers can devirtualise indirect calls either, I'd
+say it hits the pipeline even harder. Maybe not as hard as a long
+if-else-if in the final binary, but jump tables help and we're
+talking about a single "if".
+
+I totally agree, it's way over engineered.
+
+> I consumme an enormous amount of programming learning material daily
+> and this is the first time that I am hearing this.
+> 
+> If there was a performance concern about this type of construct and
+> considering that my main programming language is C++, I am bit
+> surprised that I have not seen anything about some problems with C++
+> vtbls...
+
+Even without mitigation business, we can look up a lot about
+devirtualisation, which is also why "final" keyword exists in c++.
 
 -- 
-Jens Axboe
-
+Pavel Begunkov
 

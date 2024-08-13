@@ -1,189 +1,117 @@
-Return-Path: <io-uring+bounces-2733-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2732-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B6694FAD8
-	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 02:49:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0317294FAD7
+	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 02:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 854D0B21873
-	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 00:49:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CDF7B21873
+	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 00:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004E94A23;
-	Tue, 13 Aug 2024 00:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1B817FF;
+	Tue, 13 Aug 2024 00:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="h5x2gRSH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2bLMXdZP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2a69kEvt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rDDgGzVW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h/Ib9awv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04813D69;
-	Tue, 13 Aug 2024 00:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B72EDB
+	for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 00:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723510190; cv=none; b=GMhV46uA7+lcM6fgonW0gDcUJ7FZRp5fArQmxWPHavxToqsB4f5QUYCLPUvjwaab6tDU+fZplLI6nxtmov89aXE82dCh4CetZUZvQLqo21BOTuhELhM9LM3MBLmHwdtf60CipolAV3KgTDxKU0t01mKT8/xR3m3LBk/1kLQ5eLA=
+	t=1723510180; cv=none; b=kpxqw7KHZtpDZtG/D4bQIJc0p0jMs9zQwMAskuwY7bLtRxRZTK04aoe1vURtIZVoDZuJsxY4jAzkpKKV/PDF8y6mqUFrkFtG0nXy+6cYxCmVgOsy65Aq8UtoMCTPvsD8CRdJLpIHIVqPPIC7gYOzqOgH2+BRfgJoTFAAmqg/O4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723510190; c=relaxed/simple;
-	bh=szWjwUqHZIAcfPTehI1G6L2XpIfTQOWpVvev95c1ay8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mm0W+vKtyrofB7ARDLDJwuhDhgHKo+E1fW9ZqCJnzGhZbwyPbivNXzt1IODZfpPVN/s0pJ+1XumNF0QYwU6dd61Y7rJxmlsx/gslWdGPvg7uieNcztL38HQmfWftlJ5OaVFAr3nsSdE22E740Dtx5vtffJqZ+d0IKpmwKFQkLI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=h5x2gRSH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2bLMXdZP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2a69kEvt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rDDgGzVW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2D7BD1F444;
-	Tue, 13 Aug 2024 00:49:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723510186;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PkFD+SvOhV/khNKqznjzWOr3vknle2BXwJ31uj/bmMw=;
-	b=h5x2gRSHVhszIS5fQQcohg5oa1wZKbT19SfGg093xXtMglSS71qQRASktInRWkt9UGtgfW
-	/jfPA1VPK3GqJY8LgDKN75mFURJCp9Bz7czDapYurZhCUyZ+ajk+LUjysdYCSPXLSIa5A3
-	rqAGaFXl7kvBoOCQjYaIuT4VcWDUg+8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723510186;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PkFD+SvOhV/khNKqznjzWOr3vknle2BXwJ31uj/bmMw=;
-	b=2bLMXdZPLlLfW9DaawJB0JWFuXLb6lSEl5HpCLq7A0Hwx76hBZPTAoEqztNOJ29Q6+roJu
-	tGC1O/rFb35T6BAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2a69kEvt;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rDDgGzVW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723510185;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PkFD+SvOhV/khNKqznjzWOr3vknle2BXwJ31uj/bmMw=;
-	b=2a69kEvt5IUF8VxHQsEtxc5s/GfLx7QkSlscalUdIPva3PrV5tJ3auAFVk0XoIWoYIq8kp
-	VnzMHSIGEN9pr1u+krE1pjBEnaz+pZ+LXYnpEOpA5bGe9Mo3CdoJ85p1ym9SCYWXjCiphm
-	oO1JxN/xvyuJF8iRSmqupUh3Pxtu5xo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723510185;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PkFD+SvOhV/khNKqznjzWOr3vknle2BXwJ31uj/bmMw=;
-	b=rDDgGzVWFAKWYoa35l+Xk+uPvbjF2r9QOmnK9Nm8V3aJZ/j5JHp8+NodR7kjgwl3xRNX/Z
-	22Vznkab/6fS0YDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1297913983;
-	Tue, 13 Aug 2024 00:49:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KzJJBKmtumYVOwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 13 Aug 2024 00:49:45 +0000
-Date: Tue, 13 Aug 2024 02:49:35 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: dsterba@suse.cz, Christoph Hellwig <hch@infradead.org>,
-	Mark Harmstone <maharmstone@fb.com>, linux-btrfs@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Subject: Re: [PATCH] btrfs: add io_uring interface for encoded reads
-Message-ID: <20240813004935.GM25962@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240809173552.929988-1-maharmstone@fb.com>
- <Zrnxgu7vkVDgI6VU@infradead.org>
- <1f5f4194-8981-46d4-aa7d-819cbdf653b9@gmail.com>
- <20240812165816.GL25962@twin.jikos.cz>
- <8d8e24bf-95d2-418e-b305-42eec37341c7@gmail.com>
+	s=arc-20240116; t=1723510180; c=relaxed/simple;
+	bh=qL3QKnSH9D659LrOhp+bY4ZhqHgS4o7GriCi1MBCIPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cm++xWJsNzZp5+1Hm6dqfsYQyBjYIGWxGzV38D8IJxgtWr2Ljnod335NocZVsuhpDsxHEP0J0wsFm9IMYsZ6YHXI8+jIc1dNPIrefsoCcOUeSqkgRKaNQdzC/LLnDgKdXvj8WxkRpMxS9WAiH5hdhMLygMwS1l5cSg1rBGhHz5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h/Ib9awv; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42816ca782dso37822105e9.2
+        for <io-uring@vger.kernel.org>; Mon, 12 Aug 2024 17:49:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723510177; x=1724114977; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GqmN+3FV9Pff+1BU/gju4r3iI3tiJCY+lyjrrAAN+GM=;
+        b=h/Ib9awvc1Be5YjjHijR2JTfi5MQd+Ny5qNeUW0RrZVvrQRkVzAou6efW5z61JglpU
+         MhSpzhLwIhoqbjz3nPZ+QS+zjTws8Fa8sbeeoHw6BgIUKeuUFji6d9lp51dGksLCOOP5
+         MqjShexjW29bz8OnPXHmi757nrNEzymoFFgEIMoY82pY4Z5sfskQhnBIo/oAdPp1EVqe
+         g5V8hhKCYDQH4+xR6bI8S3J8jMN+pS9Li8sXevUxu8gw1OcEbR6W6VQHgAvizbAdsUYv
+         0eOrj1ctSfVzxaElvuX5DBn3mgCnof1UbxUlqIm37IJcJVPVhW7S+i2GOLe8kT6URMM/
+         4cEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723510177; x=1724114977;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GqmN+3FV9Pff+1BU/gju4r3iI3tiJCY+lyjrrAAN+GM=;
+        b=q8jXFXSSWpFQB1IUPEsi/gdB+OCmmDiu8vY1uGjIz89FRm65CDRBZzGz6nmUEZbzxm
+         gBGiOXGlJDFPWP82O5bVrTpHJNtAukQ4koao3+XqV22+kPizh88SnRxA6FVV9NcExr+9
+         Q5NlrgxnCUn+5+3hAaomxPdej2JuzdZMWlslLGUEyyrI6OzEDYet/f/A4r/07KzBLaiC
+         JWomjnAYLjDLuVgWD1Tei3/VKsq4O6Uh6sBgQmOiiGG75Ui4KZT3MtWyQtKvIgR0MPdD
+         /GKGq0HCt5IFV9ovuCsptckooiE6Mlqb9RrUGE6pgBPQXx17kFXZQIPsq6/L8TJ+np1g
+         nfgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlV+XL3ozPxmwbo059K6+UflVNLQ1/Ly6BH3j5i8BYYFjFwGYdCcGzOeSS77dql3kmNGsJ9x2VVWcTOvC+8yxfWK9hBMrLL9U=
+X-Gm-Message-State: AOJu0YzAqt+4R5P4991YdjL8AKvd3VtAIohIEqYMMS8eVi5NMQxdksxF
+	5wjZeUfe+A9/JLnuXQayr+ky1uPrddsfS5xOezaYOxRPW4aNPsdB
+X-Google-Smtp-Source: AGHT+IGingoyo25aB+TYSdWKzggSRjYEegNHmJbJcjy3tFeTgvQnU+o/2eotpTHDC6/MCtID10E7Kg==
+X-Received: by 2002:a05:600c:1e1a:b0:429:d43e:db9e with SMTP id 5b1f17b1804b1-429d4895427mr12194705e9.36.1723510177034;
+        Mon, 12 Aug 2024 17:49:37 -0700 (PDT)
+Received: from [192.168.42.116] ([85.255.232.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c75044b5sm120106725e9.2.2024.08.12.17.49.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Aug 2024 17:49:36 -0700 (PDT)
+Message-ID: <61b2c7c1-7607-4bd9-b430-b190b6166117@gmail.com>
+Date: Tue, 13 Aug 2024 01:50:06 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d8e24bf-95d2-418e-b305-42eec37341c7@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -2.71
-X-Rspamd-Queue-Id: 2D7BD1F444
-X-Spamd-Result: default: False [-2.71 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] clodkid and abs mode CQ wait timeouts
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: Lewis Baker <lewissbaker@gmail.com>
+References: <cover.1723039801.git.asml.silence@gmail.com>
+ <98f30ada-e6a9-4a44-ac93-49665041c1ff@kernel.dk>
+ <6ad98d50-75f4-4f7d-9062-75bfbf0ec75d@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <6ad98d50-75f4-4f7d-9062-75bfbf0ec75d@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 12, 2024 at 08:17:43PM +0100, Pavel Begunkov wrote:
-> On 8/12/24 17:58, David Sterba wrote:
-> > On Mon, Aug 12, 2024 at 05:10:15PM +0100, Pavel Begunkov wrote:
-> >> And the last point, I'm surprised there are two versions of
-> >> btrfs_ioctl_encoded_io_args. Maybe, it's a good moment to fix it if
-> >> we're creating a new interface.
-> >>
-> >> E.g. by adding a new structure defined right with u64 and such, use it
-> >> in io_uring, and cast to it in the ioctl code when it's x64 (with
-> >> a good set of BUILD_BUG_ON sprinkled) and convert structures otherwise?
-> > 
-> > If you mean the 32bit version of the ioctl struct
-> > (btrfs_ioctl_encoded_io_args_32), I don't think we can fix it. It's been
+On 8/12/24 19:30, Jens Axboe wrote:
+> On 8/12/24 12:13 PM, Jens Axboe wrote:
+>> On 8/7/24 8:18 AM, Pavel Begunkov wrote:
+>>> Patch 3 allows the user to pass IORING_ENTER_ABS_TIMER while waiting
+>>> for completions, which makes the kernel to interpret the passed timespec
+>>> not as a relative time to wait but rather an absolute timeout.
+>>>
+>>> Patch 4 adds a way to set a clock id to use for CQ waiting.
+>>>
+>>> Tests: https://github.com/isilence/liburing.git abs-timeout
+>>
+>> Looks good to me - was going to ask about tests, but I see you have those
+>> already! Thanks.
 > 
-> Right, I meant btrfs_ioctl_encoded_io_args_32. And to clarify, nothing
-> can be done for the ioctl(2) part, I only suggested to have a single
-> structure when it comes to io_uring.
-> 
-> > there from the beginning and it's not a mistake. I don't remember the
-> > details why and only vaguely remember that I'd asked why we need it.
-> > Similar 64/32 struct is in the send ioctl but that was a mistake due to
-> > a pointer being passed in the structure and that needs to be handled due
-> > to different type width.
-> 
-> Would be interesting to learn why, maybe Omar remembers? Only two
-> fields are not explicitly sized, both could've been just u64.
-> The structure iov points to (struct iovec) would've had a compat
-> flavour, but that doesn't require a separate
-> btrfs_ioctl_encoded_io_args.
+> Took a look at the test, also looks good to me. But we need the man
+> pages updated, or nobody will ever know this thing exists.
 
-Found it:
+If we go into that topic, people not so often read manuals
+to learn new features, a semi formal tutorial would be much
+more useful, I believe.
 
-"why don't we avoid the send 32bit workaround"
-https://lore.kernel.org/linux-btrfs/20190828120650.GZ2752@twin.jikos.cz/
+Regardless, I can update mans before sending the tests, I was
+waiting if anyone have feedback / opinions on the api.
 
-"because big-endian"
-https://lore.kernel.org/linux-btrfs/20190903171458.GA7452@vader/
+-- 
+Pavel Begunkov
 

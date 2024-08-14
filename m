@@ -1,72 +1,72 @@
-Return-Path: <io-uring+bounces-2765-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2766-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C38695194D
-	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 12:45:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140F495194E
+	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 12:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28AA02812C9
-	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 10:45:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C59FE2852F5
+	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 10:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233451AE875;
-	Wed, 14 Aug 2024 10:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1441AED22;
+	Wed, 14 Aug 2024 10:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MrbT4Az/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GhBIQJ4M"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6970B1AE86B;
-	Wed, 14 Aug 2024 10:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00661448D4;
+	Wed, 14 Aug 2024 10:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723632329; cv=none; b=Fd4yrYpOHyfhJPhmopKISDAxu1Jyp11ZEuaJJ4z8Q2F+XLUr8ZbBMbFrdi6cSqWWsTGYbtG0bJxTRavzSq1H2msPji7ZlMAT9++snjhaNm60nqLxc6AZaqSs+pwiTmEo9yJHFaSewthLjz3mzX7zgzq/nlRlKo+N9GyHmvoXKts=
+	t=1723632330; cv=none; b=oI28P77ixu5O3VveWWvuBod5Mxl3rYjjOhHmYWEyS5UwmKGruiwdceVoTRpnmhddvURWlh86jyrivC3/EqyM2CVPraOk22kCjaC/XRQWl7/O012geSsORzZ4P80B7ojPmEzkXswNwP25Lg1XcF5EZ3FV+2hhdtuoyUBF70FvRlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723632329; c=relaxed/simple;
-	bh=w2+Gx2llTSCIEW4z0w0ChEqAXKpMZsr4Hk2SFKO+bsU=;
+	s=arc-20240116; t=1723632330; c=relaxed/simple;
+	bh=u3n4zzz10biwWSRIUfBz8MlJPLdBSaqHZ7gqivjEoC4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kHHBjHdqMVqiUfYa7y+0/LfkhhqlWIVdNf8QUIsI1UtZPwQ1DYHi+rOCVngOqZdjtc8dTkCat3nXURIHBRyD9jmGIQvA2RmMbg6tK5mpHigsU3JKWYh+5R7T3BkK0/AgFPHOdcsqkCFStWovCRUvwFjWdqBr9R0FDWVoluoPaP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MrbT4Az/; arc=none smtp.client-ip=209.85.218.54
+	 MIME-Version; b=IOJXvox6oW8hM/tWxKFWG7c9EK8dl5VfWZdM1IL03Rs+ICLg/aDIOOEQw/Q1QCIU26rOYU5xUnDfbsLp1p6S/YbA/dNRfS6FYOo1EXpJXqJ8txqh/wAKo1CKMYVDqHQm2izw4YpqL+JBpmtXQA2qJxzYei3/yoipev7gb/owTv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GhBIQJ4M; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so498025566b.1;
-        Wed, 14 Aug 2024 03:45:27 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7ad02501c3so778841466b.2;
+        Wed, 14 Aug 2024 03:45:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723632325; x=1724237125; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723632327; x=1724237127; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=coYbv4PcaCiw3s7iKLGpr0JKeDXM/58rHgT2Op2hXlo=;
-        b=MrbT4Az/JZROeAovtsLxW4rgqg1yX5ADvPTWssGYum2DsMH75V5jnEoLWKEvGAkYrc
-         aIHJwBy3+FStC4sq8E5VGUnY0RQCoApod7FfuDasUgzPR6invPy8Aqqd4SfLnlmMRKtv
-         KV2ssW238YDa+JlWUMLJtmXOJPdzr+M+uQOlM95cwHaTqCIjhbGkA0w46t7J9YGJEaha
-         Dh27elv1GZOIoGU2HTQZclUaM9QTfQgu4APTUjX64bjiVdsf9V7pGcKpR2PIisEv6CzY
-         HFyQtVrPzAdJCoknFMxl0vXvQTDfzsFPWBnNfeHpMJW6xtW6Vkv76jjcykpyn8PyaM0Z
-         EHrA==
+        bh=fvJpr7p454Y/UfNPCoQA/axDAfLDDtHMeofcmIJVphY=;
+        b=GhBIQJ4MCSlsJF2LpP+qfSjtNFQsfpCeIVggH5KwmIjla2A5BFnLC7hv7qDbxGg2yw
+         pbDim5hjT29SX0gQqBT680NdWwQgDQZKTS6ZG4+zexllpb6Cz8UoxW0ZC3iV5jffa5+z
+         nUjzlEAkr2Pb5TAmV84ysPyXnOmu68erh7pQOABc0SqSlI9b/Kn7ayT1Hb6yUAyE4wTy
+         FquT432h4R8zSDFBRAkmhrcGBQnoZ1LkeWPEA8B2xNZ+5IrIFGoV/sD/34ETlcjKv9iH
+         liONV2NWTbup5IZyoovyI6ISi0yThmj6HnEwg/GDXOSeU80WIXJyaUYA0++rNKJ/E6qg
+         SrRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723632325; x=1724237125;
+        d=1e100.net; s=20230601; t=1723632327; x=1724237127;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=coYbv4PcaCiw3s7iKLGpr0JKeDXM/58rHgT2Op2hXlo=;
-        b=fNi4tEGDNBOqdamzVbEsJZzegd1YxYSsDfhNMiIj48ONzytBWl11csfTPkPnwLYk0G
-         bkfkjrkMYsb+hcvm180/OtGAnoQpYZpoE8SwO9tZrgObD5BJUqYrqyGC+V2y0s7U4S2+
-         Qm54a8GrTkRdiR5PosrmCooqqVg+7bDhTleSVBwxvpgywabVGgzvqtVcSxfnzE1HS7J/
-         Ue2l5ae8owrEJnFQT8upWpTSJoexS7RKF8h+UgoBFSFbTTbD2PgKyBy92DsyB8XWNJ7z
-         SmAmUKUU8OywAYhYh728sIIYe5O01gBynF35CsBfHX67GU/fIRpCoQItvpVaeuCYpCGQ
-         w4cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Lnnz3/1xFQYgrzieYUxcMBV78IZz/RUjR6BlfF89XHBLUqOevRVZK7QdBoiUeaJhRWL7IOzaDFZVJeyHA0Xh51kQ2x+k2svov9o=
-X-Gm-Message-State: AOJu0Yxoo7L66hD92jVzZBquKX/A1hdTuN9Ubj+1emJ57yN1hKHtPHf7
-	eSU6SzO41/oTE5MBAi+c2MeTQKVQdNDX6wTHrPxgFJj/I8+0Y7Z1DMc02xxs
-X-Google-Smtp-Source: AGHT+IGfriIepvv++2PrjZ9Q9AjLepaO3ymcXMwFRj3SpDze6Sv3EXtnN23wF2rBhfZ8mcwRYC92+g==
-X-Received: by 2002:a17:906:cade:b0:a7a:1cfe:a262 with SMTP id a640c23a62f3a-a8367009c0emr168159466b.55.1723632325229;
-        Wed, 14 Aug 2024 03:45:25 -0700 (PDT)
+        bh=fvJpr7p454Y/UfNPCoQA/axDAfLDDtHMeofcmIJVphY=;
+        b=nmqS4Ay989UcgykCa6JtGkFg0uGrC7tOlQwve1QcOhb0ZUVJEOL4SSTeJCThfF4dVC
+         DsQOtMfeWWNh9binZohaRT20QMJoHJR9y+6ZMAHSkGlJUGZv+hhTMGyy8opGhKU907Zw
+         9+Mse0Ljf8p9zEA1bMAOOe578N+Qq/504Cu+obecvn7uSFAYGfSoa83YnL/3c++ppQgM
+         m877Rle1ax6U6RwZdwyXkiGwrzvrY3l+O8es4dRPN+TmFiTR9Gr2jsP2Cd8ddesFeSnn
+         YX+zOC1UCnLGB7ZY5e6GbCFgMaeqrrI5hmWthhSePTrB3rIxWcufgpcPZDTmIparp4cU
+         pBcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSsJqr4PSbrc78s8QR0G2+fCT0leSHcPW5eL4RT+8M8tgy7VD13a7Ry0FDWTwGRfoXNsc4ZU7XNZBk6/jVlLdPlaI4valZV/m5NSs=
+X-Gm-Message-State: AOJu0YwYN3rmVhF3T7m/pwr8DHGGxQaDCijqBvhvmKKVmtHWTeB0SjEY
+	87wvfCMwkMzsRd2WXyR3rOd5oH7DKhBaQguyEnnmWolv/oOAOCIcgpVpsk0H
+X-Google-Smtp-Source: AGHT+IF5x7vVq+APZiVW0Zf/kYmxy4TtcaaAPS1Fj1piCtyS5MQvRUzOqgbF+0Kt0wNs5ja3bp6E1A==
+X-Received: by 2002:a17:907:e601:b0:a7a:c197:8701 with SMTP id a640c23a62f3a-a8366d5b86cmr180254766b.31.1723632326621;
+        Wed, 14 Aug 2024 03:45:26 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.132.251])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f418692asm157212766b.224.2024.08.14.03.45.24
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f418692asm157212766b.224.2024.08.14.03.45.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 03:45:24 -0700 (PDT)
+        Wed, 14 Aug 2024 03:45:25 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
@@ -74,9 +74,9 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	Conrad Meyer <conradmeyer@meta.com>,
 	linux-block@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC 3/5] filemap: introduce filemap_invalidate_pages
-Date: Wed, 14 Aug 2024 11:45:52 +0100
-Message-ID: <fd078cd48528a6825ec3b158ffc9c09c6b1dec3c.1723601134.git.asml.silence@gmail.com>
+Subject: [RFC 4/5] block: introduce blk_validate_discard()
+Date: Wed, 14 Aug 2024 11:45:53 +0100
+Message-ID: <41ac9ff000cbd47fd8e386ee70e8049c3ac80ead.1723601134.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1723601133.git.asml.silence@gmail.com>
 References: <cover.1723601133.git.asml.silence@gmail.com>
@@ -88,70 +88,86 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-kiocb_invalidate_pages() is useful for the write path, however not
-everything is backed by kiocb and we want to reuse the function for bio
-based discard implementation. Extract and and reuse a new helper called
-filemap_invalidate_pages(), which takes a argument indicating whether it
-should be non-blocking and might return -EAGAIN.
+In preparation to further changes extract a helper function out of
+blk_ioctl_discard() that validates discard arguments.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/pagemap.h |  2 ++
- mm/filemap.c            | 18 +++++++++++++-----
- 2 files changed, 15 insertions(+), 5 deletions(-)
+ block/ioctl.c | 45 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 28 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index d9c7edb6422b..e39c3a7ce33c 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -32,6 +32,8 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 		pgoff_t start, pgoff_t end);
- int kiocb_invalidate_pages(struct kiocb *iocb, size_t count);
- void kiocb_invalidate_post_direct_write(struct kiocb *iocb, size_t count);
-+int filemap_invalidate_pages(struct address_space *mapping,
-+			     loff_t pos, loff_t end, bool nowait);
- 
- int write_inode_now(struct inode *, int sync);
- int filemap_fdatawrite(struct address_space *);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d62150418b91..74baec119239 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2712,14 +2712,12 @@ int kiocb_write_and_wait(struct kiocb *iocb, size_t count)
+diff --git a/block/ioctl.c b/block/ioctl.c
+index e8e4a4190f18..c7a3e6c6f5fa 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -92,39 +92,50 @@ static int compat_blkpg_ioctl(struct block_device *bdev,
  }
- EXPORT_SYMBOL_GPL(kiocb_write_and_wait);
+ #endif
  
--int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
-+int filemap_invalidate_pages(struct address_space *mapping,
-+			     loff_t pos, loff_t end, bool nowait)
+-static int blk_ioctl_discard(struct block_device *bdev, blk_mode_t mode,
+-		unsigned long arg)
++static int blk_validate_discard(struct block_device *bdev, blk_mode_t mode,
++				uint64_t start, uint64_t len)
  {
--	struct address_space *mapping = iocb->ki_filp->f_mapping;
--	loff_t pos = iocb->ki_pos;
--	loff_t end = pos + count - 1;
- 	int ret;
+-	unsigned int bs_mask = bdev_logical_block_size(bdev) - 1;
+-	uint64_t range[2], start, len, end;
+-	struct bio *prev = NULL, *bio;
+-	sector_t sector, nr_sects;
+-	struct blk_plug plug;
+-	int err;
++	unsigned int bs_mask;
++	uint64_t end;
  
--	if (iocb->ki_flags & IOCB_NOWAIT) {
-+	if (nowait) {
- 		/* we could block if there are any pages in the range */
- 		if (filemap_range_has_page(mapping, pos, end))
- 			return -EAGAIN;
-@@ -2738,6 +2736,16 @@ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
- 	return invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
- 					     end >> PAGE_SHIFT);
- }
-+
-+int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
-+{
-+	struct address_space *mapping = iocb->ki_filp->f_mapping;
-+	loff_t pos = iocb->ki_pos;
-+	loff_t end = pos + count - 1;
-+
-+	return filemap_invalidate_pages(mapping, pos, end,
-+					iocb->ki_flags & IOCB_NOWAIT);
+ 	if (!(mode & BLK_OPEN_WRITE))
+ 		return -EBADF;
+-
+ 	if (!bdev_max_discard_sectors(bdev))
+ 		return -EOPNOTSUPP;
+ 	if (bdev_read_only(bdev))
+ 		return -EPERM;
+ 
+-	if (copy_from_user(range, (void __user *)arg, sizeof(range)))
+-		return -EFAULT;
+-
+-	start = range[0];
+-	len = range[1];
+-
+-	if (!len)
+-		return -EINVAL;
++	bs_mask = bdev_logical_block_size(bdev) - 1;
+ 	if ((start | len) & bs_mask)
+ 		return -EINVAL;
++	if (!len)
++		return -EINVAL;
+ 
+ 	if (check_add_overflow(start, len, &end) ||
+ 	    end > bdev_nr_bytes(bdev))
+ 		return -EINVAL;
+ 
++	return 0;
 +}
- EXPORT_SYMBOL_GPL(kiocb_invalidate_pages);
- 
- /**
++
++static int blk_ioctl_discard(struct block_device *bdev, blk_mode_t mode,
++		unsigned long arg)
++{
++	uint64_t range[2], start, len;
++	struct bio *prev = NULL, *bio;
++	sector_t sector, nr_sects;
++	struct blk_plug plug;
++	int err;
++
++	if (copy_from_user(range, (void __user *)arg, sizeof(range)))
++		return -EFAULT;
++	start = range[0];
++	len = range[1];
++
++	err = blk_validate_discard(bdev, mode, start, len);
++	if (err)
++		return err;
++
+ 	filemap_invalidate_lock(bdev->bd_mapping);
+ 	err = truncate_bdev_range(bdev, mode, start, start + len - 1);
+ 	if (err)
 -- 
 2.45.2
 

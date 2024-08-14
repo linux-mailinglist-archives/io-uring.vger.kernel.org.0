@@ -1,75 +1,74 @@
-Return-Path: <io-uring+bounces-2759-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2760-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8410951108
-	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 02:31:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F7695111E
+	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 02:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10F4E1C20BF4
-	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 00:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5930D1C21DA1
+	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 00:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBADD19E;
-	Wed, 14 Aug 2024 00:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB3D63A;
+	Wed, 14 Aug 2024 00:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="btao4+qm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLAwnUSd"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110AE197
-	for <io-uring@vger.kernel.org>; Wed, 14 Aug 2024 00:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA9E469D
+	for <io-uring@vger.kernel.org>; Wed, 14 Aug 2024 00:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723595474; cv=none; b=VE9+f9lMLoNlqXKf5MXV5jZJsNTC0L1Ui1AEAE+Qkp1UUPAG2P8BTA4ph4VkgpURZ86TRCh+8NKmTFgZxu9wlH8S9P1Y6Bo7vg2kf3xJyI6wFGrf/k6siQNZkhx/lbMI0LTNMP6kVjYXp05y6JZDWTEcQNhRZs5Xk17veBRnIwg=
+	t=1723596219; cv=none; b=jbgWh8ymkfJIdLUzCtfRatet4u8gOL8uIAlCW+NPpmFY6nPYWojFIQ0NY66Wqh0IWlOaeuUnW/D/wYl7spVU8yHWhFtspVYVbVuoMAUOJud+RQMy2TqBLIoaAPlhz1OJq3DaJ5zq81ySfIw3NsZkQkILbLHlY2YwzXKSByHXaqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723595474; c=relaxed/simple;
-	bh=2Wy0zZxtVHlaJs4ePhfjMZJYe0RIMLnmfzgEnhTuzss=;
+	s=arc-20240116; t=1723596219; c=relaxed/simple;
+	bh=QrqBvh1sflAALKepSGFgh1RhVdzaE28UnClrKiKRI6k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hIztsS1tKO07/EQXhzNrY1kR/iRCZNG9HZI00QhqYtb+kqAAVO9FqtgGMKzhTKjY27QwCf92JvUZtiBZiSlUWtp7j016s0wm4Ml133TL/TtXGeIjyv3848uVDsrXT/zoKGHpTTJGGpVJ3j93p2acMHqQqVzr28TJw9u9PLd4AXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=btao4+qm; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb77ecd7a2so1119981a91.1
-        for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 17:31:10 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=uemzvQPxT2JLbQH+A7JG/VN7mGG3bPskrqG4C5617xMzNwIeK5yTILV/wvUZghCQJpcDLggUB9txzfbb2klx384aZvM6jmvqX7HuI2UAlLC9QWTTcfTSbGm7e2i+qvzVutI/pvfmVwfpFdrwhBStM+Z9QBisFK045sJMPedDxUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLAwnUSd; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7aada2358fso63070966b.0
+        for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 17:43:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723595470; x=1724200270; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723596216; x=1724201016; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=AQbtvTSoIC70UPekZsDo/+HSOt+9e2i5S/q1C6WHWcI=;
-        b=btao4+qm9xApbzaF7c4RNbc8QQE0ah8fZL/j2dXdhq0I7QZQ3UuMAbKOKEkpF4F4Ik
-         OHdoQVC+Kbit666UxsosjWSghi8BmQIku8KL850OE4mSqI6Me2q35ExQb5Q6QX9QWODQ
-         ObLT5CHSLhUPDcYymDMTVN6CDm8VMcmsVcZOBW8SmCaezHxnoO+SDRxH4r/WCauMnScv
-         XMlViY8vXAHvl+V+g3dBDBT4x/xMKAB25R2PTaCffIBfSBZBv1cPlmZ3i75i3emPUKFC
-         /fkTXumPJvbKsfRWsybOZWIM78KVUG0JEPzL7i8/d6ERSNVO+mwhYBRFDnwkhQVBNQ4r
-         QbgA==
+        bh=CqOyvXFib6EMxaKg14UstEhQYLMJUzTyHq4svwPHBuQ=;
+        b=YLAwnUSdtfo/joi+dkHDohQmutuS54d+992bNlsyhg4R2cObHI/InNdORhKalhlzUu
+         vRI0HqUjRaVj/AHymKqp5o/k0a/STXxmpliNTLEIZT/Yc7sNJf5sBEgUEtXwSfcchSOX
+         bc0y987mQ3K5jEteCNlKr5XtY82jMKwQZ2URxw5geQqK5mzyhxg5KPKsD0Xlx1OXRMXu
+         1UFjtJ4uHcyAXGShyumhbRPqk/2RZEyPw+PmATF7pCIhy7r7Cm2j2Jwx3+982sJeJKhx
+         vA72UaC0gAg99OY6QTA+UBe0DoltOZF0pNJ0YVNivbmoh4WCseH3O6RTkLRXJ+8aIICe
+         GcEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723595470; x=1724200270;
+        d=1e100.net; s=20230601; t=1723596216; x=1724201016;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AQbtvTSoIC70UPekZsDo/+HSOt+9e2i5S/q1C6WHWcI=;
-        b=Y3shEtSSHSI51FtWWNaKoeq1AA+k/UHRdD2m4Ho3FSDCcTX8BxiSWkJfbh6rL7vwo9
-         KaEGwZwHiNtlswo+TJ48Zk25T0LWe36ySCWA8vQu+bn8WUkbLywjfT9RI7rQGNfghSsS
-         TCEWp7UZ6/WOmQ3mEvWEcA8COxG6e/djeUpddcd/MKTF6TE6sHPukdHGNCPv43dQ2foL
-         pGl4GTQ1fHxA6c8PvF3zC6CXfklIILM3LHf0LuW19oXsByBpgAF12iKQWKxoi0zkR+OP
-         J17FVoswHBhmDYwBvcleeJ60MhNQZHSYvz15A9RBhFvIMiguzRsChX13MYsqaZ4Z493U
-         U8sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQks+idKQIVMi439j6aYYHVpx/ZfP+xh/Z30ffDn7LVfhZAWMB89rDjKopNGlFcbF36UbrYZqSwQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfhti2k6NoBggYz8IjEm73CrdUB+QQGMAH3KwsArBIgUNyjebO
-	5U8ktNfHhZEXht3hXu5m0LHSdqti0HTGtrLN2Iewrqb7NFuqxgxSlRZKE7/itR/LCdXhQuoSDdG
-	8
-X-Google-Smtp-Source: AGHT+IHF2117JhxqVeOyCpsaIzyCYag/1b3QqjueeArbgjzXCENKGouSFX0PUk9N7vyJcnxVem1kRQ==
-X-Received: by 2002:a17:90b:3cb:b0:2d0:1abe:5e53 with SMTP id 98e67ed59e1d1-2d3aa88b218mr816966a91.0.1723595469953;
-        Tue, 13 Aug 2024 17:31:09 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3ac7dcf81sm206453a91.16.2024.08.13.17.31.09
+        bh=CqOyvXFib6EMxaKg14UstEhQYLMJUzTyHq4svwPHBuQ=;
+        b=GiwMOCG1dDAPkvJ+OlOsMhLN3tzQ8pgBURWZq6keUB3NULMhL3jWyVR8I7vOYZf5SX
+         SXM1FaZtZiAtd9e/j3AnZaPlGnNgdR7hYhHYjG9OLcVbQf4KnL1uuDga5DygDkPJYvEi
+         BFSjknsirIeAy/QlCdlzAqhVEiYozo0SZ3pU9CxDdelwdwMXU9xt8kkrakn0e5fGIYMg
+         CkZHpyWddKIOUL0ZNNevwmi4Gq5csDQqOPVVi3NcSUBjgPbBzmKVA5q8sQdhONCVaeml
+         F9hJFoZxgE2D5FDVB7e5oXCtlYmsCnAOa7imbgRllwm6EJcth2Xyx8gyMeao+W/YN1CU
+         gpcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVo9d4fBKsQooPVGNRg69bnNMx88LWcw6IwVYlQ/pCEltdtpjV4PbmzKb2CG97FkyWRCRKX7owggR5xClH07goJM5OOSpi1XmM=
+X-Gm-Message-State: AOJu0Yw19IBUM4Z8/5sSGxXCrVZCIMnTIUJuQfmMWor7VLgn9jF80+qK
+	2AM3Cx+KFB7kUFWiFLAK/hHDOXr/luL/G9NMkEhIZzdvbts9Z5Uy0DuprsrG
+X-Google-Smtp-Source: AGHT+IGkYNUfznYIQhVjzKkvsS4UdWH0YXRMBGEkNn511LKCYfH65FTcJve4DdTTry9ieY18i8WqOA==
+X-Received: by 2002:a17:907:3daa:b0:a72:64f0:552e with SMTP id a640c23a62f3a-a836ac120c8mr28998166b.19.1723596215359;
+        Tue, 13 Aug 2024 17:43:35 -0700 (PDT)
+Received: from [192.168.42.69] ([148.252.132.251])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f414eb8dsm110524166b.162.2024.08.13.17.43.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 17:31:09 -0700 (PDT)
-Message-ID: <ff475d82-0c2e-4200-a7ef-77a074218899@kernel.dk>
-Date: Tue, 13 Aug 2024 18:31:08 -0600
+        Tue, 13 Aug 2024 17:43:35 -0700 (PDT)
+Message-ID: <0575d23b-bf1b-4ffd-9edf-b12c3a8ebe2c@gmail.com>
+Date: Wed, 14 Aug 2024 01:44:10 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -79,8 +78,8 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] io_uring/napi: remove duplicate io_napi_entry timeout
  assignation
-To: Olivier Langlois <olivier@trillion01.com>,
- Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+To: Olivier Langlois <olivier@trillion01.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org
 References: <145b54ff179f87609e20dffaf5563c07cdbcad1a.1723423275.git.olivier@trillion01.com>
  <05255cc5136254574b884b5e10aae7cf8301662a.camel@trillion01.com>
  <8c1ee6ab-8425-4d13-80f5-ff085d12dc91@kernel.dk>
@@ -91,12 +90,12 @@ References: <145b54ff179f87609e20dffaf5563c07cdbcad1a.1723423275.git.olivier@tri
  <bea51c28-17e0-4693-96bf-502ffa75f01a@kernel.dk>
  <a01899e4b4e6f83f5d191a1a26615655d97a4718.camel@trillion01.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
+From: Pavel Begunkov <asml.silence@gmail.com>
 In-Reply-To: <a01899e4b4e6f83f5d191a1a26615655d97a4718.camel@trillion01.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/13/24 6:09 PM, Olivier Langlois wrote:
+On 8/14/24 01:09, Olivier Langlois wrote:
 > On Tue, 2024-08-13 at 12:35 -0600, Jens Axboe wrote:
 >> On 8/13/24 11:22 AM, Olivier Langlois wrote:
 >>> On Mon, 2024-08-12 at 14:40 -0600, Jens Axboe wrote:
@@ -144,17 +143,12 @@ On 8/13/24 6:09 PM, Olivier Langlois wrote:
 > with a prototype around the same concept:
 > https://lore.kernel.org/io-uring/1be64672f22be44fbe1540053427d978c0224dfc.camel@trillion01.com/T/#mc7271764641f9c810ea5438ed3dc0662fbc08cb6
 
-Sorry if I made you feel like that, was not my intent. I just latched on
-to the ops setup and didn't like that at all. I do think
-pre-registrering an ID upfront is a good change, as it avoids a bunch of
-hot path checking. And for a lot of use cases, single NAPI instance per
-ring is indeed the common use case, by far.
-
-Please realize that I get (and answer) a lot of email and also have a
-lot of other things on my plate than answer emails, hence replies can
-often be short and to the point. If I don't mention a part of your
-patch, I either missed it or figured it necessitated a rework based on
-the other feedback.
+I've been playing with it but more of as a mean to some
+other ideas. I had hard time to justify to myself to send
+anything just to change the scheme, but it doesn't mean it's
+a bad idea to get something like that merged. It just needs
+some brushing mostly around excessive complexity, and it's
+a part of normal dev process.
 
 > you also have to understand that all the small napi issues that I have
 > fixed this week are no stranger from me working on this new idea. The
@@ -164,33 +158,18 @@ the other feedback.
 > keep in mind that I am by far a git magician. I am a very casual
 > user... Anything that is outside the usual beaten trails such as
 > reordoring commits or breaking them down feels perilious to me...
-
-Reviews and fixes are _always_ appreciated, even if emails don't include
-that. They sure could, but then it'd just be a copied blurb, and I don't
-think that's very genuine. FWIW, your patch submissions have been fine.
-The critique I had for your patch was that you should not include little
-fixes with larger changes. That's just not how kernel patches are done.
-You do the little fixes first, and then the bigger change on top as
-separate changes. The reason for that are two-fold: it makes it easier
-to backport them to stable, if that is needed, and it makes it easier to
-review the actual functional change. Both of those are really important.
-
+> 
 > I had 230+ lines changes committed when you confirmed that few lines
 > should be changed to address this new RCU issue. I did figure that it
 > would not that big a deal to include them with the rest of my change.
 
-See above, it is a big deal, and honestly something I recommend for any
-kind of project, not just the kernel.
-
-> that being said, if my patch submission is acceptable conditional to
-> needed rework, I am willing to learn how to better use git to meet your
-> requirements.
-
-Your git skills are fine, don't worry about that, there's nothing wrong
-with the mechanics of the submission. It's just the changes themselves
-that need a splitting up, and rework.
+The main reason to have fixes in separate commits from new
+features is because we're backporting fixes to older kernels.
+It's usually just a cherry-pick, but being a part of a larger
+commit complicates things a lot. There are also other usual
+reasons like patch readability, keeping git history, not
+mixing unrelated things together and so on.
 
 -- 
-Jens Axboe
-
+Pavel Begunkov
 

@@ -1,160 +1,166 @@
-Return-Path: <io-uring+bounces-2757-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2758-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FDBB950FCD
-	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 00:35:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893609510E0
+	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 02:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 826A9B21B0D
-	for <lists+io-uring@lfdr.de>; Tue, 13 Aug 2024 22:35:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A4271C21372
+	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 00:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7D313635D;
-	Tue, 13 Aug 2024 22:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrAcvfO4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40776197;
+	Wed, 14 Aug 2024 00:09:47 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A38370
-	for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 22:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B5C195
+	for <io-uring@vger.kernel.org>; Wed, 14 Aug 2024 00:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723588535; cv=none; b=FqzHXOq9dbW3xDPuW3gFAU3M2Ok5+RWnZzuwm0M2f4mOK2GGNWoU6+l2jXEIWj6Q+Eg3ctIkZHhzfTHk2sOdpggnpzr0ZEKtPAARdaW1AeHqXD1C+OCaRs630fwEyWCroG+XNSaAY83+tZR8jl08kebQUpXYtlhiCFhqJqbzJxg=
+	t=1723594187; cv=none; b=pIH3REJh98BBedzqVJZOgt3EvPrPDpHlP1n/yaP0Z103+qsy1xFLxnOLsWmOABIjy1xhcI6295rKnVLZZ306s0hxsVhEEz2r+DhNzt0X/nTmh64bnMDdn6+YewnzS7r6hVrG7GG/cxO4iev+NrQOWZLnfI4EJPPnZnFa8BTNJkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723588535; c=relaxed/simple;
-	bh=77496m2abrxEQVmRZIZWUjDUrlNjeSLEdYlATnxGszU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YIi5Oo1LlQruxBaokN+NbGxlJ+tOiSOosgeyN2hAMpPhraYt+nDNN1Jl8Ba1Rn1kG/+R1og4MRw59gLjR+xeXT149nDiFF6Pl5JmQBjjHu6Ylg2j5U86YgUZOg9geGXfnYQmWTZHDCMNG9fszN7xRanUMEUJig0KLzGkCwYovLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SrAcvfO4; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-530c2e5f4feso6140052e87.0
-        for <io-uring@vger.kernel.org>; Tue, 13 Aug 2024 15:35:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723588531; x=1724193331; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=47x11KgbZEARAnGZBQ+LaTRjIinzqaQ7vbKlWxtgyJA=;
-        b=SrAcvfO4q9hnRazZrsLLqY40s8Ps8FPe5XEt8LGAo3FwT61FF7elRP2Z8X78ylL6sy
-         E2Jsrgskj3mM0z7jNQNdYs8KeJyCau5kiy6R/j5p43K7U5IYVjBe1qJex9GjWQab0+RS
-         FhbblctzgiCE4q4p+4fCaONdZZMId9CE3LrKsekLg8OprKZECphjxUYyudbnumi4cf/k
-         A6BVQD4PizWVcZnc8dW8LkQb8mFO82qqa8ud4gUZCtNzC1qqDurG/cEzK9p6yNTA83Av
-         ydjYfVGF5m+TiMWcn0ERxOc4Y5ywgyGQ+y+uH1rGKo9rx8pXOMy9VRjnC3s6uuIVVMXy
-         VswA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723588531; x=1724193331;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=47x11KgbZEARAnGZBQ+LaTRjIinzqaQ7vbKlWxtgyJA=;
-        b=WNMF+62p2e9VV1GBrZRIVTCTF3UWDcHh88YziXg3F/eXYQLwKcCOIuFjivz4gdRJ5+
-         M99Kg+CVUKzVGeJg9Xue58662tTG3i7LQXI/7fabYxgyNUd8cVmmraseK551Afuee5oM
-         y4xJ57hXbol7LIT4F1dkKjvEp1wqYg/fe8OqE1MRdIoTQ5eI6W86McZOhm4nXFfFJPom
-         8/ZXHtmSPtAispyNvsKA+JnCA4tJhVSnD6pMf2tej7gVl+d1RvUNlhe9C2BhzIBvDdcD
-         J2L0QCcPAngaC5SrwjSKtMmOmWC0T6fvSkQ/5n0EiR/laUU+EznFnicdmmMvrgQKRF20
-         ZUvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwHTpOzDfnUjezUL4iLKCYesIFyoV2D+eNzH4YIUFkWMBlI5lilRr1EQTHif5Xy3Ax4mzTkTpCkKPtCPGdDJ2vG3Q+CppDa6s=
-X-Gm-Message-State: AOJu0Yz6jzcwIqsaL+WTCeQS6CsDxdKjHmuJVdCi4moXuAxB+a42WN/2
-	drbocqHopT6wm/rBKKwQu7XebRICywyVx3n13JaZw9cKBCa7f4Yu
-X-Google-Smtp-Source: AGHT+IGvour3g7/jrTeZ0ARGxFsVe5xenIei7LauVP//uha54SwYQSBBu2/vgHiFoN8stEBEnO5rPA==
-X-Received: by 2002:a05:6512:398a:b0:52e:9ecd:3465 with SMTP id 2adb3069b0e04-532edbcf258mr402215e87.57.1723588530845;
-        Tue, 13 Aug 2024 15:35:30 -0700 (PDT)
-Received: from [192.168.42.69] ([148.252.132.251])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411b578sm105054766b.142.2024.08.13.15.35.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 15:35:30 -0700 (PDT)
-Message-ID: <70c5f2ff-d134-4e90-8e3d-e9f06ba8f407@gmail.com>
-Date: Tue, 13 Aug 2024 23:36:06 +0100
+	s=arc-20240116; t=1723594187; c=relaxed/simple;
+	bh=w5BRKB/qXJqkIiZknMLkaY1g+GowXtdrpHVYYWiXp/8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=f+RKTXbC4uJlPpvoYblDsqiWwO9lLKqesRKOO0u6hmxsm6ftI1DtA4MWzpOz7+h0bTORHbw5/uESUiIgbJrVgiul97ahm24ZeZN72px+CcmRHxl1A7ib0KtxOo5lEjwmxJJ/bp/zCRT2aIfxriMlXr1CtdS1QEmefdEmClQidYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
+Received: from [45.44.224.220] (port=58188 helo=[192.168.1.177])
+	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <olivier@trillion01.com>)
+	id 1se1aB-0003mc-12;
+	Tue, 13 Aug 2024 20:09:43 -0400
+Message-ID: <a01899e4b4e6f83f5d191a1a26615655d97a4718.camel@trillion01.com>
+Subject: Re: [PATCH] io_uring/napi: remove duplicate io_napi_entry timeout
+ assignation
+From: Olivier Langlois <olivier@trillion01.com>
+To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+	io-uring@vger.kernel.org
+Date: Tue, 13 Aug 2024 20:09:42 -0400
+In-Reply-To: <bea51c28-17e0-4693-96bf-502ffa75f01a@kernel.dk>
+References: 
+	<145b54ff179f87609e20dffaf5563c07cdbcad1a.1723423275.git.olivier@trillion01.com>
+	 <05255cc5136254574b884b5e10aae7cf8301662a.camel@trillion01.com>
+	 <8c1ee6ab-8425-4d13-80f5-ff085d12dc91@kernel.dk>
+	 <f1397b51-8d41-4f91-aa25-37f771fe4e13@kernel.dk>
+	 <8887f2d97c1dafb6ceaf9f5c492457f642f532dd.camel@trillion01.com>
+	 <5730c0c1-73cb-42b5-8af3-afe60529f57d@kernel.dk>
+	 <e7e8a80ffcca7b3527b74be5741c927937517291.camel@trillion01.com>
+	 <bea51c28-17e0-4693-96bf-502ffa75f01a@kernel.dk>
+Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
+ keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
+ 5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
+ g5nV/401re30kRfA8OPivpnj6mZhU/9RTwjbVPPb8dPlm2gFLXwGPeDITgSRs+KJ0mM37fW8EatJs
+ 0a8J1Nk8wBvT7ce+S2lOrxDItra9pW3ukze7LMirwvdMRC5bdlw2Lz03b5NrOUq+Wxv7szn5Xr9f/
+ HdaCH7baWNAO6H/O5LbJ3zndewokEmKk+oCIcXjaH0U6QK5gJoO+3Yt5dcTo92Vm3VMxzK2NPFXgp
+ La7lR9Ei0hzQ0zptyFFyftt9uV71kMHldaQaSfUTsu9dJbnS2kI/j+F2S1q6dgKi3DEm0ZRGvjsSG
+ rkgPJ5T16GI1cS2iQntawdr0A1vfXiB9xZ1SMGxL/l6js9BVlIx/CBGOJ4L190QmxJlcAZ2VnQzrl
+ ramRUv01xb00IPJ5TBft5IJ+SY0FnY9pIERIl6w9khwLt/oGuKNmUHmzJGYoJHYfh72Mm8RQ1R/JS
+ o6v85ULBGdEC3pQq1j//OPyH3egiXIwFq6BtULH5CvsxQkSqgj1MpjwfgVJ8VbjNwqwBXHjooEORj
+ vFQqWQki6By3QARAQABtDJPbGl2aWVyIExhbmdsb2lzIChNeSBrZXkpIDxvbGl2aWVyQHRyaWxsaW
+ 9uMDEuY29tPokCNwQTAQgAIQUCVh3TJwIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRBlaka
+ GGsWHEI1AD/9sbj+vnFU29WemVqB4iW+9RrHIcbXI4Jg8WaffTQ8KvVeCJ4otzgVT2nHC2A82t4PF
+ 0tp21Ez17CKDNilMvOt8zq6ZHx36CPjoqUVjAdozOiBDpC4qB6ZKYn+gqSENO4hqmmaOW57wT9vII
+ v6mtHmnFvgpOEJl6wbs8ArHDt0BLSjc8QQfvBhoKoWs+ijQTyvFGlQl0oWxEbUkR1J3gdft9Oj9xQ
+ G4OFo73WaSEK/L9IalU2ulCBC+ucSP9McoDxy1i1u8HUDrV5wBY1zafc9zVBcMNH6+ZjxwQmZXqtz
+ ATzB3RbSFHAdmvxl8q6MeS2yx7Atk0CXgW9z5k2KeuZhz5rVV5A+D19SSGzW11uYXsibZx/Wjr9xB
+ KHB6U7qh5sRHaQS191NPonKcsXXAziR+vxwQTP7ZKfy+g5N/e6uivoUnQrl9uvUDDPXEpwVNSoVws
+ Vn4tNyrGEdN11pHDbH5fSGzdpbY8+yczUoxMmsEQe/fpVwRBZUqafRn2TVUhV0qqzsUuQcTNw1zIZ
+ JgvkqrHgd4ivd2b1bXBczmu/wMGpEnF6cWzSQDiwC1NF3i+gHCuD8IX1ujThWtzXsn0VtrMkrRCbn
+ ponVQ6HcbRYYXPuK0HRRjCSuAKo5porVONepiOSmu0FBrpGqBkpBtLrzKXoi1yt/7a/wGdMcVhYGg
+ vA==
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] abstract napi tracking strategy
-To: Olivier Langlois <olivier@trillion01.com>, Jens Axboe <axboe@kernel.dk>,
- io-uring@vger.kernel.org
-References: <cover.1723567469.git.olivier@trillion01.com>
- <c614ee28-eeb2-43bd-ae06-cdde9fd6fee2@kernel.dk>
- <a818bc04dfdcdbacf7cc6bf90c03b8a81d051328.camel@trillion01.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <a818bc04dfdcdbacf7cc6bf90c03b8a81d051328.camel@trillion01.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 8/13/24 22:25, Olivier Langlois wrote:
-> On Tue, 2024-08-13 at 12:33 -0600, Jens Axboe wrote:
->> On 8/13/24 10:44 AM, Olivier Langlois wrote:
->>> the actual napi tracking strategy is inducing a non-negligeable
->>> overhead.
->>> Everytime a multishot poll is triggered or any poll armed, if the
->>> napi is
->>> enabled on the ring a lookup is performed to either add a new napi
->>> id into
->>> the napi_list or its timeout value is updated.
->>>
->>> For many scenarios, this is overkill as the napi id list will be
->>> pretty
->>> much static most of the time. To address this common scenario, a
->>> new
->>> abstraction has been created following the common Linux kernel
->>> idiom of
->>> creating an abstract interface with a struct filled with function
->>> pointers.
->>>
->>> Creating an alternate napi tracking strategy is therefore made in 2
->>> phases.
->>>
->>> 1. Introduce the io_napi_tracking_ops interface
->>> 2. Implement a static napi tracking by defining a new
->>> io_napi_tracking_ops
->>
->> I don't think we should create ops for this, unless there's a strict
->> need to do so. Indirect function calls aren't cheap, and the CPU side
->> mitigations for security issues made them worse.
->>
->> You're not wrong that ops is not an uncommon idiom in the kernel, but
->> it's a lot less prevalent as a solution than it used to. Exactly
->> because
->> of the above reasons.
->>
-> ok. Do you have a reference explaining this?
-> and what type of construct would you use instead?
-> 
-> AFAIK, a big performance killer is the branch mispredictions coming
-> from big switch/case or if/else if/else blocks and it was precisely the
-> reason why you removed the big switch/case io_uring was having with
-> function pointers in io_issue_def...
+On Tue, 2024-08-13 at 12:35 -0600, Jens Axboe wrote:
+> On 8/13/24 11:22 AM, Olivier Langlois wrote:
+> > On Mon, 2024-08-12 at 14:40 -0600, Jens Axboe wrote:
+> > >=20
+> > >=20
+> > > > 3. I am surprised to notice that in __io_napi_do_busy_loop(),
+> > > > list_for_each_entry_rcu() is called to traverse the list but
+> > > > the
+> > > > regular methods list_del() and list_add_tail() are called to
+> > > > update
+> > > > the
+> > > > list instead of their RCU variant.
+> > >=20
+> > > Should all just use rcu variants.
+> > >=20
+> > > Here's a mashup of the changes. Would be great if you can test -
+> > > I'll
+> > > do
+> > > some too, but always good with more than one person testing as it
+> > > tends
+> > > to hit more cases.
+> > >=20
+> > Jens,
+> >=20
+> > I have integrated our RCU corrections into
+> > https://lore.kernel.org/io-uring/5fc9dd07e48a7178f547ed1b2aaa0814607fa2=
+46.1723567469.git.olivier@trillion01.com/T/#u
+> >=20
+> > and my testing so far is not showing any problems...
+> > but I have a very static setup...
+> > I had no issues too without the corrections...
+>=20
+> Thanks for testing, but regardless of whether that series would go in
+> or
+> not, I think those rcu changes should be done separately and upfront
+> rather than be integrated with other changes.
+>=20
+sorry about that...
 
-Compilers can optimise switch-case very well, look up what jump
-tables is, often works even better than indirect functions even
-without mitigations. And it wasn't converted because of performance,
-it was a nice efficient jump table before.
+I am going to share a little bit how I currently feel. I feel
+disappointed because when I reread your initial reply, I have not been
+able to spot a single positive thing said about my proposal despite
+that I have prealably tested the water concerning my idea and the big
+lines about how I was planning to design it. All, I have been told from
+Pavel that the idea was so great that he was even currently playing
+with a prototype around the same concept:
+https://lore.kernel.org/io-uring/1be64672f22be44fbe1540053427d978c0224dfc.c=
+amel@trillion01.com/T/#mc7271764641f9c810ea5438ed3dc0662fbc08cb6
 
-And not like compilers can devirtualise indirect calls either, I'd
-say it hits the pipeline even harder. Maybe not as hard as a long
-if-else-if in the final binary, but jump tables help and we're
-talking about a single "if".
+you also have to understand that all the small napi issues that I have
+fixed this week are no stranger from me working on this new idea. The
+RCU issues that I have reported back have been spotted when I was doing
+my final code review before testing my patch before submitting it.
 
-I totally agree, it's way over engineered.
+keep in mind that I am by far a git magician. I am a very casual
+user... Anything that is outside the usual beaten trails such as
+reordoring commits or breaking them down feels perilious to me...
 
-> I consumme an enormous amount of programming learning material daily
-> and this is the first time that I am hearing this.
-> 
-> If there was a performance concern about this type of construct and
-> considering that my main programming language is C++, I am bit
-> surprised that I have not seen anything about some problems with C++
-> vtbls...
+I had 230+ lines changes committed when you confirmed that few lines
+should be changed to address this new RCU issue. I did figure that it
+would not that big a deal to include them with the rest of my change.
 
-Even without mitigation business, we can look up a lot about
-devirtualisation, which is also why "final" keyword exists in c++.
+that being said, if my patch submission is acceptable conditional to
+needed rework, I am willing to learn how to better use git to meet your
+requirements.
 
--- 
-Pavel Begunkov
+Greetings,
+
 

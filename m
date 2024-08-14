@@ -1,145 +1,108 @@
-Return-Path: <io-uring+bounces-2768-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2769-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2459C951A56
-	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 13:47:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C2F951BAC
+	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 15:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33051F24465
-	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 11:47:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFA521C216E2
+	for <lists+io-uring@lfdr.de>; Wed, 14 Aug 2024 13:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF971B012A;
-	Wed, 14 Aug 2024 11:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65B01879;
+	Wed, 14 Aug 2024 13:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="o6m9NlFq"
 X-Original-To: io-uring@vger.kernel.org
-Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DB31B0124
-	for <io-uring@vger.kernel.org>; Wed, 14 Aug 2024 11:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1851DFE8
+	for <io-uring@vger.kernel.org>; Wed, 14 Aug 2024 13:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723635851; cv=none; b=S/KihtyxFFDGtfb114lHNFRJVyeS4nxRmWZ5AvfpqcRd8lwdBlWN6HOcVybZFbeML8DzbQx71+/kZHRZKJn4tTD+X17ku3pwHUmXGaV409uvZZ7JEedqgCoGOQzksb8id3yxOfGNssJGawuq4rQHEBnJFOedpJ6uUuP9HEEOnKA=
+	t=1723641484; cv=none; b=WkU8rxEEdxpryL8EdtoLyF5zsMCjxMUFfYxUBT+eUW8Cc5V+MehT3Y6KL7zz0FHXRYmlTC5GIxyhsc7c0PpE6z2ouurKXOb8cZa8Gy6tzvUoZj1x+Dg/xmUd+S5etpXlLvlxfa6dZ9+C7arNflnDAUCKUt3kdRk19ual8DjK0Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723635851; c=relaxed/simple;
-	bh=A4XHFifphxgE+SkaW5hXnDUVRFY+4Y6mNqsdNReuhok=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P3ZIta2MuVmoRHms11Z0A3dLr+3fxXR9g1kukKOi4JqBVbSqPi1sJ0LnYYQQXrHcr4sbROvAGqYGY0Mz9qiVZfE8XkBJMyiGLf9wPZOXT5AYbD283ywU8vYPWf6cpedkMy91M1PPgVF9X9BOI1HQbye2QKyIjWDp0gtc9i4Geo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=52992 helo=[192.168.1.177])
-	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <olivier@trillion01.com>)
-	id 1seCQB-0002O4-0c;
-	Wed, 14 Aug 2024 07:44:07 -0400
-Message-ID: <f86da1b705e98cac8c72e807ca50d2b4ce3a50a2.camel@trillion01.com>
-Subject: Re: [PATCH 1/2] io_uring/napi: Introduce io_napi_tracking_ops
-From: Olivier Langlois <olivier@trillion01.com>
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
-	io-uring@vger.kernel.org
-Date: Wed, 14 Aug 2024 07:44:05 -0400
-In-Reply-To: <bfbb03a7ad6256b68d08429c0888a05032a1b182.1723567469.git.olivier@trillion01.com>
-References: <cover.1723567469.git.olivier@trillion01.com>
-	 <bfbb03a7ad6256b68d08429c0888a05032a1b182.1723567469.git.olivier@trillion01.com>
-Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
- keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
- 5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
- g5nV/401re30kRfA8OPivpnj6mZhU/9RTwjbVPPb8dPlm2gFLXwGPeDITgSRs+KJ0mM37fW8EatJs
- 0a8J1Nk8wBvT7ce+S2lOrxDItra9pW3ukze7LMirwvdMRC5bdlw2Lz03b5NrOUq+Wxv7szn5Xr9f/
- HdaCH7baWNAO6H/O5LbJ3zndewokEmKk+oCIcXjaH0U6QK5gJoO+3Yt5dcTo92Vm3VMxzK2NPFXgp
- La7lR9Ei0hzQ0zptyFFyftt9uV71kMHldaQaSfUTsu9dJbnS2kI/j+F2S1q6dgKi3DEm0ZRGvjsSG
- rkgPJ5T16GI1cS2iQntawdr0A1vfXiB9xZ1SMGxL/l6js9BVlIx/CBGOJ4L190QmxJlcAZ2VnQzrl
- ramRUv01xb00IPJ5TBft5IJ+SY0FnY9pIERIl6w9khwLt/oGuKNmUHmzJGYoJHYfh72Mm8RQ1R/JS
- o6v85ULBGdEC3pQq1j//OPyH3egiXIwFq6BtULH5CvsxQkSqgj1MpjwfgVJ8VbjNwqwBXHjooEORj
- vFQqWQki6By3QARAQABtDJPbGl2aWVyIExhbmdsb2lzIChNeSBrZXkpIDxvbGl2aWVyQHRyaWxsaW
- 9uMDEuY29tPokCNwQTAQgAIQUCVh3TJwIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRBlaka
- GGsWHEI1AD/9sbj+vnFU29WemVqB4iW+9RrHIcbXI4Jg8WaffTQ8KvVeCJ4otzgVT2nHC2A82t4PF
- 0tp21Ez17CKDNilMvOt8zq6ZHx36CPjoqUVjAdozOiBDpC4qB6ZKYn+gqSENO4hqmmaOW57wT9vII
- v6mtHmnFvgpOEJl6wbs8ArHDt0BLSjc8QQfvBhoKoWs+ijQTyvFGlQl0oWxEbUkR1J3gdft9Oj9xQ
- G4OFo73WaSEK/L9IalU2ulCBC+ucSP9McoDxy1i1u8HUDrV5wBY1zafc9zVBcMNH6+ZjxwQmZXqtz
- ATzB3RbSFHAdmvxl8q6MeS2yx7Atk0CXgW9z5k2KeuZhz5rVV5A+D19SSGzW11uYXsibZx/Wjr9xB
- KHB6U7qh5sRHaQS191NPonKcsXXAziR+vxwQTP7ZKfy+g5N/e6uivoUnQrl9uvUDDPXEpwVNSoVws
- Vn4tNyrGEdN11pHDbH5fSGzdpbY8+yczUoxMmsEQe/fpVwRBZUqafRn2TVUhV0qqzsUuQcTNw1zIZ
- JgvkqrHgd4ivd2b1bXBczmu/wMGpEnF6cWzSQDiwC1NF3i+gHCuD8IX1ujThWtzXsn0VtrMkrRCbn
- ponVQ6HcbRYYXPuK0HRRjCSuAKo5porVONepiOSmu0FBrpGqBkpBtLrzKXoi1yt/7a/wGdMcVhYGg
- vA==
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1723641484; c=relaxed/simple;
+	bh=1I+cTPzjcUxDabUKeaUo2ikK2SYrm+UZ3pWr1dbAhfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AtOJlukzm3HRNkR9Ir4bY0fwjREH9RER6Vd46xDHD7uvLnB9KL55wNfbEb5Ea/0u0oyY/ZfkyL1JPMYCGVNbuGRQAAxJ6DCPrS+sgpn4XlF46ZtBBGN3KMq7LsyWvM4TLjgfhAHsErGOWkI/JSL+mHfAO3tYycYcT3qIY9RTtRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=o6m9NlFq; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-72703dd2b86so33579a12.1
+        for <io-uring@vger.kernel.org>; Wed, 14 Aug 2024 06:18:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723641479; x=1724246279; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=SmVq3vPDAtlzq78jyyu5NlxulBiXolyiYgJIgR+2Wow=;
+        b=o6m9NlFqp0XmY5xX4qKhriIClM/FLlSwxvSryff62ca83cseYtfG5PgtYhnvVaXmxS
+         Bi/hUQnza7m/R2HcbIv9CeaxVU6z39OjSwfgVS3akV8uQ/jg2ZaRtZxHriJUWWPOhgUF
+         m22dWIH+I+RexZ4oq/jn6q2jW1s0KZv4KbYFUERmvDXz+PkWDcC+as8opz+iBItQeM2h
+         Jj4u1BFSINhImjxezXROkDTe7AQ1gwZkpi254tTYzfHf22WijyDDHdAXFZELry4Q6Hev
+         OqqsDaBhqWCuxZXmbyIlgq/0i91ZFGnNEWPsgX7vXH6Hvp93znrkWO20DwoGmvAG9N8z
+         jySA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723641479; x=1724246279;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SmVq3vPDAtlzq78jyyu5NlxulBiXolyiYgJIgR+2Wow=;
+        b=rzQCvfNYNmKMHDN5gTUDvE9pudpETMD1eOEfJdgZ6ETRS/vYjfsY16v2WLiqCfIG7G
+         pUIvbmm/BdXEqY6O0f32wgJlBdxJB0SKblAlW86NQJsmAHvhdKqKnhDswqMYBHLhlJJu
+         UxXzFdijeDOlZWcemMzTN4FK5kowcDa+RO5B8ZzP0sb/kfHoIyQN/k28S3z2RB/Jlnr0
+         t8W4M8/YD9geoNEkR431H+Rj7tkDac2EUMuj7V5EM1fd5AWmwt4//2aA+Kr/KFskDzlf
+         9OS/UyXFC6bODQgPRp7ouWcdFir5VdxpxkN+2kR9BkRuSyRcBVlQXY6Zh3041c0bh/Sx
+         jwGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkMbcOhnVibYKELqE19VhKRYVABbF1Huy6bglNPesZ2Yo4eslAwVl7vkU+qUcN79vQvmR+AoRB+Li5/5fDWbv5DkaHLjDcaxQ=
+X-Gm-Message-State: AOJu0YwAFMt8QEtASGl9cakdyt0Bk0Ndkq1SxuoAZWRcsBrNwUZXAUeE
+	YOJT7oYYLPlIoAYi7wPVrZvInp0H1aEVv6Utdu/PRpQTNb8LA8pb6H5nYvmL8s8=
+X-Google-Smtp-Source: AGHT+IG4mZKe3ml0zKtydBNHaK1yxKDC7TxC2dMWsAY/wttfvKmaUbw8Akgd8LDrnzSeVz/gDXdL1w==
+X-Received: by 2002:a05:6a21:3286:b0:1c4:84ee:63d1 with SMTP id adf61e73a8af0-1c8eb050722mr2128608637.9.1723641479537;
+        Wed, 14 Aug 2024 06:17:59 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3ac7f9dc6sm1681361a91.29.2024.08.14.06.17.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 06:17:58 -0700 (PDT)
+Message-ID: <db299eac-8a5f-4cb1-9b1e-ab6e86fea9b9@kernel.dk>
+Date: Wed, 14 Aug 2024 07:17:57 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] io_uring/napi: Introduce io_napi_tracking_ops
+To: Olivier Langlois <olivier@trillion01.com>,
+ Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1723567469.git.olivier@trillion01.com>
+ <bfbb03a7ad6256b68d08429c0888a05032a1b182.1723567469.git.olivier@trillion01.com>
+ <f86da1b705e98cac8c72e807ca50d2b4ce3a50a2.camel@trillion01.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <f86da1b705e98cac8c72e807ca50d2b4ce3a50a2.camel@trillion01.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-08-13 at 13:10 -0400, Olivier Langlois wrote:
->=20
-> ---
-> =A0include/linux/io_uring_types.h | 12 +++++-
-> =A0io_uring/fdinfo.c=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0 4 ++
-> =A0io_uring/napi.c=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 | 76 ++++=
-++++++++++++++++++++++++++--
-> --
-> =A0io_uring/napi.h=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 | 11 +---=
--
-> =A04 files changed, 86 insertions(+), 17 deletions(-)
->=20
-> diff --git a/include/linux/io_uring_types.h
-> b/include/linux/io_uring_types.h
-> index 3315005df117..c1d1b28f8cca 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -217,6 +217,16 @@ struct io_alloc_cache {
-> =A0	size_t			elem_size;
-> =A0};
-> =A0
-> +#ifdef CONFIG_NET_RX_BUSY_POLL
-> +struct io_napi_tracking_ops {
-> +	void (*add_id)(struct io_kiocb *req);
-> +	bool (*do_busy_loop)(struct io_ring_ctx *ctx,
-> +			=A0=A0=A0=A0 void *loop_end_arg);
-> +	void (*show_fdinfo)(struct io_ring_ctx *ctx,
-> +			=A0=A0=A0 struct seq_file *m);
-> +};
-> +#endif
-> +
-I have kept thinking about the critic...
+On 8/14/24 5:44 AM, Olivier Langlois wrote:
+> At this point, the only thing remaining point to determine is which
+> between calling a function pointer of calling a 2 conditional branches
+> code is more efficient. and I am of the opinion that the function
+> pointer is better due to my C++ background but this is debatable...
 
-add_id is either NULL or equal to dynamic_tracking_add_id and the
-pointer is even tested before calling it. This pointer is easily
-removed.
+As mentioned earlier, your C++ background for systems programming isn't
+super relevant here. Even without mitigations, a perfectly predictable
+branch is surely faster than an indirect function call. And with
+mitigations, it's not even close.
 
-show_fdinfo, well, this is is so unimportant, if you don't like it, it
-is very easily removable too. nobody will notice.
+It's a single handler, just do the branches. I don't think this is worth
+fretting over.
 
-the only thing that would remains is do_busy_loop. Its value can either
-be:
-
-- no_tracking_do_busy_loop
-- dynamic_tracking_do_busy_loop
-- static_tracking_do_busy_loop
-
-so the whole io_napi_tracking_ops could be replaced by a single
-function pointer
-
-At this point, the only thing remaining point to determine is which
-between calling a function pointer of calling a 2 conditional branches
-code is more efficient. and I am of the opinion that the function
-pointer is better due to my C++ background but this is debatable...
+-- 
+Jens Axboe
 
 

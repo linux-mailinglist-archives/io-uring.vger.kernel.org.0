@@ -1,51 +1,52 @@
-Return-Path: <io-uring+bounces-2780-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2781-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58BA2953D49
-	for <lists+io-uring@lfdr.de>; Fri, 16 Aug 2024 00:17:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDDC953D73
+	for <lists+io-uring@lfdr.de>; Fri, 16 Aug 2024 00:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2AEA1F21667
-	for <lists+io-uring@lfdr.de>; Thu, 15 Aug 2024 22:17:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 426D61F2395F
+	for <lists+io-uring@lfdr.de>; Thu, 15 Aug 2024 22:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F2E1547CC;
-	Thu, 15 Aug 2024 22:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664E81552E3;
+	Thu, 15 Aug 2024 22:44:49 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B6A15445D
-	for <io-uring@vger.kernel.org>; Thu, 15 Aug 2024 22:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D75155314
+	for <io-uring@vger.kernel.org>; Thu, 15 Aug 2024 22:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723760259; cv=none; b=AW8blExhxYnW6Y4Y1kwasO/K07KAR3tb4CIvDfc3iY5/qsyxaeDDW8cp/mkPTFnE5h3zvEGCIEyxEIUButRTzGMSJf/Yupn1DEEtcqrOhBYuXi1MjJ6kjRbR+T9P71YtqSalrCX4LaJ3V6QWgwArOQYwelJtYqSZAuoXspL6018=
+	t=1723761889; cv=none; b=ladKPVnX8BAL1v8Uc2pUJPOpIPTf1v/hMucl2KGSVZytME9bZKwXYvpnLZPWqRyS2BYL/eN+08VLuDUsMhR3kQJLhtUpT/mWLIBN7SSXJF9XhlKm6/AUG82GmeSPiA/6IEadWBmH7tA1UiB66OafG3CzTOJOkd0zmx79QU1pDUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723760259; c=relaxed/simple;
-	bh=JbzgOExFXSf1lPhO3rZsp4vurUghx+WDBaDaDxgqas8=;
+	s=arc-20240116; t=1723761889; c=relaxed/simple;
+	bh=CMsw78qj/l3OlO3KHZS1JJpd9VQvkl14TSChROLxjhU=;
 	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Yo6EG8k3zuKQVimW9+pblVPVF12D/GhlWiA23NwuG/9AAXc6d3HVSLbgFySimdiJ/5sT975sTS3A/0DddquRNvnRsrk54c98p0FA3+RCJ1/vmku2LjeJD8IQ2zZZhODMe/0BD+Rnl0Re+1+dnrutjeF1VQQdGJSyoaSpbilI5Zo=
+	 Content-Type:MIME-Version; b=at5H4gg0pxK/G0WiW3iwoE+4ANSEPWUWTT16Z1jg/YreH39pZjpnatqWXrQ3BH5basgrtYCKVkfv12YyFSf5DBoctR13CN6I65xJgpieFt1EjQMxjjLdI71qeGuNNx2Pdvj3fvGj5KP6PBy2m3rE31/AsUvtPxI1YPNpMGNzcXE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=57250 helo=[192.168.1.177])
+Received: from [45.44.224.220] (port=54318 helo=[192.168.1.177])
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1seimg-0002Bw-0I;
-	Thu, 15 Aug 2024 18:17:30 -0400
-Message-ID: <f899f21be48509d72ed8a1955061bef98512fab4.camel@trillion01.com>
+	id 1sejD3-0003m4-32;
+	Thu, 15 Aug 2024 18:44:45 -0400
+Message-ID: <1b13d089da46f091d66bbc8f96b1d4da881e53d1.camel@trillion01.com>
 Subject: Re: [PATCH 0/2] abstract napi tracking strategy
 From: Olivier Langlois <olivier@trillion01.com>
 To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
 	io-uring@vger.kernel.org
-Date: Thu, 15 Aug 2024 18:17:29 -0400
-In-Reply-To: <631b17e3-0c95-4313-9a07-418cd1a248b7@kernel.dk>
+Date: Thu, 15 Aug 2024 18:44:45 -0400
+In-Reply-To: <f899f21be48509d72ed8a1955061bef98512fab4.camel@trillion01.com>
 References: <cover.1723567469.git.olivier@trillion01.com>
 	 <c614ee28-eeb2-43bd-ae06-cdde9fd6fee2@kernel.dk>
 	 <a818bc04dfdcdbacf7cc6bf90c03b8a81d051328.camel@trillion01.com>
 	 <631b17e3-0c95-4313-9a07-418cd1a248b7@kernel.dk>
+	 <f899f21be48509d72ed8a1955061bef98512fab4.camel@trillion01.com>
 Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
  keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
  5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
@@ -89,254 +90,49 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-On Tue, 2024-08-13 at 15:44 -0600, Jens Axboe wrote:
-> On 8/13/24 3:25 PM, Olivier Langlois wrote:
-> > On Tue, 2024-08-13 at 12:33 -0600, Jens Axboe wrote:
-> > > On 8/13/24 10:44 AM, Olivier Langlois wrote:
-> > > > the actual napi tracking strategy is inducing a non-negligeable
-> > > > overhead.
-> > > > Everytime a multishot poll is triggered or any poll armed, if
-> > > > the
-> > > > napi is
-> > > > enabled on the ring a lookup is performed to either add a new
-> > > > napi
-> > > > id into
-> > > > the napi_list or its timeout value is updated.
-> > > >=20
-> > > > For many scenarios, this is overkill as the napi id list will
-> > > > be
-> > > > pretty
-> > > > much static most of the time. To address this common scenario,
-> > > > a
-> > > > new
-> > > > abstraction has been created following the common Linux kernel
-> > > > idiom of
-> > > > creating an abstract interface with a struct filled with
-> > > > function
-> > > > pointers.
-> > > >=20
-> > > > Creating an alternate napi tracking strategy is therefore made
-> > > > in 2
-> > > > phases.
-> > > >=20
-> > > > 1. Introduce the io_napi_tracking_ops interface
-> > > > 2. Implement a static napi tracking by defining a new
-> > > > io_napi_tracking_ops
-> > >=20
-> > > I don't think we should create ops for this, unless there's a
-> > > strict
-> > > need to do so. Indirect function calls aren't cheap, and the CPU
-> > > side
-> > > mitigations for security issues made them worse.
-> > >=20
-> > > You're not wrong that ops is not an uncommon idiom in the kernel,
-> > > but
-> > > it's a lot less prevalent as a solution than it used to. Exactly
-> > > because
-> > > of the above reasons.
-> > >=20
-> > ok. Do you have a reference explaining this?
-> > and what type of construct would you use instead?
+On Thu, 2024-08-15 at 18:17 -0400, Olivier Langlois wrote:
 >=20
-> See all the spectre nonsense, and the mitigations that followed from
-> that.
+> To my eyes, what is really important, it is that absolute best
+> technical solution is choosen and the only way that this discussion
+> can
+> be done, it is with numbers. So I have created a small created a
+> small
+> benchmark program to compare a function pointer indirect call vs
+> selecting a function in a 3 branches if/else if/else block. Here are
+> the results:
 >=20
-> > AFAIK, a big performance killer is the branch mispredictions coming
-> > from big switch/case or if/else if/else blocks and it was precisely
-> > the
-> > reason why you removed the big switch/case io_uring was having with
-> > function pointers in io_issue_def...
+> ----------------------------------------------------------
+> Benchmark=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Time=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0 CPU=A0=A0 Iterations
+> ----------------------------------------------------------
+> BM_test_virtual=A0=A0=A0=A0=A0 0.628 ns=A0=A0=A0=A0=A0=A0=A0 0.627 ns=A0=
+=A0=A0 930255515
+> BM_test_ifElse=A0=A0=A0=A0=A0=A0=A0 1.59 ns=A0=A0=A0=A0=A0=A0=A0=A0 1.58 =
+ns=A0=A0=A0 446805050
 >=20
-> For sure, which is why io_uring itself ended up using indirect
-> function
-> calls, because the table just became unwieldy. But that's a different
-> case from adding it for just a single case, or two. For those, branch
-> prediction should be fine, as it would always have the same outcome.
->=20
-> > I consumme an enormous amount of programming learning material
-> > daily
-> > and this is the first time that I am hearing this.
->=20
-> The kernel and backend programming are a bit different in that
-> regard,
-> for better or for worse.
->=20
-> > If there was a performance concern about this type of construct and
-> > considering that my main programming language is C++, I am bit
-> > surprised that I have not seen anything about some problems with
-> > C++
-> > vtbls...
->=20
-> It's definitely slower than a direct function call, regardless of
-> whether this is in the kernel or not. Can be mitigated by having the
-> common case be predicted with a branch. See INDIRECT_CALL_*() in the
-> kernel.
->=20
-> > but oh well, I am learning new stuff everyday, so please share the
-> > references you have about the topic so that I can perfect my
-> > knowledge.
->=20
-> I think lwn had a recent thing on indirect function calls as it
-> pertains
-> to the security modules, I'd check that first. But the spectre thing
-> above is likely all you need!
->=20
-
-Jens,
-
-thx a lot about the clarifications. I will for sure investigate these
-leads to better understand your fear of function callbacks...
-
-I have little interest about Spectre and other mitigations and security
-in general so I know very little about those topics.
-
-A guy, that I value a lot his knowledge is Chandler Carruth from Google
-who made a talk about Spectre in 2018:
-https://www.youtube.com/watch?v=3D_f7O3IfIR2k
-
-I will rewatch his talk, check LWN about the indirect functions calls
-INDIRECT_CALL() macros that you mention...
-
-AFAIK, the various kernel mitigations are mostly applied when
-transiting from Kernel mode back to userspace.
-
-because otherwise the compiled code for a usespace program would be
-pretty much identical than kernel compiled code.
-
-To my eyes, what is really important, it is that absolute best
-technical solution is choosen and the only way that this discussion can
-be done, it is with numbers. So I have created a small created a small
-benchmark program to compare a function pointer indirect call vs
-selecting a function in a 3 branches if/else if/else block. Here are
-the results:
+I have fixed my benchmark:
 
 ----------------------------------------------------------
 Benchmark                Time             CPU   Iterations
 ----------------------------------------------------------
-BM_test_virtual      0.628 ns        0.627 ns    930255515
-BM_test_ifElse        1.59 ns         1.58 ns    446805050
-
-add this result with my concession in
-https://lore.kernel.org/io-uring/f86da1b705e98cac8c72e807ca50d2b4ce3a50a2.c=
-amel@trillion01.com/
-
-that you are right for 2 of the function pointers out of the 3
-functions of io_napi_tracking_ops...
-
-Hopefully this discussion will lead us toward the best solution.
-
-keep in mind that this point is a minuscule issue.
-
-if you prefer the 2.5x slower construct for any reason that you do not
-have to justify, I'll accept your decision and rework my proposal to go
-your way.
-
-I believe that offering some form of NAPI static tracking is still a
-very interesting feature no matter what is the outcome for this very
-minor technical issue.
+BM_test_virtual       2.57 ns         2.53 ns    277764970
+BM_test_ifElse        1.58 ns         1.57 ns    445197861
 
 code:
-/*
- * virtual overhead vs if/else google benchmark
- *
- * Olivier Langlois - August 15, 2024
- *
- * compile cmd:
- * g++ -std=3Dc++26 -I.. -pthread -Wall -g -O3 -pipe
- * -fno-omit-frame-pointer bench_virtual.cpp -lbenchmark -o
-bench_virtual
- */
+using Func_t =3D bool (*)();
 
-#include "benchmark/benchmark.h"
-
-/*
- * CppCon 2015: Chandler Carruth "Tuning C++: Benchmarks, and CPUs, and
- * Compilers! Oh My!
- * https://www.youtube.com/watch?v=3DnXaxk27zwlk
- */
-static void escape(void *p)
+bool testVirtual(Func_t ptr)
 {
-    asm volatile("" : : "g"(p) : "memory");
-}
-
-bool no_tracking_do_busy_loop()
-{
-    int res{0};
-
-    escape(&res);
-    return res;
-}
-
-bool dynamic_tracking_do_busy_loop()
-{
-    int res{1};
-
-    escape(&res);
-    return res;
-}
-
-bool static_tracking_do_busy_loop()
-{
-    int res{2};
-
-    escape(&res);
-    return res;
-}
-
-class io_napi_tracking_ops
-{
-public:
-    virtual bool do_busy_loop() noexcept =3D 0;
-};
-
-class static_tracking_ops : public io_napi_tracking_ops
-{
-public:
-    bool do_busy_loop() noexcept override;
-};
-
-bool static_tracking_ops::do_busy_loop() noexcept
-{
-    return static_tracking_do_busy_loop();
-}
-
-bool testVirtual(io_napi_tracking_ops *ptr)
-{
-    return ptr->do_busy_loop();
-}
-
-bool testIfElseDispatch(int i)
-{
-    if (i =3D=3D 0)
-        return no_tracking_do_busy_loop();
-    else if (i =3D=3D 1)
-        return dynamic_tracking_do_busy_loop();
-    else
-        return static_tracking_do_busy_loop();
+    return ptr();
 }
 
 void BM_test_virtual(benchmark::State &state)
 {
-    static_tracking_ops vObj;
-    volatile io_napi_tracking_ops *ptr =3D &vObj;
+    volatile Func_t ptr =3D &static_tracking_do_busy_loop;
 
     for (auto _ : state) {
-        benchmark::DoNotOptimize(testVirtual(
-            const_cast<io_napi_tracking_ops *>(ptr)));
+        benchmark::DoNotOptimize(testVirtual(ptr));
     }
 }
-
-void BM_test_ifElse(benchmark::State &state)
-{
-    volatile int i =3D 2;
-
-    for (auto _ : state) {
-        benchmark::DoNotOptimize(testIfElseDispatch(i));
-    }
-}
-
-BENCHMARK(BM_test_virtual);
-BENCHMARK(BM_test_ifElse);
-BENCHMARK_MAIN();
 
 

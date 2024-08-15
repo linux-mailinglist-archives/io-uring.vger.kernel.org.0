@@ -1,147 +1,159 @@
-Return-Path: <io-uring+bounces-2771-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2772-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D75895279A
-	for <lists+io-uring@lfdr.de>; Thu, 15 Aug 2024 03:42:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C3F5953515
+	for <lists+io-uring@lfdr.de>; Thu, 15 Aug 2024 16:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAA4282693
-	for <lists+io-uring@lfdr.de>; Thu, 15 Aug 2024 01:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0BB01F20FAB
+	for <lists+io-uring@lfdr.de>; Thu, 15 Aug 2024 14:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD491878;
-	Thu, 15 Aug 2024 01:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DABF19FA7A;
+	Thu, 15 Aug 2024 14:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UecL9i5D"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FKl1OVJw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E8117C9
-	for <io-uring@vger.kernel.org>; Thu, 15 Aug 2024 01:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEC663D5
+	for <io-uring@vger.kernel.org>; Thu, 15 Aug 2024 14:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723686162; cv=none; b=nomEvkkJA9zZcV1BfPwzSKHz+MtAAUz7C/9OCs+yOZYBIJk4VrAXW0smFnQnjuIJFWxMHz76JBzWW+Etr/7ZwkdeekdHXCuIPvw9NlwblYAlu7MAVf8PuJ5HMCkJd7pV8EMAqAb5bqyw2MOwtt8ChVfit0yQbTMWxTsn6XvyZGo=
+	t=1723732419; cv=none; b=UtyP4PwlKmG4nFG/r5Sx/y1NwPaVQBPJuMtbDmB24++K405NGwA5oqvxRWMb8CcxFPOkZfD3ppc4dmhLUg/PVFMZXIHoaU6UT7ipEJT+UcVvwGsbT28xiHL0Q+dQLF9pVMrfU+EaiI2Q/HyWDfvGcfRPpOtZTkUG3Sg7vSG7w20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723686162; c=relaxed/simple;
-	bh=E6FKHKidRonGKOHEN40H7P70gEg4mgWPuWn21CDjAUQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aglzQvK3YCAJkEWh0cEc6bdVvYGu/OWP/A8HV3NcHjYWjM5X4x9oZFX7AoyC7M5nlL4KfY2MGRMx0ARJcCHG7zky3hxZNk3f6qhWwRodci13oO6ekOX2Wzf/EmnJjyP/54TFhs2Z6VJb6GhxkZsBseZAjmugAsjXe0lFlU6Tmj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UecL9i5D; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723686159;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SDO7p1/rCt/Ulp3/NJW+f3wt6sswEX3iXmzKx2IC/YQ=;
-	b=UecL9i5DgLJ1s01aef+sVOxzH2/5byQVcBFlxc/qAvJaLA9tYFgHsvK0Zqx2QvKvPVCBsf
-	M8mOvsF+C8wrdpKHpSmC9iwnF+fDsFi9/nJ+VOHoXHpd09OH8Yi5JchwmmzBdKwnc1++p6
-	NqFtoCh+cy/LkHsbXVpBtw/5zL9YL2o=
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
- [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-9-Wot0uavvNsKQi_SW-tGo3A-1; Wed, 14 Aug 2024 21:42:37 -0400
-X-MC-Unique: Wot0uavvNsKQi_SW-tGo3A-1
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-4928d06cfebso38152137.1
-        for <io-uring@vger.kernel.org>; Wed, 14 Aug 2024 18:42:37 -0700 (PDT)
+	s=arc-20240116; t=1723732419; c=relaxed/simple;
+	bh=DSUGtq/9K941kinoQIx3PPemHfZMHkN9rIaiuu2LfGQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M3Kzl2d9m0TDrG8GAHQ4/knog7ar7MejVG0xDB2X57M9xlBR1W7X3l+UjFsTg+8u5jZVayA4fXo3wkt8et8gRdB871T2qygqvTpsYtXfwCveno+uHSrX2OOvb/Zy37KF+1+Qa3/4p+163LdWyWsnk1Q3BsMr3ap0eCChAQsQll8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FKl1OVJw; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-81f902e94e6so3523539f.0
+        for <io-uring@vger.kernel.org>; Thu, 15 Aug 2024 07:33:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723732416; x=1724337216; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6rICprDujQR2UM4HfjMuX0CO7+q7wHZGrKy7Agwu530=;
+        b=FKl1OVJwAR1kZuBLBeUXm1I2Pj9nn+wI4xSPZWhpWnYc5wTSn6U4qU/zl21sMBWGlG
+         5rJVOGvq6Ws4Nqc6Ppp5jLVjgLkd568kTW3q91duWRM0zIFPZ9roLnwLI59sMmnRIXRJ
+         7b/nmDFbPemPGm/zcmSfvOPGnGMnTes4tvtCwAs9LVv4N9VY1xgMmBMk5rzLlsnUUPOr
+         Z1LOyWOQshsScLd3wrec6ABcmTahHO+FnwFR3dfecSS4rWzWv34H0MNR1b3IReIh4Ola
+         kKfmjGMtZ8byxyhRksWgjcQuIkVA5Lvc9akLRCaoCGLrb0qo3dIfCv6NYUPqAHKwkmAE
+         TJEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723686157; x=1724290957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SDO7p1/rCt/Ulp3/NJW+f3wt6sswEX3iXmzKx2IC/YQ=;
-        b=N92/g8ZtS6b2I2xB55qPjFmXdg+6Q17FjU6WYwDfLG/sr3k3frQAgzSkQD/Si4NexD
-         kWAOD0AEyPz7aLTYlJJAXVarBrFNCnnRd2o5nhdw1+iiB8OKTIO9rgrNG7ln7Stttmhh
-         otu03XrYL0y6MvWvM1h+AcV0v3o8yjAbgBbSXYkZCts4aJtZK9D0F384XnOoybhjdjVw
-         ziTuww1PSWtUu7v2oeegLQpHrINEIIafaeYKOIWNT6BE29Yi+UD5zIObKUi9ZJFVd9yl
-         T78H79AR2qcbkMv1X/9P3lcPzonKmY3JU6aSXX+chjKCQX1UzQbCDAzdTa/rZZGEVVDa
-         n6Ag==
-X-Gm-Message-State: AOJu0Yyn/Wf7DjaszfAaXveXZVn0YzGIdDhBsH/9dpo4a+A5tZJAKrDA
-	3edoZCdeUTxmxIWEDSd+YHhhIqxUrHPoEeRb8O3uNuuDI7hc7yL0QHTtZHrvLiW23XUQcw8+Sks
-	l4NNK6w7dJwMXmiKfEgr5cI/hJNMIEUIuVESrPbEBtIV9kh5t3GcPgj4pqLJjQ/S+Gks1EDJvOQ
-	N0rWSZuuNJiFHaIrxgsmbVoYXnVWg+UoE=
-X-Received: by 2002:a05:6122:1685:b0:4f5:312a:658a with SMTP id 71dfb90a1353d-4fc5aa5ccdamr732812e0c.0.1723686157158;
-        Wed, 14 Aug 2024 18:42:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGkXgg3KEei4df4ZQe2BBMOv0cgXLjhI//+DZyaCr9SlaZy09JMcILmazo/fy8v4koEzrDcRzwJjOp/HiyDrY=
-X-Received: by 2002:a05:6122:1685:b0:4f5:312a:658a with SMTP id
- 71dfb90a1353d-4fc5aa5ccdamr732804e0c.0.1723686156775; Wed, 14 Aug 2024
- 18:42:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723732416; x=1724337216;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6rICprDujQR2UM4HfjMuX0CO7+q7wHZGrKy7Agwu530=;
+        b=MOBhLN40WTyF1IAYfjcKS4k9rdp+gU0plwD9x9Li14+nWWBhwF3ViGNVBa1hgoFe0o
+         6a7KcysUVAl9JQZL0WAvdsONZ06+kOuB650irGT33iHqZfrlpm8omcL2fJzLMLLs+kNV
+         O7088/5oeNImfEVjGKKHNiD+icT2SbXrZLwlV7a25ZyyUOb1lsA+YoyQWvmoW4gkLkrC
+         BhI+1W2Inn7avnZaNq4nnibru9kyOX7xLrDbVm0xm0Nn7OOjfAJZwtgz9CFxID67Gpwa
+         CbiXA14CbgTdIo94837iJhL0mGYs2Ib+gr1Z5K3g4kzMJG+6IKJn+j7tJ7t2OMroNxhH
+         iXBg==
+X-Gm-Message-State: AOJu0YzMGHuhebHteLpRFiPuHWP5IeZRwdzY0VMv3gu27spuualXIUlw
+	kgOz/Hm0XE/U4o7USAsOZVjNeMG+t3k2h7vioN41nm9PK/xWT8KzBVSaQbM5lHY=
+X-Google-Smtp-Source: AGHT+IGvpiwXjlJpt5son2O8gjjV3rFX1h5+5bydBPLKRSpEg1HWIUur+IBQ2exWat+kjseYTgNOvQ==
+X-Received: by 2002:a6b:6305:0:b0:7f6:85d1:f81a with SMTP id ca18e2360f4ac-824e86c307dmr186663439f.2.1723732416308;
+        Thu, 15 Aug 2024 07:33:36 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-824e98eda17sm52953239f.6.2024.08.15.07.33.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 07:33:35 -0700 (PDT)
+Message-ID: <fd357721-7ba7-4321-88da-28651754f8a4@kernel.dk>
+Date: Thu, 15 Aug 2024 08:33:34 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1723601133.git.asml.silence@gmail.com> <6ecd7ab3386f63f1656dc766c1b5b038ff5353c2.1723601134.git.asml.silence@gmail.com>
-In-Reply-To: <6ecd7ab3386f63f1656dc766c1b5b038ff5353c2.1723601134.git.asml.silence@gmail.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Thu, 15 Aug 2024 09:42:24 +0800
-Message-ID: <CAFj5m9+CXS_b5kgFioFHTWivb6O+R9HytsSQEHcEzUM5SqHfgw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC 5/5] block: implement io_uring discard cmd
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	Conrad Meyer <conradmeyer@meta.com>, linux-block@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Ming Lei <ming.lei@redhat.com>, Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org, Conrad Meyer <conradmeyer@meta.com>,
+ linux-block@vger.kernel.org, linux-mm@kvack.org
+References: <cover.1723601133.git.asml.silence@gmail.com>
+ <6ecd7ab3386f63f1656dc766c1b5b038ff5353c2.1723601134.git.asml.silence@gmail.com>
+ <CAFj5m9+CXS_b5kgFioFHTWivb6O+R9HytsSQEHcEzUM5SqHfgw@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAFj5m9+CXS_b5kgFioFHTWivb6O+R9HytsSQEHcEzUM5SqHfgw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 14, 2024 at 6:46=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
->
-> Add ->uring_cmd callback for block device files and use it to implement
-> asynchronous discard. Normally, it first tries to execute the command
-> from non-blocking context, which we limit to a single bio because
-> otherwise one of sub-bios may need to wait for other bios, and we don't
-> want to deal with partial IO. If non-blocking attempt fails, we'll retry
-> it in a blocking context.
->
-> Suggested-by: Conrad Meyer <conradmeyer@meta.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  block/blk.h             |  1 +
->  block/fops.c            |  2 +
->  block/ioctl.c           | 94 +++++++++++++++++++++++++++++++++++++++++
->  include/uapi/linux/fs.h |  2 +
->  4 files changed, 99 insertions(+)
->
-> diff --git a/block/blk.h b/block/blk.h
-> index e180863f918b..5178c5ba6852 100644
-> --- a/block/blk.h
-> +++ b/block/blk.h
-> @@ -571,6 +571,7 @@ blk_mode_t file_to_blk_mode(struct file *file);
->  int truncate_bdev_range(struct block_device *bdev, blk_mode_t mode,
->                 loff_t lstart, loff_t lend);
->  long blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg);
-> +int blkdev_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)=
-;
->  long compat_blkdev_ioctl(struct file *file, unsigned cmd, unsigned long =
-arg);
->
->  extern const struct address_space_operations def_blk_aops;
-> diff --git a/block/fops.c b/block/fops.c
-> index 9825c1713a49..8154b10b5abf 100644
-> --- a/block/fops.c
-> +++ b/block/fops.c
-> @@ -17,6 +17,7 @@
->  #include <linux/fs.h>
->  #include <linux/iomap.h>
->  #include <linux/module.h>
-> +#include <linux/io_uring/cmd.h>
->  #include "blk.h"
->
->  static inline struct inode *bdev_file_inode(struct file *file)
-> @@ -873,6 +874,7 @@ const struct file_operations def_blk_fops =3D {
->         .splice_read    =3D filemap_splice_read,
->         .splice_write   =3D iter_file_splice_write,
->         .fallocate      =3D blkdev_fallocate,
-> +       .uring_cmd      =3D blkdev_uring_cmd,
+On 8/14/24 7:42 PM, Ming Lei wrote:
+> On Wed, Aug 14, 2024 at 6:46?PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>
+>> Add ->uring_cmd callback for block device files and use it to implement
+>> asynchronous discard. Normally, it first tries to execute the command
+>> from non-blocking context, which we limit to a single bio because
+>> otherwise one of sub-bios may need to wait for other bios, and we don't
+>> want to deal with partial IO. If non-blocking attempt fails, we'll retry
+>> it in a blocking context.
+>>
+>> Suggested-by: Conrad Meyer <conradmeyer@meta.com>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>  block/blk.h             |  1 +
+>>  block/fops.c            |  2 +
+>>  block/ioctl.c           | 94 +++++++++++++++++++++++++++++++++++++++++
+>>  include/uapi/linux/fs.h |  2 +
+>>  4 files changed, 99 insertions(+)
+>>
+>> diff --git a/block/blk.h b/block/blk.h
+>> index e180863f918b..5178c5ba6852 100644
+>> --- a/block/blk.h
+>> +++ b/block/blk.h
+>> @@ -571,6 +571,7 @@ blk_mode_t file_to_blk_mode(struct file *file);
+>>  int truncate_bdev_range(struct block_device *bdev, blk_mode_t mode,
+>>                 loff_t lstart, loff_t lend);
+>>  long blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg);
+>> +int blkdev_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags);
+>>  long compat_blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg);
+>>
+>>  extern const struct address_space_operations def_blk_aops;
+>> diff --git a/block/fops.c b/block/fops.c
+>> index 9825c1713a49..8154b10b5abf 100644
+>> --- a/block/fops.c
+>> +++ b/block/fops.c
+>> @@ -17,6 +17,7 @@
+>>  #include <linux/fs.h>
+>>  #include <linux/iomap.h>
+>>  #include <linux/module.h>
+>> +#include <linux/io_uring/cmd.h>
+>>  #include "blk.h"
+>>
+>>  static inline struct inode *bdev_file_inode(struct file *file)
+>> @@ -873,6 +874,7 @@ const struct file_operations def_blk_fops = {
+>>         .splice_read    = filemap_splice_read,
+>>         .splice_write   = iter_file_splice_write,
+>>         .fallocate      = blkdev_fallocate,
+>> +       .uring_cmd      = blkdev_uring_cmd,
+> 
+> Just be curious, we have IORING_OP_FALLOCATE already for sending
+> discard to block device, why is .uring_cmd added for this purpose?
 
-Just be curious, we have IORING_OP_FALLOCATE already for sending
-discard to block device, why is .uring_cmd added for this purpose?
+I think wiring up a bdev uring_cmd makes sense, because:
 
-Thanks,
+1) The existing FALLOCATE op is using vfs_fallocate, which is inherently
+   sync and hence always punted to io-wq.
+
+2) There will most certainly be other async ops that would be
+   interesting to add, at which point we'd need it anyway.
+
+3) It arguably makes more sense to have a direct discard op than use
+   fallocate for this, if working on a raw bdev.
+
+And probably others...
+
+-- 
+Jens Axboe
 
 

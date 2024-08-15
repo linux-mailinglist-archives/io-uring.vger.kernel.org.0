@@ -1,138 +1,155 @@
-Return-Path: <io-uring+bounces-2781-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2782-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DDDC953D73
-	for <lists+io-uring@lfdr.de>; Fri, 16 Aug 2024 00:45:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9204F953E05
+	for <lists+io-uring@lfdr.de>; Fri, 16 Aug 2024 01:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 426D61F2395F
-	for <lists+io-uring@lfdr.de>; Thu, 15 Aug 2024 22:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FD6C282DF2
+	for <lists+io-uring@lfdr.de>; Thu, 15 Aug 2024 23:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664E81552E3;
-	Thu, 15 Aug 2024 22:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569D3156861;
+	Thu, 15 Aug 2024 23:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fsaMa/ZJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D75155314
-	for <io-uring@vger.kernel.org>; Thu, 15 Aug 2024 22:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2921757CA7
+	for <io-uring@vger.kernel.org>; Thu, 15 Aug 2024 23:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723761889; cv=none; b=ladKPVnX8BAL1v8Uc2pUJPOpIPTf1v/hMucl2KGSVZytME9bZKwXYvpnLZPWqRyS2BYL/eN+08VLuDUsMhR3kQJLhtUpT/mWLIBN7SSXJF9XhlKm6/AUG82GmeSPiA/6IEadWBmH7tA1UiB66OafG3CzTOJOkd0zmx79QU1pDUg=
+	t=1723765494; cv=none; b=o/Kgdqg+23d/k7VGqse6qLE/4MUZtDko02D2YInVWKj6BYHGc26B3f+YQZQ5tg2uaKBuD0iGUP24BbxR/qxUh3+tfkL4r5CC+DJYCs7y/KJfLOESs9A74p44Qg9w4uiyyqiYUUyvj+DGjXk7H4a0TmilyfTZiRxbScbV5ZYWTFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723761889; c=relaxed/simple;
-	bh=CMsw78qj/l3OlO3KHZS1JJpd9VQvkl14TSChROLxjhU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=at5H4gg0pxK/G0WiW3iwoE+4ANSEPWUWTT16Z1jg/YreH39pZjpnatqWXrQ3BH5basgrtYCKVkfv12YyFSf5DBoctR13CN6I65xJgpieFt1EjQMxjjLdI71qeGuNNx2Pdvj3fvGj5KP6PBy2m3rE31/AsUvtPxI1YPNpMGNzcXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=54318 helo=[192.168.1.177])
-	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <olivier@trillion01.com>)
-	id 1sejD3-0003m4-32;
-	Thu, 15 Aug 2024 18:44:45 -0400
-Message-ID: <1b13d089da46f091d66bbc8f96b1d4da881e53d1.camel@trillion01.com>
-Subject: Re: [PATCH 0/2] abstract napi tracking strategy
-From: Olivier Langlois <olivier@trillion01.com>
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
-	io-uring@vger.kernel.org
-Date: Thu, 15 Aug 2024 18:44:45 -0400
-In-Reply-To: <f899f21be48509d72ed8a1955061bef98512fab4.camel@trillion01.com>
-References: <cover.1723567469.git.olivier@trillion01.com>
-	 <c614ee28-eeb2-43bd-ae06-cdde9fd6fee2@kernel.dk>
-	 <a818bc04dfdcdbacf7cc6bf90c03b8a81d051328.camel@trillion01.com>
-	 <631b17e3-0c95-4313-9a07-418cd1a248b7@kernel.dk>
-	 <f899f21be48509d72ed8a1955061bef98512fab4.camel@trillion01.com>
-Autocrypt: addr=olivier@trillion01.com; prefer-encrypt=mutual;
- keydata=mQINBFYd0ycBEAC53xedP1NExPwtBnDkVuMZgRiLmWoQQ8U7vEwt6HVGSsMRHx9smD76i
- 5rO/iCT6tDIpZoyJsTOh1h2NTn6ZkoFSn9lNOJksE77/n7HNaNxiBfvZHsuNuI53CkYFix9JhzP3t
- g5nV/401re30kRfA8OPivpnj6mZhU/9RTwjbVPPb8dPlm2gFLXwGPeDITgSRs+KJ0mM37fW8EatJs
- 0a8J1Nk8wBvT7ce+S2lOrxDItra9pW3ukze7LMirwvdMRC5bdlw2Lz03b5NrOUq+Wxv7szn5Xr9f/
- HdaCH7baWNAO6H/O5LbJ3zndewokEmKk+oCIcXjaH0U6QK5gJoO+3Yt5dcTo92Vm3VMxzK2NPFXgp
- La7lR9Ei0hzQ0zptyFFyftt9uV71kMHldaQaSfUTsu9dJbnS2kI/j+F2S1q6dgKi3DEm0ZRGvjsSG
- rkgPJ5T16GI1cS2iQntawdr0A1vfXiB9xZ1SMGxL/l6js9BVlIx/CBGOJ4L190QmxJlcAZ2VnQzrl
- ramRUv01xb00IPJ5TBft5IJ+SY0FnY9pIERIl6w9khwLt/oGuKNmUHmzJGYoJHYfh72Mm8RQ1R/JS
- o6v85ULBGdEC3pQq1j//OPyH3egiXIwFq6BtULH5CvsxQkSqgj1MpjwfgVJ8VbjNwqwBXHjooEORj
- vFQqWQki6By3QARAQABtDJPbGl2aWVyIExhbmdsb2lzIChNeSBrZXkpIDxvbGl2aWVyQHRyaWxsaW
- 9uMDEuY29tPokCNwQTAQgAIQUCVh3TJwIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRBlaka
- GGsWHEI1AD/9sbj+vnFU29WemVqB4iW+9RrHIcbXI4Jg8WaffTQ8KvVeCJ4otzgVT2nHC2A82t4PF
- 0tp21Ez17CKDNilMvOt8zq6ZHx36CPjoqUVjAdozOiBDpC4qB6ZKYn+gqSENO4hqmmaOW57wT9vII
- v6mtHmnFvgpOEJl6wbs8ArHDt0BLSjc8QQfvBhoKoWs+ijQTyvFGlQl0oWxEbUkR1J3gdft9Oj9xQ
- G4OFo73WaSEK/L9IalU2ulCBC+ucSP9McoDxy1i1u8HUDrV5wBY1zafc9zVBcMNH6+ZjxwQmZXqtz
- ATzB3RbSFHAdmvxl8q6MeS2yx7Atk0CXgW9z5k2KeuZhz5rVV5A+D19SSGzW11uYXsibZx/Wjr9xB
- KHB6U7qh5sRHaQS191NPonKcsXXAziR+vxwQTP7ZKfy+g5N/e6uivoUnQrl9uvUDDPXEpwVNSoVws
- Vn4tNyrGEdN11pHDbH5fSGzdpbY8+yczUoxMmsEQe/fpVwRBZUqafRn2TVUhV0qqzsUuQcTNw1zIZ
- JgvkqrHgd4ivd2b1bXBczmu/wMGpEnF6cWzSQDiwC1NF3i+gHCuD8IX1ujThWtzXsn0VtrMkrRCbn
- ponVQ6HcbRYYXPuK0HRRjCSuAKo5porVONepiOSmu0FBrpGqBkpBtLrzKXoi1yt/7a/wGdMcVhYGg
- vA==
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1723765494; c=relaxed/simple;
+	bh=jJUmaLK0878WgZ26lY0pHs7F7N4leXfF8/Z9sGtr1vA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IFNbX1VutXp5iwn3kVWP0ZzqhEc7q1X87ozjbFqnXeeOOIT7e0z9N8M/vnecvmyHJI0pB2/37ZClgw/igW+KOIG+8XFhrJbcYAsX9KzIfitSjsXpWBx6dmy6I0ktExFSNy4teZ3ykJ5wA1VUA0LKSC5TcmE7bFr4mvhMQTBzuPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fsaMa/ZJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723765491;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QOb3UN1CKWbBfb8ov4q73kqKN1ZyoosgZ8TwQ+HhtV4=;
+	b=fsaMa/ZJRJ2qqqtenhOrRHtZLlh85wc8boxgrsSL8+kw/9KSpOKHcYp5wt6MJW3exx7ZcQ
+	BIy1uta0D04WJ8xoE6HCowxD3+D0tp3UOClOiCGpdGg987bFcF9w8Hoi0qwfa+Nz2w/rLT
+	4Yb4SuUxllVak4VLYGqrmwvdVG1hzXY=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-93-piKqWIi-NImKipJMIY-Dig-1; Thu,
+ 15 Aug 2024 19:44:47 -0400
+X-MC-Unique: piKqWIi-NImKipJMIY-Dig-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1680A1956064;
+	Thu, 15 Aug 2024 23:44:46 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.41])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9AF0719560A3;
+	Thu, 15 Aug 2024 23:44:40 +0000 (UTC)
+Date: Fri, 16 Aug 2024 07:44:34 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+	Conrad Meyer <conradmeyer@meta.com>, linux-block@vger.kernel.org,
+	linux-mm@kvack.org, ming.lei@redhat.com
+Subject: Re: [RFC 5/5] block: implement io_uring discard cmd
+Message-ID: <Zr6S4sHWtdlbl/dd@fedora>
+References: <cover.1723601133.git.asml.silence@gmail.com>
+ <6ecd7ab3386f63f1656dc766c1b5b038ff5353c2.1723601134.git.asml.silence@gmail.com>
+ <CAFj5m9+CXS_b5kgFioFHTWivb6O+R9HytsSQEHcEzUM5SqHfgw@mail.gmail.com>
+ <fd357721-7ba7-4321-88da-28651754f8a4@kernel.dk>
+ <e06fd325-f20f-44d8-8f72-89b97cf4186f@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e06fd325-f20f-44d8-8f72-89b97cf4186f@gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, 2024-08-15 at 18:17 -0400, Olivier Langlois wrote:
->=20
-> To my eyes, what is really important, it is that absolute best
-> technical solution is choosen and the only way that this discussion
-> can
-> be done, it is with numbers. So I have created a small created a
-> small
-> benchmark program to compare a function pointer indirect call vs
-> selecting a function in a 3 branches if/else if/else block. Here are
-> the results:
->=20
-> ----------------------------------------------------------
-> Benchmark=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Time=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0 CPU=A0=A0 Iterations
-> ----------------------------------------------------------
-> BM_test_virtual=A0=A0=A0=A0=A0 0.628 ns=A0=A0=A0=A0=A0=A0=A0 0.627 ns=A0=
-=A0=A0 930255515
-> BM_test_ifElse=A0=A0=A0=A0=A0=A0=A0 1.59 ns=A0=A0=A0=A0=A0=A0=A0=A0 1.58 =
-ns=A0=A0=A0 446805050
->=20
-I have fixed my benchmark:
+On Thu, Aug 15, 2024 at 06:11:13PM +0100, Pavel Begunkov wrote:
+> On 8/15/24 15:33, Jens Axboe wrote:
+> > On 8/14/24 7:42 PM, Ming Lei wrote:
+> > > On Wed, Aug 14, 2024 at 6:46?PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> > > > 
+> > > > Add ->uring_cmd callback for block device files and use it to implement
+> > > > asynchronous discard. Normally, it first tries to execute the command
+> > > > from non-blocking context, which we limit to a single bio because
+> > > > otherwise one of sub-bios may need to wait for other bios, and we don't
+> > > > want to deal with partial IO. If non-blocking attempt fails, we'll retry
+> > > > it in a blocking context.
+> > > > 
+> > > > Suggested-by: Conrad Meyer <conradmeyer@meta.com>
+> > > > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> > > > ---
+> > > >   block/blk.h             |  1 +
+> > > >   block/fops.c            |  2 +
+> > > >   block/ioctl.c           | 94 +++++++++++++++++++++++++++++++++++++++++
+> > > >   include/uapi/linux/fs.h |  2 +
+> > > >   4 files changed, 99 insertions(+)
+> > > > 
+> > > > diff --git a/block/blk.h b/block/blk.h
+> > > > index e180863f918b..5178c5ba6852 100644
+> > > > --- a/block/blk.h
+> > > > +++ b/block/blk.h
+> > > > @@ -571,6 +571,7 @@ blk_mode_t file_to_blk_mode(struct file *file);
+> > > >   int truncate_bdev_range(struct block_device *bdev, blk_mode_t mode,
+> > > >                  loff_t lstart, loff_t lend);
+> > > >   long blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg);
+> > > > +int blkdev_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags);
+> > > >   long compat_blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg);
+> > > > 
+> > > >   extern const struct address_space_operations def_blk_aops;
+> > > > diff --git a/block/fops.c b/block/fops.c
+> > > > index 9825c1713a49..8154b10b5abf 100644
+> > > > --- a/block/fops.c
+> > > > +++ b/block/fops.c
+> > > > @@ -17,6 +17,7 @@
+> > > >   #include <linux/fs.h>
+> > > >   #include <linux/iomap.h>
+> > > >   #include <linux/module.h>
+> > > > +#include <linux/io_uring/cmd.h>
+> > > >   #include "blk.h"
+> > > > 
+> > > >   static inline struct inode *bdev_file_inode(struct file *file)
+> > > > @@ -873,6 +874,7 @@ const struct file_operations def_blk_fops = {
+> > > >          .splice_read    = filemap_splice_read,
+> > > >          .splice_write   = iter_file_splice_write,
+> > > >          .fallocate      = blkdev_fallocate,
+> > > > +       .uring_cmd      = blkdev_uring_cmd,
+> > > 
+> > > Just be curious, we have IORING_OP_FALLOCATE already for sending
+> > > discard to block device, why is .uring_cmd added for this purpose?
+> 
+> Which is a good question, I haven't thought about it, but I tend to
+> agree with Jens. Because vfs_fallocate is created synchronous
+> IORING_OP_FALLOCATE is slow for anything but pretty large requests.
+> Probably can be patched up, which would  involve changing the
+> fops->fallocate protot, but I'm not sure async there makes sense
+> outside of bdev (?), and cmd approach is simpler, can be made
+> somewhat more efficient (1 less layer in the way), and it's not
+> really something completely new since we have it in ioctl.
 
-----------------------------------------------------------
-Benchmark                Time             CPU   Iterations
-----------------------------------------------------------
-BM_test_virtual       2.57 ns         2.53 ns    277764970
-BM_test_ifElse        1.58 ns         1.57 ns    445197861
+Yeah, we have ioctl(DISCARD), which acquires filemap_invalidate_lock,
+same with blkdev_fallocate().
 
-code:
-using Func_t =3D bool (*)();
+But this patch drops this exclusive lock, so it becomes async friendly,
+but may cause stale page cache. However, if the lock is required, it can't
+be efficient anymore and io-wq may be inevitable, :-)
 
-bool testVirtual(Func_t ptr)
-{
-    return ptr();
-}
-
-void BM_test_virtual(benchmark::State &state)
-{
-    volatile Func_t ptr =3D &static_tracking_do_busy_loop;
-
-    for (auto _ : state) {
-        benchmark::DoNotOptimize(testVirtual(ptr));
-    }
-}
+Thanks,
+Ming
 
 

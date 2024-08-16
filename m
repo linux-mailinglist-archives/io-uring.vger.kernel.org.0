@@ -1,82 +1,87 @@
-Return-Path: <io-uring+bounces-2792-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2793-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F868955075
-	for <lists+io-uring@lfdr.de>; Fri, 16 Aug 2024 20:01:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755209550A2
+	for <lists+io-uring@lfdr.de>; Fri, 16 Aug 2024 20:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B23671C2215E
-	for <lists+io-uring@lfdr.de>; Fri, 16 Aug 2024 18:01:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5671C20FF4
+	for <lists+io-uring@lfdr.de>; Fri, 16 Aug 2024 18:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D46F817;
-	Fri, 16 Aug 2024 18:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659E61C3F18;
+	Fri, 16 Aug 2024 18:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="m8oXL+bl"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="MajBbaEq"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-ua1-f98.google.com (mail-ua1-f98.google.com [209.85.222.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6FA1C2309
-	for <io-uring@vger.kernel.org>; Fri, 16 Aug 2024 18:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B361C3796
+	for <io-uring@vger.kernel.org>; Fri, 16 Aug 2024 18:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723831312; cv=none; b=nS+4XKqOqke1pTKSoOhgorCyR5ntQ1buXIVe0JKBakvtNK6b0d4OtT/4VdPYLIsyYjbysOJilbwvUwVjPp+uZxhxhq3uBySSdGbnuQy98El0JGMTnxpiGEEnceDWEYNFvNTlOV4NUoQz0Qy9xLyZGte6y9qxEEtoG6Ie0W/U/JU=
+	t=1723832157; cv=none; b=Ps598EI+ZrPjqvE18GajkBHUlXvNDLBwEMg2YOMl5/nWBJO7Ns+KVIwxH+qeEwkTGMg/ulJBeH/UD7enBNFKAU/8qOuE/pw0PJtHrbwBX7Mo6CU5uz1woJok35BoxIfeuNwjmyGxNtH7uzzbQugdFvCyjJHRVhpBT7KmMeXv9ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723831312; c=relaxed/simple;
-	bh=EYKC43c5kzp1VyPdjoRUOK76uMP/FapHfpSEmr/KslA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oH+CKhHoyTtZr0W/eFBZL1FSiadKRPF3j1I966rKC2GfGicyIQkAprJPtgVj9DkFmjBdTrYqGHj3marsgNQGVt3ZX22awoI+RnSZDpRDr9B8lqCoxOwZOzJEJBPL1d7aUs0Wq64qvBhQ6AS0xr/BRC4Dwy6aP4OVs1dqaFQrXa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=m8oXL+bl; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7105043330aso2050996b3a.0
-        for <io-uring@vger.kernel.org>; Fri, 16 Aug 2024 11:01:51 -0700 (PDT)
+	s=arc-20240116; t=1723832157; c=relaxed/simple;
+	bh=zxiUW/toeZX5AppBzoekrX29ilUmIU0h888Rq44XoHY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e+ScSwystwd9kq97QKsLrBn+X++ni2wcCN5QKX/Zr0gYYZ2vjbfwH1vfu3EHhxKSTMOJx2ssXiitwaMDJ4ElE9IZLGSOM8oQAhjzWQuxRuAqeWkRy0znX7SPz8kUW2XJxlHApUlkj/UHMWWhaMlgMS6uxfftCLsG7X5CQttlCvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=MajBbaEq; arc=none smtp.client-ip=209.85.222.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-ua1-f98.google.com with SMTP id a1e0cc1a2514c-8430d25b01cso185986241.1
+        for <io-uring@vger.kernel.org>; Fri, 16 Aug 2024 11:15:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1723831310; x=1724436110; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FIwcB7az5fnFRKyT3m48GY3wRI7BR9/OZ/wY5w1Yjm8=;
-        b=m8oXL+bl9BGvjOzYDHPnv8ZJ0u5L7z6pmE8l/xyR14bqcNabQ+bXks1p30lMGakhfZ
-         BQHUZzZv1EqxSJZbTHlCXeCqA3e71qE0/u6QqFjlNt+53ov7HtDdBK5SLng/Bw4IHswT
-         Ctk36knr78K7fZXyV02fhubkpdLHBgO3KvvPU7msBXQ1IrCV8dBYi1NSQCPeWp9jpi2c
-         GqbrRM8NX4qOl6UhUFwqSHF1lm/46RdXnAemFxniSl/7D3GZPFcrsVD81KPqGUthgCPG
-         cU8dVjvOe31iZXjM8P78+PNStTm8ugMT7NFLBd4F4I2n9pkmf6XuvAEhLOeL8i8Bdqqx
-         p2rg==
+        d=purestorage.com; s=google2022; t=1723832153; x=1724436953; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WjxybjqjIyQYbHemfFTeOm2xjPxQaOuMoDMlPG+rLzw=;
+        b=MajBbaEqqqqd+maMYClarM92nP1WXwjdkBIBZkryE3dkEYoDhyLOnLqKhrI3jdikIO
+         M7zA03BkCCdoKngAjXpkPREbjqJTv3mj6yIENcfoHa3CiSNHjgizwT5uJ1e0g7eYeR8H
+         KxrO1a5Dy6fUyJzWCsZQCY0tJApYovyKgctj15FN14vV26EPh/byrf/3LX0QENq12iuF
+         g7XitROqKjCLq3I4Gwj/wcNg3aOO8T4Pb+RkXecdfCif6l82828n0OWLPfSq2GGx2E7H
+         RQUhS9OVo6dlWKAJDAj47dIdD9/VJBHOvC2hxhPRg7uEJOpnYZCuW72F7IMHOZv1LXYR
+         9m8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723831310; x=1724436110;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FIwcB7az5fnFRKyT3m48GY3wRI7BR9/OZ/wY5w1Yjm8=;
-        b=Na4U58+AgcMrGDdHqnnpQJDIApmlSFh2jY1O1/G/oDmIswVHk+LQzcPXviO/uYy8KU
-         hu7KlYstaRFqBIkHDPnoUHDP+4r1HhtpKIY/T9Sgx327iDMOWBnVM3X98FoOulhx3pyA
-         211qHmdWK4gjIvrj8jboDnTnaTcDArX1jDo3RnACsNgK29/9eIWRvSrjAubALC/86+qz
-         bggJQV1KxE/VcIUsf/6zC2GOzRCV+gsFew0esktxefiTiwN90r8fl27fHh1ZxX0xC+zH
-         Nq7shGAWQzDNhjB/XWZv2Upj9pglSUUDW1GQaMJ2HQYxNrX0tiTtuANJUeQL+3R7MR47
-         Cb2A==
-X-Gm-Message-State: AOJu0YxLZsp7mTk/vwchlZIGrxJY6mCCwS7bUlAv4hGYF7lha2LSCv8z
-	ucNUgG3n+aqhN7rEoj5VQr1efXKTGZlFu9uvCCq5IOWPG4Q4m+OtI55DPY5445ker68NsrCQsqv
-	d
-X-Google-Smtp-Source: AGHT+IFbTi4XLrwVukMTdSWWkQ2Bo0Dh/NoNrp0RusPDPVVhtXi9x+pA+Tqq/Q61tCCDVCoIFO0uOw==
-X-Received: by 2002:a05:6a21:3a96:b0:1c8:b10d:eaf4 with SMTP id adf61e73a8af0-1c90502ae4dmr4575402637.41.1723831310548;
-        Fri, 16 Aug 2024 11:01:50 -0700 (PDT)
-Received: from localhost (fwdproxy-prn-042.fbsv.net. [2a03:2880:ff:2a::face:b00c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127af3d11esm2869607b3a.217.2024.08.16.11.01.50
+        d=1e100.net; s=20230601; t=1723832153; x=1724436953;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WjxybjqjIyQYbHemfFTeOm2xjPxQaOuMoDMlPG+rLzw=;
+        b=Meanr1YPtNgW9m1PB3xoO5tSsPxlox9h/iQeZVSieObXuU68dS1lGbq/kfJZpiBszd
+         Ilhbq6ppT5D2rlqgs4pM/zRHGZ13KsolPMBR0aptJXiwert9JjUr0DtlsDjFE1jN24dU
+         hpZf6SdQR52dfmOEo1XNdEzXKiexEo7E32JqSZY1bD2M+ss6ZzV6lcH0XMILyYHd4GA5
+         CsWuDLUk9dFno0YN3t9fKHD1sVj5oL695MC/a5T1v1gP8quBglpft781Z4X1kVgLuMPD
+         t9Hl25gpzLQLFZiPafbQOZbFSlw4tmRREGg1j5vjVSxnl44Vs3y5viDdlVWoS23Ej9WM
+         m+GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkYYfmXkveE6nrbECC5+L0NXnJTYgSYuD4Y99EXSRn93q7cUfCME9yfi7eiBaoE4DoL8UYNj2N4Lzw0uV1pJzqgIto2r+Jhyc=
+X-Gm-Message-State: AOJu0YzJKkmxosBphbxyox8XjG6Fw47W0Zu95Xsy+DUqcJ/LiM1+eOFf
+	wRYlkKXbhQ2hdIyDq6wWWxCSw0zC/b6Tk0WzYCeUgfEcVbBPQmwT00f/MIbOXJVhi9y1PNWuIA4
+	iA4hOlGm+rZvRGkyb6wHyJFVLm+UaRFX1U4uGIhOXsgDjLJqE
+X-Google-Smtp-Source: AGHT+IEcRZRkVqmX6uxa02ElXcDjNwYLEXrtHyOHkT5kx5rZ1E6y/bSW/WG85j0v8EsBvXBI46ol3hg/vwNS
+X-Received: by 2002:a05:6102:c86:b0:48f:4bd5:23d9 with SMTP id ada2fe7eead31-49779906068mr4512209137.5.1723832153414;
+        Fri, 16 Aug 2024 11:15:53 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id a1e0cc1a2514c-842fb761ac2sm155545241.9.2024.08.16.11.15.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 11:01:50 -0700 (PDT)
-From: David Wei <dw@davidwei.uk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
+        Fri, 16 Aug 2024 11:15:53 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 8D2863401CD;
+	Fri, 16 Aug 2024 12:15:52 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 77B37E408E7; Fri, 16 Aug 2024 12:15:52 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
 	Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH v1 3/3] io_uring: add IORING_FEAT_IOWAIT_TOGGLE feature flag
-Date: Fri, 16 Aug 2024 11:01:45 -0700
-Message-ID: <20240816180145.14561-4-dw@davidwei.uk>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240816180145.14561-1-dw@davidwei.uk>
-References: <20240816180145.14561-1-dw@davidwei.uk>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring: fix user_data field name in comment
+Date: Fri, 16 Aug 2024 12:15:23 -0600
+Message-ID: <20240816181526.3642732-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -85,41 +90,33 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add IORING_FEAT_IOWAIT_TOGGLE and return it in io_uring_create(). This
-will be used by liburing to check for this feature.
+io_uring_cqe's user_data field refers to `sqe->data`, but io_uring_sqe
+does not have a data field. Fix the comment to say `sqe->user_data`.
 
-Signed-off-by: David Wei <dw@davidwei.uk>
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+Link: https://github.com/axboe/liburing/pull/1206
 ---
- include/uapi/linux/io_uring.h | 1 +
- io_uring/io_uring.c           | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ include/uapi/linux/io_uring.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 2552d4927511..3a94afa8665e 100644
+index 48c440edf674..7af716136df9 100644
 --- a/include/uapi/linux/io_uring.h
 +++ b/include/uapi/linux/io_uring.h
-@@ -544,6 +544,7 @@ struct io_uring_params {
- #define IORING_FEAT_LINKED_FILE		(1U << 12)
- #define IORING_FEAT_REG_REG_RING	(1U << 13)
- #define IORING_FEAT_RECVSEND_BUNDLE	(1U << 14)
-+#define IORING_FEAT_IOWAIT_TOGGLE	(1U << 15)
+@@ -419,11 +419,11 @@ enum io_uring_msg_ring_flags {
  
  /*
-  * io_uring_register(2) opcodes and arguments
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 9438875e43ea..006bccd55984 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3541,7 +3541,7 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 			IORING_FEAT_EXT_ARG | IORING_FEAT_NATIVE_WORKERS |
- 			IORING_FEAT_RSRC_TAGS | IORING_FEAT_CQE_SKIP |
- 			IORING_FEAT_LINKED_FILE | IORING_FEAT_REG_REG_RING |
--			IORING_FEAT_RECVSEND_BUNDLE;
-+			IORING_FEAT_RECVSEND_BUNDLE | IORING_FEAT_IOWAIT_TOGGLE;
+  * IO completion data structure (Completion Queue Entry)
+  */
+ struct io_uring_cqe {
+-	__u64	user_data;	/* sqe->data submission passed back */
++	__u64	user_data;	/* sqe->user_data value passed back */
+ 	__s32	res;		/* result code for this event */
+ 	__u32	flags;
  
- 	if (copy_to_user(params, p, sizeof(*p))) {
- 		ret = -EFAULT;
+ 	/*
+ 	 * If the ring is initialized with IORING_SETUP_CQE32, then this field
 -- 
-2.43.5
+2.45.2
 
 

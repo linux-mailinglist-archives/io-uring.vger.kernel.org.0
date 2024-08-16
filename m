@@ -1,112 +1,202 @@
-Return-Path: <io-uring+bounces-2806-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2807-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926F7955345
-	for <lists+io-uring@lfdr.de>; Sat, 17 Aug 2024 00:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF0E3955363
+	for <lists+io-uring@lfdr.de>; Sat, 17 Aug 2024 00:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A6C1F21FF8
-	for <lists+io-uring@lfdr.de>; Fri, 16 Aug 2024 22:23:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 615741F2157C
+	for <lists+io-uring@lfdr.de>; Fri, 16 Aug 2024 22:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334FE14533C;
-	Fri, 16 Aug 2024 22:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9593412C478;
+	Fri, 16 Aug 2024 22:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="GVWquQlX"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="oZuJXUxm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6F71448E0
-	for <io-uring@vger.kernel.org>; Fri, 16 Aug 2024 22:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF6EBA33
+	for <io-uring@vger.kernel.org>; Fri, 16 Aug 2024 22:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723846992; cv=none; b=V8bZZvmuHIF8RO3Fo+9i8vO1Jp/d7AYoeBFKF/gnzktppR+9S0Phe2Fy5flO5Zo3b1EDvyMfqwyllqHiNM0Vql2tYbPSaCVvyfKRdK486Ss0rwJh4B71eDz1KkW6bpNY0UZ5cfCW+uak8Lv7z3eF/72vVvlTj4uFTiLXbPuKg/s=
+	t=1723847811; cv=none; b=gKJ7pU8bOGpK6x/FryYk9BSUV+vL5I20FRbDqcNXnAQHda3c9miF21GilkLOrKOGOvCNl/XKcVqw4luTlEA/OBUUEaCt6zYgTkXW6MLm4HYRBicqyk0CCNvoUuseJBRzz49/iZNfoREWFlVjWIY0LmTW4AZ7YcrMIOYdU06VVcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723846992; c=relaxed/simple;
-	bh=bTysRd1bAhztbXXKBteDMqUVM4YWTu4U8qR5aQ1Wixw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=THApfx01LWB0/FUiM1BGxKB5ouHpW0VR5vjE2Ktgkzpcoz1mkOH7UKC7U6Dj1NI0u5CDiFt5FkqbOpqUtRX+3P2LKNMXhqNTl24oKlFFd9iNp9mYjzKhK+xj20Z2Q9KFZ57F31DHhUPngVMwyEFUF0lfjc6i8hOdUos0eGtnzSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=GVWquQlX; arc=none smtp.client-ip=209.85.167.182
+	s=arc-20240116; t=1723847811; c=relaxed/simple;
+	bh=qaG4LOJUFQM3iT+Acy9aJMN96rM0IOVUFjfAxr9Ykkg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t4hxZdMtFi0ireunmAE73Lpz/ob1jL7YI+hqbAsbra35cN4+hVJcQeCMS7hppWcSkXnX3T55kQvplnnHgf7ew+BAyNBjJjqlVBh7FI6/5Nm4q3M3DtTI6qMdbLwNrpWdr7IWSmVpcQVqEVSNi5ypBI7kbuK75+e1Yl3yifzmy3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=oZuJXUxm; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db23a60850so1594107b6e.0
-        for <io-uring@vger.kernel.org>; Fri, 16 Aug 2024 15:23:10 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fc60c3ead4so22716525ad.0
+        for <io-uring@vger.kernel.org>; Fri, 16 Aug 2024 15:36:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1723846989; x=1724451789; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nuVkvW4GNrLeoim63/iv6czDdRqnKmw2mpDeGoZCC0o=;
-        b=GVWquQlXojyndIU6ogSSv+CfgAgC15mVCRQXAMVT8rQlJET7+IAs8pDLEgAoqRtE9j
-         Ek1Jf7nXxWUbpCfjekXEX9ZVAuq5DPq8/j/IVWqTX7ev7UtvOtyJUBD7UaUdCTidOGYK
-         09qqzaktdJoTpIOemSF0HTdetYXRZA8GmzOwkifSD+wbQDMdfqIHVs5/IZ7piJ4kPerj
-         0akvCpnMRBBHjwqTJ6d+qHsg0IszzZ8VQYqil+EEfQ7ruzCm+/E5DXk4VdyQnflHZghQ
-         GdarCcJYFWV9UAO3FPdDB6jBHvU9wI7QuIne+gqluqFIDMeYgmG6swOa0+tiDzCyZYqR
-         z9zQ==
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1723847809; x=1724452609; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pkKeuLzAkqJ8qev1JBVwzklKihO1Qg5YsJ9t7EcmvW0=;
+        b=oZuJXUxmp/GlwVWXuM6tjCp+DlOw5b3r4+bepMm1QCtFs6dOp+2XDO2Xi0h83uD41v
+         tsi1HLKV6+xjxhY5+D9C+NEmdQ1V5JzHmzFdTYLCRHGOai39r5nMTXrD7Ftgf1CQL8/h
+         gbUuVBbFPe0gP6RlkDPlK2s96kfCclQzVYNaRQ1kKoBkVSHjKfCAXe4LupWuJcIzzDQX
+         kx2A1pLRFGyPdhtQ5k7sO47/9ecyrsTPnRBUMhfrS4hzLrxSR6yQD4az2XZH+c5n7Vg1
+         vZ2I75VctxMq0Ontq5UQa97km9v/5f9evR7KuixvYY6O9rNR8N8+aPjquliMvwWeRdfq
+         XiLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723846989; x=1724451789;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nuVkvW4GNrLeoim63/iv6czDdRqnKmw2mpDeGoZCC0o=;
-        b=cKqBdFGhIqDrSziAOhwh+XAktcw0mPPubIK6qywpioudZokKc72Kpas5Cw1aZzL/sX
-         4Ke8Jl93p5DgY+jd7DphZeaWLLi5qkCD/Np6e+x2OPU358LhGGf2hzi4VgCTi6nQKbFD
-         Q9FkeHXeW/EQYPRYekP48Cl7oTh0ujbeCNbG1W4XXuAXUu4gNgbqeZle+L8/4b1IA7io
-         DDDbnM5lbpokZVwWndKwLszRN3/nOlJqtvQQzJeKn7jsAslDUjfWHi/aTx+o/GQmIVaU
-         D4DMNl9ezl/XuNn48bLrrXF3mSDuoMgzSGwRcGAxk79Toezxlv7WEyly1Ec3Ck9X9Ar4
-         e5hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiuuqdW6MxrPEBbkIa0dTX066IVClJ+vTMsNn8nNnDtG4P0rw/LalQ60Otu9IM0NJLlTD7VqUyZyEFCqIb+8TUNewdjBZ6Nkg=
-X-Gm-Message-State: AOJu0Ywi8KlqNgC5Fv3ZMu2Ik5g5cjDCK3YQ4Z82n0blUhuZiDnZfwtZ
-	kjKNa6mePc2XPlfmhgHW0RHZIPG3V7XQE8ob1VV+NeUdruUYK6lbPjnmiznHk0k=
-X-Google-Smtp-Source: AGHT+IFMI1DSIBq1qNQ7RyCk3Pcepeh4W1X/aqGaFlKSrNSHjRdBRoUj2k5v60s8adiN/qr/s1wJSg==
-X-Received: by 2002:a05:6808:1407:b0:3db:2025:122 with SMTP id 5614622812f47-3dd3ae07aafmr5303842b6e.36.1723846989657;
-        Fri, 16 Aug 2024 15:23:09 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1156:1:1cbd:da2b:a9f2:881? ([2620:10d:c090:500::7:a8d6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b6356929sm3502878a12.73.2024.08.16.15.23.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 15:23:09 -0700 (PDT)
-Message-ID: <803eef8f-49ca-4cd2-843d-d9e5095269d8@davidwei.uk>
-Date: Fri, 16 Aug 2024 15:23:07 -0700
+        d=1e100.net; s=20230601; t=1723847809; x=1724452609;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pkKeuLzAkqJ8qev1JBVwzklKihO1Qg5YsJ9t7EcmvW0=;
+        b=w43+1ooggXyMwyNq37NoVgqx6lI02sp2W7YuQhCs0Cbsl0p6DEsxBy0naMwNRWAOJh
+         sYuMMlOSwq4JJ/F9IJ4esYmroVFbSBWysYRSPnd/u2nc2UwWKOHNGF9oA/5cIXwbRwvz
+         liNB9DPJ+sExDgjT1H8A50EmYHXO2TlWxGAasvBYrxkHBnyqih+fxRZXwduYbYyBTp0e
+         b/ORRNnLiWCPR5FEcAdnYaEoVRDB7vJbeDqoiTZQFzt5q85MH3nBrSsX58FQzme4XB/9
+         Fbqm2NwjuS75E2vqgXsGufF7V3tN3EJzBVtdCR4QwXuA9q5EJ8g/krTtW4iWTJpFySVU
+         h/OQ==
+X-Gm-Message-State: AOJu0YyhTBWBzJ6UqEquT7xnR2T0LrJbsaz48DMSF6l6FilRx94NH5pp
+	EtHglAopSN9UY8dC+uZTjy43Q3pNCs4ELmvbic2kcfiX8fgiC5VmC4MWYFgDjWjOJMzBkiecnFR
+	F
+X-Google-Smtp-Source: AGHT+IG0BbIOLTO34n3jaP2xAJ26WiZqkma6LFXW2rgT/Ge3+IXJ/WV6lm0FZHEnOdAntKXPB1KbBA==
+X-Received: by 2002:a17:902:d4c9:b0:1fb:9b91:d7c1 with SMTP id d9443c01a7336-2020404ee4cmr47132465ad.55.1723847809190;
+        Fri, 16 Aug 2024 15:36:49 -0700 (PDT)
+Received: from localhost (fwdproxy-prn-016.fbsv.net. [2a03:2880:ff:10::face:b00c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f031bc27sm29862575ad.71.2024.08.16.15.36.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 15:36:48 -0700 (PDT)
+From: David Wei <dw@davidwei.uk>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	David Wei <dw@davidwei.uk>
+Subject: [PATCH v2] io_uring: add IORING_ENTER_NO_IOWAIT to not set in_iowait
+Date: Fri, 16 Aug 2024 15:36:40 -0700
+Message-ID: <20240816223640.1140763-1-dw@davidwei.uk>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] io_uring: do not set no_iowait if
- IORING_ENTER_NO_WAIT
-Content-Language: en-GB
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-References: <20240816180145.14561-1-dw@davidwei.uk>
- <20240816180145.14561-3-dw@davidwei.uk>
- <5163db7a-c40a-4cd1-b809-e701bec6f98d@kernel.dk>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <5163db7a-c40a-4cd1-b809-e701bec6f98d@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024-08-16 11:38, Jens Axboe wrote:
-> On 8/16/24 12:01 PM, David Wei wrote:
->> diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
->> index 9935819f12b7..e35fecca4445 100644
->> --- a/io_uring/io_uring.h
->> +++ b/io_uring/io_uring.h
->> @@ -41,6 +41,7 @@ struct io_wait_queue {
->>  	unsigned cq_tail;
->>  	unsigned nr_timeouts;
->>  	ktime_t timeout;
->> +	bool no_iowait;
->>  
->>  #ifdef CONFIG_NET_RX_BUSY_POLL
->>  	ktime_t napi_busy_poll_dt;
-> 
-> I'd put that bool below the NAPI section, then it'll pack in with
-> napi_prefer_busy_poll rather than waste 7 bytes as it does here.
-> 
+io_uring sets current->in_iowait when waiting for completions, which
+achieves two things:
 
-Thanks, I will remember to always check with pahole next time!
+1. Proper accounting of the time as iowait time
+2. Enable cpufreq optimisations, setting SCHED_CPUFREQ_IOWAIT on the rq
+
+For block IO this makes sense as high iowait can be indicative of
+issues. But for network IO especially recv, the recv side does not
+control when the completions happen.
+
+Some user tooling attributes iowait time as CPU utilisation i.e. not
+idle, so high iowait time looks like high CPU util even though the task
+is not scheduled and the CPU is free to run other tasks. When doing
+network IO with e.g. the batch completion feature, the CPU may appear to
+have high utilisation.
+
+This patchset adds a IOURING_ENTER_NO_IOWAIT flag that can be set on
+enter. If set, then current->in_iowait is not set. By default this flag
+is not set to maintain existing behaviour i.e. in_iowait is always set.
+This is to prevent waiting for completions being accounted as CPU
+utilisation.
+
+Not setting in_iowait does mean that we also lose cpufreq optimisations
+above because in_iowait semantics couples 1 and 2 together. Eventually
+we will untangle the two so the optimisations can be enabled
+independently of the accounting.
+
+IORING_FEAT_IOWAIT_TOGGLE is returned in io_uring_create() to indicate
+support. This will be used by liburing to check for this feature.
+
+Signed-off-by: David Wei <dw@davidwei.uk>
+---
+v2:
+ - squash patches into one
+ - move no_iowait in struct io_wait_queue to the end
+ - always set iowq.no_iowait
+
+---
+ include/uapi/linux/io_uring.h | 2 ++
+ io_uring/io_uring.c           | 7 ++++---
+ io_uring/io_uring.h           | 1 +
+ 3 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 48c440edf674..3a94afa8665e 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -508,6 +508,7 @@ struct io_cqring_offsets {
+ #define IORING_ENTER_EXT_ARG		(1U << 3)
+ #define IORING_ENTER_REGISTERED_RING	(1U << 4)
+ #define IORING_ENTER_ABS_TIMER		(1U << 5)
++#define IORING_ENTER_NO_IOWAIT		(1U << 6)
+ 
+ /*
+  * Passed in for io_uring_setup(2). Copied back with updated info on success
+@@ -543,6 +544,7 @@ struct io_uring_params {
+ #define IORING_FEAT_LINKED_FILE		(1U << 12)
+ #define IORING_FEAT_REG_REG_RING	(1U << 13)
+ #define IORING_FEAT_RECVSEND_BUNDLE	(1U << 14)
++#define IORING_FEAT_IOWAIT_TOGGLE	(1U << 15)
+ 
+ /*
+  * io_uring_register(2) opcodes and arguments
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 20229e72b65c..5e75672525df 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2372,7 +2372,7 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 	 * can take into account that the task is waiting for IO - turns out
+ 	 * to be important for low QD IO.
+ 	 */
+-	if (current_pending_io())
++	if (!iowq->no_iowait && current_pending_io())
+ 		current->in_iowait = 1;
+ 	ret = 0;
+ 	if (iowq->timeout == KTIME_MAX)
+@@ -2414,6 +2414,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
+ 	iowq.cq_tail = READ_ONCE(ctx->rings->cq.head) + min_events;
+ 	iowq.timeout = KTIME_MAX;
++	iowq.no_iowait = flags & IORING_ENTER_NO_IOWAIT;
+ 
+ 	if (uts) {
+ 		struct timespec64 ts;
+@@ -3155,7 +3156,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 	if (unlikely(flags & ~(IORING_ENTER_GETEVENTS | IORING_ENTER_SQ_WAKEUP |
+ 			       IORING_ENTER_SQ_WAIT | IORING_ENTER_EXT_ARG |
+ 			       IORING_ENTER_REGISTERED_RING |
+-			       IORING_ENTER_ABS_TIMER)))
++			       IORING_ENTER_ABS_TIMER | IORING_ENTER_NO_IOWAIT)))
+ 		return -EINVAL;
+ 
+ 	/*
+@@ -3539,7 +3540,7 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 			IORING_FEAT_EXT_ARG | IORING_FEAT_NATIVE_WORKERS |
+ 			IORING_FEAT_RSRC_TAGS | IORING_FEAT_CQE_SKIP |
+ 			IORING_FEAT_LINKED_FILE | IORING_FEAT_REG_REG_RING |
+-			IORING_FEAT_RECVSEND_BUNDLE;
++			IORING_FEAT_RECVSEND_BUNDLE | IORING_FEAT_IOWAIT_TOGGLE;
+ 
+ 	if (copy_to_user(params, p, sizeof(*p))) {
+ 		ret = -EFAULT;
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 9935819f12b7..426079a966ac 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -46,6 +46,7 @@ struct io_wait_queue {
+ 	ktime_t napi_busy_poll_dt;
+ 	bool napi_prefer_busy_poll;
+ #endif
++	bool no_iowait;
+ };
+ 
+ static inline bool io_should_wake(struct io_wait_queue *iowq)
+-- 
+2.43.5
+
 

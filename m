@@ -1,178 +1,187 @@
-Return-Path: <io-uring+bounces-2814-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2815-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0827995554F
-	for <lists+io-uring@lfdr.de>; Sat, 17 Aug 2024 06:16:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E8495596E
+	for <lists+io-uring@lfdr.de>; Sat, 17 Aug 2024 21:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6DC282A3E
-	for <lists+io-uring@lfdr.de>; Sat, 17 Aug 2024 04:16:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C5331F21A13
+	for <lists+io-uring@lfdr.de>; Sat, 17 Aug 2024 19:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFA13716D;
-	Sat, 17 Aug 2024 04:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A5912DD88;
+	Sat, 17 Aug 2024 19:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QNg5VmM+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJQHM7EA"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D9C22338
-	for <io-uring@vger.kernel.org>; Sat, 17 Aug 2024 04:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D35F7F7CA
+	for <io-uring@vger.kernel.org>; Sat, 17 Aug 2024 19:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723868201; cv=none; b=is+xLq4ZWW2Qj4NrB688Q+/z91qg+FHA/Qt0hKgtevWhDpjVPF7OnH1pfz6t7hTjLWiZZXdCpsuXPmPOu2ShQCN/WLIou7Rkk0Mkc++NgsGEAVPpTcFAz3V6iAIl3l3GXT8Lu5pT1Sgx9TEIvl4URqnhjq3jludzr4bUEvfj0/k=
+	t=1723923846; cv=none; b=VvgSllXnKo3Xj1E3yaSG+4aJWRkzrq2912OWuDsmuGCb9EpSsEAjh172UjmrQSJHeElNqjDCtRl2Q9Qbp1VfRcVdKqlUzrDbqVO8TDhni9yFYejFmtmfYeYmaQaIIjw4RMcCEPk4ZXhxTLP44yqRA/A8W3b21JAtAdQ1AziqzKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723868201; c=relaxed/simple;
-	bh=O9/l7v5MYEnlC0f5zH8ojBWCl7YKPKoB9f0eBBd92CA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=UXFA9U+NlAG+LXARBJMOnUTTy69Io1h+euBy0I4OQU8UekZYi2QSDhMRSCK1shGDxjc5lubj5VAvBLv6C4VtuKWa2KA+e0YtyJqP8KWnQRQrD7gj7DlIOExiNWbo9bDNLoj0OTqitkAfg5v3lGtlCACRARBhoXRJAHJ63j+zg1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QNg5VmM+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723868198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LiqVRaoulk/mY0QB38YEzeF4KeY9i1TXrrsn3lGI4aU=;
-	b=QNg5VmM+lbLIg5je9lb/QTf6c52dnqmw05c+jUIPolnu8GT6EMDBLSUa5Yu0I74IZSSN8F
-	730RF0vFvnI5BPqxdnJy3Gp6vVvxHEOpXJ7tSjDIfzHtwV4lx/CVPhtGxTYSOyxbaRLTrB
-	bhKBvSERr2tjftTn6But/CH/BqvSRGk=
-Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
- [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-534-WGT_73nvMAGU0c9mgU9iXA-1; Sat, 17 Aug 2024 00:16:36 -0400
-X-MC-Unique: WGT_73nvMAGU0c9mgU9iXA-1
-Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-492a3346e4bso64917137.3
-        for <io-uring@vger.kernel.org>; Fri, 16 Aug 2024 21:16:36 -0700 (PDT)
+	s=arc-20240116; t=1723923846; c=relaxed/simple;
+	bh=TdwOqfcMmNQDcyr/jU6gWXHu3ho/p1mKCh3dvd+BOV8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Umdhixs7DaFcD8gn26TGcjVW3nB1TObcRiW4ElEr+dItmHYY6Dw5oK5VfLl0BACq5UuD35XRFmhnILPuDSSK1qFp+reazk0w4OfTmeZ+N09edJIOHUMC+XAqINiUS1aK6WixAwWdqzaI+MR8v2F79maS/XAlZjZrJ0MawfbPcYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UJQHM7EA; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a83597ce5beso458768766b.1
+        for <io-uring@vger.kernel.org>; Sat, 17 Aug 2024 12:44:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723923844; x=1724528644; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HsZ9yoi1F0UI6wnD97zjkId2BnKCa+jCNGGdHjiO+1o=;
+        b=UJQHM7EAsEcNpdcazmH2Jk6ec15MnA0ZE/aHwRAoc/7nt+jxb5YH1NPvIvofiEnFay
+         kqPUujevI+nz62NSHsloFUPLCDXglOqo8z2GSR+LUqa8ygTFSToELDPmM8h0wp0OFDU4
+         65xRZd2m+JK14ZP3Df+Y0SJF1QO+hNaWh+eGFpWeOrGkTUK+JNusf54YbssQEb72vq+y
+         F+YxG9CjD2NRHwl/lT9aJmKHhCpHTlTa2Vl6lQZNfBf61nY660shg2iQpnuUiSz+jVgQ
+         TdEysaMXCl5tKL5f8WYDTw/th8h9boHLi9gEdx6ZBYeRGtd6cRHzmTjJ+9bXjAcAFJOZ
+         DqNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723868196; x=1724472996;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LiqVRaoulk/mY0QB38YEzeF4KeY9i1TXrrsn3lGI4aU=;
-        b=ZzyuQWsHwG3JTYRBumdH4XcgD10ePC3ijrHyVBmuoyBt9y/0PRxmfr/LYkFQdBNtco
-         9Yw+/mHx+rpdHVes2T39V3ajQPhejrOZdA6ij3BIE4iDG3FktM3F7pIybFwVsuhsNeP3
-         huE94bl54RVLgGexe+P4Zx3xIKg/6Q77H2CVfaidys/UdRlIiWsjHwogIaKmMziXHCR9
-         GvzF2GbgKvqCNFbz/7OnSk6Bz+2aEzbWuRztXReTC6p6PHpqqi76oaJgpyXyiiVdxNKw
-         3wtUZJxfjT2jLOFuPngxbtajNcuHDUny9aorptqd+E22uBJBAsDu5NDPKwmDxPPd6jr2
-         9xAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXo7oI2Yi3nWiK1Borrfto8QsJTICUxKxTfI/7jnvd3b38hCxZyRHHGSwiPwqO1xDGuZxX4VbjY19n9y2F/Mo8H3tbQXnXpbZc=
-X-Gm-Message-State: AOJu0YxOfhnALHmDeXGnKe7AWbIKxdRP2RCf6qpDRdL4bhh7aZjg4uq8
-	T5FqoJdNhG7aQpqmCReYdQXNNMYCYJhC7QnOWr1FNM8flO0Ieh1TMK1sxjP8Eyrc8a+WwG8JSWt
-	CdUic4yyIqEwJ9jcfQmKO5yXTeRlDsM85jOa6f80jC+comocetiuww8Ms+dOa9jRIsHcEk7N+ac
-	NIIgfW+3SwVwm54DA3hvsgkGMFBLO6fsM=
-X-Received: by 2002:a05:6102:5127:b0:492:a4f3:34c2 with SMTP id ada2fe7eead31-49779a409b6mr3094145137.5.1723868195808;
-        Fri, 16 Aug 2024 21:16:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFsztqX8ZhdNatL778NuvEH/u9w9I5BJjMoYXfA03WqFWsKr785hzMGK4Fd6ZtrcZCRkVRd2QJnX7cr2X0NEw0=
-X-Received: by 2002:a05:6102:5127:b0:492:a4f3:34c2 with SMTP id
- ada2fe7eead31-49779a409b6mr3094141137.5.1723868195494; Fri, 16 Aug 2024
- 21:16:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723923844; x=1724528644;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HsZ9yoi1F0UI6wnD97zjkId2BnKCa+jCNGGdHjiO+1o=;
+        b=vNG6rScnjmfNomZWwRMtXAoEyGQCj3xtEg9UcF+LvXqAiYYerQVGnGfAXfdMc4jtZz
+         2dAHxb8NE+zoqEDR1iaS1WAdeoqVU6rajFEu7V30LSy5ukIIZLDKO6vCasmvl9Ht6TzU
+         8vjPESBgoKUOHcDRpypNyDejfGBpyUN+w2QrGv46G/UFv7eAf2g6gl6FpyChSy1EyvkM
+         6Z074Ekqtt9bkdoCNV7RMW7mmgc/SQYGrwwq3jU5c3i4NtK2Q+Oi7F+QIwOIvBhaWn97
+         LEFuJnAZAReifhxuATrpOOc3cGzQAQcY0ooD4IHgR2fhNw+NT6UxLF2pP3HwHre9adup
+         Muwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtmEe1Vn4V8/FRQTR6GnT/eZ74Ltp4IyzTjN5vxSOC1JOJQKXfXLzs/x5Qc9pj8P9Je7avqRZoXMwGRYq6dfj9dxKYFd0vPJQ=
+X-Gm-Message-State: AOJu0YzLH6uHErXhLK4tSpcnbOJ9mPKBPXoiArWBxRRytaubc7242Isl
+	zNyEVW4iUvAL8G0i595iJL8wEzZ0nBTVaeINplt+Ojf6sHhCLMC09ZqMLA==
+X-Google-Smtp-Source: AGHT+IHgZtRJhoDRhzVeVan2d2h6Dua5ORg/6/3GyJhRRrh5gJRccDtdJTIuZCAKZKxRxaKktsjsHw==
+X-Received: by 2002:a17:907:3fa4:b0:a72:64f0:552e with SMTP id a640c23a62f3a-a8394e34235mr618496166b.19.1723923843220;
+        Sat, 17 Aug 2024 12:44:03 -0700 (PDT)
+Received: from [192.168.8.113] ([185.69.144.74])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839344cdsm436743466b.114.2024.08.17.12.44.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 17 Aug 2024 12:44:02 -0700 (PDT)
+Message-ID: <ab4252f1-90e3-4abf-b4fb-0b318edc05bd@gmail.com>
+Date: Sat, 17 Aug 2024 20:44:37 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808162503.345913-1-ming.lei@redhat.com>
-In-Reply-To: <20240808162503.345913-1-ming.lei@redhat.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Sat, 17 Aug 2024 12:16:24 +0800
-Message-ID: <CAFj5m9L3FGhdFw61K9-iLWs=ak3OGmunEKC6Fs=SPYDVfcPAVg@mail.gmail.com>
-Subject: Re: [PATCH V5 0/8] io_uring: support sqe group and provide group kbuf
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, linux-block@vger.kernel.org, 
-	Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] io_uring: add IORING_ENTER_NO_IOWAIT to not set
+ in_iowait
+To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>
+References: <20240816223640.1140763-1-dw@davidwei.uk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240816223640.1140763-1-dw@davidwei.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 9, 2024 at 12:25=E2=80=AFAM Ming Lei <ming.lei@redhat.com> wrot=
-e:
->
-> Hello,
->
-> The 1st 3 patches are cleanup, and prepare for adding sqe group.
->
-> The 4th patch supports generic sqe group which is like link chain, but
-> allows each sqe in group to be issued in parallel and the group shares
-> same IO_LINK & IO_DRAIN boundary, so N:M dependency can be supported with
-> sqe group & io link together. sqe group changes nothing on
-> IOSQE_IO_LINK.
->
-> The 5th patch supports one variant of sqe group: allow members to depend
-> on group leader, so that kernel resource lifetime can be aligned with
-> group leader or group, then any kernel resource can be shared in this
-> sqe group, and can be used in generic device zero copy.
->
-> The 6th & 7th patches supports providing sqe group buffer via the sqe
-> group variant.
->
-> The 8th patch supports ublk zero copy based on io_uring providing sqe
-> group buffer.
->
-> Tests:
->
-> 1) pass liburing test
-> - make runtests
->
-> 2) write/pass two sqe group test cases:
->
-> https://github.com/axboe/liburing/compare/master...ming1:liburing:sqe_gro=
-up_v2
->
-> - covers related sqe flags combination and linking groups, both nop and
-> one multi-destination file copy.
->
-> - cover failure handling test: fail leader IO or member IO in both single
->   group and linked groups, which is done in each sqe flags combination
->   test
->
-> 3) ublksrv zero copy:
->
-> ublksrv userspace implements zero copy by sqe group & provide group
-> kbuf:
->
->         git clone https://github.com/ublk-org/ublksrv.git -b group-provid=
-e-buf_v2
->         make test T=3Dloop/009:nbd/061    #ublk zc tests
->
-> When running 64KB/512KB block size test on ublk-loop('ublk add -t loop --=
-buffered_io -f $backing'),
-> it is observed that perf is doubled.
->
-> Any comments are welcome!
->
-> V5:
->         - follow Pavel's suggestion to minimize change on io_uring fast c=
-ode
->           path: sqe group code is called in by single 'if (unlikely())' f=
-rom
->           both issue & completion code path
->
->         - simplify & re-write group request completion
->                 avoid to touch io-wq code by completing group leader via =
-tw
->                 directly, just like ->task_complete
->
->                 re-write group member & leader completion handling, one
->                 simplification is always to free leader via the last memb=
-er
->
->                 simplify queueing group members, not support issuing lead=
-er
->                 and members in parallel
->
->         - fail the whole group if IO_*LINK & IO_DRAIN is set on group
->           members, and test code to cover this change
->
->         - misc cleanup
+On 8/16/24 23:36, David Wei wrote:
+> io_uring sets current->in_iowait when waiting for completions, which
+> achieves two things:
+> 
+> 1. Proper accounting of the time as iowait time
+> 2. Enable cpufreq optimisations, setting SCHED_CPUFREQ_IOWAIT on the rq
 
-Hi Pavel,
+"achieve" is not the right word, nobody wanted 1. and it's not
+"proper accounting" but rather an unfortunate side effect.
 
-V5 should address all your comments on V4, so care to take a look?
+> For block IO this makes sense as high iowait can be indicative of
+> issues. But for network IO especially recv, the recv side does not
+> control when the completions happen.
+> 
+> Some user tooling attributes iowait time as CPU utilisation i.e. not
+> idle, so high iowait time looks like high CPU util even though the task
+> is not scheduled and the CPU is free to run other tasks. When doing
+> network IO with e.g. the batch completion feature, the CPU may appear to
+> have high utilisation.
 
-Thanks,
+How "batch completion" came into the picture? It elevates
+iowait for any net apps, we have enough reports about it.
 
+
+> This patchset adds a IOURING_ENTER_NO_IOWAIT flag that can be set on
+> enter. If set, then current->in_iowait is not set. By default this flag
+
+A worthwhile change but for _completely_ different reasons. So, first,
+it's v3, not v2, considering the patchset from a couple month ago. And
+since in essence nothing has changed, I can only repeat same points I
+made back then.
+
+The description reads like the flag's purpose is to change accounting,
+and I'm vividly oppose any user exposed (per ring) toggle doing that.
+We don't want the overhead, it's a very confusing feature, and not even
+that helpful. iowait is monitored not by the app itself but by someone
+else outside, likely by a different person, and even before trying to
+make sense of numbers the monitor would need to learn first whether
+_any_ program uses io_uring and what flags the application writer
+decided to pass, even more fun when io_uring is used via a 3rd party
+library.
+
+Exactly same patches could make sense if you flip the description
+and say "in_iowait is good for perfomance in some cases but
+degrades power consumption for others, so here is a way to tune
+performance", (just take Jamal's numbers). And that would need to
+clearly state (including man) that the iowait statistic is a side
+effect of it, we don't give it a thought, and the time accounting
+aspect may and hopefully will change in the future.
+
+Jens, can you remind what happened with separating iowait stats
+vs the optimisation? I believed you sent some patches
+
+> is not set to maintain existing behaviour i.e. in_iowait is always set.
+> This is to prevent waiting for completions being accounted as CPU
+> utilisation.
+
+For accounting, it's more reasonable to keep it disabled by
+default, so we stop getting millions complaints per day about
+high iowait.
+
+> Not setting in_iowait does mean that we also lose cpufreq optimisations
+> above because in_iowait semantics couples 1 and 2 together. Eventually
+> we will untangle the two so the optimisations can be enabled
+> independently of the accounting.
+> 
+> IORING_FEAT_IOWAIT_TOGGLE is returned in io_uring_create() to indicate
+> support. This will be used by liburing to check for this feature.
+> Signed-off-by: David Wei <dw@davidwei.uk>
+> ---
+> v2:
+>   - squash patches into one
+>   - move no_iowait in struct io_wait_queue to the end
+>   - always set iowq.no_iowait
+> 
+> ---
+>   include/uapi/linux/io_uring.h | 2 ++
+>   io_uring/io_uring.c           | 7 ++++---
+>   io_uring/io_uring.h           | 1 +
+>   3 files changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 48c440edf674..3a94afa8665e 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -508,6 +508,7 @@ struct io_cqring_offsets {
+>   #define IORING_ENTER_EXT_ARG		(1U << 3)
+>   #define IORING_ENTER_REGISTERED_RING	(1U << 4)
+>   #define IORING_ENTER_ABS_TIMER		(1U << 5)
+> +#define IORING_ENTER_NO_IOWAIT		(1U << 6)
+
+Just curious, why did we switch from a register opcode to an
+ENTER flag?
+
+
+-- 
+Pavel Begunkov
 

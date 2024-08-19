@@ -1,73 +1,74 @@
-Return-Path: <io-uring+bounces-2833-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2834-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04845957533
-	for <lists+io-uring@lfdr.de>; Mon, 19 Aug 2024 22:02:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B98A957852
+	for <lists+io-uring@lfdr.de>; Tue, 20 Aug 2024 01:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C2F4B231A2
-	for <lists+io-uring@lfdr.de>; Mon, 19 Aug 2024 20:02:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137C1283FC8
+	for <lists+io-uring@lfdr.de>; Mon, 19 Aug 2024 23:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B757D1DD388;
-	Mon, 19 Aug 2024 20:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A793715990E;
+	Mon, 19 Aug 2024 23:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fiHPE709"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="VHzqy/gv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AA81DC49E
-	for <io-uring@vger.kernel.org>; Mon, 19 Aug 2024 20:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD59D14D43D
+	for <io-uring@vger.kernel.org>; Mon, 19 Aug 2024 23:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724097734; cv=none; b=Wjrx47JDRjEQxwUo9arviOHSNcZB2L/duY1Va88WsG93PkQFQ7BTdCb4zCisuMY+7QvVQlSTLwpyUf8Dugiy62+5JgvZewu9rRbrN2/zjvBTOIkbb9EheDl3tA5tZrEYXTZuScXaEe+bkOCFw/WavrWtIpxqk4wGIdifyKVU6pg=
+	t=1724108632; cv=none; b=euq8NVJCvorNPUrjBWAYJc26885c7yy/iGX7SVY06tdHx1dH3EWOdfqf9VzsIKogZgTx1mVMF5mP3TSfhc2JpPskI+8jk8ycGYxKz9R9aIb0tewbawcT2Na638m5fXLNRNoSzcJLRqbz3HTwN0L4MGLsJKAaFrcOR5HPrRxvi68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724097734; c=relaxed/simple;
-	bh=brqBzu5hwTI9ikdmDQFMDsnGTdp+3wdYRz0VCgj12Gs=;
+	s=arc-20240116; t=1724108632; c=relaxed/simple;
+	bh=DWDrPAgyt3q3qqpf/Bm5RscRhfde6eGy0s0ZIh+s1Fw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TcZRIUqzweOvR1bBsa4G6CEHbByoSFoCsN4UhYrAzuwPiQKQwwE6VZjQijNqj+wMWWYYE0KrGazVEUrp2aHttX9QDyAh98dX2uox4bw6VmoGUqeSOaNY4KYBq7f319CELMTZIUjBry5pmG6tMuTxqN6GD4H2/mNc4v/onbr+U+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fiHPE709; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d3ba497224so634490a91.0
-        for <io-uring@vger.kernel.org>; Mon, 19 Aug 2024 13:02:11 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=uevTwU5grrLo7vhZ2aNes94zm8KqHJEskSmtpKzlqN3l3q299QFg6pHZE6NLChCGjWyXkNqrlB9Ib+xBcXZ35hMucID1aMQsCjMzQKuaQ4HCPw3eRDCW6cHAu4JdfOP3KIXmVDa0vBvMgEH42QwBqEX5Ipso4xgWzXly8xuDTyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=VHzqy/gv; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2705d31a35cso1114589fac.0
+        for <io-uring@vger.kernel.org>; Mon, 19 Aug 2024 16:03:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724097731; x=1724702531; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1724108630; x=1724713430; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pBkl3+XvJeAklRL+6TFbxoUucjnynnJ4wXSRFBTFaQc=;
-        b=fiHPE709FnI1QiEOtQZ2ekHW1o2kHh7Y1qp0mPb7KGrdWtotEhOBN5+537v9T+YyuJ
-         TICWCnJo2xeQdoXSu7ejX+oayAGi2I2KQ9K+YbEJwnhj/Oj7E8nNhiG46Fa+xtgS4QSH
-         9ffCxO/IJMbUCUOhuNnUkHnY5OA3eM0nDbIbgqow9wIN1XmzB0FrBR8mV+IcBNMaZhHv
-         SwLEMC++KyX8hwAj/NFt6ZGPaPMaHSX5YxKvKr9ZtxVV9IISBA93NiAlsvJG10gVQk/X
-         I9/Y4wdoLj8OpHix+8Ba9FMUIFXOX2hNAe+V4frrpy5Gwloi89WCoKg6tof/XXOX8v/X
-         3MCQ==
+        bh=B7FF2xPFNcpfo//VjsVucyjCndxHBHqcNrJYQAzj6ak=;
+        b=VHzqy/gv3yH2QEk3etqyQsqbigissQcF1HPP3noQn80J78AWxZERmY+J7yxg0mgk61
+         2wfWOUDetftY45397KtSts8j1a8+LDgkeNN0BaAD4queoKs9TiGmfph/3KDfSuiuK+JZ
+         k5+kaOSN6mwlfejSyOMtUKQggxKTmiu1e4adA4SALf1JZB8Gua8uPzlxwH+ATeYZb8ke
+         CLPpqdFh7t5K2daV/mw5ozfnQmWxApj9/ydGcANYfugD8G9gR3uKW1xVFlrEM2cqeMLo
+         Rv9TXh/7ogUNGJZNZtJ99sdGYom4WE88sRTe8t5ov4FVadb2XvCjv3jMZYBes0hYVfyQ
+         QbxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724097731; x=1724702531;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1724108630; x=1724713430;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pBkl3+XvJeAklRL+6TFbxoUucjnynnJ4wXSRFBTFaQc=;
-        b=jUVpOK4VIBZ76u+5Uv7iO0ZRV6za0S7jEqJPshmeQSE+QXij2SuagbG5ZfaYT4cqTo
-         FrByQlelwil0KHlNdeWMwcxPOKaHMt6R3vVO15f0IZkgeQUSxgmhWVQQP5m1dzrAfP4n
-         UfzLZB0bDW6dIiidtEHc/mMaTvBovxxW7Yx9XW1nu/IbhO6/5KnKCYSb43e5/JAI5Zih
-         LhJ7F0F7mrD5SqWHrScsdEjt8uC7KqUjCUUu4DL540XCCtNNOenrPPXXnekoHSX+E1L6
-         Va8au/JVlsZt9WS4She1aQdtPFODIahI/uW1uCvssymdci79vdLyYcyylmk2G2vd/JI8
-         Xq+g==
-X-Gm-Message-State: AOJu0YyzjoP/W0RYQkqjY7yRim+myyCXRlpc8vX5yQTuwxaI7VpI15yd
-	95Y8tOoEiqIdvPYz4jnOR7Zb5aTr2gIqXAQJK1JKtPHUsxEM1opytU2xK1TQIKs=
-X-Google-Smtp-Source: AGHT+IGhGfvDEMLkeZJwlMhyh4v1+tO0SzOoGdLBcZEfbz9YTeG1J9v2kob+e+94rKiTd1PuLu4OJw==
-X-Received: by 2002:a17:90a:d517:b0:2d3:c488:fa6b with SMTP id 98e67ed59e1d1-2d3e151f6d8mr8019983a91.5.1724097730914;
-        Mon, 19 Aug 2024 13:02:10 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e2e6b1f6sm7772049a91.19.2024.08.19.13.02.09
+        bh=B7FF2xPFNcpfo//VjsVucyjCndxHBHqcNrJYQAzj6ak=;
+        b=pHGY39BcysaDHXT9mngmfRgOhYMe6D0fd6PpiNKysVj1hNKs+vA91sXWu/3UpxPbKT
+         UIbXFzaF2VM5/KolE3+W9A8ZasF2o2mQEVTPVy+e4mVnNGRKSI9EZuNwoNTaPcsGQW1J
+         oUWAFvVoefMFfy9EFT5MGJbS79IiP8ihMruF+1f/OtFZ2H3eBKQYUQuM1GsZdM1Cqzl1
+         /KLrbAV+M82sbRKvIokO0AIJ+NbDf/0M6Dsa84uHxrdGO+/gFVedCgEim0XXZx/ckYEk
+         DahSWywNcaRQhPfq50jlsfdNVIc7HvFCZQYsQjvicQQCR/uUm6Ki3c7CBVC/sAXbnBX7
+         q1mA==
+X-Gm-Message-State: AOJu0YxFeL+1xcoOaowVwSV+gEIuaoZeNC2eeCDiGjtkc0vwVixEfDlP
+	2Jasjg4JwqUWo1w13LaCn6wjLNP4tePz90bspdtXT5pBEGez+mvJ65emgUFLq2aiOzoOKLkJEKs
+	vmEY=
+X-Google-Smtp-Source: AGHT+IHtSLvx/QNXMgK5YXXCbPc+LjVNDq/28CfjoPvtJBpLho+Kxunpr3xkXl/MceIr8XErkbESyQ==
+X-Received: by 2002:a05:6870:d626:b0:25e:8509:160e with SMTP id 586e51a60fabf-2701c349877mr15873424fac.3.1724108629652;
+        Mon, 19 Aug 2024 16:03:49 -0700 (PDT)
+Received: from [192.168.1.13] (174-21-189-109.tukw.qwest.net. [174.21.189.109])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61ce869sm6988325a12.24.2024.08.19.16.03.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 13:02:10 -0700 (PDT)
-Message-ID: <5d7aabe5-3988-4a85-b329-4dfe89b22582@kernel.dk>
-Date: Mon, 19 Aug 2024 14:02:09 -0600
+        Mon, 19 Aug 2024 16:03:49 -0700 (PDT)
+Message-ID: <5c209f2e-34c5-4afa-9ecf-842f33d6baf0@davidwei.uk>
+Date: Mon, 19 Aug 2024 16:03:48 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -75,135 +76,130 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 5/5] block: implement io_uring discard cmd
-To: Pavel Begunkov <asml.silence@gmail.com>, Ming Lei <ming.lei@redhat.com>
-Cc: io-uring@vger.kernel.org, Conrad Meyer <conradmeyer@meta.com>,
- linux-block@vger.kernel.org, linux-mm@kvack.org
-References: <cover.1723601133.git.asml.silence@gmail.com>
- <6ecd7ab3386f63f1656dc766c1b5b038ff5353c2.1723601134.git.asml.silence@gmail.com>
- <CAFj5m9+CXS_b5kgFioFHTWivb6O+R9HytsSQEHcEzUM5SqHfgw@mail.gmail.com>
- <fd357721-7ba7-4321-88da-28651754f8a4@kernel.dk>
- <e06fd325-f20f-44d8-8f72-89b97cf4186f@gmail.com> <Zr6S4sHWtdlbl/dd@fedora>
- <4d016a30-d258-4d0e-b3bc-18bf0bd48e32@kernel.dk> <Zr6vIt1uSe9/xguH@fedora>
- <df7c7a6c-3d6f-459b-a7c4-3c105c7b67c5@gmail.com> <Zr60qvr5u1Z4/aZC@fedora>
- <dbfd1a3f-a8b6-4d05-943e-4a1387c9d03a@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <dbfd1a3f-a8b6-4d05-943e-4a1387c9d03a@gmail.com>
+Subject: Re: [PATCH v2] io_uring: add IORING_ENTER_NO_IOWAIT to not set
+ in_iowait
+Content-Language: en-GB
+To: Jeff Moyer <jmoyer@redhat.com>
+Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>
+References: <20240816223640.1140763-1-dw@davidwei.uk>
+ <x49bk1s9c35.fsf@segfault.usersys.redhat.com>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <x49bk1s9c35.fsf@segfault.usersys.redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 8/15/24 8:16 PM, Pavel Begunkov wrote:
-> On 8/16/24 03:08, Ming Lei wrote:
->> On Fri, Aug 16, 2024 at 02:59:49AM +0100, Pavel Begunkov wrote:
->>> On 8/16/24 02:45, Ming Lei wrote:
->>>> On Thu, Aug 15, 2024 at 07:24:16PM -0600, Jens Axboe wrote:
->>>>> On 8/15/24 5:44 PM, Ming Lei wrote:
->>>>>> On Thu, Aug 15, 2024 at 06:11:13PM +0100, Pavel Begunkov wrote:
->>>>>>> On 8/15/24 15:33, Jens Axboe wrote:
->>>>>>>> On 8/14/24 7:42 PM, Ming Lei wrote:
->>>>>>>>> On Wed, Aug 14, 2024 at 6:46?PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>>>>>>>>
->>>>>>>>>> Add ->uring_cmd callback for block device files and use it to implement
->>>>>>>>>> asynchronous discard. Normally, it first tries to execute the command
->>>>>>>>>> from non-blocking context, which we limit to a single bio because
->>>>>>>>>> otherwise one of sub-bios may need to wait for other bios, and we don't
->>>>>>>>>> want to deal with partial IO. If non-blocking attempt fails, we'll retry
->>>>>>>>>> it in a blocking context.
->>>>>>>>>>
->>>>>>>>>> Suggested-by: Conrad Meyer <conradmeyer@meta.com>
->>>>>>>>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>>>>>>>>> ---
->>>>>>>>>>     block/blk.h             |  1 +
->>>>>>>>>>     block/fops.c            |  2 +
->>>>>>>>>>     block/ioctl.c           | 94 +++++++++++++++++++++++++++++++++++++++++
->>>>>>>>>>     include/uapi/linux/fs.h |  2 +
->>>>>>>>>>     4 files changed, 99 insertions(+)
->>>>>>>>>>
->>>>>>>>>> diff --git a/block/blk.h b/block/blk.h
->>>>>>>>>> index e180863f918b..5178c5ba6852 100644
->>>>>>>>>> --- a/block/blk.h
->>>>>>>>>> +++ b/block/blk.h
->>>>>>>>>> @@ -571,6 +571,7 @@ blk_mode_t file_to_blk_mode(struct file *file);
->>>>>>>>>>     int truncate_bdev_range(struct block_device *bdev, blk_mode_t mode,
->>>>>>>>>>                    loff_t lstart, loff_t lend);
->>>>>>>>>>     long blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg);
->>>>>>>>>> +int blkdev_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags);
->>>>>>>>>>     long compat_blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg);
->>>>>>>>>>
->>>>>>>>>>     extern const struct address_space_operations def_blk_aops;
->>>>>>>>>> diff --git a/block/fops.c b/block/fops.c
->>>>>>>>>> index 9825c1713a49..8154b10b5abf 100644
->>>>>>>>>> --- a/block/fops.c
->>>>>>>>>> +++ b/block/fops.c
->>>>>>>>>> @@ -17,6 +17,7 @@
->>>>>>>>>>     #include <linux/fs.h>
->>>>>>>>>>     #include <linux/iomap.h>
->>>>>>>>>>     #include <linux/module.h>
->>>>>>>>>> +#include <linux/io_uring/cmd.h>
->>>>>>>>>>     #include "blk.h"
->>>>>>>>>>
->>>>>>>>>>     static inline struct inode *bdev_file_inode(struct file *file)
->>>>>>>>>> @@ -873,6 +874,7 @@ const struct file_operations def_blk_fops = {
->>>>>>>>>>            .splice_read    = filemap_splice_read,
->>>>>>>>>>            .splice_write   = iter_file_splice_write,
->>>>>>>>>>            .fallocate      = blkdev_fallocate,
->>>>>>>>>> +       .uring_cmd      = blkdev_uring_cmd,
->>>>>>>>>
->>>>>>>>> Just be curious, we have IORING_OP_FALLOCATE already for sending
->>>>>>>>> discard to block device, why is .uring_cmd added for this purpose?
->>>>>>>
->>>>>>> Which is a good question, I haven't thought about it, but I tend to
->>>>>>> agree with Jens. Because vfs_fallocate is created synchronous
->>>>>>> IORING_OP_FALLOCATE is slow for anything but pretty large requests.
->>>>>>> Probably can be patched up, which would  involve changing the
->>>>>>> fops->fallocate protot, but I'm not sure async there makes sense
->>>>>>> outside of bdev (?), and cmd approach is simpler, can be made
->>>>>>> somewhat more efficient (1 less layer in the way), and it's not
->>>>>>> really something completely new since we have it in ioctl.
->>>>>>
->>>>>> Yeah, we have ioctl(DISCARD), which acquires filemap_invalidate_lock,
->>>>>> same with blkdev_fallocate().
->>>>>>
->>>>>> But this patch drops this exclusive lock, so it becomes async friendly,
->>>>>> but may cause stale page cache. However, if the lock is required, it can't
->>>>>> be efficient anymore and io-wq may be inevitable, :-)
->>>>>
->>>>> If you want to grab the lock, you can still opportunistically grab it.
->>>>> For (by far) the common case, you'll get it, and you can still do it
->>>>> inline.
->>>>
->>>> If the lock is grabbed in the whole cmd lifetime, it is basically one sync
->>>> interface cause there is at most one async discard cmd in-flight for each
->>>> device.
->>>>
->>>> Meantime the handling has to move to io-wq for avoiding to block current
->>>> context, the interface becomes same with IORING_OP_FALLOCATE?
->>>
->>> Right, and agree that we can't trylock because we'd need to keep it
->>> locked until IO completes, at least the sync versions does that.
->>>
->>> But I think *invalidate_pages() in the patch should be enough. That's
->>> what the write path does, so it shouldn't cause any problem to the
->>> kernel. As for user space, that'd be more relaxed than the ioctl,
->>> just as writes are, so nothing new to the user. I hope someone with
->>> better filemap understanding can confirm it (or not).
->>
->> I may not be familiar with filemap enough, but looks *invalidate_pages()
->> is only for removing pages from the page cache range, and the lock is added
->> for preventing new page cache read from being started, so stale data read
->> can be avoided when DISCARD is in-progress.
+On 2024-08-16 18:23, Jeff Moyer wrote:
+> Hi, David,
 > 
-> Sounds like it, but the point is it's the same data race for the
-> user as if it would've had a write in progress.
+> David Wei <dw@davidwei.uk> writes:
+> 
+>> io_uring sets current->in_iowait when waiting for completions, which
+>> achieves two things:
+>>
+>> 1. Proper accounting of the time as iowait time
+>> 2. Enable cpufreq optimisations, setting SCHED_CPUFREQ_IOWAIT on the rq
+>>
+>> For block IO this makes sense as high iowait can be indicative of
+>> issues.
+> 
+> It also let's you know that the system isn't truly idle.  IOW, it would
+> be doing some work if it didn't have to wait for I/O.  This was the
+> reason the metric was added (admins being confused about why their
+> system was showing up idle).
 
-Right, which is why it should not matter. I think it's pretty silly to
-take the sync implementation as gospel here, assuming that the original
-author knew what they were doing in full detail. It just needs proper
-documenting.
+I see. Thanks for the historical context.
 
--- 
-Jens Axboe
+> 
+>> But for network IO especially recv, the recv side does not control
+>> when the completions happen.
+>>
+>> Some user tooling attributes iowait time as CPU utilisation i.e. not
+> 
+> What user tooling are you talking about?  If it shows iowait as busy
+> time, the tooling is broken.  Please see my last mail on the subject:
+>   https://lore.kernel.org/io-uring/x49cz0hxdfa.fsf@segfault.boston.devel.redhat.com/
 
+Our internal tooling for example considers CPU util% to be (100 -
+idle%), but it also has a CPU busy% defined as (100 - idle% - iowait%).
+It is very unfortunate that everyone uses CPU util% for monitoring, with
+all sorts of alerts, dashboards and load balancers referring to this
+value. One reason is that, depending on context, high iowait time may or
+may not be a problem, so it isn't as simple as redefining CPU util% to
+exclude iowait.
 
+> 
+>> idle, so high iowait time looks like high CPU util even though the task
+>> is not scheduled and the CPU is free to run other tasks. When doing
+>> network IO with e.g. the batch completion feature, the CPU may appear to
+>> have high utilisation.
+> 
+> Again, iowait is idle time.
+
+That's fair. I think it is simpler to have a single "CPU util" metric
+defined as (100 - idle%), and have a switch that userspace explicitly
+flips to say "I want iowait to be considered truly idle or not". This
+means things such as load balancers can be built around a single metric,
+rather than having to consider both util/busy and needing to understand
+"does iowait mean anything?".
+
+> 
+>> This patchset adds a IOURING_ENTER_NO_IOWAIT flag that can be set on
+>> enter. If set, then current->in_iowait is not set. By default this flag
+>> is not set to maintain existing behaviour i.e. in_iowait is always set.
+>> This is to prevent waiting for completions being accounted as CPU
+>> utilisation.
+>>
+>> Not setting in_iowait does mean that we also lose cpufreq optimisations
+>> above because in_iowait semantics couples 1 and 2 together. Eventually
+>> we will untangle the two so the optimisations can be enabled
+>> independently of the accounting.
+>>
+>> IORING_FEAT_IOWAIT_TOGGLE is returned in io_uring_create() to indicate
+>> support. This will be used by liburing to check for this feature.
+> 
+> If I receive a problem report where iowait time isn't accurate, I now
+> have to somehow figure out if an application is setting this flag.  This
+> sounds like a support headache, and I do wonder what the benefit is.
+> From what you've written, the justification for the patch is that some
+> userspace tooling misinterprets iowait.  Shouldn't we just fix that?
+
+Right, I understand your concerns. That's why by default this flag is
+not set and io_uring behaves as before with in_iowait always set.
+
+Unfortunately, "just fix userspace" for us is a huge ask because a whole
+pyramid of both code and human understanding has been built on the
+current definition of "CPU utilisation". This is extremely time
+consuming to change, nor is it something that we (io_uring) want to take
+on imo. Why not give the option for people to indicate whether they want
+iowait showing up or not?
+
+> 
+> It may be that certain (all?) network functions, like recv, should not
+> be accounted as iowait.  However, I don't think the onus should be on
+> applications to tell the kernel about that--the kernel should just
+> figure that out on its own.
+> 
+> Am I alone in these opinions?
+
+Why should the onus be on the kernel? I think it is more difficult for
+the kernel to figure out exactly what semantics userspace wants and it
+is simpler for userspace to select their preference.
+
+From my experience, userspace apps either assigns a thread with an
+io_uring instance to network IO or disk IO, but never both. If there is
+a valid case for doing both types in the same io_uring, then it would be
+trivial to add wait helpers that sets IORING_ENTER_NO_IOWAIT on a per
+wait basis.
+
+I do agree with you that this is not ideal. What io_uring really wants
+is to decouple the iowait accounting from the cpufreq optimisation that
+gets enabled in the presence of in_iowait, which is a bigger ask and out
+of scope of this patch. When _someone_ decides to fix the wider iowait
+issue, I'm happy to revisit this patch.
+
+> 
+> Cheers,
+> Jeff
+> 
 

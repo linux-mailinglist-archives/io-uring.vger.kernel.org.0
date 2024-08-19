@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-2839-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2840-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB7F29578A8
-	for <lists+io-uring@lfdr.de>; Tue, 20 Aug 2024 01:30:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF2B89578A9
+	for <lists+io-uring@lfdr.de>; Tue, 20 Aug 2024 01:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1E7928463A
-	for <lists+io-uring@lfdr.de>; Mon, 19 Aug 2024 23:30:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F1B21C2338D
+	for <lists+io-uring@lfdr.de>; Mon, 19 Aug 2024 23:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8C51DF67B;
-	Mon, 19 Aug 2024 23:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80981DF666;
+	Mon, 19 Aug 2024 23:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2wt59RQP"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="RbCoAz8s"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA011DF69F
-	for <io-uring@vger.kernel.org>; Mon, 19 Aug 2024 23:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A815C613
+	for <io-uring@vger.kernel.org>; Mon, 19 Aug 2024 23:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724110255; cv=none; b=CELa5LUsGrLzgW+GuXJruMpdfSL323xN+H1A4bpCwtq+bQzSoch6FNw4L0Xtag8BjTUa94I4Ix/aN5CCurcvQomxCA9IgERQYenJ5rFko6ENVva3hN6C4jKvV1zPUS/uSdIakYWDQevQaUqnie7jKJNVXEN+OUC4UigFhBMH3HA=
+	t=1724110256; cv=none; b=W8qH5+Y6PIf3vmKp31mA9iRmXXlKe0ugBLUsft5C+vZ/pI+XkHC74RseR8lR6IUCmkdM3vc6/ylTxeJ0ZH1Y2szV4dBPCV1+ZcxOzq6W8WTx6NC5VdcYHnMbccGMo800rJIa4N7cXPJxwr5oILH/GgRYfe/7HVeyMEwmRx+h3xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724110255; c=relaxed/simple;
-	bh=Lb7j/kLMs8jWsEG+Y7Us0Q/dAQ4cqFm/VRlrOvHmKgs=;
+	s=arc-20240116; t=1724110256; c=relaxed/simple;
+	bh=1AMvaUwiKqJEPa0Ol9keO8S69ng/qRx7RpmzDx/vtNU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FIyZYu/tW9J6Ky0XP/TumAEoa9BnT1Gsx9X6WhcSSNKyy6V+8ouhH6Z1Sy1BXfNURDQIvz5Q9TBb+7Srq2QhxzZXpuq8YNFvUCP0Fa/y80o14ORpHA90Swnnel3dX/9o6lM1YdLgxRWO+RPTmrCUsBb7KV8EVXMLI/CoJWTrpKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2wt59RQP; arc=none smtp.client-ip=209.85.215.181
+	 MIME-Version; b=Hqtez4DjcgL9NNSskiw4exHAdRwW0D+ykBkhOOtV3hgMo8NVe/Ovk2m+TgfkhxvFzXOPOqkTgLQTd2A84njmWE8WQgeo4aXSEmMe8yXURMiZye0zAauXg8Bw/AQU+fcLen04w5mYDLC82/GAVsmEKd6T4Qdmwf8x+y0B8ZE7JUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=RbCoAz8s; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-78f86e56b4cso429687a12.3
-        for <io-uring@vger.kernel.org>; Mon, 19 Aug 2024 16:30:52 -0700 (PDT)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d3d382de43so837083a91.0
+        for <io-uring@vger.kernel.org>; Mon, 19 Aug 2024 16:30:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724110252; x=1724715052; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724110253; x=1724715053; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xjVRvH7/wAQ3u0PxEu9L4on+dtOhqN39XwqqSWu2Nic=;
-        b=2wt59RQPTSv4WX5K1eOUZURsqe3KL7Nokkkj2b0TF4NQqoyTMgcHuqsBqxM+j0i/j/
-         KyK2CmK88GOd+U5tjQrGOW0h17HELMZvK3VvLiFtQ+30ikLWtlok8bk3zYiylqd8K9cB
-         Ka6Hbec8aJMtGUPlUnRuKiytmZSB4b4tFeZPrL2b+hnerzO82querinQ/Sg2fKiYhpwI
-         K10UDALSlo3mCCbU3woody5SXJhwfal3/EudCFHBf7O/Me0mOpWoCohuG9BOrL5mON6Z
-         nE6fLNCxAsrQnIzqPPS9xCeVt6Szxq4PIO3jeXSxcxou4aKQDffUKRdVNwynLnwdWiWV
-         3nJQ==
+        bh=zvatlSeRar1mDUQg4xOKTeFuqZnG3ELf9pznvltnYEg=;
+        b=RbCoAz8sTboDsi8aaD6p5/EMybVG8em6QqOLey2H4MmJhuv5WETbzpPvU2wyqXNxtu
+         xzOI9jYnGqabzFx+qqkWh43KqGvLtPo+bMRrv+Jq6bi4o7fT/xfzpEe3XglJkxsziIQi
+         N4pfSXTJ+E9gUgDGYgE3rT/PyZ7xzZ/9UOpI3AWWbyvppe24oe+w2i3WcPh5oL6GwJ59
+         B1ezeMkltBmiWL/qSck6dV+mdJkcSS0qjxYaAF+n7nWT+p88Sm6gYDwR1v/Keh6PJtHZ
+         qGhYozyxlEVY/HVOw+6LH2TAqi8ckfdL5yvF8wZpAdy8Cj1fSA3plIRHL7PoC9whvOaJ
+         lbmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724110252; x=1724715052;
+        d=1e100.net; s=20230601; t=1724110253; x=1724715053;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xjVRvH7/wAQ3u0PxEu9L4on+dtOhqN39XwqqSWu2Nic=;
-        b=BFu2FoB8qwWu50GSMaO6l8DRyJQtU2t9DtIoCG2SG6AimEo6u9e1KN88uUmqVat0Au
-         b6bNOcQ1p44mFZgZBQnO/ZLZibkJLvanKL9PepEacj3sExXVUBxUt7/jNT032dWGXHNt
-         D6mWhg/M08G+vhJCf6sGu4uKJbM8WS7lsqfhEITj8+wN/r7aaTx0iC4Ey/xbDJxHT4jD
-         WE7XaT4IyIKgOnTSuzGjeT/L0To2ayuNLYibwEjJZlMwsedLFjsOwvtdd19/LUIURz2h
-         fwSzUnLGnUAUCjOYCsv+FicL+hZZeIYM9Vq6PGNLOziKZzVblZwDQaNU6h5MS3gt0BpW
-         sObQ==
-X-Gm-Message-State: AOJu0Yx3dW0mqRHJZ/ErwkGDqvqzBLtDVR0ikD4rQ/GGmIwnrr3kfOvD
-	CXH8BfIVlB1/mm3NBjvHrQOXwW4qFEQ3MAdIDnHzxwsrjCerwJkTL+PuUDWBFtyPNi1y3Ve4vj8
-	V
-X-Google-Smtp-Source: AGHT+IGfyfEuDt7zvo3cFrCcaO0WBJONcuQnL3ZmZbdb/rAHyRAC5sYqECoijY8BJKWlgQcwynfgsg==
-X-Received: by 2002:a05:6a21:9982:b0:1c4:e645:559b with SMTP id adf61e73a8af0-1c9050929f0mr10679507637.8.1724110251920;
-        Mon, 19 Aug 2024 16:30:51 -0700 (PDT)
+        bh=zvatlSeRar1mDUQg4xOKTeFuqZnG3ELf9pznvltnYEg=;
+        b=q8SUcdk9KvIBLeezvwulYPki0nheKSAbRdit6yIjnGJnuIDb7ipqHEpL8W3cGUJ+E0
+         4ZrI50Tx0pVUTm0UWRP60v1tcpjos5dvpcEOrHW6Hakam1DQIIte1DsVsoIFoKE90JrB
+         aLmz85pa+b/+fHXaZWMkELoCMLyefDEP+3ostyJMnNt8KLMPloEptnWcm8RmkAR+YFB3
+         LtHZo04JONGpliG6dFqjX8DI0Oc6nbRQTq08OLhaNowCRRIyQYT9LQMHFp/pOd1+9WjE
+         G9vlDI/F69aCvuaaQ82C424riMAJdyhbFlth/uLpgd82ldTS+BwuXSe+uw5i8W/KKjHh
+         cFIA==
+X-Gm-Message-State: AOJu0YwtLSZ3CfNd98MsJxAwivQ85ZaHejh7xxeptlPd1WZzJFZJ2FsH
+	qRr6v1SoXbl4lishyfM+KxyTBnVQb7fhG8r/kaTP5+GBX3gPBZrK5LEBkXcg6Iag/CdMRGOImKt
+	O
+X-Google-Smtp-Source: AGHT+IERNCchdBEtWEoWu4cf299u8sCDIiHath6hnhxsAjy5cjv6QKZyAQQnwr83RqUSAsL0XXFLRQ==
+X-Received: by 2002:a05:6a21:3381:b0:1c4:d312:64d8 with SMTP id adf61e73a8af0-1c904f81da7mr8024689637.3.1724110253454;
+        Mon, 19 Aug 2024 16:30:53 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61dc929sm8219838a12.40.2024.08.19.16.30.50
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61dc929sm8219838a12.40.2024.08.19.16.30.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 16:30:50 -0700 (PDT)
+        Mon, 19 Aug 2024 16:30:52 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: dw@davidwei.uk,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/5] io_uring: add support for batch wait timeout
-Date: Mon, 19 Aug 2024 17:28:52 -0600
-Message-ID: <20240819233042.230956-5-axboe@kernel.dk>
+Subject: [PATCH 5/5] io_uring: wire up min batch wake timeout
+Date: Mon, 19 Aug 2024 17:28:53 -0600
+Message-ID: <20240819233042.230956-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240819233042.230956-1-axboe@kernel.dk>
 References: <20240819233042.230956-1-axboe@kernel.dk>
@@ -85,201 +85,92 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Waiting for events with io_uring has two knobs that can be set:
+Expose min_wait_usec in io_uring_getevents_arg, replacing the pad member
+that is currently in there. The value is in usecs, which is explained in
+the name as well.
 
-1) The number of events to wake for
-2) The timeout associated with the event
+Note that if min_wait_usec and a normal timeout is used in conjunction,
+the normal timeout is still relative to the base time. For example, if
+min_wait_usec is set to 100 and the normal timeout is 1000, the max
+total time waited is still 1000. This also means that if the normal
+timeout is shorter than min_wait_usec, then only the min_wait_usec will
+take effect.
 
-Waiting will abort when either of those conditions are met, as expected.
+See previous commit for an explanation of how this works.
 
-This adds support for a third event, which is associated with the number
-of events to wait for. Applications generally like to handle batches of
-completions, and right now they'd set a number of events to wait for and
-the timeout for that. If no events have been received but the timeout
-triggers, control is returned to the application and it can wait again.
-However, if the application doesn't have anything to do until events are
-reaped, then it's possible to make this waiting more efficient.
-
-For example, the application may have a latency time of 50 usecs and
-wanting to handle a batch of 8 requests at the time. If it uses 50 usecs
-as the timeout, then it'll be doing 20K context switches per second even
-if nothing is happening.
-
-This introduces the notion of min batch wait time. If the min batch wait
-time expires, then we'll return to userspace if we have any events at all.
-If none are available, the general wait time is applied. Any request
-arriving after the min batch wait time will cause waiting to stop and
-return control to the application.
+IORING_FEAT_MIN_TIMEOUT is added as a feature flag for this, as
+applications doing submit_and_wait_timeout() style operations will
+generally not see the -EINVAL from the wait side as they return the
+number of IOs submitted. Only if no IOs are submitted will the -EINVAL
+bubble back up to the application.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c | 75 +++++++++++++++++++++++++++++++++++++++------
- io_uring/io_uring.h |  2 ++
- 2 files changed, 67 insertions(+), 10 deletions(-)
+ include/uapi/linux/io_uring.h | 3 ++-
+ io_uring/io_uring.c           | 8 ++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 7af716136df9..042eab793e26 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -543,6 +543,7 @@ struct io_uring_params {
+ #define IORING_FEAT_LINKED_FILE		(1U << 12)
+ #define IORING_FEAT_REG_REG_RING	(1U << 13)
+ #define IORING_FEAT_RECVSEND_BUNDLE	(1U << 14)
++#define IORING_FEAT_MIN_TIMEOUT		(1U << 15)
+ 
+ /*
+  * io_uring_register(2) opcodes and arguments
+@@ -766,7 +767,7 @@ enum io_uring_register_restriction_op {
+ struct io_uring_getevents_arg {
+ 	__u64	sigmask;
+ 	__u32	sigmask_sz;
+-	__u32	pad;
++	__u32	min_wait_usec;
+ 	__u64	ts;
+ };
+ 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index ddfbe04c61ed..d09a7c2e1096 100644
+index d09a7c2e1096..20b67fea645d 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -2363,13 +2363,62 @@ static enum hrtimer_restart io_cqring_timer_wakeup(struct hrtimer *timer)
- 	return HRTIMER_NORESTART;
- }
+@@ -2475,6 +2475,7 @@ struct ext_arg {
+ 	size_t argsz;
+ 	struct __kernel_timespec __user *ts;
+ 	const sigset_t __user *sig;
++	ktime_t min_time;
+ };
  
-+/*
-+ * Doing min_timeout portion. If we saw any timeouts, events, or have work,
-+ * wake up. If not, and we have a normal timeout, switch to that and keep
-+ * sleeping.
-+ */
-+static enum hrtimer_restart io_cqring_min_timer_wakeup(struct hrtimer *timer)
-+{
-+	struct io_wait_queue *iowq = container_of(timer, struct io_wait_queue, t);
-+	struct io_ring_ctx *ctx = iowq->ctx;
-+
-+	/* no general timeout, or shorter, we are done */
-+	if (iowq->timeout == KTIME_MAX ||
-+	    ktime_after(iowq->min_timeout, iowq->timeout))
-+		goto out_wake;
-+	/* work we may need to run, wake function will see if we need to wake */
-+	if (io_has_work(ctx))
-+		goto out_wake;
-+	/* got events since we started waiting, min timeout is done */
-+	if (iowq->cq_min_tail != READ_ONCE(ctx->rings->cq.tail))
-+		goto out_wake;
-+	/* if we have any events and min timeout expired, we're done */
-+	if (io_cqring_events(ctx))
-+		goto out_wake;
-+
-+	/*
-+	 * If using deferred task_work running and application is waiting on
-+	 * more than one request, ensure we reset it now where we are switching
-+	 * to normal sleeps. Any request completion post min_wait should wake
-+	 * the task and return.
-+	 */
-+	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
-+		atomic_set(&ctx->cq_wait_nr, 1);
-+
-+	iowq->t.function = io_cqring_timer_wakeup;
-+	hrtimer_set_expires(timer, iowq->timeout);
-+	return HRTIMER_RESTART;
-+out_wake:
-+	return io_cqring_timer_wakeup(timer);
-+}
-+
- static int io_cqring_schedule_timeout(struct io_wait_queue *iowq,
--				      clockid_t clock_id)
-+				      clockid_t clock_id, ktime_t start_time)
- {
-+	ktime_t timeout;
-+
- 	iowq->hit_timeout = 0;
- 	hrtimer_init_on_stack(&iowq->t, clock_id, HRTIMER_MODE_ABS);
--	iowq->t.function = io_cqring_timer_wakeup;
--	hrtimer_set_expires_range_ns(&iowq->t, iowq->timeout, 0);
-+	if (iowq->min_timeout) {
-+		timeout = ktime_add_ns(iowq->min_timeout, start_time);
-+		iowq->t.function = io_cqring_min_timer_wakeup;
-+	} else {
-+		timeout = iowq->timeout;
-+		iowq->t.function = io_cqring_timer_wakeup;
-+	}
-+
-+	hrtimer_set_expires_range_ns(&iowq->t, timeout, 0);
- 	hrtimer_start_expires(&iowq->t, HRTIMER_MODE_ABS);
- 
- 	if (!READ_ONCE(iowq->hit_timeout))
-@@ -2383,7 +2432,8 @@ static int io_cqring_schedule_timeout(struct io_wait_queue *iowq,
- }
- 
- static int __io_cqring_wait_schedule(struct io_ring_ctx *ctx,
--				     struct io_wait_queue *iowq)
-+				     struct io_wait_queue *iowq,
-+				     ktime_t start_time)
- {
- 	int ret = 0;
- 
-@@ -2394,8 +2444,8 @@ static int __io_cqring_wait_schedule(struct io_ring_ctx *ctx,
- 	 */
- 	if (current_pending_io())
- 		current->in_iowait = 1;
--	if (iowq->timeout != KTIME_MAX)
--		ret = io_cqring_schedule_timeout(iowq, ctx->clockid);
-+	if (iowq->timeout != KTIME_MAX || iowq->min_timeout != KTIME_MAX)
-+		ret = io_cqring_schedule_timeout(iowq, ctx->clockid, start_time);
- 	else
- 		schedule();
- 	current->in_iowait = 0;
-@@ -2404,7 +2454,8 @@ static int __io_cqring_wait_schedule(struct io_ring_ctx *ctx,
- 
- /* If this returns > 0, the caller should retry */
- static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
--					  struct io_wait_queue *iowq)
-+					  struct io_wait_queue *iowq,
-+					  ktime_t start_time)
- {
- 	if (unlikely(READ_ONCE(ctx->check_cq)))
- 		return 1;
-@@ -2417,7 +2468,7 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
- 	if (unlikely(io_should_wake(iowq)))
- 		return 0;
- 
--	return __io_cqring_wait_schedule(ctx, iowq);
-+	return __io_cqring_wait_schedule(ctx, iowq, start_time);
- }
- 
- struct ext_arg {
-@@ -2435,6 +2486,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
- {
- 	struct io_wait_queue iowq;
- 	struct io_rings *rings = ctx->rings;
-+	ktime_t start_time;
- 	int ret;
- 
- 	if (!io_allowed_run_tw(ctx))
-@@ -2453,8 +2505,11 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
- 	INIT_LIST_HEAD(&iowq.wq.entry);
- 	iowq.ctx = ctx;
+ /*
+@@ -2507,7 +2508,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
  	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
-+	iowq.cq_min_tail = READ_ONCE(ctx->rings->cq.tail);
+ 	iowq.cq_min_tail = READ_ONCE(ctx->rings->cq.tail);
  	iowq.cq_tail = READ_ONCE(ctx->rings->cq.head) + min_events;
-+	iowq.min_timeout = 0;
+-	iowq.min_timeout = 0;
++	iowq.min_timeout = ext_arg->min_time;
  	iowq.timeout = KTIME_MAX;
-+	start_time = io_get_time(ctx);
+ 	start_time = io_get_time(ctx);
  
- 	if (ext_arg->ts) {
- 		struct timespec64 ts;
-@@ -2464,7 +2519,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+@@ -3231,8 +3232,7 @@ static int io_get_ext_arg(unsigned flags, const void __user *argp,
+ 		return -EINVAL;
+ 	if (copy_from_user(&arg, argp, sizeof(arg)))
+ 		return -EFAULT;
+-	if (arg.pad)
+-		return -EINVAL;
++	ext_arg->min_time = arg.min_wait_usec * NSEC_PER_USEC;
+ 	ext_arg->sig = u64_to_user_ptr(arg.sigmask);
+ 	ext_arg->argsz = arg.sigmask_sz;
+ 	ext_arg->ts = u64_to_user_ptr(arg.ts);
+@@ -3633,7 +3633,7 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 			IORING_FEAT_EXT_ARG | IORING_FEAT_NATIVE_WORKERS |
+ 			IORING_FEAT_RSRC_TAGS | IORING_FEAT_CQE_SKIP |
+ 			IORING_FEAT_LINKED_FILE | IORING_FEAT_REG_REG_RING |
+-			IORING_FEAT_RECVSEND_BUNDLE;
++			IORING_FEAT_RECVSEND_BUNDLE | IORING_FEAT_MIN_TIMEOUT;
  
- 		iowq.timeout = timespec64_to_ktime(ts);
- 		if (!(flags & IORING_ENTER_ABS_TIMER))
--			iowq.timeout = ktime_add(iowq.timeout, io_get_time(ctx));
-+			iowq.timeout = ktime_add(iowq.timeout, start_time);
- 	}
- 
- 	if (ext_arg->sig) {
-@@ -2495,7 +2550,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
- 							TASK_INTERRUPTIBLE);
- 		}
- 
--		ret = io_cqring_wait_schedule(ctx, &iowq);
-+		ret = io_cqring_wait_schedule(ctx, &iowq, start_time);
- 		__set_current_state(TASK_RUNNING);
- 		atomic_set(&ctx->cq_wait_nr, IO_CQ_WAKE_INIT);
- 
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index f95c1b080f4b..65078e641390 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -39,8 +39,10 @@ struct io_wait_queue {
- 	struct wait_queue_entry wq;
- 	struct io_ring_ctx *ctx;
- 	unsigned cq_tail;
-+	unsigned cq_min_tail;
- 	unsigned nr_timeouts;
- 	int hit_timeout;
-+	ktime_t min_timeout;
- 	ktime_t timeout;
- 	struct hrtimer t;
- 
+ 	if (copy_to_user(params, p, sizeof(*p))) {
+ 		ret = -EFAULT;
 -- 
 2.43.0
 

@@ -1,74 +1,75 @@
-Return-Path: <io-uring+bounces-2843-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2844-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4AF958D11
-	for <lists+io-uring@lfdr.de>; Tue, 20 Aug 2024 19:19:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E761958F06
+	for <lists+io-uring@lfdr.de>; Tue, 20 Aug 2024 22:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C36801F2473A
-	for <lists+io-uring@lfdr.de>; Tue, 20 Aug 2024 17:19:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09FAA1F23912
+	for <lists+io-uring@lfdr.de>; Tue, 20 Aug 2024 20:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF531B8E8A;
-	Tue, 20 Aug 2024 17:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17193FB9F;
+	Tue, 20 Aug 2024 20:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dB90G1hY"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="kr6Ajr9T"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE961101C4;
-	Tue, 20 Aug 2024 17:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E0318E34A
+	for <io-uring@vger.kernel.org>; Tue, 20 Aug 2024 20:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174315; cv=none; b=sNyZYGiXGdakos6z/VTC+PaeIA5Yn29WYbyJ7fotr0j33wXXimAFVfsYRL7EvRM21sA1/xW7BL7FDO58D33mGBAdjo1RuTnUaPuQ9wOpN6p+vBh12hUBT1k5tEv7LdBVMkje/AD3F6w3UGy/mADmGvVLpRNh+BcTPUicgUcBkB4=
+	t=1724184521; cv=none; b=MfpBwrUHc6AXq7IYBkbgzjKHrbyQ7exv/JHuYvx75C72QtiagCcvw0G+6GQSaoXnUmYOKX/ZpwRNHfZRXsj9Zgt6ldu3VgQBVTj44jkCFPTbiJY15GLASvPaeJnFN0IwrVSdQPx7yzRqya/gYSs6X1D291bDvSCXOFAm00t8aa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174315; c=relaxed/simple;
-	bh=K7lKBEb5d2DKiZ0ThXJk7j7HC0pMqiZD9ZOgRxPZK/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=quNeZ2HqbHK2aaQLHGAJQrxaODTHB6E9nF2gZmVs0I4vldKfUJSOBPQMCkX6BuY0WgvBYkaQBHUlvspAawpf8i1OqCx3BqHoXU+k/cOYIwA3UbD67mIyIFbZfD4wZnhzieRpHbKNMCKsXG4TdDIF+ZaqrCHTGNbusOD4EAXa6DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dB90G1hY; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7aa4ca9d72so745998266b.0;
-        Tue, 20 Aug 2024 10:18:33 -0700 (PDT)
+	s=arc-20240116; t=1724184521; c=relaxed/simple;
+	bh=P9kRRyje8RtZrUzMp0irj8+5jUaJEifsvLUloSVFXYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MRqYBYpoto+xOeMIyP7K7zDHi1blPwdGnpkDGDtZy+k0S3YsVZekVERMLGZ9IQIDLtqMFa3Bjntdiunjvp6ZsXJGoQVKw6y8jn7kEX6YLKjQTuXPXQCMEByC3tslooqtQ9QhavnsTry0q3opPuPyPsP3uo9paQvz3oIBPvn5XvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=kr6Ajr9T; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7a115c427f1so3653720a12.0
+        for <io-uring@vger.kernel.org>; Tue, 20 Aug 2024 13:08:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724174312; x=1724779112; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1724184519; x=1724789319; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=w+RXbpZ+OXyPsRrZFRrCFaRajdIpPUXoh7rfHKzntLs=;
-        b=dB90G1hYwKxByRmo5uMBUCMnUMOtshnIupyxb3Oqzt2WtMr/jUvjscZygLyb1NTvdt
-         0Qwswlzksre+DwpX8FewdOEYyDEsmvtNjol2CG1EGj0yJS4O7AaM5+3ryeEEKCZDKVpP
-         IdgSY+3CZf+a3Zf+dRqhR4B97t7Xj/FJxEDkIn9I2JFAgzAvspZtDKTymyGTDzAFzs6o
-         X68XCNyFDgzh+KWAMnzkTfLBL2cdFV/MWCbDJ8WntfiaMOpw9PavhdnkWDL0csIOzIDV
-         DqhsVfr9vYvtF5mP2L775uklR+sxa5WZWzjSbOJCJaFbC6mdr/z+T1jXo4B/bm4s+KMV
-         06jg==
+        bh=F3bOJsU1zXmBHsibF/thcBh2YIaMzACizTMcYYAxyuQ=;
+        b=kr6Ajr9TwRBgzsBhZMKQrWd9pzqeKPbP4KMrWBFZWxGnUhJo1/7vWlL60OftcO9oez
+         MP132fxjB2NGtVZjhiLlMT6FwcZ0CiSyk6RCmTM22rqqremFf8g6UeMoiexx5eX4vwoT
+         +SPCdf0n81guOyixl0qDAoqhhdl30TQmWhXIqlMw7dtzqqbiPTIvMoLzGALLxZU9RAPb
+         MByMWzIhNHCGtXwH8e1vwPZ4VDDLDKXu31VP1cSgkN8HpgK4mdgsHrN2gM3MpQ15EPy8
+         4k3ZmOZloHubi3uYw92mLADX4NnwQgHYytDpDiZKBacym+1JReOJqyqvWWSS6VgtbiPZ
+         zllg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724174312; x=1724779112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1724184519; x=1724789319;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w+RXbpZ+OXyPsRrZFRrCFaRajdIpPUXoh7rfHKzntLs=;
-        b=lWmqt3Z81XIZu6Og1btiPg5OLcJH1eVuFjaVVY+IQyVTJimnsPujoQjsIHprrDtCk8
-         xGEra1yOimu+XEfK95yW4HdHQWsrla3rVEVtlSO4VCcxAbh6On90x4WNQyaD+s0XQMXi
-         2z+noJ+A8ZILM1vxzP8hjo47eyLWcU8MjvCuk3v97rk4IRstaP4CGLiZ4/OiL7fr1o03
-         9EpZwT+AyzDVhqcQ0LJYrz6da06+BmEoPs/TBlIKOM7MOluYmucMiGUgyam2yrtvCSxN
-         W+bWkU0V1qb4/lt7osjT2RrRaoi4lvfkCDBHSMr5JwY6WidH7CNVSTwUEwKBEtyqzauW
-         M4Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCXw5mJk3dktf5NMt/b4GHCRbhEfBdEA6ve8BGeuH6vUWdeXfNS94hbXhQ7vrApOfoYdQKbkL9laK1UNTg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO2Z09FnGlG8XUpqoh1MXh+4/ZdfrHmCfwDvc6saDbO2IKXqtH
-	9jBqZatpKgCYXj6qx3YTOOqjFyzFGW4IL5gRRnOUtG4cL+DzORmC
-X-Google-Smtp-Source: AGHT+IH3k+sZO9tU+W74giEEa69Bw48c6Vz0E0qFyPViLeM3L11zqSo6gMiaGiLsiwO4iLdVM/Jr1w==
-X-Received: by 2002:a17:907:1c08:b0:a86:672d:8436 with SMTP id a640c23a62f3a-a86672d874dmr37469166b.59.1724174311455;
-        Tue, 20 Aug 2024 10:18:31 -0700 (PDT)
-Received: from [192.168.42.136] ([148.252.128.6])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838eeeefsm787314866b.97.2024.08.20.10.18.30
+        bh=F3bOJsU1zXmBHsibF/thcBh2YIaMzACizTMcYYAxyuQ=;
+        b=EoRWH/0KX9B5BbJRF/ZXiorxPstZ0yvU5JG0il1BDkvIgGe68HOY6tsLfn2lrw5Ne7
+         cNk5OLevpoxBMpwOdIIuUa5bo7vs91Y7Vv7z55Mcs4tC9YKyIynmhoOrL+bqrxD+6MZB
+         RDo6mxWyaNzdtWPfZ8iJPfX2BNrpNXRWhNeqts02nyOxNjfKAcG6FYJlLWjJK80upHF+
+         8bT02ECafLphLUnbChKDyelMR+8wMeOhXYd+ApMwSaa0pwj10vBDnpHEXJR2vUorxyXe
+         NFRFS+Z8hmFMj95mqjDi0NG81DfW0THoYda5B201DM6baiZCwj9zZeWwG46Tuzp1kFeB
+         4Ndw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHp64kNEWXukhC/Eb0kpclASRG26NJGr3KNQdf2MIIG68Ie4nJQKzj+6nrIWrtsTNuoKU1UFh8WQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqt16l/SH6PIv8vzStq2c4Gg4Up8tyGX18//Yg6gmd+2SzOBOX
+	42a73iPwBnceiCm0suOQrFa2KG4ijS2Bj8o9s7YHaYmekaGDjaL83ZDlkOR2XFzJMmhzAdRsFcg
+	z8wM=
+X-Google-Smtp-Source: AGHT+IEKWSKqCaLCVfti7B7yIGXZXBEeVT/V0ZizxEuph3i3QHAF955u+VWpY869fyWpnn7YcgQx2g==
+X-Received: by 2002:a05:6a21:3103:b0:1c8:b336:4022 with SMTP id adf61e73a8af0-1cad8352b8emr593548637.36.1724184519124;
+        Tue, 20 Aug 2024 13:08:39 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1256:1:80c:c984:f4f1:951f? ([2620:10d:c090:500::5:2f5b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127af1e3e3sm8926721b3a.179.2024.08.20.13.08.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 10:18:31 -0700 (PDT)
-Message-ID: <c69d1769-ae86-4659-bbda-6f7760a8e83f@gmail.com>
-Date: Tue, 20 Aug 2024 18:19:00 +0100
+        Tue, 20 Aug 2024 13:08:38 -0700 (PDT)
+Message-ID: <58a42e82-3742-4439-998e-c9389c5849bc@davidwei.uk>
+Date: Tue, 20 Aug 2024 13:08:36 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,82 +77,114 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 5/5] block: implement io_uring discard cmd
-To: Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>
-Cc: io-uring@vger.kernel.org, Conrad Meyer <conradmeyer@meta.com>,
- linux-block@vger.kernel.org, linux-mm@kvack.org, Jan Kara <jack@suse.cz>,
- Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-References: <cover.1723601133.git.asml.silence@gmail.com>
- <6ecd7ab3386f63f1656dc766c1b5b038ff5353c2.1723601134.git.asml.silence@gmail.com>
- <CAFj5m9+CXS_b5kgFioFHTWivb6O+R9HytsSQEHcEzUM5SqHfgw@mail.gmail.com>
- <fd357721-7ba7-4321-88da-28651754f8a4@kernel.dk>
- <e06fd325-f20f-44d8-8f72-89b97cf4186f@gmail.com> <Zr6S4sHWtdlbl/dd@fedora>
- <4d016a30-d258-4d0e-b3bc-18bf0bd48e32@kernel.dk> <Zr6vIt1uSe9/xguH@fedora>
- <e9562cf8-9cf1-409e-8fbd-546d11fcba93@kernel.dk> <ZsQBMjaBrtcFLpIj@fedora>
- <d8ef3e63-1a94-45a4-974a-01324d6ce310@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <d8ef3e63-1a94-45a4-974a-01324d6ce310@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 3/5] io_uring: implement our own schedule timeout handling
+Content-Language: en-GB
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20240819233042.230956-1-axboe@kernel.dk>
+ <20240819233042.230956-4-axboe@kernel.dk>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <20240819233042.230956-4-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/20/24 17:30, Jens Axboe wrote:
-> On 8/19/24 8:36 PM, Ming Lei wrote:
->> On Mon, Aug 19, 2024 at 02:01:21PM -0600, Jens Axboe wrote:
->>> On 8/15/24 7:45 PM, Ming Lei wrote:
-...
->>>> Meantime the handling has to move to io-wq for avoiding to block current
->>>> context, the interface becomes same with IORING_OP_FALLOCATE?
->>>
->>> I think the current truncate is overkill, we should be able to get by
->>> without. And no, I will not entertain an option that's "oh just punt it
->>> to io-wq".
->>
->> BTW, the truncate is added by 351499a172c0 ("block: Invalidate cache on discard v2"),
->> and block/009 serves as regression test for covering page cache
->> coherency and discard.
->>
->> Here the issue is actually related with the exclusive lock of
->> filemap_invalidate_lock(). IMO, it is reasonable to prevent page read during
->> discard for not polluting page cache. block/009 may fail too without the lock.
->>
->> It is just that concurrent discards can't be allowed any more by
->> down_write() of rw_semaphore, and block device is really capable of doing
->> that. It can be thought as one regression of 7607c44c157d ("block: Hold invalidate_lock in
->> BLKDISCARD ioctl").
->>
->> Cc Jan Kara and Shin'ichiro Kawasaki.
+On 2024-08-19 16:28, Jens Axboe wrote:
+> In preparation for having two distinct timeouts and avoid waking the
+> task if we don't need to.
 > 
-> Honestly I just think that's nonsense. It's like mixing direct and
-> buffered writes. Can you get corruption? Yes you most certainly can.
-> There should be no reason why we can't run discards without providing
-> page cache coherency. The sync interface attempts to do that, but that
-> doesn't mean that an async (or a different sync one, if that made sense)
-> should.
-
-I don't see it as a problem either, it's a new interface, just need
-to be upfront on what guarantees it provides (one more reason why
-not fallocate), I'll elaborate on it in the commit message and so.
-
-I think a reasonable thing to do is to have one rule for all write-like
-operations starting from plain writes, which is currently allowing races
-to happen and shift it to the user. Purely in theory we can get inventive
-with likes of range lock trees, but that's unwarranted for all sorts of
-reasons.
-
-> If you do discards to the same range as you're doing buffered IO, you
-> get to keep both potentially pieces. Fact is that most folks are doing
-> dio for performant IO exactly because buffered writes tend to be
-> horrible, and you could certainly use that with async discards and have
-> the application manage it just fine.
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  io_uring/io_uring.c | 41 ++++++++++++++++++++++++++++++++++++-----
+>  io_uring/io_uring.h |  2 ++
+>  2 files changed, 38 insertions(+), 5 deletions(-)
 > 
-> So I really think any attempts to provide page cache synchronization for
-> this is futile. And the existing sync one looks pretty abysmal, but it
-> doesn't really matter as it's a sync interfce. If one were to do
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 9e2b8d4c05db..ddfbe04c61ed 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -2322,7 +2322,7 @@ static int io_wake_function(struct wait_queue_entry *curr, unsigned int mode,
+>  	 * Cannot safely flush overflowed CQEs from here, ensure we wake up
+>  	 * the task, and the next invocation will do it.
+>  	 */
+> -	if (io_should_wake(iowq) || io_has_work(iowq->ctx))
+> +	if (io_should_wake(iowq) || io_has_work(iowq->ctx) || iowq->hit_timeout)
 
-It should be a pain for sync as well, you can't even spin another process
-and parallelise this way.
+iowq->hit_timeout may be modified in a timer softirq context, while this
+wait_queue_func_t (AIUI) may get called from any context e.g.
+net_rx_softirq for sockets. Does this need a READ_ONLY()?
 
--- 
-Pavel Begunkov
+>  		return autoremove_wake_function(curr, mode, wake_flags, key);
+>  	return -1;
+>  }
+> @@ -2350,6 +2350,38 @@ static bool current_pending_io(void)
+>  	return percpu_counter_read_positive(&tctx->inflight);
+>  }
+>  
+> +static enum hrtimer_restart io_cqring_timer_wakeup(struct hrtimer *timer)
+> +{
+> +	struct io_wait_queue *iowq = container_of(timer, struct io_wait_queue, t);
+> +	struct io_ring_ctx *ctx = iowq->ctx;
+> +
+> +	WRITE_ONCE(iowq->hit_timeout, 1);
+> +	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
+> +		wake_up_process(ctx->submitter_task);
+> +	else
+> +		io_cqring_wake(ctx);
+
+This is a bit different to schedule_hrtimeout_range_clock(). Why is
+io_cqring_wake() needed here for non-DEFER_TASKRUN?
+
+> +	return HRTIMER_NORESTART;
+> +}
+> +
+> +static int io_cqring_schedule_timeout(struct io_wait_queue *iowq,
+> +				      clockid_t clock_id)
+> +{
+> +	iowq->hit_timeout = 0;
+> +	hrtimer_init_on_stack(&iowq->t, clock_id, HRTIMER_MODE_ABS);
+> +	iowq->t.function = io_cqring_timer_wakeup;
+> +	hrtimer_set_expires_range_ns(&iowq->t, iowq->timeout, 0);
+> +	hrtimer_start_expires(&iowq->t, HRTIMER_MODE_ABS);
+> +
+> +	if (!READ_ONCE(iowq->hit_timeout))
+> +		schedule();
+> +
+> +	hrtimer_cancel(&iowq->t);
+> +	destroy_hrtimer_on_stack(&iowq->t);
+> +	__set_current_state(TASK_RUNNING);
+> +
+> +	return READ_ONCE(iowq->hit_timeout) ? -ETIME : 0;
+> +}
+> +
+>  static int __io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+>  				     struct io_wait_queue *iowq)
+>  {
+> @@ -2362,11 +2394,10 @@ static int __io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+>  	 */
+>  	if (current_pending_io())
+>  		current->in_iowait = 1;
+> -	if (iowq->timeout == KTIME_MAX)
+> +	if (iowq->timeout != KTIME_MAX)
+> +		ret = io_cqring_schedule_timeout(iowq, ctx->clockid);
+> +	else
+>  		schedule();
+> -	else if (!schedule_hrtimeout_range_clock(&iowq->timeout, 0,
+> -						 HRTIMER_MODE_ABS, ctx->clockid))
+> -		ret = -ETIME;
+>  	current->in_iowait = 0;
+>  	return ret;
+>  }
+> diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+> index 9935819f12b7..f95c1b080f4b 100644
+> --- a/io_uring/io_uring.h
+> +++ b/io_uring/io_uring.h
+> @@ -40,7 +40,9 @@ struct io_wait_queue {
+>  	struct io_ring_ctx *ctx;
+>  	unsigned cq_tail;
+>  	unsigned nr_timeouts;
+> +	int hit_timeout;
+>  	ktime_t timeout;
+> +	struct hrtimer t;
+>  
+>  #ifdef CONFIG_NET_RX_BUSY_POLL
+>  	ktime_t napi_busy_poll_dt;
 

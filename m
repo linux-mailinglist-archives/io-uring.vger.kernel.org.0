@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-2858-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2859-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C243D959063
-	for <lists+io-uring@lfdr.de>; Wed, 21 Aug 2024 00:19:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB72895909F
+	for <lists+io-uring@lfdr.de>; Wed, 21 Aug 2024 00:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E762284847
-	for <lists+io-uring@lfdr.de>; Tue, 20 Aug 2024 22:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE0028506E
+	for <lists+io-uring@lfdr.de>; Tue, 20 Aug 2024 22:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB64B18C01C;
-	Tue, 20 Aug 2024 22:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1221C14B94B;
+	Tue, 20 Aug 2024 22:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Zn1pG4c6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SvNr7e44"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8787814D444
-	for <io-uring@vger.kernel.org>; Tue, 20 Aug 2024 22:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CFE14AD38
+	for <io-uring@vger.kernel.org>; Tue, 20 Aug 2024 22:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724192380; cv=none; b=i/IAnmDszdM68gqaoPzhZpFbA0SCG8DEbEDLfua77Nt3s9lbI9Zl8/q1kTMLzwGvWo/wZt4ghwndzopY75IYsHCmfOUMMMBllsF928J4KFWBAdXlTsZxXqpkyD7o5aAu+sxkq55ZvBqcvh5iMRkFrxhx/Ql+yJ6itdU2l3XiNqs=
+	t=1724193944; cv=none; b=HnSaHdbXHrYjyzRKD/tN+rA1mEP1sJWMCWDRPZNIoGz7/Zpdh+qL/YMF8GI8LIPrJM7wrbYrzWvo4Kbgpf/IzUFDqMXGz8gPouTsZPZPQvRcaAhEva7U2OGqO42Zr4ytiJcH+UHSHdiF80ig7ATnkEfFAU1JKjHTm9xMWZ5WJCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724192380; c=relaxed/simple;
-	bh=IgUE14Iui2IBY5fvwUcdKLW2UTDFp5BiyAmmJ70ukK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=laOTg/uepEhQah5S6aQ47x1Nj1KxZSEa4LLXpnVauGEhRaE6AxzN8wmLOotRBw73jfDOFhPWOVu9CY88To3iBhxve9SZIyH50sQ53gX8hslndvjxkLiIdAhhiXY3/80F83ismdeaYc2QK/nFSkmKt9ydCEkTs5R0u8dsCwQsu0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Zn1pG4c6; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7c691c8f8dcso4033900a12.1
-        for <io-uring@vger.kernel.org>; Tue, 20 Aug 2024 15:19:37 -0700 (PDT)
+	s=arc-20240116; t=1724193944; c=relaxed/simple;
+	bh=7UPtdTOjB7hfvr6mm6siuD9USQbLxxtNjzSt9ezxbd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kjh4QguyU012Icg60gE4/3MSivRfbe+wyiDudYAhvaofGVVzvqe1lFay8RqLWn4K8Ps5LtNMABpQKkJVjDwdQ7bKXzOX+Rj5QpRw+QGVH27e4pRwJO3K/UuzyvB6Es/T66PFvYbl6cKxbQ2DZd3UGq7JEftIqZi+v0n/LGLA1Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SvNr7e44; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7ac469e4c4so33994366b.0
+        for <io-uring@vger.kernel.org>; Tue, 20 Aug 2024 15:45:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724192377; x=1724797177; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724193940; x=1724798740; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JmY7zOv9iDQf86ZkJ0w3RBxIVOM+BRXCMM/BvTC1yVM=;
-        b=Zn1pG4c6CVTH/PMSxa2H4B8CR2eSv5FV4axziKmfZW4aMiTAA5G86T0/3Y+7RnTwrD
-         8q+ZsxicrP/vK4VLFvtlK9gtUCMUIwAJ7NiBwB1qz6wCcE8Hh1bSEllD1N7l06Ef6W/a
-         iBHdJ21UkS2N02wXLRNSdOTLt/nr7h2gxTi7me2jB29l37kXiw+o55waP1x8Fp4K4E7z
-         jLURp1gnfxsNKZYLfDwmiavqD6/NSWSJaCmZqR+YQg1Uy2IUe8Bw5idj3E+H1lHkgHmy
-         NgL6KK7Si/XJ/VCQffGIAY1T2g4oh93qjt/HqXCNwmi59N3j8PbDY+nqyV1m+E0yXK5G
-         26CQ==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fOxexOAYoq0Ku26UrLL0NnhNIWS7ZHTGbVYU1RPFCQA=;
+        b=SvNr7e44Hh62MJQ+5XiSIkdHURujWzD3lc/ac8IfSpqA43qnUMyIkZmPE7fTh1Fy5P
+         WMSuiVklJTyRI9RFTmhCpe72YcMd0HZwXFo1rCSCF2VWt3Mapp4/z7TZv1G1YNYBhK6v
+         tO11RkxEJ4+QM5HUYYsxEy3f66Gta+R2pLl50jI1RBlK36RnTOQuIQxxZSxx3+XcJrqP
+         5IDPjzWq99E5MLMhXvqi8U0RSHRziSj5K6P5QhTsH4RPgfPuD6X5D0jgDzKfHONEpGyu
+         mYeyS50DGjZLr3rSEGQyXmk5LoFwO/mZ9BgH1adzEcDWpL6AKlmSpniD4iWMZOckZGSH
+         UuPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724192377; x=1724797177;
+        d=1e100.net; s=20230601; t=1724193940; x=1724798740;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JmY7zOv9iDQf86ZkJ0w3RBxIVOM+BRXCMM/BvTC1yVM=;
-        b=uFqpaQy+Y6C5rFkJKonkN9ONgsxb39NVZSmDTR1SbEQwglsgGCWQxUfkY0WBS+hKdr
-         5qe3CjA0XQlVFkEa7CzpqMYSKmYsR/swuzPkt6dHNYmDkg4HrAl7q8paE8D5CZiw6vS3
-         kx49en9w9HdztWveJ01X3gVXPkngUK13ZrC2tsUNcChlKhROByIDtnTxOYTgAl3AHKd7
-         6zHCp8U82pnWpC6W5bahcjK1fCPN3US23yOnOlaYkE4x2+2aAz8e7TfPKjvvdPWDjn3/
-         jaTExS5yVFIJln0ixMvglVHl/yRKcEkBbPaAFe8IAHhTl3CtdB4jhZx018CunXrqtN3o
-         ouDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX79xU0fuZiZ80F/fFEIL1gs8B1ffzHlUTGOUm03ZoezkSLbkVXTaShTC68u/in9q9uQcqsW2UgHQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkOrwOsmq13Yha0Nc3Rpw1g4oUmJaS08Ej1CqE4AKATJ2prMzj
-	rpI1y9lLblpXaOXJLzxL0WB1H+9Zcb3Mklzu/Qa30urcox0pKVYU24ZaG45F8Xg=
-X-Google-Smtp-Source: AGHT+IGXREiHQPTeV0KUI9sNNeB5VeROC7PEZHaRgd11un7ZQcxUMPgQEG5DxKP86kRhTNsG1Du/hg==
-X-Received: by 2002:a17:90a:70f:b0:2c4:e333:35e5 with SMTP id 98e67ed59e1d1-2d5ea4c4893mr373422a91.36.1724192376787;
-        Tue, 20 Aug 2024 15:19:36 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5ebb9a002sm117201a91.51.2024.08.20.15.19.35
+        bh=fOxexOAYoq0Ku26UrLL0NnhNIWS7ZHTGbVYU1RPFCQA=;
+        b=SWYB6Ou9lVu7TyTciFik8bU+jg6uymGrWhDBb4kGuMqqQsOEf1jQVH6V69eUMtfpAD
+         fi+i47jZUE/DLIkJrsffp+Y91l1UXBdSt12pICSGtZ2pBqbLEHooD88350E9CafbDvBt
+         IP2tOv3BF0Mkq7gapr+u3tYCXJP7nUpynVmjKUd8WAUbd5c95c3jzuTPrvL51l4iREnt
+         h6yCssfL/ihV+4Z0qJqNctfyt6YzkM99yKAMajtZCSFN+q72lM7XuhnPDrAzLQGPld2J
+         uAMMIIXg42KUW9yn1AKaNLWEcxRwoh1jrFsc7ekSoUStq2K+A+MpKsRs3wlOPVjW8O4t
+         z+Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXobZg5pz5Sp+mgVXHDvgIyplkoGLWOaYReiG9AaohmUE6tAhQAd6SrMVautd9H0QCeCtOV7kexKg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+9m4sTohyl9+DlxoMtQhEHE+iHf1ziKFYel+6vNjmyJPd5p+j
+	l1j7nhxo4q7pp/Tjx9PzFXzTAjTHzV15lGxZX3h1pgMQF7vF8iw109hVOQ==
+X-Google-Smtp-Source: AGHT+IFtmWDBKCBaEQ3UzY3ykcfmlp99ZeRKRhV+T44aw3G4U+NbmhJanNc4ACZvksGjP7hxBpNePQ==
+X-Received: by 2002:a17:907:3d90:b0:a7a:afe8:1015 with SMTP id a640c23a62f3a-a867017ba7emr30315566b.29.1724193940043;
+        Tue, 20 Aug 2024 15:45:40 -0700 (PDT)
+Received: from [192.168.42.254] ([148.252.128.6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838cf0c4sm820624466b.51.2024.08.20.15.45.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 15:19:35 -0700 (PDT)
-Message-ID: <53474dc7-f4ee-4f21-a556-789c23df526e@kernel.dk>
-Date: Tue, 20 Aug 2024 16:19:35 -0600
+        Tue, 20 Aug 2024 15:45:39 -0700 (PDT)
+Message-ID: <abbab9cf-1249-4463-88cc-85a51399a950@gmail.com>
+Date: Tue, 20 Aug 2024 23:46:08 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,64 +76,109 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] io_uring: implement our own schedule timeout handling
-To: David Wei <dw@davidwei.uk>, Pavel Begunkov <asml.silence@gmail.com>,
- io-uring@vger.kernel.org
+Subject: Re: [PATCH 4/5] io_uring: add support for batch wait timeout
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: dw@davidwei.uk
 References: <20240819233042.230956-1-axboe@kernel.dk>
- <20240819233042.230956-4-axboe@kernel.dk>
- <58a42e82-3742-4439-998e-c9389c5849bc@davidwei.uk>
- <cb79d5dd-3ff2-4cc3-ae0e-24c03d2729b3@kernel.dk>
- <d1116971-a2f7-430d-97d8-03440befd38a@davidwei.uk>
- <a3285bfe-ddcb-4521-940c-2e59f774ec70@kernel.dk>
- <48359591-314d-42b0-8332-58f9f6041330@davidwei.uk>
- <4b0ed07b-1cb0-4564-9d13-44a7e6680190@gmail.com>
- <344d1781-0004-4623-9eb4-2c2f479267f4@davidwei.uk>
+ <20240819233042.230956-5-axboe@kernel.dk>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <344d1781-0004-4623-9eb4-2c2f479267f4@davidwei.uk>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240819233042.230956-5-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/20/24 4:14 PM, David Wei wrote:
-> On 2024-08-20 15:13, Pavel Begunkov wrote:
->>>>>> On 8/20/24 2:08 PM, David Wei wrote:
->>>>> To rephase the question, why is the original code calling
->>>>> schedule_hrtimeout_range_clock() not needing to differentiate behaviour
->>>>> between defer taskrun and not?
->>>>
->>>> Because that part is the same, the task schedules out and goes to sleep.
->>>> That has always been the same regardless of how the ring is setup. Only
->>>> difference is that DEFER_TASKRUN doesn't add itself to ctx->wait, and
->>>> hence cannot be woken by a wake_up(ctx->wait). We have to wake the task
->>>> manually.
->>>>
->>>
->>> io_cqring_timer_wakeup() is the timer expired callback which calls
->>> wake_up_process() or io_cqring_wake() depending on DEFER_TASKRUN.
->>>
->>> The original code calling schedule_hrtimeout_range_clock() uses
->>> hrtimer_sleeper instead, which has a default timer expired callback set
->>> to hrtimer_wakeup().
->>>
->>> hrtimer_wakeup() only calls wake_up_process().
->>>
->>> My question is: why this asymmetry? Why does the new custom callback
->>> require io_cqring_wake()?
->>
->> That's what I'm saying, it doesn't need and doesn't really want it.
->> From the correctness point of view, it's ok since we wake up a
->> (unnecessarily) larger set of tasks.
->>
+On 8/20/24 00:28, Jens Axboe wrote:
+> Waiting for events with io_uring has two knobs that can be set:
 > 
-> Yeah your explanation that came in while I was writing the email
-> answered it, thanks Pavel.
+> 1) The number of events to wake for
+> 2) The timeout associated with the event
+> 
+> Waiting will abort when either of those conditions are met, as expected.
+> 
+> This adds support for a third event, which is associated with the number
+> of events to wait for. Applications generally like to handle batches of
+> completions, and right now they'd set a number of events to wait for and
+> the timeout for that. If no events have been received but the timeout
+> triggers, control is returned to the application and it can wait again.
+> However, if the application doesn't have anything to do until events are
+> reaped, then it's possible to make this waiting more efficient.
+> 
+> For example, the application may have a latency time of 50 usecs and
+> wanting to handle a batch of 8 requests at the time. If it uses 50 usecs
+> as the timeout, then it'll be doing 20K context switches per second even
+> if nothing is happening.
+> 
+> This introduces the notion of min batch wait time. If the min batch wait
+> time expires, then we'll return to userspace if we have any events at all.
+> If none are available, the general wait time is applied. Any request
+> arriving after the min batch wait time will cause waiting to stop and
+> return control to the application.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>   io_uring/io_uring.c | 75 +++++++++++++++++++++++++++++++++++++++------
+>   io_uring/io_uring.h |  2 ++
+>   2 files changed, 67 insertions(+), 10 deletions(-)
+> 
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index ddfbe04c61ed..d09a7c2e1096 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -2363,13 +2363,62 @@ static enum hrtimer_restart io_cqring_timer_wakeup(struct hrtimer *timer)
+>   	return HRTIMER_NORESTART;
+>   }
+>   
+> +/*
+> + * Doing min_timeout portion. If we saw any timeouts, events, or have work,
+> + * wake up. If not, and we have a normal timeout, switch to that and keep
+> + * sleeping.
+> + */
+> +static enum hrtimer_restart io_cqring_min_timer_wakeup(struct hrtimer *timer)
+> +{
+> +	struct io_wait_queue *iowq = container_of(timer, struct io_wait_queue, t);
+> +	struct io_ring_ctx *ctx = iowq->ctx;
+> +
+> +	/* no general timeout, or shorter, we are done */
+> +	if (iowq->timeout == KTIME_MAX ||
+> +	    ktime_after(iowq->min_timeout, iowq->timeout))
+> +		goto out_wake;
+> +	/* work we may need to run, wake function will see if we need to wake */
+> +	if (io_has_work(ctx))
+> +		goto out_wake;
+> +	/* got events since we started waiting, min timeout is done */
+> +	if (iowq->cq_min_tail != READ_ONCE(ctx->rings->cq.tail))
+> +		goto out_wake;
+> +	/* if we have any events and min timeout expired, we're done */
+> +	if (io_cqring_events(ctx))
+> +		goto out_wake;
+> +
+> +	/*
+> +	 * If using deferred task_work running and application is waiting on
+> +	 * more than one request, ensure we reset it now where we are switching
+> +	 * to normal sleeps. Any request completion post min_wait should wake
+> +	 * the task and return.
+> +	 */
+> +	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
+> +		atomic_set(&ctx->cq_wait_nr, 1);
 
-Hah and now I see what you meant - yeah we can just remove the
-distinction. I didn't see anything in testing, but I also didn't have
-multiple tasks waiting on a ring, nor would you. So it doesn't really
-matter, but I'll clean it up so there's no confusion.
+racy
+
+atomic_set(&ctx->cq_wait_nr, 1);
+smp_mb();
+if (llist_empty(&ctx->work_llist))
+	// wake;
+
+
+> +
+> +	iowq->t.function = io_cqring_timer_wakeup;
+> +	hrtimer_set_expires(timer, iowq->timeout);
+> +	return HRTIMER_RESTART;
+> +out_wake:
+> +	return io_cqring_timer_wakeup(timer);
+> +}
+> +
+
 
 -- 
-Jens Axboe
-
+Pavel Begunkov
 

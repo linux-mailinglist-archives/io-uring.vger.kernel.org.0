@@ -1,104 +1,154 @@
-Return-Path: <io-uring+bounces-2865-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2866-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC849591A3
-	for <lists+io-uring@lfdr.de>; Wed, 21 Aug 2024 02:13:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC06959319
+	for <lists+io-uring@lfdr.de>; Wed, 21 Aug 2024 04:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0438D284DDF
-	for <lists+io-uring@lfdr.de>; Wed, 21 Aug 2024 00:13:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E6E1F2302F
+	for <lists+io-uring@lfdr.de>; Wed, 21 Aug 2024 02:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE26581E;
-	Wed, 21 Aug 2024 00:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0273D14882D;
+	Wed, 21 Aug 2024 02:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="lDP1JDX8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MnCYuq8D"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0DD7482
-	for <io-uring@vger.kernel.org>; Wed, 21 Aug 2024 00:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C77D1CA81
+	for <io-uring@vger.kernel.org>; Wed, 21 Aug 2024 02:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724199184; cv=none; b=cWdHTmkaW41sKZs9wbjp420ihJ5vuBJns0CFmsGSNrIAdwstTz3rqHxu9szffRMMJ0txC+c0xv5hDXGqWVn2Hf/synmJmvywMgtekcPhuCYndWuzSeOCGs1Z9rLaazY557KlEN5zNVY3/4viAa9HbURArEBvMj/QnKrtTa1dHWA=
+	t=1724208924; cv=none; b=BSOXFW08IiBMt0A90dOq1iJ3jiWi5GHVvX0totMq9l2h6h7WHITGamx+Fepje/8IMB4bBWPF6k79wuOsOWOZLs4JsNP9Qn611DkW5HGaDkUuFiJY0Z2r+639FNrs5EMP7GWX+YIyE/b/DqzAj6yRCStNM3Ia1JihtJzRCqUjJJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724199184; c=relaxed/simple;
-	bh=kOPLBTjcmFaQRa69LNcz5Mx4WQRj65z1ic4d6Ixbsf0=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eohd5xsV3DuRJFdltbHIlliiwyMYcmfRscTQ4aKSsyYOBddxyCYiYt4XfpINcXcuK5jt26E4KbhfLydh3zclr0xxG6nlEsKQrIGecayh4icT4NOzCEoOVFQmyQAwQV8Y1bYfEQMR8dt1MVm4U5FAMuwPtik7VKaZ/8oyNAY3lUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=lDP1JDX8; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fec34f94abso56107945ad.2
-        for <io-uring@vger.kernel.org>; Tue, 20 Aug 2024 17:13:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724199180; x=1724803980; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TlRH6iHmuSRL4pZKJTG75Qf6Il47NLxdGFKrIvRVKtw=;
-        b=lDP1JDX8svq/zE72yySp9451kg155wTwl8q47HBUFSdcYyZIc6xCRpzoOh9MkwlfS+
-         Xsxk52z3zb9fnfEdj7IBQkfU85+Te3e9Z8Q8+BM/AuuZKYCtB0auexdvRYGNto5uVNOq
-         z4leNGJj0D+RmqwjRyl/XEG0SS4PeRK0NvvJDapxEoOHDXemowrg/ecds2fG4630gsGh
-         kXSbPQTX9p6jgElLL9cSbvWHYFicu6+/u/80E3fs0UnGkVa0T/LKltlW0ALTnfiP/+0U
-         wkzrH7Fw2koWAgQGsBDFqxxbqqx/FSz06KE484cAWav8S+qHYDMmTdY4PDFAszgjwfy6
-         YmzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724199180; x=1724803980;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TlRH6iHmuSRL4pZKJTG75Qf6Il47NLxdGFKrIvRVKtw=;
-        b=gIiN07kjqlqyCBwQsHn0Q4WDCLbSXjJaumQfjWM3KTDNrVcj8WinVErIcsRsyedZrH
-         D0Anzuv2QjY13EFUuP52iKRvqzEzZvifqQfb0qFCy1VN8u31Fxj8ARQsDZ3E5NYiF9Hm
-         5vWGFlDtp/Zx730z/OmTZ72M/Am9oi0RIz6ZDF3izVQMC9xJMtV3RGrERgcsYhHklJWs
-         HnCdpzleJWYLfdTow+lL5sfLeygQkxWuWy/yCFl1e/Yuk1PYNFLBj4R8txyVyxa9TafT
-         Jr53M+W4mzQUBBA+Sx74HR7Kfn9IBCm2B86X5bFG6B0J5wpG/1zKjMKu6nX3IYR5pbG9
-         gn6Q==
-X-Gm-Message-State: AOJu0YwUGvoGL7cKOiljIGY9D5coA5hV+9pd6Kvkhu1uPVBb2sm0f990
-	8Ow8d3FFV9r6f50DTl/kx/nZPlSR5loH4E6A/mpSedNMfFuDy/LNGovQ3rdUCNBzhhW6zUOje1i
-	4
-X-Google-Smtp-Source: AGHT+IFmq3jjiz8iBJ/PNwf4+BcMuVdPIQZMh8rvKsjUyKEiFXYtpxspO6zKxq4pMdcFut2DDppvTA==
-X-Received: by 2002:a17:902:c652:b0:201:f1b5:24ac with SMTP id d9443c01a7336-20368096e5emr4766695ad.54.1724199180406;
-        Tue, 20 Aug 2024 17:13:00 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02faa77sm83165285ad.58.2024.08.20.17.12.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 17:12:59 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <285eca872bd46640ed209c0b09628f53744cb3ab.1724110909.git.asml.silence@gmail.com>
-References: <285eca872bd46640ed209c0b09628f53744cb3ab.1724110909.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing 1/1] test/send-zerocopy: test fix datagrams
- over UDP limit
-Message-Id: <172419917963.98368.17880563952445291485.b4-ty@kernel.dk>
-Date: Tue, 20 Aug 2024 18:12:59 -0600
+	s=arc-20240116; t=1724208924; c=relaxed/simple;
+	bh=xYtbIZN9AyCEi914ZJeTdlzwoaOrJfCbBZzvtmDTOtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JDpcMmx8OdI2sUcdMTVcOLpyDMPpmrfDfUnXvROPeMvwH+iHW/op3L+FEi1ELLfuD2YLHUZjTNPLQUCEksiaREM4qYpZYE5JNm715ajLZD/IaFPSlcXF/V70w9I5zLB5O4V9odBKtk/jCHOQPy7xXBKm9oeQka2LWA5H5zqzBzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MnCYuq8D; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724208921;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KSiSgD05DeHtm5VziINX4tjvKw+IZh1lV84+HlnOlgg=;
+	b=MnCYuq8D9+J2BfjJ44Jh5pGb4zLlvdUWhk5sExB4QuIdV0KYxsujsY3A7RyzAR2NNXhmww
+	hagr3hg1barakt+/+LQ/hocJIlmQpQmgToPx3EvFr/9Hh35jjt4PKgtMOrsc9qZBz/PG0s
+	gMGnMMkdyGG+1Ki/JJx+E08yz9aCad8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-179-ufT1cexHObWimM0gMNSokA-1; Tue,
+ 20 Aug 2024 22:55:20 -0400
+X-MC-Unique: ufT1cexHObWimM0gMNSokA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D31DD1955D4C;
+	Wed, 21 Aug 2024 02:55:17 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.126])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E46CE19560AE;
+	Wed, 21 Aug 2024 02:55:11 +0000 (UTC)
+Date: Wed, 21 Aug 2024 10:55:06 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+	Conrad Meyer <conradmeyer@meta.com>, linux-block@vger.kernel.org,
+	linux-mm@kvack.org, Jan Kara <jack@suse.cz>,
+	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Subject: Re: [RFC 5/5] block: implement io_uring discard cmd
+Message-ID: <ZsVXClra11+yLjss@fedora>
+References: <CAFj5m9+CXS_b5kgFioFHTWivb6O+R9HytsSQEHcEzUM5SqHfgw@mail.gmail.com>
+ <fd357721-7ba7-4321-88da-28651754f8a4@kernel.dk>
+ <e06fd325-f20f-44d8-8f72-89b97cf4186f@gmail.com>
+ <Zr6S4sHWtdlbl/dd@fedora>
+ <4d016a30-d258-4d0e-b3bc-18bf0bd48e32@kernel.dk>
+ <Zr6vIt1uSe9/xguH@fedora>
+ <e9562cf8-9cf1-409e-8fbd-546d11fcba93@kernel.dk>
+ <ZsQBMjaBrtcFLpIj@fedora>
+ <d8ef3e63-1a94-45a4-974a-01324d6ce310@kernel.dk>
+ <c69d1769-ae86-4659-bbda-6f7760a8e83f@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c69d1769-ae86-4659-bbda-6f7760a8e83f@gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-
-On Tue, 20 Aug 2024 22:53:39 +0100, Pavel Begunkov wrote:
+On Tue, Aug 20, 2024 at 06:19:00PM +0100, Pavel Begunkov wrote:
+> On 8/20/24 17:30, Jens Axboe wrote:
+> > On 8/19/24 8:36 PM, Ming Lei wrote:
+> > > On Mon, Aug 19, 2024 at 02:01:21PM -0600, Jens Axboe wrote:
+> > > > On 8/15/24 7:45 PM, Ming Lei wrote:
+> ...
+> > > > > Meantime the handling has to move to io-wq for avoiding to block current
+> > > > > context, the interface becomes same with IORING_OP_FALLOCATE?
+> > > > 
+> > > > I think the current truncate is overkill, we should be able to get by
+> > > > without. And no, I will not entertain an option that's "oh just punt it
+> > > > to io-wq".
+> > > 
+> > > BTW, the truncate is added by 351499a172c0 ("block: Invalidate cache on discard v2"),
+> > > and block/009 serves as regression test for covering page cache
+> > > coherency and discard.
+> > > 
+> > > Here the issue is actually related with the exclusive lock of
+> > > filemap_invalidate_lock(). IMO, it is reasonable to prevent page read during
+> > > discard for not polluting page cache. block/009 may fail too without the lock.
+> > > 
+> > > It is just that concurrent discards can't be allowed any more by
+> > > down_write() of rw_semaphore, and block device is really capable of doing
+> > > that. It can be thought as one regression of 7607c44c157d ("block: Hold invalidate_lock in
+> > > BLKDISCARD ioctl").
+> > > 
+> > > Cc Jan Kara and Shin'ichiro Kawasaki.
+> > 
+> > Honestly I just think that's nonsense. It's like mixing direct and
+> > buffered writes. Can you get corruption? Yes you most certainly can.
+> > There should be no reason why we can't run discards without providing
+> > page cache coherency. The sync interface attempts to do that, but that
+> > doesn't mean that an async (or a different sync one, if that made sense)
+> > should.
 > 
+> I don't see it as a problem either, it's a new interface, just need
+> to be upfront on what guarantees it provides (one more reason why
+> not fallocate), I'll elaborate on it in the commit message and so.
 
+Fair enough.
 
-Applied, thanks!
+> 
+> I think a reasonable thing to do is to have one rule for all write-like
+> operations starting from plain writes, which is currently allowing races
+> to happen and shift it to the user. Purely in theory we can get inventive
+> with likes of range lock trees, but that's unwarranted for all sorts of
+> reasons.
+> 
+> > If you do discards to the same range as you're doing buffered IO, you
+> > get to keep both potentially pieces. Fact is that most folks are doing
+> > dio for performant IO exactly because buffered writes tend to be
+> > horrible, and you could certainly use that with async discards and have
+> > the application manage it just fine.
+> > 
+> > So I really think any attempts to provide page cache synchronization for
+> > this is futile. And the existing sync one looks pretty abysmal, but it
+> > doesn't really matter as it's a sync interfce. If one were to do
+> 
+> It should be a pain for sync as well, you can't even spin another process
+> and parallelise this way.
 
-[1/1] test/send-zerocopy: test fix datagrams over UDP limit
-      commit: 2d4e799017d64cd2f8304503eef9064931bb3fbd
+Yes, this way has degraded some sync discard workloads perf a lot.
 
-Best regards,
--- 
-Jens Axboe
-
-
+Thanks,
+Ming
 
 

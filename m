@@ -1,77 +1,82 @@
-Return-Path: <io-uring+bounces-2867-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2869-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0852E959F8B
-	for <lists+io-uring@lfdr.de>; Wed, 21 Aug 2024 16:19:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CAB2959F90
+	for <lists+io-uring@lfdr.de>; Wed, 21 Aug 2024 16:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53C1283233
-	for <lists+io-uring@lfdr.de>; Wed, 21 Aug 2024 14:19:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF7F8B214F3
+	for <lists+io-uring@lfdr.de>; Wed, 21 Aug 2024 14:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAE41B1D58;
-	Wed, 21 Aug 2024 14:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5A51AF4ED;
+	Wed, 21 Aug 2024 14:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="n5ZB8Q+q"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bUIWAngH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7126118C348
-	for <io-uring@vger.kernel.org>; Wed, 21 Aug 2024 14:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4B21AF4D2
+	for <io-uring@vger.kernel.org>; Wed, 21 Aug 2024 14:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724249957; cv=none; b=NcVBMVwmbihSvYr2FoTG0olQOt08jfvDWC10SZ6+FsF4tHUjMzFDHBCZu67FLh084uy9G5mXuB3qlE5301RYFtc0UtS/T4gDcSTuu1NUB3+F/FtMdc5scBsduLRKr49TbYcbw+sWHOvkreDuSkes1uNlf2Gz8cB4/6U/nwpuhuw=
+	t=1724249958; cv=none; b=H1HePLsD+yKmVTW0NZFhqnQHPrLVBW4HKSsDw2OSWvJUjawNvN8V9NUowuzgHy28HiLd2mep9O39uuaQ0qsPFfttq1FuKVb3ufSjdpubZLFCr7BIiV0IKlA7QqkXxEgmoJeRJqg4cZWufhbgmVLYhw/dbC3xUrNegISJP0M1yAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724249957; c=relaxed/simple;
-	bh=SaFJU8VADDZoXJ2uHpWJtqUZ7Ey014do592P0QJXuHk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZgIGnOG9d2m4TYZaRFtIzYbWk/prOF8Fa/gTXUEGmwZnZxF89Nfk75u0pFHllwpbDmlJgIv7IvgLJCdZ1HwQkTxlVDVrgYo4nZhYeu4jAxhO8+koCDKA7RtjaCdZ2at1He/Zwo3qRtxv7HAIq5PGpgn4wmHCAYAa8tcYexY/DMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=n5ZB8Q+q; arc=none smtp.client-ip=209.85.166.180
+	s=arc-20240116; t=1724249958; c=relaxed/simple;
+	bh=xMoc4My7QZ8jZ5RQ5B8Hxyx6CrgWlRJp/Q9mFmCwZGs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ceh6nq8WUMl7s4/tEHnPgLILE5jaQm3CsTapiCIcPhFI7siNUGsUDQkmH8wy2sJI9QSQp+oKTesOO9b/frgkdNgJtfItkO6E5ocGg0RWjk69tB2ofboGHL74boT7Mfoaw/siOZUD2M53fEnANgMmtbzugxAegGhxwXSKfDAWtQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bUIWAngH; arc=none smtp.client-ip=209.85.166.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-39d31d16d39so16172535ab.0
-        for <io-uring@vger.kernel.org>; Wed, 21 Aug 2024 07:19:14 -0700 (PDT)
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-39d3cd4fa49so3025395ab.1
+        for <io-uring@vger.kernel.org>; Wed, 21 Aug 2024 07:19:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724249953; x=1724854753; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=34pN4P3pOPmGwZgsQCNbVUNjaon27ZTQZNWrGQrp5zM=;
-        b=n5ZB8Q+q+rT1i4EjIXAXiehd9X9Y8/n4gSL3QWr2jxOx3BLPAXZz3Dl9XNG27MoSwL
-         tiI/Y3fVz48bgzISwtPh/R9Wn66CYcGe6QRu0TmFWiEp4osRJQV/PDwc9n8sD0Ww7eJL
-         g97w7UlNMN8sAD7r5k5ONQGr3DUOlSz50SOb3LbdzGk5P/9TksFHEwEftdJdimN+D3kh
-         WoyX1CdBoYh7Sq2NzQhmaZ4/7eWM8mEusdK7NsR5vUzbp4C9R8+NmPIWKHzcmkv+9Ib5
-         E518d0JLku3tDWDL/zm9Z+hqZgRKFiLtZHtd55aijHdG3dFKdLbhQp/GkxQY67w+4h0E
-         nEZg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A6LTIh3DcVfrLOVFkRBBopt0cmnN3QyNN9FFhzOKYYo=;
+        b=bUIWAngHGY0+adtTvpg0QQLsZfKdZD3u7EJl+4os4QJvFJqGvd2S16YscpVA6AGo5j
+         UCto7bOHZg/Eeoggi84cxZouSEZuTRmjBwhol7I2nBNIH8RmMQ2RXpQJbvLWoWMPLmDk
+         WVWyJCIRYX4aKY2nJ2RHJs1Kxz/yXSE+sMT/cKXxvcxq3fYVR4oUBYFkbIWX0Lqef2No
+         iSA0BxFs0c8rwkZ5Q3Ybpu2220UM6WnLNqZ7iwlmPOY/L2VaDFWU1Ev/E9QyTxZZDiYL
+         Ws2nRBBvWXLip5UbU+2akpBppDIX9ySbFFKvhHISNa7KIJ2xK7nA4zgkJkNmqyqKpDIR
+         mBSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1724249953; x=1724854753;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=34pN4P3pOPmGwZgsQCNbVUNjaon27ZTQZNWrGQrp5zM=;
-        b=UCRwQ/r5gGaGkCukd+J4hKPw4YQFop0ZhuV9/hO/KvSac29Pg6OMKSal16BjL6BUgt
-         4Vt+1oQ0AMna776w7OTJyCVOL9SuJvalhzu5F69BrMM2G3d3Lfo/bU1lw3NbzKz1WYpt
-         ZSt8wGxiJfjiW2QHmc7dOE5nftk5VKiCm1bx8hVqrX08nHPoJb2CSJX9jjAgUayKtX8I
-         ta2Ig9um2olB1rd9nusskeTvh3b3kFr6OsV8uLNOXTsSkyc43NDpQqW+9rr0t3RLYCKz
-         UPuzKTWJoNCOuK79dzZqkRE94XQHPFFGjhXKr9Pr/w4O/Jl6kS/hgLBmYcdnzHnAVdXD
-         ui2Q==
-X-Gm-Message-State: AOJu0YwbIofWlUyDbvY1Bn28s6WRTvQo3SulTAc/ilIzkgXXVu365XNj
-	3XcBj4C6Ptgspo/gifO1Ggs9HvpgVYoAoe3wfjpVLpww4GP3MCPRKmr4p1cgfFDVYJOLyWAIvAg
-	i
-X-Google-Smtp-Source: AGHT+IHTtjBNWrDxyKlbj4h56zwlWf1zfVbuuXYOWwOC+yeOpGgPLjZFbxWpjBxKi6ZN3HxyZ1keAw==
-X-Received: by 2002:a05:6e02:198b:b0:39b:28d1:169b with SMTP id e9e14a558f8ab-39d6c390340mr28664215ab.15.1724249952735;
-        Wed, 21 Aug 2024 07:19:12 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A6LTIh3DcVfrLOVFkRBBopt0cmnN3QyNN9FFhzOKYYo=;
+        b=TUmmoik5ROgKQQKY6dI2NkipSEYECxph96N0f6iJh7/NV03eUg8P9xN0GlufMykSS/
+         h7j/anS+XzouBVAnutC1yuEiQTz7rLg7z24muZAJ6A/5TUaLT7g4+3m89ANjJPwXav6c
+         +66v9aQiGwPx8PCrdmPuhwJSx7fzCBx2vZ/FMtfRin/YZdf0/jc42Ah10OlPw4Q1VJe1
+         z7lgAmd+tMIQ7fX4IrbLNHOJX0Tw5EhRjg88RwHyLCfPArSFXm5r+jGJWDYxUI/tuPoH
+         WsxB4CqaYMbMQrqSn7PldzPEgAAWU1Rq1gRNyADO3T1tdYsMUFa5cc7UCyzWLZC2NRYu
+         Xz8w==
+X-Gm-Message-State: AOJu0Yx2oGssVq2hYp1Me95D8BbWHqNlghlysiPsy0jHK7S8p1w1Wvr+
+	bGhd9O8E9eluvKgstdgLr1qEHyk1atFo3WJen8JIMWsKGHl91EZ6EVtLZmTdRVj/4QB46BnfLnI
+	m
+X-Google-Smtp-Source: AGHT+IHYoxO7kjfbBsDXbVUJLAGr5MmQ4Afq5NyUBt5LDoVdknrp46HPripSzP2q2zbjiy7addY1QQ==
+X-Received: by 2002:a05:6e02:152b:b0:39d:2e6f:bb19 with SMTP id e9e14a558f8ab-39d6c3c0e6cmr18502195ab.10.1724249953467;
+        Wed, 21 Aug 2024 07:19:13 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
         by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39d1eb0bc93sm50967285ab.19.2024.08.21.07.19.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 07:19:12 -0700 (PDT)
+        Wed, 21 Aug 2024 07:19:13 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
-Cc: dw@davidwei.uk
-Subject: [PATCHSET v5 0/5] Add support for batched min timeout
-Date: Wed, 21 Aug 2024 08:16:21 -0600
-Message-ID: <20240821141910.204660-1-axboe@kernel.dk>
+Cc: dw@davidwei.uk,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/5] io_uring: encapsulate extraneous wait flags into a separate struct
+Date: Wed, 21 Aug 2024 08:16:22 -0600
+Message-ID: <20240821141910.204660-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240821141910.204660-1-axboe@kernel.dk>
+References: <20240821141910.204660-1-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,33 +85,135 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Rather than need to pass in 2 or 3 separate arguments, add a struct
+to encapsulate the timeout and sigset_t parts of waiting. In preparation
+for adding another argument for waiting.
 
-Here's v5 of the min-wait patchset. For a full description, see the v2
-posting:
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ io_uring/io_uring.c | 45 ++++++++++++++++++++++++---------------------
+ 1 file changed, 24 insertions(+), 21 deletions(-)
 
-https://lore.kernel.org/io-uring/20240215161002.3044270-1-axboe@kernel.dk/
-
-As before, there's a liburing branch with added test cases, it can be
-found here:
-
-https://git.kernel.dk/cgit/liburing/log/?h=min-wait
-
-The patches are on top of master with for-6.12/io_uring pulled in.
-
-Changes since v4:
-- Use READ/WRITE_ONCE consistently with iowq->hit_timeout
-- Unify how io_cqring_timer_wakeup() handles ring types by always using
-  wake_up_process().
-- Fix race in min timer wakeup with DEFER_TASKRUN
-- Don't reset ctx->cq_wait_nr if timeout has been hit
-
- include/uapi/linux/io_uring.h |   3 +-
- io_uring/io_uring.c           | 191 +++++++++++++++++++++++++---------
- io_uring/io_uring.h           |   4 +
- 3 files changed, 150 insertions(+), 48 deletions(-)
-
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 20229e72b65c..37053d32c668 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2384,13 +2384,18 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
+ 	return ret;
+ }
+ 
++struct ext_arg {
++	size_t argsz;
++	struct __kernel_timespec __user *ts;
++	const sigset_t __user *sig;
++};
++
+ /*
+  * Wait until events become available, if we don't already have some. The
+  * application must reap them itself, as they reside on the shared cq ring.
+  */
+ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+-			  const sigset_t __user *sig, size_t sigsz,
+-			  struct __kernel_timespec __user *uts)
++			  struct ext_arg *ext_arg)
+ {
+ 	struct io_wait_queue iowq;
+ 	struct io_rings *rings = ctx->rings;
+@@ -2415,10 +2420,10 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 	iowq.cq_tail = READ_ONCE(ctx->rings->cq.head) + min_events;
+ 	iowq.timeout = KTIME_MAX;
+ 
+-	if (uts) {
++	if (ext_arg->ts) {
+ 		struct timespec64 ts;
+ 
+-		if (get_timespec64(&ts, uts))
++		if (get_timespec64(&ts, ext_arg->ts))
+ 			return -EFAULT;
+ 
+ 		iowq.timeout = timespec64_to_ktime(ts);
+@@ -2426,14 +2431,14 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 			iowq.timeout = ktime_add(iowq.timeout, io_get_time(ctx));
+ 	}
+ 
+-	if (sig) {
++	if (ext_arg->sig) {
+ #ifdef CONFIG_COMPAT
+ 		if (in_compat_syscall())
+-			ret = set_compat_user_sigmask((const compat_sigset_t __user *)sig,
+-						      sigsz);
++			ret = set_compat_user_sigmask((const compat_sigset_t __user *)ext_arg->sig,
++						      ext_arg->argsz);
+ 		else
+ #endif
+-			ret = set_user_sigmask(sig, sigsz);
++			ret = set_user_sigmask(ext_arg->sig, ext_arg->argsz);
+ 
+ 		if (ret)
+ 			return ret;
+@@ -3112,9 +3117,8 @@ static int io_validate_ext_arg(unsigned flags, const void __user *argp, size_t a
+ 	return 0;
+ }
+ 
+-static int io_get_ext_arg(unsigned flags, const void __user *argp, size_t *argsz,
+-			  struct __kernel_timespec __user **ts,
+-			  const sigset_t __user **sig)
++static int io_get_ext_arg(unsigned flags, const void __user *argp,
++			  struct ext_arg *ext_arg)
+ {
+ 	struct io_uring_getevents_arg arg;
+ 
+@@ -3123,8 +3127,8 @@ static int io_get_ext_arg(unsigned flags, const void __user *argp, size_t *argsz
+ 	 * is just a pointer to the sigset_t.
+ 	 */
+ 	if (!(flags & IORING_ENTER_EXT_ARG)) {
+-		*sig = (const sigset_t __user *) argp;
+-		*ts = NULL;
++		ext_arg->sig = (const sigset_t __user *) argp;
++		ext_arg->ts = NULL;
+ 		return 0;
+ 	}
+ 
+@@ -3132,15 +3136,15 @@ static int io_get_ext_arg(unsigned flags, const void __user *argp, size_t *argsz
+ 	 * EXT_ARG is set - ensure we agree on the size of it and copy in our
+ 	 * timespec and sigset_t pointers if good.
+ 	 */
+-	if (*argsz != sizeof(arg))
++	if (ext_arg->argsz != sizeof(arg))
+ 		return -EINVAL;
+ 	if (copy_from_user(&arg, argp, sizeof(arg)))
+ 		return -EFAULT;
+ 	if (arg.pad)
+ 		return -EINVAL;
+-	*sig = u64_to_user_ptr(arg.sigmask);
+-	*argsz = arg.sigmask_sz;
+-	*ts = u64_to_user_ptr(arg.ts);
++	ext_arg->sig = u64_to_user_ptr(arg.sigmask);
++	ext_arg->argsz = arg.sigmask_sz;
++	ext_arg->ts = u64_to_user_ptr(arg.ts);
+ 	return 0;
+ }
+ 
+@@ -3246,15 +3250,14 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 			}
+ 			mutex_unlock(&ctx->uring_lock);
+ 		} else {
+-			const sigset_t __user *sig;
+-			struct __kernel_timespec __user *ts;
++			struct ext_arg ext_arg = { .argsz = argsz };
+ 
+-			ret2 = io_get_ext_arg(flags, argp, &argsz, &ts, &sig);
++			ret2 = io_get_ext_arg(flags, argp, &ext_arg);
+ 			if (likely(!ret2)) {
+ 				min_complete = min(min_complete,
+ 						   ctx->cq_entries);
+ 				ret2 = io_cqring_wait(ctx, min_complete, flags,
+-						      sig, argsz, ts);
++						      &ext_arg);
+ 			}
+ 		}
+ 
 -- 
-Jens Axboe
+2.43.0
 
 

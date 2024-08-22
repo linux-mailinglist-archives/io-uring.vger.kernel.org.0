@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-2895-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2896-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336E095B601
-	for <lists+io-uring@lfdr.de>; Thu, 22 Aug 2024 15:09:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFBF395B676
+	for <lists+io-uring@lfdr.de>; Thu, 22 Aug 2024 15:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5DD1285238
-	for <lists+io-uring@lfdr.de>; Thu, 22 Aug 2024 13:09:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62A83281D62
+	for <lists+io-uring@lfdr.de>; Thu, 22 Aug 2024 13:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85E71C9DE6;
-	Thu, 22 Aug 2024 13:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C0C1C9453;
+	Thu, 22 Aug 2024 13:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NRQtPJTr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="je7G11ot"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EED41C9DD7;
-	Thu, 22 Aug 2024 13:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F981CB321
+	for <io-uring@vger.kernel.org>; Thu, 22 Aug 2024 13:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724332123; cv=none; b=uOW03EafV45x8LYqjUjRMNdZQd2ZHKCHMiGXx0ZcErs91BRvWwwwRZpzdLwRf3PcWuPpsrOCI0PGdTOLX/NqHfllwfqKYe37g4cc9+bo2lL7aZnF9UvReA1rkP55fh0C5lJDdHOhQDNh7aVFoB6o1TE+VgD+l1u4frFj+pJijjE=
+	t=1724332957; cv=none; b=n0hTOnBhZTTABJ0H+XNI/6r25iGMEr7XN/nFxie7YDq6r0OW4Pz4cQW2TyKCxVmhROlVFzfhVChmWmmB8RY7rM9Tpprita1BGEouBR9DD8u+ol9BEHhNm5liKeDpQce/p4jynr0IKsMrXpZIoB7cbqrzOmc3RurddyS1Ofyec3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724332123; c=relaxed/simple;
-	bh=qmNqu6ae8ARraFZaQxP22e+UfQbynK394nji+qy0BAU=;
+	s=arc-20240116; t=1724332957; c=relaxed/simple;
+	bh=ciZkDi9rxG5M9+wGMfc2K8Oe3jYqKEj6eGHhqjHRUsc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LmZ7S+S51RBN5Rahnc1l3EpPpjNe8nLIx9OilCRidFd1PD0Mbgwf3k0R7w0dvAva//fzjyBk4rELp8tb3I1pfk35fUOxImhnxxt28h8wAdCDsVDu9XzN0UotBIn6GJaNS0IedjjvJiyc9CDRr1bD4CVATxQbFlpgl+FRUgpVL+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NRQtPJTr; arc=none smtp.client-ip=209.85.218.46
+	 In-Reply-To:Content-Type; b=R21ek6/RNN+iDF5UMgL2IsjnNy1jOgOZzxqszvQJkgm5Q+LrsBXuEJessgvRl+k4p3Wi4QpGZwr+7u096PfvhU64RujvgIAXDV9pzU6kp7LRLLljUQ15Abm79JXq4xALbam4C8KAH7yxIXJ/1uo9ccZx9m9byg+9xZE+mEIt4yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=je7G11ot; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8666734767so98879466b.1;
-        Thu, 22 Aug 2024 06:08:42 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bec87ececeso1098507a12.0
+        for <io-uring@vger.kernel.org>; Thu, 22 Aug 2024 06:22:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724332120; x=1724936920; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724332954; x=1724937754; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dl+Hsm8zibvc7WrumbZdWV/OSVlPFvlVPjSvuxKRlb0=;
-        b=NRQtPJTrK7ovOW1A3eYHzRhetOXlprhZ4LV8W6M0mInxLbszt+2fa1+BY6/UYOr8yB
-         rlZ6r8vIFI0y9Usx4uRCG2WGHGmAVzHc+by4xHyu/SB+3ymE69I/EuMWDFRgjX7I0cnu
-         9w+JlS3g8UHEu/tIGPAXG3PQOQf7w58+4/oXLLswIqYGQR1cUKlgNf4LPuGPk27RieLl
-         3Pt0YMjeTJAqfRH4UjJbZSgNSgbRQGaGaoOUyTo/7OE+0BYrWTHasV09TzmatHAWMefz
-         zv+OW6A4LGYGXrZrxs0R/cbLGYeGs4lRi0lKl6MKHSHiwZuSao+eTUBVGX4+KECECjs9
-         dK1w==
+        bh=Z8eRY4nyLdUxopRMEeB7+S6FgkDi3i4JcOXHZLy8A/o=;
+        b=je7G11otjLnd+pcwITFjx7Oa/21Cd5uoJaWeT5pUuCc2rerhj43y/9NFMMeOkhaxdu
+         CCOZYNi0wT+CdTD3CAMMl8P7BQzrrAWZkXL2pYga0eHv0inFDdcbLhoKhSUmEnS9pT5/
+         px8Mup46n0Xbes0zJfVOdkCXCxvDrPj3P7n5P0Ba3B1gc60Ku6ewofWxzf7kjPEsEx11
+         UIz1GjQQg4PhjO5GLbGwAExFKwYEF//SiHbAGo6+eRPTgy4BY8qgTYB7vv9z1SwVe6F5
+         Hv/h5zrZIhoK0dLqx0nFL47j0q18AnEBhXtiYGF4mlrNVvHyA83LCkrBpssow/Jo6DCO
+         iLTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724332120; x=1724936920;
+        d=1e100.net; s=20230601; t=1724332954; x=1724937754;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dl+Hsm8zibvc7WrumbZdWV/OSVlPFvlVPjSvuxKRlb0=;
-        b=u5gctDq8xPiqtkBsCE8O7TVB7Ew4wSOXl2/AUEMPYvjEyk7SdQFLGgQttjdW8OSfer
-         FREPhXexFusNEALqCUtLV2on/oet2xxCKHSoIRF1oEDa0wF9CdwYddml5jSWGroyJ8Po
-         kPL5MjEaaQbc5eQ+pXDevJLfvf14U16Vg8yOgpSozrxFwxuBfC/Wxf9NId7PBiWV1dxW
-         IOLXqYP/DOfb2x3G3qmi/hjUFyCVT50Blquj5MZp/UJEufLZaKbS6BVW1uPIDxrQgeoU
-         EhB4YmfGV2DciKHiHo3D7czMOEqL8SabK3j9WjGkcKRf5HB9nxM33LsUJafJKr894PFH
-         TuNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgkAQ/c5WUvGZ8kgKTMfDDqM6TvIvKKG6l7cGhpycy1d8kbUgMCo0wJZn0GCbYbZc3AX2bLpT5Udt/Hw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjX8Cq6j2Z0j8pFlbaRDDudlFFVii+GEGfOsB/5lgmenxphjJJ
-	Z0eC5/LyR2N3oqge7+T+/DYmENTMCd8bXPDm2/eW9T5rjhKxgx0xo3jfLw==
-X-Google-Smtp-Source: AGHT+IFhOWmaj/+dvpn8QW8FqpNKUG4zL5yX1NIC/SrZU7nd40LcEHlt/jfOHgQhcw8E5s5ffGox+Q==
-X-Received: by 2002:a17:907:986:b0:a86:85eb:bddb with SMTP id a640c23a62f3a-a8685ebcd68mr255418566b.52.1724332120131;
-        Thu, 22 Aug 2024 06:08:40 -0700 (PDT)
-Received: from [192.168.42.32] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f436bd5sm117966966b.119.2024.08.22.06.08.39
+        bh=Z8eRY4nyLdUxopRMEeB7+S6FgkDi3i4JcOXHZLy8A/o=;
+        b=ozOxqxtnJfKynM8eDGmxllgpBaSgQMLoYR8IOUqLMNHsI6qneSb81aPZ5I+qXt261V
+         thMqcEHz8LAseBQicSAXyPU9YcAmZVK4WPsigpSdtLlzmNOEZqNti0UuBkG6efpZfuyI
+         itBdw83f+5gnvrFzRrZDAGk/VPuxonSyejX8tvCts/yOJ2xmqtame4Z2DUxqDUfXjFSS
+         X7mZrc44TwF+uIu2h7V8/avbxYTIR4lkY3CEagdnGzc1dYwj2S7QvOhNriYCX90bBZUD
+         eFQsb6W5783Xh0kDmy2jU3ylaoEUuk03mIEtpGIw2ctpT0VjBDQWmOdgA0jXFoM6xsuV
+         3oJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHPYNtbZ01O1OgcMMCFY4LIFge0xryj4SSmxbxYWo8WuAFuqFuFZq22zleklVWEAsc3Up597ThCw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6MSEXU6YFHPKi/YkjBbj/gkqi1ea+D+hZiUvHhtVh4Rg0TnXK
+	/RcFJdERgyxvxPr/kXmI49cMcvgZ9w2lHkh2+PjBmhvHJtvuCrDY
+X-Google-Smtp-Source: AGHT+IH9DJrs9tA2LOS3PcJNaFKfHE3E9oOwSQFU8PoDqUaLBR5ucM5SY6k5fUEpOiiaKzVdPt/dYA==
+X-Received: by 2002:a17:907:2d0a:b0:a86:7b71:7b74 with SMTP id a640c23a62f3a-a867b718734mr403104966b.55.1724332953249;
+        Thu, 22 Aug 2024 06:22:33 -0700 (PDT)
+Received: from [192.168.42.237] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86942d5afesm84376566b.154.2024.08.22.06.22.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 06:08:39 -0700 (PDT)
-Message-ID: <523aed7d-6c19-4fce-9a25-b13163a43917@gmail.com>
-Date: Thu, 22 Aug 2024 14:09:05 +0100
+        Thu, 22 Aug 2024 06:22:32 -0700 (PDT)
+Message-ID: <00ce2394-03e2-4769-bc55-8affdc578bd1@gmail.com>
+Date: Thu, 22 Aug 2024 14:22:58 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,52 +76,49 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] block: implement async wire write zeroes
-To: Christoph Hellwig <hch@infradead.org>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Conrad Meyer <conradmeyer@meta.com>, linux-block@vger.kernel.org,
- linux-mm@kvack.org
-References: <cover.1724297388.git.asml.silence@gmail.com>
- <09c5ef75c04c17ee2fd551da50fc9aae3bfce50a.1724297388.git.asml.silence@gmail.com>
- <ZsbfwKgdLZKVHOMD@infradead.org>
+Subject: Re: [PATCH 3/5] io_uring: implement our own schedule timeout handling
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: dw@davidwei.uk
+References: <20240821141910.204660-1-axboe@kernel.dk>
+ <20240821141910.204660-4-axboe@kernel.dk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZsbfwKgdLZKVHOMD@infradead.org>
+In-Reply-To: <20240821141910.204660-4-axboe@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/22/24 07:50, Christoph Hellwig wrote:
-> On Thu, Aug 22, 2024 at 04:35:56AM +0100, Pavel Begunkov wrote:
->> Add another io_uring cmd for block layer implementing asynchronous write
->> zeroes. It reuses helpers we've added for async discards, and inherits
->> the code structure as well as all considerations in regards to page
->> cache races.
+On 8/21/24 15:16, Jens Axboe wrote:
+> In preparation for having two distinct timeouts and avoid waking the
+> task if we don't need to.
 > 
-> Most comments from discard apply here as well.
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>   io_uring/io_uring.c | 37 ++++++++++++++++++++++++++++++++-----
+>   io_uring/io_uring.h |  2 ++
+>   2 files changed, 34 insertions(+), 5 deletions(-)
 > 
->> +static int blkdev_queue_cmd(struct io_uring_cmd *cmd, struct block_device *bdev,
->> +			    uint64_t start, uint64_t len, sector_t limit,
->> +			    blk_opf_t opf)
-> 
-> This feels a little over generic as it doesn't just queue any random
-> command.
-> 
->> +static int blkdev_cmd_write_zeroes(struct io_uring_cmd *cmd,
->> +				   struct block_device *bdev,
->> +				   uint64_t start, uint64_t len, bool nowait)
->> +{
->> +	blk_opf_t opf = REQ_OP_WRITE_ZEROES | REQ_NOUNMAP;
->> +
->> +	if (nowait)
->> +		opf |= REQ_NOWAIT;
->> +	return blkdev_queue_cmd(cmd, bdev, start, len,
->> +				bdev_write_zeroes_sectors(bdev), opf);
-> 
-> So no support for fallback to Write of zero page here?  That's probably
-> the case where the async offload is needed most.
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 9e2b8d4c05db..4ba5292137c3 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -2322,7 +2322,7 @@ static int io_wake_function(struct wait_queue_entry *curr, unsigned int mode,
+>   	 * Cannot safely flush overflowed CQEs from here, ensure we wake up
+>   	 * the task, and the next invocation will do it.
+>   	 */
+> -	if (io_should_wake(iowq) || io_has_work(iowq->ctx))
+> +	if (io_should_wake(iowq) || io_has_work(iowq->ctx) || iowq->hit_timeout)
 
-Fair enough, but I believe it's more reasonable to have a separate
-cmd for it instead of silently falling back.
+Shouldn't be needed. If the timer fires, it should wake the task,
+and the task will check ->hit_timeout there and later remove the
+itself from the waitqueue.
+
+>   		return autoremove_wake_function(curr, mode, wake_flags, key);
+>   	return -1;
+>   }
+> @@ -2350,6 +2350,34 @@ static bool current_pending_io(void)
+>   	return percpu_counter_read_positive(&tctx->inflight);
+>   }
+...
 
 -- 
 Pavel Begunkov

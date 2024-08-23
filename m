@@ -1,84 +1,82 @@
-Return-Path: <io-uring+bounces-2908-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2909-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D408495CAD0
-	for <lists+io-uring@lfdr.de>; Fri, 23 Aug 2024 12:48:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A6C95CAD4
+	for <lists+io-uring@lfdr.de>; Fri, 23 Aug 2024 12:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E1AC1F27965
-	for <lists+io-uring@lfdr.de>; Fri, 23 Aug 2024 10:48:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C26A1C222C4
+	for <lists+io-uring@lfdr.de>; Fri, 23 Aug 2024 10:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E3738389;
-	Fri, 23 Aug 2024 10:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A679B187842;
+	Fri, 23 Aug 2024 10:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GsyhN/HM"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EO/QF1wU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93A2187563
-	for <io-uring@vger.kernel.org>; Fri, 23 Aug 2024 10:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7202187874
+	for <io-uring@vger.kernel.org>; Fri, 23 Aug 2024 10:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724410106; cv=none; b=WZ0cJfjmDaCOWxhvKUMmnqvoXuS/NCE9GczXxl6/Lz6zbU3+mJGvNtmw/vhMUO/RJjRXBCXTBGKsPimorSJsKW2cCsvhmSQ5i4jsMf5DDyxOIdmjtHi9Sn6zz49156I83A/w57DUpKnsxCFsywpICbSg1tIwRdhtZ7QpT2YdqDY=
+	t=1724410109; cv=none; b=kdqCb1a+eRGAT9g3VeiBPXZJrLcK++DsQpTQ4gBgdAv7y1Ge3Q5HWwZV1+umwGbSs5Ys6Z/AyA0+SdaJGEpObUCkonKwryEJcHT8FGZS7S+yEwNQmLeGUXRMg+1urJruJOhIetmcifXjmMl5+Rvi7CreRjRA04MsoliR8HjzDVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724410106; c=relaxed/simple;
-	bh=sZkPdHu9h1cr9eLtTsn2Hs6X8Mcx1oFFuOWH/X/o+Tg=;
+	s=arc-20240116; t=1724410109; c=relaxed/simple;
+	bh=Q7UzLGf8MKdCLyKP3dqKL//JTDm9JhtgAu8TQCvTKUM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=sJx9RPll8JTttul5lWTnFBegnbHK2L7DCPjmCor7bntSMEXZqgjyW3QiigFVZvTMCReG5CrcWq51TBUDA3CzPs/CCutqSLMFzAGUxUpZaLA4D4vJbOpOwsi8K+98XTnhox9Bs0ko2Wzy7HbH/ruu2jCM7EN6RZp4sIyJCfqaAbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GsyhN/HM; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=O116omAHo2YcXWS88UXxR0EbipX3YErAu/WQu6Rx/YurNTACISM5jZNb42mUGCx5mbMmLc9ex3i1UaS1CW9ofpOtuyTQIcaJ9J2hxtkmZP5DPmP/Fid/0q8jP1TuvRvhiJp3ocOItLSFocuJwfA+jO3F2M+Q7Jc0pyVWqiIStT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EO/QF1wU; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240823104823epoutp0254c6cae296d59b9d6f8c4aa4f796162b~uVdo9Lspg0969809698epoutp02a
-	for <io-uring@vger.kernel.org>; Fri, 23 Aug 2024 10:48:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240823104823epoutp0254c6cae296d59b9d6f8c4aa4f796162b~uVdo9Lspg0969809698epoutp02a
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240823104825epoutp03bd02adabef4d83652e7f053a8cdd7560~uVdrbqVML1015510155epoutp033
+	for <io-uring@vger.kernel.org>; Fri, 23 Aug 2024 10:48:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240823104825epoutp03bd02adabef4d83652e7f053a8cdd7560~uVdrbqVML1015510155epoutp033
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724410103;
-	bh=90CNtiP/2tt+h1YZtONu5flbGM3VvoqfTKHbF+jJYgc=;
+	s=mail20170921; t=1724410105;
+	bh=dHflLZxFjxBERw9P6UhrJ3VAQJqBtBlBCjawxtTo9Eg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GsyhN/HM1//gxXmRqb23bC+dYSqQoLO85lk6DFbBuhEYGiuZNAtKjhKMuMETelPiF
-	 sHf6pHzbzLZc6N4xXpjIXsuAAdaZcoTwu4gF6qS6dRGglhMBhv1p3RpDPpwD3JKk5L
-	 5EJfm2Gjw6HfWA6CKGWHVWM4k7gB8abCF0ecn9iU=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240823104822epcas5p1262f2e00ced25e2a84c26e18f1596f68~uVdodsH0s2850128501epcas5p1a;
-	Fri, 23 Aug 2024 10:48:22 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Wqxch6lndz4x9Q0; Fri, 23 Aug
-	2024 10:48:20 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9A.8F.09743.4F868C66; Fri, 23 Aug 2024 19:48:20 +0900 (KST)
+	b=EO/QF1wUbe3umRcH6D9vxbbBpds0lw041Uy/4QpzTwA37577rcMc8ZUDXsPIWT7qJ
+	 SW5vBOmJT9IAg8baGgLDLpHTNp20FicX0rQNEclHPrUHN9uTdoXUip0eDSaNyGI2zI
+	 auwSa3Pn1ak3uypEUSyiC8IIsSI8I1Qaju2Gj3dE=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240823104825epcas5p2e2c56889cac00a48fd239e910c09a317~uVdq70haN1947219472epcas5p2F;
+	Fri, 23 Aug 2024 10:48:25 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Wqxcl20Gcz4x9Pr; Fri, 23 Aug
+	2024 10:48:23 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	59.8A.19863.7F868C66; Fri, 23 Aug 2024 19:48:23 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240823104622epcas5p2e3b29f793eff9857c5712b3d6d327ed5~uVb44JoMx1288512885epcas5p2n;
-	Fri, 23 Aug 2024 10:46:22 +0000 (GMT)
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240823104624epcas5p40c1b0f3516100f69cbd31d45867cd289~uVb60yNDG1989019890epcas5p4R;
+	Fri, 23 Aug 2024 10:46:24 +0000 (GMT)
 Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240823104622epsmtrp2e09c20224f926e6655aeccf9907e12da~uVb42v-es0122301223epsmtrp2E;
-	Fri, 23 Aug 2024 10:46:22 +0000 (GMT)
-X-AuditID: b6c32a4a-14fff7000000260f-7d-66c868f4185f
+	20240823104624epsmtrp22e6120f2aec0add88e82ca28503226a9~uVb60Jd690122301223epsmtrp2J;
+	Fri, 23 Aug 2024 10:46:24 +0000 (GMT)
+X-AuditID: b6c32a50-c73ff70000004d97-0f-66c868f7ae1b
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
 	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	26.50.19367.E7868C66; Fri, 23 Aug 2024 19:46:22 +0900 (KST)
+	08.50.19367.08868C66; Fri, 23 Aug 2024 19:46:24 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.99.41.245]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240823104620epsmtip288908594f49a4e4a562d9e488ce2b8d2~uVb213WlK1442714427epsmtip2a;
-	Fri, 23 Aug 2024 10:46:20 +0000 (GMT)
+	20240823104622epsmtip28ea9f66138f2e61ca934e1bd02c34d4c~uVb4_dOD31442714427epsmtip2b;
+	Fri, 23 Aug 2024 10:46:22 +0000 (GMT)
 From: Anuj Gupta <anuj20.g@samsung.com>
 To: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
 	martin.petersen@oracle.com, asml.silence@gmail.com, krisman@suse.de
 Cc: io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
 	linux-block@vger.kernel.org, gost.dev@samsung.com,
-	linux-scsi@vger.kernel.org, Anuj Gupta <anuj20.g@samsung.com>, Kanchan Joshi
-	<joshi.k@samsung.com>
-Subject: [PATCH v3 04/10] block: modify bio_integrity_map_user to accept
- iov_iter as argument
-Date: Fri, 23 Aug 2024 16:08:04 +0530
-Message-Id: <20240823103811.2421-5-anuj20.g@samsung.com>
+	linux-scsi@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+Subject: [PATCH v3 05/10] block: define meta io descriptor
+Date: Fri, 23 Aug 2024 16:08:05 +0530
+Message-Id: <20240823103811.2421-6-anuj20.g@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240823103811.2421-1-anuj20.g@samsung.com>
 Precedence: bulk
@@ -88,153 +86,80 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLJsWRmVeSWpSXmKPExsWy7bCmlu6XjBNpBktn61k0TfjLbDFn1TZG
-	i9V3+9ksbh7YyWSxcvVRJot3redYLI7+f8tmMenQNUaL7WeWMlvsvaVtMX/ZU3aL7us72CyW
-	H//H5MDrsXPWXXaPy2dLPTat6mTz2Lyk3mP3zQY2j49Pb7F49G1Zxeix+XS1x+dNcgGcUdk2
-	GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUBHKymUJeaU
-	AoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKTAr0ihNzi0vz0vXyUkusDA0MjEyBChOyMzad
-	esFUcEq+YsPlFywNjL1SXYycHBICJhIz+qeydzFycQgJ7GaUWLJ6CROE84lRYs27BWwgVWDO
-	jauOMB0//7SzQBTtZJS4Pm8bVPtnRommjkksIFVsAuoSR563MoLYIgKVEs93/QDrYBa4yShx
-	aO8zZpCEsEC8xPXuZWBFLAKqEhMvbwdr5hWwkNj6sJMNYp28xMxL39lBbE4BS4mm2Q1QNYIS
-	J2c+AbOZgWqat85mBlkgIbCUQ+Jk8xxWiGYXiYW/NjNC2MISr45vYYewpSQ+v9sLtSBd4sfl
-	p0wQdoFE87F9UPX2Eq2n+oGGcgAt0JRYv0sfIiwrMfXUOiaIvXwSvb+fQLXySuyYB2MrSbSv
-	nANlS0jsPdfABDJGQsBD4v6yIkiI9jBKHDuQPYFRYRaSb2Yh+WYWwuIFjMyrGCVTC4pz01OL
-	TQuM8lLL4ZGcnJ+7iRGcjrW8djA+fPBB7xAjEwfjIUYJDmYlEd6ke0fThHhTEiurUovy44tK
-	c1KLDzGaAoN7IrOUaHI+MCPklcQbmlgamJiZmZlYGpsZKonzvm6dmyIkkJ5YkpqdmlqQWgTT
-	x8TBKdXAZM7Z8UtfP6wtck+XXnf9xh2f3VOaLhjHSjRv1Fvkd7CpecL01LSutNu3Fxppzy5Y
-	q3Zj5t5JW2yu/BYUiFVbF8si07SOk+OD+NS/056+kjj1U7v0cN8Hkd07BBNS9614srjdSz2U
-	/7nS1n+GG1pXflj2cYXZq+wcw/2qnd2T8r///nesfXG2OLdhk5T0JgcewTWpZQW3otZt+H7e
-	jklAbyN7wtxKz/Lf63av3FK7MEGhpdQhzFS5fOYtlvWl6rx+v42+VMf/kF286vPae2KeGpmO
-	hzMuPvgd0Hv678zNtgKxe83r57u+iAiS+V/faxBXPGXVk46MWYfl1llcvjBx/0Wp/sUpz0O2
-	iNbsLzv3V4mlOCPRUIu5qDgRAPCSqotQBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsWy7bCSvG5dxok0g/mnNC2aJvxltpizahuj
-	xeq7/WwWNw/sZLJYufook8W71nMsFkf/v2WzmHToGqPF9jNLmS323tK2mL/sKbtF9/UdbBbL
-	j/9jcuD12DnrLrvH5bOlHptWdbJ5bF5S77H7ZgObx8ent1g8+rasYvTYfLra4/MmuQDOKC6b
-	lNSczLLUIn27BK6MTadeMBWckq/YcPkFSwNjr1QXIyeHhICJxM8/7SxdjFwcQgLbGSUebupg
-	gUhISJx6uYwRwhaWWPnvOTtE0UdGiRud59lAEmwC6hJHnrcygiREBBoZJbY0fwHrZha4zyix
-	oDsExBYWiJX40tgE1sAioCox8fJ2sBpeAQuJrQ872SA2yEvMvPSdHcTmFLCUaJrdAFYjBFSz
-	bPkZRoh6QYmTM59AzZeXaN46m3kCo8AsJKlZSFILGJlWMYqmFhTnpucmFxjqFSfmFpfmpesl
-	5+duYgRHi1bQDsZl6//qHWJk4mA8xCjBwawkwpt072iaEG9KYmVValF+fFFpTmrxIUZpDhYl
-	cV7lnM4UIYH0xJLU7NTUgtQimCwTB6dUA9M0I/66B5oq26w79mceEJGwXFpX80HfxG1D/5LT
-	Ti9XiE+ztA/v7nhw+45Sg/X8fTMkd+z7xG3j3Cqq8PXYx6tP3F88mRwU79Gu48XIniC5jNfv
-	nPLjR9KVaYcnzdE/Fhv2ofSy1MN+Xc4FjhnNIZtjuxfIvFwxl7HHZVl33elM/9kN6wPOvkr6
-	XGc2SeVU3X2Zc6rlC9Jzt8gueXq+2zn+/Zr+WQfXspev2sDEtPjXSvcY3pOPVdbqvmQ9c2jn
-	nG13YywqDzJyfF8nPIlHj/3VNaXCrMIX7k18F51O/e7adtXb4li6sGxIXS/n/cRz7dF3PpRz
-	u5vxMVXvmdO0dFnEjU3SVXW7cpjOi0s7+CmxFGckGmoxFxUnAgC0jE+0BQMAAA==
-X-CMS-MailID: 20240823104622epcas5p2e3b29f793eff9857c5712b3d6d327ed5
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmhu73jBNpBqs+8ljMWbWN0WL13X42
+	i5sHdjJZrFx9lMniXes5Fouj/9+yWUw6dI3RYvuZpcwWe29pW8xf9pTdovv6DjaL5cf/MTnw
+	eOycdZfd4/LZUo9NqzrZPDYvqffYfbOBzePj01ssHn1bVjF6bD5d7fF5k1wAZ1S2TUZqYkpq
+	kUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QvUoKZYk5pUChgMTi
+	YiV9O5ui/NKSVIWM/OISW6XUgpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7Iyjs2+zFHSy
+	Vzw/u5O9gfEDaxcjJ4eEgInE5KM9TF2MXBxCAnsYJR5/62GFcD4xSpxeNIEdzvl0uxeu5djj
+	XywQiZ2MElPn/4Zq+cwosf7zSxaQKjYBdYkjz1sZQWwRgUqJ57t+gHUwC2xhlGhet5gdJCEs
+	YCXx6f9DMJtFQFVi25kfzCA2r4CFxMe5DcwQ6+QlZl76DlbDKWAp0TS7gQWiRlDi5MwnYDYz
+	UE3z1tnMIAskBOZySHxoWcIE0ewisXn/N6i7hSVeHd/CDmFLSXx+t5cNwk6X+HH5KVR9gUTz
+	sX2MELa9ROupfqChHEALNCXW79KHCMtKTD21jgliL59E7+8nUK28EjvmwdhKEu0r50DZEhJ7
+	zzVA2R4Sz+acZYaEVg+jxLyed0wTGBVmIflnFpJ/ZiGsXsDIvIpRKrWgODc9Ndm0wFA3L7Uc
+	HtHJ+bmbGMHJWCtgB+PqDX/1DjEycTAeYpTgYFYS4U26dzRNiDclsbIqtSg/vqg0J7X4EKMp
+	MMQnMkuJJucD80FeSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWpRTB9TBycUg1M
+	2gf2cFSe7t+++fuKlBUsBR57m8Tm77bOuD2/5MajZqEOPuPU9yuX3v4sycB+qniD8IcqC3ax
+	pRoTRBNVt+b+FN14ktc9zKLz33uZ9Q2Lpk8NEvnKnbSApez9Eyv3udN55P0COTQ6tfc8s2qY
+	vu9SoV+fmKWcwsU1K67OarzBfkfhvLXpRZmSPY+MWjkm6K/dWO3a7r7H41nY/74rRjmO91Nn
+	bPy0v2Ji0uoJ4bdXrDxhvun5Gf37X+5fK+S+W6V16OGjCblFx/Z0ijYLyby7ply3g7FWMSOS
+	q2LNMs/tZaafGcO6AxQN1jfP2D+hJvBS9us9DmunTDBXzZ/iLLXiLrfDJbsl17gu3Nlse9U1
+	VYmlOCPRUIu5qDgRAOGXo0xPBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsWy7bCSvG5Dxok0g9Z9hhZzVm1jtFh9t5/N
+	4uaBnUwWK1cfZbJ413qOxeLo/7dsFpMOXWO02H5mKbPF3lvaFvOXPWW36L6+g81i+fF/TA48
+	Hjtn3WX3uHy21GPTqk42j81L6j1232xg8/j49BaLR9+WVYwem09Xe3zeJBfAGcVlk5Kak1mW
+	WqRvl8CVcXT2bZaCTvaK52d3sjcwfmDtYuTkkBAwkTj2+BdLFyMXh5DAdkaJ1vaHLBAJCYlT
+	L5cxQtjCEiv/PWeHKPrIKDHrUx8TSIJNQF3iyPNWRpCEiEAjo8SW5i9go5gFdjFKzN36jRmk
+	SljASuLT/4fsIDaLgKrEtjM/wOK8AhYSH+c2MEOskJeYeek7WA2ngKVE0+wGsDOEgGqWLT/D
+	CFEvKHFy5hOwODNQffPW2cwTGAVmIUnNQpJawMi0ilE0taA4Nz03ucBQrzgxt7g0L10vOT93
+	EyM4SrSCdjAuW/9X7xAjEwfjIUYJDmYlEd6ke0fThHhTEiurUovy44tKc1KLDzFKc7AoifMq
+	53SmCAmkJ5akZqemFqQWwWSZODilGpjqpC4nXjULMdz95LPOpAcfJFdsWPkvUtaOR4D77BLF
+	djmWL4wLFL5ayoey1OjatDBNdKjer8696W/58ut1LImG7UvLqycEnPsWFLKGpem20RMZtpN3
+	6ubpsPrWv0nP4QxR9MpSfq/gKe6fs/9K7v7X/2fyHqnZ1Nzyucpm+3bVQ+Gn1h3v4/x8Y8my
+	KP8f340vuOSFiHclrTLQO71n17W/zs2PDW8ma1TV608PKmFwCFSsjTT7q+cTGHlmSYq4fivn
+	0y1Z+o6miw62VZs0CZb98J81VerjzKs2M24dcK/WdDy5TPrPL7t9Yirdq10vaVk4SbjctJzn
+	L1BfKmosaBY0Z51wtGMrK39PtqqcEktxRqKhFnNRcSIAvJ82tAEDAAA=
+X-CMS-MailID: 20240823104624epcas5p40c1b0f3516100f69cbd31d45867cd289
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240823104622epcas5p2e3b29f793eff9857c5712b3d6d327ed5
+X-CMS-RootMailID: 20240823104624epcas5p40c1b0f3516100f69cbd31d45867cd289
 References: <20240823103811.2421-1-anuj20.g@samsung.com>
-	<CGME20240823104622epcas5p2e3b29f793eff9857c5712b3d6d327ed5@epcas5p2.samsung.com>
+	<CGME20240823104624epcas5p40c1b0f3516100f69cbd31d45867cd289@epcas5p4.samsung.com>
 
-This patch refactors bio_integrity_map_user to accept iov_iter as
-argument. This is a prep patch.
+From: Kanchan Joshi <joshi.k@samsung.com>
 
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+Introduces a new 'uio_meta' structure that upper layer can
+use to pass the meta/integrity information.
+
 Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- block/bio-integrity.c         | 12 +++++-------
- drivers/nvme/host/ioctl.c     | 11 +++++++++--
- include/linux/bio-integrity.h |  6 +++---
- 3 files changed, 17 insertions(+), 12 deletions(-)
+ include/linux/bio-integrity.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-index d8b810a2b4bf..aaf67eb427ab 100644
---- a/block/bio-integrity.c
-+++ b/block/bio-integrity.c
-@@ -310,17 +310,16 @@ static unsigned int bvec_from_pages(struct bio_vec *bvec, struct page **pages,
- 	return nr_bvecs;
- }
- 
--int bio_integrity_map_user(struct bio *bio, void __user *ubuf, ssize_t bytes,
-+int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter,
- 			   u32 seed)
- {
- 	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
- 	unsigned int align = blk_lim_dma_alignment_and_pad(&q->limits);
- 	struct page *stack_pages[UIO_FASTIOV], **pages = stack_pages;
- 	struct bio_vec stack_vec[UIO_FASTIOV], *bvec = stack_vec;
-+	size_t offset, bytes = iter->count;
- 	unsigned int direction, nr_bvecs;
--	struct iov_iter iter;
- 	int ret, nr_vecs;
--	size_t offset;
- 	bool copy;
- 
- 	if (bio_integrity(bio))
-@@ -333,8 +332,7 @@ int bio_integrity_map_user(struct bio *bio, void __user *ubuf, ssize_t bytes,
- 	else
- 		direction = ITER_SOURCE;
- 
--	iov_iter_ubuf(&iter, direction, ubuf, bytes);
--	nr_vecs = iov_iter_npages(&iter, BIO_MAX_VECS + 1);
-+	nr_vecs = iov_iter_npages(iter, BIO_MAX_VECS + 1);
- 	if (nr_vecs > BIO_MAX_VECS)
- 		return -E2BIG;
- 	if (nr_vecs > UIO_FASTIOV) {
-@@ -344,8 +342,8 @@ int bio_integrity_map_user(struct bio *bio, void __user *ubuf, ssize_t bytes,
- 		pages = NULL;
- 	}
- 
--	copy = !iov_iter_is_aligned(&iter, align, align);
--	ret = iov_iter_extract_pages(&iter, &pages, bytes, nr_vecs, 0, &offset);
-+	copy = !iov_iter_is_aligned(iter, align, align);
-+	ret = iov_iter_extract_pages(iter, &pages, bytes, nr_vecs, 0, &offset);
- 	if (unlikely(ret < 0))
- 		goto free_bvec;
- 
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index f1d58e70933f..d8628e7071cb 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -146,8 +146,15 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 	if (bdev) {
- 		bio_set_dev(bio, bdev);
- 		if (meta_buffer && meta_len) {
--			ret = bio_integrity_map_user(bio, meta_buffer, meta_len,
--						     meta_seed);
-+			struct iov_iter iter;
-+			unsigned int direction;
-+
-+			if (bio_data_dir(bio) == READ)
-+				direction = ITER_DEST;
-+			else
-+				direction = ITER_SOURCE;
-+			iov_iter_ubuf(&iter, direction, meta_buffer, meta_len);
-+			ret = bio_integrity_map_user(bio, &iter, meta_seed);
- 			if (ret)
- 				goto out_unmap;
- 			req->cmd_flags |= REQ_INTEGRITY;
 diff --git a/include/linux/bio-integrity.h b/include/linux/bio-integrity.h
-index 485d8a43017a..5313811dc1ce 100644
+index 5313811dc1ce..a1a9031a5985 100644
 --- a/include/linux/bio-integrity.h
 +++ b/include/linux/bio-integrity.h
-@@ -75,7 +75,7 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio, gfp_t gfp,
- 		unsigned int nr);
- int bio_integrity_add_page(struct bio *bio, struct page *page, unsigned int len,
- 		unsigned int offset);
--int bio_integrity_map_user(struct bio *bio, void __user *ubuf, ssize_t len, u32 seed);
-+int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter, u32 seed);
- void bio_integrity_unmap_user(struct bio *bio);
- bool bio_integrity_prep(struct bio *bio);
- void bio_integrity_advance(struct bio *bio, unsigned int bytes_done);
-@@ -101,8 +101,8 @@ static inline void bioset_integrity_free(struct bio_set *bs)
- {
- }
+@@ -30,6 +30,15 @@ struct bio_integrity_payload {
+ 	struct bio_vec		bip_inline_vecs[];/* embedded bvec array */
+ };
  
--static inline int bio_integrity_map_user(struct bio *bio, void __user *ubuf,
--					 ssize_t len, u32 seed)
-+static inline int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter,
-+					u32 seed)
- {
- 	return -EINVAL;
- }
++/* flags for integrity meta */
++typedef __u16 __bitwise meta_flags_t;
++
++struct uio_meta {
++	meta_flags_t	flags;
++	u16		app_tag;
++	struct		iov_iter iter;
++};
++
+ #define BIP_CLONE_FLAGS (BIP_MAPPED_INTEGRITY | BIP_CTRL_NOCHECK | \
+ 			 BIP_DISK_NOCHECK | BIP_IP_CHECKSUM)
+ 
 -- 
 2.25.1
 

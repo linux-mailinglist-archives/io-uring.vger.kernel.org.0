@@ -1,369 +1,138 @@
-Return-Path: <io-uring+bounces-2949-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2950-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D280F95DEC3
-	for <lists+io-uring@lfdr.de>; Sat, 24 Aug 2024 17:49:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A2395E0CA
+	for <lists+io-uring@lfdr.de>; Sun, 25 Aug 2024 05:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3DB41C20E4D
-	for <lists+io-uring@lfdr.de>; Sat, 24 Aug 2024 15:49:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E3A1F219B5
+	for <lists+io-uring@lfdr.de>; Sun, 25 Aug 2024 03:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBC129CEB;
-	Sat, 24 Aug 2024 15:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XedUTUe6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7873D62;
+	Sun, 25 Aug 2024 03:15:21 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B7F33997
-	for <io-uring@vger.kernel.org>; Sat, 24 Aug 2024 15:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14B77462
+	for <io-uring@vger.kernel.org>; Sun, 25 Aug 2024 03:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724514580; cv=none; b=PDWBBSz6DkeXGuVu8RaOVpdc1AJvVh0ZQjK8qNIA4/r3/NvMElERvL5H0JZ9zEMZ6MVsWzHzToM8vSFC/9YykLwYfvI7eGYorh39RlPtsCl8j/rsGHBfwr0BGCxfyQJb/1iF68DzHiNWt9kRs1YAMg7EI4U1SN4nTwg+oN7Qk58=
+	t=1724555721; cv=none; b=O2jief7GA0twaIkhDzOU+EkGiBElm9sJrdmNNoCCxQWBuYoiWLVSizCG6fAwI/2izl66aiqBWTVRhzOmmM4AaSphvIX04OkJwsqHcuwvo5lPhYEFX4ixuLbyoMGdrPfqIGOsJ02HVdCs4EOH1a320oosWibl+JsBoTSxblAsYP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724514580; c=relaxed/simple;
-	bh=a8AEBnyI8HVyZARw3vmEeQBmPpjGfki8hC8yZFcTHmg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pk+l3xfNIHVQso0RU5DJ1CKOLjwLF1CYOfUpvkNmOiDEHcOYpKoFGdBW4Fcco2rE3SpCabcE9mmTBFcJ/+HNmLJUFsJhNZmZPhximBWB9GLeApdiVux6qA8M2DY79RM8iVY8tRaQ6BuW+DR7/JbrNQ7wqi/oqxNFfYJA0ztm1x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XedUTUe6; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7141b04e7b5so1801112b3a.2
-        for <io-uring@vger.kernel.org>; Sat, 24 Aug 2024 08:49:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724514578; x=1725119378; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iAeRAXFupLVom4BMrDo2dVEoXFIU00zLkGGzhsJFOhs=;
-        b=XedUTUe6R2YtVVpu76bfauTp489J3rShdgIMKj8vLVRiPsvmhrGNO57C9lafuw1sMM
-         BXrECAhflPclMdJHOPlisUo+qEKlUUVk3MlH2etkz+kEgkikfyBg+tdLAkyZnZNBjTSA
-         yp0eH6442Ot6b9VKn2uPOFNehr347ReeCN7mYOHxpcpgf6sPlJC2KDiAuYxgybCaj7xE
-         23Xrn4CZkWLKk/2g8JF21maTJOFu7YzJn4rNTUoLWE6x2Ejqjh4h9sa8N9Jn6lAMlEHy
-         vtRFsCjbbkLniz9HMDC3kAHY4ToPPsLvjmkW5/IHx8/CQfuJx2jBMZW7mp/9Ql3prnvm
-         tn6w==
+	s=arc-20240116; t=1724555721; c=relaxed/simple;
+	bh=RK5NfLsyx4eUhsXeDSvEl18nl5lCXp1CulpGwaImu5s=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Tu8a4N9OjpqRt06mVWngxOyYjR0wi2sh8zJu/f7Z6wPCJ3T0REqx3MHt/85fyXemfa6K4SqT7cnmM6WkUtzBjcW8V/nI4VLLt8NmQ4kZdOFPKKj3J2XFVPSUzR6kD925ScWUxR9Jp2dDdYfqW7mumpU9cXXzDEn4m4ni5NoJnoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81faf98703eso366217739f.3
+        for <io-uring@vger.kernel.org>; Sat, 24 Aug 2024 20:15:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724514578; x=1725119378;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iAeRAXFupLVom4BMrDo2dVEoXFIU00zLkGGzhsJFOhs=;
-        b=KoV8v6Vwot1/p89hZJFKUS/YXQIhU3AE1p573mJIuU4JQcOo3lvGga1prR2pTp4dSb
-         Euek7ocvpOS0AJgX/1MhtChlrDh7Y7VSWpL2wlplyrzyqxx5TgzXX5FaJgfXJDL404hE
-         Bg0as4CCjwmOYldLFWftiIsdjzcN/5a/6jPSWzkbAnviiD2sDMaTDXIAt82D3jDxpIeo
-         fhtPMKlbiDnOmMO0ndeT7ITum8EU8IKV8vZcZdT1LyqOwyiNuUXLppM5YCbVB/y5MapB
-         tSnewC0Xa/4s6aksjpZUmzXXPRWgLFH6MKEP4m5nREgAJA/rSUfgSpDfHaK1V+cO73j1
-         v7rQ==
-X-Gm-Message-State: AOJu0YxsPOwQ098Vyv4vJUqbvrL99U+MryTzhC/Xb34j8tb/lL5dDNOb
-	bK9IKPFp6i4fTc+OU1EQCPtkp7LYG/G8s8gzI/TUCLVzYyqimnv3C73ZC9cD99HmXsgxE7gU8rZ
-	6
-X-Google-Smtp-Source: AGHT+IGnfc6hl36B3f5GogSLp7PnqfzRvWkbm7HKpslXU+RbCK++8sayYRW1ZXBGkAfQcWxuhXCQcg==
-X-Received: by 2002:a05:6a21:150d:b0:1c6:fa87:774b with SMTP id adf61e73a8af0-1cc89fdd9eemr6276010637.39.1724514577630;
-        Sat, 24 Aug 2024 08:49:37 -0700 (PDT)
-Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e09c3sm4633925b3a.122.2024.08.24.08.49.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 08:49:36 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/3] io_uring/net: allow coalescing of mapped segments
-Date: Sat, 24 Aug 2024 09:47:00 -0600
-Message-ID: <20240824154924.110619-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240824154924.110619-1-axboe@kernel.dk>
-References: <20240824154924.110619-1-axboe@kernel.dk>
+        d=1e100.net; s=20230601; t=1724555719; x=1725160519;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YWkUy50VSZCVMxhPPIPKFCnvvr9xmzUrWiRrVivNeWI=;
+        b=IDgNW9A7wixHJTmXWSTZcByP+VRqnH3DxRpH7VF6mQVk2f3yO1Ioh0pJ/Yf0d+01jD
+         GXWtnCcnY64G4J6UNNpiz67Lxm8Z7lqmwMR/HkdZoekD99E37m8AQNXhY8xulF85Cfdw
+         KLYAD8thOectuYI9BkrqnmDatTWIt3PZ9Wl6YIiLluGizSwk1XpSc35D6PD4sFM1/Ef5
+         p5NhTLiJsM/jOBHIUWfZ9DZ/lZnQZuXDOdm1yg9sjivV6F9Agbfz6L9Ro/ePThKIJmrZ
+         hW8UJzRvzUD2XDwTlXhfK7U5uB4GtBH0Y9RDzqG7kljqLfn7CGoncS05nEeVihmn2Lqz
+         95UA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxqQYe02zPhtD0MNV02LeO3MqIW2eb838p1XSlA9fHyq0w6H6HxNXVbs2G6aSKgCTaLzAxw5t+yQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv3gCK5cgRbcYQewGMspypZo891Fw03r6b7itN14ITaI5cPsoF
+	egFhkDpe4MT2QS1wBDA9BVuwn3kcpm4/5ZtN49tkEP4WWS/LwyA3Yp/d5rw5i1PMxc+0AryqkGI
+	gZaWykuBZ2F6FmXaoT2BpWxWLnoRM2N5OIs4pJNmsQh74s2BX/KuzvrE=
+X-Google-Smtp-Source: AGHT+IGPJdMqpneQMbl9tfnMnbyjtwds5MJLvjyeXxbxE3Dny2XA8kV5JhbaSqgM3LQ+7nMUmT0pcnuZ1zjbE5J1mPqWBiGO44eF
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:c549:0:b0:39b:3c0c:c3a4 with SMTP id
+ e9e14a558f8ab-39e3c985c48mr5170605ab.2.1724555718791; Sat, 24 Aug 2024
+ 20:15:18 -0700 (PDT)
+Date: Sat, 24 Aug 2024 20:15:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000003a7ed0620796b9d@google.com>
+Subject: [syzbot] [io-uring?] WARNING in io_sq_thread
+From: syzbot <syzbot+82e078bac56cae572bce@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-For bundles, when multiple buffers are selected, it's not unlikely
-that some/all of them will be virtually contigious. If these segments
-aren't big, then nice wins can be reaped by coalescing them into
-bigger segments. This makes networking copies more efficient, and
-reduces the number of iterations that need to be done over an iovec.
-Ideally, multiple segments that would've been mapped as an ITER_IOVEC
-before can now be mapped into a single ITER_UBUF iterator.
+Hello,
 
-Example from an io_uring network backend receiving data, with various
-transfer sizes, over a 100G network link.
+syzbot found the following issue on:
 
-recv size    coalesce    threads    bw          cpu usage    bw diff
-=====================================================================
-64             0           1       23GB/sec       100%
-64             1           1       46GB/sec        79%        +100%
-64             0           4       81GB/sec       370%
-64             1           4       96GB/sec       160%        + 20%
-256            0           1       44GB/sec        90%
-256            1           1       47GB/sec        48%        +  7%
-256            0           4       90GB/sec       190%
-256            1           4       96GB/sec       120%        +  7%
-1024           0           1       49GB/sec        60%
-1024           1           1       50GB/sec        53%        +  2%
-1024           0           4       94GB/sec       140%
-1024           1           4       96GB/sec       120%        +  2%
+HEAD commit:    bb1b0acdcd66 Add linux-next specific files for 20240820
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1363f893980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=49406de25a441ccf
+dashboard link: https://syzkaller.appspot.com/bug?extid=82e078bac56cae572bce
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-where obviously small buffer sizes benefit the most, but where an
-efficiency gain is seen even at higher buffer sizes as well.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ebc2ae824293/disk-bb1b0acd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5f62bd0c0e25/vmlinux-bb1b0acd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ddf6d0bc053d/bzImage-bb1b0acd.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+82e078bac56cae572bce@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+do not call blocking ops when !TASK_RUNNING; state=1 set at [<ffffffff816d32e6>] prepare_to_wait+0x186/0x210 kernel/sched/wait.c:237
+WARNING: CPU: 1 PID: 5335 at kernel/sched/core.c:8556 __might_sleep+0xb9/0xe0 kernel/sched/core.c:8552
+Modules linked in:
+CPU: 1 UID: 0 PID: 5335 Comm: iou-sqp-5333 Not tainted 6.11.0-rc4-next-20240820-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:__might_sleep+0xb9/0xe0 kernel/sched/core.c:8552
+Code: 9d 0e 01 90 42 80 3c 23 00 74 08 48 89 ef e8 3e 9d 97 00 48 8b 4d 00 48 c7 c7 c0 60 0a 8c 44 89 ee 48 89 ca e8 b8 01 f1 ff 90 <0f> 0b 90 90 eb b5 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 70 ff ff ff
+RSP: 0018:ffffc900041e7968 EFLAGS: 00010246
+RAX: 11f47f6d1cba3d00 RBX: 1ffff110040802ec RCX: ffff888020400000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffff888020401760 R08: ffffffff8155acc2 R09: fffffbfff1cfa354
+R10: dffffc0000000000 R11: fffffbfff1cfa354 R12: dffffc0000000000
+R13: 0000000000000001 R14: 0000000000000249 R15: ffffffff8c0ab880
+FS:  00007ffbe99d66c0(0000) GS:ffff8880b9100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffed4fbfdec CR3: 0000000024c2c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+ __mutex_lock+0xc1/0xd70 kernel/locking/mutex.c:752
+ io_sq_thread+0x1310/0x1c40 io_uring/sqpoll.c:367
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
 ---
- io_uring/kbuf.c | 61 +++++++++++++++++++++++++++++++++++++++++++++----
- io_uring/kbuf.h |  3 +++
- io_uring/net.c  | 48 ++++++++++++++++----------------------
- io_uring/net.h  |  1 +
- 4 files changed, 80 insertions(+), 33 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index e3330ff9bfdf..83a9ec08d146 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -129,6 +129,7 @@ static int io_provided_buffers_select(struct io_kiocb *req, size_t *len,
- 
- 	arg->iovs[0].iov_base = buf;
- 	arg->iovs[0].iov_len = *len;
-+	arg->nsegs = 1;
- 	return 0;
- }
- 
-@@ -194,11 +195,16 @@ void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
- /* cap it at a reasonable 256, will be one page even for 4K */
- #define PEEK_MAX_IMPORT		256
- 
-+/*
-+ * Returns how many iovecs were used to fill the range. arg->nsegs contains
-+ * the number of buffers mapped, which may be less than the return value if
-+ * segments were coalesced.
-+ */
- static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
- 				struct io_buffer_list *bl)
- {
- 	struct io_uring_buf_ring *br = bl->buf_ring;
--	struct iovec *iov = arg->iovs;
-+	struct iovec *prev_iov, *iov = arg->iovs;
- 	int nr_iovs = arg->nr_iovs;
- 	__u16 nr_avail, tail, head;
- 	struct io_uring_buf *buf;
-@@ -253,9 +259,11 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
- 	if (!arg->max_len)
- 		arg->max_len = INT_MAX;
- 
-+	prev_iov = NULL;
- 	req->buf_index = buf->bid;
- 	do {
- 		u32 len = buf->len;
-+		void __user *ubuf;
- 
- 		/* truncate end piece, if needed, for non partial buffers */
- 		if (len > arg->max_len) {
-@@ -264,10 +272,20 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
- 				buf->len = len;
- 		}
- 
--		iov->iov_base = u64_to_user_ptr(buf->addr);
--		iov->iov_len = len;
--		iov++;
-+		ubuf = u64_to_user_ptr(buf->addr);
-+		if (prev_iov &&
-+		    prev_iov->iov_base + prev_iov->iov_len == ubuf &&
-+		    prev_iov->iov_len + len <= INT_MAX) {
-+			prev_iov->iov_len += len;
-+		} else {
-+			iov->iov_base = ubuf;
-+			iov->iov_len = len;
-+			if (arg->coalesce)
-+				prev_iov = iov;
-+			iov++;
-+		}
- 
-+		arg->nsegs++;
- 		arg->out_len += len;
- 		arg->max_len -= len;
- 		if (!arg->max_len)
-@@ -280,7 +298,8 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
- 		req->flags |= REQ_F_BL_EMPTY;
- 
- 	req->flags |= REQ_F_BUFFER_RING;
--	req->buf_list = bl;
-+	if (arg->coalesce)
-+		req->buf_list = bl;
- 	return iov - arg->iovs;
- }
- 
-@@ -340,6 +359,38 @@ int io_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg)
- 	return io_provided_buffers_select(req, &arg->max_len, bl, arg);
- }
- 
-+int io_buffer_segments(struct io_kiocb *req, int nbytes)
-+{
-+	struct io_uring_buf_ring *br;
-+	struct io_buffer_list *bl;
-+	int nbufs = 0;
-+	unsigned bid;
-+
-+	/*
-+	 * Safe to use ->buf_list here, as coalescing can only have happened
-+	 * if we remained lock throughout the operation. Unlocked usage must
-+	 * not have buf_sel_arg->coalesce set to true
-+	 */
-+	bl = req->buf_list;
-+	if (unlikely(!bl || !(bl->flags & IOBL_BUF_RING)))
-+		return 1;
-+
-+	bid = req->buf_index;
-+	br = bl->buf_ring;
-+	do {
-+		struct io_uring_buf *buf;
-+		int this_len;
-+
-+		buf = io_ring_head_to_buf(br, bid, bl->mask);
-+		this_len = min_t(int, buf->len, nbytes);
-+		nbufs++;
-+		bid++;
-+		nbytes -= this_len;
-+	} while (nbytes);
-+
-+	return nbufs;
-+}
-+
- static int __io_remove_buffers(struct io_ring_ctx *ctx,
- 			       struct io_buffer_list *bl, unsigned nbufs)
- {
-diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index a8fbe2e3b73a..fe2f174b33cf 100644
---- a/io_uring/kbuf.h
-+++ b/io_uring/kbuf.h
-@@ -61,8 +61,11 @@ struct buf_sel_arg {
- 	size_t max_len;
- 	unsigned short nr_iovs;
- 	unsigned short mode;
-+	unsigned short nsegs;
-+	bool coalesce;
- };
- 
-+int io_buffer_segments(struct io_kiocb *req, int nbytes);
- void __user *io_buffer_select(struct io_kiocb *req, size_t *len,
- 			      unsigned int issue_flags);
- int io_buffers_select(struct io_kiocb *req, struct buf_sel_arg *arg,
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 14dd60bed676..4553465805f7 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -460,33 +460,16 @@ static void io_req_msg_cleanup(struct io_kiocb *req,
- static int io_bundle_nbufs(struct io_kiocb *req, int ret)
- {
- 	struct io_async_msghdr *kmsg = req->async_data;
--	struct iovec *iov;
--	int nbufs;
- 
--	/* no data is always zero segments, and a ubuf is always 1 segment */
-+	/* no data is always zero segments */
- 	if (ret <= 0)
- 		return 0;
--	if (iter_is_ubuf(&kmsg->msg.msg_iter))
--		return 1;
--
--	iov = kmsg->free_iov;
--	if (!iov)
--		iov = &kmsg->fast_iov;
--
--	/* if all data was transferred, it's basic pointer math */
-+	/* if all data was transferred, we already know the number of buffers */
- 	if (!iov_iter_count(&kmsg->msg.msg_iter))
--		return iter_iov(&kmsg->msg.msg_iter) - iov;
--
--	/* short transfer, count segments */
--	nbufs = 0;
--	do {
--		int this_len = min_t(int, iov[nbufs].iov_len, ret);
--
--		nbufs++;
--		ret -= this_len;
--	} while (ret);
-+		return kmsg->nbufs;
- 
--	return nbufs;
-+	/* short transfer, iterate buffers to find number of segments */
-+	return io_buffer_segments(req, ret);
- }
- 
- static inline bool io_send_finish(struct io_kiocb *req, int *ret,
-@@ -600,6 +583,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 			.iovs = &kmsg->fast_iov,
- 			.max_len = min_not_zero(sr->len, INT_MAX),
- 			.nr_iovs = 1,
-+			.coalesce = !(issue_flags & IO_URING_F_UNLOCKED),
- 		};
- 
- 		if (kmsg->free_iov) {
-@@ -623,6 +607,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 			req->flags |= REQ_F_NEED_CLEANUP;
- 		}
- 		sr->len = arg.out_len;
-+		kmsg->nbufs = arg.nsegs;
- 
- 		if (ret == 1) {
- 			sr->buf = arg.iovs[0].iov_base;
-@@ -1078,6 +1063,7 @@ static int io_recv_buf_select(struct io_kiocb *req, struct io_async_msghdr *kmsg
- 			.iovs = &kmsg->fast_iov,
- 			.nr_iovs = 1,
- 			.mode = KBUF_MODE_EXPAND,
-+			.coalesce = true,
- 		};
- 
- 		if (kmsg->free_iov) {
-@@ -1093,7 +1079,18 @@ static int io_recv_buf_select(struct io_kiocb *req, struct io_async_msghdr *kmsg
- 		if (unlikely(ret < 0))
- 			return ret;
- 
--		/* special case 1 vec, can be a fast path */
-+		if (arg.iovs != &kmsg->fast_iov && arg.iovs != kmsg->free_iov) {
-+			kmsg->free_iov_nr = arg.nsegs;
-+			kmsg->free_iov = arg.iovs;
-+			req->flags |= REQ_F_NEED_CLEANUP;
-+		}
-+		kmsg->nbufs = arg.nsegs;
-+
-+		/*
-+		 * Special case 1 vec, can be a fast path. Note that multiple
-+		 * contig buffers may get mapped to a single vec, but we can
-+		 * still use ITER_UBUF for those.
-+		 */
- 		if (ret == 1) {
- 			sr->buf = arg.iovs[0].iov_base;
- 			sr->len = arg.iovs[0].iov_len;
-@@ -1101,11 +1098,6 @@ static int io_recv_buf_select(struct io_kiocb *req, struct io_async_msghdr *kmsg
- 		}
- 		iov_iter_init(&kmsg->msg.msg_iter, ITER_DEST, arg.iovs, ret,
- 				arg.out_len);
--		if (arg.iovs != &kmsg->fast_iov && arg.iovs != kmsg->free_iov) {
--			kmsg->free_iov_nr = ret;
--			kmsg->free_iov = arg.iovs;
--			req->flags |= REQ_F_NEED_CLEANUP;
--		}
- 	} else {
- 		void __user *buf;
- 
-diff --git a/io_uring/net.h b/io_uring/net.h
-index 52bfee05f06a..b9a453da4a0f 100644
---- a/io_uring/net.h
-+++ b/io_uring/net.h
-@@ -9,6 +9,7 @@ struct io_async_msghdr {
- 	/* points to an allocated iov, if NULL we use fast_iov instead */
- 	struct iovec			*free_iov;
- 	int				free_iov_nr;
-+	int				nbufs;
- 	int				namelen;
- 	__kernel_size_t			controllen;
- 	__kernel_size_t			payloadlen;
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

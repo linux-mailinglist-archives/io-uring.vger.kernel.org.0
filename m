@@ -1,98 +1,98 @@
-Return-Path: <io-uring+bounces-2952-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2953-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21AD095F4E3
-	for <lists+io-uring@lfdr.de>; Mon, 26 Aug 2024 17:22:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC8CF95FE20
+	for <lists+io-uring@lfdr.de>; Tue, 27 Aug 2024 03:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F8271C213D9
-	for <lists+io-uring@lfdr.de>; Mon, 26 Aug 2024 15:22:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDF371C218AB
+	for <lists+io-uring@lfdr.de>; Tue, 27 Aug 2024 01:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97939158DD9;
-	Mon, 26 Aug 2024 15:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DD92107;
+	Tue, 27 Aug 2024 01:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vdHiV4t8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KOJRZLQR";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="07xMN3os";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KA/yihGE"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dKYC3BXr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vo/JpDsK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HDRnYXa8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MI5HetbI"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0D11E521;
-	Mon, 26 Aug 2024 15:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8199110E9;
+	Tue, 27 Aug 2024 01:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724685730; cv=none; b=O8FDpPZ605J6NNi9EZfS3d3O/BlrCKSi5RSd2acMbnCT/1NZdsdpZtDdxfwYXaNHm0rIfq4z3krqOtFhxUbxppFLwLtJDf/p/o8bqGs2cHP4pN/SH0G11JE3ZaWwiyxyieoIQQRTdS+38MCwZlXPAaZo70XILAs9LbpzhOpvS0c=
+	t=1724720611; cv=none; b=MetSdoyvzdc5V4SfZGmXIyGQMEq8jBbLWIpH8G09xFdMQ01I7PAdkvMBGWWRkNs3LJd50XX33GM7BK3uutdOpbSuRbRmhRm7DqIRXCWb/js42YQVcdgI9wQyJgsmok6+ZQwTxB/VGuPI85pSnuomvnvxrjs/FpiOHyZhiqXhW1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724685730; c=relaxed/simple;
-	bh=Ha8rgp3ScmzbWdOfI65XueQTm090aHq4omUQKdIyHJs=;
+	s=arc-20240116; t=1724720611; c=relaxed/simple;
+	bh=6dP/OAaiEq68919mEEvx1yVKBe3QKwZeVyUYLvwv4Pk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1jVtnLBqqEeapAF5Qomf/mMhrXOieOJLI4apKbbKnG+7M4akmX5p5lHavE8PIYltv1MZTI50NbTpz/sriIpl5FeA1zJpwETxTXvkn8PMRdfXVWhwTgC699qzmA32G5neWlqWXjyNH8XVJv/iz+KZEy479vubz0vatbltS/gamY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vdHiV4t8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KOJRZLQR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=07xMN3os; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KA/yihGE; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=cza1/XSEcf4RNulkz1oSV2hgc9D4p9heqMTPnnhXU81zufQgKVjmono68fJIbKmTa8WZ0ruShfQ6uga4uSJ5RFj5VBQy8jb7beb93CpdYDnl7exNztTZa6nZEdfM7evNNeqWTAinin1NJ5nVCDiXsIvAPNjnswbFN/45UssnDP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dKYC3BXr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vo/JpDsK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HDRnYXa8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MI5HetbI; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E016F21ABE;
-	Mon, 26 Aug 2024 15:22:06 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7AE5C21AE8;
+	Tue, 27 Aug 2024 01:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724685727;
+	t=1724720607;
 	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
 	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Pm/piezsxxed8lMj25yPAbHQz1vX77rXtcgIrDLedTg=;
-	b=vdHiV4t8RFVHG8bbkmI67sIl0BBVhnqI6/0W7gHaw0MAmq2i7UDHeCXxLblC6YEDgqQQx8
-	UXgv9YsJFDvxngRp4MA45LFWu3lLKRgVP4Tb7gUZQunME1LOqVD2B1g4Jf/v3TWbfbK6o3
-	QmCJeI350CC7rKrLhHuY9cwf0LCflxw=
+	bh=6ShFHYUxU8uP4XznSRLaBsSExVDA49/Z3Xdlwzp9ozs=;
+	b=dKYC3BXrDqEmWlFx/kGEBOXQLDuf/DuSRa8Hcd2kIaFtHK208/ZzJ4u435HSNI4uhIbExN
+	NVnj79wdlqZm16H9DYdk/74N0iYtDl/yO2Km2MOxJ71892ziOzV5si8BOigK+Xuc9IY9og
+	P31GlS5NoZYNAI6s6DYl8vKQPwzsMJ4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724685727;
+	s=susede2_ed25519; t=1724720607;
 	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
 	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Pm/piezsxxed8lMj25yPAbHQz1vX77rXtcgIrDLedTg=;
-	b=KOJRZLQRLgl8THz4Iw/iEhT4x8FiMDU6rVDAEaMiIOEeEErsuGbsL/tY5iGnT87NTQHQYd
-	PR9zxA+i/ZHiKzCw==
+	bh=6ShFHYUxU8uP4XznSRLaBsSExVDA49/Z3Xdlwzp9ozs=;
+	b=Vo/JpDsKyeV/5gZwWyDrGCjD2U3TTdBlqYjex9jbhcfahyybzHN8IbgsELKiu9WC/jPVDH
+	i+jRF0dSRjxq9YAg==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724685726;
+	t=1724720606;
 	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
 	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Pm/piezsxxed8lMj25yPAbHQz1vX77rXtcgIrDLedTg=;
-	b=07xMN3osyrlmHT/5c3vFmowgLtVXJAwEpu2MPBdOnr9gdPtT7Pm4LgjcFqmD7ET/6DxT0C
-	EIHojhAxFS4BpYmKBefvBIhqj8uH+wEfn1TWB+2OBQh4afQWyweSx9igKT35uTtk18HjiV
-	QTjAfB0Z5xKKTmVuM41/ws1R5a5IPAY=
+	bh=6ShFHYUxU8uP4XznSRLaBsSExVDA49/Z3Xdlwzp9ozs=;
+	b=HDRnYXa89AKPRdjsQIdh2jcV2+Urk4NMVUGILHRadVt3XuXiMyq7cpmzgKF/lIZByGskDn
+	nNtq13PkFmjbjN0eCTvNME4Bu+WDyVvh9OcphyJgOH36fsWE4JDbQu5Wf7WEzEJncMnG5L
+	xUj81WaUfAYjHsNPZq9iOGchd9LYtvY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724685726;
+	s=susede2_ed25519; t=1724720606;
 	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
 	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Pm/piezsxxed8lMj25yPAbHQz1vX77rXtcgIrDLedTg=;
-	b=KA/yihGEjEKUjjyQC04NCq+kYvDjgYd/LQG3o+hMe861KuJzrJMQPfU5ZIPJ0ujKd+AtoQ
-	F6IT6xY6U66jZeDQ==
+	bh=6ShFHYUxU8uP4XznSRLaBsSExVDA49/Z3Xdlwzp9ozs=;
+	b=MI5HetbIlT0sLLZmDn15dFDDpIg7O7lezy3BfHWsQ0GqFjZe6WCSuAe0WN17cB+i43F2fX
+	8QwR6Z9vBanEzcDQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CDE281398D;
-	Mon, 26 Aug 2024 15:22:06 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 534E513724;
+	Tue, 27 Aug 2024 01:03:26 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TFwHMp6dzGZJaQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 26 Aug 2024 15:22:06 +0000
-Date: Mon, 26 Aug 2024 17:22:05 +0200
+	id dj/OE94lzWaeEwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 27 Aug 2024 01:03:26 +0000
+Date: Tue, 27 Aug 2024 03:03:25 +0200
 From: David Sterba <dsterba@suse.cz>
 To: Mark Harmstone <maharmstone@fb.com>
 Cc: io-uring@vger.kernel.org, linux-btrfs@vger.kernel.org
 Subject: Re: [PATCH 2/6] btrfs: store encoded read state in struct
  btrfs_encoded_read_private
-Message-ID: <20240826152205.GQ25962@twin.jikos.cz>
+Message-ID: <20240827010325.GW25962@twin.jikos.cz>
 Reply-To: dsterba@suse.cz
 References: <20240823162810.1668399-1-maharmstone@fb.com>
  <20240823162810.1668399-3-maharmstone@fb.com>
@@ -113,21 +113,21 @@ X-Spamd-Result: default: False [-4.00 / 50.00];
 	HAS_REPLYTO(0.30)[dsterba@suse.cz];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
 	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,twin.jikos.cz:mid,fb.com:email];
 	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,twin.jikos.cz:mid,suse.cz:replyto]
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
 X-Spam-Flag: NO
 X-Spam-Level: 
 
@@ -135,7 +135,10 @@ On Fri, Aug 23, 2024 at 05:27:44PM +0100, Mark Harmstone wrote:
 > Move the various stack variables needed for encoded reads into struct
 > btrfs_encoded_read_private, so that we can split it into several
 > functions.
-> 
+
+Moving local variables makes sense in some cases but I don't see reason
+to move all of them.
+
 > Signed-off-by: Mark Harmstone <maharmstone@fb.com>
 > ---
 >  fs/btrfs/btrfs_inode.h |  20 ++++-
@@ -162,45 +165,23 @@ On Fri, Aug 23, 2024 at 05:27:44PM +0100, Mark Harmstone wrote:
 > +	unsigned long nr_pages;
 > +	struct page **pages;
 > +	struct extent_state *cached_state;
+
+The cached state is used as a local variable that is not reused by other
+functions that also take the private structure, so what's the reason to
+store it here?
+
 > +	size_t count;
 > +	struct iovec iovstack[UIO_FASTIOV];
 > +	struct iovec *iov;
+
+Same, this is used in the leaf functions and not passed around.
+
 > +	struct iov_iter iter;
 > +	struct btrfs_ioctl_encoded_io_args args;
 > +	struct file *file;
 > +};
-> +
-> +ssize_t btrfs_encoded_read(struct btrfs_encoded_read_private *priv);
->  ssize_t btrfs_do_encoded_write(struct kiocb *iocb, struct iov_iter *from,
->  			       const struct btrfs_ioctl_encoded_io_args *encoded);
->  
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index a0cc029d95ed..c1292e58366a 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -9078,12 +9078,6 @@ static ssize_t btrfs_encoded_read_inline(
->  	return ret;
->  }
->  
-> -struct btrfs_encoded_read_private {
-> -	wait_queue_head_t wait;
-> -	atomic_t pending;
-> -	blk_status_t status;
-> -};
-> -
->  static void btrfs_encoded_read_endio(struct btrfs_bio *bbio)
->  {
->  	struct btrfs_encoded_read_private *priv = bbio->private;
-> @@ -9104,33 +9098,31 @@ static void btrfs_encoded_read_endio(struct btrfs_bio *bbio)
->  	bio_put(&bbio->bio);
->  }
->  
-> -int btrfs_encoded_read_regular_fill_pages(struct btrfs_inode *inode,
-> -					  u64 file_offset, u64 disk_bytenr,
-> -					  u64 disk_io_size, struct page **pages)
-> +static void _btrfs_encoded_read_regular_fill_pages(struct btrfs_inode *inode,
 
-Please don't use underscores in function names
-
-https://btrfs.readthedocs.io/en/latest/dev/Development-notes.html#function-declarations
+As a coding pattern, the structure should store data that would be
+otherwise passed as parameters or repeatedly derived from the
+parameters.
 

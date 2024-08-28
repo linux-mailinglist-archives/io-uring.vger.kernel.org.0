@@ -1,223 +1,225 @@
-Return-Path: <io-uring+bounces-2964-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-2965-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D0C962D14
-	for <lists+io-uring@lfdr.de>; Wed, 28 Aug 2024 17:57:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46805962D62
+	for <lists+io-uring@lfdr.de>; Wed, 28 Aug 2024 18:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 482BE1C21E75
-	for <lists+io-uring@lfdr.de>; Wed, 28 Aug 2024 15:57:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAD08B25A8E
+	for <lists+io-uring@lfdr.de>; Wed, 28 Aug 2024 16:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497771A0718;
-	Wed, 28 Aug 2024 15:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3051A38FD;
+	Wed, 28 Aug 2024 16:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u5o1CBcQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cvgiqf1U";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ceeg/ax1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="M2ql/P5W"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PS2jtbkX"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E265172767
-	for <io-uring@vger.kernel.org>; Wed, 28 Aug 2024 15:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE85334CC4
+	for <io-uring@vger.kernel.org>; Wed, 28 Aug 2024 16:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724860635; cv=none; b=WGcJ+Nor3sjjbeYZZ8gaNr43qEE677tcP7sicoUijvpj5hqDcdNJeGnvePVO6MBS6YSHt36DCuvMsNj4+ZQywrIwtBevpy5ZJ7/KAbgiPzhE3039CSChllI7vMlQe2mBh1RIWm19HHk4Is/r5P5AdAE38tTx0Ov1JzLqalXn0Sk=
+	t=1724861627; cv=none; b=S+ecJ2BduyetSoMhwd/NpDk1m0FdKZ/WQLkxBwSkn+LiweibV35LSOvq2vmMcvBoM4gxZtAlMjmndB2MvaYdkUEXxjkN8Kew7gZuaz9Nn4GTbs7DAeA0Dk+eevuDtmW4//ZVe8eYMNbV1o7DDeXEU6khvhkzHy8knkSigop9fuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724860635; c=relaxed/simple;
-	bh=me6KxokgyDxJygitM1JWXxD+YXcHjIp9MouWl42Fd1c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cSe2LzQXlanc5gFqLn6qlPXY/rFBw84mNrD+seqzr7vKWIbTnIlYyPUTAA31Hk9gLKFHzxXv85vAfWVba9+MyHbGJf5c7Dap7V4IUQ0tKvX1oRF1OVFoAZOtA4XHidj7OZWo5BbuGxoS25Xoyi9eejQuEpAH4NpX5nYb7+xBIqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u5o1CBcQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cvgiqf1U; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ceeg/ax1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=M2ql/P5W; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A563521B56;
-	Wed, 28 Aug 2024 15:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724860631; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pG0rR44lBDRXBjesiR3WF0odPxXtaX02Sroiba8vKaM=;
-	b=u5o1CBcQb0Rf/iwEgpkYQ6ySp1Q54cFWuJABgY1bu6jxyJYf6m/99Lp/e0THowWlOdyYC1
-	1DMQw1ju0himj/0NjF+e6LuloupWqjcuArKgjVYKcPzzUNUWtI85300e3nlIz44JX4uuEj
-	kMrHUYzlhd2eXii78ZWmUd1EmCYWnqs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724860631;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pG0rR44lBDRXBjesiR3WF0odPxXtaX02Sroiba8vKaM=;
-	b=Cvgiqf1U2A5CxUSpfbCLb+hFiAzV0+QhCzcUpdMGlP2mXAPR+zqEwISz/0iyQ2XJ5CRF0q
-	XgokwCfMQEGVy4Bw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724860630; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pG0rR44lBDRXBjesiR3WF0odPxXtaX02Sroiba8vKaM=;
-	b=Ceeg/ax1mxxcTbN5DuY+o60ojhB1P+B5rki7Uq+xUXtOhph7Lqgzb4Lu0sXOqOrHRSbRfP
-	uY4GkhUtK3NYsITd0XzNMSQ/fgZgcJOA+lwDILc1vic+9d8+vaOoogd8Kpxx6avDjMnIIH
-	ZB3TvE1NvA4GDkex4z8xSaSLxsCkCUM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724860630;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pG0rR44lBDRXBjesiR3WF0odPxXtaX02Sroiba8vKaM=;
-	b=M2ql/P5W7av+gXpfVYhyv1Y2PCZeAZapSJr/lo5swkw5ns2CSAlEc8ygdMV2To8KPzoAu5
-	m5h6LlIvSoLuTUBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6BFA8138D2;
-	Wed, 28 Aug 2024 15:57:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XVAxFNZIz2ZNWgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 28 Aug 2024 15:57:10 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring <io-uring@vger.kernel.org>
-Subject: Re: [PATCH] io_uring/rsrc: ensure compat iovecs are copied correctly
-In-Reply-To: <b1fa09cd-ca5a-41ff-bc64-bec43f483a48@kernel.dk> (Jens Axboe's
-	message of "Wed, 28 Aug 2024 09:46:14 -0600")
-Organization: SUSE
-References: <b1fa09cd-ca5a-41ff-bc64-bec43f483a48@kernel.dk>
-Date: Wed, 28 Aug 2024 11:57:05 -0400
-Message-ID: <871q28ej3i.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1724861627; c=relaxed/simple;
+	bh=rUj4e7X9XFiwm6eArKv4Fq5QEX9Ryc8j4twis9QdIKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=Mrrsi2KQulouYUS++wUiyXRFpwNTYW8HS/F8QGLG7u0LHBtRv/HxNVgo2blXjPwWV3cwQpxpyhz3CDseiypfq9xmH6usXMdmzcRrYd3jbi0ecC8VsS9bR0hnXBn3aaOnq4OQUql/x1GYh0CyHo6ikdEdVTmJ4lq2wlOJ0NL2USU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PS2jtbkX; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240828161342epoutp04434f2e8232f220046c3292cd7d490b49~v8IHjw9eb2569525695epoutp04a
+	for <io-uring@vger.kernel.org>; Wed, 28 Aug 2024 16:13:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240828161342epoutp04434f2e8232f220046c3292cd7d490b49~v8IHjw9eb2569525695epoutp04a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724861623;
+	bh=HnL33aP4E10mX6zcM/z2UMMF0nMT5SuYS3j5XhT324w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PS2jtbkXa9B0rY5FO+5CpB3xxcVXNM79sh497IU45XvHDGlDUaVVHQP6W2xyVcEX2
+	 ebhmso/ZMUx/AOLnOTiFDBi1JAu2wy1M0tvn5vpt2aGbEKsHIFHcgWaJPl3txM4tHl
+	 K27bR1uPlvE+Ryw+y68gjkXrRJ3o1TVXGfImw24k=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240828161342epcas5p2e27a44f3e80c49f9d0f999331dd9fdf0~v8IHCQ1nM2989929899epcas5p2T;
+	Wed, 28 Aug 2024 16:13:42 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Wv8bm4Wpbz4x9Pt; Wed, 28 Aug
+	2024 16:13:40 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F6.DD.08855.4BC4FC66; Thu, 29 Aug 2024 01:13:40 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240828112543epcas5p1109ce4ce7237ea38e339111b5bf8c63a~v4MrEDHAK2402224022epcas5p1d;
+	Wed, 28 Aug 2024 11:25:43 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240828112543epsmtrp2d173a3e59b5ea6e24e83a65f3c737eb6~v4MrDSBPf1058610586epsmtrp2G;
+	Wed, 28 Aug 2024 11:25:43 +0000 (GMT)
+X-AuditID: b6c32a44-107ff70000002297-82-66cf4cb44878
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	35.F3.07567.7390FC66; Wed, 28 Aug 2024 20:25:43 +0900 (KST)
+Received: from green245 (unknown [107.99.41.245]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240828112540epsmtip12cff0499d082d60701d087b37e368c0a~v4MoUcwNx2866928669epsmtip1N;
+	Wed, 28 Aug 2024 11:25:40 +0000 (GMT)
+Date: Wed, 28 Aug 2024 16:48:06 +0530
+From: Anuj Gupta <anuj20.g@samsung.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: axboe@kernel.dk, kbusch@kernel.org, martin.petersen@oracle.com,
+	asml.silence@gmail.com, krisman@suse.de, io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH v3 03/10] block: handle split correctly for user meta
+ bounce buffer
+Message-ID: <20240828111806.GA3301@green245>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	TO_DN_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mailhost.krisman.be:mid,kernel.dk:email,suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20240824083116.GC8805@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAJsWRmVeSWpSXmKPExsWy7bCmuu4Wn/NpBoceSFvMWbWN0WL13X42
+	i5sHdjJZrFx9lMniXes5FotJh64xWmw/s5TZYu8tbYv5y56yW3Rf38Fmsfz4PyYHbo+ds+6y
+	e1w+W+qxaVUnm8fmJfUeu282sHl8fHqLxaNvyypGj82nqz0+b5IL4IzKtslITUxJLVJIzUvO
+	T8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOlVJoSwxpxQoFJBYXKykb2dT
+	lF9akqqQkV9cYquUWpCSU2BSoFecmFtcmpeul5daYmVoYGBkClSYkJ1x4PNUpoL9khULWi+z
+	NDDOEO1i5OSQEDCR6D23jr2LkYtDSGA3o8TOiWtYQBJCAp8YJU5PUodIfGOUuLRtDxtcx7XT
+	TBCJvYwSbe9+MkM4zxglFk/fzwpSxSKgKnHt6FawDjYBdYkjz1sZQWwRASWJp6/OMoI0MAv8
+	YpRYNr2PGSQhLBApsbH5EJjNK6AjseXXMzYIW1Di5MwnYDdxCmhLzFl7EcwWFVCWOLDtONgZ
+	EgJbOCQ2LtnMDHGfi8SDeUehbhWWeHV8CzuELSXx+d1eqHi6xI/LT5kg7AKJ5mP7GCFse4nW
+	U/1gc5gFMiT+TpsOVS8rMfXUOiaIOJ9E7+8nUL28EjvmwdhKEu0r50DZEhJ7zzVA2R4Su/6t
+	Z4YE6i1GidVvoyYwys9C8tssJOsgbB2JBbs/AdkcQLa0xPJ/HBCmpsT6XfoLGFlXMUqmFhTn
+	pqcmmxYY5qWWw2M8OT93EyM4KWu57GC8Mf+f3iFGJg7GQ4wSHMxKIrwnjp9NE+JNSaysSi3K
+	jy8qzUktPsRoCoysicxSosn5wLyQVxJvaGJpYGJmZmZiaWxmqCTO+7p1boqQQHpiSWp2ampB
+	ahFMHxMHp1QDU0LP44sXIm6L18qnVhTVXOt4dCFqj++7L68LnnClP5muwaUesu8V31P+a/0V
+	F8+32ORfWndryp15Ny88toszPnKhWFFzstPxonrXnMijJ2Sc/RX32P9Z1P+9bOvBuiKGb3/u
+	f/2/qeaUhQMjE7PaW13tEKPVjs7pZpXKqZcf+z1hLpEUNb6+dxH/mnO+YSmm7HOaD1mc7Jy6
+	7YXx1QTZPhP3/x2Kk/4d49pwk3X7hJZJuYtTjy3VeKx5b9rFKxE7xf0nHL+fufnPq6Wpihwb
+	pbwfzGef9EC0K6yl+VPZY562Rz+MF2eE7jx7Tu9gpSN7rdmH1kULelZu4bt6eLq96cuDeZMe
+	TWfoWlS27NSa471KLMUZiYZazEXFiQAOGPp+UwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42LZdlhJTtec83yaQf98dYs5q7YxWqy+289m
+	cfPATiaLlauPMlm8az3HYjHp0DVGi+1nljJb7L2lbTF/2VN2i+7rO9gslh//x+TA7bFz1l12
+	j8tnSz02repk89i8pN5j980GNo+PT2+xePRtWcXosfl0tcfnTXIBnFFcNimpOZllqUX6dglc
+	GZ9PT2Iv+C9W0TlDt4Hxo1AXIyeHhICJRO+100xdjFwcQgK7GSXurHjOBpGQkDj1chkjhC0s
+	sfLfc3aIoieMEqfOvmEBSbAIqEpcO7oVrIFNQF3iyPNWsAYRASWJp6/OMoI0MAv8YpRYNr2P
+	GSQhLBApsbH5EJjNK6AjseXXMzaIqXcYJdbcfMMKkRCUODnzCdgGZgEtiRv/XgLdxwFkS0ss
+	/8cBEuYU0JaYs/YiWImogLLEgW3HmSYwCs5C0j0LSfcshO4FjMyrGCVTC4pz03OTDQsM81LL
+	9YoTc4tL89L1kvNzNzGCo0lLYwfjvfn/9A4xMnEwHmKU4GBWEuE9cfxsmhBvSmJlVWpRfnxR
+	aU5q8SFGaQ4WJXFewxmzU4QE0hNLUrNTUwtSi2CyTBycUg1MVZ+dpFJXf3Xw+3SL/95T25u8
+	224c8Ul9KGd188W0Fx5666Z2Xku15/BcE3x7ja5cfXahT/PXkLjZCRvSpZViGo6+X2BuF1iy
+	0GlL6xH7M2aHtPn33w3ROZER+2Fp6M5dKm981+xa7vB9c5DblDavWwnnNblc25c9ZxTuSNi1
+	8Lf5hiknhG3WXuF9ar/bMkb5r697WIDw9v9buu5yCxq5S18JyTkSs/lHzJn5Fa+dTs8Jnra9
+	XvTXZHPl4wv0Xe8f3v3bMdRs2k8BFpPsO+sFcgXNhJ6faqk43RbVYBx3qUgzt2WbkVDpb7UA
+	1rbMLZMyM6sX2N5YkaX2dPJ79YO28f5TdlyxqJRiXOvS8t9DiaU4I9FQi7moOBEAZBB4DRUD
+	AAA=
+X-CMS-MailID: 20240828112543epcas5p1109ce4ce7237ea38e339111b5bf8c63a
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----bx0Hnhhrn7x.JlxYXzjBkilvv7KFXT55p7POp3cMcMNV4hS0=_dd2c9_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240823104620epcas5p2118c152963d6cadfbc9968790ac0e536
+References: <20240823103811.2421-1-anuj20.g@samsung.com>
+	<CGME20240823104620epcas5p2118c152963d6cadfbc9968790ac0e536@epcas5p2.samsung.com>
+	<20240823103811.2421-4-anuj20.g@samsung.com> <20240824083116.GC8805@lst.de>
 
-Jens Axboe <axboe@kernel.dk> writes:
+------bx0Hnhhrn7x.JlxYXzjBkilvv7KFXT55p7POp3cMcMNV4hS0=_dd2c9_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-> For buffer registration (or updates), a userspace iovec is copied in
-> and updated. If the application is within a compat syscall, then the
-> iovec type is compat_iovec rather than iovec. However, the type used
-> in __io_sqe_buffers_update() and io_sqe_buffers_register() is always
-> struct iovec, and hence the source is incremented by the size of a
-> non-compat iovec in the loop. This misses every other iovec in the
-> source, and will run into garbage half way through the copies and
-> return -EFAULT to the application.
->
-> Maintain the source address separately and assign to our user vec
-> pointer, so that copies always happen from the right source address.
->
-> Fixes: f4eaf8eda89e ("io_uring/rsrc: Drop io_copy_iov in favor of iovec API")
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+On Sat, Aug 24, 2024 at 10:31:16AM +0200, Christoph Hellwig wrote:
+> On Fri, Aug 23, 2024 at 04:08:03PM +0530, Anuj Gupta wrote:
+> > Copy back the bounce buffer to user-space in entirety when the parent
+> > bio completes.
+> 
+> This looks odd to me.  The usual way to handle iterating the entire
+> submitter controlled data is to just iterate over the bvec array, as
+> done by bio_for_each_segment_all/bio_for_each_bvec_all for the bio
+> data.  I think you want to do the same here, probably with a
+> similar bip_for_each_bvec_all or similar helper.  That way you don't
+> need to stash away the iter.  Currently we have the field for that,
+> but I really want to split up struct bio_integrity_payload into
+> what is actually needed for the payload and stuff only needed for
+> the block layer autogenerated PI (bip_bio/bio_iter/bip_work).
+ 
+I can add it [*], to iterate over the entire bvec array. But the original
+bio_iter still needs to be stored during submission, to calculate the
+number of bytes in the original integrity/metadata iter (as it could have
+gotten split, and I don't have original integrity iter stored anywhere).
+Do you have a different opinion?
 
-Thanks for the fix, Jens. please take:
-
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
-
->
-> ---
->
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index a860516bf448..b38d0ef41ef1 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -394,10 +394,11 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
->  				   struct io_uring_rsrc_update2 *up,
->  				   unsigned int nr_args)
->  {
-> -	struct iovec __user *uvec = u64_to_user_ptr(up->data);
->  	u64 __user *tags = u64_to_user_ptr(up->tags);
->  	struct iovec fast_iov, *iov;
->  	struct page *last_hpage = NULL;
-> +	struct iovec __user *uvec;
-> +	u64 user_data = up->data;
->  	__u32 done;
->  	int i, err;
->  
-> @@ -410,7 +411,8 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
->  		struct io_mapped_ubuf *imu;
->  		u64 tag = 0;
->  
-> -		iov = iovec_from_user(&uvec[done], 1, 1, &fast_iov, ctx->compat);
-> +		uvec = u64_to_user_ptr(user_data);
-> +		iov = iovec_from_user(uvec, 1, 1, &fast_iov, ctx->compat);
->  		if (IS_ERR(iov)) {
->  			err = PTR_ERR(iov);
->  			break;
-> @@ -443,6 +445,10 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
->  
->  		ctx->user_bufs[i] = imu;
->  		*io_get_tag_slot(ctx->buf_data, i) = tag;
-> +		if (ctx->compat)
-> +			user_data += sizeof(struct compat_iovec);
-> +		else
-> +			user_data += sizeof(struct iovec);
->  	}
->  	return done ? done : err;
->  }
-> @@ -949,7 +955,7 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
->  	struct page *last_hpage = NULL;
->  	struct io_rsrc_data *data;
->  	struct iovec fast_iov, *iov = &fast_iov;
-> -	const struct iovec __user *uvec = (struct iovec * __user) arg;
-> +	const struct iovec __user *uvec;
->  	int i, ret;
->  
->  	BUILD_BUG_ON(IORING_MAX_REG_BUFFERS >= (1u << 16));
-> @@ -972,7 +978,8 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
->  
->  	for (i = 0; i < nr_args; i++, ctx->nr_user_bufs++) {
->  		if (arg) {
-> -			iov = iovec_from_user(&uvec[i], 1, 1, &fast_iov, ctx->compat);
-> +			uvec = (struct iovec * __user) arg;
-> +			iov = iovec_from_user(uvec, 1, 1, &fast_iov, ctx->compat);
->  			if (IS_ERR(iov)) {
->  				ret = PTR_ERR(iov);
->  				break;
-> @@ -980,6 +987,10 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
->  			ret = io_buffer_validate(iov);
->  			if (ret)
->  				break;
-> +			if (ctx->compat)
-> +				arg += sizeof(struct compat_iovec);
-> +			else
-> +				arg += sizeof(struct iovec);
->  		}
->  
->  		if (!iov->iov_base && *io_get_tag_slot(data, i)) {
-
+[*]
+diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+index ff7de4fe74c4..f1690c644e70 100644
+--- a/block/bio-integrity.c
++++ b/block/bio-integrity.c
+@@ -125,11 +125,23 @@ static void bio_integrity_uncopy_user(struct bio_integrity_payload *bip)
+ 	struct bio_vec *copy = &bip->bip_vec[1];
+ 	size_t bytes = bio_iter_integrity_bytes(bi, bip->bio_iter);
+ 	struct iov_iter iter;
+-	int ret;
++	struct bio_vec *bvec;
++	struct bvec_iter_all iter_all;
+ 
+ 	iov_iter_bvec(&iter, ITER_DEST, copy, nr_vecs, bytes);
+-	ret = copy_to_iter(bvec_virt(bip->bip_vec), bytes, &iter);
+-	WARN_ON_ONCE(ret != bytes);
++	bip_for_each_segment_all(bvec, bip, iter_all) {
++		ssize_t ret;
++
++		ret = copy_page_to_iter(bvec->bv_page,
++					bvec->bv_offset,
++					bvec->bv_len,
++					&iter);
++
++		if (!iov_iter_count(&iter))
++			break;
++
++		WARN_ON_ONCE(ret < bvec->bv_len);
++	}
+ 
+ 	bio_integrity_unpin_bvec(copy, nr_vecs, true);
+ }
+diff --git a/include/linux/bio-integrity.h b/include/linux/bio-integrity.h
+index 22ff2ae16444..3132ef6f27e0 100644
+--- a/include/linux/bio-integrity.h
++++ b/include/linux/bio-integrity.h
+@@ -46,6 +46,19 @@ struct uio_meta {
+ 	struct		iov_iter iter;
+ };
+ 
++static inline bool bip_next_segment(const struct bio_integrity_payload *bip,
++				    struct bvec_iter_all *iter)
++{
++	if (iter->idx >= bip->bip_vcnt)
++		return false;
++
++	bvec_advance(&bip->bip_vec[iter->idx], iter);
++	return true;
++}
++
++#define bip_for_each_segment_all(bvl, bip, iter) \
++	for (bvl = bvec_init_iter_all(&iter); bip_next_segment((bip), &iter); )
++
+ #define BIP_CLONE_FLAGS (BIP_MAPPED_INTEGRITY | BIP_CTRL_NOCHECK | \
+ 			 BIP_DISK_NOCHECK | BIP_IP_CHECKSUM | \
+ 			 BIP_CHECK_GUARD | BIP_CHECK_REFTAG | \
 -- 
-Gabriel Krisman Bertazi
+2.25.1
+
+------bx0Hnhhrn7x.JlxYXzjBkilvv7KFXT55p7POp3cMcMNV4hS0=_dd2c9_
+Content-Type: text/plain; charset="utf-8"
+
+
+------bx0Hnhhrn7x.JlxYXzjBkilvv7KFXT55p7POp3cMcMNV4hS0=_dd2c9_--
 

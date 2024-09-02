@@ -1,151 +1,113 @@
-Return-Path: <io-uring+bounces-3012-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3013-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC11967F7F
-	for <lists+io-uring@lfdr.de>; Mon,  2 Sep 2024 08:31:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 418E0968B2D
+	for <lists+io-uring@lfdr.de>; Mon,  2 Sep 2024 17:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C7A21C20D9D
-	for <lists+io-uring@lfdr.de>; Mon,  2 Sep 2024 06:31:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C33ADB21CBC
+	for <lists+io-uring@lfdr.de>; Mon,  2 Sep 2024 15:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DAD3C30;
-	Mon,  2 Sep 2024 06:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0E819F105;
+	Mon,  2 Sep 2024 15:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="q8V7e+mm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yuAHtmJ8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6156115C140
-	for <io-uring@vger.kernel.org>; Mon,  2 Sep 2024 06:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC837364BA
+	for <io-uring@vger.kernel.org>; Mon,  2 Sep 2024 15:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725258652; cv=none; b=Tytnfxxe8rN7qxXph6M9nBvPwNh840p10J7uAAvkCIzeiX1gFX1pQbBqdufp+s6RVqlrkGaWIRxzT6/x9X783qCGr24hBsf+d75p9sy9qmHNbcnpXoJyomEp7OIZzWW+feYsWpH1/lrQSnWXmFTf9hKUzeB+SKq9le9bB1ecY1U=
+	t=1725291624; cv=none; b=VbzRlAp4tcjkF4mYPYKaurSLKDEtiQW38va0buwKvy+FiVuniBFXZ4e7Ddh4OnuRHfa/MQq8uC4r4Xoc7vMBQIHu2wiyXpCa40sCRz+ig4NwcM4hFB/bR6X/HmFHexUp60mKFNVoHepqq4kqUC8TktFxijaZ93xUOyuZr7NbnbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725258652; c=relaxed/simple;
-	bh=WRY93CUbNk2e228cbO2zWgsuAyrGL2NQBZajjEwdNfg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=nH6YiLBnOol2prwI9ucamxgIBYNGwdN6iTnMa+kEUBzQhXCc1pHStrmZt8PGv6OMtCmX/sniG8FmC5jpM4OeZzch+pmiPXLGoFXlo9XJpClxH3QVvEpVMMEU3Qv1d66JWKtVKIg6vUmnf+u04j6EzAxBbX3shv7tR57Norjzsgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=q8V7e+mm; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240902063048epoutp013a12cc8bc259904095b8245b5ebf51a1~xWZl-cNni0718807188epoutp012
-	for <io-uring@vger.kernel.org>; Mon,  2 Sep 2024 06:30:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240902063048epoutp013a12cc8bc259904095b8245b5ebf51a1~xWZl-cNni0718807188epoutp012
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725258648;
-	bh=wR+9/CmcgcSqRaHmSjUjZG+cFrJhHrF2EvYygWICBYw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q8V7e+mm67zrN+k4BV0qNLKrzbAeXLf0e2cg7h/VdWA3W8q44qnVUUSjO12xIgaJp
-	 S35eQyhl+iBw8WG6KNJ+5fNVY2zV7H1K7lS4rDP1E5+TA5tDYmbaxa8TQMGfudOl8o
-	 31qaypeHP4A9EvzvqJTJ5IDciJdCdXDO/jiy/tYs=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240902063047epcas5p1c3106478e202c98c3f728ad809284d75~xWZlnqTGU0367503675epcas5p19;
-	Mon,  2 Sep 2024 06:30:47 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WxzQs1Z83z4x9Q3; Mon,  2 Sep
-	2024 06:30:45 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	53.85.09642.49B55D66; Mon,  2 Sep 2024 15:30:44 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240902062910epcas5p490bdf7aa1ee9f31491c7948de089f220~xWYLO9SII2160321603epcas5p4F;
-	Mon,  2 Sep 2024 06:29:10 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240902062910epsmtrp2bfc0e62bb92fde31336c19c53f1153e7~xWYLOYKFB0595505955epsmtrp2P;
-	Mon,  2 Sep 2024 06:29:10 +0000 (GMT)
-X-AuditID: b6c32a4b-613ff700000025aa-33-66d55b94dce9
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	30.88.08456.63B55D66; Mon,  2 Sep 2024 15:29:10 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.99.41.245]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240902062909epsmtip2e1967004af7960b0a891bfb7bffb1ef3~xWYKaUTUY2333423334epsmtip2q;
-	Mon,  2 Sep 2024 06:29:09 +0000 (GMT)
-From: Anuj Gupta <anuj20.g@samsung.com>
-To: axboe@kernel.dk, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org, Anuj Gupta <anuj20.g@samsung.com>
-Subject: [PATCH v1 2/2] io_uring: remove unused rsrc_put_fn
-Date: Mon,  2 Sep 2024 11:51:34 +0530
-Message-Id: <20240902062134.136387-3-anuj20.g@samsung.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725291624; c=relaxed/simple;
+	bh=qUzbEgovbqZq5w7omKq3eD4xqVgYXIWRkzD4uF3AoIQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=F6h6bReryPcg3rVNPPOPUoDcEHeQ5r6g28M8aTP8vN9zrbVhu4qMdqy535+4AQu/xm9JzsIX09pNHiBZkLKckVgCu5dni16sFrMfZEPt+7WZKJ34HmPhWdHA/rOtAYTh/m470B798aG1CwIR8g16jdtlO6EgajL+vxuUKHr2uhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yuAHtmJ8; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d88690837eso1858026a91.2
+        for <io-uring@vger.kernel.org>; Mon, 02 Sep 2024 08:40:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725291621; x=1725896421; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tqU1kDCHFohRSR7SOIyLpIkHKZD0JqCFO7fQYNgH8FM=;
+        b=yuAHtmJ8BitMmuy6+4dzSn73x9CSAzmglIzSIm31w3Ic43F4CoGuB/ZJgvfZ2pLlcl
+         7AUIBfOiDSUfPYfb7uNNujNT+YwfJAWVkQ/bSngCsHNXBOxsQodBFLjsXn4oUt/Uwpnx
+         KWe9pCD2G7A6veKCIHS5Xsyck8lc4DrRynxrAx1oBxRmYRiSS8qW9vBpfTXBTr6qsi7j
+         yO3ZGcZ9Ry4YIbO/lV1ljEzdaLuvF4DY/JV+dFPC4zPyGGjQ85ifxX+M0QDv2XW9xuL+
+         8rSzP+V/DcQG9MeZhsHTcDCUI3C4kxoxAY8MRL6Kh6XIllHbx0tqpInbg21r7Eo2Uf5w
+         4mkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725291621; x=1725896421;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tqU1kDCHFohRSR7SOIyLpIkHKZD0JqCFO7fQYNgH8FM=;
+        b=GHZ5+pdzfXf/aaH8SMjOLxRIhf/qPd6EoBOOcviWwcWp4aKp2P5cjDz59DB1ollJMU
+         tWkDWj+ssK6puUqjF3zByP9lLjOjo6+Js1HHP3sfd0tOJXpJ6x+nscpjZkH5tcrhSQxE
+         faqdc0EWhDDJ+dirj+WltntWg2ykihNnN7L8EordxSoPnTfZK2MzK/AO1Ah01llGOyq1
+         GBpQQasJrwOc5i3B/KQRt3O8aIyCKzB79XVmdaVeyKsVGBpADQfO4aJCqss09J05c+2x
+         Xt60wJUI9xMazpS7NeBq0u5TFg6v0C+UZdl2k2ZJ3DvmWushVD+TBxiyrMyVgievaMBp
+         NY3g==
+X-Gm-Message-State: AOJu0YxpOdJcd1XiKqpYyklRt+NWclp8H0HnKPvGw5qU2nc7mTZW2Dye
+	TvesEZ6k/yse8JnBZNpfJrjppeB8XABSVV9B2NxNwvvE7O52lp0NNF4BRspcOOw=
+X-Google-Smtp-Source: AGHT+IHB8V+krjuB/c896e3GtUXxu/0LT1cDdzPg5efCWGpZ8kiLNDMVWjjQNssCyTkMgLKtV5iOgQ==
+X-Received: by 2002:a17:90a:e2c3:b0:2d8:a373:481e with SMTP id 98e67ed59e1d1-2d8a3736fffmr5204552a91.24.1725291620802;
+        Mon, 02 Sep 2024 08:40:20 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8e77590c7sm1899850a91.6.2024.09.02.08.40.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 08:40:19 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: asml.silence@gmail.com, Anuj Gupta <anuj20.g@samsung.com>
+Cc: io-uring@vger.kernel.org
 In-Reply-To: <20240902062134.136387-1-anuj20.g@samsung.com>
+References: <CGME20240902062908epcas5p334384250be037fb09463e5093c082b56@epcas5p3.samsung.com>
+ <20240902062134.136387-1-anuj20.g@samsung.com>
+Subject: Re: [PATCH v1 0/2] cleanup
+Message-Id: <172529161963.4471.14701393752845459189.b4-ty@kernel.dk>
+Date: Mon, 02 Sep 2024 09:40:19 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBKsWRmVeSWpSXmKPExsWy7bCmpu6U6KtpBjPOSVo0TfjLbDFn1TZG
-	i9V3+9ks3rWeY3Fg8dg56y67x+WzpR59W1YxenzeJBfAEpVtk5GamJJapJCal5yfkpmXbqvk
-	HRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQO0UUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCR
-	X1xiq5RakJJTYFKgV5yYW1yal66Xl1piZWhgYGQKVJiQnXH14Cz2giaWir7ngg2M85m7GDk5
-	JARMJPo2r2PrYuTiEBLYzSjRee06O4TziVFiz5xXLCBVQgLfGCUOLXbsYuQA65h9IhIivJdR
-	YmGTI0T9Z0aJf6/eg9WzCahLHHneyghiiwhoS7x+PBUszixgL3Fu9QcmEFtYwFri2JP57CA2
-	i4CqxJ6jV1lBbF4BK4mVHTPYIa6Tl5h56TuYzQlU3/tjASNEjaDEyZlPoGbKSzRvnc0McoSE
-	wDF2iYtnXkI1u0jMOfUbyhaWeHV8C5QtJfH53V42CDtd4sflp0wQdoFE87F9jBC2vUTrqX5m
-	kIeZBTQl1u/ShwjLSkw9tY4JYi+fRO/vJ1CtvBI75sHYShLtK+dA2RISe881QNkeEvNPX4aG
-	dB+jxJSFx1gnMCrMQvLPLCT/zEJYvYCReRWjZGpBcW56arFpgXFeajk8ipPzczcxgpOglvcO
-	xkcPPugdYmTiYDzEKMHBrCTCu3TPxTQh3pTEyqrUovz4otKc1OJDjKbAAJ/ILCWanA9Mw3kl
-	8YYmlgYmZmZmJpbGZoZK4ryvW+emCAmkJ5akZqemFqQWwfQxcXBKNTBtYpQvSpkQ+157jobI
-	4k6FvM4nF5c231NS0D8v6a9jd021wW/aqwsbTxqozUo9nBC8ctn5+496ExecS//1r/TFicvX
-	vGYe2/b1hOKvlQqNU1+stm6tuPWWkcV5yo+Ys10BX3Vf8XbVP/rE9U3lQr97uqPzdVPFiDcf
-	b/lee+UWbXLCN7FJw2LFqteHJb6lBzOavXLdp3Hm75w/Gd/asqQqZnwJrC2315ioNaWIY80l
-	l9/XtSTLhO3YFZbd3mNw8WnwSqHHZvvvKv1ueVq/VcpOr84048+Mw65chezBYufX71+ll816
-	X/LgNQtG7jK+PvVTnGp/o+/XMzDPW9cY8df23r1ldTcVCnUnP/pvH5ChxFKckWioxVxUnAgA
-	tf4rwQsEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPLMWRmVeSWpSXmKPExsWy7bCSvK5Z9NU0gw2T5S2aJvxltpizahuj
-	xeq7/WwW71rPsTiweOycdZfd4/LZUo++LasYPT5vkgtgieKySUnNySxLLdK3S+DKuHpwFntB
-	E0tF33PBBsb5zF2MHBwSAiYSs09EdjFycQgJ7GaUuD9lKnsXIydQXELi1MtljBC2sMTKf8/Z
-	IYo+Mkq82X0FLMEmoC5x5HkrI8ggEQFdica7CiBhZgFHiakbroHNERawljj2ZD6YzSKgKrHn
-	6FVWEJtXwEpiZccMqF3yEjMvfQezOYHqe38sABsvBFTzYvNnZoh6QYmTM5+wQMyXl2jeOpt5
-	AqPALCSpWUhSCxiZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn525iBIepltYOxj2rPugd
-	YmTiYDzEKMHBrCTCu3TPxTQh3pTEyqrUovz4otKc1OJDjNIcLErivN9e96YICaQnlqRmp6YW
-	pBbBZJk4OKUamFpuMLdZXtykLSNjdu9/PH/L0rD2/bE/BUUmlR89t+nRYq2rKlrnr/guTW6y
-	SfgvznTyx6e27e9+tkw7m/adTWdu15zkL5unOapmdFp1Fz31+Py/x2272lE/oz3sez7OWVg2
-	d3lrUwS/j5ByoN7PYIXYyIbSCepm+U8+N6gzJGyWehKkaiZh7LZquqPtrdAQ9pVMtjZmx9l+
-	Ku/qnvxZ6fE/p9daU2e7Fm9hPS7p0X/qTktRh5eu+KHd6przD6eXH15y+9n6e65i79cuPDo5
-	QM/2lqyjRL6gprbOJsvlM38skZhyaOmkppnZky/e5VtQLlQ74/TWncEix3l3vn8uP/tj4vUd
-	PFnPzfekpZy0llViKc5INNRiLipOBACp2NVXwgIAAA==
-X-CMS-MailID: 20240902062910epcas5p490bdf7aa1ee9f31491c7948de089f220
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240902062910epcas5p490bdf7aa1ee9f31491c7948de089f220
-References: <20240902062134.136387-1-anuj20.g@samsung.com>
-	<CGME20240902062910epcas5p490bdf7aa1ee9f31491c7948de089f220@epcas5p4.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-rsrc_put_fn is declared but never used, remove it.
 
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
----
- io_uring/rsrc.h | 2 --
- 1 file changed, 2 deletions(-)
+On Mon, 02 Sep 2024 11:51:32 +0530, Anuj Gupta wrote:
+> Two cleanups
+> First patch adds a new line after variable declaration.
+> Second patch removes a unused declaration.
+> 
+> Anuj Gupta (2):
+>   io_uring: add new line after variable declaration
+>   io_uring: remove unused rsrc_put_fn
+> 
+> [...]
 
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 18242b2e9da4..3d0dda3556e6 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -22,8 +22,6 @@ struct io_rsrc_put {
- 	};
- };
- 
--typedef void (rsrc_put_fn)(struct io_ring_ctx *ctx, struct io_rsrc_put *prsrc);
--
- struct io_rsrc_data {
- 	struct io_ring_ctx		*ctx;
- 
+Applied, thanks!
+
+[1/2] io_uring: add new line after variable declaration
+      commit: 6cf52b42c4efa4d064d19064fd2313ca4aaf9569
+[2/2] io_uring: remove unused rsrc_put_fn
+      commit: c9f9ce65c2436879779d39c6e65b95c74a206e49
+
+Best regards,
 -- 
-2.25.1
+Jens Axboe
+
+
 
 

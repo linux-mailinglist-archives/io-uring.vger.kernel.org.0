@@ -1,137 +1,302 @@
-Return-Path: <io-uring+bounces-3038-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3039-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C125696C7C1
-	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 21:42:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D13DC96CA4E
+	for <lists+io-uring@lfdr.de>; Thu,  5 Sep 2024 00:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6782875C9
-	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 19:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60CAC1F28906
+	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 22:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7D084A27;
-	Wed,  4 Sep 2024 19:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172111885A5;
+	Wed,  4 Sep 2024 22:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="w08QlZm2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSZ/VpnK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28481E1A34
-	for <io-uring@vger.kernel.org>; Wed,  4 Sep 2024 19:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8BC1849CB;
+	Wed,  4 Sep 2024 22:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725478915; cv=none; b=eXnqzTUGLbcwULZncIbNT8bWD2Jad7PjsiLOztdtVDmw9+t1z0dFRJ5c8TXkHq918uSzlpu7aju078l9R6EmkBEGGwVKGH8AHFGChJfhN9ueseRTbc3rAFEMRIBdo7BA9T9i6Pe82EP+Kc+3UA3uuPY61QMFqfDzUq0xKSbmPs0=
+	t=1725488630; cv=none; b=o4Sl9XZzR4ZFcBCd+Zk2myO682ehwg0D5m+pj//xYx/A1bpy9ddciBtcQ6g4fv6cV9M8E8/A3F3hyBoMOuGa9VVZBPdRtHw6WOFNES8BUHALErUlFOlmJRfu5DR//E3/YVoLEugY6mWYit2Pci6MWvJhiqb+X6ExrD7uJpwIZ94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725478915; c=relaxed/simple;
-	bh=wbc+d2YpNTtCFGaD6dfisy7NLXUN9LVrut/O3nL494k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fidlEDx/SIXzQDGcyYMwMtIFw/DG4X3d5LwNyvZ6Z31MbBUj7CBQHQriKnVLOFKtQf9okIJF03zEzq3Zy0sdfnJrfkWd6mA2On5tKEJH4hobdGl1L8/z8NyboPymTUm50IPI6Sh/mUbMxu/zvziyq47Ty8CKpFjdYKqFHb/fTtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=w08QlZm2; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39d47a9ffb9so25529605ab.1
-        for <io-uring@vger.kernel.org>; Wed, 04 Sep 2024 12:41:53 -0700 (PDT)
+	s=arc-20240116; t=1725488630; c=relaxed/simple;
+	bh=kRVkt4+WhsatR9jnqTZpuVAEsksRgOSOji0M4RhrWOk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u/CcdhyW4xPLkKQqn75C7DIKWi36v6wIRGUe3uvhqXmoeJDbyHNXLVB9kfSaxfMxbv52LZvb8R0gpy94JOP+EjSs/VivRelgvPqzWzrwrxRUJQHvBsHSLH4Y8X6jAyci3bqRx1tR6aRR7bw7R8sSpltLd1+YiQEU5SZCRklPaBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSZ/VpnK; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4567dd6f77fso11453151cf.0;
+        Wed, 04 Sep 2024 15:23:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725478913; x=1726083713; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RdwDAwj1M1g5czG2XW5eNSEASwKM8Vfwg83dxIvpeAI=;
-        b=w08QlZm20dmSaeI4iVJuMF/vukREsJMyYCAZhdJoI+zZX0soN0Z3Q7OUJOE1UQbafB
-         qQX1S1cPqwNvT37yGCZOymYQgOUyCqnoDtGBX6ZI2vZ0rHfyp7rYxqmxc4u81rRMLQum
-         3onLKk70J9vBME7dRCb6sML17qMWXECGkMPaRe30pfxMmAnubH6ZMw6BFoH0asRrTHS4
-         +B6jKlDuHEqUpUksvUI6iswv5YdmwUjIZTks6H+17Af9s4vKVm7Mcbz3sbSZycq6mQDm
-         YG6VYJtgi12T6SLH5jFXzPvTcooxp93vo+CwliZMAywf1ioYkR3xQS1gktnmKLxX6nSF
-         LRuw==
+        d=gmail.com; s=20230601; t=1725488627; x=1726093427; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rKNYLQsVUjNoxMpBiS/2gPNv3mQBnalHju2QL1qf/nE=;
+        b=mSZ/VpnKZUZDmzTm4duMa93sBeF/N8/F26RdtFFXwvH9Y7GY95KTcvqwrxLrGcuIka
+         UIl5jiB64YKEQqfaGEuey6klKfvrkiIEkNricw0dvJCpsCv9AxPiy376QttR+y+g7BS1
+         N9FpITqaDnOgXuiEh5w7aTICe3Mmlke+Mi9jS4/0h3MlTa7zplYtmUiWRFJ/XRxvqgcf
+         zRadFIcs+jHZ23tYl/T2UrHiQBC7RKsZDdrDCvYg/33XnKX9h3v9Cooej7hrZnr3lAV/
+         bUGxW4kAb+tfqn6a9oNG/imSQ3q4TAziK6pw03QS9AemMQRVbMZ/STOfmz8In+b3s+LN
+         AB3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725478913; x=1726083713;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RdwDAwj1M1g5czG2XW5eNSEASwKM8Vfwg83dxIvpeAI=;
-        b=s1n6ZlzYuVw7yv19UPfF1frOt4esqNYMxaLDN5tFDcaQpRSlu/z7P7zrNYS4/JUZtc
-         vMNxQiQmpvd17onWQkfepkbBvk7KUh2kwI6nuQ0bzFPtC8EDULy6u9MQmjykd+kZ0H7q
-         amFeBXHX9Anbb2lJD4z4+D8Leky4tVuGwbD2B27Xmtqv6C058POp5domrdkDmSJ691TL
-         fvjBvLzce+x7SE2D3E0od34g0ECoaxmOYBs0/wOaopo1quaFdX7EDIXQArvTBdTt5VaY
-         yHZJp8xLQnyFj1E4oK1Pcmyfh9a1MDbLoqbWTkfSkAdoJGLkQzhUbhGmT+X4TwSjhgWx
-         LTHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUh9hFRTxfTbEpO/NAGhAW09wg/aghWf7uhRW6G7FGSLo9JtS8TigVorZNuhmW99zVgamKeqCCgdA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxboMhOaq3697s16fIaFVtNQ7h/aNVktUp7K7hSg0OoqBqcNItr
-	0twfD8YsMiIVioxZHUaHiujhIE8QRi+YIG3tlG96HStvLKayfJIkl+bZ7ERnptE=
-X-Google-Smtp-Source: AGHT+IHeZk1frFnh+IgNt7FlgN2aGXKB+oocbA6gS5JVRPoPWPYbe0NvMfg+O8wOba9QrMFCFRvn2Q==
-X-Received: by 2002:a05:6e02:1a29:b0:39f:61e4:1ad8 with SMTP id e9e14a558f8ab-39f61e48be4mr123352395ab.26.1725478912732;
-        Wed, 04 Sep 2024 12:41:52 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f5078fb2dsm26948335ab.87.2024.09.04.12.41.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 12:41:52 -0700 (PDT)
-Message-ID: <5a71607d-ba1a-49f1-8ea6-7e619b85b547@kernel.dk>
-Date: Wed, 4 Sep 2024 13:41:51 -0600
+        d=1e100.net; s=20230601; t=1725488627; x=1726093427;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rKNYLQsVUjNoxMpBiS/2gPNv3mQBnalHju2QL1qf/nE=;
+        b=r7c6Dn00Jw2jXk576lZua4spTjhSrAIypl9UqyOo0ExjAtv5ju4Vi/aXa8VV+9B8pI
+         uJdyLhE01TbCPaMz4Go94M886OEwO6vG0Z4g7OvrOu7Tq89vJA0+RAuqfTQGbUEVjXxn
+         CcJVFpQHRZSxrljDTqMyHSGiQnr42fZ8WZBKuOBYt8b32nsafaDuRDRzi9GgKKwdWiFD
+         gRii0ZDuk4a/bueFduIrYerQOalEp0NefQGQvhrhdY6nEK6igKpZjIkHRPc+e2zKior3
+         rDl2uB93kgwqfsjuacTNAdOZVmSPsj4DJ94lcoz26GEDYsiYbE6KdzkaWU2gVzQcSrGX
+         y/Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAvzBvyjpGadEsXOEVus5c/jDaZiutEZshnu+rAe8npHByzi9Cf3zJuGEhEP8h7mP/2ytuKQBgtrhj8lrsvA==@vger.kernel.org, AJvYcCVouwO6yNSANl8XCwUxaYaNgWFf1opx52B3xYLwWZUlcBouqAMPXz/H+Hioa9VOepZl0Q20gli3yQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5kiVEI7bunpEiYruOA/ywQSpHTIjh3c5Sp+u0QBZLcjrpJ3Hj
+	U63S4wWyoWi9NMhs4klZ/A1FhUv7VBuuJwIawLmj4zAAH6QkqDsNYgiFgd5fV4ya6U1qO7dQ9ww
+	yshSC2AUl6qEWDFOa3Cj3bpca6dk=
+X-Google-Smtp-Source: AGHT+IFEEOiFvSYXzRR6icDiAj5ewRIRWNAmT0g7lDjUWxdcq00aSDjXrIKRz+g949MmDZimqtpysS3k6dbryR4n5eg=
+X-Received: by 2002:a05:622a:34f:b0:446:5c58:805d with SMTP id
+ d75a77b69052e-457f8c0a7d4mr55582261cf.19.1725488627003; Wed, 04 Sep 2024
+ 15:23:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 00/17] fuse: fuse-over-io-uring
-To: Bernd Schubert <bernd.schubert@fastmail.fm>,
- Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Pavel Begunkov <asml.silence@gmail.com>, bernd@fastmail.fm
-Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Amir Goldstein <amir73il@gmail.com>
 References: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-0-9207f7391444@ddn.com>
- <e51abb75-b3f9-4e91-91dc-81931ceacad6@kernel.dk>
- <93127b12-77ae-4e25-bb48-8c8596c7702f@fastmail.fm>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <93127b12-77ae-4e25-bb48-8c8596c7702f@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-6-9207f7391444@ddn.com>
+In-Reply-To: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-6-9207f7391444@ddn.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 4 Sep 2024 15:23:36 -0700
+Message-ID: <CAJnrk1aFcDyJJ5rP1LFkpyUPHkzDv_bcOMPW2m28ZBS8T+WmUA@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 06/17] fuse: Add the queue configuration ioctl
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, bernd@fastmail.fm, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/4/24 1:37 PM, Bernd Schubert wrote:
-> 
-> 
-> On 9/4/24 18:42, Jens Axboe wrote:
->> Overall I think this looks pretty reasonable from an io_uring point of
->> view. Some minor comments in the replies that would need to get
->> resolved, and we'll need to get Ming's buffer work done to reap the dio
->> benefits.
->>
->> I ran a quick benchmark here, doing 4k buffered random reads from a big
->> file. I see about 25% improvement for that case, and notably at half the
->> CPU usage.
-> 
-> That is a bit low for my needs, but you will definitely need to wake up on 
-> the same core - not applied in this patch version. I also need to re-test
->  with current kernel versions, but I think even that is not perfect. 
-> 
-> We had a rather long discussion here
-> https://lore.kernel.org/lkml/d9151806-c63a-c1da-12ad-c9c1c7039785@amd.com/T/#r58884ee2c68f9ac5fdb89c4e3a968007ff08468e
-> and there is a seesaw hack, which makes it work perfectly. 
-> Then got persistently distracted with other work - so far I didn't track down yet why 
-> __wake_up_on_current_cpu didn't work. Back that time it was also only still
-> patch and not in linux yet. I need to retest and possible figure out where
-> the task switch happens.
+On Sun, Sep 1, 2024 at 6:37=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> w=
+rote:
+>
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+>  fs/fuse/dev.c             | 30 ++++++++++++++++++++++++++++++
+>  fs/fuse/dev_uring.c       |  2 ++
+>  fs/fuse/dev_uring_i.h     | 13 +++++++++++++
+>  fs/fuse/fuse_i.h          |  4 ++++
+>  include/uapi/linux/fuse.h | 39 +++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 88 insertions(+)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 6489179e7260..06ea4dc5ffe1 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -2379,6 +2379,33 @@ static long fuse_dev_ioctl_backing_close(struct fi=
+le *file, __u32 __user *argp)
+>         return fuse_backing_close(fud->fc, backing_id);
+>  }
+>
+> +#ifdef CONFIG_FUSE_IO_URING
+> +static long fuse_uring_queue_ioc(struct file *file, __u32 __user *argp)
+> +{
+> +       int res =3D 0;
+> +       struct fuse_dev *fud;
+> +       struct fuse_conn *fc;
+> +       struct fuse_ring_queue_config qcfg;
+> +
+> +       res =3D copy_from_user(&qcfg, (void *)argp, sizeof(qcfg));
+> +       if (res !=3D 0)
+> +               return -EFAULT;
+> +
+> +       res =3D _fuse_dev_ioctl_clone(file, qcfg.control_fd);
 
-I'll give it a look, wasn't too worried about it as we're also still
-missing the zero copy bits. More concerned with just getting the core of
-it sane, which I think we're pretty close to. Then we can work on making
-it even faster post that.
+I'm confused how this works for > 1 queues. If I'm understanding this
+correctly, if a system has multiple cores and the server would like
+multi-queues, then the server needs to call the ioctl
+FUSE_DEV_IOC_URING_QUEUE_CFG multiple times (each with a different
+qid).
 
-> Also, if you are testing with with buffered writes, 
-> v2 series had more optimization, like a core+1 hack for async IO.
-> I think in order to get it landed and to agree on the approach with
-> Miklos it is better to first remove all these optimizations and then
-> fix it later... Though for performance testing it is not optimal.
+In this handler, when we get to _fuse_dev_ioctl_clone() ->
+fuse_device_clone(), it allocates and installs a new fud and then sets
+file->private_data to fud, but isn't this underlying file the same for
+all of the queues since they are using the same fd for the ioctl
+calls? It seems like every queue after the 1st would fail with -EINVAL
+from the "if (new->private_data)" check in fuse_device_clone()?
 
-Exactly, that's why I objected to some of the v2 io_uring hackery that
-just wasn't palatable.
+Not sure if I'm missing something or if this intentionally doesn't
+support multi-queue yet. If the latter, then I'm curious how you're
+planning to get the fud for a specific queue given that
+file->private_data and fuse_get_dev() only can support the single
+queue case.
 
--- 
-Jens Axboe
+Thanks,
+Joanne
 
+> +       if (res !=3D 0)
+> +               return res;
+> +
+> +       fud =3D fuse_get_dev(file);
+> +       if (fud =3D=3D NULL)
+> +               return -ENODEV;
+> +       fc =3D fud->fc;
+> +
+> +       fud->ring_q =3D fuse_uring_get_queue(fc->ring, qcfg.qid);
+> +
+> +       return 0;
+> +}
+> +#endif
+> +
+>  static long
+>  fuse_dev_ioctl(struct file *file, unsigned int cmd,
+>                unsigned long arg)
+> @@ -2398,6 +2425,9 @@ fuse_dev_ioctl(struct file *file, unsigned int cmd,
+>  #ifdef CONFIG_FUSE_IO_URING
+>         case FUSE_DEV_IOC_URING_CFG:
+>                 return fuse_uring_conn_cfg(file, argp);
+> +
+> +       case FUSE_DEV_IOC_URING_QUEUE_CFG:
+> +               return fuse_uring_queue_ioc(file, argp);
+>  #endif
+>         default:
+>                 return -ENOTTY;
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index 4e7518ef6527..4dcb4972242e 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -42,6 +42,8 @@ static void fuse_uring_queue_cfg(struct fuse_ring_queue=
+ *queue, int qid,
+>
+>                 ent->queue =3D queue;
+>                 ent->tag =3D tag;
+> +
+> +               ent->state =3D FRRS_INIT;
+>         }
+>  }
+>
+> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
+> index d4eff87bcd1f..301b37d16506 100644
+> --- a/fs/fuse/dev_uring_i.h
+> +++ b/fs/fuse/dev_uring_i.h
+> @@ -14,6 +14,13 @@
+>  /* IORING_MAX_ENTRIES */
+>  #define FUSE_URING_MAX_QUEUE_DEPTH 32768
+>
+> +enum fuse_ring_req_state {
+> +
+> +       /* request is basially initialized */
+> +       FRRS_INIT =3D 1,
+> +
+> +};
+> +
+>  /* A fuse ring entry, part of the ring queue */
+>  struct fuse_ring_ent {
+>         /* back pointer */
+> @@ -21,6 +28,12 @@ struct fuse_ring_ent {
+>
+>         /* array index in the ring-queue */
+>         unsigned int tag;
+> +
+> +       /*
+> +        * state the request is currently in
+> +        * (enum fuse_ring_req_state)
+> +        */
+> +       unsigned long state;
+>  };
+>
+>  struct fuse_ring_queue {
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 33e81b895fee..5eb8552d9d7f 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -540,6 +540,10 @@ struct fuse_dev {
+>
+>         /** list entry on fc->devices */
+>         struct list_head entry;
+> +
+> +#ifdef CONFIG_FUSE_IO_URING
+> +       struct fuse_ring_queue *ring_q;
+> +#endif
+>  };
+>
+>  enum fuse_dax_mode {
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index a1c35e0338f0..143ed3c1c7b3 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -1118,6 +1118,18 @@ struct fuse_ring_config {
+>         uint8_t padding[64];
+>  };
+>
+> +struct fuse_ring_queue_config {
+> +       /* qid the command is for */
+> +       uint32_t qid;
+> +
+> +       /* /dev/fuse fd that initiated the mount. */
+> +       uint32_t control_fd;
+> +
+> +       /* for future extensions */
+> +       uint8_t padding[64];
+> +};
+> +
+> +
+>  /* Device ioctls: */
+>  #define FUSE_DEV_IOC_MAGIC             229
+>  #define FUSE_DEV_IOC_CLONE             _IOR(FUSE_DEV_IOC_MAGIC, 0, uint3=
+2_t)
+> @@ -1126,6 +1138,8 @@ struct fuse_ring_config {
+>  #define FUSE_DEV_IOC_BACKING_CLOSE     _IOW(FUSE_DEV_IOC_MAGIC, 2, uint3=
+2_t)
+>  #define FUSE_DEV_IOC_URING_CFG         _IOR(FUSE_DEV_IOC_MAGIC, 3, \
+>                                              struct fuse_ring_config)
+> +#define FUSE_DEV_IOC_URING_QUEUE_CFG   _IOR(FUSE_DEV_IOC_MAGIC, 3, \
+> +                                            struct fuse_ring_queue_confi=
+g)
+>
+>  struct fuse_lseek_in {
+>         uint64_t        fh;
+> @@ -1233,4 +1247,29 @@ struct fuse_supp_groups {
+>  #define FUSE_RING_HEADER_BUF_SIZE 4096
+>  #define FUSE_RING_MIN_IN_OUT_ARG_SIZE 4096
+>
+> +/**
+> + * This structure mapped onto the
+> + */
+> +struct fuse_ring_req {
+> +       union {
+> +               /* The first 4K are command data */
+> +               char ring_header[FUSE_RING_HEADER_BUF_SIZE];
+> +
+> +               struct {
+> +                       uint64_t flags;
+> +
+> +                       uint32_t in_out_arg_len;
+> +                       uint32_t padding;
+> +
+> +                       /* kernel fills in, reads out */
+> +                       union {
+> +                               struct fuse_in_header in;
+> +                               struct fuse_out_header out;
+> +                       };
+> +               };
+> +       };
+> +
+> +       char in_out_arg[];
+> +};
+> +
+>  #endif /* _LINUX_FUSE_H */
+>
+> --
+> 2.43.0
+>
 

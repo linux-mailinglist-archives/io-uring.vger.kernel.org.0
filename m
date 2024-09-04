@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3033-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3034-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9656F96C449
-	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 18:43:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A39596C6F8
+	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 20:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2FCE1C23C48
-	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 16:42:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25E7F1F229D8
+	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 18:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEA41E00BD;
-	Wed,  4 Sep 2024 16:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456BD1E4107;
+	Wed,  4 Sep 2024 18:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="sgi/C4+c"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1Mzz9bCX"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF211DA319
-	for <io-uring@vger.kernel.org>; Wed,  4 Sep 2024 16:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A147E1E2034
+	for <io-uring@vger.kernel.org>; Wed,  4 Sep 2024 18:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725468176; cv=none; b=YBglibMew1LJ3smabUTImYZk53ig9WKi2MZLc3SaIRWmVL8AuA5H38I3Jo3mkMz2u5nrqnBqk+I33xnWjWnbVioXAQHkQeJZiC9m35q00vnfrqMHfbcDvfJFLijewFnOvkFL1K7R43jUDmCWYLcsaMzgjsvyTZ5s20KqC6HpqZY=
+	t=1725476352; cv=none; b=TsuAoS0Ymom01iPYb/4WBjFYf52bfk9qnOHQTzZts4CnSfPlkjPcnZJ3+i4tZayoIkzQeelXIzMDdR65PSe9O9lueCOYEB93iOHYxMlaVL275g8aMCXlD5xgwCWmSIT0M66bSFVIJWh3bb8HDpfhMPNzgcXwzxDJGRc2Njkas10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725468176; c=relaxed/simple;
-	bh=2g8hORqJfgJK6c4TQK5Uakx8LmMu/IUmPZLfREx32WY=;
+	s=arc-20240116; t=1725476352; c=relaxed/simple;
+	bh=Kr4wnJWAVLiOQ+87uD8Ult0dwg3eo90OJJGevl8kV+8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HVkOM+i5RB2zMTWUZDI6oo91KVs9ILWDH/cGa1RsTLq/U47WJW8uSlEMTz1s00sfl5S9MWNdUrdD8SDdjD4J6t/UBAIeWJdoHqmeXAEc1j/Qz4S+RZBZjXwwAL9MheyOsyHJHtkkT/ISujoIMgvnmgC6jUKCTePJzgz5jkzMSoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=sgi/C4+c; arc=none smtp.client-ip=209.85.166.49
+	 In-Reply-To:Content-Type; b=ri4QV0Zs01mMQs1nPO8ypkBqptlwpDDh1Ys3iDn6mVRGUmqq+xbMZOY8sWhUxkInGN3aje/bqlUAAVlDjapYMbH0YyqRoaTmHglGI8xaEIdAe9ENVWQsRlYQuXegKXCeXXRywkAXC9WlP3WfSaRM+cDkExUjm0ikq2S8/xZaPUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1Mzz9bCX; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-82521c46feaso298215739f.2
-        for <io-uring@vger.kernel.org>; Wed, 04 Sep 2024 09:42:54 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d8a4bad409so3090945a91.0
+        for <io-uring@vger.kernel.org>; Wed, 04 Sep 2024 11:59:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725468173; x=1726072973; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725476348; x=1726081148; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7EhfYnDF3geuG4Vlp11MLOFukSIq+HchLGo2+d5gn5Y=;
-        b=sgi/C4+csRpxX5SBHfUQo2JZc+iEDHieqzVx64/Dr3XeT8h4INMOb3dUSpeyHKDbHs
-         88O8vEXIfp+wQsazDtnNaNZBF9uoAv3CNJOkGg4pWnVzkjlBxque8yFbaO9ho7ZjsjGk
-         RYM6uC/PcCilYIj8HPcSm0XZz7NFOC8LhFovBTs1VReLK4xy7i+tYO/Onfaylwf/Pozh
-         oW8w+4ltSgyMkyJiUKrinudNdJKtv3K27KilnLW/ee6GyGCiUDV/2fuX8YOSEEVP2kfn
-         5mwrsHDQKzvSHcrzo6Z0+41hvRgmU1pOW26AKmdpTwrv3CW32vCOGH7Hhg5D9w+JcT41
-         KfpQ==
+        bh=x8LsCKVZwV5lQ3jWhAlg4mSx2NCcOVeDvZznPs+OiwI=;
+        b=1Mzz9bCXApQcIpuWTQ5BZUYPHNJS8dbtQQYtc9pe/QkvvyrEDi3QZqMlut0SdwW2HB
+         nNH5qGyANnOAdMFnJYAJAwmkjH4lnA6/eOeNgUUKrNVWY5IyFF4llABSPuzGUF1aDG9D
+         54ZIJUjeUptk5CspCdYetWtJUTj25KHgl/xQgzDkRXp38SI0XYIB6LJrxdLaSWCeEESg
+         FIV7MIazHYlr9qGk5UPd/5YniB1F1aGJ9W1Y8IN7W5q4j6UmQ771GlU49PSrkFxDHtpd
+         IGT7fGxD+LVT/0GQZZBFMSlzgNs+IG4fWen72KpPFrQSbAtyQea9hcvAsaQ8CfHs6irr
+         Kgdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725468173; x=1726072973;
+        d=1e100.net; s=20230601; t=1725476348; x=1726081148;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7EhfYnDF3geuG4Vlp11MLOFukSIq+HchLGo2+d5gn5Y=;
-        b=TtADuK1NEnd8TVrVzZKtnC3m1UC6fmJ571I+Im60qYfEUpJZPuHfKcjlHEzQNh6mh4
-         aCP89FLsj0UKpk/GsSzlvK8JDmlDAhdop/2NCNWsVGvisc3X2tMbfFfmxHN2HGVnK4YF
-         BEVqR1D/BwLhsI6irDlCFnBVg+6Y5MDFnZa6U2SCRWtHxamUGmKHy6zQMsyrgSGpbO6P
-         xKXcIDZfj4nC5EvKdX2b/tSJQmr22g8IXpgHjGB7mFSCIWzo+v95ZCTX2cFV3DfVVaGD
-         L7K9vqejHyXke5MGACRaFg6YM9eK+gHP7ZXXXkpk1mgCsnusYVFC7yTQEw1B+NqbDzXg
-         dEHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWefQM/v6fLBp2oKabjcKiqFwdtykB9GtvEETrvAVIk3vy4abqLviehIR6Z7OynGkMMDhKzzR2DPw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXFJKX/bWgHaVxTPoqnvZHc4JfCLIeqVg02EEqJ1Mm3f4EzK6s
-	jgwFTKPfnGGeMP8JxwPaaIdEWTGbUZMkPB4b8Virm2wPkWG+uPhwhkzriSz9cgo=
-X-Google-Smtp-Source: AGHT+IHhCXKvkoFcAU16828iKL9lDAwOYMFjXGtZvWZm1i4uqR6mNtlu+n0aKognVOquEwQwRUen1A==
-X-Received: by 2002:a05:6602:6c04:b0:81f:b53b:728d with SMTP id ca18e2360f4ac-82a37503513mr1463710439f.6.1725468173592;
-        Wed, 04 Sep 2024 09:42:53 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82a1a499273sm358522439f.34.2024.09.04.09.42.52
+        bh=x8LsCKVZwV5lQ3jWhAlg4mSx2NCcOVeDvZznPs+OiwI=;
+        b=jEXVo+ekXTcpyeJxISoJHmmqJfADrqBr0w7AejU2HpEqY6DFCIO6VcG3KgeymVuloq
+         H539cy43QlZz3EtvXCHNWcgfqPXILiBJYTcY6kw8KwVMn2IgS0DzhszQF0Y0ZsEJ5iZ7
+         P/vhY509OnlrUMedos/F3akRQZsMe69IIzFHbIfGm7GDorNziWHvHqA4GQ7NjBEgdavC
+         yjJCQqiVSjtnIkLHAEUINfBgJJX8/2FnXhBPVvz36PdTmShd6JbDvypevzs/bKX1iBXE
+         VCV12yRtPD6Eaz5Ts4a8xdwk8udaQxN9GODYP+oVtfyPE4NSg3iwVC4r77y2h+xo/F/m
+         8WyA==
+X-Forwarded-Encrypted: i=1; AJvYcCU51x5H2wSGERRf3qK5h6r9ma4htyzJ94KR936eqa4IxzG3fOmCgthMlK84ZlRhnHQhKHFd0ZfCNg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzinHUCfOsYhvjWy9dr3PGO6GcoI3bdOXdF69C0YD23KGagYZtA
+	JZ+AZXdTTaWHEWIvd+lBs2bk4cCq4WnVEoP9xLQusbgfd5TdzBRim87lrv+L/mU=
+X-Google-Smtp-Source: AGHT+IEczGwYE1W6qKTTzXwAPYEQh+2rAiwq81FMnvGCUVLI1W5fddQWW+CUvwy+U8JB2KVDKRXq8g==
+X-Received: by 2002:a17:90a:dc13:b0:2da:936c:e5ad with SMTP id 98e67ed59e1d1-2da936cef76mr2879780a91.33.1725476347815;
+        Wed, 04 Sep 2024 11:59:07 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c085:21cf::1030? ([2620:10d:c090:400::5:fa1a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8cc28ac9asm7592934a91.28.2024.09.04.11.59.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 09:42:53 -0700 (PDT)
-Message-ID: <e51abb75-b3f9-4e91-91dc-81931ceacad6@kernel.dk>
-Date: Wed, 4 Sep 2024 10:42:52 -0600
+        Wed, 04 Sep 2024 11:59:07 -0700 (PDT)
+Message-ID: <364a2201-34cb-4888-9e27-9a34999d5a79@kernel.dk>
+Date: Wed, 4 Sep 2024 12:59:05 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,27 +76,61 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 00/17] fuse: fuse-over-io-uring
+Subject: Re: [PATCH RFC v3 17/17] fuse: {uring} Pin the user buffer
 To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>,
  Pavel Begunkov <asml.silence@gmail.com>, bernd@fastmail.fm
 Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
  Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
  Amir Goldstein <amir73il@gmail.com>
 References: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-0-9207f7391444@ddn.com>
+ <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-17-9207f7391444@ddn.com>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-0-9207f7391444@ddn.com>
+In-Reply-To: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-17-9207f7391444@ddn.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Overall I think this looks pretty reasonable from an io_uring point of
-view. Some minor comments in the replies that would need to get
-resolved, and we'll need to get Ming's buffer work done to reap the dio
-benefits.
+On 9/1/24 7:37 AM, Bernd Schubert wrote:
+> @@ -465,53 +486,41 @@ static int fuse_uring_out_header_has_err(struct fuse_out_header *oh,
+>  
+>  static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
+>  				     struct fuse_req *req,
+> -				     struct fuse_ring_ent *ent)
+> +				     struct fuse_ring_ent *ent,
+> +				     struct fuse_ring_req *rreq)
+>  {
+> -	struct fuse_ring_req __user *rreq = ent->rreq;
+>  	struct fuse_copy_state cs;
+>  	struct fuse_args *args = req->args;
+>  	struct iov_iter iter;
+> -	int err;
+> -	int res_arg_len;
+> +	int res_arg_len, err;
+>  
+> -	err = copy_from_user(&res_arg_len, &rreq->in_out_arg_len,
+> -			     sizeof(res_arg_len));
+> -	if (err)
+> -		return err;
+> -
+> -	err = import_ubuf(ITER_SOURCE, (void __user *)&rreq->in_out_arg,
+> -			  ent->max_arg_len, &iter);
+> -	if (err)
+> -		return err;
+> +	res_arg_len = rreq->in_out_arg_len;
+>  
+>  	fuse_copy_init(&cs, 0, &iter);
+>  	cs.is_uring = 1;
+> +	cs.ring.pages = &ent->user_pages[FUSE_RING_PAYLOAD_PG];
+>  	cs.req = req;
+>  
+> -	return fuse_copy_out_args(&cs, args, res_arg_len);
+> +	err = fuse_copy_out_args(&cs, args, res_arg_len);
+> +
+> +	return err;
+>  }
 
-I ran a quick benchmark here, doing 4k buffered random reads from a big
-file. I see about 25% improvement for that case, and notably at half the
-CPU usage.
+This last assignment, and 'err' in general, can go away after this
+patch.
 
 -- 
 Jens Axboe

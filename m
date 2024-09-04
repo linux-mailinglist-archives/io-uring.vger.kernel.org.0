@@ -1,72 +1,72 @@
-Return-Path: <io-uring+bounces-3020-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3021-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7FC96C003
-	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 16:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D43F96C005
+	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 16:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9DF31F25C5E
-	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 14:20:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EDA31F26509
+	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 14:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3F21DC074;
-	Wed,  4 Sep 2024 14:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900EC2575F;
+	Wed,  4 Sep 2024 14:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndUWntOq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a8SvQuC4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E021DC061;
-	Wed,  4 Sep 2024 14:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05A91E0B9C;
+	Wed,  4 Sep 2024 14:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725459469; cv=none; b=uQtEyH+9Zfk1oqk73puayT18SWv8KRA+8540zGJNsH8i2ynJw92fPj2pTqjhrMEwvQgBvKeEtTBF9YO+UJtLR2V0NoQg0tGak7lNuD1t9mXG94Y/jfCPBEAu7R+O0xIKtnJm/1oRnmxXNWPlmtOs9c1VANq4PE5blY3aFmDWsew=
+	t=1725459471; cv=none; b=QpB9K5jCw71Cobmvq1qU+Tbm9zPDD3GbZm9Rbd+A2NpjNNtMpG+yU2Qy6cDHcsP/X8UQjZCbJnxE1coiUmb8n28cY4FJm0gLVqtDT7L06hbvZoDY8eNFR1+gsISb7TdZD90Kc65mgM3o178UlKfjWE8tPBnjzJJuNv2F60aWMJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725459469; c=relaxed/simple;
-	bh=xgZK/jw8ZlQXj8cIxR0W7ybGVnlcP1lJNS+9Q/l9a0s=;
+	s=arc-20240116; t=1725459471; c=relaxed/simple;
+	bh=JrAOgMM2iAIABQmCU3ZV4QTcl0u9rm5SIWFUspGZWXA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Dh3EvDk3Lo25T1Ehc5JXhdQzNnJ7foPpANQOqYpIZRlq31RkvMD9fa3m1o3EiYtnCEaMMDZ6Brcfnh4gn2uSrVRPzqMOqGbSHkl7Yp/WAisKVqdxPI2bH7hDpUVfZpyxxMc7usHCnTBPtJemdnTh2io6YqoQpq41v9uUYFR/LZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ndUWntOq; arc=none smtp.client-ip=209.85.218.51
+	 MIME-Version; b=vAfNyCXi1FDGgK4cmwdtuSgPt6aRRnAU9Uvzwt484Y2EO55lonsyPJuvB9FZgIrrxwwoPhFV9B2iMJepgX4IsS3sNMkw1iY4bqVK8DfhFX6av2XIOCpVp71/4gmscz+urrZToyaVVS1wRfvM+5uQbvQrF51Z1Y4dM2CxfbXVrPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a8SvQuC4; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a86b46c4831so775420666b.1;
-        Wed, 04 Sep 2024 07:17:47 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a86e9db75b9so739471266b.1;
+        Wed, 04 Sep 2024 07:17:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725459466; x=1726064266; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725459468; x=1726064268; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yyZRXxiAI12SAMIbkwT8bn9l7S8e/TKEaLOeKBVDL1c=;
-        b=ndUWntOq4XJuMpOUjj5eavzRr2ekQTut+8DfyAj0+sb33Es+BYAd6gWznWpmbnA4YN
-         cpSuLENaxhzV90evVeXnKR+O7F5FfUroEZoZWAlXMizMbiaG20X9BvgwhQBAaXa2cRhd
-         RoHjtjJd9xD7y+hPR6ij8pk8basOg80XDzXR4gkhq1VSV/YmWzoCLwtwg1IxXsvOn+Ch
-         ngyWm3wZobfq5usju5jgMyzL1OIUS+rLj7+zGKV/hvTgYszIkbm84tbz/4YduStkhNei
-         FBsi1qCSR4lPeVfMRJRakkIYcNGBAHDjuMTlez4hkiLAiRCC7brV2SUWi8F92d9J+ir6
-         Qmow==
+        bh=2XjW/1z5M+e5L1HlSBo37JIC76JYeYPBxc+HZavMul8=;
+        b=a8SvQuC4AM1diZaMBfDKvheL4ygM5HfgLrAQTpjhmuWpypp2mcE48MQ4chmU1hpwxb
+         FpVGiHT+56Dz/EMgnPYdlyRT+LtoFutx9O5N6cOXA4P8dIJ/YWlBkOk8fpAe/HPOeZg7
+         Y+r2Ak5lFUf1WQGZMorHLnJcRjL9AZii8YkWP9UalvMzM+tENiXKEcmEIdEH99fnbY+1
+         ZP2Vwq5zhIxJB/921wOTpx8YDjt5/hbNuhocctg0Ch3S/pQF+7yD52zzXeLjnJy0eyfR
+         dh3pmtSGet8zG7Q0TJXzQ3Vp4VZoy/2VY5CEcesa8eCAo/Yq/D7qfptyFFMBWPSTJNDw
+         F6GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725459466; x=1726064266;
+        d=1e100.net; s=20230601; t=1725459468; x=1726064268;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yyZRXxiAI12SAMIbkwT8bn9l7S8e/TKEaLOeKBVDL1c=;
-        b=IMJckxDeh7ps/PdQJ4ZWgnj/kRKIfvbuTjFp3xmZ7dVhophER5BGVG602Q48O9Ti6b
-         f9F8PEoyYUAiuG150Iir9CPqd0tDZVzBu1xC2niv6NfARZMkm9fQ4zxW5NWxafN09ad2
-         AV1guMHQZL5RWfqksW3cMogjEZKuXx5RAjxOwQB48LGO8yK9YHJh+CukOV/1qJLVpG3n
-         rDMbOk8IDMlC2sc0T3BLgg221hu0gNiE3QHXc2GnxjEV62psLsHx8qW1yg13iH+LwrAc
-         jXZFlN2D6G4gMthKbNYCadMwSUZAYdY2UxqzPIsI0RuONI1ObRfVvIf5BAVQTzdr7Fwr
-         oXZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZsMD+x/QaasOIIUC3GDqg46Vyo/GqaDVdSWw9cfmW+wK1YhFVPwLSnY0P9xMgni3cEkhBmWf8lW1rZw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXYMlmTAQeyKuaxlqIA6Ji2z1+N/QCaiwGNfyxf1jSdiqWM6zQ
-	aSlpzKgyzshjGsVIx9S4WYbXDO2bjW2UCs0aQC+BbbhLZ36ooeYtmlH6lw==
-X-Google-Smtp-Source: AGHT+IElud/tGXrs7q4hPENcWMYIZSj7RTtRqWMNx0QoFf5mcRK9CPIkT2ZU7thyj+ZNDXYdgCuEaw==
-X-Received: by 2002:a17:907:a07:b0:a7d:e84c:a9e7 with SMTP id a640c23a62f3a-a89d8848bd3mr1056922166b.53.1725459466090;
-        Wed, 04 Sep 2024 07:17:46 -0700 (PDT)
+        bh=2XjW/1z5M+e5L1HlSBo37JIC76JYeYPBxc+HZavMul8=;
+        b=xEJ+5orNtTw5rAvXEVthYYrDdBlylNtch/Xjt8Ho6OhGDvPi9O1LSeWSLLQgDrEjiX
+         6oVWR3s7UiFyJV9Iud6k0eugbiptj6n96485M8so/l9za5jXYyQeVhm+uAlV0r/TV0/I
+         II4f8D9h8+s2AtygpoZ8xCckxhujMMOZ6TXYPwbaxaBzfirPbF0qdOqsUjjkzW/S3l//
+         N6GQSo7f7EroYWC2dEtBQf3LyYlfVHhZXEcqh7N00RXr7zLBnHNHweghim5jpTCuiIHT
+         LwYRQF+j/ZgpU6moF93bKn7NstDvts0TFKi8qPqT44bIIwErRiGbwd+foB4ya/RZ5CXX
+         hKdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPemvetmqfrSdNn+jkAwws8KVrmPsKpadLjJic8z66F+w2tRbpSz2ldCXYqusfzSBz+ZlcjY4ESEhgwA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIYjE1kgU0YmFhHCcvNtIPYg/bdjoGsJGTDtdFOItKjQ9/iy07
+	JTH27+0aIXQspcGmvTEOORtdFIckjHvQfTTsCRQOBR1Qr6mljR/oMahIJw==
+X-Google-Smtp-Source: AGHT+IEYnlE2jE9AeI30LzbXw8Pi928CHHZ2cfjLj3+Sl10dnyCa2YAie/Zh3flyVcceULOyKSQ8nA==
+X-Received: by 2002:a17:907:1ca4:b0:a77:c080:11fa with SMTP id a640c23a62f3a-a8a1d4d2201mr484969666b.48.1725459467509;
+        Wed, 04 Sep 2024 07:17:47 -0700 (PDT)
 Received: from 127.0.0.1localhost ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989196c88sm811160766b.102.2024.09.04.07.17.42
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989196c88sm811160766b.102.2024.09.04.07.17.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 07:17:43 -0700 (PDT)
+        Wed, 04 Sep 2024 07:17:46 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
@@ -75,9 +75,9 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	linux-block@vger.kernel.org,
 	linux-mm@kvack.org,
 	Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v3 2/8] io_uring/cmd: give inline space in request to cmds
-Date: Wed,  4 Sep 2024 15:18:01 +0100
-Message-ID: <7ca779a61ee5e166e535d70df9c7f07b15d8a0ce.1725459175.git.asml.silence@gmail.com>
+Subject: [PATCH v3 3/8] filemap: introduce filemap_invalidate_pages
+Date: Wed,  4 Sep 2024 15:18:02 +0100
+Message-ID: <f81374b52c92d0dce0f01a279d1eed42b54056aa.1725459175.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1725459175.git.asml.silence@gmail.com>
 References: <cover.1725459175.git.asml.silence@gmail.com>
@@ -89,34 +89,69 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some io_uring commands can use some inline space in io_kiocb. We have 32
-bytes in struct io_uring_cmd, expose it.
+kiocb_invalidate_pages() is useful for the write path, however not
+everything is backed by kiocb and we want to reuse the function for bio
+based discard implementation. Extract and and reuse a new helper called
+filemap_invalidate_pages(), which takes a argument indicating whether it
+should be non-blocking and might return -EAGAIN.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring/cmd.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ include/linux/pagemap.h |  2 ++
+ mm/filemap.c            | 17 ++++++++++++-----
+ 2 files changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index 86ceb3383e49..c189d36ad55e 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -23,6 +23,15 @@ static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
- 	return sqe->cmd;
- }
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index d9c7edb6422b..e39c3a7ce33c 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -32,6 +32,8 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+ 		pgoff_t start, pgoff_t end);
+ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count);
+ void kiocb_invalidate_post_direct_write(struct kiocb *iocb, size_t count);
++int filemap_invalidate_pages(struct address_space *mapping,
++			     loff_t pos, loff_t end, bool nowait);
  
-+static inline void io_uring_cmd_private_sz_check(size_t cmd_sz)
-+{
-+	BUILD_BUG_ON(cmd_sz > sizeof_field(struct io_uring_cmd, pdu));
-+}
-+#define io_uring_cmd_to_pdu(cmd, pdu_type) ( \
-+	io_uring_cmd_private_sz_check(sizeof(pdu_type)), \
-+	((pdu_type *)&(cmd)->pdu) \
-+)
+ int write_inode_now(struct inode *, int sync);
+ int filemap_fdatawrite(struct address_space *);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index d62150418b91..6843ed4847d4 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2712,14 +2712,12 @@ int kiocb_write_and_wait(struct kiocb *iocb, size_t count)
+ }
+ EXPORT_SYMBOL_GPL(kiocb_write_and_wait);
+ 
+-int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
++int filemap_invalidate_pages(struct address_space *mapping,
++			     loff_t pos, loff_t end, bool nowait)
+ {
+-	struct address_space *mapping = iocb->ki_filp->f_mapping;
+-	loff_t pos = iocb->ki_pos;
+-	loff_t end = pos + count - 1;
+ 	int ret;
+ 
+-	if (iocb->ki_flags & IOCB_NOWAIT) {
++	if (nowait) {
+ 		/* we could block if there are any pages in the range */
+ 		if (filemap_range_has_page(mapping, pos, end))
+ 			return -EAGAIN;
+@@ -2738,6 +2736,15 @@ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
+ 	return invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
+ 					     end >> PAGE_SHIFT);
+ }
 +
- #if defined(CONFIG_IO_URING)
- int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
- 			      struct iov_iter *iter, void *ioucmd);
++int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
++{
++	struct address_space *mapping = iocb->ki_filp->f_mapping;
++
++	return filemap_invalidate_pages(mapping, iocb->ki_pos,
++					iocb->ki_pos + count - 1,
++					iocb->ki_flags & IOCB_NOWAIT);
++}
+ EXPORT_SYMBOL_GPL(kiocb_invalidate_pages);
+ 
+ /**
 -- 
 2.45.2
 

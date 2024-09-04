@@ -1,181 +1,141 @@
-Return-Path: <io-uring+bounces-3017-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3018-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACBE96BFB0
-	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 16:08:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FE996C000
+	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 16:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE0D81C24147
-	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 14:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E92581C25070
+	for <lists+io-uring@lfdr.de>; Wed,  4 Sep 2024 14:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E43E1DB93C;
-	Wed,  4 Sep 2024 14:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF391DB957;
+	Wed,  4 Sep 2024 14:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdps6SmO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajBq1VeF"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541C11DA317;
-	Wed,  4 Sep 2024 14:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F66F1DC048;
+	Wed,  4 Sep 2024 14:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725458899; cv=none; b=cJbfBahlUX0hyhBZQmvJ7UhLwu2IFeOduTylOLKfrEhfUjpd8oJjJtq+qb3lgWv5G8ZrXwREZd3hyEss8ynXk+71A1lEUOyxNxOWn/vtMZ4JotX/YaoiVqSx6xBOlv9HAfGLyhM+ZYGu9mPccLUyXbDwCqPFIKxFVyCEfF+zhoE=
+	t=1725459466; cv=none; b=UmAOFLqO+d2TILjlb6y2Z7X/nnqINvc2XYGjMiBYTNBiIXzDdeFGosrJa85J7Z8if3qN2O7xSdsN/yk9QbNp0AMj1jGddPi594ufYEY2hCrPZaSgnz0HhTF8HvvTR0g1lThZzg6zVspA9y3k1yzUQioFpwVOVGlM22ilCfmW92E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725458899; c=relaxed/simple;
-	bh=TuFfSFXB3mOeMRu83p18mWmGeEZpEzUTyyyUn2eZFso=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aPNvZ6ETNLfpmmSVGSs4GHxPmgZhQiszOAiNo7pvGcdCjQyT8Ky1fU0Yk37/eC9D51OuZwi0AJUF3u2EBDfg7TKhomuMqGLy1YYKWHUA/Os3BFn5WNc/CUddcxKvLN5spr1jfX5nPGyuTiHbNsr9Sx/EBa/6KHIq7gpmIr5OFyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bdps6SmO; arc=none smtp.client-ip=209.85.218.52
+	s=arc-20240116; t=1725459466; c=relaxed/simple;
+	bh=4Yxe+N/S1XVopK+KXa2fAy17xdpFXOaI0/Gs2uA7tVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dP3qdzfBs5OXGqvGgcg8sbTPS0Mm0rTrr5iF8O18vau9QOHNJR4uiCdVw1Hv+dgBgJ/aCBEWdo38QQOcnbPGdkxultXd5j7oCR9FVsRd2oZ28gF0J27fZMXDDXROKjKLXuz7rlWqUdkmZIgJjUs1vUjx1DkYRuk5YFLgaeFAt6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajBq1VeF; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a86859e2fc0so753284166b.3;
-        Wed, 04 Sep 2024 07:08:17 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso74335555e9.1;
+        Wed, 04 Sep 2024 07:17:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725458895; x=1726063695; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9Vzg9NTfvw0pq61GqdD+2MdU5ejBvO4DrvV5LujxZ60=;
-        b=bdps6SmOzHGF4jMo47b7xIB6lI4ZzFdR8XlvO9jEFW2lSgXhnNRqMQGINpiGnAfsCl
-         lPYBWv5HukJT5YAhB3gETb5IHGm4bSVN45Z+QvaYsML6S73N1SMQdvS2bQnIHPOzg1y7
-         BlOU52JgFz/ms9kKtyjUxYRYLssw4qHW3nAVangZuZzojl1jky2xNZeEYtuY9gsZeV3c
-         bshLFTA/MCbcHBMPwo1IMsORDhp4eya2+iCYEE4WouMGKqSUO/Uxaf33OQcpVJlRo5Qf
-         iQ1WxJ/HKHJteeBAiE5BmQPgdlyYcnIB4sW4PVSoXv4W9c0trmpUk5MtYEtvHT0IIfv/
-         sh/w==
+        d=gmail.com; s=20230601; t=1725459463; x=1726064263; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HY15Bjqq4aKur+xvKj1EtQb6SIbOC5ont+cHg4lEL9w=;
+        b=ajBq1VeFqY3GwXm30/JJ0zeIQwQfYuOSyT+zUGoyaqzeTtfOWvkw4jHwJerx4de0AM
+         dDdwX+f6nnECtyn0NnZwBT3Psqd7kQyu0S9dLJmrb6RqOG3cYAlxcFxNNgzZAnB35Fvn
+         IJMux6twBGh9cGkxM8QlHWJjylgrkACW3LIUWxz/1oj6OSrtgWAAiTZKZLLAlXagX4Y1
+         wh8BMto0NKQk6fvXOEoyStw+viJ6/G0IKBipN3QXw19CcDCVon/wdUmCxwxruqgoKP5r
+         fQD0XwrfGXcohraBcnuqd6Lk7DM/8oIEAHrmBrQHteZkrpK0i9UrOFClaDAyf8TK+w5m
+         7PEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725458895; x=1726063695;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Vzg9NTfvw0pq61GqdD+2MdU5ejBvO4DrvV5LujxZ60=;
-        b=L76efUXAPxzcTyGamDzSw0+OPO4rBOwYb7R1/4R3epFGbYD2TPS2D2AqSLJ1iUgHWi
-         jTQuB734bylRDbFyiCvHTPzb1OGLAQilY5WIKTqhfAIsHX70+YQZFncTvxR7+sMditKK
-         kT43r8igDyVY4F7Za03KzCygJeS8aSRZJPEYyRA2liEUvmATJryGHXHUj/DHgw6ius76
-         +4KM0Y6RwBF8fnZ/Pp6m8G+TZ5+ZIt25nqWw/lfRXT48teuzC2WwM1KXvdvRcDWCJoSX
-         kmXGguJGAZ2w3+WQb5qmBojpAXjTotsgMt3HgTvQbapmeyMJ5bjThyJtRc7Qgr2RNGJX
-         Dhkg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6zBNa8zLoYGb2sLW+t16Aq1HS+HAAhplCfnWHO8l58sFmSUiag9ODAydnCe2tGW979WZZl+++zC+KRQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF+Ij8We2J0xU0Sklw+n0a45U/uNQTM8BYI1ZDsTOEBbEoFhqj
-	S16eJdlmCv0tgYIHi95I5tsMqnWhlDLOb6FjjjW36jHDMR/oc5bn
-X-Google-Smtp-Source: AGHT+IFHkxzA8+V6mMLDPA0dFW/6czPw92cnzbP7aNN0xEnuG0VygH5QgI54NmEhOeZFBBZ5S5U4Ng==
-X-Received: by 2002:a17:907:2da5:b0:a86:9cff:6798 with SMTP id a640c23a62f3a-a8a32ed4b43mr369763366b.30.1725458894425;
-        Wed, 04 Sep 2024 07:08:14 -0700 (PDT)
-Received: from [192.168.42.8] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb61fsm828174566b.10.2024.09.04.07.08.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Sep 2024 07:08:13 -0700 (PDT)
-Message-ID: <574578e0-ed5c-488e-b4f7-71da59651fc9@gmail.com>
-Date: Wed, 4 Sep 2024 15:08:41 +0100
+        d=1e100.net; s=20230601; t=1725459463; x=1726064263;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HY15Bjqq4aKur+xvKj1EtQb6SIbOC5ont+cHg4lEL9w=;
+        b=J2wz4CblufIU8CLDi5vPxcl8oy/V36a7OrUv7B6Ys+7mExS9T7xNHEN3TK8QGX7vGg
+         0tjkiTnbfwfFet9/H2f7GwG9ABxZk1XiocBax/f70O6x1vmtK4TJGG1876Q1m2SDo9GH
+         fi2ZC2YZux5LV5pvO3BVmWXCk+lDMQG9p/Z0/VfrtOPo3YNPW3S/tT2FliPHzzQYQei0
+         YRRzrcLeiK0XucrG9ly7ppCflKFy5pLVqyHxrU6641qTxVzFklqz4NCNF7J/Z1Tk1Ga8
+         Ma6v5FUAYVGVgWdCJ1/nSEPehHuZLNY1aHBCK98c0u5zbqP/Jq0016na65eupktGL0Ch
+         SoGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/y1rFAoAEpP8Ww3KRarbEXG4yhmP0tP5fWtJ1ykFelKRnPhr7ZNHJIAVpX2DjHuWy3qZGHS6EcO8EGw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfCMPeQIOgybXm0Doc+MnYa0aGwe8KPsgcKcjFFKVNLyop/slx
+	VL1PQ36GDVTofj8qjTk6CLFMZmvusMz5Zuh1ilC0+PlZahqbQvbzLzEilw==
+X-Google-Smtp-Source: AGHT+IEwWK5Yj7vtJLC5Y418j0w9AbR/IgvD3JjLJ/GmnxmpSoNSgA7dlM+QCEdgLBruNVWlP7g0kA==
+X-Received: by 2002:adf:f608:0:b0:374:c05f:2313 with SMTP id ffacd0b85a97d-374c05f2775mr10514389f8f.45.1725459461605;
+        Wed, 04 Sep 2024 07:17:41 -0700 (PDT)
+Received: from 127.0.0.1localhost ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989196c88sm811160766b.102.2024.09.04.07.17.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 07:17:40 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	asml.silence@gmail.com,
+	Conrad Meyer <conradmeyer@meta.com>,
+	linux-block@vger.kernel.org,
+	linux-mm@kvack.org,
+	Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v3 0/8] implement async block discards and other ops via io_uring
+Date: Wed,  4 Sep 2024 15:17:59 +0100
+Message-ID: <cover.1725459175.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] block: implement async discard as io_uring cmd
-To: Christoph Hellwig <hch@infradead.org>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Conrad Meyer <conradmeyer@meta.com>, linux-block@vger.kernel.org,
- linux-mm@kvack.org, dchinner@redhat.com
-References: <cover.1724297388.git.asml.silence@gmail.com>
- <e39a9aabe503bbd7f2b7454327d3e6a6620deccf.1724297388.git.asml.silence@gmail.com>
- <Zsbe1mIYMd9uf8cq@infradead.org>
- <c39469f3-2b9c-493b-9cd6-94ae9a4994b8@gmail.com>
- <Zsh5kZrcL-D7sjyB@infradead.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Zsh5kZrcL-D7sjyB@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 8/23/24 12:59, Christoph Hellwig wrote:
-> On Thu, Aug 22, 2024 at 02:07:16PM +0100, Pavel Begunkov wrote:
->>>> Note, unlike ioctl(BLKDISCARD) with stronger guarantees against races,
->>>> we only do a best effort attempt to invalidate page cache, and it can
->>>> race with any writes and reads and leave page cache stale. It's the
->>>> same kind of races we allow to direct writes.
->>>
->>> Can you please write up a man page for this that clear documents the
->>> expecvted semantics?
->>
->> Do we have it documented anywhere how O_DIRECT writes interact
->> with page cache, so I can refer to it?
-> 
-> I can't find a good writeup.  Adding Dave as he tends to do long
-> emails on topic like this so he might have one hiding somewhere.
-> 
->>> GFP_KERNEL can often will block.  You'll probably want a GFP_NOWAIT
->>> allocation here for the nowait case.
->>
->> I can change it for clarity, but I don't think it's much of a concern
->> since the read/write path and pretty sure a bunch of other places never
->> cared about it. It does the main thing, propagating it down e.g. for
->> tag allocation.
-> 
-> True, we're only doing the nowait allocation for larger data
-> structures.  Which is a bit odd indeed.
+There is an interest in having asynchronous block operations like
+discard and write zeroes. The series implements that as io_uring commands,
+which is an io_uring request type allowing to implement custom file
+specific operations.
 
-That's widespread, last time I looked into it no amount of patching
-saved io_uring and tasks being killed by the oom reaper under memory
-pressure.
+First 4 are preparation patches. Patch 5 introduces the main chunk of
+cmd infrastructure and discard commands. Patches 6-8 implement
+write zeroes variants.
 
->> I'd rather avoid calling bio_discard_limit() an extra time, it does
->> too much stuff inside, when the expected case is a single bio and
->> for multi-bio that overhead would really matter.
-> 
-> Compared to a memory allocation it's not really doing all the much.
-> In the long run we really should move splitting discard bios down
-> the stack like we do for normal I/O anyway.
-> 
->> Maybe I should uniline blk_alloc_discard_bio() and dedup it with
-> 
-> uniline?  I read that as unіnline, but as it's not inline I don't
-> understand what you mean either.
+Branch with tests and docs:
+https://github.com/isilence/liburing.git discard-cmd
 
-"Hand code" if you wish, but you can just ignore it
+The man page specifically (need to shuffle it to some cmd section):
+https://github.com/isilence/liburing/commit/a6fa2bc2400bf7fcb80496e322b5db4c8b3191f0
 
+v3: use GFP_NOWAIT for non-blocking allocation
+    fail oversized nowait discards in advance
+    drop secure erase and add zero page writes
+    renamed function name + other cosmetic changes
+    use IOC / ioctl encoding for cmd opcodes
 
->>>> +#define BLOCK_URING_CMD_DISCARD			0
->>>
->>> Is fs.h the reight place for this?
->>
->> Arguable, but I can move it to io_uring, makes things simpler
->> for me.
-> 
-> I would have expected a uapi/linux/blkdev.h for it (and I'm kinda
-> surprised we don't have that yet).
+v2: move out of CONFIG_COMPAT
+    add write zeroes & secure erase
+    drop a note about interaction with page cache
 
-I think that would be overkill, we don't need it for just these
-commands, and it's only adds pain with probing the header with
-autotools or so. If there is a future vision for it I'd say we
-can drop a patch on top.
+Pavel Begunkov (8):
+  io_uring/cmd: expose iowq to cmds
+  io_uring/cmd: give inline space in request to cmds
+  filemap: introduce filemap_invalidate_pages
+  block: introduce blk_validate_byte_range()
+  block: implement async discard as io_uring cmd
+  block: implement async write zeroes command
+  block: add nowait flag for __blkdev_issue_zero_pages
+  block: implement async write zero pages command
 
->>> Curious:  how to we deal with conflicting uring cmds on different
->>> device and how do we probe for them?  The NVMe uring_cmds
->>> use the ioctl-style _IO* encoding which at least helps a bit with
->>> that and which seem like a good idea.  Maybe someone needs to write
->>> up a few lose rules on uring commands?
->>
->> My concern is that we're sacrificing compiler optimisations
->> (well, jump tables are disabled IIRC) for something that doesn't even
->> guarantee uniqueness. I'd like to see some degree of reflection,
->> like user querying a file class in terms of what operations it
->> supports, but that's beyond the scope of the series.
-> 
-> We can't guaranteed uniqueness, but between the class, the direction,
-> and the argument size we get a pretty good one.  There is a reason
-> pretty much all ioctls added in the last 25 years are using this scheme.
-
-which is likely because some people insisted on it and not because
-the scheme is so great that everyone became acolytes. Not to mention
-only 256 possible "types" and the endless mess of sharing them and
-trying to find a range to use. I'll convert to have less headache,
-but either way we're just propagating the problem into the future.
+ block/blk-lib.c              |  25 +++-
+ block/blk.h                  |   1 +
+ block/fops.c                 |   2 +
+ block/ioctl.c                | 228 ++++++++++++++++++++++++++++++++---
+ include/linux/bio.h          |   6 +
+ include/linux/blkdev.h       |   1 +
+ include/linux/io_uring/cmd.h |  15 +++
+ include/linux/pagemap.h      |   2 +
+ include/uapi/linux/fs.h      |   4 +
+ io_uring/io_uring.c          |  11 ++
+ io_uring/io_uring.h          |   1 +
+ io_uring/uring_cmd.c         |   7 ++
+ mm/filemap.c                 |  17 ++-
+ 13 files changed, 292 insertions(+), 28 deletions(-)
 
 -- 
-Pavel Begunkov
+2.45.2
+
 

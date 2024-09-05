@@ -1,38 +1,38 @@
-Return-Path: <io-uring+bounces-3045-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3046-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0415496D31C
-	for <lists+io-uring@lfdr.de>; Thu,  5 Sep 2024 11:28:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C3A96D323
+	for <lists+io-uring@lfdr.de>; Thu,  5 Sep 2024 11:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE8F01F25097
-	for <lists+io-uring@lfdr.de>; Thu,  5 Sep 2024 09:28:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AC3E1F2545E
+	for <lists+io-uring@lfdr.de>; Thu,  5 Sep 2024 09:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C590B197A92;
-	Thu,  5 Sep 2024 09:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9B51990CD;
+	Thu,  5 Sep 2024 09:27:34 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E68C197A7A;
-	Thu,  5 Sep 2024 09:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF61197A7A;
+	Thu,  5 Sep 2024 09:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725528449; cv=none; b=MhjduwIZkVQi+i1avogoXzB2M7JQ3w1EuRWexhD/1vcmvEI5RZFpZ+ckb6FzXHd/+Alzty4kCp0NnQsXKACt0kbdRcsxVAiyFmYt/REkoInD1yk+H5ybkTKCxWkWF80us+8LJkqG2yNLsf9aTJ5q2YXoNKnc/K2qIGIekT0CfrU=
+	t=1725528454; cv=none; b=LJf83AtHipmkKpwcBNsbeBxyyydIEuKom9NQDjq/Y4g57TG4l9vqHedCe7VSWS79IPyCr5Aak3LGB+PPctXlmEmM2RvSppKPbbgLM8/z6RaZP0bWKLIY0qk9D+JnXJWzPFDnCyKwe+ICuHp684yfHnL5SvREe5gDolnwLP5K3mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725528449; c=relaxed/simple;
-	bh=4iXHiaHmMfPlrIg/MR9QkOejr+dGX2C9r+fuICZAqwE=;
+	s=arc-20240116; t=1725528454; c=relaxed/simple;
+	bh=edp627popAZTkRr7v+xqmAOIkA2ak/45oKZuSXAezOk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KNBzxl6umBnFOq6IesIcwOxMGsOxeWbRaZVUuWKpb/qOey/tHkoLPPy4N8l+QMRPhQQ9dNiTbQXKBH8DEgdGv9nJWQLOTEbfDURMWXDvQRrIevSwN1CQVGXoYFcQJEMCc2BuwWZhWvYqcQKDLwk4g25CYDQeqBM9GP1xqhVcdWE=
+	 MIME-Version; b=f48KbMCzxa11yg/0QBBjX/sjZtUvhWVVSGs82WN+h7Lxv3bZ3T8MMIhNWOEdne5eFZqU3/Sg297LaoBlkg8dud1RbKHYRwxBjQKOSUZSREzjZ+lJUn1EYIE3wgEXrnEHVs2eI8PGdO+lIW2DNmNhns1qSkW4Od9r31i7YoPXrKM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C3D11576;
-	Thu,  5 Sep 2024 02:27:53 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EE271063;
+	Thu,  5 Sep 2024 02:27:58 -0700 (PDT)
 Received: from e127648.arm.com (unknown [10.57.75.86])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9A68C3F8A4;
-	Thu,  5 Sep 2024 02:27:22 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 130043F73F;
+	Thu,  5 Sep 2024 02:27:26 -0700 (PDT)
 From: Christian Loehle <christian.loehle@arm.com>
 To: linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -55,9 +55,9 @@ Cc: juri.lelli@redhat.com,
 	dsmythies@telus.net,
 	axboe@kernel.dk,
 	Christian Loehle <christian.loehle@arm.com>
-Subject: [RFC PATCH 2/8] cpuidle: Prefer teo over menu governor
-Date: Thu,  5 Sep 2024 10:26:39 +0100
-Message-Id: <20240905092645.2885200-3-christian.loehle@arm.com>
+Subject: [RFC PATCH 3/8] TEST: cpufreq/schedutil: Linear iowait boost step
+Date: Thu,  5 Sep 2024 10:26:40 +0100
+Message-Id: <20240905092645.2885200-4-christian.loehle@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240905092645.2885200-1-christian.loehle@arm.com>
 References: <20240905092645.2885200-1-christian.loehle@arm.com>
@@ -69,65 +69,42 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since menu no longer has the interactivity boost teo works better
-overall, so make it the default.
+In preparation for capping iowait boost make the steps linear as
+opposed to doubling.
 
 Signed-off-by: Christian Loehle <christian.loehle@arm.com>
 ---
- drivers/cpuidle/Kconfig          | 5 +----
- drivers/cpuidle/governors/menu.c | 2 +-
- drivers/cpuidle/governors/teo.c  | 2 +-
- 3 files changed, 3 insertions(+), 6 deletions(-)
+ kernel/sched/cpufreq_schedutil.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/cpuidle/Kconfig b/drivers/cpuidle/Kconfig
-index cac5997dca50..ae67a464025a 100644
---- a/drivers/cpuidle/Kconfig
-+++ b/drivers/cpuidle/Kconfig
-@@ -5,7 +5,7 @@ config CPU_IDLE
- 	bool "CPU idle PM support"
- 	default y if ACPI || PPC_PSERIES
- 	select CPU_IDLE_GOV_LADDER if (!NO_HZ && !NO_HZ_IDLE)
--	select CPU_IDLE_GOV_MENU if (NO_HZ || NO_HZ_IDLE) && !CPU_IDLE_GOV_TEO
-+	select CPU_IDLE_GOV_TEO if (NO_HZ || NO_HZ_IDLE) && !CPU_IDLE_GOV_MENU
- 	help
- 	  CPU idle is a generic framework for supporting software-controlled
- 	  idle processor power management.  It includes modular cross-platform
-@@ -30,9 +30,6 @@ config CPU_IDLE_GOV_TEO
- 	  This governor implements a simplified idle state selection method
- 	  focused on timer events and does not do any interactivity boosting.
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index eece6244f9d2..7810374aaa5b 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -267,7 +267,8 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
+ 	/* Double the boost at each request */
+ 	if (sg_cpu->iowait_boost) {
+ 		sg_cpu->iowait_boost =
+-			min_t(unsigned int, sg_cpu->iowait_boost << 1, SCHED_CAPACITY_SCALE);
++			min_t(unsigned int,
++			      sg_cpu->iowait_boost + IOWAIT_BOOST_MIN, SCHED_CAPACITY_SCALE);
+ 		return;
+ 	}
  
--	  Some workloads benefit from using it and it generally should be safe
--	  to use.  Say Y here if you are not happy with the alternatives.
--
- config CPU_IDLE_GOV_HALTPOLL
- 	bool "Haltpoll governor (for virtualized systems)"
- 	depends on KVM_GUEST
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index 28363bfa3e4c..c0ae5e98d6f1 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -508,7 +508,7 @@ static int menu_enable_device(struct cpuidle_driver *drv,
+@@ -308,11 +309,9 @@ static unsigned long sugov_iowait_apply(struct sugov_cpu *sg_cpu, u64 time,
+ 		/*
+ 		 * No boost pending; reduce the boost value.
+ 		 */
+-		sg_cpu->iowait_boost >>= 1;
+-		if (sg_cpu->iowait_boost < IOWAIT_BOOST_MIN) {
+-			sg_cpu->iowait_boost = 0;
++		sg_cpu->iowait_boost -= IOWAIT_BOOST_MIN;
++		if (!sg_cpu->iowait_boost)
+ 			return 0;
+-		}
+ 	}
  
- static struct cpuidle_governor menu_governor = {
- 	.name =		"menu",
--	.rating =	20,
-+	.rating =	19,
- 	.enable =	menu_enable_device,
- 	.select =	menu_select,
- 	.reflect =	menu_reflect,
-diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
-index f2992f92d8db..6c3cc39f285d 100644
---- a/drivers/cpuidle/governors/teo.c
-+++ b/drivers/cpuidle/governors/teo.c
-@@ -537,7 +537,7 @@ static int teo_enable_device(struct cpuidle_driver *drv,
- 
- static struct cpuidle_governor teo_governor = {
- 	.name =		"teo",
--	.rating =	19,
-+	.rating =	20,
- 	.enable =	teo_enable_device,
- 	.select =	teo_select,
- 	.reflect =	teo_reflect,
+ 	sg_cpu->iowait_boost_pending = false;
 -- 
 2.34.1
 

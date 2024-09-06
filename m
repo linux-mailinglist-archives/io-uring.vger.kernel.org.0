@@ -1,194 +1,170 @@
-Return-Path: <io-uring+bounces-3053-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3054-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB5696E499
-	for <lists+io-uring@lfdr.de>; Thu,  5 Sep 2024 23:04:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2B696E82A
+	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 05:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B1E31C23F9D
-	for <lists+io-uring@lfdr.de>; Thu,  5 Sep 2024 21:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28B911F24163
+	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 03:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1688A9443;
-	Thu,  5 Sep 2024 21:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291F23770D;
+	Fri,  6 Sep 2024 03:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="n5rn2X4w";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GsKRD1wo"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bwURKxXy"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9537A188A16;
-	Thu,  5 Sep 2024 21:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791BD1773A;
+	Fri,  6 Sep 2024 03:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725570287; cv=none; b=KNcYVigvF4WofGOncnYPR+FBTrbx2YwWxQC+D2gaRTSTU0PMQ7mXR/k/cQoOkPQRrQut3A2tONrFxvkTKp0FpM+hjLhuEbsgc/b84vpyR/QTf1KNdMFUHfc3UxEIyf56vYS8llvSifQAXvzA9zp15FdPZzOMJDUHNk8oGjfTxAM=
+	t=1725593045; cv=none; b=eZieF4OVi8XC4wimMfW9iRraLtBb85eunF24qISxlXGHVEffA+VXCTpBVMqgwgD9rbr5Ti8hZuHKebgsS9JrE5s2YgxWHSnkaKZMTgc8sPBxvr6k6V2wgSIfnHTh9OmYIQacwvySYmqDkz2EJOVPew6EJILqMRpRzhe/hUucJ50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725570287; c=relaxed/simple;
-	bh=pnJo8BCK/P3cWwmcQ6XRvES4TVu/0JjX0mA0+astEaQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ItI63lqvVRz32BjPzNn+8XspazAxzsQxABbciS+1uqxpZP68aucEtLRysrNLCe9iW7oPwfKSSKHCYmxLE360L1lsj7myDoMuJ82BesX/op6AkqaPkLidBcCgCaT1Hzeq2lV2dx5IW6Lk7xwp8xOmETFhftsnAhouAqdnKaUW1DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=n5rn2X4w; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GsKRD1wo; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id C1EA9138039E;
-	Thu,  5 Sep 2024 17:04:43 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Thu, 05 Sep 2024 17:04:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1725570283;
-	 x=1725656683; bh=3p4qQr07PkgRUdo6X+f/Vcy9Vgd92TzGan6BdMlGZSA=; b=
-	n5rn2X4wYl1TyLsAnA917oyGgO6kS+okmdrN4rEwKPpA37wFNWU/prCR/oKDn+Xp
-	ZUNfjg0tDxYnlk/rKBUJh7tnSIU+q63re90RU7kuXjwUQqX9zAxPbBtRDXi3YbPS
-	+iymIAYpoEmYS4m9ZrgJj8K4g9m9ib4RvEmB0noFDgFlwr5bLjfTFabbnuCGr4YV
-	D6oCpvOBF6BT6cJnSRsHiyCb7iKPUGhQ7JUcTGNtboq5AtNSwGDz9hyHBcDVtwyk
-	2SYYWekm4eyv2qDZV0x7IBLJXcZ03f2pD8qitx+0V9Q9KVPxqZKwI8YbwC+X+6vM
-	0oebiP8SGuoxt1FUkvvXoQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725570283; x=
-	1725656683; bh=3p4qQr07PkgRUdo6X+f/Vcy9Vgd92TzGan6BdMlGZSA=; b=G
-	sKRD1woO2VGLChwZ6LwaA+IDjdiEEymqxVeEHfCnR0Q0CgaCZDUvrFM9KhjWBDjG
-	9SwOQk9N1dSmxj9/qwaZjU4uW+bpbC08s9UNaQYV6GMLvuOJpCBWEdQrUIfOKb6/
-	lTFquKr2h91RQCV69vDGNRZmKhTHLFh7JMFVZpEEt5V9Yw8rXRNVU2dU8RwYNwtS
-	yMmoDq6U0VBnrkYQAVCeTWLVms2+m9UFEX01twTtP3AkDy7Zhj931QQT/psAGVJn
-	uGNTUavOAHNo6/gQezrhHqce2n0udOvW0jE+MalwIRcbdvEZLouUtIir2E2Z/vdB
-	jbnXnbpf9PPtqXWulgGaQ==
-X-ME-Sender: <xms:6xzaZmpaB2MnswIVgAhCpHPYGOFiEK953Ru0O77uV5bu_KkpPR9f9Q>
-    <xme:6xzaZkrXClOXZYXJAGXOK8MgxbvlDz3Jxzao8alAdexJoZQEph8m2P7YiW5MXyLiX
-    MjNebmzZI6HRoS7>
-X-ME-Received: <xmr:6xzaZrN-orTj8_9wkHLZqHYycZxk4w4AolPsTPz4fNWuUm-Ki_hK9V45jdlazJFg3XEU_YW1qISNxhJJuOvXYO661uVJQb_pwRYWx37-3IiNYPrz5xiC>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehledgudehiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
-    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusg
-    gvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddu
-    gfdtgfegleefvdehfeeiveejieefveeiteeggffggfeulefgjeenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghr
-    thesfhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtohep
-    sghstghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivg
-    hrvgguihdrhhhupdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgt
-    ohhmpdhrtghpthhtohepsggvrhhnugesfhgrshhtmhgrihhlrdhfmhdprhgtphhtthhope
-    hlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjh
-    horghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhoshgvfhes
-    thhogihitghprghnuggrrdgtohhm
-X-ME-Proxy: <xmx:6xzaZl4w7DIrGyEBUu0d5LG7yDa7rW6FrAOUrHTYgFV5kTwZMmZSrw>
-    <xmx:6xzaZl7Q8Di8Yo8P0PH1R09znJ22CsBOui7z99P8PbTLeMFkn9bgdw>
-    <xmx:6xzaZljIS7V4pMS7MW8sYnZXjoiunE82wMXDtkkARRwQuM6Dtudnpg>
-    <xmx:6xzaZv7uALud-pV_2gzyE26bk4WscUVk-mQqzWBwMBfPuL9_ledDQg>
-    <xmx:6xzaZiw2xJHxMV74mxdS3EjNnLjuzOMJGx9tjKZGPSeWm4vFRKWf93fy>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 5 Sep 2024 17:04:41 -0400 (EDT)
-Message-ID: <3ec40e7a-8600-4aec-af57-7f65126c78eb@fastmail.fm>
-Date: Thu, 5 Sep 2024 23:04:40 +0200
+	s=arc-20240116; t=1725593045; c=relaxed/simple;
+	bh=RH6TZLZQD54kymWTWzrD/ChEmeUBlBEentXZxNOU++s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+c4ZfOIC8dg5MKUU4FpRYMSheDV1ckaSFiXoGhr0wELqDCy8ZkMVQ1UZh0Qg5Bjr6W5HTzNwCp6i894qbTNUt/IrIXmW97PggjC9SgV3laSpiHRHrHA3FkCxwn4t0Fww/g1rfXxOb4LdZbpO70098gMUjfz4Fp/FOgRKJxpKtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bwURKxXy; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725593044; x=1757129044;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RH6TZLZQD54kymWTWzrD/ChEmeUBlBEentXZxNOU++s=;
+  b=bwURKxXydBE4loQEEqtNEvNP8OAskbUs9mt+9IAeylh49wJUY5OCq5i8
+   EpajR+RHvjMIMKdRhfmvkYIbwG3/Lu8Qg9rX1qQmC152Fsqm32S5iBPEL
+   OdprMq/7Q2rqPRfU8YPCXGCC5RixOChviqJ1izovFutWJ89Qj7O4Ss4iI
+   eWPT8x15MT2IUJGuask14yhFclAMglxwdgl7on0CFx/aD+GtK4GaYrV/9
+   n4QEBEUrbq8Viz8SehtJ323BWwx9XixtfgycoyViuWsnMJGX65rL+abMi
+   zjrKAeocnDvYArUgkt15sB86f6wBgG/v6VJH+h9R+Vadk6ZnwDGQZB4gH
+   w==;
+X-CSE-ConnectionGUID: Jt3qzRa7SVKOijCPggK74Q==
+X-CSE-MsgGUID: n/eVVuMwRL+3m0v6SxUeVA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11186"; a="35012714"
+X-IronPort-AV: E=Sophos;i="6.10,206,1719903600"; 
+   d="scan'208";a="35012714"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 20:24:03 -0700
+X-CSE-ConnectionGUID: cA6JjpjfQZqIGy6c+qY9hA==
+X-CSE-MsgGUID: fFkCuXrFRICuRwwqMHvuJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,206,1719903600"; 
+   d="scan'208";a="70393846"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 05 Sep 2024 20:24:01 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1smPZm-000AZ2-21;
+	Fri, 06 Sep 2024 03:23:58 +0000
+Date: Fri, 6 Sep 2024 11:23:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
+	asml.silence@gmail.com, Conrad Meyer <conradmeyer@meta.com>,
+	linux-block@vger.kernel.org, linux-mm@kvack.org,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v3 7/8] block: add nowait flag for
+ __blkdev_issue_zero_pages
+Message-ID: <202409061126.hKdAymJK-lkp@intel.com>
+References: <292fa1c611adb064efe16ab741aad65c2128ada8.1725459175.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 17/17] fuse: {uring} Pin the user buffer
-To: Jens Axboe <axboe@kernel.dk>, Bernd Schubert <bschubert@ddn.com>,
- Miklos Szeredi <miklos@szeredi.hu>, Pavel Begunkov <asml.silence@gmail.com>,
- bernd@fastmail.fm
-Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Amir Goldstein <amir73il@gmail.com>
-References: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-0-9207f7391444@ddn.com>
- <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-17-9207f7391444@ddn.com>
- <9a0e31ff-06ad-4065-8218-84b9206fc8a5@kernel.dk>
- <6c336a8f-4a91-4236-9431-9d0123b38796@fastmail.fm>
- <cd1e8d26-a0f0-49f2-ac27-428d26713cc1@kernel.dk>
- <26c96371-a113-4384-b97b-cf4913cdf8b5@fastmail.fm>
- <20342352-773c-4fb1-ac66-bcc6cf45d577@kernel.dk>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20342352-773c-4fb1-ac66-bcc6cf45d577@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <292fa1c611adb064efe16ab741aad65c2128ada8.1725459175.git.asml.silence@gmail.com>
+
+Hi Pavel,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on axboe-block/for-next]
+[also build test WARNING on akpm-mm/mm-everything linus/master v6.11-rc6 next-20240905]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Pavel-Begunkov/io_uring-cmd-expose-iowq-to-cmds/20240904-222012
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/292fa1c611adb064efe16ab741aad65c2128ada8.1725459175.git.asml.silence%40gmail.com
+patch subject: [PATCH v3 7/8] block: add nowait flag for __blkdev_issue_zero_pages
+config: i386-randconfig-141-20240906 (https://download.01.org/0day-ci/archive/20240906/202409061126.hKdAymJK-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240906/202409061126.hKdAymJK-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409061126.hKdAymJK-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> block/blk-lib.c:200:12: warning: variable 'opf' set but not used [-Wunused-but-set-variable]
+     200 |         blk_opf_t opf = REQ_OP_WRITE;
+         |                   ^
+   1 warning generated.
 
 
+vim +/opf +200 block/blk-lib.c
 
-On 9/4/24 21:40, Jens Axboe wrote:
-> On 9/4/24 1:25 PM, Bernd Schubert wrote:
->>
->>
->> On 9/4/24 18:16, Jens Axboe wrote:
->>> On 9/4/24 10:08 AM, Bernd Schubert wrote:
->>>> Hi Jens,
->>>>
->>>> thanks for your help.
->>>>
->>>> On 9/4/24 17:47, Jens Axboe wrote:
->>>>> On 9/1/24 7:37 AM, Bernd Schubert wrote:
->>>>>> This is to allow copying into the buffer from the application
->>>>>> without the need to copy in ring context (and with that,
->>>>>> the need that the ring task is active in kernel space).
->>>>>>
->>>>>> Also absolutely needed for now to avoid this teardown issue
->>>>>
->>>>> I'm fine using these helpers, but they are absolutely not needed to
->>>>> avoid that teardown issue - well they may help because it's already
->>>>> mapped, but it's really the fault of your handler from attempting to map
->>>>> in user pages from when it's teardown/fallback task_work. If invoked and
->>>>> the ring is dying or not in the right task (as per the patch from
->>>>> Pavel), then just cleanup and return -ECANCELED.
->>>>
->>>> As I had posted on Friday/Saturday, it didn't work. I had added a 
->>>> debug pr_info into Pavels patch, somehow it didn't trigger on PF_EXITING 
->>>> and I didn't further debug it yet as I was working on the pin anyway.
->>>> And since Monday occupied with other work...
->>>
->>> Then there's something wrong with that patch, as it definitely should
->>> work. How did you reproduce the teardown crash? I'll take a look here.
->>
->> Thank you! In this specific case
->>
->> 1) Run passthrough_hp with --debug-fuse
->>
->> 2) dd if=/dev/zero of=/scratch/test/testfile bs=1M count=1
->>
->> Then on the console that has passthrough_hp output and runs slow with my
->> ASAN/etc kernel: ctrl-z and kill -9 %
->> I guess a pkill -9 passthrough_hp should also work
-> 
-> Eerily similar to what I tried, but I managed to get it to trigger.
-> Should work what's in there, but I think checking for task != current is
-> better and not race prone like PF_EXITING is. So maybe? Try with the
-> below incremental.
-> 
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index 55bdcb4b63b3..fa5a0f724a84 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -121,7 +121,8 @@ static void io_uring_cmd_work(struct io_kiocb *req, struct io_tw_state *ts)
->  	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
->  	unsigned flags = IO_URING_F_COMPLETE_DEFER;
->  
-> -	if (req->task->flags & PF_EXITING)
-> +	/* Different task should only happen if the original is going away */
-> +	if (req->task != current)
->  		flags |= IO_URING_F_TASK_DEAD;
->  
->  	/* task_work executor checks the deffered list completion */
-> 
+   195	
+   196	int blkdev_issue_zero_pages_bio(struct block_device *bdev,
+   197			sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
+   198			struct bio **biop, unsigned int flags)
+   199	{
+ > 200		blk_opf_t opf = REQ_OP_WRITE;
+   201	
+   202		if (flags & BLKDEV_ZERO_PAGES_NOWAIT) {
+   203			sector_t max_bio_sectors = BIO_MAX_VECS << PAGE_SECTORS_SHIFT;
+   204	
+   205			if (nr_sects > max_bio_sectors)
+   206				return -EAGAIN;
+   207			opf |= REQ_NOWAIT;
+   208		}
+   209	
+   210		while (nr_sects) {
+   211			unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
+   212			struct bio *bio;
+   213	
+   214			bio = bio_alloc(bdev, nr_vecs, REQ_OP_WRITE, gfp_mask);
+   215			if (!bio)
+   216				return -ENOMEM;
+   217			bio->bi_iter.bi_sector = sector;
+   218	
+   219			if ((flags & BLKDEV_ZERO_KILLABLE) &&
+   220			    fatal_signal_pending(current))
+   221				return -EINTR;
+   222	
+   223			do {
+   224				unsigned int len, added;
+   225	
+   226				len = min_t(sector_t,
+   227					PAGE_SIZE, nr_sects << SECTOR_SHIFT);
+   228				added = bio_add_page(bio, ZERO_PAGE(0), len, 0);
+   229				if (added < len)
+   230					break;
+   231				nr_sects -= added >> SECTOR_SHIFT;
+   232				sector += added >> SECTOR_SHIFT;
+   233			} while (nr_sects);
+   234	
+   235			*biop = bio_chain_and_submit(*biop, bio);
+   236			cond_resched();
+   237		}
+   238	
+   239		return 0;
+   240	}
+   241	
 
-Thanks, just tested this version works fine!
-My user of that (patch 16/17) left the fuse ring entry in bad state -
-fixed in my v4 branch.
-
-Thanks,
-Bernd
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 

@@ -1,90 +1,92 @@
-Return-Path: <io-uring+bounces-3055-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3056-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAE396EA0C
-	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 08:20:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE0C96F064
+	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 11:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 847051C21B4E
-	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 06:20:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 089BF1C23B64
+	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 09:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8134C13AD2A;
-	Fri,  6 Sep 2024 06:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7711C9DFD;
+	Fri,  6 Sep 2024 09:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="IFf5a5o/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from ybb.ne.jp (unknown [188.127.240.97])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C10713D2B8
-	for <io-uring@vger.kernel.org>; Fri,  6 Sep 2024 06:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.127.240.97
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FC21C9DF9
+	for <io-uring@vger.kernel.org>; Fri,  6 Sep 2024 09:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725603634; cv=none; b=Xff8nF27tHiyUhuSuBqsIHzhqjACa1BwALxfSc1icE9zU9o0dxXoWoyqJcDog0ckv4QXTuNOwxoB4ZQa9aEGpSQlHtLzPfjKzzqgGrfKBVkTKHs80fwn4tJbZdYIgfhysL9Z5jgHCuEMyJJCJ88pdx6omFJ2JK6CupH7sCbyeak=
+	t=1725616427; cv=none; b=q02kSUci76bZwjkOA31PGPdDIM8C0I05ohzmLznKpNnBjdEhQPb9nYEZscM44zTf8MJs9jBzLUEXu1F258H92TCBaaCW0ORfspwx0ifRpOfsKtN+G4cEOUv5Nvw9hBgFeqCU7X0/GTwkR2DM5rwP4XJvtHA7bBZ3UGEGUpKrdEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725603634; c=relaxed/simple;
-	bh=nLrJSIn4BUI240a3JGE5wEqrpi3zQYWZqRjv0FweO+I=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TA+M7LPqJeTTNIdjBVmlMSAjV5SoaMagzvcEtNRRY4gnKtcLaeQHNc6fXhpePfL+IjUfe/0FHy5HlNaHw+U9OIksKu1ha7kR391CakY8hVov9uk1rhnUHoUAzEWoJ5qe5iFVU8bIvdaKpfOz32gZ7ekam6pomWgWbBGn5R6aC28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=frontier.com; spf=fail smtp.mailfrom=frontier.com; arc=none smtp.client-ip=188.127.240.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=frontier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=frontier.com
-Received: from 198-23-219-245-host.colocrossing.com (localhost [IPv6:::1])
-	by ybb.ne.jp (Postfix) with ESMTP id 2DCFFA7B579
-	for <io-uring@vger.kernel.org>; Fri,  6 Sep 2024 09:12:02 +0300 (MSK)
-Reply-To: croitoru@vaasile.com
-From: dandsmiller@frontier.com
-To: io-uring@vger.kernel.org
-Subject: Business  Proposal
-Date: 5 Sep 2024 23:12:02 -0700
-Message-ID: <20240905231202.EAF76DFE0758FBFB@frontier.com>
+	s=arc-20240116; t=1725616427; c=relaxed/simple;
+	bh=IFiJzNa23HL4yv8NJuBXDog0rL9XAEykvFMCfcNcisU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=VwrYDmN6emygTsZvPkLCuFe6ROWpQ1eMiUZYgJ1ybNjIMTtuv0Huyj12C02wYu8Mf+JSyB2/EamBXOkdEFB+0NY8OJO56++3aVoiLeh1eWikRZenYaRotRb0/lOxG5ilj2wgtPhlCQuIZzz9JvaQpjxmjwaaMFQcfockJJSjTZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=IFf5a5o/; arc=none smtp.client-ip=185.136.65.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 2024090609533366f6b5c52f39ae7b2a
+        for <io-uring@vger.kernel.org>;
+        Fri, 06 Sep 2024 11:53:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=6VoFJll+UytvMdR9ZwPf6T244iPbXuYc1jQw/YWFhao=;
+ b=IFf5a5o//QwGazxn9uhFa7rMjQVkIGpi1g5YNZaci36YSaBTA2Mvw9YD43a2yHJIvqbYzC
+ /M9yM07dsd7Q5zf3KyREHPSSCdNOU6ztSV0Zq9B1Io6q3TFwwrAlaP0jtFQIdIBH97GLMoFP
+ EMYEagm1ed4Zpsplr6f4XArhcJV8PJbx+KhB5mmXsl13I0tzp5zOP/trXgeYAhHeBQECDy6K
+ BK/V8xq5CyflLO4IGSVHpS1KIF5ygh7LEFStJmj4zoLt5FRa12VEBWJS8Yl3RgZT7XfQBcpQ
+ GaB7x9qGj+8KDQmCghFMXWAQooGN2Hnzz0pmUEoS0CfDv4KCcNnNObxQ==;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: stable@vger.kernel.org
+Cc: io-uring@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	axboe@kernel.dk,
+	asml.silence@gmail.com,
+	dqminh@cloudflare.com,
+	longman@redhat.com,
+	adriaan.schmidt@siemens.com,
+	florian.bezdeka@siemens.com,
+	Felix Moessbauer <felix.moessbauer@siemens.com>
+Subject: [PATCH][6.1][0/2] io_uring: Do not set PF_NO_SETAFFINITY on poller threads
+Date: Fri,  6 Sep 2024 11:53:19 +0200
+Message-Id: <20240906095321.388613-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1321639:519-21489:flowmailer
 
+Setting the PF_NO_SETAFFINITY flag creates problems in combination with
+cpuset operations (see commit messages for details). To mitigate this, fixes have
+been written to remove the flag from the poller threads, which landed in v6.3. We
+need them in v6.1 as well.
 
-Good day.
+Best regards,
+Felix Moessbauer
+Siemens AG
 
-I am seeking a reliable and experienced partner to manage our=20
-real estate investments in your country. The ideal partner will=20
-possess:
+Jens Axboe (1):
+  io_uring/io-wq: stop setting PF_NO_SETAFFINITY on io-wq workers
 
-- In-depth knowledge of the local real estate market
-- Proven track record in property management and development
-- Strong network and connections in the industry
-- Ability to navigate regulatory requirements
-- Transparency, integrity, and a commitment to delivering results
+Michal Koutný (1):
+  io_uring/sqpoll: Do not set PF_NO_SETAFFINITY on sqpoll threads
 
-Responsibilities:
+ io_uring/io-wq.c  | 16 +++++++++++-----
+ io_uring/sqpoll.c |  1 -
+ 2 files changed, 11 insertions(+), 6 deletions(-)
 
-The partner will be responsible for:
+-- 
+2.39.2
 
-- Sourcing and evaluating investment opportunities
-- Conducting due diligence and risk assessments
-- Managing property acquisition, development, and sales
-- Ensuring compliance with local laws and regulations
-- Providing regular updates and performance reports
-
-Benefits:
-
-By partnering with us, you will benefit from:
-
-- Access to substantial investment capital
-- Opportunity to collaborate with a reputable UK-based company
-- Shared success and returns on investment.
-
-I look forward to the possibility of working together and=20
-achieving mutual success in the real estate market.
-
-If you are interested in exploring this partnership opportunity,=20
-I would be delighted to schedule a call or meeting to discuss=20
-further.
-
-
-
-Best regards
-Croitoru Vasile.
 

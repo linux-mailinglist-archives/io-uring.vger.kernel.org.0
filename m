@@ -1,48 +1,48 @@
-Return-Path: <io-uring+bounces-3057-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3058-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9874096F066
-	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 11:55:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D9C096F065
+	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 11:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33058B21FA4
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6909F1C23705
 	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 09:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B7D1C9EA3;
-	Fri,  6 Sep 2024 09:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DAB1C8FD4;
+	Fri,  6 Sep 2024 09:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="UMsxOR18"
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="LWqDfATK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2300E1C9DFA
-	for <io-uring@vger.kernel.org>; Fri,  6 Sep 2024 09:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FBD1C9DF8
+	for <io-uring@vger.kernel.org>; Fri,  6 Sep 2024 09:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725616427; cv=none; b=bw0crbEYVb+3U9UXEw2ygyrPm3I1tOGN2Uf6dMV/nfVtlMyNIAPEhfSEhfbgQ2RSVbikvWtWJ3HCDxLors8S+E8jEBGamZ7C0189Wrsl7609FZjC0Ly3j6hVY3e7PEbhh8b3gtqUTROLMFXYuHHy9WLcatealUYKF8K1rcbAGyU=
+	t=1725616428; cv=none; b=XZ7PCr9+KnmOEH9WunCjQNafh/Pvn2WYXMPPRcPOXUkESOYRTH3KUdvNJE6CawPpnbmp/F6wEcUKxJeID9CXXBJh7BxLzs3ZHfh5/nBY4h24VszGn7df2RgxV+2nz2y4cT/X2ZUFCW2DQak40nRUl9+DIUo4rsQoLTjI05EC1NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725616427; c=relaxed/simple;
-	bh=8XHNoIQfIyQtbDLRSGDPf+aLvqEvZjnzaj5Dek7I8Q4=;
+	s=arc-20240116; t=1725616428; c=relaxed/simple;
+	bh=1pi+ZE9H6rSyN5PpZ9k74hjrSRiBdqp4Fn5YbapZfXk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cjgwETmB4aExo3uutxeQMIkIc3k7Fv8GjgWe9j/aG5Nhyhn573kAbFNvJHHZip7po12FG9oZWNOWP3xhNhKDdXQTFO4pbKuMi8O8/S4NcjZiA7gnUZAFPKI0sBoWoqMaDz8wmDVXNeBEII3fLgLYFZBVNXbJ03VHmoY738qu+WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=UMsxOR18; arc=none smtp.client-ip=185.136.64.227
+	 MIME-Version:Content-Type; b=s1uAnDlqNIb5PDFsdXUOv/Ukcw+odKHy3z+KqHc9qU4uNqFcFpKNPT2+IWtWe2zuxHyQ/VJzjzS09X02UEbe0NWkT2+r/VzBnaw8dBwJcgu/56Kog+8iljHKV4Dlimgx59ZwltUUqB9WGtaxIOXLp0hD15h0ipfbvWmwW2tBSLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=LWqDfATK; arc=none smtp.client-ip=185.136.65.225
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 2024090609533917b4daed5334c1e57b
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 2024090609534387b7bfdee544bbd6f5
         for <io-uring@vger.kernel.org>;
-        Fri, 06 Sep 2024 11:53:40 +0200
+        Fri, 06 Sep 2024 11:53:43 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=felix.moessbauer@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=ghovqhbYJ+w5KNxfwKu3pn/axYB+6/3jSM34AUo5pxQ=;
- b=UMsxOR18TiuVRFfTwYuCaGJ0NWLsRHYIYHuNNvZYBdXXQhvGSKIMyzV2bZAEFkeT/K3gEI
- h6Yg+ZBNRWmyiN5zzinjxeJ/EccL9MAFnkL5bZUgw5NY4NLB6CFNsCMBfJK7fbptc71PGEsR
- S8iTryuHtde5i9HgG6MU/xjmWXytJs5jQKHy5DBIVf9AbVWUcYb0fDDAftpgkDA4qnDrPXE9
- uzzB1Sj07lz1gjjo/Ucp0s5ABkOAEZlE+6vLJnYlQQz5COZoHgFKfJzFd/Yf6MpvorPXOasF
- yh6jAk/FD4a63ZiCl08ye2xHG0OI7Pu1yQK9IhpFayeXx+6ToTzdEMRA==;
+ bh=VQynP3ITLuCADWZje+F9AQoYOLz42+/shggf0ishfvM=;
+ b=LWqDfATKPVenyJXuklby7nYPlGjUB/UWj1QvdlGlW39ZBRywTsvdFWcCuKyaEZ2EuJu7CG
+ fQKysHpAUXijG0gQG14Qh716dV+wDxGghDiKUMOjHPBfn+GJN6ZbFOk1Mjn25V4/Pr1D/uR5
+ MHdOp4xxPzZJ0y3sR1+qLPhZ7cFESa/P9p9FnjrrIp4ah0Xvyl59xWZsqKiMTUhDlAN/PZKT
+ QOzM558GUKSMaAU/qU38ajG8owFcgpwRg8Of4OphWhkNkbWTmW35XQOuTfsYGgG6RC9cqjFP
+ 7PG5O7iaRhs610JNiUwuc9MhE7B2Ws8OUXjCZDI07u2IpiVzhsk+lvBA==;
 From: Felix Moessbauer <felix.moessbauer@siemens.com>
 To: stable@vger.kernel.org
 Cc: io-uring@vger.kernel.org,
@@ -53,10 +53,11 @@ Cc: io-uring@vger.kernel.org,
 	longman@redhat.com,
 	adriaan.schmidt@siemens.com,
 	florian.bezdeka@siemens.com,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
 	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [PATCH][6.1][1/2] io_uring/io-wq: stop setting PF_NO_SETAFFINITY on io-wq workers
-Date: Fri,  6 Sep 2024 11:53:20 +0200
-Message-Id: <20240906095321.388613-2-felix.moessbauer@siemens.com>
+Subject: [PATCH][6.1][2/2] io_uring/sqpoll: Do not set PF_NO_SETAFFINITY on sqpoll threads
+Date: Fri,  6 Sep 2024 11:53:21 +0200
+Message-Id: <20240906095321.388613-3-felix.moessbauer@siemens.com>
 In-Reply-To: <20240906095321.388613-1-felix.moessbauer@siemens.com>
 References: <20240906095321.388613-1-felix.moessbauer@siemens.com>
 Precedence: bulk
@@ -65,83 +66,43 @@ List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-1321639:519-21489:flowmailer
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Michal Koutný <mkoutny@suse.com>
 
-commit 01e68ce08a30db3d842ce7a55f7f6e0474a55f9a upstream.
+commit a5fc1441af7719e93dc7a638a960befb694ade89 upstream.
 
-Every now and then reports come in that are puzzled on why changing
-affinity on the io-wq workers fails with EINVAL. This happens because they
-set PF_NO_SETAFFINITY as part of their creation, as io-wq organizes
-workers into groups based on what CPU they are running on.
+Users may specify a CPU where the sqpoll thread would run. This may
+conflict with cpuset operations because of strict PF_NO_SETAFFINITY
+requirement. That flag is unnecessary for polling "kernel" threads, see
+the reasoning in commit 01e68ce08a30 ("io_uring/io-wq: stop setting
+PF_NO_SETAFFINITY on io-wq workers"). Drop the flag on poll threads too.
 
-However, this is purely an optimization and not a functional requirement.
-We can allow setting affinity, and just lazily update our worker to wqe
-mappings. If a given io-wq thread times out, it normally exits if there's
-no more work to do. The exception is if it's the last worker available.
-For the timeout case, check the affinity of the worker against group mask
-and exit even if it's the last worker. New workers should be created with
-the right mask and in the right location.
-
-Reported-by:Daniel Dao <dqminh@cloudflare.com>
-Link: https://lore.kernel.org/io-uring/CA+wXwBQwgxB3_UphSny-yAP5b26meeOu1W4TwYVcD_+5gOhvPw@mail.gmail.com/
+Fixes: 01e68ce08a30 ("io_uring/io-wq: stop setting PF_NO_SETAFFINITY on io-wq workers")
+Link: https://lore.kernel.org/all/20230314162559.pnyxdllzgw7jozgx@blackpad/
+Signed-off-by: Michal Koutný <mkoutny@suse.com>
+Link: https://lore.kernel.org/r/20230314183332.25834-1-mkoutny@suse.com
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 ---
- io_uring/io-wq.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ io_uring/sqpoll.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index 04503118cdc1..139cd49b2c27 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -628,7 +628,7 @@ static int io_wqe_worker(void *data)
- 	struct io_wqe_acct *acct = io_wqe_get_acct(worker);
- 	struct io_wqe *wqe = worker->wqe;
- 	struct io_wq *wq = wqe->wq;
--	bool last_timeout = false;
-+	bool exit_mask = false, last_timeout = false;
- 	char buf[TASK_COMM_LEN];
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index 11610a70573a..6ea21b503113 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -233,7 +233,6 @@ static int io_sq_thread(void *data)
+ 		set_cpus_allowed_ptr(current, cpumask_of(sqd->sq_cpu));
+ 	else
+ 		set_cpus_allowed_ptr(current, cpu_online_mask);
+-	current->flags |= PF_NO_SETAFFINITY;
  
- 	worker->flags |= (IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
-@@ -644,8 +644,11 @@ static int io_wqe_worker(void *data)
- 			io_worker_handle_work(worker);
- 
- 		raw_spin_lock(&wqe->lock);
--		/* timed out, exit unless we're the last worker */
--		if (last_timeout && acct->nr_workers > 1) {
-+		/*
-+		 * Last sleep timed out. Exit if we're not the last worker,
-+		 * or if someone modified our affinity.
-+		 */
-+		if (last_timeout && (exit_mask || acct->nr_workers > 1)) {
- 			acct->nr_workers--;
- 			raw_spin_unlock(&wqe->lock);
- 			__set_current_state(TASK_RUNNING);
-@@ -664,7 +667,11 @@ static int io_wqe_worker(void *data)
- 				continue;
- 			break;
- 		}
--		last_timeout = !ret;
-+		if (!ret) {
-+			last_timeout = true;
-+			exit_mask = !cpumask_test_cpu(raw_smp_processor_id(),
-+							wqe->cpu_mask);
-+		}
- 	}
- 
- 	if (test_bit(IO_WQ_BIT_EXIT, &wq->state))
-@@ -716,7 +723,6 @@ static void io_init_new_worker(struct io_wqe *wqe, struct io_worker *worker,
- 	tsk->worker_private = worker;
- 	worker->task = tsk;
- 	set_cpus_allowed_ptr(tsk, wqe->cpu_mask);
--	tsk->flags |= PF_NO_SETAFFINITY;
- 
- 	raw_spin_lock(&wqe->lock);
- 	hlist_nulls_add_head_rcu(&worker->nulls_node, &wqe->free_list);
+ 	/*
+ 	 * Force audit context to get setup, in case we do prep side async
 -- 
 2.39.2
 

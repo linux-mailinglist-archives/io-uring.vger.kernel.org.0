@@ -1,188 +1,143 @@
-Return-Path: <io-uring+bounces-3073-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3074-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA9096FC16
-	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 21:23:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A4196FE2C
+	for <lists+io-uring@lfdr.de>; Sat,  7 Sep 2024 00:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9285F1F24773
-	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 19:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123FC287885
+	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 22:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1751C86FB;
-	Fri,  6 Sep 2024 19:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0860B15B0EC;
+	Fri,  6 Sep 2024 22:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIp6jb8q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YgONsrOM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2BC1B85D5;
-	Fri,  6 Sep 2024 19:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C485C613;
+	Fri,  6 Sep 2024 22:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725650627; cv=none; b=K+1nCHQ3ZzIEaG6dwhA7Ub82W/nHioDl6w+Fm9kqwzm/IBEyc20ZO67Di1g3nw0bI0gwZ1WC6yqlO6UsQNAyjm9ZwIFUDJTLKgk2luqKCE3L7HEErMjpygVTCaGy9yX5vbovTCWoAYcDgAbqir6R10a66gbbZ6n8wIxe4cgGU9g=
+	t=1725663418; cv=none; b=EPAsc705d8E63T/GR38uiII+6dej5FRgTvylBnL4Q+P+wqq841FkOHZ5kTM0iVogSOKJNcciZTJo0JSl3Y8T8/Um/HouCDoZuws3U+7nptFto7Qm2HqMgGFk/ZUfPNYbuHWffJBYffvIVq5ZE7pQ5aXWeb2YPPVqro2Jg1AjNlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725650627; c=relaxed/simple;
-	bh=nxAr7Ei1WYwKengUI4zeD4NH55sooGUwgYSIlh7xkHw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ubdYgiR+89xbGoKTg+uA6tk/87UnfHHaSzIeKV5hG8qyd2+UwjuiIVqCESGeFpraM0eB0YOHJD4xwvNfN8rM2S/cesjathQXWJ2MZ7aeRsRLA9DNRW+y/vxLb/oDKSDeyhvJZcXiUdjH6BeGAM4mJasJwerOCpniU3o7ceovGro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TIp6jb8q; arc=none smtp.client-ip=209.85.210.54
+	s=arc-20240116; t=1725663418; c=relaxed/simple;
+	bh=maoi4n2RXuMluWy6MNivIbHc3lpL4aBnaNCTlonGGCo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qqqljzVonktg867lcsLYyNSwF1EQJF2Y9yV0hOlM8nIOQFvucmUJ+YNtjTkbrBepe/gdMbu8xJAuN57TYbP9Y13llwTu8QixZIBWaLclkCQZE7NLL39fYzc4PLeQnFeqFhpGj3vTJkR/SwQ6AYCuT37koZQeuTbsYDs/35m0CGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YgONsrOM; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-70941cb73e9so1321388a34.2;
-        Fri, 06 Sep 2024 12:23:45 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so348860966b.0;
+        Fri, 06 Sep 2024 15:56:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725650625; x=1726255425; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CCQTDySUr/h//BFALqT2v4C/WCXPyTterg1sfGPAVlc=;
-        b=TIp6jb8qWILX/dBFb9TNUAugL7/Icg/E0DcMQBN3Qzren8a6ddhigvBPK7tn70PVlC
-         0JusJcS57ZbNwlKgh6TdliklWmH+dqm5WCuE8tDcyzM5GU7WJe75Dpq9FoFICRMYfzMV
-         4jMpWTYgtL2o8Jce/F+LVorjAfvU0AorngmBj8LrfqiX1JVw5lFufQBFDAzXwLvtjtCp
-         znV+sxVZ8P5+5sM1OYvf1dtn4y6sUIZ1NYQs+j9T0LLgUud23//rH9OY4Me/WHGwBoGV
-         QaurlpBdmCwH44NYM78O/rBnjFPyr6emd38AI5thIbXW5odvoE20/96WSg5LHj/zOB01
-         Q75A==
+        d=gmail.com; s=20230601; t=1725663415; x=1726268215; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nGTHGb53DvEPF010k3Zs0+1r6sTv45lepnS24XVNVEo=;
+        b=YgONsrOMGS7vFTg/wtDDvUW3aGDkDQGLjHWZqYb2emWrj1f6pDrdUz2SdoqFouzlmR
+         taLC3UupbF/lZKro1LHrcrN1HRkDTmP9SnJE5PYGAD8uhy5QcfP0e4HShiXthoJetgWI
+         CiJWwg5SFntxVBBfNybdG9QyZrhkvC2dwIb/6N/YnlLq3j7eWSiUgK/YI36+yukn88Gp
+         KTDFU3DFNa0zcRIWYg57duDml8twY5qpIgMaaE1aglDeWlXNsLzzEd79FLVTH1RZkNdI
+         xAFf9Y41jPSJs7Lp3aRE4MvU/NCCJNFuKBXR3An+IyO3WWgIZtgNNkYmpL3SOVGtLCvI
+         jenQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725650625; x=1726255425;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CCQTDySUr/h//BFALqT2v4C/WCXPyTterg1sfGPAVlc=;
-        b=RJypdOBhBiPR4h96QVOqOfaGAqi9IDV5adqarmHDU+He0qNBQL/v63ggTEhqcz4b/v
-         HFgowxc2sQbl5KunA1WYHA3AkSX9j9YSo8LfQxwwqLTbFmG7xXZkixC/D/6OBB5XWb6+
-         1xPAfNz3bCq4IkzCAzuCKoXC+gkzva8XGCUrHKawRM05bFkMAiP2Le/jcuB/NrURlxEz
-         8xd0VSCiTzMZ2nRxPw4hppzKM1uCJnEBSP9RIFIvRZS244AvzdvrZAJDHZWHOsWNBAZu
-         QJku8Fpcr2gAQBSIfHaEx1gwxMiwmSrC0TWbOy8yjwQIk9dEAaed9QJBm51YYkZTF4Fy
-         CkQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCZNGnQ7zftaKuvz31WmmtxJp78Skn3ah4CsKT/BiSsbNSKgjj3cKt34FJpnlqMkk/jM4+YxRlvSidjF0uwA==@vger.kernel.org, AJvYcCWKdpkTRwBK41Siv0iEwZD2pSDle44QfdLxoFzJsIISX+ukRvmuSw4Ei1l94L6zTLRA06agr2mlcA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/1Y1acJofPXiGRdv9mwbvPc+BKqLWM2oxrdXih0tZ9ehYVAot
-	3wVp2t3J7jBVYseFDWwQVgJwMvzKFkEkBFYPCwJGTOi7Tf0fnw38zOlXdxq2XwXIKpweCTzvHBK
-	m3iX8x3qipaXX+K3auJUxdH1Gm6dp4A==
-X-Google-Smtp-Source: AGHT+IG5raLeH6/DSrLHLG4mXHFBnQ809c/rzp6ulmATVYQpIyYWV3pgFYipnMQaMWVWkSdJq/2PlTIBMGhYJw2wMpc=
-X-Received: by 2002:a05:6830:7102:b0:709:4882:d001 with SMTP id
- 46e09a7af769-710cc21cc90mr4869209a34.9.1725650625265; Fri, 06 Sep 2024
- 12:23:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725663415; x=1726268215;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nGTHGb53DvEPF010k3Zs0+1r6sTv45lepnS24XVNVEo=;
+        b=SmZzOqBifEDQTdAF5TZaoW2OoaCEl4DXK9sRbg/4GX/HFpY9de1ZH6REviHHUNfwsD
+         aBoJckFRLJkGUP4l6oor5F0Eez4Uph3UWFm6PfEM+ceL9QoaPEUit4/ggRC+kDZAQPq0
+         FPhrqVtZJdZvn1QrAx4P+0LdMziboKG4jjmJ/+J5ncS4raC0DMosyrnA0wQJib25KrmH
+         yFkrklbsG0gS+M5sU/EKPSYSbLIgHCjNj3vZzMC+fvPD0xRD8xNI8f8ojViIjhiecAC4
+         Ub51A61MY7XuPKjJam4fdf8twNrvKw/7BmBHKLV0stWOpC6FE8fuC5ZDLeYS4ePeFM/T
+         /ysQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaSqblhkMUngLvNmzo/byro5/bRT8tRwNu5ar9+db0XQhaxlRMJxARHsLSO3TWcJ5Bsx8rBEI9n4J3UQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAC0KwQb54SJAB4gTtKOo9OaNm/qAmsRk7m9LXAE9jvY42wKPu
+	3MtRk6uJpQwwvEhBoi5mdojRMt2nLY+tsfOe5bF6Npow5pIm1vvJTSGKMV34
+X-Google-Smtp-Source: AGHT+IHuJBTmNgLXekzqo/kN3wYBE9A78U+mlsI5nzmIR5b6yYLak0xoaHmWgdXR81I+7iIxWWK4gw==
+X-Received: by 2002:a17:907:3da4:b0:a80:c0ed:2145 with SMTP id a640c23a62f3a-a8a85f2ee3dmr431894766b.2.1725663414129;
+        Fri, 06 Sep 2024 15:56:54 -0700 (PDT)
+Received: from 127.0.0.1localhost ([148.252.146.236])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d54978sm2679566b.199.2024.09.06.15.56.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 15:56:53 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	asml.silence@gmail.com,
+	Conrad Meyer <conradmeyer@meta.com>,
+	linux-block@vger.kernel.org,
+	linux-mm@kvack.org,
+	Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v4 0/8] implement async block discards and other ops via io_uring
+Date: Fri,  6 Sep 2024 23:57:17 +0100
+Message-ID: <cover.1725621577.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-0-9207f7391444@ddn.com>
- <20240901-b4-fuse-uring-rfcv3-without-mmap-v3-5-9207f7391444@ddn.com>
- <CAJnrk1am+s=z2iDcdQ9vXrTvo3wAXH9UE57BpXAovOqdNdYKHg@mail.gmail.com> <4a0ac578-48fd-4c46-88c1-713f1720e771@fastmail.fm>
-In-Reply-To: <4a0ac578-48fd-4c46-88c1-713f1720e771@fastmail.fm>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 6 Sep 2024 12:23:34 -0700
-Message-ID: <CAJnrk1ZNZh1xT9dOkCMhJ2Np9BB8knPuKofruy5dFiovzfrhRQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 05/17] fuse: Add a uring config ioctl
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, bernd@fastmail.fm, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 4, 2024 at 3:24=E2=80=AFPM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
-> On 9/4/24 02:43, Joanne Koong wrote:
-> > On Sun, Sep 1, 2024 at 6:37=E2=80=AFAM Bernd Schubert <bschubert@ddn.co=
-m> wrote:
-> >>
-> >> This only adds the initial ioctl for basic fuse-uring initialization.
-> >> More ioctl types will be added later to initialize queues.
-...
-> >
-> >> +               return -EINVAL;
-> >> +       }
-> >> +
-> >> +       if (rcfg->nr_queues > 1 && rcfg->nr_queues !=3D num_present_cp=
-us()) {
-> >
-> > Will it always be that nr_queues must be the number of CPUs on the
-> > system or will that constraint be relaxed in the future?
->
-> In all my testing performance rather suffered when any kind of cpu switch=
-ing was involved. I guess we should first find a good reason to relax it an=
-d then need to think about which queue to use, when a request comes on a di=
-fferent core. Do you have a use case?
+There is an interest in having asynchronous block operations like
+discard and write zeroes. The series implements that as io_uring commands,
+which is an io_uring request type allowing to implement custom file
+specific operations.
 
-Ah, gotcha. I don't have a use case in mind, just thought it'd be
-common for some users to want more than 1 queue but not as many queues
-as they have cores. This could always be added later in the future
-though if this use case actually comes up.
+First 4 are preparation patches. Patch 5 introduces the main chunk of
+cmd infrastructure and discard commands. Patches 6-8 implement
+write zeroes variants.
 
->
-> >> diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
-> >> index 6c506f040d5f..e6289bafb788 100644
-> >> --- a/fs/fuse/fuse_dev_i.h
-> >> +++ b/fs/fuse/fuse_dev_i.h
-> >> @@ -7,6 +7,7 @@
-> >>  #define _FS_FUSE_DEV_I_H
-> >>
-> >>  #include <linux/types.h>
-> >> +#include <linux/fs.h>
-> >
-> > I think you accidentally included this.
-> >
->
-> When I remove it:
->
-> bschubert2@imesrv6 linux.git>make M=3Dfs/fuse/
->   CC [M]  fs/fuse/dev_uring.o
-> In file included from fs/fuse/dev_uring.c:7:
-> fs/fuse/fuse_dev_i.h:15:52: warning: declaration of 'struct file' will no=
-t be visible outside of this function [-Wvisibility]
-> static inline struct fuse_dev *fuse_get_dev(struct file *file)
->                                                    ^
-> fs/fuse/fuse_dev_i.h:21:9: error: call to undeclared function 'READ_ONCE'=
-; ISO C99 and later do not support implicit function declarations [-Wimplic=
-it-function-declaration]
->         return READ_ONCE(file->private_data);
->                ^
-> fs/fuse/fuse_dev_i.h:21:23: error: incomplete definition of type 'struct =
-file'
->         return READ_ONCE(file->private_data);
->                          ~~~~^
->
->
-> I could also include <linux/fs.h> in dev_uring.c, but isn't it cleaner
-> to have the include in fuse_dev_i.h as it is that file that
-> adds dependencies?
->
+Branch with tests and docs:
+https://github.com/isilence/liburing.git discard-cmd
 
-You're totally right, I had missed that this patch adds in a new
-caller of this header (dev_uring.c) - sorry for the noise!
+The man page specifically (need to shuffle it to some cmd section):
+https://github.com/isilence/liburing/commit/a6fa2bc2400bf7fcb80496e322b5db4c8b3191f0
 
-> >>
-...
-> >> +
-> >>  #endif /* _LINUX_FUSE_H */
-> >>
-> >> --
-> >> 2.43.0
-> >>
->
-> I will get it all fixed later this week! I will also review my own
-> patches before v4, I just wanted to get v3 out asap as it was already
-> taking so much time after v2.
->
+v4: fix failing to pass nowait (unused opf) in patch 7
 
-Gotcha, I'll wait until v4 to review the other patches in this set then.
+v3: use GFP_NOWAIT for non-blocking allocation
+    fail oversized nowait discards in advance
+    drop secure erase and add zero page writes
+    renamed function name + other cosmetic changes
+    use IOC / ioctl encoding for cmd opcodes
 
-Excited to follow all the progress on this!
+v2: move out of CONFIG_COMPAT
+    add write zeroes & secure erase
+    drop a note about interaction with page cache
 
+Pavel Begunkov (8):
+  io_uring/cmd: expose iowq to cmds
+  io_uring/cmd: give inline space in request to cmds
+  filemap: introduce filemap_invalidate_pages
+  block: introduce blk_validate_byte_range()
+  block: implement async discard as io_uring cmd
+  block: implement async write zeroes command
+  block: add nowait flag for __blkdev_issue_zero_pages
+  block: implement async write zero pages command
 
-Thanks,
-Joanne
+ block/blk-lib.c              |  27 ++++-
+ block/blk.h                  |   1 +
+ block/fops.c                 |   2 +
+ block/ioctl.c                | 228 ++++++++++++++++++++++++++++++++---
+ include/linux/bio.h          |   6 +
+ include/linux/blkdev.h       |   1 +
+ include/linux/io_uring/cmd.h |  15 +++
+ include/linux/pagemap.h      |   2 +
+ include/uapi/linux/fs.h      |   4 +
+ io_uring/io_uring.c          |  11 ++
+ io_uring/io_uring.h          |   1 +
+ io_uring/uring_cmd.c         |   7 ++
+ mm/filemap.c                 |  17 ++-
+ 13 files changed, 293 insertions(+), 29 deletions(-)
 
->
-> Thanks,
-> Bernd
->
+-- 
+2.45.2
+
 

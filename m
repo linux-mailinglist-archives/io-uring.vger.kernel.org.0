@@ -1,72 +1,72 @@
-Return-Path: <io-uring+bounces-3081-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3082-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69D896FE3B
-	for <lists+io-uring@lfdr.de>; Sat,  7 Sep 2024 00:57:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74EA96FE3D
+	for <lists+io-uring@lfdr.de>; Sat,  7 Sep 2024 00:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CECE28780F
-	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 22:57:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F319E1C22A1D
+	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 22:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E8715ADB1;
-	Fri,  6 Sep 2024 22:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA6015B12B;
+	Fri,  6 Sep 2024 22:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPLODqSO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDIUu+Ao"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D6715B54E;
-	Fri,  6 Sep 2024 22:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7563615B57C;
+	Fri,  6 Sep 2024 22:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725663430; cv=none; b=uw1UmvuuvtMQ2uxC/zDAmEgNTMjc6EN9bPO7z/PlNfI5j+ny6xOuxwUM5FrJAejVTyQoX1Sh5yQB11bluEvH+gqvnqf3xFxZXxbtjhPYx8cmUZoZin9CN7aGkF/ehHXitI7BgPnJM8B9aEBWMWY7pMIHEP1M4f/ciq0sIN6w/I8=
+	t=1725663433; cv=none; b=pyhX3R8sX83NhvKnXq702YwJuC+ni7cdW1V/nkz0AIJAoYgZl6bOAeVCeVNfD6Rp0+fNSkHNj/KUIW5o4n3xwfPTbj7DxcWOUMHnwJqDOR+qIXErjqKHVS8nOyfVUDW0N0Jkk+bqQu2kS2eRcTXmeFwbQQUtrqoYuMR0x1rLpy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725663430; c=relaxed/simple;
-	bh=78UR0qruQh9KW0yalCw2O7xPrgksBC9fYQyOrc8Aubg=;
+	s=arc-20240116; t=1725663433; c=relaxed/simple;
+	bh=fX6prqf2VFD2UV5gx7IfCiSBWUdjjihLSk5KGUumqJA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DKJ6lVg/12mdT0tWwRobTL2G39PEkOqqY4TISP+zq8ZYGjdfMMAguSgQCTL+sdjCS6JgMnq233D/v7ZPwZI8zRuJ6WeL2gfC+FXhKGQ8Jq70BgFqtuWpXSbGb+9ARdse/BbEvDjyrmRhNZII/kRzK2/NwiUSndaRPk9TKwXyrWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPLODqSO; arc=none smtp.client-ip=209.85.218.52
+	 MIME-Version; b=ZNyJNKctalR/RJDPPPN2cD97r01HOcurwVyiDg4EZovrHT+HzGNLAlBmcRjlsK0jFNvyKSGL5VjEs9jMT2VHio6Lc/lG76OccEHrGrVFc8Eus1JDDp+4S3Pyflk43zMEQbf+P+kFI/JeQ/2A8YQRG1mncwUtUNIqwKEbHuZoFJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDIUu+Ao; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8ce5db8668so112530966b.1;
-        Fri, 06 Sep 2024 15:57:09 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-535be093a43so3180061e87.3;
+        Fri, 06 Sep 2024 15:57:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725663427; x=1726268227; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725663429; x=1726268229; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jYezJHCo7v489eblMcj1bTcVFXeBrX/vk5R7qG2A1Yk=;
-        b=iPLODqSO95xJ8LezNfwQmV0CBQjTWMC86BPKjs76QLXZIIhUlOr7UH4WWiF6Q53Cr/
-         PwOznYDnmR5AIWkmxQiKn2PUcuipWdN91jI7l1+MeQrw5hxD7b6lfNTKjdOwUOG3AALo
-         +7rO15Kpb5WXztBDykinIl8O2asGikK13uuqsewntJR0C7u+h2SjuEgD5piQsdfqmajQ
-         coq1RjK/t3KaVS/V/4xpV45qur14rFcVadJxVkoA8hjuhwG/I4+YRrColMMWkvl2+TJT
-         jwIf6PUU2CuYyQXQfGl7ic9Yq0835Kz0GbYi8VocRmteC6UtHD3ou4szjHrpAYsQd9Uo
-         Zm0A==
+        bh=llWa+KY1CsE699NO6/Qz9OdhajA1Gh72FplwVQHN8Os=;
+        b=CDIUu+Aox8Z3H8bOdSttwSPxdkc00prGvp90oFfJRsB4F9gphuR7MTmCX+hgBEBaAe
+         PamvlXyfAzCzM8dc+tW91Mw+ei1zoQg8OyP2GkSHIrXQ37BgcKufbFr99WwxxrGHuSCe
+         ZAHt95jc7uujescyQtei8SNqJKnTw0t1fIH0Ga01PHtgO3ONl2qzO/NsUaFiu2tJ9VpJ
+         AkN2MBMX4Ee2UYjHcVNd9OE/BYGYRTMTm2S/IBOjdFB60qGNPUlxZMSjHoimDG6QkEGR
+         FJKP7Z9UAnnj2QVxea9jkhtSep/nNH89vDcGOSnjLL7jiwTgLT1M297YBoSasHvuPE+1
+         3zLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725663427; x=1726268227;
+        d=1e100.net; s=20230601; t=1725663429; x=1726268229;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jYezJHCo7v489eblMcj1bTcVFXeBrX/vk5R7qG2A1Yk=;
-        b=bjUZWjbV4U8vWPfG0ALFKqm1hM4BWZDM+81zSPND2t5NpR5KFowTlezjZj3cteTaNU
-         INX3peqC8LuE/848Tx+3CGod7CiS5htBMHktX/m2WFgf9HPn38pwK8urJb2GYT4mxycq
-         5+C2unDkCwdkSlPhfTwYBvjJidehPSy7QUoJmrPjTutHgFiOCkNnrYtxu+p0wu5oSPxH
-         5EyCmhM1mPAhRGVBsOKTfkBB/M45ZwsOHdx+DZENbJmoAvL06Skggsp0ApYsf6fzu6nM
-         ucS0qUxx9D4UR3hF477DiGqfWN9M4Ri6YBqEJxs+XenSaoNDOmMc0/F2/SwXe6LOvIBT
-         0xYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSpxRuTMjW551MfX4H6VPwIZR1v+6MdL9Y1PJKMbrF5yqdwoVS9ibu+g5Bz014F6egQogr+todyhS7cw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuMF069s1Thhzd8xUASER/wKld77CJ0vfbCdB6/rYuMR4jgXCA
-	OQ/i9hvKW7dXzFx31uys8LATt22h/w64+L8kAHgdTHJYBGI7/I0j++LEmfWh
-X-Google-Smtp-Source: AGHT+IE/3M7b/K3pyseCsX+NiZT9J56A5VyhoP1o7o5GWtiHew5dHLC0T6ZxFj2yq0dOHss7K5NZbA==
-X-Received: by 2002:a17:907:3f20:b0:a8d:caa:7fee with SMTP id a640c23a62f3a-a8d1bf75ec5mr67443566b.7.1725663427142;
-        Fri, 06 Sep 2024 15:57:07 -0700 (PDT)
+        bh=llWa+KY1CsE699NO6/Qz9OdhajA1Gh72FplwVQHN8Os=;
+        b=kfGIOuFF2urkmb0TXdywkMIhNOHeRB+A/LLxgNL+ZT6pupsBhLu+Ke4QPRN95azygz
+         /BqeiLooZl155xYgi1YDRGAekXUVEMMh/LWYTt1+3o2irsINavaVE2bGOHlRkGnK85St
+         mNRUZeRZsaZfm90PQJoz4qQekHz/CXMqJwisOzADb+2T8qyw17dJpsggA451v0Dv4W78
+         MH2jboDr/EjjB5Hzkr5uGsci3G80O4yz57UvMFDQyuLfIhbRWM2fEAYjB4qwUBWUMaBj
+         73GqbmXQiYQeZqc0sfB0J7+LSImoXAgjpsNGdcf+FpRsTUbl2VgJh+3l0uVD7/mxEXrm
+         +7dA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyBBO0Gz7J6fj8nD5JyFs4AkCpm/XqgL57pHzVxk0FFszlgcne61tq1CHGs2oQYSvIUgreBi6miY2otA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLUPJ+8kawVyv5QpXZtWXW83jMMDecCXjOYoxs7LFXUcHKFdOo
+	vsz3Zuwkq/VhxOt7vav+FDcyqIBH59YvgFSjrS4gHCQhV+c6b5LVOf5F/xAQ
+X-Google-Smtp-Source: AGHT+IF7dy6Fwnb2jmgqk1DE1zvsMyOI+fNBEs5xezgv4QpyDJkwby70G9EHhdLSnvBeBbSkACl5HA==
+X-Received: by 2002:a05:6512:10d0:b0:52c:d904:d26e with SMTP id 2adb3069b0e04-536587abee5mr2790225e87.21.1725663429138;
+        Fri, 06 Sep 2024 15:57:09 -0700 (PDT)
 Received: from 127.0.0.1localhost ([148.252.146.236])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d54978sm2679566b.199.2024.09.06.15.57.05
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d54978sm2679566b.199.2024.09.06.15.57.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 15:57:06 -0700 (PDT)
+        Fri, 06 Sep 2024 15:57:08 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>,
@@ -75,9 +75,9 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	linux-block@vger.kernel.org,
 	linux-mm@kvack.org,
 	Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v4 7/8] block: add nowait flag for __blkdev_issue_zero_pages
-Date: Fri,  6 Sep 2024 23:57:24 +0100
-Message-ID: <387caa9b7a23061f19034a8afd1dfcf017d8fe35.1725621577.git.asml.silence@gmail.com>
+Subject: [PATCH v4 8/8] block: implement async write zero pages command
+Date: Fri,  6 Sep 2024 23:57:25 +0100
+Message-ID: <c465430b0802ced71d22f548587f2e06951b3cd5.1725621577.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1725621577.git.asml.silence@gmail.com>
 References: <cover.1725621577.git.asml.silence@gmail.com>
@@ -89,114 +89,86 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To reuse __blkdev_issue_zero_pages() in the following patch, we need to
-make it work with non-blocking requests. Add a new nowait flag we can
-pass inside. Return errors if something went wrong, and check
-bio_alloc() for failures, which wasn't supposed to happen before because
-of what gfp flags the callers are passing. Note that there might be a
-bio passed back even when the function returned an error. To limit the
-scope of the patch, don't add return code handling to callers, that can
-be deferred to a follow up.
+Add a command that writes the zero page to the drive. Apart from passing
+the zero page instead of actual data it uses the normal write path and
+doesn't do any further acceleration, nor it requires any special
+hardware support. The indended use is to have a fallback when
+BLOCK_URING_CMD_WRITE_ZEROES is not supported.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- block/blk-lib.c        | 24 +++++++++++++++++++-----
- include/linux/bio.h    |  4 ++++
- include/linux/blkdev.h |  1 +
- 3 files changed, 24 insertions(+), 5 deletions(-)
+ block/ioctl.c           | 24 +++++++++++++++++++++---
+ include/uapi/linux/fs.h |  1 +
+ 2 files changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/block/blk-lib.c b/block/blk-lib.c
-index c94c67a75f7e..0d8f1b93b4c3 100644
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -193,20 +193,32 @@ static unsigned int __blkdev_sectors_to_bio_pages(sector_t nr_sects)
- 	return min(pages, (sector_t)BIO_MAX_VECS);
- }
+diff --git a/block/ioctl.c b/block/ioctl.c
+index ef4b2a90ad79..3cb479192023 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -774,7 +774,8 @@ static void bio_cmd_bio_end_io(struct bio *bio)
  
--static void __blkdev_issue_zero_pages(struct block_device *bdev,
-+int blkdev_issue_zero_pages_bio(struct block_device *bdev,
- 		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
- 		struct bio **biop, unsigned int flags)
+ static int blkdev_cmd_write_zeroes(struct io_uring_cmd *cmd,
+ 				   struct block_device *bdev,
+-				   uint64_t start, uint64_t len, bool nowait)
++				   uint64_t start, uint64_t len,
++				   bool nowait, bool zero_pages)
  {
-+	blk_opf_t opf = REQ_OP_WRITE;
+ 
+ 	sector_t bs_mask = (bdev_logical_block_size(bdev) >> SECTOR_SHIFT) - 1;
+@@ -793,6 +794,20 @@ static int blkdev_cmd_write_zeroes(struct io_uring_cmd *cmd,
+ 	if (err)
+ 		return err;
+ 
++	if (zero_pages) {
++		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd,
++						struct blk_iou_cmd);
 +
-+	if (flags & BLKDEV_ZERO_PAGES_NOWAIT) {
-+		sector_t max_bio_sectors = BIO_MAX_VECS << PAGE_SECTORS_SHIFT;
-+
-+		if (nr_sects > max_bio_sectors)
++		err = blkdev_issue_zero_pages_bio(bdev, sector, nr_sects,
++						  gfp, &prev,
++						  BLKDEV_ZERO_PAGES_NOWAIT);
++		if (!prev)
 +			return -EAGAIN;
-+		opf |= REQ_NOWAIT;
++		if (err)
++			bic->res = err;
++		goto out_submit;
 +	}
 +
- 	while (nr_sects) {
- 		unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
- 		struct bio *bio;
- 
--		bio = bio_alloc(bdev, nr_vecs, REQ_OP_WRITE, gfp_mask);
-+		bio = bio_alloc(bdev, nr_vecs, opf, gfp_mask);
-+		if (!bio)
-+			return -ENOMEM;
- 		bio->bi_iter.bi_sector = sector;
- 
- 		if ((flags & BLKDEV_ZERO_KILLABLE) &&
- 		    fatal_signal_pending(current))
--			break;
-+			return -EINTR;
- 
- 		do {
- 			unsigned int len, added;
-@@ -223,6 +235,8 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
- 		*biop = bio_chain_and_submit(*biop, bio);
- 		cond_resched();
- 	}
-+
-+	return 0;
- }
- 
- static int blkdev_issue_zero_pages(struct block_device *bdev, sector_t sector,
-@@ -236,7 +250,7 @@ static int blkdev_issue_zero_pages(struct block_device *bdev, sector_t sector,
+ 	if (!limit)
  		return -EOPNOTSUPP;
- 
- 	blk_start_plug(&plug);
--	__blkdev_issue_zero_pages(bdev, sector, nr_sects, gfp, &bio, flags);
-+	blkdev_issue_zero_pages_bio(bdev, sector, nr_sects, gfp, &bio, flags);
- 	if (bio) {
- 		if ((flags & BLKDEV_ZERO_KILLABLE) &&
- 		    fatal_signal_pending(current)) {
-@@ -286,7 +300,7 @@ int __blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
- 	} else {
- 		if (flags & BLKDEV_ZERO_NOFALLBACK)
- 			return -EOPNOTSUPP;
--		__blkdev_issue_zero_pages(bdev, sector, nr_sects, gfp_mask,
-+		blkdev_issue_zero_pages_bio(bdev, sector, nr_sects, gfp_mask,
- 				biop, flags);
+ 	/*
+@@ -826,7 +841,7 @@ static int blkdev_cmd_write_zeroes(struct io_uring_cmd *cmd,
  	}
- 	return 0;
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 78ead424484c..87d85b326e1e 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -686,4 +686,8 @@ struct bio *blk_alloc_discard_bio(struct block_device *bdev,
+ 	if (!prev)
+ 		return -EAGAIN;
+-
++out_submit:
+ 	prev->bi_private = cmd;
+ 	prev->bi_end_io = bio_cmd_bio_end_io;
+ 	submit_bio(prev);
+@@ -904,7 +919,10 @@ int blkdev_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ 		return blkdev_cmd_discard(cmd, bdev, start, len, bic->nowait);
+ 	case BLOCK_URING_CMD_WRITE_ZEROES:
+ 		return blkdev_cmd_write_zeroes(cmd, bdev, start, len,
+-					       bic->nowait);
++					       bic->nowait, false);
++	case BLOCK_URING_CMD_WRITE_ZERO_PAGE:
++		return blkdev_cmd_write_zeroes(cmd, bdev, start, len,
++					       bic->nowait, true);
+ 	}
+ 	return -EINVAL;
+ }
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 68b0fccebf92..f4337b87d846 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -210,6 +210,7 @@ struct fsxattr {
  
- sector_t bio_discard_limit(struct block_device *bdev, sector_t sector);
+ #define BLOCK_URING_CMD_DISCARD			_IO(0x12,137)
+ #define BLOCK_URING_CMD_WRITE_ZEROES		_IO(0x12,138)
++#define BLOCK_URING_CMD_WRITE_ZERO_PAGE		_IO(0x12,139)
  
-+int blkdev_issue_zero_pages_bio(struct block_device *bdev,
-+		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
-+		struct bio **biop, unsigned int flags);
-+
- #endif /* __LINUX_BIO_H */
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 643c9020a35a..bf1aa951fda2 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1098,6 +1098,7 @@ int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
- #define BLKDEV_ZERO_NOUNMAP	(1 << 0)  /* do not free blocks */
- #define BLKDEV_ZERO_NOFALLBACK	(1 << 1)  /* don't write explicit zeroes */
- #define BLKDEV_ZERO_KILLABLE	(1 << 2)  /* interruptible by fatal signals */
-+#define BLKDEV_ZERO_PAGES_NOWAIT (1 << 3) /* non-blocking submission  */
- 
- extern int __blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
- 		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop,
+ #define BMAP_IOCTL 1		/* obsolete - kept for compatibility */
+ #define FIBMAP	   _IO(0x00,1)	/* bmap access */
 -- 
 2.45.2
 

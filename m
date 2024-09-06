@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3067-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3068-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8F996F71A
-	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 16:41:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D6696F7E2
+	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 17:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09E4A286310
-	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 14:41:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEB661C21521
+	for <lists+io-uring@lfdr.de>; Fri,  6 Sep 2024 15:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399AA1D1739;
-	Fri,  6 Sep 2024 14:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B58E1D1F77;
+	Fri,  6 Sep 2024 15:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M2Yzqa0R"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AjYf3UqW"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555891D04A0;
-	Fri,  6 Sep 2024 14:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4390B1D1F56;
+	Fri,  6 Sep 2024 15:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725633680; cv=none; b=tBvf420jEibDwcXAugfWuoBhhP4lXkhQB7fjLtcCaTWBk0w2vUqYnnUzmnAkFiSgMUDMATjj7NiTOVwNQMNYMfaOmkoVWYKjvV+ISjYr0ZL73SS0YQqtbM0GsDBy8CQxjjM3atI4T7LPmNXaWFhyRfypFfIRnhcYw13Q2lRvDAI=
+	t=1725635447; cv=none; b=DLfjmuLqrid0bxUMWDCUlfb45ySfSLE6H/w6mbydPPyNqVy75XKJW5gDhap81DX2e+68hXdBIaurjS1jTg7GhOadjLdZ38meV94u+W4+0duxoj1L7FToWolbJyA+cjX8BE/1nB3HJacLaPLBVSsvfNtBYhfoUp44TInVxMth+DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725633680; c=relaxed/simple;
-	bh=s+77huen4Z7h3vSV/lDW30tHBiNJHGiNdLoHegm/G1I=;
+	s=arc-20240116; t=1725635447; c=relaxed/simple;
+	bh=i+t/fNrw4T10Eus90nnb7VH+5QGi1UY4wE4dcwg5FBQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nq+I98JDsIq6MASty19kUHrMZCuAfgrBDSDLi2PGtcC8aoDG6B/+q4LSkGPvpPi3+ug7exoh59rsIi3hEITfQBuX3DExjDIqO+rrH67ghvFFmTF8kVjILte0hswnJz47BkPVCMZRK/TQANqc6mQZwSr8mlGbwvIDwXTOwRmDjeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M2Yzqa0R; arc=none smtp.client-ip=209.85.218.41
+	 In-Reply-To:Content-Type; b=m5XP5IIA/3Fr1bqUEl0WKlWP0IukKQJzfQZgfVoFs+S3oGFSY9dl+bptL4ErPhA8S/B+8qKeTAKwm+74IqCv6KS3ML6KFeVd3Ut7d6rN9XmlSFg5YUCsEiS7uzep3hr5gjLS6oS4FZ5/Hpt8jto5lnnJZ7p4luiZ1ZvUp7iQXdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AjYf3UqW; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a86e9db75b9so264581966b.1;
-        Fri, 06 Sep 2024 07:41:17 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a868d7f92feso299607866b.2;
+        Fri, 06 Sep 2024 08:10:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725633676; x=1726238476; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725635443; x=1726240243; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=6gUbhLmuX4st5r7L2akUWLECfiawR4Mef6gecmpxq2o=;
-        b=M2Yzqa0RibJccj1cwhzG4NUwRjy5UelwFjdyxB2STz+IYp63booAlDjkYytInqCuGz
-         d/4QnarvkZG9fsXK7/BEFt3bZD/9jjqIQcva3yXKQKAmr6QaOYVNktgcGCYhP19Gwtha
-         y7VZn7F2VsJ7eMvG+BRA1jo7RJFmf8MH2JFufQzOmQ9gZjRceoCBlsrm4KzatLV/6Evd
-         Xzl9vsgJQ8iVfSB6H25Qbirf5pJ/r+SLM3WwExPezWNs9MDwcEj6I6YqrutUEFQx5Tce
-         N/Jz240HvBVW2wI1HR1YDjORSg6oyv28j2YoldhmlZhfMbejcnorigtmhhGaIPGNa/b4
-         4qYw==
+        bh=BK5K+HQ8FU3skoCuxhX88GuAhU3e+OoqmoVoL7JQIDY=;
+        b=AjYf3UqWteA++hZdzm2Wrl1M8TD5mb9stf9qcUhcTYmBpV8R4RnZ5GYI5sE31LLEfX
+         dSHEwjmMS9ND0seBpWqQbXf5l0QaVoMEn/rWge4mC6eMOj5l26ts+7vfGGaKTnI5ShDo
+         wcbcHeiFh5ctGvqMFizQFzMvY5E9hAk5903qcr0tjCPQ5QICV99p3arRTMEHQ+rZSULu
+         mZxSi5gZQ+Ka3HquFPNSVJfxcPxYktWPOjRlEd44e/fdE5FCxVm6irlXBb9f5kyBV7Cz
+         L1C11mge3Is35U3TFD3uriGsN2HQD3ZRbsquLAQn11AoCPw/cNMUnIpJr/eAVgI8THrG
+         GQWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725633676; x=1726238476;
+        d=1e100.net; s=20230601; t=1725635443; x=1726240243;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6gUbhLmuX4st5r7L2akUWLECfiawR4Mef6gecmpxq2o=;
-        b=MYioXoULSLvU/bgMfXE0Qx7hwife5mq/x0Ot+nEHbsgzuAWW3kOEILCgwimD4+aHBB
-         FL0iBzRA80ibHoIzSHI352GummC2QfddIy/2WIeuZTm+MSP8Qj+IVZ3s90nTjgFncOe6
-         2P+SG+RJMu2S8BjJeVQtwBq2iEjWMjGmjFM+Nr2odEHIJ45RmeSRs7jJcBlvntjevseG
-         4wIOPo7pP6hjT2DJ2uJa/V7AR230J2VzE+Zd5Y6HsCyvBtVgk+nBxfQK6dr6RYyUpEUv
-         OKS3dvm3z+YwPGxtBF103OglPcHA5U2HuCMIIjaM+5jOz9O5gNqNvicqJx7dHm08NzZ2
-         7veA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9E5ZKmLdXG819NIt08qWyEvurl4AwJCm4SNRFiL9/hFiiE08V4tHTyL/mQgxFnnxe++tHjuRpAg==@vger.kernel.org, AJvYcCV9jQmBLFGdlJKrOIt/hgobIdiI9m2QNBYcLPySWfBzLZWsVOrPbD8qI5pttsRP/mLvPMuVa6mSzUnzX9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV3GJVFTFUZqjgxHcNWeV6D+OGx/y0EgUL5lqP74HV0ZyDK73n
-	WFspdhE3XrOiMzWdRx4vv3/dpFdEaDOJN2XtygFypaUIduiPafpnykDJkApS
-X-Google-Smtp-Source: AGHT+IG6o8xe/vHKbB5TAbtipmkKCzMf+OHTOjk9e5TOXIfeY1toBybB4VmXVAMQzsxINPNoOqO24w==
-X-Received: by 2002:a17:907:c06:b0:a77:eb34:3b49 with SMTP id a640c23a62f3a-a8a88669369mr220833966b.37.1725633675667;
-        Fri, 06 Sep 2024 07:41:15 -0700 (PDT)
+        bh=BK5K+HQ8FU3skoCuxhX88GuAhU3e+OoqmoVoL7JQIDY=;
+        b=UpyFY6GRPdNpc9u/dX2rLsM5PeA2o0nZ+YdBWuFEoCAkmunSYW5DloI3S/moiQG0Ev
+         JYCleFaEzhjnlrHkQWHm1XSFQ+z6oEN1hz/Y5gf+eiLnAGrHewzWmA1d5aL7RHI80gil
+         GbqD/4VRKVwIyEy4/3FoJQm83fKGvNCXs4v+ljJwL+pQ08K/VKS4kS8uz42LDxky3a5R
+         aKRYgA++EQ63YYvlsi+r5zjg6suEbBPdn4Zx0eVNwoeb+lrZOqdbCr08UACpcrhXB/fk
+         0Rfq/7kmYrHdRQry5Mp+4T2KhX82W2PiLUMaKNFj84n+pwU6eokWoAVIMTSnuhU0rAGs
+         N2IA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Bby05QvdIIgCIUSuMPgCGFRBjz1B027M1A351bgx4Eql0eAMx0ER6oEKThaMhNBJxxRtgnZatw==@vger.kernel.org, AJvYcCXZGjbGn+dWrhDfupJj7w5qU8MsQh1HdgspTpEKZ0IhH/iWAxE+gtskzv6mHupF0kY8iHl5Pw6QenUwVis=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6OhHib1bAI9CzzU8DFe2PT2on/leBz3LddSXPtlHn7t7vyIAD
+	ETRnSWvfxqGTyGs8rTvs9q0gxp9IzY6vlz2BZCbFbeiLoInThODE
+X-Google-Smtp-Source: AGHT+IEHZk4MfYzZ/+9VpZ4SBCKz3jBrA8PAIbC7iVjj7I3vCLdV4duwiVy3beJC8Iupuh/mh7Uwrw==
+X-Received: by 2002:a17:906:f59f:b0:a86:7fc3:8620 with SMTP id a640c23a62f3a-a897f8bd0d3mr2143548366b.31.1725635443270;
+        Fri, 06 Sep 2024 08:10:43 -0700 (PDT)
 Received: from [192.168.42.120] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a87564d83sm117069666b.8.2024.09.06.07.41.15
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a84784cfdsm132329466b.118.2024.09.06.08.10.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Sep 2024 07:41:15 -0700 (PDT)
-Message-ID: <7f1765e2-11c4-4e69-b25e-79cf0dd51404@gmail.com>
-Date: Fri, 6 Sep 2024 15:41:49 +0100
+        Fri, 06 Sep 2024 08:10:42 -0700 (PDT)
+Message-ID: <61d13795-17ba-4715-bf3a-2d7da0b300c7@gmail.com>
+Date: Fri, 6 Sep 2024 16:11:16 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,197 +76,150 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] btrfs: add io_uring interface for encoded reads
+Subject: Re: [PATCH 5/6] btrfs: move wait out of btrfs_encoded_read
 To: Mark Harmstone <maharmstone@fb.com>, io-uring@vger.kernel.org,
  linux-btrfs@vger.kernel.org
 References: <20240823162810.1668399-1-maharmstone@fb.com>
- <20240823162810.1668399-7-maharmstone@fb.com>
+ <20240823162810.1668399-6-maharmstone@fb.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240823162810.1668399-7-maharmstone@fb.com>
+In-Reply-To: <20240823162810.1668399-6-maharmstone@fb.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 8/23/24 17:27, Mark Harmstone wrote:
-> Adds an io_uring interface for asynchronous encoded reads, using the
-> same interface as for the ioctl. To use this you would use an SQE opcode
-> of IORING_OP_URING_CMD, the cmd_op would be BTRFS_IOC_ENCODED_READ, and
-> addr would point to the userspace address of the
-> btrfs_ioctl_encoded_io_args struct. As with the ioctl, you need to have
-> CAP_SYS_ADMIN for this to work.
+> Makes it so that if btrfs_encoded_read has launched a bio, rather than
+> waiting for it to complete it leaves the extent and inode locked and returns
+> -EIOCBQUEUED. The caller is responsible for waiting on the bio, and
+> calling the completion code in the new btrfs_encoded_read_regular_end.
 > 
 > Signed-off-by: Mark Harmstone <maharmstone@fb.com>
 > ---
-...
+>   fs/btrfs/btrfs_inode.h |  1 +
+>   fs/btrfs/inode.c       | 81 +++++++++++++++++++++++-------------------
+>   fs/btrfs/ioctl.c       |  8 +++++
+>   3 files changed, 54 insertions(+), 36 deletions(-)
+> 
 > diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-> index a5d786c6d7d4..62e5757d3ba2 100644
+> index f4d77c3bb544..a5d786c6d7d4 100644
 > --- a/fs/btrfs/btrfs_inode.h
 > +++ b/fs/btrfs/btrfs_inode.h
-> @@ -620,6 +620,8 @@ struct btrfs_encoded_read_private {
->   	struct btrfs_ioctl_encoded_io_args args;
->   	struct file *file;
->   	void __user *copy_out;
-> +	struct io_uring_cmd *cmd;
-> +	unsigned int issue_flags;
+> @@ -623,6 +623,7 @@ struct btrfs_encoded_read_private {
 >   };
 >   
-...
-> +static inline struct btrfs_encoded_read_private *btrfs_uring_encoded_read_pdu(
-> +		struct io_uring_cmd *cmd)
-> +{
-> +	return *(struct btrfs_encoded_read_private **)cmd->pdu;
-> +}
-> +static void btrfs_finish_uring_encoded_read(struct io_uring_cmd *cmd,
-> +					    unsigned int issue_flags)
-> +{
-> +	struct btrfs_encoded_read_private *priv;
-> +	ssize_t ret;
-> +
-> +	priv = btrfs_uring_encoded_read_pdu(cmd);
-> +	ret = btrfs_encoded_read_finish(priv, -EIOCBQUEUED);
-> +
-> +	io_uring_cmd_done(priv->cmd, ret, 0, priv->issue_flags);
+>   ssize_t btrfs_encoded_read(struct btrfs_encoded_read_private *priv);
+> +ssize_t btrfs_encoded_read_regular_end(struct btrfs_encoded_read_private *priv);
+>   ssize_t btrfs_do_encoded_write(struct kiocb *iocb, struct iov_iter *from,
+>   			       const struct btrfs_ioctl_encoded_io_args *encoded);
+>   
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 1e53977a4854..1bd4c74e8c51 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -8999,7 +8999,7 @@ static ssize_t btrfs_encoded_read_inline(
+>   				struct extent_state **cached_state,
+>   				u64 extent_start, size_t count,
+>   				struct btrfs_ioctl_encoded_io_args *encoded,
+> -				bool *unlocked)
+> +				bool *need_unlock)
+>   {
+>   	struct btrfs_root *root = inode->root;
+>   	struct btrfs_fs_info *fs_info = root->fs_info;
+> @@ -9067,7 +9067,7 @@ static ssize_t btrfs_encoded_read_inline(
+>   	btrfs_release_path(path);
+>   	unlock_extent(io_tree, start, lockend, cached_state);
+>   	btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
+> -	*unlocked = true;
+> +	*need_unlock = false;
+>   
+>   	ret = copy_to_iter(tmp, count, iter);
+>   	if (ret != count)
+> @@ -9155,42 +9155,26 @@ int btrfs_encoded_read_regular_fill_pages(struct btrfs_inode *inode,
+>   	return blk_status_to_errno(READ_ONCE(priv.status));
+>   }
+>   
+> -static ssize_t btrfs_encoded_read_regular(struct btrfs_encoded_read_private *priv,
+> -					  u64 start, u64 lockend,
+> -					  u64 disk_bytenr, u64 disk_io_size,
+> -					  bool *unlocked)
+> +ssize_t btrfs_encoded_read_regular_end(struct btrfs_encoded_read_private *priv)
+> -	struct btrfs_inode *inode = BTRFS_I(file_inode(priv->file));
+> -	struct extent_io_tree *io_tree = &inode->io_tree;
+> +	u64 cur, start, lockend;
+>   	unsigned long i;
+> -	u64 cur;
+>   	size_t page_offset;
+> -	ssize_t ret;
+> -
+> -	priv->nr_pages = DIV_ROUND_UP(disk_io_size, PAGE_SIZE);
+> -	priv->pages = kcalloc(priv->nr_pages, sizeof(struct page *), GFP_NOFS);
+> -	if (!priv->pages) {
+> -		priv->nr_pages = 0;
+> -		return -ENOMEM;
+> -	}
+> -	ret = btrfs_alloc_page_array(priv->nr_pages, priv->pages, false);
+> -	if (ret)
+> -		return -ENOMEM;
+> +	struct btrfs_inode *inode = BTRFS_I(file_inode(priv->file));
+> +	struct btrfs_fs_info *fs_info = inode->root->fs_info;
+> +	struct extent_io_tree *io_tree = &inode->io_tree;
+> +	int ret;
+> -	_btrfs_encoded_read_regular_fill_pages(inode, start, disk_bytenr,
+> -					       disk_io_size, priv);
+> +	start = ALIGN_DOWN(priv->args.offset, fs_info->sectorsize);
+> +	lockend = start + BTRFS_MAX_UNCOMPRESSED - 1;
+>   
+> -	if (atomic_dec_return(&priv->pending))
+> -		io_wait_event(priv->wait, !atomic_read(&priv->pending));
+> +	unlock_extent(io_tree, start, lockend, &priv->cached_state);
+> +	btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
 
-s/priv->issue_flags/issue_flags/
+AFAIS, btrfs_encoded_read_regular_end is here to be used asynchronously
+in a later patch, specifically via bio callback -> io_uring tw callback,
+and that io_uring tw callback might not get run in any reasonable amount
+of time as it's controlled by the user space.
 
-You can't use flags that you got somewhere before from a completely
-different execution context.
+So, it takes the inode lock in one context (task executing the
+request) and releases it in another, it's usually is not allowed.
+And it also holds the locks potentially semi indefinitely (guaranteed
+to be executed when io_uring and/or task die). There is also
+unlock_extent() which I'd assume we don't want to hold locked
+for too long.
 
-> +
-> +	kfree(priv);
-> +}
-> +
-> +static void btrfs_encoded_read_uring_endio(struct btrfs_bio *bbio)
-> +{
-> +	struct btrfs_encoded_read_private *priv = bbio->private;
+It's in general a bad practice having is_locked variables, especially
+when it's not on stack, even more so when it's implicit like
 
-Might be cleaner if you combine it with btrfs_encoded_read_ioctl_endio
-
-btrfs_encoded_read_endio()
-{
-	...
-	if (!atomic_dec_return(&priv->pending)) {
-		if (priv->cmd)
-			io_uring_cmd_complete_in_task();
-		else
-			wake_up();
-	...
+regular_read() {
+	(ret == -EIOCBQUEUED)
+		need_unlock = false; // delay it
+}
+btrfs_encoded_read_finish() {
+	if (ret == -EIOCBQUEUED)
+		unlock();
 }
 
+That just too easy to miss when you do anything with the code
+afterwards.
 
+I hope Josef and btrfs folks can comment what would be a way
+here, does the inode lock has to be held for the entire
+duration of IO?
 
-> +
-> +	if (bbio->bio.bi_status) {
-> +		/*
-> +		 * The memory barrier implied by the atomic_dec_return() here
-> +		 * pairs with the memory barrier implied by the
-> +		 * atomic_dec_return() or io_wait_event() in
-> +		 * btrfs_encoded_read_regular_fill_pages() to ensure that this
-> +		 * write is observed before the load of status in
-> +		 * btrfs_encoded_read_regular_fill_pages().
-> +		 */
-> +		WRITE_ONCE(priv->status, bbio->bio.bi_status);
-> +	}
-> +	if (!atomic_dec_return(&priv->pending)) {
-> +		io_uring_cmd_complete_in_task(priv->cmd,
-> +					      btrfs_finish_uring_encoded_read);
-> +	}
-> +	bio_put(&bbio->bio);
-> +}
-> +
->   static void _btrfs_encoded_read_regular_fill_pages(struct btrfs_inode *inode,
->   					u64 file_offset, u64 disk_bytenr,
->   					u64 disk_io_size,
-> @@ -9106,11 +9148,16 @@ static void _btrfs_encoded_read_regular_fill_pages(struct btrfs_inode *inode,
->   	struct btrfs_fs_info *fs_info = inode->root->fs_info;
->   	unsigned long i = 0;
->   	struct btrfs_bio *bbio;
-> +	btrfs_bio_end_io_t cb;
 >   
-> -	init_waitqueue_head(&priv->wait);
-> +	if (priv->cmd) {
-> +		cb = btrfs_encoded_read_uring_endio;
-> +	} else {
-> +		init_waitqueue_head(&priv->wait);
-> +		cb = btrfs_encoded_read_ioctl_endio;
-> +	}
+>   	ret = blk_status_to_errno(READ_ONCE(priv->status));
+>   	if (ret)
+>   		return ret;
 >   
-> -	bbio = btrfs_bio_alloc(BIO_MAX_VECS, REQ_OP_READ, fs_info,
-> -			       btrfs_encoded_read_endio, priv);
-> +	bbio = btrfs_bio_alloc(BIO_MAX_VECS, REQ_OP_READ, fs_info, cb, priv);
->   	bbio->bio.bi_iter.bi_sector = disk_bytenr >> SECTOR_SHIFT;
->   	bbio->inode = inode;
->   
-> @@ -9122,7 +9169,7 @@ static void _btrfs_encoded_read_regular_fill_pages(struct btrfs_inode *inode,
->   			btrfs_submit_bio(bbio, 0);
->   
->   			bbio = btrfs_bio_alloc(BIO_MAX_VECS, REQ_OP_READ, fs_info,
-> -					       btrfs_encoded_read_endio, priv);
-> +					       cb, priv);
->   			bbio->bio.bi_iter.bi_sector = disk_bytenr >> SECTOR_SHIFT;
->   			bbio->inode = inode;
->   			continue;
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index c1886209933a..85a512a9ca64 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-...
-> +static void btrfs_uring_encoded_read(struct io_uring_cmd *cmd,
-> +				     unsigned int issue_flags)
-> +{
-> +	ssize_t ret;
-> +	void __user *argp = (void __user *)(uintptr_t)cmd->sqe->addr;
-
-u64_to_user_ptr()
-
-> +	struct btrfs_encoded_read_private *priv;
-> +	bool compat = issue_flags & IO_URING_F_COMPAT;
-> +
-> +	priv = kmalloc(sizeof(*priv), GFP_KERNEL);
-> +	if (!priv) {
-> +		ret = -ENOMEM;
-> +		goto out_uring;
-> +	}
-> +
-> +	ret = btrfs_prepare_encoded_read(priv, cmd->file, compat, argp);
-> +	if (ret)
-> +		goto out_finish;
-> +
-> +	if (iov_iter_count(&priv->iter) == 0) {
-> +		ret = 0;
-> +		goto out_finish;
-> +	}
-> +
-> +	*(struct btrfs_encoded_read_private **)cmd->pdu = priv;
-> +	priv->cmd = cmd;
-> +	priv->issue_flags = issue_flags;
-
-You shouldn't be stashing issue_flags, it almost always wrong.
-Looks btrfs_finish_uring_encoded_read() is the only user, and
-with my comment above you can kill priv->issue_flags
-
-> +	ret = btrfs_encoded_read(priv);
-> +
-> +	if (ret == -EIOCBQUEUED && atomic_dec_return(&priv->pending))
-> +		return;
-
-Is gating on -EIOCBQUEUED just an optimisation? I.e. it's fine
-to swap checks
-
-if (atomic_dec_return(&priv->pending) && ret == -EIOCBQUEUED)
-
-but we know that unless it returned -EIOCBQUEUED nobody
-should've touched ->pending.
-
-> +
-> +out_finish:
-> +	ret = btrfs_encoded_read_finish(priv, ret);
-> +	kfree(priv);
-> +
-> +out_uring:
-> +	io_uring_cmd_done(cmd, ret, 0, issue_flags);
-> +}
-> +
+> -	unlock_extent(io_tree, start, lockend, &priv->cached_state);
+> -	btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
+> -	*unlocked = true;
+> -
+>   	if (priv->args.compression) {
+>   		i = 0;
+>   		page_offset = 0;
+> @@ -9215,6 +9199,30 @@ static ssize_t btrfs_encoded_read_regular(struct btrfs_encoded_read_private *pri
+>   	return priv->count;
+>   }
 
 -- 
 Pavel Begunkov

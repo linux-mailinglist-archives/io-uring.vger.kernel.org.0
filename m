@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-3084-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3085-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA96970173
-	for <lists+io-uring@lfdr.de>; Sat,  7 Sep 2024 11:58:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C698897017A
+	for <lists+io-uring@lfdr.de>; Sat,  7 Sep 2024 12:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9891EB22CF3
-	for <lists+io-uring@lfdr.de>; Sat,  7 Sep 2024 09:58:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F0C61C216DD
+	for <lists+io-uring@lfdr.de>; Sat,  7 Sep 2024 10:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2D114BF87;
-	Sat,  7 Sep 2024 09:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE7312D766;
+	Sat,  7 Sep 2024 10:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="Hb3kfPTP"
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="QEfHz9QM"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C280154C10
-	for <io-uring@vger.kernel.org>; Sat,  7 Sep 2024 09:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC98C1B85ED
+	for <io-uring@vger.kernel.org>; Sat,  7 Sep 2024 10:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725703078; cv=none; b=EO2VmYZv6WKi5mXILyQMBlTvriJLP2dTq/1vd9Ngt/tBX9BvW4/luQyqUyYOYe306pL+z6pxZa2VmP40Q2hSzuD1WlagnoWtYEC8/MP27dIltnCB3hSbqJr9snkekwVcytuBBfo2gtX3ehbDnIez2hL0MyoIAIShlT1pgq2CW3U=
+	t=1725703336; cv=none; b=Fj+TSUWL62k87SbH5JwfCmybAcdb9hz2WAP/XgplyP1iGRXDAvThptzeYycG6Lfy4CjyQEsZA4gJNMU7kOV86hT6Jc1mP1FiV9MXjk2q2P1HeAwDHI6f+59+MulF9aZqRRjHEaEm6n0ee4aT35DwnEG1hXscP6wEdIq7KMIwQIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725703078; c=relaxed/simple;
-	bh=tiPTbHnY+2nOrmCHuGoFGkPY9sR170hFjDbw1sNgnGE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WdcBX1bCp+TXDpEWZIoMgeRakt5gehBW3VrBod80Pu75AEQRqa6xEDfDhh4/vqQW6UXL13fxw2Tjbld8CBMjLABQMdToCip1o3GGyPySN53T7SPjnIn/yMOZaZnejY5IXDsU7zMzPyJUv40Usx4kEf4OVO83k//AS6X3p4tbWh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=Hb3kfPTP; arc=none smtp.client-ip=185.136.64.226
+	s=arc-20240116; t=1725703336; c=relaxed/simple;
+	bh=ygaw0iQ4if0wmh1A0SwqpkKterIPJAxl9O47aPadSIQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EXFYyBW6uMjD0/ZrQUC2Ta3o1M6eTkt4Dzww4rDmgADsHw8LF+GAle8oH9uEuTy5bZOovJ1q+0F8H13LNREBHhZKzpwf1qGuTwu7fPVUj7Hvee8hv1q8SUTmDnOffIdE98SRjD1Ktq3dfoJjacD9H7jnNH4P+eQx5iHvnAbmVNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=QEfHz9QM; arc=none smtp.client-ip=185.136.64.226
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20240907095747dce4802cea40afb47e
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20240907100211305c726b1da42dbd41
         for <io-uring@vger.kernel.org>;
-        Sat, 07 Sep 2024 11:57:47 +0200
+        Sat, 07 Sep 2024 12:02:12 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=felix.moessbauer@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=rWjk7kQaptgNGEKIjhDPXFTjIGNRskNMMtFtkoA3rk0=;
- b=Hb3kfPTP3gg6SFxXzyHjNq7h9IhGQd9/ycyaJ8T1A6sJrk8m+zi1/U4PBiUgmSmrhKRzYH
- 9/IG4RBNor/QZ3ARzT1gXkjVt9yi84gho5Z8B/Z8vAxrujko2/HOV6sCRxB7Sybx2Jv2ddrc
- oBfyyxlRx15kInJrjswjJPTCfj6CAWjU+MIn5fFWNgUZMwB3nSjNkofR4ZjaCQfB1wdFK2XH
- zt0FtXRK/6YikULZp5mzWKSKpsoV0isztlBKVof32P/a81NFNM6ZxDevKDJKMqdgbq9965XH
- hlxM0hTxpEsxgtLn+CSkfblqTBHURrgiGIsOBNN3sTuVnK30kLuDQseQ==;
+ bh=j2hxCV9kxaihF+Ww53ZONcD+/QxZDY7mdYu0UHPKwF0=;
+ b=QEfHz9QMNiD7l4xIijjcV9SgTpO5UQ6olrY7RM9AHfSawPrGpaj6zbUsP/LP5z3XPPtvLJ
+ +H2f3NxFf3TD1cs0JHXcqrsxGRrMFTIu0fdvPnQmW6+grvWL2j6uZdGH6xjsCy0VGNHrPuyj
+ 66vthWheVhh8mMUrWVaBsmYdwxR/COpwAshIrPehiOA8a4DGdGKtLgzfV7HqnUr2jupsUyKl
+ BAnO3azFORybLfsacE7c38M0Bp9Keir4HHIeRck+ZDgbvz1/YgY+htgl84IRf9xiHMXfJNHa
+ 5i2Mr1lYNj40DLg8RQoedkFjwn1YJD7M57Kb3xxaJcNmUsAjkCp2N+5w==;
 From: Felix Moessbauer <felix.moessbauer@siemens.com>
 To: axboe@kernel.dk
 Cc: asml.silence@gmail.com,
@@ -54,9 +54,9 @@ Cc: asml.silence@gmail.com,
 	florian.bezdeka@siemens.com,
 	stable@vger.kernel.org,
 	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [PATCH v2 1/1] io_uring/sqpoll: inherit cpumask of creating process
-Date: Sat,  7 Sep 2024 11:57:29 +0200
-Message-Id: <20240907095729.27037-1-felix.moessbauer@siemens.com>
+Subject: [PATCH v3 1/1] io_uring/sqpoll: inherit cpumask of creating process
+Date: Sat,  7 Sep 2024 12:02:04 +0200
+Message-Id: <20240907100204.28609-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -91,6 +91,12 @@ Fixes: 37d1e2e3642e ("io_uring: move SQPOLL thread io-wq forked worker")
 Cc: stable@vger.kernel.org # 6.1+
 Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 ---
+Changes since v2:
+
+- in v2 I accidentally sent the backport of this patch for v6.1. Will
+  resend that once this one is accepted. Anyways, now we know that this
+  also works on a v6.1 kernel.
+
 Changes since v1:
 
 - do not set poller thread cpuset in non-pinning case, as the default is already
@@ -104,22 +110,21 @@ Best regards,
 Felix Moessbauer
 Siemens AG
 
- io_uring/sqpoll.c | 2 --
- 1 file changed, 2 deletions(-)
+ io_uring/sqpoll.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 6ea21b503113..5a002fa1d953 100644
+index 3b50dc9586d1..713be7c29388 100644
 --- a/io_uring/sqpoll.c
 +++ b/io_uring/sqpoll.c
-@@ -231,8 +231,6 @@ static int io_sq_thread(void *data)
- 
- 	if (sqd->sq_cpu != -1)
+@@ -289,7 +289,6 @@ static int io_sq_thread(void *data)
+ 	if (sqd->sq_cpu != -1) {
  		set_cpus_allowed_ptr(current, cpumask_of(sqd->sq_cpu));
--	else
+ 	} else {
 -		set_cpus_allowed_ptr(current, cpu_online_mask);
+ 		sqd->sq_cpu = raw_smp_processor_id();
+ 	}
  
- 	/*
- 	 * Force audit context to get setup, in case we do prep side async
 -- 
 2.39.2
 

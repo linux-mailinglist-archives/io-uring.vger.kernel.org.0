@@ -1,74 +1,75 @@
-Return-Path: <io-uring+bounces-3091-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3092-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3AAF970A8C
-	for <lists+io-uring@lfdr.de>; Mon,  9 Sep 2024 00:43:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A7B971D2C
+	for <lists+io-uring@lfdr.de>; Mon,  9 Sep 2024 16:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1195281BFA
-	for <lists+io-uring@lfdr.de>; Sun,  8 Sep 2024 22:43:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82F5C28346A
+	for <lists+io-uring@lfdr.de>; Mon,  9 Sep 2024 14:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F87716131C;
-	Sun,  8 Sep 2024 22:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C66F1DA5F;
+	Mon,  9 Sep 2024 14:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YyRnzJBb"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cnudllxz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D83F14D420
-	for <io-uring@vger.kernel.org>; Sun,  8 Sep 2024 22:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435011BB6B8
+	for <io-uring@vger.kernel.org>; Mon,  9 Sep 2024 14:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725835434; cv=none; b=BTLZsIBmn0QLPcL1lRMJ4o+tf/mdym2buHw1/OLd/S1Dy9OK8Ft/SKNz1xtRXiyv8w1eF/hnp1j7NKT02l/3CDRHXnXWGgP5SunIJbcG6hht1Db2bMA5wIIIyZlGxGWXrVae7YUzYjOoGMs1QT9w+WXD19pKNbN/BP0q5gLhfHg=
+	t=1725893508; cv=none; b=iRUhZvy8D5x49ndI2D1+9xTK6mBsXnm6xjkFFChvS1kCltmnmtSIn2PPC/Z+DxrCIb60EHElonLRWoDEUNKZn+TdyP3iNMWWZr9vW0PC64Q0ZHW6lvmK29s2kp0ZYHbuRBMOO2d6eo+dn8cRAxriOR6fh8DWrTiFtWdXkv/S0Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725835434; c=relaxed/simple;
-	bh=3Kor3yv3ywm3saN1nnfM5YfFsoGmPxm1ickkJWyVMSk=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=MSR4BUszjbE/3s2y5tG0InR0KN5LkNCMGsIsNjBd1vSdBx8N5TfVP27uiKihn+bE5bs3+abeRJ4UsKd+uGLMT1HzMhL+LaMKLyla8djYBfZIcqR1yXE8Dp62cKk8j0Yez7knmxc1f+wjnKATSF5u+dMn3mWWRuvs9O4M/uEtJZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YyRnzJBb; arc=none smtp.client-ip=209.85.215.181
+	s=arc-20240116; t=1725893508; c=relaxed/simple;
+	bh=+cJBG1upvR+F3tYffdvhWbT1y7mKiym6WyRY+g0v8zE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tZijK85GZs30Ae1qZZ698T6/LXwY5iaivRkmKI2MhFyJ6k6mSmenB1iboQ+zWoFh9PM0cdnYYh98L8XhFIghUj2MzoXg8rSLc0+8agFQfLfMgqlFUUJw2sj11nQ3cZFocHiceK+QIEveQ+DXTlGCJ+BjzceDcgI4k/3qYV6yySQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cnudllxz; arc=none smtp.client-ip=209.85.215.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7cf5e179b68so2832265a12.1
-        for <io-uring@vger.kernel.org>; Sun, 08 Sep 2024 15:43:50 -0700 (PDT)
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-70b2421471aso2913530a12.0
+        for <io-uring@vger.kernel.org>; Mon, 09 Sep 2024 07:51:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725835430; x=1726440230; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iAyLddTqguzkGr3Wj05/22DLnL5wITmlleipJ1mo33o=;
-        b=YyRnzJBbK5Mt5UNhSvlBQahLxldL4dZ3OI0s0jK2W9yM55oKYxagGe8hMJHKX8kYzU
-         6PFwGvF2xppvoMdZm65F8asNVSEZ2lppXM2qyLfMQmPRNBG7JLQ5f2ScXsKuutH6syB8
-         7kXvz5IlUmsx+X0EqQkytt9JJCkOr1EhoDlMmX3NT9zhbwNMZwwac28YuZq6aj35bts2
-         4eFWmiSGK6BtP1cOaYd2uESKXp8QK0poayd30rIeSDoiZXvBYWqH7gqiQ57NWLbOTyMS
-         H38qZ7LiMfe30uj3sdUp7jerCiNtE8yp6v5i+fyNlvAclIp72gckIfi0mN5acOL3KwzS
-         pUoQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725893505; x=1726498305; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f9rWAsIGzZ6u/QYJf5tnAdUimUu+PCvUeW7OogHaSuI=;
+        b=cnudllxzOE8KL2lqOQmdQyS6HH8YpiuIX1rNf24tMN4nWHPT3h7UbwZNz1W+YbKdE7
+         0YGmn5r4pRfhz/B3Z/KrvZiNBNoI+VutLAZmg45zOcjO3hMlQ2sAYHGdp0ETItoxUD5E
+         HQAAu2XNTseXSGizMdTJygudXccn67OvyrSFaW3aon6yfHOfluU+vJDmpsUV1O8J96Ry
+         wWULQYbY1u3Oezm8SeoB7Bfltk4kEkyz3WoK4j/3p3JXqI62eZFr6YSg4rI7RXdmuZnb
+         5SZWZxcFVyxAA+mVy7kHw9lK+gJr/Dltfpr81AR5uzR0LK5wB8oaKuf+swArwDTR7r8P
+         gWBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725835430; x=1726440230;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iAyLddTqguzkGr3Wj05/22DLnL5wITmlleipJ1mo33o=;
-        b=BUrzfk6doZAqFkxhjBNL9dRgysr6kqBDhinPD6MSLJlWHUFy3jrfTNGR1fMuN6RfmB
-         WdnfmBe9Ylf+J6+rudLXtYtaVws7guDrx/svXNNyYcUVbvH0hlsUihzi7iYdQBts0UFp
-         nX1YxyzyK9mOM5yPiTYKTtwzriAu/fSGDf8xbibfkWmqlxObZaqx6oD2CFZNs/pHuU5f
-         e95O2go8j/hR72jhruux/AdUKekM8Qa/CTYtjJ0QhMQV9viNtCZXbeDGBeLZpRkuqkmY
-         OtZeHFKebjEpx1g8JvVSHg22sCTYfdHEnkXgMTNrFdvCnj9giYaoUvjFTm58bZ+ZRobC
-         FaQQ==
-X-Gm-Message-State: AOJu0Yyvkiv9UutCN54cqjFeK4Hpb+uN1rb2uzntGkhfjNGBsTMcS4pe
-	ETsQTypK76801ylnTjy+GJOZW+CAC7NNTY9e7YDVwCqQ+qx7eHq9+N7dKe+bAvZkA60vHoFPHdp
-	Q
-X-Google-Smtp-Source: AGHT+IHov+8cO+ICJ8uGXkOn/pFAVIGmNPdR9TfHGwVn/VjLuqTrvJRI8NWjzP0XuaoFJBpDONJNbw==
-X-Received: by 2002:a17:902:ec91:b0:206:9c9b:61bb with SMTP id d9443c01a7336-206b7ce742fmr211197475ad.6.1725835429495;
-        Sun, 08 Sep 2024 15:43:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725893505; x=1726498305;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f9rWAsIGzZ6u/QYJf5tnAdUimUu+PCvUeW7OogHaSuI=;
+        b=EvVMz/b6xqNFpXqYTIQwDTBmZpJ59vwDzbXAnGuzNTdl+CXblHgqMh/Mv/d+UGRY5T
+         ysSYJhzysQjF/qUkUhk2Prarr9zz0R5Di4JaNYYL9w4E3Uqp6i1ez3vb6HloicmwEVy+
+         z8pnffRAC4SwzKJSMAme3p/HgvVJwkqdPFlBAYCq62igZGygjEsKhfYtKifgiQHRZ4P8
+         B1pdZ9bHCa8ueyX1B98+bpBAaprIB9eGgnvDz/KibD17+rEUnHa6AapMg8wnY1eBd0D0
+         PTcQlzxlWZeerOLbuuv9k3V8ksq+8eBRfS8qD3R8M2kIOeAGL+fn4Sdb0iAOtvHaH08c
+         fbRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA15o8znlfQFfzlnadrLmybZcHidy8zaJzWcgcX/2EdoNpnwtMLjC0hvWfaaVmsQUhDlJB5pkfEA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLDYmyJWU2HXJEOXw2kagaNTJ5anOx+v5At/Q3uMKYjWcekwG1
+	/cukw53K9h0JAxKumHiQed8Kkd7q22gDTuJRWNwi9Tgx9OuU2/nFSSu619PuN8L0f3vsXAXKImE
+	j
+X-Google-Smtp-Source: AGHT+IGXmoYoNnbLnmlnvdjNnKtCotyC6KrIkej+yws/iMo0+HjJYgBJ0A65h3AE+feie3K02nBLtw==
+X-Received: by 2002:a05:6a20:891e:b0:1cf:2939:a0de with SMTP id adf61e73a8af0-1cf2939a1e8mr5746386637.14.1725893505231;
+        Mon, 09 Sep 2024 07:51:45 -0700 (PDT)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f21726sm23529405ad.236.2024.09.08.15.43.48
-        for <io-uring@vger.kernel.org>
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f31235sm34960025ad.253.2024.09.09.07.51.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Sep 2024 15:43:48 -0700 (PDT)
-Message-ID: <03850d46-6ac5-42d0-b43d-2f5744fb8091@kernel.dk>
-Date: Sun, 8 Sep 2024 16:43:48 -0600
+        Mon, 09 Sep 2024 07:51:44 -0700 (PDT)
+Message-ID: <29245c2e-d536-4a98-88ed-d1757795b3cd@kernel.dk>
+Date: Mon, 9 Sep 2024 08:51:43 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,85 +77,54 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/8] implement async block discards and other ops via
+ io_uring
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Cc: Conrad Meyer <conradmeyer@meta.com>, linux-block@vger.kernel.org,
+ linux-mm@kvack.org, Christoph Hellwig <hch@infradead.org>
+References: <cover.1725621577.git.asml.silence@gmail.com>
 Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/eventfd: move refs to refcount_t
+In-Reply-To: <cover.1725621577.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-atomic_t for the struct io_ev_fd references and there are no issues with
-it. While the ref getting and putting for the eventfd code is somewhat
-performance critical for cases where eventfd signaling is used (news
-flash, you should not...), it probably doesn't warrant using an atomic_t
-for this. Let's just move to it to refcount_t to get the added
-protection of over/underflows.
+On 9/6/24 4:57 PM, Pavel Begunkov wrote:
+> There is an interest in having asynchronous block operations like
+> discard and write zeroes. The series implements that as io_uring commands,
+> which is an io_uring request type allowing to implement custom file
+> specific operations.
+> 
+> First 4 are preparation patches. Patch 5 introduces the main chunk of
+> cmd infrastructure and discard commands. Patches 6-8 implement
+> write zeroes variants.
 
-Link: https://lore.kernel.org/lkml/202409082039.hnsaIJ3X-lkp@intel.com/
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409082039.hnsaIJ3X-lkp@intel.com/
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Sitting in for-6.12/io_uring-discard for now, as there's a hidden
+dependency with the end/len patch in for-6.12/block.
 
----
+Ran a quick test - have 64 4k discards inflight. Here's the current
+performance, with 64 threads with sync discard:
 
-diff --git a/io_uring/eventfd.c b/io_uring/eventfd.c
-index d9836d43725f..e37fddd5d9ce 100644
---- a/io_uring/eventfd.c
-+++ b/io_uring/eventfd.c
-@@ -15,7 +15,7 @@ struct io_ev_fd {
- 	struct eventfd_ctx	*cq_ev_fd;
- 	unsigned int		eventfd_async: 1;
- 	struct rcu_head		rcu;
--	atomic_t		refs;
-+	refcount_t		refs;
- 	atomic_t		ops;
- };
- 
-@@ -37,7 +37,7 @@ static void io_eventfd_do_signal(struct rcu_head *rcu)
- 
- 	eventfd_signal_mask(ev_fd->cq_ev_fd, EPOLL_URING_WAKE);
- 
--	if (atomic_dec_and_test(&ev_fd->refs))
-+	if (refcount_dec_and_test(&ev_fd->refs))
- 		io_eventfd_free(rcu);
- }
- 
-@@ -63,7 +63,7 @@ void io_eventfd_signal(struct io_ring_ctx *ctx)
- 	 */
- 	if (unlikely(!ev_fd))
- 		return;
--	if (!atomic_inc_not_zero(&ev_fd->refs))
-+	if (!refcount_inc_not_zero(&ev_fd->refs))
- 		return;
- 	if (ev_fd->eventfd_async && !io_wq_current_is_worker())
- 		goto out;
-@@ -77,7 +77,7 @@ void io_eventfd_signal(struct io_ring_ctx *ctx)
- 		}
- 	}
- out:
--	if (atomic_dec_and_test(&ev_fd->refs))
-+	if (refcount_dec_and_test(&ev_fd->refs))
- 		call_rcu(&ev_fd->rcu, io_eventfd_free);
- }
- 
-@@ -137,7 +137,7 @@ int io_eventfd_register(struct io_ring_ctx *ctx, void __user *arg,
- 
- 	ev_fd->eventfd_async = eventfd_async;
- 	ctx->has_evfd = true;
--	atomic_set(&ev_fd->refs, 1);
-+	refcount_set(&ev_fd->refs, 1);
- 	atomic_set(&ev_fd->ops, 0);
- 	rcu_assign_pointer(ctx->io_ev_fd, ev_fd);
- 	return 0;
-@@ -152,7 +152,7 @@ int io_eventfd_unregister(struct io_ring_ctx *ctx)
- 	if (ev_fd) {
- 		ctx->has_evfd = false;
- 		rcu_assign_pointer(ctx->io_ev_fd, NULL);
--		if (atomic_dec_and_test(&ev_fd->refs))
-+		if (refcount_dec_and_test(&ev_fd->refs))
- 			call_rcu(&ev_fd->rcu, io_eventfd_free);
- 		return 0;
- 	}
+qd64 sync discard: 21K IOPS, lat avg 3 msec (max 21 msec)
+
+and using io_uring with async discard, otherwise same test case:
+
+qd64 async discard: 76K IOPS, lat avg 845 usec (max 2.2 msec)
+
+If we switch to doing 1M discards, then we get:
+
+qd64 sync discard: 14K IOPS, lat avg 5 msec (max 25 msec)
+
+and using io_uring with async discard, otherwise same test case:
+
+qd64 async discard: 56K IOPS, lat avg 1153 usec (max 3.6 msec)
+
+This is on a:
+
+Samsung Electronics Co Ltd NVMe SSD Controller PM174X
+
+nvme device. It doesn't have the fastest discard, but still nicely shows
+the improvement over a purely sync discard.
 
 -- 
 Jens Axboe

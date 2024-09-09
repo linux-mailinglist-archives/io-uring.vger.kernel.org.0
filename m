@@ -1,130 +1,127 @@
-Return-Path: <io-uring+bounces-3094-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3095-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CAED971D8E
-	for <lists+io-uring@lfdr.de>; Mon,  9 Sep 2024 17:09:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08925971D96
+	for <lists+io-uring@lfdr.de>; Mon,  9 Sep 2024 17:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A70391C22613
-	for <lists+io-uring@lfdr.de>; Mon,  9 Sep 2024 15:09:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9A91284647
+	for <lists+io-uring@lfdr.de>; Mon,  9 Sep 2024 15:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3741B27D;
-	Mon,  9 Sep 2024 15:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8E11BC49;
+	Mon,  9 Sep 2024 15:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Vu3k6qUm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="uqGfKSCZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236F11CD0C
-	for <io-uring@vger.kernel.org>; Mon,  9 Sep 2024 15:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CA11C69D
+	for <io-uring@vger.kernel.org>; Mon,  9 Sep 2024 15:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725894542; cv=none; b=uXHnHz/NGXLr33n1M6QsmDFWUkFGeHS5KF6t4Xszt+y2bl/KOqKnr4Up7xZVsrZOdXyvYyP8l4uHEYHvD9wmZMqJoq/AOkvCwc4G4caRMgdajnWy1KiCYfwtZOV4Zr04b/xuzij59i7Fz7L3FlMMw7/pays3qK4Y7QtVyiteUFs=
+	t=1725894578; cv=none; b=giRWmQfKjaRGvjuBx1Zg6JfA3FAJ2oDunH7D4tZj1LoRTk9toeyYYRkoJkCrZYpIzwgqepCujVmM1F9zvOD++vmTa59pqXAI/nXKL1mnjiYOvYadOo2PkFkhRkzNSD1oI+wIn85uj+P9DVXNcAFNSxlW2RaG5d4pmpNOtFamqg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725894542; c=relaxed/simple;
-	bh=xPcRfbUDnlRSH5p507wqtYBgZjtSxWo7rAqcE2R7yk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GAmI676+Hcsa5PfCqLeIIqoRoy1G940Vq3N9snvJpgX8yad8H62x4UULGvsNKmGM5YAx8rWdnHi6y+GsZd7PpD9fJeWzu65YQIs+daZKTm0ttjXl7S6tg6lJoh1hQ6VLSMPwcTtmryp5K125j9bnjpr0XGlWrqdEAtUgIlomW4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Vu3k6qUm; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1725894578; c=relaxed/simple;
+	bh=KrCuM112xvksWAEhVjhwKSWtIGAgg/emdYOf6L8k8tQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XqA5vECvKWsykomjW4d/0LlHJjFgGL/fC7cSrAED8Wf79eAu2dYF7WAjklV//OtCFQsI6wm/X6oEYE1XA/tD77DoyY9ymnLWeb6YDSllWfIgvpkJPm/0AVd+4eRjHcC/m5fAc6fDU/OsymXS2DDpovS9ZRr6FQcYZEfupNPVDZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=uqGfKSCZ; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fee6435a34so38112435ad.0
-        for <io-uring@vger.kernel.org>; Mon, 09 Sep 2024 08:09:00 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-718e482930bso1233276b3a.2
+        for <io-uring@vger.kernel.org>; Mon, 09 Sep 2024 08:09:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725894540; x=1726499340; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XJhTFlfxhKbPWqyjtraK3mWFbHY7wyyFUxYrQtn7EAI=;
-        b=Vu3k6qUmlRQzn5WTg7QeLLu+0nES5f13OH2rfp3IvCN/aiQJsPb2z24JQfQAzOMTZ1
-         DK3W7tgGZBLY9XD8GXYXDSlbBm3e50/+hbQN197Vktn8Nx8huhF4yowLT89uxM00fwRd
-         wpgzgr8H2olfcCdV3awmADYvdnvGfAnWSgIIw5kMcco4ldZgyvXo6cvcYmVW56qzpjEm
-         H5WRQUNm67YDMhZzhxNYd5RPjCYDvjpKw7WKpGepBZvhmTw5z/naXXYuIwu4VQ6Wfxrl
-         RV6zKh4eMuY3YMQ5BK55k2Xc9ThC/KEfRB5m/frpjcg2mpXqFCBCVWC+a141UplUWeYS
-         G6Zw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725894575; x=1726499375; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cZD0LM8B0SLCDFsrFpilRozE4KulMUqwHZ2jEOs5nf0=;
+        b=uqGfKSCZ78R4uf+geLebFEy+dsojQ834HrsPv/tpr4A7Z50QZHPT+yUjJQl/piJCJs
+         eFb90DpIPF/PTL+AFjlJc1nLEG/ELbWdxU/griJT9KjApJoQvEVlgey9dIvxVjUa6QrL
+         SRdbK/A3lNsbCIiwa5V0P9kwPiINlf5rg+pxfBBDsrSSdb1peU8fxFmTe+WCqj36/ptZ
+         2+ykBCW/t42/yB7ZPc1NPBh1tAkVf9kBYRlzi+pE8825EJndDzy4YF5PnyQljRzBNoVJ
+         xz3p3ao5HmsS2qaCPDYmK0ZFraeUb7wp+Ipimt6gMIjjIFTxqveN/IYEljlMxbkE7VHo
+         K+PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725894540; x=1726499340;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XJhTFlfxhKbPWqyjtraK3mWFbHY7wyyFUxYrQtn7EAI=;
-        b=qwZpHpoL7i4SPsWmQEDJf74ScrCHYeUxq+IJMAmYYuWxVEpQj+gk2a3u0h2JEvlqv9
-         CUma2LWZ4OIWRC5iU/fDYGhIYz+maAmq+2xpd2i5wVbuJjbI6/Z0H/DMQ0lksq3gkHKd
-         KYWFyDjTE8a3WkJE7sLD+FSXp9QJ3UD4IQ1Ma9tRx0HJP6fxbXWRoliuYknbEePRV2Od
-         wSGXLAuj4yL+Hl/WM6OngxeZEkEPIqjnX7437j19xvdpgUiMXriJ2yPX+kggDwvgly+8
-         5E50l4n0W1JSuyaH/VJSQF/FwaHAxm+wP3lkncOgVv4qXj7MTBBxZI/gJUGCEDwap2KF
-         aRpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsJTIxvef2PgnJP6awA7Q9yb52B0mZz2yDWgYzr2TrlMo6kma5qN8b9jqBStyAYQ1bG3kryQhAVA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3N1VDFzWG57x7lw95gLjwbumfu+XbHjxeeonqT4nSuuJm1P00
-	+wHP+rV3EYkxGw7TJ9tlXaC2HWB1N0iUXCUyS5YLE436/54xaUQ09C4nd1WJPfE=
-X-Google-Smtp-Source: AGHT+IE4GDDZJbyQG+6N1pXP67MaHd57oGUInS3duAH669gz/mZd73jCuJO9cuvk4Qq99/EbkTfMqQ==
-X-Received: by 2002:a17:902:d506:b0:207:1828:82fd with SMTP id d9443c01a7336-207182893dcmr38404705ad.28.1725894540291;
-        Mon, 09 Sep 2024 08:09:00 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f416b6sm35173015ad.294.2024.09.09.08.08.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 08:08:59 -0700 (PDT)
-Message-ID: <be5fc442-6378-4592-bd17-2756d04e363c@kernel.dk>
-Date: Mon, 9 Sep 2024 09:08:58 -0600
+        d=1e100.net; s=20230601; t=1725894575; x=1726499375;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cZD0LM8B0SLCDFsrFpilRozE4KulMUqwHZ2jEOs5nf0=;
+        b=byxS6loRaNDEbXImELBxG6GMbxoQq6x/TQjUl/4LONU+z7WH1wewR2rLZNY+AGnSeM
+         xjNFZ/CWUmn/KdCV9pYMqDxgIRhYF3nEy5yQq1P/QY+s7JCd2r6HOQCyfVIb+aXsuShX
+         beYnvsF4G/CkVmi6Gg08VbxONCRJW3fadjvUbxY9433KB8IZbYx8NUpW6QpxxO3t8XSQ
+         /1ExmZy4f2FDScP8X8ysc6csgbd7c+RsjhU/yHuAMSKy9lL+TiAnVfCspTA0chBD45f/
+         CRNZeuXNtTfBg7My6ddWyTAGM3JiEidasvnx+CCcxww2Waw0Se2LSqDdEx1vF7HqpzDf
+         XD/w==
+X-Gm-Message-State: AOJu0YyUFGj3QMQ1iwTY0eIfitDWe3FDlcKf5MkWnaiw1IbYifZ8cZqI
+	+b7PY9gC7r1mhSZMrurhhBUGes9HIcMLbY02uaa3y5OZ1GzmVeMA7Yd4dFW08UE=
+X-Google-Smtp-Source: AGHT+IGMnrlvMfMiebqng8NbwSxr6iDv+FCr1bhfnL2Hi0eMUOZmYfxKU7s51gi//tAzm2Ppg6U7sA==
+X-Received: by 2002:a05:6a00:845:b0:710:9d5e:555c with SMTP id d2e1a72fcca58-718d5f141f4mr18435523b3a.23.1725894575372;
+        Mon, 09 Sep 2024 08:09:35 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5990bfdsm3618706b3a.212.2024.09.09.08.09.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 08:09:34 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+Cc: Conrad Meyer <conradmeyer@meta.com>, linux-block@vger.kernel.org, 
+ linux-mm@kvack.org, Christoph Hellwig <hch@infradead.org>
+In-Reply-To: <cover.1725621577.git.asml.silence@gmail.com>
+References: <cover.1725621577.git.asml.silence@gmail.com>
+Subject: Re: [PATCH v4 0/8] implement async block discards and other ops
+ via io_uring
+Message-Id: <172589457427.297553.5122724634440899238.b4-ty@kernel.dk>
+Date: Mon, 09 Sep 2024 09:09:34 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] io_uring/sqpoll: do not allow pinning outside of
- cpuset
-To: Felix Moessbauer <felix.moessbauer@siemens.com>
-Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org, cgroups@vger.kernel.org, dqminh@cloudflare.com,
- longman@redhat.com, adriaan.schmidt@siemens.com,
- florian.bezdeka@siemens.com, stable@vger.kernel.org
-References: <20240909150036.55921-1-felix.moessbauer@siemens.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240909150036.55921-1-felix.moessbauer@siemens.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On 9/9/24 9:00 AM, Felix Moessbauer wrote:
-> The submit queue polling threads are userland threads that just never
-> exit to the userland. When creating the thread with IORING_SETUP_SQ_AFF,
-> the affinity of the poller thread is set to the cpu specified in
-> sq_thread_cpu. However, this CPU can be outside of the cpuset defined
-> by the cgroup cpuset controller. This violates the rules defined by the
-> cpuset controller and is a potential issue for realtime applications.
+
+On Fri, 06 Sep 2024 23:57:17 +0100, Pavel Begunkov wrote:
+> There is an interest in having asynchronous block operations like
+> discard and write zeroes. The series implements that as io_uring commands,
+> which is an io_uring request type allowing to implement custom file
+> specific operations.
 > 
-> In b7ed6d8ffd6 we fixed the default affinity of the poller thread, in
-> case no explicit pinning is required by inheriting the one of the
-> creating task. In case of explicit pinning, the check is more
-> complicated, as also a cpu outside of the parent cpumask is allowed.
-> We implemented this by using cpuset_cpus_allowed (that has support for
-> cgroup cpusets) and testing if the requested cpu is in the set.
+> First 4 are preparation patches. Patch 5 introduces the main chunk of
+> cmd infrastructure and discard commands. Patches 6-8 implement
+> write zeroes variants.
+> 
+> [...]
 
-This also looks good to me.
+Applied, thanks!
 
-> that's hopefully the last fix of cpu pinnings of the sq poller threads.
-> However, there is more to come on the io-wq side. E.g the syscalls for
-> IORING_REGISTER_IOWQ_AFF that can be used to change the affinites are
-> not yet protected. I'm currently just lacking good reproducers for that.
-> I also have to admit that I don't feel too comfortable making changes to
-> the wq part, given that I don't have good tests.
+[1/8] io_uring/cmd: expose iowq to cmds
+      commit: c6472f5f9a0806b0598ba513344b5a30cfa53b97
+[2/8] io_uring/cmd: give inline space in request to cmds
+      commit: 1a7628d034f8328813163d07ce112e1198289aeb
+[3/8] filemap: introduce filemap_invalidate_pages
+      commit: 1f027ae3136dfb4bfe40d83f3e0f5019e63db883
+[4/8] block: introduce blk_validate_byte_range()
+      commit: da22f537db72c2520c48445840b7e371c58762a7
+[5/8] block: implement async discard as io_uring cmd
+      commit: 0d266c981982f0f54165f05dbcdf449bb87f5184
+[6/8] block: implement async write zeroes command
+      commit: b56d5132a78db21ca3b386056af38802aea0a274
+[7/8] block: add nowait flag for __blkdev_issue_zero_pages
+      commit: 4f8e422a0744f1294c784109cfbedafd97263c2f
+[8/8] block: implement async write zero pages command
+      commit: 4811c90cbf179b4c58fdbad54c5b05efc0d59159
 
-Yep io-wq will have the same ignorance of cpu limits, so would need the
-same love for when someone asks for specific cpus.
-
-> While fixing this, I'm wondering if it makes sense to add tests for the
-> combination of pinning and cpuset. If yes, where should these tests be
-> added?
-
-Yeah certainly add tests, liburing would be a good spot for that. That's
-where the feature/regression/bug tests always go.
-
+Best regards,
 -- 
 Jens Axboe
+
+
 
 

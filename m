@@ -1,137 +1,130 @@
-Return-Path: <io-uring+bounces-3093-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3094-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2BF971D62
-	for <lists+io-uring@lfdr.de>; Mon,  9 Sep 2024 17:01:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CAED971D8E
+	for <lists+io-uring@lfdr.de>; Mon,  9 Sep 2024 17:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54009B22DFC
-	for <lists+io-uring@lfdr.de>; Mon,  9 Sep 2024 15:01:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A70391C22613
+	for <lists+io-uring@lfdr.de>; Mon,  9 Sep 2024 15:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C19134A8;
-	Mon,  9 Sep 2024 15:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3741B27D;
+	Mon,  9 Sep 2024 15:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="UEYY5X7T"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Vu3k6qUm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E0814A82
-	for <io-uring@vger.kernel.org>; Mon,  9 Sep 2024 15:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236F11CD0C
+	for <io-uring@vger.kernel.org>; Mon,  9 Sep 2024 15:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725894060; cv=none; b=ovMJ42By3PuhLXzwrCDyRJ4J1jUz6LJJgkn2EXEplo+X1b6xXbdTeK5apdrwoi/vWACBJ6HASvVCBZK97+eIHEJ27M3AlUsuwJls3BPSmVpEPdDs0OJoEoI+aEHB2sklObN+Qa+imM6FQQyh41fzWVQq+DJqzIMTyzu9mqvkSrs=
+	t=1725894542; cv=none; b=uXHnHz/NGXLr33n1M6QsmDFWUkFGeHS5KF6t4Xszt+y2bl/KOqKnr4Up7xZVsrZOdXyvYyP8l4uHEYHvD9wmZMqJoq/AOkvCwc4G4caRMgdajnWy1KiCYfwtZOV4Zr04b/xuzij59i7Fz7L3FlMMw7/pays3qK4Y7QtVyiteUFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725894060; c=relaxed/simple;
-	bh=RzOo4nswEo3jSmFZkHprYDJX4YMV6YOVmHsXRuguc3I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UciVKAX6AsDCEN+pjDkoI07FChQKpIbjPL2rp22a2zVWlK9Ffsj8embnHszyD9Q7mFbYfIFaqazjGRvh/iL+tOS8fZoMvRz0M9mgCdurGRs1L8PbTXzIlYGX2T/DN+J8BN6cb6vaImV/q7kUl4+10i+O0Nzt+YvWu0JaZTQHHH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=UEYY5X7T; arc=none smtp.client-ip=185.136.64.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 2024090915005217f775c7e358e65035
-        for <io-uring@vger.kernel.org>;
-        Mon, 09 Sep 2024 17:00:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=X8ddSxPwoRliEpQfz+Jf+VCcHRWUMvdaMj1Nlh/9NU8=;
- b=UEYY5X7TmjROFRyYtCHlEzx4t24DMp5YL4hySPe6h9WTnpz0lWSLABoy7dAvKjnNF4b2s8
- miG+PXci6F0GzQyXFt2C1WEkjpYWd8ybyLc3vzvpsIm2AHdaQ0nq33CQFK/hbU2zcnknNez7
- ZJ/AMH5sWfu0/KgJqTCGoPF+J+zqjnUfjI5oWO4dNi/rIxz/lm5cyqne6k/Cbz9RKxASI8P5
- 59eeZXbsQW/5kCh1kRKGvr8WUrl5pb8ptwj6dvQcuCNC1gyTGDF7ZrLwUhKqau0otFK+5tXj
- hMa7SxWede2zJX1NGLh8ZTVb8s0bDuygmUzy3P1jK0d022gRhWUVDglw==;
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com,
-	linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	dqminh@cloudflare.com,
-	longman@redhat.com,
-	adriaan.schmidt@siemens.com,
-	florian.bezdeka@siemens.com,
-	stable@vger.kernel.org,
-	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [PATCH 1/1] io_uring/sqpoll: do not allow pinning outside of cpuset
-Date: Mon,  9 Sep 2024 17:00:36 +0200
-Message-Id: <20240909150036.55921-1-felix.moessbauer@siemens.com>
+	s=arc-20240116; t=1725894542; c=relaxed/simple;
+	bh=xPcRfbUDnlRSH5p507wqtYBgZjtSxWo7rAqcE2R7yk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GAmI676+Hcsa5PfCqLeIIqoRoy1G940Vq3N9snvJpgX8yad8H62x4UULGvsNKmGM5YAx8rWdnHi6y+GsZd7PpD9fJeWzu65YQIs+daZKTm0ttjXl7S6tg6lJoh1hQ6VLSMPwcTtmryp5K125j9bnjpr0XGlWrqdEAtUgIlomW4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Vu3k6qUm; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fee6435a34so38112435ad.0
+        for <io-uring@vger.kernel.org>; Mon, 09 Sep 2024 08:09:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725894540; x=1726499340; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XJhTFlfxhKbPWqyjtraK3mWFbHY7wyyFUxYrQtn7EAI=;
+        b=Vu3k6qUmlRQzn5WTg7QeLLu+0nES5f13OH2rfp3IvCN/aiQJsPb2z24JQfQAzOMTZ1
+         DK3W7tgGZBLY9XD8GXYXDSlbBm3e50/+hbQN197Vktn8Nx8huhF4yowLT89uxM00fwRd
+         wpgzgr8H2olfcCdV3awmADYvdnvGfAnWSgIIw5kMcco4ldZgyvXo6cvcYmVW56qzpjEm
+         H5WRQUNm67YDMhZzhxNYd5RPjCYDvjpKw7WKpGepBZvhmTw5z/naXXYuIwu4VQ6Wfxrl
+         RV6zKh4eMuY3YMQ5BK55k2Xc9ThC/KEfRB5m/frpjcg2mpXqFCBCVWC+a141UplUWeYS
+         G6Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725894540; x=1726499340;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XJhTFlfxhKbPWqyjtraK3mWFbHY7wyyFUxYrQtn7EAI=;
+        b=qwZpHpoL7i4SPsWmQEDJf74ScrCHYeUxq+IJMAmYYuWxVEpQj+gk2a3u0h2JEvlqv9
+         CUma2LWZ4OIWRC5iU/fDYGhIYz+maAmq+2xpd2i5wVbuJjbI6/Z0H/DMQ0lksq3gkHKd
+         KYWFyDjTE8a3WkJE7sLD+FSXp9QJ3UD4IQ1Ma9tRx0HJP6fxbXWRoliuYknbEePRV2Od
+         wSGXLAuj4yL+Hl/WM6OngxeZEkEPIqjnX7437j19xvdpgUiMXriJ2yPX+kggDwvgly+8
+         5E50l4n0W1JSuyaH/VJSQF/FwaHAxm+wP3lkncOgVv4qXj7MTBBxZI/gJUGCEDwap2KF
+         aRpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsJTIxvef2PgnJP6awA7Q9yb52B0mZz2yDWgYzr2TrlMo6kma5qN8b9jqBStyAYQ1bG3kryQhAVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3N1VDFzWG57x7lw95gLjwbumfu+XbHjxeeonqT4nSuuJm1P00
+	+wHP+rV3EYkxGw7TJ9tlXaC2HWB1N0iUXCUyS5YLE436/54xaUQ09C4nd1WJPfE=
+X-Google-Smtp-Source: AGHT+IE4GDDZJbyQG+6N1pXP67MaHd57oGUInS3duAH669gz/mZd73jCuJO9cuvk4Qq99/EbkTfMqQ==
+X-Received: by 2002:a17:902:d506:b0:207:1828:82fd with SMTP id d9443c01a7336-207182893dcmr38404705ad.28.1725894540291;
+        Mon, 09 Sep 2024 08:09:00 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f416b6sm35173015ad.294.2024.09.09.08.08.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 08:08:59 -0700 (PDT)
+Message-ID: <be5fc442-6378-4592-bd17-2756d04e363c@kernel.dk>
+Date: Mon, 9 Sep 2024 09:08:58 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1321639:519-21489:flowmailer
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] io_uring/sqpoll: do not allow pinning outside of
+ cpuset
+To: Felix Moessbauer <felix.moessbauer@siemens.com>
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org, cgroups@vger.kernel.org, dqminh@cloudflare.com,
+ longman@redhat.com, adriaan.schmidt@siemens.com,
+ florian.bezdeka@siemens.com, stable@vger.kernel.org
+References: <20240909150036.55921-1-felix.moessbauer@siemens.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240909150036.55921-1-felix.moessbauer@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The submit queue polling threads are userland threads that just never
-exit to the userland. When creating the thread with IORING_SETUP_SQ_AFF,
-the affinity of the poller thread is set to the cpu specified in
-sq_thread_cpu. However, this CPU can be outside of the cpuset defined
-by the cgroup cpuset controller. This violates the rules defined by the
-cpuset controller and is a potential issue for realtime applications.
+On 9/9/24 9:00 AM, Felix Moessbauer wrote:
+> The submit queue polling threads are userland threads that just never
+> exit to the userland. When creating the thread with IORING_SETUP_SQ_AFF,
+> the affinity of the poller thread is set to the cpu specified in
+> sq_thread_cpu. However, this CPU can be outside of the cpuset defined
+> by the cgroup cpuset controller. This violates the rules defined by the
+> cpuset controller and is a potential issue for realtime applications.
+> 
+> In b7ed6d8ffd6 we fixed the default affinity of the poller thread, in
+> case no explicit pinning is required by inheriting the one of the
+> creating task. In case of explicit pinning, the check is more
+> complicated, as also a cpu outside of the parent cpumask is allowed.
+> We implemented this by using cpuset_cpus_allowed (that has support for
+> cgroup cpusets) and testing if the requested cpu is in the set.
 
-In b7ed6d8ffd6 we fixed the default affinity of the poller thread, in
-case no explicit pinning is required by inheriting the one of the
-creating task. In case of explicit pinning, the check is more
-complicated, as also a cpu outside of the parent cpumask is allowed.
-We implemented this by using cpuset_cpus_allowed (that has support for
-cgroup cpusets) and testing if the requested cpu is in the set.
+This also looks good to me.
 
-Fixes: 37d1e2e3642e ("io_uring: move SQPOLL thread io-wq forked worker")
-Cc: stable@vger.kernel.org # 6.1+
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
----
-Hi,
+> that's hopefully the last fix of cpu pinnings of the sq poller threads.
+> However, there is more to come on the io-wq side. E.g the syscalls for
+> IORING_REGISTER_IOWQ_AFF that can be used to change the affinites are
+> not yet protected. I'm currently just lacking good reproducers for that.
+> I also have to admit that I don't feel too comfortable making changes to
+> the wq part, given that I don't have good tests.
 
-that's hopefully the last fix of cpu pinnings of the sq poller threads.
-However, there is more to come on the io-wq side. E.g the syscalls for
-IORING_REGISTER_IOWQ_AFF that can be used to change the affinites are
-not yet protected. I'm currently just lacking good reproducers for that.
-I also have to admit that I don't feel too comfortable making changes to
-the wq part, given that I don't have good tests.
+Yep io-wq will have the same ignorance of cpu limits, so would need the
+same love for when someone asks for specific cpus.
 
-While fixing this, I'm wondering if it makes sense to add tests for the
-combination of pinning and cpuset. If yes, where should these tests be
-added?
+> While fixing this, I'm wondering if it makes sense to add tests for the
+> combination of pinning and cpuset. If yes, where should these tests be
+> added?
 
-Best regards,
-Felix Moessbauer
-Siemens AG
+Yeah certainly add tests, liburing would be a good spot for that. That's
+where the feature/regression/bug tests always go.
 
- io_uring/sqpoll.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 713be7c29388..b8ec8fec99b8 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -10,6 +10,7 @@
- #include <linux/slab.h>
- #include <linux/audit.h>
- #include <linux/security.h>
-+#include <linux/cpuset.h>
- #include <linux/io_uring.h>
- 
- #include <uapi/linux/io_uring.h>
-@@ -459,10 +460,12 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
- 			return 0;
- 
- 		if (p->flags & IORING_SETUP_SQ_AFF) {
-+			struct cpumask allowed_mask;
- 			int cpu = p->sq_thread_cpu;
- 
- 			ret = -EINVAL;
--			if (cpu >= nr_cpu_ids || !cpu_online(cpu))
-+			cpuset_cpus_allowed(current, &allowed_mask);
-+			if (!cpumask_test_cpu(cpu, &allowed_mask))
- 				goto err_sqpoll;
- 			sqd->sq_cpu = cpu;
- 		} else {
 -- 
-2.39.2
+Jens Axboe
 
 

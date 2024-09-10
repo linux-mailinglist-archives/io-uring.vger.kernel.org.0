@@ -1,234 +1,230 @@
-Return-Path: <io-uring+bounces-3115-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3116-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA1E973AF0
-	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 17:05:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD44D973AFB
+	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 17:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7FF1F2539C
-	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 15:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB0721C23CE1
+	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 15:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4797194A43;
-	Tue, 10 Sep 2024 15:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17465196D9A;
+	Tue, 10 Sep 2024 15:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y0v4rt0v"
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="q/qNkKoe"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2064.outbound.protection.outlook.com [40.107.20.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7EC1DFD1
-	for <io-uring@vger.kernel.org>; Tue, 10 Sep 2024 15:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725980697; cv=none; b=nlsI2Vb0OaKlobRP0DB49raWHa65se8mOxnnMOrF+rQ0NHlQEyW/XQd2wXdSItuWhnWOts5L1aDpf7/h0IfVDVfgA0IJ87sJHpo8Alx8lhxSYPpTXpQCarCxY6BTuKGmkAkmSdZ40EY8n+PI1T6kOYTXxAxg+cCUZ9ung0PIhms=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725980697; c=relaxed/simple;
-	bh=4mgHDfSax/5TSkAWs3Ho/u/j87cQNsUksLX15hjdbG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e/oDstxxHUnp+QW2U3A/13SZFzYSUpcpQ/mG/M2KZZxeEXtcjtheXr1Hr8xr7/K26eDLgg8CgjLIZAB1DHyrxFai+c8NIXePvKqCRm/IBJSknCSxuMJ+4TeAwBK59/p2nZZsDvp3YYmGjt4WTEqOwx4D9515ifm5GrNG0/AOiXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y0v4rt0v; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725980695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GDz0byhQS+s6u6DW8Qwii+Zg/kt7+Og96iaRCkOZvnU=;
-	b=Y0v4rt0vUg8l4JcnySJ/lLxccv3rIhLJOq/1WKDxExWVgRvVVi9VvJMKldDDTvtFzA1ohT
-	SC2vIN7eB4T5+PyxlbpSW9kaU4nAY0eVb6pg6DzbvotA1WxXd62eYrZghCGfJEZk8HcjaO
-	Q+tW4Zd0JnrcBsUJMNcw8Bj4UTGxuGg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-518-_4-o3rENNBK1PNlDP979Tw-1; Tue,
- 10 Sep 2024 11:04:53 -0400
-X-MC-Unique: _4-o3rENNBK1PNlDP979Tw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B6E71956096;
-	Tue, 10 Sep 2024 15:04:52 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.11])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 77B711955D48;
-	Tue, 10 Sep 2024 15:04:47 +0000 (UTC)
-Date: Tue, 10 Sep 2024 23:04:41 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, Kevin Wolf <kwolf@redhat.com>,
-	ming.lei@redhat.com
-Subject: Re: [PATCH V5 4/8] io_uring: support SQE group
-Message-ID: <ZuBgCbjuED/KOFTt@fedora>
-References: <20240808162503.345913-1-ming.lei@redhat.com>
- <20240808162503.345913-5-ming.lei@redhat.com>
- <3c819871-7ca3-47ea-b752-c4a8a49f8304@gmail.com>
- <Zs/5Hpi16aQKlHFw@fedora>
- <36ae357b-bebe-4276-a8db-d6dccf227b61@gmail.com>
- <ZtweiCfLOJmdeY0Z@fedora>
- <7050796e-be88-4e01-abdb-976baba2f83b@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E574D143C4C;
+	Tue, 10 Sep 2024 15:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725980894; cv=fail; b=oh07kTXeMOdDnKV7a+qfvBe54XosnPV/7yJBQqgAoJf2LagORoL4FANpKW+GBdUNjR57IQzjkW22i9ct64/O2nefUlzaOlBSBF5hFuTj5Qz9xUsaNPamRVo4HegBUqSoEV/Guhzj6jKOM36nbup8M5Mj6Xibk1PAVWKs7cthaC4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725980894; c=relaxed/simple;
+	bh=AL58VOKZczphaudr14BELtv1TaM0k4HkfkC0iduLPEw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OPR0xLk+8o5kof0K7gKMmbF70bmI1i2oYUD1zPQzT9fTIfIvxbAmOZmldp0tXNQMoTxxrA5UfZdy2xFzrSjZj+/Dq6BlJLus7xdH32WzjffkmXx0zzZgsDTHrs0HEjUj+2md4LWuai7Y6G/PuqGLcObbrsXrEJkykR2O6L5TuCM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=q/qNkKoe; arc=fail smtp.client-ip=40.107.20.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rsoy2x7I/NCWenX9CmV1ZxeazHmcb2zLK32BvtJyAo31Qwwh5qS40kfCZjpU0knor+wUiezuFesRDC0B9I2tD4TgxsqNe71DozXLjzrFAJEfqITNWoccI7JYqBMwFRplC2MGSny1y4K3Uako2nWEPdSH8tg2wr+DpQPM11YrH4rmMoQeaK8FS4vYMVAPsuM/W5XURLfFwc5zfIFxWMKEadzz8H4JJmNeYmcPjm+G87tCuZFs6Q+stz0NxW6C8rW2/AndZulOdzP6QY/w/kND6qMS52B+G2Xjwjzs/l/SvSzR95YoQCt2TDdO7vLQsrmOQ5K0oyryJ0u8+FV0b2WlSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AL58VOKZczphaudr14BELtv1TaM0k4HkfkC0iduLPEw=;
+ b=T4P5FAo546A2irQESEbLMWmWR8Je6xR/XOXAhUfRfWGJYOHVi6iEDEKAj7OjGdHrQ3SF1wRU4G4qJB8BPi6LKMfo1E7jx2BMj6ZoTqXatXzvwZAte/BGUbQztv2yz1kENHSGJNS7f6gx4jco9z6rI+zXxoLQ0E3z2MVw6nFRlSliSsUQV+0D0/Fd4mMaJaBU+b/6JTau2tLAcVIwgwXRTBhGFajcMfhsIkCbY3fubRwtJ8DoBGkTgK0b5h/Nw5yo3EjbtAqtyywA89gYUrV8vQZmjRNWJnrkGRhJARNE+zEvcS4nMlv1VI6NxaJnb6QE/Y5lat9VmnF0JN8AkZKo6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AL58VOKZczphaudr14BELtv1TaM0k4HkfkC0iduLPEw=;
+ b=q/qNkKoeHEgprtNQheyWEog2awDGMRelJJmvdzv0KV+Sv8McOh9POpPAb3KzGVcZRZ+P4bG8SBWjkTDCRZODBm+pRpzTdhhKDmDkjueuHpv+uLGiTJs4GwwHpbLWjL/06aktZHEbaHlKJQp3eAUDeZLUyaJbpuIgFeNQeK5+eUQGPpVjXrrPH87/f2dEv4V1RbZXMMhWl8LvznmtDvaDe9H+n0K5ht4FVTaZoj4sWQDaUta9ivdV8J7FZnq0Hs/Al3hlEg16Fy66ffN0YLnDb/IbEfd/lhSGnsveuq7i32VWXzkFpY0HPvaw7HdL+3xOWPBl6O9Yx5MC+h2ioaOH+Q==
+Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:47f::13)
+ by PAVPR10MB7331.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:31e::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Tue, 10 Sep
+ 2024 15:08:07 +0000
+Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8198:b4e0:8d12:3dfe]) by DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8198:b4e0:8d12:3dfe%4]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
+ 15:08:07 +0000
+From: "MOESSBAUER, Felix" <felix.moessbauer@siemens.com>
+To: "axboe@kernel.dk" <axboe@kernel.dk>
+CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>, "Bezdeka, Florian"
+	<florian.bezdeka@siemens.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "longman@redhat.com" <longman@redhat.com>,
+	"asml.silence@gmail.com" <asml.silence@gmail.com>, "Schmidt, Adriaan"
+	<adriaan.schmidt@siemens.com>, "dqminh@cloudflare.com"
+	<dqminh@cloudflare.com>
+Subject: Re: [PATCH 0/2] io_uring/io-wq: respect cgroup cpusets
+Thread-Topic: [PATCH 0/2] io_uring/io-wq: respect cgroup cpusets
+Thread-Index: AQHbA45p2jJwLZGl/U6eNmWxPlYEebJRGycAgAAENgA=
+Date: Tue, 10 Sep 2024 15:08:07 +0000
+Message-ID: <92d7b08e4b077530317a62bb49bc2888413b244a.camel@siemens.com>
+References: <20240910143320.123234-1-felix.moessbauer@siemens.com>
+	 <ec01745a-b102-4f6e-abc9-abd636d36319@kernel.dk>
+In-Reply-To: <ec01745a-b102-4f6e-abc9-abd636d36319@kernel.dk>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.46.4-2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR10MB6828:EE_|PAVPR10MB7331:EE_
+x-ms-office365-filtering-correlation-id: ced0a4a5-e4ec-4387-3133-08dcd1aa6066
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?dnc4WUwxYm9zaHVEMURqdUJuNzRoM2ZTeUt2UnovalNHN0tiMVBFMmdQYVI3?=
+ =?utf-8?B?K0VjZmNPYVZycGtVZ0ZtaDNYYXArOFlURzlYMnVCVFB6c1ZCWGwzYmZ4Z2NK?=
+ =?utf-8?B?RHlWaUNMdlQybjFQTkIwRE4zZEhjUmhpVklBT01GOG5rK2loL3Z3bDNvL0RY?=
+ =?utf-8?B?QUhLN2EwR0dKb2VRSGlGK2txNXA4SXVGS202VDFsY0ltbUJONC9TekpLcFdH?=
+ =?utf-8?B?ZWdXYThydHdyTVU0RU1YR3FmTkx1T0FIQWdsVWpMdE1qOW9pbFl5TUdXVEUv?=
+ =?utf-8?B?RGFKWUlNUE5Jc2tQTHpQOGZibWJ6TEw1QUtmcG02cTYxV2YvVEFmTzcxdk9o?=
+ =?utf-8?B?VXdVT1pidU5lVzdhUW40a3RqVFhkRFNRWGxsdHVNVlMzVk0wTlc4aCtkMkk4?=
+ =?utf-8?B?a0dRSFo4N1VXSnhleVJuZ2dIb2pwUEd6ZkQ4SzhoSTNnOGQ4Sk1QSlJ2MGht?=
+ =?utf-8?B?cTZrS1l3UjVGSzZyUXJCcGloNUdHMzVJaVl3cDJUU2JHZzFqT0hDek9sUy9H?=
+ =?utf-8?B?aXpyc1FoUmhtN1JOQm5YNFJHbTcwcG9Cb1lOMTN6UllOcE1xOTlFeEhjSlZS?=
+ =?utf-8?B?UnlEN01aMmJpK1gxTzM0QzJGN09NaDFqTU42ZVFXWlFIdS8yVG5jcXpzNGhE?=
+ =?utf-8?B?UUoxekhSMDRCT1IxaGZHYWdqeGc1QzZhakNGMzh6Qll1cEZnU1JHUlJsREJL?=
+ =?utf-8?B?OVJPT3ZzN0o3YWoveTBJRXg4QjJuRHdIbmZEZEZqODlCUjFJSk1PREhFaWhG?=
+ =?utf-8?B?SDF5bzhpRFVPODlsWUIrcjVmZk4zSGU1WUtiVzJIaklIc3BCMmVtT2R4VTRk?=
+ =?utf-8?B?aHVaamRrdksxajBmOGpMMk1UTFFWNEY0TUtPcDFsSTBCeERDOVJuUXRtMWFv?=
+ =?utf-8?B?SXNGTFpLWmVkUXpCWlgwRlp0Wm1KNUQ5eEVIVCs0d3Uwd1h0UTA0RVM2OVVh?=
+ =?utf-8?B?cnpMSGJudnRGcWxZVTh5clRxQjlteXcrUXhZWXFlS1ZwazdqUm94TzlVQ3J1?=
+ =?utf-8?B?N3M1ejZGcmJpbndQcmdQQlhjSDMza2M3SVRqTE15TjJ4ckpOMGhLVWYxeGNP?=
+ =?utf-8?B?Ynl0V3N2U3hhTHp6UVVCc2NYL0RUSC95MTZKcHlyMXMyQjZhSmlFQzdMQkhY?=
+ =?utf-8?B?N3pMOFlWMjZKTUVEdXVjbFlucDBqeElMcEdRV0p2SFROc29UVXllbjg2a2tu?=
+ =?utf-8?B?NWJQL0M4VzhmNHdZOVo1QnFEdlVBYkZyV2d0RzNMTE1zT1BldW52bGIxZERr?=
+ =?utf-8?B?RTF1a2dLakM3QTFtcU5aRFFnc2xwYmxiUWtRdUJZWFBlNzNmRkt4N21WUjdS?=
+ =?utf-8?B?VHl5QUFGRHBoeGQwSThmN3ozM3N1TzJ1SmtrZUVMWlVFSkxpUUNGQzNTUmRm?=
+ =?utf-8?B?dGd5RjRKd2xrS1J3cE53dytQTExCLytiS0h4UHZKTmNrcURlWEFMNGdhcVcv?=
+ =?utf-8?B?OFVES0JmWkJ6OXduR1dXVnRmak03TEFCOG5PWUtUMDRJV2ZzMW9sMS91S2dk?=
+ =?utf-8?B?LzJGcjRlZ3hZRUovNjcvTE93T21mLzB3WGJha21NVkZ4am1hS0FOU05qY1RC?=
+ =?utf-8?B?eTFYalZNOWlmRDE1UEZ5QmZlTlFMV3NtUXdFR2tlU3RsSWc3OWVtaXI2M3JI?=
+ =?utf-8?B?NVNhWVdsZ1crWWgybTh6WERpWjNsT3hscXhXZ0dJSGMvaDJCRkphTU5nVG1P?=
+ =?utf-8?B?bCtUblliNXRQZUEzVG1rZ1phdGsrZ2dGRzZiZ0RxazNBTjh0K0gzd0ZFV3JB?=
+ =?utf-8?B?TkpxTkY3Y3o4enEyZmpFRFg0Rnp4c3FSU09qc2VEcHU1VVo1WGJLU2Y4NCtp?=
+ =?utf-8?Q?qn1Yo734js+iDBzrj14k60FMwRVyrMnsioUQA=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?NmVNK3Y0QlpTc2QzTFlNaGNub1pyQ25jZWNZa2JTMGljeWJOdGRESlVIZ0Q5?=
+ =?utf-8?B?SlN4SEh3UEJ3bmdVNVl5L09xakU0ZkNIaDN4ajFncG5sNG5ENVVNMjc1M1B5?=
+ =?utf-8?B?UTdsVjN1UHdmWGt5ajRKcVcxYmVIaHluRERaY1R1RXlyTlRWby9NcUJhV0M5?=
+ =?utf-8?B?MG9ZSkkvZlVUN3ZuVUtxczZnUVBlZFlHS0M3a1p3VE9neGI4RzJFd21pa0Q3?=
+ =?utf-8?B?Mm5obXJJR0NKcHZNeFNjNjFkeisweEx4RW5MeWwxU256L01kby81L1JCbWhT?=
+ =?utf-8?B?V0thM3V1QXREZXY1N3EyVzAwZzVRUzY3RE1heE9ZQ1ZpS0JxcndZV3lDbUcy?=
+ =?utf-8?B?YU0zWWZLcHhENEY2d25uaHoyVFE3NCtOS3VBY1lTUlk4bEc5NWowaGNlZ0hK?=
+ =?utf-8?B?dVhSSGlVRXVJZ0dtTXR1ZzNnK1dvUFd2ZFlVN1crdEp0Vm4zOGtoZEVXaXYy?=
+ =?utf-8?B?QTVHNEFncmU2RmdFam5NTVFDUjRNMXRkVUs3cE13dDUvNGExcXN1RlZKNnpv?=
+ =?utf-8?B?TDZIV1BFV3ppcXVNNFNtcGdrbmdzai9CN29vWXNpeEUyRW1VaGpMbHZkVVI0?=
+ =?utf-8?B?T1BBT003RW5td1RwZ1U0cE9FazljMVhaRFlydHp1UnVOVkJXVDBqVWUyZTlW?=
+ =?utf-8?B?UjlFaWh6S0hCdWFQbkloYTZPeFpsYmEyK0IwSkU3MCtMRnQreGlyNUs1OXJr?=
+ =?utf-8?B?dzhtMjFBaVk2ei9zQzVjQnIwUTFoczhlOThkZnJMemtoVHY2VC9hMXNuZ2VU?=
+ =?utf-8?B?aHNkaVVNR3hid2xwSXFjWUJEUWtkd2lrZy9OWXp3UUhpR3hOc2hQeHlqaTkr?=
+ =?utf-8?B?eUtLUVF3MFpqNUc2d0RSb1AyQkFiajhtcGZlK1BxOFUwTkdwV1l5SEUzRlRm?=
+ =?utf-8?B?SDJEVy96Rzh2UWRUNEN3cytrQmgyUWMrS0RIellqNmp2dCtRWEdieElNQ2J4?=
+ =?utf-8?B?WGFiWWtMMFN4UCsweTAyQzNUR1pNVlRSUkd6VFdsbjF0ZVZERTZnQXZpNWNr?=
+ =?utf-8?B?UEdPUjI3TmdsT1FMTWVkaHd6ZHdlcnVNR3ZRRFMybnM4TlJVVUJiZWp6MEJ6?=
+ =?utf-8?B?Mms0SzFSaDJmam9md1BvMHJGWGNnSmJkN0gwTXlMYXQ2aS9lYTRlb0Z4QTdr?=
+ =?utf-8?B?Yk9yWHN2c1FabnRJTmhYQ3luNHJ0NTlaenJnclFJTVV1em4wb1dIeHhOcHd2?=
+ =?utf-8?B?S1V2V3dVdFJuQUoxbG9GT3dLcjIxLzduaXh4YkxoZzlUdFlOVXpQN2ZQa1BQ?=
+ =?utf-8?B?eEhoQzR1alNvQlVldXVOeEdBUXQvdU41WW4xeWgzam8vZklzUUVkMmhNZTBG?=
+ =?utf-8?B?MWlqT2hCUkVnM0lsT2JPY0VjWXRvNnZ4Ylppc2FuM0xFUmhFL3dyWFFqbEx5?=
+ =?utf-8?B?MHBGT0dVenVoZWlSUnlOYjZrWGcwZjhrT3BVKzR5cmFlYnd3Y1Bhc2tnNWJr?=
+ =?utf-8?B?YURvbUF0T0JzYVlhdS9UY1h6aWdMRmVvVG0wZVp1VlhVd0dHd1o5YXdZc0Nn?=
+ =?utf-8?B?eXBPWkZzMzUrVWlSUlJOTStyYlQvR2dIZkMvVnVXRU81UGZTcER4dDRFWHBy?=
+ =?utf-8?B?Uk1EMGtUK0dUcGdGV2tmQ0FnOUNMUjFRM2thejBZelhHQjBXeTdISS9qZkJE?=
+ =?utf-8?B?a0Joc0ZNT01ZZE9PT1BwVFVVZEFqK3F5QnI1ZEx5SFo1R0xWR0pzazBYczR4?=
+ =?utf-8?B?dzJPWDF0QW5FUGF2cG5rcXdBYkpyNjFrb3dKdmNxZSt6eTNuOVowVWJVRXN4?=
+ =?utf-8?B?b3lvOEx4Ti94OVpRUDVGTGR3U3RPZzJrNmxxbXhvOXpoMkdBck15NktPTUR2?=
+ =?utf-8?B?QVhLRkhsWkdZQS9XK3ZGcUNvY2xuZmplRHE4OEE0Mm9GaUlPbUZkM1UxL3pT?=
+ =?utf-8?B?eWFYTXZvSnRzZFhMTVhiTlovQUMxWlBHVWYxZzBSa05TWGlwbTI3RVNzVzJ6?=
+ =?utf-8?B?Nmw0dXRyaU50Rlg2RmVqZHE0WllnYXNBdWNkUHcwbEl6UDF5a285ek8vZjZC?=
+ =?utf-8?B?Y09mWm5mOTN0dTlyYUFiMWN3bzhUeDI1TG00NnU5REFYWlpmbENtLzZzbysx?=
+ =?utf-8?B?VHhPWFRWd0w5NTIwbVdia3pFejhweGptY04zQlU0ZnRtOC8yNHJOTG1zNnpS?=
+ =?utf-8?B?YzRXd1FlU0pmY1VXNE1md3JOTDM2QjBxSFI0REZzSC91bFMycTR6bEFqbCtm?=
+ =?utf-8?B?RU03bXBJN1A1cUk1SEpFV3pxZ0xmU2Z0dlRTT0tsVjZnZ3hZejl2YUVqT1F4?=
+ =?utf-8?Q?lk5NsLME3kzlKUHTnJ/SWguhRtpfhAhN98crV65Q+o=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FF71610E4A57F94D8C7E2E77EC4E2256@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7050796e-be88-4e01-abdb-976baba2f83b@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: ced0a4a5-e4ec-4387-3133-08dcd1aa6066
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2024 15:08:07.1110
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: nkpjlkL4HDEuOnFf8ZUoYgNiAWqGFEAgqINVdnuvQkDndvNCPFWBkUibCc3OPWnAw9i1KHlntn/FTVh9ZrXXyx3bewyqbT1oKvC7Y59kR9M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB7331
 
-On Tue, Sep 10, 2024 at 02:12:53PM +0100, Pavel Begunkov wrote:
-> On 9/7/24 10:36, Ming Lei wrote:
-> ...
-> > > > Wrt. ublk, group provides zero copy, and the ublk io(group) is generic
-> > > > IO, sometime IO_LINK is really needed & helpful, such as in ublk-nbd,
-> > > > send(tcp) requests need to be linked & zc. And we shouldn't limit IO_LINK
-> > > > for generic io_uring IO.
-> > > > 
-> > > > > from nuances as such, which would be quite hard to track, the semantics
-> > > > > of IOSQE_CQE_SKIP_SUCCESS is unclear.
-> > > > 
-> > > > IO group just follows every normal request.
-> > > 
-> > > It tries to mimic but groups don't and essentially can't do it the
-> > > same way, at least in some aspects. E.g. IOSQE_CQE_SKIP_SUCCESS
-> > > usually means that all following will be silenced. What if a
-> > > member is CQE_SKIP, should it stop the leader from posting a CQE?
-> > > And whatever the answer is, it'll be different from the link's
-> > > behaviour.
-> > 
-> > Here it looks easier than link's:
-> > 
-> > - only leader's IOSQE_CQE_SKIP_SUCCESS follows linked request's rule
-> > - all members just respects the flag for its own, and not related with
-> > leader's
-> > 
-> > > 
-> > > Regardless, let's forbid IOSQE_CQE_SKIP_SUCCESS and linked timeouts
-> > > for groups, that can be discussed afterwards.
-> > 
-> > It should easy to forbid IOSQE_CQE_SKIP_SUCCESS which is per-sqe, will do
-> > it in V6.
-> > 
-> > I am not sure if it is easy to disallow IORING_OP_LINK_TIMEOUT, which
-> > covers all linked sqes, and group leader could be just one of them.
-> > Can you share any idea about the implementation to forbid LINK_TIMEOUT
-> > for sqe group?
-> 
-> diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-> index 671d6093bf36..83b5fd64b4e9 100644
-> --- a/io_uring/timeout.c
-> +++ b/io_uring/timeout.c
-> @@ -542,6 +542,9 @@ static int __io_timeout_prep(struct io_kiocb *req,
->  	data->mode = io_translate_timeout_mode(flags);
->  	hrtimer_init(&data->timer, io_timeout_get_clock(data), data->mode);
-> +	if (is_timeout_link && req->ctx->submit_state.group.head)
-> +		return -EINVAL;
-> +
->  	if (is_timeout_link) {
->  		struct io_submit_link *link = &req->ctx->submit_state.link;
-> 
-> This should do, they already look into the ctx's link list. Just move
-> it into the "if (is_timeout_link)" block.
-
-OK.
-
-> 
-> 
-> > > > 1) fail in linked chain
-> > > > - follows IO_LINK's behavior since io_fail_links() covers io group
-> > > > 
-> > > > 2) otherwise
-> > > > - just respect IOSQE_CQE_SKIP_SUCCESS
-> > > > 
-> > > > > And also it doen't work with IORING_OP_LINK_TIMEOUT.
-> > > > 
-> > > > REQ_F_LINK_TIMEOUT can work on whole group(or group leader) only, and I
-> > > > will document it in V6.
-> > > 
-> > > It would still be troublesome. When a linked timeout fires it searches
-> > > for the request it's attached to and cancels it, however, group leaders
-> > > that queued up their members are discoverable. But let's say you can find
-> > > them in some way, then the only sensbile thing to do is cancel members,
-> > > which should be doable by checking req->grp_leader, but might be easier
-> > > to leave it to follow up patches.
-> > 
-> > We have changed sqe group to start queuing members after leader is
-> > completed. link timeout will cancel leader with all its members via
-> > leader->grp_link, this behavior should respect IORING_OP_LINK_TIMEOUT
-> > completely.
-> > 
-> > Please see io_fail_links() and io_cancel_group_members().
-> > 
-> > > 
-> > > 
-> > > > > > +
-> > > > > > +		lead->grp_refs += 1;
-> > > > > > +		group->last->grp_link = req;
-> > > > > > +		group->last = req;
-> > > > > > +
-> > > > > > +		if (req->flags & REQ_F_SQE_GROUP)
-> > > > > > +			return NULL;
-> > > > > > +
-> > > > > > +		req->grp_link = NULL;
-> > > > > > +		req->flags |= REQ_F_SQE_GROUP;
-> > > > > > +		group->head = NULL;
-> > > > > > +		if (lead->flags & REQ_F_FAIL) {
-> > > > > > +			io_queue_sqe_fallback(lead);
-> > > > > 
-> > > > > Let's say the group was in the middle of a link, it'll
-> > > > > complete that group and continue with assembling / executing
-> > > > > the link when it should've failed it and honoured the
-> > > > > request order.
-> > > > 
-> > > > OK, here we can simply remove the above two lines, and link submit
-> > > > state can handle this failure in link chain.
-> > > 
-> > > If you just delete then nobody would check for REQ_F_FAIL and
-> > > fail the request.
-> > 
-> > io_link_assembling() & io_link_sqe() checks for REQ_F_FAIL and call
-> > io_queue_sqe_fallback() either if it is in link chain or
-> > not.
-> 
-> The case we're talking about is failing a group, which is
-> also in the middle of a link.
-> 
-> LINK_HEAD -> {GROUP_LEAD, GROUP_MEMBER}
-> 
-> Let's say GROUP_MEMBER fails and sets REQ_F_FAIL to the lead,
-> then in v5 does:
-> 
-> if (lead->flags & REQ_F_FAIL) {
-> 	io_queue_sqe_fallback(lead);
-> 	return NULL;
-> }
-> 
-> In which case it posts cqes for GROUP_LEAD and GROUP_MEMBER,
-> and then try to execute LINK_HEAD (without failing it), which
-> is wrong. So first we need:
-> 
-> if (state.linked_link.head)
-> 	req_fail_link_node(state.linked_link.head);
-
-For group leader, link advancing is always done via io_queue_next(), in
-which io_disarm_next() is called for failing the whole remained link
-if the current request is marked as FAIL.
-
-> 
-> And then we can't just remove io_queue_sqe_fallback(), because
-> when a group is not linked there would be no io_link_sqe()
-> to fail it. You can do:
-
-If one request in group is marked as FAIL, io_link_assembling()
-will return true, and io_link_sqe() will fail it.
-
-
-Thanks, 
-Ming
-
+T24gVHVlLCAyMDI0LTA5LTEwIGF0IDA4OjUzIC0wNjAwLCBKZW5zIEF4Ym9lIHdyb3RlOg0KPiBP
+biA5LzEwLzI0IDg6MzMgQU0sIEZlbGl4IE1vZXNzYmF1ZXIgd3JvdGU6DQo+ID4gSGksDQo+ID4g
+DQo+ID4gdGhpcyBzZXJpZXMgY29udGludWVzIHRoZSBhZmZpbml0eSBjbGVhbnVwIHdvcmsgc3Rh
+cnRlZCBpbg0KPiA+IGlvX3VyaW5nL3NxcG9sbC4gSXQgaGFzIGJlZW4gdGVzdGVkIGFnYWluc3Qg
+dGhlIGxpYnVyaW5nIHRlc3RzdWl0ZQ0KPiA+IChtYWtlIHJ1bnRlc3RzKSwgd2hlcmVieSB0aGUg
+cmVhZC1tc2hvdCB0ZXN0IGFsd2F5cyBmYWlsczoNCj4gPiANCj4gPiDCoCBSdW5uaW5nIHRlc3Qg
+cmVhZC1tc2hvdC50DQo+ID4gwqAgQnVmZmVyIHJpbmcgcmVnaXN0ZXIgZmFpbGVkIC0yMg0KPiA+
+IMKgIHRlc3RfaW5jIDAgMA0KPiA+IGZhaWxlZMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgDQo+ID4gwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIA0KPiA+IMKg
+IFRlc3QgcmVhZC1tc2hvdC50IGZhaWxlZCB3aXRoIHJldCAxwqDCoMKgwqAgDQo+ID4gDQo+ID4g
+SG93ZXZlciwgdGhpcyB0ZXN0IGFsc28gZmFpbHMgb24gYSBub24tcGF0Y2hlZCBsaW51eC1uZXh0
+IEAgDQo+ID4gYmM4M2I0ZDFmMDg2Lg0KPiANCj4gVGhhdCBzb3VuZHMgdmVyeSBvZGQuLi4gV2hh
+dCBsaWJ1cmluZyBhcmUgeW91IHVzaW5nPyBPbiBvbGQga2VybmVscw0KPiB3aGVyZSBwcm92aWRl
+ZCBidWZmZXIgcmluZ3MgYXJlbid0IGF2YWlsYWJsZSB0aGUgdGVzdCBzaG91bGQganVzdA0KPiBz
+a2lwLA0KPiBuZXcgb25lcyBpdCBzaG91bGQgcGFzcy4gT25seSB0aGluZyBJIGNhbiB0aGluayBv
+ZiBpcyB0aGF0IHlvdXINCj4gbGlidXJpbmcNCj4gcmVwbyBpc24ndCBjdXJyZW50Pw0KDQpIbW0u
+Li4gSSB0ZXN0ZWQgYWdhaW5zdA0KaHR0cHM6Ly9naXRodWIuY29tL2F4Ym9lL2xpYnVyaW5nL2Nv
+bW1pdC83NGZlZmExYjUxZWUzNWEyMDE0Y2E2ZTc2NjdkN2MxMGU5YzViMDZmDQoNCkknbGwgcmVk
+byB0aGUgdGVzdCBhZ2FpbnN0IHRoZSB1bnBhdGNoZWQga2VybmVsIHRvIGJlIDEwMCUgc3VyZSB0
+aGF0IGl0DQppcyBub3QgcmVsYXRlZCB0byBteSBwYXRjaGVzLiBUaGUgLTIyIGlzIGxpa2VseSBh
+biAtRUlOVkFMLg0KDQo+IA0KPiA+IFRoZSB0ZXN0IHdxLWFmZi50IHN1Y2NlZWRzIGlmIGF0IGxl
+YXN0IGNwdSAwLDEgYXJlIGluIHRoZSBzZXQgYW5kDQo+ID4gZmFpbHMgb3RoZXJ3aXNlLiBUaGlz
+IGlzIGV4cGVjdGVkLCBhcyB0aGUgdGVzdCB3YW50cyB0byBwaW4gb24NCj4gPiB0aGVzZQ0KPiA+
+IGNwdXMuIEknbGwgc2VuZCBhIHBhdGNoIGZvciBsaWJ1cmluZyB0byBza2lwIHRoYXQgdGVzdCBp
+biBjYXNlIHRoaXMNCj4gPiBwcmUtY29uZGl0aW9uIGlzIG5vdCBtZXQuDQo+ID4gDQo+ID4gUmVn
+YXJkaW5nIGJhY2twb3J0aW5nOiBJIHdvdWxkIGxpa2UgdG8gYmFja3BvcnQgdGhlc2UgcGF0Y2hl
+cyB0bw0KPiA+IDYuMSBhcw0KPiA+IHdlbGwsIGFzIHRoZXkgYWZmZWN0IG91ciByZWFsdGltZSBh
+cHBsaWNhdGlvbnMuIEhvd2V2ZXIsIGluLWJldHdlZW4NCj4gPiA2LjENCj4gPiBhbmQgbmV4dCB0
+aGVyZSBpcyBhIG1ham9yIGNoYW5nZSBkYTY0ZDZkYjNiZDMgKCJpb191cmluZzogT25lIHdxZQ0K
+PiA+IHBlcg0KPiA+IHdxIiksIHdoaWNoIG1ha2VzIHRoZSBiYWNrcG9ydCB0cmlja3kuIFdoaWxl
+IEkgZG9uJ3QgdGhpbmsgd2Ugd2FudA0KPiA+IHRvDQo+ID4gYmFja3BvcnQgdGhpcyBjaGFuZ2Us
+IHdvdWxkIGEgZGVkaWNhdGVkIGJhY2twb3J0IG9mIHRoZSB0d28gcGlubmluZw0KPiA+IHBhdGNo
+ZXMgZm9yIHRoZSBvbGQgbXVsdGktcXVldWUgaW1wbGVtZW50YXRpb24gaGF2ZSBhIGNoYW5jZSB0
+byBiZQ0KPiA+IGFjY2VwdGVkPw0KPiANCj4gTGV0J3Mgbm90IGJhY2twb3J0IHRoYXQgcGF0Y2gs
+IGp1c3QgYmVjYXVzZSBpdCdzIHByZXR0eSBpbnZhc2l2ZS4NCj4gSXQncw0KPiBmaW5lIHRvIGhh
+dmUgYSBzZXBhcmF0ZSBiYWNrcG9ydCBwYXRjaCBvZiB0aGVtIGZvciAtc3RhYmxlLCBpbiB0aGlz
+DQo+IGNhc2UNCj4gd2UnbGwgaGF2ZSBvbmUgdmVyc2lvbiBmb3Igc3RhYmxlIGtlcm5lbHMgbmV3
+IGVub3VnaCB0byBoYXZlIHRoYXQNCj4gY2hhbmdlLCBhbmQgb25lIGZvciBvbGRlciB2ZXJzaW9u
+cy4gVGhhbmtmdWxseSBub3QgdGhhdCBtYW55IHRvIGNhcmUNCj4gYWJvdXQuDQoNCk9rLCB0aGF0
+IGlzIGZpbmUgZm9yIG1lLiBUaGVuIGxldCdzIGZpcnN0IGdldCB0aGluZ3MgcmlnaHQgaW4gdGhp
+cw0Kc2VyaWVzIGFuZCB0aGVuIEknbGwgc2VuZCB0aGUgYmFja3BvcnQuDQoNCkJlc3QgcmVnYXJk
+cywNCkZlbGl4DQoNCj4gDQoNCi0tIA0KU2llbWVucyBBRywgVGVjaG5vbG9neQ0KTGludXggRXhw
+ZXJ0IENlbnRlcg0KDQoNCg==
 

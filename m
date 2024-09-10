@@ -1,101 +1,127 @@
-Return-Path: <io-uring+bounces-3107-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3110-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86EF99739EE
-	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 16:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCB81973A2B
+	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 16:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7EEFB2270E
-	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 14:33:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03EE283585
+	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 14:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA153195FEC;
-	Tue, 10 Sep 2024 14:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEF719597F;
+	Tue, 10 Sep 2024 14:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="aLjdWnrr"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2eNUBtLg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9588019309C
-	for <io-uring@vger.kernel.org>; Tue, 10 Sep 2024 14:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D658B19412D
+	for <io-uring@vger.kernel.org>; Tue, 10 Sep 2024 14:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725978816; cv=none; b=BoI6MH1Yx38x0xXmlJnxh0v3kZNd5L+G6YDSkFRtyCgJV+FCWWU2Mrp7KUxW4mpzr9V89bS4cc6CI6ved3QUcZQikx6RQWZKFa5+sxUG4jKBwihD7jUMdnFCNL2bLpmoEt4Cm1JOE3NCUIKFMGqRM8dzn0maXOw795MttagPwvs=
+	t=1725979325; cv=none; b=bg7HhyuBqzryX73NDXUFPhVDTjE16whqVIm307cqRazDR1pzh7LVUilSgT+QvXueZMSr3svc2mrn3vXRbfnl4XSRVmvJq1l3TiyTxUJS6nvWQzaZLYVqqVo8OYO8YIqRT0rAEQ8hgHGbhNKFeeWOCJNyV5JNDAHUcoU9PZKNnyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725978816; c=relaxed/simple;
-	bh=HdjpHHoNjYhBNqAxemQTKbJ7B8cX2tOtQLZrtAyVLgk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KCp0FKQ2tvNjPKgL0vbEl6Sx5gAvB67vsICOCB4PSBFfqLD+VdjZqrWEQ9fh7ZJpBhJQ7b/KUDuDvfPmj0IXJlHd0GM9gADgFRWJcZ1Hvw95wGw/rPuRDRL5fgtwe7eIH6jnf6968/MKnPMLAxkU8ZGN/HGy4xYOgpFuQp550DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=aLjdWnrr; arc=none smtp.client-ip=185.136.65.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202409101433310109bec0d547149e50
-        for <io-uring@vger.kernel.org>;
-        Tue, 10 Sep 2024 16:33:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=n2V+rpn0MsoDnSoEFfdxd31DQiUD8YinS8WdnXxpaHA=;
- b=aLjdWnrraN9sTjU0K0JxfJEbsKlJHU3RGuyyvDTifxtBVtGcPAgQPicpqN0YzHzHMNJ0iN
- lvbbSUTFekouVMhaU5rxBl/04r1pz6SkK1jN6O3szNKQeuijZR75rb6vcDuOSQjThb3IJRt9
- QdtrpimuBVImvEO2PW7IrNTV5dN8+n3IXfPzo7dCMuV2vGEga0ynWkQ0Wpve2woBBszaaYkd
- jJ4XOv/EQeJ6EmVMSgM8rw+QiE9DGVFOySl1bngfYbJ6tSuWVEVnZ4eeTwpuXKrmqvp2edmJ
- RuVIfHb6siZsDUpz1cVYDsl32kcXIm8IcYPv8FshZtB+OMtsW4OBvLxA==;
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com,
-	linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	dqminh@cloudflare.com,
-	longman@redhat.com,
-	adriaan.schmidt@siemens.com,
-	florian.bezdeka@siemens.com,
-	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [PATCH 2/2] io_uring/io-wq: limit io poller cpuset to ambient one
-Date: Tue, 10 Sep 2024 16:33:20 +0200
-Message-Id: <20240910143320.123234-3-felix.moessbauer@siemens.com>
-In-Reply-To: <20240910143320.123234-1-felix.moessbauer@siemens.com>
-References: <20240910143320.123234-1-felix.moessbauer@siemens.com>
+	s=arc-20240116; t=1725979325; c=relaxed/simple;
+	bh=HHHppCsJ1E+IzV1UoMVu0WzHEvqFTqbhdThpoc9f438=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=P1n1YYAo6cE1xx/reDI6iGvFgglN/otW1rqYMOEVAEqSuwF4DiWVtxtL8kvZdtSZ4AhU2HMwsT9xsTflUOX/NFwCUaspUMJXkrWbqQRzMgM/zhuQWgs3bVGnI1Zl468LS2Pu1kCL3a8X1J3sKxX3j/PucD1FxW7gqeeb+IvQGSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2eNUBtLg; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-710dead5d2aso446202a34.0
+        for <io-uring@vger.kernel.org>; Tue, 10 Sep 2024 07:42:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725979321; x=1726584121; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CEcOw7GOnjnj4uw69UKHYvRPFBvmH1khMsiSUSnSnjE=;
+        b=2eNUBtLgtqPHWjM15LNCHYR0LsaCe6DpYvyUm2KvkqAIHzHpoZWMSisjCNOmCNSt6I
+         svJOqlWf5R74T0CHFwDpSuytIvHc2FliEManT4YVnNZo1QqQJhpkDF/SWh8Wya3jLrkh
+         zGFPJCptyolIIt4dDJFbj1vTV+L77hWuY9SkbrYQITGQXFBIblgp/qina78p9lfPOm/t
+         Eu6DfiqWH0Jp881eLe80vagu3/YCNxGQ9GsQfZN/uUIlPV3VOvFLVxqlcfinHX5jPXqy
+         ca1lLKiv1ylJI4K2fIP/nCq+iQL7P5lr7K/zvzzbvcy67U/V7us+t/Gi0IVGJurVoRvw
+         3VFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725979321; x=1726584121;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CEcOw7GOnjnj4uw69UKHYvRPFBvmH1khMsiSUSnSnjE=;
+        b=fb9HVb5HhuNAm8GyWutSn54bJMmAcuWyuZo5rxBNJTLU1MaxjmzmSYVqYcdti4HI8T
+         R+ey7skYXQiQoWH/b/Xt83fjPPgQ6W+/lcc0QKzBl02rPHkP6Bxzg25WcnrQEl5avNZn
+         y7C/dPXo6JBCruEY2VmmFZCDRGut7MA1FxVUbP0aO418b25/mx0AkBtU/pCJ9DtC25gO
+         6/o9tj/WrTvTQ9pHeI/tpfsYHoXlu+D9TZnwUNNr1TJpR4rxOz1XnNbsn/KkIxGAemmg
+         jBDrKnsRNEmggJapgv9+vNmOaNuHC1R9WsLHZydZSLYuYMAkWOdAPvrAlkmG6GlKYofl
+         Ynog==
+X-Gm-Message-State: AOJu0Yyk/r9cPykP0NcXFQW/fW/ccyCo+WkqJZYwlHzYxwojKMVUUaFn
+	EZWCmeQ4BRgYGyob7MeiKyJYOkdajkH6Z7593n0MIALNdroCyXeyjhZdb2bRBdBRd1ivPm0OEhJ
+	U
+X-Google-Smtp-Source: AGHT+IEdBLcPkPPOrKblLmNy4Szrv4lpf+GRNMwM+Rv8csmMJOyPNU2o9+EengdYuRStJQlp54xo6A==
+X-Received: by 2002:a05:6830:7196:b0:704:4bb7:af8a with SMTP id 46e09a7af769-710d6e3e3dcmr9910050a34.20.1725979321161;
+        Tue, 10 Sep 2024 07:42:01 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d094667f2bsm1616869173.178.2024.09.10.07.42.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 07:42:00 -0700 (PDT)
+Message-ID: <8b7a8200-f616-46a8-bc44-5af7ce9b081a@kernel.dk>
+Date: Tue, 10 Sep 2024 08:41:59 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1321639:519-21489:flowmailer
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/rw: treat -EOPNOTSUPP for IOCB_NOWAIT like -EAGAIN
+Cc: Robert Sander <r.sander@heinlein-support.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The io work queue polling threads are userland threads that just never
-exit to the userland. By that, they are also assigned to a cgroup (the
-group of the creating task).
+Some file systems, ocfs2 in this case, will return -EOPNOTSUPP for
+an IOCB_NOWAIT read/write attempt. While this can be argued to be
+correct, the usual return value for something that requires blocking
+issue is -EAGAIN.
 
-When creating a new io poller, this poller should inherit the cpu limits
-of the cgroup, as it belongs to the cgroup of the creating task.
+A refactoring io_uring commit dropped calling kiocb_done() for
+negative return values, which is otherwise where we already do that
+transformation. To ensure we catch it in both spots, check it in
+__io_read() itself as well.
 
-Fixes: da64d6db3bd3 ("io_uring: One wqe per wq")
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+Reported-by: Robert Sander <r.sander@heinlein-support.de>
+Link: https://fosstodon.org/@gurubert@mastodon.gurubert.de/113112431889638440
+Cc: stable@vger.kernel.org
+Fixes: a08d195b586a ("io_uring/rw: split io_read() into a helper")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
 ---
- io_uring/io-wq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index c7055a8895d7..a38f36b68060 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -1168,7 +1168,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index c004d21e2f12..d85e2d41a992 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -855,6 +855,14 @@ static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
  
- 	if (!alloc_cpumask_var(&wq->cpu_mask, GFP_KERNEL))
- 		goto err;
--	cpumask_copy(wq->cpu_mask, cpu_possible_mask);
-+	cpuset_cpus_allowed(data->task, wq->cpu_mask);
- 	wq->acct[IO_WQ_ACCT_BOUND].max_workers = bounded;
- 	wq->acct[IO_WQ_ACCT_UNBOUND].max_workers =
- 				task_rlimit(current, RLIMIT_NPROC);
+ 	ret = io_iter_do_read(rw, &io->iter);
+ 
++	/*
++	 * Some file systems like to return -EOPNOTSUPP for an IOCB_NOWAIT
++	 * issue, even though they should be returning -EAGAIN. To be safe,
++	 * retry from blocking context for either.
++	 */
++	if (ret == -EOPNOTSUPP && force_nonblock)
++		ret = -EAGAIN;
++
+ 	if (ret == -EAGAIN || (req->flags & REQ_F_REISSUE)) {
+ 		req->flags &= ~REQ_F_REISSUE;
+ 		/* If we can poll, just do that. */
+
 -- 
-2.39.2
+Jens Axboe
 
 

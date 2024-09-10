@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3128-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3129-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7969743E6
-	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 22:10:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3562974404
+	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 22:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F301F26CF1
-	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 20:10:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C0E11F24DFE
+	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 20:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E98F18C930;
-	Tue, 10 Sep 2024 20:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795A2183CC7;
+	Tue, 10 Sep 2024 20:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nA1pcZSU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KE/iBm/w"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDC1176252;
-	Tue, 10 Sep 2024 20:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE45566A;
+	Tue, 10 Sep 2024 20:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725999013; cv=none; b=GLufigef2RoxsUIP/armnk52EjSsjV4rN6bIgZPEmUyrvMc1hjBGN99h5fZDjo7aJxboJk66CtnJY3J8OII5dSxpWUsBERwmWvO1yU+C/FaP9XHUNKvGibPrNnH0TRKgeXPOJPvXUfR64h6ThGJLHjnbGdzzWIJYBHXNIFQVuaA=
+	t=1725999734; cv=none; b=pzyM8/O/vlneKge/FZdCDAsiiSQsFtBCVRrUqx7NdTA6QmTI2RVoxAufg8PT6VEas0EZ9DVJqTKkr71MBOmWYh4Fev609Flhjmn0am0IZL3E/Is4vsYJAl8elSrHQkgX6InutWq9JDhqCuC4Zv0EA68di5ZHAWyhQe1p/Nhm2Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725999013; c=relaxed/simple;
-	bh=lb2HrdtFUXtuZIFefr+NvrlNc3pcdiXB5EQnXVqikrs=;
+	s=arc-20240116; t=1725999734; c=relaxed/simple;
+	bh=f3JEjOCsd1ymTwKzB4PjN7pUptasEUQGp85xPTdZ+Qk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nfe6XtJ9TCMUEjm5wqxLaokAzc2oeGHvA+hOaq+nUPVqk6Rp63ITCSTMgVsBhGCqyWyf+NmV3EMF/78Q78tSjZEM2RHcuu1zncoICwFyej8Av/1/i8aQCoa6Ng03FKKZRgrv1OppRVm3YM+dn0fRGw62U46m8YVYtCimlcDyad4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nA1pcZSU; arc=none smtp.client-ip=209.85.221.47
+	 In-Reply-To:Content-Type; b=W4omA+r6Cgup0rHLnxp4vhS4JQvUXsR7LLQsg9uZMxaYb5GKFGFc7YrtxyxmvgWWEDIyZHOTqWHjfjXe3OjnlmcygAaIoEf1AqCISI2FMza2dYNewDT8Wa7cIDCVBRpU1HAje+sFicRLYXhNvlihDzgBtD70vozZlWRbSIKDuMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KE/iBm/w; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-374ca65cafdso3765685f8f.2;
-        Tue, 10 Sep 2024 13:10:09 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cb1e623d1so12166655e9.0;
+        Tue, 10 Sep 2024 13:22:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725999008; x=1726603808; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725999731; x=1726604531; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1V8I0bda6wgDAwGKScnVsLlsELDqLNjD+DNqt7q61gM=;
-        b=nA1pcZSUKkVrs/Zh+hAEo8rzfA2pa/hsJlSe4RfGHuyRuRBq7slXNi+khxcCE7fstP
-         CHKjGMbgEBTM3U18GmZ0dehwQzgkPSaPttRLaO9JzWk40ZwZfbOFtwRGHKQ0cmRCAIK6
-         7Ufh3dQZhHstavQ5XNS6khH9q0X+U5ivsaVdtD/98gaOJ8oja/kaBAuU2XE0lZR10+XS
-         aVPQMxv0p+B+2Mt4tyfpIEPJjURiXQLzxwFxDdpKs+TnOxvFD8THVFUJM7FpBTFwOtIj
-         qHea+xgfk2nqL+3BHvVRhNqeLEyZX0aCCEZQfoJmNacO2EnWkvtEXUTAd8m1bC7SpgNp
-         ypNQ==
+        bh=MDjydcKVUDScuDqfe8vsl4HZhSr4A4L5web6qrYiGpI=;
+        b=KE/iBm/wkU93x3rS0tGJQ/6txvJnP7rJvNA3mkWUjSRZcXA+R+6PjIJsFT3P57bggV
+         WD9KInkf1E/gWq/Zz20ShBhGH44ISTX03cgpV/nrQ7DJ4aEdcrOQdDLWuhV7L8bONThf
+         QxOuMPCbATtvbXo+b3eNEpNdS0dqGmYZHIVGez8f2OgFmUbXSNQXczXecgqz16t0pQKT
+         IMbGVN+md2KY2xn4HU8VQl0kyhG/Eboq/5r7WjmZfT1fkcZuWxfST+uaKIfkCtRObeJe
+         TM2OBeAzWFasGQajaAJOaHdflUWVp3KkvV4ctJ7ycg5H3bsf4VLTYmBFgwWPTWpMNMoE
+         ePaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725999008; x=1726603808;
+        d=1e100.net; s=20230601; t=1725999731; x=1726604531;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1V8I0bda6wgDAwGKScnVsLlsELDqLNjD+DNqt7q61gM=;
-        b=J4aUQvYiUG5bpzDyJ0CRZ/YK2C7HaP2SX8bd196NyXm2VSoi6iaoZekUkTSf7aHBje
-         tdm05cSn9Vg4gWETp/EILwTUf74PegtvFqakCHH6ePuIV4UlrVWdSVEzVL18MtyVM6Gz
-         P0C4Xqr5UFr3+L4eu9q3k5t8lypJgX6JV5ytbLxGi6Px9ejnTm58x/sZWZhZ0LtffBjN
-         2y1e6HkpvLNFGV1BxX3R5H5fDsGQVX9relSXXnuNpsDm8OPAxftCPKaHPQ/Ks4COpYPG
-         TpeLnA6dy46AzTiVkSlMsa+/BSlU8zHBmzAg7vlZqBM0pOXo53DqcCWN9yTo4mRWh5+Q
-         NGpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlXeatx8oR7GLN7Qq1oIhExclMKfkf9/C1itGpeZbk9uoExIygR/z4UdKPWtJ3XQ4Hp6DdhHRSqKwngA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4mrEmjp0Z7bRv0HlkaIq0ZAFz9oqQ1buCb+r0Wpk1cgNC9Oca
-	1WdKDX6J8XwCCTq/dQB7ezW7dMmWy5ienJaABWLbvUpwi3WynrP8
-X-Google-Smtp-Source: AGHT+IGPhCsr2Cg6XFvgIErACrpEzyACnrLWkIv8TFs1iJmpEPQsddD03gvCRqm/Dm+ZabnJuSjhSQ==
-X-Received: by 2002:a5d:47ab:0:b0:374:c122:e8b8 with SMTP id ffacd0b85a97d-378949ef675mr8780895f8f.11.1725999007887;
-        Tue, 10 Sep 2024 13:10:07 -0700 (PDT)
+        bh=MDjydcKVUDScuDqfe8vsl4HZhSr4A4L5web6qrYiGpI=;
+        b=qkFWGyGueBBJ2t9xL7k0Jp3R2CCYRiH3mNxLg73PljHJBwSE+Q9prvJ+aQrxUSR/K9
+         AyJ8ymmE3LN4gna5qrQypKMLuLeDbELV6jr5CesE/s3me9OHtAdhzjoiv9rARnH0nQK9
+         qAz5Fe9OHvbKvUAriuEd1J/K3YZTwWE8V6/8ngqD3pLFgqYOEbOT29lYBy34TgVJR84P
+         TeXxG9GsuBe7MA1fVGXoSdEWrYxwv+XG58f1QUQskctMCHArYrfPfGatW6bn2wG6dsol
+         YpE7zj2VM+JwHpnqa9GPW2cBAohILIDYzpK1sWdaCKc96VV3YE8JgD7RZ6027ExPVkIu
+         6vKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVb5R0qBSWn9aNNjFagBTdyKmHYwWwUenRmt9UtEvSPxcYgYfm4VWo9rJtx4HvBTbDbtaewsEG5H20xg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPX8eh6eONbIQ8SdQ01G+D1TGs7/Hv2SXRZg5IdNFU0EGZIJp7
+	g10QjZhc+oN3jIv5oT96pbZmn/XqxfN/tRmE2SexxYG4y27AZamB
+X-Google-Smtp-Source: AGHT+IEXI7/Uw0lWdkbc1U6kE4SSL+rt3p7Kxas3S5dCTBcXcLo8UyFbt9cKKwqFtKZcpt9g6bDf7Q==
+X-Received: by 2002:a05:600c:3b0f:b0:428:23c8:1e54 with SMTP id 5b1f17b1804b1-42ccd32deb6mr6702565e9.18.1725999730311;
+        Tue, 10 Sep 2024 13:22:10 -0700 (PDT)
 Received: from [192.168.42.24] ([185.69.144.178])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb33489sm120509425e9.19.2024.09.10.13.10.07
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956653c6sm9757407f8f.32.2024.09.10.13.22.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 13:10:07 -0700 (PDT)
-Message-ID: <bea206da-d634-4e34-8d69-94a024721f21@gmail.com>
-Date: Tue, 10 Sep 2024 21:10:34 +0100
+        Tue, 10 Sep 2024 13:22:09 -0700 (PDT)
+Message-ID: <a9a447c7-6b6d-4a49-ac16-e6b8e97908b6@gmail.com>
+Date: Tue, 10 Sep 2024 21:22:37 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,95 +76,121 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 8/8] block: implement async write zero pages command
+Subject: Re: [PATCH v4 5/8] block: implement async discard as io_uring cmd
 To: Christoph Hellwig <hch@infradead.org>
 Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
  Conrad Meyer <conradmeyer@meta.com>, linux-block@vger.kernel.org,
  linux-mm@kvack.org
 References: <cover.1725621577.git.asml.silence@gmail.com>
- <c465430b0802ced71d22f548587f2e06951b3cd5.1725621577.git.asml.silence@gmail.com>
- <Zt_9DEzoX6uxC9Q7@infradead.org>
- <d205d118-8907-4da1-8dd8-2c7c103d2754@gmail.com>
- <ZuBVy2U7Whre7EnU@infradead.org>
+ <7fc0a61ae29190a42e958eddfefd6d44cdf372ad.1725621577.git.asml.silence@gmail.com>
+ <Zt_8wlXTyS2E7Xbe@infradead.org>
+ <430ca5b3-6ee1-463b-9e4e-5d0b934578cc@gmail.com>
+ <ZuBU6Nn3lS21FN_Y@infradead.org>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZuBVy2U7Whre7EnU@infradead.org>
+In-Reply-To: <ZuBU6Nn3lS21FN_Y@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/10/24 15:20, Christoph Hellwig wrote:
-> On Tue, Sep 10, 2024 at 01:17:48PM +0100, Pavel Begunkov wrote:
->>>> Add a command that writes the zero page to the drive. Apart from passing
->>>> the zero page instead of actual data it uses the normal write path and
->>>> doesn't do any further acceleration, nor it requires any special
->>>> hardware support. The indended use is to have a fallback when
->>>> BLOCK_URING_CMD_WRITE_ZEROES is not supported.
+On 9/10/24 15:17, Christoph Hellwig wrote:
+> On Tue, Sep 10, 2024 at 11:58:23AM +0100, Pavel Begunkov wrote:
+>>>> +
+>>>> +	err = filemap_invalidate_pages(bdev->bd_mapping, start,
+>>>> +					start + len - 1, nowait);
+>>>> +	if (err)
+>>>> +		return err;
+>>>> +
+>>>> +	while ((bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects, gfp))) {
+>>>> +		if (nowait)
+>>>> +			bio->bi_opf |= REQ_NOWAIT;
+>>>> +		prev = bio_chain_and_submit(prev, bio);
+>>>> +	}
+>>>> +	if (!prev)
+>>>> +		return -EAGAIN;
 >>>
->>> That's just a horrible API.  The user should not have to care if the
->>> kernel is using different kinds of implementations.
+>>> If a user changes the max_discard value between the check above and
+>>> the loop here this is racy.
 >>
->> It's rather not a good api when instead of issuing a presumably low
->> overhead fast command the user expects sending a good bunch of actual
->> writes with different performance characteristics.
+>> If the driver randomly changes it, it's racy either way. What do
+>> you want to protect against?
 > 
-> The normal use case (at least the ones I've been involved with) are
-> simply zero these blocks or the entire device, and please do it as
-> good as you can.  Needing asynchronous error handling in userspace
-> for that is extremely counter productive.
+> The discard limit shrinking and now this successfully returning while
+> not actually discarding the range.  The fix is pretty simple in that
 
-If we expect any error handling from the user space at all (we do),
-it'll and have to be asynchronous, it's async commands and io_uring.
-Asking the user to reissue a command in some form is normal.
+If it's shrinking then bios initialised and submitted with that
+initial larger limit should fail, e.g. by the disk or driver, which
+would be caught by bio_cmd_bio_end_io(). If nobody fails bios, then
+nothing ever will help here, you can always first queue up bios
+and change the limit afterwards while they're still in flight.
 
->> In my experience,
->> such fallbacks cause more pain when a more explicit approach is
->> possible. And let me note that it's already exposed via fallocate, even
->> though in a bit different way.
+> the nowait case should simply break out of the loop after the first bio.
+
+while ((bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects, gfp))) {
+	if (nowait)
+		bio->bi_opf |= REQ_NOWAIT;
+	prev = bio_chain_and_submit(prev, bio);
+	if (nowait)
+		break;
+}
+
+Like this? I need to add nr_sects==0 post loop checking either way,
+but I don't see how this break would be better any better than
+bio_put before the submit from v2.
+
+>>>> +sector_t bio_discard_limit(struct block_device *bdev, sector_t sector);
+>>>
+>>> And to be honest, I'd really prefer to not have bio_discard_limit
+>>> exposed.  Certainly not outside a header private to block/.
+>>
+>> Which is the other reason why first versions were putting down
+>> a bio seeing that there is more to be done for nowait, which
+>> you didn't like. I can return back to it or narrow the scopre.
 > 
-> Do you mean the FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE case in
-> blkdev_fallocate?  As far as I can tell this is actually a really bad
-> example, as even a hardware offloaded write zeroes can and often does
-> write physical zeroes to the media, and does so from a firmware path
-> that is often slower than the kernel loop.
+> The above should also take care of that.
+> 
+>>
+>>> Also why start at 137?  A comment
+>>> would generally be pretty useful as well.
+>>
+>> There is a comment, 2 lines above the new define.
+>>
+>> /*
+>>   * A jump here: 130-136 are reserved for zoned block devices
+>>   * (see uapi/linux/blkzoned.h)
+>>   */
+>>
+>> Is that your concern?
+> 
+> But those are ioctls, this is not an ioctl and uses a different
+> number space.  Take a look at e.g. nvme uring cmds which also
+> don't try to use the same number space as the ioctl.
 
-That's a shame, I agree, which is why I call it "presumably" faster,
-but that actually gives more reasons why you might want this cmd
-separately from write zeroes, considering the user might know
-its hardware and the kernel doesn't try to choose which approach
-faster.
+As far as I see nvme cmds are just dropped onto the 0x80- range. Not
+continuing ioctls, right, but nevertheless random and undocumented. And
+if we're arguing that IOC helps preventing people issuing ioctls to a
+wrong file type, we can easily extend it to "what if someone passes BLK*
+ioctl number to io_uring or vise versa? Not to mention that most of the
+IOC selling points have zero sense for io_uring like struct size and
+struct copy direction.
 
-> But you have an actual use case where you want to send a write zeroes
-> command but never a loop of writes, it would be good to document that
-> and add a flag for it.  And if we don't have that case it would still
+>>> Also can we have a include/uapi/linux/blkdev.h for this instead of
+>>> bloating fs.h that gets included just about everywhere?
+>> I don't think it belongs to this series.
+> 
+> How would adding a proper header instead of bloating fs.h not be
+> part of the series adding the first ever block layer uring_cmds?
 
-Users who know more about hw and e.g. prefer writes with 0 page as
-per above. Users with lots of devices who care about pcie / memory
-bandwidth, there is enough of those, they might want to do
-something different like adjusting algorithms and throttling.
-Better/easier testing, though of lesser importance.
+Because, apparently, no one have ever gave a damn about it.
+I'll add it for you, but with header probing instead of a simple
+ifdef I'd call it a usability downgrade.
 
-Those I made up just now on the spot, but the reporter did
-specifically ask about some way to differentiate fallbacks.
+> Just in case I wasn't clear - this isn't asking you to move anything
+> existing as we can't do that without breaking existing applications.
 
-> be good to have a reserved flags field to add it later if needed.
+We can, by including blkdev.h into fs.h, but that's a different
+kind of a structure.
 
-if (unlikely(sqe->ioprio || sqe->__pad1 || sqe->len ||
-	     sqe->rw_flags || sqe->file_index))
-	return -EINVAL;
-
-There is a good bunch of sqe fields that can used for that later.
-
-> Btw, do you have API documentation (e.g. in the form of a man page)
-> for these new calls somewhere?
-
-Mentioned in the cover:
-
-tests and docs:
-https://github.com/isilence/liburing.git discard-cmd
-man page specifically:
-https://github.com/isilence/liburing/commit/a6fa2bc2400bf7fcb80496e322b5db4c8b3191f0
-
-I'll send them once the kernel is set in place.
+> It is about adding the new command to the proper place.
 
 -- 
 Pavel Begunkov

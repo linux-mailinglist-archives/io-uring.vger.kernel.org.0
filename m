@@ -1,284 +1,140 @@
-Return-Path: <io-uring+bounces-3104-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3105-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B43C97385B
-	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 15:12:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC6F59739AA
+	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 16:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85CF01F25B54
-	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 13:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972701F21F2B
+	for <lists+io-uring@lfdr.de>; Tue, 10 Sep 2024 14:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0783191F94;
-	Tue, 10 Sep 2024 13:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803EC17BEC8;
+	Tue, 10 Sep 2024 14:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hjii7mt6"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hnUz3AjZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E42524B4;
-	Tue, 10 Sep 2024 13:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815131EB2F;
+	Tue, 10 Sep 2024 14:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725973950; cv=none; b=oFs+9GnC5Zr59cqHfUYPE8VAs/YtqA4IEkj+S4xVJ+LbdAWA7KVaCAixzeReJfQk0A+AloDpKzYnnJF7GarcI18HrstYZFeVnDsS/3/caSmkM8q41BJz2pgwc8wfRUdzHZJWEtRey9U0M6jJfw8b/w2T6mEcmQLQ8/7Q05HCAyE=
+	t=1725977839; cv=none; b=diOvQeTCk9Bl8lo7D8zm3DrOMKBnUFeAkd3xSHK++3ZEfOKEn6kjez0dM1g1OJqTSat4BA+bsz1Wl58UpOXIgnSP7esPKiNzrGcAMN1s68pQujHjXX4VsrjTvOXhhwcxb0x1j73DslsCcotUHo8WZHy1nG/zbpsB5kO7G7I4q7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725973950; c=relaxed/simple;
-	bh=6FZh9PrgZbdKU2iYVPACRsatwjq6CV5cbevBKcmsQBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cSwoQidn4UOr/sjgxFHg6yQTB08QCz8cl1FYa9dZis6cyOMXNYeA+zMOKAXpQUmc5NaY4+Al/cioCp340EwiYKHVI2cpI94AfAYIb9+bSGI3vs7z+4sp9dJjZp5jBPUxIlMc+0v9oXRu8B75WKVmzAous+qJ3dhpMCoU7XCSpyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hjii7mt6; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c275491c61so6858283a12.0;
-        Tue, 10 Sep 2024 06:12:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725973947; x=1726578747; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=11AIdOA7zCRdw1DcFC14ilrN+2IcxyqHRTjwx5zddCY=;
-        b=Hjii7mt6HCJrWUOe937X0chfWtd3Dipef/78wTfS/DVuFYBSCwh3Zf72MTZcoyRSuR
-         pJdWhldAHlIuw8oaNbSZzBMjydJUNpRucwm2+04YH0vQF9PT0ThzcI+EIjlaB5f0h7qI
-         uWaiqgYXTJfX18F1H+N2a01ZKBQGGTUS2W4WQTc8qrEeypLg5dTHuBLP0vieQ544puVq
-         UZZBdZYGm5iLfH8EWtXpvdpVLd3OofWWXEROLuZedRkwEU/7zgjw9FKSE5EfAaygGrpw
-         a4HEsyo1Oc5sN75/Vg1SE0cixQfueO2KU0PDvhiKoSUSOw6WDB4OAg/oag0wZNsMWb7E
-         rzRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725973947; x=1726578747;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=11AIdOA7zCRdw1DcFC14ilrN+2IcxyqHRTjwx5zddCY=;
-        b=k9iF9IioLqqBP9yDiQrg24WhrXbor5VtYfN074A8DqLuKy4y8HHFWW/KLrcsYiE4xT
-         soAWz208jWVXeSABOLNfLlR+QhazRZu5OzSZawyIPq2DhWz9kg/OHGJgspQAGU69v1Wq
-         RkcDqgps2lGueNzMFtzYRzv9cSCkUlD0Rw8HENO/qbE/1tKHaAiDChdCWFaHr3PUa/3v
-         wmcwztBGwzFzW5K7vUH4SIhtSszQNdMUF/1ynlrCJRVhk9+dU6IUbuKfz3HXAxfKjk2h
-         8JPyngCeZRLNoIy3j/XuxwhbBpmB08A7UllPhpIXxGBn7qAwB/vPS9eF8VQIFgLb8MfC
-         2DOw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6vWaZmW/xx2cNgFZSOFUpRy5fetEkKmeOgcnUjo271br1MxOK7qybXRvV0wkHxC7xjxcmYYZM9A==@vger.kernel.org, AJvYcCXc+vKjlp/APBvjgIgHLc69CCRc+ZvnENlL2SHw1QvwgqIFlP+TIuhNateMDoQEXfhW0uArW6H16DjRxog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEvRkIOL9LoimgNo/jvY99v8MaMh+X0sLjA1MM/xXBu0qDTFWV
-	c7GuvvtScAxIvQBqqxv0ZPRdgUrPDfFJcoxx+uhpm+UPvsDE0MI/
-X-Google-Smtp-Source: AGHT+IFCgBUqWWH+b5W/+hc9i68lO9+yrKJlEhm8eXVvrLwvTDGcB/3ZpfK71dv2BK9pn3RnXAk/ZQ==
-X-Received: by 2002:a05:6402:1d4d:b0:5c4:95d:da34 with SMTP id 4fb4d7f45d1cf-5c4095ddb7cmr862617a12.26.1725973946632;
-        Tue, 10 Sep 2024 06:12:26 -0700 (PDT)
-Received: from [192.168.42.252] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd41ba7sm4280604a12.4.2024.09.10.06.12.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 06:12:26 -0700 (PDT)
-Message-ID: <7050796e-be88-4e01-abdb-976baba2f83b@gmail.com>
-Date: Tue, 10 Sep 2024 14:12:53 +0100
+	s=arc-20240116; t=1725977839; c=relaxed/simple;
+	bh=ILoKlmcc9IlBjuY4J36z4xq3BtRyZ37EwBe1tM0lrnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o1zWPb7D7SptjDcH3kjrc5aH2rWFszlK7YLfHV1uekKBIitUWGl6wr/EWf/I7ajCFaAqUPIzMoIGS5c9UFXjt/cMVHpLE377/8NvVNSUjvnJqVpygEMjPQVYP7lO1mvZpd6tRL3rI8Z1Wgu9tOwlNh7y6u+ulGZzmYUbIwis8Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hnUz3AjZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DkOrZ1Suf79nRPSASZN/zy8KeU8qA5QdhlPDiSeKVDE=; b=hnUz3AjZ8oQEKvbkyJ9wzk2EEY
+	nibfCyItU0Jxw+x8oUp8v+zTkmkSv+FSCms/YGS4Oxb3TmrbX6G1O2AD2JDs6G5dq0zle2ObC5N1Q
+	vl16jF51PffGlGNmWN4EkiJgAIAlw5jFpQvnXXFK7P872FNZv1d71/ygdSXDdlR+4eHjj+62l/qL2
+	6PrNaa6rFOHARsNyAclXgdAAIHfL1Su6JERU4L97IQ1vIPYfH+dWvlATUVfk/tnRAIMJfg+68vywC
+	iX5MYNmNjLcqkqhHB3UlMK69aQC1z4kEpR3c8aZW7eMTGzxpgKENYy9/wtQ3M/ccVnGW+u/RHPc9B
+	+zNySoBA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1so1g8-00000005qEM-0NM3;
+	Tue, 10 Sep 2024 14:17:12 +0000
+Date: Tue, 10 Sep 2024 07:17:12 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, io-uring@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, Conrad Meyer <conradmeyer@meta.com>,
+	linux-block@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 5/8] block: implement async discard as io_uring cmd
+Message-ID: <ZuBU6Nn3lS21FN_Y@infradead.org>
+References: <cover.1725621577.git.asml.silence@gmail.com>
+ <7fc0a61ae29190a42e958eddfefd6d44cdf372ad.1725621577.git.asml.silence@gmail.com>
+ <Zt_8wlXTyS2E7Xbe@infradead.org>
+ <430ca5b3-6ee1-463b-9e4e-5d0b934578cc@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 4/8] io_uring: support SQE group
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
- linux-block@vger.kernel.org, Kevin Wolf <kwolf@redhat.com>
-References: <20240808162503.345913-1-ming.lei@redhat.com>
- <20240808162503.345913-5-ming.lei@redhat.com>
- <3c819871-7ca3-47ea-b752-c4a8a49f8304@gmail.com> <Zs/5Hpi16aQKlHFw@fedora>
- <36ae357b-bebe-4276-a8db-d6dccf227b61@gmail.com> <ZtweiCfLOJmdeY0Z@fedora>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZtweiCfLOJmdeY0Z@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <430ca5b3-6ee1-463b-9e4e-5d0b934578cc@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 9/7/24 10:36, Ming Lei wrote:
-...
->>> Wrt. ublk, group provides zero copy, and the ublk io(group) is generic
->>> IO, sometime IO_LINK is really needed & helpful, such as in ublk-nbd,
->>> send(tcp) requests need to be linked & zc. And we shouldn't limit IO_LINK
->>> for generic io_uring IO.
->>>
->>>> from nuances as such, which would be quite hard to track, the semantics
->>>> of IOSQE_CQE_SKIP_SUCCESS is unclear.
->>>
->>> IO group just follows every normal request.
->>
->> It tries to mimic but groups don't and essentially can't do it the
->> same way, at least in some aspects. E.g. IOSQE_CQE_SKIP_SUCCESS
->> usually means that all following will be silenced. What if a
->> member is CQE_SKIP, should it stop the leader from posting a CQE?
->> And whatever the answer is, it'll be different from the link's
->> behaviour.
+On Tue, Sep 10, 2024 at 11:58:23AM +0100, Pavel Begunkov wrote:
+> > Based on the above this function is misnamed, as it validates sector_t
+> > range and not a byte range.
 > 
-> Here it looks easier than link's:
+> Start and len here are in bytes. What do you mean?
+
+You are right, sorry.
+
+> > > +
+> > > +	err = filemap_invalidate_pages(bdev->bd_mapping, start,
+> > > +					start + len - 1, nowait);
+> > > +	if (err)
+> > > +		return err;
+> > > +
+> > > +	while ((bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects, gfp))) {
+> > > +		if (nowait)
+> > > +			bio->bi_opf |= REQ_NOWAIT;
+> > > +		prev = bio_chain_and_submit(prev, bio);
+> > > +	}
+> > > +	if (!prev)
+> > > +		return -EAGAIN;
+> > 
+> > If a user changes the max_discard value between the check above and
+> > the loop here this is racy.
 > 
-> - only leader's IOSQE_CQE_SKIP_SUCCESS follows linked request's rule
-> - all members just respects the flag for its own, and not related with
-> leader's
+> If the driver randomly changes it, it's racy either way. What do
+> you want to protect against?
+
+The discard limit shrinking and now this successfully returning while
+not actually discarding the range.  The fix is pretty simple in that
+the nowait case should simply break out of the loop after the first bio.
+
+> > > +sector_t bio_discard_limit(struct block_device *bdev, sector_t sector);
+> > 
+> > And to be honest, I'd really prefer to not have bio_discard_limit
+> > exposed.  Certainly not outside a header private to block/.
 > 
->>
->> Regardless, let's forbid IOSQE_CQE_SKIP_SUCCESS and linked timeouts
->> for groups, that can be discussed afterwards.
+> Which is the other reason why first versions were putting down
+> a bio seeing that there is more to be done for nowait, which
+> you didn't like. I can return back to it or narrow the scopre.
+
+The above should also take care of that.
+
 > 
-> It should easy to forbid IOSQE_CQE_SKIP_SUCCESS which is per-sqe, will do
-> it in V6.
+> > Also why start at 137?  A comment
+> > would generally be pretty useful as well.
 > 
-> I am not sure if it is easy to disallow IORING_OP_LINK_TIMEOUT, which
-> covers all linked sqes, and group leader could be just one of them.
-> Can you share any idea about the implementation to forbid LINK_TIMEOUT
-> for sqe group?
-
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index 671d6093bf36..83b5fd64b4e9 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -542,6 +542,9 @@ static int __io_timeout_prep(struct io_kiocb *req,
-  	data->mode = io_translate_timeout_mode(flags);
-  	hrtimer_init(&data->timer, io_timeout_get_clock(data), data->mode);
-  
-+	if (is_timeout_link && req->ctx->submit_state.group.head)
-+		return -EINVAL;
-+
-  	if (is_timeout_link) {
-  		struct io_submit_link *link = &req->ctx->submit_state.link;
-  
-
-This should do, they already look into the ctx's link list. Just move
-it into the "if (is_timeout_link)" block.
-
-
->>> 1) fail in linked chain
->>> - follows IO_LINK's behavior since io_fail_links() covers io group
->>>
->>> 2) otherwise
->>> - just respect IOSQE_CQE_SKIP_SUCCESS
->>>
->>>> And also it doen't work with IORING_OP_LINK_TIMEOUT.
->>>
->>> REQ_F_LINK_TIMEOUT can work on whole group(or group leader) only, and I
->>> will document it in V6.
->>
->> It would still be troublesome. When a linked timeout fires it searches
->> for the request it's attached to and cancels it, however, group leaders
->> that queued up their members are discoverable. But let's say you can find
->> them in some way, then the only sensbile thing to do is cancel members,
->> which should be doable by checking req->grp_leader, but might be easier
->> to leave it to follow up patches.
+> There is a comment, 2 lines above the new define.
 > 
-> We have changed sqe group to start queuing members after leader is
-> completed. link timeout will cancel leader with all its members via
-> leader->grp_link, this behavior should respect IORING_OP_LINK_TIMEOUT
-> completely.
+> /*
+>  * A jump here: 130-136 are reserved for zoned block devices
+>  * (see uapi/linux/blkzoned.h)
+>  */
 > 
-> Please see io_fail_links() and io_cancel_group_members().
-> 
->>
->>
->>>>> +
->>>>> +		lead->grp_refs += 1;
->>>>> +		group->last->grp_link = req;
->>>>> +		group->last = req;
->>>>> +
->>>>> +		if (req->flags & REQ_F_SQE_GROUP)
->>>>> +			return NULL;
->>>>> +
->>>>> +		req->grp_link = NULL;
->>>>> +		req->flags |= REQ_F_SQE_GROUP;
->>>>> +		group->head = NULL;
->>>>> +		if (lead->flags & REQ_F_FAIL) {
->>>>> +			io_queue_sqe_fallback(lead);
->>>>
->>>> Let's say the group was in the middle of a link, it'll
->>>> complete that group and continue with assembling / executing
->>>> the link when it should've failed it and honoured the
->>>> request order.
->>>
->>> OK, here we can simply remove the above two lines, and link submit
->>> state can handle this failure in link chain.
->>
->> If you just delete then nobody would check for REQ_F_FAIL and
->> fail the request.
-> 
-> io_link_assembling() & io_link_sqe() checks for REQ_F_FAIL and call
-> io_queue_sqe_fallback() either if it is in link chain or
-> not.
+> Is that your concern?
 
-The case we're talking about is failing a group, which is
-also in the middle of a link.
+But those are ioctls, this is not an ioctl and uses a different
+number space.  Take a look at e.g. nvme uring cmds which also
+don't try to use the same number space as the ioctl.
 
-LINK_HEAD -> {GROUP_LEAD, GROUP_MEMBER}
+> > Also can we have a include/uapi/linux/blkdev.h for this instead of
+> > bloating fs.h that gets included just about everywhere?
+> I don't think it belongs to this series.
 
-Let's say GROUP_MEMBER fails and sets REQ_F_FAIL to the lead,
-then in v5 does:
+How would adding a proper header instead of bloating fs.h not be
+part of the series adding the first ever block layer uring_cmds?
+Just in case I wasn't clear - this isn't asking you to move anything
+existing as we can't do that without breaking existing applications.
+It is about adding the new command to the proper place.
 
-if (lead->flags & REQ_F_FAIL) {
-	io_queue_sqe_fallback(lead);
-	return NULL;
-}
-
-In which case it posts cqes for GROUP_LEAD and GROUP_MEMBER,
-and then try to execute LINK_HEAD (without failing it), which
-is wrong. So first we need:
-
-if (state.linked_link.head)
-	req_fail_link_node(state.linked_link.head);
-
-And then we can't just remove io_queue_sqe_fallback(), because
-when a group is not linked there would be no io_link_sqe()
-to fail it. You can do:
-
-
-io_group_sqe()
-{
-	if ((lead->flags & REQ_F_FAIL) && !ctx->state.link.head) {
-		io_queue_sqe_fallback(lead);
-		return NULL;
-	}
-	...
-}
-
-but it's much cleaner to move REQ_F_FAIL out of group assembling.
-We'd also want to move same REQ_F_FAIL / io_queue_sqe_fallback()
-out of io_link_sqe(), but I didn't mentioned because it's not
-strictly required for your set AFAIR.
-
-
->> Assuming you'd also set the fail flag to the
->> link head when appropriate, how about deleting these two line
->> and do like below? (can be further prettified)
->>
->>
->> bool io_group_assembling()
->> {
->> 	return state->group.head || (req->flags & REQ_F_SQE_GROUP);
->> }
->> bool io_link_assembling()
->> {
->> 	return state->link.head || (req->flags & IO_REQ_LINK_FLAGS);
->> }
->>
->> static inline int io_submit_sqe()
->> {
->> 	...
->> 	if (unlikely(io_link_assembling(state, req) ||
->> 				 io_group_assembling(state, req) ||
->> 				 req->flags & REQ_F_FAIL)) {
->> 		if (io_group_assembling(state, req)) {
->> 			req = io_group_sqe(&state->group, req);
->> 			if (!req)
->> 				return 0;
->> 		}
->> 		if (io_link_assembling(state, req)) {
->> 			req = io_link_sqe(&state->link, req);
->> 			if (!req)
->> 				return 0;
->> 		}
->> 		if (req->flags & REQ_F_FAIL) {
->> 			io_queue_sqe_fallback(req);
->> 			return 0;
-> 
-> As I mentioned above, io_link_assembling() & io_link_sqe() covers
-> the failure handling.
-
--- 
-Pavel Begunkov
 

@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-3180-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3181-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8B4976EE8
-	for <lists+io-uring@lfdr.de>; Thu, 12 Sep 2024 18:40:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F98976EE9
+	for <lists+io-uring@lfdr.de>; Thu, 12 Sep 2024 18:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F20A91F25FB2
-	for <lists+io-uring@lfdr.de>; Thu, 12 Sep 2024 16:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20FD5281611
+	for <lists+io-uring@lfdr.de>; Thu, 12 Sep 2024 16:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10AE1AB6CA;
-	Thu, 12 Sep 2024 16:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98421B373C;
+	Thu, 12 Sep 2024 16:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vVPEMRnV"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="tfapbNf3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDD61B373C
-	for <io-uring@vger.kernel.org>; Thu, 12 Sep 2024 16:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD72199948
+	for <io-uring@vger.kernel.org>; Thu, 12 Sep 2024 16:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726159229; cv=none; b=I9MRi7Z/cC+EKQO1U9e6yhYxgHrsnEC2tkJQ9SQ2TNR0P5C4c3aQ78KlFIMlAjgIycFWlEcfLTJEnwvCLTo7uvsuNyVLqboeJycsMyTiARVs5SA1jr2z/S5370lV/7Ey7KAWIDwqE5l7KBj+mZnwnq6FJFv8GoHT3rUn8oQdufY=
+	t=1726159230; cv=none; b=O3uMOC0lO20DC1a1i1Aqf8qy7gEGFvd04ADKMi9d7gH8lhSStROIWERxhCkjJWheU8lp5iB3JRlgs8V8p22XwjfGZ9nHVRWJqlBGiImg3RmS3eFJR0ShSn/2x4Ul/st0SmNGx1Cph5DkriK3ALO3Ucdo94UkhrnbKoE9ZJavlhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726159229; c=relaxed/simple;
-	bh=ofcd9ZfwXZC926+j/ai6Tgwm6zx2Xxb8xIDZxdFekBU=;
+	s=arc-20240116; t=1726159230; c=relaxed/simple;
+	bh=NOCt6VHX9d33XDA6YpeHy4pPVcxD0zpGGYsSBcZGiBQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AlsHr/E6Fwc1jfPs9NF5dYuzCRHvegagzwE8/4Y9iWYPMoNXSzcP9UBI3Tz3ZyOkocbZDHaPrW/VzHKsy4h6kcRUs37pB2jMmyyHkDgnqVOLWrjb5MVWAt9fTGWk+H03ZE0bQP2f+jmZ33B5C0XfVgOTLN4O32WJHuAIsDsrUbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vVPEMRnV; arc=none smtp.client-ip=209.85.166.171
+	 MIME-Version; b=tiPHKuFN4OO6IcqTzILb6qmg4SWI0K/IZUY497pwNA4qhlumfidIun59eicriWRyc7XlGZVe9xHsHWdop6a/i2SlqWj31FOMNGKrwL4X9uztymR+r5NFnUCfMRn4U443USKJ4zu4jUzQ9ElC3cR6G9G9b7xxdioL7sDXSdqy7R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=tfapbNf3; arc=none smtp.client-ip=209.85.166.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a07b73cf4eso163895ab.3
-        for <io-uring@vger.kernel.org>; Thu, 12 Sep 2024 09:40:26 -0700 (PDT)
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-82aa7c3b498so35830639f.1
+        for <io-uring@vger.kernel.org>; Thu, 12 Sep 2024 09:40:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726159226; x=1726764026; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726159227; x=1726764027; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jZLxd3vq3MiYnms3SCnT2pvoOPN4l/5rBTAnIjuZGxU=;
-        b=vVPEMRnVvoQkYXbTzVpw8QijewDruO2P25TSb9KNiAWiouJ9trGYxdsdb5oaFaP1Nl
-         z5J6QYwMG+rjH7tDaqga2rzx4Tx2cub5znt5uwnxsDvrG74+bUHX4rjiYP3C2W0A9pQ3
-         zHnKpBuXoHElfP/MqUlj3y/HcSDRE37QC39IdSd7ZkNnvP7DLnkW+EnuWcsx+a95mspE
-         J5fyY25XE1LjJKTE8FV1TZFgkza/KQnCVhsDdtosYM7p9a4XCzekW1K21SubxU8KYiQq
-         SWVti014CT4cLEZWC0j7so+ASk07cbLuNUanCC4iGDNFcZey2ph3GZ7H1FAWGQR5I6cE
-         oQeA==
+        bh=QOyADvkgWX4sIZiJCtHCCmIHsnfPyrAkAiM8Xmf+8mc=;
+        b=tfapbNf3nP2HHSEurBZKTwNMNOyfYMXtkNXMrmQbWXy063WJa5PlXIiozIMWSHHcRk
+         PxeQxceVrYe/ZdsrXUS7L6fMB9KO1CZ17AQ232DcudNpqbDidaUxTEMHOpgLo5ivGsPl
+         WeI8Ls4GHSuPTgPWBP/yhtlPY1AvM4hoGC9GWLQVJbwEgfdp1zbE1B49neDmIPO2qHiE
+         iyllHK8GaS4lE/z5TSnOa6Y90P07/RviB/9x+TAHOO/fa0/haKGuXscuDRwaxxEixSnf
+         dm2Z/dFBk6WrBGSwxPr2yubg2qxIUS2KHJGHyMRQOXHkamDODInoQ117M6UjEVCqymZM
+         sGDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726159226; x=1726764026;
+        d=1e100.net; s=20230601; t=1726159227; x=1726764027;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jZLxd3vq3MiYnms3SCnT2pvoOPN4l/5rBTAnIjuZGxU=;
-        b=uIa/Xg0q9uTldK/cnyyWXInlbR3oyWV+smjkuiNXTMW7nDICbs9xb52PC/piYAV+s8
-         a+ZMk45Nk7ImT/CXpUQEIfsEehLZwlUpGJYi+DfPMLN+TgDros/7GyFdnGK/col8LJAk
-         DFdyY8TkpRbX+tvQBMs4SV1hz2iHjGpIl9VGVmoYIUuoyaiQa6dkkktDB+mfeKUjETuc
-         yX2rKLJdLllXPWwOrWgWEsFoVueH3j4QUKn0ztznMXNNvpxD6Ea+uAiwAwIcXJBNjWyV
-         Exw4zwWcxJJ1PfJPNleywOlt9ydB/HTLr+LCwKh+6VwK/jKOQF/Fs3zIbfTqiS8+eKlG
-         yAxA==
-X-Gm-Message-State: AOJu0YzxIRZcmlAgn9hjOl5elfHJCSRjvBe98ReiPeLySODKEE36XJzq
-	U5pgcqUccMOND/1TkOW9kZGd03vYT/UyQK1UmF+l6C5370LWKbu1UFgQ9AqPRZWT+SiUXFqrNI4
-	a
-X-Google-Smtp-Source: AGHT+IHYs3LQhIVl5AvuIG6mfUvpDA4V5Ng1JBJ6bS5CkzxcpmKOZNqtvJ56eC1ZPpXzTnUYIz3y/Q==
-X-Received: by 2002:a05:6e02:188c:b0:398:36c0:7968 with SMTP id e9e14a558f8ab-3a0848fae61mr41590125ab.6.1726159225829;
-        Thu, 12 Sep 2024 09:40:25 -0700 (PDT)
+        bh=QOyADvkgWX4sIZiJCtHCCmIHsnfPyrAkAiM8Xmf+8mc=;
+        b=JyflKMPuPr3mQ62PQTMRhmLlcyxxIuaIL8yAHV4k12isrRNtyMW5rNSIoYD/6fkFlY
+         UkG2DPnyPJ7ot217g9GWd6BybPYsvDW0pfwYxt+7elk09iDg5kyJ8t37vqXm6jHQfSLY
+         DQqQ54BY+zRIyot+aHViQkHm2gCGt7UNR4il1+GLQumCHlOyd4i3+r1psr+txnoYjRwq
+         6/K2PjX3MxmhqbS8GScLnzYhtD6ehLiZAkbvRiIol3WOsQeS+wVNQWbH/7YOjvPJWwo8
+         fM6mpXiA27rP0grqEbFCRT/yeuHrb+7XKKIqgXbtyfeUqTi/sq2eS+8h9OqoJSsyQs6q
+         Bu7A==
+X-Gm-Message-State: AOJu0YzvVe38W7K4vSQ6OoeFviJk8vffAYqgAT0b/hbiN3vfKamXWHsM
+	7LW/i5VJXY8zXU7dkO8u3qTWqYXY20+0cRe270PNwMwlcYHXOb0yM11OagiQ+y0R7WM+UmamyXU
+	B
+X-Google-Smtp-Source: AGHT+IE+TjUyvaYoIpV2L09SS5lJG+fYLjFrSrTiwyWOtxZRv1kUfn3f+gkOBJOygd46mfAr571K+Q==
+X-Received: by 2002:a05:6e02:1c4c:b0:375:acd3:31b3 with SMTP id e9e14a558f8ab-3a08461c41fmr29768485ab.5.1726159227442;
+        Thu, 12 Sep 2024 09:40:27 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a05901625esm32564985ab.85.2024.09.12.09.40.24
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a05901625esm32564985ab.85.2024.09.12.09.40.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 09:40:24 -0700 (PDT)
+        Thu, 12 Sep 2024 09:40:26 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/4] io_uring/register: provide helper to get io_ring_ctx from 'fd'
-Date: Thu, 12 Sep 2024 10:38:22 -0600
-Message-ID: <20240912164019.634560-4-axboe@kernel.dk>
+Subject: [PATCH 4/4] io_uring: add IORING_REGISTER_COPY_BUFFERS method
+Date: Thu, 12 Sep 2024 10:38:23 -0600
+Message-ID: <20240912164019.634560-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240912164019.634560-1-axboe@kernel.dk>
 References: <20240912164019.634560-1-axboe@kernel.dk>
@@ -84,119 +84,211 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Can be done in one of two ways:
+Buffers can get registered with io_uring, which allows to skip the
+repeated pin_pages, unpin/unref pages for each O_DIRECT operation. This
+reduces the overhead of O_DIRECT IO.
 
-1) Regular file descriptor, just fget()
-2) Registered ring, index our own table for that
+However, registrering buffers can take some time. Normally this isn't an
+issue as it's done at initialization time (and hence less critical), but
+for cases where rings can be created and destroyed as part of an IO
+thread pool, registering the same buffers for multiple rings become a
+more time sensitive proposition. As an example, let's say an application
+has an IO memory pool of 500G. Initial registration takes:
 
-In preparation for adding another register use of needing to get a ctx
-from a file descriptor, abstract out this helper and use it in the main
-register syscall as well.
+Got 500 huge pages (each 1024MB)
+Registered 500 pages in 409 msec
+
+or about 0.4 seconds. If we go higher to 900 1GB huge pages being
+registered:
+
+Registered 900 pages in 738 msec
+
+which is, as expected, a fully linear scaling.
+
+Rather than have each ring pin/map/register the same buffer pool,
+provide an io_uring_register(2) opcode to simply duplicate the buffers
+that are registered with another ring. Adding the same 900GB of
+registered buffers to the target ring can then be accomplished in:
+
+Copied 900 pages in 17 usec
+
+While timing differs a bit, this provides around a 25,000-40,000x
+speedup for this use case.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/register.c | 54 +++++++++++++++++++++++++++------------------
- io_uring/register.h |  1 +
- 2 files changed, 34 insertions(+), 21 deletions(-)
+ include/uapi/linux/io_uring.h | 13 +++++
+ io_uring/register.c           |  6 +++
+ io_uring/rsrc.c               | 91 +++++++++++++++++++++++++++++++++++
+ io_uring/rsrc.h               |  1 +
+ 4 files changed, 111 insertions(+)
 
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index a275f91d2ac0..9dc5bb428c8a 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -609,6 +609,9 @@ enum io_uring_register_op {
+ 
+ 	IORING_REGISTER_CLOCK			= 29,
+ 
++	/* copy registered buffers from source ring to current ring */
++	IORING_REGISTER_COPY_BUFFERS		= 30,
++
+ 	/* this goes last */
+ 	IORING_REGISTER_LAST,
+ 
+@@ -694,6 +697,16 @@ struct io_uring_clock_register {
+ 	__u32	__resv[3];
+ };
+ 
++enum {
++	IORING_REGISTER_SRC_REGISTERED = 1,
++};
++
++struct io_uring_copy_buffers {
++	__u32	src_fd;
++	__u32	flags;
++	__u32	pad[6];
++};
++
+ struct io_uring_buf {
+ 	__u64	addr;
+ 	__u32	len;
 diff --git a/io_uring/register.c b/io_uring/register.c
-index 57cb85c42526..d90159478045 100644
+index d90159478045..dab0f8024ddf 100644
 --- a/io_uring/register.c
 +++ b/io_uring/register.c
-@@ -550,21 +550,16 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 	return ret;
+@@ -542,6 +542,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 			break;
+ 		ret = io_register_clock(ctx, arg);
+ 		break;
++	case IORING_REGISTER_COPY_BUFFERS:
++		ret = -EINVAL;
++		if (!arg || nr_args != 1)
++			break;
++		ret = io_register_copy_buffers(ctx, arg);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 28f98de3c304..40696a395f0a 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -17,6 +17,7 @@
+ #include "openclose.h"
+ #include "rsrc.h"
+ #include "memmap.h"
++#include "register.h"
+ 
+ struct io_rsrc_update {
+ 	struct file			*file;
+@@ -1137,3 +1138,93 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
+ 
+ 	return 0;
  }
- 
--SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
--		void __user *, arg, unsigned int, nr_args)
-+/*
-+ * Given an 'fd' value, return the ctx associated with if. If 'registered' is
-+ * true, then the registered index is used. Otherwise, the normal fd table.
-+ * Caller must call fput() on the returned file, unless it's an ERR_PTR.
-+ */
-+struct file *io_uring_register_get_file(int fd, bool registered)
- {
--	struct io_ring_ctx *ctx;
--	long ret = -EBADF;
- 	struct file *file;
--	bool use_registered_ring;
- 
--	use_registered_ring = !!(opcode & IORING_REGISTER_USE_REGISTERED_RING);
--	opcode &= ~IORING_REGISTER_USE_REGISTERED_RING;
--
--	if (opcode >= IORING_REGISTER_LAST)
--		return -EINVAL;
--
--	if (use_registered_ring) {
-+	if (registered) {
- 		/*
- 		 * Ring fd has been registered via IORING_REGISTER_RING_FDS, we
- 		 * need only dereference our task private array to find it.
-@@ -572,27 +567,44 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
- 		struct io_uring_task *tctx = current->io_uring;
- 
- 		if (unlikely(!tctx || fd >= IO_RINGFD_REG_MAX))
--			return -EINVAL;
-+			return ERR_PTR(-EINVAL);
- 		fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
- 		file = tctx->registered_rings[fd];
--		if (unlikely(!file))
--			return -EBADF;
- 	} else {
- 		file = fget(fd);
--		if (unlikely(!file))
--			return -EBADF;
--		ret = -EOPNOTSUPP;
--		if (!io_is_uring_fops(file))
--			goto out_fput;
- 	}
- 
-+	if (unlikely(!file))
-+		return ERR_PTR(-EBADF);
-+	if (io_is_uring_fops(file))
-+		return file;
-+	fput(file);
-+	return ERR_PTR(-EOPNOTSUPP);
++
++static int io_copy_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx)
++{
++	struct io_mapped_ubuf **user_bufs;
++	struct io_rsrc_data *data;
++	int i, ret, nbufs;
++
++	/*
++	 * Drop our own lock here. We'll setup the data we need and reference
++	 * the source buffers, then re-grab, check, and assign at the end.
++	 */
++	mutex_unlock(&ctx->uring_lock);
++
++	mutex_lock(&src_ctx->uring_lock);
++	ret = -ENXIO;
++	nbufs = src_ctx->nr_user_bufs;
++	if (!nbufs)
++		goto out_unlock;
++	ret = io_rsrc_data_alloc(ctx, IORING_RSRC_BUFFER, NULL, nbufs, &data);
++	if (ret)
++		goto out_unlock;
++
++	ret = -ENOMEM;
++	user_bufs = kcalloc(nbufs, sizeof(*ctx->user_bufs), GFP_KERNEL);
++	if (!user_bufs)
++		goto out_free_data;
++
++	for (i = 0; i < nbufs; i++) {
++		struct io_mapped_ubuf *src = src_ctx->user_bufs[i];
++
++		refcount_inc(&src->refs);
++		user_bufs[i] = src;
++	}
++
++	/* Have a ref on the bufs now, drop src lock and re-grab our own lock */
++	mutex_unlock(&src_ctx->uring_lock);
++	mutex_lock(&ctx->uring_lock);
++	if (!ctx->user_bufs) {
++		ctx->user_bufs = user_bufs;
++		ctx->buf_data = data;
++		ctx->nr_user_bufs = nbufs;
++		return 0;
++	}
++
++	/* someone raced setting up buffers, dump ours */
++	for (i = 0; i < nbufs; i++)
++		io_buffer_unmap(ctx, &user_bufs[i]);
++	io_rsrc_data_free(data);
++	kfree(user_bufs);
++	return -EBUSY;
++out_free_data:
++	io_rsrc_data_free(data);
++out_unlock:
++	mutex_unlock(&src_ctx->uring_lock);
++	mutex_lock(&ctx->uring_lock);
++	return ret;
 +}
 +
-+SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
-+		void __user *, arg, unsigned int, nr_args)
++/*
++ * Copy the registered buffers from the source ring whose file descriptor
++ * is given in the src_fd to the current ring. This is identical to registering
++ * the buffers with ctx, except faster as mappings already exist.
++ *
++ * Since the memory is already accounted once, don't account it again.
++ */
++int io_register_copy_buffers(struct io_ring_ctx *ctx, void __user *arg)
 +{
-+	struct io_ring_ctx *ctx;
-+	long ret = -EBADF;
++	struct io_uring_copy_buffers buf;
++	bool registered_src;
 +	struct file *file;
-+	bool use_registered_ring;
++	int ret;
 +
-+	use_registered_ring = !!(opcode & IORING_REGISTER_USE_REGISTERED_RING);
-+	opcode &= ~IORING_REGISTER_USE_REGISTERED_RING;
-+
-+	if (opcode >= IORING_REGISTER_LAST)
++	if (ctx->user_bufs || ctx->nr_user_bufs)
++		return -EBUSY;
++	if (copy_from_user(&buf, arg, sizeof(buf)))
++		return -EFAULT;
++	if (buf.flags & ~IORING_REGISTER_SRC_REGISTERED)
++		return -EINVAL;
++	if (memchr_inv(buf.pad, 0, sizeof(buf.pad)))
 +		return -EINVAL;
 +
-+	file = io_uring_register_get_file(fd, use_registered_ring);
++	registered_src = (buf.flags & IORING_REGISTER_SRC_REGISTERED) != 0;
++	file = io_uring_register_get_file(buf.src_fd, registered_src);
 +	if (IS_ERR(file))
 +		return PTR_ERR(file);
- 	ctx = file->private_data;
++	ret = io_copy_buffers(ctx, file->private_data);
++	if (!registered_src)
++		fput(file);
++	return ret;
++}
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 98a253172c27..93546ab337a6 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -68,6 +68,7 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
+ 			   struct io_mapped_ubuf *imu,
+ 			   u64 buf_addr, size_t len);
  
- 	mutex_lock(&ctx->uring_lock);
- 	ret = __io_uring_register(ctx, opcode, arg, nr_args);
- 	mutex_unlock(&ctx->uring_lock);
- 	trace_io_uring_register(ctx, opcode, ctx->nr_user_files, ctx->nr_user_bufs, ret);
--out_fput:
- 	if (!use_registered_ring)
- 		fput(file);
- 	return ret;
-diff --git a/io_uring/register.h b/io_uring/register.h
-index c9da997d503c..cc69b88338fe 100644
---- a/io_uring/register.h
-+++ b/io_uring/register.h
-@@ -4,5 +4,6 @@
- 
- int io_eventfd_unregister(struct io_ring_ctx *ctx);
- int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id);
-+struct file *io_uring_register_get_file(int fd, bool registered);
- 
- #endif
++int io_register_copy_buffers(struct io_ring_ctx *ctx, void __user *arg);
+ void __io_sqe_buffers_unregister(struct io_ring_ctx *ctx);
+ int io_sqe_buffers_unregister(struct io_ring_ctx *ctx);
+ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
 -- 
 2.45.2
 

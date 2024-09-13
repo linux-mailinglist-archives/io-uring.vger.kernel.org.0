@@ -1,73 +1,73 @@
-Return-Path: <io-uring+bounces-3187-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3188-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6278978654
-	for <lists+io-uring@lfdr.de>; Fri, 13 Sep 2024 19:02:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7854978657
+	for <lists+io-uring@lfdr.de>; Fri, 13 Sep 2024 19:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D24711C22376
-	for <lists+io-uring@lfdr.de>; Fri, 13 Sep 2024 17:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E93C1F266F0
+	for <lists+io-uring@lfdr.de>; Fri, 13 Sep 2024 17:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEEE82D66;
-	Fri, 13 Sep 2024 17:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485E48060A;
+	Fri, 13 Sep 2024 17:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Oni/lgAf"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fEFffGBZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8925857CBB
-	for <io-uring@vger.kernel.org>; Fri, 13 Sep 2024 17:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2E06BB4B
+	for <io-uring@vger.kernel.org>; Fri, 13 Sep 2024 17:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726246935; cv=none; b=O64yCRXT+acY4k3y8gJ2waCd7tZ2PmWfDdIH+iQ40zgB3JTz9YrT5cZWWe8DHMOO8lMM4ZeDjuGZx3UY+Rs8Mk6LFuxy9gJHEW9lh2QkeCpPSnuZhMxtiozY69ihqwvspqNzuA9mpgrQBUwQoCzqbWONnbWHzuCpPQqPwCCu9tw=
+	t=1726246948; cv=none; b=DBjFba8UkhGaTIJI4w6uUV8iVehs/N+msLwuks4CNHN/bCcOzt9JhMfHo/sesiuyrJH4q6cPQzJ6KNd7cLXLwbUazgSGxoIwNcVuLetGvomsMJv6YjA5jaNGMRWOqDIfysi7R/K/AjkrDF2W2DE9Ba2cgEQDzNA6Q9+f/EXSl80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726246935; c=relaxed/simple;
-	bh=ciUXSuloLBlw7bBIPEWstBfP2e1ZPSKb/saVNoFnmFE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=LUX/cBQLzgQPP704rjDnH0CFEly8/+N9eKgkx6VEV3c5NptKiCoedEyqiozFr05lihnIIDJbQtpHF9VjSBQRLIm+b9rP1wgAm89NIUzUQm7wq2uWpMFLy/seJp3M91PWqDlw4JMepwd1fa6KHYK68e23mbVeEMeH6On//269Omg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Oni/lgAf; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1726246948; c=relaxed/simple;
+	bh=CFuPXgAIe9QRLf+Ar6dCe4hRfUvGMfzEqzx36oWQNuE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=LHAFIgL16WVB5Fz+qIUsM7T0dr0WD8qdteZZ0R2yvTrBkCy+Qa6s3T48K5xc3gZAW+EXbZx0JUloC8xpd9XIrkNpFKrlm7ZFT0CZp9vDrmhEomBbklRjTZwBFqJSKGb1kDHqUBO9EObL8awE5mVLAZY0grWDy0v/Uwe/v+c1pKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fEFffGBZ; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-718d962ad64so1975336b3a.0
-        for <io-uring@vger.kernel.org>; Fri, 13 Sep 2024 10:02:10 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20551eeba95so10733775ad.2
+        for <io-uring@vger.kernel.org>; Fri, 13 Sep 2024 10:02:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726246930; x=1726851730; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726246945; x=1726851745; darn=vger.kernel.org;
         h=content-transfer-encoding:content-language:cc:to:subject:from
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WMUDT9aIpMQ5ZxifNuNp/jGIFGlERgK9UuPxM5GZn/g=;
-        b=Oni/lgAfwTVZwKrYB7AcSLPDhK4QTDXLnu+orUxBgwEQmTUMM+GlDlYxRYB/LpFPyW
-         gpN8i26ml+f6YtxEE+7N5BtaPoUStqboVR7CnZ2XMu4slHKy0dxo+YfDyFpPSeYIll3Z
-         PvyE/C68Z1rfdzUzwZBvHkYXNnxeKqgDDizqe9USqLOwslkM9sXSfsHqKwdJycCo0ZzS
-         3kgoBrcRDI3YRvgwoCEHbepHGpN+dDtm5VkuwIDpqewqRIErtsngCGxZoNA2tX8enuV2
-         63ZpU2lMCsi0XjRK0zl87WWdKgseRtTkH5x5DqhaD+p2fga7k8YivXtaJpQ3ACPbBIYb
-         IIUw==
+        bh=5wHcWRluVBu2t0MwCnn6+MNkXe8NHF100vnq+e8LHzY=;
+        b=fEFffGBZgI1pCLhHizA9kD92W4UY7/kjh7LGcsXxI1oIucNB6x07vrVPvFGFHmV51A
+         HOFIQoQlLI0Icq4a5SZ/hFKVAeBAplP2w3nnMTDqLa2eGh/oBR8XwTOtFte6aBzKQFX2
+         O8Vomrs8tFOPi96D2sZ+bV0X6Wt/usmD+RyPfAsdmInN+o3PIZtTP2L4PIqIQj+i9R+l
+         jUQxVgjMZLCwSsSQLCudImk3ZcxMtj1FNInLOoB/7vtQ5IVvxuSJIaOlVsCWTe9o2u+W
+         Fpim9ShwPgEZg5WiE5wmfpP3UU5M5tG8FWCyu4B1cmqc8SIryRFD/69rMBf4aR1n1UZr
+         z2BQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726246930; x=1726851730;
+        d=1e100.net; s=20230601; t=1726246945; x=1726851745;
         h=content-transfer-encoding:content-language:cc:to:subject:from
          :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=WMUDT9aIpMQ5ZxifNuNp/jGIFGlERgK9UuPxM5GZn/g=;
-        b=Ydb6lndGJ5IYMY5YVF910s7Y9W9mF/IRlPBXpjb8S9F2A9YRrYlba6cl07CuC47WAG
-         G2rPKSyvCxSb8uVmCjr4L5R8EyVOjwuDcbr3Xkmm0sfjwbgilDfsYtwtOr55kUHz0ehR
-         xGAR3qbQGu1hUiGpBe5L7a/cybwtQ8ddQrQfHQm+Sipq1KMay5y1lRiwCJNaSYNU4iL2
-         utsp7Wsiw90s3iD5u/Kfx8U7gGmYsAlCa4NwXtMlaZRXdU+wJU7HwC+w6BZD+n+ovfgs
-         PD7uI8DWsVserOyRY7dEa2wNr0fzaWZ6bChWP5muoKAuZud8i05Dl1v9AmbBRGvN5J7W
-         XZOQ==
-X-Gm-Message-State: AOJu0YzFjLKETdwdTfzrqmvw0xcvGh9m3i3OgopwJGoRyxA73JTMcIe7
-	H7BzcgracqNklteRIIpli8rlqCkdmSILn/Cux04MmT+N7110/VsI1X+s0Ot7NLMFj4GiSsMPEzI
-	j
-X-Google-Smtp-Source: AGHT+IHY1g3Kx5dLM1uPTT3NOylbwDGrZSHB07K8GGJZwgsFJ10s6Tj/iDN0b8GLTzMohKhwdHfdzQ==
-X-Received: by 2002:a05:6a00:14d0:b0:717:9768:a4ed with SMTP id d2e1a72fcca58-7192609318dmr12268508b3a.16.1726246929521;
-        Fri, 13 Sep 2024 10:02:09 -0700 (PDT)
+        bh=5wHcWRluVBu2t0MwCnn6+MNkXe8NHF100vnq+e8LHzY=;
+        b=vQnPlsKEGRrzZOpGrbywDg04sXkwXhMlO/aJQaSF73LxhSgR0cL6cY/7DtBxoM4QHi
+         i2ULqGx3ZrYm+xr26WV4Nz52VmFrefb+MV9UDOR0zDXepYs0nuXHFxjkaaMoLiANYSAE
+         e+3sdElrCYRQP4UazyaP0Ngh0b9vAI1S7OZFm3uXsDyrJiTBy/RL2C9hpW/flHvD3Hlo
+         xQhdOBUOpKPhENv/NoV88rYmnkzf/3w0MWQ9WTsWYnnD8J+ekgOO2fj41wQhKCwTuXAh
+         KdWB8EkwQ29heIdQp47LfiXGcw+pNiMMmeuvdRMjhPRNV3JSnW9J1d9vToGYd3ljBVN6
+         bifQ==
+X-Gm-Message-State: AOJu0YzxAOFPTmh9KKZ6HOlopU0uNrrERoCx57B1GxznubRAeZ3fUWaE
+	+ww6snFKLCbktFKgShbgFzf9+/+/b6MGrrCn0dsP3Ety+MgaNtJ8aXs2mznhy/AwNuRGn7O79+0
+	B
+X-Google-Smtp-Source: AGHT+IENlOCjM20RDpY+OWzJ/HWe5rUvoLfHf9u/OTro4QCyOoFc+vp/pBwFawcx5uNM1zTuHeH3kQ==
+X-Received: by 2002:a17:90b:1c81:b0:2d8:7307:3f74 with SMTP id 98e67ed59e1d1-2dbb9f31cf2mr4014757a91.27.1726246945281;
+        Fri, 13 Sep 2024 10:02:25 -0700 (PDT)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090c37efsm6306053b3a.187.2024.09.13.10.02.08
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9c7c7b4sm2031208a91.17.2024.09.13.10.02.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 10:02:08 -0700 (PDT)
-Message-ID: <aa117c13-193f-479d-a0de-9fca9bfc00a8@kernel.dk>
-Date: Fri, 13 Sep 2024 11:02:06 -0600
+        Fri, 13 Sep 2024 10:02:24 -0700 (PDT)
+Message-ID: <a672ddb6-a141-47a5-b7f4-f992b4dcbb88@kernel.dk>
+Date: Fri, 13 Sep 2024 11:02:24 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,139 +76,81 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring updates for 6.12-rc1
+Subject: [GIT PULL] io_uring async discard support
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
+Cc: io-uring <io-uring@vger.kernel.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi Linus,
 
-Here are the main io_uring changes for the 6.12 merge window. There will
-be a followup one that adds discard support, but since that depends on
-both this branch and the block branch, it'll be sent post both of those.
+As mentioned, and sitting on top of both the 6.12 block and io_uring
+core branches, here's support for async discard through io_uring. This
+allows applications to issue async discards, rather than rely on the
+blocking sync ioctl discards we already have. The sync support is
+difficult to use outside of idle/cleanup periods. On a real (but slow)
+device, testing shows the following results when compared to sync
+discard:
 
-This pull request contains:
+qd64 sync discard: 21K IOPS, lat avg 3 msec (max 21 msec)
+qd64 async discard: 76K IOPS, lat avg 845 usec (max 2.2 msec)
 
-- NAPI fixes and cleanups (Pavel, Olivier)
+qd64 sync discard: 14K IOPS, lat avg 5 msec (max 25 msec)
+qd64 async discard: 56K IOPS, lat avg 1153 usec (max 3.6 msec)
 
-- Add support for absolute timeouts (Pavel)
+and synthetic null_blk testing with the same queue depth and block size
+settings as above shows:
 
-- Fixes for io-wq/sqpoll affinities (Felix)
-
-- Efficiency improvements for dealing with huge pages (Chenliang)
-
-- Support for a minwait mode, where the application essentially has two
-  timouts - one smaller one that defines the batch timeout, and the
-  overall large one similar to what we had before. This enables
-  efficient use of batching based on count + timeout, while still working
-  well with periods of less intensive workloads.
-
-- Use ITER_UBUF for single segment sends
-
-- Add support for incremental buffer consumption. Right now each
-  operation will always consume a full buffer. With incremental
-  consumption, a recv/read operation only consumes the part of the
-  buffer that it needs to satisfy the operation.
-
-- Add support for GCOV for io_uring, to help retain a high coverage of
-  test to code ratio.
-
-- Fix regression with ocfs2, where an odd -EOPNOTSUPP wasn't correctly
-  converted to a blocking retry.
-
-- Add support for cloning registered buffers from one ring to another.
-
-- Misc cleanups (Anuj, me)
+Type	Trim size	IOPS	Lat avg (usec)	Lat Max (usec)
+==============================================================
+sync	4k		 144K	    444		   20314
+async	4k		1353K	     47		     595
+sync	1M		  56K	   1136		   21031
+async	1M		  94K	    680		     760			
 
 Please pull!
 
 
-The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
+The following changes since commit 84eacf177faa605853c58e5b1c0d9544b88c16fd:
 
-  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
+  io_uring/io-wq: inherit cpuset of cgroup in io worker (2024-09-11 07:27:56 -0600)
 
 are available in the Git repository at:
 
-  git://git.kernel.dk/linux.git tags/for-6.12/io_uring-20240913
+  git://git.kernel.dk/linux.git tags/for-6.12/io_uring-discard-20240913
 
-for you to fetch changes up to 7cc2a6eadcd7a5aa36ac63e6659f5c6138c7f4d2:
+for you to fetch changes up to 50c52250e2d74b098465841163c18f4b4e9ad430:
 
-  io_uring: add IORING_REGISTER_COPY_BUFFERS method (2024-09-12 10:14:15 -0600)
-
-----------------------------------------------------------------
-for-6.12/io_uring-20240913
+  block: implement async io_uring discard cmd (2024-09-11 10:45:28 -0600)
 
 ----------------------------------------------------------------
-Anuj Gupta (2):
-      io_uring: add new line after variable declaration
-      io_uring: remove unused rsrc_put_fn
+for-6.12/io_uring-discard-20240913
 
-Chenliang Li (2):
-      io_uring/rsrc: store folio shift and mask into imu
-      io_uring/rsrc: enable multi-hugepage buffer coalescing
+----------------------------------------------------------------
+Jens Axboe (2):
+      Merge branch 'for-6.12/block' into for-6.12/io_uring-discard
+      Merge branch 'for-6.12/io_uring' into for-6.12/io_uring-discard
 
-Felix Moessbauer (3):
-      io_uring/sqpoll: do not allow pinning outside of cpuset
-      io_uring/io-wq: do not allow pinning outside of cpuset
-      io_uring/io-wq: inherit cpuset of cgroup in io worker
+Pavel Begunkov (5):
+      io_uring/cmd: expose iowq to cmds
+      io_uring/cmd: give inline space in request to cmds
+      filemap: introduce filemap_invalidate_pages
+      block: introduce blk_validate_byte_range()
+      block: implement async io_uring discard cmd
 
-Jens Axboe (22):
-      io_uring/kbuf: use 'bl' directly rather than req->buf_list
-      io_uring/net: use ITER_UBUF for single segment send maps
-      io_uring/kbuf: turn io_buffer_list booleans into flags
-      io_uring: encapsulate extraneous wait flags into a separate struct
-      io_uring: move schedule wait logic into helper
-      io_uring: implement our own schedule timeout handling
-      io_uring: add support for batch wait timeout
-      io_uring: wire up min batch wake timeout
-      io_uring/kbuf: shrink nr_iovs/mode in struct buf_sel_arg
-      io_uring/kbuf: add io_kbuf_commit() helper
-      io_uring/kbuf: move io_ring_head_to_buf() to kbuf.h
-      Revert "io_uring: Require zeroed sqe->len on provided-buffers send"
-      io_uring/kbuf: pass in 'len' argument for buffer commit
-      io_uring/kbuf: add support for incremental buffer consumption
-      io_uring: add GCOV_PROFILE_URING Kconfig option
-      io_uring/eventfd: move refs to refcount_t
-      io_uring/rw: treat -EOPNOTSUPP for IOCB_NOWAIT like -EAGAIN
-      io_uring/rw: drop -EOPNOTSUPP check in __io_complete_rw_common()
-      io_uring/rsrc: clear 'slot' entry upfront
-      io_uring/rsrc: add reference count to struct io_mapped_ubuf
-      io_uring/register: provide helper to get io_ring_ctx from 'fd'
-      io_uring: add IORING_REGISTER_COPY_BUFFERS method
-
-Olivier Langlois (2):
-      io_uring: add napi busy settings to the fdinfo output
-      io_uring: micro optimization of __io_sq_thread() condition
-
-Pavel Begunkov (4):
-      io_uring/napi: refactor __io_napi_busy_loop()
-      io_uring/napi: postpone napi timeout adjustment
-      io_uring: add absolute mode wait timeouts
-      io_uring: user registered clockid for wait timeouts
-
- include/linux/io_uring_types.h |   3 +
- include/uapi/linux/io_uring.h  |  42 ++++++-
- init/Kconfig                   |  13 +++
- io_uring/Makefile              |   4 +
- io_uring/eventfd.c             |  13 ++-
- io_uring/fdinfo.c              |  14 ++-
- io_uring/io-wq.c               |  25 ++++-
- io_uring/io_uring.c            | 212 ++++++++++++++++++++++++++---------
- io_uring/io_uring.h            |  12 ++
- io_uring/kbuf.c                |  96 ++++++++--------
- io_uring/kbuf.h                |  94 +++++++++++-----
- io_uring/napi.c                |  35 ++----
- io_uring/napi.h                |  16 ---
- io_uring/net.c                 |  27 +++--
- io_uring/register.c            |  91 +++++++++++----
- io_uring/register.h            |   1 +
- io_uring/rsrc.c                | 245 ++++++++++++++++++++++++++++++++++-------
- io_uring/rsrc.h                |  14 ++-
- io_uring/rw.c                  |  19 +++-
- io_uring/sqpoll.c              |   7 +-
- 20 files changed, 723 insertions(+), 260 deletions(-)
+ block/blk.h                  |   1 +
+ block/fops.c                 |   2 +
+ block/ioctl.c                | 163 +++++++++++++++++++++++++++++++----
+ include/linux/io_uring/cmd.h |  15 ++++
+ include/linux/pagemap.h      |   2 +
+ include/uapi/linux/blkdev.h  |  14 +++
+ io_uring/io_uring.c          |  11 +++
+ io_uring/io_uring.h          |   1 +
+ io_uring/uring_cmd.c         |   7 ++
+ mm/filemap.c                 |  17 ++--
+ 10 files changed, 209 insertions(+), 24 deletions(-)
 
 -- 
 Jens Axboe

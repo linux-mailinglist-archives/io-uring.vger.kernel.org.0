@@ -1,106 +1,126 @@
-Return-Path: <io-uring+bounces-3207-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3208-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDD797A313
-	for <lists+io-uring@lfdr.de>; Mon, 16 Sep 2024 15:49:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28B397A3C6
+	for <lists+io-uring@lfdr.de>; Mon, 16 Sep 2024 16:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF32F1F22EC5
-	for <lists+io-uring@lfdr.de>; Mon, 16 Sep 2024 13:49:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318051C27FAB
+	for <lists+io-uring@lfdr.de>; Mon, 16 Sep 2024 14:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D255155A59;
-	Mon, 16 Sep 2024 13:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936CB158208;
+	Mon, 16 Sep 2024 14:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JkHk4k8Z"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dYc0C88A"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAB414A60C
-	for <io-uring@vger.kernel.org>; Mon, 16 Sep 2024 13:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DED2157493
+	for <io-uring@vger.kernel.org>; Mon, 16 Sep 2024 14:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726494590; cv=none; b=YzQ/r47EXWCITwg41xaTf6ORwMkmh4JRtvrOgJN/4UW2qr312kGCeBcLRsXRnvMfThfeCHf7IDNtDfEG6lIzGeUxZsB1VTmcpIDfpSGldk0lbd5yBYGDYr4tOxrxna05A7Z1Tq70d20oQzgroGDkUUCP3g3h9m7APU4Mfxi9TCY=
+	t=1726495639; cv=none; b=XFXxckfDDxfxBH0qLVtXkO9ukWGV64KAEBEoa+cN+GnQryyb2XcXVqw6/4qMADzoBtyBlme6YEhVdrrGL3gWesYFdjtSqvD6owcMaFo1FJjVWsbJum19FwOuFeAzwXwzgoZD5slpeQB/q4QsuoQ5+HE4AQwqZUVuh5spbcXrBRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726494590; c=relaxed/simple;
-	bh=mTYLlhgJFyLCJFiquQhXbDJFC9KNkU16Jqo0fhCn7Mk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aDCgt34Ur2KSg7VnYvBsjZPxdf1H/TGxGY54iAfBVFGHdbK1FgUUNtlv8uy9tvLX8sYNXNC6RXRghCQLPLUX8W39pWfwCxB4CNoCa11DH++EE5usXvnpVzuCBsgA1icFlQnKuRlL0J26Bf3sKY79CRAUBM6KBx4rL+9lRdovCFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=JkHk4k8Z; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so26633885e9.3
-        for <io-uring@vger.kernel.org>; Mon, 16 Sep 2024 06:49:47 -0700 (PDT)
+	s=arc-20240116; t=1726495639; c=relaxed/simple;
+	bh=9fpsYcPjxb1uoqdMEAieb7ZKGURnWGooE/R/MtJt0rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Mkz9i//uzv6Vdm6CIW7Mu+ywSGYx6DgW7k0TTC4ra4cLcjWGkiQwApYS4XtrNLbrPA6Yfce+XJ2P7xgSzapIS8Y9Z5ZGTRQuvtck7k6S+qA3d91dtROuhzsAZEO/RGuIj6ma/qIyESEjf+PAazII2wunsXHpmC8iYtGXqAkKGYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dYc0C88A; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c413cf5de5so6289285a12.0
+        for <io-uring@vger.kernel.org>; Mon, 16 Sep 2024 07:07:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726494586; x=1727099386; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NhrGkzepf/7gkzfLnNo1SUYJoz3hCDltEutlMFgBtEY=;
-        b=JkHk4k8Z5Kwht73EaZOwmRiD4q1lZhFTaon+lgrc+irA92oS2AgclFY7TQIrBMqivh
-         DRQKLSxmJ+FmX0x66KmjZ+VPfVPaSAlYxzk1KlQgXEj4+W/zyPGiHXnwRl6t4OtA0Bke
-         LzBiTGELaUB2Ujmuf4dPg0K/v3+RyidiuXry9qQwvWWkZ4PRB8f5zZTaNWPSJX9x4117
-         xTS6L23anWzNZmpDb5D4yaTU5jzdW5AZLrKdOYs4Sxi3cynnpkrWzKZWcqjLCc8lSiaW
-         34tmv8y1FG/CsP3wOwU/bMyOJ7a/mKPcjzTxBzDB19IzwNcWySFtptsJ4eI/QHJ4O691
-         TMtw==
+        d=linaro.org; s=google; t=1726495635; x=1727100435; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+urhfmX0gEPcBzlVcIkRBv+Xc6c9XpUnmfqcLpG9k84=;
+        b=dYc0C88A+tEy+30aRTkY7qMmd66B2c1Ar0kzxevi+fe2LgQdGPO1SipDj+fbsYWyKR
+         WiKz8hYL71wMO6bKD1gqBvkhzv/Du3Vc0YZ3y84Jgon+OM+lSpXsuFDa0m4P8DNBxRDi
+         4D1BG+1/pHbvjinLPj6UM2BJIzjydAX9qkhfN+kGCCLx0jVLN1vvVRQ6uWKI7Q6IrobP
+         7S0TMFEMAy/6LmVun6Tmtj3Nl/gqLbvnALvJq2OEebcB5pnwDvO9PG9dG3trYTF3UKqR
+         PG0hMVIzgeHLOrjN2t6PNzHzsL0POwWpeIndbeQUx7b3g4aZ7S//BwM0R4gdZzbxvhRh
+         b/jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726494586; x=1727099386;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NhrGkzepf/7gkzfLnNo1SUYJoz3hCDltEutlMFgBtEY=;
-        b=jf7EdQ6ZiDoQAGQvcfa1ar7khVrlq/uA5DObMJDc93dMOS3TNA9G4BB1lPmMiKsA1u
-         JEiWw4mSezjipuZC9zfyAByp+42ljo5TySVIlY3wZsoB/XBSLBi0NIxcKbexlGeHvOM0
-         LlAg1nYs5DQoOBJifAaZi0Lx66PMCXy8zwfDimi6pKKU8gkbVXIga8X9U7jvbSDzMtEo
-         Gfdxnj7N/dTKiDsHacm7riQPDcj31vGWZ1H7C+2dSfDOKxZQ4dd7w9gLRpvbiwlFwHHS
-         FD5/jzoBtmMIaRpt9S+hEJ/Ft4lHmzSgeBitaH3pGUv14TwdUuM0IaNqDlmfxDAkqNcU
-         Zi8Q==
-X-Gm-Message-State: AOJu0YyzSIj8u4CKgjwdArmOnKmEfJ381Vk3O5tQucL5BRL6srmdbycc
-	GvEPuDBz5FNhGTBRR9uUOniNyCBrq7Rg8OdSTzJqAbNZN9QR2IWr8g4rOQx5tRo=
-X-Google-Smtp-Source: AGHT+IEFd+n3pMJxR417Q9zcx0oWXZFwDVePmgPghEM7qSB/XlIsd7vjIXUULvkasjnBv/6HrG/WoQ==
-X-Received: by 2002:adf:ea46:0:b0:374:c712:507a with SMTP id ffacd0b85a97d-378d61f125fmr5809960f8f.32.1726494585856;
-        Mon, 16 Sep 2024 06:49:45 -0700 (PDT)
-Received: from [127.0.0.1] ([194.2.69.69])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e85ccsm7266248f8f.42.2024.09.16.06.49.41
+        d=1e100.net; s=20230601; t=1726495635; x=1727100435;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+urhfmX0gEPcBzlVcIkRBv+Xc6c9XpUnmfqcLpG9k84=;
+        b=UxzJkQI813CRhVUKnA6AcJ0UXfOVkvMAHJvxBPN9TTj1UT1Lza397W2DXa9EP5DkoS
+         8kekfUFgqgBHrOZFPMog3HHFmkfGv+PerJyRDvpnZGJfgCv42AqdPxqyyS/mNDg8x7JY
+         RJ38Zcwhg+Ym5BRZfPZqjfCxOVoCxzVWIVXJzO/Skb8rQU5SMf7RRRzuQwctyu+QshBK
+         +vrKXzdrV/yUacIENcTozVdqvItKa/RYCVbweYZMYxQNxsnlzZSIB39wVzPDKlQgumEp
+         KmfMvh2PV039Cahce3CMXPmbQo60H1GToWaTzi5Ep9atTslrYCTZ9Sr+FQItogLJIu2Y
+         BlTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFFZR/jV7TIFVi36T/ugD4+D2+EsA3cOCF9mmeYT7x0HLWEAHIoVpG6EpLjiqdxl28+wG30DAlsw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXzhCm0yqvT77bHx5sVtaqXVfe3WSfSnn1lnZgcLeXfFRgjar2
+	JyurHkIwbGdbWApjV6eVgqYYaY1kZuBX/8hh0J3MdwrmTFjSFKZSmb2GTenlmiE=
+X-Google-Smtp-Source: AGHT+IGpdf/bVgk6BGObyyM95jOqlzvTJMhqTClXF6aSu3Wdslx9j/hss0XI+Ji9ZIWoH1+SkeVxYg==
+X-Received: by 2002:a05:6402:500c:b0:5c0:bba5:60d2 with SMTP id 4fb4d7f45d1cf-5c413e2cf48mr13620216a12.21.1726495635262;
+        Mon, 16 Sep 2024 07:07:15 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb89c4esm2608985a12.61.2024.09.16.07.07.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 06:49:45 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Felix Moessbauer <felix.moessbauer@siemens.com>
-Cc: io-uring <io-uring@vger.kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20240916111150.1266191-1-felix.moessbauer@siemens.com>
-References: <20240916111150.1266191-1-felix.moessbauer@siemens.com>
-Subject: Re: [PATCH v3 1/1] io_uring/sqpoll: do not put cpumask on stack
-Message-Id: <172649458122.10114.15596316527978537875.b4-ty@kernel.dk>
-Date: Mon, 16 Sep 2024 07:49:41 -0600
+        Mon, 16 Sep 2024 07:07:14 -0700 (PDT)
+Date: Mon, 16 Sep 2024 17:07:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] io_uring: clean up a type in io_uring_register_get_file()
+Message-ID: <6f6cb630-079f-4fdf-bf95-1082e0a3fc6e@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+Originally "fd" was unsigned int but it was changed to int when we pulled
+this code into a separate function in commit 0b6d253e084a
+("io_uring/register: provide helper to get io_ring_ctx from 'fd'").  This
+doesn't really cause a runtime problem because the call to
+array_index_nospec() will clamp negative fds to 0 and nothing else uses
+the negative values.
 
-On Mon, 16 Sep 2024 13:11:50 +0200, Felix Moessbauer wrote:
-> Putting the cpumask on the stack is deprecated for a long time (since
-> 2d3854a37e8), as these can be big. Given that, change the on-stack
-> allocation of allowed_mask to be dynamically allocated.
-> 
-> 
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ io_uring/register.c | 2 +-
+ io_uring/register.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Applied, thanks!
-
-[1/1] io_uring/sqpoll: do not put cpumask on stack
-      commit: 7f44beadcc11adb98220556d2ddbe9c97aa6d42d
-
-Best regards,
+diff --git a/io_uring/register.c b/io_uring/register.c
+index dab0f8024ddf..165f8661c12b 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -561,7 +561,7 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+  * true, then the registered index is used. Otherwise, the normal fd table.
+  * Caller must call fput() on the returned file, unless it's an ERR_PTR.
+  */
+-struct file *io_uring_register_get_file(int fd, bool registered)
++struct file *io_uring_register_get_file(unsigned int fd, bool registered)
+ {
+ 	struct file *file;
+ 
+diff --git a/io_uring/register.h b/io_uring/register.h
+index cc69b88338fe..a5f39d5ef9e0 100644
+--- a/io_uring/register.h
++++ b/io_uring/register.h
+@@ -4,6 +4,6 @@
+ 
+ int io_eventfd_unregister(struct io_ring_ctx *ctx);
+ int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id);
+-struct file *io_uring_register_get_file(int fd, bool registered);
++struct file *io_uring_register_get_file(unsigned int fd, bool registered);
+ 
+ #endif
 -- 
-Jens Axboe
-
-
+2.45.2
 
 

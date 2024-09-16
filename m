@@ -1,79 +1,106 @@
-Return-Path: <io-uring+bounces-3206-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3207-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC38F97A16E
-	for <lists+io-uring@lfdr.de>; Mon, 16 Sep 2024 14:07:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CDD797A313
+	for <lists+io-uring@lfdr.de>; Mon, 16 Sep 2024 15:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B6F31C23271
-	for <lists+io-uring@lfdr.de>; Mon, 16 Sep 2024 12:07:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF32F1F22EC5
+	for <lists+io-uring@lfdr.de>; Mon, 16 Sep 2024 13:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE5C15749A;
-	Mon, 16 Sep 2024 11:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D255155A59;
+	Mon, 16 Sep 2024 13:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNgBA9AS"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JkHk4k8Z"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB8B156C73
-	for <io-uring@vger.kernel.org>; Mon, 16 Sep 2024 11:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAB414A60C
+	for <io-uring@vger.kernel.org>; Mon, 16 Sep 2024 13:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726487952; cv=none; b=P5NZpHMwy6gKWzmC9LKq1dAC51RCnBNzZbqHOK4wshYy5DWCDf8Qx7uPGXpJxVGZ/MWglzhVRZg0pgw8fXKLFE2sLq535X3RHsyXHXWmRKVeinoHNDUbUKwTvpiBfBFcZWfNP6H7aGx2vpzYeKLj9kOUtUjDK5V1LUNcC63m8WQ=
+	t=1726494590; cv=none; b=YzQ/r47EXWCITwg41xaTf6ORwMkmh4JRtvrOgJN/4UW2qr312kGCeBcLRsXRnvMfThfeCHf7IDNtDfEG6lIzGeUxZsB1VTmcpIDfpSGldk0lbd5yBYGDYr4tOxrxna05A7Z1Tq70d20oQzgroGDkUUCP3g3h9m7APU4Mfxi9TCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726487952; c=relaxed/simple;
-	bh=4gqeG7Y5PpXuCpp5pSNg2pGr9qr1P0UTq/gnu6eHWgw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=W5uMreQj+Z7vgu17ndaVZDsflE37/vbGSndlgIzgAM4Qqi6wjOW/6dJ6VsQcKegJfdenFNiMb9VV7dX9oicvxYvsKT46pXSCJs8q66IvT+uAZ04lKHzmUgoOvNdHAkZr94gRM9OeB2+ZLbNXam0dKuo6+7yYLrIT+qKMPcLgTC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNgBA9AS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A17AC4CEC4;
-	Mon, 16 Sep 2024 11:59:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726487952;
-	bh=4gqeG7Y5PpXuCpp5pSNg2pGr9qr1P0UTq/gnu6eHWgw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ZNgBA9ASIfDjoERgEBL10PETdccvkr3b8x+9JuhHqc4/MeXOR2WOY1Y8T4rkCLC5+
-	 sfi69/N3CfRAKdwH0SV3zVTOZTYfX3xKrKeIzy4QDE7p48NdwIVfk4+sySSU3COpjD
-	 qH7HwbmrObdRPZHVIqNxUWUsdCArJMdRZOggf6th3ujMzAyHOeTodEmIX/UlFo7ip1
-	 0goJaUdjJ1fC5lLKPKafbq6wnsFyaTYGfmCbI2t8Ss/nTE8jiXxKjRKzpZ2XwuV/Im
-	 LsfAOblKuSVcO4NBzUZhuVF1aytt1BbOhIsCXG0D4oJECmy6sdhrHgpZWHxx3jPjSk
-	 yqKRPtmmxiuWw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 717673809A80;
-	Mon, 16 Sep 2024 11:59:15 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring updates for 6.12-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aa117c13-193f-479d-a0de-9fca9bfc00a8@kernel.dk>
-References: <aa117c13-193f-479d-a0de-9fca9bfc00a8@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aa117c13-193f-479d-a0de-9fca9bfc00a8@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/for-6.12/io_uring-20240913
-X-PR-Tracked-Commit-Id: 7cc2a6eadcd7a5aa36ac63e6659f5c6138c7f4d2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3a4d319a8fb5a9bbdf5b31ef32841eb286b1dcc2
-Message-Id: <172648795410.3670563.676061230555642439.pr-tracker-bot@kernel.org>
-Date: Mon, 16 Sep 2024 11:59:14 +0000
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+	s=arc-20240116; t=1726494590; c=relaxed/simple;
+	bh=mTYLlhgJFyLCJFiquQhXbDJFC9KNkU16Jqo0fhCn7Mk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=aDCgt34Ur2KSg7VnYvBsjZPxdf1H/TGxGY54iAfBVFGHdbK1FgUUNtlv8uy9tvLX8sYNXNC6RXRghCQLPLUX8W39pWfwCxB4CNoCa11DH++EE5usXvnpVzuCBsgA1icFlQnKuRlL0J26Bf3sKY79CRAUBM6KBx4rL+9lRdovCFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=JkHk4k8Z; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so26633885e9.3
+        for <io-uring@vger.kernel.org>; Mon, 16 Sep 2024 06:49:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726494586; x=1727099386; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NhrGkzepf/7gkzfLnNo1SUYJoz3hCDltEutlMFgBtEY=;
+        b=JkHk4k8Z5Kwht73EaZOwmRiD4q1lZhFTaon+lgrc+irA92oS2AgclFY7TQIrBMqivh
+         DRQKLSxmJ+FmX0x66KmjZ+VPfVPaSAlYxzk1KlQgXEj4+W/zyPGiHXnwRl6t4OtA0Bke
+         LzBiTGELaUB2Ujmuf4dPg0K/v3+RyidiuXry9qQwvWWkZ4PRB8f5zZTaNWPSJX9x4117
+         xTS6L23anWzNZmpDb5D4yaTU5jzdW5AZLrKdOYs4Sxi3cynnpkrWzKZWcqjLCc8lSiaW
+         34tmv8y1FG/CsP3wOwU/bMyOJ7a/mKPcjzTxBzDB19IzwNcWySFtptsJ4eI/QHJ4O691
+         TMtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726494586; x=1727099386;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NhrGkzepf/7gkzfLnNo1SUYJoz3hCDltEutlMFgBtEY=;
+        b=jf7EdQ6ZiDoQAGQvcfa1ar7khVrlq/uA5DObMJDc93dMOS3TNA9G4BB1lPmMiKsA1u
+         JEiWw4mSezjipuZC9zfyAByp+42ljo5TySVIlY3wZsoB/XBSLBi0NIxcKbexlGeHvOM0
+         LlAg1nYs5DQoOBJifAaZi0Lx66PMCXy8zwfDimi6pKKU8gkbVXIga8X9U7jvbSDzMtEo
+         Gfdxnj7N/dTKiDsHacm7riQPDcj31vGWZ1H7C+2dSfDOKxZQ4dd7w9gLRpvbiwlFwHHS
+         FD5/jzoBtmMIaRpt9S+hEJ/Ft4lHmzSgeBitaH3pGUv14TwdUuM0IaNqDlmfxDAkqNcU
+         Zi8Q==
+X-Gm-Message-State: AOJu0YyzSIj8u4CKgjwdArmOnKmEfJ381Vk3O5tQucL5BRL6srmdbycc
+	GvEPuDBz5FNhGTBRR9uUOniNyCBrq7Rg8OdSTzJqAbNZN9QR2IWr8g4rOQx5tRo=
+X-Google-Smtp-Source: AGHT+IEFd+n3pMJxR417Q9zcx0oWXZFwDVePmgPghEM7qSB/XlIsd7vjIXUULvkasjnBv/6HrG/WoQ==
+X-Received: by 2002:adf:ea46:0:b0:374:c712:507a with SMTP id ffacd0b85a97d-378d61f125fmr5809960f8f.32.1726494585856;
+        Mon, 16 Sep 2024 06:49:45 -0700 (PDT)
+Received: from [127.0.0.1] ([194.2.69.69])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e85ccsm7266248f8f.42.2024.09.16.06.49.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2024 06:49:45 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Felix Moessbauer <felix.moessbauer@siemens.com>
+Cc: io-uring <io-uring@vger.kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20240916111150.1266191-1-felix.moessbauer@siemens.com>
+References: <20240916111150.1266191-1-felix.moessbauer@siemens.com>
+Subject: Re: [PATCH v3 1/1] io_uring/sqpoll: do not put cpumask on stack
+Message-Id: <172649458122.10114.15596316527978537875.b4-ty@kernel.dk>
+Date: Mon, 16 Sep 2024 07:49:41 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-The pull request you sent on Fri, 13 Sep 2024 11:02:06 -0600:
 
-> git://git.kernel.dk/linux.git tags/for-6.12/io_uring-20240913
+On Mon, 16 Sep 2024 13:11:50 +0200, Felix Moessbauer wrote:
+> Putting the cpumask on the stack is deprecated for a long time (since
+> 2d3854a37e8), as these can be big. Given that, change the on-stack
+> allocation of allowed_mask to be dynamically allocated.
+> 
+> 
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3a4d319a8fb5a9bbdf5b31ef32841eb286b1dcc2
+Applied, thanks!
 
-Thank you!
+[1/1] io_uring/sqpoll: do not put cpumask on stack
+      commit: 7f44beadcc11adb98220556d2ddbe9c97aa6d42d
 
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jens Axboe
+
+
+
 

@@ -1,47 +1,46 @@
-Return-Path: <io-uring+bounces-3226-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3227-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E987997BCA5
-	for <lists+io-uring@lfdr.de>; Wed, 18 Sep 2024 14:59:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403B597BCA6
+	for <lists+io-uring@lfdr.de>; Wed, 18 Sep 2024 14:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 290F91C20DE0
-	for <lists+io-uring@lfdr.de>; Wed, 18 Sep 2024 12:59:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 013DB284CA0
+	for <lists+io-uring@lfdr.de>; Wed, 18 Sep 2024 12:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44745189F41;
-	Wed, 18 Sep 2024 12:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23866189F41;
+	Wed, 18 Sep 2024 12:59:34 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CAA189F3C
-	for <io-uring@vger.kernel.org>; Wed, 18 Sep 2024 12:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB56189F3C
+	for <io-uring@vger.kernel.org>; Wed, 18 Sep 2024 12:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726664362; cv=none; b=d8iMAZbP4Z3LAL6Ne4TIq4cMTkNfza6G2Nn7NJZ30ag/EIXFDoAtSPUe7ZcKp4s2QXEKdBgwupzbvNAUnzSbLiSdX+13HwAaoUIrI8zB7yA/1lnyctbCU+5PsNOmO7LRjIEEaoBDVIwwLFHiWby5I60YQL0c83p8/8SISyONgJ8=
+	t=1726664374; cv=none; b=DV0TurXF5LBa3Rbc+0Wdosdi6Q9w8GgJdop1PoPdvFnYCWQUtg13525NmVo0JytdcruEgBVBmxheyOLDtvbiVY5am4Cr+fTHUe9oJQyQGQ+6Vi5GhemjODfpxzM1VUha5+6jT2KNqTznATGk254R7ZJN9VTl/IWR9jrefUz5YNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726664362; c=relaxed/simple;
-	bh=T2HBJnHh+UA9f8xRUSHyOXWKiEp/UGrYRGIesC2mU+Y=;
-	h=From:Date:Message-ID:In-Reply-To:References:To:Subject; b=DSn4vF/yq0RyFUW5b87tKtLePtfm81z1rF4GSo60MRGDkHd1rpuaaxczUOLoUxF4edIq1aVyZAu7G3xsse0gJUgIAx9B00Fz2oLVZApfLDf+OIo/T+lE5V94cY7lMyvA0Np/IQbzG1LsIfKg/oM5g9U+82Lixubn4uY5iGKDWDc=
+	s=arc-20240116; t=1726664374; c=relaxed/simple;
+	bh=JYPk6/iJriZpassG5VAQmfiWdz1m3srGV9RGSF8yGsM=;
+	h=From:Date:Message-ID:In-Reply-To:References:To:Subject; b=rQzgFDD7+WWsdDKLK5gWKyINWjrl/RwAUyAO1krQCaNOgYbyUvsa9Fw4o80MkJ2lOsbEtcTvey2vI/XAg/Sg0/EVJ9LeHnVjzKHPA+m+XbFQNtfGxX+sVuw9aonbb1dAnVQTvszaslzQ2wZ5p6qAzAYILcciWhjk3LMB20v3lb8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
-Received: from [45.44.224.220] (port=53750 helo=localhost)
+Received: from [45.44.224.220] (port=46878 helo=localhost)
 	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <olivier@trillion01.com>)
-	id 1squH8-0004Ze-1l;
-	Wed, 18 Sep 2024 08:59:18 -0400
+	id 1squHL-0004aX-0K;
+	Wed, 18 Sep 2024 08:59:31 -0400
 From: Olivier Langlois <olivier@trillion01.com>
-Date: Wed, 18 Sep 2024 08:59:18 -0400
-Message-ID: <d56f61c585d117eb3c59e46ebd573950576f5546.1726589775.git.olivier@trillion01.com>
+Date: Wed, 18 Sep 2024 08:59:30 -0400
+Message-ID: <16fd803fb9fff9323a9d01e54a2584366780bbeb.1726589775.git.olivier@trillion01.com>
 In-Reply-To: <cover.1726589775.git.olivier@trillion01.com>
 References: <cover.1726589775.git.olivier@trillion01.com>
 To: Jens Axboe <axboe@kernel.dk>,Pavel Begunkov <asml.silence@gmail.com>,io-uring@vger.kernel.org
-Subject: [PATCH v3 1/3] io_uring/napi: protect concurrent io_napi_entry
- timeout accesses
+Subject: [PATCH v3 2/3] io_uring/napi: fix io_napi_entry RCU accesses
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -58,47 +57,62 @@ List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 
-io_napi_entry timeout value can be updated while accessed from the poll
-functions.
-
-Its concurrent accesses are wrapped with READ_ONCE()/WRITE_ONCE() macros
-to avoid incorrect compiler optimizations.
+correct 3 RCU structures modifications that were not using the RCU
+functions to make their update.
 
 Signed-off-by: Olivier Langlois <olivier@trillion01.com>
 ---
- io_uring/napi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ io_uring/napi.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
 diff --git a/io_uring/napi.c b/io_uring/napi.c
-index 1de1d4d62925..1dd2df9da468 100644
+index 1dd2df9da468..6fc127e74f10 100644
 --- a/io_uring/napi.c
 +++ b/io_uring/napi.c
-@@ -60,7 +60,7 @@ void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
- 	rcu_read_lock();
- 	e = io_napi_hash_find(hash_list, napi_id);
- 	if (e) {
--		e->timeout = jiffies + NAPI_TIMEOUT;
-+		WRITE_ONCE(e->timeout, jiffies + NAPI_TIMEOUT);
- 		rcu_read_unlock();
- 		return;
+@@ -81,19 +81,24 @@ void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
  	}
-@@ -92,7 +92,7 @@ static void __io_napi_remove_stale(struct io_ring_ctx *ctx)
+ 
+ 	hlist_add_tail_rcu(&e->node, hash_list);
+-	list_add_tail(&e->list, &ctx->napi_list);
++	list_add_tail_rcu(&e->list, &ctx->napi_list);
+ 	spin_unlock(&ctx->napi_lock);
+ }
+ 
+ static void __io_napi_remove_stale(struct io_ring_ctx *ctx)
+ {
+ 	struct io_napi_entry *e;
+-	unsigned int i;
  
  	spin_lock(&ctx->napi_lock);
- 	hash_for_each(ctx->napi_ht, i, e, node) {
--		if (time_after(jiffies, e->timeout)) {
-+		if (time_after(jiffies, READ_ONCE(e->timeout))) {
- 			list_del(&e->list);
+-	hash_for_each(ctx->napi_ht, i, e, node) {
++	/*
++	 * list_for_each_entry_safe() is not required as long as:
++	 * 1. list_del_rcu() does not reset the deleted node next pointer
++	 * 2. kfree_rcu() delays the memory freeing until the next quiescent
++	 *    state
++	 */
++	list_for_each_entry(e, &ctx->napi_list, list) {
+ 		if (time_after(jiffies, READ_ONCE(e->timeout))) {
+-			list_del(&e->list);
++			list_del_rcu(&e->list);
  			hash_del_rcu(&e->node);
  			kfree_rcu(e, rcu);
-@@ -150,7 +150,7 @@ static bool __io_napi_do_busy_loop(struct io_ring_ctx *ctx,
- 		napi_busy_loop_rcu(e->napi_id, loop_end, loop_end_arg,
- 				   ctx->napi_prefer_busy_poll, BUSY_POLL_BUDGET);
+ 		}
+@@ -204,13 +209,13 @@ void io_napi_init(struct io_ring_ctx *ctx)
+ void io_napi_free(struct io_ring_ctx *ctx)
+ {
+ 	struct io_napi_entry *e;
+-	unsigned int i;
  
--		if (time_after(jiffies, e->timeout))
-+		if (time_after(jiffies, READ_ONCE(e->timeout)))
- 			is_stale = true;
+ 	spin_lock(&ctx->napi_lock);
+-	hash_for_each(ctx->napi_ht, i, e, node) {
++	list_for_each_entry(e, &ctx->napi_list, list) {
+ 		hash_del_rcu(&e->node);
+ 		kfree_rcu(e, rcu);
  	}
++	INIT_LIST_HEAD_RCU(&ctx->napi_list);
+ 	spin_unlock(&ctx->napi_lock);
+ }
  
 -- 
 2.46.1

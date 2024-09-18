@@ -1,271 +1,398 @@
-Return-Path: <io-uring+bounces-3220-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3221-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE4B97B318
-	for <lists+io-uring@lfdr.de>; Tue, 17 Sep 2024 18:42:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE12B97B6B5
+	for <lists+io-uring@lfdr.de>; Wed, 18 Sep 2024 04:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29EF8285397
-	for <lists+io-uring@lfdr.de>; Tue, 17 Sep 2024 16:42:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33ABE2865CF
+	for <lists+io-uring@lfdr.de>; Wed, 18 Sep 2024 02:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2F68248C;
-	Tue, 17 Sep 2024 16:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA05261FED;
+	Wed, 18 Sep 2024 02:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y+3Lfjaz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JZSqKKhq";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y+3Lfjaz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JZSqKKhq"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fr+tv+DV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A424C17C990
-	for <io-uring@vger.kernel.org>; Tue, 17 Sep 2024 16:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2453658210
+	for <io-uring@vger.kernel.org>; Wed, 18 Sep 2024 02:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726591318; cv=none; b=DfwtARi3nYDqlrK3g/DBRMPIzc/uaICcRuDIX5KCJ82q+KITfajNP7pfTBVsyv4o3yKET9NnaYS+XDtz2kpFxCe1iKFDVTysEIqeU826LKefXQYhd91d6w8Plvf2+iMtCBtBSzUXeRfKEp1pm5CQPaPLy9dS24YsO4i7wmvEkkY=
+	t=1726625453; cv=none; b=LjdCuYSpr7dBihWCzulu86YcJ0Mp7Aw7OxOOH+IfXjA/njfHpjM68jFRxcXoBW+jyg1ehUHef618zD61Tem/5FAHJVffU8W0UX86gjPQ+CJ9HZEASU/dVLdfB/9QAnRwXnNoUYbdtUVbRXh+qG6vSk++4hhETIzNHqma+yTx5fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726591318; c=relaxed/simple;
-	bh=5riLJQhXKm+3n0taE1Squ/lRA7/RJPc/i9u5dtg5YO4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BySn4IgB1ux6zGYIJ4iALnJVQYAJOzpcfMbIDUiBCbkqISrLs7nL+BjFCsCr+ZmgLy2rig0ByV8Vv6z09G+2OoWhf8N3LgUi6IEG8VM2XIA21l4/ps7Vy2HsHqJt0N7iZtM6OQ6oTqHslFD15ZXw2tjBahv+ofL9pq1+bojDKkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y+3Lfjaz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JZSqKKhq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y+3Lfjaz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JZSqKKhq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B81862233E;
-	Tue, 17 Sep 2024 16:41:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726591314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B/YYKqvXrQA67EsNBngBCA5AC/oADyVUBNfTyDcdwZY=;
-	b=Y+3LfjazJaBn1KS5oEa0vsR5h1ikCnC9XJlglou/fgnvtKVP1aTMKcfGva+De57WjYK9mU
-	R/TZvUbDZtQK7ypv+6R4cuoylATHj3/KCVQwyGPn+srwprbmIHlVRi45C7JDraSVvGbEXu
-	j1i2u4UlmP8gjR6yK3M3sR2fCmKoFww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726591314;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B/YYKqvXrQA67EsNBngBCA5AC/oADyVUBNfTyDcdwZY=;
-	b=JZSqKKhqnWARXonqIcnUwySi/j1E+2rEYGu5wku5/hElc3WJ979RqBvMOvShdZtMr44IJU
-	oyt/tEgOkQTAVFCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Y+3Lfjaz;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=JZSqKKhq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726591314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B/YYKqvXrQA67EsNBngBCA5AC/oADyVUBNfTyDcdwZY=;
-	b=Y+3LfjazJaBn1KS5oEa0vsR5h1ikCnC9XJlglou/fgnvtKVP1aTMKcfGva+De57WjYK9mU
-	R/TZvUbDZtQK7ypv+6R4cuoylATHj3/KCVQwyGPn+srwprbmIHlVRi45C7JDraSVvGbEXu
-	j1i2u4UlmP8gjR6yK3M3sR2fCmKoFww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726591314;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B/YYKqvXrQA67EsNBngBCA5AC/oADyVUBNfTyDcdwZY=;
-	b=JZSqKKhqnWARXonqIcnUwySi/j1E+2rEYGu5wku5/hElc3WJ979RqBvMOvShdZtMr44IJU
-	oyt/tEgOkQTAVFCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 79ACB13AB6;
-	Tue, 17 Sep 2024 16:41:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oOVmF1Kx6WZtagAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 17 Sep 2024 16:41:54 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org
-Subject: Re: [PATCH 4/4] io_uring: add IORING_REGISTER_COPY_BUFFERS method
-In-Reply-To: <20240912164019.634560-5-axboe@kernel.dk> (Jens Axboe's message
-	of "Thu, 12 Sep 2024 10:38:23 -0600")
-References: <20240912164019.634560-1-axboe@kernel.dk>
-	<20240912164019.634560-5-axboe@kernel.dk>
-Date: Tue, 17 Sep 2024 12:41:49 -0400
-Message-ID: <87jzfagrle.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1726625453; c=relaxed/simple;
+	bh=sKWbOMH4P24E6BnvZYSq6BRnKSlD5ZalDfrKb7+p5ts=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=gduiAXkAGKJZwzcdm8zF6PAFs7OBLBqcA47oEXrb9v22MFDHhMxB6phCz3xHjPCH6rAHlSuE1JbGKPK6nzmWa9NpLrwcuGjfP0Xq9qcJdZP35iv7hfEKWMNYXO6Om63XPldZ15v/nDfqZ5nBWppeROGKfMZaxQ3VJ3sK9N1lcPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fr+tv+DV; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240918021046epoutp045e924d39571a5b8c64f32a34f952b9b0~2NLIkc3lu2230722307epoutp04Y
+	for <io-uring@vger.kernel.org>; Wed, 18 Sep 2024 02:10:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240918021046epoutp045e924d39571a5b8c64f32a34f952b9b0~2NLIkc3lu2230722307epoutp04Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726625446;
+	bh=YB/Kn4zP87WsWLT08fcUQuDrLHGW9spUWa+9l41J8F0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=fr+tv+DVcU0i6Xvo7GJDeUtnr3J9wVQp6hm+YPn67l97c5sMPX5Jw7hNebJsg4xak
+	 dgF+rRvZex9qytwKv2/Xh+Rr12mZdl+TbJfBQSLkBYF3uItFEOmvl/87SJ2icwrcl4
+	 Ovgb2zS39MQY0J2c8A2s8yhnR/1RGkg23nz5Hl7g=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240918021046epcas5p2128cd368a1f05cd72891245ddc1c63fa~2NLH8ScxI3272332723epcas5p2I;
+	Wed, 18 Sep 2024 02:10:46 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4X7hvS1NVVz4x9Pv; Wed, 18 Sep
+	2024 02:10:44 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	31.53.09642.4A63AE66; Wed, 18 Sep 2024 11:10:44 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240918021016epcas5p14d6e771ee39bee5dddf253c39b84110c~2NKspVdSG2902629026epcas5p1f;
+	Wed, 18 Sep 2024 02:10:16 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240918021016epsmtrp1e9e33ed7808cb8043d28b50da0774e92~2NKsopQyB1650416504epsmtrp17;
+	Wed, 18 Sep 2024 02:10:16 +0000 (GMT)
+X-AuditID: b6c32a4b-613ff700000025aa-e2-66ea36a4f73d
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7A.B5.07567.8863AE66; Wed, 18 Sep 2024 11:10:16 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240918021015epsmtip12bb6b10ee58bc7ef822daf5a7a49d632~2NKrfmte33116131161epsmtip1K;
+	Wed, 18 Sep 2024 02:10:15 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, hexue
+	<xue01.he@samsung.com>
+Subject: [PATCH v8 RESEND] io_uring: releasing CPU resources when polling
+Date: Wed, 18 Sep 2024 10:10:10 +0800
+Message-Id: <20240918021010.12894-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: B81862233E
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RCPT_COUNT_TWO(0.00)[2];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLKsWRmVeSWpSXmKPExsWy7bCmlu4Ss1dpBsumslnMWbWN0WL13X42
+	i3et51gsfnXfZbS4vGsOm8XZCR9YLbounGJzYPfYOesuu8fls6UefVtWMXp83iQXwBKVbZOR
+	mpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdICSQlliTilQ
+	KCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITvjyf1p
+	TAWrXCq2rJ/J2MA40byLkZNDQsBEouNHN3sXIxeHkMBuRokLB8+yQDifGCX+nNsBlfnGKLH0
+	8m8WmJbl8/pYIRJ7GSVWzX3BCOH8YJS4vPEEK0gVm4CSxP4tHxhBbBEBbYnXj6cCdXNwMAtE
+	SbxYyw0SFhbwlOg808kOYrMIqEps3bIKzOYVsJSY3DcHapm8xM2u/cwQcUGJkzOfgMWZgeLN
+	W2czg+yVEDjELrFi/w0miAYXiQOnHrND2MISr45vgbKlJF72t0HZ+RKTv69nhLBrJNZtfge1
+	zFri35U9UHdqSqzfpQ8RlpWYemodE8RePone30+gVvFK7JgHYytJLDmyAmqkhMTvCYtYIWwP
+	iQnP/4PdLyQQK/Hpzi/2CYzys5C8MwvJO7MQNi9gZF7FKJlaUJybnlpsWmCcl1oOj9jk/NxN
+	jOB0qOW9g/HRgw96hxiZOBgPMUpwMCuJ8Ip/eJkmxJuSWFmVWpQfX1Sak1p8iNEUGMYTmaVE
+	k/OBCTmvJN7QxNLAxMzMzMTS2MxQSZz3devcFCGB9MSS1OzU1ILUIpg+Jg5OqQYmVbMVh67d
+	zr/lte5k5tQNm5hDtJ+YJp+/GfDlY0I938SX0bte7EyY1b/9dGxwp8zNldVrfk87/iPpb/Yi
+	G8t9G+9bLrQ8EhW+6jjLWwmHGufavg+fHLeqbVh5ndUimr9CLqBN/1bthvVfG7plPkxVEozY
+	1bH8mYemWP+MP5c6HtwM4Ul2uKonav/o1PxFkkv5F/X8bfDam3D9j3Bylq7xnB0lErl98rvv
+	Myw61y0mcGHF+T2dS8Ws67MVDGNrpttI9jHs0VJaW7dg13zx/UnunbzTJ7s//bfGxebYjrCv
+	k56ubnzx9/XMIz5/HsXVMqWs9nh0UvnuydK2Sw8zHFyuGH5WfcX4W1Hr57+2W/NK5iuxFGck
+	GmoxFxUnAgAnk7xuEAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsWy7bCSnG6H2as0g+MLdC3mrNrGaLH6bj+b
+	xbvWcywWv7rvMlpc3jWHzeLshA+sFl0XTrE5sHvsnHWX3ePy2VKPvi2rGD0+b5ILYInisklJ
+	zcksSy3St0vgynhyfxpTwSqXii3rZzI2ME4072Lk5JAQMJFYPq+PFcQWEtjNKDH3lzdEXEJi
+	x6M/rBC2sMTKf8/Zuxi5gGq+MUq87t8MlmATUJLYv+UDYxcjB4eIgK5E410FkDCzQIzEhz0T
+	2EFsYQFPic4znWA2i4CqxNYtq8BsXgFLicl9c1gg5stL3OzazwwRF5Q4OfMJC8QceYnmrbOZ
+	JzDyzUKSmoUktYCRaRWjZGpBcW56brJhgWFearlecWJucWleul5yfu4mRnBYamnsYLw3/5/e
+	IUYmDsZDjBIczEoivOIfXqYJ8aYkVlalFuXHF5XmpBYfYpTmYFES5zWcMTtFSCA9sSQ1OzW1
+	ILUIJsvEwSnVwPTaZ+IPgduP2DVOs90ve6+l/vnU7idKTTvY3QtyHqor+bcr9Of/anU3Elpd
+	LHXhH88+u2/RqT5WTJuSF959f3f/kXLpOWt9V86oOcQUUbHm1QFV1dkxDWszEiYs5oifePiX
+	a5j+rQB35T8n564zC+HqiW8VfBc5ffmx809LVV0bf65mXRawR6omqFe/JmT/J2FOj0/CfwwU
+	U3Sqvzg5fE1Z5LB96tFJtUwSJjvmvP2edK1nVwb/X/87SSyxF5mqHO7pWpzQO7f8RL9m7qpv
+	mVOYtbesudn1Od1j+TslJwW5GSXpnrlCYo/anWc1CHRxeF9frtiZOFPl38vo/Qcyqzbf2i52
+	iMVSSv27zezztkosxRmJhlrMRcWJANtZQv66AgAA
+X-CMS-MailID: 20240918021016epcas5p14d6e771ee39bee5dddf253c39b84110c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240918021016epcas5p14d6e771ee39bee5dddf253c39b84110c
+References: <CGME20240918021016epcas5p14d6e771ee39bee5dddf253c39b84110c@epcas5p1.samsung.com>
 
-Jens Axboe <axboe@kernel.dk> writes:
+This patch add a new hybrid poll at io_uring level, it also set a signal
+"IORING_SETUP_HY_POLL" to application, aim to provide a interface for users
+to enable use new hybrid polling flexibly.
 
-> Buffers can get registered with io_uring, which allows to skip the
-> repeated pin_pages, unpin/unref pages for each O_DIRECT operation. This
-> reduces the overhead of O_DIRECT IO.
->
-> However, registrering buffers can take some time. Normally this isn't an
-> issue as it's done at initialization time (and hence less critical), but
-> for cases where rings can be created and destroyed as part of an IO
-> thread pool, registering the same buffers for multiple rings become a
-> more time sensitive proposition. As an example, let's say an application
-> has an IO memory pool of 500G. Initial registration takes:
->
-> Got 500 huge pages (each 1024MB)
-> Registered 500 pages in 409 msec
->
-> or about 0.4 seconds. If we go higher to 900 1GB huge pages being
-> registered:
->
-> Registered 900 pages in 738 msec
->
-> which is, as expected, a fully linear scaling.
->
-> Rather than have each ring pin/map/register the same buffer pool,
-> provide an io_uring_register(2) opcode to simply duplicate the buffers
-> that are registered with another ring. Adding the same 900GB of
-> registered buffers to the target ring can then be accomplished in:
->
-> Copied 900 pages in 17 usec
->
-> While timing differs a bit, this provides around a 25,000-40,000x
-> speedup for this use case.
+io_uring use polling mode could improve the IO performence, but it will
+spend 100% of CPU resources to do polling.
 
-Looks good, but I couldn't get it to apply on top of your branches.  I
-have only one comment, if you are doing a v4:
->
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  include/uapi/linux/io_uring.h | 13 +++++
->  io_uring/register.c           |  6 +++
->  io_uring/rsrc.c               | 91 +++++++++++++++++++++++++++++++++++
->  io_uring/rsrc.h               |  1 +
->  4 files changed, 111 insertions(+)
->
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+A new hybrid poll is implemented on the io_uring layer. Once IO issued,
+it will not polling immediately, but block first and re-run before IO
+complete, then poll to reap IO. This poll function could be a suboptimal
+solution when running on a single thread, it offers the performance lower
+than regular polling but higher than IRQ, and CPU utilization is also lower
+than polling.
 
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -17,6 +17,7 @@
->  #include "openclose.h"
->  #include "rsrc.h"
->  #include "memmap.h"
-> +#include "register.h"
->  
->  struct io_rsrc_update {
->  	struct file			*file;
-> @@ -1137,3 +1138,93 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
->  
->  	return 0;
->  }
-> +
-> +static int io_copy_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx)
+Test Result
+fio-3.35, 16 poll queues, 1 thread
+-------------------------------------------------------------------------
+Performance
+-------------------------------------------------------------------------
+                write         read        randwrite  randread
+regular poll BW=3939MiB/s  BW=6613MiB/s  IOPS=190K  IOPS=470K
+IRQ          BW=3927MiB/s  BW=6612MiB/s  IOPS=181K  IOPS=203K
+hybrid poll  BW=3937MiB/s  BW=6623MiB/s  IOPS=190K  IOPS=358K(suboptimal)
+-------------------------------------------------------------------------
+CPU Utilization
+------------------------------------------------------
+                write   read    randwrite   randread
+regular poll    100%    100%    100%        100%
+IRQ             50%     53%     100%        100%
+hybrid poll     70%     37%     70%         85%
+------------------------------------------------------
 
+--
+changes since v7:
+- rebase code on for-6.12/io_uring
+- remove unused varibales
 
-The error handling code in this function is a bit hairy, IMO.  I think
-if you check nbufs unlocked and validate it later, it could be much
-simpler:
+changes since v6:
+- Modified IO path, distinct iopoll and uring_cmd_iopoll
+- update test results
 
-static int io_copy_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx)
-{
-	struct io_mapped_ubuf **user_bufs;
-	struct io_rsrc_data *data;
-	int i, ret, nbufs;
+changes since v5:
+- Remove cstime recorder
+- Use minimize sleep time in different drivers
+- Use the half of whole runtime to do schedule
+- Consider as a suboptimal solution between
+  regular poll and IRQ
 
-	/* Read nr_user_bufs unlocked.  Must be validated later */
-	nbufs = READ_ONCE(src_ctx->nr_user_bufs);
-	if (!nbufs)
-		return -ENXIO;
+changes since v4:
+- Rewrote the commit
+- Update the test results
+- Reorganized the code basd on 6.11
 
-	ret = io_rsrc_data_alloc(ctx, IORING_RSRC_BUFFER, NULL, nbufs, &data);
-	if (ret)
-		return ret;
+changes since v3:
+- Simplified the commit
+- Add some comments on code
 
-	user_bufs = kcalloc(nbufs, sizeof(*ctx->user_bufs), GFP_KERNEL);
-	if (!user_bufs) {
-        	ret = -ENOMEM;
-		goto out_free_data;
-        }
+changes since v2:
+- Modified some formatting errors
+- Move judgement to poll path
 
-	mutex_unlock(&ctx->uring_lock);
-	mutex_lock(&src_ctx->uring_lock);
+changes since v1:
+- Extend hybrid poll to async polled io
 
- 	ret = -EBUSY;
-	if (nbufs != src_ctx->nr_user_bufs) {
-		mutex_unlock(&src_ctx->uring_lock);
-		mutex_lock(&ctx->uring_lock);
-		goto out;
-	}
-	for (i = 0; i < nbufs; i++) {
-		struct io_mapped_ubuf *src = src_ctx->user_bufs[i];
-		refcount_inc(&src->refs);
-		user_bufs[i] = src;
-	}
+Signed-off-by: hexue <xue01.he@samsung.com>
+---
+ include/linux/io_uring_types.h |  6 +++
+ include/uapi/linux/io_uring.h  |  1 +
+ io_uring/io_uring.c            |  3 +-
+ io_uring/rw.c                  | 99 ++++++++++++++++++++++++++++++----
+ 4 files changed, 97 insertions(+), 12 deletions(-)
 
-	/* Have a ref on the bufs now, drop src lock and re-grab our own lock */
-	mutex_unlock(&src_ctx->uring_lock);
-	mutex_lock(&ctx->uring_lock);
-
-	if (!ctx->user_bufs)
-                goto out_unmap;
-
-	ctx->user_bufs = user_bufs;
-	ctx->buf_data = data;
-	ctx->nr_user_bufs = nbufs;
-
-	return 0;
-
-out_unmap:
- 	/* someone raced setting up buffers, dump ours */
- 	for (i = 0; i < nbufs; i++)
- 		io_buffer_unmap(ctx, &user_bufs[i]);
-out:
-	kfree(user_bufs);
-out_free_data:
-	io_rsrc_data_free(data);
-	return ret;
-}
-
-Thanks,
-
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 3315005df117..35ac4a8bf6ab 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -422,6 +422,8 @@ struct io_ring_ctx {
+ 	unsigned short			n_sqe_pages;
+ 	struct page			**ring_pages;
+ 	struct page			**sqe_pages;
++	/* for io_uring hybrid poll*/
++	u64			available_time;
+ };
+ 
+ struct io_tw_state {
+@@ -657,6 +659,10 @@ struct io_kiocb {
+ 		u64			extra1;
+ 		u64			extra2;
+ 	} big_cqe;
++    /* for io_uring hybrid iopoll */
++	bool		poll_state;
++	u64			iopoll_start;
++	u64			iopoll_end;
+ };
+ 
+ struct io_overflow_cqe {
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 2aaf7ee256ac..42ae868651b0 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -199,6 +199,7 @@ enum io_uring_sqe_flags_bit {
+  * Removes indirection through the SQ index array.
+  */
+ #define IORING_SETUP_NO_SQARRAY		(1U << 16)
++#define IORING_SETUP_HY_POLL	(1U << 17)
+ 
+ enum io_uring_op {
+ 	IORING_OP_NOP,
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 3942db160f18..bb3dfd749572 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -301,6 +301,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 		goto err;
+ 
+ 	ctx->flags = p->flags;
++	ctx->available_time = LLONG_MAX;
+ 	atomic_set(&ctx->cq_wait_nr, IO_CQ_WAKE_INIT);
+ 	init_waitqueue_head(&ctx->sqo_sq_wait);
+ 	INIT_LIST_HEAD(&ctx->sqd_list);
+@@ -3603,7 +3604,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
+ 			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
+ 			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY |
+-			IORING_SETUP_NO_SQARRAY))
++			IORING_SETUP_NO_SQARRAY | IORING_SETUP_HY_POLL))
+ 		return -EINVAL;
+ 
+ 	return io_uring_create(entries, &p, params);
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index c004d21e2f12..4d32b9b9900b 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -772,6 +772,13 @@ static bool need_complete_io(struct io_kiocb *req)
+ 		S_ISBLK(file_inode(req->file)->i_mode);
+ }
+ 
++static void init_hybrid_poll(struct io_kiocb *req)
++{
++	/* make sure every req only block once*/
++	req->poll_state = false;
++	req->iopoll_start = ktime_get_ns();
++}
++
+ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
+ {
+ 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+@@ -809,6 +816,8 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
+ 		kiocb->ki_flags |= IOCB_HIPRI;
+ 		kiocb->ki_complete = io_complete_rw_iopoll;
+ 		req->iopoll_completed = 0;
++		if (ctx->flags & IORING_SETUP_HY_POLL)
++			init_hybrid_poll(req);
+ 	} else {
+ 		if (kiocb->ki_flags & IOCB_HIPRI)
+ 			return -EINVAL;
+@@ -1105,6 +1114,81 @@ void io_rw_fail(struct io_kiocb *req)
+ 	io_req_set_res(req, res, req->cqe.flags);
+ }
+ 
++static int io_uring_classic_poll(struct io_kiocb *req,
++		struct io_comp_batch *iob, unsigned int poll_flags)
++{
++	int ret;
++	struct file *file = req->file;
++
++	if (req->opcode == IORING_OP_URING_CMD) {
++		struct io_uring_cmd *ioucmd;
++
++		ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
++		ret = file->f_op->uring_cmd_iopoll(ioucmd, iob,
++						poll_flags);
++	} else {
++		struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
++
++		ret = file->f_op->iopoll(&rw->kiocb, iob, poll_flags);
++	}
++	return ret;
++}
++
++static u64 io_delay(struct io_ring_ctx *ctx, struct io_kiocb *req)
++{
++	struct hrtimer_sleeper timer;
++	enum hrtimer_mode mode;
++	ktime_t kt;
++	u64 sleep_time;
++
++	if (req->poll_state)
++		return 0;
++
++	if (ctx->available_time == LLONG_MAX)
++		return 0;
++
++	/* Using half running time to do schedul */
++	sleep_time = ctx->available_time / 2;
++
++	kt = ktime_set(0, sleep_time);
++	req->poll_state = true;
++
++	mode = HRTIMER_MODE_REL;
++	hrtimer_init_sleeper_on_stack(&timer, CLOCK_MONOTONIC, mode);
++	hrtimer_set_expires(&timer.timer, kt);
++	set_current_state(TASK_INTERRUPTIBLE);
++	hrtimer_sleeper_start_expires(&timer, mode);
++
++	if (timer.task)
++		io_schedule();
++
++	hrtimer_cancel(&timer.timer);
++	__set_current_state(TASK_RUNNING);
++	destroy_hrtimer_on_stack(&timer.timer);
++
++	return sleep_time;
++}
++
++static int io_uring_hybrid_poll(struct io_kiocb *req,
++				struct io_comp_batch *iob, unsigned int poll_flags)
++{
++	struct io_ring_ctx *ctx = req->ctx;
++	int ret;
++	u64 runtime, sleep_time;
++
++	sleep_time = io_delay(ctx, req);
++	ret = io_uring_classic_poll(req, iob, poll_flags);
++	req->iopoll_end = ktime_get_ns();
++	runtime = req->iopoll_end - req->iopoll_start - sleep_time;
++
++	/* use minimize sleep time if there are different speed
++	 * drivers, it could get more completions from fast one
++	 */
++	if (ctx->available_time > runtime)
++		ctx->available_time = runtime;
++	return ret;
++}
++
+ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ {
+ 	struct io_wq_work_node *pos, *start, *prev;
+@@ -1121,7 +1205,6 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 
+ 	wq_list_for_each(pos, start, &ctx->iopoll_list) {
+ 		struct io_kiocb *req = container_of(pos, struct io_kiocb, comp_list);
+-		struct file *file = req->file;
+ 		int ret;
+ 
+ 		/*
+@@ -1132,17 +1215,11 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 		if (READ_ONCE(req->iopoll_completed))
+ 			break;
+ 
+-		if (req->opcode == IORING_OP_URING_CMD) {
+-			struct io_uring_cmd *ioucmd;
+-
+-			ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+-			ret = file->f_op->uring_cmd_iopoll(ioucmd, &iob,
+-								poll_flags);
+-		} else {
+-			struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
++		if (ctx->flags & IORING_SETUP_HY_POLL)
++			ret = io_uring_hybrid_poll(req, &iob, poll_flags);
++		else
++			ret = io_uring_classic_poll(req, &iob, poll_flags);
+ 
+-			ret = file->f_op->iopoll(&rw->kiocb, &iob, poll_flags);
+-		}
+ 		if (unlikely(ret < 0))
+ 			return ret;
+ 		else if (ret)
 -- 
-Gabriel Krisman Bertazi
+2.40.1
+
 

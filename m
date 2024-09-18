@@ -1,398 +1,305 @@
-Return-Path: <io-uring+bounces-3221-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3222-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE12B97B6B5
-	for <lists+io-uring@lfdr.de>; Wed, 18 Sep 2024 04:11:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698EF97B724
+	for <lists+io-uring@lfdr.de>; Wed, 18 Sep 2024 05:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33ABE2865CF
-	for <lists+io-uring@lfdr.de>; Wed, 18 Sep 2024 02:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD4B91F2416A
+	for <lists+io-uring@lfdr.de>; Wed, 18 Sep 2024 03:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA05261FED;
-	Wed, 18 Sep 2024 02:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A788248D;
+	Wed, 18 Sep 2024 03:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fr+tv+DV"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i/ql75D1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2453658210
-	for <io-uring@vger.kernel.org>; Wed, 18 Sep 2024 02:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EE627442;
+	Wed, 18 Sep 2024 03:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726625453; cv=none; b=LjdCuYSpr7dBihWCzulu86YcJ0Mp7Aw7OxOOH+IfXjA/njfHpjM68jFRxcXoBW+jyg1ehUHef618zD61Tem/5FAHJVffU8W0UX86gjPQ+CJ9HZEASU/dVLdfB/9QAnRwXnNoUYbdtUVbRXh+qG6vSk++4hhETIzNHqma+yTx5fI=
+	t=1726631866; cv=none; b=IFdUuC0ydlarFfbzV4T69xIoVX6Ah+9IIrowKx7RWFW+8RMiU8lFkIvNf0ee8noDDLY1DltbW4wR9NnGwjO1VG7hkaajQQsrXuAL6ZME+IHq5p/j5be0PyFhoAm8608MMTngGlDm0dZhdi0nU+1NrdnLroNLpT8OBxj1qLUVobg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726625453; c=relaxed/simple;
-	bh=sKWbOMH4P24E6BnvZYSq6BRnKSlD5ZalDfrKb7+p5ts=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=gduiAXkAGKJZwzcdm8zF6PAFs7OBLBqcA47oEXrb9v22MFDHhMxB6phCz3xHjPCH6rAHlSuE1JbGKPK6nzmWa9NpLrwcuGjfP0Xq9qcJdZP35iv7hfEKWMNYXO6Om63XPldZ15v/nDfqZ5nBWppeROGKfMZaxQ3VJ3sK9N1lcPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fr+tv+DV; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240918021046epoutp045e924d39571a5b8c64f32a34f952b9b0~2NLIkc3lu2230722307epoutp04Y
-	for <io-uring@vger.kernel.org>; Wed, 18 Sep 2024 02:10:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240918021046epoutp045e924d39571a5b8c64f32a34f952b9b0~2NLIkc3lu2230722307epoutp04Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726625446;
-	bh=YB/Kn4zP87WsWLT08fcUQuDrLHGW9spUWa+9l41J8F0=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=fr+tv+DVcU0i6Xvo7GJDeUtnr3J9wVQp6hm+YPn67l97c5sMPX5Jw7hNebJsg4xak
-	 dgF+rRvZex9qytwKv2/Xh+Rr12mZdl+TbJfBQSLkBYF3uItFEOmvl/87SJ2icwrcl4
-	 Ovgb2zS39MQY0J2c8A2s8yhnR/1RGkg23nz5Hl7g=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240918021046epcas5p2128cd368a1f05cd72891245ddc1c63fa~2NLH8ScxI3272332723epcas5p2I;
-	Wed, 18 Sep 2024 02:10:46 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4X7hvS1NVVz4x9Pv; Wed, 18 Sep
-	2024 02:10:44 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	31.53.09642.4A63AE66; Wed, 18 Sep 2024 11:10:44 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240918021016epcas5p14d6e771ee39bee5dddf253c39b84110c~2NKspVdSG2902629026epcas5p1f;
-	Wed, 18 Sep 2024 02:10:16 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240918021016epsmtrp1e9e33ed7808cb8043d28b50da0774e92~2NKsopQyB1650416504epsmtrp17;
-	Wed, 18 Sep 2024 02:10:16 +0000 (GMT)
-X-AuditID: b6c32a4b-613ff700000025aa-e2-66ea36a4f73d
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7A.B5.07567.8863AE66; Wed, 18 Sep 2024 11:10:16 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240918021015epsmtip12bb6b10ee58bc7ef822daf5a7a49d632~2NKrfmte33116131161epsmtip1K;
-	Wed, 18 Sep 2024 02:10:15 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, hexue
-	<xue01.he@samsung.com>
-Subject: [PATCH v8 RESEND] io_uring: releasing CPU resources when polling
-Date: Wed, 18 Sep 2024 10:10:10 +0800
-Message-Id: <20240918021010.12894-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1726631866; c=relaxed/simple;
+	bh=frD+K5HzGjuUq0/TH8Nj5H7UMFbyFlSEUpgkRZX7OQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kooUeU1gxR/VOXVHKzAYomd3vEqoGGdcUvvaN2BpjONEtbnHwubg26CBLq6FlwErHA6cy8t0XnCH7o2Vk7UZFbxqwykrZOgr8hTdMOZnJ/0IOmQEPqKcHNZv0cE+zWbRC/GqXyFlkQjXVZ+9N2HV7uXuV6xUzUw1W3p/Kr5tmkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i/ql75D1; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726631863; x=1758167863;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=frD+K5HzGjuUq0/TH8Nj5H7UMFbyFlSEUpgkRZX7OQU=;
+  b=i/ql75D1kEiMZnBNJ0tupLx4EFrVgamasnK0EMjBeH8hnCvCzscKGJrs
+   VABMSkIsbaOcA3WF6qZ5hHqB4tHIlv38aPwYS7ohFJ4ajmXrUYLwCXvJ1
+   vg3nqdg0Rj/vKKdL1Qc0mvngxRPhLohA6G2DleMfzZNVj6A8YD1G5Us3J
+   /KCzk5S/0Yt6egxezZrlM2XaAjmPozB5OEImJ+PRpIVRp9hogvCkJtD7p
+   zD+4gL3fhY6MrKghhxqMw0hhQRzeSJfMVzKN0zWNygeYQuW667RP51ka9
+   w1ZN/TTQrdiHlD2PAx9bGH1TFzciO6koLY7CCcTpqM4Q5jC9LiCWhENR7
+   g==;
+X-CSE-ConnectionGUID: TLvtrn6fQcuUg0IpV/wEYw==
+X-CSE-MsgGUID: fid2O0s6RlKRSnh+58Nyiw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="25398610"
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="25398610"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 20:57:43 -0700
+X-CSE-ConnectionGUID: 97MOeXxuQZe8qSWGXtTPYQ==
+X-CSE-MsgGUID: AeWhu8umTt6Qh9MrwCDOPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="73962877"
+Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.161.23])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 20:57:39 -0700
+Date: Wed, 18 Sep 2024 11:56:31 +0800
+From: "Lai, Yi" <yi1.lai@linux.intel.com>
+To: Felix Moessbauer <felix.moessbauer@siemens.com>
+Cc: axboe@kernel.dk, asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org, cgroups@vger.kernel.org,
+	dqminh@cloudflare.com, longman@redhat.com,
+	adriaan.schmidt@siemens.com, florian.bezdeka@siemens.com,
+	stable@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	pengfei.xu@intel.com, yi1.lai@intel.com
+Subject: Re: [PATCH 1/1] io_uring/sqpoll: do not allow pinning outside of
+ cpuset
+Message-ID: <ZupPb3OH3tnM2ARj@ly-workstation>
+References: <20240909150036.55921-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLKsWRmVeSWpSXmKPExsWy7bCmlu4Ss1dpBsumslnMWbWN0WL13X42
-	i3et51gsfnXfZbS4vGsOm8XZCR9YLbounGJzYPfYOesuu8fls6UefVtWMXp83iQXwBKVbZOR
-	mpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdICSQlliTilQ
-	KCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITvjyf1p
-	TAWrXCq2rJ/J2MA40byLkZNDQsBEouNHN3sXIxeHkMBuRokLB8+yQDifGCX+nNsBlfnGKLH0
-	8m8WmJbl8/pYIRJ7GSVWzX3BCOH8YJS4vPEEK0gVm4CSxP4tHxhBbBEBbYnXj6cCdXNwMAtE
-	SbxYyw0SFhbwlOg808kOYrMIqEps3bIKzOYVsJSY3DcHapm8xM2u/cwQcUGJkzOfgMWZgeLN
-	W2czg+yVEDjELrFi/w0miAYXiQOnHrND2MISr45vgbKlJF72t0HZ+RKTv69nhLBrJNZtfge1
-	zFri35U9UHdqSqzfpQ8RlpWYemodE8RePone30+gVvFK7JgHYytJLDmyAmqkhMTvCYtYIWwP
-	iQnP/4PdLyQQK/Hpzi/2CYzys5C8MwvJO7MQNi9gZF7FKJlaUJybnlpsWmCcl1oOj9jk/NxN
-	jOB0qOW9g/HRgw96hxiZOBgPMUpwMCuJ8Ip/eJkmxJuSWFmVWpQfX1Sak1p8iNEUGMYTmaVE
-	k/OBCTmvJN7QxNLAxMzMzMTS2MxQSZz3devcFCGB9MSS1OzU1ILUIpg+Jg5OqQYmVbMVh67d
-	zr/lte5k5tQNm5hDtJ+YJp+/GfDlY0I938SX0bte7EyY1b/9dGxwp8zNldVrfk87/iPpb/Yi
-	G8t9G+9bLrQ8EhW+6jjLWwmHGufavg+fHLeqbVh5ndUimr9CLqBN/1bthvVfG7plPkxVEozY
-	1bH8mYemWP+MP5c6HtwM4Ul2uKonav/o1PxFkkv5F/X8bfDam3D9j3Bylq7xnB0lErl98rvv
-	Myw61y0mcGHF+T2dS8Ws67MVDGNrpttI9jHs0VJaW7dg13zx/UnunbzTJ7s//bfGxebYjrCv
-	k56ubnzx9/XMIz5/HsXVMqWs9nh0UvnuydK2Sw8zHFyuGH5WfcX4W1Hr57+2W/NK5iuxFGck
-	GmoxFxUnAgAnk7xuEAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsWy7bCSnG6H2as0g+MLdC3mrNrGaLH6bj+b
-	xbvWcywWv7rvMlpc3jWHzeLshA+sFl0XTrE5sHvsnHWX3ePy2VKPvi2rGD0+b5ILYInisklJ
-	zcksSy3St0vgynhyfxpTwSqXii3rZzI2ME4072Lk5JAQMJFYPq+PFcQWEtjNKDH3lzdEXEJi
-	x6M/rBC2sMTKf8/Zuxi5gGq+MUq87t8MlmATUJLYv+UDYxcjB4eIgK5E410FkDCzQIzEhz0T
-	2EFsYQFPic4znWA2i4CqxNYtq8BsXgFLicl9c1gg5stL3OzazwwRF5Q4OfMJC8QceYnmrbOZ
-	JzDyzUKSmoUktYCRaRWjZGpBcW56brJhgWFearlecWJucWleul5yfu4mRnBYamnsYLw3/5/e
-	IUYmDsZDjBIczEoivOIfXqYJ8aYkVlalFuXHF5XmpBYfYpTmYFES5zWcMTtFSCA9sSQ1OzW1
-	ILUIJsvEwSnVwPTaZ+IPgduP2DVOs90ve6+l/vnU7idKTTvY3QtyHqor+bcr9Of/anU3Elpd
-	LHXhH88+u2/RqT5WTJuSF959f3f/kXLpOWt9V86oOcQUUbHm1QFV1dkxDWszEiYs5oifePiX
-	a5j+rQB35T8n564zC+HqiW8VfBc5ffmx809LVV0bf65mXRawR6omqFe/JmT/J2FOj0/CfwwU
-	U3Sqvzg5fE1Z5LB96tFJtUwSJjvmvP2edK1nVwb/X/87SSyxF5mqHO7pWpzQO7f8RL9m7qpv
-	mVOYtbesudn1Od1j+TslJwW5GSXpnrlCYo/anWc1CHRxeF9frtiZOFPl38vo/Qcyqzbf2i52
-	iMVSSv27zezztkosxRmJhlrMRcWJANtZQv66AgAA
-X-CMS-MailID: 20240918021016epcas5p14d6e771ee39bee5dddf253c39b84110c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240918021016epcas5p14d6e771ee39bee5dddf253c39b84110c
-References: <CGME20240918021016epcas5p14d6e771ee39bee5dddf253c39b84110c@epcas5p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909150036.55921-1-felix.moessbauer@siemens.com>
 
-This patch add a new hybrid poll at io_uring level, it also set a signal
-"IORING_SETUP_HY_POLL" to application, aim to provide a interface for users
-to enable use new hybrid polling flexibly.
+Hi Felix Moessbauer,
 
-io_uring use polling mode could improve the IO performence, but it will
-spend 100% of CPU resources to do polling.
+Greetings!
 
-A new hybrid poll is implemented on the io_uring layer. Once IO issued,
-it will not polling immediately, but block first and re-run before IO
-complete, then poll to reap IO. This poll function could be a suboptimal
-solution when running on a single thread, it offers the performance lower
-than regular polling but higher than IRQ, and CPU utilization is also lower
-than polling.
+I used Syzkaller and found that there is KASAN: use-after-free Read in io_sq_offload_create in Linux-next tree - next-20240916.
 
-Test Result
-fio-3.35, 16 poll queues, 1 thread
--------------------------------------------------------------------------
-Performance
--------------------------------------------------------------------------
-                write         read        randwrite  randread
-regular poll BW=3939MiB/s  BW=6613MiB/s  IOPS=190K  IOPS=470K
-IRQ          BW=3927MiB/s  BW=6612MiB/s  IOPS=181K  IOPS=203K
-hybrid poll  BW=3937MiB/s  BW=6623MiB/s  IOPS=190K  IOPS=358K(suboptimal)
--------------------------------------------------------------------------
-CPU Utilization
-------------------------------------------------------
-                write   read    randwrite   randread
-regular poll    100%    100%    100%        100%
-IRQ             50%     53%     100%        100%
-hybrid poll     70%     37%     70%         85%
-------------------------------------------------------
+After bisection and the first bad commit is:
+"
+f011c9cf04c0 io_uring/sqpoll: do not allow pinning outside of cpuset
+"
 
---
-changes since v7:
-- rebase code on for-6.12/io_uring
-- remove unused varibales
+All detailed into can be found at:
+https://github.com/laifryiee/syzkaller_logs/tree/main/240917_135250_io_sq_offload_create
+Syzkaller repro code:
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/repro.c
+Syzkaller repro syscall steps:
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/repro.prog
+Syzkaller report:
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/repro.report
+Kconfig(make olddefconfig):
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/kconfig_origin
+Bisect info:
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/bisect_info.log
+bzImage:
+https://github.com/laifryiee/syzkaller_logs/raw/main/240917_135250_io_sq_offload_create/bzImage_7083504315d64199a329de322fce989e1e10f4f7
+Issue dmesg:
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/7083504315d64199a329de322fce989e1e10f4f7_dmesg.log
 
-changes since v6:
-- Modified IO path, distinct iopoll and uring_cmd_iopoll
-- update test results
+"
+[   23.564898] ==================================================================
+[   23.565444] BUG: KASAN: use-after-free in io_sq_offload_create+0xcaa/0x11d0
+[   23.565971] Read of size 8 at addr ffff888036377898 by task repro/729
+[   23.566459] 
+[   23.566593] CPU: 0 UID: 0 PID: 729 Comm: repro Not tainted 6.11.0-next-20240916-7083504315d6 #1
+[   23.567271] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
+[   23.568066] Call Trace:
+[   23.568252]  <TASK>
+[   23.568417]  dump_stack_lvl+0xea/0x150
+[   23.568718]  print_report+0xce/0x610
+[   23.569001]  ? io_sq_offload_create+0xcaa/0x11d0
+[   23.569340]  ? kasan_addr_to_slab+0x11/0xb0
+[   23.569651]  ? io_sq_offload_create+0xcaa/0x11d0
+[   23.569992]  kasan_report+0xcc/0x110
+[   23.570277]  ? io_sq_offload_create+0xcaa/0x11d0
+[   23.570621]  kasan_check_range+0x3e/0x1c0
+[   23.570917]  __kasan_check_read+0x15/0x20
+[   23.571212]  io_sq_offload_create+0xcaa/0x11d0
+[   23.571540]  ? __pfx_io_sq_offload_create+0x10/0x10
+[   23.571893]  ? __pfx___lock_acquire+0x10/0x10
+[   23.572228]  ? __this_cpu_preempt_check+0x21/0x30
+[   23.572580]  ? lock_acquire.part.0+0x152/0x390
+[   23.572910]  ? __this_cpu_preempt_check+0x21/0x30
+[   23.573254]  ? lock_release+0x441/0x870
+[   23.573541]  ? __pfx_lock_release+0x10/0x10
+[   23.573846]  ? trace_lock_acquire+0x139/0x1b0
+[   23.574180]  ? debug_smp_processor_id+0x20/0x30
+[   23.574524]  ? rcu_is_watching+0x19/0xc0
+[   23.574826]  ? __alloc_pages_noprof+0x517/0x710
+[   23.575171]  ? __pfx___alloc_pages_noprof+0x10/0x10
+[   23.575526]  ? mod_objcg_state+0x42c/0x9c0
+[   23.575838]  ? lockdep_hardirqs_on+0x89/0x110
+[   23.576159]  ? __sanitizer_cov_trace_switch+0x58/0xa0
+[   23.576534]  ? policy_nodemask+0xf9/0x450
+[   23.576835]  ? __sanitizer_cov_trace_const_cmp2+0x1c/0x30
+[   23.577220]  ? alloc_pages_mpol_noprof+0x35d/0x580
+[   23.577575]  ? __pfx_alloc_pages_mpol_noprof+0x10/0x10
+[   23.577950]  ? __kmalloc_node_noprof+0x3a3/0x4e0
+[   23.578302]  ? __kvmalloc_node_noprof+0x7f/0x240
+[   23.578645]  ? alloc_pages_noprof+0xa9/0x180
+[   23.578963]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
+[   23.579347]  ? io_pages_map+0x244/0x5c0
+[   23.579631]  io_uring_setup+0x18df/0x3950
+[   23.579936]  ? __pfx_io_uring_setup+0x10/0x10
+[   23.580263]  ? __audit_syscall_entry+0x39c/0x500
+[   23.580602]  __x64_sys_io_uring_setup+0xa4/0x160
+[   23.580939]  x64_sys_call+0x17f5/0x20d0
+[   23.581224]  do_syscall_64+0x6d/0x140
+[   23.581498]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[   23.581872] RIP: 0033:0x7efd9fa3ee5d
+[   23.582140] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 93 af 1b 00 f7 d8 64 89 01 48
+[   23.583404] RSP: 002b:00007ffdd4400858 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
+[   23.583938] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007efd9fa3ee5d
+[   23.584430] RDX: 00007efd9fb3f247 RSI: 0000000020000080 RDI: 0000000000005230
+[   23.584927] RBP: 00007ffdd4400860 R08: 00007ffdd44002d0 R09: 00007ffdd4400890
+[   23.585419] R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffdd44009b8
+[   23.585914] R13: 0000000000401730 R14: 0000000000403e08 R15: 00007efd9fcb5000
+[   23.586424]  </TASK>
+[   23.586589] 
+[   23.586709] The buggy address belongs to the physical page:
+[   23.587094] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x36377
+[   23.587644] flags: 0xfffffc0000000(node=0|zone=1|lastcpupid=0x1fffff)
+[   23.588103] raw: 000fffffc0000000 ffffea0000d8ddc8 ffffea0000d8ddc8 0000000000000000
+[   23.588636] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[   23.589167] page dumped because: kasan: bad access detected
+[   23.589551] 
+[   23.589670] Memory state around the buggy address:
+[   23.590007]  ffff888036377780: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   23.590514]  ffff888036377800: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   23.591011] >ffff888036377880: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   23.591508]                             ^
+[   23.591794]  ffff888036377900: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   23.592292]  ffff888036377980: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   23.592789] ==================================================================
+[   23.593344] Disabling lock debugging due to kernel taint
+"
 
-changes since v5:
-- Remove cstime recorder
-- Use minimize sleep time in different drivers
-- Use the half of whole runtime to do schedule
-- Consider as a suboptimal solution between
-  regular poll and IRQ
+I hope you find it useful.
 
-changes since v4:
-- Rewrote the commit
-- Update the test results
-- Reorganized the code basd on 6.11
+Regards,
+Yi Lai
 
-changes since v3:
-- Simplified the commit
-- Add some comments on code
-
-changes since v2:
-- Modified some formatting errors
-- Move judgement to poll path
-
-changes since v1:
-- Extend hybrid poll to async polled io
-
-Signed-off-by: hexue <xue01.he@samsung.com>
 ---
- include/linux/io_uring_types.h |  6 +++
- include/uapi/linux/io_uring.h  |  1 +
- io_uring/io_uring.c            |  3 +-
- io_uring/rw.c                  | 99 ++++++++++++++++++++++++++++++----
- 4 files changed, 97 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 3315005df117..35ac4a8bf6ab 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -422,6 +422,8 @@ struct io_ring_ctx {
- 	unsigned short			n_sqe_pages;
- 	struct page			**ring_pages;
- 	struct page			**sqe_pages;
-+	/* for io_uring hybrid poll*/
-+	u64			available_time;
- };
- 
- struct io_tw_state {
-@@ -657,6 +659,10 @@ struct io_kiocb {
- 		u64			extra1;
- 		u64			extra2;
- 	} big_cqe;
-+    /* for io_uring hybrid iopoll */
-+	bool		poll_state;
-+	u64			iopoll_start;
-+	u64			iopoll_end;
- };
- 
- struct io_overflow_cqe {
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 2aaf7ee256ac..42ae868651b0 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -199,6 +199,7 @@ enum io_uring_sqe_flags_bit {
-  * Removes indirection through the SQ index array.
-  */
- #define IORING_SETUP_NO_SQARRAY		(1U << 16)
-+#define IORING_SETUP_HY_POLL	(1U << 17)
- 
- enum io_uring_op {
- 	IORING_OP_NOP,
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 3942db160f18..bb3dfd749572 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -301,6 +301,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 		goto err;
- 
- 	ctx->flags = p->flags;
-+	ctx->available_time = LLONG_MAX;
- 	atomic_set(&ctx->cq_wait_nr, IO_CQ_WAKE_INIT);
- 	init_waitqueue_head(&ctx->sqo_sq_wait);
- 	INIT_LIST_HEAD(&ctx->sqd_list);
-@@ -3603,7 +3604,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
- 			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
- 			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY |
--			IORING_SETUP_NO_SQARRAY))
-+			IORING_SETUP_NO_SQARRAY | IORING_SETUP_HY_POLL))
- 		return -EINVAL;
- 
- 	return io_uring_create(entries, &p, params);
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index c004d21e2f12..4d32b9b9900b 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -772,6 +772,13 @@ static bool need_complete_io(struct io_kiocb *req)
- 		S_ISBLK(file_inode(req->file)->i_mode);
- }
- 
-+static void init_hybrid_poll(struct io_kiocb *req)
-+{
-+	/* make sure every req only block once*/
-+	req->poll_state = false;
-+	req->iopoll_start = ktime_get_ns();
-+}
-+
- static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
- {
- 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
-@@ -809,6 +816,8 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
- 		kiocb->ki_flags |= IOCB_HIPRI;
- 		kiocb->ki_complete = io_complete_rw_iopoll;
- 		req->iopoll_completed = 0;
-+		if (ctx->flags & IORING_SETUP_HY_POLL)
-+			init_hybrid_poll(req);
- 	} else {
- 		if (kiocb->ki_flags & IOCB_HIPRI)
- 			return -EINVAL;
-@@ -1105,6 +1114,81 @@ void io_rw_fail(struct io_kiocb *req)
- 	io_req_set_res(req, res, req->cqe.flags);
- }
- 
-+static int io_uring_classic_poll(struct io_kiocb *req,
-+		struct io_comp_batch *iob, unsigned int poll_flags)
-+{
-+	int ret;
-+	struct file *file = req->file;
-+
-+	if (req->opcode == IORING_OP_URING_CMD) {
-+		struct io_uring_cmd *ioucmd;
-+
-+		ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
-+		ret = file->f_op->uring_cmd_iopoll(ioucmd, iob,
-+						poll_flags);
-+	} else {
-+		struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
-+
-+		ret = file->f_op->iopoll(&rw->kiocb, iob, poll_flags);
-+	}
-+	return ret;
-+}
-+
-+static u64 io_delay(struct io_ring_ctx *ctx, struct io_kiocb *req)
-+{
-+	struct hrtimer_sleeper timer;
-+	enum hrtimer_mode mode;
-+	ktime_t kt;
-+	u64 sleep_time;
-+
-+	if (req->poll_state)
-+		return 0;
-+
-+	if (ctx->available_time == LLONG_MAX)
-+		return 0;
-+
-+	/* Using half running time to do schedul */
-+	sleep_time = ctx->available_time / 2;
-+
-+	kt = ktime_set(0, sleep_time);
-+	req->poll_state = true;
-+
-+	mode = HRTIMER_MODE_REL;
-+	hrtimer_init_sleeper_on_stack(&timer, CLOCK_MONOTONIC, mode);
-+	hrtimer_set_expires(&timer.timer, kt);
-+	set_current_state(TASK_INTERRUPTIBLE);
-+	hrtimer_sleeper_start_expires(&timer, mode);
-+
-+	if (timer.task)
-+		io_schedule();
-+
-+	hrtimer_cancel(&timer.timer);
-+	__set_current_state(TASK_RUNNING);
-+	destroy_hrtimer_on_stack(&timer.timer);
-+
-+	return sleep_time;
-+}
-+
-+static int io_uring_hybrid_poll(struct io_kiocb *req,
-+				struct io_comp_batch *iob, unsigned int poll_flags)
-+{
-+	struct io_ring_ctx *ctx = req->ctx;
-+	int ret;
-+	u64 runtime, sleep_time;
-+
-+	sleep_time = io_delay(ctx, req);
-+	ret = io_uring_classic_poll(req, iob, poll_flags);
-+	req->iopoll_end = ktime_get_ns();
-+	runtime = req->iopoll_end - req->iopoll_start - sleep_time;
-+
-+	/* use minimize sleep time if there are different speed
-+	 * drivers, it could get more completions from fast one
-+	 */
-+	if (ctx->available_time > runtime)
-+		ctx->available_time = runtime;
-+	return ret;
-+}
-+
- int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- {
- 	struct io_wq_work_node *pos, *start, *prev;
-@@ -1121,7 +1205,6 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- 
- 	wq_list_for_each(pos, start, &ctx->iopoll_list) {
- 		struct io_kiocb *req = container_of(pos, struct io_kiocb, comp_list);
--		struct file *file = req->file;
- 		int ret;
- 
- 		/*
-@@ -1132,17 +1215,11 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- 		if (READ_ONCE(req->iopoll_completed))
- 			break;
- 
--		if (req->opcode == IORING_OP_URING_CMD) {
--			struct io_uring_cmd *ioucmd;
--
--			ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
--			ret = file->f_op->uring_cmd_iopoll(ioucmd, &iob,
--								poll_flags);
--		} else {
--			struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
-+		if (ctx->flags & IORING_SETUP_HY_POLL)
-+			ret = io_uring_hybrid_poll(req, &iob, poll_flags);
-+		else
-+			ret = io_uring_classic_poll(req, &iob, poll_flags);
- 
--			ret = file->f_op->iopoll(&rw->kiocb, &iob, poll_flags);
--		}
- 		if (unlikely(ret < 0))
- 			return ret;
- 		else if (ret)
--- 
-2.40.1
+If you don't need the following environment to reproduce the problem or if you
+already have one reproduced environment, please ignore the following information.
 
+How to reproduce:
+git clone https://gitlab.com/xupengfe/repro_vm_env.git
+cd repro_vm_env
+tar -xvf repro_vm_env.tar.gz
+cd repro_vm_env; ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
+  // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
+  // You could change the bzImage_xxx as you want
+  // Maybe you need to remove line "-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \" for different qemu version
+You could use below command to log in, there is no password for root.
+ssh -p 10023 root@localhost
+
+After login vm(virtual machine) successfully, you could transfer reproduced
+binary to the vm by below way, and reproduce the problem in vm:
+gcc -pthread -o repro repro.c
+scp -P 10023 repro root@localhost:/root/
+
+Get the bzImage for target kernel:
+Please use target kconfig and copy it to kernel_src/.config
+make olddefconfig
+make -jx bzImage           //x should equal or less than cpu num your pc has
+
+Fill the bzImage file into above start3.sh to load the target kernel in vm.
+
+Tips:
+If you already have qemu-system-x86_64, please ignore below info.
+If you want to install qemu v7.1.0 version:
+git clone https://github.com/qemu/qemu.git
+cd qemu
+git checkout -f v7.1.0
+mkdir build
+cd build
+yum install -y ninja-build.x86_64
+yum -y install libslirp-devel.x86_64
+../configure --target-list=x86_64-softmmu --enable-kvm --enable-vnc --enable-gtk --enable-sdl --enable-usb-redir --enable-slirp
+make
+make install 
+
+On Mon, Sep 09, 2024 at 05:00:36PM +0200, Felix Moessbauer wrote:
+> The submit queue polling threads are userland threads that just never
+> exit to the userland. When creating the thread with IORING_SETUP_SQ_AFF,
+> the affinity of the poller thread is set to the cpu specified in
+> sq_thread_cpu. However, this CPU can be outside of the cpuset defined
+> by the cgroup cpuset controller. This violates the rules defined by the
+> cpuset controller and is a potential issue for realtime applications.
+> 
+> In b7ed6d8ffd6 we fixed the default affinity of the poller thread, in
+> case no explicit pinning is required by inheriting the one of the
+> creating task. In case of explicit pinning, the check is more
+> complicated, as also a cpu outside of the parent cpumask is allowed.
+> We implemented this by using cpuset_cpus_allowed (that has support for
+> cgroup cpusets) and testing if the requested cpu is in the set.
+> 
+> Fixes: 37d1e2e3642e ("io_uring: move SQPOLL thread io-wq forked worker")
+> Cc: stable@vger.kernel.org # 6.1+
+> Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+> ---
+> Hi,
+> 
+> that's hopefully the last fix of cpu pinnings of the sq poller threads.
+> However, there is more to come on the io-wq side. E.g the syscalls for
+> IORING_REGISTER_IOWQ_AFF that can be used to change the affinites are
+> not yet protected. I'm currently just lacking good reproducers for that.
+> I also have to admit that I don't feel too comfortable making changes to
+> the wq part, given that I don't have good tests.
+> 
+> While fixing this, I'm wondering if it makes sense to add tests for the
+> combination of pinning and cpuset. If yes, where should these tests be
+> added?
+> 
+> Best regards,
+> Felix Moessbauer
+> Siemens AG
+> 
+>  io_uring/sqpoll.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+> index 713be7c29388..b8ec8fec99b8 100644
+> --- a/io_uring/sqpoll.c
+> +++ b/io_uring/sqpoll.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/audit.h>
+>  #include <linux/security.h>
+> +#include <linux/cpuset.h>
+>  #include <linux/io_uring.h>
+>  
+>  #include <uapi/linux/io_uring.h>
+> @@ -459,10 +460,12 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
+>  			return 0;
+>  
+>  		if (p->flags & IORING_SETUP_SQ_AFF) {
+> +			struct cpumask allowed_mask;
+>  			int cpu = p->sq_thread_cpu;
+>  
+>  			ret = -EINVAL;
+> -			if (cpu >= nr_cpu_ids || !cpu_online(cpu))
+> +			cpuset_cpus_allowed(current, &allowed_mask);
+> +			if (!cpumask_test_cpu(cpu, &allowed_mask))
+>  				goto err_sqpoll;
+>  			sqd->sq_cpu = cpu;
+>  		} else {
+> -- 
+> 2.39.2
+> 
 

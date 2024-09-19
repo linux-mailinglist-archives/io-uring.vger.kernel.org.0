@@ -1,75 +1,74 @@
-Return-Path: <io-uring+bounces-3231-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3232-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C6897C30C
-	for <lists+io-uring@lfdr.de>; Thu, 19 Sep 2024 04:59:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 788BF97C7DF
+	for <lists+io-uring@lfdr.de>; Thu, 19 Sep 2024 12:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2832E1F2281C
-	for <lists+io-uring@lfdr.de>; Thu, 19 Sep 2024 02:59:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB0FE1C23BF7
+	for <lists+io-uring@lfdr.de>; Thu, 19 Sep 2024 10:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF13B156E4;
-	Thu, 19 Sep 2024 02:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF97B168BD;
+	Thu, 19 Sep 2024 10:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NOgV1qXV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mqgpy7Fu"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69085125DE
-	for <io-uring@vger.kernel.org>; Thu, 19 Sep 2024 02:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D8633D8
+	for <io-uring@vger.kernel.org>; Thu, 19 Sep 2024 10:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726714777; cv=none; b=gz0rlU/++ISeAiwJ9sasE8pbELmSyberLyM6BxM+kDp98aHa3BrgxsW4gzwtWkkNMGIefYtD8kx7/ubU5iPUka7sccWt3C0/dyz2opjCSMSTLkWVOiBt5B1JTTmZINu687KTSMPg5SZf2mlM4TJpfRHZyMq4JX2fVEbCY3GED5w=
+	t=1726741343; cv=none; b=R9Bmf9pbLDwwrA3HRHe/5yHGdftBwOJmkQIbzub5w2jcI6BYHWKpR9mTZGvc7TaUHeWpKuaVqiyFHje999hImrD52G3dbcUSHiQFYZnHK2RjAyO/HzkRYjUnpQZnEPtyWJwaK/1VXk/caB/l+bCc1PWSuWrtcMJU2ygNhqnkipM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726714777; c=relaxed/simple;
-	bh=JomdbaigvuCqbsbgeRQWsLuld5x+bjvG+g/+e+z//8c=;
+	s=arc-20240116; t=1726741343; c=relaxed/simple;
+	bh=ae2sK6gbFdzWrLur0NhRU0vkG1HPguYkfuoTNPVOFSU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Ar/EkIDKjfp+n0hwAxM9W1jAOnbYZElHFKl14TfAHE1dhiEDYfq9dpsXPdC9v2bgt6f4ib3wHImiMn2/wNBgPAZKFj3KxITwvJdKqgIVypqsfWF5FK9kn/ASOKYUEzH543H6Vlr2JoWiIf56T3aUPBgZR5LxppRJnIiFK+DWPso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NOgV1qXV; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d29b7edc2so36313066b.1
-        for <io-uring@vger.kernel.org>; Wed, 18 Sep 2024 19:59:32 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=C7D99/sxdWl0/dBInA4h38ymkKys/VkpDSJEbUJk8jmPXD84seVw9SZ3RLxkIeYF/vwmriNSA84cjyCRQwoy32w9yHxr/AG+tXfPA8QUnBvEeK3mn4+Gtlwa9A8WSHtz/zDT/HtE6PMSiwaZLWsr6VxQKd/KAiVkEkmvWYcdG/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mqgpy7Fu; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c42bd0386cso890724a12.2
+        for <io-uring@vger.kernel.org>; Thu, 19 Sep 2024 03:22:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726714771; x=1727319571; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726741340; x=1727346140; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=R55u0GBo+bW9A/PWdjSvmvFDkYExmph5qqMGKGkkhjg=;
-        b=NOgV1qXVhJvYY3G7zXy0nDqydirXHHDukz9G4IFqMgh/W02zXrs8rxzvWEoyZT9rR4
-         vGcZpYkkzVaGsEuyzG6X+xKvzEazHz5O/82QCWD+z3FplcDY4LrfN2ElB0sJVgpft0wU
-         QZR3X0TTFQ5XemgspX6rYFwe2KuohyskI2pRfmydev5MybwlyaBHtK/ROfKefzrO4HFX
-         9WdeWgcYeJI4LDjeSx85his5Tjw7bnwuib94T5ISzJ4NENc9/XHjHdNqxQtImnAUMA0O
-         8aGLuulfcdtqwC7zP31SEUroKNy4175/oW59XOLcVXXI8U0S/BTMdN34k+AUmewNo8K8
-         sOgA==
+        bh=tbLB5tJsjEtMyazIOcNA/W1/4WBDV33MJC/I0dVyEpQ=;
+        b=Mqgpy7FuN9Mf+0sBZBgLmBwHLiA6rd6tMPWdN7LzK5Dy00L4SadJFT5WJI3JaJRFYx
+         HdP1xDs6vnKf7OfKTEJo1rtl1GpehwJxQ1MGguZvnk6BiybCNNxy+z/PVl9imRwgr2mv
+         QtkuW+d/rCbf7agMFCATU9IKcvXM7uGC+ehoP9KA+3qIJ2HFuKusWanLh8tr7HddN2Yt
+         ZYUxKAwT6iZFm9dh2e4N803tXWK/2S8zg/55Smb1io/tA4u9Yba5aWsghsrAigRzgpqO
+         Fz9poSM6TtdRvkS4K5MPFamwztfE2U0CXSFKbDfNPq421G7JkCA5ZynHbQy66624F+gC
+         g+kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726714771; x=1727319571;
+        d=1e100.net; s=20230601; t=1726741340; x=1727346140;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R55u0GBo+bW9A/PWdjSvmvFDkYExmph5qqMGKGkkhjg=;
-        b=tl4nP3Yq08IYbb6MTscZCeBN5/Sahfh96ztlwYmEQC0Pz5VgNZH2wuk82AlygT1DWf
-         UL2Z34sEmG9DJ37LuVPrkwgaqAKREvHqIJh7B5c+8cOhjPJyu1syH92pvv3C7le+joSH
-         aWwKxOrCKt+lrR9kXIyyUjXheEkbiBwe8dQMMdh8/STWb+lR6nC3sL1v8Q2unLLg/lWH
-         KIgoWfnr8rZvyA+tjDQzHduv3x1HLWLQ2GVx9UYzxvFerb7ufTsiPJ8AV+BG6NG0tYwL
-         ga3xXpAOSaY87Oi8bXSThbR/3fUWLBI4rpmlabeg5OdXlRozlltMFaISqaenmJkKArW0
-         RE4g==
-X-Forwarded-Encrypted: i=1; AJvYcCX5d5QijyviXrNXBEPrkyUKjtMTTghizQxMUr6yQp/EZhvp5oK0y8zIHcx4T4e8F5nS+hz/qHHvlg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEyQhRgek263pFGEFRVrUuoJPZncTD36SnBYWmJ3AAzOQlMp0X
-	JZxKQqCT2IOKYiPbFC7VvqyF1x97vXnK5aIagsIfKc/wnyaPi6Rm2vabb0IUVjeKgDgjmwT3Hrx
-	+9rOMbw==
-X-Google-Smtp-Source: AGHT+IEGgPqm99mswfeZ6bScibJgvJ0z7TbURgFL0I6nkLxiYX10y1e1d8O5SBnKWkjuxuKYTgv1PQ==
-X-Received: by 2002:a17:907:7b8a:b0:a90:b67e:7aa9 with SMTP id a640c23a62f3a-a90b67e809dmr368370566b.55.1726714771250;
-        Wed, 18 Sep 2024 19:59:31 -0700 (PDT)
-Received: from [192.168.0.216] ([185.44.53.103])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610966e2sm669803566b.16.2024.09.18.19.59.28
+        bh=tbLB5tJsjEtMyazIOcNA/W1/4WBDV33MJC/I0dVyEpQ=;
+        b=xK2NYfjdXZtizFOJebJfcBt9PJzAiZ6pZLzKV8/MnfuqlmVnOE02Ld1r/2Yv2+SJ9Y
+         9BoDvkRnlGhHcvVf7Wwpc5JJFNwDwZ0xGY1WUNCyAiRGIzbd/y90k6VNmYIKIWWBgJbD
+         /9vp/UKpfdz44Zw9GKqo/gP4rwkqpZ2sJOK1suO1usck1PH9gNpke3eQZ1552F310FPF
+         ryz0o0xH23z/e66aqO4Rn5mI2WiIM8gJdEk/zD+ROj7WrOYKehVSU2U1rqxKHxLgmmjo
+         YBTPv9OSC24NaLKAi2/2R46U5T3T2NlcV0l0sSFvYYPPlIv8UaaeNrLG5/XOlCL1cQOU
+         DmJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWp9cPeLPQy+PoB1HajFjoD3GHhslLuWrZgl2TTIENF7aN26rjx9SGSuZXRmSwh6uY21nteAfrqwQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YykXV6s8NfX2AOZWRoXlaYDvsXE0SqKzVfO48f/l4AOpvdFLBw7
+	m+6KQcCydDVl4Wnmc1o6OzQvGM9kB/8bRPRpZfB8UumMWiueV6W+wPVBvnvP
+X-Google-Smtp-Source: AGHT+IEDXLgBO4w4Q6Pr0kxFRMEcy976iTcrClG1d3EtYKKYDSC2wQ2eqCm/Z931Nv4YCS/ryoraHg==
+X-Received: by 2002:a17:906:730d:b0:a7a:a46e:dc3f with SMTP id a640c23a62f3a-a90296eabc9mr2907500766b.45.1726741340158;
+        Thu, 19 Sep 2024 03:22:20 -0700 (PDT)
+Received: from [192.168.42.125] ([62.218.223.254])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a906133049csm698645266b.205.2024.09.19.03.22.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2024 19:59:29 -0700 (PDT)
-Message-ID: <050c85eb-177f-4ef5-93ed-b5d1179b4015@kernel.dk>
-Date: Wed, 18 Sep 2024 20:59:27 -0600
+        Thu, 19 Sep 2024 03:22:19 -0700 (PDT)
+Message-ID: <6e445fe1-9a75-4e50-aa70-514937064e64@gmail.com>
+Date: Thu, 19 Sep 2024 11:22:57 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,242 +76,58 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] io_uring/napi: add static napi tracking strategy
-To: Olivier Langlois <olivier@trillion01.com>,
- Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1726589775.git.olivier@trillion01.com>
- <edca1df43f5114f91f9d8ea95e2e8769ec6792b4.1726589775.git.olivier@trillion01.com>
+Subject: Re: [PATCH] io_uring: run normal task_work AFTER local work
+To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <8e3894e3-2609-4233-83df-1633fba7d4dd@kernel.dk>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <edca1df43f5114f91f9d8ea95e2e8769ec6792b4.1726589775.git.olivier@trillion01.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <8e3894e3-2609-4233-83df-1633fba7d4dd@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/18/24 6:59 AM, Olivier Langlois wrote:
-> add the static napi tracking strategy that allows the user to manually
-> manage the napi ids list to busy poll and offload the ring from
-> dynamically update the list.
+On 9/18/24 19:03, Jens Axboe wrote:
+> io_cqring_wait() doesn't run normal task_work after the local work, and
+> it's the only location to do it in that order. Normally this doesn't
+> matter, except if:
+> 
+> 1) The ring is setup with DEFER_TASKRUN
+> 2) The local work item may generate normal task_work
+> 
+> For condition 2, this can happen when closing a file and it's the final
+> put of that file, for example. This can cause stalls where a task is
+> waiting to make progress, but there's nothing else that will wake it up.
 
-Add the static napi tracking strategy. That allows the user to manually
-manage the napi ids list for busy polling, and eliminate the overhead of
-dynamically updating the list from the fast path.
+TIF_NOTIFY_SIGNAL from normal task_work should prevent the task
+from sleeping until it processes task works, that should make
+the waiting loop make another iteration and get to the task work
+execution again (if it continues to sleep). I don't understand how
+the patch works, but if it's legit sounds we have a bigger problem,
+e.g. what if someone else queue up a work right after that tw
+execution block.
 
-Maybe?
-
-> index b1e0e0d85349..6f0e40e1469c 100644
-> --- a/io_uring/fdinfo.c
-> +++ b/io_uring/fdinfo.c
-> @@ -46,6 +46,46 @@ static __cold int io_uring_show_cred(struct seq_file *m, unsigned int id,
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_NET_RX_BUSY_POLL
-> +static __cold void common_tracking_show_fdinfo(struct io_ring_ctx *ctx,
-> +					       struct seq_file *m,
-> +					       const char *tracking_strategy)
-> +{
-> +	seq_puts(m, "NAPI:\tenabled\n");
-> +	seq_printf(m, "napi tracking:\t%s\n", tracking_strategy);
-> +	seq_printf(m, "napi_busy_poll_dt:\t%llu\n", ctx->napi_busy_poll_dt);
-> +	if (ctx->napi_prefer_busy_poll)
-> +		seq_puts(m, "napi_prefer_busy_poll:\ttrue\n");
-> +	else
-> +		seq_puts(m, "napi_prefer_busy_poll:\tfalse\n");
-> +}
-> +
-> +static __cold void napi_show_fdinfo(struct io_ring_ctx *ctx,
-> +				    struct seq_file *m)
-> +{
-> +	unsigned int mode = READ_ONCE(ctx->napi_track_mode);
-> +
-> +	switch (mode) {
-> +	case IO_URING_NAPI_TRACKING_INACTIVE:
-> +		seq_puts(m, "NAPI:\tdisabled\n");
-> +		break;
-> +	case IO_URING_NAPI_TRACKING_DYNAMIC:
-> +		common_tracking_show_fdinfo(ctx, m, "dynamic");
-> +		break;
-> +	case IO_URING_NAPI_TRACKING_STATIC:
-> +		common_tracking_show_fdinfo(ctx, m, "static");
-> +		break;
-> +	default:
-> +		seq_printf(m, "NAPI:\tunknown mode (%u)\n", mode);
-> +	}
-> +}
-> +#else
-> +static inline void napi_show_fdinfo(struct io_ring_ctx *ctx,
-> +				    struct seq_file *m)
-> +{
-> +}
-> +#endif
-
-I think this code should go in napi.c, with the stub
-CONFIG_NET_RX_BUSY_POLL in napi.h. Not a huge deal.
-
-This also conflicts with your previous napi patch adding fdinfo support.
-What kernel is this patchset based on? You should rebase it
-for-6.12/io_uring, then it should apply to the development branch going
-forward too.
-
-> diff --git a/io_uring/napi.c b/io_uring/napi.c
-> index 6fc127e74f10..d98b87d346ca 100644
-> --- a/io_uring/napi.c
-> +++ b/io_uring/napi.c
-> @@ -38,22 +38,14 @@ static inline ktime_t net_to_ktime(unsigned long t)
->  	return ns_to_ktime(t << 10);
->  }
->  
-> -void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
-> +int __io_napi_add_id(struct io_ring_ctx *ctx, unsigned int napi_id)
->  {
->  	struct hlist_head *hash_list;
-> -	unsigned int napi_id;
-> -	struct sock *sk;
->  	struct io_napi_entry *e;
->  
-> -	sk = sock->sk;
-> -	if (!sk)
-> -		return;
-> -
-> -	napi_id = READ_ONCE(sk->sk_napi_id);
-> -
->  	/* Non-NAPI IDs can be rejected. */
->  	if (napi_id < MIN_NAPI_ID)
-> -		return;
-> +		return -EINVAL;
->  
->  	hash_list = &ctx->napi_ht[hash_min(napi_id, HASH_BITS(ctx->napi_ht))];
->  
-> @@ -62,13 +54,13 @@ void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
->  	if (e) {
->  		WRITE_ONCE(e->timeout, jiffies + NAPI_TIMEOUT);
->  		rcu_read_unlock();
-> -		return;
-> +		return -EEXIST;
->  	}
->  	rcu_read_unlock();
->  
->  	e = kmalloc(sizeof(*e), GFP_NOWAIT);
->  	if (!e)
-> -		return;
-> +		return -ENOMEM;
->  
->  	e->napi_id = napi_id;
->  	e->timeout = jiffies + NAPI_TIMEOUT;
-> @@ -77,12 +69,37 @@ void __io_napi_add(struct io_ring_ctx *ctx, struct socket *sock)
->  	if (unlikely(io_napi_hash_find(hash_list, napi_id))) {
->  		spin_unlock(&ctx->napi_lock);
->  		kfree(e);
-> -		return;
-> +		return -EEXIST;
->  	}
-
-You could abstract this out to a prep patch, having __io_napi_add()
-return an error value. That would leave the meat of your patch simpler
-and easier to review.
-
-> +static int __io_napi_del_id(struct io_ring_ctx *ctx, unsigned int napi_id)
-> +{
-> +	struct hlist_head *hash_list;
-> +	struct io_napi_entry *e;
-> +
-> +	/* Non-NAPI IDs can be rejected. */
-> +	if (napi_id < MIN_NAPI_ID)
-> +		return -EINVAL;
-> +
-> +	hash_list = &ctx->napi_ht[hash_min(napi_id, HASH_BITS(ctx->napi_ht))];
-> +	spin_lock(&ctx->napi_lock);
-> +	e = io_napi_hash_find(hash_list, napi_id);
-> +	if (unlikely(!e)) {
-> +		spin_unlock(&ctx->napi_lock);
-> +		return -ENOENT;
-> +	}
-> +
-> +	list_del_rcu(&e->list);
-> +	hash_del_rcu(&e->node);
-> +	kfree_rcu(e, rcu);
-> +	spin_unlock(&ctx->napi_lock);
-> +	return 0;
->  }
-
-For new code, not a bad idea to use:
-
-	guard(spinlock)(&ctx->napi_lock);
-
-Only one cleanup path here, but...
-
->  static void __io_napi_remove_stale(struct io_ring_ctx *ctx)
-> @@ -141,8 +158,26 @@ static bool io_napi_busy_loop_should_end(void *data,
->  	return false;
->  }
->  
-> -static bool __io_napi_do_busy_loop(struct io_ring_ctx *ctx,
-> -				   void *loop_end_arg)
-> +/*
-> + * never report stale entries
-> + */
-> +static bool static_tracking_do_busy_loop(struct io_ring_ctx *ctx,
-> +					 void *loop_end_arg)
-> +{
-> +	struct io_napi_entry *e;
-> +	bool (*loop_end)(void *, unsigned long) = NULL;
-> +
-> +	if (loop_end_arg)
-> +		loop_end = io_napi_busy_loop_should_end;
-> +
-> +	list_for_each_entry_rcu(e, &ctx->napi_list, list)
-> +		napi_busy_loop_rcu(e->napi_id, loop_end, loop_end_arg,
-> +				   ctx->napi_prefer_busy_poll, BUSY_POLL_BUDGET);
-> +	return false;
-> +}
-> +
-> +static bool dynamic_tracking_do_busy_loop(struct io_ring_ctx *ctx,
-> +					  void *loop_end_arg)
->  {
->  	struct io_napi_entry *e;
->  	bool (*loop_end)(void *, unsigned long) = NULL;
-
-This is somewhat convoluted, but I think it'd be cleaner to have a prep
-patch that just passes in both loop_end and loop_end_arg to the caller?
-Some of this predates your changes here, but seems there's room for
-cleaning this up. What do you think?
-
-> diff --git a/io_uring/napi.h b/io_uring/napi.h
-> index 27b88c3eb428..220574522484 100644
-> --- a/io_uring/napi.h
-> +++ b/io_uring/napi.h
-> @@ -54,13 +54,20 @@ static inline void io_napi_add(struct io_kiocb *req)
->  {
->  	struct io_ring_ctx *ctx = req->ctx;
->  	struct socket *sock;
-> +	struct sock *sk;
->  
-> -	if (!READ_ONCE(ctx->napi_enabled))
-> +	if (READ_ONCE(ctx->napi_track_mode) != IO_URING_NAPI_TRACKING_DYNAMIC)
->  		return;
->  
->  	sock = sock_from_file(req->file);
-> -	if (sock)
-> -		__io_napi_add(ctx, sock);
-> +	if (!sock)
-> +		return;
-> +
-> +	sk = sock->sk;
-> +	if (!sk)
-> +		return;
-> +
-> +	__io_napi_add_id(ctx, READ_ONCE(sk->sk_napi_id));
->  }
-
-I like having this follow the expected outcome, which is that sock and
-sk are valid.
-
-	sock = sock_from_file(req->file);
-	if (sock && sock->sk)
-		__io_napi_add_id(ctx, READ_ONCE(sock->sk->sk_napi_id));
-
-or something like that. At least to me that's more readable.
+> Link: https://github.com/axboe/liburing/issues/1235
+> Cc: stable@vger.kernel.org
+> Fixes: 846072f16eed ("io_uring: mimimise io_cqring_wait_schedule")
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> ---
+> 
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 1aca501efaf6..d6a2cd351525 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -2568,9 +2568,9 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+>   		 * If we got woken because of task_work being processed, run it
+>   		 * now rather than let the caller do another wait loop.
+>   		 */
+> -		io_run_task_work();
+>   		if (!llist_empty(&ctx->work_llist))
+>   			io_run_local_work(ctx, nr_wait);
+> +		io_run_task_work();
+>   
+>   		/*
+>   		 * Non-local task_work will be run on exit to userspace, but
 
 -- 
-Jens Axboe
+Pavel Begunkov
 

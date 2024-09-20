@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3241-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3242-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB9E97D111
-	for <lists+io-uring@lfdr.de>; Fri, 20 Sep 2024 08:16:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A18D97D301
+	for <lists+io-uring@lfdr.de>; Fri, 20 Sep 2024 10:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEC9F283FCE
-	for <lists+io-uring@lfdr.de>; Fri, 20 Sep 2024 06:16:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E24181F22FC5
+	for <lists+io-uring@lfdr.de>; Fri, 20 Sep 2024 08:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277D52746B;
-	Fri, 20 Sep 2024 06:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E3F2AE77;
+	Fri, 20 Sep 2024 08:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AFeeyDvx"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="UzwQxEdI"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0244DB644
-	for <io-uring@vger.kernel.org>; Fri, 20 Sep 2024 06:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DE82B9BC
+	for <io-uring@vger.kernel.org>; Fri, 20 Sep 2024 08:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726812990; cv=none; b=Kx4FHLvIzinpO6oEAr5bxr8oAnbEnq9ebYgFl4uKLJRsPSUEM9o61OZrETOQ1A2vteXA+cA4zXFHkr3S1Stw946Aha3YULW+SkyP4OKI6nmdSsxYB4lEtc0tAY1ToiwkaNTbtP6zyIC46wSNbiDbLOm73WqXFP9MSqg56NDrI6I=
+	t=1726822276; cv=none; b=sDhTgbSUVgKKtaWHmdl+pU7VeIFKw4OwIx4Ag5teX9Bra36cpOudmDQGRFokl47yIzch3AADyYCU1xkqznvFypGsBC0zjJZOaLGUSSnZgAWTgUbcO38UWZhrmp8sFlU1aRVeGjH1MFWzGKgXEs94SQDE/4Cjrw6HP66SuyXgdHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726812990; c=relaxed/simple;
-	bh=x82bL5TAamfbaREGO0OOWbVhEsTMQhs6jHl9eoqOSRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=COxS+C+zgN+xtYP+dVEvWSiM3NZ2/OeNQMgaEIgivmZvAhhuOzotaI63Zq1ViIrpHQvkWZRvrkKMiniZDlcpQymlIT8dlnNO2+b4t7bm2cS4UY10P7Kdil1S0/ZhQ4/m/4kCVpsuso+2gFl2n0amKPHBS171x3MZapJ1ibOH4CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AFeeyDvx; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1726822276; c=relaxed/simple;
+	bh=enjexeWIM/zfUTF9N6uDaW6CmXQXGi1d2i+TGQBYd+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GAEK4eMmEoSNmivaXczIofo8IZMEoQ1WkzOz9yiQNorJAj9thBwpDcQZCmjFz26xmf40Xqpu6DsVurR+YurTLXhKkeG3evwBT6Cqcb71LWY/JY99flBDJXS+tmVsfvuolVZgpE8BObmIYglL+o6FjNWZKk9gQ3MlHKDQK4HGej8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=UzwQxEdI; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso14974825e9.1
-        for <io-uring@vger.kernel.org>; Thu, 19 Sep 2024 23:16:25 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c42bcf35fbso2404255a12.1
+        for <io-uring@vger.kernel.org>; Fri, 20 Sep 2024 01:51:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726812984; x=1727417784; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726822271; x=1727427071; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6RCv/rgK71GW9hmAjLRWGCxlDYvnMXge9G1nQFmSKjA=;
-        b=AFeeyDvx0cJA7eVgLVmgWQDI2oT1ck3DV4J0hzV2JmFutiWmwow2/137zqf0OElD2/
-         B8lYj2KOtd4km7n9U4JXpL4Uv/hs4cSa+hFT3SG3ACIjey4jXO4hoMtDfVK/bKqK8dF2
-         rAY0Hwv+wAWCQ0AIHi8h46ms456kr6ZP0IYeVVEUVvHs/9UURxM0lFqbDHlENiEhRDdF
-         bXjGVU1K1vOQ2foJkrmUApJyW/Czn7W+g5HSMVg21VlN4ymP5qbyeYg4foiHViRCphIg
-         LGImQX3I3pOxfSHhsrVR8nMwmYNFSgycdhYYoE0iK+qpjwsLiRYLrfFJdJAOhfTjbXRa
-         jD3Q==
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Rvy4/7iJkADqxJUMtWkXFnVrVE6Fo9oX+q4VInNWCCw=;
+        b=UzwQxEdIh+iMIQzZlRSZKNKfsMPetTZfDWg4JJaaCxIKrgIsd+lntMzvgaMqf/nceO
+         ACrcO3QQJqpW7/ZKQwRDHlwdGiGu+NUDiFYZANsRFFxmzPYqMMxLONqIJVD0XtBxkP1N
+         AZqGSyH7QfJHeUpXF7Rbd2il6t0khD9+4NazijVj6A/mCkQe2JyCeMf/MXCP/iVSVCm+
+         iVXdagyZQSdk7HvMvEdxRymD/Asz87BCstPUlaGCkUiPMOSNC7NhBZL61LTQNMsK7byX
+         s+1TgY/ydX48X1G4csSzr3wtUYczFWrSrgjvQmf1miWV9ETHTcJEb1WBXlIP3knbZwJc
+         PQIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726812984; x=1727417784;
+        d=1e100.net; s=20230601; t=1726822271; x=1727427071;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6RCv/rgK71GW9hmAjLRWGCxlDYvnMXge9G1nQFmSKjA=;
-        b=BUexE3WM7wpQeaCXasOR9LwTaQCkUcXrj+geIj8HR0/AwGXaojJjBXSh6Z4aF5vZQm
-         JdYKbIJ3Tl2Lu5IYoSAzMpjdPlzVRXiaMVcVRrnvHLJfXUypoGFKLupRmamisw2aoVeK
-         pRrVfZLVryXMRy3CNYvf97f7SHvYp2S+G96VbxOnL9J4e9Mb8g53/5oiBVpJ7QPBtFDY
-         rEYKyIruQDhlL/9pxh2+eJW6Mw1650qZPYSDdWYrGwE8OD9WzIjRW+AXCIinlL97lgXx
-         rEQz0fvUTHxegmFWGE/1DKdo8QBGZGWV0CCX/To/I8DXhdO4PKHpbE4CkjdVcFNwJlyK
-         uRHg==
-X-Gm-Message-State: AOJu0Yz+jLJdjyTAiA2Msc1ZphB4R+VJzu1aAQPeD9lkM+KZxTMJkyEr
-	vVG0eRzYYfWWhs9PLTH3MaSVDM4w0HGJf9DTuCib87F73mUvhVASKldy9qp+ivPcBYIVAr7UGeD
-	JBiRZOA==
-X-Google-Smtp-Source: AGHT+IGDYapQ/bcvovesPF/uFJ8EcwWgvFd95QrMcQCJAhYnoNVKRLcsfTH527NOVxEOb3BLZlmJIA==
-X-Received: by 2002:a05:600c:5101:b0:42c:b97a:5f7d with SMTP id 5b1f17b1804b1-42e7c15a14amr10295825e9.7.1726812984530;
-        Thu, 19 Sep 2024 23:16:24 -0700 (PDT)
+        bh=Rvy4/7iJkADqxJUMtWkXFnVrVE6Fo9oX+q4VInNWCCw=;
+        b=BoegsGW67EdJUA4lp7Lyn/RElcPnmSFVpHRTX3NqtkMffgDF6UwajfGeXS4Dogo/aH
+         O9frsyxemZeItfzQYuLIjSR/K0WXqZCq/16Rujz1DrX7ZpJkt+tXeY6JhGJxsKtBqaAt
+         kDGBQTmI1CS0EojXhxieLaNnBZxDojqHbzTzq82aBLP0qBnbd0meJKaTTfG0aO/b165E
+         f4dsDdE4eENJQghcHFg4QS2kxadugOu6Ev+mpp85s3buBE/KXJue4/P5m1K/ecoUQP+D
+         hc8i0szFvuRav3+ZW6Ioh9mXyPE+ijzOYgj5+7GnOJaWEGXgZFWdqnHzaE2LfauA+R5e
+         x4YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiWhZZSOhg9xkbzaew44FiFQueY4o2/wmyUj68nk65cCoslwjmEd5oxskO1Bj4aJEHnHN545BCcw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOAF5AgIOc/H1cdESDZ0M7mvxDMsOJIwLc7oX+IJXAgGlHdlTX
+	gmpV6aLBkM2YDVWHCCC3CfuobF293e6S7s6KaSyFABzh6cFyJWPb8LbCSsl8fk4=
+X-Google-Smtp-Source: AGHT+IFREpCbUeNC+7klw4/rTFGjabYGgqoPION+JjvgLb78PO0UMh/HrYsrQj+a8l6zN8qNYtm1FQ==
+X-Received: by 2002:a17:907:3f25:b0:a8a:ead3:8515 with SMTP id a640c23a62f3a-a90d514a83fmr159421166b.65.1726822271073;
+        Fri, 20 Sep 2024 01:51:11 -0700 (PDT)
 Received: from [192.168.0.216] ([185.44.53.103])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7afa9c93sm13175485e9.18.2024.09.19.23.16.22
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f42f1sm812092966b.57.2024.09.20.01.51.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2024 23:16:22 -0700 (PDT)
-Message-ID: <1c02959b-030c-4993-b566-8b72b682a8e0@kernel.dk>
-Date: Fri, 20 Sep 2024 00:16:22 -0600
+        Fri, 20 Sep 2024 01:51:10 -0700 (PDT)
+Message-ID: <0d88fc54-93a7-4075-996f-b2d343c0ba28@kernel.dk>
+Date: Fri, 20 Sep 2024 02:51:09 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,89 +76,125 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] io_uring: add IORING_REGISTER_COPY_BUFFERS method
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-References: <20240912164019.634560-1-axboe@kernel.dk>
- <20240912164019.634560-5-axboe@kernel.dk>
- <87jzfagrle.fsf@mailhost.krisman.be>
+Subject: Re: [syzbot] [io-uring?] INFO: rcu detected stall in
+ sys_io_uring_enter (2)
+To: syzbot <syzbot+5fca234bd7eb378ff78e@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <66ed061d.050a0220.29194.0053.GAE@google.com>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <87jzfagrle.fsf@mailhost.krisman.be>
+In-Reply-To: <66ed061d.050a0220.29194.0053.GAE@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/17/24 10:41 AM, Gabriel Krisman Bertazi wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
+On 9/19/24 11:20 PM, syzbot wrote:
+> Hello,
 > 
->> Buffers can get registered with io_uring, which allows to skip the
->> repeated pin_pages, unpin/unref pages for each O_DIRECT operation. This
->> reduces the overhead of O_DIRECT IO.
->>
->> However, registrering buffers can take some time. Normally this isn't an
->> issue as it's done at initialization time (and hence less critical), but
->> for cases where rings can be created and destroyed as part of an IO
->> thread pool, registering the same buffers for multiple rings become a
->> more time sensitive proposition. As an example, let's say an application
->> has an IO memory pool of 500G. Initial registration takes:
->>
->> Got 500 huge pages (each 1024MB)
->> Registered 500 pages in 409 msec
->>
->> or about 0.4 seconds. If we go higher to 900 1GB huge pages being
->> registered:
->>
->> Registered 900 pages in 738 msec
->>
->> which is, as expected, a fully linear scaling.
->>
->> Rather than have each ring pin/map/register the same buffer pool,
->> provide an io_uring_register(2) opcode to simply duplicate the buffers
->> that are registered with another ring. Adding the same 900GB of
->> registered buffers to the target ring can then be accomplished in:
->>
->> Copied 900 pages in 17 usec
->>
->> While timing differs a bit, this provides around a 25,000-40,000x
->> speedup for this use case.
+> syzbot found the following issue on:
 > 
-> Looks good, but I couldn't get it to apply on top of your branches.  I
-> have only one comment, if you are doing a v4:
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
->>  include/uapi/linux/io_uring.h | 13 +++++
->>  io_uring/register.c           |  6 +++
->>  io_uring/rsrc.c               | 91 +++++++++++++++++++++++++++++++++++
->>  io_uring/rsrc.h               |  1 +
->>  4 files changed, 111 insertions(+)
->>
->> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> HEAD commit:    98f7e32f20d2 Linux 6.11
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17271c07980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c78874575ba70f27
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5fca234bd7eb378ff78e
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 > 
->> --- a/io_uring/rsrc.c
->> +++ b/io_uring/rsrc.c
->> @@ -17,6 +17,7 @@
->>  #include "openclose.h"
->>  #include "rsrc.h"
->>  #include "memmap.h"
->> +#include "register.h"
->>  
->>  struct io_rsrc_update {
->>  	struct file			*file;
->> @@ -1137,3 +1138,93 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
->>  
->>  	return 0;
->>  }
->> +
->> +static int io_copy_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx)
+> Unfortunately, I don't have any reproducer for this issue yet.
 > 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/20d79fec7eb2/disk-98f7e32f.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/57606ddb0989/vmlinux-98f7e32f.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/901e6ba22e57/bzImage-98f7e32f.xz
 > 
-> The error handling code in this function is a bit hairy, IMO.  I think
-> if you check nbufs unlocked and validate it later, it could be much
-> simpler:
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5fca234bd7eb378ff78e@syzkaller.appspotmail.com
+> 
+> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> rcu: 	1-...!: (0 ticks this GP) idle=11bc/1/0x4000000000000000 softirq=116660/116660 fqs=17
+> rcu: 	(detected by 0, t=10502 jiffies, g=200145, q=315 ncpus=2)
+> Sending NMI from CPU 0 to CPUs 1:
+> NMI backtrace for cpu 1
+> CPU: 1 UID: 0 PID: 6917 Comm: syz.2.16175 Not tainted 6.11.0-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+> RIP: 0010:match_held_lock+0x0/0xb0 kernel/locking/lockdep.c:5204
+> Code: 08 75 11 48 89 d8 48 83 c4 10 5b 41 5e 41 5f c3 cc cc cc cc e8 11 f9 ff ff 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <55> 53 bd 01 00 00 00 48 39 77 10 74 67 48 89 fb 81 7f 20 00 00 20
+> RSP: 0018:ffffc90000a18d10 EFLAGS: 00000083
+> RAX: 0000000000000002 RBX: ffff888057310b08 RCX: ffff888057310000
+> RDX: ffff888057310000 RSI: ffff8880b892c898 RDI: ffff888057310b08
+> RBP: 0000000000000001 R08: ffffffff8180cfbe R09: 0000000000000000
+> R10: ffff88803641a340 R11: ffffed1006c8346b R12: 0000000000000046
+> R13: ffff888057310000 R14: 00000000ffffffff R15: ffff8880b892c898
+> FS:  00007f183bd6c6c0(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f7205d61f98 CR3: 000000001bb10000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <NMI>
+>  </NMI>
+>  <IRQ>
+>  __lock_is_held kernel/locking/lockdep.c:5500 [inline]
+>  lock_is_held_type+0xa9/0x190 kernel/locking/lockdep.c:5831
+>  lock_is_held include/linux/lockdep.h:249 [inline]
+>  __run_hrtimer kernel/time/hrtimer.c:1655 [inline]
+>  __hrtimer_run_queues+0x2d9/0xd50 kernel/time/hrtimer.c:1753
+>  hrtimer_interrupt+0x396/0x990 kernel/time/hrtimer.c:1815
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
+>  __sysvec_apic_timer_interrupt+0x110/0x3f0 arch/x86/kernel/apic/apic.c:1049
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+>  sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1043
+>  </IRQ>
+>  <TASK>
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5763
+> Code: 2b 00 74 08 4c 89 f7 e8 ea e1 87 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
+> RSP: 0018:ffffc9000c5c79a0 EFLAGS: 00000206
+> RAX: 0000000000000001 RBX: 1ffff920018b8f40 RCX: 2e46bf6ba4daf100
+> RDX: dffffc0000000000 RSI: ffffffff8beae6c0 RDI: ffffffff8c3fbac0
+> RBP: ffffc9000c5c7ae8 R08: ffffffff93fa6967 R09: 1ffffffff27f4d2c
+> R10: dffffc0000000000 R11: fffffbfff27f4d2d R12: 1ffff920018b8f3c
+> R13: dffffc0000000000 R14: ffffc9000c5c7a00 R15: 0000000000000246
+>  __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>  __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+>  io_cqring_do_overflow_flush io_uring/io_uring.c:644 [inline]
+>  io_cqring_wait io_uring/io_uring.c:2486 [inline]
+>  __do_sys_io_uring_enter io_uring/io_uring.c:3255 [inline]
+>  __se_sys_io_uring_enter+0x1c2a/0x2670 io_uring/io_uring.c:3147
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Sorry missed this due to travel - this is upstream in this merge window.
-If you want to send a cleanup against for-6.12/io_uring, then please do!
+I know there's no reproducer for this and hence it can't get tested, but
+this is obviously some syzbot nonsense that just wildly overflows the
+CQE list. The below should fix it, will add it.
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index f3570e81ecb4..c03d523ff468 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -635,6 +635,21 @@ static void __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool dying)
+ 		}
+ 		list_del(&ocqe->list);
+ 		kfree(ocqe);
++
++		/*
++		 * For silly syzbot cases that deliberately overflow by huge
++		 * amounts, check if we need to resched and drop and
++		 * reacquire the locks if so. Nothing real would ever hit this.
++		 * Ideally we'd have a non-posting unlock for this, but hard
++		 * to care for a non-real case.
++		 */
++		if (need_resched()) {
++			io_cq_unlock_post(ctx);
++			mutex_unlock(&ctx->uring_lock);
++			cond_resched();
++			mutex_lock(&ctx->uring_lock);
++			io_cq_lock(ctx);
++		}
+ 	}
+ 
+ 	if (list_empty(&ctx->cq_overflow_list)) {
 
 -- 
 Jens Axboe

@@ -1,134 +1,158 @@
-Return-Path: <io-uring+bounces-3243-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3244-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6512497D30B
-	for <lists+io-uring@lfdr.de>; Fri, 20 Sep 2024 10:54:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D46A97D5B8
+	for <lists+io-uring@lfdr.de>; Fri, 20 Sep 2024 14:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90F991C212C0
-	for <lists+io-uring@lfdr.de>; Fri, 20 Sep 2024 08:54:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD389B20F2A
+	for <lists+io-uring@lfdr.de>; Fri, 20 Sep 2024 12:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C608822EEF;
-	Fri, 20 Sep 2024 08:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pMm8TDGM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA411684A4;
+	Fri, 20 Sep 2024 12:47:26 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1712AE77
-	for <io-uring@vger.kernel.org>; Fri, 20 Sep 2024 08:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A9F165EEB
+	for <io-uring@vger.kernel.org>; Fri, 20 Sep 2024 12:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726822459; cv=none; b=VPZgINTO8CsJqneyEOUHAyoV8OcXO4PC0Z7fKaBblLOnRRxM8UFj97lRKbAGnxOy83jfRWUtgyQRYdHUxEwhr5a5HRM82fpMQIRFEuRGdadpIesLlXVjHzY3zhw8bwiwDqgw0rVX8dwuJo9Y/2J/9MgkXuwUsbWULGqkpZNMT0s=
+	t=1726836446; cv=none; b=p1Gti22nITOy2+RNiDIOGgnv0xLI7X5S47e8t8T2J7D1EHMl3YcjppO43rHHm8vAG4r4+T1c+HuMkLRuc1uGh7ytprmfccOVWHvCq81OAvqbPC0SWlIzgz1+fMI4qz6DRy3DAJwdsmO5jEai8wlcCBVlxIkSNhqj5YtwQYmL0lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726822459; c=relaxed/simple;
-	bh=9NhO17Mmj/bWSQTLhwoJFHgFNGhUTO2tmVtKN+jaXAE=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=Tb4xNjgnLPH2pHQ4xbprfgVFsNA21uOxyOY/xA7coH02NIaXCi7Y3ZDOBSlUizjDMfMf5UCBkF57zryE2ePyKQfhxedCsAufx2lrcMU0adFhhPvdhcsEkah0oh/Vp8AqKGq8xIfBuOh+Xrm/LU+DKPeY0pl4+i4mUrhTZNih3rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pMm8TDGM; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5356ab89665so2382363e87.1
-        for <io-uring@vger.kernel.org>; Fri, 20 Sep 2024 01:54:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726822453; x=1727427253; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WWcFHCfbggv4qX2DWQCpYP4rg8Ta1tqJ/0puGBzntN0=;
-        b=pMm8TDGMz3EXSGStgL5gREJ7R3YGfIRDWl4kOpzgILVNXvGsSwIE/FZVlu1bqVPhX4
-         PjH7Q97wkgb7Bk5QwUv8ZgAZJvtpmeP0Z/+EkYFdTNb9+sZrIqlE0mDOosCvxmpE06EN
-         7Jsf018eJl1JysV9EwTp9F6g8Mm30ZAHJA+yfolMC/0/kNW/y/fsvxLltZGWWeI0sw5f
-         FPzMWX2eoqt4F3VnmitKYkVWdUyWOd/+GYVIdMWNalI65w8tyygYJppkaG/sGhxce/58
-         bgeDwMzs9B8/q5JwSQET94S5LPH+MMs+YC/QiNddG+0R7UGgfcPTcjUNjcGoEohTLA1i
-         9Ctw==
+	s=arc-20240116; t=1726836446; c=relaxed/simple;
+	bh=tD3iDft4SBwpBaSHl8NlI2gqYGQHO0INPEO5LqHu1QI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=D+95tMoF5wbBavFXKyC4szXkscEenSLJ9DZv2FUYNyfT1VSThp97InsBdqKhjylpGwUTS0SkVYyFvYv7cGAmNJNoc0oG/BdeK3T0EQddYOVeANywwWhYP07Ke+i4N3Y2sPqyWcBsH+LWzEz9s5rNtaDZQEV4JQ5gtnrPYPOkRfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0a08aa0f1so22758695ab.0
+        for <io-uring@vger.kernel.org>; Fri, 20 Sep 2024 05:47:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726822453; x=1727427253;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WWcFHCfbggv4qX2DWQCpYP4rg8Ta1tqJ/0puGBzntN0=;
-        b=GjpjGCOMcs3MqSWAQpvvUcEAft55HdEr9KTtgpZ9SLIksQCQepWGX1pUISFjiiPfbP
-         yubyLLuQ01+NGSJ2lJrAAUayXcnXyS3x/ZJQ87B88xCXbZ/IVyknhYEj+oFAWbXGBHyI
-         PHqbsBsjJhjNiXutW3Q9dQlsQj/pNYdbqAZk1BxsCsM13TfsrXKORphdzXk+g7zVBAJw
-         UAu7m11UhtsN+55JwelA0UjVBzTuzedXFn3LOE0+FgOrWKvqOuHxR5sPhipbb0bgepT5
-         VQlAQp6jsr2Ka5r+HDQafy3eXsIIVzn4gwgdeW3R6NuGMmx/OOp0WxuUj9sHZcvaBSVP
-         ST2w==
-X-Gm-Message-State: AOJu0YxyjYUtofVBtlnRP+Xl5Gik78G0vEd4/4ji1UMU2KU1ksUEHGym
-	okD9XAJZk53YzcpRygYO1LfiYAPP9+8DwblRw/EJr5U6aWYLlSyCeLTFAVgcWaW/hq+VieiV2WO
-	pBRR0Rg==
-X-Google-Smtp-Source: AGHT+IFqUFlB85cHCUHRL5ruaX20nA5oUgLg0RS9hxN3bcyuIpVJBBIQNxSf0u2I/OR5RMNtZMKY0g==
-X-Received: by 2002:a05:6512:a90:b0:536:5551:79ed with SMTP id 2adb3069b0e04-536ad3d48cdmr1134869e87.50.1726822452865;
-        Fri, 20 Sep 2024 01:54:12 -0700 (PDT)
-Received: from [192.168.0.216] ([185.44.53.103])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb492a1sm6925219a12.8.2024.09.20.01.54.11
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 01:54:12 -0700 (PDT)
-Message-ID: <0bf88b09-277c-4a87-bd55-2e4d7da511b5@kernel.dk>
-Date: Fri, 20 Sep 2024 02:54:10 -0600
+        d=1e100.net; s=20230601; t=1726836444; x=1727441244;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IxIryZOr6HYqrQlJxWr1jnYP1uSOLuO/kQSlwcjblKo=;
+        b=kSnZNxJp/5lJtludobUVeKr4AtSiE9Gs26K0Wq0TpAWSks5S7l0Yk4tYVNYrZdTrSx
+         irlz6rFHeGHSUwKh4mUMP1wJ8IdjPSzLZOR29o/h5FTp4i9QthI+I05nwmew4f9jdh2S
+         B9BmKuomHgsR849FOV+4snGkDpn4JFD8bzW0b+n+qNLstUZ5mlhEXcrNhIhALFDLQMxG
+         GY0OxB2t/ll00FsX0er8zhYYz7kOD15LAK4+4ZKPZEQp7pqA2RDkU/VF5GWzwQjrYJVd
+         rtZtQVfADAUIa2WV/0PEupaOfzVIFLSUlcLJkwSz+J7mw7lEvva1P1m1IraG7Y5rB89X
+         E62A==
+X-Forwarded-Encrypted: i=1; AJvYcCVBrTziNuD3F+szgN/rZpMgNk90IwTtIJW3ncOem0rQNq2fzlSCtZrHh6Gd3wczm/StwnqXOQEcdQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW4UknyTDm6GE/AcpahEi2REF5OcnczCgAwWIVDKX8qSc+LLkz
+	N/XAPlGsPsG9cYoB9GBZoeXjyVj5nYwVk7kzjKN6cAZv97MJ9nsa0mmtsLYMriOdVhrVcZbjOa6
+	RHAOv/RUr0aOCMH9CmzRH2dGGtJQ/iYks3UfUqP1VtxhwdlpSCJvyjsM=
+X-Google-Smtp-Source: AGHT+IHyg/NSSAXQ6bcrGSnBfOGrXCWgOAeuOULXE3fpQN4XrKArcp3ok4OS8tizrd/GiQq5XkG9rH2jRv2x62m/Ki2fK+6/Y32U
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: check if we need to reschedule during overflow
- flush
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a43:b0:3a0:a070:b81 with SMTP id
+ e9e14a558f8ab-3a0c8d2ea34mr32629695ab.23.1726836444433; Fri, 20 Sep 2024
+ 05:47:24 -0700 (PDT)
+Date: Fri, 20 Sep 2024 05:47:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ed6edc.050a0220.2abe4d.0014.GAE@google.com>
+Subject: [syzbot] [io-uring?] WARNING in io_sq_offload_create
+From: syzbot <syzbot+71b95eda637a2088bd6b@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-In terms of normal application usage, this list will always be empty.
-And if an application does overflow a bit, it'll have a few entries.
-However, nothing obviously prevents syzbot from running a test case
-that generates a ton of overflow entries, and then flushing them can
-take quite a while.
+Hello,
 
-Check for needing to reschedule while flushing, and drop our locks and
-do so if necessary. There's no state to maintain here as overflows
-always prune from head-of-list, hence it's fine to drop and reacquire
-the locks at the end of the loop.
+syzbot found the following issue on:
 
-Link: https://lore.kernel.org/io-uring/66ed061d.050a0220.29194.0053.GAE@google.com/
-Reported-by: syzbot+5fca234bd7eb378ff78e@syzkaller.appspotmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+HEAD commit:    adfc3ded5c33 Merge tag 'for-6.12/io_uring-discard-20240913..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10ccd500580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c7cbb8108ed6b75e
+dashboard link: https://syzkaller.appspot.com/bug?extid=71b95eda637a2088bd6b
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=156d5fc7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ccd500580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f36034d78003/disk-adfc3ded.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/312ad0ebcf45/vmlinux-adfc3ded.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/06eca1ed13c5/bzImage-adfc3ded.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+71b95eda637a2088bd6b@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5230 at include/linux/cpumask.h:135 cpu_max_bits_warn include/linux/cpumask.h:135 [inline]
+WARNING: CPU: 1 PID: 5230 at include/linux/cpumask.h:135 cpumask_check include/linux/cpumask.h:142 [inline]
+WARNING: CPU: 1 PID: 5230 at include/linux/cpumask.h:135 cpumask_test_cpu include/linux/cpumask.h:562 [inline]
+WARNING: CPU: 1 PID: 5230 at include/linux/cpumask.h:135 io_sq_offload_create+0xe3d/0x1090 io_uring/sqpoll.c:469
+Modules linked in:
+CPU: 1 UID: 0 PID: 5230 Comm: syz-executor334 Not tainted 6.11.0-syzkaller-02520-gadfc3ded5c33 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:cpu_max_bits_warn include/linux/cpumask.h:135 [inline]
+RIP: 0010:cpumask_check include/linux/cpumask.h:142 [inline]
+RIP: 0010:cpumask_test_cpu include/linux/cpumask.h:562 [inline]
+RIP: 0010:io_sq_offload_create+0xe3d/0x1090 io_uring/sqpoll.c:469
+Code: 44 24 08 e9 2f f7 ff ff e8 a0 8d 0f fd 44 89 e3 e9 06 ff ff ff e8 93 8d 0f fd 4c 89 ff e8 6b 5f 7f fd eb ad e8 84 8d 0f fd 90 <0f> 0b 90 e9 f3 fd ff ff e8 76 8d 0f fd 31 ff 89 de e8 ad 8f 0f fd
+RSP: 0018:ffffc9000369fcd8 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88803234bc00 RCX: ffffffff847b951e
+RDX: ffff88801f7eda00 RSI: ffffffff847b972c RDI: 0000000000000005
+RBP: ffff88802b2aa000 R08: 0000000000000005 R09: 0000000000000007
+R10: 0000000000000008 R11: 0000000000000000 R12: 0000000000000008
+R13: 1ffff920006d3fa0 R14: ffffc9000369fd20 R15: 0000000000000000
+FS:  000055557be9d380(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f88aadf0df8 CR3: 0000000078b14000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ io_uring_create io_uring/io_uring.c:3617 [inline]
+ io_uring_setup+0x180f/0x3730 io_uring/io_uring.c:3726
+ __do_sys_io_uring_setup io_uring/io_uring.c:3753 [inline]
+ __se_sys_io_uring_setup io_uring/io_uring.c:3747 [inline]
+ __x64_sys_io_uring_setup+0x98/0x140 io_uring/io_uring.c:3747
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f88aad91919
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe74f4e298 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 00007f88aaddb105 RCX: 00007f88aad91919
+RDX: ffffffffffffffb8 RSI: 0000000000000003 RDI: 00000000000003ff
+RBP: 00007f88aaddb0e3 R08: 0000000000008000 R09: 0000000000008000
+R10: 0000000000008000 R11: 0000000000000246 R12: 00007f88aade009c
+R13: 00007f88aaddb0a3 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
 
 ---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index d306f566a944..4199fbe6ce13 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -624,6 +624,21 @@ static void __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool dying)
- 		}
- 		list_del(&ocqe->list);
- 		kfree(ocqe);
-+
-+		/*
-+		 * For silly syzbot cases that deliberately overflow by huge
-+		 * amounts, check if we need to resched and drop and
-+		 * reacquire the locks if so. Nothing real would ever hit this.
-+		 * Ideally we'd have a non-posting unlock for this, but hard
-+		 * to care for a non-real case.
-+		 */
-+		if (need_resched()) {
-+			io_cq_unlock_post(ctx);
-+			mutex_unlock(&ctx->uring_lock);
-+			cond_resched();
-+			mutex_lock(&ctx->uring_lock);
-+			io_cq_lock(ctx);
-+		}
- 	}
- 
- 	if (list_empty(&ctx->cq_overflow_list)) {
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-Jens Axboe
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

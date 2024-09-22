@@ -1,55 +1,56 @@
-Return-Path: <io-uring+bounces-3257-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3258-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7119497DF9A
-	for <lists+io-uring@lfdr.de>; Sun, 22 Sep 2024 02:49:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B6F97E01F
+	for <lists+io-uring@lfdr.de>; Sun, 22 Sep 2024 06:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61CBAB20BBC
-	for <lists+io-uring@lfdr.de>; Sun, 22 Sep 2024 00:49:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8BDAB20F49
+	for <lists+io-uring@lfdr.de>; Sun, 22 Sep 2024 04:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249D918EFCC;
-	Sun, 22 Sep 2024 00:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE8514A097;
+	Sun, 22 Sep 2024 04:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="AylD5jAS"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mYk0Znp0"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580BD18EFC5;
-	Sun, 22 Sep 2024 00:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085C111712;
+	Sun, 22 Sep 2024 04:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726966147; cv=none; b=gQD8CWDvVJ+pzWpaHKiXn424vi5CFrLG7OHq7frq9uzMQty91tHYaoXybQiydKEs0NzXVLyf4qOP+Wmw3f0sGDfKPUzs8X51zBjRPegASr7F/7Dw95o0oWDCUS92oEA/+sCl2D9aiiNUpzozCfQ9TPdM5MitbOLT5W4LAICohQY=
+	t=1726978211; cv=none; b=qYC6AGgeV4T5WtTmio57bcJcLmTpvr4Je1FZE+Zko7Sgs+gw2Jt1A0iv8Qe/lA7HfLuC2DstrykMbe/7RyucyC2Ed62QBknTMbX7KagTpe/+IVXKdCEpLlJpNYI9PYN5XezHb07RpIE9GJEBXSQ4PsuJZlw6aeBXb3mXmkdH17o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726966147; c=relaxed/simple;
-	bh=H6FLgymN+EvqaI2jCLVxaOQjwpiv6Oos9XrGRUPQoDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dOC60rKouRx+qw/OEXcm0R2qDNNitwMtw648ISx51ZZUE4EjHD9OprJf2hTJ4FGcAjiK96f7j1lYcnIjTlmWb+vnVY73jGDH1KJFaYukqv3+nUCTLg8eMFYeQFK3KQovQJ2z7DbKGncfwbyahOR3+bgTnlryYNGV2p8lc5kQyiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=AylD5jAS; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1726978211; c=relaxed/simple;
+	bh=GmwT2MfZb+Hu1vNI7h+KSFFt0VL/u8ZYV9yw6fYXAAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EeoGvWcJPLmqremzB3j/0+fHwQHZYm33NYT9HzYqNleCdnhrKy7iGCbOpKsPxaUqKiYWuuZ3CM0c6EewRstJs1hID67/RA4UEj6SXQOst/WwtEqqa8wEoonmcEIokEVSrV33Y99FUPhOmSrLsyYy7yI1ejnhTndjAkC7i7COoiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mYk0Znp0; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=dL4fqJSchammBoaFLHOQnJXekzu+Kyp9nHrzvajQPpE=; b=AylD5jASxY0z570bzQpKvl1bJc
-	zgpmhoabY6c1jYzEjfl2plFWjc8ByTlRKMR+ahEzz2+vi+reKlvp0eCWNsSABhpkBk4h/tXSY99N0
-	lsnaFwNmvDms0xydutg37zf9sYLGqTT9qUeRGFNM5Ldz0p5/uGgib3DVRmAP27iG5zE+J4oxWve+S
-	vlYF5VyXOK04xJo9xgUWLY5mb6iGEa65Ug24fftDQq/jkpyPL4c9vD0prj6bsw66lkAl44fUqhbo2
-	YRNsGImD2q0RUeUZCGSkOE5U08AQ7TRAP0f0yoq2+vJk5DgwpYlk6o+/ExoEf+glJu+78cQp7AhHr
-	Oz8tYhBg==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=luj7dJe41qjgBXfEQGsLBJu7l5i/4o7jBwDDa7KAlus=; b=mYk0Znp08aCcY+Ic336QIre0BZ
+	sVoL3PnxXvrOORMsYIETuK/PWQs504BTAD9Brae87iVZifHZ06YBhvJ8C/9E33WejRLErSnlFj/Nx
+	snBkfsV6t9IPEboG/tNNDmcKJr18bxF4zVOCLkzbn7GawAZJQozYggfekACM1tJedwXYaIx+DWITC
+	Xc+OcQO0O8ONH+ASxTq33PXFWOxfYJBS/ayCv1xa4YPZIV3NseMXyOrB3OxfcL1N/ybMNzOg3Txpe
+	dpqmCLu3maFxGwG22Tcx5b8j5DhlsXvPUoFxDlRGxXS+DTvoxnANSF9wB0k7P1wjxDUQY/cUapgxW
+	aiUvIQww==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1ssAmb-0000000EWZO-1SnI;
-	Sun, 22 Sep 2024 00:49:01 +0000
-Date: Sun, 22 Sep 2024 01:49:01 +0100
+	id 1ssDvC-0000000EZeJ-1NUa;
+	Sun, 22 Sep 2024 04:10:06 +0000
+Date: Sun, 22 Sep 2024 05:10:06 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: audit@vger.kernel.org, io-uring@vger.kernel.org
-Subject: [RFC] struct filename, io_uring and audit troubles
-Message-ID: <20240922004901.GA3413968@ZenIV>
+Subject: Re: [RFC] struct filename, io_uring and audit troubles
+Message-ID: <20240922041006.GC3413968@ZenIV>
+References: <20240922004901.GA3413968@ZenIV>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -58,62 +59,35 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240922004901.GA3413968@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-	Looks like things like async unlink might fuck the audit
-very badly.  io_uring does getname() in originating thread and uses the
-result at the time of operation, which can happen in a different thread.
-Moreover, by that time the original syscall might have very well returned.
+On Sun, Sep 22, 2024 at 01:49:01AM +0100, Al Viro wrote:
 
-	The trouble is, getname() establishes linkage between the struct
-filename and struct audit_name; filename->aname and audit_name->name
-respectively.  struct filename can get moved from one thread to another;
-struct audit_name is very much tied to audit_context, which is per-thread
-- first few (5, currently) audit_name instances are embedded into
-audit_context.	The rest gets allocated dynamically, but all of them
-are placed on audit_context::names_list.
+> * don't bother with audit_name creation and linkage in getname(); do that
+> when we start using the sucker.  Doing that from __set_nameidata() will
+> catch the majority of the stuff that ever gets audit_inode* called for it
+> (the only exceptions are mq_open(2) and mq_unlink(2)).  Unfortunately,
+> each audit_name instance gets spewed into logs, so we would need to
+> bring the rest of that shite in, including the things like symlink
+> bodies (note that for io_uring-originating symlink we'd need that done
+> in do_symlinkat()), etc.  Unpleasant, that.
 
-	At audit_free_names() they are all wiped out - references
-back to filename instances are dropped, dynamically allocated ones
-are freed, and while embedded ones survive, they are zeroed out on
-reuse by audit_alloc_name().  audit_free_names() is called on each
-audit_reset_context(), which is done by __audit_syscall_exit() and
-(in states other than AUDIT_SYSCALL_CONTEXT) __audit_uring_exit().
+BTW, how much is exact order and number of PATH items in audit logs cast
+in stone?
 
-	Linkage from filename to audit_name is used by __audit_inode().
-It definitely expects the reference back to filename to be stable.
-And in situation when io_uring has offloaded a directory operation to
-helper thread, that is not guaranteed.
+For example,
+        char s[2][20] = {"/tmp/blah/x", "/tmp/blah/x"};
+	rename(s[0], s[1]);
+	rename(s[0], s[0]);
 
-	Another fun bit is that both audit_inode() and audit_inode_child()
-may bump the refcount on struct filename.  Which can get really fishy
-if they get called by helper thread while the originator is exiting the
-syscall - putname() from audit_free_names() in originator vs. refcount
-increment in helper is Not Nice(tm), what with the refcount not being
-atomic.
+produces 2 items (both for /tmp/blah) on the first call, and only 1 on
+the second.  Does anything care about preserving that distinction?
 
-	Potential solutions:
+And what in audit_inode{,_child}() behaviour can be changed?  I mean, does
+anything care about the loop directions when we pick the candidate
+audit_name for conversion, etc.?
 
-* don't bother with audit_name creation and linkage in getname(); do that
-when we start using the sucker.  Doing that from __set_nameidata() will
-catch the majority of the stuff that ever gets audit_inode* called for it
-(the only exceptions are mq_open(2) and mq_unlink(2)).  Unfortunately,
-each audit_name instance gets spewed into logs, so we would need to
-bring the rest of that shite in, including the things like symlink
-bodies (note that for io_uring-originating symlink we'd need that done
-in do_symlinkat()), etc.  Unpleasant, that.
-
-* make refcount atomic, add a pointer to audit_context or even task_struct
-in audit_name, have the "use name->aname if the type is acceptable"
-logics in audit_inode dependent upon the name->aname->owner matching
-what we want.  With some locking to make the check itself safe.
-
-* make refcount atomic, get rid of ->aname and have audit_inode() scan
-the names_list for entries with matching ->name and type - and that
-before the existing scan with ->name->name comparisons.
-
-* something else?
-
-	Suggestions _not_ involving creative uses of TARDIS would
-be welcome.
+It's been a long time since I've touched audit, and I have done my best
+to purge memories of the specifications ;-/
 

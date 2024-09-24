@@ -1,136 +1,166 @@
-Return-Path: <io-uring+bounces-3292-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3293-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657F8984CFD
-	for <lists+io-uring@lfdr.de>; Tue, 24 Sep 2024 23:40:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E913984EC9
+	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 01:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2442328212F
-	for <lists+io-uring@lfdr.de>; Tue, 24 Sep 2024 21:40:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0140DB23DA2
+	for <lists+io-uring@lfdr.de>; Tue, 24 Sep 2024 23:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66B484037;
-	Tue, 24 Sep 2024 21:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CB5136330;
+	Tue, 24 Sep 2024 23:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hq5N7u2X"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DIbpnzDg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46000139D07;
-	Tue, 24 Sep 2024 21:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973C51482E7
+	for <io-uring@vger.kernel.org>; Tue, 24 Sep 2024 23:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727214050; cv=none; b=A2ulZt4K0GOlT1O+66vwGBDZIUYmn7gh2LvgWxP1J5H+AEQQ989l8dhFvZ7v94KZg2JL8R2dk5f959iTGU3TeJOyLjDQvFRLlcNV3cGTLtRP+d14FjyezS1gjqq2LFa6Cl/7ovQgK3XHLLcEQzc4c55sKZPyt/6HWTMU1HbHgHE=
+	t=1727219835; cv=none; b=YR+Rc7ssoPLDLAb7KqtV2wgc1boQw3PH4znFZF0CMPwgPzkr2Bx309X3b8+NrGIwtPvSz+6M04B7SN7sp+f7sjQGGzCpZP9etyWH9WdMUhqsht+C7FbLu9Pm5o8/4MZvPGZfim3+wivFE3UPUmoNZ7JSs3c7ouVDYhAncWyBaPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727214050; c=relaxed/simple;
-	bh=RAY0u//V5rvoEZZJ6lQ/D9MwyO04UCLNzZYwgP66+Ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HEEtmb4g9TeSbWFUJy8tqRtmFPW6GaPRfUaRP6VZ7Uyqri4rw7AT4BGcMIYUB24xZR81I6NYVHuBIXmX5R9Xy0fUyb9Mmx3Hz1DgZeP0mhURbcMbwdIW9gsCQ6HlGvYf9enJaOca5QulXkmFdxO32J3aoPclJDE1kNq+V7F4Ytg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hq5N7u2X; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gKzZoHtKoQWl2qi2qmcWi2Bu3o5mOcFywRRncUL9Cfg=; b=hq5N7u2XV+zDCVKFHzns1TCFn/
-	kspjA5kqFkxkWIj0Jc0y+QqJRyXTZunAYJnGe2SzgIviyRpAWaaolE36ayZ3ddXsixTePqeeYIfnG
-	sLLc8N/BZFxLdO4D4oFtaGprecNos3r787ymgFLRkPj2elGzrplihUnP+Volgps8YRfVKzPnAb7Vg
-	5lIuIs30Vrys62KecDMSPevZry0x3eeZXFmyijEmxv4tu/9oTmgjwIbb/QvMLTzk++TDgWkzqwFQj
-	sPuV9RMM6vzwvJLU6wo11ZfUDyXQOrUBXGmm88LPLVEm3m6PfgBzbAm7Vq+QJqtseZ3xoSU47Tj0R
-	T1WOBePg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1stDH4-0000000FF1v-2cLM;
-	Tue, 24 Sep 2024 21:40:46 +0000
-Date: Tue, 24 Sep 2024 22:40:46 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC] struct filename, io_uring and audit troubles
-Message-ID: <20240924214046.GG3550746@ZenIV>
-References: <20240922004901.GA3413968@ZenIV>
- <20240923015044.GE3413968@ZenIV>
- <62104de8-6e9a-4566-bf85-f4c8d55bdb36@kernel.dk>
- <CAHC9VhQMGsL1tZrAbpwTHCriwZE2bzxAd+-7MSO+bPZe=N6+aA@mail.gmail.com>
- <20240923144841.GA3550746@ZenIV>
- <CAHC9VhSuDVW2Dmb6bA3CK6k77cPEv2vMqv3w4FfGvtcRDmgL3A@mail.gmail.com>
- <20240923203659.GD3550746@ZenIV>
+	s=arc-20240116; t=1727219835; c=relaxed/simple;
+	bh=dCTuIyEupdKJi62lAkCUN6rhJtTPQEIz8/uT/xtgEXU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KivCalS1itgjx8mhC75KhkOH+uef834I/gu6E1ztKnnig7Vyxw7fHLfvYnZUVyiQX2y/y+oN7kp+4q2hbJSvhHI3tVgW4GKDFnqxoa2SP1cNHQl87teItWlqEueFdyOz27NhIIBWsHKs4oxg37OceYd57kV7UWvrLhGJQK84OzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DIbpnzDg; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ddceaaa9f4so48565377b3.2
+        for <io-uring@vger.kernel.org>; Tue, 24 Sep 2024 16:17:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1727219832; x=1727824632; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DQbz1KV9DawuCKGwIlA9WAqzoJlKO0SVrBIhzZt0liU=;
+        b=DIbpnzDgpp0Uorn5AOWcjIM6oOn1xEaIDIhvLNH57OfCxu6SkY6jg8sGRiAzlDuqws
+         ePUhSpjJo5T07Rmo2bvKnav88xwYukqBHVqykKX+naU1HYtfrlmt1kMrbi0lqize12CY
+         LuLTE7GUqoZCTUZAaSMyqpuixjedfHUFPLVoPnKfkBmMCTHFrX6g/wehQ3+eWtjnFukh
+         o7RPcmfY15xaMlsXMQXS/lpm3fWaTEKhZnyoSzxgzHvSLOCm7v1xcF7OSjKmEC/E+/U3
+         CSFcTtZpapTHqba66kRIwEtYYib6BhYLq9YT/yICBCCRsyvNuRuztMXSzLVkSl5Nzg9X
+         LLZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727219832; x=1727824632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DQbz1KV9DawuCKGwIlA9WAqzoJlKO0SVrBIhzZt0liU=;
+        b=SSDETGe9V+3w1Z6ywMBTwXLYA9AAksh5qnapEIwby2WAd/n8p6n52D13IPnM5xHMOj
+         5hK+5knMrrMuCm9dKYcOtPaM3nUpQjtSAKszpwXTb+RlQqt9oFfnhjO8pnvYKdgi0MB6
+         WxMO79c3uVgg5kZKmlKPk1PczwxoUrTQyaC+sF0fVJPFUt5zfKyLgSepvhWMTd6WWOQq
+         WDcTJD3/Fpj43EAGGaRVL4HQi0qEBbb1mlwe0IR+quA+Bsx7GP78oyMr/JPGKCBCfyAe
+         QJkxsQc6ikpls1O7+9j3F61kCKr6Ww51QGZpn+UxFXhH/qL12LXNnYb0tu2sGDzb7vsL
+         UJDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaEvZ+wovElBNhrBxUZ98gKu/F+ffTzOyzqifoh9prRVN5SeU4dil2YIFEY5mdtrpPBorMU+i3tQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGxRowjhJUyPVAvf1FGDOLecRT0SJBN1u+jZMN8i8O1YDxUin/
+	N0nQhtm7fLbZrHenHwsfcF152eX9JeLo8ONO5UO/9H2Ai9osZXwZfaZUTF4QNgn6+3gaIyTjwbu
+	/KhzMnyrLNElURxKW3fRIx/tEYucKaFtlO3sF
+X-Google-Smtp-Source: AGHT+IH4aRIyQqyU98Rdh10Z3hWLXz8ZHU3ntO6rXPkkvkLAunfU3PHMTjgosB+ymac/L0JJ7lv61EsN2BQzXxMakZI=
+X-Received: by 2002:a05:690c:4584:b0:6af:eaaf:2527 with SMTP id
+ 00721157ae682-6e21d8a2b89mr8920407b3.18.1727219832337; Tue, 24 Sep 2024
+ 16:17:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923203659.GD3550746@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20240922004901.GA3413968@ZenIV> <20240923015044.GE3413968@ZenIV>
+ <62104de8-6e9a-4566-bf85-f4c8d55bdb36@kernel.dk> <CAHC9VhQMGsL1tZrAbpwTHCriwZE2bzxAd+-7MSO+bPZe=N6+aA@mail.gmail.com>
+ <20240923144841.GA3550746@ZenIV> <CAHC9VhSuDVW2Dmb6bA3CK6k77cPEv2vMqv3w4FfGvtcRDmgL3A@mail.gmail.com>
+ <20240923203659.GD3550746@ZenIV> <CAHC9VhSq=6MK=HKCJ8KCjYNQZ4j_eCSgTpuYyHtk2T-_m2Br3Q@mail.gmail.com>
+ <20240924070137.GE3550746@ZenIV>
+In-Reply-To: <20240924070137.GE3550746@ZenIV>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 24 Sep 2024 19:17:01 -0400
+Message-ID: <CAHC9VhR-c8T=KykMHKsovwzRKmpfSbQwYMjRQbEp-ojraCxm-g@mail.gmail.com>
+Subject: Re: [RFC] struct filename, io_uring and audit troubles
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org, audit@vger.kernel.org, 
+	io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 23, 2024 at 09:36:59PM +0100, Al Viro wrote:
+On Tue, Sep 24, 2024 at 3:01=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+> On Mon, Sep 23, 2024 at 08:11:51PM -0400, Paul Moore wrote:
+> > > Umm...  IIRC, sgrubb had been involved in the spec-related horrors, b=
+ut
+> > > that was a long time ago...
+> >
+> > Yep, he was.  Last I spoke to Steve a year or so ago, audit was no
+> > longer part of his job description; Steve still maintains his
+> > userspace audit tools, but that is a nights/weekends job as far as I
+> > understand.
+> >
+> > The last time I was involved in any audit/CC spec related work was
+> > well over a decade ago now, and all of those CC protection profiles
+> > have long since expired and been replaced.
+>
+> Interesting...  I guess eparis would be the next victim^Wpossible source
+> of information.
 
-> 	* go through the VFS side of things and make sure we have a consistent
-> set of helpers that would take struct filename * - *not* the ad-hoc mix we
-> have right now, when that's basically driven by io_uring borging them in
-> one by one - or duplicates them without bothering to share helpers.
-> E.g. mkdirat(2) does getname() and passes it to do_mkdirat(), which
-> consumes the sucker; so does mknodat(2), but do_mknodat() is static.  OTOH,
-> path_setxattr() does setxattr_copy(), then retry_estale loop with
-> user_path_at() + mnt_want_write() + do_setxattr() + mnt_drop_write() + path_put()
-> as a body, while on io_uring side we have retry_estale loop with filename_lookup() +
-> (io_uring helper that does mnt_want_write() + do_setxattr() + mnt_drop_write()) +
-> path_put().
-> 	Sure, that user_path_at() call is getname() + filename_lookup() + putname(),
-> so they are equivalent, but keeping that shite in sync is going to be trouble.
+Eric was the one who dumped the audit subsystem in my lap ~10 years
+ago so he could run off and play with containers.  Fortunately for
+Eric I was much more trusting back then and didn't read all the fine
+print before agreeing to look after audit.
 
-BTW, re mess around xattr:
-static int __io_getxattr_prep(struct io_kiocb *req,
-                              const struct io_uring_sqe *sqe)
-{
-...
-        ix->ctx.cvalue = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-	ix->ctx.size = READ_ONCE(sqe->len);
-...
-        ret = strncpy_from_user(ix->ctx.kname->name, name,
-				sizeof(ix->ctx.kname->name));
+> > >         * looking at the users of that stuff, I would probably prefer=
+ to
+> > > separate getname*() from insertion into audit context.  It's not that
+> > > tricky - __set_nameidata() catches *everything* that uses nd->name (i=
+.e.
+> > > all that audit_inode() calls in fs/namei.c use).
+> >
+> > That should be a pretty significant simplification, that sounds good to=
+ me.
+> >
+> > > ... What remains is
+> > >         do_symlinkat() for symlink body
+> > >         fs_index() on the argument (if we want to bother - it's a par=
+t
+> > > of weird Missed'em'V sysfs(2) syscall; I sincerely doubt that there's
+> > > anybody who'd use it)
+> >
+> > We probably should bother, folks that really care about audit don't
+> > like blind spots.  Perhaps make it a separate patch if it isn't too
+> > ugly to split it out.
+>
+> Heh...  I suggest you to look at the manpage of that thing.
 
-}
+Ooof.  That's something isn't it?  Yeah, that's ugly, and since it
+doesn't really return any user or sensitive system information I think
+it's safe to skip - my mistake.
 
-int io_fgetxattr(struct io_kiocb *req, unsigned int issue_flags)
-{
-...
-        ret = do_getxattr(file_mnt_idmap(req->file),
-			req->file->f_path.dentry,
-			&ix->ctx);
-...
-}
+> > >         That's all it takes.  With that done, we can kill ->aname;
+> > > just look in the ->names_list for the first entry with given ->name -
+> > > as in, given struct filename * value, no need to look inside.
+> >
+> > Seems reasonable to me.  I can't imagine these special cases being any
+> > worse than what we have now in fs/namei.c, and if nothing else having
+> > a single catch point for the bulk of the VFS lookups makes it worth it
+> > as far as I'm concerned.
+>
+> Huh?  Right now we allocate audit_names at getname_flags()/getname_kernel=
+()
+> time; grep for audit_getname() - that's as centralized as it gets.
+> What I want to do is somewhat _de_centralize it; that way they would not
+> go anywhere other than audit_context of the thread actually doing the
+> work.
+>
+> There is a lot of calls of audit_inode(), but I'm not planning to touch
+> any of those.
 
-ssize_t
-do_getxattr(struct mnt_idmap *idmap, struct dentry *d,
-        struct xattr_ctx *ctx)
-{
-...
-        if (error > 0) {
-		if (ctx->size && copy_to_user(ctx->value, ctx->kvalue, error))
-...
-}
+Sorry.  I'm a bit foggy from traveling, and trying to play catch-up
+back at home.  I'm sure it will make more sense once I see the
+patches.
 
-and we have
-struct xattr_ctx {
-        /* Value of attribute */
-	union {
-		const void __user *cvalue;
-		void __user *value;
-	};
-	...
-}
-
-Undefined behaviour aside, there's something odd going on here:
-why do we bother with copy-in in ->prep() when we do copy-out in
-->issue() anyway?  ->issue() does run with initiator's ->mm in use,
-right?
-
-IOW, what's the io_uring policy on what gets copied in ->prep() vs.
-in ->issue()?
+--=20
+paul-moore.com
 

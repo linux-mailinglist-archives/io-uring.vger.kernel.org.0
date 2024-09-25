@@ -1,96 +1,75 @@
-Return-Path: <io-uring+bounces-3297-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3298-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482649852AE
-	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 07:57:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A53D09852B9
+	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 08:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A7361C21036
-	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 05:57:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D542A1C22763
+	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 06:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6283843AD7;
-	Wed, 25 Sep 2024 05:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF782AE6C;
+	Wed, 25 Sep 2024 06:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ciPMTx17";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yaVQlpLx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uG6VMXJG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vKfFh61h"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TAtvOmmF"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADD5647;
-	Wed, 25 Sep 2024 05:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCAD14E2CD
+	for <io-uring@vger.kernel.org>; Wed, 25 Sep 2024 06:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727243858; cv=none; b=IDkljU5H7OvorDbGRHMInz9Q+SlYJcugyyo+TFuTXId/ndtbRcVBo+DoYpSoQDkcseZtpBELq6pLkrtPgPgoo+7PQNlXsXMlRHVIW0AX9L5WaL0Qbli+4+8mIeHlRTBehGNmpvdJ8N8ZJlsJqeEqvV/wGaE/wdRTPnYrfy/aYe4=
+	t=1727244069; cv=none; b=KmkGu/jTmPt+nKclKPDZPXS9lBcH3xbeqDXNfukyWlTJ6G3hwerNv6AyAe1f6c5ZLQHecsp+IunCz9G99MXBAGLzaxZ980GAd3gTsxrJb9hbuQS+8Yd5QmpA+FtFWzlKd4zZ2nLvDt/zljtvgyEXzbiv4MtIctGVkluqGZiD6SM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727243858; c=relaxed/simple;
-	bh=QMnvkHrnX6DpOPIUvO7BNl1mwT3AgkjCUdRtDwNRGws=;
+	s=arc-20240116; t=1727244069; c=relaxed/simple;
+	bh=LWwfTLGgsAaqaffWWmZAwmcBBki1MJezhqYcpwgfKE8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aaLVLXNWeI9u/6OHQmIHyjleRJUFqN5Jd6/neliR5Tu8+ajbbQlAAoMB+yrjwW9vIeRclNX91eEjWGolUwh321yHh8OWwMfqu+zdtVADD57EBvvWEVxk5mpOJBBUT2obZNZ+NJUx3KPCFVe0PxAKpq8wuNuXen4ZcAFk1rZ1iWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ciPMTx17; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yaVQlpLx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uG6VMXJG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vKfFh61h; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 718C11F7F9;
-	Wed, 25 Sep 2024 05:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727243854; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B+OcrvMk2e5Vhorb1JynJI09OAStj38QG4ipQBl6gow=;
-	b=ciPMTx172C9peh0vYN2hMc57lcq5V4u3kcCrS2+26HDvcZpfj6riY29AHezOvtIvIzpZ90
-	m3eFr70JerEItyewKxevGeyLYUF1fhqKBlPft+bqpec8GstQcSYgQerUGGjrRB9gs4hGpw
-	VkygvxjKttWUKcObwZI9haGMD1c8NAk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727243854;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B+OcrvMk2e5Vhorb1JynJI09OAStj38QG4ipQBl6gow=;
-	b=yaVQlpLxIpJG2brkAZLxlk/r3EaGCQDvk18lvMOp8ZsH15hGSX8vabbOnM9gZX+jQWTKI7
-	K4F/HKuXBmLNkjDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=uG6VMXJG;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vKfFh61h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727243853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B+OcrvMk2e5Vhorb1JynJI09OAStj38QG4ipQBl6gow=;
-	b=uG6VMXJGhMTjaEFTDmq/JjqCTRNhtZIMBBrDc0S7EB1p28CN0jrt7MAZ24FhKeNHtGNGWa
-	FFNWqAuF375eH1cWJ9iaTFYerihUbcHTWzf+Skhd7OiiS7z363U+B0KWze0rDR1SKyZRIE
-	lgqkS4iWiGSxQ5keyR1gsfodCQfGIOQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727243853;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B+OcrvMk2e5Vhorb1JynJI09OAStj38QG4ipQBl6gow=;
-	b=vKfFh61hx0+kGpTjpgTuXLR5MM46JZxoVUTf2GTIcO0YpI6rLDe7ezOa25xWSwo0pLFPbK
-	kJCKEDgMb1zvuiCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0DF3213A6A;
-	Wed, 25 Sep 2024 05:57:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sHrsOEqm82YBVwAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 25 Sep 2024 05:57:30 +0000
-Message-ID: <28419703-681c-4d8c-9450-bdc2aff19d56@suse.de>
-Date: Wed, 25 Sep 2024 07:57:31 +0200
+	 In-Reply-To:Content-Type; b=k2XXrEyFJwkM5YbB/PRYil4HO95hbIgSDBsny25+HdJUJbhFNH7VbbZ0tunXvr+UsJKgb8bogSFxAxkXbCYoa11S50eI0q36Mq5NmrOvbpO0Wv/qMbn5A+GJZ4XDxHiZNcVfNA+cA4mKlyKh7HXJiwtAC4pUi0jYCAgyuPJyGZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TAtvOmmF; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374bd0da617so4487842f8f.3
+        for <io-uring@vger.kernel.org>; Tue, 24 Sep 2024 23:01:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727244063; x=1727848863; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lDIjHlwQvn0FXZAsTPQMYoaFJJr2KcEtONsfmP4GO8E=;
+        b=TAtvOmmFHnbtP6ZSFe2Q5/4kqZ7s8GZ1hwy0e9UVfwicUvweOxKC98fM4MEkyMfA/s
+         OaYlgLoUyNJ2d0/IXmqCr5TVIQ7CL+hTxOziv0IbSQrFf2CCr1tdop6AXAAOhJElNkxI
+         flYo2VwFcSHfP7tJDPkBOfmmqzUh/bkRKPKTYyPiiSUZEtaQqN78SmTxj83UrzoEJ9w6
+         NMte2MOREbKqk8OkxVzkagyAa+1Uaw1vISH//o7J4RgtucqGedXO+LIAPIEgQrbKqU5+
+         qatXvvAFQbRl6AXVWUq2NpH29lFW/bvHXljC+2P37th2tPkRwLLGKE18EritjuxYaG+S
+         gRVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727244063; x=1727848863;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lDIjHlwQvn0FXZAsTPQMYoaFJJr2KcEtONsfmP4GO8E=;
+        b=u+eS62DdUt9bHoKAOzQ7QT4BWOgdvULNg1dNe+Vg3llMHQ/ZWinqyKZE5q5Ki1CQ5M
+         KNNGWuMcxqgf3VdCH6eC3xQWWvhwZ7N07lLB2cJAQCySb7+lIZnjLeOVgS5IW92zPRt1
+         0+uiepzpyXryEvvnwaeDmFZjuBcu2aFxopPxfYfNskcyDoJeQTVDz2iYb76qT4eahKLH
+         BOSW7m7MyfwpOY27tpCVZDA0RPqLmHq69B9li7D085AyzV0rysWDQX4W+3bK8Bw+UXNo
+         rArazv6jnj8TWbFqHzmrZL74FWEwZS7dsIatwnJBtVmagY4DU7AbTi+vt8AbHnr79UNU
+         M7Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcu2dLwUGGao7J294ETw3scTPUeKH3zZpjQtWmIxQlSy9rDvmYl1jttFaQxc48jjIW1zCS38fktw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZRcWpgj0KIhm3njShAv54e3NhGtkimjPFYfChl93NIygIX0XA
+	aXuK2PflL8UuqJ3arcRiavSHUp9t1kE15bSe4QvoKBi12MgVBzfwH3BZF/8XjiktRSlSSMDi21e
+	FMU0m1w==
+X-Google-Smtp-Source: AGHT+IHZwuigQLC9/i5kjyUilLTmxOseUudei026p8CeWIB4nZ1LOhmcx8Tv0ht7FBFnyE9PwNTDmQ==
+X-Received: by 2002:a5d:64e5:0:b0:371:8dcc:7f9e with SMTP id ffacd0b85a97d-37cc246b10amr1266080f8f.2.1727244063406;
+        Tue, 24 Sep 2024 23:01:03 -0700 (PDT)
+Received: from [172.20.13.88] ([45.147.210.162])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc32b70fsm3037184f8f.117.2024.09.24.23.01.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 23:01:02 -0700 (PDT)
+Message-ID: <d3d2c19d-d6a3-4876-87f0-d5709ee1e4b2@kernel.dk>
+Date: Wed, 25 Sep 2024 00:01:01 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -98,196 +77,97 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] io_uring: enable per-io hinting capability
-To: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
- hch@lst.de, sagi@grimberg.me, martin.petersen@oracle.com,
- brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com, bvanassche@acm.org,
- asml.silence@gmail.com
-Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
- gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com,
- Nitesh Shetty <nj.shetty@samsung.com>
-References: <20240924092457.7846-1-joshi.k@samsung.com>
- <CGME20240924093257epcas5p174955ae79ae2d08a886eeb45a6976d53@epcas5p1.samsung.com>
- <20240924092457.7846-4-joshi.k@samsung.com>
+Subject: Re: [RFC] struct filename, io_uring and audit troubles
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20240922004901.GA3413968@ZenIV> <20240923015044.GE3413968@ZenIV>
+ <62104de8-6e9a-4566-bf85-f4c8d55bdb36@kernel.dk>
+ <CAHC9VhQMGsL1tZrAbpwTHCriwZE2bzxAd+-7MSO+bPZe=N6+aA@mail.gmail.com>
+ <20240923144841.GA3550746@ZenIV>
+ <CAHC9VhSuDVW2Dmb6bA3CK6k77cPEv2vMqv3w4FfGvtcRDmgL3A@mail.gmail.com>
+ <20240923203659.GD3550746@ZenIV> <20240924214046.GG3550746@ZenIV>
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240924092457.7846-4-joshi.k@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 718C11F7F9
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	FREEMAIL_TO(0.00)[samsung.com,kernel.dk,kernel.org,lst.de,grimberg.me,oracle.com,zeniv.linux.org.uk,suse.cz,kvack.org,redhat.com,acm.org,gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[samsung.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240924214046.GG3550746@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 9/24/24 11:24, Kanchan Joshi wrote:
-> With F_SET_RW_HINT fcntl, user can set a hint on the file inode, and
-> all the subsequent writes on the file pass that hint value down.
-> This can be limiting for large files (and for block device) as all the
-> writes can be tagged with only one lifetime hint value.
-> Concurrent writes (with different hint values) are hard to manage.
-> Per-IO hinting solves that problem.
+On 9/24/24 3:40 PM, Al Viro wrote:
+> On Mon, Sep 23, 2024 at 09:36:59PM +0100, Al Viro wrote:
 > 
-> Allow userspace to pass the write hint type and its value in the SQE.
-> Two new fields are carved in the leftover space of SQE:
-> 	__u8 hint_type;
-> 	__u64 hint_val;
+>> 	* go through the VFS side of things and make sure we have a consistent
+>> set of helpers that would take struct filename * - *not* the ad-hoc mix we
+>> have right now, when that's basically driven by io_uring borging them in
+>> one by one - or duplicates them without bothering to share helpers.
+>> E.g. mkdirat(2) does getname() and passes it to do_mkdirat(), which
+>> consumes the sucker; so does mknodat(2), but do_mknodat() is static.  OTOH,
+>> path_setxattr() does setxattr_copy(), then retry_estale loop with
+>> user_path_at() + mnt_want_write() + do_setxattr() + mnt_drop_write() + path_put()
+>> as a body, while on io_uring side we have retry_estale loop with filename_lookup() +
+>> (io_uring helper that does mnt_want_write() + do_setxattr() + mnt_drop_write()) +
+>> path_put().
+>> 	Sure, that user_path_at() call is getname() + filename_lookup() + putname(),
+>> so they are equivalent, but keeping that shite in sync is going to be trouble.
 > 
-> Adding the hint_type helps in keeping the interface extensible for future
-> use.
-> At this point only one type TYPE_WRITE_LIFETIME_HINT is supported. With
-> this type, user can pass the lifetime hint values that are currently
-> supported by F_SET_RW_HINT fcntl.
+> BTW, re mess around xattr:
+> static int __io_getxattr_prep(struct io_kiocb *req,
+>                               const struct io_uring_sqe *sqe)
+> {
+> ...
+>         ix->ctx.cvalue = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+> 	ix->ctx.size = READ_ONCE(sqe->len);
+> ...
+>         ret = strncpy_from_user(ix->ctx.kname->name, name,
+> 				sizeof(ix->ctx.kname->name));
 > 
-> The write handlers (io_prep_rw, io_write) process the hint type/value
-> and hint value is passed to lower-layer using kiocb. This is good for
-> supporting direct IO, but not when kiocb is not available (e.g.,
-> buffered IO).
+> }
 > 
-> In general, per-io hints take the precedence on per-inode hints.
-> Three cases to consider:
+> int io_fgetxattr(struct io_kiocb *req, unsigned int issue_flags)
+> {
+> ...
+>         ret = do_getxattr(file_mnt_idmap(req->file),
+> 			req->file->f_path.dentry,
+> 			&ix->ctx);
+> ...
+> }
 > 
-> Case 1: When hint_type is 0 (explicitly, or implicitly as SQE fields are
-> initialized to 0), this means user did not send any hint. The per-inode
-> hint values are set in the kiocb (as before).
+> ssize_t
+> do_getxattr(struct mnt_idmap *idmap, struct dentry *d,
+>         struct xattr_ctx *ctx)
+> {
+> ...
+>         if (error > 0) {
+> 		if (ctx->size && copy_to_user(ctx->value, ctx->kvalue, error))
+> ...
+> }
 > 
-> Case 2: When hint_type is TYPE_WRITE_LIFETIME_HINT, the hint_value is
-> set into the kiocb after sanity checking.
+> and we have
+> struct xattr_ctx {
+>         /* Value of attribute */
+> 	union {
+> 		const void __user *cvalue;
+> 		void __user *value;
+> 	};
+> 	...
+> }
 > 
-> Case 3: When hint_type is anything else, this is flagged as an error
-> and write is failed.
+> Undefined behaviour aside, there's something odd going on here:
+> why do we bother with copy-in in ->prep() when we do copy-out in
+> ->issue() anyway?  ->issue() does run with initiator's ->mm in use,
+> right?
 > 
-> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> ---
->   fs/fcntl.c                    | 22 ----------------------
->   include/linux/rw_hint.h       | 24 ++++++++++++++++++++++++
->   include/uapi/linux/io_uring.h | 10 ++++++++++
->   io_uring/rw.c                 | 21 ++++++++++++++++++++-
->   4 files changed, 54 insertions(+), 23 deletions(-)
-> 
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 081e5e3d89ea..2eb78035a350 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -334,28 +334,6 @@ static int f_getowner_uids(struct file *filp, unsigned long arg)
->   }
->   #endif
->   
-> -static bool rw_hint_valid(u64 hint)
-> -{
-> -	BUILD_BUG_ON(WRITE_LIFE_NOT_SET != RWH_WRITE_LIFE_NOT_SET);
-> -	BUILD_BUG_ON(WRITE_LIFE_NONE != RWH_WRITE_LIFE_NONE);
-> -	BUILD_BUG_ON(WRITE_LIFE_SHORT != RWH_WRITE_LIFE_SHORT);
-> -	BUILD_BUG_ON(WRITE_LIFE_MEDIUM != RWH_WRITE_LIFE_MEDIUM);
-> -	BUILD_BUG_ON(WRITE_LIFE_LONG != RWH_WRITE_LIFE_LONG);
-> -	BUILD_BUG_ON(WRITE_LIFE_EXTREME != RWH_WRITE_LIFE_EXTREME);
-> -
-> -	switch (hint) {
-> -	case RWH_WRITE_LIFE_NOT_SET:
-> -	case RWH_WRITE_LIFE_NONE:
-> -	case RWH_WRITE_LIFE_SHORT:
-> -	case RWH_WRITE_LIFE_MEDIUM:
-> -	case RWH_WRITE_LIFE_LONG:
-> -	case RWH_WRITE_LIFE_EXTREME:
-> -		return true;
-> -	default:
-> -		return false;
-> -	}
-> -}
-> -
->   static long fcntl_get_rw_hint(struct file *file, unsigned int cmd,
->   			      unsigned long arg)
->   {
-> diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
-> index 309ca72f2dfb..f4373a71ffed 100644
-> --- a/include/linux/rw_hint.h
-> +++ b/include/linux/rw_hint.h
-> @@ -21,4 +21,28 @@ enum rw_hint {
->   static_assert(sizeof(enum rw_hint) == 1);
->   #endif
->   
-> +#define	WRITE_LIFE_INVALID	(RWH_WRITE_LIFE_EXTREME + 1)
-> +
-> +static inline bool rw_hint_valid(u64 hint)
-> +{
-> +	BUILD_BUG_ON(WRITE_LIFE_NOT_SET != RWH_WRITE_LIFE_NOT_SET);
-> +	BUILD_BUG_ON(WRITE_LIFE_NONE != RWH_WRITE_LIFE_NONE);
-> +	BUILD_BUG_ON(WRITE_LIFE_SHORT != RWH_WRITE_LIFE_SHORT);
-> +	BUILD_BUG_ON(WRITE_LIFE_MEDIUM != RWH_WRITE_LIFE_MEDIUM);
-> +	BUILD_BUG_ON(WRITE_LIFE_LONG != RWH_WRITE_LIFE_LONG);
-> +	BUILD_BUG_ON(WRITE_LIFE_EXTREME != RWH_WRITE_LIFE_EXTREME);
-> +
-> +	switch (hint) {
-> +	case RWH_WRITE_LIFE_NOT_SET:
-> +	case RWH_WRITE_LIFE_NONE:
-> +	case RWH_WRITE_LIFE_SHORT:
-> +	case RWH_WRITE_LIFE_MEDIUM:
-> +	case RWH_WRITE_LIFE_LONG:
-> +	case RWH_WRITE_LIFE_EXTREME:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
->   #endif /* _LINUX_RW_HINT_H */
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 1fe79e750470..e21a74dd0c49 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -98,6 +98,11 @@ struct io_uring_sqe {
->   			__u64	addr3;
->   			__u64	__pad2[1];
->   		};
-> +		struct {
-> +			/* To send per-io hint type/value with write command */
-> +			__u64	hint_val;
-> +			__u8	hint_type;
-> +		};
-Why is 'hint_val' 64 bits? Everything else is 8 bytes, so wouldn't it
-be better to shorten that? As it stands the new struct will introduce
-a hole of 24 bytes after 'hint_type'.
+> IOW, what's the io_uring policy on what gets copied in ->prep() vs.
+> in ->issue()?
 
-Cheers,
+The normal policy is that anything that is read-only should remain
+stable after ->prep() has been called, so that ->issue() can use it.
+That means the application can keep it on-stack as long as it's valid
+until io_uring_submit() returns. For structs/buffers that are copied to
+after IO, those the application obviously need to keep around until they
+see a completion for that request. So yes, for the xattr cases where the
+struct is copied to at completion time, those do not need to be stable
+after ->prep(), could be handled purely on the ->issue() side.
 
-Hannes
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
-
+Jens Axboe
 

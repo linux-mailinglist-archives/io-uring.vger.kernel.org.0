@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3302-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3303-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B62985C14
-	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 14:38:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9586985E53
+	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 15:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8C01C24789
-	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 12:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7589B1F21B4A
+	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 13:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99DE1865E2;
-	Wed, 25 Sep 2024 11:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0630917C985;
+	Wed, 25 Sep 2024 12:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5cGB+My"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jL0mtyGi"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E9121A1C;
-	Wed, 25 Sep 2024 11:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FE117BEB9;
+	Wed, 25 Sep 2024 12:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727265461; cv=none; b=VnFosV+UlGpRHl33r7dGLnf2kBf7yh5pGRkLT18xe4mNGwlAIcT9FAtEw67bxSdYZ2fxy1DEDs+Tnv0xNm8i4syNsHmJX1XVYa8k6qOsoncPk35zSP+fj1Vjo74tTB0zfXAPnY4/8hMDx2s+4hLRxYpylNilBJdPQ9t/+OfovLs=
+	t=1727266283; cv=none; b=QKXi+/QzBPLkoSdrQb4V37t92lQ8PZqIim97mlhiX8zH8oGTREwT1F5FwJooVQSWOvhkVVCkwUrpw5NDklDnA+wdU9ZobsPTm4maQX6jZxrQH27BzrPIET6qycAWs8yKvhfMk7dvmjNQuZIUK38sYuilE7d9bVEOBaAxA48Fczw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727265461; c=relaxed/simple;
-	bh=G5Td+WWrfizeS2lkkwKWDxaZwUm6k8aZ3N0P9CYmwEo=;
+	s=arc-20240116; t=1727266283; c=relaxed/simple;
+	bh=PUVNBgnIa4l40mnGlrwfTKt8522hvAy93E98nVKVo+U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tzz1cUnYSaYnT2QpB+iWLKS/97wiTmYFatUmItGOuANsa3evpXF8F5mu+I3egVOnNefyA/wdVjSJO0kWL9hb9TzVE8xnFwyMxLjb/oEnWj85auacO7sB1842eFkFCMrOPdGqfFsQcWfxcXQPgd7VH9lT+FUJ2gKESjnqC/fB8R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5cGB+My; arc=none smtp.client-ip=209.85.208.174
+	 In-Reply-To:Content-Type; b=eBsjfPBkc7ycemBJlJdVhRiQ03yrq7SoDm9na4f1z0dWHrHfk08SU/qwffUDd6/CCkX4+7YMKNRS7qussDYfaoOjlGTnIhlYYXP9fHjCaXjejEevUO2a6b3u1dIqU1CWmCw0L/nxpUs8FvusBKY3PktysYSrdG7eg/0rVkW/FDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jL0mtyGi; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f75c6ed397so70415641fa.2;
-        Wed, 25 Sep 2024 04:57:39 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so168497766b.1;
+        Wed, 25 Sep 2024 05:11:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727265458; x=1727870258; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727266280; x=1727871080; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BmlT8mVz0poKewfRg9p15ADjJkRKRpso2Nj7MuaKVq8=;
-        b=i5cGB+MyRPlIUzn8dz+YM/SEkxGS00NkMWqnpP501gke30Ts68AoAwFqigbubKKFjz
-         UQyomgHN/C/uQX7+sGInRlP7F9Qo5LtZrYB88Wx0LBvw8R+KDy37eLvG+wWSpcehy+ek
-         Czm/MsN4s6Od9Zb93tNJOJmEJtFfX6l+E6D1bv+HeGdXs1LROBc5dvipBTYd0281RsXT
-         t6vQpDriPMp3PmBoA31Uxu5r20K2CqRTbOg5E6APE7iGYjf3zV4sMseNZ3nEhAVIf6ve
-         p2eBqKZMWWvdCSiSWB4sD+WxgUqXhBxSYboOFy1lzPY6xLbFZ+asxDdyJIZP6ykar24G
-         Ldkg==
+        bh=9hW9bK7WjApbQpCc3LHU+3cowizY2PJ/6QHhNHuy6fc=;
+        b=jL0mtyGi2XFkn6bGEM5szVkMJZvCdFfN4CgKM47AbTw3o6fSFtabs45ZCjRo3FQ7ZU
+         odEjWU4YTgMfUWfgLwR44zkiI+DDEcOzTfS+/z+MfLFTccb+7R4EW6YHhWLpYf3zeKQT
+         QA5C77oMfY1fgHf5csYumSJYWTXzbDZz3DymTzc4KL5Lbem90ut+aK21t8Hl1lY8apeE
+         F2F8DgSuNVJc/1Ld4Pfl4sjVo6uxOcjsbuLpsASv8cUPA7qCJ8OpZbbl56C56frlYDZ7
+         kWX2+AiXGt8aoCY4jxDKduG0VTFAj0Vb/733p/QYG2o3vLP4lC3Dueha5D6Sz7appHK1
+         cZRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727265458; x=1727870258;
+        d=1e100.net; s=20230601; t=1727266280; x=1727871080;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BmlT8mVz0poKewfRg9p15ADjJkRKRpso2Nj7MuaKVq8=;
-        b=uxt5AYbkHETXOyJGxkfjwehhVqQfOW4g0HpUHVSjBuebDch7Msm7Eib5W77qaigYQt
-         qEIAAXvXPyYgvmllsEf+3h3GvTglglfVl21fBF7IJSNxc138VmrZVEbpfqlKCzPr4808
-         OZNfv79iPBBXzxsDfrYf1JsGvgb9Swrq6+OEW7zGmqYrhA6nCLm7MIdmgFEGqNievgnf
-         M7P30mpDSk9cJzG7s8Cm7KFixeMs7wSjcI/l9cw2wewz+xCKAQlrVBVqk0iNa5425E6z
-         QMwMlmBGWOBj4yQbhS8Smc3iA6xEXd3DGp6Tru6AqeNjyobzZsan+vXwtY2efMj0/XIN
-         I8ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyIGmQIebpsuBm1Rgj+mUbzha9JvcqTKCvI9lTegCCnChi9jmGGa6HQsJq+rOKwpQyO5YqxBmCbyWK37Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7V+ZQ18xWiZQnik001GDsRsKY9BWfDIQBf4/FMDUk+bQY2Q1L
-	xoaNc+SBNG/IeyktrLcim0fiQGWRJdpUnIzmGnYHOqsqCW+Wkev9+hBrYAlM
-X-Google-Smtp-Source: AGHT+IFIcuDJ/MTLw4ON+iRrc7fEGM33mnlKzDZ0rV+YJcV1corgdL97dhlVovAOoRBPdCHASA0bZw==
-X-Received: by 2002:a05:6512:224b:b0:533:7ce:20e0 with SMTP id 2adb3069b0e04-5387048b8demr1585664e87.8.1727265457610;
-        Wed, 25 Sep 2024 04:57:37 -0700 (PDT)
+        bh=9hW9bK7WjApbQpCc3LHU+3cowizY2PJ/6QHhNHuy6fc=;
+        b=tnuGJQruKZwEvA/B7gYL4hCKhZQcwoSEkXTcxX+nIybRdkt2zsP3YPgoD8422FQAEm
+         G1marr1rY5fOtAahYQ8TESwwuN0Xq5ZseWSwZSBj+/92Wp6PF19akjC6be5gnGu11QVg
+         nMieYFPWRLXw2LR30wZ6bklr7/NIDNb11By8PGofAKFkQxRtWjsMs79Fe86HWD0noUXP
+         7bk8+bHogM/upzezrOcxj7ejpmpw5Ga1Yq575x2MuiklTvMFoFe5Acp6gENL1qOYT/oT
+         iOA8eJ9bnoH2gEGQS2+WUGQDHdBAor60IydBZ/Rgfb462qbGIjP9GlBpDJbKfvX/M49F
+         9jSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKLHf9MwOuWPvESdvEIrU5SmBQT8jXCj5Q4UB1ojFt8c0cPx1DYa9lRQgVgHcZQZ3hxBrZ4uHi2+iyQyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMX1X/h2xEuH2GAjFSKil6zGoRAIR/FRVPAfdToLxawIgU0pZ2
+	NbMlmNXlvg4CeuyNpo4NuTmGovROdcv2FHc1wJZ+4PHd8Tjn165VLekfSqIZ
+X-Google-Smtp-Source: AGHT+IEU0urojDpL0fOG84+kksHaHBDz7bnrNhZwKyqJc5xvZWmVZf7CkpnJW2UZ5LAl1YzmDFS+lw==
+X-Received: by 2002:a17:907:a09:b0:a8d:4c83:d85d with SMTP id a640c23a62f3a-a92c4811c13mr729896266b.12.1727266280235;
+        Wed, 25 Sep 2024 05:11:20 -0700 (PDT)
 Received: from [192.168.92.221] ([85.255.235.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f347fdsm203991466b.16.2024.09.25.04.57.36
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930f82dcsm205313366b.177.2024.09.25.05.11.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 04:57:37 -0700 (PDT)
-Message-ID: <1f21a22b-e5a7-48bd-a1c8-b9d817b2291a@gmail.com>
-Date: Wed, 25 Sep 2024 12:58:17 +0100
+        Wed, 25 Sep 2024 05:11:19 -0700 (PDT)
+Message-ID: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
+Date: Wed, 25 Sep 2024 13:12:00 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,37 +76,33 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 RESEND] io_uring/fdinfo: add timeout_list to fdinfo
-To: Ruyi Zhang <ruyi.zhang@samsung.com>, axboe@kernel.dk
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- peiwei.li@samsung.com
-References: <CGME20240925085815epcas5p16fa977581284a81dae7b67da8bc96a85@epcas5p1.samsung.com>
- <20240925085800.1729-1-ruyi.zhang@samsung.com>
+Subject: Re: [PATCH V8] io_uring: releasing CPU resources when polling
+To: hexue <xue01.he@samsung.com>, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240918021010.12894-1-xue01.he@samsung.com>
+ <CGME20240925082937epcas5p1baa4bb786ea874400d7b18553cd57625@epcas5p1.samsung.com>
+ <20240925082932.3329096-1-xue01.he@samsung.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240925085800.1729-1-ruyi.zhang@samsung.com>
+In-Reply-To: <20240925082932.3329096-1-xue01.he@samsung.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/25/24 09:58, Ruyi Zhang wrote:
-> io_uring fdinfo contains most of the runtime information,which is
-> helpful for debugging io_uring applications; However, there is
-> currently a lack of timeout-related information, and this patch adds
-> timeout_list information.
-
-Please refer to unaddressed comments from v1. We can't have irqs
-disabled for that long. And it's too verbose (i.e. depends on
-the number of timeouts).
-
-
-> --
-> changes since v1:
-> - use _irq version spin_lock.
-> - Fixed formatting issues and delete redundant code.
-> - v1 :https://lore.kernel.org/io-uring/20240812020052.8763-1-ruyi.zhang@samsung.com/
-> --
+On 9/25/24 09:29, hexue wrote:
+> On 24/08/12 1:59AM, hexue wrote:
+>> This patch add a new hybrid poll at io_uring level, it also set a signal
+>> "IORING_SETUP_HY_POLL" to application, aim to provide a interface for users
+>> to enable use new hybrid polling flexibly.
 > 
-> Signed-off-by: Ruyi Zhang <ruyi.zhang@samsung.com>
+> Hi, just a gentle ping, is there still in merge window? or any comment for
+> this patch?
+
+I don't have a strong opinion on the feature, but the open question
+we should get some decision on is whether it's really well applicable to
+a good enough set of apps / workloads, if it'll even be useful in the
+future and/or for other vendors, and if the merit outweighs extra
+8 bytes + 1 flag per io_kiocb and the overhead of 1-2 static key'able
+checks in hot paths.
 
 -- 
 Pavel Begunkov

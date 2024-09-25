@@ -1,173 +1,137 @@
-Return-Path: <io-uring+bounces-3298-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3299-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53D09852B9
-	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 08:01:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8AC2985654
+	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 11:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D542A1C22763
-	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 06:01:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8011C284697
+	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 09:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF782AE6C;
-	Wed, 25 Sep 2024 06:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F6715B971;
+	Wed, 25 Sep 2024 09:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TAtvOmmF"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QUOo9tGZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCAD14E2CD
-	for <io-uring@vger.kernel.org>; Wed, 25 Sep 2024 06:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7800E15C15D
+	for <io-uring@vger.kernel.org>; Wed, 25 Sep 2024 09:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727244069; cv=none; b=KmkGu/jTmPt+nKclKPDZPXS9lBcH3xbeqDXNfukyWlTJ6G3hwerNv6AyAe1f6c5ZLQHecsp+IunCz9G99MXBAGLzaxZ980GAd3gTsxrJb9hbuQS+8Yd5QmpA+FtFWzlKd4zZ2nLvDt/zljtvgyEXzbiv4MtIctGVkluqGZiD6SM=
+	t=1727256533; cv=none; b=CehB+9+bGIxBmdZi9/7BX+hWKXvIfQsPHayanoUCxQ4kgQlAOh5lMHzGD8lw6X2YSiOuk1kOIDih8i2XtvowUWI2N0vjfS6blp61W+U1gzDn5zjQsS1ZEoOtYPtGYmgQ+oD8X9OFq1jXX/gAqSkskew9+0bQA5YuWxU9Vc2dVyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727244069; c=relaxed/simple;
-	bh=LWwfTLGgsAaqaffWWmZAwmcBBki1MJezhqYcpwgfKE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k2XXrEyFJwkM5YbB/PRYil4HO95hbIgSDBsny25+HdJUJbhFNH7VbbZ0tunXvr+UsJKgb8bogSFxAxkXbCYoa11S50eI0q36Mq5NmrOvbpO0Wv/qMbn5A+GJZ4XDxHiZNcVfNA+cA4mKlyKh7HXJiwtAC4pUi0jYCAgyuPJyGZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TAtvOmmF; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374bd0da617so4487842f8f.3
-        for <io-uring@vger.kernel.org>; Tue, 24 Sep 2024 23:01:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727244063; x=1727848863; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lDIjHlwQvn0FXZAsTPQMYoaFJJr2KcEtONsfmP4GO8E=;
-        b=TAtvOmmFHnbtP6ZSFe2Q5/4kqZ7s8GZ1hwy0e9UVfwicUvweOxKC98fM4MEkyMfA/s
-         OaYlgLoUyNJ2d0/IXmqCr5TVIQ7CL+hTxOziv0IbSQrFf2CCr1tdop6AXAAOhJElNkxI
-         flYo2VwFcSHfP7tJDPkBOfmmqzUh/bkRKPKTYyPiiSUZEtaQqN78SmTxj83UrzoEJ9w6
-         NMte2MOREbKqk8OkxVzkagyAa+1Uaw1vISH//o7J4RgtucqGedXO+LIAPIEgQrbKqU5+
-         qatXvvAFQbRl6AXVWUq2NpH29lFW/bvHXljC+2P37th2tPkRwLLGKE18EritjuxYaG+S
-         gRVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727244063; x=1727848863;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lDIjHlwQvn0FXZAsTPQMYoaFJJr2KcEtONsfmP4GO8E=;
-        b=u+eS62DdUt9bHoKAOzQ7QT4BWOgdvULNg1dNe+Vg3llMHQ/ZWinqyKZE5q5Ki1CQ5M
-         KNNGWuMcxqgf3VdCH6eC3xQWWvhwZ7N07lLB2cJAQCySb7+lIZnjLeOVgS5IW92zPRt1
-         0+uiepzpyXryEvvnwaeDmFZjuBcu2aFxopPxfYfNskcyDoJeQTVDz2iYb76qT4eahKLH
-         BOSW7m7MyfwpOY27tpCVZDA0RPqLmHq69B9li7D085AyzV0rysWDQX4W+3bK8Bw+UXNo
-         rArazv6jnj8TWbFqHzmrZL74FWEwZS7dsIatwnJBtVmagY4DU7AbTi+vt8AbHnr79UNU
-         M7Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcu2dLwUGGao7J294ETw3scTPUeKH3zZpjQtWmIxQlSy9rDvmYl1jttFaQxc48jjIW1zCS38fktw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZRcWpgj0KIhm3njShAv54e3NhGtkimjPFYfChl93NIygIX0XA
-	aXuK2PflL8UuqJ3arcRiavSHUp9t1kE15bSe4QvoKBi12MgVBzfwH3BZF/8XjiktRSlSSMDi21e
-	FMU0m1w==
-X-Google-Smtp-Source: AGHT+IHZwuigQLC9/i5kjyUilLTmxOseUudei026p8CeWIB4nZ1LOhmcx8Tv0ht7FBFnyE9PwNTDmQ==
-X-Received: by 2002:a5d:64e5:0:b0:371:8dcc:7f9e with SMTP id ffacd0b85a97d-37cc246b10amr1266080f8f.2.1727244063406;
-        Tue, 24 Sep 2024 23:01:03 -0700 (PDT)
-Received: from [172.20.13.88] ([45.147.210.162])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc32b70fsm3037184f8f.117.2024.09.24.23.01.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 23:01:02 -0700 (PDT)
-Message-ID: <d3d2c19d-d6a3-4876-87f0-d5709ee1e4b2@kernel.dk>
-Date: Wed, 25 Sep 2024 00:01:01 -0600
+	s=arc-20240116; t=1727256533; c=relaxed/simple;
+	bh=2A/5/Zh9h+rW85FdnEo9f/zG7q4C7ky0ju//Of9ir48=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=Prqx5BSJRQSe8n6oafZ1GM4YRMFcokWrZQo/BProMYvjupjKNGygFVQSrenoxGsz1UTuSvuMP5GQ2Zzx6ffyNc7lPXqIOtb/YXdv0YeQJxcCs2hSWjFo1RT8/Z07Jje3d+Cj8uSJhONkr7zmD60s2S4/FqsSiMPaTq8zzdzEEEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QUOo9tGZ; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240925092844epoutp0448b5dbcfd2f1d3b45edab6c53caf5813~4cqhFOI7L1046410464epoutp04j
+	for <io-uring@vger.kernel.org>; Wed, 25 Sep 2024 09:28:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240925092844epoutp0448b5dbcfd2f1d3b45edab6c53caf5813~4cqhFOI7L1046410464epoutp04j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727256524;
+	bh=2A/5/Zh9h+rW85FdnEo9f/zG7q4C7ky0ju//Of9ir48=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QUOo9tGZFMID2dBYuXy7ulXnyC6dtyG3g7yMp+Ao8TTtzFnlZ7gyXq84RxFSBGKDK
+	 pV2t2P/De2thJ5dNdvcXpo0vVK7erNmoAdRdZ2qXIBaXLlus3BNFoq/QA5jOZqAsr1
+	 9qltRGFnGIt9ne5fCy4QvkxQg6S1fCaMhvH+zfjI=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240925092843epcas5p4a14de11937d8b45349d6ceafda3c849e~4cqgqAn802289322893epcas5p48;
+	Wed, 25 Sep 2024 09:28:43 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XDBHY6t2nz4x9Px; Wed, 25 Sep
+	2024 09:28:41 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E9.BA.19863.9C7D3F66; Wed, 25 Sep 2024 18:28:41 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240925082937epcas5p1baa4bb786ea874400d7b18553cd57625~4b25wN5tc1294712947epcas5p1s;
+	Wed, 25 Sep 2024 08:29:37 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240925082937epsmtrp1b22f20c9bb6f3b295bfcb5b3e83294e5~4b25vgwqz0616606166epsmtrp1_;
+	Wed, 25 Sep 2024 08:29:37 +0000 (GMT)
+X-AuditID: b6c32a50-c73ff70000004d97-06-66f3d7c9a325
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6F.4B.19367.1F9C3F66; Wed, 25 Sep 2024 17:29:37 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240925082936epsmtip2df8a3d4af1b9f8c3c756a334e070e465~4b25Ai2DR2384823848epsmtip2s;
+	Wed, 25 Sep 2024 08:29:36 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: asml.silence@gmail.com, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V8] io_uring: releasing CPU resources when polling
+Date: Wed, 25 Sep 2024 16:29:32 +0800
+Message-Id: <20240925082932.3329096-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240918021010.12894-1-xue01.he@samsung.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] struct filename, io_uring and audit troubles
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20240922004901.GA3413968@ZenIV> <20240923015044.GE3413968@ZenIV>
- <62104de8-6e9a-4566-bf85-f4c8d55bdb36@kernel.dk>
- <CAHC9VhQMGsL1tZrAbpwTHCriwZE2bzxAd+-7MSO+bPZe=N6+aA@mail.gmail.com>
- <20240923144841.GA3550746@ZenIV>
- <CAHC9VhSuDVW2Dmb6bA3CK6k77cPEv2vMqv3w4FfGvtcRDmgL3A@mail.gmail.com>
- <20240923203659.GD3550746@ZenIV> <20240924214046.GG3550746@ZenIV>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240924214046.GG3550746@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTS/fk9c9pBpffmlrMWbWN0WL13X42
+	i3et51gsfnXfZbS4vGsOm8XZCR9YHdg8ds66y+5x+WypR9+WVYwenzfJBbBEZdtkpCampBYp
+	pOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAO1WUihLzCkFCgUkFhcr
+	6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRnXLkwia3gHFPF
+	vh9rWRsYe5i6GDk5JARMJC4tvcLYxcjFISSwh1Fiyc2TrBDOJ0aJ6Yv/sIFUgTkbj0bCdEx9
+	1sMGUbSTUWLr/03sEM4PRolDPWvAOtgElCT2b/nACGKLCGhLrL2/nQXEZhawkjg75yeYLSzg
+	JvH1wSGwO1gEVCXWnP4AtJqDg1fAWuJwezXEMnmJm137mUFsTqDWJQ+PgrXyCghKnJz5BGqk
+	vETz1tnMEPXX2CW6pilA2C4Sl1csgHpTWOLV8S3sELaUxMv+Nig7X2Ly9/WMEHaNxLrN71gg
+	bGuJf1f2sICcwyygKbF+lz5EWFZi6ql1TBBr+SR6fz+BGs8rsWMejK0kseTICqiREhK/JywC
+	+0pCwEPi1do4SEj1MkpM+/WVfQKjwiwk38xC8s0shM0LGJlXMUqlFhTnpqcmmxYY6uallsPj
+	ODk/dxMjODVqBexgXL3hr94hRiYOxkOMEhzMSiK8k25+TBPiTUmsrEotyo8vKs1JLT7EaAoM
+	7onMUqLJ+cDknFcSb2hiaWBiZmZmYmlsZqgkzvu6dW6KkEB6YklqdmpqQWoRTB8TB6dUA1Oe
+	x5NXpzZccX9T+7xhZf39/wo8h1gnTApcyzWn4/bkuLN6RQujHmr4VeXzFqq/ZotlDmnYHMVe
+	83XxYbXUD6dL+TYH3OGVS5T49oCtt03LSenJzuvbY64XC70Xmf54/pybwgEucxebdWZYZWk+
+	kHTbpXhM/mhrPKOBnPPVq4a270Mi9txwObF4S1X6ox9zFKwCWPju/7zUkvMz90hIfMUFux73
+	7JXODhJeX2LVn10tFfvuZzWh4LxW85YS026xB8qp2vMl47p+MPiGzkybaVsyN7WtxlXOTiwx
+	XKSPpUPwrOEq9w7mvf0azT/eR7TMu8gnmir9+IqfjdjSDPaLsW8NFFOeHM2MZlzPP/WJEktx
+	RqKhFnNRcSIAQdtughYEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsWy7bCSvO7Hk5/TDL4/57SYs2obo8Xqu/1s
+	Fu9az7FY/Oq+y2hxedccNouzEz6wOrB57Jx1l93j8tlSj74tqxg9Pm+SC2CJ4rJJSc3JLEst
+	0rdL4Mq4cmESW8E5pop9P9ayNjD2MHUxcnJICJhITH3Ww9bFyMUhJLCdUeL1jUdQCQmJHY/+
+	sELYwhIr/z1nhyj6xijx58gRFpAEm4CSxP4tHxhBbBEBXYm1mxrBbGYBG4mdLVvYQWxhATeJ
+	rw8OgQ1lEVCVWHP6A9BQDg5eAWuJw+3VEPPlJW527WcGsTkFrCSWPDzKAlIiJGApseGgG0iY
+	V0BQ4uTMJywQ0+UlmrfOZp7AKDALSWoWktQCRqZVjKKpBcW56bnJBYZ6xYm5xaV56XrJ+bmb
+	GMFBqxW0g3HZ+r96hxiZOBgPMUpwMCuJ8E66+TFNiDclsbIqtSg/vqg0J7X4EKM0B4uSOK9y
+	TmeKkEB6YklqdmpqQWoRTJaJg1OqgWnBrtu7j5yZvOXaacHeVGVnU+6Pc30Zt6Wol935/u7m
+	SoctXSY/NvSZpYXPYS+M6O3cbfQ8tkFpofChENdrbbfLi9rnl+fWmPFeKsmPyTMzNArpkL1w
+	/GlXknH5NbZEpe8vsncecyk38T0dofpXd6GOz7XDqY7TTyxZIhWspbf6wZ7CJemMdao/lt+c
+	y8cvsdj+tjV7Mc9Su2+zD8yVfSu8LeGHcgczn6XGZG93D4ELXox3NzHN/PszYqHyz/mPRZlm
+	d33T2sNqFOPJ8D2ie1/kvcwdW2dn3tVumxjU+zIja+13t9smrH8/XFKT5F7ru/GIypSFXrH3
+	6111Ij5dfeH35ln9P7Hjr7RL+j26nimxFGckGmoxFxUnAgB5s8hlyQIAAA==
+X-CMS-MailID: 20240925082937epcas5p1baa4bb786ea874400d7b18553cd57625
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240925082937epcas5p1baa4bb786ea874400d7b18553cd57625
+References: <20240918021010.12894-1-xue01.he@samsung.com>
+	<CGME20240925082937epcas5p1baa4bb786ea874400d7b18553cd57625@epcas5p1.samsung.com>
 
-On 9/24/24 3:40 PM, Al Viro wrote:
-> On Mon, Sep 23, 2024 at 09:36:59PM +0100, Al Viro wrote:
-> 
->> 	* go through the VFS side of things and make sure we have a consistent
->> set of helpers that would take struct filename * - *not* the ad-hoc mix we
->> have right now, when that's basically driven by io_uring borging them in
->> one by one - or duplicates them without bothering to share helpers.
->> E.g. mkdirat(2) does getname() and passes it to do_mkdirat(), which
->> consumes the sucker; so does mknodat(2), but do_mknodat() is static.  OTOH,
->> path_setxattr() does setxattr_copy(), then retry_estale loop with
->> user_path_at() + mnt_want_write() + do_setxattr() + mnt_drop_write() + path_put()
->> as a body, while on io_uring side we have retry_estale loop with filename_lookup() +
->> (io_uring helper that does mnt_want_write() + do_setxattr() + mnt_drop_write()) +
->> path_put().
->> 	Sure, that user_path_at() call is getname() + filename_lookup() + putname(),
->> so they are equivalent, but keeping that shite in sync is going to be trouble.
-> 
-> BTW, re mess around xattr:
-> static int __io_getxattr_prep(struct io_kiocb *req,
->                               const struct io_uring_sqe *sqe)
-> {
-> ...
->         ix->ctx.cvalue = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-> 	ix->ctx.size = READ_ONCE(sqe->len);
-> ...
->         ret = strncpy_from_user(ix->ctx.kname->name, name,
-> 				sizeof(ix->ctx.kname->name));
-> 
-> }
-> 
-> int io_fgetxattr(struct io_kiocb *req, unsigned int issue_flags)
-> {
-> ...
->         ret = do_getxattr(file_mnt_idmap(req->file),
-> 			req->file->f_path.dentry,
-> 			&ix->ctx);
-> ...
-> }
-> 
-> ssize_t
-> do_getxattr(struct mnt_idmap *idmap, struct dentry *d,
->         struct xattr_ctx *ctx)
-> {
-> ...
->         if (error > 0) {
-> 		if (ctx->size && copy_to_user(ctx->value, ctx->kvalue, error))
-> ...
-> }
-> 
-> and we have
-> struct xattr_ctx {
->         /* Value of attribute */
-> 	union {
-> 		const void __user *cvalue;
-> 		void __user *value;
-> 	};
-> 	...
-> }
-> 
-> Undefined behaviour aside, there's something odd going on here:
-> why do we bother with copy-in in ->prep() when we do copy-out in
-> ->issue() anyway?  ->issue() does run with initiator's ->mm in use,
-> right?
-> 
-> IOW, what's the io_uring policy on what gets copied in ->prep() vs.
-> in ->issue()?
+On 24/08/12 1:59AM, hexue wrote:
+>This patch add a new hybrid poll at io_uring level, it also set a signal
+>"IORING_SETUP_HY_POLL" to application, aim to provide a interface for users
+>to enable use new hybrid polling flexibly.
 
-The normal policy is that anything that is read-only should remain
-stable after ->prep() has been called, so that ->issue() can use it.
-That means the application can keep it on-stack as long as it's valid
-until io_uring_submit() returns. For structs/buffers that are copied to
-after IO, those the application obviously need to keep around until they
-see a completion for that request. So yes, for the xattr cases where the
-struct is copied to at completion time, those do not need to be stable
-after ->prep(), could be handled purely on the ->issue() side.
-
--- 
-Jens Axboe
+Hi, just a gentle ping, is there still in merge window? or any comment for
+this patch?
+--
+hexue
 

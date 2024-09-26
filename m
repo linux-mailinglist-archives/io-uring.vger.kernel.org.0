@@ -1,137 +1,286 @@
-Return-Path: <io-uring+bounces-3311-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3312-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446F89867E4
-	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 22:58:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E926986B8E
+	for <lists+io-uring@lfdr.de>; Thu, 26 Sep 2024 05:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE523282BAA
-	for <lists+io-uring@lfdr.de>; Wed, 25 Sep 2024 20:58:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0CCA1C21B0F
+	for <lists+io-uring@lfdr.de>; Thu, 26 Sep 2024 03:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA55B14D2B8;
-	Wed, 25 Sep 2024 20:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF92175D47;
+	Thu, 26 Sep 2024 03:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IcA8+EUr"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="W1VPfYm6"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A49130E58
-	for <io-uring@vger.kernel.org>; Wed, 25 Sep 2024 20:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E5D1741C6;
+	Thu, 26 Sep 2024 03:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727297930; cv=none; b=cVujebqwgSQ8xggEy6ofV5p3Qg6j6foPirQPaZTKsxInTjDE4v53yW/OfXdcu1X4xqiKAjgB5qyoUjuWvjuu/Lz6g84qCAprPJputrUoG7OYahW4DlJfEv/Q/MbZqIvL+Mrz5HCMkBflTW4LNB+tZLf4uLpZYpz3jXPoH49Kyi0=
+	t=1727322970; cv=none; b=ee3ENubE4LRs9muk3pu5nNLOQLh81BX8Xnv/NswfamLqosFTqeFOv00/kGUyy2cVYCeV4wOqXcLrl7leYZJN9ytahuovdwth0UK6ZlYBiE7AoSSnPmttJONE+7HDTZ8It5cc8v/crIfDvd+0wCQplNvWvx5iEW8Ls7pouBxs8GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727297930; c=relaxed/simple;
-	bh=1pyK3d1jv/wGRieZiiSOW8Aq2+2vd1lQtCF+g6NwPlU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HNc03zvefFlD7c+GBpNMmzGmP78aka3byM+c6J3ofkW1YFvS4pND+ZPtKq95xtkoDT3Q9+V0B8w+uPly2UCZ/HDfFG3GzAsKldYC3s26lH7O6fS+17nbMJVPuJyLz+NDrvUY7WUcjsjNscfqt55jznf7Z0k3o9YiNCpg7kWCFSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IcA8+EUr; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e1651f48c31so351364276.0
-        for <io-uring@vger.kernel.org>; Wed, 25 Sep 2024 13:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1727297928; x=1727902728; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I/RTp60C/vGTcLnuHNp0lMYJzWwQ9rzux6ho8p7w4Cs=;
-        b=IcA8+EUrckqrsBM1iD0Gx0bwTk/09IeYft27EOyGZCYqE+aSO11JpTncl8oXHaBshi
-         +ov5dNgHY6lg/Y8vj3VGkOImm7IRyxO6ls0qcY/KtKenfd9s/QtpED5IPkZ8JCNwK1BS
-         sz1+5GShGfKl9G52AXbLPrMDlSxrVAnqV9VZiDkZm0J2VekgEbuOpAZA5za+3i/UEjQb
-         jcdNAm/8VPxiwuV5PANIfCnYQW7INgwF3C61HEcq1Djv5G7dEGIIzDAH+rpPw4RN8gLy
-         3XrjiPxJBW7OzZKbPfd3UkPJ4vKU7WExPn2qVvt89pOZQv/SYHpWMPwxYFk+9mjsrR9A
-         j6NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727297928; x=1727902728;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I/RTp60C/vGTcLnuHNp0lMYJzWwQ9rzux6ho8p7w4Cs=;
-        b=GgwiINBeCWFdNtljQEsjHJYbRADZojoP2HxrujS4s2+hbiQAsfyJFP4x5Inna4Rxe0
-         kuEkrkeX5qQlhSNbjYu0Zi2MkHac9+p93ETaBbknn70drxzJJJpxaCNwokOl2fpHVqgb
-         J5sdX1TALKAVXnMqZGclBVobHyu7/ZljV8LgUp2HNeRAdhCozW/xopB1+2zqGM/NcvKX
-         2TVPqpIiHphHXHymqYrRqWdAnFxxaNjIGDPdPRSqJZBypehWhnr/vFXWy5Y1PDT07q+H
-         q/TeWAuFFaIyOq/+06G5L+h7sFFEn03JwPZaoVcC+RNWbicunm1nNo+Tl4wM5LbLxa6L
-         6B4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVN9gsSAe+FY4gWCrd5yod4GlF3rtEAgewxe+BUQttS4nlNe/lPYMrubFADyHakpNSrr/zLKY0yOw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzegiOXbYZGNbWwYUj2gbhMMF3VkPgWPW2Zp5GQo7VH6oCeR9Yb
-	kX4BkU3M3VS7tmAFoOlkUfhZ8MVeV16Sd8fZkvM6LDvKvHoiXEO2x9mWF6CmLm+Ve5qiMMnRmgi
-	pNfpuIJ592DYQa8eytljjgg1UFkfjQQVmUqvy
-X-Google-Smtp-Source: AGHT+IFO0ZO2Rbg+fW2i9lO0lub8NWPyyYcjOcT4luyxVqXK/pN8SzNM+fsLwE0tdW8dGluIjuGnaRVOmnSJqMfbb+E=
-X-Received: by 2002:a05:6902:118f:b0:e20:2e45:19bc with SMTP id
- 3f1490d57ef6-e24d7446bcdmr3423326276.4.1727297927957; Wed, 25 Sep 2024
- 13:58:47 -0700 (PDT)
+	s=arc-20240116; t=1727322970; c=relaxed/simple;
+	bh=2JYe+QQf/yUxEXm9IZ33GGv+BhtQF7udwrjZRDYNmkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pPNDWLPKHiZSIHpdtIInMu8RG2BePaQP4crOKuvQmBpfqm5yEramddGrk1B69n/UtvvGnrNV24Oyfer6WZemHy/AlyiT3UL5tdBPecCobNuiv9eRNBM1hUA0V8tA5FtLKLGwZk2KSu3MQ3QiR7FiZENX5MAS4p8u8nqLgdDreKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=W1VPfYm6; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=licKNqn/YkyGHf5ZbZt3M4s2O8Om6zgr4x34oDhQ27Y=; b=W1VPfYm6kI8SRg8SJtrFQtNipX
+	516VzkZHfLEfTDjL+gPWC2hizUCDYDfA6Xk5EJi0wFgjxuzCAd8gKl8KSciCnGlXV5+x5ZLfCbep+
+	xUQmwh5VFTZ79vU7e+lg7Zia80wiO4N0uYo2HLYzS/gsizvMqBxtRSeo08hrAD6r7OTUvhT/1WLN9
+	AGr0wJed1lBtXH2Fnfg8jbAymJiuj8V5yo0aDnI1x3N/w9TRnsQrGmYspFoFI6a/CQlaI/c7dQcDc
+	Rx+mGf8KExONjghZG7wS+k81zouPFSSSxy42aKycoe9pjeQLiqPV6QpPwiXOGl4I5zwr0FFJC/ce9
+	SkEacRHA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1stfbl-0000000FYtq-40xK;
+	Thu, 26 Sep 2024 03:56:01 +0000
+Date: Thu, 26 Sep 2024 04:56:01 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [RFC] struct filename, io_uring and audit troubles
+Message-ID: <20240926035601.GO3550746@ZenIV>
+References: <20240922004901.GA3413968@ZenIV>
+ <20240923015044.GE3413968@ZenIV>
+ <62104de8-6e9a-4566-bf85-f4c8d55bdb36@kernel.dk>
+ <CAHC9VhQMGsL1tZrAbpwTHCriwZE2bzxAd+-7MSO+bPZe=N6+aA@mail.gmail.com>
+ <20240923144841.GA3550746@ZenIV>
+ <CAHC9VhSuDVW2Dmb6bA3CK6k77cPEv2vMqv3w4FfGvtcRDmgL3A@mail.gmail.com>
+ <20240923203659.GD3550746@ZenIV>
+ <20240924214046.GG3550746@ZenIV>
+ <d3d2c19d-d6a3-4876-87f0-d5709ee1e4b2@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240922004901.GA3413968@ZenIV> <20240923015044.GE3413968@ZenIV>
- <62104de8-6e9a-4566-bf85-f4c8d55bdb36@kernel.dk> <CAHC9VhQMGsL1tZrAbpwTHCriwZE2bzxAd+-7MSO+bPZe=N6+aA@mail.gmail.com>
- <20240923144841.GA3550746@ZenIV> <CAHC9VhSuDVW2Dmb6bA3CK6k77cPEv2vMqv3w4FfGvtcRDmgL3A@mail.gmail.com>
- <20240923203659.GD3550746@ZenIV> <CAHC9VhSq=6MK=HKCJ8KCjYNQZ4j_eCSgTpuYyHtk2T-_m2Br3Q@mail.gmail.com>
- <20240925204423.GK3550746@ZenIV>
-In-Reply-To: <20240925204423.GK3550746@ZenIV>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 25 Sep 2024 16:58:37 -0400
-Message-ID: <CAHC9VhThDyJgAtfWLw_rrF=LaZh6myCmAkqDq+=W5qMCgaCmTg@mail.gmail.com>
-Subject: Re: [RFC] struct filename, io_uring and audit troubles
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org, audit@vger.kernel.org, 
-	io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d3d2c19d-d6a3-4876-87f0-d5709ee1e4b2@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Sep 25, 2024 at 4:44=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
-> On Mon, Sep 23, 2024 at 08:11:51PM -0400, Paul Moore wrote:
->
-> > >         * get rid of the "repeated getname() on the same address is g=
-oing to
-> > > give you the same object" - that can't be relied upon without audit, =
-for one
-> > > thing and for another... having a syscall that takes two pathnames th=
-at gives
-> > > different audit log (if not predicate evaluation) in cases when those=
- are
-> > > identical pointers vs. strings with identical contenst is, IMO, somew=
-hat
-> > > undesirable.  That kills filename->uaddr.
-> >
-> > /uaddr/uptr/ if I'm following you correctly, but yeah, that all seems g=
-ood.
->
-> BTW, what should we do when e.g. mkdir(2) manages to get to the parent, c=
-alls
-> audit_inode() to memorize that one and then gets -ESTALE from nfs_mkdir()=
-?
-> We repeat the pathwalk, this time with LOOKUP_REVAL (i.e. make sure to as=
-k
-> the server about each NFS directory we are visiting, even if it had been =
-seen
-> recently) and arrive to a different directory, which is not stale and whe=
-re
-> subdirectory creation succeeds.
+On Wed, Sep 25, 2024 at 12:01:01AM -0600, Jens Axboe wrote:
 
-Ah, that's fun.  I'm guessing we could run into similar issues with
-other network filesystems, or is this specific to NFS?
+> The normal policy is that anything that is read-only should remain
+> stable after ->prep() has been called, so that ->issue() can use it.
+> That means the application can keep it on-stack as long as it's valid
+> until io_uring_submit() returns. For structs/buffers that are copied to
+> after IO, those the application obviously need to keep around until they
+> see a completion for that request. So yes, for the xattr cases where the
+> struct is copied to at completion time, those do not need to be stable
+> after ->prep(), could be handled purely on the ->issue() side.
 
-> The thing is, we call audit_inode(...., AUDIT_INODE_PARENT) twice.  With =
-the
-> same name, but with different inodes.  Should we log both, or should the
-> latter call cannibalize the audit_names instance from the earlier?
+Looks like io_fsetxattr() was missing audit_file()... Anyway, in a local
+branch I've added two helpers -
 
-I think the proper behavior is to have the second call cannibalize the
-state from the first.  The intent of logging is to capture the state
-when/where the new directory is created, since we never created a
-directory off the -ESTALE path I don't see why we would need to log
-it.
+int file_setxattr(struct file *file, struct xattr_ctx *ctx);
+int filename_setxattr(int dfd, struct filename *filename,
+                      struct xattr_ctx *ctx, unsigned int lookup_flags);
 
---=20
-paul-moore.com
+and converted both fs/xattr.c and io_uring/xattr.c to those.
+
+Completely untested delta follows; it's _not_ in the final form,
+it misses getxattr side, etc.
+
+BTW, I think fs/internal.h is a very wrong place for that, as well as
+for do_mkdirat() et.al.  include/linux/marshalled_syscalls.h, perhaps?
+
+diff --git a/fs/internal.h b/fs/internal.h
+index 8cf42b327e5e..e39f80201ff8 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -285,8 +285,9 @@ ssize_t do_getxattr(struct mnt_idmap *idmap,
+ 		    struct xattr_ctx *ctx);
+ 
+ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx);
+-int do_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
+-		struct xattr_ctx *ctx);
++int file_setxattr(struct file *file, struct xattr_ctx *ctx);
++int filename_setxattr(int dfd, struct filename *filename,
++		      struct xattr_ctx *ctx, unsigned int lookup_flags);
+ int may_write_xattr(struct mnt_idmap *idmap, struct inode *inode);
+ 
+ #ifdef CONFIG_FS_POSIX_ACL
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 0fc813cb005c..fc6409181c46 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -619,7 +619,7 @@ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
+ 	return error;
+ }
+ 
+-int do_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
++static int do_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		struct xattr_ctx *ctx)
+ {
+ 	if (is_posix_acl_xattr(ctx->kname->name))
+@@ -630,32 +630,31 @@ int do_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 			ctx->kvalue, ctx->size, ctx->flags);
+ }
+ 
+-static int path_setxattr(const char __user *pathname,
+-			 const char __user *name, const void __user *value,
+-			 size_t size, int flags, unsigned int lookup_flags)
++int file_setxattr(struct file *f, struct xattr_ctx *ctx)
++{
++	int error = mnt_want_write_file(f);
++
++	if (!error) {
++		audit_file(f);
++		error = do_setxattr(file_mnt_idmap(f), f->f_path.dentry, ctx);
++		mnt_drop_write_file(f);
++	}
++	return error;
++}
++
++int filename_setxattr(int dfd, struct filename *filename,
++		      struct xattr_ctx *ctx, unsigned int lookup_flags)
+ {
+-	struct xattr_name kname;
+-	struct xattr_ctx ctx = {
+-		.cvalue   = value,
+-		.kvalue   = NULL,
+-		.size     = size,
+-		.kname    = &kname,
+-		.flags    = flags,
+-	};
+ 	struct path path;
+ 	int error;
+ 
+-	error = setxattr_copy(name, &ctx);
+-	if (error)
+-		return error;
+-
+ retry:
+-	error = user_path_at(AT_FDCWD, pathname, lookup_flags, &path);
++	error = filename_lookup(dfd, filename, lookup_flags, &path, NULL);
+ 	if (error)
+ 		goto out;
+ 	error = mnt_want_write(path.mnt);
+ 	if (!error) {
+-		error = do_setxattr(mnt_idmap(path.mnt), path.dentry, &ctx);
++		error = do_setxattr(mnt_idmap(path.mnt), path.dentry, ctx);
+ 		mnt_drop_write(path.mnt);
+ 	}
+ 	path_put(&path);
+@@ -665,6 +664,30 @@ static int path_setxattr(const char __user *pathname,
+ 	}
+ 
+ out:
++	putname(filename);
++	return error;
++}
++
++static int path_setxattr(const char __user *pathname,
++			 const char __user *name, const void __user *value,
++			 size_t size, int flags, unsigned int lookup_flags)
++{
++	struct xattr_name kname;
++	struct xattr_ctx ctx = {
++		.cvalue   = value,
++		.kvalue   = NULL,
++		.size     = size,
++		.kname    = &kname,
++		.flags    = flags,
++	};
++	int error;
++
++	error = setxattr_copy(name, &ctx);
++	if (error)
++		return error;
++
++	error = filename_setxattr(AT_FDCWD, getname(pathname),
++				  &ctx, lookup_flags);
+ 	kvfree(ctx.kvalue);
+ 	return error;
+ }
+@@ -700,17 +723,11 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, const char __user *, name,
+ 
+ 	if (fd_empty(f))
+ 		return -EBADF;
+-	audit_file(fd_file(f));
+ 	error = setxattr_copy(name, &ctx);
+ 	if (error)
+ 		return error;
+ 
+-	error = mnt_want_write_file(fd_file(f));
+-	if (!error) {
+-		error = do_setxattr(file_mnt_idmap(fd_file(f)),
+-				    fd_file(f)->f_path.dentry, &ctx);
+-		mnt_drop_write_file(fd_file(f));
+-	}
++	error = file_setxattr(fd_file(f), &ctx);
+ 	kvfree(ctx.kvalue);
+ 	return error;
+ }
+diff --git a/io_uring/xattr.c b/io_uring/xattr.c
+index 13e8d7d2cdc2..702d5981fd63 100644
+--- a/io_uring/xattr.c
++++ b/io_uring/xattr.c
+@@ -203,28 +203,14 @@ int io_fsetxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return __io_setxattr_prep(req, sqe);
+ }
+ 
+-static int __io_setxattr(struct io_kiocb *req, unsigned int issue_flags,
+-			const struct path *path)
+-{
+-	struct io_xattr *ix = io_kiocb_to_cmd(req, struct io_xattr);
+-	int ret;
+-
+-	ret = mnt_want_write(path->mnt);
+-	if (!ret) {
+-		ret = do_setxattr(mnt_idmap(path->mnt), path->dentry, &ix->ctx);
+-		mnt_drop_write(path->mnt);
+-	}
+-
+-	return ret;
+-}
+-
+ int io_fsetxattr(struct io_kiocb *req, unsigned int issue_flags)
+ {
++	struct io_xattr *ix = io_kiocb_to_cmd(req, struct io_xattr);
+ 	int ret;
+ 
+ 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
+ 
+-	ret = __io_setxattr(req, issue_flags, &req->file->f_path);
++	ret = file_setxattr(req->file, &ix->ctx);
+ 	io_xattr_finish(req, ret);
+ 	return IOU_OK;
+ }
+@@ -232,22 +218,11 @@ int io_fsetxattr(struct io_kiocb *req, unsigned int issue_flags)
+ int io_setxattr(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_xattr *ix = io_kiocb_to_cmd(req, struct io_xattr);
+-	unsigned int lookup_flags = LOOKUP_FOLLOW;
+-	struct path path;
+ 	int ret;
+ 
+ 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
+ 
+-retry:
+-	ret = filename_lookup(AT_FDCWD, ix->filename, lookup_flags, &path, NULL);
+-	if (!ret) {
+-		ret = __io_setxattr(req, issue_flags, &path);
+-		path_put(&path);
+-		if (retry_estale(ret, lookup_flags)) {
+-			lookup_flags |= LOOKUP_REVAL;
+-			goto retry;
+-		}
+-	}
++	ret = filename_setxattr(AT_FDCWD, ix->filename, &ix->ctx, LOOKUP_FOLLOW);
+ 
+ 	io_xattr_finish(req, ret);
+ 	return IOU_OK;
 

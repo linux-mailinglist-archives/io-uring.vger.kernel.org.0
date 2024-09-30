@@ -1,73 +1,73 @@
-Return-Path: <io-uring+bounces-3332-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3333-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420E898ABFC
-	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 20:23:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00DF998ABFD
+	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 20:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1E15282D83
-	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 18:23:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD9B281A11
+	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 18:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00594199958;
-	Mon, 30 Sep 2024 18:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFA9199957;
+	Mon, 30 Sep 2024 18:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ew3s4Btb"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QsHPA+I/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF10199957
-	for <io-uring@vger.kernel.org>; Mon, 30 Sep 2024 18:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CC41990AE
+	for <io-uring@vger.kernel.org>; Mon, 30 Sep 2024 18:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727720466; cv=none; b=E7LzGZToiH+/Y4gPdm7mXBgeJ1fhw6maXjk21/Gdsm2JZcIt2zXqJkyJGboUEqeYxRV8QceiMP0BfEdvsTyVWm82407ZhV69muW7ZdEK657+2ZC7zI0poQNXjmZ1y2Qm/86fnVm5K1Ab+417pScoIYvTc7KlVha9gff4n8TS7xA=
+	t=1727720469; cv=none; b=Yl0MgSRT4gd7bJ/DoOHI7x1lOFlH0iIoNVFSFMlKl1jIEzI0spa3z2RihmyYbFHexmzSChwFVj1Uf/qqvLotRbsRN/SblLaDJ309BraIvbiGOYiWGgHCQ/uGSH90q+kNKOkoFPP7UGWAHdCmTe28RDT1bL8ipWY539vwGRL6Vrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727720466; c=relaxed/simple;
-	bh=VSwCLEvRnPbXOvMic/tH/TbJClaceq6m4BaPRoKdrjk=;
+	s=arc-20240116; t=1727720469; c=relaxed/simple;
+	bh=WMXM6grgrfQu3eqcKrunC0fA5XqYfx91KUbAlUnvoPo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=H0pU57LD3Bt+oVy9fM37RPNLmuuXkwhCok1xK4iqBTniFjoJZakYVjZNlUoUCWbZwdM0iHHtNhjfZn4f3X8DT8Mu8zbX9OUmeMt6cmtc+RQvtEQzp1jsIT9urb7oCZrP07QRvNgQPqLa/mA4jfGDsGC4mIr9XyIhnfVCVK/9BS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ew3s4Btb; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=MxGBwyScCScJK2b3NHUAcT6GgyZbPzboD2eiiBksFtw6PwY215DdKXlGk8rLk0B37l8HKfE57UwtCQtJiTsSlgZPAu6TSXCowRkxXu7q0lOQhtmIaSeVe5QGCXcT7/AG1TdK+fO4jiEoUQBrNmGXNluh/BqabcTn31AAEiVD3EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QsHPA+I/; arc=none smtp.client-ip=203.254.224.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240930182102epoutp02704dbc3354ecd3f076677c3755d9b4bc~6GJtu6ndg0776207762epoutp02t
-	for <io-uring@vger.kernel.org>; Mon, 30 Sep 2024 18:21:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240930182102epoutp02704dbc3354ecd3f076677c3755d9b4bc~6GJtu6ndg0776207762epoutp02t
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240930182106epoutp04de67af3e820a41ade2ec56ea4d77ad0f~6GJw9SBog3066130661epoutp04B
+	for <io-uring@vger.kernel.org>; Mon, 30 Sep 2024 18:21:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240930182106epoutp04de67af3e820a41ade2ec56ea4d77ad0f~6GJw9SBog3066130661epoutp04B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727720462;
-	bh=hyooDSKS7SUXPMRtV3IrWwIut5VpyE7/Ysl0cxIi+DA=;
+	s=mail20170921; t=1727720466;
+	bh=i2W31PSDLoXfDAIGVqVKpmMhkKotr8fjX0j5n03WZq8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ew3s4BtbXf8v0ezKEctp91YN2XePSsT123lKrEr78iFn9hTGJNle4FwSHkh6V2J6z
-	 h6jRodhABerI3mbQ72JzG3bp40/6nR5Q9/HXI1zijQ7pEmyKIcYUYSAd5Xyg3pJs9t
-	 YJznOp5WLFn0tK7Z3aOvG12sjjvPtbPGLD4fu+ac=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240930182102epcas5p4995ee0bade62c149e74e02e48a74482a~6GJtHQqZa0453304533epcas5p4O;
-	Mon, 30 Sep 2024 18:21:02 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XHTsS3ckHz4x9Pq; Mon, 30 Sep
-	2024 18:21:00 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BF.88.08574.C0CEAF66; Tue,  1 Oct 2024 03:21:00 +0900 (KST)
+	b=QsHPA+I/QTBw7l8n7nxWCl2wIhOubxu9YLtUz9UhKWuRiF9vhY2n5mZlXz4zXXnSx
+	 XXqCt6hLjX6mmjoEJ9MvdNZp60FNPVJ6/fnkHxixASo4rQO2RIADuexzqVJu7feC7W
+	 x58eX3Vftk7OorkD2vBE0GaVD4dLG2+dH9YF5Kmo=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240930182105epcas5p1fb18814d8840786678374931f0f92e5d~6GJwXLI273030330303epcas5p1P;
+	Mon, 30 Sep 2024 18:21:05 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XHTsX0Pwjz4x9Pp; Mon, 30 Sep
+	2024 18:21:04 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	81.F6.18935.F0CEAF66; Tue,  1 Oct 2024 03:21:03 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240930182100epcas5p31a010c225f3c76aa4dc54fced32abd2a~6GJrC6v632158621586epcas5p3E;
-	Mon, 30 Sep 2024 18:21:00 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240930182103epcas5p4c9e91ca3cdf20e900b1425ae45fef81d~6GJuPNzpG2069720697epcas5p4T;
+	Mon, 30 Sep 2024 18:21:03 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240930182100epsmtrp2930bb9ae674a89b937077c890d8a79de~6GJrCAAv52734427344epsmtrp2c;
-	Mon, 30 Sep 2024 18:21:00 +0000 (GMT)
-X-AuditID: b6c32a44-6dbff7000000217e-e3-66faec0cf793
+	20240930182103epsmtrp225c56587c62c66cc2420497c3a7c41b0~6GJuNAoh_2734327343epsmtrp2p;
+	Mon, 30 Sep 2024 18:21:03 +0000 (GMT)
+X-AuditID: b6c32a50-a99ff700000049f7-74-66faec0f0586
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	61.19.08229.B0CEAF66; Tue,  1 Oct 2024 03:20:59 +0900 (KST)
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B4.29.07371.F0CEAF66; Tue,  1 Oct 2024 03:21:03 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.99.41.245]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240930182056epsmtip225762a12393553a4f7235980b0e9161b~6GJn1QD4f2505325053epsmtip2M;
-	Mon, 30 Sep 2024 18:20:56 +0000 (GMT)
+	20240930182100epsmtip2e761add8ecf8f9113294676db34a2524~6GJrCcr9X2505325053epsmtip2N;
+	Mon, 30 Sep 2024 18:20:59 +0000 (GMT)
 From: Kanchan Joshi <joshi.k@samsung.com>
 To: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, hare@suse.de,
 	sagi@grimberg.me, martin.petersen@oracle.com, brauner@kernel.org,
@@ -77,9 +77,9 @@ Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
 	io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
 	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com, Kanchan
 	Joshi <joshi.k@samsung.com>, Nitesh Shetty <nj.shetty@samsung.com>
-Subject: [PATCH v7 2/3] block, fs: restore kiocb based write hint processing
-Date: Mon, 30 Sep 2024 23:43:04 +0530
-Message-Id: <20240930181305.17286-3-joshi.k@samsung.com>
+Subject: [PATCH v7 3/3] io_uring: enable per-io hinting capability
+Date: Mon, 30 Sep 2024 23:43:05 +0530
+Message-Id: <20240930181305.17286-4-joshi.k@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240930181305.17286-1-joshi.k@samsung.com>
 Precedence: bulk
@@ -89,207 +89,238 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta1AbVRT27m6yAUtZoAwXHAuuUQSHkFjAixZ1ptSuA7U46Iz4o7gmC2ES
-	QiYJD8UBSmmHZoDSgFCgCArCJChYSpFXmPIq7fgAwT6gwNAWflAotESsiFATFrX/vnPOd853
-	v3PniHD3PNJHlKQxcDoNq6aFzkT7QMBLQbuW/kqQTvVAdM7SDlDT9GkhMm61EWhxYBWgsgfr
-	OFrO3SDQxKVODPV8bcKQuWkIQ8snfiFQVflxDM21VOLo7pSNREOP7wuRqf86QKVluQBZJ19G
-	PdarBKppmCdR4/AWhto3anDUvLhCoJHNYQEaqTxHvgWZ8d+imM7KaZIZmTlPMOM/pzKtllNC
-	pnXVRDIX6rOZ7okcIfNwfpJgVnqvCZmiNgtgfqodtBd/zGRsrXuZ1rn7WIzrR6r9So5VcDo/
-	TiNPUSRpEiPoqNj4A/GhYVJZkCwcvUr7adhkLoKOjI4JejtJbV8E7ZfGqlPtqRhWr6eD39iv
-	S0k1cH7KFL0hgua0CrU2RCvRs8n6VE2iRMMZXpNJpa+E2okfq5RlpgpSe0OScbK8XJgDRl80
-	ApEIUiHwwQ96I3AWuVPdAE6UrmN8sArgmjmX5IM/ALx3rQc3AqftjrsrdwBfsAJY1ndmJ7AB
-	uP59L+GYK6QC4GhJqiO/hyrF4ESThXB041Q9Bm/MujqwBxUNRx+2CByYoF6At/LrSQd2oRCc
-	KqgmeTVfWDH2aBs7UeGwZDwf5zlu8GrF3M5MX3j8YhXuEINUoxPsnijYeWokNI5/C3jsAe8N
-	t+0M9YG2ZauQxyo4e2eW4PHnsONCkYDHb8Kcv28KHGZwu5mWrmBeazcs3JjD+N25wPyT7jz7
-	OThjmt/p9IK3z9YLeAoDm45l8espANB8eRIvBr6VTziofMJB5f9itQC3AG9Oq09O5OShWpmG
-	S//vX+Upya1g+xwCIzvAzZotST/ARKAfQBFO73GZ6V9PcHdRsJ9+xulS4nWpak7fD0LtKz6D
-	+3jKU+z3pDHEy0LCpSFhYWEh4fvCZLSXy+KJaoU7lcgaOBXHaTndv32YyMknB1NcKvH6rjha
-	8CGnEnc65+0Tu/qPpIcb8MddAx+0ez8vNsfNZHjCwW9YrTmuV6I6tiXxlOunI4KefS/K+crk
-	wS/nD/1+pAEyi17ery/uWrhsanmXGyqK9vhq4UBPeuEn1xefEV+EHDWW/r5SfcUQf0uwElDY
-	IY/ae3gwOM0ca14alpyua2ASqpTWP+liJ+NyWNapp6yb3c2/5kX2TUVuJov9AhuzJx+x/s05
-	Av8yNZHWlb90aKHd3+N2/oHshky6aSz0qPIwOZRxdvDp8iXa2+YjLrYIXedK8qozRJmxtjVy
-	1ig9snbU953d54GSq8sKTo7ZMsy4uvXX9sV94TZTRxN6JSsLxHV69h/5BX4vlwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJIsWRmVeSWpSXmKPExsWy7bCSvC73m19pBl82GlnMWbWN0WL13X42
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Te1BUVRzm3Hv3AblyW1BOS7HbCjbALOwm4FkHspCBO0oT5tSM1Qzt7F4e
+	7bK77SOpDAiElEnkFcpi4QPbhDHkIaKyZkvE4Gs1sFgIXF4zJgIKiCFC7bJY/vf9fuf7zne+
+	35kfG+fms3jsdLWB1qllKiHTi2hpDw4Red97nCLuL9iEDte2AFQ3cICJCpeaCTTePg1Qxf15
+	HE3mLhDIfukchtqOlWLoZF0HhibzrxOo6mAehkbrTTga+XOGhTr+mWCiUuvvAJVX5AJk6QtF
+	bZYuAlV/P8ZC5s4lDLUsVOPox/EpAtkWOxnIZjrMeh1S3T3bqHOmARZlG2wgqO5rRqqxdh+T
+	apwuZVFNNdnUBXsOk3ow1kdQUxdvMami5lpAXT3yi/PwyufUTGMA1Tg6gSV5v6eMTqNlClon
+	oNVyjSJdnRoj3LYjeUtyZJRYIpJI0UahQC3LoGOEcYlJovh0lXMQQsEnMpXR2UqS6fXC8Nei
+	dRqjgRakafSGGCGtVai0EdowvSxDb1SnhqlpwyaJWPxqpJP4oTLtyb2PtafDM090LTJzwOX1
+	hcCTDckIOPuggVkIvNhcsg3A8f2dwF1MA3jcVMxysbjkHIC3H+9+qrDkDeJukgXAG5X3CXcx
+	A6C97LZTwWYzyWB4o8zo6vuS5Ri019USLjVO1mDwD4e3C/uQsbDjqg1zYYIMgnWnFpbdOCSC
+	JUfrcbcbH1b+9mi570lKYVn3XtzNeR52VY6u3MmHeWeqll8ESbMn7DebMbc4Dn5Tf5Dlxj7w
+	bmfzCubBmUkL042V0DHsINx4N2xtKmK48WaY86SX4QqDO8PUnw93e62G+xdGMVcbkhy4t4Dr
+	Zr8MB0vHVpR+cOhQzQqmYPGsY2W8XwM4VPEloxjwTc9EMD0TwfS/2xGA1wIerdVnpNLySK1E
+	pKZ3/fexck1GI1jeh5CkVlB3ejHMCjA2sALIxoW+nEHrfAqXo5B9+hmt0yTrjCpabwWRziGX
+	4Lw1co1zodSGZEmEVBwRFRUVId0QJRH6ccbzv1VwyVSZgVbStJbWPdVhbE9eDqbXHg/c0OYf
+	vNYn9Modxg+/iqKD3j/z8GgBaX83uTvkQiv5zslrWbuyY9uLGE3PLUkT9+30LBMFQo/hljSP
+	7zpVsylMzNwuyZWNTeVSZoHQfvdhDF9e8ub1vlibI6B/8+SMb9XPQLn4182sj7ZkBr0gGMZ6
+	eAGJnKGeNfRX8VsvqQIj/7af2GjWM1+ZPJuN+z/if8DNVu7U+f20NvqlbK+BhNyzIsdND48S
+	fP35LOUXccSLq7ZXFc3P3dlzaGuvsvoANhITcGpCujohNFwzGhK9Q/52r8+If5JPucUahvdl
+	im+Velz0uyxoS1i3PZReN9eulxwrfit+1RuKYL6tpSEsf4+Q0KfJJCG4Ti/7FxVwYteYBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJIsWRmVeSWpSXmKPExsWy7bCSvC7/m19pBucf8VvMWbWN0WL13X42
 	i65/W1gsXh/+xGgx7cNPZot3Tb9ZLG4e2MlksWfRJCaLlauPMlm8az3HYjF7ejOTxZP1s5gt
 	Ht/5zG5x9P9bNotJh64xWkyZ1sRosfeWtsWevSdZLOYve8pusfz4PyaLbb/nM1use/2exeL8
 	3+OsFudnzWF3kPC4fMXbY+esu+we5+9tZPG4fLbUY9OqTjaPTZ8msXtsXlLvsftmA5vHx6e3
-	WDze77vK5tG3ZRWjx5kFR4CSp6s9Pm+S89j05C1TAH8Ul01Kak5mWWqRvl0CV8a0STPZC67r
-	VbRNn87WwHhBrYuRk0NCwETi8ftHjF2MXBxCArsZJSa1PWKCSIhLNF/7wQ5hC0us/PcczBYS
-	+Mgo8Xu7XBcjBwebgKbEhcmlIL0iAiuYJLY9+csC4jALbGCSaFmyB6xBWMBH4sLH9awgNouA
-	qsTtjiVgcV4BC4k7PXOhFshLzLz0HczmFLCUmHy5gxliGVDNj3ZmiHpBiZMzn7CA2MxA9c1b
-	ZzNPYBSYhSQ1C0lqASPTKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0veT83E2M4NjW0tzBuH3V
-	B71DjEwcjIcYJTiYlUR47x36mSbEm5JYWZValB9fVJqTWnyIUZqDRUmcV/xFb4qQQHpiSWp2
-	ampBahFMlomDU6qBKW+jUabEh4xw7p9fnPfs1d30w2e7RyHX8+oosWDti/Gr126e/X/Dmjce
-	hj9vCDvX3Xmn57fLSfncGmvvo+wXkw5V/IxbmvWU7/neT7vjd91Nd/BkWXzye35Vx5y60Om7
-	a7VPWK/k1eiul17j2KexZkt5s6lsvbBgvOrlku/tPIWBCUwbljz0vrx5e3zbLtUN/w80zA1m
-	3NGmY+F9KjY5b9bekgk/jF+Eu27b+yP/LNf3iIp/gu1J9XnXjW0USqp3b58sW5S1dfP30tNW
-	X0OELBQvns6uqf3Tajl9mZWi5raDnazen5f3mJypyLnAc61OWkEv5IFIBNNUFu/b09UWHg7M
-	zJc5UnLGR7ggJnutEktxRqKhFnNRcSIAH9aBE1wDAAA=
-X-CMS-MailID: 20240930182100epcas5p31a010c225f3c76aa4dc54fced32abd2a
+	WDze77vK5tG3ZRWjx5kFR4CSp6s9Pm+S89j05C1TAH8Ul01Kak5mWWqRvl0CV8afN4UFG/Qr
+	lp78y9bAeEqti5GTQ0LARGJv8z3mLkYuDiGB3YwSD+/3sUMkxCWar/2AsoUlVv57zg5R9JFR
+	ovntK7YuRg4ONgFNiQuTS0HiIgIrmCS2PfnLAuIwC2xgkmhZsgesW1jASeLomfNMIDaLgKrE
+	6rW/weK8AhYSExeuZ4bYIC8x89J3sDingKXE5MsdYHEhoJo7P9qZIeoFJU7OfMICYjMD1Tdv
+	nc08gVFgFpLULCSpBYxMqxglUwuKc9Nzkw0LDPNSy/WKE3OLS/PS9ZLzczcxgmNbS2MH4735
+	//QOMTJxMB5ilOBgVhLhvXfoZ5oQb0piZVVqUX58UWlOavEhRmkOFiVxXsMZs1OEBNITS1Kz
+	U1MLUotgskwcnFINTAnPbkYUf3l+5euLU7GPDSI5wqM5mYsV3xnUvui4HJ0SPG/SG7vlXeUu
+	wYuuX33zbvPi+uo306bZ6EgtSRSrrvdkUXBQvTyb33uPoXLyhN3drfK93I8FT6RFsaXN/PN0
+	/YI0mZZAVyGra38PyL/tm1zsre1QcXe30Y7X7cG80wMPvcuMFvYU2Bt5Z1ukt4+JZUrIppUb
+	l1ryCnc73DNw9ysrElgwt5zJ9/KeixaPZ35jjF2Z8KV1YZD5zSu/n+89qa0xxS/5mmyAS/wt
+	pUfHjtSoztBJOnIwwlbHuUxSPj2BJTPPxjWU4fmT9tWJpRfK+3QqH50psEwuWdMmaB4xqyj/
+	yYtMpioO/wgup2IlluKMREMt5qLiRAALEIshXAMAAA==
+X-CMS-MailID: 20240930182103epcas5p4c9e91ca3cdf20e900b1425ae45fef81d
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240930182100epcas5p31a010c225f3c76aa4dc54fced32abd2a
+X-CMS-RootMailID: 20240930182103epcas5p4c9e91ca3cdf20e900b1425ae45fef81d
 References: <20240930181305.17286-1-joshi.k@samsung.com>
-	<CGME20240930182100epcas5p31a010c225f3c76aa4dc54fced32abd2a@epcas5p3.samsung.com>
+	<CGME20240930182103epcas5p4c9e91ca3cdf20e900b1425ae45fef81d@epcas5p4.samsung.com>
 
-struct kiocb has a 2 bytes hole that developed post commit 41d36a9f3e53
-("fs: remove kiocb.ki_hint").
-But write hint has made a comeback with commit 449813515d3e ("block, fs:
-Restore the per-bio/request data lifetime fields").
+With F_SET_RW_HINT fcntl, user can set a hint on the file inode, and
+all the subsequent writes on the file pass that hint value down.
+This can be limiting for large files (and for block device) as all the
+writes can be tagged with only one lifetime hint value.
+Concurrent writes (with different hint values) are hard to manage.
+Per-IO hinting solves that problem.
 
-This patch uses the leftover space in kiocb to carve 1 byte field
-ki_write_hint.
-Restore the code that operates on kiocb to use ki_write_hint instead of
-inode hint value.
+Allow userspace to pass additional metadata in the SQE.
+The type of passed metadata is expressed by a new field
 
-This does not bring any behavior change, but needed to enable per-io
-hints (by another patch).
+	__u16 meta_type;
+
+At this point one type META_TYPE_LIFETIME_HINT is supported.
+With this type, user can pass lifetime hint values in the new field
+
+	__u64 lifetime_val;
+
+This accepts all lifetime hint values that are possible with
+F_SET_RW_HINT fcntl.
+
+The write handlers (io_prep_rw, io_write) send the hint value to
+lower-layer using kiocb. This is good for upporting direct IO,
+but not when kiocb is not available (e.g., buffered IO).
+
+When per-io hints are not passed, the per-inode hint values are set in
+the kiocb (as before). Otherwise, these take the precedence on per-inode
+hints.
 
 Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
 ---
- block/fops.c         | 6 +++---
- fs/aio.c             | 1 +
- fs/cachefiles/io.c   | 1 +
- fs/direct-io.c       | 2 +-
- fs/iomap/direct-io.c | 2 +-
- include/linux/fs.h   | 8 ++++++++
- io_uring/rw.c        | 1 +
- 7 files changed, 16 insertions(+), 5 deletions(-)
+ fs/fcntl.c                    | 22 ----------------------
+ include/linux/rw_hint.h       | 24 ++++++++++++++++++++++++
+ include/uapi/linux/io_uring.h | 19 +++++++++++++++++++
+ io_uring/rw.c                 | 25 ++++++++++++++++++++++++-
+ 4 files changed, 67 insertions(+), 23 deletions(-)
 
-diff --git a/block/fops.c b/block/fops.c
-index e696ae53bf1e..85b9b97d372c 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -74,7 +74,7 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
- 		bio_init(&bio, bdev, vecs, nr_pages, dio_bio_write_op(iocb));
- 	}
- 	bio.bi_iter.bi_sector = pos >> SECTOR_SHIFT;
--	bio.bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
-+	bio.bi_write_hint = iocb->ki_write_hint;
- 	bio.bi_ioprio = iocb->ki_ioprio;
- 	if (iocb->ki_flags & IOCB_ATOMIC)
- 		bio.bi_opf |= REQ_ATOMIC;
-@@ -203,7 +203,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 
- 	for (;;) {
- 		bio->bi_iter.bi_sector = pos >> SECTOR_SHIFT;
--		bio->bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
-+		bio->bi_write_hint = iocb->ki_write_hint;
- 		bio->bi_private = dio;
- 		bio->bi_end_io = blkdev_bio_end_io;
- 		bio->bi_ioprio = iocb->ki_ioprio;
-@@ -319,7 +319,7 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
- 	dio->flags = 0;
- 	dio->iocb = iocb;
- 	bio->bi_iter.bi_sector = pos >> SECTOR_SHIFT;
--	bio->bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
-+	bio->bi_write_hint = iocb->ki_write_hint;
- 	bio->bi_end_io = blkdev_bio_end_io_async;
- 	bio->bi_ioprio = iocb->ki_ioprio;
- 
-diff --git a/fs/aio.c b/fs/aio.c
-index e8920178b50f..db618817e670 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1517,6 +1517,7 @@ static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb, int rw_type)
- 	req->ki_flags = req->ki_filp->f_iocb_flags | IOCB_AIO_RW;
- 	if (iocb->aio_flags & IOCB_FLAG_RESFD)
- 		req->ki_flags |= IOCB_EVENTFD;
-+	req->ki_write_hint = file_write_hint(req->ki_filp);
- 	if (iocb->aio_flags & IOCB_FLAG_IOPRIO) {
- 		/*
- 		 * If the IOCB_FLAG_IOPRIO flag of aio_flags is set, then
-diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
-index 6a821a959b59..c3db102ae64e 100644
---- a/fs/cachefiles/io.c
-+++ b/fs/cachefiles/io.c
-@@ -309,6 +309,7 @@ int __cachefiles_write(struct cachefiles_object *object,
- 	ki->iocb.ki_pos		= start_pos;
- 	ki->iocb.ki_flags	= IOCB_DIRECT | IOCB_WRITE;
- 	ki->iocb.ki_ioprio	= get_current_ioprio();
-+	ki->iocb.ki_write_hint  = file_write_hint(file);
- 	ki->object		= object;
- 	ki->start		= start_pos;
- 	ki->len			= len;
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index bbd05f1a2145..73629e26becb 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -409,7 +409,7 @@ dio_bio_alloc(struct dio *dio, struct dio_submit *sdio,
- 		bio->bi_end_io = dio_bio_end_io;
- 	if (dio->is_pinned)
- 		bio_set_flag(bio, BIO_PAGE_PINNED);
--	bio->bi_write_hint = file_inode(dio->iocb->ki_filp)->i_write_hint;
-+	bio->bi_write_hint = dio->iocb->ki_write_hint;
- 
- 	sdio->bio = bio;
- 	sdio->logical_offset_in_bio = sdio->cur_page_fs_offset;
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index f637aa0706a3..fff43f121ee6 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -397,7 +397,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
- 		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
- 					  GFP_KERNEL);
- 		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
--		bio->bi_write_hint = inode->i_write_hint;
-+		bio->bi_write_hint = dio->iocb->ki_write_hint;
- 		bio->bi_ioprio = dio->iocb->ki_ioprio;
- 		bio->bi_private = dio;
- 		bio->bi_end_io = iomap_dio_bio_end_io;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e3c603d01337..3dfe6de7b611 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -370,6 +370,7 @@ struct kiocb {
- 	void			*private;
- 	int			ki_flags;
- 	u16			ki_ioprio; /* See linux/ioprio.h */
-+	enum rw_hint		ki_write_hint;
- 	union {
- 		/*
- 		 * Only used for async buffered reads, where it denotes the
-@@ -2337,12 +2338,18 @@ static inline bool HAS_UNMAPPED_ID(struct mnt_idmap *idmap,
- 	       !vfsgid_valid(i_gid_into_vfsgid(idmap, inode));
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 22dd9dcce7ec..a390a05f4ef8 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -334,28 +334,6 @@ static int f_getowner_uids(struct file *filp, unsigned long arg)
  }
+ #endif
  
-+static inline enum rw_hint file_write_hint(struct file *filp)
+-static bool rw_hint_valid(u64 hint)
+-{
+-	BUILD_BUG_ON(WRITE_LIFE_NOT_SET != RWH_WRITE_LIFE_NOT_SET);
+-	BUILD_BUG_ON(WRITE_LIFE_NONE != RWH_WRITE_LIFE_NONE);
+-	BUILD_BUG_ON(WRITE_LIFE_SHORT != RWH_WRITE_LIFE_SHORT);
+-	BUILD_BUG_ON(WRITE_LIFE_MEDIUM != RWH_WRITE_LIFE_MEDIUM);
+-	BUILD_BUG_ON(WRITE_LIFE_LONG != RWH_WRITE_LIFE_LONG);
+-	BUILD_BUG_ON(WRITE_LIFE_EXTREME != RWH_WRITE_LIFE_EXTREME);
+-
+-	switch (hint) {
+-	case RWH_WRITE_LIFE_NOT_SET:
+-	case RWH_WRITE_LIFE_NONE:
+-	case RWH_WRITE_LIFE_SHORT:
+-	case RWH_WRITE_LIFE_MEDIUM:
+-	case RWH_WRITE_LIFE_LONG:
+-	case RWH_WRITE_LIFE_EXTREME:
+-		return true;
+-	default:
+-		return false;
+-	}
+-}
+-
+ static long fcntl_get_rw_hint(struct file *file, unsigned int cmd,
+ 			      unsigned long arg)
+ {
+diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
+index 309ca72f2dfb..f4373a71ffed 100644
+--- a/include/linux/rw_hint.h
++++ b/include/linux/rw_hint.h
+@@ -21,4 +21,28 @@ enum rw_hint {
+ static_assert(sizeof(enum rw_hint) == 1);
+ #endif
+ 
++#define	WRITE_LIFE_INVALID	(RWH_WRITE_LIFE_EXTREME + 1)
++
++static inline bool rw_hint_valid(u64 hint)
 +{
-+	return file_inode(filp)->i_write_hint;
++	BUILD_BUG_ON(WRITE_LIFE_NOT_SET != RWH_WRITE_LIFE_NOT_SET);
++	BUILD_BUG_ON(WRITE_LIFE_NONE != RWH_WRITE_LIFE_NONE);
++	BUILD_BUG_ON(WRITE_LIFE_SHORT != RWH_WRITE_LIFE_SHORT);
++	BUILD_BUG_ON(WRITE_LIFE_MEDIUM != RWH_WRITE_LIFE_MEDIUM);
++	BUILD_BUG_ON(WRITE_LIFE_LONG != RWH_WRITE_LIFE_LONG);
++	BUILD_BUG_ON(WRITE_LIFE_EXTREME != RWH_WRITE_LIFE_EXTREME);
++
++	switch (hint) {
++	case RWH_WRITE_LIFE_NOT_SET:
++	case RWH_WRITE_LIFE_NONE:
++	case RWH_WRITE_LIFE_SHORT:
++	case RWH_WRITE_LIFE_MEDIUM:
++	case RWH_WRITE_LIFE_LONG:
++	case RWH_WRITE_LIFE_EXTREME:
++		return true;
++	default:
++		return false;
++	}
 +}
 +
- static inline void init_sync_kiocb(struct kiocb *kiocb, struct file *filp)
- {
- 	*kiocb = (struct kiocb) {
- 		.ki_filp = filp,
- 		.ki_flags = filp->f_iocb_flags,
- 		.ki_ioprio = get_current_ioprio(),
-+		.ki_write_hint = file_write_hint(filp),
+ #endif /* _LINUX_RW_HINT_H */
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 86cb385fe0b5..951e35226229 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -92,12 +92,23 @@ struct io_uring_sqe {
+ 			__u16	addr_len;
+ 			__u16	__pad3[1];
+ 		};
++		struct {
++			/* Bit field to express 16 meta types */
++			__u16	meta_type;
++			__u16	__pad4[1];
++		};
  	};
- }
+ 	union {
+ 		struct {
+ 			__u64	addr3;
+ 			__u64	__pad2[1];
+ 		};
++		struct {
++			/* First meta type specific fields */
++			__u64	lifetime_val;
++			/* For future use */
++			__u64	__pad5[1];
++		};
+ 		__u64	optval;
+ 		/*
+ 		 * If the ring is initialized with IORING_SETUP_SQE128, then
+@@ -107,6 +118,14 @@ struct io_uring_sqe {
+ 	};
+ };
  
-@@ -2353,6 +2360,7 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
- 		.ki_filp = filp,
- 		.ki_flags = kiocb_src->ki_flags,
- 		.ki_ioprio = kiocb_src->ki_ioprio,
-+		.ki_write_hint = kiocb_src->ki_write_hint,
- 		.ki_pos = kiocb_src->ki_pos,
- 	};
- }
++enum io_uring_sqe_meta_type_bits {
++	META_TYPE_LIFETIME_HINT_BIT
++};
++
++/* this meta type covers write hint values supported by F_SET_RW_HINT fcntl */
++#define META_TYPE_LIFETIME_HINT	(1U << META_TYPE_LIFETIME_HINT_BIT)
++
++
+ /*
+  * If sqe->file_index is set to this for opcodes that instantiate a new
+  * direct descriptor (like openat/openat2/accept), then io_uring will allocate
 diff --git a/io_uring/rw.c b/io_uring/rw.c
-index f023ff49c688..510123d3d837 100644
+index 510123d3d837..bf45ee8904a4 100644
 --- a/io_uring/rw.c
 +++ b/io_uring/rw.c
-@@ -1023,6 +1023,7 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
+@@ -269,6 +269,24 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 		rw->kiocb.ki_ioprio = get_current_ioprio();
+ 	}
+ 	rw->kiocb.dio_complete = NULL;
++	if (ddir == ITER_SOURCE) {
++		u16 mtype = READ_ONCE(sqe->meta_type);
++
++		rw->kiocb.ki_write_hint = WRITE_LIFE_INVALID;
++		if (mtype) {
++			u64 lhint = READ_ONCE(sqe->lifetime_val);
++
++			if (READ_ONCE(sqe->__pad4[0]) ||
++			    READ_ONCE(sqe->__pad5[0]))
++				return -EINVAL;
++
++			if (mtype != META_TYPE_LIFETIME_HINT ||
++			    !rw_hint_valid(lhint))
++				return -EINVAL;
++
++			rw->kiocb.ki_write_hint = lhint;
++		}
++	}
+ 
+ 	rw->addr = READ_ONCE(sqe->addr);
+ 	rw->len = READ_ONCE(sqe->len);
+@@ -1023,7 +1041,12 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
  	if (unlikely(ret))
  		return ret;
  	req->cqe.res = iov_iter_count(&io->iter);
-+	rw->kiocb.ki_write_hint = file_write_hint(rw->kiocb.ki_filp);
+-	rw->kiocb.ki_write_hint = file_write_hint(rw->kiocb.ki_filp);
++	/*
++	 * Use per-file hint only if per-io hint is not set.
++	 * We need per-io hint to get precedence.
++	 */
++	if (rw->kiocb.ki_write_hint == WRITE_LIFE_INVALID)
++		rw->kiocb.ki_write_hint = file_write_hint(rw->kiocb.ki_filp);
  
  	if (force_nonblock) {
  		/* If the file doesn't support async, just async punt */

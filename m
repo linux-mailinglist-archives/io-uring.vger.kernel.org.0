@@ -1,227 +1,204 @@
-Return-Path: <io-uring+bounces-3329-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3330-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDB398AB9B
-	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 20:04:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9AD98ABF7
+	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 20:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAAE01C21401
-	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 18:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF0ED1C22FF5
+	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 18:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E760319925D;
-	Mon, 30 Sep 2024 18:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38C0199381;
+	Mon, 30 Sep 2024 18:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoKpjvYg"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PDIWA60H"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B250919922D;
-	Mon, 30 Sep 2024 18:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3233DCA62
+	for <io-uring@vger.kernel.org>; Mon, 30 Sep 2024 18:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727719438; cv=none; b=DVrDzfaleIhp7UkOmejkqqY0ebqv4T4pn5o1hbvfz35WgInPogmEo5Vmy9sOT+O+4CWM3T+XO0lGH3Zp/uYcJ0Yrd7r1def3SL0Oil4q15xmJ1DBGSJvPtTfmzqeTQnr5hAxqFmMRipeTUzODIogIoyK/lJwg3sFkv55GhyGNoU=
+	t=1727720461; cv=none; b=Z46J4ch04k1xaDSPuftpoK3UkwFbrv17G55FYjhlTOKR9GD/4HqE5lmXGY3dgmkqpAXwpTCr0JDiFj6VmzmimN8Rovadcsbx2FAg/siGimbyaAo8oAiCuJaAuBLVQcerTmICyqaqGbX4qzn91mXipWs0rC8D9g8A2cXJyNk693M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727719438; c=relaxed/simple;
-	bh=ZEOnbltI4OSiFpvW76m8lvrTI7x6MCWSM6rlKozq8Zs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C5C5Ae6yPrpOA9Keh5r9Yi3nidecu/oLbaCdUE+BfeRkGPej1Fa/MQoC4XSZNhVFC3qOqiEZBDtWsodHYQDrjo4jjA9BGsN8ohkjLCVWKR/3l23+Gj4g+27/inYIKxu+uSNUKQ8l3Fr+1bpFGBi0zZKajdzS/K9hUAwxwks1AcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoKpjvYg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F1A5C4CECF;
-	Mon, 30 Sep 2024 18:03:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727719438;
-	bh=ZEOnbltI4OSiFpvW76m8lvrTI7x6MCWSM6rlKozq8Zs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eoKpjvYghAEVM9YD+8Xz0Bci8m8jaRwZzktRuto5oIVxe6FvP18hhbptJwiFUpvLg
-	 UkZIswBW3/m4RmNIJq1FS+Uw75OiKEGRxUgUtChe9wv4Tfyd8KhzuHFTCfLcGKKbHp
-	 99eUFzOS/2x6xSRjIH7LGm2DTVonU03I31YsS+pcwHFRnLnIZi7IeDBu1b/QRHNJ2v
-	 dgFycosVrLhgHjG3cQ0+6+YKPoAFzZoL4Bka+x2rbMwqDrU2fWLYu0v9zXpN0LkxZQ
-	 pvLfbSlwPqV3W+Y2x+D2b099OHs+kP4tzkKOdeNe0n9zKpxx7tyP3skblYNH9cjVBO
-	 Ni1e7m7y99uJg==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5e57b7cac4fso2768771eaf.1;
-        Mon, 30 Sep 2024 11:03:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4funPCt2EuWOOHSjIySrSz5bD8p3OQ23tl2j7uF5uIVAVMAf7jtDQ1LcPkqe+Nw/vxXvU7hgSJH1wQpo=@vger.kernel.org, AJvYcCUqOTBgN+IwNmcj8CcPUKb05NoEQz5WyKvghZxyAyHfEmHxDxpYvduNlu6JVuBSOJYefw8oeYtXVP32E6vT@vger.kernel.org, AJvYcCWYp1iSqhvOAxhC/x6iNhxNpzfGvFKhQ/dorZ3J41bltwIRt1cx5D0jWS9D2D94QQplv3t5HgQaFg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMMlkLV0qy4WH29bxvh+pY2KuJ3QMqwrR2SHJarzXj5XoJjsy9
-	EJT0PkUdDeqWMRw7PZTQK4M3RLFDGPmCRMTD68hJQtexsUiaf0a5kCSHEvvMwFveUJnbdHAyQN5
-	iML2HyiOMbxArDSBX3DDokrXBkBk=
-X-Google-Smtp-Source: AGHT+IG3ujjyRdCEUsPatj+no7TnwxN27pJHjwq1ZLvHYOHrgYDrLwHqMQ2l/ksLAGCgBBvDMYnZEP24XZVr/DcuPnI=
-X-Received: by 2002:a05:6820:2208:b0:5e5:7086:ebe8 with SMTP id
- 006d021491bc7-5e77244736emr7313486eaf.0.1727719437428; Mon, 30 Sep 2024
- 11:03:57 -0700 (PDT)
+	s=arc-20240116; t=1727720461; c=relaxed/simple;
+	bh=NJhNSEWfQuicmoWnOXbPshrUmZB5Ti5qi6HbF/7gcdQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=g1P8k3b2hH9u1TVvqWkt4YMQNAzyyg0Z3WL6mEBT/iGMQINm5AksNwjsDdhlLGPT3asXXmmUMw6Hf18UeZD76sqhu98FnFRvpS1EyMiDGzQrBmwpmaRIm7tip8amzn5D/lGzCXgKvYk7S5Qk/9evcTOjdW3f7/Mo9nwQuY+IVZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PDIWA60H; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240930182056epoutp04862b76dc8b689fb3062a64ea46df904b~6GJneasqo2709827098epoutp04i
+	for <io-uring@vger.kernel.org>; Mon, 30 Sep 2024 18:20:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240930182056epoutp04862b76dc8b689fb3062a64ea46df904b~6GJneasqo2709827098epoutp04i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727720456;
+	bh=4LBDHSJVU1H97AxnvlyhnVRQZzY6KCoCAgte1h6Y9Ng=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=PDIWA60HsX66Yl+6XwMQcuV3CMKnrJla0HRWBvwhf4xdjjAzMLLAFTTHV6HAVDsES
+	 XM5grzbVxVObCatYW2KVmn13bfWdUaorWL0HmOWQL0yOf2CUo+AZCR01BpCZlxNQrm
+	 4xo9hvZh9WIKE2rdr83ydHlDnyL9g5XLv10wS1cU=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240930182055epcas5p1846d3252efb056c9fe61062565594212~6GJmjkRcY1760617606epcas5p17;
+	Mon, 30 Sep 2024 18:20:55 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XHTsK3WZsz4x9Pp; Mon, 30 Sep
+	2024 18:20:53 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BB.C9.09420.50CEAF66; Tue,  1 Oct 2024 03:20:53 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240930182052epcas5p37edefa7556b87c3fbb543275756ac736~6GJkcXrLq2353623536epcas5p3t;
+	Mon, 30 Sep 2024 18:20:52 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240930182052epsmtrp2c5610fcd20805f353e1d082217316a9e~6GJkbaWbv2734327343epsmtrp2g;
+	Mon, 30 Sep 2024 18:20:52 +0000 (GMT)
+X-AuditID: b6c32a49-0d5ff700000024cc-38-66faec05defa
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4C.79.18937.40CEAF66; Tue,  1 Oct 2024 03:20:52 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240930182049epsmtip23462ac72f0fbc210f05d50b83d060b98~6GJhYF2Fl2298222982epsmtip23;
+	Mon, 30 Sep 2024 18:20:49 +0000 (GMT)
+From: Kanchan Joshi <joshi.k@samsung.com>
+To: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, hare@suse.de,
+	sagi@grimberg.me, martin.petersen@oracle.com, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org, bcrl@kvack.org,
+	dhowells@redhat.com, bvanassche@acm.org, asml.silence@gmail.com
+Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
+	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com, Kanchan
+	Joshi <joshi.k@samsung.com>
+Subject: [PATCH v7 0/3] FDP and per-io hints
+Date: Mon, 30 Sep 2024 23:43:02 +0530
+Message-Id: <20240930181305.17286-1-joshi.k@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905092645.2885200-1-christian.loehle@arm.com> <20240905092645.2885200-7-christian.loehle@arm.com>
-In-Reply-To: <20240905092645.2885200-7-christian.loehle@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 30 Sep 2024 20:03:45 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i3ULQ-Mzu=6yzo4whnWne0g1sxcgPL_u828Jyy1Qu1Zg@mail.gmail.com>
-Message-ID: <CAJZ5v0i3ULQ-Mzu=6yzo4whnWne0g1sxcgPL_u828Jyy1Qu1Zg@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/8] cpufreq: intel_pstate: Remove iowait boost
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org, 
-	peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com, 
-	dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org, 
-	Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org, 
-	bvanassche@acm.org, andres@anarazel.de, asml.silence@gmail.com, 
-	linux-block@vger.kernel.org, io-uring@vger.kernel.org, qyousef@layalina.io, 
-	dsmythies@telus.net, axboe@kernel.dk, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TfVDTZRy/57ffXkAHPxncnqgQdyedKLDVwIdOIgm7H7k/uMzs6jxc7Mfb
+	2It7KUE7CA+JgUiECIMQiaC2O4iJAgHJjQgtA0qxxgmSDCUYzFhiyFsbm+V/n+/n+Xy/n/t8
+	n+dh0fwcjEBWulxDqeTiTB7DG7/ctyM0jG57nMJvucBBNYbLABnHzjCQbq0NR7N9CwBVPFii
+	ofm8ZRxZejsx1F1fhqGvjf0Yms8fxFH1uZMYsrboaWjytoOJ+tfnGKjMfAug8oo8gHpGd6Lu
+	nms4Ot84xURNA2sYap6142hodYCOhvQ1zFe55I2b+8lO/RiTHBpvxckbP2tJk6GQQZoWypjk
+	xYYcssuSyyD/mhrFSft3IwyypM0AyOt13zsPfzpOOkxBpMk6hyX6vivdk0aJJZQqmJInKyTp
+	8tQY3v4DSa8lRUbxBWGCaLSbFywXy6gYXrwoMez19EznDnjBH4gztU4qUaxW8yJe2aNSaDVU
+	cJpCrYnhUUpJplKoDFeLZWqtPDVcTmleFvD5L0Y6hUekacVdwwzllS3HVswjIBeUsnXAiwUJ
+	IVw6dQfTAW+WH9EFoO3+bbq7WADwK9sM7lJtFPqiuCcdZ6w/ekSdANb3XmW6CweAhrpahg6w
+	WAxiBxz+TOvi/YlyDFqMho1JNGIVQLNF5MIcYhc0Dp3f4HFiO6zuu0p3YTaBYH/+LeB22wqr
+	fn3EdPNb4LUqq2fOVnjyUjXNZQCJAi+4OD/laYiHQ6uzuBtz4MxAG9ONA6FjvofhxlI4cXfC
+	ozkBOy6W0N04Fuau/E53BaA5A7R8G+H28oGnl62Yi4YEG35yys+t3gbHy6Y8nVz4R2WDB5NQ
+	33mT4V7cYVhkrqWVgiD9Uwn0TyXQ/29WB2gG8AylVMtSKXWkUiCnPvzvLpMVMhPYeP2hCR1g
+	bOJBuBlgLGAGkEXj+bPHzUspfmyJOCubUimSVNpMSm0Gkc61fkoLDEhWOL+PXJMkEEbzhVFR
+	UcLol6IEPC57Nv9ziR+RKtZQUopSUqonfRjLKzAXi20UvGk/F33XKH//BBZQlxEXNtMwqC+c
+	1LF2cw9Z3iqS+RpGC/78hXz0Rbdc11oynf1DsndTZU5nCtF6JAmwL8w5Qu+L38jale3T/GXt
+	3NGFON/nSr8pZB4os+ZfetYnbO8hk4jzMGRtb1XteM2VzVPLi8PHr4s6KFmAbdOxpZHRj4jf
+	emcLirkhvW+fPZ2Sau8pWdw0EnsvtGsga/vm9cOadjPe/reXZGfGw9Z60VF7wjaWbaBdOENN
+	Nt1p/PifSW55x0p85XTC4LSwRK2q8M944Xmj7/jB9bwgHfMsflBqu5dvj4gVzb1HcnqbHyta
+	LenKd3IDihO79mnHpBx+TgjOw9VpYkEoTaUW/wv9VadwhgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsWy7bCSvC7Lm19pBnfu6FnMWbWN0WL13X42
+	i65/W1gsXh/+xGgx7cNPZot3Tb9ZLG4e2MlksWfRJCaLlauPMlm8az3HYjF7ejOTxZP1s5gt
+	Ht/5zG5x9P9bNotJh64xWkyZ1sRosfeWtsWevSdZLOYve8pusfz4PyaLda/fs1ic/3uc1eL8
+	rDnsDuIel694e+ycdZfd4/y9jSwel8+Wemxa1cnmsenTJHaPzUvqPXbfbGDz+Pj0FovH+31X
+	2Tz6tqxi9Diz4AhQ8nS1x+dNch6bnrxlCuCP4rJJSc3JLEst0rdL4Mro2X2BrWC/YMWfQ1cZ
+	Gxgn8HYxcnJICJhI9D85xdrFyMUhJLCdUeLgjKlMEAlxieZrP9ghbGGJlf+es0MUfWSU6D/w
+	CKiIg4NNQFPiwuRSkLiIwAomiW1P/rKAOMwC7UwS1ybeZQbpFhbQkVh9fj4LiM0ioCox+/AJ
+	VhCbV8BC4mjrNUaIDfISMy99Z4eIC0qcnPkErJ4ZKN68dTbzBEa+WUhSs5CkFjAyrWIUTS0o
+	zk3PTS4w1CtOzC0uzUvXS87P3cQIjk2toB2My9b/1TvEyMTBeIhRgoNZSYT33qGfaUK8KYmV
+	ValF+fFFpTmpxYcYpTlYlMR5lXM6U4QE0hNLUrNTUwtSi2CyTBycUg1M5ebHPAwbpMTKpmy7
+	2xZzIeH/kuBT+u/+X7N4IBPm4XM3stP6gvzpO/cOXP273NTS4NeEU6WzX5yKaAq5bZ29P6Wp
+	p/+8wbmQkr7UxZ+bn7Mpvf9c91eofuILF8uVyYtnH2p5zOs2tceJLXOmgFu8+waJf00N5kt3
+	bfr92sX88QIGHpco+X3SrOw+2snrU1bs4C6I2PPqOv+D2uRrqb9+NYe+NF6XIvTXbPaDkvOa
+	/SXsRj4LuEXTJ9/8mHBc+0JKU+U23nN/7HbMY5Hd789xMKJ534VXtu8vXl6f08Roybqn/MuW
+	AztarOxXBkesm1C45e8G19nrl7QKFBu4mt6TWnsosOOX60y9lh6Z3ysMlViKMxINtZiLihMB
+	v38qDjwDAAA=
+X-CMS-MailID: 20240930182052epcas5p37edefa7556b87c3fbb543275756ac736
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240930182052epcas5p37edefa7556b87c3fbb543275756ac736
+References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com>
 
-+Srinivas who can say more about the reasons why iowait boosting makes
-a difference for intel_pstate than I do.
+Another spin to incorporate the feedback from LPC and previous
+iterations. The series adds two capabilities:
+- FDP support at NVMe level (patch #1)
+- Per-io hinting via io_uring (patch #3)
+Patch #2 is needed to do per-io hints.
 
-On Thu, Sep 5, 2024 at 11:27=E2=80=AFAM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> Analogous to schedutil, remove iowait boost for the same reasons.
+The motivation and interface details are present in the commit
+descriptions.
 
-Well, first of all, iowait boosting was added to intel_pstate to help
-some workloads that otherwise were underperforming.  I'm not sure if
-you can simply remove it without introducing performance regressions
-in those workloads.
+Testing:
+Done with fcntl and liburing based custom applications.
+On raw block device, ext4, xfs, btrfs and F2FS.
+Checked that no regression occurs for application that use per-inode
+hints.
+Checked that per-io hints, when passed, take the precedence over per-inode
+hints.
 
-While you can argue that it is not useful in schedutil any more due to
-the improved scheduler input for it, you can hardly extend that
-argument to intel_pstate because it doesn't use all of the scheduler
-input used by schedutil.
+Changes since v6:
+- Change io_uring interface to pass hints as SQE metadata (Pavel, Hannes)
 
-Also, the EAS and UCLAMP_MAX arguments are not applicable to
-intel_pstate because it doesn't support any of them.
+Changes since v5:
+- Drop placement hints
+- Add per-io hint interface
 
-This applies to the ondemand cpufreq governor either.
+Changes since v4:
+- Retain the size/type checking on the enum (Bart)
+- Use the name "*_lifetime_hint" rather than "*_life_hint" (Bart)
 
+Changes since v3:
+- 4 new patches to introduce placement hints
+- Make nvme patch use the placement hints rather than lifetime hints
 
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> ---
->  drivers/cpufreq/intel_pstate.c | 50 ++--------------------------------
->  1 file changed, 3 insertions(+), 47 deletions(-)
->
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
-e.c
-> index c0278d023cfc..7f30b2569bb3 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -191,7 +191,6 @@ struct global_params {
->   * @policy:            CPUFreq policy value
->   * @update_util:       CPUFreq utility callback information
->   * @update_util_set:   CPUFreq utility callback is set
-> - * @iowait_boost:      iowait-related boost fraction
->   * @last_update:       Time of the last update.
->   * @pstate:            Stores P state limits for this CPU
->   * @vid:               Stores VID limits for this CPU
-> @@ -245,7 +244,6 @@ struct cpudata {
->         struct acpi_processor_performance acpi_perf_data;
->         bool valid_pss_table;
->  #endif
-> -       unsigned int iowait_boost;
->         s16 epp_powersave;
->         s16 epp_policy;
->         s16 epp_default;
-> @@ -2136,28 +2134,7 @@ static inline void intel_pstate_update_util_hwp_lo=
-cal(struct cpudata *cpu,
->  {
->         cpu->sample.time =3D time;
->
-> -       if (cpu->sched_flags & SCHED_CPUFREQ_IOWAIT) {
-> -               bool do_io =3D false;
-> -
-> -               cpu->sched_flags =3D 0;
-> -               /*
-> -                * Set iowait_boost flag and update time. Since IO WAIT f=
-lag
-> -                * is set all the time, we can't just conclude that there=
- is
-> -                * some IO bound activity is scheduled on this CPU with j=
-ust
-> -                * one occurrence. If we receive at least two in two
-> -                * consecutive ticks, then we treat as boost candidate.
-> -                */
-> -               if (time_before64(time, cpu->last_io_update + 2 * TICK_NS=
-EC))
-> -                       do_io =3D true;
-> -
-> -               cpu->last_io_update =3D time;
-> -
-> -               if (do_io)
-> -                       intel_pstate_hwp_boost_up(cpu);
-> -
-> -       } else {
-> -               intel_pstate_hwp_boost_down(cpu);
-> -       }
-> +       intel_pstate_hwp_boost_down(cpu);
->  }
->
->  static inline void intel_pstate_update_util_hwp(struct update_util_data =
-*data,
-> @@ -2240,9 +2217,6 @@ static inline int32_t get_target_pstate(struct cpud=
-ata *cpu)
->         busy_frac =3D div_fp(sample->mperf << cpu->aperf_mperf_shift,
->                            sample->tsc);
->
-> -       if (busy_frac < cpu->iowait_boost)
-> -               busy_frac =3D cpu->iowait_boost;
-> -
->         sample->busy_scaled =3D busy_frac * 100;
->
->         target =3D READ_ONCE(global.no_turbo) ?
-> @@ -2303,7 +2277,7 @@ static void intel_pstate_adjust_pstate(struct cpuda=
-ta *cpu)
->                 sample->aperf,
->                 sample->tsc,
->                 get_avg_frequency(cpu),
-> -               fp_toint(cpu->iowait_boost * 100));
-> +               0);
->  }
->
->  static void intel_pstate_update_util(struct update_util_data *data, u64 =
-time,
-> @@ -2317,24 +2291,6 @@ static void intel_pstate_update_util(struct update=
-_util_data *data, u64 time,
->                 return;
->
->         delta_ns =3D time - cpu->last_update;
-> -       if (flags & SCHED_CPUFREQ_IOWAIT) {
-> -               /* Start over if the CPU may have been idle. */
-> -               if (delta_ns > TICK_NSEC) {
-> -                       cpu->iowait_boost =3D ONE_EIGHTH_FP;
-> -               } else if (cpu->iowait_boost >=3D ONE_EIGHTH_FP) {
-> -                       cpu->iowait_boost <<=3D 1;
-> -                       if (cpu->iowait_boost > int_tofp(1))
-> -                               cpu->iowait_boost =3D int_tofp(1);
-> -               } else {
-> -                       cpu->iowait_boost =3D ONE_EIGHTH_FP;
-> -               }
-> -       } else if (cpu->iowait_boost) {
-> -               /* Clear iowait_boost if the CPU may have been idle. */
-> -               if (delta_ns > TICK_NSEC)
-> -                       cpu->iowait_boost =3D 0;
-> -               else
-> -                       cpu->iowait_boost >>=3D 1;
-> -       }
->         cpu->last_update =3D time;
->         delta_ns =3D time - cpu->sample.time;
->         if ((s64)delta_ns < INTEL_PSTATE_SAMPLING_INTERVAL)
-> @@ -2832,7 +2788,7 @@ static void intel_cpufreq_trace(struct cpudata *cpu=
-, unsigned int trace_type, in
->                 sample->aperf,
->                 sample->tsc,
->                 get_avg_frequency(cpu),
-> -               fp_toint(cpu->iowait_boost * 100));
-> +               0);
->  }
->
->  static void intel_cpufreq_hwp_update(struct cpudata *cpu, u32 min, u32 m=
-ax,
-> --
-> 2.34.1
->
+Changes since v2:
+- Base it on nvme-6.11 and resolve a merge conflict
+
+Changes since v1:
+- Reduce the fetched plids from 128 to 6 (Keith)
+- Use struct_size for a calculation (Keith)
+- Handle robot/sparse warning
+
+Kanchan Joshi (3):
+  nvme: enable FDP support
+  block, fs: restore kiocb based write hint processing
+  io_uring: enable per-io hinting capability
+
+Kanchan Joshi (3):
+  nvme: enable FDP support
+  block, fs: restore kiocb based write hint processing
+  io_uring: enable per-io hinting capability
+
+ block/fops.c                  |  6 +--
+ drivers/nvme/host/core.c      | 70 +++++++++++++++++++++++++++++++++++
+ drivers/nvme/host/nvme.h      |  4 ++
+ fs/aio.c                      |  1 +
+ fs/cachefiles/io.c            |  1 +
+ fs/direct-io.c                |  2 +-
+ fs/fcntl.c                    | 22 -----------
+ fs/iomap/direct-io.c          |  2 +-
+ include/linux/fs.h            |  8 ++++
+ include/linux/nvme.h          | 19 ++++++++++
+ include/linux/rw_hint.h       | 24 ++++++++++++
+ include/uapi/linux/io_uring.h | 19 ++++++++++
+ io_uring/rw.c                 | 24 ++++++++++++
+ 13 files changed, 175 insertions(+), 27 deletions(-)
+
+-- 
+2.25.1
+
 

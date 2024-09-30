@@ -1,79 +1,78 @@
-Return-Path: <io-uring+bounces-3323-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3322-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D2B98A6FD
-	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 16:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B8298A6FB
+	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 16:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 486E61F2359F
-	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 14:28:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97E401F23662
+	for <lists+io-uring@lfdr.de>; Mon, 30 Sep 2024 14:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F981917F3;
-	Mon, 30 Sep 2024 14:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFDF1917D2;
+	Mon, 30 Sep 2024 14:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YrP6mLIm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="b0fe+nNQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0968A18EFEB
-	for <io-uring@vger.kernel.org>; Mon, 30 Sep 2024 14:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A7718E758
+	for <io-uring@vger.kernel.org>; Mon, 30 Sep 2024 14:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727706518; cv=none; b=iO8tc8Oiv8zr027y6iHNWOZUOgJgp5/kMFedzouk1cANK+++O7Ur/lrov7v4/onN8wviezvAqGPSSmvlwfbnEtSQ+wSfNRTSm1WoF9q0GGFnC+/zEzn7obBlgUy+JQemseuyqkwCL36pygOq66Uv8tbxabTFVp4c4jtT7VPZd1c=
+	t=1727706517; cv=none; b=s4emw2hIsoEvo7fiV/V6iJkSLxysyxR1vj0X3qcLl2z1+zxvTJkIEVMmuxkfcCDWeOZkApJDP1yKbhp3zLU5xauOYbz2rcey9oyJT1/Y1/rxvmBNn2xYbyCuon3iCwYwW/gzrXOOlbdWLXCHv/07R5acrTdXVoJ24eVMJzSFkWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727706518; c=relaxed/simple;
-	bh=WRmrYJmJ8yY2e/aMh/4xVC33j3QfQjgVbE+b9JKSE9s=;
+	s=arc-20240116; t=1727706517; c=relaxed/simple;
+	bh=bBVSiJX25m+WPlZvfuHL5ROgTzF6c2wBzusl+2CGUOc=;
 	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=A25P2mjwNU2GO9qzGIk5wJCRUoNkl13OWFJGLcf0/0oGkLwD2fSqIxHMGv+Mizq/Bc9gXhD3vnbojsP42+nrwbnWCHyFiDx0hDtHpOPp8UPqxpV7m+3y+tsoNGMBTpgfnXjGswIc6Kty5hTG25xchPVkD9STV/4FjeADBchHKic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YrP6mLIm; arc=none smtp.client-ip=209.85.166.46
+	 MIME-Version:Content-Type; b=Z2anqhv5HPUXpJklotRN4fku07TGWK29KRFf9S7xlgvypBBH+Wn+2SbxBrKLvw82hGZO4enaMulXbA7YKF6S5EvhH9bgTTH0E2MhCxlyfwvF/DEwY37XUo/owYljGu+2rBpcyY+3C3sabaT5CRW9T1weXLnBzxGnfDn6n6DJm/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=b0fe+nNQ; arc=none smtp.client-ip=209.85.166.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-82ab349320fso181592139f.1
-        for <io-uring@vger.kernel.org>; Mon, 30 Sep 2024 07:28:33 -0700 (PDT)
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-8323b555ae2so217661739f.2
+        for <io-uring@vger.kernel.org>; Mon, 30 Sep 2024 07:28:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727706513; x=1728311313; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727706514; x=1728311314; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lmyRMSx05FC5TcMXSNeqHYcIG7S+8TzgNzmH7id7ECs=;
-        b=YrP6mLImeA+ffRQyjZSBmy0aHJVUiWTqtBGk4E+1R4QdMl+GWqZjXpms+/1iaV82HS
-         r24ssqbEQoKP1fyjFC0TLu/Gh6/JxjCFTr13P1lrz8C0DnM02Ge+1xU6C1p4NN5iJZpi
-         8S6nEC3o9s4s1DzQ4zg9ZYlKIlXOkkPLQORIA+Sh0SbVZPbVapGUHNJS+AA6k1rcV3Ql
-         ySevUm8P3A1bufsN5Dw8Pr2eZMgiufN8C3nhTlPKAXs4KnkOj6fKO+gvxMwOw84Jyd0O
-         hngRe3ZoK/fCSSPLjOpLEhz5GCyeC+uo5QrAWihbMWiSKyKgINkbS1ppvaapPzE2no2q
-         RlyA==
+        bh=HqGV2Lo5/s0rcnoZDRPEDnfm90Ew2ZxNitl1vue4MYU=;
+        b=b0fe+nNQJZLuFB5jLZpErU+XumSkknLDgq2clL3Vl6F7j5SFTi2pS0Vw7QtUJoXu5M
+         0lLxpBIPg7zmZZ0hOhS6ZnpD0aJ5FjHj4QKawuBd3KnINTPx0zwOv7A2Jsgeu46Mvbch
+         rBY8qeVgleHozyczdoc4Q6VcYtI8fX5qYnEuymBf3OAhsgbiTQh8U4+ymf14xyXZmEp2
+         jTdDzuOUD/7GnJRGz4jELjW3p+0xtLdz4Y1sCeDYdnNJHG2BW33rIy5+tl8sT+24QGnW
+         CSkgPPuWTlpoq5qbmULUehzSxD1QU1LhD8w0ys2+QLKngccnrxPsLuW//O5gDlzrN5Hr
+         gcAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727706513; x=1728311313;
+        d=1e100.net; s=20230601; t=1727706514; x=1728311314;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lmyRMSx05FC5TcMXSNeqHYcIG7S+8TzgNzmH7id7ECs=;
-        b=E/r0rCl73cpGuli3tp2vqILUOM97cPrBWCkiwUUYISKGcFdYyEwCTe+2XfwDAvd5dp
-         G/brEgXKd9YzlADDDXAIFeuCxkQzgR/XLUWmwBIMyqmG33qgH+ZZxfv+utc6t40Km0GG
-         g5B5RZ0UfloXZ3reA78SwuDDOQiHn3AkUmMxKIhcpkjJ+Uv3EY47uAnDvqBJJ1bvfjwU
-         bVuaeNTXHQJYmKX8Z5kLWnc1PLysUqpErvkjE0tsGcLRYzsprxUHjRSO/WOIETTiVVs6
-         5G4G1wU4l4bcJmN2Q/1tfUAvki9JOjPA5QnHR9KzQsaCoyqDDhDlxf2R8lJnR2hxCYel
-         WsjA==
-X-Gm-Message-State: AOJu0YwsOgEhQlAdI0P6FHpYTowfucbFCJPXNfnYUYUuIervBW/lS8Rd
-	spt7Eojykg1ly3mq6YNOcEjsBoYmsRYf+TOHxkEIV7OZHrNMF5ONkeWvitMIecBMMyne+OpDa4R
-	mkLw=
-X-Google-Smtp-Source: AGHT+IHuacDA8P0SQ2lPHoi/n49C5A1GGPdWcwL5/a+IKBtxpmF4xmJ1Do8sOOcpHvyR97ovlRcs9g==
-X-Received: by 2002:a05:6602:2b04:b0:82d:96a:84f4 with SMTP id ca18e2360f4ac-8349318d38amr1232700139f.1.1727706512999;
-        Mon, 30 Sep 2024 07:28:32 -0700 (PDT)
+        bh=HqGV2Lo5/s0rcnoZDRPEDnfm90Ew2ZxNitl1vue4MYU=;
+        b=UiJt7JuIHRPnGbtiJw0C3Y2ONgKEQOZLdR53KsTB7i8aStPnzkKBXpIHFbHpbbmbWw
+         UKtWz29pzIOQk/iOPbLTEqpO6QlUfzrK2Mox1t72I8+oL1tPJQ1D+AUEBRbis7c1RtyR
+         GLW90OZVHXgq1hHcZQjL5lwP7u40TerG7LuCo6aaTTkDT17KxWtwILIYyJzF78fJsVxk
+         SBFlAIQNAzvpl8OImDJJmZ4AoydHGkWxKr/Chz6YEV4RQdV1SooMMfuFjjE295v3HoGb
+         W+8A3jqX8x/A1rlknR96j6n1GerdKqtEVUKB1d7QSNDkYQRynnwYS/vYDI5QjpUs21eh
+         U+4A==
+X-Gm-Message-State: AOJu0YzuqzU116MVMp1kr2SN/VUeSIQW0f3U+n3GF1f+PZi4LPkVc14I
+	ZUomdSxvuHvx/MxcjdXBZ6t+khoyZ0HELjuKlccctsK62rg6sGuMo6PSWcfsBpE=
+X-Google-Smtp-Source: AGHT+IGZi5cKd7y/sm2iFlSzObB11MvRsnsp4Bw4+PlgR+68Ha0iEB/Bac4amEV7I4hrgkBplyMUgQ==
+X-Received: by 2002:a05:6602:14c6:b0:82d:d07:daaa with SMTP id ca18e2360f4ac-834931d40abmr957727439f.4.1727706513738;
+        Mon, 30 Sep 2024 07:28:33 -0700 (PDT)
 Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d8888d9dc3sm2124611173.150.2024.09.30.07.28.32
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d8888d9dc3sm2124611173.150.2024.09.30.07.28.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 07:28:32 -0700 (PDT)
+        Mon, 30 Sep 2024 07:28:33 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240921080307.185186-1-axboe@kernel.dk>
-References: <20240921080307.185186-1-axboe@kernel.dk>
-Subject: Re: [PATCHSET next 0/6] Move eventfd cq tracking into io_ev_fd
-Message-Id: <172770651230.9692.6096261870125518575.b4-ty@kernel.dk>
-Date: Mon, 30 Sep 2024 08:28:32 -0600
+In-Reply-To: <20240924115932.116167-1-axboe@kernel.dk>
+References: <20240924115932.116167-1-axboe@kernel.dk>
+Subject: Re: [PATCHSET v2 0/2] Add support for sending sync MSG_RING
+Message-Id: <172770651308.9692.15486643196195243301.b4-ty@kernel.dk>
+Date: Mon, 30 Sep 2024 08:28:33 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -85,30 +84,22 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2-dev-648c7
 
 
-On Sat, 21 Sep 2024 01:59:46 -0600, Jens Axboe wrote:
-> For some reason this ended up being a series of 6 patches, when the
-> goal was really just to move evfd_last_cq_tail out of io_ring_ctx
-> and into struct io_ev_fd, where it belongs. But this slowly builds to
-> that goal, and the final patch does the move unceremoniously.
-> 
-> Patches are on top of current -git with for-6.12/io_uring pulled in.
+On Tue, 24 Sep 2024 05:57:29 -0600, Jens Axboe wrote:
+> Over the last 6 months, several people have asked for if it's possible
+> to send a MSG_RING request to a ring without having a source ring to do
+> it from. The answer is no, as you'd need a source ring to submit such a
+> request in the first place. However, we can easily support this use case
+> of allowing someone to send a message to a ring that their own, without
+> needing to setup a source ring just for that alone.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] io_uring/eventfd: abstract out ev_fd put helper
-      commit: a2656907e0e2bd817f18ae5ba0c0bc47373031e0
-[2/6] io_uring/eventfd: check for the need to async notifier earlier
-      commit: e18ccce7024f18ada55e7bb714b28990e1fd3034
-[3/6] io_uring/eventfd: move actual signaling part into separate helper
-      commit: 0fa1e1b85857005aa7777dd3c92fa1f9324909ef
-[4/6] io_uring/eventfd: move trigger check into a helper
-      commit: bc9cd77386b3e5b9e7e4f2b016d0dbe4db2344bd
-[5/6] io_uring/eventfd: abstract out ev_fd grab + release helpers
-      commit: bb4fd7c94e41777b7980e0d06ea521311f7330be
-[6/6] io_uring/eventfd: move ctx->evfd_last_cq_tail into io_ev_fd
-      commit: e4355ab51156d5ca83733229fc6b3dfd7c5a4785
+[1/2] io_uring/msg_ring: refactor a few helper functions
+      commit: 6516c5008c88eda9137f0985f419e40d3fc7cee1
+[2/2] io_uring/msg_ring: add support for sending a sync message
+      commit: d1e55003c13ca95878afe380ad3da89d37d63b1e
 
 Best regards,
 -- 

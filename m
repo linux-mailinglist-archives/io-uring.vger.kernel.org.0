@@ -1,64 +1,110 @@
-Return-Path: <io-uring+bounces-3344-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3345-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3FD98B837
-	for <lists+io-uring@lfdr.de>; Tue,  1 Oct 2024 11:21:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F270398B8BD
+	for <lists+io-uring@lfdr.de>; Tue,  1 Oct 2024 11:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54C941C22D8A
-	for <lists+io-uring@lfdr.de>; Tue,  1 Oct 2024 09:21:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26B41F21E62
+	for <lists+io-uring@lfdr.de>; Tue,  1 Oct 2024 09:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571BF19D884;
-	Tue,  1 Oct 2024 09:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4481019F431;
+	Tue,  1 Oct 2024 09:57:12 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEE115B54C;
-	Tue,  1 Oct 2024 09:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7B419D8B3;
+	Tue,  1 Oct 2024 09:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727774456; cv=none; b=rfSMvUmI0nfZiYxM1aOBVFAg3EiQnEfIuud+wt3PEQL2Y8AiPI83zPVTPrmW8Cnwa8EGgebiqfi7Ij0mkhyxrUmfGJDYwWqh56lkbqzyqDqEWZjwrRkrJ2Uoh1GPrr93vsViJ5KtiQBn1LQkSRy+MauwHCPCA9yICfoTHrziCAs=
+	t=1727776632; cv=none; b=ngPc1HHrgYMNryDbbJIloEDXlC/Rj39aJfmC1mgWA0YSyXB0FUMVWFK6jOrOnsgrX+sdcs3XWdUIHnkzQoRSedF2jWMb6y3zrhoRxo4971pTrvlOZTG0Ow3+mwL/x+1bSqhKrvbXRxIdMb/Vbk5Gfd/NxmQk6vgsaefGRJbjA4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727774456; c=relaxed/simple;
-	bh=9BM+uzAwiW8lwTOB+YBTzCF3B3mbYwaS7AeG9dF4LA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1YWpAi6W06zi4FfzLI4SCk2k2lBV2aCxnImTJ5f8Ur0w0bAtPgpw3cjyPQhz/NcLI5QFVgWK3giWrXpGpd5YzZ/nH+wMYprqzasGw7QTmXY5QtsV0emCcNJDMd+wP0e0sft26oGiYLru+RQWxAtK0vzvYPUAA7mWpH71+TSnRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 59398227A87; Tue,  1 Oct 2024 11:20:48 +0200 (CEST)
-Date: Tue, 1 Oct 2024 11:20:48 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Kanchan Joshi <joshi.k@samsung.com>
-Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, hare@suse.de,
-	sagi@grimberg.me, martin.petersen@oracle.com, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
-	bcrl@kvack.org, dhowells@redhat.com, bvanassche@acm.org,
-	asml.silence@gmail.com, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-aio@kvack.org,
-	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <20241001092047.GA23730@lst.de>
-References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com> <20240930181305.17286-1-joshi.k@samsung.com>
+	s=arc-20240116; t=1727776632; c=relaxed/simple;
+	bh=H0q9iztMRd0pzuiH5IupS+REpCUjAfJeJx6mUfo/qhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pmBwrwCB9G/fqD8rOCy2GQM0PVnchdu4iD+1JjLx/ScQ73zvVCCo81+s6Bwy2O8T+93BkNDAavc3cjfU+mYkWQE+V0aWm6B1yjNVV/wld72gwP9wCntyp5ahpknSYCMo5VOa0GRDkz/NHsu2nBYc8Bz9T3WGna2ZfCzoyzmiEuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1285F339;
+	Tue,  1 Oct 2024 02:57:39 -0700 (PDT)
+Received: from [10.1.28.63] (e127648.arm.com [10.1.28.63])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 78FFB3F58B;
+	Tue,  1 Oct 2024 02:57:05 -0700 (PDT)
+Message-ID: <fa623b5e-721a-47fd-84c8-1088d9a6a24a@arm.com>
+Date: Tue, 1 Oct 2024 10:57:03 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930181305.17286-1-joshi.k@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 6/8] cpufreq: intel_pstate: Remove iowait boost
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com,
+ dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org,
+ Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
+ bvanassche@acm.org, andres@anarazel.de, asml.silence@gmail.com,
+ linux-block@vger.kernel.org, io-uring@vger.kernel.org, qyousef@layalina.io,
+ dsmythies@telus.net, axboe@kernel.dk
+References: <20240905092645.2885200-1-christian.loehle@arm.com>
+ <20240905092645.2885200-7-christian.loehle@arm.com>
+ <CAJZ5v0i3ULQ-Mzu=6yzo4whnWne0g1sxcgPL_u828Jyy1Qu1Zg@mail.gmail.com>
+ <0a0186cad5a9254027d0ac6a7f39e39f5473665c.camel@linux.intel.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <0a0186cad5a9254027d0ac6a7f39e39f5473665c.camel@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Any reason you completely ignored my feedback on the last version
-and did not even answer?
+On 9/30/24 21:35, srinivas pandruvada wrote:
+> On Mon, 2024-09-30 at 20:03 +0200, Rafael J. Wysocki wrote:
+>> +Srinivas who can say more about the reasons why iowait boosting
+>> makes
+>> a difference for intel_pstate than I do.
+>>
 
-That's not a very productive way to work.
+Hi Srinivas,
+
+> It makes difference on Xeons and also GFX performance.
+
+AFAIU the GFX performance with iowait boost is a regression though,
+because it cuts into the system power budget (CPU+GPU), especially
+on desktop and mobile chips (but also some servers), no?
+https://lore.kernel.org/lkml/20180730220029.81983-1-srinivas.pandruvada@linux.intel.com/
+https://lore.kernel.org/lkml/e7388bf4-deb1-34b6-97d7-89ced8e78ef1@intel.com/
+Or is there a reported case where iowait boosting helps
+graphics workloads?
+
+> The actual gains will be model specific as it will be dependent on
+> hardware algorithms and EPP.
+> 
+> It was introduced to solve regression in Skylake xeons. But even in the
+> recent servers there are gains.
+> Refer to
+> https://lkml.iu.edu/hypermail/linux/kernel/1806.0/03574.html
+
+Did you look into PELT utilization values at that time?
+I see why intel_pstate might be worse off than schedutil wrt removing
+iowait boosting and do see two remedies essentially:
+1. Boost after all sleeps (less aggressively), although I'm not a huge fan of
+this.
+2. If the gap between util_est and HWP-determined frequency is too large
+then apply some boost. A sort of fallback on a schedutil strategy.
+That would of course require util_est to be significantly large in those
+scenarios.
+
+I might try to propose something for 2, although as you can probably
+guess, playing with HWP is somewhat uncharted waters for me.
+
+Since intel_pstate will actually boost into unsustainable P-states,
+there should be workloads that regress with iowait boosting. I'll
+go looking for those.
+
 
 

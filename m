@@ -1,57 +1,57 @@
-Return-Path: <io-uring+bounces-3355-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3352-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9135798CAB1
-	for <lists+io-uring@lfdr.de>; Wed,  2 Oct 2024 03:22:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A9398CAAC
+	for <lists+io-uring@lfdr.de>; Wed,  2 Oct 2024 03:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C38871C22515
-	for <lists+io-uring@lfdr.de>; Wed,  2 Oct 2024 01:22:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 748821C20F4D
+	for <lists+io-uring@lfdr.de>; Wed,  2 Oct 2024 01:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534216FB0;
-	Wed,  2 Oct 2024 01:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FC5138E;
+	Wed,  2 Oct 2024 01:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ch0X0zpb"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="heROSkdP"
 X-Original-To: io-uring@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84729450;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAF79454;
 	Wed,  2 Oct 2024 01:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727832154; cv=none; b=bxHag7TB27c6mr0JnAhk5G1uA/RFAvQpI4tu9cL2UZP+aw6b2RQz645Sg3o7/ISag3Qf2UZxWlr3mg+n40yAd9a2tYK3sS0pMFDGNflabU00hKV/G1gS65Yfzg7z3bkda3fWG8DMYCtmS1v/fe5D3yuoYhaYYWQJs1skQmocloE=
+	t=1727832153; cv=none; b=Tosu8rNIv9dlsIHp8g1vzGPnu7MWnN11wggexI4Dng9avtJTR2CBbB6B3eirEPu0u25CEO/JgRqnvPU+Jk0jDGWqi/WLECP7/2Sf7oatklAK4hZVupvoMBDGrQPBBfrDn2ENcAZIwZ3mhjsWpvEEIeC7yX2FGeLvE1OVZ4Ff2ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727832154; c=relaxed/simple;
-	bh=f88IB4PTDKAV6GtuYOuya4kyGV9E9/vovooueg0ZoLM=;
+	s=arc-20240116; t=1727832153; c=relaxed/simple;
+	bh=gStnpPyvw9dmCFt/+rNPkZRYWlrAfXwW2VfkGt+hHSA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SISslf/oINiDX3Ks6rcUCfdgtA63khmLkMoqp51hetJkjzwiURy9yuuDyFjMkG5NpZttcndkx5fHAmoRAEGSgyiZTJL70vaM/CkOAkfBtqwA4PT+jtaV/iZ5XFFzDALLwahzY09BZwkJhEAtk14Tenk+i/q4n4zqkjvAti0rPwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ch0X0zpb; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=k5BYCRfhol908NEz2gnAwk/wvagRTnXLeX2tB4PCsAJ/fyGQjclhne6bTbuojah13xFBV4Wtw+grLhbKyEXtcU3nGzdO0twZv5+XB1cm8Ef1hE0bEy5xdPnLTdSgFtUIQwUCT+h39prqDiMynXUJ/A4TeuFhvaxCVRshlrFQ4TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=heROSkdP; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:
-	To:From:Reply-To:Content-ID:Content-Description;
-	bh=pkYbQ6A2E8yrKld2874J/quEWv8Girhvo1LfyLaZNPg=; b=ch0X0zpblgb/GayVafec7IRzPa
-	6RoPMifBXUgBg+kfqfESAQcAonG7vuiOzFn9SY/vdq4e4qcT9z/SMRgkY0a+wJqZIBOlsWHFmwnsU
-	cjM8+dyXtevVgMLU8/pGcKhd2J6GtEY9NyOCgd4QVj6kNMXKfNPkVwVA9Cud/YGwAJcElaa4ZRvpv
-	fD2c7S5IJcZtwwkzQ4t2DY2HXc8ouFuB8I77QSnZlQxLlqlHIBEtOwBRGg8HjFcqXVicNmEuFTe91
-	hKzbTFHvRwNcICC171O6OXC6UHoPVSTVjXNM7ctIFKXf/q3GOrbuRegHn80gjGiNLgHQ3PurkkOC+
-	byINkQKw==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=ZRmhc+N4gRJDAvuKVshJF7vx2/FasZk6WdJnNtu+PX8=; b=heROSkdPtzw9/Gb8QZBf2daWIy
+	y3ysFyd0EWZyRRv5sF+kIa8PeDidFLIyGBQ5OA+BmfVzs/xP9YquN5SaR5R7tSfw0U9I72fbkITSL
+	Vw3UN2uuoCuN1wHpvO++JDZx9dbhB2ZLh8kjytD7qzhRwO8IOIUv7CChQ0y4BgODCIoQ/rOjdo2VF
+	/Ad6RqKjn3gASqZDHBMAZ6ErOydewh7Z74kxhlXrwTPwB/gkrHNNHo+hWlE7L3IyogeypCMtp086Q
+	+cKV8ajE5jLavxQgozzJ4dRE/LcE7FxS+GCF7N4DlnhUsbvRHlkABDQstM3DCXK09FDCObr4tQsu1
+	ZuUpgGsQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1svo4U-0000000HW0B-1ST7;
+	id 1svo4U-0000000HW0D-1krp;
 	Wed, 02 Oct 2024 01:22:30 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: brauner@kernel.org,
 	io-uring@vger.kernel.org,
 	cgzones@googlemail.com
-Subject: [PATCH 2/9] fs: rename struct xattr_ctx to kernel_xattr_ctx
-Date: Wed,  2 Oct 2024 02:22:23 +0100
-Message-ID: <20241002012230.4174585-2-viro@zeniv.linux.org.uk>
+Subject: [PATCH 3/9] io_[gs]etxattr_prep(): just use getname()
+Date: Wed,  2 Oct 2024 02:22:24 +0100
+Message-ID: <20241002012230.4174585-3-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
 References: <20241002011011.GB4017910@ZenIV>
@@ -62,127 +62,39 @@ List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Christian Göttsche <cgzones@googlemail.com>
+getname_flags(pathname, LOOKUP_FOLLOW) is obviously bogus - following
+trailing symlinks has no impact on how to copy the pathname from userland...
 
-Rename the struct xattr_ctx to increase distinction with the about to be
-added user API struct xattr_args.
-
-No functional change.
-
-Suggested-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-Link: https://lore.kernel.org/r/20240426162042.191916-2-cgoettsche@seltendoof.de
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/internal.h    |  8 ++++----
- fs/xattr.c       | 12 ++++++------
- io_uring/xattr.c |  2 +-
- 3 files changed, 11 insertions(+), 11 deletions(-)
+ io_uring/xattr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 8c1b7acbbe8f..81c7a085355c 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -267,7 +267,7 @@ struct xattr_name {
- 	char name[XATTR_NAME_MAX + 1];
- };
- 
--struct xattr_ctx {
-+struct kernel_xattr_ctx {
- 	/* Value of attribute */
- 	union {
- 		const void __user *cvalue;
-@@ -283,11 +283,11 @@ struct xattr_ctx {
- 
- ssize_t do_getxattr(struct mnt_idmap *idmap,
- 		    struct dentry *d,
--		    struct xattr_ctx *ctx);
-+		    struct kernel_xattr_ctx *ctx);
- 
--int setxattr_copy(const char __user *name, struct xattr_ctx *ctx);
-+int setxattr_copy(const char __user *name, struct kernel_xattr_ctx *ctx);
- int do_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
--		struct xattr_ctx *ctx);
-+		struct kernel_xattr_ctx *ctx);
- int may_write_xattr(struct mnt_idmap *idmap, struct inode *inode);
- 
- #ifdef CONFIG_FS_POSIX_ACL
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 0fc813cb005c..1214ae7e71db 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -590,7 +590,7 @@ EXPORT_SYMBOL_GPL(vfs_removexattr);
-  * Extended attribute SET operations
-  */
- 
--int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
-+int setxattr_copy(const char __user *name, struct kernel_xattr_ctx *ctx)
- {
- 	int error;
- 
-@@ -620,7 +620,7 @@ int setxattr_copy(const char __user *name, struct xattr_ctx *ctx)
- }
- 
- int do_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
--		struct xattr_ctx *ctx)
-+		struct kernel_xattr_ctx *ctx)
- {
- 	if (is_posix_acl_xattr(ctx->kname->name))
- 		return do_set_acl(idmap, dentry, ctx->kname->name,
-@@ -635,7 +635,7 @@ static int path_setxattr(const char __user *pathname,
- 			 size_t size, int flags, unsigned int lookup_flags)
- {
- 	struct xattr_name kname;
--	struct xattr_ctx ctx = {
-+	struct kernel_xattr_ctx ctx = {
- 		.cvalue   = value,
- 		.kvalue   = NULL,
- 		.size     = size,
-@@ -687,7 +687,7 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, const char __user *, name,
- 		const void __user *,value, size_t, size, int, flags)
- {
- 	struct xattr_name kname;
--	struct xattr_ctx ctx = {
-+	struct kernel_xattr_ctx ctx = {
- 		.cvalue   = value,
- 		.kvalue   = NULL,
- 		.size     = size,
-@@ -720,7 +720,7 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, const char __user *, name,
-  */
- ssize_t
- do_getxattr(struct mnt_idmap *idmap, struct dentry *d,
--	struct xattr_ctx *ctx)
-+	struct kernel_xattr_ctx *ctx)
- {
- 	ssize_t error;
- 	char *kname = ctx->kname->name;
-@@ -755,7 +755,7 @@ getxattr(struct mnt_idmap *idmap, struct dentry *d,
- {
- 	ssize_t error;
- 	struct xattr_name kname;
--	struct xattr_ctx ctx = {
-+	struct kernel_xattr_ctx ctx = {
- 		.value    = value,
- 		.kvalue   = NULL,
- 		.size     = size,
 diff --git a/io_uring/xattr.c b/io_uring/xattr.c
-index 6cf41c3bc369..5b4594ede935 100644
+index 5b4594ede935..04abf0739668 100644
 --- a/io_uring/xattr.c
 +++ b/io_uring/xattr.c
-@@ -18,7 +18,7 @@
+@@ -96,7 +96,7 @@ int io_getxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  
- struct io_xattr {
- 	struct file			*file;
--	struct xattr_ctx		ctx;
-+	struct kernel_xattr_ctx		ctx;
- 	struct filename			*filename;
- };
+ 	path = u64_to_user_ptr(READ_ONCE(sqe->addr3));
  
+-	ix->filename = getname_flags(path, LOOKUP_FOLLOW);
++	ix->filename = getname(path);
+ 	if (IS_ERR(ix->filename)) {
+ 		ret = PTR_ERR(ix->filename);
+ 		ix->filename = NULL;
+@@ -189,7 +189,7 @@ int io_setxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 
+ 	path = u64_to_user_ptr(READ_ONCE(sqe->addr3));
+ 
+-	ix->filename = getname_flags(path, LOOKUP_FOLLOW);
++	ix->filename = getname(path);
+ 	if (IS_ERR(ix->filename)) {
+ 		ret = PTR_ERR(ix->filename);
+ 		ix->filename = NULL;
 -- 
 2.39.5
 

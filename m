@@ -1,56 +1,56 @@
-Return-Path: <io-uring+bounces-3366-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3367-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF0198CCBA
-	for <lists+io-uring@lfdr.de>; Wed,  2 Oct 2024 07:58:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B192B98CCCE
+	for <lists+io-uring@lfdr.de>; Wed,  2 Oct 2024 07:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EE661F226F1
-	for <lists+io-uring@lfdr.de>; Wed,  2 Oct 2024 05:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 715B5282EBD
+	for <lists+io-uring@lfdr.de>; Wed,  2 Oct 2024 05:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185D280038;
-	Wed,  2 Oct 2024 05:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E6A7DA9C;
+	Wed,  2 Oct 2024 05:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mS/TjsTy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwhU8e8x"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18E27DA9C;
-	Wed,  2 Oct 2024 05:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A85778C75;
+	Wed,  2 Oct 2024 05:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727848681; cv=none; b=KNPi8fVBSi1eVolY3btugCUrxaIbtLc+X5xphQRPv5bO57nqJ6i6L09UBe118coe0uWB3BDwIWeqly0IK2tdx78Q1U40nbhgu/nTyzP3PWhwB263yQSw1UXUrIz0NStz4EardVDne4uzGMGThpKtbSdcJeIDKWTA5eULAUHYLMQ=
+	t=1727848785; cv=none; b=HCBCdKVQS9/+Gtsb70M2CY6OpxgIKtkpoJd2xVDo+7FP/BjBRWTGgi1MksaKBZTIdAsUumzAAt02sV2sBNUt1h6YzOUNa0LUvn3I5ig9rI9TveBeiZNsNdSHAdxTxI5Up+rMjDUsKRHbf63XNiH4Q43hkOIJeXu0T/XN/LpC5G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727848681; c=relaxed/simple;
-	bh=l4EDxmEomTNIqEgzbteB4jyT954jnWCtPJjTQ+IgPkw=;
+	s=arc-20240116; t=1727848785; c=relaxed/simple;
+	bh=p1GZ19giyjDwYzrq8S2W0JWuU8WzdM0xcPlL3Vo2zug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LriC+10IvP4aeEBwqWyeCZmAxk1+oAPYAtYfVVkccihWRlmQBcyOrVEGxsl3q/3n3pr9URTHX2K+w+DZohPF4IP7c/xQK7ATGunvpUjFaltrWf8Lb5QLAww6t/NzeL3fULNVRP6kVhH5Q2EHv3tgxWDb2CF9HPM/qnpNDHykqRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mS/TjsTy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49080C4CEC5;
-	Wed,  2 Oct 2024 05:57:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUltNaSQs2aRhgW81fjz2C+Cwb85nv1gcXIX2/AM5fuGl3gcNjMeZeeMVGm3w/FuNJpICe6vUMwFUxGeyrS6yVGbXVeOUqBZH/rVt3iBlop1w8jUt9uH8OZ7/P2p2twJpWMjMLRU0SwMXR1CX6VVQXhn4IQb0yx+YZt70LBErmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwhU8e8x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B2DAC4CEC5;
+	Wed,  2 Oct 2024 05:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727848680;
-	bh=l4EDxmEomTNIqEgzbteB4jyT954jnWCtPJjTQ+IgPkw=;
+	s=k20201202; t=1727848784;
+	bh=p1GZ19giyjDwYzrq8S2W0JWuU8WzdM0xcPlL3Vo2zug=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mS/TjsTywOvOndqJ6JovmJyYOR8cCSM7DEB0l3NWSBiNvs0IGRBDvzq0oRkpEVtzB
-	 DCMCnMREpG/IBYoifI632VUIkfidLtao4zg7N50ELOV07+LUa2BfjPhL/LbFbTu7jv
-	 IBgIQpKXhl97RRc1N+ylnyBfZr+9opnxiRh4dmiUBhrSHTfAfi5/2/lTkYGIegjPX1
-	 5Tqk0TJC1W0PH43tMWO62sJkwwNlxhopqjO3dnlCEmki9CpeyUHJ6hExl5FjV+9nuN
-	 z62F7TTNV2EkcCRuvurEhbXW3Dj/DqhK9WwEweGqY7OnwcR354JDzsz9lA46NLgnqF
-	 T6VL1IMq8nsnw==
-Date: Wed, 2 Oct 2024 07:57:56 +0200
+	b=HwhU8e8xMbSUWYVKfSnOxJ92J0SBXGIky7DITgTr/WLWRQTQDU0ECIX94Latp2wpH
+	 vytH81D80E9mPtDY+hoKSIrzJgJC+HszlZS1ZMFvZsXGdMM8kKYPZXuVjhyl2+6zai
+	 ls1jLdfwGrxYceIbGYbHDGs0SCLjJqRFPbI51Mflutcfot6KP/dmCo25BZeNhWUzK4
+	 Te32n0fSQn1gfsYYkeOv0R81b5Nz0uWL+3PqRrCyOGOJAOB+cL5mBf5Pitqxdg/tKT
+	 qlgF5DKsGv8vT28yl+YeAIRhhSFVMkbthf4UQa9i0pTf3DL8exbkQePGIYtVigx65X
+	 wsTCVNUyF7bhg==
+Date: Wed, 2 Oct 2024 07:59:41 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
 	cgzones@googlemail.com
-Subject: Re: [PATCH 4/9] new helper: import_xattr_name()
-Message-ID: <20241002-abtun-filialen-1f377f997a4c@brauner>
+Subject: Re: [PATCH 6/9] replace do_getxattr() with saner helpers.
+Message-ID: <20241002-pathetisch-gesammelt-10392757f05d@brauner>
 References: <20241002011011.GB4017910@ZenIV>
  <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
- <20241002012230.4174585-4-viro@zeniv.linux.org.uk>
+ <20241002012230.4174585-6-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -59,10 +59,10 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241002012230.4174585-4-viro@zeniv.linux.org.uk>
+In-Reply-To: <20241002012230.4174585-6-viro@zeniv.linux.org.uk>
 
-On Wed, Oct 02, 2024 at 02:22:25AM GMT, Al Viro wrote:
-> common logics for marshalling xattr names.
+On Wed, Oct 02, 2024 at 02:22:27AM GMT, Al Viro wrote:
+> similar to do_setxattr() in the previous commit...
 > 
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---

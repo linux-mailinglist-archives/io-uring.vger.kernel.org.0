@@ -1,113 +1,105 @@
-Return-Path: <io-uring+bounces-3389-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3390-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE6A98E77A
-	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 02:02:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BB098E7B5
+	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 02:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0E9F288385
-	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 00:02:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 602D81F22B77
+	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 00:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBAB139D;
-	Thu,  3 Oct 2024 00:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFE563CB;
+	Thu,  3 Oct 2024 00:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="SkGy6c44"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="q4Q10RP3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8AD63CB
-	for <io-uring@vger.kernel.org>; Thu,  3 Oct 2024 00:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0D064A;
+	Thu,  3 Oct 2024 00:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727913733; cv=none; b=jIIhwduweNvVYtbK8lhfuLXmbWNT39L8pjIywtliUt3x5wYi9O7Bc4F9CJAsXKjJ9vfJP42o5LPHqcNUyqGmMxYJTFPbbcRnpcSuy33uZMMHV5IfkQiAHuXQsdmdACu6b8Fs07ZOstF+/ZE0aq0cjRU6blljn2F30tG1YUjFmR8=
+	t=1727914847; cv=none; b=UAolAD5AGZfd4pY9+InxaD3RUZARDHvnehZuzVa7BV3MHRRZEftGj8uaFzPycStYoAxtN90pPwcnvMwa+O2fpabU6DS4XtXIwFhaB/rb5s2Jj6HQ9EjoMKxaWB40SrFc3yspdqjHNAdA+L9xSO9KthyOndU7Kwv1R8R1QapzPJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727913733; c=relaxed/simple;
-	bh=6NPWw/CwhT6stwpwgGQLJZMGtUYO8CUPhinPfjIKY00=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tUR7LKsuzgO3w5FM4t8kA6/20NncD6ezbG4Isli8FvLB/5ywUqqFTVcrCC9ImoHpLTPUSMvckbHpj4AYFu2pIV33ZLbhjpRJKOkDiDVknGskbBSBrVZKYim2/kfrZwlyqwj5nG86BKhcoDec3oYIuh3fHMU66JlYZeWkLNdRMXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=SkGy6c44; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71b0d9535c0so312731b3a.2
-        for <io-uring@vger.kernel.org>; Wed, 02 Oct 2024 17:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1727913731; x=1728518531; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LyiYacsCSRJLUh/wWWkp9wksysS1oV0+OGb2ueD0cEs=;
-        b=SkGy6c44+BneN5H1L61WoG+03D/4T8ZTC+TnyOJUw446KU3MaS5yN9nSG2HVF4mGU9
-         xp5HC0t+U4W9W5uF7dxRZj+e0XsiW+3Wux5r3AmVSVo9dIphckdS8eYVN4cULFKxQwfO
-         Z8rrznM8tuTr7RAOcsg9CBTgll79WEM19SZXSsuSW8oe34tYAonZH2swhVUX8pxQ1DCr
-         0N1n/nSNpuxnnjXYUtU1L0ssv2ZIPkwu5ByTFhmCX6vbfqS9Pa4LUoy6ZWwLpNfMEhOj
-         QgAthQheV/SWGVEVC6RGfHi1H44jIgoS5vSYOF9RE2kvEd+nFTT/b9ySB0qm0o2fWuTO
-         898g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727913731; x=1728518531;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LyiYacsCSRJLUh/wWWkp9wksysS1oV0+OGb2ueD0cEs=;
-        b=pGSs0OZw2xNEwRfvs8u/4ejO23zJqkNMZtZPf8dq/jCFUOLNLB2zxZMLSo2LxOHueX
-         tu1cxchwze97exqN40fuVGfQgTUS3EUyO9GbnC4Wg5MuCC/mkvHuCzCsvEvVZtZAnRtQ
-         gChqq3Sh8vT3LKlC8qvbqUYgVEXRvoFQ8CaAiIJHXIVMFks7KVvTq2azTWpaBfkDoXBR
-         Qs3/G2rvegJKAXHWshDhbyNeN2dCdM4gv4cGJoszoUnptH/I6WPXh8kERfYWiOKKg/g+
-         m/fVopGt1Od/5SUfrtfitiUt2OUPolXvS4jbLp9M9v4ak6HPQEnbQH2/rBQMC6fE4M8q
-         WYPg==
-X-Gm-Message-State: AOJu0Yy+S6CxMQmm7vOYKnnYMBp7GqEBjPiT20BQYX2X+UPLzijaZll/
-	307j1MfrMnWVahRVMi5CxGpAJHrfep0DnnUaVY1sEU/1IDZc1ThWEMww+Z4XfSr4L4pQer6WNQu
-	p
-X-Google-Smtp-Source: AGHT+IEuEx+1UmEwmiCip3IPuwjWmWJ688Bo2iYrIaSjuStPG1CKZ9dnRSclB9wLTmMCwkxKjeM/4Q==
-X-Received: by 2002:a05:6a00:189b:b0:714:2069:d917 with SMTP id d2e1a72fcca58-71dc5d71757mr7925413b3a.25.1727913731322;
-        Wed, 02 Oct 2024 17:02:11 -0700 (PDT)
-Received: from localhost (fwdproxy-prn-035.fbsv.net. [2a03:2880:ff:23::face:b00c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9df0b50sm57127b3a.171.2024.10.02.17.02.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 17:02:10 -0700 (PDT)
-From: David Wei <dw@davidwei.uk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	David Wei <dw@davidwei.uk>
-Subject: [PATCH liburing] sanitize: add ifdef guard around sanitizer functions
-Date: Wed,  2 Oct 2024 17:02:09 -0700
-Message-ID: <20241003000209.1159551-1-dw@davidwei.uk>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1727914847; c=relaxed/simple;
+	bh=fNsT/Ir6QY/XIv84TKawGit7Z43Us4YdiuXKg6+cAjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=skJivGWyXMP9QSy7egeTTu4+AaTWSbSYlKAnW+pEtBI9rQngsN195gaxzrnQfLqK6vipEY7REngkYIlakD25JtdGtckvT6+amYXcuskYMXjWj+4hb5D9W2didNbcdilG5XBa3bpP8wrAvvRWK3SBRTZoEMWGlFpud983uQZgbLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=q4Q10RP3; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XJslc5hknzlgMW9;
+	Thu,  3 Oct 2024 00:20:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1727914839; x=1730506840; bh=Oh0VWAuDQnXtvqrOgW+mdNBp
+	O1eMzfyHq16DUHZnGIc=; b=q4Q10RP3cvtsde0sb2ibCa9e909lRJus9XrjroPK
+	B+Vo8AEO2LHR4T59I2Vw8U7LuErXXaOZ3yQsZP4gHblTnU6tXSqsVRiXydJ7yCe0
+	sGYpf69OhfMjsorv6slK6lRQXdgOKgUVgPoAHHWdk1O3+QW8Ogp8ku5bFmOnthYC
+	oR2lvZRouL6esIoM3OM/Wr1bdJ+1nH5ZUYqTpkoKZLFYRN7Df7JUld7g2e/yiYag
+	TQFHmM8W3jpPk/XHPMOnDjN52iYxzDWmChJP+gDGwkwrjCM2EufkemQO4zPUG+Ap
+	pZK6LSrTtVI7ZPgT54P0IEFiPSWQH6iz6f8JUn2Om1hmmg==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id LlQiNrpWlL36; Thu,  3 Oct 2024 00:20:39 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XJslN5L2NzlgVnY;
+	Thu,  3 Oct 2024 00:20:32 +0000 (UTC)
+Message-ID: <052e0503-eb3f-4345-b366-1c0a2c4604a5@acm.org>
+Date: Wed, 2 Oct 2024 17:20:25 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/3] FDP and per-io hints
+To: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
+ hch@lst.de, hare@suse.de, sagi@grimberg.me, martin.petersen@oracle.com,
+ brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+ jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
+ asml.silence@gmail.com
+Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
+ gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com
+References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com>
+ <20240930181305.17286-1-joshi.k@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240930181305.17286-1-joshi.k@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Otherwise there are redefinition errors during compilation if
-CONFIG_USE_SANITIZER isn't set.
+On 9/30/24 11:13 AM, Kanchan Joshi wrote:
+> Another spin to incorporate the feedback from LPC and previous
+> iterations. The series adds two capabilities:
+> - FDP support at NVMe level (patch #1)
+> - Per-io hinting via io_uring (patch #3)
+> Patch #2 is needed to do per-io hints.
+> 
+> The motivation and interface details are present in the commit
+> descriptions.
 
-Signed-off-by: David Wei <dw@davidwei.uk>
----
- src/sanitize.c | 2 ++
- 1 file changed, 2 insertions(+)
+Something is missing from the patch descriptions. What is the goal
+of this patch series? Is the goal to support FDP in filesystems in
+the kernel, is the goal to support filesystems implemented in user
+space or perhaps something else? I think this should be mentioned in
+the cover letter.
 
-diff --git a/src/sanitize.c b/src/sanitize.c
-index 46391a6..db5930d 100644
---- a/src/sanitize.c
-+++ b/src/sanitize.c
-@@ -118,6 +118,7 @@ static inline void initialize_sanitize_handlers()
- 	sanitize_handlers_initialized = true;
- }
- 
-+#if defined(CONFIG_USE_SANITIZER)
- void liburing_sanitize_ring(struct io_uring *ring)
- {
- 	struct io_uring_sq *sq = &ring->sq;
-@@ -174,3 +175,4 @@ void liburing_sanitize_iovecs(const struct iovec *iovecs, unsigned nr)
- 		}
- 	}
- }
-+#endif
--- 
-2.43.5
+Thanks,
+
+Bart.
 
 

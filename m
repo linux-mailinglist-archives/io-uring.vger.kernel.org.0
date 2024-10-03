@@ -1,75 +1,40 @@
-Return-Path: <io-uring+bounces-3391-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3392-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B5BB98E7E6
-	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 02:45:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0179098EC0F
+	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 11:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0EA6B23D57
-	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 00:45:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 243211C213F5
+	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 09:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE9823DE;
-	Thu,  3 Oct 2024 00:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ILAsrj3r"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BCC13DBB1;
+	Thu,  3 Oct 2024 09:10:51 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73861BA49
-	for <io-uring@vger.kernel.org>; Thu,  3 Oct 2024 00:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1486126C13;
+	Thu,  3 Oct 2024 09:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727916345; cv=none; b=pdYtiwle1IwIMMeCyEeQ5V9l/AZ9RA218e0yeeoATUgmWedPk1FMaDd6P4fkIiajO6f0H5hZD9jteBjDhXIWdRP1jMZHEO1fbeiL1z0rx9aYqIKmGdXuJPQwb+xc7JQSV30lEOXKuXxBsfxdv9+BkXA07xYLMA5+KWNv8Cs/7qE=
+	t=1727946651; cv=none; b=bpqnuZ1cfPozR8tTQQ73lYV58fnHDkLR26gavfDhjEtoKP6kCWWCwU2D1eFWeVGRlZnxGQhtULsoai0Zz/uV2t7QBk66zWElsZPWZjYu/LwbovL77c8cjaglRbuQWtS8hOLZpvPlrnZaqeBK5zRdqy2ublA8urCg/qLmZ7H6VuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727916345; c=relaxed/simple;
-	bh=TF8dppnwBrZ09TviWya2d+PGaBpZogq1+seL+V8bScI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rdMwyTA+9lu1+CwvVF6o0AQE8YAt6+ohByv3NIgJiC5l90LHoQhj3P6hc++67jB/5m4XLs37wFtpzCBBhDcxbHNNHeyYZe4g5/AKinYWulGnc3j6cVx9kns1DM/H+zFzO55SMrmOU2DDEvuk5kEaSt43qhetwUPjZ7z6HvRsm0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ILAsrj3r; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e1bfa9ddb3so79587a91.0
-        for <io-uring@vger.kernel.org>; Wed, 02 Oct 2024 17:45:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727916341; x=1728521141; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QaCf93WpxraxzDO4sFjK8i7IYgil7NcpsU0p4DFW1Xs=;
-        b=ILAsrj3r3zFpOBOZAKBzetraJo0NSQ/4K9CjpKqzOKXgXrSQmzFi37dSzlQgj4MnhX
-         +T55RGpHR/PMqvX66XD2rk6htDnJjQGf3HKBc6cxBUSv5E2S7Ehx3gj9/4um9HljfFL4
-         7ESBYXT4kEdUADVNsX4yZDSncj8rz1FOHkX1gCw4pj7KsbbWKcButUTePzWF51Gyni8F
-         2UpR5zTsuM0uLoSneG7qdM7u9S1UFRmvD+StsmoTL+lZHzZF3IxFQ8C/uxAaXqMjGaZa
-         N30pQ3bEnZjXHEXrHnOZ2RKbCGUZFNmTAh1JJqSjgrfBH/yWlCTsgOyN2CPO5IMPz77C
-         X5yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727916341; x=1728521141;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QaCf93WpxraxzDO4sFjK8i7IYgil7NcpsU0p4DFW1Xs=;
-        b=AhSUwSGyLUC7Z1axCCqXqcTXKuk+LYhNNWED29l+2JbvfPGWqOMJHLKSrA4Ps23aBb
-         JVMsM42/YBJ+kNPp9S9P6So05lZymek5L6Mx2sZRehlp3tGN+eWWsYyH35kspRRDYMwC
-         puGQJOg9nOSz2qlZEhPPNhVqjeslYFuMMnAcUVAfXqwZrqQU1YUALrLapSI+FQ/K86nm
-         hwiqLsdFNiIb/fKn9rjmVxltDt+z19h2r3TqIkYAwwq9G4elUjIdM84NJNjXqnvCA4ZW
-         D2A6XA7MJX4FdQPNC3b3BLR5Yubc2XW1DKz9prqWCkttlbkLDtp2xOlETRr9hj+rwyxU
-         jLNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhZgWAsSrFBAQZQlzluZKr2VnpWtFKCa8e15Yi61CVmSy2TjHtfxWSkSqPn1VWxeZPUFa4lHiHfw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbT4IEsj+vc/4t/olxH7oA7kJK+Mjqzad4lI7CJ4JPCsp7Bdsn
-	IHFQxlulg8aWAcWhgWZ4yapZO5FfHhb4D3vSqoLM4psCIMLbUJE3mVMWeWZPk9OJiojtFZjfDFg
-	8S+rKLg==
-X-Google-Smtp-Source: AGHT+IFuzZJF+OHj42IL/50NBcHjqtyqViNOniMc5hcNsi8KFJkbz47mzgql8yHjENnnY4pTguK42g==
-X-Received: by 2002:a17:90b:4c88:b0:2e0:9d79:4a02 with SMTP id 98e67ed59e1d1-2e1846bc3f6mr6284898a91.20.1727916340674;
-        Wed, 02 Oct 2024 17:45:40 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1bfb16f72sm165214a91.15.2024.10.02.17.45.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 17:45:40 -0700 (PDT)
-Message-ID: <55026b93-bcbd-422d-8ff4-1542247e375a@kernel.dk>
-Date: Wed, 2 Oct 2024 18:45:39 -0600
+	s=arc-20240116; t=1727946651; c=relaxed/simple;
+	bh=uGC8uf7Ag5AeV9OKxPQvM6LpMczuiDRZTeqo8Xz56+Y=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=t+7xbBact4NHNOeu4LeV+TmFvFvemBtvNN50QAopjpFiFGFJeyg9GHhkZmUMY7ykY1JDA2FCuM/ujbR5exOuqGdkhcRKXrpK5mxN3vyt9fRVHEtx7/LrM7UsV/mc8+qBap9dEaex3jsl1ArpYduWYYEwGgfkwSuf3pJ/+QylBRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9277339;
+	Thu,  3 Oct 2024 02:11:16 -0700 (PDT)
+Received: from [10.1.38.55] (e127648.arm.com [10.1.38.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 42F0B3F640;
+	Thu,  3 Oct 2024 02:10:43 -0700 (PDT)
+Message-ID: <61565cd6-a6e7-4ed5-a52e-dc3bc3e99869@arm.com>
+Date: Thu, 3 Oct 2024 10:10:41 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,47 +42,149 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing] sanitize: add ifdef guard around sanitizer
- functions
-To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-References: <20241003000209.1159551-1-dw@davidwei.uk>
+From: Christian Loehle <christian.loehle@arm.com>
+Subject: Re: [RFC PATCH 5/8] cpufreq/schedutil: Remove iowait boost
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com,
+ dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org,
+ Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
+ bvanassche@acm.org, andres@anarazel.de, asml.silence@gmail.com,
+ linux-block@vger.kernel.org, io-uring@vger.kernel.org, qyousef@layalina.io,
+ dsmythies@telus.net, axboe@kernel.dk
+References: <20240905092645.2885200-1-christian.loehle@arm.com>
+ <20240905092645.2885200-6-christian.loehle@arm.com>
+ <CAJZ5v0hJWwsErT193i394bHOczvCQwU_5AVVTJ1oKDe7kTW82g@mail.gmail.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241003000209.1159551-1-dw@davidwei.uk>
+In-Reply-To: <CAJZ5v0hJWwsErT193i394bHOczvCQwU_5AVVTJ1oKDe7kTW82g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/2/24 6:02 PM, David Wei wrote:
-> Otherwise there are redefinition errors during compilation if
-> CONFIG_USE_SANITIZER isn't set.
+On 9/30/24 17:34, Rafael J. Wysocki wrote:
+> On Thu, Sep 5, 2024 at 11:27 AM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+>>
+>> iowait boost in schedutil was introduced by
+>> commit ("21ca6d2c52f8 cpufreq: schedutil: Add iowait boosting").
+>> with it more or less following intel_pstate's approach to increase
+>> frequency after an iowait wakeup.
+>> Behaviour that is piggy-backed onto iowait boost is problematic
+>> due to a lot of reasons, so remove it.
+>>
+>> For schedutil specifically these are some of the reasons:
+>> 1. Boosting is applied even in scenarios where it doesn't improve
+>> throughput.
 > 
-> Signed-off-by: David Wei <dw@davidwei.uk>
-> ---
->  src/sanitize.c | 2 ++
->  1 file changed, 2 insertions(+)
+> Well, I wouldn't argue this way because it is kind of like saying that
+> air conditioning is used even when it doesn't really help.  It is
+> sometimes hard to know in advance whether or not it will help though.
+
+Right, it's a heuristic that's often wrong and costs energy when it
+triggers is what I was trying to say.
+
 > 
-> diff --git a/src/sanitize.c b/src/sanitize.c
-> index 46391a6..db5930d 100644
-> --- a/src/sanitize.c
-> +++ b/src/sanitize.c
-> @@ -118,6 +118,7 @@ static inline void initialize_sanitize_handlers()
->  	sanitize_handlers_initialized = true;
->  }
->  
-> +#if defined(CONFIG_USE_SANITIZER)
->  void liburing_sanitize_ring(struct io_uring *ring)
->  {
->  	struct io_uring_sq *sq = &ring->sq;
-> @@ -174,3 +175,4 @@ void liburing_sanitize_iovecs(const struct iovec *iovecs, unsigned nr)
->  		}
->  	}
->  }
-> +#endif
+>> 2. The boost is not accounted for in EAS: a) feec() will only consider
+>>  the actual task utilization for task placement, but another CPU might
+>>  be more energy-efficient at that capacity than the boosted one.)
+>>  b) When placing a non-IO task while a CPU is boosted compute_energy()
+>>  assumes a lower OPP than what is actually applied. This leads to
+>>  wrong EAS decisions.
+> 
+> That's a very good point IMV and so is the one regarding UCLAMP_MAX (8
+> in your list).
+> 
+> If the goal is to set the adequate performance for a given utilization
+> level (either actual or prescribed), boosting doesn't really play well
+> with this and it shouldn't be used at least in these cases.
+> 
+>> 3. Actual IO heavy workloads are hardly distinguished from infrequent
+>> in_iowait wakeups.
+> 
+> Do infrequent in_iowait wakeups really cause the boosting to be
+> applied at full swing?
 
-Hmm, but src/sanitize.o should not be built unless that is set. How is
-this happening?
+Maybe not full swing, but the relatively high rate_limit_us and TICK_NSEC
+found on Android deivces does indeed lead to occasional boosting periods
+even for 'infrequent'/unrelated wakeups.
 
--- 
-Jens Axboe
+> 
+>> 4. The boost isn't accounted for in task placement.
+> 
+> I'm not sure what exactly this means.  "Big" vs "little" or something else?
+
+That should be "[...] in task placement for HMP", you're right.
+Essentially if we were to consider a task to be 100% of capacity boost-worthy,
+we need to consider that at task placement. Now we cap out at the local CPU,
+which might be rather small. (~10% of the biggest CPU on mobile).
+Logically this argument (a CAS argument essentially), should probably come
+before the EAS one to make more sense.
+
+>> 5. The boost isn't associated with a task, it therefore lingers on the
+>> rq even after the responsible task has migrated / stopped.
+> 
+> Fair enough, but this is rather a problem with the implementation of
+> boosting and not with the basic idea of it.
+
+Unfortunately the lingering (or to use a term with less negative connotation:
+holding) almost is a necessity, too, as described in the cover-letter.
+If we only boost at enqueue (and immediately scale down on dequeue) we lose
+out massively, as the interrupt isn't boosted and we have to run at the lower
+frequency for the DVFS transition delay (even if on x86 that may be close to
+negligible). IMO this is the main reason why the mechanism can't evolve (into
+something like a per-task strategy).
+Even a per-task strategy would need to a) set a timer in case the iowait
+period is too long and b) remove boost from prev_cpu if enqueued somewhere
+else.
+
+> 
+>> 6. The boost isn't associated with a task, it therefore needs to ramp
+>> up again when migrated.
+> 
+> Well, that again is somewhat implementation-related IMV, and it need
+> not be problematic in principle.  Namely, if a task migrates and it is
+> not the only one in the "new" CPUs runqueue, and the other tasks in
+> there don't use in_iowait, maybe it's better to not boost it?
+
+Agreed, this can be argued about (and also isn't a huge problem in
+practice).
+
+> 
+> It also means that boosting is not very consistent, though, which is a
+> valid point.
+> 
+>> 7. Since schedutil doesn't know which task is getting woken up,
+>> multiple unrelated in_iowait tasks lead to boosting.
+> 
+> Well, that's by design: it boosts, when "there is enough IO pressure
+> in the runqueue", so to speak.> 
+> Basically, it is a departure from the "make performance follow
+> utilization" general idea and it is based on the observation that in
+> some cases performance can be improved by taking additional
+> information into account.
+> 
+> It is also about pure performance, not about energy efficiency.
+
+And the lines between those become more and more blurry, see the GFX
+regression. There's very few free lunches up for grabs these days, if
+you're boosting performance on X, you're likely paying for it on Y.
+That is fine as long as boosting X is deliberate which iowait boosting
+very much is not.
+
+> 
+>> 8. Boosting is hard to control with UCLAMP_MAX (which is only active
+>> when the task is on the rq, which for boosted tasks is usually not
+>> the case for most of the time).
+>>
+>> One benefit of schedutil specifically is the reliance on the
+>> scheduler's utilization signals, which have evolved a lot since it's
+>> original introduction. Some cases that benefitted from iowait boosting
+>> in the past can now be covered by e.g. util_est.
+> 
+> And it would be good to give some examples of this.
+> 
+> IMV you have a clean-cut argument in the EAS and UCLAMP_MAX cases, but
+> apart from that it is all a bit hand-wavy.
+
+Thanks Rafael, you brought up some good points!
+
 

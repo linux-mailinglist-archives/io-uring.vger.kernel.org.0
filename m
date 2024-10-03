@@ -1,63 +1,74 @@
-Return-Path: <io-uring+bounces-3400-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3401-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB3598F978
-	for <lists+io-uring@lfdr.de>; Fri,  4 Oct 2024 00:00:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E626F98F9A8
+	for <lists+io-uring@lfdr.de>; Fri,  4 Oct 2024 00:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 857DE280A12
-	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 22:00:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75F501F23165
+	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 22:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBD2186E3C;
-	Thu,  3 Oct 2024 22:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D9C1C7B7A;
+	Thu,  3 Oct 2024 22:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ZJIG9etA"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zacgglKi"
 X-Original-To: io-uring@vger.kernel.org
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09070224D1;
-	Thu,  3 Oct 2024 22:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EF21C7B79
+	for <io-uring@vger.kernel.org>; Thu,  3 Oct 2024 22:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727992834; cv=none; b=t7dI7ltpnhtrCSAGXnoHW5+2Vi/j0lK6a4CG1o/lHDFwCgkEhbF6akC7QHa6BRxyE+sqQ17z8/IBUPydVjhXI03/3VuUtHr/s0iWDHRQhlluRKMyMAKhooX4aFIrikq64VrJsFH2RdKH9yiJx3oIOn2FbB4KwAsfmIW/M8VGnMM=
+	t=1727993542; cv=none; b=iJuugceFYGmOCFWOilSqADu1+VvqOTOAk0zsM0Q6B7LmkZzywF67d4jPXCWcPrRm3onsU2zLVSEe3xfpwWyFn3pqCNUsTpzgDuW+zhLZxhquvz9thQRaJ7qj0SSymrN3LJ4WdkavAXpwz38a2gMUlh/1blJbz0Gysup3U1Io9F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727992834; c=relaxed/simple;
-	bh=IVj+wSsh4cf2uBOXlAJ67cfhtx5pQhOFpZ/jN++jz9o=;
+	s=arc-20240116; t=1727993542; c=relaxed/simple;
+	bh=a4AdcKeTt6iaLudMXKCs6XY/L4nNm6MTDCdJdND06qc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nJVcVaLtf4tvkKwfQl01weDs/eCXw5mzQf9LIAYPxHMi0Mtiu+SZn58vsFP3gp+yvkDGKn8TbT0NEFZQgDsGig2wiUlnywCRdP8qVy51mqKqUHEk4jCIU6FiUV30O81+nIesbeFVIKDxymS9TIHxO/Ru9ejBmjh4r5ccdmtQucA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ZJIG9etA; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XKQbN2JFNz6ClY9l;
-	Thu,  3 Oct 2024 22:00:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1727992824; x=1730584825; bh=IVj+wSsh4cf2uBOXlAJ67cfh
-	tx5pQhOFpZ/jN++jz9o=; b=ZJIG9etAuWeFo63DpU/5WwAcTYG/bRzhE3wzJYpQ
-	oBlGAqnYxaBh+QVigZvS9kx6RYYOZkfl6xWqBUAt5BVnOJSoB3q4q6cz80o8aYvJ
-	K2Shx0X1Rp/EttqJZWDy1nQ6nicWBMBk+7kCwtNmFw+8iVQtNCfTlmrvnNek6vK3
-	GkKMMCgkVLY6o5Oh/Z4Iv/qfKoyZ6UHjK1sTb06NdoazfzcJ6+H21i5awSnrXFG7
-	OxNoUffo9CbUWoWkio1vBZYQ5+rzzbgzGlhV/SS55svleC/L/5mWsp8qzDkBhGd4
-	45/JSp1kRUppFi4ixDePMIhrbbHgu2ZYiwFaYBROcz6N7g==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id TAmCIb-0ZlQg; Thu,  3 Oct 2024 22:00:24 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XKQbB4FqSz6ClY9k;
-	Thu,  3 Oct 2024 22:00:22 +0000 (UTC)
-Message-ID: <abd54d3a-3a5e-4ddc-9716-f6899512a3a4@acm.org>
-Date: Thu, 3 Oct 2024 15:00:21 -0700
+	 In-Reply-To:Content-Type; b=INrAauKhpwXmWPrQTzYyt6IDmBnOEvWO6QAXaG/XTlxv/giRDafhXRTsvelLQbgrHoCKeUVP1rTCPBI2AMkYfgh0KTBJrcuRUQYxQQ38ve4HpR/N8nn0ZVAdpubTZucHnuXjPILErBIDiD+yqAc/8OcsEsfDDDfSfk/HJ75CSjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zacgglKi; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e0af6e5da9so1160887a91.2
+        for <io-uring@vger.kernel.org>; Thu, 03 Oct 2024 15:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727993540; x=1728598340; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UARFeoyZ3rHdhvutpLeLbLmTRofuJ6iiIPq0QcY6Mv0=;
+        b=zacgglKiYJGuf0ENXqIZ5DDH9Nz12vqIFrXaW55eGEAzYfPcs4K3DvTM4kwg18kG6G
+         S1T/aoJTFWqAYvZoXr/Jl9UwEDfOIWJCx+/G6kXjJQeIeBZ3IPIRKuUZaBUbkY88PV0/
+         WxBN38JrclDQ1jJ+g4bI+5b5A663x+0g5+asfMLMGPlz9FMhGYcsqmoVNA6bVFZP1qub
+         1atKNKKiz80nubs81sL8oFKPE11R+cbApwOine+ah06WV9x3XJMSdXFKGSCHutKylw4l
+         8J/vKzhXTXHcJKiF3JazdZFkCGakUL+lCeMGapf1xgSUTjc9M5FFX5WRQke0XKUKb2u1
+         y5+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727993540; x=1728598340;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UARFeoyZ3rHdhvutpLeLbLmTRofuJ6iiIPq0QcY6Mv0=;
+        b=nhF4M2xaBvlaGef5dBiV5rMjnwpB5sgvcs/Q3YWPyPoaoqw0WOvK/IBznJXrQJ/LKW
+         zHYWIGgeTaQns6qti2WhRH71xEyBzVGPhgFcN6qSZL4ayk8XFp2Xxbe3kscAMl/LSAJM
+         UO76B6mwIIjnjBX96LRU8+fUUH/JqoYJJ92QaBrwTNvuGuWQr07wilS46HuQdDnA4Bub
+         NrPV72gqEelDjjH5c0UprHV0F2Sdx6uNwGpWzgpZZHdiJRNByeUhGYZue82IknHZo2iK
+         QlymMSuC6BuMlvaSnSsqi8t9ksGIjvqKwuvVykvHO15LhwJIc9iBKVZ08APsLt81jFHh
+         /9GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUljkcpuh4D5IcScahv21CO0xbE712+8AGbyM67uOTEbjSlsXctJxRIBLkG3Cx7qDoIrxrpkybg9A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi+92yUkp3VZvv31P9RMjTFnzkSbm0zd0So203Czw4VadpOcXb
+	1alxKNB3i58CTCorPoHtMF8y5xPvWdGPvJtRgRXnjwMPRyvhHgnDHKffQwzwvVY=
+X-Google-Smtp-Source: AGHT+IHM56HG+I+buxx/PP0Ki+OL0sze0gS4TyHVsLh+P56KL+AQukx5RNv5DEf6lEpdxcaFxOgK0g==
+X-Received: by 2002:a17:90b:3796:b0:2e0:8bf4:f298 with SMTP id 98e67ed59e1d1-2e1e5dcf9b1mr686996a91.0.1727993540193;
+        Thu, 03 Oct 2024 15:12:20 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1e86abbc6sm4335a91.50.2024.10.03.15.12.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 15:12:19 -0700 (PDT)
+Message-ID: <09db3e2a-8f39-4ac3-ab7b-a2c8addabc77@kernel.dk>
+Date: Thu, 3 Oct 2024 16:12:16 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -66,11 +77,12 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
+To: Bart Van Assche <bvanassche@acm.org>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>
 Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
- Jens Axboe <axboe@kernel.dk>, Kanchan Joshi <joshi.k@samsung.com>,
- hare@suse.de, sagi@grimberg.me, brauner@kernel.org, viro@zeniv.linux.org.uk,
- jack@suse.cz, jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
+ Kanchan Joshi <joshi.k@samsung.com>, hare@suse.de, sagi@grimberg.me,
+ brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+ jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
  asml.silence@gmail.com, linux-nvme@lists.infradead.org,
  linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
  linux-block@vger.kernel.org, linux-aio@kvack.org, gost.dev@samsung.com,
@@ -84,38 +96,48 @@ References: <20241001092047.GA23730@lst.de>
  <20241002151949.GA20877@lst.de> <yq17caq5xvg.fsf@ca-mkp.ca.oracle.com>
  <a8b6c57f-88fa-4af0-8a1a-d6a2f2ca8493@acm.org>
  <20241003125516.GC17031@lst.de> <Zv8RQLES1LJtDsKC@kbusch-mbp>
+ <abd54d3a-3a5e-4ddc-9716-f6899512a3a4@acm.org>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <Zv8RQLES1LJtDsKC@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <abd54d3a-3a5e-4ddc-9716-f6899512a3a4@acm.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/3/24 2:48 PM, Keith Busch wrote:
-> The only "bonus" I have is not repeatedly explaining why people can't
-> use h/w features the way they want.
+On 10/3/24 4:00 PM, Bart Van Assche wrote:
+> On 10/3/24 2:48 PM, Keith Busch wrote:
+>> The only "bonus" I have is not repeatedly explaining why people can't
+>> use h/w features the way they want.
+> 
+> Hi Keith,
+> 
+> Although that's a fair argument, what are the use cases for this patch
+> series? Filesystems in the kernel? Filesystems implemented in user
+> space? Perhaps something else?
+> 
+> This patch series adds new a new user space interface for passing hints
+> to storage devices (in io_uring). As we all know such interfaces are
+> hard to remove once these have been added.
 
-Hi Keith,
+It's a _hint_, I'm not sure how many times that has to be stated. The
+kernel is free to ignore it, and in the future, it may very well do
+that. We already had fcntl interfaces for streams, in the same vein, and
+we yanked those in the sense that they ended up doing _nothing_. Did
+things break because of that? Of course not. This is no different.
 
-Although that's a fair argument, what are the use cases for this patch
-series? Filesystems in the kernel? Filesystems implemented in user
-space? Perhaps something else?
+> We don't need new user space interfaces to support FDP for filesystems
+> in the kernel.
+> 
+> For filesystems implemented in user space, would using NVMe pass-through
+> be a viable approach? With this approach, no new user space interfaces
+> have to be added.
+> 
+> I'm wondering how to unblock FDP users without adding a new
+> controversial mechanism in the kernel.
 
-This patch series adds new a new user space interface for passing hints
-to storage devices (in io_uring). As we all know such interfaces are
-hard to remove once these have been added.
+pass-through already works, obviously - this is more about adding a
+viable real interface for it. If it's a feature that is in devices AND
+customers want to use, then pointing them at pass-through is a cop-out.
 
-We don't need new user space interfaces to support FDP for filesystems
-in the kernel.
-
-For filesystems implemented in user space, would using NVMe pass-through
-be a viable approach? With this approach, no new user space interfaces
-have to be added.
-
-I'm wondering how to unblock FDP users without adding a new
-controversial mechanism in the kernel.
-
-Thanks,
-
-Bart.
-
+-- 
+Jens Axboe
 

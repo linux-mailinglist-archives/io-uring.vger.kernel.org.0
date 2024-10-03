@@ -1,63 +1,75 @@
-Return-Path: <io-uring+bounces-3390-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3391-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BB098E7B5
-	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 02:20:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B5BB98E7E6
+	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 02:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 602D81F22B77
-	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 00:20:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0EA6B23D57
+	for <lists+io-uring@lfdr.de>; Thu,  3 Oct 2024 00:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFE563CB;
-	Thu,  3 Oct 2024 00:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE9823DE;
+	Thu,  3 Oct 2024 00:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="q4Q10RP3"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ILAsrj3r"
 X-Original-To: io-uring@vger.kernel.org
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0D064A;
-	Thu,  3 Oct 2024 00:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73861BA49
+	for <io-uring@vger.kernel.org>; Thu,  3 Oct 2024 00:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727914847; cv=none; b=UAolAD5AGZfd4pY9+InxaD3RUZARDHvnehZuzVa7BV3MHRRZEftGj8uaFzPycStYoAxtN90pPwcnvMwa+O2fpabU6DS4XtXIwFhaB/rb5s2Jj6HQ9EjoMKxaWB40SrFc3yspdqjHNAdA+L9xSO9KthyOndU7Kwv1R8R1QapzPJ0=
+	t=1727916345; cv=none; b=pdYtiwle1IwIMMeCyEeQ5V9l/AZ9RA218e0yeeoATUgmWedPk1FMaDd6P4fkIiajO6f0H5hZD9jteBjDhXIWdRP1jMZHEO1fbeiL1z0rx9aYqIKmGdXuJPQwb+xc7JQSV30lEOXKuXxBsfxdv9+BkXA07xYLMA5+KWNv8Cs/7qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727914847; c=relaxed/simple;
-	bh=fNsT/Ir6QY/XIv84TKawGit7Z43Us4YdiuXKg6+cAjk=;
+	s=arc-20240116; t=1727916345; c=relaxed/simple;
+	bh=TF8dppnwBrZ09TviWya2d+PGaBpZogq1+seL+V8bScI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=skJivGWyXMP9QSy7egeTTu4+AaTWSbSYlKAnW+pEtBI9rQngsN195gaxzrnQfLqK6vipEY7REngkYIlakD25JtdGtckvT6+amYXcuskYMXjWj+4hb5D9W2didNbcdilG5XBa3bpP8wrAvvRWK3SBRTZoEMWGlFpud983uQZgbLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=q4Q10RP3; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XJslc5hknzlgMW9;
-	Thu,  3 Oct 2024 00:20:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1727914839; x=1730506840; bh=Oh0VWAuDQnXtvqrOgW+mdNBp
-	O1eMzfyHq16DUHZnGIc=; b=q4Q10RP3cvtsde0sb2ibCa9e909lRJus9XrjroPK
-	B+Vo8AEO2LHR4T59I2Vw8U7LuErXXaOZ3yQsZP4gHblTnU6tXSqsVRiXydJ7yCe0
-	sGYpf69OhfMjsorv6slK6lRQXdgOKgUVgPoAHHWdk1O3+QW8Ogp8ku5bFmOnthYC
-	oR2lvZRouL6esIoM3OM/Wr1bdJ+1nH5ZUYqTpkoKZLFYRN7Df7JUld7g2e/yiYag
-	TQFHmM8W3jpPk/XHPMOnDjN52iYxzDWmChJP+gDGwkwrjCM2EufkemQO4zPUG+Ap
-	pZK6LSrTtVI7ZPgT54P0IEFiPSWQH6iz6f8JUn2Om1hmmg==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id LlQiNrpWlL36; Thu,  3 Oct 2024 00:20:39 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XJslN5L2NzlgVnY;
-	Thu,  3 Oct 2024 00:20:32 +0000 (UTC)
-Message-ID: <052e0503-eb3f-4345-b366-1c0a2c4604a5@acm.org>
-Date: Wed, 2 Oct 2024 17:20:25 -0700
+	 In-Reply-To:Content-Type; b=rdMwyTA+9lu1+CwvVF6o0AQE8YAt6+ohByv3NIgJiC5l90LHoQhj3P6hc++67jB/5m4XLs37wFtpzCBBhDcxbHNNHeyYZe4g5/AKinYWulGnc3j6cVx9kns1DM/H+zFzO55SMrmOU2DDEvuk5kEaSt43qhetwUPjZ7z6HvRsm0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ILAsrj3r; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e1bfa9ddb3so79587a91.0
+        for <io-uring@vger.kernel.org>; Wed, 02 Oct 2024 17:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727916341; x=1728521141; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QaCf93WpxraxzDO4sFjK8i7IYgil7NcpsU0p4DFW1Xs=;
+        b=ILAsrj3r3zFpOBOZAKBzetraJo0NSQ/4K9CjpKqzOKXgXrSQmzFi37dSzlQgj4MnhX
+         +T55RGpHR/PMqvX66XD2rk6htDnJjQGf3HKBc6cxBUSv5E2S7Ehx3gj9/4um9HljfFL4
+         7ESBYXT4kEdUADVNsX4yZDSncj8rz1FOHkX1gCw4pj7KsbbWKcButUTePzWF51Gyni8F
+         2UpR5zTsuM0uLoSneG7qdM7u9S1UFRmvD+StsmoTL+lZHzZF3IxFQ8C/uxAaXqMjGaZa
+         N30pQ3bEnZjXHEXrHnOZ2RKbCGUZFNmTAh1JJqSjgrfBH/yWlCTsgOyN2CPO5IMPz77C
+         X5yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727916341; x=1728521141;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QaCf93WpxraxzDO4sFjK8i7IYgil7NcpsU0p4DFW1Xs=;
+        b=AhSUwSGyLUC7Z1axCCqXqcTXKuk+LYhNNWED29l+2JbvfPGWqOMJHLKSrA4Ps23aBb
+         JVMsM42/YBJ+kNPp9S9P6So05lZymek5L6Mx2sZRehlp3tGN+eWWsYyH35kspRRDYMwC
+         puGQJOg9nOSz2qlZEhPPNhVqjeslYFuMMnAcUVAfXqwZrqQU1YUALrLapSI+FQ/K86nm
+         hwiqLsdFNiIb/fKn9rjmVxltDt+z19h2r3TqIkYAwwq9G4elUjIdM84NJNjXqnvCA4ZW
+         D2A6XA7MJX4FdQPNC3b3BLR5Yubc2XW1DKz9prqWCkttlbkLDtp2xOlETRr9hj+rwyxU
+         jLNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhZgWAsSrFBAQZQlzluZKr2VnpWtFKCa8e15Yi61CVmSy2TjHtfxWSkSqPn1VWxeZPUFa4lHiHfw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbT4IEsj+vc/4t/olxH7oA7kJK+Mjqzad4lI7CJ4JPCsp7Bdsn
+	IHFQxlulg8aWAcWhgWZ4yapZO5FfHhb4D3vSqoLM4psCIMLbUJE3mVMWeWZPk9OJiojtFZjfDFg
+	8S+rKLg==
+X-Google-Smtp-Source: AGHT+IFuzZJF+OHj42IL/50NBcHjqtyqViNOniMc5hcNsi8KFJkbz47mzgql8yHjENnnY4pTguK42g==
+X-Received: by 2002:a17:90b:4c88:b0:2e0:9d79:4a02 with SMTP id 98e67ed59e1d1-2e1846bc3f6mr6284898a91.20.1727916340674;
+        Wed, 02 Oct 2024 17:45:40 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1bfb16f72sm165214a91.15.2024.10.02.17.45.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 17:45:40 -0700 (PDT)
+Message-ID: <55026b93-bcbd-422d-8ff4-1542247e375a@kernel.dk>
+Date: Wed, 2 Oct 2024 18:45:39 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -65,41 +77,47 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-To: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
- hch@lst.de, hare@suse.de, sagi@grimberg.me, martin.petersen@oracle.com,
- brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- jaegeuk@kernel.org, bcrl@kvack.org, dhowells@redhat.com,
- asml.silence@gmail.com
-Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-aio@kvack.org,
- gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com
-References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com>
- <20240930181305.17286-1-joshi.k@samsung.com>
+Subject: Re: [PATCH liburing] sanitize: add ifdef guard around sanitizer
+ functions
+To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+References: <20241003000209.1159551-1-dw@davidwei.uk>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240930181305.17286-1-joshi.k@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241003000209.1159551-1-dw@davidwei.uk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/30/24 11:13 AM, Kanchan Joshi wrote:
-> Another spin to incorporate the feedback from LPC and previous
-> iterations. The series adds two capabilities:
-> - FDP support at NVMe level (patch #1)
-> - Per-io hinting via io_uring (patch #3)
-> Patch #2 is needed to do per-io hints.
+On 10/2/24 6:02 PM, David Wei wrote:
+> Otherwise there are redefinition errors during compilation if
+> CONFIG_USE_SANITIZER isn't set.
 > 
-> The motivation and interface details are present in the commit
-> descriptions.
+> Signed-off-by: David Wei <dw@davidwei.uk>
+> ---
+>  src/sanitize.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/src/sanitize.c b/src/sanitize.c
+> index 46391a6..db5930d 100644
+> --- a/src/sanitize.c
+> +++ b/src/sanitize.c
+> @@ -118,6 +118,7 @@ static inline void initialize_sanitize_handlers()
+>  	sanitize_handlers_initialized = true;
+>  }
+>  
+> +#if defined(CONFIG_USE_SANITIZER)
+>  void liburing_sanitize_ring(struct io_uring *ring)
+>  {
+>  	struct io_uring_sq *sq = &ring->sq;
+> @@ -174,3 +175,4 @@ void liburing_sanitize_iovecs(const struct iovec *iovecs, unsigned nr)
+>  		}
+>  	}
+>  }
+> +#endif
 
-Something is missing from the patch descriptions. What is the goal
-of this patch series? Is the goal to support FDP in filesystems in
-the kernel, is the goal to support filesystems implemented in user
-space or perhaps something else? I think this should be mentioned in
-the cover letter.
+Hmm, but src/sanitize.o should not be built unless that is set. How is
+this happening?
 
-Thanks,
-
-Bart.
-
+-- 
+Jens Axboe
 

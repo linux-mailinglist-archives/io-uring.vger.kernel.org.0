@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-3426-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3427-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03C4990D2F
-	for <lists+io-uring@lfdr.de>; Fri,  4 Oct 2024 21:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 399E0990DBF
+	for <lists+io-uring@lfdr.de>; Fri,  4 Oct 2024 21:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ED93283250
-	for <lists+io-uring@lfdr.de>; Fri,  4 Oct 2024 19:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D32287054
+	for <lists+io-uring@lfdr.de>; Fri,  4 Oct 2024 19:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579F520606E;
-	Fri,  4 Oct 2024 18:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A091D89FB;
+	Fri,  4 Oct 2024 18:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6qUo0DT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWwKlmtc"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BA720606A;
-	Fri,  4 Oct 2024 18:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECF81D95BE;
+	Fri,  4 Oct 2024 18:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728066355; cv=none; b=fYW4vqokdjHt1fsew1dBlCzhuEkiJDkIeohihz5kBocjprsnsGp67cVSKK/OsebTEaB11KSHKPnHA3YLd3NuZXKZDOe0+SHC6qC5RHDHbEdfb+M3qqIzS5fiZO+YOf+uklcfLT34Sjj/4xWKnOPm99nU5EuDoP91vbshwOpohDw=
+	t=1728066478; cv=none; b=MtpekJ9jAgWhYt76NMSebJJ+ZnY0/sUAxFVq5RCmevU2DeKzuUI2pB53EL8BHVFOKXngxlRZ8Wuepi193bY2QPYRJb4R8Tca4SYGGfb/9jIpqdEOS5gKwTFJ0HxWP97X2V3gtRpQQxocHQRrL/UfHRQCvFXIqxK5mrZ8FJSX04Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728066355; c=relaxed/simple;
-	bh=rY6mFcDsEre+YnT0jQ+P5qHzYCY9XoykSYhbOfyQYuQ=;
+	s=arc-20240116; t=1728066478; c=relaxed/simple;
+	bh=IgYMgtqiHAQsBKJx2iJTXwxxvvb52UxnQ0WOVJSj5R4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V0dz3INc080sqsOlxO1q5Qrsg4YrYE/UJIBxG0ydRmlgY6qK4EckUnkkEY+3P6vPyMzrJU34dr01uvX9bMMe3KgB2O8vfOPdRlLvmMn3wngzdCWXcZSLmRZzmZ6a9pxnLhjGoXZ17jOkBCRr0Dr21yQhaEAp28hza54ko+WtTIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6qUo0DT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB4BC4CECE;
-	Fri,  4 Oct 2024 18:25:54 +0000 (UTC)
+	 MIME-Version; b=Hahj/0pizzaYWRp/hiw6nYorw7y6MspxHwjHHW9sax/kBMZDygvtEXnH5f63WNdiyeneZtToTs3wxiDdLHbxibidvUBmcPVPykaYdVpgwkpTZymJj9XeYMuwDx6MeELF8t51Qfd6Vt54fhFD4guf3m82eZgkfWqT8KxdItc1SOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWwKlmtc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90693C4CEC6;
+	Fri,  4 Oct 2024 18:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728066355;
-	bh=rY6mFcDsEre+YnT0jQ+P5qHzYCY9XoykSYhbOfyQYuQ=;
+	s=k20201202; t=1728066478;
+	bh=IgYMgtqiHAQsBKJx2iJTXwxxvvb52UxnQ0WOVJSj5R4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=d6qUo0DTUKqNYKuIng+C6RN83pYJz6Ot3kRavV2FITyHtimklO1/1oWZZVVBp4m9v
-	 3LYs3sDCKEeR9R+UjNjmrH95NtVC7zEfewnjV5BYf4ZR4iSicB1czzptk1zHU7TL7G
-	 R3x3BS7jfgyGpdz9RFvYcdADNfkOk4v5D7FNJRUk2cu8qiZkczlB3Dubs3F6KvNJTC
-	 ru5Rt3wwVMJx4JPcKTeGt4f2VL5tFkBqFdshd8W6yRnYqeth4ngaUKf7URQtzAdBbv
-	 2pq7EkHlB6qSLQ3sAg8iu3q0AUx8J4xHRi03mNv3pwaz+V7BwThzug8F4WwnxDmwn8
-	 2Z54/0UDRNkPQ==
+	b=fWwKlmtc41/9OyT8EUwCQbwM6mjJqEf+2GijyK+CSBHDWwwCIexwkel3JBhm9vTf/
+	 ye7tDMVE3C+eGJNCe05AUK0uacHVq3+Vjc6dmclpu39Tf/i9VZKA4+1dgD47pdYouP
+	 3pXBVjEgcP6dAKGE1DAutVhikv8EP86OIJWekizRJBkSyv5k7NEKUwFBfr6LJnvd7H
+	 BAWqwOozbD4QYxiNDfgmKt4nIuKesrmiSqnPMJdYYcPipizMOiO0rx1spcLAFVtBDM
+	 fLFIDlz19gEtHZI8SfzD8id5T+QEqH99VOvBLBKwVfZMXhEdulbEgocTqAlVHrakmJ
+	 6EMXKgVEr/sqw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -49,12 +49,12 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <sashal@kernel.org>,
 	asml.silence@gmail.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 29/58] io_uring: check if we need to reschedule during overflow flush
-Date: Fri,  4 Oct 2024 14:24:02 -0400
-Message-ID: <20241004182503.3672477-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 22/42] io_uring: check if we need to reschedule during overflow flush
+Date: Fri,  4 Oct 2024 14:26:33 -0400
+Message-ID: <20241004182718.3673735-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241004182503.3672477-1-sashal@kernel.org>
-References: <20241004182503.3672477-1-sashal@kernel.org>
+In-Reply-To: <20241004182718.3673735-1-sashal@kernel.org>
+References: <20241004182718.3673735-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.54
+X-stable-base: Linux 6.1.112
 Content-Transfer-Encoding: 8bit
 
 From: Jens Axboe <axboe@kernel.dk>
@@ -90,11 +90,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 15 insertions(+)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 68504709f75cb..7ecfd314cf3cb 100644
+index b21f2bafaeb04..f902b161f02ca 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -701,6 +701,21 @@ static void __io_cqring_overflow_flush(struct io_ring_ctx *ctx)
- 		memcpy(cqe, &ocqe->cqe, cqe_size);
+@@ -615,6 +615,21 @@ static bool __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool force)
+ 
  		list_del(&ocqe->list);
  		kfree(ocqe);
 +
@@ -114,7 +114,7 @@ index 68504709f75cb..7ecfd314cf3cb 100644
 +		}
  	}
  
- 	if (list_empty(&ctx->cq_overflow_list)) {
+ 	all_flushed = list_empty(&ctx->cq_overflow_list);
 -- 
 2.43.0
 

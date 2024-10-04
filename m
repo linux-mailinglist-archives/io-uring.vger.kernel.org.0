@@ -1,74 +1,73 @@
-Return-Path: <io-uring+bounces-3415-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3416-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1F89903B2
-	for <lists+io-uring@lfdr.de>; Fri,  4 Oct 2024 15:17:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3340A9904D3
+	for <lists+io-uring@lfdr.de>; Fri,  4 Oct 2024 15:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A32C1C21360
-	for <lists+io-uring@lfdr.de>; Fri,  4 Oct 2024 13:17:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B07A3B20BC3
+	for <lists+io-uring@lfdr.de>; Fri,  4 Oct 2024 13:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A366715CD58;
-	Fri,  4 Oct 2024 13:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9FF1BC59;
+	Fri,  4 Oct 2024 13:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbIukUkH"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="v3txtzRO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACEA156872;
-	Fri,  4 Oct 2024 13:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AD520FAA2
+	for <io-uring@vger.kernel.org>; Fri,  4 Oct 2024 13:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728047866; cv=none; b=mI0VvBN1GpRBUjFQb+0hzD3fsRTpC7++wxe7XmGfqIP3m7itJ3u4SKRSzvUCtI6cVvRUGj/Ur2AuC/uTvNVublIQdXt9+cNj8PzUAARHopBRyBDeIfTX84sPzhx6T26dDjDu1+t0iXBwleKP5syuWTozdmQbEoT3dWncWhpBYLQ=
+	t=1728049818; cv=none; b=P2sccCfc/3X4xUlwyPBGfzdkxn4X5+Wmp1m0CHF0Nlcb5GvbRpMMlOIWUY6Xk2fV8m3LnI7NRGAju+MOCBzQqgYDxmGvXLfqvrLuVeI2nnYRGTOhkOlAigh/CNiAhEY7sx55S2SSTa2daH0DAotWw3UulSd/FDUEYJHRnpZjSe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728047866; c=relaxed/simple;
-	bh=WHKnN32Pe2DhvGdAFMSHxyfMwJ8co7XmMknpVTg1sHs=;
+	s=arc-20240116; t=1728049818; c=relaxed/simple;
+	bh=vDW/Tb4/0/w2k1GStr4Bxd6VNyxBFmWkOjvgKb8O10U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cnlcG7oAMhc814NI/7XQQY05bqUIRgToRFelGqv6JY+4sLDb/FU0UQvi4xO5mecpwp9/8AWqTgVU09WQY5emv3GieutFMT44dl/jSVgFDJ0mJSgmILuBpQhBf8NUpsQaIY7ErCUachsslaFJDKU0Jh47eHyiFUtJQ2CskBcme3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbIukUkH; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cbbb1727eso21475945e9.2;
-        Fri, 04 Oct 2024 06:17:44 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=WfWH+6xmtdDEKTsZsEjcIjqB2SEPLjQOTjeCDq1YcwQ3wE5buDJap9j0lU9Tw1hNYlQEPAOJ06hRMmyHqYkKNlh45eCSsXGqJns8FAAcoS18UbM4wW4Qmjxxud2hvKPN2VTD8+EIcVxW3UZLufrA4NeJiKXLUz7doUKjyzrPW0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=v3txtzRO; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-82ce603d8b5so98149439f.0
+        for <io-uring@vger.kernel.org>; Fri, 04 Oct 2024 06:50:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728047863; x=1728652663; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728049814; x=1728654614; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EP7ewQG/vBLMLg2WRG9XuTdzd48wbPPN6UpOMrmi6UY=;
-        b=LbIukUkHhmWZApevyxUSsS/jIzlvl2lP11QyomIXP/M2NpI9ftZM6/lwEP5iSHwhgd
-         bSYPoULCuo12Iad+/JQDZUCVB6rCCOPsLyEmZQkZSwxUobmUf7dYGnfBo/f+qabBiF6F
-         1tOmK0qWgXYvf2kneC2f8wugTlEP30CEt4AbPRGg6FdQxs84B85tClIODPMYxJ/MVNt7
-         60SresroerpvD9kLb0djEbZYu9EzC7aygld/ZHwl0UfJOsWvrq8gd4SQ7EYhhn58y+by
-         BmINYeUtimGHUS+454iypRzJ1FXa6HfJzpKJbj3miUK5eQbjkCejWDtYca1w8aQMXMkw
-         KFeg==
+        bh=vvfHmf6WgmPp7+mQWC0QYAt5wudV/fwmBgIGJSQerZ4=;
+        b=v3txtzROjZ+SExHWpcbqz1BBP8XixqHR8HVL9SMtv+1A+AgJw4jPENIjsyjM8ss2DA
+         uZDf7CYXaMSF8hwcpztW/USRRHHqUtfA+RydKe9HR0vAq06QX+Cd9ezjPhpbcd95miqp
+         gmWA3zRGgsMWHvnku6v13Q+EkkqzIKQKyZTdt+02u9WYd0fUyMrjgQtfyLUmWGb+n6AX
+         RF22elzssQYOstV2LR6ORFc5qrFW7LNamd4eVG3EwnDNUXRW2dFu26EUrGMLuE8wQxtq
+         2T1/yHWvuEYuQ7Wh5ruK0/RnFpZdlg97L1Ld8A7wj1Y67zPfOQgv+081gba2PtEEtUae
+         RAYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728047863; x=1728652663;
+        d=1e100.net; s=20230601; t=1728049814; x=1728654614;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EP7ewQG/vBLMLg2WRG9XuTdzd48wbPPN6UpOMrmi6UY=;
-        b=TqKe/wzfYzIobWasUzAuzs4BZeUrHRzakSYFAPU2AARKluoWZRQUSyaiRaqfAb0s5R
-         NInVFZY9SaMRNCfAwIzFKtJLIajR3puksSo7BlaJDWVvX190RsmV7dj6zgo2dnUQV9th
-         A7a51beJVhvHBDFiQ4xG6vPG6popHUmH0Gdm7iwI6lWj3NYgAe7T3qnAWf+PFE1V3O+K
-         sGtpd8V99LmhuTFABv6D9ynginU+UoL7JeLsjl973gGPdl8+8FhiBv7UJbUMY5L5SAG9
-         YEQLfDvuzhYAShZYJrtkufrQNSLcxaiOckYgb65ixalOzEUeEARpa6S8BATmHLgZwyUw
-         /S+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWZq8TgEaUQrxSBvCOvllzuiVVlluKHv6ajs0uCMV6Xu+iIsl2PD1pmMeio974j0+hnUjW06u0Bnw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCJiINUsRz1Ku2JGuREk6Lhus4/yTp9qSFkKCCVnqvhn68l3wP
-	yH8KTq+Ah9XPeFiEGCUXRLxIPWvk10BX4+67cD0T43goVza+O3mn
-X-Google-Smtp-Source: AGHT+IHLdjD1chhBEqT7Z6CJzV8NqCWrmBn1AalwxRxhrAQlFVuQUNB2Gs1NBQgdj9XlTBqrOaE/oQ==
-X-Received: by 2002:a05:600c:198c:b0:42c:bdb0:c61e with SMTP id 5b1f17b1804b1-42f85aae2damr21212005e9.13.1728047862855;
-        Fri, 04 Oct 2024 06:17:42 -0700 (PDT)
-Received: from [192.168.42.155] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b1d826sm15474155e9.26.2024.10.04.06.17.42
+        bh=vvfHmf6WgmPp7+mQWC0QYAt5wudV/fwmBgIGJSQerZ4=;
+        b=gET/74jyKi3XteOiwbxtUWMqPVnymNz+Q88+U/9CRTRAdogw8TP/hpKjcjIAYNMvdv
+         7abW1+Shh9Ho6UUGl8tUboU24q0nnsWbviVaLbC5tos4tqzppQ0QvHT+Zt+MJ38HBB/Q
+         jOFC7/WKAAHIUN9gRGkc752bGvcwXvnr1Ffzd4sUmLxMvG7e6F3Qn8ZXMSifq1cFQYm3
+         5iFDHIiaoqH11NI+nqJUhD8NckCfTFVpFQ/tRZBWe/bDqOgF1AWfcmMTkyURDBM5hc8q
+         lTwlq5GuizUP4VeabL/buy2xGOIQuWs27Yieu1XLv+SqMhj9K2zxeQI9brI2BJxzvIOI
+         9hXw==
+X-Gm-Message-State: AOJu0Yy2XvwU0tX9hlQcNDlMY+BV5dHCZgLcxB73TlPqjtH8wmUnXq8D
+	YaFsftGO0N140bEX6WuY3+8npGJS/gu9tUZkhVoUvC2RGAIhPmi1s6gbsbxbqbo=
+X-Google-Smtp-Source: AGHT+IHA+zI7dFTE2sm8wwiPyLYCf4QwJOQYInfNnQOTA42PBmHHr/XV8gsqM1gT5Rzy37HGCKU4KQ==
+X-Received: by 2002:a05:6602:1341:b0:82a:a4e7:5544 with SMTP id ca18e2360f4ac-834f7cb2762mr348752539f.9.1728049813807;
+        Fri, 04 Oct 2024 06:50:13 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db559b0099sm729613173.77.2024.10.04.06.50.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2024 06:17:42 -0700 (PDT)
-Message-ID: <36b88a5a-1209-4db3-8514-0f1e1828f7e1@gmail.com>
-Date: Fri, 4 Oct 2024 14:18:13 +0100
+        Fri, 04 Oct 2024 06:50:13 -0700 (PDT)
+Message-ID: <2f2cc702-609b-4e69-be1a-a373e74692f4@kernel.dk>
+Date: Fri, 4 Oct 2024 07:50:12 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,66 +75,50 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 5/8] io_uring: support sqe group with members depending
- on leader
-To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
- io-uring@vger.kernel.org
-Cc: linux-block@vger.kernel.org
-References: <20240912104933.1875409-1-ming.lei@redhat.com>
- <20240912104933.1875409-6-ming.lei@redhat.com>
+Subject: Re: [bug report] io_uring/poll: get rid of unlocked cancel hash
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: io-uring@vger.kernel.org
+References: <e6c1c02e-ffe7-4bf0-8ea4-57e6b88d47ce@stanley.mountain>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240912104933.1875409-6-ming.lei@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <e6c1c02e-ffe7-4bf0-8ea4-57e6b88d47ce@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/12/24 11:49, Ming Lei wrote:
-> IOSQE_SQE_GROUP just starts to queue members after the leader is completed,
-> which way is just for simplifying implementation, and this behavior is never
-> part of UAPI, and it may be relaxed and members can be queued concurrently
-> with leader in future.
+On 10/4/24 3:00 AM, Dan Carpenter wrote:
+> Hello Jens Axboe,
 > 
-> However, some resource can't cross OPs, such as kernel buffer, otherwise
-> the buffer may be leaked easily in case that any OP failure or application
-> panic.
+> Commit 313314db5bcb ("io_uring/poll: get rid of unlocked cancel
+> hash") from Sep 30, 2024 (linux-next), leads to the following Smatch
+> static checker warning:
 > 
-> Add flag REQ_F_SQE_GROUP_DEP for allowing members to depend on group leader
-> explicitly, so that group members won't be queued until the leader request is
-> completed, the kernel resource lifetime can be aligned with group leader
+> 	io_uring/poll.c:932 io_poll_remove()
+> 	warn: duplicate check 'ret2' (previous on line 930)
+> 
+> io_uring/poll.c
+>     919 int io_poll_remove(struct io_kiocb *req, unsigned int issue_flags)
+>     920 {
+>     921         struct io_poll_update *poll_update = io_kiocb_to_cmd(req, struct io_poll_update);
+>     922         struct io_ring_ctx *ctx = req->ctx;
+>     923         struct io_cancel_data cd = { .ctx = ctx, .data = poll_update->old_user_data, };
+>     924         struct io_kiocb *preq;
+>     925         int ret2, ret = 0;
+>     926 
+>     927         io_ring_submit_lock(ctx, issue_flags);
+>     928         preq = io_poll_find(ctx, true, &cd);
+>     929         ret2 = io_poll_disarm(preq);
+>     930         if (!ret2)
+>     931                 goto found;
+> --> 932         if (ret2) {
+>     933                 ret = ret2;
+>     934                 goto out;
+>     935         }
+> 
+> A lot of the function is dead code now.  ;)
 
-That's the current and only behaviour, we don't need an extra flag
-for that. We can add it back later when anything changes.
-
-> or group, one typical use case is to support zero copy for device internal
-> buffer.
-> 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->   include/linux/io_uring_types.h | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index 11c6726abbb9..793d5a26d9b8 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -472,6 +472,7 @@ enum {
->   	REQ_F_BL_NO_RECYCLE_BIT,
->   	REQ_F_BUFFERS_COMMIT_BIT,
->   	REQ_F_SQE_GROUP_LEADER_BIT,
-> +	REQ_F_SQE_GROUP_DEP_BIT,
->   
->   	/* not a real bit, just to check we're not overflowing the space */
->   	__REQ_F_LAST_BIT,
-> @@ -554,6 +555,8 @@ enum {
->   	REQ_F_BUFFERS_COMMIT	= IO_REQ_FLAG(REQ_F_BUFFERS_COMMIT_BIT),
->   	/* sqe group lead */
->   	REQ_F_SQE_GROUP_LEADER	= IO_REQ_FLAG(REQ_F_SQE_GROUP_LEADER_BIT),
-> +	/* sqe group with members depending on leader */
-> +	REQ_F_SQE_GROUP_DEP	= IO_REQ_FLAG(REQ_F_SQE_GROUP_DEP_BIT),
->   };
->   
->   typedef void (*io_req_tw_func_t)(struct io_kiocb *req, struct io_tw_state *ts);
+Thanks, will revisit and fold in a fix!
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

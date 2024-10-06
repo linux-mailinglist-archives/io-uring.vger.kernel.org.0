@@ -1,126 +1,192 @@
-Return-Path: <io-uring+bounces-3435-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3436-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F220991D8B
-	for <lists+io-uring@lfdr.de>; Sun,  6 Oct 2024 11:47:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C41991FC8
+	for <lists+io-uring@lfdr.de>; Sun,  6 Oct 2024 18:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89BD8B21A95
-	for <lists+io-uring@lfdr.de>; Sun,  6 Oct 2024 09:47:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85C051F21584
+	for <lists+io-uring@lfdr.de>; Sun,  6 Oct 2024 16:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8C216B75C;
-	Sun,  6 Oct 2024 09:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1503189510;
+	Sun,  6 Oct 2024 16:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DtuxEk3B"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="EOZPYrsJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE8214C588
-	for <io-uring@vger.kernel.org>; Sun,  6 Oct 2024 09:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93F5136E3F
+	for <io-uring@vger.kernel.org>; Sun,  6 Oct 2024 16:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728208057; cv=none; b=RFpvO9Pw0jbQSyFGcCwq/JcuFOhK/psE6u2aX3q/v/2hx3MhgyiB0dLFvXocjUu5skRIeS2Rlyqcno1wYcUmDkllBZprp57QgW2JOJey1uWP03X2DGqc0aK3WiDkhi7LXeIMLUyPXL2mrS0lUDqpkInNLsFs+lGWWIAdCiboh5U=
+	t=1728233862; cv=none; b=LyR0B3nBmPZVG8UnUX0dB4/ovPx0Qk1huHGo+rZ9fB+Tu3lSXfZRTu2xixEB8KpGgdIgDyX5rNkFdAKrjmkkWmpQNTDyixKXgPUsfwQNUim+07BTbx/FdaUJygUEqzGIlQASdnXBeYlNr26Htfa8lrdMiFLhX81c/FtUnMSB4Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728208057; c=relaxed/simple;
-	bh=c2OxxeIYI72Zmzm5aHzF9XiPDspLeIrQWoS2Viiy+R4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sIqr2O11xy1IChwuSmrS0vj5/GHZpCC1STu/OhKUrJNbgVYErmS6O1EljdeOTSPhstkAgHh2wK/Yu/ANFI2Wb7MgvdHdIrG3Wama9q6TWuHeq50h5djnC2OZQ/LndtFgkD/Lefp4H6zFizipSQX5dRg3lPk1PQC8yb0hgkciWis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DtuxEk3B; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728208053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jRvc6wp81Jc0dvNSIM1R4b2E7F+U8Hg12zoh665lgsI=;
-	b=DtuxEk3BlLLet2h60ksMHtL0xR/Z1K6GnZXyVSqqHXcA6/efAM3liJzSwV+je6lf5rn/Rn
-	g/koDn7hUu4eMi2UfEVPlzVw3UH8q/qqZsva9+6qDko8sVFG46TobeMsM2atXURGJxDrVq
-	lqE6gki4stu7Zmj15rbN2Yja45XSbGE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-qai1sTzfNe-D17l_QbFHvg-1; Sun,
- 06 Oct 2024 05:47:32 -0400
-X-MC-Unique: qai1sTzfNe-D17l_QbFHvg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 326E5195608A;
-	Sun,  6 Oct 2024 09:47:31 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.29])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74D1719560A2;
-	Sun,  6 Oct 2024 09:47:27 +0000 (UTC)
-Date: Sun, 6 Oct 2024 17:47:21 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCH V6 6/8] io_uring: support providing sqe group buffer
-Message-ID: <ZwJcqS61eXM5pmor@fedora>
-References: <20240912104933.1875409-1-ming.lei@redhat.com>
- <20240912104933.1875409-7-ming.lei@redhat.com>
- <51c10faa-ac28-4c40-82c4-373dbcad6e79@gmail.com>
+	s=arc-20240116; t=1728233862; c=relaxed/simple;
+	bh=qRHF9+MzDoENGKggI8R3wGG9hXH6cLq+EmJ+pEMbOKg=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=tJJTK4rQdnWFWSc/MMMLSJcm9fdMguvvFfFxgrMb4/AydZ8Aqs1lxdTJUPP97wdnkgn9jg3S+RC7YAnabUAq8VCOxPEB63HhrhNA46jFiM1G/5aiTb7PgLu5jUE6LUOcbxciZSVNrpr32UaoJyZzxAUKzNieOK70n6t0izLRe7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=EOZPYrsJ; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20bc2970df5so27288745ad.3
+        for <io-uring@vger.kernel.org>; Sun, 06 Oct 2024 09:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728233857; x=1728838657; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c7RjuV/zLweuHiyiIGHapmtMjG9nb8VCEWStPB58kFk=;
+        b=EOZPYrsJCz5TFWRdY15v+GMs6ZC6Ha5RYwRZ8NyjNg837hFBptvUUTOeN9c1ihPaeB
+         84frQcZeE8yAYSXQozqk8YCq8S2q4Ggsmbb3G0tJ27iYXcSHa+Jth1prSzNsxaCxAvGq
+         dfCRULcwjIDIlRPqHWPXXn7OEHdZnwdjVHBDKeWet0UoOuHdv2jusc16YcsR2+qv6sq/
+         WhI8hd5iqqyzR2JV8tYx9dRFJ6GoGG9Q698vfX0Otd2XgiSEFTy81fQ/+4XQL50Homsv
+         lLKG9OXULnQ+ZM3Zzzs+9DGdHXFFs9xS7qX8EXJfhWV+SUyDEx9fy3kR2y9GIK4dZevh
+         4Taw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728233857; x=1728838657;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=c7RjuV/zLweuHiyiIGHapmtMjG9nb8VCEWStPB58kFk=;
+        b=OOfJXGBsl64Scr8dgSLYYG+m+3G/DjasjnZR1X9w3VorWaaNPRA3Bw7ENwTRJ44EdF
+         eAOJfGMS6ZsMUOXWOqepf6nHDY0vjc4FwXunSxNvv9G7SvnQh7UK6WXrpnOY/9IRs/nD
+         cvVIAxcSWEBL4edGlBpn/eiJgSdFi+D9Ii2vv1JS/yOO2X5vcoGXIp/aNupAUfB8tf5V
+         itOCUndAbnPpNTpjy6RRxf+EAizbsetMS3FdzDV0uMGpgUkwdspvdF7X82nZSLvFXpBw
+         4MR9pXxdD7eDJx942sgfx+oc4nwTfYIVO6BPE2a1JMo9GSCxoiZdcFAUa/fiaD88miru
+         ThiQ==
+X-Gm-Message-State: AOJu0Yz6XdDUwou+hMvWhOuWXrL7eFoyPhYR9qc8MDv2XJFvqNpXI5qx
+	m2F7WRXw3JNmgx93IdIADMADn3nSgSlAn2I5fRGNZet3rQ5ZcbROnNwXnzDEVDzQta6k7UR3GlT
+	8JcM=
+X-Google-Smtp-Source: AGHT+IGaMubuO8nTNmUzBkNdt8IYLKACqzevHibho1TbFWnc9DaUiinVqYJl/3n4SZEP5HADeZGLVA==
+X-Received: by 2002:a17:903:986:b0:205:8bad:171c with SMTP id d9443c01a7336-20bfde57e5bmr140204565ad.12.1728233856882;
+        Sun, 06 Oct 2024 09:57:36 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c139391e5sm27008875ad.133.2024.10.06.09.57.35
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2024 09:57:35 -0700 (PDT)
+Message-ID: <ce905994-79d2-4783-9f49-9277238a9b30@kernel.dk>
+Date: Sun, 6 Oct 2024 10:57:35 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <51c10faa-ac28-4c40-82c4-373dbcad6e79@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/rw: allow non-blocking attempts for !FMODE_NOWAIT if
+ pollable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 04, 2024 at 04:32:04PM +0100, Pavel Begunkov wrote:
-> On 9/12/24 11:49, Ming Lei wrote:
-> ...
-...
-> > @@ -473,6 +494,7 @@ enum {
-> >   	REQ_F_BUFFERS_COMMIT_BIT,
-> >   	REQ_F_SQE_GROUP_LEADER_BIT,
-> >   	REQ_F_SQE_GROUP_DEP_BIT,
-> > +	REQ_F_GROUP_KBUF_BIT,
-> >   	/* not a real bit, just to check we're not overflowing the space */
-> >   	__REQ_F_LAST_BIT,
-> > @@ -557,6 +579,8 @@ enum {
-> >   	REQ_F_SQE_GROUP_LEADER	= IO_REQ_FLAG(REQ_F_SQE_GROUP_LEADER_BIT),
-> >   	/* sqe group with members depending on leader */
-> >   	REQ_F_SQE_GROUP_DEP	= IO_REQ_FLAG(REQ_F_SQE_GROUP_DEP_BIT),
-> > +	/* group lead provides kbuf for members, set for both lead and member */
-> > +	REQ_F_GROUP_KBUF	= IO_REQ_FLAG(REQ_F_GROUP_KBUF_BIT),
-> 
-> We have a huge flag problem here. It's a 4th group flag, that gives
-> me an idea that it's overabused. We're adding state machines based on
-> them "set group, clear group, but if last set it again. And clear
-> group lead if refs are of particular value". And it's not really
-> clear what these two flags are here for or what they do.
-> 
-> From what I see you need here just one flag to mark requests
-> that provide a buffer, ala REQ_F_PROVIDING_KBUF. On the import
-> side:
-> 
-> if ((req->flags & GROUP) && (req->lead->flags & REQ_F_PROVIDING_KBUF))
-> 	...
-> 
-> And when you kill the request:
-> 
-> if (req->flags & REQ_F_PROVIDING_KBUF)
-> 	io_group_kbuf_drop();
+The checking for whether or not io_uring can do a non-blocking read or
+write attempt is gated on FMODE_NOWAIT. However, if the file is
+pollable, it's feasible to just check if it's currently in a state in
+which it can sanely receive or send _some_ data.
 
-REQ_F_PROVIDING_KBUF may be killed too, and the check helper can become:
+This avoids unnecessary io-wq punts, and repeated worthless retries
+before doing that punt, by assuming that some data can get delivered
+or received if poll tells us that is true.
 
-bool io_use_group_provided_buf(req)
-{
-	return (req->flags & GROUP) && req->lead->grp_buf;
-}
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
+---
 
-Thanks,
-Ming
+Sits on top of the read mshot fix sent out yesterday.
+
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 93ad92605884..328c9771346e 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -31,9 +31,19 @@ struct io_rw {
+ 	rwf_t				flags;
+ };
+ 
+-static inline bool io_file_supports_nowait(struct io_kiocb *req)
++static bool io_file_supports_nowait(struct io_kiocb *req, __poll_t mask)
+ {
+-	return req->flags & REQ_F_SUPPORT_NOWAIT;
++	/* If FMODE_NOWAIT is set for a file, we're golden */
++	if (req->flags & REQ_F_SUPPORT_NOWAIT)
++		return true;
++	/* No FMODE_NOWAIT, if we can poll, check the status */
++	if (io_file_can_poll(req)) {
++		struct poll_table_struct pt = { ._key = mask };
++
++		return vfs_poll(req->file, &pt) & mask;
++	}
++	/* No FMODE_NOWAIT support, and file isn't pollable. Tough luck. */
++	return false;
+ }
+ 
+ #ifdef CONFIG_COMPAT
+@@ -796,8 +806,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
+ 	 * supports async. Otherwise it's impossible to use O_NONBLOCK files
+ 	 * reliably. If not, or it IOCB_NOWAIT is set, don't retry.
+ 	 */
+-	if ((kiocb->ki_flags & IOCB_NOWAIT) ||
+-	    ((file->f_flags & O_NONBLOCK) && !io_file_supports_nowait(req)))
++	if (kiocb->ki_flags & IOCB_NOWAIT || file->f_flags & O_NONBLOCK)
+ 		req->flags |= REQ_F_NOWAIT;
+ 
+ 	if (ctx->flags & IORING_SETUP_IOPOLL) {
+@@ -838,7 +847,7 @@ static int __io_read(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	if (force_nonblock) {
+ 		/* If the file doesn't support async, just async punt */
+-		if (unlikely(!io_file_supports_nowait(req)))
++		if (unlikely(!io_file_supports_nowait(req, EPOLLIN)))
+ 			return -EAGAIN;
+ 		kiocb->ki_flags |= IOCB_NOWAIT;
+ 	} else {
+@@ -951,13 +960,6 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	ret = __io_read(req, issue_flags);
+ 
+-	/*
+-	 * If the file doesn't support proper NOWAIT, then disable multishot
+-	 * and stay in single shot mode.
+-	 */
+-	if (!io_file_supports_nowait(req))
+-		req->flags &= ~REQ_F_APOLL_MULTISHOT;
+-
+ 	/*
+ 	 * If we get -EAGAIN, recycle our buffer and just let normal poll
+ 	 * handling arm it.
+@@ -984,9 +986,6 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
+ 		 * jump to the termination path. This request is then done.
+ 		 */
+ 		cflags = io_put_kbuf(req, ret, issue_flags);
+-		if (!(req->flags & REQ_F_APOLL_MULTISHOT))
+-			goto done;
+-
+ 		rw->len = 0; /* similarly to above, reset len to 0 */
+ 
+ 		if (io_req_post_cqe(req, ret, cflags | IORING_CQE_F_MORE)) {
+@@ -1007,7 +1006,6 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
+ 	 * Either an error, or we've hit overflow posting the CQE. For any
+ 	 * multishot request, hitting overflow will terminate it.
+ 	 */
+-done:
+ 	io_req_set_res(req, ret, cflags);
+ 	io_req_rw_cleanup(req, issue_flags);
+ 	if (issue_flags & IO_URING_F_MULTISHOT)
+@@ -1031,7 +1029,7 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	if (force_nonblock) {
+ 		/* If the file doesn't support async, just async punt */
+-		if (unlikely(!io_file_supports_nowait(req)))
++		if (unlikely(!io_file_supports_nowait(req, EPOLLOUT)))
+ 			goto ret_eagain;
+ 
+ 		/* Check if we can support NOWAIT. */
+
+-- 
+Jens Axboe
 
 

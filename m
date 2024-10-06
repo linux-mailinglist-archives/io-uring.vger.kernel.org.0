@@ -1,195 +1,147 @@
-Return-Path: <io-uring+bounces-3428-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3429-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D5799138B
-	for <lists+io-uring@lfdr.de>; Sat,  5 Oct 2024 02:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C33991BB0
+	for <lists+io-uring@lfdr.de>; Sun,  6 Oct 2024 03:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43ED01F2375A
-	for <lists+io-uring@lfdr.de>; Sat,  5 Oct 2024 00:39:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C5D1F21E0F
+	for <lists+io-uring@lfdr.de>; Sun,  6 Oct 2024 01:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2693322B;
-	Sat,  5 Oct 2024 00:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC94A920;
+	Sun,  6 Oct 2024 01:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b="FLcE3F+I";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g2n7d9H5"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="B5cBuiNs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450C529CA;
-	Sat,  5 Oct 2024 00:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91AB3D76
+	for <io-uring@vger.kernel.org>; Sun,  6 Oct 2024 01:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728088753; cv=none; b=c71/mPDmgeD5ZBue3k9Hs2yWoQSQMAgW+h553UdtfUM0O4/C/GLcyOm80buEu9++GODyPOtvl4+p0EDiChpMQaB/tBqWt1giV3mdbgILRpAJxfaOFt7tPN4sq/petq8IifNw/OM9sdFgCrrMhzLXyN8R4DK2Iy4hbDfv6QJox4M=
+	t=1728177100; cv=none; b=mcTSuEUvWEzYmUkM256A2gaTBJJ1viw26+E25ZxEnZwKkKmHk14VNGFzjAbd60kD+ksYbwLzZ5ahpXb/rz6z3pnZ9kR5KA+GXJqTDZ6cub6yLC31qG+fJsEwdkXq9t6kF1RtIdSHJvEu0RGcyPWt4CZyphJDNXjwU2CqNWNDtJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728088753; c=relaxed/simple;
-	bh=t4ox1moCdNVjEYfw/SHgaraLE+A3E0RXcZOmdLZSsiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qK2q22u1M0KM4LuAXdTFUrStw+dc2mTqsPsa+qWVK3CsEaopvLMkJRU4flTY29qIPCBDcBex4B6AEv8/KC+ev5fDXDUrAddKg77XAzDhPJn2C0vAwdTITxba0vZHImgW2MkjPozsWv7kg5xTbiP0PLTV/kjeu0c2PizVM2YOVo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de; spf=pass smtp.mailfrom=anarazel.de; dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b=FLcE3F+I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g2n7d9H5; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anarazel.de
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 24A5C13805E2;
-	Fri,  4 Oct 2024 20:39:10 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Fri, 04 Oct 2024 20:39:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1728088750; x=1728175150; bh=lL/jeDhQ0T
-	2sVRGSKsBanrFa3Wo3OgPVAPdrzYDOaZU=; b=FLcE3F+I3TrTMVjYyDkHVlZ1n5
-	vEYCC2QDkMDZBebW5oFYwMAtAmdxjAmVqLtqznvEI/8GNJOmak+0ZVMGWrOwLxlM
-	ffJADAQQwmGH0tgBhirF0Ksvh+q0WWflOO7BJF6cnG3ggxzTUC2Ejo62LwuX4Ik4
-	WhI+wpukN2w/MbDJANbSnopVgn/UDBsSQkfRKGiib+BCKJ4w0QWgBlWhaDZE1UVf
-	/ATcabESghztfA8cGEs8tfCeFC6E3p2NwGluTm6rl8tbIPRKn0Hslb7CoLTllViM
-	HApgSgN60haygR/zKM0BWUdSCGRq5KcCsZG0Cjrf1wyQNEvr7PoSaSHTcbpA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1728088750; x=1728175150; bh=lL/jeDhQ0T2sVRGSKsBanrFa3Wo3
-	OgPVAPdrzYDOaZU=; b=g2n7d9H5qF2VLDZmYmKun1q1hn/Iu9i8re2x4x0PKc2R
-	wvD3XeYKzspl/qLzJNWZ7aKQSqqIINW05/ukUfG//Qh6fG9sPTsHKHzos0T9+A+z
-	v3ZXjMWq93ywpOvqs8IS62Np/dw2o0ZbxgdE7CHiHbhenXjRQ2OPgNF1GMlYFTW0
-	3ELaPnT6J5l0cAWDHp0Gr1Hgm5QiKY0egi3VQSUf7ykoyQnSmUPF/YKAYmkHsBuq
-	cUCExSWZ3BF4XrSjnWkXFS7y2K/YITFzTXtK8uchNmIF21P8Gahv1eiqvY0e7SZJ
-	r/kxjh7N01iHSeV2ar/wMqX9TS5YgNGz6PFQZzdwXA==
-X-ME-Sender: <xms:rYoAZ_3FW5MbKjgL9PdOD64TaYWoBmrlMrm4YFuySfkOn1GogX8nOg>
-    <xme:rYoAZ-G2JmWxFA0ua5DzEbmEyBJcUXETtyL2Jm2bf8iY7il5o1440cCQ81zqj3cUC
-    _8NA9HBUVcBLnTFYg>
-X-ME-Received: <xmr:rYoAZ_5blobP6qtwk42B_OtikgmWS8lMc-jJ3xg8IWRMvWReOCbKikyIfXfVxUBTghnGE_VQ7zXNDVRla45iHAgnjZz2x2d2Qzzvz_1TSA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvgedgfeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomheptehnughrvghsucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivg
-    hlrdguvgeqnecuggftrfgrthhtvghrnhepfeffgfelvdffgedtveelgfdtgefghfdvkefg
-    geetieevjeekteduleevjefhueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdruggvpdhnsggprhgt
-    phhtthhopedvuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghvrghnrghssh
-    gthhgvsegrtghmrdhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnhdrlhhovghhlhgv
-    segrrhhmrdgtohhmpdhrtghpthhtohepughivghtmhgrrhdrvghgghgvmhgrnhhnsegrrh
-    hmrdgtohhmpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepqhhpvghrrhgvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepph
-    gvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprggurhhirghnrdhh
-    uhhnthgvrhesihhnthgvlhdrtghomhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlh
-    drughkpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:rYoAZ03Ltrv3p59gBHhTY4FxT2sSl3xMzXIVBbfA1nRXa7W5Hfdvsg>
-    <xmx:rYoAZyGCu5QE_Ho3nDlpzGWyENASseovlZ7ERK4hpLfr14tBGW66gQ>
-    <xmx:rYoAZ1-qEuCjBO4ER8GUjAGBb9sRHoG8Wp4HaUK_qr3aqLh6gI-HZg>
-    <xmx:rYoAZ_l1NRE4Y4W15VPejdSx8vmeCVzmapLq_40PO5TOaYfZjilf1A>
-    <xmx:rooAZ2MgYa13qAD6m7jbaRPID47t20DOaN6SylC6RlOOm9xFY3AcQ58x>
-Feedback-ID: id4a34324:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 4 Oct 2024 20:39:09 -0400 (EDT)
-Date: Fri, 4 Oct 2024 20:39:09 -0400
-From: Andres Freund <andres@anarazel.de>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: Quentin Perret <qperret@google.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com, 
-	dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org, 
-	Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org, 
-	bvanassche@acm.org, asml.silence@gmail.com, linux-block@vger.kernel.org, 
-	io-uring@vger.kernel.org, qyousef@layalina.io, dsmythies@telus.net, axboe@kernel.dk
-Subject: Re: [RFC PATCH 5/8] cpufreq/schedutil: Remove iowait boost
-Message-ID: <io3xcj5vpqbkojoktbp3fuuj77gqqkf2v3gg62i4aep4ps36dc@we2zwwp5hsyt>
-References: <20240905092645.2885200-1-christian.loehle@arm.com>
- <20240905092645.2885200-6-christian.loehle@arm.com>
- <CAJZ5v0hJWwsErT193i394bHOczvCQwU_5AVVTJ1oKDe7kTW82g@mail.gmail.com>
- <Zv5oTvxPsiTWCJIo@google.com>
- <6e21e8f1-e3b4-4915-87cc-6ce77f54cc8a@arm.com>
+	s=arc-20240116; t=1728177100; c=relaxed/simple;
+	bh=lsg4tJkXpeQUl4p8OJFUt1yae6MeFb9IfjqkuaTkMEs=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=mpHtxpSwStm3yYfJvDVT+Q8dI2ZPLSf2JgYcBB2hAesZfXsJnB6F3ZbnZlGSF+2XzdNGhpJK+XAnNFfKhBj85XaU1zw6E/6qiR3+6XvPrfOypjiFRHjUZJRIh/B2PZ6uk2QDJ8llmj2qWSTeBmbEdXDpc+Nc0BGHSkzZcJbrpk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=B5cBuiNs; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71ddfc61c78so2051768b3a.2
+        for <io-uring@vger.kernel.org>; Sat, 05 Oct 2024 18:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728177092; x=1728781892; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6qUxN6PMZAh4gnarROdDzMFQG22nP/PXd9amhHhgdsE=;
+        b=B5cBuiNsfmVK0eXyDvnEB4SduMhIgdQaf1Z9wEU0BsIlHAAKn3i0GPbVaiC0u3jdjx
+         Wry0uAgnjL6eCbQ1woYMoB7kg73JnHB1dYCgROrIOWI7ue1m1gg8fC+g/YfvwFot1c2j
+         nO2Jvh9JDshbqJpyE4p9pyAzRAHNwda8EsWA/Ukg4vb02OxnjxTqlfGHIpxTHPxhyNxV
+         BJjUT6/KA9hFX8x2dx6eBIOmbP+oK8ZgNGxe0pB7ee6dTDOiimWu1oIHYFc1/waLh9XX
+         UYOmWJLY7ca1pnMnomXpCX8i0yloKmLmcvPzazxwF/6qaHMnGxGGxMwWtESLGBlL+jKi
+         PfyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728177092; x=1728781892;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6qUxN6PMZAh4gnarROdDzMFQG22nP/PXd9amhHhgdsE=;
+        b=HhbobbHXk/Kj1vFbuIHQFplJy//oZQkACzcvEJPZx11C+RQfI3W7AJV9GrlPwFbj+J
+         k+9XMZ5DAelU/N5NDReov2OU7XCpZ+YntF68e7tOExtoR2FOH3wphvSzv1rdtUbCWsy3
+         JnLyzWJRHM8D4KUYCdFxI+R/9Dxu1lm5TxskTi5hVwtleGRNr3S8aqi77Cxkhhxhdsqt
+         LshZzerjeHg1Sv1qknInXa/ZilJm/GlQ+rUsjA/ldOxnGJ348dnqHosXTbk/zaV4joNY
+         gWYvMtzOWMVmSFLoyJGqKnXgH0SETlEibydJHPK0awKuM6IK8GyJijGmgaI/ydZIy3Qg
+         7igA==
+X-Gm-Message-State: AOJu0Yx87sBsAgEnViM0nU1y7htlJZcvt1kSVcKIDLyYK4ayDAYCe5GP
+	LDZ6pThg5VayIQPQ81bHVLuMD222hKDsWAaMFZj7GpmODhp6ij3YylmYEGWvS+OuaTR154plQhn
+	I3ZA=
+X-Google-Smtp-Source: AGHT+IG3GltG2dXWcGw95PXumRNCSvhkIkgsahJH1JufXCdngvnwVlkdPsL0KScj1QYwbMFFC7Di4g==
+X-Received: by 2002:a05:6a21:a4c1:b0:1d5:2d6d:1614 with SMTP id adf61e73a8af0-1d6dfa427ccmr11998517637.23.1728177092497;
+        Sat, 05 Oct 2024 18:11:32 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c3758esm2368437a12.74.2024.10.05.18.11.31
+        for <io-uring@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 05 Oct 2024 18:11:31 -0700 (PDT)
+Message-ID: <f6c8ec06-8826-4021-b36d-74e3612ac7d2@kernel.dk>
+Date: Sat, 5 Oct 2024 19:11:31 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e21e8f1-e3b4-4915-87cc-6ce77f54cc8a@arm.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/rw: fix cflags posting for single issue multishot
+ read
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+If multishot gets disabled, and hence the request will get terminated
+rather than persist for more iterations, then posting the CQE with the
+right cflags is still important. Most notably, the buffer reference
+needs to be included.
 
+Refactor the return of __io_read() a bit, so that the provided buffer
+is always put correctly, and hence returned to the application.
 
-A caveat: I'm a userspace developer that occasionally strays into kernel land
-(see e.g. the io_uring iowait thing). So I'm likely to get some kernel side
-things wrong.
+Link: https://github.com/axboe/liburing/issues/1257
+Cc: stable@vger.kernel.org
+Fixes: 2a975d426c82 ("io_uring/rw: don't allow multishot reads without NOWAIT support")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
+---
 
-On 2024-10-03 11:30:52 +0100, Christian Loehle wrote:
-> These are the main issues with transforming the existing mechanism into
-> a per-task attribute.
-> Almost unsolvable is: Does reducing "iowait pressure" (be it per-task or per-rq)
-> actually improve throughput even (assuming for now that this throughput is
-> something we care about, I'm sure you know that isn't always the case, e.g.
-> background tasks). With MCQ devices and some reasonable IO workload that is
-> IO-bound our iowait boosting is often just boosting CPU frequency (which uses
-> power obviously) to queue in yet another request for a device which has essentially
-> endless pending requests. If pending request N+1 arrives x usecs earlier or
-> later at the device then makes no difference in IO throughput.
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index f023ff49c688..93ad92605884 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -972,17 +972,21 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
+ 		if (issue_flags & IO_URING_F_MULTISHOT)
+ 			return IOU_ISSUE_SKIP_COMPLETE;
+ 		return -EAGAIN;
+-	}
+-
+-	/*
+-	 * Any successful return value will keep the multishot read armed.
+-	 */
+-	if (ret > 0 && req->flags & REQ_F_APOLL_MULTISHOT) {
++	} else if (ret <= 0) {
++		io_kbuf_recycle(req, issue_flags);
++		if (ret < 0)
++			req_set_fail(req);
++	} else {
+ 		/*
+-		 * Put our buffer and post a CQE. If we fail to post a CQE, then
++		 * Any successful return value will keep the multishot read
++		 * armed, if it's still set. Put our buffer and post a CQE. If
++		 * we fail to post a CQE, or multishot is no longer set, then
+ 		 * jump to the termination path. This request is then done.
+ 		 */
+ 		cflags = io_put_kbuf(req, ret, issue_flags);
++		if (!(req->flags & REQ_F_APOLL_MULTISHOT))
++			goto done;
++
+ 		rw->len = 0; /* similarly to above, reset len to 0 */
+ 
+ 		if (io_req_post_cqe(req, ret, cflags | IORING_CQE_F_MORE)) {
+@@ -1003,6 +1007,7 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
+ 	 * Either an error, or we've hit overflow posting the CQE. For any
+ 	 * multishot request, hitting overflow will terminate it.
+ 	 */
++done:
+ 	io_req_set_res(req, ret, cflags);
+ 	io_req_rw_cleanup(req, issue_flags);
+ 	if (issue_flags & IO_URING_F_MULTISHOT)
 
-That's sometimes true, but definitely not all the time? There are plenty
-workloads with low-queue-depth style IO. Which often are also rather latency
-sensitive.
+-- 
+Jens Axboe
 
-E.g. the device a database journal resides on will typically have a low queue
-depth. It's extremely common in OLTPish workloads to be bound by the latency
-of journal flushes. If, after the journal flush completes, the CPU is clocked
-low and takes a while to wake up, you'll see substantially worse performance.
-
-
-
-
-> If boosting would improve e.g. IOPS (of that device) is something the block layer
-> (with a lot of added infrastructure, but at least in theory it would know what
-> device we're iowaiting on, unlike the scheduler) could tell us about. If that is
-> actually useful for user experience (i.e. worth the power) only userspace can decide
-> (and then we're back at uclamp_min anyway).
-
-I think there are many cases where userspace won't realistically be able to do
-anything about that.
-
-For one, just because, for some workload, a too deep idle state is bad during
-IO, doesn't mean userspace won't ever want to clock down. And it's probably
-going to be too expensive to change any attributes around idle states for
-individual IOs.
-
-Are there actually any non-privileged APIs around this that userspace *could*
-even change? I'd not consider moving to busy-polling based APIs a realistic
-alternative.
-
-
-For many workloads cpuidle is way too aggressive dropping into lower states
-*despite* iowait. But just disabling all lower idle states obviously has
-undesirable energy usage implications. It surely is the answer for some
-workloads, but I don't think it'd be good to promote it as the sole solution.
-
-
-It's easy to under-estimate the real-world impact of a change like this. When
-benchmarking we tend to see what kind of throughput we can get, by having N
-clients hammering the server as fast as they can. But in the real world that's
-pretty rare for anything latency sensitive to go full blast - rather there's a
-rate of requests incoming and that the clients are sensitive to requests being
-processed more slowly.
-
-
-That's not to say that the current situation can't be improved - I've seen way
-too many workloads where the only ways to get decent performance were one of:
-
-- disable most idle states (via sysfs or /dev/cpu_dma_latency)
-- just have busy loops when idling - doesn't work when doing synchronous
-  syscalls that block though
-- have some lower priority tasks scheduled that just burns CPU
-
-I'm just worried that removing iowait will make this worse.
-
-Greetings,
-
-Andres Freund
 

@@ -1,147 +1,291 @@
-Return-Path: <io-uring+bounces-3429-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3430-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C33991BB0
-	for <lists+io-uring@lfdr.de>; Sun,  6 Oct 2024 03:11:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C385991C77
+	for <lists+io-uring@lfdr.de>; Sun,  6 Oct 2024 05:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C5D1F21E0F
-	for <lists+io-uring@lfdr.de>; Sun,  6 Oct 2024 01:11:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23E7B1C213D1
+	for <lists+io-uring@lfdr.de>; Sun,  6 Oct 2024 03:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC94A920;
-	Sun,  6 Oct 2024 01:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F39614A0A4;
+	Sun,  6 Oct 2024 03:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="B5cBuiNs"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MVtxYp3X"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91AB3D76
-	for <io-uring@vger.kernel.org>; Sun,  6 Oct 2024 01:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63794EAC6
+	for <io-uring@vger.kernel.org>; Sun,  6 Oct 2024 03:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728177100; cv=none; b=mcTSuEUvWEzYmUkM256A2gaTBJJ1viw26+E25ZxEnZwKkKmHk14VNGFzjAbd60kD+ksYbwLzZ5ahpXb/rz6z3pnZ9kR5KA+GXJqTDZ6cub6yLC31qG+fJsEwdkXq9t6kF1RtIdSHJvEu0RGcyPWt4CZyphJDNXjwU2CqNWNDtJU=
+	t=1728186867; cv=none; b=VOpBHmwjGONFLuiGZvnVewbhvNGTZw/QWJxIox5N4ku3q9tolqPE+Jz6+NxSKzKAHX6JyxJEfXoLxvVb1HnwRrQKAe2J79n2peVbCbpTrkvaHOXg/2ekGTYv1OLNVFnwGtXsQZ0ybc8avBbY2VyCvdd8kaXQw/Z3sIPBw7+dh0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728177100; c=relaxed/simple;
-	bh=lsg4tJkXpeQUl4p8OJFUt1yae6MeFb9IfjqkuaTkMEs=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=mpHtxpSwStm3yYfJvDVT+Q8dI2ZPLSf2JgYcBB2hAesZfXsJnB6F3ZbnZlGSF+2XzdNGhpJK+XAnNFfKhBj85XaU1zw6E/6qiR3+6XvPrfOypjiFRHjUZJRIh/B2PZ6uk2QDJ8llmj2qWSTeBmbEdXDpc+Nc0BGHSkzZcJbrpk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=B5cBuiNs; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71ddfc61c78so2051768b3a.2
-        for <io-uring@vger.kernel.org>; Sat, 05 Oct 2024 18:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728177092; x=1728781892; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6qUxN6PMZAh4gnarROdDzMFQG22nP/PXd9amhHhgdsE=;
-        b=B5cBuiNsfmVK0eXyDvnEB4SduMhIgdQaf1Z9wEU0BsIlHAAKn3i0GPbVaiC0u3jdjx
-         Wry0uAgnjL6eCbQ1woYMoB7kg73JnHB1dYCgROrIOWI7ue1m1gg8fC+g/YfvwFot1c2j
-         nO2Jvh9JDshbqJpyE4p9pyAzRAHNwda8EsWA/Ukg4vb02OxnjxTqlfGHIpxTHPxhyNxV
-         BJjUT6/KA9hFX8x2dx6eBIOmbP+oK8ZgNGxe0pB7ee6dTDOiimWu1oIHYFc1/waLh9XX
-         UYOmWJLY7ca1pnMnomXpCX8i0yloKmLmcvPzazxwF/6qaHMnGxGGxMwWtESLGBlL+jKi
-         PfyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728177092; x=1728781892;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6qUxN6PMZAh4gnarROdDzMFQG22nP/PXd9amhHhgdsE=;
-        b=HhbobbHXk/Kj1vFbuIHQFplJy//oZQkACzcvEJPZx11C+RQfI3W7AJV9GrlPwFbj+J
-         k+9XMZ5DAelU/N5NDReov2OU7XCpZ+YntF68e7tOExtoR2FOH3wphvSzv1rdtUbCWsy3
-         JnLyzWJRHM8D4KUYCdFxI+R/9Dxu1lm5TxskTi5hVwtleGRNr3S8aqi77Cxkhhxhdsqt
-         LshZzerjeHg1Sv1qknInXa/ZilJm/GlQ+rUsjA/ldOxnGJ348dnqHosXTbk/zaV4joNY
-         gWYvMtzOWMVmSFLoyJGqKnXgH0SETlEibydJHPK0awKuM6IK8GyJijGmgaI/ydZIy3Qg
-         7igA==
-X-Gm-Message-State: AOJu0Yx87sBsAgEnViM0nU1y7htlJZcvt1kSVcKIDLyYK4ayDAYCe5GP
-	LDZ6pThg5VayIQPQ81bHVLuMD222hKDsWAaMFZj7GpmODhp6ij3YylmYEGWvS+OuaTR154plQhn
-	I3ZA=
-X-Google-Smtp-Source: AGHT+IG3GltG2dXWcGw95PXumRNCSvhkIkgsahJH1JufXCdngvnwVlkdPsL0KScj1QYwbMFFC7Di4g==
-X-Received: by 2002:a05:6a21:a4c1:b0:1d5:2d6d:1614 with SMTP id adf61e73a8af0-1d6dfa427ccmr11998517637.23.1728177092497;
-        Sat, 05 Oct 2024 18:11:32 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6c3758esm2368437a12.74.2024.10.05.18.11.31
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Oct 2024 18:11:31 -0700 (PDT)
-Message-ID: <f6c8ec06-8826-4021-b36d-74e3612ac7d2@kernel.dk>
-Date: Sat, 5 Oct 2024 19:11:31 -0600
+	s=arc-20240116; t=1728186867; c=relaxed/simple;
+	bh=cIKr7O4yQzF4ar3MExX335MGYdIri/si1RGn4cMWjA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jWr5Ll6gDqo11c+DAWY4QGCcfTG4mkyIOU9FZV2eSGxi4jqA7TMLvdEAAT4GX+WnDWYNrjLngUrT6g7iNi5lEGdEoqrzOOTaG4re83MzKqykiDKrpXehxNalNk26GOYo+YFqItpsn1ymMw2mVIgEr5cS17wgN8tb61uTrXx0MU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MVtxYp3X; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728186864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pSq3nTl6jIdbog6zkho/feio3dOuT9WYpCQ8vRqv8ZA=;
+	b=MVtxYp3Xcn3PHrPi7e56ViftOh/Ldm+HMn68iM6mG0WGYtPHCKi+WsLJuOsDRPd2rL75Ks
+	fqc6sJ/Nq+qpQ8U5wjraEy3OIVHUlGS09+TM0FOor7pKBjuuI4bKNspVU9dvcY0POl3xWZ
+	utfNN9QBYbPWw/yXtJkZ1far8KDrzSM=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-a_Uht70wOMGLnUazx95dcQ-1; Sat,
+ 05 Oct 2024 23:54:22 -0400
+X-MC-Unique: a_Uht70wOMGLnUazx95dcQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6413B195608A;
+	Sun,  6 Oct 2024 03:54:21 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.21])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A572B3000198;
+	Sun,  6 Oct 2024 03:54:14 +0000 (UTC)
+Date: Sun, 6 Oct 2024 11:54:08 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+	linux-block@vger.kernel.org, Kevin Wolf <kwolf@redhat.com>,
+	ming.lei@redhat.com
+Subject: Re: [PATCH V6 4/8] io_uring: support SQE group
+Message-ID: <ZwIJ4Hn52-tm22Z8@fedora>
+References: <20240912104933.1875409-1-ming.lei@redhat.com>
+ <20240912104933.1875409-5-ming.lei@redhat.com>
+ <239e42d2-791e-4ef5-a312-8b5959af7841@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/rw: fix cflags posting for single issue multishot
- read
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <239e42d2-791e-4ef5-a312-8b5959af7841@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-If multishot gets disabled, and hence the request will get terminated
-rather than persist for more iterations, then posting the CQE with the
-right cflags is still important. Most notably, the buffer reference
-needs to be included.
+On Fri, Oct 04, 2024 at 02:12:28PM +0100, Pavel Begunkov wrote:
+> On 9/12/24 11:49, Ming Lei wrote:
+> ...
+> > --- a/io_uring/io_uring.c
+> > +++ b/io_uring/io_uring.c
+> > @@ -111,13 +111,15 @@
+> ...
+> > +static void io_complete_group_member(struct io_kiocb *req)
+> > +{
+> > +	struct io_kiocb *lead = get_group_leader(req);
+> > +
+> > +	if (WARN_ON_ONCE(!(req->flags & REQ_F_SQE_GROUP) ||
+> > +			 lead->grp_refs <= 0))
+> > +		return;
+> > +
+> > +	/* member CQE needs to be posted first */
+> > +	if (!(req->flags & REQ_F_CQE_SKIP))
+> > +		io_req_commit_cqe(req->ctx, req);
+> > +
+> > +	req->flags &= ~REQ_F_SQE_GROUP;
+> 
+> I can't say I like this implicit state machine too much,
+> but let's add a comment why we need to clear it. i.e.
+> it seems it wouldn't be needed if not for the
+> mark_last_group_member() below that puts it back to tunnel
+> the leader to io_free_batch_list().
 
-Refactor the return of __io_read() a bit, so that the provided buffer
-is always put correctly, and hence returned to the application.
+Yeah, the main purpose is for reusing the flag for marking last
+member, will add comment for this usage.
 
-Link: https://github.com/axboe/liburing/issues/1257
-Cc: stable@vger.kernel.org
-Fixes: 2a975d426c82 ("io_uring/rw: don't allow multishot reads without NOWAIT support")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> > +
+> > +	/* Set leader as failed in case of any member failed */
+> > +	if (unlikely((req->flags & REQ_F_FAIL)))
+> > +		req_set_fail(lead);
+> > +
+> > +	if (!--lead->grp_refs) {
+> > +		mark_last_group_member(req);
+> > +		if (!(lead->flags & REQ_F_CQE_SKIP))
+> > +			io_req_commit_cqe(lead->ctx, lead);
+> > +	} else if (lead->grp_refs == 1 && (lead->flags & REQ_F_SQE_GROUP)) {
+> > +		/*
+> > +		 * The single uncompleted leader will degenerate to plain
+> > +		 * request, so group leader can be always freed via the
+> > +		 * last completed member.
+> > +		 */
+> > +		lead->flags &= ~REQ_F_SQE_GROUP_LEADER;
+> 
+> What does this try to handle? A group with a leader but no
+> members? If that's the case, io_group_sqe() and io_submit_state_end()
+> just need to fail such groups (and clear REQ_F_SQE_GROUP before
+> that).
 
----
+The code block allows to issue leader and members concurrently, but
+we have changed to always issue members after leader is completed, so
+the above code can be removed now.
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index f023ff49c688..93ad92605884 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -972,17 +972,21 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
- 		if (issue_flags & IO_URING_F_MULTISHOT)
- 			return IOU_ISSUE_SKIP_COMPLETE;
- 		return -EAGAIN;
--	}
--
--	/*
--	 * Any successful return value will keep the multishot read armed.
--	 */
--	if (ret > 0 && req->flags & REQ_F_APOLL_MULTISHOT) {
-+	} else if (ret <= 0) {
-+		io_kbuf_recycle(req, issue_flags);
-+		if (ret < 0)
-+			req_set_fail(req);
-+	} else {
- 		/*
--		 * Put our buffer and post a CQE. If we fail to post a CQE, then
-+		 * Any successful return value will keep the multishot read
-+		 * armed, if it's still set. Put our buffer and post a CQE. If
-+		 * we fail to post a CQE, or multishot is no longer set, then
- 		 * jump to the termination path. This request is then done.
- 		 */
- 		cflags = io_put_kbuf(req, ret, issue_flags);
-+		if (!(req->flags & REQ_F_APOLL_MULTISHOT))
-+			goto done;
-+
- 		rw->len = 0; /* similarly to above, reset len to 0 */
- 
- 		if (io_req_post_cqe(req, ret, cflags | IORING_CQE_F_MORE)) {
-@@ -1003,6 +1007,7 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
- 	 * Either an error, or we've hit overflow posting the CQE. For any
- 	 * multishot request, hitting overflow will terminate it.
- 	 */
-+done:
- 	io_req_set_res(req, ret, cflags);
- 	io_req_rw_cleanup(req, issue_flags);
- 	if (issue_flags & IO_URING_F_MULTISHOT)
+> 
+> > +	}
+> > +}
+> > +
+> > +static void io_complete_group_leader(struct io_kiocb *req)
+> > +{
+> > +	WARN_ON_ONCE(req->grp_refs <= 1);
+> > +	req->flags &= ~REQ_F_SQE_GROUP;
+> > +	req->grp_refs -= 1;
+> > +}
+> > +
+> > +static void io_complete_group_req(struct io_kiocb *req)
+> > +{
+> > +	if (req_is_group_leader(req))
+> > +		io_complete_group_leader(req);
+> > +	else
+> > +		io_complete_group_member(req);
+> > +}
+> > +
+> >   static void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
+> >   {
+> >   	struct io_ring_ctx *ctx = req->ctx;
+> > @@ -890,7 +1005,8 @@ static void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
+> >   	 * Handle special CQ sync cases via task_work. DEFER_TASKRUN requires
+> >   	 * the submitter task context, IOPOLL protects with uring_lock.
+> >   	 */
+> > -	if (ctx->task_complete || (ctx->flags & IORING_SETUP_IOPOLL)) {
+> > +	if (ctx->task_complete || (ctx->flags & IORING_SETUP_IOPOLL) ||
+> > +	    req_is_group_leader(req)) {
+> 
+> We're better to push all group requests to io_req_task_complete(),
+> not just a group leader. While seems to be correct, that just
+> overcomplicates the request's flow, it can post a CQE here, but then
+> still expect to do group stuff in the CQE posting loop
+> (flush_completions -> io_complete_group_req), which might post another
+> cqe for the leader, and then do yet another post processing loop in
+> io_free_batch_list().
 
--- 
-Jens Axboe
+OK, it is simpler to complete all group reqs via tw.
+
+> 
+> 
+> >   		req->io_task_work.func = io_req_task_complete;
+> >   		io_req_task_work_add(req);
+> >   		return;
+> > @@ -1388,11 +1504,43 @@ static void io_free_batch_list(struct io_ring_ctx *ctx,
+> >   						    comp_list);
+> >   		if (unlikely(req->flags & IO_REQ_CLEAN_SLOW_FLAGS)) {
+> > +			if (req_is_last_group_member(req) ||
+> > +					req_is_group_leader(req)) {
+> > +				struct io_kiocb *leader;
+> > +
+> > +				/* Leader is freed via the last member */
+> > +				if (req_is_group_leader(req)) {
+> > +					if (req->grp_link)
+> > +						io_queue_group_members(req);
+> > +					node = req->comp_list.next;
+> > +					continue;
+> > +				}
+> > +
+> > +				/*
+> > +				 * Prepare for freeing leader since we are the
+> > +				 * last group member
+> > +				 */
+> > +				leader = get_group_leader(req);
+> > +				leader->flags &= ~REQ_F_SQE_GROUP_LEADER;
+> > +				req->flags &= ~REQ_F_SQE_GROUP;
+> > +				/*
+> > +				 * Link leader to current request's next,
+> > +				 * this way works because the iterator
+> > +				 * always check the next node only.
+> > +				 *
+> > +				 * Be careful when you change the iterator
+> > +				 * in future
+> > +				 */
+> > +				wq_stack_add_head(&leader->comp_list,
+> > +						  &req->comp_list);
+> > +			}
+> > +
+> >   			if (req->flags & REQ_F_REFCOUNT) {
+> >   				node = req->comp_list.next;
+> >   				if (!req_ref_put_and_test(req))
+> >   					continue;
+> >   			}
+> > +
+> >   			if ((req->flags & REQ_F_POLLED) && req->apoll) {
+> >   				struct async_poll *apoll = req->apoll;
+> > @@ -1427,8 +1575,16 @@ void __io_submit_flush_completions(struct io_ring_ctx *ctx)
+> >   		struct io_kiocb *req = container_of(node, struct io_kiocb,
+> >   					    comp_list);
+> > -		if (!(req->flags & REQ_F_CQE_SKIP))
+> > -			io_req_commit_cqe(ctx, req);
+> > +		if (unlikely(req->flags & (REQ_F_CQE_SKIP | REQ_F_SQE_GROUP))) {
+> > +			if (req->flags & REQ_F_SQE_GROUP) {
+> > +				io_complete_group_req(req);
+> > +				continue;
+> > +			}
+> > +
+> > +			if (req->flags & REQ_F_CQE_SKIP)
+> > +				continue;
+> > +		}
+> > +		io_req_commit_cqe(ctx, req);
+> >   	}
+> >   	__io_cq_unlock_post(ctx);
+> > @@ -1638,8 +1794,12 @@ static u32 io_get_sequence(struct io_kiocb *req)
+> >   	struct io_kiocb *cur;
+> >   	/* need original cached_sq_head, but it was increased for each req */
+> > -	io_for_each_link(cur, req)
+> > -		seq--;
+> > +	io_for_each_link(cur, req) {
+> > +		if (req_is_group_leader(cur))
+> > +			seq -= cur->grp_refs;
+> > +		else
+> > +			seq--;
+> > +	}
+> >   	return seq;
+> >   }
+> ...
+> > @@ -2217,8 +2470,22 @@ static void io_submit_state_end(struct io_ring_ctx *ctx)
+> >   {
+> >   	struct io_submit_state *state = &ctx->submit_state;
+> > -	if (unlikely(state->link.head))
+> > -		io_queue_sqe_fallback(state->link.head);
+> > +	if (unlikely(state->group.head || state->link.head)) {
+> > +		/* the last member must set REQ_F_SQE_GROUP */
+> > +		if (state->group.head) {
+> > +			struct io_kiocb *lead = state->group.head;
+> > +
+> > +			state->group.last->grp_link = NULL;
+> > +			if (lead->flags & IO_REQ_LINK_FLAGS)
+> > +				io_link_sqe(&state->link, lead);
+> > +			else
+> > +				io_queue_sqe_fallback(lead);
+> 
+> req1(F_LINK), req2(F_GROUP), req3
+> 
+> is supposed to be turned into
+> 
+> req1 -> {group: req2 (lead), req3 }
+> 
+> but note that req2 here doesn't have F_LINK set.
+> I think it should be like this instead:
+> 
+> if (state->link.head)
+> 	io_link_sqe();
+> else
+> 	io_queue_sqe_fallback(lead);
+
+Indeed, the above change is correct.
+
+
+Thanks,
+Ming
 
 

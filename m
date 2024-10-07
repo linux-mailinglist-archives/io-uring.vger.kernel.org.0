@@ -1,88 +1,57 @@
-Return-Path: <io-uring+bounces-3440-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3441-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB739935F0
-	for <lists+io-uring@lfdr.de>; Mon,  7 Oct 2024 20:20:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819509938F9
+	for <lists+io-uring@lfdr.de>; Mon,  7 Oct 2024 23:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BB352868D3
-	for <lists+io-uring@lfdr.de>; Mon,  7 Oct 2024 18:20:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CF59B22B21
+	for <lists+io-uring@lfdr.de>; Mon,  7 Oct 2024 21:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B941D7E47;
-	Mon,  7 Oct 2024 18:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060BE1DE88C;
+	Mon,  7 Oct 2024 21:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="sOJIFcRU"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RWZQrQQ2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DE01C1AAA
-	for <io-uring@vger.kernel.org>; Mon,  7 Oct 2024 18:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3C41DE4D8;
+	Mon,  7 Oct 2024 21:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728325224; cv=none; b=UL6sU1OdWNk2bwCdaKJwY8m1Zd3skuAue2ljNQHqaoCrkqv4zdShURFOOEYvG8Ajta5Hp6IH6GwR5tqKY09s7vCfZXUNyr3pigEsub5BcELsgwIdF2Dmib4ObRFr8RHuYSj1V9wHHTG2in03lAZQOqoGVK/KyT7Ec/kUEks99po=
+	t=1728336038; cv=none; b=CTnfjcm9KJguxMiZbUgTntADIdZy6f5U2wd/VMNLimFAQP2FZflM6UR1Pd0S0UpBz92DLVJu5kpC1bpcpTZsKDS8tcfPjyI98sx8Iy6G+ndAeev27MonGXb9xzWQ3OdmERoNqaw92j7LXlNH9r9480WMB2biTU9IoouGcCM5+yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728325224; c=relaxed/simple;
-	bh=ojSf5cbidjyO8BtBhVFcTNRnlmrewtRNc0xe7Fx60FY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WA9ggx/wF/J8VtmToiQmY+97epI3pG4AnSQSgV4X0s6MG8/vUhecL8grpcbBowiRbxHwfElWGJoAgs681lOEyusmdwvak0ykZwnU29jrk4tydy5DvkeFKXrR9qqH83hpB1SqcbmPFAkNdM9zGxpnoZhTIxDoA/dMHR5+qLeR7VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=sOJIFcRU; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-832525e7449so345692539f.2
-        for <io-uring@vger.kernel.org>; Mon, 07 Oct 2024 11:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728325222; x=1728930022; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=u2v+8dRG3UE1nMM69AsVKIVOw5VffZD/lCmj3L+nU2o=;
-        b=sOJIFcRUN7YdCEC44GOBihYdDHZCsljQ5usYhbhASaPPWYvOtYn2vFk0d7avOx6+2q
-         yBdz5GyghM5S9SueGD+deyzajya/+pYyZ9nqV5nLgr5qw7RR5/z9BbkZwCOVWerFqMcg
-         FHd5pU6dU/8QmaarjWeynwpDvMyW1rP8gy1NmqoSMmUkx9m26b9GyRnabfRlu2tWfj9I
-         n+Gja60UfP1jROhQltjywXuPrJpiy3Qx8KELVY1fSujRbDaSrGjKxu9tmv8AckRjVeI0
-         hZt5uz7sqjRpyzMpHYSUOOMcOnsaV3m5FP3QwLXfP18EKd3lLgyQKBmrMGLQf4pCBJSX
-         ExTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728325222; x=1728930022;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u2v+8dRG3UE1nMM69AsVKIVOw5VffZD/lCmj3L+nU2o=;
-        b=pebYb9d4yNW2YP+2vVgAzPvHRGZNdE+sB+a1AY5HFvESCdhKrZstcS0+VPP8UeM/nt
-         KKSrfSoQGLTQlCPGbVnAVHppWQbszWAJqloV8e2gD8tR9wwEWg9xSsHbm+SHhqvW3veG
-         jP4nlwDvP24AOuF8FLedqr4Q/HrxG0ihdZC63ogEwE4kW4ii79gam2BQKe+Rdw+8h6M/
-         Hs9ElIqwlcDd3hE23Bk6S80FV3mWHslQssgP4mUmTpbSm8xm7pLyLbG1Nm/HATnIqg8X
-         dWdmdClQYW55H1Ime96RcKIWvRoHL5EfvUVnrSteG24vgZvgej+BiwhVOkKSSQ15NK9Q
-         4VIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkmmEmXHnTh73D4DtZr3GQYbt+1B4eE+Jqf61S012MVI8LrHgV+/Gw/oQLAVcbImDWPbhg7nY3bQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcc4L85kM2jJ/AhvfPR7t8S3++YF483iWivafo+aO4xbqq3I0e
-	5aLeuCi1Y28jvgd2UlIQ1sPX0HMBqJ4fZAEz77AiHvy1ZHId8eHgTu7BZti1nCA=
-X-Google-Smtp-Source: AGHT+IGyvCO4hk9dD0z++2E+tCl7PlWSCqS+Vxlnqkga5Qs+bR1Yv5xManU/Zq/VXIHQuRZvUimsgg==
-X-Received: by 2002:a05:6e02:12c7:b0:39f:6f8c:45f3 with SMTP id e9e14a558f8ab-3a375bae0b2mr106028055ab.16.1728325221940;
-        Mon, 07 Oct 2024 11:20:21 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a37a868967sm14065885ab.67.2024.10.07.11.20.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 11:20:21 -0700 (PDT)
-Message-ID: <965e59b5-615a-4d20-bb04-a462c33ad84b@kernel.dk>
-Date: Mon, 7 Oct 2024 12:20:20 -0600
-Precedence: bulk
-X-Mailing-List: io-uring@vger.kernel.org
-List-Id: <io-uring.vger.kernel.org>
-List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
-From: Jens Axboe <axboe@kernel.dk>
-To: Al Viro <viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1728336038; c=relaxed/simple;
+	bh=ulNGmKR8IkHpaEiA1Q2QHKLKsymcXQYlhS3FBAr4qB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HDndpmrgRGmFGzRQ7sPAp2VGpC3YejJfPTv3i1RwUbqYSrRITIKRj7GzviSu+Pw4hpO9MIJSks4RXflrb9IrRoGhHs+IfCV6+1PF2X66WFfRXse3Xh1HRPYbCS5wZ/ubBl0+AfNWe7bAYFhv1b7vJFKcXN4hiKqG+8mfmdxrpUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RWZQrQQ2; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pQ1ColmBObMTnYdunZ9Y+88wedLoBDEP4jQTW7uiuI4=; b=RWZQrQQ2qdIRVcfj3AMv+lNoP0
+	/2v/oLw5NJBJmucOrSlhk2TYI3NhT89RcTIORQpbF1ZrCYI4nXBB0A8gh5XbyqOqdqbxpym6oyXIW
+	P0QUStC7+IPcWOwtr04jK2TZxccC8R4BF/pIgC2MQ7o1S2MLNASIYyDgipQU0O8kHlHTrBfTXBSu5
+	DZjqorYQvxBJBtjV9SwhkRaDM1XvEG7Mjd24e1u5d+NokSXga3EYkCnPv6TppDG/Wo3FLWSz3iWcx
+	5Y6ZkpWcEm4YD97+bS/Q0MD6Ktd879ZpIxhMf/nXKylKyBD9tKR+ovbC2CU/lhyRJfaO03I5lA559
+	eKcY+Oag==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sxv9e-00000001hfl-0W46;
+	Mon, 07 Oct 2024 21:20:34 +0000
+Date: Mon, 7 Oct 2024 22:20:34 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
- io-uring@vger.kernel.org, cgzones@googlemail.com
-References: <20241002011011.GB4017910@ZenIV>
- <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
+	io-uring@vger.kernel.org, cgzones@googlemail.com
+Subject: Re: [PATCH 5/9] replace do_setxattr() with saner helpers.
+Message-ID: <20241007212034.GS4017910@ZenIV>
+References: <20241002012230.4174585-1-viro@zeniv.linux.org.uk>
  <20241002012230.4174585-5-viro@zeniv.linux.org.uk>
  <12334e67-80a6-4509-9826-90d16483835e@kernel.dk>
  <20241002020857.GC4017910@ZenIV>
@@ -91,83 +60,54 @@ References: <20241002011011.GB4017910@ZenIV>
  <d69b33f9-31a0-4c70-baf2-a72dc28139e0@kernel.dk>
  <20241006052859.GD4017910@ZenIV>
  <69e696d7-637a-4cb2-912c-6066d23afd72@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <69e696d7-637a-4cb2-912c-6066d23afd72@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <965e59b5-615a-4d20-bb04-a462c33ad84b@kernel.dk>
+Precedence: bulk
+X-Mailing-List: io-uring@vger.kernel.org
+List-Id: <io-uring.vger.kernel.org>
+List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <965e59b5-615a-4d20-bb04-a462c33ad84b@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 10/7/24 12:09 PM, Jens Axboe wrote:
->>>> Questions on the io_uring side:
->>>> 	* you usually reject REQ_F_FIXED_FILE for ...at() at ->prep() time.
->>>> Fine, but... what's the point of doing that in IORING_OP_FGETXATTR case?
->>>> Or IORING_OP_GETXATTR, for that matter, since you pass AT_FDCWD anyway...
->>>> Am I missing something subtle here?
->>>
->>> Right, it could be allowed for fgetxattr on the io_uring side. Anything
->>> that passes in a struct file would be fair game to enable it on.
->>> Anything that passes in a path (eg a non-fd value), it obviously
->>> wouldn't make sense anyway.
->>
->> OK, done and force-pushed into #work.xattr.
+On Mon, Oct 07, 2024 at 12:20:20PM -0600, Jens Axboe wrote:
+> On 10/7/24 12:09 PM, Jens Axboe wrote:
+> >>>> Questions on the io_uring side:
+> >>>> 	* you usually reject REQ_F_FIXED_FILE for ...at() at ->prep() time.
+> >>>> Fine, but... what's the point of doing that in IORING_OP_FGETXATTR case?
+> >>>> Or IORING_OP_GETXATTR, for that matter, since you pass AT_FDCWD anyway...
+> >>>> Am I missing something subtle here?
+> >>>
+> >>> Right, it could be allowed for fgetxattr on the io_uring side. Anything
+> >>> that passes in a struct file would be fair game to enable it on.
+> >>> Anything that passes in a path (eg a non-fd value), it obviously
+> >>> wouldn't make sense anyway.
+> >>
+> >> OK, done and force-pushed into #work.xattr.
+> > 
+> > I just checked, and while I think this is fine to do for the 'fd' taking
+> > {s,g}etxattr, I don't think the path taking ones should allow
+> > IOSQE_FIXED_FILE being set. It's nonsensical, as they don't take a file
+> > descriptor. So I'd prefer if we kept it to just the f* variants. I can
+> > just make this tweak in my io_uring 6.12 branch and get it upstream this
+> > week, that'll take it out of your hands.
+> > 
+> > What do you think?
 > 
-> I just checked, and while I think this is fine to do for the 'fd' taking
-> {s,g}etxattr, I don't think the path taking ones should allow
-> IOSQE_FIXED_FILE being set. It's nonsensical, as they don't take a file
-> descriptor. So I'd prefer if we kept it to just the f* variants. I can
-> just make this tweak in my io_uring 6.12 branch and get it upstream this
-> week, that'll take it out of your hands.
-> 
-> What do you think?
+> Like the below. You can update yours if you want, or I can shove this
+> into 6.12, whatever is the easiest for you.
 
-Like the below. You can update yours if you want, or I can shove this
-into 6.12, whatever is the easiest for you.
+Can I put your s-o-b on that, with e.g.
 
+io_uring: IORING_OP_F[GS]ETXATTR is fine with REQ_F_FIXED_FILE
 
-diff --git a/io_uring/xattr.c b/io_uring/xattr.c
-index 6cf41c3bc369..4b68c282c91a 100644
---- a/io_uring/xattr.c
-+++ b/io_uring/xattr.c
-@@ -48,9 +48,6 @@ static int __io_getxattr_prep(struct io_kiocb *req,
- 	const char __user *name;
- 	int ret;
- 
--	if (unlikely(req->flags & REQ_F_FIXED_FILE))
--		return -EBADF;
--
- 	ix->filename = NULL;
- 	ix->ctx.kvalue = NULL;
- 	name = u64_to_user_ptr(READ_ONCE(sqe->addr));
-@@ -90,6 +87,9 @@ int io_getxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	const char __user *path;
- 	int ret;
- 
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
- 	ret = __io_getxattr_prep(req, sqe);
- 	if (ret)
- 		return ret;
-@@ -152,9 +152,6 @@ static int __io_setxattr_prep(struct io_kiocb *req,
- 	const char __user *name;
- 	int ret;
- 
--	if (unlikely(req->flags & REQ_F_FIXED_FILE))
--		return -EBADF;
--
- 	ix->filename = NULL;
- 	name = u64_to_user_ptr(READ_ONCE(sqe->addr));
- 	ix->ctx.cvalue = u64_to_user_ptr(READ_ONCE(sqe->addr2));
-@@ -183,6 +180,9 @@ int io_setxattr_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	const char __user *path;
- 	int ret;
- 
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
- 	ret = __io_setxattr_prep(req, sqe);
- 	if (ret)
- 		return ret;
+Rejection of IOSQE_FIXED_FILE combined with IORING_OP_[GS]ETXATTR
+is fine - these do not take a file descriptor, so such combination
+makes no sense.  The checks are misplaced, though - as it is, they
+triggers on IORING_OP_F[GS]ETXATTR as well, and those do take 
+a file reference, no matter the origin. 
 
--- 
-Jens Axboe
+as commit message?
 

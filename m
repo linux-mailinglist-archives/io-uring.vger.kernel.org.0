@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3517-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3518-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71BB9997572
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 21:08:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689B3997576
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 21:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A491C1C226E5
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 19:08:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84E3D1C22825
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 19:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646461DF734;
-	Wed,  9 Oct 2024 19:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62E11E0495;
+	Wed,  9 Oct 2024 19:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ca4lfUGM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTgF7zGH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A472CEDE;
-	Wed,  9 Oct 2024 19:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0723917332C;
+	Wed,  9 Oct 2024 19:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728500902; cv=none; b=vDvnrkhZ+KsBwzI5V7mEjGErh4ISNtpP0Q4+37yOo0e18pCyEvi65Jl9I4GoYHWbWIIpThH/xwh/etkvAdH/SvtQKnxC3YgSJRi4jHlzw5JI0tQQfrGbDMzHgrG7sllC6d5cUqnpDjhAcEf7R+eHpyUhG8FKDYAIuL4ic3SGHqM=
+	t=1728501101; cv=none; b=PbvF5T8yXH+ftk2YzcqISbbJdfnQ0aCNGu5meQge9KdugH/acVz+ar7WsrplwawgHQw/7OSSKHPfFZA41yioQla8bldc5u5aJZls0BR2g7WD1n+gaJOJIpg+pi1RULVW5jAF4XvksaMRcU9axfwCVZQh1WIs0IGGFyqdNOn00j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728500902; c=relaxed/simple;
-	bh=G5s6E6f3HH7Z0pR1OU0hV/3kW2hFKzyqyr8PKYwFUdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UByMBkcmm5nTLkraCLiXeQSLQ2I2ucjSdHuLG8wA4shgLZZ4G83ABCy7RcrNng5Nilunjs4wr3O9NCelq1/gVZaUpJGvxHBAj9NArXulqsgTch4fzuB2HKh0lq7I0DZHtlObdGwIgl+Xbi5Wr7g5JpsSZ7lWODEEowyKjPyLLj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ca4lfUGM; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1728501101; c=relaxed/simple;
+	bh=Nu2bYL8LuHCjSMn9TSEypvoCVON3G/WfL7hu0dYK2aA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Zgp5gpCZ9KJuX/SWQqgM5aoRB4K9A7yjueHJ8I9WCTt5DZo7RxNCLTAw27kjNaz5VAiYGeNKu/hIkgV6MtWn8K/4LXyCpbT2bokIU/yGXXVqYVLXkhxdo2LKgCHo/4lpUKS+Z175T+jI5QDDTC+X+nPUQkMjBeeMGLhZyDNnG1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dTgF7zGH; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7aa086b077so24271266b.0;
-        Wed, 09 Oct 2024 12:08:18 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c42e7adbddso64898a12.2;
+        Wed, 09 Oct 2024 12:11:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728500897; x=1729105697; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728501098; x=1729105898; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iNbwS/9TFy5SDCfi2gzQ4eMSSBkW/CakGPDvG7OaM5I=;
-        b=ca4lfUGMADvmeAnNdABHxIyPFdaqJ6mNhWmFA8k5VbjrxbD9DM9IiOoPspBrBqgWv4
-         W31lAVjJArHig+I3YY6MoGfRmCHdoAstBE9qV7WivfsofOpOU13uhRCRD+t0yGOOwzbG
-         W+4IVR7gseBX6t4wxNq27O4QZO3fcyW295Rmh17jp1ljr+Q77NWVp08AOu1nlYzttGRY
-         0bKz0Limzaj+0psKN+E46RjwPqRDi/+0NwzVJMZY0KY0wjuyWGFl/rEOHRvJ8/HqgelP
-         uYnI9XZQZF2+tausPXUQmxmslTsNCJ+Xo+Eng4ziKvqD3nll9jCKhIcLEdwu1KZ4xbN4
-         y67Q==
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=GiPB8AoUiM93yNDSFmmV4wPtRYjJAVzhcLHdW+BnWss=;
+        b=dTgF7zGHQVOu6ZU35JW5BHCCC89UnHsaicFDrrh8B+udYrq/wJEAH3vTk+xGCwAXOF
+         ySGtFLMTJgXwG455MMTqfe0G//nqY3/fib+ctdPHdgzB8gL8/xLjzTQYtWPMAVhjYEJN
+         HseN22VoMZXOA9MTBHgTA/QutxCK/VTXkDz2crX//IT0jU3arBvfqF86tnK+lNGa0/Dw
+         wiSPspk+ovU6MF3H9BccppPFz09oxCjQyL/E93Vdm3JGLvIMuPcrr2O4o8aG2UgkYE3I
+         zqJyijuVa7ty/USWBAwFfZXyPNm71Pmht2QPE5GbJLo/v15kBkY+1DLhmIvz8UgGQXbe
+         nK2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728500897; x=1729105697;
+        d=1e100.net; s=20230601; t=1728501098; x=1729105898;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iNbwS/9TFy5SDCfi2gzQ4eMSSBkW/CakGPDvG7OaM5I=;
-        b=CuNAYrKcl3VV2mHL0+eE7ZL2qylg1a8lOV/0804XxR0gpeDfasvdHxvksC2kQ/zW2f
-         JKOjfabCxCv/d5FGA4S+8fNjurZSa5Q46oVVEdCBRGwWDPChxHCTyEExlOo3j5jvn4nj
-         E6Yw03da+tpyzvUATW5EfGAi4msyyosRMF1sf3JgJoQ2wnhJTDMC5KCF2mQbBi0n+GIp
-         esS8ne2h5yQjDdBd+k7GKtYvyPrd2heQHnJGl6/u+h5FluU9grByvqH04ytBMOthTBg/
-         eWBfuTUOulqNH3nhrbXk3tJMKu+ZQhWCe5QG1DCIsbqn29iGkK8m8VnZCwjA3EOkHamp
-         GWug==
-X-Forwarded-Encrypted: i=1; AJvYcCUEXHi3Rr262FKqyVNNBcrMicvFoGgxFM2a2gC8GBtV5pUdU7be2mxXN39HUVDNSN6cMKC6O0kXKg==@vger.kernel.org, AJvYcCUpcME0xIwcY+iA6O6pyMcB1KsFqlqydGmfoOpArdHOmRA6QZjcYHAuJeBu45nTClZUodNpCGCI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGYmiLx1++2FmNlF6bEm31mWu+VP5ePz9/ooQTugKjOi0NUnKA
-	44hFq91sfziUslnLUhIIltzMvFBn3dFAAGRRmKbQPAiVs7yOgH24
-X-Google-Smtp-Source: AGHT+IFwHpJ0YRgupGxZL5VNYKMbysPScAH+WyZ6mG3JMls0+JD31bVetIVMkCnpgf0resTUvD4TQw==
-X-Received: by 2002:a17:907:c19:b0:a99:37af:9cf9 with SMTP id a640c23a62f3a-a999e8cb92emr123481666b.49.1728500896628;
-        Wed, 09 Oct 2024 12:08:16 -0700 (PDT)
+        bh=GiPB8AoUiM93yNDSFmmV4wPtRYjJAVzhcLHdW+BnWss=;
+        b=O+ec68fiAugtwXNcIOPJTkpSahybaGgTZt200jIokS8wOAW6HkC569gidleMLQfmN7
+         iDJqWb9fwlD/TOIlunsfsjBcv8X1Bc2zDpvoIq1+N+aJL1x2M4D1jsy3g3AWQ0JRaINo
+         c6B7LVkfpR/S5vZRea4S1YzTmYF9DkyyLLm+8cw8rgBOtMJ+36j8wI0uS2CQd/+SSrAL
+         3v6yR2mdWxjzDJw3X7e5KLmczW7a//pHo7SLMCw4g7FCSzVLOINEyHMS2pawjwXja7zA
+         DXuoa6B6aaimEZuLoEkFtS8KjjK4SR2+nNtsxPXC1Nd4fQa1NaHC6hfKt/wyHU8AgMGR
+         D3vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFIG3G0TpXPmcGsiI75ZU+GTjlsDchBusINZYp0fieoJWG8X36uuciWvEuPhf/mUcCtBImFis9@vger.kernel.org, AJvYcCXqVXNH0TwVJ7R6WhPVRvNro7BQEBI+HIiyYeZXA7jrnXBeJPaalbfAC4ZCVKqLWVEgXz5PI1+tjw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt98K9zUOKbORYS2Dq0Xnqwso8GRvvGABpsjgPH8PeYBaHXioJ
+	F0++44g75KDZlmAeQYV3EMZrTm6OU5yECBPJcB4u3GXJjL4SDgRB
+X-Google-Smtp-Source: AGHT+IGvmPOnaaxNnyUHDmfhJTWExS3Mi0hxE0fMOwiMpt+HjovxGhNFkMa1tld/SS/djFXBM4vcdw==
+X-Received: by 2002:a05:6402:2741:b0:5c8:7a0b:2848 with SMTP id 4fb4d7f45d1cf-5c91d68d22fmr3655013a12.36.1728501098059;
+        Wed, 09 Oct 2024 12:11:38 -0700 (PDT)
 Received: from [192.168.42.9] ([148.252.145.180])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99527e8e15sm473000766b.181.2024.10.09.12.08.15
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05956ddsm5747302a12.4.2024.10.09.12.11.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 12:08:16 -0700 (PDT)
-Message-ID: <8d624a0a-3b00-4117-800d-a25314a8a25b@gmail.com>
-Date: Wed, 9 Oct 2024 20:08:52 +0100
+        Wed, 09 Oct 2024 12:11:37 -0700 (PDT)
+Message-ID: <8fcb5c94-959e-4daa-836b-ab14e25c3a89@gmail.com>
+Date: Wed, 9 Oct 2024 20:12:13 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,76 +76,113 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 09/15] io_uring/zcrx: add interface queue and refill
- queue
-To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
- io-uring@vger.kernel.org, netdev@vger.kernel.org
-Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
+Subject: Re: [PATCH v1 08/15] net: add helper executing custom callback from
+ napi
+To: Joe Damato <jdamato@fastly.com>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org, netdev@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
  Mina Almasry <almasrymina@google.com>
 References: <20241007221603.1703699-1-dw@davidwei.uk>
- <20241007221603.1703699-10-dw@davidwei.uk>
- <8075828d-74c8-4a0c-8505-45259181f6bb@kernel.dk>
+ <20241007221603.1703699-9-dw@davidwei.uk> <ZwWxQjov3Zc_oeiR@LQ3V64L9R2>
+ <6e20af86-8b37-4e84-8ac9-ab9f8c215d00@gmail.com>
+ <ZwartzLxnL7MXam6@LQ3V64L9R2>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <8075828d-74c8-4a0c-8505-45259181f6bb@kernel.dk>
+In-Reply-To: <ZwartzLxnL7MXam6@LQ3V64L9R2>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/9/24 18:50, Jens Axboe wrote:
-> On 10/7/24 4:15 PM, David Wei wrote:
->> From: David Wei <davidhwei@meta.com>
+On 10/9/24 17:13, Joe Damato wrote:
+> On Wed, Oct 09, 2024 at 04:09:53PM +0100, Pavel Begunkov wrote:
+>> On 10/8/24 23:25, Joe Damato wrote:
+>>> On Mon, Oct 07, 2024 at 03:15:56PM -0700, David Wei wrote:
+>>>> From: Pavel Begunkov <asml.silence@gmail.com>
+>>>
+>>> [...]
+>>>
+>>>> However, from time to time we need to synchronise with the napi, for
+>>>> example to add more user memory or allocate fallback buffers. Add a
+>>>> helper function napi_execute that allows to run a custom callback from
+>>>> under napi context so that it can access and modify napi protected
+>>>> parts of io_uring. It works similar to busy polling and stops napi from
+>>>> running in the meantime, so it's supposed to be a slow control path.
+>>>>
+>>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>>>> Signed-off-by: David Wei <dw@davidwei.uk>
+>>>
+>>> [...]
+>>>
+>>>> diff --git a/net/core/dev.c b/net/core/dev.c
+>>>> index 1e740faf9e78..ba2f43cf5517 100644
+>>>> --- a/net/core/dev.c
+>>>> +++ b/net/core/dev.c
+>>>> @@ -6497,6 +6497,59 @@ void napi_busy_loop(unsigned int napi_id,
+>>>>    }
+>>>>    EXPORT_SYMBOL(napi_busy_loop);
+>>>> +void napi_execute(unsigned napi_id,
+>>>> +		  void (*cb)(void *), void *cb_arg)
+>>>> +{
+>>>> +	struct napi_struct *napi;
+>>>> +	bool done = false;
+>>>> +	unsigned long val;
+>>>> +	void *have_poll_lock = NULL;
+>>>> +
+>>>> +	rcu_read_lock();
+>>>> +
+>>>> +	napi = napi_by_id(napi_id);
+>>>> +	if (!napi) {
+>>>> +		rcu_read_unlock();
+>>>> +		return;
+>>>> +	}
+>>>> +
+>>>> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
+>>>> +		preempt_disable();
+>>>> +	for (;;) {
+>>>> +		local_bh_disable();
+>>>> +		val = READ_ONCE(napi->state);
+>>>> +
+>>>> +		/* If multiple threads are competing for this napi,
+>>>> +		* we avoid dirtying napi->state as much as we can.
+>>>> +		*/
+>>>> +		if (val & (NAPIF_STATE_DISABLE | NAPIF_STATE_SCHED |
+>>>> +			  NAPIF_STATE_IN_BUSY_POLL))
+>>>> +			goto restart;
+>>>> +
+>>>> +		if (cmpxchg(&napi->state, val,
+>>>> +			   val | NAPIF_STATE_IN_BUSY_POLL |
+>>>> +				 NAPIF_STATE_SCHED) != val)
+>>>> +			goto restart;
+>>>> +
+>>>> +		have_poll_lock = netpoll_poll_lock(napi);
+>>>> +		cb(cb_arg);
+>>>
+>>> A lot of the above code seems quite similar to __napi_busy_loop, as
+>>> you mentioned.
+>>>
+>>> It might be too painful, but I can't help but wonder if there's a
+>>> way to refactor this to use common helpers or something?
+>>>
+>>> I had been thinking that the napi->state check /
+>>> cmpxchg could maybe be refactored to avoid being repeated in both
+>>> places?
 >>
-...
->> diff --git a/io_uring/Makefile b/io_uring/Makefile
->> index 61923e11c767..1a1184f3946a 100644
->> --- a/io_uring/Makefile
->> +++ b/io_uring/Makefile
->> @@ -10,6 +10,7 @@ obj-$(CONFIG_IO_URING)		+= io_uring.o opdef.o kbuf.o rsrc.o notif.o \
->>   					epoll.o statx.o timeout.o fdinfo.o \
->>   					cancel.o waitid.o register.o \
->>   					truncate.o memmap.o
->> +obj-$(CONFIG_PAGE_POOL)	+= zcrx.o
->>   obj-$(CONFIG_IO_WQ)		+= io-wq.o
->>   obj-$(CONFIG_FUTEX)		+= futex.o
->>   obj-$(CONFIG_NET_RX_BUSY_POLL) += napi.o
+>> Yep, I can add a helper for that, but I'm not sure how to
+>> deduplicate it further while trying not to pollute the
+>> napi polling path.
 > 
-> I wonder if this should be expressed a bit differently. Probably have a
-> CONFIG_IO_URING_ZCRX which depends on CONFIG_INET and CONFIG_PAGE_POOL.
-> And then you can also use that rather than doing:
+> It was just a minor nit; I wouldn't want to hold back this important
+> work just for that.
 > 
-> #if defined(CONFIG_PAGE_POOL) && defined(CONFIG_INET)
+> I'm still looking at the code myself to see if I can see a better
+> arrangement of the code.
 > 
-> in some spots. Not a big deal, it'll work as-is. And honestly should
-> probably cleanup the existing IO_WQ symbol while at it, so perhaps
-> better left for after the fact.
+> But that could always come later as a cleanup for -next ?
 
-I should probably just add not selectable by user
-CONFIG_IO_URING_ZCRX and make it depend on INET/etc.
-
-
->> +static int io_allocate_rbuf_ring(struct io_zcrx_ifq *ifq,
->> +				 struct io_uring_zcrx_ifq_reg *reg)
->> +{
->> +	size_t off, size;
->> +	void *ptr;
->> +
->> +	off = sizeof(struct io_uring);
->> +	size = off + sizeof(struct io_uring_zcrx_rqe) * reg->rq_entries;
->> +
->> +	ptr = io_pages_map(&ifq->rqe_pages, &ifq->n_rqe_pages, size);
->> +	if (IS_ERR(ptr))
->> +		return PTR_ERR(ptr);
->> +
->> +	ifq->rq_ring = (struct io_uring *)ptr;
->> +	ifq->rqes = (struct io_uring_zcrx_rqe *)((char *)ptr + off);
->> +	return 0;
->> +}
-> 
-> No need to cast that ptr to char *.
-
-I'll apply it and other small nits, thanks for the review
+It's still early, there will be a v6 anyway. And thanks for
+taking a look.
 
 -- 
 Pavel Begunkov

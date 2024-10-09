@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-3532-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3533-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72C999774E
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 23:12:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E8799777D
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 23:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F8B1C21CBA
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 21:12:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D28DB21463
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 21:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C541E3760;
-	Wed,  9 Oct 2024 21:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D261E1C30;
+	Wed,  9 Oct 2024 21:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yaTZXXa7"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iny9wZto"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CAD1E32C1
-	for <io-uring@vger.kernel.org>; Wed,  9 Oct 2024 21:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBF22119
+	for <io-uring@vger.kernel.org>; Wed,  9 Oct 2024 21:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728508321; cv=none; b=RwaSSqpTJC4SzhMv1P10oZeniOmq4/YMpTCcOKj8uBZgd6+5KpBTirplsWXAIA1knfmD/ue/hi3Phs5sI+hAEpLrMobg/w2NhMNtTU5lgW0K1oC7DME1E3E+cqo830RMOCf598WCVR3jRWuyc5rcUOtZ/G4MaUJlpSJwHEIxJ1k=
+	t=1728509398; cv=none; b=El5Wy8UJD7+3h4uElNsU37ZKiP00+6Lvjz1gwBOued05O/5eafK8QBysqw6SEOwsg32vGpNvbMzyCKgqw7TdCxYofptOnMO6N2SqdzwIgAmea3hBwGjt9Ab+45Y8W3KnahEIAvCLeavMX5u8RUFljzTpsfyU7QmKgnPQ5z7RShE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728508321; c=relaxed/simple;
-	bh=tDiQmmnYC8QCBHjTCFKNaYKTLQOcG0YvoNcNUVkKLFI=;
+	s=arc-20240116; t=1728509398; c=relaxed/simple;
+	bh=fn76Svm8OiX1t6y3rwEUHt/hSEryZJBd25LbsOLHIXI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NhiFEHDzItu++m7i3fLs9ibvbsNm8FV/rA556nithnyV0TXIGM97x/UMUQOiIaim6XjITG1132zPQL1nR/FXZzwx2SEGFf4OYnoeOilUhmrn/dHbnLKu7nJexIt3SygcUmpvs7V8NGs0r7+A4hF1Oaiof8JSXxUDdC0sj9whDBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yaTZXXa7; arc=none smtp.client-ip=209.85.160.174
+	 To:Cc:Content-Type; b=LVx8bn+OVbITPmLNq/nRJWA7U0+YJ51s3v3ORrI41fLyK+tYiO0LAgR2aBwBk6tLx9ulGsQ3Ehtbi50xE+GbyCTy35GAgDeF6Vwk07Ctv6EnRXbqHbDN4369gecPaHlZqeAaLgbKh3BRcU5oBSczB6ZMcHIn2JbDvlUk+wBI5A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iny9wZto; arc=none smtp.client-ip=209.85.160.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-460395fb1acso90271cf.0
-        for <io-uring@vger.kernel.org>; Wed, 09 Oct 2024 14:11:59 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4603d3e0547so95391cf.0
+        for <io-uring@vger.kernel.org>; Wed, 09 Oct 2024 14:29:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728508319; x=1729113119; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728509396; x=1729114196; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tDiQmmnYC8QCBHjTCFKNaYKTLQOcG0YvoNcNUVkKLFI=;
-        b=yaTZXXa7plY6DXwuASLh3W590a5yjdWfAqV6EoiBpyQFWCGVHrTbJ2pOyIgpidPE50
-         0iGDfKNr/A7E1PiZapbVo6hcLanXnb5yckhca7Vq4JcCz1CooXmoYX/0kEOJ9YSm5TsC
-         YqFU3Dt/tH+V60ZQOc5OcBFPM5eXNgSDlaaNVOa0l4nnvUzp5LM0Y06a+q5+68ssyYeC
-         u5uZ/wb2oXlKv6DL9IhXdSsOqAca0m9PM0L4Twer2k87vincnpdzL06CCohntJXox4s1
-         3KBot3yN7g9V4z3bpMvZjP/WBwNIZsSyc2ytX5Mw/M93VNnxMcw9joRLEdFCbV/yT7b0
-         cqqA==
+        bh=fn76Svm8OiX1t6y3rwEUHt/hSEryZJBd25LbsOLHIXI=;
+        b=iny9wZtotDvRdyN4ZzWNyXIAtGtLK8OXXpUyCQupDhnFjiP45OPspycSDVydZfmp0h
+         GABVtjMVIhVZKUGeXOIBbAoAZRU3lfZMEAoWF8n2Zl09fxLSErSCaAoX1Y5ANFrS7dP6
+         Gh4hUeAuMjkMDeyusEOUskOht70q4c4nNHUlYyBiclQnlJ/HKNsppSf7M0xx0zLworin
+         OU+jBIEN1uetITSYIOqyHYSqcMGVu2uffPqEYak0AhwYakQn1iWxpgsiKeLOiJlU0Ww5
+         2pGkGttfgzqipn8mxY73XnDLwncP+pFXLYyFxAwqKBFeYl75MWZjsjL3gnSYH+702XgH
+         Lq9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728508319; x=1729113119;
+        d=1e100.net; s=20230601; t=1728509396; x=1729114196;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tDiQmmnYC8QCBHjTCFKNaYKTLQOcG0YvoNcNUVkKLFI=;
-        b=uIPZY4vDWCGvmGJ0XQOabIe43fLoN4q/YCgDd2VwOkyMsCfn/6txzJzIXFKVnVLFsl
-         F39dhuWNOG0Ho2nTIsZUI571TQ8cDJg7sgzI4PIuBf3KuB0jEwW0qvDierRXc23x7AQH
-         2vgIj87nZzyeGR4LROAqUPO4QkvbjfukLzB83QtRK7p1hUH5KvBOwfJJoCPisvrMFaNh
-         SPl0Jwh6YPSScnl3nTj14efoocUpBJcaMmA+PT4dDOXymiaeUY4z3FThjkb/fvys0z1O
-         qNbEHa+9zibRFzq92woMVB2SVXJzuIlPUUjzbti3y7JA1fyXGo15iuK7cyDxnJKKMwns
-         tiTA==
-X-Gm-Message-State: AOJu0Yz8/+G5+SzybWr604DEz0LdwiPyjrc4uDoMG0Su/TvaZarTPUM8
-	Cauu4e1BatbSvl5uXsoUg2ooMSVfFZslp7ly5YG7r2STWCaLJAeXHG3i7sh5vzHPeG8t1jGvGKX
-	+Y8xR8XeanVLJH9liuOPGrABoZ0VV7s7Odr9t
-X-Google-Smtp-Source: AGHT+IG0CkxSS2KNR9g9xFhl+BGJZe4WWWDqAEC6C1Ey/4/z6ysY4E3GxuJTsY9lca7U4j6L4LhiBrbXUTutH2ue/XY=
-X-Received: by 2002:a05:622a:5e89:b0:45f:924:6bcd with SMTP id
- d75a77b69052e-46040440db2mr1007721cf.22.1728508318768; Wed, 09 Oct 2024
- 14:11:58 -0700 (PDT)
+        bh=fn76Svm8OiX1t6y3rwEUHt/hSEryZJBd25LbsOLHIXI=;
+        b=KdxTxOkC7jBDlDmaQhFJsbvx6zPLiR/1ntbbuxLCOTgOvhi1bGn9EV+Td7DI8ZgTh1
+         bdTBa4q2zGOcrab88MyNTNyid9ajn5mQv+PM3wcMf1Dj4nMqyQ0R6SuKiAlrGEM1nqGV
+         9Tw4Rd2c+qOLe3FDAHBtrRN4S9YizeiczNjU7cPaC5gPnM9wDFiTA/67E/ypzAdC0bMM
+         bARNJwir6s5dF/ERYH/qM6vbihWX687IncmX05eKMNwpHQTMNy8dhEW8wSFp3k8aQ7hr
+         Ok+u/sh4Brmf2/UTJeUWG3zBA5M7jpG3TlMUwNJW37uZ7DWwePJ6u9LMrTcSmiJaHlrM
+         5m+A==
+X-Gm-Message-State: AOJu0YxZZ34NF68JB/QCjUBCG8sYuoZl9cHP8Bk4n2PhtZ2oafMufDmY
+	ua9IQeovL6E6tmvOw8LRVMJKbpeUJzynTINM+Er0FcYq6AF3QY70+V34iedv30tHIYgdWAtKZZG
+	uzFqTLQ0PFvORl6Mi4vQnPOingw0YIFraTApy
+X-Google-Smtp-Source: AGHT+IEmUrVTOR01x0sMOaDeSFo7MLqbhWFmE6974LVCsvUmTt9WB3PMswxlZAHTXDkBbEUP4EhsNOtnIYy2oHrN+2M=
+X-Received: by 2002:a05:622a:8387:b0:45e:f057:3fd6 with SMTP id
+ d75a77b69052e-460404743bamr1186711cf.20.1728509395628; Wed, 09 Oct 2024
+ 14:29:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007221603.1703699-1-dw@davidwei.uk> <20241007221603.1703699-8-dw@davidwei.uk>
-In-Reply-To: <20241007221603.1703699-8-dw@davidwei.uk>
+References: <20241007221603.1703699-1-dw@davidwei.uk> <20241007221603.1703699-11-dw@davidwei.uk>
+In-Reply-To: <20241007221603.1703699-11-dw@davidwei.uk>
 From: Mina Almasry <almasrymina@google.com>
-Date: Wed, 9 Oct 2024 14:11:45 -0700
-Message-ID: <CAHS8izPuRgGPz9Fg8NcsJzUaX5+8zSvT33XEp=LqdKMdm=KzbA@mail.gmail.com>
-Subject: Re: [PATCH v1 07/15] net: page pool: add helper creating area from pages
+Date: Wed, 9 Oct 2024 14:29:41 -0700
+Message-ID: <CAHS8izNChXnQaMS5X=--e6Jz6OZGcJsgoSH4D6r4MEmFhxxdyQ@mail.gmail.com>
+Subject: Re: [PATCH v1 10/15] io_uring/zcrx: add io_zcrx_area
 To: David Wei <dw@davidwei.uk>
 Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, 
 	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
@@ -87,27 +87,40 @@ Content-Transfer-Encoding: quoted-printable
 
 On Mon, Oct 7, 2024 at 3:16=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
 >
-> From: Pavel Begunkov <asml.silence@gmail.com>
+> From: David Wei <davidhwei@meta.com>
 >
-> Add a helper that takes an array of pages and initialises passed in
-> memory provider's area with them, where each net_iov takes one page.
-> It's also responsible for setting up dma mappings.
+> Add io_zcrx_area that represents a region of userspace memory that is
+> used for zero copy. During ifq registration, userspace passes in the
+> uaddr and len of userspace memory, which is then pinned by the kernel.
+> Each net_iov is mapped to one of these pages.
 >
-> We keep it in page_pool.c not to leak netmem details to outside
-> providers like io_uring, which don't have access to netmem_priv.h
-> and other private helpers.
+> The freelist is a spinlock protected list that keeps track of all the
+> net_iovs/pages that aren't used.
 >
+> For now, there is only one area per ifq and area registration happens
+> implicitly as part of ifq registration. There is no API for
+> adding/removing areas yet. The struct for area registration is there for
+> future extensibility once we support multiple areas and TCP devmem.
+>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> Signed-off-by: David Wei <dw@davidwei.uk>
 
-Initial feeling is that this belongs somewhere in the provider. The
-functions added here don't seem generically useful to the page pool to
-be honest.
+This patch, and the later patch to add the io_uring memory provider
+are what I was referring to in the other thread as changes I would
+like to reuse for a socket extension for this.
 
-The challenge seems to be netmem/net_iov dependencies. The only thing
-I see you're calling is net_iov_to_netmem() and friends. Are these the
-issue? I think these are in netmem.h actually. Consider including that
-in the provider implementation, if it makes sense to you.
+In my mind it would be nice to decouple the memory being bound to the
+page_pool from io_uring, so I can bind a malloced/pinned block of
+memory to the rx queue and use it with regular sockets. Seems a lot of
+this patch and the provider can be reused. The biggest issue AFAICT I
+see is that there are io_uring specific calls to set up the region
+like io_buffer_validate/io_pin_pages, but these in turn seem to call
+generic mm helpers and from a quick look I don't see much iouring
+specific.
 
---=20
+Seems fine to leave this to a future extension.
+
+--
 Thanks,
 Mina
 

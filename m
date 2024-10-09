@@ -1,72 +1,73 @@
-Return-Path: <io-uring+bounces-3493-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3494-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D448299713A
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 18:24:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384C299719F
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 18:33:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 047611C22563
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 16:24:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83321F291E1
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 16:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780621DF997;
-	Wed,  9 Oct 2024 16:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5955A38DE5;
+	Wed,  9 Oct 2024 16:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="XoVKaUu0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mL3RECTy"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F7E1F4723
-	for <io-uring@vger.kernel.org>; Wed,  9 Oct 2024 16:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC02B7BAEC;
+	Wed,  9 Oct 2024 16:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490428; cv=none; b=nHht0+NLic1x+QzLuPbabSOP++U9N5ASfcFNBV42oH4D3CNpy6V3rA5AhkIKtQONS77B9hmv8+9GEaWYFZUdT5nMfjB6hPI0yYiEg3OYGPOcAmEPAmP1TIXvMeYgACBOEtaWNAt7l7IhXDMfMa7nPTt4pwhByMnHLVweZIpueGA=
+	t=1728491306; cv=none; b=X8jqHUU3dsc76QNQV0whuQ+kvJQ9PXQJv6ifewHyVSuf+QzBGc74koDWmhlK3pvMbGyzgx/eL7BjqPiVgxhEe+Sl6XDd3zLpczzH556LBSZPoWAzovLAE+25moeQJNX6W8m5s1h0lBnIBNVkivmo/3uqbd63g9R6q+uOThMoUPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490428; c=relaxed/simple;
-	bh=qRDhwbKc4gqUv4odZFgBRE0svDDR1jk8/VJtFT5BLpw=;
+	s=arc-20240116; t=1728491306; c=relaxed/simple;
+	bh=od0tAH3/rCJbrl8G8rGMfLSYEfP2DV1tPP6XnEekH7E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eP8+iF0CHeMzx32jTu2umnJqNthjXR/afZsc+I3CqGJOcf7PGuuHfFww3w5gIGE02ZkrkLvGacQd9xgScqvQEQv6wptzh8EQDfSOP1+GzS59DnL1Sfo1CTcBvu23nfsai9Hoa+KKGIWLRVj3CpDITEuAm2V76rTRU/Qpozjr43I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=XoVKaUu0; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71df7632055so4156142b3a.3
-        for <io-uring@vger.kernel.org>; Wed, 09 Oct 2024 09:13:46 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=npqAGHXDeWxx3E0eerwjpKvBUbYwtE22WbN1JnaHIeANL1/99DHnlzxMD/JIzsRtOdEYrle+GD5+wui1I/fxbfiCislcJuFf54aMty5fhSQJql83CHNNgCbEjQNkM/w67cWxwHlZpdjKS7CMGV1u1aOtIUIQ4+xrVTBWYEHxJgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mL3RECTy; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7e9fdad5af8so2849646a12.3;
+        Wed, 09 Oct 2024 09:28:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1728490426; x=1729095226; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I33A6jYeY45I8ALsp4gxb0eFudKjIyGKk+ralmB1OTU=;
-        b=XoVKaUu0G1Rst4uSlyRoYXVfFtnrboa/r9k4ROZ3JBauitnIZwVtHZcheD4q55SBNs
-         nJq1dqNOghuDvZW44ATEXNHUfykrfxu9tuqTPPxzKE4GqcNvr3f56+YAWR1ueV+arm7u
-         WOa5nnVRCG0A7ylr0cUrcg80l/fgCzjtnl8C8=
+        d=gmail.com; s=20230601; t=1728491304; x=1729096104; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3SlEKMU6Yovy/NNNEw6pYL/e2D6bAzvVuRCK5L6mdaQ=;
+        b=mL3RECTyMznHWbM2/nPYiLKIe6VMV1kvjUI8ufynQVeF0FnUIFoTd+d6f2och8192n
+         +zLb2pMZfEHw6IsiiFBfKuYpI0SuKKJLW2C0La7mcfrhj/PATZe1fHZrG4g09jpO2vJS
+         dYpjX72us1qClz+bLw+LPHy9/vrhlc1C3yx29aXdQn0pC3gP0Lx0HBuBjOf4GBy0aWeV
+         w0hviMFB15HXS+O7fevCB7VMd2A0s+twuXWpp2b0wP22tUhyyY6iiLpBXDt4L0tbFhbp
+         sTSyhJqRvwz73nSQY7CvXyEv8LAGr0d/1+b7gr0aR0FcUE/Vt2kUlXB2r2tW1qCjmFkP
+         c8Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728490426; x=1729095226;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I33A6jYeY45I8ALsp4gxb0eFudKjIyGKk+ralmB1OTU=;
-        b=jfU0NIiyNgFYf4zAucFxclIGCSSuFuX3uD47fzuWWmHCHOBJFWSYx+hRQIxR+Pp/24
-         btpdZJoK0prlg3SqYwd+LU3BWMwhR48GnG8Fj+ZlqUKUpyN0kkNormZ5cPaokRSbQEak
-         xPQRrCWTQSObK0bC4G2PwhpveQyKA1JFAXfbDse/8EDUFp0u9+2u6skwRlcvS7FKj2O2
-         DRh2zQ43K7NZeMDS89Yk7IFZ78+EBvaWUhRkSwq481Yfg8TOasZIJR6KUhPBLh9TkQG3
-         UDVqjX+Pyy+qm0bs4sGF3tXNjizDNJzakBAtd614atqnCsnLdRpcNSmo0NnxbAvRF0dU
-         I9Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUk4ushyZcKuhuSovfFlK6i+EdpzbFl7u3eRx4ZLUFkhcwE8/oGPWuxam3rEHSv77+9REHopFXULw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZKdYN2EHBrPlVfWOCpmy1BQ5dY2/QWDEtbP9QJIa5uETlSR7u
-	cR3N5fZGO1BtpbRxQmaN9+HN8iOX2zanzLq4RrOge8SgDVRbUucUxhbCjuCfNeA4AkjGFrbVExB
-	y
-X-Google-Smtp-Source: AGHT+IE+LFDDXBBvy4teY9len83ORvaHirPjVhFZMIZBw5XnRw0clMLhZarJLPm7Q34wgwkMUTUgLw==
-X-Received: by 2002:a05:6a00:2d83:b0:71d:e93e:f53b with SMTP id d2e1a72fcca58-71e1dbbc1cemr5337089b3a.22.1728490426111;
-        Wed, 09 Oct 2024 09:13:46 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0cbba1csm7968933b3a.33.2024.10.09.09.13.44
+        d=1e100.net; s=20230601; t=1728491304; x=1729096104;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3SlEKMU6Yovy/NNNEw6pYL/e2D6bAzvVuRCK5L6mdaQ=;
+        b=qfG78ZOavTlqfT19TGUEuMq57c8sstw53opFvVgiCEjTXGsENB4Vh6YKDvPMMg3zso
+         P8ZCEac7KvutqECzq6xPH8v4UbwDL/63rZzqkpm3KFv895El5r+xE27pKsKYzjRLoXYC
+         ggTKH6bo0q8xiM1fzk5a6RBEHw6MSRWbvJF0/d8+PP9mwlHUwikhRjXZ+EDWLiLjCZ1z
+         01DrAcBjhFHDeYy5cqbO61+Dc9y3tQ10JpyAbkgUoGjdwiRXbzGjT4aEF31BoE7Of5GJ
+         1sfinl46bLh5HbW/GvvSxbhhoOBaZGYLWz1tBPHCb06Eg5ELIv+5muGjK/YzRs3aJ8ho
+         BaMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyQz1e+x9shXGmz6pUQMFkCYWUjvYYmicWG4O6os7ovDUO/PpSHQwSnvJ7yRrPFWc/gDwI7djcCQ==@vger.kernel.org, AJvYcCWVx8P/lzlBoVXkFVAM3WP5O6g21w4zmx9qVzGJPH4l+TncqqQ1QaGLpG+ECQiu2Uqqjnu7IGtc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx61qEhm0h5JlmArrE6xC/Sr9W5SRim7/Oa/QQNB5al7KwwJn0d
+	XSaEPzogvD9LXnGC3Ef+2i2aQgd9YjmxCAfE2gUIFErbKeaYmwQ=
+X-Google-Smtp-Source: AGHT+IELN89y5xMl4I0rWop66l6mY6j/Zo75tfC26y0z/ZMbJ7Y0GLy57WcDdSU7ccxymCHbXiowUw==
+X-Received: by 2002:a05:6a20:7b02:b0:1d8:a759:5251 with SMTP id adf61e73a8af0-1d8a7595303mr2590367637.21.1728491303946;
+        Wed, 09 Oct 2024 09:28:23 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a55ff9f2sm1891006a91.15.2024.10.09.09.28.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 09:13:45 -0700 (PDT)
-Date: Wed, 9 Oct 2024 09:13:43 -0700
-From: Joe Damato <jdamato@fastly.com>
+        Wed, 09 Oct 2024 09:28:23 -0700 (PDT)
+Date: Wed, 9 Oct 2024 09:28:22 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
 To: Pavel Begunkov <asml.silence@gmail.com>
 Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
 	netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
@@ -76,115 +77,65 @@ Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
 	Jesper Dangaard Brouer <hawk@kernel.org>,
 	David Ahern <dsahern@kernel.org>,
 	Mina Almasry <almasrymina@google.com>
-Subject: Re: [PATCH v1 08/15] net: add helper executing custom callback from
- napi
-Message-ID: <ZwartzLxnL7MXam6@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
-	io-uring@vger.kernel.org, netdev@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Mina Almasry <almasrymina@google.com>
+Subject: Re: [PATCH v1 03/15] net: generalise net_iov chunk owners
+Message-ID: <ZwavJuVI-6d9ZSuh@mini-arch>
 References: <20241007221603.1703699-1-dw@davidwei.uk>
- <20241007221603.1703699-9-dw@davidwei.uk>
- <ZwWxQjov3Zc_oeiR@LQ3V64L9R2>
- <6e20af86-8b37-4e84-8ac9-ab9f8c215d00@gmail.com>
+ <20241007221603.1703699-4-dw@davidwei.uk>
+ <ZwVT8AnAq_uERzvB@mini-arch>
+ <ade753dd-caab-4151-af30-39de9080f69b@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6e20af86-8b37-4e84-8ac9-ab9f8c215d00@gmail.com>
+In-Reply-To: <ade753dd-caab-4151-af30-39de9080f69b@gmail.com>
 
-On Wed, Oct 09, 2024 at 04:09:53PM +0100, Pavel Begunkov wrote:
-> On 10/8/24 23:25, Joe Damato wrote:
-> > On Mon, Oct 07, 2024 at 03:15:56PM -0700, David Wei wrote:
+On 10/08, Pavel Begunkov wrote:
+> On 10/8/24 16:46, Stanislav Fomichev wrote:
+> > On 10/07, David Wei wrote:
 > > > From: Pavel Begunkov <asml.silence@gmail.com>
-> > 
-> > [...]
-> > 
-> > > However, from time to time we need to synchronise with the napi, for
-> > > example to add more user memory or allocate fallback buffers. Add a
-> > > helper function napi_execute that allows to run a custom callback from
-> > > under napi context so that it can access and modify napi protected
-> > > parts of io_uring. It works similar to busy polling and stops napi from
-> > > running in the meantime, so it's supposed to be a slow control path.
+> > > 
+> > > Currently net_iov stores a pointer to struct dmabuf_genpool_chunk_owner,
+> > > which serves as a useful abstraction to share data and provide a
+> > > context. However, it's too devmem specific, and we want to reuse it for
+> > > other memory providers, and for that we need to decouple net_iov from
+> > > devmem. Make net_iov to point to a new base structure called
+> > > net_iov_area, which dmabuf_genpool_chunk_owner extends.
 > > > 
 > > > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 > > > Signed-off-by: David Wei <dw@davidwei.uk>
+> > > ---
+> > >   include/net/netmem.h | 21 ++++++++++++++++++++-
+> > >   net/core/devmem.c    | 25 +++++++++++++------------
+> > >   net/core/devmem.h    | 25 +++++++++----------------
+> > >   3 files changed, 42 insertions(+), 29 deletions(-)
+> > > 
+> > > diff --git a/include/net/netmem.h b/include/net/netmem.h
+> > > index 8a6e20be4b9d..3795ded30d2c 100644
+> > > --- a/include/net/netmem.h
+> > > +++ b/include/net/netmem.h
+> > > @@ -24,11 +24,20 @@ struct net_iov {
+> > >   	unsigned long __unused_padding;
+> > >   	unsigned long pp_magic;
+> > >   	struct page_pool *pp;
+> > > -	struct dmabuf_genpool_chunk_owner *owner;
+> > > +	struct net_iov_area *owner;
 > > 
-> > [...]
-> > 
-> > > diff --git a/net/core/dev.c b/net/core/dev.c
-> > > index 1e740faf9e78..ba2f43cf5517 100644
-> > > --- a/net/core/dev.c
-> > > +++ b/net/core/dev.c
-> > > @@ -6497,6 +6497,59 @@ void napi_busy_loop(unsigned int napi_id,
-> > >   }
-> > >   EXPORT_SYMBOL(napi_busy_loop);
-> > > +void napi_execute(unsigned napi_id,
-> > > +		  void (*cb)(void *), void *cb_arg)
-> > > +{
-> > > +	struct napi_struct *napi;
-> > > +	bool done = false;
-> > > +	unsigned long val;
-> > > +	void *have_poll_lock = NULL;
-> > > +
-> > > +	rcu_read_lock();
-> > > +
-> > > +	napi = napi_by_id(napi_id);
-> > > +	if (!napi) {
-> > > +		rcu_read_unlock();
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-> > > +		preempt_disable();
-> > > +	for (;;) {
-> > > +		local_bh_disable();
-> > > +		val = READ_ONCE(napi->state);
-> > > +
-> > > +		/* If multiple threads are competing for this napi,
-> > > +		* we avoid dirtying napi->state as much as we can.
-> > > +		*/
-> > > +		if (val & (NAPIF_STATE_DISABLE | NAPIF_STATE_SCHED |
-> > > +			  NAPIF_STATE_IN_BUSY_POLL))
-> > > +			goto restart;
-> > > +
-> > > +		if (cmpxchg(&napi->state, val,
-> > > +			   val | NAPIF_STATE_IN_BUSY_POLL |
-> > > +				 NAPIF_STATE_SCHED) != val)
-> > > +			goto restart;
-> > > +
-> > > +		have_poll_lock = netpoll_poll_lock(napi);
-> > > +		cb(cb_arg);
-> > 
-> > A lot of the above code seems quite similar to __napi_busy_loop, as
-> > you mentioned.
-> > 
-> > It might be too painful, but I can't help but wonder if there's a
-> > way to refactor this to use common helpers or something?
-> > 
-> > I had been thinking that the napi->state check /
-> > cmpxchg could maybe be refactored to avoid being repeated in both
-> > places?
+> > Any reason not to use dmabuf_genpool_chunk_owner as is (or rename it
+> > to net_iov_area to generalize) with the fields that you don't need
+> > set to 0/NULL? container_of makes everything harder to follow :-(
 > 
-> Yep, I can add a helper for that, but I'm not sure how to
-> deduplicate it further while trying not to pollute the
-> napi polling path.
+> It can be that, but then io_uring would have a (null) pointer to
+> struct net_devmem_dmabuf_binding it knows nothing about and other
+> fields devmem might add in the future. Also, it reduces the
+> temptation for the common code to make assumptions about the origin
+> of the area / pp memory provider. IOW, I think it's cleaner
+> when separated like in this patch.
 
-It was just a minor nit; I wouldn't want to hold back this important
-work just for that.
-
-I'm still looking at the code myself to see if I can see a better
-arrangement of the code.
-
-But that could always come later as a cleanup for -next ?
+Ack, let's see whether other people find any issues with this approach.
+For me, it makes the devmem parts harder to read, so my preference
+is on dropping this patch and keeping owner=null on your side.
 

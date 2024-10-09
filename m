@@ -1,129 +1,93 @@
-Return-Path: <io-uring+bounces-3495-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3496-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B8E9971BD
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 18:36:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733369971D1
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 18:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEEBE281CD9
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 16:36:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04E6EB26049
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 16:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503B01E25F0;
-	Wed,  9 Oct 2024 16:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D35419D098;
+	Wed,  9 Oct 2024 16:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X4gyktCo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIcvZ5r5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48FA1E1C2F;
-	Wed,  9 Oct 2024 16:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C4D198A01;
+	Wed,  9 Oct 2024 16:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728491423; cv=none; b=Z8Ga3DsCQ1SSSdvZU9/EBpha6VZJ0nt60lQoQYJd3DFJdpJBvrJbUMnGCjuhzz+fCyGiZY4PhydwceueSgF8W4uzGNJr+paXEUEtSH2K/iTssO6wePixMkV/7l63p4aiAepVpuHTRC3Aqiwp/gDmcvw2lH5IP2sA+AooEYL9Qi0=
+	t=1728491744; cv=none; b=GOjcVz9M8pOa1xv8YLPzeRlhyvOjcSfgps4K0sGqysUI6GGL1+aE9qYqGwptFQGioG1Wr8Y8W9xflqlEcqxSkZlDY6BKTKqjIepRXBxjATNIEBMehbEBgY2mwC5ro/69g0HmOw4aLHDW23RUG683mRqE0uh1xpdxSXrao1ApI/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728491423; c=relaxed/simple;
-	bh=rnFfpJwKKpScDBZ/fxV66dFCup5vbrrMbx4avl30qTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MGfvhgeFUK4PRyIbvE6F7r8S5B1xhLOFmCcsYfpZEqI4R5Jkdp0jQiAnsJTG1GP2Qb6rPddn1XlOxptA0IHIq9pcY1+lbMsZvs8XgfHS2kIG9v2wUBKkiaF3961HvFLCNUAZCxFfKwT73eELOWsiFxUm0RTsd8gqGEsxyJHQgAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X4gyktCo; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71dfe07489dso6899b3a.3;
-        Wed, 09 Oct 2024 09:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728491421; x=1729096221; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J6tBkoAxRcUXBcH6ylPks977Lpgg87dO/N6OEdsN19E=;
-        b=X4gyktColLiHenZNV+zTuEVM5jA7OzUIoGwhqf8iHy2n4LZ6JE0JyyBvluFBcZETAD
-         U/uQYFifqrNkAao+TmrqaXdseKyTI8dC5aY87l9xCxpRjsGieT11aVcAAo7G7q8KBeHK
-         RccLzDzt6gH6AoKeiXh5xfQC/1RUShRtR3tWXp6E4SGjwNiw/r0f4ZVzX6VLbUyhD2x7
-         CtsoN178mer0jB/1KLF7LhsSGTQ9LnUQ47KLSHpJSX7uQyKUwXGJIHxVgQxjngO/frW4
-         6m+Z1EjkSRszSvlejUbOmbg6oKrYyONYbB5dMhi4sZtgWn4U5bvyYjohOCGnOYlnRDjA
-         EAXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728491421; x=1729096221;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J6tBkoAxRcUXBcH6ylPks977Lpgg87dO/N6OEdsN19E=;
-        b=B8dJiZWsFKki0gRdulFzgg42vJUpJk2eKLChIo9SgEptB+nzEWmOFGFfWnBwxGuLR6
-         ngYCfU69n6WtfZzvJ0USh7D4U9dUMCW9DlN1RxY0b81NKE51z+7OWdklmGmOLyb4ptW2
-         fE5tS3wq8Xr+wh/0AtaZPe41YhiBpcp+IXCYJGNqUZN18VhwgJ5xFnLWlR0UTBj0Sd18
-         ClQKqG0MuxnayOJ7JQdu0sJvv9TSWDm4hEzk/vUPO5SCk2CDpjBic4/soBAUUcC5ueEa
-         A4IK7awOaUe1yXcSKaNHOYaxtwcC3Su7RHCnc972a8AshwJBieoC4JofIm78MM2QeIrK
-         EpKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlUBEk/nOi9FAcoB/yBwSbzd5wVWQOnP2YvrX05/YmUfA7DQDbFwHdQwNaQSxknG0fFIfkOBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFOH5RgLMe9jJhKzFPEEEsnxtmJ1D4NcfBoFJ/ofwMnu5fay8P
-	+mwpx9E5lXPfZkQoOCTAVuceBSpLBGLv1jEDDuphprn+VqB3EcP1TzUih10=
-X-Google-Smtp-Source: AGHT+IFRc1VOyNUx/b1CtreCkgFTK2fjRI8fIwedmCY5kXeD2Hy0fDwik3qSG4NsU7tlUTGii5GHNg==
-X-Received: by 2002:a05:6a00:4616:b0:71d:fd34:aa98 with SMTP id d2e1a72fcca58-71e1dbca3bcmr5161902b3a.24.1728491420989;
-        Wed, 09 Oct 2024 09:30:20 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f680cbd5sm7484366a12.8.2024.10.09.09.30.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 09:30:20 -0700 (PDT)
-Date: Wed, 9 Oct 2024 09:30:19 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: David Wei <dw@davidwei.uk>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Mina Almasry <almasrymina@google.com>
-Subject: Re: [PATCH v1 13/15] io_uring/zcrx: add copy fallback
-Message-ID: <Zwavm2w30YAdoFsB@mini-arch>
-References: <20241007221603.1703699-1-dw@davidwei.uk>
- <20241007221603.1703699-14-dw@davidwei.uk>
- <ZwVWrAeKsVj5gbXY@mini-arch>
- <6b57fb43-1271-4487-9342-5f82c972b9c5@davidwei.uk>
+	s=arc-20240116; t=1728491744; c=relaxed/simple;
+	bh=Pj1JHpsjjEWao6KpxdYZtY6m5WhQQEKvk4q5IKNDY+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OFqztttOS8qu56O7O69V7hUQ9AboVCtil38Cout2AUsYX4sV/hGYyvL7KOg1yxkUFGPXtq8YXcVXFxDHqsop6ma+CT2OKEv1p4U+BMSBGw34/0A1NSoYpb3Xxh4X9rOvZ3uFUxijbJqOlWestiLGul0yFVwiGtdMT0QwcTMeHt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIcvZ5r5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C4CCC4CEC3;
+	Wed,  9 Oct 2024 16:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728491744;
+	bh=Pj1JHpsjjEWao6KpxdYZtY6m5WhQQEKvk4q5IKNDY+Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TIcvZ5r5MwVKCocNByGXsAqxBhSs03gafdC3k3TjWDyaoxFooPDVFTdXpoKvaJSvd
+	 CzqRXGfkbE4s8tjwL8S/yOoMSb3/HHdjYL3iwjn2wxEDb+DKFA4T7eGrE+LpdSS4Xu
+	 i6PiWXt4LJ8D4x2KQ7/dkvHjCcWgE+Oqv8pPd2Cng4uRfL9L6VGNVyRu2icf91LpdF
+	 fSWXLDrBHtHsH6NeVomvn6wxVG38OpBW/hXy/hvF5uM7pkjSb3rmdSZ1AdnhwUQhDI
+	 DOqOk+PuKVyEgZ265DbCitmqKrbyfK/y2PdRTxtDJVmBPBWtC/hJi0c9dv2e8AvPe9
+	 a2Zstg/krgUbg==
+Message-ID: <3b2646d6-6d52-4479-b082-eb6264e8d6f7@kernel.org>
+Date: Wed, 9 Oct 2024 10:35:43 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6b57fb43-1271-4487-9342-5f82c972b9c5@davidwei.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 00/15] io_uring zero copy rx
+Content-Language: en-US
+To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org, netdev@vger.kernel.org
+Cc: Pavel Begunkov <asml.silence@gmail.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Mina Almasry <almasrymina@google.com>
+References: <20241007221603.1703699-1-dw@davidwei.uk>
+ <2e475d9f-8d39-43f4-adc5-501897c951a8@kernel.dk>
+ <93036b67-018a-44fb-8d12-7328c58be3c4@kernel.org>
+ <2144827e-ad7e-4cea-8e38-05fb310a85f5@kernel.dk>
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <2144827e-ad7e-4cea-8e38-05fb310a85f5@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/08, David Wei wrote:
-> On 2024-10-08 08:58, Stanislav Fomichev wrote:
-> > On 10/07, David Wei wrote:
-> >> From: Pavel Begunkov <asml.silence@gmail.com>
-> >>
-> >> There are scenarios in which the zerocopy path might get a normal
-> >> in-kernel buffer, it could be a mis-steered packet or simply the linear
-> >> part of an skb. Another use case is to allow the driver to allocate
-> >> kernel pages when it's out of zc buffers, which makes it more resilient
-> >> to spikes in load and allow the user to choose the balance between the
-> >> amount of memory provided and performance.
-> > 
-> > Tangential: should there be some clear way for the users to discover that
-> > (some counter of some entry on cq about copy fallback)?
-> > 
-> > Or the expectation is that somebody will run bpftrace to diagnose
-> > (supposedly) poor ZC performance when it falls back to copy?
-> 
-> Yeah there definitely needs to be a way to notify the user that copy
-> fallback happened. Right now I'm relying on bpftrace hooking into
-> io_zcrx_copy_chunk(). Doing it per cqe (which is emitted per frag) is
-> too much. I can think of two other options:
-> 
-> 1. Send a final cqe at the end of a number of frag cqes with a count of
->    the number of copies.
-> 2. Register a secondary area just for handling copies.
-> 
-> Other suggestions are also very welcome.
+On 10/9/24 9:43 AM, Jens Axboe wrote:
+> Yep basically line rate, I get 97-98Gbps. I originally used a slower box
+> as the sender, but then you're capped on the non-zc sender being too
+> slow. The intel box does better, but it's still basically maxing out the
+> sender at this point. So yeah, with a faster (or more efficient sender),
 
-SG, thanks. Up to you and Pavel on the mechanism and whether to follow
-up separately. Maybe even move this fallback (this patch) into that separate
-series as well? Will be easier to review/accept the rest.
+I am surprised by this comment. You should not see a Tx limited test
+(including CPU bound sender). Tx with ZC has been the easy option for a
+while now.
+
+> I have no doubts this will go much higher per thread, if the link bw was
+> there. When I looked at CPU usage for the receiver, the thread itself is
+> using ~30% CPU. And then there's some softirq/irq time outside of that,
+> but that should ammortize with higher bps rates too I'd expect.
+> 
+> My nic does have 2 100G ports, so might warrant a bit more testing...
+> 
+
+It would be good to see what the next bottleneck is for io_uring with ZC
+Rx path. My expectation is that a 200G link is a means to show you (ie.,
+you will not hit 200G so cpu monitoring, perf-top, etc will show the
+limiter).
 

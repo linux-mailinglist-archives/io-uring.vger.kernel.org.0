@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3534-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3535-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1C7997794
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 23:34:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45CD89977BE
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 23:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282791F236FD
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 21:34:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F1D61F23EE4
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 21:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589181E260B;
-	Wed,  9 Oct 2024 21:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911F9192D7C;
+	Wed,  9 Oct 2024 21:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdIMn1+v"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwUe+eoo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFCF1E2319;
-	Wed,  9 Oct 2024 21:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75AE1E32A4;
+	Wed,  9 Oct 2024 21:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728509652; cv=none; b=q7ZgNoDBw8uZfdrmGU0x68mmSrwHjo8NDSc28zD8bC5Xw4zLCYjUGzwY79lHGwiVc8OzcePHB0bSNkih+JaYLZRdRJCuFdyrMZomz1Fj3bZdhgGxwS6k9NBZXgYs6kQp3fedltzTH43oBx5UdgRYF7EDWT92TephmGyeZEP3HL8=
+	t=1728510308; cv=none; b=boNBmQHYR/cVnXhI1VQoxxX+/Bb0UmRccawR48mkn+xhkNIRh0gLTqgCCpmC2StOKOdl0qAdCkpJUtD0PQfL/JwyHs9mc91sM6BG0bBtIitoZ23vRjv0qY66Li8Y2AMfZrnC6yaSCrbWvGiiRD4OJhIofDsnPHWjZ28SMK2aW0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728509652; c=relaxed/simple;
-	bh=lHfKgnCtm/CCHpxI9WFuei35vewby6gj7khdhc87O8M=;
+	s=arc-20240116; t=1728510308; c=relaxed/simple;
+	bh=AFRL93ZlC+gmCSH3PrEnnvkfkbILUzYzxtUb1HC7v5g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jaFDz1YcprO/0mDzlFAe1GIJtJWR2R8ClD+ptHDxn3t/4j5dvSfQGMiic4/g8fQu+c8OGDrJij5mX9X7hhk4c/cDjOMMzjZkH/8wdEM3LVZyR34aPdLgtpi6rhnOiKzH6QlbPpJQq74LrK9g1HuDqMnWQXrpqsLhevZOmvhwD3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SdIMn1+v; arc=none smtp.client-ip=209.85.218.46
+	 In-Reply-To:Content-Type; b=D4Us6MbP+lFGNIfhaJyRW8m2wwO6w9wSqrocqj6wYdCJJLoYUsKQ++/wBUzW8DrfR6Ea1zJSa0yEgb9fjkMWPshVTwpcerLlI6ET3MhVQTs4bCspOBlxTzgBcMOG8OXsGsdWXryxHXH0TDI6CDkxdpKnUkaEDYxcmCMmInPx0ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bwUe+eoo; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a99388e3009so33234266b.3;
-        Wed, 09 Oct 2024 14:34:10 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so2770575e9.0;
+        Wed, 09 Oct 2024 14:45:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728509649; x=1729114449; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728510305; x=1729115105; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=T+z46ZWj1YUnv5d1G/xe9Is0nKn9y9cGETjwYzve/YQ=;
-        b=SdIMn1+vKXz3F/C6wzVtmzD7S9xKOs5MCJ1FVr26icktoio8XwASfxy3af+L8Pv16y
-         uBibFI3uP8smoEMA6GdPR0xbHo461GcmAyQsY0R9L95deCKna20L0mXiBerLzqNegi17
-         dIgymdvZnNpQbuepmABREVJkAJaEK2dpkp588sMOjyfRAAV/O8R2eeA+zWMPXdDdNOpI
-         qlDa8pb25CAu68pTpR827zznlWFostBCg1IGELIvvKUy2rzn2j7Qdfjykh+lmBgTFCvI
-         KwgaCgPg21ciBUp0EIKZT0Kx2VAfczIHUCQXnxsW5QUIYguLsdTcF/LkHLf5+WHnMCx6
-         qsaw==
+        bh=B5uc8I1q8Mecsq6gXTDyyTsvEpj1SHV6KmDkEPC8bz0=;
+        b=bwUe+eoodwSCp+2HCfkC8bvtE60lDp/9Yt9YnGvb1zs5zG849UsNkbkG9JOYWRjEHd
+         BAzubPpYRSBS5RYPm27YBbhtrJRtMsHZlK4LNW5Y08cnBD+qJjp/qcVbdxKb5OikMf+P
+         M5F6y28hy9q3oGJ11YUi4BgRGY5XBARe/unY6WSLOWUORN/LyDCsHrAd89s35WjMc6dy
+         SiFXRgbA/OTOLV8PbApB5iwCZ69y2FbgNxLGGraeospk0LQGBxMajLVcDbkseeuE5Bq3
+         60ZaV9AgGn1urNh5xmY52bDeiS0zjVkDgvqh3zCdl1q+7mGEnD6b8opi5TV5fL6Av7tF
+         72zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728509649; x=1729114449;
+        d=1e100.net; s=20230601; t=1728510305; x=1729115105;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T+z46ZWj1YUnv5d1G/xe9Is0nKn9y9cGETjwYzve/YQ=;
-        b=fAb1T1FU6VV06XTI1Q/42TFFA1b7onRpBk96yLgi4Prk7sk5WcDWmY22rivVMZLqPM
-         608k6m7fdlYRypG/SBeQpDQMNFed2/KMWrLCZF7zMz6gC+H1ZyUwSx/96nvBoA+qlPPB
-         IuoFCOwHohX3dpuChJIc7XJXycr6z2JYrG8u3qyaBeffDOjUU+zKnlgEDyupPPn+R194
-         l5QauDx8ZGFVDGuJ4TYOhHIFXvLAqg9Dz8PBpoM5E3oFC5YVC8GAEG2iz3qArj0Kop70
-         2D/drIWe2YlSrn/PG3o4+NGY9jGjbefz2NJ471YbUDkslzlP4p8FOlUF8GhJt00GKjbq
-         Ll2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXJH1byvFy7NcV/d8891/aNZIcmDmqzprFyiv2i1YcXOTHidO0wEk3eDzEr6kCywpVntq8665E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUN18WCA6mqWUv/GP8mZ6rB1Xv+OkAqHnFPAdDhXQ41nvmQAn6
-	eM5V3IrPl+P3l42nCybeNC13JjvimW4S5fdUKhq8NSure92ecS2J
-X-Google-Smtp-Source: AGHT+IGWEDjkYTJf8+aIVyyykOxzdRRrinVbbIT3S5WYsZu1ZuogVFE58coK6jceTZONZ87anShLvA==
-X-Received: by 2002:a17:907:1ca3:b0:a99:762f:b296 with SMTP id a640c23a62f3a-a998d331720mr336335466b.59.1728509648631;
-        Wed, 09 Oct 2024 14:34:08 -0700 (PDT)
-Received: from [192.168.42.9] ([148.252.145.180])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9952bd2b24sm489933466b.163.2024.10.09.14.34.07
+        bh=B5uc8I1q8Mecsq6gXTDyyTsvEpj1SHV6KmDkEPC8bz0=;
+        b=ZHrIO0UPgsXF8n9tcfKYA7L+0pAIk5k+zwus0gOb+r40DCH7EkQq2fjoju8OLitNYF
+         ZtLVnaxVz5uzerLHXwhlh6hQyghw0+22QoB0gf6gJHPaAFHDlicNnM2VWcy+eYyRi7k9
+         Ghkmig9x13KOROLreUEhByUJUAm9C9CZjV4pqHALlUh+rvvl6h1rEN43W1IiDD7Wf0bR
+         3N4rp4K3r+T24B75qP94C/dBMiHaPNla1jrkFs34ac1rnMZzt6Dxw752SYcEcHQgVWeX
+         KJDi9jvWFetWkvUs2Jcrc7HkMZqi4unZXlxnP6lK2oaQuYYWyDssER8dEBQQk1RLYS6S
+         IvFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7l2twSLTRdMfz8MVv0AkspBRjw0lhLw7n6nzFwxh6B3hpE7Vw5pqkjBMOPGdas3RUPk7Rld4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7BvDXzA3laKodPz8mZnBYNen0o1y1sHTixzaGw4iNNzBP2ul4
+	q9l+1vh4URbGLbOoVmmOlqKIXlNhw6fz3kInsi+7vYlwE8gq+YlVq4zXrA==
+X-Google-Smtp-Source: AGHT+IFcKxTKnzY3E1Yh+YR4ALTzkPqaUnCWtr9oIRFoR5s8MngKn8tO5sZHtBQovhQ0l/bdx++3jw==
+X-Received: by 2002:a05:600c:1f07:b0:42c:b995:20db with SMTP id 5b1f17b1804b1-430ccf04332mr43684315e9.5.1728510304729;
+        Wed, 09 Oct 2024 14:45:04 -0700 (PDT)
+Received: from [192.168.42.9] ([148.252.140.94])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf51834sm31092775e9.26.2024.10.09.14.45.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 14:34:08 -0700 (PDT)
-Message-ID: <6e14c383-6cbc-4eb5-9580-74fba17ec36e@gmail.com>
-Date: Wed, 9 Oct 2024 22:34:43 +0100
+        Wed, 09 Oct 2024 14:45:04 -0700 (PDT)
+Message-ID: <c16651d1-5ab3-4233-841b-7a9681f80b0c@gmail.com>
+Date: Wed, 9 Oct 2024 22:45:39 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,8 +76,7 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 07/15] net: page pool: add helper creating area from
- pages
+Subject: Re: [PATCH v1 05/15] net: prepare for non devmem TCP memory providers
 To: Mina Almasry <almasrymina@google.com>, David Wei <dw@davidwei.uk>
 Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
  Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
@@ -85,42 +84,59 @@ Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
  Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
  <hawk@kernel.org>, David Ahern <dsahern@kernel.org>
 References: <20241007221603.1703699-1-dw@davidwei.uk>
- <20241007221603.1703699-8-dw@davidwei.uk>
- <CAHS8izPuRgGPz9Fg8NcsJzUaX5+8zSvT33XEp=LqdKMdm=KzbA@mail.gmail.com>
+ <20241007221603.1703699-6-dw@davidwei.uk>
+ <CAHS8izOqNBpoOTXPU9bJJAs9L2QRmEg_tva3sM2HgiyWd=ME0g@mail.gmail.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izPuRgGPz9Fg8NcsJzUaX5+8zSvT33XEp=LqdKMdm=KzbA@mail.gmail.com>
+In-Reply-To: <CAHS8izOqNBpoOTXPU9bJJAs9L2QRmEg_tva3sM2HgiyWd=ME0g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10/9/24 22:11, Mina Almasry wrote:
+On 10/9/24 21:56, Mina Almasry wrote:
 > On Mon, Oct 7, 2024 at 3:16 PM David Wei <dw@davidwei.uk> wrote:
 >>
 >> From: Pavel Begunkov <asml.silence@gmail.com>
 >>
->> Add a helper that takes an array of pages and initialises passed in
->> memory provider's area with them, where each net_iov takes one page.
->> It's also responsible for setting up dma mappings.
+>> There is a good bunch of places in generic paths assuming that the only
+>> page pool memory provider is devmem TCP. As we want to reuse the net_iov
+>> and provider infrastructure, we need to patch it up and explicitly check
+>> the provider type when we branch into devmem TCP code.
 >>
->> We keep it in page_pool.c not to leak netmem details to outside
->> providers like io_uring, which don't have access to netmem_priv.h
->> and other private helpers.
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> Signed-off-by: David Wei <dw@davidwei.uk>
+>> ---
+>>   net/core/devmem.c         |  4 ++--
+>>   net/core/page_pool_user.c | 15 +++++++++------
+>>   net/ipv4/tcp.c            |  6 ++++++
+>>   3 files changed, 17 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/net/core/devmem.c b/net/core/devmem.c
+>> index 83d13eb441b6..b0733cf42505 100644
+>> --- a/net/core/devmem.c
+>> +++ b/net/core/devmem.c
+>> @@ -314,10 +314,10 @@ void dev_dmabuf_uninstall(struct net_device *dev)
+>>          unsigned int i;
+>>
+>>          for (i = 0; i < dev->real_num_rx_queues; i++) {
+>> -               binding = dev->_rx[i].mp_params.mp_priv;
+>> -               if (!binding)
+>> +               if (dev->_rx[i].mp_params.mp_ops != &dmabuf_devmem_ops)
+>>                          continue;
 >>
 > 
-> Initial feeling is that this belongs somewhere in the provider. The
-> functions added here don't seem generically useful to the page pool to
-> be honest.
-> 
-> The challenge seems to be netmem/net_iov dependencies. The only thing
-> I see you're calling is net_iov_to_netmem() and friends. Are these the
-> issue? I think these are in netmem.h actually. Consider including that
-> in the provider implementation, if it makes sense to you.
+> Sorry if I missed it (and please ignore me if I did), but
+> dmabuf_devmem_ops are maybe not defined yet?
 
-io_uring would need bits from netmem_priv.h and page_pool_priv.h,
-and Jakub was pushing hard for the devmem patches to hide all of it
-under net/core/. It's a last week change, I believe Jakub doesn't
-want any of those leaked outside, in which case net/ needs to
-provide a helper.
+You exported it in devmem.h
+
+> I'm also wondering how to find all the annyoing places where we need
+> to check this. Looks like maybe a grep for net_devmem_dmabuf_binding
+> is the way to go? I need to check whether these are all the places we
+> need the check but so far looks fine.
+
+I whac-a-mole'd them the best I can following recent devmem TCP
+changes. Would be great if you take a look and might remember
+some more places to check. And thanks for the review!
 
 -- 
 Pavel Begunkov

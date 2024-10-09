@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3542-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3543-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB8B9978D2
-	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 01:05:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8089978F8
+	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 01:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61F98280D92
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 23:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31C451F235F8
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 23:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62AD18E348;
-	Wed,  9 Oct 2024 23:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A031418E02B;
+	Wed,  9 Oct 2024 23:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jTg1ugVr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iGl7Onth"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCAE28F5;
-	Wed,  9 Oct 2024 23:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009B8149C4F;
+	Wed,  9 Oct 2024 23:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728515118; cv=none; b=pc5X0pCwpvPNxf4IFcmVvEcayp/voaKv4EYlkr3zcXoprS+aGvqjRNmpezeKwzpCYl/8HHek4W/sU/9nM2gwFs792NWY2ufFY77fMPwVJqx5md1fj0SotMiafVowC3WXniMQhx5rL0CAjSf8AMkDwwLaG3g7Q8H3yZ/KQWj3Y7Y=
+	t=1728515764; cv=none; b=OU0IP777DFVO6n12y4v8+y/V+c4g+KR5xDio+G6FVZIQVEccft1Dp8h5l3aHjwExfp6ZGNJshX6kgVU/qXDEg/1hGS/dQHxWvasKw6z2K+++GY7Tobxzyp5MQHy243VKeiYl8BTFZwdplPv6IqIQmFnNkkd/Bo+dEGIHAO36xqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728515118; c=relaxed/simple;
-	bh=GVbu5W+EoawWiX9oP+c1hgIFjoj79O9cSV+IVre9ICw=;
+	s=arc-20240116; t=1728515764; c=relaxed/simple;
+	bh=vTqGZCEk/zBnFttORfT4upYwuKwwziq6Bi6LEe9RMPA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kRtCanmQY5BPfeVZ0dUAPL5MvkR04nstVygDEoqTvk3pBx93okxUq3jwd0mNM1umklrLiiPSmEQMZ1wmzrI5dXcfSqRdzj+NHNuAoZjOA9y7ycaKTQsCB8J8EaY0vKUTbZY7w/h5gqJPsx6jhi17wGsyIOiC8vz2IOxQRoL2YrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jTg1ugVr; arc=none smtp.client-ip=209.85.221.49
+	 In-Reply-To:Content-Type; b=VNa9dbpmOGwUSTlZTSRf1VYsdRzAu1U9vw5HEhfiReiWdNFm6BMN6Qrm4Mn5DWp6L9P8qMqOQquqT/ny0BY4/q/k9XjlMpWD9BokQA+5a/JQOumfeniv0m9oTzlFVwMRpMbiqg0lYoKxyKhzyXdFoY11/u7iP8dWFCMmlcVkY84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iGl7Onth; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4821e6b4so127109f8f.3;
-        Wed, 09 Oct 2024 16:05:16 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43056d99a5aso8940675e9.0;
+        Wed, 09 Oct 2024 16:16:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728515115; x=1729119915; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728515761; x=1729120561; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mwO/+TkrUmFpJirky8YHe7AeRiTCNVN59wiu+n2wTB8=;
-        b=jTg1ugVrjUB+YF+ExlACHSFgcI3bD/k53a+huezi/0ncMBQJTi8WOiZzKL6ShbtX8t
-         gCtgkKbBwzOLEhHr6iqt43mUjGcyWKcUiexw847X5m0SrkXMK7h8IvImRYm7WRSuh86e
-         xwp8zaBn5SgvjfUg9E20yqErveTnj0Xw1gGncqJFzA/E3GGb601yFWk7h6Y6PFSErzYX
-         XzizbB95e4mY0mzt5EnqBsiig8rSpVnQyYCkEQvz5Sp/l17xMgCFpb2nT5oqRPQRXOZH
-         8D/z+Pl5pokFOC3ppblOuSGR1fD87VUbj6BqMMQc8K/fZkvC80LX3AYaji7LkEr7ggYZ
-         o79A==
+        bh=httgxAgVR5a8WQxl6ZZFyi5BU8XXltONSneJVMDwTRw=;
+        b=iGl7Onthz1Rf2nHaflejDIJgccZxhUtLKjoMmMHrNurvYMYDnAQkojRPX87a5LZfo6
+         yJ2c9cvPksOQblK3bgNJXogQIUuvfzs1q5XPaO1HucHsTDoZPBOVFdcg5mZ0uRCPwpI7
+         lLHN85DJ8Pi4gyxLUAi6R/vpazVq9RLi1JZoEPa6snB13DaBqwWXo+WOUMESazRQRN44
+         WS+5yomlXxEr4I4ECm2TdVb9rJVsjNpuJHyBtFCLE7cMy7aieTkxrU6GgRI+frZ84NWC
+         eJ0ST9t2BwfXA+FxnlbhAwkqrMHs2Gp4/VAk9YKi/kuaxfvxa0FrhG6Jzokw8sR2W1n2
+         6FWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728515115; x=1729119915;
+        d=1e100.net; s=20230601; t=1728515761; x=1729120561;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mwO/+TkrUmFpJirky8YHe7AeRiTCNVN59wiu+n2wTB8=;
-        b=KX9xL9ggH9KUHievikDTBnFMqvEV9sHrH+KIiPPTY73TFuapReeg1FjvDX/l6ktJB8
-         7VQS70cdp51vyeTdFFAX20fk/WV30Cczc63bCzc/QQTycVSCy/8UO69s3NlypZzTgJex
-         4EObZKdMhcOX6lh+ZjdxeUqgT50a29GVVarkzmyX7zsmtP78wLP0GGU2iokEW7umot/7
-         FY4mwdXGqjRsEC8c/BwOCkfIjW5MouotkALxsMluN40GpG9Ri2FnGKYNCDermirQgv6w
-         O6Z39uzGPhbql6vzvmx3cyLob6EqEe8/JyCb+EiCwucAoMAbqfAMcYEPxgpLY43xdmZD
-         X/Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCXPoNagg54jPfyjrytyZw+qwCw3Fx0T5tThUt2bv029BsndQNWTwkP77Q8/Brw/tWq1vFMgZL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe6dsjZOxMgcn+Yvrc0qHznT3/Y35O9IHj512IXNS0CamsEzPx
-	/u175YvZ3eC81qt3dSbHQRgtIitq9aDscTSv/UtmFTfER1Teu8/h
-X-Google-Smtp-Source: AGHT+IGZkF+9qK+nZq7Hek9nP5VIf7zawyzbqSxZ09H4CR5hlE8riLheVAH8/2g58P14EwWZm/URuA==
-X-Received: by 2002:a05:6000:109:b0:37c:cdb6:6a9e with SMTP id ffacd0b85a97d-37d3a9b5242mr2834900f8f.9.1728515115067;
-        Wed, 09 Oct 2024 16:05:15 -0700 (PDT)
+        bh=httgxAgVR5a8WQxl6ZZFyi5BU8XXltONSneJVMDwTRw=;
+        b=mSZxin+OUoJDpk3UTdodwhuE0dbSqv1UwYpOQyZgxoG4TUjK5PZVuED+EPfN7NKp1+
+         hWU6pnHhKDHiwvPi8+x1sWgUVqviy4e7m8dPniD34L/vP51HPfEcAa0ST9UDXESzvQlX
+         EtWpPRniuSno2i23589XO84KRU7pmH3gu4DshwKrgiLvLTz94J31YtmLdO0TJQJDC89X
+         5FSj2Bq6jlv+QXTC9q/yxISHEQlnHyuzN2hxxhtu7RMrd1g46t70NaovmdiA83eiXlLK
+         lWTr5jqPk64Yd4v/GBwDcSXlgDZ6DRvqW9JjL3HukNwfsP01Y4+8xvUms9FdDMvfTtsO
+         dgQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYehoX5y87334gf6DPV9XsXItlZS0SeqrNc3Vl+aXjv2QCOAFSSHxH1XL6ld1LgITM66WD4gQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlDVWRnFNfEb+oprxkkgc0SzRqE7vSVGmbhiThaxiCKFv7gOSr
+	ncIFbcXJEUME10gttlWlIYbI+q1tWvxhHuWoSIbpygkMlQob31TV
+X-Google-Smtp-Source: AGHT+IE6GvfmxDSCj3qW/WZsSVLBtqw4g4R372xGsqAo0mPvbnOVjbuscCtQj/xUV14myhmw+xcITw==
+X-Received: by 2002:a05:600c:4fc8:b0:430:56de:d0ae with SMTP id 5b1f17b1804b1-43115acf9f3mr8529315e9.15.1728515760822;
+        Wed, 09 Oct 2024 16:16:00 -0700 (PDT)
 Received: from [192.168.42.9] ([148.252.140.94])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6cf960sm7142f8f.63.2024.10.09.16.05.13
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430c7e653absm33031125e9.0.2024.10.09.16.15.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 16:05:14 -0700 (PDT)
-Message-ID: <f872e215-25af-4663-a18e-659803cc1ea6@gmail.com>
-Date: Thu, 10 Oct 2024 00:05:49 +0100
+        Wed, 09 Oct 2024 16:16:00 -0700 (PDT)
+Message-ID: <ed21bca5-5087-4eff-814c-39180078a700@gmail.com>
+Date: Thu, 10 Oct 2024 00:16:34 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,62 +76,49 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 13/15] io_uring/zcrx: add copy fallback
-To: Stanislav Fomichev <stfomichev@gmail.com>, David Wei <dw@davidwei.uk>
+Subject: Re: [PATCH v1 01/15] net: devmem: pull struct definitions out of
+ ifdef
+To: Mina Almasry <almasrymina@google.com>, David Wei <dw@davidwei.uk>
 Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
  Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
  Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
  Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>
+ <hawk@kernel.org>, David Ahern <dsahern@kernel.org>
 References: <20241007221603.1703699-1-dw@davidwei.uk>
- <20241007221603.1703699-14-dw@davidwei.uk> <ZwVWrAeKsVj5gbXY@mini-arch>
- <6b57fb43-1271-4487-9342-5f82c972b9c5@davidwei.uk>
- <Zwavm2w30YAdoFsB@mini-arch>
+ <20241007221603.1703699-2-dw@davidwei.uk>
+ <CAHS8izMHmG8-Go6k63UaCtwvEcp=D73Ja0XfrTjNp_b5TUmUFA@mail.gmail.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Zwavm2w30YAdoFsB@mini-arch>
+In-Reply-To: <CAHS8izMHmG8-Go6k63UaCtwvEcp=D73Ja0XfrTjNp_b5TUmUFA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/9/24 17:30, Stanislav Fomichev wrote:
-> On 10/08, David Wei wrote:
->> On 2024-10-08 08:58, Stanislav Fomichev wrote:
->>> On 10/07, David Wei wrote:
->>>> From: Pavel Begunkov <asml.silence@gmail.com>
->>>>
->>>> There are scenarios in which the zerocopy path might get a normal
->>>> in-kernel buffer, it could be a mis-steered packet or simply the linear
->>>> part of an skb. Another use case is to allow the driver to allocate
->>>> kernel pages when it's out of zc buffers, which makes it more resilient
->>>> to spikes in load and allow the user to choose the balance between the
->>>> amount of memory provided and performance.
->>>
->>> Tangential: should there be some clear way for the users to discover that
->>> (some counter of some entry on cq about copy fallback)?
->>>
->>> Or the expectation is that somebody will run bpftrace to diagnose
->>> (supposedly) poor ZC performance when it falls back to copy?
+On 10/9/24 21:17, Mina Almasry wrote:
+> On Mon, Oct 7, 2024 at 3:16 PM David Wei <dw@davidwei.uk> wrote:
 >>
->> Yeah there definitely needs to be a way to notify the user that copy
->> fallback happened. Right now I'm relying on bpftrace hooking into
->> io_zcrx_copy_chunk(). Doing it per cqe (which is emitted per frag) is
->> too much. I can think of two other options:
+>> From: Pavel Begunkov <asml.silence@gmail.com>
 >>
->> 1. Send a final cqe at the end of a number of frag cqes with a count of
->>     the number of copies.
->> 2. Register a secondary area just for handling copies.
+>> Don't hide structure definitions under conditional compilation, it only
+>> makes messier and harder to maintain. Move struct
+>> dmabuf_genpool_chunk_owner definition out of CONFIG_NET_DEVMEM ifdef
+>> together with a bunch of trivial inlined helpers using the structure.
 >>
->> Other suggestions are also very welcome.
 > 
-> SG, thanks. Up to you and Pavel on the mechanism and whether to follow
-> up separately. Maybe even move this fallback (this patch) into that separate
-> series as well? Will be easier to review/accept the rest.
+> To be honest I think the way it is is better? Having the struct
+> defined but always not set (because the code to set it is always
+> compiled out) seem worse to me.
+> 
+> Is there a strong reason to have this? Otherwise maybe drop this?
+I can drop it if there are strong opinions on that, but I'm
+allergic to ifdef hell and just trying to help to avoid it becoming
+so. I even believe it's considered a bad pattern (is it?).
 
-I think it's fine to leave it? It shouldn't be particularly
-interesting to the net folks to review, and without it any skb
-with the linear part would break it, but perhaps it's not such
-a concern for bnxt.
+As for a more technical description "why", it reduces the line count
+and you don't need to duplicate functions. It's always annoying
+making sure the prototypes stay same, but this way it's always
+compiled and syntactically checked. And when refactoring anything
+like the next patch does, you only need to change one function
+but not both. Do you find that convincing?
 
 -- 
 Pavel Begunkov

@@ -1,138 +1,107 @@
-Return-Path: <io-uring+bounces-3525-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3526-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3589975F5
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 21:51:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A24E997645
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 22:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4B92829FE
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 19:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C00D285339
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 20:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B721714A4;
-	Wed,  9 Oct 2024 19:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F1018A6B9;
+	Wed,  9 Oct 2024 20:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="R2Nx/QM4"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SUhuRbJW"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203661D318A
-	for <io-uring@vger.kernel.org>; Wed,  9 Oct 2024 19:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751E117BB34
+	for <io-uring@vger.kernel.org>; Wed,  9 Oct 2024 20:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728503463; cv=none; b=MUpHydsRht2CAyWYT+YDNdKfRTe6y7QceqZqzPJR4IhpH58cK8kjP564YtSJ+qL8hWJ4oESOG8x6/z9ECxFQDzMCdw2IVc1x1S+Afzg2NUrHwZf/MY1Ld7wZ2oQb2dbeg89I40MYtRfU4xJRTlTD0ppGBpX5wont/5PfQZbdjqY=
+	t=1728505079; cv=none; b=AncI/moz7mdUxyDXhBugiTQm9WTYtE2ysubmzWG0mxUO2MRpp655Ax0FDsuz/O+unp+63ErU3cBLFn70xSad5C3oRiWHTpCgf6yWS2JXZ5Nm47CamfWFN7gNAA5fDiKr3C2ueUtEM1pYK34nInTuDCjIY+KPxPlpqFcakXCTMOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728503463; c=relaxed/simple;
-	bh=K3Sin6HsrhzRRP2HgMTVeCGgTRTQpKHKA+ETtOJS1ms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XB99FUNK5XhVT84oCshiK1ddpvCRL7Z1J3LuTVkmBhJIBgRHIDQTJ6Y0jPIl3zkbj04Bc4tc3XZF48krwBzF7+IazU9m8ChsexK58f/SIrlfCkJJ8zuJW2ME/LVf27G72v5uMSWLfX1jQLoMkKJFLTPT3bE8PhohJXUPuRrTgiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=R2Nx/QM4; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a34ccc6a9aso1095255ab.1
-        for <io-uring@vger.kernel.org>; Wed, 09 Oct 2024 12:51:01 -0700 (PDT)
+	s=arc-20240116; t=1728505079; c=relaxed/simple;
+	bh=maOx7b5x9FkkuEx3eAHB27tHVJF/LWrzXWhPOgT0klI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SZ2+Ac5AfYenCvJWXJRYiv5ZrYYgWaAiNOcSFtvMuJY2EAf4IH1ZlrWf/UA5uzZLusR4CH5/ClbgRgILI8siEmOTTmHsUaoTpJRaTKfl4P+5swSVBIbffzUdVx6/EpFYisFUB7/za0xVrlyuzpUO965oKcCHZWXyJ4pt961oD08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SUhuRbJW; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-460395fb1acso74801cf.0
+        for <io-uring@vger.kernel.org>; Wed, 09 Oct 2024 13:17:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728503461; x=1729108261; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hyzeTwQWm4QHExZgx/HQ8cPQRRp2JJMriJXGeys4Vd0=;
-        b=R2Nx/QM4GYFd/yEcKVat7fuhEAM13FpJ6BVnprCf5AdGFE9ov7KP4qLszjL1ZeacMA
-         /4mBKBQJZptZUg5pS7V7GT0zTPbW2pcAcLoevBLydTZr/CLBCUfXt1yvLz0B8FuXitpe
-         YGpzsLxGVgMao+lDavmqN/DMg3QqMddroMuCzL7RkFHFUwaopbj67/Cl+sGkIVbSvsrX
-         iWcEGSIsQoHLH/XLcCwsYd35dC6nKUJr2ALcISpq3TnugwdJ+iNnnSF508V4K7ZiqvOg
-         kR2fx8XF+I0p72BVCxbetEIEcBztMQFPfqLjgbIFxbhDeomVkTV2MPpyxuOeFx/naUhk
-         M6Lw==
+        d=google.com; s=20230601; t=1728505077; x=1729109877; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=maOx7b5x9FkkuEx3eAHB27tHVJF/LWrzXWhPOgT0klI=;
+        b=SUhuRbJWWLI9fL95Sbr0W/eFgXOk/72u4p6SUfx6iI7MSBa/FoyrANQHvT5GdzeCDi
+         t1tCO3PaC2uS7A0wQxjM32BasVEaniJ6JFUuXY2Qvcvegia2aMoRWbxxUfaveWTuWYOP
+         uSyrYf35QPqFVcAnsDgzyU6jqtl+og8zpSk7nTNP3h+TDhS6QqYAYNe62F5J2mMnybl3
+         e/HdEdLfOwE1eL8T0eO6MkcHEyWgRGfrTNKlkSCPZOs0IMwEvN7/XCk92x6OlmWWr9sE
+         YJ+qBq6B5i4PN4TkqIqkjGM0raMbzdc7TgqVwKDNR+TQBHkL98mtcSmlpAB3Q8cI7Vlc
+         3dHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728503461; x=1729108261;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hyzeTwQWm4QHExZgx/HQ8cPQRRp2JJMriJXGeys4Vd0=;
-        b=jV4OZ0z1Ltwz8grnL9Qe98FK8y2HQ9Vqr9soMaXTIERi1ybMEN0jYI1L4hL1iXmxrN
-         y/Tu2D6F4XgPnvTDiej2u/0/lXWuL/IWzVo29QZOYbiz2IpsBRjmlMnjPmar5WqjouhT
-         RVIbhgcp+4tj8RjkwZ/h/rabMyKHBMuHYXwvNNkKIAg20uJgOJ4M7zYpStp2cbJBeJwO
-         ntl+TdGDk3ttWC7ztLr+wAsFlG7aefDKP3+DB5fCdLjEj76EKJso4FYa9I5eNYwBnJN/
-         USfJW+fOqtWWcITZfE32VeVwqoztQNFazYawFZ46cf2TGztKBxzbXlWfIHoZpo1XwHKU
-         bJFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUm0hA62+t8wPik+LsFfYRkumK73LiUtNnb1s8vLMbrM2adihtUefdVR5VzWNpfT5ZISUaN1XjAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx37TJbgdhVo/pXFR68URs2GBJvW8ZRZDfo68s0t4I0Os9dLveI
-	KpHLPwgavFeu3E5Pf5vc4N8EoWgPk8sexfSa9FVhvOwJVngLtN1+ZjMvsPUkb6M=
-X-Google-Smtp-Source: AGHT+IEDtXerx531mxi3pVoSP4s1yifrJRdu3yBQSw7xZ3r6OWX3zbsW/0ceQm4MVFLJHpDyf3mzGA==
-X-Received: by 2002:a05:6e02:1fcc:b0:3a3:9792:e9e8 with SMTP id e9e14a558f8ab-3a397ce8583mr33498195ab.5.1728503461140;
-        Wed, 09 Oct 2024 12:51:01 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dba90f4166sm162232173.159.2024.10.09.12.51.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 12:51:00 -0700 (PDT)
-Message-ID: <32a05d6b-1b82-467f-ac3e-f3cd2e5c0e22@kernel.dk>
-Date: Wed, 9 Oct 2024 13:50:59 -0600
+        d=1e100.net; s=20230601; t=1728505077; x=1729109877;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=maOx7b5x9FkkuEx3eAHB27tHVJF/LWrzXWhPOgT0klI=;
+        b=M4Df14MwpvADn7FL6r59Z6VEV/mrw3uopQCT7SSNKTsAnh98BYOPy6K8/yuN7RVDIT
+         Gs1+SQhRx7BoNnsSkP6o2uyjbHapaEBf+4TUdCmcfDoX5PrtFqcLkN948TA741LSQZSK
+         iISfbwAuWjIF15qw8P/1b/8eCDW1kw4id7ZTVXRe8cOPM0xfHPhktq93hdUFZWahNL70
+         MwST0Ey/n+sslPgQSJNF/DjUGlq/Z1/F9/SOD6wCLZa+1i0aLH72IfXbfT9EBEPyrMjI
+         cZ42t6WgYpiaN9DbMN5H8p6sNNd2PrPD4qZETCKp19g6LfcF5sSfEgURjJ79d1Hg5Wjx
+         Kbrw==
+X-Gm-Message-State: AOJu0YzZLfo/FIfLVukC211Wfo+PRli5v0TZkU6NPYpeHzsloG25jVqh
+	VOWrs9MFeoGEUZ10VSTODzWKYObJCuHbCerA4cXFy6rila893azOQvCiWTC6xi3+GVt9e8gpRBI
+	1zNOD3OuwbbO+cqSJFVyojIm8jMKw/gL3Qi4R
+X-Google-Smtp-Source: AGHT+IGheGV+/dYGxDE1SzkSbZdYcrDvUIOdhPJcDBPP0qxjpvF84SFjrNBdgEJeMOXRNLHA3vD8gxHfFEfvPNXkHLU=
+X-Received: by 2002:a05:622a:2a14:b0:45c:9b41:248f with SMTP id
+ d75a77b69052e-4604075365dmr522271cf.25.1728505077339; Wed, 09 Oct 2024
+ 13:17:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 12/15] io_uring/zcrx: add io_recvzc request
-To: Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
- io-uring@vger.kernel.org, netdev@vger.kernel.org
-Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>
-References: <20241007221603.1703699-1-dw@davidwei.uk>
- <20241007221603.1703699-13-dw@davidwei.uk>
- <703c9d90-bca1-4ee7-b1f3-0cfeaf38ef8f@kernel.dk>
- <f2ab35ef-ef19-4280-bc39-daf9165c3a51@gmail.com>
- <af74b2db-8cf4-4b5a-9390-e7c1cfd8b409@kernel.dk>
- <7cee82f7-188f-438a-9fe1-086aeda66caf@gmail.com>
- <177d164a-2ebc-483a-ab53-7741974a59c4@kernel.dk>
- <d5be304b-0676-4f4e-adbc-eea3f7b161de@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <d5be304b-0676-4f4e-adbc-eea3f7b161de@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241007221603.1703699-1-dw@davidwei.uk> <20241007221603.1703699-2-dw@davidwei.uk>
+In-Reply-To: <20241007221603.1703699-2-dw@davidwei.uk>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 9 Oct 2024 13:17:44 -0700
+Message-ID: <CAHS8izMHmG8-Go6k63UaCtwvEcp=D73Ja0XfrTjNp_b5TUmUFA@mail.gmail.com>
+Subject: Re: [PATCH v1 01/15] net: devmem: pull struct definitions out of ifdef
+To: David Wei <dw@davidwei.uk>
+Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/9/24 1:47 PM, Pavel Begunkov wrote:
-> On 10/9/24 20:42, Jens Axboe wrote:
->> On 10/9/24 1:27 PM, Pavel Begunkov wrote:
->>>>>>> +    /* All data completions are posted as aux CQEs. */
->>>>>>> +    req->flags |= REQ_F_APOLL_MULTISHOT;
->>>>>>
->>>>>> This puzzles me a bit...
->>>>>
->>>>> Well, it's a multishot request. And that flag protects from cq
->>>>> locking rules violations, i.e. avoiding multishot reqs from
->>>>> posting from io-wq.
->>>>
->>>> Maybe make it more like the others and require that
->>>> IORING_RECV_MULTISHOT is set then, and set it based on that?
->>>
->>> if (IORING_RECV_MULTISHOT)
->>>      return -EINVAL;
->>> req->flags |= REQ_F_APOLL_MULTISHOT;
->>>
->>> It can be this if that's the preference. It's a bit more consistent,
->>> but might be harder to use. Though I can just hide the flag behind
->>> liburing helpers, would spare from neverending GH issues asking
->>> why it's -EINVAL'ed
->>
->> Maybe I'm missing something, but why not make it:
->>
->> /* multishot required */
->> if (!(flags & IORING_RECV_MULTISHOT))
->>     return -EINVAL;
->> req->flags |= REQ_F_APOLL_MULTISHOT;
-> 
-> Right, that's what I meant before spewing a non sensible snippet.
+On Mon, Oct 7, 2024 at 3:16=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
+>
+> From: Pavel Begunkov <asml.silence@gmail.com>
+>
+> Don't hide structure definitions under conditional compilation, it only
+> makes messier and harder to maintain. Move struct
+> dmabuf_genpool_chunk_owner definition out of CONFIG_NET_DEVMEM ifdef
+> together with a bunch of trivial inlined helpers using the structure.
+>
 
-ok phew, I was scratching my head there for a bit... All good then.
+To be honest I think the way it is is better? Having the struct
+defined but always not set (because the code to set it is always
+compiled out) seem worse to me.
 
+Is there a strong reason to have this? Otherwise maybe drop this?
 
--- 
-Jens Axboe
+--=20
+Thanks,
+Mina
 

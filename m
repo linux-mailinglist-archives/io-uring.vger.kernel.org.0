@@ -1,40 +1,74 @@
-Return-Path: <io-uring+bounces-3475-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3476-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F272996624
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 11:56:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61468996947
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 13:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F9A289CF1
-	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 09:56:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF2F61F244F2
+	for <lists+io-uring@lfdr.de>; Wed,  9 Oct 2024 11:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF8618FDAF;
-	Wed,  9 Oct 2024 09:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3451718DF74;
+	Wed,  9 Oct 2024 11:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIzgBMn/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC6D18FC93;
-	Wed,  9 Oct 2024 09:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7031A18E343;
+	Wed,  9 Oct 2024 11:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728467668; cv=none; b=MozJbKU3/Wa+mFOZfFfUPvCRtBcaWhY6Hp+51BHqcpWU9g+DSwxDlRxv/clqk/jUnIONiQanQKPVDrIt+AsCJjDL/YpwrPokzvPURedFVQhF0aQCU9VmPnLkfdPpZBgQwPpokVaqWdSeTUFEwLfb9YsL71ReDA3Yfm29ip/qxm0=
+	t=1728474782; cv=none; b=NVeA4bL98KwUmIh2Di7iM8bGVo8oBuMjcUobo6qDReUJtCgR6XDKN1heZcPCbkMyqkrR4pW/IjvUtb8ZUq2hlK3oOAThApzYtZOWXj5YGwPYNSIeCx4TSOgsji2jJQPp8Iwl9/f8WaX5WdMqU8ABt6KUByiS5w5gg7/iQrMZkO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728467668; c=relaxed/simple;
-	bh=VBotJtPDGGEmR2CyFHFYZxMHWD41xoURujuuBIez2GI=;
+	s=arc-20240116; t=1728474782; c=relaxed/simple;
+	bh=XplJHMsY/rZE5Wb3LR3oWscFaiUId+MmQeZs4dRGmAw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oz0VsCvRq71W5DCEr98oF6wnjeNl84a2ng9XN5YonnIlRfwfDC9KKVFAsdkwlHwh3FTnrLGapQHUaP8Ji7gDe2Gab5LwFBJSFfd6IaAwSi68JpWseJh78FKXQ+zu+nSYaAkxxiblpNEQd6ox7tt4sPVmcnZNJ7ArH5hnbSzusxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83E14FEC;
-	Wed,  9 Oct 2024 02:54:55 -0700 (PDT)
-Received: from [10.1.30.40] (e127648.arm.com [10.1.30.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A79E3F64C;
-	Wed,  9 Oct 2024 02:54:21 -0700 (PDT)
-Message-ID: <c53236ad-b94e-4508-8f3a-7229e32f62bc@arm.com>
-Date: Wed, 9 Oct 2024 10:54:18 +0100
+	 In-Reply-To:Content-Type; b=MxG8ZwmIvJl+CIZy7AsztoI8JaTpYGRIcH5T4fQWNQJ/DVHJD8VLatmk7FgPgfDT/NSHmiOuzEhCzdKaOL8m3y+SW+Yk0QZkCgruPDuBfAJrsIdU5/yOvtXav9B1hYnLLDGre7AaTfOiwqgGYvWoZLpAn1GdpETOnDjROkkeCu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIzgBMn/; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d3ae4a048so397762f8f.3;
+        Wed, 09 Oct 2024 04:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728474779; x=1729079579; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=khhqIPlwJBadfdybhRWW7Y5gqxa03C7W5xOqWI4I2uU=;
+        b=SIzgBMn/uCCqajDh7A6KgC1OrYZuOevjzaKO0+GOPBE2tg5pR1iWol/xuhtJe9eQcO
+         l0fEOIT5UD4oA4W0ZTGM3rUdyDUrk7T6HwAlWzTvYey+PEr98FaUl4qpBFZZ2bctfAcm
+         Zum/nJolxDYhnxEJZgeB4L2dVm5ykDJSuBTCiEvC9JMBP+o/nrxdY/JEnIRJIqufaxWE
+         6tXmJ/eaxzIwukQQyqiKZcc34oktI3fPAJCyYZxIiG9W9uSbI5NDzKPwjGT+9y8NElPe
+         EbK8aXUqjYEMM1dvrU75hfPj1IrpW3QNkqFMSKi5aZ6I/lJ2AMeYoAYpSj3GN1fbZeUV
+         5S0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728474779; x=1729079579;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=khhqIPlwJBadfdybhRWW7Y5gqxa03C7W5xOqWI4I2uU=;
+        b=rxT7A6tKARuyiIrpMHr/NFLSGW1IhcTdSB2xRGsrFYpbrMpgrwDGg8kHR3OXI2IvBp
+         6+2edyNynRHm5T3fsGaFXCoH72+wXPvZLq2fLXbEIoH2mxyCH1gDidMjlQ8/dta7FcFa
+         LDhNNwmgGsX0gjZGxkQF6NW1MHZwjTgYFi6rwBiduQz6wG2JNnCoVtwGpD3yLl8CfCrz
+         eFObEJARECW4XRlHOQ3kiLJ5TXdC/eOm15C/EJS4h4bkaeM+LfXO92A8Jh3iL7kz9jWj
+         WSR7+Thgf3t8ju3albyjRCzDcFNdGZL8T/yjLWiCIK9vSLdjgoVQk8q70Fk+lCm/5QVk
+         FQaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/ZxPnHlXRMxEdSRi5W2mfzcw551YavT33/B7sGau7Eilw4V7MYmJU2SZIs9sSF+Z8biRKdrw/33kfPFM=@vger.kernel.org, AJvYcCWunWhEypfJj4FHiKKszwn1/jq4mVOEdVXgdmcwE0N7mNz94msyMiDfNeJHY5qxz4KZ5EugE3erLw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrFmx7iKi+meDFJUvzOzArx7vL9aq7om0lZ8nzoV5gRIgmq243
+	o02n0Wz18FMBDK+mC4bYW4B1X8+A+2Aw29dBjC5X6F06IAqLhOAH
+X-Google-Smtp-Source: AGHT+IHI0zRDtnW95czknI0HrDmMEsIz4FPF1Ek731FBw+bMwW9CNNDjY3boYvw6SwgYrCf7FfMXGg==
+X-Received: by 2002:adf:9b96:0:b0:37c:cf73:4bf7 with SMTP id ffacd0b85a97d-37d3aa2e27dmr1383856f8f.34.1728474778395;
+        Wed, 09 Oct 2024 04:52:58 -0700 (PDT)
+Received: from [192.168.42.45] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690f66csm10218746f8f.13.2024.10.09.04.52.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 04:52:58 -0700 (PDT)
+Message-ID: <f6d34a4d-bf46-4120-8e2d-9585912a8867@gmail.com>
+Date: Wed, 9 Oct 2024 12:53:34 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -42,127 +76,88 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 5/8] cpufreq/schedutil: Remove iowait boost
-To: Andres Freund <andres@anarazel.de>
-Cc: Quentin Perret <qperret@google.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com,
- dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org,
- Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
- bvanassche@acm.org, asml.silence@gmail.com, linux-block@vger.kernel.org,
- io-uring@vger.kernel.org, qyousef@layalina.io, dsmythies@telus.net,
- axboe@kernel.dk
-References: <20240905092645.2885200-1-christian.loehle@arm.com>
- <20240905092645.2885200-6-christian.loehle@arm.com>
- <CAJZ5v0hJWwsErT193i394bHOczvCQwU_5AVVTJ1oKDe7kTW82g@mail.gmail.com>
- <Zv5oTvxPsiTWCJIo@google.com> <6e21e8f1-e3b4-4915-87cc-6ce77f54cc8a@arm.com>
- <io3xcj5vpqbkojoktbp3fuuj77gqqkf2v3gg62i4aep4ps36dc@we2zwwp5hsyt>
+Subject: Re: [PATCH V6 4/8] io_uring: support SQE group
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+ linux-block@vger.kernel.org, Kevin Wolf <kwolf@redhat.com>
+References: <20240912104933.1875409-1-ming.lei@redhat.com>
+ <20240912104933.1875409-5-ming.lei@redhat.com>
+ <239e42d2-791e-4ef5-a312-8b5959af7841@gmail.com> <ZwIJ4Hn52-tm22Z8@fedora>
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <io3xcj5vpqbkojoktbp3fuuj77gqqkf2v3gg62i4aep4ps36dc@we2zwwp5hsyt>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <ZwIJ4Hn52-tm22Z8@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/5/24 01:39, Andres Freund wrote:
-> Hi,
+On 10/6/24 04:54, Ming Lei wrote:
+> On Fri, Oct 04, 2024 at 02:12:28PM +0100, Pavel Begunkov wrote:
+>> On 9/12/24 11:49, Ming Lei wrote:
+>> ...
+>>> --- a/io_uring/io_uring.c
+>>> +++ b/io_uring/io_uring.c
+>>> @@ -111,13 +111,15 @@
+>> ...
+>>> +static void io_complete_group_member(struct io_kiocb *req)
+>>> +{
+>>> +	struct io_kiocb *lead = get_group_leader(req);
+>>> +
+>>> +	if (WARN_ON_ONCE(!(req->flags & REQ_F_SQE_GROUP) ||
+>>> +			 lead->grp_refs <= 0))
+>>> +		return;
+>>> +
+>>> +	/* member CQE needs to be posted first */
+>>> +	if (!(req->flags & REQ_F_CQE_SKIP))
+>>> +		io_req_commit_cqe(req->ctx, req);
+>>> +
+>>> +	req->flags &= ~REQ_F_SQE_GROUP;
+>>
+>> I can't say I like this implicit state machine too much,
+>> but let's add a comment why we need to clear it. i.e.
+>> it seems it wouldn't be needed if not for the
+>> mark_last_group_member() below that puts it back to tunnel
+>> the leader to io_free_batch_list().
 > 
+> Yeah, the main purpose is for reusing the flag for marking last
+> member, will add comment for this usage.
 > 
-> A caveat: I'm a userspace developer that occasionally strays into kernel land
-> (see e.g. the io_uring iowait thing). So I'm likely to get some kernel side
-> things wrong.
-
-Thank you for your input!
-
+>>
+>>> +
+>>> +	/* Set leader as failed in case of any member failed */
+>>> +	if (unlikely((req->flags & REQ_F_FAIL)))
+>>> +		req_set_fail(lead);
+>>> +
+>>> +	if (!--lead->grp_refs) {
+>>> +		mark_last_group_member(req);
+>>> +		if (!(lead->flags & REQ_F_CQE_SKIP))
+>>> +			io_req_commit_cqe(lead->ctx, lead);
+>>> +	} else if (lead->grp_refs == 1 && (lead->flags & REQ_F_SQE_GROUP)) {
+>>> +		/*
+>>> +		 * The single uncompleted leader will degenerate to plain
+>>> +		 * request, so group leader can be always freed via the
+>>> +		 * last completed member.
+>>> +		 */
+>>> +		lead->flags &= ~REQ_F_SQE_GROUP_LEADER;
+>>
+>> What does this try to handle? A group with a leader but no
+>> members? If that's the case, io_group_sqe() and io_submit_state_end()
+>> just need to fail such groups (and clear REQ_F_SQE_GROUP before
+>> that).
 > 
-> On 2024-10-03 11:30:52 +0100, Christian Loehle wrote:
->> These are the main issues with transforming the existing mechanism into
->> a per-task attribute.
->> Almost unsolvable is: Does reducing "iowait pressure" (be it per-task or per-rq)
->> actually improve throughput even (assuming for now that this throughput is
->> something we care about, I'm sure you know that isn't always the case, e.g.
->> background tasks). With MCQ devices and some reasonable IO workload that is
->> IO-bound our iowait boosting is often just boosting CPU frequency (which uses
->> power obviously) to queue in yet another request for a device which has essentially
->> endless pending requests. If pending request N+1 arrives x usecs earlier or
->> later at the device then makes no difference in IO throughput.
-> 
-> That's sometimes true, but definitely not all the time? There are plenty
-> workloads with low-queue-depth style IO. Which often are also rather latency
-> sensitive.
-> 
-> E.g. the device a database journal resides on will typically have a low queue
-> depth. It's extremely common in OLTPish workloads to be bound by the latency
-> of journal flushes. If, after the journal flush completes, the CPU is clocked
-> low and takes a while to wake up, you'll see substantially worse performance.
+> The code block allows to issue leader and members concurrently, but
+> we have changed to always issue members after leader is completed, so
+> the above code can be removed now.
 
-Yeah absolutely and if we knew what a latency-sensitive journal flush is tuning
-cpuidle and cpufreq to it would probably be reasonable.
-I did test mmtests filebench-oltp that looked fine, do you have any other
-benchmarks you would like to see?
+One case to check, what if the user submits just a single request marked
+as a group? The concern is that we create a group with a leader but
+without members otherwise, and when the leader goes through
+io_submit_flush_completions for the first time it drops it refs and
+starts waiting for members that don't exist to "wake" it. I mentioned
+above we should probably just fail it, but would be nice to have a
+test for it if not already.
 
->> If boosting would improve e.g. IOPS (of that device) is something the block layer
->> (with a lot of added infrastructure, but at least in theory it would know what
->> device we're iowaiting on, unlike the scheduler) could tell us about. If that is
->> actually useful for user experience (i.e. worth the power) only userspace can decide
->> (and then we're back at uclamp_min anyway).
-> 
-> I think there are many cases where userspace won't realistically be able to do
-> anything about that.
-> 
-> For one, just because, for some workload, a too deep idle state is bad during
-> IO, doesn't mean userspace won't ever want to clock down. And it's probably
-> going to be too expensive to change any attributes around idle states for
-> individual IOs.
+Forgot to mention, with the mentioned changes I believe the patch
+should be good enough.
 
-So the kernel currently applies these to all of them essentially.
-
-> 
-> Are there actually any non-privileged APIs around this that userspace *could*
-> even change? I'd not consider moving to busy-polling based APIs a realistic
-> alternative.
-
-No and I'm not sure an actual non-privileged API would be a good idea, would
-it? It is essentially changing hardware behavior.
-So does busy-polling of course, but the kernel can at least curb that and
-maintain fairness and so forth.
-
-> 
-> For many workloads cpuidle is way too aggressive dropping into lower states
-> *despite* iowait. But just disabling all lower idle states obviously has
-> undesirable energy usage implications. It surely is the answer for some
-> workloads, but I don't think it'd be good to promote it as the sole solution.
-
-Right, but we (cpuidle) don't know how to distinguish the two, we just do it
-for all of them. Whether kernel or userspace applies the same (awful) heuristic
-doesn't make that much of a difference in practice.
-
-> 
-> It's easy to under-estimate the real-world impact of a change like this. When
-> benchmarking we tend to see what kind of throughput we can get, by having N
-> clients hammering the server as fast as they can. But in the real world that's
-> pretty rare for anything latency sensitive to go full blast - rather there's a
-> rate of requests incoming and that the clients are sensitive to requests being
-> processed more slowly.
-
-Agreed, this series is posted as RFT and I'm happy to take a look at any
-regressions for both the cpufreq and cpuidle parts of it.
-
-> 
-> 
-> That's not to say that the current situation can't be improved - I've seen way
-> too many workloads where the only ways to get decent performance were one of:
-> 
-> - disable most idle states (via sysfs or /dev/cpu_dma_latency)
-> - just have busy loops when idling - doesn't work when doing synchronous
->   syscalls that block though
-> - have some lower priority tasks scheduled that just burns CPU
-> 
-> I'm just worried that removing iowait will make this worse.
-
-I just need to mention again that almost all of what you replied does refer to
-cpuidle, not cpufreq (which this particular patch was about), not to create more
-confusion.
-
-Regards,
-Christian
+-- 
+Pavel Begunkov
 

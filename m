@@ -1,123 +1,182 @@
-Return-Path: <io-uring+bounces-3574-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3575-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E291A9993FB
-	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 22:56:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDEC499940B
+	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 22:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEFD81C227EF
-	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 20:56:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953352875F7
+	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 20:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886D81E104F;
-	Thu, 10 Oct 2024 20:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3481E2029;
+	Thu, 10 Oct 2024 20:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="Dv+TusJv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eqHOByfW"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ogSuu1Bz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB2F1CF5C5
-	for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 20:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F044A1CEABC
+	for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 20:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728593777; cv=none; b=n3v+Yyg71m9O+wlYyCC35NoJRv+69eALxkl/0q5eIOg31mZboNkolnAdL4pWMAWrnZIde2t+HUvjCfwXS8niscEEiTilsz8evgVtY4cx4zb6OkwQey2ISM/hwkfo0TeJN/Dp9au/NQbKfDIFZPnzC3Su/J9VNAVvAIDBWLIedrQ=
+	t=1728593946; cv=none; b=t9t21tmNDkkneiJWjxy5hYEUwLy2mr6EMfe0PMqVkAZ45TR9omGg46eeY5OawjfZB8+RXmXkcEsp2B3a6ceoXwsAGUgTBXPmX0mKfHwqMezqTp9IB6UlTJ0bPTYfge37MlmDy9yphwxuyNT4P3zWt78BibKzfoxwgynX0mCpT5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728593777; c=relaxed/simple;
-	bh=Nxt0JYqXSajs+mJAtTuVqwVMU5klA2+Ya5dwcCQO5Nk=;
-	h=Message-ID:Date:MIME-Version:To:From:Cc:Subject:Content-Type; b=t4oAlXXTr1hxzgsaUTc5OgL+OUbYpP91kfpdu7i7IkOcvxWm0eKCzppG6WI4Y2GS5seMJGdXhANuY/1m1oC0JektKBwL3fImt0M0nVFWswCQ+NHE+C1x2E2dz7yTYlnPmItEMY3MFU5ULr3aEduI2PvNyTHhyYQXLq1GgVuMM5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=Dv+TusJv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eqHOByfW; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 5FB6B1140176;
-	Thu, 10 Oct 2024 16:56:14 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Thu, 10 Oct 2024 16:56:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm2; t=1728593774; x=1728680174; bh=eO
-	9AdGQREfGnxWrI8QDdDSBzJ8WmL1r/7w2ykspxwQ0=; b=Dv+TusJv6AHLB4v2aB
-	fwsJEgfem08wJgv0uVLqeDcPbdosPTnuxmG4MV4C/F3XH8UUi1MtBC2pX2ebBkef
-	UMoj4HN+o9/sT0vnWMgiXSmyEksdvDoIwmxfpTAUNmRyAwVm2OmBAtTEjfX7BG4T
-	i646sKcQW7lVw0OikX+qYTER32rfVsqdpLBzj3xkFvc01mi+6OE5cNUE6vm6qOuA
-	8r9wKBFP18yDUi+W9han/QSXNPuEnSQxV5mpRRiCkXAYg3mGFssCWf9z7+DrpCoY
-	w82VMnhMrzId+wQohD2PtEnrAdHELKAA/37+JHH5TU8DrXowWOG5Ytdb2NQDtQ4+
-	ce4w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm2; t=1728593774; x=1728680174; bh=eO9AdGQREfGnx
-	WrI8QDdDSBzJ8WmL1r/7w2ykspxwQ0=; b=eqHOByfW2AVHrl2V8muNggDsiugp/
-	Lt8SYSxvZ6DHjwu0X18pgX7bjtX60Wg0aorgfKWxtRJhBqUmCaWG9mrCFEp50/LK
-	P0RaIFlfwgc85FmucLGQFyt1zG3KEIP4hbn9UTSxpgJz1qGG853HKpJCwvmuoGWx
-	wwvn3aKYV/06nTm0mjvCX1O1steT9PyPV9uKLHKKcbW0j/hx/kW05djcfCDOT48n
-	xPNcSUAij3889uFTovC6hxjG7VWASgFUV4M1UT30zca9WQ4VpicBuCi3naL5FtN1
-	DrOuipFhHNyCpq49fRRI4btVD4s0d9APUuNEY1+klslUYF9uB/ttnYkGw==
-X-ME-Sender: <xms:bT8IZ5FcReLWNx1qc2H-D66r75aKlotrm6Ar_tEuCNRBAYE_vk_OZA>
-    <xme:bT8IZ-XLVATewQ91gPsL3ygDyNb4MlkNmuRfouLl9CZb1rE0L3dsxn_au9aY4wzYj
-    2UCz-OMhJacvWe9>
-X-ME-Received: <xmr:bT8IZ7Lmxov35PVQXgenUZkkdhl9G9mHn0-9Tg7Fh77ZUwSykPg2_loSXC32bQtKpO92xt3VfsWUXcilmt82mTyFVGltBv2kxittm2fCulrRjs5b5nty>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefiedgvdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfvffhvefutgfgsehtjeertddtvdejnecu
-    hfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrth
-    esfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepuefhffdvffefiefhleel
-    feffgeegjedvjeegvdegtdfhleefudfhtdeuvefgkefgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehf
-    rghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuth
-    dprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhope
-    grgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgv
-    ughirdhhuhdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomh
-    dprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomh
-X-ME-Proxy: <xmx:bT8IZ_GR74MzefNIWYhJx2Nfg0Ed4gY7zLvbsLToo-Pj8MWgrtO3sA>
-    <xmx:bT8IZ_Vtjy6dgwU6_e8zietQr6Gh2lR_2nOcJYfH8szJG6VucV1TEQ>
-    <xmx:bT8IZ6OLngTbh_hFXB-CpQT4u5bUpz83mm64iSGM50zYjhpFButZwA>
-    <xmx:bT8IZ-131-9f_6DiKVPT9mfMZ832auZHvkkjwo_QY11SBxSNXxsbSw>
-    <xmx:bj8IZxIId_v1Th4xd-RSv7UUpSn5u92LShYLppQKLLGUlL6SzO4eCriG>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 10 Oct 2024 16:56:12 -0400 (EDT)
-Message-ID: <d66377d6-9353-4a86-92cf-ccf2ea6c6a9d@fastmail.fm>
-Date: Thu, 10 Oct 2024 22:56:11 +0200
+	s=arc-20240116; t=1728593946; c=relaxed/simple;
+	bh=s9pcdyZ9xEY3e8lQUS9MO4s8hNmOb2nddmzlpVdUfpc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mZcNBztBoIMU7WnMvcf1X5v+zdsmyeqJQzbSTuUkv+NsK49iF5nmyGOr9H6E50SF0RvIn5qU0gWSgz/anA9TyRqfuPWxWleMEk/1cnnt3B/IQnmk9kvr69mdcboYjA5o8Kwe86n73C/4PNVnMHUmrzreJ5gs6S2mZKyCh8GsoN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ogSuu1Bz; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-460395fb1acso88991cf.0
+        for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 13:59:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728593944; x=1729198744; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s9pcdyZ9xEY3e8lQUS9MO4s8hNmOb2nddmzlpVdUfpc=;
+        b=ogSuu1BzO7sBGw1pckLXoUqF01mgFejdQ1bmI8IBVoTfDLPNRaH4vCtEW4tsIbBRIZ
+         HcJW13/HRFqcWURt0JHhD+PpJsxQ4lTbRJvUJedmNzYTRrP1+kSplkzuwGlHrdE/xA6H
+         M7yMJko5jQhKgd6qgCaLAkRW70cgm41N+WKVybwFZxB1mvmHn/UnO1tWkzeVNVkZcAx0
+         vOm4fLGoEVPeBVzlxqQoveNiOVZgQEoeNbkHwD55QBuZKaA9/2o//PxuFLaR46F+ugcg
+         wZnlTLG3flmGCQ5UtcqWQ1D00yr7/EjP94Nm5Kk8PZwpeJRn4K9qCA5LVttaoa23h0v1
+         RefQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728593944; x=1729198744;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s9pcdyZ9xEY3e8lQUS9MO4s8hNmOb2nddmzlpVdUfpc=;
+        b=M2nBrQk+w4ocUB0T0e32QRhffhKCox2q6dRo9HXzaASeMR4FakxB/cvgIZ40zCQ3NK
+         oDvKxlHkoLLT6qQxttHtTyX7Z+PILqXcwNe149AWYSAOPdsChJ12QHGw0YlAMJno2pux
+         dvr0rB/d/CV3+pRDYk9KIi3vAYXAoJRB8br20heT5m06CMjWjNvT4GP4pwpu1r5amAW2
+         MaHYo0DUQMbI9evzMaqiDRTCpctcpxTGHTeu/z8dP9w5Jiek1AK1XIce/0kT+qXkHwVV
+         JJ7jSZzC7Dowa2jjGmkJPF3uIqM9Z8ib7V3gXj6JQPp//Zm468Tz+4Lh+3jvBaTkfyI0
+         SN1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUX+nr9QzHjgqajB7Zf1Hf9reEu6hl7yxb/3ZTl8HYaw6ev4OaW3L3OqmdvyX/MAOFDVXv+O5hpnA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMF1oZw9ESitzrsuGjs+lXs7GBJYkgMTbaOwVVYXHUyMcBjPqV
+	wHQRORDY7D0WiatZcsKDmNv0ySjuUgDyYZ0Bn+CjWMp+sZijI3TvwPZMn7CAUmT/BezxcjEOakj
+	LsI64tdEygkZbbJpIhIhp/noQA470exv/IbT/
+X-Google-Smtp-Source: AGHT+IF3R8R7YB9BMwW4arLIAfEe5Ep1D8pL4yiCAr9TXamF4tK2/fqoDt20lODSTwvVl2Uxw3exUPgMpvOHmkQG6Ss=
+X-Received: by 2002:a05:622a:8388:b0:458:1d2b:35f6 with SMTP id
+ d75a77b69052e-4604af3a4bdmr1034811cf.24.1728593943606; Thu, 10 Oct 2024
+ 13:59:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: io-uring@vger.kernel.org
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-Cc: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong <joannelkoong@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>
-Subject: Large CQE for fuse headers
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241007221603.1703699-1-dw@davidwei.uk> <20241007221603.1703699-12-dw@davidwei.uk>
+ <CAHS8izO-=ugX7S11dTr5cXp11V+L-gquvwBLQko8hW4AP9vg6g@mail.gmail.com>
+ <94a22079-0858-473c-b07f-89343d9ba845@gmail.com> <CAHS8izPjHv_J8=Hz6xZmfa857st+zyA7MLSe+gCJTdZewPOmEw@mail.gmail.com>
+ <f89c65da-197a-42d9-b78a-507951484759@gmail.com> <CAHS8izMrPuQNvwGwAUjh7GAY-CoC81rc5BD1ZMmy-nNds3xDgA@mail.gmail.com>
+In-Reply-To: <CAHS8izMrPuQNvwGwAUjh7GAY-CoC81rc5BD1ZMmy-nNds3xDgA@mail.gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 10 Oct 2024 13:58:46 -0700
+Message-ID: <CAHS8izOCLrLz-XuDq13At+wcVAJRPszSvt+ijeqi8qzxAazEAw@mail.gmail.com>
+Subject: Re: [PATCH v1 11/15] io_uring/zcrx: implement zerocopy receive pp
+ memory provider
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org, netdev@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Oct 10, 2024 at 1:53=E2=80=AFPM Mina Almasry <almasrymina@google.co=
+m> wrote:
+>
+> > >>>>
+> > >>>> Once the user is done with the buffer processing, it must return i=
+t back
+> > >>>> via the refill queue, from where our ->alloc_netmems implementatio=
+n can
+> > >>>> grab it, check references, put IO_ZC_RX_UREF, and recycle the buff=
+er if
+> > >>>> there are no more users left. As we place such buffers right back =
+into
+> > >>>> the page pools fast cache and they didn't go through the normal pp
+> > >>>> release path, they are still considered "allocated" and no pp hold=
+_cnt
+> > >>>> is required.
+> > >>>
+> > >>> Why is this needed? In general the provider is to allocate free mem=
+ory
+> > >>
+> > >> I don't get it, what "this"? If it's refill queue, that's because
+> > >> I don't like actively returning buffers back via syscall / setsockop=
+t
+> > >> and trying to transfer them into the napi context (i.e.
+> > >> napi_pp_put_page) hoping it works / cached well.
+> > >>
+> > >> If "this" is IO_ZC_RX_UREF, it's because we need to track when a
+> > >> buffer is given to the userspace, and I don't think some kind of
+> > >> map / xarray in the hot path is the best for performance solution.
+> > >>
+> > >
+> > > Sorry I wasn't clear. By 'this' I'm referring to:
+> > >
+> > > "from where our ->alloc_netmems implementation can grab it, check
+> > > references, put IO_ZC_RX_UREF, and recycle the buffer if there are no
+> > > more users left"
+> > >
+> > > This is the part that I'm not able to stomach at the moment. Maybe if
+> > > I look deeper it would make more sense, but my first feelings is that
+> > > it's really not acceptable.
+> > >
+> > > alloc_netmems (and more generically page_pool_alloc_netmem), just
+> > > allocates a netmem and gives it to the page_pool code to decide
+> >
+> > That how it works because that's how devmem needs it and you
+> > tailored it, not the other way around. It could've pretty well
+> > been a callback that fills the cache as an intermediate, from
+> > where page pool can grab netmems and return back to the user,
+> > and it would've been a pretty clean interface as well.
+> >
+>
+> It could have been, but that would be a much worse design IMO. The
+> whole point of memory proivders is that they provide memory to the
+> page_pool and the page_pool does its things (among which is recycling)
+> with that memory. In this patch you seem to have implemented a
+> provider which, if the page is returned by io_uring, then it's not
+> returned to the page_pool, it's returned directly to the provider. In
+> other code paths the memory will be returned to the page_pool.
+>
+> I.e allocation is always:
+> provider -> pp -> driver
+>
+> freeing from io_uring is:
+> io_uring -> provider -> pp
+>
+> freeing from tcp stack or driver I'm guessing will be:
+> tcp stack/driver -> pp -> provider
+>
+> I'm recommending that the model for memory providers must be in line
+> with what we do for pages, devmem TCP, and Jakub's out of tree huge
+> page provider (i.e. everything else using the page_pool). The model is
+> the streamlined:
+>
+> allocation:
+> provider -> pp -> driver
+>
+> freeing (always):
+> tcp stack/io_uring/driver/whatever else -> pp -> driver
+>
 
-as discussed during LPC, we would like to have large CQE sizes, at least
-256B. Ideally 256B for fuse, but CQE512 might be a bit too much...
+Should be:
 
-Pavel said that this should be ok, but it would be better to have the CQE
-size as function argument. 
-Could you give me some hints how this should look like and especially how
-we are going to communicate the CQE size to the kernel? I guess just adding
-IORING_SETUP_CQE256 / IORING_SETUP_CQE512 would be much easier.
+> freeing (always):
+> tcp stack/io_uring/driver/whatever else -> pp -> provider
 
-I'm basically through with other changes Miklos had been asking for and
-moving fuse headers into the CQE is next.
+I.e. the pp frees to the provider, not the driver.
 
+--=20
 Thanks,
-Bernd
+Mina
 

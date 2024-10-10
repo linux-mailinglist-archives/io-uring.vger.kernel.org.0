@@ -1,74 +1,73 @@
-Return-Path: <io-uring+bounces-3570-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3571-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599D69991AF
-	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 21:05:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB09E99925E
+	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 21:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0161C23BA9
-	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 19:05:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4809428580D
+	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 19:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB65818E02D;
-	Thu, 10 Oct 2024 18:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C895E19C567;
+	Thu, 10 Oct 2024 19:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvROmFas"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KDbVKdW8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34F119CD1B;
-	Thu, 10 Oct 2024 18:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75B0198E75
+	for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 19:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728586593; cv=none; b=LkU9764lX/PtvLKqQkJ/eWtVWuWVJfAtMQe7DDQgEq3SVGe8Jo21xipsu0buj0lwU1KeT+Emph6YoQjnrFMebrSxRGg7XMJiPws+Id+D4n7Xm06/ZpXH7hnKgkZYjVsnyeoY3bxqa57Q+NCaCLCsrCAxv29PRwDUg7T12Abz/l8=
+	t=1728588688; cv=none; b=HVjWlM28sGyF1nnj83yUdr/jzE2xGXbqsaeVCM9OAoDU1ScqNHzVWEMWY4a68DZHPcDhOyUwrFBIQOJ1zQxsyP8FGslzc7nynw+AQzHIfk3kIdNABwP3VwBcD07FAaBDjJyG8h9O3hdIq0iw3/RR8+i4geSPVS4BFKSje5AqlsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728586593; c=relaxed/simple;
-	bh=DShGqDbna5jw6iH3SmgN2X/XDmZWaz4uUzW8R6IdXus=;
+	s=arc-20240116; t=1728588688; c=relaxed/simple;
+	bh=12QdTrNcCiAoL6tcG+CpDGmDROSVd3cKGB/868m13Eg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DViJ0A8hm4CLFAAfXCjZw8MeM9VNq5NN1v8yPabHU8d/Yz6GFMyWe31YA1ON0KmA1Zfvn/MR7Gfm3pgirXTm8wgcdC7xTetZMzRheG/uw844O8hzeejPt//Pujnikula+Y7tldAP2/FJ3s1OEHK3Xs05XtSF1+TqnIPEfCgNsJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LvROmFas; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb2f4b282cso1881811fa.2;
-        Thu, 10 Oct 2024 11:56:31 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=dahmG+5iECyus62lKruaYKhZaEI3pJVKc5b89BYvZI38YEo8JCsF9l8s0m7QrpvkqBNki+QubBPrXm5MBK2Fn1jjj4JjHRs3g1GscihVIZHQ+XtNvNmSefwphLmf5bWZ1KcGWnAk+63jZl/fAIO7byeZf//+I+misL5Oe4QGZb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KDbVKdW8; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-8354cc1ab0cso39885239f.0
+        for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 12:31:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728586590; x=1729191390; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728588684; x=1729193484; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=YOoqt3SzjBQgpsIKWRZ4l0Y3knuV1eGfkQz04nzTz9k=;
-        b=LvROmFasYmsn+2b4zTYlzccKKucougJBY1MELqD7ku0mt/1Oa4UJ0zL6WX2EmbIy9b
-         D2uPtSR8UkUDJi1THdv1lyC2FMZqO5lxl1hCnzOvOKAkOOimPFO3fj9yDL01j9D8ZPKk
-         ewhCuIqlV6UmM2F05PTauD0yRp672le1/NhPhVMYinqmBP6qgzC5wMS5VqW+cIGi7Kqs
-         jZlGyUF8gj/Ver2kQqkHcQ9q7gaC+Nw+fufQHEwo/ZwFpRRLCjNo7hH7+Xzpr0U7aQ9/
-         9HvOOS0DsQHOgWo6e1+ndcrv8oJ/M2E38I+/WDu8mW8PgQ1nYnhEw8I5TCk4/TF4GZ1S
-         MHGg==
+        bh=spnUaRSzdRBnptMZqzssihls7EmfH7EgrK6Ami2ZaaU=;
+        b=KDbVKdW8ceIcXCjmr0icp6OFrGy5US8zXGxt9+LBrwKWrw2Kjn+iKbIWVSvC8vWMRS
+         y0A5gOFxlbHN+ZnsIQ+VIKWseeAqOzlWY8V4cNNWNZK46hfRc/neXwR9DieFgoH8SlPW
+         FJ+9Ho5IhOgtSRHoOphe1+XAL+WuQgNSEkroyQn1MKpgHcrmbgwnzHvhqgqZ702zbYj5
+         Gic9sTIKIs6iBIXm4vu3D6PC3RsOM0PNLMExM48oNY5Fxe8YRb6kND2EIj0F9akC9nov
+         MKtpmQGHEagM44R1nEkYUy1t9zeY+7wMUM1cGGrHHG9kf9+NpPJY2hxfw3StK0v5XffT
+         wDag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728586590; x=1729191390;
+        d=1e100.net; s=20230601; t=1728588684; x=1729193484;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YOoqt3SzjBQgpsIKWRZ4l0Y3knuV1eGfkQz04nzTz9k=;
-        b=sHjDfXrg0L3gsCLqHsXb7LW93b7kVJyoF2mv4eOv+ju+lMLUcwLBgF5rTsc+u6FuRh
-         VM00N1MYv1igqi7vcGRKYaGFIe52+xExteRVekMdDLdSlj+nVThZ560QosVp0IZLSKqK
-         mg8wCpSkVoBZvN2qtnmHXWkzKiZnX1ioDL/nhQ6gCeBBdE/VKKy9PzQRY2BIjDqqfMVB
-         NVAJjoXJpHle+uxnSfdDDSXvklxKiRSneiZoMpdjr94OIF32BSQeQMXL5VzOup3SZgnV
-         ZFE+G5uxJoEXizEULFBYistfUf3zfwcRMZ66KuGhQt6oKEKmW+7vZWtysSmSZyySYiwu
-         l2xA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHNqSu8ujEfAX/GwBBlGhsdeC8qMViwT6WvJ8CsXy37iCU99ZOmkFhUvimgoXHMEgEIcXKnEPM@vger.kernel.org, AJvYcCWxwaD/PeumKADn4txroD6P6JaNFmaNVwMKx+2YaxyPrmp0kIw/IVWEf1MYJORwPP6rdu9StQeUIQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcEA8yCE8ar0RboqFimiexuJmGt7ZdulE3FlRe5UUjuxwKTfhm
-	og/Trsf6uScRlw67Zau33nV5263ietRWs+GurdzyhCTXyqCqzw68
-X-Google-Smtp-Source: AGHT+IEyShYJV6lRfcFYMwYvVWw2WHFcx7g3WhxAaQO3kv9S0E6ishVh6w2uHfpmcMHZUhVb82IE8A==
-X-Received: by 2002:a2e:702:0:b0:2fb:2b5d:215d with SMTP id 38308e7fff4ca-2fb2b5d2206mr7146121fa.7.1728586589309;
-        Thu, 10 Oct 2024 11:56:29 -0700 (PDT)
-Received: from [192.168.42.219] ([148.252.140.94])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd057sm2169418f8f.35.2024.10.10.11.56.28
+        bh=spnUaRSzdRBnptMZqzssihls7EmfH7EgrK6Ami2ZaaU=;
+        b=JoMUh1NeRI+u1wJy7J90W9VV0bjSd2WDnimr5hHVAD83z1XRWmLECxbxvwz+Uxsna5
+         q1NSQPLpb00GmRddgzbSqO8yRaS/f0Mii2ibSaZ8wVqhYcVZSdSkKTSaAbTNRRL9Dky6
+         MvHCj7xzusXUU7Q4Fq8eixWzRfNazKjzl2kzqgCN9qaLl/9867QWeFgRDi2e5i0vD/vh
+         hzs4CuyvvirCrPsW40eNoUS1vkrsuc+HWqeJx8Vgqx0Uppgoww1YSunJB847rZ1eLZMc
+         XfcKmF0JMrhIpyxXdFFEwx3jjAWk485CQUI8jNsRJ+t3HuaYp8igUnneLRr0VS54hgza
+         cBKg==
+X-Gm-Message-State: AOJu0Yyc3SFRVMLDHuOncniz9XsNueDPOwaCTpn/tRsXPZ+UJRkYFN7Q
+	/lKDmGNSqneE+j2LJs7d8h9x0aJQdsmAlZMZSoboCgUTUnZeu1AGZnRGv2vsKgs=
+X-Google-Smtp-Source: AGHT+IG7QjsSxwt8l2+Tvy2EYNGV2L0M/5m6cRB5kDmTmxXmoUGWLaS4uG+b8eG6jt4jFBZeDCxBDw==
+X-Received: by 2002:a05:6602:4886:b0:82d:835:e66d with SMTP id ca18e2360f4ac-837932dc7cemr5370039f.9.1728588683752;
+        Thu, 10 Oct 2024 12:31:23 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbada84b54sm353318173.110.2024.10.10.12.31.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 11:56:28 -0700 (PDT)
-Message-ID: <d7915d17-9ee2-4486-8d39-f9ccaa53fc13@gmail.com>
-Date: Thu, 10 Oct 2024 19:57:04 +0100
+        Thu, 10 Oct 2024 12:31:22 -0700 (PDT)
+Message-ID: <655b3348-27a1-4bc7-ade7-4d958a692d0b@kernel.dk>
+Date: Thu, 10 Oct 2024 13:31:21 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,79 +75,148 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 01/15] net: devmem: pull struct definitions out of
- ifdef
-To: Mina Almasry <almasrymina@google.com>
-Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>
-References: <20241007221603.1703699-1-dw@davidwei.uk>
- <20241007221603.1703699-2-dw@davidwei.uk>
- <CAHS8izMHmG8-Go6k63UaCtwvEcp=D73Ja0XfrTjNp_b5TUmUFA@mail.gmail.com>
- <ed21bca5-5087-4eff-814c-39180078a700@gmail.com>
- <CAHS8izNGdFTr789fFhV_NvYK0ORKPwn_KHu0CeaZp_xhg9PgCA@mail.gmail.com>
+Subject: Re: [PATCH V6 7/8] io_uring/uring_cmd: support provide group kernel
+ buffer
+To: Pavel Begunkov <asml.silence@gmail.com>, Ming Lei <ming.lei@redhat.com>
+Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org
+References: <20240912104933.1875409-1-ming.lei@redhat.com>
+ <20240912104933.1875409-8-ming.lei@redhat.com>
+ <b232fa58-1255-44b2-92c9-f8eb4f70e2c9@gmail.com> <ZwJObC6mzetw4goe@fedora>
+ <38ad4c05-6ee3-4839-8d61-f8e1b5219556@gmail.com> <ZwdJ7sDuHhWT61FR@fedora>
+ <4b40eff1-a848-4742-9cb3-541bf8ed606e@gmail.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izNGdFTr789fFhV_NvYK0ORKPwn_KHu0CeaZp_xhg9PgCA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <4b40eff1-a848-4742-9cb3-541bf8ed606e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/10/24 19:01, Mina Almasry wrote:
-> On Wed, Oct 9, 2024 at 4:16 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> On 10/9/24 21:17, Mina Almasry wrote:
->>> On Mon, Oct 7, 2024 at 3:16 PM David Wei <dw@davidwei.uk> wrote:
->>>>
->>>> From: Pavel Begunkov <asml.silence@gmail.com>
->>>>
->>>> Don't hide structure definitions under conditional compilation, it only
->>>> makes messier and harder to maintain. Move struct
->>>> dmabuf_genpool_chunk_owner definition out of CONFIG_NET_DEVMEM ifdef
->>>> together with a bunch of trivial inlined helpers using the structure.
->>>>
->>>
->>> To be honest I think the way it is is better? Having the struct
->>> defined but always not set (because the code to set it is always
->>> compiled out) seem worse to me.
->>>
->>> Is there a strong reason to have this? Otherwise maybe drop this?
->> I can drop it if there are strong opinions on that, but I'm
->> allergic to ifdef hell and just trying to help to avoid it becoming
->> so. I even believe it's considered a bad pattern (is it?).
->>
->> As for a more technical description "why", it reduces the line count
->> and you don't need to duplicate functions. It's always annoying
->> making sure the prototypes stay same, but this way it's always
->> compiled and syntactically checked. And when refactoring anything
->> like the next patch does, you only need to change one function
->> but not both. Do you find that convincing?
->>
-> 
-> To be honest the tradeoff wins in the other direction for me. The
-> extra boiler plate is not that bad, and we can be sure that any code
+Hi,
 
-We can count how often people break builds because a change
-was compiled just with one configuration in mind. Unfortunately,
-I did it myself a fair share of times, and there is enough of
-build robot reports like that. It's not just about boiler plate
-but rather overall maintainability.
+Discussed this with Pavel, and on his suggestion, I tried prototyping a
+"buffer update" opcode. Basically it works like
+IORING_REGISTER_BUFFERS_UPDATE in that it can update an existing buffer
+registration. But it works as an sqe rather than being a sync opcode.
 
-> that touches net_devmem_dmabuf_binding will get a valid internals
-> since it won't compile if the feature is disabled. This could be
-> critical and could be preventing bugs.
+The idea here is that you could do that upfront, or as part of a chain,
+and have it be generically available, just like any other buffer that
+was registered upfront. You do need an empty table registered first,
+which can just be sparse. And since you can pick the slot it goes into,
+you can rely on that slot afterwards (either as a link, or just the
+following sqe).
 
-I don't see the concern, if devmem is compiled out there wouldn't
-be a devmem provider to even create it, and you don't need to
-worry. If you think someone would create a binding without a devmem,
-then I don't believe it'd be enough to hide a struct definition
-to prevent that in the first place.
+Quick'n dirty obviously, but I did write a quick test case too to verify
+that:
 
-I think the maintainers can tell whichever way they think is
-better, I can drop the patch, even though I think it's much
-better with it.
+1) It actually works (it seems to)
+2) It's not too slow (it seems not to be, I can get ~2.5M updates per
+   second in a vm on my laptop, which isn't too bad).
+
+Not saying this is perfect, but perhaps it's worth entertaining an idea
+like that? It has the added benefit of being persistent across system
+calls as well, unless you do another IORING_OP_BUF_UPDATE at the end of
+your chain to re-set it.
+
+Comments? Could it be useful for this?
+
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 86cb385fe0b5..02d4b66267ef 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -259,6 +259,7 @@ enum io_uring_op {
+ 	IORING_OP_FTRUNCATE,
+ 	IORING_OP_BIND,
+ 	IORING_OP_LISTEN,
++	IORING_OP_BUF_UPDATE,
+ 
+ 	/* this goes last, obviously */
+ 	IORING_OP_LAST,
+diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+index a2be3bbca5ff..cda35d22397d 100644
+--- a/io_uring/opdef.c
++++ b/io_uring/opdef.c
+@@ -515,6 +515,10 @@ const struct io_issue_def io_issue_defs[] = {
+ 		.prep			= io_eopnotsupp_prep,
+ #endif
+ 	},
++	[IORING_OP_BUF_UPDATE] = {
++		.prep			= io_buf_update_prep,
++		.issue			= io_buf_update,
++	},
+ };
+ 
+ const struct io_cold_def io_cold_defs[] = {
+@@ -742,6 +746,9 @@ const struct io_cold_def io_cold_defs[] = {
+ 	[IORING_OP_LISTEN] = {
+ 		.name			= "LISTEN",
+ 	},
++	[IORING_OP_BUF_UPDATE] = {
++		.name			= "BUF_UPDATE",
++	},
+ };
+ 
+ const char *io_uring_get_opcode(u8 opcode)
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 33a3d156a85b..6f0071733018 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1236,3 +1236,44 @@ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg)
+ 		fput(file);
+ 	return ret;
+ }
++
++struct io_buf_update {
++	struct file *file;
++	struct io_uring_rsrc_update2 up;
++};
++
++int io_buf_update_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
++{
++	struct io_buf_update *ibu = io_kiocb_to_cmd(req, struct io_buf_update);
++	struct io_uring_rsrc_update2 __user *uaddr;
++
++	if (!req->ctx->buf_data)
++		return -ENXIO;
++	if (sqe->ioprio || sqe->fd || sqe->addr2 || sqe->rw_flags ||
++	    sqe->splice_fd_in)
++		return -EINVAL;
++	if (sqe->len != 1)
++		return -EINVAL;
++
++	uaddr = u64_to_user_ptr(READ_ONCE(sqe->addr));
++	if (copy_from_user(&ibu->up, uaddr, sizeof(*uaddr)))
++		return -EFAULT;
++
++	return 0;
++}
++
++int io_buf_update(struct io_kiocb *req, unsigned int issue_flags)
++{
++	struct io_buf_update *ibu = io_kiocb_to_cmd(req, struct io_buf_update);
++	struct io_ring_ctx *ctx = req->ctx;
++	int ret;
++
++	io_ring_submit_lock(ctx, issue_flags);
++	ret = __io_register_rsrc_update(ctx, IORING_RSRC_BUFFER, &ibu->up, ibu->up.nr);
++	io_ring_submit_unlock(ctx, issue_flags);
++
++	if (ret < 0)
++		req_set_fail(req);
++	io_req_set_res(req, ret, 0);
++	return 0;
++}
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 8ed588036210..d41e75c956ef 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -142,4 +142,7 @@ static inline void __io_unaccount_mem(struct user_struct *user,
+ 	atomic_long_sub(nr_pages, &user->locked_vm);
+ }
+ 
++int io_buf_update_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
++int io_buf_update(struct io_kiocb *req, unsigned int issue_flags);
++
+ #endif
 
 -- 
-Pavel Begunkov
+Jens Axboe
 

@@ -1,235 +1,337 @@
-Return-Path: <io-uring+bounces-3545-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3546-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C50997B41
-	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 05:29:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC788997D81
+	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 08:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6109D284261
-	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 03:29:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B5EB1F25000
+	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 06:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874684F881;
-	Thu, 10 Oct 2024 03:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13B21A0732;
+	Thu, 10 Oct 2024 06:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YXJmC28b"
+	dkim=pass (2048-bit key) header.d=owltronix-com.20230601.gappssmtp.com header.i=@owltronix-com.20230601.gappssmtp.com header.b="zuq7dnBe"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B983C3839C
-	for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 03:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9428A29A2
+	for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 06:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728530948; cv=none; b=jD0Zeabr4yO3wEAIdOBXRGKNh2iyG7DEoAR2jMXPyxdeTmmf2EhhJceD4snCG0a7ajsGnFG4T2L13c3Q/89dIejFOIVgfiOL/y/9X4hIGeOPdu6PmUm7px7yImWrQ/FUuLiXN3P7n/aGpIUllg6dU3e25PFHxZs8a5RPoJZjg68=
+	t=1728542437; cv=none; b=ZM4sV/CpRCRQ0XPnCPKp7Q0OO4KhK/jE95qjCOFUi+SpjiUb+pGVPv4V2lrmifH43H5LgNohlGbWjgz8ELjJHSHVyvshouYoH7+IHhB6HFiqeFBZ7rAzTXA1/VX+DqAoqLhaq42m3cFX7iwd7eC1PNtg9vSWshXdi/4PwFCBb4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728530948; c=relaxed/simple;
-	bh=wbKnTIdHZ/Nkf7T9fW3db0yncs3ELsxTmQkB6iNVmuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A6p9nFtHMLI5HjqgQsNPOPbSw9aN1HBdI53Wi8YEESjlBdPI7sVMXAreuoR1G7mmv5hlK8odInJc5N7jiYnPKi3dMvufhjD9gUldd5nGs6NjNo04WS6rLwqOA5Qjr/GUgIp8fH8N8WMRAspYDF/E9aPVrEvq9XL+gquZCGiS0Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YXJmC28b; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728530945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GmEXZEOcyZc/0SvFdsLbRoOtB7u4YK1Mc4GQkCkUhC4=;
-	b=YXJmC28bbGzpFyNmmSXpluVNxxwpQCTaqYYMGLCisP8oFkbQ190hDME0RNsXSEGk4EaG7m
-	faxrjJQNovD4X4Ucy+gc4ZLa3984ZsYYSQGSVYnYk++8u7WjF7Jc7IaRkmjcQjlfwgomoE
-	DDm9/gUB5tyui967HHK6wCKYIpbyYAU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-455-3IBhojX7MPaIpC1onoH-Xg-1; Wed,
- 09 Oct 2024 23:29:02 -0400
-X-MC-Unique: 3IBhojX7MPaIpC1onoH-Xg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 466B61956080;
-	Thu, 10 Oct 2024 03:29:01 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.47])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B5F219560AA;
-	Thu, 10 Oct 2024 03:28:56 +0000 (UTC)
-Date: Thu, 10 Oct 2024 11:28:46 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCH V6 7/8] io_uring/uring_cmd: support provide group kernel
- buffer
-Message-ID: <ZwdJ7sDuHhWT61FR@fedora>
-References: <20240912104933.1875409-1-ming.lei@redhat.com>
- <20240912104933.1875409-8-ming.lei@redhat.com>
- <b232fa58-1255-44b2-92c9-f8eb4f70e2c9@gmail.com>
- <ZwJObC6mzetw4goe@fedora>
- <38ad4c05-6ee3-4839-8d61-f8e1b5219556@gmail.com>
+	s=arc-20240116; t=1728542437; c=relaxed/simple;
+	bh=jX4DPYGmAOBQ034uHbFGeb/lKALVjHioaz1Z+lgCYVs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EwV8JeSpklowaR47PxqkVpZmAJuDRezOiG2Kx+lLLzu1VDwsX2/xMn1HCt9o8f2FJ+HZgG/EbAOmdBJEqYj812USi6rqaR+MeghacMWTjbtzSA0oogAIuZ65RS5G16kp9u1OJJn5WCNG18LyHUHGKuppDxCwPkZpl843s+A3dV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com; spf=none smtp.mailfrom=owltronix.com; dkim=pass (2048-bit key) header.d=owltronix-com.20230601.gappssmtp.com header.i=@owltronix-com.20230601.gappssmtp.com header.b=zuq7dnBe; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=owltronix.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9950d27234so81614566b.1
+        for <io-uring@vger.kernel.org>; Wed, 09 Oct 2024 23:40:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=owltronix-com.20230601.gappssmtp.com; s=20230601; t=1728542434; x=1729147234; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YtBMnssoGmOPP9k5G7rkH9LuSOvCJReyj8Ng4xiAyNw=;
+        b=zuq7dnBeNsOxlywNdO2v7bzVnv4k9HrlBOmvnhi9Y9KNfua8QHox8YSB2uBwJVPgGn
+         AJ1PcreaWUCfMb0EJuRC50bocyAK8hwbaX3H5o3UGvO4JA77PD+FMGeCmi65kklTQ8un
+         27MchjpKkcsPbWsoyc5XAnaR0JdYTlirBaTBgTSBM7rU34hnr2a0Mr3Dbvg24JJj/t9S
+         WE1dmi3skrunlROqw6Wia7WBVOhfa9HPxtyMa0ADqrFIl6pSmdm8LuNE12Zh+A6XZjkE
+         cUwqWXJjZ07CA8J72odtOX1dn40TbnwsjvZTfiBpQv/5WCNA9ATDs5fjs6gcd1DNbjKl
+         Pcpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728542434; x=1729147234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YtBMnssoGmOPP9k5G7rkH9LuSOvCJReyj8Ng4xiAyNw=;
+        b=U2JsE7nbZsUC7IJVokgUoPVpywGYvUy61SH9S7NxnkrqCzyDpZJCw2yATlbZxvMPYg
+         BYPmH5Bz6l+S2aBywiKAyWYOFzg9OITuKgYpKRNhm95w9iGHMbQPhLquXXt//kTZ0RBy
+         Xmv/3Di3mryzRtzv1ZQE7588wpuSw5SvxKa1R7hY9/kS4Wv56+ipjitaoakEmPTMG6EW
+         7r20CI7SgiWYzoEr1GewAv8uw33PS5HynRxPHFHPhLzzv6/HoiqA987FsxmrZaWfUOtw
+         6G6NgmlLBPjNKPUUSVoT6sEVLodSzUaolt4xLxT+JcaaFK7JYdn4NQxSa7YHwh9UlEQh
+         ilAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpML1a7BRc6cTDs+e5BbJdFjAPu/vT+lYPPMRWqkPYqnk4KS0fXyto73PJnPJ4JhsygBxggrHw9A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkgxTi5lToaP6paENBMQPX7Nv5FVwfrZwtHnIlH7zGXdFS9z0u
+	HknPxmifs21rLvpTLXS931ilnyDSyXRmDVAHnzqqN9iTsduUgzjuHxXu92GqzQxPuddJtjLnigy
+	xNh5KgJAFOE+9bZ4AalWbKBWkkCvBfdOQaOsZwg==
+X-Google-Smtp-Source: AGHT+IEn+NqBy+r/Wng/w3gclLBwt3fhLmzd3mc6xePFFP+6fFXSWfS6xno7nZU5yEUbpI7xBERaHXpJIGQ6Vg3CZQs=
+X-Received: by 2002:a17:907:f14c:b0:a99:9ff2:a85e with SMTP id
+ a640c23a62f3a-a999ff2a9b2mr187150166b.39.1728542433849; Wed, 09 Oct 2024
+ 23:40:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38ad4c05-6ee3-4839-8d61-f8e1b5219556@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20241002151949.GA20877@lst.de> <yq17caq5xvg.fsf@ca-mkp.ca.oracle.com>
+ <20241003125400.GB17031@lst.de> <c68fef87-288a-42c7-9185-8ac173962838@kernel.dk>
+ <CGME20241004053129eucas1p2aa4888a11a20a1a6287e7a32bbf3316b@eucas1p2.samsung.com>
+ <20241004053121.GB14265@lst.de> <20241004061811.hxhzj4n2juqaws7d@ArmHalley.local>
+ <20241004062733.GB14876@lst.de> <20241004065233.oc5gqcq3lyaxzjhz@ArmHalley.local>
+ <20241004123027.GA19168@lst.de> <20241007101011.boufh3tipewgvuao@ArmHalley.local>
+ <CANr-nt3TA75MSvTNWP3SwBh60dBwJYztHJL5LZvROa-j9Lov7g@mail.gmail.com> <97bd78a896b748b18e21e14511e8e0f4@CAMSVWEXC02.scsc.local>
+In-Reply-To: <97bd78a896b748b18e21e14511e8e0f4@CAMSVWEXC02.scsc.local>
+From: Hans Holmberg <hans@owltronix.com>
+Date: Thu, 10 Oct 2024 08:40:21 +0200
+Message-ID: <CANr-nt11OJfLRFr=rzH0LyRUzVD9ZFLKsgree=Xqv__nWerVkg@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] FDP and per-io hints
+To: Javier Gonzalez <javier.gonz@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Keith Busch <kbusch@kernel.org>, 
+	Kanchan Joshi <joshi.k@samsung.com>, "hare@suse.de" <hare@suse.de>, 
+	"sagi@grimberg.me" <sagi@grimberg.me>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>, 
+	"jaegeuk@kernel.org" <jaegeuk@kernel.org>, "bcrl@kvack.org" <bcrl@kvack.org>, 
+	"dhowells@redhat.com" <dhowells@redhat.com>, "bvanassche@acm.org" <bvanassche@acm.org>, 
+	"asml.silence@gmail.com" <asml.silence@gmail.com>, 
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, 
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "linux-aio@kvack.org" <linux-aio@kvack.org>, 
+	"gost.dev@samsung.com" <gost.dev@samsung.com>, "vishak.g@samsung.com" <vishak.g@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 09, 2024 at 04:14:33PM +0100, Pavel Begunkov wrote:
-> On 10/6/24 09:46, Ming Lei wrote:
-> > On Fri, Oct 04, 2024 at 04:44:54PM +0100, Pavel Begunkov wrote:
-> > > On 9/12/24 11:49, Ming Lei wrote:
-> > > > Allow uring command to be group leader for providing kernel buffer,
-> > > > and this way can support generic device zero copy over device buffer.
-> > > > 
-> > > > The following patch will use the way to support zero copy for ublk.
-> > > > 
-> > > > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > > > ---
-> > > >    include/linux/io_uring/cmd.h  |  7 +++++++
-> > > >    include/uapi/linux/io_uring.h |  7 ++++++-
-> > > >    io_uring/uring_cmd.c          | 28 ++++++++++++++++++++++++++++
-> > > >    3 files changed, 41 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-> > > > index 447fbfd32215..fde3a2ec7d9a 100644
-> > > > --- a/include/linux/io_uring/cmd.h
-> > > > +++ b/include/linux/io_uring/cmd.h
-> > > > @@ -48,6 +48,8 @@ void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
-> > > >    void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
-> > > >    		unsigned int issue_flags);
-> > > > +int io_uring_cmd_provide_kbuf(struct io_uring_cmd *ioucmd,
-> > > > +		const struct io_uring_kernel_buf *grp_kbuf);
-> > > >    #else
-> > > >    static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-> > > >    			      struct iov_iter *iter, void *ioucmd)
-> > > > @@ -67,6 +69,11 @@ static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
-> > > >    		unsigned int issue_flags)
-> > > >    {
-> > > >    }
-> > > > +static inline int io_uring_cmd_provide_kbuf(struct io_uring_cmd *ioucmd,
-> > > > +		const struct io_uring_kernel_buf *grp_kbuf)
-> > > > +{
-> > > > +	return -EOPNOTSUPP;
-> > > > +}
-> > > >    #endif
-> > > >    /*
-> > > > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> > > > index 2af32745ebd3..11985eeac10e 100644
-> > > > --- a/include/uapi/linux/io_uring.h
-> > > > +++ b/include/uapi/linux/io_uring.h
-> > > > @@ -271,9 +271,14 @@ enum io_uring_op {
-> > > >     * sqe->uring_cmd_flags		top 8bits aren't available for userspace
-> > > >     * IORING_URING_CMD_FIXED	use registered buffer; pass this flag
-> > > >     *				along with setting sqe->buf_index.
-> > > > + * IORING_PROVIDE_GROUP_KBUF	this command provides group kernel buffer
-> > > > + *				for member requests which can retrieve
-> > > > + *				any sub-buffer with offset(sqe->addr) and
-> > > > + *				len(sqe->len)
-> > > 
-> > > Is there a good reason it needs to be a cmd generic flag instead of
-> > > ublk specific?
-> > 
-> > io_uring request isn't visible for drivers, so driver can't know if the
-> > uring command is one group leader.
-> 
-> btw, does it have to be in a group at all? Sure, nobody would be
-> able to consume the buffer, but otherwise should be fine.
-> 
-> > Another way is to add new API of io_uring_cmd_may_provide_buffer(ioucmd)
-> 
-> The checks can be done inside of io_uring_cmd_provide_kbuf()
+On Wed, Oct 9, 2024 at 4:36=E2=80=AFPM Javier Gonzalez <javier.gonz@samsung=
+.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Hans Holmberg <hans@owltronix.com>
+> > Sent: Tuesday, October 8, 2024 12:07 PM
+> > To: Javier Gonzalez <javier.gonz@samsung.com>
+> > Cc: Christoph Hellwig <hch@lst.de>; Jens Axboe <axboe@kernel.dk>; Marti=
+n K.
+> > Petersen <martin.petersen@oracle.com>; Keith Busch <kbusch@kernel.org>;
+> > Kanchan Joshi <joshi.k@samsung.com>; hare@suse.de; sagi@grimberg.me;
+> > brauner@kernel.org; viro@zeniv.linux.org.uk; jack@suse.cz; jaegeuk@kern=
+el.org;
+> > bcrl@kvack.org; dhowells@redhat.com; bvanassche@acm.org;
+> > asml.silence@gmail.com; linux-nvme@lists.infradead.org; linux-
+> > fsdevel@vger.kernel.org; io-uring@vger.kernel.org; linux-block@vger.ker=
+nel.org;
+> > linux-aio@kvack.org; gost.dev@samsung.com; vishak.g@samsung.com
+> > Subject: Re: [PATCH v7 0/3] FDP and per-io hints
+> >
+> > On Mon, Oct 7, 2024 at 12:10=E2=80=AFPM Javier Gonz=C3=A1lez <javier.go=
+nz@samsung.com>
+> > wrote:
+> > >
+> > > On 04.10.2024 14:30, Christoph Hellwig wrote:
+> > > >On Fri, Oct 04, 2024 at 08:52:33AM +0200, Javier Gonz=C3=A1lez wrote=
+:
+> > > >> So, considerign that file system _are_ able to use temperature hin=
+ts and
+> > > >> actually make them work, why don't we support FDP the same way we =
+are
+> > > >> supporting zones so that people can use it in production?
+> > > >
+> > > >Because apparently no one has tried it.  It should be possible in th=
+eory,
+> > > >but for example unless you have power of 2 reclaim unit size size it
+> > > >won't work very well with XFS where the AGs/RTGs must be power of tw=
+o
+> > > >aligned in the LBA space, except by overprovisioning the LBA space v=
+s
+> > > >the capacity actually used.
+> > >
+> > > This is good. I think we should have at least a FS POC with data
+> > > placement support to be able to drive conclusions on how the interfac=
+e
+> > > and requirements should be. Until we have that, we can support the
+> > > use-cases that we know customers are asking for, i.e., block-level hi=
+nts
+> > > through the existing temperature API.
+> > >
+> > > >
+> > > >> I agree that down the road, an interface that allows hints (many m=
+ore
+> > > >> than 5!) is needed. And in my opinion, this interface should not h=
+ave
+> > > >> semintics attached to it, just a hint ID, #hints, and enough space=
+ to
+> > > >> put 100s of them to support storage node deployments. But this nee=
+ds to
+> > > >> come from the users of the hints / zones / streams / etc,  not fro=
+m
+> > > >> us vendors. We do not have neither details on how they deploy thes=
+e
+> > > >> features at scale, nor the workloads to validate the results. Anyt=
+hing
+> > > >> else will probably just continue polluting the storage stack with =
+more
+> > > >> interfaces that are not used and add to the problem of data placem=
+ent
+> > > >> fragmentation.
+> > > >
+> > > >Please always mentioned what layer you are talking about.  At the sy=
+scall
+> > > >level the temperatur hints are doing quite ok.  A full stream separa=
+tion
+> > > >would obviously be a lot better, as would be communicating the zone =
+/
+> > > >reclaim unit / etc size.
+> > >
+> > > I mean at the syscall level. But as mentioned above, we need to be ve=
+ry
+> > > sure that we have a clear use-case for that. If we continue seeing hi=
+nts
+> > > being use in NVMe or other protocols, and the number increase
+> > > significantly, we can deal with it later on.
+> > >
+> > > >
+> > > >As an interface to a driver that doesn't natively speak temperature
+> > > >hint on the other hand it doesn't work at all.
+> > > >
+> > > >> The issue is that the first series of this patch, which is as simp=
+le as
+> > > >> it gets, hit the list in May. Since then we are down paths that le=
+ad
+> > > >> nowhere. So the line between real technical feedback that leads to
+> > > >> a feature being merged, and technical misleading to make people be=
+ a
+> > > >> busy bee becomes very thin. In the whole data placement effort, we=
+ have
+> > > >> been down this path many times, unfortunately...
+> > > >
+> > > >Well, the previous round was the first one actually trying to addres=
+s the
+> > > >fundamental issue after 4 month.  And then after a first round of fe=
+edback
+> > > >it gets shutdown somehow out of nowhere.  As a maintainer and review=
+ that
+> > > >is the kinda of contributors I have a hard time taking serious.
+> > >
+> > > I am not sure I understand what you mean in the last sentece, so I wi=
+ll
+> > > not respond filling blanks with a bad interpretation.
+> > >
+> > > In summary, what we are asking for is to take the patches that cover =
+the
+> > > current use-case, and work together on what might be needed for bette=
+r
+> > > FS support. For this, it seems you and Hans have a good idea of what =
+you
+> > > want to have based on XFS. We can help review or do part of the work,
+> > > but trying to guess our way will only delay existing customers using
+> > > existing HW.
+> >
+> > After reading the whole thread, I end up wondering why we need to rush =
+the
+> > support for a single use case through instead of putting the architectu=
+re
+> > in place for properly supporting this new type of hardware from the sta=
+rt
+> > throughout the stack.
+>
+> This is not a rush. We have been supporting this use case through passthr=
+u for
+> over 1/2 year with code already upstream in Cachelib. This is mature enou=
+gh as
+> to move into the block layer, which is what the end user wants to do eith=
+er way.
+>
+> This is though a very good point. This is why we upstreamed passthru at t=
+he
+> time; so people can experiment, validate, and upstream only when there is=
+ a
+> clear path.
+>
+> >
+> > Even for user space consumers of raw block devices, is the last version
+> > of the patch set good enough?
+> >
+> > * It severely cripples the data separation capabilities as only a handf=
+ul of
+> >   data placement buckets are supported
+>
+> I could understand from your presentation at LPC, and late looking at the=
+ code that
+> is available that you have been successful at getting good results with t=
+he existing
+> interface in XFS. The mapping form the temperature semantics to zones (no=
+ semantics)
+> is the exact same as we are doing with FDP. Not having to change neither =
+in-kernel  nor user-space
+> structures is great.
 
-Yeah.
+No, we don't map data directly to zones using lifetime hints. In fact,
+lifetime hints contribute only a
+relatively small part  (~10% extra write amp reduction, see the
+rocksdb benchmark results).
+Segregating data by file is the most important part of the data
+placement heuristic, at least
+for this type of workload.
 
-Now the difference is just that:
+>
+> >
+> > * It just won't work if there is more than one user application per sto=
+rage
+> >   device as different applications data streams will be mixed at the nv=
+me
+> >   driver level..
+>
+> For now this use-case is not clear. Folks working on it are using passthr=
+u. When we
+> have a more clear understanding of what is needed, we might need changes =
+in the kernel.
+>
+> If you see a need for this on the work that you are doing, by all means, =
+please send patches.
+> As I said at LPC, we can work together on this.
+>
+> >
+> > While Christoph has already outlined what would be desirable from a
+> > file system point of view, I don't have the answer to what would be the=
+ overall
+> > best design for FDP. I would like to say that it looks to me like we ne=
+ed to
+> > consider more than more than the early adoption use cases and make sure=
+ we
+> > make the most of the hardware capabilities via logical abstractions tha=
+t
+> > would be compatible with a wider range of storage devices.
+> >
+> > Figuring the right way forward is tricky, but why not just let it take =
+the time
+> > that is needed to sort this out while early users explore how to use FD=
+P
+> > drives and share the results?
+>
+> I agree that we might need a new interface to support more hints, beyond =
+the temperatures.
+> Or maybe not. We would not know until someone comes with a use case. We h=
+ave made the
+> mistake in the past of treating internal research as upstreamable work. I=
+ know can see that
+> this simply complicates the in-kernel and user-space APIs.
+>
+> The existing API is usable and requires no changes. There is hardware. Th=
+ere are customers.
+> There are applications with upstream support which have been tested with =
+passthru (the
+> early results you mention). And the wiring to NVMe is _very_ simple. Ther=
+e is no reason
+> not to take this in, and then we will see what new interfaces we might ne=
+ed in the future.
+>
+> I would much rather spend time in discussing ideas with you and others on=
+ a potential
+> future API than arguing about the validity of an _existing_ one.
+>
 
-- user may know it explicitly(UAPI flag) or implicitly(driver's ->cmd_op),
-- if driver knows this uring_cmd is one group leader
-
-I am fine with either way.
-
-> 
-> > so driver can check if device buffer can be provided with this uring_cmd,
-> > but I prefer to the new uring_cmd flag:
-> > 
-> > - IORING_PROVIDE_GROUP_KBUF can provide device buffer in generic way.
-> 
-> Ok, could be.
-> 
-> > - ->prep() can fail fast in case that it isn't one group request
-> 
-> I don't believe that matters, a behaving user should never
-> see that kind of failure.
-> 
-> 
-> > > 1. Extra overhead for files / cmds that don't even care about the
-> > > feature.
-> > 
-> > It is just checking ioucmd->flags in ->prep(), and basically zero cost.
-> 
-> It's not if we add extra code for each every feature, at
-> which point it becomes a maze of such "ifs".
-
-Yeah, I guess it can't be avoided in current uring_cmd design, which
-serves for different subsystems now, and more in future.
-
-And the situation is similar with ioctl.
-
-> 
-> > > 2. As it stands with this patch, the flag is ignored by all other
-> > > cmd implementations, which might be quite confusing as an api,
-> > > especially so since if we don't set that REQ_F_GROUP_KBUF memeber
-> > > requests will silently try to import a buffer the "normal way",
-> > 
-> > The usage is same with buffer select or fixed buffer, and consumer
-> > has to check the flag.
-> 
-> We fails requests when it's asked to use the feature but
-> those are not supported, at least non-cmd requests.
-> 
-> > And same with IORING_URING_CMD_FIXED which is ignored by other
-> > implementations except for nvme, :-)
-> 
-> Oh, that's bad. If you'd try to implement the flag in the
-> future it might break the uapi. It might be worth to patch it
-> up on the ublk side, i.e. reject the flag, + backport, and hope
-> nobody tried to use them together, hmm?
-> 
-> > I can understand the concern, but it exits since uring cmd is born.
-> > 
-> > > i.e. interpret sqe->addr or such as the target buffer.
-> > 
-> > > 3. We can't even put some nice semantics on top since it's
-> > > still cmd specific and not generic to all other io_uring
-> > > requests.
-> > > 
-> > > I'd even think that it'd make sense to implement it as a
-> > > new cmd opcode, but that's the business of the file implementing
-> > > it, i.e. ublk.
-> > > 
-> > > >     */
-> > > >    #define IORING_URING_CMD_FIXED	(1U << 0)
-> > > > -#define IORING_URING_CMD_MASK	IORING_URING_CMD_FIXED
-> > > > +#define IORING_PROVIDE_GROUP_KBUF	(1U << 1)
-> > > > +#define IORING_URING_CMD_MASK	(IORING_URING_CMD_FIXED | IORING_PROVIDE_GROUP_KBUF)
-> > 
-> > It needs one new file operation, and we shouldn't work toward
-> > this way.
-> 
-> Not a new io_uring request, I rather meant sqe->cmd_op,
-> like UBLK_U_IO_FETCH_REQ_PROVIDER_BUFFER.
-
-`cmd_op` is supposed to be defined by subsystems, but maybe we can
-reserve some for generic uring_cmd. Anyway this shouldn't be one big
-deal, we can do that in future if there are more such uses.
-
-
-Thanks,
-Ming
-
+Yes, but while FDP support could be improved later on(happy to help if
+that'll be the case),
+I'm just afraid that less work now defining the way data placement is
+exposed is going to
+result in a bigger mess later when more use cases will be considered.
 

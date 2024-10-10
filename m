@@ -1,131 +1,174 @@
-Return-Path: <io-uring+bounces-3566-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3567-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D440E998F36
-	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 20:02:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949F2998F80
+	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 20:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FB9D1F25DC4
-	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 18:02:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4841B1F23C2D
+	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 18:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F0219AA6B;
-	Thu, 10 Oct 2024 18:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF75D1C9B64;
+	Thu, 10 Oct 2024 18:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0+TrZIQU"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dxaE3HBA"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C4138396
-	for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 18:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C4E19DF53
+	for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 18:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583297; cv=none; b=mimYEnVWJa5/yJMKq7pXkcUWNsSymZM9Jc26RGC9SJu5PThINp/Cc7i/g2Mt7fd/jATbRpKGJBBmeAeLknuLdUZe8/Rhh8TAKWLSHbMyyy20VB294/i42AMiY8STVLTpvW8aDOgoH8i0/tqaVJeuUyUFZdQY9r7c5Q4iv0q+J0A=
+	t=1728583919; cv=none; b=CKLZ1BAzFamnM90Cx9WBkzpEdgKN3IzbR1CqLJdVUzcbZppf+IOTei3QzkhMeRX38QXVFOZQu0NLXpb0tll4/GzbGqGimvwv36UzMloP9qbYJKtuPGCPDSEcfI3mHx/3BuFY61iFf4YvVT0eyTUa4B3zGqjhnRbcHGZj2ghGV3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583297; c=relaxed/simple;
-	bh=h4p6/oEJeeULQeOwzxT6gK43puyM2unadqeu1J64YA0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fS+tsBal3XSTXlRX8rSEpeIeFzfpm4SLXuoUwSKrrxm3YwqdQvWpr/HsovawoCCJIkKa+dXS6vsWS73ZFiIVz40MQDztzggvWZTgX9u578IyoPBjmzGAPM149byXXkWabJCvt8Dwuqda1mXHeERXJACaNoH/KT4BpbJVARIOSEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0+TrZIQU; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4603d3e0547so30441cf.0
-        for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 11:01:35 -0700 (PDT)
+	s=arc-20240116; t=1728583919; c=relaxed/simple;
+	bh=3bWMU9e+fC2FyjouFlvZ8jusiaIzuZ0pgurWY1hHAeU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RdsGySgWxDBrlXUq0aejjze5gL8qnQJZi6mOBSfE95NyxyEHk5MUDkthrjOwV8J9OVv/8JikNO+rESceueQvzoi/YYDK/gBFzwY715Ii+SaGXABg7hPsB8IAslDHeCXubLiN+4dHuIbX6gFY+keQjoSiFeV7lSyPQne2LhNtv08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dxaE3HBA; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-835426c0fefso39104339f.1
+        for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 11:11:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728583295; x=1729188095; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h4p6/oEJeeULQeOwzxT6gK43puyM2unadqeu1J64YA0=;
-        b=0+TrZIQU8bz3nlGvlw803qjqKzOMtDbfkowS1m9LybsRMobQsJAX9u5M3XlUcHmsKP
-         fjutNkmVUGWERLkXfkcfGTUeF7cOizU2NF0WnYI0N6M2qQyioDt4EDOgNTkGGCM1qwwW
-         RIJlNCtKq4SEoWTBM0d3WIDoikN/Atah57DmuocJuq+HgMuSsp3DD9/IkWYBiCOlHWiU
-         /4DASB8OpTgekVByE+DEQzqLjI13Awx2RxMkGQIWYVF8dr4DBnT1DD/R07pZQoc8t0QU
-         VhIQzs5epXMeZrjTFqyjE9MISPhQkNLT6p06i5S9T60gGPpBupMgGjHdTGyIBmzTiToJ
-         c7mA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728583916; x=1729188716; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=v+F0BsVfrw8m5gGuuX3A/23c5S/Zo9mD7HI9V9TN0us=;
+        b=dxaE3HBAuI+r2EU60XfKgjDh45MKT3MvQMzP+8IAjIY5NF2an6zDYjwJFwnVrRl4Pe
+         vM5UsERAUWg7DvyR9eMvmBPZ2QojGLkj4bkhDkJQGhVijn0wf8+6RvkWEVsRThD361g/
+         rUJQGGdUgcvi3U8kqFsOpwtbbz7nOm1QqGWtFzSUN9fzQ2UB/7W2GT5I2tq3N2HaU3PV
+         +eSWrEOh4U8W4xwjYErA4F36ISFIx6oUIuNbc2yiSVx/zfHOIMNuJgkuTU8ix6KRfZwz
+         O775ZtFqsjHrxAvbX5HBqLMaqFcJMibyJ/ViZsBhAMWs2z121LoqU5+VHbQDGr9UaFCx
+         bQWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728583295; x=1729188095;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h4p6/oEJeeULQeOwzxT6gK43puyM2unadqeu1J64YA0=;
-        b=vTx2PNwBuzoSiywiShZx0NiPoQwpguG8TOp93F51+zDXte02iGVWbOzCY2iN1EysRh
-         LOfZnIDJypMwiJVRh/VJWtMT2SJ4SBIdIhXkZuy+2tjnzPKaFR1cmGnQEdoglNKfinDS
-         /0ZE3f0o+0p8USQX6NIgL3AUvFpl3SJBLWcj8Ly/kY6+5VP1ydaerIRvcj7ObbglPnrC
-         mq4tHvFm6KDhF0hQ+JyK8G4TRW+OqHP6JG7RBI7Cwy4bQ/Kws95jUNkFYHArTDkI5vOW
-         mfHmVQ+bizvFzCwBB748FPVIL/VVDIz0AKDEZQKtMBrhX15+D9j2z4Ue4AtnR6TSBYNB
-         J8XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVro+H2jMOM5q6aPGgDQ1PJmIjhV4eaSx8Jearwoh/pKIb9eX+773hq6dCd5RqR4HIOOFJplMLRQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YynOVPGPnXtXA43tFcLOcpGx6ONGrUYJT/SMZLslHH1TaIsCcXW
-	0eRVXa4OGc7saAIP4zA8il/LZyIhS21sBgNdVNmVVMbX2y3ChiO/c9JcwZLugpisMZtj5gU5elg
-	ENma28z33lLR0WoW+2bHc24Xq/opPw7AV+RKY
-X-Google-Smtp-Source: AGHT+IE1Co5d9FOgO1g5et54dnmdPYt/7A6Q5DwteQLTHpos6fidELAlf4jiFP4oYabOZqoHCxX2MnXbXIIvb5OVky8=
-X-Received: by 2002:a05:622a:a28c:b0:460:48f1:5a49 with SMTP id
- d75a77b69052e-4604ac61976mr238341cf.14.1728583294536; Thu, 10 Oct 2024
- 11:01:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728583916; x=1729188716;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v+F0BsVfrw8m5gGuuX3A/23c5S/Zo9mD7HI9V9TN0us=;
+        b=Q/OSKaoyjEIzvf4M958ifBkfXmqa/8EoGIoFtV2fwkEFIXI9lB3Sf4/XdIZnlwqIrD
+         YonGYcfN8+E8YLPEFoUkF6FS6iY/QPgOzVl9ciFv34NU9sGfowC8EurURprOTTzq/PXc
+         W1qJF/yfl5YRkBr8GhsSfZuW/k8EOaBD1YN9wIhjcG/WzSvfK6JMrA1uDhXwYTlKptHI
+         x24T6UlzslnRwJG6vJAoZ4qk9EYC7x0E9EFYAo7zEgTYpx5hPOEt09flMXYvI4yTd5p/
+         /tdtP1VX02Q+enMO6N+jfT9wELa0cYQZwrGYFPga6BwbfbhF3DGTuoZB8T02OJDMzjXk
+         QYqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUD6EZA8Iat9CueoinuL999MvyTBf1ZuBgG7GDKBAmCQvZt3Kh/jyu/rAurGUNWDPcVTrANcnuCzw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmTZzwlWj1k2GUX7AGwTLxHjMzzeNlm6gcT6zY0R9NBZPYiHD4
+	7Lh0SLyb3Gwtox6InYhSCKg5Gzm+lB463XovQfnMn19TIkwZUeF6McI+Jjq4iKc=
+X-Google-Smtp-Source: AGHT+IGOV2UPuymvEgQ+6c1bH10cOMow3zjQBa5UHT+HcLNwzPNLPC4nhY84w0wxt2FwuHXhTxfzVQ==
+X-Received: by 2002:a92:c24c:0:b0:3a0:9f36:6bf1 with SMTP id e9e14a558f8ab-3a3a71d1af6mr33081815ab.9.1728583916165;
+        Thu, 10 Oct 2024 11:11:56 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbadaa91fbsm328259173.141.2024.10.10.11.11.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 11:11:55 -0700 (PDT)
+Message-ID: <9bbab76f-70db-48ef-9dcc-7fedd75582cb@kernel.dk>
+Date: Thu, 10 Oct 2024 12:11:54 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007221603.1703699-1-dw@davidwei.uk> <20241007221603.1703699-2-dw@davidwei.uk>
- <CAHS8izMHmG8-Go6k63UaCtwvEcp=D73Ja0XfrTjNp_b5TUmUFA@mail.gmail.com> <ed21bca5-5087-4eff-814c-39180078a700@gmail.com>
-In-Reply-To: <ed21bca5-5087-4eff-814c-39180078a700@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 10 Oct 2024 11:01:20 -0700
-Message-ID: <CAHS8izNGdFTr789fFhV_NvYK0ORKPwn_KHu0CeaZp_xhg9PgCA@mail.gmail.com>
-Subject: Re: [PATCH v1 01/15] net: devmem: pull struct definitions out of ifdef
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org, netdev@vger.kernel.org, 
-	Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 00/15] io_uring zero copy rx
+From: Jens Axboe <axboe@kernel.dk>
+To: David Ahern <dsahern@kernel.org>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org, netdev@vger.kernel.org
+Cc: Pavel Begunkov <asml.silence@gmail.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Mina Almasry <almasrymina@google.com>
+References: <20241007221603.1703699-1-dw@davidwei.uk>
+ <2e475d9f-8d39-43f4-adc5-501897c951a8@kernel.dk>
+ <93036b67-018a-44fb-8d12-7328c58be3c4@kernel.org>
+ <2144827e-ad7e-4cea-8e38-05fb310a85f5@kernel.dk>
+ <3b2646d6-6d52-4479-b082-eb6264e8d6f7@kernel.org>
+ <57391bd9-e56e-427c-9ff0-04cb49d2c6d8@kernel.dk>
+ <d0ba9ba9-8969-4bf6-a8c7-55628771c406@kernel.dk>
+ <b8fd4a5b-a7eb-45a7-a2f4-fce3b149bd5b@kernel.dk>
+ <7f8c6192-3652-4761-b2e3-8a4bddb71e29@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <7f8c6192-3652-4761-b2e3-8a4bddb71e29@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 9, 2024 at 4:16=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.c=
-om> wrote:
->
-> On 10/9/24 21:17, Mina Almasry wrote:
-> > On Mon, Oct 7, 2024 at 3:16=E2=80=AFPM David Wei <dw@davidwei.uk> wrote=
-:
-> >>
-> >> From: Pavel Begunkov <asml.silence@gmail.com>
-> >>
-> >> Don't hide structure definitions under conditional compilation, it onl=
-y
-> >> makes messier and harder to maintain. Move struct
-> >> dmabuf_genpool_chunk_owner definition out of CONFIG_NET_DEVMEM ifdef
-> >> together with a bunch of trivial inlined helpers using the structure.
-> >>
-> >
-> > To be honest I think the way it is is better? Having the struct
-> > defined but always not set (because the code to set it is always
-> > compiled out) seem worse to me.
-> >
-> > Is there a strong reason to have this? Otherwise maybe drop this?
-> I can drop it if there are strong opinions on that, but I'm
-> allergic to ifdef hell and just trying to help to avoid it becoming
-> so. I even believe it's considered a bad pattern (is it?).
->
-> As for a more technical description "why", it reduces the line count
-> and you don't need to duplicate functions. It's always annoying
-> making sure the prototypes stay same, but this way it's always
-> compiled and syntactically checked. And when refactoring anything
-> like the next patch does, you only need to change one function
-> but not both. Do you find that convincing?
->
+On 10/10/24 8:21 AM, Jens Axboe wrote:
+> On 10/9/24 11:12 AM, Jens Axboe wrote:
+>> On 10/9/24 10:53 AM, Jens Axboe wrote:
+>>> On 10/9/24 10:50 AM, Jens Axboe wrote:
+>>>> On 10/9/24 10:35 AM, David Ahern wrote:
+>>>>> On 10/9/24 9:43 AM, Jens Axboe wrote:
+>>>>>> Yep basically line rate, I get 97-98Gbps. I originally used a slower box
+>>>>>> as the sender, but then you're capped on the non-zc sender being too
+>>>>>> slow. The intel box does better, but it's still basically maxing out the
+>>>>>> sender at this point. So yeah, with a faster (or more efficient sender),
+>>>>>
+>>>>> I am surprised by this comment. You should not see a Tx limited test
+>>>>> (including CPU bound sender). Tx with ZC has been the easy option for a
+>>>>> while now.
+>>>>
+>>>> I just set this up to test yesterday and just used default! I'm sure
+>>>> there is a zc option, just not the default and hence it wasn't used.
+>>>> I'll give it a spin, will be useful for 200G testing.
+>>>
+>>> I think we're talking past each other. Yes send with zerocopy is
+>>> available for a while now, both with io_uring and just sendmsg(), but
+>>> I'm using kperf for testing and it does not look like it supports it.
+>>> Might have to add it... We'll see how far I can get without it.
+>>
+>> Stanislav pointed me at:
+>>
+>> https://github.com/facebookexperimental/kperf/pull/2
+>>
+>> which adds zc send. I ran a quick test, and it does reduce cpu
+>> utilization on the sender from 100% to 95%. I'll keep poking...
+> 
+> Update on this - did more testing and the 100 -> 95 was a bit of a
+> fluke, it's still maxed. So I added io_uring send and sendzc support to
+> kperf, and I still saw the sendzc being maxed out sending at 100G rates
+> with 100% cpu usage.
+> 
+> Poked a bit, and the reason is that it's all memcpy() off
+> skb_orphan_frags_rx() -> skb_copy_ubufs(). At this point I asked Pavel
+> as that made no sense to me, and turns out the kernel thinks there's a
+> tap on the device. Maybe there is, haven't looked at that yet, but I
+> just killed the orphaning and tested again.
+> 
+> This looks better, now I can get 100G line rate from a single thread
+> using io_uring sendzc using only 30% of the single cpu/thread (including
+> irq time). That is good news, as it unlocks being able to test > 100G as
+> the sender is no longer the bottleneck.
+> 
+> Tap side still a mystery, but it unblocked testing. I'll figure that
+> part out separately.
 
-To be honest the tradeoff wins in the other direction for me. The
-extra boiler plate is not that bad, and we can be sure that any code
-that touches net_devmem_dmabuf_binding will get a valid internals
-since it won't compile if the feature is disabled. This could be
-critical and could be preventing bugs.
+Further update - the above mystery was dhclient, thanks a lot to David
+for being able to figure that out very quickly.
 
---=20
-Thanks,
-Mina
+But the more interesting update - I got both links up on the receiving
+side, providing 200G of bandwidth. I re-ran the test, with proper zero
+copy running on the sending side, and io_uring zcrx on the receiver. The
+receiver is two threads, BUT targeting the same queue on the two nics.
+Both receiver threads bound to the same core (453 in this case). In
+other words, single cpu thread is running all of both rx threads, napi
+included.
+
+Basic thread usage from top here:
+
+10816 root      20   0  396640 393224      0 R  49.0   0.0   0:01.77 server
+10818 root      20   0  396640 389128      0 R  49.0   0.0   0:01.76 server      
+
+and I get 98.4Gbps and 98.6Gbps on the receiver side, which is basically
+the combined link bw again. So 200G not enough to saturate a single cpu
+thread.
+
+-- 
+Jens Axboe
 

@@ -1,192 +1,143 @@
-Return-Path: <io-uring+bounces-3564-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3565-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADF6998C43
-	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 17:48:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E883998EF5
+	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 19:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D7D31C22CA6
-	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 15:48:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 013CC283BA1
+	for <lists+io-uring@lfdr.de>; Thu, 10 Oct 2024 17:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E06E1917C0;
-	Thu, 10 Oct 2024 15:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9481619CD07;
+	Thu, 10 Oct 2024 17:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HjpATXrT"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h1mbn/i9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C614A7DA62;
-	Thu, 10 Oct 2024 15:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DA919D087
+	for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 17:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575262; cv=none; b=fptV2baK02QU+BIact81vrc5gI6JHsa5LdTX/GJ8s8TFKbtl8pSf/FU6oGVI9P5TvmVy1WSecA7W3v1xV2Zs1xpAvsRDYkJrYGkHeSELS0cu/taMw9oYBe5blCe61TkhAq7E11LrdzHsHKZBoz03C+tr/9XD+lByD/Yc53wwVPQ=
+	t=1728582861; cv=none; b=W7+GOBNBU2SGakVeTsqIQQ0DKQQXo3uNkONq4E3rBfyvbE4ageI0Sg4KmGo0PDaVqTt6+FSzWCzEf0iuw8mk8k5K0CO4vS+ecVnfktx3QJn0AgWhSPX7fJpK9yALIphRrHbAuw04MEJS8p3tLhzcLNABHCguoU5PdKBEAhQon0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575262; c=relaxed/simple;
-	bh=m1n2YWFVEdaH5nVH4itHpiSzRpBwnNSQcR46978WYs4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QvwGnoGynYTh0X0s98/+lEuTHBbZnu4h95VrTS9tNYFaCR8on3M3XBNtY9/33//EZyF6QbOAxpByuyp/6Mm8RsqvSoaVCkyza5MGNAHKKLWhbhP1Sg8FafV6r8dpt0+6PWRsCHSDMeXrFW0hhFAZmvBSoZd4sXCr20iLUn6WHvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HjpATXrT; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c9388a00cfso912606a12.3;
-        Thu, 10 Oct 2024 08:47:40 -0700 (PDT)
+	s=arc-20240116; t=1728582861; c=relaxed/simple;
+	bh=ZW9HmnHolJg/LLgpuCO5NuvmDeeRr46LFSiQHdTmiI0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XZiJczM/KAAjb79Dh7M1I+8M5ZZU4dAAAMd2L2wisYKV2FddYhsSvbD889Z0EigZlYW6IHlZLpPuuXcaizlCXdZzSKTqX99ZMz2P1z/yw02+pzFeWFM3GFtimtobH2UGMBRtFG2irfEz7xGoreo1Msgw8YZy/yfJp5ilMecNZRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h1mbn/i9; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460395fb1acso32231cf.0
+        for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 10:54:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728575259; x=1729180059; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XJOdKSCyRxWoJZsXqjQ2pGVqLKgYzGVaLiitUDbtxIM=;
-        b=HjpATXrTsJ1dsvyKAaL7MnlsedT0sqAzKe1Qgl69gRjPlVuI34kJaYARPiTKLhcp6j
-         ktjFUdA2Px1+E9V1Z8N828vCwpX5qtfGvUyZ7BCpfT0HoCiGDHXNiLWVsp/cT80mwD57
-         1zisZYpYWQCRp2bWnBQ++Ludncx087acmMgCzDnJjQRSgt7DsS+CcIBrbYfGrWlLNPvU
-         LhrPu6kiNRHF0zTPGZHStBdKM+/Bwx/Z4U9hljInHqsi4ii0SfrtkWaZAO83nLxm1HjZ
-         76ocryEQWiv848l29G9LfLfOioW7Co7/T7cvigbAJ/blWz8JKpaJIG4Rh10As8hrWE6J
-         mrQw==
+        d=google.com; s=20230601; t=1728582859; x=1729187659; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZW9HmnHolJg/LLgpuCO5NuvmDeeRr46LFSiQHdTmiI0=;
+        b=h1mbn/i9g/VXr2kQi0u52EAm79XWv7ovua9Er4Mmmrs7rXP6dlBITzZ4hhk0OYd/Xt
+         dUJ6jYMl495X3gdt9SwCGjJC51cWrb1dCSES4a6Ab1GC0u0Iyh9ateJs8+Y6FTALNMGN
+         pFHuCe5fSbal4x0q2mknn8SZQSmp5Ia5KnO3z670BxDRaW6xYHXcz3z28G6RuhGrz1kn
+         C+L/LGHBLCJwIatKlzWbfG+8H48qgGnJ9gw38kKofX2DR+bH7A8CrdOUr+neZ9idX3eZ
+         UyzHmMsDVXx2g7hvVckVLk3cHkJR0ltEtT6Ag5oogz6kwfiqVX0mrW1GnGl38PpWvcb7
+         Bbsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728575259; x=1729180059;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XJOdKSCyRxWoJZsXqjQ2pGVqLKgYzGVaLiitUDbtxIM=;
-        b=n+ZlV8qV49qOobEoKcXO6/mWNLWE8xAClXetdpczkibJux+WlFXxZBBaitEKGLuQsH
-         TpcgsFBJ3pq7Xs7U00OlKvuCh1VlD0i/32k2wvHHpCzZYFmppjw675yrHTbaedmt19ls
-         BBJlJVwsQ6Jy+UR0amfYg2YkXItWHMPgLA9jUkCPGJP7JouPiTPAmIbvf2MqfbCSBBgk
-         xox6mILZjxu7dcMdzdjzqbCFqP+Fg+cYmXQuH6NrF+xESXCOWldcLdf8BmswpsoxPcvM
-         xwO/vvBLluuhqgAEQoJhyBLEySUHTWgVRAusPFNOVdgPDCHd/9cq+4DLsWkBbwYxBJNj
-         pXQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrz9GE1/xL7jys70V1Xdr8hdoJRUlpyxIfJ4x/gyd+amdsPnNoJSVTreDvm3qwkpsi66qSZDo1NLejbVU=@vger.kernel.org, AJvYcCXE1cvLExrFWUcF6pPeTmyqy0y9pupN4k2fFp0l5KsJ8T4kGAqXY2+gKc5aRKWn4+8d7sBEI5KjkA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC5IZuDQxvtBdPw4gr1tAHzroJ8q08yuKVKLUSZRtOvhMnRTkz
-	EX92Jk/FXpn0Xlui9RiaKk72/WmNqV5ya8Va0ILfzfqnbokubblf
-X-Google-Smtp-Source: AGHT+IEmtBgLQok+KmjxmSzpC3Ma+9HgYtARqPFruWkhsp331a529yBtG+P+AeYz/vjVJttl6CIMag==
-X-Received: by 2002:a17:907:e648:b0:a99:5985:bf39 with SMTP id a640c23a62f3a-a998d117e0amr591415466b.13.1728575258849;
-        Thu, 10 Oct 2024 08:47:38 -0700 (PDT)
-Received: from [192.168.42.29] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f25406sm105668466b.69.2024.10.10.08.47.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 08:47:38 -0700 (PDT)
-Message-ID: <4b40eff1-a848-4742-9cb3-541bf8ed606e@gmail.com>
-Date: Thu, 10 Oct 2024 16:48:14 +0100
+        d=1e100.net; s=20230601; t=1728582859; x=1729187659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZW9HmnHolJg/LLgpuCO5NuvmDeeRr46LFSiQHdTmiI0=;
+        b=ZZL8uw4NoE3uZMNcodCGv27owXe5eDgc8NYoSZa0XU6wpGS+nV9uEGCAIXQr6nM4ys
+         K+84OPWVk27d6eTj9FsZNQ4owUMGNjdC8VpQmLCvd8RHHmMISbtJ5+brxcqQUyaXHRbY
+         rbwp45L+AYaWOUqhUPXnfyKYBOjr5mS6sSJI2PEFM0UEgrILvLmbOeiHw5/H+3y8oQCb
+         M3o9s4Q/R7KSsOLiDH3b56O4CGdYXsuac0WpD+K8n1Aablcw/XGo25A+fsMW8i2jGD3i
+         W6zdUd6Vgr6p0cFA9U69iPSqMIWiFQaoaY+WgLWV6si/8mAEQgZUQf5NJfBrwS2T3wa6
+         mWwg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/8mEZLJZs1GmAH6lTcVMPmcze00bmSrUfAExlEP3tWSXHqgDwrprU17DqXpGlE3HQeBpIspifcQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4u7gDozp7qBdHQ9IoJZMSZLQo4sn4dswl6/vjb+KhMAXo7wCd
+	JpTT44RuIgNkIP0OHtSCCzMkYiTcl47LLMlZq8D9qiETz0AMB80buWbyTvmi0zNiM5WGm9Si9H8
+	LZkHaKOvw5HZK0FiJewprWtQ1wqK6QzjdusIm
+X-Google-Smtp-Source: AGHT+IFoFOh5E6DMEbh1pCja/UyuJ4Nb4Q2wewSDJNAMu+Qapmq9K1pBPstKAJMuxmH2Et0n0YgSgpq3NSHvP8MHfdk=
+X-Received: by 2002:a05:622a:4e04:b0:458:14dd:108b with SMTP id
+ d75a77b69052e-4604b132706mr26531cf.13.1728582858210; Thu, 10 Oct 2024
+ 10:54:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 7/8] io_uring/uring_cmd: support provide group kernel
- buffer
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
- linux-block@vger.kernel.org
-References: <20240912104933.1875409-1-ming.lei@redhat.com>
- <20240912104933.1875409-8-ming.lei@redhat.com>
- <b232fa58-1255-44b2-92c9-f8eb4f70e2c9@gmail.com> <ZwJObC6mzetw4goe@fedora>
- <38ad4c05-6ee3-4839-8d61-f8e1b5219556@gmail.com> <ZwdJ7sDuHhWT61FR@fedora>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZwdJ7sDuHhWT61FR@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241007221603.1703699-1-dw@davidwei.uk> <20241007221603.1703699-7-dw@davidwei.uk>
+ <CAHS8izPFp_Q1OngcwZDQeo=YD+nnA9vyVqhuaT--+uREEkfujQ@mail.gmail.com> <9f1897b3-0cea-4822-8e33-a4cab278b2ac@gmail.com>
+In-Reply-To: <9f1897b3-0cea-4822-8e33-a4cab278b2ac@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 10 Oct 2024 10:54:04 -0700
+Message-ID: <CAHS8izOxsLc82jX=b3cwEctASerQabKR=Kqqio2Rs7hVkDHL4A@mail.gmail.com>
+Subject: Re: [PATCH v1 06/15] net: page_pool: add ->scrub mem provider callback
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org, netdev@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/10/24 04:28, Ming Lei wrote:
-> On Wed, Oct 09, 2024 at 04:14:33PM +0100, Pavel Begunkov wrote:
->> On 10/6/24 09:46, Ming Lei wrote:
->>> On Fri, Oct 04, 2024 at 04:44:54PM +0100, Pavel Begunkov wrote:
->>>> On 9/12/24 11:49, Ming Lei wrote:
-...
->>> so driver can check if device buffer can be provided with this uring_cmd,
->>> but I prefer to the new uring_cmd flag:
->>>
->>> - IORING_PROVIDE_GROUP_KBUF can provide device buffer in generic way.
->>
->> Ok, could be.
->>
->>> - ->prep() can fail fast in case that it isn't one group request
->>
->> I don't believe that matters, a behaving user should never
->> see that kind of failure.
->>
->>
->>>> 1. Extra overhead for files / cmds that don't even care about the
->>>> feature.
->>>
->>> It is just checking ioucmd->flags in ->prep(), and basically zero cost.
->>
->> It's not if we add extra code for each every feature, at
->> which point it becomes a maze of such "ifs".
-> 
-> Yeah, I guess it can't be avoided in current uring_cmd design, which
+On Wed, Oct 9, 2024 at 2:58=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.c=
+om> wrote:
+>
+> On 10/9/24 22:00, Mina Almasry wrote:
+> > On Mon, Oct 7, 2024 at 3:16=E2=80=AFPM David Wei <dw@davidwei.uk> wrote=
+:
+> >>
+> >> From: Pavel Begunkov <asml.silence@gmail.com>
+> >>
+> >> page pool is now waiting for all ppiovs to return before destroying
+> >> itself, and for that to happen the memory provider might need to push
+> >> some buffers, flush caches and so on.
+> >>
+> >> todo: we'll try to get by without it before the final release
+> >>
+> >
+> > Is the intention to drop this todo and stick with this patch, or to
+> > move ahead with this patch?
+>
+> Heh, I overlooked this todo. The plan is to actually leave it
+> as is, it's by far the simplest way and doesn't really gets
+> into anyone's way as it's a slow path.
+>
+> > To be honest, I think I read in a follow up patch that you want to
+> > unref all the memory on page_pool_destory, which is not how the
+> > page_pool is used today. Tdoay page_pool_destroy does not reclaim
+> > memory. Changing that may be OK.
+>
+> It doesn't because it can't (not breaking anything), which is a
+> problem as the page pool might never get destroyed. io_uring
+> doesn't change that, a buffer can't be reclaimed while anything
+> in the kernel stack holds it. It's only when it's given to the
+> user we can force it back out of there.
+>
+> And it has to happen one way or another, we can't trust the
+> user to put buffers back, it's just devmem does that by temporarily
+> attaching the lifetime of such buffers to a socket.
+>
 
-If can't only if we keep putting all custom / some specific
-command features into the common path. And, for example, I
-just named how this one could be avoided.
+(noob question) does io_uring not have a socket equivalent that you
+can tie the lifetime of the buffers to? I'm thinking there must be
+one, because in your patches IIRC you have the fill queues and the
+memory you bind from the userspace, there should be something that
+tells you that the userspace has exited/crashed and it's time to now
+destroy the fill queue and unbind the memory, right?
 
-The real question is whether we deem that buffer providing
-feature applicable widely enough so that it could be useful
-to many potential command implementations and therefore is
-worth of partially handling it generically in the common path.
+I'm thinking you may want to bind the lifetime of the buffers to that,
+instead of the lifetime of the pool. The pool will not be destroyed
+until the next driver/reset reconfiguration happens, right? That could
+be long long after the userspace has stopped using the memory.
 
-> serves for different subsystems now, and more in future.
-> 
-> And the situation is similar with ioctl.
-
-Well, commands look too much as ioctl for my taste, but even
-then I naively hope it can avoid regressing to it.
-
->>>> 2. As it stands with this patch, the flag is ignored by all other
->>>> cmd implementations, which might be quite confusing as an api,
->>>> especially so since if we don't set that REQ_F_GROUP_KBUF memeber
->>>> requests will silently try to import a buffer the "normal way",
->>>
->>> The usage is same with buffer select or fixed buffer, and consumer
->>> has to check the flag.
->>
->> We fails requests when it's asked to use the feature but
->> those are not supported, at least non-cmd requests.
->>
->>> And same with IORING_URING_CMD_FIXED which is ignored by other
->>> implementations except for nvme, :-)
->>
->> Oh, that's bad. If you'd try to implement the flag in the
->> future it might break the uapi. It might be worth to patch it
->> up on the ublk side, i.e. reject the flag, + backport, and hope
->> nobody tried to use them together, hmm?
->>
->>> I can understand the concern, but it exits since uring cmd is born.
->>>
->>>> i.e. interpret sqe->addr or such as the target buffer.
->>>
->>>> 3. We can't even put some nice semantics on top since it's
->>>> still cmd specific and not generic to all other io_uring
->>>> requests.
->>>>
->>>> I'd even think that it'd make sense to implement it as a
->>>> new cmd opcode, but that's the business of the file implementing
->>>> it, i.e. ublk.
->>>>
->>>>>      */
->>>>>     #define IORING_URING_CMD_FIXED	(1U << 0)
->>>>> -#define IORING_URING_CMD_MASK	IORING_URING_CMD_FIXED
->>>>> +#define IORING_PROVIDE_GROUP_KBUF	(1U << 1)
->>>>> +#define IORING_URING_CMD_MASK	(IORING_URING_CMD_FIXED | IORING_PROVIDE_GROUP_KBUF)
->>>
->>> It needs one new file operation, and we shouldn't work toward
->>> this way.
->>
->> Not a new io_uring request, I rather meant sqe->cmd_op,
->> like UBLK_U_IO_FETCH_REQ_PROVIDER_BUFFER.
-> 
-> `cmd_op` is supposed to be defined by subsystems, but maybe we can
-> reserve some for generic uring_cmd. Anyway this shouldn't be one big
-> deal, we can do that in future if there are more such uses.
-
-That's if the generic handling is desired, which isn't much
-different from a flag, otherwise it can be just a new random
-file specific cmd opcode as any other.
-
--- 
-Pavel Begunkov
+--=20
+Thanks,
+Mina
 

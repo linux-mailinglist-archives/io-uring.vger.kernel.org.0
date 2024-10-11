@@ -1,148 +1,127 @@
-Return-Path: <io-uring+bounces-3596-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3597-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC5199A6A6
-	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 16:43:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E04499A6FD
+	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 16:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5584F285024
-	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 14:43:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE4B1F216A6
+	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 14:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403A4405FB;
-	Fri, 11 Oct 2024 14:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B077DA81;
+	Fri, 11 Oct 2024 14:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C69a+sid"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="DcmwCq9T"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1716184;
-	Fri, 11 Oct 2024 14:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD7C405FB
+	for <io-uring@vger.kernel.org>; Fri, 11 Oct 2024 14:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728657787; cv=none; b=YMfkjA9Hx6b3bRLYYLPDg2cIWG4cVwbzMyKdKwcIwIF4b+cbw9XYUKmi16SRK7MBBe9XFm2OqwrFczTZk0O97l9ZTpSyJvEaTWFgdjYx+awK4XBEhXukeNXfhfSUXwU+q48a0E8prpm2eI+gqVz5cIZrGSec6XuZXUkEQJM//LI=
+	t=1728658479; cv=none; b=Wg7RAw1x5fh3OIMtWYYFTaiLViCqWJ1aU3QJ8H6iHCHRAAK3X/m5oSV0ccQcvgXyPq3kxdui2yj33DAt8jk7ELC9bCapr0Tm/BuxNY7RfNzj56XIqnawJuQETSmcNaTMIm2U3G2DOSoV0gm61e+jZW/+Uzy2lzwlSpjKUiGUX4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728657787; c=relaxed/simple;
-	bh=7PDLe6aX04qqTauZHh3YRl9ClsCusFDRy3uF4rZkfao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ucmrqnJcaj4OaoFSd5wJL/uaPeRYu+LylCGdvnBD10JdN8FpJpdyE4wI+zlFRmF8mrhGvD2JTeL+V/jS6dGTe+Pr0Hpob746dNUfuJDLOy90RWvybd3CWPjKvlmaqAWZA03XwePb1z8h52/5H87mqnp7m2E874/qefk8fzbJydU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C69a+sid; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso944424a91.0;
-        Fri, 11 Oct 2024 07:43:05 -0700 (PDT)
+	s=arc-20240116; t=1728658479; c=relaxed/simple;
+	bh=K8xdhC/kGAMUpAGxw8ydJKbwdOMnmAobTqtA2GYHGhU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=MF9hNfogaDRRvV/aQsYtVwkX6fqjOHc0zDWEkHe4bM1md5aw1PnrKGmn2XcuZRWREMn/ThkWAc7chwVYYfV9JYD8y/WzvyMdhem46bzFEPD002phnX8lHseP+Lkzkho2G2tcOX+wzUnJR0YuOXqMHxYzWEKSUunrBOhJggL8nSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=DcmwCq9T; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a3b3f4a48bso4489755ab.1
+        for <io-uring@vger.kernel.org>; Fri, 11 Oct 2024 07:54:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728657785; x=1729262585; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oCX7GZSr6GbTinBcx9jtBazjwq9+4MX/z5qScIDqe74=;
-        b=C69a+sidzhiq0l0IhBoqWljYK3AuLUdvekmQ6rYPqeYtEHQyvmUCs4+U0hkgNlJAeE
-         znhhqt52FSTNqwTlpZ6nUmHSdJgDDiCsUaQHz0pHQGcyA3/UAuFKch9BiCYTOhE1t46T
-         52UZHo+sNWXMcYzDyaFlRDBgOPTphpHlogbQOPP4h/SNVo2o/Yw0l7XpPoCenI6XYxkd
-         QmCeF0rV0E6j/g99rd/KCO8nMU3jQ868jg0k8aAMtjPlxA6BrZcl2WhzLHD8rdISZXpf
-         YFCHDu1OR/tEj1coJbsM033Bok8kQP3RJTm2sEbdCdlOXU01EjKbrLa/se9ujWTcGwbj
-         A1yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728657785; x=1729262585;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728658476; x=1729263276; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oCX7GZSr6GbTinBcx9jtBazjwq9+4MX/z5qScIDqe74=;
-        b=g8SMi5ks4iWwKsVxPTj3wFqbTEeTT1CZFmh5fzqfrAT0XjfFWRS8GlYr+9RohE1B1T
-         T9WLs+jbcD93j1xJg/NBRcvWFqyJqUxNgwbWQLigMhr5/VEKYx5VMILsTK8sJRSlhXBT
-         tozwPe7NRZ+mMlrroxAXb+CtIFU8tWK91TXJ8n41J1wRWUPVzBIULhyv3NmAVIcgeP3c
-         4S9I60XIP14TP2ir6rXgo4UU8JwkqEMVBoWtrqvP7Rjt370QJDssNcazulg5I9EOA+6x
-         oiBKCI7g5nhx/9NOIv6CK+gM3OQJCv1LaLf89PByVYn7ZMWJL8xBnSqaaZxiHU+0xj5R
-         OOng==
-X-Forwarded-Encrypted: i=1; AJvYcCUbzV/IfrX/Q41tZoMlpBoF4vXCxFxdpA/ZBbM6C0Asz/VXdqPYEqEo+Ow9Cv065yRy7C34OlN9@vger.kernel.org, AJvYcCVaBCJZkHckRMLya+HQL6IfGkPNRqXfVuhatMjt8SFx51m54D2GPCofttTThudmOXv53lMIdyWWxQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP7ng96vh644sfF2vYvkeYkPFtsIC+kgBHmwlYp4GA+OI9Em5p
-	7RjN6COCiSMBzcD2tOe0QTlLsNH3SGtCOafEoKmiNn3WnXpEL5A=
-X-Google-Smtp-Source: AGHT+IGo3oYW0V8uIvbOLsEwrlmZTbSK4B1n/uXV3D86cvXvGJdenSC+0/S9DGGBEmQnsd896+eRMg==
-X-Received: by 2002:a17:90b:1805:b0:2e2:af57:37eb with SMTP id 98e67ed59e1d1-2e2f0da8372mr3664645a91.41.1728657784986;
-        Fri, 11 Oct 2024 07:43:04 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a5712814sm5575697a91.30.2024.10.11.07.43.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 07:43:04 -0700 (PDT)
-Date: Fri, 11 Oct 2024 07:43:03 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: David Wei <dw@davidwei.uk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-	netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Mina Almasry <almasrymina@google.com>
-Subject: Re: [PATCH v1 13/15] io_uring/zcrx: add copy fallback
-Message-ID: <Zwk5d1QvRmOGDf-r@mini-arch>
-References: <20241007221603.1703699-1-dw@davidwei.uk>
- <20241007221603.1703699-14-dw@davidwei.uk>
- <ZwVWrAeKsVj5gbXY@mini-arch>
- <6b57fb43-1271-4487-9342-5f82c972b9c5@davidwei.uk>
- <Zwavm2w30YAdoFsB@mini-arch>
- <f872e215-25af-4663-a18e-659803cc1ea6@gmail.com>
- <e13c8d8b-eb66-4dd3-bfd4-8303393c592c@davidwei.uk>
+        bh=9irWn0fLFvInFzntSkKKQ9rWUJHPnxxLcUTPOhb8xpk=;
+        b=DcmwCq9TGHHDpTcf/0JANJI7NlmGLjqcpz6YjLmCLpNrHqtGFcF2Q/YBvue/uHPoVQ
+         TnOSKEr7xCuakGHz/vpIhlb3SNCeyCjeYvMuqfP9a2PzU4NYvcQxH1MhSBovrxa/bp+m
+         U+HsjCplNzDSTlB68m7XA+XG8nwNBIcmuVd4GwqlkdcnOuZvQ3jMBWpYyGm38L3MfoEE
+         +/NP8aYhsxvEBPbLLy7YI6PUy8udUMrDs4BSLmbbSVtnV4ugpLmzhKhgBLVnBE4H9mCI
+         HkFapPM4mNvJ74qHkAmrN61ubmonpzBeKznrjH4im+Rfvvf30bkfiwQIjICyP63ZFraW
+         Rm6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728658476; x=1729263276;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9irWn0fLFvInFzntSkKKQ9rWUJHPnxxLcUTPOhb8xpk=;
+        b=kxK+5VkTZpws07hvxneU0iUJUZDtB+B6Q2UhOh1/etEdHkNlP0jX2lO2Ce1kjB9BbP
+         DDb2SxtlzXfXvElGsjgJ/OqBbTZFpi937IExXdnEc7nC3BB5k3aePqSjIvmARuErVEcV
+         cChogHyaSFLFlwQ/5ygXl6l/YLRUfJvPL/wu09FblYPHYHyyH2Jz4VK2UyL3SWY1WUmn
+         nk3G2z/lWRnwwXaVx52qobbk6T1kuMofhZeVeu3iCkJMFzdzDR2ry9s3RV+DfoMhtwG9
+         S2dqI+AaM2WGNGcocYkIY9Mp3VNTEnYyDIszYOs+LeTevH9wQOwhXb6onz03s1y6CNw/
+         gfVg==
+X-Gm-Message-State: AOJu0YzqerkcetrQmmJdbdxcX2CYQOmhTs+Pspxe4czz8Wq6ffMOS7lQ
+	H+i4CbKAksLH1pIwccC9P7Pu13Fdo8o6WC2MC43gmJzr9n8ffIhx6oww27q4hQzuyuecwXbOGPd
+	ohdA=
+X-Google-Smtp-Source: AGHT+IE4VBVcss2FXWF5oDfB121XvSkfsngqI4IAD+f97YtjjBzctr9Th9NpkQLdCOlE21rADB8Ryw==
+X-Received: by 2002:a05:6e02:1786:b0:39f:325f:78e6 with SMTP id e9e14a558f8ab-3a3b56ead3bmr20399795ab.0.1728658476236;
+        Fri, 11 Oct 2024 07:54:36 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3afde8d0csm7598275ab.74.2024.10.11.07.54.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 07:54:35 -0700 (PDT)
+Message-ID: <da0401d2-0479-4115-ba5b-185f25ffe4b6@kernel.dk>
+Date: Fri, 11 Oct 2024 08:54:35 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e13c8d8b-eb66-4dd3-bfd4-8303393c592c@davidwei.uk>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.12-rc3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/10, David Wei wrote:
-> On 2024-10-09 16:05, Pavel Begunkov wrote:
-> > On 10/9/24 17:30, Stanislav Fomichev wrote:
-> >> On 10/08, David Wei wrote:
-> >>> On 2024-10-08 08:58, Stanislav Fomichev wrote:
-> >>>> On 10/07, David Wei wrote:
-> >>>>> From: Pavel Begunkov <asml.silence@gmail.com>
-> >>>>>
-> >>>>> There are scenarios in which the zerocopy path might get a normal
-> >>>>> in-kernel buffer, it could be a mis-steered packet or simply the linear
-> >>>>> part of an skb. Another use case is to allow the driver to allocate
-> >>>>> kernel pages when it's out of zc buffers, which makes it more resilient
-> >>>>> to spikes in load and allow the user to choose the balance between the
-> >>>>> amount of memory provided and performance.
-> >>>>
-> >>>> Tangential: should there be some clear way for the users to discover that
-> >>>> (some counter of some entry on cq about copy fallback)?
-> >>>>
-> >>>> Or the expectation is that somebody will run bpftrace to diagnose
-> >>>> (supposedly) poor ZC performance when it falls back to copy?
-> >>>
-> >>> Yeah there definitely needs to be a way to notify the user that copy
-> >>> fallback happened. Right now I'm relying on bpftrace hooking into
-> >>> io_zcrx_copy_chunk(). Doing it per cqe (which is emitted per frag) is
-> >>> too much. I can think of two other options:
-> >>>
-> >>> 1. Send a final cqe at the end of a number of frag cqes with a count of
-> >>>     the number of copies.
-> >>> 2. Register a secondary area just for handling copies.
-> >>>
-> >>> Other suggestions are also very welcome.
-> >>
-> >> SG, thanks. Up to you and Pavel on the mechanism and whether to follow
-> >> up separately. Maybe even move this fallback (this patch) into that separate
-> >> series as well? Will be easier to review/accept the rest.
-> > 
-> > I think it's fine to leave it? It shouldn't be particularly
-> > interesting to the net folks to review, and without it any skb
-> > with the linear part would break it, but perhaps it's not such
-> > a concern for bnxt.
-> > 
-> 
-> My preference is to leave it. Actually from real workloads, fully
-> linearized skbs are not uncommon due to the minimum size for HDS to kick
-> in for bnxt. Taking this out would imo make this patchset functionally
-> broken. Since we're all in agreement here, let's defer the improvements
-> as a follow up.
+Hi Linus,
 
-Sounds good!
+Two minor fixes for 6.12-rc3 for io_uring:
+
+- Explicitly have a mshot_finished condition for IORING_OP_RECV in
+  multishot mode, similarly to what IORING_OP_RECVMSG has. This doesn't
+  fix a bug right now, but it makes it harder to actually have a bug
+  here if a request takes multiple iterations to finish.
+
+- Fix handling of retry of read/write of !FMODE_NOWAIT files. If they
+  are pollable, that's all we need.
+
+Please pull!
+
+
+The following changes since commit c314094cb4cfa6fc5a17f4881ead2dfebfa717a7:
+
+  io_uring/net: harden multishot termination case for recv (2024-09-30 08:26:59 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.12-20241011
+
+for you to fetch changes up to f7c9134385331c5ef36252895130aa01a92de907:
+
+  io_uring/rw: allow pollable non-blocking attempts for !FMODE_NOWAIT (2024-10-06 20:58:53 -0600)
+
+----------------------------------------------------------------
+io_uring-6.12-20241011
+
+----------------------------------------------------------------
+Jens Axboe (2):
+      io_uring/rw: fix cflags posting for single issue multishot read
+      io_uring/rw: allow pollable non-blocking attempts for !FMODE_NOWAIT
+
+ io_uring/rw.c | 44 ++++++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
+
+-- 
+Jens Axboe
+
 

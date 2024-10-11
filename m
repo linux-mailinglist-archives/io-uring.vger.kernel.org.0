@@ -1,357 +1,134 @@
-Return-Path: <io-uring+bounces-3585-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3586-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C994D999B7D
-	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 06:06:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CCA4999C79
+	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 08:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A8CB1F21180
-	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 04:06:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E910B21CF9
+	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 06:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B7D1F4FCC;
-	Fri, 11 Oct 2024 04:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4BE1CCB40;
+	Fri, 11 Oct 2024 06:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E3EvLOOI"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="H04W7HKC"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6871C463E
-	for <io-uring@vger.kernel.org>; Fri, 11 Oct 2024 04:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2B219923C
+	for <io-uring@vger.kernel.org>; Fri, 11 Oct 2024 06:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728619597; cv=none; b=Z1krhGJJxKin1CkiijTNKp1SMdC7fPZz4dfWceJlDuIn9AkbubkavCA+13GmY5j7xRCJjbQKI97G5VMsPEd403ehzEXKjh36YbZWcKYBP4ScvORr9WNQvjzv399bfjGqXLtwZnaTFnVpsfXGhfjkJDKwSYwmcilRjsfHsWEFuec=
+	t=1728627332; cv=none; b=Ugr5QgfKFYhPEZ20raqhc/VvCUaAKHymU1SCaOguJvAtqcOnUvn2s6U7qXENIz8oi1tfveKF0ym/kYHzz0IyVHol58HE5czGqLgWPaSNZIDMHEr0r7y2wv3BUpXHxzJPd7LAtWsOz94lUDNXkUzuNsJoGrnzusVpqFoAMFeHwgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728619597; c=relaxed/simple;
-	bh=xoXHfKwjxcTLs0HkoArKgDokGtBbV4qLNgmijzHdnMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbrFbtqboguhSvJoeBAA1sSe5XPbSs9iePMajMvSYCN0AI27dn+z78+QNnePStwaKSjhG7mEZ4z1wllJShPVI/0Zu3+l7UqW1BZvOpkuwAzMvltosk0DrMj9krlif4lZ9dqpBPRixTQBpOX6zqODw/2IyacCeLhDEVCFMEsS+yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E3EvLOOI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728619593;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GrzNOIYO0W5zw/Ca+QG1pjT7D/m00M2oAg3EERAVKa0=;
-	b=E3EvLOOI4xjzNacXBfLDztKPuzhlX27NWLJC+phpuO9z/YWuvtNvO/LeH7MmFqSCGeBe2A
-	u42EGY6Ka5qbwI+6jVlAfEckQP1k9Ki/LJ5vaUIblajdY9Y5CMQRl/hQVgxugsr7SpwwOt
-	XrA43Y/0yUXlR+cSTpXk7WL3jYJxc6g=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-563-uE18KYtqPCeOtnrL7edfww-1; Fri,
- 11 Oct 2024 00:06:29 -0400
-X-MC-Unique: uE18KYtqPCeOtnrL7edfww-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C51191955F42;
-	Fri, 11 Oct 2024 04:06:28 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.103])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 35EDA19560AA;
-	Fri, 11 Oct 2024 04:06:23 +0000 (UTC)
-Date: Fri, 11 Oct 2024 12:06:18 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, ming.lei@redhat.com
-Subject: Re: [PATCH V6 6/8] io_uring: support providing sqe group buffer
-Message-ID: <ZwikOt5cs4TtF5NJ@fedora>
-References: <20240912104933.1875409-1-ming.lei@redhat.com>
- <20240912104933.1875409-7-ming.lei@redhat.com>
- <51c10faa-ac28-4c40-82c4-373dbcad6e79@gmail.com>
- <ZwJIWqPT_Ae9K2bp@fedora>
- <8d93e1ba-0fdf-44d4-9189-199df57d0676@gmail.com>
- <ZwdDU1-lfywyb4jO@fedora>
- <b41dfbe1-2dee-47fc-a2f4-38bef49f60ab@gmail.com>
- <ZwiGpp4ePoCihohg@fedora>
+	s=arc-20240116; t=1728627332; c=relaxed/simple;
+	bh=cWndFxD9+i6+o7VKRHZXEVet608yqtvjE1X2colHVHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=etHh0sBlZjnYkVsHV/BZYU81ag4zGJsa04tnoQpHQ+b3T2VpSTFVWN50ODhZq5gxWU5KfHwwgi4z9IEQbWEEN6YYFE6o43flYqdBmSbZ16lThFQ4fSCr5Gsi01bKD09SAPDp67a4sFzKfbXLR4sN16SWT7jgFBtUO4cmj84yT7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=H04W7HKC; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71def715ebdso1183085b3a.2
+        for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 23:15:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1728627331; x=1729232131; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mmaeyX3vpGaL8HuyG+ubgvAZ5sFwbFygc6Y/CXKcjWA=;
+        b=H04W7HKCxSHJf+LD4NA/f96wWXkFI7qMYq0papwcEMeBRm42wAG7dGiJjtfD2fTOWC
+         +xfKY8HlurDjmVo2N1ygXvHvi5Oi8mt5Gt/g9hqYmUwyf5jt3ZVkJbrwWDFW3ty8cjo/
+         WXyPVH2jqyuW6277+xnSWtbZlIpxBJZEfSV/dXabf8RIVRw/Llk+0udT2HqVK5Nbl8WY
+         rVUEbs3OrP+nKHgHqufAP7sePAI/2cWwT7689VLm9XPG9MnveXmx9IyNWMijpmEU/Jju
+         mu1/4oaxovKPqI/L2iK3WHqNsk9UoH7yyngACqnbsY7KL5viSubHcGEoPpBRz0fWRurg
+         J+HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728627331; x=1729232131;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mmaeyX3vpGaL8HuyG+ubgvAZ5sFwbFygc6Y/CXKcjWA=;
+        b=P93PzUMLaVlOJ6XvB+VJms06sFAZIUxZcS/EtOAGdGkKAHitmVnS9Y7zr4tEPmSFSP
+         3NhJF0fKl5FpKjzBPZLytxmRmj8uQswdZJbOciiZY2eQOpdWFhzGre2zmR2nP2cJt+tJ
+         VoDyT12s5RPMgJqD4FIxOXnHEZkhiA0fOstxwocqD7C0Zn38gSoBS1keDV+BuWgN8XDV
+         5Ox2i3V+VjMJ80bjyTK+edbCchRAbglorNIiBE1CgEArAPSZlKnUWA/azMm0iVKWt3Et
+         qxjaHeU3FA+wAxQWB1ojVRJSrRuih84lprrkU+ulXqNKuGQ0qDzS41NCNAmDJrZ0sGAL
+         8EeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWltpBYn3/W98PY/fSU3CS0I1IKSKPI36xg67kGefhr2FEnDxftaeZIZeNrxHHhrfIdj+RLK+0iPw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDsiY1GZL81JmG/n6lTUtmFRsqwZLT38GXcaiEyF/dcFeARw7T
+	As2oUzeh7ZN1aA0i6PFVK8B4TjFmpN3etn3M6CZIo8QQATFndrL41tM/JyMvUGg=
+X-Google-Smtp-Source: AGHT+IEYVYm/SdeQXDP0ZXZ+auF3+i+IUf9a1y4JeSOo/NLQnRKaD4rFyDYRpkkQTAyOHi4NKMRd3A==
+X-Received: by 2002:a05:6a00:228c:b0:71e:165c:2359 with SMTP id d2e1a72fcca58-71e38083fb7mr2447904b3a.26.1728627330535;
+        Thu, 10 Oct 2024 23:15:30 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c085:21e1::116b? ([2620:10d:c090:400::5:ebf3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2aa93882sm1978849b3a.103.2024.10.10.23.15.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 23:15:29 -0700 (PDT)
+Message-ID: <550cf666-ea4f-4dac-9acf-fad448324e87@davidwei.uk>
+Date: Thu, 10 Oct 2024 23:15:27 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwiGpp4ePoCihohg@fedora>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 00/15] io_uring zero copy rx
+Content-Language: en-GB
+To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ Joe Damato <jdamato@fastly.com>, io-uring@vger.kernel.org,
+ netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
+ Mina Almasry <almasrymina@google.com>, David Wei <dw@davidwei.uk>
+References: <20241007221603.1703699-1-dw@davidwei.uk>
+ <ZwW7_cRr_UpbEC-X@LQ3V64L9R2>
+ <6a45f884-f9d3-4b18-9881-3bfd3a558ea8@gmail.com>
+ <4e285394-3a07-4946-b7a4-c4e503f9a964@kernel.dk>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <4e285394-3a07-4946-b7a4-c4e503f9a964@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 11, 2024 at 10:00:06AM +0800, Ming Lei wrote:
-> On Thu, Oct 10, 2024 at 07:51:19PM +0100, Pavel Begunkov wrote:
-> > On 10/10/24 04:00, Ming Lei wrote:
-> > > On Wed, Oct 09, 2024 at 03:25:25PM +0100, Pavel Begunkov wrote:
-> > > > On 10/6/24 09:20, Ming Lei wrote:
-> > > > > On Fri, Oct 04, 2024 at 04:32:04PM +0100, Pavel Begunkov wrote:
-> > > > > > On 9/12/24 11:49, Ming Lei wrote:
-> > > > > > ...
-> > > > > > > It can help to implement generic zero copy between device and related
-> > > > > > > operations, such as ublk, fuse, vdpa,
-> > > > > > > even network receive or whatever.
-> > > > > > 
-> > > > > > That's exactly the thing it can't sanely work with because
-> > > > > > of this design.
-> > > > > 
-> > > > > The provide buffer design is absolutely generic, and basically
-> > > > > 
-> > > > > - group leader provides buffer for member OPs, and member OPs can borrow
-> > > > > the buffer if leader allows by calling io_provide_group_kbuf()
-> > > > > 
-> > > > > - after member OPs consumes the buffer, the buffer is returned back by
-> > > > > the callback implemented in group leader subsystem, so group leader can
-> > > > > release related sources;
-> > > > > 
-> > > > > - and it is guaranteed that the buffer can be released always
-> > > > > 
-> > > > > The ublk implementation is pretty simple, it can be reused in device driver
-> > > > > to share buffer with other kernel subsystems.
-> > > > > 
-> > > > > I don't see anything insane with the design.
-> > > > 
-> > > > There is nothing insane with the design, but the problem is cross
-> > > > request error handling, same thing that makes links a pain to use.
-> > > 
-> > > Wrt. link, the whole group is linked in the chain, and it respects
-> > > all existed link rule, care to share the trouble in link use case?
-> > 
-> > Error handling is a pain, it has been, even for pure link without
-> > any groups. Even with a simple req1 -> req2, you need to track if
-> > the first request fails you need to expect another failed CQE for
-> > the second request, probably refcount (let's say non-atomically)
-> > some structure and clean it up when you get both CQEs. It's not
-> > prettier when the 2nd fails, especially if you consider short IO
-> > and that you can't fully retry that partial IO, e.g. you consumed
-> > data from the socket. And so on.
-> > 
-> > > The only thing I thought of is that group internal link isn't supported
-> > > yet, but it may be added in future if use case is coming.
-> > > 
-> > > > It's good that with storage reads are reasonably idempotent and you
-> > > > can be retried if needed. With sockets and streams, however, you
-> > > > can't sanely borrow a buffer without consuming it, so if a member
-> > > > request processing the buffer fails for any reason, the user data
-> > > > will be dropped on the floor. I mentioned quite a while before,
-> > > > if for example you stash the buffer somewhere you can access
-> > > > across syscalls like the io_uring's registered buffer table, the
-> > > > user at least would be able to find an error and then memcpy the
-> > > > unprocessed data as a fallback.
-> > > 
-> > > I guess it is net rx case, which requires buffer to cross syscalls,
-> > > then the buffer has to be owned by userspace, otherwise the buffer
-> > > can be leaked easily.
-> > > 
-> > > That may not match with sqe group which is supposed to borrow kernel
-> > > buffer consumed by users.
-> > 
-> > It doesn't necessarily require to keep buffers across syscalls
-> > per se, it just can't drop the data it got on the floor. It's
-> > just storage can read data again.
+On 2024-10-09 09:12, Jens Axboe wrote:
+> On 10/9/24 9:07 AM, Pavel Begunkov wrote:
+>> On 10/9/24 00:10, Joe Damato wrote:
+>>> On Mon, Oct 07, 2024 at 03:15:48PM -0700, David Wei wrote:
+>>>> This patchset adds support for zero copy rx into userspace pages using
+>>>> io_uring, eliminating a kernel to user copy.
+>>>>
+>>>> We configure a page pool that a driver uses to fill a hw rx queue to
+>>>> hand out user pages instead of kernel pages. Any data that ends up
+>>>> hitting this hw rx queue will thus be dma'd into userspace memory
+>>>> directly, without needing to be bounced through kernel memory. 'Reading'
+>>>> data out of a socket instead becomes a _notification_ mechanism, where
+>>>> the kernel tells userspace where the data is. The overall approach is
+>>>> similar to the devmem TCP proposal.
+>>>>
+>>>> This relies on hw header/data split, flow steering and RSS to ensure
+>>>> packet headers remain in kernel memory and only desired flows hit a hw
+>>>> rx queue configured for zero copy. Configuring this is outside of the
+>>>> scope of this patchset.
+>>>
+>>> This looks super cool and very useful, thanks for doing this work.
+>>>
+>>> Is there any possibility of some notes or sample pseudo code on how
+>>> userland can use this being added to Documentation/networking/ ?
+>>
+>> io_uring man pages would need to be updated with it, there are tests
+>> in liburing and would be a good idea to add back a simple exapmle
+>> to liburing/example/*. I think it should cover it
 > 
-> In case of short read, data is really stored(not dropped) in the provided
-> buffer, and you can consume the short read data, or continue to read more to
-> the same buffer.
+> man pages for sure, but +1 to the example too. Just a basic thing would
+> get the point across, I think.
 > 
-> What is the your real issue here?
-> 
-> > 
-> > ...
-> > > > > > > diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> > > > > > > index 793d5a26d9b8..445e5507565a 100644
-> > > > > > > --- a/include/linux/io_uring_types.h
-> > > > > > > +++ b/include/linux/io_uring_types.h
-> > ...
-> > > > > > FWIW, would be nice if during init figure we can verify that the leader
-> > > > > > provides a buffer IFF there is someone consuming it, but I don't think
-> > > > > 
-> > > > > It isn't doable, same reason with IORING_OP_PROVIDE_BUFFERS, since buffer can
-> > > > > only be provided in ->issue().
-> > > > 
-> > > > In theory we could, in practise it'd be too much of a pain, I agree.
-> > > > 
-> > > > IORING_OP_PROVIDE_BUFFERS is different as you just stash the buffer
-> > > > in the io_uring instance, and it's used at an unspecified time later
-> > > > by some request. In this sense the API is explicit, requests that don't
-> > > > support it but marked with IOSQE_BUFFER_SELECT will be failed by the
-> > > > kernel.
-> > > 
-> > > That is also one reason why I add ->accept_group_kbuf.
-> > 
-> > I probably missed that, but I haven't seen that
-> 
-> Such as, any OPs with fixed buffer can't set ->accept_group_kbuf.
-> 
-> > 
-> > > > > > the semantics is flexible enough to do it sanely. i.e. there are many
-> > > > > > members in a group, some might want to use the buffer and some might not.
-> > > > > > 
-> > ...
-> > > > > > > +	if (!kbuf->bvec)
-> > > > > > > +		return -EINVAL;
-> > > > > > 
-> > > > > > How can this happen?
-> > > > > 
-> > > > > OK, we can run the check in uring_cmd API.
-> > > > 
-> > > > Not sure I follow, if a request providing a buffer can't set
-> > > > a bvec it should just fail, without exposing half made
-> > > > io_uring_kernel_buf to other requests.
-> > > > 
-> > > > Is it rather a WARN_ON_ONCE check?
-> > > 
-> > > I meant we can check it in API of io_provide_group_kbuf() since the group
-> > > buffer is filled by driver, since then the buffer is immutable, and we
-> > > needn't any other check.
-> > 
-> > That's be a buggy provider, so sounds like WARN_ON_ONCE
-> 
-> Not at all.
-> 
-> If the driver provides bad buffer, all group leader and members OP will be
-> failed, and userspace can get notified.
-> 
-> > 
-> > ...
-> > > > > > >     		if (unlikely(ret < 0))
-> > > > > > > @@ -593,6 +600,15 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
-> > > > > > >     	if (issue_flags & IO_URING_F_NONBLOCK)
-> > > > > > >     		flags |= MSG_DONTWAIT;
-> > > > > > > +	if (req->flags & REQ_F_GROUP_KBUF) {
-> > > > > > 
-> > > > > > Does anything prevent the request to be marked by both
-> > > > > > GROUP_KBUF and BUFFER_SELECT? In which case we'd set up
-> > > > > > a group kbuf and then go to the io_do_buffer_select()
-> > > > > > overriding all of that
-> > > > > 
-> > > > > It could be used in this way, and we can fail the member in
-> > > > > io_queue_group_members().
-> > > > 
-> > > > That's where the opdef flag could actually be useful,
-> > > > 
-> > > > if (opdef[member]->accept_group_kbuf &&
-> > > >      member->flags & SELECT_BUF)
-> > > > 	fail;
-> > > > 
-> > > > 
-> > > > > > > +		ret = io_import_group_kbuf(req,
-> > > > > > > +					user_ptr_to_u64(sr->buf),
-> > > > > > > +					sr->len, ITER_SOURCE,
-> > > > > > > +					&kmsg->msg.msg_iter);
-> > > > > > > +		if (unlikely(ret))
-> > > > > > > +			return ret;
-> > > > > > > +	}
-> > > > > > > +
-> > > > > > >     retry_bundle:
-> > > > > > >     	if (io_do_buffer_select(req)) {
-> > > > > > >     		struct buf_sel_arg arg = {
-> > > > > > > @@ -1154,6 +1170,11 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
-> > > > > > >     			goto out_free;
-> > > > > > >     		}
-> > > > > > >     		sr->buf = NULL;
-> > > > > > > +	} else if (req->flags & REQ_F_GROUP_KBUF) {
-> > > > > > 
-> > > > > > What happens if we get a short read/recv?
-> > > > > 
-> > > > > For short read/recv, any progress is stored in iterator, nothing to do
-> > > > > with the provide buffer, which is immutable.
-> > > > > 
-> > > > > One problem for read is reissue, but it can be handled by saving iter
-> > > > > state after the group buffer is imported, I will fix it in next version.
-> > > > > For net recv, offset/len of buffer is updated in case of short recv, so
-> > > > > it works as expected.
-> > > > 
-> > > > That was one of my worries.
-> > > > 
-> > > > > Or any other issue with short read/recv? Can you explain in detail?
-> > > > 
-> > > > To sum up design wise, when members that are using the buffer as a
-> > > > source, e.g. write/send, fail, the user is expected to usually reissue
-> > > > both the write and the ublk cmd.
-> > > > 
-> > > > Let's say you have a ublk leader command providing a 4K buffer, and
-> > > > you group it with a 4K send using the buffer. Let's assume the send
-> > > > is short and does't only 2K of data. Then the user would normally
-> > > > reissue:
-> > > > 
-> > > > ublk(4K, GROUP), send(off=2K)
-> > > > 
-> > > > That's fine assuming short IO is rare.
-> > > > 
-> > > > I worry more about the backward flow, ublk provides an "empty" buffer
-> > > > to receive/read into. ublk wants to do something with the buffer in
-> > > > the callback. What happens when read/recv is short (and cannot be
-> > > > retried by io_uring)?
-> > > > 
-> > > > 1. ublk(provide empty 4K buffer)
-> > > > 2. recv, ret=2K
-> > > > 3. ->grp_kbuf_ack: ublk should commit back only 2K
-> > > >     of data and not assume it's 4K
-> > > 
-> > > ->grp_kbuf_ack is supposed to only return back the buffer to the
-> > > owner, and it doesn't care result of buffer consumption.
-> > > 
-> > > When ->grp_kbuf_ack() is done, it means this time buffer borrow is
-> > > over.
-> > > 
-> > > When userspace figures out it is one short read, it will send one
-> > > ublk uring_cmd to notify that this io command is completed with
-> > > result(2k). ublk driver may decide to requeue this io command for
-> > > retrying the remained bytes, when only remained part of the buffer
-> > > is allowed to borrow in following provide uring command originated
-> > > from userspace.
-> > 
-> > My apologies, I failed to notice that moment, even though should've
-> > given it some thinking at the very beginning. I think that part would
-> > be a terrible interface. Might be good enough for ublk, but we can't
-> > be creating a ublk specific features that change the entire io_uring.
-> > Without knowing how much data it actually got, in generic case you
-> 
-> You do know how much data actually got in the member OP, don't you?
-> 
-> > 1) need to require the buffer to be fully initialised / zeroed
-> > before handing it.
-> 
-> The buffer is really initialized before being provided via
-> io_provide_group_kbuf(). And it is one bvec buffer, anytime the part
-> is consumed, the iterator is advanced, so always initialized buffer
-> is provided to consumer OP.
-> 
-> > 2) Can't ever commit the data from the callback,
-> 
-> What do you mean `commit`?
-> 
-> The callback is documented clearly from beginning that it is for
-> returning back the buffer to the owner.
-> 
-> Only member OPs consume buffer, and group leader provides valid buffer
-> for member OP, and the buffer lifetime is aligned with group leader
-> request.
-> 
-> > but it would need to wait until the userspace reacts. Yes, it
-> > works in the specific context of ublk, but I don't think it works
-> > as a generic interface.
-> 
-> It is just how ublk uses group buffer, but not necessary to be exactly
-> this way.
-> 
-> Anytime the buffer is provided via io_provide_group_kbuf() successfully,
-> the member OPs can consume it safely, and finally the buffer is returned
-> back if all member OPs are completed. That is all.
 
-Forget to mention:
-
-The same buffer can be provided multiple times if it is valid, and one
-offset can be added(not done yet in this patchset) easily on the provide
-buffer uring_command, so the buffer can be advanced in case of short recv
-in the provider side.
-
-> Please explain why it isn't generic interface.
-
-
-Thanks,
-Ming
-
+Yeah, there's the liburing side with helpers and all that which will get
+manpages. We'll also put back a simple example demonstrating the uAPI.
+The liburing changes will be sent as a separate patchset to the io-uring
+list.
 

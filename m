@@ -1,203 +1,153 @@
-Return-Path: <io-uring+bounces-3577-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3578-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B9C9997E7
-	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 02:33:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E6A9997FC
+	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 02:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D54BF1C25163
-	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 00:33:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94881F23D91
+	for <lists+io-uring@lfdr.de>; Fri, 11 Oct 2024 00:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0519440C;
-	Fri, 11 Oct 2024 00:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE87D81720;
+	Fri, 11 Oct 2024 00:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="IR4EdD05"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0gMQQ8Kg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228F217D2
-	for <io-uring@vger.kernel.org>; Fri, 11 Oct 2024 00:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334BB10A1F
+	for <io-uring@vger.kernel.org>; Fri, 11 Oct 2024 00:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728606590; cv=none; b=N0HxlKIKLIMRJjsHq4VhJqWFOlTRbWmR56faWJA51JiQZu9zIjWYJtOVDavma/f2sY1+sX6VXpiHugii0lijweCSuk5tHpljW4OhM2qNF2PQe4gLB1534pIaJ9JxzaxMwVhzoye0shJg3lId/YnAZVP1lkgGkXRdCXKMmgqGfdk=
+	t=1728606770; cv=none; b=SkDdr8yg0/+zWETh4DnG0tA4Yro/G0wH5AWYckREs4YXly1AQNYaMm82GWNDA1SuSYC3+DUAMmKzuhi+egSQ+uagjqGtv7q7NM9o1RYxAQxpIk1vqBWM5ng8CBMSsmG8H4Q9Nx0zOlDcjbPsZbaCHSoY0Icq9WgRcTZI8gfU7ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728606590; c=relaxed/simple;
-	bh=uCJsc3x1Wo5SSDBIG8SrjiMOurlGTbSziYI3YSHxhXc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CdU6FNXO2snzEdsNnba8NYLSI9mpdWC/GaizSg5HXcDoyWr7D9ZfVu5BK2hFCsRvB44xmxvwRutsNmK9fytkN7lZjBaOOAx2sdK20rx6orP2OsxXZydDVLzskqmgyIyDAZ4kRDQoHYjc6fD472vRZbSQL8ateoAF6bYeSWR6+00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=IR4EdD05; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20b86298710so12435835ad.1
-        for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 17:29:48 -0700 (PDT)
+	s=arc-20240116; t=1728606770; c=relaxed/simple;
+	bh=UEm4w1+/BayVnYEyIYhV9w3Mjz/x786XWJdv52Ozd44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=caftJwgv8pKTA8vzfyVVa6JOFQp7lhWcI03liBAij/zJB+AmjJe+RBf2C0yh33brKmNPjgPnYjCvZzdWN/Y8oF2T41USwCiwybLr1HndD3kIfTGjddWqXPy+IbW7KjooIJoc4Hklbqm82jS8j3tB+dNsArr6Z4hBfaegGf0xOpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0gMQQ8Kg; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4601a471aecso77601cf.1
+        for <io-uring@vger.kernel.org>; Thu, 10 Oct 2024 17:32:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1728606588; x=1729211388; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/jxj63N/X15j2xK944cy0ex/izWYNWSpB1BC7CvFvKo=;
-        b=IR4EdD05tfFmkIqI0VooNFJkkUVI9wCKDXBoWJH8pz9Uuf5/mKlI1QvF6T8shNxnKo
-         uG8RNAh0SHIDv3V9RwUnCgBlGAx9aLzLSAndjn+guIqSqr4R+cYej7PjDaCmDzCVhbr1
-         LtwjESWzlwz5JBJmorKRzq5jsMUnzH/0/egjd44lesqlVw4EOjGcDkvMUpFxjREbA4NW
-         uhqWYIPEbxRDQp5slHrnKsZfWRvwGAOB4sGRd3YGDDpBkfPl7AERGmdaIp7IcvnKXX3+
-         S0HCeeNpzNIDh3HyL//k+Dk5d7lOByQJToo36BQAm26ofsq9ORitxQDUUnN0Evu5ykeq
-         k4PQ==
+        d=google.com; s=20230601; t=1728606768; x=1729211568; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UEm4w1+/BayVnYEyIYhV9w3Mjz/x786XWJdv52Ozd44=;
+        b=0gMQQ8KgXrQRX85BoMveORkRYFrWllAqf5g7PNXYyDxJ4ftIB9hWMKDc8Japsoehn3
+         2Wxm2XXuGzUfSrMxwSbZ2Jh/paBp92LRjI5xOEDydzjA3m16PsCAf/R8BX3AqThSxrXK
+         qnZOC6moVn5kylGayrcnebFuDjiOYvf+9vvEy6SHxWstJ3YCggyi373VrKkJNIaT/kl4
+         lJHVcuh43A3DZM4fald8MR0obCCVDh780SwzglI19jtA0rhcAN419z7Zp6f6aybVJu4m
+         wPUXed649J9iMNWBH5GmGLXvWG9ALyo3M1D/CTxdTxd296DR5Z+9Cao+rOoGB3mZxooR
+         ZDTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728606588; x=1729211388;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/jxj63N/X15j2xK944cy0ex/izWYNWSpB1BC7CvFvKo=;
-        b=hcHCTqCdzmA0h41mL0leyZ3lmSY+efyIA7DAG2THzhFDc5RihLuRO8fr4YwngEq7e4
-         oDLDziNEq2VKKQNhjIJ6O1iL/H9I0Zl6R4fGBi/aKjvw2Q+80q0zpieM7bhI51f4s46f
-         F3xdpj7nt1XdbQYdeyMYxT/xsJySq9+xWXe+VIsCWF8o8xLoe2yVvmo5c7N8ygSADQZF
-         t3hmJ1Yt3nhzja49RxkHc92z1kEW9zBvazbZyYJN4FMn8Ogr5BWdtPD9HL2T4+L9I7dd
-         Coc6s+r3ecjSqcDyIxgBSI0OqZwqzeJc8J5xs9AMNTgmNkE9xnpj9uUWlrsRwF2Ybar/
-         OuMA==
-X-Gm-Message-State: AOJu0Yz6ckkBfv+tIcfkaDKxjR52eY1ci+wI0i4mfebm+YrTLGefGmyf
-	O4L/6p2dp4SSLQ/WTrOW32bXXRo1gT965QPioFum2cydW3ddmKoD+Uhsq+AL2jM=
-X-Google-Smtp-Source: AGHT+IFdiWEWLlfV9mvX75Z/WC8ndRHPoEtQDKmWk0Dyr/KGR5U3zOFqCsHFmcgUAGSRP28xjaO5tA==
-X-Received: by 2002:a17:903:2b07:b0:207:13a3:a896 with SMTP id d9443c01a7336-20ca1466468mr10234125ad.23.1728606588386;
-        Thu, 10 Oct 2024 17:29:48 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1256:1:80c:c984:f4f1:951f? ([2620:10d:c090:500::6:f60d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c0e7744sm14725845ad.135.2024.10.10.17.29.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 17:29:47 -0700 (PDT)
-Message-ID: <73637a66-e7f7-4ba6-a16e-c2ccb43735d6@davidwei.uk>
-Date: Thu, 10 Oct 2024 17:29:45 -0700
+        d=1e100.net; s=20230601; t=1728606768; x=1729211568;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UEm4w1+/BayVnYEyIYhV9w3Mjz/x786XWJdv52Ozd44=;
+        b=mWRpSPWq69tyjnYsigQ+SGmevOI4Ap3ZvLV3x7wxWnADBfLIrkpEVHyiBrZu1dOmeb
+         Hoa9kVB5xXlO2lGDyrIHxAKqsjzaLfDNOP2mdNki9vaAxe3RZjnGLNVmJAG5UYPow87B
+         Rt46YT8CQ/9lI0DljTYO27s5hNzCUZZJxxVevQBpWuag7pxC9K7NPiDU5rnbxrioGazR
+         Xd6/McrjnSy6gC6s2TxthndTaq76m3x5X3PFb4zSxD1VrcltpWvV+L/6itjoY2iFo1CF
+         qZCrCO1mELRyrCfrI/NXrFPSmPCHlwRe8NlrY8x254DGQqOVAK9FJf+T6mph/YYznkSW
+         q3hA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMvFsPL9t/Zdtp3XuMCEAoGrOBXAivwsjjquqzyRoL/ptfaC1xQO7PGfX2qg7FkWVbJGcK0egyzQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMJK8/E3HkYB6npZk88I8psZtLDv62+X02rEfdolg/MI7SOmfM
+	uB5yznxgq6EM7QzV4R+5NpYo1UCp/9DduumoP+8nLbNOLbA0rHKTT3PtASOObMWyD+yGzGE5wWg
+	8Fx6G0uQnnolffe1NA5bI+yLnigVAZFdJ6X1T
+X-Google-Smtp-Source: AGHT+IFa3X3kXCvbMNV8e/CL1FECdovrHzWeLXI7K0gOLD45vSyGS+b4KWyH5KzMfNcOFtFTiBBiLpw+Z9LcZ01I2vQ=
+X-Received: by 2002:a05:622a:7b8a:b0:460:463d:78dd with SMTP id
+ d75a77b69052e-4604ac30a33mr1830201cf.4.1728606767741; Thu, 10 Oct 2024
+ 17:32:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 00/15] io_uring zero copy rx
-To: Mina Almasry <almasrymina@google.com>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- David Wei <dw@davidwei.uk>
-References: <20241007221603.1703699-1-dw@davidwei.uk>
- <CAHS8izOv9cB60oUbxz_52BMGi7T4_u9rzTOCb23LGvZOX0QXqg@mail.gmail.com>
-Content-Language: en-GB
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <CAHS8izOv9cB60oUbxz_52BMGi7T4_u9rzTOCb23LGvZOX0QXqg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241007221603.1703699-1-dw@davidwei.uk> <20241007221603.1703699-12-dw@davidwei.uk>
+ <CAHS8izO-=ugX7S11dTr5cXp11V+L-gquvwBLQko8hW4AP9vg6g@mail.gmail.com>
+ <94a22079-0858-473c-b07f-89343d9ba845@gmail.com> <CAHS8izPjHv_J8=Hz6xZmfa857st+zyA7MLSe+gCJTdZewPOmEw@mail.gmail.com>
+ <f89c65da-197a-42d9-b78a-507951484759@gmail.com> <CAHS8izMrPuQNvwGwAUjh7GAY-CoC81rc5BD1ZMmy-nNds3xDgA@mail.gmail.com>
+ <096387ce-64f0-402f-a5d2-6b51653f9539@gmail.com>
+In-Reply-To: <096387ce-64f0-402f-a5d2-6b51653f9539@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 10 Oct 2024 17:32:34 -0700
+Message-ID: <CAHS8izMi-yrCRx=VzhBH100MgxCpmQSNsqOLZ9efV+mFeS_Hnw@mail.gmail.com>
+Subject: Re: [PATCH v1 11/15] io_uring/zcrx: implement zerocopy receive pp
+ memory provider
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org, netdev@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-10-09 09:55, Mina Almasry wrote:
-> On Mon, Oct 7, 2024 at 3:16 PM David Wei <dw@davidwei.uk> wrote:
->>
->> This patchset adds support for zero copy rx into userspace pages using
->> io_uring, eliminating a kernel to user copy.
->>
->> We configure a page pool that a driver uses to fill a hw rx queue to
->> hand out user pages instead of kernel pages. Any data that ends up
->> hitting this hw rx queue will thus be dma'd into userspace memory
->> directly, without needing to be bounced through kernel memory. 'Reading'
->> data out of a socket instead becomes a _notification_ mechanism, where
->> the kernel tells userspace where the data is. The overall approach is
->> similar to the devmem TCP proposal.
->>
->> This relies on hw header/data split, flow steering and RSS to ensure
->> packet headers remain in kernel memory and only desired flows hit a hw
->> rx queue configured for zero copy. Configuring this is outside of the
->> scope of this patchset.
->>
->> We share netdev core infra with devmem TCP. The main difference is that
->> io_uring is used for the uAPI and the lifetime of all objects are bound
->> to an io_uring instance.
-> 
-> I've been thinking about this a bit, and I hope this feedback isn't
-> too late, but I think your work may be useful for users not using
-> io_uring. I.e. zero copy to host memory that is not dependent on page
-> aligned MSS sizing. I.e. AF_XDP zerocopy but using the TCP stack.
-> 
-> If we refactor things around a bit we should be able to have the
-> memory tied to the RX queue similar to what AF_XDP does, and then we
-> should be able to zero copy to the memory via regular sockets and via
-> io_uring. This will be useful for us and other applications that would
-> like to ZC similar to what you're doing here but not necessarily
-> through io_uring.
+On Thu, Oct 10, 2024 at 2:22=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> > page_pool. To make matters worse, the bypass is only there if the
+> > netmems are returned from io_uring, and not bypassed when the netmems
+> > are returned from driver/tcp stack. I'm guessing if you reused the
+> > page_pool recycling in the io_uring return path then it would remove
+> > the need for your provider to implement its own recycling for the
+> > io_uring return case.
+> >
+> > Is letting providers bypass and override the page_pool's recycling in
+> > some code paths OK? IMO, no. A maintainer will make the judgement call
+>
+> Mina, frankly, that's nonsense. If we extend the same logic,
+> devmem overrides page allocation rules with callbacks, devmem
+> overrides and violates page pool buffer lifetimes by extending
+> it to user space, devmem violates and overrides the page pool
+> object lifetime by binding buffers to sockets. And all of it
+> I'd rather name extends and enhances to fit in the devmem use
+> case.
+>
+> > and speak authoritatively here and I will follow, but I do think it's
+> > a (much) worse design.
+>
+> Sure, I have a completely opposite opinion, that's a much
+> better approach than returning through a syscall, but I will
+> agree with you that ultimately the maintainers will say if
+> that's acceptable for the networking or not.
+>
 
-Using io_uring and trying to move away from a socket based interface is
-an explicit longer term goal. I see your proposal of adding a
-traditional socket based API as orthogonal to what we're trying to do.
-If someone is motivated enough to see this exist then they can build it
-themselves.
+Right, I'm not suggesting that you return the pages through a syscall.
+That will add syscall overhead when it's better not to have that
+especially in io_uring context. Devmem TCP needed a syscall because I
+couldn't figure out a non-syscall way with sockets for the userspace
+to tell the kernel that it's done with some netmems. You do not need
+to follow that at all. Sorry if I made it seem like so.
 
-> 
->> Data is 'read' using a new io_uring request
->> type. When done, data is returned via a new shared refill queue. A zero
->> copy page pool refills a hw rx queue from this refill queue directly. Of
->> course, the lifetime of these data buffers are managed by io_uring
->> rather than the networking stack, with different refcounting rules.
->>
->> This patchset is the first step adding basic zero copy support. We will
->> extend this iteratively with new features e.g. dynamically allocated
->> zero copy areas, THP support, dmabuf support, improved copy fallback,
->> general optimisations and more.
->>
->> In terms of netdev support, we're first targeting Broadcom bnxt. Patches
->> aren't included since Taehee Yoo has already sent a more comprehensive
->> patchset adding support in [1]. Google gve should already support this,
-> 
-> This is an aside, but GVE supports this via the out-of-tree patches
-> I've been carrying on github. Uptsream we're working on adding the
-> prerequisite page_pool support.
-> 
->> and Mellanox mlx5 support is WIP pending driver changes.
->>
->> ===========
->> Performance
->> ===========
->>
->> Test setup:
->> * AMD EPYC 9454
->> * Broadcom BCM957508 200G
->> * Kernel v6.11 base [2]
->> * liburing fork [3]
->> * kperf fork [4]
->> * 4K MTU
->> * Single TCP flow
->>
->> With application thread + net rx softirq pinned to _different_ cores:
->>
->> epoll
->> 82.2 Gbps
->>
->> io_uring
->> 116.2 Gbps (+41%)
->>
->> Pinned to _same_ core:
->>
->> epoll
->> 62.6 Gbps
->>
->> io_uring
->> 80.9 Gbps (+29%)
->>
-> 
-> Is the 'epoll' results here and the 'io_uring' using TCP RX zerocopy
-> [1]  and io_uring zerocopy respectively?
-> 
-> If not, I would like to see a comparison between TCP RX zerocopy and
-> this new io-uring zerocopy. For Google for example we use the TCP RX
-> zerocopy, I would like to see perf numbers possibly motivating us to
-> move to this new thing.
+However, I'm suggesting that when io_uring figures out that the
+userspace is done with a netmem, that you feed that netmem back to the
+pp, and utilize the pp's recycling, rather than adding your own
+recycling in the provider.
 
-No, it is comparing epoll without zero copy vs io_uring zero copy. Yes,
-that's a fair request. I will add epoll with TCP_ZEROCOPY_RECEIVE to
-kperf and compare.
+From your commit message:
 
-> 
-> [1] https://lwn.net/Articles/752046/
-> 
-> 
+"we extend the lifetime by recycling buffers only after the user space
+acknowledges that it's done processing the data via the refill queue"
+
+It seems to me that you get some signal from the userspace that data
+is ready to be reuse via that refill queue (whatever it is, very
+sorry, I'm not that familiar with io_uring). My suggestion here is
+when the userspace tells you that a netmem is ready for reuse (however
+it does that), that you feed that page back to the pp via something
+like napi_pp_put_page() or page_pool_put_page_bulk() if that makes
+sense to you. FWIW I'm trying to look through your code to understand
+what that refill queue is and where - if anywhere - it may be possible
+to feed pages back to the pp, rather than directly to the provider.
+
+--=20
+Thanks,
+Mina
 

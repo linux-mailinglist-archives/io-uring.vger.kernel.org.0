@@ -1,179 +1,140 @@
-Return-Path: <io-uring+bounces-3625-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3626-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DDB99B28E
-	for <lists+io-uring@lfdr.de>; Sat, 12 Oct 2024 11:30:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C488099B583
+	for <lists+io-uring@lfdr.de>; Sat, 12 Oct 2024 16:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C9428453A
-	for <lists+io-uring@lfdr.de>; Sat, 12 Oct 2024 09:30:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CAAB1F21495
+	for <lists+io-uring@lfdr.de>; Sat, 12 Oct 2024 14:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A3E149C53;
-	Sat, 12 Oct 2024 09:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641C7155CBF;
+	Sat, 12 Oct 2024 14:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Wcpu6+dm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qv8S1jp+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5454315F
-	for <io-uring@vger.kernel.org>; Sat, 12 Oct 2024 09:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273608F66
+	for <io-uring@vger.kernel.org>; Sat, 12 Oct 2024 14:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728725444; cv=none; b=WG7Yb2nxj+K4d8Bj8FjOkiHVnqb7n/3zQFos9j/sPJWYW7mFJC8fkIu09NJGmDa8ksQ4L0L6ijtyF99wW29oCaxUrAC2+Ts6mznS0hL1tO7WKWnWQZEyVylvz3fZNe1wJ+FNkdDhMYhBV+a0IQnDJgHQhVzX4k2g4DqUqEoTCiQ=
+	t=1728743899; cv=none; b=KBbhkGm4qUVUDA7QE2jWkA8bEpufjWneXIVsIwQQPhYtjdKXQtbk2l4UJhbGkvkQj7nLZ3H7LNUDJHdPyws5Di9d8B6B5UQquEL5mF69zYEt2n3B0ZntvsnRMeHgtrFkRzX2nZZUEJa2AZK2FTpFMK043IvTGj1iUC8X1DA4m0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728725444; c=relaxed/simple;
-	bh=6Vmd7fcKE8gbR2cCPvAillZIaE8rpwv65M5fM0UFrlI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=QLStPC9U+gL3J9mvYnYMm0pahutTzR9liYjbJCb6aDLOvFjcIMciWGzC3pXnc3zyp57CtkXG4AyDk8Ul0NpxHyMxah+xxGaHwJGXoMkbWzSSECN+I96h3hHUSE8VFMUpbi0D4RxHWzhZzW1/G2aTIeCRjusZu/eYuWYSb33j+wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Wcpu6+dm; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241012093034epoutp0349e7d413082000c150e6954b462aecce~9qp_FzVF11363113631epoutp03X
-	for <io-uring@vger.kernel.org>; Sat, 12 Oct 2024 09:30:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241012093034epoutp0349e7d413082000c150e6954b462aecce~9qp_FzVF11363113631epoutp03X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728725434;
-	bh=vuxMMAliy5LbxYqHOKd1/RK04LojR8G4oTBP4qQR32I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Wcpu6+dmpyjT79LpzCgUF09ZtOqb1f4fjajwmwzwVePebWMYBOZxhHZx3U2kenGS+
-	 GRAEkSN1ko0Y6YOhY5HfgWsy9PzMK/ZI8fY0exVyFdD8KQCfbOfhltk3nmSm8Aca+k
-	 kFkBwkEfL8dt8Hces0GleZhORe7YC8MNP/XmY+dI=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20241012093033epcas5p470fb210555be3043004d8a7f8e3d4459~9qp9X7nEi3115331153epcas5p4-;
-	Sat, 12 Oct 2024 09:30:33 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XQdWq448Fz4x9Pr; Sat, 12 Oct
-	2024 09:30:31 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	10.D2.09420.7B14A076; Sat, 12 Oct 2024 18:30:31 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad~9qYfbH0Uk0226602266epcas5p2W;
-	Sat, 12 Oct 2024 09:10:32 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241012091032epsmtrp16a917033438099983215da25ec63bf1a~9qYfZf9WP1886618866epsmtrp13;
-	Sat, 12 Oct 2024 09:10:32 +0000 (GMT)
-X-AuditID: b6c32a49-0d5ff700000024cc-28-670a41b7ecf8
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CD.EB.18937.80D3A076; Sat, 12 Oct 2024 18:10:32 +0900 (KST)
-Received: from dev.. (unknown [109.105.118.18]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241012091031epsmtip118325eee792670ef8b0ee3765a24c30d~9qYeYORfK0849208492epsmtip1j;
-	Sat, 12 Oct 2024 09:10:31 +0000 (GMT)
-From: Ruyi Zhang <ruyi.zhang@samsung.com>
-To: asml.silence@gmail.com
-Cc: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-	peiwei.li@samsung.com, ruyi.zhang@samsung.com
-Subject: Re: [PATCH v2 RESEND] io_uring/fdinfo: add timeout_list to fdinfo
-Date: Sat, 12 Oct 2024 09:10:25 +0000
-Message-ID: <20241012091026.1824-1-ruyi.zhang@samsung.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <e8d1f8e8-abd9-4e4b-aa55-d8444794f55a@gmail.com>
+	s=arc-20240116; t=1728743899; c=relaxed/simple;
+	bh=9WjEWpeEXmwJ7o6zzU3yrZ/J+X2eFQFrx40A+VFRMVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EwrcszeDsCyvREVQNlPqqYSXY8IqeWdbzG/F3hUHJOSPG6NZJQ7NWYMapXGKkqpC6UJChCdQFQtTJOgolj5iEvtYO3NCvo7Ofs3W24gHFXr84GfhLIepSVCwnbJ4VJzH0nPWbTCezgonj5rS8H/qjNpGzzpbW2BBgvKTP7Kj5p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qv8S1jp+; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-835496c8d6fso160831639f.0
+        for <io-uring@vger.kernel.org>; Sat, 12 Oct 2024 07:38:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728743895; x=1729348695; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LxPiBM9s/24QZOERd6VFCLNGvCqjGeYWcxIyXJwt8Uk=;
+        b=qv8S1jp+s3cDQFRh+ZbG/IThRr1eiGLSrrF6JtWSchMMFUJEwQMf/50v9uXgN6UOnH
+         3DE7EAPW0ED9e5kvNMR3Jo0UCEcL42qJDBvt/5wSIDOBwzhK0c4ymDoxGwtL1TqSUBfM
+         798TBuIyFA8B3dC2Ar5ET595vpB2TqD7RLFqQNEmBise+g8LpIHG5HBEtZXMtVWL4L29
+         3dTWxAukb830WjTGERTEaPyUali1glLn1GlpMIJEAWddxGfPPrNxi2MJB4bMcOZJUwV+
+         y2g5wBRONXU6crHEf2jSsFnCCO/r/+1SlZT+be/NYME6QnkqG9hX/qMMHx8Aq0Xx8fmi
+         Osag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728743895; x=1729348695;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LxPiBM9s/24QZOERd6VFCLNGvCqjGeYWcxIyXJwt8Uk=;
+        b=v4vO0yl4foLNQiDZAeV++vBfPA8U10iuDoEQEh1OoEkbgvbMp8x31HVVPOdCvZQZJd
+         +KfUwtq4APqmEzVTrul+TD7cPYAbNKU/Dhgx1PehNvltt96zWMaOhD8K5p4D53ME/C5l
+         ZkbGqMnF0YxwEceC2mlZ+KD0+++B4lGjDQ5fMB/fITIHBvCZq356eiCqRLR8DABnJs/G
+         G6/7vGbqk3bgvwdexq+MOS+FPBz/y+jcqGyPQhe3D6umgWCmSfbax0THThRYPBPyR8ot
+         wT6w+AUbYhT1yjr89WcwgXOl3foeorun/yMDM8eeslsd+4eN54+XJUmGQ+Td7BhlpXOk
+         9Mrg==
+X-Gm-Message-State: AOJu0YzSLY2Oo0XKKyJZHo4Tx6fcYX8mvIepvrwiLJKdS17zpciw0BDj
+	ZFHguF60vQjfsD3RM+CPmkbgc1lyR0xtdp56CB0kAW1oMqNNwZdgBmI4vhctGkI=
+X-Google-Smtp-Source: AGHT+IHBBBpn8Ny3I6zHLkM9Y7IUypc9SYoA60bAyAZvAGVeM51W/C1+Eg8LtJEk0NGIINJvfiGgfQ==
+X-Received: by 2002:a05:6602:6c0e:b0:835:444d:83a9 with SMTP id ca18e2360f4ac-83a64d9c39fmr167814939f.14.1728743895025;
+        Sat, 12 Oct 2024 07:38:15 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8354ba5444csm112682139f.50.2024.10.12.07.38.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Oct 2024 07:38:14 -0700 (PDT)
+Message-ID: <ec90f6e0-f2e2-4579-af9f-5592224eb274@kernel.dk>
+Date: Sat, 12 Oct 2024 08:38:13 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupik+LIzCtJLcpLzFFi42LZdlhTQ3e7I1e6Qe8yaYs5q7YxWqy+289m
-	8a71HIvFr+67jBaXd81hs3i2l9Piy+Hv7BZnJ3xgdeDw2DnrLrvH5bOlHn1bVjF6fN4kF8AS
-	lW2TkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SEkkJZ
-	Yk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafApECvODG3uDQvXS8vtcTK0MDAyBSoMCE7
-	Y39nacEOgYqOk7+ZGhjf83QxcnJICJhI/Fp4mqWLkYtDSGA3o8TNL3eZIJxPjBJfNvxkg3MO
-	TdrEDtPysaMZqmUno8T9zVehWp4wSpw9+p0JpIpNQFPi8swGxi5GDg4RASmJ33c5QMLMAjUS
-	12ZPZAOxhQW8JNp/LASzWQRUJU69PcMCUs4rYCWx+Sc/xC55icU7ljOD2JwCthK3115hBbF5
-	BQQlTs58wgIxUl6ieetsZpATJATusUs8njeRGaLZRWLFknWMELawxKvjW6AekJJ42d/GDrJL
-	QqBY4mFfPkS4gVFi2+86CNta4t+VPWDnMAN9sn6XPkRYVmLqqXVMEGv5JHp/P2GCiPNK7JgH
-	Y6tIvF/xjglm0/rW3VC2h8SEQ5vBThYSmMAo8el+6ARGhVlIvpmF5JtZCJsXMDKvYpRMLSjO
-	TU8tNi0wzEsth8dwcn7uJkZwotTy3MF498EHvUOMTByMhxglOJiVRHjfT+VMF+JNSaysSi3K
-	jy8qzUktPsRoCgzticxSosn5wFSdVxJvaGJpYGJmZmZiaWxmqCTO+7p1boqQQHpiSWp2ampB
-	ahFMHxMHp1QDE8tzM97VsjsmHBdpPnLfO+ZulIDD37XNivdP2at+bnxanvP1256W4yYvAlm9
-	8icuSiut/Gj89Nu7tv35/zOKNThL3domMFfk7+hxn8SxJ7zteSxHxlLeA5L8jxfcc5/zdVVf
-	rQtjwAW5pRxyPs82Ty4VDv7+wal3QtTOey1Vn2TbQyZvqntn7126WWrz5feeySeDpz978GBH
-	z6SkS+KNuimcz9asXbvg7Za9E6rSly1M07jgKGgSe256C6+JU/C7A86Lziz+uEXrfZXOD7VF
-	V98YaZ+qXfGz3C6UfXZ2kOzbLc8vhHh8lePKnxdhb1e2Sag30OrZn7+zXzHNn77uzjQVuyMm
-	u9aeu6p5Q9VM4pkSS3FGoqEWc1FxIgD3sU7IHQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHLMWRmVeSWpSXmKPExsWy7bCSnC6HLVe6wfINJhZzVm1jtFh9t5/N
-	4l3rORaLX913GS0u75rDZvFsL6fFl8Pf2S3OTvjA6sDhsXPWXXaPy2dLPfq2rGL0+LxJLoAl
-	issmJTUnsyy1SN8ugStjf2dpwQ6Bio6Tv5kaGN/zdDFyckgImEh87Ghm6WLk4hAS2M4oce7t
-	LBaIhJTEzaZjTBC2sMTKf8/ZQWwhgUeMEveWKYHYbAKaEpdnNjB2MXJwiADV/77LATKHWaCJ
-	UeLNvS1gvcICXhLtPxaygdgsAqoSp96eYQGp5xWwktj8kx9ivLzE4h3LmUFsTgFbidtrr7BC
-	rLKROPHiJJjNKyAocXLmE7DTmIHqm7fOZp7AKDALSWoWktQCRqZVjKKpBcW56bnJBYZ6xYm5
-	xaV56XrJ+bmbGMFBrBW0g3HZ+r96hxiZOBgPMUpwMCuJ8L6fypkuxJuSWFmVWpQfX1Sak1p8
-	iFGag0VJnFc5pzNFSCA9sSQ1OzW1ILUIJsvEwSnVwMT3MrYlnFfY5v3+FRcYFCRsJopMCa2r
-	ydc44PF5+QXtSbNzutT7NuVGLe28u7qNsdguePGxg3t/s222CAm0OXetwVria7C0T79g9KWJ
-	scKBoiKNaw/cf/s1f7lEQDuz1Tafo/nhC24nW0bY1smZhlmJ5al+bOg7Y/9GXcfXmLXfxr8n
-	ro0zeN0fs+SiHGXvaevnrk58aTNhakH/9RNy/GGNMWfbp2krZz1dIdF7z156Up2JyUSOU74n
-	u+v81nocnS9qlcJzZcvu3KJp0R2PH9ZcvfOkiKfucWQt40TePdcctF1X7o4XcPTZFnSRN+PV
-	1/8Pr8/atlTn+80V9Rtnz2n5Ubzi+abQc30NB/V3KbEUZyQaajEXFScCAL+PZ07RAgAA
-X-CMS-MailID: 20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad
-References: <e8d1f8e8-abd9-4e4b-aa55-d8444794f55a@gmail.com>
-	<CGME20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad@epcas5p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Large CQE for fuse headers
+To: Ming Lei <tom.leiming@gmail.com>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>
+References: <d66377d6-9353-4a86-92cf-ccf2ea6c6a9d@fastmail.fm>
+ <CACVXFVM-eWXk4VqSjrpH24n=z9j-Ff_CSBEvb7EcxORhxp6r9w@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CACVXFVM-eWXk4VqSjrpH24n=z9j-Ff_CSBEvb7EcxORhxp6r9w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
----
-On 2024-10-10 15:35 Pavel Begunkov wrote:
->> Two questions:
->> 
->> 1. I agree with you, we shouldn't walk a potentially very
->> long list under spinlock. but i can't find any other way
->> to get all the timeout
+On 10/11/24 7:55 PM, Ming Lei wrote:
+> On Fri, Oct 11, 2024 at 4:56?AM Bernd Schubert
+> <bernd.schubert@fastmail.fm> wrote:
+>>
+>> Hello,
+>>
+>> as discussed during LPC, we would like to have large CQE sizes, at least
+>> 256B. Ideally 256B for fuse, but CQE512 might be a bit too much...
+>>
+>> Pavel said that this should be ok, but it would be better to have the CQE
+>> size as function argument.
+>> Could you give me some hints how this should look like and especially how
+>> we are going to communicate the CQE size to the kernel? I guess just adding
+>> IORING_SETUP_CQE256 / IORING_SETUP_CQE512 would be much easier.
+>>
+>> I'm basically through with other changes Miklos had been asking for and
+>> moving fuse headers into the CQE is next.
+> 
+> Big CQE may not be efficient,  there are copy from kernel to CQE and
+> from CQE to userspace. And not flexible, it is one ring-wide property,
+> if it is big,
+> any CQE from this ring has to be big.
 
-> If only it's just under the spin, but with disabled irqs...
+There isn't really a copy - the kernel fills it in, generally the
+application itself, just in the kernel, and then the application can
+read it on that side. It's the same memory, and it'll also generally be
+cache hot when the applicatio reaps it. Unless a lot of time has passed,
+obviously.
 
->> information than to walk the timeout_list. Do you have any
->> good ideas?
+That said, yeah bigger sqe/cqe is less ideal than smaller ones,
+obviously. Currently you can fit 4 normal cqes in a cache line, or a
+single sqe. Making either of them bigger will obviously bloat that.
 
-> In the long run it'd be great to replace the spinlock
-> with a mutex, i.e. just ->uring_lock, but that would might be
-> a bit involving as need to move handling to the task context.
- 
- Yes, it makes more sense to replace spin_lock, but that would
- require other related logic to be modified, and I don't think
- it's wise to do that for the sake of a piece of debugging
- information.
+> If you are saying uring_cmd,  another way is to mapped one area for
+> this purpose, the fuse driver can write fuse headers to this indexed
+> mmap buffer, and userspace read it, which is just efficient, without
+> io_uring core changes. ublk uses this way to fill IO request header.
+> But it requires each command to have a unique tag.
 
->> 2. I also agree seq_printf heavier, if we use
->> seq_put_decimal_ull and seq_puts to concatenate strings,
->> I haven't tested whether it's more efficient or not, but
->> the code is certainly not as readable as the former. It's
->> also possible that I don't fully understand what you mean
->> and want to hear your opinion.
+That may indeed be a decent idea for this too. You don't even need fancy
+tagging, you can just use the cqe index for your tag too, as it should
+not be bigger than the the cq ring space. Then you can get away with
+just using normal cqe sizes, and just have a shared region between the
+two where data gets written by the uring_cmd completion, and the app can
+access it directly from userspace.
 
-> I don't think there is any difference, it'd be a matter of
-> doubling the number of in flight timeouts to achieve same
-> timings. Tell me, do you really have a good case where you
-> need that (pretty verbose)? Why not drgn / bpftrace it out
-> of the kernel instead?
-
- Of course, this information is available through existing tools.
- But I think that most of the io_uring metadata has been exported
- from the fdinfo file, and the purpose of adding the timeout
- information is the same as before, easier to use. This way, 
- I don't have to write additional scripts to get all kinds of data.
-
- And as far as I know, the io_uring_show_fdinfo function is
- only called once when the user is viewing the 
- /proc/xxx/fdinfo/x file once. I don't think we normally need to 
- look at this file as often, and only look at it when the program
- is abnormal, and the timeout_list is very long in the extreme case,
- so I think the performance impact of adding this code is limited.
-
----
-Ruyi Zhang
+-- 
+Jens Axboe
 

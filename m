@@ -1,72 +1,82 @@
-Return-Path: <io-uring+bounces-3623-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3625-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E68D99B251
-	for <lists+io-uring@lfdr.de>; Sat, 12 Oct 2024 10:54:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DDB99B28E
+	for <lists+io-uring@lfdr.de>; Sat, 12 Oct 2024 11:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF21328344B
-	for <lists+io-uring@lfdr.de>; Sat, 12 Oct 2024 08:54:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C9428453A
+	for <lists+io-uring@lfdr.de>; Sat, 12 Oct 2024 09:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DFD14A09F;
-	Sat, 12 Oct 2024 08:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A3E149C53;
+	Sat, 12 Oct 2024 09:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OtIpsgW5"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Wcpu6+dm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD03149E17
-	for <io-uring@vger.kernel.org>; Sat, 12 Oct 2024 08:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5454315F
+	for <io-uring@vger.kernel.org>; Sat, 12 Oct 2024 09:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728723254; cv=none; b=ZAY8wXKucVIG/P/Xhh3BTjwcpcpLewu74HJhXH029aoCNHQITTN1PLs8+WeADhbiuW0vNX/mcHueFLYNTLRFeoYK9AXtRi3e7yQ0q4H2/PucQX01WA6tbMrPuc3HFvv1YlniXRItYOnaFVgGPJAZhJhX+WZBSyeDrqO3xB133M0=
+	t=1728725444; cv=none; b=WG7Yb2nxj+K4d8Bj8FjOkiHVnqb7n/3zQFos9j/sPJWYW7mFJC8fkIu09NJGmDa8ksQ4L0L6ijtyF99wW29oCaxUrAC2+Ts6mznS0hL1tO7WKWnWQZEyVylvz3fZNe1wJ+FNkdDhMYhBV+a0IQnDJgHQhVzX4k2g4DqUqEoTCiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728723254; c=relaxed/simple;
-	bh=RpJiTIPbwVZ+tXOmSTuKL06rtYZo/Cbsg+vqbO3DbN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JB7A9HSASH8AXDHa6fglGEgbWLnkKhoPFjADxCgd8vGHOYEKA1fiQzW7Lzz4LJcD8i/SHDTxDhEN7Lo28Ho+sjxTSv03eJboGtMmqZ2oFIUIQ6KFlQUYMr2cjCQbvWak2iMs+VENP8NbVvgAbiDKJcOMiAtVeDfW2OWPhPwjdYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OtIpsgW5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728723251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aPvInSLvxFt3ne3pEZKx06NrrVqsvzpR/iUURCc+nCI=;
-	b=OtIpsgW5egXVCOeauBJV0U7EfHoKl7HjUHXgkiDQ2cMRoN42mITYXkNIyDT9XMu1kYjLYt
-	JuKfDfB4c04Jj3lyPk3IfqltwnIENuR32iD+ZgBWqOfSJJZ558cObSmMKfeedyBQu7sWKf
-	OaCKihcGH1nHGFD9Fe66K9WsTmh7MsI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-218-G6Z4fOWdPLqNYya2QoJbag-1; Sat,
- 12 Oct 2024 04:54:08 -0400
-X-MC-Unique: G6Z4fOWdPLqNYya2QoJbag-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6B83A1956048;
-	Sat, 12 Oct 2024 08:54:07 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.121])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7D33719560A2;
-	Sat, 12 Oct 2024 08:54:06 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	io-uring@vger.kernel.org,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: linux-block@vger.kernel.org,
-	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V7 7/7] ublk: support lease io buffer to io_uring
-Date: Sat, 12 Oct 2024 16:53:27 +0800
-Message-ID: <20241012085330.2540955-8-ming.lei@redhat.com>
-In-Reply-To: <20241012085330.2540955-1-ming.lei@redhat.com>
-References: <20241012085330.2540955-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1728725444; c=relaxed/simple;
+	bh=6Vmd7fcKE8gbR2cCPvAillZIaE8rpwv65M5fM0UFrlI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=QLStPC9U+gL3J9mvYnYMm0pahutTzR9liYjbJCb6aDLOvFjcIMciWGzC3pXnc3zyp57CtkXG4AyDk8Ul0NpxHyMxah+xxGaHwJGXoMkbWzSSECN+I96h3hHUSE8VFMUpbi0D4RxHWzhZzW1/G2aTIeCRjusZu/eYuWYSb33j+wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Wcpu6+dm; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241012093034epoutp0349e7d413082000c150e6954b462aecce~9qp_FzVF11363113631epoutp03X
+	for <io-uring@vger.kernel.org>; Sat, 12 Oct 2024 09:30:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241012093034epoutp0349e7d413082000c150e6954b462aecce~9qp_FzVF11363113631epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1728725434;
+	bh=vuxMMAliy5LbxYqHOKd1/RK04LojR8G4oTBP4qQR32I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Wcpu6+dmpyjT79LpzCgUF09ZtOqb1f4fjajwmwzwVePebWMYBOZxhHZx3U2kenGS+
+	 GRAEkSN1ko0Y6YOhY5HfgWsy9PzMK/ZI8fY0exVyFdD8KQCfbOfhltk3nmSm8Aca+k
+	 kFkBwkEfL8dt8Hces0GleZhORe7YC8MNP/XmY+dI=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20241012093033epcas5p470fb210555be3043004d8a7f8e3d4459~9qp9X7nEi3115331153epcas5p4-;
+	Sat, 12 Oct 2024 09:30:33 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XQdWq448Fz4x9Pr; Sat, 12 Oct
+	2024 09:30:31 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	10.D2.09420.7B14A076; Sat, 12 Oct 2024 18:30:31 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad~9qYfbH0Uk0226602266epcas5p2W;
+	Sat, 12 Oct 2024 09:10:32 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241012091032epsmtrp16a917033438099983215da25ec63bf1a~9qYfZf9WP1886618866epsmtrp13;
+	Sat, 12 Oct 2024 09:10:32 +0000 (GMT)
+X-AuditID: b6c32a49-0d5ff700000024cc-28-670a41b7ecf8
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CD.EB.18937.80D3A076; Sat, 12 Oct 2024 18:10:32 +0900 (KST)
+Received: from dev.. (unknown [109.105.118.18]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241012091031epsmtip118325eee792670ef8b0ee3765a24c30d~9qYeYORfK0849208492epsmtip1j;
+	Sat, 12 Oct 2024 09:10:31 +0000 (GMT)
+From: Ruyi Zhang <ruyi.zhang@samsung.com>
+To: asml.silence@gmail.com
+Cc: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+	peiwei.li@samsung.com, ruyi.zhang@samsung.com
+Subject: Re: [PATCH v2 RESEND] io_uring/fdinfo: add timeout_list to fdinfo
+Date: Sat, 12 Oct 2024 09:10:25 +0000
+Message-ID: <20241012091026.1824-1-ruyi.zhang@samsung.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <e8d1f8e8-abd9-4e4b-aa55-d8444794f55a@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -74,317 +84,96 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupik+LIzCtJLcpLzFFi42LZdlhTQ3e7I1e6Qe8yaYs5q7YxWqy+289m
+	8a71HIvFr+67jBaXd81hs3i2l9Piy+Hv7BZnJ3xgdeDw2DnrLrvH5bOlHn1bVjF6fN4kF8AS
+	lW2TkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SEkkJZ
+	Yk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafApECvODG3uDQvXS8vtcTK0MDAyBSoMCE7
+	Y39nacEOgYqOk7+ZGhjf83QxcnJICJhI/Fp4mqWLkYtDSGA3o8TNL3eZIJxPjBJfNvxkg3MO
+	TdrEDtPysaMZqmUno8T9zVehWp4wSpw9+p0JpIpNQFPi8swGxi5GDg4RASmJ33c5QMLMAjUS
+	12ZPZAOxhQW8JNp/LASzWQRUJU69PcMCUs4rYCWx+Sc/xC55icU7ljOD2JwCthK3115hBbF5
+	BQQlTs58wgIxUl6ieetsZpATJATusUs8njeRGaLZRWLFknWMELawxKvjW6AekJJ42d/GDrJL
+	QqBY4mFfPkS4gVFi2+86CNta4t+VPWDnMAN9sn6XPkRYVmLqqXVMEGv5JHp/P2GCiPNK7JgH
+	Y6tIvF/xjglm0/rW3VC2h8SEQ5vBThYSmMAo8el+6ARGhVlIvpmF5JtZCJsXMDKvYpRMLSjO
+	TU8tNi0wzEsth8dwcn7uJkZwotTy3MF498EHvUOMTByMhxglOJiVRHjfT+VMF+JNSaysSi3K
+	jy8qzUktPsRoCgzticxSosn5wFSdVxJvaGJpYGJmZmZiaWxmqCTO+7p1boqQQHpiSWp2ampB
+	ahFMHxMHp1QDE8tzM97VsjsmHBdpPnLfO+ZulIDD37XNivdP2at+bnxanvP1256W4yYvAlm9
+	8icuSiut/Gj89Nu7tv35/zOKNThL3domMFfk7+hxn8SxJ7zteSxHxlLeA5L8jxfcc5/zdVVf
+	rQtjwAW5pRxyPs82Ty4VDv7+wal3QtTOey1Vn2TbQyZvqntn7126WWrz5feeySeDpz978GBH
+	z6SkS+KNuimcz9asXbvg7Za9E6rSly1M07jgKGgSe256C6+JU/C7A86Lziz+uEXrfZXOD7VF
+	V98YaZ+qXfGz3C6UfXZ2kOzbLc8vhHh8lePKnxdhb1e2Sag30OrZn7+zXzHNn77uzjQVuyMm
+	u9aeu6p5Q9VM4pkSS3FGoqEWc1FxIgD3sU7IHQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHLMWRmVeSWpSXmKPExsWy7bCSnC6HLVe6wfINJhZzVm1jtFh9t5/N
+	4l3rORaLX913GS0u75rDZvFsL6fFl8Pf2S3OTvjA6sDhsXPWXXaPy2dLPfq2rGL0+LxJLoAl
+	issmJTUnsyy1SN8ugStjf2dpwQ6Bio6Tv5kaGN/zdDFyckgImEh87Ghm6WLk4hAS2M4oce7t
+	LBaIhJTEzaZjTBC2sMTKf8/ZQWwhgUeMEveWKYHYbAKaEpdnNjB2MXJwiADV/77LATKHWaCJ
+	UeLNvS1gvcICXhLtPxaygdgsAqoSp96eYQGp5xWwktj8kx9ivLzE4h3LmUFsTgFbidtrr7BC
+	rLKROPHiJJjNKyAocXLmE7DTmIHqm7fOZp7AKDALSWoWktQCRqZVjKKpBcW56bnJBYZ6xYm5
+	xaV56XrJ+bmbGMFBrBW0g3HZ+r96hxiZOBgPMUpwMCuJ8L6fypkuxJuSWFmVWpQfX1Sak1p8
+	iFGag0VJnFc5pzNFSCA9sSQ1OzW1ILUIJsvEwSnVwMT3MrYlnFfY5v3+FRcYFCRsJopMCa2r
+	ydc44PF5+QXtSbNzutT7NuVGLe28u7qNsdguePGxg3t/s222CAm0OXetwVria7C0T79g9KWJ
+	scKBoiKNaw/cf/s1f7lEQDuz1Tafo/nhC24nW0bY1smZhlmJ5al+bOg7Y/9GXcfXmLXfxr8n
+	ro0zeN0fs+SiHGXvaevnrk58aTNhakH/9RNy/GGNMWfbp2krZz1dIdF7z156Up2JyUSOU74n
+	u+v81nocnS9qlcJzZcvu3KJp0R2PH9ZcvfOkiKfucWQt40TePdcctF1X7o4XcPTZFnSRN+PV
+	1/8Pr8/atlTn+80V9Rtnz2n5Ubzi+abQc30NB/V3KbEUZyQaajEXFScCAL+PZ07RAgAA
+X-CMS-MailID: 20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad
+References: <e8d1f8e8-abd9-4e4b-aa55-d8444794f55a@gmail.com>
+	<CGME20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad@epcas5p2.samsung.com>
 
-Suopport to lease block IO buffer for userpace to run io_uring operations(FS,
-network IO), then ublk zero copy can be supported.
-
-userspace code:
-
-	git clone https://github.com/ublk-org/ublksrv.git -b uring_group
-
-And both loop and nbd zero copy(io_uring send and send zc) are covered.
-
-Performance improvement is quite obvious in big block size test, such as
-'loop --buffered_io' perf is doubled in 64KB block test("loop/007 vs
-loop/009").
-
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- drivers/block/ublk_drv.c      | 157 ++++++++++++++++++++++++++++++++--
- include/uapi/linux/ublk_cmd.h |   7 +-
- 2 files changed, 153 insertions(+), 11 deletions(-)
+On 2024-10-10 15:35 Pavel Begunkov wrote:
+>> Two questions:
+>> 
+>> 1. I agree with you, we shouldn't walk a potentially very
+>> long list under spinlock. but i can't find any other way
+>> to get all the timeout
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index a6c8e5cc6051..cd509126e152 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -51,6 +51,8 @@
- /* private ioctl command mirror */
- #define UBLK_CMD_DEL_DEV_ASYNC	_IOC_NR(UBLK_U_CMD_DEL_DEV_ASYNC)
- 
-+#define UBLK_IO_PROVIDE_IO_BUF _IOC_NR(UBLK_U_IO_PROVIDE_IO_BUF)
-+
- /* All UBLK_F_* have to be included into UBLK_F_ALL */
- #define UBLK_F_ALL (UBLK_F_SUPPORT_ZERO_COPY \
- 		| UBLK_F_URING_CMD_COMP_IN_TASK \
-@@ -71,6 +73,9 @@ struct ublk_rq_data {
- 	struct llist_node node;
- 
- 	struct kref ref;
-+
-+	bool allocated_bvec;
-+	struct io_uring_kernel_buf buf[0];
- };
- 
- struct ublk_uring_cmd_pdu {
-@@ -189,11 +194,15 @@ struct ublk_params_header {
- 	__u32	types;
- };
- 
-+static inline struct request *__ublk_check_and_get_req(struct ublk_device *ub,
-+		struct ublk_queue *ubq, int tag, size_t offset);
- static bool ublk_abort_requests(struct ublk_device *ub, struct ublk_queue *ubq);
- 
- static inline unsigned int ublk_req_build_flags(struct request *req);
- static inline struct ublksrv_io_desc *ublk_get_iod(struct ublk_queue *ubq,
- 						   int tag);
-+static void ublk_io_buf_giveback_cb(const struct io_uring_kernel_buf *buf);
-+
- static inline bool ublk_dev_is_user_copy(const struct ublk_device *ub)
- {
- 	return ub->dev_info.flags & UBLK_F_USER_COPY;
-@@ -588,6 +597,11 @@ static inline bool ublk_need_req_ref(const struct ublk_queue *ubq)
- 	return ublk_support_user_copy(ubq);
- }
- 
-+static inline bool ublk_support_zc(const struct ublk_queue *ubq)
-+{
-+	return ubq->flags & UBLK_F_SUPPORT_ZERO_COPY;
-+}
-+
- static inline void ublk_init_req_ref(const struct ublk_queue *ubq,
- 		struct request *req)
- {
-@@ -851,6 +865,71 @@ static size_t ublk_copy_user_pages(const struct request *req,
- 	return done;
- }
- 
-+/*
-+ * The built command buffer is immutable, so it is fine to feed it to
-+ * concurrent io_uring provide buf commands
-+ */
-+static int ublk_init_zero_copy_buffer(struct request *req)
-+{
-+	struct ublk_rq_data *data = blk_mq_rq_to_pdu(req);
-+	struct io_uring_kernel_buf *imu = data->buf;
-+	struct req_iterator rq_iter;
-+	unsigned int nr_bvecs = 0;
-+	struct bio_vec *bvec;
-+	unsigned int offset;
-+	struct bio_vec bv;
-+
-+	if (!ublk_rq_has_data(req))
-+		goto exit;
-+
-+	rq_for_each_bvec(bv, req, rq_iter)
-+		nr_bvecs++;
-+
-+	if (!nr_bvecs)
-+		goto exit;
-+
-+	if (req->bio != req->biotail) {
-+		int idx = 0;
-+
-+		bvec = kvmalloc_array(nr_bvecs, sizeof(struct bio_vec),
-+				GFP_NOIO);
-+		if (!bvec)
-+			return -ENOMEM;
-+
-+		offset = 0;
-+		rq_for_each_bvec(bv, req, rq_iter)
-+			bvec[idx++] = bv;
-+		data->allocated_bvec = true;
-+	} else {
-+		struct bio *bio = req->bio;
-+
-+		offset = bio->bi_iter.bi_bvec_done;
-+		bvec = __bvec_iter_bvec(bio->bi_io_vec, bio->bi_iter);
-+	}
-+	imu->bvec = bvec;
-+	imu->nr_bvecs = nr_bvecs;
-+	imu->offset = offset;
-+	imu->len = blk_rq_bytes(req);
-+	imu->dir = req_op(req) == REQ_OP_READ ? ITER_DEST : ITER_SOURCE;
-+	imu->grp_kbuf_ack = ublk_io_buf_giveback_cb;
-+
-+	return 0;
-+exit:
-+	imu->bvec = NULL;
-+	return 0;
-+}
-+
-+static void ublk_deinit_zero_copy_buffer(struct request *req)
-+{
-+	struct ublk_rq_data *data = blk_mq_rq_to_pdu(req);
-+	struct io_uring_kernel_buf *imu = data->buf;
-+
-+	if (data->allocated_bvec) {
-+		kvfree(imu->bvec);
-+		data->allocated_bvec = false;
-+	}
-+}
-+
- static inline bool ublk_need_map_req(const struct request *req)
- {
- 	return ublk_rq_has_data(req) && req_op(req) == REQ_OP_WRITE;
-@@ -862,13 +941,25 @@ static inline bool ublk_need_unmap_req(const struct request *req)
- 	       (req_op(req) == REQ_OP_READ || req_op(req) == REQ_OP_DRV_IN);
- }
- 
--static int ublk_map_io(const struct ublk_queue *ubq, const struct request *req,
-+static int ublk_map_io(const struct ublk_queue *ubq, struct request *req,
- 		struct ublk_io *io)
- {
- 	const unsigned int rq_bytes = blk_rq_bytes(req);
- 
--	if (ublk_support_user_copy(ubq))
-+	if (ublk_support_user_copy(ubq)) {
-+		if (ublk_support_zc(ubq)) {
-+			int ret = ublk_init_zero_copy_buffer(req);
-+
-+			/*
-+			 * The only failure is -ENOMEM for allocating providing
-+			 * buffer command, return zero so that we can requeue
-+			 * this req.
-+			 */
-+			if (unlikely(ret))
-+				return 0;
-+		}
- 		return rq_bytes;
-+	}
- 
- 	/*
- 	 * no zero copy, we delay copy WRITE request data into ublksrv
-@@ -886,13 +977,16 @@ static int ublk_map_io(const struct ublk_queue *ubq, const struct request *req,
- }
- 
- static int ublk_unmap_io(const struct ublk_queue *ubq,
--		const struct request *req,
-+		struct request *req,
- 		struct ublk_io *io)
- {
- 	const unsigned int rq_bytes = blk_rq_bytes(req);
- 
--	if (ublk_support_user_copy(ubq))
-+	if (ublk_support_user_copy(ubq)) {
-+		if (ublk_support_zc(ubq))
-+			ublk_deinit_zero_copy_buffer(req);
- 		return rq_bytes;
-+	}
- 
- 	if (ublk_need_unmap_req(req)) {
- 		struct iov_iter iter;
-@@ -1038,6 +1132,7 @@ static inline void __ublk_complete_rq(struct request *req)
- 
- 	return;
- exit:
-+	ublk_deinit_zero_copy_buffer(req);
- 	blk_mq_end_request(req, res);
- }
- 
-@@ -1680,6 +1775,45 @@ static inline void ublk_prep_cancel(struct io_uring_cmd *cmd,
- 	io_uring_cmd_mark_cancelable(cmd, issue_flags);
- }
- 
-+static void ublk_io_buf_giveback_cb(const struct io_uring_kernel_buf *buf)
-+{
-+	struct ublk_rq_data *data = container_of(buf, struct ublk_rq_data, buf[0]);
-+	struct request *req = blk_mq_rq_from_pdu(data);
-+	struct ublk_queue *ubq = req->mq_hctx->driver_data;
-+
-+	ublk_put_req_ref(ubq, req);
-+}
-+
-+static int ublk_provide_io_buf(struct io_uring_cmd *cmd,
-+		struct ublk_queue *ubq, int tag)
-+{
-+	struct ublk_device *ub = cmd->file->private_data;
-+	struct ublk_rq_data *data;
-+	struct request *req;
-+
-+	if (!ub)
-+		return -EPERM;
-+
-+	req = __ublk_check_and_get_req(ub, ubq, tag, 0);
-+	if (!req)
-+		return -EINVAL;
-+
-+	pr_devel("%s: qid %d tag %u request bytes %u\n",
-+			__func__, tag, ubq->q_id, blk_rq_bytes(req));
-+
-+	data = blk_mq_rq_to_pdu(req);
-+
-+	/*
-+	 * io_uring guarantees that the callback will be called after
-+	 * the provided buffer is consumed, and it is automatic removal
-+	 * before this uring command is freed.
-+	 *
-+	 * This request won't be completed unless the callback is called,
-+	 * so ublk module won't be unloaded too.
-+	 */
-+	return io_uring_cmd_lease_kbuf(cmd, data->buf);
-+}
-+
- static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
- 			       unsigned int issue_flags,
- 			       const struct ublksrv_io_cmd *ub_cmd)
-@@ -1731,6 +1865,8 @@ static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
- 
- 	ret = -EINVAL;
- 	switch (_IOC_NR(cmd_op)) {
-+	case UBLK_IO_PROVIDE_IO_BUF:
-+		return ublk_provide_io_buf(cmd, ubq, tag);
- 	case UBLK_IO_FETCH_REQ:
- 		/* UBLK_IO_FETCH_REQ is only allowed before queue is setup */
- 		if (ublk_queue_ready(ubq)) {
-@@ -2149,11 +2285,14 @@ static void ublk_align_max_io_size(struct ublk_device *ub)
- 
- static int ublk_add_tag_set(struct ublk_device *ub)
- {
-+	int zc = !!(ub->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY);
-+	struct ublk_rq_data *data;
-+
- 	ub->tag_set.ops = &ublk_mq_ops;
- 	ub->tag_set.nr_hw_queues = ub->dev_info.nr_hw_queues;
- 	ub->tag_set.queue_depth = ub->dev_info.queue_depth;
- 	ub->tag_set.numa_node = NUMA_NO_NODE;
--	ub->tag_set.cmd_size = sizeof(struct ublk_rq_data);
-+	ub->tag_set.cmd_size = struct_size(data, buf, zc);
- 	ub->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	ub->tag_set.driver_data = ub;
- 	return blk_mq_alloc_tag_set(&ub->tag_set);
-@@ -2449,8 +2588,12 @@ static int ublk_ctrl_add_dev(struct io_uring_cmd *cmd)
- 		goto out_free_dev_number;
- 	}
- 
--	/* We are not ready to support zero copy */
--	ub->dev_info.flags &= ~UBLK_F_SUPPORT_ZERO_COPY;
-+	/* zero copy depends on user copy */
-+	if ((ub->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY) &&
-+			!ublk_dev_is_user_copy(ub)) {
-+		ret = -EINVAL;
-+		goto out_free_dev_number;
-+	}
- 
- 	ub->dev_info.nr_hw_queues = min_t(unsigned int,
- 			ub->dev_info.nr_hw_queues, nr_cpu_ids);
-diff --git a/include/uapi/linux/ublk_cmd.h b/include/uapi/linux/ublk_cmd.h
-index c8dc5f8ea699..897ace0794c2 100644
---- a/include/uapi/linux/ublk_cmd.h
-+++ b/include/uapi/linux/ublk_cmd.h
-@@ -94,6 +94,8 @@
- 	_IOWR('u', UBLK_IO_COMMIT_AND_FETCH_REQ, struct ublksrv_io_cmd)
- #define	UBLK_U_IO_NEED_GET_DATA		\
- 	_IOWR('u', UBLK_IO_NEED_GET_DATA, struct ublksrv_io_cmd)
-+#define	UBLK_U_IO_PROVIDE_IO_BUF	\
-+	_IOWR('u', 0x23, struct ublksrv_io_cmd)
- 
- /* only ABORT means that no re-fetch */
- #define UBLK_IO_RES_OK			0
-@@ -126,10 +128,7 @@
- #define UBLKSRV_IO_BUF_TOTAL_BITS	(UBLK_QID_OFF + UBLK_QID_BITS)
- #define UBLKSRV_IO_BUF_TOTAL_SIZE	(1ULL << UBLKSRV_IO_BUF_TOTAL_BITS)
- 
--/*
-- * zero copy requires 4k block size, and can remap ublk driver's io
-- * request into ublksrv's vm space
-- */
-+/* io_uring provide kbuf command based zero copy */
- #define UBLK_F_SUPPORT_ZERO_COPY	(1ULL << 0)
- 
- /*
--- 
-2.46.0
+> If only it's just under the spin, but with disabled irqs...
 
+>> information than to walk the timeout_list. Do you have any
+>> good ideas?
+
+> In the long run it'd be great to replace the spinlock
+> with a mutex, i.e. just ->uring_lock, but that would might be
+> a bit involving as need to move handling to the task context.
+ 
+ Yes, it makes more sense to replace spin_lock, but that would
+ require other related logic to be modified, and I don't think
+ it's wise to do that for the sake of a piece of debugging
+ information.
+
+>> 2. I also agree seq_printf heavier, if we use
+>> seq_put_decimal_ull and seq_puts to concatenate strings,
+>> I haven't tested whether it's more efficient or not, but
+>> the code is certainly not as readable as the former. It's
+>> also possible that I don't fully understand what you mean
+>> and want to hear your opinion.
+
+> I don't think there is any difference, it'd be a matter of
+> doubling the number of in flight timeouts to achieve same
+> timings. Tell me, do you really have a good case where you
+> need that (pretty verbose)? Why not drgn / bpftrace it out
+> of the kernel instead?
+
+ Of course, this information is available through existing tools.
+ But I think that most of the io_uring metadata has been exported
+ from the fdinfo file, and the purpose of adding the timeout
+ information is the same as before, easier to use. This way, 
+ I don't have to write additional scripts to get all kinds of data.
+
+ And as far as I know, the io_uring_show_fdinfo function is
+ only called once when the user is viewing the 
+ /proc/xxx/fdinfo/x file once. I don't think we normally need to 
+ look at this file as often, and only look at it when the program
+ is abnormal, and the timeout_list is very long in the extreme case,
+ so I think the performance impact of adding this code is limited.
+
+---
+Ruyi Zhang
 

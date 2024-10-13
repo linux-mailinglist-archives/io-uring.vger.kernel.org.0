@@ -1,121 +1,110 @@
-Return-Path: <io-uring+bounces-3628-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3630-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16FC99BA8F
-	for <lists+io-uring@lfdr.de>; Sun, 13 Oct 2024 19:32:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FD899BAD3
+	for <lists+io-uring@lfdr.de>; Sun, 13 Oct 2024 20:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96FDD281995
-	for <lists+io-uring@lfdr.de>; Sun, 13 Oct 2024 17:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDACE1F2147F
+	for <lists+io-uring@lfdr.de>; Sun, 13 Oct 2024 18:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6428C13D508;
-	Sun, 13 Oct 2024 17:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="tKzHElOw"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4412213D52C;
+	Sun, 13 Oct 2024 18:28:37 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127D0145A16
-	for <io-uring@vger.kernel.org>; Sun, 13 Oct 2024 17:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5275B83CD6
+	for <io-uring@vger.kernel.org>; Sun, 13 Oct 2024 18:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.209.37.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728840750; cv=none; b=L5hiWYSUDE5CWkDihgigHekr+k1uBUzjWyNtWyw4xKWBs6U3i0I8rbHuaqIvVl8BwrUddKkMYnXxxjn8k5JZlvbJn9lcCpoOdvEo3oiJBIzXOYebmeovd22C2s4p+YO4m/SemWipY0f7XR/ZWEWnsqDYYJVLilMMDbECZxE0BjA=
+	t=1728844117; cv=none; b=Hg6qWPTPYdXLconQnAdNo7AFuMxW0tIGv0n9CQ1HV47xWtwAq5TYd5IoCccC4OTPYjh/ykVvVx9oqWQqX3cvpmpFvLrzrDTdHH9X5bqIx/vajeHD5mXHiVflTTyW5W3rTQk/hXTIdflu/O5t0llq15M88dV7a9HKXgZpDqR25z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728840750; c=relaxed/simple;
-	bh=jf0u3XwwwYGjpyfIpwZ8pPYvyJbBdYZlull6SbeLCZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GJARcGqLyUAxk6ITpa8iX7PDLMYNYCSJNekXsvzBharQZWhedRAoU++9oJfxfs7zIjB5yU8njYMes9o7OwiRZsaqyYA7aRrNiVvqxm4cZji+Q+pzcNMMakV/zg8pmvxU51j+8gcImvOUeIIxq8eGDdTRskSe8qa/C56eApRYZ9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=tKzHElOw; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-207115e3056so28677675ad.2
-        for <io-uring@vger.kernel.org>; Sun, 13 Oct 2024 10:32:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1728840748; x=1729445548; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g+AoTIRC7DeglfB0+5gUw5HhlEKInJnaHRBJUpgfzVs=;
-        b=tKzHElOwsgiC16bdn/U/bEXGdtONTnD70GqvtUQSEb1owlCuWBPp0anV30yIX2gJyO
-         tQWxq+dLMJULFwoZu2xLHLnHTO0e6unzZwOXd42KsVDsHBz893tADen6tfm3Lah0tdtg
-         simuovL2/ghwuiriLyHuPDlo5RW5y1V+NtFFEAvOHmTqFwZZP9/fVbVKP2pHPJynW/gZ
-         3I3NlHdkypv/cyO/+vzwdbIn3VqfKzJ3R0udM9dyHxlwFnOmPamOr6OyDfP5WmGaMaug
-         3C6MYQ7j9w+XVz5P5kFMK20LisDn4T1vnuhUx1QoB7BDptYQoprswrOWhJ/1gLzstRjo
-         BiMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728840748; x=1729445548;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g+AoTIRC7DeglfB0+5gUw5HhlEKInJnaHRBJUpgfzVs=;
-        b=pqim/s3+VQyWkxVHo6o5pGj0Fk9GrF/LpqYnSKuwiNTOFmo6XIsM4rKT1miRv8UtHF
-         QghYZIL2E8xl/jHz9vT380rNmDM0jEegV+qorqAhtHrsh/gh2dp8/Ol/U+t/er/A0jaI
-         TUMuRdG8wY/+nwF/bh5RUf0/vR5e3I5yisgJ9EWFRmuWRiTOr/ryakJ/Eo2aD6mD91K8
-         NQnx4KHpPBJ9eni2JO85AEG4T6OXdu+JPD7IHL5v3hOrQrRqRjtrdMVDuCbish4DJXqw
-         4as0aV+C1c03IiNOinBkYAYtqyUmmaqDPLomSrZDNqnzLxP+a/wxLRLdeqRBQV4J/b9l
-         5uig==
-X-Forwarded-Encrypted: i=1; AJvYcCW/oQuxJqbpB/k44R9c4J0Q+HC7k5gSTVyNd183RvUjEKqOY2grLX8RXexWtodFdAAAch2eKFfw3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFoSlsBaXLB2fEJc9SSuBH2Y/6bqzM7Z8+EfTy+aB4h56eKyLp
-	gOn/+ySMjO9pB+NN7L0WCP6JgxmaLK4/Q6R9/9iyJ1gJAFpQHzigvdt+pKE6X9E=
-X-Google-Smtp-Source: AGHT+IHeXafODkl0BOq1MTcEOUcgq/yVvxBsn9tGImzNC1+zJnc29XMsylbEQdfnFJGP14vnYjnnTg==
-X-Received: by 2002:a17:902:e74f:b0:20c:b0c7:7f0d with SMTP id d9443c01a7336-20cb0c781d1mr129857915ad.25.1728840748497;
-        Sun, 13 Oct 2024 10:32:28 -0700 (PDT)
-Received: from [192.168.1.24] (174-21-189-109.tukw.qwest.net. [174.21.189.109])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bad99d2sm52489545ad.31.2024.10.13.10.32.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Oct 2024 10:32:28 -0700 (PDT)
-Message-ID: <5fcbed01-843d-4256-bc81-7642dc162a2d@davidwei.uk>
-Date: Sun, 13 Oct 2024 10:32:27 -0700
+	s=arc-20240116; t=1728844117; c=relaxed/simple;
+	bh=vR+uiPei8nhKsLe20slFm0vlgaO8qI47bLaVkV9O/gQ=;
+	h=From:Date:Message-ID:To:Subject; b=oXz7X7GfmKDmDpVMjU0Z6B395mRWR5j/LzX2P8dg8Bz/Nk4HvgusiLgV/vYm18Y5SLs5n4Z157eoXme7lsL/0SzH9sgk3VrFOLj2mo3ECplf0Josf6F2/8Bj6Gap6JbpGbu2IsAASdbZx5N5ZS5C3KBmcLnu+mnX9LiozRad40s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com; spf=pass smtp.mailfrom=trillion01.com; arc=none smtp.client-ip=173.209.37.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trillion01.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trillion01.com
+Received: from [45.44.224.220] (port=55236 helo=localhost)
+	by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <olivier@trillion01.com>)
+	id 1t03K1-0002gw-2z;
+	Sun, 13 Oct 2024 14:28:05 -0400
+From: Olivier Langlois <olivier@trillion01.com>
+Date: Sun, 13 Oct 2024 14:28:05 -0400
+Message-ID: <cover.1728828877.git.olivier@trillion01.com>
+To: Jens Axboe <axboe@kernel.dk>,Pavel Begunkov <asml.silence@gmail.com>,io-uring@vger.kernel.org
+Subject: [PATCH v4 0/6] napi tracking strategy
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 09/15] io_uring/zcrx: add interface queue and refill
- queue
-Content-Language: en-GB
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: Pavel Begunkov <asml.silence@gmail.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>, David Wei <dw@davidwei.uk>
-References: <20241007221603.1703699-1-dw@davidwei.uk>
- <20241007221603.1703699-10-dw@davidwei.uk>
- <8075828d-74c8-4a0c-8505-45259181f6bb@kernel.dk>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <8075828d-74c8-4a0c-8505-45259181f6bb@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 2024-10-09 10:50, Jens Axboe wrote:
-> On 10/7/24 4:15 PM, David Wei wrote:
->> From: David Wei <davidhwei@meta.com>
->>
->> Add a new object called an interface queue (ifq) that represents a net rx queue
->> that has been configured for zero copy. Each ifq is registered using a new
->> registration opcode IORING_REGISTER_ZCRX_IFQ.
->>
->> The refill queue is allocated by the kernel and mapped by userspace using a new
->> offset IORING_OFF_RQ_RING, in a similar fashion to the main SQ/CQ. It is used
->> by userspace to return buffers that it is done with, which will then be re-used
->> by the netdev again.
->>
->> The main CQ ring is used to notify userspace of received data by using the
->> upper 16 bytes of a big CQE as a new struct io_uring_zcrx_cqe. Each entry
->> contains the offset + len to the data.
->>
->> For now, each io_uring instance only has a single ifq.
-> 
-> Looks pretty straight forward to me, but please wrap your commit
-> messages at ~72 chars or it doesn't read so well in the git log.
+the actual napi tracking strategy is inducing a non-negligeable overhead.
+Everytime a multishot poll is triggered or any poll armed, if the napi is
+enabled on the ring a lookup is performed to either add a new napi id into
+the napi_list or its timeout value is updated.
 
-Apologies, I rely on vim's text wrapping feature to format. I'll make
-sure git commit messages are <72 chars in the future.
+For many scenarios, this is overkill as the napi id list will be pretty
+much static most of the time. To address this common scenario, the concept of io_uring_napi_tracking_strategy has been created.
+the tracking strategy can be specified when io_register_napi() is called.
+
+To keep backward compatibility, the legacy strategy IO_URING_NAPI_TRACKING_DYNAMIC is assigned the value 0 so that existing code using io_uring napi busy polling continue working as before. If IO_URING_NAPI_TRACKING_STATIC is provided, io_napi_add() becomes a noop function and the responsability to update the napi devices list is given to the user by calling io_register_napi() with the opcode value of IO_URING_NAPI_STATIC_ADD_ID or IO_URING_NAPI_STATIC_DEL_ID.
+
+the NAPI ids used by a process can be discovered by calling
+getsockopt(fd, SOL_SOCKET, SO_INCOMING_NAPI_ID, &napi_id, &len)
+
+the patch serie consist of very minor fixes followed by the core of the changes
+to implement the new feature.
+
+v4 changes:
+- improve cover letter text
+- rebase patch on for-6.13/io_uring
+- create a prep-patch for the __io_napi_add refactoring change
+- create a prep-patch for the Scope-Based Resource Management refactoring
+- create a prep-patch for the __io_napi_do_busy_loop cleanup
+- adress io_napi_add() code review comment
+
+v3 changes:
+- address minor comments in patch #3
+- replace the double for loop hash macro with the single loop list macro to iterate the napi elements in patch #2
+- add __cold attribute to common_tracking_show_fdinfo() and napi_show_fdinfo()
+
+v2 changes:
+- extract small changes from the core changes to ease minor fixes backport
+- totally remove the io_napi_tracking_ops interface
+
+Olivier Langlois (6):
+  io_uring/napi: protect concurrent io_napi_entry timeout accesses
+  io_uring/napi: fix io_napi_entry RCU accesses
+  io_uring/napi: improve __io_napi_add
+  io_uring/napi: Use lock guards
+  io_uring/napi: clean up __io_napi_do_busy_loop
+  io_uring/napi: add static napi tracking strategy
+
+ include/linux/io_uring_types.h |   2 +-
+ include/uapi/linux/io_uring.h  |  32 +++++-
+ io_uring/fdinfo.c              |  54 +++++++---
+ io_uring/napi.c                | 184 +++++++++++++++++++++++----------
+ io_uring/napi.h                |   8 +-
+ 5 files changed, 207 insertions(+), 73 deletions(-)
+
+-- 
+2.47.0
+
 

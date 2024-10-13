@@ -1,73 +1,74 @@
-Return-Path: <io-uring+bounces-3627-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3628-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F353F99BA88
-	for <lists+io-uring@lfdr.de>; Sun, 13 Oct 2024 19:25:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16FC99BA8F
+	for <lists+io-uring@lfdr.de>; Sun, 13 Oct 2024 19:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DFCEB21481
-	for <lists+io-uring@lfdr.de>; Sun, 13 Oct 2024 17:25:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96FDD281995
+	for <lists+io-uring@lfdr.de>; Sun, 13 Oct 2024 17:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F381474A2;
-	Sun, 13 Oct 2024 17:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6428C13D508;
+	Sun, 13 Oct 2024 17:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="AaGI1Pv+"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="tKzHElOw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAB73D6A
-	for <io-uring@vger.kernel.org>; Sun, 13 Oct 2024 17:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127D0145A16
+	for <io-uring@vger.kernel.org>; Sun, 13 Oct 2024 17:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728840325; cv=none; b=tBqq+2KiEJlOYqgezcgLnA4Xcky4k8FykqEZ3SYboFLxcdfaWxuriSiiO3aeKSy4GgSXO0p/mMvquJReIfqMCtZ1rRHaoj3kyExGmBO1Beqi+RdpTRjXqQhjzzF7B/Fxn9N84dt/wsFc1SukeJLbeq3T6pNaXlCMcKNW7c4pduU=
+	t=1728840750; cv=none; b=L5hiWYSUDE5CWkDihgigHekr+k1uBUzjWyNtWyw4xKWBs6U3i0I8rbHuaqIvVl8BwrUddKkMYnXxxjn8k5JZlvbJn9lcCpoOdvEo3oiJBIzXOYebmeovd22C2s4p+YO4m/SemWipY0f7XR/ZWEWnsqDYYJVLilMMDbECZxE0BjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728840325; c=relaxed/simple;
-	bh=0r6ubmKK3fTmaW9p5/f0rrKPVpMMmuQVR6OAALoZIEI=;
+	s=arc-20240116; t=1728840750; c=relaxed/simple;
+	bh=jf0u3XwwwYGjpyfIpwZ8pPYvyJbBdYZlull6SbeLCZ0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qs49bxt8M4g9/qIWXeYRI6LSGavLTlVHeeBX7PpZowTnpCLh2y588mlvPy9jTTng6KDI3wK6JSYkrQ8b3Wz2sCBumZ3TZikeGsxIt5wexUunqvjqYeo4CeO0+WYgZVG7Qu7FSN/BggmO4Kell6Nm8LDtgxlSnNH/e+znUf6wCtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=AaGI1Pv+; arc=none smtp.client-ip=209.85.215.181
+	 In-Reply-To:Content-Type; b=GJARcGqLyUAxk6ITpa8iX7PDLMYNYCSJNekXsvzBharQZWhedRAoU++9oJfxfs7zIjB5yU8njYMes9o7OwiRZsaqyYA7aRrNiVvqxm4cZji+Q+pzcNMMakV/zg8pmvxU51j+8gcImvOUeIIxq8eGDdTRskSe8qa/C56eApRYZ9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=tKzHElOw; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso2190388a12.3
-        for <io-uring@vger.kernel.org>; Sun, 13 Oct 2024 10:25:23 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-207115e3056so28677675ad.2
+        for <io-uring@vger.kernel.org>; Sun, 13 Oct 2024 10:32:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1728840323; x=1729445123; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1728840748; x=1729445548; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PiTx0ha6pjBtkUTB0+EsHxh7W7/HixrnetXsL0FLYCI=;
-        b=AaGI1Pv+TJSF9B8Y6Z2nvwY0BKgeOpNB3WNxy0pW/0uuHJAAuMzPO3xyAlY/oK8+dN
-         J1jdttpdf/OgFlIGT33KDxoQ41Xyowj5glcjoaS+x7tXiiOPkdYqZVSB3065fCpP1iD4
-         i7l8uUqlGSgUpvzSDPTdrmmC5Rxq5S5ZPuNY/HfG1CFaZjzrCDWN6ESfV9HicbSwbKyj
-         fI6cIWtrkHtPgK8bd19nGQ5Z7HO3CsdnrIx1Q7q2DmOpg6z489nrIoSP05vf/TXemD9s
-         jpOoJt6T8VAP1o6eEJzHY1Zswp9D+U1OYdJXg7TrJvRTOEvnBNYK1QKrNa/Jv93rP6pk
-         MfLA==
+        bh=g+AoTIRC7DeglfB0+5gUw5HhlEKInJnaHRBJUpgfzVs=;
+        b=tKzHElOwsgiC16bdn/U/bEXGdtONTnD70GqvtUQSEb1owlCuWBPp0anV30yIX2gJyO
+         tQWxq+dLMJULFwoZu2xLHLnHTO0e6unzZwOXd42KsVDsHBz893tADen6tfm3Lah0tdtg
+         simuovL2/ghwuiriLyHuPDlo5RW5y1V+NtFFEAvOHmTqFwZZP9/fVbVKP2pHPJynW/gZ
+         3I3NlHdkypv/cyO/+vzwdbIn3VqfKzJ3R0udM9dyHxlwFnOmPamOr6OyDfP5WmGaMaug
+         3C6MYQ7j9w+XVz5P5kFMK20LisDn4T1vnuhUx1QoB7BDptYQoprswrOWhJ/1gLzstRjo
+         BiMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728840323; x=1729445123;
+        d=1e100.net; s=20230601; t=1728840748; x=1729445548;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PiTx0ha6pjBtkUTB0+EsHxh7W7/HixrnetXsL0FLYCI=;
-        b=iVbxZm1+IiU3oSz+fZCSEIMTFnpPU3PYSZhWr2NNIku5DOLzDf4+z2Goy3qZw5a8Tz
-         niv0mI90HQtYkEB/wSYE6Vy3RcEo7vg2Lk0Ls8uJDTq560WRZ1o2UZZl/OSkN4cWU4FL
-         8uauLhPAesL1LwghFmSHre1FehfOny6T18sxRfa0nfy+p6vrGjiuW9idpdvniw4XG7U7
-         o921SLvRIVz5v5wRUOpVkg9pAtxyotly1OCFe9mPlY4VVFdQZkQvcZ85V0uMGx7x9CIv
-         lw/Gow4eAC85a/izg9JejiJQlrhr60CtfDi4GbZH5U/JRyaaYf6qqC5HSjRPrMRqqFgj
-         grmA==
-X-Gm-Message-State: AOJu0YwihHel2VwrvD4TGnvVSE15sUV8EMO1zo2VU+uo58xM24qN2aih
-	7LQtgM8mhiBYsvR3JJ+ZQbspQ7BJMvYSMVSJBVKAmtpeawUleUCKxFIIsS6Gcg0=
-X-Google-Smtp-Source: AGHT+IEGlI8g2iMGz4qmfmF8QvVGmGKgZur5IagnbQDPTXE0fj9TljUIlg4BCVsEX9orjPo8VEvZrw==
-X-Received: by 2002:a17:90b:3850:b0:2cf:c9ab:e747 with SMTP id 98e67ed59e1d1-2e3151b415fmr7876066a91.1.1728840323422;
-        Sun, 13 Oct 2024 10:25:23 -0700 (PDT)
+        bh=g+AoTIRC7DeglfB0+5gUw5HhlEKInJnaHRBJUpgfzVs=;
+        b=pqim/s3+VQyWkxVHo6o5pGj0Fk9GrF/LpqYnSKuwiNTOFmo6XIsM4rKT1miRv8UtHF
+         QghYZIL2E8xl/jHz9vT380rNmDM0jEegV+qorqAhtHrsh/gh2dp8/Ol/U+t/er/A0jaI
+         TUMuRdG8wY/+nwF/bh5RUf0/vR5e3I5yisgJ9EWFRmuWRiTOr/ryakJ/Eo2aD6mD91K8
+         NQnx4KHpPBJ9eni2JO85AEG4T6OXdu+JPD7IHL5v3hOrQrRqRjtrdMVDuCbish4DJXqw
+         4as0aV+C1c03IiNOinBkYAYtqyUmmaqDPLomSrZDNqnzLxP+a/wxLRLdeqRBQV4J/b9l
+         5uig==
+X-Forwarded-Encrypted: i=1; AJvYcCW/oQuxJqbpB/k44R9c4J0Q+HC7k5gSTVyNd183RvUjEKqOY2grLX8RXexWtodFdAAAch2eKFfw3g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFoSlsBaXLB2fEJc9SSuBH2Y/6bqzM7Z8+EfTy+aB4h56eKyLp
+	gOn/+ySMjO9pB+NN7L0WCP6JgxmaLK4/Q6R9/9iyJ1gJAFpQHzigvdt+pKE6X9E=
+X-Google-Smtp-Source: AGHT+IHeXafODkl0BOq1MTcEOUcgq/yVvxBsn9tGImzNC1+zJnc29XMsylbEQdfnFJGP14vnYjnnTg==
+X-Received: by 2002:a17:902:e74f:b0:20c:b0c7:7f0d with SMTP id d9443c01a7336-20cb0c781d1mr129857915ad.25.1728840748497;
+        Sun, 13 Oct 2024 10:32:28 -0700 (PDT)
 Received: from [192.168.1.24] (174-21-189-109.tukw.qwest.net. [174.21.189.109])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3132badd2sm3603920a91.40.2024.10.13.10.25.21
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bad99d2sm52489545ad.31.2024.10.13.10.32.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Oct 2024 10:25:22 -0700 (PDT)
-Message-ID: <5d7925ed-91bf-4c78-8b70-598ae9ab3885@davidwei.uk>
-Date: Sun, 13 Oct 2024 10:25:20 -0700
+        Sun, 13 Oct 2024 10:32:28 -0700 (PDT)
+Message-ID: <5fcbed01-843d-4256-bc81-7642dc162a2d@davidwei.uk>
+Date: Sun, 13 Oct 2024 10:32:27 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -75,97 +76,46 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 06/15] net: page_pool: add ->scrub mem provider
- callback
+Subject: Re: [PATCH v1 09/15] io_uring/zcrx: add interface queue and refill
+ queue
 Content-Language: en-GB
-To: Mina Almasry <almasrymina@google.com>,
- Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- David Wei <dw@davidwei.uk>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: Pavel Begunkov <asml.silence@gmail.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
+ Mina Almasry <almasrymina@google.com>, David Wei <dw@davidwei.uk>
 References: <20241007221603.1703699-1-dw@davidwei.uk>
- <20241007221603.1703699-7-dw@davidwei.uk>
- <CAHS8izPFp_Q1OngcwZDQeo=YD+nnA9vyVqhuaT--+uREEkfujQ@mail.gmail.com>
- <9f1897b3-0cea-4822-8e33-a4cab278b2ac@gmail.com>
- <CAHS8izOxsLc82jX=b3cwEctASerQabKR=Kqqio2Rs7hVkDHL4A@mail.gmail.com>
+ <20241007221603.1703699-10-dw@davidwei.uk>
+ <8075828d-74c8-4a0c-8505-45259181f6bb@kernel.dk>
 From: David Wei <dw@davidwei.uk>
-In-Reply-To: <CAHS8izOxsLc82jX=b3cwEctASerQabKR=Kqqio2Rs7hVkDHL4A@mail.gmail.com>
+In-Reply-To: <8075828d-74c8-4a0c-8505-45259181f6bb@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 2024-10-10 10:54, Mina Almasry wrote:
-> On Wed, Oct 9, 2024 at 2:58 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+On 2024-10-09 10:50, Jens Axboe wrote:
+> On 10/7/24 4:15 PM, David Wei wrote:
+>> From: David Wei <davidhwei@meta.com>
 >>
->> On 10/9/24 22:00, Mina Almasry wrote:
->>> On Mon, Oct 7, 2024 at 3:16 PM David Wei <dw@davidwei.uk> wrote:
->>>>
->>>> From: Pavel Begunkov <asml.silence@gmail.com>
->>>>
->>>> page pool is now waiting for all ppiovs to return before destroying
->>>> itself, and for that to happen the memory provider might need to push
->>>> some buffers, flush caches and so on.
->>>>
->>>> todo: we'll try to get by without it before the final release
->>>>
->>>
->>> Is the intention to drop this todo and stick with this patch, or to
->>> move ahead with this patch?
+>> Add a new object called an interface queue (ifq) that represents a net rx queue
+>> that has been configured for zero copy. Each ifq is registered using a new
+>> registration opcode IORING_REGISTER_ZCRX_IFQ.
 >>
->> Heh, I overlooked this todo. The plan is to actually leave it
->> as is, it's by far the simplest way and doesn't really gets
->> into anyone's way as it's a slow path.
+>> The refill queue is allocated by the kernel and mapped by userspace using a new
+>> offset IORING_OFF_RQ_RING, in a similar fashion to the main SQ/CQ. It is used
+>> by userspace to return buffers that it is done with, which will then be re-used
+>> by the netdev again.
 >>
->>> To be honest, I think I read in a follow up patch that you want to
->>> unref all the memory on page_pool_destory, which is not how the
->>> page_pool is used today. Tdoay page_pool_destroy does not reclaim
->>> memory. Changing that may be OK.
+>> The main CQ ring is used to notify userspace of received data by using the
+>> upper 16 bytes of a big CQE as a new struct io_uring_zcrx_cqe. Each entry
+>> contains the offset + len to the data.
 >>
->> It doesn't because it can't (not breaking anything), which is a
->> problem as the page pool might never get destroyed. io_uring
->> doesn't change that, a buffer can't be reclaimed while anything
->> in the kernel stack holds it. It's only when it's given to the
->> user we can force it back out of there.
-
-The page pool will definitely be destroyed, the call to
-netdev_rx_queue_restart() with mp_ops/mp_priv set to null and netdev
-core will ensure that.
-
->>
->> And it has to happen one way or another, we can't trust the
->> user to put buffers back, it's just devmem does that by temporarily
->> attaching the lifetime of such buffers to a socket.
->>
+>> For now, each io_uring instance only has a single ifq.
 > 
-> (noob question) does io_uring not have a socket equivalent that you
-> can tie the lifetime of the buffers to? I'm thinking there must be
-> one, because in your patches IIRC you have the fill queues and the
-> memory you bind from the userspace, there should be something that
-> tells you that the userspace has exited/crashed and it's time to now
-> destroy the fill queue and unbind the memory, right?
-> 
-> I'm thinking you may want to bind the lifetime of the buffers to that,
-> instead of the lifetime of the pool. The pool will not be destroyed
-> until the next driver/reset reconfiguration happens, right? That could
-> be long long after the userspace has stopped using the memory.
-> 
+> Looks pretty straight forward to me, but please wrap your commit
+> messages at ~72 chars or it doesn't read so well in the git log.
 
-Yes, there are io_uring objects e.g. interface queue that hold
-everything together. IIRC page pool destroy doesn't unref but it waits
-for all pages that are handed out to skbs to be returned. So for us,
-below might work:
-
-1. Call netdev_rx_queue_restart() which allocates a new pp for the rx
-   queue and tries to free the old pp
-2. At this point we're guaranteed that any packets hitting this rx queue
-   will not go to user pages from our memory provider
-3. Assume userspace is gone (either crash or gracefully terminating),
-   unref the uref for all pages, same as what scrub() is doing today
-4. Any pages that are still in skb frags will get freed when the sockets
-   etc are closed
-5. Rely on the pp delay release to eventually terminate and clean up
-
-Let me know what you think Pavel.
+Apologies, I rely on vim's text wrapping feature to format. I'll make
+sure git commit messages are <72 chars in the future.
 

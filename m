@@ -1,73 +1,73 @@
-Return-Path: <io-uring+bounces-3626-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3627-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C488099B583
-	for <lists+io-uring@lfdr.de>; Sat, 12 Oct 2024 16:38:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F353F99BA88
+	for <lists+io-uring@lfdr.de>; Sun, 13 Oct 2024 19:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CAAB1F21495
-	for <lists+io-uring@lfdr.de>; Sat, 12 Oct 2024 14:38:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DFCEB21481
+	for <lists+io-uring@lfdr.de>; Sun, 13 Oct 2024 17:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641C7155CBF;
-	Sat, 12 Oct 2024 14:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F381474A2;
+	Sun, 13 Oct 2024 17:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qv8S1jp+"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="AaGI1Pv+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273608F66
-	for <io-uring@vger.kernel.org>; Sat, 12 Oct 2024 14:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAB73D6A
+	for <io-uring@vger.kernel.org>; Sun, 13 Oct 2024 17:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728743899; cv=none; b=KBbhkGm4qUVUDA7QE2jWkA8bEpufjWneXIVsIwQQPhYtjdKXQtbk2l4UJhbGkvkQj7nLZ3H7LNUDJHdPyws5Di9d8B6B5UQquEL5mF69zYEt2n3B0ZntvsnRMeHgtrFkRzX2nZZUEJa2AZK2FTpFMK043IvTGj1iUC8X1DA4m0E=
+	t=1728840325; cv=none; b=tBqq+2KiEJlOYqgezcgLnA4Xcky4k8FykqEZ3SYboFLxcdfaWxuriSiiO3aeKSy4GgSXO0p/mMvquJReIfqMCtZ1rRHaoj3kyExGmBO1Beqi+RdpTRjXqQhjzzF7B/Fxn9N84dt/wsFc1SukeJLbeq3T6pNaXlCMcKNW7c4pduU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728743899; c=relaxed/simple;
-	bh=9WjEWpeEXmwJ7o6zzU3yrZ/J+X2eFQFrx40A+VFRMVE=;
+	s=arc-20240116; t=1728840325; c=relaxed/simple;
+	bh=0r6ubmKK3fTmaW9p5/f0rrKPVpMMmuQVR6OAALoZIEI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EwrcszeDsCyvREVQNlPqqYSXY8IqeWdbzG/F3hUHJOSPG6NZJQ7NWYMapXGKkqpC6UJChCdQFQtTJOgolj5iEvtYO3NCvo7Ofs3W24gHFXr84GfhLIepSVCwnbJ4VJzH0nPWbTCezgonj5rS8H/qjNpGzzpbW2BBgvKTP7Kj5p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qv8S1jp+; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-835496c8d6fso160831639f.0
-        for <io-uring@vger.kernel.org>; Sat, 12 Oct 2024 07:38:15 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Qs49bxt8M4g9/qIWXeYRI6LSGavLTlVHeeBX7PpZowTnpCLh2y588mlvPy9jTTng6KDI3wK6JSYkrQ8b3Wz2sCBumZ3TZikeGsxIt5wexUunqvjqYeo4CeO0+WYgZVG7Qu7FSN/BggmO4Kell6Nm8LDtgxlSnNH/e+znUf6wCtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=AaGI1Pv+; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso2190388a12.3
+        for <io-uring@vger.kernel.org>; Sun, 13 Oct 2024 10:25:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728743895; x=1729348695; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1728840323; x=1729445123; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LxPiBM9s/24QZOERd6VFCLNGvCqjGeYWcxIyXJwt8Uk=;
-        b=qv8S1jp+s3cDQFRh+ZbG/IThRr1eiGLSrrF6JtWSchMMFUJEwQMf/50v9uXgN6UOnH
-         3DE7EAPW0ED9e5kvNMR3Jo0UCEcL42qJDBvt/5wSIDOBwzhK0c4ymDoxGwtL1TqSUBfM
-         798TBuIyFA8B3dC2Ar5ET595vpB2TqD7RLFqQNEmBise+g8LpIHG5HBEtZXMtVWL4L29
-         3dTWxAukb830WjTGERTEaPyUali1glLn1GlpMIJEAWddxGfPPrNxi2MJB4bMcOZJUwV+
-         y2g5wBRONXU6crHEf2jSsFnCCO/r/+1SlZT+be/NYME6QnkqG9hX/qMMHx8Aq0Xx8fmi
-         Osag==
+        bh=PiTx0ha6pjBtkUTB0+EsHxh7W7/HixrnetXsL0FLYCI=;
+        b=AaGI1Pv+TJSF9B8Y6Z2nvwY0BKgeOpNB3WNxy0pW/0uuHJAAuMzPO3xyAlY/oK8+dN
+         J1jdttpdf/OgFlIGT33KDxoQ41Xyowj5glcjoaS+x7tXiiOPkdYqZVSB3065fCpP1iD4
+         i7l8uUqlGSgUpvzSDPTdrmmC5Rxq5S5ZPuNY/HfG1CFaZjzrCDWN6ESfV9HicbSwbKyj
+         fI6cIWtrkHtPgK8bd19nGQ5Z7HO3CsdnrIx1Q7q2DmOpg6z489nrIoSP05vf/TXemD9s
+         jpOoJt6T8VAP1o6eEJzHY1Zswp9D+U1OYdJXg7TrJvRTOEvnBNYK1QKrNa/Jv93rP6pk
+         MfLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728743895; x=1729348695;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1728840323; x=1729445123;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LxPiBM9s/24QZOERd6VFCLNGvCqjGeYWcxIyXJwt8Uk=;
-        b=v4vO0yl4foLNQiDZAeV++vBfPA8U10iuDoEQEh1OoEkbgvbMp8x31HVVPOdCvZQZJd
-         +KfUwtq4APqmEzVTrul+TD7cPYAbNKU/Dhgx1PehNvltt96zWMaOhD8K5p4D53ME/C5l
-         ZkbGqMnF0YxwEceC2mlZ+KD0+++B4lGjDQ5fMB/fITIHBvCZq356eiCqRLR8DABnJs/G
-         G6/7vGbqk3bgvwdexq+MOS+FPBz/y+jcqGyPQhe3D6umgWCmSfbax0THThRYPBPyR8ot
-         wT6w+AUbYhT1yjr89WcwgXOl3foeorun/yMDM8eeslsd+4eN54+XJUmGQ+Td7BhlpXOk
-         9Mrg==
-X-Gm-Message-State: AOJu0YzSLY2Oo0XKKyJZHo4Tx6fcYX8mvIepvrwiLJKdS17zpciw0BDj
-	ZFHguF60vQjfsD3RM+CPmkbgc1lyR0xtdp56CB0kAW1oMqNNwZdgBmI4vhctGkI=
-X-Google-Smtp-Source: AGHT+IHBBBpn8Ny3I6zHLkM9Y7IUypc9SYoA60bAyAZvAGVeM51W/C1+Eg8LtJEk0NGIINJvfiGgfQ==
-X-Received: by 2002:a05:6602:6c0e:b0:835:444d:83a9 with SMTP id ca18e2360f4ac-83a64d9c39fmr167814939f.14.1728743895025;
-        Sat, 12 Oct 2024 07:38:15 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8354ba5444csm112682139f.50.2024.10.12.07.38.13
+        bh=PiTx0ha6pjBtkUTB0+EsHxh7W7/HixrnetXsL0FLYCI=;
+        b=iVbxZm1+IiU3oSz+fZCSEIMTFnpPU3PYSZhWr2NNIku5DOLzDf4+z2Goy3qZw5a8Tz
+         niv0mI90HQtYkEB/wSYE6Vy3RcEo7vg2Lk0Ls8uJDTq560WRZ1o2UZZl/OSkN4cWU4FL
+         8uauLhPAesL1LwghFmSHre1FehfOny6T18sxRfa0nfy+p6vrGjiuW9idpdvniw4XG7U7
+         o921SLvRIVz5v5wRUOpVkg9pAtxyotly1OCFe9mPlY4VVFdQZkQvcZ85V0uMGx7x9CIv
+         lw/Gow4eAC85a/izg9JejiJQlrhr60CtfDi4GbZH5U/JRyaaYf6qqC5HSjRPrMRqqFgj
+         grmA==
+X-Gm-Message-State: AOJu0YwihHel2VwrvD4TGnvVSE15sUV8EMO1zo2VU+uo58xM24qN2aih
+	7LQtgM8mhiBYsvR3JJ+ZQbspQ7BJMvYSMVSJBVKAmtpeawUleUCKxFIIsS6Gcg0=
+X-Google-Smtp-Source: AGHT+IEGlI8g2iMGz4qmfmF8QvVGmGKgZur5IagnbQDPTXE0fj9TljUIlg4BCVsEX9orjPo8VEvZrw==
+X-Received: by 2002:a17:90b:3850:b0:2cf:c9ab:e747 with SMTP id 98e67ed59e1d1-2e3151b415fmr7876066a91.1.1728840323422;
+        Sun, 13 Oct 2024 10:25:23 -0700 (PDT)
+Received: from [192.168.1.24] (174-21-189-109.tukw.qwest.net. [174.21.189.109])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3132badd2sm3603920a91.40.2024.10.13.10.25.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Oct 2024 07:38:14 -0700 (PDT)
-Message-ID: <ec90f6e0-f2e2-4579-af9f-5592224eb274@kernel.dk>
-Date: Sat, 12 Oct 2024 08:38:13 -0600
+        Sun, 13 Oct 2024 10:25:22 -0700 (PDT)
+Message-ID: <5d7925ed-91bf-4c78-8b70-598ae9ab3885@davidwei.uk>
+Date: Sun, 13 Oct 2024 10:25:20 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -75,66 +75,97 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Large CQE for fuse headers
-To: Ming Lei <tom.leiming@gmail.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
- Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong <joannelkoong@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>
-References: <d66377d6-9353-4a86-92cf-ccf2ea6c6a9d@fastmail.fm>
- <CACVXFVM-eWXk4VqSjrpH24n=z9j-Ff_CSBEvb7EcxORhxp6r9w@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CACVXFVM-eWXk4VqSjrpH24n=z9j-Ff_CSBEvb7EcxORhxp6r9w@mail.gmail.com>
+Subject: Re: [PATCH v1 06/15] net: page_pool: add ->scrub mem provider
+ callback
+Content-Language: en-GB
+To: Mina Almasry <almasrymina@google.com>,
+ Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
+ David Wei <dw@davidwei.uk>
+References: <20241007221603.1703699-1-dw@davidwei.uk>
+ <20241007221603.1703699-7-dw@davidwei.uk>
+ <CAHS8izPFp_Q1OngcwZDQeo=YD+nnA9vyVqhuaT--+uREEkfujQ@mail.gmail.com>
+ <9f1897b3-0cea-4822-8e33-a4cab278b2ac@gmail.com>
+ <CAHS8izOxsLc82jX=b3cwEctASerQabKR=Kqqio2Rs7hVkDHL4A@mail.gmail.com>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <CAHS8izOxsLc82jX=b3cwEctASerQabKR=Kqqio2Rs7hVkDHL4A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/11/24 7:55 PM, Ming Lei wrote:
-> On Fri, Oct 11, 2024 at 4:56?AM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
+On 2024-10-10 10:54, Mina Almasry wrote:
+> On Wed, Oct 9, 2024 at 2:58 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
 >>
->> Hello,
+>> On 10/9/24 22:00, Mina Almasry wrote:
+>>> On Mon, Oct 7, 2024 at 3:16 PM David Wei <dw@davidwei.uk> wrote:
+>>>>
+>>>> From: Pavel Begunkov <asml.silence@gmail.com>
+>>>>
+>>>> page pool is now waiting for all ppiovs to return before destroying
+>>>> itself, and for that to happen the memory provider might need to push
+>>>> some buffers, flush caches and so on.
+>>>>
+>>>> todo: we'll try to get by without it before the final release
+>>>>
+>>>
+>>> Is the intention to drop this todo and stick with this patch, or to
+>>> move ahead with this patch?
 >>
->> as discussed during LPC, we would like to have large CQE sizes, at least
->> 256B. Ideally 256B for fuse, but CQE512 might be a bit too much...
+>> Heh, I overlooked this todo. The plan is to actually leave it
+>> as is, it's by far the simplest way and doesn't really gets
+>> into anyone's way as it's a slow path.
 >>
->> Pavel said that this should be ok, but it would be better to have the CQE
->> size as function argument.
->> Could you give me some hints how this should look like and especially how
->> we are going to communicate the CQE size to the kernel? I guess just adding
->> IORING_SETUP_CQE256 / IORING_SETUP_CQE512 would be much easier.
+>>> To be honest, I think I read in a follow up patch that you want to
+>>> unref all the memory on page_pool_destory, which is not how the
+>>> page_pool is used today. Tdoay page_pool_destroy does not reclaim
+>>> memory. Changing that may be OK.
 >>
->> I'm basically through with other changes Miklos had been asking for and
->> moving fuse headers into the CQE is next.
+>> It doesn't because it can't (not breaking anything), which is a
+>> problem as the page pool might never get destroyed. io_uring
+>> doesn't change that, a buffer can't be reclaimed while anything
+>> in the kernel stack holds it. It's only when it's given to the
+>> user we can force it back out of there.
+
+The page pool will definitely be destroyed, the call to
+netdev_rx_queue_restart() with mp_ops/mp_priv set to null and netdev
+core will ensure that.
+
+>>
+>> And it has to happen one way or another, we can't trust the
+>> user to put buffers back, it's just devmem does that by temporarily
+>> attaching the lifetime of such buffers to a socket.
+>>
 > 
-> Big CQE may not be efficient,  there are copy from kernel to CQE and
-> from CQE to userspace. And not flexible, it is one ring-wide property,
-> if it is big,
-> any CQE from this ring has to be big.
+> (noob question) does io_uring not have a socket equivalent that you
+> can tie the lifetime of the buffers to? I'm thinking there must be
+> one, because in your patches IIRC you have the fill queues and the
+> memory you bind from the userspace, there should be something that
+> tells you that the userspace has exited/crashed and it's time to now
+> destroy the fill queue and unbind the memory, right?
+> 
+> I'm thinking you may want to bind the lifetime of the buffers to that,
+> instead of the lifetime of the pool. The pool will not be destroyed
+> until the next driver/reset reconfiguration happens, right? That could
+> be long long after the userspace has stopped using the memory.
+> 
 
-There isn't really a copy - the kernel fills it in, generally the
-application itself, just in the kernel, and then the application can
-read it on that side. It's the same memory, and it'll also generally be
-cache hot when the applicatio reaps it. Unless a lot of time has passed,
-obviously.
+Yes, there are io_uring objects e.g. interface queue that hold
+everything together. IIRC page pool destroy doesn't unref but it waits
+for all pages that are handed out to skbs to be returned. So for us,
+below might work:
 
-That said, yeah bigger sqe/cqe is less ideal than smaller ones,
-obviously. Currently you can fit 4 normal cqes in a cache line, or a
-single sqe. Making either of them bigger will obviously bloat that.
+1. Call netdev_rx_queue_restart() which allocates a new pp for the rx
+   queue and tries to free the old pp
+2. At this point we're guaranteed that any packets hitting this rx queue
+   will not go to user pages from our memory provider
+3. Assume userspace is gone (either crash or gracefully terminating),
+   unref the uref for all pages, same as what scrub() is doing today
+4. Any pages that are still in skb frags will get freed when the sockets
+   etc are closed
+5. Rely on the pp delay release to eventually terminate and clean up
 
-> If you are saying uring_cmd,  another way is to mapped one area for
-> this purpose, the fuse driver can write fuse headers to this indexed
-> mmap buffer, and userspace read it, which is just efficient, without
-> io_uring core changes. ublk uses this way to fill IO request header.
-> But it requires each command to have a unique tag.
-
-That may indeed be a decent idea for this too. You don't even need fancy
-tagging, you can just use the cqe index for your tag too, as it should
-not be bigger than the the cq ring space. Then you can get away with
-just using normal cqe sizes, and just have a shared region between the
-two where data gets written by the uring_cmd completion, and the app can
-access it directly from userspace.
-
--- 
-Jens Axboe
+Let me know what you think Pavel.
 

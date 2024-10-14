@@ -1,71 +1,71 @@
-Return-Path: <io-uring+bounces-3656-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3657-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0421999CA9C
-	for <lists+io-uring@lfdr.de>; Mon, 14 Oct 2024 14:49:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A0F99CB79
+	for <lists+io-uring@lfdr.de>; Mon, 14 Oct 2024 15:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 884341F23232
-	for <lists+io-uring@lfdr.de>; Mon, 14 Oct 2024 12:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAEDD1C22E84
+	for <lists+io-uring@lfdr.de>; Mon, 14 Oct 2024 13:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280331A726B;
-	Mon, 14 Oct 2024 12:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A801A76BC;
+	Mon, 14 Oct 2024 13:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="i2eLTC58";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PRf2I3Gk"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="pbU0ILu5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dOwybfaD"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E655E1E4A6
-	for <io-uring@vger.kernel.org>; Mon, 14 Oct 2024 12:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7391A1AA7A1
+	for <io-uring@vger.kernel.org>; Mon, 14 Oct 2024 13:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728910078; cv=none; b=Maz0BGo5Rfj7bJwp1W8KPu2aJitxILN/bL9PHwhUuCFz6dgQS729pngXKukXhDpleI38a8KvO62pgFAOOrFesWZTxOQR7sw14YTLFjAooZlm8mQHlaLdqNsFUd74ZwYpNEVTfXWGNWOBUUyWpUdo7tH8kJ1KpgLn3qO0bQe88hk=
+	t=1728912019; cv=none; b=rjlc9qRmzaFM6oxkOh0Fm0I8GYBJiC7XotqhIWz1ekxZ+zv8bKUoJjRlWSNZMDJTmcmoi2B3EjfFTL+6/YjNIkbj6EnLomApfgnbG7AojbxRecmJjPyq9em6eOJ/ViNxZu8ciM84VHesW+3o5qS18wfc4FeJhxXvtNAcjFeQWrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728910078; c=relaxed/simple;
-	bh=yp3+YVWhV4NxEBdlR2T01oKs3Ij+C0NRYrh/kaKBLCo=;
+	s=arc-20240116; t=1728912019; c=relaxed/simple;
+	bh=MsacvKqRTdcnda5eezI+hTBPES8rw1mi1RhEVV5payQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fmkTradN2ksmvcfQxNUUtNQbfsbS3U34w8anrKnxC5feCsPGAsxesTHURt4g7Zo0H6In35gEnYLBxUAY0OulWG44IC94K/TJFi8LYwlsbqKnsEUKVjl9U/BMpiKKN3klfzodFicW7j3cFuXs6f8ROWlQ65NyWoLi6Vc2WY80qWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=i2eLTC58; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PRf2I3Gk; arc=none smtp.client-ip=103.168.172.159
+	 In-Reply-To:Content-Type; b=mCzbmvpMiLHQ9p5h3eaE0tOWRAievSh50mEXT0IfGirDpSXLYvtuWYbqsbHdC/Cgd9wjJd6AhGf7bh52OTeGxpCjLrGiEHh4/PZcmXVJjIJu0Ke97QuNN91gOt4vP8lIZ5OubMdsBfZJIbSct6Za0SWxv9mLPePzhf7Kf/27x7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=pbU0ILu5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dOwybfaD; arc=none smtp.client-ip=103.168.172.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 2A388114015B;
-	Mon, 14 Oct 2024 08:47:55 -0400 (EDT)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 901EC138045C;
+	Mon, 14 Oct 2024 09:20:16 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Mon, 14 Oct 2024 08:47:55 -0400
+  by phl-compute-01.internal (MEProxy); Mon, 14 Oct 2024 09:20:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1728910075;
-	 x=1728996475; bh=L1dLjmKsNlzQUi6LsMnb18neaK5/7oE06XSsRM/eo/4=; b=
-	i2eLTC58iUQl5x6pTLXvT3OJxvT9G/sI2zgHEUv6qq7f2hSqlIZ08OLtz0ig1yjn
-	ZbNpR6C682Zl8YcdAObjwAM+0QE32Bcsa0EfU3VKLclX6RKP91sdzHR09y0cCN3H
-	JuQk+y3J8s6ds4DvXWPphNg1Pb2H+B2YxOWIWQtyqt7RpOliyLfngl9REUd3ORnJ
-	500ilyATIn+gVqvnKg2gmqLMxklKfU2wAxTHNEwPkMPnnhHDj8JDVcdq29ZvqOdt
-	Vil6lXHsiIvLv/Vf46CmwB7GWI2Z6rEgsytE+ZNQvyUaLiG05glHOyi5q5Bc5EXn
-	2ojJu+0rRrBI+IEXG3DUzA==
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1728912016;
+	 x=1728998416; bh=c0AMcCpXh1gyTuS4Ev8DkhQAb8SWcqr2zt0rV5DKTIE=; b=
+	pbU0ILu58SUY1V6WT5JvIoL7jRvxLGl+5ha8peeNBX7CnVdCp+FETMP2pG6B6mYB
+	Cvdqug/2VtBbY4BUAx7icFoChCT33S7GYEuVlRDNZOazQMvexW1Apk9WJt0sv2n1
+	fiNFZnKkrP6tFxCmBDYnuvwrl7OVhFSWg39dOWAITb7XT8fd3m8z2UqFc5tv4RJJ
+	RGfpafYv5mmtydF+KedEO4TT4cXEzgBvhIKJT6jd3U+yIdQd+SkTTanES3gsgC8B
+	gMQo2G0ZgCyI3mo4zZeVZkJ0N8pj90G/Tu5BEUX7vuQLOTsZa9ObFasHjCr2tkpm
+	GfflolzkCRZ8egc9xHdDpQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728910075; x=
-	1728996475; bh=L1dLjmKsNlzQUi6LsMnb18neaK5/7oE06XSsRM/eo/4=; b=P
-	Rf2I3GkRZXQvZqz/CUjR+j+t2EkWQ2kWyCJyGQMbTHywYVrkZYjCzOCYlBzbBxCJ
-	jPVBNck7cesaAmD6IdX35F6QjdvfGr9Dsh05KVAPQAOYg4hVvm/rT7NYsAorvm5p
-	V1EfaL3JI2H1L5kGtSypqxX9M3affvmtIs3aLTgO8h21IXMkWYh3uZ6OENWx4SA7
-	xQvqgiHaYcEou63D7tpzNCoO6F3xmhPMS2XEIQepSlUiSs9EzELVaJ/IF47WDzR9
-	NpQeWh84btxz6/22ouVmyMGBWv1sV6Gxk+wMhp3ZcT0eXOmtgrKjw7Y/LdWx7Aso
-	+q1Xneon+bSZiQkjGSWjw==
-X-ME-Sender: <xms:-hINZ2Hqc6fGcmpa4XVWdeZTi-QktshyysOrwYCvLV1i8t6UTX-pYw>
-    <xme:-hINZ3UNUOjUMrKeuc3sPwfSfcvuXe3vnqBdcv4c1DhtQK8-l-76BQ0r9_2akiqa2
-    vHvEpKCrwxWWaVh>
-X-ME-Received: <xmr:-hINZwIxaauLzRE_-WeEZcp4lW3xkc7GEHUofY069rHbtZN56GM5YD4wj03uTU3NhNA_69MLwL-JHXCgcdo8jvvtVOqtNClLX6FMXAVIIoXqhWseoQ6k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgheehucetufdoteggodetrfdotf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728912016; x=
+	1728998416; bh=c0AMcCpXh1gyTuS4Ev8DkhQAb8SWcqr2zt0rV5DKTIE=; b=d
+	OwybfaDfu4WhUi4mBYLV84kw5uAOOfMMyLLcnKBjo3jXjJcxr/M3cjscLUVLHUga
+	Jb/6odJx3DVsa4FDF1SfBgE/toZLgEcoTiK8A8f7DoblrIXGdO032ZFx0MTRHtcu
+	nol1eRVBKFK4uPjLoaDgXUxdutmORnEe7GjphoWYiuumrvziwKx+3d9BOUE5Gskd
+	kuO6VFhjFpIyI6WeGKXTLFjFPkSOdfepT7p5cFzJ+vvJqg4cqnVwGYmHnS2sS+kA
+	0txHheqK6IIOutLBLu+A8o7tFaWS6FSdHF92rVoSdZB2Tx5fYvhqaCCQd9o/smH6
+	7YsDjrTKRZDK+5XxZ6ALw==
+X-ME-Sender: <xms:kBoNZ17l2RlMffblMqsT_DsZbLqxQJWLBmXwUn54e46XJPeVcFc8tA>
+    <xme:kBoNZy45dwR5-7Q3mLgBgng6KZ75ueEU_KglGVcdvpUyNldF70IVIytL0BoVtNiFE
+    PBKPFv1qHp53BFK>
+X-ME-Received: <xmr:kBoNZ8cE65VQDvsEXVmFcR3lpjc6Veo175CCCxmyYeSd9zb2dDgErdjjtTIj6pRlGgxPS0KmyxWuIVB6DysbuswE3hnp1koRyeMJXOSzVeT77XTso1O4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgieefucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
     htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
@@ -73,23 +73,24 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgheehucetufdoteggod
     hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
     tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
     iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpoh
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpoh
     huthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohep
     thhomhdrlhgvihhmihhnghesghhmrghilhdrtghomhdprhgtphhtthhopegrgigsohgvse
     hkvghrnhgvlhdrughkpdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhn
     vghlrdhorhhgpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtoh
     hmpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghp
-    thhtohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhm
-X-ME-Proxy: <xmx:-hINZwEWjay54hw8ZsmvrCDBPRHAWljw8L1qQSGIrIDPjLsTgq8P3g>
-    <xmx:-hINZ8UIB52I08oKj5fm7CyTtG9Hd437jIb2hAJzrz2Kq6BzYMQLQg>
-    <xmx:-hINZzNWYpoXJi9mg9Nz4h_ncU9xOX5a0vPI6RRpULzYHmsr1gktAg>
-    <xmx:-hINZz0X8jiMTXFqD7v8ro7rjt7u1lNZINyih34_ZhMwSVd4x4SkOg>
-    <xmx:-xINZ_He24ecHJmELpMbLB5zRLapsIhIL8CZf_qghnl7-78Imy5FzL2e>
+    thhtohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhmpdhrtghpthhtohepthhrrg
+    hpvgigihhtsehsphgrfihnrdhlihhnkh
+X-ME-Proxy: <xmx:kBoNZ-I-szkgAWUNMZOVpafjyylca2Cgvdxef03LgsKt6x_OQzddGw>
+    <xmx:kBoNZ5KWbMz1AbXpYIfnxcQjogWEk8qvX4I7GyMuoQ1pH1VM2qMF3Q>
+    <xmx:kBoNZ3zkAYVQwZrL_HV_dusYM545t2uHwk2OgNjjMl4AeXdPjN2vAA>
+    <xmx:kBoNZ1JCA_JS2feW-4qbFxMrqIseRqgqcDcpKOJ4GbrTPbaera0W7w>
+    <xmx:kBoNZw-tkOgbqapPoo18aNWNp3BFbz1Sl-Y_X2cfVgGibWpSF61IhsqG>
 Feedback-ID: id8a24192:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Oct 2024 08:47:53 -0400 (EDT)
-Message-ID: <b284b6a2-8837-4779-b6a2-f31196aea7b9@fastmail.fm>
-Date: Mon, 14 Oct 2024 14:47:52 +0200
+ 14 Oct 2024 09:20:14 -0400 (EDT)
+Message-ID: <8c951c4e-b08d-416a-ad25-216839352337@fastmail.fm>
+Date: Mon, 14 Oct 2024 15:20:13 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -101,7 +102,8 @@ Subject: Re: Large CQE for fuse headers
 To: Miklos Szeredi <miklos@szeredi.hu>, Ming Lei <tom.leiming@gmail.com>
 Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
  Pavel Begunkov <asml.silence@gmail.com>,
- Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>
+ Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
+ Antonio SJ Musumeci <trapexit@spawn.link>
 References: <d66377d6-9353-4a86-92cf-ccf2ea6c6a9d@fastmail.fm>
  <CACVXFVM-eWXk4VqSjrpH24n=z9j-Ff_CSBEvb7EcxORhxp6r9w@mail.gmail.com>
  <ec90f6e0-f2e2-4579-af9f-5592224eb274@kernel.dk>
@@ -129,24 +131,23 @@ On 10/14/24 13:10, Miklos Szeredi wrote:
 > this.  Currently if the server needs to delay the processing of a
 > request it would have to copy all arguments, since validity will not
 > be guaranteed after the callback returns.  With the io_uring
+
+Well, it depends on the libfuse implementation. In plain libfuse the
+buffer is associated with the the thread. This could be improved
+by creating a request pool and buffers per request. AFAIK, Antonio
+has done that for mergerfs.
+
 > infrastructure the headers would need to be copied, but the data
 > buffer would be per-request and would not need copying.  This is
 > relaxing a requirement so existing servers would continue to work
+
+Yep, that is actually how we use it at ddn for requests over io-uring.
+
 > fine, but would not be able to take full advantage of the multi-buffer
 > design.
-> 
-> Bernd do you have an idea how this would work?
 
-I assume returning a CQE is io_uring_cq_advance()?
-In my current libfuse io_uring branch that only happens when
-all CQEs have been processed. We could also easily switch to 
-io_uring_cqe_seen() to do it per CQE.
+What do you actually mean with "multi-buffer design"?
 
-I don't understand why we need to return CQEs asap, assuming CQ
-ring size is the same as SQ ring size - why does it matter? 
-If we indeed need to return the CQE before processing the request,
-it indeed would be better to have a 2nd memory buffer associated with
-the fuse request.
 
 
 Thanks,

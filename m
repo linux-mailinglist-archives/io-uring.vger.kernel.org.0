@@ -1,62 +1,75 @@
-Return-Path: <io-uring+bounces-3649-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3650-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC12699C1E5
-	for <lists+io-uring@lfdr.de>; Mon, 14 Oct 2024 09:47:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6EC99C24F
+	for <lists+io-uring@lfdr.de>; Mon, 14 Oct 2024 09:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 927351F2100E
-	for <lists+io-uring@lfdr.de>; Mon, 14 Oct 2024 07:47:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D926328311E
+	for <lists+io-uring@lfdr.de>; Mon, 14 Oct 2024 07:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276E914B06E;
-	Mon, 14 Oct 2024 07:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF8114EC47;
+	Mon, 14 Oct 2024 07:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M2sK+YUz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A153148FF3;
-	Mon, 14 Oct 2024 07:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E881384BF
+	for <io-uring@vger.kernel.org>; Mon, 14 Oct 2024 07:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728892036; cv=none; b=gDT2tRYB2laYzoTTMc8XDp+/3ZTREjEeOuJoVODZj6qHypRCjXjFSJVvKKYvAMPEloLm2oYW+Rg1wiV+1Wl5WBJcEpDML6yxwyF00a0MKeQ7qUfGyoN789W16JcaQJ5l7E6GtZKqhwmiW0M3Jg3TtZzv5PilzfYxoMGovzxOERI=
+	t=1728892713; cv=none; b=kzLvGELdHN4J8zjPR9C6SaoN3KE+TRQx1chHx4Yp8xudKdEsHejMo/dPLJuDFJO027exaAeJrB4CxjoRE1c5dX8c4He56V9RXqC+9yl7pngxgRtNKlJh779F32IIlcfFQO03sOwiq+5IdsxmdQ4woY+wONdybjcUsZvXBxSkPVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728892036; c=relaxed/simple;
-	bh=q17jQYSUK8XLyqlZ1suQaunB3N245lax5WY2ykVkc3Y=;
+	s=arc-20240116; t=1728892713; c=relaxed/simple;
+	bh=okUCVxZQmNBCZOnwLzSniC5oceCmOwUWK0e9RpAsbxI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xa3Eq4Kkmu+OJ9gzP8h16HGvJbTP0SM6Jxp6Sz6MMVl7sCSbykz6H6rU72Ml+1YZkSdjp8voo0/+g7bs2J2zQbx1SEu01w6cngqUTktwdY1hJYZ9siDQE35XmDwP9QuWN53pZZN1/+fNdrDjgy9x0jK2bDMSzT22M4Km7b/kLDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 14511227AAC; Mon, 14 Oct 2024 09:47:09 +0200 (CEST)
-Date: Mon, 14 Oct 2024 09:47:08 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Javier Gonzalez <javier.gonz@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Kanchan Joshi <joshi.k@samsung.com>, "hare@suse.de" <hare@suse.de>,
-	"sagi@grimberg.me" <sagi@grimberg.me>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-	"bcrl@kvack.org" <bcrl@kvack.org>,
-	"dhowells@redhat.com" <dhowells@redhat.com>,
-	"bvanassche@acm.org" <bvanassche@acm.org>,
-	"asml.silence@gmail.com" <asml.silence@gmail.com>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-aio@kvack.org" <linux-aio@kvack.org>,
-	"gost.dev@samsung.com" <gost.dev@samsung.com>,
-	"vishak.g@samsung.com" <vishak.g@samsung.com>
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <20241014074708.GA22575@lst.de>
-References: <20241009092828.GA18118@lst.de> <Zwab8WDgdqwhadlE@kbusch-mbp> <CGME20241010070738eucas1p2057209e5f669f37ca586ad4a619289ed@eucas1p2.samsung.com> <20241010070736.de32zgad4qmfohhe@ArmHalley.local> <20241010091333.GB9287@lst.de> <20241010115914.eokdnq2cmcvwoeis@ArmHalley.local> <20241011090224.GC4039@lst.de> <5e9f7f1c-48fd-477f-b4ba-c94e6b50b56f@kernel.dk> <20241014062125.GA21033@lst.de> <34d3ad68068f4f87bf0a61ea8fb8f217@CAMSVWEXC02.scsc.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pSvQFSwXASmn4zs2CZSxoJQo9iXef874i2OB5Woq6Bg+/VMr2FRdsQ3m/LLfBKo2CpTUq81+DVQnNVXkojsDNeJVxPozoes+4oKC7HshV4AMY15W9uof2m6kg9yB9q+b3uf5+yXDi1EXhfq0cez03G9SDBhqEcXupfEcZld2ZHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M2sK+YUz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728892705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wBWYGh1L8mzLbunG0zkaPybO/VfGp8yc/5u12WiFxg0=;
+	b=M2sK+YUzAo1q5S4OCBwMU/jyN4UIyc32gZIXDLejZufFvZletaTzq5yCrj3AQpwZKjxGOM
+	SPQZuwcfWXsjWFPA55SHrTqatNAbnp64P+61GGFobyY8ojzHVn/x/8I/WmsKtENy3duwXQ
+	76mL0/Jqerp495NBnMXqBLdN8R3eHpg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-45-gto0hQeUPoivTJQQlE95vQ-1; Mon,
+ 14 Oct 2024 03:58:19 -0400
+X-MC-Unique: gto0hQeUPoivTJQQlE95vQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8893C1956080;
+	Mon, 14 Oct 2024 07:58:17 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.128])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 523B519560AA;
+	Mon, 14 Oct 2024 07:58:10 +0000 (UTC)
+Date: Mon, 14 Oct 2024 15:58:05 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.de>,
+	Hamza Mahfooz <someguy@effective-light.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-raid@vger.kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Report] annoyed dma debug warning "cacheline tracking EEXIST,
+ overlapping mappings aren't supported"
+Message-ID: <ZwzPDU5Lgt6MbpYt@fedora>
+References: <ZwxzdWmYcBK27mUs@fedora>
+ <426b5600-7489-43a7-8007-ac4d9dbc9aca@suse.de>
+ <20241014074151.GA22419@lst.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -65,26 +78,36 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <34d3ad68068f4f87bf0a61ea8fb8f217@CAMSVWEXC02.scsc.local>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20241014074151.GA22419@lst.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, Oct 14, 2024 at 07:02:11AM +0000, Javier Gonzalez wrote:
-> > And exactly that is the problem.  For file systems we can't support
-> > that sanely.  So IFF you absolutely want the per-I/O hints we need
-> > an opt in by the file operations.  I've said that at least twice
-> > in this discussion before, but as everyone likes to have political
-> > discussions instead of technical ones no one replied to that.
+On Mon, Oct 14, 2024 at 09:41:51AM +0200, Christoph Hellwig wrote:
+> On Mon, Oct 14, 2024 at 09:23:14AM +0200, Hannes Reinecke wrote:
+> >> 3) some storage utilities
+> >> - dm thin provisioning utility of thin_check
+> >> - `dt`(https://github.com/RobinTMiller/dt)
+> >>
+> >> I looks like same user buffer is used in more than 1 dio.
+> >>
+> >> 4) some self cooked test code which does same thing with 1)
+> >>
+> >> In storage stack, the buffer provider is far away from the actual DMA
+> >> controller operating code, which doesn't have the knowledge if
+> >> DMA_ATTR_SKIP_CPU_SYNC should be set.
+> >>
+> >> And suggestions for avoiding this noise?
+> >>
+> > Can you check if this is the NULL page? Operations like 'discard' will 
+> > create bios with several bvecs all pointing to the same NULL page.
+> > That would be the most obvious culprit.
 > 
-> Is it a way forward to add this in a new spin of the series - keeping the 
-> temperature mapping on the NVMe side?
+> The only case I fully understand without looking into the details
+> is raid1, and that will obviously map the same data multiple times
 
-What do you gain from that?  NVMe does not understand data temperatures,
-so why make up that claim?  Especially as it directly undermindes any
-file system work to actually make use of it.
+The other cases should be concurrent DIOs on same userspace buffer.
 
-> If not, what would be acceptable for a first version, before getting into adding
-> a new interface to expose agnostic hints?
 
-Just iterate on Kanchan's series for a block layer (and possible user level,
-but that's less urgent) interface for stream separation?
+Thanks,
+Ming
+
 

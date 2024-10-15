@@ -1,62 +1,50 @@
-Return-Path: <io-uring+bounces-3685-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3686-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C8A99DD7B
-	for <lists+io-uring@lfdr.de>; Tue, 15 Oct 2024 07:30:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD2299DDA8
+	for <lists+io-uring@lfdr.de>; Tue, 15 Oct 2024 07:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A91E283474
-	for <lists+io-uring@lfdr.de>; Tue, 15 Oct 2024 05:30:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63375B21AE5
+	for <lists+io-uring@lfdr.de>; Tue, 15 Oct 2024 05:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC85166F34;
-	Tue, 15 Oct 2024 05:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E338170A0B;
+	Tue, 15 Oct 2024 05:50:14 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B127B3C3C;
-	Tue, 15 Oct 2024 05:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF813D69;
+	Tue, 15 Oct 2024 05:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728970220; cv=none; b=Yteb+GO1G9FUreSv6lX3KY8GuDE9+HYl4JSVX/luTX/4lj9nzQeORMugDZmQPI3K0Iaw5lleDdEhLw2WzfUBWRT6y7toOAi4hjzFKZZmp21o7ffOv7QKdc3fCdrPL0veTYn8WJCTKS5k4GYcBQ17SHVe2viqapwQGf422YI+QQY=
+	t=1728971414; cv=none; b=cQAaL/kFTWgwAoz0E6hLkNWDV7WC0cLny854wQemlQu+TFX5SGPfiR3nLRymHHrXPXPlPF3es2e8RrrujCI/yAm4FxYOqwQx14ECX7QoKRjkx+V2a8OohsBtiDE/i5TrdxRmvqBlu4zGo7yB1OWvYsgDxGc3oVY3KReaW8gptyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728970220; c=relaxed/simple;
-	bh=EzU5mI03zFsx88x+566qvzOC2d73swVM+mldoP2G3lQ=;
+	s=arc-20240116; t=1728971414; c=relaxed/simple;
+	bh=wA9Uzsm2+2RenSWhGYDjyfwfyydcSEoqr0kEd68mP5E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cQ7xLyNEBGi+O7JV/rDM2ZW8IxrdoYh6MbHjs5QpLd58RiuNIcBoKPwome/3Ojo7VWDymd/YVbsCMl4Gpuk4u9aszz630+UD3+TfJKteg3sj9tXTzzxeo0l0aHkqk5cgKtl7VVFKjWgzgM+C8R+KCrgmWSJL3TfLJsEIKVMiozE=
+	 Content-Type:Content-Disposition:In-Reply-To; b=giLX1gfefYBDE5SWWJ4SaBbrCT47bH3sqQ9mLnNVFe8Xt7+zd9jpEA6gAIJ3o+oRHNgKOqNpFqqrWilCsFbGYvl8Ip2Iyn2iexz4WGbVrhXTWcZwuN1IQlCH/lOaLxbev7eZo4U+mG8t0iPppVQq6qXafd5JlNtPH9hJJta/MSQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id 7BC57227AA8; Tue, 15 Oct 2024 07:30:13 +0200 (CEST)
-Date: Tue, 15 Oct 2024 07:30:13 +0200
+	id 00F65227AA8; Tue, 15 Oct 2024 07:50:06 +0200 (CEST)
+Date: Tue, 15 Oct 2024 07:50:06 +0200
 From: Christoph Hellwig <hch@lst.de>
-To: Javier Gonzalez <javier.gonz@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Kanchan Joshi <joshi.k@samsung.com>, "hare@suse.de" <hare@suse.de>,
-	"sagi@grimberg.me" <sagi@grimberg.me>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-	"bcrl@kvack.org" <bcrl@kvack.org>,
-	"dhowells@redhat.com" <dhowells@redhat.com>,
-	"bvanassche@acm.org" <bvanassche@acm.org>,
-	"asml.silence@gmail.com" <asml.silence@gmail.com>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-aio@kvack.org" <linux-aio@kvack.org>,
-	"gost.dev@samsung.com" <gost.dev@samsung.com>,
-	"vishak.g@samsung.com" <vishak.g@samsung.com>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, hare@suse.de,
+	sagi@grimberg.me, martin.petersen@oracle.com, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
+	bcrl@kvack.org, dhowells@redhat.com, bvanassche@acm.org,
+	asml.silence@gmail.com, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-aio@kvack.org,
+	gost.dev@samsung.com, vishak.g@samsung.com, javier.gonz@samsung.com
 Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <20241015053013.GA18580@lst.de>
-References: <20241010091333.GB9287@lst.de> <20241010115914.eokdnq2cmcvwoeis@ArmHalley.local> <20241011090224.GC4039@lst.de> <5e9f7f1c-48fd-477f-b4ba-c94e6b50b56f@kernel.dk> <20241014062125.GA21033@lst.de> <34d3ad68068f4f87bf0a61ea8fb8f217@CAMSVWEXC02.scsc.local> <20241014074708.GA22575@lst.de> <9e3792eebf7f427db7c466374972fb99@CAMSVWEXC02.scsc.local> <20241014115052.GA32302@lst.de> <c0675721048d4b0a9a654e2e1669ad60@CAMSVWEXC02.scsc.local>
+Message-ID: <20241015055006.GA18759@lst.de>
+References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com> <20240930181305.17286-1-joshi.k@samsung.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -65,46 +53,41 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c0675721048d4b0a9a654e2e1669ad60@CAMSVWEXC02.scsc.local>
+In-Reply-To: <20240930181305.17286-1-joshi.k@samsung.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Oct 15, 2024 at 03:07:57AM +0000, Javier Gonzalez wrote:
-> > On Mon, Oct 14, 2024 at 09:08:24AM +0000, Javier Gonzalez wrote:
-> > > > Especially as it directly undermindes any file system work to actually make use
-> > of it.
-> > >
-> > > I do not think it does. If a FS wants to use the temperatures, then they
-> > > would be able to leverage FDP besides SCSI.
-> > 
-> > What do you mean with that?  This is a bit too much whitepaper vocabularly.
-> > 
-> > We have code in XFS that can make use of the temperature hint.  But to
-> > make them work it actually needs to do real stream separation on the
-> > device.  I.e. the file system consumes the temperature hints.
-> 
-> The device can guarantee the stream separation without knowing the temperature.
+As the current discussion is probably too tiring for anyone who is not a
+professional mud fighter I'll summarize my objections and comments here
+once again in a way that even aspiring middle managers should be able
+understand.
 
-Of course.  But that's entirely not the point.
+1) While the current per-file temperature hints interface is not perfect
+it is okay and make sense to reuse until we need something more fancy.
+We make good use of it in f2fs and the upcoming zoned xfs code to help
+with data placement and have numbers to show that it helps.
 
-> > What space from VFS folks do you need for hints?  And why does it
-> > matter?
-> 
-> We need space in the inode to store the hint ID.
-> 
-> Look, this feels like going in circles. All this gaslighting is what makes it difficult to 
+2) A per-I/O interface to set these temperature hint conflicts badly
+with how placement works in file systems.  If we have an urgent need
+for it on the block device it needs to be opt-in by the file operations
+so it can be enabled on block device, but not on file systems by
+default.  This way you can implement it for block device, but not
+provide it on file systems by default.  If a given file system finds
+a way to implement it it can still opt into implementing it of course.
 
-I'm so fucking tired of this.  You are not even listening to my arguments
-at all, even when explaing every detail to you again and again.  And then
-you acuse me of "gaslighting". 
+3) Mapping from temperature hints to separate write streams needs to
+happen above the block layer, because file systems need to be in
+control of it to do intelligent placement.  That means if you want to
+map from temperature hints to stream separation it needs to be
+implemented at the file operation layer, not in the device driver.
+The mapping implemented in this series is probably only useful for
+block devices.  Maybe if dumb file systems want to adopt it, it could
+be split into library code for reuse, but as usual that's probably
+best done only when actually needed.
 
-> push patches when you just do not like the feature. It is the 3rd time I propose you 
-> a way forward and you simply cannot provide any specific technical feedback - in the 
-> past email I posted several questions about the interface you seem to be talking 
-> about and you explicitly omit that.
+4) To support this the block layer, that is bios and requests need
+to support a notion of stream separation.   Kanchan's previous series
+had most of the bits for that, it just needs to be iterated on.
 
-???
-
-You are throwing random buzzwords and not even replying to all the
-low level technical points.  If you think I missed something please
-just ask again instead of this crap.
+All of this could have probably be easily done in the time spent on
+this discussion.
 

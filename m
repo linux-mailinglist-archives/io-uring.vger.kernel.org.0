@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-3737-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3738-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21D59A112B
-	for <lists+io-uring@lfdr.de>; Wed, 16 Oct 2024 20:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA42B9A112E
+	for <lists+io-uring@lfdr.de>; Wed, 16 Oct 2024 20:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C8D01C20E82
-	for <lists+io-uring@lfdr.de>; Wed, 16 Oct 2024 18:04:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9005E1F26015
+	for <lists+io-uring@lfdr.de>; Wed, 16 Oct 2024 18:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB2518C028;
-	Wed, 16 Oct 2024 18:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B2C212F0B;
+	Wed, 16 Oct 2024 18:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuDATJsA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZ1dy0Jg"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3B516C687;
-	Wed, 16 Oct 2024 18:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC45914A09E;
+	Wed, 16 Oct 2024 18:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729101837; cv=none; b=DVyGHbEIHj/Hyw59SL9K/omUiqrmn9F9EcDtDqEgzyHqjzK7Ty/UZk70AKAyUTHUjW33za92LbCTL/HD12/3gjZfrNga2MTZuYmDZvXNvMHPOExJOUdMOtq5WkjLRppcLwLPi9gYXG0kpMUpULcxDFdUeGtygNrLcwcOrEFb6w8=
+	t=1729101849; cv=none; b=HbDedVBNlEDLrXtda8RbPj6Qtvw7+DqybHbkRI3W2xjZ4w6+bxV+nU+LM/PDyylTUqQV7bvHo7yjCj7hiMMNi+sMlkXB14fBiKc92s5XfknwwZbES9LqiqoijNBEnLBHtkiu6Kd99IlNCxK8s64YDWOqtpLrq2Lq1X8lKFXtk6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729101837; c=relaxed/simple;
-	bh=FfW6BMSQjS9cLZjwGvsIbkEwyd+h+0W9gybsj/7xrRM=;
+	s=arc-20240116; t=1729101849; c=relaxed/simple;
+	bh=HzzmijPoH2mtXPKps8Y0il4uE+cACVfKq2wS0Ezsuf0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1HH1bEkbofvJjPbcN4rfLL7b74kq3NOMIDLOtbWkTRchZsDsz8LcDTh1u055f0MJ9heMOfkSvQSR3wj2ReFg0XHG457u4EKKRp4iOT7xjL7JieBzzTEFRnohXTa2kU0CCpMLdovFqhG0s8XejGJTDGTudBY+Q3aFFdtdyBIsjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuDATJsA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6429EC4CEC5;
-	Wed, 16 Oct 2024 18:03:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UfotoAr7DppuanbprAHbbB3GbD8bbp5KS2/WmZfsrBiGeB6QRxW617h+Z3kXxb0Ju6daDjLZV1VjXidyrehKass47aeNUCH8+F8UNkM0/9IlIH6Vt7WMheqks5gswrACDVpWELwwbpiWwRQQjf4D6P1zjxMAhrSsMV1DEEmkL2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZ1dy0Jg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77E3AC4CEC5;
+	Wed, 16 Oct 2024 18:04:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729101837;
-	bh=FfW6BMSQjS9cLZjwGvsIbkEwyd+h+0W9gybsj/7xrRM=;
+	s=k20201202; t=1729101849;
+	bh=HzzmijPoH2mtXPKps8Y0il4uE+cACVfKq2wS0Ezsuf0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TuDATJsAFovwyNvQ34eIJZzZWrXhNLf5X8JgZkQZhoyEhqkvlKS/9kIjGba9VPe2O
-	 xBaXyAEB1gFN5Cpk2MuP6oFCFn8hHnc9LJeFqtxs5jyGYwtXPfe9tK1SmwMpeVraBp
-	 gL7irO9NPe8khmUsIIxsn/33iByg12ERL5Uf8pAA1y+luXUyiygjTLBlbrpf/H/kCT
-	 UpMUUmc4EJci4gEunUebQN8pg/qbleR3xVwIwPvRE+3UPu9o4bbSNnSrkGV9a4u8vs
-	 w3MbjTGEcL+2wZI9gBL10kyEScW7gG6EpwazzDaYcD02i52hQSNfgiMmTj+m8Dz1c+
-	 ZUsd3R4FS03Tw==
-Date: Wed, 16 Oct 2024 12:03:53 -0600
+	b=kZ1dy0JgHxNeobOvzLSy5ftVhhY1QSE3SF3ksFod3MtCVn2w3jJzGNtgWDjYWUP5L
+	 LvZBXl7bnuTnvtj7JgjPfD2ftk1YDHfC4QINDHlz+TLaC4tFJEBWbTIVvbWtDQz1jK
+	 7bxdu4l9KFVnMpNVOVhSHW6M7tTWmdVCq0G0kKhNiCGdu/3ZElIS38qMslcr0extm8
+	 hP/tHOAO5HoFPYYE+anpFHY79BTyBqQCcUle5fVGiJKHsG5bxMvRzrKsOhMEg+ltgx
+	 QT6ZFR6nzZgEkfh0Qvz95GV6x7+0iooI3XkebrslYZAgVrEvFppGgCIlF/g2XWnMG5
+	 QYOdwszwvc0WA==
+Date: Wed, 16 Oct 2024 12:04:06 -0600
 From: Keith Busch <kbusch@kernel.org>
 To: Anuj Gupta <anuj20.g@samsung.com>
 Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
@@ -49,12 +49,12 @@ Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
 	io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
 	linux-block@vger.kernel.org, gost.dev@samsung.com,
 	linux-scsi@vger.kernel.org, vishak.g@samsung.com
-Subject: Re: [PATCH v4 01/11] block: define set of integrity flags to be
- inherited by cloned bip
-Message-ID: <ZxAACWqEh99pPhz_@kbusch-mbp.dhcp.thefacebook.com>
+Subject: Re: [PATCH v4 02/11] block: copy back bounce buffer to user-space
+ correctly in case of split
+Message-ID: <ZxAAFnC_Y6qpU-UK@kbusch-mbp.dhcp.thefacebook.com>
 References: <20241016112912.63542-1-anuj20.g@samsung.com>
- <CGME20241016113724epcas5p191ccce0f473274fc95934956662fc769@epcas5p1.samsung.com>
- <20241016112912.63542-2-anuj20.g@samsung.com>
+ <CGME20241016113736epcas5p3a03665bf0674e68a8f95bbd5f3607357@epcas5p3.samsung.com>
+ <20241016112912.63542-3-anuj20.g@samsung.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -63,11 +63,11 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241016112912.63542-2-anuj20.g@samsung.com>
+In-Reply-To: <20241016112912.63542-3-anuj20.g@samsung.com>
 
-On Wed, Oct 16, 2024 at 04:59:02PM +0530, Anuj Gupta wrote:
-> Introduce BIP_CLONE_FLAGS describing integrity flags that should be
-> inherited in the cloned bip from the parent.
+On Wed, Oct 16, 2024 at 04:59:03PM +0530, Anuj Gupta wrote:
+> Copy back the bounce buffer to user-space in entirety when the parent
+> bio completes.
 
 Looks good.
 

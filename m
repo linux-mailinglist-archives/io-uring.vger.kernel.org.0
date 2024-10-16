@@ -1,72 +1,72 @@
-Return-Path: <io-uring+bounces-3743-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3744-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509249A11ED
-	for <lists+io-uring@lfdr.de>; Wed, 16 Oct 2024 20:53:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516669A11F0
+	for <lists+io-uring@lfdr.de>; Wed, 16 Oct 2024 20:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA577B21808
-	for <lists+io-uring@lfdr.de>; Wed, 16 Oct 2024 18:53:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5073B221AB
+	for <lists+io-uring@lfdr.de>; Wed, 16 Oct 2024 18:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E102144D2;
-	Wed, 16 Oct 2024 18:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5DB2144B1;
+	Wed, 16 Oct 2024 18:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="spKfnELA"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="plXN6UGW"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F7B2144B9
-	for <io-uring@vger.kernel.org>; Wed, 16 Oct 2024 18:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D3A2141D9
+	for <io-uring@vger.kernel.org>; Wed, 16 Oct 2024 18:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729104787; cv=none; b=MYe62l8h0wlPYYJv+XakL20CWUmZyTLWap1tFTwJdmDA+NohWoT9EOMCtFEnT9RbCTmJ6yaJcoeyDdN1awKLU9yT+2wlDUC/FKU27eVoLWXuGgIGnUgyNEGlFIvYXSlO2iaESkgJ7nrXOk/Fwy/Nf4uzyMx/60+BTh8GdTZ7zs8=
+	t=1729104789; cv=none; b=entJw0i4ZHJlFxkZ/C2u+tiMwoNtp/v0lSYzW9QfcHIxir5MDxT8B2HxXxEDKajIqer94xuyK+W0K3ZXcApBie7Ctfw3AtUQnZCigOrBY1t8Fnjw0X4a9nlXHepRrZRFT3lD0BkR7+FqEU3mnmd7oTodq2dTNogn4ILj5H6cUiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729104787; c=relaxed/simple;
-	bh=GYfv98ZUd48uxOI6Ts+rl9u4lukVAUinedFku6rUGEI=;
+	s=arc-20240116; t=1729104789; c=relaxed/simple;
+	bh=N3Lp9/YMutyVAvs4ge9B26lNnGjZAtdOVSMB+PgeaiE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=quzLSd3qDKgIbeDJ7sgDMdLDsg2mxeQxHfztEnG9fKHRiWuYWUwPg4BaSGj3XK7jQdGHAs/FAd1ZAU/XKcAt77ZuoIVQ2Gpf2my3ULFkZ0scSgho06/q7OK4ZVr+22UKepyD+C+LHLVSby1I1HDOdQeZjLa2mULzJ3EQuTyez00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=spKfnELA; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=Id5n85zZZomqcJHr28wB0dV7s0XvsmcZbo1F3ts+1h2dKx40MBfy/53PxPCoDH/1N7D1Zbt1uUmNLbNtAIoAGyjJwGyZxSBuRNTO5JzHH4p2uPT1Js3Jeg6f6aHw4UhWs93i/vgjwzsQalGMnYwW1Oo6tyMCMlZYRY0hgKlVc+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=plXN6UGW; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cb89a4e4cso1002375ad.3
-        for <io-uring@vger.kernel.org>; Wed, 16 Oct 2024 11:53:06 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20bb39d97d1so1199825ad.2
+        for <io-uring@vger.kernel.org>; Wed, 16 Oct 2024 11:53:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1729104786; x=1729709586; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1729104787; x=1729709587; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gEYTOkkPbOMOeAXcMwBoyyLeSIseQx5WZXYwap0u980=;
-        b=spKfnELAPJm2zelVThTwzx8WES+MRHkBOTrVagE3bV7jwP1Oo0ZwtJKg+9wC1UuuP/
-         M67MP1ZUXAvAjHmWNdLvwoAI2OcKI5d0gGVmuvcJxfar0LbqeR4DvzsFJwKpnbQx0xD5
-         WD5A4IKh3cLVlQuh472P5RdrdaEiEzqnfeXOooSiHDYrraU7ptLRal+5Ym9gAZRfPvxG
-         derkvGASPI7tnt+ywA0IIg2nR+I6NO3kAk8tcU1GBLPLJA9fzc+/oPLCtAuM7gExs69o
-         feOwYG/P9BjNdlffQ0REaONZPgGnzZYpnaJjECVBY89HH7yfalzmS5T9A2vpEf34X/cy
-         LIEw==
+        bh=vqnj2vEyFSNWAQ9NLMcT3cBERALcNmYBRjCTByCN/C4=;
+        b=plXN6UGWVI0s58g2c13bqr68rgHXY/CfC1Ody1QYQY1vxsMooTd+rwJyMlsJg+l0Hv
+         p1AGyGACS44E/Mh4xb8IYK2SgH+D/HBTwQlSNWDv9hhWTSBhAbeXE9NwBKIM2cae13H9
+         Uvt6PWRu7naD2LCrqSpH+hQcNZw1vZdUC9bMLNRr8SfDCcDlPOdxYBcjiAponu9/2fsW
+         uDv17UsuVVU6nMkupl+hZQehLPTMjDSDPugQNmerj896ZxwTZIjN88R/aEYA1VxzuVed
+         /ctKPAkWRaLmZNpC8JpsONr06eyVQyXHBx+htQkd1o95zaxStIYLOUFCOLVazaQZFgSd
+         keUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729104786; x=1729709586;
+        d=1e100.net; s=20230601; t=1729104787; x=1729709587;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gEYTOkkPbOMOeAXcMwBoyyLeSIseQx5WZXYwap0u980=;
-        b=ufYJwG5Cq3WiIvHj34GBxJHJ60mvSooop7M7HoYRidFcSJr2jgEcAWfVzbIHJRvAvI
-         SVIF/8+HqGBdzKrYYcn5OyIohzxZ0V6H1jLtNCdENijhXprWmDTe9+v6hCqAOTxVdB8C
-         h9EyPfHgbeqSuqV7/bHdTG2ohdSPYcX3YK8KhzWdf+KScQ/RB7C8snrF0aCse9RBV4dt
-         OJqT8HW+FEBmj1abw49HEixNAJ2yCgKtcoWzWYMPvKsE8mi8iNLcrUMqfNswtVPOdYfO
-         RcIsUylScYfYMAvdJ7JXJ5XO2wZJ+Vv6fYJcRTMaAHaVGhoKfFeVLEtVx0eCl+i6ts3L
-         DX4w==
-X-Gm-Message-State: AOJu0YxkPRjhJMSctSPDrFneOo3vq+aiV2h5MFcpnELJmZwGqL1UW580
-	Tua180rX2iMaFAGvzYBL7sQ15+1Gxe16MZL+ENt8wQWJsz8ooPtMQk1dV5q0tVrIpgtTyFBOf+6
+        bh=vqnj2vEyFSNWAQ9NLMcT3cBERALcNmYBRjCTByCN/C4=;
+        b=dh9Tpd8dUts8JOvJHeKadcb3q2twUIs/5lPwtv8n9rCr7P3/ZQgkEroZl2eC8w906Z
+         y/xo3HXTNddnALBLldjOw+CF+D5HR4hpyXrzXgF05pj64dlhp2xXJPns1yvDEaqQ66fE
+         Dgncg7+OEoeUQzMb3x+46gVco6qnbhm+o1+U9tahfTCg/iEhwub+eIjsXw7tIZ3nKUOf
+         u8PXz46y0pbBW4ccDY+/CaHnQQ5AlE029yEumL+XNjv+YdKYQiB1Lw+1vjbMZqWl0lgK
+         inbswgKVyrTkButd/uXQk/cKHrGEzOhnPnSDR8cZzP714cyS1vzcvWc3xbAme//MVjRG
+         pJLw==
+X-Gm-Message-State: AOJu0YwP8M3JqXlkzl/evJAl9p0HWxPztMqeFBaRjPq2Ppd2oN7kqZMR
+	18Geh+oDqJ+rkLm7JGGUoWlER/mpdnuUKAhIrsulbfVcdkxNlmfB/PTaG1zifusYVECnmMXLZ0s
 	+
-X-Google-Smtp-Source: AGHT+IES12a7fAsskB7fQc1zYGG7uvcmwMhCjQS6javdYbymUS1L+VyRgNNviWjhI77NB23qHN3O+g==
-X-Received: by 2002:a17:903:2283:b0:20b:a10c:9bdf with SMTP id d9443c01a7336-20d27ed02f5mr62699775ad.32.1729104785844;
-        Wed, 16 Oct 2024 11:53:05 -0700 (PDT)
-Received: from localhost (fwdproxy-prn-116.fbsv.net. [2a03:2880:ff:74::face:b00c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1804b734sm31677265ad.222.2024.10.16.11.53.05
+X-Google-Smtp-Source: AGHT+IEwAQMbKcO2swe43BJm87R77nv1ylDvAa5ptxGJajdS3oBkRi+JXcNlOYLFwPMwDCELFcU/bw==
+X-Received: by 2002:a17:902:ce09:b0:20d:2e83:6995 with SMTP id d9443c01a7336-20d2e836aa1mr55849845ad.47.1729104787172;
+        Wed, 16 Oct 2024 11:53:07 -0700 (PDT)
+Received: from localhost (fwdproxy-prn-016.fbsv.net. [2a03:2880:ff:10::face:b00c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f9d3f8sm31819785ad.80.2024.10.16.11.53.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 11:53:05 -0700 (PDT)
+        Wed, 16 Oct 2024 11:53:06 -0700 (PDT)
 From: David Wei <dw@davidwei.uk>
 To: io-uring@vger.kernel.org,
 	netdev@vger.kernel.org
@@ -83,9 +83,9 @@ Cc: David Wei <dw@davidwei.uk>,
 	Stanislav Fomichev <stfomichev@gmail.com>,
 	Joe Damato <jdamato@fastly.com>,
 	Pedro Tammela <pctammela@mojatatu.com>
-Subject: [PATCH v6 04/15] net: prepare for non devmem TCP memory providers
-Date: Wed, 16 Oct 2024 11:52:41 -0700
-Message-ID: <20241016185252.3746190-5-dw@davidwei.uk>
+Subject: [PATCH v6 05/15] net: page_pool: add ->scrub mem provider callback
+Date: Wed, 16 Oct 2024 11:52:42 -0700
+Message-ID: <20241016185252.3746190-6-dw@davidwei.uk>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241016185252.3746190-1-dw@davidwei.uk>
 References: <20241016185252.3746190-1-dw@davidwei.uk>
@@ -99,146 +99,47 @@ Content-Transfer-Encoding: 8bit
 
 From: Pavel Begunkov <asml.silence@gmail.com>
 
-There is a good bunch of places in generic paths assuming that the only
-page pool memory provider is devmem TCP. As we want to reuse the net_iov
-and provider infrastructure, we need to patch it up and explicitly check
-the provider type when we branch into devmem TCP code.
+Some page pool memory providers like io_uring need to catch the point
+when the page pool is asked to be destroyed. ->destroy is not enough
+because it relies on the page pool to wait for its buffers first, but
+for that to happen a provider might need to react, e.g. to collect all
+buffers that are currently given to the user space.
+
+Add a new provider's scrub callback serving the purpose and called off
+the pp's generic (cold) scrubbing path, i.e. page_pool_scrub().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: David Wei <dw@davidwei.uk>
 ---
- net/core/devmem.c         | 10 ++++++++--
- net/core/devmem.h         |  8 ++++++++
- net/core/page_pool_user.c | 15 +++++++++------
- net/ipv4/tcp.c            |  6 ++++++
- 4 files changed, 31 insertions(+), 8 deletions(-)
+ include/net/page_pool/types.h | 1 +
+ net/core/page_pool.c          | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/net/core/devmem.c b/net/core/devmem.c
-index 01738029e35c..78983a98e5dc 100644
---- a/net/core/devmem.c
-+++ b/net/core/devmem.c
-@@ -28,6 +28,12 @@ static DEFINE_XARRAY_FLAGS(net_devmem_dmabuf_bindings, XA_FLAGS_ALLOC1);
+diff --git a/include/net/page_pool/types.h b/include/net/page_pool/types.h
+index 8a35fe474adb..fd0376ad0d26 100644
+--- a/include/net/page_pool/types.h
++++ b/include/net/page_pool/types.h
+@@ -157,6 +157,7 @@ struct memory_provider_ops {
+ 	bool (*release_netmem)(struct page_pool *pool, netmem_ref netmem);
+ 	int (*init)(struct page_pool *pool);
+ 	void (*destroy)(struct page_pool *pool);
++	void (*scrub)(struct page_pool *pool);
+ };
  
- static const struct memory_provider_ops dmabuf_devmem_ops;
+ struct pp_memory_provider_params {
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index c21c5b9edc68..9a675e16e6a4 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -1038,6 +1038,9 @@ static void page_pool_empty_alloc_cache_once(struct page_pool *pool)
  
-+bool net_is_devmem_page_pool_ops(const struct memory_provider_ops *ops)
-+{
-+	return ops == &dmabuf_devmem_ops;
-+}
-+EXPORT_SYMBOL_GPL(net_is_devmem_page_pool_ops);
-+
- static void net_devmem_dmabuf_free_chunk_owner(struct gen_pool *genpool,
- 					       struct gen_pool_chunk *chunk,
- 					       void *not_used)
-@@ -316,10 +322,10 @@ void dev_dmabuf_uninstall(struct net_device *dev)
- 	unsigned int i;
- 
- 	for (i = 0; i < dev->real_num_rx_queues; i++) {
--		binding = dev->_rx[i].mp_params.mp_priv;
--		if (!binding)
-+		if (dev->_rx[i].mp_params.mp_ops != &dmabuf_devmem_ops)
- 			continue;
- 
-+		binding = dev->_rx[i].mp_params.mp_priv;
- 		xa_for_each(&binding->bound_rxqs, xa_idx, rxq)
- 			if (rxq == &dev->_rx[i]) {
- 				xa_erase(&binding->bound_rxqs, xa_idx);
-diff --git a/net/core/devmem.h b/net/core/devmem.h
-index a2b9913e9a17..a3fdd66bb05b 100644
---- a/net/core/devmem.h
-+++ b/net/core/devmem.h
-@@ -116,6 +116,8 @@ struct net_iov *
- net_devmem_alloc_dmabuf(struct net_devmem_dmabuf_binding *binding);
- void net_devmem_free_dmabuf(struct net_iov *ppiov);
- 
-+bool net_is_devmem_page_pool_ops(const struct memory_provider_ops *ops);
-+
- #else
- struct net_devmem_dmabuf_binding;
- 
-@@ -168,6 +170,12 @@ static inline u32 net_devmem_iov_binding_id(const struct net_iov *niov)
+ static void page_pool_scrub(struct page_pool *pool)
  {
- 	return 0;
- }
++	if (pool->mp_ops && pool->mp_ops->scrub)
++		pool->mp_ops->scrub(pool);
 +
-+static inline bool
-+net_is_devmem_page_pool_ops(const struct memory_provider_ops *ops)
-+{
-+	return false;
-+}
- #endif
- 
- #endif /* _NET_DEVMEM_H */
-diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
-index 48335766c1bf..604862a73535 100644
---- a/net/core/page_pool_user.c
-+++ b/net/core/page_pool_user.c
-@@ -214,7 +214,7 @@ static int
- page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
- 		  const struct genl_info *info)
- {
--	struct net_devmem_dmabuf_binding *binding = pool->mp_priv;
-+	struct net_devmem_dmabuf_binding *binding;
- 	size_t inflight, refsz;
- 	void *hdr;
- 
-@@ -244,8 +244,11 @@ page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
- 			 pool->user.detach_time))
- 		goto err_cancel;
- 
--	if (binding && nla_put_u32(rsp, NETDEV_A_PAGE_POOL_DMABUF, binding->id))
--		goto err_cancel;
-+	if (net_is_devmem_page_pool_ops(pool->mp_ops)) {
-+		binding = pool->mp_priv;
-+		if (nla_put_u32(rsp, NETDEV_A_PAGE_POOL_DMABUF, binding->id))
-+			goto err_cancel;
-+	}
- 
- 	genlmsg_end(rsp, hdr);
- 
-@@ -353,16 +356,16 @@ void page_pool_unlist(struct page_pool *pool)
- int page_pool_check_memory_provider(struct net_device *dev,
- 				    struct netdev_rx_queue *rxq)
- {
--	struct net_devmem_dmabuf_binding *binding = rxq->mp_params.mp_priv;
-+	void *mp_priv = rxq->mp_params.mp_priv;
- 	struct page_pool *pool;
- 	struct hlist_node *n;
- 
--	if (!binding)
-+	if (!mp_priv)
- 		return 0;
- 
- 	mutex_lock(&page_pools_lock);
- 	hlist_for_each_entry_safe(pool, n, &dev->page_pools, user.list) {
--		if (pool->mp_priv != binding)
-+		if (pool->mp_priv != mp_priv)
- 			continue;
- 
- 		if (pool->slow.queue_idx == get_netdev_rx_queue_index(rxq)) {
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index e928efc22f80..31e01da61c12 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -277,6 +277,7 @@
- #include <net/ip.h>
- #include <net/sock.h>
- #include <net/rstreason.h>
-+#include <net/page_pool/types.h>
- 
- #include <linux/uaccess.h>
- #include <asm/ioctls.h>
-@@ -2476,6 +2477,11 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
- 			}
- 
- 			niov = skb_frag_net_iov(frag);
-+			if (net_is_devmem_page_pool_ops(niov->pp->mp_ops)) {
-+				err = -ENODEV;
-+				goto out;
-+			}
-+
- 			end = start + skb_frag_size(frag);
- 			copy = end - offset;
+ 	page_pool_empty_alloc_cache_once(pool);
+ 	pool->destroy_cnt++;
  
 -- 
 2.43.5

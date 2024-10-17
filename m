@@ -1,67 +1,88 @@
-Return-Path: <io-uring+bounces-3797-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3798-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65E19A2881
-	for <lists+io-uring@lfdr.de>; Thu, 17 Oct 2024 18:24:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD999A30BB
+	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 00:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C3CF284F10
-	for <lists+io-uring@lfdr.de>; Thu, 17 Oct 2024 16:24:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D8ADB2277C
+	for <lists+io-uring@lfdr.de>; Thu, 17 Oct 2024 22:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AE41DEFF6;
-	Thu, 17 Oct 2024 16:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A870C1D5CF9;
+	Thu, 17 Oct 2024 22:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftAo7CuQ"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="bul45V/m"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f98.google.com (mail-oa1-f98.google.com [209.85.160.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543E31C1AA5;
-	Thu, 17 Oct 2024 16:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E135218133F
+	for <io-uring@vger.kernel.org>; Thu, 17 Oct 2024 22:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729182241; cv=none; b=OE3Ss8euLK0BfbAkzsmHr33Wsp8Lnw1/QbbtPBB/6XjCMAXCD67inskqhAm0YwLGt9KFKe9ycNNWOR+quMl76LCE97VR3+mA/snna9WLNnNeEZTlGasyrbLSdxHoqsiE+vhW8CrRk1yafVpbdD8cGW7RdtpfYaK7lCvSBztPOZA=
+	t=1729204291; cv=none; b=EF92j6TEURzZxbhq3uiHE0zxACsCYOylF9N2ol/1B70f+DADkIZBoS4QUddzpBPjLAkcf8kv+RLjg/zd54JpvEspZBNq1UoZRs7K8QdZP5gznBSvJ51AYptrgC5f1O3m1oPiXW1lwB6qDXiJscSXahWWS+LrwsK9yUfsaJyo1PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729182241; c=relaxed/simple;
-	bh=RjDlQZTkGZvAnkqNZFuzz/RFQ82YGlXnuCXfg/gs4cE=;
+	s=arc-20240116; t=1729204291; c=relaxed/simple;
+	bh=wk78pm9A4wHGUJAGgC3pZI461YJyrUTx/sPnr9UF0G0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nvIh9elCGd/CuBhi9ngm+Ubnv/ADyEvjmQ9ZP2WSFSwPJSog661AAeQ6TCjQSKBLV/qC7G+DInXtZaOYFfg3gZSMDs706nh3H6B0ht4vOyr1+04zcHqNS4M69tnCnORL6gu7Mo5HFDzmlqsIWA+X6yoP8HB5c9HVQdfdNiYEcPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftAo7CuQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82FFDC4CEC3;
-	Thu, 17 Oct 2024 16:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729182240;
-	bh=RjDlQZTkGZvAnkqNZFuzz/RFQ82YGlXnuCXfg/gs4cE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ftAo7CuQ4OQIWh1hU+NgHZhkzh+0FAswQMwWcVSNJE5zXBFdNGB/VIxsIA5pKB6AN
-	 3Lr5M3uyOFeSB94cgkq6M9LT1C5UHhWW6q9Ql2JFCTzbFh10bxOZ4QLOH+ksP8X+sP
-	 IIACWncBrUJWvzd441ZuKK5p1lQnopNeOSQJY8qIi6fx93iX5krdO4l8zFlkCZtnyW
-	 0caoodB3qWS8twWihXtERAgMcc7lf1RLnQiojXa/hTdItF+nl4bueHKCZNbToGO21w
-	 KX/BZYgnQKi/ZZOsCab8EBgQvs9sY2UrJLdRweybpbeYff/5bCLRzyx2w0fN48nvQk
-	 eX+gqJQfy14zA==
-Date: Thu, 17 Oct 2024 10:23:57 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Christoph Hellwig <hch@lst.de>, Kanchan Joshi <joshi.k@samsung.com>,
-	axboe@kernel.dk, hare@suse.de, sagi@grimberg.me,
-	martin.petersen@oracle.com, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, jaegeuk@kernel.org,
-	bcrl@kvack.org, dhowells@redhat.com, asml.silence@gmail.com,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-aio@kvack.org, gost.dev@samsung.com, vishak.g@samsung.com,
-	javier.gonz@samsung.com
-Subject: Re: [PATCH v7 0/3] FDP and per-io hints
-Message-ID: <ZxE6HWwKPXJPtShT@kbusch-mbp.dhcp.thefacebook.com>
-References: <CGME20240930182052epcas5p37edefa7556b87c3fbb543275756ac736@epcas5p3.samsung.com>
- <20240930181305.17286-1-joshi.k@samsung.com>
- <20241015055006.GA18759@lst.de>
- <8be869a7-c858-459a-a34b-063bc81ce358@samsung.com>
- <20241017152336.GA25327@lst.de>
- <ZxEw5-l6DtlXCQRO@kbusch-mbp.dhcp.thefacebook.com>
- <37af5088-6f09-4e75-b5d0-559e92d625bb@acm.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IT0UW7Naob9+Q2lnN1Q5i5mUmW98MTUHG9eVBdTew0QuEgXlPXPKk6GYwArYdDCAzIUZT5hWR2SGQxLqs5K8ZtrulGQD4J0hFZp3oEVNs/EV/UrLbF36E9fi8BWJKPoF2mQIBBJ7JTNVfACoKcZzXFxBlLrsf5z/FYDQvn+Ka6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=bul45V/m; arc=none smtp.client-ip=209.85.160.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-oa1-f98.google.com with SMTP id 586e51a60fabf-288fa5ce8f0so585136fac.3
+        for <io-uring@vger.kernel.org>; Thu, 17 Oct 2024 15:31:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1729204289; x=1729809089; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=01Ao9hN/kTz0hVqpiuP+bXoNmbAQDLYKmsJTnEYA3R4=;
+        b=bul45V/magsAj6PbCCBG/ZBdrigA7WqE9SqUygwi2tK39SCQ7zr28RNml/EloFcBFB
+         Jm/exItr0zyy6mwbZvOI2mULO9OrtWySBEa2qX9pMFRMlkQFv19plz9Ni9dGaoMbxx+8
+         GXhDgtBKw22HfNx/O4wkQOwLePDsoYYdwuaQdAj8xqhCq88W+AxJIPG1bPwN9AWJdm8/
+         xxa5ZuePu18Z0Tb0knXlyhSo3Ap0yh9W5tm/GWfngtPXiaclMiJ8y8zE6zdGK+u2+JFh
+         byZC1lFJue4GLKtdLhmJILaDG5g9WUxhM9SUDZbl4Q0+cIyAPNWM65sQ4aL4rNo61r8F
+         Q/CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729204289; x=1729809089;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=01Ao9hN/kTz0hVqpiuP+bXoNmbAQDLYKmsJTnEYA3R4=;
+        b=MeABVxsnLj8RWqt6WinR+ZiHa2eWevfZt6DHK6HsZNQFOn+nNEqHTbA41LhpiXmH8+
+         gPFPU3478pdgbfrbDCJzfzhjIYlyxt/d3+HGlOZFeiQZPKekU310UjszyxFaSvIWLstf
+         5fDzm3ANoc5ipgl8nyW/AwVerduRiDX4Sea3KJsgp0k2X9eJy2x6eQUoZprjk8VtTg6w
+         zoClPNrdPbCcYKIOje79JPbipX/waNGNoQquj1/8vsQmr1TQyvJOcveZq5lrQal3hx13
+         G76NjS4gQUMzwxhuwPcxeaBa+5WAk1PgFoZ8kB/8ONgM/a61oFbKnk4Pqkf3cGL4c65s
+         Draw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZiGzEFzZdrkEtzBc/vzo88BLzOcLC78Z5vb9h79QZhiNtw7iGAONTlBbJKEKns6GhVNlA2c1NJQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Dd056yVMcFRYP3A/N3d9DfezoMa7AlQ47iSqmkMhXxgxYdl6
+	ehtp+mPaF6jzgJxQ7tULXFhsSX1elb9Lt+1BRjrskp9hVfIq7NvMyMhq8Fs4VDPEHhmWChM5Gs9
+	M0UG+pwLBvl0dNV9UDoAICH8IeTtpOZ9d
+X-Google-Smtp-Source: AGHT+IHA3V3Z/+WLVZlhVvJt5Ls1583QiP3dkdawaIsOXLjr7NYnfApMcV+SfGMQYJRWOeHXsOyei/Au7lzN
+X-Received: by 2002:a05:6870:b628:b0:277:e1e8:a085 with SMTP id 586e51a60fabf-2892c330c99mr309696fac.23.1729204288839;
+        Thu, 17 Oct 2024 15:31:28 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id 586e51a60fabf-2892afdda33sm16477fac.39.2024.10.17.15.31.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 15:31:28 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [10.7.70.36])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 0320734029E;
+	Thu, 17 Oct 2024 16:31:27 -0600 (MDT)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id E7821E413D0; Thu, 17 Oct 2024 16:31:26 -0600 (MDT)
+Date: Thu, 17 Oct 2024 16:31:26 -0600
+From: Uday Shankar <ushankar@purestorage.com>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH V6 8/8] ublk: support provide io buffer
+Message-ID: <ZxGQPgvfquLw8AgP@dev-ushankar.dev.purestorage.com>
+References: <20240912104933.1875409-1-ming.lei@redhat.com>
+ <20240912104933.1875409-9-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -70,39 +91,44 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <37af5088-6f09-4e75-b5d0-559e92d625bb@acm.org>
+In-Reply-To: <20240912104933.1875409-9-ming.lei@redhat.com>
 
-On Thu, Oct 17, 2024 at 09:15:21AM -0700, Bart Van Assche wrote:
-> On 10/17/24 8:44 AM, Keith Busch wrote:
-> > On Thu, Oct 17, 2024 at 05:23:37PM +0200, Christoph Hellwig wrote:
-> > > If you want to do useful stream separation you need to write data
-> > > sequentially into the stream.  Now with streams or FDP that does not
-> > > actually imply sequentially in LBA space, but if you want the file
-> > > system to not actually deal with fragmentation from hell, and be
-> > > easily track what is grouped together you really want it sequentially
-> > > in the LBA space as well.  In other words, any kind of write placement
-> > > needs to be intimately tied to the file system block allocator.
-> > 
-> > I'm replying just to make sure I understand what you're saying:
-> > 
-> > If we send per IO hints on a file, we could have interleaved hot and
-> > cold pages at various offsets of that file, so the filesystem needs an
-> > efficient way to allocate extents and track these so that it doesn't
-> > interleave these in LBA space. I think that makes sense.
-> > 
-> > We can add a fop_flags and block/fops.c can be the first one to turn it
-> > on since that LBA access is entirely user driven.
-> 
-> Does anyone care about buffered I/O to block devices? When using
-> buffered I/O, the write_hint information from the inode is used and the per
-> I/O write_hint information is ignored.
+On Thu, Sep 12, 2024 at 06:49:28PM +0800, Ming Lei wrote:
+> +static int ublk_provide_io_buf(struct io_uring_cmd *cmd,
+> +		struct ublk_queue *ubq, int tag)
+> +{
+> +	struct ublk_device *ub = cmd->file->private_data;
+> +	struct ublk_rq_data *data;
+> +	struct request *req;
+> +
+> +	if (!ub)
+> +		return -EPERM;
+> +
+> +	req = __ublk_check_and_get_req(ub, ubq, tag, 0);
+> +	if (!req)
+> +		return -EINVAL;
+> +
+> +	pr_devel("%s: qid %d tag %u request bytes %u\n",
+> +			__func__, tag, ubq->q_id, blk_rq_bytes(req));
+> +
+> +	data = blk_mq_rq_to_pdu(req);
+> +
+> +	/*
+> +	 * io_uring guarantees that the callback will be called after
+> +	 * the provided buffer is consumed, and it is automatic removal
+> +	 * before this uring command is freed.
+> +	 *
+> +	 * This request won't be completed unless the callback is called,
+> +	 * so ublk module won't be unloaded too.
+> +	 */
+> +	return io_uring_cmd_provide_kbuf(cmd, data->buf);
+> +}
 
-I'm pretty sure there are applications that use buffered IO on raw block
-(ex: postgresql), but it's a moot point: the block file_operations that
-provide the fops_flags also provide the callbacks for O_DIRECT, which is
-where this matters.
+We did some testing with this patchset and saw some panics due to
+grp_kbuf_ack being a garbage value. Turns out that's because we forgot
+to set the UBLK_F_SUPPORT_ZERO_COPY flag on the device. But it looks
+like the UBLK_IO_PROVIDE_IO_BUF command is still allowed for such
+devices. Should this function test that the device has zero copy
+configured and fail if it doesn't?
 
-We can't really use per-io write_hints on buffered-io. At least not yet,
-and maybe never. I'm not sure if it makes sense for raw block because
-the page writes won't necessarily match writes to storage.
 

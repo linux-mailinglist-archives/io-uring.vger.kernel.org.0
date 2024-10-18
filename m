@@ -1,120 +1,129 @@
-Return-Path: <io-uring+bounces-3819-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3820-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0299A437B
-	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 18:16:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B85E9A4396
+	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 18:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609871F249D2
-	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 16:16:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C932B1C2384A
+	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 16:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A875F202F6B;
-	Fri, 18 Oct 2024 16:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA502038A8;
+	Fri, 18 Oct 2024 16:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEUHRgZz"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="VzlrEF+s"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844751F4266;
-	Fri, 18 Oct 2024 16:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FFA2038AF;
+	Fri, 18 Oct 2024 16:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729268186; cv=none; b=l9cNLft7HMkyGiuykbXBTSkEyxN9LW2BpQAOQ608wRVr7Q0cJ43YA+nsfAbNWwjd64nVFU7z9t+4Cd/ym1IGXZ5Xb7m9zGn+5N0jat1mHRyo9ABIpyusjSdU8fKRT4x525RwAfzPPrgRbMDyIXXDwDCOjCiLfpDjbboYyhrXNFw=
+	t=1729268333; cv=none; b=B5PXGCxh+RL8te7kJM9Kf6aiJMVGLvk90qckv0KGgXNEM4QsAcpojtd4eFfFkZEtq/JV4X31ueiTJ0tj8tgUclhQ0Fxf0F3g2cKLxm/un25RBaTqCZt3mn3db4EIkQTsAHY1dBqx5jQu2dtygSZPM2vyh/HBEq1FVMoYTV1PYAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729268186; c=relaxed/simple;
-	bh=wibQo2950us28tv1DjwcUnXv7qQRyhUR6Z43GQKkfMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PyqAwKGLdlSxeDUGX8D9P53YxDMpQuMrOdXdlvIc+HCpNKRKtKud/YXy+nBgXQf16G6cbkESd14vRFNQg7vTu+KAxgESaS/XUejQo7odYYT2psGjDj9RPg0/RZA9mGFAeQaFW7qrmXuf6VWhS54aiGHXA4nUtaQnfPxqNvIMvAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PEUHRgZz; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso2529992e87.2;
-        Fri, 18 Oct 2024 09:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729268182; x=1729872982; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N7UdTrbaZ/hJPfr6th5jKszoKdJHe7S6bjSoYVBHtoo=;
-        b=PEUHRgZzHH+e2c6lrGFST6OVMGzXXmZVhEp48cRhoFXSzo3w52ae/ZMOd1f70OAvJ4
-         Ph+/g/6TRntTSCoAq15QimIUuRt1rCecmPNOf7GHxbqOnLaymh7UhRb3k+hWe7utvpZo
-         BlzTnA1T7DOK7E8yD9QA0lx5PB43bc3wrQawQMxndLayx1b0v49e/8SKPmslE4TMZPE3
-         xHpnglwDTpyqlwOtpw4apIc7xnHQGojbWY6pggdzrxFUZZEKPwEHgsxKRdPn9FS9keTY
-         8TawYOlhYjBdNYOulmZ8FcLEraRp3Tsu0Ov1ARPuH6AukduF9XMyOz8dqUgDjOEDhuRT
-         0Rag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729268182; x=1729872982;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N7UdTrbaZ/hJPfr6th5jKszoKdJHe7S6bjSoYVBHtoo=;
-        b=JqVJnaA9Lm9EaMuQqZ6Yd/T/8kq7JzOFNCtdyiZY0ZvO+wQHwdihPtNSvGH16eK2kE
-         GPQlxJlnQgSvhZkE1MUqBRz/KiwfEhdc7LbBIuhvLOXXjqlJzLPpni8jvfirsiBwmArr
-         7syWP0N8V6QutINua24m8e7ISHAwlHqFfdwVr31yl4Nm9aEVtVMobEbc3TrCCE0hPrWz
-         7DhplL5HmzymOuqNFlsftmhKRvHBzfkqwgCk24oAlJnxEi8t/vIpyUmSMAVqPKoQdhxc
-         I8v+5GUTI/yzAELszXlAQ6BXpJ8ZcL0vJpMUdVmNY7TymjtlG87cevcwMHNUQfH+vMYG
-         f61g==
-X-Forwarded-Encrypted: i=1; AJvYcCVqUqBqPLirjHRCtWwW0k/LkISBXDUrZq5o0YpijhteqIKmAFfAuPI2cErFaLT1lERoYBg7+zGJ1UNKKQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW4BBZ3gDAtS6l5+YJMmj8vNWBee4tCrGwNvE6y4GYsTMo9b2n
-	0vWBMlbCaSKCDc3T7vkpjmYXmR4tO48wbxWsOacEetgP3GoDRbTutUkIWQ==
-X-Google-Smtp-Source: AGHT+IHCGV45twwfqcMfJz9YHWQuN7/cuU2QIcKsAWSpTYsHu5Dhz68Kk9pWbR5+KOmbh2WK7Hu3hw==
-X-Received: by 2002:a05:6512:12cd:b0:539:968a:91a8 with SMTP id 2adb3069b0e04-53a154f8eafmr2121321e87.47.1729268182055;
-        Fri, 18 Oct 2024 09:16:22 -0700 (PDT)
-Received: from 127.0.0.1localhost ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68bc4cdesm113623266b.104.2024.10.18.09.16.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 09:16:21 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	asml.silence@gmail.com,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	linux-block@vger.kernel.org
-Subject: [PATCH for-next] nvme: use helpers to access io_uring cmd space
-Date: Fri, 18 Oct 2024 17:16:37 +0100
-Message-ID: <c274d35f441c649f0b725c70f681ec63774fce3b.1729265044.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1729268333; c=relaxed/simple;
+	bh=F323mCe8qSN2xMQlVszmsWxzyYuqUmdLoA1r7h9WV3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lDHyyw1wZi7kQxZWubs7wFDUCxniDOt/Nb663nnBMg2VtuPp/LKueZHYd5Kt+pWEmgA4xkl5DTnQcgMdgDXIzKckkCjiJtv0i3kcjtTjrsGiCHixVko46JXZa++nqNeOaV8MKHLG/NhgdADWK831O+HGlyHmpN0ekQ0o+sDPsg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=VzlrEF+s; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XVVJB6FQMz6ClSq5;
+	Fri, 18 Oct 2024 16:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1729268319; x=1731860320; bh=UZOvWd9Qdr/ICcHkPTjBkXNp
+	ReqYfNANXbD13j3yPbA=; b=VzlrEF+sa5/JCGuO0NnR/jFuALhH083kv+ExB8vk
+	5YNp7M0ui1R2CJHzoDdhkiwyPJioERh7UIggGaYtodtkPsePh42DqJ8bXKa6QHXJ
+	bPAKMy7Yb++Sjr4kgfPzq7g8mHdasUPcjNa8cTpPn9SQMsLla68j6NIN9vzDDTQ/
+	iW9EO1yXUQ5F+YPnWDpx2p5MPmR1G7m8mnMq5iBEdkRx2o+QZCfoU4sdzbXACY42
+	YwXNDesRJocfgmOMvI3FXCbJyxhoic7n6n7HLclz4pORGJE+/l7m30wzJz8szNpL
+	2cBBs6Df6+FvNo/mhvljvqsiwF5Lb/CkbWFIMoKhySHXRw==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id izSwHc7fHMsE; Fri, 18 Oct 2024 16:18:39 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XVVHx1z0Zz6ClV8W;
+	Fri, 18 Oct 2024 16:18:36 +0000 (UTC)
+Message-ID: <57798ab7-fc67-4606-900e-d221e028bd8f@acm.org>
+Date: Fri, 18 Oct 2024 09:18:34 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv8 3/6] block: introduce max_write_hints queue limit
+To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-nvme@lists.infradead.org, axboe@kernel.dk, hch@lst.de,
+ io-uring@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, joshi.k@samsung.com,
+ javier.gonz@samsung.com, Keith Busch <kbusch@kernel.org>
+References: <20241017160937.2283225-1-kbusch@meta.com>
+ <20241017160937.2283225-4-kbusch@meta.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241017160937.2283225-4-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Command implementations shouldn't be directly looking into io_uring_cmd
-to carve free space. Use an io_uring helper, which will also do build
-time size sanitisation.
+On 10/17/24 9:09 AM, Keith Busch wrote:
+> Drivers with hardware that support write hints need a way to export how
+> many are available so applications can generically query this.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- drivers/nvme/host/ioctl.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Something is missing from this patch, namely a change for the SCSI disk
+(sd) driver that sets max_write_hints to sdkp->permanent_stream_count.
 
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index 1d769c842fbf..6f351da7f049 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -404,7 +404,7 @@ struct nvme_uring_cmd_pdu {
- static inline struct nvme_uring_cmd_pdu *nvme_uring_cmd_pdu(
- 		struct io_uring_cmd *ioucmd)
- {
--	return (struct nvme_uring_cmd_pdu *)&ioucmd->pdu;
-+	return io_uring_cmd_to_pdu(ioucmd, struct nvme_uring_cmd_pdu);
- }
- 
- static void nvme_uring_task_cb(struct io_uring_cmd *ioucmd,
-@@ -634,8 +634,6 @@ static int nvme_ns_uring_cmd(struct nvme_ns *ns, struct io_uring_cmd *ioucmd,
- 	struct nvme_ctrl *ctrl = ns->ctrl;
- 	int ret;
- 
--	BUILD_BUG_ON(sizeof(struct nvme_uring_cmd_pdu) > sizeof(ioucmd->pdu));
--
- 	ret = nvme_uring_cmd_checks(issue_flags);
- 	if (ret)
- 		return ret;
--- 
-2.46.0
+> +What:		/sys/block/<disk>/queue/max_write_hints
+> +Date:		October 2024
+> +Contact:	linux-block@vger.kernel.org
+> +Description:
+> +		[RO] Maximum number of write hints supported, 0 if not
+> +		supported. If supported, valid values are 1 through
+> +		max_write_hints, inclusive.
 
+That's a bit short. I think it would help to add a reference to the
+aspects of the standards related to this attribute: permanent streams
+for SCSI and FDP for NVMe.
+
+> diff --git a/block/blk-settings.c b/block/blk-settings.c
+> index a446654ddee5e..921fb4d334fa4 100644
+> --- a/block/blk-settings.c
+> +++ b/block/blk-settings.c
+> @@ -43,6 +43,7 @@ void blk_set_stacking_limits(struct queue_limits *lim)
+>   	lim->seg_boundary_mask = BLK_SEG_BOUNDARY_MASK;
+>   
+>   	/* Inherit limits from component devices */
+> +	lim->max_write_hints = USHRT_MAX;
+>   	lim->max_segments = USHRT_MAX;
+>   	lim->max_discard_segments = USHRT_MAX;
+>   	lim->max_hw_sectors = UINT_MAX;
+> @@ -544,6 +545,8 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
+>   	t->max_segment_size = min_not_zero(t->max_segment_size,
+>   					   b->max_segment_size);
+>   
+> +	t->max_write_hints = min(t->max_write_hints, b->max_write_hints);
+> +
+>   	alignment = queue_limit_alignment_offset(b, start);
+>   
+
+I prefer that lim->max_write_hints is initialized to zero in
+blk_set_stacking_limits() and that blk_stack_limits() uses
+min_not_zero().
+
+Thanks,
+
+Bart.
 

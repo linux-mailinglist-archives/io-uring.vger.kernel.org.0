@@ -1,63 +1,73 @@
-Return-Path: <io-uring+bounces-3820-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3821-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B85E9A4396
-	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 18:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBAC9A444A
+	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 19:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C932B1C2384A
-	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 16:19:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B36011C21158
+	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 17:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA502038A8;
-	Fri, 18 Oct 2024 16:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866ED200C87;
+	Fri, 18 Oct 2024 17:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="VzlrEF+s"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="sOh04rHJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FFA2038AF;
-	Fri, 18 Oct 2024 16:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA8E14F136
+	for <io-uring@vger.kernel.org>; Fri, 18 Oct 2024 17:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729268333; cv=none; b=B5PXGCxh+RL8te7kJM9Kf6aiJMVGLvk90qckv0KGgXNEM4QsAcpojtd4eFfFkZEtq/JV4X31ueiTJ0tj8tgUclhQ0Fxf0F3g2cKLxm/un25RBaTqCZt3mn3db4EIkQTsAHY1dBqx5jQu2dtygSZPM2vyh/HBEq1FVMoYTV1PYAo=
+	t=1729271168; cv=none; b=Wpt3cFjeSZN5LtT6BP6NxJ9qr6F0LH12X9cl6TMohqbwuTVjHiB2gTbWHfn7YfwnVwpefu2IgjDcOk4BOBMGIjHRLa+rec+RpbB7g8aBjwn8x5mqvLk9QvsTysRYzB1NkDCwgqMuWNrZb3IqSBJmhC7mw0qy8iro1GhD9vmBl6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729268333; c=relaxed/simple;
-	bh=F323mCe8qSN2xMQlVszmsWxzyYuqUmdLoA1r7h9WV3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lDHyyw1wZi7kQxZWubs7wFDUCxniDOt/Nb663nnBMg2VtuPp/LKueZHYd5Kt+pWEmgA4xkl5DTnQcgMdgDXIzKckkCjiJtv0i3kcjtTjrsGiCHixVko46JXZa++nqNeOaV8MKHLG/NhgdADWK831O+HGlyHmpN0ekQ0o+sDPsg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=VzlrEF+s; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XVVJB6FQMz6ClSq5;
-	Fri, 18 Oct 2024 16:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1729268319; x=1731860320; bh=UZOvWd9Qdr/ICcHkPTjBkXNp
-	ReqYfNANXbD13j3yPbA=; b=VzlrEF+sa5/JCGuO0NnR/jFuALhH083kv+ExB8vk
-	5YNp7M0ui1R2CJHzoDdhkiwyPJioERh7UIggGaYtodtkPsePh42DqJ8bXKa6QHXJ
-	bPAKMy7Yb++Sjr4kgfPzq7g8mHdasUPcjNa8cTpPn9SQMsLla68j6NIN9vzDDTQ/
-	iW9EO1yXUQ5F+YPnWDpx2p5MPmR1G7m8mnMq5iBEdkRx2o+QZCfoU4sdzbXACY42
-	YwXNDesRJocfgmOMvI3FXCbJyxhoic7n6n7HLclz4pORGJE+/l7m30wzJz8szNpL
-	2cBBs6Df6+FvNo/mhvljvqsiwF5Lb/CkbWFIMoKhySHXRw==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id izSwHc7fHMsE; Fri, 18 Oct 2024 16:18:39 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XVVHx1z0Zz6ClV8W;
-	Fri, 18 Oct 2024 16:18:36 +0000 (UTC)
-Message-ID: <57798ab7-fc67-4606-900e-d221e028bd8f@acm.org>
-Date: Fri, 18 Oct 2024 09:18:34 -0700
+	s=arc-20240116; t=1729271168; c=relaxed/simple;
+	bh=WJbZ24j6V5koJNX1drew5DflLKsWPQ4IY4zVqD0rl8A=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jnkO/Lt0B2vVxrZD7NpbrmLDhvtW8FbjAcIBNGwZmnuNn6VYQQWsth/T+kBxeU1Sssy2wyQKfKXx1rl2CNzRNllMd+rsX8U6ECMFjHlEHZSvt7jGrSD9EHxVPO8BoxuyxBzTB/aqgdvtBPMPI9uKy2wH+HPqUuCjQRa1JMxdDi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=sOh04rHJ; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-83aad8586d3so114018839f.1
+        for <io-uring@vger.kernel.org>; Fri, 18 Oct 2024 10:06:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729271163; x=1729875963; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3mTlifwcgCgggi4OKcdW+BAN0zmU3K4EAmzWfBTmXig=;
+        b=sOh04rHJ28V1TkycCbxN61l8Ryoa0lDSgv4km8nrK4BA5GHjtw0eTp5UVznR3JdlaF
+         BAZ1OgWruOPu9l6ZhbhEKGzSo2XSLOwUai25L8hKFqHxlH4jnK17xPaTqjusfWqwydpD
+         NV7yy50fVrTbX8AGiKyE9xqiwB1YqKwszft/6mdZT6EcSuOh6w8sLjVHfJX6zvFdTpgS
+         iuNUNw3w5tlwB23TlxDTWsbfSBUrKb7mQC8OZehihDZ6O+M+5XVqyeMyjoi0SwAC5HtX
+         Y0Z6X9cMxpZTyn03INtrhlhdxw7aLvjhHFETJNuRykflot813U4UXu4cccsCf5SlA6lJ
+         HvtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729271163; x=1729875963;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3mTlifwcgCgggi4OKcdW+BAN0zmU3K4EAmzWfBTmXig=;
+        b=OEFYnr2PN5coY8ho8eYNDYj8uAWn6WWLOHPq3lEBD0C3dvX21eTZj3TXFzH49sns7/
+         vIBMBHtiJ0eXbH5V4XfX3m84qX8OTi/G0iBhnQ6bR81V3D9lzVjdV1alZKA1KZdats2z
+         55lW4H4QsT1Ej6cyk/qrvLEUTAXW10WsngIepnQkhljRTRhh9eXF6F5JVGHwAsJz3oSk
+         YscLNoF0kEQXiGRc6VtXKVTgsQar2ZNw9jSI4QK4nbD3IW8fWz5VnRjErarWal91A1c4
+         RYpcXogRaQlNUvJVx8iKL7g2dljxk1Nw+Q3125chav4dllOVBBWUvcYKzhZ6snvE6f4q
+         +Rhw==
+X-Gm-Message-State: AOJu0YxMPxOBhWQtCKWbLuf0uObWjVCNkuva8ZDCAEt3fT38Um+DfX6C
+	2gdALczGOf7DGlqBe26ucJNLuMqMlnOISZj7TA3dD+jbuPSb33n43ku5hceO0pT9oDHdZpgdeaW
+	3
+X-Google-Smtp-Source: AGHT+IFYc6ckgikebdPFdvGBcexOrtFxegkRE/fYrOMBpTX6pZMv/o5mf/xUEe2qCpVpF70yioRYHQ==
+X-Received: by 2002:a05:6e02:1548:b0:3a0:9cd5:931c with SMTP id e9e14a558f8ab-3a3f409f34amr33193225ab.20.1729271163309;
+        Fri, 18 Oct 2024 10:06:03 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3f403a70fsm4834025ab.80.2024.10.18.10.06.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 10:06:02 -0700 (PDT)
+Message-ID: <ac3e8b7b-fa02-4a70-bd1e-80ab3da328af@kernel.dk>
+Date: Fri, 18 Oct 2024 11:06:02 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -65,65 +75,57 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv8 3/6] block: introduce max_write_hints queue limit
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org, axboe@kernel.dk, hch@lst.de,
- io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, joshi.k@samsung.com,
- javier.gonz@samsung.com, Keith Busch <kbusch@kernel.org>
-References: <20241017160937.2283225-1-kbusch@meta.com>
- <20241017160937.2283225-4-kbusch@meta.com>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241017160937.2283225-4-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.12-rc4
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/17/24 9:09 AM, Keith Busch wrote:
-> Drivers with hardware that support write hints need a way to export how
-> many are available so applications can generically query this.
+Hi Linus,
 
-Something is missing from this patch, namely a change for the SCSI disk
-(sd) driver that sets max_write_hints to sdkp->permanent_stream_count.
+Just a few odd fixes that should make it into -rc4:
 
-> +What:		/sys/block/<disk>/queue/max_write_hints
-> +Date:		October 2024
-> +Contact:	linux-block@vger.kernel.org
-> +Description:
-> +		[RO] Maximum number of write hints supported, 0 if not
-> +		supported. If supported, valid values are 1 through
-> +		max_write_hints, inclusive.
+- Fix a regression this merge window where cloning of registered buffers
+  didn't take into account the dummy_ubuf.
 
-That's a bit short. I think it would help to add a reference to the
-aspects of the standards related to this attribute: permanent streams
-for SCSI and FDP for NVMe.
+- Fix a race with reading how many SQRING entries are available, causing
+  userspace to need to loop around io_uring_sqring_wait() rather than
+  being able to rely on SQEs being available when it returned.
 
-> diff --git a/block/blk-settings.c b/block/blk-settings.c
-> index a446654ddee5e..921fb4d334fa4 100644
-> --- a/block/blk-settings.c
-> +++ b/block/blk-settings.c
-> @@ -43,6 +43,7 @@ void blk_set_stacking_limits(struct queue_limits *lim)
->   	lim->seg_boundary_mask = BLK_SEG_BOUNDARY_MASK;
->   
->   	/* Inherit limits from component devices */
-> +	lim->max_write_hints = USHRT_MAX;
->   	lim->max_segments = USHRT_MAX;
->   	lim->max_discard_segments = USHRT_MAX;
->   	lim->max_hw_sectors = UINT_MAX;
-> @@ -544,6 +545,8 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
->   	t->max_segment_size = min_not_zero(t->max_segment_size,
->   					   b->max_segment_size);
->   
-> +	t->max_write_hints = min(t->max_write_hints, b->max_write_hints);
-> +
->   	alignment = queue_limit_alignment_offset(b, start);
->   
+- Ensure that the SQPOLL thread is TASK_RUNNING before running task_work
+  off the cancelation exit path.
 
-I prefer that lim->max_write_hints is initialized to zero in
-blk_set_stacking_limits() and that blk_stack_limits() uses
-min_not_zero().
+Please pull!
 
-Thanks,
 
-Bart.
+The following changes since commit f7c9134385331c5ef36252895130aa01a92de907:
+
+  io_uring/rw: allow pollable non-blocking attempts for !FMODE_NOWAIT (2024-10-06 20:58:53 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/io_uring-6.12-20241018
+
+for you to fetch changes up to 8f7033aa4089fbaf7a33995f0f2ee6c9d7b9ca1b:
+
+  io_uring/sqpoll: ensure task state is TASK_RUNNING when running task_work (2024-10-17 08:38:04 -0600)
+
+----------------------------------------------------------------
+io_uring-6.12-20241018
+
+----------------------------------------------------------------
+Jens Axboe (3):
+      io_uring/sqpoll: close race on waiting for sqring entries
+      io_uring/rsrc: ignore dummy_ubuf for buffer cloning
+      io_uring/sqpoll: ensure task state is TASK_RUNNING when running task_work
+
+ io_uring/io_uring.h | 10 +++++++++-
+ io_uring/rsrc.c     |  3 ++-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+-- 
+Jens Axboe
+
 

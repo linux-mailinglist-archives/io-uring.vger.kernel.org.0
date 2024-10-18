@@ -1,86 +1,145 @@
-Return-Path: <io-uring+bounces-3832-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3833-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726849A460D
-	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 20:44:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9969A4707
+	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 21:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386FB2858B6
-	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 18:44:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C5151C20C47
+	for <lists+io-uring@lfdr.de>; Fri, 18 Oct 2024 19:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45145202F71;
-	Fri, 18 Oct 2024 18:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5385D17E015;
+	Fri, 18 Oct 2024 19:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EB2sAJbv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdxVjwNA"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520842038BD;
-	Fri, 18 Oct 2024 18:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7C4757F3
+	for <io-uring@vger.kernel.org>; Fri, 18 Oct 2024 19:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729277073; cv=none; b=daqXYCouPjW4dSoU2JlF7B5Qd9v0pgT5o3RzlZsbS8abP56pOtMcCXk7+7NlWbC2Vs+ubv7bxYoYSozYLU3t5cD0LzD2cs8Rw1DPHOSJ+aVdhXLZyWLOPd1emwm+f8hgMzwQubE2v2x51g8Xz/vkDl5Lkz0KQ4UmaSUxDaamvlI=
+	t=1729280051; cv=none; b=eqZTW+x3lB6e4+GFL4pQ3HZWAFvdvWf6ocxnu6uW+EVWE2ROM8VRHFaidNxRD6t15xpAqZ/Ji1lUVvCpeFiRbVS2xdZ33rf5S672+hwkjALPUNCS5aYeVv2ZQNb0IhLYdUtdgbeCYkC0owTqcGPZ9JU8/lSMh/hu0s5J1L0TpoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729277073; c=relaxed/simple;
-	bh=O/Pd0MtD0eJiwbPuzLhvxnxopeoCFeBWmTgyugx7VjQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DrmnjIJDLNFF9qxbcbhAbwH3F0fQRSexKybG1xZ8dcrKIAXLxr8AxGOdSBIc0KKPHgekBktTlZMri3vUsYP3eYkqCLyifKvRxd3j3kwN/iT+/kP+a3Y8nFV9thADswLneaHX7HaC30TuNBbO2AX4uhEGjAcmwpU91cdI6tKLSdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EB2sAJbv; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1729280051; c=relaxed/simple;
+	bh=bhgixIJUxp6gvX/z7IKrZWXYe9b06adrUhE2/3+FOx8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dlERCkQXkh/9TVr2QrizyfiEJNIMnCh7z66pe6ik9b4TmXHZGx23qq7x6TlwMcippTq2tX2X75xjIGPk6b9xC2O4EeBKZubJMXrQNDJLrsbr0NLVDtWgmImE1hF+8HOob1HExigDUuM2+Wd8QZPRFz/n4SufqqchRpwzMeQuNLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UdxVjwNA; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c40aea5c40so4375317a12.0;
-        Fri, 18 Oct 2024 11:44:31 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a99c0beaaa2so394405166b.1
+        for <io-uring@vger.kernel.org>; Fri, 18 Oct 2024 12:34:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729277069; x=1729881869; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O/Pd0MtD0eJiwbPuzLhvxnxopeoCFeBWmTgyugx7VjQ=;
-        b=EB2sAJbvUreS5OnRLlDjb0pjyzau6Q6A+JxkMl2RZNrWy16FetEvFi/54LPw2yBKMr
-         EF3H1mekEdnAQvo/1dU5V5pMiCvYqjRv2fXeReGbMAIK//RqxEel9kPMz0obHds5LYon
-         EsUfXn4jtYcyzGPSlzoiQ0hrclzef1lu3FEhgOzQInpBaY+IJkjYM+26a7EAdifYdRYW
-         J1KX//1Pugw0R9+Mrrjx8flXKpkOo1MAdZWMiZwxa98ri5HkMBwcqg5D8A99Aoe1JvuF
-         tm8sfeMsXd4dKIj2lPyoEy0rt138raSHq15HXliS0B48mtLh8/GmdHQsHLsqhvW/xN3s
-         rTEQ==
+        d=gmail.com; s=20230601; t=1729280047; x=1729884847; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WEwXk/yBj3sfyc9p/8LTjU4QNIeRICrgt8jgXQGKOQI=;
+        b=UdxVjwNATxKQxJTNZwGE52b3uY3AvB6uDsc+4/MVSv3O6uYmMOgViw0+MJ0FepzBLI
+         UMEA6HXh5eNMYV8glFrSLubwnfLphzmVoBJu1bmaLMnupRp1EVqGFSEhjZk+4wV75UKp
+         gGABjN0XeEGSrB9+FfPTKc1B2Gn19q03ZZsiAHDSfaytYVzSOf9d3iL7TnxCkut26n/G
+         zXMSnm85JIE6firmUrtxS+1Wkd3nTRaWMI3ndDIVHWXGzqaYyYnTthsrCYVlkr8OEfZK
+         zsRyok4h7y5UG9ZxiQttYc+C+gEwUarW0ii+4tmlcfgA9bKdg7EXlV4QSlmM18HoSUIm
+         rItQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729277069; x=1729881869;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O/Pd0MtD0eJiwbPuzLhvxnxopeoCFeBWmTgyugx7VjQ=;
-        b=DXddNU+Cwpu0CQdNI6FUc6zjJ5EvxFMg/5GMRwcu+xRUdb9gsxY6MkvE3r1pej9+cH
-         uLeuVk5WkS1JVl0se4cBpNohbPLKPkb0A0MvMUFVILUtcY8N8RnJCh81i9hFK3CJQqyR
-         zV+Rgff/VKCmkyReEs9d4iExxrM3kXvqQYNIZRkezdYjQM0KEQcihP9f7C+XYjz5+4hG
-         IyyMHJMtfLzEatRXzDBz9uga7GF1IErF4BWSQaqvjIOcv1teewig0fy9SvuPx++JgPlP
-         ZmPB00tJXGmY9D6Zm3sCCFxvWmk5ahsPrBPfAEaboacnaZSu5s6n/Umo/aT4c8ZmB1fg
-         U4hw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlFkTXd/Djrdaphu/jhf7zJqWgZBI5DNOpzwuRKG1TPaRQtwBOgysIoe6g6Exd97HKE/bC0wmDj2Gyag==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHbbsOOW9+66raCIGaVPw0zrKvB2U6PJvdCad37+1ISOmXw8FB
-	vvBF6sKRpvVZ0P5qjEctQ5A/gUM9qFeEL3WgjYK7CvHnbGuztewCEN0gF4sBMspqNwqgx1epKJH
-	Sh+jxgT2xPDV5DvojEgXpIZBpMA==
-X-Google-Smtp-Source: AGHT+IHHW6d2BwI20vTw3bL79dV1JBvE1L2wF7p7qJZ7DPM9wWwxfLJvqtw7jR3OEKHBedug0VZ1O3UfHh1pFrPBhDw=
-X-Received: by 2002:a05:6402:3594:b0:5c9:85ce:d9cd with SMTP id
- 4fb4d7f45d1cf-5ca0b083da2mr3770993a12.3.1729277069427; Fri, 18 Oct 2024
- 11:44:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729280047; x=1729884847;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WEwXk/yBj3sfyc9p/8LTjU4QNIeRICrgt8jgXQGKOQI=;
+        b=GTCWXKTfoecFyPcg0rTxIqAIWDik21wUJUO4wzsz3f3WXidyBgIJ1x8MzVA3Cc/HaN
+         GZTRX91mjpapGuLoB348gUxBMabNmEEaHV5DZ6fc3VMnSbmEwAtuniKhDhlypsUQ7A+e
+         LR44jW3GxIcxFnhz9SdZLoe5u9rBN7zYZt7snUgMXQiIHHReFrIGPAA1XIMKamZrQ7yp
+         YuOMfFUDsLQ935z7hxjDiLach81tk1kUgWW7/pcDH/VD0NhnjYI1NbCMpLJdWeFAl2zZ
+         UiA48/JNbvbn6/VJwvqJBIWSOEBh5m87X39N9ysRFkXcNZK62bqjIseHKKLfbiCXlUHf
+         vRqw==
+X-Forwarded-Encrypted: i=1; AJvYcCURWkFoIGCUXCODeImv172NASDATwqxcLmeQtlnwIWBEU8YvZNwkj6TsHzTZvUKyVISe1EMv2W+PQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaOkmYQJsbaNZOcvh6IYr5PS3FR16GRyYCNP+EFH6rGpTx5a6X
+	7LEPVyRBAaD/3MaHKhM/pFSUX0oC+CjfC7ryyiJqwTmB3meL5J0m
+X-Google-Smtp-Source: AGHT+IFNbAKGnY3QHbUoEuUTvTvpEbaMYF95FkFJO2OcKFvephaGG4aJCLSSZuKaA8Jk8P268kr+eA==
+X-Received: by 2002:a17:907:94d4:b0:a99:f56e:ce40 with SMTP id a640c23a62f3a-a9a69c9e9c1mr347479866b.47.1729280047175;
+        Fri, 18 Oct 2024 12:34:07 -0700 (PDT)
+Received: from [192.168.42.145] ([85.255.237.171])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68bf4342sm130262366b.152.2024.10.18.12.34.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Oct 2024 12:34:06 -0700 (PDT)
+Message-ID: <19d5a8bd-60cd-496f-a7ba-ffde5dd2e906@gmail.com>
+Date: Fri, 18 Oct 2024 20:34:25 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c274d35f441c649f0b725c70f681ec63774fce3b.1729265044.git.asml.silence@gmail.com>
-In-Reply-To: <c274d35f441c649f0b725c70f681ec63774fce3b.1729265044.git.asml.silence@gmail.com>
-From: Anuj gupta <anuj1072538@gmail.com>
-Date: Sat, 19 Oct 2024 00:13:52 +0530
-Message-ID: <CACzX3Atv=iXPvGVLyZinh64AF=tSivoxxGDAzy34Bz+Lg8+KZQ@mail.gmail.com>
-Subject: Re: [PATCH for-next] nvme: use helpers to access io_uring cmd space
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] io_uring/uring_cmd: get rid of using req->imu
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20241018183948.464779-1-axboe@kernel.dk>
+ <20241018183948.464779-2-axboe@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241018183948.464779-2-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Looks good:
-Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
+On 10/18/24 19:38, Jens Axboe wrote:
+> It's pretty pointless to use io_kiocb as intermediate storage for this,
+> so split the validity check and the actual usage.
+
+The table is uring_lock protected, if we don't resolve in advance
+we should take care of locking when importing.
+
+Another concern is adding a gap b/w setting a rsrc node and looking
+up a buffer. That should be fine, but worth mentioning that when
+you grab a rsrc node it also prevent destruction of all objects that
+are created after this point.
+
+  
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>   io_uring/uring_cmd.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> index 39c3c816ec78..cc8bb5550ff5 100644
+> --- a/io_uring/uring_cmd.c
+> +++ b/io_uring/uring_cmd.c
+> @@ -211,11 +211,10 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>   		struct io_ring_ctx *ctx = req->ctx;
+>   		u16 index;
+>   
+> -		req->buf_index = READ_ONCE(sqe->buf_index);
+> +		index = READ_ONCE(sqe->buf_index);
+> +		req->buf_index = array_index_nospec(index, ctx->nr_user_bufs);
+>   		if (unlikely(req->buf_index >= ctx->nr_user_bufs))
+>   			return -EFAULT;
+
+The rsrc should hold the table destruction, but it feels like it
+should better move where importing happens.
+
+
+> -		index = array_index_nospec(req->buf_index, ctx->nr_user_bufs);
+> -		req->imu = ctx->user_bufs[index];
+>   		io_req_set_rsrc_node(req, ctx, 0);
+>   	}
+>   	ioucmd->cmd_op = READ_ONCE(sqe->cmd_op);
+> @@ -272,8 +271,10 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+>   			      struct iov_iter *iter, void *ioucmd)
+>   {
+>   	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
+> +	struct io_mapped_ubuf *imu;
+>   
+> -	return io_import_fixed(rw, iter, req->imu, ubuf, len);
+> +	imu = req->ctx->user_bufs[req->buf_index];
+> +	return io_import_fixed(rw, iter, imu, ubuf, len);
+>   }
+>   EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed);
+>   
+
+-- 
+Pavel Begunkov
 

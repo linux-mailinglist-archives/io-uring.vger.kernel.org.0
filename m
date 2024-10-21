@@ -1,196 +1,222 @@
-Return-Path: <io-uring+bounces-3843-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3844-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4399C9A59E5
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 07:46:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F419A66ED
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 13:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BF9A1C2102D
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 05:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7161C21BEA
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 11:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DC119938D;
-	Mon, 21 Oct 2024 05:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D123E1E3DE4;
+	Mon, 21 Oct 2024 11:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YQp+am13"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="gzK14w1Q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HrTqniu+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861B219340D
-	for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 05:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589BE78C76;
+	Mon, 21 Oct 2024 11:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729489579; cv=none; b=bgDJdvDqztQBjiSzHxd/KPV5eJ9n2DGxjNFNt1zh4t1mcfOrUzPIfdlYKJDaTEgxobmhDBirHLeUEWH8178KaCcUdhrcjDaujlJDJrbmODSeXmFvlIFqbP9IWKtWOgTChHr0WW+BTqnX9ShPgi3I+WWYOM6kwxyy67qP5ekTyjM=
+	t=1729511227; cv=none; b=NmE7uQVcw+yQOFkDSyFDVzjqAbWOOSZd3TSrCAsp4DUHxPqbT4T3WvWif5IG8/eL8SO6h/7r5hg9mmQbBh38HkokTvnV3w90v7KgZHIy/GMfO2ISDQiAzzzPM5Lr37x3OHqnDeeRQ3T1JKwp7Dx1Ug4jszpVTounCJRYA/c5GuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729489579; c=relaxed/simple;
-	bh=WYR0bDNkGe9X68XYEReTJwExKJCaA46pObJ2KdmkveU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=j7PyE5IMF+9OmTbMG4abYRzrJRlwFcJKh2pbMEYduQQvf3/L1viCswjBPXlEHrNXiNARApVFkAd0bFpQv35lvT1GOxEtD9iBMyrGuBRn8hDdtdyE216C81ub6qxuzAW7rs6sZ5L33FYwQuzAny89pC9mGXtZhM9vEpkoNjYTUxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YQp+am13; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241021054614epoutp04310763c2bfa94726bcf64cd7adc189b9~AYZrj9p9r1855118551epoutp04E
-	for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 05:46:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241021054614epoutp04310763c2bfa94726bcf64cd7adc189b9~AYZrj9p9r1855118551epoutp04E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1729489574;
-	bh=Ulf1ksMYUE48Lu6prNlTGdKuI66NQr+PY9q1T25et7A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YQp+am13l49BWM9zrOhUQjf4CeeUczK3XUhEluSRV8gbIbOeRqHa5Ap1SKKL9ITtG
-	 owkWmZ2KfG65fts3vCmpmF3SD8Zvru0uqEzExuZjNweVEoWpP/zoYfFYjMw5DwjAMQ
-	 TJ1bDutIEulUFoBPyNU3l/rvF1WzuDAlHs6tvolo=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20241021054614epcas5p49b1b700178b50cab66292a5f758b4a99~AYZrGrJFc1969619696epcas5p4s;
-	Mon, 21 Oct 2024 05:46:14 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XX46q2lLmz4x9QB; Mon, 21 Oct
-	2024 05:46:11 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	31.3B.18935.3AAE5176; Mon, 21 Oct 2024 14:46:11 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241021053853epcas5p28278ac9cd4f6791bca8d676cf06d99c5~AYTQNEp_O2430924309epcas5p20;
-	Mon, 21 Oct 2024 05:38:53 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241021053853epsmtrp2824203125cc849df811967e71284722f~AYTQLzLCz2056520565epsmtrp2i;
-	Mon, 21 Oct 2024 05:38:53 +0000 (GMT)
-X-AuditID: b6c32a50-cb1f8700000049f7-14-6715eaa32d47
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	40.A0.08227.CE8E5176; Mon, 21 Oct 2024 14:38:52 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241021053850epsmtip27568a368b48baf3fd3e276f32d38fe4a~AYTOKAtMD1344313443epsmtip2c;
-	Mon, 21 Oct 2024 05:38:50 +0000 (GMT)
-Date: Mon, 21 Oct 2024 11:01:10 +0530
-From: Anuj Gupta <anuj20.g@samsung.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: axboe@kernel.dk, kbusch@kernel.org, martin.petersen@oracle.com,
-	asml.silence@gmail.com, anuj1072538@gmail.com, krisman@suse.de,
-	io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-block@vger.kernel.org, gost.dev@samsung.com,
-	linux-scsi@vger.kernel.org, vishak.g@samsung.com, Kanchan Joshi
-	<joshi.k@samsung.com>
-Subject: Re: [PATCH v4 07/11] io_uring/rw: add support to send meta along
- with read/write
-Message-ID: <20241021053110.GA2720@green245>
+	s=arc-20240116; t=1729511227; c=relaxed/simple;
+	bh=icDWyVYuGoilzsVGsRx+OQFBkWifsF/RQ0kUHHKaSJg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ax719o0fP/07Memr7mEeKuJNNZ7kgsXUt1TSCRZI5X0KIvOm1q45N9QR8gzOjVvKG5+Za5p6y9XsTHenLLrIbq835egJhBmIEdQB7RYiP3NO6iMl4YNLTd2Fk/EsbiXhOJHF1+jjJwIjpFWiO8jC2N4RpcqSu2vAd2iuLO7ps0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=gzK14w1Q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HrTqniu+; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 250E225400BD;
+	Mon, 21 Oct 2024 07:47:04 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Mon, 21 Oct 2024 07:47:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1729511223;
+	 x=1729597623; bh=xYAIc9hKx/tsXstVKFR1tYRGW3CTN4RrIyyMbzt1Ldc=; b=
+	gzK14w1Q5xEOl2PE2aO1vwoatEZbK9kcXwqXAGrU/VzOnsVu1QSid2LuKTityoMR
+	OYGx1dGrpfCGtzssbiF9/ko7d1OTfiHydxoaRHATQaixBRqIx8ObFh+2WtKFzB0k
+	s5Iv7f0BsGarjuwEdZO4jpdckhqrtCsRFVjrpJeWp2FJ7N1OPgM/z1Fq9vUvZcu9
+	0RCakSfWrZq4f7mDsakpXfVAQo0EOYwcOP0Tx1HJ6eLa6MCGvu3glt4AwQejdM3X
+	kKl/PYjHHdCKkx+mDx1Ly267atBjSPzJUq0i/j4/lcWSAfWB2K1TNaw/54m17mKZ
+	NDNEbW8uHwh3VQgCyrMeIw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729511223; x=
+	1729597623; bh=xYAIc9hKx/tsXstVKFR1tYRGW3CTN4RrIyyMbzt1Ldc=; b=H
+	rTqniu+y6SgNFYWSCexJwmpOZnadEy9ctR5oalaWmx3katMjRjXnogc6novsTL2L
+	Hbrc/iRIfLqwqkR7t47lFcfPA8u9Q42hquFsm8GYlvAHjoSEeTI8Jn1SrA4IhucQ
+	N6DB8W7lbDWObditlq8R7JCcW5BZ83wfeHFsMP3YtnSKsSBK8CN7ZA0IjZtoZd38
+	5MFVandXKvh0wg+Mu/Tv27k+5/hOhqFl9++Zh6lUISjaN56LqSFZ1uVy3+FmYLYm
+	Y1ZWL0JzCiqhJKHD///CzApKbPT+KBeZVQWTSrxBoMA2TMJCp62RhQ9tfOdxSCmH
+	CFFP+G1vod7PhQX+CL0aQ==
+X-ME-Sender: <xms:Nz8WZ4Ei-2NqbzTqVMl2Wtul4Ew-YfgzsCFEVIQX2aDoD4Fm0oc1XQ>
+    <xme:Nz8WZxWzzye_IKK67wpSoSZ-YIQx0FLASso1NQXO2qfJydfPo5GWuaKr3t0KS4Rq5
+    HTSEyzDpA57b6tg>
+X-ME-Received: <xmr:Nz8WZyJ2ENM_OPkvFSRbZYkZqHesHgWKeSpdv9s13KiCCWQpF4DXBkGzSGOiqlaZ0g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledggeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfhffuvfevfhgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepffduhfegvdetfedt
+    teeihfdvfeehlefhgfehkefgveeugedvfedtheekledthedtnecuffhomhgrihhnpegrkh
+    grrdhmshdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghr
+    rghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
+    drfhhmpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepugifsegurghvihgufigvihdruhhkpdhrtghpthhtohepmhhikhhlohhssehsiigvrh
+    gvughirdhhuhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthht
+    oheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinh
+    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehi
+    ohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnh
+    hnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopegrmhhirhejfehilhes
+    ghhmrghilhdrtghomhdprhgtphhtthhopehtohhmrdhlvghimhhinhhgsehgmhgrihhlrd
+    gtohhm
+X-ME-Proxy: <xmx:Nz8WZ6FEYFDDckzqhZOvVpiyHHFnQnGa8RTbAYki9kqT79PU9J03tw>
+    <xmx:Nz8WZ-WiVdXxekYyIE3RYCz7kc8Wyyja6TDiMs53WrZpSliweumb_w>
+    <xmx:Nz8WZ9O10gcHQJoNY-TkPSjpOnne7CQliRxYEt9WOu0_W_zUnVir1w>
+    <xmx:Nz8WZ12ONK-5FY41UPYeMTSGRx5n2SDDLoR0tgo7qntmKNmv81w3ng>
+    <xmx:Nz8WZ3O4LhZkknl5B0LW9zkZPFFZ6_1usyFjK8qmsX7xxNIMgGc2lT0_>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Oct 2024 07:47:02 -0400 (EDT)
+Message-ID: <ed03c267-92c1-4431-85b2-d58fd45807be@fastmail.fm>
+Date: Mon, 21 Oct 2024 13:47:00 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241017081057.GA27241@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEJsWRmVeSWpSXmKPExsWy7bCmlu7iV6LpBjOv8Fl8/PqbxWLOqm2M
-	Fqvv9rNZ3Dywk8li5eqjTBbvWs+xWBz9/5bNYtKha4wW288sZbbYe0vbYv6yp+wW3dd3sFks
-	P/6PyeL8rDnsDnweO2fdZfe4fLbUY9OqTjaPzUvqPXbfbGDz+Pj0FotH35ZVjB6bT1d7fN4k
-	F8AZlW2TkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3S5
-	kkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafApECvODG3uDQvXS8vtcTK0MDAyBSo
-	MCE74+GLf8wFX/kr7i6+x9jA+IWni5GTQ0LAROLdnU3sXYxcHEICexglDp1ZzAbhfGKU2Ppj
-	BlTmG6PEwaOX2WBa7p5oYoVI7GWUmLDyGSOE84xR4teU+ewgVSwCqhLP/j8Hs9kE1CWOPG9l
-	BLFFBJQknr46C9bALHCBSeLQ5b9gY4UFoiVmvv8BVsQroCPxfNlPKFtQ4uTMJywgNidQ/Oif
-	16wgtqiAssSBbceZQAZJCJzhkJh1egIzxH0uEu9nnmCFsIUlXh3fwg5hS0l8frcX6od0iR+X
-	nzJB2AUSzcf2MULY9hKtp/rB5jALZEgcPnUIqldWYuqpdUwQcT6J3t9PoHp5JXbMg7GVJNpX
-	zoGyJST2nmuAsj0kFn/dCw2v+4wSX/bNZJvAKD8LyXOzkOyDsHUkFuz+xDaLkQPIlpZY/o8D
-	wtSUWL9LfwEj6ypGqdSC4tz01GTTAkPdvNRyeKQn5+duYgQnbq2AHYyrN/zVO8TIxMF4iFGC
-	g1lJhFepRDRdiDclsbIqtSg/vqg0J7X4EKMpMLomMkuJJucDc0deSbyhiaWBiZmZmYmlsZmh
-	kjjv69a5KUIC6YklqdmpqQWpRTB9TBycUg1MuczGB0Ojty6PLb8hb7jDbcVH4QYHs5XhCkv3
-	T72o/3TRO4P6XSoJju/b+NtaTeR1X0zdFhTfZ3RccktmCP/n/5slP+yq4ppY7ZNZ22NVdfu9
-	6ZUrdbIMPinxdYq177+u23Ey7+ekO18e/JPcp3vso/hqvi8ic5mDbbZ/fpLvsIpderlMa522
-	zbZ5z9Z9Fpc9IByuUBYTvvbFy9baE2Y2J/2X7N9c6sWiOffWo6v5BzW/bIkWPvNkW4AWk+p0
-	n8ylBya0cl5548TUf0LpjfnXV2eTzVkjfRx4Nn/+ppo0Obv4w5pHLQbH6/J2N883euM4/cJV
-	40me5jyZcQusnin9PPPzkn2B36YuKd6rFi2LlViKMxINtZiLihMBZMA/GGUEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSvO6bF6LpBs83mVt8/PqbxWLOqm2M
-	Fqvv9rNZ3Dywk8li5eqjTBbvWs+xWBz9/5bNYtKha4wW288sZbbYe0vbYv6yp+wW3dd3sFks
-	P/6PyeL8rDnsDnweO2fdZfe4fLbUY9OqTjaPzUvqPXbfbGDz+Pj0FotH35ZVjB6bT1d7fN4k
-	F8AZxWWTkpqTWZZapG+XwJXRvfQbS8FW3orP2xazNjCe5epi5OSQEDCRuHuiibWLkYtDSGA3
-	o8TxmV+ZIBISEqdeLmOEsIUlVv57zg5R9IRRov/qd7AiFgFViWf/QRKcHGwC6hJHnreCNYgI
-	KEk8fXWWEaSBWeACk8S2JW+YQRLCAtESM9//ACviFdCReL7sJyPE1PuMEqfPtDBDJAQlTs58
-	wgJiMwtoSdz49xJoGweQLS2x/B8HSJgTqPfon9esILaogLLEgW3HmSYwCs5C0j0LSfcshO4F
-	jMyrGCVTC4pz03OLDQuM8lLL9YoTc4tL89L1kvNzNzGCo01LawfjnlUf9A4xMnEwHmKU4GBW
-	EuFVKhFNF+JNSaysSi3Kjy8qzUktPsQozcGiJM777XVvipBAemJJanZqakFqEUyWiYNTqoFJ
-	sO3yqnksO3Zm9R3OaOfgWBI263OCYGjVsbkru33uy90NPNifJdS5nVm+ueHz05zDJ5/bf9W7
-	+XdyKL/WN+4VNglbeyY95zvEl/B69doq0aOF+94uyVY/r7vYMkM50sdW5c7kebJzIvsnVOhv
-	ZErhc3hw5KqwUBXvhN9PBXIOcvn9Pru4U3qJTH7ATK8Ug03vD5/K7pNpej33v/mrB2wnw/rt
-	HFsvGnfrnPrFNelKhXSCjcusnyde+tpIu+nmVK/MKFOTqv2zXCpZISxuQl3rj/21ix6fOW8c
-	Jcbm/idJymlxOJdNhtyDFQ8eLHX/vjb/pt5Cdu7rbx0zNrzfyv1A3c7lQZzmPdeMMr3/ty2U
-	WIozEg21mIuKEwEHf0/iJQMAAA==
-X-CMS-MailID: 20241021053853epcas5p28278ac9cd4f6791bca8d676cf06d99c5
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----Q5hryimWBrG20CTDo2Cycv07rC8cEZ5s1mVzGfufIajJO9l9=_5d1e1_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241016113747epcas5p4e276eb0da2695ba032ce1d2a3b83fff4
-References: <20241016112912.63542-1-anuj20.g@samsung.com>
-	<CGME20241016113747epcas5p4e276eb0da2695ba032ce1d2a3b83fff4@epcas5p4.samsung.com>
-	<20241016112912.63542-8-anuj20.g@samsung.com>
-	<20241017081057.GA27241@lst.de>
+User-Agent: Mozilla Thunderbird
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Subject: Re: [PATCH RFC v4 00/15] fuse: fuse-over-io-uring
+To: David Wei <dw@davidwei.uk>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, Josef Bacik <josef@toxicpanda.com>
+References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+ <38c76d27-1657-4f8c-9875-43839c8bbe80@davidwei.uk>
+Content-Language: en-US
+In-Reply-To: <38c76d27-1657-4f8c-9875-43839c8bbe80@davidwei.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-------Q5hryimWBrG20CTDo2Cycv07rC8cEZ5s1mVzGfufIajJO9l9=_5d1e1_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+Hi David,
 
-> What is the meta_type for?  To distintinguish PI from non-PI metadata?
-
-meta_type field is kept so that meta_types beyond integrity can also
-be supported in future. Pavel suggested this to Kanchan when this was
-discussed in LSF/MM.
-
-> Why doesn't this support non-PI metadata?
-
-It supports that. We have tested that (pi_type = 0 case).
-
-> Also PI or TO_PI might be
-> a better name than the rather generic integrity.  (but I'll defer to
-> Martin if he has any good arguments for naming here).
-
-Open to a different/better name.
-
+On 10/21/24 06:06, David Wei wrote:
+> [You don't often get email from dw@davidwei.uk. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
 > 
-> >  static bool need_complete_io(struct io_kiocb *req)
-> >  {
-> > +	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
-> > +
-> > +	/* Exclude meta IO as we don't support partial completion for that */
-> >  	return req->flags & REQ_F_ISREG ||
-> > -		S_ISBLK(file_inode(req->file)->i_mode);
-> > +		S_ISBLK(file_inode(req->file)->i_mode) ||
-> > +		!(rw->kiocb.ki_flags & IOCB_HAS_METADATA);
-> >  }
+> On 2024-10-15 17:05, Bernd Schubert wrote:
+> [...]
+>>
+
+...
+
+> Hi Bernd, I applied this patchset to io_uring-6.12 branch with some
+> minor conflicts. I'm running the following command:
 > 
-> What partial ocmpletions aren't supported?  Note that this would
-> trigger easily as right now metadata is only added for block devices
-> anyway.
-
-It seems that this scenario is less likely to happen. The plumbing
-seemed a bit non trivial. I have the plan to look at it, once the
-initial version of this series goes in.
-
+> $ sudo ./build/example/passthrough_hp -o allow_other --debug-fuse --nopassthrough \
+> --uring --uring-per-core-queue --uring-fg-depth=1 --uring-bg-depth=1 \
+> /home/vmuser/scratch/source /home/vmuser/scratch/dest
+> FUSE library version: 3.17.0
+> Creating ring per-core-queue=1 sync-depth=1 async-depth=1 arglen=1052672
+> dev unique: 2, opcode: INIT (26), nodeid: 0, insize: 104, pid: 0
+> INIT: 7.40
+> flags=0x73fffffb
+> max_readahead=0x00020000
+>     INIT: 7.40
+>     flags=0x4041f429
+>     max_readahead=0x00020000
+>     max_write=0x00100000
+>     max_background=0
+>     congestion_threshold=0
+>     time_gran=1
+>     unique: 2, success, outsize: 80
 > 
-> > +	if (unlikely(kiocb->ki_flags & IOCB_HAS_METADATA)) {
+> I created the source and dest folders which are both empty.
 > 
-> For a workload using metadata this is everything but unlikely.  Is
-> there a specific reason you're trying to override the existing
-> branch predictor here (although on at least x86_64 gcc these kinds
-> of unlikely calls tend to be no-ops anyway).
+> I see the following in dmesg:
+> 
+> [ 2453.197510] uring is disabled
+> [ 2453.198525] uring is disabled
+> [ 2453.198749] uring is disabled
+> ...
+> 
+> If I then try to list the directory /home/vmuser/scratch:
+> 
+> $ ls -l /home/vmuser/scratch
+> ls: cannot access 'dest': Software caused connection abort
+> 
+> And passthrough_hp terminates.
+> 
+> My kconfig:
+> 
+> CONFIG_FUSE_FS=m
+> CONFIG_FUSE_PASSTHROUGH=y
+> CONFIG_FUSE_IO_URING=y
+> 
+> I'll look into it next week but, do you see anything obviously wrong?
 
-The branch predictions were added to make it a bit friendly for
-non-metadata read/write case. 
+
+thanks for testing it! I just pushed a fix to my libfuse branches to
+avoid the abort for -EOPNOTSUPP. It will gracefully fall back to
+/dev/fuse IO now.
+
+Could you please use the rfcv4 branch, as the plain uring
+branch will soon get incompatible updates for rfc5?
+
+https://github.com/bsbernd/libfuse/tree/uring-for-rfcv4
 
 
-------Q5hryimWBrG20CTDo2Cycv07rC8cEZ5s1mVzGfufIajJO9l9=_5d1e1_
-Content-Type: text/plain; charset="utf-8"
+The short answer to let you enable fuse-io-uring:
+
+echo 1 >/sys/module/fuse/parameters/enable_uring
 
 
-------Q5hryimWBrG20CTDo2Cycv07rC8cEZ5s1mVzGfufIajJO9l9=_5d1e1_--
+(With that the "uring is disabled" should be fixed.)
+
+
+The long answer for Miklos and others
+
+
+IOCTL removal introduced a design issue, as now fuse-client
+(kernel) does not know if fuse-server/libfuse wants to set
+up io-uring communication.
+It is not even possible to forbid FUSE_URING_REQ_FETCH after
+FUSE_INIT reply, as io-uring is async. What happens is that
+fuse-client (kernel) receives all FUSE_URING_REQ_FETCH commands
+only after FUSE_INIT reply. And that although FUSE_URING_REQ_FETCH
+is send out from libuse *before* replying to FUSE_INIT.
+I had also added a comment for that into the code.
+
+And the other issue is that libfuse now does not know if kernel supports
+fuse-io-uring. That has some implications
+- libfuse cannot write at start up time a clear error message like
+"Kernel does not support fuse-over-io-uring, falling back to /dev/fuse IO"
+- In the fallback code path one might want to adjust number of libfuse
+/dev/fuse threads if io-uring is not supported - with io-uring typically
+one thread might be sufficient - to handle FUSE_INTERRUPT.
+
+
+My suggestion is that we introduce the new FUSE_URING_REQ_REGISTER (or
+replace FUSE_URING_REQ_FETCH with that) and then wait in fuse-server
+for completion of that command before sending out FUSE_URING_REQ_FETCH.
+
+
+Thanks,
+Bernd
+
 

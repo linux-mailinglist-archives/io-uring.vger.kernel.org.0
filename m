@@ -1,75 +1,75 @@
-Return-Path: <io-uring+bounces-3841-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3842-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EBFA9A5962
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 06:00:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A9A9A5966
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 06:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4985281985
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 04:00:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46A8DB21619
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 04:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC3A1CF5F0;
-	Mon, 21 Oct 2024 04:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98200193402;
+	Mon, 21 Oct 2024 04:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="W2+IJxaw"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="DvLE4SLp"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA5B2BB15
-	for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 04:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FC619307D
+	for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 04:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729483215; cv=none; b=AmwzouoRcKFKAbShBP1ln8pUGhxSeBNCyFuUz43OLyXFUrvTpCvSpXyZOY6Nzz7lde5wqf20QyKBHudQKObVsqcK6QlUsrazSNEnHohlXf4cf4IeHhcU9MeCt692Vjjmkb25O/xnQ9rwbEoRkabU3BeVkCOH3bnoJhIODOFjrEY=
+	t=1729483583; cv=none; b=nXdw9GDOf+/CrYuqhuW9eJfYdBaJfLifyJBjjTBPdcmf/TJ9exdIXw0XfQrBwbCtNoSeBKEZzUXTIj2hZxdTmeUhwvsVa/zOULMcQeXRpjcFcd55baeBysEq2Zc8jdXCBk4Wo3FySTBChIaKC+n0ejieyN8KOTeNsRLUGywTZ3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729483215; c=relaxed/simple;
-	bh=MPy2dmqKlCsrw5okIZFwkiGzwVi0bWXg1j0NfWvMFRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=OKyP5FeQEQSzJJDFZ08hTf1Upyo/Zbqt96TqW7Y5Kcb+USJ2FZJiKtSKrQOjTCjaKHFkNhS3o29AM44FK3dWa8U6Rze4JGb5JOWbcetIbBFyJjrNay7EoP/UtPIaacED122B9a4O5ddn/FciUmbayieStgOgIpvYYd1b7iOQ9u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=W2+IJxaw; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241021035324epoutp038512b458a56aa330a6f8496eca31a664~AW3KemGJ80198701987epoutp03x
-	for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 03:53:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241021035324epoutp038512b458a56aa330a6f8496eca31a664~AW3KemGJ80198701987epoutp03x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1729482804;
-	bh=MPy2dmqKlCsrw5okIZFwkiGzwVi0bWXg1j0NfWvMFRQ=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=W2+IJxawqzgcBChIlcNeNfk7coG8mvvD7lbnipymiNmSAScMciTYlAp3jDX8QTRE2
-	 eYd+OsvRbWviuIlnM2mVW0UEVWuIIzdDB5wpwPwL7o7pXKfPi1bL3CEmU+lj8uyybZ
-	 TPpJJTLNIKML89jrHHGzK3+HbWH29Xp/ByIbAXHI=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241021035324epcas5p12ccdd5a52c15f6f360c65c17e64eb3be~AW3KSDTvY0089000890epcas5p1N;
-	Mon, 21 Oct 2024 03:53:24 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XX1cg3HD7z4x9Pr; Mon, 21 Oct
-	2024 03:53:23 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	14.A2.18935.330D5176; Mon, 21 Oct 2024 12:53:23 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241021035323epcas5p3b2390d405621dcf18735b547fee153b7~AW3JA_vPX0434004340epcas5p3M;
-	Mon, 21 Oct 2024 03:53:23 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241021035323epsmtrp125ecbe8d902e2051cee4661eacde54bb~AW3JATGTO1039610396epsmtrp1k;
-	Mon, 21 Oct 2024 03:53:23 +0000 (GMT)
-X-AuditID: b6c32a50-a99ff700000049f7-f9-6715d033ad01
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	64.74.08227.330D5176; Mon, 21 Oct 2024 12:53:23 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241021035322epsmtip2c9daad8aed9690ef0a8bec70c8665986~AW3ITdVlF1271312713epsmtip2r;
-	Mon, 21 Oct 2024 03:53:22 +0000 (GMT)
-Message-ID: <9870b4ad-d140-47a0-9fe6-787128971069@samsung.com>
-Date: Mon, 21 Oct 2024 09:23:21 +0530
+	s=arc-20240116; t=1729483583; c=relaxed/simple;
+	bh=JY3VDCSJt6dsVa9Ba7wktraMc+CkhDXTN6FjudLw+Jg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X2VUKtzCMG+/daFoCOtIcaHpWg3vV5R5ecEK5tNoNoZNkgEJlDWx1VnMlw1PsmWghk/dWqy+C32C9Af0cP+4YlyLCDopr6INCyvK3e5fMnrX5MdYwfjIfR6zLCmG2JrUfRo+U+qwrtwNIenJqvbbGovh3xGcOuB9ZSH0piqyOC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=DvLE4SLp; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5ebc1af8f10so191609eaf.2
+        for <io-uring@vger.kernel.org>; Sun, 20 Oct 2024 21:06:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1729483581; x=1730088381; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+SOvE1LXr9Sxb0JRZUw0qYA4RKWSKM4BSSt0lCWJdoc=;
+        b=DvLE4SLpEALAYE3U48rdUJcG7eNX3mcRo9x1o2dzOF7wy/PZ3w/PdrVAMUSD3UEOWG
+         ma7fqOp8lfgOdyEkfAFTDUiqdkxQzab3e3MEDX2jlZH6TC6GrYzQjyxhE3xhGGzmsPb4
+         D/pinbh8MJEq7e0WCQPfnYFqP4ld8EOmil7uOWWyJ48HfzR3v9+etRLvfxDdi5IHv1iK
+         ilqiH1ZvBEyyyEiAmHVwglJDqzHcLWtCGi0aU61CxXJPVp9EC4C/LgWUyZHfbRnIhlRe
+         qn+46yFdGGZMYlIzO3ketThyKXxriGB6z5zxhhQ5s+5KMj89iDrnuLvJLLCQqJGLB8/m
+         J1Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729483581; x=1730088381;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+SOvE1LXr9Sxb0JRZUw0qYA4RKWSKM4BSSt0lCWJdoc=;
+        b=qw+veb7LDjtytCuPbx/SJGDQmX5WWjse4rgs4BH2iESBfrvtjfQEjoTIlLnnp1emSN
+         PGFemhQkmPhNYYhmOOpclnJV8hwhP7naK/d8iyiSlKTzLrOxavnXp03sluzfbGQlK5rz
+         E6BaiU3WNjhXg1G4zaReeBdH7zADEiuiqxSjIWByamXfL5GPJkzbnna+HVDzEipaJEmS
+         cG4L+VMrfLo6H/JnFpUTbzE4xXt7+bQv5hxYjWFLeOan/PhxvNcVO3/VIKalZC2QWOAK
+         pePYLCzCP7Q2XI1VYSv0qPDHUAfw9+yLHTgiUS2mD2uBBv6KW3zouMlTDwJMwHXAl3Xa
+         /vng==
+X-Forwarded-Encrypted: i=1; AJvYcCWFhi/WUhzyE/taTb25qgksLaSD3nMXfCX8fN3ciTZ/7oNALcufv9BFnGDqDQVgPdRLk9Uz099TLQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHGN0iJYPba0D4gzdtx+LmHUXI17zOZy/R43Uv3Qm9ZTb6rJRL
+	fbpGq5Kg8r/Jz7/Fxa1ztL7HK+sFA1KblY2+1BbpKNnWAL03M5Q1g072a1g9LGoe0i4Zuo42I2b
+	9jcs=
+X-Google-Smtp-Source: AGHT+IEGIAm6NwEioPr92X4+JUJ/mqfOblef6gOLE+XED99+0Cy3/tTdoQ9fhjT5p2xFNyAUB5AioQ==
+X-Received: by 2002:a05:6871:6ab:b0:288:5c55:dfd5 with SMTP id 586e51a60fabf-2892c544d6fmr8131966fac.31.1729483580764;
+        Sun, 20 Oct 2024 21:06:20 -0700 (PDT)
+Received: from [192.168.1.24] (174-21-168-99.tukw.qwest.net. [174.21.168.99])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1313988sm1893185b3a.22.2024.10.20.21.06.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Oct 2024 21:06:20 -0700 (PDT)
+Message-ID: <38c76d27-1657-4f8c-9875-43839c8bbe80@davidwei.uk>
+Date: Sun, 20 Oct 2024 21:06:18 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,53 +77,87 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next] nvme: use helpers to access io_uring cmd space
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Content-Language: en-US
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <c274d35f441c649f0b725c70f681ec63774fce3b.1729265044.git.asml.silence@gmail.com>
+Subject: Re: [PATCH RFC v4 00/15] fuse: fuse-over-io-uring
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, Josef Bacik <josef@toxicpanda.com>
+References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+Content-Language: en-GB
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNKsWRmVeSWpSXmKPExsWy7bCmuq7xBdF0g1frxC3mrNrGaLH6bj+b
-	xbvWcywWe29pO7B47Jx1l93j8tlSj8+b5AKYo7JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403N
-	DAx1DS0tzJUU8hJzU22VXHwCdN0yc4B2KSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVIL
-	UnIKTAr0ihNzi0vz0vXyUkusDA0MjEyBChOyM07tWMpUYFRxbW4fUwOjbhcjJ4eEgInEo89/
-	mUFsIYE9jBLnvrp3MXIB2Z8YJY6e3c0I4XxjlGg6fIMNpuPewmXMEIm9jBLtW+ayQThvGSVO
-	dbwAynBw8ArYSWx6rQnSwCKgKjHhyAwmEJtXQFDi5MwnLCC2qIC8xP1bM9hBbGEBH4kjz4+y
-	gbSKCLhKrPikAhJmFrCV+H3kKAuELS5x68l8JpASNgFNiQuTS0HCnAKxEu3z1jFBlMhLbH87
-	B+w0CYFH7BJv9y1hhLjZReLDhsNQtrDEq+Nb2CFsKYmX/W1QdrbEg0cPWCDsGokdm/tYIWx7
-	iYY/N1hB9jID7V2/Sx9iF59E7+8nYOdICPBKdLQJQVQrStyb9BSqU1zi4YwlULaHRMvKyYyQ
-	cN7AKDHxbdwERoVZSGEyC8mTs5B8Mwth8QJGllWMUqkFxbnpqcmmBYa6eanl8LhOzs/dxAhO
-	hVoBOxhXb/ird4iRiYPxEKMEB7OSCK9SiWi6EG9KYmVValF+fFFpTmrxIUZTYOxMZJYSTc4H
-	JuO8knhDE0sDEzMzMxNLYzNDJXHe161zU4QE0hNLUrNTUwtSi2D6mDg4pRqYRHd/X6/3/kOK
-	/oKIvWW195Onf3dlaExnnb4kQdXUh/Wg65k+ZW2hzNT0k1Km/7yVlqx5NXe/NfeTlQ0rP1cF
-	Xz5dYxfwc8nlZpUdybk9m3oF3v4w69+eLXJh79yWUm6f+u3V22ZN+BuX3RzoKbZ50VathZbd
-	v7Kf1ekr8gZPYp5TuWmJyvnyOHmNGfOWM5768vQ/rz5HhdifYzl+hk5FCc+e+nuebehZ8DXu
-	1E/X02sTp0xJdJ6ycbbztNbVe/MfaAtdXFSd15nfdiB085vjS+9ofNs4p/1rzaLTd/5cLVCd
-	rcSWFn/o9uezqnut1N566IpZfXHu2ZN7Kl5Lxvzuc9mjkWLBKfNMpizgMrlyR4mlOCPRUIu5
-	qDgRAFURnc4OBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBLMWRmVeSWpSXmKPExsWy7bCSvK7xBdF0gw9H2S3mrNrGaLH6bj+b
-	xbvWcywWe29pO7B47Jx1l93j8tlSj8+b5AKYo7hsUlJzMstSi/TtErgyTu1YylRgVHFtbh9T
-	A6NuFyMnh4SAicS9hcuYuxi5OIQEdjNKLGg8zQyREJdovvaDHcIWllj57zk7RNFrRonHm4+y
-	djFycPAK2Elseq0JUsMioCox4cgMJhCbV0BQ4uTMJywgtqiAvMT9WzPA5ggL+EgceX6UDaRV
-	RMBVYsUnFZAws4CtxO8jR1kgxm9glHh96xojREJc4taT+Uwg9WwCmhIXJpeChDkFYiXa561j
-	gigxk+ja2gVVLi+x/e0c5gmMQrOQXDELyaRZSFpmIWlZwMiyilEytaA4Nz232LDAKC+1XK84
-	Mbe4NC9dLzk/dxMjOPC1tHYw7ln1Qe8QIxMH4yFGCQ5mJRFepRLRdCHelMTKqtSi/Pii0pzU
-	4kOM0hwsSuK83173pggJpCeWpGanphakFsFkmTg4pRqYZsqeNWb5LxgZK/dIoV9cJZ331Yoe
-	rY2Nmhwux+pjhZo5nnUm8Kh5VNf5HHeMC/jKt/TCZ9ni83NP2/Ze2Ore9uNb6cr3817ceMR2
-	YHpXqsKtnvwjPyfmv1CtUGaJ1nStmMnTZ3R8rvlFjV8d19QulKhviZgVOz1EWDJ/+umU8Mne
-	11gcQ0Klvh6SVl16Zkuq5QWN1pov/0uFW9kfL7KYWLjOy8hop9G5XwfiM0L/nvsbss3h2v5V
-	3E+Db+pOs4rZ/3eb6pIXJ/7yTWEouWwrrjVVonFNru2Kz8JRDdquq2NsON9Jz3mQ/phxDuNp
-	1n3V8j9mHmSqWjrDzsuj5rezcv+jY3mWp/fpvexnqT2qxFKckWioxVxUnAgAaDsCcusCAAA=
-X-CMS-MailID: 20241021035323epcas5p3b2390d405621dcf18735b547fee153b7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241018161636epcas5p43562d1c949f7e6ed0289a7ec213490ff
-References: <CGME20241018161636epcas5p43562d1c949f7e6ed0289a7ec213490ff@epcas5p4.samsung.com>
-	<c274d35f441c649f0b725c70f681ec63774fce3b.1729265044.git.asml.silence@gmail.com>
 
-Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
+On 2024-10-15 17:05, Bernd Schubert wrote:
+[...]
+> 
+> The corresponding libfuse patches are on my uring branch,
+> but need cleanup for submission - will happen during the next
+> days.
+> https://github.com/bsbernd/libfuse/tree/uring
+> 
+> Testing with that libfuse branch is possible by running something
+> like:
+> 
+> example/passthrough_hp -o allow_other --debug-fuse --nopassthrough \
+> --uring --uring-per-core-queue --uring-fg-depth=1 --uring-bg-depth=1 \
+> /scratch/source /scratch/dest
+> 
+> With the --debug-fuse option one should see CQE in the request type,
+> if requests are received via io-uring:
+> 
+> cqe unique: 4, opcode: GETATTR (3), nodeid: 1, insize: 16, pid: 7060
+>     unique: 4, result=104
+> 
+> Without the --uring option "cqe" is replaced by the default "dev"
+> 
+> dev unique: 4, opcode: GETATTR (3), nodeid: 1, insize: 56, pid: 7117
+>    unique: 4, success, outsize: 120
+
+Hi Bernd, I applied this patchset to io_uring-6.12 branch with some
+minor conflicts. I'm running the following command:
+
+$ sudo ./build/example/passthrough_hp -o allow_other --debug-fuse --nopassthrough \
+--uring --uring-per-core-queue --uring-fg-depth=1 --uring-bg-depth=1 \
+/home/vmuser/scratch/source /home/vmuser/scratch/dest
+FUSE library version: 3.17.0
+Creating ring per-core-queue=1 sync-depth=1 async-depth=1 arglen=1052672
+dev unique: 2, opcode: INIT (26), nodeid: 0, insize: 104, pid: 0
+INIT: 7.40
+flags=0x73fffffb
+max_readahead=0x00020000
+   INIT: 7.40
+   flags=0x4041f429
+   max_readahead=0x00020000
+   max_write=0x00100000
+   max_background=0
+   congestion_threshold=0
+   time_gran=1
+   unique: 2, success, outsize: 80
+
+I created the source and dest folders which are both empty.
+
+I see the following in dmesg:
+
+[ 2453.197510] uring is disabled
+[ 2453.198525] uring is disabled
+[ 2453.198749] uring is disabled
+...
+
+If I then try to list the directory /home/vmuser/scratch:
+
+$ ls -l /home/vmuser/scratch
+ls: cannot access 'dest': Software caused connection abort
+
+And passthrough_hp terminates.
+
+My kconfig:
+
+CONFIG_FUSE_FS=m
+CONFIG_FUSE_PASSTHROUGH=y
+CONFIG_FUSE_IO_URING=y
+
+I'll look into it next week but, do you see anything obviously wrong?
 

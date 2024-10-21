@@ -1,80 +1,80 @@
-Return-Path: <io-uring+bounces-3847-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3848-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276549A6C0E
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 16:25:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F7E9A6C64
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 16:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C614C1F234DC
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 14:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D67BF1C21B33
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 14:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2EB1F9A84;
-	Mon, 21 Oct 2024 14:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9181FAC3A;
+	Mon, 21 Oct 2024 14:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="icKeinpD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SFFnsk71"
 X-Original-To: io-uring@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030FA1F9A80
-	for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 14:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72F81FA25B
+	for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 14:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729520733; cv=none; b=E2h8U1+ptzMJ3e0Q2u5v/KyKuiF/7lSLresJzCdLVw2jjEsIvCPhCWMMhribygs3+Z6JfWyVfeIdgLq1r3WzpJuhBW0lINVZZyncpvMTJ3bmZQyycmd0wHVw2L3eQCGycpLNr5ey0HQ6OKF1SIPFcif44mrf1jVV/kOjAuyBDdA=
+	t=1729521617; cv=none; b=MDRoUPJj5peV8EwOpr+S3P0tghar/WP3un3B4p+M5KfPvheOatImqV1bfPFjt4B2cOczwuyfltnglCdY6/vqSWwcDiPK3T63xQe9/NITrDDGHWIW6Hikc9ktmHdRT9uPX0Ic6Jy08yp31NvI8o8HdyKhmIQnGE57LAVomNj55e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729520733; c=relaxed/simple;
-	bh=R/s/47Tbfl/hcm2r3rccflz2BRFJptCAE9haA5rT5ZQ=;
+	s=arc-20240116; t=1729521617; c=relaxed/simple;
+	bh=Qb1J4ESPnoxMNJqmJyqgTEhGUYpIL/sGVVxxzKXx1HA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fQTAam7fmoiblCLBexoS8MptnVn6L1QEKetvsnbnjKI0p9uznXDNb4iiNA0hkfaDiXmmH+uQ0PxN90tPCvJdxpvv5t+BSULIDX+4+rDxpESpm+T8eHTIiWuFiik28lzyt+/vI4aSIcwxXKozflRToAGg+X/a+OskDuLW4JksQSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=icKeinpD; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=Mm7svr7Qdnrkl3UdiVmFHmPJaUsDHzwXOk1aQc2y5NpcD4/ZaTUcgZ8J3whpr0SL01FS9LpZ6rAjTUHWhppnKXRJ8SY4pCQeJstFmMwkhoVuTQZeHTJlLZUylXMmgijj3B5TNqw16c+7qUk+SPv5YPDyj35FIDBdnXJ83n7igoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SFFnsk71; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729520730;
+	s=mimecast20190719; t=1729521614;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UpjokMgxgfuH8Y+WhuenQWYLVdfsv+6Ns4oxoFKG8hw=;
-	b=icKeinpDN+1CP6uxTRdt6Nny5KX2dar1TLqOO+SyX8cFohWrBMK70ACggac6MjdpadD6jj
-	QH+2oRXKjgp+DXSYhTib25YW9B9E5dMTjMQrhM8qxDxu798WLZQHjf2Ud/FtO5MsY45Mdo
-	Ma4OkAPIwBor+m21WGnIL9n1V28pzN4=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=jZ/ST2n2o+s+ljcXLA0TYyh1FPWIv37+D3gxR3SEmjE=;
+	b=SFFnsk713P65FzwXBnv/YoEK05i2OUqpegHYEO4XTHda7gF3ArygZZQWrs9dXMLTUUigqS
+	OradVFj79C7cfBmx60Tsu13M1jk40u5+R5ZKhaYofl0qUGT+f94/JXB2K9frHLgvR7ujr8
+	Pnm27oINwT31HkH5StOEA3pIRbWUcZQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-498-exxOllgwM4Wkn5ZuRCGBaw-1; Mon, 21 Oct 2024 10:25:29 -0400
-X-MC-Unique: exxOllgwM4Wkn5ZuRCGBaw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-431604a3b47so27088545e9.3
-        for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 07:25:28 -0700 (PDT)
+ us-mta-328-Vk27AbSLNt2dh8-PxRd_AQ-1; Mon, 21 Oct 2024 10:40:13 -0400
+X-MC-Unique: Vk27AbSLNt2dh8-PxRd_AQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d5016d21eso1893716f8f.3
+        for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 07:40:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729520728; x=1730125528;
+        d=1e100.net; s=20230601; t=1729521612; x=1730126412;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UpjokMgxgfuH8Y+WhuenQWYLVdfsv+6Ns4oxoFKG8hw=;
-        b=lnMscbCqF1Vc2uE1dRNHWazHwsFb6Nw7/3K6xZbspG4WPILGyJia9n1yakpwJDta4Q
-         SvYbQxOCkX3Id5a0KNXXukpZ0OvNAhwbRg8zYhHwWoQG3yDNjqKTfeG33HJ/IBhLBhuc
-         zNABHDhOX9XRlEO1QB88sfJgOVCKpEiL4Cn7Yy075R5yS0Vx3e430wV2I48YD/PtvNEe
-         E2Mu8s/E+T1HIVnjZxNOkIbtyeeLdJpzI/Qh5comE9u7tN4QAvArv+tiryRjb0d896zE
-         3qJ93ZSArm378pt0Hbr80QwA1k9+rCXYvZgSHuC+sjlRk1ZQx60jXhtatVqliCqVruXk
-         Jmfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOMw+WDv5p2m8UIIgp0cInbAq/GfI6f7FnWL+iONLvkP9rHKLE0nskIPBlkR8Kd04sQ5yb8DkQTg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzdf2wc8rJ+lp+2S0tY1QHejF1cSrjBiMCxIRq6r5N8i/ekCN3B
-	v7dW4eGugf+ZEoLJw7eC6pzp+We57rD7/jsG2rLWC38nwauh1SldVf0PExt4ljmdvYRUZwAthqk
-	kfDJYpyTsFGrMHjSSV0hsURkhI3ipInY/Ii4TPnbvIJa44pT86WcqwiZA
-X-Received: by 2002:a05:600c:4341:b0:431:5ab3:d28d with SMTP id 5b1f17b1804b1-4317744af65mr18409945e9.9.1729520727914;
-        Mon, 21 Oct 2024 07:25:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHxCWnxcRvxHxsasl4Whn7dZBQ+y7vKC9ouq1kHrZJWF5+knmYUrf1NEelCsaMwv6QBvYYV8w==
-X-Received: by 2002:a05:600c:4341:b0:431:5ab3:d28d with SMTP id 5b1f17b1804b1-4317744af65mr18409705e9.9.1729520727602;
-        Mon, 21 Oct 2024 07:25:27 -0700 (PDT)
+        bh=jZ/ST2n2o+s+ljcXLA0TYyh1FPWIv37+D3gxR3SEmjE=;
+        b=whP+DoR9/6N7F5+F6peQL95KV0XQLsskBcqvtBN9vX36YfMOmP2i3fLVuE37U28zAJ
+         +Te55fpbIO78jVurntUxtZmlF2wyuCqo8vd/bOlx1N0JLln1CQSVivImluaG2tyijHVm
+         qtm/dCaguyGkLDlKR0nrrS6YjA6uMg2CPCbH0ky8V0VYydhuP+f93qGjYmyVi96cfMQ6
+         7tbNPaTJwMjJw6uVAfjO6nvzkghqV+QD5/ZvUAbpgLFpT+W2wamSyEkfYB4cctzpTVO2
+         bYEs9cXl8tXlbQh2sJxRs/VllM+xHyLYnmDHXDIRFIuh4lipgjRutqu5uGzcLHZIqqn9
+         Mftw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDROhvKAIBIutT8XLJSCmPBos+odQl3mbj/uVk9fZTlWcZhAGuFpAk2GVCoTtJdvbIeevnMOcKwA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyHo+KgNZ/wwbysHYOUI8X6nU0A/h+7cMuilZJ5mjvZ3+i6n3G
+	nqVAmpONzA3JDxSE6kOJpxrVm26zuxUUsv5m0ujPTAZDwHQ/gdv9nLFtJJ7iGhFy3X4pexaIzYK
+	R3uBuLyB0uL9s4xEmi9qPxttWuenvKwF/mDo/fTz7s2SG97PcwLSf3RDJo5WJ35qXg+o=
+X-Received: by 2002:a5d:5271:0:b0:37d:387c:7092 with SMTP id ffacd0b85a97d-37eab4d1178mr6286634f8f.7.1729521612156;
+        Mon, 21 Oct 2024 07:40:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7/5labcUqsZBuqFnZonhZTBc1BKmhXe+frMb36S+aYhl3kVjymM+TEQ1VQ61MDBDEBRa/Xg==
+X-Received: by 2002:a5d:5271:0:b0:37d:387c:7092 with SMTP id ffacd0b85a97d-37eab4d1178mr6286623f8f.7.1729521611833;
+        Mon, 21 Oct 2024 07:40:11 -0700 (PDT)
 Received: from ?IPV6:2a0d:3344:1b73:a910::f71? ([2a0d:3344:1b73:a910::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5cc921sm58563245e9.46.2024.10.21.07.25.26
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a485dcsm4487102f8f.34.2024.10.21.07.40.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 07:25:27 -0700 (PDT)
-Message-ID: <cd9c2290-f874-49e6-bc99-5336a096cffb@redhat.com>
-Date: Mon, 21 Oct 2024 16:25:25 +0200
+        Mon, 21 Oct 2024 07:40:11 -0700 (PDT)
+Message-ID: <4f61bdef-69d0-46df-abd7-581a62142986@redhat.com>
+Date: Mon, 21 Oct 2024 16:40:09 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,8 +82,7 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 08/15] net: add helper executing custom callback from
- napi
+Subject: Re: [PATCH v6 14/15] io_uring/zcrx: add copy fallback
 To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
  netdev@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
@@ -94,66 +93,49 @@ Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
  Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
  Pedro Tammela <pctammela@mojatatu.com>
 References: <20241016185252.3746190-1-dw@davidwei.uk>
- <20241016185252.3746190-9-dw@davidwei.uk>
+ <20241016185252.3746190-15-dw@davidwei.uk>
 Content-Language: en-US
 From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241016185252.3746190-9-dw@davidwei.uk>
+In-Reply-To: <20241016185252.3746190-15-dw@davidwei.uk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
 On 10/16/24 20:52, David Wei wrote:
-> @@ -6503,6 +6511,41 @@ void napi_busy_loop(unsigned int napi_id,
->  }
->  EXPORT_SYMBOL(napi_busy_loop);
+> @@ -540,6 +562,34 @@ static const struct memory_provider_ops io_uring_pp_zc_ops = {
+>  	.scrub			= io_pp_zc_scrub,
+>  };
 >  
-> +void napi_execute(unsigned napi_id,
-> +		  void (*cb)(void *), void *cb_arg)
+> +static void io_napi_refill(void *data)
 > +{
-> +	struct napi_struct *napi;
-> +	void *have_poll_lock = NULL;
-
-Minor nit: please respect the reverse x-mas tree order.
-
+> +	struct io_zc_refill_data *rd = data;
+> +	struct io_zcrx_ifq *ifq = rd->ifq;
+> +	netmem_ref netmem;
 > +
-> +	guard(rcu)();
-
-Since this will land into net core code, please use the explicit RCU
-read lock/unlock:
-
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/maintainer-netdev.rst#L387
-
-> +	napi = napi_by_id(napi_id);
-> +	if (!napi)
+> +	if (WARN_ON_ONCE(!ifq->pp))
 > +		return;
 > +
-> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-> +		preempt_disable();
+> +	netmem = page_pool_alloc_netmem(ifq->pp, GFP_ATOMIC | __GFP_NOWARN);
+> +	if (!netmem)
+> +		return;
+> +	if (WARN_ON_ONCE(!netmem_is_net_iov(netmem)))
+> +		return;
 > +
-> +	for (;;) {
-> +		local_bh_disable();
+> +	rd->niov = netmem_to_net_iov(netmem);
+> +}
 > +
-> +		if (napi_state_start_busy_polling(napi, 0)) {
-> +			have_poll_lock = netpoll_poll_lock(napi);
-> +			cb(cb_arg);
-> +			local_bh_enable();
-> +			busy_poll_stop(napi, have_poll_lock, 0, 1);
-> +			break;
-> +		}
+> +static struct net_iov *io_zc_get_buf_task_safe(struct io_zcrx_ifq *ifq)
+> +{
+> +	struct io_zc_refill_data rd = {
+> +		.ifq = ifq,
+> +	};
 > +
-> +		local_bh_enable();
-> +		if (unlikely(need_resched()))
-> +			break;
-> +		cpu_relax();
+> +	napi_execute(ifq->napi_id, io_napi_refill, &rd);
 
-Don't you need a 'loop_end' condition here?
+Under UDP flood the above has unbounded/unlimited execution time, unless
+you set NAPI_STATE_PREFER_BUSY_POLL. Is the allocation schema here
+somehow preventing such unlimited wait?
 
-Side notes not specifically related to this patch: I likely got lost in
-previous revision, but it's unclear to me which is the merge plan here,
-could you please (re-)word it?
-
-Thanks!
+Thanks,
 
 Paolo
 

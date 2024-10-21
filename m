@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3855-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3856-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44809A6E4B
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 17:35:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A541B9A6EA4
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 17:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4C33282D7F
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 15:35:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516151F22738
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 15:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD2E1C3F0E;
-	Mon, 21 Oct 2024 15:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1260E1C7B65;
+	Mon, 21 Oct 2024 15:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GpFzOkUj"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Fj0Hlxnb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0AE1C3F02
-	for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 15:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8741C57BE
+	for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 15:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729524931; cv=none; b=Jz8gM6aTt8SA4zqzbf0v/jQJbIIN3wN5OK6/isAvDGbOE+62hPgKwJ3HCDZD731XLeTLhMhXwK+AuC8CIOt4TJL1s2KfiYhmJS4EjYtEI96f8JgRCToJjZBaYJxwjKWY3D8fgOe0WekmHQCvZ5OK+9AeDJ8Tr0FerjuMljugq8E=
+	t=1729525624; cv=none; b=J8t3ABzuohYY9/G99lsFcgQ9LA+A8PNqJLgn9LnsL4WA1Ek1eyYm7MrZbU5RCYl070xpYYB2MBn3igcLWuWYlF5PDeF3g7Ajw9XIGOiXMOF7n29rAIEOl9uSRH57BieVzM1UpK1hU3VY7ZSk/3FCVhPMGtM7XENY+6l+mJqbfNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729524931; c=relaxed/simple;
-	bh=S3cnEiKuSXDoDPWcsKn3JHJUkNp9+UlxxK4fNUsaiVs=;
+	s=arc-20240116; t=1729525624; c=relaxed/simple;
+	bh=LF/v2APQUH1XNOf6nW5RuGpUkrh2C2KCHmydIhInUF0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FqsQi4Gap7n9fduFJgjrh0Z2Mj/dC2mw/Gx7W188YE3CnHhWzGz6ZMzTBASb58qAAKTXsUSmz7it1GNgCq/eCaaW/+bi75gIKyhwgn+X6yqD4cNNEUzvpCym6vNZYy3yNEcwGpSzOY9z6XiuLOeImrEOffx+naWxrQxIczW0x+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GpFzOkUj; arc=none smtp.client-ip=209.85.166.177
+	 In-Reply-To:Content-Type; b=LJxa5zyFlMyE+jQc7sdRUeFZHavGI5YCFnzAnu4ETllmG9SOTVf9hI/Pue4t3VD0WYVR8jZbyPduc9LF/QmUzNcHIpka9cAM5pyyd9oiVr0URW8+G1zp6XYyorhd3QMuGCR2OROlSCJBNu5Pz8Ku04251fpf0tZn4dEehSCT3aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Fj0Hlxnb; arc=none smtp.client-ip=209.85.166.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a3b63596e0so13393965ab.0
-        for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 08:35:28 -0700 (PDT)
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a3bd42955bso18919065ab.1
+        for <io-uring@vger.kernel.org>; Mon, 21 Oct 2024 08:47:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729524928; x=1730129728; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729525620; x=1730130420; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=KyCrG1BXzXCwPHMGuiXYVs/HDSOGt/9byltcE0gxiPg=;
-        b=GpFzOkUjjhKxESS4EHrzA2DfWP0kWOrZhtDb80Pfd5TENDWUt7Y8YOm78YzrBqmp2u
-         ouDDiGrpTYrOqdDPIkmdAQ5PrPntSJFMNBjIq2HL7hbSoEYyYD6MIbAZkttODfTVCL2u
-         SxLKiG7KoNKofj1dVRCuAJUyhbthkDOtJg/AtfeQpkUv9s9T9gVJ3goZKvIl7nK7hJxm
-         +vvXozLfv5U7W89HxtijKml6YYHxuXurAGHmYUyxEW3ODmNWtcAshBBLeKKIT6JbPu1K
-         KfyuzJSFtMuSpKp8LHo6oHiUqXtAtXwD2e4tfvSVr5CT3RjGlR26v+ao/hISC313ZGTY
-         7AvQ==
+        bh=kpdiAit/JMF1gHPpQc8Fla49evuVYP+pTUnVRIxMK3o=;
+        b=Fj0Hlxnbv91Sqv34ftbYdunF4ZSyqRBhfKbtCP6kjxuCFPdmhz/48rj8sq8xHpbVAZ
+         DewooYlqYESUb+Yq4Z5O4OBsMFXqQrSpGu4BEbMUxrvtJh7Nve4f65eSeGxLcHrju1Bu
+         QDCaJOK+HhM8cjd/Aq84PBFC7kqPJAqJXP+8JNTn6rWhGhxMcuGoZfHQZccfSa/d3jeO
+         W9TOKwOhhG2sXfU1+w0ZbTaSKa9vwQ8JEBy2TIZT1Z8ujizWnOJEvrLMKF5G9WmfUu9Z
+         abue8IJotY1IZkpy8bk4WH8QKD/W9SGVYh6H30VSV+wZ5nBJVhbr7dEDtLLRCGYsTKAo
+         gcog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729524928; x=1730129728;
+        d=1e100.net; s=20230601; t=1729525620; x=1730130420;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KyCrG1BXzXCwPHMGuiXYVs/HDSOGt/9byltcE0gxiPg=;
-        b=Ov+hZ33FGo2jinr2poc7DhB/lakHeM2ffiY2zRf42WzL7HGmIHKC3kXRwsadUc/D8X
-         Sy6dzwjTx3wnp3zTuVzcXem/AhcHtOmylCD/HP7WQeuE8oIAjaCDwqK0Gk4jcdEp3qQo
-         qco1n3c7k5ILGtDTf6oRj22nDByyqxFgkp5Hff1Vk8F8NxWMjDILngvPXIKr3NaCTCSv
-         lgWyuM3LtL3Wja8Oz2X3ahTAeEND4qgEXqbti5Xj/K1H02cbOxLO/QDST6hw6p3hP5t0
-         Idu0k/gQTgMHpPrVXGNg/pPSGrVqq/dLx5gcO0CKpET74Iyw5d2OaD5SxtV30Np/2N9H
-         aXyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXj1zOvQtHKEGoizhtR6voKQPjqJYLW/sWiplnYDWg48HgmcniBYf0nCAmnbk1ikQfF0VJo1apDVg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYGxHK0GWgdN3p8K2mVFlXZulWp7mp1ceueatBbITTPcn1h3fD
-	UiIvoPUuu8ZtFi8yBE78rM8OsecgdDNNvNVWcU/WgANoqEpuvgJzSP+zbxtDhWs=
-X-Google-Smtp-Source: AGHT+IHjjsjV6Hvo9fVu9LoWE/+ASFLQTTdX9GhzG00bjcTZgOJOifnxEQxa33cxgijQgsWue3nSbg==
-X-Received: by 2002:a05:6e02:12c5:b0:3a0:9f36:6bf1 with SMTP id e9e14a558f8ab-3a4cc28d350mr72255ab.9.1729524927705;
-        Mon, 21 Oct 2024 08:35:27 -0700 (PDT)
+        bh=kpdiAit/JMF1gHPpQc8Fla49evuVYP+pTUnVRIxMK3o=;
+        b=G8hjQwzZVnm4tpXq1YhapfMkqnl3IIdV1HGnH/tpY3AuEIu5JZKTtJwgSCvkMbT0TE
+         zIeUbiODVf+DVUbAiN/njauzKh3lMomLV4mlfosXvvzIrEBlBxSiPsE3luyPyHZthICp
+         V70zIjbbw7xyQ2vyvW26tZVExtDFgVHH4sXiC1GmLLKQ4po/BHW5ufr6UqNipnsif7dX
+         trHJpa/1KaucKlt9Tnh4/254BON+BR+pm5Tss5CYgwpfcEsxHCnR/A2m6E2i3MvTglHR
+         aoH8PhxUsBPJm6dSPtOz2fnXnFsPcjup7JiNIjK1JEC4dxiR+7Ax1mIPd3IxnL6XqKKN
+         X4+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXGk8HtHG+fw3LTPprkD6BlCSrVx8D/LXaJoHslzV8yXDnJ88XSLe0AKkdinJ6RST/ogtGGSO9Lcw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtzP0oMxiQw7ywO4nEhNKDaU+L9whYr3/XcPLPs9lRmWbDgLrS
+	l3CVrCo4wTwDwCLbPCNrAK02khToaQndL9NEsI+0n5JDbCClvcbah6Kem+pAo2g=
+X-Google-Smtp-Source: AGHT+IHr5og69wO715zXAn66waKEp7aqN8OlLYyE12JW9jdHNg5lcBLqOnMIBg6OrprNLXcTQNFtFg==
+X-Received: by 2002:a05:6e02:b46:b0:3a0:533e:3c0a with SMTP id e9e14a558f8ab-3a4cb371e0dmr5991535ab.7.1729525620617;
+        Mon, 21 Oct 2024 08:47:00 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a400a7bdb8sm11907715ab.5.2024.10.21.08.35.26
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a400b7f439sm12135375ab.76.2024.10.21.08.46.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 08:35:27 -0700 (PDT)
-Message-ID: <3aebbd91-6f2f-4c8c-82db-4d09e39e7946@kernel.dk>
-Date: Mon, 21 Oct 2024 09:35:26 -0600
+        Mon, 21 Oct 2024 08:46:59 -0700 (PDT)
+Message-ID: <1f6c0a69-afde-4b7e-8911-683bae66e104@kernel.dk>
+Date: Mon, 21 Oct 2024 09:46:59 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,7 +76,8 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/15] io_uring/zcrx: add io_zcrx_area
+Subject: Re: [PATCH v6 11/15] io_uring/zcrx: implement zerocopy receive pp
+ memory provider
 To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
  netdev@vger.kernel.org
 Cc: Pavel Begunkov <asml.silence@gmail.com>, Jakub Kicinski
@@ -87,85 +88,18 @@ Cc: Pavel Begunkov <asml.silence@gmail.com>, Jakub Kicinski
  Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
  Pedro Tammela <pctammela@mojatatu.com>
 References: <20241016185252.3746190-1-dw@davidwei.uk>
- <20241016185252.3746190-11-dw@davidwei.uk>
+ <20241016185252.3746190-12-dw@davidwei.uk>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241016185252.3746190-11-dw@davidwei.uk>
+In-Reply-To: <20241016185252.3746190-12-dw@davidwei.uk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/16/24 12:52 PM, David Wei wrote:
-> +static int io_zcrx_create_area(struct io_ring_ctx *ctx,
-> +			       struct io_zcrx_ifq *ifq,
-> +			       struct io_zcrx_area **res,
-> +			       struct io_uring_zcrx_area_reg *area_reg)
-> +{
-> +	struct io_zcrx_area *area;
-> +	int i, ret, nr_pages;
-> +	struct iovec iov;
-> +
-> +	if (area_reg->flags || area_reg->rq_area_token)
-> +		return -EINVAL;
-> +	if (area_reg->__resv1 || area_reg->__resv2[0] || area_reg->__resv2[1])
-> +		return -EINVAL;
-> +	if (area_reg->addr & ~PAGE_MASK || area_reg->len & ~PAGE_MASK)
-> +		return -EINVAL;
-> +
-> +	iov.iov_base = u64_to_user_ptr(area_reg->addr);
-> +	iov.iov_len = area_reg->len;
-> +	ret = io_buffer_validate(&iov);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = -ENOMEM;
-> +	area = kzalloc(sizeof(*area), GFP_KERNEL);
-> +	if (!area)
-> +		goto err;
-> +
-> +	area->pages = io_pin_pages((unsigned long)area_reg->addr, area_reg->len,
-> +				   &nr_pages);
-> +	if (IS_ERR(area->pages)) {
-> +		ret = PTR_ERR(area->pages);
-> +		area->pages = NULL;
-> +		goto err;
-> +	}
-> +	area->nia.num_niovs = nr_pages;
-> +
-> +	area->nia.niovs = kvmalloc_array(nr_pages, sizeof(area->nia.niovs[0]),
-> +					 GFP_KERNEL | __GFP_ZERO);
-> +	if (!area->nia.niovs)
-> +		goto err;
-> +
-> +	area->freelist = kvmalloc_array(nr_pages, sizeof(area->freelist[0]),
-> +					GFP_KERNEL | __GFP_ZERO);
-> +	if (!area->freelist)
-> +		goto err;
-> +
-> +	for (i = 0; i < nr_pages; i++) {
-> +		area->freelist[i] = i;
-> +	}
-> +
-> +	area->free_count = nr_pages;
-> +	area->ifq = ifq;
-> +	/* we're only supporting one area per ifq for now */
-> +	area->area_id = 0;
-> +	area_reg->rq_area_token = (u64)area->area_id << IORING_ZCRX_AREA_SHIFT;
-> +	spin_lock_init(&area->freelist_lock);
-> +	*res = area;
-> +	return 0;
-> +err:
-> +	if (area)
-> +		io_zcrx_free_area(area);
-> +	return ret;
-> +}
-
-Minor nit, but I think this would be nicer returning area and just using
-ERR_PTR() for the errors.
-
-Outside of that:
+Looks fine to me:
 
 Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
 -- 
 Jens Axboe
+
 

@@ -1,181 +1,194 @@
-Return-Path: <io-uring+bounces-3870-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3871-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC629A70C6
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 19:15:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342F09A723A
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 20:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08B29281522
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 17:15:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78451F26276
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 18:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5709F19342E;
-	Mon, 21 Oct 2024 17:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C08F1DACA1;
+	Mon, 21 Oct 2024 18:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jaMw0EYf"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RlatGtgO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MamAPHjh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RlatGtgO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MamAPHjh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42753137750;
-	Mon, 21 Oct 2024 17:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981EC193409;
+	Mon, 21 Oct 2024 18:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729530935; cv=none; b=Wl3JtinOoXTDHh6c1K6ehcIk7Hf6UPSUDHbEDWXLp388Y9B2rpY8B0l3wFBCEYQ9Wdv+oJNB1RaaQ+R9mgWYL1oqyDmgSBn8I4QSBqYaziSJveltSmqFIaV3+7bd92UowGZwVjoRKyo0XZiLzPWvZGphrb787WUBTgmsAvp3COw=
+	t=1729535010; cv=none; b=OOPlxQGcDJc7PInsCnr5pHN7oBJvngP7hTM2+1jvWoqY7Qz3+qyMHRL59WgoMbEwPRmLWQYFM6jDUUKlAe3HGYuzwJyZcRMppZopAyxpnEwwtJDTKHlOpyqOPL1TQ/Z+4HTs3mkBS1jyA+RoLtLApIE/20Yr0kudSVDaXm4eOcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729530935; c=relaxed/simple;
-	bh=M9VD2mMVVu7ouNqpkXpdN5xM61Z+7Iayser+4fhnJ/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jjt086HeuehsyjlI2iRvYMabJfQxN4Y5gnYstOPdAF3F8DsR5NVJiTGROaAcKK7zj6Y8O3Q9848Ab7bzjIvohW6YrHqYsilF2lCfuyQbqgVWPPRjrJ0IBN/ab4FB61KKZVSy3x5DIoTjLbxA1E2yfOCW5n6LxA5M1XJOOFw3GUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jaMw0EYf; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d47b38336so3201860f8f.3;
-        Mon, 21 Oct 2024 10:15:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729530931; x=1730135731; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w5qN6OuKcxpGdanZ/du03rbiEJuX0vwDAFIhX+Xuljc=;
-        b=jaMw0EYft8m8if7y6Xdk80FC0hrffZ1btvuNVNy6SaQML3ag/eP6jvIuoFB8I0sGj0
-         OxjyNF0oACMMW2O2Re0tmb7AS99kBFz/H0g2vRl+88n0xzRLcWDXMfXQ4OLK+Kw2KpwT
-         /AxshGgLiyz9U5aV8B/9/UIgtqZce4P6s7lIcXETxOEVS2creB6S8FLzOUUp5CuNV72V
-         gyBmn6nvzLGaOKfV7DJA2gvROzejChFEVjdOQ9iJWt2QNcFgkc88XCPPmMdUz1ozGcly
-         s1oSxslte+HMNqB9DG1uvyun/3RNo8sDdkPeTLpoq/XDtrxN7OYRjRvu+aInqlToRD5f
-         rVTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729530931; x=1730135731;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w5qN6OuKcxpGdanZ/du03rbiEJuX0vwDAFIhX+Xuljc=;
-        b=W+0vPfaqDWDtOnRwQG1NcvlxsOSPs5jeVXJNz4hbpmdZckZRYnmpgx4cELFVuiyUtB
-         Otz507q3PMyx2HwBYUrNb2HrHeo0LGXKAb0ZxwkLg6i2ZsUBOXXy9p58RtEFNiuZcDzt
-         BbMsH0T+ST+AaP5cGudbNnDa66SH7d06N1+FQmXvk8N82l4F/H72NcGkrZuwkTZFl1Hn
-         Rs0ekmF7xF7n0m1qUyIO30Uo90R6LPnB0epkzw5Y3HjHI/6fIsZtxgdoBZLf9Ig4a4OX
-         9mUGmsuy8blGEVW3sREYY8WgBDkMm1i0Ob8zLpzwkUX9tE6eOjmXyEH6Glk75vkEBVKX
-         Q+ug==
-X-Forwarded-Encrypted: i=1; AJvYcCVIDl+Z3BKvvDrhrJfl0uj2lPo30wJYh3gFgxjNXTMXK6N8xl4AORPUNNOtWGFTGri41JkRIrm+BQ==@vger.kernel.org, AJvYcCWoyLTpiT7FcuOvjUwq9KZ8COWvOcD0IbhHJ6eF7Q9dBL0N8DpowmdpZBR50hOq7vHlMFvs0dRO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7ID136RChecUfAn7oH5sl0cXT/FuhYgXYojBFpCY91pL4LpvB
-	DJUXq9Bi1Q7//OH4b32Z/A23Ccp5+g1WkKW+7CfQHkh5m64UlVwN
-X-Google-Smtp-Source: AGHT+IF1Oh9HyTn48P45KE/pXeE4if0YIjQs8X6lzdpbcAryfp39AnnETqWBs4+X9+jiAWoly4C1lg==
-X-Received: by 2002:a5d:67d1:0:b0:37d:238:983 with SMTP id ffacd0b85a97d-37eab6ed4e6mr7934667f8f.22.1729530931220;
-        Mon, 21 Oct 2024 10:15:31 -0700 (PDT)
-Received: from [192.168.42.158] ([185.69.144.55])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b944fbsm4812998f8f.72.2024.10.21.10.15.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 10:15:30 -0700 (PDT)
-Message-ID: <9d2c123d-9e1e-4365-a047-e4fe84444ab9@gmail.com>
-Date: Mon, 21 Oct 2024 18:16:16 +0100
+	s=arc-20240116; t=1729535010; c=relaxed/simple;
+	bh=VNUzRSbXDhZLV3Nj2QX1hw833SMLqsoKV4EiYmnqE1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bJ6Fi9iqOR06fCD5udVpIl8jUj9DfS1FlvpX5Juz3H2Ltx+T8wIbyUMi76BNeib9anrUzcCGiWDknWvWzswai7KnBv0t+0ErGeEW6Pnn3K/mjLZfZS9QAkIMn7qRzrDmxK9wT9e09QT1tWBEB/RhQRM6So3KWV8Hos/TXlkm4eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RlatGtgO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MamAPHjh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RlatGtgO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MamAPHjh; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CB9A01F460;
+	Mon, 21 Oct 2024 18:23:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729535005;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YEYgKOz5Gx8656Ir9rc63mprmMrVN+JVSRt7f/8F30o=;
+	b=RlatGtgOoSD/jjKFckgqPufk+jY5kWfNms3LIdJ9t6wFK/yW1SWqy8MJ7WxKbP2eHYfYlu
+	AgMsi37e7mJ6m+pY1Ed2W0q+P4apJ2uvd59yYYsK8H6askJkXSOWlXySyC5TEMmPtqkAzv
+	Y1mcQzWHnuX3VA4aKvta9kd++VUF6Fg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729535005;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YEYgKOz5Gx8656Ir9rc63mprmMrVN+JVSRt7f/8F30o=;
+	b=MamAPHjhj+VofW8NUGOfmkonmztzUKiRmhB+WjxHveIax8gNcPROBVZkDvJKKx/Mfw7LH6
+	p6ElW5M14+p4nwCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729535005;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YEYgKOz5Gx8656Ir9rc63mprmMrVN+JVSRt7f/8F30o=;
+	b=RlatGtgOoSD/jjKFckgqPufk+jY5kWfNms3LIdJ9t6wFK/yW1SWqy8MJ7WxKbP2eHYfYlu
+	AgMsi37e7mJ6m+pY1Ed2W0q+P4apJ2uvd59yYYsK8H6askJkXSOWlXySyC5TEMmPtqkAzv
+	Y1mcQzWHnuX3VA4aKvta9kd++VUF6Fg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729535005;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YEYgKOz5Gx8656Ir9rc63mprmMrVN+JVSRt7f/8F30o=;
+	b=MamAPHjhj+VofW8NUGOfmkonmztzUKiRmhB+WjxHveIax8gNcPROBVZkDvJKKx/Mfw7LH6
+	p6ElW5M14+p4nwCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B4E08139E0;
+	Mon, 21 Oct 2024 18:23:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ffuOKx2cFmcgIAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 21 Oct 2024 18:23:25 +0000
+Date: Mon, 21 Oct 2024 20:23:24 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Mark Harmstone <maharmstone@meta.com>
+Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+Subject: Re: [PATCH 5/5] btrfs: add io_uring command for encoded reads
+Message-ID: <20241021182324.GA24631@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20241014171838.304953-1-maharmstone@fb.com>
+ <20241014171838.304953-6-maharmstone@fb.com>
+ <20241021135005.GC17835@twin.jikos.cz>
+ <f4f64bfe-c92b-4656-adec-d073b6286451@meta.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 08/15] net: add helper executing custom callback from
- napi
-To: Paolo Abeni <pabeni@redhat.com>, David Wei <dw@davidwei.uk>,
- io-uring@vger.kernel.org, netdev@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>
-References: <20241016185252.3746190-1-dw@davidwei.uk>
- <20241016185252.3746190-9-dw@davidwei.uk>
- <cd9c2290-f874-49e6-bc99-5336a096cffb@redhat.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cd9c2290-f874-49e6-bc99-5336a096cffb@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4f64bfe-c92b-4656-adec-d073b6286451@meta.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Score: -4.00
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.993];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 10/21/24 15:25, Paolo Abeni wrote:
-> Hi,
+On Mon, Oct 21, 2024 at 05:05:20PM +0000, Mark Harmstone wrote:
+> >> +static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd,
+> >> +				    unsigned int issue_flags)
+> >> +{
+> >> +	size_t copy_end_kernel = offsetofend(struct btrfs_ioctl_encoded_io_args,
+> >> +					     flags);
+> >> +	size_t copy_end;
+> >> +	struct btrfs_ioctl_encoded_io_args args = {0};
+> >                                                  = { 0 }
+> >> +	int ret;
+> >> +	u64 disk_bytenr, disk_io_size;
+> >> +	struct file *file = cmd->file;
+> >> +	struct btrfs_inode *inode = BTRFS_I(file->f_inode);
+> >> +	struct btrfs_fs_info *fs_info = inode->root->fs_info;
+> >> +	struct extent_io_tree *io_tree = &inode->io_tree;
+> >> +	struct iovec iovstack[UIO_FASTIOV];
+> >> +	struct iovec *iov = iovstack;
+> >> +	struct iov_iter iter;
+> >> +	loff_t pos;
+> >> +	struct kiocb kiocb;
+> >> +	struct extent_state *cached_state = NULL;
+> >> +	u64 start, lockend;
+> > 
+> > The stack consumption looks quite high.
 > 
-> On 10/16/24 20:52, David Wei wrote:
->> @@ -6503,6 +6511,41 @@ void napi_busy_loop(unsigned int napi_id,
->>   }
->>   EXPORT_SYMBOL(napi_busy_loop);
->>   
->> +void napi_execute(unsigned napi_id,
->> +		  void (*cb)(void *), void *cb_arg)
->> +{
->> +	struct napi_struct *napi;
->> +	void *have_poll_lock = NULL;
+> 696 bytes, compared to 672 in btrfs_ioctl_encoded_read. 
+> btrfs_ioctl_encoded write is pretty big too. Probably the easiest thing 
+> here would be to allocate btrfs_uring_priv early and pass that around, I 
+> think.
 > 
-> Minor nit: please respect the reverse x-mas tree order.
-> 
->> +
->> +	guard(rcu)();
-> 
-> Since this will land into net core code, please use the explicit RCU
-> read lock/unlock:
-> 
-> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/maintainer-netdev.rst#L387
+> Do you have a recommendation for what the maximum stack size of a 
+> function should be?
 
-I missed the doc update, will change it, thanks
+It depends from where the function is called. For ioctl callbacks, like
+btrfs_ioctl_encoded_read it's the first function using kernel stack
+leaving enough for any deep IO stacks (DM/NFS/iSCSI/...). If something
+similar applies to the io_uring callbacks then it's probably fine.
 
+Using a separate off-stack structure works but it's a penalty as it
+needs the allcation. The io_uring is meant for high performance so if
+the on-stack allocation is safe then keep it like that.
 
->> +	napi = napi_by_id(napi_id);
->> +	if (!napi)
->> +		return;
->> +
->> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
->> +		preempt_disable();
->> +
->> +	for (;;) {
->> +		local_bh_disable();
->> +
->> +		if (napi_state_start_busy_polling(napi, 0)) {
->> +			have_poll_lock = netpoll_poll_lock(napi);
->> +			cb(cb_arg);
->> +			local_bh_enable();
->> +			busy_poll_stop(napi, have_poll_lock, 0, 1);
->> +			break;
->> +		}
->> +
->> +		local_bh_enable();
->> +		if (unlikely(need_resched()))
->> +			break;
->> +		cpu_relax();
-> 
-> Don't you need a 'loop_end' condition here?
+I've checked on a release config the stack consumption and the encoded
+ioctl functions are not the worst:
 
-As you mentioned in 14/15, it can indeed spin for long and is bound only
-by need_resched(). Do you think it's reasonable to wait for it without a
-time limit with NAPI_STATE_PREFER_BUSY_POLL? softirq should yield napi
-after it exhausts the budget, it should limit it well enough, what do
-you think?
-
-The only ugly part is that I don't want it to mess with the
-NAPI_F_PREFER_BUSY_POLL in busy_poll_stop()
-
-busy_poll_stop() {
-	...
-	clear_bit(NAPI_STATE_IN_BUSY_POLL, &napi->state);
-	if (flags & NAPI_F_PREFER_BUSY_POLL) {
-		napi->defer_hard_irqs_count = READ_ONCE(napi->dev->napi_defer_hard_irqs);
-		timeout = READ_ONCE(napi->dev->gro_flush_timeout);
-		if (napi->defer_hard_irqs_count && timeout) {
-			hrtimer_start(&napi->timer, ns_to_ktime(timeout), HRTIMER_MODE_REL_PINNED);
-			skip_schedule = true;
-		}
-	}
-}
-
-Is it fine to set PREFER_BUSY_POLL but do the stop call without? E.g.
-
-set_bit(NAPI_STATE_PREFER_BUSY_POLL, &napi->state);
-...
-busy_poll_stop(napi, flags=0);
-
-
--- 
-Pavel Begunkov
+tree-log.c:btrfs_sync_log                       728 static
+scrub.c:scrub_verify_one_metadata               552 dynamic,bounded
+inode.c:print_data_reloc_error                  544 dynamic,bounded
+uuid-tree.c:btrfs_uuid_scan_kthread             520 static
+tree-checker.c:check_root_item                  504 static
+file-item.c:btrfs_csum_one_bio                  496 static
+inode.c:btrfs_start_delalloc_roots              488 static
+scrub.c:scrub_raid56_parity_stripe              464 dynamic,bounded
+disk-io.c:write_dev_supers                      464 static
+ioctl.c:btrfs_ioctl_encoded_write               456 dynamic,bounded
+ioctl.c:btrfs_ioctl_encoded_read                456 dynamic,bounded
 

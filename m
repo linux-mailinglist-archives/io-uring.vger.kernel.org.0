@@ -1,222 +1,223 @@
-Return-Path: <io-uring+bounces-3844-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3845-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F419A66ED
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 13:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AD149A69F1
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 15:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7161C21BEA
-	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 11:47:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DC93280233
+	for <lists+io-uring@lfdr.de>; Mon, 21 Oct 2024 13:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D123E1E3DE4;
-	Mon, 21 Oct 2024 11:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CAE18E373;
+	Mon, 21 Oct 2024 13:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="gzK14w1Q";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HrTqniu+"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="k/a3Mo/S";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8DsxXsRh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="k/a3Mo/S";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8DsxXsRh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589BE78C76;
-	Mon, 21 Oct 2024 11:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B651E633C;
+	Mon, 21 Oct 2024 13:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729511227; cv=none; b=NmE7uQVcw+yQOFkDSyFDVzjqAbWOOSZd3TSrCAsp4DUHxPqbT4T3WvWif5IG8/eL8SO6h/7r5hg9mmQbBh38HkokTvnV3w90v7KgZHIy/GMfO2ISDQiAzzzPM5Lr37x3OHqnDeeRQ3T1JKwp7Dx1Ug4jszpVTounCJRYA/c5GuQ=
+	t=1729516918; cv=none; b=ccvEEiWidm90hvQFHqnWQVIM5a842aJOPMtTCrt3F/9DSiSW7r1AUTCF2f8zizuWaTjg+M2Y5dZ7B9bUnElDdvsQX3gKKTmNRwGPDYlPWldRkcLiiGd7xSM7Ec5RDaPP8UlFLbZG7niwr13Bc5/7NwUFp+1iaohVGtejm/0t+Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729511227; c=relaxed/simple;
-	bh=icDWyVYuGoilzsVGsRx+OQFBkWifsF/RQ0kUHHKaSJg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ax719o0fP/07Memr7mEeKuJNNZ7kgsXUt1TSCRZI5X0KIvOm1q45N9QR8gzOjVvKG5+Za5p6y9XsTHenLLrIbq835egJhBmIEdQB7RYiP3NO6iMl4YNLTd2Fk/EsbiXhOJHF1+jjJwIjpFWiO8jC2N4RpcqSu2vAd2iuLO7ps0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=gzK14w1Q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HrTqniu+; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 250E225400BD;
-	Mon, 21 Oct 2024 07:47:04 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Mon, 21 Oct 2024 07:47:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1729511223;
-	 x=1729597623; bh=xYAIc9hKx/tsXstVKFR1tYRGW3CTN4RrIyyMbzt1Ldc=; b=
-	gzK14w1Q5xEOl2PE2aO1vwoatEZbK9kcXwqXAGrU/VzOnsVu1QSid2LuKTityoMR
-	OYGx1dGrpfCGtzssbiF9/ko7d1OTfiHydxoaRHATQaixBRqIx8ObFh+2WtKFzB0k
-	s5Iv7f0BsGarjuwEdZO4jpdckhqrtCsRFVjrpJeWp2FJ7N1OPgM/z1Fq9vUvZcu9
-	0RCakSfWrZq4f7mDsakpXfVAQo0EOYwcOP0Tx1HJ6eLa6MCGvu3glt4AwQejdM3X
-	kKl/PYjHHdCKkx+mDx1Ly267atBjSPzJUq0i/j4/lcWSAfWB2K1TNaw/54m17mKZ
-	NDNEbW8uHwh3VQgCyrMeIw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729511223; x=
-	1729597623; bh=xYAIc9hKx/tsXstVKFR1tYRGW3CTN4RrIyyMbzt1Ldc=; b=H
-	rTqniu+y6SgNFYWSCexJwmpOZnadEy9ctR5oalaWmx3katMjRjXnogc6novsTL2L
-	Hbrc/iRIfLqwqkR7t47lFcfPA8u9Q42hquFsm8GYlvAHjoSEeTI8Jn1SrA4IhucQ
-	N6DB8W7lbDWObditlq8R7JCcW5BZ83wfeHFsMP3YtnSKsSBK8CN7ZA0IjZtoZd38
-	5MFVandXKvh0wg+Mu/Tv27k+5/hOhqFl9++Zh6lUISjaN56LqSFZ1uVy3+FmYLYm
-	Y1ZWL0JzCiqhJKHD///CzApKbPT+KBeZVQWTSrxBoMA2TMJCp62RhQ9tfOdxSCmH
-	CFFP+G1vod7PhQX+CL0aQ==
-X-ME-Sender: <xms:Nz8WZ4Ei-2NqbzTqVMl2Wtul4Ew-YfgzsCFEVIQX2aDoD4Fm0oc1XQ>
-    <xme:Nz8WZxWzzye_IKK67wpSoSZ-YIQx0FLASso1NQXO2qfJydfPo5GWuaKr3t0KS4Rq5
-    HTSEyzDpA57b6tg>
-X-ME-Received: <xmr:Nz8WZyJ2ENM_OPkvFSRbZYkZqHesHgWKeSpdv9s13KiCCWQpF4DXBkGzSGOiqlaZ0g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehledggeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfhffuvfevfhgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepffduhfegvdetfedt
-    teeihfdvfeehlefhgfehkefgveeugedvfedtheekledthedtnecuffhomhgrihhnpegrkh
-    grrdhmshdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghr
-    rghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
-    drfhhmpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepugifsegurghvihgufigvihdruhhkpdhrtghpthhtohepmhhikhhlohhssehsiigvrh
-    gvughirdhhuhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthht
-    oheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinh
-    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehi
-    ohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnh
-    hnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopegrmhhirhejfehilhes
-    ghhmrghilhdrtghomhdprhgtphhtthhopehtohhmrdhlvghimhhinhhgsehgmhgrihhlrd
-    gtohhm
-X-ME-Proxy: <xmx:Nz8WZ6FEYFDDckzqhZOvVpiyHHFnQnGa8RTbAYki9kqT79PU9J03tw>
-    <xmx:Nz8WZ-WiVdXxekYyIE3RYCz7kc8Wyyja6TDiMs53WrZpSliweumb_w>
-    <xmx:Nz8WZ9O10gcHQJoNY-TkPSjpOnne7CQliRxYEt9WOu0_W_zUnVir1w>
-    <xmx:Nz8WZ12ONK-5FY41UPYeMTSGRx5n2SDDLoR0tgo7qntmKNmv81w3ng>
-    <xmx:Nz8WZ3O4LhZkknl5B0LW9zkZPFFZ6_1usyFjK8qmsX7xxNIMgGc2lT0_>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Oct 2024 07:47:02 -0400 (EDT)
-Message-ID: <ed03c267-92c1-4431-85b2-d58fd45807be@fastmail.fm>
-Date: Mon, 21 Oct 2024 13:47:00 +0200
+	s=arc-20240116; t=1729516918; c=relaxed/simple;
+	bh=gHhDRNgJERw3V8HbyPTL9Af3Go1cL2efjlFfTYMYAUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qCXaEvmIN3BOj+QfgNA5DJ139mVY6PaGBxYYwzqUKrdXR5aQNa6yR8SMyVgKbFGLKv5gK9tl0iqf4172qhU6xIruKmiS1weXCplhKgjufgBgYCmV1XElfrQRSjP2ZqBm27i2ukGjBZkt+xI/YmbbaqYOcPHEpt3ny8wcWgIZIs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=k/a3Mo/S; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8DsxXsRh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=k/a3Mo/S; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8DsxXsRh; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B1A9721B41;
+	Mon, 21 Oct 2024 13:21:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729516913;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PSJ3Whu7Jk2t7AN+/YOgPa0LEaNzM/iLyUsh2X00ZDw=;
+	b=k/a3Mo/SE+viDPBqqhvo8Biz6iR4CNO1ofNUQd7JeNraCuFqWow2y625kYeZ9x8VQnZfX0
+	VCYDhNhQHhc1fMenLC8fe5KSWJNlCAOH4nSI5mbIxKXn6+Nh8aMpCqjYyYaUOEsyadHePg
+	Gwx95TAWf4SQszVbhf1x4LVF+UainCk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729516913;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PSJ3Whu7Jk2t7AN+/YOgPa0LEaNzM/iLyUsh2X00ZDw=;
+	b=8DsxXsRhvQhdq6g3cx52NJ8d4jFbazqneQ/u32x0owAggSIcuby2tSahnBq+2C7w7u51J+
+	g0yYzaYfX03IrvDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="k/a3Mo/S";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8DsxXsRh
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729516913;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PSJ3Whu7Jk2t7AN+/YOgPa0LEaNzM/iLyUsh2X00ZDw=;
+	b=k/a3Mo/SE+viDPBqqhvo8Biz6iR4CNO1ofNUQd7JeNraCuFqWow2y625kYeZ9x8VQnZfX0
+	VCYDhNhQHhc1fMenLC8fe5KSWJNlCAOH4nSI5mbIxKXn6+Nh8aMpCqjYyYaUOEsyadHePg
+	Gwx95TAWf4SQszVbhf1x4LVF+UainCk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729516913;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PSJ3Whu7Jk2t7AN+/YOgPa0LEaNzM/iLyUsh2X00ZDw=;
+	b=8DsxXsRhvQhdq6g3cx52NJ8d4jFbazqneQ/u32x0owAggSIcuby2tSahnBq+2C7w7u51J+
+	g0yYzaYfX03IrvDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9D5F8136DC;
+	Mon, 21 Oct 2024 13:21:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3j8xJnFVFmfhPwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 21 Oct 2024 13:21:53 +0000
+Date: Mon, 21 Oct 2024 15:21:48 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Mark Harmstone <maharmstone@fb.com>
+Cc: linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH 2/5] btrfs: change btrfs_encoded_read_regular_fill_pages
+ to take a callback
+Message-ID: <20241021132148.GB17835@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20241014171838.304953-1-maharmstone@fb.com>
+ <20241014171838.304953-3-maharmstone@fb.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Subject: Re: [PATCH RFC v4 00/15] fuse: fuse-over-io-uring
-To: David Wei <dw@davidwei.uk>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
- Ming Lei <tom.leiming@gmail.com>, Josef Bacik <josef@toxicpanda.com>
-References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
- <38c76d27-1657-4f8c-9875-43839c8bbe80@davidwei.uk>
-Content-Language: en-US
-In-Reply-To: <38c76d27-1657-4f8c-9875-43839c8bbe80@davidwei.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014171838.304953-3-maharmstone@fb.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: B1A9721B41
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:replyto];
+	RCPT_COUNT_THREE(0.00)[3];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.21
+X-Spam-Flag: NO
 
-Hi David,
-
-On 10/21/24 06:06, David Wei wrote:
-> [You don't often get email from dw@davidwei.uk. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+On Mon, Oct 14, 2024 at 06:18:24PM +0100, Mark Harmstone wrote:
+> Change btrfs_encoded_read_regular_fill_pages so that it takes a callback
+> rather than waiting, and add new helper function btrfs_encoded_read_wait_cb
+> to match the existing behaviour.
 > 
-> On 2024-10-15 17:05, Bernd Schubert wrote:
-> [...]
->>
-
-...
-
-> Hi Bernd, I applied this patchset to io_uring-6.12 branch with some
-> minor conflicts. I'm running the following command:
+> Signed-off-by: Mark Harmstone <maharmstone@fb.com>
+> ---
+>  fs/btrfs/btrfs_inode.h | 13 +++++++-
+>  fs/btrfs/inode.c       | 70 ++++++++++++++++++++++++++++++++----------
+>  fs/btrfs/send.c        | 15 ++++++++-
+>  3 files changed, 79 insertions(+), 19 deletions(-)
 > 
-> $ sudo ./build/example/passthrough_hp -o allow_other --debug-fuse --nopassthrough \
-> --uring --uring-per-core-queue --uring-fg-depth=1 --uring-bg-depth=1 \
-> /home/vmuser/scratch/source /home/vmuser/scratch/dest
-> FUSE library version: 3.17.0
-> Creating ring per-core-queue=1 sync-depth=1 async-depth=1 arglen=1052672
-> dev unique: 2, opcode: INIT (26), nodeid: 0, insize: 104, pid: 0
-> INIT: 7.40
-> flags=0x73fffffb
-> max_readahead=0x00020000
->     INIT: 7.40
->     flags=0x4041f429
->     max_readahead=0x00020000
->     max_write=0x00100000
->     max_background=0
->     congestion_threshold=0
->     time_gran=1
->     unique: 2, success, outsize: 80
-> 
-> I created the source and dest folders which are both empty.
-> 
-> I see the following in dmesg:
-> 
-> [ 2453.197510] uring is disabled
-> [ 2453.198525] uring is disabled
-> [ 2453.198749] uring is disabled
-> ...
-> 
-> If I then try to list the directory /home/vmuser/scratch:
-> 
-> $ ls -l /home/vmuser/scratch
-> ls: cannot access 'dest': Software caused connection abort
-> 
-> And passthrough_hp terminates.
-> 
-> My kconfig:
-> 
-> CONFIG_FUSE_FS=m
-> CONFIG_FUSE_PASSTHROUGH=y
-> CONFIG_FUSE_IO_URING=y
-> 
-> I'll look into it next week but, do you see anything obviously wrong?
+> diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+> index 3056c8aed8ef..6aea5bedc968 100644
+> --- a/fs/btrfs/btrfs_inode.h
+> +++ b/fs/btrfs/btrfs_inode.h
+> @@ -601,10 +601,21 @@ int btrfs_run_delalloc_range(struct btrfs_inode *inode, struct page *locked_page
+>  int btrfs_writepage_cow_fixup(struct page *page);
+>  int btrfs_encoded_io_compression_from_extent(struct btrfs_fs_info *fs_info,
+>  					     int compress_type);
+> +typedef void (btrfs_encoded_read_cb_t)(void *, int);
+> +
+> +struct btrfs_encoded_read_wait_ctx {
+> +	wait_queue_head_t wait;
+> +	bool done;
+> +	int err;
 
+Please reorder that so it does not waste the bytes after 'done' to align
+'err'
 
-thanks for testing it! I just pushed a fix to my libfuse branches to
-avoid the abort for -EOPNOTSUPP. It will gracefully fall back to
-/dev/fuse IO now.
+> +};
+> +
+> +void btrfs_encoded_read_wait_cb(void *ctx, int err);
+>  int btrfs_encoded_read_regular_fill_pages(struct btrfs_inode *inode,
+>  					  u64 file_offset, u64 disk_bytenr,
+>  					  u64 disk_io_size,
+> -					  struct page **pages);
+> +					  struct page **pages,
+> +					  btrfs_encoded_read_cb_t cb,
+> +					  void *cb_ctx);
+>  ssize_t btrfs_encoded_read(struct kiocb *iocb, struct iov_iter *iter,
+>  			   struct btrfs_ioctl_encoded_io_args *encoded);
+>  ssize_t btrfs_do_encoded_write(struct kiocb *iocb, struct iov_iter *from,
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index b024ebc3dcd6..b5abe98f3af4 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -9080,9 +9080,10 @@ static ssize_t btrfs_encoded_read_inline(
+>  }
+>  
+>  struct btrfs_encoded_read_private {
+> -	wait_queue_head_t wait;
+>  	atomic_t pending;
+>  	blk_status_t status;
+> +	btrfs_encoded_read_cb_t *cb;
+> +	void *cb_ctx;
 
-Could you please use the rfcv4 branch, as the plain uring
-branch will soon get incompatible updates for rfc5?
+Final version of this structure could be also reordered so it does not
+leave unnecessary holes, I think status is u8 so it now fills the hole
+after pending but I'm not sure now if other patches make more changes.
 
-https://github.com/bsbernd/libfuse/tree/uring-for-rfcv4
+>  };
+>  
+>  static void btrfs_encoded_read_endio(struct btrfs_bio *bbio)
+> @@ -9100,26 +9101,33 @@ static void btrfs_encoded_read_endio(struct btrfs_bio *bbio)
+>  		 */
+>  		WRITE_ONCE(priv->status, bbio->bio.bi_status);
+>  	}
+> -	if (!atomic_dec_return(&priv->pending))
+> -		wake_up(&priv->wait);
+> +	if (!atomic_dec_return(&priv->pending)) {
 
+Though it's in the original code, please rewrite the condition so it
+reads as an arithmetic condition, "== 0".
 
-The short answer to let you enable fuse-io-uring:
-
-echo 1 >/sys/module/fuse/parameters/enable_uring
-
-
-(With that the "uring is disabled" should be fixed.)
-
-
-The long answer for Miklos and others
-
-
-IOCTL removal introduced a design issue, as now fuse-client
-(kernel) does not know if fuse-server/libfuse wants to set
-up io-uring communication.
-It is not even possible to forbid FUSE_URING_REQ_FETCH after
-FUSE_INIT reply, as io-uring is async. What happens is that
-fuse-client (kernel) receives all FUSE_URING_REQ_FETCH commands
-only after FUSE_INIT reply. And that although FUSE_URING_REQ_FETCH
-is send out from libuse *before* replying to FUSE_INIT.
-I had also added a comment for that into the code.
-
-And the other issue is that libfuse now does not know if kernel supports
-fuse-io-uring. That has some implications
-- libfuse cannot write at start up time a clear error message like
-"Kernel does not support fuse-over-io-uring, falling back to /dev/fuse IO"
-- In the fallback code path one might want to adjust number of libfuse
-/dev/fuse threads if io-uring is not supported - with io-uring typically
-one thread might be sufficient - to handle FUSE_INTERRUPT.
-
-
-My suggestion is that we introduce the new FUSE_URING_REQ_REGISTER (or
-replace FUSE_URING_REQ_FETCH with that) and then wait in fuse-server
-for completion of that command before sending out FUSE_URING_REQ_FETCH.
-
-
-Thanks,
-Bernd
-
+> +		priv->cb(priv->cb_ctx,
+> +			 blk_status_to_errno(READ_ONCE(priv->status)));
+> +		kfree(priv);
+> +	}
+>  	bio_put(&bbio->bio);
+>  }
 

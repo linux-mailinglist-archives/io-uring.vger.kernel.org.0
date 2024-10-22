@@ -1,135 +1,120 @@
-Return-Path: <io-uring+bounces-3912-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3913-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A199AB117
-	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 16:42:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813FD9AB15D
+	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 16:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DDCD1F241BD
-	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 14:42:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42407285635
+	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 14:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD6A1A0BFD;
-	Tue, 22 Oct 2024 14:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1501A255C;
+	Tue, 22 Oct 2024 14:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpzbxFx8"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="X/OZULTY"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDD219F49C
-	for <io-uring@vger.kernel.org>; Tue, 22 Oct 2024 14:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159D91A0BE0
+	for <io-uring@vger.kernel.org>; Tue, 22 Oct 2024 14:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729608168; cv=none; b=HMUIxlCmEn+UrigCN/JnQ+C/iKXZEDIa3sXTMVp53aiRV69fuU6HH9zkD2y7xI+5ms8G5BpiWMhwqsmZoVqT1oq6reg4bx2VjtcRLTdHU2jg++IilyKGJhYLNNIXdTAgG6QsNX0WHgxPt1DCc45TNbNrR5ehnHtLV1G9UM3mdPY=
+	t=1729608647; cv=none; b=lpidC7OhzXPrACPcq/6Ly7wyr2ysjRHwKKylo0LUHp8q53G61kHHyNDuxcyZd9+tCmx+C+/cctgxss0gT5g9CPCa4AK+XUZoUxZYTjr7vwKp5NA4ZgYLTYle1FMMKFlim1/n7+lHRAReg7Mxmyo967vRGDplnPWebjRxOTeCbgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729608168; c=relaxed/simple;
-	bh=LLMAyzjVzCHC0lMplM/PxfHLu1sviICy98QmeAIpg24=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P5tu5GpjuaKPJzvpRNdBbkWslBAWqZWkXnGiCzxfOgHcez0BpVrgu6m2mdVhaQvVefO6vd9FKGGDwa/vbqEBX4wcsflRAAyLEPKsliXZDP7MmXg8Vq+5NA137n053Rw2xcFL7mmYDHVKyW0aIug30e1TWUX50LdssdFjQU3BvQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpzbxFx8; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c9634c9160so6225110a12.2
-        for <io-uring@vger.kernel.org>; Tue, 22 Oct 2024 07:42:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729608164; x=1730212964; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TKQdQvaaPOZjv5rywWtr97sd8FUzNk7jVmtMShyoNp0=;
-        b=cpzbxFx8OCpqjInXsigyFMoZqQY/G+jL5Y0Wi8MfeqqSYGz4/BOUasLNvb08HSl4qk
-         axlmQHWI+HVPGoeVvmLfDi7uIQRdOltN6pHZ3F3Us4QB5/BTtpDx6cKn0xZHCCVVel3H
-         1CVO8BBIlh+sjvVhh/9RmZuP/65IRZuqso5RRHbtAlSK0/OaBBLTTKC3H0Q450xnsiNo
-         4HG0b2Dh6L+5k1uE9orqUz1Da+x7fF5Qnk1jlpkypjUAQl0+DVCiisllIbIcRFunjHVW
-         NNiY9ZSSbkcOijhPzdrVQ/MZgMEh69OTRlU/0RM5m+k8QQjSktcsT7XV7tC6Os46Cay4
-         uhhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729608164; x=1730212964;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TKQdQvaaPOZjv5rywWtr97sd8FUzNk7jVmtMShyoNp0=;
-        b=iGQhrJffXpcpX9QF9/llLvx2cT3oRBNRAu+XJLy0+Ov01x7JaQKIPC3NKGnsBxq1NQ
-         Mkau1ImIB5dzqsyuozz8G02EtniWX4Rw4dcmJiXjdJ4t5eIhnfOmZCAiFxiuemMBLz/L
-         aEUnI0vvxGa+ezk4af6DPv3YNDfDDKAfx/EWR5Sx0m7wI30YNd/lJfxLAAfkuiGsrMjC
-         VTcogeKVXWjg7xJl+yZl07Sr/ZTws3kMlpurikccYkj2oUt7L7FfRtx1GtQhKks7ReCS
-         ELwsQguO+dojkGPyp3XOv4iloUU+mZb09ToD5Jyxaql7Cc5NoMOxAfiFfAbA8VNtlI5w
-         1QQw==
-X-Gm-Message-State: AOJu0YxWqSez6rWdJB+IXBj+8tvc7jImhk7F9KwU2SjILOfBtx/2hBoH
-	9b42WZqEIq4vW6/eWOVZ7FUnj+ZNEfwBigChOw3z9Lz0CePtOKoe/zIcxA==
-X-Google-Smtp-Source: AGHT+IFx9pf8yOBp3HQQwuHjmz3PhO1Bm9mdbK5WB3a880lq8qt/qNWEGfr7w5oKbhQVuf05akhgNg==
-X-Received: by 2002:a05:6402:1d4a:b0:5cb:69a2:7ad0 with SMTP id 4fb4d7f45d1cf-5cb69a27df0mr7344626a12.32.1729608163202;
-        Tue, 22 Oct 2024 07:42:43 -0700 (PDT)
-Received: from 127.0.0.1localhost ([148.252.141.112])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb6696b631sm3244434a12.9.2024.10.22.07.42.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 07:42:42 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	asml.silence@gmail.com
-Subject: [PATCH 4/4] io_uring/net: clean up io_msg_copy_hdr
-Date: Tue, 22 Oct 2024 15:43:15 +0100
-Message-ID: <26c2f30b491ea7998bfdb5bb290662572a61064d.1729607201.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1729607201.git.asml.silence@gmail.com>
-References: <cover.1729607201.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1729608647; c=relaxed/simple;
+	bh=TSm1BN9emZ76LQu0latI5pEpX1HqmM7/npDVoP2FMko=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jXLEMzPUV7Q2Hhe65BdLcpXaFWGhs3BTbRJXrpMI+IsnGZg2l4uQ4rlELj/TWe9Z1v3wve4g5dQ4xUrDrwsBf5scAatkVlnFf7HlniQtXNXAizny+em1ZQG+yno+Vwir+NtGrQlYXfbdRM4gMOzRcU5jRaMS3B3+7TVGR/yIbMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b=X/OZULTY; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+	by m0001303.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 49MDn5MC003018
+	for <io-uring@vger.kernel.org>; Tue, 22 Oct 2024 07:50:44 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=facebook; bh=du7uXR3XWoZvnk0xJBO7Lrq
+	L+u4jlZYXQvd50LOD9Zs=; b=X/OZULTYujw3VyHZiDcm5lhxnfi98dOgvWrN2dx
+	ZhC7KECQTEfL2Nu3oK1k6d1RwVn2y2cYx3in34wIlrb32v7nLmUyQl3UyUPQTz1b
+	1c6iQLc2BjKY3Ee6KXA4eOeOD3Iv9RY70d5Th8u0uPoaguz3krYDHKIAUtQjakjw
+	iB6E=
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by m0001303.ppops.net (PPS) with ESMTPS id 42ea7hhgw1-4
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Tue, 22 Oct 2024 07:50:44 -0700 (PDT)
+Received: from twshared11671.02.ash9.facebook.com (2620:10d:c0a8:fe::f072) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.11; Tue, 22 Oct 2024 14:50:43 +0000
+Received: by devbig276.nha1.facebook.com (Postfix, from userid 660015)
+	id 91BB27FDCDA6; Tue, 22 Oct 2024 15:50:32 +0100 (BST)
+From: Mark Harmstone <maharmstone@fb.com>
+To: <linux-btrfs@vger.kernel.org>
+CC: <io-uring@vger.kernel.org>, Mark Harmstone <maharmstone@fb.com>
+Subject: [PATCH v4 0/5] btrfs: io_uring interface for encoded reads
+Date: Tue, 22 Oct 2024 15:50:15 +0100
+Message-ID: <20241022145024.1046883-1-maharmstone@fb.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: nPXXRWBtRurZDdEu97MNOFKF-XMwxp6S
+X-Proofpoint-ORIG-GUID: nPXXRWBtRurZDdEu97MNOFKF-XMwxp6S
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
 
-Put sr->umsg into a local variable, so it doesn't repeat "sr->umsg->"
-for every field. It looks nicer, and likely without the patch it
-compiles into a bunch of umsg memory reads.
+This is version 4 of a patch series to add an io_uring interface for
+encoded reads. The principal use case for this is to eventually allow
+btrfs send and receive to operate asynchronously, the lack of io_uring
+encoded I/O being one of the main blockers for this.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/net.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+I've written a test program for this, which demonstrates the ioctl and
+io_uring interface produce identical results: https://github.com/maharmst=
+one/io_uring-encoded
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 7ff2cb771e1f..ccdbb3c42ac0 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -261,6 +261,7 @@ static int io_msg_copy_hdr(struct io_kiocb *req, struct io_async_msghdr *iomsg,
- 			   struct user_msghdr *msg, int ddir)
- {
- 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
-+	struct user_msghdr __user *umsg = sr->umsg;
- 	struct iovec *iov;
- 	int ret, nr_segs;
- 
-@@ -272,16 +273,16 @@ static int io_msg_copy_hdr(struct io_kiocb *req, struct io_async_msghdr *iomsg,
- 		nr_segs = 1;
- 	}
- 
--	if (!user_access_begin(sr->umsg, sizeof(*sr->umsg)))
-+	if (!user_access_begin(umsg, sizeof(*umsg)))
- 		return -EFAULT;
- 
- 	ret = -EFAULT;
--	unsafe_get_user(msg->msg_name, &sr->umsg->msg_name, ua_end);
--	unsafe_get_user(msg->msg_namelen, &sr->umsg->msg_namelen, ua_end);
--	unsafe_get_user(msg->msg_iov, &sr->umsg->msg_iov, ua_end);
--	unsafe_get_user(msg->msg_iovlen, &sr->umsg->msg_iovlen, ua_end);
--	unsafe_get_user(msg->msg_control, &sr->umsg->msg_control, ua_end);
--	unsafe_get_user(msg->msg_controllen, &sr->umsg->msg_controllen, ua_end);
-+	unsafe_get_user(msg->msg_name, &umsg->msg_name, ua_end);
-+	unsafe_get_user(msg->msg_namelen, &umsg->msg_namelen, ua_end);
-+	unsafe_get_user(msg->msg_iov, &umsg->msg_iov, ua_end);
-+	unsafe_get_user(msg->msg_iovlen, &umsg->msg_iovlen, ua_end);
-+	unsafe_get_user(msg->msg_control, &umsg->msg_control, ua_end);
-+	unsafe_get_user(msg->msg_controllen, &umsg->msg_controllen, ua_end);
- 	msg->msg_flags = 0;
- 
- 	if (req->flags & REQ_F_BUFFER_SELECT) {
--- 
-2.46.0
+Changelog:
+v4:
+* Rewritten to avoid taking function pointer
+* Removed nowait parameter, as this could be derived from iocb flags
+* Fixed structure not getting properly initialized
+* Followed ioctl by capping uncompressed reads at EOF
+* Rebased against btrfs/for-next
+* Formatting fixes
+* Rearranged structs to minimize holes
+* Published test program
+* Fixed potential data race with userspace
+* Changed to use io_uring_cmd_to_pdu helper function
+* Added comments for potentially confusing parts of the code
+
+v3:
+* Redo of previous versions
+
+Mark Harmstone (5):
+  btrfs: remove pointless addition in btrfs_encoded_read
+  btrfs: change btrfs_encoded_read so that reading of extent is done by
+    caller
+  btrfs: don't sleep in btrfs_encoded_read if IOCB_NOWAIT set
+  btrfs: move priv off stack in btrfs_encoded_read_regular_fill_pages
+  btrfs: add io_uring command for encoded reads
+
+ fs/btrfs/btrfs_inode.h |  13 +-
+ fs/btrfs/file.c        |   1 +
+ fs/btrfs/inode.c       | 175 ++++++++++++++-------
+ fs/btrfs/ioctl.c       | 342 ++++++++++++++++++++++++++++++++++++++++-
+ fs/btrfs/ioctl.h       |   2 +
+ fs/btrfs/send.c        |   3 +-
+ 6 files changed, 473 insertions(+), 63 deletions(-)
+
+--=20
+2.45.2
 
 

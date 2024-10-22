@@ -1,111 +1,110 @@
-Return-Path: <io-uring+bounces-3905-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3906-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E65D9AA33E
-	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 15:34:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9079AB0FE
+	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 16:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C8C91C21EAE
-	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 13:34:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4465A1F24148
+	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 14:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D8C1E481;
-	Tue, 22 Oct 2024 13:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A6A19E97F;
+	Tue, 22 Oct 2024 14:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="msrrBwUP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivL/y0fE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208E98063C
-	for <io-uring@vger.kernel.org>; Tue, 22 Oct 2024 13:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFFC558A5;
+	Tue, 22 Oct 2024 14:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729604097; cv=none; b=fnN+sPKW9ggqOpgdci+TRhI4+TJtC9ohGBLxrLiuM170mQ87GzmQLcVV4TFU+w7ycnjNfhlgetal+MrkyCr1XIxsF/FDg4sqgL2MWgO41VHPW4TYxlglQoRbRQD99eOOo3g8Fw8P50280V8z9RqRWBxygvRkFgPPTm4WP2rseFs=
+	t=1729607880; cv=none; b=czUoRNf2wNum33oGYLh5W8SwJWlk0jNvb3acFdJlyfuPH+M3Q3npj5Z8iKCw3tW3b3JP4V9M0yjZOri85/cI0gledPiSkH0LTavvdrBIvIYEMQLHu+VjC5MhsS/9qwvuPplMX8LUj9A0W8mg7dRL53eBmm25TH4lFaoLDnyLu/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729604097; c=relaxed/simple;
-	bh=xTsMZ1NscutzFx3vj+pkF7qRllj0ph1Ef4bK3IFUMp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RE3VgMGyT+RR45xKVipjjrHDRJZwdAizpl+GBOy2p1T7hbkXd8mh1ZBbdeHJhRM+lqt84/y3XeyZ/MAF5pd8fkyHtzxUG59Y7C3o+YQNjrJqWRzj7RYGqLvezwn4tfbbklViqGClRAwJvS8TSGGrXa0D/iIN5bKcGznD9kcuR8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=msrrBwUP; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a3b1aa0e80so23507025ab.1
-        for <io-uring@vger.kernel.org>; Tue, 22 Oct 2024 06:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729604094; x=1730208894; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dBSkbQIxH9wsbcPCiHBwUytG72Sft1sfvVnb0fwF/aM=;
-        b=msrrBwUPInQTBtQXxkeoH/a/L8PIRBkAO/pnLHodRZbUBV6ZzZbkpM/Jx26mnRS9zC
-         toOFYnY03KF5exPK9DpC93ig21CiAxO3W0uulT9DiBO7iUkwHioECu6u9nnnh3WKNWTJ
-         d+tpqYwghUuLKbD/0vVicEPWV7mYxcqHRkBYx8dJYGJHJFOjWDGydu/9Vd8MOgiNpezH
-         iKtVk6YFRDTPAYTVOW+FrOxNhoJJc40RnmhQW71W/IwLvKUnvoVD4aJxjvV6xM4KJhR5
-         /HnI/jK8FiYkG+GbQ1TLQwOLwhrm6n4LpxlvVOrl16oudPF6Tm7faXQVCBYEQVui2kjl
-         HxZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729604094; x=1730208894;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dBSkbQIxH9wsbcPCiHBwUytG72Sft1sfvVnb0fwF/aM=;
-        b=T3vxL39temuFMrnex9NMQ+64Sb+P5cUFYVfQN6MltrP8x1DuI4bg+a93HDpUb7+loJ
-         d8Gf4c3rCgdjrV2LuKqZ27cxMv6XGl/r7TB+T0iAzpr++VPBN0S+Ousu3ZyJzsT+xX4V
-         wITgmHybJULU7kWLi06TgL2uhIQqNGz0yLTM6SROMY3Oe99N/dtOQsN0UhK5MihbHjhK
-         iLfJ8AGbjc8Tvb6jGn+RyfDNMGuPYao1AxbUg/LxF+Sx8chbS3uwPIjuanlybNA9Kk/G
-         oOcXEM2LJ/GiT0eRtlwLbvwezFUAM/OR166HAYGfCDULvFEFAC1XNJj4AVTTmY+0njJy
-         Yn1A==
-X-Gm-Message-State: AOJu0YwRs5NkxLW84eD34mhkTJJnGpbfxm+siuSxCfhznCQCKJjc/Wns
-	Wo31sHnoIG7FwHorc4SuEkZtJz1d2+3CcBPUZjXmSvnfYlvWzjstGnmS7ff4cSeBThnKQKRaEza
-	6
-X-Google-Smtp-Source: AGHT+IH2FiVI3lN+DbElsJUjmx+BnUqWqw/31iptPVelEvwM0t7mJkvZ0jTZi4N3P7zuFNt0DqHqPw==
-X-Received: by 2002:a05:6e02:1d9b:b0:3a0:b631:76d4 with SMTP id e9e14a558f8ab-3a3f4045790mr152261065ab.1.1729604094286;
-        Tue, 22 Oct 2024 06:34:54 -0700 (PDT)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a400b7c76bsm18032385ab.72.2024.10.22.06.34.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 06:34:52 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/4] io_uring: kill 'imu' from struct io_kiocb
-Date: Tue, 22 Oct 2024 07:32:58 -0600
-Message-ID: <20241022133441.855081-5-axboe@kernel.dk>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241022133441.855081-1-axboe@kernel.dk>
-References: <20241022133441.855081-1-axboe@kernel.dk>
+	s=arc-20240116; t=1729607880; c=relaxed/simple;
+	bh=p8jy6tdnkz723LntVeZITPLHFVxOn5i0CPMPqySErvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqtnC7uQZ6sYoGFyx/t9r2rjtpwVFn2yh1E0EQPMKCaOQMbfyY/jkyr+DXnTEsZjlQagbC5W/8GkuusqBpYy+6mNo1DNpiK7Uss3w3kO9vo/Sko6iR2EtNbWVO1VJs7XH3wMFhOwmUL+CFceE3ulYxad/Q1MpA7oowAmnPshKZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivL/y0fE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85C45C4CEC3;
+	Tue, 22 Oct 2024 14:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729607879;
+	bh=p8jy6tdnkz723LntVeZITPLHFVxOn5i0CPMPqySErvQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ivL/y0fEKyi7iD+u35NDeLqW0E6Lrz5NIplvCGuMqxND+xRNwNHrHvm6/y+WuMlkx
+	 VlG+GuWFHDiF2y72ckcH0ZXfDuNlDq6UMIJAd7MLrvAJ7sz1phEoDVb86lucGIIKDT
+	 GD9xXU1iY64Ii3YGGnjPVD0DPkCzB14WDYWiRk/Txoiue72azE001DVvlypP194JsV
+	 ljFpCcmD7FR8y9YS/tf8z4pafahLex+fwjf0ptffHUyDwmet/dxxYqxjQRMircXORN
+	 LTrYgh3r1ciNs7Nfu5iB8q3QTzyhvK0t4uePDYiL7ojlVgI2sn3XqZzvruY5B3GP4B
+	 sO58BjR2qPI7A==
+Date: Tue, 22 Oct 2024 08:37:56 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, axboe@kernel.dk,
+	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	joshi.k@samsung.com, javier.gonz@samsung.com,
+	Nitesh Shetty <nj.shetty@samsung.com>,
+	Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCHv8 1/6] block, fs: restore kiocb based write hint
+ processing
+Message-ID: <Zxe4xL-sM5yF2isM@kbusch-mbp>
+References: <20241017160937.2283225-1-kbusch@meta.com>
+ <20241017160937.2283225-2-kbusch@meta.com>
+ <20241018055032.GB20262@lst.de>
+ <ZxZ3o_HzN8HN6QPK@kbusch-mbp>
+ <20241022064309.GA11161@lst.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022064309.GA11161@lst.de>
 
-It's no longer being used, remove it.
+On Tue, Oct 22, 2024 at 08:43:09AM +0200, Christoph Hellwig wrote:
+> On Mon, Oct 21, 2024 at 09:47:47AM -0600, Keith Busch wrote:
+> > On Fri, Oct 18, 2024 at 07:50:32AM +0200, Christoph Hellwig wrote:
+> > > On Thu, Oct 17, 2024 at 09:09:32AM -0700, Keith Busch wrote:
+> > > >  {
+> > > >  	*kiocb = (struct kiocb) {
+> > > >  		.ki_filp = filp,
+> > > >  		.ki_flags = filp->f_iocb_flags,
+> > > >  		.ki_ioprio = get_current_ioprio(),
+> > > > +		.ki_write_hint = file_write_hint(filp),
+> > > 
+> > > And we'll need to distinguish between the per-inode and per file
+> > > hint.  I.e. don't blindly initialize ki_write_hint to the per-inode
+> > > one here, but make that conditional in the file operation.
+> > 
+> > Maybe someone wants to do direct-io with partions where each partition
+> > has a different default "hint" when not provided a per-io hint? I don't
+> > know of such a case, but it doesn't sound terrible. In any case, I feel
+> > if you're directing writes through these interfaces, you get to keep all
+> > the pieces: user space controls policy, kernel just provides the
+> > mechanisms to do it.
+> 
+> Eww.  You actually pointed out a real problem here: if a device
+> has multiple partitions the write streams as of this series are
+> shared by them, which breaks their use case as the applications or
+> file systems in different partitions will get other users of the
+> write stream randomly overlayed onto theirs.
+> 
+> So either the available streams need to be split into smaller pools
+> by partitions, or we just assigned them to the first partition to
+> make these scheme work for partitioned devices.
+> 
+> Either way mixing up the per-inode hint and the dynamic one remains
+> a bad idea.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/io_uring_types.h | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 391087144666..6d3ee71bd832 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -613,9 +613,6 @@ struct io_kiocb {
- 	struct task_struct		*task;
- 
- 	union {
--		/* store used ubuf, so we can prevent reloading */
--		struct io_mapped_ubuf	*imu;
--
- 		/* stores selected buf, valid IFF REQ_F_BUFFER_SELECTED is set */
- 		struct io_buffer	*kbuf;
- 
--- 
-2.45.2
-
+No doubt it's almost certainly not a good idea to mix different stream
+usages, but that's not the kernels problem. It's user space policy. I
+don't think the kernel needs to perform any heroic efforts to split
+anything here. Just keep it simple.
 

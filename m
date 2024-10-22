@@ -1,263 +1,291 @@
-Return-Path: <io-uring+bounces-3896-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3897-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8055E9A9E0C
-	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 11:13:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C189A9FE2
+	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 12:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4DDAB22DD3
-	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 09:13:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5852A1F235BE
+	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 10:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90791547F5;
-	Tue, 22 Oct 2024 09:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47556199FDC;
+	Tue, 22 Oct 2024 10:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="EelYp1ic"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="c90OqJmu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="f/y1xkgT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73F91547E9;
-	Tue, 22 Oct 2024 09:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.145.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729588379; cv=fail; b=Vm78bVPDAJr7AqkLidveAbV5GvykJB/3YNJkRzKilN/K+5qv33AS7K4bC97G9fRZb7yWXn9QuA9KqgJhTMrT5TPx+gd32FPA2g1YCSddg5/IVui70qn2QGcdN6WicUMBfgGObuZqAgZtc3rRsOlBy4cSBYnA40nEBPr0VKdpTzM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729588379; c=relaxed/simple;
-	bh=0zNtXDZY5IvQD2pSEp+DGjCB/yeO1WTqDDhSsZV5zUg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=IP5bvhcWJdtv4iQZ9CIqQKe73tno3s7RPEuEX4vh8kRkvLGzMmKK3pd+TLsoS67GElWJEROnkjPUYkvkdfsD9iP7RN47VK13LMcn75rrAi+laUMkkZwcSHi8z4X2F5T9RMrdoQ0FkL+7LqjD2HraWznY5jFaNZ/EKJ0YUxHoEEU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=EelYp1ic; arc=fail smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49M7gXW7018262;
-	Tue, 22 Oct 2024 02:12:56 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	s2048-2021-q4; bh=2E6JYhUNhn1uUoytZ5Owu4X+aqr9kUmyCpcjJBGZP3g=; b=
-	EelYp1icfcKvwIaAdJb972+/DS+bLdMWfTE4DVQEUZ/TJxx/GOqtVwXkLB0cpviM
-	oy59RLb28WVtR53n52pXmD63GCQVUZC1hGHDQZBeWU6G22eNj5MpBt3gmVlrbbkt
-	BeYyBlgM+O7L+uJr/4mEXTnhhAxg/2H/dLMRRM4DwV0LTna21oZOyR3XwA7BKGkv
-	k85fYL4bqOMaeh26K+SQ7igCUru+qh452+0/QM7tQZmOf90icwXkZXKxYivOOYsq
-	fyFI/7QRz7l2uU+wh/ZHjTdSPv1BxljNwF/s1jLIH+RbzoyJk6KUGdqOzSGzGEr6
-	tqgqC0451fTn3Pgccc+CWg==
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2173.outbound.protection.outlook.com [104.47.73.173])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 42e7kt8hck-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Oct 2024 02:12:55 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aLVeq6XqY612JOcnxkiV06Mgs7jckJjlRl2EI+o8/4Avql+M0TgmhEsRPE00k76NDz+WS0DgIdJGNVMCIk9V+kH5BInAokp9GaW58dssvQbZsrXiYg1zlZ18lZcIN0xzH+2qi+wOrOW3Ud/RoAELY73JURT2yDrPzVuaY/dhNAzOGLWwL5ZDi3E4BU4rb+EWMnbBwMOl/2gsmm/BXlU0t0F6DLDSBZegQ31GSn9VYO8Hl2m/939jpthLOjgdBOMeuAO1XrLcN9pOFMw1KWhBmBciRspiMUhSgzczHCV0PiG7CkKHKeX7h4K6YuRQ7iJ5EYSt7rPSDLN6B2ynsUsv8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W3iYA+1iVnkqVwlHJYZMMdwebpvAn+znW1k8yNLxEU0=;
- b=BgYF561KT01nLgID6CWecJYNcMHub3I6azcbTxnYyxwoQfVZPx+dwTry9fMHJz/55ihC2zq3H7z9XPjySCEsvcrwTmFKIeum+tHeG8gyk8eTs3NGz5ug4WRcmg64r+22eOvWwKAbf6Hh5rgXrDhbfUvnVCPOFImQmkMNbuRBowK4ZCGQ9xYR3GDk9ItxbiZBgnk0qppl9m3ku06kfm0bxRFUQ104QU8ybIZHcUO9uULbWw/ExabrBBgXBWFg0Vz7b8FhIw2Dc5ge3w1yjrZ+JzBmeS/bZCEohhq+zHHyH4IAZUTH4O4AwlBMVPiTr7zpR3wRF7Kf9dj234gzlVM9GA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from SJ2PR15MB5669.namprd15.prod.outlook.com (2603:10b6:a03:4c0::15)
- by SA1PR15MB4657.namprd15.prod.outlook.com (2603:10b6:806:19c::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Tue, 22 Oct
- 2024 09:12:52 +0000
-Received: from SJ2PR15MB5669.namprd15.prod.outlook.com
- ([fe80::bff4:aff5:7657:9fe8]) by SJ2PR15MB5669.namprd15.prod.outlook.com
- ([fe80::bff4:aff5:7657:9fe8%6]) with mapi id 15.20.8069.027; Tue, 22 Oct 2024
- 09:12:52 +0000
-From: Mark Harmstone <maharmstone@meta.com>
-To: "dsterba@suse.cz" <dsterba@suse.cz>
-CC: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Subject: Re: [PATCH 5/5] btrfs: add io_uring command for encoded reads
-Thread-Topic: [PATCH 5/5] btrfs: add io_uring command for encoded reads
-Thread-Index: AQHbHl0hRgvHSvFL8kWBhZGVLitDMLKRQ4mAgAA2jYCAABXRAIAA+IKA
-Date: Tue, 22 Oct 2024 09:12:52 +0000
-Message-ID: <ece90bd9-d85e-4601-be71-b34dbe84f65a@meta.com>
-References: <20241014171838.304953-1-maharmstone@fb.com>
- <20241014171838.304953-6-maharmstone@fb.com>
- <20241021135005.GC17835@twin.jikos.cz>
- <f4f64bfe-c92b-4656-adec-d073b6286451@meta.com>
- <20241021182324.GA24631@suse.cz>
-In-Reply-To: <20241021182324.GA24631@suse.cz>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ2PR15MB5669:EE_|SA1PR15MB4657:EE_
-x-ms-office365-filtering-correlation-id: ac8948a6-716b-482e-d77e-08dcf279b536
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|10070799003|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?SldEL2hvek9wVW9uTFVJTW04MWdheURXalBEdTQ3Sm5pS3RPWE4yV0tOV05a?=
- =?utf-8?B?bHIxU0w0SWVPSEoxbWRYOERTeDA4NkQ0aDBUOVo1SThnbnhJd1NlN1FYbkpR?=
- =?utf-8?B?dG9lN1EvbEZIV0FXUDd4eVBZWVFhaUhNYWdXVmhzTkFGZWc2Z3g0S2MrZXlv?=
- =?utf-8?B?bWc5ampRSndTbXZaUG5aRnd0ZE1XTFc3K2k3emRiTU9IU1B5M2o1NHpaemhF?=
- =?utf-8?B?aU1VN3RhZzhnaGdUZWNnVDd4TzJJdzlMTkVtUklNWVR4bk11bkhtUUluM1BC?=
- =?utf-8?B?NHBYSGp5eWFxSHpwY3l1K1ZNQjBzRTF6VGxHYlpUWDFUVDN3OURPQ3pCMWVM?=
- =?utf-8?B?ZlN0SlRlR0VwSjBlWmkwNllhbU9EL21YYmI5VHJkdHhaVm1JSllMZjRvZytZ?=
- =?utf-8?B?VHdUcm1OWHFIaUVnUUZqV3I2Wlkxd1pJcDZhVlcyZTl4bytiVHRVb2NNYVZw?=
- =?utf-8?B?UGpyUmd1M0QwV2xmT3d0U3BmcllKV1UzSEU1VGUzcUd4c1dabEJlbEJyeVJj?=
- =?utf-8?B?d1hzTUhkaHpjazRPOVlWdXR6ZnB5Z2pPTFkxUk9MWmJWd3pHb1VKczA2UEJW?=
- =?utf-8?B?MVVBREhOMjVGQi83dTExV0ltcXRFZ3daaGJKNE41WUhTUEFrREhpcjZhQVdE?=
- =?utf-8?B?THQ2enJacno0ZnBMUWI2MFNRc09kekhEUEpEMUhHeXdWaS84emFka2VScWgx?=
- =?utf-8?B?YkEvcHN5aWlHUUxETitkTEJUdk1LNGFNd2ZDOFU5a043ZjIxRU1yeU9nWldq?=
- =?utf-8?B?QjBoaTdpZ2NFMVdwRGhRTVhkRFA1UGhiaERwN2JnRHluSXNmdmZFcmJ3aWNO?=
- =?utf-8?B?VjRuZTdVQ2FGZDhhV3NSc21tUWVSOFM0VkFMMUkvcEZnVTRINkRqdjRMTHhE?=
- =?utf-8?B?MDJMVUpGRng4T3JtSmVmUjVNWUNrcGovTTErZWlOVDNCNlZxZFJseG0rWWJ4?=
- =?utf-8?B?dExCT2lIdmtQTStpSFU2dCtLbHlENEkrc21kTmozSy90YnNFdkJUeXJlelpT?=
- =?utf-8?B?bjZtNThqYitiMHBWMkkwTmkycEpyZ2ZNNmQ0SjNsb3hNN0p2dGpTZkhLcEtw?=
- =?utf-8?B?ZE1WZ3JFOGlPN1hLMDMvb2txVUhFWTY2RGRWQ01iUkZuZHJSUWFmSElKbTRP?=
- =?utf-8?B?b3J0SGRDVXlNR0gwS1lKYnI2SzErQjVlSzVwQlQzUC9OK3MycFVFd0xTclZp?=
- =?utf-8?B?bC9aeXdLaFNFMmVFYWUwZWhRWEhrSndsQlZzanBkYTh3OEVJQXIzL0k2MkJO?=
- =?utf-8?B?UkdsSjZDSGZSdDBGdnRPUVdua1B1dldXSDJRSEtPV3FWRExPNUd2STNzc3F1?=
- =?utf-8?B?NjhZMmxEZ2RRdEs5T3huREJNb1d6QWVuOCt4Y1VBVFNYemV4WUltZDNhZGVp?=
- =?utf-8?B?OWJ5SUlQK1lkRnBkS043ZC9iaitaRGtKbUVycktlZWhJQ0VzZWhrUFpESE1R?=
- =?utf-8?B?L3g2b3ZjYVIyZld5emtnZEE2TzJMTDJ1Y2IzaE4zNTVESnB3RVNQYzBwZUcw?=
- =?utf-8?B?NHdkR3N5dHhOYW84N3M3Vi9YZmF6UEp5Nk9RbnNXSFFWRVhmRVFyMnVuL0pp?=
- =?utf-8?B?SWFGL3ljK09Jck5uc3NzcE1EQ2NyZlB1UVdQNTliWWIzRmJ5dm5Wa0FjTEZv?=
- =?utf-8?B?NGswWFY2bmdOSkhmOWxrbWR6VjQwWk9UUi9MdFJRdEQyR0JQa2N6dWUwakdo?=
- =?utf-8?B?YlphdjJaU2w5MS9NS0Fma1FlaVg4YTJSTFRFNnNPSjFFNWd1RmYyR1ZZWkxF?=
- =?utf-8?B?bk55b2NMN000LzhhaitObFg1bG9VaWpIOUh6K3FGUTFQNk1uQVVzTzE3d2hQ?=
- =?utf-8?Q?5pNAg2+9NJEYrauM5LbIZuNYVYt9gGfHy8cdo=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR15MB5669.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NThwcUR1VFFaM211OFN6Rys0bXZkcmpMVE4rd05TUFdSeTR6VjBGS1ZYNldQ?=
- =?utf-8?B?WTNHWGpKdUZsOFRRaCtOUlJpbVN0d3BuRm96bDlQaEFyVHE0OWlLWmNnL3Bt?=
- =?utf-8?B?NTJkaHpWYlpiRFhSWnplN3Q1MytmSDdVYzhBZDZxYjhKdHZtcXErajJyVVVQ?=
- =?utf-8?B?Y3pBc28xc0tIak9WVHpHa25Ed2wrNU9wTUpRaE9tdHJQZVZrUklmYUlQTW1k?=
- =?utf-8?B?c3NDMVBoYmhkUlhDbVhQcy9GMG1RdmsyYVNsaWo4cEVoZkNzQWJJVkg0Q1lO?=
- =?utf-8?B?dXBZdW9UMjU5bVlNWUVVTVpzdGVkaTgrSEhDZ3VMbmlSL2RneVVKeEQrUHBV?=
- =?utf-8?B?U0VQdnh0L3JKZjNqTC9JVE1aR2o5VHhKK2EvTWRoSU1Ya2JxV0h1eDRnNkVS?=
- =?utf-8?B?VUp0cENZTEhocUhQV3FoVGpwaDI0U1QxSDRrS0dZMkRsUlNnQ2NhNzNYYVF4?=
- =?utf-8?B?MnJQMEl6ZkdkVk1ubDRvYTA5cUw4MlVoYUQ0L0hscE5MVW8vcGROZ3d5eHBM?=
- =?utf-8?B?QmVRVEVaa2xDWDRUMG5ncmp2b1dvZ3V3R3lqVlJleWJycjQwYWZHaTBvclo0?=
- =?utf-8?B?K2UvaThDZSt3cG5CL2htc1VFMkMwSWxoekJ4TFMxaTRLNzlLNitjTnpvcjg3?=
- =?utf-8?B?MFBWSDAvOUV4SjlXOXMxenRJTERYY2VGa2VEWUVuT1VJRllxOHljQWlBWTBl?=
- =?utf-8?B?aUJ0N2V5cXpCenJvT3JORUFvZmNIVnltZlRwMnlzN0hvRkZLaTZLWjBreW1U?=
- =?utf-8?B?U0FLU2tkbXNkeXdRelU4NFY0R3duaFFvUktBTzV1c1RYTS9TU2kyUUxRNXdh?=
- =?utf-8?B?QjRjK0ZzdmoxRVBoQ202Y0s4WDNqdC8rQnd5NUI0aHVXRjNBZmlJaWxCNUdX?=
- =?utf-8?B?QUQxc3Y5K0haYUxrK0pSaDBmcjlDUHB4TDZNY1Q3UG92QWZGSDVzMkRHdlV2?=
- =?utf-8?B?V0EzRlBaOEg1eTR6a1c0QTAzL3FKYUZISG12ZlQ3bk84c0VWaXNOaCtPZ2o0?=
- =?utf-8?B?WUY3cDRENXZzUWlwQUJDZTBlNmdBQ3NtaHNRMW5KSXB6YkJkckRBbzNTVEdV?=
- =?utf-8?B?NllLM3lIc1ZQKzBiZFkrcmVCMlRld0NJcHJzdlo3SGNad3VydnpJRVMzdXZJ?=
- =?utf-8?B?QXp3cE0yZG5wdVJLMjJqV0JDSUthY05VN2VxbTBlSFpTYzgra0FNYWM2eUkr?=
- =?utf-8?B?RmlKWVNNSitlZlZJWmpEK1E1TldUSDllbGMvb2xUSTdseVBmTkxoZmR6bXdE?=
- =?utf-8?B?VW1LSm1ENEorajhzVzBQREIxRnJzdDBZb0Evdjc3SUo0allzcWtDTHJtUW84?=
- =?utf-8?B?TEhKaDc4Z1hId3FCZC84UlFMMEQwUk5aMFE3YWkxVmluRHFYb045a3hRNHZj?=
- =?utf-8?B?ZXQ0Q0FFSzhFbHh5ckYxc1hXQUVmZy9HZ2NBeTh5TjRsVlg0Tkh2Zm5hZEdz?=
- =?utf-8?B?QVZVMEthVXdCZk0xTE9kRnREUEVOWHd2S0svbmhaMWZSQ29nekFsZFlTZHoy?=
- =?utf-8?B?NU5USFFvWW1JeG1SQ2UzdHRZN2lqVzgrc2lBeXAvSlNSY2swbmhKa2tBYTlO?=
- =?utf-8?B?Ymp0VW1YcXVIRlpLbEd6YVI5UHI3N1QvbzROOGVQSjlSQUZwemRYMlN6TlRR?=
- =?utf-8?B?U1JZYk4vVGlFemc1NkJMYm5QV3J1czhzVEgxMytucFNuZ01RVDQ5ZGhFT0l0?=
- =?utf-8?B?ZFZnVFpIV2h6RWZLd081TjFXL0FPblREb2hJYlhBbmdQV2pJZVlKbElRZ3lI?=
- =?utf-8?B?aFBiMndBWHFqV2hUeGgrZFhyYldUc2M3emFlMERRUk1nVUpZdC9HU2JtN0hl?=
- =?utf-8?B?QlhWTmZ4ZkZkc3NVVURBcisxV3pUenhlSnYwNEtEcWJBaG5PM3MwYmJUTUFG?=
- =?utf-8?B?T2svaERwZGdLTHNBalpaR09YZmpFZElNY3psWnJPL0ZqbjFrUUQ2TC9BRm05?=
- =?utf-8?B?cDF3c2J3MklKOHBlTzNIWVdvRTRXaHJHcmlqOEFrbDFJWnh3aUU5OVZDTGcz?=
- =?utf-8?B?RTFWWkRRSmJwU0dVU2pCaXVkZDk1NDhWMWhlL3NPV1BUbmlwRHBGaVlLbmIx?=
- =?utf-8?B?UmlFOW9NY0xoK01Vckl1TkFUTFRWVFVhcXd4WlR6bEMzZW4yWjR4R29lbGFa?=
- =?utf-8?B?c3drYnp1MEg4ZzBzL1J3UkExM1Y4dTNqTWpiaTFLd2s4bm95b3hicUdsQ3Y4?=
- =?utf-8?Q?oUJ8qM8kqKW+3xPd88zb92E=3D?=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB97918E02D;
+	Tue, 22 Oct 2024 10:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729592651; cv=none; b=KuTpUeSGk3JdrqYw3JR51y8IbsbTwzoGlLEr6DaM0TxYQ7S2K1QWvc1dVWMk/hiclkn2JAyDHZOaqbCx+MwN1jTN9LZ1rbZdE2NGO6IrBmPqYJYyENZCrtro9FOhfSOEO8y0Gds8nOiGYalJA28bM37AQQegRRhPkfzjh6erH7U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729592651; c=relaxed/simple;
+	bh=TqoIL7qkvE1efBDn2sg+AG4rMacutCBnuMUZJ11NbIA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tyvYh3buXibX75XhiZo/6Zh2NpLDTb27gEmf1hVgSr058DZUjqYdXaIAUs4iwdze0iyPY4G1Ko/wYC5roSu31L9fO7CMD4s/tRMg6m9giKmpqJ8Xsq/kc2+YIwNPXwoEs6ZK2qpn/iZICIh/aq4MJjdEvciFMXzXRSOyWgN3vxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=c90OqJmu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=f/y1xkgT; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id F0F5711401F7;
+	Tue, 22 Oct 2024 06:24:07 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Tue, 22 Oct 2024 06:24:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1729592647;
+	 x=1729679047; bh=1u/BH5JUQH8GdhawWY5lWyZYs9/szdOia1VxtUwRudE=; b=
+	c90OqJmu+7OrqTi1I7+Akfn4M9CJThhzYCJoErglKxUBuzY/BmX2L399SWPkbzsU
+	qH/+QlHaumtVt4rdv/hPIlY6ayQ4YTwQ6qRHladoB+TYBmv/coGogxxy74y0tMQ1
+	VspZAQCmcJ7jMwe45MeQEyYRqKlO2AZ6Yy2ngLQUcgokI+KASwNu4Kt2QJNh5DwJ
+	ZB9ToD/uiPrgKg6DwYQ4sVHBq/OkeTaTsPv7zlmgZ0k6g0bXczTTpDOV5EvbW+tL
+	svGjOCc0aa1Z6FhWje24OrdsOQGBPx8cnhUOIOP92ZO/jZcwBAyoCCKF+HeWMPuz
+	+QBz5MQDlSK78Wz8HEOeQg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729592647; x=
+	1729679047; bh=1u/BH5JUQH8GdhawWY5lWyZYs9/szdOia1VxtUwRudE=; b=f
+	/y1xkgTtLxpBRm5ySUBJCByDWL8dysfFpApO5UAi8cMaGNUKQix0gz7NArKHfGFA
+	jpdmBmxsRFIFW+x0EVewINE3la9IeBO7v5lahJM8QqlOkiFCsceWj2VyF8+K+Cmd
+	XT+LydjeYylpGFZDg416NtC+BU0iCCmtzc0W79KLj/IupcYyIv3V1OlBp62w71pE
+	BKdQ31ACdeJ5p3Wjs3sJBWM+u3McBhaYxp8TkUtbJXQI2Lwm5aiJCJbeZA+a0rT8
+	2E5fddIHA7B9oeHnuAJqLuWDo12PYrSTR/LBCHdA2uAB9ASfP3RxpuuNAdPvKQlY
+	lHw70XvOhfJwZeihmWDKg==
+X-ME-Sender: <xms:Rn0XZ9lgF9X4t284XRdkZl09NQmkC3r3I7-S0y0bm6rP6oIcDpmZ6Q>
+    <xme:Rn0XZ41O-XkdkIplDD_eKxLDeD1xVBhnuT3D0D9wFx2j_DZfm4rJx6tt1KjDvJ8sS
+    jXlqK4pgIq8PCA1>
+X-ME-Received: <xmr:Rn0XZzp4FZMiLQ4UVU6vX-WhoH_FYJbIkksgsvbVEcYf4GU_3KrsxOFe686rArF0tw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeihedgvdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepfefhgeefueelffei
+    hfdvgfetuedufeffgeeuieejteeukeffiefhheeiheeivdevnecuffhomhgrihhnpegrkh
+    grrdhmshdpghhithhhuhgsrdgtohhmpdhqvghmuhdrohhrghenucevlhhushhtvghrufhi
+    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrth
+    esfhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopegufiesuggrvhhiugifvghirdhukhdprhgtphhtthhopehmih
+    hklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprgigsghovgeskhgvrhhnvghl
+    rdgukhdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprh
+    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    rghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhomhdrlhgvihhmih
+    hnghesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:R30XZ9m4g1BTzdmkhkqa0MiTpYQHENVKoYShMPuaxJCyVlGsQLzHWA>
+    <xmx:R30XZ71ueHIgbOknOZbs6nQZpm1F70DyH16udp4H9x8H8I-E0PcgOA>
+    <xmx:R30XZ8uQ523aQbeED9OSTryweh94WH1Vdgg719cLrzxmQPfQP2y6EQ>
+    <xmx:R30XZ_WZcM9hfDpOszN_sDFBdqRbYXKJ5AVZSokq72B3mgxwRFxJMw>
+    <xmx:R30XZ0sqfJ9bqdXYYRXsIJPQOWlggZ-R-zSoUpq4X2q5wyFEjD-YmTQd>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 22 Oct 2024 06:24:05 -0400 (EDT)
+Message-ID: <baf09fb5-60a6-4aa9-9a6f-0d94ccce6ba4@fastmail.fm>
+Date: Tue, 22 Oct 2024 12:24:04 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR15MB5669.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac8948a6-716b-482e-d77e-08dcf279b536
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2024 09:12:52.4603
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: q+eE8AHKqJylDCRYKc+A1VmmoH/Ok1uJEG4dtVO6dUZ0MaEEpMqg/kHzcaXR2Rc69gMGxNdeQTg2JR4AKlci+A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR15MB4657
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-ID: <13EA63085972D044A4CDAAB9AB6A19F4@namprd15.prod.outlook.com>
-X-Proofpoint-ORIG-GUID: c5nxAlS_XZ_4l9nWq3Au85D21fYSfyUs
-X-Proofpoint-GUID: c5nxAlS_XZ_4l9nWq3Au85D21fYSfyUs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 00/15] fuse: fuse-over-io-uring
+To: David Wei <dw@davidwei.uk>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, Josef Bacik <josef@toxicpanda.com>
+References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+ <38c76d27-1657-4f8c-9875-43839c8bbe80@davidwei.uk>
+ <ed03c267-92c1-4431-85b2-d58fd45807be@fastmail.fm>
+ <11032431-e58b-4f75-a8b5-cf978ffbfa50@davidwei.uk>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US
+In-Reply-To: <11032431-e58b-4f75-a8b5-cf978ffbfa50@davidwei.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 21/10/24 19:23, David Sterba wrote:
-> >=20
-> On Mon, Oct 21, 2024 at 05:05:20PM +0000, Mark Harmstone wrote:
->>>> +static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd,
->>>> +				    unsigned int issue_flags)
->>>> +{
->>>> +	size_t copy_end_kernel =3D offsetofend(struct btrfs_ioctl_encoded_io=
-_args,
->>>> +					     flags);
->>>> +	size_t copy_end;
->>>> +	struct btrfs_ioctl_encoded_io_args args =3D {0};
->>>                                                   =3D { 0 }
->>>> +	int ret;
->>>> +	u64 disk_bytenr, disk_io_size;
->>>> +	struct file *file =3D cmd->file;
->>>> +	struct btrfs_inode *inode =3D BTRFS_I(file->f_inode);
->>>> +	struct btrfs_fs_info *fs_info =3D inode->root->fs_info;
->>>> +	struct extent_io_tree *io_tree =3D &inode->io_tree;
->>>> +	struct iovec iovstack[UIO_FASTIOV];
->>>> +	struct iovec *iov =3D iovstack;
->>>> +	struct iov_iter iter;
->>>> +	loff_t pos;
->>>> +	struct kiocb kiocb;
->>>> +	struct extent_state *cached_state =3D NULL;
->>>> +	u64 start, lockend;
+
+
+On 10/21/24 22:57, David Wei wrote:
+> On 2024-10-21 04:47, Bernd Schubert wrote:
+>> Hi David,
+>>
+>> On 10/21/24 06:06, David Wei wrote:
+>>> [You don't often get email from dw@davidwei.uk. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
 >>>
->>> The stack consumption looks quite high.
+>>> On 2024-10-15 17:05, Bernd Schubert wrote:
+>>> [...]
+>>>>
 >>
->> 696 bytes, compared to 672 in btrfs_ioctl_encoded_read.
->> btrfs_ioctl_encoded write is pretty big too. Probably the easiest thing
->> here would be to allocate btrfs_uring_priv early and pass that around, I
->> think.
+>> ...
 >>
->> Do you have a recommendation for what the maximum stack size of a
->> function should be?
->=20
-> It depends from where the function is called. For ioctl callbacks, like
-> btrfs_ioctl_encoded_read it's the first function using kernel stack
-> leaving enough for any deep IO stacks (DM/NFS/iSCSI/...). If something
-> similar applies to the io_uring callbacks then it's probably fine.
+>>> Hi Bernd, I applied this patchset to io_uring-6.12 branch with some
+>>> minor conflicts. I'm running the following command:
+>>>
+>>> $ sudo ./build/example/passthrough_hp -o allow_other --debug-fuse --nopassthrough \
+>>> --uring --uring-per-core-queue --uring-fg-depth=1 --uring-bg-depth=1 \
+>>> /home/vmuser/scratch/source /home/vmuser/scratch/dest
+>>> FUSE library version: 3.17.0
+>>> Creating ring per-core-queue=1 sync-depth=1 async-depth=1 arglen=1052672
+>>> dev unique: 2, opcode: INIT (26), nodeid: 0, insize: 104, pid: 0
+>>> INIT: 7.40
+>>> flags=0x73fffffb
+>>> max_readahead=0x00020000
+>>>      INIT: 7.40
+>>>      flags=0x4041f429
+>>>      max_readahead=0x00020000
+>>>      max_write=0x00100000
+>>>      max_background=0
+>>>      congestion_threshold=0
+>>>      time_gran=1
+>>>      unique: 2, success, outsize: 80
+>>>
+>>> I created the source and dest folders which are both empty.
+>>>
+>>> I see the following in dmesg:
+>>>
+>>> [ 2453.197510] uring is disabled
+>>> [ 2453.198525] uring is disabled
+>>> [ 2453.198749] uring is disabled
+>>> ...
+>>>
+>>> If I then try to list the directory /home/vmuser/scratch:
+>>>
+>>> $ ls -l /home/vmuser/scratch
+>>> ls: cannot access 'dest': Software caused connection abort
+>>>
+>>> And passthrough_hp terminates.
+>>>
+>>> My kconfig:
+>>>
+>>> CONFIG_FUSE_FS=m
+>>> CONFIG_FUSE_PASSTHROUGH=y
+>>> CONFIG_FUSE_IO_URING=y
+>>>
+>>> I'll look into it next week but, do you see anything obviously wrong?
+>>
+>>
+>> thanks for testing it! I just pushed a fix to my libfuse branches to
+>> avoid the abort for -EOPNOTSUPP. It will gracefully fall back to
+>> /dev/fuse IO now.
+>>
+>> Could you please use the rfcv4 branch, as the plain uring
+>> branch will soon get incompatible updates for rfc5?
+>>
+>> https://github.com/bsbernd/libfuse/tree/uring-for-rfcv4
+>>
+>>
+>> The short answer to let you enable fuse-io-uring:
+>>
+>> echo 1 >/sys/module/fuse/parameters/enable_uring
+>>
+>>
+>> (With that the "uring is disabled" should be fixed.)
+> 
+> Thanks, using this branch fixed the issue and now I can see the dest
+> folder mirroring that of the source folder. There are two issues I
+> noticed:
+> 
+> [63490.068211] ---[ end trace 0000000000000000 ]---
+> [64010.242963] BUG: sleeping function called from invalid context at include/linux/sched/mm.h:330
+> [64010.243531] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 11057, name: fuse-ring-1
+> [64010.244092] preempt_count: 1, expected: 0
+> [64010.244346] RCU nest depth: 0, expected: 0
+> [64010.244599] 2 locks held by fuse-ring-1/11057:
+> [64010.244886]  #0: ffff888105db20a8 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0x900/0xd80
+> [64010.245476]  #1: ffff88810f941818 (&fc->lock){+.+.}-{2:2}, at: fuse_uring_cmd+0x83e/0x1890 [fuse]
+> [64010.246031] CPU: 1 UID: 0 PID: 11057 Comm: fuse-ring-1 Tainted: G        W          6.11.0-10089-g0d2090ccdbbe #2
+> [64010.246655] Tainted: [W]=WARN
+> [64010.246853] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
+> [64010.247542] Call Trace:
+> [64010.247705]  <TASK>
+> [64010.247860]  dump_stack_lvl+0xb0/0xd0
+> [64010.248090]  __might_resched+0x2f8/0x510
+> [64010.248338]  __kmalloc_cache_noprof+0x2aa/0x390
+> [64010.248614]  ? lockdep_init_map_type+0x2cb/0x7b0
+> [64010.248923]  ? fuse_uring_cmd+0xcc2/0x1890 [fuse]
+> [64010.249215]  fuse_uring_cmd+0xcc2/0x1890 [fuse]
+> [64010.249506]  io_uring_cmd+0x214/0x500
+> [64010.249745]  io_issue_sqe+0x588/0x1810
+> [64010.249999]  ? __pfx_io_issue_sqe+0x10/0x10
+> [64010.250254]  ? io_alloc_async_data+0x88/0x120
+> [64010.250516]  ? io_alloc_async_data+0x88/0x120
+> [64010.250811]  ? io_uring_cmd_prep+0x2eb/0x9f0
+> [64010.251103]  io_submit_sqes+0x796/0x1f80
+> [64010.251387]  __do_sys_io_uring_enter+0x90a/0xd80
+> [64010.251696]  ? do_user_addr_fault+0x26f/0xb60
+> [64010.251991]  ? __pfx___do_sys_io_uring_enter+0x10/0x10
+> [64010.252333]  ? __up_read+0x3ba/0x750
+> [64010.252565]  ? __pfx___up_read+0x10/0x10
+> [64010.252868]  do_syscall_64+0x68/0x140
+> [64010.253121]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [64010.253444] RIP: 0033:0x7f03a03fb7af
+> [64010.253679] Code: 45 0f b6 90 d0 00 00 00 41 8b b8 cc 00 00 00 45 31 c0 41 b9 08 00 00 00 41 83 e2 01 41 c1 e2 04 41 09 c2 b8 aa 01 00 00 0f 05 <c3> a8 02 74 cc f0 48 83 0c 24 00 49 8b 40 20 8b 00 a8 01 74 bc b8
+> [64010.254801] RSP: 002b:00007f039f3ffd08 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+> [64010.255261] RAX: ffffffffffffffda RBX: 0000561ab7c1ced0 RCX: 00007f03a03fb7af
+> [64010.255695] RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000009
+> [64010.256127] RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000008
+> [64010.256556] R10: 0000000000000000 R11: 0000000000000246 R12: 0000561ab7c1d7a8
+> [64010.256990] R13: 0000561ab7c1da00 R14: 0000561ab7c1d520 R15: 0000000000000001
+> [64010.257442]  </TASK>
 
-Thanks. Yes, the two should functions should be broadly equivalent.
+Regarding issue one, does this patch solve it?
 
-> Using a separate off-stack structure works but it's a penalty as it
-> needs the allcation. The io_uring is meant for high performance so if
-> the on-stack allocation is safe then keep it like that.
+diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+index e518d4379aa1..304919bc12fb 100644
+--- a/fs/fuse/dev_uring.c
++++ b/fs/fuse/dev_uring.c
+@@ -168,6 +168,12 @@ static struct fuse_ring_queue *fuse_uring_create_queue(struct fuse_ring *ring,
+         queue = kzalloc(sizeof(*queue), GFP_KERNEL_ACCOUNT);
+         if (!queue)
+                 return ERR_PTR(-ENOMEM);
++       pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL);
++       if (!pq) {
++               kfree(queue);
++               return ERR_PTR(-ENOMEM);
++       }
++
+         spin_lock(&fc->lock);
+         if (ring->queues[qid]) {
+                 spin_unlock(&fc->lock);
+@@ -186,11 +192,6 @@ static struct fuse_ring_queue *fuse_uring_create_queue(struct fuse_ring *ring,
+         INIT_LIST_HEAD(&queue->ent_in_userspace);
+         INIT_LIST_HEAD(&queue->fuse_req_queue);
 
-Okay, I'll leave this bit as it is, then. I can revisit it if we start=20
-getting a spike of stack overflow crashes mentioning=20
-btrfs_uring_encoded_read.
+-       pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL);
+-       if (!pq) {
+-               kfree(queue);
+-               return ERR_PTR(-ENOMEM);
+-       }
+         queue->fpq.processing = pq;
+         fuse_pqueue_init(&queue->fpq);
 
->=20
-> I've checked on a release config the stack consumption and the encoded
-> ioctl functions are not the worst:
->=20
-> tree-log.c:btrfs_sync_log                       728 static
-> scrub.c:scrub_verify_one_metadata               552 dynamic,bounded
-> inode.c:print_data_reloc_error                  544 dynamic,bounded
-> uuid-tree.c:btrfs_uuid_scan_kthread             520 static
-> tree-checker.c:check_root_item                  504 static
-> file-item.c:btrfs_csum_one_bio                  496 static
-> inode.c:btrfs_start_delalloc_roots              488 static
-> scrub.c:scrub_raid56_parity_stripe              464 dynamic,bounded
-> disk-io.c:write_dev_supers                      464 static
-> ioctl.c:btrfs_ioctl_encoded_write               456 dynamic,bounded
-> ioctl.c:btrfs_ioctl_encoded_read                456 dynamic,bounded
 
+I think we don't need GFP_ATOMIC, but can do allocations before taking
+the lock. This pq allocation is new in v4 and I forgot to put it into
+the right place and it slipped through my very basic testing (I'm
+concentrating on the design changes for now - testing will come back
+with v6).
+
+> 
+> If I am already in dest when I do the mount using passthrough_hp and
+> then e.g. ls, it hangs indefinitely even if I kill passthrough_hp.
+
+I'm going to check in a bit. I hope it is not a recursion issue.
+
+
+Thanks,
+Bernd
 

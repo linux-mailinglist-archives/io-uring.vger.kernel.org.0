@@ -1,97 +1,74 @@
-Return-Path: <io-uring+bounces-3898-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3899-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99979AA266
-	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 14:46:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00D19AA2E1
+	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 15:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DC9C1F23380
-	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 12:46:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3C71C2203F
+	for <lists+io-uring@lfdr.de>; Tue, 22 Oct 2024 13:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E21B19D06B;
-	Tue, 22 Oct 2024 12:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52BA19D06E;
+	Tue, 22 Oct 2024 13:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="RLIkb1XD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FpnGC/Ht"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2XZ825RM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9C21E885;
-	Tue, 22 Oct 2024 12:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6B419ABD5
+	for <io-uring@vger.kernel.org>; Tue, 22 Oct 2024 13:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729601172; cv=none; b=UI7UvocKrJnl0X6qVOsMr22n9QXa2FBmR2NkqjkDyCtOoh6CL7g5r/bJ9EuBAhzclRNRfmqIO/bfDs6wwg+lYC6gPem9MXVS1DayqbtnwgoBNrxIdefTgyop8WuqnKI/esdUEJaxvKhoCS55j2O3ad+2YLQuXzrKToVLTmUXtJ0=
+	t=1729603117; cv=none; b=Rt5xjV8go3INp3WMPsSCinnaT+3IblebbsSbxGaHXppbxUiWd/ws5zQptBI7eUqpI+hkgzxs5agDapOww1W5tMpBuskLGtYHQgs9Ji/qMiHfQcvhdwesoLFnvLR9IuZF1W16zvnOz8aVj2nCSJONJDylQWxHTGnGoOwOgrcF29A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729601172; c=relaxed/simple;
-	bh=z+pvMjjOUwH7WU5a6AveuVhfgFRMmSeCwyIeDS1Wkhk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ucOwjbG5p94jQcZkEL4Z/cSbDfzDq4lKN3SJNOuD0EHLZYjxoA7t2TNgNObe9EK1SLd8WCd4wnJmoo8jcZK4Nos2kzNYSds1p8B/3nNSzBz13KqS01reGbwb72Qb8YB79eiDSZb3MjDR83ctwp6/XyBY0qvqGGmSL4d0rr4FnBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=RLIkb1XD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FpnGC/Ht; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id BD062138038D;
-	Tue, 22 Oct 2024 08:46:08 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Tue, 22 Oct 2024 08:46:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1729601168;
-	 x=1729687568; bh=LidsP518KaG5JxXR99pfsDms8BznKyLR4+RTGS4MVts=; b=
-	RLIkb1XDvqYJPbcId6lF+3Bp+fvynPIDZyE5vcERAWCd3yKUJd9cr1jxXTIfGyFv
-	YFkjgrFXQQspBFPJUFHfpe2lN4eFMQUmnGVdnffQF4aZwy+o2iVy6NLnlfb8VZ0Y
-	/KIToDPGhXd0hNqrSg2zP/oIZKbTizNse6I0cAk4JesLFfrdoZBFkESGB35UtYgv
-	p2g9t7hMM740MH7s/SU2TSltJ6RICHwrTaCxV2WVwokxS+2SszhfBo7tR0RDu4pb
-	J47BzSScDU8zb5ojbS47PjUg0vfhDQuVwbf11bSL36DxuNI72YtE3QWGDOpp9bNy
-	MIGoPr9fgxozaq2ALo2WDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729601168; x=
-	1729687568; bh=LidsP518KaG5JxXR99pfsDms8BznKyLR4+RTGS4MVts=; b=F
-	pnGC/HtVghpIdujMRKOJzc62i93Q9voiX4AVAWW+jhaeukGt/9HW9IVV7ervud57
-	+K0ZekRFyE/zSjZS+b0iYiYz//1IazIYyXWZVwwa6JtxhupIuZJ61POkYzc1TKcb
-	dlq8XaFfR09K5o1FaE62/AVsFTMfoEoES2UcEEMyfvgk396EBAPTB4XmKWqC13xD
-	8l68xjjY77NmQgvmecjkh8FbtMLl20lYS+PE/0bc2WnwEZbDIqvDxcREVgxyaCmV
-	ozWmfaNTKTDCCxAQ4maL9URLuOiTUTa7rT/vnS3Vfkleob3s02FWJlUVPp/3ArJz
-	R7Bj2BhIVEOjZB4g5Brow==
-X-ME-Sender: <xms:kJ4XZywfJ4iWcuUrf9qvXt_f5gQPqie4ndlPpLf9pN24Mh8oAl0gIQ>
-    <xme:kJ4XZ-TpL0sRPCPgZL0iGvB2m9n1GorN3XNfGrnwSDCjHG21YLertrzuC-cDAYW1Q
-    yoXccAaAjoEvlJ3>
-X-ME-Received: <xmr:kJ4XZ0XGGV0TlviGlaa6mQTiLL8F7YcTDHc8XAZYFaSohf1teucwyqFw-8JlX4NOsA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeihedgheehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffhvfevfhgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepieekfedvleetgfff
-    vdevfeelvdefffeghfetgeegffduudehieeuteevuedukeejnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtohepugifsegurghvihgufigvihdruhhkpdhrtghpthhtohepmhhi
-    khhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlh
-    drughkpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhr
-    tghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhope
-    grmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhopehtohhmrdhlvghimhhi
-    nhhgsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:kJ4XZ4jVmq5nl8nST9lswOqKLVmzG5UG4SwK4Jd4bpCaDFybnETM2Q>
-    <xmx:kJ4XZ0DfaHmTntG1CYnNp0ARf6lk3yQqkREf-LCGlixCnxdBuJTgOg>
-    <xmx:kJ4XZ5IqIbpn6PRKMkxjWYUTynflWZf2czUP63rKShjYNtZfgOahMQ>
-    <xmx:kJ4XZ7Ddk1lHe3J6DtQUhyELNPdhbrcBSSCZ42sMk9WqWnQN-4V0dA>
-    <xmx:kJ4XZ47BxV442EJTJI14y4UtNexdAex6mS_6xPfFfdkG_IQpdo5GeI5I>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 22 Oct 2024 08:46:07 -0400 (EDT)
-Message-ID: <a95ec1f4-ca49-495d-9284-eb8828de870a@fastmail.fm>
-Date: Tue, 22 Oct 2024 14:46:05 +0200
+	s=arc-20240116; t=1729603117; c=relaxed/simple;
+	bh=gy0s1DMfktVGQnHFXyQlj4/xwgyJ16oReDf3b3kOqQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oJvjTEZcajzyJ6SUl12B1AOJUc/PUY2RF3njYvo8Dcw9SazqS+KiHkHV1VzAVKHziNHEJkNFQDSJcQ/FehbLCFGGkfRugSHFP6aKKItjO8Z9dzEkPDj5P7ugklWOpk8aQ95x58DaPL/6aFfiHooOnOHj6VZvAkdZBQ73dc810gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2XZ825RM; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-83ab21c269eso220266239f.2
+        for <io-uring@vger.kernel.org>; Tue, 22 Oct 2024 06:18:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729603115; x=1730207915; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0L9TYpjkarxYTFewfLsfvz/GrRHmYHU/JjLeDER58b8=;
+        b=2XZ825RMBH9LyQTLZcPeMwZPGy3R+YpWEFdJFDbHydYdfQX6uB4ScE6rLXVnTWMdwd
+         eBrCU+Ytz4JbqPOtNBdpZklbCWjhDGBiduzSAaV9s+wk0nPIEwsJVk/HzNdVIzAzz3HH
+         oY4ynf2mB25gi1QRU7dgEQLQopX1jTGyJuAgppK/p4Rjbj7dtipR5ny8nWY0wzxmrlhG
+         4vO2/xpkHttHH0qk0c60M+uvxDeJYx2RuySdFmnK78/FIxPpfFcj22tx/ax/sg8XIN4b
+         2mIWrsTBnzVrsba1ByPO9KSwoXrG77fmYYYh2Q8h+I5GpOYdJo+1qSlM1rKuISDkbkDr
+         jESg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729603115; x=1730207915;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0L9TYpjkarxYTFewfLsfvz/GrRHmYHU/JjLeDER58b8=;
+        b=eb/jqyTfkUbdTx7tB3k5IfMIJit0dQSpBXXGb3WK8KMkxzGBazd6VZMvDMKiyymYvi
+         bCDzrtB61An/V5v8ye/37EdQ+EG2+z9wyAXjdDq1oHplJVC9U3WSMSjRE4uSlkza9reB
+         GrwPIO49uzJjr9MHXkyF7ARbxEyTYvlxgi/CNZP07SW0v4mwquzPHvbT3VvFbZG9599J
+         vjXJsWfSQ4GabGsEDZTTvGsjnhO0c/E6NTLQkzCQCzHkGjTU6BiRzxlcnx0yuJ4yAlN1
+         OVk+FNy86HZjB2z/YswXW9oq6jFtdw7M/auB07eaLZVLLR65aXh2IYScZHFWnxxUxA//
+         yN5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX6bAVmnQHjMbUBZc6Irm+z42OTWAMp1Vlk+Dxt89nfZlPcrtrBlFMNauxzdP48kG3s2ETzSV+LYw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlyrzJggY7O1tp/LhVxFSdi0w6DPzbd3w2luAwHCKARTRCiW8B
+	AQBZHkgDt4Nvf+npDtb3L5GeqHivj+4e/BEd1NkGI47xQOWTjMn++Jvh+R4Qf+8=
+X-Google-Smtp-Source: AGHT+IGOcn2ulnlDlaDjdlGre9GWJzVPAdxJEXvgRGAw3AeqtYm6CBM9CisYKRfOyLBPBoiID9LF4A==
+X-Received: by 2002:a05:6602:1549:b0:83a:b33a:5e0a with SMTP id ca18e2360f4ac-83aba5c5755mr1255358439f.4.1729603115060;
+        Tue, 22 Oct 2024 06:18:35 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a661c23sm1540059173.178.2024.10.22.06.18.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 06:18:34 -0700 (PDT)
+Message-ID: <b7741a2f-a6b6-4a92-aa6e-9eab3f018804@kernel.dk>
+Date: Tue, 22 Oct 2024 07:18:34 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -99,64 +76,34 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 00/15] fuse: fuse-over-io-uring
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-To: David Wei <dw@davidwei.uk>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
- Ming Lei <tom.leiming@gmail.com>, Josef Bacik <josef@toxicpanda.com>
-References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
- <38c76d27-1657-4f8c-9875-43839c8bbe80@davidwei.uk>
- <ed03c267-92c1-4431-85b2-d58fd45807be@fastmail.fm>
- <11032431-e58b-4f75-a8b5-cf978ffbfa50@davidwei.uk>
- <baf09fb5-60a6-4aa9-9a6f-0d94ccce6ba4@fastmail.fm>
+Subject: Re: [PATCH 1/4] io_uring/uring_cmd: get rid of using req->imu
+To: Anuj Gupta <anuj20.g@samsung.com>
+Cc: Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org
+References: <20241022020426.819298-1-axboe@kernel.dk>
+ <20241022020426.819298-2-axboe@kernel.dk> <ZxcRQZzAmwm1XT3K@fedora>
+ <f29d4778-b5f5-4f3c-a2e6-463c5432dd65@kernel.dk>
+ <CGME20241022084205epcas5p190eb2ba790815a6ac211cb4e3b6a0fe4@epcas5p1.samsung.com>
+ <20241022083424.wz2cmebvkrdcgw2g@green245>
 Content-Language: en-US
-In-Reply-To: <baf09fb5-60a6-4aa9-9a6f-0d94ccce6ba4@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241022083424.wz2cmebvkrdcgw2g@green245>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 10/22/24 12:24, Bernd Schubert wrote:
-> On 10/21/24 22:57, David Wei wrote:
->> If I am already in dest when I do the mount using passthrough_hp and
->> then e.g. ls, it hangs indefinitely even if I kill passthrough_hp.
+On 10/22/24 2:34 AM, Anuj Gupta wrote:
+>>
+>> Gah indeed, in fact it always should be, unless it's forcefully punted
+>> to io-wq. I'll sort that out, thanks. And looks like we have zero tests
+>> for uring_cmd + fixed buffers :-(
+>>
 > 
-> I'm going to check in a bit. I hope it is not a recursion issue.
+> We do have tests for uring_cmd + fixed-buffers in liburing [*].
 > 
+> [*] https://github.com/axboe/liburing/blob/master/test/io_uring_passthrough.c
 
-Hmm, I cannot reproduce this
+We seem to yes, but its not actually importing a fixed buffer...
 
-bernd@squeeze1 dest>pwd
-/scratch/dest
+-- 
+Jens Axboe
 
-bernd@squeeze1 dest>/home/bernd/src/libfuse/github//build-debian/example/passthrough_hp -o allow_other --nopassthrough --uring --uring-per-core-queue --uring-fg-depth=1 --uring-bg-depth=1 /scratch/source /scratch/dest
-
-bernd@squeeze1 dest>ll
-total 6.4G
-drwxr-xr-x 2 fusetests fusetests 4.0K Jul 30 17:59 scratch_mnt
-drwxr-xr-x 2 fusetests fusetests 4.0K Jul 30 17:59 test_dir
--rw-r--r-- 1 bernd     bernd      50G Sep 12 14:20 testfile
--rwxr-xr-x 1 bernd     bernd     6.3G Sep 12 14:39 testfile1
-
-
-Same when running in foreground and doing operations from another console
-
-
-cqe unique: 4, opcode: GETATTR (3), nodeid: 1, insize: 16, pid: 732
-     unique: 4, result=104
-cqe unique: 6, opcode: STATFS (17), nodeid: 1, insize: 0, pid: 732
-     unique: 6, result=80
-
-
-In order to check it is not a recursion issue I also switched my VM to
-one core - still no issue. What is your setup?
-Also, I'm still on 6.10, I want to send out v5 with separated headers
-later this week and next week v6 (and maybe without RFC) for 6.12 next
-week.
-
-
-Thanks,
-Bernd
 

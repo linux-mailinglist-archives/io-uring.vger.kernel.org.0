@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-3954-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3955-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861C19ACFE7
-	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 18:15:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051C89ACFE8
+	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 18:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A70D81C2137C
-	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 16:15:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F0A81F228B9
+	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 16:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C521CB529;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A15D1CB530;
 	Wed, 23 Oct 2024 16:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="boF2UW0H"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jbyhWYkK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F901CACF2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C685B1CB31C
 	for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 16:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729700134; cv=none; b=Wbgv5JRtr3v0DqnW7kZ3chbsmSHsqe3RHdNZW7KVtSlAEyUtjh0nxYFNhSxifq2LKzPOKN0e3XVpg6nAdnrvXYIzXLujLcGIXF7w+cO5o7oWS9gsnkjLXVKL5RmU4BA8RWVZiCj+0qllp9G01JRFdhDii2VXR94OkN6q4h+sVBw=
+	t=1729700134; cv=none; b=aIIPac4LjfrKVRUQ/y3YneRjprh5YwxE4ZpQSZTKIKrgNBPP0j6iMfaxanGo0p97AvLjAl09RKnbjd0SCCy/90k8sBAPNBOBl2WYMShliygc8frRZzh+dcCYU9IC3W/1NkphtZYj9k2Dt522djcriz3h8yBULb9dvp+DUAmCZDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729700134; c=relaxed/simple;
-	bh=YuhWb2M5dzo6ojcH45qDoA0CSpsw64SGLAi2xdBIlAY=;
+	bh=O7ILj4Waqkz06uXTxRShQ3wnBOigvCdfeeJ0N9Bhr78=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=daynYhIjjl2+QEhN9PInNzO6y/x4txfMU0Lb5YNMufmuMpEKWc0n3HPXQi2mkSa+s/xbgaMSfPAvQvASNybcAG0Pw2asYrK+v6XQO2i3faO/OXf8mgZuL2uqMea2cVjbxiNC5uZAVXiYF9HEwc//c5hGmOU+L/2hjbQGI4CZsFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=boF2UW0H; arc=none smtp.client-ip=209.85.166.53
+	 MIME-Version; b=lQb/oFwvV4Ce3cTYKj5u97Vhr9JA4YHK/Tbt075tCvm3L6LZiMStrigdb7e54J9TNh7C54V8sWlJDWYe2vWOGdu7EfGaYFgNkKSJVcATKsmjCBMD6qS3oTgEnpPPJ5J3caLjnkFWXwLEPIGXdAi1yTv02iVmlTPO4f/wpmY8xeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jbyhWYkK; arc=none smtp.client-ip=209.85.166.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-83ac4dacaf9so167547739f.2
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-8377fd760b0so278304039f.2
         for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 09:15:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729700131; x=1730304931; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wJyur77YgFvOdwKbBr8lEG6FQOpaV6oMhyKIQWH8OSY=;
-        b=boF2UW0Hz4CeaoHxqJm8OMAA9hdtlwp9FbjAPvURYqXUFcUe6i7y8Fr1qgATCNrFW1
-         dUwGiwqk2xXQGAajE2fNG7X9D6Eus0GocGYfg3I6Jt37BlfBrBRb33QARXlcvIK4DcML
-         1eRwtkyqoTXypM7PaqAXp6BuqkZxD8mCpM8YjB8rdagkhaYjBYlTh3DOsiT4PGqtL3K2
-         Nlnbaczt82SXbdDDQ9u/IRgkToQ8thLqsxK71DSLwQgm/Zqj2iPVb5G/yFhF8LLzfxw2
-         vEbS/7HvsW6daX+5WoWE4rThE1ImeIc71N9h2fWLAlVuYNjLcs2ISw4CSTunUoe1uVVk
-         X7VA==
+        bh=JAVLaZMsYlaRm01XXXR+pTcArBexY2/Nbj1JvQNG4R4=;
+        b=jbyhWYkKqHRCgu4RMwSVJPaTOkVxBoEo5w2exaTb9ivqnh8YUweJz7gG/ZikXr60O3
+         QfsY+cN0GIZJHyHdiwxvnUNGVyHclBcwkSo4qqZhoQc8VT79mAALCpsHNM49MfiyVplV
+         ZXCs6+B6fF5uBj3npxomF3j/7o3eCICsHJl12IHqLYCqp8ND+gpwb/PzEThjBYHoY0Jp
+         JYkgoICX7E7t7W9QK/kUYFeeKXGJKWeQCXKVgYngLE/kWHN+dzSwlOoGvZxijmD5aIuX
+         Cq5ZxM+aEGgllfO/vDbQfFOY6WwbdoLd9wy5SgQc7vct+DeQpRQYPmCccge/oBPvS6wy
+         ANYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1729700131; x=1730304931;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wJyur77YgFvOdwKbBr8lEG6FQOpaV6oMhyKIQWH8OSY=;
-        b=jD2cchHuGTWasgHN+ipXfdYwcWyHhFSF0YVTV2f73nuJbQ+Lf6WtX8xa7/Ecy6zCYk
-         Aktrt7FBlNDOwHbOLOcQa/NE+xyF1LojRlx/zf631jXg3fVvk0+GiO52krB2YNlNVgsw
-         EtWwKv9hVqaez/V/UjaNJfJBLnnmip7mVpfHar033cD0hb66MpO1QvitEYhBD9vaJKZk
-         3kMOBUk1GflnOFpjU1EqgtHpkAzFKK0yy+QVgeLpI2sTybwcv/NcSTuR76oPGs8xPiXC
-         mOQZrWGeTpKZ+WkaUXx8DWDlEkKfjilIpw3telFTqG1um0stUj22axrtf+Fru+EtnOvt
-         wMkQ==
-X-Gm-Message-State: AOJu0YyU/mbPmxzeUhEwGowEsI4dD5gYvzvFVoxim+zsqhsFBdzSED8e
-	eT1d2Zf69PRUjf+QPdaST5iSS2cwxWOB/kZKcIL7iau2rh2kyo04xq0H0jTTEWngTGceUDWQVyE
-	p
-X-Google-Smtp-Source: AGHT+IHGdfQAIlpQAR42Ix7MxvZ9+JMaMIhDkpSCtqwmWZCH7Mija65LKy7SStmsTNerUaZJUjajnA==
-X-Received: by 2002:a05:6602:6b0f:b0:82a:4480:badc with SMTP id ca18e2360f4ac-83af63fea2fmr346953339f.10.1729700129456;
-        Wed, 23 Oct 2024 09:15:29 -0700 (PDT)
+        bh=JAVLaZMsYlaRm01XXXR+pTcArBexY2/Nbj1JvQNG4R4=;
+        b=r0KctkIqNbBhtWlJb+uQJa//v6irbBJ2BTBRYyOEVYxCutU3atWINvDFcND9qqwxmm
+         gKmB1Jfg+a65ztyl3fcc0TRFXlcsy5997fHz+MyXTTPUK2Dxi47QeqfUxaRsBGJp6xER
+         EX9yATWRZYFtHFdp3E9Cpkv8jL1Wb0n36pL3f/dmSP381RUcntnXz1Q4DIzfGxu0t1cr
+         DJ2apXZBqNirjq+Bvm90CLf6ieh2jMOQkTjOMGcglTDgd4a/9woDj5e1c68eir+mecAL
+         N6aEk4J2m3Vj4uj9/Un6teas5y+/ycje7wteEDZf+y2psR93RFB4r1VUo3ES2PTfBzvy
+         Kuzg==
+X-Gm-Message-State: AOJu0Yx2WfxOsEdOby6E94rEwqM0626pbsHa4UEV9hT8ZUyysWmhJeDP
+	dZwqDef5+ZXpoyPOUyMPn6xwvmFG3LtVz1hneyBnwI51D52VIQNIpLdBnwuL5tpXwRx+LR/wv0b
+	y
+X-Google-Smtp-Source: AGHT+IGpcof+4P2x6ot3Owb47UAToc10m33JHusxd38kxYnIrfs/U84HpvJFwXGWMqSc4ZdWiSxyvA==
+X-Received: by 2002:a05:6602:6b82:b0:835:4d27:edf6 with SMTP id ca18e2360f4ac-83af6192858mr292528839f.7.1729700131270;
+        Wed, 23 Oct 2024 09:15:31 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a556c29sm2138180173.43.2024.10.23.09.15.28
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a556c29sm2138180173.43.2024.10.23.09.15.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 23 Oct 2024 09:15:29 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/7] io_uring/net: move send zc fixed buffer import into helper
-Date: Wed, 23 Oct 2024 10:07:37 -0600
-Message-ID: <20241023161522.1126423-5-axboe@kernel.dk>
+Subject: [PATCH 5/7] io_uring: add ability for provided buffer to index registered buffers
+Date: Wed, 23 Oct 2024 10:07:38 -0600
+Message-ID: <20241023161522.1126423-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241023161522.1126423-1-axboe@kernel.dk>
 References: <20241023161522.1126423-1-axboe@kernel.dk>
@@ -84,117 +84,70 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation to making the fixed buffer importing a bit more elaborate
-in terms of what it supports.
+This just adds the necessary shifts that define what a provided buffer
+that is merely an index into a registered buffer looks like. A provided
+buffer looks like the following:
+
+struct io_uring_buf {
+	__u64	addr;
+	__u32	len;
+	__u16	bid;
+	__u16	resv;
+};
+
+where 'addr' holds a userspace address, 'len' is the length of the
+buffer, and 'bid' is the buffer ID identifying the buffer. This works
+fine for a virtual address, but it cannot be used efficiently denote
+a registered buffer. Registered buffers are pre-mapped into the kernel
+for more efficient IO, avoiding a get_user_pages() and page(s) inc+dec,
+and are used for things like O_DIRECT on storage and zero copy send.
+
+Particularly for the send case, it'd be useful to support a mix of
+provided and registered buffers. This enables the use of using a
+provided ring buffer to serialize sends, and also enables the use of
+send bundles, where a send can pick multiple buffers and send them all
+at once.
+
+If provided buffers are used as an index into registered buffers, the
+meaning of buf->addr changes. If registered buffer index 'regbuf_index'
+is desired, with a length of 'len' and the offset 'regbuf_offset' from
+the start of the buffer, then the application would fill out the entry
+as follows:
+
+buf->addr = ((__u64) regbuf_offset << IOU_BUF_OFFSET_BITS) | regbuf_index;
+buf->len = len;
+
+and otherwise add it to the buffer ring as usual. The kernel will then
+first pick a buffer from the desired buffer group ID, and then decode
+which registered buffer to use for the transfer.
+
+This provides a way to use both registered and provided buffers at the
+same time.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/net.c | 77 ++++++++++++++++++++++++++++----------------------
- 1 file changed, 44 insertions(+), 33 deletions(-)
+ include/uapi/linux/io_uring.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 13b807c729f9..dbef14aa50f9 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -81,6 +81,9 @@ struct io_sr_msg {
- 	struct io_kiocb 		*notif;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 86cb385fe0b5..eef88d570cb4 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -733,6 +733,14 @@ struct io_uring_buf_ring {
+ 	};
  };
  
-+static int io_sg_from_iter(struct sk_buff *skb, struct iov_iter *from,
-+			   size_t length);
++/*
++ * When provided buffers are used as indices into registered buffers, the
++ * lower IOU_BUF_REGBUF_BITS indicate the index into the registered buffers,
++ * and the upper IOU_BUF_OFFSET_BITS indicate the offset into that buffer.
++ */
++#define IOU_BUF_REGBUF_BITS	(32ULL)
++#define IOU_BUF_OFFSET_BITS	(32ULL)
 +
  /*
-  * Number of times we'll try and do receives if there's more data. If we
-  * exceed this limit, then add us to the back of the queue and retry from
-@@ -578,6 +581,37 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- 	return IOU_OK;
- }
- 
-+static int io_send_zc_import_single(struct io_kiocb *req,
-+				    unsigned int issue_flags)
-+{
-+	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
-+	struct io_async_msghdr *kmsg = req->async_data;
-+	struct io_ring_ctx *ctx = req->ctx;
-+	struct io_mapped_ubuf *imu;
-+	int ret;
-+	u16 idx;
-+
-+	ret = -EFAULT;
-+	io_ring_submit_lock(ctx, issue_flags);
-+	if (sr->buf_index < ctx->nr_user_bufs) {
-+		idx = array_index_nospec(sr->buf_index, ctx->nr_user_bufs);
-+		imu = READ_ONCE(ctx->user_bufs[idx]);
-+		io_req_set_rsrc_node(sr->notif, ctx);
-+		ret = 0;
-+	}
-+	io_ring_submit_unlock(ctx, issue_flags);
-+
-+	if (unlikely(ret))
-+		return ret;
-+
-+	ret = io_import_fixed(ITER_SOURCE, &kmsg->msg.msg_iter, imu,
-+				(u64)(uintptr_t)sr->buf, sr->len);
-+	if (unlikely(ret))
-+		return ret;
-+	kmsg->msg.sg_from_iter = io_sg_from_iter;
-+	return 0;
-+}
-+
- static int __io_send_import(struct io_kiocb *req, struct buf_sel_arg *arg,
- 			    int nsegs, unsigned int issue_flags)
- {
-@@ -1365,40 +1399,17 @@ static int io_send_zc_import(struct io_kiocb *req, unsigned int issue_flags)
- 	struct io_async_msghdr *kmsg = req->async_data;
- 	int ret;
- 
--	if (sr->flags & IORING_RECVSEND_FIXED_BUF) {
--		struct io_ring_ctx *ctx = req->ctx;
--		struct io_mapped_ubuf *imu;
--		int idx;
--
--		ret = -EFAULT;
--		io_ring_submit_lock(ctx, issue_flags);
--		if (sr->buf_index < ctx->nr_user_bufs) {
--			idx = array_index_nospec(sr->buf_index, ctx->nr_user_bufs);
--			imu = READ_ONCE(ctx->user_bufs[idx]);
--			io_req_set_rsrc_node(sr->notif, ctx);
--			ret = 0;
--		}
--		io_ring_submit_unlock(ctx, issue_flags);
-+	if (sr->flags & IORING_RECVSEND_FIXED_BUF)
-+		return io_send_zc_import_single(req, issue_flags);
- 
--		if (unlikely(ret))
--			return ret;
--
--		ret = io_import_fixed(ITER_SOURCE, &kmsg->msg.msg_iter, imu,
--					(u64)(uintptr_t)sr->buf, sr->len);
--		if (unlikely(ret))
--			return ret;
--		kmsg->msg.sg_from_iter = io_sg_from_iter;
--	} else {
--		ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len, &kmsg->msg.msg_iter);
--		if (unlikely(ret))
--			return ret;
--		ret = io_notif_account_mem(sr->notif, sr->len);
--		if (unlikely(ret))
--			return ret;
--		kmsg->msg.sg_from_iter = io_sg_from_iter_iovec;
--	}
--
--	return ret;
-+	ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len, &kmsg->msg.msg_iter);
-+	if (unlikely(ret))
-+		return ret;
-+	ret = io_notif_account_mem(sr->notif, sr->len);
-+	if (unlikely(ret))
-+		return ret;
-+	kmsg->msg.sg_from_iter = io_sg_from_iter_iovec;
-+	return 0;
- }
- 
- int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
+  * Flags for IORING_REGISTER_PBUF_RING.
+  *
 -- 
 2.45.2
 

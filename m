@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-3948-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3949-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC8C9ACF9B
-	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 18:01:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242189ACFB8
+	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 18:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B1A11C2404D
-	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 16:01:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81A00B25B9A
+	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 16:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5041BC065;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B391CB301;
 	Wed, 23 Oct 2024 16:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ev5jKhTa"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ifGeNe4w"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2881CACC8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905961C876D
 	for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 16:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729699274; cv=none; b=mHFFPbEoG8bkr5NnrgDo3oDAq71Mgo3MApQqytEJwXX3u/cOpBxGN74RL8gAFY/XB/H5LNJYJ3wcYQvIqNl3qBOQkhbJoBrQcvA9MZ1H+6cDuFEfZsekv4Hz0bMWG/+vzljLuWRGS51lLv0UdN/EMI5H+Net6JDexccko48fYKg=
+	t=1729699274; cv=none; b=C+2AK3KaAL+/cxDgnRYu5JRtIMejb6jroCIwkbUUqVlU2f0q7tYqAVOGtaWt0ZLx9VT/RYSjL2uwI1wSLFVA9E0Y7XzqSrfTHkK1ZwR6b7ESx7/qRwJ1jJnqwkngsecmahHW2Mmu2HzboZcicxPYxTQxzK6azkn0j9ylSV8Exs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729699274; c=relaxed/simple;
-	bh=j3VmYIUYlyBTGlqvUIMc0JUgVTjmWoaF5EMC9Dn7Zk0=;
+	bh=ffn4A5dJHuChqOSlXTeXWLXPjx1oLPljZTZL7mZyx/4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Aq6sRQ0XH31cwKBQMl2UfsAHlNAOo99ds/mCg2TNFMO0sFwHwbkhQ+2Xe5uNnrwWH7WvgNlMu23z/fzYh+0DOmS1UHJmakKzQnAhHI6riEtsoOz7TWYZqE2k0PT8RFWIPNrUF8sLY7Lae5Kgeh6ShnE1QaiSUCZt9HWLFHSSjkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ev5jKhTa; arc=none smtp.client-ip=209.85.166.46
+	 MIME-Version; b=k0PtTqAqSHwwAsOgB3S58A96lFaXuIo7beyvozVpTBW8efPI7G0IcT5QGiCtaLKym5r9IUtUOjLpdYK5nP1FCpD6/c2l5TOi5y8AAD2pxJDggS/Fgnf8eangxgF7ebRfdh9DMiCE+3aAAvgwVTTFSojimPNDcN2ZN/4xy9uMxlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ifGeNe4w; arc=none smtp.client-ip=209.85.166.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-83aba65556cso245964139f.3
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a3b98d8a7eso10415ab.3
         for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 09:01:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729699271; x=1730304071; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5+0vcL80oErDAtwoUFPo8e5XBLS2uO6xNRw7O3/obNg=;
-        b=Ev5jKhTahvEwgtm53+SWBPbwaQKNrYwGj7V41sjv4vdzZ9G5d2thWhhYwDVcfWsUW2
-         87I3fazEozoZDbni8b1P0gbl5OJel/YfEdU4/nL+sOvXLUKbJEhTFOgiGac/yWGXByu2
-         Z2pEVUK4UlLH0nKCiy8G7pVzlGEDq1qw3p1y7S31OEJTzK3+LYto+docVlQo5iq8JDv5
-         6ALMYfGa9Ru1frqZ3JzOBAvLVdKhDfKPhaMO+afylgDwI0946xSqk8JnKBg+8httoPAh
-         qcviuLg9pkBtJ0Z/kCdKYlb+Wm4hpd1U22e2AtP/xb3SKbodiB4z6s8/aw6J/3mYluBc
-         bBzw==
+        bh=FRU5eQ7mI22uFLbOdbG0N7kcRcnthB8G1M5BpYo0PVE=;
+        b=ifGeNe4wNf97S8e0J8sRf0v52OV1O0mZTCzdhRNDIUcZRuJm7/HFefrd7IJiZGBSFZ
+         4ljRVlHEHpDJFpWbN63I8/XQQRYD53becIMtyNd1Y6AIVKy2a9t9hAopK16fBbwlxNjM
+         LWLbt2IA3U+LuDTO0lo1TSJdnRhCVJFeTes47ls2ZgHaOmDD36NBwK9d0G2zhPm6dkuc
+         cXbRNg9RhUVCImzs84dFbZtdodjdc9ugAqPgMziz0QvgeUFBeUtRCItR7LXqXIJuQXvY
+         l/RLKeRedeeqQ0CO66E6yOMC+DIt9xVzw/o9f/rnZDPeJNYw0JIfTgY27u/BeU77tvrk
+         0jzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1729699271; x=1730304071;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5+0vcL80oErDAtwoUFPo8e5XBLS2uO6xNRw7O3/obNg=;
-        b=Tu2YVXQOShIMeC6Dx/0CisD3j5Ucm1LQcNbj07TfCJKHoTJBcU/suMr9EUEMqv0fKY
-         PYhwIHkpGaXuI6BTm9JvMEQRJNIuULwALgOsgxHKlUuhNGDtyEb9X7hB6yFxXJkoxVws
-         VmM81bPOUKw/d9dmJNJa0N0q2tcNgesU4q0tPpV6rLA8Lva5FBI1pVNALde5vCYo6Xn7
-         jAkBxYr4KyqVcxRdi6ec4WX7qYxYQOZ5RuCP+pSaFBELWSuJORCDh+3GhSsjQnVqOigX
-         Cs7Dmt8I8eYjXL4Xt7VyJ3k7qfRfvAgBph0t+0cijZ8BqiNqiJ1IeSmdwa6yPxV1vda8
-         UBoA==
-X-Gm-Message-State: AOJu0YxwqS6Xjm4aZbopdcIzYwAnHdLsHpdIWvGPJdY3BpByew+p0R9d
-	h6dJ0wiKYmHmW+Hx3PhV33H1DlSSqRnvAG5VuWklEwSzAiiOBUL6HvjYB7wJbeT+aeJnDOjwUdA
-	k
-X-Google-Smtp-Source: AGHT+IH9LRHHyiZiGi+xkkcG4CexnJICeEesOx3IkBJP3YlLqAd/Fdpre1iQtl5RYtCZfFABUhV63A==
-X-Received: by 2002:a05:6e02:148d:b0:3a0:98b2:8f3b with SMTP id e9e14a558f8ab-3a4d5963f65mr34090075ab.7.1729699269671;
-        Wed, 23 Oct 2024 09:01:09 -0700 (PDT)
+        bh=FRU5eQ7mI22uFLbOdbG0N7kcRcnthB8G1M5BpYo0PVE=;
+        b=FXc92RVZO1sT0j+DzRNbrWff5M8lVZoN7VR5cLtSkQZduWCAvlLjG6df9J0QMZ3X70
+         kwlZOMw6K/2zSdDNEUMe7P3bWWa1EI/0wVUNIMPAbAKEmgMRtgNPtqU7ZytD4SD+204M
+         itnFTWKpzKYYplVf78Ow2rj05WuRe7V/tDH0NP/YBeEnjTBMn8BSVWOQ/wcnA3uIAR0m
+         HAU2y+pbWsxKXmS0I0/v0ynjmD7JXNmm8NVw6YZb6YUrMIcPDT05lm5nlmFMk4iJlMTD
+         1EulO+rZ6yrskH76EJb4NpS+QgG5HqejDoeJrp4ePU9XGRZV4wwqlGgsm+gPWEJiXnt+
+         wo5A==
+X-Gm-Message-State: AOJu0YyAlirGgQZoMh94JN7fnDAa6uI6VM53kGCXUhstwvPKeooolLYC
+	jTNMM/ip6WJwsF9wLbykui3hDKV8P7wvXQZAns14MNuchp2PT+WXcRr1zE9/FDQRlQA+GLQMwEy
+	i
+X-Google-Smtp-Source: AGHT+IH6n9GKuqJdMunw7FwklnHMksB6ak96wJOc81PYecyNBTMfVZGYFmioFXwgnOpP3o0TTkgFUQ==
+X-Received: by 2002:a05:6e02:20cb:b0:3a3:96c4:29bc with SMTP id e9e14a558f8ab-3a4d59607d1mr31058395ab.11.1729699270751;
+        Wed, 23 Oct 2024 09:01:10 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a6301ecsm2115191173.135.2024.10.23.09.01.08
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a6301ecsm2115191173.135.2024.10.23.09.01.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 23 Oct 2024 09:01:09 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/3] io_uring: abstract out a bit of the ring filling logic
-Date: Wed, 23 Oct 2024 09:59:52 -0600
-Message-ID: <20241023160105.1125315-3-axboe@kernel.dk>
+Subject: [PATCH 3/3] io_uring/register: add IORING_REGISTER_RESIZE_RINGS
+Date: Wed, 23 Oct 2024 09:59:53 -0600
+Message-ID: <20241023160105.1125315-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241023160105.1125315-1-axboe@kernel.dk>
 References: <20241023160105.1125315-1-axboe@kernel.dk>
@@ -84,131 +84,254 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Abstract out a io_uring_fill_params() helper, which fills out the
-necessary bits of struct io_uring_params. Add it to io_uring.h as well,
-in preparation for having another internal user of it.
+Once a ring has been created, the size of the CQ and SQ rings are fixed.
+Usually this isn't a problem on the SQ ring side, as it merely controls
+the available number of requests that can be submitted in a single
+system call, and there's rarely a need to change that.
+
+For the CQ ring, it's a different story. For most efficient use of
+io_uring, it's important that the CQ ring never overflows. This means
+that applications must size it for the worst case scenario, which can
+be wasteful.
+
+Add IORING_REGISTER_RESIZE_RINGS, which allows an application to resize
+the existing rings. It takes a struct io_uring_params argument, the same
+one which is used to setup the ring initially, and resizes rings
+according to the sizes given.
+
+Certain properties are always inherited from the original ring setup,
+like SQE128/CQE32 and other setup options. The implementation only
+allows flag associated with how the CQ ring is sized and clamped.
+
+Existing unconsumed SQE and CQE entries are copied as part of the
+process. If either the SQ or CQ resized destination ring cannot hold the
+entries already present in the source rings, then the operation is failed
+with -EOVERFLOW. Any register op holds ->uring_lock, which prevents new
+submissions, and the internal mapping holds the completion lock as well
+across moving CQ ring state.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c | 70 ++++++++++++++++++++++++++-------------------
- io_uring/io_uring.h |  1 +
- 2 files changed, 41 insertions(+), 30 deletions(-)
+ include/uapi/linux/io_uring.h |   3 +
+ io_uring/register.c           | 177 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 180 insertions(+)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 6dea5242d666..b5974bdad48b 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3498,14 +3498,8 @@ static struct file *io_uring_get_file(struct io_ring_ctx *ctx)
- 					 O_RDWR | O_CLOEXEC, NULL);
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 86cb385fe0b5..c4737892c7cd 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -615,6 +615,9 @@ enum io_uring_register_op {
+ 	/* send MSG_RING without having a ring */
+ 	IORING_REGISTER_SEND_MSG_RING		= 31,
+ 
++	/* resize CQ ring */
++	IORING_REGISTER_RESIZE_RINGS		= 33,
++
+ 	/* this goes last */
+ 	IORING_REGISTER_LAST,
+ 
+diff --git a/io_uring/register.c b/io_uring/register.c
+index 52b2f9b74af8..e38d83c8bbf1 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -29,6 +29,7 @@
+ #include "napi.h"
+ #include "eventfd.h"
+ #include "msg_ring.h"
++#include "memmap.h"
+ 
+ #define IORING_MAX_RESTRICTIONS	(IORING_RESTRICTION_LAST + \
+ 				 IORING_REGISTER_LAST + IORING_OP_LAST)
+@@ -361,6 +362,176 @@ static int io_register_clock(struct io_ring_ctx *ctx,
+ 	return 0;
  }
  
--static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
--				  struct io_uring_params __user *params)
-+int io_uring_fill_params(unsigned entries, struct io_uring_params *p)
- {
--	struct io_ring_ctx *ctx;
--	struct io_uring_task *tctx;
--	struct file *file;
--	int ret;
--
- 	if (!entries)
- 		return -EINVAL;
- 	if (entries > IORING_MAX_ENTRIES) {
-@@ -3547,6 +3541,42 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 		p->cq_entries = 2 * p->sq_entries;
- 	}
- 
-+	p->sq_off.head = offsetof(struct io_rings, sq.head);
-+	p->sq_off.tail = offsetof(struct io_rings, sq.tail);
-+	p->sq_off.ring_mask = offsetof(struct io_rings, sq_ring_mask);
-+	p->sq_off.ring_entries = offsetof(struct io_rings, sq_ring_entries);
-+	p->sq_off.flags = offsetof(struct io_rings, sq_flags);
-+	p->sq_off.dropped = offsetof(struct io_rings, sq_dropped);
-+	p->sq_off.resv1 = 0;
-+	if (!(p->flags & IORING_SETUP_NO_MMAP))
-+		p->sq_off.user_addr = 0;
++/*
++ * State to maintain until we can swap. Both new and old state, used for
++ * either mapping or freeing.
++ */
++struct io_ring_ctx_rings {
++	unsigned short n_ring_pages;
++	unsigned short n_sqe_pages;
++	struct page **ring_pages;
++	struct page **sqe_pages;
++	struct io_uring_sqe *sq_sqes;
++	struct io_rings *rings;
++};
 +
-+	p->cq_off.head = offsetof(struct io_rings, cq.head);
-+	p->cq_off.tail = offsetof(struct io_rings, cq.tail);
-+	p->cq_off.ring_mask = offsetof(struct io_rings, cq_ring_mask);
-+	p->cq_off.ring_entries = offsetof(struct io_rings, cq_ring_entries);
-+	p->cq_off.overflow = offsetof(struct io_rings, cq_overflow);
-+	p->cq_off.cqes = offsetof(struct io_rings, cqes);
-+	p->cq_off.flags = offsetof(struct io_rings, cq_flags);
-+	p->cq_off.resv1 = 0;
-+	if (!(p->flags & IORING_SETUP_NO_MMAP))
-+		p->cq_off.user_addr = 0;
-+
-+	return 0;
++static void io_register_free_rings(struct io_uring_params *p,
++				   struct io_ring_ctx_rings *r)
++{
++	if (!(p->flags & IORING_SETUP_NO_MMAP)) {
++		io_pages_unmap(r->rings, &r->ring_pages, &r->n_ring_pages,
++				true);
++		io_pages_unmap(r->sq_sqes, &r->sqe_pages, &r->n_sqe_pages,
++				true);
++	} else {
++		io_pages_free(&r->ring_pages, r->n_ring_pages);
++		io_pages_free(&r->sqe_pages, r->n_sqe_pages);
++		vunmap(r->rings);
++		vunmap(r->sq_sqes);
++	}
 +}
 +
-+static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
-+				  struct io_uring_params __user *params)
++#define swap_old(ctx, o, n, field)		\
++	do {					\
++		(o).field = (ctx)->field;	\
++		(ctx)->field = (n).field;	\
++	} while (0)
++
++#define RESIZE_FLAGS	(IORING_SETUP_CQSIZE | IORING_SETUP_CLAMP)
++#define COPY_FLAGS	(IORING_SETUP_NO_SQARRAY | IORING_SETUP_SQE128 | \
++			 IORING_SETUP_CQE32 | IORING_SETUP_NO_MMAP)
++
++static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
 +{
-+	struct io_ring_ctx *ctx;
-+	struct io_uring_task *tctx;
-+	struct file *file;
++	struct io_ring_ctx_rings o = { }, n = { };
++	size_t size, sq_array_offset;
++	struct io_uring_params p;
++	unsigned i, tail;
++	void *ptr;
 +	int ret;
 +
-+	ret = io_uring_fill_params(entries, p);
++	/* for single issuer, must be owner resizing */
++	if (ctx->flags & IORING_SETUP_SINGLE_ISSUER &&
++	    current != ctx->submitter_task)
++		return -EEXIST;
++	if (copy_from_user(&p, arg, sizeof(p)))
++		return -EFAULT;
++	if (p.flags & ~RESIZE_FLAGS)
++		return -EINVAL;
++	/* nothing to do */
++	if (p.sq_entries == ctx->sq_entries && p.cq_entries == ctx->cq_entries)
++		return 0;
++	/* properties that are always inherited */
++	p.flags |= (ctx->flags & COPY_FLAGS);
++
++	ret = io_uring_fill_params(p.sq_entries, &p);
 +	if (unlikely(ret))
 +		return ret;
 +
- 	ctx = io_ring_ctx_alloc(p);
- 	if (!ctx)
- 		return -ENOMEM;
-@@ -3630,6 +3660,9 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	if (ret)
- 		goto err;
- 
-+	if (!(p->flags & IORING_SETUP_NO_SQARRAY))
-+		p->sq_off.array = (char *)ctx->sq_array - (char *)ctx->rings;
++	size = rings_size(p.flags, p.sq_entries, p.cq_entries,
++				&sq_array_offset);
++	if (size == SIZE_MAX)
++		return -EOVERFLOW;
 +
- 	ret = io_sq_offload_create(ctx, p);
- 	if (ret)
- 		goto err;
-@@ -3638,29 +3671,6 @@ static __cold int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	if (ret)
- 		goto err;
- 
--	p->sq_off.head = offsetof(struct io_rings, sq.head);
--	p->sq_off.tail = offsetof(struct io_rings, sq.tail);
--	p->sq_off.ring_mask = offsetof(struct io_rings, sq_ring_mask);
--	p->sq_off.ring_entries = offsetof(struct io_rings, sq_ring_entries);
--	p->sq_off.flags = offsetof(struct io_rings, sq_flags);
--	p->sq_off.dropped = offsetof(struct io_rings, sq_dropped);
--	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
--		p->sq_off.array = (char *)ctx->sq_array - (char *)ctx->rings;
--	p->sq_off.resv1 = 0;
--	if (!(ctx->flags & IORING_SETUP_NO_MMAP))
--		p->sq_off.user_addr = 0;
--
--	p->cq_off.head = offsetof(struct io_rings, cq.head);
--	p->cq_off.tail = offsetof(struct io_rings, cq.tail);
--	p->cq_off.ring_mask = offsetof(struct io_rings, cq_ring_mask);
--	p->cq_off.ring_entries = offsetof(struct io_rings, cq_ring_entries);
--	p->cq_off.overflow = offsetof(struct io_rings, cq_overflow);
--	p->cq_off.cqes = offsetof(struct io_rings, cqes);
--	p->cq_off.flags = offsetof(struct io_rings, cq_flags);
--	p->cq_off.resv1 = 0;
--	if (!(ctx->flags & IORING_SETUP_NO_MMAP))
--		p->cq_off.user_addr = 0;
--
- 	p->features = IORING_FEAT_SINGLE_MMAP | IORING_FEAT_NODROP |
- 			IORING_FEAT_SUBMIT_STABLE | IORING_FEAT_RW_CUR_POS |
- 			IORING_FEAT_CUR_PERSONALITY | IORING_FEAT_FAST_POLL |
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 4a471a810f02..e3e6cb14de5d 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -70,6 +70,7 @@ static inline bool io_should_wake(struct io_wait_queue *iowq)
- 
- unsigned long rings_size(unsigned int flags, unsigned int sq_entries,
- 			 unsigned int cq_entries, size_t *sq_offset);
-+int io_uring_fill_params(unsigned entries, struct io_uring_params *p);
- bool io_cqe_cache_refill(struct io_ring_ctx *ctx, bool overflow);
- int io_run_task_work_sig(struct io_ring_ctx *ctx);
- void io_req_defer_failed(struct io_kiocb *req, s32 res);
++	if (!(p.flags & IORING_SETUP_NO_MMAP))
++		n.rings = io_pages_map(&n.ring_pages, &n.n_ring_pages, size);
++	else
++		n.rings = __io_uaddr_map(&n.ring_pages, &n.n_ring_pages,
++						p.cq_off.user_addr, size);
++	if (IS_ERR(n.rings))
++		return PTR_ERR(n.rings);
++
++	n.rings->sq_ring_mask = p.sq_entries - 1;
++	n.rings->cq_ring_mask = p.cq_entries - 1;
++	n.rings->sq_ring_entries = p.sq_entries;
++	n.rings->cq_ring_entries = p.cq_entries;
++
++	if (copy_to_user(arg, &p, sizeof(p))) {
++		io_register_free_rings(&p, &n);
++		return -EFAULT;
++	}
++
++	if (p.flags & IORING_SETUP_SQE128)
++		size = array_size(2 * sizeof(struct io_uring_sqe), p.sq_entries);
++	else
++		size = array_size(sizeof(struct io_uring_sqe), p.sq_entries);
++	if (size == SIZE_MAX) {
++		io_register_free_rings(&p, &n);
++		return -EOVERFLOW;
++	}
++
++	if (!(p.flags & IORING_SETUP_NO_MMAP))
++		ptr = io_pages_map(&n.sqe_pages, &n.n_sqe_pages, size);
++	else
++		ptr = __io_uaddr_map(&n.sqe_pages, &n.n_sqe_pages,
++					p.sq_off.user_addr,
++					size);
++	if (IS_ERR(ptr)) {
++		io_register_free_rings(&p, &n);
++		return PTR_ERR(ptr);
++	}
++
++	/*
++	 * Now copy SQ and CQ entries, if any. If either of the destination
++	 * rings can't hold what is already there, then fail the operation.
++	 */
++	n.sq_sqes = ptr;
++	tail = ctx->rings->sq.tail;
++	if (tail - ctx->rings->sq.head > p.sq_entries) {
++		io_register_free_rings(&p, &n);
++		return -EOVERFLOW;
++	}
++	for (i = ctx->rings->sq.head; i < tail; i++) {
++		unsigned src_head = i & (ctx->sq_entries - 1);
++		unsigned dst_head = i & n.rings->sq_ring_mask;
++
++		n.sq_sqes[dst_head] = ctx->sq_sqes[src_head];
++	}
++	n.rings->sq.head = ctx->rings->sq.head;
++	n.rings->sq.tail = ctx->rings->sq.tail;
++
++	spin_lock(&ctx->completion_lock);
++	tail = ctx->rings->cq.tail;
++	if (tail - ctx->rings->cq.head > p.cq_entries) {
++		spin_unlock(&ctx->completion_lock);
++		io_register_free_rings(&p, &n);
++		return -EOVERFLOW;
++	}
++	for (i = ctx->rings->cq.head; i < tail; i++) {
++		unsigned src_head = i & (ctx->cq_entries - 1);
++		unsigned dst_head = i & n.rings->cq_ring_mask;
++
++		n.rings->cqes[dst_head] = ctx->rings->cqes[src_head];
++	}
++	n.rings->cq.head = ctx->rings->cq.head;
++	n.rings->cq.tail = ctx->rings->cq.tail;
++	/* invalidate cached cqe refill */
++	ctx->cqe_cached = ctx->cqe_sentinel = NULL;
++
++	n.rings->sq_dropped = ctx->rings->sq_dropped;
++	n.rings->sq_flags = ctx->rings->sq_flags;
++	n.rings->cq_flags = ctx->rings->cq_flags;
++	n.rings->cq_overflow = ctx->rings->cq_overflow;
++
++	/* all done, store old pointers and assign new ones */
++	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
++		ctx->sq_array = (u32 *)((char *)n.rings + sq_array_offset);
++
++	ctx->sq_entries = p.sq_entries;
++	ctx->cq_entries = p.cq_entries;
++
++	swap_old(ctx, o, n, rings);
++	swap_old(ctx, o, n, n_ring_pages);
++	swap_old(ctx, o, n, n_sqe_pages);
++	swap_old(ctx, o, n, ring_pages);
++	swap_old(ctx, o, n, sqe_pages);
++	swap_old(ctx, o, n, sq_sqes);
++	spin_unlock(&ctx->completion_lock);
++
++	io_register_free_rings(&p, &o);
++	return 0;
++}
++
+ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 			       void __user *arg, unsigned nr_args)
+ 	__releases(ctx->uring_lock)
+@@ -549,6 +720,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 			break;
+ 		ret = io_register_clone_buffers(ctx, arg);
+ 		break;
++	case IORING_REGISTER_RESIZE_RINGS:
++		ret = -EINVAL;
++		if (!arg || nr_args != 1)
++			break;
++		ret = io_register_resize_rings(ctx, arg);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
 -- 
 2.45.2
 

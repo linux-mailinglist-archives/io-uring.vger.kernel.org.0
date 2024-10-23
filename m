@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-3952-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3954-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F329ACFE4
-	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 18:15:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861C19ACFE7
+	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 18:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D931C213DC
-	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 16:15:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A70D81C2137C
+	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 16:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D202B1CB31D;
-	Wed, 23 Oct 2024 16:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C521CB529;
+	Wed, 23 Oct 2024 16:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="R39TMA99"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="boF2UW0H"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B2D1CACDD
-	for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 16:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F901CACF2
+	for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 16:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729700132; cv=none; b=D1sBxFWzfvgFX332Mb2l2wpnsPNgK3KcUxx7q7U0w+CZJGAroSBCvtny4yGH+n6OVw3uhDy/9YA1gYZwQXerPfpvUONZU1ESTMcIKJHM/mZdTUGIk60l/hYReeB+MsZNQlF5eT/Bueyti/N5aYo13H6VsxnUhvj0WxE8HyVq0HA=
+	t=1729700134; cv=none; b=Wbgv5JRtr3v0DqnW7kZ3chbsmSHsqe3RHdNZW7KVtSlAEyUtjh0nxYFNhSxifq2LKzPOKN0e3XVpg6nAdnrvXYIzXLujLcGIXF7w+cO5o7oWS9gsnkjLXVKL5RmU4BA8RWVZiCj+0qllp9G01JRFdhDii2VXR94OkN6q4h+sVBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729700132; c=relaxed/simple;
-	bh=dvGsUXnzAHkxsecjiCnLZAVaZ4J8zq/EiYVeNX/IvOo=;
+	s=arc-20240116; t=1729700134; c=relaxed/simple;
+	bh=YuhWb2M5dzo6ojcH45qDoA0CSpsw64SGLAi2xdBIlAY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u2SAl2uHDQb1JkC5IbwL2dU7iHfZ4z1TVoEti6Y9UUPo8jlhTQW3GXrRdxa67E2OQi4TT3t3Kmwd+aDJ1ogdF/S3WsXQH2TWV0ClFEImlJH6nVP4mINwyi7o7XHvRO4ckJS5MNqJoprsJd1P0yYve4zJpt5u4AHh04K4/zaU11Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=R39TMA99; arc=none smtp.client-ip=209.85.166.42
+	 MIME-Version; b=daynYhIjjl2+QEhN9PInNzO6y/x4txfMU0Lb5YNMufmuMpEKWc0n3HPXQi2mkSa+s/xbgaMSfPAvQvASNybcAG0Pw2asYrK+v6XQO2i3faO/OXf8mgZuL2uqMea2cVjbxiNC5uZAVXiYF9HEwc//c5hGmOU+L/2hjbQGI4CZsFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=boF2UW0H; arc=none smtp.client-ip=209.85.166.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-83ab3413493so240564139f.2
-        for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 09:15:30 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-83ac4dacaf9so167547739f.2
+        for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 09:15:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729700129; x=1730304929; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729700131; x=1730304931; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JCP85O6Vn4J5WfFHGwdvkrQGlciOPw4+bilPFxYPNbI=;
-        b=R39TMA99f5dVBMXqgCCk82n+vxwG1ii/GZ8tgLUot58qw1a1bTBgjzb7B/oaEk1I4c
-         I1riQA9uJfvE8WMi1/CsXyYy9lUp2tUjtLbEZilgpP5k+ipbxBeAh4mB9/pqgJanSw5P
-         wnNspOInPE8XUoyD5mL3oLZUhjgAqFbQWo+TjYQ+rS670oD7uh6xX+4p7NJ+Uwe7HPBm
-         0oxBmcO8zEXarDCqmdJu1ZINiu2SexzoumPVIiWjcLFoL0Dm1QGARUJUni+muvKv/y/8
-         7KMQEc4f1rJygXPRXQgfQIF6KRqDt/LkEPy7t1gfPMs12lDOeehT4dwywa+/NzKb/UHR
-         ZDJQ==
+        bh=wJyur77YgFvOdwKbBr8lEG6FQOpaV6oMhyKIQWH8OSY=;
+        b=boF2UW0Hz4CeaoHxqJm8OMAA9hdtlwp9FbjAPvURYqXUFcUe6i7y8Fr1qgATCNrFW1
+         dUwGiwqk2xXQGAajE2fNG7X9D6Eus0GocGYfg3I6Jt37BlfBrBRb33QARXlcvIK4DcML
+         1eRwtkyqoTXypM7PaqAXp6BuqkZxD8mCpM8YjB8rdagkhaYjBYlTh3DOsiT4PGqtL3K2
+         Nlnbaczt82SXbdDDQ9u/IRgkToQ8thLqsxK71DSLwQgm/Zqj2iPVb5G/yFhF8LLzfxw2
+         vEbS/7HvsW6daX+5WoWE4rThE1ImeIc71N9h2fWLAlVuYNjLcs2ISw4CSTunUoe1uVVk
+         X7VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729700129; x=1730304929;
+        d=1e100.net; s=20230601; t=1729700131; x=1730304931;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JCP85O6Vn4J5WfFHGwdvkrQGlciOPw4+bilPFxYPNbI=;
-        b=lwJ4OjiAMt62eUTSMg2D2whbOpVPppWKoNzdu/wg8bsruOnlIp52pue2FPslr10kdE
-         xv++TRjFj1hubo00cvJug/NQW8uWIA3xqAcdJ4VzySGlOghKnqLkU+kUGVbUEmnmHeb0
-         C45U/TjvHA+JRFr4Yyn+k0SIgkyicGem0rEQ4N8PkUr6rWeWhOHDtCePaeZtT7yYDrUJ
-         DCEx7UDlQ6qC0V7rG4IGXdaBXj8zombN9ITKowXO/2tUK0qYms+6XV6BgvzLm1it9rrA
-         PaMjioOnLRwTb771kRTQUC5rio6T679rJwTyEK1EHb1dpjfzXJQjd+kLkH/6AA7kLs4T
-         5/7A==
-X-Gm-Message-State: AOJu0YxSRTZc865koJoExY/9JO3ld/LVfR6E48r2wQvyz1e72HMA5LW2
-	a9hM9y6Q5Ezmifx/23uBaWLiPZ6IYxVi873o/xMPp6dUQYDbnWOZ6wrXqbRGuESBuvZ+/A7uDma
-	M
-X-Google-Smtp-Source: AGHT+IGMNQtlv3Cw6heF8vIB2CZGBGko3wUxeMqdvcdolJKbFZj9yhXtwYJEgi8zWsYWTPbZQffvYg==
-X-Received: by 2002:a05:6602:493:b0:82d:129f:acb6 with SMTP id ca18e2360f4ac-83af63f517fmr434941939f.14.1729700128605;
-        Wed, 23 Oct 2024 09:15:28 -0700 (PDT)
+        bh=wJyur77YgFvOdwKbBr8lEG6FQOpaV6oMhyKIQWH8OSY=;
+        b=jD2cchHuGTWasgHN+ipXfdYwcWyHhFSF0YVTV2f73nuJbQ+Lf6WtX8xa7/Ecy6zCYk
+         Aktrt7FBlNDOwHbOLOcQa/NE+xyF1LojRlx/zf631jXg3fVvk0+GiO52krB2YNlNVgsw
+         EtWwKv9hVqaez/V/UjaNJfJBLnnmip7mVpfHar033cD0hb66MpO1QvitEYhBD9vaJKZk
+         3kMOBUk1GflnOFpjU1EqgtHpkAzFKK0yy+QVgeLpI2sTybwcv/NcSTuR76oPGs8xPiXC
+         mOQZrWGeTpKZ+WkaUXx8DWDlEkKfjilIpw3telFTqG1um0stUj22axrtf+Fru+EtnOvt
+         wMkQ==
+X-Gm-Message-State: AOJu0YyU/mbPmxzeUhEwGowEsI4dD5gYvzvFVoxim+zsqhsFBdzSED8e
+	eT1d2Zf69PRUjf+QPdaST5iSS2cwxWOB/kZKcIL7iau2rh2kyo04xq0H0jTTEWngTGceUDWQVyE
+	p
+X-Google-Smtp-Source: AGHT+IHGdfQAIlpQAR42Ix7MxvZ9+JMaMIhDkpSCtqwmWZCH7Mija65LKy7SStmsTNerUaZJUjajnA==
+X-Received: by 2002:a05:6602:6b0f:b0:82a:4480:badc with SMTP id ca18e2360f4ac-83af63fea2fmr346953339f.10.1729700129456;
+        Wed, 23 Oct 2024 09:15:29 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a556c29sm2138180173.43.2024.10.23.09.15.27
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a556c29sm2138180173.43.2024.10.23.09.15.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 09:15:28 -0700 (PDT)
+        Wed, 23 Oct 2024 09:15:29 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/7] io_uring/net: abstract out io_send_import() helper
-Date: Wed, 23 Oct 2024 10:07:36 -0600
-Message-ID: <20241023161522.1126423-4-axboe@kernel.dk>
+Subject: [PATCH 4/7] io_uring/net: move send zc fixed buffer import into helper
+Date: Wed, 23 Oct 2024 10:07:37 -0600
+Message-ID: <20241023161522.1126423-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241023161522.1126423-1-axboe@kernel.dk>
 References: <20241023161522.1126423-1-axboe@kernel.dk>
@@ -84,121 +84,117 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If provided buffers are used, this helper can be used to import the
-necessary data from a provided buffer group. Only one user so far, but
-add it in preparation of adding another one. While doing so, also split
-the actual import into an iov_iter out into a separate helper.
-
-In preparation for needing to know the number of mapped segments, return
-that instead. It still returns < 0 on error.
+In preparation to making the fixed buffer importing a bit more elaborate
+in terms of what it supports.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/net.c | 75 +++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 50 insertions(+), 25 deletions(-)
+ io_uring/net.c | 77 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 44 insertions(+), 33 deletions(-)
 
 diff --git a/io_uring/net.c b/io_uring/net.c
-index 2040195e33ab..13b807c729f9 100644
+index 13b807c729f9..dbef14aa50f9 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
-@@ -578,28 +578,33 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
+@@ -81,6 +81,9 @@ struct io_sr_msg {
+ 	struct io_kiocb 		*notif;
+ };
+ 
++static int io_sg_from_iter(struct sk_buff *skb, struct iov_iter *from,
++			   size_t length);
++
+ /*
+  * Number of times we'll try and do receives if there's more data. If we
+  * exceed this limit, then add us to the back of the queue and retry from
+@@ -578,6 +581,37 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
  	return IOU_OK;
  }
  
--int io_send(struct io_kiocb *req, unsigned int issue_flags)
-+static int __io_send_import(struct io_kiocb *req, struct buf_sel_arg *arg,
-+			    int nsegs, unsigned int issue_flags)
- {
- 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
- 	struct io_async_msghdr *kmsg = req->async_data;
--	struct socket *sock;
--	unsigned flags;
--	int min_ret = 0;
--	int ret;
-+	int ret = nsegs;
- 
--	sock = sock_from_file(req->file);
--	if (unlikely(!sock))
--		return -ENOTSOCK;
-+	if (nsegs == 1) {
-+		sr->buf = arg->iovs[0].iov_base;
-+		ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len,
-+				   &kmsg->msg.msg_iter);
-+		if (unlikely(ret < 0))
-+			return ret;
-+	} else {
-+		iov_iter_init(&kmsg->msg.msg_iter, ITER_SOURCE, arg->iovs,
-+			      nsegs, arg->out_len);
-+	}
- 
--	if (!(req->flags & REQ_F_POLLED) &&
--	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
--		return -EAGAIN;
-+	return nsegs;
-+}
- 
--	flags = sr->msg_flags;
--	if (issue_flags & IO_URING_F_NONBLOCK)
--		flags |= MSG_DONTWAIT;
-+static int io_send_import(struct io_kiocb *req, unsigned int issue_flags)
++static int io_send_zc_import_single(struct io_kiocb *req,
++				    unsigned int issue_flags)
 +{
 +	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
 +	struct io_async_msghdr *kmsg = req->async_data;
-+	int ret = 1;
- 
--retry_bundle:
- 	if (io_do_buffer_select(req)) {
- 		struct buf_sel_arg arg = {
- 			.iovs = &kmsg->fast_iov,
-@@ -629,18 +634,38 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 		}
- 		sr->len = arg.out_len;
- 
--		if (ret == 1) {
--			sr->buf = arg.iovs[0].iov_base;
--			ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len,
--						&kmsg->msg.msg_iter);
--			if (unlikely(ret))
--				return ret;
--		} else {
--			iov_iter_init(&kmsg->msg.msg_iter, ITER_SOURCE,
--					arg.iovs, ret, arg.out_len);
--		}
-+		return __io_send_import(req, &arg, ret, issue_flags);
- 	}
- 
-+	return ret;
-+}
-+
-+int io_send(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
-+	struct io_async_msghdr *kmsg = req->async_data;
-+	struct socket *sock;
-+	unsigned flags;
-+	int min_ret = 0;
++	struct io_ring_ctx *ctx = req->ctx;
++	struct io_mapped_ubuf *imu;
 +	int ret;
++	u16 idx;
 +
-+	sock = sock_from_file(req->file);
-+	if (unlikely(!sock))
-+		return -ENOTSOCK;
++	ret = -EFAULT;
++	io_ring_submit_lock(ctx, issue_flags);
++	if (sr->buf_index < ctx->nr_user_bufs) {
++		idx = array_index_nospec(sr->buf_index, ctx->nr_user_bufs);
++		imu = READ_ONCE(ctx->user_bufs[idx]);
++		io_req_set_rsrc_node(sr->notif, ctx);
++		ret = 0;
++	}
++	io_ring_submit_unlock(ctx, issue_flags);
 +
-+	if (!(req->flags & REQ_F_POLLED) &&
-+	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
-+		return -EAGAIN;
-+
-+	flags = sr->msg_flags;
-+	if (issue_flags & IO_URING_F_NONBLOCK)
-+		flags |= MSG_DONTWAIT;
-+
-+retry_bundle:
-+	ret = io_send_import(req, issue_flags);
-+	if (unlikely(ret < 0))
++	if (unlikely(ret))
 +		return ret;
 +
- 	/*
- 	 * If MSG_WAITALL is set, or this is a bundle send, then we need
- 	 * the full amount. If just bundle is set, if we do a short send
++	ret = io_import_fixed(ITER_SOURCE, &kmsg->msg.msg_iter, imu,
++				(u64)(uintptr_t)sr->buf, sr->len);
++	if (unlikely(ret))
++		return ret;
++	kmsg->msg.sg_from_iter = io_sg_from_iter;
++	return 0;
++}
++
+ static int __io_send_import(struct io_kiocb *req, struct buf_sel_arg *arg,
+ 			    int nsegs, unsigned int issue_flags)
+ {
+@@ -1365,40 +1399,17 @@ static int io_send_zc_import(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct io_async_msghdr *kmsg = req->async_data;
+ 	int ret;
+ 
+-	if (sr->flags & IORING_RECVSEND_FIXED_BUF) {
+-		struct io_ring_ctx *ctx = req->ctx;
+-		struct io_mapped_ubuf *imu;
+-		int idx;
+-
+-		ret = -EFAULT;
+-		io_ring_submit_lock(ctx, issue_flags);
+-		if (sr->buf_index < ctx->nr_user_bufs) {
+-			idx = array_index_nospec(sr->buf_index, ctx->nr_user_bufs);
+-			imu = READ_ONCE(ctx->user_bufs[idx]);
+-			io_req_set_rsrc_node(sr->notif, ctx);
+-			ret = 0;
+-		}
+-		io_ring_submit_unlock(ctx, issue_flags);
++	if (sr->flags & IORING_RECVSEND_FIXED_BUF)
++		return io_send_zc_import_single(req, issue_flags);
+ 
+-		if (unlikely(ret))
+-			return ret;
+-
+-		ret = io_import_fixed(ITER_SOURCE, &kmsg->msg.msg_iter, imu,
+-					(u64)(uintptr_t)sr->buf, sr->len);
+-		if (unlikely(ret))
+-			return ret;
+-		kmsg->msg.sg_from_iter = io_sg_from_iter;
+-	} else {
+-		ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len, &kmsg->msg.msg_iter);
+-		if (unlikely(ret))
+-			return ret;
+-		ret = io_notif_account_mem(sr->notif, sr->len);
+-		if (unlikely(ret))
+-			return ret;
+-		kmsg->msg.sg_from_iter = io_sg_from_iter_iovec;
+-	}
+-
+-	return ret;
++	ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len, &kmsg->msg.msg_iter);
++	if (unlikely(ret))
++		return ret;
++	ret = io_notif_account_mem(sr->notif, sr->len);
++	if (unlikely(ret))
++		return ret;
++	kmsg->msg.sg_from_iter = io_sg_from_iter_iovec;
++	return 0;
+ }
+ 
+ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
 -- 
 2.45.2
 

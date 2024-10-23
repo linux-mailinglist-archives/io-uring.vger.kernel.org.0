@@ -1,94 +1,123 @@
-Return-Path: <io-uring+bounces-3938-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3939-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A19F9AC016
-	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 09:20:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E7AF9ACBAA
+	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 15:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD6A81F21D92
-	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 07:20:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07BD7B2381D
+	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 13:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C680F15350B;
-	Wed, 23 Oct 2024 07:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E0614B94F;
+	Wed, 23 Oct 2024 13:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sg/k6Sfu"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JBtvyEaw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E9213DB9F;
-	Wed, 23 Oct 2024 07:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553541459F6
+	for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 13:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729668040; cv=none; b=SFBOTjF0rpzgZHK9bx8EY7IUGVOz7exmz9H8AbzNOUWR0B1LRdW2rAosBKVrb6MUjtlX5arWUjy/Maq+9m1kSLa9MDvAeG9bXno1WX91UJff58QNhUP6WywwKPbanYu20Lc/VzJE64tRYzORpPpvzkm+xhxEHLgKsjYLn7uW9GM=
+	t=1729691582; cv=none; b=Gs55lfY33M7GBohQTSrbtwMDutd8G9fCzteOCeuTiBZkECBB0aQjs7eJLQlZ6+STjBYqNp6gnE0/ZlOshM+HvBuWID9jTNzzrE/SmYpdspItnj9y0WIse+7eaQpMKML93pALoZ/uqfv4vRv19x3jHTTPz4L04+HESfgcTVNn7zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729668040; c=relaxed/simple;
-	bh=EYSCT3GpLwpgWQjmPjVqWCwYz6V61945ajYy0Xe+6iI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZcUbm3iZJetno49wTtBX+PCYUK+0tdN6ywaVZWfWpoS2cmvDkpMGw42YXFLDsZMFGjCJKxjIV54qr2D36VnILIT6V/OJRVdOhjaIu9Gvo0W+RJIpDfiE0+KKv7+T4DIjAnZo+XjL2qh9IlH6ZqYLmq/aVlVRaOj1FQ7T7R4FISM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sg/k6Sfu; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=w+90h7H5AVOlUGCT6jpiVo75HoG20ZQ36MbBIWzDKCk=; b=sg/k6Sfu33Iw5/CiNpoYqkyf4X
-	ElBBSIB+U1NJ6KBwX7CC1QLsj5/W7jRqgkVLS/Q1t55vyPeXoDDFWS8o6/u7JhoeDWfyv34O0lhQj
-	NtSUWkELXMp3MDvKLwNwpQtsB85FtrY2ZsBiXxWGnjvrddxbNyryGmNOy5H3tYl3+U4EkspGvnqe9
-	+ukocsux5Q+eNjr3i0AEtuBcufLP0hheAujRayp+4/YL9wtVn+h05KQ3rYQsvBnRkSJJCchy8W8Gs
-	mRgTASenNL3AI7px863NvEkEOGfQgoYHm4P+ArsmPt1xZ+0/48UzWn1h2Ek//qM33/l7ceMPCS37s
-	vllZB6xw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3Vfa-0000000DMaT-0Hry;
-	Wed, 23 Oct 2024 07:20:38 +0000
-Date: Wed, 23 Oct 2024 00:20:38 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: David Wei <dw@davidwei.uk>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Stanislav Fomichev <stfomichev@gmail.com>,
-	Joe Damato <jdamato@fastly.com>,
-	Pedro Tammela <pctammela@mojatatu.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v6 02/15] net: generalise net_iov chunk owners
-Message-ID: <ZxijxiqNGONin3IY@infradead.org>
-References: <20241016185252.3746190-1-dw@davidwei.uk>
- <20241016185252.3746190-3-dw@davidwei.uk>
+	s=arc-20240116; t=1729691582; c=relaxed/simple;
+	bh=iTRHhX5KsifBICyvjqbq1gxaeTG2w7jeFjeipqXCf/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LVi9d77Lo3yRUN9elfb5xF/Aq1St96nrbiZobI/3sHJjSfgkl7jdK+O8PCAQYRLW/uzmmPJv0BYx6EISCggccvf7lTjhMzbSh7mIa2snCSM6UZAqnjp8XiqDHBnGW5mxvnO5eJ2MAmccXvhhMv7f8pf/q5/vrgPy6ehX6Q0SCBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=JBtvyEaw; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-83ab21c269eso272055339f.2
+        for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 06:53:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729691580; x=1730296380; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=SdLuzcBynaSFYLgz6VM1IgNDE6YUmUWLXLD1JMeeUiA=;
+        b=JBtvyEawwQA+w65vPf6kzrKFNOV5EwMH8YdlCuNrsOWWUrydb9g9qVnkPTfhtfJ0ye
+         Jd3iRoS/C8fi3XiXJzQPbKVJMRNIG/cQy2ktZlqKNghuLqwuTDFdBK7tmhV+2TspxdCV
+         IS32Ec0SgtxCpX1n9PmX0qLM/vcZpfM4RTqjPR8IdLc67s/v6PftbRF3KHl/V8gLIh8I
+         P2lgzLifHzVGFAv9n09QvuL5serPPdfoCuEpnm67mjdaV+TKU0KuMLRVyrK4pmsEZzg1
+         hfiKXJuLeo9zpnuXNHo0TZ5miHzFCnydb2vSgAUlq0mHTbScEZwWgTD+xyAgEVI11gB/
+         xNzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729691580; x=1730296380;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SdLuzcBynaSFYLgz6VM1IgNDE6YUmUWLXLD1JMeeUiA=;
+        b=Rc1E5igXdai5ocRXXobtpERqf5stV1KmzgYUk5m70er6NJKfGgPa5XNUdt+qhzNCT/
+         cUOmICyw9uNsQ6jYle8PIgNbf0QMWep1TunrGLC6aHmmcMdhokvAp+IdvsRxfQsv8os+
+         pRiE8Tc4lTpvuDAGtFvQgDs2mzJjKj7T1tyAPQ67kScIZtI4Zb1yj3JFh5i4wYX1xoe9
+         711BexSnuwPrG6rEdms4RpQ3B2MDcpWlx1uMR64cvzhrec7XomIQdpCUEnI+cjFmgmQj
+         1iX8rKaB9iHQdI7ea9fgAADnbCaeo1vJgVLjskn9sRjIk4PF83++YZZUU9KHBdNdfoTt
+         kvFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuUJ66Uv29FkpUoKI+xDefOA1vJvcH7JcffC/g9X2xtlpIhGcNY83a648t3xf6wvZI1kJOG9P1lw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnwR0yfSGOcnzyuC+QYkw9z9ABf/DCmhcRhsMzfYLfyMnmIp4r
+	hlln8KtzdD9rb0UwCP1Flp6UR/JzRQbAtWgxEBVoPW0u9/974WVJVhCOuZXVP8XV1pRWaRbP95X
+	C
+X-Google-Smtp-Source: AGHT+IFkaMFGhzSN9WgU/tn6WRGoB7VaVBeHgzcOwQFa6nR5KP/eEpjYAXBwaBCH02DCKV94C5EEHQ==
+X-Received: by 2002:a05:6602:1603:b0:835:4b2a:e52b with SMTP id ca18e2360f4ac-83af61f7668mr274163039f.10.1729691580400;
+        Wed, 23 Oct 2024 06:53:00 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ad1c64383sm217124239f.25.2024.10.23.06.52.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 06:52:59 -0700 (PDT)
+Message-ID: <b15e136f-3dbd-4d4e-92c5-103ecffe3965@kernel.dk>
+Date: Wed, 23 Oct 2024 07:52:59 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016185252.3746190-3-dw@davidwei.uk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] implement vectored registered buffers for sendzc
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <cover.1729650350.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <cover.1729650350.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 11:52:39AM -0700, David Wei wrote:
-> From: Pavel Begunkov <asml.silence@gmail.com>
+On 10/22/24 8:38 PM, Pavel Begunkov wrote:
+> Allow registered buffers to be used with zerocopy sendmsg, where the
+> passed iovec becomes a scatter list into the registered buffer
+> specified by sqe->buf_index. See patches 3 and 4 for more details.
 > 
-> Currently net_iov stores a pointer to struct dmabuf_genpool_chunk_owner,
-> which serves as a useful abstraction to share data and provide a
-> context. However, it's too devmem specific, and we want to reuse it for
-> other memory providers, and for that we need to decouple net_iov from
-> devmem. Make net_iov to point to a new base structure called
-> net_iov_area, which dmabuf_genpool_chunk_owner extends.
+> To get performance out of it, it'll need a bit more work on top for
+> optimising allocations and cleaning up send setups. We can also
+> implement it for non zerocopy variants and reads/writes in the future.
+> 
+> Tested by enabling it in test/send-zerocopy.c, which checks payloads,
+> and exercises lots of corner cases, especially around send sizes,
+> offsets and non aligned registered buffers.
 
-We've been there before.  Instead of reinventing your own memory
-provider please enhance dmabufs for your use case.  We don't really
-need to build memory buffer abstraction over memory buffer abstraction.
+Just for the edification of the list readers, Pavel and I discussed this
+a bit last night. There's a decent amount of overlap with the send zc
+provided + registered buffers work that I did last week, but haven't
+posted yet. It's here;
+
+https://git.kernel.dk/cgit/linux/log/?h=io_uring-sendzc-provided
+
+in terms of needing and using both bvec and iovec in the array, and
+having the suitable caching for the arrays rather than needing a full
+alloc + free every time.
+
+The send zc part can map into bvecs upfront and hence don't need the
+iovec array storage at the same time, which this one does as the sendmsg
+zc opcode needs to import an iovec. But perhaps there's a way to still
+unify the storage and retain the caching, without needing to come up
+with something new.
+
+Just a brief summary of the out-of-band discussion.
+
+-- 
+Jens Axboe
 

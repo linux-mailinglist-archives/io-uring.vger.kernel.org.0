@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3964-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3965-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFC69AE8E5
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 16:32:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C1C9AE904
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 16:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C2FDB21410
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 14:29:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C5FCB21065
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 14:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB471EB9EA;
-	Thu, 24 Oct 2024 14:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126EB1AF0D0;
+	Thu, 24 Oct 2024 14:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c352FhAB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bvnj0zgO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E661DFEF;
-	Thu, 24 Oct 2024 14:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65F61D63C5
+	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 14:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729779976; cv=none; b=eIA0i+BK0B3aqvTTpejlvy3BMmxOxeSHst1j1tHUN1/c+W5ewWeACbhdzN8LKvfq/2W/0q+G4ldTaPLGwhIUEUHNpSTqlqtajBjV5J4DYryuA80fVFV5EE6f0Mw8wWqJOT3VipemLXjeANiN98jFRlJQkQIodLlduQgGnz2NwDE=
+	t=1729780549; cv=none; b=c+MqnYcE23ssUQPk7cL47CqP9sxOuI1wE1kUWuGdV4ZeUwwJDqtsv1nyX/Cxn9c6wgNk/l73RPAoA8gMRrl7Nup71nb9KUXMPff3ByYMZw0ARQvSHAxaTk9afU7NbFgf7JMHHJyRJtcdfXMkkNP/c2AQSU9QVRIF+p6e1LhYRZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729779976; c=relaxed/simple;
-	bh=9zf8G7xE1167pPOhZsXN9s0WzD14vS3NQ1D6cz0hGYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GzwCZRY0DlC5cNwO+mExIk8Im82jx3zCRHCga9Oulup9TCgni4xPern1VfnEczm3viJHGsp5uVuogAZgaq/RhrOFGBBmMaW3/gEnDc69RZLEsj1Kg42Ys31pyvjd0tKu9lEoT3kLgOQCcKybeORuzKtk2b2JZU4kJ+ImsGYz7NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c352FhAB; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1729780549; c=relaxed/simple;
+	bh=dF6E2zYL8UgbpyUTKW6uhkZ3bZT23ZPnqmiemeZa3No=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YCk3JlZn6XhcKlk9eskGRVy1EoOFAPltLB8llhdRJ0F+vuJ/73pP8VFmgDyoV/AimfFHaiUBIqlD/sNVVVGfccD8Lcz0IFmB0d03ErvpEyOYwl7Pcn2BosGlaZgvzqCc02VrrK52Af2jv9mPV7vln/fXA02SW0KYblMgoez600E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bvnj0zgO; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a4031f69fso134843466b.0;
-        Thu, 24 Oct 2024 07:26:13 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a1b71d7ffso145733266b.1
+        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 07:35:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729779972; x=1730384772; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729780545; x=1730385345; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JZOo7KmWVazwjQAX6MxDRPx4P6OgsnRlGA/rdXj8KKo=;
-        b=c352FhABj0Z2VenPR9b3exEqwuSCpec+ONq4Ptj8niK4ranrytvqUQmf83Nl98Na1E
-         DvEgEukt3Ue6OK4bnTwZEzxVgAsDDXBGxpvD5oQNe/LGMcv7fxI3mP0jXBtgcMdS0Q9l
-         58/JQyn5Oq3zTOYcdX044ZZfVxYt7zcUKurHK1hU4mx8cslvy7e7EjZbIAQf982Bp2Zc
-         c2kRRHUZWNxTOafOjgHIEl/sOdlI8rHLhEO7C54FV9XkmMdbH/zbC6LINpN8sUigYz33
-         PlDkAOLz8sgrX58O+qd0sCQx7oLuMnMNWI3u0HCwtj6lcaTjMUQwem0/R5j3fHLfmeq5
-         oLZw==
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=pupVcfOe2UZo/zB7B5pmTZValF6Nji6CrhriMeUCosw=;
+        b=bvnj0zgOR2ba4oYTBSVjeMx/W0nkC1IA3M1ImFF0Wu1fj0YCMMCv3QI+GNTzkWSPUA
+         s4AplBz2RVNYM4buN/jL+IlkrwxDt+lnhrW08gKV9g9Del54PCp+HRnGbUsfZNLpX6kK
+         uzHH+F6cCHiwnszjiukRbWqMI/ILpJ7faTcYRbIaJz1kGBqYwFODfae+j8KJlRHmpXnm
+         nQx7c1TNDrNPjli/qQZ1J1NAouq1d7cLsjtJQ6ZEKvq32v3pMw/EuyQwbJnHYdZYnMJa
+         rGG8hVmKBJe2d5DwUE9yXUGyWLbWrM9OwwCY7gwM8LLzePaiQGh3nEAiwnVB8Uvm/nXr
+         pzPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729779972; x=1730384772;
+        d=1e100.net; s=20230601; t=1729780545; x=1730385345;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JZOo7KmWVazwjQAX6MxDRPx4P6OgsnRlGA/rdXj8KKo=;
-        b=K8/aEq+GLjrwLH2e0NdY0n1ws9P85jSKb31Ux9r594Iaup/f1ci6+ldKZ/mxS/MkN/
-         Ccx/c4igz04PitYe2rh3TatMa/JgWxddLVXVee8RzF6CVOjDxJxLOobscUkCWmO+klXG
-         KvJeHZaT2jmMNRFarlQJyPqqxrkDaSJtO11uYCa/HGj/0fovSUOewi3nbztXOnAaL7zn
-         HRMqwpZ9vAjxpJQULlsO6ytMGNttV5S/13o9pyyTRRBLDkpGl/dbvHg2g9F7byMV5nD3
-         /iq/1c5PIPsJVeHQrqAttheDApvynM+bvh8WcWD4FZhxCenvlZ3bSA6icZ/9abvgLeH3
-         etAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmWhJwXNkcarkmpCpQlxkcnP/zkPMWSXczoxDbyeDXJ5Tt+xjoJwohRkCtDNtqaKhwR9cj0ibrIpgWlYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9CES7Tf/LGwFVWrw0B1FH+z4UUtVFiNjryq6Mog9w2/yXNHi5
-	2Phe8lHx7jNmTHT4mT4nknE/NRN5vrnpdE+HrzOBqj1AZH9oA/6J
-X-Google-Smtp-Source: AGHT+IHiJkDrI5NFp2nhdYSrIVehhJxvo8jDoyttdVBo+GG/KU6pLUrF5x17FbaLv0PK3n43kFkPQQ==
-X-Received: by 2002:a17:906:da87:b0:a9a:134:9887 with SMTP id a640c23a62f3a-a9ad281593bmr182502566b.41.1729779971964;
-        Thu, 24 Oct 2024 07:26:11 -0700 (PDT)
+        bh=pupVcfOe2UZo/zB7B5pmTZValF6Nji6CrhriMeUCosw=;
+        b=BXsStHQzp3NGxDSSJ4agpMNnlILpq5xx6ZYVnfClXA+Zdl+38vtnbF69x8/gZBDA/f
+         /GilTn9jTlIcQjmrwMc5es/U5Cr7zEuPg2DSyZkb+MzZUh/Orr80Npc87N0/UDEUZB2X
+         /5KUfHoIqLR0UJBFmOs5ZMMlBqBtGmFQsvZ6Niy9sMRYNqZfgY+uwBZY59f0YrrvKbhi
+         XBL0R6Uala/Q9Dkqmx5gO7ZGUGUTvcdO9fEQvx07LomH2jWZmgV/fwuOzEPY68NsLNKj
+         x8ayuZMQjlagxm8rMvr9r8XdLNT5luu/6GgXQviO0Ehqay6KYUS4DVjrN0+LvU5F1G3B
+         qojQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqOR5JMFovULWjG8hrf6z5lT5Y/B35vDaEXa7IsHdC78JQxCOiCzh3AUW0CTFgc4GI4f8IHDOaXg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiFdIUIJlNbIF+Q6UDYc/a8KU383vceKIfKp5P5ZfjY+8LkDZ8
+	Td0KhNhXazZrgtMWxAOXmvMhiuSN5K6okgKf7A5VypLo7RsZWOuDoLewpw==
+X-Google-Smtp-Source: AGHT+IF5XHKHnShQm2FA4AktG0UdAD3iJdGE1/55/s2voqAOgvMhQOLPcQanLHRcpS/3qksBtdqqUQ==
+X-Received: by 2002:a17:907:7b82:b0:a99:f92a:7a66 with SMTP id a640c23a62f3a-a9abf8a7fbemr602500866b.30.1729780544720;
+        Thu, 24 Oct 2024 07:35:44 -0700 (PDT)
 Received: from [192.168.42.27] ([85.255.233.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9157366fsm629202966b.181.2024.10.24.07.26.10
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9101f9ffsm627358966b.0.2024.10.24.07.35.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:26:11 -0700 (PDT)
-Message-ID: <f60116a5-8c35-4389-bbb6-7bf6deaf71c6@gmail.com>
-Date: Thu, 24 Oct 2024 15:26:46 +0100
+        Thu, 24 Oct 2024 07:35:44 -0700 (PDT)
+Message-ID: <9e6ba7d3-22ae-4149-8eab-ed92a247ac61@gmail.com>
+Date: Thu, 24 Oct 2024 15:36:19 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,139 +76,75 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] io_uring: releasing CPU resources when polling
-To: Jens Axboe <axboe@kernel.dk>, hexue <xue01.he@samsung.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
- <CGME20241024023812epcas5p1e5798728def570cb57679eebdd742d7b@epcas5p1.samsung.com>
- <20241024023805.1082769-1-xue01.he@samsung.com>
- <9bc8f8c4-3415-48bb-9bd1-0996f2ef6669@kernel.dk>
+Subject: Re: [PATCHSET RFC 0/7] Add support for provided registered buffers
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20241023161522.1126423-1-axboe@kernel.dk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <9bc8f8c4-3415-48bb-9bd1-0996f2ef6669@kernel.dk>
+In-Reply-To: <20241023161522.1126423-1-axboe@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/24/24 15:18, Jens Axboe wrote:
-> On 10/23/24 8:38 PM, hexue wrote:
->> On 9/25/2024 12:12, Pavel Begunkov wrote:
-...
->> When the number of threads exceeds the number of CPU cores,the
->> database throughput does not increase significantly. However,
->> hybrid polling can releasing some CPU resources during the polling
->> process, so that part of the CPU time can be used for frequent
->> data processing and other operations, which speeds up the reading
->> process, thereby improving throughput and optimizaing database
->> performance.I tried different compression strategies and got
->> results similar to the above table.(~30% throughput improvement)
->>
->> As more database applications adapt to the io_uring engine, I think
->> the application of hybrid poll may have potential in some scenarios.
+On 10/23/24 17:07, Jens Axboe wrote:
+> Hi,
 > 
-> Thanks for posting some numbers on that part, that's useful. I do
-> think the feature is useful as well, but I still have some issues
-> with the implementation. Below is an incremental patch on top of
-> yours to resolve some of those, potentially. Issues:
+> Normally a request can take a provided buffer, which means "pick a
+> buffer from group X and do IO to/from it", or it can use a registered
+> buffer, which means "use the buffer at index Y and do IO to/from it".
+> For things like O_DIRECT and network zero copy, registered buffers can
+> be used to speedup the operation, as they avoid repeated
+> get_user_pages() and page referencing calls for each IO operation.
 > 
-> 1) The patch still reads a bit like a hack, in that it doesn't seem to
->     care about following the current style. This reads a bit lazy/sloppy
->     or unfinished. I've fixed that up.
-> 
-> 2) Appropriate member and function naming.
-> 
-> 3) Same as above, it doesn't care about proper placement of additions to
->     structs. Again this is a bit lazy and wasteful, attention should be
->     paid to where additions are placed to not needlessly bloat
->     structures, or place members in cache unfortunate locations. For
->     example, available_time is just placed at the end of io_ring_ctx,
->     why? It's a submission side member, and there's room with other
->     related members. Not only is the placement now where you'd want it to
->     be, memory wise, it also doesn't add 8 bytes to io_uring_ctx.
-> 
-> 4) Like the above, the io_kiocb bloat is, by far, the worst. Seems to me
->     that we can share space with the polling hash_node. This obviously
->     needs careful vetting, haven't done that yet. IOPOLL setups should
->     not be using poll at all. This needs extra checking. The poll_state
->     can go with cancel_seq_set, as there's a hole there any. And just
->     like that, rather than add 24b to io_kiocb, it doesn't take any extra
->     space at all.
-> 
-> 5) HY_POLL is a terrible name. It's associated with IOPOLL, and so let's
->     please use a name related to that. And require IOPOLL being set with
->     HYBRID_IOPOLL, as it's really a variant of that. Makes it clear that
->     HYBRID_IOPOLL is really just a mode of operation for IOPOLL, and it
->     can't exist without that.
-> 
-> Please take a look at this incremental and test it, and then post a v9
-> that looks a lot more finished. Caveat - I haven't tested this one at
-> all. Thanks!
-> 
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index c79ee9fe86d4..6cf6a45835e5 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -238,6 +238,8 @@ struct io_ring_ctx {
->   		struct io_rings		*rings;
->   		struct percpu_ref	refs;
->   
-> +		u64			poll_available_time;
-> +
->   		clockid_t		clockid;
->   		enum tk_offsets		clock_offset;
->   
-> @@ -433,9 +435,6 @@ struct io_ring_ctx {
->   	struct page			**sqe_pages;
->   
->   	struct page			**cq_wait_page;
-> -
-> -	/* for io_uring hybrid poll*/
-> -	u64			available_time;
->   };
->   
->   struct io_tw_state {
-> @@ -647,9 +646,22 @@ struct io_kiocb {
->   
->   	atomic_t			refs;
->   	bool				cancel_seq_set;
-> +	bool				poll_state;
+> Normal (non zero copy) send supports bundles, which is a way to pick
+> multiple provided buffers at once and send them. send zero copy only
+> supports registered buffers, and hence can only send a single buffer
 
-As mentioned briefly before, that can be just a req->flags flag
+That's not true, has never been, send[msg] zc work just fine with
+normal (non-registered) buffers.
 
->   	struct io_task_work		io_task_work;
-> -	/* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
-> -	struct hlist_node		hash_node;
-> +	union {
-> +		/*
-> +		 * for polled requests, i.e. IORING_OP_POLL_ADD and async armed
-> +		 * poll
-> +		 */
-> +		struct hlist_node	hash_node;
-> +		/*
-> +		 * For IOPOLL setup queues, with hybrid polling
-> +		 */
-> +		struct {
-> +			u64		iopoll_start;
-> +			u64		iopoll_end;
+> at the time.
 
-And IIRC it doesn't need to store the end as it's used immediately
-after it's set in the same function.
+And that's covered by the posted series for vectored registered
+buffers support.
 
-> +		};
-> +	};
->   	/* internal polling, see IORING_FEAT_FAST_POLL */
->   	struct async_poll		*apoll;
->   	/* opcode allocated if it needs to store data for async defer */
-> @@ -665,10 +677,6 @@ struct io_kiocb {
->   		u64			extra1;
->   		u64			extra2;
->   	} big_cqe;
-> -    /* for io_uring hybrid iopoll */
-> -	bool		poll_state;
-> -	u64			iopoll_start;
-> -	u64			iopoll_end;
->   };
->   
-...
+> This patchset adds support for using a mix of provided and registered
+> buffers, where the provided buffers merely provide an index into which
+> registered buffers to use. This enables using provided buffers for
+> send zc in general, but also bundles where multiple buffers are picked.
+> This is done by changing how the provided buffers are intepreted.
+> Normally a provided buffer has an address, length, and buffer ID
+> associated with it. The address tells the kernel where the IO should
+> occur. If both fixed and provided buffers are asked for, the provided
+> buffer address field is instead an encoding of the registered buffer
+> index and the offset within that buffer. With that in place, using a
+> combination of the two can work.
+
+What the series doesn't say is how it works with notifications and
+what is the proposed user API in regard to it, it's the main if not
+the only fundamental distinctive part of the SENDZC API.
+
+
+> Patches 1-4 are just cleanup and prep, patch 5 adds the basic
+> definition of what a fixed provided buffer looks like, patch 6 adds
+> support for kbuf to map into a bvec directly, and finally patch 7
+> adds support for send zero copy to use this mechanism.
+> 
+> More details available in the actual patches. Tested with kperf using
+> zero copy RX and TX, easily reaching 100G speeds with a single thread
+> doing 4k sends and receives.
+> 
+> Kernel tree here:
+> 
+> https://git.kernel.dk/cgit/linux/log/?h=io_uring-sendzc-provided
+> 
+>   include/uapi/linux/io_uring.h |   8 ++
+>   io_uring/kbuf.c               | 180 +++++++++++++++++++++++++++----
+>   io_uring/kbuf.h               |   9 +-
+>   io_uring/net.c                | 192 ++++++++++++++++++++++------------
+>   io_uring/net.h                |  10 +-
+>   io_uring/opdef.c              |   1 +
+>   6 files changed, 309 insertions(+), 91 deletions(-)
+> 
 
 -- 
 Pavel Begunkov

@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-3956-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3958-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E579ACFEA
-	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 18:15:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7A19ADB3D
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 07:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03DE3282B2A
-	for <lists+io-uring@lfdr.de>; Wed, 23 Oct 2024 16:15:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6735F1F22D05
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 05:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1895113B792;
-	Wed, 23 Oct 2024 16:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77960170822;
+	Thu, 24 Oct 2024 05:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0S/Xifnu"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EVLe2lpO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594971CBE8F
-	for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 16:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340731C01
+	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 05:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729700137; cv=none; b=eHxilNSiWue8qCIJr4ZkaIDoUwSvgVPL9Q2BCamNOsQFgSEU8NnCHcap+wlz6Q3d7qBkzpg/TJIVtsv+loPdAzJNQX+mBp/F6HM80Mm4oep7i3IG0SZWucQS4XVbre3S7lZWLagLQuMfPdd99DidcIzwpWiKN5eMc8aYGxnFypI=
+	t=1729746762; cv=none; b=JVxmNy0Q4bao24I+CbCecW55PdvXci0M8KJqjj7KbNRXPbS2HGx/X0Cw9vWQR+1KCSeLbtV05ClL0QmzN2DtOjnEHpVhCTWZZt7816JGPM7TqPY4qUisfSlEhK5LUm6ywJZ9l1ot7YYjwxxnUWan+UHOVI7TV9dWsJIdUVtfoGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729700137; c=relaxed/simple;
-	bh=Uqwki1LuUEifgHw2K0BHZmq0KvpknnbwvrTuucKTFDA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aohG4iItAmVPia+vVVoW5ue/fzvNPeFTLmBw5WtfULlkMNJorQPfhfLxIpWkvcTQ68Ow+xJMAvIFM2jGJz7HltrEHlOyTTy7oV97B/YmnHLgGq3fdmkA0TS2Tto6PD7IOiAyothAX9oo3a0PWWYT2WbDphkTC3LOEeAEEXKamY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0S/Xifnu; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83ac817aac3so171897839f.0
-        for <io-uring@vger.kernel.org>; Wed, 23 Oct 2024 09:15:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729700134; x=1730304934; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CXtdybHKthx98tLnmZIwgxVHacDnHFHxsladV/YkWd8=;
-        b=0S/XifnuEU2Q8H/wEp4nq5/G5VztuzzmReqJFK9Hpc5glWvJNCQNg5IySQxbcO0XI6
-         EP9IgbVKcGDxM+3CrlDgD0kyhY4vTL6plIDQXHxMtPuFjONcZ1LX9Ue6QIbyZ3AySlLi
-         UtHCQHuq8kGNM0IGCUPfotoRyM3wmA1BqnW4a7WbnH0A78Ff6AsSULYchXYUkVf4zyt2
-         98Pb6lBsL0C81Uyhl9pHSJ/IlhT4bxbRj1IkGlzQALdh62lz+WQpSM25sRIu7A6Q8fqj
-         5Dd3x7AarRXbsH/rYVttYF6UhtL4WcqSsaNBp9TN6ngYWjdHPPm69bNctd753ty8ESdk
-         2Bmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729700134; x=1730304934;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CXtdybHKthx98tLnmZIwgxVHacDnHFHxsladV/YkWd8=;
-        b=xG/S/ouytTp2nlk3TEZck9TewGMy9Nf/7c6cmBAfvzFXSGARCcVNZd05xrqRPKPARG
-         UCz114okOzVvBwNmEwuGUyipWfIdCmob1suKTvApNPOPsKUqnKEIEnGjM8GkLZNCAMXq
-         tq2OBa1qORXKSv2vHiOPZVjX3vWoZ/IoZNnBtI+uyQqhKm9e6uiYsquuUGAon23mXlCE
-         6cNuyBufI5fMkb39CjfUynpWjmyZfBzDP9nK1yVjzqMlzMoTFRJqZz3W3zxDQ+PfMoCg
-         MnsgFTfDabe72RgWPfwwtD0eGQ+/hcJe6qxmIHend3p1hruld7nkDo5hYXBhQjktgC+s
-         XBqg==
-X-Gm-Message-State: AOJu0Yzt/QDaQNhjgqF0rMWe9eDa4jGZjt9NUFZjPSK1NnTxAX0VUQev
-	h3h02iqxQH0LTcJu9JktzEEU/R2ueIOy6OZNjxGYz68ndVIMgVZUd/eShECcm7C2KqBP3capPZv
-	9
-X-Google-Smtp-Source: AGHT+IEKCM/588BO9fNZE0ipi0WMXOQlC9giondG4Enc3gQp6KnI8hjxhZE668FiCFEtJANLnABguQ==
-X-Received: by 2002:a05:6602:1603:b0:83a:a25a:cfaf with SMTP id ca18e2360f4ac-83af6155756mr303252739f.3.1729700133630;
-        Wed, 23 Oct 2024 09:15:33 -0700 (PDT)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a556c29sm2138180173.43.2024.10.23.09.15.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 09:15:33 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 7/7] io_uring/net: add provided buffer and bundle support to send zc
-Date: Wed, 23 Oct 2024 10:07:40 -0600
-Message-ID: <20241023161522.1126423-8-axboe@kernel.dk>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241023161522.1126423-1-axboe@kernel.dk>
-References: <20241023161522.1126423-1-axboe@kernel.dk>
+	s=arc-20240116; t=1729746762; c=relaxed/simple;
+	bh=QMHwjleCWdqJmffl09X8XxcLieRaYgHpBRHiOVAODVY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=Apa/mFsKrmqht+HZ7+F5TsZF2KHv7nyMdwJxqr/doHY2cvfX0b32yRvbwbgQCTC5hTGV3RUJAFpxLa6XvDvNdMXCOZcb7oJwnVppi5O5ePrRVsnLB1Yyf7xPerZreCoalYmr2nYYzxuC8mQyb2hTX/b9PwXwTTVDg1idSSXi/xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EVLe2lpO; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241024051236epoutp04f7d60641b7330e2174146f329636ff36~BS4KVIPKw2180021800epoutp04W
+	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 05:12:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241024051236epoutp04f7d60641b7330e2174146f329636ff36~BS4KVIPKw2180021800epoutp04W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1729746756;
+	bh=20NJUmqLwCb2XXrI7br3jpwrndagv7bAxQXw0ZBPwdw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EVLe2lpOm5TJ64fr4cGEw2+Jlnl41VQGhecLlxHcIhovvLyQpGU26/5EKWwlY2Zm+
+	 SDuzzu0tMZy89JvUxo00c/cNv1Cvi+Ia04k7Kqyo54lMiRhQcwQEdhnolnFmpPRNmq
+	 TdsazmiVYpYalu/oIf/IWa/LBzKWESvqe2m9rGRk=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20241024051235epcas5p3f10791adf8ae8cff9b5acbfd1d32f3ce~BS4J2YuPp1462214622epcas5p3r;
+	Thu, 24 Oct 2024 05:12:35 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XYvDb30Tfz4x9QK; Thu, 24 Oct
+	2024 05:12:31 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	69.6A.08574.F37D9176; Thu, 24 Oct 2024 14:12:31 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241024023812epcas5p1e5798728def570cb57679eebdd742d7b~BQxW800j43055130551epcas5p1h;
+	Thu, 24 Oct 2024 02:38:12 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241024023812epsmtrp1757909e7a598349e37b14d0a845ae2d2~BQxW8LAUq0664606646epsmtrp1u;
+	Thu, 24 Oct 2024 02:38:12 +0000 (GMT)
+X-AuditID: b6c32a44-6dbff7000000217e-01-6719d73f3f53
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	69.52.07371.413B9176; Thu, 24 Oct 2024 11:38:12 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241024023811epsmtip2d3692b7522bbf2b5914ba3084a2a39ce~BQxVzfvEs2454624546epsmtip2a;
+	Thu, 24 Oct 2024 02:38:11 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: asml.silence@gmail.com, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v8] io_uring: releasing CPU resources when polling
+Date: Thu, 24 Oct 2024 10:38:05 +0800
+Message-Id: <20241024023805.1082769-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -83,206 +83,111 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTXdf+umS6we5dYhZzVm1jtFh9t5/N
+	4l3rORaLX913GS0u75rDZnF2wgdWBzaPnbPusntcPlvq0bdlFaPH501yASxR2TYZqYkpqUUK
+	qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QLuVFMoSc0qBQgGJxcVK
+	+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZZ//3sBd8Eqk4
+	/l2ngXGXYBcjJ4eEgInEopMHmLsYuTiEBHYzShw4eYYdwvnEKNE2aQ1U5hujxJwLBxlhWhpv
+	7GKFSOxllFjz7ypUyw9GiTePdzGBVLEJKEns3/IBrENEQFti7f3tLCA2s4CVxNk5P8FsYQEv
+	ifcbj7OD2CwCqhI7/n1lBrF5BawlHrb8YoXYJi9xs2s/WJxTwFai/9c/NogaQYmTM59AzZSX
+	aN46mxmi/hG7xJRbWRC2i8SZBa+ZIGxhiVfHt7BD2FISL/vboOx8icnf10N9ViOxbvM7Fgjb
+	WuLflT1ANgfQfE2J9bv0IcKyElNPrWOCWMsn0fv7CdR4Xokd82BsJYklR1ZAjZSQ+D1hESvI
+	GAkBD4lv37ghQTWBUaLn/jb2CYwKs5B8MwvJN7MQNi9gZF7FKJlaUJybnppsWmCYl1oOj+Pk
+	/NxNjODUqOWyg/HG/H96hxiZOBgPMUpwMCuJ8F7MkEwX4k1JrKxKLcqPLyrNSS0+xGgKDO6J
+	zFKiyfnA5JxXEm9oYmlgYmZmZmJpbGaoJM77unVuipBAemJJanZqakFqEUwfEwenVAPThq8H
+	K3ZdmdqR5fX2kW/+/iendJ4GW76YZ9kgWHDUIVmj/oQC1+a0O1fndRReOXyjJvz82RmrI897
+	GK5LetqrE+tWlv/y/tdsx/Ny0z2yX96ve+fp4J8pcN6PW9LhlWB7bHBp1ueun5MqPwYoC0Te
+	WRDF6pAkEa088Xo0d39M+ZljJ6fMWvzxc6iYGtcZvu5YH/2NTBOT/NV0ko1c2oPDTtwybxXY
+	c8lkf/Kky1+/3Lx9e3PxpC/pEXps1zJN0j9Z25qHOB3KaXXn0g786Rc0s3Hqq47NZ+0OLdmo
+	tCvUTvXNBjcv3xuzc/J7tfj856y4rZ+nMqfnyxTTTPFDp0/MK3Q/z8//beG3bQxbCgOVWIoz
+	Eg21mIuKEwF3cKySFgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrALMWRmVeSWpSXmKPExsWy7bCSvK7IZsl0g/0TpS3mrNrGaLH6bj+b
+	xbvWcywWv7rvMlpc3jWHzeLshA+sDmweO2fdZfe4fLbUo2/LKkaPz5vkAliiuGxSUnMyy1KL
+	9O0SuDLO/u9hL/gkUnH8u04D4y7BLkZODgkBE4nGG7tYuxi5OIQEdjNKvDv4kREiISGx49Ef
+	VghbWGLlv+fsEEXfGCXOTX/EDJJgE1CS2L/lA1iDiICuxNpNjWA2s4CNxM6WLewgtrCAl8T7
+	jcfBbBYBVYkd/76C9fIKWEs8bPkFtUBe4mbXfrA4p4CtRP+vf2xdjBxAy2wkFu6SgigXlDg5
+	8wkLSJhZQF1i/TwhiE3yEs1bZzNPYBSchaRqFkLVLCRVCxiZVzFKphYU56bnJhsWGOallusV
+	J+YWl+al6yXn525iBAe6lsYOxnvz/+kdYmTiYDzEKMHBrCTCezFDMl2INyWxsiq1KD++qDQn
+	tfgQozQHi5I4r+GM2SlCAumJJanZqakFqUUwWSYOTqkGJrWe4tmrLmUdyY9958hfK2dqmLBL
+	fA1TzHrWFz07Lzfpm5s4LDx2s+F+7dPZ+fOKTtZMlq4oDXrl7XmgLmtdN0e1kmv0uecd+rvs
+	2G4eWrWX8bobu//v1f2Lfp4+0bPj4nzNp/u65t2IkFW+c3LHjMKG+JNnFrgrbp0V3SHsFjHr
+	2HFhB8/jSu4L2L5nVsVPPGCo63uvY1JYxmfvJtM1EirWWQ82egUsTZxa0F4bXy/50PzCtg83
+	zWNPuhbOa95zLNvv4/Ji7u0eLX0x0vb1OxZPSHVjF3XN1Y4zddhsmB9xaqnDhL4dQrni/NFv
+	lZfq7TzN2nO7/qLxF4YnclPf5W80vrPuTsyO8HhLkaP3lViKMxINtZiLihMBHjsXkuMCAAA=
+X-CMS-MailID: 20241024023812epcas5p1e5798728def570cb57679eebdd742d7b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241024023812epcas5p1e5798728def570cb57679eebdd742d7b
+References: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
+	<CGME20241024023812epcas5p1e5798728def570cb57679eebdd742d7b@epcas5p1.samsung.com>
 
-Provided buffers inform the kernel which buffer group ID to pick a
-buffer from for transfer. Normally that buffer contains the usual
-addr + length information, as well as a buffer ID that is passed back
-at completion time to inform the application of which buffer was used
-for the transfer.
+On 9/25/2024 12:12, Pavel Begunkov wrote:
+>I don't have a strong opinion on the feature, but the open question
+>we should get some decision on is whether it's really well applicable to
+>a good enough set of apps / workloads, if it'll even be useful in the
+>future and/or for other vendors, and if the merit outweighs extra
+>8 bytes + 1 flag per io_kiocb and the overhead of 1-2 static key'able
+>checks in hot paths.
 
-However, if registered and provided buffers are combined, then the
-provided buffer must instead tell the kernel which registered buffer
-index should be used, and the length/offset within that buffer. Rather
-than store the addr + length, the application must instead store this
-information instead.
+IMHO, releasing some of the CPU resources during the polling
+process may be appropriate for some performance bottlenecks
+due to CPU resource constraints, such as some database
+applications, in addition to completing IO operations, CPU
+also needs to peocess data, like compression and decompression.
+In a high-concurrency state, not only polling takes up a lot of
+CPU time, but also operations like calculation and processing
+also need to compete for CPU time. In this case, the performance
+of the application may be difficult to improve.
 
-If provided buffers are used with send zc, then those buffers must be
-an index into a registered buffer. Change the mapping type to use
-KBUF_MODE_BVEC, which tells the kbuf handlers to turn the mappings
-into bio_vecs rather than iovecs. Then all that is needed is to
-setup our iov_iterator to use iov_iter_bvec().
+The MultiRead interface of Rocksdb has been adapted to io_uring,
+I used db_bench to construct a situation with high CPU pressure
+and compared the performance. The test configuration is as follows,
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/net.c   | 64 +++++++++++++++++++++++++++++++++---------------
- io_uring/net.h   | 10 ++++++--
- io_uring/opdef.c |  1 +
- 3 files changed, 53 insertions(+), 22 deletions(-)
+-------------------------------------------------------------------
+CPU Model 	Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
+CPU Cores	8
+Memory		16G
+SSD			Samsung PM9A3
+-------------------------------------------------------------------
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 154756762a46..c062b1c685bd 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -83,6 +83,8 @@ struct io_sr_msg {
- 
- static int io_sg_from_iter(struct sk_buff *skb, struct iov_iter *from,
- 			   size_t length);
-+static int io_sg_from_iter_iovec(struct sk_buff *skb, struct iov_iter *from,
-+				 size_t length);
- 
- /*
-  * Number of times we'll try and do receives if there's more data. If we
-@@ -581,33 +583,34 @@ int io_sendmsg(struct io_kiocb *req, unsigned int issue_flags)
- 	return IOU_OK;
- }
- 
--static int io_send_zc_import_single(struct io_kiocb *req,
--				    unsigned int issue_flags)
-+static int __io_send_zc_import(struct io_kiocb *req,
-+			       struct io_async_msghdr *kmsg, int nsegs)
- {
- 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
--	struct io_async_msghdr *kmsg = req->async_data;
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_mapped_ubuf *imu;
- 	int ret;
- 	u16 idx;
- 
--	ret = -EFAULT;
--	io_ring_submit_lock(ctx, issue_flags);
--	if (sr->buf_index < ctx->nr_user_bufs) {
-+	if (req->flags & REQ_F_BUFFER_SELECT) {
-+		struct bio_vec *bv = kmsg->free_bvec ?: &kmsg->fast_bvec;
-+
-+		WARN_ON_ONCE(bv == &kmsg->fast_bvec && nsegs > 1);
-+		iov_iter_bvec(&kmsg->msg.msg_iter, ITER_SOURCE, bv, nsegs, sr->len);
-+	} else {
-+		if (WARN_ON_ONCE(nsegs != 1))
-+			return -EFAULT;
-+		if (unlikely(sr->buf_index >= ctx->nr_user_bufs))
-+			return -EFAULT;
- 		idx = array_index_nospec(sr->buf_index, ctx->nr_user_bufs);
- 		imu = READ_ONCE(ctx->user_bufs[idx]);
--		io_req_set_rsrc_node(sr->notif, ctx);
--		ret = 0;
--	}
--	io_ring_submit_unlock(ctx, issue_flags);
- 
--	if (unlikely(ret))
--		return ret;
-+		ret = io_import_fixed(ITER_SOURCE, &kmsg->msg.msg_iter, imu,
-+					(u64)(uintptr_t)sr->buf, sr->len);
-+		if (unlikely(ret))
-+			return ret;
-+	}
- 
--	ret = io_import_fixed(ITER_SOURCE, &kmsg->msg.msg_iter, imu,
--				(u64)(uintptr_t)sr->buf, sr->len);
--	if (unlikely(ret))
--		return ret;
- 	kmsg->msg.sg_from_iter = io_sg_from_iter;
- 	return 0;
- }
-@@ -619,6 +622,16 @@ static int __io_send_import(struct io_kiocb *req, struct buf_sel_arg *arg,
- 	struct io_async_msghdr *kmsg = req->async_data;
- 	int ret = nsegs;
- 
-+	if (sr->flags & IORING_RECVSEND_FIXED_BUF) {
-+		io_ring_submit_lock(req->ctx, issue_flags);
-+		io_req_set_rsrc_node(sr->notif, req->ctx);
-+		ret = __io_send_zc_import(req, kmsg, nsegs);
-+		io_ring_submit_unlock(req->ctx, issue_flags);
-+		if (unlikely(ret < 0))
-+			return ret;
-+		return nsegs;
-+	}
-+
- 	if (nsegs == 1) {
- 		sr->buf = arg->iovs[0].iov_base;
- 		ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len,
-@@ -646,10 +659,13 @@ static int io_send_import(struct io_kiocb *req, unsigned int issue_flags)
- 			.nr_vecs = 1,
- 		};
- 
-+		if (sr->flags & IORING_RECVSEND_FIXED_BUF)
-+			arg.mode |= KBUF_MODE_BVEC;
-+
- 		if (kmsg->free_iov) {
- 			arg.nr_vecs = kmsg->free_iov_nr;
- 			arg.iovs = kmsg->free_iov;
--			arg.mode = KBUF_MODE_FREE;
-+			arg.mode |= KBUF_MODE_FREE;
- 		}
- 
- 		if (!(sr->flags & IORING_RECVSEND_BUNDLE))
-@@ -1280,7 +1296,8 @@ void io_send_zc_cleanup(struct io_kiocb *req)
- 	}
- }
- 
--#define IO_ZC_FLAGS_COMMON (IORING_RECVSEND_POLL_FIRST | IORING_RECVSEND_FIXED_BUF)
-+#define IO_ZC_FLAGS_COMMON (IORING_RECVSEND_POLL_FIRST | \
-+			    IORING_RECVSEND_FIXED_BUF | IORING_RECVSEND_BUNDLE)
- #define IO_ZC_FLAGS_VALID  (IO_ZC_FLAGS_COMMON | IORING_SEND_ZC_REPORT_USAGE)
- 
- int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-@@ -1399,8 +1416,13 @@ static int io_send_zc_import(struct io_kiocb *req, unsigned int issue_flags)
- 	struct io_async_msghdr *kmsg = req->async_data;
- 	int ret;
- 
-+	ret = io_send_import(req, issue_flags);
-+	if (unlikely(ret < 0))
-+		return ret;
-+	if (req->flags & REQ_F_BUFFER_SELECT)
-+		return 0;
- 	if (sr->flags & IORING_RECVSEND_FIXED_BUF)
--		return io_send_zc_import_single(req, issue_flags);
-+		return __io_send_zc_import(req, kmsg, 1);
- 
- 	ret = import_ubuf(ITER_SOURCE, sr->buf, sr->len, &kmsg->msg.msg_iter);
- 	if (unlikely(ret))
-@@ -1416,6 +1438,7 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_sr_msg *zc = io_kiocb_to_cmd(req, struct io_sr_msg);
- 	struct io_async_msghdr *kmsg = req->async_data;
-+	unsigned int cflags;
- 	struct socket *sock;
- 	unsigned msg_flags;
- 	int ret, min_ret = 0;
-@@ -1476,7 +1499,8 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
- 		io_notif_flush(zc->notif);
- 		io_req_msg_cleanup(req, 0);
- 	}
--	io_req_set_res(req, ret, IORING_CQE_F_MORE);
-+	cflags = io_put_kbuf(req, ret, issue_flags);
-+	io_req_set_res(req, ret, cflags | IORING_CQE_F_MORE);
- 	return IOU_OK;
- }
- 
-diff --git a/io_uring/net.h b/io_uring/net.h
-index 52bfee05f06a..e052762cf85d 100644
---- a/io_uring/net.h
-+++ b/io_uring/net.h
-@@ -5,9 +5,15 @@
- 
- struct io_async_msghdr {
- #if defined(CONFIG_NET)
--	struct iovec			fast_iov;
-+	union {
-+		struct iovec		fast_iov;
-+		struct bio_vec		fast_bvec;
-+	};
- 	/* points to an allocated iov, if NULL we use fast_iov instead */
--	struct iovec			*free_iov;
-+	union {
-+		struct iovec		*free_iov;
-+		struct bio_vec		*free_bvec;
-+	};
- 	int				free_iov_nr;
- 	int				namelen;
- 	__kernel_size_t			controllen;
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index a2be3bbca5ff..6203a7dd5052 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -422,6 +422,7 @@ const struct io_issue_def io_issue_defs[] = {
- 		.needs_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 		.pollout		= 1,
-+		.buffer_select		= 1,
- 		.audit_skip		= 1,
- 		.ioprio			= 1,
- #if defined(CONFIG_NET)
--- 
-2.45.2
+Test case：
+./db_bench --benchmarks=multireadrandom,stats
+--duration=60
+--threads=4/8/16
+--use_direct_reads=true
+--db=/mnt/rocks/test_db
+--wal_dir=/mnt/rocks/test_db
+--key_size=4
+--value_size=4096
+-cache_size=0
+-use_existing_db=1
+-batch_size=256
+-multiread_batched=true
+-multiread_stride=0
+------------------------------------------------------
+Test result：
+			National	Optimization
+threads		ops/sec		ops/sec		CPU Utilization
+16			139300		189075		100%*8
+8			138639		133191		90%*8
+4			71475		68361		90%*8
+------------------------------------------------------
 
+When the number of threads exceeds the number of CPU cores,the
+database throughput does not increase significantly. However,
+hybrid polling can releasing some CPU resources during the polling
+process, so that part of the CPU time can be used for frequent
+data processing and other operations, which speeds up the reading
+process, thereby improving throughput and optimizaing database
+performance.I tried different compression strategies and got
+results similar to the above table.(~30% throughput improvement)
+
+As more database applications adapt to the io_uring engine, I think
+the application of hybrid poll may have potential in some scenarios.
+--
+Xue
 

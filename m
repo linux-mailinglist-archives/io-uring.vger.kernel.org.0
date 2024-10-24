@@ -1,95 +1,118 @@
-Return-Path: <io-uring+bounces-4003-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4004-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D851D9AF2C9
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 21:45:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ADCD9AF2E5
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 21:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA8F2849D1
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 19:45:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A37DDB21895
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 19:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927511FF02C;
-	Thu, 24 Oct 2024 19:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2A4189911;
+	Thu, 24 Oct 2024 19:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMm7iwRB"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VhyWKAi1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616D2169AE4;
-	Thu, 24 Oct 2024 19:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3C322B67F
+	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 19:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729799105; cv=none; b=uVeun1f+lSNsMFQPVUp+UIXOVmYW2lCyfBPqB4noJiwg9MBnidbX3RhYC6bnq/a4S8TsTtq9/ptXztZ3ixEC/FyvXUPOspqUcxqYkOVXwkevgqtHuaFasznq8BXT7AqNWTOT+pJ7GEfCUrwum/lYtjXgkdJrGxkIf356yg7ocb4=
+	t=1729799449; cv=none; b=s+WoDNMLB1G1JP4jcrn3dldRTyhmTscoGJ7dvQsp0TEoMlG/WrHnY0OpgxH7jS4YMfvzo+aw30sW/ub+deDmVWCvEmgYsJIFZj1MJ/Sic/03ro5KQXtjzz4MgpP3FCNel2ttQq0p/PWyyV+d8wnhbOGJpPVM6oICWd5s2cCyjgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729799105; c=relaxed/simple;
-	bh=c3ndfUOsrrS7srSLbBC5XHM8epxlV6CY0XRm3bJUdrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bO5uTov2WN9dx3yy/rgr4UC4TSRtTIdxR+fiNQhyQi30bg08EJ0+WgdD20jvobyjsmPdbcTkKlJLwgHfwX3N8ujwMnSg0b2CZJCGOFpZdedaxq4P+3S6Ga2xelMWReF39nSHf3olVBtboNIbOm08/CioFjD6A3eviVMbLQx9v9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iMm7iwRB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73751C4CEC7;
-	Thu, 24 Oct 2024 19:45:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729799105;
-	bh=c3ndfUOsrrS7srSLbBC5XHM8epxlV6CY0XRm3bJUdrk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iMm7iwRB0IZhUym/BkBFYexGqZs5nJlZjVp6oVWt2Y+QKne9rEfQ8OP5uGohgohK5
-	 OiLmtiC6Qcki98RPMySRRWlpwcdMEmFLZ+/OQp8MaYl4f3oON41x5L0VpNeY3PMrYg
-	 ANIwH36Hdj6UkfYudeAL5AwSm4C01OH3kIlZD7LXJHXDrRglTNUiU6c0MYQsvr8c5o
-	 W2CrIRTSUcfVjtU7jyIVcfJkDZ2qCYFfmze8hT/onGmRyUslacLh8u42UKGSt+E5bD
-	 0isyu0ZkRtRKyd+IBnN5hp7ulV05UaHP1cOFz4f9nlbiQDrqwRGML40hlhUkWhtRjG
-	 zNWDjrPygqmnw==
-Date: Thu, 24 Oct 2024 13:45:02 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, axboe@kernel.dk,
-	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	joshi.k@samsung.com, javier.gonz@samsung.com
-Subject: Re: [PATCHv8 2/6] block: use generic u16 for write hints
-Message-ID: <Zxqjvu0w9OsJN2uB@kbusch-mbp.dhcp.thefacebook.com>
-References: <20241017160937.2283225-1-kbusch@meta.com>
- <20241017160937.2283225-3-kbusch@meta.com>
- <20241018054643.GA20262@lst.de>
+	s=arc-20240116; t=1729799449; c=relaxed/simple;
+	bh=HeQLY1YNmSxDp2MVRo2paBCjex/wQ2yGMBpg+xPkL7o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CwxjXkbwcMiu9IrFFdA/EOMNYHpiA3u54YyRHBXNXhC1tPCciXVDQH4uBNR1aEs51ZMddIYlcRA4kz1T13alnnxU6Gs+uCv2ZLzfCwOWlNi1hDnBPjhZURZHJpRpm6FrMfhL/rOXgppoX3fysT6H25mCtvn1gjFFE8O8c7g2Ejc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VhyWKAi1; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-83ab5b4b048so56586639f.2
+        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 12:50:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729799444; x=1730404244; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YNwRvfMSB823uDx6N+SlBsOJRRSNRkVGgkXr3XRsTPY=;
+        b=VhyWKAi1QHYMxH6GM3KHvKfIHc4bXofXx20PNsn/itelUeFrA97d2n3ZZ2AycEVX2c
+         IuXgMfG/C/WfBhCJtGRQLN3J2GadjXEBgf/OrRO/2WLpUgi2o5jKIlmvVp2lrgdXf3z8
+         pfzpgjrub45TkyyJ768KaejyG8EPxe0F4rfI+/r2cMmtoTkRDo2UOslISm1M5ccB3sLa
+         k+TxCI0KprtkQ+p/H14F9YRfGP10YlYKW8zyd8QhtH7o24nMKNhxlriLoTvPOpbBIPai
+         aaum/SPD0MwdOg4Fj+DCKwtVb1675Ncjar62wMQiwBShfDyiDmb7JinVNRuvVciXnEAk
+         Ga0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729799444; x=1730404244;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YNwRvfMSB823uDx6N+SlBsOJRRSNRkVGgkXr3XRsTPY=;
+        b=id5VKVg1/0bS5jKhvD/MPOU9qlGizmBmgiC7aryeBFucwO3/vTv1HLP8sT46PVysR4
+         SiLI06LrEEPg4UXpqA+k/5SoYQ5SVG0s6vIVH74TGGPK7NWLP8pCiXKZqtaY3PcaWMjl
+         hG+F6+mDr99MyH4VvoUKuFrV1eGJ1WwvLz1y8cXaYBoK83r5eusLng4hRVlOnaxzAA3z
+         jcjZVodybLMXSLLNhi9oF16AAdEbQqSrJydqxhSL8zpkdJqXnIz/7bGxjeaqPE6do0Zz
+         v+ZJ1q/34sz66n4vgy3RX32dpcnCW39GZkQLLMnXjYwBaikFlCHR7Lo4SMVaKVbysCPU
+         dQaA==
+X-Gm-Message-State: AOJu0Yxeur4KKe+stY41RDJSpMWV4MvpPRYuRhTPsY3+IhL5zHgchtLT
+	uUfbOGR3wxaaw3A+x4EbJh256HvNfsYA0WS06mZMp3UvxXpeH63WywPp9vBMk5U=
+X-Google-Smtp-Source: AGHT+IGsmXUG+zs3PgF7kWrMoT6qAg1AA5ffEeIw21xkm/koXWYIAAgORnaIQPqLb4BA4TUnPOupAg==
+X-Received: by 2002:a05:6602:2c09:b0:831:e9a8:ce2a with SMTP id ca18e2360f4ac-83b0401edc2mr365137639f.3.1729799443866;
+        Thu, 24 Oct 2024 12:50:43 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a52fa87sm2787176173.13.2024.10.24.12.50.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 12:50:43 -0700 (PDT)
+Message-ID: <aaa3a0f3-a4f8-4e99-8143-1f81a5e39604@kernel.dk>
+Date: Thu, 24 Oct 2024 13:50:42 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018054643.GA20262@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] io_uring/register: add IORING_REGISTER_RESIZE_RINGS
+To: Jann Horn <jannh@google.com>
+Cc: io-uring@vger.kernel.org
+References: <20241024170829.1266002-1-axboe@kernel.dk>
+ <20241024170829.1266002-5-axboe@kernel.dk>
+ <CAG48ez3kqabFd3F6r8H7eRnwKg7GZj_bRu5CoNAjKgWr9k=GZw@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAG48ez3kqabFd3F6r8H7eRnwKg7GZj_bRu5CoNAjKgWr9k=GZw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 18, 2024 at 07:46:44AM +0200, Christoph Hellwig wrote:
-> On Thu, Oct 17, 2024 at 09:09:33AM -0700, Keith Busch wrote:
-> > From: Keith Busch <kbusch@kernel.org>
-> > 
-> > This is still backwards compatible with lifetime hints. It just doesn't
-> > constrain the hints to that definition.
+On 10/24/24 12:13 PM, Jann Horn wrote:
+> On Thu, Oct 24, 2024 at 7:08?PM Jens Axboe <axboe@kernel.dk> wrote:
+>> Add IORING_REGISTER_RESIZE_RINGS, which allows an application to resize
+>> the existing rings. It takes a struct io_uring_params argument, the same
+>> one which is used to setup the ring initially, and resizes rings
+>> according to the sizes given.
+> [...]
+>> +        * We'll do the swap. Clear out existing mappings to prevent mmap
+>> +        * from seeing them, as we'll unmap them. Any attempt to mmap existing
+>> +        * rings beyond this point will fail. Not that it could proceed at this
+>> +        * point anyway, as we'll hold the mmap_sem until we've done the swap.
+>> +        * Likewise, hold the completion * lock over the duration of the actual
+>> +        * swap.
+>> +        */
+>> +       mmap_write_lock(current->mm);
 > 
-> So in the end we'll end up with two uses of it - the existing 5
-> temperature hints and the new stream separation.  I think it
-> would be cleaner to make it a union, but I don't care that
-> strongly.
-> 
-> But we probably want a way to distinguish which one is supported.
-> 
-> E.g. for SCSI we set a net BLK_FEAT_WRITE_HINTS, for NVMe we'll set
-> BLK_FEAT_STREAM_SEPARATION.
-> 
-> Either way this should probably be the first patch in the series.
+> Why does the mmap lock for current->mm suffice here? I see nothing in
+> io_uring_mmap() that limits mmap() to tasks with the same mm_struct.
 
-I'm not sure I follow this feedback. The SCSI feature is defined as a
-lifetime stream association in SBC-5. So it's still a stream for SCSI,
-but you want to call it "WRITE_HINT", which is not a term used in the
-SCSI spec for this feature. But, you want to call it STREAM_SEPARATION
-for NVMe only, even though the FDP spec doesn't use that term? What's
-wrong with just calling it a generic hint support feature?
+Ehm does ->mmap() not hold ->mmap_sem already? I was under that
+understanding. Obviously if it doesn't, then yeah this won't be enough.
+Checked, and it does.
 
-I also don't see why SCSI couldn't use per-io hints just like this
-enables for NVMe. The spec doesn't limit SCSI to just 5 streams, so this
-provides a way to access them all through the raw block device.
+Ah I see what you mean now, task with different mm. But how would that
+come about? The io_uring fd is CLOEXEC, and it can't get passed.
+
+-- 
+Jens Axboe
 

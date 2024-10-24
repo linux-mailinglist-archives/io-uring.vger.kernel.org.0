@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3970-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3969-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 672D09AE944
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 16:48:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55409AE943
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 16:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E52D283A30
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 028861C212CC
 	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 14:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDA91E0487;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAB88614E;
 	Thu, 24 Oct 2024 14:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="DCoVIdgc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3Ko7/c7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD6F1DE88A
-	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 14:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113451DD0E6;
+	Thu, 24 Oct 2024 14:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781311; cv=none; b=aI+0C6t/QSTI16jCyoJuvwyLbrA/cbKSb1wBtPH1MAbiVobgtVpuWQCTya+TXfDsIWzpkgoywC3AP6AomyuCWbi8uKJU4qTd4FfE4feAI+SUIZGO26QP5yne2hP9KlCf1QQ7i/DYOQyIqZKPXovCiiG2crHcd7gZH39+rBNr+ak=
+	t=1729781311; cv=none; b=MfCZrO8rxuNlPWHo6Zy1FiilZMJEkjMpv1qoA7aQR9E4i+luZtQIhf1xVLBkFcIRE76rbx3QMSrQ2MU42wFScPyR+teYgT6+wNPrn9vlG0HcY69IO2W7S3L3q7U85NrTEyAA4guUUDAdMTU6DfBVIuQbVLAbtSQ+uWDsyI0zdjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729781311; c=relaxed/simple;
-	bh=gNJBUZTIKNZRH3ibq+PrEAlcpt1CdyN4srQ67Ct/aHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Q4wMuNpgeI2HXEwA7cSCrE7XjmQrxWFZcMUEzzLYFutaP8IKr4GxoCwHoJ9EQALrUTnRYSwHDrZIIkWTAIjbkkey+d++RJwF1SJY0k+80+tObDOBZDjgSkStTm6RTTR4VsYvl9O8SY4+6mCRq2FTTnIgALnjd0HRIRM+3ZK4U9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=DCoVIdgc; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-83abc039b25so40283739f.0
-        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 07:48:28 -0700 (PDT)
+	bh=Kf7IH7Ia1MQegT0zCCcPUUT7/Ni5m/YrbrJlFScLiGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QAYOigYB+PrO/b5UJPUVtXUrixcoyYzK2aKWVx3ZwCRg7B28b6QmbeYq+tzcqPUAlkNB7KQzVYtSoVNtY53zooaytFsKRI44LRt+kWB2wrvTmjIX/Eiu1v/sGwRaERXs+gFqFbBokVARtAne1smVAgjaW/+Rejs3NGi1ARk/VFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N3Ko7/c7; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so998538e87.3;
+        Thu, 24 Oct 2024 07:48:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729781308; x=1730386108; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729781307; x=1730386107; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2sYRQ6KuumguDoaCgpSV0ixaLToquZio9bcMYibGfrA=;
-        b=DCoVIdgcUVlyFoBAwYwtnMp+X6AcyHE4qnsixB012/QUxaFIn1o2dV57r1xdCqFcIq
-         Sfr96rIWUv6N0daEoBU7P+su0f7rYofmYD1UZg08c5FPEkzB+5QwEhZxQukPHuOelSHH
-         7DNIfhHSbXfSe58GcmS4J2Uos4Fnfhb/YPHv60jYBf0C6vYw6ztrSmrzOm76tsnouguG
-         XQraNsamo3iPxo6iL+adakHXlLo3K2QZowXrO9rsfPQ/EpjeGxZ6MLS8sFNOxTsbK1ii
-         /M8dQIQb9+ewuRKJuKOhW1+7iR6tyZ3PFpTiLOPivtlDxB4kHcYBJ1yFBNxRM7dFvNpQ
-         gJBw==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G1ze1FAkv4Dqw0QEQR2ZCGcnAZHEGZrNScY6wG9W5uY=;
+        b=N3Ko7/c7a8InmVTrJz4lp8E126SuY3kZdbj6ErylhuzSpebgK2vFkOXR2qJGUstIXP
+         plYcbKRKXNTjmGPjihLAsIbAk+OHTrY/RmL8zWFRBuO+dtv0dlqQ+jcuUPuzAbOJTYxv
+         oEIE7XvtCYBNnAeR8ZtQhwIN8ISpJmY1Oj2DHz4uYFC78eSVeiUOz0nSzaK0WjDpR0vj
+         LlwrNQHFK4tePLXjteUFdWScOs07rQIlSazVJO8uGbVLLKM/WwtwHDVWK0+ORXgyqK/M
+         BtSnBnjy5ZxQb2l4NSHTLtmm8niDCHwgx9G+CI/F/nv+ZYGhldNpePBgnqVmoYwvavdC
+         UxhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729781308; x=1730386108;
+        d=1e100.net; s=20230601; t=1729781307; x=1730386107;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2sYRQ6KuumguDoaCgpSV0ixaLToquZio9bcMYibGfrA=;
-        b=SprNDWecMZbtEtn1oAqBfGVD8HPa5gNOPUW/bPRWGAdPKue06/lu//uChZXjk45TtU
-         16QhixAk70iUvSQMx6mmKtS9XdED1QL4vG7/1ZkSjZjiiphXpbH5fBNqXHn8VxHoBvNm
-         eJVX7ozGK+RycPeqzEXXGP+RIXN69f+CAtCB5pkhAPjaRGpYWoUyicB+r5JegTqdmdkO
-         WX87WR294Wy2nKVZSPZzEoZ0PLVrAZgEYB8ifTpsLj5yYj9U9set+69+EntRQv/+T+55
-         bso7LNrrgam0eDTlVq1UJnGvYDkS67uO4S+2vj8ZihQRAavrIABzIMgJrxgI/kGIpsmv
-         FQFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsuVdzwECJxYgdc87sBKeM6REu0NYf5kLxWqBgkNk6VnnsMFjpU0n08n+rScNUiHy5LE0n2gFlmw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbhNO5tfT5OwDJFPbLb4ZOoVJbej3FOKlCV1moB8RUgHe6cEhI
-	/yYGxiyeZgCRNoZ05SrqHpNjhvUmvowh1y57SmCRmw1+9EN8QWbxS/O7xVyHyxg=
-X-Google-Smtp-Source: AGHT+IEuUxh29YVelxFbgcbuBJ+hz3n10GyVAe0v4EIhRujX6gsfVafmbm6ZTJyfLS5TQOsyfUYgYg==
-X-Received: by 2002:a05:6602:6b8b:b0:83a:a746:68a6 with SMTP id ca18e2360f4ac-83af6162123mr602860239f.5.1729781307723;
-        Thu, 24 Oct 2024 07:48:27 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ae6b2022bsm197903939f.27.2024.10.24.07.48.26
+        bh=G1ze1FAkv4Dqw0QEQR2ZCGcnAZHEGZrNScY6wG9W5uY=;
+        b=RSSx4OrLyPoKJBgU91IeUm4eE0T8/VoMGCiq3ntwE57w/6W4wRUp3R8qRRuYoCZico
+         lXmJNpWoys3pNGOQjgF+SvZMIOJ1w8aXq4J7oIO8YvUSnxMXyJ1J732kOH+x9PmeZ+RW
+         cfBtwWHDwt0Wqo58egOPo7lNVjPY/25JnlyHWdTt/ZrZ5urKQNPRx9ZVSkQXqe6M6WQV
+         RjwVyZ3ahTQC50J4rUm2r8MakBXzNAsMKLostU5YNiOHff40x0nvOabxf3Npb2h90UJZ
+         TNs7W1nVz9YD5VlGZkF0D9lF9W02sd+a0E7fHB5vY768tY4wxyn4m/IOp+99GToZhRs3
+         +N3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVj+mQUNi5fQS541f8i/tK/OXN7O8vOCxAP5Hm28m+5KkUUFa4PrOUb1gVQifthbaq+kalcF0bZr/dgQno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKhi2HOoPr+xQP/anqRc8oXBqK8+9srvxiLts7JsjGN/IznVbQ
+	Pc2I5X1b5A2sfCrCVLotl48LcChvV/uy9DBd9m7OevrCa4TgZ+6C
+X-Google-Smtp-Source: AGHT+IE2ctdQKfTUxcYMHQ9xUqbhJ0Pcik/Mb3DaOc2KCi8IUlK89tQqbUAiTmghBI0O47SN8dBzxQ==
+X-Received: by 2002:a05:6512:12cd:b0:539:ebe5:298e with SMTP id 2adb3069b0e04-53b23ea0e81mr1707345e87.59.1729781306811;
+        Thu, 24 Oct 2024 07:48:26 -0700 (PDT)
+Received: from [192.168.42.27] ([85.255.233.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912ee077sm629443366b.65.2024.10.24.07.48.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:48:27 -0700 (PDT)
-Message-ID: <4d61544d-3a06-4419-8dc6-f23a57740d77@kernel.dk>
-Date: Thu, 24 Oct 2024 08:48:26 -0600
+        Thu, 24 Oct 2024 07:48:26 -0700 (PDT)
+Message-ID: <8e0f74c1-aa11-4036-ba20-6f4dc0c40333@gmail.com>
+Date: Thu, 24 Oct 2024 15:49:01 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,78 +76,136 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] io_uring/net: add provided buffer and bundle support
- to send zc
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <20241023161522.1126423-1-axboe@kernel.dk>
- <20241023161522.1126423-8-axboe@kernel.dk>
- <b826ce35-98b2-4639-9d39-d798e3b08d89@gmail.com>
+Subject: Re: [PATCH v8] io_uring: releasing CPU resources when polling
+To: Jens Axboe <axboe@kernel.dk>, hexue <xue01.he@samsung.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
+ <CGME20241024023812epcas5p1e5798728def570cb57679eebdd742d7b@epcas5p1.samsung.com>
+ <20241024023805.1082769-1-xue01.he@samsung.com>
+ <9bc8f8c4-3415-48bb-9bd1-0996f2ef6669@kernel.dk>
+ <f60116a5-8c35-4389-bbb6-7bf6deaf71c6@gmail.com>
+ <b50ce7d2-b2a8-4552-8246-0464602bfd84@kernel.dk>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <b826ce35-98b2-4639-9d39-d798e3b08d89@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <b50ce7d2-b2a8-4552-8246-0464602bfd84@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/24/24 8:44 AM, Pavel Begunkov wrote:
-> On 10/23/24 17:07, Jens Axboe wrote:
->> Provided buffers inform the kernel which buffer group ID to pick a
->> buffer from for transfer. Normally that buffer contains the usual
->> addr + length information, as well as a buffer ID that is passed back
->> at completion time to inform the application of which buffer was used
->> for the transfer.
+On 10/24/24 15:40, Jens Axboe wrote:
+> On 10/24/24 8:26 AM, Pavel Begunkov wrote:
+>> On 10/24/24 15:18, Jens Axboe wrote:
+>>> On 10/23/24 8:38 PM, hexue wrote:
+>>>> On 9/25/2024 12:12, Pavel Begunkov wrote:
+>> ...
+>>>> When the number of threads exceeds the number of CPU cores,the
+>>>> database throughput does not increase significantly. However,
+>>>> hybrid polling can releasing some CPU resources during the polling
+>>>> process, so that part of the CPU time can be used for frequent
+>>>> data processing and other operations, which speeds up the reading
+>>>> process, thereby improving throughput and optimizaing database
+>>>> performance.I tried different compression strategies and got
+>>>> results similar to the above table.(~30% throughput improvement)
+>>>>
+>>>> As more database applications adapt to the io_uring engine, I think
+>>>> the application of hybrid poll may have potential in some scenarios.
+>>>
+>>> Thanks for posting some numbers on that part, that's useful. I do
+>>> think the feature is useful as well, but I still have some issues
+>>> with the implementation. Below is an incremental patch on top of
+>>> yours to resolve some of those, potentially. Issues:
+>>>
+>>> 1) The patch still reads a bit like a hack, in that it doesn't seem to
+>>>      care about following the current style. This reads a bit lazy/sloppy
+>>>      or unfinished. I've fixed that up.
+>>>
+>>> 2) Appropriate member and function naming.
+>>>
+>>> 3) Same as above, it doesn't care about proper placement of additions to
+>>>      structs. Again this is a bit lazy and wasteful, attention should be
+>>>      paid to where additions are placed to not needlessly bloat
+>>>      structures, or place members in cache unfortunate locations. For
+>>>      example, available_time is just placed at the end of io_ring_ctx,
+>>>      why? It's a submission side member, and there's room with other
+>>>      related members. Not only is the placement now where you'd want it to
+>>>      be, memory wise, it also doesn't add 8 bytes to io_uring_ctx.
+>>>
+>>> 4) Like the above, the io_kiocb bloat is, by far, the worst. Seems to me
+>>>      that we can share space with the polling hash_node. This obviously
+>>>      needs careful vetting, haven't done that yet. IOPOLL setups should
+>>>      not be using poll at all. This needs extra checking. The poll_state
+>>>      can go with cancel_seq_set, as there's a hole there any. And just
+>>>      like that, rather than add 24b to io_kiocb, it doesn't take any extra
+>>>      space at all.
+>>>
+>>> 5) HY_POLL is a terrible name. It's associated with IOPOLL, and so let's
+>>>      please use a name related to that. And require IOPOLL being set with
+>>>      HYBRID_IOPOLL, as it's really a variant of that. Makes it clear that
+>>>      HYBRID_IOPOLL is really just a mode of operation for IOPOLL, and it
+>>>      can't exist without that.
+>>>
+>>> Please take a look at this incremental and test it, and then post a v9
+>>> that looks a lot more finished. Caveat - I haven't tested this one at
+>>> all. Thanks!
+>>>
+>>> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+>>> index c79ee9fe86d4..6cf6a45835e5 100644
+>>> --- a/include/linux/io_uring_types.h
+>>> +++ b/include/linux/io_uring_types.h
+>>> @@ -238,6 +238,8 @@ struct io_ring_ctx {
+>>>            struct io_rings        *rings;
+>>>            struct percpu_ref    refs;
+>>>    +        u64            poll_available_time;
+>>> +
+>>>            clockid_t        clockid;
+>>>            enum tk_offsets        clock_offset;
+>>>    @@ -433,9 +435,6 @@ struct io_ring_ctx {
+>>>        struct page            **sqe_pages;
+>>>          struct page            **cq_wait_page;
+>>> -
+>>> -    /* for io_uring hybrid poll*/
+>>> -    u64            available_time;
+>>>    };
+>>>      struct io_tw_state {
+>>> @@ -647,9 +646,22 @@ struct io_kiocb {
+>>>          atomic_t            refs;
+>>>        bool                cancel_seq_set;
+>>> +    bool                poll_state;
 >>
->> However, if registered and provided buffers are combined, then the
->> provided buffer must instead tell the kernel which registered buffer
->> index should be used, and the length/offset within that buffer. Rather
->> than store the addr + length, the application must instead store this
->> information instead.
->>
->> If provided buffers are used with send zc, then those buffers must be
->> an index into a registered buffer. Change the mapping type to use
->> KBUF_MODE_BVEC, which tells the kbuf handlers to turn the mappings
->> into bio_vecs rather than iovecs. Then all that is needed is to
->> setup our iov_iterator to use iov_iter_bvec().
->>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->> ---
-> ...
->> diff --git a/io_uring/net.h b/io_uring/net.h
->> index 52bfee05f06a..e052762cf85d 100644
->> --- a/io_uring/net.h
->> +++ b/io_uring/net.h
->> @@ -5,9 +5,15 @@
->>     struct io_async_msghdr {
->>   #if defined(CONFIG_NET)
->> -    struct iovec            fast_iov;
->> +    union {
->> +        struct iovec        fast_iov;
->> +        struct bio_vec        fast_bvec;
->> +    };
->>       /* points to an allocated iov, if NULL we use fast_iov instead */
->> -    struct iovec            *free_iov;
->> +    union {
->> +        struct iovec        *free_iov;
->> +        struct bio_vec        *free_bvec;
+>> As mentioned briefly before, that can be just a req->flags flag
 > 
-> I'd rather not do it like that, aliasing with reusing memory and
-> counting the number is a recipe for disaster when scattered across
-> code. E.g. seems you change all(?) iovec allocations to allocate
-> based on the size of the larger structure.
+> That'd be even better, I generally despise random bool addition.
 > 
-> Counting bytes as in my series is less fragile, otherwise it needs
-> a new structure and a set of helpers that can be kept together.
+>>>        struct io_task_work        io_task_work;
+>>> -    /* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
+>>> -    struct hlist_node        hash_node;
+>>> +    union {
+>>> +        /*
+>>> +         * for polled requests, i.e. IORING_OP_POLL_ADD and async armed
+>>> +         * poll
+>>> +         */
+>>> +        struct hlist_node    hash_node;
+>>> +        /*
+>>> +         * For IOPOLL setup queues, with hybrid polling
+>>> +         */
+>>> +        struct {
+>>> +            u64        iopoll_start;
+>>> +            u64        iopoll_end;
+>>
+>> And IIRC it doesn't need to store the end as it's used immediately
+>> after it's set in the same function.
+> 
+> Nice, that opens up the door for less esoteric sharing as well. And
+> yeah, I'd just use:
+> 
+> runtime = ktime_get_ns() - req->iopoll_start - sleep_time;
+> 
+> in io_uring_hybrid_poll() and kill it entirely, doesn't even need a
+> local variable there. And then shove iopoll_start into the union with
+> comp_list/apoll_events.
 
-I have been pondering this, because I'm not a huge fan either. But
-outside of the space side, it does come out pretty nicely/clean. This
-series is really just a WIP posting as per the RFC, mostly just so we
-can come up with something that's clean enough and works for both cases,
-as it does have the caching that your series does not. And to
-facilitate some more efficient TX/RX zero copy testing.
-
-I'd love a separate struct for these two, but that kind of gets in the
-way of the usual iovec imports. I'll get back to this soonish, it's not
-a 6.13 thing by any stretch.
+That's with what the current request is hooked into the list,
+IOW such aliasing will corrupt the request
 
 -- 
-Jens Axboe
+Pavel Begunkov
 

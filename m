@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3985-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3987-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8EF9AEB64
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 18:06:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD779AEBA9
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 18:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3FD01F217AC
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 16:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B4F2284444
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 16:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03ED51E1311;
-	Thu, 24 Oct 2024 16:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41FD1F5836;
+	Thu, 24 Oct 2024 16:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hS1OdpPv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Br1/8SrJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3208158A31
-	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 16:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C9E1B0F16
+	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 16:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729785979; cv=none; b=GhM6ZZC/sNL90GOFBhhqQCo3KJuTxeO0t4wBGQWs5AI40Wcfc7eOzLreb9hgSBycQ1/oZN5pV8tnxDJviTh8aV3tdBVA02nYrU+2nqO4ZyeoRf9S3ltUo4jhxJSkRTzB19uxybS/EG+EY4mKgn8zs4eyqTTQTMPdK9V+TKiY6H4=
+	t=1729786626; cv=none; b=opymfFc/GhhDL7vEVBM2Wu7xg4qBpznoX8edMaPy+cm6+EKIerYVq9XFMIrNE7LZ2IwH7I5+TkvtMRe8YtmAiUetx1KP38vK1dBohIidFv2TEIcr5mhDXO/WcaN9iF09r8wTRMZ0c+EEG25NHbq3WH3vgbCnjwbc1fboCyX4at4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729785979; c=relaxed/simple;
-	bh=djG48BVyhTnPsdfqI5yX+V2IGYSAK00boAoQ1IZvUmE=;
+	s=arc-20240116; t=1729786626; c=relaxed/simple;
+	bh=FzLLhX/bdO8LTLZoIoJd8tqp1o1s/Goj+Xv8RYY/sg0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QL96EmyMwqeojye0bKYq1J5ReWRMLcvUN1ryTFZntHnGuyXM728YcPYu0sddcRFP4mdouqMswnfToLJFwgNRuVNbwGgav39+sUD8ljiuwbBcm8MpYdmHS+UIt/lT4GFVgaaO+LTM3V2sw9ZWLN5zBiUhxyWcWR9axra0juheh1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hS1OdpPv; arc=none smtp.client-ip=209.85.218.45
+	 In-Reply-To:Content-Type; b=iRQGYd3/x9LGBN2hriCiBCPo94Fa0rP1Rhu3GD8ZksggUWoQoCYSuwn7TsYpXWN7MzdUs4yH4UxMRYxvUePyYdtBmkCK1ENAT6MF5gqBIazdvm5UdjeKyExGBDQNYma13CtmkjdWuM4Ia4PMvTyboOjyGbZKYC/O2sitCqdiRmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Br1/8SrJ; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a16b310f5so156266466b.0
-        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 09:06:17 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a0472306cso143560766b.3
+        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 09:17:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729785976; x=1730390776; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729786623; x=1730391423; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=FRjMLH0iZKS/uVG9Tp3CrUxFBIXDpjjYnBfhpGLu9Pw=;
-        b=hS1OdpPvLsMOjIketZYvzOyeOQxTlmfFbE7xcMbQTk6vl25Srkdlfy7e3BtjfZJqdW
-         ytBlkXbp7137+hZfqeVXqgdxQrBcUviWsNpdRqL1uIxzza5WdVmIuiJpFX2LnqiYpdRg
-         pDgCNUKYELHcsCNoK0n2G2zCDMD9GTj5qE5L6PRKLf+0cvxm9EYbG1PvC2GRE8MUPxJq
-         19j25nra1lW/klQHxKvHBXZXgHNhsy+DbE9jtmTbHlYa0G9VhQj0IsZ2IwDd2Xoy8jkT
-         pRcUIGLQkl8XNSa/0nrSJbkVZ+p0pn0LVnoVgpA1IkWR0fieqkNUHn/UnkryOtpr9BVg
-         ARiA==
+        bh=sESdBJNwAFwQAyoVVF9TaPMHjhix9BawS5zI5WdyhMI=;
+        b=Br1/8SrJNQMm5oP7EUOmDMr8GWgKjHw1uQs/Bmlic1DnlK++ALxLMgWIg58DQfolsr
+         ErN+TDycuszEQ/WdSoPbWkp+h2gIUtILYnVNBIoalDj0HZdynqcz+uYtmrONxANpFfbL
+         HQum+Fp0R+SHTOROb4DtSQ3P/oaVXB9qeqrWaS0b6YXcuuUZfuEYWIJ7wphnr39pPncJ
+         UNNNv/3bXLD5pmgUwfnNHKrZmXPIcgtkpIJr7DaelWJEejZcOR3r0e1BPC+6x81OZimr
+         b0x48IdOG3ijRyK4l1srTmNoPuewA/+s7vcVLSyhB3a8VEzL855ejd0a+Gk3DKS6hWYn
+         HBhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729785976; x=1730390776;
+        d=1e100.net; s=20230601; t=1729786623; x=1730391423;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FRjMLH0iZKS/uVG9Tp3CrUxFBIXDpjjYnBfhpGLu9Pw=;
-        b=ruptwAjR6sBDXBuF3mjNNrH8NEnCTTmHQBzvtQcz9G6EqhgqBs6LW0h4ppYbgQn/td
-         /Lprlr/anv4ogOkIW0r7PoqDBJwgf/TLxW8c1rhsEGpiABKtjmgTs5Twl309ObbzdpAk
-         6hh5sRbFHa1WJuINFWPd9Y27JMkdzzmrjEOAFZGqOZUXVgdwsBim/DpsTCqE6FxYP+ue
-         SHQ5llPcD3dmP6iOH2uh2PM1LgmpzAuEXk/gvolYn2ydx06SuD0VOhgZhKPJIFwJQG46
-         pP0mGwt2UFnhVu3FXdZWlsE9y4QG43/CKM/28qLU//7fmLgAPoe2c/+jSjApA9HNTRKA
-         ofaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhaQTPMiuLEmeX8wb8XdZxpk9H2xn//Z7zPV88h9jpdUk6eY6oTAaUxX/olhxU+Vxjn74olwYTJw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBc8+YTip/3vCcqAvgDHlbI8UAYnUDYHdPTNLECqdZhWUW/7o5
-	Q1bBuZjYfdzAgMsujOTU4UPt1tsOaWqPhzD/LNXwvRozlmR6VPFmoJHpqQ==
-X-Google-Smtp-Source: AGHT+IEMY5JiYiki9/B4oIF50R8XzLtrZwl4F2dIfBUnFsw2Md72I0EGf6MYENp3K/qZKFxIcph8OA==
-X-Received: by 2002:a17:907:72ca:b0:a99:f861:ebd with SMTP id a640c23a62f3a-a9abf890c03mr666705366b.14.1729785975722;
-        Thu, 24 Oct 2024 09:06:15 -0700 (PDT)
+        bh=sESdBJNwAFwQAyoVVF9TaPMHjhix9BawS5zI5WdyhMI=;
+        b=tJ951Z+2H/WdvWgfnD+KWO6TYvrw4fmio6W4h3LgKXG+TXQ6vrVJt+DLS0RuHRvVu6
+         kmw4lTmy/Lh5zlMz/xu3hqm7ZTsz2TvdWPkX1HZw3/kI5qglTCMDU39EWF0Oh3gDc/xB
+         UsVs6mKpuPsBhG9CMdnQMcw/SXrS404+sAdAjTAnlIXYagMX/3em+5z/i50G8E5ZWrMz
+         xYeUF8M+ZcadOfeOJHSud3GxF7Mhy8cWVB5Uy1xXJf6h+C+MWblIZjS6paN3bAGTmfxE
+         6zUiF4xNbAV9BAOT+e5/cjAFiNfWhprsnB2/l3DeSjMH1s/vV3MLmHUNmJtyV80Kf6YM
+         SSSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVG4nQN/uVvf0LebEb965G1wLswKj8UBAa+/0lUUemBoTRXXgOdVQH0CDjNKJhQw/DmQCtUNvRhRA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKSk8MvOroA73fAVB8PPAW0U+OZQJDFxnAc/hwnoXORh5wBHNb
+	x6JYPztjSDJ9TBqBHv/YdyLZaMaChRk3DFAQdJ3ey0pxGhD5b4ADDsy0kQ==
+X-Google-Smtp-Source: AGHT+IGUbkifyIxeiTIBrhUndqKoXISmU7oGAuZY274dJLLT/tdEOrsSg5T8Clusrvr5ngRPJUPj9w==
+X-Received: by 2002:a17:906:7309:b0:a99:dde6:9f42 with SMTP id a640c23a62f3a-a9abf96ce04mr691070266b.47.1729786622557;
+        Thu, 24 Oct 2024 09:17:02 -0700 (PDT)
 Received: from [192.168.42.27] ([85.255.233.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9157221asm633767566b.161.2024.10.24.09.06.14
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d624asm637251466b.30.2024.10.24.09.17.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 09:06:15 -0700 (PDT)
-Message-ID: <3e28f0bb-4739-40de-93c7-9b207d90d7c5@gmail.com>
-Date: Thu, 24 Oct 2024 17:06:50 +0100
+        Thu, 24 Oct 2024 09:17:01 -0700 (PDT)
+Message-ID: <c51938c8-8bb4-44d1-8394-14aeebd58ba2@gmail.com>
+Date: Thu, 24 Oct 2024 17:17:37 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,117 +76,107 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] implement vectored registered buffers for sendzc
+Subject: Re: [PATCH 5/7] io_uring: add ability for provided buffer to index
+ registered buffers
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <cover.1729650350.git.asml.silence@gmail.com>
- <b15e136f-3dbd-4d4e-92c5-103ecffe3965@kernel.dk>
- <bfbe577b-1092-47a2-ab6c-d358f55003dc@gmail.com>
- <28964ec6-34a7-49b8-88f5-7aaf0e1e4e3f@kernel.dk>
+References: <20241023161522.1126423-1-axboe@kernel.dk>
+ <20241023161522.1126423-6-axboe@kernel.dk>
+ <34d4cfb3-e605-4d37-b104-03b8b1a892f1@gmail.com>
+ <c44ef9b3-bea7-45f5-b050-9c74ff1e0344@kernel.dk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <28964ec6-34a7-49b8-88f5-7aaf0e1e4e3f@kernel.dk>
+In-Reply-To: <c44ef9b3-bea7-45f5-b050-9c74ff1e0344@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/24/24 16:45, Jens Axboe wrote:
-> On 10/24/24 9:29 AM, Pavel Begunkov wrote:
->> On 10/23/24 14:52, Jens Axboe wrote:
->>> On 10/22/24 8:38 PM, Pavel Begunkov wrote:
->>>> Allow registered buffers to be used with zerocopy sendmsg, where the
->>>> passed iovec becomes a scatter list into the registered buffer
->>>> specified by sqe->buf_index. See patches 3 and 4 for more details.
->>>>
->>>> To get performance out of it, it'll need a bit more work on top for
->>>> optimising allocations and cleaning up send setups. We can also
->>>> implement it for non zerocopy variants and reads/writes in the future.
->>>>
->>>> Tested by enabling it in test/send-zerocopy.c, which checks payloads,
->>>> and exercises lots of corner cases, especially around send sizes,
->>>> offsets and non aligned registered buffers.
+On 10/24/24 16:57, Jens Axboe wrote:
+> On 10/24/24 9:44 AM, Pavel Begunkov wrote:
+>> On 10/23/24 17:07, Jens Axboe wrote:
+>>> This just adds the necessary shifts that define what a provided buffer
+>>> that is merely an index into a registered buffer looks like. A provided
+>>> buffer looks like the following:
 >>>
->>> Just for the edification of the list readers, Pavel and I discussed this
->>> a bit last night. There's a decent amount of overlap with the send zc
->>> provided + registered buffers work that I did last week, but haven't
->>> posted yet. It's here;
+>>> struct io_uring_buf {
+>>>      __u64    addr;
+>>>      __u32    len;
+>>>      __u16    bid;
+>>>      __u16    resv;
+>>> };
 >>>
->>> https://git.kernel.dk/cgit/linux/log/?h=io_uring-sendzc-provided
+>>> where 'addr' holds a userspace address, 'len' is the length of the
+>>> buffer, and 'bid' is the buffer ID identifying the buffer. This works
+>>> fine for a virtual address, but it cannot be used efficiently denote
+>>> a registered buffer. Registered buffers are pre-mapped into the kernel
+>>> for more efficient IO, avoiding a get_user_pages() and page(s) inc+dec,
+>>> and are used for things like O_DIRECT on storage and zero copy send.
 >>>
->>> in terms of needing and using both bvec and iovec in the array, and
->>> having the suitable caching for the arrays rather than needing a full
->>> alloc + free every time.
+>>> Particularly for the send case, it'd be useful to support a mix of
+>>> provided and registered buffers. This enables the use of using a
+>>> provided ring buffer to serialize sends, and also enables the use of
+>>> send bundles, where a send can pick multiple buffers and send them all
+>>> at once.
+>>>
+>>> If provided buffers are used as an index into registered buffers, the
+>>> meaning of buf->addr changes. If registered buffer index 'regbuf_index'
+>>> is desired, with a length of 'len' and the offset 'regbuf_offset' from
+>>> the start of the buffer, then the application would fill out the entry
+>>> as follows:
+>>>
+>>> buf->addr = ((__u64) regbuf_offset << IOU_BUF_OFFSET_BITS) | regbuf_index;
+>>> buf->len = len;
+>>>
+>>> and otherwise add it to the buffer ring as usual. The kernel will then
+>>> first pick a buffer from the desired buffer group ID, and then decode
+>>> which registered buffer to use for the transfer.
+>>>
+>>> This provides a way to use both registered and provided buffers at the
+>>> same time.
+>>>
+>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>> ---
+>>>    include/uapi/linux/io_uring.h | 8 ++++++++
+>>>    1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>>> index 86cb385fe0b5..eef88d570cb4 100644
+>>> --- a/include/uapi/linux/io_uring.h
+>>> +++ b/include/uapi/linux/io_uring.h
+>>> @@ -733,6 +733,14 @@ struct io_uring_buf_ring {
+>>>        };
+>>>    };
+>>>    +/*
+>>> + * When provided buffers are used as indices into registered buffers, the
+>>> + * lower IOU_BUF_REGBUF_BITS indicate the index into the registered buffers,
+>>> + * and the upper IOU_BUF_OFFSET_BITS indicate the offset into that buffer.
+>>> + */
+>>> +#define IOU_BUF_REGBUF_BITS    (32ULL)
+>>> +#define IOU_BUF_OFFSET_BITS    (32ULL)
 >>
->> And as I mentioned, that can be well done in-place (in the same
->> array) as one option.
+>> 32 bit is fine for IO size but not enough to store offsets, it
+>> can only address under 4GB registered buffers.
 > 
-> And that would be the way to do it, like I mentioned as well, that is
-> how my first iteration of the above did it too. But since this one just
-> needs to end up with an array of bvec, it was pointless for my series to
-> do the iovec import and only then turn it into bvecs.
-> 
-> So somewhat orthogonal, as the use cases aren't exactly the same. One
-> deals with iovecs out of necessity, the other one only previously did as
-> a matter of convenience to reuse existing iovec based helpers.
-> 
->>> The send zc part can map into bvecs upfront and hence don't need the
->>> iovec array storage at the same time, which this one does as the sendmsg
->>> zc opcode needs to import an iovec. But perhaps there's a way to still
->>> unify the storage and retain the caching, without needing to come up
->>> with something new.
->>
->> I looked through. The first problem is that your thing consuming
->> entries from the ring, with iovecs it'd need to be reading it
->> from the user one by one. Considering allocations in your helpers,
->> that would turn it into a bunch of copy_from_user, and it might
->> just easier and cleaner to copy the entire iovec.
-> 
-> I think for you case, incremental import would be the way to go. Eg
-> something ala:
-> 
-> if (!user_access_begin(user_iovec, nr_vecs * sizeof(*user_iovec)))
-> 	return -EFAULT;
+> I did think about that - at least as it stands, registered buffers are
+> limited to 1GB in size. That's how it's been since that got added. Now,
+> for the future, we may obviously lift that limitation, and yeah then
+> 32-bits would not necessarily be enough for the offset.
 
-Is it even legal? I don't know how it's implemented specifically
-but I assume there can be any kind of magic, e.g. intercepting
-page faults. I'd definitely prefer to avoid anything but the simplest
-handling like read from/write to memory, e.g. no allocations.
+Right, and I don't think it's unreasonable considering with how
+much memory systems have nowadays, and we think that one large
+registered buffer is a good thing.
 
-> 
-> bv = kmsg->bvec;
-> for_each_iov {
-> 	struct iovec iov;
-> 
-> 	unsafe_get_user(iov.iov_base, &user_iovec->iov_base, foo);
-> 	unsafe_get_user(iov.iov_len, &user_iovec->iov_len, foo);
-> 
-> 	import_to_bvec(bv, &iov);
-> 
-> 	user_iovec++;
-> 	bv++;
-> }
-> 
-> if it can be done at prep time, because then there's no need to store
-> the iovec at all, it's already stable, just in bvecs. And this avoids
-> overlapping iovec/bvec memory, and it avoids doing two iterations for
-> import. Purely a poc, just tossing out ideas.
-> 
-> But I haven't looked too closely at your series yet. In any case,
-> whatever ends up working for you, will most likely be find for the
-> bundled zerocopy send (non-vectored) as well, and I can just put it on
-> top of that.
-> 
->> And you just made one towards delaying the imu resolution, which
->> is conceptually the right thing to do because of the mess with
->> links, just like it is with fixed files. That's why it need to
->> copy the iovec at the prep stage and resolve at the issue time.
-> 
-> Indeed, prep time is certainly the place to do it. And the above
-> incremental import should work fine then, as we won't care abot
-> user_iovec being stable being prep.
+> For linux, the max read/write value has always been INT_MAX & PAGE_MASK,
+> so we could make do with 31 bits for the size, which would bump the
+> offset to 33-bits, or 8G. That'd leave enough room for, at least, 8G
+> buffers, or 8x what we support now. Which is probably fine, you'd just
+> split your buffer registrations into 8G chunks, if you want to register
+> more than 8G of memory.
 
-Seems like you're agreeing but then stating the opposite, there
-is some confusion. I'm saying that IMHO the right API wise way
-is resolving an imu at issue time, just like it's done for fixed
-files, and what your recent series did for send zc.
+That's why I mentioned IO size, you can register a very large buffer
+and do IO with a small subchunk of it, even if that "small" is 4G,
+but it still needs to be addressed. I think we need at least an order
+of magnitude or two more space for it to last for a bit.
+
+Can it steal bits from IOU_BUF_REGBUF_BITS?
 
 -- 
 Pavel Begunkov

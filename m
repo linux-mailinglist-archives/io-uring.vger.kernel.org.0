@@ -1,75 +1,74 @@
-Return-Path: <io-uring+bounces-4007-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4008-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9FE9AF315
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 21:57:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A48D9AF32A
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 21:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BECA7B220A9
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 19:57:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC6411F2182F
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 19:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA7E17333D;
-	Thu, 24 Oct 2024 19:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC9D1AB6CC;
+	Thu, 24 Oct 2024 19:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ETbCZj/V"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="UxUoZmpP"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F97619CC3A
-	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 19:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE0817333D
+	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 19:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729799780; cv=none; b=V2m1/REA9nEGzTMN+V7+BBXrFn9cW5TR1Ndwnmmao43ciMiQ/lDi+hixm218b07oZkzSpJhqNW2VMcOWmvijE2qWT4axSnP2/CRFAXDv7ZkOhfjPaeEdYHYrh/z/y4HfvPZyM6ZQ8ELCyPanFR+T8hW5Pahai27KVHCq77uoRRQ=
+	t=1729799978; cv=none; b=jxhLoC/WCs3dRM4me9S9V9EDCVKHd12haYPHmzgNs2URmqlFl7pUHYy/JfajzkOhMECgQxrUOBaeKe0PrppOyaF/niikAmaFynjumqSYAJ30uOEuzanmRSUwtNcPSaey+UXKR4xTm4KVntmtoiq5d/5ZwALmm8WyY1ia1WsvnV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729799780; c=relaxed/simple;
-	bh=VmIQlKmdRjCOjpV+zOFuLojiN1+WYuwoGQZCDFVZrxk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=t9gW9Sb9JiRJeC7/ebMjow8av3B8rXvnD8UQ9aalnfEtP6w+kdhxqVbXqM57W5mJaawdXNFD6M3g12snChxY/qEvdtlNWRWHCV0sbq60UEnUWA+yZ89aNguzbiwjcCOyZ9NRBid8sw6xwQIqtMSpgNwH7U+gLb0x3HDW5uJB4i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ETbCZj/V; arc=none smtp.client-ip=209.85.166.52
+	s=arc-20240116; t=1729799978; c=relaxed/simple;
+	bh=uRQyGavTq51O4q1N/Nc4y8ulVvCMnPegKNYRjTd52Ck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bElYtwm6NMpDALwrly9oJ86e5l7qlrTZQeGamjXMpjG2+1t2/Gje1lw4Y6LqtMAG1BJo5r5iNUGkScnN2Bm0BgbBnIyUL2CW3XRZAXIIgrn8Vy7IZGwghz1vFdsANj3tV1vp40y5wylVldDurk1DtNGPjLWFgKVs8H/mJxOfTTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=UxUoZmpP; arc=none smtp.client-ip=209.85.166.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-83ab94452a7so56871639f.3
-        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 12:56:16 -0700 (PDT)
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a3b7d95a11so4936135ab.2
+        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 12:59:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729799776; x=1730404576; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729799975; x=1730404775; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kMMaQla2XKMIkTHsq978UokkGPhyOoYjHH36iKWfbEk=;
-        b=ETbCZj/VgCque8CIRD5vGWAFeHjMA/sRhPHjhV9D33bqL2UE8UyTWnUmfifk4ZMIl4
-         fZ/t33j2g4mF7DEVxnXEJXAhwdBxJRw2yIiqqQ5OgTGOa9ETNPeXMzPBN71z9GhUp5Ol
-         wPAa6+/lkSPyge/Tk2bwJxo315iwQrMPYM9i+Z2kVU2PAAKYpsD3kL/mb91QU5RbpNBt
-         OhxbPdTQdgYk3hC5nqbQYen4Ccm4nVwIS4I/FsDaxeiD2ZqpPGpgiGqAot//9jFOKWLq
-         27bUyRon01UXw/NLcINo+lfsQxyJJE70ePNJwFI5R0xLv0Tv0hl5P2rzl+cVzT0Ni1W/
-         R0DA==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WqNQxPV8HusSw3eO39xbm77NcBgiOg0V0d5zUy9p86E=;
+        b=UxUoZmpP3tyaghOcsCr8PXRuMjVuBoo6nhIDFRXVHYBUKaqZkhBJ/sR+n5keS4CW/Q
+         UbOTAmgijFeADZervxbkPix3IM1py9pAQBEg1BLRhJym/ySKrFE/3G7g7XljDfKGSMNx
+         L+8iGfezWwim6sH2lBJXmQuzKLcMcXRhiDVabqavh/q6aEX9VtbyEOSHL7/Jb9V51nfb
+         55aUbaPfLGAFzbiagcsg/XQnU4iXXizZxZALcpgRwLsw+wNvtEKIsuVWZUZMwAeAC6rE
+         aWe9DHemiTjzJfTAxL8z1XNsTus3EgMnWZbGNF844zwqetd3/lqn80FMG93UVESGkoix
+         dZqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729799776; x=1730404576;
+        d=1e100.net; s=20230601; t=1729799975; x=1730404775;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kMMaQla2XKMIkTHsq978UokkGPhyOoYjHH36iKWfbEk=;
-        b=BR5TJOKm3wTzaMP07f+jnHIJqu6esdslz6bGOuDFu0YJEjhcl9InDKXrNpEcm5uz/U
-         SFNe+5UN0hT/D8dpF1C9GT1QBJ+6TKSnKRrUL5kOYd4wjXxp+heXs0+7UrfaGwvcls4a
-         zmgNOs9/FjQ2izVELB03b+TstjNmf8bqClElXvVjqZ93wnLTrhvQxdwEuAi4iTBWtIPk
-         cM0Qstk8u3hEiJ4vK5CTbcb38aSqrwXYhvqE8AgxpDUBIPA4s0PyYH5lJjkvBw6piB6p
-         tNvWGJdwlIUMKIFlOTShKjraTxkL8YdFsKBxNABPF6RObd6jZZKDRyMl+M9/AxvksE06
-         xL6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV7YnBDxVcRTVRUgWpOp6OKuKG/oBwGcpqVUU9mhNkDWvD5/MWuplpEidgIVVvrgCuM6C7sWMWfjw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAdXSyjdaEWbxRHTIYxzFhPVWu4R93Jcq/Am5L8WDzOuG8NusA
-	GoReVUMBK6izS2qqbgN2YRqlwuZcDMEq/zSzuDWnu5IoZ8PGl0KGFIDWrZVFo/1SZ3IGT3I8o8p
-	6
-X-Google-Smtp-Source: AGHT+IHYJhCgySxMBjkM5/UDl8g+BdWG4LUeXuVwUYHoaoo7DvRZdV9BHhvrMJXwIrHugQdNeFbVYg==
-X-Received: by 2002:a05:6602:2c94:b0:82d:16fa:52dd with SMTP id ca18e2360f4ac-83af6192782mr618844739f.7.1729799775757;
-        Thu, 24 Oct 2024 12:56:15 -0700 (PDT)
+        bh=WqNQxPV8HusSw3eO39xbm77NcBgiOg0V0d5zUy9p86E=;
+        b=ea4bDd3ToPSRY9WeXX794gdCtwv0f9oCxSv5UiiV58lD6sEr4N7JjTdiV8pNFvBSur
+         jJgcmLcutKJ6go6Opfhrfoz5DHgirKb7UdSbvMNj9e3AxlzUGa/zguB1m/5Zd1HRQhBp
+         rp4MQDX1cFPTCp7TOZ14SkdmyZVyuPx87lnzc9RIS0H/l9y2whgEznlI30t8Qf43PCgk
+         6oZ0D3YnKJM7iAvdQ8kePwv8EcPwEXh3OeDfH9grilYEiiVZP84Ga9besSv5Hn+CYpZh
+         SFEr01SFLQhUrQ+mGYdTVYL1D53qg0Lx2MegNE1rMhqAuHdq8kE6bXv8c+hpspWi66Ko
+         dIjw==
+X-Gm-Message-State: AOJu0YxRPc8rOkSAnmkTWXXyrmRNpJhWCfBbho+Q6pgdaqkZ3SZbWPuQ
+	4+ofPSg95RHkhINyqtNFBW2e6XOUKvUUmHwYbYD8JC3SUZdNa+DuY9GkbSpiN7lMtVK17ccDNHe
+	W
+X-Google-Smtp-Source: AGHT+IFrSMeoSv0cCUR8FtFr7R4hsc8/U7DYnNFRBer9JGeUujDLsElma3eYRO/4yPIF6VRsVw9wdg==
+X-Received: by 2002:a05:6e02:1fec:b0:3a0:b471:9651 with SMTP id e9e14a558f8ab-3a4de826f4dmr39977705ab.24.1729799974791;
+        Thu, 24 Oct 2024 12:59:34 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a6301ecsm2788104173.135.2024.10.24.12.56.14
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a400aaf56fsm32220945ab.33.2024.10.24.12.59.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 12:56:15 -0700 (PDT)
-Message-ID: <daeacc90-e5b4-471d-a79e-74ae10eb4aba@kernel.dk>
-Date: Thu, 24 Oct 2024 13:56:14 -0600
+        Thu, 24 Oct 2024 12:59:34 -0700 (PDT)
+Message-ID: <1384e3fe-d6e9-4d43-b992-9c389422feaa@kernel.dk>
+Date: Thu, 24 Oct 2024 13:59:33 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,68 +76,67 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] implement vectored registered buffers for sendzc
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <cover.1729650350.git.asml.silence@gmail.com>
- <b15e136f-3dbd-4d4e-92c5-103ecffe3965@kernel.dk>
- <bfbe577b-1092-47a2-ab6c-d358f55003dc@gmail.com>
- <28964ec6-34a7-49b8-88f5-7aaf0e1e4e3f@kernel.dk>
- <3e28f0bb-4739-40de-93c7-9b207d90d7c5@gmail.com>
- <3e6c3ff5-9116-4d50-9fa8-aae85ad24abc@kernel.dk>
- <3376be3e-e5c4-4fbb-95bb-b3bcd0e9bd8b@gmail.com>
- <67f9a2b9-f2bd-4abd-a4a5-c1c5e8beda61@kernel.dk>
- <d8da2a22-948b-4837-a69a-e9e91e37feec@gmail.com>
+Subject: Re: [PATCH 4/4] io_uring/register: add IORING_REGISTER_RESIZE_RINGS
+To: Jann Horn <jannh@google.com>
+Cc: io-uring@vger.kernel.org
+References: <20241024170829.1266002-1-axboe@kernel.dk>
+ <20241024170829.1266002-5-axboe@kernel.dk>
+ <CAG48ez3kqabFd3F6r8H7eRnwKg7GZj_bRu5CoNAjKgWr9k=GZw@mail.gmail.com>
+ <aaa3a0f3-a4f8-4e99-8143-1f81a5e39604@kernel.dk>
+ <CAG48ez3KJwLr8REE8hPebWtkAF6ybEGQtRnEXYYKKJKbbDYbSg@mail.gmail.com>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <d8da2a22-948b-4837-a69a-e9e91e37feec@gmail.com>
+In-Reply-To: <CAG48ez3KJwLr8REE8hPebWtkAF6ybEGQtRnEXYYKKJKbbDYbSg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/24/24 12:13 PM, Pavel Begunkov wrote:
-> On 10/24/24 19:00, Jens Axboe wrote:
->> On 10/24/24 11:56 AM, Pavel Begunkov wrote:
->>> On 10/24/24 18:19, Jens Axboe wrote:
->>>> On 10/24/24 10:06 AM, Pavel Begunkov wrote:
->>>>> On 10/24/24 16:45, Jens Axboe wrote:
-> ...>>>> Seems like you're agreeing but then stating the opposite, there
->>>>> is some confusion. I'm saying that IMHO the right API wise way
->>>>> is resolving an imu at issue time, just like it's done for fixed
->>>>> files, and what your recent series did for send zc.
->>>>
->>>> Yeah early morning confusion I guess. And I do agree in principle,
->>>> though for registered buffers, those have to be registered upfront
->>>> anyway, so no confusion possible with prep vs issue there. For provided
->>>> buffers, it only matters for the legacy ones, which generally should not
->>>> be used. Doesn't change the fact that you're technically correct, the
->>>> right time to resolve them would be at issue time.
+On 10/24/24 1:53 PM, Jann Horn wrote:
+> On Thu, Oct 24, 2024 at 9:50?PM Jens Axboe <axboe@kernel.dk> wrote:
+>> On 10/24/24 12:13 PM, Jann Horn wrote:
+>>> On Thu, Oct 24, 2024 at 7:08?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>> Add IORING_REGISTER_RESIZE_RINGS, which allows an application to resize
+>>>> the existing rings. It takes a struct io_uring_params argument, the same
+>>>> one which is used to setup the ring initially, and resizes rings
+>>>> according to the sizes given.
+>>> [...]
+>>>> +        * We'll do the swap. Clear out existing mappings to prevent mmap
+>>>> +        * from seeing them, as we'll unmap them. Any attempt to mmap existing
+>>>> +        * rings beyond this point will fail. Not that it could proceed at this
+>>>> +        * point anyway, as we'll hold the mmap_sem until we've done the swap.
+>>>> +        * Likewise, hold the completion * lock over the duration of the actual
+>>>> +        * swap.
+>>>> +        */
+>>>> +       mmap_write_lock(current->mm);
 >>>
->>> I'm talking about sendmsg with iovec. Registered buffers should
->>> be registered upfront, that's right, but iovec should be copied
->>> at prep, and finally resolved into bvecs incl the imu/buffer lookup
->>> at the issue time. And those are two different points in time,
->>> maybe because of links, draining or anything else. And if they
->>> should be at different moments, there is no way to do it while
->>> copying iovec.
+>>> Why does the mmap lock for current->mm suffice here? I see nothing in
+>>> io_uring_mmap() that limits mmap() to tasks with the same mm_struct.
 >>
->> Oh I totally follow, the incremental approach would only work if it can
->> be done at prep time. If at issue time, then it has to turn an existing
->> iovec array into the appropriate bvec array. And that's where you'd have
->> to do some clever bits to avoid holding both a full bvec and iovec array
->> in memory, which would be pretty wasteful/inefficient. If done at issue
+>> Ehm does ->mmap() not hold ->mmap_sem already? I was under that
+>> understanding. Obviously if it doesn't, then yeah this won't be enough.
+>> Checked, and it does.
+>>
+>> Ah I see what you mean now, task with different mm. But how would that
+>> come about? The io_uring fd is CLOEXEC, and it can't get passed.
 > 
-> Why would it be wasteful and inefficient? No more than jumping
-> though that incremental infra for each chunk, doubling the size
-> of the array / reallocating / memcpy'ing it, instead of a tight
-> loop doing the entire conversion.
+> Yeah, that's what I meant, tasks with different mm. I think there are
+> a few ways to get the io_uring fd into a different task, the ones I
+> can immediately think of:
+> 
+>  - O_CLOEXEC only applies on execve(), fork() should still inherit the fd
+>  - O_CLOEXEC can be cleared via fcntl()
+>  - you can use clone() to create two tasks that share FD tables
+> without sharing an mm
 
-Because it would prevent doing an iovec at-the-time import, then turning
-it into the desired bvec. That's one loop instead of two. You would have
-the space upfront, there should be no need to realloc+memcpy. And then
-there's the space concern, where the initial import is an iovec, and
-then you need a bvec. For 64-bit that's fine as they take up the same
-amount of space, but for 32-bit it'd make incremental importing from a
-stable iovec to a bvec array a bit more tricky (and would need realloc,
-unless you over-alloc'ed for the iovec array upfront).
+OK good catch, yes then it won't be enough. Might just make sense to
+exclude mmap separately, then. Thanks, I'll work on that for v4!
+Probably trivial enough with just a separate mutex that's held over
+mmap, and that register grabs too. Basically replacing mmap_write_lock()
+on the resize side with ctx->mmap_lock, and grabbing that over
+validate/mmap on the io_uring mmap side. Need to ponder the implications
+of that in terms of how the locks nest, as you'd have mmap_sem ->
+ctx->mmap_lock, but the other way around for resizing. But that should
+just be for the pinning parts, which is why it does the mmap_sem
+grabbing where it does right now.
 
 -- 
 Jens Axboe

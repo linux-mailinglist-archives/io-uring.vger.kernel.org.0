@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-4013-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4014-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF75E9AF4F8
-	for <lists+io-uring@lfdr.de>; Fri, 25 Oct 2024 00:00:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 036FF9AF526
+	for <lists+io-uring@lfdr.de>; Fri, 25 Oct 2024 00:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19DDEB20E68
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 22:00:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B3641F22ACB
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 22:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A5822B667;
-	Thu, 24 Oct 2024 22:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E4C217320;
+	Thu, 24 Oct 2024 22:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="m1SDoowK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+WXq7D7"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C3722B67F
-	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 22:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D372178F2
+	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 22:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729807242; cv=none; b=rpPQngJCPdSexXPikEMAYe/e96QAvg4ANBDV5t15L0A+KF7Lc+v9tdeDRw8rH801SZGrdE8tWSW7xTgQQKDngyK0ug82EofnsTrcnBMKbArmSdMANF0aaMhPjkQ/wCM3/btCu7auRpukbFnsdWwNsl4ChtRkp09YLQWqFGz2whE=
+	t=1729808039; cv=none; b=GD4tZeKHG7Ma6UguPnU/NsUX5K2xdQ4hrKK6R7d9Gj/vi0Iv1fDhQ2q3L6IkGcMNMAqxV0BobERB+ghvkCVcY1mPCC+cBJIJerPKO+NRLI8ULd9HPIje4LR9klGBRca0wIYHcphWaHxYBBa8peaeNpx9ju7fcsEVRM5Uq0AK5Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729807242; c=relaxed/simple;
-	bh=a9PVuWIdeyUhxvrKzRL3GLGPxz0m11iVGlnuETc/eFo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=f9wUlA2G2hmLDIPxSPQ2s0Ne62PMcPv7oDZMc8QE/cdGmfzd5/2SFN91BtXi1laEg1SbwjetCxMvOkBj/zBxmLYHuYxR4T6qA1gAwYgVb7uF9w5uRtwle1JwSrnqSMExOSPdemaFvYOTtZ4Mm+GNUdPdi7HS4v1rqZL4FYQU2BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=m1SDoowK; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c77459558so11292035ad.0
-        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 15:00:38 -0700 (PDT)
+	s=arc-20240116; t=1729808039; c=relaxed/simple;
+	bh=po5ehJnb+7rP+GK7VYUm+dex1qNN9qSIiZ8NawvUPIk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GofkX5BRFgQTHmG5yRf0uRsrAh6hD9SLYmYR3Iaqhf/13hLxif0oOiFn0BxgSKydLOJkZLhwBWe2vhP+Ly9BEUDkejrMKEgKf/5wz9hAyWQhgKnAFpSxv7GEZNXd9XUNXpGGOmNbqAJc0rSMUp+aUZuptkEQ2cfn88gh/SpABPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+WXq7D7; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so1421367e87.3
+        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 15:13:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729807237; x=1730412037; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KCNplL8u+f3ol8PhFpZjb61DxvneF5Xxcoa8hntzeI8=;
-        b=m1SDoowKLfzvUKs92X6QAg8UGNPurE+nS6S+dyVrYH5ry8xpVRhmgHGxmrb8jkAclp
-         QkRSIsJm10BjF1eId2QffAroG7txnLp7Te4AJd+fXqzp0dTFG+G9/zWP4jobC/rjL0J7
-         pw7H9z8cyJOI3W73jmw7fl+1Q+K3dF1heZlZ1EG3PzK5RzeXxDMm8rFSyTCo9h/ky577
-         N+vDLCuldxsRuoNMPzSWwgobgrT4dbW5EVKqEKKlNg9wmgixyp1s6Nj/P+DrUNRGXMNW
-         yhja/ibJ/tqRTzTZNhZxZtCTil7ZvA6sD8CiUZ/YtYceWptAgkU+zRnmfs+eV/qLW006
-         nwwA==
+        d=gmail.com; s=20230601; t=1729808035; x=1730412835; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=sFw2J2mL4WOYJo9lC4QSyavZpjOp0c0IrgvtMNHB3r4=;
+        b=R+WXq7D7yXwX5ngc2UYxPSZYttH2TIU0077iRMsVAxlm8zmrpt3vXc8j6OdRlLnrnM
+         ElPPxWlcP4dxHOkmH+Xbxy47qXRoacTcba6hx3ZJLvhfgCocm0W3fA3SxQuMoOhfiHzP
+         JhpQR6X2/kqGubzYewLoU5PW76j/mRqvSunO8zgoQNI/qIbiR2kQrg4agBPy7378orCl
+         AAtD4kNsUaJTHMtu+cFxG4XjZ4VI3NnmGrrSKAe+uAchSbtx8crparfHvVRo2GZa4M/1
+         Pi+EJcokLIpp9S1XDwyCn3nsOugwR9KgjG+odG314wDz0eLLD7EwWWuQyVEPLhraStd0
+         g+Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729807237; x=1730412037;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1729808035; x=1730412835;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KCNplL8u+f3ol8PhFpZjb61DxvneF5Xxcoa8hntzeI8=;
-        b=dbuVqkwjnzT7lHWQCtdl+s1sB3ZhsrCE8cfZeNshu4X2KfSQwNANOSba7SlIxjsz+P
-         yVD+jobktDmZ24cixs5ejhq0TgIyyNy7rDCNA/3sCjp/1dGSw9WM8OiMEoDg92YxIs/x
-         Qh2jetC7roa6HnHdraQtu6eciy8q7ZOTT9PqMmrHOPPbVIjZ4LiPenXRJ93NgB21c5ge
-         X65mrUjk35ihCeCXSX5MKLsi2Y9wnIYmV61FXYHTK6+Db54fkb9uxG6KhX2Rz98+qL7R
-         lnMF4Uei/oIux8CJ1g7+ikEeor3xGTymdVimzo80T8Cg1YoMRvcMORDER96cDBwIT8n+
-         DZyw==
-X-Gm-Message-State: AOJu0YxSgDkK5xTAxBk6abqn+bCgQmd8NkNl+y4qGeQ37lMKzfSH7mYA
-	LxlsRoG+dmymAQSMXGTOC+lNzfCc9sjt7mgdKbmKEKplL5DBMQ4gDd5E8GaybIyjxIZDVWrckT1
-	1
-X-Google-Smtp-Source: AGHT+IFnsTDEu9901HwDyX1wLhB7K0vSuEPK3se7fLDkiB4AM963FVsTn0Wi1M8sFwsV0z3De8GP/g==
-X-Received: by 2002:a17:903:990:b0:20c:af5c:fc90 with SMTP id d9443c01a7336-20fa9ea36bcmr103634535ad.49.1729807237532;
-        Thu, 24 Oct 2024 15:00:37 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee6538sm76716495ad.47.2024.10.24.15.00.36
+        bh=sFw2J2mL4WOYJo9lC4QSyavZpjOp0c0IrgvtMNHB3r4=;
+        b=Z0hUzpMoxvKPSiLf9TVm76hMwM72B6GqA6xFfnbNmlPpM3rSIjN651nYFFYtQvsX/E
+         NtOaJdQX3vBJPqmTMReIEHpz69f5sGDiNh7PmSyvLRS9EQvL1LkpHYog3DFOZiY1guQ+
+         1r6wUEiRlD55KwQERUYBiRlF29FqOJjWX3+bhZOOAu44pyXg9OxFUUXroz2xtGrqVTN1
+         a7QU+n37WwG6lZKo9luMbde78IcbkzMyo54z/4P96BthzsfAaSx4t/RLgcm5vla5In2n
+         y+GjDmsCiT3opdLHSt7BjLSD+tbkLQPc8hMPcN03Fdlszv9iLRJ3b5xlpz/0ew+7p55q
+         +few==
+X-Forwarded-Encrypted: i=1; AJvYcCVKn94Xcy7lZ5oDmA612Aphy3Lym9kCZzY1NWrshfa+9zUhRMAdYjsZemdqTXLpm2Piak1S/O7qKQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWz76ajbDQ8IXMqsrEvQnnV2o2hZ+xlgFlM2WAJPPkPpT6Qtlq
+	00ewZQjnDvNShXOdO20NrSHsKimp1xeCBZ2Q4mtuRB/gE3bjKxxbfx+LKA==
+X-Google-Smtp-Source: AGHT+IHZM50lyVZN7uVv4FJPwT6NPdmlHaDIxHdysd4FAeox191HxoEklu/pHPVgNIxq0s40mKVqGw==
+X-Received: by 2002:a05:6512:3b86:b0:539:f468:a51c with SMTP id 2adb3069b0e04-53b23e9f955mr2302784e87.52.1729808035248;
+        Thu, 24 Oct 2024 15:13:55 -0700 (PDT)
+Received: from [192.168.42.26] ([85.255.233.224])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66a6d798sm6344024a12.50.2024.10.24.15.13.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 15:00:37 -0700 (PDT)
-Message-ID: <1117c5c4-88b7-45f5-a0c2-100dad801444@kernel.dk>
-Date: Thu, 24 Oct 2024 16:00:36 -0600
+        Thu, 24 Oct 2024 15:13:54 -0700 (PDT)
+Message-ID: <4f38ca15-a341-4d93-80eb-18f79fdd6664@gmail.com>
+Date: Thu, 24 Oct 2024 23:14:28 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,155 +76,81 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] io_uring/register: add IORING_REGISTER_RESIZE_RINGS
-From: Jens Axboe <axboe@kernel.dk>
-To: Jann Horn <jannh@google.com>
-Cc: io-uring@vger.kernel.org
-References: <20241024170829.1266002-1-axboe@kernel.dk>
- <20241024170829.1266002-5-axboe@kernel.dk>
- <CAG48ez3kqabFd3F6r8H7eRnwKg7GZj_bRu5CoNAjKgWr9k=GZw@mail.gmail.com>
- <aaa3a0f3-a4f8-4e99-8143-1f81a5e39604@kernel.dk>
- <CAG48ez3KJwLr8REE8hPebWtkAF6ybEGQtRnEXYYKKJKbbDYbSg@mail.gmail.com>
- <1384e3fe-d6e9-4d43-b992-9c389422feaa@kernel.dk>
- <CAG48ez2iUrx7SauNXL3wAHHr7ceEv8zGNcaAiv+u2T8_cDO7HA@mail.gmail.com>
- <a55927a1-fa68-474c-a55b-9def6197fc93@kernel.dk>
- <CAG48ez2MJDzx4e8r6AQJMVr9C8BC+-k1OoK8as0S7RD3vh8f6A@mail.gmail.com>
- <d107ca88-3dc9-4fdd-8f19-235fdfaa6529@kernel.dk>
+Subject: Re: [PATCH 0/4] implement vectored registered buffers for sendzc
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <cover.1729650350.git.asml.silence@gmail.com>
+ <b15e136f-3dbd-4d4e-92c5-103ecffe3965@kernel.dk>
+ <bfbe577b-1092-47a2-ab6c-d358f55003dc@gmail.com>
+ <28964ec6-34a7-49b8-88f5-7aaf0e1e4e3f@kernel.dk>
+ <3e28f0bb-4739-40de-93c7-9b207d90d7c5@gmail.com>
+ <3e6c3ff5-9116-4d50-9fa8-aae85ad24abc@kernel.dk>
+ <3376be3e-e5c4-4fbb-95bb-b3bcd0e9bd8b@gmail.com>
+ <67f9a2b9-f2bd-4abd-a4a5-c1c5e8beda61@kernel.dk>
+ <d8da2a22-948b-4837-a69a-e9e91e37feec@gmail.com>
+ <daeacc90-e5b4-471d-a79e-74ae10eb4aba@kernel.dk>
 Content-Language: en-US
-In-Reply-To: <d107ca88-3dc9-4fdd-8f19-235fdfaa6529@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <daeacc90-e5b4-471d-a79e-74ae10eb4aba@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/24/24 3:08 PM, Jens Axboe wrote:
-> On 10/24/24 2:32 PM, Jann Horn wrote:
->> On Thu, Oct 24, 2024 at 10:25?PM Jens Axboe <axboe@kernel.dk> wrote:
->>> On 10/24/24 2:08 PM, Jann Horn wrote:
->>>> On Thu, Oct 24, 2024 at 9:59?PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>> On 10/24/24 1:53 PM, Jann Horn wrote:
->>>>>> On Thu, Oct 24, 2024 at 9:50?PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>>> On 10/24/24 12:13 PM, Jann Horn wrote:
->>>>>>>> On Thu, Oct 24, 2024 at 7:08?PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>>>>> Add IORING_REGISTER_RESIZE_RINGS, which allows an application to resize
->>>>>>>>> the existing rings. It takes a struct io_uring_params argument, the same
->>>>>>>>> one which is used to setup the ring initially, and resizes rings
->>>>>>>>> according to the sizes given.
->>>>>>>> [...]
->>>>>>>>> +        * We'll do the swap. Clear out existing mappings to prevent mmap
->>>>>>>>> +        * from seeing them, as we'll unmap them. Any attempt to mmap existing
->>>>>>>>> +        * rings beyond this point will fail. Not that it could proceed at this
->>>>>>>>> +        * point anyway, as we'll hold the mmap_sem until we've done the swap.
->>>>>>>>> +        * Likewise, hold the completion * lock over the duration of the actual
->>>>>>>>> +        * swap.
->>>>>>>>> +        */
->>>>>>>>> +       mmap_write_lock(current->mm);
->>>>>>>>
->>>>>>>> Why does the mmap lock for current->mm suffice here? I see nothing in
->>>>>>>> io_uring_mmap() that limits mmap() to tasks with the same mm_struct.
->>>>>>>
->>>>>>> Ehm does ->mmap() not hold ->mmap_sem already? I was under that
->>>>>>> understanding. Obviously if it doesn't, then yeah this won't be enough.
->>>>>>> Checked, and it does.
->>>>>>>
->>>>>>> Ah I see what you mean now, task with different mm. But how would that
->>>>>>> come about? The io_uring fd is CLOEXEC, and it can't get passed.
->>>>>>
->>>>>> Yeah, that's what I meant, tasks with different mm. I think there are
->>>>>> a few ways to get the io_uring fd into a different task, the ones I
->>>>>> can immediately think of:
->>>>>>
->>>>>>  - O_CLOEXEC only applies on execve(), fork() should still inherit the fd
->>>>>>  - O_CLOEXEC can be cleared via fcntl()
->>>>>>  - you can use clone() to create two tasks that share FD tables
->>>>>> without sharing an mm
+On 10/24/24 20:56, Jens Axboe wrote:
+> On 10/24/24 12:13 PM, Pavel Begunkov wrote:
+>> On 10/24/24 19:00, Jens Axboe wrote:
+>>> On 10/24/24 11:56 AM, Pavel Begunkov wrote:
+>>>> On 10/24/24 18:19, Jens Axboe wrote:
+>>>>> On 10/24/24 10:06 AM, Pavel Begunkov wrote:
+>>>>>> On 10/24/24 16:45, Jens Axboe wrote:
+>> ...>>>> Seems like you're agreeing but then stating the opposite, there
+>>>>>> is some confusion. I'm saying that IMHO the right API wise way
+>>>>>> is resolving an imu at issue time, just like it's done for fixed
+>>>>>> files, and what your recent series did for send zc.
 >>>>>
->>>>> OK good catch, yes then it won't be enough. Might just make sense to
->>>>> exclude mmap separately, then. Thanks, I'll work on that for v4!
+>>>>> Yeah early morning confusion I guess. And I do agree in principle,
+>>>>> though for registered buffers, those have to be registered upfront
+>>>>> anyway, so no confusion possible with prep vs issue there. For provided
+>>>>> buffers, it only matters for the legacy ones, which generally should not
+>>>>> be used. Doesn't change the fact that you're technically correct, the
+>>>>> right time to resolve them would be at issue time.
 >>>>
->>>> Yeah, that sounds reasonable to me.
+>>>> I'm talking about sendmsg with iovec. Registered buffers should
+>>>> be registered upfront, that's right, but iovec should be copied
+>>>> at prep, and finally resolved into bvecs incl the imu/buffer lookup
+>>>> at the issue time. And those are two different points in time,
+>>>> maybe because of links, draining or anything else. And if they
+>>>> should be at different moments, there is no way to do it while
+>>>> copying iovec.
 >>>
->>> Something like this should do it, it's really just replacing mmap_sem
->>> with a ring private lock. And since the ordering already had to deal
->>> with uring_lock vs mmap_sem ABBA issues, this should slot straight in as
->>> well.
+>>> Oh I totally follow, the incremental approach would only work if it can
+>>> be done at prep time. If at issue time, then it has to turn an existing
+>>> iovec array into the appropriate bvec array. And that's where you'd have
+>>> to do some clever bits to avoid holding both a full bvec and iovec array
+>>> in memory, which would be pretty wasteful/inefficient. If done at issue
 >>
->> Looks good to me at a glance.
+>> Why would it be wasteful and inefficient? No more than jumping
+>> though that incremental infra for each chunk, doubling the size
+>> of the array / reallocating / memcpy'ing it, instead of a tight
+>> loop doing the entire conversion.
 > 
-> Great, thanks for checking Jann. In the first place as well, appreciate
-> it.
-> 
-> FWIW, compiled and ran through the testing, looks fine so far here.
+> Because it would prevent doing an iovec at-the-time import, then turning
+> it into the desired bvec. That's one loop instead of two. You would have
+> the space upfront, there should be no need to realloc+memcpy. And then
+> there's the space concern, where the initial import is an iovec, and
+> then you need a bvec. For 64-bit that's fine as they take up the same
+> amount of space,
 
-And also fwiw, I did write a test case for this, and it goes boom pretty
-quickly without the patch, no issues with the patch. Sample output:
+That's not true, each iov can produce multiple bvec entries so
+iovs might get overwritten if you do it the simplest way.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in vm_insert_pages+0x634/0x73c
-Read of size 8 at addr ffff0000d8a264e0 by task resize-rings.t/741
+> but for 32-bit it'd make incremental importing from a
+> stable iovec to a bvec array a bit more tricky (and would need realloc,
+> unless you over-alloc'ed for the iovec array upfront).
 
-CPU: 5 UID: 1000 PID: 741 Comm: resize-rings.t Not tainted 6.12.0-rc4-00082-g0935537ea92a #7661
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- dump_backtrace.part.0+0xd0/0xe0
- show_stack+0x14/0x1c
- dump_stack_lvl+0x68/0x8c
- print_report+0x16c/0x4c8
- kasan_report+0xa0/0xe0
- __asan_report_load8_noabort+0x1c/0x24
- vm_insert_pages+0x634/0x73c
- io_uring_mmap_pages+0x1d4/0x2d8
- io_uring_mmap+0x19c/0x1c0
- mmap_region+0x844/0x19e0
- do_mmap+0x5f4/0xb00
- vm_mmap_pgoff+0x164/0x2a0
- ksys_mmap_pgoff+0x2a8/0x3c0
- __arm64_sys_mmap+0xc8/0x140
- invoke_syscall+0x6c/0x260
- el0_svc_common.constprop.0+0x158/0x224
- do_el0_svc+0x3c/0x5c
- el0_svc+0x44/0xb4
- el0t_64_sync_handler+0x118/0x124
- el0t_64_sync+0x168/0x16c
-
-Allocated by task 733:
- kasan_save_stack+0x28/0x4c
- kasan_save_track+0x1c/0x40
- kasan_save_alloc_info+0x3c/0x4c
- __kasan_kmalloc+0xac/0xb0
- __kmalloc_node_noprof+0x1b4/0x3f0
- __kvmalloc_node_noprof+0x68/0x134
- io_pages_map+0x50/0x448
- io_register_resize_rings+0x484/0x1498
- __arm64_sys_io_uring_register+0x780/0x1f3c
- invoke_syscall+0x6c/0x260
- el0_svc_common.constprop.0+0x158/0x224
- do_el0_svc+0x3c/0x5c
- el0_svc+0x44/0xb4
- el0t_64_sync_handler+0x118/0x124
- el0t_64_sync+0x168/0x16c
-
-Freed by task 733:
- kasan_save_stack+0x28/0x4c
- kasan_save_track+0x1c/0x40
- kasan_save_free_info+0x48/0x94
- __kasan_slab_free+0x48/0x60
- kfree+0x120/0x494
- kvfree+0x34/0x40
- io_pages_unmap+0x1a4/0x308
- io_register_free_rings.isra.0+0x6c/0x168
- io_register_resize_rings+0xce4/0x1498
- __arm64_sys_io_uring_register+0x780/0x1f3c
- invoke_syscall+0x6c/0x260
- el0_svc_common.constprop.0+0x158/0x224
- do_el0_svc+0x3c/0x5c
- el0_svc+0x44/0xb4
- el0t_64_sync_handler+0x118/0x124
- el0t_64_sync+0x168/0x16c
-
-The buggy address belongs to the object at ffff0000d8a264e0
- which belongs to the cache kmalloc-cg-8 of size 8
-The buggy address is located 0 bytes inside of
- freed 8-byte region [ffff0000d8a264e0, ffff0000d8a264e8)
+And that's not true, you can still well do it in place if
+iovec is placed right in the memory, which I explicitly
+noted there are simple enough ways to do it in place
+without extra reallocs.
 
 -- 
-Jens Axboe
+Pavel Begunkov
 

@@ -1,182 +1,117 @@
-Return-Path: <io-uring+bounces-3988-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3989-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1549AEC60
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 18:39:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA08D9AED2F
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 19:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89DE42835D3
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 16:39:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD7951C20911
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 17:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388711F8182;
-	Thu, 24 Oct 2024 16:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C241DD0D9;
+	Thu, 24 Oct 2024 17:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqb2EFEG"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mwQXq0t+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA30C15A87C;
-	Thu, 24 Oct 2024 16:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58603167DAC
+	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 17:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729787973; cv=none; b=Ev92wJV3edpNDry8PviHM+muqfojmG7O+znkASGXLbKRPmMRcnRPSMmNDnsexkvAW7lw2mMwGNVA8xZq5ki8DvN66YGvl2KiFSDUBf+phxD5zk40rsfsg2ck+Wyux4bjoYC+Fy5boPBCCtOwHeWXxiQi4NrJSxJ8qb3dbbry9aA=
+	t=1729789719; cv=none; b=IdIdeJ7rjOrMsRHzSXPH/942igUCRHPGWK12qRAmZce6lPArMKqhkjLkauaRVqkFtDdKMpZUQWu/GXTKcUvUNcWGyVxFMaUD7s972CTHlpIe6hlN2oYVEOQeRjDYXEhugcWgEonhMEQyjyWOGQ6zhblqz67dksJGf0UhqZ0stiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729787973; c=relaxed/simple;
-	bh=6ry637uavt5WOAjtjyuH5D5Vgw17qL4+QLHAwx2063g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r6scwuV17lkeZxpvBA/tOFylAKo2B/AYLNN7QTuZ67/EmgZhQzUyaTjFZL3jY19eoN82AFZjCXfcDHn/dwULtSf50psmoC1z1AHSvngOMpkcMlNjSHet13UGHh788lvD0j9CcGchLD92N2RQEqN0eQFB3R8iY7b7gBYQv85b0SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cqb2EFEG; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f1292a9bso1474969e87.2;
-        Thu, 24 Oct 2024 09:39:30 -0700 (PDT)
+	s=arc-20240116; t=1729789719; c=relaxed/simple;
+	bh=GZSP2Jqmj+cb5A9s36PXgauQuS0PqxgHTtekIrEFWZg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KfdX4rahwxhAJWtNPxlZrK3KkEPuRfOCDCQawA+0SZJVRpmzLGrPqAhtLKn22MOTjTkpJSM2pvoeHM4HXWDrjdk5QoTCuMMLqcw4Dv+6rNMm22Ig0NvTwAmdcAWeihAJoiRbpQv3y65io3f0g3iEfGI9xf+NbautTsgKeOL2pJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mwQXq0t+; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a3b0247d67so4488695ab.3
+        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 10:08:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729787969; x=1730392769; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BZaWT76KQAhb/SdvegV291/fD/GVxdusDKkbeX6aAyw=;
-        b=cqb2EFEG8AeUPc3LxFMYXT4XpM2DnxLDQzT6PwcDxBrRwJdFltHmSXL5g8rvbuhndS
-         xzHFlVnxfpk2ALREHeFnfMAB94Iuer0PHN9+BxnjEllAh/gRxsoij0gH5EuPA5QoMIM0
-         6jh1j47oLgpveJFh3zgrLpV2H3RrCPQcQCYGaQwke8ciuWPhJzdetOtWXIQKppyXOxpg
-         kUCD1z8Ais48Fkz+I87Sn/Xp2XFfqQwDL3eOGe6FFcmsZsLIC/Pn8NH6Sp7AXtawy2r8
-         2nLOP5yOY9C+lUOz7zz/4oJqJ9xgXG4sZ02uGJYfikJ2r8t1EQi9+/iCC+g2w3SoGZ2h
-         yI0w==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729789714; x=1730394514; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jAFTHjQtWkTk45Itv2lVcGVjShmEQvDpnfV4iMtY4Wc=;
+        b=mwQXq0t+mdWpEfv0eguX7nPxIfxKLORRyecRWyIxDClNEUjlCHEVaIQk+2qlKuhwD/
+         E4KDGw0KjEdudWHwlRhxn2nfVXyWbgCZC5nkEvTtTcNa8uDXhxu5TM1BN2VsZvryFjME
+         jA7wqWAKgF7wBTrIcEqcldBrLUpGucljm/xJlDPIvZDFSSW7UM1tQo0xnAwjthSFl2qJ
+         fRKtvpTKEm5kUiCIpo5J9dxzQpVKvr6LNURJQsPMsQv8+XDLMQDIq3I5GisD/njcqqIx
+         rlOvSsSs50BOEpT4KiIR5fjDRs7pIqRUf6j/aT5RePraDeptczRpNQuUe/p8fi4X2Rsl
+         nXAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729787969; x=1730392769;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BZaWT76KQAhb/SdvegV291/fD/GVxdusDKkbeX6aAyw=;
-        b=KuVZGevo1RMLiW6Reg+/0dgfhptx1VC+ODQISJpJXFW6Sci22Y7v3Onarx6R/XFv5H
-         4zDCdoD//T7tBhALEpZMq6wvPxXFWrsuCf1E2df2Uoz8ogluG771K4WkXhQTfHQdMfku
-         HR0HT5VlMMPs2MsUenpqtQwN6E68b/L5bcbh3NoRAmu5Qm/25yaUAqHWXnrLXJLIc7kM
-         p0AxIxsyFhnjfgaJqGavTiw+KyOJ+slJVWYhuJJuvPCJJwIFRZuER50FKctI9YNHuoFk
-         RJ+9wZ4YR962G/6stEgWg48gx5yQmg4PiCSwe9JZAq26dXb5eLEXDhRtMR3w7w7C8wWJ
-         f5cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwKvG67lWj6s2CEdAsLCSg9FYD7NUrg1hTJovCI/FZE5qTN4UinWHjrzKAh+oU1NhgwaBE8F8DlFArFcs=@vger.kernel.org, AJvYcCXbjZ5symdonmTrWeIL/0NwEhVqIIRLC0kFi32zgkxJ//AVCGSsGMJPakM+elVLMWVEJoGENKzcvw==@vger.kernel.org, AJvYcCXpp1reyxNPsU1JWMAeEAL+TJhbLuqwuCHCi/Tq+hHO7VWAiLNjqXu1QCmglNybdnQn+HarRTDA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfpcozhqTO2ifEPM/4BjyjrIcPLvlswcZByH05R7N+TYrezjLP
-	XDWmJdQtFICkofCOzj90mxwFj3lyBvb//+mzEDJYKhAGPTZXC6ym
-X-Google-Smtp-Source: AGHT+IGM2QIH1fkpvyL5zXwnzN1P9Fzl21jQNKRhYToOjYGnjYn96eDsd7Ox+gI2AzCZSLVIBZlJbw==
-X-Received: by 2002:a05:6512:281b:b0:539:dca9:19a2 with SMTP id 2adb3069b0e04-53b23e69518mr1724653e87.39.1729787968611;
-        Thu, 24 Oct 2024 09:39:28 -0700 (PDT)
-Received: from [192.168.42.27] ([85.255.233.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d638fsm645929366b.18.2024.10.24.09.39.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 09:39:28 -0700 (PDT)
-Message-ID: <de9ae678-258d-4f68-86e1-59d5eb4b70a4@gmail.com>
-Date: Thu, 24 Oct 2024 17:40:02 +0100
+        d=1e100.net; s=20230601; t=1729789714; x=1730394514;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jAFTHjQtWkTk45Itv2lVcGVjShmEQvDpnfV4iMtY4Wc=;
+        b=s4J1+SK2gYmDHEKAM1xvRzmRz+6Lv4zhIbUyB0gvGh8ccDNVJPhCiCq2mlwQxe/kE/
+         N8GrlfeGFMfY2VrhcLpGIcDkhqndb+82ihfLyfYvV4hqODvSUwOoCR0EUql5oMdwKBWd
+         mmQwqvBsLSu6RoQxIq8D3KbukH461uSfFc1vaLFZfSQReSYVY64iiLRKtfVU6Y93NjBh
+         XYYLllBIzShVA+Y81g8vpZjtm4MZcMjBgvWDTgKv6fg6726KcGTtL/uCzF/i/hqvXg26
+         FFGp9TDNV4QpByS0vWXXL0e7ZGsqBBPf5GigDlVNKZczEhtkCBcepZ461egUCy6i2sAe
+         ZjeA==
+X-Gm-Message-State: AOJu0YxlhKjhZ40UXhGG+YyvyFn9IJbOvqoA5NDzvp0h2t+rsH9rB+I5
+	Q/8ISMzSlw47/K+t/kEtgaqCedReA/elM8ePEsHm1GUKGzN0NC/IYWIt1kayEY9SZcste44m2/a
+	c
+X-Google-Smtp-Source: AGHT+IGqOkqT0IBFrlYde6N6UJolN+yfJZtri74CnqgR1TEjsindBUGZguYjxytyC7mVNt3Y83dhtg==
+X-Received: by 2002:a05:6e02:12cd:b0:3a3:67b1:3080 with SMTP id e9e14a558f8ab-3a4d595c67amr73045415ab.7.1729789713807;
+        Thu, 24 Oct 2024 10:08:33 -0700 (PDT)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a400b63981sm31368045ab.67.2024.10.24.10.08.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 10:08:33 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org
+Cc: jannh@google.com
+Subject: [PATCHSET v3 0/4] Add support for ring resizing
+Date: Thu, 24 Oct 2024 11:07:35 -0600
+Message-ID: <20241024170829.1266002-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 02/15] net: generalise net_iov chunk owners
-To: Christoph Hellwig <hch@infradead.org>
-Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org
-References: <20241016185252.3746190-1-dw@davidwei.uk>
- <20241016185252.3746190-3-dw@davidwei.uk> <ZxijxiqNGONin3IY@infradead.org>
- <264c8f95-2a69-4d49-8af6-d035fa890ef1@gmail.com>
- <ZxoSBhC6sMEbXQi8@infradead.org>
- <a6864bf1-dd88-4ae0-bc67-b88bb4c17b44@gmail.com>
- <ZxpwgLRNsrTBmJEr@infradead.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZxpwgLRNsrTBmJEr@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/24/24 17:06, Christoph Hellwig wrote:
-> On Thu, Oct 24, 2024 at 03:23:06PM +0100, Pavel Begunkov wrote:
->>> That's not what this series does.  It adds the new memory_provider_ops
->>> set of hooks, with once implementation for dmabufs, and one for
->>> io_uring zero copy.
->>
->> First, it's not a _new_ abstraction over a buffer as you called it
->> before, the abstraction (net_iov) is already merged.
-> 
-> Umm, it is a new ops vector.
+Hi,
 
-I don't understand what you mean. Callback?
+Here's v3 of the ring resizing support. For the v1 posting and details,
+look here:
 
->> Second, you mention devmem TCP, and it's not just a page pool with
->> "dmabufs", it's a user API to use it and other memory agnostic
->> allocation logic. And yes, dmabufs there is the least technically
->> important part. Just having a dmabuf handle solves absolutely nothing.
-> 
-> It solves a lot, becaue it provides a proper abstraction.
+https://lore.kernel.org/io-uring/20241022021159.820925-1-axboe@kernel.dk/T/#md3a2f049b0527592cc6d8ea25b46bde9fa8e5c68
 
-Then please go ahead and take a look at the patchset in question
-and see how much of dmabuf handling is there comparing to pure
-networking changes. The point that it's a new set of API and lots
-of changes not related directly to dmabufs stand. dmabufs is useful
-there as an abstraction there, but it's a very long stretch saying
-that the series is all about it.
+ include/uapi/linux/io_uring.h |   3 +
+ io_uring/io_uring.c           |  84 +++++++------
+ io_uring/io_uring.h           |   6 +
+ io_uring/memmap.c             |   4 +
+ io_uring/register.c           | 214 ++++++++++++++++++++++++++++++++++
+ 5 files changed, 273 insertions(+), 38 deletions(-)
 
-> 
->>> So you are precluding zero copy RX into anything but your magic
->>> io_uring buffers, and using an odd abstraction for that.
->>
->> Right io_uring zero copy RX API expects transfer to happen into io_uring
->> controlled buffers, and that's the entire idea. Buffers that are based
->> on an existing network specific abstraction, which are not restricted to
->> pages or anything specific in the long run, but the flow of which from
->> net stack to user and back is controlled by io_uring. If you worry about
->> abuse, io_uring can't even sanely initialise those buffers itself and
->> therefore asking the page pool code to do that.
-> 
-> No, I worry about trying to io_uring for not good reason. This
-
-It sounds that the argument is that you just don't want any
-io_uring APIs, I don't think you'd be able to help you with
-that.
-
-> pre-cludes in-kernel uses which would be extremly useful for
-
-Uses of what? devmem TCP is merged, I'm not removing it,
-and the net_iov abstraction is in there, which can be potentially
-be reused by other in-kernel users if that'd even make sense.
-
-> network storage drivers, and it precludes device memory of all
-> kinds.
-
-You can't use page pools to allocate for a storage device, it's
-a network specific allocator. You can get a dmabuf around that
-device's memory and zero copy into it, but there is no problem
-with that. Either use devmem TCP or wait until io_uring adds
-support for dmabufs, which is, again, trivial.
-
->> I'm even more confused how that would help. The user API has to
->> be implemented and adding a new dmabuf gives nothing, not even
->> mentioning it's not clear what semantics of that beast is
->> supposed to be.
->>
-> 
-> The dma-buf maintainers already explained to you last time
-> that there is absolutely no need to use the dmabuf UAPI, you
-> can use dma-bufs through in-kernel interfaces just fine.
-
-You can, even though it's not needed and I don't see how
-it'd be useful, but you're missing the point. A new dmabuf
-implementation doesn't implement the uapi we need nor it
-helps to talk to the net layer.
+Since v2:
+- Add patch explicitly checking for valid rings at mmap time. More
+  of a documentation patch than anything, doesn't fix any current or
+  future issues. But it makes it explicit that they have to be valid.
+- Fix an issue with resizing when the sizes were identical, causing
+  a cleared io_uring_params to be returned and liburing using that
+  to re-mmap the rings. Ensure io_uring_params is filled in before
+  getting copied back, even if nothing was done.
+- Fix an issue with SQPOLL, it needs to get quiesced before we can
+  proceed with the resize.
+- Hold the mmap_sem and completion lock across the final part of
+  the operation, where state is copied and the rings swapped. This
+  prevents concurrent IO from accessing rings that are going away,
+  and mmap from seeing any NULL or going-away mappings until the
+  swap has been completed.
+- Add some more comments.
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

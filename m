@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3977-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3978-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD619AEAB1
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 17:36:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B83D9AEABF
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 17:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F4C31C21CBA
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 15:36:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AEF5B21A6D
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 15:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628431E3DF2;
-	Thu, 24 Oct 2024 15:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA31E1F4708;
+	Thu, 24 Oct 2024 15:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhCqzKqM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKTEzxhs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6B51C728E
-	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 15:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9194C1F12EA
+	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 15:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729784157; cv=none; b=K61RXApFnCS8c9SPLe/CnqFvHdKTdFzq4CqoQykCU13meXPGeSt13Rgypk0U4AmzARkbFL2Snt1bb0ALtE9BND7kcqgiOQTqXMx64vCIx0ngU6oe32BFJgnxifiaFwqOADV4+KfgMd9AALP1TlwE24xWLxjp4y50qNpKeRnuz+k=
+	t=1729784414; cv=none; b=Hl0a9ux17rnWQifxVysG75CQSTjfGBkH1LYKxTuvdjzfNvP+IFhYgaIy3AnujV/U/Ua+iDuVahwTUlbHiCY9s/0ZsdKu77Nns+72Y27W7MUiXaAEIFz4YWOcwuH5cdrzk+4L+iBSuXjN4DtV4hUrbkMzSDbBHBRrgC++h0Kq5Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729784157; c=relaxed/simple;
-	bh=lcB98S5N2Pk3l5/exRxFKfeIhC/DUm378311n6oRYRs=;
+	s=arc-20240116; t=1729784414; c=relaxed/simple;
+	bh=kfVoKnI3hXf11d9rVRhxGg8Wd/7KCSFJabyVlCRYsOQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=a9Q3aksv5yCE2quFa84wO5MOPtiI6Ps32yd7T9zc/nmRIbaoOSIh+ZP8s04P6wdMm1IzaF8Q+n8q9UwXvSJb47xYesU5tdW/h11Ux8CpdPVzPGv7zgWpTkfCo+YpJCpLUKtGetT9us1+euM48WPfsiV+gkrUNPiYxd50qCiloPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhCqzKqM; arc=none smtp.client-ip=209.85.218.44
+	 In-Reply-To:Content-Type; b=NRJdciIgDTdiIGC+2N9uOVx3M4PNv/wticQ2IHqmUCfRD97m2DSCamgSxGfDOOyeIv2kbM4UxmZwDL75Sjn0zqxbELIONaD6ugKhCsANyI9PbIYCNgesbxIfywd4DKUWAfZP61+lU3ZBL4CTWUVJ9CoYAbNx840TlRyUMpMa+eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKTEzxhs; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a628b68a7so163676766b.2
-        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 08:35:54 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c9850ae22eso1375160a12.3
+        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 08:40:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729784153; x=1730388953; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729784410; x=1730389210; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=iAARGZnaERJLdSqoxGSicyXeEkxdgWSLPKuYFxs+2HQ=;
-        b=mhCqzKqM0YFWHI0fToCof65tbRRhgqpWJ+4c6gF5/pX7Dpip/u4AtP+aQfba49oso3
-         USjEmX5YIqiwRXYtErBWrfVq7S4+3AozOSmrkzCjRa3c5BjfiTQLvOmtLZBgA9wV8RuC
-         6pe9lomPvt2CGw+aQSgTk6BNvtwrlwl0g/I2YSu0fc5yC/9tm0+o4IZLFHq1SAid39Be
-         dOoxFKLeRkNIPzfGZVGe8Y4JSxAbvfiNkqcs8jSYwJOFzFlcNbgNwd7TLMmH90T7iy+4
-         F8Rnd5izwBhgSMMbDH3su/KY0+T+ZF/2ZVj8a7ZR2iXFdHKDaqJj+hYy9duqUwdhoucl
-         QWKA==
+        bh=jl/iDmFcjX6zX7svEcNw733rs3fDb3rr/i6vru2XO14=;
+        b=RKTEzxhsPUCRhJf4yoAIcuKcFZ9o7LYbprUd+LeWg5CJzGGorHngb2AKUZYqdYeJF4
+         +zVhTBuYTOzcwDqwn0kxZqnU5PRRIZi0CAdN2W6VLVD6TOX/VK+TuuAT+uX4OGyKMvaJ
+         mb6Oigyw41Yg32RBPuxJ5dctIEhMDrwZPJ3q5Ke4a5LWYncsisXsAR0xFmuHkfrLjT89
+         Nd4z3wv5Ri/D/VcwxXKfSXRrHLBmv3rYtXg5bIMfrAXZo1IDXalxiZmSeL3KpXViVf/M
+         IJNAmajhHdDeLHQzeJ1W0kGiL7dDtcw/2PK8XVjKXarpoxRZs2tnAKxGuW4VE15nsZG2
+         1+jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729784153; x=1730388953;
+        d=1e100.net; s=20230601; t=1729784410; x=1730389210;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iAARGZnaERJLdSqoxGSicyXeEkxdgWSLPKuYFxs+2HQ=;
-        b=ZkhDv+UJKj1NjRzbQz2LnjbKaljyXwq7RRgziS9XN++K9+LM9qbQPlNNNUtGdgn3oM
-         Qsgvwl7B43uPZALx2vFOj7JByLZYk2GyBEo5e3Ql/h+J5EYfk6LNZHnM7tBtYPL+YeK1
-         QlCCUKyRGzn6k2D6wyHZ8/wSdcAlIBzN+yoZyW648X55y+RShKGYz2T3X5vyHGAScF+y
-         DcvlB5REOqkbeC+Lr3LUnDWyOwQHFbwVJiehyATaVX7yYgOfEzlq60Iekt8+AE6KRcBt
-         zpUQsgpL89mKeuWUbhrD5UlqyKvzYoQJcfANUld5CRPPmDPqAYMbbsKGoGQz9CNmVNrM
-         25lw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdQHACvLmEAeVfxfKNrsDApezJxvyGF6a4yZtnE3U9mtpqCiXJNksfEPkNpkdpmhkuNLQ/T2WHaw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/jcTPspGnwcCOuJSyksk/WIJR4brsa7TbybhX3E4hjsEqN1jP
-	crYkmT2+ow433bRXCgW6ynHzQUWz/bQTB5NnMWzhntozPL53hXeO
-X-Google-Smtp-Source: AGHT+IFufT9wY6o81XpgB7onAA7junF3ZnVoQhBa3sdsIPulJsAgd9VpW136vG7PCY4yxAvNJ6fxKw==
-X-Received: by 2002:a17:907:1b84:b0:a9a:cac1:7aad with SMTP id a640c23a62f3a-a9acac17fd4mr288506266b.35.1729784152986;
-        Thu, 24 Oct 2024 08:35:52 -0700 (PDT)
+        bh=jl/iDmFcjX6zX7svEcNw733rs3fDb3rr/i6vru2XO14=;
+        b=m/IHlXZU3uAWgWbq4uasgOf/VPWkufdsYySI7TXEX3HlVrjkTI1b+/t49TdNVsrEOF
+         9OLQx3dz1F/DVf7reTW/5yl02rOPQkYvVbEm1ZlgLkDR5UTmSZWEND09bnNZPyXasAz7
+         9DmMPQ8umaWuR3h9o8brUlNpPPEEtwAsAm+zGEwdtlDwJjDm3rDWyUyCcB/RgUS7Js1r
+         vZBgtlPy5LJ+jjjLLheaudgPY50g0AMJ4irzkrwyfJxDXr7es41W7eQr/fVIqwQ/vkBm
+         ie4Hsxo0ZnlQeKn+xgKAtofnjtmlMADQfo5FK2COusTPrpQjeScTmTDPiQsDypIab9SZ
+         wNgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXJKducx3+lIfAG6XPOPEaaY2iYhCeCVA9IA5lv1duuB/tXNK32FRd57lTTGbJfi9msClw1BHc6A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwd6BiFQJtyamWn8baN8gwMJtDK62636DnvuDkb/wVkuJ9e1tt
+	JOdsMo3k1ytndPAEV6K9WD5ioqqtS3BGToBIsrJnBatr7o13L1OW8kpoWg==
+X-Google-Smtp-Source: AGHT+IFasnoMKFuczj+lzXrxkX+pomlExHuPdQ75qu3jE8c7JAz6EeMZ/opvyk+0gJcPNORX7mUPEQ==
+X-Received: by 2002:a05:6402:40ca:b0:5cb:acfa:621d with SMTP id 4fb4d7f45d1cf-5cbacfa695dmr151812a12.3.1729784410435;
+        Thu, 24 Oct 2024 08:40:10 -0700 (PDT)
 Received: from [192.168.42.27] ([85.255.233.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912edfedsm631647566b.72.2024.10.24.08.35.49
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c6b120sm5846762a12.59.2024.10.24.08.40.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 08:35:50 -0700 (PDT)
-Message-ID: <01aec2bf-cb55-44e6-96ab-5d9ff6a5233f@gmail.com>
-Date: Thu, 24 Oct 2024 16:36:24 +0100
+        Thu, 24 Oct 2024 08:40:10 -0700 (PDT)
+Message-ID: <db742ec9-8077-48ac-ac19-fe82732f3be7@gmail.com>
+Date: Thu, 24 Oct 2024 16:40:44 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,80 +76,78 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] io_uring/net: add provided buffer and bundle support
- to send zc
+Subject: Re: [PATCH 6/7] io_uring/kbuf: add support for mapping type
+ KBUF_MODE_BVEC
 To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <20241023161522.1126423-1-axboe@kernel.dk>
- <20241023161522.1126423-8-axboe@kernel.dk>
- <b826ce35-98b2-4639-9d39-d798e3b08d89@gmail.com>
- <4d61544d-3a06-4419-8dc6-f23a57740d77@kernel.dk>
+ <20241023161522.1126423-7-axboe@kernel.dk>
+ <84c8f280-09eb-425d-a47f-69117438ae55@gmail.com>
+ <673f2f66-cf18-44f1-878d-db2a6ffe335b@kernel.dk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <4d61544d-3a06-4419-8dc6-f23a57740d77@kernel.dk>
+In-Reply-To: <673f2f66-cf18-44f1-878d-db2a6ffe335b@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/24/24 15:48, Jens Axboe wrote:
-> On 10/24/24 8:44 AM, Pavel Begunkov wrote:
+On 10/24/24 16:27, Jens Axboe wrote:
+> On 10/24/24 9:22 AM, Pavel Begunkov wrote:
 >> On 10/23/24 17:07, Jens Axboe wrote:
->>> Provided buffers inform the kernel which buffer group ID to pick a
->>> buffer from for transfer. Normally that buffer contains the usual
->>> addr + length information, as well as a buffer ID that is passed back
->>> at completion time to inform the application of which buffer was used
->>> for the transfer.
+>>> The provided buffer helpers always map to iovecs. Add a new mode,
+>>> KBUF_MODE_BVEC, which instead maps it to a bio_vec array instead. For
+>>> use with zero-copy scenarios, where the caller would want to turn it
+>>> into a bio_vec anyway, and this avoids first iterating and filling out
+>>> and iovec array, only for the caller to then iterate it again and turn
+>>> it into a bio_vec array.
 >>>
->>> However, if registered and provided buffers are combined, then the
->>> provided buffer must instead tell the kernel which registered buffer
->>> index should be used, and the length/offset within that buffer. Rather
->>> than store the addr + length, the application must instead store this
->>> information instead.
->>>
->>> If provided buffers are used with send zc, then those buffers must be
->>> an index into a registered buffer. Change the mapping type to use
->>> KBUF_MODE_BVEC, which tells the kbuf handlers to turn the mappings
->>> into bio_vecs rather than iovecs. Then all that is needed is to
->>> setup our iov_iterator to use iov_iter_bvec().
+>>> Since it's now managing both iovecs and bvecs, change the naming of
+>>> buf_sel_arg->nr_iovs member to nr_vecs instead.
 >>>
 >>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 >>> ---
+>>>    io_uring/kbuf.c | 170 +++++++++++++++++++++++++++++++++++++++++++-----
+>>>    io_uring/kbuf.h |   9 ++-
+>>>    io_uring/net.c  |  10 +--
+>>>    3 files changed, 165 insertions(+), 24 deletions(-)
+>>>
+>>> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+>>> index 42579525c4bd..10a3a7a27e9a 100644
+>>> --- a/io_uring/kbuf.c
+>>> +++ b/io_uring/kbuf.c
 >> ...
->>> diff --git a/io_uring/net.h b/io_uring/net.h
->>> index 52bfee05f06a..e052762cf85d 100644
->>> --- a/io_uring/net.h
->>> +++ b/io_uring/net.h
->>> @@ -5,9 +5,15 @@
->>>      struct io_async_msghdr {
->>>    #if defined(CONFIG_NET)
->>> -    struct iovec            fast_iov;
->>> +    union {
->>> +        struct iovec        fast_iov;
->>> +        struct bio_vec        fast_bvec;
->>> +    };
->>>        /* points to an allocated iov, if NULL we use fast_iov instead */
->>> -    struct iovec            *free_iov;
->>> +    union {
->>> +        struct iovec        *free_iov;
->>> +        struct bio_vec        *free_bvec;
+>>> +static struct io_mapped_ubuf *io_ubuf_from_buf(struct io_ring_ctx *ctx,
+>>> +                           u64 addr, unsigned int *offset)
+>>> +{
+>>> +    struct io_mapped_ubuf *imu;
+>>> +    u16 idx;
+>>> +
+>>> +    /*
+>>> +     * Get registered buffer index and offset, encoded into the
+>>> +     * addr base value.
+>>> +     */
+>>> +    idx = addr & ((1ULL << IOU_BUF_REGBUF_BITS) - 1);
+>>> +    addr >>= IOU_BUF_REGBUF_BITS;
+>>> +    *offset = addr  & ((1ULL << IOU_BUF_OFFSET_BITS) - 1);
 >>
->> I'd rather not do it like that, aliasing with reusing memory and
->> counting the number is a recipe for disaster when scattered across
->> code. E.g. seems you change all(?) iovec allocations to allocate
->> based on the size of the larger structure.
->>
->> Counting bytes as in my series is less fragile, otherwise it needs
->> a new structure and a set of helpers that can be kept together.
+>> There are two ABI questions with that. First why not use just
+>> user addresses instead of offsets? It's more consistent with
+>> how everything else works. Surely it could've been offsets for
+>> all registered buffers ops from the beggining, but it's not.
 > 
-> I have been pondering this, because I'm not a huge fan either. But
-> outside of the space side, it does come out pretty nicely/clean. This
-> series is really just a WIP posting as per the RFC, mostly just so we
-> can come up with something that's clean enough and works for both cases,
-> as it does have the caching that your series does not. And to
-> facilitate some more efficient TX/RX zero copy testing.
+> How would that work? You need to pass in addr + buffer index for that.
 
-The thing is, I know how to implement caching on top of my series,
-but as I commented in the other thread, I don't think it can reuse
-the incremental helper well. At least it can try to unify the imu
-checking / parsing, bvec copy-setup, but that's minor.
+I guess it depends on the second part then, that is if you
+want to preserve the layout, in which case you can just use
+sqe->buf_index
+
+> The usual approach is doing that, and then 'addr' tells you the offset
+> within the buffer, eg you can just do a subtraction to get your offset.
+> But you can't pass in both addr + index in a provided buffer, which is
+> why it's using buf->addr to encode index + offset for that, rather than
+> rely on the addr for the offset too.
+> 
+> The alternative obviously is to just do the 'addr' and have that be both
+> index and offset, in which case you'd need to lookup the buffer. And
+> that's certainly a no-go.
 
 -- 
 Pavel Begunkov

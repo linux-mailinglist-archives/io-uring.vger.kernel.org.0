@@ -1,73 +1,75 @@
-Return-Path: <io-uring+bounces-3966-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3967-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA6D9AE920
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 16:41:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E639AE937
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 16:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AA8F1C21E8C
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 14:41:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B6A1F21ED7
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 14:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F40F1E5731;
-	Thu, 24 Oct 2024 14:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6141DD0DF;
+	Thu, 24 Oct 2024 14:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cdKeYq31"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="w1WYOcU/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097281E3DE8
-	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 14:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02011D9A72
+	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 14:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780843; cv=none; b=C70NoT8lwpASmiKba0pahIstcRkyIZ62MgGGrfufKA5D6T1LWL9nPXuxNbs7DmG2rtsGLe5B0rab9IpD5Ksg25NejII1IXxRRaGFy1Vk5cLcsbeK7Jlz0g1OxU9SHe3SYlGO95wqun21UOzZwbbyfchNx7DDkEv/iv0DtLewMmk=
+	t=1729781029; cv=none; b=OPt9Ajo9JCnu9hGrReozzzvzosbYVOS5cZDxa7sWnqdB64XlFmPBM7698tKf0lOL6tQSHGJR3HBsueSVdsCIqlQIkS4U1CsbCLmBxW3uYMA8yD000oOEAlMbvyYLERok8Wsr8rAKva1jR6Ku1CoNH6u4ZtqsTCPFEED/8WrkcB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780843; c=relaxed/simple;
-	bh=Zqyf6G7EWpyPb0E6EP/8o4ogo4doOTNJFut5sn+GPt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=twf0wKpr65alVCxs32ThI7d9bOBr3W3LfeaFBqVQ38ZH/8yCQEUi77y8U8VVvb2xl/sumQv67J7tltsI0UdO8YI5rf2QBy1If10j5MkCtmIzAcLZY/TWTDM+M2ANc6lI6s/rWYDPLwUI1bQ4gQRnLGrpzSmZrDchuFh8iEzD9uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cdKeYq31; arc=none smtp.client-ip=209.85.166.46
+	s=arc-20240116; t=1729781029; c=relaxed/simple;
+	bh=zR1bxIz7AsMpP5s9k8Vm64Z6H++Ddw2cS1G06GReHLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=j0p+wMdzOuRrPqLRMapef2sth83N3k5E9pYKqfriuQw6UM02Xe6rqUyw01FGoXNi5ZkYemTSA98VNGJY+VJXcW4nVrawK1sr2dPrP0638B5X7lcwR69x1IfUv77LqSQHGl7/Ze/0ddlsrgJ6cXsM+AklAUVh29SfDmg6boICZzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=w1WYOcU/; arc=none smtp.client-ip=209.85.166.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-83a9be2c028so39151939f.1
-        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 07:40:39 -0700 (PDT)
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-83abcfb9f37so39915539f.1
+        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 07:43:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729780839; x=1730385639; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729781025; x=1730385825; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c8dgch9h6/ddwkKcahJf8uCo+FVSUUTd8MNxrHmVrWk=;
-        b=cdKeYq31MZVKougG1wfxrXkNMP43cmqUEv54h2W1aiUkIszJ02cCJwsZPTMlfFdZvF
-         uUWO93cK9n6Fwc/YWqaR3+PIZwjbyvJhKF1I0bXBDRwEGwb3sZtGuQ4V3u5v/+KMdhSn
-         dLWN9h8G18VuOyjZVJYGq/p+bDipMCIhC0fAnq/1EhXAlXSaZKcfgwOTOs6R0CqeeaY/
-         1jqpSUiPowhJ2VrhR+UzNEQz0egpptTF9VEpZ9lb5JNCsy2h39KqVM7HLM3pjuKfCKL+
-         OjksLOzjwKW866Hq98IvToNDp6vSkxwokefWNHd8gvJku3YUxg9WL475H2WNkmvAhtaE
-         +6yA==
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=6CO/yKLfToyFRKAxDmcX8z2fxbf7kMfbd0LZF9mw8wQ=;
+        b=w1WYOcU/sgZecV4QS7AS6lx5oXjUCPXHmf88DuzGSD6MDZlt+sWBi4v9Gqui9QoXmv
+         ipazEmCnBtA/Ejl23/4eg7lxXLiMAdXP0OyaLyfflKc2UkwSnw+T54jVWuVdMgPkp1FR
+         N02m/wgUsNyu/aM4bD1wxbpOeB075Xej9U6/CjHEv362DmVmZ8MGSgXK5ktgLykW58UC
+         TdfpZnxuysWnFEI4Gc4ZqlMq5mJlrD4Cw/+TvzjnIuYkr+8HTbkZP555W3bq52nTkulU
+         5/v/naiBcZ9KgCFBdo6DTnblBh/rFdsgxVphOXZ/qOrEg2CePc3A+mKLAjjra9jQgh8P
+         AMXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729780839; x=1730385639;
+        d=1e100.net; s=20230601; t=1729781025; x=1730385825;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c8dgch9h6/ddwkKcahJf8uCo+FVSUUTd8MNxrHmVrWk=;
-        b=a9CaSRxg0RHixakXuUvVHwcueFTLcOBgDyfqeq6knA/Bl7R1/NLyZEaoYBBtoBE3d5
-         UpViaO5SlM2TGpRg2JIA68iRm3LwpfA+i/juO1KDnzXmpy0qfukZGEqITf4Sp04O+tvK
-         UxzSOgEzLXRemQmXxIDu1oYzx+1NGUOUdrWyTimPDLcrtGx4X7rNhBzCo+GErZgyjmnh
-         eI9fzY0f5924x7lNSc5VvPensCpsi8xm+Gmgi9D91vlIw2TXkDhSjS23lfXj7PYGIn7+
-         IMzFUR2NwtD8b+nWfabYuIIdqugafjopS6fIgMaodYskhJd7aV3Sz6YRe/9FDSbsczdI
-         0/qA==
-X-Gm-Message-State: AOJu0Yw/UZGn42K6R1wzUVRsX8I1/74RmbIbuEks2w1CC9/ku9byQnWV
-	XObE/S7CmlRRnhUyhaHKRFg9rWY6pty6jKsjKV8RqzFuGDwEhfds3H0ATZg+b14=
-X-Google-Smtp-Source: AGHT+IEPUVvgxne25Bp0uIrpKmbnJk51XcDluIHPBNH8hGAkBt9cRAM+LoNsopUyfgAaVBbnBBvCKw==
-X-Received: by 2002:a05:6602:2cc9:b0:83a:aa8e:5f72 with SMTP id ca18e2360f4ac-83af6163931mr618697939f.4.1729780838796;
-        Thu, 24 Oct 2024 07:40:38 -0700 (PDT)
+        bh=6CO/yKLfToyFRKAxDmcX8z2fxbf7kMfbd0LZF9mw8wQ=;
+        b=SDy+tmmUTr9fXUyU+k63hVo4smkDJXpvQ4AY1ctabm96eWpGPxyGaeuvaKXwHXOfv2
+         8BFCpkD4B8UcmQqdutGRNsZWZ9n/Y2LS7ySAmVkvINAe1NrXn0K6x775/E455GzzU0yo
+         ANgPp6cox+PGcuyjZzqDehSCgLleYhruQF00epwWgTnpMAeCCBmcWMR0mrAVJMSM9c0s
+         bYNARbXw971OpfZ5c8UY3EYvI9MpQADZ+oIE/RjPizY37ZS9Oaw6WZB0+Bi07hmUsQHU
+         ShTyjDKbgZC6RNFntFGPcLs8Bc40U3T1reVdiTJd5jNU+Us67ciEnvNzzbBhS7ERbYMi
+         5z9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUez+58Cri84OO0WTxGgad/w4V99zQQ5PG39ilzYItLZdS3Iiv9oWa3l2M8sYs2poKCttcmUqiIvw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywio3ak6nAwS8SaySvZrMFXh5jZ05I9B9Fr1e7OOgVAt68TzAE5
+	u0rLzzdl0YkIhygj+oive+wrMuaOAH8oLQ2YapuPvBqWnNu/OsFAmFnIERb9iafI5whnXBG2r7I
+	q
+X-Google-Smtp-Source: AGHT+IGN0s78tmplJdnm//6GtV8VrVqZZfXl38vhGvFaDXbVKMthhazhZ+d8qMEsvi7WGX42XlQobQ==
+X-Received: by 2002:a05:6602:6201:b0:83a:b149:fcf9 with SMTP id ca18e2360f4ac-83b04077ac6mr250020139f.11.1729781025570;
+        Thu, 24 Oct 2024 07:43:45 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc49baafd1sm1440243173.104.2024.10.24.07.40.37
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ad1dce129sm283223139f.34.2024.10.24.07.43.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:40:38 -0700 (PDT)
-Message-ID: <b50ce7d2-b2a8-4552-8246-0464602bfd84@kernel.dk>
-Date: Thu, 24 Oct 2024 08:40:37 -0600
+        Thu, 24 Oct 2024 07:43:45 -0700 (PDT)
+Message-ID: <954749c7-ee49-4526-9394-4dec4304a1b4@kernel.dk>
+Date: Thu, 24 Oct 2024 08:43:44 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -75,135 +77,65 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] io_uring: releasing CPU resources when polling
-To: Pavel Begunkov <asml.silence@gmail.com>, hexue <xue01.he@samsung.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
- <CGME20241024023812epcas5p1e5798728def570cb57679eebdd742d7b@epcas5p1.samsung.com>
- <20241024023805.1082769-1-xue01.he@samsung.com>
- <9bc8f8c4-3415-48bb-9bd1-0996f2ef6669@kernel.dk>
- <f60116a5-8c35-4389-bbb6-7bf6deaf71c6@gmail.com>
+Subject: Re: [PATCHSET RFC 0/7] Add support for provided registered buffers
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <20241023161522.1126423-1-axboe@kernel.dk>
+ <9e6ba7d3-22ae-4149-8eab-ed92a247ac61@gmail.com>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <f60116a5-8c35-4389-bbb6-7bf6deaf71c6@gmail.com>
+In-Reply-To: <9e6ba7d3-22ae-4149-8eab-ed92a247ac61@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/24/24 8:26 AM, Pavel Begunkov wrote:
-> On 10/24/24 15:18, Jens Axboe wrote:
->> On 10/23/24 8:38 PM, hexue wrote:
->>> On 9/25/2024 12:12, Pavel Begunkov wrote:
-> ...
->>> When the number of threads exceeds the number of CPU cores,the
->>> database throughput does not increase significantly. However,
->>> hybrid polling can releasing some CPU resources during the polling
->>> process, so that part of the CPU time can be used for frequent
->>> data processing and other operations, which speeds up the reading
->>> process, thereby improving throughput and optimizaing database
->>> performance.I tried different compression strategies and got
->>> results similar to the above table.(~30% throughput improvement)
->>>
->>> As more database applications adapt to the io_uring engine, I think
->>> the application of hybrid poll may have potential in some scenarios.
+On 10/24/24 8:36 AM, Pavel Begunkov wrote:
+> On 10/23/24 17:07, Jens Axboe wrote:
+>> Hi,
 >>
->> Thanks for posting some numbers on that part, that's useful. I do
->> think the feature is useful as well, but I still have some issues
->> with the implementation. Below is an incremental patch on top of
->> yours to resolve some of those, potentially. Issues:
+>> Normally a request can take a provided buffer, which means "pick a
+>> buffer from group X and do IO to/from it", or it can use a registered
+>> buffer, which means "use the buffer at index Y and do IO to/from it".
+>> For things like O_DIRECT and network zero copy, registered buffers can
+>> be used to speedup the operation, as they avoid repeated
+>> get_user_pages() and page referencing calls for each IO operation.
 >>
->> 1) The patch still reads a bit like a hack, in that it doesn't seem to
->>     care about following the current style. This reads a bit lazy/sloppy
->>     or unfinished. I've fixed that up.
->>
->> 2) Appropriate member and function naming.
->>
->> 3) Same as above, it doesn't care about proper placement of additions to
->>     structs. Again this is a bit lazy and wasteful, attention should be
->>     paid to where additions are placed to not needlessly bloat
->>     structures, or place members in cache unfortunate locations. For
->>     example, available_time is just placed at the end of io_ring_ctx,
->>     why? It's a submission side member, and there's room with other
->>     related members. Not only is the placement now where you'd want it to
->>     be, memory wise, it also doesn't add 8 bytes to io_uring_ctx.
->>
->> 4) Like the above, the io_kiocb bloat is, by far, the worst. Seems to me
->>     that we can share space with the polling hash_node. This obviously
->>     needs careful vetting, haven't done that yet. IOPOLL setups should
->>     not be using poll at all. This needs extra checking. The poll_state
->>     can go with cancel_seq_set, as there's a hole there any. And just
->>     like that, rather than add 24b to io_kiocb, it doesn't take any extra
->>     space at all.
->>
->> 5) HY_POLL is a terrible name. It's associated with IOPOLL, and so let's
->>     please use a name related to that. And require IOPOLL being set with
->>     HYBRID_IOPOLL, as it's really a variant of that. Makes it clear that
->>     HYBRID_IOPOLL is really just a mode of operation for IOPOLL, and it
->>     can't exist without that.
->>
->> Please take a look at this incremental and test it, and then post a v9
->> that looks a lot more finished. Caveat - I haven't tested this one at
->> all. Thanks!
->>
->> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
->> index c79ee9fe86d4..6cf6a45835e5 100644
->> --- a/include/linux/io_uring_types.h
->> +++ b/include/linux/io_uring_types.h
->> @@ -238,6 +238,8 @@ struct io_ring_ctx {
->>           struct io_rings        *rings;
->>           struct percpu_ref    refs;
->>   +        u64            poll_available_time;
->> +
->>           clockid_t        clockid;
->>           enum tk_offsets        clock_offset;
->>   @@ -433,9 +435,6 @@ struct io_ring_ctx {
->>       struct page            **sqe_pages;
->>         struct page            **cq_wait_page;
->> -
->> -    /* for io_uring hybrid poll*/
->> -    u64            available_time;
->>   };
->>     struct io_tw_state {
->> @@ -647,9 +646,22 @@ struct io_kiocb {
->>         atomic_t            refs;
->>       bool                cancel_seq_set;
->> +    bool                poll_state;
+>> Normal (non zero copy) send supports bundles, which is a way to pick
+>> multiple provided buffers at once and send them. send zero copy only
+>> supports registered buffers, and hence can only send a single buffer
 > 
-> As mentioned briefly before, that can be just a req->flags flag
+> That's not true, has never been, send[msg] zc work just fine with
+> normal (non-registered) buffers.
 
-That'd be even better, I generally despise random bool addition.
+That's not what I'm saying, perhaps it isn't clear. What I'm trying to
+say is that it only supports registered buffers, it does not support
+provided buffers. It obviously does support regular user provided
+buffers that aren't registered or provided, I figured that goes without
+saying explicitly.
 
->>       struct io_task_work        io_task_work;
->> -    /* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
->> -    struct hlist_node        hash_node;
->> +    union {
->> +        /*
->> +         * for polled requests, i.e. IORING_OP_POLL_ADD and async armed
->> +         * poll
->> +         */
->> +        struct hlist_node    hash_node;
->> +        /*
->> +         * For IOPOLL setup queues, with hybrid polling
->> +         */
->> +        struct {
->> +            u64        iopoll_start;
->> +            u64        iopoll_end;
+>> at the time.
 > 
-> And IIRC it doesn't need to store the end as it's used immediately
-> after it's set in the same function.
+> And that's covered by the posted series for vectored registered
+> buffers support.
 
-Nice, that opens up the door for less esoteric sharing as well. And
-yeah, I'd just use:
+Right, for sendmsg.
 
-runtime = ktime_get_ns() - req->iopoll_start - sleep_time;
+>> This patchset adds support for using a mix of provided and registered
+>> buffers, where the provided buffers merely provide an index into which
+>> registered buffers to use. This enables using provided buffers for
+>> send zc in general, but also bundles where multiple buffers are picked.
+>> This is done by changing how the provided buffers are intepreted.
+>> Normally a provided buffer has an address, length, and buffer ID
+>> associated with it. The address tells the kernel where the IO should
+>> occur. If both fixed and provided buffers are asked for, the provided
+>> buffer address field is instead an encoding of the registered buffer
+>> index and the offset within that buffer. With that in place, using a
+>> combination of the two can work.
+> 
+> What the series doesn't say is how it works with notifications and
+> what is the proposed user API in regard to it, it's the main if not
+> the only fundamental distinctive part of the SENDZC API.
 
-in io_uring_hybrid_poll() and kill it entirely, doesn't even need a
-local variable there. And then shove iopoll_start into the union with
-comp_list/apoll_events.
-
-My main points are really: don't randomly sprinkle additions to structs.
-Think about if they are needed, and if they are, be a bit smarter about
-where to place them. The original patch did neither of those, and that's
-a non-starter.
+Should not change that? You'll should get the usual two notifications on
+send complete, and reuse safe.
 
 -- 
 Jens Axboe

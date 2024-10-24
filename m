@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-3987-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-3988-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD779AEBA9
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 18:17:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB1549AEC60
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 18:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B4F2284444
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 16:17:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89DE42835D3
+	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 16:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41FD1F5836;
-	Thu, 24 Oct 2024 16:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388711F8182;
+	Thu, 24 Oct 2024 16:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Br1/8SrJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqb2EFEG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C9E1B0F16
-	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 16:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA30C15A87C;
+	Thu, 24 Oct 2024 16:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729786626; cv=none; b=opymfFc/GhhDL7vEVBM2Wu7xg4qBpznoX8edMaPy+cm6+EKIerYVq9XFMIrNE7LZ2IwH7I5+TkvtMRe8YtmAiUetx1KP38vK1dBohIidFv2TEIcr5mhDXO/WcaN9iF09r8wTRMZ0c+EEG25NHbq3WH3vgbCnjwbc1fboCyX4at4=
+	t=1729787973; cv=none; b=Ev92wJV3edpNDry8PviHM+muqfojmG7O+znkASGXLbKRPmMRcnRPSMmNDnsexkvAW7lw2mMwGNVA8xZq5ki8DvN66YGvl2KiFSDUBf+phxD5zk40rsfsg2ck+Wyux4bjoYC+Fy5boPBCCtOwHeWXxiQi4NrJSxJ8qb3dbbry9aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729786626; c=relaxed/simple;
-	bh=FzLLhX/bdO8LTLZoIoJd8tqp1o1s/Goj+Xv8RYY/sg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=iRQGYd3/x9LGBN2hriCiBCPo94Fa0rP1Rhu3GD8ZksggUWoQoCYSuwn7TsYpXWN7MzdUs4yH4UxMRYxvUePyYdtBmkCK1ENAT6MF5gqBIazdvm5UdjeKyExGBDQNYma13CtmkjdWuM4Ia4PMvTyboOjyGbZKYC/O2sitCqdiRmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Br1/8SrJ; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1729787973; c=relaxed/simple;
+	bh=6ry637uavt5WOAjtjyuH5D5Vgw17qL4+QLHAwx2063g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r6scwuV17lkeZxpvBA/tOFylAKo2B/AYLNN7QTuZ67/EmgZhQzUyaTjFZL3jY19eoN82AFZjCXfcDHn/dwULtSf50psmoC1z1AHSvngOMpkcMlNjSHet13UGHh788lvD0j9CcGchLD92N2RQEqN0eQFB3R8iY7b7gBYQv85b0SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cqb2EFEG; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a0472306cso143560766b.3
-        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 09:17:04 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f1292a9bso1474969e87.2;
+        Thu, 24 Oct 2024 09:39:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729786623; x=1730391423; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729787969; x=1730392769; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=sESdBJNwAFwQAyoVVF9TaPMHjhix9BawS5zI5WdyhMI=;
-        b=Br1/8SrJNQMm5oP7EUOmDMr8GWgKjHw1uQs/Bmlic1DnlK++ALxLMgWIg58DQfolsr
-         ErN+TDycuszEQ/WdSoPbWkp+h2gIUtILYnVNBIoalDj0HZdynqcz+uYtmrONxANpFfbL
-         HQum+Fp0R+SHTOROb4DtSQ3P/oaVXB9qeqrWaS0b6YXcuuUZfuEYWIJ7wphnr39pPncJ
-         UNNNv/3bXLD5pmgUwfnNHKrZmXPIcgtkpIJr7DaelWJEejZcOR3r0e1BPC+6x81OZimr
-         b0x48IdOG3ijRyK4l1srTmNoPuewA/+s7vcVLSyhB3a8VEzL855ejd0a+Gk3DKS6hWYn
-         HBhw==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BZaWT76KQAhb/SdvegV291/fD/GVxdusDKkbeX6aAyw=;
+        b=cqb2EFEG8AeUPc3LxFMYXT4XpM2DnxLDQzT6PwcDxBrRwJdFltHmSXL5g8rvbuhndS
+         xzHFlVnxfpk2ALREHeFnfMAB94Iuer0PHN9+BxnjEllAh/gRxsoij0gH5EuPA5QoMIM0
+         6jh1j47oLgpveJFh3zgrLpV2H3RrCPQcQCYGaQwke8ciuWPhJzdetOtWXIQKppyXOxpg
+         kUCD1z8Ais48Fkz+I87Sn/Xp2XFfqQwDL3eOGe6FFcmsZsLIC/Pn8NH6Sp7AXtawy2r8
+         2nLOP5yOY9C+lUOz7zz/4oJqJ9xgXG4sZ02uGJYfikJ2r8t1EQi9+/iCC+g2w3SoGZ2h
+         yI0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729786623; x=1730391423;
+        d=1e100.net; s=20230601; t=1729787969; x=1730392769;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sESdBJNwAFwQAyoVVF9TaPMHjhix9BawS5zI5WdyhMI=;
-        b=tJ951Z+2H/WdvWgfnD+KWO6TYvrw4fmio6W4h3LgKXG+TXQ6vrVJt+DLS0RuHRvVu6
-         kmw4lTmy/Lh5zlMz/xu3hqm7ZTsz2TvdWPkX1HZw3/kI5qglTCMDU39EWF0Oh3gDc/xB
-         UsVs6mKpuPsBhG9CMdnQMcw/SXrS404+sAdAjTAnlIXYagMX/3em+5z/i50G8E5ZWrMz
-         xYeUF8M+ZcadOfeOJHSud3GxF7Mhy8cWVB5Uy1xXJf6h+C+MWblIZjS6paN3bAGTmfxE
-         6zUiF4xNbAV9BAOT+e5/cjAFiNfWhprsnB2/l3DeSjMH1s/vV3MLmHUNmJtyV80Kf6YM
-         SSSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVG4nQN/uVvf0LebEb965G1wLswKj8UBAa+/0lUUemBoTRXXgOdVQH0CDjNKJhQw/DmQCtUNvRhRA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKSk8MvOroA73fAVB8PPAW0U+OZQJDFxnAc/hwnoXORh5wBHNb
-	x6JYPztjSDJ9TBqBHv/YdyLZaMaChRk3DFAQdJ3ey0pxGhD5b4ADDsy0kQ==
-X-Google-Smtp-Source: AGHT+IGUbkifyIxeiTIBrhUndqKoXISmU7oGAuZY274dJLLT/tdEOrsSg5T8Clusrvr5ngRPJUPj9w==
-X-Received: by 2002:a17:906:7309:b0:a99:dde6:9f42 with SMTP id a640c23a62f3a-a9abf96ce04mr691070266b.47.1729786622557;
-        Thu, 24 Oct 2024 09:17:02 -0700 (PDT)
+        bh=BZaWT76KQAhb/SdvegV291/fD/GVxdusDKkbeX6aAyw=;
+        b=KuVZGevo1RMLiW6Reg+/0dgfhptx1VC+ODQISJpJXFW6Sci22Y7v3Onarx6R/XFv5H
+         4zDCdoD//T7tBhALEpZMq6wvPxXFWrsuCf1E2df2Uoz8ogluG771K4WkXhQTfHQdMfku
+         HR0HT5VlMMPs2MsUenpqtQwN6E68b/L5bcbh3NoRAmu5Qm/25yaUAqHWXnrLXJLIc7kM
+         p0AxIxsyFhnjfgaJqGavTiw+KyOJ+slJVWYhuJJuvPCJJwIFRZuER50FKctI9YNHuoFk
+         RJ+9wZ4YR962G/6stEgWg48gx5yQmg4PiCSwe9JZAq26dXb5eLEXDhRtMR3w7w7C8wWJ
+         f5cw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwKvG67lWj6s2CEdAsLCSg9FYD7NUrg1hTJovCI/FZE5qTN4UinWHjrzKAh+oU1NhgwaBE8F8DlFArFcs=@vger.kernel.org, AJvYcCXbjZ5symdonmTrWeIL/0NwEhVqIIRLC0kFi32zgkxJ//AVCGSsGMJPakM+elVLMWVEJoGENKzcvw==@vger.kernel.org, AJvYcCXpp1reyxNPsU1JWMAeEAL+TJhbLuqwuCHCi/Tq+hHO7VWAiLNjqXu1QCmglNybdnQn+HarRTDA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfpcozhqTO2ifEPM/4BjyjrIcPLvlswcZByH05R7N+TYrezjLP
+	XDWmJdQtFICkofCOzj90mxwFj3lyBvb//+mzEDJYKhAGPTZXC6ym
+X-Google-Smtp-Source: AGHT+IGM2QIH1fkpvyL5zXwnzN1P9Fzl21jQNKRhYToOjYGnjYn96eDsd7Ox+gI2AzCZSLVIBZlJbw==
+X-Received: by 2002:a05:6512:281b:b0:539:dca9:19a2 with SMTP id 2adb3069b0e04-53b23e69518mr1724653e87.39.1729787968611;
+        Thu, 24 Oct 2024 09:39:28 -0700 (PDT)
 Received: from [192.168.42.27] ([85.255.233.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d624asm637251466b.30.2024.10.24.09.17.01
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d638fsm645929366b.18.2024.10.24.09.39.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 09:17:01 -0700 (PDT)
-Message-ID: <c51938c8-8bb4-44d1-8394-14aeebd58ba2@gmail.com>
-Date: Thu, 24 Oct 2024 17:17:37 +0100
+        Thu, 24 Oct 2024 09:39:28 -0700 (PDT)
+Message-ID: <de9ae678-258d-4f68-86e1-59d5eb4b70a4@gmail.com>
+Date: Thu, 24 Oct 2024 17:40:02 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,107 +76,106 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] io_uring: add ability for provided buffer to index
- registered buffers
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <20241023161522.1126423-1-axboe@kernel.dk>
- <20241023161522.1126423-6-axboe@kernel.dk>
- <34d4cfb3-e605-4d37-b104-03b8b1a892f1@gmail.com>
- <c44ef9b3-bea7-45f5-b050-9c74ff1e0344@kernel.dk>
+Subject: Re: [PATCH v6 02/15] net: generalise net_iov chunk owners
+To: Christoph Hellwig <hch@infradead.org>
+Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
+ netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
+ Mina Almasry <almasrymina@google.com>,
+ Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
+ Pedro Tammela <pctammela@mojatatu.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org
+References: <20241016185252.3746190-1-dw@davidwei.uk>
+ <20241016185252.3746190-3-dw@davidwei.uk> <ZxijxiqNGONin3IY@infradead.org>
+ <264c8f95-2a69-4d49-8af6-d035fa890ef1@gmail.com>
+ <ZxoSBhC6sMEbXQi8@infradead.org>
+ <a6864bf1-dd88-4ae0-bc67-b88bb4c17b44@gmail.com>
+ <ZxpwgLRNsrTBmJEr@infradead.org>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <c44ef9b3-bea7-45f5-b050-9c74ff1e0344@kernel.dk>
+In-Reply-To: <ZxpwgLRNsrTBmJEr@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/24/24 16:57, Jens Axboe wrote:
-> On 10/24/24 9:44 AM, Pavel Begunkov wrote:
->> On 10/23/24 17:07, Jens Axboe wrote:
->>> This just adds the necessary shifts that define what a provided buffer
->>> that is merely an index into a registered buffer looks like. A provided
->>> buffer looks like the following:
->>>
->>> struct io_uring_buf {
->>>      __u64    addr;
->>>      __u32    len;
->>>      __u16    bid;
->>>      __u16    resv;
->>> };
->>>
->>> where 'addr' holds a userspace address, 'len' is the length of the
->>> buffer, and 'bid' is the buffer ID identifying the buffer. This works
->>> fine for a virtual address, but it cannot be used efficiently denote
->>> a registered buffer. Registered buffers are pre-mapped into the kernel
->>> for more efficient IO, avoiding a get_user_pages() and page(s) inc+dec,
->>> and are used for things like O_DIRECT on storage and zero copy send.
->>>
->>> Particularly for the send case, it'd be useful to support a mix of
->>> provided and registered buffers. This enables the use of using a
->>> provided ring buffer to serialize sends, and also enables the use of
->>> send bundles, where a send can pick multiple buffers and send them all
->>> at once.
->>>
->>> If provided buffers are used as an index into registered buffers, the
->>> meaning of buf->addr changes. If registered buffer index 'regbuf_index'
->>> is desired, with a length of 'len' and the offset 'regbuf_offset' from
->>> the start of the buffer, then the application would fill out the entry
->>> as follows:
->>>
->>> buf->addr = ((__u64) regbuf_offset << IOU_BUF_OFFSET_BITS) | regbuf_index;
->>> buf->len = len;
->>>
->>> and otherwise add it to the buffer ring as usual. The kernel will then
->>> first pick a buffer from the desired buffer group ID, and then decode
->>> which registered buffer to use for the transfer.
->>>
->>> This provides a way to use both registered and provided buffers at the
->>> same time.
->>>
->>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>> ---
->>>    include/uapi/linux/io_uring.h | 8 ++++++++
->>>    1 file changed, 8 insertions(+)
->>>
->>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->>> index 86cb385fe0b5..eef88d570cb4 100644
->>> --- a/include/uapi/linux/io_uring.h
->>> +++ b/include/uapi/linux/io_uring.h
->>> @@ -733,6 +733,14 @@ struct io_uring_buf_ring {
->>>        };
->>>    };
->>>    +/*
->>> + * When provided buffers are used as indices into registered buffers, the
->>> + * lower IOU_BUF_REGBUF_BITS indicate the index into the registered buffers,
->>> + * and the upper IOU_BUF_OFFSET_BITS indicate the offset into that buffer.
->>> + */
->>> +#define IOU_BUF_REGBUF_BITS    (32ULL)
->>> +#define IOU_BUF_OFFSET_BITS    (32ULL)
+On 10/24/24 17:06, Christoph Hellwig wrote:
+> On Thu, Oct 24, 2024 at 03:23:06PM +0100, Pavel Begunkov wrote:
+>>> That's not what this series does.  It adds the new memory_provider_ops
+>>> set of hooks, with once implementation for dmabufs, and one for
+>>> io_uring zero copy.
 >>
->> 32 bit is fine for IO size but not enough to store offsets, it
->> can only address under 4GB registered buffers.
+>> First, it's not a _new_ abstraction over a buffer as you called it
+>> before, the abstraction (net_iov) is already merged.
 > 
-> I did think about that - at least as it stands, registered buffers are
-> limited to 1GB in size. That's how it's been since that got added. Now,
-> for the future, we may obviously lift that limitation, and yeah then
-> 32-bits would not necessarily be enough for the offset.
+> Umm, it is a new ops vector.
 
-Right, and I don't think it's unreasonable considering with how
-much memory systems have nowadays, and we think that one large
-registered buffer is a good thing.
+I don't understand what you mean. Callback?
 
-> For linux, the max read/write value has always been INT_MAX & PAGE_MASK,
-> so we could make do with 31 bits for the size, which would bump the
-> offset to 33-bits, or 8G. That'd leave enough room for, at least, 8G
-> buffers, or 8x what we support now. Which is probably fine, you'd just
-> split your buffer registrations into 8G chunks, if you want to register
-> more than 8G of memory.
+>> Second, you mention devmem TCP, and it's not just a page pool with
+>> "dmabufs", it's a user API to use it and other memory agnostic
+>> allocation logic. And yes, dmabufs there is the least technically
+>> important part. Just having a dmabuf handle solves absolutely nothing.
+> 
+> It solves a lot, becaue it provides a proper abstraction.
 
-That's why I mentioned IO size, you can register a very large buffer
-and do IO with a small subchunk of it, even if that "small" is 4G,
-but it still needs to be addressed. I think we need at least an order
-of magnitude or two more space for it to last for a bit.
+Then please go ahead and take a look at the patchset in question
+and see how much of dmabuf handling is there comparing to pure
+networking changes. The point that it's a new set of API and lots
+of changes not related directly to dmabufs stand. dmabufs is useful
+there as an abstraction there, but it's a very long stretch saying
+that the series is all about it.
 
-Can it steal bits from IOU_BUF_REGBUF_BITS?
+> 
+>>> So you are precluding zero copy RX into anything but your magic
+>>> io_uring buffers, and using an odd abstraction for that.
+>>
+>> Right io_uring zero copy RX API expects transfer to happen into io_uring
+>> controlled buffers, and that's the entire idea. Buffers that are based
+>> on an existing network specific abstraction, which are not restricted to
+>> pages or anything specific in the long run, but the flow of which from
+>> net stack to user and back is controlled by io_uring. If you worry about
+>> abuse, io_uring can't even sanely initialise those buffers itself and
+>> therefore asking the page pool code to do that.
+> 
+> No, I worry about trying to io_uring for not good reason. This
+
+It sounds that the argument is that you just don't want any
+io_uring APIs, I don't think you'd be able to help you with
+that.
+
+> pre-cludes in-kernel uses which would be extremly useful for
+
+Uses of what? devmem TCP is merged, I'm not removing it,
+and the net_iov abstraction is in there, which can be potentially
+be reused by other in-kernel users if that'd even make sense.
+
+> network storage drivers, and it precludes device memory of all
+> kinds.
+
+You can't use page pools to allocate for a storage device, it's
+a network specific allocator. You can get a dmabuf around that
+device's memory and zero copy into it, but there is no problem
+with that. Either use devmem TCP or wait until io_uring adds
+support for dmabufs, which is, again, trivial.
+
+>> I'm even more confused how that would help. The user API has to
+>> be implemented and adding a new dmabuf gives nothing, not even
+>> mentioning it's not clear what semantics of that beast is
+>> supposed to be.
+>>
+> 
+> The dma-buf maintainers already explained to you last time
+> that there is absolutely no need to use the dmabuf UAPI, you
+> can use dma-bufs through in-kernel interfaces just fine.
+
+You can, even though it's not needed and I don't see how
+it'd be useful, but you're missing the point. A new dmabuf
+implementation doesn't implement the uapi we need nor it
+helps to talk to the net layer.
 
 -- 
 Pavel Begunkov

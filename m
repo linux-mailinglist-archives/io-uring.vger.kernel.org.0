@@ -1,135 +1,147 @@
-Return-Path: <io-uring+bounces-4018-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4019-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5199AF5CB
-	for <lists+io-uring@lfdr.de>; Fri, 25 Oct 2024 01:25:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D939AFA42
+	for <lists+io-uring@lfdr.de>; Fri, 25 Oct 2024 08:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E3E61C21807
-	for <lists+io-uring@lfdr.de>; Thu, 24 Oct 2024 23:25:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E65291F2299E
+	for <lists+io-uring@lfdr.de>; Fri, 25 Oct 2024 06:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DE12003DE;
-	Thu, 24 Oct 2024 23:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEFA18E029;
+	Fri, 25 Oct 2024 06:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SUIokgeX"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZY47b+MV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693F21B392C
-	for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 23:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB8518CBFF
+	for <io-uring@vger.kernel.org>; Fri, 25 Oct 2024 06:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729812315; cv=none; b=XqXGskaPqIFqRQV2beF2JJWA8cK8SUdoolFSZLhgV/L/hvqcXRww4o9uFd1ma39A05xDdAuJBWiuKsHDzJxFwBmESah8jvd5Zatlxm0ILgm8ONmt9onK3rbJqoEc9SeSd4bL2SJdro8zXG/sW47fz8/VbDFymPDVTR3RULoANFg=
+	t=1729838847; cv=none; b=jyItC/tV1Yu1yPtCp6hSrOowY/qy6qzFjdQ/eB9PN5b1wXOin8DbmoyW3UmlmHummll9n+AyeLsU4hafUGa7p6P3mnlQmskAkor+f+aNZNfDyDOQfWqsDa2W6jS+nqR6YSLwRbYnb0HRt8wVpDidUbM7k+29iSWHUnqVz8CCYIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729812315; c=relaxed/simple;
-	bh=9yJ80Cu6LmbQ6HS0RLXgKe93ooM0lF7LK+mwdqi5F9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iIarrN23yTeXRat0WmXf4YCG/8R3i53awf/mad6ljHcEa3MWTcMXh5aSZZtavZnN7yIOXW9PlcGvroTFhOwUx3yuxi17uOJ/zJ4rG8VkYw2xbuV4mD4Zqpb5NUsW5svTIt7aprgF5tn1Bfe8SkE5sPo7eTO+oOm0Nu6Emug/LIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SUIokgeX; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ea8c4ce232so1101682a12.0
-        for <io-uring@vger.kernel.org>; Thu, 24 Oct 2024 16:25:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729812312; x=1730417112; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JTd/XGf1mB5cjq0szQmXcBwBqSmquAvdHM3ImKbNA5k=;
-        b=SUIokgeXaQMAUPjeG1g0QinAIqzqr0QKjYX1qyDWMuzvxzLkm9Y87bIcrrf+XWHGzA
-         kjK8huQzs6FdWu/YpQ8YSfGedmgpebf8gPOoF+9JEwmft+35HylQXLRkpIj6H4/TJqyO
-         NOmuaYUyP00QyYh78cYDk85FRQ/27V7PNEkNrLR8UHpS4WbtcN8A2651s7H+lWhO66NF
-         VuYSGYtX33cmLxSb8VMOmcYkS0UmYEwgFGGx2yJqdP7aiQwiKOxsFle0Q9ujirqujiIj
-         jUoO9YV6L2WA9EV02o3G58pRMUFBhP4CRQ6K/tzXN83el6nAUDWAKz5MKDlB6YS214db
-         4o7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729812312; x=1730417112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JTd/XGf1mB5cjq0szQmXcBwBqSmquAvdHM3ImKbNA5k=;
-        b=V1ajF3+dnHf0E2tXeGtpyeQQ+V7Aord97nFk6eyDeBCHXJH2b+Kn8IxoynhjRD7Oph
-         Tu8WHd4pGxlXlTq0aknKe8lj6jHSTLKHiTMAgLx/23hJImcMh37KsajTNfLXl+gko+XW
-         +/Hn0I2zTwRP90fFZlT5n3zt2zGatCyf83HIkTHfwnstTGdjnnDN7fKzj8byLSwJmc0r
-         hyEDlYZBXj0e132ckfKFVmYTCb4oXfT4iuod7cH62SqpZ+q1sflMiy6GT9mSDLyvoblT
-         cu1Ha+0u3OKUTomttV1fA7MBcQtPNUz7KH0r5RXYjNG/4EOTI8C23NobwtsLhXn/c3d9
-         6G6w==
-X-Gm-Message-State: AOJu0YxNkRwOo2m7nkA2yAUeR7ktvJVnkTF7kzk1YTF778Y/m4Uhak19
-	ynBlw8gSKnYImIoXQS//ED/1SDMissISMJV/RPqLNb/oXfnSKVxLsXx2nocuu0A=
-X-Google-Smtp-Source: AGHT+IEmyAGjb+MBNYiPW1nZ5+l7ErL67ME3TATwVV1rPM+Mu6WjCAlo8BS/J8MLK+3z5D7ZgghOUQ==
-X-Received: by 2002:a17:902:d543:b0:207:6fd:57d5 with SMTP id d9443c01a7336-20fa9e76831mr91650065ad.36.1729812311674;
-        Thu, 24 Oct 2024 16:25:11 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0d9a7esm76982195ad.182.2024.10.24.16.25.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 16:25:11 -0700 (PDT)
-Message-ID: <09958a6f-4e24-4a18-b6b3-7ea10ea96beb@kernel.dk>
-Date: Thu, 24 Oct 2024 17:25:10 -0600
+	s=arc-20240116; t=1729838847; c=relaxed/simple;
+	bh=y+GFTNaiiNCvu/E/cjxjx3vJfDPj/k5tRFPQhzmKTsk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=IDNror/tHgq2s0rAE+iyNzibSINNoQF3hdmeVHz0M89hMOfKEkbHup/T/tW0hUBUCRLFChHqUTH6iQgVmPhmp0wYJsdn1MXYC4yKMDShnCHrCQKsOgBWYrTJ+pDIMGIDOi/2XQtzjjCbAfKqAy9ENZrQR+PrzK4P5koJ95z9pss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZY47b+MV; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241025064715epoutp03ded5ca31c649b8d60bed81cc1f46a4c6~Bn0GTiA6L1745317453epoutp03o
+	for <io-uring@vger.kernel.org>; Fri, 25 Oct 2024 06:47:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241025064715epoutp03ded5ca31c649b8d60bed81cc1f46a4c6~Bn0GTiA6L1745317453epoutp03o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1729838835;
+	bh=y+GFTNaiiNCvu/E/cjxjx3vJfDPj/k5tRFPQhzmKTsk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZY47b+MVTvbUdMvg5iDizzo5uhcjRTOYE85MRF4/qLG3EaFkO6aMGl7BwfdYmOS59
+	 oZ6tNi17OdmpagDT2qaQUdwD7tg961JMjetKoWBVAph2BxSFnMVfvPbGZK+ShlexEd
+	 b/vLYWtKUng/Jt7qXqwVNGnKjhC3basDn1az9LY0=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20241025064715epcas5p39d505507a9186a50445807615f7baae2~Bn0GBZQVX2439624396epcas5p3F;
+	Fri, 25 Oct 2024 06:47:15 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4XZYHP5DvFz4x9Q7; Fri, 25 Oct
+	2024 06:47:13 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	71.53.09770.1FE3B176; Fri, 25 Oct 2024 15:47:13 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241025061108epcas5p173629b3149be6e3b96853eb32e61b9ab~BnUjsgopU2531625316epcas5p1A;
+	Fri, 25 Oct 2024 06:11:08 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241025061108epsmtrp1a03e57351e610dc599c005daec147395~BnUjrVCJG0440304403epsmtrp10;
+	Fri, 25 Oct 2024 06:11:08 +0000 (GMT)
+X-AuditID: b6c32a4a-bbfff7000000262a-30-671b3ef1df61
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	1C.44.08229.C763B176; Fri, 25 Oct 2024 15:11:08 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241025061107epsmtip19e31d0d8b4e4ae59263c4efb1492dfeb~BnUi1KX5U2452724527epsmtip12;
+	Fri, 25 Oct 2024 06:11:07 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v8] io_uring: releasing CPU resources when polling
+Date: Fri, 25 Oct 2024 14:10:59 +0800
+Message-Id: <20241025061059.1172576-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <62e57b0e-b646-4f96-bb83-5a0ecb4050da@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 RESEND] io_uring/fdinfo: add timeout_list to fdinfo
-To: Pavel Begunkov <asml.silence@gmail.com>,
- Ruyi Zhang <ruyi.zhang@samsung.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- peiwei.li@samsung.com
-References: <CGME20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad@epcas5p2.samsung.com>
- <e8d1f8e8-abd9-4e4b-aa55-d8444794f55a@gmail.com>
- <20241012091026.1824-1-ruyi.zhang@samsung.com>
- <5d288a05-c3c8-450a-9e25-abac89eb0951@kernel.dk>
- <cdc6a0c4-5ad8-4ad6-9dca-49fa5e44f8dd@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <cdc6a0c4-5ad8-4ad6-9dca-49fa5e44f8dd@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphk+LIzCtJLcpLzFFi42LZdlhTQ/ejnXS6wfaJahZzVm1jtFh9t5/N
+	4l3rORaLX913GS0u75rDZnF2wgdWBzaPnbPusntcPlvq0bdlFaPH501yASxR2TYZqYkpqUUK
+	qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QLuVFMoSc0qBQgGJxcVK
+	+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZ+153MRbsYa14
+	evkdawPjGpYuRk4OCQETiaXfj7N3MXJxCAnsZpR4dG0zE4TziVHi6eWpzBDON0aJ2Q8+w7X8
+	fH0Qqmovo8TuSV9ZIJwfjBLPf55jBKliE1CS2L/lA5gtIqAt8frxVLBuZgEribNzfoLZwgJe
+	Eu83gizn5GARUJX4/2slK4jNK2AtsfzcWnaIbfISN7v2M4PYnAK2Ev87drND1AhKnJz5BGqm
+	vETz1tlgp0oIXGOX6G8+ztbFyAHkuEj0LuCGmCMs8er4FqiZUhIv+9ug7HyJyd/XM0LYNRLr
+	Nr+D+tJa4t+VPSwgY5gFNCXW79KHCMtKTD21jgliLZ9E7+8nTBBxXokd82BsJYklR1ZAjZSQ
+	+D1hESuE7SEx79cesLiQwARGiVffgiYwKsxC8s0sJN/MQti8gJF5FaNkakFxbnpqsWmBUV5q
+	OTySk/NzNzGCk6OW1w7Ghw8+6B1iZOJgPMQowcGsJMJ7MUMyXYg3JbGyKrUoP76oNCe1+BCj
+	KTC4JzJLiSbnA9NzXkm8oYmlgYmZmZmJpbGZoZI47+vWuSlCAumJJanZqakFqUUwfUwcnFIN
+	TN33bQ4cr1xvLery9c8HvkP7UybcnOyl+EFpwanba9bFKk71kM/T9ZrjMHH5kv7GOv3QNPcP
+	wWs/7Yj/MMU5PPsa+ztx5/UOslmCOkECAa1sC/8unVc++cDagPm7pAzk0o0PqmszTRfaVcE4
+	v99887XJ7PeNfl/3cUn93aK755OYdEhDlEPUCi2G/mD10EcTblvbn6qb/v//2l/zG0UtOuNP
+	9Xf8abpweJL3bp6ctNR4hk/rRd/knKsse5bbMt39kEzQhcQPUWyd6q9yuSY97LQ41FibtNdJ
+	kIM5YauYurKB5IQXS/TzitJ/b06Zf+BnT39t2glR55MTXqwNd9rKeuGY9Dwtsy8PFcMNnH7f
+	UGIpzkg01GIuKk4EAMetzqkXBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsWy7bCSnG6NmXS6wdYZQhZzVm1jtFh9t5/N
+	4l3rORaLX913GS0u75rDZnF2wgdWBzaPnbPusntcPlvq0bdlFaPH501yASxRXDYpqTmZZalF
+	+nYJXBn7XncxFuxhrXh6+R1rA+Mali5GTg4JAROJn68PMnUxcnEICexmlNgwYwozREJCYsej
+	P6wQtrDEyn/P2SGKvjFKzJjfCVbEJqAksX/LB8YuRg4OEQFdica7CiBhZgEbiZ0tW9hBbGEB
+	L4n3G4+D2SwCqhL/f60Em8krYC2x/Nxadoj58hI3u/aDjeQUsJX437EbLC4ENGdC/2k2iHpB
+	iZMzn7BAzJeXaN46m3kCo8AsJKlZSFILGJlWMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefn
+	bmIEh6+W5g7G7as+6B1iZOJgPMQowcGsJMJ7MUMyXYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv
+	+IveFCGB9MSS1OzU1ILUIpgsEwenVAOTxPRXUaIOJkJLeIyYX7ZLXXwwvfPpNVHLXmH+nznf
+	/214fXJW8cJlqcYBS3l3zrzmlzdXz5K9NCrvQsbOkLM3PCWnSn3rzw5YYbFG8t0vlqS4Ew0G
+	/IEfXmiktEUe3SEuM/HS/d0Sl3vPvPjso9j1vH917LqLn67tu1cooZj+NNoyRUpAfdZXvU1N
+	Nm+eb9htsNjwd3a/aMzX1osWOtuWpXGIVsbemNz4PaeWeXfdk37l2+08nxmEdocIqBWZSkm0
+	lWz5EanJ4qaxiTEuxUegwf7Wuq3pn08HfV7uGrXiUsHGD/OX6XZ/2q1w9lVKzOOrnGWqbR9C
+	FDjfbhGQyPIrb5HbG6a6zJiJT6mJZ5MSS3FGoqEWc1FxIgAQAnMYzgIAAA==
+X-CMS-MailID: 20241025061108epcas5p173629b3149be6e3b96853eb32e61b9ab
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241025061108epcas5p173629b3149be6e3b96853eb32e61b9ab
+References: <62e57b0e-b646-4f96-bb83-5a0ecb4050da@kernel.dk>
+	<CGME20241025061108epcas5p173629b3149be6e3b96853eb32e61b9ab@epcas5p1.samsung.com>
 
-On 10/24/24 12:10 PM, Pavel Begunkov wrote:
-> On 10/24/24 18:31, Jens Axboe wrote:
->> On Sat, Oct 12, 2024 at 3:30?AM Ruyi Zhang <ruyi.zhang@samsung.com> wrote:
-> ...
->>>> I don't think there is any difference, it'd be a matter of
->>>> doubling the number of in flight timeouts to achieve same
->>>> timings. Tell me, do you really have a good case where you
->>>> need that (pretty verbose)? Why not drgn / bpftrace it out
->>>> of the kernel instead?
->>>
->>>   Of course, this information is available through existing tools.
->>>   But I think that most of the io_uring metadata has been exported
->>>   from the fdinfo file, and the purpose of adding the timeout
->>>   information is the same as before, easier to use. This way,
->>>   I don't have to write additional scripts to get all kinds of data.
->>>
->>>   And as far as I know, the io_uring_show_fdinfo function is
->>>   only called once when the user is viewing the
->>>   /proc/xxx/fdinfo/x file once. I don't think we normally need to
->>>   look at this file as often, and only look at it when the program
->>>   is abnormal, and the timeout_list is very long in the extreme case,
->>>   so I think the performance impact of adding this code is limited.
->>
->> I do think it's useful, sometimes the only thing you have to poke at
->> after-the-fact is the fdinfo information. At the same time, would it be
-> 
-> If you have an fd to print fdinfo, you can just well run drgn
-> or any other debugging tool. We keep pushing more debugging code
-> that can be extracted with bpf and other tools, and not only
-> it bloats the code, but potentially cripples the entire kernel.
+On 10/24/24 14:49 Jens Axboe wrote:
+>On 10/24/24 8:49 AM, Pavel Begunkov wrote:
+>> On 10/24/24 15:40, Jens Axboe wrote:
+>>> On 10/24/24 8:26 AM, Pavel Begunkov wrote:
+>>>> On 10/24/24 15:18, Jens Axboe wrote:
+>>>>> On 10/23/24 8:38 PM, hexue wrote:
+>>>>>> On 9/25/2024 12:12, Pavel Begunkov wrote:
+>>>> ...
 
-While that is certainly true, it's also a much harder barrier to entry.
-If you're already setup with eg drgn, then yeah fdinfo is useless as you
-can grab much more info out by just using drgn.
+>Ah true, well some other spot then, should be pretty easy to find 8
+>bytes for iopoll_start. As mentioned, the point is really just to THINK
+>about where it should go, rather than lazily just shove it at the end
+>like no thought has been given to it.
 
-I'm fine punting this to "needs more advanced debugging than fdinfo".
-It's just important we get closure on these patches, so they don't
-linger forever in no man's land.
+Thanks a lot for these suggestions and help. I will revise and submit a
+complete v9 patch, thank you very much.
 
--- 
-Jens Axboe
+--
+Xue
 

@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-4069-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4070-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 410099B344C
-	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 16:04:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 097599B344E
+	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 16:04:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 107541C21DF5
-	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 15:04:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3647E1C21D3F
+	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 15:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA56C18FDB0;
-	Mon, 28 Oct 2024 15:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A821D9681;
+	Mon, 28 Oct 2024 15:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="WJz+OxFU"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qYuTdNWw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138521D9681
-	for <io-uring@vger.kernel.org>; Mon, 28 Oct 2024 15:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACACB1DD864
+	for <io-uring@vger.kernel.org>; Mon, 28 Oct 2024 15:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730127888; cv=none; b=tROblNcPxvgDiF2efMTihmZgUcU/foaCcg6BbkJBp9u7puQIVUeikKtF33tykG5GfN7Bg6e/PeprBZPxITVn28DHh0BzH2/1ym49KXaULCfnUtD1IeogwLPp2B4wioz9Qd8RXCWi6w6DnQZEPHp4lk0dWI+tTETYmwuouE/MgzI=
+	t=1730127889; cv=none; b=O0PnlSLg0VMtN7r3Y8O+iuYbOMAAOkiSgheTOX5+cgEQhLy2TujSEcfwPrNh+H9KiXztTyhCqqIJaW+fJeM1a9YDhEFhFBjnaVWrNINfUhDAlCjydg7m3O3XKVRPagwvgkr0qJROLNR6roFPWj0DIhdkT+bNScLHMpCJPLFcjaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730127888; c=relaxed/simple;
-	bh=HPnvI+rOjDAWZqF0Xd42uWJKF/3qtcinc1VyXx9MXy4=;
+	s=arc-20240116; t=1730127889; c=relaxed/simple;
+	bh=gbtUQsMeQx/ihpjCfNEVueNKiMVBzIIvZfHP4mZ+ic0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h4+q+sL/2w9oqU5ztGVf8EJlafPhez3pcPKQO16BNWkhnr/hDvObhBRZmk0KXd+DjU4QAn1NQ1ksOwpn3ZGyB1cuE2OMwQZsQikh4C425qqnnLICfYcVHhDbgrlrIQZ6/xQcBGuf6xI8V+4U7KWmOMx7GqU+BEp/+7Srxpmg4Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=WJz+OxFU; arc=none smtp.client-ip=209.85.166.181
+	 MIME-Version; b=E/y2IWBUMpUpRCW/WH8sawOp9S37XRQWZjyc5fD/HH/EcWw+rT4Y2EMiVho89x8UGGAjRsY88lKB7sj9hRiWcwwtegG97nkAssUVjumQYR0UNtEng6fQ9eahuYf25jjD39+rkTtHPIxktYVL5gxjC6g5LDLtsGBP4w6/vpdeRw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qYuTdNWw; arc=none smtp.client-ip=209.85.210.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a3aeb19ea2so16000385ab.0
-        for <io-uring@vger.kernel.org>; Mon, 28 Oct 2024 08:04:45 -0700 (PDT)
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-71808b6246bso2337520a34.2
+        for <io-uring@vger.kernel.org>; Mon, 28 Oct 2024 08:04:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730127884; x=1730732684; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730127885; x=1730732685; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lk/+RVPeoujW1QBGROEzXF5c7w5OPLyPUXaokbUSoj0=;
-        b=WJz+OxFUIe+DfhHgsVZ0nDBs6PpiZ9xQetozra0lsfAHbXOcUwe2CUhsljaVxa0LL3
-         rojUQsuP2kaeGntrltjjE3FXRERIu1BjvTKlkXectjSwGjaD8s01yy3nrVuKukLZMgiI
-         q7E+S1P8ZHUpxGwF4Jt24MAIL17iX/lk0eQao9DC96m4hi3NRPWZv35YDYNW75MkHu7+
-         PnknCmt4osvTH1cRIdzzFpoJuJfVkEai/e4LWYmyEW14M7qOeogFndL2fB+SQ/GvPJoK
-         sBbSk3PtmM+Fw+4/IcDN+wP+U103//dK6I+fX81nSzLxvSPHBOTeAc9X+tvEc9pBYH0v
-         QCLg==
+        bh=kWafocjdEh3Pob5N+inSXBHHJdCi0UP8BjhLCBT+Hd8=;
+        b=qYuTdNWw1k4tUwU4s0qc12pSojRHVEq2y/7V/pZ4tIDt0ZjMMwiEf26wAN7LN8lQh9
+         hlmxuxkg8MNXuf5+hMNfCb0w7DqOmQhbzoBnaCNhENjQwuhnc6iWrJFTIFaIoMGEcDT4
+         ZC1QhyLmG1LMQgCXaXS7wjo+NFtmehTD3LvhaaZ90HFh6t11c+v5Dp/2q/LjHc6KgDyy
+         s3DO+AkENyuNiatu14svFrEwMUO7EV87+FKv1zIymAdNe+/PROCmQWS+3r0V5IyMStyA
+         ageY8ATbreqXrLk1Zaa1gC//bAn4u6A1TvRXEO39ZoUi61O4BKSpBzZkGmnAt2Rgev2H
+         B9RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730127884; x=1730732684;
+        d=1e100.net; s=20230601; t=1730127885; x=1730732685;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lk/+RVPeoujW1QBGROEzXF5c7w5OPLyPUXaokbUSoj0=;
-        b=qBzKTkilGtL4PrkJ/EvmAYc6+juaWSvAI6Zl6TXjQZSWNQ+R5Sxqhlu0IWzBDxOCxF
-         F8rzpI8b7Kix75bfQK+lP9vyC9jSfkWrerY1pwW7LZdt/nNQBbs4C1AakvdP8RALjiSb
-         8kCUmrK6NPNf+ce577SdxZzQ3JDU41JSHJGPkCDxz4eAnXqrhkl+ghMsalaup7Jzk/JV
-         e456BcAT1KLHdnVxTj11D/byoOqwbzx5LbGb2GUUwyHhwrcuQqL3k7id+mkqbZSE1dg/
-         HljMZwWmUfs3edUj5DDkPVlUtfwauF/pSfMsDc/W2/qFBKfjD+aJoIBWM2ZUaTPOSvN7
-         zW7g==
-X-Gm-Message-State: AOJu0YxLu+VyqiR7ZB5zzvSsKrBWvtPiJbIuC8W0WdpKMIuoW9znyR0g
-	Pf1EezLnS5mndmxO1NFYYYNZjzH4Z8q3Du2mNoGLNRukuOyr4ww13Yz+GRyQeLr8dHIgJs2C/ZR
-	A
-X-Google-Smtp-Source: AGHT+IG5i6GgjRUwZBstb32BYDeJPkTd3KNhTLPLHcgtEo1HaqZMq7xT07taUC8OMvEXruMNl5W2zQ==
-X-Received: by 2002:a05:6e02:1d01:b0:3a0:9829:100b with SMTP id e9e14a558f8ab-3a4ed2fcbc6mr66461455ab.21.1730127884126;
+        bh=kWafocjdEh3Pob5N+inSXBHHJdCi0UP8BjhLCBT+Hd8=;
+        b=ebb2EbYkP9ki8DjPGJHCyRxaeE2QEmPxZDdXkTQwEE4jd/g1foPvlI4Tl12ERzkHHI
+         nZiSkveZtsm3zxeOjBZ7D1Tt2ZXm8stIDVB8c148vyCfqVZfEGVwNJ+f/09J2cNS6O8W
+         Q0FPvD2hSaEMjMSyCWFPYBTFSMBlH9csZABEwoX8ohDuxPRNPyko3kEE7zTd3FVYaLF1
+         W9EyprUxQHnMarYK7wROnsg01J0QSjdLA1nscOyBl8/UTi5VhB6m1+f5v8YG84F8aNKs
+         Vc9tRDHyf8vGKkKOMdAknAlVSgZFFlGUdjT2qSYtC6gtYsyaYqtE9MRnGTE/12cIDun5
+         VP9g==
+X-Gm-Message-State: AOJu0YykXF+cHfzS6NqmGTF3pS3MlHf8bVPJw+FhkhGvk2UgXya1EmNg
+	poUR6xUmVMyxspjJZtBbr2VirD6aaQEB8MQ5e1fPI2Rup1UVPlMgBvYYGOBH5FgkyeWdnLoXTmw
+	0
+X-Google-Smtp-Source: AGHT+IF07h74mphVF++z2fvF+VTcvBgW8RPaoFZNx69QCaQ3VmHKuJdNd7hVbdbtlerhGFGFu+jBbg==
+X-Received: by 2002:a05:6830:6311:b0:716:ab1b:6473 with SMTP id 46e09a7af769-7186829708amr7521071a34.30.1730127884954;
         Mon, 28 Oct 2024 08:04:44 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc7261c7e3sm1721616173.72.2024.10.28.08.04.41
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc7261c7e3sm1721616173.72.2024.10.28.08.04.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 08:04:41 -0700 (PDT)
+        Mon, 28 Oct 2024 08:04:44 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 01/13] io_uring/nop: add support for testing registered files and buffers
-Date: Mon, 28 Oct 2024 08:52:31 -0600
-Message-ID: <20241028150437.387667-2-axboe@kernel.dk>
+Subject: [PATCH 02/13] io_uring/rsrc: move struct io_fixed_file to rsrc.h header
+Date: Mon, 28 Oct 2024 08:52:32 -0600
+Message-ID: <20241028150437.387667-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241028150437.387667-1-axboe@kernel.dk>
 References: <20241028150437.387667-1-axboe@kernel.dk>
@@ -84,113 +84,60 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Useful for testing performance/efficiency impact of registered files
-and buffers, vs (particularly) non-registered files.
+There's no need for this internal structure to be visible, move it to
+the private rsrc.h header instead.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/uapi/linux/io_uring.h |  3 +++
- io_uring/nop.c                | 49 +++++++++++++++++++++++++++++++----
- 2 files changed, 47 insertions(+), 5 deletions(-)
+ include/linux/io_uring_types.h | 5 -----
+ io_uring/filetable.h           | 1 +
+ io_uring/rsrc.h                | 5 +++++
+ 3 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 65b7417c1b05..024745283783 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -416,6 +416,9 @@ enum io_uring_msg_ring_flags {
-  * IORING_NOP_INJECT_RESULT	Inject result from sqe->result
-  */
- #define IORING_NOP_INJECT_RESULT	(1U << 0)
-+#define IORING_NOP_FILE			(1U << 1)
-+#define IORING_NOP_FIXED_FILE		(1U << 2)
-+#define IORING_NOP_FIXED_BUFFER		(1U << 3)
- 
- /*
-  * IO completion data structure (Completion Queue Entry)
-diff --git a/io_uring/nop.c b/io_uring/nop.c
-index a5bcf3d6984f..2c7a22ba4053 100644
---- a/io_uring/nop.c
-+++ b/io_uring/nop.c
-@@ -8,35 +8,74 @@
- #include <uapi/linux/io_uring.h>
- 
- #include "io_uring.h"
-+#include "rsrc.h"
- #include "nop.h"
- 
- struct io_nop {
- 	/* NOTE: kiocb has the file as the first member, so don't do it here */
- 	struct file     *file;
- 	int             result;
-+	int		fd;
-+	int		buffer;
-+	unsigned int	flags;
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 2f12828b22a4..d4ba4ae480d6 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -55,11 +55,6 @@ struct io_wq_work {
+ 	int cancel_seq;
  };
  
-+#define NOP_FLAGS	(IORING_NOP_INJECT_RESULT | IORING_NOP_FIXED_FILE | \
-+			 IORING_NOP_FIXED_BUFFER | IORING_NOP_FILE)
+-struct io_fixed_file {
+-	/* file * with additional FFS_* flags */
+-	unsigned long file_ptr;
+-};
+-
+ struct io_file_table {
+ 	struct io_fixed_file *files;
+ 	unsigned long *bitmap;
+diff --git a/io_uring/filetable.h b/io_uring/filetable.h
+index b2435c4dca1f..c027ed4ad68d 100644
+--- a/io_uring/filetable.h
++++ b/io_uring/filetable.h
+@@ -4,6 +4,7 @@
+ 
+ #include <linux/file.h>
+ #include <linux/io_uring_types.h>
++#include "rsrc.h"
+ 
+ bool io_alloc_file_tables(struct io_file_table *table, unsigned nr_files);
+ void io_free_file_tables(struct io_file_table *table);
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index c50d4be4aa6d..e072fb3ee351 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -40,6 +40,11 @@ struct io_rsrc_node {
+ 	struct io_rsrc_put		item;
+ };
+ 
++struct io_fixed_file {
++	/* file * with additional FFS_* flags */
++	unsigned long file_ptr;
++};
 +
- int io_nop_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
--	unsigned int flags;
- 	struct io_nop *nop = io_kiocb_to_cmd(req, struct io_nop);
- 
--	flags = READ_ONCE(sqe->nop_flags);
--	if (flags & ~IORING_NOP_INJECT_RESULT)
-+	nop->flags = READ_ONCE(sqe->nop_flags);
-+	if (nop->flags & ~NOP_FLAGS)
- 		return -EINVAL;
- 
--	if (flags & IORING_NOP_INJECT_RESULT)
-+	if (nop->flags & IORING_NOP_INJECT_RESULT)
- 		nop->result = READ_ONCE(sqe->len);
- 	else
- 		nop->result = 0;
-+	if (nop->flags & IORING_NOP_FIXED_FILE)
-+		nop->fd = READ_ONCE(sqe->fd);
-+	if (nop->flags & IORING_NOP_FIXED_BUFFER)
-+		nop->buffer = READ_ONCE(sqe->buf_index);
- 	return 0;
- }
- 
- int io_nop(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_nop *nop = io_kiocb_to_cmd(req, struct io_nop);
-+	int ret = nop->result;
-+
-+	if (nop->flags & IORING_NOP_FILE) {
-+		if (nop->flags & IORING_NOP_FIXED_FILE) {
-+			req->file = io_file_get_fixed(req, nop->fd, issue_flags);
-+			req->flags |= REQ_F_FIXED_FILE;
-+		} else {
-+			req->file = io_file_get_normal(req, nop->fd);
-+		}
-+		if (!req->file) {
-+			ret = -EBADF;
-+			goto done;
-+		}
-+	}
-+	if (nop->flags & IORING_NOP_FIXED_BUFFER) {
-+		struct io_ring_ctx *ctx = req->ctx;
-+		struct io_mapped_ubuf *imu;
-+		int idx;
- 
--	if (nop->result < 0)
-+		ret = -EFAULT;
-+		io_ring_submit_lock(ctx, issue_flags);
-+		if (nop->buffer < ctx->nr_user_bufs) {
-+			idx = array_index_nospec(nop->buffer, ctx->nr_user_bufs);
-+			imu = READ_ONCE(ctx->user_bufs[idx]);
-+			io_req_set_rsrc_node(req, ctx);
-+			ret = 0;
-+		}
-+		io_ring_submit_unlock(ctx, issue_flags);
-+	}
-+done:
-+	if (ret < 0)
- 		req_set_fail(req);
- 	io_req_set_res(req, nop->result, 0);
- 	return IOU_OK;
+ struct io_mapped_ubuf {
+ 	u64		ubuf;
+ 	unsigned int	len;
 -- 
 2.45.2
 

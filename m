@@ -1,37 +1,37 @@
-Return-Path: <io-uring+bounces-4062-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4063-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D639C9B2F6F
-	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 12:58:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB51A9B2F74
+	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 12:59:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99849282334
-	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 11:58:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C5CBB213F4
+	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 11:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90031D3648;
-	Mon, 28 Oct 2024 11:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B169E1D79A6;
+	Mon, 28 Oct 2024 11:59:38 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CD4189B8D;
-	Mon, 28 Oct 2024 11:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E763A189B8D;
+	Mon, 28 Oct 2024 11:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730116693; cv=none; b=jBa2gJuvj4WRmU17bfTFg0hOMSNnxqni4B8JZEJ9+PIlhyfywF3Yi82JEaQwHK72O8+kygsasWoCJR1Ui+sF8BkAauQZr7fJ78mVBo2ypEcE6TCeMcYOJ8S/BmstVQa5FbPTz4pr1iVoAd6cQny3zTecHAPu6/oGMyTG+iaG5Gw=
+	t=1730116778; cv=none; b=edXzjREjfN4jRlOiRssleshUL8VqlbOsKWhVi9hQe+/tzZuuhRbgFuvTd2N5bkfy98zaoE5ZsaIPncM5CiJOQNegq/7hvMEuDRh24YVeGkOq4vYPULCrOq8Q7MX6FHsKvj/NEwwcqo7dUT+SSY/S10TczEH14dq5nhobRX5Ho9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730116693; c=relaxed/simple;
-	bh=/snqQ8hB85YP2HXCoXcwxeyRuiKR6bcVDfyJNgNsUMA=;
+	s=arc-20240116; t=1730116778; c=relaxed/simple;
+	bh=A93YXKktDcp5l4ZKvNgk8vvFDuzqgXHqC4elv6hexpo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4gF4FjA3kKMv4XwaYDLdjbJjmtS4H0blXE/G/9029tNJZMhKp9AYqaxH0rJFuLjfbBTggGjZ/+7BLv+PL6loxngmFe31+3j/1wgOyto0DM5bRAMWzOvM/XFy4HF3PaQ/BZxy74D1m1wAAibdcXvcGPnr/2W3/ap1MT+vriRU1s=
+	 Content-Type:Content-Disposition:In-Reply-To; b=u6r7iiszjWH9sD9XlZH9l0ik8V4PqpNmBp23PPVOkya7HkFbfIi/5pTBpFfL31T0yF1P4ZbFwIS8s9rhsNYWRC9Rc7rgSYVNpjFao73a54nBUHYAcKu97UuptOlbUjgXfXnrvyQUbAMlCilF6oZxruf0lE6oR0eDJAJsEwVCLXk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id E2B2368BFE; Mon, 28 Oct 2024 12:58:05 +0100 (CET)
-Date: Mon, 28 Oct 2024 12:58:05 +0100
+	id 4C76468BFE; Mon, 28 Oct 2024 12:59:33 +0100 (CET)
+Date: Mon, 28 Oct 2024 12:59:32 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Keith Busch <kbusch@meta.com>
 Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
@@ -39,10 +39,9 @@ Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org, hch@lst.de, joshi.k@samsung.com,
 	javier.gonz@samsung.com, bvanassche@acm.org,
 	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv9 3/7] block: allow ability to limit partition write
- hints
-Message-ID: <20241028115805.GD8517@lst.de>
-References: <20241025213645.3464331-1-kbusch@meta.com> <20241025213645.3464331-4-kbusch@meta.com>
+Subject: Re: [PATCHv9 4/7] block, fs: add write hint to kiocb
+Message-ID: <20241028115932.GE8517@lst.de>
+References: <20241025213645.3464331-1-kbusch@meta.com> <20241025213645.3464331-5-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -51,77 +50,27 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241025213645.3464331-4-kbusch@meta.com>
+In-Reply-To: <20241025213645.3464331-5-kbusch@meta.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Fri, Oct 25, 2024 at 02:36:41PM -0700, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> When multiple partitions are used, you may want to enforce different
-> subsets of the available write hints for each partition. Provide a
-> bitmap attribute of the available write hints, and allow an admin to
-> write a different mask to set the partition's allowed write hints.
-
-Trying my best Greg impersonator voice: This needs to be documented
-in Documentation/ABI/stable/sysfs-block.
-
-That would have also helped me understanding it.  AFAIK the split here
-is an opt-in, which means the use case I explained in the previous
-case would still not work out of the box, right?
-
-> +	max_write_hints = bdev_max_write_hints(bdev);
-> +	if (max_write_hints) {
-> +		int size = BITS_TO_LONGS(max_write_hints) * sizeof(long);
-> +
-> +		bdev->write_hint_mask = kmalloc(size, GFP_KERNEL);
-> +		if (!bdev->write_hint_mask) {
-> +			free_percpu(bdev->bd_stats);
-> +			iput(inode);
-> +			return NULL;
-> +		}
-> +		memset(bdev->write_hint_mask, 0xff, size);
-> +	}
-
-This could simply use bitmap_alloc().  Similarly the other uses
-would probably benefit from using the bitmap API.
-
-> +	struct block_device *bdev = dev_to_bdev(dev);
-> +	unsigned short max_write_hints = bdev_max_write_hints(bdev);
-> +
-> +	if (max_write_hints)
-> +		return sprintf(buf, "%*pb\n", max_write_hints, bdev->write_hint_mask);
-> +	else
-> +		return sprintf(buf, "0");
-
-No need for the else.  And if you write this as:
-
-	if (!max_write_hints)
-		return sprintf(buf, "0");
-	return sprintf(buf, "%*pb\n", max_write_hints, bdev->write_hint_mask);
-
-you'd also avoid the overly long line.
-
-> +
-> +static ssize_t part_write_hint_mask_store(struct device *dev,
-> +					  struct device_attribute *attr,
-> +					  const char *buf, size_t count)
+On Fri, Oct 25, 2024 at 02:36:42PM -0700, Keith Busch wrote:
+> +static u16 blkdev_write_hint(struct kiocb *iocb, struct block_device *bdev)
 > +{
-> +	struct block_device *bdev = dev_to_bdev(dev);
-> +	unsigned short max_write_hints = bdev_max_write_hints(bdev);
-> +	unsigned long *new_mask;
-> +	int size;
+> +	u16 hint = iocb->ki_write_hint;
 > +
-> +	if (!max_write_hints)
-> +		return count;
+> +	if (!hint)
+> +		return file_inode(iocb->ki_filp)->i_write_hint;
 > +
-> +	size = BITS_TO_LONGS(max_write_hints) * sizeof(long);
-> +	new_mask = kzalloc(size, GFP_KERNEL);
-> +	if (!new_mask)
-> +		return -ENOMEM;
+> +	if (hint > bdev_max_write_hints(bdev))
+> +		return file_inode(iocb->ki_filp)->i_write_hint;
 > +
-> +	bitmap_parse(buf, count, new_mask, max_write_hints);
-> +	bitmap_copy(bdev->write_hint_mask, new_mask, max_write_hints);
+> +	if (bdev_is_partition(bdev) &&
+> +	    !test_bit(hint - 1, bdev->write_hint_mask))
+> +		return file_inode(iocb->ki_filp)->i_write_hint;
 
-What protects access to bdev->write_hint_mask?
+I would have expected an error when using an invalid stream identifier.
+
+That of course requires telling the application how many are available
+through e.g. statx as requested last time.
 
 

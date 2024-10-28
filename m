@@ -1,98 +1,78 @@
-Return-Path: <io-uring+bounces-4085-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4086-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC579B3911
-	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 19:27:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D5089B394B
+	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 19:39:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C451C21339
-	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 18:27:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0286D2824BB
+	for <lists+io-uring@lfdr.de>; Mon, 28 Oct 2024 18:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053641DF966;
-	Mon, 28 Oct 2024 18:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37C61DF975;
+	Mon, 28 Oct 2024 18:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="DhKPFJpw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7JA3pW8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E200186616;
-	Mon, 28 Oct 2024 18:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E9E1DF962;
+	Mon, 28 Oct 2024 18:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730140059; cv=none; b=Nb8OYesr+K/bp3e0LGo3EGNswNJ4HuKKGTSrLYm40smPjcZDsV0N0W53XLOJpYfUdjL8Pbk3nYVLGAy95MmqjOMbuI7KFsw+WReH4veKvRbzyO6trxD6yB3ce00tkH1YRWlDYHBY3bvMoP5UFfSB2xanJmzGxSuD99b8TvP/IlM=
+	t=1730140738; cv=none; b=QWOwP81BVUqe89IxU60wLlwSipXzuG8Z4PRRXgSBLgwtucVXSE5vXNITPr0PYpnqzc2Yw9U8+7xXZsHapSa4SXopxoz+rrg17LSG7qN08VGiuDR+NHjceAAlg1cHFbuNLvqiqZDxu4qigc8uIjng3UQ4gMM4izoaNMSTHI5KyvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730140059; c=relaxed/simple;
-	bh=rhlpUCqerCgg89TeahubZhhVDdSg0WPb2EHjHy0q2Xw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KkJY6sKdSi2wwoC3FCStrYyJ/g9YsJvhFmL5XLnnamngNi22nSjUsnIYcw9VCCe/+aZhUhpmSJ5KRWyvB2bgA4K/z1oHX32QrQ0gH+Npj26sBiDJFr2by9ffDEoFAVnzY/GVFIB8wOD/iSvgovo+7Xd+X1pPQxeloYfvqtLSjHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=DhKPFJpw; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Xchh93fq2zlgVnY;
-	Mon, 28 Oct 2024 18:27:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1730140054; x=1732732055; bh=rhlpUCqerCgg89TeahubZhhV
-	DdSg0WPb2EHjHy0q2Xw=; b=DhKPFJpwpvxhzpKYxUjS3ZL89K5UeOtkI/jcnaB6
-	cNh3v4ZfnI0ivSzxXOQKTXYMYhzusvFhy79ymlg+2ZDoMhzboqNNAGPDSHDTkDNJ
-	L5FWLiu7IuAieAeFA40n3agyo5Rymjr6y/bc96C5MCwsU6FiUUvGXsjfQ9LOCD7N
-	51FN8UKAgeq8VD3JFETDbgUyNZN6qo7kk51MRsFdngjRj+wAu6FtzN8trc5d+q7V
-	aVVDXTCsll4vYfbcUJaTxzUcyrIr7VgARFcNVQBQ53GveJMWdUBskwwSXAhE9Fj8
-	p3WQOPXTNDTnP3PzVtEppXyRAN0KPyczS4udNgXocq5bNQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id sMy7fRG_jkxB; Mon, 28 Oct 2024 18:27:34 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Xchh56TsqzlgTWR;
-	Mon, 28 Oct 2024 18:27:33 +0000 (UTC)
-Message-ID: <626bd35e-7216-4379-967d-5f6ebb4a5272@acm.org>
-Date: Mon, 28 Oct 2024 11:27:33 -0700
+	s=arc-20240116; t=1730140738; c=relaxed/simple;
+	bh=yXvl5ucMYrCRugDnDUgPtXONHx76D+ygufgs+U8P30E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=repPq09L9p6ePnGikJ2EH8WYod79rLfoKuC3gPU79W0vQjv2OEs4VPoEHfkebFAT7p9PBZ9OuEXqoL1jWSpBMpyhvdbGvac9yYuxn0Df3Qq1OvcEtjNr+qXsoGpbt8ZClT096GeMRuYF5i96TsNlx8Z1tGSBv+7k847Yx222kDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r7JA3pW8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FFDEC4CEC3;
+	Mon, 28 Oct 2024 18:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730140738;
+	bh=yXvl5ucMYrCRugDnDUgPtXONHx76D+ygufgs+U8P30E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r7JA3pW8g1hX5xPQMspeIhKV4yWSsMsg0b7U6TyGSNAuYS7nOhJZX+XjwSmAgbg8t
+	 KfPEFiaSWvMKtDyhWgSObDlgGsupjIiHxfxRIzB2CHH1te2cgfYTZKB4bCJ5VWpJbA
+	 jIygKCoa/Ggcpi0VyeQAfng4XZ5bggHOjHtaYGspnZlyt37k2krRH019x2gxp2dd28
+	 jSQU0gXQyVQUY6lZ0P+JcU3f2y5JuWOF8Betv4q1ee8QdDQIQhpa22GpU9KdTfQpni
+	 ZIcCOU1gdd6/yaOvhlct/ZVUksMJovqWEoaFxmXonb7bR3so0r1obwKwCQi5TxPX+8
+	 LoWpWTUlvnQvw==
+Date: Mon, 28 Oct 2024 12:38:54 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de,
+	joshi.k@samsung.com, javier.gonz@samsung.com,
+	Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCHv9 1/7] block: use generic u16 for write hints
+Message-ID: <Zx_aPg7Pjq-7lU-T@kbusch-mbp>
+References: <20241025213645.3464331-1-kbusch@meta.com>
+ <20241025213645.3464331-2-kbusch@meta.com>
+ <a86cfa72-426b-46f4-83b0-b60920286223@acm.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv9 3/7] block: allow ability to limit partition write hints
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, joshi.k@samsung.com,
- javier.gonz@samsung.com, Keith Busch <kbusch@kernel.org>
-References: <20241025213645.3464331-1-kbusch@meta.com>
- <20241025213645.3464331-4-kbusch@meta.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241025213645.3464331-4-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a86cfa72-426b-46f4-83b0-b60920286223@acm.org>
 
-On 10/25/24 2:36 PM, Keith Busch wrote:
-> When multiple partitions are used, you may want to enforce different
-> subsets of the available write hints for each partition. Provide a
-> bitmap attribute of the available write hints, and allow an admin to
-> write a different mask to set the partition's allowed write hints.
+On Mon, Oct 28, 2024 at 11:19:33AM -0700, Bart Van Assche wrote:
+> On 10/25/24 2:36 PM, Keith Busch wrote:
+> > This is still backwards compatible with lifetime hints. It just doesn't
+> > constrain the hints to that definition.
+> 
+> Since struct bio is modified, and since it is important not to increase
+> the size of struct bio, some comments about whether or not the size of
+> struct bio is affected would be welcome.
 
-After /proc/irq/*/smp_affinity was introduced (a bitmask),
-/proc/irq/*/smp_affinity_list (set of ranges) was introduced as a more
-user-friendly alternative. Is the same expected to happen with the
-write_hint_mask? If so, shouldn't we skip the bitmask user space
-interface and directly introduce the more user friendly interface (set
-of ranges)?
-
-Thanks,
-
-Bart.
+Sure. The type just shrinks a hole from 2 bytes to 1. Total size remains
+the same.
 

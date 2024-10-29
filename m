@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-4106-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4107-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5727E9B4DB5
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 16:23:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E11E9B4DB7
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 16:23:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88EB81C22537
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 15:23:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E05428581E
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 15:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BA2194A51;
-	Tue, 29 Oct 2024 15:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42F51946BA;
+	Tue, 29 Oct 2024 15:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="iglaf5zK"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fjO5OmiI"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8631946B9
-	for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 15:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3864A192D73
+	for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 15:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730215390; cv=none; b=cWxfgG6oG12nYrnWtwD3A1cxTrd9g3zbn3LbEM3vZhM/RH9q+0qC9rs6ZEp3FUizt0YvwS00sUV3R/z+R+CWgmcs+qhZi6hoYEErx2ROQylN8UaDC7frdqnA73vH5a04Pk6bAWg+aRDVkRCZapZRgAqs0X6ocHsWBhssEF3eEIM=
+	t=1730215391; cv=none; b=Ilh1eokxkhhd+GYVwhiK+WlxG8LMhlaGPq94R2Va+YYBGxl5VDd7OPq6YHmuEgxNT9A3J2BCJhF4kZ9sGU7fr0bgtgV28tWnP2m2rLXkk5LbtjTOt4R3Ay4agyMlAYlJmwTl/q9fmpchDlwO4mxAU7Ll/HXbbcIZeQJPy1qpbe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730215390; c=relaxed/simple;
-	bh=SYpQSxC5Dp9fLpjQdEWdmbvundwGSG12kF2zAC1HBac=;
+	s=arc-20240116; t=1730215391; c=relaxed/simple;
+	bh=MFnBn3Pt+fR8V94brBcdw32DLbRG+lgrEKVj+CSb2kM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=opFkUgoC3IiAM/Vw98OtBCURxurrf9FfuwNB/7R72OpPQsLg1IZHCHLqvCP2VfWeH1XseklKPpo9BUyd+1pU/I/pQLBDnrRt/EmQRYG8G26RLevpRmnz3XeMgGw2RRjlPAqTIiHVb/oGWIsz8WFQojl7XcCYKINMMMjr4og7+tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=iglaf5zK; arc=none smtp.client-ip=209.85.166.41
+	 MIME-Version; b=u+vBdXVkqO0Gp5P/JgmIgtpXFgRG/ivD5ngdduSS+/VHM1Nu5ffg5GPGgi9jxScENtkFYzHifLoD+Dc54WchOV6Dtz2ixOgq0hj/8VKwhT6r/gGcDBTPXQIhYIBWuCSrUJboah3kMsA+l+CT4xCXaX3Qz2sNB76Jkof/AjkWCes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fjO5OmiI; arc=none smtp.client-ip=209.85.166.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-83a9be2c028so207842039f.1
-        for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 08:23:07 -0700 (PDT)
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-83ac817aac3so224087339f.0
+        for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 08:23:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730215386; x=1730820186; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730215388; x=1730820188; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yp+EnMS7ATl15usRfPUg+8nUDFsAhh02UXOXNhYJd0A=;
-        b=iglaf5zKAAZXNL8/03dh0l2Lg9bHnTNxLtvizY5NU8BUqipjE9GhVslzYkA3ZNBKLW
-         iIzvs/IFcXXNJQSYmq8CeTZklwzURkQ1VTUSuMbosZ3MO1CcXsIrPvDy8/MQfPlZiaEf
-         4jBZ/t91OjxA7b4F04fdSnV8ZG7M/GrSSw34VtiWKbZ085elcK5b0gv8HnE4BL9P5MCj
-         hdXQxuBwtDLSEUSBkmOQVxz7JMLAkXfJl1Jvqte9qNlsw2DQf7jM1TJUuaoGPuh/fIUV
-         SyeDBriJhX7I7+qui5AgNDwVQfRbLWNHzCDolreisdZ9kSoIEhH+bsrGJr4ZZpbN6v4W
-         bEKg==
+        bh=1wzBUpdtpa3hgDqW+hLOo7TP8QbExzAyYMIVCGHCt2s=;
+        b=fjO5OmiInsLraK6U0/nHbSqHpvoHB6WskVFk7bhJUBBA0H/SX8m9QgNSsy1rr2VO1u
+         wFHozHsmy1GJaDCELIMzPIQhYgir/3c+ls+wrCjYiXRgJCY+SQnM6O9jmardcPz7v+Zb
+         C/TgFkqLmM30EQiG61+Jchc3UY91okorZgJ7MM+2S8ixRDxJL6+28RbxDUyV/R8DxXpt
+         MYiXCHt/FKw+d/O6aGqvna4rqSzY8X4BVcfInMcuiUJlrSn8Vsjm0Ov9rtKsxpkZrV/F
+         iF3jJynflcgEd46dSA9AFSet844fRjYOeNnfufsIgvQqGUa5OgxgdiMPbM+VJqle0n6q
+         y3Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730215386; x=1730820186;
+        d=1e100.net; s=20230601; t=1730215388; x=1730820188;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yp+EnMS7ATl15usRfPUg+8nUDFsAhh02UXOXNhYJd0A=;
-        b=Wx976K/B9jjTFfKcQbKG+WsZfADpb8fKiTcONuiC9PEjBLHM9ULnWt/4vWBKkyI4HL
-         /SrDxL8bwdFSwRZjvig6HsI5qv9PvwMsL2GC0KQlO2ZWn6TmykpH3d9TpbBcEEjw6zhj
-         z3+uWRPNDj9/T/a9khw7L9Ry/wRStF5HCNh8q2dPv/8tmQcNTI5YfOWkiQrO3chriu79
-         TZOsd+6QqbUC7aE4GVsJL1Lu6pbtrVEYJU6QlCrjDqm8bLC3eWzZNT2Q9nKDhl3BCsYP
-         IjoBCqKxU9VbFiWitp3gOl6mI5wFr3KlcoPEKvVI2/3AWfqHEsmgP53XaNndIxcNBZi4
-         RYcQ==
-X-Gm-Message-State: AOJu0YyyL6ourRPflcy7Eg+q0c5RSg2FVdlVu340/E90NMGhwFP+UXMC
-	P9xpvsh6Ad0Rkbi35NNc3bnGQy0Qq8+suHcugX3FMOejMVBjgABq2HW4db7znggjYzpnL8VzmZB
-	M
-X-Google-Smtp-Source: AGHT+IEJbLL+ZwSlC6u3psE6EB7tU0uLx8tQYij3QYs9qbBKvXX6vrCJ8E6TNppb40gqX1f+s3csmA==
-X-Received: by 2002:a05:6602:2b01:b0:83a:b7e8:a684 with SMTP id ca18e2360f4ac-83b1c60b7d9mr1460896739f.11.1730215386535;
-        Tue, 29 Oct 2024 08:23:06 -0700 (PDT)
+        bh=1wzBUpdtpa3hgDqW+hLOo7TP8QbExzAyYMIVCGHCt2s=;
+        b=Fvc/srURxK06ch3ykORWFajx+LzP06il4qqVbBHcZfiuodAAOAsesRy9Q5sXed3fft
+         EjenACWFn/fn0QGL7jDNvuA3pSrbXYeStqs8zdQz3bdsNuIrY/kNN/n9QP7VNNIOMhV8
+         Gm5KS64n2H+DHHwRaJlRzvssQ3KLFUFmLBGQHeHdBwNK4rnpIBXPSLs2Wg8NwKQXBBjM
+         TNOYPR9dBfTNfuQijpw83UM8Psl5A3Mi1Fx29J3WA43y0sJuUs9yuMAw690Apk9GBxXD
+         Uwyc8yLWlJr3w7kuHaM0ED60j4dyUA5ciC7ToD/7eZEeDNmRJ9yI4ZUmDPqNxFphpZHK
+         FRjw==
+X-Gm-Message-State: AOJu0Yw784MCOHOGA0mOcWoiExKyG8Yq+oma47W9kJz1TJZ523Lm6rPh
+	e6WDi57IKqkxJ/Jtj05lgiRgNrVtcuFZQI8USEm0rQHTSfRlkYaS+Xz7PE1kdVpeoUIE8ol46sQ
+	W
+X-Google-Smtp-Source: AGHT+IFLeKfustyDdRJxQJ7GI181AUb8Du1hiK6ihHsBFuXyAp3j/8yl1Y5CZ12lejKPHY8IVouQzw==
+X-Received: by 2002:a05:6602:160f:b0:82d:16fa:52dd with SMTP id ca18e2360f4ac-83b5670c468mr13553339f.7.1730215387960;
+        Tue, 29 Oct 2024 08:23:07 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc725eb58esm2434160173.27.2024.10.29.08.23.05
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc725eb58esm2434160173.27.2024.10.29.08.23.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 08:23:05 -0700 (PDT)
+        Tue, 29 Oct 2024 08:23:06 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 03/14] io_uring: specify freeptr usage for SLAB_TYPESAFE_BY_RCU io_kiocb cache
-Date: Tue, 29 Oct 2024 09:16:32 -0600
-Message-ID: <20241029152249.667290-4-axboe@kernel.dk>
+Subject: [PATCH 04/14] io_uring/splice: open code 2nd direct file assignment
+Date: Tue, 29 Oct 2024 09:16:33 -0600
+Message-ID: <20241029152249.667290-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241029152249.667290-1-axboe@kernel.dk>
 References: <20241029152249.667290-1-axboe@kernel.dk>
@@ -84,28 +84,131 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Doesn't matter right now as there's still some bytes left for it, but
-let's prepare for the io_kiocb potentially growing and add a specific
-freeptr offset for it.
+In preparation for not pinning the whole registered file table, open
+code the second potential direct file assignment. This will be handled
+by appropriate helpers in the future, for now just do it manually.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c | 2 ++
- 1 file changed, 2 insertions(+)
+ io_uring/opdef.c  |  2 ++
+ io_uring/splice.c | 44 ++++++++++++++++++++++++++++++++++++--------
+ io_uring/splice.h |  1 +
+ 3 files changed, 39 insertions(+), 8 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 2863b957e373..a09c67b38c1b 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3846,6 +3846,8 @@ static int __init io_uring_init(void)
- 	struct kmem_cache_args kmem_args = {
- 		.useroffset = offsetof(struct io_kiocb, cmd.data),
- 		.usersize = sizeof_field(struct io_kiocb, cmd.data),
-+		.freeptr_offset = offsetof(struct io_kiocb, work),
-+		.use_freeptr_offset = true,
- 	};
+diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+index a2be3bbca5ff..3de75eca1c92 100644
+--- a/io_uring/opdef.c
++++ b/io_uring/opdef.c
+@@ -641,6 +641,7 @@ const struct io_cold_def io_cold_defs[] = {
+ 	},
+ 	[IORING_OP_SPLICE] = {
+ 		.name			= "SPLICE",
++		.cleanup		= io_splice_cleanup,
+ 	},
+ 	[IORING_OP_PROVIDE_BUFFERS] = {
+ 		.name			= "PROVIDE_BUFFERS",
+@@ -650,6 +651,7 @@ const struct io_cold_def io_cold_defs[] = {
+ 	},
+ 	[IORING_OP_TEE] = {
+ 		.name			= "TEE",
++		.cleanup		= io_splice_cleanup,
+ 	},
+ 	[IORING_OP_SHUTDOWN] = {
+ 		.name			= "SHUTDOWN",
+diff --git a/io_uring/splice.c b/io_uring/splice.c
+index 3b659cd23e9d..e62bc6497a94 100644
+--- a/io_uring/splice.c
++++ b/io_uring/splice.c
+@@ -21,6 +21,7 @@ struct io_splice {
+ 	u64				len;
+ 	int				splice_fd_in;
+ 	unsigned int			flags;
++	struct io_rsrc_node		*rsrc_node;
+ };
  
- #define __BUILD_BUG_VERIFY_OFFSET_SIZE(stype, eoffset, esize, ename) do { \
+ static int __io_splice_prep(struct io_kiocb *req,
+@@ -34,6 +35,7 @@ static int __io_splice_prep(struct io_kiocb *req,
+ 	if (unlikely(sp->flags & ~valid_flags))
+ 		return -EINVAL;
+ 	sp->splice_fd_in = READ_ONCE(sqe->splice_fd_in);
++	sp->rsrc_node = NULL;
+ 	req->flags |= REQ_F_FORCE_ASYNC;
+ 	return 0;
+ }
+@@ -45,6 +47,38 @@ int io_tee_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return __io_splice_prep(req, sqe);
+ }
+ 
++void io_splice_cleanup(struct io_kiocb *req)
++{
++	struct io_splice *sp = io_kiocb_to_cmd(req, struct io_splice);
++
++	io_put_rsrc_node(req->ctx, sp->rsrc_node);
++}
++
++static struct file *io_splice_get_file(struct io_kiocb *req,
++				       unsigned int issue_flags)
++{
++	struct io_splice *sp = io_kiocb_to_cmd(req, struct io_splice);
++	struct io_ring_ctx *ctx = req->ctx;
++	struct io_fixed_file *slot;
++	struct file *file = NULL;
++
++	if (!(sp->flags & SPLICE_F_FD_IN_FIXED))
++		return io_file_get_normal(req, sp->splice_fd_in);
++
++	io_ring_submit_lock(ctx, issue_flags);
++	if (unlikely(sp->splice_fd_in >= ctx->nr_user_files))
++		goto out;
++	sp->splice_fd_in = array_index_nospec(sp->splice_fd_in, ctx->nr_user_files);
++	slot = &ctx->file_table.files[sp->splice_fd_in];
++	if (!req->rsrc_node)
++		__io_req_set_rsrc_node(req, ctx);
++	file = io_slot_file(slot);
++	req->flags |= REQ_F_NEED_CLEANUP;
++out:
++	io_ring_submit_unlock(ctx, issue_flags);
++	return file;
++}
++
+ int io_tee(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_splice *sp = io_kiocb_to_cmd(req, struct io_splice);
+@@ -55,10 +89,7 @@ int io_tee(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
+ 
+-	if (sp->flags & SPLICE_F_FD_IN_FIXED)
+-		in = io_file_get_fixed(req, sp->splice_fd_in, issue_flags);
+-	else
+-		in = io_file_get_normal(req, sp->splice_fd_in);
++	in = io_splice_get_file(req, issue_flags);
+ 	if (!in) {
+ 		ret = -EBADF;
+ 		goto done;
+@@ -96,10 +127,7 @@ int io_splice(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
+ 
+-	if (sp->flags & SPLICE_F_FD_IN_FIXED)
+-		in = io_file_get_fixed(req, sp->splice_fd_in, issue_flags);
+-	else
+-		in = io_file_get_normal(req, sp->splice_fd_in);
++	in = io_splice_get_file(req, issue_flags);
+ 	if (!in) {
+ 		ret = -EBADF;
+ 		goto done;
+diff --git a/io_uring/splice.h b/io_uring/splice.h
+index 542f94168ad3..b9b2848327fb 100644
+--- a/io_uring/splice.h
++++ b/io_uring/splice.h
+@@ -3,5 +3,6 @@
+ int io_tee_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_tee(struct io_kiocb *req, unsigned int issue_flags);
+ 
++void io_splice_cleanup(struct io_kiocb *req);
+ int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_splice(struct io_kiocb *req, unsigned int issue_flags);
 -- 
 2.45.2
 

@@ -1,173 +1,160 @@
-Return-Path: <io-uring+bounces-4092-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4093-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39D69B42D4
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 08:10:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BCF9B4A0F
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 13:47:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B52A71C210A0
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 07:10:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 613BB1C2254A
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 12:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59837200BB7;
-	Tue, 29 Oct 2024 07:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7408220262B;
+	Tue, 29 Oct 2024 12:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rP0HPVL8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Mq4EpQzi";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rP0HPVL8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Mq4EpQzi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2fJjsQ9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9395A8821;
-	Tue, 29 Oct 2024 07:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD961E2301;
+	Tue, 29 Oct 2024 12:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730185820; cv=none; b=lekqG8DQZGJ4QHY+LML1NTxjhdJODYUDGdC9YjeyRq7HRFpu7srPQhSGXJhlpJYx23dfcoqjtgDA5GmfkiIpkJ6Y7GUPRn+HylNghQPBfQPWfGmZuriVj6r1x5UTpGQgUQnST6dmlhROw+Mw9P7bRT9skUOSCXbV30vntvSCrv0=
+	t=1730206032; cv=none; b=Htw3mRRiISuXSwg7V7NCduCp+1HC9riiJU4jO7Ao7nUs9AVPF/rVgtsU16+0yGqx2rQLJriz8SfCeH6cQoX7iDlJaAAUudCtZx1N5EhreyOQXDqaPmuaSjHga8YyDQjlpv4cndb9jajmhU3uO7EU4Sg9qR+lPgzc6A29Dg9kbW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730185820; c=relaxed/simple;
-	bh=GM8SwVn5bwtNv0nbmAxwmZTORJT73kBrM80HseA6IX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lOSVUChWi0wc2AAGU5LjDhUl/EyQgl0gnJRQhImZSx6VwlpdtOOOStnZnTMOp4TmQ4yo2HkT+NoJ4e/uSGI7AbB4+hDcYAurGkDVUjkFtD8Rq6EoFeojDbpvUJRGVgp3Bf2USwOjaOYZPyaOojQlGYpVAco+2tMcb9QijFqaWJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rP0HPVL8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Mq4EpQzi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rP0HPVL8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Mq4EpQzi; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A2BC01FE41;
-	Tue, 29 Oct 2024 07:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730185815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
-	b=rP0HPVL8jbXJ5HQq3HIYRygN5a9S75GUK2anEyhnEUBygoB31PsT3n/KI7r2GImgx/DuoC
-	o5isNJMDiwPExsK2kFpyioxvsfK5SOzhGeshSaj3B0Vmm4LyMd10EP+ZYQ0NLmK3mG2ZVu
-	RN3FXSkUcFtBtgWCMeo4XrSJ8jnj2u4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730185815;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
-	b=Mq4EpQziMcMuD8h0m3qhHHiKcTVi4vP4nH/ECSVaevf2TxzG7Nf/gNTXbVY8MbYS5ib+Az
-	as2x7vXvF865+bCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730185815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
-	b=rP0HPVL8jbXJ5HQq3HIYRygN5a9S75GUK2anEyhnEUBygoB31PsT3n/KI7r2GImgx/DuoC
-	o5isNJMDiwPExsK2kFpyioxvsfK5SOzhGeshSaj3B0Vmm4LyMd10EP+ZYQ0NLmK3mG2ZVu
-	RN3FXSkUcFtBtgWCMeo4XrSJ8jnj2u4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730185815;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H9XfqwrRteTneCnjhgeI86O38AxJQje6fZ6MqhejA+s=;
-	b=Mq4EpQziMcMuD8h0m3qhHHiKcTVi4vP4nH/ECSVaevf2TxzG7Nf/gNTXbVY8MbYS5ib+Az
-	as2x7vXvF865+bCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3405B136A5;
-	Tue, 29 Oct 2024 07:10:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eAZTCleKIGe2cgAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 29 Oct 2024 07:10:15 +0000
-Message-ID: <c7a36219-bfe2-4be4-83ba-5af7f33b4a98@suse.de>
-Date: Tue, 29 Oct 2024 08:10:15 +0100
+	s=arc-20240116; t=1730206032; c=relaxed/simple;
+	bh=PKIGvIkqahKGpUaSw28+IKqMSUuUV0Hhi1F1HBqO43A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ViWHb2sVD8TAsOvIovL1SwzGc39okDvQ8ZtjOD2OOia+lQthWNq5rqn/E+DuUxSeJo+QsVbAblwE+M+qlUGXr5Y+USaTqAAE5VjzPSqTizbQvvlhyAVGyFZc4l1HaXArjqqI3zOoKgztw/lv9yDGuN/6RT7HDXjr0uj7tBpxFbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2fJjsQ9; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99fa009adcso366944966b.0;
+        Tue, 29 Oct 2024 05:47:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730206028; x=1730810828; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UXEU0K+HVbTbvp27dG/5AsENh9x1wq4XCrDbezUDB6I=;
+        b=k2fJjsQ9L4LWoM4PL7yZwKPUFTf4+W2wupzWIb/ZoMnu5UZ6K74DWIitK8BZtN2aP8
+         DDNTJXha54bcGgTf340F5t8zZubgVRbn9YoT7w8QP9S2wLJ2Im4uzFvlFbKMzUe1xWar
+         Od+glT5qcwGsZT/tiOHoFiADygKJuHeKrGUgSgtC4DJBocXoUy3U+depaBXSJzny7DG7
+         zmZEv/gGlnemfZ/MsuP+6rOMWGdAkOXEHnbeFzJDk3XMT68oEwa4j7qr7JepNdgFyeNH
+         pHm/8j8W+pvMUY7y4Kmop6F43R72fSEzQTnxZJxpKxWd/RXtdao/Hup6PLEjolxQMTmL
+         lBag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730206028; x=1730810828;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UXEU0K+HVbTbvp27dG/5AsENh9x1wq4XCrDbezUDB6I=;
+        b=rviQQKppHH/q6D3rsJ3vD8Np+vgz2bCrdLwnEQl/LlIR9/bPdWRCbtA9ZDGL2IK0t2
+         tiSZYGJdhOSYXY5vQUw9rIYdxMZLkxn+XN/PZyyTsqkY9sF1rL33Oiq1LTuPqkTdX3BY
+         Hqe/blm+SZOwZXLH0+fg4Vz2HJZo5sGw4VJZlABXaLuKqEZU1ZA23X6cdclIsGPVWmsk
+         ORZ4tdccfDENZ+zKdw4yRxOKyKv6SpoKF5C8JTBhQt3DyIPY+x2HM3gxYpfR2thEE7dc
+         BVVyYlZxx6rea6kFiX4Av5Q0l7+QKXYYPN5mz/ZVykw1culcXXu7hdxYeOPM+4Dj1VcQ
+         OttQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4T+teNhJA7m3FeIWpz+R+WpzLRD8r34EjoVvYaLT38vjjGLnkYCJrGrHB+v5ePOoRxVW5P96WBQ==@vger.kernel.org, AJvYcCWGvH0a9OXs+3uIB+qHp3gHBZVvMoN8AAUwblU8SP5uyZT/S1n5ExT9rKMGbR/MT4BvHbmVKKpsi0kOxQ==@vger.kernel.org, AJvYcCWm/VatUyQD8aFm4dJhDhJa/M8GQFyebKNBVJiK0NUqGhN6jp9r21AwNSfDQ63zDvyb7p6hSWEP605agAhPfw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlId72CxpIhoabaIILcShUBBsqAxjoS56fAdZ+7761LjCDgq9v
+	ZQjnscx/nC8fQ5Ex40lgY/iEISaSVeCcgfhnMCFdM6E9629d1t8RSqP+vr7kORiMw0eyjFqueDx
+	5nOdcHWiUTJ76rJOEXoZ77Y41tQ==
+X-Google-Smtp-Source: AGHT+IH24jDXrN1/rLUODZ7dXWnQNAXgArrAqn9CD/XkQZPaaSbgd3HS6kL07anh4QVcaAdjYqc8XepfsP8tIRg++xU=
+X-Received: by 2002:a05:6402:348f:b0:5c9:34b4:69a8 with SMTP id
+ 4fb4d7f45d1cf-5cbbf889850mr13754716a12.6.1730206028117; Tue, 29 Oct 2024
+ 05:47:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv9 7/7] scsi: set permanent stream count in block limits
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, joshi.k@samsung.com,
- javier.gonz@samsung.com, bvanassche@acm.org, Keith Busch <kbusch@kernel.org>
-References: <20241025213645.3464331-1-kbusch@meta.com>
- <20241025213645.3464331-8-kbusch@meta.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20241025213645.3464331-8-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.976];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+References: <20241025213645.3464331-1-kbusch@meta.com> <20241025213645.3464331-6-kbusch@meta.com>
+In-Reply-To: <20241025213645.3464331-6-kbusch@meta.com>
+From: Anuj gupta <anuj1072538@gmail.com>
+Date: Tue, 29 Oct 2024 18:16:29 +0530
+Message-ID: <CACzX3AvZ=+cBaoZ9oKW3osA1WiWm5H5b7+wWAouLryK4-ymYfA@mail.gmail.com>
+Subject: Re: [PATCHv9 5/7] io_uring: enable per-io hinting capability
+To: Keith Busch <kbusch@meta.com>
+Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-scsi@vger.kernel.org, io-uring@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, hch@lst.de, joshi.k@samsung.com, 
+	javier.gonz@samsung.com, bvanassche@acm.org, Hannes Reinecke <hare@suse.de>, 
+	Nitesh Shetty <nj.shetty@samsung.com>, Keith Busch <kbusch@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/25/24 23:36, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> The block limits exports the number of write hints, so set this limit if
-> the device reports support for the lifetime hints. Not only does this
-> inform the user of which hints are possible, it also allows scsi devices
-> supporting the feature to utilize the full range through raw block
-> device direct-io.
-> 
+On Sat, Oct 26, 2024 at 3:13=E2=80=AFAM Keith Busch <kbusch@meta.com> wrote=
+:
+>
+> From: Kanchan Joshi <joshi.k@samsung.com>
+>
+> With F_SET_RW_HINT fcntl, user can set a hint on the file inode, and
+> all the subsequent writes on the file pass that hint value down. This
+> can be limiting for block device as all the writes will be tagged with
+> only one lifetime hint value. Concurrent writes (with different hint
+> values) are hard to manage. Per-IO hinting solves that problem.
+>
+> Allow userspace to pass additional metadata in the SQE.
+>
+>         __u16 write_hint;
+>
+> If the hint is provided, filesystems may optionally use it. A filesytem
+> may ignore this field if it does not support per-io hints, or if the
+> value is invalid for its backing storage. Just like the inode hints,
+> requesting values that are not supported by the hardware are not an
+> error.
+>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
 > Signed-off-by: Keith Busch <kbusch@kernel.org>
 > ---
->   drivers/scsi/sd.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> index ca4bc0ac76adc..235dd6e5b6688 100644
-> --- a/drivers/scsi/sd.c
-> +++ b/drivers/scsi/sd.c
-> @@ -3768,6 +3768,8 @@ static int sd_revalidate_disk(struct gendisk *disk)
->   		sd_config_protection(sdkp, &lim);
->   	}
->   
-> +	lim.max_write_hints = sdkp->permanent_stream_count;
-> +
->   	/*
->   	 * We now have all cache related info, determine how we deal
->   	 * with flush requests.
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+>  include/uapi/linux/io_uring.h | 4 ++++
+>  io_uring/rw.c                 | 3 ++-
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
+h
+> index 60b9c98595faf..8cdcc461d464c 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -92,6 +92,10 @@ struct io_uring_sqe {
+>                         __u16   addr_len;
+>                         __u16   __pad3[1];
+>                 };
+> +               struct {
+> +                       __u16   write_hint;
+> +                       __u16   __pad4[1];
+> +               };
+>         };
+>         union {
+>                 struct {
+> diff --git a/io_uring/rw.c b/io_uring/rw.c
+> index 8080ffd6d5712..5a1231bfecc3a 100644
+> --- a/io_uring/rw.c
+> +++ b/io_uring/rw.c
+> @@ -279,7 +279,8 @@ static int io_prep_rw(struct io_kiocb *req, const str=
+uct io_uring_sqe *sqe,
+>                 rw->kiocb.ki_ioprio =3D get_current_ioprio();
+>         }
+>         rw->kiocb.dio_complete =3D NULL;
+> -
+> +       if (ddir =3D=3D ITER_SOURCE)
+> +               rw->kiocb.ki_write_hint =3D READ_ONCE(sqe->write_hint);
+>         rw->addr =3D READ_ONCE(sqe->addr);
+>         rw->len =3D READ_ONCE(sqe->len);
+>         rw->flags =3D READ_ONCE(sqe->rw_flags);
+> --
+> 2.43.5
+>
 
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Since this patch adds a couple of new fields, it makes sense to add
+BUILD_BUG_ON() checks in io_uring_init for these fields to assert the
+layout of struct io_uring_sqe. And probably a zero check for pad4 in
+io_prep_rw.
+--
+Anuj Gupta
 

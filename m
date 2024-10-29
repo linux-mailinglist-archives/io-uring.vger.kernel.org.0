@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-4116-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4113-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10849B4DC2
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 16:24:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9129B4DBC
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 16:23:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E246B24548
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 15:24:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BE881F23434
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 15:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E876193416;
-	Tue, 29 Oct 2024 15:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9716B18E028;
+	Tue, 29 Oct 2024 15:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xq7WE511"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ci2DUGfM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91416192D73
-	for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 15:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DC5194A64
+	for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 15:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730215402; cv=none; b=mrbOSljVIeYY3LYXsd7bHXINMIStyx+heKpdwRb/kV/s3VbcQV77lnQ3lDdP+QrPFJ7MJycTAnL0AUwDOY6Btb+Z6FHrb5sioaH4epYHimj3QJ63Sewo1lnhI/wAAK6N/9q6Rmbk2S9eiaMJiD+pLB05fkb3KFVYT2T+05u8unY=
+	t=1730215400; cv=none; b=g74zfAcsfUONi8Qnsr78RY2Iaer5/ZSMjWN9upAc6KGjh+DRF8w8VuqsShEwUT3ztC80HGuHMPjJ+aJGFUASVFiOBNv0yuxjL/CRXcu2qWrpoDZIPf/Sq5ky1yY3RmOnfo9gc5yBiplpojIi+SoPlP/Jv0OoAzdcHgse25knSvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730215402; c=relaxed/simple;
-	bh=rF1F7mRg81r1JZfeQMFyR0YxBXBG2Sz7+aVnWOxyr6A=;
+	s=arc-20240116; t=1730215400; c=relaxed/simple;
+	bh=xlqUmmAAAFdpSt0oI3cj/qRICnW+M5T/Lr9Gngjg2wQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EpwV4/cuOu76Ezf5tSfb1Fj5KGEOy/Mfy5IiT/i0IWArewWHs8epNujRmzcyhr++IAmosAwg17JXmiJ8oFeID+iwNBX3VHzg/u0PG7UrdsNpKqM9OhH7YjkRnHR1g6jseGXUxglpooFxFE2EiHGhYGcxQY1loHQNsHmAZc9YfhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xq7WE511; arc=none smtp.client-ip=209.85.166.49
+	 MIME-Version; b=NRWJYyVGXzcoeH7VzO3WBHC4R3agf+GxBoskJIV7wAfrjq7BmZhG8gwJnNuYC/VWtIRfxZCg93bpbUgkGg8WcAEOWA//5a8eU4u4lE1pMcP4hNFh9HAe+Ks9ZUnb0gu3PEY0+72UW5Wbv0QOcSLgkKuwo/q4mIVI5/0VMLSop6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ci2DUGfM; arc=none smtp.client-ip=209.85.166.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-83ab5b4b048so224284239f.2
-        for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 08:23:16 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-83a9be2c0e6so212164539f.2
+        for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 08:23:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730215396; x=1730820196; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KZHSdILI2GyI3B5u8oG+vmRZl/98vI9kPJoHRTFnMvg=;
-        b=xq7WE511wtXCuRbEr3KZmlrLll0XQM8r9MmC//Kp2iJqbIyVT25ec8/6yONYWuYuil
-         sdiaqMijbiQrZtIP4LI7OQhSIT/GzTflTUT9EoEdWqKrffqepiyZAQUYdiQ6sJt7/Cp8
-         J2dMHMESJoVUx9CrDpjCZSQ9QVZiRgWBmvpYcwGo6bVNhzaNsR+fyKbwJkccefBtxJv6
-         2AbUMBezabHdoHfQ7KjjVicBfp0dgPHV/D8mcaQYgYQsDepVZMiA5ZUYF5uBM8DfR8HW
-         j9yfsc8K8x0RVY+2G8DSK3w9/6FI+4o/OgIUjAWyVMzhY5HI7ngz382/DKzygzjtceVc
-         GX+w==
+        bh=ygh/OC1xh/vCMWKCfVOfQzTNBpIeWGRvL/JRac4VemA=;
+        b=Ci2DUGfM/xcCZLxWEUrp1p3vIol9HT3jwR0uarKuaWNs7ignHsKZZUCLrQljiwFxlp
+         QCSa+cRkrJ769y5WCqcGM6D3FOI8Q9IaeeARje9vebpibb6pdCLezRWsdfhp0ozO1S6y
+         5dozztN2XoN2wg83gIjUYgk+++eblt2fDKeKicQkjGduNFjVJwOjK9SdvHD/yJNL9kdw
+         UnOun3zzxR+ETMq/ZtXDa9QLxhHwHzj/vuUUXabrJmKTiUzb9dSt5J7U1DXIcZdnX2rV
+         5r9Gf1K/pl059Yk+Azgpx4e5EEoejMQZ2z2fxjfUokdEMHHTgfbQF8DwtCUOOpMcw15X
+         xZFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1730215396; x=1730820196;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KZHSdILI2GyI3B5u8oG+vmRZl/98vI9kPJoHRTFnMvg=;
-        b=AjWMjjvG81soPArjAIfTI13g8WAfQ7hVAe6AvU5odHOCmmq23QLO3tZjmZZS2v3/pg
-         bH3cdNG7QIPVWUiw7g3IDYyFQc6Z/uOj6/YjD4SqSV15Hz2ZqSyRSLs3t4dV8BFPKaXE
-         SSgqm42ko7FMwyHj7PIRGNgcfq0MqUQ5Yd/ztyH3VjTGvz1mTy54UOZgjmvX0aZ/aoOf
-         n7audm16Gv+AWrg5ZOJqx5OikCUtkv9Rq05zw1aEythAveiVznm8+JnLG5EKHWSqS5Ro
-         5CkGZxtSeeEcec9x2Iag46yn+U5oJEQstN4X0AVfUZ6p+lX2LsAhF9T0lmr24jWqEvKY
-         Pnog==
-X-Gm-Message-State: AOJu0YyXch4/J2+y7vyi72WktHqBk+mme8XYchW40XWx4DepX2wWOyYr
-	ve68OvMuNYa5Z/ZO7acGPg67SIpRXucLYkRWFXYJZQmPF/4yn7p4jtVNki/qmG4HfAy/ti0E4zo
-	o
-X-Google-Smtp-Source: AGHT+IGPBKMiQ6Od3LlaxL1aOMFsa3/6D08XHXikPDFqcIOCzxW0xuHVOJ+StfLAJIahuXKoFdVPeg==
-X-Received: by 2002:a05:6602:14cb:b0:835:3ffe:fe31 with SMTP id ca18e2360f4ac-83b1c40b3a5mr1182752039f.8.1730215395479;
-        Tue, 29 Oct 2024 08:23:15 -0700 (PDT)
+        bh=ygh/OC1xh/vCMWKCfVOfQzTNBpIeWGRvL/JRac4VemA=;
+        b=RzU1tOHFKQbiM5BAh1Jy55uZ0L/+6jqwWaco7qUgmHtHDKjy2VB/jnkhwvaQJqV0TS
+         XzDBe6oOvo8r0NQtR7iiyt1saXByAKDWB6dMuJVrmyfgDuZSVjelzPXjMEhRoKX+CGnn
+         wZG22y7VtxHnoSO+jWeHrwfI+h+9Zad08hYOpesouHTutqTMCo3LRy7BrGrW1XNIVFyQ
+         7cXVVcRU3RdmD0dqG5L/jN16lqF+Euq7v1cNVVoPrnvy+Oy8hRhX3LEMnsGMMtkmNMWM
+         aKNgVjmNnuHWccd3toG1urzQNXwtwwU6TdsGX2bXfr+QfC/YT2drQlaC122c/qQGmlWF
+         /rww==
+X-Gm-Message-State: AOJu0Yw8AzCeo6BWL9FKr16XrT+zFvdMk86gfkR5ssM0Qmgc91YERaE3
+	QtntzHLquoZIhrF1jwGFZ9y8z1OvrmMKXGfxKwwAeN0pKmwYaKAMiyXOrFRTaNozOnyzKpSndwD
+	s
+X-Google-Smtp-Source: AGHT+IF/g3S0z7eXN99M4rGt55k1nDf9+w0tJT/rb0/zEvTalFyF2UVE/rkWS6q9hpwSY3ufdrwMQw==
+X-Received: by 2002:a05:6602:6002:b0:83a:a96b:8825 with SMTP id ca18e2360f4ac-83b1bcefdebmr1251718539f.0.1730215396254;
+        Tue, 29 Oct 2024 08:23:16 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc725eb58esm2434160173.27.2024.10.29.08.23.14
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc725eb58esm2434160173.27.2024.10.29.08.23.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 08:23:14 -0700 (PDT)
+        Tue, 29 Oct 2024 08:23:15 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 10/14] io_uring/rsrc: unify file and buffer resource tables
-Date: Tue, 29 Oct 2024 09:16:39 -0600
-Message-ID: <20241029152249.667290-11-axboe@kernel.dk>
+Subject: [PATCH 11/14] io_uring/rsrc: add io_rsrc_node_lookup() helper
+Date: Tue, 29 Oct 2024 09:16:40 -0600
+Message-ID: <20241029152249.667290-12-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241029152249.667290-1-axboe@kernel.dk>
 References: <20241029152249.667290-1-axboe@kernel.dk>
@@ -84,839 +84,358 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For files, there's nr_user_files/file_table/file_data, and buffers have
-nr_user_bufs/user_bufs/buf_data. There's no reason why file_table and
-file_data can't be the same thing, and ditto for the buffer side. That
-gets rid of more io_ring_ctx state that's in two spots rather than just
-being in one spot, as it should be. Put all the registered file data in
-one locations, and ditto on the buffer front.
-
-This also avoids having both io_rsrc_data->nodes being an allocated
-array, and ->user_bufs[] or ->file_table.nodes. There's no reason to
-have this information duplicated. Keep it in one spot, io_rsrc_data,
-along with how many resources are available.
+There are lots of spots open-coding this functionality, add a generic
+helper that does the node lookup in a speculation safe way.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/io_uring_types.h |  15 ++-
- io_uring/cancel.c              |   4 +-
- io_uring/fdinfo.c              |  10 +-
- io_uring/filetable.c           |  46 +++----
- io_uring/filetable.h           |   2 +-
- io_uring/io_uring.c            |   7 +-
- io_uring/msg_ring.c            |   4 +-
- io_uring/net.c                 |   6 +-
- io_uring/nop.c                 |   6 +-
- io_uring/register.c            |   3 +-
- io_uring/rsrc.c                | 215 +++++++++++----------------------
- io_uring/rsrc.h                |   7 +-
- io_uring/rw.c                  |   6 +-
- io_uring/splice.c              |   6 +-
- io_uring/uring_cmd.c           |   6 +-
- 15 files changed, 127 insertions(+), 216 deletions(-)
+ io_uring/cancel.c    |  8 +++++---
+ io_uring/filetable.c | 16 +++++++++-------
+ io_uring/filetable.h |  2 +-
+ io_uring/io_uring.c  |  6 +-----
+ io_uring/msg_ring.c  | 31 +++++++++++++++----------------
+ io_uring/net.c       |  6 ++----
+ io_uring/nop.c       |  6 ++----
+ io_uring/rsrc.c      | 12 +++++++-----
+ io_uring/rsrc.h      |  8 ++++++++
+ io_uring/rw.c        |  6 ++----
+ io_uring/splice.c    |  6 +-----
+ io_uring/uring_cmd.c |  9 ++++-----
+ 12 files changed, 57 insertions(+), 59 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 696f2a05a98b..77fd508d043a 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -55,8 +55,13 @@ struct io_wq_work {
- 	int cancel_seq;
- };
- 
-+struct io_rsrc_data {
-+	unsigned int			nr;
-+	struct io_rsrc_node		**nodes;
-+};
-+
- struct io_file_table {
--	struct io_rsrc_node **nodes;
-+	struct io_rsrc_data data;
- 	unsigned long *bitmap;
- 	unsigned int alloc_hint;
- };
-@@ -276,9 +281,7 @@ struct io_ring_ctx {
- 		struct io_wq_work_list	iopoll_list;
- 
- 		struct io_file_table	file_table;
--		struct io_rsrc_node	**user_bufs;
--		unsigned		nr_user_files;
--		unsigned		nr_user_bufs;
-+		struct io_rsrc_data	buf_table;
- 
- 		struct io_submit_state	submit_state;
- 
-@@ -366,10 +369,6 @@ struct io_ring_ctx {
- 	struct wait_queue_head		poll_wq;
- 	struct io_restriction		restrictions;
- 
--	/* slow path rsrc auxilary data, used by update/register */
--	struct io_rsrc_data		*file_data;
--	struct io_rsrc_data		*buf_data;
--
- 	u32			pers_next;
- 	struct xarray		personalities;
- 
 diff --git a/io_uring/cancel.c b/io_uring/cancel.c
-index cc3475b22ae5..3a2996307025 100644
+index 3a2996307025..bbca5cb69cb5 100644
 --- a/io_uring/cancel.c
 +++ b/io_uring/cancel.c
-@@ -240,9 +240,9 @@ static int __io_sync_cancel(struct io_uring_task *tctx,
+@@ -240,10 +240,12 @@ static int __io_sync_cancel(struct io_uring_task *tctx,
  	/* fixed must be grabbed every time since we drop the uring_lock */
  	if ((cd->flags & IORING_ASYNC_CANCEL_FD) &&
  	    (cd->flags & IORING_ASYNC_CANCEL_FD_FIXED)) {
--		if (unlikely(fd >= ctx->nr_user_files))
-+		if (unlikely(fd >= ctx->file_table.data.nr))
+-		if (unlikely(fd >= ctx->file_table.data.nr))
++		struct io_rsrc_node *node;
++
++		node = io_rsrc_node_lookup(&ctx->file_table.data, fd);
++		if (unlikely(!node))
  			return -EBADF;
--		fd = array_index_nospec(fd, ctx->nr_user_files);
-+		fd = array_index_nospec(fd, ctx->file_table.data.nr);
- 		cd->file = io_file_from_index(&ctx->file_table, fd);
+-		fd = array_index_nospec(fd, ctx->file_table.data.nr);
+-		cd->file = io_file_from_index(&ctx->file_table, fd);
++		cd->file = io_slot_file(node);
  		if (!cd->file)
  			return -EBADF;
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index 064a79475c5f..e3f5e9fe5562 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -165,8 +165,8 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
- 	seq_printf(m, "SqThreadCpu:\t%d\n", sq_cpu);
- 	seq_printf(m, "SqTotalTime:\t%llu\n", sq_total_time);
- 	seq_printf(m, "SqWorkTime:\t%llu\n", sq_work_time);
--	seq_printf(m, "UserFiles:\t%u\n", ctx->nr_user_files);
--	for (i = 0; has_lock && i < ctx->nr_user_files; i++) {
-+	seq_printf(m, "UserFiles:\t%u\n", ctx->file_table.data.nr);
-+	for (i = 0; has_lock && i < ctx->file_table.data.nr; i++) {
- 		struct file *f = io_file_from_index(&ctx->file_table, i);
- 
- 		if (f)
-@@ -174,9 +174,9 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
- 		else
- 			seq_printf(m, "%5u: <none>\n", i);
- 	}
--	seq_printf(m, "UserBufs:\t%u\n", ctx->nr_user_bufs);
--	for (i = 0; has_lock && i < ctx->nr_user_bufs; i++) {
--		struct io_mapped_ubuf *buf = ctx->user_bufs[i]->buf;
-+	seq_printf(m, "UserBufs:\t%u\n", ctx->buf_table.nr);
-+	for (i = 0; has_lock && i < ctx->buf_table.nr; i++) {
-+		struct io_mapped_ubuf *buf = ctx->buf_table.nodes[i]->buf;
- 
- 		seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->ubuf, buf->len);
  	}
 diff --git a/io_uring/filetable.c b/io_uring/filetable.c
-index a01be324ac15..c1bea2d9dce2 100644
+index c1bea2d9dce2..1f22f183cdeb 100644
 --- a/io_uring/filetable.c
 +++ b/io_uring/filetable.c
-@@ -38,25 +38,19 @@ static int io_file_bitmap_get(struct io_ring_ctx *ctx)
- 
- bool io_alloc_file_tables(struct io_file_table *table, unsigned nr_files)
+@@ -58,7 +58,7 @@ static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
+ 				 u32 slot_index)
+ 	__must_hold(&req->ctx->uring_lock)
  {
--	table->nodes = kvmalloc_array(nr_files, sizeof(struct io_src_node *),
--					GFP_KERNEL_ACCOUNT | __GFP_ZERO);
--	if (unlikely(!table->nodes))
-+	if (io_rsrc_data_alloc(&table->data, nr_files))
- 		return false;
--
- 	table->bitmap = bitmap_zalloc(nr_files, GFP_KERNEL_ACCOUNT);
--	if (unlikely(!table->bitmap)) {
--		kvfree(table->nodes);
--		return false;
--	}
--
--	return true;
-+	if (table->bitmap)
-+		return true;
-+	io_rsrc_data_free(&table->data);
-+	return false;
- }
- 
- void io_free_file_tables(struct io_file_table *table)
- {
--	kvfree(table->nodes);
-+	io_rsrc_data_free(&table->data);
- 	bitmap_free(table->bitmap);
--	table->nodes = NULL;
- 	table->bitmap = NULL;
- }
- 
-@@ -68,22 +62,22 @@ static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
+-	struct io_rsrc_node *node;
++	struct io_rsrc_node *node, *old_node;
  
  	if (io_is_uring_fops(file))
  		return -EBADF;
--	if (!ctx->file_data)
-+	if (!ctx->file_table.data.nr)
- 		return -ENXIO;
--	if (slot_index >= ctx->nr_user_files)
-+	if (slot_index >= ctx->file_table.data.nr)
- 		return -EINVAL;
- 
--	node = io_rsrc_node_alloc(ctx, ctx->file_data, IORING_RSRC_FILE);
-+	node = io_rsrc_node_alloc(ctx, &ctx->file_table.data, IORING_RSRC_FILE);
+@@ -71,9 +71,9 @@ static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
  	if (IS_ERR(node))
  		return -ENOMEM;
  
--	slot_index = array_index_nospec(slot_index, ctx->nr_user_files);
--	if (ctx->file_table.nodes[slot_index])
--		io_put_rsrc_node(ctx->file_table.nodes[slot_index]);
-+	slot_index = array_index_nospec(slot_index, ctx->file_table.data.nr);
-+	if (ctx->file_table.data.nodes[slot_index])
-+		io_put_rsrc_node(ctx->file_table.data.nodes[slot_index]);
+-	slot_index = array_index_nospec(slot_index, ctx->file_table.data.nr);
+-	if (ctx->file_table.data.nodes[slot_index])
+-		io_put_rsrc_node(ctx->file_table.data.nodes[slot_index]);
++	old_node = io_rsrc_node_lookup(&ctx->file_table.data, slot_index);
++	if (old_node)
++		io_put_rsrc_node(old_node);
  	else
  		io_file_bitmap_set(&ctx->file_table, slot_index);
  
--	ctx->file_table.nodes[slot_index] = node;
-+	ctx->file_table.data.nodes[slot_index] = node;
- 	io_fixed_file_set(node, file);
- 	return 0;
- }
-@@ -129,16 +123,16 @@ int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
+@@ -123,15 +123,17 @@ int io_fixed_fd_install(struct io_kiocb *req, unsigned int issue_flags,
  
  int io_fixed_fd_remove(struct io_ring_ctx *ctx, unsigned int offset)
  {
--	if (unlikely(!ctx->file_data))
-+	if (unlikely(!ctx->file_table.data.nr))
++	struct io_rsrc_node *node;
++
+ 	if (unlikely(!ctx->file_table.data.nr))
  		return -ENXIO;
--	if (offset >= ctx->nr_user_files)
-+	if (offset >= ctx->file_table.data.nr)
+ 	if (offset >= ctx->file_table.data.nr)
  		return -EINVAL;
  
--	offset = array_index_nospec(offset, ctx->nr_user_files);
--	if (!ctx->file_table.nodes[offset])
-+	offset = array_index_nospec(offset, ctx->file_table.data.nr);
-+	if (!ctx->file_table.data.nodes[offset])
+-	offset = array_index_nospec(offset, ctx->file_table.data.nr);
+-	if (!ctx->file_table.data.nodes[offset])
++	node = io_rsrc_node_lookup(&ctx->file_table.data, offset);
++	if (!node)
  		return -EBADF;
--	io_put_rsrc_node(ctx->file_table.nodes[offset]);
--	ctx->file_table.nodes[offset] = NULL;
-+	io_put_rsrc_node(ctx->file_table.data.nodes[offset]);
-+	ctx->file_table.data.nodes[offset] = NULL;
+-	io_put_rsrc_node(ctx->file_table.data.nodes[offset]);
++	io_put_rsrc_node(node);
+ 	ctx->file_table.data.nodes[offset] = NULL;
  	io_file_bitmap_clear(&ctx->file_table, offset);
  	return 0;
- }
-@@ -153,7 +147,7 @@ int io_register_file_alloc_range(struct io_ring_ctx *ctx,
- 		return -EFAULT;
- 	if (check_add_overflow(range.off, range.len, &end))
- 		return -EOVERFLOW;
--	if (range.resv || end > ctx->nr_user_files)
-+	if (range.resv || end > ctx->file_table.data.nr)
- 		return -EINVAL;
- 
- 	io_file_table_set_alloc_range(ctx, range.off, range.len);
 diff --git a/io_uring/filetable.h b/io_uring/filetable.h
-index 47616079abaa..664c31502dbb 100644
+index 664c31502dbb..29edda0caa65 100644
 --- a/io_uring/filetable.h
 +++ b/io_uring/filetable.h
 @@ -52,7 +52,7 @@ static inline struct file *io_slot_file(struct io_rsrc_node *node)
  static inline struct file *io_file_from_index(struct io_file_table *table,
  					      int index)
  {
--	struct io_rsrc_node *node = table->nodes[index];
-+	struct io_rsrc_node *node = table->data.nodes[index];
+-	struct io_rsrc_node *node = table->data.nodes[index];
++	struct io_rsrc_node *node = io_rsrc_node_lookup(&table->data, index);
  
  	if (node)
  		return io_slot_file(node);
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 60c947114fa3..78df515fb3a7 100644
+index 78df515fb3a7..3a535e9e8ac3 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -1879,11 +1879,10 @@ inline struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
+@@ -1879,16 +1879,12 @@ inline struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
  	struct file *file = NULL;
  
  	io_ring_submit_lock(ctx, issue_flags);
--
--	if (unlikely((unsigned int)fd >= ctx->nr_user_files))
-+	if (unlikely((unsigned int)fd >= ctx->file_table.data.nr))
- 		goto out;
--	fd = array_index_nospec(fd, ctx->nr_user_files);
--	node = ctx->file_table.nodes[fd];
-+	fd = array_index_nospec(fd, ctx->file_table.data.nr);
-+	node = ctx->file_table.data.nodes[fd];
+-	if (unlikely((unsigned int)fd >= ctx->file_table.data.nr))
+-		goto out;
+-	fd = array_index_nospec(fd, ctx->file_table.data.nr);
+-	node = ctx->file_table.data.nodes[fd];
++	node = io_rsrc_node_lookup(&ctx->file_table.data, fd);
  	if (node) {
  		io_req_assign_rsrc_node(req, node);
  		req->flags |= io_slot_flags(node);
+ 		file = io_slot_file(node);
+ 	}
+-out:
+ 	io_ring_submit_unlock(ctx, issue_flags);
+ 	return file;
+ }
 diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
-index edea1ffd501c..b90ab3b8f5e0 100644
+index b90ab3b8f5e0..99af39e1d0fb 100644
 --- a/io_uring/msg_ring.c
 +++ b/io_uring/msg_ring.c
-@@ -180,8 +180,8 @@ static struct file *io_msg_grab_file(struct io_kiocb *req, unsigned int issue_fl
- 	int idx = msg->src_fd;
+@@ -172,22 +172,24 @@ static int io_msg_ring_data(struct io_kiocb *req, unsigned int issue_flags)
+ 	return __io_msg_ring_data(target_ctx, msg, issue_flags);
+ }
+ 
+-static struct file *io_msg_grab_file(struct io_kiocb *req, unsigned int issue_flags)
++static int io_msg_grab_file(struct io_kiocb *req, unsigned int issue_flags)
+ {
+ 	struct io_msg *msg = io_kiocb_to_cmd(req, struct io_msg);
+ 	struct io_ring_ctx *ctx = req->ctx;
+-	struct file *file = NULL;
+-	int idx = msg->src_fd;
++	struct io_rsrc_node *node;
++	int ret = -EBADF;
  
  	io_ring_submit_lock(ctx, issue_flags);
--	if (likely(idx < ctx->nr_user_files)) {
--		idx = array_index_nospec(idx, ctx->nr_user_files);
-+	if (likely(idx < ctx->file_table.data.nr)) {
-+		idx = array_index_nospec(idx, ctx->file_table.data.nr);
- 		file = io_file_from_index(&ctx->file_table, idx);
- 		if (file)
- 			get_file(file);
+-	if (likely(idx < ctx->file_table.data.nr)) {
+-		idx = array_index_nospec(idx, ctx->file_table.data.nr);
+-		file = io_file_from_index(&ctx->file_table, idx);
+-		if (file)
+-			get_file(file);
++	node = io_rsrc_node_lookup(&ctx->file_table.data, msg->src_fd);
++	if (node) {
++		msg->src_file = io_slot_file(node);
++		if (msg->src_file)
++			get_file(msg->src_file);
++		req->flags |= REQ_F_NEED_CLEANUP;
++		ret = 0;
+ 	}
+ 	io_ring_submit_unlock(ctx, issue_flags);
+-	return file;
++	return ret;
+ }
+ 
+ static int io_msg_install_complete(struct io_kiocb *req, unsigned int issue_flags)
+@@ -256,7 +258,6 @@ static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct io_ring_ctx *target_ctx = req->file->private_data;
+ 	struct io_msg *msg = io_kiocb_to_cmd(req, struct io_msg);
+ 	struct io_ring_ctx *ctx = req->ctx;
+-	struct file *src_file = msg->src_file;
+ 
+ 	if (msg->len)
+ 		return -EINVAL;
+@@ -264,12 +265,10 @@ static int io_msg_send_fd(struct io_kiocb *req, unsigned int issue_flags)
+ 		return -EINVAL;
+ 	if (target_ctx->flags & IORING_SETUP_R_DISABLED)
+ 		return -EBADFD;
+-	if (!src_file) {
+-		src_file = io_msg_grab_file(req, issue_flags);
+-		if (!src_file)
+-			return -EBADF;
+-		msg->src_file = src_file;
+-		req->flags |= REQ_F_NEED_CLEANUP;
++	if (!msg->src_file) {
++		int ret = io_msg_grab_file(req, issue_flags);
++		if (unlikely(ret))
++			return ret;
+ 	}
+ 
+ 	if (io_msg_need_remote(target_ctx))
 diff --git a/io_uring/net.c b/io_uring/net.c
-index ce1156551d10..3e1f31574abb 100644
+index 3e1f31574abb..2f7b334ed708 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
-@@ -1347,9 +1347,9 @@ static int io_send_zc_import(struct io_kiocb *req, unsigned int issue_flags)
+@@ -1343,13 +1343,11 @@ static int io_send_zc_import(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (sr->flags & IORING_RECVSEND_FIXED_BUF) {
+ 		struct io_ring_ctx *ctx = req->ctx;
+ 		struct io_rsrc_node *node;
+-		int idx;
  
  		ret = -EFAULT;
  		io_ring_submit_lock(ctx, issue_flags);
--		if (sr->buf_index < ctx->nr_user_bufs) {
--			idx = array_index_nospec(sr->buf_index, ctx->nr_user_bufs);
--			node = ctx->user_bufs[idx];
-+		if (sr->buf_index < ctx->buf_table.nr) {
-+			idx = array_index_nospec(sr->buf_index, ctx->buf_table.nr);
-+			node = ctx->buf_table.nodes[idx];
+-		if (sr->buf_index < ctx->buf_table.nr) {
+-			idx = array_index_nospec(sr->buf_index, ctx->buf_table.nr);
+-			node = ctx->buf_table.nodes[idx];
++		node = io_rsrc_node_lookup(&ctx->buf_table, sr->buf_index);
++		if (node) {
  			io_req_assign_rsrc_node(sr->notif, node);
  			ret = 0;
  		}
 diff --git a/io_uring/nop.c b/io_uring/nop.c
-index de91600a3bc6..0dac01127de5 100644
+index 0dac01127de5..149dbdc53607 100644
 --- a/io_uring/nop.c
 +++ b/io_uring/nop.c
-@@ -66,9 +66,9 @@ int io_nop(struct io_kiocb *req, unsigned int issue_flags)
+@@ -62,13 +62,11 @@ int io_nop(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (nop->flags & IORING_NOP_FIXED_BUFFER) {
+ 		struct io_ring_ctx *ctx = req->ctx;
+ 		struct io_rsrc_node *node;
+-		int idx;
  
  		ret = -EFAULT;
  		io_ring_submit_lock(ctx, issue_flags);
--		if (nop->buffer < ctx->nr_user_bufs) {
--			idx = array_index_nospec(nop->buffer, ctx->nr_user_bufs);
--			node = READ_ONCE(ctx->user_bufs[idx]);
-+		if (nop->buffer < ctx->buf_table.nr) {
-+			idx = array_index_nospec(nop->buffer, ctx->buf_table.nr);
-+			node = READ_ONCE(ctx->buf_table.nodes[idx]);
+-		if (nop->buffer < ctx->buf_table.nr) {
+-			idx = array_index_nospec(nop->buffer, ctx->buf_table.nr);
+-			node = READ_ONCE(ctx->buf_table.nodes[idx]);
++		node = io_rsrc_node_lookup(&ctx->buf_table, nop->buffer);
++		if (node) {
  			io_req_assign_rsrc_node(req, node);
  			ret = 0;
  		}
-diff --git a/io_uring/register.c b/io_uring/register.c
-index 1eb686eaa310..45edfc57963a 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -937,7 +937,8 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
- 	mutex_lock(&ctx->uring_lock);
- 	ret = __io_uring_register(ctx, opcode, arg, nr_args);
- 	mutex_unlock(&ctx->uring_lock);
--	trace_io_uring_register(ctx, opcode, ctx->nr_user_files, ctx->nr_user_bufs, ret);
-+	trace_io_uring_register(ctx, opcode, ctx->file_table.data.nr,
-+				ctx->buf_table.nr, ret);
- 	if (!use_registered_ring)
- 		fput(file);
- 	return ret;
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index b1729cbdc749..902e003704a9 100644
+index 902e003704a9..0924c53dd954 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -143,39 +143,28 @@ struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx,
- 	return node;
- }
- 
--static void io_rsrc_data_free(struct io_rsrc_data *data)
-+__cold void io_rsrc_data_free(struct io_rsrc_data *data)
- {
--	int i;
--
--	for (i = 0; i < data->nr; i++) {
--		struct io_rsrc_node *node = data->nodes[i];
--
--		if (node)
--			io_put_rsrc_node(node);
-+	if (!data->nr)
-+		return;
-+	while (data->nr--) {
-+		if (data->nodes[data->nr])
-+			io_put_rsrc_node(data->nodes[data->nr]);
- 	}
- 	kvfree(data->nodes);
--	kfree(data);
-+	data->nodes = NULL;
-+	data->nr = 0;
- }
- 
--__cold static int io_rsrc_data_alloc(struct io_ring_ctx *ctx, unsigned nr,
--				     struct io_rsrc_data **pdata)
-+__cold int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr)
- {
--	struct io_rsrc_data *data;
--
--	data = kzalloc(sizeof(*data), GFP_KERNEL);
--	if (!data)
--		return -ENOMEM;
--
- 	data->nodes = kvmalloc_array(nr, sizeof(struct io_rsrc_node *),
--					GFP_KERNEL | __GFP_ZERO);
--	if (!data->nodes) {
--		kfree(data);
--		return -ENOMEM;
-+					GFP_KERNEL_ACCOUNT | __GFP_ZERO);
-+	if (data->nodes) {
-+		data->nr = nr;
-+		return 0;
- 	}
--
--	data->nr = nr;
--	*pdata = data;
--	return 0;
-+	return -ENOMEM;
- }
- 
- static int __io_sqe_files_update(struct io_ring_ctx *ctx,
-@@ -187,9 +176,9 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 	int fd, i, err = 0;
- 	unsigned int done;
- 
--	if (!ctx->file_data)
-+	if (!ctx->file_table.data.nr)
- 		return -ENXIO;
--	if (up->offset + nr_args > ctx->nr_user_files)
-+	if (up->offset + nr_args > ctx->file_table.data.nr)
+@@ -182,6 +182,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
  		return -EINVAL;
  
  	for (done = 0; done < nr_args; done++) {
-@@ -207,10 +196,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
++		struct io_rsrc_node *node;
+ 		u64 tag = 0;
+ 
+ 		if ((tags && copy_from_user(&tag, &tags[done], sizeof(tag))) ||
+@@ -196,9 +197,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
  		if (fd == IORING_REGISTER_FILES_SKIP)
  			continue;
  
--		i = array_index_nospec(up->offset + done, ctx->nr_user_files);
--		if (ctx->file_table.nodes[i]) {
--			io_put_rsrc_node(ctx->file_table.nodes[i]);
--			ctx->file_table.nodes[i] = NULL;
-+		i = array_index_nospec(up->offset + done, ctx->file_table.data.nr);
-+		if (ctx->file_table.data.nodes[i]) {
-+			io_put_rsrc_node(ctx->file_table.data.nodes[i]);
-+			ctx->file_table.data.nodes[i] = NULL;
+-		i = array_index_nospec(up->offset + done, ctx->file_table.data.nr);
+-		if (ctx->file_table.data.nodes[i]) {
+-			io_put_rsrc_node(ctx->file_table.data.nodes[i]);
++		i = up->offset + done;
++		node = io_rsrc_node_lookup(&ctx->file_table.data, i);
++		if (node) {
++			io_put_rsrc_node(node);
+ 			ctx->file_table.data.nodes[i] = NULL;
  			io_file_bitmap_clear(&ctx->file_table, i);
  		}
- 		if (fd != -1) {
-@@ -229,13 +218,14 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 				err = -EBADF;
- 				break;
- 			}
--			node = io_rsrc_node_alloc(ctx, ctx->file_data, IORING_RSRC_FILE);
-+			node = io_rsrc_node_alloc(ctx, &ctx->file_table.data,
-+						  IORING_RSRC_FILE);
- 			if (!node) {
- 				err = -ENOMEM;
- 				fput(file);
- 				break;
- 			}
--			ctx->file_table.nodes[i] = node;
-+			ctx->file_table.data.nodes[i] = node;
- 			if (tag)
- 				node->tag = tag;
- 			io_fixed_file_set(node, file);
-@@ -257,9 +247,9 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
- 	__u32 done;
- 	int i, err;
- 
--	if (!ctx->buf_data)
-+	if (!ctx->buf_table.nr)
- 		return -ENXIO;
--	if (up->offset + nr_args > ctx->nr_user_bufs)
-+	if (up->offset + nr_args > ctx->buf_table.nr)
- 		return -EINVAL;
- 
- 	for (done = 0; done < nr_args; done++) {
-@@ -283,16 +273,16 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
- 			err = -EINVAL;
- 			break;
- 		}
--		i = array_index_nospec(up->offset + done, ctx->nr_user_bufs);
-+		i = array_index_nospec(up->offset + done, ctx->buf_table.nr);
- 		node = io_sqe_buffer_register(ctx, iov, i, &last_hpage);
- 		if (IS_ERR(node)) {
- 			err = PTR_ERR(node);
- 			break;
- 		}
--		if (ctx->user_bufs[i])
--			io_put_rsrc_node(ctx->user_bufs[i]);
-+		if (ctx->buf_table.nodes[i])
-+			io_put_rsrc_node(ctx->buf_table.nodes[i]);
- 
--		ctx->user_bufs[i] = node;
-+		ctx->buf_table.nodes[i] = node;
- 		if (tag)
- 			node->tag = tag;
- 		if (ctx->compat)
-@@ -410,7 +400,7 @@ static int io_files_update_with_index_alloc(struct io_kiocb *req,
- 	struct file *file;
- 	int ret, fd;
- 
--	if (!req->ctx->file_data)
-+	if (!req->ctx->file_table.data.nr)
- 		return -ENXIO;
- 
- 	for (done = 0; done < up->nr_args; done++) {
-@@ -495,35 +485,13 @@ void io_free_rsrc_node(struct io_rsrc_node *node)
- 	kfree(node);
- }
- 
--static void __io_sqe_files_unregister(struct io_ring_ctx *ctx)
--{
--	int i;
--
--	lockdep_assert_held(&ctx->uring_lock);
--
--	for (i = 0; i < ctx->nr_user_files; i++) {
--		struct io_rsrc_node *node = ctx->file_table.nodes[i];
--
--		if (node) {
--			io_put_rsrc_node(node);
--			io_file_bitmap_clear(&ctx->file_table, i);
--			ctx->file_table.nodes[i] = NULL;
--		}
--	}
--
--	io_free_file_tables(&ctx->file_table);
--	io_file_table_set_alloc_range(ctx, 0, 0);
--	io_rsrc_data_free(ctx->file_data);
--	ctx->file_data = NULL;
--	ctx->nr_user_files = 0;
--}
--
- int io_sqe_files_unregister(struct io_ring_ctx *ctx)
- {
--	if (!ctx->file_data)
-+	if (!ctx->file_table.data.nr)
- 		return -ENXIO;
- 
--	__io_sqe_files_unregister(ctx);
-+	io_free_file_tables(&ctx->file_table);
-+	io_file_table_set_alloc_range(ctx, 0, 0);
- 	return 0;
- }
- 
-@@ -535,7 +503,7 @@ int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 	int fd, ret;
- 	unsigned i;
- 
--	if (ctx->file_data)
-+	if (ctx->file_table.data.nr)
- 		return -EBUSY;
- 	if (!nr_args)
- 		return -EINVAL;
-@@ -543,17 +511,10 @@ int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 		return -EMFILE;
- 	if (nr_args > rlimit(RLIMIT_NOFILE))
- 		return -EMFILE;
--	ret = io_rsrc_data_alloc(ctx, nr_args, &ctx->file_data);
--	if (ret)
--		return ret;
--
--	if (!io_alloc_file_tables(&ctx->file_table, nr_args)) {
--		io_rsrc_data_free(ctx->file_data);
--		ctx->file_data = NULL;
-+	if (!io_alloc_file_tables(&ctx->file_table, nr_args))
- 		return -ENOMEM;
--	}
- 
--	for (i = 0; i < nr_args; i++, ctx->nr_user_files++) {
-+	for (i = 0; i < nr_args; i++) {
- 		struct io_rsrc_node *node;
- 		u64 tag = 0;
- 
-@@ -583,51 +544,32 @@ int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 			goto fail;
- 		}
- 		ret = -ENOMEM;
--		node = io_rsrc_node_alloc(ctx, ctx->file_data, IORING_RSRC_FILE);
-+		node = io_rsrc_node_alloc(ctx, &ctx->file_table.data,
-+					  IORING_RSRC_FILE);
- 		if (!node) {
- 			fput(file);
- 			goto fail;
- 		}
- 		if (tag)
- 			node->tag = tag;
--		ctx->file_table.nodes[i] = node;
-+		ctx->file_table.data.nodes[i] = node;
- 		io_fixed_file_set(node, file);
- 		io_file_bitmap_set(&ctx->file_table, i);
- 	}
- 
- 	/* default it to the whole table */
--	io_file_table_set_alloc_range(ctx, 0, ctx->nr_user_files);
-+	io_file_table_set_alloc_range(ctx, 0, ctx->file_table.data.nr);
- 	return 0;
- fail:
--	__io_sqe_files_unregister(ctx);
-+	io_sqe_files_unregister(ctx);
- 	return ret;
- }
- 
--static void __io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
--{
--	unsigned int i;
--
--	lockdep_assert_held(&ctx->uring_lock);
--
--	for (i = 0; i < ctx->nr_user_bufs; i++) {
--		if (ctx->user_bufs[i]) {
--			io_put_rsrc_node(ctx->user_bufs[i]);
--			ctx->user_bufs[i] = NULL;
--		}
--	}
--	kvfree(ctx->user_bufs);
--	ctx->user_bufs = NULL;
--	io_rsrc_data_free(ctx->buf_data);
--	ctx->buf_data = NULL;
--	ctx->nr_user_bufs = 0;
--}
--
- int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
- {
--	if (!ctx->buf_data)
-+	if (!ctx->buf_table.nr)
- 		return -ENXIO;
--
--	__io_sqe_buffers_unregister(ctx);
-+	io_rsrc_data_free(&ctx->buf_table);
- 	return 0;
- }
- 
-@@ -654,8 +596,8 @@ static bool headpage_already_acct(struct io_ring_ctx *ctx, struct page **pages,
- 	}
- 
- 	/* check previously registered pages */
--	for (i = 0; i < ctx->nr_user_bufs; i++) {
--		struct io_rsrc_node *node = ctx->user_bufs[i];
-+	for (i = 0; i < ctx->buf_table.nr; i++) {
-+		struct io_rsrc_node *node = ctx->buf_table.nodes[i];
- 		struct io_mapped_ubuf *imu = node->buf;
- 
- 		for (j = 0; j < imu->nr_bvecs; j++) {
-@@ -807,7 +749,10 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
- 	struct io_imu_folio_data data;
- 	bool coalesced;
- 
--	node = io_rsrc_node_alloc(ctx, ctx->buf_data, IORING_RSRC_BUFFER);
-+	if (!iov->iov_base)
-+		return rsrc_empty_node;
-+
-+	node = io_rsrc_node_alloc(ctx, &ctx->buf_table, IORING_RSRC_BUFFER);
- 	if (!node)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -865,40 +810,29 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
- 	return node;
- }
- 
--static int io_buffers_map_alloc(struct io_ring_ctx *ctx, unsigned int nr_args)
--{
--	ctx->user_bufs = kcalloc(nr_args, sizeof(*ctx->user_bufs), GFP_KERNEL);
--	return ctx->user_bufs ? 0 : -ENOMEM;
--}
--
- int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
- 			    unsigned int nr_args, u64 __user *tags)
- {
- 	struct page *last_hpage = NULL;
--	struct io_rsrc_data *data;
-+	struct io_rsrc_data data;
- 	struct iovec fast_iov, *iov = &fast_iov;
- 	const struct iovec __user *uvec;
- 	int i, ret;
- 
- 	BUILD_BUG_ON(IORING_MAX_REG_BUFFERS >= (1u << 16));
- 
--	if (ctx->user_bufs)
-+	if (ctx->buf_table.nr)
- 		return -EBUSY;
- 	if (!nr_args || nr_args > IORING_MAX_REG_BUFFERS)
- 		return -EINVAL;
--	ret = io_rsrc_data_alloc(ctx, nr_args, &data);
-+	ret = io_rsrc_data_alloc(&data, nr_args);
- 	if (ret)
- 		return ret;
--	ret = io_buffers_map_alloc(ctx, nr_args);
--	if (ret) {
--		io_rsrc_data_free(data);
--		return ret;
--	}
- 
- 	if (!arg)
- 		memset(iov, 0, sizeof(*iov));
- 
--	for (i = 0; i < nr_args; i++, ctx->nr_user_bufs++) {
-+	for (i = 0; i < nr_args; i++) {
- 		struct io_rsrc_node *node;
- 		u64 tag = 0;
- 
-@@ -936,14 +870,12 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
- 		}
- 		if (tag)
- 			node->tag = tag;
--		ctx->user_bufs[i] = node;
-+		data.nodes[i] = node;
- 	}
- 
--	WARN_ON_ONCE(ctx->buf_data);
--
--	ctx->buf_data = data;
-+	ctx->buf_table = data;
- 	if (ret)
--		__io_sqe_buffers_unregister(ctx);
-+		io_sqe_buffers_unregister(ctx);
- 	return ret;
- }
- 
-@@ -1010,8 +942,7 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
- 
- static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx)
- {
--	struct io_rsrc_node **user_bufs;
--	struct io_rsrc_data *data;
-+	struct io_rsrc_data data;
- 	int i, ret, nbufs;
- 
- 	/*
-@@ -1022,43 +953,35 @@ static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx
- 
- 	mutex_lock(&src_ctx->uring_lock);
- 	ret = -ENXIO;
--	nbufs = src_ctx->nr_user_bufs;
-+	nbufs = src_ctx->buf_table.nr;
- 	if (!nbufs)
- 		goto out_unlock;
--	ret = io_rsrc_data_alloc(ctx, nbufs, &data);
-+	ret = io_rsrc_data_alloc(&data, nbufs);
- 	if (ret)
+@@ -961,9 +963,9 @@ static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx
  		goto out_unlock;
  
--	ret = -ENOMEM;
--	user_bufs = kvmalloc_array(nbufs, sizeof(struct io_rsrc_node *),
--					GFP_KERNEL | __GFP_ZERO);
--	if (!user_bufs)
--		goto out_free_data;
--
  	for (i = 0; i < nbufs; i++) {
--		struct io_rsrc_node *src_node = src_ctx->user_bufs[i];
-+		struct io_rsrc_node *src_node = src_ctx->buf_table.nodes[i];
- 		struct io_rsrc_node *dst_node;
+-		struct io_rsrc_node *src_node = src_ctx->buf_table.nodes[i];
+-		struct io_rsrc_node *dst_node;
++		struct io_rsrc_node *dst_node, *src_node;
  
++		src_node = io_rsrc_node_lookup(&src_ctx->buf_table, i);
  		if (src_node == rsrc_empty_node) {
  			dst_node = rsrc_empty_node;
  		} else {
--			dst_node = io_rsrc_node_alloc(ctx, data, IORING_RSRC_BUFFER);
-+			dst_node = io_rsrc_node_alloc(ctx, &data, IORING_RSRC_BUFFER);
- 			if (!dst_node)
- 				goto out_put_free;
- 
- 			refcount_inc(&src_node->buf->refs);
- 			dst_node->buf = src_node->buf;
- 		}
--		user_bufs[i] = dst_node;
-+		data.nodes[i] = dst_node;
- 	}
- 
- 	/* Have a ref on the bufs now, drop src lock and re-grab our own lock */
- 	mutex_unlock(&src_ctx->uring_lock);
- 	mutex_lock(&ctx->uring_lock);
--	if (!ctx->user_bufs) {
--		ctx->user_bufs = user_bufs;
--		ctx->buf_data = data;
--		ctx->nr_user_bufs = nbufs;
-+	if (!ctx->buf_table.nr) {
-+		ctx->buf_table = data;
- 		return 0;
- 	}
- 
-@@ -1069,12 +992,10 @@ static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx
- 	i = nbufs;
- out_put_free:
- 	while (i--) {
--		io_buffer_unmap(src_ctx, user_bufs[i]);
--		kfree(user_bufs[i]);
-+		io_buffer_unmap(src_ctx, data.nodes[i]);
-+		kfree(data.nodes[i]);
- 	}
--	kvfree(user_bufs);
--out_free_data:
--	io_rsrc_data_free(data);
-+	io_rsrc_data_free(&data);
- out_unlock:
- 	mutex_unlock(&src_ctx->uring_lock);
- 	mutex_lock(&ctx->uring_lock);
-@@ -1095,7 +1016,7 @@ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg)
- 	struct file *file;
- 	int ret;
- 
--	if (ctx->user_bufs || ctx->nr_user_bufs)
-+	if (ctx->buf_table.nr)
- 		return -EBUSY;
- 	if (copy_from_user(&buf, arg, sizeof(buf)))
- 		return -EFAULT;
 diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 6a7863f13ea9..438e0ac6abf7 100644
+index 438e0ac6abf7..6952fb45f57a 100644
 --- a/io_uring/rsrc.h
 +++ b/io_uring/rsrc.h
-@@ -13,11 +13,6 @@ enum {
- 	IORING_RSRC_BUFFER		= 1,
- };
+@@ -71,6 +71,14 @@ int io_register_rsrc(struct io_ring_ctx *ctx, void __user *arg,
+ extern const struct io_rsrc_node empty_node;
+ #define rsrc_empty_node	(struct io_rsrc_node *) &empty_node
  
--struct io_rsrc_data {
--	unsigned int			nr;
--	struct io_rsrc_node		**nodes;
--};
--
- struct io_rsrc_node {
- 	struct io_ring_ctx		*ctx;
- 	int				refs;
-@@ -51,6 +46,8 @@ struct io_imu_folio_data {
- struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx,
- 					struct io_rsrc_data *data, int type);
- void io_free_rsrc_node(struct io_rsrc_node *node);
-+void io_rsrc_data_free(struct io_rsrc_data *data);
-+int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr);
- 
- int io_import_fixed(int ddir, struct iov_iter *iter,
- 			   struct io_mapped_ubuf *imu,
++static inline struct io_rsrc_node *io_rsrc_node_lookup(struct io_rsrc_data *data,
++						       int index)
++{
++	if (index < data->nr)
++		return data->nodes[array_index_nospec(index, data->nr)];
++	return NULL;
++}
++
+ static inline void io_put_rsrc_node(struct io_rsrc_node *node)
+ {
+ 	if (node != rsrc_empty_node && !--node->refs)
 diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 65491f4f2c7e..28fff18ebb19 100644
+index 28fff18ebb19..30448f343c7f 100644
 --- a/io_uring/rw.c
 +++ b/io_uring/rw.c
-@@ -339,10 +339,10 @@ static int io_prep_rw_fixed(struct io_kiocb *req, const struct io_uring_sqe *sqe
+@@ -332,17 +332,15 @@ static int io_prep_rw_fixed(struct io_kiocb *req, const struct io_uring_sqe *sqe
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_rsrc_node *node;
+ 	struct io_async_rw *io;
+-	u16 index;
+ 	int ret;
+ 
+ 	ret = io_prep_rw(req, sqe, ddir, false);
  	if (unlikely(ret))
  		return ret;
  
--	if (unlikely(req->buf_index >= ctx->nr_user_bufs))
-+	if (unlikely(req->buf_index >= ctx->buf_table.nr))
+-	if (unlikely(req->buf_index >= ctx->buf_table.nr))
++	node = io_rsrc_node_lookup(&ctx->buf_table, req->buf_index);
++	if (!node)
  		return -EFAULT;
--	index = array_index_nospec(req->buf_index, ctx->nr_user_bufs);
--	node = ctx->user_bufs[index];
-+	index = array_index_nospec(req->buf_index, ctx->buf_table.nr);
-+	node = ctx->buf_table.nodes[index];
+-	index = array_index_nospec(req->buf_index, ctx->buf_table.nr);
+-	node = ctx->buf_table.nodes[index];
  	io_req_assign_rsrc_node(req, node);
  
  	io = req->async_data;
 diff --git a/io_uring/splice.c b/io_uring/splice.c
-index f78afb575ae6..aaaddb66e90a 100644
+index aaaddb66e90a..deeb8bb18651 100644
 --- a/io_uring/splice.c
 +++ b/io_uring/splice.c
-@@ -66,10 +66,10 @@ static struct file *io_splice_get_file(struct io_kiocb *req,
+@@ -66,17 +66,13 @@ static struct file *io_splice_get_file(struct io_kiocb *req,
  		return io_file_get_normal(req, sp->splice_fd_in);
  
  	io_ring_submit_lock(ctx, issue_flags);
--	if (unlikely(sp->splice_fd_in >= ctx->nr_user_files))
-+	if (unlikely(sp->splice_fd_in >= ctx->file_table.data.nr))
- 		goto out;
--	sp->splice_fd_in = array_index_nospec(sp->splice_fd_in, ctx->nr_user_files);
--	node = ctx->file_table.nodes[sp->splice_fd_in];
-+	sp->splice_fd_in = array_index_nospec(sp->splice_fd_in, ctx->file_table.data.nr);
-+	node = ctx->file_table.data.nodes[sp->splice_fd_in];
+-	if (unlikely(sp->splice_fd_in >= ctx->file_table.data.nr))
+-		goto out;
+-	sp->splice_fd_in = array_index_nospec(sp->splice_fd_in, ctx->file_table.data.nr);
+-	node = ctx->file_table.data.nodes[sp->splice_fd_in];
++	node = io_rsrc_node_lookup(&ctx->file_table.data, sp->splice_fd_in);
  	if (node) {
  		node->refs++;
  		sp->rsrc_node = node;
+ 		file = io_slot_file(node);
+ 		req->flags |= REQ_F_NEED_CLEANUP;
+ 	}
+-out:
+ 	io_ring_submit_unlock(ctx, issue_flags);
+ 	return file;
+ }
 diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 0899c71008ae..17d5f5004702 100644
+index 17d5f5004702..535909a38e76 100644
 --- a/io_uring/uring_cmd.c
 +++ b/io_uring/uring_cmd.c
-@@ -212,15 +212,15 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		u16 index;
+@@ -209,18 +209,17 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
  
- 		index = READ_ONCE(sqe->buf_index);
--		if (unlikely(index >= ctx->nr_user_bufs))
-+		if (unlikely(index >= ctx->buf_table.nr))
+ 	if (ioucmd->flags & IORING_URING_CMD_FIXED) {
+ 		struct io_ring_ctx *ctx = req->ctx;
+-		u16 index;
++		struct io_rsrc_node *node;
+ 
+-		index = READ_ONCE(sqe->buf_index);
+-		if (unlikely(index >= ctx->buf_table.nr))
++		node = io_rsrc_node_lookup(&ctx->buf_table, req->buf_index);
++		if (unlikely(!node))
  			return -EFAULT;
--		req->buf_index = array_index_nospec(index, ctx->nr_user_bufs);
-+		req->buf_index = array_index_nospec(index, ctx->buf_table.nr);
+-		req->buf_index = array_index_nospec(index, ctx->buf_table.nr);
  		/*
  		 * Pi node upfront, prior to io_uring_cmd_import_fixed()
  		 * being called. This prevents destruction of the mapped buffer
  		 * we'll need at actual import time.
  		 */
--		io_req_assign_rsrc_node(req, ctx->user_bufs[req->buf_index]);
-+		io_req_assign_rsrc_node(req, ctx->buf_table.nodes[req->buf_index]);
+-		io_req_assign_rsrc_node(req, ctx->buf_table.nodes[req->buf_index]);
++		io_req_assign_rsrc_node(req, node);
  	}
  	ioucmd->cmd_op = READ_ONCE(sqe->cmd_op);
  

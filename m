@@ -1,100 +1,61 @@
-Return-Path: <io-uring+bounces-4153-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4154-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB949B5543
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 22:51:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C98749B5553
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 22:52:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94A5BB22303
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 21:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F18E1F23E44
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 21:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37DC1DEFFD;
-	Tue, 29 Oct 2024 21:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E205D194AD6;
+	Tue, 29 Oct 2024 21:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yfY9XSKs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8w7Y1yCe";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yfY9XSKs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8w7Y1yCe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jd9mHMte"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DF7194AD6;
-	Tue, 29 Oct 2024 21:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B341A1422AB;
+	Tue, 29 Oct 2024 21:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730238685; cv=none; b=RuO0P6I3lYcn27/4jAI0+/LKma+/IWtqYRtht5ushlQ9c9u2+BMUZIwEp5uGvFKlsqeaKh1wswyz02Vk2duwulp1AJjoUUVSF1BEe3O31hI4p6uWfPpH5z+pgl+HKCTFQ9a3fyyMZOBlckM4BVltcIA7A9TTLSVqcZMuowE9nZI=
+	t=1730238766; cv=none; b=hL+lenHuTghEf05ZH/Yv6EFdWqqAIkXqgVtDipwLWvn5zc1hT1GiJ/jGuDQJ2gWAppjRFEw7v7JchLHRhB/Dd5Yl63gc/jBlUIlDUWtZLZWjZgG2VRbpnWUGmgVLfxMgMcH1Szr+ajMzfnIFvklwgrBdEeCjqOE+FtyZvoX/4Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730238685; c=relaxed/simple;
-	bh=8Uu1YgwSM9A9HIece66TROqs3TFvV8LqiKHIapaJNhk=;
+	s=arc-20240116; t=1730238766; c=relaxed/simple;
+	bh=aQ4snfpqU8/cP5h4360AM/aNhQUoNlVkuZ5R6R5m2QU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWJZzB2n+9pNnvhlaqkXdM8i0cjoUXh4kK+SJYq7/nqZ9glL5OvYqrPZ5uDLUDstFq35bDi0B6WCsuJHURn1WPL+qDteZulVUFLxdOk9njBxMuRW1y/ScVBuMiZGP4U4B4Qe7JuFOGsMWTlahfIjLqi2mONG71S2IOY/3wWIpQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yfY9XSKs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8w7Y1yCe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yfY9XSKs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8w7Y1yCe; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2421021EA7;
-	Tue, 29 Oct 2024 21:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730238681;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ErBlRuPZilid7W+V2PDj60AUsSW3rqYKe3JjGY5yH6o=;
-	b=yfY9XSKsh9w5dt4V4dRWMiOnRukGMVUmZ4fojStBWJOfS7ICCwd9KyNw7rfI9B55Gsskk8
-	DulfhAFpavbr023qzklhlqpdAvmEP+yg7cmPiXji1okwafAz0qtsCyMV8aCfllsSJcp95Z
-	X+BNRZeL/SW+6eMgdC+3ErNw/sot8LE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730238681;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ErBlRuPZilid7W+V2PDj60AUsSW3rqYKe3JjGY5yH6o=;
-	b=8w7Y1yCeMUT4ZxmunL1ICUpLfrWosV/VQ8R5MENBOCktKJvBmLWeKGQGCW4U1mvxk+pPra
-	LDcXsqzeJbDCdsDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730238681;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ErBlRuPZilid7W+V2PDj60AUsSW3rqYKe3JjGY5yH6o=;
-	b=yfY9XSKsh9w5dt4V4dRWMiOnRukGMVUmZ4fojStBWJOfS7ICCwd9KyNw7rfI9B55Gsskk8
-	DulfhAFpavbr023qzklhlqpdAvmEP+yg7cmPiXji1okwafAz0qtsCyMV8aCfllsSJcp95Z
-	X+BNRZeL/SW+6eMgdC+3ErNw/sot8LE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730238681;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ErBlRuPZilid7W+V2PDj60AUsSW3rqYKe3JjGY5yH6o=;
-	b=8w7Y1yCeMUT4ZxmunL1ICUpLfrWosV/VQ8R5MENBOCktKJvBmLWeKGQGCW4U1mvxk+pPra
-	LDcXsqzeJbDCdsDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 11426139A2;
-	Tue, 29 Oct 2024 21:51:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UEsHBNlYIWcheAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 29 Oct 2024 21:51:21 +0000
-Date: Tue, 29 Oct 2024 22:51:04 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Mark Harmstone <maharmstone@fb.com>
-Cc: linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH 5/5] btrfs: add io_uring command for encoded reads
-Message-ID: <20241029215104.GT31418@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20241022145024.1046883-1-maharmstone@fb.com>
- <20241022145024.1046883-6-maharmstone@fb.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ad/A83hAuYSkG7rmaDBudphtdAZkJI5d5nvAo7+K3UaX4JfBER1SMCRJ78fXwuEhoBJpW4/tBUYIQIBUXM0Ic/fv5uI30aIEpwFAanBZHu0uHp6toj6+WnNR6/hmHWjOORTa3QhcNznURUmoQc+fZ5Im8iA0zXGVxqPlCBDtdkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jd9mHMte; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22FE7C4CECD;
+	Tue, 29 Oct 2024 21:52:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730238766;
+	bh=aQ4snfpqU8/cP5h4360AM/aNhQUoNlVkuZ5R6R5m2QU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jd9mHMteIVmcMbTaE3uwEugAGddfJddGcYP16SY3RjAJbJTHVVyuEpJoA8haaDdeV
+	 MbpBDStbLtcbFjfL+MfXyB4/Wyb8YVufy6WdIfNab2QLmbU1tL3LJSOs2qc6rNkqVt
+	 3NnEe9/aLQ9mOc0zUcM6jmP3Yw+nLMsDtFELguWmSjqBZZhbCicBnV6i7tbgdZ3bMW
+	 uGbGq64Z02SpC76xDyfd8h36MIz7LoAinxHMf06p91m/K5FdUvuT9S27GwXg5rsHke
+	 L73fnEIM2MuntOef2uFX5WwjmlpJFgbIo8kfAtEf61LFPxGux4oAaCTkyGa9ty1zm0
+	 uYl6HV1LYpUiw==
+Date: Tue, 29 Oct 2024 15:52:42 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Anuj Gupta <anuj20.g@samsung.com>
+Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
+	asml.silence@gmail.com, anuj1072538@gmail.com, brauner@kernel.org,
+	jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
+	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org,
+	Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [PATCH v5 10/10] block: add support to pass user meta buffer
+Message-ID: <ZyFZKmM5ALFaFGRd@kbusch-mbp.dhcp.thefacebook.com>
+References: <20241029162402.21400-1-anuj20.g@samsung.com>
+ <CGME20241029163235epcas5p340ce6d131cc7bf220db978a2d4dc24c2@epcas5p3.samsung.com>
+ <20241029162402.21400-11-anuj20.g@samsung.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -103,61 +64,16 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241022145024.1046883-6-maharmstone@fb.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -4.00
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[twin.jikos.cz:mid,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20241029162402.21400-11-anuj20.g@samsung.com>
 
-On Tue, Oct 22, 2024 at 03:50:20PM +0100, Mark Harmstone wrote:
-> +static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd,
-> +				    unsigned int issue_flags)
-> +{
-> +	size_t copy_end_kernel = offsetofend(struct btrfs_ioctl_encoded_io_args,
-> +					     flags);
-> +	size_t copy_end;
-> +	struct btrfs_ioctl_encoded_io_args args = { 0 };
-> +	int ret;
-> +	u64 disk_bytenr, disk_io_size;
-> +	struct file *file = cmd->file;
-> +	struct btrfs_inode *inode = BTRFS_I(file->f_inode);
-> +	struct btrfs_fs_info *fs_info = inode->root->fs_info;
-> +	struct extent_io_tree *io_tree = &inode->io_tree;
-> +	struct iovec iovstack[UIO_FASTIOV];
-> +	struct iovec *iov = iovstack;
-> +	struct iov_iter iter;
-> +	loff_t pos;
-> +	struct kiocb kiocb;
-> +	struct extent_state *cached_state = NULL;
-> +	u64 start, lockend;
-> +	void __user *sqe_addr = u64_to_user_ptr(READ_ONCE(cmd->sqe->addr));
-> +
-> +	if (!capable(CAP_SYS_ADMIN)) {
-> +		ret = -EPERM;
-> +		goto out_acct;
-> +	}
+On Tue, Oct 29, 2024 at 09:54:02PM +0530, Anuj Gupta wrote:
+> From: Kanchan Joshi <joshi.k@samsung.com>
+> 
+> If an iocb contains metadata, extract that and prepare the bip.
+> Based on flags specified by the user, set corresponding guard/app/ref
+> tags to be checked in bip.
 
-Access level check must be done first before any data are read, in this
-case cmd->file and sqe_addr. Fixed.
+Looks good.
+
+Reviewed-by: Keith Busch <kbusch@kernel.org>
 

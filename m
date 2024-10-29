@@ -1,72 +1,72 @@
-Return-Path: <io-uring+bounces-4163-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4164-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF8CF9B566A
-	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 00:06:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC14E9B566B
+	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 00:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17FDEB21744
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 23:06:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69EF71F23E55
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 23:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7246720C465;
-	Tue, 29 Oct 2024 23:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7540220B202;
+	Tue, 29 Oct 2024 23:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="Ull04dqe"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="179FQU2e"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706CA20C302
-	for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 23:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07EF20B1E1
+	for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 23:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730243171; cv=none; b=aU+6+AqPH3nvf0UMtXoQuGp5XhDmgXvNq//+KcGdDoWLbjRIMostPZo1AbGzsmIqkK9havBsDXZge/AlV29K9HFOfryEFW8wTlQDYHexSRTAGTqMj7rSHvcUJElY32DxMWpa1iWXG2sMnehDny8hywbBECM7XRsTA11SAgAECbc=
+	t=1730243173; cv=none; b=KkxnHu/EyiH+Cznna8AIuO1Zb9aLmbvbJcy5dqa3YigS4byBGWaG8kmh0mMaXpBie5v3ARUm1ig2cWWhd6CxA45/Tb40oTqZGBfAvtCR6fRpbJkqFtTnAxRZyt+Srn1OTzqXPQGEdHka867eMn3rzuxYoOK6cBaekOD6YObQklk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730243171; c=relaxed/simple;
-	bh=40TRLrkxLiE/L93cu7fVtrl05gtC+YqtB6WtAY0jo/E=;
+	s=arc-20240116; t=1730243173; c=relaxed/simple;
+	bh=JyVjK7YOvoabNVDtTnbKrxUTGtAIunU+H4BlNa2mfrI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pnPZkKZiqNxTzZAi64N2lSn+TmzTsl156jf4VEHnrDbXBTOtFPXRUiGY0eBVMyon7sqZSzB5ogaYou9UK+57Q7PbEOsNBtVKLIayIrM6UTyr5capxaiL4ZOyOrQ0wdf7fd7KTOstMdH16LK+FVmH1yRHdjQKE8qzlkCLbuD8Nv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=Ull04dqe; arc=none smtp.client-ip=209.85.214.182
+	 MIME-Version; b=IhQ6XYOO3f19wIRspZ0b+j6wIdgSKge88vXUooZfw62itQdRp7My+WO+KTYj9bPlMnZ7+rlHbev0HogmgfTdls9wtJFAG9yt0dSroO5r3B/ihcNQdemMbcH7aHOF5YvojIni4G7dSxmxZOmvBmWjAKryWrWvQFIEHr6zgxFBx8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=179FQU2e; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c7edf2872so2436115ad.1
-        for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 16:06:09 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20cdda5cfb6so58566645ad.3
+        for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 16:06:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1730243169; x=1730847969; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1730243170; x=1730847970; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tmyth23R42frMPjJlMy8hhDb4L00WvoqlDbMJmlZ6cY=;
-        b=Ull04dqe+xTwg7DDlTqze5O9HbYy86RP70haCmnWOCwT+WHXFqQ3EAjuKUiXbCB6FX
-         MjywAk8YlBt1sBlU9ywQWLIxpxZdqh3B+wvZ0eCTTgXxTN6EKM1IhlL+iyZdVUw6XlnA
-         41yDxklyFkXmTE9RcUz8Xh1dW0QtJ/GQgPe2UDB8+rAopYzdqrd+6zQTKCTmWZlATDCg
-         uyizd0RMqBskqCQkqRYdUc20lYMQQdhLW6G9i3Zi0R7wcHH06M98tS/1tpnSctwaNQ3a
-         /sPmiGFJiFtIXz3oWZATwwHrs/hv+6nVHtY2kdT+ulKusjnI/4FLFDtTk+1AyYqd9Wqm
-         FSQA==
+        bh=DWVyuxyLAA+gP7qzocAulOtm935R31KBNt5fXLjAz2o=;
+        b=179FQU2eqWRM1pGsGc2PyLc6eemeihRjKBHtet7NgLOjAIEdCAaPT829Ma4SWSMnAi
+         b1AEi7OUJOYSfrSgrcMvATf0zjwP3SO0jnscgwh+DnItg2VxvZb6iyUHl6G+BMWNgGUs
+         sUReq4VfvqewClD2K3DQlZmoe8wlRn8HbYgb/kycLofirG5xUS7nZ/0upuVpsMhfd+i0
+         lj0dzGGgItnB4aoh6vfsu5yJ5W3hDOxOnaHswgVI9vOX7mgw61K+rU1p/8aA7/4h+reC
+         lLTZjldQFIxGS08np1ceAJSgycv3mlFFJ8Im3bqdT3H/XT7QqMHjNilMTTMU/NDkaXM3
+         YDjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730243169; x=1730847969;
+        d=1e100.net; s=20230601; t=1730243170; x=1730847970;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tmyth23R42frMPjJlMy8hhDb4L00WvoqlDbMJmlZ6cY=;
-        b=aP/hAryvdwVA74Wmsg3upxHon5FNTJH16XOOiTPq0mglX3c4TyBVghs8gBqXMGZ5Bn
-         18Rr/znRCrhbOAr8TTivop4kQE6lP2+3RJnBy99YbKMDE3oDhhPK9bl0y8l3VruCYdk+
-         OE3CJzs1MCd3eDiao4p74ZlrScTJIlGDnSD9nptBBn4bNFOAM42kcW7gPwTagQwpQz5i
-         lRRRk8wEoHEhAR7z63tMopHBb6L5ypnqtOR0KkQwMlnlwJlqFTtCbv0E7aPPOtuNNvFT
-         q+ZhzJud2tAORLaOHD5p3G0Ekj/cuSeVRqqJuhXa75GY1CbacX7cAFIi2HInG3yn7cfY
-         LthA==
-X-Gm-Message-State: AOJu0Yx/5RLqtUfgxGc76x4jaLwnP/TpiBF3Hwe9k6knHyMNy5Gn6jqt
-	Kr48fPWe3iMDGdeidtSkM4mt2+eBs0DNxiPioSo2F0BYpNPO7yMG1Dvn7peYQ4vv8/Y+w0YcIdU
-	bphM=
-X-Google-Smtp-Source: AGHT+IExC/U1U4b4/0PK/2AJaQ87tHNCdGw58CkvecpCo0J1vfWKEV+tydRUwVnhwunMpnh0LOh75g==
-X-Received: by 2002:a17:90b:1e04:b0:2c9:90fa:b9f8 with SMTP id 98e67ed59e1d1-2e92238987amr5663596a91.10.1730243168719;
-        Tue, 29 Oct 2024 16:06:08 -0700 (PDT)
-Received: from localhost (fwdproxy-prn-000.fbsv.net. [2a03:2880:ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa638e7sm229352a91.31.2024.10.29.16.06.08
+        bh=DWVyuxyLAA+gP7qzocAulOtm935R31KBNt5fXLjAz2o=;
+        b=mCTIBVHGFXn7MjPrYsq3KtIHHN0dd+kyO6oXDKG+6U7pzdvT99x85+uojRx9Y5l5eF
+         d56tLz2COh1eyLT7OuCu9BGaYPdNxGLSH/Th5oj7dIZX4t6HrqtpeHfnBP3a26u7qEUD
+         EDi5jMu6SOC4T1efWyNAOtIKIumJd/N2/bqFoy/atzNsrSY3rYkRZwwpDnevbFGSqQfe
+         HAxGKm3BHXtLMTEH7jp3lA1ig78OtKZJHKGMPfYo79vDuvdsDlW6AvpA1o4cZaGbU6t+
+         tZjU2Fy7HR5VERK4Nw60S5CG3tvvYBZgMsWAVwfDEh+TOtE/dVctW9mIJekCpfreOyqp
+         syKw==
+X-Gm-Message-State: AOJu0YyTGG5YAEPJSmujp1Tq7RbdGks2mXIEylHbXdPtngrBVgCztCAm
+	wktvOHzuUA36W2HYFzLN+QuD6mE393rKa/Ch+S90Ic3LoaKC95/V84MUhhWWA/pOJK2UHkEpBQn
+	KqrQ=
+X-Google-Smtp-Source: AGHT+IGOg0dZc4PT0ae4yAucYApC0VXGscg/ikrkbDEdBsLxhpP38CT7d7jbTbxMPrMqFV+vo1Jr9w==
+X-Received: by 2002:a17:903:41cd:b0:20b:707c:d688 with SMTP id d9443c01a7336-210c6c0d30cmr201059395ad.18.1730243170063;
+        Tue, 29 Oct 2024 16:06:10 -0700 (PDT)
+Received: from localhost (fwdproxy-prn-001.fbsv.net. [2a03:2880:ff:1::face:b00c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf464ecsm72098475ad.28.2024.10.29.16.06.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 16:06:08 -0700 (PDT)
+        Tue, 29 Oct 2024 16:06:09 -0700 (PDT)
 From: David Wei <dw@davidwei.uk>
 To: io-uring@vger.kernel.org,
 	netdev@vger.kernel.org
@@ -82,9 +82,9 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	Stanislav Fomichev <stfomichev@gmail.com>,
 	Joe Damato <jdamato@fastly.com>,
 	Pedro Tammela <pctammela@mojatatu.com>
-Subject: [PATCH v7 08/15] net: add helper executing custom callback from napi
-Date: Tue, 29 Oct 2024 16:05:11 -0700
-Message-ID: <20241029230521.2385749-9-dw@davidwei.uk>
+Subject: [PATCH v7 09/15] io_uring/zcrx: add interface queue and refill queue
+Date: Tue, 29 Oct 2024 16:05:12 -0700
+Message-ID: <20241029230521.2385749-10-dw@davidwei.uk>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241029230521.2385749-1-dw@davidwei.uk>
 References: <20241029230521.2385749-1-dw@davidwei.uk>
@@ -96,159 +96,451 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+From: David Wei <davidhwei@meta.com>
 
-It's useful to have napi private bits and pieces like page pool's fast
-allocating cache, so that the hot allocation path doesn't have to do any
-additional synchronisation. In case of io_uring memory provider
-introduced in following patches, we keep the consumer end of the
-io_uring's refill queue private to napi as it's a hot path.
+Add a new object called an interface queue (ifq) that represents a net
+rx queue that has been configured for zero copy. Each ifq is registered
+using a new registration opcode IORING_REGISTER_ZCRX_IFQ.
 
-However, from time to time we need to synchronise with the napi, for
-example to add more user memory or allocate fallback buffers. Add a
-helper function napi_execute that allows to run a custom callback from
-under napi context so that it can access and modify napi protected
-parts of io_uring. It works similar to busy polling and stops napi from
-running in the meantime, so it's supposed to be a slow control path.
+The refill queue is allocated by the kernel and mapped by userspace
+using a new offset IORING_OFF_RQ_RING, in a similar fashion to the main
+SQ/CQ. It is used by userspace to return buffers that it is done with,
+which will then be re-used by the netdev again.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+The main CQ ring is used to notify userspace of received data by using
+the upper 16 bytes of a big CQE as a new struct io_uring_zcrx_cqe. Each
+entry contains the offset + len to the data.
+
+For now, each io_uring instance only has a single ifq.
+
 Signed-off-by: David Wei <dw@davidwei.uk>
 ---
- include/net/busy_poll.h |  6 +++
- net/core/dev.c          | 81 ++++++++++++++++++++++++++++++++---------
- 2 files changed, 70 insertions(+), 17 deletions(-)
+ Kconfig                        |   2 +
+ include/linux/io_uring_types.h |   3 +
+ include/uapi/linux/io_uring.h  |  43 ++++++++++
+ io_uring/KConfig               |  10 +++
+ io_uring/Makefile              |   1 +
+ io_uring/io_uring.c            |   7 ++
+ io_uring/memmap.c              |   8 ++
+ io_uring/register.c            |   7 ++
+ io_uring/zcrx.c                | 143 +++++++++++++++++++++++++++++++++
+ io_uring/zcrx.h                |  39 +++++++++
+ 10 files changed, 263 insertions(+)
+ create mode 100644 io_uring/KConfig
+ create mode 100644 io_uring/zcrx.c
+ create mode 100644 io_uring/zcrx.h
 
-diff --git a/include/net/busy_poll.h b/include/net/busy_poll.h
-index f03040baaefd..3fd9e65731e9 100644
---- a/include/net/busy_poll.h
-+++ b/include/net/busy_poll.h
-@@ -47,6 +47,7 @@ bool sk_busy_loop_end(void *p, unsigned long start_time);
- void napi_busy_loop(unsigned int napi_id,
- 		    bool (*loop_end)(void *, unsigned long),
- 		    void *loop_end_arg, bool prefer_busy_poll, u16 budget);
-+void napi_execute(unsigned napi_id, void (*cb)(void *), void *cb_arg);
+diff --git a/Kconfig b/Kconfig
+index 745bc773f567..529ea7694ba9 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -30,3 +30,5 @@ source "lib/Kconfig"
+ source "lib/Kconfig.debug"
  
- void napi_busy_loop_rcu(unsigned int napi_id,
- 			bool (*loop_end)(void *, unsigned long),
-@@ -63,6 +64,11 @@ static inline bool sk_can_busy_loop(struct sock *sk)
- 	return false;
- }
- 
-+static inline void napi_execute(unsigned napi_id,
-+				void (*cb)(void *), void *cb_arg)
-+{
-+}
+ source "Documentation/Kconfig"
 +
- #endif /* CONFIG_NET_RX_BUSY_POLL */
- 
- static inline unsigned long busy_loop_current_time(void)
-diff --git a/net/core/dev.c b/net/core/dev.c
-index c682173a7642..5ea455e64363 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -6347,6 +6347,30 @@ enum {
- 	NAPI_F_END_ON_RESCHED	= 2,
++source "io_uring/KConfig"
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 6d3ee71bd832..f0f6d3d186b1 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -39,6 +39,8 @@ enum io_uring_cmd_flags {
+ 	IO_URING_F_COMPAT		= (1 << 12),
  };
  
-+static inline bool napi_state_start_busy_polling(struct napi_struct *napi,
-+						 unsigned flags)
-+{
-+	unsigned long val = READ_ONCE(napi->state);
++struct io_zcrx_ifq;
 +
-+	/* If multiple threads are competing for this napi,
-+	 * we avoid dirtying napi->state as much as we can.
-+	 */
-+	if (val & (NAPIF_STATE_DISABLE | NAPIF_STATE_SCHED |
-+		   NAPIF_STATE_IN_BUSY_POLL))
-+		goto fail;
+ struct io_wq_work_node {
+ 	struct io_wq_work_node *next;
+ };
+@@ -373,6 +375,7 @@ struct io_ring_ctx {
+ 	struct io_alloc_cache		rsrc_node_cache;
+ 	struct wait_queue_head		rsrc_quiesce_wq;
+ 	unsigned			rsrc_quiesce;
++	struct io_zcrx_ifq		*ifq;
+ 
+ 	u32			pers_next;
+ 	struct xarray		personalities;
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 86cb385fe0b5..d398e19f8eea 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -467,6 +467,8 @@ struct io_uring_cqe {
+ #define IORING_OFF_PBUF_RING		0x80000000ULL
+ #define IORING_OFF_PBUF_SHIFT		16
+ #define IORING_OFF_MMAP_MASK		0xf8000000ULL
++#define IORING_OFF_RQ_RING		0x20000000ULL
++#define IORING_OFF_RQ_SHIFT		16
+ 
+ /*
+  * Filled with the offset for mmap(2)
+@@ -615,6 +617,9 @@ enum io_uring_register_op {
+ 	/* send MSG_RING without having a ring */
+ 	IORING_REGISTER_SEND_MSG_RING		= 31,
+ 
++	/* register a netdev hw rx queue for zerocopy */
++	IORING_REGISTER_ZCRX_IFQ		= 32,
 +
-+	if (cmpxchg(&napi->state, val,
-+		    val | NAPIF_STATE_IN_BUSY_POLL |
-+			  NAPIF_STATE_SCHED) != val)
-+		goto fail;
+ 	/* this goes last */
+ 	IORING_REGISTER_LAST,
+ 
+@@ -845,6 +850,44 @@ enum io_uring_socket_op {
+ 	SOCKET_URING_OP_SETSOCKOPT,
+ };
+ 
++/* Zero copy receive refill queue entry */
++struct io_uring_zcrx_rqe {
++	__u64	off;
++	__u32	len;
++	__u32	__pad;
++};
 +
-+	return true;
-+fail:
-+	if (flags & NAPI_F_PREFER_BUSY_POLL)
-+		set_bit(NAPI_STATE_PREFER_BUSY_POLL, &napi->state);
-+	return false;
-+}
++struct io_uring_zcrx_cqe {
++	__u64	off;
++	__u64	__pad;
++};
 +
- static void busy_poll_stop(struct napi_struct *napi, void *have_poll_lock,
- 			   unsigned flags, u16 budget)
- {
-@@ -6422,24 +6446,8 @@ static void __napi_busy_loop(unsigned int napi_id,
- 		local_bh_disable();
- 		bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
- 		if (!napi_poll) {
--			unsigned long val = READ_ONCE(napi->state);
--
--			/* If multiple threads are competing for this napi,
--			 * we avoid dirtying napi->state as much as we can.
--			 */
--			if (val & (NAPIF_STATE_DISABLE | NAPIF_STATE_SCHED |
--				   NAPIF_STATE_IN_BUSY_POLL)) {
--				if (flags & NAPI_F_PREFER_BUSY_POLL)
--					set_bit(NAPI_STATE_PREFER_BUSY_POLL, &napi->state);
-+			if (!napi_state_start_busy_polling(napi, flags))
- 				goto count;
--			}
--			if (cmpxchg(&napi->state, val,
--				    val | NAPIF_STATE_IN_BUSY_POLL |
--					  NAPIF_STATE_SCHED) != val) {
--				if (flags & NAPI_F_PREFER_BUSY_POLL)
--					set_bit(NAPI_STATE_PREFER_BUSY_POLL, &napi->state);
--				goto count;
--			}
- 			have_poll_lock = netpoll_poll_lock(napi);
- 			napi_poll = napi->poll;
- 		}
-@@ -6503,6 +6511,45 @@ void napi_busy_loop(unsigned int napi_id,
++/* The bit from which area id is encoded into offsets */
++#define IORING_ZCRX_AREA_SHIFT	48
++#define IORING_ZCRX_AREA_MASK	(~(((__u64)1 << IORING_ZCRX_AREA_SHIFT) - 1))
++
++struct io_uring_zcrx_offsets {
++	__u32	head;
++	__u32	tail;
++	__u32	rqes;
++	__u32	mmap_sz;
++	__u64	__resv[2];
++};
++
++/*
++ * Argument for IORING_REGISTER_ZCRX_IFQ
++ */
++struct io_uring_zcrx_ifq_reg {
++	__u32	if_idx;
++	__u32	if_rxq;
++	__u32	rq_entries;
++	__u32	flags;
++
++	__u64	area_ptr; /* pointer to struct io_uring_zcrx_area_reg */
++	struct io_uring_zcrx_offsets offsets;
++	__u64	__resv[3];
++};
++
+ #ifdef __cplusplus
  }
- EXPORT_SYMBOL(napi_busy_loop);
+ #endif
+diff --git a/io_uring/KConfig b/io_uring/KConfig
+new file mode 100644
+index 000000000000..9e2a4beba1ef
+--- /dev/null
++++ b/io_uring/KConfig
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# io_uring configuration
++#
++
++config IO_URING_ZCRX
++	def_bool y
++	depends on PAGE_POOL
++	depends on INET
++	depends on NET_RX_BUSY_POLL
+diff --git a/io_uring/Makefile b/io_uring/Makefile
+index 53167bef37d7..a95b0b8229c9 100644
+--- a/io_uring/Makefile
++++ b/io_uring/Makefile
+@@ -14,6 +14,7 @@ obj-$(CONFIG_IO_URING)		+= io_uring.o opdef.o kbuf.o rsrc.o notif.o \
+ 					epoll.o statx.o timeout.o fdinfo.o \
+ 					cancel.o waitid.o register.o \
+ 					truncate.o memmap.o
++obj-$(CONFIG_IO_URING_ZCRX)	+= zcrx.o
+ obj-$(CONFIG_IO_WQ)		+= io-wq.o
+ obj-$(CONFIG_FUTEX)		+= futex.o
+ obj-$(CONFIG_NET_RX_BUSY_POLL) += napi.o
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 58b401900b41..49d73c793f06 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -98,6 +98,7 @@
+ #include "uring_cmd.h"
+ #include "msg_ring.h"
+ #include "memmap.h"
++#include "zcrx.h"
  
-+void napi_execute(unsigned napi_id,
-+		  void (*cb)(void *), void *cb_arg)
-+{
-+	unsigned flags = NAPI_F_PREFER_BUSY_POLL;
-+	void *have_poll_lock = NULL;
-+	struct napi_struct *napi;
-+
-+	rcu_read_lock();
-+	napi = napi_by_id(napi_id);
-+	if (!napi) {
-+		rcu_read_unlock();
-+		return;
-+	}
-+
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+		preempt_disable();
-+
-+	for (;;) {
-+		local_bh_disable();
-+
-+		if (napi_state_start_busy_polling(napi, flags)) {
-+			have_poll_lock = netpoll_poll_lock(napi);
-+			cb(cb_arg);
-+			local_bh_enable();
-+			busy_poll_stop(napi, have_poll_lock, flags, 1);
-+			break;
+ #include "timeout.h"
+ #include "poll.h"
+@@ -2729,6 +2730,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 		return;
+ 
+ 	mutex_lock(&ctx->uring_lock);
++	io_unregister_zcrx_ifqs(ctx);
+ 	if (ctx->buf_data)
+ 		__io_sqe_buffers_unregister(ctx);
+ 	if (ctx->file_data)
+@@ -2903,6 +2905,11 @@ static __cold void io_ring_exit_work(struct work_struct *work)
+ 			io_cqring_overflow_kill(ctx);
+ 			mutex_unlock(&ctx->uring_lock);
+ 		}
++		if (ctx->ifq) {
++			mutex_lock(&ctx->uring_lock);
++			io_shutdown_zcrx_ifqs(ctx);
++			mutex_unlock(&ctx->uring_lock);
 +		}
-+
-+		local_bh_enable();
-+		if (unlikely(need_resched()))
+ 
+ 		if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
+ 			io_move_task_work_from_local(ctx);
+diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+index a0f32a255fd1..4c384e8615f6 100644
+--- a/io_uring/memmap.c
++++ b/io_uring/memmap.c
+@@ -12,6 +12,7 @@
+ 
+ #include "memmap.h"
+ #include "kbuf.h"
++#include "zcrx.h"
+ 
+ static void *io_mem_alloc_compound(struct page **pages, int nr_pages,
+ 				   size_t size, gfp_t gfp)
+@@ -223,6 +224,10 @@ static void *io_uring_validate_mmap_request(struct file *file, loff_t pgoff,
+ 		io_put_bl(ctx, bl);
+ 		return ptr;
+ 		}
++	case IORING_OFF_RQ_RING:
++		if (!ctx->ifq)
++			return ERR_PTR(-EINVAL);
++		return ctx->ifq->rq_ring;
+ 	}
+ 
+ 	return ERR_PTR(-EINVAL);
+@@ -261,6 +266,9 @@ __cold int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
+ 						ctx->n_sqe_pages);
+ 	case IORING_OFF_PBUF_RING:
+ 		return io_pbuf_mmap(file, vma);
++	case IORING_OFF_RQ_RING:
++		return io_uring_mmap_pages(ctx, vma, ctx->ifq->rqe_pages,
++						ctx->ifq->n_rqe_pages);
+ 	}
+ 
+ 	return -EINVAL;
+diff --git a/io_uring/register.c b/io_uring/register.c
+index 52b2f9b74af8..1fac52b14e3d 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -29,6 +29,7 @@
+ #include "napi.h"
+ #include "eventfd.h"
+ #include "msg_ring.h"
++#include "zcrx.h"
+ 
+ #define IORING_MAX_RESTRICTIONS	(IORING_RESTRICTION_LAST + \
+ 				 IORING_REGISTER_LAST + IORING_OP_LAST)
+@@ -549,6 +550,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 			break;
+ 		ret = io_register_clone_buffers(ctx, arg);
+ 		break;
++	case IORING_REGISTER_ZCRX_IFQ:
++		ret = -EINVAL;
++		if (!arg || nr_args != 1)
 +			break;
-+		cpu_relax();
-+	}
++		ret = io_register_zcrx_ifq(ctx, arg);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+new file mode 100644
+index 000000000000..4c53fd4f7bb3
+--- /dev/null
++++ b/io_uring/zcrx.c
+@@ -0,0 +1,143 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/mm.h>
++#include <linux/io_uring.h>
 +
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+		preempt_enable();
-+	rcu_read_unlock();
++#include <uapi/linux/io_uring.h>
++
++#include "io_uring.h"
++#include "kbuf.h"
++#include "memmap.h"
++#include "zcrx.h"
++
++#define IO_RQ_MAX_ENTRIES		32768
++
++static int io_allocate_rbuf_ring(struct io_zcrx_ifq *ifq,
++				 struct io_uring_zcrx_ifq_reg *reg)
++{
++	size_t off, size;
++	void *ptr;
++
++	off = sizeof(struct io_uring);
++	size = off + sizeof(struct io_uring_zcrx_rqe) * reg->rq_entries;
++
++	ptr = io_pages_map(&ifq->rqe_pages, &ifq->n_rqe_pages, size);
++	if (IS_ERR(ptr))
++		return PTR_ERR(ptr);
++
++	ifq->rq_ring = (struct io_uring *)ptr;
++	ifq->rqes = (struct io_uring_zcrx_rqe *)(ptr + off);
++	return 0;
 +}
 +
- #endif /* CONFIG_NET_RX_BUSY_POLL */
- 
- static void __napi_hash_add_with_id(struct napi_struct *napi,
++static void io_free_rbuf_ring(struct io_zcrx_ifq *ifq)
++{
++	io_pages_unmap(ifq->rq_ring, &ifq->rqe_pages, &ifq->n_rqe_pages, true);
++	ifq->rq_ring = NULL;
++	ifq->rqes = NULL;
++}
++
++static struct io_zcrx_ifq *io_zcrx_ifq_alloc(struct io_ring_ctx *ctx)
++{
++	struct io_zcrx_ifq *ifq;
++
++	ifq = kzalloc(sizeof(*ifq), GFP_KERNEL);
++	if (!ifq)
++		return NULL;
++
++	ifq->if_rxq = -1;
++	ifq->ctx = ctx;
++	return ifq;
++}
++
++static void io_zcrx_ifq_free(struct io_zcrx_ifq *ifq)
++{
++	io_free_rbuf_ring(ifq);
++	kfree(ifq);
++}
++
++int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
++			  struct io_uring_zcrx_ifq_reg __user *arg)
++{
++	struct io_uring_zcrx_ifq_reg reg;
++	struct io_zcrx_ifq *ifq;
++	size_t ring_sz, rqes_sz;
++	int ret;
++
++	/*
++	 * 1. Interface queue allocation.
++	 * 2. It can observe data destined for sockets of other tasks.
++	 */
++	if (!capable(CAP_NET_ADMIN))
++		return -EPERM;
++
++	/* mandatory io_uring features for zc rx */
++	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN &&
++	      ctx->flags & IORING_SETUP_CQE32))
++		return -EINVAL;
++	if (ctx->ifq)
++		return -EBUSY;
++	if (copy_from_user(&reg, arg, sizeof(reg)))
++		return -EFAULT;
++	if (reg.__resv[0] || reg.__resv[1] || reg.__resv[2])
++		return -EINVAL;
++	if (reg.if_rxq == -1 || !reg.rq_entries || reg.flags)
++		return -EINVAL;
++	if (reg.rq_entries > IO_RQ_MAX_ENTRIES) {
++		if (!(ctx->flags & IORING_SETUP_CLAMP))
++			return -EINVAL;
++		reg.rq_entries = IO_RQ_MAX_ENTRIES;
++	}
++	reg.rq_entries = roundup_pow_of_two(reg.rq_entries);
++
++	if (!reg.area_ptr)
++		return -EFAULT;
++
++	ifq = io_zcrx_ifq_alloc(ctx);
++	if (!ifq)
++		return -ENOMEM;
++
++	ret = io_allocate_rbuf_ring(ifq, &reg);
++	if (ret)
++		goto err;
++
++	ifq->rq_entries = reg.rq_entries;
++	ifq->if_rxq = reg.if_rxq;
++
++	ring_sz = sizeof(struct io_uring);
++	rqes_sz = sizeof(struct io_uring_zcrx_rqe) * ifq->rq_entries;
++	reg.offsets.mmap_sz = ring_sz + rqes_sz;
++	reg.offsets.rqes = ring_sz;
++	reg.offsets.head = offsetof(struct io_uring, head);
++	reg.offsets.tail = offsetof(struct io_uring, tail);
++
++	if (copy_to_user(arg, &reg, sizeof(reg))) {
++		ret = -EFAULT;
++		goto err;
++	}
++
++	ctx->ifq = ifq;
++	return 0;
++err:
++	io_zcrx_ifq_free(ifq);
++	return ret;
++}
++
++void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx)
++{
++	struct io_zcrx_ifq *ifq = ctx->ifq;
++
++	lockdep_assert_held(&ctx->uring_lock);
++
++	if (!ifq)
++		return;
++
++	ctx->ifq = NULL;
++	io_zcrx_ifq_free(ifq);
++}
++
++void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx)
++{
++	lockdep_assert_held(&ctx->uring_lock);
++}
+diff --git a/io_uring/zcrx.h b/io_uring/zcrx.h
+new file mode 100644
+index 000000000000..1f76eecac5fd
+--- /dev/null
++++ b/io_uring/zcrx.h
+@@ -0,0 +1,39 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef IOU_ZC_RX_H
++#define IOU_ZC_RX_H
++
++#include <linux/io_uring_types.h>
++
++struct io_zcrx_ifq {
++	struct io_ring_ctx		*ctx;
++	struct net_device		*dev;
++	struct io_uring			*rq_ring;
++	struct io_uring_zcrx_rqe 	*rqes;
++	u32				rq_entries;
++
++	unsigned short			n_rqe_pages;
++	struct page			**rqe_pages;
++
++	u32				if_rxq;
++};
++
++#if defined(CONFIG_IO_URING_ZCRX)
++int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
++			 struct io_uring_zcrx_ifq_reg __user *arg);
++void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx);
++void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx);
++#else
++static inline int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
++					struct io_uring_zcrx_ifq_reg __user *arg)
++{
++	return -EOPNOTSUPP;
++}
++static inline void io_unregister_zcrx_ifqs(struct io_ring_ctx *ctx)
++{
++}
++static inline void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx)
++{
++}
++#endif
++
++#endif
 -- 
 2.43.5
 

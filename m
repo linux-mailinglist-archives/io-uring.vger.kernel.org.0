@@ -1,196 +1,140 @@
-Return-Path: <io-uring+bounces-4117-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4100-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF1C9B4DC1
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 16:24:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 864629B4D98
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 16:21:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F570282DC5
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 15:24:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9D912857EF
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 15:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1197192D73;
-	Tue, 29 Oct 2024 15:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EB01990C5;
+	Tue, 29 Oct 2024 15:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="S/0lO4ou"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="EkBldLnO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC98193074
-	for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 15:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A296F196D9A
+	for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 15:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730215403; cv=none; b=QPsdnE7X5iAIPTka2hHOk8qh27r2MrXurBKaPfwlf3jjpHyMSu3i2IRUHijLwHvLTRbO65KBYc8g6nqaDJHc4aKF2YE7YB0NDupbPpQAsmcVdOKvwf+Xw91ffOJyeDUgmiUeoaqCI/ka/inHz1B1ZVraqd5J2Nc6egLIkImF3LU=
+	t=1730215204; cv=none; b=N+f4xv3t5uGYnHKLMzieVN9cLT1n2+KYteFg4eTa5ra8TXYsWg1AXvu/llvURbrAlk3bApvj3y9yxqfQmO2gkk4QbFvD816dH2qbLcUYKxlyK7HWV5mY7zYwYmTdMVnVl/cYS3szRuiM1IvHztApVw3VtEnV+yAc1eDMJYZONi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730215403; c=relaxed/simple;
-	bh=uQWCLluDMPQNOEiZ8Ul9ExJn/tDb0mVWPhxe1LwxSMw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L4gJKizuT3Wxyx6tARROrRJ41bmJQhG34SUN7Jdalu6g8BFDvnGkgUFfvMkSEWZbQt797/HqdzwBfIRrvuhtTv1rTtoClQBxEXvYOE5t3W1C0dJDcdKDiB908HdyrPyPwzrRvEh7/iOr3bUhrrfczXE++8/SuOABHeJViEZGcjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=S/0lO4ou; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-83ab94452a7so234427139f.3
-        for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 08:23:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730215400; x=1730820200; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1g4Gm0gSb+oxL2pvGRFmkBIgUYG3z4aBcpjF/hLkUQI=;
-        b=S/0lO4ou7DzzMIZA1R6loNEAasLLmGm5Imp9BJq5jLNtKO1QXSj5U93C7gSTE1mVGw
-         FX2JpsapLfDkgp5KCCH1j7tpYsDpq8w2k+L0fQldxhJ4ygcLWaRX71UXat0JmYTPPfNi
-         u0J6Zqw5VozIq8Ps+JGKfkomusuzIJfRpLmcdbejw50XFJbV1BFN6MOLGRc0QZ2vMkZg
-         pOxNvpVAIezN8SJY4H21HEeKua1DWXIwOk0reVlXttVe2msvbwp04erCIQ00cKEBVgxa
-         c2oe/Pt7RQevSXCk833pbeV3lyKJIWSVIeppRXwP1cIaGujyhvOuEuJi39QYLomsoO3z
-         DGzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730215400; x=1730820200;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1g4Gm0gSb+oxL2pvGRFmkBIgUYG3z4aBcpjF/hLkUQI=;
-        b=JWWrg8KzTTuRbYmZspQQJHsmx5AG4bCCof0ZjHNNr8Rm1aod7SRwtYuxPzPW7DZOjz
-         Hd7X4py91WN25PNiRHGXwNirZUf5lGoBkPIRoabrd92uSIAAWnizx5qHVCkAkm8kuR4B
-         tuBaNMBYqhxKEE/Yb2w36DQz3AeUCXlaju+/6zxpE0hG2iLc1g/QjwZZpy8h1c80QYKe
-         p0Jio2l1R2/NKBtyf9R7ZjulWgREsgNlL2kwW4u4XCrsJTWbyOzAekEwFNzcABuHoorf
-         M200usI4N6ErsIWq6hWhtPRHvfRLwhl6jaWzpqZ/Jgt+cGaAHd7Bs49amsY5H/PWFujA
-         wpiA==
-X-Gm-Message-State: AOJu0YyVP5HVcgAJAyaydZNPybTIzoC2Bn8lfvCR8HzaPwS+KcMtNNIP
-	S7N1RCGj7x20EunShP9uuxiy3fCAFLNht5c7Y0e5pRrVxPB3QUfKG1fz044vGy167VBgBr0FHUl
-	z
-X-Google-Smtp-Source: AGHT+IEB4HZr8SpkQXVyD4kbsc5kytkUQ+KqPkVATsUPNbzuigMUz4DhuLB1QG3QwSYuqPjs/pcsfQ==
-X-Received: by 2002:a05:6602:6411:b0:83a:9a59:f382 with SMTP id ca18e2360f4ac-83b567b996fmr13630139f.16.1730215400262;
-        Tue, 29 Oct 2024 08:23:20 -0700 (PDT)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc725eb58esm2434160173.27.2024.10.29.08.23.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 08:23:19 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 14/14] io_uring/rsrc: add io_reset_rsrc_node() helper
-Date: Tue, 29 Oct 2024 09:16:43 -0600
-Message-ID: <20241029152249.667290-15-axboe@kernel.dk>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241029152249.667290-1-axboe@kernel.dk>
-References: <20241029152249.667290-1-axboe@kernel.dk>
+	s=arc-20240116; t=1730215204; c=relaxed/simple;
+	bh=u5K3D5yLSkHuUgTsOePWDLML5bOnFkPsgBx7WMm9Kok=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AsdLsbFe81xP9uYFMMDqBeIXOv2NIEjrsVjIX+HqYeB5VE504m4lQkYmGYJHfLN/5wZ1gW3XI/4uNR5kmIxdDRwngqzBNmXfVy5YWryFMa56vU23EPad9Q4mK6IWmN5MW1b2zCaV1+yfGsloxOjRqVvrkjsZxp/iYz6CJPypyrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=EkBldLnO; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T72Tru012612
+	for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 08:20:02 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2021-q4; bh=XgvQBUxMc4oBRDRyps
+	Eh3gf2mVo+uaeROl5mqKEtNEM=; b=EkBldLnO1a5HwaERD48j8+tJYInobYCnto
+	+7gK6kCnzA59H/PerqdNJH6U57UXRpA4P265FoAfDfBvquW4SsqUAf5bwseHRogt
+	GNm2UQseW/y1/FI6TVRnHIlTrwl4QyDP028+Pa5WSrtYsoETwdCIbRKIYrG4jysk
+	1s5MTTyxmeHVTFXstQalE8mUKJSHB+9MhSBjgAWo2IYYcj0bGf6KaNfaML12mw/I
+	stlMrECM7iIqHeb2R8SbLqg4nf1qnIPeSVi8XfuEzan3LBxv3nMUs9sI+vALdfmK
+	QgBOe7Lu8P/1YchdWUt9SMoKE9RbPsQKcatwmHxw87SeazTjAThA==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 42jty7asby-18
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Tue, 29 Oct 2024 08:20:01 -0700 (PDT)
+Received: from twshared10900.35.frc1.facebook.com (2620:10d:c085:108::150d) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.11; Tue, 29 Oct 2024 15:19:58 +0000
+Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
+	id D97AA14920E9A; Tue, 29 Oct 2024 08:19:43 -0700 (PDT)
+From: Keith Busch <kbusch@meta.com>
+To: <linux-block@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
+        <linux-scsi@vger.kernel.org>, <io-uring@vger.kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <hch@lst.de>, <joshi.k@samsung.com>,
+        <javier.gonz@samsung.com>, <bvanassche@acm.org>,
+        Keith Busch
+	<kbusch@kernel.org>
+Subject: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+Date: Tue, 29 Oct 2024 08:19:13 -0700
+Message-ID: <20241029151922.459139-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: gP-WgbMsa4eLUFAFIJbNlYEU3BVmtxH-
+X-Proofpoint-GUID: gP-WgbMsa4eLUFAFIJbNlYEU3BVmtxH-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
 
-Puts and reset an existing node in a slot, if one exists. Returns true
-if a node was there, false if not. This helps cleanup some of the code
-that does a lookup just to clear an existing node.
+From: Keith Busch <kbusch@kernel.org>
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/filetable.c | 10 +++-------
- io_uring/rsrc.c      | 12 +++---------
- io_uring/rsrc.h      | 11 +++++++++++
- 3 files changed, 17 insertions(+), 16 deletions(-)
+Changes from v9:
 
-diff --git a/io_uring/filetable.c b/io_uring/filetable.c
-index 1f22f183cdeb..717d5b806781 100644
---- a/io_uring/filetable.c
-+++ b/io_uring/filetable.c
-@@ -58,7 +58,7 @@ static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
- 				 u32 slot_index)
- 	__must_hold(&req->ctx->uring_lock)
- {
--	struct io_rsrc_node *node, *old_node;
-+	struct io_rsrc_node *node;
- 
- 	if (io_is_uring_fops(file))
- 		return -EBADF;
-@@ -71,10 +71,7 @@ static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
- 	if (IS_ERR(node))
- 		return -ENOMEM;
- 
--	old_node = io_rsrc_node_lookup(&ctx->file_table.data, slot_index);
--	if (old_node)
--		io_put_rsrc_node(old_node);
--	else
-+	if (!io_reset_rsrc_node(&ctx->file_table.data, slot_index))
- 		io_file_bitmap_set(&ctx->file_table, slot_index);
- 
- 	ctx->file_table.data.nodes[slot_index] = node;
-@@ -133,8 +130,7 @@ int io_fixed_fd_remove(struct io_ring_ctx *ctx, unsigned int offset)
- 	node = io_rsrc_node_lookup(&ctx->file_table.data, offset);
- 	if (!node)
- 		return -EBADF;
--	io_put_rsrc_node(node);
--	ctx->file_table.data.nodes[offset] = NULL;
-+	io_reset_rsrc_node(&ctx->file_table.data, offset);
- 	io_file_bitmap_clear(&ctx->file_table, offset);
- 	return 0;
- }
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 0924c53dd954..97673771a0fb 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -182,7 +182,6 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 		return -EINVAL;
- 
- 	for (done = 0; done < nr_args; done++) {
--		struct io_rsrc_node *node;
- 		u64 tag = 0;
- 
- 		if ((tags && copy_from_user(&tag, &tags[done], sizeof(tag))) ||
-@@ -198,12 +197,9 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 			continue;
- 
- 		i = up->offset + done;
--		node = io_rsrc_node_lookup(&ctx->file_table.data, i);
--		if (node) {
--			io_put_rsrc_node(node);
--			ctx->file_table.data.nodes[i] = NULL;
-+		if (io_reset_rsrc_node(&ctx->file_table.data, i))
- 			io_file_bitmap_clear(&ctx->file_table, i);
--		}
-+
- 		if (fd != -1) {
- 			struct file *file = fget(fd);
- 			struct io_rsrc_node *node;
-@@ -281,9 +277,7 @@ static int __io_sqe_buffers_update(struct io_ring_ctx *ctx,
- 			err = PTR_ERR(node);
- 			break;
- 		}
--		if (ctx->buf_table.nodes[i])
--			io_put_rsrc_node(ctx->buf_table.nodes[i]);
--
-+		io_reset_rsrc_node(&ctx->buf_table, i);
- 		ctx->buf_table.nodes[i] = node;
- 		if (tag)
- 			node->tag = tag;
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 6952fb45f57a..abd214f303f5 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -85,6 +85,17 @@ static inline void io_put_rsrc_node(struct io_rsrc_node *node)
- 		io_free_rsrc_node(node);
- }
- 
-+static inline bool io_reset_rsrc_node(struct io_rsrc_data *data, int index)
-+{
-+	struct io_rsrc_node *node = data->nodes[index];
-+
-+	if (!node)
-+		return false;
-+	io_put_rsrc_node(node);
-+	data->nodes[index] = NULL;
-+	return true;
-+}
-+
- static inline void io_req_put_rsrc_nodes(struct io_kiocb *req)
- {
- 	if (req->rsrc_nodes[IORING_RSRC_FILE] != rsrc_empty_node) {
--- 
-2.45.2
+  Document the partition hint mask
+
+  Use bitmap_alloc API
+
+  Fixup bitmap memory leak
+
+  Return invalid value if user requests an invalid write hint
+
+  Added and exported a block device feature flag for indicating generic
+  placement hint support
+
+  Added statx write hint max field
+
+  Added BUILD_BUG_ON check for new io_uring SQE fields.
+
+  Added reviews
+
+Kanchan Joshi (2):
+  io_uring: enable per-io hinting capability
+  nvme: enable FDP support
+
+Keith Busch (7):
+  block: use generic u16 for write hints
+  block: introduce max_write_hints queue limit
+  statx: add write hint information
+  block: allow ability to limit partition write hints
+  block, fs: add write hint to kiocb
+  block: export placement hint feature
+  scsi: set permanent stream count in block limits
+
+ Documentation/ABI/stable/sysfs-block | 13 +++++
+ block/bdev.c                         | 18 ++++++
+ block/blk-settings.c                 |  5 ++
+ block/blk-sysfs.c                    |  6 ++
+ block/fops.c                         | 31 +++++++++-
+ block/partitions/core.c              | 44 ++++++++++++++-
+ drivers/nvme/host/core.c             | 84 ++++++++++++++++++++++++++++
+ drivers/nvme/host/nvme.h             |  5 ++
+ drivers/scsi/sd.c                    |  2 +
+ fs/stat.c                            |  1 +
+ include/linux/blk-mq.h               |  3 +-
+ include/linux/blk_types.h            |  4 +-
+ include/linux/blkdev.h               | 15 +++++
+ include/linux/fs.h                   |  1 +
+ include/linux/nvme.h                 | 19 +++++++
+ include/linux/stat.h                 |  1 +
+ include/uapi/linux/io_uring.h        |  4 ++
+ include/uapi/linux/stat.h            |  3 +-
+ io_uring/io_uring.c                  |  2 +
+ io_uring/rw.c                        |  3 +-
+ 20 files changed, 253 insertions(+), 11 deletions(-)
+
+--=20
+2.43.5
 
 

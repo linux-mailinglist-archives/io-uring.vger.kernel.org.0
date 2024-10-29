@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-4127-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4128-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E559B4F68
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 17:35:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2989B4F95
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 17:39:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEFCB284443
-	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 16:35:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ED821C210F8
+	for <lists+io-uring@lfdr.de>; Tue, 29 Oct 2024 16:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461C519A2A3;
-	Tue, 29 Oct 2024 16:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897921CC885;
+	Tue, 29 Oct 2024 16:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVO0ccWV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAtnnpTW"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED95E1953BD;
-	Tue, 29 Oct 2024 16:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230C01D9A51;
+	Tue, 29 Oct 2024 16:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730219702; cv=none; b=Z3C/0KUdbBljWqu1pSC9YLYeyef4VfxNxYoGA/9ySCymwoR57Kev5x9Qdv+fg7jTXOJyA7XrkO/zYMlKjg9G+1jYcdm/tUTHrJgipB1Ud/Bk2T//pulzE/k/zdYvLep82pR1f3VoZCHVa2kgSFpms6/vAH3AVeywAdxh8PpHWzI=
+	t=1730219920; cv=none; b=iT5m0USgcFV1buMTGp1Qxr9BiuHfGYbhAdJdVGHcwlVI0rm882ImvZTn4UMe4pkESFMRgHH0R/J+jtpTY6iD+KjiguxgDRWeeUMKjo+IhpeBnf8D4vSNrBj7UPPDF2nBIVR/Kx3hZm9FqE6CRR218l7Vu844C/2TC3r3dBB3LQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730219702; c=relaxed/simple;
-	bh=9UFLjkptR6QNpx3fZ3XKEoB+h3bv0CqqhrhXETuwvTY=;
+	s=arc-20240116; t=1730219920; c=relaxed/simple;
+	bh=dSQechY7kKZJkZNicyQbJ3cyE+OPqhZQ1obuU+tkcfU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RdMCtTEsJytmYYKr3eRAhyTQzJztKD96t7WAHAkNgA7RM1PKhNul8PGBhHWH9hMJ08xNSW3Mvyz9vPhQT1DCdvvMxweZdP6HDSGs6ZrtjRdjKo5+3Gca7H4hf2z2L7a8hUWnvTs4BFT5gHwGBLVrgQ2ow19bp/moIEMfivxY80g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dVO0ccWV; arc=none smtp.client-ip=209.85.221.47
+	 In-Reply-To:Content-Type; b=j9I/8g+XZ2dOOZGBUfSgQ9laQPG5OYPHmVxqN7lfIYwVcuXswFuKc4MQecQ2U9d7+xTVBfuUnMcOUW50gTZsoo3JjJm4ZJ9R2QIhWll9s2dhnTG/b7BzlE6W4jGeY285h2gPAXUvo4ogSBBfkZCeZTlaDL7zjQXjzFtM+rk5/Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAtnnpTW; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so3781937f8f.1;
-        Tue, 29 Oct 2024 09:34:59 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43155afca99so56595e9.1;
+        Tue, 29 Oct 2024 09:38:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730219698; x=1730824498; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730219916; x=1730824716; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+u5Ty9K6ARrub3VQWTBAHNUC9+t1wfrSDcH0T/9nwt8=;
-        b=dVO0ccWVEAGXEHSrJvqnraQksNIzM83IH+g+NWIMd0BRpEmaxpDNfee3CVIZfwQ8sk
-         O5xCTy99DjZ6kChIawvSGkAIIKiWgjTM52rpkDi8uaoVjrFQ0fN9/vUFJ0kvU+53ld4a
-         RKDiH7R52y4teURUiB04Jt2mtz+Z2Oc90HBULxQRe8E8uwCG9kkzrWHUf9HyGC93kw9V
-         hzcdStrhMhrXUbZkDnYaLw2L9mA9cyNzlRZGu75rDuxIaxTATPeAWa3qTxVfU569AqA+
-         +gjCop/yGdJw5F1bWzS201FbUz0ZEZGB6bL8MiPODnaHjzT1/hW0eKHlklIGUvqSxu2Y
-         dHLA==
+        bh=cVGyxAIaxcFI0Z/SaAj/2sA3gCvkq4jv863YJyc1V9I=;
+        b=AAtnnpTWdHo8BzAvw0n+jIQ0RepEDSBvFrrsU8MyMKPfv3K1WP9A1tJDtpzitHueG5
+         6Uovf6DxB8KQw6k2KVYcu4l+acoJJrr4s1o98PKNkoEMHEWTNH+gPS7IKoTDmrVxMZCr
+         P8HZXLTZIYs5ZV9UaG7SOvy2BJ0H8CY4vuVLDxmIvRecZCkEFyVeDhx5dpDg/K7Jwles
+         A5cbWRcw0JF2b+tCg3ND5DmreH1PPhLf1tqrLoiwHeiOfxrzTmNGdDB54MBIguwS/qRz
+         FLsZfn622yRGje+/NwEkiRqYVtWUb+BMta56O0HBsfloL1L3/VIycsnkKAouv7mTsId7
+         ZT1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730219698; x=1730824498;
+        d=1e100.net; s=20230601; t=1730219916; x=1730824716;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+u5Ty9K6ARrub3VQWTBAHNUC9+t1wfrSDcH0T/9nwt8=;
-        b=qxm3kY6MzuLU/BMUCxFHi3+u/FcWjEyRKO5MOoAQJAkXulfWimanqxRgWQ0fdmacaa
-         pAJ2t7xUUQMLNmXbf2OT8OLa0uDRdAbX9cANgb737zkRNX5iwO1OTngAkei14+dG6yyr
-         TkO4iVCVYbG7X9JeRqM/vgIeu3nBdnWCPz9L+lzgxyC2xnwCXRWU13aDGySVz/EMVudk
-         bS22MRxKPKvUuhwkyIXGwfYQ99dZ27V8Rf2gHs+0Vja3jvHxKE2dF9OQTS+dLM2iPlXF
-         Vsi9co0+PhBqxyDLrBjCk3tQlK8Ylk2ZEm3jJwCAJSfxV2LGjO7y1Yx/EpEP1law2zsI
-         AvIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBnGe11rFEIm9L/U8ab70so3kzLqpwTsbxWOXmsnbPV7R8tnrmjH1aKzZapT2ZK9bIRF1qGHtwjQ==@vger.kernel.org, AJvYcCUVni0PYtD9YfHkIHKryy9WdrjUPgh/eYDjn4VjHjY1YBWwGfPh7T+iKv4CSzQyNsgpvElUiBPvwe/6wWk=@vger.kernel.org, AJvYcCVsRJ0NHegNHot37QH+4P5bZrPsAPKCD7NVfikpP3MAAC0uVLecmhgjnLTKhUS1kosVk10q7LHp@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfuAXMwKeUhwUBGgVJMNICIPuBhAPAsQq6hiCMAqJQJ/SGLXdi
-	8eI7vD47Hh00f16Q/XrtYO0B8gmtMFzFyyrx8UcCTLTW9tSzccS2
-X-Google-Smtp-Source: AGHT+IFGeVvWfs2GbjjZ9Xw4mTo06zaHYge/2mupAU5QXpyOurso+KUqnM1MIi7YA6r0q9wC6cUBrQ==
-X-Received: by 2002:a5d:5146:0:b0:37d:5496:290c with SMTP id ffacd0b85a97d-380610f255fmr9152980f8f.7.1730219698083;
-        Tue, 29 Oct 2024 09:34:58 -0700 (PDT)
+        bh=cVGyxAIaxcFI0Z/SaAj/2sA3gCvkq4jv863YJyc1V9I=;
+        b=E2T0Ey5zzxOgiwNhEwUWK6DmFiTXNhEqBPhPp/REbyds1LVYYjyOsJ2iE5iiTXNAuG
+         7zFcU6onsZSPDQx9BEUnms1SAxy4JpfNSsEsMI/rvb2e/VMcbUgc2QIWtapSZFkJcizF
+         iccdki0Vi+WCm7cqfdiPIBC5pwULOaWKPDz9HBGjR/Oweu8thyrIJLtn9lDb47fMbTzH
+         SgFnfi9AZIgLF0EfDKC80Up3+3MufPcYnpfmRKxFIaJbDPx6TaicN9mySvUbbLG/EUWz
+         My5pg7fizyZYnJkkhkGuOMlL6Xg0/8nG74ZrWXoGqyDMApzH8v7+pUWMg2a8mNKevle3
+         QbJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXxT3A0KB++fDh32SDxIcERviC8ydlSgKB/j9vV5JmAZS7o5fz2oO+8qy3oy8aEWiQpxaSqWP3ca5IkA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgHtXeiet2lBe3QjwXzqO8/LqD5yrkPm9IHXyPgkYbhbu48tNm
+	gWgNHWmYsVlsY6Z4873jKnmevyP86ZO4IsudHWg6+6EIoNiyBuG4
+X-Google-Smtp-Source: AGHT+IF447NseM2GzhbL85pACWbqOtidpVfM1Qg3JoFEFPvXZWdm+CnKoLkQwDVFvqanl3mXwRgUKw==
+X-Received: by 2002:a5d:5d85:0:b0:381:b20b:ff3e with SMTP id ffacd0b85a97d-381b20bffa5mr1781847f8f.26.1730219916265;
+        Tue, 29 Oct 2024 09:38:36 -0700 (PDT)
 Received: from [192.168.42.53] ([148.252.132.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b7124csm13055685f8f.81.2024.10.29.09.34.55
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b1c65dsm13110992f8f.8.2024.10.29.09.38.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 09:34:57 -0700 (PDT)
-Message-ID: <9a14e132-6a13-4077-973d-b1eca417e563@gmail.com>
-Date: Tue, 29 Oct 2024 16:35:16 +0000
+        Tue, 29 Oct 2024 09:38:36 -0700 (PDT)
+Message-ID: <2bcce6c2-29c5-4b36-9840-7db516a40c41@gmail.com>
+Date: Tue, 29 Oct 2024 16:38:55 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,120 +76,87 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 02/15] net: generalise net_iov chunk owners
-To: Christoph Hellwig <hch@infradead.org>
-Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org
-References: <20241016185252.3746190-1-dw@davidwei.uk>
- <20241016185252.3746190-3-dw@davidwei.uk> <ZxijxiqNGONin3IY@infradead.org>
- <264c8f95-2a69-4d49-8af6-d035fa890ef1@gmail.com>
- <ZxoSBhC6sMEbXQi8@infradead.org>
- <a6864bf1-dd88-4ae0-bc67-b88bb4c17b44@gmail.com>
- <ZxpwgLRNsrTBmJEr@infradead.org>
- <de9ae678-258d-4f68-86e1-59d5eb4b70a4@gmail.com>
- <Zx9_iYLVnkyE05Hh@infradead.org>
+Subject: Re: [PATCH V8 4/7] io_uring: support SQE group
+To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+ Uday Shankar <ushankar@purestorage.com>,
+ Akilesh Kailash <akailash@google.com>, Kevin Wolf <kwolf@redhat.com>
+References: <20241025122247.3709133-1-ming.lei@redhat.com>
+ <20241025122247.3709133-5-ming.lei@redhat.com>
+ <5417bcc5-e766-4044-905b-da5768d69f29@kernel.dk> <ZyA_dbiU0ho5IJYA@fedora>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Zx9_iYLVnkyE05Hh@infradead.org>
+In-Reply-To: <ZyA_dbiU0ho5IJYA@fedora>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/28/24 12:11, Christoph Hellwig wrote:
-> On Thu, Oct 24, 2024 at 05:40:02PM +0100, Pavel Begunkov wrote:
->> On 10/24/24 17:06, Christoph Hellwig wrote:
->>> On Thu, Oct 24, 2024 at 03:23:06PM +0100, Pavel Begunkov wrote:
->>>>> That's not what this series does.  It adds the new memory_provider_ops
->>>>> set of hooks, with once implementation for dmabufs, and one for
->>>>> io_uring zero copy.
->>>>
->>>> First, it's not a _new_ abstraction over a buffer as you called it
->>>> before, the abstraction (net_iov) is already merged.
+On 10/29/24 01:50, Ming Lei wrote:
+> On Mon, Oct 28, 2024 at 06:12:34PM -0600, Jens Axboe wrote:
+>> On 10/25/24 6:22 AM, Ming Lei wrote:
+>>> SQE group is defined as one chain of SQEs starting with the first SQE that
+>>> has IOSQE_SQE_GROUP set, and ending with the first subsequent SQE that
+>>> doesn't have it set, and it is similar with chain of linked SQEs.
 >>>
->>> Umm, it is a new ops vector.
->>
->> I don't understand what you mean. Callback?
-> 
-> struct memory_provider_ops.  It's a method table or ops vetor, no
-> callbacks involved.
-
-I see, the reply is about your phrase about additional memory
-abstractions:
-
-"... don't really need to build memory buffer abstraction over
-memory buffer abstraction."
-
->> Then please go ahead and take a look at the patchset in question
->> and see how much of dmabuf handling is there comparing to pure
->> networking changes. The point that it's a new set of API and lots
->> of changes not related directly to dmabufs stand. dmabufs is useful
->> there as an abstraction there, but it's a very long stretch saying
->> that the series is all about it.
-> 
-> I did take a look, that's why I replied.
-> 
->>>> on an existing network specific abstraction, which are not restricted to
->>>> pages or anything specific in the long run, but the flow of which from
->>>> net stack to user and back is controlled by io_uring. If you worry about
->>>> abuse, io_uring can't even sanely initialise those buffers itself and
->>>> therefore asking the page pool code to do that.
+>>> Not like linked SQEs, each sqe is issued after the previous one is
+>>> completed. All SQEs in one group can be submitted in parallel. To simplify
+>>> the implementation from beginning, all members are queued after the leader
+>>> is completed, however, this way may be changed and leader and members may
+>>> be issued concurrently in future.
 >>>
->>> No, I worry about trying to io_uring for not good reason. This
+>>> The 1st SQE is group leader, and the other SQEs are group member. The whole
+>>> group share single IOSQE_IO_LINK and IOSQE_IO_DRAIN from group leader, and
+>>> the two flags can't be set for group members. For the sake of
+>>> simplicity, IORING_OP_LINK_TIMEOUT is disallowed for SQE group now.
+>>>
+>>> When the group is in one link chain, this group isn't submitted until the
+>>> previous SQE or group is completed. And the following SQE or group can't
+>>> be started if this group isn't completed. Failure from any group member will
+>>> fail the group leader, then the link chain can be terminated.
+>>>
+>>> When IOSQE_IO_DRAIN is set for group leader, all requests in this group and
+>>> previous requests submitted are drained. Given IOSQE_IO_DRAIN can be set for
+>>> group leader only, we respect IO_DRAIN by always completing group leader as
+>>> the last one in the group. Meantime it is natural to post leader's CQE
+>>> as the last one from application viewpoint.
+>>>
+>>> Working together with IOSQE_IO_LINK, SQE group provides flexible way to
+>>> support N:M dependency, such as:
+>>>
+>>> - group A is chained with group B together
+>>> - group A has N SQEs
+>>> - group B has M SQEs
+>>>
+>>> then M SQEs in group B depend on N SQEs in group A.
+>>>
+>>> N:M dependency can support some interesting use cases in efficient way:
+>>>
+>>> 1) read from multiple files, then write the read data into single file
+>>>
+>>> 2) read from single file, and write the read data into multiple files
+>>>
+>>> 3) write same data into multiple files, and read data from multiple files and
+>>> compare if correct data is written
+>>>
+>>> Also IOSQE_SQE_GROUP takes the last bit in sqe->flags, but we still can
+>>> extend sqe->flags with io_uring context flag, such as use __pad3 for
+>>> non-uring_cmd OPs and part of uring_cmd_flags for uring_cmd OP.
 >>
->> It sounds that the argument is that you just don't want any
->> io_uring APIs, I don't think you'd be able to help you with
->> that.
+>> Since it's taking the last flag, maybe a better idea to have the last
+>> flag mean "more flags in (for example) __pad3" and put the new flag
+>> there? Not sure you mean in terms of "io_uring context flag", would it
+>> be an enter flag? Ring required to be setup with a certain flag? Neither
+>> of those seem super encouraging, imho.
 > 
-> No, that's complete misinterpreting what I'm saying.  Of course an
-> io_uring API is fine.  But tying low-level implementation details to
-> to is not.
-
-It works with low level concepts, i.e. private NIC queues, but it does
-that through well established abstractions (page pool) already extended
-for such cases. There is no directly going into a driver / hardware and
-hard coding queue allocation, some memory injection or anything similar.
-The user api has to embrace the hardware limitations, right, there is no
-way around it without completely changing the approach and performance
-and/or applicability. And queues as first class citizens is not a new
-concept in general.
-
->>> pre-cludes in-kernel uses which would be extremly useful for
->>
->> Uses of what? devmem TCP is merged, I'm not removing it,
->> and the net_iov abstraction is in there, which can be potentially
->> be reused by other in-kernel users if that'd even make sense.
+> I meant:
 > 
-> How when you are hardcoding io uring memory registrations instead
-> of making them a generic dmabuf?  Which btw would also really help
+> If "more flags in __pad3" is enabled in future we may claim it as one
+> feature to userspace, such as IORING_FEAT_EXT_FLAG.
+> 
+> Will improve the above commit log.
 
-If you mean internals, making up a dmabuf that has never existed in the
-picture in the first place is not cleaner or easier in any way. If that
-changes, e.g. there is more code to reuse in the future, we can unify it
-then.
-
-If that's about user api, you've just mentioned before that it can be
-pages / user pointers. As to why it goes through io_uring, I explained
-it before, but in short, it gives a better api for io_uring users, we
-can avoid creating a yet another file (netlink socket) and keeping it
-around, that way we don't need to synchronise with the nl socket and/or
-trying to steal memory from it, and the devmem api is also too
-monolithic for such purposes, so even that would need to change, i.e.
-splitting queue and memory registration.
-
-> with pre-registering the memry with the iommu to get good performance
-> in IOMMU-enabled setups.
-
-The page pool already does that just like it handles the normal
-path without providers.
+And we can't take it in either case. The field is in a union, and
+other opcodes use that part of the SQE. Enabling a generic feature
+for a subset of requests only is not a good idea.
 
 -- 
 Pavel Begunkov

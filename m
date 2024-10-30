@@ -1,124 +1,367 @@
-Return-Path: <io-uring+bounces-4173-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4174-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B3F9B58CE
-	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 01:45:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D07F69B58DE
+	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 01:59:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52A3B1C22C9A
-	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 00:45:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5FA28453C
+	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 00:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3B84C70;
-	Wed, 30 Oct 2024 00:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0F929CEF;
+	Wed, 30 Oct 2024 00:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WJ9O/j27"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XnCAtlVp"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C559A8F5B
-	for <io-uring@vger.kernel.org>; Wed, 30 Oct 2024 00:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A885A282F4;
+	Wed, 30 Oct 2024 00:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730249129; cv=none; b=qy3qpfTGrRu4YY0YntzscDOgiT9djdTjMc5IeeRgPZ+kA/8TW5GlPiSJgkt0MP1KVy8/SEw/cQCjKo/Gqybgcf9kwTXAojlocVwXkrYJ6XYyOA9shGnhdimjMswHg537RyV/3nEn5VFAnbWYpVSFbppkIujPS6yFxkGLdleCEVo=
+	t=1730249959; cv=none; b=ANIQ2EM/K4cQUK759PSHioAtCpMNlCQkPsX4INohQFNpl0H5Ifbbnr/ZVfju0Fdmq0qZfw2XhuAJleQy2kyKF8r/nFs443fakC6CcUKPgCYw8KjiUGpH89bqfbiSQAeZEJgNXAfGqyjdc2rVl8DBl5wpy0Yx6Ui0ZkZu4a7y5ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730249129; c=relaxed/simple;
-	bh=q0XgTlrNtBGGrXXeNoFe11wWPBxeRiPJvn/YRW2CroA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dyN1Hn+BCJ5/sOFvqRv1zZm673Q5IUExmAuHDxuTmEmjiT6HhUwkS+jX1GLzu0lWcpfVWXKueS1fGVz/6V0Z1grvCTHl1PUc/4qHLJ4oiEBj6/asNNXK1adLCExAhJNYRJvXXaosIVdEHH4fNYlFT4hka9bs4GJ9noPlDfy2i+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WJ9O/j27; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730249126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FUQbGHE89Tjuuzon/UFuhihO7l7z+hPsgybfAFogew8=;
-	b=WJ9O/j27guwp+3yW9AiWEELAeZFwMHb1wwww+h04D0bUaRz84hoEc9VvfsHwLEirsVNEZq
-	Tl4ri30TgjmjYAaQGWzFA3SjBrODQ1Ta3HHWzIdi6/AHkMzn8wFoenPTdXXj7LrFv10Vf7
-	xLQIIAv/49I2Qc6KMZ2V8rhB9/62OP8=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-581-01mQZ12jNkqoKHpDuTsjSQ-1; Tue,
- 29 Oct 2024 20:45:20 -0400
-X-MC-Unique: 01mQZ12jNkqoKHpDuTsjSQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3E07A195608A;
-	Wed, 30 Oct 2024 00:45:19 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.45])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9EFFB1956088;
-	Wed, 30 Oct 2024 00:45:14 +0000 (UTC)
-Date: Wed, 30 Oct 2024 08:45:09 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	Uday Shankar <ushankar@purestorage.com>,
-	Akilesh Kailash <akailash@google.com>
-Subject: Re: [PATCH V8 5/7] io_uring: support leased group buffer with
- REQ_F_GROUP_KBUF
-Message-ID: <ZyGBlWUt02xJRQii@fedora>
-References: <20241025122247.3709133-1-ming.lei@redhat.com>
- <20241025122247.3709133-6-ming.lei@redhat.com>
- <4576f723-5694-40b5-a656-abd1c8d05d62@gmail.com>
+	s=arc-20240116; t=1730249959; c=relaxed/simple;
+	bh=23j3p/pIVZzpLwXm3oJr46ZJTztiveMI7B4CcPfzuh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UZBaZXvZoTlz2y9nOqOY9GDO+lQ1a8VFWt8DdrT4raOK4+Ml3n3gHXR7G2hkxZoQ7Qd8BVCQktuDLWfygiF+6jxRb2uoqyRZTAbBcsCnXGPsbR6CQ114c+wwZjCKyzVIb5mk2yXEwmV/J9qWWz3maeRWPk4jnmZVlvZIuWxcR68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XnCAtlVp; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso57605295e9.1;
+        Tue, 29 Oct 2024 17:59:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730249955; x=1730854755; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xFfQqO0PEPy7BDZYVvfE+jH63zcuQllaI2N88CBZSRA=;
+        b=XnCAtlVpaGs5/45gBERVHA9tBoqvJB1LoQqhEp3SFqUUB3l2zYdY2AAE4Cm2oUWj+d
+         WdEPKCmC8foRs4Z8pBokgIZG1/2G+/Jf/4wUmQc783uuITcHTNljBZL0mIRQ9z/u5XHw
+         NHkLDPqSqDLGwRfArJezKz20DEr8T4c0Q6kKRT/N3IK5cwBc9qKyKlLHGaPU6rxRmLdE
+         fGaQpCb89T7Mq5Ok8U7JvwleL1lKb+4Wr80zuIg9fYTiD1E2evTXINL9qsY/EhxcUujY
+         9BFE7lSrqb0hBZ0PPgW2/4g5zvafvKao06a39xfHXHbVTq5IrViagZRvkjg1Cv8GP+JQ
+         qIWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730249955; x=1730854755;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xFfQqO0PEPy7BDZYVvfE+jH63zcuQllaI2N88CBZSRA=;
+        b=CBVxXF1e4e6gHZ2Sk3IV+zdpuQoWmcYveD5ukiR4mP8LmyzTHd9gF0DKJJnhoN2xsE
+         DEsKNVv5fHX3kVIA5qk4YdxnbixyrmI+q0biuTWKFuuFwBJojpEflTmbk0fEX5WTwVcO
+         SAd0dPtG1wGRvYQZOBR9tR2HAPufnKCuDsBRdeBUp+JxyUbP9v5BJLcG1HuuW/uyRESw
+         9BAreAJjJIPjFfXze1xf9b0CagT/49t+ovBLRtyKehG2Lc0NotissCqkz4c+9weihocj
+         MB2Lww2x0bcdoGVjL6UIjr5V1MmKXH6Vu79TGtqE/SoKs+upD0+981UUcpstRpRsiIeZ
+         1TaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1fTbmaoeG88LXOmznB1hd5Y/1sXpRHsv1cch2yXKS0XiuDCGbtEQFSsJxxpqyNPXAkW5fI7bgWgGWXw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKcuPYUsqVn1p5iA3ARhSMk1wGa5g8+6qSg4X1Wu7sqY5uT8Qo
+	9AJS+GZY3Qb2RTKjdZ/uaUBA8jgOuszPz+SBz1dhP0S4hu+DB1cCuSFedQ==
+X-Google-Smtp-Source: AGHT+IFEHcdv88xPkUrQV0AzWfnSZ2aPkGqIs1jHBfK/8Z5KojLfVJNgwqhHvPcqI6IrtzeHsjhWxw==
+X-Received: by 2002:a05:600c:1d01:b0:42c:a6da:a149 with SMTP id 5b1f17b1804b1-4319ad048cdmr124447705e9.25.1730249954564;
+        Tue, 29 Oct 2024 17:59:14 -0700 (PDT)
+Received: from [192.168.42.216] ([148.252.146.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca9f1sm4935145e9.46.2024.10.29.17.59.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 17:59:14 -0700 (PDT)
+Message-ID: <63db1884-3170-499d-87c8-678923320699@gmail.com>
+Date: Wed, 30 Oct 2024 00:59:33 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4576f723-5694-40b5-a656-abd1c8d05d62@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] btrfs: add io_uring command for encoded reads
+To: Mark Harmstone <maharmstone@fb.com>, linux-btrfs@vger.kernel.org
+Cc: io-uring@vger.kernel.org
+References: <20241022145024.1046883-1-maharmstone@fb.com>
+ <20241022145024.1046883-6-maharmstone@fb.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241022145024.1046883-6-maharmstone@fb.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 04:47:59PM +0000, Pavel Begunkov wrote:
-> On 10/25/24 13:22, Ming Lei wrote:
-> ...
-> > diff --git a/io_uring/rw.c b/io_uring/rw.c
-> > index 4bc0d762627d..5a2025d48804 100644
-> > --- a/io_uring/rw.c
-> > +++ b/io_uring/rw.c
-> > @@ -245,7 +245,8 @@ static int io_prep_rw_setup(struct io_kiocb *req, int ddir, bool do_import)
-> >   	if (io_rw_alloc_async(req))
-> >   		return -ENOMEM;
-> > -	if (!do_import || io_do_buffer_select(req))
-> > +	if (!do_import || io_do_buffer_select(req) ||
-> > +	    io_use_leased_grp_kbuf(req))
-> >   		return 0;
-> >   	rw = req->async_data;
-> > @@ -489,6 +490,11 @@ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
-> >   		}
-> >   		req_set_fail(req);
-> >   		req->cqe.res = res;
-> > +		if (io_use_leased_grp_kbuf(req)) {
-> 
-> That's what I'm talking about, we're pushing more and
-> into the generic paths (or patching every single hot opcode
-> there is). You said it's fine for ublk the way it was, i.e.
-> without tracking, so let's then pretend it's a ublk specific
-> feature, kill that addition and settle at that if that's the
-> way to go.
+On 10/22/24 15:50, Mark Harmstone wrote:
+...
+> +static void btrfs_uring_read_finished(struct io_uring_cmd *cmd,
+> +				      unsigned int issue_flags)
+> +{
+> +	struct btrfs_uring_priv *priv =
+> +		*io_uring_cmd_to_pdu(cmd, struct btrfs_uring_priv *);
+> +	struct btrfs_inode *inode = BTRFS_I(file_inode(priv->iocb.ki_filp));
+> +	struct extent_io_tree *io_tree = &inode->io_tree;
+> +	unsigned long i;
+> +	u64 cur;
+> +	size_t page_offset;
+> +	ssize_t ret;
+> +
+> +	if (priv->err) {
+> +		ret = priv->err;
+> +		goto out;
+> +	}
+> +
+> +	if (priv->compressed) {
+> +		i = 0;
+> +		page_offset = 0;
+> +	} else {
+> +		i = (priv->iocb.ki_pos - priv->start) >> PAGE_SHIFT;
+> +		page_offset = offset_in_page(priv->iocb.ki_pos - priv->start);
+> +	}
+> +	cur = 0;
+> +	while (cur < priv->count) {
+> +		size_t bytes = min_t(size_t, priv->count - cur,
+> +				     PAGE_SIZE - page_offset);
+> +
+> +		if (copy_page_to_iter(priv->pages[i], page_offset, bytes,
+> +				      &priv->iter) != bytes) {
 
-As I mentioned before, it isn't ublk specific, zeroing is required
-because the buffer is kernel buffer, that is all. Any other approach
-needs this kind of handling too. The coming fuse zc need it.
+If that's an iovec backed iter that might fail, you'd need to
+steal this patch
 
-And it can't be done in driver side, because driver has no idea how
-to consume the kernel buffer.
+https://lore.kernel.org/all/20241016-fuse-uring-for-6-10-rfc4-v4-12-9739c753666e@ddn.com/
 
-Also it is only required in case of short read/recv, and it isn't
-hot path, not mention it is just one check on request flag.
+and fail if "issue_flags & IO_URING_F_TASK_DEAD", see
+
+https://lore.kernel.org/all/20241016-fuse-uring-for-6-10-rfc4-v4-13-9739c753666e@ddn.com/
 
 
-Thanks,
-Ming
+> +			ret = -EFAULT;
+> +			goto out;
+> +		}
+> +
+> +		i++;
+> +		cur += bytes;
+> +		page_offset = 0;
+> +	}
+> +	ret = priv->count;
+> +
+> +out:
+> +	unlock_extent(io_tree, priv->start, priv->lockend, &priv->cached_state);
+> +	btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
 
+When called via io_uring_cmd_complete_in_task() this function might
+not get run in any reasonable amount of time. Even worse, a
+misbehaving user can block it until the task dies.
+
+I don't remember if rwsem allows unlock being executed in a different
+task than the pairing lock, but blocking it for that long could be a
+problem. I might not remember it right but I think Boris meantioned
+that the O_DIRECT path drops the inode lock right after submission
+without waiting for bios to complete. Is that right? Can we do it
+here as well?
+
+> +
+> +	io_uring_cmd_done(cmd, ret, 0, issue_flags);
+> +	add_rchar(current, ret);
+> +
+> +	for (unsigned long index = 0; index < priv->nr_pages; index++)
+> +		__free_page(priv->pages[index]);
+> +
+> +	kfree(priv->pages);
+> +	kfree(priv->iov);
+> +	kfree(priv);
+> +}
+> +
+> +void btrfs_uring_read_extent_endio(void *ctx, int err)
+> +{
+> +	struct btrfs_uring_priv *priv = ctx;
+> +
+> +	priv->err = err;
+> +
+> +	*io_uring_cmd_to_pdu(priv->cmd, struct btrfs_uring_priv *) = priv;
+
+a nit, I'd suggest to create a temp var, should be easier to
+read. It'd even be nicer if you wrap it into a structure
+as suggested last time.
+
+struct io_btrfs_cmd {
+	struct btrfs_uring_priv *priv;
+};
+
+struct io_btrfs_cmd *bc = io_uring_cmd_to_pdu(cmd, struct io_btrfs_cmd);
+bc->priv = priv;
+
+> +	io_uring_cmd_complete_in_task(priv->cmd, btrfs_uring_read_finished);
+> +}
+> +
+> +static int btrfs_uring_read_extent(struct kiocb *iocb, struct iov_iter *iter,
+> +				   u64 start, u64 lockend,
+> +				   struct extent_state *cached_state,
+> +				   u64 disk_bytenr, u64 disk_io_size,
+> +				   size_t count, bool compressed,
+> +				   struct iovec *iov,
+> +				   struct io_uring_cmd *cmd)
+> +{
+> +	struct btrfs_inode *inode = BTRFS_I(file_inode(iocb->ki_filp));
+> +	struct extent_io_tree *io_tree = &inode->io_tree;
+> +	struct page **pages;
+> +	struct btrfs_uring_priv *priv = NULL;
+> +	unsigned long nr_pages;
+> +	int ret;
+> +
+> +	nr_pages = DIV_ROUND_UP(disk_io_size, PAGE_SIZE);
+> +	pages = kcalloc(nr_pages, sizeof(struct page *), GFP_NOFS);
+> +	if (!pages)
+> +		return -ENOMEM;
+> +	ret = btrfs_alloc_page_array(nr_pages, pages, 0);
+> +	if (ret) {
+> +		ret = -ENOMEM;
+> +		goto fail;
+> +	}
+> +
+> +	priv = kmalloc(sizeof(*priv), GFP_NOFS);
+> +	if (!priv) {
+> +		ret = -ENOMEM;
+> +		goto fail;
+> +	}
+> +
+> +	priv->iocb = *iocb;
+> +	priv->iov = iov;
+> +	priv->iter = *iter;
+> +	priv->count = count;
+> +	priv->cmd = cmd;
+> +	priv->cached_state = cached_state;
+> +	priv->compressed = compressed;
+> +	priv->nr_pages = nr_pages;
+> +	priv->pages = pages;
+> +	priv->start = start;
+> +	priv->lockend = lockend;
+> +	priv->err = 0;
+> +
+> +	ret = btrfs_encoded_read_regular_fill_pages(inode, disk_bytenr,
+> +						    disk_io_size, pages,
+> +						    priv);
+> +	if (ret && ret != -EIOCBQUEUED)
+> +		goto fail;
+
+Turning both into return EIOCBQUEUED is a bit suspicious, but
+I lack context to say. Might make sense to return ret and let
+the caller handle it.
+
+> +
+> +	/*
+> +	 * If we return -EIOCBQUEUED, we're deferring the cleanup to
+> +	 * btrfs_uring_read_finished, which will handle unlocking the extent
+> +	 * and inode and freeing the allocations.
+> +	 */
+> +
+> +	return -EIOCBQUEUED;
+> +
+> +fail:
+> +	unlock_extent(io_tree, start, lockend, &cached_state);
+> +	btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
+> +	kfree(priv);
+> +	return ret;
+> +}
+> +
+> +static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd,
+> +				    unsigned int issue_flags)
+> +{
+> +	size_t copy_end_kernel = offsetofend(struct btrfs_ioctl_encoded_io_args,
+> +					     flags);
+> +	size_t copy_end;
+> +	struct btrfs_ioctl_encoded_io_args args = { 0 };
+> +	int ret;
+> +	u64 disk_bytenr, disk_io_size;
+> +	struct file *file = cmd->file;
+> +	struct btrfs_inode *inode = BTRFS_I(file->f_inode);
+> +	struct btrfs_fs_info *fs_info = inode->root->fs_info;
+> +	struct extent_io_tree *io_tree = &inode->io_tree;
+> +	struct iovec iovstack[UIO_FASTIOV];
+> +	struct iovec *iov = iovstack;
+> +	struct iov_iter iter;
+> +	loff_t pos;
+> +	struct kiocb kiocb;
+> +	struct extent_state *cached_state = NULL;
+> +	u64 start, lockend;
+> +	void __user *sqe_addr = u64_to_user_ptr(READ_ONCE(cmd->sqe->addr));
+
+Let's rename it, I was taken aback for a brief second why
+you're copy_from_user() from an SQE / the ring, which turns
+out to be a user pointer to a btrfs structure.
+
+...
+> +	ret = btrfs_encoded_read(&kiocb, &iter, &args, &cached_state,
+> +				 &disk_bytenr, &disk_io_size);
+> +	if (ret < 0 && ret != -EIOCBQUEUED)
+> +		goto out_free;
+> +
+> +	file_accessed(file);
+> +
+> +	if (copy_to_user(sqe_addr + copy_end, (char *)&args + copy_end_kernel,
+> +			 sizeof(args) - copy_end_kernel)) {
+> +		if (ret == -EIOCBQUEUED) {
+> +			unlock_extent(io_tree, start, lockend, &cached_state);
+> +			btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
+> +		}> +		ret = -EFAULT;
+> +		goto out_free;
+
+It seems we're saving iov in the priv structure, who can access the iovec
+after the request is submitted? -EIOCBQUEUED in general means that the
+request is submitted and will get completed async, e.g. via callback, and
+if the bio callback can use the iov maybe via the iter, this goto will be
+a use after free.
+
+Also, you're returning -EFAULT back to io_uring, which will kill the
+io_uring request / cmd while there might still be in flight bios that
+can try to access it.
+
+Can you inject errors into the copy and test please?
+
+> +	}
+> +
+> +	if (ret == -EIOCBQUEUED) {
+> +		u64 count;
+> +
+> +		/*
+> +		 * If we've optimized things by storing the iovecs on the stack,
+> +		 * undo this.
+> +		 */> +		if (!iov) {
+> +			iov = kmalloc(sizeof(struct iovec) * args.iovcnt,
+> +				      GFP_NOFS);
+> +			if (!iov) {
+> +				unlock_extent(io_tree, start, lockend,
+> +					      &cached_state);
+> +				btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
+> +				ret = -ENOMEM;
+> +				goto out_acct;
+> +			}
+> +
+> +			memcpy(iov, iovstack,
+> +			       sizeof(struct iovec) * args.iovcnt);
+> +		}
+> +
+> +		count = min_t(u64, iov_iter_count(&iter), disk_io_size);
+> +
+> +		/* Match ioctl by not returning past EOF if uncompressed */
+> +		if (!args.compression)
+> +			count = min_t(u64, count, args.len);
+> +
+> +		ret = btrfs_uring_read_extent(&kiocb, &iter, start, lockend,
+> +					      cached_state, disk_bytenr,
+> +					      disk_io_size, count,
+> +					      args.compression, iov, cmd);
+> +
+> +		goto out_acct;
+> +	}
+> +
+> +out_free:
+> +	kfree(iov);
+> +
+> +out_acct:
+> +	if (ret > 0)
+> +		add_rchar(current, ret);
+> +	inc_syscr(current);
+> +
+> +	return ret;
+> +}
+
+-- 
+Pavel Begunkov
 

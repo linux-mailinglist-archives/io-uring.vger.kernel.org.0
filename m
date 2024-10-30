@@ -1,104 +1,106 @@
-Return-Path: <io-uring+bounces-4242-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4243-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19A19B6DC7
-	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 21:37:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7037B9B6E23
+	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 21:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F9D81C2194D
-	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 20:37:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F097CB20F7B
+	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 20:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760941E130F;
-	Wed, 30 Oct 2024 20:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119311EBFEF;
+	Wed, 30 Oct 2024 20:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKhDA2yg"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dke4ZVv1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BFC1DE3BD;
-	Wed, 30 Oct 2024 20:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14B819CC24
+	for <io-uring@vger.kernel.org>; Wed, 30 Oct 2024 20:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730320643; cv=none; b=I2F5rXaEPfdG6OHeHk3nsf46RSWtR6six1siTfRJIQiJjV50AkNZ9JJzOttZLaTnExLDG6GCoQJ2EMg0jvR1yruGfsIGpU5nwr0OGrcVIPe4IYE1C6ta7wmSoSb0dnNcJQ36XV4wMrLmAvOjQBjYfEH9UwtQCuTJJIclMYnpwY0=
+	t=1730321434; cv=none; b=hwyy4CEjrIcK4zYJ2CWeNbO+PgYhDoGRBWSM2VJZzOaQSt95CsrptKctUPd/bte5Jy7mTXg32TCDv8CCJ9IebrQ//oK5N2HYZhsKXvIfVCwH0vUdRxbJQDXRLTBtaYDSoKvZH6tNvF/hNsiWr1ut3X+MC8J8hcXgrLHzoF2GwiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730320643; c=relaxed/simple;
-	bh=PrJ+6LIqFra5zqIEIDGYKJDXKAfwJPRoggLObenh7h4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p0+HyHJBtmJE2x/6Zjc8Rh496pxLPtENA2K80HlwdrUW0cp2AKiwePdrXwXxXpBat6XyFC/eb+b2A3wxYw89k+pL3jqpj1V45dKgYlELThNG1m0yMkUQ84FOtDSbxQYl8RxkRK7ff2WPPbVtj6HhhAEliK7C026/nW6NOOVV260=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKhDA2yg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFB76C4CECE;
-	Wed, 30 Oct 2024 20:37:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730320642;
-	bh=PrJ+6LIqFra5zqIEIDGYKJDXKAfwJPRoggLObenh7h4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KKhDA2ygEUVS6ERioFoB4scqZ9gcxJJRhuLv+hCDw3RnLJ4nTzPW2pOtwsOwRB2RM
-	 I2GEtJEavoIE0hlbtXrzHBo/bs8lOkaWKr9VCNs9L3VS3dCTkxFJhKZ+TTWXVpwTAw
-	 H+Ja8fOIYdTnFipRPT8JbOOtXYMMrO2BdnhqCLT4RNIKIWGagSJabin8jFUsgVRTv1
-	 n7Rjcet4rMiD7dLL1myojyToyhviipQONn1XERVa2wHp43t3CE/REUGMMKtn42wo5F
-	 rCJxZRV3AcWguygA8JA2nMKwTuoFEcE6kE/rywpkGIqq59eCECeZYGXtYN2iFR/yr3
-	 YlNAtHnspw7aQ==
-Date: Wed, 30 Oct 2024 14:37:19 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, joshi.k@samsung.com,
-	javier.gonz@samsung.com
-Subject: Re: [PATCHv10 4/9] block: allow ability to limit partition write
- hints
-Message-ID: <ZyKY_xdxcM2aSMow@kbusch-mbp.dhcp.thefacebook.com>
-References: <20241029151922.459139-1-kbusch@meta.com>
- <20241029151922.459139-5-kbusch@meta.com>
- <a1ff3560-4072-4ecf-8501-e353b1c98bf0@acm.org>
- <20241030044658.GA32344@lst.de>
- <ZyKTACiLUsCEcJ-R@kbusch-mbp.dhcp.thefacebook.com>
- <7f63ba9b-856b-4ca5-b864-de1b8f87d658@acm.org>
+	s=arc-20240116; t=1730321434; c=relaxed/simple;
+	bh=3pHlmcpo8YA4y490N9OoT9tIs+5u/LLUf3zRzKJ5URI=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TKfXWTu0Rt3cHBKf1vYVt9vsYDu3bDRBu6ThwEgJF6v3K2pMEZpXatsOGEXBAfptqxmhQ6n7WPR2kVQ3bvM7A98EOmrMgj/H2bx635YDrskSq3KTQew7uba4UZZPL0PLWqFTmYHpOk0PnqilhOzAot6X5tc8Dn97SSZtqGzNYJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dke4ZVv1; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-83a9be2c028so9147639f.1
+        for <io-uring@vger.kernel.org>; Wed, 30 Oct 2024 13:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730321429; x=1730926229; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u1ARA/ksH/6VfH4Rm5NsoeoxTmnLeapUXlRo+hN92J8=;
+        b=dke4ZVv10doTmqAwiHGcX3/m5eDxqN6iAB+Fm26tc/rqFejYKJZP2AJbQUv6nlcS8L
+         NZlmaf9u9/l8dI37QJ2gmWYVlWPHl53w8WK1szf4/DrcdwxrKD0UZrz1zWb82W2N71g0
+         U+E2+ONt3oL8MGAIOZM27a6bWcMEl5OVsnm1HyruP26sB3xjymEOaW8Rqi7S644h7I+I
+         ROo1UowIckj64pEPP/0zhp93NmHhwu7J0c4Ou2toacUcICIrkrI8rWWPGbulhqOcts3c
+         vMOZ3F/DdzdnPi33T7eNAcYt1BXkmLj6WCtJT46NwXhppZULZlwVkdWppl6JZXkkVYiC
+         xo/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730321429; x=1730926229;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u1ARA/ksH/6VfH4Rm5NsoeoxTmnLeapUXlRo+hN92J8=;
+        b=p3ZekmdZ3qNUSfcJ2ltEhYalVurTx/Os0or/r6hlQwNqSsXTfawZSt1r/qlOllYBVf
+         oqmaszIuiKx1xXtBd36HERCcAJPTUOgRaCAsAZQEWd1S8NG8RlrYAWIk248tkpFc+8Xf
+         7ort+V6XJMftS1Iaxj2nVfFu+3rzpKze1HBqBQE7rMpv7gZ9tjEyAQMFYunevFSkVYMf
+         JGSp1SRj1IF44HTLeSiGjuKPuG7kydxh9sFSB1dKX1sWlWsNgWDtqlLsNjRuANnfkffz
+         5vB14hxmJRZ4lxDevYKUpv8enZ1NvmMCSp87fYzgLPD5OtzboGWlrlX2k3fdMmlPjrpK
+         afrg==
+X-Gm-Message-State: AOJu0YxwBX5MYv0VxCPZvM1RwntvKMI0Uwq0IO4N259W0bKSldNScY8L
+	YH5T1xNPO/Vr55ziCel85v002oZKHP+yKg+9j6lEneXctCiRq9mCVV2IUKRn31DtcKZuRGvTsvu
+	PyYQ=
+X-Google-Smtp-Source: AGHT+IE27tqNlXjxIjv4qjHvxc80R1ZTzxgNvH8vy1YawEaerUnJjGmfeO4GK/EHW09lNih+3z43yg==
+X-Received: by 2002:a05:6602:6d10:b0:83a:aa8e:5f72 with SMTP id ca18e2360f4ac-83b1c484d25mr1536192639f.4.1730321429202;
+        Wed, 30 Oct 2024 13:50:29 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc727b23aasm3057796173.172.2024.10.30.13.50.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 13:50:28 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Haiyue Wang <haiyuewa@163.com>
+In-Reply-To: <20241030175348.569-1-haiyuewa@163.com>
+References: <20241030175348.569-1-haiyuewa@163.com>
+Subject: Re: [PATCH liburing v1] Remove the redundant include
+ "liburing/compat.h"
+Message-Id: <173032142829.103392.5604936100310118191.b4-ty@kernel.dk>
+Date: Wed, 30 Oct 2024 14:50:28 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f63ba9b-856b-4ca5-b864-de1b8f87d658@acm.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Wed, Oct 30, 2024 at 01:26:38PM -0700, Bart Van Assche wrote:
-> On 10/30/24 1:11 PM, Keith Busch wrote:
-> > On Wed, Oct 30, 2024 at 05:46:58AM +0100, Christoph Hellwig wrote:
-> > > On Tue, Oct 29, 2024 at 10:25:11AM -0700, Bart Van Assche wrote:
-> > > > > +}
-> > > > 
-> > > > bitmap_copy() is not atomic. Shouldn't the bitmap_copy() call be
-> > > > serialized against the code that tests bits in bdev->write_hint_mask?
-> > > 
-> > > It needs something.  I actually pointed that out last round, but forgot
-> > > about it again this time :)
-> > 
-> > I disagree. Whether we serialize it or not, writes in flight will either
-> > think it can write or it won't. There's no point adding any overhead to
-> > the IO path for this as you can't stop ending up with inflight writes
-> > using the tag you're trying to turn off.
+
+On Thu, 31 Oct 2024 01:53:45 +0800, Haiyue Wang wrote:
+> Since these C source files have included the "liburing/liburing.h",
+> which has included "liburing/compat.h".
 > 
-> Shouldn't the request queue be frozen while this write_hint_mask bitmap
-> is modified, just like the request queue is frozen while queue limits
-> are updated? This change wouldn't add any additional overhead to the I/O
-> path.
+> 
 
-The partitions don't have a queue. If we need to freeze, then changing
-one partition's available hints harms IO to other partitions.
+Applied, thanks!
 
-Also, block direct IO creates the bio before it freezes. Freezing would
-only get writes using the hint you're trying to disable queue up after
-all the checks have been done, so you still can't stop making inflight
-writes with freeze.
+[1/1] Remove the redundant include "liburing/compat.h"
+      commit: 99a09d92097f3362aa624fe9b1172de28203eea5
 
-But if by "not atomic", if you're just saying we need a barrier on the
-bitmap_copy, like smp_mb__after_atomic(), then yeah, I see that's
-probably appropriate here.
+Best regards,
+-- 
+Jens Axboe
+
+
+
 

@@ -1,119 +1,200 @@
-Return-Path: <io-uring+bounces-4218-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4219-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D42ED9B6A29
-	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 18:06:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD229B6A3D
+	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 18:08:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88AC81F21869
-	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 17:06:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4F71C215FC
+	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 17:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C80C2185B6;
-	Wed, 30 Oct 2024 16:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E624A21A718;
+	Wed, 30 Oct 2024 16:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rQtHU/2V"
 X-Original-To: io-uring@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18327217451;
-	Wed, 30 Oct 2024 16:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5D9216DFF
+	for <io-uring@vger.kernel.org>; Wed, 30 Oct 2024 16:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307438; cv=none; b=qINNnf+/zwK8Ks/FR387AGXdyI65dY1GPhI2M6xFKIGwK4mOdsnCRhCBsJtO3+QutQduwL5hCMstlW/UfBST052dsIo3r/9jple6PMO4r6XCHDHWel9a3HMk4jyrF4Jo1mc0iSnamIU8oL2YwlgnBxlRpwJRjEbm+1ZRTT7OKv0=
+	t=1730307535; cv=none; b=RmESpoEICpNUCpEdmktP+aCxP/aF1hwYRVxZCdlS5K4hiZ1UNOGieW+iyuvwoJX5iLnAteKBcNSEEEBhUde84uXvG80i0WkfmlBEfgw8EpCUYV9gXFq26bUGIi7PhiN1XOwa/Mbxb0Zjf76BITWnGTuxJgaxhgwGdj6w7BSgTN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307438; c=relaxed/simple;
-	bh=PmY58ufbxZt52Fj6QFq92qEjPRlv3+mg9qay8fcYwio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pau9pWEp5CiJesy6UXXu5BN1uzjGoHfRcnk+ml4LOY1lWdxvP449Dn7fPYURAPLEoEDg3Ve6gXrowspXI9z+z/bONxlxseZ5A0LmGuBt8931Q9i0j1KTztHjqc/f2yh7TlmLqAMTUPd7z3OopAoMMsXiSB4r8cqeFHEgcSuxE+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 3A309227A8E; Wed, 30 Oct 2024 17:57:09 +0100 (CET)
-Date: Wed, 30 Oct 2024 17:57:08 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, joshi.k@samsung.com,
-	javier.gonz@samsung.com, bvanassche@acm.org,
-	Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCHv10 9/9] scsi: set permanent stream count in block limits
-Message-ID: <20241030165708.GA11009@lst.de>
-References: <20241029153702.GA27545@lst.de> <ZyEBhOoDHKJs4EEY@kbusch-mbp> <20241029155330.GA27856@lst.de> <ZyEL4FOBMr4H8DGM@kbusch-mbp> <20241030045526.GA32385@lst.de> <ZyJTsyDjn6ABVbV0@kbusch-mbp.dhcp.thefacebook.com> <20241030154556.GA4449@lst.de> <ZyJVV6R5Ei0UEiVJ@kbusch-mbp.dhcp.thefacebook.com> <20241030155052.GA4984@lst.de> <ZyJiEwZwjevelmW2@kbusch-mbp.dhcp.thefacebook.com>
+	s=arc-20240116; t=1730307535; c=relaxed/simple;
+	bh=cNDsXsuTEXeaSfa9Bk5LLs1H6160Pp1SXmeg/kVIzr0=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=KqDlJd/1862kuiUlohOM0sBX+MKoiiP8NoIH4OkiYUzeOnECWDOe7Eph5UQiJEWdHu7L3JtfJ1xSpT/jKZeXi97B4GcrsBVLXyYXc3Ly6WFQ17rqr1hodM1okIop85TQppcGoa/H5qsvDgKBw5hA/JeVFavdVF/MC3KiArBRYvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rQtHU/2V; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-83b430a4cfdso123293139f.2
+        for <io-uring@vger.kernel.org>; Wed, 30 Oct 2024 09:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730307532; x=1730912332; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G7zjvxfo4RA9wtSmDn7Cj6QXedm/GWH9XYbFN+kjhzg=;
+        b=rQtHU/2V1sdHeENpwFt6UAlxgu85e8mQ+fW2rKuxHdKmtjUHcfibIf0AWiM0Pmt6Gf
+         m8e/sziW7JktdfcKqg4Rj58KrtnTAKqnFgW62/ul2+1vs6C5rxQwXjW+/etSMFB6m43P
+         kIn4ENEknpp56PtN67BmfABHPFWgDTDzcQLHJxJf6bqbHXR2OCQY/5lCQvIGWMzpV8dG
+         ouu4s+NxfhjU+VxHjVw9ET+yyHkclkgRiYxJ18gueQetIABkl8dbYjiZ4Pe2SvIjeOqy
+         s1QZbxKIBHGcAOXNUwwiXQIHJEHuZrGFQKtlxyBQPB71JtxShcPbBF+vZPeGVmRllEKr
+         gy5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730307532; x=1730912332;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=G7zjvxfo4RA9wtSmDn7Cj6QXedm/GWH9XYbFN+kjhzg=;
+        b=DjRBm5wOQYy+g7L42aK9SV0u7CvJ3U+sk/jszzMUYNzbgUCCoGHK5zOiLLQsgVD8Hp
+         g8FOONLu6TLu2cwJCEHvkcOxugtUe83rk0gw7aKI9yJLVHcsylCg0zzDHzmCLCDpifhF
+         ymGiVmXa0nedQO2el9+eJeXCXTd/3SKOYrnYeyMki8SQUGDNRBRfOjbEVsw8+EXBqZyp
+         ZreSGr6TTp6y0cREi+MQpLRrhEmEri2F7ZAH8fzU3teM3cgC1gKWnkgrIMTMcXIvmyFR
+         w5p9YMEa4JCKrpi04M6M/Akx34bZ/TYM1/09DmUrri71FT+jliudqUaUqQLrrpuBWqWx
+         s6BQ==
+X-Gm-Message-State: AOJu0Yxs1MKfMyiWv0vtZ36drKgIHsbz5X6U2gYltzVoaPnC09aPIK+v
+	WqedPnJHjt5ibYAcRyBMmi1RPo4wYj2VlY6Zk2SB8fqBKJFBn3p984lugHJ0Gpz4X5Z8D4+xz8p
+	YySc=
+X-Google-Smtp-Source: AGHT+IELRrk6g5S2+JEQ6OQQcI6xxhfyw7XRWQMf1CMhg1m1l5wW1TTDv/2E5OqO6r+6GCA9xMewkQ==
+X-Received: by 2002:a05:6602:3413:b0:83a:b235:2d74 with SMTP id ca18e2360f4ac-83b1c40d531mr1659636239f.7.1730307531783;
+        Wed, 30 Oct 2024 09:58:51 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83b137c9797sm251527039f.10.2024.10.30.09.58.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 09:58:51 -0700 (PDT)
+Message-ID: <db316d73-cb32-4f7f-beb0-68f253f5e0c5@kernel.dk>
+Date: Wed, 30 Oct 2024 10:58:50 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZyJiEwZwjevelmW2@kbusch-mbp.dhcp.thefacebook.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH RFC] io_uring/rsrc: add last-lookup cache hit to
+ io_rsrc_node_lookup()
+Cc: Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 30, 2024 at 10:42:59AM -0600, Keith Busch wrote:
-> On Wed, Oct 30, 2024 at 04:50:52PM +0100, Christoph Hellwig wrote:
-> > On Wed, Oct 30, 2024 at 09:48:39AM -0600, Keith Busch wrote:
-> > > What??? You said to map the temperature hints to a write stream. The
-> > > driver offers that here. But you specifically don't want that? I'm so
-> > > confused.
-> > 
-> > In bdev/fops.c (or file systems if they want to do that) not down in the
-> > driver forced down everyones throat.  Which was the whole point of the
-> > discussion that we're running in circles here.
-> 
-> That makes no sense. A change completely isolated to a driver isn't
-> forcing anything on anyone. It's the upper layers that's forcing this
-> down, whether the driver uses it or not: the hints are already getting
-> to the driver, but the driver currently doesn't use it.
+This avoids array_index_nospec() for repeated lookups on the same node,
+which can be quite common (and costly). If a cached node is removed from
+the given table, it'll get cleared in the cache as well.
+io_reset_rsrc_node() takes care of that, which is used in the spots
+that's replacing a node.
 
-And once it uses by default, taking it away will have someone scream
-regresion, because we're not taking it away form that super special
-use case.
+Note: need to double check this is 100% safe wrt speculation, but I
+believe it should be as we're not using the passed in value to index
+any arrays (directly).
 
-> Here's something recent from rocksdb developers running ycsb worklada
-> benchmark. The filesystem used is XFS.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Thanks for finally putting something up.
+---
 
-> It sets temperature hints for different SST levels, which already
-> happens today. The last data point made some minor changes with
-> level-to-hint mapping.
+Sending this out as an RFC, as array_index_nospec() can cause stalls for
+frequent lookups. For buffers, it's not unusual to have larger regions
+registered, which means hitting the same resource node lookup all the
+time.
 
-Do you have a pointer to the changes?
+At the same time, I'm not 100% certain on the sanity of this. Before
+you'd always do:
 
-> Without FDP:
-> 
-> WAF:        2.72
-> IOPS:       1465
-> READ LAT:   2681us
-> UPDATE LAT: 3115us
-> 
-> With FDP (rocksdb unmodified):
-> 
-> WAF:        2.26
-> IOPS:       1473
-> READ LAT:   2415us
-> UPDATE LAT: 2807us
-> 
-> With FDP (with some minor rocksdb changes):
-> 
-> WAF:        1.67
-> IOPS:       1547
-> READ LAT:   1978us
-> UPDATE LAT: 2267us
+index = array_index_nospec(index, max_nr);
+node = some_table[index];
 
-Compared to the Numbers Hans presented at Plumbers for the Zoned XFS code,
-which should work just fine with FDP IFF we exposed real write streams,
-which roughly double read nad wirte IOPS and reduce the WAF to almost
-1 this doesn't look too spectacular to be honest, but it sure it something.
+and now you can do:
 
-I just wish we could get the real infraѕtructure instead of some band
-aid, which makes it really hard to expose the real thing because now
-it's been taken up and directly wired to a UAPI.
-one
+if (index == last_index)
+	return last_node;
+last_node = some_table[array_index_nospec(index, max_nr)];
+last_index = index;
+return last_node;
+
+which _seems_ like it should be safe as no array indexing occurs. Hence
+the Jann CC :-)
+
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 77fd508d043a..c283179b0c89 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -57,6 +57,8 @@ struct io_wq_work {
+ 
+ struct io_rsrc_data {
+ 	unsigned int			nr;
++	unsigned int			last_index;
++	struct io_rsrc_node		*last_node;
+ 	struct io_rsrc_node		**nodes;
+ };
+ 
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 9829c51105ed..413d003bc5d7 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -139,6 +139,8 @@ __cold void io_rsrc_data_free(struct io_rsrc_data *data)
+ 		if (data->nodes[data->nr])
+ 			io_put_rsrc_node(data->nodes[data->nr]);
+ 	}
++	data->last_node = NULL;
++	data->last_index = -1U;
+ 	kvfree(data->nodes);
+ 	data->nodes = NULL;
+ 	data->nr = 0;
+@@ -150,6 +152,7 @@ __cold int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr)
+ 					GFP_KERNEL_ACCOUNT | __GFP_ZERO);
+ 	if (data->nodes) {
+ 		data->nr = nr;
++		data->last_index = -1U;
+ 		return 0;
+ 	}
+ 	return -ENOMEM;
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index a40fad783a69..e2795daa877d 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -70,8 +70,16 @@ int io_register_rsrc(struct io_ring_ctx *ctx, void __user *arg,
+ static inline struct io_rsrc_node *io_rsrc_node_lookup(struct io_rsrc_data *data,
+ 						       int index)
+ {
+-	if (index < data->nr)
+-		return data->nodes[array_index_nospec(index, data->nr)];
++	if (index < data->nr) {
++		if (index != data->last_index) {
++			index = array_index_nospec(index, data->nr);
++			if (data->nodes[index]) {
++				data->last_index = index;
++				data->last_node = data->nodes[index];
++			}
++		}
++		return data->last_node;
++	}
+ 	return NULL;
+ }
+ 
+@@ -85,8 +93,14 @@ static inline bool io_reset_rsrc_node(struct io_rsrc_data *data, int index)
+ {
+ 	struct io_rsrc_node *node = data->nodes[index];
+ 
+-	if (!node)
++	if (!node) {
++		WARN_ON_ONCE(index == data->last_index);
+ 		return false;
++	}
++	if (index == data->last_index) {
++		data->last_node = NULL;
++		data->last_index = -1U;
++	}
+ 	io_put_rsrc_node(node);
+ 	data->nodes[index] = NULL;
+ 	return true;
+
+-- 
+Jens Axboe
+
 

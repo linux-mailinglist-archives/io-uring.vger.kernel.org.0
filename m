@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-4203-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4204-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FF29B63F5
-	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 14:20:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E1269B63F7
+	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 14:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFE2F283051
-	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 13:20:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09391C20F54
+	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 13:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3290D1925B3;
-	Wed, 30 Oct 2024 13:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F313545023;
+	Wed, 30 Oct 2024 13:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="nRhcURT1"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="j8KcXIkr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304B845023
-	for <io-uring@vger.kernel.org>; Wed, 30 Oct 2024 13:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F9017579
+	for <io-uring@vger.kernel.org>; Wed, 30 Oct 2024 13:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730294454; cv=none; b=jAGZGzY8Dm5IpvAyr9xgy3w4cV/214q7kWeBQwTmpA+/020LyfnPI3Wd1+LdzJejrwfggO4oHYUy0rh74af5fgyo2bYuzJdGdoP2Sf2m0iKi91T0pVE2dLuIBPJmL3KG6rvNGuITRKlBBQMh93+MikU93y0ctqeAra+NbA5BBMg=
+	t=1730294574; cv=none; b=OBLSYvZz+sncpe50IzTUPEJxscWbPLUX9Kh0bNkqrt5reMtInltKl6/Y2my4BrE/7HMANWyfYlPVHPlYNB+y/tu/6aWzADKsYXt31JUWnsBarwAFItUHKY0Vz+Mr29F3p4Kic5X9jMEchPFYQ0+gol1dfoBZv8NQ+Ot+IfdlKto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730294454; c=relaxed/simple;
-	bh=V2WPzvbbzQfgwMPqDzWNQTTXVsQclLVGxXXHSG2cCNs=;
+	s=arc-20240116; t=1730294574; c=relaxed/simple;
+	bh=9FK7f+E5aRzs7Lh0jso/B/zfODURd4Qjf+nQAF18gs8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bAslIWVz5/056jdEaBeHb49iWM2vesvc9Esu/fFIRatvs99XHpInaPdb9nAfp8IPS6Amxxb9Mh1sRL5BxclTSo6wtJ58SU7EOrlrVJUJWiMlxsjOXO9Ls1Y5J46lx716lXmHvQ3szP5mB4gcSLLw+ohFzvZNvXcWr+hEoLgqty4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=nRhcURT1; arc=none smtp.client-ip=209.85.166.44
+	 In-Reply-To:Content-Type; b=JxrGq+DfIOjeFHsc9rWWbcOX9NS2/fGjWK0oWfozFYS5oINZZfE9oM5gGu8SpXEfh4Q1GgTRk/QbqJoFsP588S73iTHLFGJO4BlxL8n9vMVBxgAei8ujSeh60T4NJBQMeGJqGGTZ/VryMlpObtXNgFcFDWhB7KlY2MfunACbY2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=j8KcXIkr; arc=none smtp.client-ip=209.85.166.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-83aba237c03so230952339f.3
-        for <io-uring@vger.kernel.org>; Wed, 30 Oct 2024 06:20:52 -0700 (PDT)
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-83ac05206c9so253612839f.3
+        for <io-uring@vger.kernel.org>; Wed, 30 Oct 2024 06:22:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730294451; x=1730899251; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730294572; x=1730899372; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=adEXhwMuT7QHQGAB5KoTePWRnBbGG1A5V3HCE+rDC+o=;
-        b=nRhcURT1AraPTZ0t2yvM6LqmMSOkCqYedi7vPWrPvC1LXynylZBn8gqQM6z1VySTzJ
-         EzzOtM41qobpejSVIUiNmhd8OCPCw4ZFIwPkouQxXf/kgGl+UsjygV3Au9o/6+Ffd/xz
-         vybWRP6QquJwqZ/qgQpSfgrrWv6QgnIsPMAHDQyEnVNYtpyoa8EYyYKV77WSSlYpY3Kf
-         Vhk9oqFNFaUTY/XXigSgjV+MQ91wNNsytA0ii0BIWZubUdHyLxsYQB4gW9YSoa6cMA/r
-         bMhSmhffGbbD4n8MTJHV1e2ZEEqLKGfsyfqYx4E41yWIIzsQE4cM5cnPu+oLEcpzSTW0
-         yrlQ==
+        bh=myQnaByp07a0IHHurFVWaxlM2x/jJgPeZ0zaUorCsOo=;
+        b=j8KcXIkr/T6uKsRvuDSoN9bVu6rjzzLJib6oI9Js38I/2h9ulWLJZsipCQARvkeFzP
+         meWtZj79D6oMi/EcpHyn01gzqReR4C1xv93IvcITrTF7BTcLP0pLEug+/S6sgRFrjdoV
+         cVMHk1r6eaP5vm4hLHUWk/rv6CCb9BFsQNP9UrJUJ8ADh3x8P7N3tOxgc6lSrEPS3jAs
+         pg714j8iTW2PXTdPg2W2o01ht3HfT0MXNG5FfVBjQywWx7gBeZXCSsE7ArAXoubyaV35
+         TCq01AtY3gS/5Y1+zKPZOE8dQSE93sG4aDHY/Qsmh+ZyCyjBNNw+I8BkwJrz7HYgc1Qq
+         5v9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730294451; x=1730899251;
+        d=1e100.net; s=20230601; t=1730294572; x=1730899372;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=adEXhwMuT7QHQGAB5KoTePWRnBbGG1A5V3HCE+rDC+o=;
-        b=tBh8Sg33ZIfjN6fSgRx0X/uvOJZVFCHo7C35hgIu6WCTUF05OidGodAyI07vjT3DYm
-         ERvA89xTGqApsJX8NdMtF9Lt4+z2plwHy51CAEhMvdFjxhEFa9tquGW1zui3XZsIyPCN
-         YvqTKULkemFc6Rrf3zGlEJi2MOkkPAnRmCRwfiBo3nwFWixaP9OJGhnCUakwhx8NBHRe
-         EteOoNihzL525LofkA2OW9y052op4VC2VosYZL7eOsl8J3f/LcIuJhybJUEdMAodt+TN
-         dJy4I94xB/k5rE+iXIVCaAMyUuBwdGci9QyxuLOClAoEz9t6+KGayPG8jMZ8cwp4TREw
-         xC5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXM9UZQ5cchM/YFW6LOg17Be4L55zZ4/+eo5KIS/tds4OkWOa1Hu9vsuctkAewFasTc2RtT4qhQSg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu3RJxANlAok3fRzOS/0PNzc/yslmzZfxJpNnJidq5nagSktcL
-	TSC8WvOhIBy8a0r8UPpgluLwy/GKhOQSiaOJv82RddYfCCY9yvgm68fqh+A8gYI=
-X-Google-Smtp-Source: AGHT+IE1gya8DOKv02mrGw2idtxQZHTZ4tVr3O33fc42BDUiQhAjx67dZQQUsUaBW8z5Sau94zjOGA==
-X-Received: by 2002:a05:6602:6343:b0:83b:29a5:ff89 with SMTP id ca18e2360f4ac-83b29a602bamr1106197239f.15.1730294451146;
-        Wed, 30 Oct 2024 06:20:51 -0700 (PDT)
+        bh=myQnaByp07a0IHHurFVWaxlM2x/jJgPeZ0zaUorCsOo=;
+        b=n+y8R/GKJpxNNUQ8NDPsVYIuvOLegs4oVYX4P3jyBlxfXgNj0eZRlPZmapKTdU+vvx
+         r1atU24Kp+5SYroa4Uo5d6x7SwXi2yRs/l6Q5Eh7WfiYRKvYV7w0WaaTWkRq2lG3/mFB
+         UonIWLC/hUN7vaNKIe7ObqckdlkLaYRUFeiq8Y5WPD1Wn2ICsf9osebDX7Dv8uB8st5e
+         MPnRiBai3GPnuwAI8LaC7UYoFaaPquTaGE8Hpu0gxtSQRWYx/Hq726gFhc1gC8fukX74
+         I2cr4LQrOykIgY9Sq7uclj6jG1yXHn68cpW6u1lL14jyuLuwDlv3V/MoPcAu23gh+i22
+         +m1g==
+X-Gm-Message-State: AOJu0YzbtsmorY3t7ISGHOaaau5Du1VoaQxrFiw91Dx3YmCESGFIcTYu
+	5TeTjygt8puu+6mV7LMNTvnjOFSJXHW7n0N8PSbo07YIbUTK3B9nycfaYM/3bEM2vMeKg3DUN5d
+	m
+X-Google-Smtp-Source: AGHT+IHQkH9YVrBGdXr9LT+Uswotflo9flvmeEourEVynaPUxwWlc0dIJvOvr39mavGVEsbnpqxuHw==
+X-Received: by 2002:a05:6602:60c6:b0:83a:a82b:f855 with SMTP id ca18e2360f4ac-83b1c4ba8acmr1686032139f.9.1730294572041;
+        Wed, 30 Oct 2024 06:22:52 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc727ae9cdsm2840996173.158.2024.10.30.06.20.49
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc7275069csm2843942173.111.2024.10.30.06.22.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 06:20:50 -0700 (PDT)
-Message-ID: <d986221d-7399-4487-9c28-5d6f953510cd@kernel.dk>
-Date: Wed, 30 Oct 2024 07:20:48 -0600
+        Wed, 30 Oct 2024 06:22:51 -0700 (PDT)
+Message-ID: <eebde978-cf9b-4586-9dcf-0ff62e535a2d@kernel.dk>
+Date: Wed, 30 Oct 2024 07:22:49 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,69 +76,56 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V8 0/8] io_uring: support sqe group and leased group kbuf
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
- linux-block@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>,
- Akilesh Kailash <akailash@google.com>
-References: <20241025122247.3709133-1-ming.lei@redhat.com>
- <15b9b1e0-d961-4174-96ed-5a6287e4b38b@gmail.com>
- <d859c85c-b7bf-4673-8c77-9d7113f19dbb@kernel.dk>
- <bc44d3c0-41e8-425c-957f-bad70aedcc50@kernel.dk>
- <e76d9742-5693-4057-b925-3917943c7441@kernel.dk>
- <f51e50c8-271e-49b6-b3e1-a63bf61d7451@kernel.dk> <ZyGT3h5jNsKB0mrZ@fedora>
- <674e8c3c-1f2c-464a-ad59-da3d00104383@kernel.dk> <ZyGjID-17REc9X3e@fedora>
- <ZyGx4JBPdU4VlxlZ@fedora>
+Subject: Re: [bug report] io_uring: add support for fixed wait regions
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: io-uring@vger.kernel.org
+References: <3191af58-8707-4916-a657-ee376b36810a@stanley.mountain>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZyGx4JBPdU4VlxlZ@fedora>
+In-Reply-To: <3191af58-8707-4916-a657-ee376b36810a@stanley.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/29/24 10:11 PM, Ming Lei wrote:
-> On Wed, Oct 30, 2024 at 11:08:16AM +0800, Ming Lei wrote:
->> On Tue, Oct 29, 2024 at 08:43:39PM -0600, Jens Axboe wrote:
+On 10/30/24 5:40 AM, Dan Carpenter wrote:
+> Hello Jens Axboe,
 > 
-> ...
+> Commit 4b926ab18279 ("io_uring: add support for fixed wait regions")
+> from Oct 22, 2024 (linux-next), leads to the following Smatch static
+> checker warning:
 > 
->>> You could avoid the OP dependency with just a flag, if you really wanted
->>> to. But I'm not sure it makes a lot of sense. And it's a hell of a lot
->>
->> Yes, IO_LINK won't work for submitting multiple IOs concurrently, extra
->> syscall makes application too complicated, and IO latency is increased.
->>
->>> simpler than the sqe group scheme, which I'm a bit worried about as it's
->>> a bit complicated in how deep it needs to go in the code. This one
->>> stands alone, so I'd strongly encourage we pursue this a bit further and
->>> iron out the kinks. Maybe it won't work in the end, I don't know, but it
->>> seems pretty promising and it's soooo much simpler.
->>
->> If buffer register and lookup are always done in ->prep(), OP dependency
->> may be avoided.
+> 	io_uring/register.c:616 io_register_cqwait_reg()
+> 	warn: was expecting a 64 bit value instead of '~(~(((1) << 12) - 1))'
 > 
-> Even all buffer register and lookup are done in ->prep(), OP dependency
-> still can't be avoided completely, such as:
+> io_uring/register.c
+>     594 static int io_register_cqwait_reg(struct io_ring_ctx *ctx, void __user *uarg)
+>     595 {
+>     596         struct io_uring_cqwait_reg_arg arg;
+>     597         struct io_uring_reg_wait *reg;
+>     598         struct page **pages;
+>     599         unsigned long len;
+>     600         int nr_pages, poff;
+>     601         int ret;
+>     602 
+>     603         if (ctx->cq_wait_page || ctx->cq_wait_arg)
+>     604                 return -EBUSY;
+>     605         if (copy_from_user(&arg, uarg, sizeof(arg)))
+>     606                 return -EFAULT;
+>     607         if (!arg.nr_entries || arg.flags)
+>     608                 return -EINVAL;
+>     609         if (arg.struct_size != sizeof(*reg))
+>     610                 return -EINVAL;
+>     611         if (check_mul_overflow(arg.struct_size, arg.nr_entries, &len))
+>     612                 return -EOVERFLOW;
+>     613         if (len > PAGE_SIZE)
+>     614                 return -EINVAL;
+>     615         /* offset + len must fit within a page, and must be reg_wait aligned */
+> --> 616         poff = arg.user_addr & ~PAGE_MASK;
 > 
-> 1) two local buffers for sending to two sockets
-> 
-> 2) group 1: IORING_OP_LOCAL_KBUF1 & [send(sock1), send(sock2)]  
-> 
-> 3) group 2: IORING_OP_LOCAL_KBUF2 & [send(sock1), send(sock2)]
-> 
-> group 1 and group 2 needs to be linked, but inside each group, the two
-> sends may be submitted in parallel.
+> This is a harmless thing, but on 32 bit systems you can put whatever you want in
+> the high 32 bits of arg.user_addr and it won't affect anything.
 
-That is where groups of course work, in that you can submit 2 groups and
-have each member inside each group run independently. But I do think we
-need to decouple the local buffer and group concepts entirely. For the
-first step, getting local buffers working with zero copy would be ideal,
-and then just live with the fact that group 1 needs to be submitted
-first and group 2 once the first ones are done.
-
-Once local buffers are done, we can look at doing the sqe grouping in a
-nice way. I do think it's a potentially powerful concept, but we're
-going to make a lot more progress on this issue if we carefully separate
-dependencies and get each of them done separately.
+That is certainly true, it'll get masked away. I suspect this kind of
+thing is everywhere, though? What do you suggest?
 
 -- 
 Jens Axboe

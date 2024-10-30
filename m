@@ -1,130 +1,104 @@
-Return-Path: <io-uring+bounces-4247-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4248-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0DD9B6E6B
-	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 22:09:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1AF9B6E9B
+	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 22:16:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0382B281EA9
-	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 21:09:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F0D21C21857
+	for <lists+io-uring@lfdr.de>; Wed, 30 Oct 2024 21:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30E42139A4;
-	Wed, 30 Oct 2024 21:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609D31EB9FD;
+	Wed, 30 Oct 2024 21:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DAKgH6Pm"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="zox8MNWg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718D01F4700;
-	Wed, 30 Oct 2024 21:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF931BD9D3;
+	Wed, 30 Oct 2024 21:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730322570; cv=none; b=q044QovSFzGS4i3QcUigopXhNUdJD8TWUtvM+DDGXxdZB3BAQSdYdjRZsEXp+OilqRhoFYWAxu+DxIsnX6lERQ9CFWkKtNh7co2+SmCgFXKWfts1g1of0WLuKhbXQoavK685tcQ9XgDCKGzlR0LTXWHrqUTSDn4/XeK5PS9Ll5s=
+	t=1730322955; cv=none; b=mtG+0V0MUZnByMkm5r5VV8c5Z1njwrJkpUxGrjaysym7VookjXNpeWk6lh2NPparik32zx35nrkXqnStxA68RlLX3Grc68wGzX9ljXo+43RwWhdBB0dHTTYSyVhoSHoWa3qxgk8Kktye/nVMGRuxGKfJJVWQRJzCpgHqttOZL38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730322570; c=relaxed/simple;
-	bh=NBQ38qs+AbyE0Vr5iDj8caZDO5/MYkzq0hD2+YnFywI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sWnPPSFRoEsbWYyXlhdX04gCrjZx1YdsCuO+tXGcWSbpB8QTje1yYk/bEyC1uuN3q9twFG8TrRG77Az89WLkcOKIWch11E4tWYPdTDwI3p/aSfkY3P237Qe9/OVig+hJsLMfLc14+yFLlJiM6enHHXxUt+ix7ZNEj5neCqlcP9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DAKgH6Pm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9A5AC4CECE;
-	Wed, 30 Oct 2024 21:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730322569;
-	bh=NBQ38qs+AbyE0Vr5iDj8caZDO5/MYkzq0hD2+YnFywI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DAKgH6Pmk7D2XBp3rQzuXx0gmeaTve7/Q+dbQ3Anyg2ljqQvRnSqbacrTvbXsN5ou
-	 G8Fy8GdyHdrOacMUD2zMcHK37+gABPdJQGK2G/IWs5WhA4GRqbtM1Ns39tPviPAUCG
-	 UTsIBn5/d6xL267h9o1ECYi7+hqDK5lg0UVxm6czQgLXVjp9IhV3NNbPrErHeEYNsT
-	 hvxg4BlgiQ/CzplHAPDdiljSmVNrlRtXAZUimsNWCyZOl72QdmWE/5ETP0yc2xp3Ty
-	 MvW5EpmRDHStTsQrPev91kCO7hV9wdC4WP/F+aLzDNHfCuKb1kegKtFtE+T2b9PQ++
-	 BJArTVNMCczvQ==
-Date: Wed, 30 Oct 2024 15:09:26 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Kanchan Joshi <joshi.k@samsung.com>
-Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
-	asml.silence@gmail.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-	gost.dev@samsung.com, vishak.g@samsung.com, anuj1072538@gmail.com,
-	Anuj Gupta <anuj20.g@samsung.com>
-Subject: Re: [PATCH v6 06/10] io_uring/rw: add support to send metadata along
- with read/write
-Message-ID: <ZyKghoCwbOjAxXMz@kbusch-mbp.dhcp.thefacebook.com>
-References: <20241030180112.4635-1-joshi.k@samsung.com>
- <CGME20241030181013epcas5p2762403c83e29c81ec34b2a7755154245@epcas5p2.samsung.com>
- <20241030180112.4635-7-joshi.k@samsung.com>
+	s=arc-20240116; t=1730322955; c=relaxed/simple;
+	bh=b4DMBOXHUsK1o4aXcsj1mIAeGTxICrtIEl/X4S9aMmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bHDrbOg1zgxwklBlhjKOOpWYXUdW53D94rbLrqLLqYzNc4crSgTdDrYc5JdGqNB4qZyq3CKpzvSkJzZYfEJd1byRhRrEhWo/e51Utvql2lAkMb9HmivOaeWKTJS/evZG590idyT+e1xV15JPuLAEHa+J27XphONGUppgeUu2xbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=zox8MNWg; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Xf0KN5GvpzlgMW3;
+	Wed, 30 Oct 2024 21:15:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1730322949; x=1732914950; bh=b4DMBOXHUsK1o4aXcsj1mIAe
+	GTxICrtIEl/X4S9aMmM=; b=zox8MNWgMID5qKcjZdijr0DcLrVbE5phS46vpu24
+	wrFxrcFoUCjZa2CDHmNRcfuOEvopYpTxUde44SD4j7i5fjKckz2WLPCYhxf96jYt
+	uEs30sP8COFtc0ARm32FHRAGZeHmslxs5iW3+2aJs8fTPL+mwdS5ROGgpDsgkYyd
+	flVIYEV1A1/kLmVGL2GYC/9Ur4dqBcVHn3gxyPdUjiuWDdGFwRC48zT8oShGWppD
+	F7f2l73E52JY4WcXgOKj5lpGAOglQ4k/2+r8uABoqeE8J4/GNyUQvcDI1a2UXZOh
+	iQnyofz45pN9aPpmgSsxjLqATqaSJ0eCNuHT6JgMPgawEQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Khb2TIHA1NgX; Wed, 30 Oct 2024 21:15:49 +0000 (UTC)
+Received: from [IPV6:2a00:79e0:2e14:8:dff5:f005:4483:ce42] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Xf0KH031BzlgMVx;
+	Wed, 30 Oct 2024 21:15:46 +0000 (UTC)
+Message-ID: <4ee729b7-a3c5-493c-bcda-feb3e9aab5ff@acm.org>
+Date: Wed, 30 Oct 2024 14:15:45 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030180112.4635-7-joshi.k@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv10 4/9] block: allow ability to limit partition write
+ hints
+To: Keith Busch <kbusch@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+ linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-scsi@vger.kernel.org, io-uring@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, joshi.k@samsung.com, javier.gonz@samsung.com
+References: <20241029151922.459139-1-kbusch@meta.com>
+ <20241029151922.459139-5-kbusch@meta.com>
+ <a1ff3560-4072-4ecf-8501-e353b1c98bf0@acm.org>
+ <20241030044658.GA32344@lst.de>
+ <ZyKTACiLUsCEcJ-R@kbusch-mbp.dhcp.thefacebook.com>
+ <7f63ba9b-856b-4ca5-b864-de1b8f87d658@acm.org>
+ <ZyKY_xdxcM2aSMow@kbusch-mbp.dhcp.thefacebook.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <ZyKY_xdxcM2aSMow@kbusch-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 30, 2024 at 11:31:08PM +0530, Kanchan Joshi wrote:
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 024745283783..48dcca125db3 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -105,6 +105,22 @@ struct io_uring_sqe {
->  		 */
->  		__u8	cmd[0];
->  	};
-> +	/*
-> +	 * If the ring is initialized with IORING_SETUP_SQE128, then
-> +	 * this field is starting offset for 64 bytes of data. For meta io
-> +	 * this contains 'struct io_uring_meta_pi'
-> +	 */
-> +	__u8	big_sqe[0];
-> +};
-> +
-> +/* this is placed in SQE128 */
-> +struct io_uring_meta_pi {
-> +	__u16		pi_flags;
-> +	__u16		app_tag;
-> +	__u32		len;
-> +	__u64		addr;
-> +	__u64		seed;
-> +	__u64		rsvd[2];
->  };
+On 10/30/24 1:37 PM, Keith Busch wrote:
+> But if by "not atomic", if you're just saying we need a barrier on the
+> bitmap_copy, like smp_mb__after_atomic(), then yeah, I see that's
+> probably appropriate here.
 
-On the previous version, I was more questioning if it aligns with what
-Pavel was trying to do here. I didn't quite get it, so I was more
-confused than saying it should be this way now.
+smp_mb__after_atomic() follows atomic operations. bitmap_copy() does not
+use any kind of atomic operation.
 
-But I personally think this path makes sense. I would set it up just a
-little differently for extended sqe's so that the PI overlays a more
-generic struct that other opcodes might find a way to use later.
-Something like:
+I'm wondering whether introducing a variant of bitmap_copy() that uses
+WRITE_ONCE() or smp_store_release() would be appropriate.
 
-struct io_uring_sqe_ext {
-	union {
-		__u32	rsvd0[8];
-		struct {
-			__u16		pi_flags;
-			__u16		app_tag;
-			__u32		len;
-			__u64		addr;
-			__u64		seed;
-		} rw_pi;
-	};
-	__u32	rsvd1[8];
-};
-  
-> @@ -3902,6 +3903,9 @@ static int __init io_uring_init(void)
->  	/* top 8bits are for internal use */
->  	BUILD_BUG_ON((IORING_URING_CMD_MASK & 0xff000000) != 0);
->  
-> +	BUILD_BUG_ON(sizeof(struct io_uring_meta_pi) >
-> +		     sizeof(struct io_uring_sqe));
+Thanks,
 
-Then this check would become:
+Bart.
 
-	BUILD_BUG_ON(sizeof(struct io_uring_sqe_ext) != sizeof(struct io_uring_sqe));
+
 

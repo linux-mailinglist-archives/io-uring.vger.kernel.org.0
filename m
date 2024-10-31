@@ -1,73 +1,75 @@
-Return-Path: <io-uring+bounces-4285-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4286-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F0E9B8534
-	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 22:22:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D583F9B8539
+	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 22:24:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 917FEB20E01
-	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 21:22:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04DBD1C20B74
+	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 21:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AAE1BB6B5;
-	Thu, 31 Oct 2024 21:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2A8175D35;
+	Thu, 31 Oct 2024 21:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Dj2ZIDJP"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TXSF1sx/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412CE1CCB36
-	for <io-uring@vger.kernel.org>; Thu, 31 Oct 2024 21:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F4C45BE3
+	for <io-uring@vger.kernel.org>; Thu, 31 Oct 2024 21:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730409751; cv=none; b=Ayroz16CI7uy2FLS8hejKClM9UQqgsym684gNmfD9klQFz26HxX4kteOLb/ooTxKxLHEkVt3sgcvFgGaDVhHoPkBps93NSRIzd0MT/HO+bDzQkspCoxMbGQkyOnXVwjMI2AElqZLiOoa6axCTWYtMqC1ZGT2LPSSg/TBrFXfbUs=
+	t=1730409859; cv=none; b=VwWMs+/LVETrzViC1ivZ0X67+mlSH0uZhfz7Vec9pxp3ubGnshJ3Ms90lDl9EuYqMiC2LL0lIaL+wftD4f5o8448X9MTgTCB3fxzUejHH3x+BgJPIyM8J1et98VLmlxGdnKI0NnxL4lr2Gnndj1yeVEKcqW3Ab8kWqz2wB2VNqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730409751; c=relaxed/simple;
-	bh=NmQ3w1C9gDlAiSnZ4/aCN1riWjwU0i9ohYSPRwof9tk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=EitbAHwmdwYOISZepcIvKwQwX4d2vhiQCOrL1bOCetWU975KgoSd4mCiKAGlcxbGRC5y8o16Bh8qdajfpCeCjQPXqDuZW1J/NuxVogMZ+qeLMoCzS3k0i0hpW2Vy3oTVpG7WGaoJDTr0VyV94pjiTTN9MUTIQsGiAz6t8AEgpV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Dj2ZIDJP; arc=none smtp.client-ip=209.85.215.182
+	s=arc-20240116; t=1730409859; c=relaxed/simple;
+	bh=MhymX7A3Uu+ithNvsEI/GOxTZ8CxLwV6KjVAApSjZNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SF/cDT7UHECn8ZVvhsN2GKxnv2+QmnA6pDj5/QDqUMXnVDhccYhkF4pFYUVlN+9Ct33htBXpeqDL6/7UI7bAgcyoDsEfUCTMyDk5E4e1Zg7GAePANt8ZME4TaiQE1oqhxj2LP4eSdBXg7G2EGMCVJIyeuPmwg8zPM9x7jjk0v3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TXSF1sx/; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso960214a12.3
-        for <io-uring@vger.kernel.org>; Thu, 31 Oct 2024 14:22:21 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e49ad46b1so1061704b3a.1
+        for <io-uring@vger.kernel.org>; Thu, 31 Oct 2024 14:24:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730409740; x=1731014540; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jbBqtqOWDZuGi35NiFMLhW1ZLss7CzMedglYfe+eWdA=;
-        b=Dj2ZIDJPlaXFmyoSqcm3SFfriIJ1SUUM4VmBZSUmBCN99Y9/LXqXrdP3zCqCMuzzMR
-         K0Cm5CGKtFaxozp+ec2VVGrmEvi5KB+/KTcgLIlC6ABNJSy8O48qR1oQjIERR+yuoR+t
-         w/7E6fqdvsaK3VaHvZJGv9TXxRoY+ACYrGC/p/IjM5jzjnzUAAcq8yS10VBiQk28+3Z+
-         AA6dG7NV70zr2XVDHudX6VRHWZUrRyFYs+sadmAwg5AOFSJdSXlsJDbdMTukYB3cYY89
-         Vl9plEgKYDYi7nJDrRk/1yRcIlgj+ndali7sOQKeWts+kEiKDxz9vD0Nnc5ru/EovDSE
-         AkWQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730409852; x=1731014652; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O7/HnUXDg/vXS33ST6qzChVVjLK4LIVcVbe/7leAtlw=;
+        b=TXSF1sx/1BpeUfqvmD7t00/inVT8As8xGu4GXUjJwH9ZTtfSWbsQqXQ5r+LwiRQBSM
+         WPRTJvnyP1YnZQo7xYUMM9wOOc9lz/I2WkLofifsyxADyNYwd25+Cuh6A9b+38jCs9PR
+         qH4Z41J/FQRiCon1hKYZ84N/V6fyNN5F+xbc3mC3eNWrz/ypzqOW3fg6NaJ9YzIj63f4
+         vNRSwDiVdLfORZTgbzwm94//1EIM9NQnK1RZO/OlFcKyLiWFQa0R412qy57Rx5+f+9QW
+         jAxK8PUgvJmueehoHekWC2CAXOhIGsnM2Hdd/PmxxkW6BkGqg7CsaGT4RcTJLuBi809l
+         rrkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730409740; x=1731014540;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jbBqtqOWDZuGi35NiFMLhW1ZLss7CzMedglYfe+eWdA=;
-        b=J4uIeDivrExSyis6IInloU8iuTZOCHhWWobYNA/dWD3wLtkslIrWe+qGI5B7pVUngD
-         9fhlYmDyEMvIwASsFOxMnNzAKCKRcEOX2YF/5fw8f9A5xCQz0Zu6qAzrO9ys/mtUgWji
-         +UtwOnkrJV4EA76+6m2qs3d8z/1VoTF70cMVrVVF6Vas1gXUwErlFDLojFqxErew3uVi
-         hUsTGmSH01j2B201iRI6g4X71opDL3ZaUbTwtBXHUpg3w+9dc7mkWqErMV8jEGFWIlnV
-         pI8Lf7v4r67V6/DdzPpCuhMo1NucJwLP7sg20rzctxxTWd+zV9XtPNggkcvvgFNFsvv8
-         UAfw==
-X-Gm-Message-State: AOJu0Yx3uVN4HBOUyvg+5vexoDKM0ohYz1f/1YQ+P8iR491Ei8PPtp+9
-	IGDU4JcC3XGsgCCT4HoVjA+2Bg+xi+sgBXVrrtXShU8t65JJXgLh4SGA0y3YNCn6/sX+JJSMnOR
-	B/Dg=
-X-Google-Smtp-Source: AGHT+IE2nwznm9PjHypVCx2DXziUrKShAb3IEGrIr9ZocPX3Ud9nE7mThWO6pN0yB1Ik4M4F3zfBQg==
-X-Received: by 2002:a17:90b:2e43:b0:2e0:a77e:8305 with SMTP id 98e67ed59e1d1-2e94c533088mr1721501a91.39.1730409740411;
-        Thu, 31 Oct 2024 14:22:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730409852; x=1731014652;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O7/HnUXDg/vXS33ST6qzChVVjLK4LIVcVbe/7leAtlw=;
+        b=tHsbQ5CnKEFJaqKjRtmImWFjBtQhfZ2+rIsjZact2jBWELTJ8induZnxgGqJSNMZJM
+         76i+KCcTOY5M+DzMICTGMaSK+w4kvYG018C7pksV/DcYRkiekpc3NPLpv87amL5bjXUr
+         pKU02rGMynfJZJeJZRI6/7UF2nMgXVNV0Lnwg5XIIDoC78VGtE3KLhgG1P3xhXzq9DFC
+         6i1I3ztS2rxLhr6vzDxqelD3jnKelFleSY4IaMOlVZIYozdr33yr6zBOD0KYPgEPQdgv
+         0gg8irMWaTzpgrRd8fBVeSDdtUzQFS7cH93JTUS16na5B0xlTcxKQfOgTeEK4oG9CVWw
+         OjEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXmeWqDWwCoA28tw44aJn6t0BSSSFCrbwvCna6tEy0MvmNaxy/Nx55NzAIdkC7u8ftS7P3PaNCaQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbM2a+qkJLVO8d0OF6PAzGLGeqmLFixdjjoXO7x13EBqc+9/j7
+	T/OEy6Q7X9KMjgyBS9A2lmkpqxtfVE6/M7B/Teml0r1n7nTnXERL89We4P41bqCw0ez5cGaIyDz
+	MXCU=
+X-Google-Smtp-Source: AGHT+IGHH/FzYsWgflbxII3YBb1w6beQMVxD7diTb0MInLD2F/tUVezebR7ZK6ylxwzrc8K+RMDbBg==
+X-Received: by 2002:a05:6a00:988:b0:71e:6ef2:6c11 with SMTP id d2e1a72fcca58-72062f874bemr29839614b3a.9.1730409852429;
+        Thu, 31 Oct 2024 14:24:12 -0700 (PDT)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93dac02b8sm1629955a91.28.2024.10.31.14.22.19
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b8d02sm1580960b3a.43.2024.10.31.14.24.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 14:22:19 -0700 (PDT)
-Message-ID: <e60a3dd3-3a74-4181-8430-90c106a202f6@kernel.dk>
-Date: Thu, 31 Oct 2024 15:22:18 -0600
+        Thu, 31 Oct 2024 14:24:11 -0700 (PDT)
+Message-ID: <5d99696d-bc46-421c-b8df-c64dda483215@kernel.dk>
+Date: Thu, 31 Oct 2024 15:24:10 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -75,204 +77,75 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V8 4/7] io_uring: support SQE group
+To: Ming Lei <ming.lei@redhat.com>, io-uring@vger.kernel.org,
+ Pavel Begunkov <asml.silence@gmail.com>
+Cc: linux-block@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>,
+ Akilesh Kailash <akailash@google.com>, Kevin Wolf <kwolf@redhat.com>
+References: <20241025122247.3709133-1-ming.lei@redhat.com>
+ <20241025122247.3709133-5-ming.lei@redhat.com>
 Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-Cc: Ming Lei <ming.lei@redhat.com>, Pavel Begunkov <asml.silence@gmail.com>
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH RFC] io_uring: extend io_uring_sqe flags bits
+In-Reply-To: <20241025122247.3709133-5-ming.lei@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-In hindsight everything is clearer, but it probably should've been known
-that 8 bits of ->flags would run out sooner than later. Rather than
-gobble up the last bit for a random use case, add a bit that controls
-whether or not ->personality is used as a flags2 argument. If that is
-the case, then there's a new IOSQE2_PERSONALITY flag that tells io_uring
-which personality field to read.
+On 10/25/24 6:22 AM, Ming Lei wrote:
+> SQE group is defined as one chain of SQEs starting with the first SQE that
+> has IOSQE_SQE_GROUP set, and ending with the first subsequent SQE that
+> doesn't have it set, and it is similar with chain of linked SQEs.
+> 
+> Not like linked SQEs, each sqe is issued after the previous one is
+> completed. All SQEs in one group can be submitted in parallel. To simplify
+> the implementation from beginning, all members are queued after the leader
+> is completed, however, this way may be changed and leader and members may
+> be issued concurrently in future.
+> 
+> The 1st SQE is group leader, and the other SQEs are group member. The whole
+> group share single IOSQE_IO_LINK and IOSQE_IO_DRAIN from group leader, and
+> the two flags can't be set for group members. For the sake of
+> simplicity, IORING_OP_LINK_TIMEOUT is disallowed for SQE group now.
+> 
+> When the group is in one link chain, this group isn't submitted until the
+> previous SQE or group is completed. And the following SQE or group can't
+> be started if this group isn't completed. Failure from any group member will
+> fail the group leader, then the link chain can be terminated.
+> 
+> When IOSQE_IO_DRAIN is set for group leader, all requests in this group and
+> previous requests submitted are drained. Given IOSQE_IO_DRAIN can be set for
+> group leader only, we respect IO_DRAIN by always completing group leader as
+> the last one in the group. Meantime it is natural to post leader's CQE
+> as the last one from application viewpoint.
+> 
+> Working together with IOSQE_IO_LINK, SQE group provides flexible way to
+> support N:M dependency, such as:
+> 
+> - group A is chained with group B together
+> - group A has N SQEs
+> - group B has M SQEs
+> 
+> then M SQEs in group B depend on N SQEs in group A.
+> 
+> N:M dependency can support some interesting use cases in efficient way:
+> 
+> 1) read from multiple files, then write the read data into single file
+> 
+> 2) read from single file, and write the read data into multiple files
+> 
+> 3) write same data into multiple files, and read data from multiple files and
+> compare if correct data is written
+> 
+> Also IOSQE_SQE_GROUP takes the last bit in sqe->flags, but we still can
+> extend sqe->flags with io_uring context flag, such as use __pad3 for
+> non-uring_cmd OPs and part of uring_cmd_flags for uring_cmd OP.
 
-While this isn't the prettiest, it does allow extending with 15 extra
-flags, and retains being able to use personality with any kind of
-command. The exception is uring cmd, where personality2 will overlap
-with the space set aside for SQE128. If they really need that, then that
-would have to be done via a uring cmd flag.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-Was toying with this idea to allow for some more flags, I just don't
-like grabbing the last flag and punting the problem both to the future
-and to "somebody elses problem". Here's one way we could do it, without
-rewriting the entire sqe into a v2. Which does need to happen at some
-point, but preferably without pressing issues around.
-
-I don't _hate_ it, there's really not a great way to do this. And I
-do think personality is the least used of all the things, and probably
-will never get used with uring_cmd. But if it had to work for that,
-then there are certainly ways to pass in that info. Not that we
-ever would...
-
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 77fd508d043a..8a45bf6a68ca 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -433,6 +433,7 @@ struct io_tw_state {
- };
- 
- enum {
-+	/* 8 bits of sqe->flags */
- 	REQ_F_FIXED_FILE_BIT	= IOSQE_FIXED_FILE_BIT,
- 	REQ_F_IO_DRAIN_BIT	= IOSQE_IO_DRAIN_BIT,
- 	REQ_F_LINK_BIT		= IOSQE_IO_LINK_BIT,
-@@ -440,9 +441,13 @@ enum {
- 	REQ_F_FORCE_ASYNC_BIT	= IOSQE_ASYNC_BIT,
- 	REQ_F_BUFFER_SELECT_BIT	= IOSQE_BUFFER_SELECT_BIT,
- 	REQ_F_CQE_SKIP_BIT	= IOSQE_CQE_SKIP_SUCCESS_BIT,
-+	REQ_F_FLAGS2_BIT	= IOSQE_FLAGS2_BIT,
- 
--	/* first byte is taken by user flags, shift it to not overlap */
--	REQ_F_FAIL_BIT		= 8,
-+	/* 16 bits of sqe->flags2 */
-+	REQ_F_PERSONALITY_BIT	= IOSQE2_PERSONALITY_BIT + 8,
-+
-+	/* first byte taken by sqe->flags, next 2 by sqe->flags2 */
-+	REQ_F_FAIL_BIT		= 24,
- 	REQ_F_INFLIGHT_BIT,
- 	REQ_F_CUR_POS_BIT,
- 	REQ_F_NOWAIT_BIT,
-@@ -492,6 +497,10 @@ enum {
- 	REQ_F_BUFFER_SELECT	= IO_REQ_FLAG(REQ_F_BUFFER_SELECT_BIT),
- 	/* IOSQE_CQE_SKIP_SUCCESS */
- 	REQ_F_CQE_SKIP		= IO_REQ_FLAG(REQ_F_CQE_SKIP_BIT),
-+	/* ->flags2 is valid */
-+	REQ_F_FLAGS2		= IO_REQ_FLAG(REQ_F_FLAGS2_BIT),
-+
-+	REQ_F_PERSONALITY	= IO_REQ_FLAG(REQ_F_PERSONALITY_BIT),
- 
- 	/* fail rest of links */
- 	REQ_F_FAIL		= IO_REQ_FLAG(REQ_F_FAIL_BIT),
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index ce58c4590de6..c7c3ba69ffdd 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -82,8 +82,12 @@ struct io_uring_sqe {
- 		/* for grouped buffer selection */
- 		__u16	buf_group;
- 	} __attribute__((packed));
--	/* personality to use, if used */
--	__u16	personality;
-+	union {
-+		/* personality to use, if used */
-+		__u16	personality;
-+		/* 2nd set of flags, can't be used with personality */
-+		__u16	flags2;
-+	};
- 	union {
- 		__s32	splice_fd_in;
- 		__u32	file_index;
-@@ -99,11 +103,17 @@ struct io_uring_sqe {
- 			__u64	__pad2[1];
- 		};
- 		__u64	optval;
--		/*
--		 * If the ring is initialized with IORING_SETUP_SQE128, then
--		 * this field is used for 80 bytes of arbitrary command data
--		 */
--		__u8	cmd[0];
-+		struct {
-+			/*
-+			 * If the ring is initialized with IORING_SETUP_SQE128,
-+			 * then this field is used for 80 bytes of arbitrary
-+			 * command data
-+			 */
-+			__u8	cmd[0];
-+
-+			/* personality to use, if IOSQE2_PERSONALITY set */
-+			__u16	personality2;
-+		};
- 	};
- };
- 
-@@ -124,6 +134,11 @@ enum io_uring_sqe_flags_bit {
- 	IOSQE_ASYNC_BIT,
- 	IOSQE_BUFFER_SELECT_BIT,
- 	IOSQE_CQE_SKIP_SUCCESS_BIT,
-+	IOSQE_FLAGS2_BIT,
-+};
-+
-+enum io_uring_sqe_flags2_bit {
-+	IOSQE2_PERSONALITY_BIT,
- };
- 
- /*
-@@ -143,6 +158,14 @@ enum io_uring_sqe_flags_bit {
- #define IOSQE_BUFFER_SELECT	(1U << IOSQE_BUFFER_SELECT_BIT)
- /* don't post CQE if request succeeded */
- #define IOSQE_CQE_SKIP_SUCCESS	(1U << IOSQE_CQE_SKIP_SUCCESS_BIT)
-+/* ->flags2 is valid */
-+#define IOSQE_FLAGS2		(1U << IOSQE_FLAGS2_BIT)
-+
-+/*
-+ * sqe->flags2
-+ */
-+ /* if set, sqe->personality2 contains personality */
-+#define IOSQE2_PERSONALITY	(1U << IOSQE2_PERSONALITY_BIT)
- 
- /*
-  * io_uring_setup() flags
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 1149fba20503..c2bbadd5640d 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -109,7 +109,8 @@
- 			  IOSQE_IO_HARDLINK | IOSQE_ASYNC)
- 
- #define SQE_VALID_FLAGS	(SQE_COMMON_FLAGS | IOSQE_BUFFER_SELECT | \
--			IOSQE_IO_DRAIN | IOSQE_CQE_SKIP_SUCCESS)
-+			IOSQE_IO_DRAIN | IOSQE_CQE_SKIP_SUCCESS | \
-+			IOSQE_FLAGS2 | IOSQE2_PERSONALITY)
- 
- #define IO_REQ_CLEAN_FLAGS (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP | \
- 				REQ_F_POLLED | REQ_F_INFLIGHT | REQ_F_CREDS | \
-@@ -2032,6 +2033,8 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	req->opcode = opcode = READ_ONCE(sqe->opcode);
- 	/* same numerical values with corresponding REQ_F_*, safe to copy */
- 	sqe_flags = READ_ONCE(sqe->flags);
-+	if (sqe_flags & REQ_F_FLAGS2)
-+		sqe_flags |= (__u32) READ_ONCE(sqe->flags2) << 8;
- 	req->flags = (__force io_req_flags_t) sqe_flags;
- 	req->cqe.user_data = READ_ONCE(sqe->user_data);
- 	req->file = NULL;
-@@ -2095,8 +2098,12 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		}
- 	}
- 
--	personality = READ_ONCE(sqe->personality);
--	if (personality) {
-+	personality = 0;
-+	if (req->flags & REQ_F_PERSONALITY)
-+		personality = READ_ONCE(sqe->personality2);
-+	else if (!(req->flags & REQ_F_FLAGS2))
-+		personality = READ_ONCE(sqe->personality);
-+	if (unlikely(personality)) {
- 		int ret;
- 
- 		req->creds = xa_load(&ctx->personalities, personality);
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 535909a38e76..ee04e0c48672 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -200,7 +200,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
- 
--	if (sqe->__pad1)
-+	if (sqe->__pad1 || req->flags & REQ_F_PERSONALITY)
- 		return -EINVAL;
- 
- 	ioucmd->flags = READ_ONCE(sqe->uring_cmd_flags);
+Did you run the liburing tests with this? I rebased it on top of the
+flags2 patch I just sent out, and it fails defer-taskrun and crashes
+link_drain. Don't know if others fail too. I'll try the original one
+too, but nothing between those two should make a difference. It passes
+just fine with just the flags2 patch, so I'm a bit suspicious this patch
+is the issue.
 
 -- 
 Jens Axboe
-
 

@@ -1,74 +1,75 @@
-Return-Path: <io-uring+bounces-4266-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4267-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FBFA9B7BEB
-	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 14:42:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A1B9B7C31
+	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 14:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F9D51F21FB1
-	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 13:42:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57851B20EEE
+	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 13:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1576D19DF75;
-	Thu, 31 Oct 2024 13:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3518219DF4A;
+	Thu, 31 Oct 2024 13:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aioUJphG"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2cnny9S1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B8113D886;
-	Thu, 31 Oct 2024 13:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D7B19C56F
+	for <io-uring@vger.kernel.org>; Thu, 31 Oct 2024 13:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730382163; cv=none; b=pzCLiM55C7tJfs7lFkeaKzAaWqwptUa2oH4wcE85iH716dRujDIx/YlQUlqybBNY5ZV4zkp/0fb3jXcj8KmFJ2ISEvq4xcZ1CISlwXv9/Wvmx9Oy65Y7m6ZQjoxyGF+DXJNtA7gOc0hRdol1NH4wgaHeKNa7tLLO08KQ7Ce5l88=
+	t=1730382865; cv=none; b=lwat+havS8pVba7KJiNbI9ZLu/xQ80rI0PpveaTS5maTMYVnAFnIxAe1KqwmgkTGKDWzdFLSwg1cFAiWN8TlAMbXGycnd2GBl8Rxq8k/V1FmbJXAm0IlVw9n8jAwbeBCoUsjP/BIoLGAlhsVyZe2YlTAe7W8HmqhfSBfRu9SLVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730382163; c=relaxed/simple;
-	bh=CGL+7TVFEN775o/FDiZ1zGZhlsCfi6m3O5t2MrhJHRU=;
+	s=arc-20240116; t=1730382865; c=relaxed/simple;
+	bh=BcdNO+B1i6XayXfKbuKMWxEl8nqfUbzJtp9PX/+EK4Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f2zaw5dSj3eTerpv0LH0HRNllsjp2WqvCVcfP1baCquNd2Ey/Zc4PfYr//gNk9vberzyevA7YTDqsXLwpJv2OvRsPDcYLwiwAEvUKzPzHKQDPaYIfTn3CmCzkIynT/7LqhgY01rSGqpriguBRoAix7M1rM2pQV8Pt/wDgcIRrMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aioUJphG; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c94c4ad9d8so1249186a12.2;
-        Thu, 31 Oct 2024 06:42:40 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=ADZr+hKVn9wy+ZvaQXRmJnd7rwuCzLHbq0l5e9ZeN+/Z/o9YN0Oe5zkHpYHsVHY7Gno557wdmj4eNRIk6NJXZZ5usvlFJWiT6rMiifsHmxyG5AIlJ6UzCRl7on4l50uFqxTPT3pcNN9TvwuLgj/AcyM0E7wgWRdHcPnS1ZeK1bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2cnny9S1; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-83aac75fcceso32048139f.0
+        for <io-uring@vger.kernel.org>; Thu, 31 Oct 2024 06:54:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730382159; x=1730986959; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730382861; x=1730987661; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pX4zcsVxZGwq44kVRTBXx/XCzgKmdkYFkLop4gp3280=;
-        b=aioUJphGDUHk1Jhotjx7chQH26uforb/h3zwu20M2aQdjn7ty4AfQq3o9H98cj8sU+
-         858OwKeoNajshiE2o3XaQekyycXCO5q9TWjHK55/i9PivEMpOMSuFAdyj6TVrCW9BbtB
-         D5D/+zYfTzSnXouMVWAjpYvbcma7wrOrVPrd6ZFGM+sB3SLV59CFCjAXy6Qyh79YS+Hu
-         tknrDd24ArjVjwsmHFaqruZiYm98INLyMMTjoXrKbmFNFGordrTGj/Xq05KgYSDZDgCJ
-         pO1ZMhc2pyUUtkvubcaIvpp8CJdZB2AfwOtRb7c6fZ9v3p3HjsPV29q1/yKrqKV6VArr
-         Amlg==
+        bh=7Ozykn063MQ6cJTxtGABB4doGntoFAE1h7Gboqv1VRo=;
+        b=2cnny9S1+XNOUNPgLurEed2hf6J+QYatCfm8qHForxudHC+CIe4PZd+elq1sDbwn8j
+         V2EoIANu2FjPlIhkHJqyT00y41pM1vl44kp+5h0b3hJgAhEKcYdmNX2+E0ewY8WrAGel
+         PTNPAkGRE9IhwmR3+C2BIyHy8biCLWv4hFutOfmJE747vZWJJr/2H/hbpX1BNyoujxt+
+         tIgKASCGbz46HFP0d9RCkbSYfe1G4uanLLcsehwgg605Q4gSR/3+xuUMyZybNTDmpe1I
+         8nbQMKB6cER23hoqXMdlrLIJo/YSjRtFr8HaHyqR3cTl2aiO/w5HEuou0ImoEIUSefyC
+         Zb5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730382159; x=1730986959;
+        d=1e100.net; s=20230601; t=1730382861; x=1730987661;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pX4zcsVxZGwq44kVRTBXx/XCzgKmdkYFkLop4gp3280=;
-        b=bId/hmMvN1RhGMW/KfRG40YCGSeeNgADOPd2Ysds/8TmtyLb8e/GO5hp0UJQqr/YbE
-         ZMuKOn4oXd95kRfhdbk4u2zdZJSkrVwJ7xeS+vzUXv4nWVEG4+SUVdJdTizBlKOUfm+C
-         mjSw5m+9wROjeRiTe0YkKATndXlZJuadMUh0hBdNvrE/KvVFFyAnDf9CXMaA1Yf4r9Yr
-         slVEKBwORcLvYRXKGH1SAMDPhssQtiMmartGRJjJuyXl+b8BETEFE7oQzA0gvHBPaTgx
-         dNXxC1guJQsaZxQeEckcxZ/cMKirX9Ubd0Py5Uewj97jwo0pmstv9xniB5WipZzHRBLe
-         X+Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCWY5o6/jHerwKv1LTd4mtKksF8VftGv3HXj1cZijXncPufyEXTah9hjsXlr4eiU+wsHAi5Yv2Ybc4ZMWA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlBTXFMcfqBFa5/FFm7y75iC4kTh+N2fhqkxOZAaHy4mkt1I+U
-	4uabZEAmAFrDwHgxnb07gkrWrMa9M31Soi7hDUdmcwFA8S2I6koD
-X-Google-Smtp-Source: AGHT+IEj5vjkJGn4MjOBNZR5esb7mclsiAhN+/s7YqOrtDD2u/Ui9R49brusCHyMAM0ED7Dv61A1Vg==
-X-Received: by 2002:a17:906:c113:b0:a9a:5e3a:641d with SMTP id a640c23a62f3a-a9e50cb0401mr339363266b.59.1730382158840;
-        Thu, 31 Oct 2024 06:42:38 -0700 (PDT)
-Received: from [192.168.42.141] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c56acsm70988966b.77.2024.10.31.06.42.38
+        bh=7Ozykn063MQ6cJTxtGABB4doGntoFAE1h7Gboqv1VRo=;
+        b=mvzKimoxxgBniY/bHG3r8drKUkXEWbxDqQ5si7az1kkNNqH75JbrtJBAfwAOp9yd8v
+         iRDTsBKLdmBfXwNsJTWAYrgeQpY4d1efS0APvDh+d7MLHBukEcYyZR9X5dhRfPTbF1sI
+         PRyqLdPEIcjAR3BrGbFY6qhacf2TYcldf+vmB6TRrFcI3ayi3WEuG1GsfxbxyyH+4X4J
+         xvwo7cLAsgFGd8GTeVa9FFrfeaMSJ5MoDdpQkkjvbkKnRaXmkNKXRozMoKoKGJhjrUpk
+         /PzRv72JR/r2sCWIyEc0nczO8xmF8S/egmfVX2anpaTNvnnn9svnv3E2eGYloXS7oXyi
+         qKtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6DkwYsrX4BrNURTwBaqxjIe2jILlOcSLDpx6cPe0UllbBKnKdl+sko1PCru+/EZLcrqhz4ScOaQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YygJeptfiXP4JDF9uG5WJOPUGDfi4CQKg7ZwuJiuga2c+2fPiPP
+	b6p+e8XR2MXs6RUv7JByXeMCXtdcyHftAeuJNC3juBudJqL0pFYk2jCRO03YFkLIsIg+PrJFYSf
+	iZgg=
+X-Google-Smtp-Source: AGHT+IHuIgNYM1EOIIqsTsyCyOpwGGFkgec5hrXe4ft8QGwRusQ1c+GSIyG5htAvlVjSSjfxjH4EhQ==
+X-Received: by 2002:a05:6602:2c10:b0:83a:bd82:77f with SMTP id ca18e2360f4ac-83b1c468599mr2219510939f.8.1730382860527;
+        Thu, 31 Oct 2024 06:54:20 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de049ba80asm287603173.156.2024.10.31.06.54.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 06:42:38 -0700 (PDT)
-Message-ID: <05a899a1-7edd-45a1-8b1f-d29eaf99c194@gmail.com>
-Date: Thu, 31 Oct 2024 13:42:55 +0000
+        Thu, 31 Oct 2024 06:54:19 -0700 (PDT)
+Message-ID: <a9dec476-59ec-49c3-a3bd-8f05ccc61b19@kernel.dk>
+Date: Thu, 31 Oct 2024 07:54:19 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,111 +77,87 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V8 0/8] io_uring: support sqe group and leased group kbuf
-To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, linux-block@vger.kernel.org,
- Uday Shankar <ushankar@purestorage.com>,
- Akilesh Kailash <akailash@google.com>
-References: <15b9b1e0-d961-4174-96ed-5a6287e4b38b@gmail.com>
- <d859c85c-b7bf-4673-8c77-9d7113f19dbb@kernel.dk>
- <bc44d3c0-41e8-425c-957f-bad70aedcc50@kernel.dk>
- <e76d9742-5693-4057-b925-3917943c7441@kernel.dk>
- <f51e50c8-271e-49b6-b3e1-a63bf61d7451@kernel.dk> <ZyGT3h5jNsKB0mrZ@fedora>
- <674e8c3c-1f2c-464a-ad59-da3d00104383@kernel.dk> <ZyGjID-17REc9X3e@fedora>
- <ZyGx4JBPdU4VlxlZ@fedora> <d986221d-7399-4487-9c28-5d6f953510cd@kernel.dk>
- <ZyLxJdn7bboZMAcs@fedora>
+Subject: Re: [bug report] io_uring: fsfreeze deadlocks when performing
+ O_DIRECT writes
+To: Peter Mann <peter.mann@sh.cz>
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org
+References: <38c94aec-81c9-4f62-b44e-1d87f5597644@sh.cz>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZyLxJdn7bboZMAcs@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <38c94aec-81c9-4f62-b44e-1d87f5597644@sh.cz>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/31/24 02:53, Ming Lei wrote:
-> On Wed, Oct 30, 2024 at 07:20:48AM -0600, Jens Axboe wrote:
->> On 10/29/24 10:11 PM, Ming Lei wrote:
->>> On Wed, Oct 30, 2024 at 11:08:16AM +0800, Ming Lei wrote:
->>>> On Tue, Oct 29, 2024 at 08:43:39PM -0600, Jens Axboe wrote:
->>>
->>> ...
->>>
->>>>> You could avoid the OP dependency with just a flag, if you really wanted
->>>>> to. But I'm not sure it makes a lot of sense. And it's a hell of a lot
->>>>
->>>> Yes, IO_LINK won't work for submitting multiple IOs concurrently, extra
->>>> syscall makes application too complicated, and IO latency is increased.
->>>>
->>>>> simpler than the sqe group scheme, which I'm a bit worried about as it's
->>>>> a bit complicated in how deep it needs to go in the code. This one
->>>>> stands alone, so I'd strongly encourage we pursue this a bit further and
->>>>> iron out the kinks. Maybe it won't work in the end, I don't know, but it
->>>>> seems pretty promising and it's soooo much simpler.
->>>>
->>>> If buffer register and lookup are always done in ->prep(), OP dependency
->>>> may be avoided.
->>>
->>> Even all buffer register and lookup are done in ->prep(), OP dependency
->>> still can't be avoided completely, such as:
->>>
->>> 1) two local buffers for sending to two sockets
->>>
->>> 2) group 1: IORING_OP_LOCAL_KBUF1 & [send(sock1), send(sock2)]
->>>
->>> 3) group 2: IORING_OP_LOCAL_KBUF2 & [send(sock1), send(sock2)]
->>>
->>> group 1 and group 2 needs to be linked, but inside each group, the two
->>> sends may be submitted in parallel.
->>
->> That is where groups of course work, in that you can submit 2 groups and
->> have each member inside each group run independently. But I do think we
->> need to decouple the local buffer and group concepts entirely. For the
->> first step, getting local buffers working with zero copy would be ideal,
->> and then just live with the fact that group 1 needs to be submitted
->> first and group 2 once the first ones are done.
+On 10/31/24 5:20 AM, Peter Mann wrote:
+> Hello,
 > 
-> IMHO, it is one _kernel_ zero copy(_performance_) feature, which often imply:
+> it appears that there is a high probability of a deadlock occuring when performing fsfreeze on a filesystem which is currently performing multiple io_uring O_DIRECT writes.
 > 
-> - better performance expectation
-> - no big change on existed application for using this feature
-
-Yes, the feature doesn't make sense without appropriate performance
-wins, but I outright disagree with "there should be no big uapi
-changes to use it". It might be nice if the user doesn't have to
-change anything, but I find it of lower priority than performance,
-clarity of the overall design and so on.
-
-> Application developer is less interested in sort of crippled or immature
-> feature, especially need big change on existed code logic(then two code paths
-> need to maintain), with potential performance regression.
-
-Then we just need avoid creating a "crippled" feature, I believe
-everyone is on the same page here. As for maturity, features don't
-get there at the same pace, extra layers of complexity definitely
-do make getting into shape much slower. You can argue you like how
-the uapi turned to be, though I believe there are still rough edges
-if we consider it a generic feature, but the kernel side of things is
-fairly complicated.
-
-> With sqe group and REQ_F_GROUP_KBUF, application just needs lines of
-> code change for using the feature, and it is pretty easy to evaluate
-> the feature since no any extra logic change & no extra syscall/wait
-> introduced. The whole patchset has been mature enough, unfortunately
-> blocked without obvious reasons.
+> Steps to reproduce:
+> 1. Mount xfs or ext4 filesystem on /mnt
 > 
->>
->> Once local buffers are done, we can look at doing the sqe grouping in a
->> nice way. I do think it's a potentially powerful concept, but we're
->> going to make a lot more progress on this issue if we carefully separate
->> dependencies and get each of them done separately.
+> 2. Start writing to the filesystem. Must use io_uring, direct io and iodepth>1 to reproduce:
+> fio --ioengine=io_uring --direct=1 --bs=4k --size=100M --rw=randwrite --loops=100000 --iodepth=32 --name=test --filename=/mnt/fio_test
 > 
-> One fundamental difference between local buffer and REQ_F_GROUP_KBUF is
+> 3. Run this in another shell. For me it deadlocks almost immediately:
+> while true; do fsfreeze -f /mnt/; echo froze; fsfreeze -u /mnt/; echo unfroze; done
 > 
-> - local buffer has to be provided and used in ->prep()
-> - REQ_F_GROUP_KBUF needs to be provided in ->issue() instead of ->prep()
+> 4. Fsfreeze and all tasks attempting to write /mnt get stuck:
+> At this point all stuck processes cannot be killed by SIGKILL and they are stuck in uninterruptible sleep.
+> If you try 'touch /mnt/a' for example, the new process gets stuck in the exact same way as well.
+> 
+> This gets printed when running 6.11.4 with some debug options enabled:
+> [  539.586122] Showing all locks held in the system:
+> [  539.612972] 1 lock held by khungtaskd/35:
+> [  539.626204]  #0: ffffffffb3b1c100 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x32/0x1e0
+> [  539.640561] 1 lock held by dmesg/640:
+> [  539.654282]  #0: ffff9fd541a8e0e0 (&user->lock){+.+.}-{3:3}, at: devkmsg_read+0x74/0x2d0
+> [  539.669220] 2 locks held by fio/647:
+> [  539.684253]  #0: ffff9fd54fe720b0 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0x5c2/0x820
+> [  539.699565]  #1: ffff9fd541a8d450 (sb_writers#15){++++}-{0:0}, at: io_issue_sqe+0x9c/0x780
+> [  539.715587] 2 locks held by fio/648:
+> [  539.732293]  #0: ffff9fd54fe710b0 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0x5c2/0x820
+> [  539.749121]  #1: ffff9fd541a8d450 (sb_writers#15){++++}-{0:0}, at: io_issue_sqe+0x9c/0x780
+> [  539.765484] 2 locks held by fio/649:
+> [  539.781483]  #0: ffff9fd541a8f0b0 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0x5c2/0x820
+> [  539.798785]  #1: ffff9fd541a8d450 (sb_writers#15){++++}-{0:0}, at: io_issue_sqe+0x9c/0x780
+> [  539.815466] 2 locks held by fio/650:
+> [  539.831966]  #0: ffff9fd54fe740b0 (&ctx->uring_lock){+.+.}-{3:3}, at: __do_sys_io_uring_enter+0x5c2/0x820
+> [  539.849527]  #1: ffff9fd541a8d450 (sb_writers#15){++++}-{0:0}, at: io_issue_sqe+0x9c/0x780
+> [  539.867469] 1 lock held by fsfreeze/696:
+> [  539.884565]  #0: ffff9fd541a8d450 (sb_writers#15){++++}-{0:0}, at: freeze_super+0x20a/0x600
+> 
+> I reproduced this bug on nvme, sata ssd, virtio disks and lvm logical volumes.
+> It deadlocks on all kernels that I tried (all on amd64):
+> 6.12-rc5 (compiled from kernel.org)
+> 6.11.4 (compiled from kernel.org)
+> 6.10.11-1~bpo12+1 (debian)
+> 6.1.0-23 (debian)
+> 5.14.0-427.40.1.el9_4.x86_64 (rocky linux)
+> 5.10.0-33-amd64 (debian)
+> 
+> I tried to compile some older ones to check if it's a regression, but
+> those either didn't compile or didn't boot in my VM, sorry about that.
+> If you have anything specific for me to try, I'm happy to help.
+> 
+> Found this issue as well, so it seems like it's not just me:
+> https://gitlab.com/qemu-project/qemu/-/issues/881
+> Note that mariadb 10.6 adds support for io_uring, and that proxmox backups perform fsfreeze in the guest VM.
+> 
+> Originally I discovered this after a scheduled lvm snapshot of mariadb
+> got stuck. It appears that lvm calls dm_suspend, which then calls
+> freeze_super, so it looks like the same bug to me. I discovered the
+> simpler fsfreeze/fio reproduction method when I tried to find a
+> workaround.
 
-I'd need to take a look at that local buffer patch to say, but likely
-there is a way to shift all of it to ->issue(), which would be more
-aligned with fixed file resolution and how links use it.
+Thanks for the report! I'm pretty sure this is due to the freezing not
+allowing task_work to run, which prevents completions from being run.
+Hence you run into a situation where freezing isn't running the very IO
+completions that will free up the rwsem, with IO issue being stuck on
+the freeze having started.
+
+I'll take a look...
 
 -- 
-Pavel Begunkov
+Jens Axboe
 

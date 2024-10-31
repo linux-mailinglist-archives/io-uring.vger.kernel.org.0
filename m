@@ -1,74 +1,73 @@
-Return-Path: <io-uring+bounces-4284-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4285-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD5B89B828D
-	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 19:26:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F0E9B8534
+	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 22:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 688171F22845
-	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 18:26:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 917FEB20E01
+	for <lists+io-uring@lfdr.de>; Thu, 31 Oct 2024 21:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8D51C57AD;
-	Thu, 31 Oct 2024 18:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AAE1BB6B5;
+	Thu, 31 Oct 2024 21:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mfUPPNPB"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Dj2ZIDJP"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6194BECF;
-	Thu, 31 Oct 2024 18:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412CE1CCB36
+	for <io-uring@vger.kernel.org>; Thu, 31 Oct 2024 21:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730399156; cv=none; b=StTEaDlhKs1a67oJ16UEDqX4jyXV0ToY18JPHq9/g03SjOGh3OaqOBLV1Fmsmg8Maq7qlNx8kuo2IueQaGwDiiq2zPo44O1yoMefZEO6AG5H5mgjNYCTogTyJu+iaE0wBVMM85T4uxxixdgBrX4yCf7WtVRzcLz/uoPYZ0J2+RQ=
+	t=1730409751; cv=none; b=Ayroz16CI7uy2FLS8hejKClM9UQqgsym684gNmfD9klQFz26HxX4kteOLb/ooTxKxLHEkVt3sgcvFgGaDVhHoPkBps93NSRIzd0MT/HO+bDzQkspCoxMbGQkyOnXVwjMI2AElqZLiOoa6axCTWYtMqC1ZGT2LPSSg/TBrFXfbUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730399156; c=relaxed/simple;
-	bh=AhY6d4Mww3sZhpDrfAu9tYQBx1ULanuYD6CAOvfp9/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aEiYYZwRsUmk/XrwrAIu6egO/DQXwg8qPR6v1JEvKzpp8Lc/5/ARoaibB8DyWx18r0kLW7mnX9VqJg+UOWsPvl70OyQEfgdeTjaHkAet9f9SxlqKQ9FSQBDUIP055gPYstMwoDMpQeI1uow6wQwS680t7TxI2b+VdLnAoG0WeCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mfUPPNPB; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99f646ff1bso150013866b.2;
-        Thu, 31 Oct 2024 11:25:54 -0700 (PDT)
+	s=arc-20240116; t=1730409751; c=relaxed/simple;
+	bh=NmQ3w1C9gDlAiSnZ4/aCN1riWjwU0i9ohYSPRwof9tk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=EitbAHwmdwYOISZepcIvKwQwX4d2vhiQCOrL1bOCetWU975KgoSd4mCiKAGlcxbGRC5y8o16Bh8qdajfpCeCjQPXqDuZW1J/NuxVogMZ+qeLMoCzS3k0i0hpW2Vy3oTVpG7WGaoJDTr0VyV94pjiTTN9MUTIQsGiAz6t8AEgpV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Dj2ZIDJP; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso960214a12.3
+        for <io-uring@vger.kernel.org>; Thu, 31 Oct 2024 14:22:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730399153; x=1731003953; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bgxmxzIovDLOUycrc9UMIVdVx3QmZlDRnF4E1HfSqPA=;
-        b=mfUPPNPB9Eg3Xs7u7y7H4JwefvBT8TQKipG62BeXP+hzqL7693a6lrFWkThj981Au/
-         9WW6MiM7eE/XepOh9ady2yMZlodtrtE5e0rSfLf4yKu9CKSr9eW2aLEOC6Y55rooqnS2
-         4c6qfpky5QMoKukiQHenoGe7JKIm3HFigzemaDQnhrjpx9qfPWtxdAeU24mNANZbDTxU
-         CWuuo3xb0v26iEW35ccjeOC6930hXSxLTnocMkhUJr9HGFDIScnxaJN6UCbMMMuQKyfy
-         BFmlGgNCkD12lIM93+1DplIuplOzN1RuSO2ZgFh+fQpp15E/MQKtMHMYUmy1u+ZitCZw
-         +aow==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730409740; x=1731014540; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jbBqtqOWDZuGi35NiFMLhW1ZLss7CzMedglYfe+eWdA=;
+        b=Dj2ZIDJPlaXFmyoSqcm3SFfriIJ1SUUM4VmBZSUmBCN99Y9/LXqXrdP3zCqCMuzzMR
+         K0Cm5CGKtFaxozp+ec2VVGrmEvi5KB+/KTcgLIlC6ABNJSy8O48qR1oQjIERR+yuoR+t
+         w/7E6fqdvsaK3VaHvZJGv9TXxRoY+ACYrGC/p/IjM5jzjnzUAAcq8yS10VBiQk28+3Z+
+         AA6dG7NV70zr2XVDHudX6VRHWZUrRyFYs+sadmAwg5AOFSJdSXlsJDbdMTukYB3cYY89
+         Vl9plEgKYDYi7nJDrRk/1yRcIlgj+ndali7sOQKeWts+kEiKDxz9vD0Nnc5ru/EovDSE
+         AkWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730399153; x=1731003953;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bgxmxzIovDLOUycrc9UMIVdVx3QmZlDRnF4E1HfSqPA=;
-        b=aGlYVlTRIJZv3uzCNOMWwUnNcNkcU3+suSNrQi9Q98cqhjVWhQ36xqHAjJIwS/j7kM
-         OgN5hKfYfDm0CyiKxrJmZPxB1ps1reI38LXcNbUPudjz6ZtsQnWcgbbWF4kY53Bglwo/
-         6yaiq0tMywer2fSUfKFEbDDu5h29Gf5UU3zeWhwm8eaByvwjm2nUL8yVq7aVNCy+tNGz
-         3flTu5tWFynTywPHHp9thT6LOo905m7XdOZILIJEnDVJD8a2bMeGwdl0GI9fclnV0E5o
-         w4ycORW+O3jI9lxKoE81NEDuNgmRyA7/Fno/+uW/aYEgGil6Z3jJvhyQyrn9pm/hHblH
-         h7Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBUpSoHD/XhbY2S0G6WNw1Pdk+Be8zuqvG4d/zGA+jyKimU1lLTo7sXUQsxQ/mDK7Hd+JMgHbknACRDA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYHVbeJ+vrYnYojJwu7LoTlbjPX7a0Mff5WexckuEaduBjuMta
-	Eyt+yGIaIszcr5p2ghUeTX0+hLMrgOlDu53D+v7g+neSfxS0cDAcgcKftg==
-X-Google-Smtp-Source: AGHT+IGQ8XbY662szyYfx+s4/CYow/Hh3WOqH9vbOz4ioV4bmXMVsduAReZt71BDP3wm5MKaFznjUQ==
-X-Received: by 2002:a17:907:94cb:b0:a9a:6b4c:9d2c with SMTP id a640c23a62f3a-a9e3a7f4453mr872727766b.59.1730399152269;
-        Thu, 31 Oct 2024 11:25:52 -0700 (PDT)
-Received: from [192.168.42.203] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565f9b63sm92033066b.110.2024.10.31.11.25.51
+        d=1e100.net; s=20230601; t=1730409740; x=1731014540;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jbBqtqOWDZuGi35NiFMLhW1ZLss7CzMedglYfe+eWdA=;
+        b=J4uIeDivrExSyis6IInloU8iuTZOCHhWWobYNA/dWD3wLtkslIrWe+qGI5B7pVUngD
+         9fhlYmDyEMvIwASsFOxMnNzAKCKRcEOX2YF/5fw8f9A5xCQz0Zu6qAzrO9ys/mtUgWji
+         +UtwOnkrJV4EA76+6m2qs3d8z/1VoTF70cMVrVVF6Vas1gXUwErlFDLojFqxErew3uVi
+         hUsTGmSH01j2B201iRI6g4X71opDL3ZaUbTwtBXHUpg3w+9dc7mkWqErMV8jEGFWIlnV
+         pI8Lf7v4r67V6/DdzPpCuhMo1NucJwLP7sg20rzctxxTWd+zV9XtPNggkcvvgFNFsvv8
+         UAfw==
+X-Gm-Message-State: AOJu0Yx3uVN4HBOUyvg+5vexoDKM0ohYz1f/1YQ+P8iR491Ei8PPtp+9
+	IGDU4JcC3XGsgCCT4HoVjA+2Bg+xi+sgBXVrrtXShU8t65JJXgLh4SGA0y3YNCn6/sX+JJSMnOR
+	B/Dg=
+X-Google-Smtp-Source: AGHT+IE2nwznm9PjHypVCx2DXziUrKShAb3IEGrIr9ZocPX3Ud9nE7mThWO6pN0yB1Ik4M4F3zfBQg==
+X-Received: by 2002:a17:90b:2e43:b0:2e0:a77e:8305 with SMTP id 98e67ed59e1d1-2e94c533088mr1721501a91.39.1730409740411;
+        Thu, 31 Oct 2024 14:22:20 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93dac02b8sm1629955a91.28.2024.10.31.14.22.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 11:25:51 -0700 (PDT)
-Message-ID: <fad6bb86-0646-4039-b234-5752f3f833f0@gmail.com>
-Date: Thu, 31 Oct 2024 18:26:03 +0000
+        Thu, 31 Oct 2024 14:22:19 -0700 (PDT)
+Message-ID: <e60a3dd3-3a74-4181-8430-90c106a202f6@kernel.dk>
+Date: Thu, 31 Oct 2024 15:22:18 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,191 +75,204 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] btrfs: add io_uring command for encoded reads
-To: Mark Harmstone <maharmstone@meta.com>,
- "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Cc: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-References: <20241022145024.1046883-1-maharmstone@fb.com>
- <20241022145024.1046883-6-maharmstone@fb.com>
- <63db1884-3170-499d-87c8-678923320699@gmail.com>
- <46aa1f2a-d0c6-429e-a862-1b3b8c37c109@meta.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <46aa1f2a-d0c6-429e-a862-1b3b8c37c109@meta.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: io-uring <io-uring@vger.kernel.org>
+Cc: Ming Lei <ming.lei@redhat.com>, Pavel Begunkov <asml.silence@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH RFC] io_uring: extend io_uring_sqe flags bits
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/31/24 17:08, Mark Harmstone wrote:
-> Thanks Pavel.
-> 
-...
->> If that's an iovec backed iter that might fail, you'd need to
->> steal this patch
->>
->> https://lore.kernel.org/all/20241016-fuse-uring-for-6-10-rfc4-v4-12-9739c753666e@ddn.com/
->>
->> and fail if "issue_flags & IO_URING_F_TASK_DEAD", see
->>
->> https://lore.kernel.org/all/20241016-fuse-uring-for-6-10-rfc4-v4-13-9739c753666e@ddn.com/
-> 
-> Thanks, I've sent a patchset including your patch. Does it make a
-> difference, though? If the task has died, presumably copy_page_to_iter
-> can't copy to another process' memory...?
+In hindsight everything is clearer, but it probably should've been known
+that 8 bits of ->flags would run out sooner than later. Rather than
+gobble up the last bit for a random use case, add a bit that controls
+whether or not ->personality is used as a flags2 argument. If that is
+the case, then there's a new IOSQE2_PERSONALITY flag that tells io_uring
+which personality field to read.
 
-IIRC copy_to_user will crash without mm set, not sure about
-copy_page_to_iter(). Regardless, when the original task has dies
-and it gets run from io_uring's fallback path, you shouldn't
-make any assumptions about the current task.
+While this isn't the prettiest, it does allow extending with 15 extra
+flags, and retains being able to use personality with any kind of
+command. The exception is uring cmd, where personality2 will overlap
+with the space set aside for SQE128. If they really need that, then that
+would have to be done via a uring cmd flag.
 
->>> +            ret = -EFAULT;
->>> +            goto out;
->>> +        }
->>> +
->>> +        i++;
->>> +        cur += bytes;
->>> +        page_offset = 0;
->>> +    }
->>> +    ret = priv->count;
->>> +
->>> +out:
->>> +    unlock_extent(io_tree, priv->start, priv->lockend,
->>> &priv->cached_state);
->>> +    btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
->>
->> When called via io_uring_cmd_complete_in_task() this function might
->> not get run in any reasonable amount of time. Even worse, a
->> misbehaving user can block it until the task dies.
->>
->> I don't remember if rwsem allows unlock being executed in a different
->> task than the pairing lock, but blocking it for that long could be a
->> problem. I might not remember it right but I think Boris meantioned
->> that the O_DIRECT path drops the inode lock right after submission
->> without waiting for bios to complete. Is that right? Can we do it
->> here as well?
-> 
-> We can't release the inode lock until we've released the extent lock. I
-> do intend to look into reducing the amount of time we hold the extent
-> lock, if we can, but it's not trivial to do this in a safe manner.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-I lack the btrfs knowledge, but sounds like it can be done the
-same way the async dio path works.
+---
 
-> We could perhaps move the unlocking to btrfs_uring_read_extent_endio
-> instead, but it looks unlocking an rwsem in a different context might
-> cause problems with PREEMPT_RT(?).
+Was toying with this idea to allow for some more flags, I just don't
+like grabbing the last flag and punting the problem both to the future
+and to "somebody elses problem". Here's one way we could do it, without
+rewriting the entire sqe into a v2. Which does need to happen at some
+point, but preferably without pressing issues around.
 
-At least from a quick glance it doesn't seem that locks in
-__clear_extent_bit are [soft]irq protected. Would be a good
-idea to give it a run with lockdep enabled.
+I don't _hate_ it, there's really not a great way to do this. And I
+do think personality is the least used of all the things, and probably
+will never get used with uring_cmd. But if it had to work for that,
+then there are certainly ways to pass in that info. Not that we
+ever would...
 
-
-...
->>> +    ret = btrfs_encoded_read_regular_fill_pages(inode, disk_bytenr,
->>> +                            disk_io_size, pages,
->>> +                            priv);
->>> +    if (ret && ret != -EIOCBQUEUED)
->>> +        goto fail;
->>
->> Turning both into return EIOCBQUEUED is a bit suspicious, but
->> I lack context to say. Might make sense to return ret and let
->> the caller handle it.
-> 
-> btrfs_encoded_read_regular_fill_pages returns 0 if the bio completes
-> before the function can finish, -EIOCBQUEUED otherwise. In either case
-> the behaviour of the calling function will be the same.
-
-Ok
-
-...
->>> +    if (copy_to_user(sqe_addr + copy_end, (char *)&args +
->>> copy_end_kernel,
->>> +             sizeof(args) - copy_end_kernel)) {
->>> +        if (ret == -EIOCBQUEUED) {
->>> +            unlock_extent(io_tree, start, lockend, &cached_state);
->>> +            btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
->>> +        }
->>> +        ret = -EFAULT;
->>> +        goto out_free;
->>
->> It seems we're saving iov in the priv structure, who can access the iovec
->> after the request is submitted? -EIOCBQUEUED in general means that the
->> request is submitted and will get completed async, e.g. via callback, and
->> if the bio callback can use the iov maybe via the iter, this goto will be
->> a use after free.
->>
->> Also, you're returning -EFAULT back to io_uring, which will kill the
->> io_uring request / cmd while there might still be in flight bios that
->> can try to access it.
->>
->> Can you inject errors into the copy and test please?
-> 
-> The bio hasn't been submitted at this point, that happens in
-> btrfs_uring_read_extent. So far all we've done is read the metadata from
-> the page cache. The copy_to_user here is copying the metadata info to
-> the userspace structure.
-
-I see, in this case it should be fine, but why is it -EIOCBQUEUED
-then? It always meant that it queued up the request and will
-complete it asynchronously, and that's where the confusion sprouted
-from. Not looking deeper but sounds more like -EAGAIN? Assuming it's
-returned because we can't block
-
->>> +    }
->>> +
->>> +    if (ret == -EIOCBQUEUED) {
->>> +        u64 count;
->>> +
->>> +        /*
->>> +         * If we've optimized things by storing the iovecs on the stack,
->>> +         * undo this.
->>> +         */> +        if (!iov) {
->>> +            iov = kmalloc(sizeof(struct iovec) * args.iovcnt,
->>> +                      GFP_NOFS);
->>> +            if (!iov) {
->>> +                unlock_extent(io_tree, start, lockend,
->>> +                          &cached_state);
->>> +                btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
->>> +                ret = -ENOMEM;
->>> +                goto out_acct;
->>> +            }
->>> +
->>> +            memcpy(iov, iovstack,
->>> +                   sizeof(struct iovec) * args.iovcnt);
-
-As an optimisation in the future you can allocate it
-together with the btrfs_priv structure.
-
->>> +        }
->>> +
->>> +        count = min_t(u64, iov_iter_count(&iter), disk_io_size);
->>> +
->>> +        /* Match ioctl by not returning past EOF if uncompressed */
->>> +        if (!args.compression)
->>> +            count = min_t(u64, count, args.len);
->>> +
->>> +        ret = btrfs_uring_read_extent(&kiocb, &iter, start, lockend,
->>> +                          cached_state, disk_bytenr,
->>> +                          disk_io_size, count,
->>> +                          args.compression, iov, cmd);
-
-So that's the only spot where asynchronous code branches off
-in this function? Do I read you right?
-
->>> +
->>> +        goto out_acct;
->>> +    }
->>> +
->>> +out_free:
->>> +    kfree(iov);
->>> +
->>> +out_acct:
->>> +    if (ret > 0)
->>> +        add_rchar(current, ret);
->>> +    inc_syscr(current);
->>> +
->>> +    return ret;
->>> +}
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 77fd508d043a..8a45bf6a68ca 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -433,6 +433,7 @@ struct io_tw_state {
+ };
+ 
+ enum {
++	/* 8 bits of sqe->flags */
+ 	REQ_F_FIXED_FILE_BIT	= IOSQE_FIXED_FILE_BIT,
+ 	REQ_F_IO_DRAIN_BIT	= IOSQE_IO_DRAIN_BIT,
+ 	REQ_F_LINK_BIT		= IOSQE_IO_LINK_BIT,
+@@ -440,9 +441,13 @@ enum {
+ 	REQ_F_FORCE_ASYNC_BIT	= IOSQE_ASYNC_BIT,
+ 	REQ_F_BUFFER_SELECT_BIT	= IOSQE_BUFFER_SELECT_BIT,
+ 	REQ_F_CQE_SKIP_BIT	= IOSQE_CQE_SKIP_SUCCESS_BIT,
++	REQ_F_FLAGS2_BIT	= IOSQE_FLAGS2_BIT,
+ 
+-	/* first byte is taken by user flags, shift it to not overlap */
+-	REQ_F_FAIL_BIT		= 8,
++	/* 16 bits of sqe->flags2 */
++	REQ_F_PERSONALITY_BIT	= IOSQE2_PERSONALITY_BIT + 8,
++
++	/* first byte taken by sqe->flags, next 2 by sqe->flags2 */
++	REQ_F_FAIL_BIT		= 24,
+ 	REQ_F_INFLIGHT_BIT,
+ 	REQ_F_CUR_POS_BIT,
+ 	REQ_F_NOWAIT_BIT,
+@@ -492,6 +497,10 @@ enum {
+ 	REQ_F_BUFFER_SELECT	= IO_REQ_FLAG(REQ_F_BUFFER_SELECT_BIT),
+ 	/* IOSQE_CQE_SKIP_SUCCESS */
+ 	REQ_F_CQE_SKIP		= IO_REQ_FLAG(REQ_F_CQE_SKIP_BIT),
++	/* ->flags2 is valid */
++	REQ_F_FLAGS2		= IO_REQ_FLAG(REQ_F_FLAGS2_BIT),
++
++	REQ_F_PERSONALITY	= IO_REQ_FLAG(REQ_F_PERSONALITY_BIT),
+ 
+ 	/* fail rest of links */
+ 	REQ_F_FAIL		= IO_REQ_FLAG(REQ_F_FAIL_BIT),
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index ce58c4590de6..c7c3ba69ffdd 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -82,8 +82,12 @@ struct io_uring_sqe {
+ 		/* for grouped buffer selection */
+ 		__u16	buf_group;
+ 	} __attribute__((packed));
+-	/* personality to use, if used */
+-	__u16	personality;
++	union {
++		/* personality to use, if used */
++		__u16	personality;
++		/* 2nd set of flags, can't be used with personality */
++		__u16	flags2;
++	};
+ 	union {
+ 		__s32	splice_fd_in;
+ 		__u32	file_index;
+@@ -99,11 +103,17 @@ struct io_uring_sqe {
+ 			__u64	__pad2[1];
+ 		};
+ 		__u64	optval;
+-		/*
+-		 * If the ring is initialized with IORING_SETUP_SQE128, then
+-		 * this field is used for 80 bytes of arbitrary command data
+-		 */
+-		__u8	cmd[0];
++		struct {
++			/*
++			 * If the ring is initialized with IORING_SETUP_SQE128,
++			 * then this field is used for 80 bytes of arbitrary
++			 * command data
++			 */
++			__u8	cmd[0];
++
++			/* personality to use, if IOSQE2_PERSONALITY set */
++			__u16	personality2;
++		};
+ 	};
+ };
+ 
+@@ -124,6 +134,11 @@ enum io_uring_sqe_flags_bit {
+ 	IOSQE_ASYNC_BIT,
+ 	IOSQE_BUFFER_SELECT_BIT,
+ 	IOSQE_CQE_SKIP_SUCCESS_BIT,
++	IOSQE_FLAGS2_BIT,
++};
++
++enum io_uring_sqe_flags2_bit {
++	IOSQE2_PERSONALITY_BIT,
+ };
+ 
+ /*
+@@ -143,6 +158,14 @@ enum io_uring_sqe_flags_bit {
+ #define IOSQE_BUFFER_SELECT	(1U << IOSQE_BUFFER_SELECT_BIT)
+ /* don't post CQE if request succeeded */
+ #define IOSQE_CQE_SKIP_SUCCESS	(1U << IOSQE_CQE_SKIP_SUCCESS_BIT)
++/* ->flags2 is valid */
++#define IOSQE_FLAGS2		(1U << IOSQE_FLAGS2_BIT)
++
++/*
++ * sqe->flags2
++ */
++ /* if set, sqe->personality2 contains personality */
++#define IOSQE2_PERSONALITY	(1U << IOSQE2_PERSONALITY_BIT)
+ 
+ /*
+  * io_uring_setup() flags
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 1149fba20503..c2bbadd5640d 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -109,7 +109,8 @@
+ 			  IOSQE_IO_HARDLINK | IOSQE_ASYNC)
+ 
+ #define SQE_VALID_FLAGS	(SQE_COMMON_FLAGS | IOSQE_BUFFER_SELECT | \
+-			IOSQE_IO_DRAIN | IOSQE_CQE_SKIP_SUCCESS)
++			IOSQE_IO_DRAIN | IOSQE_CQE_SKIP_SUCCESS | \
++			IOSQE_FLAGS2 | IOSQE2_PERSONALITY)
+ 
+ #define IO_REQ_CLEAN_FLAGS (REQ_F_BUFFER_SELECTED | REQ_F_NEED_CLEANUP | \
+ 				REQ_F_POLLED | REQ_F_INFLIGHT | REQ_F_CREDS | \
+@@ -2032,6 +2033,8 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 	req->opcode = opcode = READ_ONCE(sqe->opcode);
+ 	/* same numerical values with corresponding REQ_F_*, safe to copy */
+ 	sqe_flags = READ_ONCE(sqe->flags);
++	if (sqe_flags & REQ_F_FLAGS2)
++		sqe_flags |= (__u32) READ_ONCE(sqe->flags2) << 8;
+ 	req->flags = (__force io_req_flags_t) sqe_flags;
+ 	req->cqe.user_data = READ_ONCE(sqe->user_data);
+ 	req->file = NULL;
+@@ -2095,8 +2098,12 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 		}
+ 	}
+ 
+-	personality = READ_ONCE(sqe->personality);
+-	if (personality) {
++	personality = 0;
++	if (req->flags & REQ_F_PERSONALITY)
++		personality = READ_ONCE(sqe->personality2);
++	else if (!(req->flags & REQ_F_FLAGS2))
++		personality = READ_ONCE(sqe->personality);
++	if (unlikely(personality)) {
+ 		int ret;
+ 
+ 		req->creds = xa_load(&ctx->personalities, personality);
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 535909a38e76..ee04e0c48672 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -200,7 +200,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+ 
+-	if (sqe->__pad1)
++	if (sqe->__pad1 || req->flags & REQ_F_PERSONALITY)
+ 		return -EINVAL;
+ 
+ 	ioucmd->flags = READ_ONCE(sqe->uring_cmd_flags);
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

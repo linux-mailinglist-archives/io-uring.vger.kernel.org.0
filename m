@@ -1,113 +1,98 @@
-Return-Path: <io-uring+bounces-4311-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4312-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF6059B9433
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 16:18:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7AAD9B95AA
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 17:42:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E05961C20F3F
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 15:18:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AD7D281273
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 16:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADC61C303A;
-	Fri,  1 Nov 2024 15:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2438E1C9ECC;
+	Fri,  1 Nov 2024 16:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Gj7UqalH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VPN6z4Bf"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7711C0DD6
-	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 15:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72A633F7
+	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 16:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730474284; cv=none; b=cSOcJcSYwK0xq6GVM6LtNciSDWR0nzKyxh2Loap9yRQRwZBm8wJ18C3VkDKGrgKGiB9R0lXueWV+c7ClyVxDTPDUXx8qRYdoHUH/V5D65zQy31SFCdNZNgeNhc5FXLhtHKFgegYCTWI6JWjuBx2ws6yb5omuf0ua+ukwphHOL04=
+	t=1730479345; cv=none; b=XYPKDjFbGM4Xdo71oPX5xoqgFFozAylJ2qbey1KxLgGpQHJsXWq8cotSayx1xKNtenqhF4d7UqggChEJqjvUgRiZ+Nj/h6AayfVx/2NQ0aT+JO2GjwGAmh6nwrNs/NKIWJ+4YUqoBEP3ivvU42GzI6obdTuIFkMs5nvY6YV6xvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730474284; c=relaxed/simple;
-	bh=lkf5T6VDGyK+AxefNOE21mzu9AeD2d3DO0OV8fJLP+c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Dsz1ziNRQaEE2Ds7IhfagVnzeD/L7TPw9xnVD2Q4EadAVbnRlJZ1Hi62z8jdQqSJTXhyQAkP9dTwoj7PXkyaTx5p80Gmp//emCKFhs9G8ODiQivwcFrHYw0iouGyFdxsP5yHoYT+PA8PcB5l+oqytbTrRggm9gGe1D7PwQ67Cv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Gj7UqalH; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cf6eea3c0so18088295ad.0
-        for <io-uring@vger.kernel.org>; Fri, 01 Nov 2024 08:18:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730474282; x=1731079082; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z76tNBW7IiSXlnUlkX8YEl3RTDQ10RA/5zOtclJTWHM=;
-        b=Gj7UqalHVi11YwDmtH+oQ+hNgPm/7lz26qP76ymyEAyGigHKce/sJ2R0W3M9dI12St
-         ga8zfKGhRSwC2w1fRJY3uHhoNLsfJNsB9mwdOftcX1bUq+PH20zxWcxlJ05bZt2YOirV
-         61zaDb0m77rJwkkHsSTpx29stgTPK1drgNFLX0/ZmJF3H5sbWZS+Nc3wjRgxzE7LIyOD
-         fj4ksTF1XN71YX3ZuJb38Nf14e34bqx+mn5ZgoE62VgeuPrhVqBp5DwPOKyjpvpTlN1w
-         xmoYN6heP4UEvSU9cUdyffS6VcE0o5agtGPIitLnyceh7w2BdgIP4/DgjzssbwTokTrd
-         MJRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730474282; x=1731079082;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z76tNBW7IiSXlnUlkX8YEl3RTDQ10RA/5zOtclJTWHM=;
-        b=Rts8bsSEUB06FjC6EpWDhipZ4gboWAMT7yM6CugYb/jhg9oOjaB3uVMUhc1t4On/4Z
-         8bRfxuYLo8Vt3+aK2Vt/iih/wsDB0z6VkvEMnSTg7sawc7IO5gZqIuV3WLXoRXWv1/Jg
-         Fdkg+6Gfu3tZJgwEw6QYP3a966MyXWOdyBeSTvI7bjJC/tGrC6ca3ssmvbyOydYN5Mld
-         QOtIaYf8oDGNqi69PV+KBQ9iT+lilwvA0TE6kKGChK+FtHsD9IbD/aMA5SQLapaY6fgI
-         ECmcHUSdCMc16bM5S69CglmdhAbW9oWj3fLK+YKoXd0a02dUejNcWxTwJ6QSb9fljgSi
-         u9NA==
-X-Gm-Message-State: AOJu0YwP1BOYAOYQSor+ZiydqYAy/PPZsttQdCcr6JvJQ3W8oVEDUB76
-	9N5g8UnzMmX2MOzyilTmjGo03QOmUw9VgHMgfoWDDmKiQ0ILhamklk2YyJ21WB4=
-X-Google-Smtp-Source: AGHT+IFeNQdAJMdFu2eVkBAD+wHxFyp+YiN4W9Y8wYMbUNxprY5tnH5CjMhX/v4HkmIVX6xStac7eA==
-X-Received: by 2002:a17:903:40cc:b0:20c:b0c7:7f0d with SMTP id d9443c01a7336-210c68db595mr292711025ad.25.1730474281550;
-        Fri, 01 Nov 2024 08:18:01 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057069e7sm22762955ad.95.2024.11.01.08.18.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 08:18:00 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: asml.silence@gmail.com, hexue <xue01.he@samsung.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241101091957.564220-1-xue01.he@samsung.com>
-References: <CGME20241101092007epcas5p29e0c6a6c7a732642cba600bb1c1faff0@epcas5p2.samsung.com>
- <20241101091957.564220-1-xue01.he@samsung.com>
-Subject: Re: [PATCH v9 0/1] io_uring: releasing CPU resources when polling
-Message-Id: <173047428059.527059.2484497150578119081.b4-ty@kernel.dk>
-Date: Fri, 01 Nov 2024 09:18:00 -0600
+	s=arc-20240116; t=1730479345; c=relaxed/simple;
+	bh=41jsXj9HiPye9EZEX8FCZGoCUwb1iIM1188UAzwmzck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gExBYjTX3U00J5AeQ4MSKxvfcFbft3WsxhksEbLYKViY8vbDpkOuBrXao+GD2OXRqz+H0dTsoOEyFErSMYy1ccM7aYM6esGO2Zivk7/j2rmHMorD2l1mSAeXS/dcsbh0qiwllXgkFdFapKdP/svY9BZubODWFk5jKpOeOC2QCus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VPN6z4Bf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730479341;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hNnZeBds2WpKx0IIBFYY8TK2aXlxnjxfhiCcGBuVzxA=;
+	b=VPN6z4Bf7zZPBiPnVqm4gE3tanW2aCrWNjhHeGSsurFc3dE3eLnJgb+YTjuo7NR4PFsFb+
+	JOTwaVW2qAdzJ5u0cKp0BZwHr2cU0VjjDJMr43KQpoptgdx1/wqpsWV4wW0o50Fm5cgSm0
+	WoBCGl5MBszryXJEGRhRjRzKdv3467w=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-509-IYRgYiU-MzSlhR7Xhb4b9w-1; Fri,
+ 01 Nov 2024 12:42:16 -0400
+X-MC-Unique: IYRgYiU-MzSlhR7Xhb4b9w-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 05FA71955F41;
+	Fri,  1 Nov 2024 16:42:14 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.17])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C05191956086;
+	Fri,  1 Nov 2024 16:42:09 +0000 (UTC)
+Date: Sat, 2 Nov 2024 00:42:04 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring <io-uring@vger.kernel.org>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH v2] io_uring: extend io_uring_sqe flags bits
+Message-ID: <ZyUE3A2nGiIBLDGx@fedora>
+References: <d86e060f-be37-4efe-8d58-95cf8a22d37e@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d86e060f-be37-4efe-8d58-95cf8a22d37e@kernel.dk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-
-On Fri, 01 Nov 2024 17:19:56 +0800, hexue wrote:
-> This patch add a new hybrid poll at io_uring level, it also set a signal
-> "IORING_SETUP_HYBRID_IOPOLL" to application, aim to provide a interface for
-> users to enable hybrid polling.
+On Fri, Nov 01, 2024 at 09:15:28AM -0600, Jens Axboe wrote:
+> In hindsight everything is clearer, but it probably should've been known
+> that 8 bits of ->flags would run out sooner than later. Rather than
+> gobble up the last bit for a random use case, add a bit that controls
+> whether or not ->personality is used as a flags2 argument. If that is
+> the case, then there's a new IOSQE2_PERSONALITY flag that tells io_uring
+> which personality field to read.
 > 
-> Hybrid poll may appropriate for some performance bottlenecks due to CPU
-> resource constraints, such as some database applications. In a
-> high-concurrency state, not only polling takes up a lot of CPU time, but
-> also operations like calculation and processing also need to compete for
-> CPU time.
+> While this isn't the prettiest, it does allow extending with 15 extra
+> flags, and retains being able to use personality with any kind of
+> command. The exception is uring cmd, where personality2 will overlap
+> with the space set aside for SQE128. If they really need that, then that
+> would have to be done via a uring cmd flag.
 > 
-> [...]
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Applied, thanks!
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-[1/1] io_uring: releasing CPU resources when polling
-      commit: 71b51c2fb200c502626e433ac7e22bcb8a3ae00c
-
-Best regards,
--- 
-Jens Axboe
-
-
+Thanks,
+Ming
 
 

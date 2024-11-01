@@ -1,275 +1,200 @@
-Return-Path: <io-uring+bounces-4319-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4320-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1F29B9697
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 18:33:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 641A29B96B4
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 18:41:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0D051C20FF8
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 17:33:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8E81C21BBB
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 17:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175EC1CBE8C;
-	Fri,  1 Nov 2024 17:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8581CC897;
+	Fri,  1 Nov 2024 17:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IzElJKg7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dHaLX6On"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D6B13777F
-	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 17:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF301AC884;
+	Fri,  1 Nov 2024 17:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730482418; cv=none; b=jPSXnq8Wo6jOGLLOv0Ck9W9DGXHGo/ajCCBRUVzWuUjA8DPIEnA9YkNTEer3+CJX56bKoz5kP8PCXC5enTFmsD1qXaVe14QvYRyHc2IigXmiU754Wci+zLqkb4lNgNM8qF1Rs+aifLydg7WGMLu7APjqugU83H/pN2wlAYMzUy4=
+	t=1730482863; cv=none; b=fV0DMJKeVS7vgxYhnkWphKMAJh/9Mn/VUNk3Nrs30vfvLxpE2eL8RDNMerl/cMArfEl4MDs5Gf2VLvFvGualunTZbK+2pfkQ54LLuH3BPb2sY4EMkbF3w30EABqdjc9ILEu8WJTLpV4Z2Kd1NELoZUfAmKQ2nm6jJin+sn86lbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730482418; c=relaxed/simple;
-	bh=LDysvWVOm6YSOEXsjRcStvJV0NsFkGaOctPWske0Ux4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BP4m5SQ8pDxLQENxr/kgqEme1Hw6HTp5loSOQmB9MgnLnghyeJSN387/XL2wkpx6QXHVMLOX/eF+Fm0FfWPGRZLFiOhocbcjyroSseKZBJDC911CccoUjPg52KapCa+OALLXaNjC8Us404QV9hoe3NLZcpTXlHa7iO5CgqqODSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IzElJKg7; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539e66ba398so1464e87.0
-        for <io-uring@vger.kernel.org>; Fri, 01 Nov 2024 10:33:35 -0700 (PDT)
+	s=arc-20240116; t=1730482863; c=relaxed/simple;
+	bh=q+mSis0eJrpzcfbXQ4vOMDEyoAC5gFQlxWK7wgJPFbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vBtqvsNNhmwkHo4wJW6kEaBjNWmOkOWTXKTC0FGRjm/df3AL+P8FLyS7A+T5R8AtejVz5atjPBeZ8rYPdMZyPC2t2XSnCVNJMs0M8LvxJ5vJtNc6Um96lAdxrLOUKmkP2Xn+CAvj14m8xFcMSU6oK6kQo41/63OXP3CZKuPuQF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dHaLX6On; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d41894a32so1235599f8f.1;
+        Fri, 01 Nov 2024 10:41:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730482414; x=1731087214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GYb80jOT633DwWNVdbDF/Z6pEUzZdJHkkuNALtPZT24=;
-        b=IzElJKg7c8xCmi399w8gt+P5s4m/Q26ZiirpuDXlEWRoAFerAbOzXOQubQckYnenZE
-         U5gaKMf4z7EeedP2gnIskmokkTkd4k31Uard3ErxzCqJKliS8pZeI6nuUuzxcTxms5Ks
-         qpg5VGEF+jap+bxxLN/hUhOwuqzgmVeymqc7eFRIB/NuRQQSHSJbSJBSLL1b5yeb3xM3
-         z9Oxa8slLGGPe2ExDmuoCqORidVg5NhKCHR+WmOGLlP+U1aUiwRfMfYS0QPRFNVTUeQ9
-         nShuCeCBdGvmhr3KffRMrrlaMn6L92YNQfge//7gJyhHpIZv4/ERi3gA8itTi1P4VqdF
-         Z59g==
+        d=gmail.com; s=20230601; t=1730482860; x=1731087660; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iTwsd4RDo3jFbS015Dfc+aEcibnzb1LuBrWGUJngbOM=;
+        b=dHaLX6On8sZUSRc3VOlga/UXKVMewDsmBbZRmCa32MO3hvdrKGAV8K+BdgY3zn+lqV
+         qyKnxNLJA26ApsgEhlfBwO6XPrhke7x4KhVCiFWZea2OD1FRAqXNtwhEx6QEp4IiNmIH
+         mfgqhphwqm9dE3775viOp/xHPnv5MJJ/AwtA75FEkcGg5yNbOYNPwH9UiGn0CuYLO/MF
+         VBuDVCnC7OaFJ+laTq6yFDwly96s9E5kRGi+G4eMl2zVd7pBbIhQqNSxuo7FD/lkJ68W
+         35WF6PdIgAysuV7qsStPkPN4qUVO9hn2d1v5DMnW1lgSz75w9Sn/QZumR+AqDuCGMQSw
+         cNQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730482414; x=1731087214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GYb80jOT633DwWNVdbDF/Z6pEUzZdJHkkuNALtPZT24=;
-        b=tfIYHKxZXhmXt+0l2jvwQvDdlat75sdLus4VRCeKvmAClTu80r+ATq0E3zNKRq0UEt
-         ehiyZQ/0WIDGbrhZQuTOxUtRSGr59r2Q+TG6OO3l5Z7tj03OdCiLqNgk6IB0y/56kHj5
-         WjOznHzGJQfufo6RJK4X34OzgfCQ0AYl+MZdbcmIc5wIojOpJDNbBvrfuMHqrkKz1ykN
-         FaUAYXB7mafmhrhDaPN8XGivsTkR8340SV88wJgka37ARPcxgpeeANdJQQmGmSUH8B6d
-         ND31wWw8YP0vC1KnMIbI75I4cziR1rAPArbbGda/lpXgrwGJkgN53R689ICmuyeR1gdO
-         fZ7A==
-X-Gm-Message-State: AOJu0YxDpeYRwUVh3wJOy2KjVGd+gNhNCxuvd5Ize3wXv/v+WFlUzCnn
-	bMTG/un7F2pclURkwZuz3Pf343krrqFO7QoXPfjCcziqfjghcOBf1hGZqpV8E/Min+HA5E188CZ
-	XBjYeMNwM1I0v8fqQCPmjH6vXzyOMCocroQV3
-X-Gm-Gg: ASbGncuJnI1a5K4ckAF6nkgKnz/c0ed8MNnqySxuh5HqunBQaBiNMVQNHGkAfMc0Uqj
-	SbN6OPy94C9E+77bpRITx3n9IwIMOG9ZOjVAozKlPLUCXhThdCkFl/ozLAPSAdg==
-X-Google-Smtp-Source: AGHT+IEDTVBFLDHOfUZcw+7El1DtOhGdgLOw4zAPwk9e+2hKN/6KQynUEmx8+dP4fNJOPHD9b/MtKHMkyUasvAca9so=
-X-Received: by 2002:a05:6512:469:b0:530:ae18:810e with SMTP id
- 2adb3069b0e04-53c7bb8e9e1mr550819e87.5.1730482413783; Fri, 01 Nov 2024
- 10:33:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730482860; x=1731087660;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iTwsd4RDo3jFbS015Dfc+aEcibnzb1LuBrWGUJngbOM=;
+        b=FpLE8jZLBLO3RzXdK24KIwyeTkSb53WscpvGTTtZghlsGiQiISs+pbCCj3sYXVa+Xy
+         jr1iJTRIn4/I/ZgezIXCCgJVO1T2D2QTtWtYqp97JZN8OOuQoBzHuslIohv9pU80tl1n
+         VlsFNUDYgyWZNZ2J7Hn6wOsHVRHMKau5q2HBZtvT7fGmKud8LQqUrScL3n6UcQe78Sld
+         ESEGVyIKN+6W69vgSiIW82dERe5iB7FCxD6tDpoLiy91A2V4Fx//sUNpQRMCfz/WztiR
+         GAh+LSf1yqZanbdo4xeSMu/rHfuPXt8pjD3APcglL3hCkN6+lapHytLKIzxYMDi2oa6e
+         MfNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIm28U8LBjcbTqM23whj0gW8XxRXklK+HMUREA6bZOKa9OyTvL7/dIiJKrCZZzzvzD4aaw2zk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCrp9R5GD7NEo64wwCqDimdhlg53E0he4+KEFgvWxMCQV3EM4T
+	GyQal/qhxSJg3LkbQJNqd2a3C7MH9RIhNNDG4zFOHQm2aAcyJ4xD
+X-Google-Smtp-Source: AGHT+IHb1gtgC+CA86ED+yRUNLH0wa8osL8Mxswo6TjQAAakiOk8u0P57fXFQrku88HxGB0JeZofZA==
+X-Received: by 2002:a05:6000:1f8c:b0:37d:3780:31d2 with SMTP id ffacd0b85a97d-381c79b88cemr4080615f8f.15.1730482860039;
+        Fri, 01 Nov 2024 10:41:00 -0700 (PDT)
+Received: from [192.168.42.19] ([85.255.236.151])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d6848b5sm68485835e9.32.2024.11.01.10.40.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 10:40:59 -0700 (PDT)
+Message-ID: <5b928f0e-f3f8-4eaa-b750-e3f445d2fa46@gmail.com>
+Date: Fri, 1 Nov 2024 17:41:05 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029230521.2385749-1-dw@davidwei.uk> <20241029230521.2385749-7-dw@davidwei.uk>
-In-Reply-To: <20241029230521.2385749-7-dw@davidwei.uk>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 1 Nov 2024 10:33:19 -0700
-Message-ID: <CAHS8izMkpisFO1Mx0z_qh0eeAkhsowbyCqKqvcV=JkzHV0Y2gQ@mail.gmail.com>
-Subject: Re: [PATCH v7 06/15] net: page pool: add helper creating area from pages
-To: David Wei <dw@davidwei.uk>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, 
-	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>, 
-	Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>, 
-	Pedro Tammela <pctammela@mojatatu.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 04/15] net: prepare for non devmem TCP memory providers
+To: Mina Almasry <almasrymina@google.com>, David Wei <dw@davidwei.uk>
+Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
+ Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
+ Pedro Tammela <pctammela@mojatatu.com>
+References: <20241029230521.2385749-1-dw@davidwei.uk>
+ <20241029230521.2385749-5-dw@davidwei.uk>
+ <CAHS8izPZ3bzmPx=geE0Nb0q8kG8fvzsGT2YgohoFJbSz2r21Zw@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAHS8izPZ3bzmPx=geE0Nb0q8kG8fvzsGT2YgohoFJbSz2r21Zw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 29, 2024 at 4:06=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
->
-> From: Pavel Begunkov <asml.silence@gmail.com>
->
-> Add a helper that takes an array of pages and initialises passed in
-> memory provider's area with them, where each net_iov takes one page.
-> It's also responsible for setting up dma mappings.
->
-> We keep it in page_pool.c not to leak netmem details to outside
-> providers like io_uring, which don't have access to netmem_priv.h
-> and other private helpers.
->
+On 11/1/24 17:09, Mina Almasry wrote:
+> On Tue, Oct 29, 2024 at 4:06 PM David Wei <dw@davidwei.uk> wrote:
+...
+>> +
+>>   static void net_devmem_dmabuf_free_chunk_owner(struct gen_pool *genpool,
+>>                                                 struct gen_pool_chunk *chunk,
+>>                                                 void *not_used)
+>> @@ -316,10 +322,10 @@ void dev_dmabuf_uninstall(struct net_device *dev)
+>>          unsigned int i;
+>>
+>>          for (i = 0; i < dev->real_num_rx_queues; i++) {
+>> -               binding = dev->_rx[i].mp_params.mp_priv;
+>> -               if (!binding)
+>> +               if (dev->_rx[i].mp_params.mp_ops != &dmabuf_devmem_ops)
+>>                          continue;
+>>
+> 
+> Use the net_is_devmem_page_pool_ops helper here?
 
-I honestly prefer leaking netmem_priv.h details into the io_uring
-rather than having io_uring provider specific code in page_pool.c.
+It could, but the function is there primarily for outside users to
+avoid ifdefs and build problems. I don't think it worth reiteration?
+I'll change if there is a next version.
 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> Signed-off-by: David Wei <dw@davidwei.uk>
-> ---
->  include/net/page_pool/memory_provider.h | 10 ++++
->  net/core/page_pool.c                    | 63 ++++++++++++++++++++++++-
->  2 files changed, 71 insertions(+), 2 deletions(-)
->  create mode 100644 include/net/page_pool/memory_provider.h
->
-> diff --git a/include/net/page_pool/memory_provider.h b/include/net/page_p=
-ool/memory_provider.h
-> new file mode 100644
-> index 000000000000..83d7eec0058d
-> --- /dev/null
-> +++ b/include/net/page_pool/memory_provider.h
-> @@ -0,0 +1,10 @@
-> +#ifndef _NET_PAGE_POOL_MEMORY_PROVIDER_H
-> +#define _NET_PAGE_POOL_MEMORY_PROVIDER_H
-> +
-> +int page_pool_mp_init_paged_area(struct page_pool *pool,
-> +                               struct net_iov_area *area,
-> +                               struct page **pages);
-> +void page_pool_mp_release_area(struct page_pool *pool,
-> +                               struct net_iov_area *area);
-> +
-> +#endif
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index 9a675e16e6a4..8bd4a3c80726 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -13,6 +13,7 @@
->
->  #include <net/netdev_rx_queue.h>
->  #include <net/page_pool/helpers.h>
-> +#include <net/page_pool/memory_provider.h>
->  #include <net/xdp.h>
->
->  #include <linux/dma-direction.h>
-> @@ -459,7 +460,8 @@ page_pool_dma_sync_for_device(const struct page_pool =
-*pool,
->                 __page_pool_dma_sync_for_device(pool, netmem, dma_sync_si=
-ze);
->  }
->
-> -static bool page_pool_dma_map(struct page_pool *pool, netmem_ref netmem)
-> +static bool page_pool_dma_map_page(struct page_pool *pool, netmem_ref ne=
-tmem,
-> +                                  struct page *page)
+...
+>> @@ -244,8 +244,11 @@ page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
+>>                           pool->user.detach_time))
+>>                  goto err_cancel;
+>>
+>> -       if (binding && nla_put_u32(rsp, NETDEV_A_PAGE_POOL_DMABUF, binding->id))
+>> -               goto err_cancel;
+>> +       if (net_is_devmem_page_pool_ops(pool->mp_ops)) {
+>> +               binding = pool->mp_priv;
+>> +               if (nla_put_u32(rsp, NETDEV_A_PAGE_POOL_DMABUF, binding->id))
+>> +                       goto err_cancel;
+>> +       }
+> 
+> Worthy of note is that I think Jakub asked for this introspection, and
+> likely you should also add similar introspection. I.e. page_pool
 
-I have to say this is confusing for me. Passing in both the netmem and
-the page is weird. The page is the one being mapped and the
-netmem->dma_addr is the one being filled with the mapping.
+I think we can patch it up after merging the series? Depends what Jakub
+thinks. In any case, I can't parse io_uring ops here until a later patch
+adding those ops, so it'd be a new patch if it's a part of this series.
 
-Netmem is meant to be an abstraction over page. Passing both makes
-little sense to me. The reason you're doing this is because the
-io_uring memory provider is in a bit of a weird design IMO where the
-memory comes in pages but it doesn't want to use paged-backed-netmem.
-Instead it uses net_iov-backed-netmem and there is an out of band page
-to be managed.
+> dumping should likely be improved to dump that it's bound to io_uring
+> memory. Not sure what io_uring memory 'id' equivalent would be, if
+> any.
 
-I think it would make sense to use paged-backed-netmem for your use
-case, or at least I don't see why it wouldn't work. Memory providers
-were designed to handle the hugepage usecase where the memory
-allocated by the provider is pages. Is there a reason that doesn't
-work for you as well?
+I don't think io_uring have any id to give. What is it for in the
+first place? Do you give it to netlink to communicate with devmem
+TCP or something similar?
 
-If you really need to use net_iov-backed-netmem, can we put this
-weirdness in the provider? I don't know that we want a generic-looking
-dma_map function which is a bit confusing to take a netmem and a page.
+>>          genlmsg_end(rsp, hdr);
+>>
+>> @@ -353,16 +356,16 @@ void page_pool_unlist(struct page_pool *pool)
+>>   int page_pool_check_memory_provider(struct net_device *dev,
+>>                                      struct netdev_rx_queue *rxq)
+...
+>> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+>> index e928efc22f80..31e01da61c12 100644
+>> --- a/net/ipv4/tcp.c
+>> +++ b/net/ipv4/tcp.c
+>> @@ -277,6 +277,7 @@
+>>   #include <net/ip.h>
+>>   #include <net/sock.h>
+>>   #include <net/rstreason.h>
+>> +#include <net/page_pool/types.h>
+>>
+>>   #include <linux/uaccess.h>
+>>   #include <asm/ioctls.h>
+>> @@ -2476,6 +2477,11 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
+>>                          }
+>>
+>>                          niov = skb_frag_net_iov(frag);
+>> +                       if (net_is_devmem_page_pool_ops(niov->pp->mp_ops)) {
+>> +                               err = -ENODEV;
+>> +                               goto out;
+>> +                       }
+>> +
+> 
+> I think this check needs to go in the caller. Currently the caller
+> assumes that if !skb_frags_readable(), then the frag is dma-buf, and
 
->  {
->         dma_addr_t dma;
->
-> @@ -468,7 +470,7 @@ static bool page_pool_dma_map(struct page_pool *pool,=
- netmem_ref netmem)
->          * into page private data (i.e 32bit cpu with 64bit DMA caps)
->          * This mapping is kept for lifetime of page, until leaving pool.
->          */
-> -       dma =3D dma_map_page_attrs(pool->p.dev, netmem_to_page(netmem), 0=
-,
-> +       dma =3D dma_map_page_attrs(pool->p.dev, page, 0,
->                                  (PAGE_SIZE << pool->p.order), pool->p.dm=
-a_dir,
->                                  DMA_ATTR_SKIP_CPU_SYNC |
->                                          DMA_ATTR_WEAK_ORDERING);
-> @@ -490,6 +492,11 @@ static bool page_pool_dma_map(struct page_pool *pool=
-, netmem_ref netmem)
->         return false;
->  }
->
-> +static bool page_pool_dma_map(struct page_pool *pool, netmem_ref netmem)
-> +{
-> +       return page_pool_dma_map_page(pool, netmem, netmem_to_page(netmem=
-));
-> +}
-> +
->  static struct page *__page_pool_alloc_page_order(struct page_pool *pool,
->                                                  gfp_t gfp)
->  {
-> @@ -1154,3 +1161,55 @@ void page_pool_update_nid(struct page_pool *pool, =
-int new_nid)
->         }
->  }
->  EXPORT_SYMBOL(page_pool_update_nid);
-> +
-> +static void page_pool_release_page_dma(struct page_pool *pool,
-> +                                      netmem_ref netmem)
-> +{
-> +       __page_pool_release_page_dma(pool, netmem);
-> +}
-> +
+io_uring originated netmem that are marked unreadable as well
+and so will end up in tcp_recvmsg_dmabuf(), then we reject and
+fail since they should not be fed to devmem TCP. It should be
+fine from correctness perspective.
 
-Is this wrapper necessary? Do you wanna rename the original function
-to remove the __ instead of a adding a wrapper?
+We need to check frags, and that's the place where we iterate
+frags. Another option is to add a loop in tcp_recvmsg_locked
+walking over all frags of an skb and doing the checks, but
+that's an unnecessary performance burden to devmem.
 
-> +int page_pool_mp_init_paged_area(struct page_pool *pool,
-> +                                struct net_iov_area *area,
-> +                                struct page **pages)
-> +{
-> +       struct net_iov *niov;
-> +       netmem_ref netmem;
-> +       int i, ret =3D 0;
-> +
-> +       if (!pool->dma_map)
-> +               return -EOPNOTSUPP;
-> +
-> +       for (i =3D 0; i < area->num_niovs; i++) {
-> +               niov =3D &area->niovs[i];
-> +               netmem =3D net_iov_to_netmem(niov);
-> +
-> +               page_pool_set_pp_info(pool, netmem);
-> +               if (!page_pool_dma_map_page(pool, netmem, pages[i])) {
-> +                       ret =3D -EINVAL;
-> +                       goto err_unmap_dma;
-> +               }
-> +       }
-> +       return 0;
-> +
-> +err_unmap_dma:
-> +       while (i--) {
-> +               netmem =3D net_iov_to_netmem(&area->niovs[i]);
-> +               page_pool_release_page_dma(pool, netmem);
-> +       }
-> +       return ret;
-> +}
-> +
-> +void page_pool_mp_release_area(struct page_pool *pool,
-> +                              struct net_iov_area *area)
-> +{
-> +       int i;
-> +
-> +       if (!pool->dma_map)
-> +               return;
-> +
-> +       for (i =3D 0; i < area->num_niovs; i++) {
-> +               struct net_iov *niov =3D &area->niovs[i];
-> +
-> +               page_pool_release_page_dma(pool, net_iov_to_netmem(niov))=
-;
-> +       }
-> +}
+> calls tcp_recvmsg_dmabuf on it. The caller needs to check that the
+> frag is specifically a dma-buf frag now.
+> 
+> Can io_uring frags somehow end up in tcp_recvmsg_locked? You're still
+> using the tcp stack with io_uring ZC right? So I suspect they might?
 
-Similarly I these 2 functions belong in the provider to be honest.
+All of them are using the same socket rx queue, so yes, any of them
+can see any type of packet non net_iov / pages
 
-
---=20
-Thanks,
-Mina
+-- 
+Pavel Begunkov
 

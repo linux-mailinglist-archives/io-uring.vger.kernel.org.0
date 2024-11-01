@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-4325-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4326-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0379B97A1
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 19:35:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A3C9B97C6
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 19:40:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B22841F21BEB
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 18:35:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B0B28168B
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 18:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A321149E17;
-	Fri,  1 Nov 2024 18:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAC41A0BE7;
+	Fri,  1 Nov 2024 18:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OKKuk5q0"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FuxBna4B"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72884146592;
-	Fri,  1 Nov 2024 18:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB867602D
+	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 18:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730486095; cv=none; b=GHLprIvxwmCGuqwLXnF4+lhQUQSFnRiOoI+33CNncM/h/ovE7tuyHtYjMLtdxuCCVJwSBzq+E96ckk/kdkCUiAVqrSvmy8g1ajtoTXZeMd50XM1N+ENwkCmu2MFV0cDI81Qa5NP2+16K/6Vs09dwsO1FwaU9V9wSAwB8F92JuDI=
+	t=1730486398; cv=none; b=spgns5EdekeugFjnFQ8/rOFe/vEKxtXc2h4WF8guY7JvvrZC/JAtfA8JVa6GE9ElQ3IK3d8QALFaxhyjjUK9ngEAtCTmNUCb4pHAfCi/kCVWSiRrCpi7ppmNN3HXlq9VuIGBkdi37FEy7dyPkcGI1dWl+zE3K+IcCIBcw591rTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730486095; c=relaxed/simple;
-	bh=pvZNLwJanWTI0a7jl9Z+5tB8L7uxCtvjaPGJLpse8C8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ab0zHyffuvUXgg2mjPdlK4qehf0W3Cx21adNAlQ48F69AU5kyVM6fLKBXKkoRAvpjVc+rYAR7vVGmbaU/dhBZAq2GR7g3kBWpJGnEvaYA8S+KEkPiF/kPCbaI56nFRbHIRC4f269CbwCU2WjJJG4eE33IcoaYd6CGvT7ZQASKU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OKKuk5q0; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-431ac30d379so18068495e9.1;
-        Fri, 01 Nov 2024 11:34:53 -0700 (PDT)
+	s=arc-20240116; t=1730486398; c=relaxed/simple;
+	bh=gLFicVklt80PjJRUup7NzZ3RMY+vDlNQeAPiRz/+8DQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=T28k6GfiEyqEFA+PIk9x0GMCDGdkUn33fh7LXOT2M7eNfyy98Oj4nmrtLU3MSeIZI1PyU5hxws4C4r/OIJBhkFBZXTvfRXsX5/lT/Dn4GGob2Pm1C7YJ8mnZe5oQrs1VwjA5uEryh4iTYvEdUpLYEbo3og95b5BZhkmWu5p0aV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FuxBna4B; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e2e8c8915eso1706774a91.3
+        for <io-uring@vger.kernel.org>; Fri, 01 Nov 2024 11:39:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730486092; x=1731090892; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730486395; x=1731091195; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d9cLb+8Zm1EPG1j/QzKgAtizsAeVkXYPF6j5dQdjilE=;
-        b=OKKuk5q0MqM9ZaFUuTXysNcStthJtqgFM2zwA+dOpsMxpRIWChfNheeu3FcY19wDYH
-         J+71MJhFQbRcJM7ncOujf+fTs/ljq3+YpfCIY++twfd9ax23KtaicMOnn9nfNsQrHcNH
-         W6x2E0UVoh74NBm1nWCYAnAj2swFRU7mev9vyTlZCh7xwKunG+32qn+KJEE8ecaeSWB6
-         0t7T3EPhUJJTHjtOqYr1RJR6jwXk7w/vlsD1fK6Fj/vism4TVGQqfTm165GYXVUCPVSv
-         JKMXmWT3/uSd6veyO17JXLOtcrbluBONNr9WS5J84G7fJuCUekWLfPZpL7o9LG1NEDkj
-         T/8A==
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Sv2NPZj9ucZ/NSKlLvd5WhO3WhafG+dboWd3jlYO78g=;
+        b=FuxBna4B057ASPGwRpNoxVnOT+liXvwENGsZP7rj7Sdr17htr6Hda/EDVWM952ygQ6
+         g0WOKiM+/eJeuUQBPSpgtSTFPLENBhopFqYH2ufe72gH8LPfmx7eKtjcRieojonRgVzv
+         13E/KXiXf8jQDi08U/DI2sebFuo1uUvPIeN8pizGITn2vr2jP5KDw9V+cjPHJcOZftxl
+         9k0sL86itPH/4EePJwJnN1t8JGzhoD23xegHOL2dzFr8/+znz4T6f6vB5ZdKTy41ruF0
+         YIju4eQdkMXbbe3QMv9EH6d23/bmtZXTF+OLE4x9x53jlXpJlCFjZJnpe/0r0qOM5YCs
+         fQYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730486092; x=1731090892;
+        d=1e100.net; s=20230601; t=1730486395; x=1731091195;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d9cLb+8Zm1EPG1j/QzKgAtizsAeVkXYPF6j5dQdjilE=;
-        b=ZbjlyMDK0ulvvbo/fm7kjJtZYPP3/HOkmY3Mndi4kSe2+nrMYD65JlOeQesdZQtLNe
-         lmo6XCuq7pxT8pb09lSHhacB6/1MvY3H5firzEfKwBoQ9gvox8mRMxe5glAcVuSPlZLJ
-         cl6sbCV0qiuQktvSBwNiPtbJCOMDTNSZZWH6byKPHCj0JgjTu9ol8xEzeGY6tiY/AHyK
-         TWF1s02wGbQWjKzTSsm1FWkQHwZwrRcJBvDFBRKe18q+CC3UBV4FBLXnGxfqsNTdia4J
-         gTVYXOcuqQ2TJxSXq5/qtjBJ4BPDZmgL6cbVsLGWgZHEpJ4k9mDVDT4XltfHsC9EXPg6
-         JJSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGATGy7n20kR41x+wXfd+CnfPW6M7yWgKUJKITMmIJinlI6UgsQhA1rveVNSm/34QaFV4TJa16@vger.kernel.org, AJvYcCVWvYhUlzlSLU66GNyf70EyxJl3AXTrDZ2B4cVgMoi9LYlJlRkl0HQ34t+FvN6mduOWKZWXMt1Sjw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk4cri9V/QYBE6Sf3u3kDrcFQVsXfTnU89EP70ABe9BNJJCNa+
-	XCq1wXEVr6WT9f3s97AmOxQDcLKnQlC3qdKOerLoMDCDHSYyZECw
-X-Google-Smtp-Source: AGHT+IGC+FvAuRg8+cYw8X0e4pOWmDIWdE/keKH+JUsyXR+jxupy6lLECmY7WXTzDyd+XrfzCZWq/w==
-X-Received: by 2002:a05:600c:1d84:b0:42c:ba1f:5482 with SMTP id 5b1f17b1804b1-4319ad36a7amr182918275e9.35.1730486091446;
-        Fri, 01 Nov 2024 11:34:51 -0700 (PDT)
-Received: from [192.168.42.19] ([85.255.236.151])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5e8562sm70553705e9.23.2024.11.01.11.34.49
+        bh=Sv2NPZj9ucZ/NSKlLvd5WhO3WhafG+dboWd3jlYO78g=;
+        b=XNqX5G26Rc8dyUxfTuElY/H5dPYLlVL/SIOnvgeoMh4dYD3zg5i9kr3260obuzRpAB
+         kOBbT6VLsI/xW6N71mq4VdVlMcY8/omwZ4BwnuAe0STJFxAFjFU2zXijL5UDqoUjenBR
+         Fer0D1rQzLWVeCRa13Tz37lS87cfGUKPQuaqqL4N8S8ZvvEngoGKIJeKxEtCDg8oqJTj
+         8shy9x5dIKUL0LA+6uLaQJ9kubdSDRJeUejRIL5zd4x3docGrTcOQSatzl6Z3W5Vi+Gi
+         K5ZR51v+7m/+YZMVarDXc2a0eT9R0pYBQJUSoSOXbJj9nqzh+m+f5CswdIRF32ejUcLr
+         URHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4rW/KJzZj2SEiSVxfu++1ePgiyi4aSl2ECD6Va8qLqTGisQeqEITv3DAO3Zm4HkUwbXo68ybQUg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YycoxRFNhJPytoNgs043FLUbqcLKduglwnplT+KJYMbqIHJh/I3
+	LyXcFroYTqCBU/qJDMnpilGcO6HP7cEQx+lHFKQVezPreMOr1bT5Zr9rWq6eZbg=
+X-Google-Smtp-Source: AGHT+IHyHmDaBiU0gczCLybLVKw7JNUuwsQogB3UD8nqD/VkAZDEOR6GontfpKYBmoSqcnv0vsxgvg==
+X-Received: by 2002:a17:90b:2e4d:b0:2e5:e269:1b5a with SMTP id 98e67ed59e1d1-2e94c54a67emr5395853a91.41.1730486395259;
+        Fri, 01 Nov 2024 11:39:55 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93dac02b8sm3045545a91.28.2024.11.01.11.39.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 11:34:51 -0700 (PDT)
-Message-ID: <58046d4d-4dff-42c2-ae89-a69c2b43e295@gmail.com>
-Date: Fri, 1 Nov 2024 18:35:02 +0000
+        Fri, 01 Nov 2024 11:39:54 -0700 (PDT)
+Message-ID: <4a7fe7a1-02d9-4488-8aef-b4c3851224ed@kernel.dk>
+Date: Fri, 1 Nov 2024 12:39:53 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,94 +76,37 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 06/15] net: page_pool: add ->scrub mem provider
- callback
-To: Mina Almasry <almasrymina@google.com>
-Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>
-References: <20241007221603.1703699-1-dw@davidwei.uk>
- <20241007221603.1703699-7-dw@davidwei.uk>
- <CAHS8izPFp_Q1OngcwZDQeo=YD+nnA9vyVqhuaT--+uREEkfujQ@mail.gmail.com>
- <9f1897b3-0cea-4822-8e33-a4cab278b2ac@gmail.com>
- <CAHS8izOxsLc82jX=b3cwEctASerQabKR=Kqqio2Rs7hVkDHL4A@mail.gmail.com>
- <5d7925ed-91bf-4c78-8b70-598ae9ab3885@davidwei.uk>
- <CAHS8izNt8pfBwGnRNWphN4vJJ=1yJX=++-RmGVHrVOvy59=13Q@mail.gmail.com>
- <6acf95a6-2ddc-4eee-a6e1-257ac8d41285@gmail.com>
- <CAHS8izNXOSGCAT6zvwTOpW7uomuA5L7EwuVD75gyeh2pmqyE2w@mail.gmail.com>
+Subject: Re: [syzbot] [io-uring?] general protection fault in
+ io_uring_show_fdinfo (2)
+To: syzbot <syzbot+6cb1e1ecb22a749ef8e8@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <67251dc5.050a0220.529b6.015d.GAE@google.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izNXOSGCAT6zvwTOpW7uomuA5L7EwuVD75gyeh2pmqyE2w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <67251dc5.050a0220.529b6.015d.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/1/24 17:18, Mina Almasry wrote:
-> On Wed, Oct 16, 2024 at 10:42 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-...
->>> The critical point is as I said above, if you free the memory only
->>> when the pp is destroyed, then the memory lives from 1 io_uring ZC
->>> instance to the next. The next instance will see a reduced address
->>> space because the previously destroyed io_uring ZC connection did not
->>> free the memory. You could have users in production opening thousands
->>> of io_uring ZC connections between rxq resets, and not cleaning up
->>> those connections. In that case I think eventually they'll run out of
->>> memory as the memory leaks until it's cleaned up with a pp destroy
->>> (driver reset?).
->>
->> Not sure what giving memory from one io_uring zc instance to
->> another means. And it's perfectly valid to receive a buffer, close
->> the socket and only after use the data, it logically belongs to
->> the user, not the socket. It's only bound to io_uring zcrx/queue
->> object for clean up purposes if io_uring goes down, it's different
->> from devmem TCP.
->>
+On 11/1/24 12:28 PM, syzbot wrote:
+> Hello,
 > 
-> (responding here because I'm looking at the latest iteration after
-> vacation, but the discussion is here)
+> syzbot found the following issue on:
 > 
-> Huh, interesting. For devmem TCP we bind a region of memory to the
-> queue once, and after that we can create N connections all reusing the
-> same memory region. Is that not the case for io_uring? There are no
+> HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=162bc6f7980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=6cb1e1ecb22a749ef8e8
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f92630580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=126b655f980000
 
-Hmm, I think we already discussed the same question before. Yes, it
-does indeed support arbitrary number of connections. For what I was
-saying above, the devmem TCP analogy would be attaching buffers to the
-netlink socket instead of a tcp socket (that new xarray you added) when
-you give it to user space. Then, you can close the connection after a
-receive and the buffer you've got would still be alive.
+Ah forgot fdinfo for the sparse buffers...
 
-That's pretty intuitive as well, with normal receives the kernel
-doesn't nuke the buffer you got data into from a normal recv(2) just
-because the connection got closed.
-
-> docs or selftest with the series to show sample code using this, but
-
-There should be a good bunch of tests in liburing if you follow
-links in the cover letter, as well as added support to some
-benchmark tools, kperf and netbench. Also, as mentioned, need to
-add a simpler example to liburing, not sure why it was removed.
-There will also be man pages, that's better to be done after
-merging it since things could change.
-
-
-> the cover letter mentions that RSS + flow steering needs to be
-> configured for io ZC to work. The configuration of flow steering
-> implies that the user is responsible for initiating the connection. If
-> the user is initiating 1 connection then they can initiate many
-> without reconfiguring the memory binding, right?
-
-Right
-
-> When the user initiates the second connection, any pages not cleaned
-> up from the previous connection (because we're waiting for the scrub
-> callback to be hit), will be occupied when they should not be, right?
-
-I'm not sure what you mean, but seems like the question comes from
-the assumptions that it supports only one connection at a time,
-which is not the case.
+#syz test: git://git.kernel.dk/linux for-6.13/io_uring
 
 -- 
-Pavel Begunkov
+Jens Axboe
+
 

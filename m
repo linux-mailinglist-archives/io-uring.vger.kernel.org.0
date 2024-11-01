@@ -1,165 +1,112 @@
-Return-Path: <io-uring+bounces-4333-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4334-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1A69B994A
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 21:17:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70B59B9976
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 21:29:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C17BB2131F
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 20:17:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E86471C215F5
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 20:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DA6168DA;
-	Fri,  1 Nov 2024 20:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F3A1A2658;
+	Fri,  1 Nov 2024 20:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G+eqrW5s"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vbKLqbqy"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7DB1D968D
-	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 20:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB501D89E9
+	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 20:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730492214; cv=none; b=gkajlo7T14HS3051+CGgTu01X/HcTDCAUZsUSeZ0Vuik7BJzjqR/byMvKZMjL7EUeoN51W63XHNiT80tU2ziKvKFxvv2GgO+aNyYS4zzywt8aXnP9johcmUbwZk7UJ0Kfhtrv0AGZnIPikceTyXV8GLXybet17iBjzGM8lkP5j8=
+	t=1730492961; cv=none; b=iovbtfztqgaR1SlRTxVKBH7/xMvltT99Sax4UG3Gzkc3F+6prwp9AwoG+Vr5p4HeT3VxHEnBiCt/NmvYjgMik9mbQS0qro+rqYgv7PP27k3lVsWntgTwLuwLzAO1Rt7T+BFGhn5T+5ZOFmKwpr122W2HMpr4m7nk+qGcC8PMHBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730492214; c=relaxed/simple;
-	bh=Neq2taM8S5zc3+C2OTWpu8fNI6E1Ypyk9B14+qIRqyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=INoNJqyK0+cLRqnqFg/oz2l88IlMHhrPIvMfUdkvDPe5rS8dzx0LYvc66QfNZEcIXYvOwZy3cLWmZd3jc+9JeB8rsduzbIROYaIjUicZI5o0o9jsEQTqAICrWIinAaqFamrQKYmX0/n9GzhnL6+HdSkXHyI7iHobk81s4avC+Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G+eqrW5s; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460b295b9eeso11861cf.1
-        for <io-uring@vger.kernel.org>; Fri, 01 Nov 2024 13:16:52 -0700 (PDT)
+	s=arc-20240116; t=1730492961; c=relaxed/simple;
+	bh=SHtIzlTdskgqF/JotKMdHU2LJfq+lln40ai2gKwXBZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=eyvgud8p01IcARX4UIo9l5YUpG5s8QkBrzSDiP216TL0HwOzNzNFDTWC65vhXRuffwegJajzSVfu1ZkR/cjAaJY4qAckK061rCO0ARVz2tAoYx+0yU9JmVa15Mdkl4i8QYs8H7wdRhPbeW1Xm3WsveV4vyXHVlMBt8GIlMa2J5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vbKLqbqy; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e3686088c3so1812687a91.0
+        for <io-uring@vger.kernel.org>; Fri, 01 Nov 2024 13:29:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730492211; x=1731097011; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m0pmXdKRRehOTDxxZcS9Rlf0z5oyVOgg9mgnJxfzU+4=;
-        b=G+eqrW5s8586h2weWLiXdnwb3dkkfqyEejh9G/JQDjpfDjh3fQ54vmQbrVTwwtMkPg
-         FlLO7qlahLANtJmy4U+uSZeYlgzEHHmwxNzg/0+GGt8iKuNDRGvqBvKf9mQAVwO0j+0o
-         P70AOqClXEbXtsEP2WmIbnFPoQLla6hx6dB5mRRTrkRpkfYlc9zN1wDEvGeP0V+al/Eq
-         p2nGgyIaULRRdmT5O5Sm7P4/aF4PWCyybQ1etfOEp3I4AXVqaQXAVWBpEA+uuDw+qhxG
-         W0DcX4L9YT2446ZTjG54sM4O70H9IO9TyApjv8N19bYZS6xxWvpu4BCB6z6vnOOMVDd0
-         5ucQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730492957; x=1731097757; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=37Ml4ihCR1TC/QhKboatJNZ1ET5x5XZk+QbDisk1nWE=;
+        b=vbKLqbqyaU/YRnm42T062qh51fNZIQQ77ahIorhJnkIlbj8zKBZR9eXHr0nIH/KkWS
+         M+cnm81iYoMlRBH41ykIJCGC992YiG5lzwttPg8pURfL1yr1n/EFRI38u9m/sFhHX/Z+
+         fNpt7RJbgJlMUkQbeAWNVdPD+zpeKYEj8aQiwVhkSZkELQG6Az4Rt/8xXV2tN0/2CLDu
+         bOcgE6kBQOCc8ZfkemHfPrn7VClkN9uwz+ApfGYnxBvy9t4VPYwQeE/NNe2HqKNUvLuM
+         Uj5G1rSOjxCbSOFN/uR7Cxz5iX9auy6y79rhzHPAO0ggOENYu60NTVDQV8hbSkBZ9fsT
+         YZzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730492211; x=1731097011;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m0pmXdKRRehOTDxxZcS9Rlf0z5oyVOgg9mgnJxfzU+4=;
-        b=RnIjmmIL57WpnWwijT91cQZMWBpbWWyxzKYfj0xpt+X6q+fvoACpyC0ujTxbo7dvoj
-         Odjf5SXCem+bamQlRc9xazi8PGM4rJLMAYILZ2MM1eF5x1TLtVqBKbPnC8nXtz02fJpB
-         FWnwrgVbp8WZIvBAmyUGm7cykD++bLvJH4xQZ+KztqQo/i+LvY8q4ke4G/F5bVsiRxHD
-         2Pi6GPvY38G9EfW1hZliFS2SrtgezC6SfLJ231/7LflI0+/muOreHP4Bjep05A2/bWX7
-         9PGePc+Qmgfrx4ietSkiWXrbUpyMzSLP6RasrEl7Oopfvc0mJq25fSVSXuaA9ApMKzna
-         3NMw==
-X-Gm-Message-State: AOJu0YwVENUiCpPML8Jm9vYZJB2bgLh/EXT3jXbKgRZAjHDBYBqtTgEq
-	3PUSfweNRCpLqQEedA3u394wYjCQcr3dtmLsu7Ju4qIa3ga8YC1s1iHpHZtbgEnevyvY+FiBjaw
-	TXplOc2rqzg00I29PSoZSDzk89Vdb1ypKmxZ7
-X-Gm-Gg: ASbGncvMf2UAJ48Tdl2xEMQghcaus5qnP31a8E+cmOYNs035sk38x3w5er5Z5oE810b
-	Rhkf5yyJUn1C9wwO5EpdAczU1mwkeHXQiZD3LjuIEq/tBAL1bQZ7m/VnAkAL2rw==
-X-Google-Smtp-Source: AGHT+IGQlnMovoi5lGZ5r+xc2iOTrOWS9RcVERrIUE0qklnzO30h74p7/gLLkEvfHRWyOdgZxsJcaMWekAkfadGD3mI=
-X-Received: by 2002:a05:622a:4e9b:b0:45f:89c:e55 with SMTP id
- d75a77b69052e-462c5ed23c0mr637391cf.8.1730492211131; Fri, 01 Nov 2024
- 13:16:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730492957; x=1731097757;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=37Ml4ihCR1TC/QhKboatJNZ1ET5x5XZk+QbDisk1nWE=;
+        b=bZLWKnRZD4uUfOcjUMhZlQGdnBZtsCqJvbhPKiIeT7rQW4Y5llLDKZ9PIpIxkN6LMa
+         C2oD4Mc6hPxFw/tNVJSdVxPrkkmmVOvd13+M+lSdxObQ/X1UyZitWQkJVEhKzKFVQD0X
+         PfDBhgO0ZvAyjc4B9F/KH1TWeYNb/ZipBjeiraMd3pQGh+2o7RsJ0b/OksNpzvYIBdg1
+         nZIWf0tvfmIk1mpqVo0bGLS0V8Vrk878MLN6kdDI644wWiYffE9UfuQSHTlMQmSS3GTD
+         L79Hq8LpPTWuHti5rInuUbOxtYobMdhjqcv5HROn5+4bitpzpJOW+kaT4Q6ciYIrKhn6
+         FSwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUeaQFZYQjgatqTExaeev5oQrXAoYExQJ67spEDXEnhhQCZBDdaRIwOye7fLYvjSzMSLtadY7sKA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG6X3wqhB9jxmC9qtHu+QeZKdFbc3DumbyocTz7fh5T4x7oHsZ
+	MVuB6uVSoppkzaAhKoN60bPVdrDje2fLWmbuf1rYMdid9CF+jq1gBFPpdopIFio=
+X-Google-Smtp-Source: AGHT+IEuGyZz/WBx1ul7rIyEtn2aVVVvVjBz+RnMGGnpTvoeJ0INGxNW/v4lDRjyuwVayFnotQksXA==
+X-Received: by 2002:a17:90a:a58f:b0:2e3:171e:3b8c with SMTP id 98e67ed59e1d1-2e92cf2d074mr12419264a91.25.1730492957589;
+        Fri, 01 Nov 2024 13:29:17 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93daac445sm3153148a91.18.2024.11.01.13.29.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 13:29:17 -0700 (PDT)
+Message-ID: <8fb2e8a3-c46c-4116-9f5e-0ab826ec9d22@kernel.dk>
+Date: Fri, 1 Nov 2024 14:29:15 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029230521.2385749-1-dw@davidwei.uk> <20241029230521.2385749-14-dw@davidwei.uk>
-In-Reply-To: <20241029230521.2385749-14-dw@davidwei.uk>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 1 Nov 2024 13:16:39 -0700
-Message-ID: <CAHS8izMFV=1oRR6Tq-BVJxCL3hbEjNa0CBzWmWxbnk_0MZOs6w@mail.gmail.com>
-Subject: Re: [PATCH v7 13/15] io_uring/zcrx: set pp memory provider for an rx queue
-To: David Wei <dw@davidwei.uk>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, 
-	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>, 
-	Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>, 
-	Pedro Tammela <pctammela@mojatatu.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] general protection fault in
+ io_sqe_buffer_register
+To: syzbot <syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <67253504.050a0220.3c8d68.08e1.GAE@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <67253504.050a0220.3c8d68.08e1.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 4:06=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
->
-> From: David Wei <davidhwei@meta.com>
->
-> Set the page pool memory provider for the rx queue configured for zero
-> copy to io_uring. Then the rx queue is reset using
-> netdev_rx_queue_restart() and netdev core + page pool will take care of
-> filling the rx queue from the io_uring zero copy memory provider.
->
-> For now, there is only one ifq so its destruction happens implicitly
-> during io_uring cleanup.
->
-> Signed-off-by: David Wei <dw@davidwei.uk>
-> ---
->  io_uring/zcrx.c | 86 +++++++++++++++++++++++++++++++++++++++++++++++--
->  io_uring/zcrx.h |  2 ++
->  2 files changed, 86 insertions(+), 2 deletions(-)
->
-> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-> index 477b0d1b7b91..3f4625730dbd 100644
-> --- a/io_uring/zcrx.c
-> +++ b/io_uring/zcrx.c
-> @@ -8,6 +8,7 @@
->  #include <net/page_pool/helpers.h>
->  #include <net/page_pool/memory_provider.h>
->  #include <trace/events/page_pool.h>
-> +#include <net/netdev_rx_queue.h>
->  #include <net/tcp.h>
->  #include <net/rps.h>
->
-> @@ -36,6 +37,65 @@ static inline struct io_zcrx_area *io_zcrx_iov_to_area=
-(const struct net_iov *nio
->         return container_of(owner, struct io_zcrx_area, nia);
->  }
->
-> +static int io_open_zc_rxq(struct io_zcrx_ifq *ifq, unsigned ifq_idx)
-> +{
-> +       struct netdev_rx_queue *rxq;
-> +       struct net_device *dev =3D ifq->dev;
-> +       int ret;
-> +
-> +       ASSERT_RTNL();
-> +
-> +       if (ifq_idx >=3D dev->num_rx_queues)
-> +               return -EINVAL;
-> +       ifq_idx =3D array_index_nospec(ifq_idx, dev->num_rx_queues);
-> +
-> +       rxq =3D __netif_get_rx_queue(ifq->dev, ifq_idx);
-> +       if (rxq->mp_params.mp_priv)
-> +               return -EEXIST;
-> +
-> +       ifq->if_rxq =3D ifq_idx;
-> +       rxq->mp_params.mp_ops =3D &io_uring_pp_zc_ops;
-> +       rxq->mp_params.mp_priv =3D ifq;
-> +       ret =3D netdev_rx_queue_restart(ifq->dev, ifq->if_rxq);
-> +       if (ret)
-> +               goto fail;
-> +       return 0;
-> +fail:
-> +       rxq->mp_params.mp_ops =3D NULL;
-> +       rxq->mp_params.mp_priv =3D NULL;
-> +       ifq->if_rxq =3D -1;
-> +       return ret;
-> +}
-> +
+On 11/1/24 2:07 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=12052630580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=05c0f12a4d43d656817e
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15abc6f7980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10eb655f980000
 
-I don't see a CAP_NET_ADMIN check. Likely I missed it. Is that done
-somewhere? Binding user memory to an rx queue needs to be a privileged
-operation.
+Same deal:
 
---=20
-Thanks,
-Mina
+#syz test: git://git.kernel.dk/linux for-6.13/io_uring
+
+-- 
+Jens Axboe
+
 

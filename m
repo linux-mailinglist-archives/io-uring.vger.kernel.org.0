@@ -1,196 +1,190 @@
-Return-Path: <io-uring+bounces-4323-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4324-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0575D9B973A
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 19:17:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5199B977B
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 19:28:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28CB71C20E5A
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 18:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9A41C20D0D
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 18:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7076C196D80;
-	Fri,  1 Nov 2024 18:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RAeH6rW5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8B61CEE91;
+	Fri,  1 Nov 2024 18:28:24 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910401CEAA4;
-	Fri,  1 Nov 2024 18:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57AC1CEAB3
+	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 18:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730484982; cv=none; b=M8XZFLgy8hcCqech6c8HDOlLQqbRn5vEfSzjTKP5v+k3ndrtk+oUwmohrtiYkNlqrF/VfR6iv3BUIupY0nKKEcXctumqtw/LMHRpyLFURYhowGdkZTQ+3LnQ9nw7thyMTIqXQKEFXQv0EsGWSpEPna0gT/FXTmdod+DrTVa9bIw=
+	t=1730485704; cv=none; b=H2xbOMTCZaxkJCEhB1cEmYSwT2KijaJoyeYZStAEUzudxfWON29PBk64B0g5AwvQkTzY8xoRmrBKR89Y4QZSqpKHlOKNi1+sEFjOBKCcrc3e7j2FbghisypygIdZ74FkNJu4c6iWI75t3vewWu2eIp1xCMrg5ROKV9KDIW9lgIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730484982; c=relaxed/simple;
-	bh=0FR/njw452jCVSO4SsQ9lRF6aQwJcXYFDa74fwjd7xU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kli2LW5KkP77VL/F3jORLKfvCdqth3t2hfFntm/0IpnX/cHTS6pmBUzq71P7PA9WXT5podsWVk4maTujia9QrLlC1sJGC6GAV35GP1amdWCIyA/74KdG2yNV9xy3pzdwo6eW1Tte2bWEHYKd52ZudairwFZu75j6xGIDpsIfyPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RAeH6rW5; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43163667f0eso18815705e9.0;
-        Fri, 01 Nov 2024 11:16:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730484979; x=1731089779; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cc4lXFKgcyUIAuEC6kZ9N4WBDUARabN2Mw/9c+S8Xsw=;
-        b=RAeH6rW5kWb5ME5WurdlJIRXNC8K59CZlvmVjf6YofVxOFRe8Bw1oDGcgMcS2r3Wav
-         NslruWQfEOeKWEFuQIyOtMgHjoDkAS9M8D1FTC90t7b2VQm2BofmnshwhdPhH23sWvtZ
-         adWg/VstzzpMw4qW3Nc4P4aRFyWiCz4/Uj6/lM50EMNWXTR7JcPsfhMALYzgn/Ldee0F
-         /iiSPoaSyaAUgPLQiGpmYhAZ9Pgi2zQRpHYu6CciU69nWAAAdMmgTvzQ4VLFRRxYiB7I
-         TxS7A5RX7Uwa76TCvrfYG6hDf694rVADc/rbdEwEdnJNj/lRRQh0uXoAVd0oOPBY/R3P
-         xl2A==
+	s=arc-20240116; t=1730485704; c=relaxed/simple;
+	bh=l0T9mCnjOg2XvMLD+hWsTelnrQD13YtAkSS3/V1DClg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=CdIPQBdeiXYNLwG2V92+rSrNTt7rtom1qxihjlpA78a63fTin5PfXG4pSRdhaT67EwwMWlWBNuU4ARW2AG38uQgIvjaFF3VzcYDyTBmy754s0DPmH3Cbg1WyYzR7ktAE3XYz9V8UpYCQl6To6hvTyQlbJ4fehorYUC76BvQ6vgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4f32b0007so20414825ab.1
+        for <io-uring@vger.kernel.org>; Fri, 01 Nov 2024 11:28:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730484979; x=1731089779;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cc4lXFKgcyUIAuEC6kZ9N4WBDUARabN2Mw/9c+S8Xsw=;
-        b=jkogd5jZs6FGi1ZPmHdiXYYQo2gAPTRnqUVbC6aEHCCGj+FsmGmQ2wLmM1z5ebAJZi
-         wXN+zvFcyDl/Q1SXhTARDJZkZUpv/ffo4/fgk0UxET+FzWZZ+LUdmOfN0TeHOMMhmK/e
-         Fyha6f8E4avp3weWhjY7BBSxGuHHu2iYFzQ7I7Q/p28mIez7UR988CXQ0kai9zx7OeH+
-         m1sYyQxj4RdPnVWyoXLK2IuxD6C5+8/8VqLZbN3zBvsAdVVNMc7Y2E5v9W0yQ+fXlHlL
-         rFOSVnsKcIKldonc8EzYZi+98OZrOT0nL2UXAAmUWMZIift69d/cChwduJHKwsXHTCzU
-         CATQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhbjxZLWnFiGVsFhyn8isExjSio12if+SWZS2XFX0F8c8GSNc2U76S/2HWnTMJYuyzYVR/mhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxacGxPh3VIrxPDB8mTnF1K6bp0nNHbQdBTDzRkIgDM62eBwJF
-	5RU2k4dzUwR0IDBXyg/tsDZhxbJLmKHDk9Bieq2R8BLn9PBcW2YN
-X-Google-Smtp-Source: AGHT+IElKTn819yNPTSho21gH78+hoFX4HkE49vG5ci5mpB3stuKhjkJP3WgO8moYPZrDmK6WDB6gA==
-X-Received: by 2002:a05:600c:3150:b0:431:5ce5:4864 with SMTP id 5b1f17b1804b1-432832aa0b1mr34058125e9.35.1730484978490;
-        Fri, 01 Nov 2024 11:16:18 -0700 (PDT)
-Received: from [192.168.42.19] ([85.255.236.151])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5c65c7sm69352105e9.19.2024.11.01.11.16.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 11:16:18 -0700 (PDT)
-Message-ID: <2928976c-d3ea-4595-803f-b975847e4402@gmail.com>
-Date: Fri, 1 Nov 2024 18:16:30 +0000
+        d=1e100.net; s=20230601; t=1730485702; x=1731090502;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xYSzkUhLHjbwBxT1pIhzrxhNq7Z6ar3u+agVTALcisA=;
+        b=OT18xoyMaVXjEnYN/IDtRuCiBq7gnFi2TBCCVHOOWCJcic4ITOZ+VJcC6lXbZaCcOp
+         IsGwjf1fYuj9WVRILmO8OJrBnxTmWHbATM0A6r4iz3vrfox33Um/lHMch4YsQDuddklR
+         nQGIG2PG+ziMHYj8tBudOx8IsKWUwzTg1cuhmsofqnYHdxxDKN67I5apOEK4mVSfsy5a
+         Wt65mP+NkOLMxLVWIfeUT3CC5N589BP68VzCTidBUZ17Z0zXiiGKd/RlDY7EV8PURCZ6
+         aKL3X/3BgiauRx0JhG6X2Y18f1CBE0DD45ywB+yPApNwOPpBs2Hn5gnjY22Ksdoij7D8
+         Vdrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGIyUMA5R9juyJC77e0yuf7VE84Rc5xDG2yI6hquMAlxK9OBjaB9QUcjjUsrb9k1snZ/biG7YEcA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp+G1qrEjYWuENuf2Hcp7Ucec5/FViZ4fMHGapUwLfExBfR50O
+	0AvDbxVv9xCgQIkoMyiuszxVuUmuyUkSo46zZFfkd/ncPTjmI5AmAOswFfLFEvGOSSR2DwmMAJ9
+	JNWUt19rCNSDBTP5WATvCDcBFgypJ8l99dNkcQS8atjvOGhOv8YXisQ4=
+X-Google-Smtp-Source: AGHT+IHzaHk3yeELuE84dm8bqG8Ermt+8ogyze3Cvn+bmQdk+DCerk7BQ5xQhzR+l+ndFXW8DCGsQHPKNtO6eTOzKNeDjoLLzUMN
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 06/15] net: page pool: add helper creating area from
- pages
-To: Mina Almasry <almasrymina@google.com>, David Wei <dw@davidwei.uk>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>
-References: <20241029230521.2385749-1-dw@davidwei.uk>
- <20241029230521.2385749-7-dw@davidwei.uk>
- <CAHS8izMkpisFO1Mx0z_qh0eeAkhsowbyCqKqvcV=JkzHV0Y2gQ@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izMkpisFO1Mx0z_qh0eeAkhsowbyCqKqvcV=JkzHV0Y2gQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:174e:b0:3a3:b256:f31f with SMTP id
+ e9e14a558f8ab-3a617539ebfmr90746135ab.19.1730485702003; Fri, 01 Nov 2024
+ 11:28:22 -0700 (PDT)
+Date: Fri, 01 Nov 2024 11:28:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67251dc5.050a0220.529b6.015d.GAE@google.com>
+Subject: [syzbot] [io-uring?] general protection fault in io_uring_show_fdinfo (2)
+From: syzbot <syzbot+6cb1e1ecb22a749ef8e8@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/1/24 17:33, Mina Almasry wrote:
-> On Tue, Oct 29, 2024 at 4:06 PM David Wei <dw@davidwei.uk> wrote:
->>
->> From: Pavel Begunkov <asml.silence@gmail.com>
->>
->> Add a helper that takes an array of pages and initialises passed in
->> memory provider's area with them, where each net_iov takes one page.
->> It's also responsible for setting up dma mappings.
->>
->> We keep it in page_pool.c not to leak netmem details to outside
->> providers like io_uring, which don't have access to netmem_priv.h
->> and other private helpers.
->>
-> 
-> I honestly prefer leaking netmem_priv.h details into the io_uring
-> rather than having io_uring provider specific code in page_pool.c.
+Hello,
 
-Even though Jakub didn't comment on this patch, but he definitely
-wasn't fond of giving all those headers to non net/ users. I guess
-I can't please everyone. One middle option is to make the page
-pool helper more granular, i.e. taking care of one netmem at
-a time, and moving the loop to io_uring, but I don't think it
-changes anything.
+syzbot found the following issue on:
 
-...
->>   #include <linux/dma-direction.h>
->> @@ -459,7 +460,8 @@ page_pool_dma_sync_for_device(const struct page_pool *pool,
->>                  __page_pool_dma_sync_for_device(pool, netmem, dma_sync_size);
->>   }
->>
->> -static bool page_pool_dma_map(struct page_pool *pool, netmem_ref netmem)
->> +static bool page_pool_dma_map_page(struct page_pool *pool, netmem_ref netmem,
->> +                                  struct page *page)
-> 
-> I have to say this is confusing for me. Passing in both the netmem and
-> the page is weird. The page is the one being mapped and the
-> netmem->dma_addr is the one being filled with the mapping.
+HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=162bc6f7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
+dashboard link: https://syzkaller.appspot.com/bug?extid=6cb1e1ecb22a749ef8e8
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f92630580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=126b655f980000
 
-the page argument provides a mapping, the netmem gives the object
-where the mapping is set. netmem could be the same as the page
-argument, but I don't think it's inherently wrong, and it's an
-internal helper anyway. I can entirely copy paste the function, I
-don't think it's anyhow an improvement.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
 
-> Netmem is meant to be an abstraction over page. Passing both makes
-> little sense to me. The reason you're doing this is because the
-> io_uring memory provider is in a bit of a weird design IMO where the
-> memory comes in pages but it doesn't want to use paged-backed-netmem.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6cb1e1ecb22a749ef8e8@syzkaller.appspotmail.com
 
-Mina, as explained it before, I view it rather as an abstraction
-that helps with finer grained control over memory and extending
-it this way, I don't think it's such a stretch, and it doesn't
-change much for the networking stack overall. Not fitting into
-devmem TCP category doesn't make it weird.
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
+CPU: 1 UID: 0 PID: 5845 Comm: syz-executor422 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:io_uring_show_fdinfo+0xeed/0x1810 io_uring/fdinfo.c:181
+Code: 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 cb 68 3c f6 48 8b 1b 48 83 c3 18 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 a5 68 3c f6 4d 89 fe 48 8b 1b 48 89
+RSP: 0018:ffffc9000352f700 EFLAGS: 00010206
+RAX: 0000000000000003 RBX: 0000000000000018 RCX: dffffc0000000000
+RDX: ffff888030040000 RSI: 0000000000000003 RDI: 0000000000000000
+RBP: ffffc9000352f940 R08: ffffffff8bc2f00d R09: 1ffff1100690201f
+R10: dffffc0000000000 R11: ffffed1006902020 R12: 0000000000000000
+R13: dffffc0000000000 R14: ffff888034e26128 R15: ffff888034e26120
+FS:  00005555693ab380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000564acb56e0d8 CR3: 000000007f2d0000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ seq_show+0x608/0x770 fs/proc/fd.c:68
+ seq_read_iter+0x43f/0xd70 fs/seq_file.c:230
+ seq_read+0x3a9/0x4f0 fs/seq_file.c:162
+ do_loop_readv_writev fs/read_write.c:854 [inline]
+ vfs_readv+0x6bc/0xa80 fs/read_write.c:1027
+ do_preadv fs/read_write.c:1142 [inline]
+ __do_sys_preadv fs/read_write.c:1192 [inline]
+ __se_sys_preadv fs/read_write.c:1187 [inline]
+ __x64_sys_preadv+0x1c7/0x2d0 fs/read_write.c:1187
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7f677d1669
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffecebd7a78 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
+RAX: ffffffffffffffda RBX: 00007ffecebd7a80 RCX: 00007f7f677d1669
+RDX: 0000000000000001 RSI: 0000000020000640 RDI: 0000000000000004
+RBP: 00007f7f67844610 R08: 0000000000000000 R09: 68742f636f72702f
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffecebd7cb8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:io_uring_show_fdinfo+0xeed/0x1810 io_uring/fdinfo.c:181
+Code: 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 cb 68 3c f6 48 8b 1b 48 83 c3 18 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 a5 68 3c f6 4d 89 fe 48 8b 1b 48 89
+RSP: 0018:ffffc9000352f700 EFLAGS: 00010206
+RAX: 0000000000000003 RBX: 0000000000000018 RCX: dffffc0000000000
+RDX: ffff888030040000 RSI: 0000000000000003 RDI: 0000000000000000
+RBP: ffffc9000352f940 R08: ffffffff8bc2f00d R09: 1ffff1100690201f
+R10: dffffc0000000000 R11: ffffed1006902020 R12: 0000000000000000
+R13: dffffc0000000000 R14: ffff888034e26128 R15: ffff888034e26120
+FS:  00005555693ab380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000008 CR3: 000000007f2d0000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 4 bytes skipped:
+   0:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1)
+   4:	74 08                	je     0xe
+   6:	48 89 df             	mov    %rbx,%rdi
+   9:	e8 cb 68 3c f6       	call   0xf63c68d9
+   e:	48 8b 1b             	mov    (%rbx),%rbx
+  11:	48 83 c3 18          	add    $0x18,%rbx
+  15:	48 89 d8             	mov    %rbx,%rax
+  18:	48 c1 e8 03          	shr    $0x3,%rax
+  1c:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
+  23:	fc ff df
+* 26:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1) <-- trapping instruction
+  2a:	74 08                	je     0x34
+  2c:	48 89 df             	mov    %rbx,%rdi
+  2f:	e8 a5 68 3c f6       	call   0xf63c68d9
+  34:	4d 89 fe             	mov    %r15,%r14
+  37:	48 8b 1b             	mov    (%rbx),%rbx
+  3a:	48                   	rex.W
+  3b:	89                   	.byte 0x89
 
-> Instead it uses net_iov-backed-netmem and there is an out of band page
-> to be managed.
-> 
-> I think it would make sense to use paged-backed-netmem for your use
-> case, or at least I don't see why it wouldn't work. Memory providers
 
-It's a user page, we can't make assumptions about it, we can't
-reuse space in struct page like for pp refcounting (unlike when
-it's allocated by the kernel), we can't use the normal page
-refcounting.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-If that's the direction people prefer, we can roll back to v1 from
-a couple years ago, fill skbs fill user pages, attach ubuf_info to
-every skb, and whack-a-mole'ing all places where the page could be
-put down or such, pretty similarly what net_iov does. Honestly, I
-thought that reusing common infra so that the net stack doesn't
-need a different path per interface was a good idea.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> were designed to handle the hugepage usecase where the memory
-> allocated by the provider is pages. Is there a reason that doesn't
-> work for you as well?
-> 
-> If you really need to use net_iov-backed-netmem, can we put this
-> weirdness in the provider? I don't know that we want a generic-looking
-> dma_map function which is a bit confusing to take a netmem and a page.> 
-...
->> +
->> +static void page_pool_release_page_dma(struct page_pool *pool,
->> +                                      netmem_ref netmem)
->> +{
->> +       __page_pool_release_page_dma(pool, netmem);
->> +}
->> +
-> 
-> Is this wrapper necessary? Do you wanna rename the original function
-> to remove the __ instead of a adding a wrapper?
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-I only added it here to cast away __always_inline since it's used in
-a slow / setup path. It shouldn't change the binary, but I'm not a huge
-fan of leaving the hint for the code where it's not needed.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
--- 
-Pavel Begunkov
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

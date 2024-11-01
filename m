@@ -1,190 +1,121 @@
-Return-Path: <io-uring+bounces-4331-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4332-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F939B9927
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 21:07:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B29509B9934
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 21:12:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D233AB21207
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 20:07:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 460F9283235
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 20:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF861D1E77;
-	Fri,  1 Nov 2024 20:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35F71CEAAC;
+	Fri,  1 Nov 2024 20:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y66KX+dq"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07FB1D2B11
-	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 20:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188A21E1322
+	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 20:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730491655; cv=none; b=ZHCP1GAQPHIms6UIQllDl+CFOr9RI3kPnYu/bhNGd/Rg2cGNpn6x8dIMeiw8ToLAki2S+WHmy8bcdrL89XDcN1TpF4Njdl5q8Bm4+b1SPBXVQTzuPDcHdc/tgtkxrJN+cnScZGU8Zll4uTda9h8Ayd9kCK7AAOQnsteeWz1hRm4=
+	t=1730491921; cv=none; b=Vai1hLUpjelaCA2tQbnorRcDIC7qyVPPPJLNnGH6Vr6/7t/ZFekYrKro7zF9pxN6yDFKTCtmbSKR+J1FFwBVvz42smZtQx8PBaEMgK6QIxkprCElXj0zAeS8+bDlwM9alHGrJ/aCgoxaYm1rgodc7kodLYxtpnEiy3Poma/Thmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730491655; c=relaxed/simple;
-	bh=pLCSgf1FA7YufT7FjypRtJtCBin2sqPNA2G6Ffx8JmY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rzoi3GrgxYmD8+vMizKRSxzPDcbZ7HPB4Rm/Ho98Y4oh9O/x0VkMeBeM+cVHb5l7PK2eduzp3KL+KGO2hOV1TVH/D9xZpraxMJjzS6qOF68wCWVLXMOBi4JqtHv/okeH9PVGQIFTaIIhvqrH7LU0qs6qA5ZnCUYhIw69XapPH8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4e41e2732so22794915ab.2
-        for <io-uring@vger.kernel.org>; Fri, 01 Nov 2024 13:07:33 -0700 (PDT)
+	s=arc-20240116; t=1730491921; c=relaxed/simple;
+	bh=hr97Yp3Qp6SmW8JuJbDwdSzmRhchs4ulWgoo6MWx2hI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mlEv0lhwST9AGG1eqB4rCrTQ7Q3hpXy+SjqT7bJpGM0H+KqTVcPu+pgE2Ya2AbOqwXoLG1cID6ASFDjpe/Ng1vefjwho3JZiCndqubZnuaKpA05QH8PwuenTHpHjt/upYKvvf6FG1B+APFL4J249QCX6bLYcWWUuzqh3Zlkw8Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y66KX+dq; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4608dddaa35so75521cf.0
+        for <io-uring@vger.kernel.org>; Fri, 01 Nov 2024 13:11:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730491919; x=1731096719; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ejiV3nojKU8JOSRuqbEiFZ2lXr3DMRw92KQ2wPjl88w=;
+        b=Y66KX+dqIUF/kiMMuILdaoMfa7BOoK8P/JD7e3jkubRqEC0JiNmzku704pdOooZwvG
+         QSjweK4ptQkFXd/SbN2ukdh7Ed3ksiiOUkBHkx5yfScgkXXgUN1Lt7kHaguRrbCfdtrr
+         y85G+wGHON591di9BXLRK30SCe+ouq/v73kidEg8QiNdVICf1qWMZhoM9DHUhWPsrTGS
+         yJaxOUgHLwzgeoWYZjYqwnhvXFEvQjggGE8+qTM0/trMrjC7umtq8+qMJdtCS/SmVIzR
+         0uqmDz2gqNswXDzbSRvmEcu3T+clOQuFBGFLPZgEQfEv1BE/5m5PrC2pFH1rLIQ3qgQH
+         fNlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730491652; x=1731096452;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WKkXYUGj7iwxbjiKax0C3RrxchxN2fGDD9Ow3Ftv1DU=;
-        b=U6xvYakUiSk9byg1Q/8d4ACgaj6n9HZ73Le5ifSWrVta0GnELHRA3+wxJYJZ0lPZIx
-         EaS5um0PSXle9U6pqjX76dUfIozPHr4Qz3qsaQDLI6KMvCyL51pCXF02lNq8o6RkfRWq
-         l7tWfNWe0xleOrDAGQsb2LEpBg0wP41q6xlonV2aRL8ZHGBOhRwI3JNYudncvIKa48mG
-         5xdhW9GkHoUPwgi8et+H/umg+OrhkBQ5Kyw49WJ7CNyiYu1/nmU4JQTST/U02Jw1i72P
-         TONeehhEAhsR+I6QZFK5rIcWXQzrgWHkiSQI7vdWbKrdvj+sw4ZZVau0zJoF3QQMtQPu
-         rnUw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3p6c9JmhLYcr1lHDDaqjexFbWvF9YLKFpAVG55kLv7tu8nJIESLP3Ncqtwzim0UhEl/yOjeQH1w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLE0VNARqupAVuXut8pQpPQgIygUT7GUQm1ePepo+loA5WI2SU
-	eIHZCDIoqR3IqaGZVD8TJGUyE7oh/SvFDB8CL/ZbYt20RJ9ifizn/rjvnGb9OEWhjBQbBHkrejj
-	Zq8vXPQVLpryjmAFCPch0hSC9MmnDEgWlnYRns9En86AfTrP+gV+2GGs=
-X-Google-Smtp-Source: AGHT+IElId++NX4OCR+e50oEteEN2/ewKdWt5dAGF5kq255zp5JCCSVY8a/ac7cvhnmE11BJXFu8qEcaOS68LzeocUNavBOmRL7o
+        d=1e100.net; s=20230601; t=1730491919; x=1731096719;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ejiV3nojKU8JOSRuqbEiFZ2lXr3DMRw92KQ2wPjl88w=;
+        b=vr/YCu/NeXMIclfrlMuC1UI2JZEj6VOdP8B8BpvxigBuhok1sTrQVlzthu9rnorx7e
+         df7Ch9/2HW6mLskrhyAC+yhVq79U2XBHWjggyduubly0gRaS6OIIA6koML2vdxeWtAW+
+         WwwFzbJOhbooIQK1exbF7k6YFCMTjME5Co3kFRnqlgAUKpXpJchaoymrR1YUeD9VN08u
+         3EbU35cK2a5qy4svE/i2Gb9fNc7DnA/7f6bxrd6PK6tm3/tte1TpDhrsfxhYb1Axw+dt
+         mh0DkVJNSVGRPBPFk7ayeXYhnSBQquHyA66tfhqYMWWYK3BPfb9BvC+Wn3Tpi7b3Ky4Z
+         ePyQ==
+X-Gm-Message-State: AOJu0YwKP1pDRJBUnAs6NGilUX8AK6sJKZOgBGxANOcJgGnztjFVXyRk
+	EheLmkewYg/0+l8n/fYKzpCkJWBWie+dkSwzVfcyBj9AcxumMk8nVeiTLFUHGZ+sk18AqrCxT+T
+	MeNz6LH0LomBDnMqCTBMWYMKu46WS1GmWKOor
+X-Gm-Gg: ASbGncvrdPC2Pwnc3zC+de+eNnTi+lQGM9iY2KfLs+xL8fCD8giZWlkFNA07uVu4C4M
+	HdVfNI2LbQIufCt5XI4VxSrbdC9TdgJzCNxcIHCm6Bf7+1ijGyqI4XRZt98Rsyg==
+X-Google-Smtp-Source: AGHT+IHhchjVNua+q1hjFSSUiFjye5O8F2gFXrFh+qB1xxZL2N98zYmsGHlhpJipLyhO/M3LOagO1DK9x+u5isJgcdM=
+X-Received: by 2002:a05:622a:2991:b0:461:5b0d:7aa5 with SMTP id
+ d75a77b69052e-462c5ef8accmr680331cf.16.1730491918776; Fri, 01 Nov 2024
+ 13:11:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1548:b0:3a2:6ce9:19c6 with SMTP id
- e9e14a558f8ab-3a4ed30fe20mr242408415ab.25.1730491652715; Fri, 01 Nov 2024
- 13:07:32 -0700 (PDT)
-Date: Fri, 01 Nov 2024 13:07:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67253504.050a0220.3c8d68.08e1.GAE@google.com>
-Subject: [syzbot] [io-uring?] general protection fault in io_sqe_buffer_register
-From: syzbot <syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20241029230521.2385749-1-dw@davidwei.uk> <20241029230521.2385749-13-dw@davidwei.uk>
+In-Reply-To: <20241029230521.2385749-13-dw@davidwei.uk>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 1 Nov 2024 13:11:46 -0700
+Message-ID: <CAHS8izP=S8nEk77A+dfBzOyq7ddcGUNYNkVGDhpfJarzdx3vGw@mail.gmail.com>
+Subject: Re: [PATCH v7 12/15] io_uring/zcrx: add io_recvzc request
+To: David Wei <dw@davidwei.uk>
+Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>, 
+	Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Oct 29, 2024 at 4:06=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
+>
+...
+> +static void io_zcrx_get_buf_uref(struct net_iov *niov)
+> +{
+> +       atomic_long_add(IO_ZC_RX_UREF, &niov->pp_ref_count);
+> +}
+> +
 
-syzbot found the following issue on:
+This is not specific to io_rcrx I think. Please rename this and put it
+somewhere generic, like netmem.h.
 
-HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12052630580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
-dashboard link: https://syzkaller.appspot.com/bug?extid=05c0f12a4d43d656817e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15abc6f7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10eb655f980000
+Then tcp_recvmsg_dmabuf can use the same helper instead of the very
+ugly call it currently does:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
+- atomic_long_inc(&niov->pp_ref_count);
++ net_iov_pp_ref_get(niov, 1);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com
+Or something.
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 0 UID: 0 PID: 5845 Comm: syz-executor176 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:headpage_already_acct io_uring/rsrc.c:584 [inline]
-RIP: 0010:io_buffer_account_pin io_uring/rsrc.c:614 [inline]
-RIP: 0010:io_sqe_buffer_register+0xaa8/0x2cf0 io_uring/rsrc.c:758
-Code: 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 b0 8a 55 fd 48 8b 1b 48 83 c3 18 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 8a 8a 55 fd 48 8b 03 48 89 44 24 60
-RSP: 0018:ffffc90003faf640 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: dffffc0000000000
-RDX: ffff88807ef14128 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003faf7f0 R08: ffffffff84a9ce37 R09: 1ffffd40003a8000
-R10: dffffc0000000000 R11: fffff940003a8001 R12: ffffea0001d40000
-R13: 0000000000000006 R14: 1ffff110060dc350 R15: ffff8880306e1a80
-FS:  00005555684d7380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020010404 CR3: 000000007ea62000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __io_sqe_buffers_update io_uring/rsrc.c:257 [inline]
- __io_register_rsrc_update+0x5c8/0x1320 io_uring/rsrc.c:295
- io_register_rsrc_update+0x1d1/0x230 io_uring/rsrc.c:326
- __do_sys_io_uring_register io_uring/register.c:938 [inline]
- __se_sys_io_uring_register+0x8ee/0x40d0 io_uring/register.c:915
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f96c01b8469
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc4e36b3a8 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 00000000000004b5 RCX: 00007f96c01b8469
-RDX: 0000000020000600 RSI: 0000000000000010 RDI: 0000000000000003
-RBP: 0000000000000003 R08: 00000000000ac5f8 R09: 00000000000ac5f8
-R10: 0000000000000020 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffc4e36b578 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:headpage_already_acct io_uring/rsrc.c:584 [inline]
-RIP: 0010:io_buffer_account_pin io_uring/rsrc.c:614 [inline]
-RIP: 0010:io_sqe_buffer_register+0xaa8/0x2cf0 io_uring/rsrc.c:758
-Code: 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 b0 8a 55 fd 48 8b 1b 48 83 c3 18 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 8a 8a 55 fd 48 8b 03 48 89 44 24 60
-RSP: 0018:ffffc90003faf640 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: dffffc0000000000
-RDX: ffff88807ef14128 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003faf7f0 R08: ffffffff84a9ce37 R09: 1ffffd40003a8000
-R10: dffffc0000000000 R11: fffff940003a8001 R12: ffffea0001d40000
-R13: 0000000000000006 R14: 1ffff110060dc350 R15: ffff8880306e1a80
-FS:  00005555684d7380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f96c017d020 CR3: 000000007ea62000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 3 bytes skipped:
-   0:	df 80 3c 08 00 74    	filds  0x7400083c(%rax)
-   6:	08 48 89             	or     %cl,-0x77(%rax)
-   9:	df e8                	fucomip %st(0),%st
-   b:	b0 8a                	mov    $0x8a,%al
-   d:	55                   	push   %rbp
-   e:	fd                   	std
-   f:	48 8b 1b             	mov    (%rbx),%rbx
-  12:	48 83 c3 18          	add    $0x18,%rbx
-  16:	48 89 d8             	mov    %rbx,%rax
-  19:	48 c1 e8 03          	shr    $0x3,%rax
-  1d:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
-  24:	fc ff df
-* 27:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1) <-- trapping instruction
-  2b:	74 08                	je     0x35
-  2d:	48 89 df             	mov    %rbx,%rdi
-  30:	e8 8a 8a 55 fd       	call   0xfd558abf
-  35:	48 8b 03             	mov    (%rbx),%rax
-  38:	48 89 44 24 60       	mov    %rax,0x60(%rsp)
+In general I think io_uring code can do whatever it wants with the
+io_uring specific bits in net_iov (everything under net_area_owner I
+think), but please lets try to keep any code touching the generic
+net_iov fields (pp_pagic, pp_ref_count, and others) in generic
+helpers.
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--=20
+Thanks,
+Mina
 

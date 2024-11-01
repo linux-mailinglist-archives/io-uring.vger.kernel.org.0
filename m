@@ -1,143 +1,120 @@
-Return-Path: <io-uring+bounces-4305-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4306-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C679B9381
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 15:42:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B049B93BA
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 15:49:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D6B1C216D5
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 14:42:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDFCA1F21E2A
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 14:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491C21A7273;
-	Fri,  1 Nov 2024 14:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D2F1AAE3B;
+	Fri,  1 Nov 2024 14:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="3dpprIfX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqviswlY"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668901AA787
-	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 14:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FC41AA78E;
+	Fri,  1 Nov 2024 14:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730472168; cv=none; b=tIvliprlGMbTpxc4pztWQTuUs6pOPhYTmXuClHvm0Po4zAytVPWaF1+0PPmR537s5QKw8uGoEQ+ZjJ7/Wp4GMMRxfkp+JztYImgfwJ21xLHvdCgM4m7vi1uYcoYDr23WnzD8Je6gKNvYefdV0s6O/fvNWfSqDO8+RiZ0MQLrLe8=
+	t=1730472556; cv=none; b=H3JCkb7LcwaT5IE5nE9uqGVVrqcZy0i4BeYfg6VDNjnHPfwvOvxobaOqIyn8Ctz7FcOzCxGIt/El0kvZWCk/tT3BPqNesCprz9fp4VsMUdVKGU704xKniv6ggUP46BA24EjPDNoTgZ7pdInmOpFlm+so4WhMqWd6JymBdVU/4+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730472168; c=relaxed/simple;
-	bh=mszviQ/L4y1bnkz10UAEd1/H4XcUKLujNcAGiHvIYLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DQRz5Kc7WWKkr0APGq5S+EfiYwTGO+7MjxxUvzrMMRMnleUEhihFy1NQGDuTdmlH4wkw8kJ/WF6CINSX9c/KTnsaicpckjZ0qM60OXCxwDxDKGSaoOu+RThImDLvEIguuoTdMzKFWxLVs4OUlm8rENTTQrjR/bXbyBQw1ILSpwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=3dpprIfX; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20b5affde14so16676585ad.3
-        for <io-uring@vger.kernel.org>; Fri, 01 Nov 2024 07:42:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730472164; x=1731076964; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TBr+kumU7qmmAYNPmAe5037X2aivRbq/Uucz4QCN680=;
-        b=3dpprIfXVvb9tc52i6JZHF6q65vLDwvB9TKdlF67laKSokT/GPbkP10GLxCQffA60V
-         vvfKiwgGbyGwHW3KKFXz+njqZLmp3KDqCILVnIz6qsZnf5nXTzacvbBcRidjGVNJoGDm
-         ENgWSaOa6X5lwoNxujIpg6Bo64ekuEyJpXwaxz5g+mX044/KhRHzl7Qr5Qtef0DxIv9A
-         ZUt0UfI62s6r+TwIUlFglhw2ehaCLhsv4FjsDhwJGX1u8/8kpC1opTp9Ir0uLQDMkRfZ
-         R9E10wOpx4XzoKMk1VOyH1zOVV21a+m526weYE5SGn4hbMofBynAoL/XGJmLz1gtqhYP
-         Uqlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730472164; x=1731076964;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TBr+kumU7qmmAYNPmAe5037X2aivRbq/Uucz4QCN680=;
-        b=a6H2uUzet7pTQE8PE/ZUFHO/ZOr5TUc7LmftpKWYjWVYDfZ691xkalUOgYkL9/y8pB
-         PxyGoOxJBGJBihNpAQ307IqYtFYPeaiU0FV41eRc2E4cPq8AH+nNZcg7W3C+CZrUsYCA
-         7q1BXpxPhTAvB0rd5rCUl29LXJaeLQuXO/f7FZERgWxqHPXx9R7/72pwHC5FKlpg/vW0
-         8g7arlH0i4pkId2FUWPtQ7Xlx0Z4JPe9AMacciCE7N2paMjcST5GhTOPh2E75oViMdCa
-         veFACyCtcjT+MjR5K3wGmg/lQQX3cNX8EJltrNg6zNoCxSNtopTxqDdLaV66NQqginsU
-         +bpg==
-X-Gm-Message-State: AOJu0YzeapmMxPpm6TkWZtm3Cwy6yQRp3EU60X+uDJ99413Qad9cpEu+
-	rQFDgw/9d3FeCf/FFDn1DR5CTBtrCwHralVSIcZ/GaAWu56XM6T/EEiZ/LTwKvi/98K7wLgaJ0w
-	BiYA=
-X-Google-Smtp-Source: AGHT+IE/dsO/2QHIGlqh3kr+tn0EAfzWL9GLQqFbzoofex/h8/KajrvSWAJR7C8NrmLSJb724daPrQ==
-X-Received: by 2002:a17:902:f543:b0:20b:a5b5:b89 with SMTP id d9443c01a7336-210c6b0171emr278810405ad.35.1730472163625;
-        Fri, 01 Nov 2024 07:42:43 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ed906sm22352705ad.32.2024.11.01.07.42.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 07:42:42 -0700 (PDT)
-Message-ID: <e648e765-9076-4236-a75d-c7baf68c1040@kernel.dk>
-Date: Fri, 1 Nov 2024 08:42:42 -0600
+	s=arc-20240116; t=1730472556; c=relaxed/simple;
+	bh=k7EVw74ih8Q0h2JSgjLP3Pfx29kLuoxz2HYyitmb5QY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hBfAeUimU6J0Dijnu2NtLhFu8Y8RbYYEvS+B1WQ1IQJdsGs6JohqgBi6sliykFg8BYzQH+QafelXMTd3OY4LTWEvp6e+dFEEgplewQibODi2GoVftqWs3/9KleIeENlLK8ev57y5v1zkUnVqY4rs6apRk9ZiGbWBoNgAufxQoIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqviswlY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AFBFC4CECD;
+	Fri,  1 Nov 2024 14:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730472555;
+	bh=k7EVw74ih8Q0h2JSgjLP3Pfx29kLuoxz2HYyitmb5QY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qqviswlYX1BHKuPR5ekMMzxSlcNtysICRu79OUByTD9UMQIsGrpVy/A721KYFuHMe
+	 TZgNQ9laCdOQKoOOdHw+RLLXTRMtPDyj+1aOdIvd/CmVB1QDlxAT1sXJW1ILqbhgQj
+	 r2chJflG1cLWi+WegmVeWDFEgaGMQ1D/J7Vs55mWI6YhP5xHJdg5e1ZqnThl3RcSmW
+	 A/t4EPA6eJxanq/Ag7wG+RZpB6Hdw1r++uL8XIiNJqWdiYaNtOJY5lcWERoBA2hDsR
+	 ustDb/50m8C5CtlUteDhkjp1SoqsrgvAqVnupo9cwHKs137vxOIFE7gwnytEzws0Ol
+	 0wDEgDRoQz2Pw==
+Date: Fri, 1 Nov 2024 08:49:12 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Hans Holmberg <hans@owltronix.com>
+Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, joshi.k@samsung.com,
+	javier.gonz@samsung.com, bvanassche@acm.org,
+	Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCHv10 9/9] scsi: set permanent stream count in block limits
+Message-ID: <ZyTqZ3UR39VTHSA2@kbusch-mbp.dhcp.thefacebook.com>
+References: <ZyJTsyDjn6ABVbV0@kbusch-mbp.dhcp.thefacebook.com>
+ <20241030154556.GA4449@lst.de>
+ <ZyJVV6R5Ei0UEiVJ@kbusch-mbp.dhcp.thefacebook.com>
+ <20241030155052.GA4984@lst.de>
+ <ZyJiEwZwjevelmW2@kbusch-mbp.dhcp.thefacebook.com>
+ <20241030165708.GA11009@lst.de>
+ <ZyK0GS33Qhkx3AW-@kbusch-mbp.dhcp.thefacebook.com>
+ <CANr-nt35zoSijRXYr+ommmWGfq0+Ye0tf3SfHfwi0cfpvwB0pg@mail.gmail.com>
+ <ZyOO4PojaVIdmlOA@kbusch-mbp.dhcp.thefacebook.com>
+ <CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] io_uring: extend io_uring_sqe flags bits
-To: Ming Lei <ming.lei@redhat.com>
-Cc: io-uring <io-uring@vger.kernel.org>,
- Pavel Begunkov <asml.silence@gmail.com>
-References: <e60a3dd3-3a74-4181-8430-90c106a202f6@kernel.dk>
- <ZyQ5CcwfLhaASvMz@fedora> <ZyRAKm0IQV7wWjhC@fedora>
- <3a907323-331f-4442-a2a0-4e2757aaba8b@kernel.dk> <ZyTm9rBQpy7WFdwK@fedora>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZyTm9rBQpy7WFdwK@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
 
-On 11/1/24 8:34 AM, Ming Lei wrote:
-> On Fri, Nov 01, 2024 at 07:59:38AM -0600, Jens Axboe wrote:
->> On 10/31/24 8:42 PM, Ming Lei wrote:
->>> On Fri, Nov 01, 2024 at 10:12:25AM +0800, Ming Lei wrote:
->>>> On Thu, Oct 31, 2024 at 03:22:18PM -0600, Jens Axboe wrote:
->>>>> In hindsight everything is clearer, but it probably should've been known
->>>>> that 8 bits of ->flags would run out sooner than later. Rather than
->>>>> gobble up the last bit for a random use case, add a bit that controls
->>>>> whether or not ->personality is used as a flags2 argument. If that is
->>>>> the case, then there's a new IOSQE2_PERSONALITY flag that tells io_uring
->>>>> which personality field to read.
->>>>>
->>>>> While this isn't the prettiest, it does allow extending with 15 extra
->>>>> flags, and retains being able to use personality with any kind of
->>>>> command. The exception is uring cmd, where personality2 will overlap
->>>>> with the space set aside for SQE128. If they really need that, then that
->>>>
->>>> The space is the 1st `short` for uring_cmd, instead of SQE128 only.
->>>>
->>>> Also it is overlapped with ->optval and ->addr3, so just wondering why not
->>>> use ->__pad2?
->>>>
->>>> Another ways is to use __pad2 for sqe2_flags for non-uring_cmd, and for
->>>> uring_cmd, use its top 16 as sqe2_flags, this way does work, but it is
->>>> just a bit ugly to use.
->>>
->>> Also IOSQE2_PERSONALITY doesn't have to be per-SQE, and it can be one
->>> feature of IORING_FEAT_IOSQE2_PERSONALITY, that is why I thought it is
->>> fine to take the 7th bit as SQE_GROUP now.
->>
->> Not sure I follow your thinking there, can you expand?
+On Fri, Nov 01, 2024 at 08:16:30AM +0100, Hans Holmberg wrote:
+> On Thu, Oct 31, 2024 at 3:06 PM Keith Busch <kbusch@kernel.org> wrote:
+> > On Thu, Oct 31, 2024 at 09:19:51AM +0100, Hans Holmberg wrote:
+> > > No. The meta data IO is just 0.1% of all writes, so that we use a
+> > > separate device for that in the benchmark really does not matter.
+> >
+> > It's very little spatially, but they overwrite differently than other
+> > data, creating many small holes in large erase blocks.
 > 
-> It could be one io_uring setup flag, such as
-> IORING_SETUP_IOSQE2_PERSONALITY.
+> I don't really get how this could influence anything significantly.(If at all).
+
+Fill your filesystem to near capacity, then continue using it for a few
+months. While the filesystem will report some available space, there
+may not be many good blocks available to erase. Maybe.
+ 
+> > Again, I absolutely disagree that this locks anyone in to anything.
+> > That's an overly dramatic excuse.
 > 
-> If this flag is set, take __pad2 as sqe2_flags, otherwise use current
-> way, so it doesn't have to take bit7 of sqe_flags for this purpose.
+> Locking in or not, to constructively move things forward (if we are
+> now stuck on how to wire up fs support) 
 
-Would probably have to be a IORING_SETUP_IOSQE2_FLAGS or something in
-general. And while that could work, not a huge fan of that. I think we
-should retain that for when a v2 of the sqe is done, to coordinate which
-version to use.
+But we're not stuck on how to wire up to fs. That part was settled and
+in kernel 10 years ago. We're stuck on wiring it down to the driver,
+which should have been the easiest part.
 
-> Also in future, if uring_cmd needs personality, it still may reuse top
-> 16bit of uring_cmd_flags for that.
+> I believe it would be worthwhile to prototype active fdp data
+> placement in xfs and evaluate it. Happy to help out with that.
 
-Right, that's what I referred to in terms of uring_cmd just having its
-own way to set personality.
+When are we allowed to conclude evaluation? We have benefits my
+customers want on well tested kernels, and wish to proceed now.
 
--- 
-Jens Axboe
+I'm not discouraing anyone from continuing further prototypes,
+innovations, and improvements. I'd like to spend more time doing that
+too, and merging something incrementally better doesn't prevent anyone
+from doing that.
+
+> Fdp and zns are different beasts, so I don't expect the results in the
+> presentation to be directly translatable but we can see what we can
+> do.
+> 
+> Is RocksDB the only file system user at the moment?
+
+Rocks is the only open source one I know about. There are propietary
+users, too.
 

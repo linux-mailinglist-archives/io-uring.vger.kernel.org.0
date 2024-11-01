@@ -1,174 +1,248 @@
-Return-Path: <io-uring+bounces-4297-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4298-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39849B8CE4
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 09:19:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2499B8DE7
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 10:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E100B22D75
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 08:19:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FAD11C20B93
+	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 09:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262B1156C69;
-	Fri,  1 Nov 2024 08:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A104D1BDC3;
+	Fri,  1 Nov 2024 09:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nezja3Uy"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="W2HGURR4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED4A14D29B
-	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 08:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA861581F0
+	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 09:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730449161; cv=none; b=sPE9uhoG1lrqPWb2gkPMA1ouBniH37sP+J1iVtUAcjOSjwuFYcUUuJYVKI07UeoNhtBy4P84BO9MrF6KOuHJMJFjGDzEHNxb5ougmuB8YgpV4OB8lJZrRFpGUKarXzHhmFYwsbbcrhRMyk5aByFMxyJ4KzVKKYc3I1awhheSMk8=
+	t=1730453557; cv=none; b=LZNKpCSIQEyGXikwwxcJBRaT1L3iQNVR2ZWCmiFfT+vgmMITk+rtMlu153mCo4O5TCuPZNat4T7L5WQZpEnYjSHH/OIiAZHFiQpHs3DXSNDFN/TJ3CDvlEvx8SCcgd4gzKMI5jAAE+5sFj3yAn1nkgXgs1jKTejmEGUhkjMv3R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730449161; c=relaxed/simple;
-	bh=IBxCMaTDMwMv7TecQhch3IN0C/Pthjqbj5pJgfI0Dyc=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=qni2sfU2Maxmtaem4g3SayDAp78/yrGgS5+2M5i+m/OGOwwcqWeqF+/4gUkAv4MGCnegLRPvuQ8ReWP5VsBMvRD72NgMgLIbfnTQuOYIQE1Q83fBCHOzG14La4FW6Jb1O+yRRY/TFsRC2nPSwSnl2vvxSwuq5cfdSni1kGtn03Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nezja3Uy; arc=none smtp.client-ip=210.118.77.11
+	s=arc-20240116; t=1730453557; c=relaxed/simple;
+	bh=8JT1KSGbwIIi9U6Y6JINeq/j0V9Eu+cGVsjZAzNNP5o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=BrWulcFIdcNW+zWh/8Z2bPO+RBkEIE3ibgP5CDy1as0S8fvIpxAmey8Crnq57cS15CpKiTzUlOd1o5GlbGtclHx2XIf3lfgl2+uRa0bHJA+rijo3nG42GujcHo0lsqqrD/oa1r1Y5ICKO+USpNJTNUvvebbpa6nYFWRrSa18joI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=W2HGURR4; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241101081915euoutp0162f9652cbbbe1a26e5a4737e192540d5~Dyla7A-OR1379213792euoutp01O
-	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 08:19:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241101081915euoutp0162f9652cbbbe1a26e5a4737e192540d5~Dyla7A-OR1379213792euoutp01O
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241101093231epoutp01fe3c26ca617a34a02b6592edd7ff603d~DzlZLsvg21960919609epoutp01o
+	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 09:32:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241101093231epoutp01fe3c26ca617a34a02b6592edd7ff603d~DzlZLsvg21960919609epoutp01o
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730449155;
-	bh=u0t4feekxOIswH/gya5PvM4rWukDuX0GEL28uYYRBHM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=nezja3UyPadsbJdJFB1BbxfY/LoWbOzC3yTYYCVFi039jTrjHEOildnT6DXmFGDbD
-	 Nu03N73Hf3GUbuYoyYM4I5skLr/WSxhgAC6p59YfchgZhI3wbr8p1ZQ8wp9re0Yx3p
-	 QjbL6r38IvQP4B9ogJn2SxY4kqrcX/WyWXgacEbk=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20241101081915eucas1p2c8a05e9da2bb94096e29e2c99dc460cc~DylapO37t0479604796eucas1p2O;
-	Fri,  1 Nov 2024 08:19:15 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 72.23.20821.30F84276; Fri,  1
-	Nov 2024 08:19:15 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241101081914eucas1p269f6f4d515aa0db81f4fb03cd3ae64d7~DylZ8gtLF3182931829eucas1p2Y;
-	Fri,  1 Nov 2024 08:19:14 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241101081914eusmtrp24265f317813388cfa225d1254c009a9b~DylZ73QdP2944729447eusmtrp2G;
-	Fri,  1 Nov 2024 08:19:14 +0000 (GMT)
-X-AuditID: cbfec7f2-b09c370000005155-7a-67248f038fa3
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 47.C0.19654.20F84276; Fri,  1
-	Nov 2024 08:19:14 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241101081914eusmtip2b586a3684238513b723c7a4ad1e26a71~DylZxysUn0659906599eusmtip2a;
-	Fri,  1 Nov 2024 08:19:14 +0000 (GMT)
-Received: from localhost (106.110.32.122) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 1 Nov 2024 08:19:13 +0000
-Date: Fri, 1 Nov 2024 09:19:12 +0100
-From: Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>
-To: Hans Holmberg <hans@owltronix.com>
-CC: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, "Keith
- Busch" <kbusch@meta.com>, <linux-block@vger.kernel.org>,
-	<linux-nvme@lists.infradead.org>, <linux-scsi@vger.kernel.org>,
-	<io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<joshi.k@samsung.com>, <bvanassche@acm.org>, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCHv10 9/9] scsi: set permanent stream count in block limits
-Message-ID: <20241101081912.kvixtd6mattjemxk@ArmHalley.local>
+	s=mail20170921; t=1730453551;
+	bh=RBIeRi6DvPfok+pEnL5Q3tutpIPNPK4K5trjCZx3AIw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=W2HGURR4HXXkcMQ82WvgrPCidN+pD1h0ie2/v6ORV41JIlS27HHcAhCkGtyVRm9R/
+	 /l0l9xFbYsWqwKs4MkNhXPjZJWykvg86+cVifUFrbd5nDziZhyhEVzeU3HWnDwVl0H
+	 DBSXGuz03tyld/kJ5O+kvdWEn14YcrYXHgzWsEGc=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20241101093231epcas5p37429a0d3ceecac28544e3cf736904a10~DzlYyOqxi0632306323epcas5p3M;
+	Fri,  1 Nov 2024 09:32:31 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Xfwcs21f9z4x9Px; Fri,  1 Nov
+	2024 09:32:29 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E7.CD.08574.D20A4276; Fri,  1 Nov 2024 18:32:29 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241101092007epcas5p29e0c6a6c7a732642cba600bb1c1faff0~DzajrPZQR0809008090epcas5p2D;
+	Fri,  1 Nov 2024 09:20:07 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241101092007epsmtrp2a16eb8016917b757decdacbbe84312e9~DzajqkDkq2461124611epsmtrp2A;
+	Fri,  1 Nov 2024 09:20:07 +0000 (GMT)
+X-AuditID: b6c32a44-6dbff7000000217e-40-6724a02dd81b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	04.8E.18937.74D94276; Fri,  1 Nov 2024 18:20:07 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241101092006epsmtip2a8781b955a069bf49645f6b99fb8f500~DzaitT17m0073700737epsmtip2k;
+	Fri,  1 Nov 2024 09:20:06 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, hexue
+	<xue01.he@samsung.com>
+Subject: [PATCH v9 0/1] io_uring: releasing CPU resources when polling
+Date: Fri,  1 Nov 2024 17:19:56 +0800
+Message-Id: <20241101091957.564220-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-In-Reply-To: <CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPKsWRmVeSWpSXmKPExsWy7djPc7rM/SrpBrO2CVlM+/CT2WLu1NWs
-	FnsWTWKyWLn6KJPFu9ZzLBaTDl1jtDhzdSGLxd5b2hZ79p5ksZi/7Cm7Rff1HWwO3B6Xr3h7
-	bFrVyeaxeUm9x+6bDWwe5y5WeBzetIjVY/Ppao/Pm+QCOKK4bFJSczLLUov07RK4MjbO+c9W
-	cJar4sFCqwbGvRxdjJwcEgImEh3LXrJ0MXJxCAmsYJTYfe4zlPOFUaL9xGlGCOczo8TCz8dZ
-	YVr2XbvABpFYzihxaGoDC1zV/KvnoDKbGSWuv3zIDNLCIqAi0fdhPSOIzSZgL3Fp2S2wuIiA
-	msTZFx1MIDazwFUmifcPwOLCAj4S29d/YgOxeQVsJc7f7WKFsAUlTs58wgJRbyXR+aEJKM4B
-	ZEtLLP8H9hCnQKDE/6efmSEuVZJ4/OItI4RdK3Fqyy0mkNskBPo5JY4vPQtV5CLxoncRE4Qt
-	LPHq+BZ2CFtG4v/O+VDxaomGkyegmlsYJVo7toItlhCwlug7kwNR4yix+tgvZogwn8SNt4IQ
-	Z/JJTNo2HSrMK9HRJgRRrSax+t4blgmMyrOQPDYLyWOzEB5bwMi8ilE8tbQ4Nz212DAvtVyv
-	ODG3uDQvXS85P3cTIzBNnf53/NMOxrmvPuodYmTiYDzEKMHBrCTC+6FAOV2INyWxsiq1KD++
-	qDQntfgQozQHi5I4r2qKfKqQQHpiSWp2ampBahFMlomDU6qBKdZWWtn+1Ff+y2tmX3/axmx6
-	8Er3ir0Fv190l55NOOv8+VH5bwvPlIeuVYxLtsetSsrzyQ89U/3nSEbrdM09LQGqD/4Kveq0
-	+Pn6yStx6QfZtQ2ejpvZ9xgtUP21Yves18xP0o6pC+VLpOx9/7pFL/Nfm+6m8+E9k99Mszbh
-	lvRP3hn9WOtBwNObEc/Fp1uypVUITWdWkT800adP5NOX/2eaJKdsqSj/8W3V20n6O+0d/s1b
-	qHc3TqtS8IjyqclT+T7xnjeL4eCpsTF1qvjnZfuyc0e088HT76dM92DS9I5zii9LaL469YKc
-	J8fzDGO39e4xp5vWei64tOYLW3aO+Hc9aat9al0FAVMOcKYfUmIpzkg01GIuKk4EAP8jPTfC
-	AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xe7pM/SrpBpvblS2mffjJbDF36mpW
-	iz2LJjFZrFx9lMniXes5FotJh64xWpy5upDFYu8tbYs9e0+yWMxf9pTdovv6DjYHbo/LV7w9
-	Nq3qZPPYvKTeY/fNBjaPcxcrPA5vWsTqsfl0tcfnTXIBHFF6NkX5pSWpChn5xSW2StGGFkZ6
-	hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GRvn/GcrOMtV8WChVQPjXo4uRk4OCQET
-	iX3XLrB1MXJxCAksZZSY/+koK0RCRmLjl6tQtrDEn2tdUEUfGSXWL7jMDOFsZpT4tmclE0gV
-	i4CKRN+H9YwgNpuAvcSlZbeYQWwRATWJsy86wGqYBa4ySbx/ABYXFvCR2L7+ExuIzStgK3H+
-	bhcrxNDFLBJvlm6GSghKnJz5hAWi2UJi5vzzQAs4gGxpieX/wF7gFAiU+P/0MzPEpUoSj1+8
-	ZYSwayU+/33GOIFReBaSSbOQTJqFMGkBI/MqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwHjd
-	duznlh2MK1991DvEyMTBeIhRgoNZSYT3Q4FyuhBvSmJlVWpRfnxRaU5q8SFGU2BQTGSWEk3O
-	ByaMvJJ4QzMDU0MTM0sDU0szYyVxXrYr59OEBNITS1KzU1MLUotg+pg4OKUamMzvPHHZ/mia
-	lfjvmkfnt3lxG99vKuJ4zOf9+UpJ+vbaOW++JV+Ycfu76/XcnWt9/zx1uf5WMfZpXWscy+2z
-	Dqy8xeFnut5siHeo469RTs4QOzc3m+HewQv8vb9PS63lmbD2wewZ1XsS/7OsX/Ob16t2me+k
-	4NWGQi8Ozducu2LtdNYIvVVrVJ49Eu9SmGJ7aMY+Zr0DDDvvpDKmmHp2Kz4tyF7Nlxm55uyX
-	Ncc8X3vZ2uZ5bPA8ryEQWOye/blNnnuPzE69BbznNiyZ3KGw9nA019PshVp2k+dwT37z8/RK
-	oys5Rt1eLgEnX03bUjOj4nKavmvSPJ2e3oiJRb5Zx+4Iz/moErPPsFu9M9Jt0jUlluKMREMt
-	5qLiRABodThwYAMAAA==
-X-CMS-MailID: 20241101081914eucas1p269f6f4d515aa0db81f4fb03cd3ae64d7
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNKsWRmVeSWpSXmKPExsWy7bCmpq7uApV0g3vfOSzmrNrGaLH6bj+b
+	xbvWcywWv7rvMlpc3jWHzeLshA+sFl0XTrE5sHvsnHWX3ePy2VKPvi2rGD0+b5ILYInKtslI
+	TUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOkBJoSwxpxQo
+	FJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BSoFecmFtcmpeul5daYmVoYGBkClSYkJ3x80Av
+	Y8F5+YoXq48yNzDelOhi5OSQEDCRaNz9lAnEFhLYzSjRtVS2i5ELyP7EKPFp9nxWOGfyq90s
+	MB3fDm9jg0jsZJT4t+ojlPODUeL8k1NgVWwCShL7t3xgBLFFBLQlXj+eChTn4GAWiJJ4sZYb
+	JCws4CZx88Z2sHIWAVWJjtX72EBsXgEribXXzzNDLJOXuNm1nxkiLihxcuYTsHpmoHjz1tnM
+	IHslBA6xS7w5fACqwUVi2rd2KFtY4tXxLewQtpTE53d72SDsfInJ39czQtg1Eus2v4P6zFri
+	35U9UHdqSqzfpQ8RlpWYemodE8RePone30+YIOK8EjvmwdhKEkuOrIAaKSHxe8IiVgjbQ+LK
+	5yXMICOFBGIlTi5JnMAoPwvJN7OQfDMLYfECRuZVjJKpBcW56anJpgWGeanl8GhNzs/dxAhO
+	hVouOxhvzP+nd4iRiYPxEKMEB7OSCO+HAuV0Id6UxMqq1KL8+KLSnNTiQ4ymwCCeyCwlmpwP
+	TMZ5JfGGJpYGJmZmZiaWxmaGSuK8r1vnpggJpCeWpGanphakFsH0MXFwSjUwLTh2cleN0iPr
+	gx8zHWc527itCAz+VnU69VHc/YKmn6GdCRNvV0vXpM7MFRUojr5vGVmvLrDPg2lv9Nuny2Tm
+	lOSe6dTmW3r+H6NByguxlR2zYy18Itf9nDnvxseNEcvYPAIjVswy+Po7sGHx5k16DFPypRg4
+	KziXqNX5T5rv6CQi7RtlZeH6cNHL11dXFzQa6M878Gq5hNCN0LzotdezJim5/l2/bYb8lAcv
+	AnsmKE3qMjv+8KtZzhfRrLNXlt08GG/ttuHFixNz2J57HF/9QmDKhnmPS6+/yfj1Ir/UtuSL
+	vQ/zrH8FZmnVtc/T3BZ2ZkX9CqqbeYb3a3CAp0CGx3WWff3XmBMVGI50Vs0SV2Ipzkg01GIu
+	Kk4EABtXVdkOBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCLMWRmVeSWpSXmKPExsWy7bCSvK77XJV0g95OTos5q7YxWqy+289m
+	8a71HIvFr+67jBaXd81hszg74QOrRdeFU2wO7B47Z91l97h8ttSjb8sqRo/Pm+QCWKK4bFJS
+	czLLUov07RK4Mn4e6GUsOC9f8WL1UeYGxpsSXYycHBICJhLfDm9j62Lk4hAS2M4osf/1JSaI
+	hITEjkd/WCFsYYmV/56zQxR9Y5T4f7SVHSTBJqAksX/LB8YuRg4OEQFdica7CiBhZoEYiQ97
+	JoCVCAu4Sdy8sZ0FxGYRUJXoWL2PDcTmFbCSWHv9PDPEfHmJm137mSHighInZz5hgZgjL9G8
+	dTbzBEa+WUhSs5CkFjAyrWIUTS0ozk3PTS4w1CtOzC0uzUvXS87P3cQIDkitoB2My9b/1TvE
+	yMTBeIhRgoNZSYT3Q4FyuhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe5ZzOFCGB9MSS1OzU1ILU
+	IpgsEwenVANTmuONyhUbsj8tKuKIt2R4eSdcpOik7UHHrjd/PvlM49M+6Wila6Qglz7rgmSC
+	5KM7/c9frDm+9Pvn39sl2kzET9ast3SW/m2SknZKTfXgtJqkfudtX/ZG177RvMpzsclpDp+8
+	xbVfAt4l0vOzlisnet3gmXFDTcrtYA3rleuectNXzHZQuSUU8+24SduXq7Vqkzwbdwqe5cpe
+	x8R4Kdxh67PicJ87zo9SXeTmyf1d9U3NQydXdNkjH5Vt/XuZ3pSErD035Zef3iGd84tDk0Ok
+	I6/ycs2Ibuswa1u+8fYPWduj+5qWLv6gc25qQUMs4yLBO5/S7ZoEp9gLLi/xvffn9k42g+xH
+	T9bJfOW9VFGqxFKckWioxVxUnAgAdddriLcCAAA=
+X-CMS-MailID: 20241101092007epcas5p29e0c6a6c7a732642cba600bb1c1faff0
 X-Msg-Generator: CA
-X-RootMTR: 20241101071645eucas1p2a08b10cb2c9db427e809be6fa8809c9c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241101071645eucas1p2a08b10cb2c9db427e809be6fa8809c9c
-References: <20241030154556.GA4449@lst.de>
-	<ZyJVV6R5Ei0UEiVJ@kbusch-mbp.dhcp.thefacebook.com>
-	<20241030155052.GA4984@lst.de>
-	<ZyJiEwZwjevelmW2@kbusch-mbp.dhcp.thefacebook.com>
-	<20241030165708.GA11009@lst.de>
-	<ZyK0GS33Qhkx3AW-@kbusch-mbp.dhcp.thefacebook.com>
-	<CANr-nt35zoSijRXYr+ommmWGfq0+Ye0tf3SfHfwi0cfpvwB0pg@mail.gmail.com>
-	<ZyOO4PojaVIdmlOA@kbusch-mbp.dhcp.thefacebook.com>
-	<CGME20241101071645eucas1p2a08b10cb2c9db427e809be6fa8809c9c@eucas1p2.samsung.com>
-	<CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241101092007epcas5p29e0c6a6c7a732642cba600bb1c1faff0
+References: <CGME20241101092007epcas5p29e0c6a6c7a732642cba600bb1c1faff0@epcas5p2.samsung.com>
 
-On 01.11.2024 08:16, Hans Holmberg wrote:
->Locking in or not, to constructively move things forward (if we are
->now stuck on how to wire up fs support) I believe it would be
->worthwhile to prototype active fdp data placement in xfs and evaluate
->it. Happy to help out with that.
+This patch add a new hybrid poll at io_uring level, it also set a signal
+"IORING_SETUP_HYBRID_IOPOLL" to application, aim to provide a interface for
+users to enable hybrid polling.
 
-I appreciate you willingness to move things forward. I really mean it.
+Hybrid poll may appropriate for some performance bottlenecks due to CPU
+resource constraints, such as some database applications. In a
+high-concurrency state, not only polling takes up a lot of CPU time, but
+also operations like calculation and processing also need to compete for
+CPU time.
 
-I have talked several times in this thread about collaborating in the
-API that you have in mind. I would _very_ much like to have a common
-abstraction for ZNS, ZUFS, FDP, and whatever people build on other
-protocols. But without tangible patches showing this, we simply cannot
-block this anymore.
+The MultiRead interface of Rocksdb has been adapted to io_uring. Here used
+db_bench to construct a situation with high CPU pressure and compared the
+performance. The test configuration is as follows,
 
->
->Fdp and zns are different beasts, so I don't expect the results in the
->presentation to be directly translatable but we can see what we can
->do.
->
->Is RocksDB the only file system user at the moment?
->Is the benchmark setup/config something that could be shared?
+-------------------------------------------------------------------
+CPU Model       Intel(R) Xeon(R) Gold 6152 CPU @ 2.10GHz
+CPU Cores       8
+Memory          16G
+SSD             Samsung PM9A3
+-------------------------------------------------------------------
 
-It is a YCSB workload. You have the scripts here:
+Test case:
+./db_bench --benchmarks=multireadrandom,stats
+--duration=60
+--threads=4/8/16
+--use_direct_reads=true
+--db=/mnt/rocks/test_db
+--wal_dir=/mnt/rocks/test_db
+--key_size=4
+--value_size=4096
+-cache_size=0
+-use_existing_db=1
+-batch_size=256
+-multiread_batched=true
+-multiread_stride=0
+---------------------------------------------------------------
+Test result:
+          National        Optimization
+thread    sops/sec        ops/sec        CPU Utilization
+16        121953          160233         100%*8
+8         120198          116087         90%*8
+4         61302           59105          90%*8
+---------------------------------------------------------------
 
-    https://github.com/brianfrankcooper/YCSB/blob/master/workloads/workloada
+The 9th version patch makes following changes:
 
-If you have other standard workload you want us to run, let me know and
-we will post the results in the list too.
+1. change some member and function name
 
-We will post the changes to the L3 placement in RocksDB. I think we can
-make them available somewhere for you to test before that. Let me come
-back to you on this.
+2. Avoid the expansion of io_kiocb structure. After checking, the hash_node
+structure is used in asynchronous poll, while the iopoll only supports the
+dirict io for disk, these two path are different and they will not be used
+simultaneously, it also confirmed in the code. So I shared this space with
+iopoll_start.
+
+ union {
+	/*
+	 * for polled requests, i.e. IORING_OP_POLL_ADD and async armed
+	 * poll
+	 */
+	struct hlist_node   hash_node;
+	/* For IOPOLL setup queues, with hybrid polling */
+	u64                     iopoll_start;
+ };
+
+3. Avoid the expansion of io_ring_ctx structure. Although there is an
+8-byte hole in the first structure, the structure is basically constants
+and some read-only hot data that will not be changed, that means this cache
+does not need to be brushed down frequently, but the hybrid_poll_time of
+the recorded run time had a chance to be modified several times. So I put
+it in the second structure (submission data), which is still 24 bytes of
+space, and some of its own variables also need to be modified.
+
+4. Add the poll_state identity to the flags of req.
+
+/* every req only blocks once in hybrid poll */
+REQ_F_IOPOLL_STATE = IO_REQ_FLAG(REQ_F_HYBRID_IOPOLL_STATE_BIT)
+
+--
+changes since v7:
+- rebase code on for-6.12/io_uring
+- remove unused varibales
+
+changes since v6:
+- Modified IO path, distinct iopoll and uring_cmd_iopoll
+- update test results
+
+changes since v5:
+- Remove cstime recorder
+- Use minimize sleep time in different drivers
+- Use the half of whole runtime to do schedule
+- Consider as a suboptimal solution between
+  regular poll and IRQ
+
+changes since v4:
+- Rewrote the commit
+- Update the test results
+- Reorganized the code basd on 6.11
+
+changes since v3:
+- Simplified the commit
+- Add some comments on code
+
+changes since v2:
+- Modified some formatting errors
+- Move judgement to poll path
+
+changes since v1:
+- Extend hybrid poll to async polled io
+
+hexue (1):
+  io_uring: releasing CPU resources when polling
+
+ include/linux/io_uring_types.h | 19 ++++++-
+ include/uapi/linux/io_uring.h  |  3 ++
+ io_uring/io_uring.c            |  8 ++-
+ io_uring/rw.c                  | 92 ++++++++++++++++++++++++++++++----
+ 4 files changed, 108 insertions(+), 14 deletions(-)
+
+-- 
+2.40.1
+
 

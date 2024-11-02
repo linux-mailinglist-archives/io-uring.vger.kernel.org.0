@@ -1,93 +1,79 @@
-Return-Path: <io-uring+bounces-4341-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4342-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B231A9B9AB0
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 23:13:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C71259B9C13
+	for <lists+io-uring@lfdr.de>; Sat,  2 Nov 2024 02:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D5C282050
-	for <lists+io-uring@lfdr.de>; Fri,  1 Nov 2024 22:13:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B140282B71
+	for <lists+io-uring@lfdr.de>; Sat,  2 Nov 2024 01:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8643C1E47A4;
-	Fri,  1 Nov 2024 22:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916D339AD6;
+	Sat,  2 Nov 2024 01:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+hjRHR0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB782140E34
-	for <io-uring@vger.kernel.org>; Fri,  1 Nov 2024 22:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC7F2E630
+	for <io-uring@vger.kernel.org>; Sat,  2 Nov 2024 01:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730499188; cv=none; b=I5vXdYqEet4Pa3ATO/v0J0J+bSmGarCM1HOSGiiDJb2JqSiKeUditZ1SC4FK8xTuWkFHOw0xA7Ol8ASfiZ69ai8NSHq3uSA9OQ2mfZULIRehFUDZ5lWbMyyIe8bmTmIBJKZG86tRatvDCvISeillmD+1JUDx+kdg9E8yatkF0gg=
+	t=1730512053; cv=none; b=t5qw91LTC3JtkSD9pGPYRTIp+kxJ6FPF1s5OP3PHxSEkIm+Gaqg+U7XbiWG1IvhGGduxXi7TBUyFhMvrzRP993jZZtyCDRQNY/CgM18K/07V2B2AIU3uFvNlKFQVGgXHDWGqYBHSMbDq7knBAKa7m4lXPY1eqDEeU/Q+M5FBWtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730499188; c=relaxed/simple;
-	bh=DXk7Tfz6V+9j+3TwKxH43yAXMkCnANFH0QzoCsbXz8g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jdqWM2FZD4W9eb73IoNMD7MgGLUk6NE5UaqQnpylwjPGU6meJXU6hy9U7Yt1jOyPQ9k46z5GIyCY9YMI4r3im3J/9lJHwecK0OpD8wbQslYx01y7Sy5eQm9TYO9tSk+z64v2BHAqqRu/60edLo1lmpwHXx6AxAX+3QdirC4nMM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6bce8a678so4289765ab.1
-        for <io-uring@vger.kernel.org>; Fri, 01 Nov 2024 15:13:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730499186; x=1731103986;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mbGkxpLwmpLDwY6C5+KcVqrUr3hsQWtb/ZrSyYB3thQ=;
-        b=vO+Sb4YRtIoBWe4YPfG5tG+D114klCPwFi1mfB5oCl642iijo2v8TPUss9CBTrXY8X
-         Qd5wuq+7MiQUMBWKH4H/vNPfQ9Qn89uqZjekvhtBMTrpQrWXQhTHKrUYRM0c1kxx1JSq
-         c1zttegwM2QEufRoqNK8RKZcHZvffFsz+G8KD5zMa7swSb/c1b29Bo1I1wqvJqg87ZHQ
-         LtThiKATqcK1Vx6IU/f5mBzugMeLuqX3gxYQ9oXIh47p1gmUGDRkfhhhMw/+cpmzjWFH
-         PIUSPNl+LtHoPoFcIRdJeIDR9LgKtFwBH4uu9e9lsf+5O5EhhWKUii8jsKHCLWqJw8Y7
-         jwzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtyBPFHDkdKPYBdPxl2wbmSYNKgAj0+R88QpjiM6h2mJjTDO5SXqJcWYCuiqn2/3VAoAOiPRm8gw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp67eWFeoQufgKVZ65AHvaJxjAkyQu+yhVZ11JpFBjWtCr7i7m
-	alcyAmO0pkKPuq/aia7WgfWxdcwCXClFi1J5xdA22QcKGrH9iUyNvF04Q8hhXODIYf7bbDXCKtC
-	1W3aklPZU2pBAU4d3LM+UY5t8GXh5phci1nx75ha81SnhcZGZH1cO/NI=
-X-Google-Smtp-Source: AGHT+IFvOt29HeE/lLPloslsE9diBs/vNO7oiztlxo8RQHBFFzL07o+uCm4/H83aB7L+lEUCGr0SYQNlZJtkk8qZ4s8yacqI5lKt
+	s=arc-20240116; t=1730512053; c=relaxed/simple;
+	bh=W0jlGRLVNs33l/IItdYqj8qljd7U1O6/hKGsxuJMe5c=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=gqAiJg7hwdhtPA4VK0gSRKlF8kODMM3QI28EFyFXCBdh8x6V55NF4oTL1vrc/BEx03c78UnB3MeTbep42YlOIdfYpGmMjLjzXrkJEpRRWmkaCIuaIcb1bHWnu4stTq9xDi4DdGlSWzI3btYMjrulD6WBcp7du/woGOW6gF3IX7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+hjRHR0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54B3FC4CECD;
+	Sat,  2 Nov 2024 01:47:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730512053;
+	bh=W0jlGRLVNs33l/IItdYqj8qljd7U1O6/hKGsxuJMe5c=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=f+hjRHR07B0sNWDj44QOQxyaI2s1FFGNqTBgUAWEtwrnUF+h0xyVwDMWsWLrdshXl
+	 yqpZ1uoS8Ig7M1becVQWUo4BwJhlA+sPnMtAO29y/V2Q2kgn1CGGXpZ/YS9hLnXTjV
+	 2n3Bltfa7wmCM09fjuiwnvqw3Jhb8peTFaXxQq85q72qtNhHVqiwMGsjx4MU++vmko
+	 SBQgMGo+PRwjONGWEFIg5jfaSwSJgkP5IHL9Ouvkpzc2Q71JOCXTo5xEg8nUDkNsVu
+	 MUZXS3Lgx7y69k7Jpy+ZEycphE4jnClH0g5h5iJ2yY9q2v6z+hF4OyI+3/S7oWUpZO
+	 ePNjWGRIfEENA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE5E83AB8A90;
+	Sat,  2 Nov 2024 01:47:42 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fix for 6.12-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <8a3c26ea-bebb-401c-9fa3-e900aacfa77d@kernel.dk>
+References: <8a3c26ea-bebb-401c-9fa3-e900aacfa77d@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <8a3c26ea-bebb-401c-9fa3-e900aacfa77d@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.12-20241101
+X-PR-Tracked-Commit-Id: 1d60d74e852647255bd8e76f5a22dc42531e4389
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f0d3699aef2b6f864c78ccfa8e2a7327f65b8841
+Message-Id: <173051206128.2889628.4084676108044508266.pr-tracker-bot@kernel.org>
+Date: Sat, 02 Nov 2024 01:47:41 +0000
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:348c:b0:3a6:bfd1:49a9 with SMTP id
- e9e14a558f8ab-3a6bfd1546emr719465ab.2.1730499186133; Fri, 01 Nov 2024
- 15:13:06 -0700 (PDT)
-Date: Fri, 01 Nov 2024 15:13:06 -0700
-In-Reply-To: <67251dc5.050a0220.529b6.015d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67255272.050a0220.35b515.017b.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] general protection fault in
- io_uring_show_fdinfo (2)
-From: syzbot <syzbot+6cb1e1ecb22a749ef8e8@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-syzbot has bisected this issue to:
+The pull request you sent on Fri, 1 Nov 2024 12:10:14 -0600:
 
-commit 661768085e99aad356ebc77d78ac41fd02eccbe3
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Wed Oct 30 15:51:58 2024 +0000
+> git://git.kernel.dk/linux.git tags/io_uring-6.12-20241101
 
-    io_uring/rsrc: get rid of the empty node and dummy_ubuf
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f0d3699aef2b6f864c78ccfa8e2a7327f65b8841
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17631630580000
-start commit:   f9f24ca362a4 Add linux-next specific files for 20241031
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14e31630580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10e31630580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
-dashboard link: https://syzkaller.appspot.com/bug?extid=6cb1e1ecb22a749ef8e8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f92630580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=126b655f980000
+Thank you!
 
-Reported-by: syzbot+6cb1e1ecb22a749ef8e8@syzkaller.appspotmail.com
-Fixes: 661768085e99 ("io_uring/rsrc: get rid of the empty node and dummy_ubuf")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 

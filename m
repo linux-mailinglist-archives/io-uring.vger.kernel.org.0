@@ -1,75 +1,74 @@
-Return-Path: <io-uring+bounces-4374-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4375-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F7D9BA87E
-	for <lists+io-uring@lfdr.de>; Sun,  3 Nov 2024 23:18:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA85C9BA887
+	for <lists+io-uring@lfdr.de>; Sun,  3 Nov 2024 23:31:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41DEE1F20FDA
-	for <lists+io-uring@lfdr.de>; Sun,  3 Nov 2024 22:18:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3443F28123A
+	for <lists+io-uring@lfdr.de>; Sun,  3 Nov 2024 22:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D254918BC27;
-	Sun,  3 Nov 2024 22:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67041632C0;
+	Sun,  3 Nov 2024 22:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NPdKULJ8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TVdPtdAz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F69AC2FB
-	for <io-uring@vger.kernel.org>; Sun,  3 Nov 2024 22:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE312154C08;
+	Sun,  3 Nov 2024 22:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730672315; cv=none; b=OsdJ0VXIp/r9chqbxgn2rQVsAEGDTzmKLfb7a90v0yDAcpuSCrSNfFrqD/FSRuoSOGb4DHZSIHr3+gYKYdzuHjIR4VjJu4kDv/YEH/GAZFAuuBDQTdW8s7uuskmX4CQpH0+FvG4ziDijZvXuhV2nOdWkJZJq5BiXHWopcoy87sY=
+	t=1730673083; cv=none; b=FaTEUNfIkY29fK/ziI4reG7kZdmfyapZ97y4DWAMwY4S34/wOZT8CYsm3uSpNOnxcaJf74zfKwK3CGRdpqPfgFWSmHZtDb0ejC18DuwNjg45pU5GhXvhmOWIbn4zU/BXa0KVtxhA7uD3ifRc2DcO5sha0HgnpZpNL5mJQWaLQTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730672315; c=relaxed/simple;
-	bh=j2IMa55Kf51bV2yBdHxAkZC3Yr3JwhR84+uQXjD8UzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SZ7jzxa4Dc3FkLbDa5FHWT0HqZqY5xGNkf8V9fgk4HFNHVYtU3JcZDf8JW2iBc7zIbECG0D6WYE0P8ho52W3843H9WApCy+Gd3zFTT/tI6zLhZ9laxwjOCy0x3q8L5rJApWmkFkF+QDdNg6c3IT/wJqER9ewSE0ReoHAFJbO7r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NPdKULJ8; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7eda47b7343so2240369a12.0
-        for <io-uring@vger.kernel.org>; Sun, 03 Nov 2024 14:18:32 -0800 (PST)
+	s=arc-20240116; t=1730673083; c=relaxed/simple;
+	bh=hhtn9HCvafeK3eDppZtxCQW/RpzVXm7nW+bUvrH5ceI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TtezmtpBTZP+zn10414TNj9zLB8TqDD3m9BrWuPoSeQesVOI9oGQPEGP4h4ntEh8sGmT4IcitKeICNZr7Uz20SS66yU9xMNb2X6iamaHC1gWAkBjh9cu4SzUXQIIaf6MTR3URQEZxyvE+1QatA08i1EZznRZqZ1V1wvr1ZGFSu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TVdPtdAz; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43159c9f617so27808955e9.2;
+        Sun, 03 Nov 2024 14:31:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730672312; x=1731277112; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730673080; x=1731277880; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=wSRVzj6LrK5JoywxshhGMKZh92xKUrfjp4yCEYQUtxg=;
-        b=NPdKULJ8KqV+zWZcpq/7nyaIV5CojjIOhNrppxCRk1q2kQHYLc9lXeYhMrulFFt5sB
-         iNLmla5vEcpHqT5MIZQifl+20IUSC7zeH6LVBnksxZ0KaNyB02zx7BbTScmC8g8c7UXO
-         5HZYdZrBlG4EqOGtNq1Xu4sseHUSp6Ue83GJd3e7vd2hHNs4TPqT3Xf6fRJHdZu0AI3d
-         C6NUnCdHvV/ydTtWhbgml2yd9zGlYZM5tLHmD3+qHZvLM4U6/yixcv7W6vIM907q07Cm
-         QBlvWWhySHKtxUW4LeLdq+4mBe8WBPFBnUukyrfLaH8vKfpeOftMxNeZ7cn8OA2ofXCS
-         Ff8Q==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XGrK+KTHRBvs0q/y6HvC4FviTAm+itFMEXAEERpVRz0=;
+        b=TVdPtdAzPgL9R0FcnCDY+wXNLHTBi8G8eZlPKNHWUlnLTiembI8LqmKzieAJGsTCyh
+         NFUV4EYFNN+/QZwGg7LuBKDEo7w/xWdFnDWNQT0MhEzs+KZG/yrARtAUSHWTfPhKWCCu
+         LDJIXGQhk5lrPV74Tgn3l7DYjx0tdZTw95MCYGqsxpJPE/UN2BIsNtpjjmQW3WVBX1Pq
+         fkusutaxBAUsTipFZmmdA29fZYCSfSEKAo9lEKm4m3fOn8ZcBEV/I5dV0N6o0Yi3v2Y8
+         NQixhtdbEIcf4tcbJ/PCmcRozVXiqdSYncsyPOVh/GZFfMP2UZaaT5YEUDjt/u0v5s1i
+         KK4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730672312; x=1731277112;
+        d=1e100.net; s=20230601; t=1730673080; x=1731277880;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wSRVzj6LrK5JoywxshhGMKZh92xKUrfjp4yCEYQUtxg=;
-        b=UxZ+mTQvD5rV0Beu8H89+MsqVSEj49z4eCUFONyivUdJAW3gxJ4F7Iy8d6b6MDY2AX
-         JfkeaxobhbWZl5d8iT/y6xBdJiblkrefaQj9GpZAfhczlRDQ6Mc2dUJ2Egc2fg9lO/ib
-         B/FgJSAHZjhteUD043/UHWyUWuqy4DX8VKxQRKqVkk5no2PeLHVPlsg22jIKSA3pVJc6
-         W/F16ClHfFvDyu3teRwHXycNnGsHAeTSWOFkmF7arO5s3vT/WN+LWtVaf4GLxr0We5fo
-         6l9Hpi29wN0HJXefBEfd3Yl14PMD1E26Cbdb7OpPsA2U9CNCkcDC1kP51q9IT1CR9t9B
-         FHPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVV1cSQpaMKVZJxCkms1wKlfm48SYZMIbffz8JtBl/KYMZ9FQs4ZVCBQ6n4/Uuviu58jX24OV3mA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx36r+xOQ3W8vk3/Rsk4enHayC6/WL0mo8ONAZGGFeDaJcslMck
-	HnJ0idS/zWlyRFLhKz++NRyakiiYDfPWUDk2DsYO2M6XOMUSqNQy0E4EJpy8h/Gow8gVcKNG/Af
-	gXcI=
-X-Google-Smtp-Source: AGHT+IF9z11aQfSCfvlNllW1R97Dr8cHuQlXO4CHQns37eVtdrc5JO99SkAOiBZeH9iWMW70/gFN8A==
-X-Received: by 2002:a17:902:fc8f:b0:20c:f648:e39b with SMTP id d9443c01a7336-210c6872d40mr437940105ad.11.1730672312018;
-        Sun, 03 Nov 2024 14:18:32 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ee4b0sm50116565ad.16.2024.11.03.14.18.31
+        bh=XGrK+KTHRBvs0q/y6HvC4FviTAm+itFMEXAEERpVRz0=;
+        b=SiYmNzp4ImgZiPnExGOKdHrWCrBnSnYaCvEB8n0Uv1OqZ48G1PP09ig/1py9Pg550U
+         bVukZ2h14gaYe/BNwp08aotcx2EKdXH/grMH40NlGX+894SkAUtZCkBhb6dPA8c1n7k2
+         NP3ir3EpQqoCouBpOytmASh+YuAjiZITGBLz2R5N5tVuNYSHaEk35R2cUBigMgC9JhPo
+         WXss3sa2esbkFwqdYeiCR/cIrdYsK96o8TDOBdMoGfT0HDk5gaXCdH4Xsfb8gT+y7m72
+         HwSckTxR248sE6L8ZwDCpYlfGVRSFhtb68AwLPj6UVvw+AFZMKFpbAkM2FydDvYDoudW
+         q6tw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3AyycmDxQOPELKcm7/yDCQxiLRbnvXeaK1ftY53ENHXETGM/s5vGgW7MuGIaFrlezmePiiX7q2b7lTQw=@vger.kernel.org, AJvYcCXFnHAYdmSbqbiXm1s9bulsqD+z1vbNO7DmwnLlEz1uZpsvWirPnAgdfq5G5aYbfIzdeMt7H2lV4w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5G1z7oUNlzgiRihU6fHtN0+7X7mHTK3fkA5tJG6vM2kHc/vgr
+	VuIc8LsGkQov+L8EULfsNhQQ8js2M+i94FpcyCVBcFBEWppwQ08B
+X-Google-Smtp-Source: AGHT+IFIovAu2JOjQRZyT1MDER7onmVD1Wyw++CyRxJTX4tEceAMw2uubDP/1GC4E5HJ/SWENQlxag==
+X-Received: by 2002:a05:600c:500a:b0:431:561b:b32a with SMTP id 5b1f17b1804b1-4319acb8ce7mr274677125e9.19.1730673080050;
+        Sun, 03 Nov 2024 14:31:20 -0800 (PST)
+Received: from [192.168.42.207] ([85.255.236.151])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7d20sm11661095f8f.7.2024.11.03.14.31.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Nov 2024 14:18:31 -0800 (PST)
-Message-ID: <d4077350-ac9e-49ac-8720-ee861b626cb8@kernel.dk>
-Date: Sun, 3 Nov 2024 15:18:30 -0700
+        Sun, 03 Nov 2024 14:31:19 -0800 (PST)
+Message-ID: <4802ef4c-84ca-4588-aa34-6f1ffa31ac49@gmail.com>
+Date: Sun, 3 Nov 2024 22:31:25 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,64 +76,102 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] io_uring: move struct io_kiocb from task_struct to
- io_uring_task
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-References: <20241103175108.76460-1-axboe@kernel.dk>
- <20241103175108.76460-4-axboe@kernel.dk>
- <8025a63c-6e3c-41b5-a46e-ff0d3b8dd43b@gmail.com>
- <639914bc-0772-41dd-af28-8baa58811354@kernel.dk>
- <69530f83-ea01-4f06-8635-ce8d2405e7ef@gmail.com>
+Subject: Re: [PATCH V8 5/7] io_uring: support leased group buffer with
+ REQ_F_GROUP_KBUF
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+ linux-block@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>,
+ Akilesh Kailash <akailash@google.com>
+References: <20241025122247.3709133-1-ming.lei@redhat.com>
+ <20241025122247.3709133-6-ming.lei@redhat.com>
+ <4576f723-5694-40b5-a656-abd1c8d05d62@gmail.com> <ZyGBlWUt02xJRQii@fedora>
+ <bbf2612e-e029-460f-91cf-e1b00de3e656@gmail.com> <ZyGURQ-LgIY9DOmh@fedora>
+ <40107636-651f-47ea-8086-58953351c462@gmail.com> <ZyQpH8ttWAhS9C5G@fedora>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <69530f83-ea01-4f06-8635-ce8d2405e7ef@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <ZyQpH8ttWAhS9C5G@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 11/3/24 3:05 PM, Pavel Begunkov wrote:
-> On 11/3/24 21:54, Jens Axboe wrote:
->> On 11/3/24 2:47 PM, Pavel Begunkov wrote:
->>> On 11/3/24 17:49, Jens Axboe wrote:
->>> ...
->>>> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
->>> ...
->>>>        nd->head = prev_nd->head;
->>>> @@ -115,7 +115,7 @@ struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
->>>>        notif->opcode = IORING_OP_NOP;
->>>>        notif->flags = 0;
->>>>        notif->file = NULL;
->>>> -    notif->task = current;
->>>> +    notif->tctx = current->io_uring;
->>>>        io_get_task_refs(1);
->>>>        notif->file_node = NULL;
->>>>        notif->buf_node = NULL;
->>>> diff --git a/io_uring/poll.c b/io_uring/poll.c
->>>> index 7db3010b5733..56332893a4b0 100644
->>>> --- a/io_uring/poll.c
->>>> +++ b/io_uring/poll.c
->>>> @@ -224,8 +224,7 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
->>>>    {
->>>>        int v;
->>>>    -    /* req->task == current here, checking PF_EXITING is safe */
->>>> -    if (unlikely(req->task->flags & PF_EXITING))
->>>> +    if (unlikely(current->flags & PF_EXITING))
->>>>            return -ECANCELED
->>>
->>> Unlike what the comment says, req->task doesn't have to match current,
->>> in which case the new check does nothing and it'll break in many very
->>> interesting ways.
+On 11/1/24 01:04, Ming Lei wrote:
+> On Thu, Oct 31, 2024 at 01:16:07PM +0000, Pavel Begunkov wrote:
+>> On 10/30/24 02:04, Ming Lei wrote:
+>>> On Wed, Oct 30, 2024 at 01:25:33AM +0000, Pavel Begunkov wrote:
+>>>> On 10/30/24 00:45, Ming Lei wrote:
+>>>>> On Tue, Oct 29, 2024 at 04:47:59PM +0000, Pavel Begunkov wrote:
+>>>>>> On 10/25/24 13:22, Ming Lei wrote:
+>>>>>> ...
+>>>>>>> diff --git a/io_uring/rw.c b/io_uring/rw.c
+>>>>>>> index 4bc0d762627d..5a2025d48804 100644
+>>>>>>> --- a/io_uring/rw.c
+>>>>>>> +++ b/io_uring/rw.c
+>>>>>>> @@ -245,7 +245,8 @@ static int io_prep_rw_setup(struct io_kiocb *req, int ddir, bool do_import)
+>>>>>>>      	if (io_rw_alloc_async(req))
+>>>>>>>      		return -ENOMEM;
+>>>>>>> -	if (!do_import || io_do_buffer_select(req))
+>>>>>>> +	if (!do_import || io_do_buffer_select(req) ||
+>>>>>>> +	    io_use_leased_grp_kbuf(req))
+>>>>>>>      		return 0;
+>>>>>>>      	rw = req->async_data;
+>>>>>>> @@ -489,6 +490,11 @@ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
+>>>>>>>      		}
+>>>>>>>      		req_set_fail(req);
+>>>>>>>      		req->cqe.res = res;
+>>>>>>> +		if (io_use_leased_grp_kbuf(req)) {
+>>>>>>
+>>>>>> That's what I'm talking about, we're pushing more and
+>>>>>> into the generic paths (or patching every single hot opcode
+>>>>>> there is). You said it's fine for ublk the way it was, i.e.
+>>>>>> without tracking, so let's then pretend it's a ublk specific
+>>>>>> feature, kill that addition and settle at that if that's the
+>>>>>> way to go.
+>>>>>
+>>>>> As I mentioned before, it isn't ublk specific, zeroing is required
+>>>>> because the buffer is kernel buffer, that is all. Any other approach
+>>>>> needs this kind of handling too. The coming fuse zc need it.
+>>>>>
+>>>>> And it can't be done in driver side, because driver has no idea how
+>>>>> to consume the kernel buffer.
+>>>>>
+>>>>> Also it is only required in case of short read/recv, and it isn't
+>>>>> hot path, not mention it is just one check on request flag.
+>>>>
+>>>> I agree, it's not hot, it's a failure path, and the recv side
+>>>> is of medium hotness, but the main concern is that the feature
+>>>> is too actively leaking into other requests.
+>>> The point is that if you'd like to support kernel buffer. If yes, this
+>>> kind of change can't be avoided.
 >>
->> In which cases does it not outside of fallback?
+>> There is no guarantee with the patchset that there will be any IO done
+>> with that buffer, e.g. place a nop into the group, and even then you
 > 
-> I think it can only be fallback path
+> Yes, here it depends on user. In case of ublk, the application has to be
+> trusted, and the situation is same with other user-emulated storage, such
+> as qemu.
+> 
+>> have offsets and length, so it's not clear what the zeroying is supposed
+>> to achieve.
+> 
+> The buffer may bee one page cache page, if it isn't initialized
+> completely, kernel data may be leaked to userspace via mmap.
+> 
+>> Either the buffer comes fully "initialised", i.e. free of
+>> kernel private data, or we need to track what parts of the buffer were
+>> used.
+> 
+> That is why the only workable way is to zero the remainder in
+> consumer of OP, imo.
 
-I think so too, that's what I was getting at. Hence I think we should just
-change these PF_EXITING checks to be PF_KTHREAD instead. If we're invoked
-from that kind of context, cancel.
+If it can leak kernel data in some way, I'm afraid zeroing of the
+remainder alone won't be enough to prevent it, e.g. the recv/read
+len doesn't have to match the buffer size.
 
-I'll adjust.
+So likely leased buffers should come to io_uring already
+initialised, or more specifically it shouldn't contain any data
+that the user space (ublk user space) is not supposed to see.
+The other way is to track what parts of the buffer were actually
+filled.
 
 -- 
-Jens Axboe
-
+Pavel Begunkov
 

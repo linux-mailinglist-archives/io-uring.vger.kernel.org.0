@@ -1,75 +1,74 @@
-Return-Path: <io-uring+bounces-4379-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4380-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F379BA969
-	for <lists+io-uring@lfdr.de>; Sun,  3 Nov 2024 23:51:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C75DA9BA98A
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 00:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59DF3B21CFB
-	for <lists+io-uring@lfdr.de>; Sun,  3 Nov 2024 22:51:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8166B21BB9
+	for <lists+io-uring@lfdr.de>; Sun,  3 Nov 2024 23:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B4C18C010;
-	Sun,  3 Nov 2024 22:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C834189BA3;
+	Sun,  3 Nov 2024 23:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="E8LFIlN3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ij3R2tJk"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE8018C32C
-	for <io-uring@vger.kernel.org>; Sun,  3 Nov 2024 22:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E4C433AB
+	for <io-uring@vger.kernel.org>; Sun,  3 Nov 2024 23:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730674286; cv=none; b=bnFFbkcWZrnw7h3E/ACeySGveFKrIVUHzYxGg6iYMp5J8SgDglEuZC/+eAFTfSksAlOz5ZmG1Qd0IOTkb4OrnckQavHBK6z4B9PMoj9je9MamSDy6C8kk5aeNtp07fG9SRkzOFhPBLQAQ98YW/Kgc8FwbUvYxtghIP2ujqYIC9I=
+	t=1730675873; cv=none; b=eAqJf1HNZvxoGNA0vhm+QXB/h4pLauHVxikL7XaKi62QFYKPdR07AQKwuN8RRxGhUyfFMoFUoMLhJTDugyZwGGNd+Y/2ka1JYeeSwEwtVZ3++cWdW6O6O8dC+6kNVccpiVko5JLCY5/ouivEaFSQtktmkW6VYJYj1AvAxvKBQ5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730674286; c=relaxed/simple;
-	bh=rc4iilvq2Hss3oj7tFB8x5fcnd8bpO4LqE+XFrvn2tE=;
+	s=arc-20240116; t=1730675873; c=relaxed/simple;
+	bh=3L4zWIjlnOh1Y5sSLHf9TdPbIpm8LkROgAxnMrAPhiA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KXorHxUUdhH7KUrq9rXYFZKKwJqjSp8BP/cjb+e/TWJW2Z0yLfIGBnVQ5vakMHmJ+EMOKY6Jz/4PH3yHXwNDbqJgwdD59tDCiRcXX4tOJ80/ZiUg1+4RdFwwI43aIOWzOEuHAFecfaQ8uI+9gFlDfHPmc9XTIbgthISiCVH/jY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=E8LFIlN3; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e61b47c6cso3241615b3a.2
-        for <io-uring@vger.kernel.org>; Sun, 03 Nov 2024 14:51:24 -0800 (PST)
+	 In-Reply-To:Content-Type; b=QGpnCO05Bo0EOGgWsXxLJ13ocpBfL8FRsz5TsoRSEP4DTqLdHbr0F69ugOzkdZoDsyKuaEUEmKYNLJ92J1zvlgHeqV2x24IhN7l7tbwU3YypYy8mHvkyS3feHabvKjhTPA2CeGSf92yVf9oTrutqWYI4Gb9+4rBzBYVqwDC9hu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ij3R2tJk; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43158625112so31186365e9.3
+        for <io-uring@vger.kernel.org>; Sun, 03 Nov 2024 15:17:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730674284; x=1731279084; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730675870; x=1731280670; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=prBc6cdWDBNr9BG1zdBF/MSqFtzOgVTInCG3aPrJtdQ=;
-        b=E8LFIlN3iEJudijbpxYAB0A6aL0dgwiVbkW9DQAShlBdd8KdUYZJDzBfesuJv1f81s
-         8wgsYbcBY0GStL6DFYX1O5R+tWzF0g9NFDhGBiXZQGC+8L8WYwJ+tjcUcD/Rp+oV7ieT
-         TpwiJPJFFVgsoJgruX8uhW8XjgO9QVDQ8ZEBoCF9HW326aArDdJJk35BzqtsmC7OSKN2
-         ir96PH7mvOEQ+heNWzdi6DlxPMEXZHkp9bRglgiYjUo96k5PfYr6AddUtwbMY/+D+cHx
-         DlY4pVRkVkcKBqFnOreTpk+HdR49uF5wiDNylccPRCc4ykU5swL9qwtssN8wI16PQsXU
-         JUIQ==
+        bh=I+aVw8nn7w9EuYSZEHd2vH29CyB0mcV6sD9Qy6eUD48=;
+        b=ij3R2tJkMbwZlAg+K7p9dkzGEJ4EmoaN/nHxVhmbRsB+EIjFoiT06DHiEl6bu5mKAH
+         vd2X9k+dwzjaHCkgfX6+Vl9wQdTKnm6FdItW4DL9sXwcMHz66etjPUxgA04XthtI0JPh
+         8nsqqApUW4uWnhvZ1OnHc2UuEZdVW0/CWCdTj19n87wQ/3IuOn3EoNWWwjXRUBH/sXbB
+         SxvqFD4SruwlKJ2EeRNqOEsYW65EYhXpnhlGE8yGlr6p6cQ2UwWnkzH/tfQevsSmVSHZ
+         6fzkUC/zo5vyubVn5G5GYQDE4DlU8PTM1jKVBjm+oGz5HUMJl0yEO2ZC4dRXF7AwGsHZ
+         EXwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730674284; x=1731279084;
+        d=1e100.net; s=20230601; t=1730675870; x=1731280670;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=prBc6cdWDBNr9BG1zdBF/MSqFtzOgVTInCG3aPrJtdQ=;
-        b=Bwh+bmfNM/YlVX4zbFC+mf7fdoeS0UXLSu2QluqrfvqrikD6xrVBQY19G04PUQXZUq
-         l6BDnAb7zltt8g63Iy34is45bTBJdST+VwGLXA+Fay2FH4+eU+RokA/aQ7ek2ZluqhT8
-         Lb5LosYN+sM7Ny47SzVPJwHl9sq1+fMBTcGjoYyLf4UgwpaLhp4j/Yl2wGDCDgO+BCQP
-         YYsSMjEumB/S8HQTyC1VKVW47xR9xO88+p7O1TKkZ32w9N+BY74aK0OYVoaGv4yE9mbL
-         9uqkdVRcg4T7AWQRtALSZCcRDaXKzJpzGYl+314U+VKOiz+EWL46HBBiO3sUWPw3RmcD
-         uyXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJVy/nPq41ObrNb2Pft7Hx3Jm41D73uG1WKLLkOlz1NucdzMiUdlpycT39Ozw/wuvGG9rjejjUrg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOe2ub1hgLljL6/fZg+WLTE3YmPUySspMV4v+VwZIrbb8sugH8
-	fwDTwmF3aqVG0gjShgX0EJH5ghxN4TetbBiyyZYzg3mf+JusBhz6IenzuHcwVGcVdFmySrBxwN8
-	VZ7o=
-X-Google-Smtp-Source: AGHT+IF4ZXyU8y+HNKrPFCbIXUOpz6Nl1Sn3HqZpODif2sQ/k/kRxOSBlmWGH+//QD4Uc5lcM3xoJA==
-X-Received: by 2002:a05:6a00:b55:b0:71e:744a:3fbd with SMTP id d2e1a72fcca58-7206306df29mr41807488b3a.20.1730674284080;
-        Sun, 03 Nov 2024 14:51:24 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2ebebcsm6451010b3a.172.2024.11.03.14.51.23
+        bh=I+aVw8nn7w9EuYSZEHd2vH29CyB0mcV6sD9Qy6eUD48=;
+        b=aANOPUCmxdbQJZIqp9k4HwxW8NT+r+JaHP7VN54yZ6CXKa1goE7m1mCTfB/pB4aM4E
+         BP/YaW2L6XKD3V7uWGQPwPr0mGAP26v+63TCbARy1AujS+/+NjIMqYtcxch+beSAhJ7f
+         HUDlusxRG6LU8OT5KPcy4cprth2geD6Db1SHd6PXsOEso6b9YTVv+tUKNXlIQKR7LR3n
+         R9Nw1CEAyFS6sJNyBg2ki3Z/tTriYYFG8bVwksjA6WoHTux+dNgaILX3Z7xuxFTQntS3
+         6KKcgDOEaLhICpnfvPqMppZn1xX2lJXhNxM5kpoa3JPlf2ZaRPoPBHAytCpn5R2dTk1l
+         iHCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWh2WPTLE8opkh+s+aa4TtDkdFDz2eiMLXjY9vpf020Au9vZPdBiUXWrNXiwPbxVqEWT+TkVYTFUQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZFMRM9+QwSE46hpobpBOosBHgrjC1+ReyEERdIWM3edTsVsBs
+	JN6dpGPY8iOV08L82Dg+PXyXWFZcbBSzs4rVscr2cAwgYiWdoam7
+X-Google-Smtp-Source: AGHT+IEu3/X3dKLCL8kGwXR7OYlOGj/ZY8A9DEYLeuLfcz/diQmooIoWuAYF/hkMr5NO3VmXkyPDtw==
+X-Received: by 2002:a05:600c:3054:b0:431:44fe:fd9f with SMTP id 5b1f17b1804b1-4328327ec3cmr80048995e9.23.1730675869651;
+        Sun, 03 Nov 2024 15:17:49 -0800 (PST)
+Received: from [192.168.42.207] ([85.255.236.151])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e073sm11575385f8f.66.2024.11.03.15.17.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Nov 2024 14:51:23 -0800 (PST)
-Message-ID: <81330ac7-6c9b-4515-8dce-6294fcd45641@kernel.dk>
-Date: Sun, 3 Nov 2024 15:51:22 -0700
+        Sun, 03 Nov 2024 15:17:49 -0800 (PST)
+Message-ID: <099ea61e-b36c-4b87-9897-8265e3a6b6c1@gmail.com>
+Date: Sun, 3 Nov 2024 23:17:55 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -79,7 +78,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 3/3] io_uring: move struct io_kiocb from task_struct to
  io_uring_task
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
 References: <20241103175108.76460-1-axboe@kernel.dk>
  <20241103175108.76460-4-axboe@kernel.dk>
  <8025a63c-6e3c-41b5-a46e-ff0d3b8dd43b@gmail.com>
@@ -89,90 +88,52 @@ References: <20241103175108.76460-1-axboe@kernel.dk>
  <03d7e082-259a-4063-8a98-5a919ce0fe3e@gmail.com>
  <40c07820-e6e2-4d90-a095-31bb59cedb8d@kernel.dk>
  <4cd58a90-2cbb-443c-84ab-9a9e0805e72b@gmail.com>
+ <81330ac7-6c9b-4515-8dce-6294fcd45641@kernel.dk>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <4cd58a90-2cbb-443c-84ab-9a9e0805e72b@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <81330ac7-6c9b-4515-8dce-6294fcd45641@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/3/24 3:47 PM, Pavel Begunkov wrote:
-> On 11/3/24 22:40, Jens Axboe wrote:
->> On 11/3/24 3:36 PM, Pavel Begunkov wrote:
->>> On 11/3/24 22:18, Jens Axboe wrote:
->>>> On 11/3/24 3:05 PM, Pavel Begunkov wrote:
->>>>> On 11/3/24 21:54, Jens Axboe wrote:
->>>>>> On 11/3/24 2:47 PM, Pavel Begunkov wrote:
->>>>>>> On 11/3/24 17:49, Jens Axboe wrote:
->>>>>>> ...
->>>>>>>> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
->>>>>>> ...
->>>>>>>>          nd->head = prev_nd->head;
->>>>>>>> @@ -115,7 +115,7 @@ struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
->>>>>>>>          notif->opcode = IORING_OP_NOP;
->>>>>>>>          notif->flags = 0;
->>>>>>>>          notif->file = NULL;
->>>>>>>> -    notif->task = current;
->>>>>>>> +    notif->tctx = current->io_uring;
->>>>>>>>          io_get_task_refs(1);
->>>>>>>>          notif->file_node = NULL;
->>>>>>>>          notif->buf_node = NULL;
->>>>>>>> diff --git a/io_uring/poll.c b/io_uring/poll.c
->>>>>>>> index 7db3010b5733..56332893a4b0 100644
->>>>>>>> --- a/io_uring/poll.c
->>>>>>>> +++ b/io_uring/poll.c
->>>>>>>> @@ -224,8 +224,7 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
->>>>>>>>      {
->>>>>>>>          int v;
->>>>>>>>      -    /* req->task == current here, checking PF_EXITING is safe */
->>>>>>>> -    if (unlikely(req->task->flags & PF_EXITING))
->>>>>>>> +    if (unlikely(current->flags & PF_EXITING))
->>>>>>>>              return -ECANCELED
->>>>>>>
->>>>>>> Unlike what the comment says, req->task doesn't have to match current,
->>>>>>> in which case the new check does nothing and it'll break in many very
->>>>>>> interesting ways.
->>>>>>
->>>>>> In which cases does it not outside of fallback?
->>>>>
->>>>> I think it can only be fallback path
->>>>
->>>> I think so too, that's what I was getting at. Hence I think we should just
->>>> change these PF_EXITING checks to be PF_KTHREAD instead. If we're invoked
->>>> from that kind of context, cancel.
+On 11/3/24 22:51, Jens Axboe wrote:
+> On 11/3/24 3:47 PM, Pavel Begunkov wrote:
+>> On 11/3/24 22:40, Jens Axboe wrote:
+...
+>>> Right, but:
 >>>
->>> Replacing with just a PF_KTHREAD check won't be right, you can
->>> get here with the right task but after it has been half killed and
->>> marked PF_EXITING.
+>>> if (current->flags & (PF_EXITING | PF_KTHREAD))
+>>>      ...
+>>>
+>>> should be fine as it'll catch both cases with the single check.
 >>
->> Right, but:
+>> Was thinking to mention it, it should be fine buf feels wrong. Instead
+>> of directly checking what we want, i.e. whether the task we want to run
+>> the request from is dead, we are now doing "let's check if the task
+>> is dead. Ah yes, let's also see if it's PF_KTHREAD which indirectly
+>> implies that the task is dead because of implementation details."
 >>
->> if (current->flags & (PF_EXITING | PF_KTHREAD))
->>     ...
->>
->> should be fine as it'll catch both cases with the single check.
+>> Should be fine to leave that, but why not just leave the check
+>> how it was? Even if it now requires an extra deref through tctx.
 > 
-> Was thinking to mention it, it should be fine buf feels wrong. Instead
-> of directly checking what we want, i.e. whether the task we want to run
-> the request from is dead, we are now doing "let's check if the task
-> is dead. Ah yes, let's also see if it's PF_KTHREAD which indirectly
-> implies that the task is dead because of implementation details."
+> I think it'd be better with a comment, I added one that says:
 > 
-> Should be fine to leave that, but why not just leave the check
-> how it was? Even if it now requires an extra deref through tctx.
+> /* exiting original task or fallback work, cancel */
+> 
+> We can retain the original check, but it's actually a data race to check
+> ->flags from a different task. Yes for this case we're in fallback work
+> and the value should be long since stable, but seems prudent to just
+> check for the two criteria we care about. At least the comment will be
+> correct now ;-)
 
-I think it'd be better with a comment, I added one that says:
+I don't think whack-a-mole'ing all cases is a good thing,
+but at least it can get moved into a helper and be reused in
+all other places.
 
-/* exiting original task or fallback work, cancel */
+if (io_tw_should_terminate(req, tw))
+	fail;
 
-We can retain the original check, but it's actually a data race to check
-->flags from a different task. Yes for this case we're in fallback work
-and the value should be long since stable, but seems prudent to just
-check for the two criteria we care about. At least the comment will be
-correct now ;-)
-
-The extra deref mostly doesn't matter here, only potentially for
-io_req_task_submit().
+should be more readable
 
 -- 
-Jens Axboe
+Pavel Begunkov
 

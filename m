@@ -1,97 +1,123 @@
-Return-Path: <io-uring+bounces-4368-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4369-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7946F9BA76B
-	for <lists+io-uring@lfdr.de>; Sun,  3 Nov 2024 19:33:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C585E9BA85F
+	for <lists+io-uring@lfdr.de>; Sun,  3 Nov 2024 22:47:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00BBAB21220
-	for <lists+io-uring@lfdr.de>; Sun,  3 Nov 2024 18:33:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 807F7281AB0
+	for <lists+io-uring@lfdr.de>; Sun,  3 Nov 2024 21:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8453FAD2D;
-	Sun,  3 Nov 2024 18:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D20189F33;
+	Sun,  3 Nov 2024 21:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NwJ7M4wS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2Fd7E0f"
 X-Original-To: io-uring@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F5B29A0;
-	Sun,  3 Nov 2024 18:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28C6E552
+	for <io-uring@vger.kernel.org>; Sun,  3 Nov 2024 21:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730658775; cv=none; b=P/8vj7RjorqgTmivR7Mhu5x1AvXhijjhmucKyGa79qHYXVFGvCMZTGOPgjHaYq7elTqLobTdBxAol51c9fxo3ZeaIDtXjBcWlfh64XjjKBDLQC2nIQGprFlqkoL0/+P9Io+Z+FisjG3duE+yWyk+wEWgo30X0VOdkaprkXCDH0E=
+	t=1730670430; cv=none; b=CUtOEy4qKrFBB4pzdzix2juClufcjHSuoBtlJIxNbHtAc7GO6YyvXk3/5lKeQ8vPFIpy8hIVgUJVdxSqk2M56wMQVBE9LIU0YcFErY5h2N54tBacdnCjpVuHkFx8UhTnAJRPPyXkP+oA3TtO+hbfxgNt0AotQXtWly71riangBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730658775; c=relaxed/simple;
-	bh=3KD6eaKuf3XilOsEx4jvD5d+n7WW2+ezBH2GGGu/XXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gm/Zllo3GiZX0LDJhCLXVkwleMoyC2qdmbpYs7UPzzyYr0bncfMd2Yzt7Rqt1KRqZ897UgLYSwk7OjXYB8/rM1sk4ASkBgR4LgJGpBiLmlTz80d3jjumxAz0Zez3qnMDpMOh5uKJRrdZBifCnmYV9BP82bL80SKuBH0D6GoXxyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NwJ7M4wS; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=S09L9I0l0uhvMCgbKe7ooblBiG64V3WJebF5I6KG5BE=; b=NwJ7M4wSyPZFAxwqErPtFAa6NO
-	fu6lp+Q4SuFOyY6WHF2Zp3UQMTo73lS18LiMQJBHOPH4RiSOJ0VcdrA/vnlKaVWp8OEdclvGr0cFW
-	XJCgVqTNBWVt6qGB2k+l6FErx0zrpQQqrxjXcIjcfly/JNqqnXFCPawrkbA6DiS2fGfMlE9wCuPpd
-	px2KgsvfkbtlBgaTVyMW6ZbXcL8UeDUV1hkgKksD/hlXIoaAUAI1mNP55ylpI/aaHFiAbh1JmoOT+
-	rcDWbljU2POSZiyNZlKeRPNGkdq+U/DWxde3tU2zvG4WfVVKtWG9cdvIyzEP3XQTwZek1eXWplQii
-	TGxcRpSA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t7fP7-0000000AlOD-2fx0;
-	Sun, 03 Nov 2024 18:32:49 +0000
-Date: Sun, 3 Nov 2024 18:32:49 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>, io-uring@vger.kernel.org,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>
-Subject: Re: [RFC][PATCHES v2] xattr stuff and interactions with io_uring
-Message-ID: <20241103183249.GT1350452@ZenIV>
-References: <20241002011011.GB4017910@ZenIV>
- <20241102072834.GQ1350452@ZenIV>
- <2a01f70e-111c-4981-9165-5f5170242a8c@kernel.dk>
- <20241103065156.GS1350452@ZenIV>
- <a8081b55-c770-4709-aa9e-f55c85d78cdb@app.fastmail.com>
+	s=arc-20240116; t=1730670430; c=relaxed/simple;
+	bh=mDqSIZN2TNjQqiMiFpU1trVq5il+6jiYAZJHDE7o4g4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iEas2t2WRaGeXb6uqRiNfeFgARgaCQBze6e+Pi/4bta6c2uOBnxOWF6fDDgUqBrEYU7EObBnH+I3ls7Na/sDT26TDOYNWB9/9XhY+yhYU7c+v0K/gHko0aFC3SLYeAuWZqCNdXB8eo8aQtZVNnfSeJ0h1L7uXlNyy7tluPJhUH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2Fd7E0f; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d47b38336so2693352f8f.3
+        for <io-uring@vger.kernel.org>; Sun, 03 Nov 2024 13:47:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730670427; x=1731275227; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ty+RdcM6KnoADbI2CnTYvHIptTP9vNnLhojipzxT4j0=;
+        b=B2Fd7E0fKR4cgV/T6chzeWg+mgsYmHHOSFtJkb7p7tEetlO2jG5eQ4JpyEj2gSg6BM
+         I3BbNODKR+5r+5fL3bSmrfkM0nNENCj+zVZsMTI4wnIOYfLvrs+SL5Lo2Pxs8I+p+dH6
+         qyzjWC1nNBfcOrfo0Qk/F8tAg2USMGu8SWkrc0/niEmyyzVE75/h7G4EIOlLDbuHENI6
+         wmHpXFcZBVT8MbL24sSM5OprXQUqcV/blXFzkRTaWSroG2Q8JlJhWIchI1QejWJ4xzfk
+         R+FgJ9mS1o3dtYQ1xqFwQ00XA8ETO+AL6qAoBWj/kbMSxmU+1jZi2UAhH2C/+kIBSINM
+         2uwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730670427; x=1731275227;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ty+RdcM6KnoADbI2CnTYvHIptTP9vNnLhojipzxT4j0=;
+        b=saCpf/NxIo1tnAwbcMFcahMeNFNeRUQRKynjhH4SGowG+cHWeAUEn3RtpujB0bxKtv
+         tWPFwy8+KWU3R816UTkYRyipQ9MD8ycaQPgbw00IXaSFIm68xMCUGYQ2wpa1MfZFfoNv
+         D/kWoMXtNuDiHLQmZJthJgtmNyWR97Sq3pNMDksRU1V20vJyVQqr7FvKMx4Hnc4a5XBy
+         mmQg2g0yyF935rfdMZELtsHjBxoTn5CTS6MiVmZ9ZZGfWTMDhaoBjeeqlGBqQoTlvR8H
+         kkLlwTjPPxtOShU5qBVytQ/C6SirMHANYvFolt8UAG3aI3PPGXu5eHr4S0zaXrKk75C0
+         oH4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWYVaGupUpoL9IiHVPi1+eQm6vepBAEF00SMnc4AWdIuDtYUHgFxqj6kwxhb6gAY1RX4zwQaisS1Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXeuYOcX5HJSA7y29qv61AN7TpzKk0bXYtXloaJa5j6s3VWB6/
+	KHlNYVRHDrxDplFifrAUgI/LT5PnPCjEOkGFBBdwrm6NuMCoUhbb
+X-Google-Smtp-Source: AGHT+IEHVv9tHgUrR18k/8gPTPZip32GRPwbullzVwWC4E1VvqnTRviLM/B1+8lsE52na7dNPngQrQ==
+X-Received: by 2002:a5d:5f54:0:b0:381:c811:d2a3 with SMTP id ffacd0b85a97d-381c811d382mr7078659f8f.39.1730670426879;
+        Sun, 03 Nov 2024 13:47:06 -0800 (PST)
+Received: from [192.168.42.207] ([85.255.236.151])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e6aasm11487018f8f.67.2024.11.03.13.47.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Nov 2024 13:47:06 -0800 (PST)
+Message-ID: <8025a63c-6e3c-41b5-a46e-ff0d3b8dd43b@gmail.com>
+Date: Sun, 3 Nov 2024 21:47:12 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a8081b55-c770-4709-aa9e-f55c85d78cdb@app.fastmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] io_uring: move struct io_kiocb from task_struct to
+ io_uring_task
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20241103175108.76460-1-axboe@kernel.dk>
+ <20241103175108.76460-4-axboe@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241103175108.76460-4-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 03, 2024 at 02:57:14PM +0100, Arnd Bergmann wrote:
-> On Sun, Nov 3, 2024, at 07:51, Al Viro wrote:
-> > On Sat, Nov 02, 2024 at 08:43:31AM -0600, Jens Axboe wrote:
-> >> Tested on arm64, fwiw I get these:
-> >> 
-> >> <stdin>:1603:2: warning: #warning syscall setxattrat not implemented [-Wcpp]
-> >> <stdin>:1606:2: warning: #warning syscall getxattrat not implemented [-Wcpp]
-> >> <stdin>:1609:2: warning: #warning syscall listxattrat not implemented [-Wcpp]
-> >> <stdin>:1612:2: warning: #warning syscall removexattrat not implemented [-Wcpp]
-> >
-> > arch/arm64/tools/syscall*.tbl bits are missing (as well as
-> > arch/sparc/kernel/syscall_32.tbl ones, but that's less of an
-> > issue).
-> >
-> > AFAICS, the following should be the right incremental.  Objections, anyone?
-> 
-> Looks fine to me.
-> 
-> I have a patch to convert s390 to use the exact same format
-> as the others, and I should push that patch, but it slightly
-> conflict with this one.
-> 
-> We can also remove the old include/uapi/asm-generic/unistd.h
-> that is no longer used.
+On 11/3/24 17:49, Jens Axboe wrote:
+...
+> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+...
+>   	nd->head = prev_nd->head;
+> @@ -115,7 +115,7 @@ struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
+>   	notif->opcode = IORING_OP_NOP;
+>   	notif->flags = 0;
+>   	notif->file = NULL;
+> -	notif->task = current;
+> +	notif->tctx = current->io_uring;
+>   	io_get_task_refs(1);
+>   	notif->file_node = NULL;
+>   	notif->buf_node = NULL;
+> diff --git a/io_uring/poll.c b/io_uring/poll.c
+> index 7db3010b5733..56332893a4b0 100644
+> --- a/io_uring/poll.c
+> +++ b/io_uring/poll.c
+> @@ -224,8 +224,7 @@ static int io_poll_check_events(struct io_kiocb *req, struct io_tw_state *ts)
+>   {
+>   	int v;
+>   
+> -	/* req->task == current here, checking PF_EXITING is safe */
+> -	if (unlikely(req->task->flags & PF_EXITING))
+> +	if (unlikely(current->flags & PF_EXITING))
+>   		return -ECANCELED
 
-I'd suggest starting with Documentation/process/adding-syscalls.rst, then...
+Unlike what the comment says, req->task doesn't have to match current,
+in which case the new check does nothing and it'll break in many very
+interesting ways.
+
+-- 
+Pavel Begunkov
 

@@ -1,150 +1,157 @@
-Return-Path: <io-uring+bounces-4397-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4398-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806DD9BAFF2
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 10:40:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D179BB138
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 11:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4C241C2205C
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 09:40:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8B501F21D91
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 10:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB5B1ADFE2;
-	Mon,  4 Nov 2024 09:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WbV5qoMS"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C431B0F34;
+	Mon,  4 Nov 2024 10:36:27 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88A11AC426
-	for <io-uring@vger.kernel.org>; Mon,  4 Nov 2024 09:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D001B0F26
+	for <io-uring@vger.kernel.org>; Mon,  4 Nov 2024 10:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730713231; cv=none; b=ncDL7IWhezEXMVzdQ3TtpCWojiES8oOtjbGdP7mcM5Wj5NvZcjQS2rR2HKcAQuFuJQi5j5lDBkj/RkqBYB5glynzmxNCffR5fs1bVtjt7nFMvLfXVIPNL++LQfUbMcajS+MkMiAk3nmhBY/xKbpBcxZkrqQR7g4DV0lMCyq8xsk=
+	t=1730716587; cv=none; b=DbjoqVK9SwoIBZkRnJxB7EDw+gPYvQNSuMIrEoPlp+hvgmusqM82YCUmfhIiCMKDdh0W8ymfDm/QJnCvnfjQ8tchGmkOIrvFMfbK7znSQ3eXbac1ycsO/ntdfs8wfxOQyl2LLnb3BKnJFobLao07xMAYBQ6lDhPthbHyJq3MZSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730713231; c=relaxed/simple;
-	bh=/2KWbTeIX8OFyjJnGDxLsfFpKtH0vHpcfurYnQGh9qk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=Yf0RJcjCE7WwnozBrzU9dMV6LDCGUI/fQ8EYEoMmY5Zuf5hREwog4MWja1kJcR4ge3IJRjaCvYXZInynn/nMYGXZ/76vsGbp1PPpT3gGBE65fHxnME02rKH4vpRltHeNvqAgAwDKeUpua/8lSeihrvtlqttEZxu5yAGz7h3AuTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WbV5qoMS; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241104094024epoutp0253bef925d9b2aa1c6c68ef28438b3373~EuoILIQk82292022920epoutp02G
-	for <io-uring@vger.kernel.org>; Mon,  4 Nov 2024 09:40:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241104094024epoutp0253bef925d9b2aa1c6c68ef28438b3373~EuoILIQk82292022920epoutp02G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730713224;
-	bh=/2KWbTeIX8OFyjJnGDxLsfFpKtH0vHpcfurYnQGh9qk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WbV5qoMS2c/2HCrxiQebd3ssuLJCXYymmIt7uqgfze6G0m92ADzsimjdfLxTBJzMI
-	 kFPUzCx+9sBsgn2xAIEGUB/34P+4WaC4q0ne/G/Lj9A8GPBPmuDOuUL6D5wjS7AA80
-	 XQkPQcjPf6FtQbr42vjrRztxEDY0WopV6TpLqjk0=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241104094024epcas5p19f2baa060a32014627aef72cdb4c641a~EuoH64rqM2520225202epcas5p1N;
-	Mon,  4 Nov 2024 09:40:24 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XhmfZ1hSSz4x9Pq; Mon,  4 Nov
-	2024 09:40:22 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	49.74.09800.48698276; Mon,  4 Nov 2024 18:40:20 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241104072914epcas5p2d44c91a277995d5c69bacd4e4308933d~Es1mOsiEQ2271622716epcas5p23;
-	Mon,  4 Nov 2024 07:29:14 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241104072914epsmtrp188c60915ea9c82d5676ee59a90969a29~Es1mOBVzt0180401804epsmtrp1X;
-	Mon,  4 Nov 2024 07:29:14 +0000 (GMT)
-X-AuditID: b6c32a4b-23fff70000002648-67-672896845931
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E2.98.07371.9C778276; Mon,  4 Nov 2024 16:29:13 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241104072913epsmtip2d779602a1dd38bcd762dc37d60793f5f~Es1lU23lA1188611886epsmtip2F;
-	Mon,  4 Nov 2024 07:29:12 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v9 1/1] io_uring: releasing CPU resources when
- polling
-Date: Mon,  4 Nov 2024 15:29:07 +0800
-Message-Id: <20241104072907.768671-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <a9b7a578-cf47-474f-8714-297437b385cd@kernel.dk>
+	s=arc-20240116; t=1730716587; c=relaxed/simple;
+	bh=OeXcuUqLK9bYzAA1BHzDEgYwPgFv19Wfs0jvrMvUS8Y=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oSt2tCA9IVm1J0mD6OSmD5V+ChyVf+htBcF3ylhAU2yrznh+M5frPWYxpHMSYe78s/KO8ebske40yuvZVroNiPWANCav0eB2Jh10JORZ7LArqjNXmQVBMH+iyqTLY673FsBY7GybPimTrFQPuT9HVBXz4iUBNkTXaSIWjJPu7vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3fa97f09cso42145915ab.0
+        for <io-uring@vger.kernel.org>; Mon, 04 Nov 2024 02:36:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730716585; x=1731321385;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=45MKnYCR0HjR6EAdmcVBnlWYHf7EelS6cbO1gpSSq88=;
+        b=Ty2ZFMxTn2NJEgmPwcBL5FcXq3cxxRePqMeoPIFYON7OEdyuDNbnER4vCh/R3vQg2R
+         WzLDF/9i6s4jX8Oh6V3okufXm09c9tFTlBof7vUSKgPbuRk4sBB1CkHgddEnbde6kyJ7
+         uA4ESW5YUtNblskGmyKHwES++YlaLeRVhRnVdg2DnWRI6jy8PIBi+vwOqLlADZzZiQCl
+         aUPJ4XD7depLqCDuUBOWcTiI7tjB8O1Fd9/bQdTKuNFIXBmWw+MyNYvF+oLZL83V9mpz
+         NDqzZMvxYRnc6M6mguEJwJamB3I+Hk8LT67q3blRCkOXS2r+RgK3gcyzD/q6JeCKpbnv
+         gUBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJgcUSCa9ZvL20sjp5XyXxw09hL5HjpfWd2windzE4JkmsYupSKAM2a5elcJeEaNoiL0y6sgqcew==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrwy4v9LhugWPXhq38Zo3/7A1oejeFHV/fSJV7xcKLnWHKFJhr
+	AT3BV0d2IxsYos6YLKsFOA6qTi5J/iSmspZCu1flRN8xag/4OakUPJyZ83r8I20Ivt2ZJKgGh59
+	KvC6P0sAcE4kIwGOy37QcEDRBMqRlYH3IjNmLbHoTLTl7+oxqosYn8GE=
+X-Google-Smtp-Source: AGHT+IHoGvGypx3NhStEVQDjdPhANng44DlnJGQ1DlDnMH5qtrMfgbn8AVZHdpkDjoLrjHec5/EDNltbCvS8IJcFrguYOE7jSkvp
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplk+LIzCtJLcpLzFFi42LZdlhTQ7dlmka6QesJKYs5q7YxWqy+289m
-	8a71HIvFr+67jBaXd81hszg74QOrA5vHzll32T0uny316NuyitHj8ya5AJaobJuM1MSU1CKF
-	1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoN1KCmWJOaVAoYDE4mIl
-	fTubovzSklSFjPziElul1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyM5Ue/Mhd8Zq2Y
-	vPMyYwPjTZYuRk4OCQETiT037zJ3MXJxCAnsZpSYc3k+C4TziVHiw6urUJlvjBI7F7fBtaz4
-	3gFVtZdR4sCymYwQzg9GidmXZzCDVLEJKEns3/KBEcQWERCW2N/RCtTBwcEsECJx80wESFhY
-	IEBi/b+vYOUsAqoSl7/2sYPYvAJWEr/nb2GDWCYvcbNrP1gNp4CtxPQv85khagQlTs58AnYQ
-	M1BN89bZYJdKCFxil+h8so8JotlFovv9dHYIW1ji1fEtULaUxMv+Nig7X2Ly9/WMEHaNxLrN
-	76C+tJb4d2UP1M2aEut36UOEZSWmnlrHBLGXT6L39xOoVbwSO+bB2EoSS46sgBopIfF7wiJW
-	CNtDYv7Xk9AQncAo8WjuHPYJjAqzkPwzC8k/sxBWL2BkXsUomVpQnJueWmxaYJyXWg6P5eT8
-	3E2M4PSo5b2D8dGDD3qHGJk4GA8xSnAwK4nwzktVTxfiTUmsrEotyo8vKs1JLT7EaAoM8InM
-	UqLJ+cAEnVcSb2hiaWBiZmZmYmlsZqgkzvu6dW6KkEB6YklqdmpqQWoRTB8TB6dUA5NL6dOK
-	2RPUT0rp91qnbXc5WFViNTPbKXD7QzGJr7PtpvinpuUo30k6y/TMVqns4r7gaGuxGXP4z79u
-	d127+fvho+mzlDfmpQee1koPfHIvJ+HXk70R6/kn1TTMZjdiWnjVbVryJLcj9R0a30rDZ+72
-	LvnEavLENG5J8Ta9mqNivsUMTLVPM196lbnt9pvsqh45+dHjbxsPfmSLnPXzbteXH8w7Dmqt
-	/93BxBF5JWl7kOPVepfyPzuT0h+Yu7Afue/WpJQU/GPyaZu/bVInujMPTPrzpmj5BdmanulX
-	+nabFahciT5pvcLqD4uxxwS2SeZyAbvk/7pnH/8jxcgj9GJpr2PM41NtFfze35eu3afEUpyR
-	aKjFXFScCACwjSJMGAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsWy7bCSvO7Jco10g48zzSzmrNrGaLH6bj+b
-	xbvWcywWv7rvMlpc3jWHzeLshA+sDmweO2fdZfe4fLbUo2/LKkaPz5vkAliiuGxSUnMyy1KL
-	9O0SuDKWH/3KXPCZtWLyzsuMDYw3WboYOTkkBEwkVnzvALK5OIQEdjNKfL90jxkiISGx49Ef
-	VghbWGLlv+fsILaQwDdGiTVPwkFsNgElif1bPjCC2CJANfs7WsGGMguESXTtOAPWKyzgJ3Hr
-	9kWwmSwCqhKXv/aBzeEVsJL4PX8LG8R8eYmbXfvBajgFbCWmf5kPZHMA7bKR6NmZBlEuKHFy
-	5hOo8fISzVtnM09gFJiFJDULSWoBI9MqRsnUguLc9NxkwwLDvNRyveLE3OLSvHS95PzcTYzg
-	4NXS2MF4b/4/vUOMTByMhxglOJiVRHjnpaqnC/GmJFZWpRblxxeV5qQWH2KU5mBREuc1nDE7
-	RUggPbEkNTs1tSC1CCbLxMEp1cB0Ul3dtfGGO7vSbhFGUbtTvrM3zU28uJ7Tvz336OEXi793
-	Ra2Rr7mXYKnDXKjW0ZXKGpydv1lTXfhYrZ+500fHm0e2mRTYT9c+9v21zp0lzm41bms+vTH3
-	Zbo6b5/kFw2WRocF+5va/sU8ufgrYfeP0t3zFBXEd815fNHrgqmA4q9Xh1L6+Hp+Vzgq9Ybc
-	X3tp8oXzT/vnbYxjVE76XLfl3PlO2U635Qkfs2bdbvuwPVpuf6rOzATh1b+uGPJ5B8tIvFR7
-	GlMYl1KsKvTsataZ4GuFQZEvF22Y8M+wjItt8hLhp6HSAXNehzd9fvcj5eZhthk6k74f+XJT
-	e07CKrlbStlT9N/fY1E/kKKprfBaiaU4I9FQi7moOBEAcfWJSs0CAAA=
-X-CMS-MailID: 20241104072914epcas5p2d44c91a277995d5c69bacd4e4308933d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241104072914epcas5p2d44c91a277995d5c69bacd4e4308933d
-References: <a9b7a578-cf47-474f-8714-297437b385cd@kernel.dk>
-	<CGME20241104072914epcas5p2d44c91a277995d5c69bacd4e4308933d@epcas5p2.samsung.com>
+X-Received: by 2002:a05:6e02:13a5:b0:3a0:98b2:8f3b with SMTP id
+ e9e14a558f8ab-3a6b026372fmr121545735ab.7.1730716583498; Mon, 04 Nov 2024
+ 02:36:23 -0800 (PST)
+Date: Mon, 04 Nov 2024 02:36:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6728a3a7.050a0220.35b515.01b9.GAE@google.com>
+Subject: [syzbot] [io-uring?] [usb?] WARNING in io_get_cqe_overflow (2)
+From: syzbot <syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/1/2024 08:06, Jens Axboe wrote:
->On 11/1/24 3:19 AM, hexue wrote:
->> A new hybrid poll is implemented on the io_uring layer. Once IO issued,
->> it will not polling immediately, but block first and re-run before IO
->> complete, then poll to reap IO. This poll function could be a suboptimal
->> solution when running on a single thread, it offers the performance lower
->> than regular polling but higher than IRQ, and CPU utilization is also lower
->> than polling.
->
->This looks much better now.
->
->Do you have a patch for liburing to enable testing of hybrid polling
->as well? Don't care about perf numbers for that, but it should get
->exercised.
+Hello,
 
-Sure, I'll add some liburing test cases and submit patch soon.
-Thank you.
+syzbot found the following issue on:
 
---
-Xue
+HEAD commit:    c88416ba074a Add linux-next specific files for 20241101
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14c04740580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
+dashboard link: https://syzkaller.appspot.com/bug?extid=e333341d3d985e5173b2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ec06a7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c04740580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/760a8c88d0c3/disk-c88416ba.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/46e4b0a851a2/vmlinux-c88416ba.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/428e2c784b75/bzImage-c88416ba.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 3508 at io_uring/io_uring.h:142 io_lockdep_assert_cq_locked io_uring/io_uring.h:142 [inline]
+WARNING: CPU: 1 PID: 3508 at io_uring/io_uring.h:142 io_get_cqe_overflow+0x43f/0x590 io_uring/io_uring.h:166
+Modules linked in:
+CPU: 1 UID: 0 PID: 3508 Comm: kworker/u8:8 Not tainted 6.12.0-rc5-next-20241101-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: iou_exit io_ring_exit_work
+RIP: 0010:io_lockdep_assert_cq_locked io_uring/io_uring.h:142 [inline]
+RIP: 0010:io_get_cqe_overflow+0x43f/0x590 io_uring/io_uring.h:166
+Code: 0f 0b 90 e9 62 fc ff ff e8 fe 43 ec fc 90 0f 0b 90 e9 90 fe ff ff e8 f0 43 ec fc 90 0f 0b 90 e9 82 fe ff ff e8 e2 43 ec fc 90 <0f> 0b 90 e9 74 fe ff ff e8 d4 43 ec fc 90 0f 0b 90 e9 66 fe ff ff
+RSP: 0018:ffffc9000d0df810 EFLAGS: 00010293
+RAX: ffffffff84a97a1e RBX: ffff888034e58000 RCX: ffff888032328000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000001 R08: ffffffff84a97821 R09: fffff52001a1befc
+R10: dffffc0000000000 R11: fffff52001a1befc R12: 0000000000000000
+R13: dffffc0000000000 R14: dffffc0000000000 R15: ffffc9000d0df8a0
+FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd6dd6c11f0 CR3: 000000004b8ac000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ io_get_cqe io_uring/io_uring.h:182 [inline]
+ io_fill_cqe_aux io_uring/io_uring.c:822 [inline]
+ __io_post_aux_cqe io_uring/io_uring.c:843 [inline]
+ io_post_aux_cqe+0xe5/0x420 io_uring/io_uring.c:855
+ io_free_rsrc_node+0xe3/0x220 io_uring/rsrc.c:453
+ io_put_rsrc_node io_uring/rsrc.h:81 [inline]
+ io_rsrc_data_free+0xf2/0x200 io_uring/rsrc.c:140
+ io_free_file_tables+0x23/0x70 io_uring/filetable.c:52
+ io_sqe_files_unregister+0x53/0x140 io_uring/rsrc.c:477
+ io_ring_ctx_free+0x49/0xdb0 io_uring/io_uring.c:2715
+ io_ring_exit_work+0x80f/0x8a0 io_uring/io_uring.c:2952
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

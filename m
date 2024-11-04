@@ -1,115 +1,171 @@
-Return-Path: <io-uring+bounces-4387-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4388-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6449BA9B5
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 01:13:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA069BA9B8
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 01:16:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 651671F218FB
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 00:13:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45B0CB20BC2
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 00:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65B4800;
-	Mon,  4 Nov 2024 00:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5205A23A6;
+	Mon,  4 Nov 2024 00:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yk3Igf6A"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h4ppXhUT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19081382;
-	Mon,  4 Nov 2024 00:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1943C2F
+	for <io-uring@vger.kernel.org>; Mon,  4 Nov 2024 00:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730679234; cv=none; b=CwyKAnS4oKHFvHV7CZgoLo4hvk0YxAlYxtkIJkHliMnfabf3ja2R+D9tKF8cKeCzjC4p3aqylFmfAIHzs6103b6UjuCGiK087dNmPhkl+NdjZL85/0O6Q5fBm5QNV8UzdRma/4eUWZkCd0Cna6dbkNqF6iiupqdXc7IFxaDFTEM=
+	t=1730679406; cv=none; b=E3v5LMezdo6tNZU+C7S7TOPfTTKnLOxpIOsSI0rgovcIBEDzPlbkySIcDe9gVbJo8nGT2m1AjGZqXAjxS76KotlxMb4EcNonKdzGFetu2z3If3jixXd23Zg3IsQ30cNSH2YRs6EVQoqbEm6o7AMWFh4lFzv3F+9+nUEVuJRareo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730679234; c=relaxed/simple;
-	bh=V++SIrL4pMEI5pNUJcrMt1+JJeKlvbC3HnCBqGa7ds0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dEAFLCvLGXhif4mSlIImS7k2ill9EA0rq1dilNMHwejSS9lduHGRGzX7APEvzQzcHdBopb5KPGglkvC1sCfOUcWlddWYPPVQzhyuZFNqEzeTlByobSQ6j0lbGBFGAscRZDeI2VBm06MdvPOMbfJmDqo+fvVcUeLcETNq/zc32aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yk3Igf6A; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4314f38d274so45272965e9.1;
-        Sun, 03 Nov 2024 16:13:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730679231; x=1731284031; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qHtR0AfGexz+ECaBa1rWLsytx49UMV+ptX5eA/FmtyM=;
-        b=Yk3Igf6AFDcgb4TiiUDwxvxcfCEfGG7ntI5NCocEiqWCGXMTurM353uTTrPIClYSgZ
-         BjuRb+S8WD2YM8AxIaIb+b8KEnkhmDaAQ3a9EcCQYaECuJtc0vt9fwRaCKJuWEkJ/VY9
-         Zrfjs6ZcKuiMhprrLOMb+Y5v8Q07nYj9QkgfcsWWX+606q6HVrcu0sh76FFbeS8XhZ22
-         vc8sSuJpyQZzZRvUiAHJfyTDe+KlfBBBatdxLi2GqY+puWFdcqRrF7JjEoJc2+XSIN/I
-         T0ZbjjNccItstKKINAgYQrsQpEs0Hfrv04x4AGdH7NW5na4H5lKN1kub5QOBUci0q8u2
-         591g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730679231; x=1731284031;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qHtR0AfGexz+ECaBa1rWLsytx49UMV+ptX5eA/FmtyM=;
-        b=rF6YSvhdiMc/IBY6cAReCX73NtIDqDWOAkIcUOAWmpGJJrEVOL+sj2ExXPnEkijiWb
-         90S2ATYIJ3mpsBn0jVntjcqAZNGh/dg93ytcpmSRCPLVj8G22LB37RKeX6OgM/ndq9Ru
-         qDD9CHlwt6t2Ukmt/EdU4Fe/8jOIIJtLd3ydCyWu7Biq6seH6NZmBWSfnOtM2O+9zLGX
-         LXGtJoTMi6fwVI1A2kmCUhhpqi4BnaB4vrDHbqsQuNOXL0NaVJi0tGHZbnNX7hky8EvC
-         x6c+tzT4lR1oH6WsEUlIv5K/i2ZK4QbAjheR7KUBVjbvp2Qgxnzlbu46/7tYS9Mf1dYw
-         Pc6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVdRWO6FXzzzDpu0zklk637PepN8PNhEVdrTcsIC17mow9n3geVSEwsyNJjUTiywdJFI4ZOnzZBxWiK1w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+y2I5j4aoPmXHvwlzBH6tN4Acz4N07R5LBPsI0C9MbQiJPPF1
-	wRRDwZwhjxQ279DTMWJodpjzaQxo18/p4ORLcCJC4LYm0g332NeH
-X-Google-Smtp-Source: AGHT+IFWaY88FKDr62Jz6iapJJrl387wL7YmSC/0yid8IHAKqK3QFl/b8mcZDksathVD+kVP7aFJGA==
-X-Received: by 2002:a05:600c:a07:b0:431:4b88:d407 with SMTP id 5b1f17b1804b1-432868a5b83mr98239235e9.5.1730679231335;
-        Sun, 03 Nov 2024 16:13:51 -0800 (PST)
-Received: from [192.168.42.207] ([85.255.236.151])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bb78b809sm186294235e9.1.2024.11.03.16.13.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Nov 2024 16:13:50 -0800 (PST)
-Message-ID: <35cdcdbf-aebb-4928-9ebd-e5123881c116@gmail.com>
-Date: Mon, 4 Nov 2024 00:13:56 +0000
+	s=arc-20240116; t=1730679406; c=relaxed/simple;
+	bh=M70eisBWpg3I71yZDIId/qycGuZkcss5v2Wba028nfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2xpDWbLs4tXyBGBEr9fwUINcyJ/pJ9UrHxDkmzTL8PLObtRl0ek09J6X+mWNw3LdPPlAXo6u2a8OK/6rfH8Ql9m9JMXht2THisMGRjC/dPgUCnzIE2tXRQkK6nO6EQji6kQN1kIMXPqVN9aUzJgNWObYXP78hmjwMzovmxLtMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h4ppXhUT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730679403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CU3FDgB5ZlNOXOjll3ZLNJ02L4FVQ4xwcWvIa7+dE9Y=;
+	b=h4ppXhUTs+XFa8a7dNJNbPISNovxhoPXHsscqq2R76RgoU8+iLjZoY7LthDWQCseKeksAB
+	D5EJbDdnvP2i4DXhWhHEaoofckF1DHrabdGiuNYVT5xGPy2aYDL/bTKD4dDlKWtFmnfBN+
+	XW5whVHMwbSn7YA/2Mu9kikeY+c0T30=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-632-jWLoHY0XNtORtVKXbFzj3Q-1; Sun,
+ 03 Nov 2024 19:16:38 -0500
+X-MC-Unique: jWLoHY0XNtORtVKXbFzj3Q-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74B9219560AA;
+	Mon,  4 Nov 2024 00:16:36 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.38])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E83F319560AD;
+	Mon,  4 Nov 2024 00:16:30 +0000 (UTC)
+Date: Mon, 4 Nov 2024 08:16:24 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	Uday Shankar <ushankar@purestorage.com>,
+	Akilesh Kailash <akailash@google.com>
+Subject: Re: [PATCH V8 5/7] io_uring: support leased group buffer with
+ REQ_F_GROUP_KBUF
+Message-ID: <ZygSWB08t1PPyPyv@fedora>
+References: <20241025122247.3709133-1-ming.lei@redhat.com>
+ <20241025122247.3709133-6-ming.lei@redhat.com>
+ <4576f723-5694-40b5-a656-abd1c8d05d62@gmail.com>
+ <ZyGBlWUt02xJRQii@fedora>
+ <bbf2612e-e029-460f-91cf-e1b00de3e656@gmail.com>
+ <ZyGURQ-LgIY9DOmh@fedora>
+ <40107636-651f-47ea-8086-58953351c462@gmail.com>
+ <ZyQpH8ttWAhS9C5G@fedora>
+ <4802ef4c-84ca-4588-aa34-6f1ffa31ac49@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] io_uring/cmd: let cmds to know about dying task
-To: Mark Harmstone <maharmstone@fb.com>, linux-btrfs@vger.kernel.org
-Cc: io-uring@vger.kernel.org
-References: <20241031163257.3616106-1-maharmstone@fb.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241031163257.3616106-1-maharmstone@fb.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4802ef4c-84ca-4588-aa34-6f1ffa31ac49@gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 10/31/24 16:32, Mark Harmstone wrote:
-...
->   struct io_wq_work_node {
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index 39c3c816ec78..78a8ba5d39ae 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -119,9 +119,13 @@ EXPORT_SYMBOL_GPL(io_uring_cmd_mark_cancelable);
->   static void io_uring_cmd_work(struct io_kiocb *req, struct io_tw_state *ts)
->   {
->   	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
-> +	unsigned int flags = IO_URING_F_COMPLETE_DEFER;
-> +
-> +	if (req->task != current)
-> +		flags |= IO_URING_F_TASK_DEAD;
+On Sun, Nov 03, 2024 at 10:31:25PM +0000, Pavel Begunkov wrote:
+> On 11/1/24 01:04, Ming Lei wrote:
+> > On Thu, Oct 31, 2024 at 01:16:07PM +0000, Pavel Begunkov wrote:
+> > > On 10/30/24 02:04, Ming Lei wrote:
+> > > > On Wed, Oct 30, 2024 at 01:25:33AM +0000, Pavel Begunkov wrote:
+> > > > > On 10/30/24 00:45, Ming Lei wrote:
+> > > > > > On Tue, Oct 29, 2024 at 04:47:59PM +0000, Pavel Begunkov wrote:
+> > > > > > > On 10/25/24 13:22, Ming Lei wrote:
+> > > > > > > ...
+> > > > > > > > diff --git a/io_uring/rw.c b/io_uring/rw.c
+> > > > > > > > index 4bc0d762627d..5a2025d48804 100644
+> > > > > > > > --- a/io_uring/rw.c
+> > > > > > > > +++ b/io_uring/rw.c
+> > > > > > > > @@ -245,7 +245,8 @@ static int io_prep_rw_setup(struct io_kiocb *req, int ddir, bool do_import)
+> > > > > > > >      	if (io_rw_alloc_async(req))
+> > > > > > > >      		return -ENOMEM;
+> > > > > > > > -	if (!do_import || io_do_buffer_select(req))
+> > > > > > > > +	if (!do_import || io_do_buffer_select(req) ||
+> > > > > > > > +	    io_use_leased_grp_kbuf(req))
+> > > > > > > >      		return 0;
+> > > > > > > >      	rw = req->async_data;
+> > > > > > > > @@ -489,6 +490,11 @@ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
+> > > > > > > >      		}
+> > > > > > > >      		req_set_fail(req);
+> > > > > > > >      		req->cqe.res = res;
+> > > > > > > > +		if (io_use_leased_grp_kbuf(req)) {
+> > > > > > > 
+> > > > > > > That's what I'm talking about, we're pushing more and
+> > > > > > > into the generic paths (or patching every single hot opcode
+> > > > > > > there is). You said it's fine for ublk the way it was, i.e.
+> > > > > > > without tracking, so let's then pretend it's a ublk specific
+> > > > > > > feature, kill that addition and settle at that if that's the
+> > > > > > > way to go.
+> > > > > > 
+> > > > > > As I mentioned before, it isn't ublk specific, zeroing is required
+> > > > > > because the buffer is kernel buffer, that is all. Any other approach
+> > > > > > needs this kind of handling too. The coming fuse zc need it.
+> > > > > > 
+> > > > > > And it can't be done in driver side, because driver has no idea how
+> > > > > > to consume the kernel buffer.
+> > > > > > 
+> > > > > > Also it is only required in case of short read/recv, and it isn't
+> > > > > > hot path, not mention it is just one check on request flag.
+> > > > > 
+> > > > > I agree, it's not hot, it's a failure path, and the recv side
+> > > > > is of medium hotness, but the main concern is that the feature
+> > > > > is too actively leaking into other requests.
+> > > > The point is that if you'd like to support kernel buffer. If yes, this
+> > > > kind of change can't be avoided.
+> > > 
+> > > There is no guarantee with the patchset that there will be any IO done
+> > > with that buffer, e.g. place a nop into the group, and even then you
+> > 
+> > Yes, here it depends on user. In case of ublk, the application has to be
+> > trusted, and the situation is same with other user-emulated storage, such
+> > as qemu.
+> > 
+> > > have offsets and length, so it's not clear what the zeroying is supposed
+> > > to achieve.
+> > 
+> > The buffer may bee one page cache page, if it isn't initialized
+> > completely, kernel data may be leaked to userspace via mmap.
+> > 
+> > > Either the buffer comes fully "initialised", i.e. free of
+> > > kernel private data, or we need to track what parts of the buffer were
+> > > used.
+> > 
+> > That is why the only workable way is to zero the remainder in
+> > consumer of OP, imo.
+> 
+> If it can leak kernel data in some way, I'm afraid zeroing of the
+> remainder alone won't be enough to prevent it, e.g. the recv/read
+> len doesn't have to match the buffer size.
 
-Actually, the patch is broken. I have no clue why Bernd changed
-it and left my name, here was the original:
+The leased kernel buffer size is fixed, and the recv/read len is known
+in case of short read/recv, the remainder part is known too, so can you
+explain why zeroing remainder alone isn't enough?
 
-https://lore.kernel.org/io-uring/d2528a1c-3d7c-4124-953c-02e8e415529e@gmail.com/
 
-also now it'll also conflict with patches Jens is queuing, I'll send
-a replacement btrfs can take.
 
--- 
-Pavel Begunkov
+Thanks,
+Ming
+
 

@@ -1,93 +1,108 @@
-Return-Path: <io-uring+bounces-4399-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4400-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C866C9BB37E
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 12:35:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1249BB41D
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 13:02:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0131A1F23196
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 11:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FC621C20E68
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 12:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A9418F2F0;
-	Mon,  4 Nov 2024 11:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A02F7C0BE;
+	Mon,  4 Nov 2024 12:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Em4wj8Gn"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B295018A6B6
-	for <io-uring@vger.kernel.org>; Mon,  4 Nov 2024 11:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFA91AF0B3
+	for <io-uring@vger.kernel.org>; Mon,  4 Nov 2024 12:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719866; cv=none; b=RphdH9jfqQ6E/79ghQfjBaiyCkT5iz1u9KBRoRSN2yKabzfAa/N7u45hstCJwAIR70ZJopkZac8XUbZPb/H7AE+Vtk50pup9AsmmtKv473wsvoLWrUs3hfnRHnX/p9L82B/TZjbb+BKxf2kNo3/CYRawfR/re5UoexfpOXOeMOw=
+	t=1730721774; cv=none; b=DYqIhifnKrUhcyAReIVAGUUACkVmiti0b99f96t03+UyhgQT1AkCwXRR2DxC4bxqtYz8LxgORJrr7J2oMCxt+AmEBRteEsnPUj9BIhzfnTbL/qWjDwAPjIlbcWSCmI2iK4lGcMqx5qAjjkacOIK7MfdufA4ZpTUrQLd1jNFywAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719866; c=relaxed/simple;
-	bh=USTEXjGieWszLGj5z6r32OOADjpD4CWIcX6mjLJKHQ4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=csRXmwxOSFiwKPbN4XZHIr0P1KtvPajnc8h5zRGwBOjTsWA8Q71U2Xwb0DPAzk89vJSp5wkrQg9D3llLhNSD0x5aYrPy9NzNIAQaBeFf3fsagIffdcbSHZ/WBLjxOi8wvJzLRMtuXwVP30BZz2tn9wG+MK5JZjieoUb+bRtzXos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6bb827478so24331285ab.0
-        for <io-uring@vger.kernel.org>; Mon, 04 Nov 2024 03:31:04 -0800 (PST)
+	s=arc-20240116; t=1730721774; c=relaxed/simple;
+	bh=Z5chtCEy/K52Xx78sfWDQ1oAcDatwVCW3dywb3WbDGI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LJSI0lRxZ1K+5fDnfKZyu/ioiKtMosXZS464V5X5r8KKvFUU0L1T/kLgw4fjsmqwhD39G1WqSiVS9+Y89PbbBMCAN8Yf/+M6SWsB/2XfJA4CFAtazLxFbUGJxfq2OHayusK6+TvHJV0pjlVYUvFjokXUujvZ3by+zdQ5zExX9QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Em4wj8Gn; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a68480164so652131066b.3
+        for <io-uring@vger.kernel.org>; Mon, 04 Nov 2024 04:02:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730721771; x=1731326571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xugJ/9yOS7+V1YDXDPiEE2wNQ+MkObOppIYl3Zt9jNw=;
+        b=Em4wj8GnYz3XSzJVrzEtIAkr3BrjEQ2zV4ll5ojGp3QGmIsUpblggfgbH+ssuKlld8
+         FUjafbrQVd8EbGhot0kPS7vupVB2bOZfIgYuDROZGuAovaJgqalhM0PfOi5dj3+vE7Tx
+         C6f+L4ac8/bBcyAhxT4pmqJvjiKyEkoEoMnDkzgjqHnRFkY1Y7zqKW1NNTC7PD5WrMek
+         ZGxmXfUp6kNWx3oMbpqWaC6QXxHnz1MTEu7paMR+dVSK4LEWS2rc1F3kIMXXzzsofi8x
+         /WbCqHiwALgSGhOqZemhIZcAGoFkLc8v9FpjoLzGYfMT/UcIXVLluQObcmK7enGt2vLs
+         QB5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730719864; x=1731324664;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7K+Rxi0VCaGxt4BQbyfBUCQ8LjiJXLegtr22yoocie0=;
-        b=N8zqVMFvRV/+bxvqG8TM5RvGd0qzINGiAATuK7nXoAsQ3roa0uYZvqpdsYszdd3ppG
-         QWWB0gKeZ0bFcFxelxrNT9IXIR5KNP5Db/8U5XDxzeOAvXcjGMGuy+qPJ/FBUMg82Dd0
-         n0U6aS9nQJ21HkXU/qFwl8/LM/msi7K04plnq5k0AMWjFWLrHCzLcMW4nTNak7YQWIYM
-         osWQBG/lZ/zQghbU4dQyVW6vctOZv5jGMxQQTE1EYZ85BbVY2kZ3Tr8d6BYjiwZq9wWt
-         VA4UN1dwAhZzikuiRLjj20gV4GOHnUI5jM6EGCnY33dPzEQTyiqeKVMEC2VN0VE+N0M2
-         N95g==
-X-Forwarded-Encrypted: i=1; AJvYcCUwS2MHASxg+q41dFPl9HlxXG48xZndDkEgkMJsY4BZZ9phAD5haDLQqe6Dn3FSS6V0jEAzSTek8w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU2QncAGTaci2YZ4n/HaTUH8/xGOGOcnX5fmX9CHVPbTru+f9N
-	dr7VIUw7Vu7wnuvNxvzo7k5tqfHR7kMpMaiwG31voSfYWoulKyoWnT9CBz2a+lW8c2CewYPug7v
-	a/d71by7ZD0hzd5UpSkhcnFqIR2idYmXIhflpDS8k0JdboTvvNlhZ6p8=
-X-Google-Smtp-Source: AGHT+IEHvYw/XzmB2HY4/rJQxloYCEvLWoq1GowHu4aappO6X751IG15/mI2XWUfsn57t3nkVzFOEfFEIWW4ziCCkwXvAQWgEKMz
+        d=1e100.net; s=20230601; t=1730721771; x=1731326571;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xugJ/9yOS7+V1YDXDPiEE2wNQ+MkObOppIYl3Zt9jNw=;
+        b=kxoN4iU013g2sxcuchpiWLiaognJir6koQP2+lz7XyPMT9E9U/kGwheuUTjOKLFjcr
+         TbQgce4qtzPEz7rGuW2+apwKArKWCZULYXqmCmZ+NLbHT3NIqE97+pWTjGVPBhHz3osB
+         zZbIyZN86h9Hv8yEUh1SG714p6CFDuxFmgkk9WYeYMgiCc14GlzOWVGU4y0CEqo80L9X
+         iLGbOUxxMWD40/lcBC5SoKfADRxXF8lYHpe5e8PHIOoefRoAFFXRZYnFiRM55va64fIR
+         i/mGYiuKtKOhkf3SCFazuE7D/AS325ooLuV8ty2C8We/9akV9imARytcWtMtb0WRwZ/K
+         RJfw==
+X-Gm-Message-State: AOJu0YxNQ00epmys6e4Qr44u3cwSdFGtYeQ5o+gd4o1/gsdXrRdliyDs
+	p2zZNcZogJaz+wMWOQoOnB4C6yc3+mfU+b20UdAYuwNYjz3rD366V9I76Q==
+X-Google-Smtp-Source: AGHT+IHi9ikW/hsW1rEjZj6Ecg25hMOo39KP3V342Ys3Y2pm0gu67RGKCVPpKqVszGqVTUlX5B/tsA==
+X-Received: by 2002:a17:907:1c22:b0:a99:f1aa:a71f with SMTP id a640c23a62f3a-a9de5c90d49mr3274960566b.11.1730721770792;
+        Mon, 04 Nov 2024 04:02:50 -0800 (PST)
+Received: from 127.0.0.1localhost ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565e5516sm544382666b.107.2024.11.04.04.02.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 04:02:50 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	asml.silence@gmail.com
+Subject: [PATCH] io_uring: prevent speculating sq_array indexing
+Date: Mon,  4 Nov 2024 12:02:47 +0000
+Message-ID: <c6c7a25962924a55869e317e4fdb682dfdc6b279.1730687889.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1707:b0:39f:5e18:239d with SMTP id
- e9e14a558f8ab-3a6b02fbee5mr99594675ab.15.1730719864025; Mon, 04 Nov 2024
- 03:31:04 -0800 (PST)
-Date: Mon, 04 Nov 2024 03:31:03 -0800
-In-Reply-To: <6728a3a7.050a0220.35b515.01b9.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6728b077.050a0220.35b515.01ba.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] [usb?] WARNING in io_get_cqe_overflow (2)
-From: syzbot <syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+The SQ index array consists of user provided indexes, which io_uring
+then uses to index the SQ, and so it's susceptible to speculation. For
+all other queues io_uring tracks heads and tails in kernel, and they
+shouldn't need any special care.
 
-commit 3f1a546444738b21a8c312a4b49dc168b65c8706
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Sat Oct 26 01:27:39 2024 +0000
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-    io_uring/rsrc: get rid of per-ring io_rsrc_node list
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index f34fa1ead2cf..406825d000eb 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2544,6 +2544,7 @@ static bool io_get_sqe(struct io_ring_ctx *ctx, const struct io_uring_sqe **sqe)
+ 				   READ_ONCE(ctx->rings->sq_dropped) + 1);
+ 			return false;
+ 		}
++		head = array_index_nospec(head, ctx->sq_entries);
+ 	}
+ 
+ 	/*
+-- 
+2.46.0
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15aaa1f7980000
-start commit:   c88416ba074a Add linux-next specific files for 20241101
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17aaa1f7980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13aaa1f7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
-dashboard link: https://syzkaller.appspot.com/bug?extid=e333341d3d985e5173b2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ec06a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c04740580000
-
-Reported-by: syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com
-Fixes: 3f1a54644473 ("io_uring/rsrc: get rid of per-ring io_rsrc_node list")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 

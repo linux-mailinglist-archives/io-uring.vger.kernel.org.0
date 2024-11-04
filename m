@@ -1,162 +1,137 @@
-Return-Path: <io-uring+bounces-4423-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4424-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D64A9BB99D
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 16:59:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 999CC9BB9E8
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 17:12:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4131B2101C
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 15:59:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51B731F22717
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 16:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335CB1BFE03;
-	Mon,  4 Nov 2024 15:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C5F1C07F3;
+	Mon,  4 Nov 2024 16:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ba6U4nWj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPZV4Fd5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E081D70816
-	for <io-uring@vger.kernel.org>; Mon,  4 Nov 2024 15:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C44E1B393D;
+	Mon,  4 Nov 2024 16:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730735940; cv=none; b=IJbyIaRVeLirl+oHwsHwJjp2OAfKkSyMKmhc3ei2LO6sWOo7IstBeZoD5KOQ3YFstfhpI2nNTcBJ0ox/b9KItPTBbhmU8y9cVSBenTMGwh4Kwc1cakf14hX9Mw36QEV/j9fO1Gkbseb+FqgygVTBBXhPDjko5fSAmbLRazA1NRc=
+	t=1730736728; cv=none; b=gWKJ4V3TKf3Ize9eHtgXkDMBI1GuzMNC52Kj3ZvB34/5YC4AoIAKB61+MdVNKTK3zU679TAE7oVGAmikNfoQbH0jUbK1KQCC6yb6z6Q73SkY+S0o1qDtRW9CxOw4+KAAh8/nhGEMpJKvdbrMRqiRpLIDkuXE+Zpi8kvMum0kK94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730735940; c=relaxed/simple;
-	bh=NhaHiQLeeM5U8QY1u4TUnjkgyHHUp39DbT0trsmIeHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oEdqOKcNGzZcyhv6Kwg2qYhOnChTzuGr46R3hfBBLqpH8n7PZgyPsXoG8MS2BldUZz1OXp6WRmAYTDhdHkYkwBp1eKL/tBX1bb1tBEGeadHnAVg8lw1eJTWVzvn2KmroOz0duP7hRcagBihju32RpUn9fnPu6TIlQ13/XOiqEU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ba6U4nWj; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-83aad4a05eeso184944639f.1
-        for <io-uring@vger.kernel.org>; Mon, 04 Nov 2024 07:58:57 -0800 (PST)
+	s=arc-20240116; t=1730736728; c=relaxed/simple;
+	bh=vPRwe90zHahHOOj0Z2Qh+3WOfaePnL2PTtvbs7zA2M8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C+GG7Et7M0/W9BoG5jviDL5Qo0RhWVVZrBUBbVghz8o2CRxlh2J6zFVMFhbYVnhQyi+5lTw4mZW3TvGn034878K3MflM/zQjKTlgG83CjEcgf/VAH0o+xK1K7MvagTzHiLr+GC453ulHWRC0GlatwaY7o8QQTY7w0ZwoJSvoIAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bPZV4Fd5; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9eaaab29bcso111887566b.2;
+        Mon, 04 Nov 2024 08:12:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730735937; x=1731340737; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6e/nD16lDPHQ4FWyFr7ZRP80M+oYReyHPvPL/Qu3Gpc=;
-        b=Ba6U4nWjPdg/2Ud+VGDcC3g63KmznGYKUKDZgpCrPyiWGRviKNQZtLi0Q/hldik1c3
-         G4Vk9bftN5RhEWayvvsWgWwEU0iM4hh/6IXXu3rNLc1+cTifQ24HNHxTPjwft5Nt/16i
-         JARm7GW9Ze9bHG9P/H6S8YoPIBjK4W3pGtT28IEJ1ckyLZc8n+3wUeKAEvnQsDb2i4zm
-         G52hfvWOpGyat5TgiamO8azpJiiVCJeBw2dRc9X3S7mhggjCJhLeC/gdv0Dbje0qeOEV
-         P2a9Y9xCSrZ1PpX8MTuO7lUJGLjHHr78EXw4OsWPk4Lmy9wbGnVTOV3iR/+n/jtojMQP
-         BnXQ==
+        d=gmail.com; s=20230601; t=1730736724; x=1731341524; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e/5b8ihx5vuRnwO1en4w28K6JwXaOVMpIi0lr9UaU58=;
+        b=bPZV4Fd5tII7vFXOCW3Y0GsTCeP25GhthmiEn7+b4Pbk2FaATtG0/g+8HBkwGYTxzD
+         bpoWnBHtjomacJojXWRjd23Oh7b5Vftko8xXx3ntXYpIdN8tqx+7VxiUZzY8BpB5tMmm
+         nX0rZpS660GuAPNCKtcWY+xyk62s37LPfmDmXc34kSpL+qIpZ48/F019pYE9YL70HpK2
+         mIQQzA1W6isuyf+sXBp4OBrqmSB0U2QvWlGXmZZcUTODQP5nd2a7emLaUNclVnndHyPh
+         O2eHhP3Xsd4o9b7PJxKOCVTIBurdUsK0heuh/95BvyHXEPmjWL20j3+3mKncRB/aH8vH
+         fP5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730735937; x=1731340737;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6e/nD16lDPHQ4FWyFr7ZRP80M+oYReyHPvPL/Qu3Gpc=;
-        b=hjx63n9Pgdqk1ZNRMYKtGl28ET7lBlpvsST/bvhmtTiVPUhycUO2JU7LOTI9y86z4D
-         LeCElcLMRslcsnQsTTOlkUtH2BWXY7Vz0EbIN6SwJEWa4O+BVQFeywZiP+0plsxr9pY8
-         lXXrDjX+2WWmxZw5+WxH9J9y3ywOEhGSohD3pZwT3AHvIFFJK6C9kuFqTMRp4Oq+CAtX
-         DC1ZSAqlTf6DzMJuGybdmDWy2RBIe+I3lC7X73qPaDOJBeuPZHROlPBDwvvw1AIioa9W
-         OdyUBoV4T/nQpqO69SBDSku+s1Is6UW5PPOa6xIr6g61tPRDk/O7ncJKPFqiGKU7Qw5O
-         Sj9w==
-X-Gm-Message-State: AOJu0YyT3IFaMQsKlXMDgnnP3/AoP3x3DeF4r83xvwTC6AwKvpgGClwV
-	+Q6lFc4pPFDYbxI9GPwBwJfZgjzqgbw0uKcrXESrksEqjiiQ92/juD4eB4kZ4R0=
-X-Google-Smtp-Source: AGHT+IFCIzXlcRK0iv0dqWzv0axbztsx3wQi11UA2IJi94+9Axq7TMobh1ZDbgrBwrebzDSPAn0Ieg==
-X-Received: by 2002:a05:6602:1592:b0:83a:b7a2:74e6 with SMTP id ca18e2360f4ac-83b56605610mr2554651839f.0.1730735937063;
-        Mon, 04 Nov 2024 07:58:57 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de048881e8sm1985667173.15.2024.11.04.07.58.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 07:58:56 -0800 (PST)
-Message-ID: <3282cea4-a47c-4e62-9d1f-5c0321676fd5@kernel.dk>
-Date: Mon, 4 Nov 2024 08:58:55 -0700
+        d=1e100.net; s=20230601; t=1730736724; x=1731341524;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e/5b8ihx5vuRnwO1en4w28K6JwXaOVMpIi0lr9UaU58=;
+        b=qE+kqXqGdCxboP24YMVLw8/NCKnH73j0wEDJXnP9MqbXigz+tKMTvHtQSWOGi+cKko
+         JGpHOlY2g+SoBUQ82pKAL5bO/1QBluoauYa+Dil7dJhf1MBZrdewJCfcs8IHK8lP3hRs
+         KrewP8WXesgn3C023x13IO7Zj9gKFs6/7KfowA+kF9mepq4eqP6UtY8aJTPWyU9UqoDX
+         aVnK0usGs9Bx1uOsQM4dnxbsko+u4IqjRinRxHIoW5R2QOIApNRV0bkciv2h6H1pIgPd
+         aIemy7cZUtbA3mkKAOPuj7uZNL6oHxd0YRjUeye9oqeRb0QyyFClaF+RmF9qtAgeEhOj
+         2tuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAUmxgJQoV7Gqghfrwl8kohqDW7mI5HIvZX5eZ6V9P9n+OtHG0GCp6GWNj6MVsEmbzW/hN3oPYa5PRkw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB3o6zRfGFjH7/wgdQ/djRnpWvxZtpBlp9761pcUZs+Q2fTSiL
+	iY9IrVXHwp1OHC509HRfHwSS3BPaajt6/aIQMisQyWENtz5b3KjSS9NsKw==
+X-Google-Smtp-Source: AGHT+IFB7u+BFwqO1pg0HGy/EQuPa6tUq16WBgDsMOF3rH+L9Pv6arPDwilF40PC4gAAX+UMLHuYvQ==
+X-Received: by 2002:a17:907:868a:b0:a99:e745:d47f with SMTP id a640c23a62f3a-a9e508e50a5mr1533875166b.21.1730736723945;
+        Mon, 04 Nov 2024 08:12:03 -0800 (PST)
+Received: from 127.0.0.1localhost ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565f75e7sm576594566b.142.2024.11.04.08.12.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 08:12:03 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	asml.silence@gmail.com,
+	maharmstone@fb.com,
+	linux-btrfs@vger.kernel.org
+Subject: [PATCH] io_uring/cmd: let cmds to know about dying task
+Date: Mon,  4 Nov 2024 16:12:04 +0000
+Message-ID: <55888b6a644b4fc490849832fd5c5e5bfed523ef.1730687879.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Stable backport (was "Re: PROBLEM: io_uring hang causing
- uninterruptible sleep state on 6.6.59")
-To: Andrew Marshall <andrew@johnandrewmarshall.com>,
- Keith Busch <kbusch@kernel.org>
-Cc: io-uring@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, stable <stable@vger.kernel.org>
-References: <3d913aef-8c44-4f50-9bdf-7d9051b08941@app.fastmail.com>
- <cc8b92ba-2daa-49e3-abe6-39e7d79f213d@kernel.dk>
- <ZygO7O1Pm5lYbNkP@kbusch-mbp>
- <25c4c665-1a33-456c-93c7-8b7b56c0e6db@kernel.dk>
- <c34e6c38-ca47-439a-baf1-3489c05a65a8@kernel.dk>
- <98907a37-81dd-463e-b5ef-9190bf0f33be@app.fastmail.com>
- <23b02882-6f23-4b19-b39d-fd4ef09429ad@app.fastmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <23b02882-6f23-4b19-b39d-fd4ef09429ad@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/4/24 6:17 AM, Andrew Marshall wrote:
-> On Sun, Nov 3, 2024, at 23:25, Andrew Marshall wrote:
->> On Sun, Nov 3, 2024, at 21:38, Jens Axboe wrote:
->>> On 11/3/24 5:06 PM, Jens Axboe wrote:
->>>> On 11/3/24 5:01 PM, Keith Busch wrote:
->>>>> On Sun, Nov 03, 2024 at 04:53:27PM -0700, Jens Axboe wrote:
->>>>>> On 11/3/24 4:47 PM, Andrew Marshall wrote:
->>>>>>> I identified f4ce3b5d26ce149e77e6b8e8f2058aa80e5b034e as the likely
->>>>>>> problematic commit simply by browsing git log. As indicated above;
->>>>>>> reverting that atop 6.6.59 results in success. Since it is passing on
->>>>>>> 6.11.6, I suspect there is some missing backport to 6.6.x, or some
->>>>>>> other semantic merge conflict. Unfortunately I do not have a compact,
->>>>>>> minimal reproducer, but can provide my large one (it is testing a
->>>>>>> larger build process in a VM) if needed?there are some additional
->>>>>>> details in the above-linked downstream bug report, though. I hope that
->>>>>>> having identified the problematic commit is enough for someone with
->>>>>>> more context to go off of. Happy to provide more information if
->>>>>>> needed.
->>>>>>
->>>>>> Don't worry about not having a reproducer, having the backport commit
->>>>>> pin pointed will do just fine. I'll take a look at this.
->>>>>
->>>>> I think stable is missing:
->>>>>
->>>>>   6b231248e97fc3 ("io_uring: consolidate overflow flushing")
->>>>
->>>> I think you need to go back further than that, this one already
->>>> unconditionally holds ->uring_lock around overflow flushing...
->>>
->>> Took a look, it's this one:
->>>
->>> commit 8d09a88ef9d3cb7d21d45c39b7b7c31298d23998
->>> Author: Pavel Begunkov <asml.silence@gmail.com>
->>> Date:   Wed Apr 10 02:26:54 2024 +0100
->>>
->>>     io_uring: always lock __io_cqring_overflow_flush
->>>
->>> Greg/stable, can you pick this one for 6.6-stable? It picks
->>> cleanly.
->>>
->>> For 6.1, which is the other stable of that age that has the backport,
->>> the attached patch will do the trick.
->>>
->>> With that, I believe it should be sorted. Hopefully that can make
->>> 6.6.60 and 6.1.116.
->>>
->>> -- 
->>> Jens Axboe
->>> Attachments:
->>> * 0001-io_uring-always-lock-__io_cqring_overflow_flush.patch
->>
->> Cherry-picking 6b231248e97fc3 onto 6.6.59, I can confirm it passes my 
->> reproducer (run a few times). Your first quick patch also passed, for 
->> what it?s worth. Thanks for the quick responses!
-> 
-> Correction: I cherry-picked and tested
-> 8d09a88ef9d3cb7d21d45c39b7b7c31298d23998 (which was the change you
-> identified), not 6b231248e97fc3. Apologies for any confusion.
+When the taks that submitted a request is dying, a task work for that
+request might get run by a kernel thread or even worse by a half
+dismantled task. We can't just cancel the task work without running the
+callback as the cmd might need to do some clean up, so pass a flag
+instead. If set, it's not safe to access any task resources and the
+callback is expected to cancel the cmd ASAP.
 
-Thanks for clarifying, so it's as expected. Hopefully -stable can pick
-this backport up soonish, so the next stable release will be sorted.
-Thanks for reporting the issue!
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
 
+Made a bit fancier to avoid conflicts. Mark, as before I'd suggest you
+to take it and send together with the fix.
+
+ include/linux/io_uring_types.h | 1 +
+ io_uring/uring_cmd.c           | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index ad5001102c86..bfdf9cbceda9 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -37,6 +37,7 @@ enum io_uring_cmd_flags {
+ 	/* set when uring wants to cancel a previously issued command */
+ 	IO_URING_F_CANCEL		= (1 << 11),
+ 	IO_URING_F_COMPAT		= (1 << 12),
++	IO_URING_F_TASK_DEAD		= (1 << 13),
+ };
+ 
+ struct io_wq_work_node {
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 40b8b777ba12..f0113548ec92 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -119,9 +119,13 @@ EXPORT_SYMBOL_GPL(io_uring_cmd_mark_cancelable);
+ static void io_uring_cmd_work(struct io_kiocb *req, struct io_tw_state *ts)
+ {
+ 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
++	unsigned int flags = IO_URING_F_COMPLETE_DEFER;
++
++	if (current->flags & (PF_EXITING | PF_KTHREAD))
++		flags |= IO_URING_F_TASK_DEAD;
+ 
+ 	/* task_work executor checks the deffered list completion */
+-	ioucmd->task_work_cb(ioucmd, IO_URING_F_COMPLETE_DEFER);
++	ioucmd->task_work_cb(ioucmd, flags);
+ }
+ 
+ void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
 -- 
-Jens Axboe
+2.46.0
+
 

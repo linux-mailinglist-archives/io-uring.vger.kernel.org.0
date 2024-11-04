@@ -1,104 +1,170 @@
-Return-Path: <io-uring+bounces-4394-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4395-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31399BABA1
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 04:58:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630F89BABD0
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 05:26:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A837D281B02
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 03:58:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6669A1C2087F
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 04:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF57F165F04;
-	Mon,  4 Nov 2024 03:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2515116EB76;
+	Mon,  4 Nov 2024 04:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="IVEOTMWX"
+	dkim=pass (2048-bit key) header.d=johnandrewmarshall.com header.i=@johnandrewmarshall.com header.b="brbyYgra";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VvdNy5IR"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A821FC3
-	for <io-uring@vger.kernel.org>; Mon,  4 Nov 2024 03:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43A420ED;
+	Mon,  4 Nov 2024 04:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730692687; cv=none; b=EF2PHUzBoK9R4lA8U/ZYP/ndTPXdNCCk0SCezC6vYF2GFFRUGXdV1NatBO2Ya+lXTTb7lFk0afYva7stZkh9d8G/vS1sL3vug/NZYowJDXM6uRG+SP0OglJOdj1nI2XsN5LEFZHFURkfnfrIn6HdNWumexjoo1CMScmiKz/Z6d4=
+	t=1730694378; cv=none; b=Ux9fIqu8Af1LmcoTAjORP4qUZB0TO6j565dxPZi3hHgVHevFCBH6bWcHiZDb1zmaqizmrjxlyMfTzG7CFU9qMSaYIOAFvuO8TFF4OHEnEDu6+xloQ/U202YRd91Amkond1I+iRNgOElc6BVSA3HPcUYuDqLFaSNjAbTg47VYxTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730692687; c=relaxed/simple;
-	bh=q25Hza0Pz4DUqCkWtCwr4OLdFYNTtghLvEUjXzRB3zI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k9rygaEhJlGF7nnf2hIuir7Xm3ehrOapWg7vUsAIoKOA3wZCtL0Ss+3YTof423L1NbeXRrTdJPlGCIi/wkh/DfDzU4v7rw0KNJGkzqKKqAUUFjduGQDDpTJm6YKTIlggC0yzLPD+XHzfjv47jmEjQD3upUFKDV3f7wkxeGUJZ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=IVEOTMWX; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e3686088c3so2728531a91.0
-        for <io-uring@vger.kernel.org>; Sun, 03 Nov 2024 19:58:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730692685; x=1731297485; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WoESZVK667Hgfz//e+LiXCa10g6dyuneuQQKs0aNPT0=;
-        b=IVEOTMWXn9JpmmmrExWJdxw0MloKq+4d4xImcytkY5SdFqElBM0ds7i7NOBtRLapxd
-         TCB83tqo8AXamZ4ouOamhduTzmcRH/JmwEsiNTWEW2J17ohXJ44OlMvFE0oTCblyncL4
-         xVf15ddSNDgfPLFmOWfBwvTwxbw826wmqPt7EWwWbbPyTRWkXlv5LZD5mWwDa97D/Lc0
-         +JUm1ICywAdIQbB6yrcdHHz0aAiCd5tWo8F8zTmNCSQvOzJCw11FQs+Y88MNaCo8POFH
-         E1mfYu1Kh1XQ4u8+o+mtBUbCwj47aWz3FOV8MKzZEa4rH6r/1jlG9JjYJLw19KBTyuDn
-         YHqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730692685; x=1731297485;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WoESZVK667Hgfz//e+LiXCa10g6dyuneuQQKs0aNPT0=;
-        b=pRdUfu1x1EMie3u8PYTkQCKCoG3i5a5BGk0UlhiMGSBAEn1lnf2nYud53lFnx641Nr
-         VGh9MlbD8W9WK74nrCZ1IYswjq6XlcZ/R/o847C62er3dTFLD1UvXWaDMXWSQjBmQT0K
-         chMMi5cluTVJJTj+5RUudHymtX6hVy9tZgsTbhITwcPxkldeE7E2gPeat9K7NLwDl/Gq
-         e3ad5D4b5Tn8LvoEUg23r94JfwQuOCF1TjDu8KcFTfEd1ARSaUWZrgR970pbXdUbiMkg
-         ntIu6YtcZlsbB8iD6QCuIoyFU3oAHuXYEtnkgEt+5jcbzu3ER89GqZ7Zc4mflVJ9sfpy
-         CK7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUbuEZWfREgNqrY4aQRIlqBOI3RsYo5MPsn7d1sjo5hXI0aqErkSPzNFVyL6dUzB0PQiquuUqmFiQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf1ZmLnqAwAq2ZRjxShLOgQA2vYz4eOc5BjCVAdTv/G8Qd6dmy
-	5Mmsvt3HUsXdi1n2FQaa6pU8YXQItqZ2WY4z3kryMuy8yqZYWGq3c45FYcEioQ8=
-X-Google-Smtp-Source: AGHT+IHSzlEn4SnUyAwromaWjOCJLe72lJZnCD+/VbW83o1zZNEuNWD2zS2KN2CM0oZvxNE5X2tJxA==
-X-Received: by 2002:a17:90b:4a8c:b0:2e2:acd7:1df0 with SMTP id 98e67ed59e1d1-2e92cf85afamr18367601a91.41.1730692684736;
-        Sun, 03 Nov 2024 19:58:04 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93db183cdsm6479729a91.40.2024.11.03.19.58.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Nov 2024 19:58:04 -0800 (PST)
-Message-ID: <1a89b102-19e3-4384-a871-a75bdad32e82@kernel.dk>
-Date: Sun, 3 Nov 2024 20:58:02 -0700
+	s=arc-20240116; t=1730694378; c=relaxed/simple;
+	bh=mEnfDO2HJBpnOg4XxLOZrDqK5ORlbSKjA+TGiG2pjxw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=PxtpgOmstGZA1b8QHHOxMkgUCxbpxude5foZirpqfFBYCTldVTVcDdSRJgsEh1aydJ3DAfc0ydXbEYajiAaQXJei1zSDX8n36iNsprrkkLumc9R9t++q3Li/EKdUAj09cMbFqI1HI2+D69IRN5VrhbRWJunXfKh954svJkSti2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=johnandrewmarshall.com; spf=pass smtp.mailfrom=johnandrewmarshall.com; dkim=pass (2048-bit key) header.d=johnandrewmarshall.com header.i=@johnandrewmarshall.com header.b=brbyYgra; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VvdNy5IR; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=johnandrewmarshall.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=johnandrewmarshall.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id BC1DF1140065;
+	Sun,  3 Nov 2024 23:26:14 -0500 (EST)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-09.internal (MEProxy); Sun, 03 Nov 2024 23:26:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	johnandrewmarshall.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1730694374; x=1730780774; bh=/FIBjVgGqk
+	VIrB9n+QQfMcN+1fXozGhyC1gKvO3XoI8=; b=brbyYgraOsa8xeHKobq8WKyPov
+	hwZ4XzYo5tCNBmNHnUwd4KPv3KcKPGHIAAbvwtWf4bKNgnE8LDXXGCmpS1/8h+lR
+	1DQ+Cbbq8hFz2MmYB3lswcXv8EsOXz64E948mCHYFsPMABQ+bOyjseHMErwOKvTA
+	A6l9UTRyVekHFjjFQIhw+yt/4w6ErnjtH/RcqCr6QjFm3vfxW+dUqUoc7nhBtEFQ
+	Ba9y75G9xN9AIVZ3T6IYYtDvANqntpLDrxRPqSp7kkei+2ugDjy3TVEgnXvpbP4B
+	WypeUGlBaUvI/Mk+9AvO5Vj0T+6KbPjHSvnCGZdKt0FaGq7flxpsUmuyL41g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730694374; x=
+	1730780774; bh=/FIBjVgGqkVIrB9n+QQfMcN+1fXozGhyC1gKvO3XoI8=; b=V
+	vdNy5IRpHPbBINyDgW/unEQffZAnzvV1+8ZZGSXrH2WG29I+iMljnKKRUlM++1D2
+	K50S7rvv+iGAis3f7SXJpugawJ0JQWdyVzDowdjGhst2BVuYWwA6h2Ib5BK8A4Qq
+	Dl7uyNpICRrpRK4Ce1TOOaCnbyYTWT4QI8eClJ8CMqTuOQxkePR+HjZ2sKNqj5EJ
+	PXC9bEYzsBnzZ/I60PzpQd3jFiOHRnENr+8eA9jqLC+DDHlX8m9SfCueGYVqAvMj
+	spOjI7rdQpeKa5jKoYTRoZEnnTW2MAu0HcIwYP0BCRHbwQbRWyBPkD4vZ+ofRlVY
+	rJH5gb1iQCEoaakLXpjkQ==
+X-ME-Sender: <xms:5kwoZ3bJZJLPiG8nZvlW0lql8V1oKIJh0IAhafSIrTQbxgI6jlKrxw>
+    <xme:5kwoZ2bnpzaJysJLsqaoxWpSilqIGN2C1plevwop9_bNUi-yZa0ZdAk9LWESUcdtf
+    W2HBpio6ZmM5HWWPQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelhedgjeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehnughrvgifucforghrshhhrghllhdfuceorghnughrvgifsehjoh
+    hhnhgrnhgurhgvfihmrghrshhhrghllhdrtghomheqnecuggftrfgrthhtvghrnhephfek
+    uddtieevvdeuudduheevjeevueeigfefieevhfelteegteetgfdvkeefleefnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvgifsehj
+    ohhhnhgrnhgurhgvfihmrghrshhhrghllhdrtghomhdpnhgspghrtghpthhtohephedpmh
+    houggvpehsmhhtphhouhhtpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdp
+    rhgtphhtthhopehksghushgthheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvg
+    hgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepihhoqdhu
+    rhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtrggslhgvse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:5kwoZ5-Cy9w-Md-rN4U5qsoUyJPC2VYp8dJ3gAHo5-Iz4ScHXyITmw>
+    <xmx:5kwoZ9rjeGsHgOHs7a_uQwDQ4BVxhbUHFkzUnh6xFSxkNwRKQ0UasQ>
+    <xmx:5kwoZyqkarRx76JmCcNx12o312EL-1mYLTTsEIOQGZgeW4DXqh4-zw>
+    <xmx:5kwoZzQ-hOQ5XzjCAHX-El7UerOyAglYn3RkynYA2dGdkuNeIO6-3w>
+    <xmx:5kwoZ7mf38-AUGX1ECL5wlJSYkOIQ45WTKBmV9YoF2-m4EE98FXGY8G3>
+Feedback-ID: i5df14252:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 76B8CB00068; Sun,  3 Nov 2024 23:26:14 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rsrc: fix null ptr dereference in
- io_sqe_buffer_register
-To: Daniel Yang <danielyangkang@gmail.com>,
- Pavel Begunkov <asml.silence@gmail.com>,
- "open list:IO_URING" <io-uring@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-Cc: syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com
-References: <20241104035105.192960-1-danielyangkang@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241104035105.192960-1-danielyangkang@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Sun, 03 Nov 2024 23:25:53 -0500
+From: "Andrew Marshall" <andrew@johnandrewmarshall.com>
+To: "Jens Axboe" <axboe@kernel.dk>, "Keith Busch" <kbusch@kernel.org>
+Cc: io-uring@vger.kernel.org,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ stable <stable@vger.kernel.org>
+Message-Id: <98907a37-81dd-463e-b5ef-9190bf0f33be@app.fastmail.com>
+In-Reply-To: <c34e6c38-ca47-439a-baf1-3489c05a65a8@kernel.dk>
+References: <3d913aef-8c44-4f50-9bdf-7d9051b08941@app.fastmail.com>
+ <cc8b92ba-2daa-49e3-abe6-39e7d79f213d@kernel.dk>
+ <ZygO7O1Pm5lYbNkP@kbusch-mbp>
+ <25c4c665-1a33-456c-93c7-8b7b56c0e6db@kernel.dk>
+ <c34e6c38-ca47-439a-baf1-3489c05a65a8@kernel.dk>
+Subject: Re: Stable backport (was "Re: PROBLEM: io_uring hang causing uninterruptible
+ sleep state on 6.6.59")
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 11/3/24 8:51 PM, Daniel Yang wrote:
-> The call stack io_sqe_buffer_register -> io_buffer_account_pin ->
-> headpage_already_acct results in a null ptr dereference in the for loop.
-> There is no guarantee that ctx->buf_table.nodes[i] is an allocated node
-> so add a check if null before dereferencing.
+On Sun, Nov 3, 2024, at 21:38, Jens Axboe wrote:
+> On 11/3/24 5:06 PM, Jens Axboe wrote:
+>> On 11/3/24 5:01 PM, Keith Busch wrote:
+>>> On Sun, Nov 03, 2024 at 04:53:27PM -0700, Jens Axboe wrote:
+>>>> On 11/3/24 4:47 PM, Andrew Marshall wrote:
+>>>>> I identified f4ce3b5d26ce149e77e6b8e8f2058aa80e5b034e as the likely
+>>>>> problematic commit simply by browsing git log. As indicated above;
+>>>>> reverting that atop 6.6.59 results in success. Since it is passing=
+ on
+>>>>> 6.11.6, I suspect there is some missing backport to 6.6.x, or some
+>>>>> other semantic merge conflict. Unfortunately I do not have a compa=
+ct,
+>>>>> minimal reproducer, but can provide my large one (it is testing a
+>>>>> larger build process in a VM) if needed?there are some additional
+>>>>> details in the above-linked downstream bug report, though. I hope =
+that
+>>>>> having identified the problematic commit is enough for someone with
+>>>>> more context to go off of. Happy to provide more information if
+>>>>> needed.
+>>>>
+>>>> Don't worry about not having a reproducer, having the backport comm=
+it
+>>>> pin pointed will do just fine. I'll take a look at this.
+>>>
+>>> I think stable is missing:
+>>>
+>>>   6b231248e97fc3 ("io_uring: consolidate overflow flushing")
+>>=20
+>> I think you need to go back further than that, this one already
+>> unconditionally holds ->uring_lock around overflow flushing...
+>
+> Took a look, it's this one:
+>
+> commit 8d09a88ef9d3cb7d21d45c39b7b7c31298d23998
+> Author: Pavel Begunkov <asml.silence@gmail.com>
+> Date:   Wed Apr 10 02:26:54 2024 +0100
+>
+>     io_uring: always lock __io_cqring_overflow_flush
+>
+> Greg/stable, can you pick this one for 6.6-stable? It picks
+> cleanly.
+>
+> For 6.1, which is the other stable of that age that has the backport,
+> the attached patch will do the trick.
+>
+> With that, I believe it should be sorted. Hopefully that can make
+> 6.6.60 and 6.1.116.
+>
+> --=20
+> Jens Axboe
+> Attachments:
+> * 0001-io_uring-always-lock-__io_cqring_overflow_flush.patch
 
-Assuming this is an older tree, it's fixed in the current tree.
-
--- 
-Jens Axboe
-
+Cherry-picking 6b231248e97fc3 onto 6.6.59, I can confirm it passes my re=
+producer (run a few times). Your first quick patch also passed, for what=
+ it=E2=80=99s worth. Thanks for the quick responses!
 

@@ -1,75 +1,74 @@
-Return-Path: <io-uring+bounces-4428-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4429-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DF59BBA3F
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 17:23:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0B29BBA6F
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 17:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB54E1C2468C
-	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 16:23:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBAE1C213EB
+	for <lists+io-uring@lfdr.de>; Mon,  4 Nov 2024 16:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B961C2450;
-	Mon,  4 Nov 2024 16:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4E61C07F1;
+	Mon,  4 Nov 2024 16:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wXh7YonW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SUjvwnkb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8CB1CACEF
-	for <io-uring@vger.kernel.org>; Mon,  4 Nov 2024 16:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC49820326;
+	Mon,  4 Nov 2024 16:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737282; cv=none; b=taxAyN3u4qYKVqcro7fz3yj+RxZsWCn4/2QOyr1ubfvXWKf9NN4l1QB6TgeOrsvAyy+XvzrHHF116FDwfmxPtwOj3x+CFZ/V8sGtECUJIW/cMM6U2LdWeRTC2AC+zKSQ2Soh07oTt2bWgSKYVHB8Vnpg7iiArgn3eB11U9aW0C0=
+	t=1730738287; cv=none; b=I/UHe6VZlb6iS4c+8scJ1gEJSdHYRZPAeQgjSixoYZAP8zolzF7Rvj/uccppTbQ3I0vCZHZmY+PWdB2n6z3SDxJtnN8lExemzwKzzW3Pt3S6Qobo1JcxoCiGvTNRCBPWapEZV+4NyaFFmKFikmwYuv49F3VT1wmvOEkmoLfgCjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737282; c=relaxed/simple;
-	bh=dBAhqXHq/slcTX9bzaSb/SxdvhUAiLVaNKzH65NStRY=;
+	s=arc-20240116; t=1730738287; c=relaxed/simple;
+	bh=8pX11qNfWYxJfjipQQ48vfCsg1LLtSOf23BJJFU9rLg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YrPXXn/sAbp68iNqhkr1urH+h5j3wYcufELWRt8sKNefHl4xSFZVDrMma0tvDNkADJnXtUJwbg+p0ZiZfprWxL8t1m6QOnAf7mUeUQRN9LWttlaVvYPfr7LEcv9HF+WtoRNRm9GBGpmsNceVTP32Mjz+hsVYG80IyaEsuazDCdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=wXh7YonW; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-83abc039b25so175409039f.0
-        for <io-uring@vger.kernel.org>; Mon, 04 Nov 2024 08:21:20 -0800 (PST)
+	 In-Reply-To:Content-Type; b=Kk3dTl6NXIm8jminflLXjgtwO4BCLxbPYJ+sdx4Qgjw1QVWxedDXvdivQ1N+WkzJ55xnxyI702Vl/nhwAoo2VtBEz/n7gDhmrYuTeguBMnQ8aZh1giT5yJrn2BYmTyqqp/VnZDB1p19N9QW3WXRsxwze0tt+rGrJa/xZdK4tzuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SUjvwnkb; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cec93719ccso2779595a12.2;
+        Mon, 04 Nov 2024 08:38:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730737279; x=1731342079; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730738284; x=1731343084; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gCkzIY8lvwR9jW+wCfLD+cI8Ga+TdeAOk0nkkCBQsQo=;
-        b=wXh7YonWbrtNdBbfjrQhlyskOVGRK+RJUFVABt1yS1YbNy4b51uyLZASvfcTyRS9aD
-         fZEhPpAaT649ZRcNS06qqJMY5DA96W5UuCyo4Yt0MWhjk/mvllOR6K41lvSinr8ouhtl
-         erxIU8HO3Q1zc5AwrCSpT4+krmhxbCQY4p1JXhIEAdAa2OYS3m/RrTLt2LTnNpvm0amp
-         zgkOlY4bZePBDqopEmFC2vEMmQiIxSCdoz7RoiPdwysHBkf5wIYbOfceitQD5jobQN5v
-         e0nHJ65NfKuqUjvdcZIDzGzi6ukitkBLrXg+3y0mEDQ1FvmBQ+qXEbMg+q1y54zG9GoX
-         GZBg==
+        bh=aG7p/v+GZb8kUzbIL7r3HcUkBQkE1tJdxNXPjnP871c=;
+        b=SUjvwnkbtcjB5cUWSQ0z10SBvMcjYYfRQ3IGdPbbxGCiJpy/oP4ojGQQOeIt/S/lTK
+         8pW0ZTozLSE4Qd8Rv9fNMSRP/mkbZGopbgQKaZkAevALMuWmv4s372qa/hiuaocupl9A
+         G0g2UcRMKcOVHGNN8f7W/UnSAUVLsjyTabvcu/V+Gcsuy/So8YioruvInY0JuzWz9WNm
+         jQmeDj50j7L5Oa0yroYG4vWSdiSzD16JrYrSJj35yuw1yoDXCapd31jB7oP5YZS0j8bZ
+         jtwUe2EeGfRECwfZAw/70+LtAfydSwkrUOImqkl+52wKSxgzDx30YrhLC5oTofQmYBWj
+         URUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730737279; x=1731342079;
+        d=1e100.net; s=20230601; t=1730738284; x=1731343084;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gCkzIY8lvwR9jW+wCfLD+cI8Ga+TdeAOk0nkkCBQsQo=;
-        b=NRvOGbUrAS9ZpgHssUIFVQXiZRYcMBHcPG7aQSU/dijMJZ1r4dSlYphaOqNLFniA29
-         bdtGUtlSpiAoHIPlN3l43M8nSAbw6Wp4UYXgunsajNM5dhRzGoVKuBeuVHEBcARIX2Qn
-         Xp1DOBlJqVkSs6vQ1pwG+6fG9TYP2B3xU/HnmtbVh4eOKg2HmGoWfc/QKpFtz3Ib4VZF
-         aEyZcRL/Gca8xZ4TONrLSnxHj4keeXCPBbpeYiyQLcpkckvZvnhHz07Os+tpIS+fxyR1
-         75QDHALPjiB6lvDyXE0bqwnhPFUm+o7lMy8oYM6TT6AmdCLPYAMj1iP5ALB0GDqdgE1K
-         Mzmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIRpRRrNLo+VpiKzwvE0I8wQh6Ez+JISp1lpKMie9CXtdsBXZjwQFUYzgo1Et8vYpqtItwG/GQwQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxMBwZiTc43gBWAO9jBP64hFlhgty4AnKxKGDl8D7PO+jMC7O3
-	c4TAM+qErQmU2I5gurM/+NHnHfbGPROD3WJWDrMAgosC219h323Xz198pLQGr6gQlIvcGUErn6x
-	A5aE=
-X-Google-Smtp-Source: AGHT+IGJL1lpTcBtghGCDf7hbxLLzoSwJTdYMgCJ1xLFvofscrqNrruIJpFPUg3EAiZP+n6NS61KYg==
-X-Received: by 2002:a05:6602:6405:b0:83a:a96b:8825 with SMTP id ca18e2360f4ac-83b7180abc0mr1338147639f.0.1730737279382;
-        Mon, 04 Nov 2024 08:21:19 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83b67cd14casm224576239f.46.2024.11.04.08.21.18
+        bh=aG7p/v+GZb8kUzbIL7r3HcUkBQkE1tJdxNXPjnP871c=;
+        b=gxJQgSSR1JZ1ihLbXG76lH3bnRQQjxyt7KvvoIdYkkT+JW9jhOlusw9Kj/sJEQGtD0
+         q2B2Y2xnw/CSXvjLxrMA760CvO4rxSCgSUfNk+5r9m0nyNI2YDZUa4rdg6lgSOTTsXYb
+         u7Llns0GeXdnzOO6QXEDUujaCK8siI/+79KVTbnxUVFFhuL9SdDC0Uhykm1bmRClGZjw
+         ZLHqxl6l29/NJ6uKjO5gasEFWEQCGbmG2ygqE53rWAfulcSqk5fELYSCezi2YQCYcHkt
+         I06kUmmUYn2CD5oD2Nr/ojRwA+C0m+P7cgDfDNeZBnnQTclYd8SbbkP+yl91KOTGBXNN
+         mNxw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8A1Yy4Z9eJHffVd2fjJMuCcpdU0ryhMPg/orXp8Q9HC+v6ZpxEApvk8jPGMUis7pWtzTJoGTsCT5cCVw=@vger.kernel.org, AJvYcCXsKdf35qpJ5TRFzfqeZsGPb+ws0DEqUEU2/C5vuQRm/AQN41QQJ+DiIFVAmmCIYFOXkWDxPqgOmQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPM5bg+SrA3fl1d4bshx4hlsKYmBDRUs1g4rD2BgMWJTjX9V3r
+	idvdmy+LHWba96jjrAs18YASewsdKadGAqTZ/J9+3Rb2IA4tl9ul
+X-Google-Smtp-Source: AGHT+IFDt7hOTdk9sS+VlYN+AKPR3L7iFyEPeziAofYDvfU4KtFjjdIljT8FpR9H4cWsxjRSbmJGag==
+X-Received: by 2002:a05:6402:518a:b0:5c9:76ca:705b with SMTP id 4fb4d7f45d1cf-5cd54afde73mr15176013a12.34.1730738283805;
+        Mon, 04 Nov 2024 08:38:03 -0800 (PST)
+Received: from [192.168.42.71] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6afe451sm26846a12.67.2024.11.04.08.38.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 08:21:18 -0800 (PST)
-Message-ID: <ebb71378-7224-45f6-b47e-3f89eb446fc2@kernel.dk>
-Date: Mon, 4 Nov 2024 09:21:17 -0700
+        Mon, 04 Nov 2024 08:38:03 -0800 (PST)
+Message-ID: <0e4d8bda-459c-41f0-af8d-30c9d81bfb80@gmail.com>
+Date: Mon, 4 Nov 2024 16:38:08 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,41 +76,57 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/1] io_uring: releasing CPU resources when polling
-To: hexue <xue01.he@samsung.com>
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <a9b7a578-cf47-474f-8714-297437b385cd@kernel.dk>
- <CGME20241104072914epcas5p2d44c91a277995d5c69bacd4e4308933d@epcas5p2.samsung.com>
- <20241104072907.768671-1-xue01.he@samsung.com>
+Subject: Re: [PATCH V8 5/7] io_uring: support leased group buffer with
+ REQ_F_GROUP_KBUF
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+ linux-block@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>,
+ Akilesh Kailash <akailash@google.com>
+References: <ZyGURQ-LgIY9DOmh@fedora>
+ <40107636-651f-47ea-8086-58953351c462@gmail.com> <ZyQpH8ttWAhS9C5G@fedora>
+ <4802ef4c-84ca-4588-aa34-6f1ffa31ac49@gmail.com> <ZygSWB08t1PPyPyv@fedora>
+ <0cd7e62b-3e5d-46f2-926b-5e3c3f65c7dd@gmail.com> <ZyghmwcI1U4WizyX@fedora>
+ <74d8d323-789c-4b4d-8ce6-ada6a567b552@gmail.com> <ZyjHQN9VITpOlyPA@fedora>
+ <8fc4d419-5d16-4f58-ae66-8267edaff6ef@gmail.com> <ZyjNq92M8qhJFEKm@fedora>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241104072907.768671-1-xue01.he@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <ZyjNq92M8qhJFEKm@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/4/24 12:29 AM, hexue wrote:
-> On 11/1/2024 08:06, Jens Axboe wrote:
->> On 11/1/24 3:19 AM, hexue wrote:
->>> A new hybrid poll is implemented on the io_uring layer. Once IO issued,
->>> it will not polling immediately, but block first and re-run before IO
->>> complete, then poll to reap IO. This poll function could be a suboptimal
->>> solution when running on a single thread, it offers the performance lower
->>> than regular polling but higher than IRQ, and CPU utilization is also lower
->>> than polling.
+On 11/4/24 13:35, Ming Lei wrote:
+> On Mon, Nov 04, 2024 at 01:24:09PM +0000, Pavel Begunkov wrote:
+...
+>>>>>> any private data, then the buffer should've already been initialised by
+>>>>>> the time it was lease. Initialised is in the sense that it contains no
+>>>>>
+>>>>> For block IO the practice is to zero the remainder after short read, please
+>>>>> see example of loop, lo_complete_rq() & lo_read_simple().
+>>>>
+>>>> It's more important for me to understand what it tries to fix, whether
+>>>> we can leak kernel data without the patch, and whether it can be exploited
+>>>> even with the change. We can then decide if it's nicer to zero or not.
+>>>>
+>>>> I can also ask it in a different way, can you tell is there some security
+>>>> concern if there is no zeroing? And if so, can you describe what's the exact
+>>>> way it can be triggered?
+>>>
+>>> Firstly the zeroing follows loop's handling for short read
 >>
->> This looks much better now.
+>>> Secondly, if the remainder part of one page cache buffer isn't zeroed, it might
+>>> be leaked to userspace via another read() or mmap() on same page.
 >>
->> Do you have a patch for liburing to enable testing of hybrid polling
->> as well? Don't care about perf numbers for that, but it should get
->> exercised.
+>> What kind of data this leaked buffer can contain? Is it uninitialised
+>> kernel memory like a freshly kmalloc'ed chunk would have? Or is it private
+>> data of some user process?
 > 
-> Sure, I'll add some liburing test cases and submit patch soon.
+> Yes, the page may be uninitialized, and might contain random kernel data.
 
-Thanks! Bonus for also documenting the setup flag in
-man/io_uring_setup.2 as well in the liburing repo. If things don't get
-documented, then people don't know they exist...
+I see now, the user is obviously untrusted, but you're saying the ublk
+server user space is trusted enough to see that kind of kernel data.
+Sounds like a security concern, is there a precedent allowing such? Is
+it what ublk normally does even without this zero copy proposal?
 
 -- 
-Jens Axboe
+Pavel Begunkov
 

@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-4447-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4448-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AADE9BC255
-	for <lists+io-uring@lfdr.de>; Tue,  5 Nov 2024 02:08:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB4E9BC26A
+	for <lists+io-uring@lfdr.de>; Tue,  5 Nov 2024 02:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE1DE2832AD
-	for <lists+io-uring@lfdr.de>; Tue,  5 Nov 2024 01:08:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC23C1C219A2
+	for <lists+io-uring@lfdr.de>; Tue,  5 Nov 2024 01:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A90EB65C;
-	Tue,  5 Nov 2024 01:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E6A168BD;
+	Tue,  5 Nov 2024 01:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2TS/Ou9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7imEkVB"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC2F179BD;
-	Tue,  5 Nov 2024 01:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6467518643;
+	Tue,  5 Nov 2024 01:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730768913; cv=none; b=dk7b2YN4L22gAeEHu9rpboclwbmyw2MpDWSuhYg3sRnsxInjKouwa4qF+eS0y8Kt+v5+IULYlpleCI/Zx0JGLXc38QvR0BVRxz7W27k6bhK7ikJikRQU73soxSytrSymaNqPIi/31T/Y7gIly55a/91UWdzuFDUnyHl8+idV+p4=
+	t=1730769616; cv=none; b=ZE5MsqVBPU7GjU3RTxyrZxRvVyQRC97DEaZm7/leMRa/vs4Mp+/nonFKQB00DX6uawqaLa2o/qjvfnQKICdHCdVJVRxA/E+bkr8jKpG0m2aD0jdI/uqbUlOH2ceIG+kCD9XwYQAqjxS+9495mN7ORlK9P4ikFh7TqbdYbtZuhEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730768913; c=relaxed/simple;
-	bh=hHvdRdW+fW0pxpAILcBUaFPFpkUuiFqOD3AkfLtzT9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WvekUU56g+WSjblXiCgnrEhDgEvpU5KzN6ow3GZZxWoWvLzH0fXhbMvjfaG3/Vc3ovQjYDS/JxwIgmbwo3ajoZbNvRiIFLsI04e+l5qi9uw7TxD9gFNe9PVLzjK6IgTN44T939yO574ofIHeI29ANxgWbDvvQ7qhluWnQ5/aN/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J2TS/Ou9; arc=none smtp.client-ip=209.85.208.170
+	s=arc-20240116; t=1730769616; c=relaxed/simple;
+	bh=4ZeODM8skcep6J2m+GGX7dhWp6HeU31CoF2rqvPJ0z0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tgUZVGlVIIXHytBPq5CucxF441PKSlQ110sb0mvSxjuV+sqtNXOlMhfCfgoN5rZ9JTcdppN6wW0zMh56F2Dl3QQhc3LsgGcm7ufaZzmzK2eRXCVBAWNNPj+AS6YJfZm4JVuB9qDYo4L6Vo4e2Ccid3vEH6QT0VQHBmca6CRDrJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S7imEkVB; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so71038911fa.0;
-        Mon, 04 Nov 2024 17:08:31 -0800 (PST)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a6b4ca29bso632486666b.3;
+        Mon, 04 Nov 2024 17:20:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730768909; x=1731373709; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730769613; x=1731374413; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vwYy7nSlZB+y8B+kMzEpNFJDHLv1rFCOnF4tjya76lU=;
-        b=J2TS/Ou9Ey3JsTA9ILEwMHwTu0rzRJTwi5PgoKW/VGNeBv2FcvY1oE81EYGCsZwqMz
-         4Msz9JSTsq9GjZcYsBjI7ml1RzXM7hELkXenhFo7PnTXerlvjVFaLSVG4I6urQLeGpzT
-         /o4K1IePfgw1ak8mPZRvwiH0ePtkzNdtz+E6yGtSwnY0laRbWUYqtU03OoOgIQYyrcIT
-         d5XHRwhc4Pd7jYMwBtGvIwz4xX9wVgAYiRrhhltCK+mEYdVJiBewX9A4C3JYf59X/a0Q
-         xfP9RY6P4HcBX1Dhv0pcT16C1ZARp1HETmrgWOf+l98DSt8PD26CyMrF4pJt0V0+vSAn
-         gyrg==
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=8zDOYGOJYzIB3JQdGMKFXo1DFLDaK4hziGkm1F7ZkF0=;
+        b=S7imEkVB9qIaAAAcwTt++TJ0UgOGlQNg4u54UnAT210F2bCD7xqshAsQu4/+uQJJ0h
+         uFZl+1vdgqmAbcS/kZ+/rGfvVYLnMwWkFctsrHVmW/5mP0Epqrffv2HQejb8ddhY9NeZ
+         bTa64e5LurUNqkdANybyjzLptCtkpKhATFS9A8+Mq/x+FA3lQiwahzd/VTBqKdYnnAbc
+         gSqaYwCnM66WSinWRtGnthkNibuCWCCcmIWZz7P4mPE6Eszi+J015zt5cfcMv+Smgeqj
+         ugzBl5DLc0e74P0ko0riBk4/4HJfQ+gD6KNOG1qkHzWpnZI5Rdmm8l92Olf0/pzayO+Z
+         /VmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730768909; x=1731373709;
+        d=1e100.net; s=20230601; t=1730769613; x=1731374413;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vwYy7nSlZB+y8B+kMzEpNFJDHLv1rFCOnF4tjya76lU=;
-        b=DDssHikTV3VUQ1M3qDvfqgTJuC5UaHd7ZeJqREE1XX2wxO4qQig7Tzw3Fx4GOqTi3Q
-         ve6Rzygbt1YFUh230TzXLhpqnJ98kvXacg0gdbzrLSvWJXIqstQJt4Z2NYZDgebD3M7F
-         yrXfYyYLNbP+m3DDCh250d7YAg5VqPW3t/EM+pgF1TMDJTYlEVyRl5+gDtPc+XE71wBb
-         TQk6DQIp9N8prAPDaYhweFGyR4HEx9vXyRHlwemhd5q/QiTEjAnpHrZP+n4403KJ0Z+b
-         qo3HJ5Qaf+fhvTquGsIOjGVmevTETJSW9S7ix5gBc7e3da9EWDxhjkRL2Le/Vt6k3g18
-         8mpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkGSV/vfJhETNgh0HW88YJJhmGK0N+L9Xg6rFEfcbmgCCgpLtZWy6vEGW2Szt51EE+LM8z73M2DZEU2HCa3Q==@vger.kernel.org, AJvYcCXOxWXb4hL5T2wjjzVdSXBIJ99ZsfBTLjVv/sCY3BAQfEXWlRvJPCZk6eUjHSs9LKB6dK/hgbvIEA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxc7P8+nuSIK8jvfF7YB9sEFK2gfgnIeXLhkkzVfPRnmy+9HnV
-	dp8sKMaSdKdezp6hdQHhbt8+BR/WezRLJxj8zHb4l3CZnYNqzLsXNhm0AA==
-X-Google-Smtp-Source: AGHT+IEefNDP2MM+aZtaLaoLaLazoX+zbAA0eH21KIr2yO+DX7/LRtKFxzaTJeMO91Eb0ysts5j2jA==
-X-Received: by 2002:a05:651c:1506:b0:2f7:6653:8053 with SMTP id 38308e7fff4ca-2fedb7c72d6mr98770141fa.18.1730768909156;
-        Mon, 04 Nov 2024 17:08:29 -0800 (PST)
+        bh=8zDOYGOJYzIB3JQdGMKFXo1DFLDaK4hziGkm1F7ZkF0=;
+        b=mbDCUGxkp1loi1irZ0v17g29+8qxForlHw5ZWd0KmCfX3zA3wl7tMvmOutlRMuU1bp
+         dmpA0Bp78zs27na0srjCPebJpxxkBtxGm/0eu24cctaeJnm8nG9DDQha06COnu24SQcz
+         yqBZTPCYggAOa5W5eNztV1bSVPvXYDYkCQ/vqemBYZrWXBdJKWBUEBPVKyYcPInjr4+j
+         9ffbi1lv1AinPBub7ovzz1JuzqmuwhNjj1Pa9zcDwGnib5OSVtR3MT/x/pn1W0zQKhpg
+         2rx3/Ds2CHi8O4VJg+k7TFveRf3J4R2KguHBg3Wt+LGsJ8QX1U8Udyvy/30ykH+KBHnl
+         r45A==
+X-Forwarded-Encrypted: i=1; AJvYcCWDL9uQU+JBGaLNJM2SQiHbtz2jvHY7jSENUITIQvP1qNLgpKAYQhAstQ8St7mVdhXUS8VtFyiUXDpo+CvF@vger.kernel.org, AJvYcCWluF9v3q4PXFjkyMdEto/eKo8chyaVpm3T9Ba0iF4spfMwbtdoyaV1PsDNzFLCGeUyj0NkyRAUtw==@vger.kernel.org, AJvYcCXWezvpnqYKc/4dvPeo1sJvRvZcXJHamDRAAKBfifd/8+APR6a2M/78esdPQx2An6KqOlvT4I2d/HFK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy95+EkFeEEszbhPlCUKckSBpaGKxLm85+7XnTL0hq6X2SVjIPx
+	9v1T/GOoc6XYCseLO3NXeXVsIFuOcotV2IhCQQbDAwoe1bbppj2ZWZ++sw==
+X-Google-Smtp-Source: AGHT+IHT2qm2S6k5VB5g9yg+m4lEHMLIGG99uLnk4+glboo+zNf/MBRl0/XDlh55wrA8zQGBLAeEAw==
+X-Received: by 2002:a17:907:97c9:b0:a9a:eca:f7c4 with SMTP id a640c23a62f3a-a9e50b9e2a8mr1643037566b.54.1730769612361;
+        Mon, 04 Nov 2024 17:20:12 -0800 (PST)
 Received: from [192.168.42.95] ([148.252.145.116])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17f92ffsm52744366b.141.2024.11.04.17.08.27
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16f8e2csm54116366b.91.2024.11.04.17.20.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 17:08:28 -0800 (PST)
-Message-ID: <f8e7a026-da8a-4ce4-9b76-24c7eef4a80a@gmail.com>
-Date: Tue, 5 Nov 2024 01:08:32 +0000
+        Mon, 04 Nov 2024 17:20:11 -0800 (PST)
+Message-ID: <768a51d0-8c63-4d9f-a636-c9cb52a0c4f4@gmail.com>
+Date: Tue, 5 Nov 2024 01:20:15 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,46 +76,60 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 12/15] io_uring/cmd: let cmds to know about dying
- task
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- Joanne Koong <joannelkoong@gmail.com>, Amir Goldstein <amir73il@gmail.com>,
- Ming Lei <tom.leiming@gmail.com>
-References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
- <20241016-fuse-uring-for-6-10-rfc4-v4-12-9739c753666e@ddn.com>
- <b4e388fe-4986-4ce7-b696-31f2d725cf1c@gmail.com>
- <473a3eb3-5472-4f1c-8709-f30ef3bee310@ddn.com>
+Subject: Re: [syzbot] [io-uring?] [usb?] WARNING in io_get_cqe_overflow (2)
+To: Jens Axboe <axboe@kernel.dk>,
+ syzbot <syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <6728b077.050a0220.35b515.01ba.GAE@google.com>
+ <13da163a-d088-4b4d-8ad1-dbf609b03228@gmail.com>
+ <b29d2635-d640-4b8e-ad43-1aa25c20d7c8@kernel.dk>
+ <965a473d-596a-4cf4-8ec2-a8626c4c73f6@gmail.com>
+ <16f43422-91aa-4c6d-b36c-3e9cb52b1ff2@gmail.com>
+ <e003c787-71b5-4373-ac53-c98b6b260e04@kernel.dk>
+ <09b7008b-b8c1-4368-9d04-a3bdb96ab26d@gmail.com>
+ <0daae856-a3c6-4eff-95cc-e39674f24d41@kernel.dk>
+ <74004a91-2753-45fc-88b4-8b2103f9a155@kernel.dk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <473a3eb3-5472-4f1c-8709-f30ef3bee310@ddn.com>
+In-Reply-To: <74004a91-2753-45fc-88b4-8b2103f9a155@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/4/24 22:15, Bernd Schubert wrote:
-> On 11/4/24 01:28, Pavel Begunkov wrote:
-...
->> In general if you need to change something, either stick your
->> name, so that I know it might be a derivative, or reflect it in
->> the commit message, e.g.
+On 11/4/24 17:05, Jens Axboe wrote:
+> On 11/4/24 10:03 AM, Jens Axboe wrote:
+>> On 11/4/24 9:54 AM, Pavel Begunkov wrote:
+>>> On 11/4/24 15:43, Jens Axboe wrote:
+>>>> On 11/4/24 8:34 AM, Pavel Begunkov wrote:
+>>>>> On 11/4/24 15:27, Pavel Begunkov wrote:
+>>> ...
+>>>>> Regardless, the rule with sth like that should be simpler,
+>>>>> i.e. a ctx is getting killed => everything is run from fallback/kthread.
+>>>>
+>>>> I like it, and now there's another reason to do it. Can you out the
+>>>> patch?
+>>>
+>>> Let's see if it works, hopefully will try today.
 >>
->> Signed-off-by: initial author
->> [Person 2: changed this and that]
->> Signed-off-by: person 2
+>> I already tried it here fwiw, does fix the issue (as expected) and it
+>> passes the full testing too.
 > 
-> Oh sorry, for sure. I totally forgot to update the commit message.
-> 
-> Somehow the initial version didn't trigger. I need to double check to
+> Forgot to include the basic reproducer I wrote for this report, it's
+> below.
 
-"Didn't trigger" like in "kernel was still crashing"?
+Thanks for testing.
 
-FWIW, the original version is how it's handled in several places
-across io_uring, and the difference is a gap for !DEFER_TASKRUN
-when a task_work is queued somewhere in between when a task is
-started going through exit() but haven't got PF_EXITING set yet.
-IOW, should be harder to hit.
+I was just looking at the patch, and the fun part is that it depends on
+failing tw off PF_KTHREAD tasks... Otherwise when the fallback executes
+a request the original task could still be alive =>
+(req->task->flags & PF_EXITING) check passes and the request continues
+doing stuff from the kthread (with no mm and so).
+
+A side note that it should be marginally better than before on the
+cancellation front because we're killing task_work more eagerly
+for a dying ctx but alive tasks.
+
+I'll send the patch properly.
 
 -- 
 Pavel Begunkov

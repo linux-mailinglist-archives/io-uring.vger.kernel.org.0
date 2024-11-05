@@ -1,78 +1,107 @@
-Return-Path: <io-uring+bounces-4453-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4454-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3657D9BC9DD
-	for <lists+io-uring@lfdr.de>; Tue,  5 Nov 2024 11:03:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 067439BCD1A
+	for <lists+io-uring@lfdr.de>; Tue,  5 Nov 2024 13:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6699A1C22556
-	for <lists+io-uring@lfdr.de>; Tue,  5 Nov 2024 10:03:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86380B224A2
+	for <lists+io-uring@lfdr.de>; Tue,  5 Nov 2024 12:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022C81CDA3B;
-	Tue,  5 Nov 2024 10:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2191D5AA2;
+	Tue,  5 Nov 2024 12:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ciQB2xAZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573D318F2F7;
-	Tue,  5 Nov 2024 10:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87831D54FE
+	for <io-uring@vger.kernel.org>; Tue,  5 Nov 2024 12:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730800993; cv=none; b=pXjsQo441PMKiRcWxAADcP0llMykyNki2fdbpTQEBMnq4WIpsu2UjHJVzlUAcQHE+gOeAPEY+vGdqb/DxuT4wGTt1fMDyU2C0IZUBWDSFoW0y6zlxFL1EVwnTqmHzqWmJT/OLMV4tKCWWIfgNwTkh39No8hu+fVlQm9d+Cju9fY=
+	t=1730811194; cv=none; b=gAIjTSwjAQKplppnin8OEI1CRmxHblgo4cp67Ds6tGzYRBBEH7oMpG5E/vwj62ZU72cRcMc4LC10IerZSezwhI7myajbSw2dcF/DJjkxsQ5sql+rUz/wcgrNFhbe+Y+QHlpgb05KkerbbBUhjTNGA9xdV/3AyYU0M57OTa1Vl7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730800993; c=relaxed/simple;
-	bh=oi+hODaubSqjykR3ygGmsP6g2tHPT7jHikSbj4esYwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gAvoXeS58imHmxp/exi85OrERUOp5xow2luSbDMuaCXv7ZYUlF0fDSx4BIptb4az1DoMQuvg6E+AUCNTrQ63XNu3PjjZfoYYFPVjLQ8WNKlCbIZWn2um/JqIvmSDgrFt0vpCiR1DhthAUxS1XsaUwivxP1goZ2Ekog4QlKlBk+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 13978227AA8; Tue,  5 Nov 2024 11:03:08 +0100 (CET)
-Date: Tue, 5 Nov 2024 11:03:07 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Anuj Gupta <anuj20.g@samsung.com>
-Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
-	martin.petersen@oracle.com, asml.silence@gmail.com,
-	anuj1072538@gmail.com, brauner@kernel.org, jack@suse.cz,
-	viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
-	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 02/10] block: copy back bounce buffer to user-space
- correctly in case of split
-Message-ID: <20241105100307.GA650@lst.de>
-References: <20241104140601.12239-1-anuj20.g@samsung.com> <CGME20241104141448epcas5p4179505e12f9cf45fd792dc6da6afce8e@epcas5p4.samsung.com> <20241104140601.12239-3-anuj20.g@samsung.com>
+	s=arc-20240116; t=1730811194; c=relaxed/simple;
+	bh=HfTXplarQOHy9YfWmWCfFXa/p0jmzVRpggtdp58QP7g=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NeFa0/HgNyOUG2+SSFumQrH0B7yJ2E0n4OMRBVELedHVCq0Jif7QhdZ0sggJdoyK/1q575X5yP9Xu4R5MWwF8IYKEA38ElUMbxEu2sy9IZsr8KUZ7YbNuVbiybTLJ+2+gnq1kNWMSWCxVnIxvLvneFp0wux6S7/4NK5970Qp6ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ciQB2xAZ; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20e576dbc42so56060795ad.0
+        for <io-uring@vger.kernel.org>; Tue, 05 Nov 2024 04:53:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730811192; x=1731415992; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5BO5XX0R5eMaR+cACtZBYsHiyqQQsnCsIlJHaNsW+1s=;
+        b=ciQB2xAZxDodmv/4zZRwOfpmpADtUd+3RuLOErSbKjwCStmm+vSUU3AHOd1OI3qXhl
+         +bBNQPAfkurZTSEQYJqg51Z8p3inoeLkoDHKV8oHgmCOshHve8IW8wA/RxWpOU/pUr6M
+         rmjI9Z0cxOnqLio4L6Hqff+zeK8prgUEjtmNKIIfMIvfKDUiGvAD4prLlfYC0kPp011g
+         DnSSBZ7j88cvI2PQ8+4XwnNInxgi5xjnXKCCHTRXU9uWaJusDJLW/ToudO1kUxDu7vAn
+         nhnQNFiicaf9xhTE1RVn8rBQOlaOfthvotEdE3pkSEiO0Al7CJV5FSpC+CIKgmjWsZH4
+         Dzug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730811192; x=1731415992;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5BO5XX0R5eMaR+cACtZBYsHiyqQQsnCsIlJHaNsW+1s=;
+        b=WHDyo7VX+SVFzpP3fqBrRPg+Wb1bcGdAuZ9zUFVwPEs7rvFJaw5a341cPDBWSRdbh+
+         wafFgn0gWRG4U6Lc/uvT4Ek1M8lpGSq1QjGhXn+WNkUWWZeq6dJF6O2ArUbmmKrfarny
+         MXnZBrdiLfNZk361fl5YeSM0EVUl6h3GimePFzCuhTTnftr7JAA5iJBLBCMCl6m6Xxfe
+         3nMQaFvG9/IJ3F/t1BSF9ZdCpD6ViJloU8zH+RdjDeYwGyZg5J52q3z2VBO00d8gs+g7
+         Vtx2Cygod3fCxlAzjToEEKznVI3nz1+Wop6hmHxXqZEpugZtGmJAcGTvKziGJV8UuhDj
+         MRwQ==
+X-Gm-Message-State: AOJu0YzlqTfV1PdfkLXMyHvrNvfqcZ7qaEvzcG6M1YEoGneAJBm+xbIU
+	2rFR4w57f/iWGG0cR0UU4WlvcmXprsvTyGZbifQxu1zf17I53zS4S0c6/wSCw5UbLpejHrN1bYF
+	fEJc=
+X-Google-Smtp-Source: AGHT+IHW22lYbExBI32TkNRE38B8+QjxS3w5HIAZEw3M81HNS9P0ZL9SaBybKHsNgYQTFtUz1JvPgA==
+X-Received: by 2002:a17:902:e890:b0:20c:e169:eb75 with SMTP id d9443c01a7336-21103abcfbbmr279296885ad.2.1730811191979;
+        Tue, 05 Nov 2024 04:53:11 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c7560sm77321965ad.237.2024.11.05.04.53.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 04:53:11 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <d1cd472cec2230c66bd1c8d412a5833f0af75384.1730772720.git.asml.silence@gmail.com>
+References: <d1cd472cec2230c66bd1c8d412a5833f0af75384.1730772720.git.asml.silence@gmail.com>
+Subject: Re: [PATCH 1/1] io_uring: avoid normal tw intermediate fallback
+Message-Id: <173081119091.5378.7521271914967142535.b4-ty@kernel.dk>
+Date: Tue, 05 Nov 2024 05:53:10 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104140601.12239-3-anuj20.g@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Mon, Nov 04, 2024 at 07:35:53PM +0530, Anuj Gupta wrote:
-> From: Christoph Hellwig <hch@lst.de>
-> 
-> Copy back the bounce buffer to user-space in entirety when the parent
-> bio completes. The existing code uses bip_iter.bi_size for sizing the
-> copy, which can be modified. So move away from that and fetch it from
-> the vector passed to the block layer. While at it, switch to using
-> better variable names.
-> 
-> Fixes: 492c5d455969f ("block: bio-integrity: directly map user buffers")
-> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-> [hch: better names for variables]
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-This shouldn't really have a from for me as it wasn't my patch
-originally.  But if you insist to re-attribute it, my signoff should
-be the first as signoffs are supposed to be a chain starting from
-the original author to the submitter.
+On Tue, 05 Nov 2024 02:12:33 +0000, Pavel Begunkov wrote:
+> When a DEFER_TASKRUN io_uring is terminating it requeues deferred task
+> work items as normal tw, which can further fallback to kthread
+> execution. Avoid this extra step and always push them to the fallback
+> kthread.
+> 
+> 
+
+Applied, thanks!
+
+[1/1] io_uring: avoid normal tw intermediate fallback
+      commit: 1e891bb8c4d0fe2d8c008d9d96d7e29d7f86f5e2
+
+Best regards,
+-- 
+Jens Axboe
+
+
 
 

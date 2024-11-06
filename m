@@ -1,54 +1,54 @@
-Return-Path: <io-uring+bounces-4471-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4472-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C189BDC6D
-	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 03:22:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B31949BDC93
+	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 03:26:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61C1B1F269C0
-	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 02:22:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EABA1F291BC
+	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 02:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C4F1DF982;
-	Wed,  6 Nov 2024 02:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89771F7579;
+	Wed,  6 Nov 2024 02:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOkMC0BF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRO21QH0"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF76B1DF97B;
-	Wed,  6 Nov 2024 02:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEB71F7574;
+	Wed,  6 Nov 2024 02:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730859137; cv=none; b=roI79DguZzSEaErRDk8x+JTxtCnKqo225hIjiwsnud5cujIIDNN9FVqcQu3RsAlHTvoeI29t/XEGYm9y4YRWqqsC0vzgvRuBT6Dv7295AoejHYlsoah97S9qsmSX/0uFQyx6jtaJnA608OBWAhuuobiRgoYwzU0EnstA4kiU59Q=
+	t=1730859189; cv=none; b=ommP849U5jtpgezomRUJuTw9DknPJ+Um7hXpbmGF/p5ki7Ga1fZ1WAX69rCgaXi/LeDAaGSRJTPWoCP5y7y1E026Rbj5zyRRKvQ5vYGO7UlPui/iGWjPmn2FO9vjM/c58t57suHhfAakP2N1vu2mL1/MW2jafJis30id6MGtOQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730859137; c=relaxed/simple;
-	bh=W651HOHjGzMDsCgtNU4gYW/D1n71pQWGsOS7ffSj49I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a6br6Fspc+sZS/vUQd0vI/RKM5McOPwK3lr9NcNQDzf6GiNlFwO4IGWMUbRmdc/BfF6gxVRqEH3aie1++2zV3+YBer5eqEgpnjQHE2xfnyWXqZaac4Mfrm7/A37jolFAQmIqDNbYlMfjeN4Y3UiWXMb5asPNqw7yVI0DIg8SscI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOkMC0BF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 082B7C4CECF;
-	Wed,  6 Nov 2024 02:12:15 +0000 (UTC)
+	s=arc-20240116; t=1730859189; c=relaxed/simple;
+	bh=LK8O32ryrR36QBqT2i4Q5Z4wfcG6NDPXs6IKa66b5+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GtAukmG5MTjACCijmnnDbGzVwTClX+9Blnn7Zmc0FXMuwJ8WZk22B8UJqeq3VhysmsrK22SQGe3547LrdnW9cYJW88slVMOF7TD+vhGQ0Xi2Tx+0xzio7iRtPm9uKQF1ZfQwm93TwilkVJ81+kBjXf3nNbkdu+dmlHqbgI1E+Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRO21QH0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93676C4CECF;
+	Wed,  6 Nov 2024 02:13:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730859136;
-	bh=W651HOHjGzMDsCgtNU4gYW/D1n71pQWGsOS7ffSj49I=;
+	s=k20201202; t=1730859189;
+	bh=LK8O32ryrR36QBqT2i4Q5Z4wfcG6NDPXs6IKa66b5+I=;
 	h=From:To:Cc:Subject:Date:From;
-	b=KOkMC0BFa78Sq+EZxLDfcW34TmRYjowgDmeAL0kLIC5zwesvehau0FzOxfRolgeXG
-	 decXlwavcVeTmPWsnwnMBzPswFNbkUJ4lCfqQLHAkkcWmgS+cFnC2l54xRV7Ju8VZy
-	 7sj+nEGJe+IqUv+8WgBQ4MFaz9IPpVNyJIydTqB6sULi1xoJOpyU5bapmK+VqBYp65
-	 uRPVMzrCLe3eMtwx1HqS51H21OValeRLSrOAKu038xT9m1bdQVGdHZM9w1PoYSwY2Z
-	 L6eEDROrv5tIUCGSHF+zdxEeaIr2PLdzTu6YTHHM38acMj5nAQ1yglGWoyCriDItLx
-	 8xmYHaA2V8Jgw==
+	b=rRO21QH0xfFTeP7bYnslEKVBxjjIJoiDbFByTo/ukFj3zOIDYV3VhH2fIUdyV91xn
+	 7qyPJhk+lv4XIe5tw/Vq7fMkcppN1H8mWBg1C7TvkCqApLMcONQiIiQnCjwqNL7xFJ
+	 VyFqj/dysm8MJpBQd+D4wmZyiRvUMv6yHGCbR+KNqJavpeIKwA2DoJmakBkHBIKu8M
+	 wIVoiN5yI5onXOqO4Rv4pooegBe2vbsiCRpYlJcMUNOW99jQsEsjiuHBE2DhVK9hZk
+	 WdSjpCYHxEajXQVZb1b1WwE+qgSYi8LerR2v7reVYV0BXBuLkD6gzWG1pkrnDf8+OE
+	 +KjuYy6rjY+KQ==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
 	axboe@kernel.dk
 Cc: Peter Mann <peter.mann@sh.cz>,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: FAILED: Patch "io_uring/rw: fix missing NOWAIT check for O_DIRECT start write" failed to apply to v5.15-stable tree
-Date: Tue,  5 Nov 2024 21:12:14 -0500
-Message-ID: <20241106021214.182779-1-sashal@kernel.org>
+Subject: FAILED: Patch "io_uring/rw: fix missing NOWAIT check for O_DIRECT start write" failed to apply to v5.10-stable tree
+Date: Tue,  5 Nov 2024 21:13:06 -0500
+Message-ID: <20241106021306.183371-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -60,7 +60,7 @@ X-Patchwork-Hint: ignore
 X-stable: review
 Content-Transfer-Encoding: 8bit
 
-The patch below does not apply to the v5.15-stable tree.
+The patch below does not apply to the v5.10-stable tree.
 If someone wants it applied there, or to any other stable or longterm
 tree, then please email the backport, including the original git commit
 id to <stable@vger.kernel.org>.

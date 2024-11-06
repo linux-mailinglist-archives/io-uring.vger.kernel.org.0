@@ -1,148 +1,148 @@
-Return-Path: <io-uring+bounces-4487-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4488-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC459BEFDA
-	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 15:11:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4FA89BF018
+	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 15:27:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF2C1F22088
-	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 14:11:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4912BB24E45
+	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 14:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F79E1F9EB6;
-	Wed,  6 Nov 2024 14:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D93201101;
+	Wed,  6 Nov 2024 14:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="n67AyePp"
+	dkim=pass (2048-bit key) header.d=owltronix-com.20230601.gappssmtp.com header.i=@owltronix-com.20230601.gappssmtp.com header.b="K0ELk7ZO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35B11F9ABD
-	for <io-uring@vger.kernel.org>; Wed,  6 Nov 2024 14:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EA5201244
+	for <io-uring@vger.kernel.org>; Wed,  6 Nov 2024 14:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730902301; cv=none; b=i9nDj7dXm7p7L8A7M3fx16qkPQH7eDXMoH4sa1Jf/quOUhm8NgL1pZRxRj+bvxGXbu0K/9wtg7PBMubrSxIOsT6EfmDLzXYGeo4pei5ofoxFYNB9vENti6gkyvRZw9IiqMWHtRrI/grYol5F2LNGjdBvfQv31qeMcAUas8aOetw=
+	t=1730903200; cv=none; b=J1bngFc5+m1L/98SUeQ8SQAcsE9+N4hcrdDrYp9dWU0HctRJrpqBYj6VqjDkya1XOvuTNem56S0vgkCw+Gd/vEjSCmagwgHeTtxShCdCPm8oyG5DPDsYzIYBTRmi9cadxfzYDxqpM8IIyQQcAOtko5baUTrvLHf8cB9gKPMxoGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730902301; c=relaxed/simple;
-	bh=0XcMLKxlQrw5C+8/ecJTcOYO4V8xUwsJw8tuO2G/QIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mHwFFIJB7a3Hrwpd/vpXCd0oExUlNhcEUjntN5cdod7JHlVS6C4/l9mhrORaX2wElb6C6z39s24flmL2eT3SLW23Y1PNP6Caq6QkuuYqGOe7ZpH9CTDQrv8mowuMYFFsInbMuVEf75QwcgZhfsFNRg3ln5zxvrBo3AGtpHXPThs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=n67AyePp; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83ab94452a7so284199439f.3
-        for <io-uring@vger.kernel.org>; Wed, 06 Nov 2024 06:11:38 -0800 (PST)
+	s=arc-20240116; t=1730903200; c=relaxed/simple;
+	bh=ipqB5GhZfhZeP6+Fw73KMpW7vTqNOHY4wT9od9XDnNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HU7TLHq9E8OtSEuzZig3797UoF/AxVhraWLERVKKq1y+6kvvCTRS4uww0NhkETcNfLTOnCaz4z9orz7V7XB6T3Mzn4zLQPUDO3TdBY+IdaUPoNwbn+/T+6lDA2VNnE/AXodLFf9Uy303Ar3M4CtOYDagQeChis/pMclulnU1T5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com; spf=none smtp.mailfrom=owltronix.com; dkim=pass (2048-bit key) header.d=owltronix-com.20230601.gappssmtp.com header.i=@owltronix-com.20230601.gappssmtp.com header.b=K0ELk7ZO; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=owltronix.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a850270e2so1129368066b.0
+        for <io-uring@vger.kernel.org>; Wed, 06 Nov 2024 06:26:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730902298; x=1731507098; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/v3+1CD1zkiIKugXAd7QtzaltBjAUDdyHcQ+nF9s83k=;
-        b=n67AyePpwD1hIgQ8eiOMA3gRccdgeNeisAtYdlsdz3PlLfbnbBXv/NfMuTvZGyIPVw
-         UVQ7pAz4r0vIpLuHDN6pfd4mWvxsL77ZzXpiBDsvvlErDG0i4Jz7/tbME45NJ5XNrbLo
-         fCM+LWZs8qqYAFFooZ/TyqiRpO96iWYhrV5EcEaxozNr7+2RoUWcwaFIOodDJy6N70CL
-         IWNxQSLIWxeXz2TEiwRGg6fBx/IJekMcNrwH+L7Jiopgd16Ln2DwqW82zPfu3BlkNbdu
-         DY57XdjVXK8ADJYzVg3a9CNVyBNbZKzVsB0vB7+CTb5DvirGoZM92t+kgD0Q2SGgQV+s
-         4B7A==
+        d=owltronix-com.20230601.gappssmtp.com; s=20230601; t=1730903197; x=1731507997; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ipqB5GhZfhZeP6+Fw73KMpW7vTqNOHY4wT9od9XDnNU=;
+        b=K0ELk7ZOqojBpwfYYFVtlhrgVqwWO9F5XOz+slzrpH7whuThi5sFINpU1Uz2YObfRL
+         RdopoaQbBe9AIueM/xK9qkRcpHa4xbkp9sQ1ZgrPkDzzmE6dLuYVXBoLaa6zn4ZF0Por
+         aMkFouowSW3zErpN1orbPemdy6YLrb8rvl6H36Mru773Dx3Alieh0RZkjYs3iM53nH21
+         8dKWaSlRjYHBC2QXhw1BILFPGFrs3nbW/kufRc7QIZUFCc7FI/o1OFoXFUAe2c9bWdp/
+         qg5rqdNPPloEYVDahsor2ScfawUvljWuiK9BhvMKOazWXD1ys8NY8ELcl7iP6fOW5snV
+         Y5Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730902298; x=1731507098;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/v3+1CD1zkiIKugXAd7QtzaltBjAUDdyHcQ+nF9s83k=;
-        b=QUx18Sltg2NCODiX9o7dEG4xfnCRElhKxT7fFlZylLZSfmUZWxYjntcHb0ZOCsY1IL
-         1VFoxnMmlFfAefHlKMNMA+LTSrEt2i6OgQwIY38yZjP7QlZGKP/w9zjsXx9QPCruR9qU
-         fbR5zOJQl0tw1FxPpd3NwSEoeMxXZs/6FqglP+FpCoXP7FlTpbBZ8alLFI2TW06psqhu
-         VXwYUXAQ2svgLNHv/J/AOykaOeaXOtE15LuA5WsAYQCnBu8qPV+i43VF2PSVoT2pYkky
-         LV+i5UjWIrI3CFQqRzJyCbX2qpt2HdAbXisEFwqeTmpnbpZ0WT88dihLcfm8zA8Tw8He
-         qooQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDuQ+beMEbN3zRxsGSMjCdxOmo5I39PELCzpygSs/8nV4Co+8DLs36gVh1LNkwIJhZOryXyoi04A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQmrpObesvrN+l5P8Km328IESHS65gurt81aYwVzH0KuYcc1gr
-	Y9BxiKLWlX7Kv2AYj/xwiqPchjhKG70yGCvjdzCNvXtsChsIpa/w+HGkQMsB0KM=
-X-Google-Smtp-Source: AGHT+IE2d4o3hCxgkh0OwFEymLimuz4K+2YCjShLapsO4FRw+4RpGbBWdXRFnZNBEzOVy1jWbcvTBw==
-X-Received: by 2002:a05:6602:3427:b0:83b:2da6:239a with SMTP id ca18e2360f4ac-83b567a0614mr2568382039f.15.1730902295867;
-        Wed, 06 Nov 2024 06:11:35 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83b67c7d81dsm319718539f.37.2024.11.06.06.11.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 06:11:34 -0800 (PST)
-Message-ID: <f4bfc61b-9fe6-466a-a943-7143ed1ec804@kernel.dk>
-Date: Wed, 6 Nov 2024 07:11:33 -0700
+        d=1e100.net; s=20230601; t=1730903197; x=1731507997;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ipqB5GhZfhZeP6+Fw73KMpW7vTqNOHY4wT9od9XDnNU=;
+        b=oiZWDJnWvd/CLWRmvDO0R/QsfZrIpP11y9547E7haRSzwe6QdkkySGa7Z8opvOkDPs
+         /roI9Y8ifGc+LUR1SJPBsg+jZQtusx/3xX7ViZ/u9/NMsemPK3lsygJFcN92ZcQGBzTf
+         ksOFXANJskgKMSSv2MddaYqmz/+zdKSNjyPWnweoAXgWJwaMBevt/+q+c9QhmOgbjIi+
+         i4lvvuydc1VI796Rkji8QiUPMHTqljw00XAcD7ts6QVI/iaz+a+zToqZAjuYcKH/g+Q9
+         MlQR+I5+zDqHMXPJ+jAGEbLrxiEKKnmodeWX3oNZex+CcwQ4YDV08Mld0wKfPgmh/UiG
+         EEzg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3hIK28Z/npdfruWWoLwLTM7hCLXs/0rJ5e5wV1kJkCf1/J38LsErkYYedpA3epyHB55b/CsF5wQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcUwSHi2j6Wb/DdQmxpz03YAv6VodprSW34KYt2TcZ9Z3wg3iK
+	lOp6UPrEol8Y8b5C7TumtkZ7xWSR9kXMz7jE6BEROU7DBzQHjCC4upke0SMu3gYGY0S9dJ+SB8W
+	f9VNzENV/PRNJiKh40weZqfEnzJRy+/FiZLkXcA==
+X-Google-Smtp-Source: AGHT+IGTNjawymGmZtRv6kzFPFouB6jfAmX0w1MWjwjaaSmC15ADSV9RR263VUeTaevgARYiFWCXry3+rk2bBInzbBw=
+X-Received: by 2002:a17:907:2dac:b0:a99:6791:5449 with SMTP id
+ a640c23a62f3a-a9e6587df7fmr2121988466b.52.1730903196776; Wed, 06 Nov 2024
+ 06:26:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Stable backport (was "Re: PROBLEM: io_uring hang causing
- uninterruptible sleep state on 6.6.59")
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Keith Busch <kbusch@kernel.org>,
- Andrew Marshall <andrew@johnandrewmarshall.com>, io-uring@vger.kernel.org,
- stable <stable@vger.kernel.org>
-References: <3d913aef-8c44-4f50-9bdf-7d9051b08941@app.fastmail.com>
- <cc8b92ba-2daa-49e3-abe6-39e7d79f213d@kernel.dk>
- <ZygO7O1Pm5lYbNkP@kbusch-mbp>
- <25c4c665-1a33-456c-93c7-8b7b56c0e6db@kernel.dk>
- <c34e6c38-ca47-439a-baf1-3489c05a65a8@kernel.dk>
- <2024110620-stretch-custodian-0e7d@gregkh>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <2024110620-stretch-custodian-0e7d@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <ZyJTsyDjn6ABVbV0@kbusch-mbp.dhcp.thefacebook.com>
+ <20241030154556.GA4449@lst.de> <ZyJVV6R5Ei0UEiVJ@kbusch-mbp.dhcp.thefacebook.com>
+ <20241030155052.GA4984@lst.de> <ZyJiEwZwjevelmW2@kbusch-mbp.dhcp.thefacebook.com>
+ <20241030165708.GA11009@lst.de> <ZyK0GS33Qhkx3AW-@kbusch-mbp.dhcp.thefacebook.com>
+ <CANr-nt35zoSijRXYr+ommmWGfq0+Ye0tf3SfHfwi0cfpvwB0pg@mail.gmail.com>
+ <ZyOO4PojaVIdmlOA@kbusch-mbp.dhcp.thefacebook.com> <CANr-nt30gQzFFsnJt9Tzs1kRDWSj=2w0iTC1qYfu+7JwpszwQQ@mail.gmail.com>
+ <ZyTqZ3UR39VTHSA2@kbusch-mbp.dhcp.thefacebook.com>
+In-Reply-To: <ZyTqZ3UR39VTHSA2@kbusch-mbp.dhcp.thefacebook.com>
+From: Hans Holmberg <hans@owltronix.com>
+Date: Wed, 6 Nov 2024 15:26:25 +0100
+Message-ID: <CANr-nt0stXUn38EawwQPa+fGmgvHE7Ch8LH7tGyNp5NPpm1m0w@mail.gmail.com>
+Subject: Re: [PATCHv10 9/9] scsi: set permanent stream count in block limits
+To: Keith Busch <kbusch@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org, 
+	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, joshi.k@samsung.com, 
+	javier.gonz@samsung.com, bvanassche@acm.org, Hannes Reinecke <hare@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/5/24 11:05 PM, Greg Kroah-Hartman wrote:
-> On Sun, Nov 03, 2024 at 07:38:30PM -0700, Jens Axboe wrote:
->> On 11/3/24 5:06 PM, Jens Axboe wrote:
->>> On 11/3/24 5:01 PM, Keith Busch wrote:
->>>> On Sun, Nov 03, 2024 at 04:53:27PM -0700, Jens Axboe wrote:
->>>>> On 11/3/24 4:47 PM, Andrew Marshall wrote:
->>>>>> I identified f4ce3b5d26ce149e77e6b8e8f2058aa80e5b034e as the likely
->>>>>> problematic commit simply by browsing git log. As indicated above;
->>>>>> reverting that atop 6.6.59 results in success. Since it is passing on
->>>>>> 6.11.6, I suspect there is some missing backport to 6.6.x, or some
->>>>>> other semantic merge conflict. Unfortunately I do not have a compact,
->>>>>> minimal reproducer, but can provide my large one (it is testing a
->>>>>> larger build process in a VM) if needed?there are some additional
->>>>>> details in the above-linked downstream bug report, though. I hope that
->>>>>> having identified the problematic commit is enough for someone with
->>>>>> more context to go off of. Happy to provide more information if
->>>>>> needed.
->>>>>
->>>>> Don't worry about not having a reproducer, having the backport commit
->>>>> pin pointed will do just fine. I'll take a look at this.
->>>>
->>>> I think stable is missing:
->>>>
->>>>   6b231248e97fc3 ("io_uring: consolidate overflow flushing")
->>>
->>> I think you need to go back further than that, this one already
->>> unconditionally holds ->uring_lock around overflow flushing...
->>
->> Took a look, it's this one:
->>
->> commit 8d09a88ef9d3cb7d21d45c39b7b7c31298d23998
->> Author: Pavel Begunkov <asml.silence@gmail.com>
->> Date:   Wed Apr 10 02:26:54 2024 +0100
->>
->>     io_uring: always lock __io_cqring_overflow_flush
->>
->> Greg/stable, can you pick this one for 6.6-stable? It picks
->> cleanly.
->>
->> For 6.1, which is the other stable of that age that has the backport,
->> the attached patch will do the trick.
->>
->> With that, I believe it should be sorted. Hopefully that can make
->> 6.6.60 and 6.1.116.
-> 
-> Now queued up, thanks.
+On Fri, Nov 1, 2024 at 3:49=E2=80=AFPM Keith Busch <kbusch@kernel.org> wrot=
+e:
+>
+> On Fri, Nov 01, 2024 at 08:16:30AM +0100, Hans Holmberg wrote:
+> > On Thu, Oct 31, 2024 at 3:06=E2=80=AFPM Keith Busch <kbusch@kernel.org>=
+ wrote:
+> > > On Thu, Oct 31, 2024 at 09:19:51AM +0100, Hans Holmberg wrote:
+> > > > No. The meta data IO is just 0.1% of all writes, so that we use a
+> > > > separate device for that in the benchmark really does not matter.
+> > >
+> > > It's very little spatially, but they overwrite differently than other
+> > > data, creating many small holes in large erase blocks.
+> >
+> > I don't really get how this could influence anything significantly.(If =
+at all).
+>
+> Fill your filesystem to near capacity, then continue using it for a few
+> months. While the filesystem will report some available space, there
+> may not be many good blocks available to erase. Maybe.
 
-Thanks Greg!
+For *this* benchmark workload, the metadata io is such a tiny fraction
+so I doubt the impact on wa could be measured.
+I completely agree it's a good idea to separate metadata from data
+blocks in general. It is actually a good reason for letting the file
+system control write stream allocation for all blocks :)
 
--- 
-Jens Axboe
+> > I believe it would be worthwhile to prototype active fdp data
+> > placement in xfs and evaluate it. Happy to help out with that.
+>
+> When are we allowed to conclude evaluation? We have benefits my
+> customers want on well tested kernels, and wish to proceed now.
+
+Christoph has now wired up prototype support for FDP on top of the
+xfs-rt-zoned work + this patch set, and I have had time to look over
+it and started doing some testing on HW.
+In addition to the FDP support, metadata can also be stored on the
+same block device as the data.
+
+Now that all placement handles are available, we can use the full data
+separation capabilities of the underlying storage, so that's good.
+We can map out the placement handles to different write streams much
+like we assign open zones for zoned storage and this opens up for
+supporting data placement heuristics for a wider range use cases (not
+just the RocksDB use case discussed here).
+
+The big pieces that are missing from the FDP plumbing as I see it is
+the ability to read reclaim unit size and syncing up the remaining
+capacity of the placement units with the file system allocation
+groups, but I guess that can be added later.
+
+I've started benchmarking on the hardware I have at hand, iterating on
+a good workload configuration. It will take some time to get to some
+robust write amp measurements since the drives are very big and
+require a painfully long warmup time.
 

@@ -1,193 +1,147 @@
-Return-Path: <io-uring+bounces-4472-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4473-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31949BDC93
-	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 03:26:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A10BB9BDE09
+	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 05:45:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EABA1F291BC
-	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 02:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648782843E4
+	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 04:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89771F7579;
-	Wed,  6 Nov 2024 02:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60DF13541B;
+	Wed,  6 Nov 2024 04:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRO21QH0"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C2YqnW7V"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEB71F7574;
-	Wed,  6 Nov 2024 02:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A7118D622
+	for <io-uring@vger.kernel.org>; Wed,  6 Nov 2024 04:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730859189; cv=none; b=ommP849U5jtpgezomRUJuTw9DknPJ+Um7hXpbmGF/p5ki7Ga1fZ1WAX69rCgaXi/LeDAaGSRJTPWoCP5y7y1E026Rbj5zyRRKvQ5vYGO7UlPui/iGWjPmn2FO9vjM/c58t57suHhfAakP2N1vu2mL1/MW2jafJis30id6MGtOQU=
+	t=1730868300; cv=none; b=inrZQMJADmBndHFXIJt5PGFNKQ0YCyxL0Y3gSsR4lm0IF/7khXlDIScBCXL2HVgG4xIcweL7hAC6CP+pLNMHBsG7BCcWnpUZqRh+WyuBjy7z0znsFDqKcwC+fvus38KUrSH4jbUWrRnCeDJSl+ToFavU8PaFRQWUySfzTay3UIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730859189; c=relaxed/simple;
-	bh=LK8O32ryrR36QBqT2i4Q5Z4wfcG6NDPXs6IKa66b5+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GtAukmG5MTjACCijmnnDbGzVwTClX+9Blnn7Zmc0FXMuwJ8WZk22B8UJqeq3VhysmsrK22SQGe3547LrdnW9cYJW88slVMOF7TD+vhGQ0Xi2Tx+0xzio7iRtPm9uKQF1ZfQwm93TwilkVJ81+kBjXf3nNbkdu+dmlHqbgI1E+Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRO21QH0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93676C4CECF;
-	Wed,  6 Nov 2024 02:13:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730859189;
-	bh=LK8O32ryrR36QBqT2i4Q5Z4wfcG6NDPXs6IKa66b5+I=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rRO21QH0xfFTeP7bYnslEKVBxjjIJoiDbFByTo/ukFj3zOIDYV3VhH2fIUdyV91xn
-	 7qyPJhk+lv4XIe5tw/Vq7fMkcppN1H8mWBg1C7TvkCqApLMcONQiIiQnCjwqNL7xFJ
-	 VyFqj/dysm8MJpBQd+D4wmZyiRvUMv6yHGCbR+KNqJavpeIKwA2DoJmakBkHBIKu8M
-	 wIVoiN5yI5onXOqO4Rv4pooegBe2vbsiCRpYlJcMUNOW99jQsEsjiuHBE2DhVK9hZk
-	 WdSjpCYHxEajXQVZb1b1WwE+qgSYi8LerR2v7reVYV0BXBuLkD6gzWG1pkrnDf8+OE
-	 +KjuYy6rjY+KQ==
-From: Sasha Levin <sashal@kernel.org>
-To: stable@vger.kernel.org,
-	axboe@kernel.dk
-Cc: Peter Mann <peter.mann@sh.cz>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: FAILED: Patch "io_uring/rw: fix missing NOWAIT check for O_DIRECT start write" failed to apply to v5.10-stable tree
-Date: Tue,  5 Nov 2024 21:13:06 -0500
-Message-ID: <20241106021306.183371-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730868300; c=relaxed/simple;
+	bh=LdyvcGK5ggPPw0mXer7lTISLm33Byqe+sqxIB3ZcAKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o6cv+0d8hrzCzrVvXY/0aFZQPU3TgEVz/wv7ZwF9PjUzmXFw9mkcSBc2Lxntw9iaO07MXfzudDvhMsaCYFQ92tg92YqvbO0c49tBSY+JyOYK5fCVFEG9hpO8/6J3fQMelAt/doZk7dB5AAKDUzlipc30Z9FtaYeYhsXwa67f/Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C2YqnW7V; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730868295;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LdyvcGK5ggPPw0mXer7lTISLm33Byqe+sqxIB3ZcAKA=;
+	b=C2YqnW7VszUMybKNk11xjRl3GoKu1ayEdayCx2Rt36SbglKof+caa+tiaeFvxBjNGVlIkZ
+	vOIH0QEzo6IG3k934fV/eTw5MaEjpcyLWElJHcva29StVfQie/CobZXYcqYniuOscQVfhW
+	gitIYuCfgfWbhA4CEfRHKgAjmuniL64=
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com
+ [209.85.222.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-212-l-HS6Sw5M32OZz7regnpqw-1; Tue, 05 Nov 2024 23:44:53 -0500
+X-MC-Unique: l-HS6Sw5M32OZz7regnpqw-1
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-84fbe9a23f9so2782234241.0
+        for <io-uring@vger.kernel.org>; Tue, 05 Nov 2024 20:44:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730868293; x=1731473093;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LdyvcGK5ggPPw0mXer7lTISLm33Byqe+sqxIB3ZcAKA=;
+        b=nmi+xm0L9H74fFd5o2lClupEh1C/f085JYzFCtXkEGQjzBVJ8avM5p/L1Iw61+KBMY
+         nXMmYRn4+mh5CBwpH6L4YGFiY29GIig44BhruUSfbRLTxkswhamaRBxkluOD2Av37wnO
+         57DDYbJm5V+JiAb+/QU4S0nMP49teucKze3Vm3k0WUZQy6mM9VDEJNoPbO4mw9u0hzQb
+         V73ozCYnR1WxP3hu9DbBvVPGGemc8eXArm3zsPnMhstgi6JDatkb2uc5fvRTniDLGEG4
+         oAAKVYF3nJSUMMYY33Jzu64AVXSD4w73Vm3RgAkh+y9UA5p/GzYqtGJfmBHc6C+4QsTJ
+         JYjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfAguqbclqG072Xs/5tNzKxNLAUroAM93BhciWr65nTafT81XPRn/xmNcCmwGAcZ/0lXg+3UJoaw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxptQfxKUppI/aJrg1E5xH9lM2lDR/IgpnnrYnSuyIv+/f+BNYG
+	MiTZ6JDfF1rUmLST8gXfpF/OimfWeyShpzXJ7GVlIJ5bHYoOBVlafJclEnjX+OUJq9/BCGkOzMC
+	F+aiW62Nbs9pQlYjrYHj1xk/16pMP+Hx+g7VAz/qYkOtQRwhSVqfRecTJVeIDiNxMZShp6XXZxZ
+	CsrMxohaOkZR5MZmhtLVYNvHS2E25OJ+Y=
+X-Received: by 2002:a05:6102:3753:b0:4a4:9363:b84f with SMTP id ada2fe7eead31-4a8cfb25e4amr37666143137.5.1730868292819;
+        Tue, 05 Nov 2024 20:44:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE4iGAezGMJs15MNuuVVJkx2duwmdHhkRxiLbHUY21XKlOr3ugjz4SNSgTPpCow5imWMd0nbAcU7G/vr44oXyY=
+X-Received: by 2002:a05:6102:3753:b0:4a4:9363:b84f with SMTP id
+ ada2fe7eead31-4a8cfb25e4amr37666136137.5.1730868292604; Tue, 05 Nov 2024
+ 20:44:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Hint: ignore
-X-stable: review
-Content-Transfer-Encoding: 8bit
+References: <20241016-fuse-uring-for-6-10-rfc4-v4-0-9739c753666e@ddn.com>
+ <20241016-fuse-uring-for-6-10-rfc4-v4-12-9739c753666e@ddn.com>
+ <b4e388fe-4986-4ce7-b696-31f2d725cf1c@gmail.com> <473a3eb3-5472-4f1c-8709-f30ef3bee310@ddn.com>
+ <f8e7a026-da8a-4ce4-9b76-24c7eef4a80a@gmail.com> <9db7b714-55f4-4017-9d30-cdb4aeac2886@ddn.com>
+In-Reply-To: <9db7b714-55f4-4017-9d30-cdb4aeac2886@ddn.com>
+From: Ming Lei <ming.lei@redhat.com>
+Date: Wed, 6 Nov 2024 12:44:41 +0800
+Message-ID: <CAFj5m9L9xjYcm2-B_Dv=L3Ne3kRY5DVQ8mU7pqocqXE13Ajp-g@mail.gmail.com>
+Subject: Re: [PATCH RFC v4 12/15] io_uring/cmd: let cmds to know about dying task
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Jens Axboe <axboe@kernel.dk>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, Joanne Koong <joannelkoong@gmail.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The patch below does not apply to the v5.10-stable tree.
-If someone wants it applied there, or to any other stable or longterm
-tree, then please email the backport, including the original git commit
-id to <stable@vger.kernel.org>.
+On Wed, Nov 6, 2024 at 7:02=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> w=
+rote:
+>
+>
+>
+> On 11/5/24 02:08, Pavel Begunkov wrote:
+> > On 11/4/24 22:15, Bernd Schubert wrote:
+> >> On 11/4/24 01:28, Pavel Begunkov wrote:
+> > ...
+> >>> In general if you need to change something, either stick your
+> >>> name, so that I know it might be a derivative, or reflect it in
+> >>> the commit message, e.g.
+> >>>
+> >>> Signed-off-by: initial author
+> >>> [Person 2: changed this and that]
+> >>> Signed-off-by: person 2
+> >>
+> >> Oh sorry, for sure. I totally forgot to update the commit message.
+> >>
+> >> Somehow the initial version didn't trigger. I need to double check to
+> >
+> > "Didn't trigger" like in "kernel was still crashing"?
+>
+> My initial problem was a crash in iov_iter_get_pages2() on process
+> kill. And when I tested your initial patch IO_URING_F_TASK_DEAD didn't
+> get set. Jens then asked to test with the version that I have in my
+> branch and that worked fine. Although in the mean time I wonder if
+> I made test mistake (like just fuse.ko reload instead of reboot with
+> new kernel). Just fixed a couple of issues in my branch (basically
+> ready for the next version send), will test the initial patch
+> again as first thing in the morning.
+>
+>
+> >
+> > FWIW, the original version is how it's handled in several places
+> > across io_uring, and the difference is a gap for !DEFER_TASKRUN
+> > when a task_work is queued somewhere in between when a task is
+> > started going through exit() but haven't got PF_EXITING set yet.
+> > IOW, should be harder to hit.
+> >
+>
+> Does that mean that the test for PF_EXITING is racy and we cannot
+> entirely rely on it?
+
+Another solution is to mark uring_cmd as io_uring_cmd_mark_cancelable(),
+which provides a chance to cancel cmd in the current context.
 
 Thanks,
-Sasha
-
------------------- original commit in Linus's tree ------------------
-
-From 1d60d74e852647255bd8e76f5a22dc42531e4389 Mon Sep 17 00:00:00 2001
-From: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 31 Oct 2024 08:05:44 -0600
-Subject: [PATCH] io_uring/rw: fix missing NOWAIT check for O_DIRECT start
- write
-
-When io_uring starts a write, it'll call kiocb_start_write() to bump the
-super block rwsem, preventing any freezes from happening while that
-write is in-flight. The freeze side will grab that rwsem for writing,
-excluding any new writers from happening and waiting for existing writes
-to finish. But io_uring unconditionally uses kiocb_start_write(), which
-will block if someone is currently attempting to freeze the mount point.
-This causes a deadlock where freeze is waiting for previous writes to
-complete, but the previous writes cannot complete, as the task that is
-supposed to complete them is blocked waiting on starting a new write.
-This results in the following stuck trace showing that dependency with
-the write blocked starting a new write:
-
-task:fio             state:D stack:0     pid:886   tgid:886   ppid:876
-Call trace:
- __switch_to+0x1d8/0x348
- __schedule+0x8e8/0x2248
- schedule+0x110/0x3f0
- percpu_rwsem_wait+0x1e8/0x3f8
- __percpu_down_read+0xe8/0x500
- io_write+0xbb8/0xff8
- io_issue_sqe+0x10c/0x1020
- io_submit_sqes+0x614/0x2110
- __arm64_sys_io_uring_enter+0x524/0x1038
- invoke_syscall+0x74/0x268
- el0_svc_common.constprop.0+0x160/0x238
- do_el0_svc+0x44/0x60
- el0_svc+0x44/0xb0
- el0t_64_sync_handler+0x118/0x128
- el0t_64_sync+0x168/0x170
-INFO: task fsfreeze:7364 blocked for more than 15 seconds.
-      Not tainted 6.12.0-rc5-00063-g76aaf945701c #7963
-
-with the attempting freezer stuck trying to grab the rwsem:
-
-task:fsfreeze        state:D stack:0     pid:7364  tgid:7364  ppid:995
-Call trace:
- __switch_to+0x1d8/0x348
- __schedule+0x8e8/0x2248
- schedule+0x110/0x3f0
- percpu_down_write+0x2b0/0x680
- freeze_super+0x248/0x8a8
- do_vfs_ioctl+0x149c/0x1b18
- __arm64_sys_ioctl+0xd0/0x1a0
- invoke_syscall+0x74/0x268
- el0_svc_common.constprop.0+0x160/0x238
- do_el0_svc+0x44/0x60
- el0_svc+0x44/0xb0
- el0t_64_sync_handler+0x118/0x128
- el0t_64_sync+0x168/0x170
-
-Fix this by having the io_uring side honor IOCB_NOWAIT, and only attempt a
-blocking grab of the super block rwsem if it isn't set. For normal issue
-where IOCB_NOWAIT would always be set, this returns -EAGAIN which will
-have io_uring core issue a blocking attempt of the write. That will in
-turn also get completions run, ensuring forward progress.
-
-Since freezing requires CAP_SYS_ADMIN in the first place, this isn't
-something that can be triggered by a regular user.
-
-Cc: stable@vger.kernel.org # 5.10+
-Reported-by: Peter Mann <peter.mann@sh.cz>
-Link: https://lore.kernel.org/io-uring/38c94aec-81c9-4f62-b44e-1d87f5597644@sh.cz
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/rw.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 354c4e175654c..155938f100931 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -1014,6 +1014,25 @@ int io_read_mshot(struct io_kiocb *req, unsigned int issue_flags)
- 	return IOU_OK;
- }
- 
-+static bool io_kiocb_start_write(struct io_kiocb *req, struct kiocb *kiocb)
-+{
-+	struct inode *inode;
-+	bool ret;
-+
-+	if (!(req->flags & REQ_F_ISREG))
-+		return true;
-+	if (!(kiocb->ki_flags & IOCB_NOWAIT)) {
-+		kiocb_start_write(kiocb);
-+		return true;
-+	}
-+
-+	inode = file_inode(kiocb->ki_filp);
-+	ret = sb_start_write_trylock(inode->i_sb);
-+	if (ret)
-+		__sb_writers_release(inode->i_sb, SB_FREEZE_WRITE);
-+	return ret;
-+}
-+
- int io_write(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
-@@ -1051,8 +1070,8 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
- 	if (unlikely(ret))
- 		return ret;
- 
--	if (req->flags & REQ_F_ISREG)
--		kiocb_start_write(kiocb);
-+	if (unlikely(!io_kiocb_start_write(req, kiocb)))
-+		return -EAGAIN;
- 	kiocb->ki_flags |= IOCB_WRITE;
- 
- 	if (likely(req->file->f_op->write_iter))
--- 
-2.43.0
-
-
-
 
 

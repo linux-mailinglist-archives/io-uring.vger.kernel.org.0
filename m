@@ -1,62 +1,62 @@
-Return-Path: <io-uring+bounces-4481-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4482-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78FFF9BE8C5
-	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 13:27:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056FD9BE8C6
+	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 13:27:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A92AC1C211EE
-	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 12:27:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3703E1C21D42
+	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 12:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B8E1DF995;
-	Wed,  6 Nov 2024 12:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342621DF99B;
+	Wed,  6 Nov 2024 12:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WEDX4P5Y"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PQsCw8zc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE641DFD87
-	for <io-uring@vger.kernel.org>; Wed,  6 Nov 2024 12:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB911DDA15
+	for <io-uring@vger.kernel.org>; Wed,  6 Nov 2024 12:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730896048; cv=none; b=JgozjeE21eHMBnJ0FqOTXEwUhKjP6yTl8Db8FFduY7dANF3h9QxpVfRPWA//kD9BEtuAwfzOjbDqIXU8vbffv0mzSoXzgcKLrkRNituOPeVnuth07g4/2d9VsvKfqoCJEYW7LTI+K1gcqhwLrVXg4tKNIR7f1eZ+BlFjKyjiOs0=
+	t=1730896051; cv=none; b=pGQu9lY6mTPbFrJnF1QLH7XRdxsu6hCcGmJeaDi9/M680U97JDUJwVGes2jkOBp7l46pfUIpTZunaCIZ0h//D4L8njfu8EkTRRr2vE/580dL3l3PbQoz7Str9rtG6TWGZlSzE+186O8ybOU/MUYxGiY09bkDjgJ7dpwhFeOODnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730896048; c=relaxed/simple;
-	bh=1QWulgHUvJkdOB0e5l3GzqDIh6AiXlQGyix1I1F/ZgY=;
+	s=arc-20240116; t=1730896051; c=relaxed/simple;
+	bh=R0hor+AGXWJQ+b6eCKSSwPBAK1nbOUeit79ZDkEKo3E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d/cKPRD4BiwoWT6pgRdPU2tAjFcI9DGnjA8Y1y6dxqCJZiW4yL262iEGSN8RpFtDrlPLgn7vKSi++uS9TVlFcYtJqijEYgOo3gbKF1tPhlSQNjXQyK3nnO+qYs+4wHbz6r/+L7shnSVr6ULG7cWLgaeSzWwIjfAAlTRIRvaPNWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WEDX4P5Y; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=mYZRzfmIINYHMgSSMbuGd2SbAxa0/LrmXYwUIB8f6oGccZzZOXD9Mw20XhILrEswah9z78e9Rwm5D0a4EIKbRwHNS9VJTiPxKJ/fLQ9GuJJMqxXRIghUvryd18O7ngyGDwpAl/AfhmebWgAx/GqT19f0V2UYqNp4mKnP9QOVZH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PQsCw8zc; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730896044;
+	s=mimecast20190719; t=1730896048;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lprUT577+Ss+DKbpmzYjj4MgCX45ZINOsjEQPPDWDG0=;
-	b=WEDX4P5Ywo7DYGSwy8dMjCrXQgSn9RHFsaxYlL78Vod5+MIj0fqrzh/a0xaHti/WEGtD6h
-	GC9fGygUw5H3ez/9URx2GZUbbuIl0r8ZQV+qae6y9CqWBH312D+I3lk+FTcZ3U80zhpouv
-	ZK8mTYHFWaFzZnBtDNGzQDEOtNwTALA=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+	bh=1Bkn+1zjp+r+Ic/txbig//oiVTK8s22E84dBS34JjeY=;
+	b=PQsCw8zcWeeX2GzTxHPnU1RjTIVUXWfCkGCrIKGw36C7sBD+Ce8gbIOvgz2NZva+NttqNv
+	jgm9GzIN/H2TlRAqgUP+K5f80pWHtzqUACDw8UpvBXSO/LYQK4yYZZqBHZpovFJgyO91+Y
+	rC9/QUCH3E9krSxeotSntaaz/ceLscA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-ZXJVmKGKOW2P9_HVR4spxA-1; Wed,
- 06 Nov 2024 07:27:21 -0500
-X-MC-Unique: ZXJVmKGKOW2P9_HVR4spxA-1
-X-Mimecast-MFC-AGG-ID: ZXJVmKGKOW2P9_HVR4spxA
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-307-exft2KXlNOapteNZjSRhrQ-1; Wed,
+ 06 Nov 2024 07:27:25 -0500
+X-MC-Unique: exft2KXlNOapteNZjSRhrQ-1
+X-Mimecast-MFC-AGG-ID: exft2KXlNOapteNZjSRhrQ
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BC031195FE03;
-	Wed,  6 Nov 2024 12:27:19 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1ECBE1944D2B;
+	Wed,  6 Nov 2024 12:27:24 +0000 (UTC)
 Received: from localhost (unknown [10.72.116.107])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7E9C51955F40;
-	Wed,  6 Nov 2024 12:27:18 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E342619560AA;
+	Wed,  6 Nov 2024 12:27:22 +0000 (UTC)
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	io-uring@vger.kernel.org,
@@ -65,9 +65,9 @@ Cc: linux-block@vger.kernel.org,
 	Uday Shankar <ushankar@purestorage.com>,
 	Akilesh Kailash <akailash@google.com>,
 	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V9 2/7] io_uring: rename ubuf of io_mapped_buf as start
-Date: Wed,  6 Nov 2024 20:26:51 +0800
-Message-ID: <20241106122659.730712-3-ming.lei@redhat.com>
+Subject: [PATCH V9 3/7] io_uring: shrink io_mapped_buf
+Date: Wed,  6 Nov 2024 20:26:52 +0800
+Message-ID: <20241106122659.730712-4-ming.lei@redhat.com>
 In-Reply-To: <20241106122659.730712-1-ming.lei@redhat.com>
 References: <20241106122659.730712-1-ming.lei@redhat.com>
 Precedence: bulk
@@ -77,75 +77,63 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-->ubuf of `io_mapped_buf` stores the start address of userspace fixed
-buffer. `io_mapped_buf` will be extended for covering kernel buffer,
-so rename ->ubuf as ->start.
+`struct io_mapped_buf` will be extended to cover kernel buffer which
+may be in fast IO path, and `struct io_mapped_buf` needs to be per-IO.
+
+So shrink sizeof(struct io_mapped_buf) by the following ways:
+
+- folio_shift is < 64, so 6bits are enough to hold it, the remained bits
+  can be used for the coming kernel buffer
+
+- define `acct_pages` as 'unsigned int', which is big enough for
+  accounting pages in the buffer
 
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- io_uring/fdinfo.c | 2 +-
- io_uring/rsrc.c   | 6 +++---
- io_uring/rsrc.h   | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ io_uring/rsrc.c | 2 ++
+ io_uring/rsrc.h | 6 +++---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index 9ca95f877312..9b39cb596136 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -223,7 +223,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
- 		if (ctx->buf_table.nodes[i])
- 			buf = ctx->buf_table.nodes[i]->buf;
- 		if (buf)
--			seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->ubuf, buf->len);
-+			seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->start, buf->len);
- 		else
- 			seq_printf(m, "%5u: <none>\n", i);
- 	}
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 70dba4a4de1d..9b8827c72230 100644
+index 9b8827c72230..16f5abe03d10 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -765,7 +765,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+@@ -685,6 +685,8 @@ static bool io_try_coalesce_buffer(struct page ***pages, int *nr_pages,
+ 		return false;
  
- 	size = iov->iov_len;
- 	/* store original address for later verification */
--	imu->ubuf = (unsigned long) iov->iov_base;
-+	imu->start = (unsigned long) iov->iov_base;
- 	imu->len = iov->iov_len;
- 	imu->nr_bvecs = nr_pages;
- 	imu->folio_shift = PAGE_SHIFT;
-@@ -877,14 +877,14 @@ int io_import_fixed(int ddir, struct iov_iter *iter,
- 	if (unlikely(check_add_overflow(buf_addr, (u64)len, &buf_end)))
- 		return -EFAULT;
- 	/* not inside the mapped region */
--	if (unlikely(buf_addr < imu->ubuf || buf_end > (imu->ubuf + imu->len)))
-+	if (unlikely(buf_addr < imu->start || buf_end > (imu->start + imu->len)))
- 		return -EFAULT;
- 
+ 	data->folio_shift = folio_shift(folio);
++	WARN_ON_ONCE(data->folio_shift >= 64);
++
  	/*
- 	 * Might not be a start of buffer, set size appropriately
- 	 * and advance us to the beginning.
- 	 */
--	offset = buf_addr - imu->ubuf;
-+	offset = buf_addr - imu->start;
- 	iov_iter_bvec(iter, ddir, imu->bvec, imu->nr_bvecs, offset + len);
- 
- 	if (offset) {
+ 	 * Check if pages are contiguous inside a folio, and all folios have
+ 	 * the same page count except for the head and tail.
 diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 9d55f9769c77..887699400e29 100644
+index 887699400e29..255ec94ea172 100644
 --- a/io_uring/rsrc.h
 +++ b/io_uring/rsrc.h
-@@ -27,7 +27,7 @@ struct io_rsrc_node {
- };
- 
- struct io_mapped_buf {
--	u64		ubuf;
-+	u64		start;
+@@ -30,9 +30,9 @@ struct io_mapped_buf {
+ 	u64		start;
  	unsigned int	len;
  	unsigned int	nr_bvecs;
- 	unsigned int    folio_shift;
+-	unsigned int    folio_shift;
+ 	refcount_t	refs;
+-	unsigned long	acct_pages;
++	unsigned int	acct_pages;
++	unsigned int	folio_shift:6;
+ 	struct bio_vec	bvec[] __counted_by(nr_bvecs);
+ };
+ 
+@@ -41,7 +41,7 @@ struct io_imu_folio_data {
+ 	unsigned int	nr_pages_head;
+ 	/* For non-head/tail folios, has to be fully included */
+ 	unsigned int	nr_pages_mid;
+-	unsigned int	folio_shift;
++	unsigned char	folio_shift;
+ };
+ 
+ struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int type);
 -- 
 2.47.0
 

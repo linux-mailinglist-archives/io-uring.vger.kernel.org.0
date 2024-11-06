@@ -1,62 +1,62 @@
-Return-Path: <io-uring+bounces-4485-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4486-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDED9BE8D2
-	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 13:27:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0F59BE8D7
+	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 13:27:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EDAF1C21BA6
-	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 12:27:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BE2A2839FC
+	for <lists+io-uring@lfdr.de>; Wed,  6 Nov 2024 12:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEAD1DFD99;
-	Wed,  6 Nov 2024 12:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E6A1DFD87;
+	Wed,  6 Nov 2024 12:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XPLV+QRP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V7UO3qSK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1331DF98C
-	for <io-uring@vger.kernel.org>; Wed,  6 Nov 2024 12:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDB71DF992
+	for <io-uring@vger.kernel.org>; Wed,  6 Nov 2024 12:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730896065; cv=none; b=i6ZDhKUZX6PWu/PHZbHWAyROf3nRqrfZe90B+3xo+DP52rxOs7MasqnKjwX+dYXzmTnr5PmC5hI3wvGikskYDHhhaS1+dfMBP3Jwki4N42b+gkTkAJeB4WS6ML/XXYOoCpziEGRZzLgEHjtauBokCaxPHsOEFoWA5USJKsfVVak=
+	t=1730896069; cv=none; b=Mx1HRwyudx/Q2dMAjSORoj9cMkytnKPdqs7usUo5GbEmNOLPfSo3d4IPOA9P+xEpFUbEJBYXnvi4SMg0FM53uB9AOTDbbdNvcH8Qq0Xt0p4aDm5fRm9bkYYk9BtJ5jsbyLY+5NQjIomC9mivTboBg5Im6fHa2hqWUbRErlJn3r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730896065; c=relaxed/simple;
-	bh=ef9QRRM73LFQtxlW0meSWrPeRjCZELXcD6HSWOHesh0=;
+	s=arc-20240116; t=1730896069; c=relaxed/simple;
+	bh=urQWHiH77YJTmsEu5hTe87cSmbXxgFCQq640UTcGOSU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GcmZWk03kzfGUPZhglzhzNm8yPaZ039E58gdP+vL5eVIZStNCdHodUN5SgcHUjR4CgHl2HGDu0AKu81Hgqx1qSuiQFeMo/CAH1mQI490BnTkn/CSEyKQAs2TJKrVOV2hU5CpObPslD/xo4Z3uK4Qex7iapqlnkrFVvl+g/zN6YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XPLV+QRP; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=qn+TXSyuYU09oU4juSP1aCBhxvPAYzg4OhqOcFhDgI+6DJWwQpGnTomRzxerm2Y07BdFDzrarTBFWUBAg/5OK7OIZolnyyptv7frkEmlonlQWbNroHbpyjOxAr1eHexxJBLfJMPZF1XOIleNQuemi3seFkm3X+yWKbkaFUAHoBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V7UO3qSK; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730896062;
+	s=mimecast20190719; t=1730896065;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4/rwFt4byI/RP9SWAIWNPx5U2cnvRwoR2eVyqA6RWuE=;
-	b=XPLV+QRPfPx0/Q+6HjQq/zwbS5jEjaYnNXdMRDEbkNtxTU23fbcrL8+UDlAn0mxEoCAmJY
-	wSqHInDPw3IK8+sE6/askUG+pE8Qe+q70Vn37gvwpY64TUpd6LPBsOS6u9hRnAC+cyCx1E
-	Jp54V/JyPDqgSNLe3WC8wXP2/nAMBHs=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+	bh=QXLRaNyikFHPTXnIBW88UenpXV8h2w/e/TjazBJromI=;
+	b=V7UO3qSKqOAyNz/VUZ0POLIQ5yCjKpGfF7Hghh6abe0NRjftw46qxWiWkHzu6nxSB9Yt/o
+	DTC3mFgvjpby4839rMEzR8iSii/XelB+0bagTYvjq3YuiaQp/qcUXKIqG3ivysdlP2GroW
+	e+xquTnmnN7rceLWiaG/P1Luba4xGFw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-319-vxpMDMu-Me2SgOZAagQJTw-1; Wed,
- 06 Nov 2024 07:27:39 -0500
-X-MC-Unique: vxpMDMu-Me2SgOZAagQJTw-1
-X-Mimecast-MFC-AGG-ID: vxpMDMu-Me2SgOZAagQJTw
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-360-nYFpt9SbNHWXNe0I1uJrKg-1; Wed,
+ 06 Nov 2024 07:27:42 -0500
+X-MC-Unique: nYFpt9SbNHWXNe0I1uJrKg-1
+X-Mimecast-MFC-AGG-ID: nYFpt9SbNHWXNe0I1uJrKg
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0EC761955BEE;
-	Wed,  6 Nov 2024 12:27:37 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 32F69195608F;
+	Wed,  6 Nov 2024 12:27:41 +0000 (UTC)
 Received: from localhost (unknown [10.72.116.107])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 139721956088;
-	Wed,  6 Nov 2024 12:27:35 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3EA7319541A6;
+	Wed,  6 Nov 2024 12:27:39 +0000 (UTC)
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	io-uring@vger.kernel.org,
@@ -65,9 +65,9 @@ Cc: linux-block@vger.kernel.org,
 	Uday Shankar <ushankar@purestorage.com>,
 	Akilesh Kailash <akailash@google.com>,
 	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V9 6/7] io_uring/uring_cmd: support leasing device kernel buffer to io_uring
-Date: Wed,  6 Nov 2024 20:26:55 +0800
-Message-ID: <20241106122659.730712-7-ming.lei@redhat.com>
+Subject: [PATCH V9 7/7] ublk: support leasing io buffer to io_uring
+Date: Wed,  6 Nov 2024 20:26:56 +0800
+Message-ID: <20241106122659.730712-8-ming.lei@redhat.com>
 In-Reply-To: <20241106122659.730712-1-ming.lei@redhat.com>
 References: <20241106122659.730712-1-ming.lei@redhat.com>
 Precedence: bulk
@@ -77,82 +77,323 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Add API of io_uring_cmd_lease_kbuf() for driver to lease its kernel
-buffer to io_uring.
+Suopport to lease block IO buffer for userpace to run io_uring operations(FS,
+network IO), then ublk zero copy can be supported.
 
-The leased buffer can only be consumed by io_uring OPs in group wide,
-and the uring_cmd has to be one group leader.
+userspace code:
 
-This way can support generic device zero copy over device buffer in
-userspace:
+	git clone https://github.com/ublk-org/ublksrv.git -b uring_group
 
-- create one sqe group
-- lease one device buffer to io_uring by the group leader of uring_cmd
-- io_uring member OPs consume this kernel buffer by passing IOSQE_IO_DRAIN
-  which isn't used for group member, and mapped to GROUP_BUF.
-- the kernel buffer is returned back after all member OPs are completed
+And both loop and nbd zero copy(io_uring send and send zc) are covered.
+
+Performance improvement is quite obvious in big block size test, such as
+'loop --buffered_io' perf is doubled in 64KB block test("loop/007 vs
+loop/009").
 
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- include/linux/io_uring/cmd.h |  7 +++++++
- io_uring/uring_cmd.c         | 10 ++++++++++
- 2 files changed, 17 insertions(+)
+ drivers/block/ublk_drv.c      | 160 ++++++++++++++++++++++++++++++++--
+ include/uapi/linux/ublk_cmd.h |  11 ++-
+ 2 files changed, 161 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index 578a3fdf5c71..8a6f1db1ca84 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -60,6 +60,8 @@ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
- /* Execute the request from a blocking context */
- void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd);
+diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+index 6ba2c1dd1d87..5803c6418d1e 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -51,6 +51,8 @@
+ /* private ioctl command mirror */
+ #define UBLK_CMD_DEL_DEV_ASYNC	_IOC_NR(UBLK_U_CMD_DEL_DEV_ASYNC)
  
-+int io_uring_cmd_lease_kbuf(struct io_uring_cmd *ioucmd,
-+		const struct io_mapped_buf *grp_kbuf);
- #else
- static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
- 			      struct iov_iter *iter, void *ioucmd)
-@@ -82,6 +84,11 @@ static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
- static inline void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd)
++#define UBLK_IO_PROVIDE_IO_BUF _IOC_NR(UBLK_U_IO_PROVIDE_IO_BUF)
++
+ /* All UBLK_F_* have to be included into UBLK_F_ALL */
+ #define UBLK_F_ALL (UBLK_F_SUPPORT_ZERO_COPY \
+ 		| UBLK_F_URING_CMD_COMP_IN_TASK \
+@@ -71,6 +73,9 @@ struct ublk_rq_data {
+ 	struct llist_node node;
+ 
+ 	struct kref ref;
++
++	bool allocated_bvec;
++	struct io_mapped_buf buf[0];
+ };
+ 
+ struct ublk_uring_cmd_pdu {
+@@ -189,11 +194,15 @@ struct ublk_params_header {
+ 	__u32	types;
+ };
+ 
++static inline struct request *__ublk_check_and_get_req(struct ublk_device *ub,
++		struct ublk_queue *ubq, int tag, size_t offset);
+ static bool ublk_abort_requests(struct ublk_device *ub, struct ublk_queue *ubq);
+ 
+ static inline unsigned int ublk_req_build_flags(struct request *req);
+ static inline struct ublksrv_io_desc *ublk_get_iod(struct ublk_queue *ubq,
+ 						   int tag);
++static void ublk_io_buf_giveback_cb(const struct io_mapped_buf *buf);
++
+ static inline bool ublk_dev_is_user_copy(const struct ublk_device *ub)
  {
+ 	return ub->dev_info.flags & UBLK_F_USER_COPY;
+@@ -588,6 +597,11 @@ static inline bool ublk_need_req_ref(const struct ublk_queue *ubq)
+ 	return ublk_support_user_copy(ubq);
  }
-+static inline int io_uring_cmd_lease_kbuf(struct io_uring_cmd *ioucmd,
-+		const struct io_mapped_buf *grp_kbuf)
+ 
++static inline bool ublk_support_zc(const struct ublk_queue *ubq)
 +{
-+	return -EOPNOTSUPP;
++	return ubq->flags & UBLK_F_SUPPORT_ZERO_COPY;
 +}
- #endif
++
+ static inline void ublk_init_req_ref(const struct ublk_queue *ubq,
+ 		struct request *req)
+ {
+@@ -851,6 +865,72 @@ static size_t ublk_copy_user_pages(const struct request *req,
+ 	return done;
+ }
+ 
++/*
++ * The built command buffer is immutable, so it is fine to feed it to
++ * concurrent io_uring provide buf commands
++ */
++static int ublk_init_zero_copy_buffer(struct request *req)
++{
++	struct ublk_rq_data *data = blk_mq_rq_to_pdu(req);
++	struct io_mapped_buf *imu = data->buf;
++	struct req_iterator rq_iter;
++	unsigned int nr_bvecs = 0;
++	struct bio_vec *bvec;
++	unsigned int offset;
++	struct bio_vec bv;
++
++	if (!ublk_rq_has_data(req))
++		goto exit;
++
++	rq_for_each_bvec(bv, req, rq_iter)
++		nr_bvecs++;
++
++	if (!nr_bvecs)
++		goto exit;
++
++	if (req->bio != req->biotail) {
++		int idx = 0;
++
++		bvec = kvmalloc_array(nr_bvecs, sizeof(struct bio_vec),
++				GFP_NOIO);
++		if (!bvec)
++			return -ENOMEM;
++
++		offset = 0;
++		rq_for_each_bvec(bv, req, rq_iter)
++			bvec[idx++] = bv;
++		data->allocated_bvec = true;
++	} else {
++		struct bio *bio = req->bio;
++
++		offset = bio->bi_iter.bi_bvec_done;
++		bvec = __bvec_iter_bvec(bio->bi_io_vec, bio->bi_iter);
++	}
++	imu->kbuf = 1;
++	imu->pbvec = bvec;
++	imu->nr_bvecs = nr_bvecs;
++	imu->offset = offset;
++	imu->len = blk_rq_bytes(req);
++	imu->dir = req_op(req) == REQ_OP_READ ? ITER_DEST : ITER_SOURCE;
++	imu->kbuf_ack = ublk_io_buf_giveback_cb;
++
++	return 0;
++exit:
++	imu->pbvec = NULL;
++	return 0;
++}
++
++static void ublk_deinit_zero_copy_buffer(struct request *req)
++{
++	struct ublk_rq_data *data = blk_mq_rq_to_pdu(req);
++	struct io_mapped_buf *imu = data->buf;
++
++	if (data->allocated_bvec) {
++		kvfree(imu->pbvec);
++		data->allocated_bvec = false;
++	}
++}
++
+ static inline bool ublk_need_map_req(const struct request *req)
+ {
+ 	return ublk_rq_has_data(req) && req_op(req) == REQ_OP_WRITE;
+@@ -862,13 +942,25 @@ static inline bool ublk_need_unmap_req(const struct request *req)
+ 	       (req_op(req) == REQ_OP_READ || req_op(req) == REQ_OP_DRV_IN);
+ }
+ 
+-static int ublk_map_io(const struct ublk_queue *ubq, const struct request *req,
++static int ublk_map_io(const struct ublk_queue *ubq, struct request *req,
+ 		struct ublk_io *io)
+ {
+ 	const unsigned int rq_bytes = blk_rq_bytes(req);
+ 
+-	if (ublk_support_user_copy(ubq))
++	if (ublk_support_user_copy(ubq)) {
++		if (ublk_support_zc(ubq)) {
++			int ret = ublk_init_zero_copy_buffer(req);
++
++			/*
++			 * The only failure is -ENOMEM for allocating providing
++			 * buffer command, return zero so that we can requeue
++			 * this req.
++			 */
++			if (unlikely(ret))
++				return 0;
++		}
+ 		return rq_bytes;
++	}
+ 
+ 	/*
+ 	 * no zero copy, we delay copy WRITE request data into ublksrv
+@@ -886,13 +978,16 @@ static int ublk_map_io(const struct ublk_queue *ubq, const struct request *req,
+ }
+ 
+ static int ublk_unmap_io(const struct ublk_queue *ubq,
+-		const struct request *req,
++		struct request *req,
+ 		struct ublk_io *io)
+ {
+ 	const unsigned int rq_bytes = blk_rq_bytes(req);
+ 
+-	if (ublk_support_user_copy(ubq))
++	if (ublk_support_user_copy(ubq)) {
++		if (ublk_support_zc(ubq))
++			ublk_deinit_zero_copy_buffer(req);
+ 		return rq_bytes;
++	}
+ 
+ 	if (ublk_need_unmap_req(req)) {
+ 		struct iov_iter iter;
+@@ -1038,6 +1133,7 @@ static inline void __ublk_complete_rq(struct request *req)
+ 
+ 	return;
+ exit:
++	ublk_deinit_zero_copy_buffer(req);
+ 	blk_mq_end_request(req, res);
+ }
+ 
+@@ -1680,6 +1776,45 @@ static inline void ublk_prep_cancel(struct io_uring_cmd *cmd,
+ 	io_uring_cmd_mark_cancelable(cmd, issue_flags);
+ }
+ 
++static void ublk_io_buf_giveback_cb(const struct io_mapped_buf *buf)
++{
++	struct ublk_rq_data *data = container_of(buf, struct ublk_rq_data, buf[0]);
++	struct request *req = blk_mq_rq_from_pdu(data);
++	struct ublk_queue *ubq = req->mq_hctx->driver_data;
++
++	ublk_put_req_ref(ubq, req);
++}
++
++static int ublk_provide_io_buf(struct io_uring_cmd *cmd,
++		struct ublk_queue *ubq, int tag)
++{
++	struct ublk_device *ub = cmd->file->private_data;
++	struct ublk_rq_data *data;
++	struct request *req;
++
++	if (!ub)
++		return -EPERM;
++
++	req = __ublk_check_and_get_req(ub, ubq, tag, 0);
++	if (!req)
++		return -EINVAL;
++
++	pr_devel("%s: qid %d tag %u request bytes %u\n",
++			__func__, tag, ubq->q_id, blk_rq_bytes(req));
++
++	data = blk_mq_rq_to_pdu(req);
++
++	/*
++	 * io_uring guarantees that the callback will be called after
++	 * the provided buffer is consumed, and it is automatic removal
++	 * before this uring command is freed.
++	 *
++	 * This request won't be completed unless the callback is called,
++	 * so ublk module won't be unloaded too.
++	 */
++	return io_uring_cmd_lease_kbuf(cmd, data->buf);
++}
++
+ static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
+ 			       unsigned int issue_flags,
+ 			       const struct ublksrv_io_cmd *ub_cmd)
+@@ -1731,6 +1866,10 @@ static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
+ 
+ 	ret = -EINVAL;
+ 	switch (_IOC_NR(cmd_op)) {
++	case UBLK_IO_PROVIDE_IO_BUF:
++		if (unlikely(!ublk_support_zc(ubq)))
++			goto out;
++		return ublk_provide_io_buf(cmd, ubq, tag);
+ 	case UBLK_IO_FETCH_REQ:
+ 		/* UBLK_IO_FETCH_REQ is only allowed before queue is setup */
+ 		if (ublk_queue_ready(ubq)) {
+@@ -2149,11 +2288,14 @@ static void ublk_align_max_io_size(struct ublk_device *ub)
+ 
+ static int ublk_add_tag_set(struct ublk_device *ub)
+ {
++	int zc = !!(ub->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY);
++	struct ublk_rq_data *data;
++
+ 	ub->tag_set.ops = &ublk_mq_ops;
+ 	ub->tag_set.nr_hw_queues = ub->dev_info.nr_hw_queues;
+ 	ub->tag_set.queue_depth = ub->dev_info.queue_depth;
+ 	ub->tag_set.numa_node = NUMA_NO_NODE;
+-	ub->tag_set.cmd_size = sizeof(struct ublk_rq_data);
++	ub->tag_set.cmd_size = struct_size(data, buf, zc);
+ 	ub->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
+ 	ub->tag_set.driver_data = ub;
+ 	return blk_mq_alloc_tag_set(&ub->tag_set);
+@@ -2458,8 +2600,12 @@ static int ublk_ctrl_add_dev(struct io_uring_cmd *cmd)
+ 		goto out_free_dev_number;
+ 	}
+ 
+-	/* We are not ready to support zero copy */
+-	ub->dev_info.flags &= ~UBLK_F_SUPPORT_ZERO_COPY;
++	/* zero copy depends on user copy */
++	if ((ub->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY) &&
++			!ublk_dev_is_user_copy(ub)) {
++		ret = -EINVAL;
++		goto out_free_dev_number;
++	}
+ 
+ 	ub->dev_info.nr_hw_queues = min_t(unsigned int,
+ 			ub->dev_info.nr_hw_queues, nr_cpu_ids);
+diff --git a/include/uapi/linux/ublk_cmd.h b/include/uapi/linux/ublk_cmd.h
+index 12873639ea96..04d73b349709 100644
+--- a/include/uapi/linux/ublk_cmd.h
++++ b/include/uapi/linux/ublk_cmd.h
+@@ -94,6 +94,8 @@
+ 	_IOWR('u', UBLK_IO_COMMIT_AND_FETCH_REQ, struct ublksrv_io_cmd)
+ #define	UBLK_U_IO_NEED_GET_DATA		\
+ 	_IOWR('u', UBLK_IO_NEED_GET_DATA, struct ublksrv_io_cmd)
++#define	UBLK_U_IO_PROVIDE_IO_BUF	\
++	_IOWR('u', 0x23, struct ublksrv_io_cmd)
+ 
+ /* only ABORT means that no re-fetch */
+ #define UBLK_IO_RES_OK			0
+@@ -127,9 +129,12 @@
+ #define UBLKSRV_IO_BUF_TOTAL_SIZE	(1ULL << UBLKSRV_IO_BUF_TOTAL_BITS)
  
  /*
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 40b8b777ba12..5d59183212f6 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -15,6 +15,7 @@
- #include "alloc_cache.h"
- #include "rsrc.h"
- #include "uring_cmd.h"
-+#include "kbuf.h"
+- * zero copy requires 4k block size, and can remap ublk driver's io
+- * request into ublksrv's vm space
+- */
++ * io_uring provide kbuf command based zero copy
++ *
++ * Not available for UBLK_F_UNPRIVILEGED_DEV, because we rely on ublk
++ * server to fill up request buffer for READ IO, and ublk server can't
++ * be trusted in case of UBLK_F_UNPRIVILEGED_DEV.
++*/
+ #define UBLK_F_SUPPORT_ZERO_COPY	(1ULL << 0)
  
- static struct uring_cache *io_uring_async_get(struct io_kiocb *req)
- {
-@@ -175,6 +176,15 @@ void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret, ssize_t res2,
- }
- EXPORT_SYMBOL_GPL(io_uring_cmd_done);
- 
-+int io_uring_cmd_lease_kbuf(struct io_uring_cmd *ioucmd,
-+			    const struct io_mapped_buf *grp_kbuf)
-+{
-+	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
-+
-+	return io_lease_group_kbuf(req, grp_kbuf);
-+}
-+EXPORT_SYMBOL_GPL(io_uring_cmd_lease_kbuf);
-+
- static int io_uring_cmd_prep_setup(struct io_kiocb *req,
- 				   const struct io_uring_sqe *sqe)
- {
+ /*
 -- 
 2.47.0
 

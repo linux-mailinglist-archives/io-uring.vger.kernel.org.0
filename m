@@ -1,130 +1,160 @@
-Return-Path: <io-uring+bounces-4548-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4557-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3F79C0CDA
-	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 18:30:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634029C0DBE
+	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 19:28:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2A91C22894
-	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 17:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15F6E1F22D76
+	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 18:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BAE1917E7;
-	Thu,  7 Nov 2024 17:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9372170B1;
+	Thu,  7 Nov 2024 18:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHLjb9st"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zx73TQEF"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA61190049;
-	Thu,  7 Nov 2024 17:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2296216A15;
+	Thu,  7 Nov 2024 18:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731000640; cv=none; b=IQZylMA58+CxjN6GB3rCpyw7sl29RJ+PIbzXQoAFxhpVFduBoIKZIIEwbtBlK2QPXYRTptdbXPUStKzcRxq31eLPy9uwxAHPNUf/xqqVn4m+tC4l/dy744Ij0UunNygbmYH6AHkPOyi4z9Bg9K8cdCVmRTlXU/nnMUpctZSkTjk=
+	t=1731004114; cv=none; b=UGNDL68mmyNRsW+ahPqPMdxqaSAlHvwHAPemMRwOBrMYnpsl5keLT6OsxE7Hk+S80ThepGb+kcdYOIblYqqn33rn6O01TDU4SzfzqLbFr2CVrenw8fH7DnH3LkNOk6mvqssRFZ6N4e34TDzgomnO4kHw4D2VEUpTsfwU+IRWl0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731000640; c=relaxed/simple;
-	bh=Kic2XLGRurlrGactitQeZzSqbNEAU2q2DiXEUxxAYj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SuN5LQLImGWmJzbq1kdYYUZ3QzxToLUC3p5dLX3wVrOPPrVi5+u3nZ6QShtR3sPb2pMYOsKwXqDZsVnr476rs8Y74SFNctQdgrsAs3kz5+PEpJOcGGeAFvC4hgNQ2+Bh2J7OkZsJE79kbpHmkrG1IKlJpSr0Y6woe2RxMUyBzTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHLjb9st; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cacb76e924so1841140a12.0;
-        Thu, 07 Nov 2024 09:30:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731000637; x=1731605437; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lCnx04qdk6zMZ0LIRHX3e1wxnrAQ1/h0DrPbQAd66Xs=;
-        b=KHLjb9stO5rXZeQB8rSS6cOZ+oKE2iI0ZEde+2OtIwUT5jXXN7q7DBht0YfEl4gXNt
-         iCjRNupoM+ynr124e/FeZ2E15eqiscIbUdZnrF+Y12aBIIvvh8w0j/DnBCXP2MuBlphu
-         d241jO6yvFgMaWJYPvfOzMqxmxyr4ODK9Bk4WESLHzXwyjW1i8CM2gil501C+7jiExLa
-         amJE/0kfiBoNm+iHBE50oeJx1BZGaitQfEljjcWF0B5y6wLwbJ3OIsxIw4P4VH8y3HfR
-         RVmHZkf3Ps4B0WrRl5d6xzahPZyvazqGESE1MlEfehc9Z9vaOJ4Bkf51TF0aC57f3YiN
-         zoYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731000637; x=1731605437;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lCnx04qdk6zMZ0LIRHX3e1wxnrAQ1/h0DrPbQAd66Xs=;
-        b=AEtRYiOK1cvwoGpWpkrM4bUOu73yIug9mvweIjFAR1ErGQsCbM3C9g6U07T8LL9tmm
-         GHanIVYxnsWsUUCIgKCH87v87WCJuCUkSqBPiSJX1uhEBxVuIgb513xRpy+6MwNC02aF
-         bdPGGhmfqkPaXJwvYasIDpqv7iOgfOS0LBguxONgtqGOakHWla94o1oh6ttK9iQdRsbF
-         92LgDuvjh/6sn0vq8GXGsihq8QF39DoYlC1HMyhPJ8AxldE02qJUyjcFL5VFtnGnhKbL
-         yLNOCqmJX2jEr+J/xjtkWMz0wUocubZgz6YVCF/7lWYoUJRSyf4oIFXy0+OBIyF2oAcz
-         ha0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUtLnulpnFzeR8O2JJ+O6JQbvBBZtEnzaQs5o9ouWntGzlKSCE3qkf5snZg9v8i1vQkyhiLS9AgOU4hFnM=@vger.kernel.org, AJvYcCVK4WuEV3qCFFDx8c7xKEFurSZA7f7oiW+gCnsUm+gcErdQC8cs275Fgf0nZAtJySq/gggPEki1sS4npQ==@vger.kernel.org, AJvYcCWjJgfw4l6XUPcyoIaRhMol1IlJ7dSMvU51cBJGodrD3adO+UGvn4qLdFLUQPFgbQHLExREdq5BsQ==@vger.kernel.org, AJvYcCWkpYTVOXp/cV183izgyKwcfxp6ewmA4uTkD967WM4xZqlcikGCfTDVmSxcmppRDYwb1mKp/n8FAMqDPRzOng==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDC6bqWgJru9AbgTxwUMv737vQ1P71YnacgBeFgpyXNGITjl50
-	PdUn2k7FCd2Pe5PtvswWMlHGcjRNLLXpHURIQ/NQqu2E+FnvfHqK
-X-Google-Smtp-Source: AGHT+IESnbWGzA/22VokA2ZRCeQrgxKGn28bGagAmMqOxAFoTUKzdME8cEC2XEg/ojV+oORHekXoPw==
-X-Received: by 2002:a17:907:1c05:b0:a9a:19c8:740c with SMTP id a640c23a62f3a-a9e6587e0bbmr2393468966b.47.1731000636974;
-        Thu, 07 Nov 2024 09:30:36 -0800 (PST)
-Received: from [192.168.42.191] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc56fcsm124607466b.125.2024.11.07.09.30.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 09:30:36 -0800 (PST)
-Message-ID: <7995ffbd-7ec0-4f99-86a2-011bc3375228@gmail.com>
-Date: Thu, 7 Nov 2024 17:30:36 +0000
+	s=arc-20240116; t=1731004114; c=relaxed/simple;
+	bh=+Wo6r82THbUjNXMk4MeQeta3Cu/1ECzHE0kWbvDojkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7bGvil6enXac/5gff9t0qvx+qcKtAAsuUvxybGn/6+c6URzD9GlBjhbU1yZgh5f9Tdc/+ItD6/h621vbAQ7YNWuweWp6ve/d6sy/NeccsNHzArOn7LfWb77pBLnjHNPu2ryQ/C+mD5xHNj6B9GliT2xNEiXnx7zEB5HnZlhDQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zx73TQEF; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731004112; x=1762540112;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+Wo6r82THbUjNXMk4MeQeta3Cu/1ECzHE0kWbvDojkQ=;
+  b=Zx73TQEF16YHYX2GUNQI+E4egK3tFzSpXEgO6wma4wYC/9bod4jPV7AK
+   V/+eDkGaCxfdsa0cASC+xkkNNfSzl9FFlm7LZk5/MKIYhRAifGADtRID9
+   s49Fqwq7Ux0vuQc9WlYLrj6IrgbKfgogsQWo44qyXJRkVeVIzoH6/r+xT
+   GtyBVAd7n4EJJOoXnzmuSAekmRi0fyzJfeZyKNf2OdoY56ehaI3dktYKJ
+   D/5a7847ECiwLp1bzoGortKjHMoXEmPSPDFvZCJf4544oidPV2+QlNrhH
+   Amgk/5/GdaKU8mS0WB94IJ/CrcjkasyIJshE3f+XO+Bz+8XkPpHme533z
+   g==;
+X-CSE-ConnectionGUID: tlONnJXGTzyoVTGB2g19vQ==
+X-CSE-MsgGUID: olUyjysCSTKeX58uz4Tycw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="48380865"
+X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
+   d="scan'208";a="48380865"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 10:28:31 -0800
+X-CSE-ConnectionGUID: zurYR6BgQBuTRkxzKAxxFg==
+X-CSE-MsgGUID: jgQgNA92TbqFNgqvtzw1+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
+   d="scan'208";a="85984316"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 07 Nov 2024 10:28:29 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t97F3-000qZq-3B;
+	Thu, 07 Nov 2024 18:28:25 +0000
+Date: Fri, 8 Nov 2024 02:27:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-block@vger.kernel.org,
+	Uday Shankar <ushankar@purestorage.com>,
+	Akilesh Kailash <akailash@google.com>,
+	Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH V10 11/12] io_uring/uring_cmd: support leasing device
+ kernel buffer to io_uring
+Message-ID: <202411080218.NHuzJ77W-lkp@intel.com>
+References: <20241107110149.890530-12-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/10] io_uring/rw: add support to send metadata along
- with read/write
-To: Keith Busch <kbusch@kernel.org>, Anuj Gupta <anuj20.g@samsung.com>
-Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
- anuj1072538@gmail.com, brauner@kernel.org, jack@suse.cz,
- viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
- gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
- linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
-References: <20241029162402.21400-1-anuj20.g@samsung.com>
- <CGME20241029163225epcas5p24ec51c7a9b6b115757ed99cadcc3690c@epcas5p2.samsung.com>
- <20241029162402.21400-7-anuj20.g@samsung.com>
- <ZyFuxfiRqH8YB-46@kbusch-mbp.dhcp.thefacebook.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <ZyFuxfiRqH8YB-46@kbusch-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107110149.890530-12-ming.lei@redhat.com>
 
-On 10/29/24 23:24, Keith Busch wrote:
-> On Tue, Oct 29, 2024 at 09:53:58PM +0530, Anuj Gupta wrote:
->> This patch adds the capability of sending metadata along with read/write.
->> A new meta_type field is introduced in SQE which indicates the type of
->> metadata being passed. This meta is represented by a newly introduced
->> 'struct io_uring_meta_pi' which specifies information such as flags,buffer
->> length,seed and apptag. Application sets up a SQE128 ring, prepares
->> io_uring_meta_pi within the second SQE.
->> The patch processes the user-passed information to prepare uio_meta
->> descriptor and passes it down using kiocb->private.
->>
->> Meta exchange is supported only for direct IO.
->> Also vectored read/write operations with meta are not supported
->> currently.
-> 
-> It looks like it is reasonable to add support for fixed buffers too.
-> There would be implications for subsequent patches, mostly patch 10, but
-> it looks like we can do that.
-> 
-> Anyway, this patch mostly looks okay to me. I don't know about the whole
-> "meta_type" thing. My understanding from Pavel was wanting a way to
-> chain command specific extra options. For example, userspace metadata
-> and write hints, and this doesn't look like it can be extended to do
-> that.
+Hi Ming,
 
-It makes sense to implement write hints as a meta/attribute type,
-but depends on whether it's supposed to be widely supported by
-different file types vs it being a block specific feature, and if
-SQEs have space for it.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on axboe-block/for-next]
+[also build test ERROR on next-20241107]
+[cannot apply to linus/master v6.12-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ming-Lei/io_uring-rsrc-pass-struct-io_ring_ctx-reference-to-rsrc-helpers/20241107-190456
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/20241107110149.890530-12-ming.lei%40redhat.com
+patch subject: [PATCH V10 11/12] io_uring/uring_cmd: support leasing device kernel buffer to io_uring
+config: arc-randconfig-001-20241108 (https://download.01.org/0day-ci/archive/20241108/202411080218.NHuzJ77W-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241108/202411080218.NHuzJ77W-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411080218.NHuzJ77W-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from block/fops.c:20:
+>> include/linux/io_uring/cmd.h:89:1: error: expected identifier or '(' before '{' token
+      89 | {
+         | ^
+>> include/linux/io_uring/cmd.h:87:19: warning: 'io_uring_cmd_lease_kbuf' declared 'static' but never defined [-Wunused-function]
+      87 | static inline int io_uring_cmd_lease_kbuf(struct io_uring_cmd *ioucmd,
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +89 include/linux/io_uring/cmd.h
+
+    62	
+    63	int io_uring_cmd_lease_kbuf(struct io_uring_cmd *ioucmd,
+    64				    struct io_rsrc_node *node);
+    65	#else
+    66	static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
+    67				      struct iov_iter *iter, void *ioucmd)
+    68	{
+    69		return -EOPNOTSUPP;
+    70	}
+    71	static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
+    72			ssize_t ret2, unsigned issue_flags)
+    73	{
+    74	}
+    75	static inline void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+    76				    void (*task_work_cb)(struct io_uring_cmd *, unsigned),
+    77				    unsigned flags)
+    78	{
+    79	}
+    80	static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
+    81			unsigned int issue_flags)
+    82	{
+    83	}
+    84	static inline void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd)
+    85	{
+    86	}
+  > 87	static inline int io_uring_cmd_lease_kbuf(struct io_uring_cmd *ioucmd,
+    88						  struct io_rsrc_node *node);
+  > 89	{
+    90		return -EOPNOTSUPP;
+    91	}
+    92	#endif
+    93	
 
 -- 
-Pavel Begunkov
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 

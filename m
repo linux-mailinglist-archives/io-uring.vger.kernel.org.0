@@ -1,143 +1,133 @@
-Return-Path: <io-uring+bounces-4515-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4516-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D199BFB56
-	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 02:23:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B4A9BFC69
+	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 03:12:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F144D1F21690
-	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 01:23:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D51C281FBF
+	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 02:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3027FD;
-	Thu,  7 Nov 2024 01:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBE5194A40;
+	Thu,  7 Nov 2024 02:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bxoWftDF"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="o37u+N6W"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B265C2C6
-	for <io-uring@vger.kernel.org>; Thu,  7 Nov 2024 01:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219E9101F2
+	for <io-uring@vger.kernel.org>; Thu,  7 Nov 2024 02:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730942594; cv=none; b=pHqHOthZn/6g/MJhDtXFVHLNT6NjAVw2rtMs6Tc5nwxGw0N8gF1JRaVzJkSWl5reeom3cBItoJQKBnDx75hpsUxfPwGEGmVXnSzCgWDJO/BpkYLaJNZx5TknjsCO9dm2qwljgUCUD+ukXWg1LBA+L1SYTKg9OSkQx4S3uUmt7AY=
+	t=1730945399; cv=none; b=HUYDnFq0FL6FNfLXEi5SJGlSWwqERh6WQ1/HobyHHc7bdVNgE8NWPEdp6cgMbcKRJ/AJ6JP0354GyHGZTzgotbIJQgEWe8yUXkCNMVrTIugnAK3gpxfvQq0kZQlrwlGvGiC0eMOTvb7Iocf9r2RSMPr498OlrRG0J/jo6UEZcFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730942594; c=relaxed/simple;
-	bh=lO8jMmeciwyw3nKZRm4PImIztzFClbfNd6hS49UkEfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgwcM9XXrFpOjvKoyNDGmXkTlkmcFdSPblxqt1oii/zLVmOMvOjz/diC7uOwLpkdnEYycndhaBxrZC3ZIVncuunhzeZ9w/OsW26ovKjb3ZJSJd9QDgy/0MEluz2lDc4KgFI8ddQ2NZt7D4Vt40LND0mVm3Ja+HPQbIlXGFizvOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bxoWftDF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730942590;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+GrivlArMJW6RGuGOgaXa80GXlOmJ0sRIUvVkMBG7pc=;
-	b=bxoWftDFSNPrtzleqUG2Nm0WX1xut1ieZLxJUSyzwv4UEDA6VzslHAp0Y51CSFqkvQxM2w
-	/jSmvhKH3le1AjVLap6NncvMH00uJhKftFvIgZ+l7IsSXdfJgJ3M0tf1cCuPChJ4n2m9NX
-	2qiMJOOlm4+xAgjtTPlL2vQRoegsOVE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-107-0wjN3JwzP56B0J-9M4CHBQ-1; Wed,
- 06 Nov 2024 20:23:05 -0500
-X-MC-Unique: 0wjN3JwzP56B0J-9M4CHBQ-1
-X-Mimecast-MFC-AGG-ID: 0wjN3JwzP56B0J-9M4CHBQ
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 05950195604F;
-	Thu,  7 Nov 2024 01:23:04 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.47])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2655519560AA;
-	Thu,  7 Nov 2024 01:22:58 +0000 (UTC)
-Date: Thu, 7 Nov 2024 09:22:53 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-	linux-block@vger.kernel.org,
-	Uday Shankar <ushankar@purestorage.com>,
-	Akilesh Kailash <akailash@google.com>
-Subject: Re: [PATCH V9 4/7] io_uring: reuse io_mapped_buf for kernel buffer
-Message-ID: <ZywWbb_RmuA9hp3Z@fedora>
-References: <20241106122659.730712-1-ming.lei@redhat.com>
- <20241106122659.730712-5-ming.lei@redhat.com>
- <e27c7b11-4fa0-4c51-a596-67c0773a657a@kernel.dk>
+	s=arc-20240116; t=1730945399; c=relaxed/simple;
+	bh=U9UwNAev20LVjIzoelIDNy9digyaRx9q0qybyVFRXUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=slF782oIJzS/fJMFEpvqwwF1wqAANADknRvLvaXnutI/npEeMWlX9T2xYBbNyKs9O/9V6uKJzcGQx/GsY3s3Q/yUwQrAIexYOw8xx2vSxpxTCqgzAn6bibPWz+Hq0cd8D4z3XiebD9BpiczjzRaDMY6j3wA+zRvsgGq8Qggo2Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=o37u+N6W; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so306115b3a.1
+        for <io-uring@vger.kernel.org>; Wed, 06 Nov 2024 18:09:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730945395; x=1731550195; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M5VEXH/UjVZxKSBS42OsN1z+40kpn9n52otycPhBNjg=;
+        b=o37u+N6W5u5b2gtR/PZami0YGkuUQpsCQQQEwzHS9f3Axo8vf06/YD7OxwHceCDcni
+         GgUsy1fNvkpaQ5+7HkNf3OqCq8s7KjrvfGh56TLOVTGqyE3SaMrT5tqhCm5ZK4BrekFX
+         el08KYfIIqcbYQpO2RCRXxj9CImDomBNJGsYFmPN4OexxtmDCf4YYQlYAtBWGlraC+TX
+         erQxB8PN6CjVZhmoIpI7pZetZDkqnZr94yF2VIB4CVOqHnvIZamELJG950Rv9C2pmf0a
+         GxOh6J65yKCwRohGmy+SJWTFG7/63TIfZUcnzJUT1ihbvl3zq3ajUPqAjGXiAQo4AGNp
+         f/dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730945395; x=1731550195;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M5VEXH/UjVZxKSBS42OsN1z+40kpn9n52otycPhBNjg=;
+        b=CQzC7Wvc7UiH0lOXnerVaKCbbK0XYT7EvrwPXM2ayRZS5I1HgDoV8pxwKgNpPSFL/p
+         qIh9YIbEmAodJuGzL0VFEzxpGg0fLrspL8Mx+7jWjbV9ByarAHZ2GQg61qQ+9IjoR1Ih
+         mN07KCg06WTQ2DuNfesl6hFbFHoq8aEcwtg9Uwpn5I6jtJqQnedr8HYGF0aPnASg9G/I
+         o+ey0uIVmrBxnkMUkrejDJufIGCrakItoZqGm5kVZEEygAJdF3xfBrIbM6OXyJgEW3p9
+         0XkXVXacKsOHP4728I7B7aCjsKRYT+9i2jZhu/+LgEyMR55msCIlSHh20yUJWclqbYYB
+         wNMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkhPm2chOuL7xyYrDMP9idjJTVEN1P008rMdWEhpmt4tQUR7u1SJdHzFisMxZdyAYX2bh+2amX6w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfHqdq2YcdL1ChHeXY/sDaSd0+FoSk3lC/1/olFEvqKPjudL+t
+	z7f+h4Jk9N7ZYET4sxzt0V2NqpnpRl3Ht/hWtyb8+82rgB3rfsL4tOsjVC+lIRU=
+X-Google-Smtp-Source: AGHT+IE4FdVcCFM7JfMcQ3SKmd1UC6mzCGq6q6jfwTYIDNNfVDV6mTuEsMVwx/N+IlnX034mAbpOSg==
+X-Received: by 2002:a05:6a00:170d:b0:71e:1314:899a with SMTP id d2e1a72fcca58-720c998d8b9mr30360940b3a.20.1730945395467;
+        Wed, 06 Nov 2024 18:09:55 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a50512sm256626b3a.173.2024.11.06.18.09.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 18:09:54 -0800 (PST)
+Message-ID: <e757bfa0-0c21-41d6-a072-ce85f4ea8a04@kernel.dk>
+Date: Wed, 6 Nov 2024 19:09:53 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e27c7b11-4fa0-4c51-a596-67c0773a657a@kernel.dk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv10 6/9] io_uring: enable per-io hinting capability
+To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+ io-uring@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, joshi.k@samsung.com,
+ javier.gonz@samsung.com, bvanassche@acm.org,
+ Nitesh Shetty <nj.shetty@samsung.com>, Keith Busch <kbusch@kernel.org>
+References: <20241029151922.459139-1-kbusch@meta.com>
+ <20241029151922.459139-7-kbusch@meta.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241029151922.459139-7-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 06, 2024 at 08:15:13AM -0700, Jens Axboe wrote:
-> On 11/6/24 5:26 AM, Ming Lei wrote:
-> > Prepare for supporting kernel buffer in case of io group, in which group
-> > leader leases kernel buffer to io_uring, and consumed by io_uring OPs.
-> > 
-> > So reuse io_mapped_buf for group kernel buffer, and unfortunately
-> > io_import_fixed() can't be reused since userspace fixed buffer is
-> > virt-contiguous, but it isn't true for kernel buffer.
-> > 
-> > Also kernel buffer lifetime is bound with group leader request, it isn't
-> > necessary to use rsrc_node for tracking its lifetime, especially it needs
-> > extra allocation of rsrc_node for each IO.
-> 
-> While it isn't strictly necessary, I do think it'd clean up the io_kiocb
-> parts and hopefully unify the assign and put path more. So I'd strongly
-> suggest you do use an io_rsrc_node, even if it does just map the
-> io_mapped_buf for this.
+On 10/29/24 9:19 AM, Keith Busch wrote:
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 0247452837830..6e1985d3b306c 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -92,6 +92,10 @@ struct io_uring_sqe {
+>  			__u16	addr_len;
+>  			__u16	__pad3[1];
+>  		};
+> +		struct {
+> +			__u16	write_hint;
+> +			__u16	__pad4[1];
+> +		};
 
-Can you share your idea about how to unify buffer? I am also interested
-in this area, so I may take it into account in this patch.
+Might make more sense to have this overlap further down, with the
+passthrough command. That'd put it solidly out of anything that isn't
+passthrough or needs addr3.
 
-Will you plan to use io_rsrc_node for all buffer type(include buffer
-select)?
+> diff --git a/io_uring/rw.c b/io_uring/rw.c
+> index 7ce1cbc048faf..b5dea58356d93 100644
+> --- a/io_uring/rw.c
+> +++ b/io_uring/rw.c
+> @@ -279,7 +279,8 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+>  		rw->kiocb.ki_ioprio = get_current_ioprio();
+>  	}
+>  	rw->kiocb.dio_complete = NULL;
+> -
+> +	if (ddir == ITER_SOURCE)
+> +		rw->kiocb.ki_write_hint = READ_ONCE(sqe->write_hint);
+>  	rw->addr = READ_ONCE(sqe->addr);
+>  	rw->len = READ_ONCE(sqe->len);
+>  	rw->flags = READ_ONCE(sqe->rw_flags);
 
-> 
-> > +struct io_mapped_buf {
-> > +	u64		start;
-> > +	unsigned int	len;
-> > +	unsigned int	nr_bvecs;
-> > +
-> > +	/* kbuf hasn't refs and accounting, its lifetime is bound with req */
-> > +	union {
-> > +		struct {
-> > +			refcount_t	refs;
-> > +			unsigned int	acct_pages;
-> > +		};
-> > +		/* pbvec is only for kbuf */
-> > +		const struct bio_vec	*pbvec;
-> > +	};
-> > +	unsigned int	folio_shift:6;
-> > +	unsigned int	dir:1;		/* ITER_DEST or ITER_SOURCE */
-> > +	unsigned int	kbuf:1;		/* kernel buffer or not */
-> > +	/* offset in the 1st bvec, for kbuf only */
-> > +	unsigned int	offset;
-> > +	struct bio_vec	bvec[] __counted_by(nr_bvecs);
-> > +};
-> 
-> And then I'd get rid of this union, and have it follow the normal rules
-> for an io_mapped_buf in that the refs are valid. Yes it'll take 8b more,
-> but honestly I think unifying these bits and keeping it consistent is a
-> LOT more important than saving a bit of space.
-> 
-> This is imho the last piece missing to make this conform more nicely
-> with how resource nodes are generally handled and used.
+Can't we just read it unconditionally? I know it's a write hint, hence
+why checking for ITER_SOURCE, but if we can just set it regardless, then
+we don't need to branch around that.
 
-OK.
-
-
-thanks,
-Ming
-
+-- 
+Jens Axboe
 

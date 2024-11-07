@@ -1,202 +1,271 @@
-Return-Path: <io-uring+bounces-4542-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4547-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331799C0C82
-	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 18:10:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3228A9C0CCD
+	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 18:23:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8FBF1F22BE5
-	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 17:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FB9D1C22600
+	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 17:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB626217446;
-	Thu,  7 Nov 2024 17:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690E52161FA;
+	Thu,  7 Nov 2024 17:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="KSUctOe9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zykuer6S"
 X-Original-To: io-uring@vger.kernel.org
-Received: from outbound-ip168b.ess.barracuda.com (outbound-ip168b.ess.barracuda.com [209.222.82.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522BE216A15;
-	Thu,  7 Nov 2024 17:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730999083; cv=fail; b=qdpR8qg9lrwOrQ/H9851I/BPaHquMq55e02ksgGyZTpurHLgqNA7UuyZXuUrq8muFL7hw1FgfVKeGTwOKcoSl6DLd3b/TTCIZuJyd5W1ibZo4fj+BwikSQkeHbvwxOGRKz0s0xa9V70phrTloRF2mpXKDHTQx0sOmsc4WLf8tIc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730999083; c=relaxed/simple;
-	bh=jKm4kFdU3Tezi0StqAjPcOzsAyE8qzZlYpZuvcYeiH4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZYNihAKWbq4wCxb85mhuRqKFe1qzhMdOZlNdGfARMcaoceojVGpiY/uod8pV4jR6NNpn8qYcda+PaqU/IWwMyxQbnqTOCprD8HRbfNSz1HSvXANyoMLEbtdR5kCC/MO8Oo+LWLR/pMJ3R9DFqoDM/SZ2oWoUfVtTy5N1FIgo8DU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=KSUctOe9; arc=fail smtp.client-ip=209.222.82.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2173.outbound.protection.outlook.com [104.47.59.173]) by mx-outbound16-173.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Thu, 07 Nov 2024 17:04:34 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lydtX+dkOFDZj0FWI93tESCnCAbHNfuGUCuoEPJi+VpXIJZFo3Os8bYU8GqyoLtH9YmAEYyobOZgOUVJWNXTJBj5aJpe8AIuFO32K14W13RlFqPmqKHptki081etDv90Xix2vzKSZvi5SpJdrTQg9utNNxqTI7T3D26kQrAvgS633BDMRXs9K4bT0tsmklx64EjTnTMegwd4BK5Mo+E2MHYJcH7EUZRIrEIKFMzyh1lAkzfv0LKV2lR3noor1ghMk5PCDGSJXh4L62FrE/3TPKgQhHi0D3/kfe4Qf2u5VXdaw+5F7u6+eF1ddvR8RK9YvKkwMGHAWFO9F6aSooHfPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T30O5KHmapOuYwSuCcKCgLAgQIV7XE97QiyqOtVMWcI=;
- b=KlIH+hVKV6CO518nQ+Q+OkgBF/Ny/zADDR77GWmcC4BPzj+VOgBxSEgRcunpJx0DtoLu3D0jmP3zXMKxRKL1uLudeueZ0+CXnEjBVSWwiTEYWIcnPO97Wfcgqe8PeNvkFlryWpxB/URG4AJbx7xsMOaqZZ7wZ2yKA52YCUdGwRgW3y6ld74bSay+bqDD77ZZgfs7nkq0e46DV7coNfxQ9SIcd41LpZe5UUcc1Y8AAXUz39kjggRnfouMuH+il/dRxj5bfbPrqn4PSVca+UqLIzJBhPUHPVuFK/X4tv/mvR0FEeyrjXQretWWUmnDjJNm9/rP4lM8T27npyMLs/xdoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 50.222.100.11) smtp.rcpttodomain=bsbernd.com smtp.mailfrom=ddn.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ddn.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T30O5KHmapOuYwSuCcKCgLAgQIV7XE97QiyqOtVMWcI=;
- b=KSUctOe9MVgRjxF3LfgnCOnlx3/34uWEVtaPNZO58q9hK0ll1SUn0kF/wvcy7BxgolSpokK4qGA18YHfpY2MDc9TUK2VQIMP/gtXtrf0mUu3HwqcCAAs2GeIEkg7WuNQUM8JjNV6oSVdfbrdaa9BSh6D/9CYzFZKFGXAA5rZvDs=
-Received: from BYAPR11CA0070.namprd11.prod.outlook.com (2603:10b6:a03:80::47)
- by CH3PR19MB7905.namprd19.prod.outlook.com (2603:10b6:610:155::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Thu, 7 Nov
- 2024 17:04:27 +0000
-Received: from SJ5PEPF000001CA.namprd05.prod.outlook.com
- (2603:10b6:a03:80:cafe::56) by BYAPR11CA0070.outlook.office365.com
- (2603:10b6:a03:80::47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18 via Frontend
- Transport; Thu, 7 Nov 2024 17:04:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
- smtp.mailfrom=ddn.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ddn.com;
-Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
- 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
- client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
-Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
- SJ5PEPF000001CA.mail.protection.outlook.com (10.167.242.39) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8137.17
- via Frontend Transport; Thu, 7 Nov 2024 17:04:26 +0000
-Received: from localhost (unknown [10.68.0.8])
-	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id CDF2D121;
-	Thu,  7 Nov 2024 17:04:25 +0000 (UTC)
-From: Bernd Schubert <bschubert@ddn.com>
-Date: Thu, 07 Nov 2024 18:04:00 +0100
-Subject: [PATCH RFC v5 16/16] fuse: enable fuse-over-io-uring
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653E4DDBE;
+	Thu,  7 Nov 2024 17:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731000216; cv=none; b=PM2GmhySn9ObzmZ9/VaebOexBTZ6Njvg9mg4tx/8wiitjH/Gy1c8XEhqlMMRqsQm8/LotKFbCNWK7LpNR1n/XuZDOBYoqt2ZOSCX8SeGzl12j+yZ4H+voh2vhShi3wOk3ljCuGUcWS5L/3NA/eNz4G1bH8f5vhEf/fxrvoAmJpA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731000216; c=relaxed/simple;
+	bh=GiEBH3vCaFny3F9wCmysPBdsf2lj75atnrwXemAxTp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EqzW7wq2YUhoAhpdMQqUHrphAS3pibqIiJZt34UFLxxOZx7qRdmlFHL8ArL1AsBKZSZIFWHUhMum1nCSSbuZYwkzHBFZTGo5izGkRwvAmOo/ScgUrUu5aSpVi5Ksqxx/O07/csRG+UT5t1ZxgPb+4YkVKgYWmd5HwQht70LcCKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zykuer6S; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a16b310f5so195511366b.0;
+        Thu, 07 Nov 2024 09:23:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731000212; x=1731605012; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9FOmBpO65NUUZbynSIJljWcZSxtJSzr/BEmXGDAexTM=;
+        b=Zykuer6S6yeP15AYrU1FHU5KLcR1LBtunF5SopQRn4gZvKgwoSTO+hCiYQ7qzL+SeE
+         YMS/c3Hq5Zu6GOhdbKHnBlXg3wdj/UIWX4u7ngBrXICa9/ZSx11iYqFt7wfrv8cEz5il
+         dyYY1V2N/hcJEWbXjjyN7InwL8C7otYyiYETWaKbdpjRGgkLu3lauQE6pJbx0TXXJgJU
+         1QiQyO7QxySfqvCc8RbVDlitO4om2MESy5Qsz1AFAQ9rEck+quzH67pXGY3U56quUUNA
+         KaoTXFWPkEvCkICzgtxdZiw6BzqOSt8Au65f5anpTJbQFxmKe2l3r3ltxxdctTYFVmZh
+         OIfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731000212; x=1731605012;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9FOmBpO65NUUZbynSIJljWcZSxtJSzr/BEmXGDAexTM=;
+        b=swsP+TUpTVxmeVr13oxfrvqwRLc8e1uIcBiyuAr4zm6CgKMgOgkk/wOWGNDwCtHUM+
+         D04Z9RbZHdVFiJ8RmTfoerZu6DKeMO7EiOchgmWd14fMPZ2scCgGS7QlOieZdaOg0E+2
+         fv+BLAw8s6UfR3EgcK6CYNIQpAb+W3hEFdLd6RI635BhV921djNIL1o5lubLS2c8+JZr
+         bvruR7AwEqMd6tgXf+IUf+KGtYmIR6G7zKD5GuZY7C7WThSbAGzRQsZOJtR8kB+vO4RU
+         D3d2WJciJ+Dh9rz+YuYNeSK2BBj3HkDYq7PAAuXkTKDWufPFr7sHWi3hjS1Q6PQYsg92
+         ovxg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9YW/e+sgRVDYWTacfs6HJaJFAr+z6Z5NG+9SffD27+i7Kj4W2lsfJ+GQKrcREliRkjL+YUZoGPw==@vger.kernel.org, AJvYcCVt63zz0U1aUvPXkH5ClJ62LV5E6ZTJHt5+BAvqfzncp4yXxB7y40nZ4lnSAE0Y8XVFn5r17lTJv02Z7/8=@vger.kernel.org, AJvYcCWDRoqlgMxFrFPFeAaJ/275ygzvuF8ohCIgQVLSpIQ7yQXHwJP01AGOXBywPUFj6++rm5jKwSdOGJLKiQ==@vger.kernel.org, AJvYcCXQKsxlzOqpn9tSrRQhsBTEzsuvBr4EEey/zX0FXf0J+8avmyCyYa0tWgr4LKN2SBGMdivfy1iSjeSUMyku9w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhMBow1XKz8E08JiuvwlQ+EFg0z8td6RgexZvxMXqMQEjDXTD4
+	NakwF7b7G8VOE4tL/5xk9IzcyHz7NT6WIoOcwvKu/vYonVZj3Am+
+X-Google-Smtp-Source: AGHT+IGjmKySyNTN/8QcAW8bxivaq94CNWApyrUQEWFwxsq+VaX7hSp+J5pWWeh6pYc6mWGzASLRLw==
+X-Received: by 2002:a17:907:6ea4:b0:a9a:dc3:c86e with SMTP id a640c23a62f3a-a9eeb36c852mr77812166b.11.1731000211235;
+        Thu, 07 Nov 2024 09:23:31 -0800 (PST)
+Received: from [192.168.42.11] (82-132-217-53.dab.02.net. [82.132.217.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0def54asm122435866b.157.2024.11.07.09.23.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 09:23:30 -0800 (PST)
+Message-ID: <b11cc81d-08b7-437d-85b4-083b84389ff1@gmail.com>
+Date: Thu, 7 Nov 2024 17:23:29 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241107-fuse-uring-for-6-10-rfc4-v5-16-e8660a991499@ddn.com>
-References: <20241107-fuse-uring-for-6-10-rfc4-v5-0-e8660a991499@ddn.com>
-In-Reply-To: <20241107-fuse-uring-for-6-10-rfc4-v5-0-e8660a991499@ddn.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
- Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
- Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, 
- David Wei <dw@davidwei.uk>, bernd@bsbernd.com, 
- Bernd Schubert <bschubert@ddn.com>
-X-Mailer: b4 0.15-dev-2a633
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730999049; l=828;
- i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
- bh=jKm4kFdU3Tezi0StqAjPcOzsAyE8qzZlYpZuvcYeiH4=;
- b=U4crFgrXTlvp5HvayLFG7IvTG9rO6ywbdsEpLQKmy6oXqMxhtVfTvcxGw5Oxt1jxItVjpF9LN
- /CVg7ZutoPyD92ksxA/tYtQfDXOUMMP69cd04LeUIUuVZaUol6LL1kK
-X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
- pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CA:EE_|CH3PR19MB7905:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02e91e8c-2ccc-46f5-54a8-08dcff4e3c77
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dktxZjEvOWxpLzQzem0rZkIwb0JYNWs1VVlRcHc4TFBXcEFBUnVnbXpabVA2?=
- =?utf-8?B?MmVvTGRZU1JwZUhsYyt0UFdha1lrU1RVa21MMUFGMFpEYXhxd05vMWNBdExY?=
- =?utf-8?B?YW5aS3h1TzZvMzNPbzVEKzEyUGNoV281L20xVVhQM0d1THNMM3p1dTFyajBV?=
- =?utf-8?B?TEtQY1J5UlkxdW8rQWUzK2FuMXNoNXRlM2hQYmcrU0J0VndzVVVuT0I2ejE0?=
- =?utf-8?B?ZFVjbXVGWVNocVpTeXhhVXMveDJSc2NtUEJPZ0x4TTZrRnBoL2VHQ3h3OXBB?=
- =?utf-8?B?WmVTU0tsNHhqUTdKVmRQT1RsQ1EybG1JUER5aUZ3TzBRL2JRdXYzaFA5RFpz?=
- =?utf-8?B?c2dDN1ZPUllsUVFiN05Ld3FQSVJ4SC9GS0lxdzNPZGs5QmRKajJvM3E1MlND?=
- =?utf-8?B?Nzh5dmFnRW9qVlV0YjNCMWtCVTQvM2VSYlJzMGM0WHU4dFYyZEdEb1ZoZER3?=
- =?utf-8?B?VENVdS9DZU9vVmVVdE55RUMrejc5Vk9KMHl3RWJyd1hJVjNteS90WWJ4VWtz?=
- =?utf-8?B?SGppNEtLbW8wYTFUMUt3azc2eTRBQndTSlhmakdxUkhWTml1Znp0OEFnaDQ3?=
- =?utf-8?B?aEp4U1VNRWxPd0hRUHJNWFFvUmtDaUo2OFYrZHVxaStFcFU3RzBhVE9xUXZs?=
- =?utf-8?B?WDhPNW1QU3dlTHpDajBKTmRKaFB3aDM4TGRGQWoybFRzVUgvOWdPb0JkSXVp?=
- =?utf-8?B?ZWY1cUIwZGdzS2ljMWVMbEtrcGlBR2diL0hoNlNzbFUyOHVtZDl1T1ZtZDZa?=
- =?utf-8?B?aWFyMit1SC9qd2o3SGdoUEVtc3hkRHl6YzErNzhZV0l5QkJtUnJMVVdFNUlX?=
- =?utf-8?B?RFdXY0JhQVB6NnZicnU3T3dmN083Vm1VRGZ6VE9rQ09vbmhCQnlXRzBvVk9o?=
- =?utf-8?B?S0JCdmFTTSthR01sSFU5YllSbDI5RlVQUHE4eDU2ejdUdzZUT1BKdkRUc09s?=
- =?utf-8?B?UnBWNzJFUzhRT0hocThLNjVIWi9oZ09NZDRnVlFXRXF0ZFlQeUUxaWZ0Z3Vm?=
- =?utf-8?B?WUwwNmJQM0U4K2JFNzJKYllhSVJ3TEQ0YVpuOFhpdWVFUTN6SlM5cVA1eHhl?=
- =?utf-8?B?azNlTEptdkFKMnhjZFpGNU9xY0l1eHVuOFR2VXFmUE8yNk90TWNaeEU2SkJp?=
- =?utf-8?B?bDhXOUl2MnVqbDhOU1pYQ3RUMnVRendxWkR6ZUNub2ZQUkJvZ3BCU2tOVVdS?=
- =?utf-8?B?eXlQdVF5bHpoWE0rZE1KUFNmZEZycjdDL2dYUEF2NjlVd3dCVXQ5VG5hTXJ6?=
- =?utf-8?B?b0krY1FUdGRhRFBsQXU5Z1hnUVdMak1MOXkwdUZSYi92T3hJTHl3MGN4aldi?=
- =?utf-8?B?OGkxU0wrWnRnakhiZGpYVGNiNUZ5d1JNaHZNM1g2cG40ZDc5SGRNTW9OenVS?=
- =?utf-8?B?cjcvR29wRTdFOFBxTEs4UjlhT0dGaUVuS3UvRHpXV1ZrUy9aRythWHpHU1cy?=
- =?utf-8?B?Q3ZFOU5YQTZoQ2ZCZkV4S0pNclJxSkUyRE9yY2dkWWRXaWhrTXdoQ1ErOXZP?=
- =?utf-8?B?REJ2K2E0L01ZanA3cEpwZVY3NkVtSDBzUjZKb2xoTGZ6T0dReGRQcW5kbTgz?=
- =?utf-8?B?NzZHRllsL1hsWm5GRmppL2h2b051bllGSTVTb0ptbnU4Mm9rSmNqTjFzRW5I?=
- =?utf-8?B?aVNNbVA2MU1lSVdrSnp4enlVYkh4VUt5YkNKdVg4NlhqMklCeWcyQlA2eTBx?=
- =?utf-8?B?cisyM25CM2xyMFI1ajZFUkFWaXhJcm8vUmJYdDRUOUlMSHBYOW5kMGxZeGJn?=
- =?utf-8?B?b3RBZzB5TFdsSkZVeHJJbTNrV1Z0SXlzcERKUmJDdXJWNUdFbTVteHFvQng2?=
- =?utf-8?B?WmJGbkw3WWYydUd2aFNrSy9WWWJvLzMxUmVTWExWK3p2NzdCUzZQVlhGVEta?=
- =?utf-8?B?T09kdmsyQlQrRUdaTHNWVi9HU1BWWlY2bE9tZVMxeVFWMEE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	2FWEAK43CapPaiQASyh+tgO6mh7JbgjZeFYk76ZRL0WZJf6RhN8T+6TTWDUkmwAKLQAVu2IvkVhxYt6YeAGRDMv7Pq8ItqYZoBH4tJpVylwGej8B89vlglNT/6Jbtx+dkXqeGjnNjM94zKqTNGsATnjXT4+AuEuyRq1QUEpCfcocuskH6LZ6jfeGQVkTVoe+IRU+b+1AsTcKT87ex+2bU/K1fgJkOrDRqgIVF/C81MzIO4USk9wYQ+2ZzDUKhhwgNLs91wvKOT+K2Fz73MIX2TFgnAOlrrCDUcn5n4MfV/uWr9oaOQxSmayEHSQq1JWNSMgJiLHGD36lvGn/M4aK/lInGtMDTePPBtFyvGhvTwM1pvS2AabKA6LyeqPGb09K8mc7rL0cAgcP8HsAxD2z1VSYyih/dGOYT2MTA3Nv92Z/RPUBJyzvydRLiikRER3P8XQjtVgCfJMvnUrbkxQoFDyBUMZfzKUZgh9Vg8xHxVx0FJZeTAKfIVe7w1TaYOnS7Qp1g1bVzS5ffzj0ipuDLAefW7mH3IgJsdF38u7IEC/QKueek3m2LncwgqtlEMsIIarmw0m9sojqUWxCO1QB5xpDmd691ho/m8sXgAb9DndWvFVb2sh0C36U2cgK1r0YNThACGEiwAkY4CugFrsl2g==
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 17:04:26.5815
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02e91e8c-2ccc-46f5-54a8-08dcff4e3c77
-X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CA.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR19MB7905
-X-BESS-ID: 1730999074-104269-31157-18924-1
-X-BESS-VER: 2019.1_20241029.2310
-X-BESS-Apparent-Source-IP: 104.47.59.173
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVhYGRkBGBlDMwjAxxdQi0Tw50c
-	Qk0TLNMs3AIs0sMS0tzcAoLTnRLFWpNhYAQx2E80AAAAA=
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.260269 [from 
-	cloudscan15-150.us-east-2a.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 06/10] io_uring/rw: add support to send metadata along
+ with read/write
+To: Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@kernel.org>
+Cc: axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
+ brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
+ anuj1072538@gmail.com, Anuj Gupta <anuj20.g@samsung.com>
+References: <20241030180112.4635-1-joshi.k@samsung.com>
+ <CGME20241030181013epcas5p2762403c83e29c81ec34b2a7755154245@epcas5p2.samsung.com>
+ <20241030180112.4635-7-joshi.k@samsung.com>
+ <ZyKghoCwbOjAxXMz@kbusch-mbp.dhcp.thefacebook.com>
+ <914cd186-8d15-4989-ad4e-f7e268cd3266@gmail.com>
+ <ceb58d97-b2e3-4d36-898d-753ba69476be@samsung.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <ceb58d97-b2e3-4d36-898d-753ba69476be@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-All required parts are handled now, fuse-io-uring can
-be enabled.
+On 11/1/24 17:54, Kanchan Joshi wrote:
+> On 10/31/2024 8:09 PM, Pavel Begunkov wrote:
+>> On 10/30/24 21:09, Keith Busch wrote:
+>>> On Wed, Oct 30, 2024 at 11:31:08PM +0530, Kanchan Joshi wrote:
+>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/
+>>>> io_uring.h
+>>>> index 024745283783..48dcca125db3 100644
+>>>> --- a/include/uapi/linux/io_uring.h
+>>>> +++ b/include/uapi/linux/io_uring.h
+>>>> @@ -105,6 +105,22 @@ struct io_uring_sqe {
+>>>>             */
+>>>>            __u8    cmd[0];
+>>>>        };
+>>>> +    /*
+>>>> +     * If the ring is initialized with IORING_SETUP_SQE128, then
+>>>> +     * this field is starting offset for 64 bytes of data. For meta io
+>>>> +     * this contains 'struct io_uring_meta_pi'
+>>>> +     */
+>>>> +    __u8    big_sqe[0];
+>>>> +};
+>>
+>> I don't think zero sized arrays are good as a uapi regardless of
+>> cmd[0] above, let's just do
+>>
+>> sqe = get_sqe();
+>> big_sqe = (void *)(sqe + 1)
+>>
+>> with an appropriate helper.
+> 
+> In one of the internal version I did just that (i.e., sqe + 1), and
+> that's fine for kernel.
+> But afterwards added big_sqe so that userspace can directly access
+> access second-half of SQE_128. We have the similar big_cqe[] within
+> io_uring_cqe too.
+> 
+> Is this still an eyesore?
 
-Signed-off-by: Bernd Schubert <bschubert@ddn.com>
----
- fs/fuse/dev_uring.c | 5 -----
- 1 file changed, 5 deletions(-)
+Yes, let's kill it as well please, and I don't think the feature
+really cares about it, so should be easy to do if not already in
+later revisions.
 
-diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index b465da41c42c47eaf69f09bab1423061bc8fcc68..2ee7d5ba260bc4b54927af1a856dabcf7d725edb 100644
---- a/fs/fuse/dev_uring.c
-+++ b/fs/fuse/dev_uring.c
-@@ -1056,11 +1056,6 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- 	u32 cmd_op = cmd->cmd_op;
- 	int err = 0;
- 
--	/* Disabled for now, especially as teardown is not implemented yet */
--	err = -EOPNOTSUPP;
--	pr_info_ratelimited("fuse-io-uring is not enabled yet\n");
--	goto out;
--
- 	pr_devel("%s:%d received: cmd op %d\n", __func__, __LINE__, cmd_op);
- 
- 	err = -EOPNOTSUPP;
+>>>> +
+>>>> +/* this is placed in SQE128 */
+>>>> +struct io_uring_meta_pi {
+>>>> +    __u16        pi_flags;
+>>>> +    __u16        app_tag;
+>>>> +    __u32        len;
+>>>> +    __u64        addr;
+>>>> +    __u64        seed;
+>>>> +    __u64        rsvd[2];
+>>>>    };
+>>>
+>>> On the previous version, I was more questioning if it aligns with what
+>>
+>> I missed that discussion, let me know if I need to look it up
+> 
+> Yes, please take a look at previous iteration (v5):
+> https://lore.kernel.org/io-uring/e7aae741-c139-48d1-bb22-dbcd69aa2f73@samsung.com/
+
+"But in general, this is about seeing metadata as a generic term to
+encode extra information into io_uring SQE."
+
+Yep, that's the idea, and it also sounds to me that stream hints
+is one potential user as well. To summarise, the end goal is to be
+able to add more meta types/attributes in the future, which can be
+file specific, e.g. pipes don't care about integrity data, and to
+be able to pass an arbitrary number of such attributes to a single
+request.
+
+We don't need to implement it here, but the uapi needs to be flexible
+enough to be able to accommodate that, or we should have an
+understanding how it can be extended without dirty hacks.
+
+> Also the corresponding code, since my other answers will use that.
+> 
+>>> Pavel was trying to do here. I didn't quite get it, so I was more
+>>> confused than saying it should be this way now.
+>>
+>> The point is, SQEs don't have nearly enough space to accommodate all
+>> such optional features, especially when it's taking so much space and
+>> not applicable to all reads but rather some specific  use cases and
+>> files. Consider that there might be more similar extensions and we might
+>> even want to use them together.
+>>
+>> 1. SQE128 makes it big for all requests, intermixing with requests that
+>> don't need additional space wastes space. SQE128 is fine to use but at
+>> the same time we should be mindful about it and try to avoid enabling it
+>> if feasible.
+> 
+> Right. And initial versions of this series did not use SQE128. But as we
+> moved towards passing more comprehensive PI information, first SQE was
+> not enough. And we thought to make use of SQE128 rather than taking
+> copy_from_user cost.
+
+Do we have any data how expensive it is? I don't think I've ever
+tried to profile it. And where the overhead comes from? speculation
+prevention?
+
+If it's indeed costly, we can add sth to io_uring like pre-mapping
+memory to optimise it, which would be useful in other places as
+well.
+  
+>   > 2. This API hard codes io_uring_meta_pi into the extended part of the
+>> SQE. If we want to add another feature it'd need to go after the meta
+>> struct. SQE256?
+> 
+> Not necessarily. It depends on how much extra space it needs for another
+> feature. To keep free space in first SQE, I chose to place PI in the
+> second one. Anyone requiring 20b (in v6) or 18b (in v5) space, does not
+> even have to ask for SQE128.
+> For more, they can use leftover space in second SQE (about half of
+> second sqe will still be free). In v5, they have entire second SQE if
+> they don't want to use PI.
+> If contiguity is a concern, we can move all PI bytes (about 32b) to the
+> end of second SQE.
+> 
+> 
+>   > And what if the user doesn't need PI but only the second
+>> feature?
+> 
+> Not this version, but v5 exposed meta_type as bit flags.
+
+There has to be a type, I assume it's being added back.
+
+> And with that, user will not pass the PI flag and that enables to use
+> all the PI bytes for something else. We will have union of PI with some
+> other info that is known not to co-exist.
+
+Let's say we have 3 different attributes META_TYPE{1,2,3}.
+
+How are they placed in an SQE?
+
+meta1 = (void *)get_big_sqe(sqe);
+meta2 = meta1 + sizeof(?); // sizeof(struct meta1_struct)
+meta3 = meta2 + sizeof(struct meta2_struct);
+
+Structures are likely not fixed size (?). At least the PI looks large
+enough to force everyone to be just aliased to it.
+
+And can the user pass first meta2 in the sqe and then meta1?
+
+meta2 = (void *)get_big_sqe(sqe);
+meta1 = meta2 + sizeof(?); // sizeof(struct meta2_struct)
+
+If yes, how parsing should look like? Does the kernel need to read each
+chunk's type and look up its size to iterate to the next one?
+
+If no, what happens if we want to pass meta2 and meta3, do they start
+from the big_sqe?
+
+How do we pass how many of such attributes is there for the request?
+
+It should support arbitrary number of attributes in the long run, which
+we can't pass in an SQE, bumping the SQE size is not scalable in
+general, so it'd need to support user pointers or sth similar at some
+point. Placing them in an SQE can serve as an optimisation, and a first
+step, though it might be easier to start with user pointer instead.
+
+Also, when we eventually come to user pointers, we want it to be
+performant as well and e.g. get by just one copy_from_user, and the
+api/struct layouts would need to be able to support it. And once it's
+copied we'll want it to be handled uniformly with the SQE variant, that
+requires a common format. For different formats there will be a question
+of perfomance, maintainability, duplicating kernel and userspace code.
+
+All that doesn't need to be implemented, but we need a clear direction
+for the API. Maybe we can get a simplified user space pseudo code
+showing how the end API is supposed to look like?
 
 -- 
-2.43.0
-
+Pavel Begunkov
 

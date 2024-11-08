@@ -1,123 +1,151 @@
-Return-Path: <io-uring+bounces-4561-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4562-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF6B69C11AD
-	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 23:26:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4079C1362
+	for <lists+io-uring@lfdr.de>; Fri,  8 Nov 2024 01:59:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05412B21E44
-	for <lists+io-uring@lfdr.de>; Thu,  7 Nov 2024 22:26:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85FAA1F232A3
+	for <lists+io-uring@lfdr.de>; Fri,  8 Nov 2024 00:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B3D218D64;
-	Thu,  7 Nov 2024 22:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2A71C36;
+	Fri,  8 Nov 2024 00:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="yPzFmgSt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dkGALXav"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC53218958
-	for <io-uring@vger.kernel.org>; Thu,  7 Nov 2024 22:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B62101DE
+	for <io-uring@vger.kernel.org>; Fri,  8 Nov 2024 00:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731018364; cv=none; b=jM4oA8hNzdD7AYEb4bL57dnaOEHmc9l3uBxZ5PXGXD81H0Us+fzig2fJucy9to40vgKBsi6QOI5VfBxRQFcTRPEN5+zmxXhuiunHgZVESyK6lU9cVVYhlYL/GHHUAPvkQ8yLsfRgBnfSdtQN14VTiTmpQXzI12G8lhl0q9aOy+Q=
+	t=1731027591; cv=none; b=Zzuo2nSwDvxmsuqQAigVQcgqMCEoGlwmXSLDsYbRVAWLJhCCLjSGzIsGhZFmJ9GpBH6Nf1vEDkG5jI55z4bzOfSecsZfAqmaNFxIcN+Nj1RiJnoKv7Yasz+MnEmvZ30Rg9yh0SE3P7hpFkZ1dljoVvrmbmKvIVWkUCSQ6KRP6YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731018364; c=relaxed/simple;
-	bh=1aHsB/zKiQbMlmmGU8Nt65GTi06r96XtuPpx3Rw94cM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sZ/jfepdsEs7pvCEKIq9lfVtWclb8WG5ekbrjjZoLQwwrMpgi6B7N6O0D10c/uCbufVXP/BlVLF9jDFzU2G8BSYxL1vJJUzYr81tDHt9O45+oLdxl5IOaUhfYGttOYz/NrFuihTap3OZDKArfhq2gXl064OfG57GYQnwY2Stg1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=yPzFmgSt; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-288b392b8daso927561fac.2
-        for <io-uring@vger.kernel.org>; Thu, 07 Nov 2024 14:26:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731018361; x=1731623161; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ic3moIW2xzE9kekqow/yFFuj4gT8GFTls4K6Xfp4vq0=;
-        b=yPzFmgStmaNZdI5uukrDIiGL50XmI7Qj5aoyaMw/jvB23GSuByS8nzdGihE8fHOlKi
-         tWhzdG17Qa/5VMtSGFEi00dE9qCMM46Uiuu/O/zaIi4SFeiEvGTAM235GqD/PVMVEtQc
-         S/cp4l4Wn2PVrkV+PB8WcXZ2Q0jvvGZCWhUjjIUy/2PqurV97ns9aEZHYvylp9wi9+ZJ
-         M8wvhJBGCGiA9NpgwOPjR+l8FD84sxLDaHjOGIoiM5OVQH9tRINu1fEi6AptaIDG8VvY
-         Pb44vsXb+lkJ5IHAsdCZWNsAI6ybGX4Om1TFTTCiNk9OIN9a/lE9PSt/OLKwVWwHcvHP
-         Gfxg==
+	s=arc-20240116; t=1731027591; c=relaxed/simple;
+	bh=W4hReRp2Mnbvh0WIskrdIeFbIogt3Hkskf8ms8EAoOg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uWB/DzpAIHZwCNj5L+bUODrn8BJUl36HSIXfxky0tDi0MLrUVzvlXyNBeBCRhDqpRhl5r3fsPjlCVSqLaZ9C+A7V5YJ9UwbCK8qtTF0XWGPz7tmVg7qzZJ1ncdoOckuL66f0IFWFisOoNj8DGl5Kd5kP6IOH94YESoze1+6Y0yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dkGALXav; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731027587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mrxY8mthm3WC9EQoiDbhDZtH2molPeBe5KI5KQp4nCM=;
+	b=dkGALXavodkUjBi/V/0GhbyQorR4muj2WKiVG28rCGLJU0vcl29ngo6lvIIDm1i2ckqF/W
+	T7fTb0jS7JDMRr24pXmU7Pg4OtJFKfy3Gidpobokycb7WSQlIZ03di9lEqK/Its+TVAXLf
+	CaAtHtoEB1Xt7GCqo8tCJ1kb0cwn8GA=
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
+ [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-442-acL0CMo-MQOZC8OkIrrfFw-1; Thu, 07 Nov 2024 19:59:46 -0500
+X-MC-Unique: acL0CMo-MQOZC8OkIrrfFw-1
+X-Mimecast-MFC-AGG-ID: acL0CMo-MQOZC8OkIrrfFw
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-850470fc8bfso1682493241.1
+        for <io-uring@vger.kernel.org>; Thu, 07 Nov 2024 16:59:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731018361; x=1731623161;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ic3moIW2xzE9kekqow/yFFuj4gT8GFTls4K6Xfp4vq0=;
-        b=LJ/iN19AWnLjYRW1CxpYai+hrryBIo3Q5eUqt5YBAFikfwXyw6Ez/qwYtbuvDcR/Ar
-         TR5Rbx047WDs9djSlRdqnQ+XF1SRrYT0s3NHPJdaCTRFJGhGxIgxm3nuOFXSOych62q7
-         DknVgRF0PJa7CZU2JpHxx0INUPR+0EuW96DzX+1ZGNmtmeueGp3hQ0qFymU0Ci4KOdO9
-         Ehn9jcOHXfk41OCLoF5u/XHGJ14KHqlmTaC6MkqjazlxprZkO1Qk+kg4YWaF/bxeFMG7
-         uFNBZsaeIIod0b1TaXrxp5ElEDThXglTukmtes2ExBZpRsgn+bhHAPTuoF0YqRZI2Lv8
-         oE2w==
-X-Gm-Message-State: AOJu0YxbTOczRpuU73gcxoRlY/LjeFG0WqmQ/HNTL6E427+O/8lqnFjq
-	kvqVDNEnC1VLBUhr9LDDsggy/bSPwbbkBWuvNG4gRm2e1ayRDMCySzpgBCun5XENoXX/v3dCVyO
-	oD08=
-X-Google-Smtp-Source: AGHT+IFuI5q1Mb4wqDT2YjLU822jxP2SRwO92t0Qytb10bAEIacogw+MK0uT+tmaS89AoFiDN2AjvQ==
-X-Received: by 2002:a05:6871:1cd:b0:277:d8ee:6dda with SMTP id 586e51a60fabf-2956011f91amr585507fac.23.1731018361266;
-        Thu, 07 Nov 2024 14:26:01 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546ed7ab3sm642504fac.42.2024.11.07.14.26.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 14:26:00 -0800 (PST)
-Message-ID: <b0004544-91f7-47b8-a8d6-da7c6e925883@kernel.dk>
-Date: Thu, 7 Nov 2024 15:25:59 -0700
+        d=1e100.net; s=20230601; t=1731027586; x=1731632386;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mrxY8mthm3WC9EQoiDbhDZtH2molPeBe5KI5KQp4nCM=;
+        b=nFAnMBfrvpMjPR14ikWpHs0Jvdqa5hHK3EdzNLzclYoedWRu1Cc4zXl5d5KHgFuQUK
+         4FU3H2bc2b23pAcHIMJ6x9/WOSi9jZ6/WqA8VYBT6QAH3AVRVh5JeUF5U6404W5G79NL
+         81kPcTtFTn8vW+5t2Ga4T6vNiKayM62dep2gCcr4r0HM+U1pIvltgVNer/b8x53lKPkd
+         +phWjFMtZ9wSEQOm7qRAWGLfMp0c4mK/vKUq5HNcVY8t4bxCE9bGbjGLoMpKY2dNhcr9
+         q4tgAo2rWNUhdhrvplEIWnPtf2vwzwopMPJBASTP9LfkUkwr3y08WMHdRzvnW0hdShEu
+         qpFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzx2Izx25mSu36jfpmx75cilY7vcUpJyn9CCKKrb7HZ1tnS6yBvwpatctcoDV/MrB+SUHnzCvuOw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUND62HRLvJj/wLE5IfW0VvNBQOX/9gm5BLJyA15CJV4HMjn7Q
+	CDliClJPJmM2xkyhfSicMaJNNB5eElb9GRnXQ+ULtd9z+NBLA0rpnyL8ri/0JrWrfPyC2baW8aK
+	4BHdr3jP3WY4Lmcctd7c367Hiv/d50dKow3skROZul59jlnpwwZLASJn3J8GCwW7wXrRDDSGlTQ
+	GAM1rnhrogGXAsytOlbZ6pjjCQyaIaWvs=
+X-Received: by 2002:a05:6102:f09:b0:4a4:4868:cfd9 with SMTP id ada2fe7eead31-4aae2155d07mr1001991137.1.1731027585791;
+        Thu, 07 Nov 2024 16:59:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGV2g7efsraeLBtXSmAhHbiS1EPg9TvsBp4gAzEj57wDFhMq4wrH7lpK+/pHfyImoFhI9XQ4HQC46BD6cztxeI=
+X-Received: by 2002:a05:6102:f09:b0:4a4:4868:cfd9 with SMTP id
+ ada2fe7eead31-4aae2155d07mr1001987137.1.1731027585541; Thu, 07 Nov 2024
+ 16:59:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH V10 0/12] io_uring: support group buffer & ublk
- zc
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
- Ming Lei <ming.lei@redhat.com>
-Cc: linux-block@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>,
- Akilesh Kailash <akailash@google.com>
-References: <20241107110149.890530-1-ming.lei@redhat.com>
- <173101830487.993487.13218873496602462534.b4-ty@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <173101830487.993487.13218873496602462534.b4-ty@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241107110149.890530-1-ming.lei@redhat.com> <20241107110149.890530-12-ming.lei@redhat.com>
+In-Reply-To: <20241107110149.890530-12-ming.lei@redhat.com>
+From: Ming Lei <ming.lei@redhat.com>
+Date: Fri, 8 Nov 2024 08:59:34 +0800
+Message-ID: <CAFj5m9+wyUzA2WDN4YA1Q=YwnwVZ48g5=q1HSMaXbs7-oHgPYA@mail.gmail.com>
+Subject: Re: [PATCH V10 11/12] io_uring/uring_cmd: support leasing device
+ kernel buffer to io_uring
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org, 
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: linux-block@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>, 
+	Akilesh Kailash <akailash@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/7/24 3:25 PM, Jens Axboe wrote:
-> 
-> On Thu, 07 Nov 2024 19:01:33 +0800, Ming Lei wrote:
->> Patch 1~3 cleans rsrc code.
->>
->> Patch 4~9 prepares for supporting kernel buffer.
->>
->> The 10th patch supports group buffer, so far only kernel buffer is
->> supported, but it is pretty easy to extend for userspace group buffer.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [01/12] io_uring/rsrc: pass 'struct io_ring_ctx' reference to rsrc helpers
->         commit: 0d98c509086837a8cf5a32f82f2a58f39a539192
-> [02/12] io_uring/rsrc: remove '->ctx_ptr' of 'struct io_rsrc_node'
->         commit: 4f219fcce5e4366cc121fc98270beb1fbbb3df2b
-> [03/12] io_uring/rsrc: add & apply io_req_assign_buf_node()
->         commit: 039c878db7add23c1c9ea18424c442cce76670f9
+On Thu, Nov 7, 2024 at 7:02=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrote=
+:
+>
+> Add API of io_uring_cmd_lease_kbuf() for driver to lease its kernel
+> buffer to io_uring.
+>
+> The leased buffer can only be consumed by io_uring OPs in group wide,
+> and the uring_cmd has to be one group leader.
+>
+> This way can support generic device zero copy over device buffer in
+> userspace:
+>
+> - create one sqe group
+> - lease one device buffer to io_uring by the group leader of uring_cmd
+> - io_uring member OPs consume this kernel buffer by passing IOSQE_IO_DRAI=
+N
+>   which isn't used for group member, and mapped to GROUP_BUF.
+> - the kernel buffer is returned back after all member OPs are completed
+>
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  include/linux/io_uring/cmd.h |  7 +++++++
+>  io_uring/uring_cmd.c         | 10 ++++++++++
+>  2 files changed, 17 insertions(+)
+>
+> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+> index 578a3fdf5c71..0997ea247188 100644
+> --- a/include/linux/io_uring/cmd.h
+> +++ b/include/linux/io_uring/cmd.h
+> @@ -60,6 +60,8 @@ void io_uring_cmd_mark_cancelable(struct io_uring_cmd *=
+cmd,
+>  /* Execute the request from a blocking context */
+>  void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd);
+>
+> +int io_uring_cmd_lease_kbuf(struct io_uring_cmd *ioucmd,
+> +                           struct io_rsrc_node *node);
+>  #else
+>  static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len,=
+ int rw,
+>                               struct iov_iter *iter, void *ioucmd)
+> @@ -82,6 +84,11 @@ static inline void io_uring_cmd_mark_cancelable(struct=
+ io_uring_cmd *cmd,
+>  static inline void io_uring_cmd_issue_blocking(struct io_uring_cmd *iouc=
+md)
+>  {
+>  }
+> +static inline int io_uring_cmd_lease_kbuf(struct io_uring_cmd *ioucmd,
+> +                                         struct io_rsrc_node *node);
 
-Applied the first three as they stand alone quite nicely. I did ponder
-on patch 1 to skip the make eg io_alloc_file_tables() not take both
-the ctx and &ctx->file_table, but we may as well keep it symmetric.
+ops, the above ";" needs to be removed, :-(
 
-I'll take a look at the rest of the series tomorrow.
-
--- 
-Jens Axboe
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+>  #endif
 
 

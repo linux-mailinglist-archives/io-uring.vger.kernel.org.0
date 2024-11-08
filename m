@@ -1,101 +1,138 @@
-Return-Path: <io-uring+bounces-4568-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4570-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB419C2518
-	for <lists+io-uring@lfdr.de>; Fri,  8 Nov 2024 19:52:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EAD9C25BA
+	for <lists+io-uring@lfdr.de>; Fri,  8 Nov 2024 20:43:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65E85B22D12
-	for <lists+io-uring@lfdr.de>; Fri,  8 Nov 2024 18:52:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB6091C2362A
+	for <lists+io-uring@lfdr.de>; Fri,  8 Nov 2024 19:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC79199385;
-	Fri,  8 Nov 2024 18:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BFF1C1F10;
+	Fri,  8 Nov 2024 19:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="zRuyM1VF"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="RhE734Fe"
 X-Original-To: io-uring@vger.kernel.org
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5585233D96;
-	Fri,  8 Nov 2024 18:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1996C1C1F06
+	for <io-uring@vger.kernel.org>; Fri,  8 Nov 2024 19:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731091936; cv=none; b=pZDzWM3bo98Ns5nDO06vZMBnxzoI8OwTmXuLO2Ytn7lRaKxA4+cyFgSF1YYyy+AwonvuE4XhnAtXEDQAQ5fG3Xoa4ONvQRGg814wCOENAX2456D1+yFQWjdtthU9IjBlsebYZbclt5nfRwQShlFT8UmLfWqhlp7zLIGkYApWp24=
+	t=1731094990; cv=none; b=QAwD5tI01kJ4LbZ1TayTZhBxevVuRBAQoZmgeR7vOcZwhMkAJw/sZsaJ0IvoGMhQUnZZimONyf03nGkvfbuLxxsv/BlGcqy1MW8w+eZkh0lcieYl096SUIhMSR8RgcgzBgA3rmbX7lYxDo8CG7wEeKxiZpf+ZfXv6FOpK+Dpt0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731091936; c=relaxed/simple;
-	bh=JVPYyABt4fIR2H2QHQjsQ9GDszOfP+4CM0lq2I2MeHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AD4HPFJm1Nv++xlMaWz5j6PorQHlWUs4RGLOlIAX7CGtIsGDnLggyHWUO17vZOpxdez8y7ruAU7WHGpC9Y2aj9aPRliL+5ZjRzO+Y2f+iDwZTxMlXM/NHwmlgIlfRhCdkA9hVaggCXh6Hfmr23ct+SW7tgikew4Wdr5KBTzxDdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=zRuyM1VF; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XlSjM11PvzlgTWK;
-	Fri,  8 Nov 2024 18:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1731091923; x=1733683924; bh=JVPYyABt4fIR2H2QHQjsQ9GD
-	szOfP+4CM0lq2I2MeHU=; b=zRuyM1VFZ0FXJma19dczCVvpm+qz/06pgLbBbB/k
-	BBRfVJJ5Agbtpzut8QwnRXGN3z6YdIz8XRPWNWZsHx111VOsuFyBe4exmUfvqcbo
-	tVpD2OvlLgLpYmo3rhy5MkHx3qlBJHrsWPKP8O7cJD8+fkdWKHNWXslRRHir0NOD
-	YWgNGEt7jdelnDraiq3RRJrRHeW0jBLSyxAYZgw5HSlYUQUEEJ7pQ0f/h5++VDNV
-	54In+/EwxNdPbFtHlXQdU5BjEfPPpIuiSy3bQ0aApmgTErrctjUye9y+Zcuy2geK
-	7tS/qlfOG9kXuqXUzzO67Y3RACA0ZqZF/5tiC+BwmRGSJQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id votlEUy7cqa6; Fri,  8 Nov 2024 18:52:03 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XlSjD0CbmzlgTsK;
-	Fri,  8 Nov 2024 18:51:59 +0000 (UTC)
-Message-ID: <2b5a365a-215a-48de-acb1-b846a4f24680@acm.org>
-Date: Fri, 8 Nov 2024 10:51:57 -0800
+	s=arc-20240116; t=1731094990; c=relaxed/simple;
+	bh=kJHUOkZq4OqxDP2m8gl/HfwIZuznYWslLepJFC+6drU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LkGQUFo9HDHUqRT/jTzYfyrxRPFC+Ss46dSbZBQVP5FQgLHoGW256gDTLeLMjsiHN//G2VxCzbGHHxALWrGAWqN/pb4XlWPG31Dci9qkxfc7XcMHIIqfhYFErrZaG8d+UtoDR8/PIuvrSBjLN1uyr4MdrO24VguGMM32KKx3dGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=RhE734Fe; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A8HPiFZ014433
+	for <io-uring@vger.kernel.org>; Fri, 8 Nov 2024 11:43:08 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2021-q4; bh=6okj447WixbNNhNQHa
+	A9DEOarhvhg3oKtVsSwQCEn3Y=; b=RhE734FeexQvP2U1/uC+/vT3UbmmyFSZTM
+	t6gNuFDeljwFO4jwyriPVo/Z3MCFa2XrL5kQJeuxBIkYwLR/mfpEC6mdWzISpHeF
+	BLc70a91dCVA6Mj51ps0q4sHzLVLoRGMWdevQ2ZF8SWqiwEw/KANbr3Lg/apws1i
+	bFW8XpENiSQmwfY652E+abHV8lxjGQ4zGTwBNQbVnM81IHgPIhPZMyNi1aL00Box
+	JyXPtvbD/KIwwQ6dO2KSs9bSvt/x92rzotW2OymXKnZ0yhfDBkO1qfA8l6exs7ct
+	NV7N1daP8VwsO2MOwRABrflZdZTdDI4XFIyPvZxHqY98amJToO/Q==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 42sp2t9mrh-12
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Fri, 08 Nov 2024 11:43:07 -0800 (PST)
+Received: from twshared29075.03.ash8.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.11; Fri, 8 Nov 2024 19:43:00 +0000
+Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
+	id 35FAE14E3A027; Fri,  8 Nov 2024 11:36:58 -0800 (PST)
+From: Keith Busch <kbusch@meta.com>
+To: <linux-block@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
+        <linux-scsi@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <io-uring@vger.kernel.org>, <axboe@kernel.dk>
+CC: <hch@lst.de>, <martin.petersen@oracle.com>, <asml.silence@gmail.com>,
+        <javier.gonz@samsung.com>, <joshi.k@samsung.com>,
+        Keith Busch
+	<kbusch@kernel.org>
+Subject: [PATCHv11 0/9] write hints with nvme fdp and scsi streams
+Date: Fri, 8 Nov 2024 11:36:20 -0800
+Message-ID: <20241108193629.3817619-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
-To: Javier Gonzalez <javier.gonz@samsung.com>,
- Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "joshi.k@samsung.com" <joshi.k@samsung.com>
-References: <20241029151922.459139-1-kbusch@meta.com>
- <20241105155014.GA7310@lst.de> <Zy0k06wK0ymPm4BV@kbusch-mbp>
- <20241108141852.GA6578@lst.de> <Zy4zgwYKB1f6McTH@kbusch-mbp>
- <CGME20241108165444eucas1p183f631e2710142fbbc7dee9300baf77a@eucas1p1.samsung.com>
- <Zy5CSgNJtgUgBH3H@casper.infradead.org>
- <d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: j8h2miGDPyDosop39YBnrXPZuBBqidNb
+X-Proofpoint-ORIG-GUID: j8h2miGDPyDosop39YBnrXPZuBBqidNb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
 
-On 11/8/24 9:43 AM, Javier Gonzalez wrote:
-> If there is an interest, we can re-spin this again...
+From: Keith Busch <kbusch@kernel.org>
 
-I'm interested. Work is ongoing in JEDEC on support for copy offloading
-for UFS devices. This work involves standardizing which SCSI copy
-offloading features should be supported and which features are not
-required. Implementations are expected to be available soon.
+Changes from v10:
 
-Thanks,
+  Fixed FDP max handle size calculations (wrong type)
 
-Bart.
+  Defined and used FDP constants instead of literal numbers
+
+  Moved io_uring write_hint to the end of the SQE so as not to overlap
+  with other defined fields except uring_cmd
+
+  Default partition split so partition one gets all the write hints
+  exclusively
+
+  Folded in the fix for stacking block stream feature for nvme-multipath
+  (from hch xfs-zoned-streams branch)
+
+Kanchan Joshi (2):
+  io_uring: enable per-io hinting capability
+  nvme: enable FDP support
+
+Keith Busch (7):
+  block: use generic u16 for write hints
+  block: introduce max_write_hints queue limit
+  statx: add write hint information
+  block: allow ability to limit partition write hints
+  block, fs: add write hint to kiocb
+  block: export placement hint feature
+  scsi: set permanent stream count in block limits
+
+ Documentation/ABI/stable/sysfs-block | 14 ++++++
+ block/bdev.c                         | 22 +++++++++
+ block/blk-settings.c                 |  5 ++
+ block/blk-sysfs.c                    |  6 +++
+ block/fops.c                         | 31 +++++++++++--
+ block/partitions/core.c              | 45 +++++++++++++++++-
+ drivers/nvme/host/core.c             | 69 ++++++++++++++++++++++++++++
+ drivers/nvme/host/multipath.c        |  3 +-
+ drivers/nvme/host/nvme.h             |  5 ++
+ drivers/scsi/sd.c                    |  2 +
+ fs/stat.c                            |  1 +
+ include/linux/blk-mq.h               |  3 +-
+ include/linux/blk_types.h            |  4 +-
+ include/linux/blkdev.h               | 15 ++++++
+ include/linux/fs.h                   |  1 +
+ include/linux/nvme.h                 | 37 +++++++++++++++
+ include/linux/stat.h                 |  1 +
+ include/uapi/linux/io_uring.h        |  4 ++
+ include/uapi/linux/stat.h            |  3 +-
+ io_uring/io_uring.c                  |  2 +
+ io_uring/rw.c                        |  2 +-
+ 21 files changed, 263 insertions(+), 12 deletions(-)
+
+--=20
+2.43.5
+
 

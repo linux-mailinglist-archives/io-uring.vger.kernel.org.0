@@ -1,78 +1,77 @@
-Return-Path: <io-uring+bounces-4582-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4583-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F3A9C32F3
-	for <lists+io-uring@lfdr.de>; Sun, 10 Nov 2024 15:55:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC6D9C32F4
+	for <lists+io-uring@lfdr.de>; Sun, 10 Nov 2024 15:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBAC11F2130D
-	for <lists+io-uring@lfdr.de>; Sun, 10 Nov 2024 14:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068091F212D0
+	for <lists+io-uring@lfdr.de>; Sun, 10 Nov 2024 14:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03E638FA6;
-	Sun, 10 Nov 2024 14:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC451C28E;
+	Sun, 10 Nov 2024 14:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsrBf3lS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZcsn0Y2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32543A1BA
-	for <io-uring@vger.kernel.org>; Sun, 10 Nov 2024 14:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5560B3B298
+	for <io-uring@vger.kernel.org>; Sun, 10 Nov 2024 14:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731250544; cv=none; b=SYLSVqLM7bP9/vfSNx9lwl4yyF8/GHB15SwimgKFZjPivoaJvvPCguoqCEb7DnY1THdHTELIeiCwI6EVCPkfaV55DSEVe9HzAbOBzc6Mr/kDos/1O2kOIykLA7HPWzqgoEG6cEQr4VCVXtHOVDAeHfmGsGFzyK+QEtRA8g4fE9k=
+	t=1731250546; cv=none; b=q1qDBLlGcOK80WmTzUgs3NDp1YU1Hi2eAaCM/MldsyOQ+DLiSuOqyKgTzYEfqN7stk7xDg+eU9P3eEFHR0d0MTNk4qRv3jbU3eSgyHPVSLEX82YXakW5oEQnbuiv1wDi8c51/L3un8e6R6hQpsw4fPSnzYejv6fMAf1ajxGQ6Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731250544; c=relaxed/simple;
-	bh=nKTClVBGhsX7zwCwaox4vBWPDBNgwgIEBPiBoPiSRTM=;
+	s=arc-20240116; t=1731250546; c=relaxed/simple;
+	bh=gzBlB2S9hWxCZWyz5YLoZ43Ubwbn8Hm9jMNBwg1G+MU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HlDaU6kWr9pSQU32e6F4FSxJaiG5bJ9m4Nm9jwWMp+8n3fWqle0CUJClVdR/I5b/aH5tJEaNEwcc77UYfpQBzwb84+gERSHulFqjc4eSwDaLk5I3Ax8vqha6kq0i2JgNKgoxBaefwq6L7kBXE5tW4mlPOjyIQa3ALUcZMCjF0L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsrBf3lS; arc=none smtp.client-ip=209.85.221.44
+	 MIME-Version; b=HW/vHhJoeZPIrK8xn6FHRiizU17Pz4bYs1cA7rP6T9z9JRDyKIsuKdrfccliFiNxObvQBqaqvpg81xGbDDz3ABx69f64tMZ8b7VzEBMyfaITiNHoPqdtgF13xYr0bXAYp8GgzauYgLsuMCZ78pGkO8LNjg9YEdjpSbTijL28EPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SZcsn0Y2; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d4c482844so2536223f8f.0
-        for <io-uring@vger.kernel.org>; Sun, 10 Nov 2024 06:55:42 -0800 (PST)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d462c91a9so2302370f8f.2
+        for <io-uring@vger.kernel.org>; Sun, 10 Nov 2024 06:55:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731250541; x=1731855341; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731250542; x=1731855342; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oN/036oZWg1nQl48c3sVtA0Ff5fx+R8e47nsnQGPmB0=;
-        b=TsrBf3lSOVkVZro9ex53qvXBzZlJHYAjsFDjxVSlRx5H2EVGqXF22CD9dI0kCKjNJp
-         GB7CgkWXkTPv/93k6HZALhdrLmYz9meut+y46hDWUinnLCPfj5x/IDxo0xOUzU8HCJW/
-         tv+sSROmpYRybqD3diDUlamfFdWaen6rwGifV9alwv6JuBuH2fO++guqnTgtxPTOmG+n
-         xGgZQcKpH+KyhWVUJ8/e0A/g4+Ki5MTdf9wJwksSSe1G54XZv/joUA2Bk9NTKym4hpqj
-         BGGQX25gycnclwqjNUOPCOBLFJpCCFGaLgGiYQlU5z0KR7gxbuKe9Uk++NeuEU2/K9OA
-         InpA==
+        bh=Y8zV3Xxbm1BmP6KeJIic2z/32D6ufKuQ8hf49CeI9RI=;
+        b=SZcsn0Y2LORrndAB7MMhw9E7z79fxBEGedYO7qekBz9rZEJsL0pZhxrTrWWrISvMfU
+         O6BShYVZKb95PDufl1+PbSRdOfLK3UY9JuGGUCQuMbjUD4N2Yxwycjz8wV6YzMHQXeJC
+         IMKEY/QqOKSIHGNebXnsNNYCgUy2ba0N7lt3GII2AemUclAyDZCVHm/St6Dl5wS6CLAQ
+         VKjHfnpYhnF4bZT92yEObax/aP4dZTVgG3LG7JAjCBK6ES44lgNa7lwhW2lAQKiK9xjc
+         WFtWW/efo0XrYSd/QTxuFDjOGYmSO97deRJQYyUsanuZCJHrz1TiBLWbc2GJCIwlTjPE
+         T/Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731250541; x=1731855341;
+        d=1e100.net; s=20230601; t=1731250542; x=1731855342;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oN/036oZWg1nQl48c3sVtA0Ff5fx+R8e47nsnQGPmB0=;
-        b=HKMFFcxdN/Nl5o5OeSzaRb0H10eqn8N38TtXV9VUm791wrj0DMVsED18se2706Wy9b
-         759idpg3yEOggvdOkSXVPkzW53qvtdV272EsF1a1pjdjGia2ZYihY6tP4lfLmOdH71E3
-         2OcPy/TeDLu9DcAnY6OprcGIZJLb1FJ8wdRUBgYxtmZdMZmILjDUpRy5bphGdMwwfLth
-         wwIfYY3nv1eAATL9uiU51YU3V0OsvdHnpBgQZqTPjAQZYgMB0ZvVIvJiDzuXB2MFM8p9
-         e4D8nT/vj1V/pWrzyE6CZ8FfHbsZCaSycuIqmylUQOZPPfnrLF9Y6e8daXcRO5w+DmVV
-         yeXQ==
-X-Gm-Message-State: AOJu0YwoY2vXAaOhsUFqiHJpxd1IWD+47DjwVJTvxc0DbdfFyCkKvAux
-	sU8FZYSBkiPPeLrdmlq1nfi4KF4IZ14vNbjNHFG5AM2bTK98BFxa5ZQgsA==
-X-Google-Smtp-Source: AGHT+IHMtTRM/rssqmS0BRomNvXz9YfEGW3aupMAENcYewfPkSssM749yv0RQ/dhuX2iPeX1Sn69AQ==
-X-Received: by 2002:a5d:648b:0:b0:37d:47ee:10d9 with SMTP id ffacd0b85a97d-381f1873485mr7798089f8f.34.1731250540857;
-        Sun, 10 Nov 2024 06:55:40 -0800 (PST)
+        bh=Y8zV3Xxbm1BmP6KeJIic2z/32D6ufKuQ8hf49CeI9RI=;
+        b=MWj2QtQZhRYJfPYwsiSLkPg4Fas62oJVBBRYvFYfQZQiO4FNtRgMgUNyLRtfJ1ImPz
+         dO+7NqpnM2826wjU3+VWWth5wNm5VEnw/kuHGs9/ibIp4q/sBcBcA8f6xn11m64pzhpk
+         UpYGRUyyAoJWhzBBtvQ7QhEPqxYhxxpaDFa02C/FtHQ9Asjy0T/PRsLc+tbFFhs6Ewpn
+         hYBBqPpRvF4zvIjRPwBC427a8zWLTXNBGi/OM9kRedZSNnpO7TppBE7O3xF7rAtv1QLO
+         PMjhUvYWXD4EXoepZGEyRjCv6VWbMlSzcwc/esf8QbFtKfbcPX6V6g74JzNoJAa5JRQo
+         8MuQ==
+X-Gm-Message-State: AOJu0Ywo6taJ2d6V3R2BrnHJJiOldL5PC73R2BUzhQUzxScRkpy3d8+D
+	JkumG/AeqMKzxEr5U9e0s5pGveqJyngz60v6XEga2TwHkBEpvFJjkKY90Q==
+X-Google-Smtp-Source: AGHT+IGPdSvV5L+oA8X5syO1/CqS/TBDiMp9fp9O6fpLei48ElAJy1BbZzWdi/GrnF5w4sp6JuCaDw==
+X-Received: by 2002:a05:6000:481b:b0:374:c614:73df with SMTP id ffacd0b85a97d-381f1852a83mr7685838f8f.57.1731250542082;
+        Sun, 10 Nov 2024 06:55:42 -0800 (PST)
 Received: from 127.0.0.1localhost ([85.255.234.98])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6beea6sm182445535e9.20.2024.11.10.06.55.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6beea6sm182445535e9.20.2024.11.10.06.55.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 06:55:40 -0800 (PST)
+        Sun, 10 Nov 2024 06:55:41 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [RFC 2/3] io_uring: add support for ignoring inline completions for waits
-Date: Sun, 10 Nov 2024 14:56:21 +0000
-Message-ID: <90bc3070b66b2a9f832716fd149184309ea6277d.1731205010.git.asml.silence@gmail.com>
+Cc: asml.silence@gmail.com
+Subject: [RFC 3/3] io_uring: allow waiting loop to ignore some CQEs
+Date: Sun, 10 Nov 2024 14:56:22 +0000
+Message-ID: <a15bb014ecc67b004c2bd2283758c5ab3987e54a.1731205010.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1731205010.git.asml.silence@gmail.com>
 References: <cover.1731205010.git.asml.silence@gmail.com>
@@ -84,131 +83,173 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Jens Axboe <axboe@kernel.dk>
+The user might not care about getting results of certain request, but
+there will still wake up the task (i.e. task_work) and trigger the
+waiting loop to terminate.
 
-io_uring treats all completions the same - they post a completion event,
-or more, and anyone waiting on event completions will see each event as
-it gets posted.
+IOSQE_SET_F_HINT_SILENT attempts to de-priorities such completions.
+The completion will be eventually posted, however the execution of the
+request can and likely will be delayed to batch it with other requests.
 
-However, some events may be more interesting that others. For a request
-and response type model, it's not uncommon to have send/write events
-that are submitted with a recv/read type of request. While the app does
-want to see a successful send/write completion eventually, it need not
-handle it upfront as it would want to do with a recv/read, as it isn't
-time sensitive. Generally, a send/write completion will just mean that
-a buffer can get recycled/reused, whereas a recv/read completion needs
-acting upon (and a response sent).
+It's an incomplete prototype, it only works with DEFER_TASKRUN, fails to
+apply the optimisation for task_works queued before the waiting loop
+starts, and interaction with IOSQE_SET_F_HINT_IGNORE_INLINE is likely
+broken.
 
-This can be somewhat tricky to handle if many requests and responses
-are being handled, and the app generally needs to track the number of
-pending sends/writes to be able to sanely wait on just new incoming
-recv/read requests. And even with that, an application would still
-like to see a completion for a short/failed send/write immediately.
-
-Add infrastructure to account inline completions, such that they can
-be deducted from the 'wait_nr' being passed in via a submit_and_wait()
-type of situation. Inline completions are ones that complete directly
-inline from submission, such as a send to a socket where there's
-enough space to accomodate the data being sent.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-[pavel: rebased onto iosets]
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring_types.h |  1 +
- include/uapi/linux/io_uring.h  |  4 ++++
- io_uring/io_uring.c            | 12 ++++++++++--
- io_uring/register.c            |  2 +-
- 4 files changed, 16 insertions(+), 3 deletions(-)
+ include/uapi/linux/io_uring.h |  1 +
+ io_uring/io_uring.c           | 43 +++++++++++++++++++++++------------
+ io_uring/register.c           |  3 ++-
+ 3 files changed, 31 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 79f38c07642d..f04444f9356a 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -213,6 +213,7 @@ struct io_submit_state {
- 	bool			need_plug;
- 	bool			cq_flush;
- 	unsigned short		submit_nr;
-+	unsigned short		inline_completions;
- 	struct blk_plug		plug;
- };
- 
 diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 6a432383e7c3..e6d10fba8ae2 100644
+index e6d10fba8ae2..6dff0ee4e20c 100644
 --- a/include/uapi/linux/io_uring.h
 +++ b/include/uapi/linux/io_uring.h
-@@ -899,6 +899,10 @@ struct io_uring_recvmsg_out {
- 	__u32 flags;
+@@ -901,6 +901,7 @@ struct io_uring_recvmsg_out {
+ 
+ enum {
+ 	IOSQE_SET_F_HINT_IGNORE_INLINE		= 1,
++	IOSQE_SET_F_HINT_SILENT			= 2,
  };
  
-+enum {
-+	IOSQE_SET_F_HINT_IGNORE_INLINE		= 1,
-+};
-+
  struct io_uring_ioset_reg {
- 	__u64 flags;
- 	__u64 __resv[3];
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index cf688a9ff737..6e89435c243d 100644
+index 6e89435c243d..2e1af10fd4f2 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -1575,6 +1575,9 @@ void __io_submit_flush_completions(struct io_ring_ctx *ctx)
- 		struct io_kiocb *req = container_of(node, struct io_kiocb,
- 					    comp_list);
- 
-+		if (req->ioset->flags & IOSQE_SET_F_HINT_IGNORE_INLINE)
-+			state->inline_completions++;
-+
- 		if (unlikely(req->flags & (REQ_F_CQE_SKIP | REQ_F_GROUP))) {
- 			if (req->flags & REQ_F_GROUP) {
- 				io_complete_group_req(req);
-@@ -2511,6 +2514,7 @@ static void io_submit_state_start(struct io_submit_state *state,
- 	state->plug_started = false;
- 	state->need_plug = max_ios > 2;
- 	state->submit_nr = max_ios;
-+	state->inline_completions = 0;
- 	/* set only head, no need to init link_last in advance */
- 	state->link.head = NULL;
- 	state->group.head = NULL;
-@@ -3611,6 +3615,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 		size_t, argsz)
+@@ -1270,6 +1270,7 @@ static inline void io_req_local_work_add(struct io_kiocb *req,
  {
- 	struct io_ring_ctx *ctx;
-+	int inline_complete = 0;
- 	struct file *file;
- 	long ret;
+ 	unsigned nr_wait, nr_tw, nr_tw_prev;
+ 	struct llist_node *head;
++	bool ignore = req->ioset->flags & IOSQE_SET_F_HINT_SILENT;
  
-@@ -3676,6 +3681,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 			mutex_unlock(&ctx->uring_lock);
- 			goto out;
+ 	/* See comment above IO_CQ_WAKE_INIT */
+ 	BUILD_BUG_ON(IO_CQ_WAKE_FORCE <= IORING_MAX_CQ_ENTRIES);
+@@ -1297,13 +1298,17 @@ static inline void io_req_local_work_add(struct io_kiocb *req,
+ 			nr_tw_prev = READ_ONCE(first_req->nr_tw);
  		}
-+		inline_complete = ctx->submit_state.inline_completions;
- 		if (flags & IORING_ENTER_GETEVENTS) {
- 			if (ctx->syscall_iopoll)
- 				goto iopoll_locked;
-@@ -3713,8 +3719,10 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
  
- 			ret2 = io_get_ext_arg(ctx, flags, argp, &ext_arg);
- 			if (likely(!ret2)) {
--				min_complete = min(min_complete,
--						   ctx->cq_entries);
-+				if (min_complete > ctx->cq_entries)
-+					min_complete = ctx->cq_entries;
-+				else
-+					min_complete += inline_complete;
- 				ret2 = io_cqring_wait(ctx, min_complete, flags,
- 						      &ext_arg);
- 			}
+-		/*
+-		 * Theoretically, it can overflow, but that's fine as one of
+-		 * previous adds should've tried to wake the task.
+-		 */
+-		nr_tw = nr_tw_prev + 1;
+-		if (!(flags & IOU_F_TWQ_LAZY_WAKE))
+-			nr_tw = IO_CQ_WAKE_FORCE;
++		nr_tw = nr_tw_prev;
++
++		if (!ignore) {
++			/*
++			 * Theoretically, it can overflow, but that's fine as
++			 * one of previous adds should've tried to wake the task.
++			 */
++			nr_tw += 1;
++			if (!(flags & IOU_F_TWQ_LAZY_WAKE))
++				nr_tw = IO_CQ_WAKE_FORCE;
++		}
+ 
+ 		req->nr_tw = nr_tw;
+ 		req->io_task_work.node.next = head;
+@@ -1325,6 +1330,9 @@ static inline void io_req_local_work_add(struct io_kiocb *req,
+ 			io_eventfd_signal(ctx);
+ 	}
+ 
++	if (ignore)
++		return;
++
+ 	nr_wait = atomic_read(&ctx->cq_wait_nr);
+ 	/* not enough or no one is waiting */
+ 	if (nr_tw < nr_wait)
+@@ -1405,7 +1413,7 @@ static bool io_run_local_work_continue(struct io_ring_ctx *ctx, int events,
+ }
+ 
+ static int __io_run_local_work(struct io_ring_ctx *ctx, struct io_tw_state *ts,
+-			       int min_events)
++			       int min_events, struct io_wait_queue *waitq)
+ {
+ 	struct llist_node *node;
+ 	unsigned int loops = 0;
+@@ -1425,6 +1433,10 @@ static int __io_run_local_work(struct io_ring_ctx *ctx, struct io_tw_state *ts,
+ 		struct llist_node *next = node->next;
+ 		struct io_kiocb *req = container_of(node, struct io_kiocb,
+ 						    io_task_work.node);
++
++		if (req->ioset->flags & IOSQE_SET_F_HINT_SILENT)
++			waitq->cq_tail++;
++
+ 		INDIRECT_CALL_2(req->io_task_work.func,
+ 				io_poll_task_func, io_req_rw_complete,
+ 				req, ts);
+@@ -1450,16 +1462,17 @@ static inline int io_run_local_work_locked(struct io_ring_ctx *ctx,
+ 
+ 	if (llist_empty(&ctx->work_llist))
+ 		return 0;
+-	return __io_run_local_work(ctx, &ts, min_events);
++	return __io_run_local_work(ctx, &ts, min_events, NULL);
+ }
+ 
+-static int io_run_local_work(struct io_ring_ctx *ctx, int min_events)
++static int io_run_local_work(struct io_ring_ctx *ctx, int min_events,
++			      struct io_wait_queue *waitq)
+ {
+ 	struct io_tw_state ts = {};
+ 	int ret;
+ 
+ 	mutex_lock(&ctx->uring_lock);
+-	ret = __io_run_local_work(ctx, &ts, min_events);
++	ret = __io_run_local_work(ctx, &ts, min_events, waitq);
+ 	mutex_unlock(&ctx->uring_lock);
+ 	return ret;
+ }
+@@ -2643,7 +2656,7 @@ int io_run_task_work_sig(struct io_ring_ctx *ctx)
+ {
+ 	if (!llist_empty(&ctx->work_llist)) {
+ 		__set_current_state(TASK_RUNNING);
+-		if (io_run_local_work(ctx, INT_MAX) > 0)
++		if (io_run_local_work(ctx, INT_MAX, NULL) > 0)
+ 			return 0;
+ 	}
+ 	if (io_run_task_work() > 0)
+@@ -2806,7 +2819,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 	if (!io_allowed_run_tw(ctx))
+ 		return -EEXIST;
+ 	if (!llist_empty(&ctx->work_llist))
+-		io_run_local_work(ctx, min_events);
++		io_run_local_work(ctx, min_events, NULL);
+ 	io_run_task_work();
+ 
+ 	if (unlikely(test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq)))
+@@ -2877,7 +2890,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 		 * now rather than let the caller do another wait loop.
+ 		 */
+ 		if (!llist_empty(&ctx->work_llist))
+-			io_run_local_work(ctx, nr_wait);
++			io_run_local_work(ctx, nr_wait, &iowq);
+ 		io_run_task_work();
+ 
+ 		/*
+@@ -3389,7 +3402,7 @@ static __cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 
+ 	if ((ctx->flags & IORING_SETUP_DEFER_TASKRUN) &&
+ 	    io_allowed_defer_tw_run(ctx))
+-		ret |= io_run_local_work(ctx, INT_MAX) > 0;
++		ret |= io_run_local_work(ctx, INT_MAX, NULL) > 0;
+ 	ret |= io_cancel_defer_files(ctx, tctx, cancel_all);
+ 	mutex_lock(&ctx->uring_lock);
+ 	ret |= io_poll_remove_all(ctx, tctx, cancel_all);
 diff --git a/io_uring/register.c b/io_uring/register.c
-index e7571dc46da5..f87ec7b773bd 100644
+index f87ec7b773bd..5462c49bebd3 100644
 --- a/io_uring/register.c
 +++ b/io_uring/register.c
-@@ -92,7 +92,7 @@ static int io_update_ioset(struct io_ring_ctx *ctx,
+@@ -92,7 +92,8 @@ static int io_update_ioset(struct io_ring_ctx *ctx,
  {
  	if (!(ctx->flags & IORING_SETUP_IOSET))
  		return -EINVAL;
--	if (reg->flags)
-+	if (reg->flags & ~IOSQE_SET_F_HINT_IGNORE_INLINE)
+-	if (reg->flags & ~IOSQE_SET_F_HINT_IGNORE_INLINE)
++	if (reg->flags & ~(IOSQE_SET_F_HINT_IGNORE_INLINE |
++			   IOSQE_SET_F_HINT_SILENT))
  		return -EINVAL;
  	if (reg->__resv[0] || reg->__resv[1] || reg->__resv[2])
  		return -EINVAL;

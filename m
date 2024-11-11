@@ -1,58 +1,48 @@
-Return-Path: <io-uring+bounces-4609-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4610-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33BF9C429B
-	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 17:27:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADD29C42B6
+	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 17:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A35221F2611E
-	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 16:27:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8735FB229DD
+	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 16:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08C9178368;
-	Mon, 11 Nov 2024 16:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZQf0+4y"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCB71A0BF2;
+	Mon, 11 Nov 2024 16:34:33 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBFC13C80D;
-	Mon, 11 Nov 2024 16:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8161B19C569;
+	Mon, 11 Nov 2024 16:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731342457; cv=none; b=iGkauuVESVmIqTZqAK8150+PC/HexAegDBLMKogttE/9ihZmuaLWv0cVBiWnzIsvX/APHRhGqltrPVRYUI3cFA8dTxLgf7lJvraUuQvO/xoI086w7BngIOJpadLvr0P3KlCzao7QZAkxN3Aur7+CkAht71SR9hLNltX/jHA2SrQ=
+	t=1731342873; cv=none; b=W56lczzOzO+6IjNfPyOjgQdJG2Ho1Wqy3dMcIrFYuZRsIzKqp38djWz4CJFZ5OhFbtY8lBdpNaClLAVzI3330jJBt9irJpBDQu7l5mlVCfEwm5ii5nUBA+mLGJneRooPAergv4FsFvfL73hti8ST+VavxfhyTH0rYeK3jHiCiIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731342457; c=relaxed/simple;
-	bh=fJMQuYsECNO8SL8MoMztWuhXknHywKxO6bpFKaQ4/tk=;
+	s=arc-20240116; t=1731342873; c=relaxed/simple;
+	bh=KWPIFZJXA+An9Mjg45PmlhqbudT3WPMG04jLt2b/DsE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fl27/5nMtgrN2AE1d8QkC7NJWUGPiOo3sVHJ1GFtm4+t2S2lA6B6GKIaOVLbS5DWBEppk6RZXFsTcAXewLx6+5Smw4vq55YaEidK0okb8/a6EDac+X0ZbdMMB6D+l6XIzZjDfucnK7SP55PwczSs14KqlIzgPaGM3+Mby6VFB0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZQf0+4y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 555DAC4CECF;
-	Mon, 11 Nov 2024 16:27:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731342457;
-	bh=fJMQuYsECNO8SL8MoMztWuhXknHywKxO6bpFKaQ4/tk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rZQf0+4yfZt5LKsbrtjWZLo88wX1EU9zpd2YctRXKMVU2fN+CkFXHpbROUtJe9O15
-	 /kvN6WXl0rbXesHJ9B4wWSh8aCTrBBS3SIAtmhOFzGpuEEqWhzh0RaYs1XKEIUI4hX
-	 jTCd+eGz8qgqTgz2lTuCmRmo0/lsl6Rv3brNNr5Kyh94rFdbCbHMAoGyIe/5WSlVSS
-	 KDyUpkbgXIp5Isx+39PNn0sYUtTAIv/aoK10rcaNSI2qUKBKih0Gu5/UpFCwEycIoe
-	 rebe0foqrYFiPhXRxGui7NFwBduK/0JiigPipoP54RuVXtPlZ/JmOoVxRlVChkz9X8
-	 R2MQ0jI6pEHiQ==
-Date: Mon, 11 Nov 2024 09:27:33 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	axboe@kernel.dk, martin.petersen@oracle.com, asml.silence@gmail.com,
+	 Content-Type:Content-Disposition:In-Reply-To; b=kW5yiO5VfMNStG4ua8mK5R++U2MGaAUIj9zA1U5VryEx7H71oZvSchyEm/UP1+VJV6EtWl0h3kcpA7+wYvtOjkkzDj4LRXRHQkZ+s9BNe/Lbw6TN73HINnP1gXnC72aaF+ovU33VWYYDyK05KISyroIdu4lsKqMrZJ4aJHDmY+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D98C768D05; Mon, 11 Nov 2024 17:34:25 +0100 (CET)
+Date: Mon, 11 Nov 2024 17:34:25 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, axboe@kernel.dk,
+	martin.petersen@oracle.com, asml.silence@gmail.com,
 	javier.gonz@samsung.com, joshi.k@samsung.com
 Subject: Re: [PATCHv11 0/9] write hints with nvme fdp and scsi streams
-Message-ID: <ZzIwdW0-yn6uglDF@kbusch-mbp>
-References: <20241108193629.3817619-1-kbusch@meta.com>
- <20241111102914.GA27870@lst.de>
+Message-ID: <20241111163425.GA17212@lst.de>
+References: <20241108193629.3817619-1-kbusch@meta.com> <20241111102914.GA27870@lst.de> <ZzIwdW0-yn6uglDF@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -61,69 +51,52 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241111102914.GA27870@lst.de>
+In-Reply-To: <ZzIwdW0-yn6uglDF@kbusch-mbp>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Nov 11, 2024 at 11:29:14AM +0100, Christoph Hellwig wrote:
-> On Fri, Nov 08, 2024 at 11:36:20AM -0800, Keith Busch wrote:
-> >   Default partition split so partition one gets all the write hints
-> >   exclusively
+On Mon, Nov 11, 2024 at 09:27:33AM -0700, Keith Busch wrote:
+> Just purely for backward compatibility, I don't think you can have the
+> nvme driver error out if a stream is too large. The fcntl lifetime hint
+> never errored out before, which gets set unconditionally from the
+> file_inode without considering the block device's max write stream.
+
+True.  But block/fops.c should simply not the write hint in that
+case (or even do a bit of folding if we care enough).
+
+> >  - block/fops.c is the place to map the existing write hints into
+> >    the write streams instead of the driver
 > 
-> I still don't think this actually works as expected, as the user
-> interface says the write streams are contigous, and with the bitmap
-> they aren't.
+> I might be something here, but that part sure looks the same as what's
+> in this series.
+
+Your series simply mixes up the existing write (temperature) hint and
+the write stream, including for file system use.  This version does
+something very similar, but only for block devices.
+
 > 
-> As I seem to have a really hard time to get my point across, I instead
-> spent this morning doing a POC of what I mean, and pushed it here:
+> >  - the stream granularity is added, because adding it to statx at a
+> >    later time would be nasty.  Getting it in nvme is actually amazingly
+> >    cumbersome so I gave up on that and just fed a dummy value for
+> >    testing, though
 > 
-> http://git.infradead.org/?p=users/hch/misc.git;a=shortlog;h=refs/heads/block-write-streams
+> Just regarding the documentation on the write_stream_granularity, you
+> don't need to discard the entire RU in a single command. You can
+> invalidate the RU simply by overwriting the LBAs without ever issuing
+> any discard commands.
 
-Just purely for backward compatibility, I don't think you can have the
-nvme driver error out if a stream is too large. The fcntl lifetime hint
-never errored out before, which gets set unconditionally from the
-file_inode without considering the block device's max write stream.
+True.  Did I managed this was a quick hack job?
 
-> The big differences are:
-> 
->  - there is a separate write_stream value now instead of overloading
->    the write hint.  For now it is an 8-bit field for the internal
->    data structures so that we don't have to grow the bio, but all the
->    user interfaces are kept at 16 bits (or in case of statx reduced to
->    it).  If this becomes now enough because we need to support devices
->    with multiple reclaim groups we'll have to find some space by using
->    unions or growing structures
+> If you really want to treat it this way, you need to ensure the first
+> LBA written to an RU is always aligned to NPDA/NPDAL.
 
-As far as I know, 255 possible streams exceeds any use case I know
-about.
+Those are just hints as well, but I agree you probably get much
+better results if they do.
 
->  - block/fops.c is the place to map the existing write hints into
->    the write streams instead of the driver
+> If this is really what you require to move this forward, though, that's
+> fine with me.
 
-I might be something here, but that part sure looks the same as what's
-in this series.
+I could move it forward, but right now I'm more than over subsribed.
+If someone actually pushing for this work could put more effort into it
+it will surely be faster.
 
->  - the stream granularity is added, because adding it to statx at a
->    later time would be nasty.  Getting it in nvme is actually amazingly
->    cumbersome so I gave up on that and just fed a dummy value for
->    testing, though
-
-Just regarding the documentation on the write_stream_granularity, you
-don't need to discard the entire RU in a single command. You can
-invalidate the RU simply by overwriting the LBAs without ever issuing
-any discard commands.
-
-If you really want to treat it this way, you need to ensure the first
-LBA written to an RU is always aligned to NPDA/NPDAL.
-
-If this is really what you require to move this forward, though, that's
-fine with me.
-
->  - the partitions remapping is now done using an offset into the global
->    write stream space so that the there is a contiguous number space.
->    The interface for this is rather hacky, so only treat it as a start
->    for interface and use case discussions.
->  - the generic stack limits code stopped stacking the max write
->    streams.  While it does the right thing for simple things like
->    multipath and mirroring/striping is is wrong for anything non-trivial
->    like parity raid.  I've left this as a separate fold patch for the
->    discussion.
 

@@ -1,105 +1,94 @@
-Return-Path: <io-uring+bounces-4602-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4603-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A4D9C3BB9
-	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 11:13:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED3D9C3BF2
+	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 11:30:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14CF28298F
-	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 10:13:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 691201C21BEF
+	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 10:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA75E149C4D;
-	Mon, 11 Nov 2024 10:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CeVrh2k8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A76117C9BB;
+	Mon, 11 Nov 2024 10:29:22 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37BE1487DC
-	for <io-uring@vger.kernel.org>; Mon, 11 Nov 2024 10:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CB01850AF;
+	Mon, 11 Nov 2024 10:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731320011; cv=none; b=BpXHijoPBlfbRQbOtee97Iwh7OQMsxhHv6q93BEWJtWWVDh/ILEV4Vj75Iowfe+Vf3BXi3cAMEid66Il+4vFTQEp+IQfA5Auo0qgzAwN0qJKw+Ep56LNidTxTEUAHfqJFfMG4W4lElhjTXirTrGJ4sFADiyb2btyvrA0WJ2Z85k=
+	t=1731320962; cv=none; b=EY8hoco10BKQrTEDBrz17eUI6jhdBsgb2MXERNL7caIdv0UBpPxxJvdRlznuOCH087/Sa9wY/pg5Q2ykS3J7mfHUS06n/AeOytZJFjlj2463ULDt9IST3wMxHM5oPkz6yY6bZfwfN5eyauk0IvpcE6rHwr1dLwcCV9mx7ZwLePQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731320011; c=relaxed/simple;
-	bh=eeMsht0fq/5vkHuGbnWPUg1e2bsEs6ODP9xVEu1c9NU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oLwpraxV542GDhLfay9wFyuQg1tBLBb9tCEpOVJ1Icb5NLjNHOzta6Zj/eDBy4TuoVjpRcXxaxcWkl/X/YEYiNLCyeX2oCn3qo0qwgLmniPSIsCwpFToPyAXSiuUSyyLr2fD5+kJ3+cdsSTGPFB9rAu/j6DkeWmy1d2EoAzhhqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CeVrh2k8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731320008;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RFOv5I2JybypHq5q7M26Aqj/o+48sP+/DWqaDZsRe0o=;
-	b=CeVrh2k8b/20utqNKnO3o8DYE+P0b6vGUnN/9zkDnzStJD4vOyvLdSz5sZPZ+31RjCDdoD
-	ZGupHiaI7AQSBcIFfgJksT9ZibZMFFW1Pu1dlzlmYEmj77jrEkOqDQxcXCjv/0Uacd3XbS
-	DtW3okcIYE9Q/V+P0RGZk9t2A5jK054=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-576-IxHx3ZJvOQWFV7cAx2Qtkw-1; Mon,
- 11 Nov 2024 05:13:26 -0500
-X-MC-Unique: IxHx3ZJvOQWFV7cAx2Qtkw-1
-X-Mimecast-MFC-AGG-ID: IxHx3ZJvOQWFV7cAx2Qtkw
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CF80619560B0;
-	Mon, 11 Nov 2024 10:13:24 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.22])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 90C90195E488;
-	Mon, 11 Nov 2024 10:13:22 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	io-uring@vger.kernel.org,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: Ming Lei <ming.lei@redhat.com>,
-	Guangwu Zhang <guazhang@redhat.com>,
-	Jeff Moyer <jmoyer@redhat.com>
-Subject: [PATCH] io_uring/uring_cmd: fix buffer index retrieval
-Date: Mon, 11 Nov 2024 18:13:18 +0800
-Message-ID: <20241111101318.1387557-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1731320962; c=relaxed/simple;
+	bh=H8688IHkrAhzY0lMUPLf6jI8Dg7DkVuXAc0C7/5+aus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GBzSdKpRxaWIEARV5sxJFtLDX9XYfHwPS2E6/5oe0XfxDU0w4lEj033LgD8LjudW4xvPET6TOb23mBfbjO3IYqLozRJjfZp798UaTUyVRsIy+1Qoi1MVCAJo47eXI6y43x/sCBWCGKg4lfHZBNyQVjmdIUyVRhXLnXV0smkQR4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 3C96168D09; Mon, 11 Nov 2024 11:29:15 +0100 (CET)
+Date: Mon, 11 Nov 2024 11:29:14 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Keith Busch <kbusch@meta.com>
+Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
+	martin.petersen@oracle.com, asml.silence@gmail.com,
+	javier.gonz@samsung.com, joshi.k@samsung.com,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv11 0/9] write hints with nvme fdp and scsi streams
+Message-ID: <20241111102914.GA27870@lst.de>
+References: <20241108193629.3817619-1-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108193629.3817619-1-kbusch@meta.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Add back buffer index retrieval for IORING_URING_CMD_FIXED.
+On Fri, Nov 08, 2024 at 11:36:20AM -0800, Keith Busch wrote:
+>   Default partition split so partition one gets all the write hints
+>   exclusively
 
-Reported-by: Guangwu Zhang <guazhang@redhat.com>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Fixes: b54a14041ee6 ("io_uring/rsrc: add io_rsrc_node_lookup() helper")
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- io_uring/uring_cmd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I still don't think this actually works as expected, as the user
+interface says the write streams are contigous, and with the bitmap
+they aren't.
 
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index e7723759cb23..1abb5c9f803f 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -220,8 +220,9 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	if (ioucmd->flags & IORING_URING_CMD_FIXED) {
- 		struct io_ring_ctx *ctx = req->ctx;
- 		struct io_rsrc_node *node;
-+		u16 index = READ_ONCE(sqe->buf_index);
- 
--		node = io_rsrc_node_lookup(&ctx->buf_table, req->buf_index);
-+		node = io_rsrc_node_lookup(&ctx->buf_table, index);
- 		if (unlikely(!node))
- 			return -EFAULT;
- 		/*
--- 
-2.46.0
+As I seem to have a really hard time to get my point across, I instead
+spent this morning doing a POC of what I mean, and pushed it here:
 
+http://git.infradead.org/?p=users/hch/misc.git;a=shortlog;h=refs/heads/block-write-streams
+
+The big differences are:
+
+ - there is a separate write_stream value now instead of overloading
+   the write hint.  For now it is an 8-bit field for the internal
+   data structures so that we don't have to grow the bio, but all the
+   user interfaces are kept at 16 bits (or in case of statx reduced to
+   it).  If this becomes now enough because we need to support devices
+   with multiple reclaim groups we'll have to find some space by using
+   unions or growing structures
+ - block/fops.c is the place to map the existing write hints into
+   the write streams instead of the driver
+ - the stream granularity is added, because adding it to statx at a
+   later time would be nasty.  Getting it in nvme is actually amazingly
+   cumbersome so I gave up on that and just fed a dummy value for
+   testing, though
+ - the partitions remapping is now done using an offset into the global
+   write stream space so that the there is a contiguous number space.
+   The interface for this is rather hacky, so only treat it as a start
+   for interface and use case discussions.
+ - the generic stack limits code stopped stacking the max write
+   streams.  While it does the right thing for simple things like
+   multipath and mirroring/striping is is wrong for anything non-trivial
+   like parity raid.  I've left this as a separate fold patch for the
+   discussion.
 

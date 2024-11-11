@@ -1,105 +1,129 @@
-Return-Path: <io-uring+bounces-4608-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4609-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C35B89C41A0
-	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 16:13:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F33BF9C429B
+	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 17:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DC161F22230
-	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 15:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A35221F2611E
+	for <lists+io-uring@lfdr.de>; Mon, 11 Nov 2024 16:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8247338F83;
-	Mon, 11 Nov 2024 15:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08C9178368;
+	Mon, 11 Nov 2024 16:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="K/Sn6P2m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZQf0+4y"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087701E481
-	for <io-uring@vger.kernel.org>; Mon, 11 Nov 2024 15:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBFC13C80D;
+	Mon, 11 Nov 2024 16:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731338029; cv=none; b=Nzi0E6HhiG9QNCPalIWaL/c1TH6cjU/svuyQBxTBu3XdTWweQHf0r79efdyuWDhdc2pgJMKTnyqRqUJL/8Ev6tpkVpxkTP5GI1R5FYCe6xR5aQ+N2rNmcuEJzvDQCwN/2llsa2h/YX5XRZUSGGJmi3r0bjRB72cPFB34rzsSm4c=
+	t=1731342457; cv=none; b=iGkauuVESVmIqTZqAK8150+PC/HexAegDBLMKogttE/9ihZmuaLWv0cVBiWnzIsvX/APHRhGqltrPVRYUI3cFA8dTxLgf7lJvraUuQvO/xoI086w7BngIOJpadLvr0P3KlCzao7QZAkxN3Aur7+CkAht71SR9hLNltX/jHA2SrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731338029; c=relaxed/simple;
-	bh=CU9hEl7sfhN5wTRzCcr7KT+fx3UR6C6yIE7TLEMIUAQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AQe8S25U//LsxNf4kWcGV24LVniBRNkSKAIJiPof/qOoZkUc0Dgo5Arvh/SOFmpEWvVfkh28cSMhiveKnzo5WsSd68MuzqNcl++pl/5P4xHEE3jK+X4+Npa6FvAiYkiEvxY+7X/TnIQNDJnXIwnEBEQDUuzZ6OOYRbCu03SfQdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=K/Sn6P2m; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5ebc27fdc30so2292062eaf.2
-        for <io-uring@vger.kernel.org>; Mon, 11 Nov 2024 07:13:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731338026; x=1731942826; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gRd3PlTMOvgFhjZvjCP1kJw/zuaBej17UmSQbJlXUZ4=;
-        b=K/Sn6P2m6hw/jHwqJUH1R3w/fn7SO/EM5CA4qM5SkcRq8zlKBRPjiCVKmVzXyccjQ+
-         fAv6Cyjx1kzVoaEIOPU+zXvWIV/UqDniGWWxbVjFdSw/ADZrVloAZWXgJwdZrtt5h+ch
-         dbnnGZL7PE9XLmdZQEdyj8pq5sYC7cf2jjvujpUe0GrZmn4AV+s/aOKtuZmeG+Ip1wEb
-         Wyge3DqgUwkDGEjCqXx7ADOcD1Nj8ljjj5P9PHS7KMd7iw9PSmS+5ji7oxPHgCkmy8qe
-         CzECMObkjUH2y6+3wlVL45AJDXmRpvQKoayHUNDD4ECcnzCME8JN3H0o1BmXc0xehuQ/
-         iCWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731338026; x=1731942826;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gRd3PlTMOvgFhjZvjCP1kJw/zuaBej17UmSQbJlXUZ4=;
-        b=QfEzjCAVC+RpOGVJVtaZbAD/bJF3PFEVkbE+Y7pLq+s2OP8OVKczQ/5BY6EEkvB/Hb
-         l4x66LDnIriChemUFHpbw2DWzVYn0zmgK9ltE1MbHxUdeRoio3eHfN6nBNY8XlNj1+Nj
-         x3SAQV7JNRum2nK1HzJMMEV//GkS1aVdtMU2b/gtrY/x1mT96rnEaTJ9XFjDTzb8xL11
-         xT0gMoCk/Eal6R2XWXi1PcJzGrKrIbHHUsw0NDjF+yNlZ4ueOT9bOYG5lwWaLdpSjQkM
-         4jm6903UNQB6ds3dBvKts8sV9BXvETfMSRWgiBeKxteDAjaLmkKz1dkZixW3E7Cz8lDI
-         Puzw==
-X-Gm-Message-State: AOJu0YxfC34DqYTj71c8idi9oqHfPoAnz8nrwdTr5U+DA4SYFQFe5zYD
-	0EZIpbGg7xaqRdc7rNATXzyERsFcCohNcWCAcMir1L85E6+7YZY2lxksGkXYl4I=
-X-Google-Smtp-Source: AGHT+IFpHBe3+IQQfoisPLMmDJgLqXJN9ryZsUW/xydadlPgWdSiBv25nqh35TFQtcY7Yv7/Ovjr5A==
-X-Received: by 2002:a05:6820:983:b0:5ee:bb2:bdd4 with SMTP id 006d021491bc7-5ee57b96aadmr8631424eaf.1.1731338025979;
-        Mon, 11 Nov 2024 07:13:45 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ee4950f84fsm1946813eaf.16.2024.11.11.07.13.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 07:13:45 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>, 
- Ming Lei <ming.lei@redhat.com>
-Cc: Guangwu Zhang <guazhang@redhat.com>, Jeff Moyer <jmoyer@redhat.com>
-In-Reply-To: <20241111101318.1387557-1-ming.lei@redhat.com>
-References: <20241111101318.1387557-1-ming.lei@redhat.com>
-Subject: Re: [PATCH] io_uring/uring_cmd: fix buffer index retrieval
-Message-Id: <173133802479.1860347.617719850207705664.b4-ty@kernel.dk>
-Date: Mon, 11 Nov 2024 08:13:44 -0700
+	s=arc-20240116; t=1731342457; c=relaxed/simple;
+	bh=fJMQuYsECNO8SL8MoMztWuhXknHywKxO6bpFKaQ4/tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fl27/5nMtgrN2AE1d8QkC7NJWUGPiOo3sVHJ1GFtm4+t2S2lA6B6GKIaOVLbS5DWBEppk6RZXFsTcAXewLx6+5Smw4vq55YaEidK0okb8/a6EDac+X0ZbdMMB6D+l6XIzZjDfucnK7SP55PwczSs14KqlIzgPaGM3+Mby6VFB0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZQf0+4y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 555DAC4CECF;
+	Mon, 11 Nov 2024 16:27:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731342457;
+	bh=fJMQuYsECNO8SL8MoMztWuhXknHywKxO6bpFKaQ4/tk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rZQf0+4yfZt5LKsbrtjWZLo88wX1EU9zpd2YctRXKMVU2fN+CkFXHpbROUtJe9O15
+	 /kvN6WXl0rbXesHJ9B4wWSh8aCTrBBS3SIAtmhOFzGpuEEqWhzh0RaYs1XKEIUI4hX
+	 jTCd+eGz8qgqTgz2lTuCmRmo0/lsl6Rv3brNNr5Kyh94rFdbCbHMAoGyIe/5WSlVSS
+	 KDyUpkbgXIp5Isx+39PNn0sYUtTAIv/aoK10rcaNSI2qUKBKih0Gu5/UpFCwEycIoe
+	 rebe0foqrYFiPhXRxGui7NFwBduK/0JiigPipoP54RuVXtPlZ/JmOoVxRlVChkz9X8
+	 R2MQ0jI6pEHiQ==
+Date: Mon, 11 Nov 2024 09:27:33 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+	axboe@kernel.dk, martin.petersen@oracle.com, asml.silence@gmail.com,
+	javier.gonz@samsung.com, joshi.k@samsung.com
+Subject: Re: [PATCHv11 0/9] write hints with nvme fdp and scsi streams
+Message-ID: <ZzIwdW0-yn6uglDF@kbusch-mbp>
+References: <20241108193629.3817619-1-kbusch@meta.com>
+ <20241111102914.GA27870@lst.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111102914.GA27870@lst.de>
 
-
-On Mon, 11 Nov 2024 18:13:18 +0800, Ming Lei wrote:
-> Add back buffer index retrieval for IORING_URING_CMD_FIXED.
+On Mon, Nov 11, 2024 at 11:29:14AM +0100, Christoph Hellwig wrote:
+> On Fri, Nov 08, 2024 at 11:36:20AM -0800, Keith Busch wrote:
+> >   Default partition split so partition one gets all the write hints
+> >   exclusively
 > 
+> I still don't think this actually works as expected, as the user
+> interface says the write streams are contigous, and with the bitmap
+> they aren't.
 > 
+> As I seem to have a really hard time to get my point across, I instead
+> spent this morning doing a POC of what I mean, and pushed it here:
+> 
+> http://git.infradead.org/?p=users/hch/misc.git;a=shortlog;h=refs/heads/block-write-streams
 
-Applied, thanks!
+Just purely for backward compatibility, I don't think you can have the
+nvme driver error out if a stream is too large. The fcntl lifetime hint
+never errored out before, which gets set unconditionally from the
+file_inode without considering the block device's max write stream.
 
-[1/1] io_uring/uring_cmd: fix buffer index retrieval
-      commit: a43e236fb9aef4528f2bd24095d1f348030f5d9d
+> The big differences are:
+> 
+>  - there is a separate write_stream value now instead of overloading
+>    the write hint.  For now it is an 8-bit field for the internal
+>    data structures so that we don't have to grow the bio, but all the
+>    user interfaces are kept at 16 bits (or in case of statx reduced to
+>    it).  If this becomes now enough because we need to support devices
+>    with multiple reclaim groups we'll have to find some space by using
+>    unions or growing structures
 
-Best regards,
--- 
-Jens Axboe
+As far as I know, 255 possible streams exceeds any use case I know
+about.
 
+>  - block/fops.c is the place to map the existing write hints into
+>    the write streams instead of the driver
 
+I might be something here, but that part sure looks the same as what's
+in this series.
 
+>  - the stream granularity is added, because adding it to statx at a
+>    later time would be nasty.  Getting it in nvme is actually amazingly
+>    cumbersome so I gave up on that and just fed a dummy value for
+>    testing, though
+
+Just regarding the documentation on the write_stream_granularity, you
+don't need to discard the entire RU in a single command. You can
+invalidate the RU simply by overwriting the LBAs without ever issuing
+any discard commands.
+
+If you really want to treat it this way, you need to ensure the first
+LBA written to an RU is always aligned to NPDA/NPDAL.
+
+If this is really what you require to move this forward, though, that's
+fine with me.
+
+>  - the partitions remapping is now done using an offset into the global
+>    write stream space so that the there is a contiguous number space.
+>    The interface for this is rather hacky, so only treat it as a start
+>    for interface and use case discussions.
+>  - the generic stack limits code stopped stacking the max write
+>    streams.  While it does the right thing for simple things like
+>    multipath and mirroring/striping is is wrong for anything non-trivial
+>    like parity raid.  I've left this as a separate fold patch for the
+>    discussion.
 

@@ -1,123 +1,238 @@
-Return-Path: <io-uring+bounces-4625-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4626-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6DC69C5C25
-	for <lists+io-uring@lfdr.de>; Tue, 12 Nov 2024 16:43:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFC99C5D56
+	for <lists+io-uring@lfdr.de>; Tue, 12 Nov 2024 17:32:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CCEC1F21DDB
-	for <lists+io-uring@lfdr.de>; Tue, 12 Nov 2024 15:43:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFD0B281874
+	for <lists+io-uring@lfdr.de>; Tue, 12 Nov 2024 16:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A65720127A;
-	Tue, 12 Nov 2024 15:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A17D205E3F;
+	Tue, 12 Nov 2024 16:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bBHRXVej"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="fAx2Nj8j"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E2C200C8E
-	for <io-uring@vger.kernel.org>; Tue, 12 Nov 2024 15:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBE01FF606
+	for <io-uring@vger.kernel.org>; Tue, 12 Nov 2024 16:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731426199; cv=none; b=n3dm98Qsp78da2eJuUavs9k4DWIyqFnOHdjkNKD/1rjvv1uUt2NLYHAHjKViy9rGiGeAb8vfc5rIwIbZkhFpGL3M99iiyyerS161FlmY+59gBUPvX+x3CSMyfDMBstoUf7qgf5RUkPZiDFVBaVAS+FSel1b59fCvZzT6lmQ4SAg=
+	t=1731429064; cv=none; b=rrtvnrqK//fASFgTZXyYG9cbE5e6aAaqDXPKJ91E4inxhnT9tx0ADNJd9NNmW5mD+kSqHSswsTZE3WdQV66jN614WdpO0yGfSuq949Hy4QaxGGzW4Xn6mwScXqNcr5vEkZLU7YkuTP3KStvLOhRRJLkI0wo66tEByqOvF+Gn3d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731426199; c=relaxed/simple;
-	bh=jLg3iIGdqUsUy8PbumjydYiC8wGi4ADE4Xjhm44Sa3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GKYCjqy99gxc5vtrBN67yCNcrMVWPbybrVeCyGlOh48tgZNDOxPp43xEN0QA30NmYaSmEBXEr3LD1ZJB5laJ7lHhp675/wo67MUR4y8Qilv7t7IZx0F/v2u6J2rsCeQp1fKHysPjLo3Wy0hrSDScbwMYs0DsUA//v81nGtodLbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bBHRXVej; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-71811aba576so3500387a34.1
-        for <io-uring@vger.kernel.org>; Tue, 12 Nov 2024 07:43:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731426196; x=1732030996; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MPGRYVZnENQchqDtOkd6T23ctHQLbROEiqELavnqalk=;
-        b=bBHRXVejZpnoYCYDMY+9pgYe9wgOsytNlZ/UTpBm1v0XdPHDywDvIaQIs9malw39Wo
-         geOMVx6c46paVNzMWgHX+GB8C8sFiBTDJdycr6c9imXZUlG5uKArt2/yV7A7FEW1KGxF
-         nXuubBNCPtBepq8KyXJtkTydNg1ANShRQYApA/+wiEigPH0z3d4TUONDtkPK7X73yGd3
-         yHgjWnMA+QM4xpO7DNRogVzcNb5a+IzdQ7y3uPwt0G1hqWvKdOxcRF3gJS31tQiM56Gs
-         7sHjX5L5nz/mcfHkTTlCOZGUX/BVHWA74S0jh+IlS41Q9W5T5MCTZTjDao1zv2lw368y
-         zAvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731426196; x=1732030996;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MPGRYVZnENQchqDtOkd6T23ctHQLbROEiqELavnqalk=;
-        b=MWOzS4LU6PR9yJVH0oeRZzDEasHU4X8o5MbyxPVcYn1CY2Nj8fpMjBkojCT5aUCuWW
-         pwWh88mX/YLUOq8ltglRksgcrdziNq0WskblqLOaYP8SFoi1w4XflACrSuGqRTUpQ+F/
-         QELiZ0rfyjCTSHslSsVGlRfTod9J+AB2dLiaN5m8Aq59D2OflO8oBo8CcgJ7eCwso/yl
-         sf2ZFVEqR3L/XJ90St75Y8XwQgvkDRHKVXTAwKyBF893Gtov4aC3xBup4D4RlaY/Leqb
-         FxJg8EVwkt8dxnG4ls3U+uwogxbDEfCKIsv5mYEoVr/xds386/180mn3J1yQmOfp5Z1A
-         f5iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxwMLNr6b7o73XAy72ZrG0Hsxv7APyHXvkxzZU6k2UnyzrnZ9Za234hyXM0Q1/IfqULshNeplmHA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxRTvUIG0ywdAffpx0zx63TEV9i4QpnYJ+amPiKZ9Z7g8ykwQP
-	2/LnI/GqbYo4ZGQNRdn/Bub3lpBPvMTLHonKiN4kOMBt0M5NZNKXI+NJk8E3Yxg=
-X-Google-Smtp-Source: AGHT+IGWRW9zxLPcJ5x2fkal5OOLMH4WIgl8/rLC/lU0qkUAN08LLFyRp5+T7eXmY61Tvha4d7ZdTg==
-X-Received: by 2002:a05:6870:450e:b0:277:ca34:27e9 with SMTP id 586e51a60fabf-295603c0c36mr9373068fac.6.1731426196316;
-        Tue, 12 Nov 2024 07:43:16 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a109219dbsm2741817a34.67.2024.11.12.07.43.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 07:43:15 -0800 (PST)
-Message-ID: <c0eb2b6f-1145-4ce3-a2b3-98d32cdfa623@kernel.dk>
-Date: Tue, 12 Nov 2024 08:43:14 -0700
+	s=arc-20240116; t=1731429064; c=relaxed/simple;
+	bh=VNWs4lJ7gieJ8qYMcGgkoiMsOw2wzlQrK2uG6cSAcNg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eqxBSCUyYmJDHiYAbq+sxeEuE90UxJq8eTmbLYZxpF8sdUsSmW9ccGYJL4vPdWLU1wdU0VdHlUN0n+F81iDLjhYCYi28hwshEWPDkb/0FZ2lvBULM6hs9XLxvYepLOEXsf7Os3qPCC4lakgSsC+MP/CKUgtmzntCyrP0TEGzSc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b=fAx2Nj8j; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACEmL38022180
+	for <io-uring@vger.kernel.org>; Tue, 12 Nov 2024 08:31:00 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=facebook; bh=NSnTXW6rmt53Ko8ssjbFmfR
+	0T1sJIyfSFre9XduMcJQ=; b=fAx2Nj8jUgisR19iUYyYpnWygJiLVrpVDV3MAZJ
+	bFDVTVFBqwmaGIYUQDEK294RdSP3UdbDrbbjp7QPQu1Rwlag2QxFtl618gSaeR/y
+	r3+XjNhg8Rp6AWnmN8VdUC6XJ56nsS5WuwWPd/3bv4zmcXI43hiou0zmqRUwStp2
+	SCjY=
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 42v93p0w4p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Tue, 12 Nov 2024 08:30:59 -0800 (PST)
+Received: from twshared18321.17.frc2.facebook.com (2620:10d:c0a8:1b::8e35) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.11; Tue, 12 Nov 2024 16:30:59 +0000
+Received: by devbig276.nha1.facebook.com (Postfix, from userid 660015)
+	id B72418966EE1; Tue, 12 Nov 2024 16:30:51 +0000 (GMT)
+From: Mark Harmstone <maharmstone@fb.com>
+To: <linux-btrfs@vger.kernel.org>, <io-uring@vger.kernel.org>
+CC: Mark Harmstone <maharmstone@fb.com>
+Subject: [PATCH] btrfs: add io_uring interface for encoded writes
+Date: Tue, 12 Nov 2024 16:29:55 +0000
+Message-ID: <20241112163021.1948119-1-maharmstone@fb.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing] test: add test cases for hybrid iopoll
-To: Anuj Gupta <anuj20.g@samsung.com>, hexue <xue01.he@samsung.com>
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <CGME20241111123656epcas5p20cac863708cd83d1fdbb523625665273@epcas5p2.samsung.com>
- <20241111123650.1857526-1-xue01.he@samsung.com>
- <20241112104406.2rltxkliwhksn3hw@green245>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241112104406.2rltxkliwhksn3hw@green245>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: QKb8GD4fuCJgbJwUHp_cwopiVSpvSceI
+X-Proofpoint-ORIG-GUID: QKb8GD4fuCJgbJwUHp_cwopiVSpvSceI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
 
-On 11/12/24 3:44 AM, Anuj Gupta wrote:
->> +utilization than polling. Similarly, this feature also requires the devices
->> +to support polling configuration.
-> This feature would work if a device doesn't have polled queues,right?
-> The performance might be suboptimal in that case, but the userspace won't
-> get any errors.
+Add an io_uring interface for encoded writes, with the same parameters
+as the BTRFS_IOC_ENCODED_WRITE ioctl.
 
-We've traditionally been a mix of lax and strict on this. IMHO we should
-return -EOPTNOTSUPP for IOPOLL (and IOPOLL|HYBRID) if polling isn't
-configured correctly. I've seen way too many not realize that they need
-to configure their nvme side for pollable queues for it to do what it
-needs to do. If you don't and it's just allowed, then you don't really
-get much of a win, you're just burning CPU.
+As with the encoded reads code, there's a test program for this at
+https://github.com/maharmstone/io_uring-encoded, and I'll get this
+worked into an fstest.
 
-Hence I do think that this should strongly recommend that the devices
-support polling, that part is fine.
+How io_uring works is that it initially calls btrfs_uring_cmd with the
+IO_URING_F_NONBLOCK flag set, and if we return -EAGAIN it tries again in
+a kthread with the flag cleared.
 
-Agree with your other comments, thanks for reviewing it!
+Ideally we'd honour this and call try_lock etc., but there's still a lot
+of work to be done to create non-blocking versions of all the functions
+in our write path. Instead, just validate the input in
+btrfs_uring_encoded_write() on the first pass and return -EAGAIN, with a
+view to properly optimizing the happy path later on.
 
-> This patch mostly looks fine. But the code here seems to be largely
-> duplicated from "test/io_uring_passthrough.c" and "test/iopoll.c".
-> Can we consider adding the hybrid poll test as a part of the existing
-> tests as it seems that it would only require passing a extra flag
-> during ring setup.
+Signed-off-by: Mark Harmstone <maharmstone@fb.com>
+---
+ fs/btrfs/ioctl.c | 116 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 116 insertions(+)
 
-Yeah I do think modifying test/iopoll.c to test all the same
-configurations but with HYBRID added would be the way to go, rather than
-duplicate all of this. Ditto for passthrough.
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 6478216305c7..37578270686a 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -5030,6 +5030,116 @@ static int btrfs_uring_encoded_read(struct io_uri=
+ng_cmd *cmd, unsigned int issue
+ 	return ret;
+ }
+=20
++static int btrfs_uring_encoded_write(struct io_uring_cmd *cmd, unsigned =
+int issue_flags)
++{
++	struct btrfs_ioctl_encoded_io_args args;
++	struct iovec iovstack[UIO_FASTIOV];
++	struct iovec *iov =3D iovstack;
++	struct iov_iter iter;
++	loff_t pos;
++	struct kiocb kiocb;
++	struct file *file;
++	ssize_t ret;
++	void __user *sqe_addr;
++
++	if (!capable(CAP_SYS_ADMIN)) {
++		ret =3D -EPERM;
++		goto out_acct;
++	}
++
++	file =3D cmd->file;
++	sqe_addr =3D u64_to_user_ptr(READ_ONCE(cmd->sqe->addr));
++
++	if (!(file->f_mode & FMODE_WRITE)) {
++		ret =3D -EBADF;
++		goto out_acct;
++	}
++
++	if (issue_flags & IO_URING_F_COMPAT) {
++#if defined(CONFIG_64BIT) && defined(CONFIG_COMPAT)
++		struct btrfs_ioctl_encoded_io_args_32 args32;
++
++		if (copy_from_user(&args32, sqe_addr, sizeof(args32))) {
++			ret =3D -EFAULT;
++			goto out_acct;
++		}
++		args.iov =3D compat_ptr(args32.iov);
++		args.iovcnt =3D args32.iovcnt;
++		args.offset =3D args32.offset;
++		args.flags =3D args32.flags;
++		args.len =3D args32.len;
++		args.unencoded_len =3D args32.unencoded_len;
++		args.unencoded_offset =3D args32.unencoded_offset;
++		args.compression =3D args32.compression;
++		args.encryption =3D args32.encryption;
++		memcpy(args.reserved, args32.reserved, sizeof(args.reserved));
++#else
++		return -ENOTTY;
++#endif
++	} else {
++		if (copy_from_user(&args, sqe_addr, sizeof(args))) {
++			ret =3D -EFAULT;
++			goto out_acct;
++		}
++	}
++
++	ret =3D -EINVAL;
++	if (args.flags !=3D 0)
++		goto out_acct;
++	if (memchr_inv(args.reserved, 0, sizeof(args.reserved)))
++		goto out_acct;
++	if (args.compression =3D=3D BTRFS_ENCODED_IO_COMPRESSION_NONE &&
++	    args.encryption =3D=3D BTRFS_ENCODED_IO_ENCRYPTION_NONE)
++		goto out_acct;
++	if (args.compression >=3D BTRFS_ENCODED_IO_COMPRESSION_TYPES ||
++	    args.encryption >=3D BTRFS_ENCODED_IO_ENCRYPTION_TYPES)
++		goto out_acct;
++	if (args.unencoded_offset > args.unencoded_len)
++		goto out_acct;
++	if (args.len > args.unencoded_len - args.unencoded_offset)
++		goto out_acct;
++
++	if (issue_flags & IO_URING_F_NONBLOCK) {
++		ret =3D -EAGAIN;
++		goto out_acct;
++	}
++
++	ret =3D import_iovec(ITER_SOURCE, args.iov, args.iovcnt, ARRAY_SIZE(iov=
+stack),
++			   &iov, &iter);
++	if (ret < 0)
++		goto out_acct;
++
++	if (iov_iter_count(&iter) =3D=3D 0) {
++		ret =3D 0;
++		goto out_iov;
++	}
++	pos =3D args.offset;
++	ret =3D rw_verify_area(WRITE, file, &pos, args.len);
++	if (ret < 0)
++		goto out_iov;
++
++	init_sync_kiocb(&kiocb, file);
++	ret =3D kiocb_set_rw_flags(&kiocb, 0, WRITE);
++	if (ret)
++		goto out_iov;
++	kiocb.ki_pos =3D pos;
++
++	file_start_write(file);
++
++	ret =3D btrfs_do_write_iter(&kiocb, &iter, &args);
++	if (ret > 0)
++		fsnotify_modify(file);
++
++	file_end_write(file);
++out_iov:
++	kfree(iov);
++out_acct:
++	if (ret > 0)
++		add_wchar(current, ret);
++	inc_syscw(current);
++	return ret;
++}
++
+ int btrfs_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+ {
+ 	switch (cmd->cmd_op) {
+@@ -5038,6 +5148,12 @@ int btrfs_uring_cmd(struct io_uring_cmd *cmd, unsi=
+gned int issue_flags)
+ 	case BTRFS_IOC_ENCODED_READ_32:
+ #endif
+ 		return btrfs_uring_encoded_read(cmd, issue_flags);
++
++	case BTRFS_IOC_ENCODED_WRITE:
++#if defined(CONFIG_64BIT) && defined(CONFIG_COMPAT)
++	case BTRFS_IOC_ENCODED_WRITE_32:
++#endif
++		return btrfs_uring_encoded_write(cmd, issue_flags);
+ 	}
+=20
+ 	return -EINVAL;
+--=20
+2.45.2
 
--- 
-Jens Axboe
 

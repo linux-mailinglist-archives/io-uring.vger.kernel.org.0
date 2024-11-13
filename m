@@ -1,311 +1,141 @@
-Return-Path: <io-uring+bounces-4642-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4643-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9AFB9C6A80
-	for <lists+io-uring@lfdr.de>; Wed, 13 Nov 2024 09:22:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017659C6D6A
+	for <lists+io-uring@lfdr.de>; Wed, 13 Nov 2024 12:08:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 412FD1F23007
-	for <lists+io-uring@lfdr.de>; Wed, 13 Nov 2024 08:22:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB1FC2816C4
+	for <lists+io-uring@lfdr.de>; Wed, 13 Nov 2024 11:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E13B178CE4;
-	Wed, 13 Nov 2024 08:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DCUPb80N"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7991FDFB1;
+	Wed, 13 Nov 2024 11:08:24 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342CA170A03
-	for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 08:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD961FB728
+	for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 11:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731486125; cv=none; b=f+TUjcHhv6j6DYf7dA3eqnJpOO/KAW76slAXaydJG7IiBK4z/HLM2/No1LuNWyZiMHjbUhBCROz6lVCVRpmBQDbwGBOH+FYb15maM0GoaxUDxW0js6r13wAewh36RWLLtu+tHZ9sW14Qx449HfjwEiLRFX2pLfpGUi5WngZaVCo=
+	t=1731496104; cv=none; b=lTZ13TJxDTnzO8busEzLfkf8fFXntSh0eLYZ2p7SoH6mxz7cOq7WEXQCpmhnRDmVzgQcWWvfijgm1+Lr4hEMp2J9o6T2tRLvI+bKZ8jkYNVLpTZ7qfAvr5rsJ+NESe8lrSA06PNnkqMCXQQLCkmKMc9IrlV2VI13vaNkoTJcTbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731486125; c=relaxed/simple;
-	bh=ihU4653sS88XlDZKcGYKS8GTplbffqyofHAFf53OIF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nt4jn2oyaO2jTHcpjph+ZIPVKhY7LOaOD0/xbcKFrChzhg1o9VGOi2ZVS3JY9pB38QE4l6q/iGJHbVmzf5STv6DBJ9FqjAZI2+c5eQjgLfvTgzk2DCTOVJqXklUZOnT7FYiSJ1jDLOxRg6UnF8r6EB4o62GFD+eXDZyuao1q+V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DCUPb80N; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731486122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w+wTOgJUYwCWQeKYvlbfUw3Q/3AETGabYnZ3FOdO2IA=;
-	b=DCUPb80N0c/cAxUC00cCtZdBdgyVcM8mJWVmQrGr4tdfFGvMHzbh+gzQiT/lDHwbzD8xrc
-	nJYUiEB+b0MJuZCvmfMGgLAiDN+QmKBzVxZ1QNvsunYVxvAshIiM0eGPJLGYE1CZakRohI
-	iwpJ8Y1KZDc3z+ZIJDC2WWXZ/ORTbPk=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-136-PZpHsZcIORGCu7BmwY6FTQ-1; Wed,
- 13 Nov 2024 03:21:58 -0500
-X-MC-Unique: PZpHsZcIORGCu7BmwY6FTQ-1
-X-Mimecast-MFC-AGG-ID: PZpHsZcIORGCu7BmwY6FTQ
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7DE2D1955EE7;
-	Wed, 13 Nov 2024 08:21:57 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.65])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D947119560A3;
-	Wed, 13 Nov 2024 08:21:53 +0000 (UTC)
-Date: Wed, 13 Nov 2024 16:21:48 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, ming.lei@redhat.com
-Subject: Re: [RFC 2/3] io_uring/bpf: allow to register and run BPF programs
-Message-ID: <ZzRhnDXxkahNB0rx@fedora>
-References: <cover.1731285516.git.asml.silence@gmail.com>
- <cffec449e9f6a37b0701f2a8fdd37688db25be55.1731285516.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1731496104; c=relaxed/simple;
+	bh=BttepegVwmZfjhL0wAJzClhZUY/sI0zBSBjji2tJCHA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EkjNYPTmLruCxz82YToyn/2YeNyy/llu8lV8npDvGWYt/5o4wToQJFUjgrv1it0wHoxI+XP7EEXuJQRKwxIvRO30IW+lg9tjvu3DS0GOcdU6/nrHFg9a7TgTZCKFB6zQaXLmzNE+D7VofWCtXHgm3sgRlp3uKUOpjkgGLRcADpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b7974696so80975505ab.1
+        for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 03:08:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731496102; x=1732100902;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FxKyyJT3LSMHkt5w14DHewRVHGYzuoWGX77T7Jz2XrE=;
+        b=e2MItKoH7HUXKmIb4vJ/JBeezafgMCT7wN7fxrQfpvJI9FHEeQrHTZVAptmHM2iWw4
+         UtWqYO38FuFXKS67WE4kBo1bWavOFIUTO5C4iXfbTxfiVGGezJ8aWaY7U4Otmaf4KY7o
+         N/ekvbesRsO/fYUAhJE3Ay62kB40Q5NyVU5gLch4fEy0vLJUSrOLRi645+U318+4lNLw
+         E7xcVXpJ8qq8MDu9r4fBrMZ8vzOxMGoz77sTk2ZnnGHo3yK/9n29LuAtcPDhJFMIs8gI
+         A9lJf8AHMm3W9l9qCWIAfQ442RWl3Wfd72lPUbdfhk7VEHkvYL302ThGGe4hJaLdROpF
+         7kTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQMKpW/EFSDfIYls7uMH+OZJVkhzGrdRkTZuk7rB0GbLfBRm39Sy4+gdg22s95mCO/h3hteJQFyw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS190Weglb3yV1zaEl6m68sekZSeX2tKQrt6gklDP5yzpB9OUR
+	qsEXV33KEawIC1Gu1EJ9eiAeTvqqEJbskZ2DBpjPqG2LXy3eAEpyhv0jSpPwnzEMswZh/ZcuVq/
+	+OoiwO1X0bWCQkn2dT7pAv52R+EuGfh1ExpeTlxy4jYMZNYfjDSgaTyM=
+X-Google-Smtp-Source: AGHT+IFxkz+oqfY40/x239QSKjuhklYHKhhajqoIuStvoJhvimR3uWz0oTt4CTw5EPVKx2zqpnppQrC7I5dQ662lq+Fe4Kw9gHaX
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cffec449e9f6a37b0701f2a8fdd37688db25be55.1731285516.git.asml.silence@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Received: by 2002:a05:6e02:144c:b0:3a5:e1a8:8ab1 with SMTP id
+ e9e14a558f8ab-3a6f19944bfmr211984735ab.3.1731496102525; Wed, 13 Nov 2024
+ 03:08:22 -0800 (PST)
+Date: Wed, 13 Nov 2024 03:08:22 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673488a6.050a0220.2a2fcc.000a.GAE@google.com>
+Subject: [syzbot] [io-uring?] KCSAN: data-race in __se_sys_io_uring_register /
+ io_sqe_files_register (3)
+From: syzbot <syzbot+5a486fef3de40e0d8c76@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 11, 2024 at 01:50:45AM +0000, Pavel Begunkov wrote:
-> Let the user to register a BPF_PROG_TYPE_IOURING BPF program to a ring.
-> The progrma will be run in the waiting loop every time something
-> happens, i.e. the task was woken up by a task_work / signal / etc.
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  include/linux/io_uring_types.h |  4 +++
->  include/uapi/linux/io_uring.h  |  9 +++++
->  io_uring/bpf.c                 | 63 ++++++++++++++++++++++++++++++++++
->  io_uring/bpf.h                 | 41 ++++++++++++++++++++++
->  io_uring/io_uring.c            | 15 ++++++++
->  io_uring/register.c            |  7 ++++
->  6 files changed, 139 insertions(+)
->  create mode 100644 io_uring/bpf.h
-> 
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index ad5001102c86..50cee0d3622e 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -8,6 +8,8 @@
->  #include <linux/llist.h>
->  #include <uapi/linux/io_uring.h>
->  
-> +struct io_bpf_ctx;
-> +
->  enum {
->  	/*
->  	 * A hint to not wake right away but delay until there are enough of
-> @@ -246,6 +248,8 @@ struct io_ring_ctx {
->  
->  		enum task_work_notify_mode	notify_method;
->  		unsigned			sq_thread_idle;
-> +
-> +		struct io_bpf_ctx		*bpf_ctx;
->  	} ____cacheline_aligned_in_smp;
->  
->  	/* submission data */
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index ba373deb8406..f2c2fefc8514 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -634,6 +634,8 @@ enum io_uring_register_op {
->  	/* register fixed io_uring_reg_wait arguments */
->  	IORING_REGISTER_CQWAIT_REG		= 34,
->  
-> +	IORING_REGISTER_BPF			= 35,
-> +
->  	/* this goes last */
->  	IORING_REGISTER_LAST,
->  
-> @@ -905,6 +907,13 @@ enum io_uring_socket_op {
->  	SOCKET_URING_OP_SETSOCKOPT,
->  };
->  
-> +struct io_uring_bpf_reg {
-> +	__u64		prog_fd;
-> +	__u32		flags;
-> +	__u32		resv1;
-> +	__u64		resv2[2];
-> +};
-> +
->  #ifdef __cplusplus
->  }
->  #endif
-> diff --git a/io_uring/bpf.c b/io_uring/bpf.c
-> index 6eb0c47b4aa9..8b7c74761c63 100644
-> --- a/io_uring/bpf.c
-> +++ b/io_uring/bpf.c
-> @@ -1,6 +1,9 @@
->  // SPDX-License-Identifier: GPL-2.0
->  
->  #include <linux/bpf.h>
-> +#include <linux/filter.h>
-> +
-> +#include "bpf.h"
->  
->  static const struct bpf_func_proto *
->  io_bpf_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
-> @@ -22,3 +25,63 @@ const struct bpf_verifier_ops bpf_io_uring_verifier_ops = {
->  	.get_func_proto			= io_bpf_func_proto,
->  	.is_valid_access		= io_bpf_is_valid_access,
->  };
-> +
-> +int io_run_bpf(struct io_ring_ctx *ctx)
-> +{
-> +	struct io_bpf_ctx *bc = ctx->bpf_ctx;
-> +	int ret;
-> +
-> +	mutex_lock(&ctx->uring_lock);
-> +	ret = bpf_prog_run_pin_on_cpu(bc->prog, bc);
-> +	mutex_unlock(&ctx->uring_lock);
-> +	return ret;
-> +}
-> +
-> +int io_unregister_bpf(struct io_ring_ctx *ctx)
-> +{
-> +	struct io_bpf_ctx *bc = ctx->bpf_ctx;
-> +
-> +	if (!bc)
-> +		return -ENXIO;
-> +	bpf_prog_put(bc->prog);
-> +	kfree(bc);
-> +	ctx->bpf_ctx = NULL;
-> +	return 0;
-> +}
-> +
-> +int io_register_bpf(struct io_ring_ctx *ctx, void __user *arg,
-> +		    unsigned int nr_args)
-> +{
-> +	struct __user io_uring_bpf_reg *bpf_reg_usr = arg;
-> +	struct io_uring_bpf_reg bpf_reg;
-> +	struct io_bpf_ctx *bc;
-> +	struct bpf_prog *prog;
-> +
-> +	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
-> +		return -EOPNOTSUPP;
-> +
-> +	if (nr_args != 1)
-> +		return -EINVAL;
-> +	if (copy_from_user(&bpf_reg, bpf_reg_usr, sizeof(bpf_reg)))
-> +		return -EFAULT;
-> +	if (bpf_reg.flags || bpf_reg.resv1 ||
-> +	    bpf_reg.resv2[0] || bpf_reg.resv2[1])
-> +		return -EINVAL;
-> +
-> +	if (ctx->bpf_ctx)
-> +		return -ENXIO;
-> +
-> +	bc = kzalloc(sizeof(*bc), GFP_KERNEL);
-> +	if (!bc)
-> +		return -ENOMEM;
-> +
-> +	prog = bpf_prog_get_type(bpf_reg.prog_fd, BPF_PROG_TYPE_IOURING);
-> +	if (IS_ERR(prog)) {
-> +		kfree(bc);
-> +		return PTR_ERR(prog);
-> +	}
-> +
-> +	bc->prog = prog;
-> +	ctx->bpf_ctx = bc;
-> +	return 0;
-> +}
-> diff --git a/io_uring/bpf.h b/io_uring/bpf.h
-> new file mode 100644
-> index 000000000000..2b4e555ff07a
-> --- /dev/null
-> +++ b/io_uring/bpf.h
-> @@ -0,0 +1,41 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#ifndef IOU_BPF_H
-> +#define IOU_BPF_H
-> +
-> +#include <linux/io_uring/bpf.h>
-> +#include <linux/io_uring_types.h>
-> +
-> +struct bpf_prog;
-> +
-> +struct io_bpf_ctx {
-> +	struct io_bpf_ctx_kern kern;
-> +	struct bpf_prog *prog;
-> +};
-> +
-> +static inline bool io_bpf_enabled(struct io_ring_ctx *ctx)
-> +{
-> +	return IS_ENABLED(CONFIG_BPF) && ctx->bpf_ctx != NULL;
-> +}
-> +
-> +#ifdef CONFIG_BPF
-> +int io_register_bpf(struct io_ring_ctx *ctx, void __user *arg,
-> +		    unsigned int nr_args);
-> +int io_unregister_bpf(struct io_ring_ctx *ctx);
-> +int io_run_bpf(struct io_ring_ctx *ctx);
-> +
-> +#else
-> +static inline int io_register_bpf(struct io_ring_ctx *ctx, void __user *arg,
-> +				  unsigned int nr_args)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +static inline int io_unregister_bpf(struct io_ring_ctx *ctx)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +static inline int io_run_bpf(struct io_ring_ctx *ctx)
-> +{
-> +}
-> +#endif
-> +
-> +#endif
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index f34fa1ead2cf..82599e2a888a 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -104,6 +104,7 @@
->  #include "rw.h"
->  #include "alloc_cache.h"
->  #include "eventfd.h"
-> +#include "bpf.h"
->  
->  #define SQE_COMMON_FLAGS (IOSQE_FIXED_FILE | IOSQE_IO_LINK | \
->  			  IOSQE_IO_HARDLINK | IOSQE_ASYNC)
-> @@ -2834,6 +2835,12 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
->  
->  	io_napi_busy_loop(ctx, &iowq);
->  
-> +	if (io_bpf_enabled(ctx)) {
-> +		ret = io_run_bpf(ctx);
-> +		if (ret == IOU_BPF_RET_STOP)
-> +			return 0;
-> +	}
-> +
->  	trace_io_uring_cqring_wait(ctx, min_events);
->  	do {
->  		unsigned long check_cq;
-> @@ -2879,6 +2886,13 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
->  		if (ret < 0)
->  			break;
->  
-> +		if (io_bpf_enabled(ctx)) {
-> +			ret = io_run_bpf(ctx);
-> +			if (ret == IOU_BPF_RET_STOP)
-> +				break;
-> +			continue;
-> +		}
+Hello,
 
-I believe 'struct_ops' is much simpler to run the prog and return the result.
-Then you needn't any bpf core change and the bpf register code.
+syzbot found the following issue on:
+
+HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e838c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=29fedde79f609854
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a486fef3de40e0d8c76
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/15a7713979b8/disk-2d5404ca.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b51c4f695d4a/vmlinux-2d5404ca.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e8c0f17bc00b/bzImage-2d5404ca.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5a486fef3de40e0d8c76@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in __se_sys_io_uring_register / io_sqe_files_register
+
+read-write to 0xffff8881021940b8 of 4 bytes by task 5923 on cpu 1:
+ io_sqe_files_register+0x2c4/0x3b0 io_uring/rsrc.c:713
+ __io_uring_register io_uring/register.c:403 [inline]
+ __do_sys_io_uring_register io_uring/register.c:611 [inline]
+ __se_sys_io_uring_register+0x8d0/0x1280 io_uring/register.c:591
+ __x64_sys_io_uring_register+0x55/0x70 io_uring/register.c:591
+ x64_sys_call+0x202/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:428
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+read to 0xffff8881021940b8 of 4 bytes by task 5924 on cpu 0:
+ __do_sys_io_uring_register io_uring/register.c:613 [inline]
+ __se_sys_io_uring_register+0xe4a/0x1280 io_uring/register.c:591
+ __x64_sys_io_uring_register+0x55/0x70 io_uring/register.c:591
+ x64_sys_call+0x202/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:428
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x00000000 -> 0x00000001
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 UID: 0 PID: 5924 Comm: syz.1.1000 Not tainted 6.12.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+==================================================================
 
 
-Thanks,
-Ming
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

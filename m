@@ -1,68 +1,69 @@
-Return-Path: <io-uring+bounces-4641-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4642-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B61F9C6A66
-	for <lists+io-uring@lfdr.de>; Wed, 13 Nov 2024 09:13:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9AFB9C6A80
+	for <lists+io-uring@lfdr.de>; Wed, 13 Nov 2024 09:22:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F6461F26B56
-	for <lists+io-uring@lfdr.de>; Wed, 13 Nov 2024 08:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 412FD1F23007
+	for <lists+io-uring@lfdr.de>; Wed, 13 Nov 2024 08:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30136189F2F;
-	Wed, 13 Nov 2024 08:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E13B178CE4;
+	Wed, 13 Nov 2024 08:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pt5eRkan"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DCUPb80N"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED228189BA3
-	for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 08:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342CA170A03
+	for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 08:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731485627; cv=none; b=Xe3cRghpjAfK/6LqAeQx8NWQ1jGZuf9H2iWl5UBCZNNav22IXQHytYNuXma3JSo+jfkwyK9ogIu6KU9dzmym268pHM/cOJAyxupLTQN5Dvw7seoV/rWnfF4ZMImVI1KtItZ2Nz+KbUbFLTG+sM+m38h9QEbROK7IKdS7bYaT6O4=
+	t=1731486125; cv=none; b=f+TUjcHhv6j6DYf7dA3eqnJpOO/KAW76slAXaydJG7IiBK4z/HLM2/No1LuNWyZiMHjbUhBCROz6lVCVRpmBQDbwGBOH+FYb15maM0GoaxUDxW0js6r13wAewh36RWLLtu+tHZ9sW14Qx449HfjwEiLRFX2pLfpGUi5WngZaVCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731485627; c=relaxed/simple;
-	bh=WZYcGCo77oOdbyTIxnBMVS8PnqyOx4CULu3NKdVr53A=;
+	s=arc-20240116; t=1731486125; c=relaxed/simple;
+	bh=ihU4653sS88XlDZKcGYKS8GTplbffqyofHAFf53OIF8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpF3S0veAEJF4PSsOEXywuRfMq0bOC2fPkXxb0h9SNwSBJcwsFQJgcByWO373UMzBMMQpZmtEO4GYqo9R8OnLEIxvbppqFsuo7DQaDQECABjOQOMqJc13X9R/mDIr6FRBs2tMmkC9ajMj4fZYOiA8XT2sDypgCyQh5rElU99P18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pt5eRkan; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nt4jn2oyaO2jTHcpjph+ZIPVKhY7LOaOD0/xbcKFrChzhg1o9VGOi2ZVS3JY9pB38QE4l6q/iGJHbVmzf5STv6DBJ9FqjAZI2+c5eQjgLfvTgzk2DCTOVJqXklUZOnT7FYiSJ1jDLOxRg6UnF8r6EB4o62GFD+eXDZyuao1q+V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DCUPb80N; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731485623;
+	s=mimecast20190719; t=1731486122;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jx8deyfeh2fJtp2XnqSorqsexjkrivPBbZoTtAHAICw=;
-	b=Pt5eRkanmj/9BZYYquL7UrD2dBLprYKWUigB7pvzwhjws9ts1+cccJ7LeMMr7g0Myg6N2n
-	O0TPFaCt3rDsj65pMxOMtst2NtPqO5lJZvyyyPi36Am2Nk6trLQ1/WnCbnUcgsibg8Onya
-	x9vp7vVusqdhsqObrIJEiakKG55QD4I=
+	bh=w+wTOgJUYwCWQeKYvlbfUw3Q/3AETGabYnZ3FOdO2IA=;
+	b=DCUPb80N0c/cAxUC00cCtZdBdgyVcM8mJWVmQrGr4tdfFGvMHzbh+gzQiT/lDHwbzD8xrc
+	nJYUiEB+b0MJuZCvmfMGgLAiDN+QmKBzVxZ1QNvsunYVxvAshIiM0eGPJLGYE1CZakRohI
+	iwpJ8Y1KZDc3z+ZIJDC2WWXZ/ORTbPk=
 Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-265-ThU26QKOPyqPTW0eaVw5sA-1; Wed,
- 13 Nov 2024 03:13:42 -0500
-X-MC-Unique: ThU26QKOPyqPTW0eaVw5sA-1
-X-Mimecast-MFC-AGG-ID: ThU26QKOPyqPTW0eaVw5sA
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-136-PZpHsZcIORGCu7BmwY6FTQ-1; Wed,
+ 13 Nov 2024 03:21:58 -0500
+X-MC-Unique: PZpHsZcIORGCu7BmwY6FTQ-1
+X-Mimecast-MFC-AGG-ID: PZpHsZcIORGCu7BmwY6FTQ
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8B68E1955EE7;
-	Wed, 13 Nov 2024 08:13:41 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7DE2D1955EE7;
+	Wed, 13 Nov 2024 08:21:57 +0000 (UTC)
 Received: from fedora (unknown [10.72.116.65])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9EF3C195DF81;
-	Wed, 13 Nov 2024 08:13:38 +0000 (UTC)
-Date: Wed, 13 Nov 2024 16:13:33 +0800
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D947119560A3;
+	Wed, 13 Nov 2024 08:21:53 +0000 (UTC)
+Date: Wed, 13 Nov 2024 16:21:48 +0800
 From: Ming Lei <ming.lei@redhat.com>
 To: Pavel Begunkov <asml.silence@gmail.com>
 Cc: io-uring@vger.kernel.org, ming.lei@redhat.com
-Subject: Re: [RFC 0/3] Add BPF for io_uring
-Message-ID: <ZzRfrbrAvmbcuOUi@fedora>
+Subject: Re: [RFC 2/3] io_uring/bpf: allow to register and run BPF programs
+Message-ID: <ZzRhnDXxkahNB0rx@fedora>
 References: <cover.1731285516.git.asml.silence@gmail.com>
+ <cffec449e9f6a37b0701f2a8fdd37688db25be55.1731285516.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -71,68 +72,240 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1731285516.git.asml.silence@gmail.com>
+In-Reply-To: <cffec449e9f6a37b0701f2a8fdd37688db25be55.1731285516.git.asml.silence@gmail.com>
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, Nov 11, 2024 at 01:50:43AM +0000, Pavel Begunkov wrote:
-> WARNING: it's an early prototype and could likely be broken and unsafe
-> to run. Also, most probably it doesn't do the right thing from the
-> modern BPF perspective, but that's fine as I want to get some numbers
-> first and only then consult with BPF folks and brush it up.
+On Mon, Nov 11, 2024 at 01:50:45AM +0000, Pavel Begunkov wrote:
+> Let the user to register a BPF_PROG_TYPE_IOURING BPF program to a ring.
+> The progrma will be run in the waiting loop every time something
+> happens, i.e. the task was woken up by a task_work / signal / etc.
 > 
-> A comeback of the io_uring BPF proposal put on top new infrastructure.
-> Instead executing BPF as a new request type, it's now run in the io_uring
-> waiting loop. The program is called to react every time we get a new
-> event like a queued task_work or an interrupt. Patch 3 adds some helpers
-> the BPF program can use to interact with io_uring like submitting new
-> requests and looking at CQEs. It also controls when to return control
-> back to user space by returning one of IOU_BPF_RET_{OK,STOP}, and sets
-> the task_work batching size, i.e. how many CQEs to wait for it be run
-> again, via a kfunc helper. We need to be able to sleep to submit
-> requests, hence only sleepable BPF is allowed. 
-
-I guess this way may break the existed interface of io_uring_enter(),
-or at least one flag should be added to tell kernel that the wait behavior
-will be overrided by bpf prog.
-
-Also can you share how these perfect parameters may be calculated
-by bpf prog? And why isn't io_uring kernel code capable of doing that?
-
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  include/linux/io_uring_types.h |  4 +++
+>  include/uapi/linux/io_uring.h  |  9 +++++
+>  io_uring/bpf.c                 | 63 ++++++++++++++++++++++++++++++++++
+>  io_uring/bpf.h                 | 41 ++++++++++++++++++++++
+>  io_uring/io_uring.c            | 15 ++++++++
+>  io_uring/register.c            |  7 ++++
+>  6 files changed, 139 insertions(+)
+>  create mode 100644 io_uring/bpf.h
 > 
-> BPF can help to create arbitrary relations between requests from
-> within the kernel
+> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+> index ad5001102c86..50cee0d3622e 100644
+> --- a/include/linux/io_uring_types.h
+> +++ b/include/linux/io_uring_types.h
+> @@ -8,6 +8,8 @@
+>  #include <linux/llist.h>
+>  #include <uapi/linux/io_uring.h>
+>  
+> +struct io_bpf_ctx;
+> +
+>  enum {
+>  	/*
+>  	 * A hint to not wake right away but delay until there are enough of
+> @@ -246,6 +248,8 @@ struct io_ring_ctx {
+>  
+>  		enum task_work_notify_mode	notify_method;
+>  		unsigned			sq_thread_idle;
+> +
+> +		struct io_bpf_ctx		*bpf_ctx;
+>  	} ____cacheline_aligned_in_smp;
+>  
+>  	/* submission data */
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index ba373deb8406..f2c2fefc8514 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -634,6 +634,8 @@ enum io_uring_register_op {
+>  	/* register fixed io_uring_reg_wait arguments */
+>  	IORING_REGISTER_CQWAIT_REG		= 34,
+>  
+> +	IORING_REGISTER_BPF			= 35,
+> +
+>  	/* this goes last */
+>  	IORING_REGISTER_LAST,
+>  
+> @@ -905,6 +907,13 @@ enum io_uring_socket_op {
+>  	SOCKET_URING_OP_SETSOCKOPT,
+>  };
+>  
+> +struct io_uring_bpf_reg {
+> +	__u64		prog_fd;
+> +	__u32		flags;
+> +	__u32		resv1;
+> +	__u64		resv2[2];
+> +};
+> +
+>  #ifdef __cplusplus
+>  }
+>  #endif
+> diff --git a/io_uring/bpf.c b/io_uring/bpf.c
+> index 6eb0c47b4aa9..8b7c74761c63 100644
+> --- a/io_uring/bpf.c
+> +++ b/io_uring/bpf.c
+> @@ -1,6 +1,9 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+>  #include <linux/bpf.h>
+> +#include <linux/filter.h>
+> +
+> +#include "bpf.h"
+>  
+>  static const struct bpf_func_proto *
+>  io_bpf_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+> @@ -22,3 +25,63 @@ const struct bpf_verifier_ops bpf_io_uring_verifier_ops = {
+>  	.get_func_proto			= io_bpf_func_proto,
+>  	.is_valid_access		= io_bpf_is_valid_access,
+>  };
+> +
+> +int io_run_bpf(struct io_ring_ctx *ctx)
+> +{
+> +	struct io_bpf_ctx *bc = ctx->bpf_ctx;
+> +	int ret;
+> +
+> +	mutex_lock(&ctx->uring_lock);
+> +	ret = bpf_prog_run_pin_on_cpu(bc->prog, bc);
+> +	mutex_unlock(&ctx->uring_lock);
+> +	return ret;
+> +}
+> +
+> +int io_unregister_bpf(struct io_ring_ctx *ctx)
+> +{
+> +	struct io_bpf_ctx *bc = ctx->bpf_ctx;
+> +
+> +	if (!bc)
+> +		return -ENXIO;
+> +	bpf_prog_put(bc->prog);
+> +	kfree(bc);
+> +	ctx->bpf_ctx = NULL;
+> +	return 0;
+> +}
+> +
+> +int io_register_bpf(struct io_ring_ctx *ctx, void __user *arg,
+> +		    unsigned int nr_args)
+> +{
+> +	struct __user io_uring_bpf_reg *bpf_reg_usr = arg;
+> +	struct io_uring_bpf_reg bpf_reg;
+> +	struct io_bpf_ctx *bc;
+> +	struct bpf_prog *prog;
+> +
+> +	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
+> +		return -EOPNOTSUPP;
+> +
+> +	if (nr_args != 1)
+> +		return -EINVAL;
+> +	if (copy_from_user(&bpf_reg, bpf_reg_usr, sizeof(bpf_reg)))
+> +		return -EFAULT;
+> +	if (bpf_reg.flags || bpf_reg.resv1 ||
+> +	    bpf_reg.resv2[0] || bpf_reg.resv2[1])
+> +		return -EINVAL;
+> +
+> +	if (ctx->bpf_ctx)
+> +		return -ENXIO;
+> +
+> +	bc = kzalloc(sizeof(*bc), GFP_KERNEL);
+> +	if (!bc)
+> +		return -ENOMEM;
+> +
+> +	prog = bpf_prog_get_type(bpf_reg.prog_fd, BPF_PROG_TYPE_IOURING);
+> +	if (IS_ERR(prog)) {
+> +		kfree(bc);
+> +		return PTR_ERR(prog);
+> +	}
+> +
+> +	bc->prog = prog;
+> +	ctx->bpf_ctx = bc;
+> +	return 0;
+> +}
+> diff --git a/io_uring/bpf.h b/io_uring/bpf.h
+> new file mode 100644
+> index 000000000000..2b4e555ff07a
+> --- /dev/null
+> +++ b/io_uring/bpf.h
+> @@ -0,0 +1,41 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#ifndef IOU_BPF_H
+> +#define IOU_BPF_H
+> +
+> +#include <linux/io_uring/bpf.h>
+> +#include <linux/io_uring_types.h>
+> +
+> +struct bpf_prog;
+> +
+> +struct io_bpf_ctx {
+> +	struct io_bpf_ctx_kern kern;
+> +	struct bpf_prog *prog;
+> +};
+> +
+> +static inline bool io_bpf_enabled(struct io_ring_ctx *ctx)
+> +{
+> +	return IS_ENABLED(CONFIG_BPF) && ctx->bpf_ctx != NULL;
+> +}
+> +
+> +#ifdef CONFIG_BPF
+> +int io_register_bpf(struct io_ring_ctx *ctx, void __user *arg,
+> +		    unsigned int nr_args);
+> +int io_unregister_bpf(struct io_ring_ctx *ctx);
+> +int io_run_bpf(struct io_ring_ctx *ctx);
+> +
+> +#else
+> +static inline int io_register_bpf(struct io_ring_ctx *ctx, void __user *arg,
+> +				  unsigned int nr_args)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +static inline int io_unregister_bpf(struct io_ring_ctx *ctx)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +static inline int io_run_bpf(struct io_ring_ctx *ctx)
+> +{
+> +}
+> +#endif
+> +
+> +#endif
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index f34fa1ead2cf..82599e2a888a 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -104,6 +104,7 @@
+>  #include "rw.h"
+>  #include "alloc_cache.h"
+>  #include "eventfd.h"
+> +#include "bpf.h"
+>  
+>  #define SQE_COMMON_FLAGS (IOSQE_FIXED_FILE | IOSQE_IO_LINK | \
+>  			  IOSQE_IO_HARDLINK | IOSQE_ASYNC)
+> @@ -2834,6 +2835,12 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+>  
+>  	io_napi_busy_loop(ctx, &iowq);
+>  
+> +	if (io_bpf_enabled(ctx)) {
+> +		ret = io_run_bpf(ctx);
+> +		if (ret == IOU_BPF_RET_STOP)
+> +			return 0;
+> +	}
+> +
+>  	trace_io_uring_cqring_wait(ctx, min_events);
+>  	do {
+>  		unsigned long check_cq;
+> @@ -2879,6 +2886,13 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+>  		if (ret < 0)
+>  			break;
+>  
+> +		if (io_bpf_enabled(ctx)) {
+> +			ret = io_run_bpf(ctx);
+> +			if (ret == IOU_BPF_RET_STOP)
+> +				break;
+> +			continue;
+> +		}
 
-Can you explain it in details about the `arbitrary relations`?
-
-> and later help with tuning the wait loop batching.
-> E.g. with minor extensions we can implement batch wait timeouts.
-> We can also use it to let the user to safely access internal resources
-> and maybe even do a more elaborate request setup than SQE allows it.
-> 
-> The benchmark is primitive, the non-BPF baseline issues a 2 nop request
-> link at a time and waits for them to complete. The BPF version runs
-> them (2 * N requests) one by one. Numbers with mitigations on:
-> 
-> # nice -n -20 taskset -c 0 ./minimal 0 50000000
-> type 2-LINK, requests to run 50000000
-> sec 10, total (ms) 10314
-> # nice -n -20 taskset -c 0 ./minimal 1 50000000
-> type BPF, requests to run 50000000
-> sec 6, total (ms) 6808
-> 
-> It needs to be better tested, especially with asynchronous requests
-> like reads and other hardware. It can also be further optimised. E.g.
-> we can avoid extra locking by taking it once for BPF/task_work_run.
-> 
-> The test (see examples-bpf/minimal[.bpf].c)
-> https://github.com/isilence/liburing.git io_uring-bpf
-> https://github.com/isilence/liburing/tree/io_uring-bpf
-
-Looks you pull bpftool & libbpf code into the example, and just
-wondering why not link the example with libbpf directly?
+I believe 'struct_ops' is much simpler to run the prog and return the result.
+Then you needn't any bpf core change and the bpf register code.
 
 
-Thanks, 
+Thanks,
 Ming
 
 

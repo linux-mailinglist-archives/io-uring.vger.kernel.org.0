@@ -1,90 +1,100 @@
-Return-Path: <io-uring+bounces-4667-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4668-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DFB79C7EC0
-	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 00:25:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAE19C7EF3
+	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 00:51:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19CB2844A9
-	for <lists+io-uring@lfdr.de>; Wed, 13 Nov 2024 23:25:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E4FAB23E6A
+	for <lists+io-uring@lfdr.de>; Wed, 13 Nov 2024 23:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD8917FAC2;
-	Wed, 13 Nov 2024 23:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F38118C907;
+	Wed, 13 Nov 2024 23:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JrOojgLJ"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="kYJ/tV+b"
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8485918BC2C
-	for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 23:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D8118C01F
+	for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 23:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731540325; cv=none; b=l5XGemDQ+BtQ9Xt94uR7fDis7tWO1V4Wq2VjDWJEIzULdihGtjrnS4cc1M8oBIj7eR2kvQpvPEN80iZ0WNwUaKIvKqL67+iFK6W5A9ayoY9cxdwmU2r58/HTsp8wE9jNYZbBhOqf5TjzCj9DVDf3LeJZRusnDXBbPfFm0XWwgQk=
+	t=1731541876; cv=none; b=Im0nn98YnG6RlsFJADIroxnQ5ZXda83jfzE0R33LnC4ZRChDume2582Jdip4ESud8UiwqQpLr9hGBd/mTNpByuY508r+WedhCYljUoUWIUZc1qvbmO5ckZQtrA0Q9jqZ/KQCD5ibWjwoTlSyhJS17ZyCncjH37PGbB/vp4a6BIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731540325; c=relaxed/simple;
-	bh=c5dYtWrY11OG4lgQlqIZVJE4vP5JPLMTqoyIrqudnWI=;
+	s=arc-20240116; t=1731541876; c=relaxed/simple;
+	bh=iqbHEEkvtBJUUD2xvY1+B9NYMn7DnHXcWD0gw8D90/s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJLWD4diZkxoO/akd4LuxBEcoqgjnvRmIBrERXNwJx8ft5S7rRUPpB9zmssDaGEg5A74/sl2zbEUjIIBSHU+JTX4UkOw0txWQtRVPOEg7kMNVj3yyJ7dQy7JeDf0VR5Ez6CsLPIxI64kLoYBb45vaEH4vxStgoQGB2XQeePOsZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JrOojgLJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731540322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RzPWmh0C8RYeAeZIKKXP7q682GlgR+SBS+qZzgFuwNs=;
-	b=JrOojgLJc48x9O04lakp0xc7Rrdy/gaRUhbkOdSI7xaFHmZZ0LVcZah1tvHeKrSc8b8Thl
-	1NMWPDC008PyWMMaS2ubThucJ2QiiZMRcvBVlPhcPS2AS82Q2ZlMz5rGvvnJ+g+08aInZl
-	XksBSnPVc2Oly/rTurZRRg/IhN1tENY=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-515-pFjKMDPLOq-7mgm-n3VLkQ-1; Wed, 13 Nov 2024 18:25:21 -0500
-X-MC-Unique: pFjKMDPLOq-7mgm-n3VLkQ-1
-X-Mimecast-MFC-AGG-ID: pFjKMDPLOq-7mgm-n3VLkQ
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4315eaa3189so336905e9.1
-        for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 15:25:21 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uIfmpSw18sKTuyJq8zwcOveiQOI7RwIpytYZba8qfwu2XlGC+VQp4uCydlG50q7q59TdfuvOfUR1rsGU6gEzr9+f+UCGSQVuh/QvryQvaWE21tXXE5zxkp6kG8etscKt4Wy0MOTu5AkMRR5W6ELXmYrqhhpT13DaXNlhs1u1KN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=kYJ/tV+b; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso1023873a12.1
+        for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 15:51:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731541874; x=1732146674; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dR6gxZVOVPj2t9+Oku6JJyuYiTaMGP57Slvmc9QYLdI=;
+        b=kYJ/tV+bLpzvktreUGRYY8zED3aHQaYpWC7s6NK93e7ztXAoWJsGc1+qdS69GX8noX
+         TE4xWrzeA3IdxxbZR2FEyY0wkpG9Q51FnUwHHO/Q0MsGzdG+9jPY9MzXGGTVFIJ5xGlV
+         DDHo7vtiNYFsCXz6h9QoygWHddJnb5MeikoqaeR4J4fceKWpxU5f+WbqDVAbjaE1+fga
+         9aswDDxDcu64TvrBkH72g6hltrzjZe2dovW1mhKDQa6zjn+l3YeYddhY0Nmej7itdWhY
+         8mvKzX2+GrwoZ3cJWOckFXkdMUHXcvJ+2+mEm9BFEN2fFXSO+/OwDBf/GjgUPrVA9kFG
+         ajXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731540320; x=1732145120;
+        d=1e100.net; s=20230601; t=1731541874; x=1732146674;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RzPWmh0C8RYeAeZIKKXP7q682GlgR+SBS+qZzgFuwNs=;
-        b=sBeMVnhep+5Pu0u0r1JRv5/eKy50387o950jhfLdwe6smA+zhRd7zo+BAM9s9hYfSI
-         3ST5HU+mmGPq4QSwtI4QaRj6OnQYdH+KY9vYPmJgNmgtM9FBdlMR86bSipXDoQO0urM0
-         4O/4jWy+Br9Rf0dNu2eS+l1yaTpIRA2SV4qQX82dAaWC5tO+UAtjSSXqGWlASn6IGRPQ
-         qn0ubi2WBSqtsHj3YOfP/fvJDfGRCgfhDMiel4qNUuMFM8jZ5FABx9VrCVy0oWPtz3+n
-         sUiSOH50NOQ7Yj77qJnia1IX5mYa6ufnSPzhstV0cnfDoUU8t3TvLFppOuZdqlC1lrs6
-         Dsgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfF6jqq8q1kLv1xYgUfldd4Zt+rl9q5CTgiThq4XzntQZz9uCLbGQc7FYmyTjNsLoVFboS0fwygQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpbMcS2fujFhGUQK34TgQLE0RGoDFwAnB8nmsjd/rYgRx3P7Xd
-	5ucL794XmeoiCzWu6xbsVBrPY5q5OpuGYThZ+BG1FeO+saoP18OcJnYUBteJ4dg9yGEC27tiUpM
-	qYmw//t/W07DJncC5Hzt8cUH3TpNJ5ogwVbcHM4HFKyVQLtmClchjC3NI
-X-Received: by 2002:a05:600c:3d8d:b0:431:4847:47c0 with SMTP id 5b1f17b1804b1-432da76ec4amr935395e9.7.1731540320197;
-        Wed, 13 Nov 2024 15:25:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHDNE+4rEsYxD1YNYi7V9qyaFYVxzcxTW8otS2BtZTbP6JFcM1ds70h/SDQ68r3Vw5bW0apPw==
-X-Received: by 2002:a05:600c:3d8d:b0:431:4847:47c0 with SMTP id 5b1f17b1804b1-432da76ec4amr935285e9.7.1731540319813;
-        Wed, 13 Nov 2024 15:25:19 -0800 (PST)
-Received: from redhat.com ([2.55.171.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d9d0a4absm4692895e9.24.2024.11.13.15.25.15
+        bh=dR6gxZVOVPj2t9+Oku6JJyuYiTaMGP57Slvmc9QYLdI=;
+        b=FRaLWy72nRaPEVVyZv/peJ5QL4EaNnjaeSpsmWyPo2xlOtAE9kaOmr51XB7x6groBN
+         6s0E9WsKcAYpdwrwvuFQYI4se5TwsXH9rWwGVja/zXnUfRX//5eJOZwMvq7JyT2cDl7I
+         Mp9XJ/6l+7rRujeJiajRa31avXbXfTUcx36PKswn93SFLQ6jc3HteSLSEQjffVj1tJuH
+         LpBNpT+00DxthH7eZS/oq6t3IMFYSiwPCHy9JggHvAxpUSkcNeWyvwaJqA8HjrzJfEw2
+         yt2pPI7vic7tYEms1AjNX1up4b4TWh/iRWbA6REIdimjGMHZm3WexbcFo6u2d5BpOemU
+         IFfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXx84xgHl30F00TspUT0Hk27baVLENzyErUUaPYwekKQ3Gocc8wwu4IeQi1DcA4RL1EuKUKKxWY1w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YybXocCiJxFDdS+P760LvsPd99JjyyyQXzgRKVXtahLrFftmOYs
+	ONPhKllQZhoveOBxg9cp+qDn/5BzdffcwAuwBq2z3n350IqfQYdV5yoZ6gqB0LY=
+X-Google-Smtp-Source: AGHT+IGnJMdOUCMCs6jEMGK8slkeJs2lCzIM0b+P01P83BSSB16iV+QAJQtoT6rroZ1RFQlD0VyEEQ==
+X-Received: by 2002:a17:90b:1f89:b0:2e2:ada8:2986 with SMTP id 98e67ed59e1d1-2e9fe6640c3mr1819128a91.16.1731541873837;
+        Wed, 13 Nov 2024 15:51:13 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea02481b8dsm134060a91.9.2024.11.13.15.51.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 15:25:18 -0800 (PST)
-Date: Wed, 13 Nov 2024 18:25:13 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
+        Wed, 13 Nov 2024 15:51:13 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1tBN8f-00EIWG-34;
+	Thu, 14 Nov 2024 10:51:09 +1100
+Date: Thu, 14 Nov 2024 10:51:09 +1100
+From: Dave Chinner <david@fromorbit.com>
 To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Wang <jasowang@redhat.com>,
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	linux-block@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH 2/6] virtio_blk: reverse request order in virtio_queue_rqs
-Message-ID: <20241113182448-mutt-send-email-mst@kernel.org>
-References: <20241113152050.157179-1-hch@lst.de>
- <20241113152050.157179-3-hch@lst.de>
+Cc: Pierre Labat <plabat@micron.com>, Keith Busch <kbusch@kernel.org>,
+	Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@meta.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+	"asml.silence@gmail.com" <asml.silence@gmail.com>,
+	"javier.gonz@samsung.com" <javier.gonz@samsung.com>
+Subject: Re: [EXT] Re: [PATCHv11 0/9] write hints with nvme fdp and scsi
+ streams
+Message-ID: <ZzU7bZokkTN2s8qr@dread.disaster.area>
+References: <20241108193629.3817619-1-kbusch@meta.com>
+ <CGME20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b@epcas5p3.samsung.com>
+ <20241111102914.GA27870@lst.de>
+ <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com>
+ <20241112133439.GA4164@lst.de>
+ <ZzNlaXZTn3Pjiofn@kbusch-mbp.dhcp.thefacebook.com>
+ <DS0PR08MB854131CDA4CDDF2451CEB71DAB592@DS0PR08MB8541.namprd08.prod.outlook.com>
+ <20241113044736.GA20212@lst.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -93,114 +103,93 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241113152050.157179-3-hch@lst.de>
+In-Reply-To: <20241113044736.GA20212@lst.de>
 
-On Wed, Nov 13, 2024 at 04:20:42PM +0100, Christoph Hellwig wrote:
-> blk_mq_flush_plug_list submits requests in the reverse order that they
-> were submitted, which leads to a rather suboptimal I/O pattern especially
-> in rotational devices.  Fix this by rewriting nvme_queue_rqs so that it
-> always pops the requests from the passed in request list, and then adds
-> them to the head of a local submit list.  This actually simplifies the
-> code a bit as it removes the complicated list splicing, at the cost of
-> extra updates of the rq_next pointer.  As that should be cache hot
-> anyway it should be an easy price to pay.
+On Wed, Nov 13, 2024 at 05:47:36AM +0100, Christoph Hellwig wrote:
+> On Tue, Nov 12, 2024 at 06:18:21PM +0000, Pierre Labat wrote:
+> > About 2)
+> > Provide a simple way to the user to decide which layer generate write hints.
+> > As an example, as some of you pointed out, what if the filesystem wants to generate write hints to optimize its [own] data handling by the storage, and at the same time the application using the FS understand the storage and also wants to optimize using write hints.
+> > Both use cases are legit, I think.
+> > To handle that in a simple way, why not have a filesystem mount parameter enabling/disabling the use of write hints by the FS?
 > 
-> Fixes: 0e9911fa768f ("virtio-blk: support mq_ops->queue_rqs()")
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/block/virtio_blk.c | 46 +++++++++++++++++---------------------
->  1 file changed, 21 insertions(+), 25 deletions(-)
+> The file system is, and always has been, the entity in charge of
+> resource allocation of the underlying device.  Bypassing it will get
+> you in trouble, and a simple mount option isn't really changing that
+> (it's also not exactly a scalable interface).
 > 
-> diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-> index 0e99a4714928..b25f7c06a28e 100644
-> --- a/drivers/block/virtio_blk.c
-> +++ b/drivers/block/virtio_blk.c
-> @@ -471,18 +471,18 @@ static bool virtblk_prep_rq_batch(struct request *req)
->  	return virtblk_prep_rq(req->mq_hctx, vblk, req, vbr) == BLK_STS_OK;
->  }
->  
-> -static bool virtblk_add_req_batch(struct virtio_blk_vq *vq,
-> +static void virtblk_add_req_batch(struct virtio_blk_vq *vq,
->  					struct request **rqlist)
->  {
-> +	struct request *req;
->  	unsigned long flags;
-> -	int err;
->  	bool kick;
->  
->  	spin_lock_irqsave(&vq->lock, flags);
->  
-> -	while (!rq_list_empty(*rqlist)) {
-> -		struct request *req = rq_list_pop(rqlist);
-> +	while ((req = rq_list_pop(rqlist))) {
->  		struct virtblk_req *vbr = blk_mq_rq_to_pdu(req);
-> +		int err;
->  
->  		err = virtblk_add_req(vq->vq, vbr);
->  		if (err) {
-> @@ -495,37 +495,33 @@ static bool virtblk_add_req_batch(struct virtio_blk_vq *vq,
->  	kick = virtqueue_kick_prepare(vq->vq);
->  	spin_unlock_irqrestore(&vq->lock, flags);
->  
-> -	return kick;
-> +	if (kick)
-> +		virtqueue_notify(vq->vq);
->  }
->  
->  static void virtio_queue_rqs(struct request **rqlist)
->  {
-> -	struct request *req, *next, *prev = NULL;
-> +	struct request *submit_list = NULL;
->  	struct request *requeue_list = NULL;
-> +	struct request **requeue_lastp = &requeue_list;
-> +	struct virtio_blk_vq *vq = NULL;
-> +	struct request *req;
->  
-> -	rq_list_for_each_safe(rqlist, req, next) {
-> -		struct virtio_blk_vq *vq = get_virtio_blk_vq(req->mq_hctx);
-> -		bool kick;
-> -
-> -		if (!virtblk_prep_rq_batch(req)) {
-> -			rq_list_move(rqlist, &requeue_list, req, prev);
-> -			req = prev;
-> -			if (!req)
-> -				continue;
-> -		}
-> +	while ((req = rq_list_pop(rqlist))) {
-> +		struct virtio_blk_vq *this_vq = get_virtio_blk_vq(req->mq_hctx);
->  
-> -		if (!next || req->mq_hctx != next->mq_hctx) {
-> -			req->rq_next = NULL;
-> -			kick = virtblk_add_req_batch(vq, rqlist);
-> -			if (kick)
-> -				virtqueue_notify(vq->vq);
-> +		if (vq && vq != this_vq)
-> +			virtblk_add_req_batch(vq, &submit_list);
-> +		vq = this_vq;
->  
-> -			*rqlist = next;
-> -			prev = NULL;
-> -		} else
-> -			prev = req;
-> +		if (virtblk_prep_rq_batch(req))
-> +			rq_list_add(&submit_list, req); /* reverse order */
-> +		else
-> +			rq_list_add_tail(&requeue_lastp, req);
->  	}
->  
-> +	if (vq)
-> +		virtblk_add_req_batch(vq, &submit_list);
->  	*rqlist = requeue_list;
->  }
+> If an application wants to micro-manage placement decisions it should not
+> use a file system, or at least not a normal one with Posix semantics.
+> That being said we'd demonstrated that applications using proper grouping
+> of data by file and the simple temperature hints can get very good result
+> from file systems that can interpret them, without a lot of work in the
+> file system.  I suspect for most applications that actually want files
+> that is actually going to give better results than trying to do the
+> micro-management that tries to bypass the file system.
 
+This.
 
+The most important thing that filesystems do behind the scenes is
+manage -data locality-. XFS has thousands of lines of code to manage
+and control data locality - the allocation policy API itself has a
+*dozens* control parameters. We have 2 separate allocation
+architectures (one btree based, one bitmap based) and multiple
+locality policy algorithms. These juggled physical alignment, size
+granularity, size limits, data type being allocated for, desired
+locality targets, different search algorithms (e.g. first fit, best
+fit, exact fit by size or location, etc), multiple fallback
+strategies when the initial target cannot be met, etc.
 
-looks ok from virtio POV
+Allocation policy management is the core of every block based
+filesystem that has ever been written.
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Specifically to this "stream hint" discussion: go look at the XFS
+filestreams allocator.
 
+SGI wrote an entirely new allocator for XFS whose only purpose in
+life is to automatically separate individual streams of user data
+into physically separate regions of LBA space.
 
-> -- 
-> 2.45.2
+This was written to optimise realtime ingest and playback of
+multiple uncompressed 4k and 8k video data streams from big
+isochronous SAN storage arrays back in ~2005.  Each stream could be
+up to 1.2GB/s of data. If the data for each IO was not exactly
+placed in alignment with the storage array stripe cache granularity
+(2MB, IIRC), then a cache miss would occur and the IO latency would
+be too high and frames of data would be missed/dropped.
 
+IOWs, we have an allocator in XFS that specifically designed to
+separate indepedent streams of data to independent regions of the
+filesystem LBA space to effcient support data IO rates in the order
+of tens of GB/s.
+
+What are we talking about now? Storage hardware that might be able
+to do 10-15GB/s of IO that needs stream separation for efficient
+management of the internal storage resources.
+
+The fact we have previously solved this class of stream separation
+problem at the filesystem level *without needing a user-controlled
+API at all* is probably the most relevant fact missing from this
+discussion.
+
+As to the concern about stream/temp/hint translation consistency
+across different hardware: the filesystem is the perfect place to
+provide this abstraction to users. The block device can expose what
+it supports, the user API can be fixed, and the filesystem can
+provide the mapping between the two that won't change for the life
+of the filesystem...
+
+Long story short: Christoph is right.
+
+The OS hints/streams API needs to be aligned to the capabilities
+that filesystems already provide *as a primary design goal*. What
+the new hardware might support is a secondary concern. i.e. hardware
+driven software design is almost always a mistake: define the user
+API and abstractions first, then the OS can reduce it sanely down to
+what the specific hardware present is capable of supporting.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 

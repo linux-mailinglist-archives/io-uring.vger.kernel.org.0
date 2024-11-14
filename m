@@ -1,77 +1,77 @@
-Return-Path: <io-uring+bounces-4671-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4672-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4AD99C81CE
-	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 05:14:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67AA19C81D1
+	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 05:14:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DD601F233CD
-	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 04:14:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6710B24C98
+	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 04:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990611E8827;
-	Thu, 14 Nov 2024 04:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246391E882F;
+	Thu, 14 Nov 2024 04:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXk0rxwX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CeY6ZZ23"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4C41E882F
-	for <io-uring@vger.kernel.org>; Thu, 14 Nov 2024 04:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED7B1E8826
+	for <io-uring@vger.kernel.org>; Thu, 14 Nov 2024 04:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731557641; cv=none; b=vEYnyhZ/Swr3mCNfGh3xAazXzhUY4YU86r85Z6905dvjC7f5V/RIwzaPgf7biM5iO6amIy7u9BKviTq0pk59kb5QJ8LEf27VoQrSn599HlXqOndxnslpv3S+upkF/BuH7jPTHiGY0Vzis6AloqEZ5v3qZcEpO2z4P5Wice78Vi8=
+	t=1731557643; cv=none; b=d9KrPp++ONauOa60fy0v5CL95RndMYq8Oz5i2ecGk6bqAY99TuDZuSvbvK09H56O2l0c78R/AFANopwDZO0H6F7oRODGrJZgjXzXrcnjIO+jyHsU1pfgWv+TlEgr59N3NxkLceFMwX31c4HUm/cuO6p3YyETmcVk2Hf597h9Ivo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731557641; c=relaxed/simple;
-	bh=eGfmk5pHWRmz/5IEyopxX540NFO23oPagEaL0p8rDAI=;
+	s=arc-20240116; t=1731557643; c=relaxed/simple;
+	bh=bOXuPylse+C0vi8bk1k20OU0yKwquVaExqg5AhfYLSY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GfXNEe06U03uEhqTREMNhVfa1cW7XXwYXw4/1rAA+ioCDDFrib+OCAMtaN/4STF762FsSG/uwS+NFpyznGLjOZUiPTTSz52CSF5ac7hxWzIxfRfEHZxKayMk3kFdS+zHVtO4iUw3pLrVr7cq//CCwcjGsG280NWk9m7LBe47pN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NXk0rxwX; arc=none smtp.client-ip=209.85.221.51
+	 MIME-Version; b=k3cz5g9Q/Ukqwt3K+WAACk4kkadAalJYrdGgG/p4OXr5o/XT2HtHfjk6JKX+/dmG6OOT+DW8fXW2tTbSr9PLhyTPfSSXbKNSUVriGgVz9BLGMmE9PwuGe0WQ/S5qF77LD62Dhiv0tVM+SZhuMvmzl6h3426PcxE9enMxj8dAMqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CeY6ZZ23; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37ed7eb07a4so125410f8f.2
-        for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 20:13:59 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so1969605e9.1
+        for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 20:14:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731557638; x=1732162438; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731557639; x=1732162439; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LbuG+/DWjJeYlovcxNfbsJzRVRRM+t1Xz3YpJq8xpS0=;
-        b=NXk0rxwXikeN/V1smIQABraEbwM+1IV3tUczzcRoUK7PPvxEPFIxCEgeHYTAgRtnLy
-         vUCsJ87umG/jZtdOdR2KePjOaRibFVXEGo+lQCZ/FP9kk1jAZxpg8puFr334puCJl1F9
-         FdYcFOo2AkQimlpXacx1qKyX0Le8RGatGs4+7bHzsrjKZGib7dJFCZH/i7UtTcAt+WkA
-         5u7L7Lfr10dU7/6RXE/sa5q5QdRF8cpIRVNJmZWyiff16oyq6P5T8Pl2nbcjnhfTA1ug
-         rS1V0drcZFCTbfYmpD8C5M7VeZ47SNSq5u8Y2JdW7FlnO5LEPVsviiC0jdMnQE3un836
-         ctFA==
+        bh=Hwyltf5fgdrVd41AJQ/C7rIRuEDCxBHV6H77DqLRdb4=;
+        b=CeY6ZZ23I7bZ8ULSUFhhZ0JOIQ41+pjd7YdU48OwjyOPzjpvX1QnOVqu0hpI8Z/YO8
+         oEg27T+1oUZELq5DXx2TK6cEc6Zv8ROMXhUTTId4vBvMorrgCIFJVLWvYuUwiQUC4cow
+         mgPAx5PtQCV3jSKHKIGQurwct5hCu/rt/N5KU+wyvml4kCdnn9x2/CYpT0JUvU1aVxJQ
+         yNeCp8WyfMI1nN+yzs9BUeBjurR+sYYfMc/t7Ogss+ys9kdchhcHordDf1j58J6yEIlB
+         EkTmub1vRognRbh5h/DqIOjB61wOOClU3T+dIBgOWnpclxXxVTdXzp1QPc3PPP36G+rY
+         skAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731557638; x=1732162438;
+        d=1e100.net; s=20230601; t=1731557639; x=1732162439;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LbuG+/DWjJeYlovcxNfbsJzRVRRM+t1Xz3YpJq8xpS0=;
-        b=swHePCqlVOsh9cbG+i6F3pJFRyCNyuA+AqSeAWV5q/npMYhDJkxdvltjO1BJfceMJ0
-         HVJLpbXDLx1nc8bZtddxpR0pLctE2pQ+H75KUjRXbfhpvvL0a9VE0xuW7dgCMWQ86X+e
-         vehfXZ2raC7LX8CPhSMDYI0rLbBbtQqbw4t3+aP2NKBR85bT6FioItQicADBEgBY1Glw
-         NHK0iuClpUEkoRFKIq4H4kUEFGl+hTrp9RkhfLiqGuSyrqo6xoU3KDbvFFWjN4THfNJd
-         KE6VM31wms9eC1LcU/lDkjfbAjmGWNUldKmc9qPPXkvbHqKQdO075VY5ZFwT2+CpHZN+
-         SlSQ==
-X-Gm-Message-State: AOJu0YzN/adSRlI4aObq6tIJMfgP0sSGOHexehwsH/Gj6scxKtgovqSV
-	WkwUmKZcz3iqrMbAuPQNx5DvsiJm7VPHp1mF3uK6eB8V8ZDJN04AFhGz8w==
-X-Google-Smtp-Source: AGHT+IGqS0sdBB369z2SSe8Uw+6yFrfB6Z3f7GpElRqlh06aUVjAACDkQx2ilmhxZRUBC3pvBnMS2A==
-X-Received: by 2002:a5d:47ac:0:b0:37d:5282:1339 with SMTP id ffacd0b85a97d-3820df6136cmr4287581f8f.22.1731557637993;
-        Wed, 13 Nov 2024 20:13:57 -0800 (PST)
+        bh=Hwyltf5fgdrVd41AJQ/C7rIRuEDCxBHV6H77DqLRdb4=;
+        b=XOfRDOs93ah1vRWT1uXGeK7z0X8tjIdu5F1REPP5dUCZMPoU6ncYY8fc0Ud1EVFMLb
+         WAyXjb/kFIGnR0TWaS3wDu/rHCBKTc/DQGJ/iAL1fCSfGx2rRTd82ke8+pCD6ffkmVgJ
+         7Kp9Bt0zOVTYN8h+KyEjbUbMIsn2LMfiBwV71oEnfSQP7dd2SDFdHx0Wt6MfzQR5IbvB
+         FCq3p9mwI4Tq6F1/qJJsaoLRBuoApGkP1oYU0KiVQzNca9PAS65xXlBfMAf5LQl3y9IW
+         Ad44nB8WiVBQBDNluW7ix1MCFEiJCMcogdeb5dfS76bu4T2cTkjB7TtGxEwHDLnvl2wN
+         bf2g==
+X-Gm-Message-State: AOJu0YyWH8ABEhDPXdDwQlPLwOqHhpcZo+LF+SqQIz+1kJYnLMPkokNv
+	qzMctYsplCo8rWUL+fe1K0ClJypKy+QkSWmRENntnyRAUCppd94Xm0O5JA==
+X-Google-Smtp-Source: AGHT+IGKIufDLs3bta+PL+WA+/3gFF+wlnPP7XlwH8u9p++yKtxJ2th3LO/5NHZPaUSIR0vd+/G2JQ==
+X-Received: by 2002:a05:6000:1564:b0:37d:4d21:350c with SMTP id ffacd0b85a97d-381f186cc7fmr18473685f8f.13.1731557639328;
+        Wed, 13 Nov 2024 20:13:59 -0800 (PST)
 Received: from 127.0.0.1localhost ([148.252.132.111])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae311fbsm251936f8f.95.2024.11.13.20.13.56
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae311fbsm251936f8f.95.2024.11.13.20.13.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 20:13:57 -0800 (PST)
+        Wed, 13 Nov 2024 20:13:58 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 1/6] io_uring: fortify io_pin_pages with a warning
-Date: Thu, 14 Nov 2024 04:14:20 +0000
-Message-ID: <d48e0c097cbd90fb47acaddb6c247596510d8cfc.1731556844.git.asml.silence@gmail.com>
+Subject: [PATCH 2/6] io_uring: disable ENTER_EXT_ARG_REG for IOPOLL
+Date: Thu, 14 Nov 2024 04:14:21 +0000
+Message-ID: <a35ecd919dbdc17bd5b7932273e317832c531b45.1731556844.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1731556844.git.asml.silence@gmail.com>
 References: <cover.1731556844.git.asml.silence@gmail.com>
@@ -83,30 +83,34 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We're a bit too frivolous with types of nr_pages arguments, converting
-it to long and back to int, passing an unsigned int pointer as an int
-pointer and so on. Shouldn't cause any problem but should be carefully
-reviewed, but until then let's add a WARN_ON_ONCE check to be more
-confident callers don't pass poorely checked arguents.
+IOPOLL doesn't use the extended arguments, no need for it to support
+IORING_ENTER_EXT_ARG_REG. Let's disable it for IOPOLL, if anything it
+leaves more space for future extensions.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/memmap.c | 2 ++
- 1 file changed, 2 insertions(+)
+ io_uring/io_uring.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index 85c66fa54956..6ab59c60dfd0 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -140,6 +140,8 @@ struct page **io_pin_pages(unsigned long uaddr, unsigned long len, int *npages)
- 	nr_pages = end - start;
- 	if (WARN_ON_ONCE(!nr_pages))
- 		return ERR_PTR(-EINVAL);
-+	if (WARN_ON_ONCE(nr_pages > INT_MAX))
-+		return ERR_PTR(-EOVERFLOW);
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index bd71782057de..464a70bde7e6 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3214,12 +3214,8 @@ static int io_validate_ext_arg(struct io_ring_ctx *ctx, unsigned flags,
  
- 	pages = kvmalloc_array(nr_pages, sizeof(struct page *), GFP_KERNEL);
- 	if (!pages)
+ 	if (!(flags & IORING_ENTER_EXT_ARG))
+ 		return 0;
+-
+-	if (flags & IORING_ENTER_EXT_ARG_REG) {
+-		if (argsz != sizeof(struct io_uring_reg_wait))
+-			return -EINVAL;
+-		return PTR_ERR(io_get_ext_arg_reg(ctx, argp));
+-	}
++	if (flags & IORING_ENTER_EXT_ARG_REG)
++		return -EINVAL;
+ 	if (argsz != sizeof(arg))
+ 		return -EINVAL;
+ 	if (copy_from_user(&arg, argp, sizeof(arg)))
 -- 
 2.46.0
 

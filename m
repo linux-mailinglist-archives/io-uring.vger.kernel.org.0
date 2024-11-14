@@ -1,133 +1,144 @@
-Return-Path: <io-uring+bounces-4704-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4705-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1D49C92F6
-	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 21:11:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0AD9C938D
+	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 21:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FFAE28484E
-	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 20:11:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E8661F215FA
+	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 20:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9611AA7A5;
-	Thu, 14 Nov 2024 20:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8EE1ABED9;
+	Thu, 14 Nov 2024 20:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anx91EaE"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z+1GKWE8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4161A9B5D;
-	Thu, 14 Nov 2024 20:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99E81ABEC6
+	for <io-uring@vger.kernel.org>; Thu, 14 Nov 2024 20:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731615066; cv=none; b=F9iTyTzchL7SS5g9sMibw3GEJswog/U+fzA2Lf5idKyuFoSz9IxJzm00AGGTMtzXunbKkvjVLEK1Wx/z21XipbQfLUXhNFLdAFi/3e6DQAzVqo72EV6E8RmNYEDdukWfxPQz7Jr7f7YRwYdRMdCevDwNwqO1KwAyJEg4Io8KO3A=
+	t=1731617789; cv=none; b=MrOjwjktr5ENM6sF+L3V8A80tGwtc+29ufF+PeyR8IF0dNk7bvgh3Y+LorG9ePDuNdgF1BLdccNV2cSzPfq+ahoUUdg7E57Slq0EVxN7A8cggMUFqU796vnGFhrg1QnAetf5iRKpds8BdOYv+Gg8dKa+AGI65P+9VYGxk4CqBSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731615066; c=relaxed/simple;
-	bh=ASl8LSAvyQVJiieFrry6JPr3SCOWxU/QgkzXXpnO05k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drxFhEPbMbjY39Y4iwOyuq2dsavqcNImFcqm1Z5cawbW0a2HX6rG8/C2+5JchZZpkamRHSEc2vgkDYyRtsm1Awpa8lk/YntQKSd437OFfhJVCv8VH85UgpNe0cJZxriR11G90oDEg910qbf1yQ3NQg95ojX9JPjApHuZCkRXnMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anx91EaE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C035C4CECD;
-	Thu, 14 Nov 2024 20:11:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731615066;
-	bh=ASl8LSAvyQVJiieFrry6JPr3SCOWxU/QgkzXXpnO05k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=anx91EaEjJy6ntu/ddhlMwoMHjGZHqXIcwlIbSxu2kcIowwLvk0UMlYby2HoawQBE
-	 sbHvq+nARD/fY8HjJLg0VQCU5jOhJpqefyvJJFZ+f+qLvTpgcBp+tjagV8VPGSTX60
-	 4kskjjjHURDBovPsnp/VTNUO8ITbMWwx2W2KL+5N2QKDS7IRQ9oAIkEmJm+59XuIOA
-	 l1VzSp7HwTt1oIQOTTmYjK82gHnErDFI3wDf+EKeei1n2xKrAKGHUEWdD7uchJoI3V
-	 PC5BtRgOOKwMQ0g+7H4HCnJlTN/H4VNZ+dTMPpc4aPLFr+AOKTMj7fybJKs94y7uhH
-	 7wMQc3PHz3+RQ==
-Date: Thu, 14 Nov 2024 13:11:03 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, "Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>, Keith Busch <kbusch@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	linux-block@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH 4/6] block: add a rq_list type
-Message-ID: <20241114201103.GA2036469@thelio-3990X>
-References: <20241113152050.157179-1-hch@lst.de>
- <20241113152050.157179-5-hch@lst.de>
+	s=arc-20240116; t=1731617789; c=relaxed/simple;
+	bh=gvaNuFGod3IE9HBoY5V/2n10VBY4eB7XY/0Px1Z9+/0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cL//seh+6hsdoXUBQUvvAIu2OFdYgrkS6W1m3Ba9KC0/WoKDRjt2yxMsgJMhWmcqkPaA5jD0e7A9Wf7LkuZR+hvnLXPkuadbWdzXib+iQwkUt7m6MuWL/tJVZToodqwzYM84znxd4+zCS26DRr8ROcRo7m633hDwpkvdVGJQ7z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z+1GKWE8; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4608dddaa35so84031cf.0
+        for <io-uring@vger.kernel.org>; Thu, 14 Nov 2024 12:56:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731617787; x=1732222587; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gvaNuFGod3IE9HBoY5V/2n10VBY4eB7XY/0Px1Z9+/0=;
+        b=z+1GKWE8M1TJUJMEg7sZgUGrxiXTNGThRjZQC8Y9miGmAYsz+iI7MGMYLzUbyyKUjR
+         GkZx0z9RYTnLlAkPQFrUODwm5BBxNuklvhhIWyeMtgA0clhzV2KTS8i8iT2SUhcfgOvU
+         saSUDDFnTEnR1/HXsBA3ekjYye0PiZoXqXX/MIjXVid5ZJJTWeNlsHXUeQw8zT8JoGCL
+         PPQzBUqyPoMivnRcrr6CtZ/WoE/c8IteD1b7OAeJf35/TmE26mmoNy6bhrJqWYcWvGX/
+         4gMGjpZEb7yabUFcch4YUYyX8uR7xQ61iQrn7Ars4iYp7CiDqOPdp8c/J15BP0zwl3wH
+         kMLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731617787; x=1732222587;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gvaNuFGod3IE9HBoY5V/2n10VBY4eB7XY/0Px1Z9+/0=;
+        b=IMjrf7BJSPXBtYk2np/spS7229OUFR4klM8sTB8uc0VlwmGmjuFkFPnhA4uSWGdvRi
+         fwfbN35UkCpKZaYNwZDnkDK+r3PpCwPnA2DBQC+bUQZYpgIc5iJVqiSXTM+wl35lRZue
+         sQTEwdvonTCiKvxzVzD+7VYnoq2PA8nhmes5m9+YMaVAULXCJUmnnR4tuf2/1rIr3mNF
+         uvKCbtAgG+Xc616z9Aeoqw8lkar4OlrT9Z8d6Xn5bC00A7jvN951omI9wofoZ5jtbQLb
+         tT2ZhHrFTr4FrtCJzR0etB2Ow17p9SuWgLVqY0CE/k4EskGIKokHPMNnyWXO22p61nJo
+         Z2Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCXz8VHczM+KSBuhDtMTTtYS5/brNd0lau1Tuh78sXy2G8fFsvOVUxoyicRVyo9Mp4hLyO+6mrW2PQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzebJIYV5hyfXIQkNhNOogkgDS26RTgngUplpoekEmtFGfnMybi
+	J2rkdGCuemjTffSikRgaq6dQnGTvBNq7ARnXp9cp/2I3G27uHb/4G/4/KRORcfS6hNjCslciAxk
+	gd0EK12RiddGsEZ9Mg98YLhT1ce31EZ8uoho0iUpQoFSYCUZcCw==
+X-Gm-Gg: ASbGncs3Rwpftjti2wvD+3DsMadDesoMquGSo8y4NSmN/u50hUcXTPA7wpLwc9asRIv
+	ANTJHYPlJp4DyoW+3gD90OBjrNYWJ6y8=
+X-Google-Smtp-Source: AGHT+IEWJeK1a9RR60u3MigSTq7pa3Jl63a9sm3KA1A0xvKAJRFeVHzhVi8RC+EcouqTOMAKMeGk2+7U0GM0L6VOmM0=
+X-Received: by 2002:a05:622a:452:b0:463:1934:f546 with SMTP id
+ d75a77b69052e-463639372eamr484741cf.23.1731617786432; Thu, 14 Nov 2024
+ 12:56:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113152050.157179-5-hch@lst.de>
+References: <20241029230521.2385749-1-dw@davidwei.uk> <20241029230521.2385749-12-dw@davidwei.uk>
+ <CAHS8izNbNCAmecRDCL_rRjMU0Spnqo_BY5pyG1EhF2rZFx+y0A@mail.gmail.com>
+ <af9a249a-1577-40fd-b1ba-be3737e86b18@gmail.com> <CAHS8izPEmbepTYsjjsxX_Dt-0Lz1HviuCyPM857-0q4GPdn4Rg@mail.gmail.com>
+ <9ed60db4-234c-4565-93d6-4dac6b4e4e15@davidwei.uk>
+In-Reply-To: <9ed60db4-234c-4565-93d6-4dac6b4e4e15@davidwei.uk>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 14 Nov 2024 12:56:14 -0800
+Message-ID: <CAHS8izND0V4LbTYrk2bZNkSuDDvm2gejAB07f=JYtCBKvSXROQ@mail.gmail.com>
+Subject: Re: [PATCH v7 11/15] io_uring/zcrx: implement zerocopy receive pp
+ memory provider
+To: David Wei <dw@davidwei.uk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
+	netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>, 
+	Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Christoph,
+On Mon, Nov 11, 2024 at 1:15=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
+> > Is it very complicated to napi_pp_put_page() niovs as the user puts
+> > them in the refill queue without adding a new syscall? If so, is it
+> > possible to do a niov equivalent of page_pool_put_page_bulk() of the
+> > refill queue while/as you process the RX path?
+> >
+> > If you've tested the generic code paths to be performance deficient
+> > and your recycling is indeed better, you could improve the page_pool
+> > to pull netmems when it needs to like you're doing here, but in a
+> > generic way that applies to the page allocator and other providers.
+> > Not a one-off implementation that only applies to your provider.
+> >
+> > If you're absolutely set on ignoring the currently supported reffing
+> > and implementing your own reffing and recycling for your use case,
+> > sure, that could work, but please don't overload the
+> > niov->pp_ref_count reserved for the generic use cases for this. Add
+> > io_zcrx_area->io_uring_ref or something and do whatever you want with
+> > it. Since it's not sharing the pp_ref_count with the generic code
+> > paths I don't see them conflicting in the future.
+>
+> Why insist on this? Both page/niov and devmem/io_uring niov are mutually
+> exclusive. There is no strong technical reason to not re-use
+> pp_ref_count.
+>
 
-On Wed, Nov 13, 2024 at 04:20:44PM +0100, Christoph Hellwig wrote:
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index 65f37ae70712..ce8b65503ff0 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -1006,6 +1006,11 @@ extern void blk_put_queue(struct request_queue *);
->  void blk_mark_disk_dead(struct gendisk *disk);
->  
->  #ifdef CONFIG_BLOCK
-> +struct rq_list {
-> +	struct request *head;
-> +	struct request *tail;
-> +};
-> +
->  /*
->   * blk_plug permits building a queue of related requests by holding the I/O
->   * fragments for a short period. This allows merging of sequential requests
-> @@ -1018,10 +1023,10 @@ void blk_mark_disk_dead(struct gendisk *disk);
->   * blk_flush_plug() is called.
->   */
->  struct blk_plug {
-> -	struct request *mq_list; /* blk-mq requests */
-> +	struct rq_list mq_list; /* blk-mq requests */
->  
->  	/* if ios_left is > 1, we can batch tag/rq allocations */
-> -	struct request *cached_rq;
-> +	struct rq_list cached_rqs;
->  	u64 cur_ktime;
->  	unsigned short nr_ios;
->  
-> @@ -1683,7 +1688,7 @@ int bdev_thaw(struct block_device *bdev);
->  void bdev_fput(struct file *bdev_file);
->  
->  struct io_comp_batch {
-> -	struct request *req_list;
-> +	struct rq_list req_list;
+Conflict between devmem (specifically) and io_uring is not my concern.
+My concern is possible future conflict between io_uring refcounting
+and page/devmem refcounting.
 
-This change as commit a3396b99990d ("block: add a rq_list type") in
-next-20241114 causes errors when CONFIG_BLOCK is disabled because the
-definition of 'struct rq_list' is under CONFIG_BLOCK. Should it be moved
-out?
+Currently net_iov refcounting and page refcounting is unified (as much
+as possible). net_iov->pp_ref_count is an exact mirror in usage of
+page->pp_ref_count and the intention is for it to remain so. This
+patch reuses net_iov->pp_ref_count in a way that doesn't really apply
+to page->pp_ref_count and already some deviation in use case is
+happening which may lead to conflicting requirements in the future
+(and to be fair, may not).
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 00212e96261a..a1fd0ddce5cf 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1006,12 +1006,12 @@ extern void blk_put_queue(struct request_queue *);
- 
- void blk_mark_disk_dead(struct gendisk *disk);
- 
--#ifdef CONFIG_BLOCK
- struct rq_list {
- 	struct request *head;
- 	struct request *tail;
- };
- 
-+#ifdef CONFIG_BLOCK
- /*
-  * blk_plug permits building a queue of related requests by holding the I/O
-  * fragments for a short period. This allows merging of sequential requests
+But I've been bringing this up a lot in the past (and offering
+alternatives that don't introduce this overloading) and I think this
+conversation has run its course. I'm unsure about this approach and
+this could use another pair of eyes. Jakub, sorry to bother you but
+you probably are the one that reviewed the whole net_iov stuff most
+closely. Any chance you would take a look and provide direction here?
+Maybe my concern is overblown...
 
->  	bool need_ts;
->  	void (*complete)(struct io_comp_batch *);
->  };
+--
+Thanks,
+Mina
 

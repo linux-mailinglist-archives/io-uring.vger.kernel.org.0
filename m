@@ -1,117 +1,133 @@
-Return-Path: <io-uring+bounces-4699-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4704-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B529C9195
-	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 19:22:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1D49C92F6
+	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 21:11:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE3EBB379A2
-	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 17:38:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FFAE28484E
+	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 20:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC1418C022;
-	Thu, 14 Nov 2024 17:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9611AA7A5;
+	Thu, 14 Nov 2024 20:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjkW4Ew5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anx91EaE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55DD18BC21
-	for <io-uring@vger.kernel.org>; Thu, 14 Nov 2024 17:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4161A9B5D;
+	Thu, 14 Nov 2024 20:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731605891; cv=none; b=FQ0jTzWBR9eobTTIkNh2vl+0wrD0tG9Ni9JNhQBsp7P7mwt3i54Pah5psh3upwN4k5Pr+ZG/MpjZKlA6mDInCQklo36Jn7CFyO24wUSfIZjjLFKnSzt2dyqK1QE8uVYYmhRDO6a6ZamGFtaK/f+W8dWhBVUEnqkdGBM82ZqLlm4=
+	t=1731615066; cv=none; b=F9iTyTzchL7SS5g9sMibw3GEJswog/U+fzA2Lf5idKyuFoSz9IxJzm00AGGTMtzXunbKkvjVLEK1Wx/z21XipbQfLUXhNFLdAFi/3e6DQAzVqo72EV6E8RmNYEDdukWfxPQz7Jr7f7YRwYdRMdCevDwNwqO1KwAyJEg4Io8KO3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731605891; c=relaxed/simple;
-	bh=bOXuPylse+C0vi8bk1k20OU0yKwquVaExqg5AhfYLSY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LFM2Z4mWoMzsxNd/x5rHh7Nev5GELO2apTrFiQ5SabqyK4P/sZqtH1dbnJriuvUknOtGKaQYGUNiJpCq2pT1fM1mOIFkWX3+p91qavjiA8UYCJ2F+1Um7i/ogvyAT0cgCVZovMbapwdrT+NW8/SDu3vlNB8LvuNLRYM+zoTk/WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kjkW4Ew5; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c96b2a10e1so1531149a12.2
-        for <io-uring@vger.kernel.org>; Thu, 14 Nov 2024 09:38:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731605886; x=1732210686; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hwyltf5fgdrVd41AJQ/C7rIRuEDCxBHV6H77DqLRdb4=;
-        b=kjkW4Ew57qQt1wa34buEqr00mf4vLxG2Az+cq/OBVHUrV3T3CzyufhjH7Jd+3b8Xsf
-         IzDhlNd+AXfdNvqy+83wSd/4lOikoEUFh4xBsVn9Eu5EPHbW4LCsbPYja9loNyAHwH9S
-         ConrBgiUk3vxah2WW17fNRO/93Ec4BPMNjyMRucc4hHIZHh53fTdnIaj5Og6a18c7b0+
-         u3kKWHiHFWYDQ2WAzhhSLwV6Zo64zv8Uw1jrtO2VPAX2sUfcre4fXAw8qu0OJUl5fsja
-         WtmbfUf+PaIK0x/UiNZsxvAjseyFEZA0dOGMXVd+5qk2x0oWZvY/4ZMlKN7J7FlaTmoI
-         8VVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731605886; x=1732210686;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hwyltf5fgdrVd41AJQ/C7rIRuEDCxBHV6H77DqLRdb4=;
-        b=Yz3SXA5aJyF+8L8dV9nGZAKmzECBft4qPCrB43MAz6/GiYq1N0Kq5eBduNLz7/RhD6
-         j15B9E0uzizAQmCfcbNv6wn7bHvF+RzRFpWkyZPmhqdXr1tnCdFSilcKDhpV6KNWNOgw
-         RG7+7y1KrsbHPfsojvp1XOZJ6EkKloatWUw+eFYKIn9KmohTOpo3WlhzbKW/4XkD7DaP
-         ZghbetGjQKmB0OqJiz5gUAwX0zCsAXHt+AvgljLb/Y0yXgT5hCevGHHLDL2+8bHc8LtK
-         1YbO9yuYKr4Rh8TZ1GTF/AeYKO7kDU1cXYxBtHzabNaY3jPK/njabMbOcXTGuTy3S4ln
-         KEnw==
-X-Gm-Message-State: AOJu0YwYgcats8TNVU5Rvn+cDdlzk2oHX/zhPUTLP3FmL3Gtku2wQqGX
-	dxlbZu9vO776S30NRT/O1DtNjJaNP+EG+lzAmpWc7XVqkpG/AZwnxe0qEA==
-X-Google-Smtp-Source: AGHT+IFLrBnrhgupBSxAeeyTLlK6AzEX2PN7Q7KdVaFeLRU3EICLH6ubGg0wE/iSII3BQYMR/Lj0/w==
-X-Received: by 2002:a17:906:4f96:b0:a9f:168:efdf with SMTP id a640c23a62f3a-a9f0169008dmr1613752466b.6.1731605885712;
-        Thu, 14 Nov 2024 09:38:05 -0800 (PST)
-Received: from 127.0.0.1localhost ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df56b31sm85799966b.72.2024.11.14.09.38.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 09:38:05 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH v2 2/6] io_uring: disable ENTER_EXT_ARG_REG for IOPOLL
-Date: Thu, 14 Nov 2024 17:38:32 +0000
-Message-ID: <a35ecd919dbdc17bd5b7932273e317832c531b45.1731604990.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1731604990.git.asml.silence@gmail.com>
-References: <cover.1731604990.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1731615066; c=relaxed/simple;
+	bh=ASl8LSAvyQVJiieFrry6JPr3SCOWxU/QgkzXXpnO05k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=drxFhEPbMbjY39Y4iwOyuq2dsavqcNImFcqm1Z5cawbW0a2HX6rG8/C2+5JchZZpkamRHSEc2vgkDYyRtsm1Awpa8lk/YntQKSd437OFfhJVCv8VH85UgpNe0cJZxriR11G90oDEg910qbf1yQ3NQg95ojX9JPjApHuZCkRXnMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anx91EaE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C035C4CECD;
+	Thu, 14 Nov 2024 20:11:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731615066;
+	bh=ASl8LSAvyQVJiieFrry6JPr3SCOWxU/QgkzXXpnO05k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=anx91EaEjJy6ntu/ddhlMwoMHjGZHqXIcwlIbSxu2kcIowwLvk0UMlYby2HoawQBE
+	 sbHvq+nARD/fY8HjJLg0VQCU5jOhJpqefyvJJFZ+f+qLvTpgcBp+tjagV8VPGSTX60
+	 4kskjjjHURDBovPsnp/VTNUO8ITbMWwx2W2KL+5N2QKDS7IRQ9oAIkEmJm+59XuIOA
+	 l1VzSp7HwTt1oIQOTTmYjK82gHnErDFI3wDf+EKeei1n2xKrAKGHUEWdD7uchJoI3V
+	 PC5BtRgOOKwMQ0g+7H4HCnJlTN/H4VNZ+dTMPpc4aPLFr+AOKTMj7fybJKs94y7uhH
+	 7wMQc3PHz3+RQ==
+Date: Thu, 14 Nov 2024 13:11:03 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, "Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>, Keith Busch <kbusch@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-block@vger.kernel.org, virtualization@lists.linux.dev,
+	linux-nvme@lists.infradead.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH 4/6] block: add a rq_list type
+Message-ID: <20241114201103.GA2036469@thelio-3990X>
+References: <20241113152050.157179-1-hch@lst.de>
+ <20241113152050.157179-5-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113152050.157179-5-hch@lst.de>
 
-IOPOLL doesn't use the extended arguments, no need for it to support
-IORING_ENTER_EXT_ARG_REG. Let's disable it for IOPOLL, if anything it
-leaves more space for future extensions.
+Hi Christoph,
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/io_uring.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+On Wed, Nov 13, 2024 at 04:20:44PM +0100, Christoph Hellwig wrote:
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 65f37ae70712..ce8b65503ff0 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -1006,6 +1006,11 @@ extern void blk_put_queue(struct request_queue *);
+>  void blk_mark_disk_dead(struct gendisk *disk);
+>  
+>  #ifdef CONFIG_BLOCK
+> +struct rq_list {
+> +	struct request *head;
+> +	struct request *tail;
+> +};
+> +
+>  /*
+>   * blk_plug permits building a queue of related requests by holding the I/O
+>   * fragments for a short period. This allows merging of sequential requests
+> @@ -1018,10 +1023,10 @@ void blk_mark_disk_dead(struct gendisk *disk);
+>   * blk_flush_plug() is called.
+>   */
+>  struct blk_plug {
+> -	struct request *mq_list; /* blk-mq requests */
+> +	struct rq_list mq_list; /* blk-mq requests */
+>  
+>  	/* if ios_left is > 1, we can batch tag/rq allocations */
+> -	struct request *cached_rq;
+> +	struct rq_list cached_rqs;
+>  	u64 cur_ktime;
+>  	unsigned short nr_ios;
+>  
+> @@ -1683,7 +1688,7 @@ int bdev_thaw(struct block_device *bdev);
+>  void bdev_fput(struct file *bdev_file);
+>  
+>  struct io_comp_batch {
+> -	struct request *req_list;
+> +	struct rq_list req_list;
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index bd71782057de..464a70bde7e6 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3214,12 +3214,8 @@ static int io_validate_ext_arg(struct io_ring_ctx *ctx, unsigned flags,
+This change as commit a3396b99990d ("block: add a rq_list type") in
+next-20241114 causes errors when CONFIG_BLOCK is disabled because the
+definition of 'struct rq_list' is under CONFIG_BLOCK. Should it be moved
+out?
+
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 00212e96261a..a1fd0ddce5cf 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1006,12 +1006,12 @@ extern void blk_put_queue(struct request_queue *);
  
- 	if (!(flags & IORING_ENTER_EXT_ARG))
- 		return 0;
--
--	if (flags & IORING_ENTER_EXT_ARG_REG) {
--		if (argsz != sizeof(struct io_uring_reg_wait))
--			return -EINVAL;
--		return PTR_ERR(io_get_ext_arg_reg(ctx, argp));
--	}
-+	if (flags & IORING_ENTER_EXT_ARG_REG)
-+		return -EINVAL;
- 	if (argsz != sizeof(arg))
- 		return -EINVAL;
- 	if (copy_from_user(&arg, argp, sizeof(arg)))
--- 
-2.46.0
+ void blk_mark_disk_dead(struct gendisk *disk);
+ 
+-#ifdef CONFIG_BLOCK
+ struct rq_list {
+ 	struct request *head;
+ 	struct request *tail;
+ };
+ 
++#ifdef CONFIG_BLOCK
+ /*
+  * blk_plug permits building a queue of related requests by holding the I/O
+  * fragments for a short period. This allows merging of sequential requests
 
+>  	bool need_ts;
+>  	void (*complete)(struct io_comp_batch *);
+>  };
 

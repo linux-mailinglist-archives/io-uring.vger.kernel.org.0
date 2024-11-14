@@ -1,77 +1,77 @@
-Return-Path: <io-uring+bounces-4674-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4675-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6569C81D2
-	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 05:14:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADEF59C81D3
+	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 05:14:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE607284679
-	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 04:14:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8D01F21E23
+	for <lists+io-uring@lfdr.de>; Thu, 14 Nov 2024 04:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812EE1E7C16;
-	Thu, 14 Nov 2024 04:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB8B1DF72E;
+	Thu, 14 Nov 2024 04:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpNy1ax5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBkRajoV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A511DF72E
-	for <io-uring@vger.kernel.org>; Thu, 14 Nov 2024 04:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE211E8827
+	for <io-uring@vger.kernel.org>; Thu, 14 Nov 2024 04:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731557646; cv=none; b=HEXIRfIo5CL83mqhjmhaK+qNaCPj89KNl+iyhcdDZva2vnhBLgJAcgtW2yM+k5NwMmoirzK6KHrAfXMQNg7clWyWri0HR0aFUxFHKAkqj6Qpamtm/jNWI5M9B6wkv/OQo1WMD/j+4ORis9ytHnzAjFFGNJgxzEgq/BrJYYfi1/8=
+	t=1731557649; cv=none; b=gfl9TbttUFK8yEEm0H/N9WfmAvNGuEIv5RY1LkMtalmO2seo3HRbBOlwln2qmWGPOaC9arKv6IeYNwpXabcG3ezE62vDR2uMAMz4RoS3/zgXwdVnvkHwwESXVBE+eTh3TC07UvwHxVoBq7THyI4uexejNJHsa5pNdU+7WUuozgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731557646; c=relaxed/simple;
-	bh=XGNR0R9bVnjdyjqTCXAwbp0v04eZfBEsyas4/N/tT50=;
+	s=arc-20240116; t=1731557649; c=relaxed/simple;
+	bh=/obiZqY5u6S9sB6CawVtRypVIKFQ0tCsRKXtcq4bR9I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rSzc3QylE2XxaSLxKMgAr1V2EQnODBS9vPatzvYpu0f7gSIe73Q62UfkVJAbLOxVc1FxM28wudyYCfe0ONvUCHpMYY6VfZUplKppXTAidPCcGjGNO5MlnayAcbpbMdxmMSELrH38dnfOs9jme+NIi9w6uEO73x/Wj8X7Hjr67xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpNy1ax5; arc=none smtp.client-ip=209.85.221.46
+	 MIME-Version; b=sgaLpNyEhT3rPi+i95LN6FrIPjCZfLKWr3tg3CWBg/LfKMUwqAfe2KrEcCTn+scWncGHBRdobm6+oKK8ffno5XUHK901wsi+yMtkmc8er35iswTYss+6qp16aWdoRabbJCOpaQHUKm+X4UQONzsCHedg5qUhD7jdq/kGHr/tCi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fBkRajoV; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-382171fe8b1so175713f8f.1
-        for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 20:14:04 -0800 (PST)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d6ff1cbe1so141693f8f.3
+        for <io-uring@vger.kernel.org>; Wed, 13 Nov 2024 20:14:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731557643; x=1732162443; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731557645; x=1732162445; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QevZ2XM/oLWl+9z9+p8K4+bD59erMc6Ct/g8gJjyWoY=;
-        b=hpNy1ax5ekraWGDxFSrEwZgKqu1lgzFajUOoW96ePdoIR4ey1xkgFTG/gOgFceZ1gu
-         mY2/Mawgz2trT8grZX+3whkqj6MS43tNx2OIeGvZUNv8YtE2R26TehiCpA2yzkr/2pmQ
-         xiEpO59TDkOq9qNXRbtqRKizWaURov4nGBgxZg6YFSnU+Ei8MXeJBy4I1YDgjxeRRDFI
-         0Qb3Oq/A5FRU4ZF0Dp+PsHUxbkVXWNAcEQVuaLjr/q5KKGN5CGaoYDs4VyK3YCWuCmjH
-         MKb/qCN1HR29jq7U+Di98nJHNvztUzMhvj4K8zkkvFRMpISyJYcFjuSdUKQ+sTkc8C/G
-         Py4w==
+        bh=HzJUtYhk70OYS1BXABOZzA3PP2mUGfbEHdHP14EV0Uc=;
+        b=fBkRajoVo2gogtxZZhXdDqXvy0A9xxkjJdDia9KWvbC3SZzmjeF40DUyv2aF8d75Xl
+         Xp1X5V8lON62QtoIMbsvkxg5g6fM/EK4/XVO0QiSLtFoS60eradiOSGmEx+Z/L2Ipr1A
+         22EKtlllG53Heb+NXYR3intFxQPewuSKAYsv0uSFsgKA7w+uOJe/BaATYN6YI2nsdXWh
+         bfTcXouToz2l25UWVK5Y+H7U60DVIW5DdrLyWdRMf18YaK3edRPhvoNpS2vAOdt/XIqX
+         UECuGXIKfevSx2dYekDx2W4qSVKnbJJviQ3r7hFIyKjgKLLZzYXYJcqaPBTXP2zs2mjd
+         fQ4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731557643; x=1732162443;
+        d=1e100.net; s=20230601; t=1731557645; x=1732162445;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QevZ2XM/oLWl+9z9+p8K4+bD59erMc6Ct/g8gJjyWoY=;
-        b=ARicuM2N6m+SXGy9o/FdH3GR4DPl3vnHZRMA/HAkWeha2IdC4uE+oxmbkRfzc8DutD
-         vtk2cXZEzOqxIi3CDr3kXNZarD2OeVpqjgnL+hzxkihdmt1nCY+a4lQkQtGEsx3opWEc
-         7VUNzDq1+9jcbVcwbsIrffHJRa7gh1XGhYj4937Eg8WuW5ih912/bskbxVP3SsmfXaUP
-         AlVBoU+ne3HlxtM8IbTpmqBgKdzaRDPoGgaeUB+pbmRVw0vteiU3vf746OGxJpLxzk2p
-         O8CD4UjBsYOng4RMlHBWxLSpVpy3iYAjf1yIZwy5O8u4B5iSxLauJXglvcaoBpIuOIrM
-         9WTA==
-X-Gm-Message-State: AOJu0YyyCH4xlvP6/xSmOmJFC7WULlKEi8s/RKVKc80xLKLuJK0jwWy5
-	xaETX7t8lO3r1b8NjDg/YL3iEJ4sMoKk7a9DtRKDFiu70u54RayR3mejcQ==
-X-Google-Smtp-Source: AGHT+IF7PNOJCpu6HZRqcfBPV7OvKg5sSIv9Ho53jENvP7WjPzPxMr4yoKYkjxjtzp1cIXNPyNCDKQ==
-X-Received: by 2002:a05:6000:1568:b0:374:cd3c:db6d with SMTP id ffacd0b85a97d-38213fe958bmr1379505f8f.6.1731557642774;
-        Wed, 13 Nov 2024 20:14:02 -0800 (PST)
+        bh=HzJUtYhk70OYS1BXABOZzA3PP2mUGfbEHdHP14EV0Uc=;
+        b=QhNJofnguaigsw4fxLa6YxqJ3d71hfr8NoHrWjBmvKDoBS9rV8s+RLKKL3+t1fthfu
+         1ztRZfpjQyISvT9+/daHddeEDj3++mLs+BsL2oqZ3vqTczg/2Xej+x0oWLEJnej1sTGs
+         FDM8wnECS2oU89fBljsHzP2ryZzpHSkDNl6XMx0H44otqiA7zkR3rHNvonzsHZiEdd55
+         ijhWpWTBKRR9NKLA7JYOm/ZqbfBEGJjhDvwkiba5yErNfTVlOFbZAg01LVQJlPjWqPil
+         HLflmUPbbnhJY/OIyFiPsmxVNI+qitK1Vibp4OslxBlKLaU5APcl+nGjkS9j2uOp1RY9
+         ERRg==
+X-Gm-Message-State: AOJu0YxqvMngvhWdThVsSaUCXsFH1PdUlTDgO+B1A4/tn7M1RocpcvSE
+	+7QeOW6U0KvjX5YB3XtsY9mk4uQOHgCNBRMNT2knD16+ycNfYcuSUAmQow==
+X-Google-Smtp-Source: AGHT+IHOVG0IjOQKRQ3aUSzPxndxQTkGVqICejHcKJSt+p8sMETbhyWbOL7jjM3zJfIMulk0zP+WeA==
+X-Received: by 2002:a5d:6d8c:0:b0:382:d8c:2dc3 with SMTP id ffacd0b85a97d-3820df71a43mr4218824f8f.14.1731557644890;
+        Wed, 13 Nov 2024 20:14:04 -0800 (PST)
 Received: from 127.0.0.1localhost ([148.252.132.111])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae311fbsm251936f8f.95.2024.11.13.20.14.01
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae311fbsm251936f8f.95.2024.11.13.20.14.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 20:14:02 -0800 (PST)
+        Wed, 13 Nov 2024 20:14:04 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 4/6] io_uring: introduce memory regions
-Date: Thu, 14 Nov 2024 04:14:23 +0000
-Message-ID: <cd8e0927651ecdb99776503e50aa3554573b9a61.1731556844.git.asml.silence@gmail.com>
+Subject: [PATCH 5/6] io_uring: add parameter region registration
+Date: Thu, 14 Nov 2024 04:14:24 +0000
+Message-ID: <481f7a4973b86038f6b03f0d1e9ce4e127ced315.1731556844.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1731556844.git.asml.silence@gmail.com>
 References: <cover.1731556844.git.asml.silence@gmail.com>
@@ -83,181 +83,169 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We've got a good number of mappings we share with the userspace, that
-includes the main rings, provided buffer rings and at least a couple
-more types. And all of them duplicate some of the code for page pinning,
-mmap'ing and attempts to optimise it with huge pages.
+Allow the user to pre-register a region for passing various paramteres.
 
-Introduce a notion of regions. For userspace it's just a new structure
-called struct io_uring_region_desc which supposed to parameterise all
-such mapping / queues creations. It either represents a user provided
-memory, in which case the user_addr field should point to it, or a
-request to the kernel to creating the memory, in which case the user is
-supposed to mmap it after using the offset returned in the mmap_offset
-field. With uniform userspace API we can avoid additional boiler plate
-code and when we'd be adding some optimisation it'll be applied to all
-mapping types.
+To use it for passing wait loop arguments, which is wired in the
+following commit, the region has to be registered with the
+IORING_PARAM_REGION_WAIT_ARG flag set. The flag also requires the
+context to be currently disabled, i.e. IORING_SETUP_R_DISABLED, to avoid
+races with otherwise potentially running waiters.
 
-Internally, there is a new structure struct io_mapped_region holding all
-relevant runtime information and some helpers to work with it. This
-patch limits it to user provided regions, which will be extended as a
-follow up work.
+This will also be useful in the future for various request / SQE
+arguments like iovec, the meta read/write API, and also for BPF.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
  include/linux/io_uring_types.h |  6 ++++
- include/uapi/linux/io_uring.h  | 13 +++++++
- io_uring/memmap.c              | 65 ++++++++++++++++++++++++++++++++++
- io_uring/memmap.h              | 14 ++++++++
- 4 files changed, 98 insertions(+)
+ include/uapi/linux/io_uring.h  | 13 ++++++++
+ io_uring/io_uring.c            |  1 +
+ io_uring/register.c            | 59 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 79 insertions(+)
 
 diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 52a5da99a205..1d3a37234ace 100644
+index 1d3a37234ace..aa5f5ea98076 100644
 --- a/include/linux/io_uring_types.h
 +++ b/include/linux/io_uring_types.h
-@@ -75,6 +75,12 @@ struct io_hash_table {
- 	unsigned		hash_bits;
+@@ -324,6 +324,9 @@ struct io_ring_ctx {
+ 		unsigned		cq_entries;
+ 		struct io_ev_fd	__rcu	*io_ev_fd;
+ 		unsigned		cq_extra;
++
++		void			*cq_wait_arg;
++		size_t			cq_wait_size;
+ 	} ____cacheline_aligned_in_smp;
+ 
+ 	/*
+@@ -429,6 +432,9 @@ struct io_ring_ctx {
+ 	unsigned short			n_sqe_pages;
+ 	struct page			**ring_pages;
+ 	struct page			**sqe_pages;
++
++	/* used for optimised request parameter and wait argument passing  */
++	struct io_mapped_region		param_region;
  };
  
-+struct io_mapped_region {
-+	struct page		**pages;
-+	void			*vmap_ptr;
-+	size_t			nr_pages;
-+};
-+
- /*
-  * Arbitrary limit, can be raised if need be
-  */
+ struct io_tw_state {
 diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 132f5db3d4e8..7ceeccbbf4cb 100644
+index 7ceeccbbf4cb..49b94029c137 100644
 --- a/include/uapi/linux/io_uring.h
 +++ b/include/uapi/linux/io_uring.h
-@@ -647,6 +647,19 @@ struct io_uring_files_update {
- 	__aligned_u64 /* __s32 * */ fds;
+@@ -627,6 +627,8 @@ enum io_uring_register_op {
+ 	/* resize CQ ring */
+ 	IORING_REGISTER_RESIZE_RINGS		= 33,
+ 
++	IORING_REGISTER_PARAM_REGION		= 34,
++
+ 	/* this goes last */
+ 	IORING_REGISTER_LAST,
+ 
+@@ -660,6 +662,17 @@ struct io_uring_region_desc {
+ 	__u64 __resv[4];
  };
  
 +enum {
-+	/* initialise with user memory pointed by user_addr */
-+	IORING_REGION_USER_MEM			= 1,
++	/* expose the region as registered wait arguments */
++	IORING_PARAM_REGION_WAIT_ARG			= 1,
 +};
 +
-+struct io_uring_region_desc {
-+	__u64 user_addr;
-+	__u64 size;
++struct io_uring_param_region_reg {
++	__u64 region_uptr; /* struct io_uring_region_desc * */
 +	__u64 flags;
-+	__u64 mmap_offset;
-+	__u64 __resv[4];
++	__u64 __resv[2];
 +};
 +
  /*
   * Register a fully sparse file space, rather than pass in an array of all
   * -1 file descriptors.
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index 6ab59c60dfd0..6b03f5641ef3 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -12,6 +12,7 @@
- 
- #include "memmap.h"
- #include "kbuf.h"
-+#include "rsrc.h"
- 
- static void *io_mem_alloc_compound(struct page **pages, int nr_pages,
- 				   size_t size, gfp_t gfp)
-@@ -194,6 +195,70 @@ void *__io_uaddr_map(struct page ***pages, unsigned short *npages,
- 	return ERR_PTR(-ENOMEM);
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 286b7bb73978..c640b8a4ceee 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -2709,6 +2709,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	io_alloc_cache_free(&ctx->msg_cache, io_msg_cache_free);
+ 	io_futex_cache_free(ctx);
+ 	io_destroy_buffers(ctx);
++	io_free_region(ctx, &ctx->param_region);
+ 	mutex_unlock(&ctx->uring_lock);
+ 	if (ctx->sq_creds)
+ 		put_cred(ctx->sq_creds);
+diff --git a/io_uring/register.c b/io_uring/register.c
+index 3c5a3cfb186b..d1ba14da37ea 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -570,6 +570,59 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
+ 	return ret;
  }
  
-+void io_free_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr)
++/*
++ * Register a page holding N entries of struct io_uring_reg_wait, which can
++ * be used via io_uring_enter(2) if IORING_GETEVENTS_EXT_ARG_REG is set.
++ * If that is set with IORING_GETEVENTS_EXT_ARG, then instead of passing
++ * in a pointer for a struct io_uring_getevents_arg, an index into this
++ * registered array is passed, avoiding two (arg + timeout) copies per
++ * invocation.
++ */
++static int io_register_mapped_heap(struct io_ring_ctx *ctx, void __user *uarg)
 +{
-+	if (mr->pages)
-+		unpin_user_pages(mr->pages, mr->nr_pages);
-+	if (mr->vmap_ptr)
-+		vunmap(mr->vmap_ptr);
-+	if (mr->nr_pages && ctx->user)
-+		__io_unaccount_mem(ctx->user, mr->nr_pages);
++	struct io_uring_param_region_reg __user *reg_uptr = uarg;
++	struct io_uring_param_region_reg reg;
++	struct io_uring_region_desc __user *rd_uptr;
++	struct io_uring_region_desc rd;
++	int ret;
 +
-+	memset(mr, 0, sizeof(*mr));
-+}
-+
-+int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
-+		     struct io_uring_region_desc *reg)
-+{
-+	int pages_accounted = 0;
-+	struct page **pages;
-+	int nr_pages, ret;
-+	void *vptr;
-+	u64 end;
-+
-+	if (WARN_ON_ONCE(mr->pages || mr->vmap_ptr || mr->nr_pages))
++	if (io_region_is_set(&ctx->param_region))
++		return -EBUSY;
++	if (copy_from_user(&reg, reg_uptr, sizeof(reg)))
 +		return -EFAULT;
-+	if (memchr_inv(&reg->__resv, 0, sizeof(reg->__resv)))
-+		return -EINVAL;
-+	if (reg->flags != IORING_REGION_USER_MEM)
-+		return -EINVAL;
-+	if (!reg->user_addr)
++	rd_uptr = u64_to_user_ptr(reg.region_uptr);
++	if (copy_from_user(&rd, rd_uptr, sizeof(rd)))
 +		return -EFAULT;
-+	if (!reg->size || reg->mmap_offset)
-+		return -EINVAL;
-+	if ((reg->size >> PAGE_SHIFT) > INT_MAX)
-+		return E2BIG;
-+	if ((reg->user_addr | reg->size) & ~PAGE_MASK)
-+		return -EINVAL;
-+	if (check_add_overflow(reg->user_addr, reg->size, &end))
-+		return -EOVERFLOW;
 +
-+	pages = io_pin_pages(reg->user_addr, reg->size, &nr_pages);
-+	if (IS_ERR(pages))
-+		return PTR_ERR(pages);
++	if (memchr_inv(&reg.__resv, 0, sizeof(reg.__resv)))
++		return -EINVAL;
++	if (reg.flags != IORING_PARAM_REGION_WAIT_ARG)
++		return -EINVAL;
 +
-+	if (ctx->user) {
-+		ret = __io_account_mem(ctx->user, nr_pages);
-+		if (ret)
-+			goto out_free;
-+		pages_accounted = nr_pages;
++	/*
++	 * This ensures there are no waiters. Waiters are unlocked and it's
++	 * hard to synchronise with them, especially if we need to initialise
++	 * the region.
++	 */
++	if ((reg.flags & IORING_PARAM_REGION_WAIT_ARG) &&
++	    !(ctx->flags & IORING_SETUP_R_DISABLED))
++		return -EINVAL;
++
++	ret = io_create_region(ctx, &ctx->param_region, &rd);
++	if (ret)
++		return ret;
++	if (copy_to_user(rd_uptr, &rd, sizeof(rd))) {
++		io_free_region(ctx, &ctx->param_region);
++		return -EFAULT;
 +	}
 +
-+	vptr = vmap(pages, nr_pages, VM_MAP, PAGE_KERNEL);
-+	if (!vptr)
-+		goto out_free;
-+
-+	mr->pages = pages;
-+	mr->vmap_ptr = vptr;
-+	mr->nr_pages = nr_pages;
++	if (reg.flags & IORING_PARAM_REGION_WAIT_ARG) {
++		ctx->cq_wait_arg = io_region_get_ptr(&ctx->param_region);
++		ctx->cq_wait_size = rd.size;
++	}
 +	return 0;
-+out_free:
-+	if (pages_accounted)
-+		__io_unaccount_mem(ctx->user, pages_accounted);
-+	io_pages_free(&pages, nr_pages);
-+	return ret;
 +}
 +
- static void *io_uring_validate_mmap_request(struct file *file, loff_t pgoff,
- 					    size_t sz)
- {
-diff --git a/io_uring/memmap.h b/io_uring/memmap.h
-index 5cec5b7ac49a..f361a635b6c7 100644
---- a/io_uring/memmap.h
-+++ b/io_uring/memmap.h
-@@ -22,4 +22,18 @@ unsigned long io_uring_get_unmapped_area(struct file *file, unsigned long addr,
- 					 unsigned long flags);
- int io_uring_mmap(struct file *file, struct vm_area_struct *vma);
- 
-+void io_free_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr);
-+int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
-+		     struct io_uring_region_desc *reg);
-+
-+static inline void *io_region_get_ptr(struct io_mapped_region *mr)
-+{
-+	return mr->vmap_ptr;
-+}
-+
-+static inline bool io_region_is_set(struct io_mapped_region *mr)
-+{
-+	return !!mr->nr_pages;
-+}
-+
- #endif
+ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 			       void __user *arg, unsigned nr_args)
+ 	__releases(ctx->uring_lock)
+@@ -764,6 +817,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
+ 			break;
+ 		ret = io_register_resize_rings(ctx, arg);
+ 		break;
++	case IORING_REGISTER_PARAM_REGION:
++		ret = -EINVAL;
++		if (!arg || nr_args != 1)
++			break;
++		ret = io_register_mapped_heap(ctx, arg);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		break;
 -- 
 2.46.0
 

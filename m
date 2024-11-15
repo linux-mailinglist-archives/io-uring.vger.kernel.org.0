@@ -1,167 +1,109 @@
-Return-Path: <io-uring+bounces-4715-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4716-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6229CDE9D
-	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 13:49:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB3C9CDFF2
+	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 14:30:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0601F20FC0
-	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 12:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1313F1F22940
+	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 13:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BCD1BBBD3;
-	Fri, 15 Nov 2024 12:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF9F1C07D5;
+	Fri, 15 Nov 2024 13:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TqiUZMdU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e10ZpYOG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FD018950A
-	for <io-uring@vger.kernel.org>; Fri, 15 Nov 2024 12:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62811C07C5;
+	Fri, 15 Nov 2024 13:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731674975; cv=none; b=jmlzFP6bMGT9njJm406uaLf3gIPXeSGb7zVg53S4qMRacC7HDqLVCG9xUSnvzNOLQa/AJgRHyMf9rcXaQRHNetBYMmfR/JEHKyWEJHQ0fHDDbmiXQw89pT7PHkND2mdj8RdXCCnvjNbzUJ9y1coJA4HHOITcP4fCXPdjmlc14F8=
+	t=1731677392; cv=none; b=S/ryoDxIE4tJL2uVQTctc5BOSZbPf6h6XLFnX/FO7bBxnGdZ4HuLVGwK9vKfSUa0M6l0XtbIc5jAQfgVLWIhlYrXQCRNya5BqTjCVDv43cqSyQ9vIDFJ8+i+PjmT99MGoadbXsgPsRyXNOcKkz6tIcfBEouvPk7qKXb7jRzXGPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731674975; c=relaxed/simple;
-	bh=+UYApFnT9UM37KTNXTpn2LxWwTjTgga79QdwKc3PiHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZfuolPLzq30uIQGq7i0sV9pJAAy9EKESEZn3YDK7RySMRSllgVaxHfwtUEPHjfUKfIwbbHYlWu5l9r4kxeGmgKyXNrKUz5RhIwF26HNuWetKGoP2VYYXANtSN4XUgHDznY1ckM0Lbkr7z+bpqqqflWadDBsHExKgH5jMmLvA2Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TqiUZMdU; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2118dfe6042so14274545ad.2
-        for <io-uring@vger.kernel.org>; Fri, 15 Nov 2024 04:49:32 -0800 (PST)
+	s=arc-20240116; t=1731677392; c=relaxed/simple;
+	bh=J/5ZDP8yvp5xJV8M6LlD9Na/ogk0y+HnBPjWwxvT0Uo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ISjGHHVFjWrPne++zMA1LiGcEquetTLJgs+YTlxRlLo8KT4VvlDi2GwEgazVX7d13g0IUZXNUqi/2QG2SUXejVgOiPJsP9xfY/0qgHBMMhmfdpukrAEJSx3SxjvfRxCT0LhG4TmTv4d5ndIZyjVJhk8Ao+2pUlL06hpc7b8D3Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e10ZpYOG; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cf9cd111ecso342156a12.3;
+        Fri, 15 Nov 2024 05:29:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731674971; x=1732279771; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jwJVxt+nzxze2SmN7f33ZKdyuGZOFXgYv9MV7GcQNWA=;
-        b=TqiUZMdU4ZCtD+Rg1MV3fYw7A7G/8hDEubDD97mUD8VFIMvJpydHoc1OqQaVck50Ti
-         CIiMbK+SDUVDVj2SwkSWFtjoDKCAgJpg8uBMlU5BU3xZN6FMrudyvBNCWsN4obfPGnq/
-         TOOeogimHm5AqC3mtEGY5u0/v3sFvXFhoQafjtYPlLgtHMT3kxzIvrbcFRwoRAp1waq5
-         x9sfzXGq/cRH331GYb9ImrvO4Nf3jfx4+n2Di5vpTP6M/ziQ/GZbQpUPPcDnwAPlL4Gs
-         MsajxHhYC643k55cu0f46zcQuL/GjIhJ7Goes03JVpB//MPXvfBq+oI3B7GSeKwH/7jk
-         W3PA==
+        d=gmail.com; s=20230601; t=1731677389; x=1732282189; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PXyAxxnKLpgZmGT3ZHAoHzNaVqLioXGnV41IMIjl6Ac=;
+        b=e10ZpYOGXLB0I4FRAn2tWsYwb7Bl/E3d2XZofmgYyOgivasDX7iAEdr4geUjwdxv5/
+         1TGVJv2yTsBlx8qzAxNU0Dbc2UoNDX9bEPZS7olYRXmZ0qpIcgxzwzn7ICRI4XZYlVxi
+         O5wV15dbvXuKfXc5ec4NzgS4nM72ap8U/IhF1FX8H96cMOS+sKoiRGQYN9dnAy5NvB44
+         d37RwDO64ZI6wuu4H0VsqQkHcr7LYC06k5rCxnDeAQwOjHLgqvJ4cGVSQDQCBH+3FBj4
+         vqQ/FUsRm30Juaf81SmOUHe4KB/P862D4TeCI/Z5bboY8K2FXyEvmSdbeHVSM+uDznSq
+         nhdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731674971; x=1732279771;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jwJVxt+nzxze2SmN7f33ZKdyuGZOFXgYv9MV7GcQNWA=;
-        b=xJOzb6Gp9zJ2rRoE9nZEwYCKadnYmsKYsMAW/HF6ZhTU67m/MGo7h+3p1yNuCIQQgm
-         TbSaIwT5MC6xbmQ4BsZkCuKDnFFUq6gZaugrMUYuM/QwUK0TIQpUO0pBUtF8H2eRAW+X
-         9WUjCdnTLmlAylG0jaXymsekcRovhsEj5G4UrvzFiqS/OybNJLj2KPQHS+uy7T1aXq4B
-         SxH4jujFSDaOwyOIjzB7T0sG/FctQaVzrdqGnJgLJVGaS2uaELZ6MeVVd9kp6cHfbjMm
-         026HGWUfkgpmZxAil0krxgfx2lQSGFvFK60nwma+dYiS9iOcoDSJRJa+/vnJIOSW7amP
-         xWUA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0QjqkZdvwaXVUPJ+i0tfc9w0DRt32PUsakKJ3W6RO4e7YDhLPQHrX1pDvRbzEvrmWXj7GTLfsUw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3dqGktgeVmRknblJycksmSJqzVqomcw4HSGGeh5R06lqv8yfA
-	HlRzktNI0HWUG3bJKqcR8Er0B8UsVSO4GkglU6TDPe0N01Z/nzfvR20dUPSBMoM=
-X-Google-Smtp-Source: AGHT+IHLsm4F8XGgt+dNqMlncEMHZaB6TNbve2F3AL5DPq8Q+6a6Bwd0d1gK0LzJt/GKxZcrS9AoKQ==
-X-Received: by 2002:a17:902:e74c:b0:20f:b5d1:8805 with SMTP id d9443c01a7336-211d0ca73admr34323225ad.0.1731674971420;
-        Fri, 15 Nov 2024 04:49:31 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f34609sm11080105ad.121.2024.11.15.04.49.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 04:49:30 -0800 (PST)
-Message-ID: <9f646b56-ebbf-4f2d-bceb-6ce1deb5d515@kernel.dk>
-Date: Fri, 15 Nov 2024 05:49:29 -0700
+        d=1e100.net; s=20230601; t=1731677389; x=1732282189;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PXyAxxnKLpgZmGT3ZHAoHzNaVqLioXGnV41IMIjl6Ac=;
+        b=DNzaJd/BYeiZFB/zEpsWjgYaHE9Ez1oRn4jaY9pUJxT8/7C39Btk04w5vdYZaRctlO
+         gJeG35v8lHGlPBne0gnqvkx247ah2bvtABIcxdzUeWL4hXTemnUSbrGAr3Lz1uSuFzpR
+         5x1pjSLEwFoYQt3Q3GV7Ijf3pRI+8cFJqKz7MRAeB80NP8nrh4YIdXxABFUpD9GKII8t
+         lHV7Li45u2Z0Ptb2M3fFsrXMVB7FWNkNnA3r46Ag3X6WN4yMw7Rc9l5O0k379MD0KUm9
+         mqFSeFml9dLvIWVXfkyQQpRyLxoQ/6KoAsSVQKKPTRVSCKS+lI9gNi3ZOs+Of6q0KUkG
+         nPAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3BLsG0sxonhnDmfrhQ+/wUpIf7DchKfC+wgLaaX18vC/ZT6lWmVcdqy51B6b9obs/5AWwh/a6eg==@vger.kernel.org, AJvYcCV8emCuU7QBUIu1SHldD5LpNsGNk83JPwacgOVMJBKMdaPFdVCcN0H/j82QjQEEjUIZvGFFXzQS1MSzC8U=@vger.kernel.org, AJvYcCVvrQ9zcBcRPmwqlojZMMhDTpl2LO2oNvi6qb97zW067lr2getIrzJK2v1I7Me2TA+I0S6yz4x/0yYB7g==@vger.kernel.org, AJvYcCXi1mHIFkxseSLCeJ1JYDLb0413TjtCt/tIltWQxnUIzUcqUz1SebKZ8GcPlB2RZ898FV5LVjvQPlnOAPShSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfQR0PX6JIs2sD26y2rK/9MDbNk6Svz9J3+jozk/uSJ09FqFK6
+	jGLD7KDxOTsa40eCF2gbtvKiIUbIyOJGx+fh5KVM1MGR2pVAqjDd6fQXhX6FVfmmeqGuAg8QqxV
+	wzfgMkcJ5pkMj6zB0IzJgkvub+w==
+X-Google-Smtp-Source: AGHT+IGqWKTlmFq3/n12hP2Y2a/LRqzo/oZoAMzv7wmcNU8urPo976WbIba/QasmZjKbU6xrICmiEgAE4o4NmycRUDo=
+X-Received: by 2002:a17:907:3f25:b0:a9a:2afc:e4e4 with SMTP id
+ a640c23a62f3a-aa483557d9bmr200273066b.59.1731677388795; Fri, 15 Nov 2024
+ 05:29:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] block: add a rq_list type
-To: Nathan Chancellor <nathan@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
- Pavel Begunkov <asml.silence@gmail.com>, linux-block@vger.kernel.org,
- virtualization@lists.linux.dev, linux-nvme@lists.infradead.org,
- io-uring@vger.kernel.org
-References: <20241113152050.157179-1-hch@lst.de>
- <20241113152050.157179-5-hch@lst.de> <20241114201103.GA2036469@thelio-3990X>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241114201103.GA2036469@thelio-3990X>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241114104517.51726-1-anuj20.g@samsung.com> <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
+ <20241114104517.51726-7-anuj20.g@samsung.com> <20241114121632.GA3382@lst.de>
+In-Reply-To: <20241114121632.GA3382@lst.de>
+From: Anuj gupta <anuj1072538@gmail.com>
+Date: Fri, 15 Nov 2024 18:59:11 +0530
+Message-ID: <CACzX3As0EzgC-Qgp=Kt67kjqwq8sqsEWDCpgjb3BFW2UzU=oGw@mail.gmail.com>
+Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
+ and PI support
+To: Christoph Hellwig <hch@lst.de>
+Cc: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, kbusch@kernel.org, 
+	martin.petersen@oracle.com, asml.silence@gmail.com, brauner@kernel.org, 
+	jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org, 
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com, 
+	linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/14/24 1:11 PM, Nathan Chancellor wrote:
-> Hi Christoph,
-> 
-> On Wed, Nov 13, 2024 at 04:20:44PM +0100, Christoph Hellwig wrote:
->> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
->> index 65f37ae70712..ce8b65503ff0 100644
->> --- a/include/linux/blkdev.h
->> +++ b/include/linux/blkdev.h
->> @@ -1006,6 +1006,11 @@ extern void blk_put_queue(struct request_queue *);
->>  void blk_mark_disk_dead(struct gendisk *disk);
->>  
->>  #ifdef CONFIG_BLOCK
->> +struct rq_list {
->> +	struct request *head;
->> +	struct request *tail;
->> +};
->> +
->>  /*
->>   * blk_plug permits building a queue of related requests by holding the I/O
->>   * fragments for a short period. This allows merging of sequential requests
->> @@ -1018,10 +1023,10 @@ void blk_mark_disk_dead(struct gendisk *disk);
->>   * blk_flush_plug() is called.
->>   */
->>  struct blk_plug {
->> -	struct request *mq_list; /* blk-mq requests */
->> +	struct rq_list mq_list; /* blk-mq requests */
->>  
->>  	/* if ios_left is > 1, we can batch tag/rq allocations */
->> -	struct request *cached_rq;
->> +	struct rq_list cached_rqs;
->>  	u64 cur_ktime;
->>  	unsigned short nr_ios;
->>  
->> @@ -1683,7 +1688,7 @@ int bdev_thaw(struct block_device *bdev);
->>  void bdev_fput(struct file *bdev_file);
->>  
->>  struct io_comp_batch {
->> -	struct request *req_list;
->> +	struct rq_list req_list;
-> 
-> This change as commit a3396b99990d ("block: add a rq_list type") in
-> next-20241114 causes errors when CONFIG_BLOCK is disabled because the
-> definition of 'struct rq_list' is under CONFIG_BLOCK. Should it be moved
-> out?
-> 
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index 00212e96261a..a1fd0ddce5cf 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -1006,12 +1006,12 @@ extern void blk_put_queue(struct request_queue *);
->  
->  void blk_mark_disk_dead(struct gendisk *disk);
->  
-> -#ifdef CONFIG_BLOCK
->  struct rq_list {
->  	struct request *head;
->  	struct request *tail;
->  };
->  
-> +#ifdef CONFIG_BLOCK
->  /*
->   * blk_plug permits building a queue of related requests by holding the I/O
->   * fragments for a short period. This allows merging of sequential requests
-> 
+On Thu, Nov 14, 2024 at 5:46=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
+e:
+>
+> On Thu, Nov 14, 2024 at 04:15:12PM +0530, Anuj Gupta wrote:
+> > PI attribute is supported only for direct IO. Also, vectored read/write
+> > operations are not supported with PI currently.
+>
+> Eww.  I know it's frustration for your if maintainers give contradicting
+> guidance, but this is really an awful interface.  Not only the pointless
+> indirection which make the interface hard to use, but limiting it to
+> not support vectored I/O makes it pretty useless.
+>
 
-Fix looks fine, but I can't apply a patch that hasn't been signed off.
-Please send one, or I'll just have to sort it out manually as we're
-really close to this code shipping.
-
-
--- 
-Jens Axboe
-
+The check added in this patch returning failure for vectored-io is a
+mistake. The application can prepare protection information for vectored
+read/write and send. So vectored-io works with the current patchset.
+I just need to remove the check in this patch.
 

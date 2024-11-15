@@ -1,77 +1,77 @@
-Return-Path: <io-uring+bounces-4742-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4743-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB359CFA77
-	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 23:55:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD329CFA23
+	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 23:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AFF2B2E2AE
-	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 22:06:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CF3DB47F6C
+	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 22:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB0018FC85;
-	Fri, 15 Nov 2024 21:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BB31FDF9F;
+	Fri, 15 Nov 2024 21:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgXQRsY0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWE0hcE0"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8575C1FDF92
-	for <io-uring@vger.kernel.org>; Fri, 15 Nov 2024 21:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCB91FDF92
+	for <io-uring@vger.kernel.org>; Fri, 15 Nov 2024 21:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731706397; cv=none; b=a1zVK+sbPt8E9XK1NvDLd5uFgscaV8F6ySz+d8NnHYtLaQNUGBQSJqZJ5oY5mY74CFV6UqcJy7CuWsqs84fHGgL5XqJuOrUSSOVVXvplSNHedtRoabctUBDyd9xa2uFC6qCCmcwdoahDqywhpXxUYvbvG9itUvRrkmXC2O8LDvI=
+	t=1731706402; cv=none; b=Gynun1Bie0xrN/ANtCvfDv5LnrWbOT2QW1KLph2jDBro8jUxUzwyJV+D+5XaPBAGkGLz6uVFKmAGN9bw8WWjKi3DHf1jhEd1zpI1WxMAIYr1GC3tcL/N5/6maWxCFm87e1Ph2AoqW4EFRjFmVn8xPc6eIZLolKtKY+zo7LFHoro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731706397; c=relaxed/simple;
-	bh=xYZHUvywzGJloDPhoEEV20mT5d5lF6lAtamijUkqOOs=;
+	s=arc-20240116; t=1731706402; c=relaxed/simple;
+	bh=wwGynPXkF20AraUsK2w2sohhhqLepUdz8Q0unalezdg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=miF/ThkySEcgfMrQ2HJKM6IvJjjflOvILaCbtPmSQp2TxBXhbM137ovMFhmokpHtsE4GZadoH+epdvlpbk2BVxIiesi120lsSzZgPNJddTQC7kwPexXxd6Y6WF53xYvY+TjGNcQ8uBvZZX3hSqj3eZcvn5fFUlTF5phwrrNJKQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgXQRsY0; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=mopFz7SNIqLgCwbmPy9Ei/14pKiouhU1gpuSCze+SPZIfBivZOiPgEbMAakqUsHDgSGZa1HVVGv0GYJ64VDJIub4hErhcHJk7nIrg/jaWsHzi2CVImuwFyXzzftp6OgpwYw4MoZ/pNpDXjPLfrQyS6m2sWs29+pjqqhMovciRSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWE0hcE0; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so19535475e9.1
-        for <io-uring@vger.kernel.org>; Fri, 15 Nov 2024 13:33:15 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43158625112so798015e9.3
+        for <io-uring@vger.kernel.org>; Fri, 15 Nov 2024 13:33:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731706393; x=1732311193; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731706394; x=1732311194; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xQBi1iIuoh3NbsC5pbTwBoqOZ+wl3kG8MmjMdEdWtac=;
-        b=UgXQRsY0Tw6GJ0lm3pxH0t/Y2KHekhX8huR7abRxbymFVN3d2sIyl2MS4pKAVKKUut
-         0fZnEvjAnaSrxDNZGB8HJnfRAtLAK0BK5hk2Qe2u+KPXJ1VUVEC5xw0Q1G3C+sgEPj5j
-         culoDwbsquhFgyuHIVVOhMPD41DLLJEmpqKCFrp9La9xuhwv6/ztrpR7q8Aqx1yvZezH
-         QEJfuUHbZuTU81ADe/D8ehmNF8jAn5YLXczw/a4O3a/IYg5f1yosHgBxTgaKXt0QAClo
-         BIUWEzlISsYng5cMRIvOswqGhzxuugSZBSV6e6cQ3cCTaqU7KtTZrV8P/Ap6IG3ts7Nu
-         CZyg==
+        bh=YNM2WJwBXprOb2QXvwXlSAYOSUSwg9yszuSdSI916n0=;
+        b=cWE0hcE0+Ogqxgiv1Wr8Euafk0J3u04H5kqlKk6VuP2VovN3OeoYERzv6sIJcSka4g
+         HeRUrfz3EjNr4mvjrWOUkZpDL64V45y0v20/k8qoR/p0hia5LLIKbt7HTiVE1z+5itEP
+         btRlwFEnJBSckSFG0vtEFQdJVUVj4OnA3se8nRvRTW+qIjxcaAgTXTJ4kYfBUyK1I5lU
+         pAhI4k0K5gksHuqrnqrT0a8mjTgeUXS+n0om4mYEYn5zolEiQZmEhPqay9TZUIiV4Rxg
+         NtnmrOv6clNGpxqMbIwnXu5KO4XcHnXvGzyHFshC6FnAlebCZvR3Jv2I+b61xB7Eo9Wr
+         H1ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731706393; x=1732311193;
+        d=1e100.net; s=20230601; t=1731706394; x=1732311194;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xQBi1iIuoh3NbsC5pbTwBoqOZ+wl3kG8MmjMdEdWtac=;
-        b=XGXLEo9MedqNT5a1nQx73Tvw0F21lHmGLAf3NbiiS8v8rJyiR6Hglu+G0F486qsvoz
-         mUn1zUE6hk6Dw1QOToAuGbhA71S6kt4n+q990IoaA8+a66qNKqNPd9jVZTvwsILpSVXW
-         op7bYjsWd0oGayfTLIRrhtVQwMl7wCbwKFj5Fm9C2eNCasgq1o3ra/oOSJo6jTSAqPXy
-         Hb4TPpLvnedo9ir3p68gM8CZc41K6RpNwSUxJYSViM3+n58VsCPC0Fbq58ioVoM0lTHQ
-         RdLq1yJ/ssygXWolr8sOYZqjqcr0ahywbvs5hTkWePwB9L2CihZ3tXtVz40EBtbJxB/w
-         RqUg==
-X-Gm-Message-State: AOJu0YySj7rvlbQfJxTWe3DhyS99YiRyPgEXmF35VstPPERW0Ac9nbnc
-	t614+J4dyGTyX3SvL1vnVLrwuNV5DsyaKDe4eGe+6xNaK2A4jsOatuy4VA==
-X-Google-Smtp-Source: AGHT+IH+P+Af+6i0o/SKPip46fTFOx42P56MmNZ9z6W2VBEGytZsGoUO9X0CP+4VfgsP+WiVgIU4kA==
-X-Received: by 2002:a5d:64c8:0:b0:382:2ba9:9d65 with SMTP id ffacd0b85a97d-3822ba9a39cmr1934094f8f.31.1731706392881;
-        Fri, 15 Nov 2024 13:33:12 -0800 (PST)
+        bh=YNM2WJwBXprOb2QXvwXlSAYOSUSwg9yszuSdSI916n0=;
+        b=lDdgABvcpVkevOhC4dlWCo162gk/R0ZmooY22NeovqPd+EpVUNJcBaoj9y0hoWsX19
+         CJjdG29idnWQ6uMmm91izLtgZm0uWEkTL39zltgmnLW1FHHWjs8lwFSe6Q+zpNMrxReT
+         bPPNtJXgHpbiSeJPYdBg3vGUsF9JXLAzFpiDiPM/8BUO1SeYc3Q6dCel7LUMbXxSphMT
+         1Sv/0cBTPbPjZE95dZpj9uteWIgqb4NqL49jnjdRJEsEdTdennyZSp3OLeUO1XEVs1eG
+         RQytFa9b/jbJkZ4XxVJBg80f8sOLbve6ZZXvqRM/NRtyILFQOo3Eos6YyV1+0UUWTh1s
+         IDuw==
+X-Gm-Message-State: AOJu0YwITRRoWsoQkwMD71NF+TbrVGRdAGtMX5T/4beFp4i5ospOM3TA
+	AlLTePdhwlTKbxckpMupWBeGafgvyeFFJktvvflsp9GW2BQCf14Z/OHtrg==
+X-Google-Smtp-Source: AGHT+IFr1yNDAeV0E8HJX8oyRBmW6eWQ77dafhJ8oZIW2UrxNZP4AbKAL45fMzRj2yt8Vg3R2d+TVg==
+X-Received: by 2002:a05:6000:481c:b0:382:d0b:179a with SMTP id ffacd0b85a97d-382258f0beamr3061457f8f.6.1731706394306;
+        Fri, 15 Nov 2024 13:33:14 -0800 (PST)
 Received: from 127.0.0.1localhost ([148.252.132.111])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382247849b0sm3397258f8f.97.2024.11.15.13.33.11
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382247849b0sm3397258f8f.97.2024.11.15.13.33.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 13:33:12 -0800 (PST)
+        Fri, 15 Nov 2024 13:33:13 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH liburing 2/8] Update io_uring.h
-Date: Fri, 15 Nov 2024 21:33:49 +0000
-Message-ID: <7f84430397941168cd4237590cad20578236184b.1731705935.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 3/8] queue: add region helpers and fix up wait reg kernel api
+Date: Fri, 15 Nov 2024 21:33:50 +0000
+Message-ID: <c70d4c2ecbec2ec0005903d559bf7c4975a305e6.1731705935.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1731705935.git.asml.silence@gmail.com>
 References: <cover.1731705935.git.asml.silence@gmail.com>
@@ -83,59 +83,91 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove the wait register opcode and add region registration
-bits.
+Now the kernel expects a byte offset instead of a
+struct io_uring_reg_wait index. Also add a helper
+for registering a region of memory.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- src/include/liburing/io_uring.h | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ src/include/liburing.h | 4 +++-
+ src/liburing-ffi.map   | 1 +
+ src/liburing.map       | 1 +
+ src/queue.c            | 4 +++-
+ src/register.c         | 6 ++++++
+ 5 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index 20bc570..b2adc3f 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -615,7 +615,7 @@ enum io_uring_register_op {
+diff --git a/src/include/liburing.h b/src/include/liburing.h
+index 4d45dca..81ffe6e 100644
+--- a/src/include/liburing.h
++++ b/src/include/liburing.h
+@@ -285,8 +285,10 @@ int io_uring_register(unsigned int fd, unsigned int opcode, const void *arg,
+ 		      unsigned int nr_args);
  
- 	IORING_REGISTER_RESIZE_RINGS		= 33,
- 
--	IORING_REGISTER_CQWAIT_REG		= 34,
-+	IORING_REGISTER_MEM_REGION		= 34,
- 
- 	/* this goes last */
- 	IORING_REGISTER_LAST,
-@@ -637,6 +637,31 @@ struct io_uring_files_update {
- 	__aligned_u64 /* __s32 * */ fds;
- };
- 
-+enum {
-+	/* initialise with user provided memory pointed by user_addr */
-+	IORING_MEM_REGION_TYPE_USER		= 1,
-+};
-+
-+struct io_uring_region_desc {
-+	__u64 user_addr;
-+	__u64 size;
-+	__u32 flags;
-+	__u32 id;
-+	__u64 mmap_offset;
-+	__u64 __resv[4];
-+};
-+
-+enum {
-+	/* expose the region as registered wait arguments */
-+	IORING_MEM_REGION_REG_WAIT_ARG		= 1,
-+};
-+
-+struct io_uring_mem_region_reg {
-+	__u64 region_uptr; /* struct io_uring_region_desc * */
-+	__u64 flags;
-+	__u64 __resv[2];
-+};
-+
  /*
-  * Register a fully sparse file space, rather than pass in an array of all
-  * -1 file descriptors.
+- * Mapped/registered wait regions
++ * Mapped/registered regions
+  */
++int io_uring_register_region(struct io_uring *ring,
++			     struct io_uring_mem_region_reg *reg);
+ struct io_uring_reg_wait *io_uring_setup_reg_wait(struct io_uring *ring,
+ 						  unsigned nentries, int *err);
+ void io_uring_free_reg_wait(struct io_uring_reg_wait *reg, unsigned nentries);
+diff --git a/src/liburing-ffi.map b/src/liburing-ffi.map
+index 0985f78..117a46a 100644
+--- a/src/liburing-ffi.map
++++ b/src/liburing-ffi.map
+@@ -224,4 +224,5 @@ LIBURING_2.9 {
+ 		io_uring_free_reg_wait;
+ 		io_uring_setup_reg_wait;
+ 		io_uring_clone_buffers_offset;
++		io_uring_register_region;
+ } LIBURING_2.8;
+diff --git a/src/liburing.map b/src/liburing.map
+index 998621d..46edbc9 100644
+--- a/src/liburing.map
++++ b/src/liburing.map
+@@ -111,4 +111,5 @@ LIBURING_2.9 {
+ 		io_uring_free_reg_wait;
+ 		io_uring_setup_reg_wait;
+ 		io_uring_clone_buffers_offset;
++		io_uring_register_region;
+ } LIBURING_2.8;
+diff --git a/src/queue.c b/src/queue.c
+index 1692866..5f28e01 100644
+--- a/src/queue.c
++++ b/src/queue.c
+@@ -324,6 +324,8 @@ int io_uring_submit_and_wait_reg(struct io_uring *ring,
+ 				 struct io_uring_cqe **cqe_ptr,
+ 				 unsigned wait_nr, int reg_index)
+ {
++	unsigned long offset = reg_index * sizeof(struct io_uring_reg_wait);
++
+ 	struct get_data data = {
+ 		.submit		= __io_uring_flush_sq(ring),
+ 		.wait_nr	= wait_nr,
+@@ -331,7 +333,7 @@ int io_uring_submit_and_wait_reg(struct io_uring *ring,
+ 				  IORING_ENTER_EXT_ARG_REG,
+ 		.sz		= sizeof(struct io_uring_reg_wait),
+ 		.has_ts		= true,
+-		.arg		= (void *) (uintptr_t) reg_index,
++		.arg		= (void *) (uintptr_t) offset,
+ 	};
+ 
+ 	if (!(ring->features & IORING_FEAT_EXT_ARG))
+diff --git a/src/register.c b/src/register.c
+index d566f5c..0fff208 100644
+--- a/src/register.c
++++ b/src/register.c
+@@ -470,3 +470,9 @@ int io_uring_register_wait_reg(struct io_uring *ring,
+ {
+ 	return -EINVAL;
+ }
++
++int io_uring_register_region(struct io_uring *ring,
++			     struct io_uring_mem_region_reg *reg)
++{
++	return do_register(ring, IORING_REGISTER_MEM_REGION, reg, 1);
++}
 -- 
 2.46.0
 

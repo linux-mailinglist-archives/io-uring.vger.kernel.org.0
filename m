@@ -1,112 +1,103 @@
-Return-Path: <io-uring+bounces-4718-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4721-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E719CF16D
-	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 17:23:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65AA9CF179
+	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 17:28:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E780B3EC3F
-	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 15:47:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B30F293477
+	for <lists+io-uring@lfdr.de>; Fri, 15 Nov 2024 16:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06941D5148;
-	Fri, 15 Nov 2024 15:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A97E1CEADF;
+	Fri, 15 Nov 2024 16:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TC9LE44L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXqZSo45"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2FA1C07EE
-	for <io-uring@vger.kernel.org>; Fri, 15 Nov 2024 15:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA81C1CEAD6;
+	Fri, 15 Nov 2024 16:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731685259; cv=none; b=X+6FvZnp8vJm+2U5Vm2dN/NRJwKk2rkKT9/jYW4PbMMatNDCD7IYBgHQw0guRykq9pEUKHbfL+pXKdKtInuz4lHyfXU94udrx+uhRMV9wBRkoZNPw4ebwKBs6aumHn4r1BQBeYDqquPgEXD759RascqTtVQV6S5nerpMdLGFRmM=
+	t=1731688089; cv=none; b=d7KcJBjAK3Nyion77ktXTkD7uY8jgJl7Bg8JXKXVteXPHFsCO+S2tjpqqa2dv9EIj6cPEFlbQ68BOZUEHJla5G6+jGqK6g1fyhctFQyXHwrszTMHedI2j6g8idv0Sdl6UhUtBhfBGhX6Xy/jfyfHH+fuIV450RWHGaqMCa7B2oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731685259; c=relaxed/simple;
-	bh=jdr8qNxy+Jo1gsIHbtkxZqlHxWm+kUlA4DWc5Z9WKtw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CqJ8hXyqL5eXJr6pqFMcH37/N6OUyN93FNAe14fLqpEgY5/ywLUk/6sedhagT2Lulb2aJ6RHrso/T8mH/mF6TTopkCwmHH2m2PVTLROkWaLSUr19blutTC8TDMyhAgDoP3FNCoAvhwfKxCv9huk98W2/6zHTUOXgMc+pLDvks68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TC9LE44L; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e602994635so536063b6e.0
-        for <io-uring@vger.kernel.org>; Fri, 15 Nov 2024 07:40:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731685256; x=1732290056; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qoZnHCDbvEhSS1c5SRWBNLiOwRUEY61DZ2aXp4JDEYc=;
-        b=TC9LE44LpmuaBUF2ni7msJ+oK51W1D83PnHgzYUlflAY+cERqgR0vE3LBLWk9TxC7a
-         p1jISsurUq6S59DUx37zcfpMiJCv0awylLruPYU+YwApwtBUxVxZlHm1bI/POjy+BFtn
-         lqh86KHsj+bVsS2fy/299PTkWQB9HX+9Ha/fgfEhvLbFblmNostVlEjJU99Lbx3adXJ/
-         rznhtFl0LPcslGWEQYTRdzLVPEzO2z0r3kxqHWvZUO87CGUO8Jp5zg4tjqakkUGRNgu2
-         avNFass9dSjg0z0AhbOJfrmY5zTcAI8aw8srkccowzVXjare5LgxZaCh3lNhUyep4inO
-         JgFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731685256; x=1732290056;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qoZnHCDbvEhSS1c5SRWBNLiOwRUEY61DZ2aXp4JDEYc=;
-        b=q3oNOyHbNNzs34MsaFZUoXUcMvVLX+NqezGmzzqYzYibbQ0emLVq2zXZpdC/pG9zZo
-         LlVeI8crRlPXN7d4QAKMhl5UXbchCkv/aY6v25rvFPWuf3ejQR4DYfaH/e3zXMPvSS5F
-         l1uA+d8H5tvyJ0pjNaBebXQGUdTAqrRDRNtmTEjBa4Q+svg20kdGLp5VHeB2BMpsBLei
-         Vu0YSNHY766hOnMaWgmhnLn8MhwxA8PRIcIPOoneECeWpDKdRiGyxCtvtFjmuZaPCgX7
-         OJPOMgwJlFaynIgE1gwLfzbm0u6ZS7bqP7oSMT0j+t/g8Ul0cxto07+BJTK2fq8fWxSq
-         /m7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXNg91WxAhT1nHhvSbsi4lCzkcteDnpIlLfdOIBlCc2NHD1iJ1lUyLOoPihHmHSSWPrGW5YpWZoPg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpBaima9lwMghh00l8mrZUoKSHaJKQrHPX2dnBebtt2cEdjRr5
-	HBMeLix0uEl2IIWBhpLCdogmeld96ANeB9c1Vchg9rg7NKJD1gROth/LBd7XGQE=
-X-Google-Smtp-Source: AGHT+IFdUS8uN49tDNf746ur2SPDst9sm3KOAJaU1AK84+5cj7rnDzwIuOtF3souY+5wecSwvnATWA==
-X-Received: by 2002:a05:6870:e38a:b0:288:a00e:92dc with SMTP id 586e51a60fabf-2962deeacdamr3161996fac.2.1731685256497;
-        Fri, 15 Nov 2024 07:40:56 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29610949b12sm1516348fac.26.2024.11.15.07.40.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 07:40:55 -0800 (PST)
-Message-ID: <7b1ed2bb-dc06-41ea-ba48-85c25d085dd8@kernel.dk>
-Date: Fri, 15 Nov 2024 08:40:54 -0700
+	s=arc-20240116; t=1731688089; c=relaxed/simple;
+	bh=XOUgdezN4ZR1SvSwisJLzjliFvPotJwHe9wFvR4ENX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hJFx/7UEXyhuGuPawVrJtDkaEuU5jYYGgrOM91Jbqjnvnwj3ZEpAYsO6dZMnlCrwR0ojNVJTZGyZuJTWLUNRizieW3XOHGBU7YKpHu+GTRLhTCPRkIf9F43WvoQeBCGGGhc6S+KAosWnwdhLE/vLK3HPT989UPbYM6KEkJGxMbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXqZSo45; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA789C4CECF;
+	Fri, 15 Nov 2024 16:28:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731688089;
+	bh=XOUgdezN4ZR1SvSwisJLzjliFvPotJwHe9wFvR4ENX8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RXqZSo45vVeTt/JN3nwEBmIhhFCDSMdJ0gFzSXt2LzR+bWzr7z5NDQ/PNKeQVA0hT
+	 QHkm3aE4qO44nudL9NZL4aHmVnHQlkh6lDffbKCbMAHAXosypock/hdjoZk9KHFlXO
+	 vGKwhpY9gJCiaF+zHU1/bLK8ulxxjEICPa4yKF4hgf1b6wJlPZT2r6YPwJn7+tbfsn
+	 ruhVTfUY4jVa6ZNTalNcBjvZOYiyDiRWPhv2zOc3ksqtEWvxiWsciVyv8zKcRhW0R0
+	 kSIsqqgklQ7SupdtgZhCdoxIUFGxtMcy5gQBLJpg0GsRh4hqEH3YJqRRvRvw+ufgOI
+	 TY0RCoD7mdmyw==
+Date: Fri, 15 Nov 2024 09:28:05 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Dave Chinner <david@fromorbit.com>, Pierre Labat <plabat@micron.com>,
+	Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@meta.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+	"asml.silence@gmail.com" <asml.silence@gmail.com>,
+	"javier.gonz@samsung.com" <javier.gonz@samsung.com>
+Subject: Re: [EXT] Re: [PATCHv11 0/9] write hints with nvme fdp and scsi
+ streams
+Message-ID: <Zzd2lfQURP70dAxu@kbusch-mbp>
+References: <20241108193629.3817619-1-kbusch@meta.com>
+ <CGME20241111103051epcas5p341a23ed677f2dfd6bc6d4e5c4826327b@epcas5p3.samsung.com>
+ <20241111102914.GA27870@lst.de>
+ <7a2f6231-bb35-4438-ba50-3f9c4cc9789a@samsung.com>
+ <20241112133439.GA4164@lst.de>
+ <ZzNlaXZTn3Pjiofn@kbusch-mbp.dhcp.thefacebook.com>
+ <DS0PR08MB854131CDA4CDDF2451CEB71DAB592@DS0PR08MB8541.namprd08.prod.outlook.com>
+ <20241113044736.GA20212@lst.de>
+ <ZzU7bZokkTN2s8qr@dread.disaster.area>
+ <20241114060710.GA11169@lst.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing] test: add test cases for hybrid iopoll
-To: hexue <xue01.he@samsung.com>
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <3aada5a2-074a-45e8-882c-0302cae4c41b@kernel.dk>
- <CGME20241115033450epcas5p10bdbbfa584b483d8822535d43da868d2@epcas5p1.samsung.com>
- <20241115033445.742464-1-xue01.he@samsung.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241115033445.742464-1-xue01.he@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114060710.GA11169@lst.de>
 
-On 11/14/24 8:34 PM, hexue wrote:
->> The kernel should already do this, no point duplicating it in liburing.
->>
->> The test bits look much better now, way simpler. I'll just need to
->> double check that they handle EINVAL on setup properly, and EOPNOTSUPP
->> at completion time will turn off further testing of it. Did you run it
->> on configurations where hybrid io polling will both fail at setup time,
->> and at runtime (eg the latter where the kernel supports it, but the
->> device/fs does not)?
+On Thu, Nov 14, 2024 at 07:07:10AM +0100, Christoph Hellwig wrote:
+> On Thu, Nov 14, 2024 at 10:51:09AM +1100, Dave Chinner wrote:
+> > SGI wrote an entirely new allocator for XFS whose only purpose in
+> > life is to automatically separate individual streams of user data
+> > into physically separate regions of LBA space.
 > 
-> Yes, I have run both of these error configurations. The running cases are: 
-> hybrid poll without IORING_SETUP_IOPOLL and device with incorrect queue
-> configuration, EINVAL and EOPNOTSUPP are both identified.
+> One of the interesting quirks of streams/FDP is that they they operate
+> on (semi-)physical data placement that is completely decoupled from LBA
+> space.  
 
-I figured that was the case, as the existing test case should already
-cover both of those cases. I'll get this applied once you send the
-updated version.
+That's not particularly interesting about FDP. All conventional NAND
+SSDs operates that way. FDP just reports more stuff because that's what
+people kept asking for. But it doesn't require you fundamentally change
+how you acces it. You've singled out FDP to force a sequential write
+requirement that that requires unique support from every filesystem
+despite the feature not needing that.
 
--- 
-Jens Axboe
+We have demonstrated 40% reduction in write amplifcation from doing the
+most simplist possible thing that doesn't require any filesystem or
+kernel-user ABI changes at all. You might think that's not significant
+enough to let people realize those gains without more invasive block
+stack changes, but you may not buying NAND in bulk if that's the case.
 

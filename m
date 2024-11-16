@@ -1,77 +1,77 @@
-Return-Path: <io-uring+bounces-4757-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4758-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6889D00F4
-	for <lists+io-uring@lfdr.de>; Sat, 16 Nov 2024 22:27:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EF09D00F5
+	for <lists+io-uring@lfdr.de>; Sat, 16 Nov 2024 22:27:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF36C1F23541
-	for <lists+io-uring@lfdr.de>; Sat, 16 Nov 2024 21:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C891F234CC
+	for <lists+io-uring@lfdr.de>; Sat, 16 Nov 2024 21:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50B3194A63;
-	Sat, 16 Nov 2024 21:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408D0196C9B;
+	Sat, 16 Nov 2024 21:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZC1InzS7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pk3Ex+aL"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55AF196C9B
-	for <io-uring@vger.kernel.org>; Sat, 16 Nov 2024 21:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FF4199951
+	for <io-uring@vger.kernel.org>; Sat, 16 Nov 2024 21:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731792433; cv=none; b=S1LJnUcQbu7hPutuNGj3W6LEnI4DOAPHIFKHfL47HW9jRVIfft+1X/j2jU+pMiihuNDwvOVMCU0Vg20v++2nReiu4DLwm/itDNLkktCrpu974GEk5A4+OQxDVnJKd7aLx8jZOq6Bu6LEZEi/Bw082QwzLoW7WauYx+ffsFQnodo=
+	t=1731792434; cv=none; b=F5u4mMQM8nDW9emKQVcMDPs1R2qFkJNxmNqE4JBl9eOTLWXP/N0sP+N9TDFS/jaTYrIdQK8AT0K0YyboLOt0V11E3ZJK3FltzC3C6hG8Y/SnsT4Ex41hFi2J83l9XZqFOQeYIP6mQ9bHNU+5e53NaxM6V6cUj7THXE9bEziiEDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731792433; c=relaxed/simple;
-	bh=ZpzgsozMuAk/ochldTowI7h7bTEw7JWBZOOahdDVlW0=;
+	s=arc-20240116; t=1731792434; c=relaxed/simple;
+	bh=EBjtApE+0ml2VVg5tZc0gb1Jm+KXzRBdLxw6ViaGhuA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W8PkxBnU+sEJ5japghUlnJ2ArEBWTPDs6NMNau7ovR1hiGq2bXIRHFC25lbSz6SGOElTUlMVOYlOcmlpSvBtfiF1ZpNqyaipRBPk9nPlI5qhkEtJOMN0RzT909aSHaGXsCJWLF230Lt5jAU2vv694ru89pD/IY/MQPpuQloEN/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZC1InzS7; arc=none smtp.client-ip=209.85.128.48
+	 MIME-Version; b=bhhoN3o9Ei91TdYpXTnlBJ+khiCQXPLa2ofywe9HfmPVBaZzhYojKWck9e7od2Dd0nPoNbLsXJCE9TgrhoHfnFR9+6510+3xGJV7Xvgu3f1xtuOsX7HYZeZ7fuoXTGPAOzoxehAmALFhyqNvZVPtnp5/dAgVF1gOZ0FCtzqflWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pk3Ex+aL; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so6660445e9.3
-        for <io-uring@vger.kernel.org>; Sat, 16 Nov 2024 13:27:11 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431616c23b5so16691355e9.0
+        for <io-uring@vger.kernel.org>; Sat, 16 Nov 2024 13:27:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731792429; x=1732397229; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731792430; x=1732397230; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Wg+v/WEafR0hhxU0jQVQiPnsF9EILrTwW/uQsLAHZ2k=;
-        b=ZC1InzS7PCGlcK5UW9jo2V54SQ8OV10R2Kr3S+/g67n5YniFJytj0pH8nx0rPH7CTA
-         vy7euZnQfc+8ks90QGwwvCjmC3Me3d8LtFmbMmfUq6VGYlOk12cbUQuj9jPPAhMBT8pj
-         ne9iSpGJywfBjXHsBdFEz3e9+EUDArFDwok7yjePEDUdZqRWtKavogkzjGzWD12xHeZB
-         yWccyr6vmedWbeO4TzZOLol1di4CiL07IpnKmPoS4RJjjkw3FMBtW61RcmxZvxnbCNvv
-         p/k2WjEnXDA5syGy3+yDdY1c3V1+DCGJWG4U8+j4uzvuFbRjMDfrDNNK+CbmJJEAStga
-         CCqQ==
+        bh=DOUfpRV7H9ek215nIoavPI9l7/2gX9TLCS2UpNr7zAc=;
+        b=Pk3Ex+aLRc3laZBvu3/CedYXlYJNp2LMOdBSwlK3O92ySP5DtfN90MeRyLdq7RvcCH
+         qCgi96Qb9KcDnad1YUyV6MAWwQIKnXLec9CttvbsLu6kNc724HSpZ+W8/cn+YPk6cheE
+         zXZaMGPPmgtiZmzDp423r1anDIMNFuZxOn0HLxGgC1JUoQ1sEWsIwKHzsdRD1hgTcwN6
+         C7DPCqJbZ9R1bcpHdBRHja6eMDMCCgUqhdN80NaLTdO+qzfl7c/eOykIM1fMip06keYJ
+         ME+lD0jwSj1cIhWBbTWYjULjFbCYWAyei1y9MCb/XAXWHbfKNzoSoN0UU/EaDWYeLp3u
+         200g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731792429; x=1732397229;
+        d=1e100.net; s=20230601; t=1731792430; x=1732397230;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Wg+v/WEafR0hhxU0jQVQiPnsF9EILrTwW/uQsLAHZ2k=;
-        b=qooEAvYWbWZlZdN9WIJvCFt0QbC8QZxQgqzRBzdL1Q/PD+UoP7zkNRjNngBFfo4TYY
-         G9AtXOGizjA+uUJgPFNOoEYZ0iS6RAxrNtFLF63kKGqJCmQ4FZciliKyFRRTvvgTKwuU
-         1G09WxYjb0dDxpGjmpy4N0qGU+XMcBQ1YMat0oiI+n9PY/utSaDVJPhiTIF5gnU6CHXl
-         GHGGtTsqRdmimFTKLeiTMgUIA7lQDHdakOR+G+y9+LKGTV8qBCE6wYSB6sKCeneuJp0p
-         r6X98yV86iqs7RRIKckaHQAYOF+zsZsk0j4UDsr3S9nmy4IdJCI1pIgRQUQYsvXmJvAG
-         4ywA==
-X-Gm-Message-State: AOJu0YxqFuA3d0+CMFR8zwhsJeDuhK+glaynjOGfjlILgRHiCrY8WT1+
-	eBt9zKnVqjxu0bHLJQUgGnUjjdcSEXm4vkVc7Dp0boKpoeUXMrMgJMRsFQ==
-X-Google-Smtp-Source: AGHT+IHtvy1HqyUf3Kg1RThApoE+yK2cE2VoE9L5hkGfYTCe+se5M49Y+gMpVjoWSapsHUd48xp1aA==
-X-Received: by 2002:a05:600c:3b03:b0:431:6083:cd2a with SMTP id 5b1f17b1804b1-432df74ba87mr67477105e9.15.1731792429334;
+        bh=DOUfpRV7H9ek215nIoavPI9l7/2gX9TLCS2UpNr7zAc=;
+        b=Ol6FQFOyIRaAfeIjP0NMf5eSB/Af28/I/QzpOQf4D87S6k44IRJf4/qxJx1uP/pnvG
+         G5GxL1P2wVIhfYMWPWBo42nuxM1YfeF2rxeoUSa8V3rGebGmx466bVDHyWFCeJ0/sZhb
+         gB/bx0X/KWL62raWpsWMWLq5Yqz8fte5bpk4NkEuB/xCjnLufqRJuZ8CmpsjmSG/by63
+         aj6aPcVU6gnP6vRbijafMEZlvXlvCbpCzL3wO/jjkBFxtSLNMwEv5ygIo/BMhDCKjg4p
+         Ll4yKwMlCEkqkxd/AHlg4OVX9i488MPT/fmGaYiVrlVCrhnQEmR7gUT2msIXHu+2XzUs
+         o+IA==
+X-Gm-Message-State: AOJu0Yy3pPcd6Rpb765ZGK7kohgLXR04/ws1hKqOXmddcfb3pC1v7Dpd
+	v5Xa1RV0z9aJ4oJJxcpDEv5q+1OiUzuQjX4ygBZ7E8DSLG5cM/O4LQQJwA==
+X-Google-Smtp-Source: AGHT+IF0z6m87URy1Xd5VUPGNw2SH/FqyT/guSTpCAv9RrRVk+tAPzM8nTfmQyXkeaZo9Rdji5oz+w==
+X-Received: by 2002:a05:600c:1f88:b0:426:5e32:4857 with SMTP id 5b1f17b1804b1-432def7e5e8mr60412015e9.0.1731792429953;
         Sat, 16 Nov 2024 13:27:09 -0800 (PST)
 Received: from 127.0.0.1localhost ([148.252.146.122])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac0aef0sm101071325e9.28.2024.11.16.13.27.08
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac0aef0sm101071325e9.28.2024.11.16.13.27.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 13:27:08 -0800 (PST)
+        Sat, 16 Nov 2024 13:27:09 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH liburing 1/8] test/reg-wait: fix test_regions
-Date: Sat, 16 Nov 2024 21:27:41 +0000
-Message-ID: <13bd6e7b30bdaed0d11bdfda409e5369ab8005ec.1731792294.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 2/8] test/reg-wait: pass right timeout indexes
+Date: Sat, 16 Nov 2024 21:27:42 +0000
+Message-ID: <4a64eff75fbdd1fc93e1683f5b8b0f58794e27fe.1731792294.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1731792294.git.asml.silence@gmail.com>
 References: <cover.1731792294.git.asml.silence@gmail.com>
@@ -83,137 +83,27 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Regions for CQ wait arguments are registered to disabled rings, and
-test_try_register_region() doesn't do it right. While at it kill the
-extra argument as it doesn't do anything useful.
-
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/reg-wait.c | 43 +++++++++++++++++++------------------------
- 1 file changed, 19 insertions(+), 24 deletions(-)
+ test/reg-wait.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/test/reg-wait.c b/test/reg-wait.c
-index aef4546..eef10e0 100644
+index eef10e0..ec90019 100644
 --- a/test/reg-wait.c
 +++ b/test/reg-wait.c
-@@ -222,7 +222,7 @@ err:
- }
+@@ -72,10 +72,11 @@ static int test_offsets(struct io_uring *ring)
  
- static int test_try_register_region(struct io_uring_mem_region_reg *pr,
--				    bool disabled, bool reenable)
-+				    bool disabled)
- {
- 	struct io_uring ring;
- 	int flags = 0;
-@@ -237,15 +237,16 @@ static int test_try_register_region(struct io_uring_mem_region_reg *pr,
- 		return 1;
- 	}
+ 	rw = reg + max_index;
+ 	memset(rw, 0, sizeof(*rw));
++	rw->flags = IORING_REG_WAIT_TS;
+ 	rw->ts.tv_sec = 0;
+ 	rw->ts.tv_nsec = 1000;
  
--	if (reenable) {
-+	ret = io_uring_register_region(&ring, pr);
-+	if (ret)
-+		goto err;
-+
-+	if (disabled) {
- 		ret = io_uring_enable_rings(&ring);
--		if (ret) {
-+		if (ret)
- 			fprintf(stderr, "io_uring_enable_rings failure %i\n", ret);
--			return 1;
--		}
- 	}
--
--	ret = io_uring_register_region(&ring, pr);
-+err:
- 	io_uring_queue_exit(&ring);
- 	return ret;
- }
-@@ -270,28 +271,22 @@ static int test_regions(void)
- 	mr.region_uptr = (__u64)(unsigned long)&rd;
- 	mr.flags = IORING_MEM_REGION_REG_WAIT_ARG;
- 
--	ret = test_try_register_region(&mr, true, false);
-+	ret = test_try_register_region(&mr, true);
- 	if (ret == -EINVAL)
- 		return T_EXIT_SKIP;
- 	if (ret) {
--		fprintf(stderr, "test_try_register_region(true, false) fail %i\n", ret);
--		return T_EXIT_FAIL;
--	}
--
--	ret = test_try_register_region(&mr, false, false);
--	if (ret != -EINVAL) {
--		fprintf(stderr, "test_try_register_region(false, false) fail %i\n", ret);
-+		fprintf(stderr, "region: register normal fail %i\n", ret);
- 		return T_EXIT_FAIL;
- 	}
- 
--	ret = test_try_register_region(&mr, true, true);
-+	ret = test_try_register_region(&mr, false);
- 	if (ret != -EINVAL) {
--		fprintf(stderr, "test_try_register_region(true, true) fail %i\n", ret);
-+		fprintf(stderr, "region: register with !R_DISABLED fail %i\n", ret);
- 		return T_EXIT_FAIL;
- 	}
- 
- 	rd.size = 4096 * 4;
--	ret = test_try_register_region(&mr, true, false);
-+	ret = test_try_register_region(&mr, true);
- 	if (ret) {
- 		fprintf(stderr, "test_try_register_region() 16KB fail %i\n", ret);
- 		return T_EXIT_FAIL;
-@@ -299,7 +294,7 @@ static int test_regions(void)
- 	rd.size = 4096;
- 
- 	rd.user_addr = 0;
--	ret = test_try_register_region(&mr, true, false);
-+	ret = test_try_register_region(&mr, true);
+-	ret = io_uring_submit_and_wait_reg(ring, &cqe, 1, 0);
++	ret = io_uring_submit_and_wait_reg(ring, &cqe, 1, max_index);
  	if (ret != -EFAULT) {
- 		fprintf(stderr, "test_try_register_region() null uptr fail %i\n", ret);
- 		return T_EXIT_FAIL;
-@@ -307,7 +302,7 @@ static int test_regions(void)
- 	rd.user_addr = (__u64)(unsigned long)buffer;
- 
- 	rd.flags = 0;
--	ret = test_try_register_region(&mr, true, false);
-+	ret = test_try_register_region(&mr, true);
- 	if (!ret) {
- 		fprintf(stderr, "test_try_register_region() kernel alloc with uptr fail %i\n", ret);
- 		return T_EXIT_FAIL;
-@@ -315,7 +310,7 @@ static int test_regions(void)
- 	rd.flags = IORING_MEM_REGION_TYPE_USER;
- 
- 	rd.size = 0;
--	ret = test_try_register_region(&mr, true, false);
-+	ret = test_try_register_region(&mr, true);
- 	if (!ret) {
- 		fprintf(stderr, "test_try_register_region() 0-size fail %i\n", ret);
- 		return T_EXIT_FAIL;
-@@ -323,7 +318,7 @@ static int test_regions(void)
- 	rd.size = 4096;
- 
- 	mr.region_uptr = 0;
--	ret = test_try_register_region(&mr, true, false);
-+	ret = test_try_register_region(&mr, true);
- 	if (!ret) {
- 		fprintf(stderr, "test_try_register_region() NULL region %i\n", ret);
- 		return T_EXIT_FAIL;
-@@ -331,14 +326,14 @@ static int test_regions(void)
- 	mr.region_uptr = (__u64)(unsigned long)&rd;
- 
- 	rd.user_addr += 16;
--	ret = test_try_register_region(&mr, true, false);
-+	ret = test_try_register_region(&mr, true);
- 	if (!ret) {
- 		fprintf(stderr, "test_try_register_region() misaligned region %i\n", ret);
- 		return T_EXIT_FAIL;
- 	}
- 
- 	rd.user_addr = 0x1000;
--	ret = test_try_register_region(&mr, true, false);
-+	ret = test_try_register_region(&mr, true);
- 	if (!ret) {
- 		fprintf(stderr, "test_try_register_region() bogus uptr %i\n", ret);
+ 		fprintf(stderr, "max+1 index failed: %d\n", ret);
  		return T_EXIT_FAIL;
 -- 
 2.46.0

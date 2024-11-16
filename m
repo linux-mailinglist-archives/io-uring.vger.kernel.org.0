@@ -1,220 +1,145 @@
-Return-Path: <io-uring+bounces-4764-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4765-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DAFE9D00FB
-	for <lists+io-uring@lfdr.de>; Sat, 16 Nov 2024 22:27:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978E69D0167
+	for <lists+io-uring@lfdr.de>; Sun, 17 Nov 2024 00:10:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9496B24071
-	for <lists+io-uring@lfdr.de>; Sat, 16 Nov 2024 21:27:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3F0AB24B13
+	for <lists+io-uring@lfdr.de>; Sat, 16 Nov 2024 23:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C6019A2A3;
-	Sat, 16 Nov 2024 21:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B9C194A63;
+	Sat, 16 Nov 2024 23:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3VZAPZ2"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V+74xtRE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C94198E80
-	for <io-uring@vger.kernel.org>; Sat, 16 Nov 2024 21:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A867729A2;
+	Sat, 16 Nov 2024 23:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731792440; cv=none; b=oKxRoRcHoFnQFqPcIgLoay1SaSVttNipYpNoMcqUlrdh4LkMljLjxJFMdMj5+43oTv62vPva0u+n24cmRiexJlJLfmsh7k8aUhsLiboje3elS8QMitSIFfJpxYys8710hZ9BptIBDS9f0wcusrPWc1GSu7MK3lgzZmH+t8iZirY=
+	t=1731798624; cv=none; b=oUQHQ9AzcAxB5wXKbnAXtYEQLE719eDKx6Dp70IYDUm4MXsbf9X44oEY8JdNtwpXe3YVll0yuu30fYptitlJYDAV9i0ik3qoF5jHzmLjpz47oL7jKRsBzVdofjV6lXcRig0GbXF0WFyyAxWHfuHf4LljJnHsiJ5WOXCP5oplVtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731792440; c=relaxed/simple;
-	bh=hkVKUkENVbqyJqDlHt03FqumUOp2/hffMrETnKCt9fU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OgNXSn8KSwxCJ+GoGHzXFxyHYPO2qAGVQ8mXkJGZYDhlRa0TwqDCg+92Em1lyqpLWC3KdJG89WQfdbAOI63xBBu6G+RdRP5aeL8xJoAPX1l9E4L8PeWSQ2fs4uOzDM8fnSDzutR2RFubYPtiLMBBxFv8YmAVYqf1zluQBjskFhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3VZAPZ2; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so15912665e9.2
-        for <io-uring@vger.kernel.org>; Sat, 16 Nov 2024 13:27:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731792437; x=1732397237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VknFPR0P1FV3lPWvCpBDYnQxmfE5/HgO96NgGZKcy3k=;
-        b=E3VZAPZ2PSDeQTsp+VKAXMsTEOiFRWfyA9gMtLhmRt/qV8uyyQBIKDFw/BTh+RNV+n
-         n5voIUvM+27nUbyY5DnWczhdmrxFxwjnlmkMgl6kw2nQAjOOEUhT1pMzceTZOBHwFok4
-         CnBWi+ywirJqE5cvs9ZHPaSyrwV5oIkIoV6LH1brd26lNwwqK2RpEsRfXZ5cRRnWL6D6
-         IzKciTQxkiu0BCsALmFVMzOs9sCMuI+VZmj+Qh0WlTnIgRKZD1znrC4+jsJeK6+v2Egq
-         gLONyJzwhbO4jSGif4KSTLPapS1YOSBQIg/ajnMDiZVyiGnmsnpaLlJbAO3Y6SKoE5Oj
-         pXxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731792437; x=1732397237;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VknFPR0P1FV3lPWvCpBDYnQxmfE5/HgO96NgGZKcy3k=;
-        b=Hc2WS2cncCuumKkGdnRPl1pAPPYiMwvk71ThVe0S+4kPJW88gb4peLhy1eyaVGrFlh
-         UnpId0cY7Y3LqkL9m65MRBscUrQjBxFTt1HWxyyoC3EpciVpLEy8Pw+8xmp/BWQPWQZE
-         pZPlpctwQBayDOTvczErUZiI4XLG7fzAZm25CNCxBHlJAY2oY10YTXR5m+G/bYuAA7Gj
-         jAIxAI0I8oK/1F/Guih1ZFei+7GC3uhSMT3q5BUqgsksH+XtBGfTos7yGCKR0xdXL9fj
-         BfpExEreG7bIxBAJjG+YOURwYhGqbvHfo1yabYr/xIStMI+YormEraffbBusdLKYonwB
-         avGw==
-X-Gm-Message-State: AOJu0YzP9hlnS8/gmpsNfPL/adN6uPQtFSJuMTh0CSjEj63aGQQ5IAi9
-	0LTSjaC5bv9NUMlGYBHsXYmfPWBc/+QKops3p9OsmkB9KUz+vZud7kJQJA==
-X-Google-Smtp-Source: AGHT+IFs4OzPha+cdEliLHnJJyGCyCfcnCSZdri0bkJMYlFWXms6Z0LeSee+Jgufvc9VeVUyaITwtQ==
-X-Received: by 2002:a05:600c:3d86:b0:42f:8515:e490 with SMTP id 5b1f17b1804b1-432df7179c6mr63419375e9.5.1731792436996;
-        Sat, 16 Nov 2024 13:27:16 -0800 (PST)
-Received: from 127.0.0.1localhost ([148.252.146.122])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac0aef0sm101071325e9.28.2024.11.16.13.27.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 13:27:16 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH liburing 8/8] test/reg-wait: test various sized regions
-Date: Sat, 16 Nov 2024 21:27:48 +0000
-Message-ID: <84233449abb8f5f3c878e7ccabf8520880bac624.1731792294.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1731792294.git.asml.silence@gmail.com>
-References: <cover.1731792294.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1731798624; c=relaxed/simple;
+	bh=J8TdKlbufzk8/hb67F60g16aY7BksH2lDSQzP/7KGb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUMHTiIgU05teSNCP9k54DG685nfPt88NPaQMsntJvcq6h2Ft9e0//mAfZoAy2QWuJSIQ/12WsGUnEmYuOdqVLvjxtLUYjITWO/ZHYPJVGcSQNECjdoJ/B69Byg9RZ1ZmbzIzIr2aVyDb+dFqsZfQlJi2JQu9qVtkl0Gq3kHfMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V+74xtRE; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731798623; x=1763334623;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J8TdKlbufzk8/hb67F60g16aY7BksH2lDSQzP/7KGb0=;
+  b=V+74xtREoIPt+e7tjT3W3JZ9TmdD0LoOSZiJ6fQyG1Use5m5Wl9iXe5P
+   SxH75+4Botx/OlS27k49LGMVtq9BTqHFJvpVDwDQXFipzgrY7CNDBKvkj
+   mEHwneJXI8Z8PdTMkPJYWERaARV3HKMVksEQDSbWwVWFOHEKZorSMkjV5
+   UjojxUoE707MdDfDlTRD5d7lb/CjYypekU8OusDh2aLvO1gqMEGwbxQdN
+   SSmmOKk+UwuBDU6XGbuxj8zEuon2u6J4V2MoMosa2iVMXpPXbfdb++DVB
+   X12c8Qe7iMaLpmhVlzUHc67SNkZBwtYxIzuSJTh2HoZqS7704G5PJ3rYo
+   g==;
+X-CSE-ConnectionGUID: y1qfZXGCQjyjfb3+U2IUoQ==
+X-CSE-MsgGUID: Kx4mXAujRWiYYQByjrFX1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="19388885"
+X-IronPort-AV: E=Sophos;i="6.12,160,1728975600"; 
+   d="scan'208";a="19388885"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 15:10:22 -0800
+X-CSE-ConnectionGUID: 18+FoBMjQe2kvuLxiyxaXA==
+X-CSE-MsgGUID: x4jbkL5oTsSTSFJ0eVCDHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,160,1728975600"; 
+   d="scan'208";a="89284449"
+Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 16 Nov 2024 15:10:17 -0800
+Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tCRvi-00019x-2o;
+	Sat, 16 Nov 2024 23:10:14 +0000
+Date: Sun, 17 Nov 2024 07:09:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, hch@lst.de,
+	kbusch@kernel.org, martin.petersen@oracle.com,
+	asml.silence@gmail.com, anuj1072538@gmail.com, brauner@kernel.org,
+	jack@suse.cz, viro@zeniv.linux.org.uk
+Cc: oe-kbuild-all@lists.linux.dev, io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
+	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org,
+	Anuj Gupta <anuj20.g@samsung.com>,
+	Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
+ and PI support
+Message-ID: <202411170724.GLZyWdlD-lkp@intel.com>
+References: <20241114104517.51726-7-anuj20.g@samsung.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114104517.51726-7-anuj20.g@samsung.com>
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- test/reg-wait.c | 81 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 80 insertions(+), 1 deletion(-)
+Hi Anuj,
 
-diff --git a/test/reg-wait.c b/test/reg-wait.c
-index 559228f..b7c823a 100644
---- a/test/reg-wait.c
-+++ b/test/reg-wait.c
-@@ -9,6 +9,8 @@
- #include <string.h>
- #include <fcntl.h>
- #include <sys/time.h>
-+#include <sys/mman.h>
-+#include <linux/mman.h>
- 
- #include "liburing.h"
- #include "helpers.h"
-@@ -63,6 +65,12 @@ err:
- 	return ret;
- }
- 
-+static int init_ring_with_region(struct io_uring *ring, unsigned ring_flags,
-+				 struct io_uring_mem_region_reg *pr)
-+{
-+	return __init_ring_with_region(ring, ring_flags, pr, true);
-+}
-+
- static int page_size;
- static struct io_uring_reg_wait *reg;
- 
-@@ -109,6 +117,14 @@ static int test_offsets(struct io_uring *ring, struct io_uring_reg_wait *base,
- 	int copy_size;
- 	int ret;
- 
-+	rw = base;
-+	memcpy(rw, &brief_wait, sizeof(brief_wait));
-+	ret = io_uring_submit_and_wait_reg(ring, &cqe, 1, 0);
-+	if (ret != -ETIME) {
-+		fprintf(stderr, "0 index failed: %d\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
- 	if (overallocated) {
- 		rw = base + max_index;
- 		memcpy(rw, &brief_wait, sizeof(brief_wait));
-@@ -134,7 +150,7 @@ static int test_offsets(struct io_uring *ring, struct io_uring_reg_wait *base,
- 		return T_EXIT_FAIL;
- 	}
- 
--	offset = page_size - sizeof(long);
-+	offset = size - sizeof(long);
- 	rw = (void *)base + offset;
- 	copy_size = overallocated ? sizeof(brief_wait) : sizeof(long);
- 	memcpy(rw, &brief_wait, copy_size);
-@@ -354,6 +370,62 @@ static int test_regions(void)
- 	return 0;
- }
- 
-+static void *alloc_region_buffer(size_t size, bool huge)
-+{
-+	int flags = MAP_PRIVATE | MAP_ANONYMOUS;
-+	void *p;
-+
-+	if (huge)
-+		flags |= MAP_HUGETLB | MAP_HUGE_2MB;
-+	p = mmap(NULL, size, PROT_READ | PROT_WRITE, flags, -1, 0);
-+	return p == MAP_FAILED ? NULL : p;
-+}
-+
-+static int test_region_buffer_types(void)
-+{
-+	const size_t huge_size = 1024 * 1024 * 2;
-+	const size_t map_sizes[] = { page_size, page_size * 2, page_size * 16,
-+				     huge_size, 2 * huge_size};
-+	struct io_uring_region_desc rd = {};
-+	struct io_uring_mem_region_reg mr = {};
-+	struct io_uring ring;
-+	int sz_idx, ret;
-+
-+	mr.region_uptr = (__u64)(unsigned long)&rd;
-+	mr.flags = IORING_MEM_REGION_REG_WAIT_ARG;
-+
-+	for (sz_idx = 0; sz_idx < ARRAY_SIZE(map_sizes); sz_idx++) {
-+		size_t size = map_sizes[sz_idx];
-+		void *buffer;
-+
-+		buffer = alloc_region_buffer(size, size >= huge_size);
-+		if (!buffer)
-+			continue;
-+
-+		rd.user_addr = (__u64)(unsigned long)buffer;
-+		rd.size = size;
-+		rd.flags = IORING_MEM_REGION_TYPE_USER;
-+
-+		ret = init_ring_with_region(&ring, 0, &mr);
-+		if (ret) {
-+			fprintf(stderr, "init ring failed %i\n", ret);
-+			return 1;
-+		}
-+
-+		ret = test_offsets(&ring, buffer, size, false);
-+		if (ret) {
-+			fprintf(stderr, "test_offsets failed, size %lu\n",
-+				(unsigned long)size);
-+			return 1;
-+		}
-+
-+		munmap(buffer, size);
-+		io_uring_queue_exit(&ring);
-+	}
-+
-+	return 0;
-+}
-+
- int main(int argc, char *argv[])
- {
- 	int ret;
-@@ -381,5 +453,12 @@ int main(int argc, char *argv[])
- 		fprintf(stderr, "test_wait_arg failed\n");
- 		return 1;
- 	}
-+
-+	ret = test_region_buffer_types();
-+	if (ret == T_EXIT_FAIL) {
-+		fprintf(stderr, "test_region_buffer_types failed\n");
-+		return 1;
-+	}
-+
- 	return 0;
- }
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on axboe-block/for-next]
+[also build test WARNING on next-20241115]
+[cannot apply to brauner-vfs/vfs.all mkp-scsi/for-next hch-configfs/for-next linus/master jejb-scsi/for-next v6.12-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Anuj-Gupta/block-define-set-of-integrity-flags-to-be-inherited-by-cloned-bip/20241114-193419
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/20241114104517.51726-7-anuj20.g%40samsung.com
+patch subject: [PATCH v9 06/11] io_uring: introduce attributes for read/write and PI support
+config: arc-nsimosci_hs_smp_defconfig (https://download.01.org/0day-ci/archive/20241117/202411170724.GLZyWdlD-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241117/202411170724.GLZyWdlD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411170724.GLZyWdlD-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   io_uring/rw.c: In function 'io_prep_pi_indirect':
+>> io_uring/rw.c:305:38: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     305 |         if (copy_from_user(&pi_attr, (void __user *)pi_attr_addr, sizeof(pi_attr)))
+         |                                      ^
+   io_uring/rw.c: In function 'io_prep_attr_vec':
+   io_uring/rw.c:321:38: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     321 |         if (copy_from_user(attr_vec, (void __user *)attr_addr, attr_vec_size))
+         |                                      ^
+
+
+vim +305 io_uring/rw.c
+
+   298	
+   299	
+   300	static inline int io_prep_pi_indirect(struct io_kiocb *req, struct io_rw *rw,
+   301					      int ddir, u64 pi_attr_addr)
+   302	{
+   303		struct io_uring_attr_pi pi_attr;
+   304	
+ > 305		if (copy_from_user(&pi_attr, (void __user *)pi_attr_addr, sizeof(pi_attr)))
+   306			return -EFAULT;
+   307		return io_prep_rw_pi(req, rw, ddir, &pi_attr);
+   308	}
+   309	
+
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 

@@ -1,126 +1,144 @@
-Return-Path: <io-uring+bounces-4809-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4810-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F549D1DF1
-	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 03:05:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 331B59D1F66
+	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 05:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EA60282720
-	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 02:05:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDFCB280DA2
+	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 04:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BDC28E3F;
-	Tue, 19 Nov 2024 02:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pBH3ldPj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0029149C57;
+	Tue, 19 Nov 2024 04:38:29 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497C1E56A
-	for <io-uring@vger.kernel.org>; Tue, 19 Nov 2024 02:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432621459F6
+	for <io-uring@vger.kernel.org>; Tue, 19 Nov 2024 04:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731981917; cv=none; b=taLg6zn2M3lKk9ZVnY9aC0NmJFSukWJCWTd8IDxIVtXARCOtJoJTGzmAsMeWfueybIVO4FHWhGTtZXVZQBLBIgxEUa7oZ/48rUSLa+3VB5GHvf20jbP1hug08FlYqnMmlTa5EWOZ5EkVwm+eTHFFBkpItHdC0QG7Khn4QjXvey4=
+	t=1731991109; cv=none; b=o7hVBmUJ+nzItL645YlgtVbkNDudAWkEV9+kPkwecBtdELQ3bPmIyWaDbJZMRi0crvFktjCXSLuGrqzRcuNos2siEwDg7I9fMl9GiYQXAsprJLI/E4yaC5OKhMPl8KvUWTlyh6cXlZsUg7aVd3/PK9qG1vPDXi3wpq6uzw6Sz9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731981917; c=relaxed/simple;
-	bh=LmgD4EDr0FTLqqK9XaD5BT5Z6Q4O09mMiDxVmhM11B0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OGc2/F+dTR7bslalAPyoyklqM/0/XXdAJ6nYIqi7mZphAAkYgJB1ISGbdXQHB6FozEEZxVr9BC3N/HLOwuqcbvAItvPUTV9gFpzP3uIgLj44TvdUlf1JQOo+PyhC7cxtOraxMol28bRHh0IdjucliAP+ChlcE5NuxzZj7IVJFT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pBH3ldPj; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21207f0d949so22481685ad.2
-        for <io-uring@vger.kernel.org>; Mon, 18 Nov 2024 18:05:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731981914; x=1732586714; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WcWYkuw/dHleRAQ13JfTYO9vRdxnJUNHSEXK98JCGFw=;
-        b=pBH3ldPjBuULkuUq3nb+2AEj2tBFJuZ5rPUH4+/DGqYucwDeU6UFh5sfM3FC8wdX9E
-         b+EzXL6b1LQhxqSNA8NS+rvExkzPHc9hFuia1iAyqIgFXVagMj1SxnhNfYIN9tt82AA/
-         Li33Vf+BQJ0/NEKtJJTXu0LmXMKzF3U/SsZ6vgNEWpMqWUXCXTXj4v9U6sqLuIiO6Zsd
-         eBCa2Zy6xVNjRxIJd5AFBXY/TyEQ+aXgmemjNNvDuU76Flj7DOTkye0CbAuQZ6S8O24R
-         wpTda4jiaUQMSanQHRgEKmGCCax5IsVGpl9BLkGjbUkQ53DfLFEN+yDpcf13g/UbY4W8
-         djtw==
+	s=arc-20240116; t=1731991109; c=relaxed/simple;
+	bh=at7JDw2wSlb9prZGsNeSTPouS27shd0nnref3sxOBew=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=upICpIvUiq4XH/DRe5J7Y1OELYrvhOXiPc57M1aT24ELrBixZFI8Tss2f3njzc8nJAkF2HYG1bBBOdzLOPlJS8dyXhgxSuNEyZoheI/zwY59j4ohJxWhs/jybkI1w38ZdMv1A7zpQh3nsp9kGI5oIe1iYREvIqg0fmsbtnjJ0/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a763a5464fso25875275ab.2
+        for <io-uring@vger.kernel.org>; Mon, 18 Nov 2024 20:38:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731981914; x=1732586714;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WcWYkuw/dHleRAQ13JfTYO9vRdxnJUNHSEXK98JCGFw=;
-        b=ZBIpWoRs47t9lcS+EPA7xZ1RJfI4/chFg95dyp9zApZakkiN1YF0UGoC8V1f/QWB4o
-         gtB0ILNutkOH0AVd2vdxX4diQXk8QF+ngrFyaBRmB4PlJwmWYXlDFokCPoQ9GPpKTB7U
-         UVM7FITAFh/3rbsF5MIY5s/ARCTP1u3NguP3CN1s4kFqAz0m23Yhvp6HHgHTf1QKBv4F
-         Yktub7tiLOYiE+8W7qllcQjtoLRDXdq1r1jctPh+i7rQzOauIvTdsQkxpOnxsa5FPEov
-         +Qy1j+Oo/N/2hmmdqgFArYsNsicJrwrpiZ5CwXOG07dFLTCik/x0L4+JyyIUjDElOhH6
-         XS+w==
-X-Gm-Message-State: AOJu0YymrCVZWC3n525f1gpHKhZ8uEw5LBxUaq332UgoGTixj0zyJ/vR
-	0cb22Rmxp5xTi5xCaGeFpOUgV9ArnzfjXTxa20KqWsk1+hbNaeSF0gBRgCp3V41F408CfyyHEA6
-	HdM8=
-X-Google-Smtp-Source: AGHT+IFVGyVkGdBEOMW7k4qEsJarDKR91xDsplLor2zMQTKi7wMPIDX2xIjtrWEmT0TGZ2ZYb3iFPA==
-X-Received: by 2002:a17:903:32c8:b0:20c:9062:fb88 with SMTP id d9443c01a7336-211d0d6f59bmr222965765ad.1.1731981914307;
-        Mon, 18 Nov 2024 18:05:14 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0ec7f36sm64097215ad.85.2024.11.18.18.05.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 18:05:13 -0800 (PST)
-Message-ID: <96b28c66-53c5-4c98-97e4-b2236fae69b5@kernel.dk>
-Date: Mon, 18 Nov 2024 19:05:12 -0700
+        d=1e100.net; s=20230601; t=1731991107; x=1732595907;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PyhytCsuWindymjmcYTPQlyB9D+gYqumk2oyZHJvxds=;
+        b=iGhRCv+1C1M2/b6o8yN7IDXJHlUdcy5dCwyZWIPtX5rIoQOgQsdhm17jfuPIc/84RV
+         jhOJFeIQx3gYaxMvWUberI60XPovdSJ4UW2EgghXlSSjYAZVaZAA7dXD8duJcz7hzcih
+         JcYia/dK9tut9nA2Z61su+rK8o8pFJz8gHoRydSya8PpHaf3m/JgrKoaeYGkdDzlTcct
+         vFfTJxVVvNAHxDqy/67b4P4W45tUvK/QB5n6bzM/5INuijMuAMIXdG0WjjaKwE09dYas
+         HGhagHs4J7lnP7enoikORyPS/vVN11sQTLp2Vfy101+KvdGOzpkv4Oo9QCDQtByW9YRE
+         9vLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOHVJTMTS65pPAJKlatTGvumYohKE/7yoJtq2n9her8cVWLxnTZN6j7Y+JsCS4V5DdPfxOCdQQ0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV5KLaVbAG3gywn0/f2HhKWiee60liEvTh78be11B2k4NBh/Mt
+	vtx+F5WqORUb6hoQJnHIvGXqbVkpdplGzouyFOU18g8KMEzE46Y4npefsLfBiVVju2NbtM4xVsV
+	gkeg8PXYtzcypUz0pxMjJ5RTfyIWb3Xhho7HyG0xGiLsrtSnTTzyEcc0=
+X-Google-Smtp-Source: AGHT+IHA5E9xSdc8gM4f7gYs8Mm9n9qUSQftEHTZ404DRN4cM+4ZCbQGJbF9HOpVXfhPFHW40PnGfWeFs1u3+F6oJGN3fSBIuQRH
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] Clean up alloc_cache allocations
-To: Gabriel Krisman Bertazi <krisman@suse.de>, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org
-References: <20241119012224.1698238-1-krisman@suse.de>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241119012224.1698238-1-krisman@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:3205:b0:3a7:1cf9:2427 with SMTP id
+ e9e14a558f8ab-3a747ffa0bemr149373155ab.2.1731991107438; Mon, 18 Nov 2024
+ 20:38:27 -0800 (PST)
+Date: Mon, 18 Nov 2024 20:38:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673c1643.050a0220.87769.0066.GAE@google.com>
+Subject: [syzbot] [io-uring?] WARNING in __io_uring_free
+From: syzbot <syzbot+cc36d44ec9f368e443d3@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/18/24 6:22 PM, Gabriel Krisman Bertazi wrote:
-> Jens, Pavel,
-> 
-> The allocation paths that use alloc_cache duplicate the same code
-> pattern, sometimes in a quite convoluted way.  This series cleans up
-> that code by folding the allocation into the cache code itself, making
-> it just an allocator function, and keeping the cache policy invisible to
-> callers.  A bigger justification for doing this, beyond code simplicity,
-> is that it makes it trivial to test the impact of disabling the cache
-> and using slab directly, which I've used for slab improvement
-> experiments.  I think this is one step forward in the direction
-> eventually lifting the alloc_cache into a proper magazine layer in slab
-> out of io_uring.
+Hello,
 
-Nice!
+syzbot found the following issue on:
 
-Patchset looks good, from a quick look, even from just a cleanup
-perspective. We're obviously inside the merge window right now, so it's
-a 6.14 target at this point. I'll take some timer to review it a bit
-closer later this week.
+HEAD commit:    cfaaa7d010d1 Merge tag 'net-6.12-rc8' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13005cc0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+dashboard link: https://syzkaller.appspot.com/bug?extid=cc36d44ec9f368e443d3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> It survived liburing testsuite, and when microbenchmarking the
-> read-write path with mmtests and fio, I didn't observe any significant
-> performance variation (there was actually a 2% gain, but that was
-> within the variance of the test runs, making it not signficant and
-> surely test noise).
-> 
-> I'm specifically interested, and happy to do so, if there are specific
-> benchmarks you'd like me to run it against.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-In general, running the liburing test suite with various types of files
-and devices and with KASAN and LOCKDEP turned on is a good test of not
-having messed something up, in a big way at least. But maybe you already
-ran that too?
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-cfaaa7d0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/63eae0d3e67f/vmlinux-cfaaa7d0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6495d9e4ddee/bzImage-cfaaa7d0.xz
 
--- 
-Jens Axboe
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cc36d44ec9f368e443d3@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 16 at io_uring/tctx.c:51 __io_uring_free+0xfa/0x140 io_uring/tctx.c:51
+Modules linked in:
+CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.12.0-rc7-syzkaller-00125-gcfaaa7d010d1 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__io_uring_free+0xfa/0x140 io_uring/tctx.c:51
+Code: 80 7c 25 00 00 74 08 4c 89 f7 e8 a1 8a 49 fd 49 c7 06 00 00 00 00 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 37 ad df fc 90 <0f> 0b 90 e9 6a ff ff ff e8 29 ad df fc 90 0f 0b 90 eb 84 e8 1e ad
+RSP: 0018:ffffc900004279b8 EFLAGS: 00010246
+RAX: ffffffff84b53cd9 RBX: ffff88804fc3b8e0 RCX: ffff88801b7e8000
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: ffff88801f058000
+RBP: 0000000000000001 R08: ffffffff8154d881 R09: 1ffff11003e0b005
+R10: dffffc0000000000 R11: ffffed1003e0b006 R12: dffffc0000000000
+R13: 1ffff11003e0b120 R14: ffff88801f058900 R15: ffff88804fc3b800
+FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005594393ad338 CR3: 000000000e734000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ io_uring_free include/linux/io_uring.h:31 [inline]
+ __put_task_struct+0xd5/0x290 kernel/fork.c:975
+ put_task_struct include/linux/sched/task.h:144 [inline]
+ delayed_put_task_struct+0x125/0x300 kernel/exit.c:228
+ rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+ rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+ handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
+ run_ksoftirqd+0xca/0x130 kernel/softirq.c:927
+ smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

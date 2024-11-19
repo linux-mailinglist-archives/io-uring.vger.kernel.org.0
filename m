@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-4834-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4835-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD8949D2A6E
-	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 17:04:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F599D2AC1
+	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 17:23:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ADB0B23DE0
-	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 16:02:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF4CFB2926A
+	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 16:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D025A145FFF;
-	Tue, 19 Nov 2024 16:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F26F3C463;
+	Tue, 19 Nov 2024 16:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pwDuAYT8"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SG5aB+Wi"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE99318A950
-	for <io-uring@vger.kernel.org>; Tue, 19 Nov 2024 16:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FE3199B9
+	for <io-uring@vger.kernel.org>; Tue, 19 Nov 2024 16:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732032130; cv=none; b=eIs6D4cgNBOxjQpQChJuyL+HKxEhtJfAGe6e+6hBiztpqu6n02ejgNy3r+JviUbCB6N1KsC4m22cHMFJi2U46gummN45zEUqIKHKkFCQLRuY1lAqhe9K39qs1RFuNxcqn6OQo+okBGFs+sV7WqCK9dmkkQrD8tZlxfkACcz+fRY=
+	t=1732033124; cv=none; b=I8bgfqlqSXbRyDLoQTAtQaCBPDnbLUuiWhhW6U7MbhExK+/Mzl/TLW5rwP/uspuPo9+fPjeAkxKVvVJEmMWW6lPuwK+0R/bIa6gXPJhFQJU7yTa6N8fqVIg93AxzFp4zReRW0l994NqTzq62oVmQZd92z4OVgk9SzdTXxheGgNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732032130; c=relaxed/simple;
-	bh=8GJM7uCVNS7hTxenfrjLOtcu5/3K2ajO3nNFvrW0bwM=;
+	s=arc-20240116; t=1732033124; c=relaxed/simple;
+	bh=EpmM9T4jeTope9+UNhqcgngzlzMONMv6llYJLImRyu4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cSCXWC3ONvH3siegaKou33BWuLKV0U90ZWj7/Iqcv7+njPXC9t8jbErF+Kgf34V73nDRh7k0dECQsOBMNYU8k6/8O0AWTFztOGF2Wla6fLH9kQS2W/tzbytSDxn3I8WrIhzOxvvXC1aZqykxKRLcuUDcn57TDYBv0NPuhIyyKS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pwDuAYT8; arc=none smtp.client-ip=209.85.167.172
+	 In-Reply-To:Content-Type; b=MeR5c8RFUqrqWwfxreIavTFR2z/Kk1Qxx/BV66JH8jMPkBOHD98jaOPl4GvEhCnPd7TyvLMDe1El4kVz6LO6pRTysO7hnxgIuoblJTv4Krkbu+puo36B4ECkN5hTD6ThYWiJgvDeKMMvvpNBgFK61mlMqT/LBbEyXNr6IqvOdlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SG5aB+Wi; arc=none smtp.client-ip=209.85.167.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e5f835c024so634094b6e.2
-        for <io-uring@vger.kernel.org>; Tue, 19 Nov 2024 08:02:07 -0800 (PST)
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3e60e57a322so623541b6e.3
+        for <io-uring@vger.kernel.org>; Tue, 19 Nov 2024 08:18:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732032127; x=1732636927; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732033120; x=1732637920; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yL8tHp2Fpr+O+zAmTby5OswtjdArzHPCWWqILBa0+ws=;
-        b=pwDuAYT8j0ACyBy+QA77yQKOoTxJVU+6ZcXaNdDBftxPUoMgPowFrflOfc2pvNw6a+
-         2V8WvdR/TOoVLNXJuP/F4AMsxTDqi+FoKl9KrQnDUedDt5LxtudUc/CPEcJAJo5oLEcU
-         3qvnsFxddOoNoizQiD/iggTT+gz0MubesYo5UYWrN9msTYTHAi3TdpkOzWVIV9gT6f8n
-         K+kJomX4dkTDX3dhvXMoWs3F7W1af0Kbr5LVxA5/bUoATk8QFYBvBOhHL2lwOxJQw65o
-         9JPTKHtEnZMolKCoopOvL4urOrTBSm11ja0vnZk62wBSkc1BG+OVcA+330YKlFjbo6Oq
-         Fb/w==
+        bh=NUYE9FPGQhm1dvf9fDZHQxlLBXymfUQu5MbS+4u+WfA=;
+        b=SG5aB+WiprGDdOAUtXEJmUB7Tuhvg5ZnvhEmHEG55dWToD+ajwSKiuaP5cHGpyM7jc
+         cxLg853/aA/pJJViHOPNFjr4E4+NR4xciN6cquOQJaT+/+KBPtuTRdVfSbsfs/QyaXiA
+         XWoyqOZrpYjABPLH61nMMyv9EvXuKWB+Cxi32SZOhM84ePQLIFeLd9UsW/ZnhCbRCPD/
+         E5UZWEwQHQjN3K3ubC/fBj2CnAOaHAoo5U+fuNW5tBJXCmuj/XSDWNLhwfiF1S/6F0m7
+         MSLSsgu6bCX+aghPcNd1TU3XhEUxV68EfcY+ZfvFwQpVBew2CHqJRA8rV2JtpXiez16c
+         qahg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732032127; x=1732636927;
+        d=1e100.net; s=20230601; t=1732033120; x=1732637920;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yL8tHp2Fpr+O+zAmTby5OswtjdArzHPCWWqILBa0+ws=;
-        b=NlgKK+ej18vg/6Pn8lvGBXgQca1ZtCcCHe5kmUmxGSe8Z6avskcuYekuGusvo0bFtD
-         LIRA+t1zMruiZpn0dN5Ph06GjnqESl41rBfgjeJE2CicWD07NeJHZqY7fV+iX0Mr04Dl
-         hvAQ/4tHJrZ7e+gLvtu+m3OOLAGCufnye/PHUjAOkU+ChY2eMpgKoFxWUUOenOIeIUR2
-         uHZustuK+IWZVVuAlUujZh8eqorBwr/yZ76WfE0HOTECJVyIbmU+gNnVdc3o60k/xI/+
-         chG+ozzvx3Go2J21+eSLuxkLLwkYQ0jSlpf8MtggQrsl8ftJq8Ylqc0GGXMxuLTJjXis
-         LdAA==
-X-Gm-Message-State: AOJu0Yy2vqQQ7JbBpgJjJ7wmU5CshzWG6kQLNEqqt25vsOfWS7a+l2dP
-	zmD8ji/8p6bK4PXnHgT4WxGCSLf3MyZIuFZG6MEjcz7T5vrZAAOzTjBsKklInPS5BMc4jLsoqDg
-	2FyI=
-X-Google-Smtp-Source: AGHT+IG6jajNaFfp8vyW5721LEFfJ8EM7//vaq7sqCF1K2Rsf7YJomlkZ1NBKmmfzPW2ai+mmip4hg==
-X-Received: by 2002:a05:6808:16ab:b0:3e6:2772:2a4b with SMTP id 5614622812f47-3e7bc7a3fecmr13929823b6e.9.1732032126668;
-        Tue, 19 Nov 2024 08:02:06 -0800 (PST)
+        bh=NUYE9FPGQhm1dvf9fDZHQxlLBXymfUQu5MbS+4u+WfA=;
+        b=GJCRESd/1EsVV2NS/JLjd8a6ZMfuhAEvALBUx45qliNLCd2XuQf/k2rnQM/kzTtsyq
+         K7x7pZZH4lg6rao2q9xA8e2/g9plgOjnDxoueTdnP3tJl8z10t9stnz2C5K4+PMrvjC8
+         ZE0UTMnV1ZMna2+UaWaZT6QdM7DKSJwdd/xzRF9/laqaYe/uFR1y/gfQoRN/d2rd026B
+         x+5NEeYukq94kqzUKiIf1mAheyr71jUB2a+m+rzGNZPp6D02uURKT3W0sbhAO8BB0atT
+         Z7MU9otMaIONUuHH5WK6XVt3jnh+Ee6OhHuajCoVKiX4s9cOb42XgoxyM8tou9zfysTD
+         uEjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfD4fXLrILTrDu6ecIPdAnBjmekyHKwBsb0x62ZjkHSjuduKcYPYlBW03kLv1UxHUVo4onQj7vPg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG6PJv6dArXcWRfh8NWJEil3rMH0PYJ1RUA9ywR/qaFW+EgsWI
+	tBI8zPsTB5T0VyE7Bw2Pk58NHK4B0IHlPeh9ppa0nmGAVuLsuDZx2KSjakGdjZo=
+X-Google-Smtp-Source: AGHT+IFP1snBbj3tSi06euu/lCA16VXTLDGSe9QQjlyZAo/S0wbl0ZX5PBz3knQGEF9wx+oUU+Sn6w==
+X-Received: by 2002:a05:6808:1204:b0:3e5:f4f9:3280 with SMTP id 5614622812f47-3e7bc7bfa12mr13166015b6e.10.1732033120410;
+        Tue, 19 Nov 2024 08:18:40 -0800 (PST)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7bcd92e51sm3704608b6e.45.2024.11.19.08.02.05
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7bcd93889sm3716289b6e.46.2024.11.19.08.18.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 08:02:05 -0800 (PST)
-Message-ID: <d4e5a858-1333-4427-a470-350c45b78733@kernel.dk>
-Date: Tue, 19 Nov 2024 09:02:05 -0700
+        Tue, 19 Nov 2024 08:18:39 -0800 (PST)
+Message-ID: <2549a20b-e4a2-42ec-9d8c-cf4488acb6c0@kernel.dk>
+Date: Tue, 19 Nov 2024 09:18:39 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,72 +76,76 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/14] io_uring: specify freeptr usage for
- SLAB_TYPESAFE_BY_RCU io_kiocb cache
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: io-uring@vger.kernel.org
-References: <20241029152249.667290-1-axboe@kernel.dk>
- <20241029152249.667290-4-axboe@kernel.dk>
- <37c588d4-2c32-4aad-a19e-642961f200d7@roeck-us.net>
+Subject: Re: [PATCH 1/9] io_uring: Fold allocation into alloc_cache helper
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org
+References: <20241119012224.1698238-1-krisman@suse.de>
+ <20241119012224.1698238-2-krisman@suse.de>
+ <4e679f16-7da9-47c7-959c-d4636e5117b2@kernel.dk>
+ <87ttc3nsv5.fsf@mailhost.krisman.be>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <37c588d4-2c32-4aad-a19e-642961f200d7@roeck-us.net>
+In-Reply-To: <87ttc3nsv5.fsf@mailhost.krisman.be>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/19/24 8:36 AM, Guenter Roeck wrote:
-> Hi,
+On 11/19/24 8:30 AM, Gabriel Krisman Bertazi wrote:
+> Jens Axboe <axboe@kernel.dk> writes:
 > 
-> On Tue, Oct 29, 2024 at 09:16:32AM -0600, Jens Axboe wrote:
->> Doesn't matter right now as there's still some bytes left for it, but
->> let's prepare for the io_kiocb potentially growing and add a specific
->> freeptr offset for it.
+>> On 11/18/24 6:22 PM, Gabriel Krisman Bertazi wrote:
+>>> diff --git a/io_uring/alloc_cache.h b/io_uring/alloc_cache.h
+>>> index b7a38a2069cf..6b34e491a30a 100644
+>>> --- a/io_uring/alloc_cache.h
+>>> +++ b/io_uring/alloc_cache.h
+>>> @@ -30,6 +30,13 @@ static inline void *io_alloc_cache_get(struct io_alloc_cache *cache)
+>>>  	return NULL;
+>>>  }
+>>>  
+>>> +static inline void *io_alloc_cache_alloc(struct io_alloc_cache *cache, gfp_t gfp)
+>>> +{
+>>> +	if (!cache->nr_cached)
+>>> +		return kzalloc(cache->elem_size, gfp);
+>>> +	return io_alloc_cache_get(cache);
+>>> +}
 >>
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> I don't think you want to use kzalloc here. The caller will need to
+>> clear what its needs for the cached path anyway, so has no other option
+>> than to clear/set things twice for that case.
 > 
-> This patch triggers:
+> Hi Jens,
 > 
-> Kernel panic - not syncing: __kmem_cache_create_args: Failed to create slab 'io_kiocb'. Error -22
-> CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-mac-00971-g158f238aa69d #1
-> Stack from 00c63e5c:
->         00c63e5c 00612c1c 00612c1c 00000300 00000001 005f3ce6 004b9044 00612c1c
->         004ae21e 00000310 000000b6 005f3ce6 005f3ce6 ffffffea ffffffea 00797244
->         00c63f20 000c6974 005ee588 004c9051 005f3ce6 ffffffea 000000a5 00c614a0
->         004a72c2 0002cb62 000c675e 004adb58 0076f28a 005f3ce6 000000b6 00c63ef4
->         00000310 00c63ef4 00000000 00000016 0076f23e 00c63f4c 00000010 00000004
->         00000038 0000009a 01000000 00000000 00000000 00000000 000020e0 0076f23e
-> Call Trace: [<004b9044>] dump_stack+0xc/0x10
->  [<004ae21e>] panic+0xc4/0x252
->  [<000c6974>] __kmem_cache_create_args+0x216/0x26c
->  [<004a72c2>] strcpy+0x0/0x1c
->  [<0002cb62>] parse_args+0x0/0x1f2
->  [<000c675e>] __kmem_cache_create_args+0x0/0x26c
->  [<004adb58>] memset+0x0/0x8c
->  [<0076f28a>] io_uring_init+0x4c/0xca
->  [<0076f23e>] io_uring_init+0x0/0xca
->  [<000020e0>] do_one_initcall+0x32/0x192
->  [<0076f23e>] io_uring_init+0x0/0xca
->  [<0000211c>] do_one_initcall+0x6e/0x192
->  [<004a72c2>] strcpy+0x0/0x1c
->  [<0002cb62>] parse_args+0x0/0x1f2
->  [<000020ae>] do_one_initcall+0x0/0x192
->  [<0075c4e2>] kernel_init_freeable+0x1a0/0x1a4
->  [<0076f23e>] io_uring_init+0x0/0xca
->  [<004b911a>] kernel_init+0x0/0xec
->  [<004b912e>] kernel_init+0x14/0xec
->  [<004b911a>] kernel_init+0x0/0xec
->  [<0000252c>] ret_from_kernel_thread+0xc/0x14
-> 
-> when trying to boot the m68k:q800 machine in qemu.
-> 
-> An added debug message in create_cache() shows the reason:
-> 
-> #### freeptr_offset=154 object_size=182 flags=0x310 aligned=0 sizeof(freeptr_t)=4
-> 
-> freeptr_offset would need to be 4-byte aligned but that is not the
-> case on m68k.
+> The reason I do kzalloc here is to be able to trust the value of
+> rw->free_iov (io_rw_alloc_async) and hdr->free_iov (io_msg_alloc_async)
+> regardless of where the allocated memory came from, cache or slab.  In
+> the callers (patch 6 and 7), we do:
 
-Why is ->work 2-byte aligned to begin with on m68k?!
+I see, I guess that makes sense as some things are persistent in cache
+and need clearing upfront if freshly allocated.
+
+> +	hdr = io_uring_alloc_async_data(&ctx->netmsg_cache, req);
+> +	if (!hdr)
+> +		return NULL;
+> +
+> +	/* If the async data was cached, we might have an iov cached inside. */
+> +	if (hdr->free_iov) {
+> 
+> An alternative would be to return a flag indicating whether the
+> allocated memory came from the cache or not, but it didn't seem elegant.
+> Do you see a better way?
+> 
+> I also considered that zeroing memory here shouldn't harm performance,
+> because it'll hit the cache most of the time.
+
+It should hit cache most of the time, but if we exceed the cache size,
+then you will see allocations happen and churn. I don't like the idea of
+the flag, then we still need to complicate the caller. We can do
+something like slab where you have a hook for freshly allocated data
+only? That can either be a property of the cache, or passed in via
+io_alloc_cache_alloc()?
+
+BTW, I'd probably change the name of that to io_cache_get() or
+io_cache_alloc() or something like that, I don't think we need two
+allocs in there.
 
 -- 
 Jens Axboe

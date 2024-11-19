@@ -1,50 +1,50 @@
-Return-Path: <io-uring+bounces-4828-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4829-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0439D2599
-	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 13:21:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA6269D259D
+	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 13:22:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BDDAB26E4A
-	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 12:21:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 740EC1F249D1
+	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 12:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800081D0E24;
-	Tue, 19 Nov 2024 12:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D14F1D0F50;
+	Tue, 19 Nov 2024 12:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iX6N5usS"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MGZmuUG5"
 X-Original-To: io-uring@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5DC1D0E10;
-	Tue, 19 Nov 2024 12:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064E01D0E3A;
+	Tue, 19 Nov 2024 12:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732018640; cv=none; b=ayWvZzClS4hPr1qTdKHIfv3sOnBe2Obad1YvbPlybcHOwr6wTucuZq8/ajy+7VQadJWTdRFN6VKoERWbp3IJAqOjAxc8osaQU+DEnN7GDP49eflP3aDpIe9IqqnqChRy6jNIh8V3WztVG8BNISXdEgKpOGetTfhs8Cl7hJyfe7U=
+	t=1732018642; cv=none; b=maLenixWJr2KI9/8mWwp313dEQLo8dRkQWb2fwYkOEuYs1NFa5bT9v5O5P2JeMPpEFvdh0k/OoGq3iHc7wv1gH2W7uFGvCeFKVMTsyRTf61cahDTan2GuTTIdf5ukZdxwiboAxEZIKSF0p4lBPaJaMkniz86rcvrQ7V1SleZ3xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732018640; c=relaxed/simple;
-	bh=J/BBIHLXbfQ1xNijrjooKssM5rtn8HvBrlUm1US2obk=;
+	s=arc-20240116; t=1732018642; c=relaxed/simple;
+	bh=0mruMxanft8RAOOhOn+R3dNkn6CDPrf8czsoxHAKvXs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L7Np653T/XA4+4T9pgynrpdUXVpn3+BS3ZQsKu3/lp/Pm8FryzGdARV4mhNtFa01Il9ou6RWZX6vCwOfH6JR/specjFtnGLtfvs/u3gVqjj5c6sxuLqEH+GzitW6hKCKNVrD6gHoqO62iE5a8GI23+LI7F/Wt6qsYprpi6ebDFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iX6N5usS; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=Lvic9p91K4ZYNM+s+0Vtla7RuXqvRt4W7SC2Z2ClFfe6O4y7oz4oARySN+2cijIt2WbDyWO6sHQKKZb4evS0+ZxVb7MrePkb0jqPEBYe98WOAz6fj2A0xQdE/9zXGicMoD3dRYhinKcJ/Rb9nZLyyZ/m7WoihW+OCG9PBguOsNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MGZmuUG5; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=hUzFZ+6FshEO8qDOzDKYYt7UzsaW6ENPIVFJY3i4Ksc=; b=iX6N5usSzl5VUxc9vsJlWn6NU1
-	EL9wo40+nmZF8v0f4dY0502RtQn+SvrFmDAPVVW5K+UWkUrYCAiir3O6Ms8mK0Uiiqr6Ap4BApEpg
-	CCebaH+Ojm3AJRFc73fC3GP1SfW7g5oCgcn2pNahsVFHmIqw5eIPljGNXQHqF74UGMB6qNvggkwxI
-	fzRJHHEyhcRgzikQ8TaAT0J9sRGU1LWOFnl3HnJ32T4UoO2Cev7tuZPmZY/GpakmPqGIs08X9PLue
-	R9VtzppUNmcAWtYoGz4ZFkEqHIwuR21jhsLtLQUjDy75HnhTU2Xm07VchUGwei2VulgBxu2AxpOrZ
-	JVVGAPuw==;
+	bh=hi5wiGxgAmC0Cdjfsdl0g9zpBk10TijhAP5DsB115+4=; b=MGZmuUG5w97cSfwF4J9cGxZDwy
+	aQzYCs6GoMDxhAgTIEdPCDR6J1HIu4GhTxJAg+TsGHVkk68cn8ptBmGgiYZCzLdkLJGIcLfNWZSKn
+	X7q5icZsgLRFz1BosbfqEbsldSPfV4+7g4iZKzDrLyq5slY16l4mXKUdi2RrWb/phgNLkeNH5QEma
+	//fyzeaQaMnHJ+d2K7tgHHVz4CKSUJqddal4HKFBZMND34ccirDLLdDAzvSKdtxXu2zQFayvqFQhT
+	PzgpO19j/8Ew8xuL9cJW24D1IVNkQ2MH53TMv0abWK0UvDfi+ZhoPGrAA0NBQAlsPMnAzR++RjZiO
+	tDWKDm7Q==;
 Received: from 2a02-8389-2341-5b80-1731-a089-d2b1-3edf.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:1731:a089:d2b1:3edf] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDNAR-0000000CJMO-0zoF;
-	Tue, 19 Nov 2024 12:17:15 +0000
+	id 1tDNAT-0000000CJP8-3EaH;
+	Tue, 19 Nov 2024 12:17:18 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -60,9 +60,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	linux-nvme@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org,
 	io-uring@vger.kernel.org
-Subject: [PATCH 14/15] nvme: enable FDP support
-Date: Tue, 19 Nov 2024 13:16:28 +0100
-Message-ID: <20241119121632.1225556-15-hch@lst.de>
+Subject: [PATCH 15/15] RFC: block: allow write streams on partitions
+Date: Tue, 19 Nov 2024 13:16:29 +0100
+Message-ID: <20241119121632.1225556-16-hch@lst.de>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241119121632.1225556-1-hch@lst.de>
 References: <20241119121632.1225556-1-hch@lst.de>
@@ -75,210 +75,185 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Wire up the block level write streams to the NVMe Flexible Data Placement
-(FDP) feature as ratified in TP 4146a.
+By default assign all write streams to partition 1, and add a hack
+sysfs files that distributes them all equally.
 
-Based on code from Kanchan Joshi <joshi.k@samsung.com>,
-Hui Qi <hui81.qi@samsung.com>, Nitesh Shetty <nj.shetty@samsung.com> and
-Keith Busch <kbusch@kernel.org>, but a lot of it has been rewritten to
-fit the block layer write stream infrastructure.
+This is implemented by storing the number of per-partition write
+streams in struct block device, as well as the offset to the global
+ones, and then remapping the write streams in the I/O submission
+path.
+
+The sysfs is hacky and undocumented, better suggestions welcome
+from actual users of write stream on partitions.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/nvme/host/core.c | 129 +++++++++++++++++++++++++++++++++++++++
- drivers/nvme/host/nvme.h |   4 ++
- 2 files changed, 133 insertions(+)
+ block/bdev.c              |  9 +++++++
+ block/blk-core.c          |  2 ++
+ block/genhd.c             | 52 +++++++++++++++++++++++++++++++++++++++
+ block/partitions/core.c   |  6 +++--
+ include/linux/blk_types.h |  7 ++++++
+ include/linux/blkdev.h    |  2 +-
+ 6 files changed, 75 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index b61225201b47..543bbe7de063 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -673,6 +673,7 @@ static void nvme_free_ns_head(struct kref *ref)
- 	ida_free(&head->subsys->ns_ida, head->instance);
- 	cleanup_srcu_struct(&head->srcu);
- 	nvme_put_subsystem(head->subsys);
-+	kfree(head->plids);
- 	kfree(head);
- }
- 
-@@ -990,6 +991,15 @@ static inline blk_status_t nvme_setup_rw(struct nvme_ns *ns,
- 	if (req->cmd_flags & REQ_RAHEAD)
- 		dsmgmt |= NVME_RW_DSM_FREQ_PREFETCH;
- 
-+	if (op == nvme_cmd_write && ns->head->nr_plids) {
-+		u16 write_stream = req->bio->bi_write_stream;
+diff --git a/block/bdev.c b/block/bdev.c
+index c23245f1fdfe..f3549a8cdb3f 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -440,6 +440,15 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
+ 		return NULL;
+ 	}
+ 	bdev->bd_disk = disk;
 +
-+		if (WARN_ON_ONCE(write_stream > ns->head->nr_plids))
-+			return BLK_STS_INVAL;
-+		dsmgmt |= ns->head->plids[write_stream - 1] << 16;
-+		control |= NVME_RW_DTYPE_DPLCMT;
++	/*
++	 * Assign all write streams to the first partition by default.
++	 */
++	if (partno == 1) {
++		bdev->bd_part_write_stream_start = 0;
++		bdev->bd_part_write_streams = bdev_max_write_streams(bdev);
 +	}
 +
- 	if (req->cmd_flags & REQ_ATOMIC && !nvme_valid_atomic_write(req))
- 		return BLK_STS_INVAL;
- 
-@@ -2142,6 +2152,107 @@ static int nvme_update_ns_info_generic(struct nvme_ns *ns,
- 	return ret;
+ 	return bdev;
  }
  
-+static int nvme_read_fdp_config(struct nvme_ns *ns, struct nvme_ns_info *info)
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 666efe8fa202..9654937f9b2d 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -574,6 +574,8 @@ static int blk_partition_remap(struct bio *bio)
+ 		return -EIO;
+ 	if (bio_sectors(bio)) {
+ 		bio->bi_iter.bi_sector += p->bd_start_sect;
++		if (bio->bi_write_stream)
++			bio->bi_write_stream += p->bd_part_write_stream_start;
+ 		trace_block_bio_remap(bio, p->bd_dev,
+ 				      bio->bi_iter.bi_sector -
+ 				      p->bd_start_sect);
+diff --git a/block/genhd.c b/block/genhd.c
+index 79230c109fca..3156c70522b6 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -1070,6 +1070,54 @@ static ssize_t partscan_show(struct device *dev,
+ 	return sysfs_emit(buf, "%u\n", disk_has_partscan(dev_to_disk(dev)));
+ }
+ 
++static ssize_t disk_distribute_write_streams_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
 +{
-+	struct nvme_fdp_config result;
-+	struct nvme_fdp_config_log *log;
-+	struct nvme_fdp_config_desc *configs;
-+	size_t log_size;
-+	int error;
++	/* Anything useful to show here like the ranges? */
++	return sysfs_emit(buf, "0\n");
++}
 +
-+	error = nvme_get_features(ns->ctrl, NVME_FEAT_FDP, info->endgid, NULL,
-+			0, &result);
++static ssize_t disk_distribute_write_streams_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct gendisk *disk = dev_to_disk(dev);
++	struct block_device *bdev = disk->part0, *part;
++	unsigned short total_write_streams =
++		disk->queue->limits.max_write_streams;
++	unsigned short part_write_streams, part_write_stream_start = 0;
++	unsigned long nr_partitions = 0, idx;
++	int error = 0;
++
++	if (!total_write_streams)
++		return -EINVAL;
++
++	mutex_lock(&disk->open_mutex);
++	if (atomic_read(&bdev->bd_openers)) {
++		error = -EBUSY;
++		goto out_unlock;
++	}
++
++	xa_for_each_start(&disk->part_tbl, idx, part, 1)
++		nr_partitions++;
++	if (!nr_partitions)
++		goto out_unlock;
++
++	part_write_streams = total_write_streams / nr_partitions;
++	xa_for_each_start(&disk->part_tbl, idx, part, 1) {
++		part->bd_part_write_streams = part_write_streams;
++		part->bd_part_write_stream_start = part_write_stream_start;
++		part_write_stream_start += part_write_streams;
++		dev_info(dev,
++			"assigning %u write streams at %u to partition %lu\n",
++			part_write_streams, part_write_stream_start, idx - 1);
++	}
++out_unlock:
++	mutex_unlock(&disk->open_mutex);
 +	if (error)
 +		return error;
-+
-+	if (!(result.flags & FDPCFG_FDPE)) {
-+		dev_warn(ns->ctrl->device, "FDP not enable in current config\n");
-+		return -EINVAL;
-+	}
-+
-+	log_size = sizeof(*log) + (result.fdpcidx + 1) * sizeof(*configs);
-+	log = kmalloc(log_size, GFP_KERNEL);
-+	if (!log)
-+		return -ENOMEM;
-+
-+	error = nvme_get_log_lsi(ns->ctrl, info->nsid, NVME_LOG_FDP_CONFIGS,
-+			0, 0, log, log_size, 0, info->endgid);
-+	if (error) {
-+		dev_warn(ns->ctrl->device,
-+			"failed to read FDP config log: 0x%x\n", error);
-+		goto out_free_log;
-+	}
-+
-+	if (le32_to_cpu(log->size) < log_size) {
-+		dev_warn(ns->ctrl->device, "FDP log too small: %d vs %zd\n",
-+				le32_to_cpu(log->size), log_size);
-+		error = -EINVAL;
-+		goto out_free_log;
-+	}
-+
-+	configs = (struct nvme_fdp_config_desc *)(log + 1);
-+	if (le32_to_cpu(configs[result.fdpcidx].nrg) > 1) {
-+		dev_warn(ns->ctrl->device, "FDP NRG > 1 not supported\n");
-+		return -EINVAL;
-+	}
-+	ns->head->runs = le64_to_cpu(configs[result.fdpcidx].runs);
-+
-+out_free_log:
-+	kfree(log);
-+	return error;
++	return count;
 +}
 +
-+static int nvme_fetch_fdp_plids(struct nvme_ns *ns, u32 nsid)
-+{
-+	struct nvme_ns_head *head = ns->head;
-+	struct nvme_fdp_ruh_status *ruhs;
-+	const unsigned int max_nr_plids = S8_MAX - 1;
-+	size_t size = struct_size(ruhs, ruhsd, max_nr_plids);
-+	struct nvme_command c = {
-+		.imr.opcode	= nvme_cmd_io_mgmt_recv,
-+		.imr.nsid	= cpu_to_le32(nsid),
-+		.imr.mo		= NVME_IO_MGMT_RECV_MO_RUHS,
-+		.imr.numd	= cpu_to_le32(nvme_bytes_to_numd(size)),
-+	};
-+	int ret, i;
-+
-+	ruhs = kzalloc(size, GFP_KERNEL);
-+	if (!ruhs)
-+		return -ENOMEM;
-+
-+	ret = nvme_submit_sync_cmd(ns->queue, &c, ruhs, size);
-+	if (ret) {
-+		dev_warn(ns->ctrl->device,
-+			"failed to read FDP reclaim unit handles: 0x%x\n", ret);
-+		goto out;
-+	}
-+
-+	ns->head->nr_plids = le16_to_cpu(ruhs->nruhsd);
-+	if (!ns->head->nr_plids)
-+		goto out;
-+
-+	if (ns->head->nr_plids > max_nr_plids) {
-+		dev_info(ns->ctrl->device,
-+			"capping max write streams from %d to %d\n",
-+			ns->head->nr_plids, max_nr_plids);
-+		ns->head->nr_plids = max_nr_plids;
-+	}
-+
-+	head->plids = kcalloc(ns->head->nr_plids, sizeof(head->plids),
-+			      GFP_KERNEL);
-+	if (!head->plids) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	for (i = 0; i < ns->head->nr_plids; i++)
-+		head->plids[i] = le16_to_cpu(ruhs->ruhsd[i].pid);
-+
-+out:
-+	kfree(ruhs);
-+	return ret;
-+}
-+
- static int nvme_update_ns_info_block(struct nvme_ns *ns,
- 		struct nvme_ns_info *info)
+ static DEVICE_ATTR(range, 0444, disk_range_show, NULL);
+ static DEVICE_ATTR(ext_range, 0444, disk_ext_range_show, NULL);
+ static DEVICE_ATTR(removable, 0444, disk_removable_show, NULL);
+@@ -1084,6 +1132,9 @@ static DEVICE_ATTR(inflight, 0444, part_inflight_show, NULL);
+ static DEVICE_ATTR(badblocks, 0644, disk_badblocks_show, disk_badblocks_store);
+ static DEVICE_ATTR(diskseq, 0444, diskseq_show, NULL);
+ static DEVICE_ATTR(partscan, 0444, partscan_show, NULL);
++static DEVICE_ATTR(distribute_write_streams, 0644,
++	disk_distribute_write_streams_show,
++	disk_distribute_write_streams_store);
+ 
+ #ifdef CONFIG_FAIL_MAKE_REQUEST
+ ssize_t part_fail_show(struct device *dev,
+@@ -1135,6 +1186,7 @@ static struct attribute *disk_attrs[] = {
+ 	&dev_attr_events_poll_msecs.attr,
+ 	&dev_attr_diskseq.attr,
+ 	&dev_attr_partscan.attr,
++	&dev_attr_distribute_write_streams.attr,
+ #ifdef CONFIG_FAIL_MAKE_REQUEST
+ 	&dev_attr_fail.attr,
+ #endif
+diff --git a/block/partitions/core.c b/block/partitions/core.c
+index 815ed33caa1b..a27dbb5589ce 100644
+--- a/block/partitions/core.c
++++ b/block/partitions/core.c
+@@ -245,8 +245,10 @@ static const struct attribute_group *part_attr_groups[] = {
+ 
+ static void part_release(struct device *dev)
  {
-@@ -2178,6 +2289,18 @@ static int nvme_update_ns_info_block(struct nvme_ns *ns,
- 			goto out;
- 	}
- 
-+	if (!(ns->ctrl->ctratt & NVME_CTRL_ATTR_FDPS)) {
-+		ns->head->nr_plids = 0;
-+		kfree(ns->head->plids);
-+		ns->head->plids = NULL;
-+	} else if (!ns->head->plids) {
-+		ret = nvme_read_fdp_config(ns, info);
-+		if (!ret)
-+			ret = nvme_fetch_fdp_plids(ns, info->nsid);
-+		if (ret < 0)
-+			goto out;
-+	}
+-	put_disk(dev_to_bdev(dev)->bd_disk);
+-	bdev_drop(dev_to_bdev(dev));
++	struct block_device *part = dev_to_bdev(dev);
 +
- 	blk_mq_freeze_queue(ns->disk->queue);
- 	ns->head->lba_shift = id->lbaf[lbaf].ds;
- 	ns->head->nuse = le64_to_cpu(id->nuse);
-@@ -2211,6 +2334,10 @@ static int nvme_update_ns_info_block(struct nvme_ns *ns,
- 	if (!nvme_init_integrity(ns->head, &lim, info))
- 		capacity = 0;
++	put_disk(part->bd_disk);
++	bdev_drop(part);
+ }
  
-+	lim.max_write_streams = ns->head->nr_plids;
-+	if (lim.max_write_streams)
-+		lim.write_stream_granularity = ns->head->runs;
+ static int part_uevent(const struct device *dev, struct kobj_uevent_env *env)
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 4ca3449ce9c9..02a3d58e814f 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -74,6 +74,13 @@ struct block_device {
+ #ifdef CONFIG_SECURITY
+ 	void			*bd_security;
+ #endif
 +
- 	ret = queue_limits_commit_update(ns->disk->queue, &lim);
- 	if (ret) {
- 		blk_mq_unfreeze_queue(ns->disk->queue);
-@@ -2313,6 +2440,8 @@ static int nvme_update_ns_info(struct nvme_ns *ns, struct nvme_ns_info *info)
- 			ns->head->disk->flags |= GENHD_FL_HIDDEN;
- 		else
- 			nvme_init_integrity(ns->head, &lim, info);
-+		lim.max_write_streams = ns_lim->max_write_streams;
-+		lim.write_stream_granularity = ns_lim->write_stream_granularity;
- 		ret = queue_limits_commit_update(ns->head->disk->queue, &lim);
- 
- 		set_capacity_and_notify(ns->head->disk, get_capacity(ns->disk));
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 8cea8416b0d2..f10aa0cb6df5 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -493,6 +493,10 @@ struct nvme_ns_head {
- 	struct gendisk		*disk;
- 
- 	u16			endgid;
-+	u16                     nr_plids;
-+	u16			*plids;
-+	u64			runs;
++	/*
++	 * Allow assigning write streams to partitions.
++	 */
++	unsigned short		bd_part_write_streams;
++	unsigned short		bd_part_write_stream_start;
 +
- #ifdef CONFIG_NVME_MULTIPATH
- 	struct bio_list		requeue_list;
- 	spinlock_t		requeue_lock;
+ 	/*
+ 	 * keep this out-of-line as it's both big and not needed in the fast
+ 	 * path
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 9fda66530d9a..bb0921e642fb 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1242,7 +1242,7 @@ static inline unsigned int bdev_max_segments(struct block_device *bdev)
+ static inline unsigned short bdev_max_write_streams(struct block_device *bdev)
+ {
+ 	if (bdev_is_partition(bdev))
+-		return 0;
++		return bdev->bd_part_write_streams;
+ 	return bdev_limits(bdev)->max_write_streams;
+ }
+ 
 -- 
 2.45.2
 

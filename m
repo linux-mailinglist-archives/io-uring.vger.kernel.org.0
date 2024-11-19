@@ -1,74 +1,74 @@
-Return-Path: <io-uring+bounces-4805-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4806-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328469D1DBA
-	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 02:59:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8119D1DE6
+	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 03:02:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC66A2827F1
-	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 01:59:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA785B20B54
+	for <lists+io-uring@lfdr.de>; Tue, 19 Nov 2024 02:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AE213211A;
-	Tue, 19 Nov 2024 01:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2126F29406;
+	Tue, 19 Nov 2024 02:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jFjVyyuj"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="b6yIDOZt"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA72137745
-	for <io-uring@vger.kernel.org>; Tue, 19 Nov 2024 01:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8B8179A7
+	for <io-uring@vger.kernel.org>; Tue, 19 Nov 2024 02:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731981558; cv=none; b=U126NRrKW8LcK8leKV9hNvb4LcafdqrH+7CcbtcTql1L8Oak3k2gm64RCQ3Ay/KJKCiBDy9ZQnpjhle5Y9uArYu9tl4pAPlCcAtUAnEI5jJqvbtdYLAO+6JW5UXCpmZlS6Cv3NVz97GaW/5u/T4riZrpju9g8ctAQsQ1s/SVSmU=
+	t=1731981727; cv=none; b=rx6mSGRJEONblREhayzszv2o7GhLhLFZr07jVtTeTX6ckYSUA6Qbgg+fI86ROhrENJU2C3y1og0mEt0fJ5lOhuME8trud1bXBPUG3bis5P/Wzw8VyJne7k1MRcYdHcDn8qwTPapfJyMKj694BypD5s343cO6sMQVeSmqJdayfuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731981558; c=relaxed/simple;
-	bh=ZfjlXjPwI9E2F3PcahXxbSADEwmj11F4UvKrPvQzKPs=;
+	s=arc-20240116; t=1731981727; c=relaxed/simple;
+	bh=I/5dN8O6i56fb0YGwK2szdKDK2UAP8QlNENuCCnzxv0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XIIyqv5ZWg66qPSpOu+3nyv5Fp9O95gltYwZBWBS8eR1T69xjEFQGZz+JA+k/p9aymoZbC0EsrlNfce5BDnW+01pabEyUJRwCJegyQSMdqsOa9YHdb7+wWeydIa07fbSX3idjNfurBD7n6iSN2z/upH8GNXfPbjexOl3kW2O8Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jFjVyyuj; arc=none smtp.client-ip=209.85.210.169
+	 In-Reply-To:Content-Type; b=o5ErUUbR4Sf5DBK4VdGyNCs3BbXF+PRP4teYFsfoi33KZ46Zi6geKsskoFtOTP+7sP5egckcZxACPwgmMxsdt1YzslDDC/dql/Rsjk1Wisb44zvOVtT/YvrYg42CbaEJ1F3GMjAJhfhjgoYA31QHhzH+lV4McvVSnUxpY/1O1OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=b6yIDOZt; arc=none smtp.client-ip=209.85.215.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7240d93fffdso3058326b3a.2
-        for <io-uring@vger.kernel.org>; Mon, 18 Nov 2024 17:59:13 -0800 (PST)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7f8c7ca7f3cso2865076a12.2
+        for <io-uring@vger.kernel.org>; Mon, 18 Nov 2024 18:02:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731981553; x=1732586353; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731981724; x=1732586524; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HJqdU9lCfeBWxQySZ5P5WBVC+iT4zBQwxuILvtFzzAk=;
-        b=jFjVyyujlSUl1LIX/1CfhdVt3B2Ix421LC2Uuwk0Yvp/BA0rFp+OCIKtOypqHekhmQ
-         Nf24Xt+tMszWiQZy4UaQpGdQDCHoGdXgvQ9Aw9WtC8vga7VXJ2xpc+AwuqOEJxobOvQS
-         wv8bFE06VZVW5zgZMoUaig8llQacv3wAztTLC0Ak+Ghfko1b0NTNZJwv1VSABHjnLtpM
-         1nWgV7dLig4DjFJgMAdJF80CXjDcySv9BVQnZv8ZJQCIz1Y+x+87CMfDUPwy12aJmFYX
-         RkFk9+T/kf/IEij7PeEk0XVuQFbLB73ovr41ssw3NV3tOvloH9sLCZ/UQW/WmCHxnsaP
-         TT5Q==
+        bh=BvCpgtDczM8fTWqbMLtasOe9kYB99UTUC1x+m0DkqVw=;
+        b=b6yIDOZtGQPJtkuzYpqBtWv0RGTnce92wdT3RtF378r9gXMdpBDTP6iVOWCDEvcFGH
+         wwikTk4RXDAWH//WxmJea7okn6pUHUfT5+rW/GF8aO6knI/j3hGKF4QfFIkJNFZN0JJt
+         gm5NjvGYAg1e092bYlrqtDkWJA0xN0QOv1RkoksVZq+yf1MW5fzhuiOlZeOH/K7Vzhex
+         BCnpkA1vM5nGo8XZUKPiSUzOPayIujsNhemklE+m3BpX0c6M02yuz9LRkwvlOeYWpyZx
+         vw5UwCB68puBZ8IETt/kymxTO+1YzqJ+3zdjlpg66bGXUObnpTuaVH5lgdflxUHykMbj
+         PFsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731981553; x=1732586353;
+        d=1e100.net; s=20230601; t=1731981724; x=1732586524;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HJqdU9lCfeBWxQySZ5P5WBVC+iT4zBQwxuILvtFzzAk=;
-        b=S8dNnwpw8uIam2PObB4ok8CInBt6F/x85v5cu2ruIqPw2e8XjOJa7mMntjuOBVkgYw
-         9v+KXWYLxU/p2UfOap2PxOFlMKTIQH4ETJQBnOegpJFf2I/HVfG4xpX7Q3DyyDflCV29
-         +IP8TJUiLDMjs7pbEx1Inl4AF8jo+WYbHqPsJVq7gGbF/8aWK+DUqImZf1SK+XfFAWuM
-         WWhyy30gAmVGDYqrbnTPxcZ0y9ww1ywJDS9kX6KU/3EsJ2XSPmAOgaoDB8dKwPsbANoT
-         XAxesYgsmtse8tFZ70SuAUX9lZrRntHywzB/CyHdchTkt6NDI6cHBOODxKnL9bUORVNZ
-         CVZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXlsejQPINM/CH6mcBJMzcfC9Zfgp45HjZ9orKIbMnLSKto5Jtk8ZcSxwxNjWHWzjZGVcVOv/JPA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2WrhMXEU1MDtB4hbB7nAzSsy7px3B4adJpMO7EnPt0D4l4nxd
-	wpdyOyYlyLJbyMKfdBC20caAP5CJbvq3IEpInikZNK0NBjOBb0ihWj4oUjr+roo=
-X-Google-Smtp-Source: AGHT+IHd8K7uGTXOyJQvw9Z/DCg/GOf+FEE9Bck5wSRQcvn4fkG2viVrnOGFZhYkrLI7Dontc+OVXA==
-X-Received: by 2002:a05:6a20:2d22:b0:1db:e329:83f5 with SMTP id adf61e73a8af0-1dc90b23e29mr23475637637.14.1731981553354;
-        Mon, 18 Nov 2024 17:59:13 -0800 (PST)
+        bh=BvCpgtDczM8fTWqbMLtasOe9kYB99UTUC1x+m0DkqVw=;
+        b=UwJozOclpu6vsSgQPiejU0ThWsCDJ1bjSmdB5DV3ZThLenQfmqFsHVlhBR5XBZTc04
+         d0wAziPvMqmI4xgEwZ9i6ClhAGaEodZJ8TYanl7ZVn7Fb1ViRuZ6BdbGfFn33NEIyfmy
+         wREGFNdp0D4UXyaxzMk05S7rZUC9u3kZ61h1HJG4eo2PI0eh9G5soZ6NtT7v/6mTfn0x
+         ZG7xhIhFAC02qA2m16qFFcEkiUsT5DY+UqFRmmDmjgwIm9xPogO78Z1rd99nYkBlfnqi
+         cLKzps4f0iv/b9uV5SOq3xwuTJU6hrjf0rZoWDAlK19SrHYshBx9wQdrztk1nK2sFYHj
+         QvXw==
+X-Gm-Message-State: AOJu0YyiP+hIKlKphyca9mIqC0iF3DiLzcgFzfbNwRa7QGZWJtJuSgtr
+	ix9faQTEIbrYLJE1UTEH0LQOvWRK5y443dnEIbGp8ijmKUgd2Prj6mGos5PmsbkxOZu8/iFKQry
+	pmVI=
+X-Google-Smtp-Source: AGHT+IGy1dB8wlWBopdRVmT8HKf90+Shvl4Qg2WxkHrpIMV1MdiSjDEYM3IG0yHvzVAUPCsfVtqD5w==
+X-Received: by 2002:a05:6a21:9993:b0:1d9:261c:5943 with SMTP id adf61e73a8af0-1dc90b233b0mr19917483637.10.1731981723866;
+        Mon, 18 Nov 2024 18:02:03 -0800 (PST)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea5832e629sm3456224a91.23.2024.11.18.17.59.12
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1dade0esm6571652a12.66.2024.11.18.18.02.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 17:59:12 -0800 (PST)
-Message-ID: <278a1964-b795-4146-8f24-19f112af75b0@kernel.dk>
-Date: Mon, 18 Nov 2024 18:59:11 -0700
+        Mon, 18 Nov 2024 18:02:02 -0800 (PST)
+Message-ID: <4e679f16-7da9-47c7-959c-d4636e5117b2@kernel.dk>
+Date: Mon, 18 Nov 2024 19:02:01 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -76,67 +76,36 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] io_uring: prevent reg-wait speculations
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc: jannh@google.com
-References: <fd36cd900023955c763bd424c0895ae5828f68a0.1731979403.git.asml.silence@gmail.com>
- <0dfd1032-6ddd-49b3-a422-569af2307d3b@kernel.dk>
- <d5e9c79f-d571-4f3a-9145-f7e349e532ae@gmail.com>
+Subject: Re: [PATCH 1/9] io_uring: Fold allocation into alloc_cache helper
+To: Gabriel Krisman Bertazi <krisman@suse.de>, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org
+References: <20241119012224.1698238-1-krisman@suse.de>
+ <20241119012224.1698238-2-krisman@suse.de>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <d5e9c79f-d571-4f3a-9145-f7e349e532ae@gmail.com>
+In-Reply-To: <20241119012224.1698238-2-krisman@suse.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/18/24 6:43 PM, Pavel Begunkov wrote:
-> On 11/19/24 01:29, Jens Axboe wrote:
->> On 11/18/24 6:29 PM, Pavel Begunkov wrote:
->>> With *ENTER_EXT_ARG_REG instead of passing a user pointer with arguments
->>> for the waiting loop the user can specify an offset into a pre-mapped
->>> region of memory, in which case the
->>> [offset, offset + sizeof(io_uring_reg_wait)) will be intepreted as the
->>> argument.
->>>
->>> As we address a kernel array using a user given index, it'd be a subject
->>> to speculation type of exploits.
->>>
->>> Fixes: d617b3147d54c ("io_uring: restore back registered wait arguments")
->>> Fixes: aa00f67adc2c0 ("io_uring: add support for fixed wait regions")
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>> ---
->>>   io_uring/io_uring.c | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>> index da8fd460977b..3a3e4fca1545 100644
->>> --- a/io_uring/io_uring.c
->>> +++ b/io_uring/io_uring.c
->>> @@ -3207,6 +3207,7 @@ static struct io_uring_reg_wait *io_get_ext_arg_reg(struct io_ring_ctx *ctx,
->>>                end > ctx->cq_wait_size))
->>>           return ERR_PTR(-EFAULT);
->>>   +    barrier_nospec();
->>>       return ctx->cq_wait_arg + offset;
->>
->> We need something better than that, barrier_nospec() is a big slow
->> hammer...
-> 
-> Right, more of a discussion opener. I wonder if Jann can help here
-> (see the other reply). I don't like back and forth like that, but if
-> nothing works there is an option of returning back to reg-wait array
-> indexes. Trivial to change, but then we're committing to not expanding
-> the structure or complicating things if we do.
+On 11/18/24 6:22 PM, Gabriel Krisman Bertazi wrote:
+> diff --git a/io_uring/alloc_cache.h b/io_uring/alloc_cache.h
+> index b7a38a2069cf..6b34e491a30a 100644
+> --- a/io_uring/alloc_cache.h
+> +++ b/io_uring/alloc_cache.h
+> @@ -30,6 +30,13 @@ static inline void *io_alloc_cache_get(struct io_alloc_cache *cache)
+>  	return NULL;
+>  }
+>  
+> +static inline void *io_alloc_cache_alloc(struct io_alloc_cache *cache, gfp_t gfp)
+> +{
+> +	if (!cache->nr_cached)
+> +		return kzalloc(cache->elem_size, gfp);
+> +	return io_alloc_cache_get(cache);
+> +}
 
-Then I think it should've been marked as a discussion point, because we
-definitely can't do this. Soliciting input is perfectly fine. And yeah,
-was thinking the same thing, if this is an issue then we just go back to
-indexing again. At least both the problem and solution is well known
-there. The original aa00f67adc2c0 just needed an array_index_nospec()
-and it would've been fine.
-
-Not a huge deal in terms of timing, either way.
-
-I suspect we can do something similar here, with just clamping the
-indexing offset. But let's hear what Jann thinks.
+I don't think you want to use kzalloc here. The caller will need to
+clear what its needs for the cached path anyway, so has no other option
+than to clear/set things twice for that case.
 
 -- 
 Jens Axboe

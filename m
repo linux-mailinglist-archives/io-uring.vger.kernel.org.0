@@ -1,84 +1,84 @@
-Return-Path: <io-uring+bounces-4885-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4886-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C3969D43D7
-	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 23:15:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E069D43D8
+	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 23:15:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C6471F22B43
-	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 22:15:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF733B23700
+	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 22:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B171BC9F7;
-	Wed, 20 Nov 2024 22:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74571802DD;
+	Wed, 20 Nov 2024 22:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="bqqiJkL6"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="PNg6y3GG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7904B1802DD
-	for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 22:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E31413C3D3
+	for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 22:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732140898; cv=none; b=BLnuf+Mxja4wcp0gJ8GbPhNM7MT7wg/tLQ7ii9zIyq6Wlqia3stmon8K51A544na95lK9Kw3hriCNdVo+Rg1/x3X7cvPNTsqo1NZzc2T+aCulr6TditaVal3GQ6eTD2ov9F7CBCQLvgXT7LJ7IerQdyfFhZC1gQwkLyUFoQ0aE4=
+	t=1732140899; cv=none; b=E0UJlPeWTX58juCvY99ebwKepSOZ01i2j6OJz3wBAzmgcxONtIbi2/BZzGZlyCwjo8CsO/O54DXCpoEXvUIGb5T2hDsVaaO2FNBpdQDRW5l9uz6PiWtfYz5pddZuQ8gsT5u6eElHX4e8KS2B3fRukCM3By4BXjacyUNOaMIzITU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732140898; c=relaxed/simple;
-	bh=YGPGFiFWDBXHdtj/i1vaxr1Yts6u74gPz2TFtBG06Jc=;
+	s=arc-20240116; t=1732140899; c=relaxed/simple;
+	bh=0L672kBSX3QwnyGap8Jjf0ZzME04VkgJwp3olpFRJ8g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZB92sXCDvSbhgFQT1610Efw0BKNolxHENbSMb/j1oC48ZImAjQesFoKm2bDe1jtjDB5xHYkdqUnRupui7GuQCxxh7KXWee+Xsu5egCDEnZxZxSEKzsb2RyKQbJLxAZrUxkYbuwTVJaTsFushVgli+hHAyWxOk2JSp+4xXuMB9wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=bqqiJkL6; arc=none smtp.client-ip=209.85.215.172
+	 MIME-Version; b=ZS8IcwS+DfEJ0GGt0qVwTt8X78dzeD+vlgL0gmQaQn8fSM/A8P/x4I/vS90pXi6/3QwDvWuG1UJTOC+kQD1aTVgob21B8I+BpTzNReYME9GqRsxAzjNdJ8yImyDQTG+BF/CPm2/4fgKOY7EJNTQGmg4yksP2sIatZ21rysyJPDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=PNg6y3GG; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7f71f2b136eso250606a12.1
-        for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 14:14:56 -0800 (PST)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7f8cc29aaf2so208183a12.3
+        for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 14:14:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1732140896; x=1732745696; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1732140897; x=1732745697; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vzbyVcjfNk/Lt/lVuCnnDLI2/P5nIpS8qvfpCpAujlI=;
-        b=bqqiJkL6N5DZKto9TeOThrs+OQCS+ReLMJFeFH/s9eS9/LzTcEAuQxmEbXSNeSRVEQ
-         FsOXFcecT7aQOpDaFg3HI7WMnJn7BdihOIIkBaD9mGxDifVkHKVwwuGQW/TVnzjVb6mB
-         WZV11ANPTBy88AlCRUQ8yXWjLSQ/ibuZxGAmymgF+7FQEW4k7oayLfOXE+WZSA29iwUR
-         hSFwTY18P+ndl0mWR9KAhOTe3m8B+qfaCD5NbTEtOHYhgcI0O9uKgHPZ4eS3igAboKIQ
-         k/If3S6Y8ofxqdJFuHSdbvGBFdrqITVsIcrD81+BWked5Ar+/YY982KIuq7dtJxe38dE
-         x7sA==
+        bh=nlTZmi11+GwqGzSy9kTb3NoT1Grn8NSsFFqh6K9C1aM=;
+        b=PNg6y3GGe1tvkOytII8nNdJjQd8NAucNQiy6cspxmoXfZx7Dn+4bKWyEcc15Z3yQgh
+         ovaDHsFEQPsnV785022lfqockRrjYWX0Q4NsX+zX1DCmNf/AbKQ7QVO34RK3tG+mRZCX
+         fIU2H7I87YQ1Ue1cHB1dPb2Oe/Z6uDMonF2GZRpFqqfykhF3EgImiK3WKmt/QmLsf3fl
+         kPuCH96Ey1S6MRx7LmmuDjmPi8i001DM0NgvfXfGNwsBT7wlBSfUmvZu4bcX6z+iCcxc
+         uNCiicIgXHY4KFrG7yJE5fSfImJZE3/EyjW8l5DiKcxTHneM0C3LpApivAkKYa+7FoNl
+         +qnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732140896; x=1732745696;
+        d=1e100.net; s=20230601; t=1732140897; x=1732745697;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vzbyVcjfNk/Lt/lVuCnnDLI2/P5nIpS8qvfpCpAujlI=;
-        b=gu5Rlc09Cc7mhVJiVRp4ODq0M1XFPb0ThQYDQ2/+opYWFwo/4VCcNQ07eMXTa0z0kv
-         hgqWZfI0UHHOLR4blCXkiev4ku/thE0Rdk6LAKqIQ4JCBYuvm9s4MjKrzQX6xfkxcX2r
-         pdwINoExQ+c3uZdRHGHGt/HoshWpY+H87kZpk1wsDzeYoKEu+5JeQr6AmFqNTBPPQo7i
-         gRYysa4rHE6SAHn50iGen7rCsN3Wyx8beu46mXqByRtxxI7Ys9y0DyBiVcT6ZRSUqzTC
-         7gmkxpyi7EqYs/QpDSWLC/FWVHFpbsYEvPGCCHqOS6hCr+Qt8fISUT+dGmllhYCRG7AL
-         b1HQ==
-X-Gm-Message-State: AOJu0Yx01Of7VYbHXbJCDbh8igSMySuVYd0qJ6XQYrhMHn6+OUeQbjA5
-	UAn5dArkYLJ7hGVk3obOI/khu2Wcab+T1cEpmNfzylVe1jhuyTEjWqQb9iiLoeEIaKtyth0HCzy
+        bh=nlTZmi11+GwqGzSy9kTb3NoT1Grn8NSsFFqh6K9C1aM=;
+        b=nH7RKCWy/q3BK/K0MXnwpBMBHfv02ZkqUbD749xONGpA91pnsXaV+In0GD7azqOEOg
+         baNbmhBUIfuAdanavtQb5ihFVC5vZAyT17Mu2dFSOb7TfOj8eOoLk6mBzZ+a6tSFbIp3
+         Ezlia33y9BPe0hlc0ykbN88/LtymI+2ggRLTCJi2VgFQVohEi7QObDgUzywoVFbcFCK+
+         pGe/z7CElfST0IFsnOhCKO7Pj9TiA1LXzaPlj0rFTMbBFQLsa7py1Eu9l1lMCF5ur+cR
+         TgVjid3DYNZgGW1QqizKbeQJY82u0aspWg6wXMWNP2wnadLdcWpPOMARw4545zeeYHUS
+         sUxQ==
+X-Gm-Message-State: AOJu0YxakNc4gq90Uq13bPINxmkE1ePlkk3JbYqc4WeVgVvvjhfPu8qe
+	b2DT6k/koX25V81c9oBAD5ohFrdaERV4s6nXyaxgTN0OiQ0i4QRsy94bUhE05rYryocTQQhMWiS
 	3
-X-Gm-Gg: ASbGnctYeq2TxAOaif5p1pmue37DCWn41mKrz70xQymlBM0tEsq/WKo4GcX8Sa02sH2
-	Njy5NIQm8hikd9IoWKvXkp0Yd2Q96gILMMiONPugArmNf+WdiGvdogwoXMovA4MFawQmQFR4ZHP
-	6MSAGuhEEM4dPswYfUD9q0fbyHC90udOb7u2w8+5awR1xRrO9UQz1hQWQkw+T99T4D2CVNp58UH
-	1MbUaHL66/Wz13NpxFqlyu1ftzZl/Wx7MM=
-X-Google-Smtp-Source: AGHT+IHMUhyai68xmG0fuZqSh/jxTZ8RvFEfg2NbowwfIYjw+QnouQSyXmaIiAXVZYb/2nrEwraDfQ==
-X-Received: by 2002:a05:6a20:4305:b0:1dc:792f:d27c with SMTP id adf61e73a8af0-1ddb0338a82mr5176093637.42.1732140895788;
-        Wed, 20 Nov 2024 14:14:55 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:72::])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbb64f5514sm50719a12.34.2024.11.20.14.14.55
+X-Gm-Gg: ASbGnctz9vkE96Kaqw2W2gaSj11rylGTC0QzU8VcimjaxSF0R7k4/Iz3gNC5oTfSZ7F
+	RgqwFSXwQ/WeUYFrqfqaHPKtOdsco6Kg1I31iocsJWeYnb/24sMoyg0Kty5naohFcVyg3yaW/yz
+	CgHHl9rMc9zDQVOKCyH/jrW8ayvlCT3JDm1nUG4Vt2yEsVms7aaCqKdXUoKoCN6dBr7iAqbJ6PC
+	AN7dVS42zZatcF9Bge65vct2dRtKM3tQ/DfwAlApMg1vJmjOvE4i0w/hAF/smS9G/PCEM4=
+X-Google-Smtp-Source: AGHT+IG+mG9Ia3JUuPCfbjctJXvO1EBDDb55Rk0DK7PuhHttOsfImnobkmWd1aPmqlPFsJcEiwkkDg==
+X-Received: by 2002:a05:6a20:12ce:b0:1db:f732:d177 with SMTP id adf61e73a8af0-1ddaedcbf4fmr6730938637.25.1732140897028;
+        Wed, 20 Nov 2024 14:14:57 -0800 (PST)
+Received: from localhost (fwdproxy-prn-002.fbsv.net. [2a03:2880:ff:2::face:b00c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724bef00cdasm2146769b3a.79.2024.11.20.14.14.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 14:14:55 -0800 (PST)
+        Wed, 20 Nov 2024 14:14:56 -0800 (PST)
 From: David Wei <dw@davidwei.uk>
 To: io-uring@vger.kernel.org
 Cc: David Wei <dw@davidwei.uk>,
 	Jens Axboe <axboe@kernel.dk>,
 	Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH next v1 1/2] io_uring: add io_local_work_pending()
-Date: Wed, 20 Nov 2024 14:14:51 -0800
-Message-ID: <20241120221452.3762588-2-dw@davidwei.uk>
+Subject: [PATCH next v1 2/2] io_uring: limit local tw done
+Date: Wed, 20 Nov 2024 14:14:52 -0800
+Message-ID: <20241120221452.3762588-3-dw@davidwei.uk>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241120221452.3762588-1-dw@davidwei.uk>
 References: <20241120221452.3762588-1-dw@davidwei.uk>
@@ -90,112 +90,135 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for adding a new llist of tw to retry due to hitting the
-tw limit, add a helper io_local_work_pending(). This function returns
-true if there is any local tw pending. For now it only checks
-ctx->work_llist.
+Instead of eagerly running all available local tw, limit the amount of
+local tw done to the max of IO_LOCAL_TW_DEFAULT_MAX (20) or wait_nr. The
+value of 20 is chosen as a reasonable heuristic to allow enough work
+batching but also keep latency down.
+
+Add a retry_llist that maintains a list of local tw that couldn't be
+done in time. No synchronisation is needed since it is only modified
+within the task context.
 
 Signed-off-by: David Wei <dw@davidwei.uk>
 ---
- io_uring/io_uring.c | 14 +++++++-------
- io_uring/io_uring.h |  9 +++++++--
- 2 files changed, 14 insertions(+), 9 deletions(-)
+ include/linux/io_uring_types.h |  1 +
+ io_uring/io_uring.c            | 43 +++++++++++++++++++++++++---------
+ io_uring/io_uring.h            |  2 +-
+ 3 files changed, 34 insertions(+), 12 deletions(-)
 
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 593c10a02144..011860ade268 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -336,6 +336,7 @@ struct io_ring_ctx {
+ 	 */
+ 	struct {
+ 		struct llist_head	work_llist;
++		struct llist_head	retry_llist;
+ 		unsigned long		check_cq;
+ 		atomic_t		cq_wait_nr;
+ 		atomic_t		cq_timeouts;
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 801293399883..83bf041d2648 100644
+index 83bf041d2648..c3a7d0197636 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -1260,7 +1260,7 @@ static void __cold io_move_task_work_from_local(struct io_ring_ctx *ctx)
+@@ -121,6 +121,7 @@
+ 
+ #define IO_COMPL_BATCH			32
+ #define IO_REQ_ALLOC_BATCH		8
++#define IO_LOCAL_TW_DEFAULT_MAX		20
+ 
+ struct io_defer_entry {
+ 	struct list_head	list;
+@@ -1255,6 +1256,8 @@ static void __cold io_move_task_work_from_local(struct io_ring_ctx *ctx)
+ 	struct llist_node *node = llist_del_all(&ctx->work_llist);
+ 
+ 	__io_fallback_tw(node, false);
++	node = llist_del_all(&ctx->retry_llist);
++	__io_fallback_tw(node, false);
+ }
+ 
  static bool io_run_local_work_continue(struct io_ring_ctx *ctx, int events,
- 				       int min_events)
- {
--	if (llist_empty(&ctx->work_llist))
-+	if (!io_local_work_pending(ctx))
- 		return false;
- 	if (events < min_events)
- 		return true;
-@@ -1313,7 +1313,7 @@ static inline int io_run_local_work_locked(struct io_ring_ctx *ctx,
- {
- 	struct io_tw_state ts = {};
- 
--	if (llist_empty(&ctx->work_llist))
-+	if (!io_local_work_pending(ctx))
- 		return 0;
- 	return __io_run_local_work(ctx, &ts, min_events);
- }
-@@ -2328,7 +2328,7 @@ static int io_wake_function(struct wait_queue_entry *curr, unsigned int mode,
- 
- int io_run_task_work_sig(struct io_ring_ctx *ctx)
- {
--	if (!llist_empty(&ctx->work_llist)) {
-+	if (io_local_work_pending(ctx)) {
- 		__set_current_state(TASK_RUNNING);
- 		if (io_run_local_work(ctx, INT_MAX) > 0)
- 			return 0;
-@@ -2459,7 +2459,7 @@ static inline int io_cqring_wait_schedule(struct io_ring_ctx *ctx,
- {
- 	if (unlikely(READ_ONCE(ctx->check_cq)))
- 		return 1;
--	if (unlikely(!llist_empty(&ctx->work_llist)))
-+	if (unlikely(io_local_work_pending(ctx)))
- 		return 1;
- 	if (unlikely(task_work_pending(current)))
- 		return 1;
-@@ -2493,7 +2493,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
- 
- 	if (!io_allowed_run_tw(ctx))
- 		return -EEXIST;
--	if (!llist_empty(&ctx->work_llist))
-+	if (io_local_work_pending(ctx))
- 		io_run_local_work(ctx, min_events);
- 	io_run_task_work();
- 
-@@ -2564,7 +2564,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
- 		 * If we got woken because of task_work being processed, run it
- 		 * now rather than let the caller do another wait loop.
- 		 */
--		if (!llist_empty(&ctx->work_llist))
-+		if (io_local_work_pending(ctx))
- 			io_run_local_work(ctx, nr_wait);
- 		io_run_task_work();
- 
-@@ -3158,7 +3158,7 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
- 		io_run_task_work();
- 		io_uring_drop_tctx_refs(current);
- 		xa_for_each(&tctx->xa, index, node) {
--			if (!llist_empty(&node->ctx->work_llist)) {
-+			if (io_local_work_pending(node->ctx)) {
- 				WARN_ON_ONCE(node->ctx->submitter_task &&
- 					     node->ctx->submitter_task != current);
- 				goto end_wait;
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 4070d4c8ef97..69eb3b23a5a0 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -347,9 +347,14 @@ static inline int io_run_task_work(void)
- 	return ret;
+@@ -1269,37 +1272,55 @@ static bool io_run_local_work_continue(struct io_ring_ctx *ctx, int events,
+ 	return false;
  }
  
-+static inline bool io_local_work_pending(struct io_ring_ctx *ctx)
++static int __io_run_local_work_loop(struct llist_node **node,
++				    struct io_tw_state *ts,
++				    int events)
 +{
-+	return !llist_empty(&ctx->work_llist);
++	while (*node) {
++		struct llist_node *next = (*node)->next;
++		struct io_kiocb *req = container_of(*node, struct io_kiocb,
++						    io_task_work.node);
++		INDIRECT_CALL_2(req->io_task_work.func,
++				io_poll_task_func, io_req_rw_complete,
++				req, ts);
++		*node = next;
++		if (--events <= 0)
++			break;
++	}
++
++	return events;
 +}
 +
- static inline bool io_task_work_pending(struct io_ring_ctx *ctx)
+ static int __io_run_local_work(struct io_ring_ctx *ctx, struct io_tw_state *ts,
+ 			       int min_events)
  {
--	return task_work_pending(current) || !llist_empty(&ctx->work_llist);
-+	return task_work_pending(current) || io_local_work_pending(ctx);
+ 	struct llist_node *node;
+ 	unsigned int loops = 0;
+-	int ret = 0;
++	int ret, limit;
+ 
+ 	if (WARN_ON_ONCE(ctx->submitter_task != current))
+ 		return -EEXIST;
+ 	if (ctx->flags & IORING_SETUP_TASKRUN_FLAG)
+ 		atomic_andnot(IORING_SQ_TASKRUN, &ctx->rings->sq_flags);
++	limit = max(IO_LOCAL_TW_DEFAULT_MAX, min_events);
+ again:
++	ret = __io_run_local_work_loop(&ctx->retry_llist.first, ts, limit);
++	if (ctx->retry_llist.first)
++		goto retry_done;
++
+ 	/*
+ 	 * llists are in reverse order, flip it back the right way before
+ 	 * running the pending items.
+ 	 */
+ 	node = llist_reverse_order(llist_del_all(&ctx->work_llist));
+-	while (node) {
+-		struct llist_node *next = node->next;
+-		struct io_kiocb *req = container_of(node, struct io_kiocb,
+-						    io_task_work.node);
+-		INDIRECT_CALL_2(req->io_task_work.func,
+-				io_poll_task_func, io_req_rw_complete,
+-				req, ts);
+-		ret++;
+-		node = next;
+-	}
++	ret = __io_run_local_work_loop(&node, ts, ret);
++	ctx->retry_llist.first = node;
+ 	loops++;
+ 
++	ret = limit - ret;
+ 	if (io_run_local_work_continue(ctx, ret, min_events))
+ 		goto again;
++retry_done:
+ 	io_submit_flush_completions(ctx);
+ 	if (io_run_local_work_continue(ctx, ret, min_events))
+ 		goto again;
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index 69eb3b23a5a0..12abee607e4a 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -349,7 +349,7 @@ static inline int io_run_task_work(void)
+ 
+ static inline bool io_local_work_pending(struct io_ring_ctx *ctx)
+ {
+-	return !llist_empty(&ctx->work_llist);
++	return !llist_empty(&ctx->work_llist) || !llist_empty(&ctx->retry_llist);
  }
  
- static inline void io_tw_lock(struct io_ring_ctx *ctx, struct io_tw_state *ts)
-@@ -484,6 +489,6 @@ enum {
- static inline bool io_has_work(struct io_ring_ctx *ctx)
- {
- 	return test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq) ||
--	       !llist_empty(&ctx->work_llist);
-+	       io_local_work_pending(ctx);
- }
- #endif
+ static inline bool io_task_work_pending(struct io_ring_ctx *ctx)
 -- 
 2.43.5
 

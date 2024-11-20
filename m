@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-4901-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4902-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72E19D449B
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 00:39:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DD09D449A
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 00:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F95FB21FA5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80813282D7C
 	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 23:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353521C1F12;
-	Wed, 20 Nov 2024 23:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584F91C4A24;
+	Wed, 20 Nov 2024 23:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OW244mQq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dixf142m"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ACB1BC07B
-	for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 23:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8031C304F
+	for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 23:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732145958; cv=none; b=jgfEKe81M1Rzpu0se2WWXW0A/mWl+AGTb7Eb73hzpQNXG2klMpw9HAPFzXt8+WNZ6tb2eJeB+gT4nx7pErcsUt7/FFBrvwNApdFg9H+13GUlEJVlf03X1QHywKO7Ez+YGqKbF3feMzYnxJwhm6RxMlK9fw6Nv+C42vM5YR43OLg=
+	t=1732145960; cv=none; b=mG2uHFyWih4Pt5tcApH0APaXaRiJAqlkm7xbsOJWlVxzowkgQeMMBsr9Xehr/HKV3+wdMTX20UI0e34XAHrzVtN8/mY7z+KOECnqHKnGB9rRoHpcfnxXM/Y16jv99h53HE4y6Nnf/3ieRwvd3eCx7NGSAwkAOmRNjIhACUeBU/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732145958; c=relaxed/simple;
-	bh=X93e4P6TrNChfhJFSS8kzIWDocqiqJKXRoBJmTVTOAM=;
+	s=arc-20240116; t=1732145960; c=relaxed/simple;
+	bh=L2B3JsoWYtc7K/z17sFcQCnlYHwaq7AEdp+VwXjhI0o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WJAaijFS7Wo1SZrMYUpavpzmhZzbte4XMFg0M+d4mwZicOnyhKkHW05GNcJR5njbLEsmuXa5g5qzVwYBwgW8an5Fh90yNSyx86w6fiZ+hK+TCWd4fNykj+WncbOMJjRdvk2j01dsnRPAJNY54dzhFAAozb0bjphT/K0WERzKAz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OW244mQq; arc=none smtp.client-ip=209.85.218.54
+	 MIME-Version; b=r8iLtCp4cslirb18beHIIRrxa6Q8qN8qfFKL/WwXICrGsZkpfe22oBNMz14uDs4nOBmDjQoyv5Fxmw84RxkTaZovhLl4EOlPDl8V2eQFHY8PleQrkf/hGpv90Vo5ta/2dbQXAAOpo4LxWWKbP9cf9DSjp+fcgBdvjC5In5qEomM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dixf142m; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9ed49edd41so53456166b.0
-        for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 15:39:16 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53dcb6f68b1so116927e87.3
+        for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 15:39:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732145954; x=1732750754; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732145956; x=1732750756; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wctm1ym+mS1Y4xYRtSWfz2pW8kjA6AZFpy5byKN9nvA=;
-        b=OW244mQqzZYvjVhyrlNZX5M6Cxj2nrsuhI8LFP1Wt2G8jopUHvoDgqFb0cP/3g/1zb
-         s4Ju53Yi5aGBTD7ewyALEl4H9RNMCgX15HUnvveE9T3C7oOIpQszpcBKBcAiBtHKlTAx
-         PGlRLSPYzNqcPByj3qGcLtbU+bvKFb6Eb7UsV9VDShEUNN7/oAH/xpnJ869ZXcyNrRLE
-         8yqYVfOl/xXsB8nFLN0OqWrt2D/awPPlSKzZ4M043K33C/a5YslaGdXSwRSBe0TCFQVp
-         Qbo4YX9vhmYauWN+qOENFC1R8/67Lgd5pE7uxnBbGx2ziCpE0LV5QJaP2WcNkM18y+Lm
-         Mclw==
+        bh=+eqVQFABLZJJv+bkoApoYkStReOdoYQCm+mvVfO46wk=;
+        b=Dixf142mMt+I/063sOg8gZ61QGQwx8JF5eiQvs5L2MLeXL4Jc5zdFWRl6e1Nqv5hVk
+         anhcxW533RwhU8QoMwsZWtph2je02P92NHfm7q16eCQp0dRMSgM0w242ZBVTyDnSDmvh
+         kx8KusUDhhYzpfn1yaxZ7G8D+9lJQIKs3lO4f6m/Ya7s27g/a88PUX0G36b3sQ6bVltL
+         SJzj73SpiH5CRkSb6UPq+WcWFDT8Ofxe8yZotw/DiMz/uf0wzs7huf5DpT92E8HBzzfS
+         DDhfNLjeW/mbEZDx5capOe7XINa+sJTyapJdOQG2/brTeTowEj/F1GsFVR0qdgp8Lkby
+         3A3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732145954; x=1732750754;
+        d=1e100.net; s=20230601; t=1732145956; x=1732750756;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wctm1ym+mS1Y4xYRtSWfz2pW8kjA6AZFpy5byKN9nvA=;
-        b=msQEZIApbzz+lCnvfyJAXwBQvdwDcEJV+Va4+kLUOSmXL55QoMunaOLQM0AsimlwbV
-         0xKCQyJJCZVLIoLE48sdCsjdFYbteM5Ee4gBaA+2YRB5z3ix6PdAHLqUF3TFGTiOD5IK
-         zWdvxhWXqjg28Hd6CcWwbC3TG1Dl/kknVMuhfgp4iZpDW38zu9daUzQN7RNMoZFRoO2Q
-         qls5knQXro5p//wxn9VQQ0yX5j6Mg3swQ25EyaCaFJap4weuIlQ5+HcvSGxzwomeR1TO
-         t++tX3Q+AQAXzJrCyQ8QBVtWviEGUtI8QIY9T8dhgUeFPe5ZGO583Dz5bvtBpFso/rvc
-         iVdQ==
-X-Gm-Message-State: AOJu0YwAIbMSNtVk+yleJ1c6S7jbkG/APIk/mOrZIMTANh1PXI4wR4cP
-	QQ/flc7tjTLLzmjhBD1qb/LrFidlICVs8jTLJ2LkagPCvKAUZd2KfUnlMA==
-X-Gm-Gg: ASbGncuqrOawWwcS4IIKJAS0rOdq4S/xoN/eoKJiwSDOAwG2qvknqOEDzwqCJg4M8q+
-	9pZGLUoBUG5xD3YzbChVgfi62RdYj5YR0rELPgtNLDKPrL2OvtEF0bzbddm/KSmFO2pHdeKTnlA
-	AAvjf1UcrUcKAZx4QQ5hkU81OE2Yxik2AvdxFkJ3Z0yNMi6D3Ag15UhgoXx3HcqThhuIJ9RPg/F
-	+DKw9hvo3n8N3wFdaRWiuLrRi00sVWsHh0gGcLI7BkCgI5xoxq6OzWhtVdqg6J2
-X-Google-Smtp-Source: AGHT+IF6ojHr7YeOYwFHqfyXJvgsynhEM7aND1VU2+A7a8VLDld5B4aEFjRBhTFhpVe3qQFzbzoT2A==
-X-Received: by 2002:a17:907:3f99:b0:a9e:c947:8c5e with SMTP id a640c23a62f3a-aa4dd749167mr491479666b.57.1732145954222;
-        Wed, 20 Nov 2024 15:39:14 -0800 (PST)
+        bh=+eqVQFABLZJJv+bkoApoYkStReOdoYQCm+mvVfO46wk=;
+        b=lFIm4viGnR8iYzGjwd0wxrG3zlrOcdN497PcWMjubzcR1iA5OrfkmbLs+9swFtGeod
+         p/IyVeP5QkEGnjKN42bGCWArCaYxd9Ok92b/VQ9MPaxlEcquJbq81qGZ35hgOohxzRx/
+         mfnV3b4Uj3NPa16WmjJ9zfslKVK233YhXD2j7jNmY/4/n+wxRQZdU5YRGRi1LVOQEXGS
+         hpAZ54zjoKWxhV+9XH9Rlg6/bo7MG0G50xg3dRxpJY++4gZRVgG4I2ZMQTV3d4DdBHp1
+         nYjwtlUWDuICcAuioD0lk463a+rkA39QaLCNgiI8HmdiSx2hY/ePPdn3MPxm32CYz8fD
+         qCBQ==
+X-Gm-Message-State: AOJu0YzVNUXpw6H43cghqC8+ygXS8W3yj9+kHiU4bRflxI6kGl0TwBw+
+	A0D7w37Ws0T92eTgWv95gphPWEwXRgH/2fJ67GZE7U5b2iq8nHI7fg/owA==
+X-Gm-Gg: ASbGncvcl1G27vrJJVCkVx2yMlcJYLEo8YgLGXcoLu+5kIrF83uqrPIs7TxUZO0DpTU
+	/Q39HFNZIOhz3N360iM/6+QnDbm6XCPh5knq6hvIeOFexaz1h3yhaVHkMjxKlT8Kbg2BG2e+7nR
+	GAzdXkXm3s2XanAfvs0F6ktH7UKHMarqNPCrjXcyqWVRMt3PmOxu+A1YSZDTw2fHuKCYiuLouVL
+	5RaLB+s7T3rBxZs8/x/SUZRjTUvM4CcBsbfJjWIpR8NALGOlhPy+7NnvzBd1Qyq
+X-Google-Smtp-Source: AGHT+IHR60F02KPCqEE0F/4KiXNLNafuOOCQdC0QwkwufuV7ElgmnehKSFb5fnfhRZJQPaZAds/6+A==
+X-Received: by 2002:a05:6512:3a87:b0:539:f93d:eb3d with SMTP id 2adb3069b0e04-53dc1369cbfmr2070679e87.46.1732145955514;
+        Wed, 20 Nov 2024 15:39:15 -0800 (PST)
 Received: from 127.0.0.1localhost ([148.252.141.165])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f418120fsm12544566b.78.2024.11.20.15.39.13
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f418120fsm12544566b.78.2024.11.20.15.39.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 15:39:13 -0800 (PST)
+        Wed, 20 Nov 2024 15:39:15 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH liburing 2/4] test/reg-wait: basic test + probing of kernel regions
-Date: Wed, 20 Nov 2024 23:39:49 +0000
-Message-ID: <8a525a846002b2a899addbae52f922d9034b4257.1731987026.git.asml.silence@gmail.com>
+Subject: [PATCH liburing 3/4] test/reg-wait: add allocation abstraction
+Date: Wed, 20 Nov 2024 23:39:50 +0000
+Message-ID: <75e1f917fa8cec832065e4edc08e2c04644545cf.1731987026.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1731987026.git.asml.silence@gmail.com>
 References: <cover.1731987026.git.asml.silence@gmail.com>
@@ -89,50 +89,139 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- test/reg-wait.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ test/reg-wait.c | 82 +++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 56 insertions(+), 26 deletions(-)
 
 diff --git a/test/reg-wait.c b/test/reg-wait.c
-index 544cd48..9b18ab1 100644
+index 9b18ab1..d59e51b 100644
 --- a/test/reg-wait.c
 +++ b/test/reg-wait.c
-@@ -23,6 +23,8 @@ static const struct io_uring_reg_wait brief_wait = {
- 	.ts.tv_nsec = 1000,
- };
+@@ -67,12 +67,6 @@ err:
+ 	return ret;
+ }
  
-+static bool has_kernel_regions;
-+
- static int test_wait_reg_offset(struct io_uring *ring,
- 				 unsigned wait_nr, unsigned long offset)
- {
-@@ -380,6 +382,27 @@ static int test_regions(void)
- 		return T_EXIT_FAIL;
- 	}
+-static int init_ring_with_region(struct io_uring *ring, unsigned ring_flags,
+-				 struct io_uring_mem_region_reg *pr)
+-{
+-	return __init_ring_with_region(ring, ring_flags, pr, true);
+-}
+-
+ static int page_size;
+ static struct io_uring_reg_wait *reg;
  
-+	rd.flags = 0;
-+	rd.user_addr = 0;
-+	ret = test_try_register_region(&mr, true);
-+	if (ret == -EINVAL) {
-+		has_kernel_regions = false;
-+		goto out;
-+	}
-+	if (ret) {
-+		fprintf(stderr, "test_try_register_region() failed kernel alloc %i\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	has_kernel_regions = true;
-+	rd.flags = 0;
-+	rd.user_addr = (__u64)(unsigned long)buffer;
-+	ret = test_try_register_region(&mr, true);
-+	if (!ret) {
-+		fprintf(stderr, "test_try_register_region() failed uptr w kernel alloc %i\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+out:
- 	munmap(buffer, page_size);
+@@ -407,15 +401,49 @@ out:
  	return 0;
  }
+ 
+-static void *alloc_region_buffer(size_t size, bool huge)
++struct t_region {
++	void *ptr;
++	bool user_mem;
++	size_t size;
++};
++
++static void t_region_free(struct t_region *r)
+ {
++	if (r->ptr)
++		munmap(r->ptr, r->size);
++}
++
++static int t_region_create_user(struct t_region *r,
++				struct io_uring *ring,
++				bool huge)
++{
++	struct io_uring_region_desc rd = {};
++	struct io_uring_mem_region_reg mr = {};
+ 	int flags = MAP_PRIVATE | MAP_ANONYMOUS;
+ 	void *p;
++	int ret;
+ 
+ 	if (huge)
+ 		flags |= MAP_HUGETLB | MAP_HUGE_2MB;
+-	p = mmap(NULL, size, PROT_READ | PROT_WRITE, flags, -1, 0);
+-	return p == MAP_FAILED ? NULL : p;
++
++	p = mmap(NULL, r->size, PROT_READ | PROT_WRITE, flags, -1, 0);
++	if (p == MAP_FAILED)
++		return -ENOMEM;
++
++	mr.region_uptr = (__u64)(unsigned long)&rd;
++	mr.flags = IORING_MEM_REGION_REG_WAIT_ARG;
++	rd.user_addr = (__u64)(unsigned long)p;
++	rd.flags = IORING_MEM_REGION_TYPE_USER;
++	rd.size = r->size;
++
++	ret = io_uring_register_region(ring, &mr);
++	if (ret) {
++		munmap(p, r->size);
++		return ret;
++	}
++	r->ptr = p;
++	r->user_mem = true;
++	return 0;
+ }
+ 
+ static int test_region_buffer_types(void)
+@@ -423,40 +451,42 @@ static int test_region_buffer_types(void)
+ 	const size_t huge_size = 1024 * 1024 * 2;
+ 	const size_t map_sizes[] = { page_size, page_size * 2, page_size * 16,
+ 				     huge_size, 2 * huge_size};
+-	struct io_uring_region_desc rd = {};
+-	struct io_uring_mem_region_reg mr = {};
+ 	struct io_uring ring;
+ 	int sz_idx, ret;
+ 
+-	mr.region_uptr = (__u64)(unsigned long)&rd;
+-	mr.flags = IORING_MEM_REGION_REG_WAIT_ARG;
+-
+ 	for (sz_idx = 0; sz_idx < ARRAY_SIZE(map_sizes); sz_idx++) {
+ 		size_t size = map_sizes[sz_idx];
+-		void *buffer;
++		struct t_region r = { .size = size, };
+ 
+-		buffer = alloc_region_buffer(size, size >= huge_size);
+-		if (!buffer)
+-			continue;
+-
+-		rd.user_addr = (__u64)(unsigned long)buffer;
+-		rd.size = size;
+-		rd.flags = IORING_MEM_REGION_TYPE_USER;
++		ret = io_uring_queue_init(8, &ring, IORING_SETUP_R_DISABLED);
++		if (ret) {
++			fprintf(stderr, "ring setup failed: %d\n", ret);
++			return ret;
++		}
+ 
+-		ret = init_ring_with_region(&ring, 0, &mr);
++		ret = t_region_create_user(&r, &ring, size >= huge_size);
+ 		if (ret) {
+-			fprintf(stderr, "init ring failed %i\n", ret);
++			io_uring_queue_exit(&ring);
++			if (ret == -ENOMEM || ret == -EINVAL)
++				continue;
++			fprintf(stderr, "t_region_create_user failed\n");
+ 			return 1;
+ 		}
+ 
+-		ret = test_offsets(&ring, buffer, size, false);
++		ret = io_uring_enable_rings(&ring);
++		if (ret) {
++			fprintf(stderr, "io_uring_enable_rings failure %i\n", ret);
++			return ret;
++		}
++
++		ret = test_offsets(&ring, r.ptr, size, false);
+ 		if (ret) {
+ 			fprintf(stderr, "test_offsets failed, size %lu\n",
+ 				(unsigned long)size);
+ 			return 1;
+ 		}
+ 
+-		munmap(buffer, size);
++		t_region_free(&r);
+ 		io_uring_queue_exit(&ring);
+ 	}
+ 
 -- 
 2.46.0
 

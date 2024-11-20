@@ -1,113 +1,90 @@
-Return-Path: <io-uring+bounces-4881-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4882-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E4B9D4138
-	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 18:35:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 339AA9D41C6
+	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 19:02:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943B91F22C4D
-	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 17:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A86131F23F4E
+	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 18:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAB519F41C;
-	Wed, 20 Nov 2024 17:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8F21474A5;
+	Wed, 20 Nov 2024 18:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLUzD5nA"
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="kP6se4X/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BE35588F;
-	Wed, 20 Nov 2024 17:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A1012FF69;
+	Wed, 20 Nov 2024 18:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732124119; cv=none; b=UM8Tvb4m+MTC6hH3cTgWq7RFY+d9w/BckATGR0pPhmHJwMTWEKmR/YkxIOtuWWYDU64+fwWmxoJ2uyPNA6swrKsDzw3JZ4H5z1vBvCo4riZ/P9vzDPHndBPbm/9D/jp0oVJ1lYGHMraXSzqwP79qW+ZzqFvf5mZEL4Ydgzcsans=
+	t=1732125771; cv=none; b=bEgsAvpu03CUNaU3fuKlLHnkRxR/QLHE9qSPkgh1813SPAmFOA2SHmUfy2UCiAj3LlWDFwdw16OYCbknwZJKoIML+bCZ/aIHPc/gZDX9PtDBc4PeegE3ERuwn1SLb7wU+fmVykvq/5eOxJRX4/SS0ZoibA8VkOjo3ozQyfycGrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732124119; c=relaxed/simple;
-	bh=zhUb1iqG0sWlDdOWsUtyWjkBDoFZXFk2BYB6s8NvcW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Doq+ohvoMauTE1lmgRIdbUQCuKghJdNNzGmNWXFSyBFbb5FqwC4anCSPbweV2FqNGhgF0gyi5L/vRXES4z1qkaFSEg2x3YsxhEGQJ+in9nHdYrCfIebdVconhKLrmE6dRY3ivtih4lDJlYWCM0km42A4pf9JSVR6YHbVDwfB8cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLUzD5nA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9551EC4CECD;
-	Wed, 20 Nov 2024 17:35:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732124118;
-	bh=zhUb1iqG0sWlDdOWsUtyWjkBDoFZXFk2BYB6s8NvcW0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LLUzD5nAaUwl9vXY+3MQc8Sg4ssq4q4ByVc9JI2Y4n+Yt1kif7fKNsX1iw9qBALKd
-	 jrOIX3vDsp2ybevJ8zF9wEi7L09s4rgIFxHzejp/m2+yh18lWnuoB2Svmu6jQL7+t3
-	 QaBtG50OgjyjfvpbeVJZEVrcnLl8m7cob922A4sdXGTs0c9gELvbboSE2ZPMBQFesP
-	 vOAuV4FlMssmc2SFpWEdfqFsTjNPns8SGxD9Mz+ig/gbJCVrIRii6cssEsFwAuBu8J
-	 DKV3AkQ36KcBvFxleA+LPG4qjhOdljCjhPqKIrXpezWXIJDntBVMJMsZ/6yd6cO5t+
-	 kb0lafconi9CQ==
-Date: Wed, 20 Nov 2024 09:35:17 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, Christoph Hellwig <hch@lst.de>,
-	Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk,
-	kbusch@kernel.org, martin.petersen@oracle.com,
-	anuj1072538@gmail.com, brauner@kernel.org, jack@suse.cz,
-	viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
-	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
- and PI support
-Message-ID: <20241120173517.GQ9425@frogsfrogsfrogs>
-References: <20241114104517.51726-1-anuj20.g@samsung.com>
- <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
- <20241114104517.51726-7-anuj20.g@samsung.com>
- <20241114121632.GA3382@lst.de>
- <3fa101c9-1b38-426d-9d7c-8ed488035d4a@gmail.com>
- <ZzeNEcpSKFemO30g@casper.infradead.org>
+	s=arc-20240116; t=1732125771; c=relaxed/simple;
+	bh=sdW1ywqzef0DiPcYn4D+cJXKXJdd8fJAVTgMxJQcrok=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rWdHfNCXv42ngtgEqYK6L3rjT2XNSArkW1G6AyvwNtXZ6M4BDkv+a2Y0oWj4E6aPwZemb7Nsvb1Q8UK+WcjW8FbulDXGlpjZwrv/8feCyxTR5H/SOCVbdow4ytBklBLDZFFV+OBFPB7qdno5/ZFlng6s030V1d5e9Mz5O2HOhSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=kP6se4X/; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1732125047;
+	bh=sdW1ywqzef0DiPcYn4D+cJXKXJdd8fJAVTgMxJQcrok=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=kP6se4X/MYCnWvDfI3TBNLuGUC0edJq/nYQAEvTwAxtQOOEXff8ECn4CNZ4tXvSDY
+	 1e9yiTxjsq9nVY4YzrGh46I+1gi/MHw5FrC7LM4ZUxJzDPPX/Xz0q/iLRD844O3jc7
+	 sNfWtNhYjQjhIMmav/JFtu13pDSeya9rbWlRgh2s=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 650B1401F3; Wed, 20 Nov 2024 09:50:47 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 62C9C401F0;
+	Wed, 20 Nov 2024 09:50:47 -0800 (PST)
+Date: Wed, 20 Nov 2024 09:50:47 -0800 (PST)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+    Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+    Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Roman Gushchin <roman.gushchin@linux.dev>, 
+    Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
+    Pavel Begunkov <asml.silence@gmail.com>, Mike Rapoport <rppt@kernel.org>, 
+    Christian Brauner <brauner@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
+    Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>, 
+    linux-mm@kvack.org, io-uring@vger.kernel.org, linux-m68k@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
+In-Reply-To: <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz>
+Message-ID: <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
+References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org> <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzeNEcpSKFemO30g@casper.infradead.org>
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Nov 15, 2024 at 06:04:01PM +0000, Matthew Wilcox wrote:
-> On Thu, Nov 14, 2024 at 01:09:44PM +0000, Pavel Begunkov wrote:
-> > With SQE128 it's also a problem that now all SQEs are 128 bytes regardless
-> > of whether a particular request needs it or not, and the user will need
-> > to zero them for each request.
-> 
-> The way we handled this in NVMe was to use a bit in the command that
-> was called (iirc) FUSED, which let you use two consecutive entries for
-> a single command.
-> 
-> Some variant on that could surely be used for io_uring.  Perhaps a
-> special opcode that says "the real opcode is here, and this is a two-slot
-> command".  Processing gets a little spicy when one slot is the last in
-> the buffer and the next is the the first in the buffer, but that's a SMOP.
+On Wed, 20 Nov 2024, Vlastimil Babka wrote:
 
-I like willy's suggestion -- what's the difficulty in having a SQE flag
-that says "...and keep going into the next SQE"?  I guess that
-introduces the problem that you can no longer react to the observation
-of 4 new SQEs by creating 4 new contexts to process those SQEs and throw
-all 4 of them at background threads, since you don't know how many IOs
-are there.
+> >
+> > Fixes: aaa736b186239b7d ("io_uring: specify freeptr usage for SLAB_TYPESAFE_BY_RCU io_kiocb cache")
+> > Fixes: d345bd2e9834e2da ("mm: add kmem_cache_create_rcu()")
+> > Reported-by: Guenter Roeck <linux@roeck-us.net>
+> > Closes: https://lore.kernel.org/37c588d4-2c32-4aad-a19e-642961f200d7@roeck-us.net
+> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>
+> Thanks, will add it to slab pull for 6.13.
 
-That said, depending on the size of the PI metadata, it might be more
-convenient for the app programmer to supply one pointer to a single
-array of PI information for the entire IO request, packed in whatever
-format the underlying device wants.
+Note that there are widespread assumptions in kernel code that the
+alignment of scalars is the "natural alignment". Other portions of the
+kernel may break. The compiler actually goes along with this??
 
-Thinking with my xfs(progs) hat on, if we ever wanted to run xfs_buf(fer
-cache) IOs through io_uring with PI metadata, we'd probably want a
-vectored io submission interface (xfs_buffers can map to discontiguous
-LBA ranges on disk), but we'd probably have a single memory object to
-hold all the PI information.
+How do you deal with torn reads/writes in such a scenario? Is this UP
+only?
 
-But really, AFAICT it's 6 of one or half a dozen of the other, so I
-don't care all that much so long as you all pick something and merge it.
-:)
-
---D
 

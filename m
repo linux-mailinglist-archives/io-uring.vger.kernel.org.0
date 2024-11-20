@@ -1,73 +1,74 @@
-Return-Path: <io-uring+bounces-4853-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4854-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C269D31FF
-	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 03:05:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5AD9D3210
+	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 03:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D35FB23593
-	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 02:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3372D1F23C24
+	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 02:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD443D76;
-	Wed, 20 Nov 2024 02:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D340A42A93;
+	Wed, 20 Nov 2024 02:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xui+m+KU"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="H2u79SPO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2FA1B95B
-	for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 02:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A7C1E485
+	for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 02:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732068306; cv=none; b=sZDWku3wq85PA90Ya8LRvLFsMkAs1JlZfYlGcTFf9V070Lo/KkSEqEkgRORZzS5k8lE+Uq6tOiTHfPmWFKmv3e/T9pt9RFcjAmTUFP9BIrjktAU4RUHWPyxtlJAUY1r4nnYg5KOzmArHWp8cMhCSBDCBeoLkA2xeRidjldBVVl8=
+	t=1732068546; cv=none; b=ebPdh7BXou+4ICC/R6DUm6HxxwUd2PC18Mhhm/6pSpCs4WSuwWf6Kh2sKQ5VRkbsr6yqD3Ps4AMCNRWF4E7rgOXeqNTkbIw7JFmc6FTnkN3LeGY7ZgcXels2pTL3zQc8BPl4S5CU+iEiwjYePsBM+Pttu/9WRZnC9a6+W53hyYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732068306; c=relaxed/simple;
-	bh=0mbREAYeAzyXEqliHjgt/9CkIZjs9XkaZhBnFR68Ii4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=LITJWOdf8Pz3Ob1K+kyBCKvQE9Wx7AyOjrGWjLZWDopw7FQ8xLcKXJM6XMLSx1+lzmPjc+Qe4rPJwH/OgktvTqnjrom4YR35c6j74bDlmEoGuudpJIrLPp0c+vxCK2DtO/ruD7EBKFjhn8vvkxfObBuJvyRDgLugT6N+IVftBkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xui+m+KU; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1732068546; c=relaxed/simple;
+	bh=5GVhUiPvRQDQUwe/tKJCOsnyD7A0Clmez3Qq8pNgWT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Uu8vS0GImp/kxgfo8Zpf9tbWgFNb+HEr5u6fVEhnc9yEh0ENRFaCVnB/2rTAuV5KARDd1JaT2sqmeLIIaRCm0VO0ehekkMCsnZHuSqVEv6IzqZRyT+BWybULmmx0Z98aZ9NiVfJaOR6dxhDJEfX9FfojJJ20KT0iwtqBBa5hAag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=H2u79SPO; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21210fe8775so3040795ad.1
-        for <io-uring@vger.kernel.org>; Tue, 19 Nov 2024 18:05:04 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21210eaa803so32382235ad.2
+        for <io-uring@vger.kernel.org>; Tue, 19 Nov 2024 18:09:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732068303; x=1732673103; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rp1gu/xCHDO+McGdeXQtBg7OwBGC/gkLP9/1W9uRP3s=;
-        b=xui+m+KUU6Sf+3FohOK2WyZ62BtyQGTvs0qEKB4L+C6BjsOQL29EztGQWHjtJYS3W4
-         RYbALPrQS1Lu8HXuwCUSwkQsxtFck3dAQWD4YqfrFI3uE4b4dyE2SyraSrigbB+gOj2d
-         AC6P8ELWEngYU7R9mQIrjc+U5Bhbt+yPCmKMliFE3egnebpl49M+u7HWSpsza83GwaKA
-         W5X4wUim2bHmFr8JO+c4AuoTisVT6t74CCwD0/skAB2do9pT7xISIgdWy8iomQz6wfqo
-         rfpS1nl1VhfIjGyYgwMq0q5RD3Prz+p+uCIo2PIT6ZHJ6X+uSWiD5yU+TKFp9fsYzKEQ
-         j3+A==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732068544; x=1732673344; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2h82quloITTdBUdVp6tDUqoe9w3KkmGAGNei0et3wPM=;
+        b=H2u79SPO93/viTbDz0BMtSLbAL3G1sThSs2zYVrSJoeUGNxnBCCdGYIG1boGuBBlP5
+         PrLqcwuvN06ZXCKSQfRVKxkLAe4VS5XJh4aMdifIYOvAIuEtyZqC6FrSp6mfiAOXpad0
+         IkYIijIsqv0LmSKHModSDbKpYe/GMqq78wRTT8CTnmgE3aai9SdbKkIP6KE3utX4+tlO
+         fDQYyyRcR3EDp5l05i3npDdWk9aYW6NQ2yhWqf9znJ3bWEe+yKezFjRLnP3i37aTwIP2
+         o35eYULMslvzo8hlZGdDqFH3A9PFZYUQVGYR00+AznjOh/MjPyNAJdJdHhKJzSNQsINp
+         WI9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732068303; x=1732673103;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Rp1gu/xCHDO+McGdeXQtBg7OwBGC/gkLP9/1W9uRP3s=;
-        b=NXRm8CGBl0xWS5Uz+lIXWdd/E0XivaAuVQIzfvg/PcRHJvJl+PCGDrq5Sn9it72197
-         wMBY9ksuW6of6X8UYEhTenqlv0dstXk6Z0ewV5AY6RXL54I4W4jmWsyzJLgvgd+75maP
-         pf60aqFraVXPNM5sOFMtg4Jv2kC9m1prbLWz9kkL/Ez/3XxGNuxSCOseePXusQ1mroNi
-         sVP0O3jcFfC6S+wNhniFb5jXPa64g8CGjwk3c18nxC8lY3zCd5ThoC7fhae9VtIzpeuG
-         RQpc3uguw4VY4lJUCvb6P6BQDXWcok+m5yTmbzrIlERxvlo20M9Z2Ge+vJM8ESmPQwsJ
-         j2Ww==
-X-Gm-Message-State: AOJu0YyX7ZLFHFs3nM1Rq2cxuy12QqrNIt3sRobw9pzsQ4pkvWnT9VOp
-	Qk4BnVj2dOXAcLxKoFj1J/cnk/9nYeCNoP62/Q2n9RaE7F0JAnbzdBm+c8No3vfk+oPiah9AjXh
-	hkSY=
-X-Google-Smtp-Source: AGHT+IGbkFkpMdrWc87vQN8wGWQmYZo9ZqX9i66dPsHKFGhh1lDU/3oHap6RgWOcgxB1VTngVwBKpw==
-X-Received: by 2002:a17:903:32cf:b0:212:3f36:d983 with SMTP id d9443c01a7336-21269e95910mr16877955ad.27.1732068303178;
-        Tue, 19 Nov 2024 18:05:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732068544; x=1732673344;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2h82quloITTdBUdVp6tDUqoe9w3KkmGAGNei0et3wPM=;
+        b=O9yZmAj6gHdquex2BQ82CNhrkL5zX9YnafDmQkCoSn4Yd3VXRf38zJCC3LbdsdvSFK
+         wqeh0rptcsECXEBzvZqRjcF8bMM+yDhlz7QgdWcCE+g0j87BDm2uwUkx2TOFqrj3Bneu
+         z+3YMCWDBuZNNCXxLsbbs6OHWJCJ3M11eseCzeOfOuGpR61Uq5F5ngr81PZCzGNHABXY
+         CqlS0dogoqicCFaX0eTuPmAv8yqM51X+1Ngrs/FNslaXWpiRfvz6BIiwiOO6ct2kOgDW
+         n1RszF3cgA5a3ePuUioFilnl6gKk2ZicEWaWpYBn0vH04i+uKZsP+F9M1a0dRTxp75MJ
+         97KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXA4TFBLWDITESa2QEoea9EEJ5JurnO8cJ5OmYLuruq/Ka9T8hLvieBZb423A6zQR8u2QrgBvKGsA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/S9ZWe3HMcdJQNW2hsGbJwyuk9PmoCz8Mva1jCIaC5raHt8wL
+	V+nSQYIMJjcsbbdPLLp2L1mwPyezbfiQ9SMrdh2jBu1vhSNzJJhiQ95dkBmHGcU=
+X-Google-Smtp-Source: AGHT+IHGETfVsy25zpRmx32L3XEHtj0O2ZxDzWIQvXLyEqX4QEn/jJ2LWs5f/389WJTc5gyEYfhJiA==
+X-Received: by 2002:a17:903:2ace:b0:206:96bf:b0cf with SMTP id d9443c01a7336-2126a287eb6mr18660715ad.0.1732068544153;
+        Tue, 19 Nov 2024 18:09:04 -0800 (PST)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212549e4b50sm19293645ad.147.2024.11.19.18.05.02
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21259f208b6sm17151955ad.267.2024.11.19.18.09.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 18:05:02 -0800 (PST)
-Message-ID: <fe73d557-8c4f-4ad7-88c3-92a598efe4e5@kernel.dk>
-Date: Tue, 19 Nov 2024 19:05:01 -0700
+        Tue, 19 Nov 2024 18:09:03 -0800 (PST)
+Message-ID: <07b133f5-4352-4c1a-bbc9-d1e881c96781@kernel.dk>
+Date: Tue, 19 Nov 2024 19:09:02 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -75,68 +76,79 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] WARNING in __io_uring_free
+To: syzbot <syzbot+cc36d44ec9f368e443d3@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <673c1643.050a0220.87769.0066.GAE@google.com>
 Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring: add separate freeptr type for slab
+In-Reply-To: <673c1643.050a0220.87769.0066.GAE@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-io_uring: add separate freeptr type for slab
+On 11/18/24 9:38 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    cfaaa7d010d1 Merge tag 'net-6.12-rc8' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13005cc0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=cc36d44ec9f368e443d3
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-cfaaa7d0.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/63eae0d3e67f/vmlinux-cfaaa7d0.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/6495d9e4ddee/bzImage-cfaaa7d0.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+cc36d44ec9f368e443d3@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 16 at io_uring/tctx.c:51 __io_uring_free+0xfa/0x140 io_uring/tctx.c:51
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.12.0-rc7-syzkaller-00125-gcfaaa7d010d1 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:__io_uring_free+0xfa/0x140 io_uring/tctx.c:51
+> Code: 80 7c 25 00 00 74 08 4c 89 f7 e8 a1 8a 49 fd 49 c7 06 00 00 00 00 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 37 ad df fc 90 <0f> 0b 90 e9 6a ff ff ff e8 29 ad df fc 90 0f 0b 90 eb 84 e8 1e ad
+> RSP: 0018:ffffc900004279b8 EFLAGS: 00010246
+> RAX: ffffffff84b53cd9 RBX: ffff88804fc3b8e0 RCX: ffff88801b7e8000
+> RDX: 0000000000000100 RSI: 0000000000000000 RDI: ffff88801f058000
+> RBP: 0000000000000001 R08: ffffffff8154d881 R09: 1ffff11003e0b005
+> R10: dffffc0000000000 R11: ffffed1003e0b006 R12: dffffc0000000000
+> R13: 1ffff11003e0b120 R14: ffff88801f058900 R15: ffff88804fc3b800
+> FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00005594393ad338 CR3: 000000000e734000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  io_uring_free include/linux/io_uring.h:31 [inline]
+>  __put_task_struct+0xd5/0x290 kernel/fork.c:975
+>  put_task_struct include/linux/sched/task.h:144 [inline]
+>  delayed_put_task_struct+0x125/0x300 kernel/exit.c:228
+>  rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+>  rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+>  handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
+>  run_ksoftirqd+0xca/0x130 kernel/softirq.c:927
+>  smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
+>  kthread+0x2f0/0x390 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
 
-A previous commit used io_kiocb->work as the free pointer space. Which
-is completely fine, but apparently m68k does odd alignment and the
-struct ends up being 2-byte aligned rather than 4-byte aligned.
+I had to click the report to see that it's using forced memory failure
+allocations to trigger this. But with that in mind, I still didn't see
+what the issue was. I guess I'll take a look when a reproducer exists,
+but don't think there's much afoul here due to the usage of fault
+injection.
 
-Add a union around io_kiocb->work, and add a specific freeptr_t type in
-there to be used for slab. Mark it as needing sizeof(type) alignment, to
-force m68k to do so. On anything normal, this won't change sizing or
-alignment at all.
-
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-Fixes: aaa736b18623 ("io_uring: specify freeptr usage for SLAB_TYPESAFE_BY_RCU io_kiocb cache")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index aa5f5ea98076..91efc7e6bf3f 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -673,7 +673,16 @@ struct io_kiocb {
- 	struct io_kiocb			*link;
- 	/* custom credentials, valid IFF REQ_F_CREDS is set */
- 	const struct cred		*creds;
--	struct io_wq_work		work;
-+
-+	/*
-+	 * Use separate freeptr for slab, but overlay it with work as that
-+	 * part is long done by the time the request is freed. Due to an m68k
-+	 * quirk, ensure it's aligned to at least the size of the type.
-+	 */
-+	union {
-+		struct io_wq_work	work;
-+		freeptr_t		freeptr __aligned(sizeof(freeptr_t));
-+	};
- 
- 	struct {
- 		u64			extra1;
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index da8fd460977b..4bf25b9e5105 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3813,7 +3813,7 @@ static int __init io_uring_init(void)
- 	struct kmem_cache_args kmem_args = {
- 		.useroffset = offsetof(struct io_kiocb, cmd.data),
- 		.usersize = sizeof_field(struct io_kiocb, cmd.data),
--		.freeptr_offset = offsetof(struct io_kiocb, work),
-+		.freeptr_offset = offsetof(struct io_kiocb, freeptr),
- 		.use_freeptr_offset = true,
- 	};
- 
 -- 
 Jens Axboe
-
 

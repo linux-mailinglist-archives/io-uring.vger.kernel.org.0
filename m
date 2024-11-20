@@ -1,143 +1,115 @@
-Return-Path: <io-uring+bounces-4883-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4884-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B209D41DA
-	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 19:11:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F34C19D43D6
+	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 23:15:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D3CC1F2293B
-	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 18:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FCD2834CE
+	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 22:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7454819E97F;
-	Wed, 20 Nov 2024 18:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EA819D078;
+	Wed, 20 Nov 2024 22:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V5+GQoE9"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="nxx2c3dq"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4066A1E515;
-	Wed, 20 Nov 2024 18:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8A913C3D3
+	for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 22:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732126275; cv=none; b=Mzy5s954nHX57icZ7SLDqH5aiIW6P+/fa9A4nbjvXuOgmSMwl3+mDbIHxeFsnbx411lGdw/hZ9IzS2cXx2c0190A6Q0Stm4Qr4GE9qehPNbUmmtfEEx00764TB4E6E/Uwb5IxaBms6YKS3i8OJMDtbaPe8p5raK6FwzrA2njRuc=
+	t=1732140896; cv=none; b=MqUwLXuq9dlE57H5q8roPBgdLcf1c9kFq+yi7tEwoi7WHUrjX6Q9NvMTVQgB+YJBNNFY11k+GiHIpkLF9XooUj7zmK3j+qvWcfqjv7USF/cSwWMYVNDwHCN33ZxSHPseDhih08V7GZIQ3jgW5Fo3WY3/jQ489WW2KcA2nUxMcqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732126275; c=relaxed/simple;
-	bh=4KW8uGBjK8rnCZMWN0tePYGPLCRfhRqH20IFPcBM49M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cI6yt/aVZFSw/yGczpQwO0S24ML5XVS8oQ4V/+O0e9A7CHwi6BHXkZVBVrqQrLbB8wrsqvyHDKJ1H3lozeNKF1gimabiOa0roKughnLjQZ9GlJa6zbnS7uzdF1/FXetlHQi8oz44ylqIDX+/4o00hhWyBKdnpOCAsZacbIW98mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V5+GQoE9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 132BEC4CECD;
-	Wed, 20 Nov 2024 18:11:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732126274;
-	bh=4KW8uGBjK8rnCZMWN0tePYGPLCRfhRqH20IFPcBM49M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V5+GQoE9ZvQgP5hlFV2GTtIY/O4uH/c404WeWL9Tu4jciPU9OXkj6dLrNwqWMTAeh
-	 ezgg8TpP0M/qsIK7ofAI/svqEyJX6ciEs3pT9FcYeUemxShye00mM8O+RXIQ9W6Hw7
-	 zFOZOGJYGotCtFk/XyieCmJJuAv73Wed6lYtvdrOJ9kzRnrVo1CLfMM/8791dUmeJA
-	 MbCXkHSOOsYlm03MSm/eRM5a1H60Ou3W+euM0f2xRVXaTP5M1JlZDENCAPShluXnSq
-	 9ZLn9Kigpy/cvCyj9iKoQ8eim//N0vlqPXNuAxnQ7WYK+wxFfqYROSF8Yhg5G2hzJ7
-	 /7qJGjyyVgJbQ==
-Date: Wed, 20 Nov 2024 11:11:12 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
-	Pierre Labat <plabat@micron.com>,
-	Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@meta.com>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-	"asml.silence@gmail.com" <asml.silence@gmail.com>,
-	"javier.gonz@samsung.com" <javier.gonz@samsung.com>
-Subject: Re: [EXT] Re: [PATCHv11 0/9] write hints with nvme fdp and scsi
- streams
-Message-ID: <Zz4mQGrlKMiPa8NH@kbusch-mbp>
-References: <ZzNlaXZTn3Pjiofn@kbusch-mbp.dhcp.thefacebook.com>
- <DS0PR08MB854131CDA4CDDF2451CEB71DAB592@DS0PR08MB8541.namprd08.prod.outlook.com>
- <20241113044736.GA20212@lst.de>
- <ZzU7bZokkTN2s8qr@dread.disaster.area>
- <20241114060710.GA11169@lst.de>
- <Zzd2lfQURP70dAxu@kbusch-mbp>
- <20241115165348.GA22628@lst.de>
- <ZzvPpD5O8wJzeHth@kbusch-mbp>
- <20241119071556.GA8417@lst.de>
- <20241120172158.GP9425@frogsfrogsfrogs>
+	s=arc-20240116; t=1732140896; c=relaxed/simple;
+	bh=yiQdMKXrUNCQLBoVsduPJrT39hxxCNRNPvqaUq5xRs8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lPZiHZ8Tsk6KDgPxCpgy3YWbOM6wHe5lYO3ikUP5A2trxFNNLokW5fZjsEU/wSj3tjR8KjoL8RyVL2/jasGNt6ptSwt4Rkh33GMV2tCVlh6bb0eC5IWDZHbotX795G8Qyzw2nLgpmA9SNMlA8sfCKD0jPGD4HVYnPmbXbcTcjUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=nxx2c3dq; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea8c4ce232so306185a12.0
+        for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 14:14:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1732140894; x=1732745694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gTT2EwTl4Zc8GmHImqk6R/mxtFeX1RyQwHV+zzXarEs=;
+        b=nxx2c3dq1KKvnftigavRcx0+tlhlP4V4qnePjKaZaQeaUbTKDW48ALfLpna6Xb4c21
+         zdxEWXhQuvqPvVXqAGLa6pKjnZouIJoS2R8tcWgz+sWnE8Rb8AJK1k//BlKdHgalo9hK
+         tIQ5Slr0AWhxfWEVhVXpo0FQOV0dhoElvmaKEMwzkGX9olyPpavt9yHg2lxiHon0H4BR
+         cSzxLu7OwvvDdlQB3JAULrRy89n9UnPFCGvS+8B7MGCRhX9wXmA+rgJwqnK6H+OOwjkI
+         PeZF1XT48fcV+lGTgJa5YF70Ply7n8yoK+2WKK3InFrDlXoBf+P70PAn441HPJzZf9j1
+         X0Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732140894; x=1732745694;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gTT2EwTl4Zc8GmHImqk6R/mxtFeX1RyQwHV+zzXarEs=;
+        b=nf0tGGcaEfSBu8LrhpjOjucPvZ2vifTwg8IhapviT7hNhUpsT8S87EUFxDjivEeXpX
+         fGxZM6PhN7RaNCyW72J8jJKWUyVLhDtVa1MlAYXfyDiTx82KyDwczpP26+Gp8dvq8TsJ
+         71Hj8IIwvVDf7frAj1RMBzV2dyw8RX2CbxKlHEBHRWuLQ48JpBr6qwVWEN24AMN9R9dB
+         ZVxSIV2QWnRTZ9k5Fk8bxAX9iPu6bqmhcU0zyHXb5LnBPgb254j/YyShgKHf/kkfnHB6
+         05jws6XKh8lR5uZbTJC6e7NvB940QgI9GacP1/0goiNbV6Yu+z5l0n/qhu8lRI6k7/HB
+         cI7A==
+X-Gm-Message-State: AOJu0Yy2NTYAQdZQQtYnKEkEVXYDZef9extei7uuR+5M7AGZ+ufSlNNz
+	Yzf8GQFY9DiQ4F/TKiTmBtPlmrcyZza2a3SIKQTKi41s5abSO8ourtn0My8DkNVc6HXwOq5I0da
+	6
+X-Gm-Gg: ASbGncu1Gp27L+o9V/LLdw188d5bxoWvEdppop3rlR11ngnZU0TnM7KFsan7QvNzkSV
+	OVh7LUc2/wPs33khaP83Gt3iEg9+oBny5lEc64Ma6gkGfbueN+l/S9h4Vl6ebay+fOLNebSGMwB
+	2aRdxzrCwItMhbr/U6NKPSCe4gytr91c/0kc1WeQXuVEtP34QwWJXoWdtTtN1qkVWSP+gXboE8J
+	/roUeqIbmYyEn+Fc8z5NLssit5vGTTT9LTN3iIbnCOvQWGivuqooWeij3llCsVUGqUf5wwl
+X-Google-Smtp-Source: AGHT+IGIImdwRP9igpfBocD7/oFbzJVbYRGHskEa+K9glftYOdUc1Dz9bnO5WlNM00QldS45ZIgAHQ==
+X-Received: by 2002:a05:6a20:8410:b0:1db:eb5b:be50 with SMTP id adf61e73a8af0-1ddae1043a2mr6632156637.4.1732140894509;
+        Wed, 20 Nov 2024 14:14:54 -0800 (PST)
+Received: from localhost (fwdproxy-prn-017.fbsv.net. [2a03:2880:ff:11::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbb64e0f7bsm51801a12.8.2024.11.20.14.14.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 14:14:54 -0800 (PST)
+From: David Wei <dw@davidwei.uk>
+To: io-uring@vger.kernel.org
+Cc: David Wei <dw@davidwei.uk>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH next v1 0/2] limit local tw done
+Date: Wed, 20 Nov 2024 14:14:50 -0800
+Message-ID: <20241120221452.3762588-1-dw@davidwei.uk>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120172158.GP9425@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 20, 2024 at 09:21:58AM -0800, Darrick J. Wong wrote:
-> 
-> How do filesystem users pick a write stream?  I get a pretty strong
-> sense that you're aiming to provide the ability for application software
-> to group together a bunch of (potentially arbitrary) files in a cohort.
-> Then (maybe?) you can say "This cohort of files are all expected to have
-> data blocks related to each other in some fashion, so put them together
-> so that the storage doesn't have to work so hard".
-> 
-> Part of my comprehension problem here (and probably why few fs people
-> commented on this thread) is that I have no idea what FDP is, or what
-> the write lifetime hints in scsi were/are, or what the current "hinting"
-> scheme is.
+Currently when running local tw it will eagerly try and complete all
+available work. When there is a burst of work coming in, the list of
+work in work_llist may be much larger than the requested batch count
+wait_nr. Doing all of the work eagerly may cause latency issues for some
+applications that do not want to spend so much time in the kernel.
 
-FDP is just the "new" version of NVMe's streams. Support for its
-predecessor was added in commit f5d118406247acf ("nvme: add support for
-streams")
+Limit the amount of local tw done to the max of 20 (a heuristic) or
+wait_nr. This then does not require any userspace changes.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f5d118406247acfc4fc481e441e01ea4d6318fdc
+Many applications will submit and wait with wait_nr = 1 to mean "wait
+for _at least_ 1 completion, but do more work if available". This used
+to mean "all work" but now that is capped to 20 requests. If users want
+more work batching, then they can set wait_nr to > 20.
 
-Various applications were written to that interface and showed initial
-promise, but production quality hardware never materialized. Some of
-these applications are still setting the write hints today, and the
-filesystems are all passing through the block stack, but there's just
-currently no nvme driver listening on the other side.
+David Wei (2):
+  io_uring: add io_local_work_pending()
+  io_uring: limit local tw done
 
-Contrast to the older nvme streams, capable hardware subscribing to this
-newer FDP scheme have been developed, and so people want to use those
-same applications using those same hints in the exact same way that it
-was originally designed. Enabling them could be just be a simple driver
-patch like the above without bothering the filesystem people :)
- 
-> Is this what we're arguing about?
-> 
-> enum rw_hint {
-> 	WRITE_LIFE_NOT_SET	= RWH_WRITE_LIFE_NOT_SET,
-> 	WRITE_LIFE_NONE		= RWH_WRITE_LIFE_NONE,
-> 	WRITE_LIFE_SHORT	= RWH_WRITE_LIFE_SHORT,
-> 	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
-> 	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
-> 	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
-> } __packed;
-> 
-> (What happens if you have two disjoint sets of files, both of which are
-> MEDIUM, but they shouldn't be intertwined?)
+ include/linux/io_uring_types.h |  1 +
+ io_uring/io_uring.c            | 57 +++++++++++++++++++++++-----------
+ io_uring/io_uring.h            |  9 ++++--
+ 3 files changed, 47 insertions(+), 20 deletions(-)
 
-It's not going to perform as well. You'd be advised against over
-subscribing the hint value among applications with different relative
-expectations, but it generally (but not always) should be no worse than
-if you hadn't given any hints at all.
- 
-> Or are these new fdp hint things an overload of the existing write hint
-> fields in the iocb/inode/bio?  With a totally different meaning from
-> anticipated lifetime of the data blocks?
+-- 
+2.43.5
 
-The meaning assigned to an FDP stream is whatever the user wants it to
-mean. It's not strictly a lifetime hint, but that is certainly a valid
-way to use them. The contract on the device's side is that writes to
-one stream won't create media interfere or contention with writes to
-other streams. This is the same as nvme's original streams, which for
-some reason did not carry any of this controversy.
 

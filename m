@@ -1,77 +1,77 @@
-Return-Path: <io-uring+bounces-4892-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4893-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40529D4487
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 00:33:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48BA49D4488
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 00:33:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4D68283362
-	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 23:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CBAC283429
+	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 23:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E761C8773;
-	Wed, 20 Nov 2024 23:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ABC1BC068;
+	Wed, 20 Nov 2024 23:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X/LfyBht"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FpRQYszL"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DAD1C8306
-	for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 23:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39B51C8317
+	for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 23:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732145593; cv=none; b=lOSb13rA20dz/85iU0tavh/dukzjSMudlGpdmj26fTPjaW0tlGdynRtF5FdH+ycnYPKOYoI+ng1R2mDUtzIszNkD7xvqRuIQSS/Z8DEo9Cx2C11FWvouLuxbHKT33Di+73tc3D2IngJX8FSE9suN3pOOhm1YErQywuJ0q83uVnQ=
+	t=1732145594; cv=none; b=f+MTige8hpQG6Llw1MSgA4wyYB8DQzO9OdiNWeO3oUcEY3GG5huBQeT6H5yx+ip236/ZafjTwaiCSAuzhq5VNHGZSOPVoLqSgdFe3HS9F3csq2HWXdpCcpnURoRgNjnJA57omhfNt9NRPC8WBTnlfwBnRvuqzNOfvfeoLFBxcYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732145593; c=relaxed/simple;
-	bh=A/BG30k4dPSYeGyQ9WWlDhGgvjjruOFJ2EsBN5g0230=;
+	s=arc-20240116; t=1732145594; c=relaxed/simple;
+	bh=dujS0aFvz1kY8S8u3h9P118Wqvzr24FydnRRbGhqzO0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ClwketkB/jP0xAWNGJF7GpmH6NdXbqEsbZdqSNu8B3b9HkDbs4tTZPK4fAyXjzO0DvZGwuKQnlmoR9hxeElAIPpIqt///P48POV6M9zFNg5Dhc+TfFijvkdr+oOao4c144cejx7i+f9yhXQ7ylQYD8ig3YczjspfFWyndtfolXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X/LfyBht; arc=none smtp.client-ip=209.85.218.50
+	 MIME-Version; b=bpdRR+N6GBxyALf/5NRmjUyVJJ/ViV8baABVqiOYEcqLDsH68RdcFmWFqGY1RqfP8WUYXpOWZQ7dqw4iSn57iYwR7QkfJw/XmsaL53d3z9MJHPjISvVhzbDDwXcFv13fd5vMsOJzUkZIHQNc/3U60AoXIG7yoYdtCAAq1AHhrJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FpRQYszL; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9eb3794a04so31272266b.3
-        for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 15:33:11 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so421983e87.2
+        for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 15:33:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732145590; x=1732750390; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732145591; x=1732750391; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5cQnp+lrUnHITWCsKfUZMU+VFdBNN5rUz4oDhu1P1PU=;
-        b=X/LfyBhtExzLE4fS1ZP1Y+l0mvEbIcTXl0NK+FtPGBFpIaleNwLxJw4qV0/ie3BXst
-         kHAPlW/fCt0LHz8ACRjrHsOzakH4w9BHakFbWuTbV82Z8gEA1RaUbXyBWIDNSXHIKer0
-         Vlt59v5RxGBNx1O5HnJpb5VceNjEpxapcAMjQRDzH34Lf++xoSn4uiWlFUev4bXNZLWr
-         Th+IK15HCCcq0ptBGKWXpzMQIqJgyO0PuhR5VPejo7LDjATE7xb4Afggo2kXQSAWjIa9
-         bU9jp/0YFSl/dyqTWO8Z5y0aL0e9Qq7kLUMgzMDOYl/aFRj109uF5TKiB3sFNpdc3bsA
-         yf7g==
+        bh=sPuIWteBXaKyE6IW5ybcaZa+VOFWSvl/ffKsXytsJvI=;
+        b=FpRQYszLLTq1CYSDLrHKIhA1lqQesgGs0Fn1rd/PqZAFv+UhieLXGl9Ac0wRqEqqoK
+         fBop1xpCQb5scnPxdUxpOkr3mYQmKHbJeSN3SYNTfOLKCmdkoHeVNdOm1c5m92Wr0Hnu
+         BilwTYWhh6mkiAszJX7OPAbKLMOGmJvmwSqISogLfdAdf1kc/8MAud46AknvfGoh45C/
+         EGtzFhuydwNNo2NS53JxXhxdUKEf09PfRfS2HkJW4kBvpZwfDepNfOsFl5b5+4wz0aYO
+         YJP+MY6MDxHVCDsuQ3UmvYQgcRX74RVvKEeubayDNMpAu+MT2fP36oh+yNTMJdCqX9TW
+         5gAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732145590; x=1732750390;
+        d=1e100.net; s=20230601; t=1732145591; x=1732750391;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5cQnp+lrUnHITWCsKfUZMU+VFdBNN5rUz4oDhu1P1PU=;
-        b=pdkFTYhNvz8v9xAtyiosl+/zJpkjm9CIYu04YQmONOw04wpiedb2A3wWyHJa6wP7N/
-         Km/fv7Cf1Lo78bJplI8PoDgnZBVhpG81kgN2TuIeMsUM8OVusJolQFsp8NnqhRp6uJ2F
-         Ws7QFq3hxtmx8jfGdol8nyLkFScILKd24f94v81Nkr61Dc1VQMfdt7u3t3EXrr7cqh0e
-         22sfhPl2Iqtty0q4pgEC7SZ1Wnw57w2z/sm9qxRNhwSZOwOzKap6ZlpuFy2D+tYJaIwy
-         xaA5VHqgsrMs+JfqN+YkxutjXWn2wxL/LHZeTl73INHrliLI8hsHXWXMKtRNC/TYha8v
-         D1Dw==
-X-Gm-Message-State: AOJu0YzfvnJ8IVsaqfcnwnx+UmfchOUrzyohkHZcC0fit1/a3o+6rwzu
-	Q54MRHB083/mX3KtnC51L8w7f/A+ueIXaenNMIXGo3NFe0CNxiZZ2z6jTw==
-X-Google-Smtp-Source: AGHT+IHkPqIIRFu+8WyF3Vi5l/fSSbPN75nthpEilp1VBi0CJiLpfWRWgdYbYNxS1cgcLhWjfNJ4rg==
-X-Received: by 2002:a17:907:9493:b0:a99:5234:c56c with SMTP id a640c23a62f3a-aa4dd59f50bmr463269566b.33.1732145589768;
-        Wed, 20 Nov 2024 15:33:09 -0800 (PST)
+        bh=sPuIWteBXaKyE6IW5ybcaZa+VOFWSvl/ffKsXytsJvI=;
+        b=LynOsmyfIRNswODdLlBX8F/7Pkr3xePV2l9egs0Qo4ro1tlN59l5cTCVhjBxmQtFVZ
+         7rm5iRi7oWlDffd3E+3h878Psb5wTMnxz1rrsM/QjnRNXwWVwGnSrDsfqL4p750fztqZ
+         rTdJD3A8orMmybw6/9MX/cK7OK4r3E0XJxgsuli9XwZUF+lUFNH9OT2gm89g8aZJ/m2L
+         t43b1F64ONjuZXenBuFeSEvy5QPnqO0dSnPwIdFhqtfY89YuoOzReXPxmWDJuWSYcRDZ
+         RMu0kmDeHZawn7OD8ctSB4Rp9ggCewIBIAF29KL4FHrbzsahwMTASqidWORAYNd5TAsf
+         uHIA==
+X-Gm-Message-State: AOJu0YwQGYgqcQhCyk27zOG97ZlWJAVsTiO2ghkUj6LF5m1Hk5Tq16SX
+	lzxt6BlcoICxxyipCKL2vV8cE8FIEiniJTLR5g79d/bdL9fsW0CcrCl8ug==
+X-Google-Smtp-Source: AGHT+IGmEUH2UNo3QdR9ZYnpzXS+DgKxoCUTT5UrXeJpfsQYbYO7ZNEpJ+aWSz2Gors6s/8AnfI8Ig==
+X-Received: by 2002:a19:6b19:0:b0:53d:c3aa:e4ef with SMTP id 2adb3069b0e04-53dc3aae78emr2639633e87.31.1732145590645;
+        Wed, 20 Nov 2024 15:33:10 -0800 (PST)
 Received: from 127.0.0.1localhost ([148.252.141.165])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f415372bsm12166066b.13.2024.11.20.15.33.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 15:33:09 -0800 (PST)
+        Wed, 20 Nov 2024 15:33:10 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 05/11] io_uring/memmap: account memory before pinning
-Date: Wed, 20 Nov 2024 23:33:28 +0000
-Message-ID: <ba7a2fa8c75ac048a06fee6a316f914f97549761.1732144783.git.asml.silence@gmail.com>
+Subject: [PATCH 06/11] io_uring/memmap: reuse io_free_region for failure path
+Date: Wed, 20 Nov 2024 23:33:29 +0000
+Message-ID: <626c9711e8facbac2d80f1852763e61d9668de1b.1732144783.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1732144783.git.asml.silence@gmail.com>
 References: <cover.1732144783.git.asml.silence@gmail.com>
@@ -83,54 +83,63 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move memory accounting before page pinning. It shouldn't even try to pin
-pages if it's not allowed, and accounting is also relatively
-inexpensive. It also give a better code structure as we do generic
-accounting and then can branch for different mapping types.
+Regions are going to become more complex with allocation options and
+optimisations, I want to split initialisation into steps and for that it
+needs a sane fail path. Reuse io_free_region(), it's smart enough to
+undo only what's needed and leaves the structure in a consistent state.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/memmap.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ io_uring/memmap.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
 diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index f76bee5a861a..cc5f6f69ee6c 100644
+index cc5f6f69ee6c..2b3cb3fd3fdf 100644
 --- a/io_uring/memmap.c
 +++ b/io_uring/memmap.c
-@@ -243,17 +243,21 @@ int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
- 	if (check_add_overflow(reg->user_addr, reg->size, &end))
- 		return -EOVERFLOW;
- 
--	pages = io_pin_pages(reg->user_addr, reg->size, &nr_pages);
--	if (IS_ERR(pages))
--		return PTR_ERR(pages);
--
-+	nr_pages = reg->size >> PAGE_SHIFT;
- 	if (ctx->user) {
+@@ -220,7 +220,6 @@ void io_free_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr)
+ int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
+ 		     struct io_uring_region_desc *reg)
+ {
+-	int pages_accounted = 0;
+ 	struct page **pages;
+ 	int nr_pages, ret;
+ 	void *vptr;
+@@ -248,32 +247,27 @@ int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
  		ret = __io_account_mem(ctx->user, nr_pages);
  		if (ret)
--			goto out_free;
-+			return ret;
- 		pages_accounted = nr_pages;
+ 			return ret;
+-		pages_accounted = nr_pages;
  	}
++	mr->nr_pages = nr_pages;
  
-+	pages = io_pin_pages(reg->user_addr, reg->size, &nr_pages);
-+	if (IS_ERR(pages)) {
-+		ret = PTR_ERR(pages);
-+		pages = NULL;
-+		goto out_free;
-+	}
-+
+ 	pages = io_pin_pages(reg->user_addr, reg->size, &nr_pages);
+ 	if (IS_ERR(pages)) {
+ 		ret = PTR_ERR(pages);
+-		pages = NULL;
+ 		goto out_free;
+ 	}
++	mr->pages = pages;
++	mr->flags |= IO_REGION_F_USER_PINNED;
+ 
  	vptr = vmap(pages, nr_pages, VM_MAP, PAGE_KERNEL);
  	if (!vptr) {
  		ret = -ENOMEM;
-@@ -268,7 +272,8 @@ int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
+ 		goto out_free;
+ 	}
+-
+-	mr->pages = pages;
+ 	mr->ptr = vptr;
+-	mr->nr_pages = nr_pages;
+-	mr->flags |= IO_REGION_F_VMAP | IO_REGION_F_USER_PINNED;
++	mr->flags |= IO_REGION_F_VMAP;
+ 	return 0;
  out_free:
- 	if (pages_accounted)
- 		__io_unaccount_mem(ctx->user, pages_accounted);
--	io_pages_free(&pages, nr_pages);
-+	if (pages)
-+		io_pages_free(&pages, nr_pages);
+-	if (pages_accounted)
+-		__io_unaccount_mem(ctx->user, pages_accounted);
+-	if (pages)
+-		io_pages_free(&pages, nr_pages);
++	io_free_region(ctx, mr);
  	return ret;
  }
  

@@ -1,126 +1,111 @@
-Return-Path: <io-uring+bounces-4863-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4864-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33BA9D3B1C
-	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 13:51:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D38579D3D63
+	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 15:19:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18243B220AF
-	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 12:50:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B32BB2E11B
+	for <lists+io-uring@lfdr.de>; Wed, 20 Nov 2024 14:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2491DFEF;
-	Wed, 20 Nov 2024 12:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87CE1AA1FC;
+	Wed, 20 Nov 2024 14:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LpmCIM6x"
 X-Original-To: io-uring@vger.kernel.org
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C846719D894
-	for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 12:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA321A2C25
+	for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 14:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732107005; cv=none; b=Q642B00T299hMy1v2ISfp8efRW8df8sNDSj/hZMPKVCUxzXuE3WlqD5ZF+KuPwn1fyDHhFVrXcYnUo3tx0OXBIMQWZEKAsNhoh+45d4Q2TR99MBuC0GIxFO4VbtVLJHjZGeuAv/XX2K65+K+ePF+Mh7zAbTRHvZxWebKeo2BdkU=
+	t=1732112028; cv=none; b=LcpE3YsNpEEHLMxMqRIaeOciUT0ObXZPwlh048QF41Yf+6zKDaFL03EBoSzBDsEbOFFhCu0aabx7ipE6g0XCNAxhzyz6Ab7DSCq/QJrMXVD2c8iZo8MdI3TgX75IGenZcJTQUzg2V956PhOQa3lhXlfJJRaPlZHwMybj8clvHzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732107005; c=relaxed/simple;
-	bh=jS7aMpa63T45yjLrS+R35Cy/TD0V6z13wR4ZGFUUcdQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GwSFtwGvw5tVW6ayrm8F91Wj4uAFn8eJZ41+NYaPvrvk8tNT3mwoWr2tCLbB3kyqT/UhteYvY3ULiSYTeFMpZBvmb2M2Jw9bkfROf+TPvs9PmiQKckId5Ep4vIRH0DTS02mjOXZtKE4LYwbb2ct/d9YWAQI+gjz2IbzERvmIWD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:35da:ab43:467b:7991])
-	by laurent.telenet-ops.be with cmsmtp
-	id f0pl2D00N3gUftr010pl1v; Wed, 20 Nov 2024 13:49:56 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tDk94-007c0d-1L;
-	Wed, 20 Nov 2024 13:49:45 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tDk9R-009NS0-8N;
-	Wed, 20 Nov 2024 13:49:45 +0100
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Kees Cook <keescook@chromium.org>,
-	Jann Horn <jannh@google.com>
-Cc: linux-mm@kvack.org,
-	io-uring@vger.kernel.org,
-	linux-m68k@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] slab: Fix too strict alignment check in create_cache()
-Date: Wed, 20 Nov 2024 13:49:41 +0100
-Message-Id: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732112028; c=relaxed/simple;
+	bh=fG2rtQP3i/fL3pl3U4h6EqkOrbGR5g+ma9OgPWJDVWE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CeVzA7qwpFs5uu69FDKdJasX6rdYbsaumvAggqLyC4pVY6C8FWqLzY1+AXzeDlICKFyst7N5bBiavtri/RibIBHEfdtykqIbvId2CERns3rHH09WHBd7eAka+VE9PzUKWvPMo0lG3M8hOT3z/pHjLfeza0+3jWPB+zixEFTsI+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LpmCIM6x; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-296b0d23303so1258283fac.2
+        for <io-uring@vger.kernel.org>; Wed, 20 Nov 2024 06:13:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732112025; x=1732716825; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eTi5b10WLqsSCiJUbo5/jmc+MHfUzlPQvFKPqOZIskk=;
+        b=LpmCIM6x4TvKbGsPpW1de+zhTNl+wyyKhR66oMlBjtPPpyw3WK1HsH1DFSH33jlEJ8
+         P+6hE07JpLLfp3Ihp3RpUSHwaZ0BVel+cr3juEEllrLYdyZkBo7EN+k2uioJir5+fsw+
+         bEWB1X2l4oelgfkbfvXrgg7HmejO/cI5N/vM1+IwOR3lLzdslmAiUvR9rPbDsUIzTxPR
+         i1IZLvKNdCJdYioxtTv+jyBa+ZSSvbl9a+JnYukGDIctDx0uzzf8OJZF72RYQMx36Ozv
+         4PskqUECzyv4QjFUOcxc92+HQX2CnlvXIS2OjBuAmo3abvl7dOxvzMwzo4ASPXUESiAJ
+         0Wgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732112025; x=1732716825;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eTi5b10WLqsSCiJUbo5/jmc+MHfUzlPQvFKPqOZIskk=;
+        b=EJmkYBUGq5s6Ji+chRXx8tqcN8c65Lg5QiQu7TkaaWEhqFsyCvuWp2U6EQ/Ia9vj+9
+         fkun/2t8GJNc5b5arQyo0O/WNJRZNhHQe3wvXdlVuP2qtRlveoOm9lhM+Xm30tn0gM6L
+         /aoR+2FXM7ih5tY1bpv0FK6meyt0oMGuMoCo1D0KImAengw+vn5ipV9R6InIm7GAsgn5
+         EyYYj8oo9JtdaTOrhYmaVLvYuZEs8k7rchEg3hzJodS9foPwSj4Qs/drD4TE82mLhtDB
+         wpHgkJNLg90XasowEquOIgRYUqLD7oDtYRFxf1aYC6r6Vkk3LM+1YKRHdpAw3yol9XEo
+         KFkg==
+X-Gm-Message-State: AOJu0YwSNy5vflZqulH2kkiatv8X885NjN2bI0yy/Df9GTjaMf/SH7jd
+	UR5tEVXqpme+f12VZcGduSqY2Jom3IMJ2cfyUYhJAYOMB3PjP+79LtaEPsFFd8iCSuwcEtPPk/E
+	0GLw=
+X-Google-Smtp-Source: AGHT+IHKEqEaFV0atda3jXxRVp2Q7ZAibmbPVVSQctOYrQe4CjaraL/pBwf2ptYdMN+qn4DtUXHsLQ==
+X-Received: by 2002:a05:687c:2c11:b0:296:dd44:de85 with SMTP id 586e51a60fabf-296dd44e290mr2244900fac.28.1732112024924;
+        Wed, 20 Nov 2024 06:13:44 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29651ac5ff9sm4185830fac.42.2024.11.20.06.13.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 06:13:44 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <d8ea3bef-74d8-4f77-8223-6d36464dd4dc@stanley.mountain>
+References: <d8ea3bef-74d8-4f77-8223-6d36464dd4dc@stanley.mountain>
+Subject: Re: [PATCH next] io_uring/region: return negative -E2BIG in
+ io_create_region()
+Message-Id: <173211202382.191688.16891113055939966026.b4-ty@kernel.dk>
+Date: Wed, 20 Nov 2024 07:13:43 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-86319
 
-On m68k, where the minimum alignment of unsigned long is 2 bytes:
 
-    Kernel panic - not syncing: __kmem_cache_create_args: Failed to create slab 'io_kiocb'. Error -22
-    CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-atari-03776-g7eaa1f99261a #1783
-    Stack from 0102fe5c:
-	    0102fe5c 00514a2b 00514a2b ffffff00 00000001 0051f5ed 00425e78 00514a2b
-	    0041eb74 ffffffea 00000310 0051f5ed ffffffea ffffffea 00601f60 00000044
-	    0102ff20 000e7a68 0051ab8e 004383b8 0051f5ed ffffffea 000000b8 00000007
-	    01020c00 00000000 000e77f0 0041e5f0 005f67c0 0051f5ed 000000b6 0102fef4
-	    00000310 0102fef4 00000000 00000016 005f676c 0060a34c 00000010 00000004
-	    00000038 0000009a 01000000 000000b8 005f668e 0102e000 00001372 0102ff88
-    Call Trace: [<00425e78>] dump_stack+0xc/0x10
-     [<0041eb74>] panic+0xd8/0x26c
-     [<000e7a68>] __kmem_cache_create_args+0x278/0x2e8
-     [<000e77f0>] __kmem_cache_create_args+0x0/0x2e8
-     [<0041e5f0>] memset+0x0/0x8c
-     [<005f67c0>] io_uring_init+0x54/0xd2
+On Wed, 20 Nov 2024 12:15:05 +0300, Dan Carpenter wrote:
+> This code accidentally returns positivie E2BIG instead of negative
+> -E2BIG.  The callers treat negatives and positives the same so this
+> doesn't affect the kernel.  The error code is returned to userspace via
+> the system call.
+> 
+> 
 
-The minimal alignment of an integral type may differ from its size,
-hence is not safe to assume that an arbitrary freeptr_t (which is
-basically an unsigned long) is always aligned to 4 or 8 bytes.
+Applied, thanks!
 
-As nothing seems to require the additional alignment, it is safe to fix
-this by relaxing the check to the actual minimum alignment of freeptr_t.
+[1/1] io_uring/region: return negative -E2BIG in io_create_region()
+      commit: 2efeb13a0e2a0a188ae85ce7d838874a4c8d135d
 
-Fixes: aaa736b186239b7d ("io_uring: specify freeptr usage for SLAB_TYPESAFE_BY_RCU io_kiocb cache")
-Fixes: d345bd2e9834e2da ("mm: add kmem_cache_create_rcu()")
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Closes: https://lore.kernel.org/37c588d4-2c32-4aad-a19e-642961f200d7@roeck-us.net
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- mm/slab_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 893d320599151845..f2f201d865c108bd 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -230,7 +230,7 @@ static struct kmem_cache *create_cache(const char *name,
- 	if (args->use_freeptr_offset &&
- 	    (args->freeptr_offset >= object_size ||
- 	     !(flags & SLAB_TYPESAFE_BY_RCU) ||
--	     !IS_ALIGNED(args->freeptr_offset, sizeof(freeptr_t))))
-+	     !IS_ALIGNED(args->freeptr_offset, __alignof(freeptr_t))))
- 		goto out;
- 
- 	err = -ENOMEM;
+Best regards,
 -- 
-2.34.1
+Jens Axboe
+
+
 
 

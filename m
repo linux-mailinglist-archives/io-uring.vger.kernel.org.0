@@ -1,95 +1,169 @@
-Return-Path: <io-uring+bounces-4939-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4940-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C2D69D51D4
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 18:32:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E599D522B
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 18:54:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE1A8B23CCC
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 17:32:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E31CB21487
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 17:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8755317333A;
-	Thu, 21 Nov 2024 17:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F094155CBF;
+	Thu, 21 Nov 2024 17:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="AUZeXvlh"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="esB3NE9p"
 X-Original-To: io-uring@vger.kernel.org
-Received: from gentwo.org (gentwo.org [62.72.0.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F94188907;
-	Thu, 21 Nov 2024 17:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADBE6CDAF
+	for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 17:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732210366; cv=none; b=Sjx4EV0AO6wogk6W3r/SoMXA5lf2fMQRGouQngRLkaCxmQmAN23ALYIzdk8Q4cXSAql0EFGRUYFP3X7XbX02SGPtfRzjCKC+t5SwBlrRyovyjVqh28xFuc7LnOAFPxUu2KKnsUGD2BwESPhyL1hdkzLUD38Q+0cPWuL+TCX3780=
+	t=1732211644; cv=none; b=dWTyVVpdBjnLjgyNiHdVzNUyMqIaN8L33gHj7P0GL3+aEM5fzTBdNYQzOPQRcVpcmBqqV2kOjXFL/iuB8Uu89B4wPOvQzYz62dE4KPUB0/QV1bln5+Kv4UaIEyXqm/x2KCTxqngYKOynMNjUKJoh+uHVCEuD3f622UpkcE1Xzwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732210366; c=relaxed/simple;
-	bh=dGIvAVVhr1XQ+IBWwKJiytD8adIRDF3znbGFVaI1CE8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=apVXiSAF1WJu/gUMm3EeG/y1LLbn+RchCNEV1Bu+XWLGgX192h3xaQKUjZmpcIfD3h+/5zYnmIuAAOHefH/Ym0h68/K8pnjM7u1gGCsrT++gp1eWC5iuu6u5GwrEDMAkpZMu548Nw9/SkzePDORA4wjV/CLylG5QbvDsTh2BH+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=AUZeXvlh; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1732209808;
-	bh=dGIvAVVhr1XQ+IBWwKJiytD8adIRDF3znbGFVaI1CE8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=AUZeXvlhRTQXOreYKQ5tM6otggSm6Vmlfpnt6jWROdE8oB9IViP6vwvSzWiBSxH3B
-	 m+s13vkh7TkgT+a+wMGPI53H4oy4UB4eV3H+LH5QLoKAJvLaR/fxnklp+9E6qBAh5i
-	 SHbp4BMgosdGgvJTZj/UC6b9OP4roggPYEssKGzs=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 8CC9B401F4; Thu, 21 Nov 2024 09:23:28 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 89830401EE;
-	Thu, 21 Nov 2024 09:23:28 -0800 (PST)
-Date: Thu, 21 Nov 2024 09:23:28 -0800 (PST)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>, 
-    David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-    Pavel Begunkov <asml.silence@gmail.com>, Mike Rapoport <rppt@kernel.org>, 
-    Christian Brauner <brauner@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
-    Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>, 
-    linux-mm@kvack.org, io-uring@vger.kernel.org, linux-m68k@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-In-Reply-To: <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
-Message-ID: <693a6243-b2bd-7f2b-2b69-c7e2308d0f58@gentwo.org>
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org> <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz> <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org> <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
+	s=arc-20240116; t=1732211644; c=relaxed/simple;
+	bh=aUkO2DLhPDOMNtrqZVYo7uniBmPPHkuN8Czf06h7yHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=inQQlXBsX1C7qyceVOmxDWYv4TsNdAeJsxOrOEb47w5waA+zTeNC4a6Y18ldGcEPvKTa0VV3dIjpf2UnY1jp3agUmp/G+r0/9dyHTj28AmMp14p40BXa1HFi/l3t3gE3y1btmo46V9mFkId3Z+yiNyEdkqv6vNL20LEAZVjteUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=esB3NE9p; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-72467c35ddeso1806799b3a.0
+        for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 09:54:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1732211642; x=1732816442; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xNfbOs3rYNqmSxZro+5y4KXxU97Uq5JLxpUMPaUd0ew=;
+        b=esB3NE9pZ5FAbguLSdQY+rga+mIATmXWUpQUGpSdHPiStvqPdDbAgsFMtiyP4iJv3R
+         0H78X7oUiPIJV3c43OfcBmgGxmZFOS1KAcXRxAzYAmD9EGK6gZBMdILZn/1j4ig/xhFF
+         rzQUCQZ4qGvw+nh4yD8OcWQ0A+08zjl7GGL7UX5JPNKdkq4ML02XONnkxxlGdJduqYRX
+         yXWoQZKF3tAFFhwEaaTUM2I1Z8znmK0/XfJvFJwVXzunRZ7Nezddt1xwpsMaZO/kbFgU
+         mzeD0C9wmMbVloHqmCUeRGT3G+6Yncxcglk8XtJNHNFoNGNUWbv2WOa4rr5R6vDeMaVK
+         jpMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732211642; x=1732816442;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xNfbOs3rYNqmSxZro+5y4KXxU97Uq5JLxpUMPaUd0ew=;
+        b=tBl1dStw9xXVND1hM/poKVxYXSl9PiCTTrGleN3u3Lo71BqinNLAW1+YpUatpesYDJ
+         gAXX1kWqwzDwjkiNz8CWLK0Oc4g/AY64L01CgA+rAkiGU4V/cdJIVH6791rhXJJGm5y5
+         3UI/COu+qsG02q/QX4iTQxTuwyWL2cPXoRPdx2Wg2Hy6IqhuOil0c249WSCXfwMgzaWf
+         VFmrXQTf24BMGwpMGotWtKORcejKi7NFPnyMWB1lPD8SAN6nstn1wlWYV3x4f7SnuRT2
+         9/r4EzCwOyfsYGd2H3Fi8afPcmN1qpE4JVEi9S03cK8StZmvpZ3X98SU1JnxwmyHRZWq
+         Vj6w==
+X-Forwarded-Encrypted: i=1; AJvYcCX4ZS+FryTHqVuGfWupL9fXYrERLk/v8P9zXwPTZaXuVNJl44bFrenn1UsUoMDGOWeIKLPdibPqMA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/vFiI7V7hB+pm6bspx5lCo0ePZ3IuoCZI1928gbMpADdZaMqg
+	c256eMlt2uBfYjoRJ339oct3nJ1JuLUUH3RDFe6yTqtFcpMI1SgJm9fkV0AzC6A=
+X-Gm-Gg: ASbGncv4QLdvv4eyxxmD8KmV8MdgvlBdikEztEGeaxwfSNLq6chu5KMO7K1Cp0g6BQ2
+	clkajO54OfM2oT8H7n2sWsVYqFrw1UINIfW50oSySXiYKvvFKQtAMUEMzSYJrQzZauFrbVjhfRV
+	M4coFvF7iY+8RLBisUXWnsCQnjriHjgifsbB9fTmTaANUIFP7XXMr/qHTyOe+E2ugiVEf4vE9Qu
+	Kaz9QBQ8t/rStXx18Cyt8UI5QBUtG+2DAL9JBfNxEu98TOPaGgqlxa5UjXTab0ScAr2pTVfkmnq
+	arMQF4qpwWM=
+X-Google-Smtp-Source: AGHT+IHZwLM1SCR8Z7osArU+ysFq1z14LxS43NTyZMZBZiLfzDJw7HMmJlrto9Vx+gsWijTSr/W1jA==
+X-Received: by 2002:aa7:91cc:0:b0:724:d05e:3845 with SMTP id d2e1a72fcca58-724d05e39b0mr4471862b3a.4.1732211641998;
+        Thu, 21 Nov 2024 09:54:01 -0800 (PST)
+Received: from ?IPV6:2a03:83e0:1256:1:80c:c984:f4f1:951f? ([2620:10d:c090:500::6:7483])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de531308sm31112b3a.110.2024.11.21.09.54.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 09:54:01 -0800 (PST)
+Message-ID: <8dfe2a9b-52f8-4206-a670-ecede76ab637@davidwei.uk>
+Date: Thu, 21 Nov 2024 09:53:59 -0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next v1 2/2] io_uring: limit local tw done
+Content-Language: en-GB
+To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org
+References: <20241120221452.3762588-1-dw@davidwei.uk>
+ <20241120221452.3762588-3-dw@davidwei.uk>
+ <f32b768f-e4a4-4b8c-a4f8-0cdf0a506713@gmail.com>
+ <95470d11-c791-4b00-be95-45c2573c6b86@kernel.dk>
+ <614ce5a4-d289-4c3a-be5b-236769566557@gmail.com>
+ <b7170b8e-9346-465b-be60-402c8f125e54@kernel.dk>
+ <66fa0bfd-13aa-4608-a390-17ea5f333940@gmail.com>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <66fa0bfd-13aa-4608-a390-17ea5f333940@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 21 Nov 2024, Geert Uytterhoeven wrote:
+On 2024-11-21 07:07, Pavel Begunkov wrote:
+> On 11/21/24 14:31, Jens Axboe wrote:
+>> On 11/21/24 7:25 AM, Pavel Begunkov wrote:
+>>> On 11/21/24 01:12, Jens Axboe wrote:
+>>>> On 11/20/24 4:56 PM, Pavel Begunkov wrote:
+>>>>> On 11/20/24 22:14, David Wei wrote:
+> ...
+>>>> I think that can only work if we change work_llist to be a regular list
+>>>> with regular locking. Otherwise it's a bit of a mess with the list being
+>>>
+>>> Dylan once measured the overhead of locks vs atomics in this
+>>> path for some artificial case, we can pull the numbers up.
+>>
+>> I did it more recently if you'll remember, actually posted a patch I
+>> think a few months ago changing it to that. But even that approach adds
+> 
+> Right, and it's be a separate topic from this set.
+> 
+>> extra overhead, if you want to add it to the same list as now you need
+> 
+> Extra overhead to the retry path, which is not the hot path,
+> and coldness of it is uncertain.
+> 
+>> to re-grab (and re-disable interrupts) the lock to add it back. My gut
+>> says that would be _worse_ than the current approach. And if you keep a
+>> separate list instead, well then you're back to identical overhead in
+>> terms of now needing to check both when needing to know if anything is
+>> pending, and checking both when running it.
+>>
+>>>> reordered, and then you're spending extra cycles on potentially
+>>>> reordering all the entries again.
+>>>
+>>> That sucks, I agree, but then it's same question of how often
+>>> it happens.
+>>
+>> At least for now, there's a real issue reported and we should fix it. I
+>> think the current patches are fine in that regard. That doesn't mean we
+>> can't potentially make it better, we should certainly investigate that.
+>> But I don't see the current patches as being suboptimal really, they are
+>> definitely good enough as-is for solving the issue.
+> 
+> That's fair enough, but I still would love to know how frequent
+> it is. There is no purpose in optimising it as hot/slow path if
+> it triggers every fifth run or such. David, how easy it is to
+> get some stats? We can hack up some bpftrace script
+> 
 
-> Linux has supported m68k since last century.
+Here is a sample distribution of how many task work is done per
+__io_run_local_work():
 
-Yeah I fondly remember the 80s where 68K systems were always out of reach
-for me to have. The dream system that I never could get my hands on. The
-creme de la creme du jour. I just had to be content with the 6800 and
-6502 processors. Then IBM started the sick road down the 8088, 8086
-that led from crap to more crap. Sigh.
+@work_done:
+[1]             15385954  |@                                                   |
+[2, 4)          33424809  |@@@@                                                |
+[4, 8)          196055270 |@@@@@@@@@@@@@@@@@@@@@@@@                            |
+[8, 16)         419060191 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[16, 32)        48395043  |@@@@@@                                              |
+[32, 64)         1573469  |                                                    |
+[64, 128)          98151  |                                                    |
+[128, 256)         14288  |                                                    |
+[256, 512)          2035  |                                                    |
+[512, 1K)            268  |                                                    |
+[1K, 2K)              13  |                                                    |
 
-> Any new such assumptions are fixed quickly (at least in the kernel).
-> If you need a specific alignment, make sure to use __aligned and/or
-> appropriate padding in structures.
-> And yes, the compiler knows, and provides __alignof__.
->
-> > How do you deal with torn reads/writes in such a scenario? Is this UP
-> > only?
->
-> Linux does not support (rate) SMP m68k machines.
+This workload had wait_nr set to 20 and the timeout set to 500 µs.
 
-Ah. Ok that explains it.
-
-Do we really need to maintain support for a platform that has been
-obsolete for decade and does not even support SMP?
+Empirically, I know that any task work done > 50 will violate the
+latency limit for this workload. In these cases, all the requests must
+be dropped. So even if excessive task work happens in a small % of time,
+the impact is far larger than this.
 

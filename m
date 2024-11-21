@@ -1,132 +1,266 @@
-Return-Path: <io-uring+bounces-4914-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4919-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4129D489D
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 09:16:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF41D9D4E62
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 15:13:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7360628315C
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 08:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7075E2817CB
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 14:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FB71ADFE8;
-	Thu, 21 Nov 2024 08:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A661DB527;
+	Thu, 21 Nov 2024 14:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MgGIjaE8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B32A1AC420;
-	Thu, 21 Nov 2024 08:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427FE1DB34B
+	for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 14:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732176957; cv=none; b=UJHy0RP0FlGNXB2s2bSP652y6MCqWnlF1DenGn7ejCOyFpPAIBuLAp284ugqnbV1wG01yd4EN9wCehE+8xRf5Ije5GQxpKj5QRzbIEJ6PQdvGeeSaBkm6cNn85LHtiFpXKzBZKk/B7zLpucqQ2XYM/M1uTrzC1VQaZ1n2LKYdzc=
+	t=1732198354; cv=none; b=sF/Jn8mDJj+01+AXRcGDULPxkU6y6OhbCNhYrWpwtuWMrnZy3bJd23Hh6yH0o6B5LVgqc2OVipFx5tksfcgh5a48wfCSti9FGfGTszrTdjP0p1CDzOtvCqV/40aqcSiyliWvi897jKulPm0xJNFtPq3D8uiZK6HS/uUefoJvMUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732176957; c=relaxed/simple;
-	bh=9o2/CH4id7fZ663DryZCUjiGj2CBRaiKI71WozjFFpM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HTXmXdmiI46vRRT4iLL0AyVl5ay9PAjTbG+xPx+loLxAX39l0LQsr3bG4PEMcKWDLoUVtx+4ittt+Gj5SVDU4RVes+tojoAMWSz3d7mCJC+Ni1MGkWzaBRTU2kQ97u7Rcll8+kT0jGZ5KNO/s4x9D7D8Z1HOkzDhZ/Uw0FamVaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6eebc318242so5529837b3.3;
-        Thu, 21 Nov 2024 00:15:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732176953; x=1732781753;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fa1bafhgnf4UjyHiSsOg5v1diyDhD3E0RXZDuNixLkQ=;
-        b=mw1RKNUwy8tZW8U0tbx1lVhrqMMnwXG9ZO8kK50fly97i34fri/arLi6cERj/A8jaP
-         DBti9E7qt12BKWRki1+UB1FAJcKWcCgVmDc4Bq2ZLoiQe2W4XO84ETPcv+vpHN++wXuR
-         AT1ltkxLh2Dd/QwrVctWxeVKZwn7UCn97k68KNgRGi2qGy0xYn2yyY+E6iIQaI1Ia/u7
-         IJP3eSS/kqBR1kceY8g2kZobhYGM7nT86gWQTbdFcx37kMa6qce++GQznyyyHbEuIl4e
-         mE8qZWF1CKmkTH9c9Kpl6/RmMKNo7GWIHIY6Ygt1+THKsIG1PLCj9nM8NzH90DzUFPaJ
-         cy/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWen/YNkpCg0RU6xCH2mOeNTUmK7G1qi0YFPA9Eg7dk2biBBtetJ1k2RSLGoS5ETTZg9KTfiNus1A==@vger.kernel.org, AJvYcCXFFWPl3Q5cgpoeff00QtjlQc6Iv/obPpoNOPE4Ye80NFSQZEdZ+S2XJL0ypKMoyG1LgRhQYWMYxxJQD1dZ@vger.kernel.org, AJvYcCXnvSApmPnuB7igXKffYyPEfpijiOq+PAxQ2d5YKqTgHtui11bYlxLaKukxOqfNN3fYuA9J48S4wggRrg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpNi/K1MbjzDVyJJdInaUwZ80SCel+7ceDLF8vfLFUvlv6xklB
-	uxgKrD3D2wGBNeXz/WNRZVhN/XyVRBHd1eCitBGNx4H7tqgJiIUnPRfG1A+o
-X-Google-Smtp-Source: AGHT+IFNs9xzqjSTuoDKG/VbsgjHOTZpoSVmWKXyFN2pv8oz/YTJqZcinuLSTo9hr4iYI0MUEmrekQ==
-X-Received: by 2002:a05:690c:23c4:b0:6ee:ac2f:c6fa with SMTP id 00721157ae682-6eebd13026emr74713127b3.24.1732176953261;
-        Thu, 21 Nov 2024 00:15:53 -0800 (PST)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ee7137f6aasm26001927b3.124.2024.11.21.00.15.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 00:15:51 -0800 (PST)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6eeb31b10ceso5985737b3.1;
-        Thu, 21 Nov 2024 00:15:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWJT/DQApNPYjF6m+UesPut5zsBstHjgZklD9PrMvfNlqLr7TiggXr8QcKS0Yhfcm3H4/xdB2wYF8hmR91z@vger.kernel.org, AJvYcCWpuFM/FtqzAd0CKT6wognT+F3YSYG5iYdsBcNEyL5RCQXUo6wmkbTImVw6+d7GBUEv07aVUqnzyU6+Wg==@vger.kernel.org, AJvYcCXw1AyxCxFVBrKFGVMxir0S5huU42jVkky6guNNJGqV4LGF7nQJH6uiD0SG3rboi6zH5nRYcAWsXw==@vger.kernel.org
-X-Received: by 2002:a05:690c:7209:b0:6e2:fcb5:52ea with SMTP id
- 00721157ae682-6eebd2ae56emr67688777b3.29.1732176948950; Thu, 21 Nov 2024
- 00:15:48 -0800 (PST)
+	s=arc-20240116; t=1732198354; c=relaxed/simple;
+	bh=s8vT+cUuucQdxZxmr6s3Mt1TxHz4+30DjZa8lMoNy0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=GpwZvAmF4kVvoDmWrWizV6SY8ZJjhs8+/b1JufHNjmHbGtg5yHxtBAH0RIv8j22Bq3p3/b/mFcAZww9pYSonlE7Gt1K88M7HGagiUJb0Z+hOq97QhAfASD5Y5I6LjmXimX4UTIjxvQuAg3AgURqFNUworcg2ASFpJP9po1dSYv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MgGIjaE8; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241121141222epoutp013f916861ea7eabf34f2f9055c32cbace~KATcHArOq0339703397epoutp01A
+	for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 14:12:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241121141222epoutp013f916861ea7eabf34f2f9055c32cbace~KATcHArOq0339703397epoutp01A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1732198342;
+	bh=/jFwQg3L6x/QhXsFJXEKX5/pdgnqKEpG97iSSGqG2AQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MgGIjaE8zz8oICK69FcTaoU/3lQRGz7bdLX36BIgEQ0PFLCk3kfnhMXfuE422mNlV
+	 k1tHAH4nAV6RvalLa7Jr7zV7s3w/ozZM2QbaSk7R7Xx/vRoTGEbc+/ebGskiNMNjBU
+	 RnIlTe3+uG8BCj6EYZIvFC7hgK7a9US6b3jS7pz4=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20241121141221epcas5p1f717aaf925a0e63cae2e559997bef624~KATbGu9Mz2866128661epcas5p1K;
+	Thu, 21 Nov 2024 14:12:21 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XvKtW4QNGz4x9Pq; Thu, 21 Nov
+	2024 14:12:19 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F0.1C.20052.3CF3F376; Thu, 21 Nov 2024 23:12:19 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241121090727epcas5p378eff726d8ab3b727ff96ac6c8dd351d~J8JNJZAAv1902619026epcas5p3K;
+	Thu, 21 Nov 2024 09:07:27 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241121090727epsmtrp22645c4c5508c147abbbe8e26eda3f86f~J8JNHeYKv1714217142epsmtrp2T;
+	Thu, 21 Nov 2024 09:07:27 +0000 (GMT)
+X-AuditID: b6c32a49-3fffd70000004e54-a1-673f3fc30d21
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	3F.3A.18937.E48FE376; Thu, 21 Nov 2024 18:07:26 +0900 (KST)
+Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241121090724epsmtip223faf39b7052c34ce93410208c8e6f41~J8JK2_6n-0612906129epsmtip2I;
+	Thu, 21 Nov 2024 09:07:24 +0000 (GMT)
+Date: Thu, 21 Nov 2024 14:29:35 +0530
+From: Anuj Gupta <anuj20.g@samsung.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
+	martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
+	jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+	gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+	linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
+ and PI support
+Message-ID: <20241121085935.GA3851@green245>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
- <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz> <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
-In-Reply-To: <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 21 Nov 2024 09:15:37 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
-Message-ID: <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>, 
-	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, Mike Rapoport <rppt@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
-	io-uring@vger.kernel.org, linux-m68k@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2a98aa33-121b-46ed-b4ae-e4049179819a@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGJsWRmVeSWpSXmKPExsWy7bCmlu5he/t0g/418hYfv/5msZizahuj
+	xeq7/WwWrw9/YrS4eWAnk8XK1UeZLN61nmOxmD29mcni6P+3bBaTDl1jtNh7S9tiz96TLBbz
+	lz1lt+i+voPNYvnxf0wW5/8eZ7U4P2sOu4Ogx85Zd9k9Lp8t9di0qpPNY/OSeo/dNxvYPD4+
+	vcXi0bdlFaPHmQVH2D0+b5Lz2PTkLVMAV1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGh
+	rqGlhbmSQl5ibqqtkotPgK5bZg7QO0oKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpSc
+	ApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7Iy1bz4zFryWq5j55yBjA+MJiS5GTg4JAROJra8b
+	WLoYuTiEBHYzSjQfbWWFcD4xSqz7sYYJztn4/hkjTEtzz3dGiMRORokFKx+wQzjPGCX2zP7L
+	BFLFIqAqseL9BGYQm01AXeLI81awbhEBbYnX1w+BNTALLGSWaLr5nx0kISwQI3H9zhRWEJtX
+	QEdi3YddULagxMmZT1hAbE4BW4mtH8+zgdiiAsoSB7YdB7tPQuAJh8TvzhvsEPe5SDw/94AJ
+	whaWeHV8C1RcSuLzu71sEHa6xI/LT6FqCiSaj+2D+s1eovVUP9jVzAIZEtO+X4SqkZWYemod
+	E0ScT6L39xOoOK/EjnkwtpJE+8o5ULaExN5zDVC2h8SfF3OgAfmDSeLf3N3MExjlZyF5bhaS
+	fRC2jsSC3Z/YZjFyANnSEsv/cUCYmhLrd+kvYGRdxSiZWlCcm55abFpgmJdaDo/z5PzcTYzg
+	BK/luYPx7oMPeocYmTgYDzFKcDArifA6KNmnC/GmJFZWpRblxxeV5qQWH2I0BcbWRGYp0eR8
+	YI7JK4k3NLE0MDEzMzOxNDYzVBLnfd06N0VIID2xJDU7NbUgtQimj4mDU6qBiWHxzOMbX3J2
+	PZt2xU8/LGJGtviLQBepMFUuPdFXn+bLeG3L7z8Yl3BxcpiMkpbIob9n9IOzrkt+frX79Af3
+	bL85e/Rdbn75z1LRUix7a959VlGH06t7zisUrd1t5e9TFtHh1DNXI0Sttfx+yqwfNvwX7PeW
+	1CWJvBQ0/X5Y74v0j7QX6fkrWH5GpFz+/fxjyvMz914eEpHNsvd4dv/fouTlFblBd8/yP11t
+	7fh1076jt/QSfj5VVS+fftVPl6c17vPzlVo1MgdTssSWNB3Rtbr+NGyWEONRm8s9636tfdYV
+	t9fShvH8kjV5xQ2tBRNCez+ukjz/d5qosOrmqjnzOhxW/TFOYMlZMlWRb7e9rxJLcUaioRZz
+	UXEiADr6Ruh5BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWy7bCSvK7fD7t0g4/PrC0+fv3NYjFn1TZG
+	i9V3+9ksXh/+xGhx88BOJouVq48yWbxrPcdiMXt6M5PF0f9v2SwmHbrGaLH3lrbFnr0nWSzm
+	L3vKbtF9fQebxfLj/5gszv89zmpxftYcdgdBj52z7rJ7XD5b6rFpVSebx+Yl9R67bzaweXx8
+	eovFo2/LKkaPMwuOsHt83iTnsenJW6YArigum5TUnMyy1CJ9uwSujDcbO9kLVstUfGk/wt7A
+	uFCsi5GTQ0LARKK55ztjFyMXh5DAdkaJZR1NbBAJCYlTL5cxQtjCEiv/PWeHKHrCKPGv6wMT
+	SIJFQFVixfsJzCA2m4C6xJHnrWANIgLaEq+vH2IHsZkFFjNLTG6IArGFBWIkrt+Zwgpi8wro
+	SKz7sIsVYugPJomXl2ZCJQQlTs58wgLRrCVx499LoGUcQLa0xPJ/HCBhTgFbia0fz4MdKiqg
+	LHFg23GmCYyCs5B0z0LSPQuhewEj8ypG0dSC4tz03OQCQ73ixNzi0rx0veT83E2M4GjUCtrB
+	uGz9X71DjEwcjIcYJTiYlUR4q3Wt04V4UxIrq1KL8uOLSnNSiw8xSnOwKInzKud0pggJpCeW
+	pGanphakFsFkmTg4pRqYNh7U+fCfc4ukXPuvaeGeXp7uNssvzTjlU3d80ss3j1Vffjy6W45R
+	0PnSo2lRGT1eHwuWn/srZbMjjU+87/De3kMBQq8KFrwMvLpL1uj6Z29TEasZWv8Wdxd8aYlO
+	vra9XbVE1JWx4p+sre3z/V2fums/P+4z2tzyyyz3TsrBXxw/3s/d51G8Zv/dOXGXF908/jb7
+	wyRzXwdpZ1GBXQ+/XzKbfmB7gXsC//zblh8sW3jnOfBc2eP0Q6FnebRrXlRtWXTkg6+9Z3xv
+	nVR69tjTSFNc7daqravTPy25aebyL77//pq2pVHLOTztz8Q2rl4yZ2+QV8XTGbfXPlh/3DKe
+	jbHV9prb532ssidXG34NOaLEUpyRaKjFXFScCAAxVp8INQMAAA==
+X-CMS-MailID: 20241121090727epcas5p378eff726d8ab3b727ff96ac6c8dd351d
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739
+References: <20241114104517.51726-1-anuj20.g@samsung.com>
+	<CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
+	<20241114104517.51726-7-anuj20.g@samsung.com>
+	<c622ee8c-82f0-44d4-99da-91357af7ecac@gmail.com>
+	<b61e1bfb-a410-4f5f-949d-a56f2d5f7791@gmail.com>
+	<20241118125029.GB27505@lst.de>
+	<2a98aa33-121b-46ed-b4ae-e4049179819a@gmail.com>
 
-Hi Christoph,
+------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-On Wed, Nov 20, 2024 at 6:50=E2=80=AFPM Christoph Lameter (Ampere)
-<cl@gentwo.org> wrote:
-> On Wed, 20 Nov 2024, Vlastimil Babka wrote:
-> > > Fixes: aaa736b186239b7d ("io_uring: specify freeptr usage for SLAB_TY=
-PESAFE_BY_RCU io_kiocb cache")
-> > > Fixes: d345bd2e9834e2da ("mm: add kmem_cache_create_rcu()")
-> > > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > > Closes: https://lore.kernel.org/37c588d4-2c32-4aad-a19e-642961f200d7@=
-roeck-us.net
-> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> >
-> > Thanks, will add it to slab pull for 6.13.
+On Mon, Nov 18, 2024 at 04:59:22PM +0000, Pavel Begunkov wrote:
+> On 11/18/24 12:50, Christoph Hellwig wrote:
+> > On Sat, Nov 16, 2024 at 12:32:25AM +0000, Pavel Begunkov wrote:
+> > > We can also reuse your idea from your previous iterations and
+> > > use the bitmap to list all attributes. Then preamble and
+> > > the explicit attr_type field are not needed, type checking
+> > > in the loop is removed and packing is better. And just
+> > > by looking at the map we can calculate the size of the
+> > > array and remove all size checks in the loop.
+> > 
+> > Can we please stop overdesigning the f**k out of this?  Really,
+> 
+> Please stop it, it doesn't add weight to your argument. The design
+> requirement has never changed, at least not during this patchset
+> iterations.
+> 
+> > either we're fine using the space in the extended SQE, or
+> > we're fine using a separate opcode, or if we really have to just
+> > make it uring_cmd.  But stop making thing being extensible for
+> > the sake of being extensible.
+> 
+> It's asked to be extendible because there is a good chance it'll need to
+> be extended, and no, I'm not suggesting anyone to implement the entire
+> thing, only PI bits is fine.
+> 
+> And no, it doesn't have to be "this or that" while there are other
+> options suggested for consideration. And the problem with the SQE128
+> option is not even about SQE128 but how it's placed inside, i.e.
+> at a fixed spot.
+> 
+> Do we have technical arguments against the direction in the last
+> suggestion? It's extendible and _very_ simple. The entire (generic)
+> handling for the bitmask approach for this set would be sth like:
+> 
+> struct sqe {
+> 	u64 attr_type_mask;
+> 	u64 attr_ptr;
+> };
+> if (sqe->attr_type_mask) {
+> 	if (sqe->attr_type_mask != TYPE_PI)
+> 		return -EINVAL;
+> 
+> 	struct uapi_pi_structure pi;
+> 	copy_from_user(&pi, sqe->attr_ptr, sizeof(pi));
+> 	hanlde_pi(&pi);
+> }
+> 
+> And the user side:
+> 
+> struct uapi_pi_structure pi = { ... };
+> sqe->attr_ptr = &pi;
+> sqe->attr_type_mask = TYPE_PI;
 >
-> Note that there are widespread assumptions in kernel code that the
-> alignment of scalars is the "natural alignment". Other portions of the
-> kernel may break. The compiler actually goes along with this??
 
-Linux has supported m68k since last century.
-Any new such assumptions are fixed quickly (at least in the kernel).
-If you need a specific alignment, make sure to use __aligned and/or
-appropriate padding in structures.
-And yes, the compiler knows, and provides __alignof__.
+How about using this, but also have the ability to keep PI inline. 
+Attributes added down the line can take one of these options:
+1. If available space in SQE/SQE128 is sufficient for keeping attribute
+fields, one can choose to keep them inline and introduce a TYPE_XYZ_INLINE
+attribute flag.
+2. If the available space is not sufficient, pass the attribute information
+as pointer and introduce a TYPE_XYZ attribute flag.
+3. One can choose to support a attribute via both pointer and inline scheme.
+The pointer scheme can help with scenarios where user wants to avoid SQE128
+for whatever reasons (e.g. mixed workload).
 
-> How do you deal with torn reads/writes in such a scenario? Is this UP
-> only?
+Something like this:
 
-Linux does not support (rate) SMP m68k machines.
+// uapi/.../io_uring.h
 
-Gr{oetje,eeting}s,
+struct sqe {
+	...
+	u64 attr_type_mask;
+	u64 attr_ptr;
+};
 
-                        Geert
+// kernel space
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+if (sqe->attr_type_mask) {
+	struct uapi_pi_struct pi, *piptr;
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+	if ((sqe->attr_type_mask & TYPE_PI_INLINE) &&
+	    (sqe->attr_type_mask & TYPE_PI))
+		return -EINVAL;
+	/* inline PI case */
+	if (sqe->attr_type_mask & TYPE_PI_INLINE) {
+		if (!(ctx->flags & IORING_SETUP_SQE128))
+			return -EINVAL;
+		piptr = (sqe + 1);
+	} else if (sqe->attr_type_mask & TYPE_PI) {
+	/* indirect PI case */
+		copy_from_user(&pi, sqe->attr_ptr, sizeof(pi));
+		piptr = &pi;
+	}
+
+	handle_pi(piptr);
+	
+}
+
+And the user side:
+
+// send PI using pointer:
+
+struct uapi_pi_structure pi = { ... };
+sqe->attr_ptr = &pi;
+sqe->attr_type_mask = TYPE_PI;
+
+// send PI inline:
+
+/* setup a big-sqe ring */
+struct uapi_pi_structure *pi = (sqe+1);
+prepare_pi(pi);
+sqe->attr_type_mask = TYPE_PI_INLINE;
+
+
+------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_
+Content-Type: text/plain; charset="utf-8"
+
+
+------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_1e8c2_--
 

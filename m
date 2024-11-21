@@ -1,78 +1,79 @@
-Return-Path: <io-uring+bounces-4924-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4925-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AAB69D4EB0
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 15:31:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E889D4EB9
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 15:35:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BD65282B27
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 14:31:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BB1C1F212D0
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 14:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C8C74068;
-	Thu, 21 Nov 2024 14:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C814A02;
+	Thu, 21 Nov 2024 14:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="aNht9HPU"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wEa69jkH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821A920330
-	for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 14:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488931D7E4C
+	for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 14:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732199496; cv=none; b=nDo+ZEiO1sMP3nhCuqxz5d7V4OnEwsIoStFF5dOhShALlsyO8QZAQek3Rn52Fa54AhfnnIWXC/H2+kVNbxA792dOLPPhlDb956XRpY6qHZBQ2EhDz7zct4Il36WNt7ApUaeOAYyal/FXvIPx4IVmKj5PH2xh1qJvnuTp1PbUYSM=
+	t=1732199703; cv=none; b=e6VXZqORFbPbYuwoMF7NR0G3DWxt0MSM/vI2opCI5pCjBGS4TP2LOSUIkNZY/IIX7IspCwLSqQyhNqAPWAZ30HR0EuNyuBY0Xtvw6AYDFEFfJd2sz31aDX98Lb0N7MeheYcCrDl2ilLsZz4DSW6qy0QJOpSJK9SuRKSpH8U5cxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732199496; c=relaxed/simple;
-	bh=/psb0axBKmNyGHrrRmp/KeV0jF/o6t+FCl7fYLyEW0U=;
+	s=arc-20240116; t=1732199703; c=relaxed/simple;
+	bh=GhGlCq/U3jIwGUbdGBZrrVYQN2Uq7xTjOK5vVXlobrk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NdkAfV+lfmkJRcaqePAxL2NA/I5U/SkRkWJ0WybXP6Fh+cSM1eaYfgNFQyp+HbOxi1osQMpt9Uo2IaacfY1lseCcUGJBHPVRxERj1Gr1dY/irmPz8AwkHudt/BYkNM7hnFRwASxLPWIS5T7WxJXIiCReNOrFoIWuPNMRV1GLpOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=aNht9HPU; arc=none smtp.client-ip=209.85.210.48
+	 In-Reply-To:Content-Type; b=l26kx3BC5cKOViUikvtqQPG6C/gP6Yy/L+7EIIeuTSDh9wGPTVpZvO+Oyj3FPHN+xfJA0ZnVOiPfFJawXFNdt6pwA39zCzCrcSQLqolUZmt/sd6AF1cqa3qHyH8+OwlzDihJh8XjU1LEK7bcOxI2qrroqtGUjc2yBIXxUZTAQKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=wEa69jkH; arc=none smtp.client-ip=209.85.167.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-71a6bfcb836so1090052a34.0
-        for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 06:31:32 -0800 (PST)
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e5fcf464ecso622433b6e.0
+        for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 06:35:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732199491; x=1732804291; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732199699; x=1732804499; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=8OmI9YuGFt2Ot1jL1EuABZfiwjXL4cro16xRHwCYlD0=;
-        b=aNht9HPUVUiGkKxrfgvu0OBwgEhPPg1Ae2t2IOiaCE0v6fdSPwGSVwtaB7FGBrtO8S
-         1tJJyWrqCZf55Eq4NB8/9/eQT3gRbR1erI1OCHzg0r5Co0eDXjdGDfClMzeNUG4Z/EdR
-         n3JG5FfsFRzMo3IJHbtgChkrB2Zct6CssT/wLIV0UT0KzrH/zlFcy9pqVsJw1s4Ul6gQ
-         Zr/Eq+0RyJ4MHlhXINWiic8bqJrDtN3kwun6ECFH8jv1guUcyHp6cuIwNfgIaCebVElm
-         ylcAiMDmXCXgaH/3c8IVh7Qj4zfY1wXO8Hj6kn4nA6ZnrQnUhKGW64ieDXPUcuXUf1XK
-         GzOA==
+        bh=b/lHA0tY9xvDEAvZZx3Psq/BnosxfVR3PYmnhOVgAn0=;
+        b=wEa69jkHkOA8qY8AMrqawxIAH9wWE4cT2GevgCCdcqH8YeN5Hsbl5J0T5NyaWBo+Yd
+         NwMzraFS3Jhyi7Pev8nt8p+XOCLS7zip5tnXwFCWI8EPnbdtPrMW9Pgiu0Q9vL+IMg0F
+         nKN25Kupc7WtqEuykLeLEp0PoLuDAjtzHtPwtg1DTR7HFX6UGOqdgkLkZB9LsqWr5XJ+
+         QuguWufdiHY/9OhgQc2JukPPPObuX9FjOejLRhu82iE1wIHwT6HAO2l2JsBBw0s0VX5B
+         q9d68hyTa73nq2uy3aoDD8Lx6PmI8us7xXytbB1+8FSz7ZlHiBGMa6vO5ahDCHW5TzHF
+         D03A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732199491; x=1732804291;
+        d=1e100.net; s=20230601; t=1732199699; x=1732804499;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8OmI9YuGFt2Ot1jL1EuABZfiwjXL4cro16xRHwCYlD0=;
-        b=ui0M1PxzjdWJ8/X7q6jT29QA4D3537hLspvt/lx+UImcztGWtCf001TbumHuSdkOLK
-         xTt9O8t5xQC1bEgUKTxCv69NSfpWF687T7uut3wh2/pA1lX+N4BfCp9K8vEPH246aMbz
-         EFZ+Fz3MmkBUPD6QQF+75XBz8A1iKChfNDrshMcEMOaqbinmBgsUxhiNc5zct6BNTLEF
-         iPr7Lpx2nJAOog60Q7U4axUtuMnhMwbrSnhWW3vgROaMVtA7XLj0elYMn6oNdPFy/Y3w
-         OoSmStyHTq7oEJzNJA7shez/EYK+8Dh14G4PHsVFiRL500RjQj6lXwjRd7HSo+p7NrhW
-         qnHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxgsgKmXVeEEDX3RsWfoRIiK4phyWEBGiegkeQ6nPv3tnPe7v2tBzJZbROFcZ/N9OB1CFUTUfYDw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPiUDf2Kk/lqWR7vkodR62zKDkj9ikjaVx0QB2Q7Zrp//ah6ku
-	plAM9BNqsU19qNlxTzxscKebn0UfpSm2JlD5rowBkGgA9aIxM3TYw96+vzi00rE=
-X-Gm-Gg: ASbGncsIhaVaQQvJuJBFYxp95Pn+fC2TMqS5hiobsLzo5nPJS6DHaulJ0T96Wz6+tou
-	lqkiawQNs2uze6l2pvKfukJw2B1hCmrlKrNKj3YyReui1+19o6gRbgMhxIQxYOLEp+Sizprxbc0
-	AeUIEe4oA/xTvKCxO04VPGYr4+6UtOkEj6p8HPOS4fchWoFKpxwOxg6p82pal3QnFgD3GQV4nE+
-	5b5kcKjDWTZx0x/GadJgupBmX/4IjmH8avaiAxV/Xr83A==
-X-Google-Smtp-Source: AGHT+IF/EbIZVjMdxLruDRlKfgi7D+h9C4XcIpPU+FnszyKDrtqTtrO53lahbb+MmzIVMDPKJaZziA==
-X-Received: by 2002:a05:6830:1e90:b0:718:d38:7bbe with SMTP id 46e09a7af769-71b0e598d3cmr1699766a34.11.1732199491401;
-        Thu, 21 Nov 2024 06:31:31 -0800 (PST)
+        bh=b/lHA0tY9xvDEAvZZx3Psq/BnosxfVR3PYmnhOVgAn0=;
+        b=Z3ZsAXWqP2mcBbAOsUpkOSSRgB7jxZrEj8If2DrRBFDCy2Hl+dvzmr/kI0jzOI5TJo
+         0YVxMt7kEmhtEPakqv9V7sck3/70K/RwY2AJUo4Ruv3Eci/DCY7Z21R0CnyAIBtOJ9Il
+         v7O92UD98UuUZbIyP30QlMv7gTgQXko/MC6pMnTkFveySoSV+Gtwckj+N/fV6MCQ0Dax
+         UHHo6vwPQ14yzRTW3VHxc9ZQwPMSTwnKYhOQiY3w3Eu0IljgmZFNZpcCB2IVJxawRJTT
+         AkbQi+L330HpBFMHtBL5Gtsb8m7rpgxO2OgO8MN/s/aOg6pDEz3EAYmAeb7+4o1qGIVu
+         3dAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVG33kDbThW+3OBCmdCkSbAdNrZRe+ek3RaMWzM795yL/LaZvdYKxOKLi53k0BJx+UShgPQPElXSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX0DadqB5wG0LdtWvHUZQm8b1PR9CkjaM51EQQYxg1ODmh1rJh
+	m1skLpWzUEbmUi8DFDWqVxD/tZA/bCgMBjzZlawPK16/8yPpwKuwKQN1HXSG7jmo/3KzZBx1mlW
+	dgNw=
+X-Gm-Gg: ASbGnctRMdbg2en4l3+HRHbZQEK5LDQIev+NaTaW5C9A5AI0mmsFuQvc2oBnqULbh8V
+	wcYfzHcrgfJHwPN5AVXFOnVTFqzxPtmmwYzoERxU0BVFsAuaADn+8MY0IvmS6a7dVwiL6QDl+7A
+	z1n85lzNgZXNTGr5DTJdXTE61KrJUsy2pL8SuvR7jbmox/hU3SM3GKMDWoRqcWHLD/Y3mup6NOp
+	ukIvVeBfuhO+JX8xVRuCm2/JBJhzMcKH/KZZO4EeA+qwg==
+X-Google-Smtp-Source: AGHT+IFDwBOzu8cpXzBeHrnu4rY5ZmCyXGwsnX4vxGyDANC46YkjZTh/o/4qVXjZgtlh436iU/gqtA==
+X-Received: by 2002:a05:6808:3c8c:b0:3e6:2956:9104 with SMTP id 5614622812f47-3e7eb7e51f2mr8491005b6e.35.1732199699316;
+        Thu, 21 Nov 2024 06:34:59 -0800 (PST)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-296518526c1sm4801093fac.10.2024.11.21.06.31.30
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7bcd2121dsm4700868b6e.23.2024.11.21.06.34.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 06:31:30 -0800 (PST)
-Message-ID: <b7170b8e-9346-465b-be60-402c8f125e54@kernel.dk>
-Date: Thu, 21 Nov 2024 07:31:29 -0700
+        Thu, 21 Nov 2024 06:34:58 -0800 (PST)
+Message-ID: <7e7243ae-db29-4a96-aece-d66897080a41@kernel.dk>
+Date: Thu, 21 Nov 2024 07:34:57 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -86,74 +87,68 @@ To: Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
 References: <20241120221452.3762588-1-dw@davidwei.uk>
  <20241120221452.3762588-3-dw@davidwei.uk>
  <f32b768f-e4a4-4b8c-a4f8-0cdf0a506713@gmail.com>
- <95470d11-c791-4b00-be95-45c2573c6b86@kernel.dk>
- <614ce5a4-d289-4c3a-be5b-236769566557@gmail.com>
+ <4d71017c-8a88-40bb-a643-0efb92413d3d@davidwei.uk>
+ <1d98f35c-d338-4852-ac8c-b5262c0020ac@gmail.com>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <614ce5a4-d289-4c3a-be5b-236769566557@gmail.com>
+In-Reply-To: <1d98f35c-d338-4852-ac8c-b5262c0020ac@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/21/24 7:25 AM, Pavel Begunkov wrote:
-> On 11/21/24 01:12, Jens Axboe wrote:
->> On 11/20/24 4:56 PM, Pavel Begunkov wrote:
+On 11/21/24 7:29 AM, Pavel Begunkov wrote:
+> On 11/21/24 00:52, David Wei wrote:
+>> On 2024-11-20 15:56, Pavel Begunkov wrote:
 >>> On 11/20/24 22:14, David Wei wrote:
 > ...
 >>> One thing that is not so nice is that now we have this handling and
 >>> checks in the hot path, and __io_run_local_work_loop() most likely
 >>> gets uninlined.
->>
->> I don't think that really matters, it's pretty light. The main overhead
->> in this function is not the call, it's reordering requests and touching
->> cachelines of the requests.
->>
->> I think it's pretty light as-is and actually looks pretty good. It's
-> 
-> It could be light, but the question is importance / frequency of
-> the new path. If it only happens rarely but affects a high 9,
-> then it'd more sense to optimise it from the common path.
-
-I'm more worried about the outlier cases. We don't generally expect this
-to trigger very much obviously, if long chains of task_work was the norm
-then we'd have other reports/issues related to that. But the common
-overhead here is really just checking if another (same cacheline)
-pointer is non-NULL, and ditto on the run side. Really don't think
-that's anything to worry about.
-
->> also similar to how sqpoll bites over longer task_work lines, and
->> arguably a mistake that we allow huge depths of this when we can avoid
->> it with deferred task_work.
->>
+>>>
 >>> I wonder, can we just requeue it via task_work again? We can even
 >>> add a variant efficiently adding a list instead of a single entry,
 >>> i.e. local_task_work_add(head, tail, ...);
 >>
->> I think that can only work if we change work_llist to be a regular list
->> with regular locking. Otherwise it's a bit of a mess with the list being
+>> That was an early idea, but it means re-reversing the list and then
+>> atomically adding each node back to work_llist concurrently with e.g.
+>> io_req_local_work_add().
+>>
+>> Using a separate retry_llist means we don't need to concurrently add to
+>> either retry_llist or work_llist.
+>>
+>>>
+>>> I'm also curious what's the use case you've got that is hitting
+>>> the problem?
+>>>
+>>
+>> There is a Memcache-like workload that has load shedding based on the
+>> time spent doing work. With epoll, the work of reading sockets and
+>> processing a request is done by user, which can decide after some amount
+>> of time to drop the remaining work if it takes too long. With io_uring,
+>> the work of reading sockets is done eagerly inside of task work. If
+>> there is a burst of work, then so much time is spent in task work
+>> reading from sockets that, by the time control returns to user the
+>> timeout has already elapsed.
 > 
-> Dylan once measured the overhead of locks vs atomics in this
-> path for some artificial case, we can pull the numbers up.
+> Interesting, it also sounds like instead of an arbitrary 20 we
+> might want the user to feed it to us. Might be easier to do it
+> with the bpf toy not to carve another argument.
 
-I did it more recently if you'll remember, actually posted a patch I
-think a few months ago changing it to that. But even that approach adds
-extra overhead, if you want to add it to the same list as now you need
-to re-grab (and re-disable interrupts) the lock to add it back. My gut
-says that would be _worse_ than the current approach. And if you keep a
-separate list instead, well then you're back to identical overhead in
-terms of now needing to check both when needing to know if anything is
-pending, and checking both when running it.
+David and I did discuss that, and I was not in favor of having an extra
+argument. We really just need some kind of limit to prevent it
+over-running. Arguably that should always be min_events, which we
+already have, but that kind of runs afoul of applications just doing
+io_uring_wait_cqe() and hence asking for 1. That's why the hand wavy
+number exists, which is really no different than other hand wavy numbers
+we have to limit running of "something" - eg other kinds of retries.
 
->> reordered, and then you're spending extra cycles on potentially
->> reordering all the entries again.
-> 
-> That sucks, I agree, but then it's same question of how often
-> it happens.
+Adding another argument to this just again doubles wait logic complexity
+in terms of the API. If it's needed down the line for whatever reason,
+then yeah we can certainly do it, probably via the wait regions. But
+adding it to the generic wait path would be a mistake imho.
 
-At least for now, there's a real issue reported and we should fix it. I
-think the current patches are fine in that regard. That doesn't mean we
-can't potentially make it better, we should certainly investigate that.
-But I don't see the current patches as being suboptimal really, they are
-definitely good enough as-is for solving the issue.
+I also strongly suggest this is the last we'll ever hear of this, and
+for that reason alone I don't think it's worth any kind of extra
+arguments or added complexity.
 
 -- 
 Jens Axboe

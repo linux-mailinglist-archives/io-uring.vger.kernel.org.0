@@ -1,53 +1,56 @@
-Return-Path: <io-uring+bounces-4912-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4913-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A8B9D47FA
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 07:54:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA3F9D481F
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 08:18:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C89282AE8
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 06:54:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A05B9B2247F
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 07:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AB54207A;
-	Thu, 21 Nov 2024 06:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D20B12BF02;
+	Thu, 21 Nov 2024 07:17:57 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4255817BD3;
-	Thu, 21 Nov 2024 06:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48E1230986;
+	Thu, 21 Nov 2024 07:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732172060; cv=none; b=ZrFINGgT125Aa7pvZ/eJHBgP7nBXf24UVoDtn4ogvkdNc2cwV2y7imUCgeh9Dnt7W72PgMKBVSlrGCSJdwO83uxpBszfne3gJS+058VGkDQ95nHExO4vflsG618dOt5zIVbcECNyUpDLmOsnvPgyMAdRm4mbbLhpfGC5UonqBlk=
+	t=1732173477; cv=none; b=Px1Fzw7R/aM2dcBU4Q2VuKEXIUCA0zUgxk8O3PH15KObhk20j7L67NuHW0lRDrSW4p6vmqqGNjTsCCnYUrMEyU/xtlsPqnAFW5WW3QnRh5F6rZ9vhAXm1PZu/fuOWVh9+Xoo/NsBYTxuTT0wLCHT/1rQOIwGrSFWb4Ds2ku/LXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732172060; c=relaxed/simple;
-	bh=kny5aq3Sf0mGB8wddIubpsuJjSYKI1g1UlvMUtCv9N8=;
+	s=arc-20240116; t=1732173477; c=relaxed/simple;
+	bh=MZBJOVF8zI5nrwFBupqg2PfYY7lz872zAFhUIdCxBf4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TgRw2Lnk6x6SJTvIHC2Ci2bx6ir4fl7VWpRFUgpdj8vN4SprjiY6N5uqG1oq+fMTlOoYBbI4CCxaHkmrFec1DsxYlm1H9mgSyYB8wbDft97WHn0586KFZ4bykVG9zjVl2n4Me4Piw5DMHOpW3Sp8EMtjAp5ud0DzyYOjf6iYKWY=
+	 Content-Type:Content-Disposition:In-Reply-To; b=glLkKCi01X8mgT6rRu5ECpDZ+28v0i5te3Z7VK/tPRNR6VbjeKB9EYwB78PMyVSDeo4sUIgbmILV67lRFZ2baxjt/HB3yD1iYM4Hm7CH264z8YFVI86Zqo7AxFyBHLlbJCoa1Wcz31FiaG9H95FRbFhaYEo3H/dT10AZOv8l2w0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id D51AB68AFE; Thu, 21 Nov 2024 07:54:13 +0100 (CET)
-Date: Thu, 21 Nov 2024 07:54:13 +0100
+	id 3E2F668AFE; Thu, 21 Nov 2024 08:17:49 +0100 (CET)
+Date: Thu, 21 Nov 2024 08:17:48 +0100
 From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Christoph Hellwig <hch@lst.de>, Anuj Gupta <anuj20.g@samsung.com>,
-	axboe@kernel.dk, kbusch@kernel.org, martin.petersen@oracle.com,
-	anuj1072538@gmail.com, brauner@kernel.org, jack@suse.cz,
-	viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-	gost.dev@samsung.com, linux-scsi@vger.kernel.org,
-	vishak.g@samsung.com, linux-fsdevel@vger.kernel.org,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
- and PI support
-Message-ID: <20241121065413.GA22464@lst.de>
-References: <20241114104517.51726-1-anuj20.g@samsung.com> <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com> <20241114104517.51726-7-anuj20.g@samsung.com> <20241114121632.GA3382@lst.de> <3fa101c9-1b38-426d-9d7c-8ed488035d4a@gmail.com> <ZzeNEcpSKFemO30g@casper.infradead.org> <20241120173517.GQ9425@frogsfrogsfrogs>
+To: Keith Busch <kbusch@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Dave Chinner <david@fromorbit.com>,
+	Pierre Labat <plabat@micron.com>,
+	Kanchan Joshi <joshi.k@samsung.com>, Keith Busch <kbusch@meta.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+	"asml.silence@gmail.com" <asml.silence@gmail.com>,
+	"javier.gonz@samsung.com" <javier.gonz@samsung.com>
+Subject: Re: [EXT] Re: [PATCHv11 0/9] write hints with nvme fdp and scsi
+ streams
+Message-ID: <20241121071748.GA22859@lst.de>
+References: <DS0PR08MB854131CDA4CDDF2451CEB71DAB592@DS0PR08MB8541.namprd08.prod.outlook.com> <20241113044736.GA20212@lst.de> <ZzU7bZokkTN2s8qr@dread.disaster.area> <20241114060710.GA11169@lst.de> <Zzd2lfQURP70dAxu@kbusch-mbp> <20241115165348.GA22628@lst.de> <ZzvPpD5O8wJzeHth@kbusch-mbp> <20241119071556.GA8417@lst.de> <20241120172158.GP9425@frogsfrogsfrogs> <Zz4mQGrlKMiPa8NH@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -56,33 +59,52 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241120173517.GQ9425@frogsfrogsfrogs>
+In-Reply-To: <Zz4mQGrlKMiPa8NH@kbusch-mbp>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Nov 20, 2024 at 09:35:17AM -0800, Darrick J. Wong wrote:
-> I like willy's suggestion -- what's the difficulty in having a SQE flag
-> that says "...and keep going into the next SQE"?  I guess that
-> introduces the problem that you can no longer react to the observation
-> of 4 new SQEs by creating 4 new contexts to process those SQEs and throw
-> all 4 of them at background threads, since you don't know how many IOs
-> are there.
+On Wed, Nov 20, 2024 at 11:11:12AM -0700, Keith Busch wrote:
+> Various applications were written to that interface and showed initial
+> promise, but production quality hardware never materialized.
 
-Which is why everyone hates the nvme fused commands with passion, and no
-one but vmware actually uses them, and no other fused command pair
-except for compare and write ever materialized.
+FYI, production grade NVMe streams hardware did materialize and is still
+is shipped and used by multiple storage OEMS.  Like most things in
+enterprise storage you're unlikely to see it outside the firmware builds
+for those few customers that actually require and QAed it.
 
-> That said, depending on the size of the PI metadata, it might be more
-> convenient for the app programmer to supply one pointer to a single
-> array of PI information for the entire IO request, packed in whatever
-> format the underlying device wants.
-> 
-> Thinking with my xfs(progs) hat on, if we ever wanted to run xfs_buf(fer
-> cache) IOs through io_uring with PI metadata, we'd probably want a
-> vectored io submission interface (xfs_buffers can map to discontiguous
-> LBA ranges on disk), but we'd probably have a single memory object to
-> hold all the PI information.
+> Some of
+> these applications are still setting the write hints today, and the
+> filesystems are all passing through the block stack, but there's just
+> currently no nvme driver listening on the other side.
 
-Agreed.  And unless I'm misremembering something, all proposals so far
-had a single PI buffer for vectored read/writes.
+The only source available application we could fine that is using these
+hints is rocksb, which got the fcntl interface wrong so that it did not
+have a chance to actually work until Hans fixed it recently.  Once he
+fixed it, it shows great results when using file system based hinting,
+although it still needs tuning to align it's internal file size to
+the hardware reclaim unit size, i.e. it either needs behind the scenes
+knowledge or an improved interface to be properly optimized.
 
+> The meaning assigned to an FDP stream is whatever the user wants it to
+> mean. It's not strictly a lifetime hint, but that is certainly a valid
+> way to use them. The contract on the device's side is that writes to
+> one stream won't create media interfere or contention with writes to
+> other streams. This is the same as nvme's original streams, which for
+> some reason did not carry any of this controversy.
+
+Maybe people realized how badly that works outside a few very special
+purpose uses?
+
+I've said it before, but if you really do want to bypass the file
+systems (and there's very good reasons for that for some workloads),
+bypass it entirely.  Don't try to micro-manage the layer below the
+file system from the application without any chance for the file system
+to even be in the known.
+
+The entire discussion also seems to treat file systems as simple
+containers for blocks that are static.  While that is roughly true
+for a lot of older file system designs, once you implement things
+like snapshots, data checksums, data journalling or in general
+flash friendly metadata write patterns that is very wrong, and
+the file systems will want to be able to separate write streams
+independently of the pure application write streams.
 

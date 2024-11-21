@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-4933-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4934-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DAE9D5072
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 17:05:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E555D9D508E
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 17:17:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDCD41F21D48
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 16:05:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 899F3B210E5
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 16:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E8E487A7;
-	Thu, 21 Nov 2024 16:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EAD55C29;
+	Thu, 21 Nov 2024 16:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cnmNMMok"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJrOxSO+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2EE155CBF
-	for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 16:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A60119A
+	for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 16:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732205145; cv=none; b=AqQVu3QaEMmk9dtA+hUJhtWdxKF+Zr6T59jZQmThi1f35g7hDBzwv9edwXBHgaEH2nqZSVCz4MMG5dSkpi5uBei9wolzUK5gGGossScmnltqJ6cTqWQF/9BciLQ1L1+5TA3nmBfic5taITrxPovnp13V1LqNWsZMs9NZpyjtktI=
+	t=1732205862; cv=none; b=az1C/3haEZa54s/Wml8/Blut82Fn3gkgrjcey96D3CujMTcSt/AhvjSu1R100X8f5ztLzCDcyUgoZmmxkw3K4eqcah5bqTsivT+a31tKExNF53XGerliVs4j6B7oK9r+RP6TpKiKV/UJoqA0QQEcNJOjvP8yancLlyl0d61NjFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732205145; c=relaxed/simple;
-	bh=uQ+snqmo+uJfLiZciN3DtHYvFDFuKZ4nAqGr0LANN60=;
+	s=arc-20240116; t=1732205862; c=relaxed/simple;
+	bh=MbmCTckO9u7WcNeuwkMAIjrw8P5WWhnYBFbPswg5o8k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=f+2dHIhsfRCnpowFiVpVGf+NqIBF2vBqynoOYwLbgV8F7NMjQ96yAZaNLtRXox4DjS4mAieOy/4xhrOWUm2Gl/tpvQHo9zssrAi0ThZ+rw2aJtDwOg44g6MoYViH3Ilbif3TRXbXp8Gppo7ixxytz0dUDKduGGF8D+NSJSEDUKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cnmNMMok; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-295cee3a962so717321fac.3
-        for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 08:05:40 -0800 (PST)
+	 In-Reply-To:Content-Type; b=d47EZCo2mCA2g8tUNuOwIGE0aErJBY/rb2BridlMsCegOFxVC26Ph5dgWKR1OSSgXXxq8FnpqA8vs3+u/YCCK39OBIZrKI+VmgQnEGJE1yUdy6xn2+orBiKkGZzGPQpBIamvGWhQUHxQUSN/zdD0w2sD5LOjK38x+tIQAWWhqn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJrOxSO+; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cfabc686c8so1378359a12.0
+        for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 08:17:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732205140; x=1732809940; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732205859; x=1732810659; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=exZPhSVfKFX+Bl2JbKHzMUzH6gqoDfmAkXWzC382iac=;
-        b=cnmNMMok0W0WxhLBpnzmnKFfhyyWQJfR3guXe181wICxfGXEAClCwJvEfYKNowntgS
-         rSvA6lBsZlbwS5lQl4QT6Oj6HMc5eKqDjO+ofD2MZ9ZsMOuuk7cVmxz9WzcNqBURfaMR
-         31/VFxmwJfL29UP2sXCiPBbm+/skHQiEoSpuDxgBiR/uVriPPjwGuorvKM0E73kKb+ey
-         xji+DpUQN9nJt6iixWY0ntQfvitT+C2Ls3GF8nNspWjezv1qGOTz7lQ5NciGi/q85qvA
-         YQZUh00k/VdWnpEtcPftTksZXcx7E8zWNshQA/FEES0P6hBeEAUzEVp+u4Ybrllzvgf5
-         X0ZQ==
+        bh=7sPHg6EcpO1jT1ViyRv9KvH38kjphWL1Z7991YBHzXc=;
+        b=KJrOxSO+g7Dy0UyDQmWKZhWawE3Phm8Y7KJHi6rLTod1AnHFWcoFwzPlOl7sYfzfN5
+         rNEP+pKSbClr5Dr5V6vSiRJL0x4F+15wpNi47QnOGs7luFNZqsWAuTQH133MRBRd2Lga
+         uMYc3I/TRUmtRIuOaVJE9RYUkaTfPR/Kz75tA49C/XA9IWCKo/AyhyugKLqXc1xP2CDP
+         JnSoY8L/lZEwhkgYudASfVGCsmLzHXW222/kz8qYJ8MMWVSVLdb31oW49yPHxKgN+DU1
+         pI3F0WeZnO94hKuUL5DTcWKXZ294zPxGtdKNRBpiLE8L5tNZBanr1OflwYGca0fkEObh
+         xBug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732205140; x=1732809940;
+        d=1e100.net; s=20230601; t=1732205859; x=1732810659;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=exZPhSVfKFX+Bl2JbKHzMUzH6gqoDfmAkXWzC382iac=;
-        b=SKNdP3TPsSb6oKsfjoZD5nF6Ojgxy0Ed3ZGePH/BFg6AxapAFIkQTQ0xwjVG+52lBV
-         oZmN4qOqaDw+1Gut+SsOdQhHyaGSlWzTNt83DFOe0q3WMAVyNq+Rz79m9tZFWPResoPB
-         mHPOzQJjNYiGZtYoGw3YgiGpVDVMMxAbZC0aRNlEiPt6DLczCsC7Oj558o2kNGbrDCjQ
-         znU3VwrWJk1oOs4fshHG6Cjsvd86JSyWrdbmEmYYY0F5A7gvcBGoAX6eLqe8u1BjMU6y
-         4WRwSeErY5Fto6w3K786hyMyxuoeNZYCVEAa3H/WJ1OmeHqbrdQ7gNebYKrri6JgUWeb
-         cpjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUH6RFFKraxrmT31rsyE9W/lRig0bShwz//pS+5qs6MBwFMj5GSkzmk5bJsK41dY3y0CXiElLy8JA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiEDUk7MfQCi3T7RY1P2B3C+HAZnm/mnKrpRrirFb0b4wXt0Sl
-	BtPfnBTlc2pkY349cHj2gGxpKOXyoNMrb/J4yOqy1nmG7XxIb3jkm1G5w9RqhMQ=
-X-Gm-Gg: ASbGncsHCUkh8ikzvkfKY1oqDujOHdV05/2gGQeQ/vPGY3++n84x8C9OKtLuZOtjX6P
-	4EfCAERx4JpWE2bts4U6KsqOWz38ezpwnTDu6/CwTemBVnTEvuNrdXtbZsttSs+G+soBnzojfZH
-	X250Uxv3htoZh3ENgQGT21crvqZlZx+FqditZvaJiJTFya7hqg/QwYCZjQpAH1TBvFoCid5se/E
-	F7bQRmKU1vRsUdqHEf83t7srh5/vozeMsgPH9V3zsKF+g==
-X-Google-Smtp-Source: AGHT+IFh9fb+HRcxYpj5n8BoWYKIM+s7ym07QQZltfuFI86065WBJbh9L+Xn+Q1/T8VOVfo532PXCA==
-X-Received: by 2002:a05:6870:9123:b0:277:d9f6:26f6 with SMTP id 586e51a60fabf-296d9bb710cmr7628653fac.12.1732205139794;
-        Thu, 21 Nov 2024 08:05:39 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29719e8e8ddsm62113fac.52.2024.11.21.08.05.38
+        bh=7sPHg6EcpO1jT1ViyRv9KvH38kjphWL1Z7991YBHzXc=;
+        b=B6rtSgHqcQYvEbv7HL/TfRXxqqH0/giJzaGdF1aVZS1uw4fV9aXaDQoQoOD9lVs+2H
+         kZUnRi7jIkhff+ioFh29XMRFDs7CQsOXrnaW7Ma3o5pkRYs1UxVcr9YFLCJa6+bzWbRq
+         uFUnuXgXK1w/5Kzna0iCt9Q9UHAejotjupbLWMagQiGoAVY5sMWcDap/tOwmWtFj+BzM
+         8ZicywReM2DKqnKI9qj6O3sC4/U9yJ7Tk6CoSSWQOztc5dCBDPbvTQGo2M8kgSONhqnQ
+         IwqoXBDjYDEm0//sWkB//BLvqoHmfWY9yfxO1lYjbgqf5pz+oTc3IivJe9tL1ZciGnRV
+         jnfw==
+X-Forwarded-Encrypted: i=1; AJvYcCV22eSisMJIgJ7t/zdCGqG8WE/uaDIeaVZpl/wIVZt+YbZTSfMdEGWbVc9IHvcvdUT/Mi5be+LS+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKEaKwg4zWt2jezgQ+xPrA4RRFZaAEswLBM9Zwbo6P4xPnAzCz
+	zOo4gA3tAaKn4fMqQBTdVB0SPoEnR6MVTGY28WjZ4voSlKBdR0II
+X-Gm-Gg: ASbGncsqS2KCp7ZjxUVQY5lF22GXYiNaklx3CKXawAOH9KxQMEg+QLB3wCNbkLOcXGV
+	toKRCUgKcNzWmMLf6ngYqyOeLyZnSe/SVOErcwEXZvsSp/aGWlGfks9k+PxsatxZFlGfIG0DDu9
+	hsnp9sNTUXJOCHQFhwWil1Cx2SKckJgcUfag4cYMrK0T8m0hFgXKGr2p3yFG6BXVEKAnyJ3x3Wz
+	8b432+X+KMOKhoSdAka59AA9uyjmfJoYhPaCxPPmYZKwYSfhLbJpudCS1s7SA==
+X-Google-Smtp-Source: AGHT+IHXjgD6Wk1MnZtaQFbg1wiMTxfqFdo6XhsiwtSTq/ScorNNViYYi0GcDNoRFdWbnFFnLHwBfQ==
+X-Received: by 2002:a17:907:9452:b0:a9a:67a9:dc45 with SMTP id a640c23a62f3a-aa4dd50a559mr772475866b.3.1732205858604;
+        Thu, 21 Nov 2024 08:17:38 -0800 (PST)
+Received: from [192.168.42.237] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f419d412sm97357666b.84.2024.11.21.08.17.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 08:05:39 -0800 (PST)
-Message-ID: <727c08cc-41ee-4b46-bf66-67ad773eb3e4@kernel.dk>
-Date: Thu, 21 Nov 2024 09:05:37 -0700
+        Thu, 21 Nov 2024 08:17:38 -0800 (PST)
+Message-ID: <357a3a72-5918-44e1-b84f-54ae093cf419@gmail.com>
+Date: Thu, 21 Nov 2024 16:18:30 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,7 +81,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH next v1 2/2] io_uring: limit local tw done
-To: Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
+To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
  io-uring@vger.kernel.org
 References: <20241120221452.3762588-1-dw@davidwei.uk>
  <20241120221452.3762588-3-dw@davidwei.uk>
@@ -92,57 +92,30 @@ References: <20241120221452.3762588-1-dw@davidwei.uk>
  <66fa0bfd-13aa-4608-a390-17ea5f333940@gmail.com>
  <9859667c-0fbf-4aa5-9779-dae91a9c128b@kernel.dk>
  <3e6a574c-27ae-47f4-a3e3-2be2c385f89b@kernel.dk>
- <e0753760-2a91-406f-8b06-98528cf6defa@gmail.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <e0753760-2a91-406f-8b06-98528cf6defa@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <3e6a574c-27ae-47f4-a3e3-2be2c385f89b@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/21/24 9:00 AM, Pavel Begunkov wrote:
-> On 11/21/24 15:22, Jens Axboe wrote:
->> On 11/21/24 8:15 AM, Jens Axboe wrote:
->>> I'd rather entertain NOT using llists for this in the first place, as it
->>> gets rid of the reversing which is the main cost here. That won't change
->>> the need for a retry list necessarily, as I think we'd be better off
->>> with a lockless retry list still. But at least it'd get rid of the
->>> reversing. Let me see if I can dig out that patch... Totally orthogonal
->>> to this topic, obviously.
->>
->> It's here:
->>
->> https://lore.kernel.org/io-uring/20240326184615.458820-3-axboe@kernel.dk/
->>
->> I did improve it further but never posted it again, fwiw.
-> It's nice that with sth like that we're not restricted by space and be
-> smarter about batching, e.g. splitting nr_tw into buckets. However, the
-> overhead of spinlock could be very hard if there is contention. With
+On 11/21/24 15:22, Jens Axboe wrote:
+> On 11/21/24 8:15 AM, Jens Axboe wrote:
+>> I'd rather entertain NOT using llists for this in the first place, as it
+>> gets rid of the reversing which is the main cost here. That won't change
+>> the need for a retry list necessarily, as I think we'd be better off
+>> with a lockless retry list still. But at least it'd get rid of the
+>> reversing. Let me see if I can dig out that patch... Totally orthogonal
+>> to this topic, obviously.
+> 
+> It's here:
+> 
+> https://lore.kernel.org/io-uring/20240326184615.458820-3-axboe@kernel.dk/
+> 
+> I did improve it further but never posted it again, fwiw.
 
-This is true, but it's also equally true for the llist - if you have
-contention on adding vs running, then you'll be bouncing the cacheline
-regardless. With the spinlock, you also have the added overhead of the
-IRQ disabling.
-
-> block it's more uniform which CPU tw comes from, but with network it
-> could be much more random. That's what Dylan measured back than, and
-> quite a similar situation that you've seen yourself before is with
-> socket locks.
-
-I'm sure he found the llist to be preferable, but that was also before
-we had to add the reversing. So not so clear cut anymore, may push it
-over the edge as I bet there was not much of a difference before. At
-least when I benchmarked this back in March, it wasn't like llist was
-a clear winner.
-
-> Another option is to try out how a lockless list (instead of stack)
-> with double cmpxchg would perform.
-
-I did ponder that and even talked to Paul about it as well, but I never
-benchmarked that one. I can try and resurrect that effort. One annoyance
-there is that we need arch support, but I don't think it's a big deal as
-the alternative is just to fallback to spinlock + normal list if it's
-not available.
+io_req_local_work_add() needs a smp_mb() after unlock, see comments,
+release/unlock doesn't do it.
 
 -- 
-Jens Axboe
+Pavel Begunkov
 

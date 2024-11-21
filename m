@@ -1,141 +1,152 @@
-Return-Path: <io-uring+bounces-4941-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4942-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8314B9D5289
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 19:30:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110DC9D5299
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 19:35:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF21280E83
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 18:30:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A86E1F21FCB
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 18:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BA21C8FC8;
-	Thu, 21 Nov 2024 18:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAFE1A2574;
+	Thu, 21 Nov 2024 18:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKtjep3O"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="riv6zpD6"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFA81C5799;
-	Thu, 21 Nov 2024 18:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E6B6F06B
+	for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 18:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732213804; cv=none; b=T/MNTfyx5lJy0B4gVSEaA4pVYu0Ln+P4btuGHK0Tnn+CCMZDUBX61huSuNTneVF73mRfL/FAu7vUntwPwmDDGejxqRD2q6xweM70vOW3MUBN3AEnvzbKUMsqeN1TWXdpE910GByJdZxuY0MKNGGXD7wZn17k3KolCkRhH58Htus=
+	t=1732214116; cv=none; b=QZo7KLyMee9PY8TuXkE6FFEQeBVeg3c4OXO4WuS87SW5bB1G4jpwws5hpLeBu7/P5mSLLjJfIgn0H7pvHr4aTD4YBx208MVx4iQP7KyNLGa05MtQJHtl6NDiKbc1QgxLqGBu3yzxclnLhtEPaddTqEJAnH2G8fYQZL55UFYd7K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732213804; c=relaxed/simple;
-	bh=fzBMHyBPmOcnPSKvdX8ScUW0W9JnhS02LVLMWZ4aCts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MAvhYG739rTjnTJp4WGJz71QhAgVqWPro4M4UYJeP460GbxAWcfTMOEaG4AdTyHuDYSHMiwsozULey7uUHwSVgavxGJCL/XZS0yY2xjIm9kSCb6Xayw6+XxQdRdAoz78KPeSFjFrWPmzREmE3BRHvLtbOD/XslKHb+26ee38TZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKtjep3O; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20cdb889222so12559735ad.3;
-        Thu, 21 Nov 2024 10:30:02 -0800 (PST)
+	s=arc-20240116; t=1732214116; c=relaxed/simple;
+	bh=sxEt5QHQVWebuJzi/ZocdkWCv5jV6t5UCOUoxd5WEPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B/t7yYo6q09wX/A3+9sL1CFk2vAlFFrxiq3SIUzf4GNaE7neyekGuYFjOyIVxjQR+CVjy5C0Cr+NdX6//Q6TNUVP/UG0PUnQeGHCoMjmgZ3cQyx3O2jQXql75WEzWval+m/ksyAthrkLA5wmjk98cQdX5Aw9nqsyS6TJPzwX1D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=riv6zpD6; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-27d0e994ae3so647569fac.3
+        for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 10:35:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732213802; x=1732818602; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YhmbgbKDuSc1xVxpykJYeJe5ug61FuTdvle5K3IjcWg=;
-        b=SKtjep3OY7MBgJXRexqKQmpg+7X5jyTbhqGa6StEGCmIt4fC8UwER8Gpe8hyWYqtOZ
-         63U+BwFUcjZbamJDoy3BWhQpCpeDNAydWl5sCOvUW/bsqwA3xQds94zHzhAdXYacuqTt
-         JhLyNS27KM0XjDZhB4eAYLzgh2Tp5RIOQ3FM5p5yYiucFOv3m+f3B7M+Pzy+XroIBRyx
-         WO/0I5aqsDzrSfkCEOGp7DqVcaHWD++KE1+HLJ+UtLO3L3s8m+bZDfVOi5+8KEnRqCBi
-         91x1aAoHrGMm6h4fq7tlj3K6+2yZaza9O06CMCH7RH+s349uvEKHlrtgH33I9Re0PC0K
-         8ZNw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732214113; x=1732818913; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mbqhQuLd+DrrA6T8L2Ps3K6JSpl7CQfQrjhLlkd4Ce8=;
+        b=riv6zpD6gKoahr9CvmQFTmST+QAMwSYFLMwaQsEgTVOGBMNidnBQMiPwwp0yJDBzSw
+         Z9AI7AtV7wV3TO6Z9iYwlNVHhth2gkvTHr/wmDzQTM5Jv0Ge2Qc23S3YG4BjXCeNLbNI
+         5g/h8/lF7ZhQ1vxYAAJWNcLELLfgupR8idnFSKZBm8NRE0p2Mh4CcKXFriWORjbeG8kZ
+         Fs4d/Qo54oWRxwZyb1a3bnQucfc9q19ThmnzMjb6R3Qd9ObuhMixUAje/zbHfX0+cFSC
+         PnTVQ9LG6qhIV1U27+vJGGpV/4o5kP2Qq6DqeosRpMQikmZewa45q5SHGcPHU+Dz5Bnb
+         dyZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732213802; x=1732818602;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YhmbgbKDuSc1xVxpykJYeJe5ug61FuTdvle5K3IjcWg=;
-        b=Wu8MwWi/0JdAEjTXZqyFlVmG3Z8kOcM1GDl0ZUwEFixB33hnJfw2Y6YucXZnuLPhK8
-         Znlmj/jOD8yh4zqwxmIULIuSA8uaAd2jzSFjb5ZI2Jo/YPfgM/3Xs5T1x4n1ylR65yK8
-         l6VS6CB2LHS7mGGdDENgGg43+1pEJry6MdaEczIU/chzrVLXP/OrURrcn9AfPLLfHWy9
-         ninmtVSICE9BNKyB3Ima7y1FE1GSKxO88ew68HH9bg5kYTwoO71IS1hT1G7D6uUwSJ2s
-         d/arHGSr0F2349RP6/sByG8dCHdRtVN4JGnLi13DXEJp2KfcQ8Wd82cgEbn3EKXK5IYx
-         I9QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVhme4z0Km7HUEM98jsGtSvEpoovpgXf0LAbFNWCUkNxZnAyBF6U7TgA8zboWp4vP8Q8xiR/yF7Bxw+w==@vger.kernel.org, AJvYcCX19+kv/+bPEXpkhdzsGwljZEcd0tuyAULowtl6tGt9nzSQL9YRDuS11biYuRLNEHpqTJJkLQGrAg==@vger.kernel.org, AJvYcCX5Bnsmxgi9ztP3BIg1ksJDRVwIn/9wgTcDfb0UXvbOuUIlQNYrc/7MfWZ1nxgJc5F76sQWpDJaZ45aH2SE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3yNUEeHzDXouvzKWOlShjd6fOjg+yCRHsJoQ7fcQeszWo4tk8
-	9Z63MoKXzgSveEjfWtitd5KTX81gWB+l+tj32IGKMyXdbUXQwxPS
-X-Gm-Gg: ASbGnctHcyxhkjV+0qJ3OwqrmKAz1QxnOgjkpDkc7Gcoj6WejqgCy8U4h0Nsgh9j2g/
-	5NinQ8OVoHbl4Hb4LFsKRrjz0nHrK5pIG8AH0sFo0M+ErwGoKUzWOVQid8kykJ0K3MWK9KLiQGs
-	fDFX9nXZAwPv9hUBe7+S8p9/RsxJV5eNwHE/64MWJKF8sxPmdI266A6WL3IQwI91VjP5yrZ95x5
-	K4FZ+u+D+rMMPZvOaHXFEbuvCvkPTaAmMizMhhf3m/vP2IfdjwasVFvv96BZlo=
-X-Google-Smtp-Source: AGHT+IHs0C5RMruMnzg4VLJfmLHCfX9KqLLttit2qp3jnsKRaWQ2sRHsg4Ye0SOzyMU+ihT6ZLzkaA==
-X-Received: by 2002:a17:903:22ca:b0:20b:ce30:878d with SMTP id d9443c01a7336-2129f426cecmr49455ad.23.1732213801735;
-        Thu, 21 Nov 2024 10:30:01 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc2aad7sm1310415ad.279.2024.11.21.10.30.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 10:30:01 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 21 Nov 2024 10:30:00 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
-	linux-mm@kvack.org, io-uring@vger.kernel.org,
-	linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-Message-ID: <f602e322-af21-4bb3-86d4-52795a581354@roeck-us.net>
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
- <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz>
- <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
- <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
- <693a6243-b2bd-7f2b-2b69-c7e2308d0f58@gentwo.org>
+        d=1e100.net; s=20230601; t=1732214113; x=1732818913;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mbqhQuLd+DrrA6T8L2Ps3K6JSpl7CQfQrjhLlkd4Ce8=;
+        b=wc3Rd6zUHaFngj13xkzapHrr9KFpecgcwBkGBts6hShUJPjgUyMmaqPMT3VoBdM6pG
+         3QFhU8/L7wjey9gIlkZAyfJE9kMHETIoogmqUx41KdtKt7kiUcBdrn08WdRjmGUyZBOw
+         dgOmbJPHBFDKD3G+CRUtCuA+WZpQGDwBxFArPsKDA1qcebLYk8z4HUlZthO6IIDw8hfG
+         DLEDhzV3F/VxudTCCjnCeZ/hNAH/zUlA53rX62uCO7h8DGWDku+NsBdvDNqFE383t7oZ
+         rp97n5JQjE08oI7sk34FbhFyv+gKWWuk7aRCqTpHR7qK4Tck8HcSMdcoL2ArCZGzz9IX
+         C49A==
+X-Forwarded-Encrypted: i=1; AJvYcCVRMA2G8f5bCRm+u8AofTTYXvpKx8TmzFegAIo0lPCgXkQX+n6vt+Mx23/fnmmlwzsKsi4kG7fzSA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YykXLT94/NG0XLfRh+Lv9kOaSSwiIUEoG22v3LUzT5VA5URGjE9
+	nNPeTQWzf0IHp2Z9JUiICIpDI5Y8nv4LPnpgMev0Fsls62Fs1ivRcUu/KnWyeEU=
+X-Gm-Gg: ASbGncs9nBQD4z1td/rs8bfv6b9b/fCsS0xrlJYZ47ab6c8pPi1yf0ahMr6ilHIdNMC
+	JonwmVooH8/WqRUNHGtOhs7VIRcyd8Jl4Sa/Es7NJpQXGWiHadjjz7LuHmiYukUaCI6ObIWt2Pj
+	Rp78K1kF12P1+jsVXJbBrcILQkeTpELm3UT2rGOAJ+Cs+81rQivrYiQJpfL5BFwMLrqKjmzx7HX
+	EE5sTKkyot6v9FqzOm1s3ZVIAH+U5xBISX9VOvHdRiuVw==
+X-Google-Smtp-Source: AGHT+IGQ9k8wS2TS60qT8IVjc3fnuFCoLgHqv0GNMp58Q1HLV2LNWsVqKRLFgpF9Cw9p6ZAQqUdenA==
+X-Received: by 2002:a05:6870:9619:b0:296:b0d8:9025 with SMTP id 586e51a60fabf-296d9bcedd8mr8467428fac.20.1732214113009;
+        Thu, 21 Nov 2024 10:35:13 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2971d87e96dsm52987fac.45.2024.11.21.10.35.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 10:35:12 -0800 (PST)
+Message-ID: <3fe55eba-1a8c-464f-8598-6068ce03f296@kernel.dk>
+Date: Thu, 21 Nov 2024 11:35:10 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <693a6243-b2bd-7f2b-2b69-c7e2308d0f58@gentwo.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
+To: Guenter Roeck <linux@roeck-us.net>,
+ "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Pavel Begunkov
+ <asml.silence@gmail.com>, Mike Rapoport <rppt@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>,
+ Jann Horn <jannh@google.com>, linux-mm@kvack.org, io-uring@vger.kernel.org,
+ linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
+ <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz>
+ <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
+ <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
+ <693a6243-b2bd-7f2b-2b69-c7e2308d0f58@gentwo.org>
+ <f602e322-af21-4bb3-86d4-52795a581354@roeck-us.net>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <f602e322-af21-4bb3-86d4-52795a581354@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 21, 2024 at 09:23:28AM -0800, Christoph Lameter (Ampere) wrote:
-> On Thu, 21 Nov 2024, Geert Uytterhoeven wrote:
-> 
-> > Linux has supported m68k since last century.
-> 
-> Yeah I fondly remember the 80s where 68K systems were always out of reach
-> for me to have. The dream system that I never could get my hands on. The
-> creme de la creme du jour. I just had to be content with the 6800 and
-> 6502 processors. Then IBM started the sick road down the 8088, 8086
-> that led from crap to more crap. Sigh.
-> 
-> > Any new such assumptions are fixed quickly (at least in the kernel).
-> > If you need a specific alignment, make sure to use __aligned and/or
-> > appropriate padding in structures.
-> > And yes, the compiler knows, and provides __alignof__.
-> >
-> > > How do you deal with torn reads/writes in such a scenario? Is this UP
-> > > only?
-> >
-> > Linux does not support (rate) SMP m68k machines.
-> 
-> Ah. Ok that explains it.
-> 
-> Do we really need to maintain support for a platform that has been
-> obsolete for decade and does not even support SMP?
+On 11/21/24 11:30 AM, Guenter Roeck wrote:
+> On Thu, Nov 21, 2024 at 09:23:28AM -0800, Christoph Lameter (Ampere) wrote:
+>> On Thu, 21 Nov 2024, Geert Uytterhoeven wrote:
+>>
+>>> Linux has supported m68k since last century.
+>>
+>> Yeah I fondly remember the 80s where 68K systems were always out of reach
+>> for me to have. The dream system that I never could get my hands on. The
+>> creme de la creme du jour. I just had to be content with the 6800 and
+>> 6502 processors. Then IBM started the sick road down the 8088, 8086
+>> that led from crap to more crap. Sigh.
+>>
+>>> Any new such assumptions are fixed quickly (at least in the kernel).
+>>> If you need a specific alignment, make sure to use __aligned and/or
+>>> appropriate padding in structures.
+>>> And yes, the compiler knows, and provides __alignof__.
+>>>
+>>>> How do you deal with torn reads/writes in such a scenario? Is this UP
+>>>> only?
+>>>
+>>> Linux does not support (rate) SMP m68k machines.
+>>
+>> Ah. Ok that explains it.
+>>
+>> Do we really need to maintain support for a platform that has been
+>> obsolete for decade and does not even support SMP?
 
-Since this keeps coming up, I think there is a much more important
-question to ask:
+I asked that earlier in this thread too...
 
-Do we really need to continue supporting nommu machines ? Is anyone
-but me even boot testing those ?
+> Since this keeps coming up, I think there is a much more important
+> question to ask:
+> 
+> Do we really need to continue supporting nommu machines ? Is anyone
+> but me even boot testing those ?
 
-Guenter
+Getting rid of nommu would be nice for sure in terms of maintenance,
+it's one of those things that pop up as a build breaking thing because
+nobody is using/testing them.
+
+I'm all for axing relics from the codebase. Doesn't mean they can't be
+maintained out-of-tree, but that is where they belong imho.
+
+-- 
+Jens Axboe
 

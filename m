@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-4931-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4932-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F26C9D5000
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 16:45:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4CE89D5044
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 16:59:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90141B21D72
-	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 15:44:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9915C28297A
+	for <lists+io-uring@lfdr.de>; Thu, 21 Nov 2024 15:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3481155C98;
-	Thu, 21 Nov 2024 15:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20355156875;
+	Thu, 21 Nov 2024 15:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YcfmLjbD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i2+yvJvs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B0013E898;
-	Thu, 21 Nov 2024 15:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA01132122
+	for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 15:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732203890; cv=none; b=NNMmloW3URj93Gw6Z8wqnvuGv1AxzIjAhofcbgRt79YLs2ZYIhSEwqBtu+Qlo9H/0oYkpVigMfwJ5Vq8lPdTMybfSN4jJwPlpS3OaZaclTpGE3L4x+RRQMKV/ZGMcbnG/NrZdZxpI0BYEdMGyvSuXeTFvs/ZWdEGNxHJSBEpGak=
+	t=1732204783; cv=none; b=seR3VGIc26KNfjDr238rhtu5/49YGaTZG+Ir+Zb9f2+MQOR0HDBxblAEaQz8xRDrnsTMYnTGzW0MqFQXGy3902Bpd6lSi8It2vSKOmJ1CoAdUCXAFkRZEPvUNSCX0Fh6dnUzbWF6dABKDf3WnyNIB/eCXfAMOnvIkwxizX5CRk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732203890; c=relaxed/simple;
-	bh=MB6iJnnXYaZmNl56XT3EwoAa/w2SBxfGpUrAsPhuyX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JlpSFEMpVb995iKYZ2OD3Oq7gAM2np9dUX0scdIoPu7+HQBwQOwgRzWsDU1KwuyGkK1qLTUjNVGuM8Vh2N2qN6WcbH057oInP+XQpyf5BaNgP0wrOHBMTniBuE/5qLhMP/ZdXl5lUiI61CpoFCYxDjmy8iNj3Oyohq8d/F+slLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YcfmLjbD; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1732204783; c=relaxed/simple;
+	bh=OsvJyLq+73hEs88UDpI/9w9HQiej80RjHwprvnALY5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CiPnwQ0sqSLNTEMbBKe2GZQajup94k3/jL3cjSlCXKLdX+UrwCY2RloA+T/sOmFlZS8x8XmjPzLETjxw+VD6Q+WxQEaEb35I8HNlQjr/VVUolL0cFghiVruPOcJVIkJcpzcTxpHgSlvZpe9zSLiqtRJW3Iq9SUpKtgFI+y/8oww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i2+yvJvs; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53da353eb2eso1763386e87.3;
-        Thu, 21 Nov 2024 07:44:48 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so20295451fa.0
+        for <io-uring@vger.kernel.org>; Thu, 21 Nov 2024 07:59:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732203887; x=1732808687; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732204779; x=1732809579; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yq70YJzrFfkaT6vO9+6QOQ5rfwZ7sR/Fpz34vhs1TzQ=;
-        b=YcfmLjbDeg66naza7X6STJigEBriur9xptPGujJR+V3z6VB4JHvuTY8yLxORIEIV4s
-         U9RYnrj3vrJd/zgVFI3KVRDqZ+7RqQgz+JfUEDiRKGDgZ7GxizBQno/6qdlVuPGdey9b
-         E1qZcZ/5vs0F1LeGD69q+asMGfw5Gz/JmwkHp+BWee5piVG4W0qCuyl/EDnSqRy2h7ON
-         hJzSkiKfQgXBOmOd9pMkZJVwWHPWdeob/iclISYrbMKPo5F4saBlUI9sR0bu4l2ZyisV
-         bBHX/6oZpVAjUeeAk3YrYUhkpGnxxeOmx+sM6PdO9HzfIa5KG9ftJmCjjh+RD0Sreszr
-         sHuw==
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=nKczFFnvjQfl2oczClmsZdIAWLlFm5IvR6BHU4jiK98=;
+        b=i2+yvJvsNqEX5gG85zhhdYhD4aFD71UI8/b+RB90Due/JKqKHzWF6AkSK26ecupwGh
+         flvQomanoLW2yQJMMyRe4ItvcHVJm86G4s5x6I8HtB3s01ggCwNqcjC6p1VFTcKfHDZu
+         CAG9sz2GEI1CsekyffzlU2YX0u1eYGfaiyckap0Lb+a1xISz7pTCjVANo2pYFcMQZCvR
+         T9JU91FsyngQCWMRk3b8xY6iidMDTdBwAn4cWqw1OFcxQb18D2wshaUFFFnzYYM1/UqF
+         B02vwadMsBo0H3IpyWN2KBxYHyP20DGeYYoRdtXSTYlfciC1kgX9nxeZE7/3p6+c0+Dt
+         PNyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732203887; x=1732808687;
+        d=1e100.net; s=20230601; t=1732204779; x=1732809579;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yq70YJzrFfkaT6vO9+6QOQ5rfwZ7sR/Fpz34vhs1TzQ=;
-        b=Xvdb35BOvkkK+32ZmA+uPRclcfqdGuMfPeYG/zxFb0QXjIo8IGRM5DwlyELSvvxw/n
-         V3DW//cA/zAZaIP/cPBHdKBukkiD/AumqIaWygg3M6rIW+uukcQqlxKTyGjrrJCMlVj+
-         uDi9xLtLWVb49fBYm+/o9u2k9lJEkOR4dbNxHdki0LcPixcbjBaqZ5RnQVCumFWgXASy
-         qOs7VE1EKMFTkIjZm+S/XVk17/J/ZMLcY524snbhCrL0Rw0j3PijROcz3z7zod4cWBJL
-         KaDE5QtWZiI2cgP0lKewUWLuP1BDUTZSsdJMpmsrpnmUXi6P+/es9KvWQD2dMYLqP22s
-         RdSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUVi1YwvnhcO9JfK4cTqLFqj+RuIqkkBm9Fh8gQwVzVgiYqqfB1TD574vR2Y3Vgdj2LBrfMeDK5eOG4Q==@vger.kernel.org, AJvYcCWRikq9ntiwj4+3BKevlsUabH2W+AmMcdapDnKrVX0aifHQWwQzrm79zIOTebuuzR6A0c83t5uN70Zxg8omiQ==@vger.kernel.org, AJvYcCWc3ieakZ6cug5KHBvPyBn7cwERmYAsMdlHhVs7XoEo4FmImqOSJ6UBiJzJh78n+gEc9+h0+t9oYohyThk=@vger.kernel.org, AJvYcCXUebid6tj+qHDw5TgWM9fHGm7gCiXhRRNVXWpHkI4b4NMM5XRPA/6ZlTWTyQIrW5NQrCYPi7/+0Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCQUO/PRY/nU2rTt9iCjdcPfGrcU1lB/fP5y8ibKhJTzuTJMXE
-	vhOrRSRp5c+O29NAfYdo0kgpmSeaoTdMrEyAlHLt/cJpZHr9iZGm
-X-Gm-Gg: ASbGnctCOFphGJpIgpIaA0dz00SawXrx0fKhgi5kT3LPuZqc9dUY5KRdH/etO+NlkSD
-	rG9crNq9xT0ROi2MjLCq7CBxzkt1JQub0Cj8X/gV3x8YVvFcJUNrJSM0FenB2lcXpl/oMaFaPvr
-	uD7N2/7jCEzbrYNRyh/hShypwLMCT7Tuw89PSqPLSrRxnvyfGQEcfTVCN3TvJPCfX6G2UMF4afv
-	H+BP2Qp0ZsyB/UZpYOQrggsOT/rSGZOX+bAy79bULyIjpXBYVKDDdEeugZZCQ==
-X-Google-Smtp-Source: AGHT+IF++NRQF74gXAH6xM1W4Qh3AQIH8KSN5zEQe3RTf9TGDltr4dR/aWa+g/x4zzyWxju6+0KAMw==
-X-Received: by 2002:a05:6512:1195:b0:535:6a34:b8c3 with SMTP id 2adb3069b0e04-53dc13230b4mr6167738e87.5.1732203886812;
-        Thu, 21 Nov 2024 07:44:46 -0800 (PST)
+        bh=nKczFFnvjQfl2oczClmsZdIAWLlFm5IvR6BHU4jiK98=;
+        b=lz0zYtVs1d3I7r71q2QS+QcaG9xT/F/0PoEVq2JvMTkUviBTEZzPWvUamu9Rkmtq0s
+         5F3KCO0IJDyysg3wgnpkEdu98Pc5wnJxhmWp6BR9UDvN8VMSWXub/z/5giEnNhORhDFa
+         zdVa9o5cKue7QGwxldUvUUhMU9MHpROADS5KNKyqYtKv4pU5NaE+pBfQH/vGEHefHS2+
+         ZIZ55/Zg21ulOQtagzyYplkU/6Xt4U445Ag2CZUuuI0B1mEz4eG/bHCTqwEf5PcJlfR+
+         Qxn2relOttd24OspX+WpdBMoWhXRcY1Cx6FPHwpyRaxXesFpf1cdqOeXxqa6kj4sYTL3
+         FQ0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWrEXoV/5dfZ9oVI4eR+F16Q89PIFFV5qSgkrRl5Tyml6hbA6fi9raX8zYH6HW+sLIptgjMdwDisw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzCukoz+ShypqcNEAChJ0ZuERb14R8bP686uWQycZgeI76WzKR
+	BWAR9beVVf1bK81uchhPTWHODP2EVvJw2S9nLZsZ53R9v0jn4QMRdDBtkw==
+X-Gm-Gg: ASbGnct0qY5QtttlPzaKPu6bDElE2L8iSj8rqS9VC51HKxf+zN+Gi1XPSCS7au6o3bI
+	Cd/wJu11y+rZNh7lwADixUyNYFFM7RXxt7t42ysfgsGFfJZX4cO81YT5ljH0bcthd96z2cxjw6A
+	mMElqWhG9dKnVZE12X5SMPVWHt7+fbokvPSum2j3C8MkoJ7vtfU8lpqpQT3j+AtQqquSyB/DuZ+
+	j8gF9yJcfZWJhO+qbZHPskQtENR41D1Uhjfw+w+WQ5hnaT7W+nKZHqwjyugDA==
+X-Google-Smtp-Source: AGHT+IEcWIg5neQYRZ9eKANboR5y5zZyE0ijd2Bee2IMREiHoI3r9/BGEXB272UgrmXl9nNmihuPEQ==
+X-Received: by 2002:a05:651c:909:b0:2fb:2a96:37fd with SMTP id 38308e7fff4ca-2ff8dc7631fmr73975601fa.29.1732204779136;
+        Thu, 21 Nov 2024 07:59:39 -0800 (PST)
 Received: from [192.168.42.120] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f43801f5sm93964866b.190.2024.11.21.07.44.46
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f42d48d4sm94064066b.119.2024.11.21.07.59.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 07:44:46 -0800 (PST)
-Message-ID: <506ca9ff-40c2-49eb-bcc3-e1735a4f4cd9@gmail.com>
-Date: Thu, 21 Nov 2024 15:45:37 +0000
+        Thu, 21 Nov 2024 07:59:38 -0800 (PST)
+Message-ID: <e0753760-2a91-406f-8b06-98528cf6defa@gmail.com>
+Date: Thu, 21 Nov 2024 16:00:30 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,88 +80,48 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 06/11] io_uring: introduce attributes for read/write
- and PI support
-To: Anuj Gupta <anuj20.g@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
- martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
- jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
- gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
- linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
-References: <20241114104517.51726-1-anuj20.g@samsung.com>
- <CGME20241114105405epcas5p24ca2fb9017276ff8a50ef447638fd739@epcas5p2.samsung.com>
- <20241114104517.51726-7-anuj20.g@samsung.com>
- <c622ee8c-82f0-44d4-99da-91357af7ecac@gmail.com>
- <b61e1bfb-a410-4f5f-949d-a56f2d5f7791@gmail.com>
- <20241118125029.GB27505@lst.de>
- <2a98aa33-121b-46ed-b4ae-e4049179819a@gmail.com>
- <20241121085935.GA3851@green245>
+Subject: Re: [PATCH next v1 2/2] io_uring: limit local tw done
+To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org
+References: <20241120221452.3762588-1-dw@davidwei.uk>
+ <20241120221452.3762588-3-dw@davidwei.uk>
+ <f32b768f-e4a4-4b8c-a4f8-0cdf0a506713@gmail.com>
+ <95470d11-c791-4b00-be95-45c2573c6b86@kernel.dk>
+ <614ce5a4-d289-4c3a-be5b-236769566557@gmail.com>
+ <b7170b8e-9346-465b-be60-402c8f125e54@kernel.dk>
+ <66fa0bfd-13aa-4608-a390-17ea5f333940@gmail.com>
+ <9859667c-0fbf-4aa5-9779-dae91a9c128b@kernel.dk>
+ <3e6a574c-27ae-47f4-a3e3-2be2c385f89b@kernel.dk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241121085935.GA3851@green245>
+In-Reply-To: <3e6a574c-27ae-47f4-a3e3-2be2c385f89b@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/21/24 08:59, Anuj Gupta wrote:
-> On Mon, Nov 18, 2024 at 04:59:22PM +0000, Pavel Begunkov wrote:
->> On 11/18/24 12:50, Christoph Hellwig wrote:
->>> On Sat, Nov 16, 2024 at 12:32:25AM +0000, Pavel Begunkov wrote:
-...
->> Do we have technical arguments against the direction in the last
->> suggestion? It's extendible and _very_ simple. The entire (generic)
->> handling for the bitmask approach for this set would be sth like:
->>
->> struct sqe {
->> 	u64 attr_type_mask;
->> 	u64 attr_ptr;
->> };
->> if (sqe->attr_type_mask) {
->> 	if (sqe->attr_type_mask != TYPE_PI)
->> 		return -EINVAL;
->>
->> 	struct uapi_pi_structure pi;
->> 	copy_from_user(&pi, sqe->attr_ptr, sizeof(pi));
->> 	hanlde_pi(&pi);
->> }
->>
->> And the user side:
->>
->> struct uapi_pi_structure pi = { ... };
->> sqe->attr_ptr = &pi;
->> sqe->attr_type_mask = TYPE_PI;
->>
+On 11/21/24 15:22, Jens Axboe wrote:
+> On 11/21/24 8:15 AM, Jens Axboe wrote:
+>> I'd rather entertain NOT using llists for this in the first place, as it
+>> gets rid of the reversing which is the main cost here. That won't change
+>> the need for a retry list necessarily, as I think we'd be better off
+>> with a lockless retry list still. But at least it'd get rid of the
+>> reversing. Let me see if I can dig out that patch... Totally orthogonal
+>> to this topic, obviously.
 > 
-> How about using this, but also have the ability to keep PI inline.
-> Attributes added down the line can take one of these options:
-> 1. If available space in SQE/SQE128 is sufficient for keeping attribute
-> fields, one can choose to keep them inline and introduce a TYPE_XYZ_INLINE
-> attribute flag.
-> 2. If the available space is not sufficient, pass the attribute information
-> as pointer and introduce a TYPE_XYZ attribute flag.
-> 3. One can choose to support a attribute via both pointer and inline scheme.
-> The pointer scheme can help with scenarios where user wants to avoid SQE128
-> for whatever reasons (e.g. mixed workload).
+> It's here:
+> 
+> https://lore.kernel.org/io-uring/20240326184615.458820-3-axboe@kernel.dk/
+> 
+> I did improve it further but never posted it again, fwiw.
+It's nice that with sth like that we're not restricted by space and be
+smarter about batching, e.g. splitting nr_tw into buckets. However, the
+overhead of spinlock could be very hard if there is contention. With
+block it's more uniform which CPU tw comes from, but with network it
+could be much more random. That's what Dylan measured back than, and
+quite a similar situation that you've seen yourself before is with
+socket locks.
 
-Right, the idea would work. It'd need to be not type specific but
-rather a separate flag covering all attributes of a request, though.
-IOW, either all of them are in user memory or all optimised. We probably
-don't have a good place for a flag, but then you can just chip away a
-bit from attr_type_mask as you're doing for INLINE.
-
-enum {
-	TYPE_PI = 1,
-	...
-	TYPE_FLAG_INLINE = 1 << 63,
-};
-
-// sqe->attr_type_mask = TYPE_PI | TYPE_FLAG_INLINE;
-
-Another question is whether it's better to use SQE or another mapping
-like reg-wait thing does. My suggestion is, send it without the INLINE
-optimisation targeting 6.14 (I assume block bits are sorted?). We'll
-figure that optimisation separately and target the same release, there
-is plenty of time for that.
+Another option is to try out how a lockless list (instead of stack)
+with double cmpxchg would perform.
 
 -- 
 Pavel Begunkov

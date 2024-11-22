@@ -1,101 +1,101 @@
-Return-Path: <io-uring+bounces-4997-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4998-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A319D6559
-	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 22:16:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B369D655A
+	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 22:16:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 928ACB22EBE
-	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 21:16:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB6D7B23214
+	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 21:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACA1175D25;
-	Fri, 22 Nov 2024 21:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995F517DFFC;
+	Fri, 22 Nov 2024 21:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HSsdL44B";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5Xsw2e/m";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HSsdL44B";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5Xsw2e/m"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wO3Qla++";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tJjkbJse";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wO3Qla++";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tJjkbJse"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA40185935
-	for <io-uring@vger.kernel.org>; Fri, 22 Nov 2024 21:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB96189909
+	for <io-uring@vger.kernel.org>; Fri, 22 Nov 2024 21:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732310174; cv=none; b=bZxXoDqq/zZMg67WvtdIqKc+EZRFyYhdgBsal/za2dMy7rsXkT1+gwc57e9YE/cGCs7gSOeV5f9DhZPqmhF8iaaXWPAnSOMdBfG2KpISo+8whs1uQwEU52kLNaYMoRL/S8+olyMwek5V4fcuvMLgMfscRd3n5W5pvLpqwyTpSQE=
+	t=1732310176; cv=none; b=eYcYAwpprL+e1J0OnBVyYLoMB524jWEC5wPDF4Wfgw2rpfKfzA0Mh6+j48V5KZXnj+XgyS5ZMvJanhHSZ8WjGHoMeQcG9B7jbVE4Z212SkXCAIfrNyd4HQ8XDMNwBJYJc2v0g2BHuNbyT/uV/BdSNHD4ZmvHRUhXnYUZXIVBg+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732310174; c=relaxed/simple;
-	bh=ug5qwzfDoq4jP8N+GgqelNZOEIYdlOPn+CA1KbzYS80=;
+	s=arc-20240116; t=1732310176; c=relaxed/simple;
+	bh=Fgfw0rnRWuj34c7lmsjDmG4onhxt8XB673osQsaNJTU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vl/y2uz0BHd6418O/JPRrEp3DmbHleoqFnA2ievhPJ5q4bjfae57BTj+Egcdm8imAdkuZ/VNjkD6khiljLi1dOG31ps5yj5Yt5r2PyYNiChu+euykqQqTORFTMZXjendPm4QC0X8BGJLV2Ho8Q7Bc87qo3v5bPUY8ZqB5Ee2aVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HSsdL44B; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5Xsw2e/m; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HSsdL44B; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5Xsw2e/m; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=VY10Y3oTW7ocMEUHpDF8/ZA0Pue9zJwM3S992vSpAKuG8NF1J/2Qn6BUZHlLJAsvxv4xxI68edNmRA3lv571SFx0ixBJ2RaD0C6i5hy+W85nopLthKrQHy9XuTRXk9BxQgi9F8Pzy9BzmthOZFo/GwLQ6Lvroim7SW0Rrq4EUSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wO3Qla++; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tJjkbJse; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wO3Qla++; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tJjkbJse; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A4839211FF;
-	Fri, 22 Nov 2024 21:16:11 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 531EF21200;
+	Fri, 22 Nov 2024 21:16:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732310171; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1732310173; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Fit5cB00P9J1ddoFuX578NEg8p69De2TjOOtiEvyYUI=;
-	b=HSsdL44BJ5nRY2k1Ax5f/bzTW4rR0mnNFjPDSnZcfy6N+P+XVQO0RP4ZZaCM5EowzApX9V
-	MwPf4O0bLVAyn0gvcla+w3BOabLrm4iufwb6bnzdw8pUxOc0Viti58aSxgqTFD4wx2fpWH
-	8gQaw+Hstc7bBSeJWXrL08Y8peJecdY=
+	bh=ztVHk8HwhzP7hT8mRZgASJKgTI7AJFZ8CjPhxJFXT1w=;
+	b=wO3Qla++zDzVMNqweFmahPzR8+QhPnHs7S67D7WGEt7UsGbnvUQAfnNqZbeczXNdjwC43r
+	6UlPPEFXLqqzwZAA/s1XEeKs88EDSYbqEsDb1xiZ7/z9AmwT++HYlRR8d9+cjAN8qZjkeI
+	tk30DalcysQtDrNVgMZ20ScZPF109a8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732310171;
+	s=susede2_ed25519; t=1732310173;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Fit5cB00P9J1ddoFuX578NEg8p69De2TjOOtiEvyYUI=;
-	b=5Xsw2e/mGvUxAz0/B7PmeJgmAQ5Hj2lLzsFuXqHLNn4cyu1H9eqm+Fwvsei88db7/PyvG7
-	qb/ZZJBHskdn0WAg==
+	bh=ztVHk8HwhzP7hT8mRZgASJKgTI7AJFZ8CjPhxJFXT1w=;
+	b=tJjkbJseHGLA6m2BLhcqqnvBpwx0BI/sO23XF5qEKUz8/f89b4YxK/gRM4/dWO03QkVmEt
+	JLSvSwkc/qFVZABA==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732310171; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1732310173; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Fit5cB00P9J1ddoFuX578NEg8p69De2TjOOtiEvyYUI=;
-	b=HSsdL44BJ5nRY2k1Ax5f/bzTW4rR0mnNFjPDSnZcfy6N+P+XVQO0RP4ZZaCM5EowzApX9V
-	MwPf4O0bLVAyn0gvcla+w3BOabLrm4iufwb6bnzdw8pUxOc0Viti58aSxgqTFD4wx2fpWH
-	8gQaw+Hstc7bBSeJWXrL08Y8peJecdY=
+	bh=ztVHk8HwhzP7hT8mRZgASJKgTI7AJFZ8CjPhxJFXT1w=;
+	b=wO3Qla++zDzVMNqweFmahPzR8+QhPnHs7S67D7WGEt7UsGbnvUQAfnNqZbeczXNdjwC43r
+	6UlPPEFXLqqzwZAA/s1XEeKs88EDSYbqEsDb1xiZ7/z9AmwT++HYlRR8d9+cjAN8qZjkeI
+	tk30DalcysQtDrNVgMZ20ScZPF109a8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732310171;
+	s=susede2_ed25519; t=1732310173;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Fit5cB00P9J1ddoFuX578NEg8p69De2TjOOtiEvyYUI=;
-	b=5Xsw2e/mGvUxAz0/B7PmeJgmAQ5Hj2lLzsFuXqHLNn4cyu1H9eqm+Fwvsei88db7/PyvG7
-	qb/ZZJBHskdn0WAg==
+	bh=ztVHk8HwhzP7hT8mRZgASJKgTI7AJFZ8CjPhxJFXT1w=;
+	b=tJjkbJseHGLA6m2BLhcqqnvBpwx0BI/sO23XF5qEKUz8/f89b4YxK/gRM4/dWO03QkVmEt
+	JLSvSwkc/qFVZABA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6CAAC13998;
-	Fri, 22 Nov 2024 21:16:11 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1C0EC13998;
+	Fri, 22 Nov 2024 21:16:12 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +NSOFJv0QGfaXQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Fri, 22 Nov 2024 21:16:11 +0000
+	id q/riOJz0QGfcXQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Fri, 22 Nov 2024 21:16:12 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: axboe@kernel.dk,
 	asml.silence@gmail.com
 Cc: io-uring@vger.kernel.org,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v2 8/9] io_uring: Move old async data allocation helper to header
-Date: Fri, 22 Nov 2024 16:15:40 -0500
-Message-ID: <20241122211541.2135280-9-krisman@suse.de>
+Subject: [PATCH v2 9/9] io_uring/msg_ring: Drop custom destructor
+Date: Fri, 22 Nov 2024 16:15:41 -0500
+Message-ID: <20241122211541.2135280-10-krisman@suse.de>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241122211541.2135280-1-krisman@suse.de>
 References: <20241122211541.2135280-1-krisman@suse.de>
@@ -115,7 +115,7 @@ X-Spamd-Result: default: False [-1.30 / 50.00];
 	R_MISSING_CHARSET(0.50)[];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[];
 	ARC_NA(0.00)[];
@@ -134,114 +134,62 @@ X-Spamd-Result: default: False [-1.30 / 50.00];
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-There are two remaining uses of the old async data allocator that do not
-rely on the alloc cache.  I don't want to make them use the new
-allocator helper because that would require a if(cache) check, which
-will result in dead code for the cached case (for callers passing a
-cache, gcc can't prove the cache isn't NULL, and will therefore preserve
-the check.  Since this is an inline function and just a few lines long,
-keep a second helper to deal with cases where we don't have an async
-data cache.
-
-No functional change intended here.  This is just moving the helper
-around and making it inline.
+kfree can handle slab objects nowadays. Drop the extra callback and just
+use kfree.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- io_uring/io_uring.c | 13 -------------
- io_uring/io_uring.h | 12 ++++++++++++
- io_uring/timeout.c  |  5 ++---
- io_uring/waitid.c   |  4 ++--
- 4 files changed, 16 insertions(+), 18 deletions(-)
+ io_uring/io_uring.c | 4 ++--
+ io_uring/msg_ring.c | 7 -------
+ io_uring/msg_ring.h | 1 -
+ 3 files changed, 2 insertions(+), 10 deletions(-)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index bd71782057de..08c42a0e3e74 100644
+index 08c42a0e3e74..1e591234f32b 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -1616,19 +1616,6 @@ io_req_flags_t io_file_get_flags(struct file *file)
- 	return res;
+@@ -361,7 +361,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
+ 	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
+ 	io_alloc_cache_free(&ctx->uring_cache, kfree);
+-	io_alloc_cache_free(&ctx->msg_cache, io_msg_cache_free);
++	io_alloc_cache_free(&ctx->msg_cache, kfree);
+ 	io_futex_cache_free(ctx);
+ 	kvfree(ctx->cancel_table.hbs);
+ 	xa_destroy(&ctx->io_bl_xa);
+@@ -2693,7 +2693,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
+ 	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
+ 	io_alloc_cache_free(&ctx->uring_cache, kfree);
+-	io_alloc_cache_free(&ctx->msg_cache, io_msg_cache_free);
++	io_alloc_cache_free(&ctx->msg_cache, kfree);
+ 	io_futex_cache_free(ctx);
+ 	io_destroy_buffers(ctx);
+ 	io_unregister_cqwait_reg(ctx);
+diff --git a/io_uring/msg_ring.c b/io_uring/msg_ring.c
+index e63af34004b7..d41ea29802a6 100644
+--- a/io_uring/msg_ring.c
++++ b/io_uring/msg_ring.c
+@@ -358,10 +358,3 @@ int io_uring_sync_msg_ring(struct io_uring_sqe *sqe)
+ 	}
+ 	return ret;
  }
- 
--bool io_alloc_async_data(struct io_kiocb *req)
+-
+-void io_msg_cache_free(const void *entry)
 -{
--	const struct io_issue_def *def = &io_issue_defs[req->opcode];
+-	struct io_kiocb *req = (struct io_kiocb *) entry;
 -
--	WARN_ON_ONCE(!def->async_size);
--	req->async_data = kmalloc(def->async_size, GFP_KERNEL);
--	if (req->async_data) {
--		req->flags |= REQ_F_ASYNC_DATA;
--		return false;
--	}
--	return true;
+-	kmem_cache_free(req_cachep, req);
 -}
--
- static u32 io_get_sequence(struct io_kiocb *req)
- {
- 	u32 seq = req->ctx->cached_sq_head;
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 91414a4da1b2..cbd2c0358bb1 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -12,6 +12,7 @@
- #include "io-wq.h"
- #include "slist.h"
- #include "filetable.h"
-+#include "opdef.h"
- 
- #ifndef CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -233,6 +234,17 @@ static inline void *io_uring_alloc_async_data(struct io_alloc_cache *cache,
- 	return req->async_data;
- }
- 
-+static inline void *io_uring_alloc_async_data_nocache(struct io_kiocb *req)
-+{
-+	const struct io_issue_def *def = &io_issue_defs[req->opcode];
-+
-+	WARN_ON_ONCE(!def->async_size);
-+	req->async_data = kmalloc(def->async_size, GFP_KERNEL);
-+	if (req->async_data)
-+		req->flags |= REQ_F_ASYNC_DATA;
-+	return req->async_data;
-+}
-+
- static inline bool req_has_async_data(struct io_kiocb *req)
- {
- 	return req->flags & REQ_F_ASYNC_DATA;
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index 5b12bd6a804c..078dfd6fcf71 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -526,10 +526,9 @@ static int __io_timeout_prep(struct io_kiocb *req,
- 
- 	if (WARN_ON_ONCE(req_has_async_data(req)))
- 		return -EFAULT;
--	if (io_alloc_async_data(req))
-+	data = io_uring_alloc_async_data_nocache(req);
-+	if (!data)
- 		return -ENOMEM;
--
--	data = req->async_data;
- 	data->req = req;
- 	data->flags = flags;
- 
-diff --git a/io_uring/waitid.c b/io_uring/waitid.c
-index daef5dd644f0..6778c0ee76c4 100644
---- a/io_uring/waitid.c
-+++ b/io_uring/waitid.c
-@@ -303,10 +303,10 @@ int io_waitid(struct io_kiocb *req, unsigned int issue_flags)
- 	struct io_waitid_async *iwa;
- 	int ret;
- 
--	if (io_alloc_async_data(req))
-+	iwa = io_uring_alloc_async_data_nocache(req);
-+	if (!iwa)
- 		return -ENOMEM;
- 
--	iwa = req->async_data;
- 	iwa->req = req;
- 
- 	ret = kernel_waitid_prepare(&iwa->wo, iw->which, iw->upid, &iw->info,
+diff --git a/io_uring/msg_ring.h b/io_uring/msg_ring.h
+index 38e7f8f0c944..32236d2fb778 100644
+--- a/io_uring/msg_ring.h
++++ b/io_uring/msg_ring.h
+@@ -4,4 +4,3 @@ int io_uring_sync_msg_ring(struct io_uring_sqe *sqe);
+ int io_msg_ring_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
+ int io_msg_ring(struct io_kiocb *req, unsigned int issue_flags);
+ void io_msg_ring_cleanup(struct io_kiocb *req);
+-void io_msg_cache_free(const void *entry);
 -- 
 2.47.0
 

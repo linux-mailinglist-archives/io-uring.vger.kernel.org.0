@@ -1,127 +1,119 @@
-Return-Path: <io-uring+bounces-4965-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4966-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE6C9D56B1
-	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 01:23:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171B79D5818
+	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 03:12:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520C428309D
-	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 00:23:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE392829A2
+	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 02:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C99E2CA8;
-	Fri, 22 Nov 2024 00:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3EB70824;
+	Fri, 22 Nov 2024 02:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbprpurr"
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="b3Irpy9C"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from flow-b6-smtp.messagingengine.com (flow-b6-smtp.messagingengine.com [202.12.124.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A40715A8;
-	Fri, 22 Nov 2024 00:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCBB4C6C;
+	Fri, 22 Nov 2024 02:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732235014; cv=none; b=d7ttB+Vb/PG028BFvsUmmbHVQmZVdIFov9LDubXK8yMKKYFiR50PL+vB+pZJkKV8Fnq7WqmUygPV9QKUO3TurdSmL5/ZaNevDP/Zzozl9rRVBNDWdaeEn16yyh7FJiSCXuQg2vsW5HdK3ybLQ7TmI3X7W14Ol+mWCtTrZwzhIBk=
+	t=1732241514; cv=none; b=hy+3cc+cRA+GMA9FWEXnResb9N3xlnsdbSpOxUyPQ8Dme9mKjEoDL3ElJyxgqmviuHqgv1/k6NJKpoxAEqjnU1IKH4DR6cRcv5hzTcRizueasS6GyG8nNpVn6zR9d89yS5NUwojcICHkiBWS7t7ap8vDgMngt4gY0Ut4WxnCpnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732235014; c=relaxed/simple;
-	bh=+QH/OYcCJQTHkWDi9Mz3wZ7DEIXig5j4yU+JGy8razE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mBmAXvjXDIq0/hciBZOuTgiJx1f3qy+22jhqbMPPWgefqGNq27/h4nue0Dcx3uVzDedt6X/3DWWCRg8VWnPV+2YZHTo8yx+oP+NYi9JJHPNE9rYcAr1icVQ3bfQjYrM3ZoCLkbrGfQmB9U/GbvQntIFGG44VOWdQcCNcCV9+1BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbprpurr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69A0C4CECC;
-	Fri, 22 Nov 2024 00:23:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732235013;
-	bh=+QH/OYcCJQTHkWDi9Mz3wZ7DEIXig5j4yU+JGy8razE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pbprpurr8gstgLWvynRh4gN3SAZyj677O93nF23T9qO34OFlTgSrJsI8/uUcvUIes
-	 O6tsINdL98/x3LSSQDZqJmLnC8vmi5C46OgAIaYkGbWxrcRq2UVRhgBFnlhEcUwaOU
-	 RFdFRd1JKeu0cKZCjdtry4IUpWxmx2Vr5W5ptofcojHJF6Dq1tCXBCZW9LYmUY76/G
-	 dcmAyQmAsS/DpYuw5qDXuX7fvXhqXqI4l54z2zHBZ8oBuQQ7H7qTb1swv9zN8NsefB
-	 2SqT8869FtEnzICbW5HYwZBO2IrRzKmKL7oUq8H6UTlxwEeZ42zplti8uWeqcY7ZnY
-	 9LEMFpFWjPXpA==
-Message-ID: <858dbafa-6320-4603-82b9-38f586f18249@kernel.org>
-Date: Fri, 22 Nov 2024 10:23:26 +1000
+	s=arc-20240116; t=1732241514; c=relaxed/simple;
+	bh=Dj6Cd3CPk5BDqSn9Sgb4JB+T8BZAB7Elrl8desRceeE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cKAWcp+uNiwCQrc5ISlegoF7EbKm61AK05oBwcYuaKJ+3ZzjR2w6xpxQe5r4lkri5oagZT13C3AJxjZbIrUwDKxHKmKuS2N5uxLn8HbLtLO+rKcW5sc4ELKemh+bOtDbMytCEAzgWQGrN/+o3XgEmSogvZkN4ZYYk2ZxVJnWQIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=b3Irpy9C; arc=none smtp.client-ip=202.12.124.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.stl.internal (Postfix) with ESMTP id DA08D1D4055F;
+	Thu, 21 Nov 2024 21:11:49 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Thu, 21 Nov 2024 21:11:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732241509; x=1732248709; bh=HylobLOw4ozA3ZsgMN3A1CJKTLhCugUmrHO
+	t6P6eI6M=; b=b3Irpy9CN1X7xtDjGC5aWAUtKCfwXUFdgndUfSfSaowMMhKH5HT
+	q4Xga4uB+cvQU+bZM5/HwJ4ytBCklJRgQVwU6mGeVWhVL7ea6JVdZ7uiwNPUaH3S
+	wi0Do0tWSJAYrSNcvdlFLYWfuOHSWwW3qdBPGLeiUePeYsWfgEkWwBX+pfSBwe+5
+	agGbCGwWa4uN+vw7Ln9OQsgcCeJEPI4EQqYqJbGuvmm/XzN4qyPRTG7OpgbJdtkQ
+	Px/y3VVjUEXHRTUH7yZUxEgBWGE/0YkKKWP0KOgWtc0yudPXRRyfvoy7YcvChGOV
+	UHrrSZOOQutg8v0Pluj9+CHyE3BiJAfFTYA==
+X-ME-Sender: <xms:Y-g_Z09Sylq-iCp6aQygX3VU2_kR78pMh37D3a1BDsuVoJxkCWx96w>
+    <xme:Y-g_Z8sh4hgcLP3UGF8Yi9fW_8_PFABu4tAarOmmBQIv45p6mZws-BkgC45KCQhWh
+    CC3uWw2CHSNrovYBpQ>
+X-ME-Received: <xmr:Y-g_Z6AdKesLb87FO3lX1YrQ8oNSqX1wZPkds9Hzt73I_xZphv1wWvu0iSktjMg73RDUs-3-rcmXizUZX4iMaeV2PfEBcLLVIDY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeejgdegvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfh
+    rhhomhephfhinhhnucfvhhgrihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdroh
+    hrgheqnecuggftrfgrthhtvghrnhepleeuheelheekgfeuvedtveetjeekhfffkeefffff
+    tdfgjeevkeegfedvueehueelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghr
+    tghpthhtohepvddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehglhgruhgsih
+    htiiesphhhhihsihhkrdhfuhdqsggvrhhlihhnrdguvgdprhgtphhtthhopehgvggvrhht
+    sehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopegtlheslhhinhhugidrtghomh
+    dprhgtphhtthhopehpvghnsggvrhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehr
+    ihgvnhhtjhgvshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepihgrmhhjohhonhhsoh
+    hordhkihhmsehlghgvrdgtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhu
+    nhgurghtihhonhdrohhrghdprhgtphhtthhopehvsggrsghkrgesshhushgvrdgtiidprh
+    gtphhtthhopehrohhmrghnrdhguhhshhgthhhinheslhhinhhugidruggvvh
+X-ME-Proxy: <xmx:Y-g_Z0fJgmUY4zg6tAwmozTZioO5XE7ZJl_gwZOC25Oa7u0SmdkZkg>
+    <xmx:Y-g_Z5NBPRUn9dEOPinJAYv-jCvHNVIOwrZ0WzGbdfqVA02FOAQ3lQ>
+    <xmx:Y-g_Z-mZaYKM6zfhiJbbxvlI1SIhjYJk5t6pF8FPo6Eg-sSiHzP_ng>
+    <xmx:Y-g_Z7tvp8oiWAEOuUkRSLnBOjorHTxj93-7BfRDsji_aTt95NdQyA>
+    <xmx:Zeg_Z2yeix9dyhXM0QLXKNKwYB8fZ-ksrwGAEHbOLoIBI8fZbmRDZ4Fj>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Nov 2024 21:11:45 -0500 (EST)
+Date: Fri, 22 Nov 2024 13:12:15 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+    Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
+    David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Vlastimil Babka <vbabka@suse.cz>, 
+    Roman Gushchin <roman.gushchin@linux.dev>, 
+    Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
+    Pavel Begunkov <asml.silence@gmail.com>, Mike@rox.of.borg, 
+    Rapoport@rox.of.borg, Christian Brauner <brauner@kernel.org>, 
+    Guenter Roeck <linux@roeck-us.net>, Kees Cook <keescook@chromium.org>, 
+    Jann Horn <jannh@google.com>, linux-mm@kvack.org, io-uring@vger.kernel.org, 
+    linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
+In-Reply-To: <d0d818bb9635d43bde2331864733504f6f7a3635.camel@physik.fu-berlin.de>
+Message-ID: <dcf5f09a-6c68-4391-2b88-cceac7ff462f@linux-m68k.org>
+References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org> <d0d818bb9635d43bde2331864733504f6f7a3635.camel@physik.fu-berlin.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-To: Guenter Roeck <linux@roeck-us.net>,
- "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
- Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- Pavel Begunkov <asml.silence@gmail.com>, Mike Rapoport <rppt@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>,
- Jann Horn <jannh@google.com>, linux-mm@kvack.org, io-uring@vger.kernel.org,
- linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
- <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz>
- <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
- <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
- <693a6243-b2bd-7f2b-2b69-c7e2308d0f58@gentwo.org>
- <f602e322-af21-4bb3-86d4-52795a581354@roeck-us.net>
-Content-Language: en-US
-From: Greg Ungerer <gerg@kernel.org>
-In-Reply-To: <f602e322-af21-4bb3-86d4-52795a581354@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
 
-On 22/11/24 04:30, Guenter Roeck wrote:
-> On Thu, Nov 21, 2024 at 09:23:28AM -0800, Christoph Lameter (Ampere) wrote:
->> On Thu, 21 Nov 2024, Geert Uytterhoeven wrote:
->>
->>> Linux has supported m68k since last century.
->>
->> Yeah I fondly remember the 80s where 68K systems were always out of reach
->> for me to have. The dream system that I never could get my hands on. The
->> creme de la creme du jour. I just had to be content with the 6800 and
->> 6502 processors. Then IBM started the sick road down the 8088, 8086
->> that led from crap to more crap. Sigh.
->>
->>> Any new such assumptions are fixed quickly (at least in the kernel).
->>> If you need a specific alignment, make sure to use __aligned and/or
->>> appropriate padding in structures.
->>> And yes, the compiler knows, and provides __alignof__.
->>>
->>>> How do you deal with torn reads/writes in such a scenario? Is this UP
->>>> only?
->>>
->>> Linux does not support (rate) SMP m68k machines.
->>
->> Ah. Ok that explains it.
->>
->> Do we really need to maintain support for a platform that has been
->> obsolete for decade and does not even support SMP?
+On Thu, 21 Nov 2024, John Paul Adrian Glaubitz wrote:
+
+> On Wed, 2024-11-20 at 13:46 +0100, Geert Uytterhoeven wrote:
+> > On m68k, where the minimum alignment of unsigned long is 2 bytes:
 > 
-> Since this keeps coming up, I think there is a much more important
-> question to ask:
+> Well, well, well, my old friend strikes again ;-).
 > 
-> Do we really need to continue supporting nommu machines ? Is anyone
-> but me even boot testing those ?
+> These will always come up until we fix the alignment issue on m68k.
+> 
 
-Yes. Across many architectures. And yes on every release, and for m68k building
-and testing on every rc for nommu at a minimum.
-
-I rarely hit build or testing problems on nonmmu targets. At least every kernel
-release I build and test armnommu (including thumb2 on cortex), m68k, RISC-V and
-xtensa. They are all easy, qemu targets for them all. Thats just me. So I would
-guess there are others building and testing too.
-
-But what has that got to do with this thread, seems somewhat tangential to the
-discussions here so far...
-
-Regards
-Greg
-
-
+Hmmm. That patch you're replying too. Does it make the kernel source code 
+better or worse?
 

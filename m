@@ -1,101 +1,101 @@
-Return-Path: <io-uring+bounces-4994-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4995-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F7E9D6555
-	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 22:16:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 124159D6557
+	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 22:16:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9080161852
-	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 21:16:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83D8C161317
+	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 21:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156F5156F3A;
-	Fri, 22 Nov 2024 21:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A810156F3A;
+	Fri, 22 Nov 2024 21:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YgviElC2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TFTa+bwB";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YgviElC2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TFTa+bwB"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ya5lK9Vn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EG1WY9Te";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A1xonI0Z";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+mY64JaK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0572189B8A
-	for <io-uring@vger.kernel.org>; Fri, 22 Nov 2024 21:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83B254F95
+	for <io-uring@vger.kernel.org>; Fri, 22 Nov 2024 21:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732310167; cv=none; b=jjsAuqo4lH/Mo7HoGZZdQ+MnR0kMtjWcDMKbG/i+Yt/HDRn2RazsLEJKc4vH9IDSUMJw2fyDM6McTzs8Nrky4kizbhpzmgc4/ch0chSDXLji5dnNXe+6rqrsRy/YTI+bqW8E64b6wNU9qdwiff1wvThNfSynwtuCpTSQ08Yqxq4=
+	t=1732310172; cv=none; b=dzUR4bdc3G+rvqR60s9q8j209ju5kfMrm4TNTaH5Sp5Lr33ALjMtkDI1VDUka7yzEFVI0LEMBnCVGBjqpmJj3h4+R41mHZZpZf+Vbi/bn4nHcieHJdYeGtVTCHlVrWPU3+VNTC2lsjauSfNHWPQw65GRZnUEt4yma6yJarGRsD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732310167; c=relaxed/simple;
-	bh=5WoqjSwwUE9bU5sKV+4i9+RapnGP/RtMwaSLAWVCV2s=;
+	s=arc-20240116; t=1732310172; c=relaxed/simple;
+	bh=o3XWb+ztFT4nsPWZIrjZBjjgOz24AeHFlG1kxx8yMMU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=anO3pVQxz+WdtKwg61SENQWUdoBgiukY4adV6HCvu3vUsVNA8x1qnNMkL4cjORxTvl4pYni0Z8oxHDoG1dtvEy8ckn9XXVnyqgCC1RB4Lc/YRR79Jp/Sisl+mhp4/xZ5515EFZuqL3ggF9l2LSqukXyTx4Zb416NXDPiSclm12g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YgviElC2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TFTa+bwB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YgviElC2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TFTa+bwB; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=VmV6dvmbqIfE7fOSW5llZ+fbtXUJ00MvUw/B1NH4wV1HvjEpdvYhcNOXfEteqoqWbb81o+lb+b0jzc+0oItPWogW5HscMzC0Ez0rAi1WL/ggKcJOttAq91Y4Ap+IE2wStLPa/iciN1rzoNd0C8oqgo71MaA5dqihLDVygVpavOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ya5lK9Vn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EG1WY9Te; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A1xonI0Z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+mY64JaK; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 094D41F79E;
-	Fri, 22 Nov 2024 21:16:01 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AD01021200;
+	Fri, 22 Nov 2024 21:16:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732310161; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1732310168; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZVyY8rJDbIZ67Po5mOsXYAGukUb3YTyduqCEDWLu3co=;
-	b=YgviElC2GCDI8+nusDgI/Q1g0eQDq0WTEtQWsP4+aR4emBa6nIQLq3bs3oc41tBkBEYk9K
-	9AvhaLeVh/qE3i6ZFcd/FqpsDGoclfT3eE9LkuL8bIR5IC0LNhlIRa6tXoQSL/Z1RxBT16
-	6Qq+J9ZT+AGIyqUmBQgno6oA6JO+Tmw=
+	bh=i37RvDHe3b/txmys4XbZFO1wo8mNN+93QYUjCHcPtm4=;
+	b=ya5lK9VnxONYmIWbIpTnZlEOKnFBMMIpnHl4SD9T8F9kSwjou1GEBO4zNzOcZqnukwgshq
+	P45Hr6S7DQ4QJLfbyARhtp3XonZhBY11DlrxBL7HUhyrYlfxNknaRfQ+e1+J+1iJfl3oFb
+	WxbcMpYwoDTmB+Yxc52+0Cad5xHuOyE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732310161;
+	s=susede2_ed25519; t=1732310168;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZVyY8rJDbIZ67Po5mOsXYAGukUb3YTyduqCEDWLu3co=;
-	b=TFTa+bwBXJ5gjc/DGIdSNTfhS5pbnEfA/Wov0zW5sOkKMcFKqpyfYsj7gcXAd0jUXSZcfK
-	gUsZWbpqomwMGtDQ==
-Authentication-Results: smtp-out2.suse.de;
+	bh=i37RvDHe3b/txmys4XbZFO1wo8mNN+93QYUjCHcPtm4=;
+	b=EG1WY9TeGx4mvAATYuDA7lVuYb2xwha6DUB3ABsptxXoVWoPmMZ2Ewdn9NYI/y/9a9wMLU
+	K3VyNs6ZyOiZrDDg==
+Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732310161; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1732310167; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZVyY8rJDbIZ67Po5mOsXYAGukUb3YTyduqCEDWLu3co=;
-	b=YgviElC2GCDI8+nusDgI/Q1g0eQDq0WTEtQWsP4+aR4emBa6nIQLq3bs3oc41tBkBEYk9K
-	9AvhaLeVh/qE3i6ZFcd/FqpsDGoclfT3eE9LkuL8bIR5IC0LNhlIRa6tXoQSL/Z1RxBT16
-	6Qq+J9ZT+AGIyqUmBQgno6oA6JO+Tmw=
+	bh=i37RvDHe3b/txmys4XbZFO1wo8mNN+93QYUjCHcPtm4=;
+	b=A1xonI0ZodNh9fUDhFKK3BcJ0jFbTQn79MC6OBa2XMxTNEa5p+jr1RgbbgdY+tskh8COhY
+	2Nc7nvf5tVMAK5MO6K1MJd663+36JLKegInTaiSMwRSVL37kg14N1tBflHkTVA7jfuHq1U
+	djdkolQfKVl6tZHjhATaveuh74aVPG0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732310161;
+	s=susede2_ed25519; t=1732310167;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZVyY8rJDbIZ67Po5mOsXYAGukUb3YTyduqCEDWLu3co=;
-	b=TFTa+bwBXJ5gjc/DGIdSNTfhS5pbnEfA/Wov0zW5sOkKMcFKqpyfYsj7gcXAd0jUXSZcfK
-	gUsZWbpqomwMGtDQ==
+	bh=i37RvDHe3b/txmys4XbZFO1wo8mNN+93QYUjCHcPtm4=;
+	b=+mY64JaKHwzbL0h5mFfnkPTaySry2aQ3+XhWOAnVWAVDwF6ZcqNBul4nMx1htZXpTqY4FA
+	ATskhwKMYNoNqjBQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BA6AA13998;
-	Fri, 22 Nov 2024 21:16:00 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 71ABA13998;
+	Fri, 22 Nov 2024 21:16:07 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id h1xJJZD0QGfMXQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Fri, 22 Nov 2024 21:16:00 +0000
+	id 3fWhFZf0QGfTXQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Fri, 22 Nov 2024 21:16:07 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: axboe@kernel.dk,
 	asml.silence@gmail.com
 Cc: io-uring@vger.kernel.org,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v2 5/9] io_uring/uring_cmd: Allocate async data through generic helper
-Date: Fri, 22 Nov 2024 16:15:37 -0500
-Message-ID: <20241122211541.2135280-6-krisman@suse.de>
+Subject: [PATCH v2 6/9] io_uring/net: Allocate msghdr async data through helper
+Date: Fri, 22 Nov 2024 16:15:38 -0500
+Message-ID: <20241122211541.2135280-7-krisman@suse.de>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241122211541.2135280-1-krisman@suse.de>
 References: <20241122211541.2135280-1-krisman@suse.de>
@@ -115,7 +115,7 @@ X-Spamd-Result: default: False [-1.30 / 50.00];
 	R_MISSING_CHARSET(0.50)[];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[];
 	ARC_NA(0.00)[];
@@ -134,64 +134,66 @@ X-Spamd-Result: default: False [-1.30 / 50.00];
 X-Spam-Score: -1.30
 X-Spam-Flag: NO
 
-This abstracts away the cache details and simplify the code.
+This abstracts away the cache details.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- io_uring/io_uring.h  |  1 +
- io_uring/uring_cmd.c | 20 ++------------------
- 2 files changed, 3 insertions(+), 18 deletions(-)
+ io_uring/net.c | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index ddf3f05c3622..91414a4da1b2 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -8,6 +8,7 @@
- #include <linux/poll.h>
- #include <linux/io_uring_types.h>
- #include <uapi/linux/eventpoll.h>
-+#include "alloc_cache.h"
- #include "io-wq.h"
- #include "slist.h"
- #include "filetable.h"
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index e9d99d3ecc34..8c1c732b3f15 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -16,22 +16,6 @@
- #include "rsrc.h"
- #include "uring_cmd.h"
+diff --git a/io_uring/net.c b/io_uring/net.c
+index df1f7dc6f1c8..8457408194e7 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -155,30 +155,31 @@ static void io_netmsg_recycle(struct io_kiocb *req, unsigned int issue_flags)
+ 	}
+ }
  
--static struct uring_cache *io_uring_async_get(struct io_kiocb *req)
--{
--	struct io_ring_ctx *ctx = req->ctx;
--	struct uring_cache *cache;
--
--	cache = io_alloc_cache_get(&ctx->uring_cache);
--	if (cache) {
--		req->flags |= REQ_F_ASYNC_DATA;
--		req->async_data = cache;
--		return cache;
--	}
--	if (!io_alloc_async_data(req))
--		return req->async_data;
--	return NULL;
--}
--
- static void io_req_uring_cleanup(struct io_kiocb *req, unsigned int issue_flags)
++static void io_msg_async_data_init(void *obj)
++{
++	struct io_async_msghdr *hdr = (struct io_async_msghdr *)obj;
++
++	hdr->free_iov = NULL;
++	hdr->free_iov_nr = 0;
++}
++
+ static struct io_async_msghdr *io_msg_alloc_async(struct io_kiocb *req)
  {
- 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
-@@ -181,8 +165,8 @@ static int io_uring_cmd_prep_setup(struct io_kiocb *req,
- 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
- 	struct uring_cache *cache;
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_async_msghdr *hdr;
  
--	cache = io_uring_async_get(req);
--	if (unlikely(!cache))
-+	cache = io_uring_alloc_async_data(&req->ctx->uring_cache, req, NULL);
-+	if (!cache)
- 		return -ENOMEM;
+-	hdr = io_alloc_cache_get(&ctx->netmsg_cache);
+-	if (hdr) {
+-		if (hdr->free_iov) {
+-			kasan_mempool_unpoison_object(hdr->free_iov,
+-				hdr->free_iov_nr * sizeof(struct iovec));
+-			req->flags |= REQ_F_NEED_CLEANUP;
+-		}
+-		req->flags |= REQ_F_ASYNC_DATA;
+-		req->async_data = hdr;
+-		return hdr;
+-	}
++	hdr = io_uring_alloc_async_data(&ctx->netmsg_cache, req,
++					io_msg_async_data_init);
++	if (!hdr)
++		return NULL;
  
- 	if (!(req->flags & REQ_F_FORCE_ASYNC)) {
+-	if (!io_alloc_async_data(req)) {
+-		hdr = req->async_data;
+-		hdr->free_iov_nr = 0;
+-		hdr->free_iov = NULL;
+-		return hdr;
++	/* If the async data was cached, we might have an iov cached inside. */
++	if (hdr->free_iov) {
++		kasan_mempool_unpoison_object(hdr->free_iov,
++					      hdr->free_iov_nr * sizeof(struct iovec));
++		req->flags |= REQ_F_NEED_CLEANUP;
+ 	}
+-	return NULL;
++	return hdr;
+ }
+ 
+ /* assign new iovec to kmsg, if we need to */
 -- 
 2.47.0
 

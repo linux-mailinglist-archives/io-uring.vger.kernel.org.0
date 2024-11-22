@@ -1,309 +1,139 @@
-Return-Path: <io-uring+bounces-4981-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-4982-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0E69D61ED
-	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 17:18:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED8D9D62AF
+	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 18:00:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2DD616162E
-	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 16:17:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20165B20F8F
+	for <lists+io-uring@lfdr.de>; Fri, 22 Nov 2024 17:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55F61DEFFC;
-	Fri, 22 Nov 2024 16:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9DB1DE2BD;
+	Fri, 22 Nov 2024 17:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xvNdOuwo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gu3doCMg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB6F1DE2BE
-	for <io-uring@vger.kernel.org>; Fri, 22 Nov 2024 16:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E79E1632E0
+	for <io-uring@vger.kernel.org>; Fri, 22 Nov 2024 17:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732292221; cv=none; b=faPftNViZi+W6VWjcshEu9R0jnPAZ/2gG1K/cqmzEmNJDvNcushWZn9+RzWvgNWf/55muYJudyXyIbL632PGD8gilirh7N0zgxoQ28O9ymB3zJbaxbnFWfWVzBDd394sADsSmY0eVbPuTOCHlfcpjwiuFp4K+2O+4Wtp+y1VMXQ=
+	t=1732294837; cv=none; b=h4XvxqjT6aG10+H2PqQWB5P4votWm6BaeECgbdpHR7uNE3pLAnc8gmOya4Mh3TqjJYHh+7WplSAJgGkL4pL42o9mnxpaSn09m2W4X0Hm9/oFUM+q5cLqWYqGNeUNvhtPMpQfheHvLo0VZ7FGVtn7rYnPUJDEAB82tDLoiBHMB/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732292221; c=relaxed/simple;
-	bh=Sx7Z+8UdA2+RRGv0MaBPB+SqAcBDuC10NJpQzFkxep0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UOjuVis5bD93ObtWmtWZJmTHPzCyer1uSyFha1DEEIJcrwMuC6O9X9XIYotmiOFxcTepvHtva2ZQjy8r7ScmAINa7/osL0sWOdSDVEvyO4UjVaHpM561+Dw4zaF1qRZcofp1PGzd+vVu/h+G1HkMVbeSiAlYil/49OaaGm3KREQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xvNdOuwo; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-27b7a1480bdso1288280fac.2
-        for <io-uring@vger.kernel.org>; Fri, 22 Nov 2024 08:16:58 -0800 (PST)
+	s=arc-20240116; t=1732294837; c=relaxed/simple;
+	bh=wXZQ2OfUyAeZwYfE5GVWQloodWA+tAL1YGdRSb071bA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UNvjgyfT5kyPbaVr9Fooha3D6cv31jlufpsL5UBpUhP+Nu9cLshZZmFpMsOwdcJSFg5NjvJpzngcwRC5xi3fd4Zf4CLVbQQpdcXQ+4EITn2MK5UrTiXQQ+T9mDuctwXmw5ZyZkV9P4nFEWHVr2l5sW4HJTyMnNtffV9O1ASL+Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gu3doCMg; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53d9ff92edaso2760527e87.1
+        for <io-uring@vger.kernel.org>; Fri, 22 Nov 2024 09:00:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732292217; x=1732897017; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=psFPyPZEURJCFZnrPeS8wFL/Z8gpnok+wNuirh5Dqm8=;
-        b=xvNdOuwoSFjEWh4TFxZqeI5f+LSlR2157OE6xPQL2b49+Ukc6rh8kDyF/QPYTWQYw5
-         AkKSRV4cci6UiVA3n47rme7FFeFsbi+at99leHMJ8s1VKrCI2hGBD2e/Nw6JERIK+mo/
-         DeRNK/rMQ77WVR2/bbcA1st65X3k/ctkg5ilQNMjL5vgCfb+PBd2V5lwMl8wxSHz/G1+
-         Gq1Gte2DTynpv3H+vwwF9er3/JkgfpOuUOv+avcPehzHXiSm7dCY6Tt988tVRStwS37K
-         gZLJA9W2kksZNT6oob+WHQyU5p+hkyEeq4JSc9LdKXdW3OhK3SyfqQpQ9k+dnr0xSiTl
-         4RTA==
+        d=gmail.com; s=20230601; t=1732294833; x=1732899633; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PwsUrgiaNwqbA5hkdgr7EclDnByd+6Ag4fdolzFXIEU=;
+        b=gu3doCMgSHiF599AukbMJCwmKPQoyiPGkvuC32WR9sFk1E6DiFguIVUqC3TVeZ3Iwo
+         GPpIHkgNkAeTNC6Z8Nvh+nENCTTYZrBtp++CPd6S3+N7OYgGQ/dlYmw2q+3hQcY+eTFO
+         6+bjXguBYxeWDk75dGfTK0PQjjZ5FET5sKgpsgvQ+xlApaTbomczqRG2M5NNn1+ZH9A6
+         7TjVHmO5uh6m5Za/4/8njBPn6TVkkuDVOB1KBhRmomQxIpYGRb6YZvElY/0e4UsP7EDv
+         OcF/qQaLXAdKeRqIR6pOejT3pquzWM7fMvGZXCgxDc6e2SwTZufRfofQDqF3T7w8VlsO
+         qfhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732292217; x=1732897017;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=psFPyPZEURJCFZnrPeS8wFL/Z8gpnok+wNuirh5Dqm8=;
-        b=bxqkyh2+e7YxGdu1KzF20T0r4i/nHh+9mCmTHD1NZe2D2QY3abKsr/N8m0mEcMcHa3
-         dDZ/RsRjd7tn21Ov3okDcxDitDUoY1LsNjiMcuTsKcguchDNqERFm157un07e6NfCG55
-         75ARHWrteD/lomxZkqc46EQ0LPkDY21vUsIz0MVUHthII8hwq0MmRvcRt5ou0UmdvVem
-         Sd2bCXZKpWEw9qbkgNV6E2YfMmT8+rbS9Ijh/ZeKm0t7z47iLpuyZTST6XFMF+cIzMR8
-         U1N0IrJxVNLRie0z7zN0zYA3wiieNdb+AfXV9jun352HB/DGYj2LLYCPufTDB9ieIZ3o
-         ICGQ==
-X-Gm-Message-State: AOJu0YyB+AGHGyLmz9WnlPWXMUyEhQIm9fv8BYUNpWhVNNMUmN3kF6Vv
-	OngOlE00fH3epEcAKws4yBdSUzqi8kUhOHMNWrdHRxsRxGz9fYfYbo9u7ypMXkMn/IfP+WWTP4H
-	p1ZM=
-X-Gm-Gg: ASbGnctFai9cYW9+37tzKIU1qq0b+RhAjWP5IpwCRstbEX/DdUPaGkWsoqI1vVfXdyK
-	tePeKbKLSPsR8ltTzpcXZSG1pWM+vidb7WHTmYVsx9RRrPqgBBhH7Rznwkh7z9OULbIeMGkACIs
-	z0j+SnBEyYqChXFCwevdd605jeKTq6eaQx8d+mdMW1yMa5TR9/1LrQv1h346+CaQj5e+Ax8VhuY
-	D0kYJb0hEc2Lbl42XX22vMACCUOdsYP3dv9EcHZies5EwGU7cReLA==
-X-Google-Smtp-Source: AGHT+IHyvujbI0j7KjJUO5J9PTZWB89UCenjCzkqOjB7ByEW8xtrUXxxhaKAX89983rwJh2g1sa+Sw==
-X-Received: by 2002:a05:6870:d69c:b0:296:de15:f27d with SMTP id 586e51a60fabf-29720e08c8bmr4174309fac.30.1732292217656;
-        Fri, 22 Nov 2024 08:16:57 -0800 (PST)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5f06976585esm436958eaf.18.2024.11.22.08.16.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 08:16:56 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 6/6] io_uring: make __tctx_task_work_run() take an io_wq_work_list
-Date: Fri, 22 Nov 2024 09:12:44 -0700
-Message-ID: <20241122161645.494868-7-axboe@kernel.dk>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241122161645.494868-1-axboe@kernel.dk>
-References: <20241122161645.494868-1-axboe@kernel.dk>
+        d=1e100.net; s=20230601; t=1732294833; x=1732899633;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PwsUrgiaNwqbA5hkdgr7EclDnByd+6Ag4fdolzFXIEU=;
+        b=eeRZuZKQGDz2iZ6yBo6yvRu1vqcJjeVdfd4x8jbrtReAfftSbuVXTu0E3RpS8/JOBI
+         8YDnzT/be2p7V6Wx1GlRvf59Ptnzj7AepBNN7peNt6SKX8lAPVRuNTEXTbMUES/H+l1L
+         Ak6hCTvFXWDeaOOw58jiEqEzbb9+5UUJplhWgIPYYfoO6z294Mzl9OY1FEJJyQqckoH4
+         eK32soBFbZwUYb8iTN/hHRR7OBxj6blLu/LXIuucrPMxy/HyDwghWfC15YN9nXPeBT27
+         nasu0dC+YlfxSxAnbNmM5MMSwBDSoeU5MikRKtiaacLdbT7hmTRZUPhUqjqYhEYLL+wo
+         ONbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCuHT2mwqxvgYVYEzxokAJaVI2DOW9oqeIZJ0UnlB4pZXZho29ezf1ugmboaoMlp3EdO+YF2kTtg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc9LAMLIVp+riKBFoerdJoEhXJPq/O635/an8mBN5s+DWG9kv2
+	fmjmNGJuoRHDnZfus7oddn0FSKMgHGSOhwFRdEr5yLyGkBTZaO0K
+X-Gm-Gg: ASbGncvjm0VM4MTAD1gruBwqhokpeq0zKMjMMNCLiJHNRidwYw0VLGCPmTPqT3/I1JB
+	bL8Y+DXh1Nk7Vw9FWUqY0+s15hIQd44VSATadj7BmQQxGYvRzkZ9UXX0RTqzSj73eOpSq78HbeQ
+	KNESZplBwzxKAM0u7haKI1/ag0yR2sETU56qav9lPcZrwIL6E4nqes+azF28XyBTnj1pvP9H3Ga
+	+inuWxTk7pqVc08PyrVzbdov7RT06vXUCgQD9j7dvIfYNj5k+PnSyK8XFU=
+X-Google-Smtp-Source: AGHT+IFwaN2i08PPlF/MgJGIH8zPrsIq5jRJ5NREAg3cgejsfic270fk46gFqKeO5jAyR3tAH0tmiw==
+X-Received: by 2002:a05:6512:1303:b0:53d:cb7e:225a with SMTP id 2adb3069b0e04-53dd36aa62cmr2486567e87.24.1732294832989;
+        Fri, 22 Nov 2024 09:00:32 -0800 (PST)
+Received: from [192.168.42.9] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57bbafsm119269166b.155.2024.11.22.09.00.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 09:00:32 -0800 (PST)
+Message-ID: <c7c5f1e6-e794-4cef-a45e-773e05aa4d71@gmail.com>
+Date: Fri, 22 Nov 2024 17:01:26 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next v1 2/2] io_uring: limit local tw done
+To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org
+References: <20241120221452.3762588-1-dw@davidwei.uk>
+ <20241120221452.3762588-3-dw@davidwei.uk>
+ <f32b768f-e4a4-4b8c-a4f8-0cdf0a506713@gmail.com>
+ <95470d11-c791-4b00-be95-45c2573c6b86@kernel.dk>
+ <614ce5a4-d289-4c3a-be5b-236769566557@gmail.com>
+ <b7170b8e-9346-465b-be60-402c8f125e54@kernel.dk>
+ <66fa0bfd-13aa-4608-a390-17ea5f333940@gmail.com>
+ <9859667c-0fbf-4aa5-9779-dae91a9c128b@kernel.dk>
+ <3e6a574c-27ae-47f4-a3e3-2be2c385f89b@kernel.dk>
+ <357a3a72-5918-44e1-b84f-54ae093cf419@gmail.com>
+ <375a1b30-5e68-439d-be55-444eaa19d7ef@kernel.dk>
+ <c2f80710-7253-4dfb-a275-6698f65ab25c@gmail.com>
+ <80eeba88-2738-405e-b539-516d67f0dcd2@kernel.dk>
+ <e7a2ed0e-fe0a-4a19-86bf-90bd38bc6b61@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <e7a2ed0e-fe0a-4a19-86bf-90bd38bc6b61@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The normal task_work logic doesn't really need it, as it always runs
-all of the pending work. But for SQPOLL, it can now pass in its
-retry_list which simplifies the tracking of split up task_work running.
+On 11/21/24 17:05, Jens Axboe wrote:
+> On 11/21/24 9:57 AM, Jens Axboe wrote:
+>> I did run a basic IRQ storage test as-is, and will compare that with the
+>> llist stuff we have now. Just in terms of overhead. It's not quite a
+>> networking test, but you do get the IRQ side and some burstiness in
+>> terms of completions that way too, at high rates. So should be roughly
+>> comparable.
+> 
+> Perf looks comparable, it's about 60M IOPS. Some fluctuation with IRQ
 
-This avoids passing io_wq_work_node around. Rather than pass in a list,
-SQPOLL could re-add the leftover items to the generic task_work list.
-But that requires re-locking the task_lock and using task_list for that,
-whereas having a separate retry list allows for skipping those steps.
-The downside is that now two lists need checking, but that's now it
-was before as well.
+60M with iopoll? That one normally shouldn't use use task_work
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/io_uring.c | 36 ++++++++++++++++--------------------
- io_uring/io_uring.h |  9 +++++----
- io_uring/sqpoll.c   | 20 +++++++++++---------
- 3 files changed, 32 insertions(+), 33 deletions(-)
+> driven, so won't render an opinion on whether one is faster than the
+> other. What is visible though is that adding and running local task_work
+> drops from 2.39% to 2.02% using spinlock + io_wq_work_list over llist,
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index bc520a67fc03..5e52d8db3dca 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1044,20 +1044,20 @@ static void ctx_flush_and_put(struct io_ring_ctx *ctx, struct io_tw_state *ts)
- /*
-  * Run queued task_work, returning the number of entries processed in *count.
-  * If more entries than max_entries are available, stop processing once this
-- * is reached and return the rest of the list.
-+ * is reached.
-  */
--struct io_wq_work_node *io_handle_tw_list(struct io_wq_work_node *node,
--					  unsigned int *count,
--					  unsigned int max_entries)
-+void io_handle_tw_list(struct io_wq_work_list *list, unsigned int *count,
-+		       unsigned int max_entries)
- {
- 	struct io_ring_ctx *ctx = NULL;
- 	struct io_tw_state ts = { };
- 
- 	do {
--		struct io_wq_work_node *next = node->next;
-+		struct io_wq_work_node *node = list->first;
- 		struct io_kiocb *req = container_of(node, struct io_kiocb,
- 						    io_task_work.node);
- 
-+		list->first = node->next;
- 		if (req->ctx != ctx) {
- 			ctx_flush_and_put(ctx, &ts);
- 			ctx = req->ctx;
-@@ -1067,17 +1067,15 @@ struct io_wq_work_node *io_handle_tw_list(struct io_wq_work_node *node,
- 		INDIRECT_CALL_2(req->io_task_work.func,
- 				io_poll_task_func, io_req_rw_complete,
- 				req, &ts);
--		node = next;
- 		(*count)++;
- 		if (unlikely(need_resched())) {
- 			ctx_flush_and_put(ctx, &ts);
- 			ctx = NULL;
- 			cond_resched();
- 		}
--	} while (node && *count < max_entries);
-+	} while (list->first && *count < max_entries);
- 
- 	ctx_flush_and_put(ctx, &ts);
--	return node;
- }
- 
- static __cold void __io_fallback_schedule(struct io_ring_ctx *ctx,
-@@ -1137,41 +1135,39 @@ static void io_fallback_tw(struct io_uring_task *tctx, bool sync)
- 	__io_fallback_tw(&tctx->task_list, &tctx->task_lock, sync);
- }
- 
--struct io_wq_work_node *__tctx_task_work_run(struct io_uring_task *tctx,
--					     unsigned int max_entries,
--					     unsigned int *count)
-+void __tctx_task_work_run(struct io_uring_task *tctx,
-+			  struct io_wq_work_list *list,
-+			  unsigned int max_entries, unsigned int *count)
- {
--	struct io_wq_work_node *node;
--
- 	if (unlikely(current->flags & PF_EXITING)) {
- 		io_fallback_tw(tctx, true);
--		return NULL;
-+		return;
- 	}
- 
- 	if (!READ_ONCE(tctx->task_list.first))
--		return NULL;
-+		return;
- 
- 	spin_lock_irq(&tctx->task_lock);
--	node = tctx->task_list.first;
-+	*list = tctx->task_list;
- 	INIT_WQ_LIST(&tctx->task_list);
- 	spin_unlock_irq(&tctx->task_lock);
- 
--	if (node)
--		node = io_handle_tw_list(node, count, max_entries);
-+	if (!wq_list_empty(list))
-+		io_handle_tw_list(list, count, max_entries);
- 
- 	/* relaxed read is enough as only the task itself sets ->in_cancel */
- 	if (unlikely(atomic_read(&tctx->in_cancel)))
- 		io_uring_drop_tctx_refs(current);
- 
- 	trace_io_uring_task_work_run(tctx, *count);
--	return node;
- }
- 
- unsigned int tctx_task_work_run(struct io_uring_task *tctx)
- {
-+	struct io_wq_work_list list;
- 	unsigned int count = 0;
- 
--	__tctx_task_work_run(tctx, UINT_MAX, &count);
-+	__tctx_task_work_run(tctx, &list, UINT_MAX, &count);
- 	return count;
- }
- 
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 2b0e7c5db30d..74b1468aefda 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -91,10 +91,11 @@ void io_req_task_queue(struct io_kiocb *req);
- void io_req_task_complete(struct io_kiocb *req, struct io_tw_state *ts);
- void io_req_task_queue_fail(struct io_kiocb *req, int ret);
- void io_req_task_submit(struct io_kiocb *req, struct io_tw_state *ts);
--struct io_wq_work_node *io_handle_tw_list(struct io_wq_work_node *node,
--	unsigned int *count, unsigned int max_entries);
--struct io_wq_work_node *__tctx_task_work_run(struct io_uring_task *tctx,
--	unsigned int max_entries, unsigned int *count);
-+void io_handle_tw_list(struct io_wq_work_list *list, unsigned int *count,
-+	unsigned int max_entries);
-+void __tctx_task_work_run(struct io_uring_task *tctx,
-+	struct io_wq_work_list *list, unsigned int max_entries,
-+	unsigned int *count);
- unsigned int tctx_task_work_run(struct io_uring_task *tctx);
- void tctx_task_work(struct callback_head *cb);
- __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd);
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index aec6c2d56910..3cd50369db5a 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -221,29 +221,29 @@ static bool io_sqd_handle_event(struct io_sq_data *sqd)
-  * than we were asked to process. Newly queued task_work isn't run until the
-  * retry list has been fully processed.
-  */
--static unsigned int io_sq_tw(struct io_wq_work_node **retry_list, int max_entries)
-+static unsigned int io_sq_tw(struct io_wq_work_list *retry_list, int max_entries)
- {
- 	struct io_uring_task *tctx = current->io_uring;
- 	unsigned int count = 0;
- 
--	if (*retry_list) {
--		*retry_list = io_handle_tw_list(*retry_list, &count, max_entries);
-+	if (!wq_list_empty(retry_list)) {
-+		io_handle_tw_list(retry_list, &count, max_entries);
- 		if (count >= max_entries)
- 			goto out;
- 		max_entries -= count;
- 	}
--	*retry_list = __tctx_task_work_run(tctx, max_entries, &count);
-+	__tctx_task_work_run(tctx, retry_list, max_entries, &count);
- out:
- 	if (task_work_pending(current))
- 		task_work_run();
- 	return count;
- }
- 
--static bool io_sq_tw_pending(struct io_wq_work_node *retry_list)
-+static bool io_sq_tw_pending(struct io_wq_work_list *retry_list)
- {
- 	struct io_uring_task *tctx = current->io_uring;
- 
--	return retry_list || READ_ONCE(tctx->task_list.first);
-+	return !wq_list_empty(retry_list) || !wq_list_empty(&tctx->task_list);
- }
- 
- static void io_sq_update_worktime(struct io_sq_data *sqd, struct rusage *start)
-@@ -259,7 +259,7 @@ static void io_sq_update_worktime(struct io_sq_data *sqd, struct rusage *start)
- 
- static int io_sq_thread(void *data)
- {
--	struct io_wq_work_node *retry_list = NULL;
-+	struct io_wq_work_list retry_list;
- 	struct io_sq_data *sqd = data;
- 	struct io_ring_ctx *ctx;
- 	struct rusage start;
-@@ -292,6 +292,7 @@ static int io_sq_thread(void *data)
- 	audit_uring_entry(IORING_OP_NOP);
- 	audit_uring_exit(true, 0);
- 
-+	INIT_WQ_LIST(&retry_list);
- 	mutex_lock(&sqd->lock);
- 	while (1) {
- 		bool cap_entries, sqt_spin = false;
-@@ -332,7 +333,8 @@ static int io_sq_thread(void *data)
- 		}
- 
- 		prepare_to_wait(&sqd->wait, &wait, TASK_INTERRUPTIBLE);
--		if (!io_sqd_events_pending(sqd) && !io_sq_tw_pending(retry_list)) {
-+		if (!io_sqd_events_pending(sqd) &&
-+		    !io_sq_tw_pending(&retry_list)) {
- 			bool needs_sched = true;
- 
- 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-@@ -371,7 +373,7 @@ static int io_sq_thread(void *data)
- 		timeout = jiffies + sqd->sq_thread_idle;
- 	}
- 
--	if (retry_list)
-+	if (!wq_list_empty(&retry_list))
- 		io_sq_tw(&retry_list, UINT_MAX);
- 
- 	io_uring_cancel_generic(true, sqd);
+Do you summed it up with io_req_local_work_add()? Just sounds a bit
+weird since it's usually run off [soft]irq. I have doubts that part
+became faster. Running could be, especially with high QD and
+consistency of SSD. Btw, what QD was it? 32?
+
+> and we entirely drop 2.2% of list reversing in the process.
+
+We actually discussed it before but in some different patchset,
+perf is not helpful much here, the overhead and cache loading
+moves around a lot between functions.
+
+I don't think we have a solid proof here, especially for networking
+workloads, which tend to hammer it more from more CPUs. Can we run
+some net benchmarks? Even better to do a good prod experiment.
+
 -- 
-2.45.2
-
+Pavel Begunkov
 

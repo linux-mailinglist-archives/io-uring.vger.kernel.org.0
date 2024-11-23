@@ -1,162 +1,86 @@
-Return-Path: <io-uring+bounces-5002-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5003-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B699D6883
-	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 10:52:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B86F09D68FF
+	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 13:23:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95D91281C7D
-	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 09:52:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E422281D6F
+	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 12:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E2617084F;
-	Sat, 23 Nov 2024 09:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="OnQMoOIZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD6217A583;
+	Sat, 23 Nov 2024 12:23:51 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614B116FF44
-	for <io-uring@vger.kernel.org>; Sat, 23 Nov 2024 09:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD441442F2
+	for <io-uring@vger.kernel.org>; Sat, 23 Nov 2024 12:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732355556; cv=none; b=bNrQlwIK4eUebeIAjfvhJBnqBCAl5C9rNHIJ/HMf1Ujxyy+5hYqS/5uaF0MEh8IXNxbFgxIRNt2rxwY40ZzeXyHGTf5uFRmBsKDmEBIanyF6b1Vqd0Hzn7eiLU6hLrCSOQGdXJ89BR7FbRmkUkc8Cd9SwEBy3WKro1BAx2XpO7Y=
+	t=1732364631; cv=none; b=DiPeRT83NUSDOkQwfRfi1xaTDCFViV66rptAS7tyGaBZyPQxBv91MjzyLr6uyBeLW2/eC9eXbu8XNyonLLRbpRfIKc9ZuOPtQC8FMZ5SqXSb0hTyL+BhW50GzgMFFTnynvFpg7SKvD/fV/Q5bbbMShJfchKVDuPnBeMVoBZvomg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732355556; c=relaxed/simple;
-	bh=JsftFFy6Awj8SNiG5+p8xm/w1vLK2OFmElvQj1EPZDk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=faXgRVvm1eWAZ+379z04D65GVLNlK8uTvuDS8MeeXZsgG1cOLe68FgYZQKM+p++7FB6MqNPvVz12bzE9fHM+1sd5v3TtZsdARvMWzKR898sORFd7XSJw4qv4F8beOd5398RDUoZLHEa82/smiP9eQNAsLF2M4GFwlSg1RHEdMqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=OnQMoOIZ; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460ad98b031so20078861cf.0
-        for <io-uring@vger.kernel.org>; Sat, 23 Nov 2024 01:52:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1732355553; x=1732960353; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pfuwWH6s9WheFli8owZJ40a4CslfDCyeDxz9fgZYQFc=;
-        b=OnQMoOIZPhy9Oe5gBN2IQLsRXHRH/UE0GNhI8ojzoR9qNeH5JIWqaOQ0HK6aU3WmDw
-         N6iw8R6uLj61Le34SykIYG0f02/UbBPejKEWwSwrfP8vBJ2+863qwmDAYhIBL0WE5BPz
-         BQMK/DRwCujqHTf4IWuHJfmWXiEWAn0/CbD1I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732355553; x=1732960353;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pfuwWH6s9WheFli8owZJ40a4CslfDCyeDxz9fgZYQFc=;
-        b=JGo7S8dFcrS1sJoRshxZdF/S8iPQSILyTx9WRN7e0MM3PRaDPNt7F1xh0NMQtjCeqa
-         ZEsZfx726hFWtqaU4M4h2h3q1MbA6rZCXBnfT3/7XrHaHJBuo7pM09X5hFnR8/qXa5QF
-         3sONW3RZCsC8C7Sh00FcBYbCGOlTK5OQGPqxdvn7oWgTYJeCWIFu4jRDNnnqsePYOnda
-         6Q+2mdKIsUpreYrjMPTAnsI6G6Et78811RkxPVJqBkV5FYG68cT/HkhViZVt15edeGYa
-         gXxZxAtj31pwSZyjJWQHUQNiMgFGTEeVciolq/5PmrJqHmsIs9iWl79JK04YDrBE17G9
-         Zu8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWVOR++vzClF8xDoj2omYgn3i0eP4VboqKRy5zgZ+C9kNoJqpVbIsd3R5HjOvk2Ss7qta260HmqXA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym7YNOxG7DZ8pJiLPsbYpbv1QYA32BCJllgVc/cZmV5jaNFCp5
-	kXWsEK3ZY1yeV3pd0JsOuKJ/fPeoMrGWBgfmc/VWtbZyaSGhiiIt4rOWIz/3jFnDdq4AH2GuNpU
-	JUFp60qHX9Q2gE1uIbyctQVLrOTqiMgBZYTBP4g==
-X-Gm-Gg: ASbGnctbOhKE0wxIMQ7EKPQuD0Tr1UmdFO7NFyHyXCmYN9p51YMxrFUb5PyldN89qdT
-	72tVYSfLthgP8+ezYNWfOJli/+U7ZljEi/g==
-X-Google-Smtp-Source: AGHT+IE7Cdtq1dglVEIsBM11JPHkABoLeUdp8yGp5PTxuThy3hmuvowcYbrEvtHDUYqVfRNXdhwHQW32MvJkS4f6z7s=
-X-Received: by 2002:a05:622a:452:b0:461:333a:46c with SMTP id
- d75a77b69052e-4653d5a4927mr79042581cf.27.1732355553365; Sat, 23 Nov 2024
- 01:52:33 -0800 (PST)
+	s=arc-20240116; t=1732364631; c=relaxed/simple;
+	bh=VG6TBjrs+7YEdsPnkd/7mMuayZ6gu84YB2KEnSmW3g0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XcMk0ZY/qKfAmD4AgzUvbO/VjhQsE2GwYf4+PNZyzxCnoTA2JvNkXzglW39RvxVQw7NB1NJThGnEvl6mB9CIGv2QRb2pf3ypLxqfUtnav9DpC3BSOPYAv3JYuGCBCDJZa1eCwPHxDmx5WgxJcwFFlekAvea4lr7UxatuR7uql+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XwWKw1Djcz1jy8Z;
+	Sat, 23 Nov 2024 20:21:40 +0800 (CST)
+Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
+	by mail.maildlp.com (Postfix) with ESMTPS id DD8B41A0188;
+	Sat, 23 Nov 2024 20:23:42 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd200010.china.huawei.com (7.221.188.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Sat, 23 Nov 2024 20:23:42 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Sat, 23 Nov 2024 20:23:39 +0800
+From: lizetao <lizetao1@huawei.com>
+To: Jens Axboe <axboe@kernel.dk>
+CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"asml.silence@gmail.com" <asml.silence@gmail.com>, lizetao
+	<lizetao1@huawei.com>
+Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggLW5leHRdIGlvX3VyaW5nOiBhZGQgc3VwcG9ydCBm?=
+ =?utf-8?Q?or_fchmod?=
+Thread-Topic: [PATCH -next] io_uring: add support for fchmod
+Thread-Index: Ads6Wn5Us6O6He9UT4KWT2JV2JtSNwAwVosAAKFZHtA=
+Date: Sat, 23 Nov 2024 12:23:39 +0000
+Message-ID: <8609cb5ca3bf4d2c8018ec2339f36430@huawei.com>
+References: <e291085644e14b3eb4d1c3995098bf4e@huawei.com>
+ <2fe3005b-279d-489d-823f-731c6a52e5b1@kernel.dk>
+In-Reply-To: <2fe3005b-279d-489d-823f-731c6a52e5b1@kernel.dk>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122-fuse-uring-for-6-10-rfc4-v6-0-28e6cdd0e914@ddn.com> <20241122-fuse-uring-for-6-10-rfc4-v6-6-28e6cdd0e914@ddn.com>
-In-Reply-To: <20241122-fuse-uring-for-6-10-rfc4-v6-6-28e6cdd0e914@ddn.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Sat, 23 Nov 2024 10:52:22 +0100
-Message-ID: <CAJfpegtih77CpuSQAOkUaKRMPj44ua65+_MUMa3LqgYjLFofqg@mail.gmail.com>
-Subject: Re: [PATCH RFC v6 06/16] fuse: {uring} Handle SQEs - register commands
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
-	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>, 
-	bernd@bsbernd.com
-Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 22 Nov 2024 at 00:44, Bernd Schubert <bschubert@ddn.com> wrote:
-
-> +static struct fuse_ring *fuse_uring_create(struct fuse_conn *fc)
-> +{
-> +       struct fuse_ring *ring = NULL;
-> +       size_t nr_queues = num_possible_cpus();
-> +       struct fuse_ring *res = NULL;
-> +
-> +       ring = kzalloc(sizeof(*fc->ring) +
-> +                              nr_queues * sizeof(struct fuse_ring_queue),
-
-Left over from a previous version?
-
-> +static void fuse_uring_ent_avail(struct fuse_ring_ent *ring_ent,
-> +                                struct fuse_ring_queue *queue)
-> +       __must_hold(&queue->lock)
-> +{
-> +       struct fuse_ring *ring = queue->ring;
-> +
-> +       lockdep_assert_held(&queue->lock);
-> +
-> +       /* unsets all previous flags - basically resets */
-> +       pr_devel("%s ring=%p qid=%d state=%d\n", __func__, ring,
-> +                ring_ent->queue->qid, ring_ent->state);
-> +
-> +       if (WARN_ON(ring_ent->state != FRRS_COMMIT)) {
-> +               pr_warn("%s qid=%d state=%d\n", __func__, ring_ent->queue->qid,
-> +                       ring_ent->state);
-> +               return;
-> +       }
-> +
-> +       list_move(&ring_ent->list, &queue->ent_avail_queue);
-> +
-> +       ring_ent->state = FRRS_WAIT;
-> +}
-
-AFAICS this function is essentially just one line, the rest is
-debugging.   While it's good for initial development it's bad for
-review because the of the bad signal to noise ratio (the debugging
-part is irrelevant for code review).
-
-Would it make sense to post the non-RFC version without most of the
-pr_debug()/pr_warn() stuff and just keep the simple WARN_ON() lines
-that signal if something has gone wrong.
-
-Long term we could get rid of some of that too.   E.g ring_ent->state
-seems to be there just for debugging, but if the code is clean enough
-we don't need to have a separate state.
-
-> +#if 0
-> +       /* Does not work as sending over io-uring is async */
-> +       err = -ETXTBSY;
-> +       if (fc->initialized) {
-> +               pr_info_ratelimited(
-> +                       "Received FUSE_URING_REQ_FETCH after connection is initialized\n");
-> +               return err;
-> +       }
-> +#endif
-
-I fail to remember what's up with this.  Why is it important that
-FETCH is sent before INIT reply?
-
-> diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
-> index 6c506f040d5fb57dae746880c657a95637ac50ce..e82cbf9c569af4f271ba0456cb49e0a5116bf36b 100644
-> --- a/fs/fuse/fuse_dev_i.h
-> +++ b/fs/fuse/fuse_dev_i.h
-> @@ -8,6 +8,7 @@
->
->  #include <linux/types.h>
->
-> +
-
-Unneeded extra line.
-
-Thanks,
-Miklos
+SGkNCg0KPj5PbiAxMS8xOS8yNCAxOjEyIEFNLCBsaXpldGFvIHdyb3RlOg0KPj4gQWRkcyBzdXBw
+b3J0IGZvciBkb2luZyBjaG1vZCB0aHJvdWdoIGlvX3VyaW5nLiBJT1JJTkdfT1BfRkNITU9EIA0K
+Pj5iZWhhdmVzIGxpa2UgZmNobW9kKDIpIGFuZCB0YWtlcyB0aGUgc2FtZSBhcmd1bWVudHMuDQoN
+Cj4gTG9va3MgcHJldHR5IHN0cmFpZ2h0IGZvcndhcmQuIFRoZSBvbmx5IGRvd25zaWRlIGlzIHRo
+ZSBmb3JjZWQgdXNlIG9mIFJFUV9GX0ZPUkNFX0FTWU5DIC0gZGlkIHlvdSBsb29rIGludG8gaG93
+IGZlYXNpYmxlIGl0IHdvdWxkIGJlIHRvIGFsbG93IG5vbi1ibG9ja2luZyBpc3N1ZSBvZiB0aGlz
+PyBXb3VsZCBpbWFnaW5lIHRoZSBtYWpvcml0eSBvZiBmY2htb2QgY2FsbHMgZW5kIHVwIG5vdCBi
+bG9ja2luZyBpbiB0aGUgZmlyc3QgcGxhY2UuDQoNClllcywgSSBjb25zaWRlcmVkIGZjaG1vZCB0
+byBhbGxvdyBhc3luY2hyb25vdXMgZXhlY3V0aW9uIGFuZCB3cm90ZSBhIHRlc3QgY2FzZSB0byB0
+ZXN0IGl0LCB0aGUgcmVzdWx0cyBhcmUgYXMgZm9sbG93czoNCg0KZmNobW9kOg0KcmVhbAkwbTEu
+NDEzcw0KdXNlcgkwbTAuMjUzcw0Kc3lzCTBtMS4wNzlzDQoNCmlvX3VyaW5nICsgZmNobW9kOg0K
+cmVhbAkwbTEuMjY4cw0KdXNlcgkwbTAuMDE1cw0Kc3lzCTBtNS43MzlzDQoNClRoZXJlIGlzIGFi
+b3V0IGEgMTAlIGltcHJvdmVtZW50Lg0KDQo+IC0tDQo+SmVucyBBeGJvZQ0KDQotLQ0KTGkgWmV0
+YW8NCg==
 

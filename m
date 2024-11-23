@@ -1,182 +1,126 @@
-Return-Path: <io-uring+bounces-5000-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5001-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D189D66DC
-	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 01:49:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8235A9D6847
+	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 10:01:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47604B20DEB
-	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 00:49:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B09E1612D9
+	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 09:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D082905;
-	Sat, 23 Nov 2024 00:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAEE17BEBF;
+	Sat, 23 Nov 2024 09:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDpXJDZR"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Krh3un5w"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08051257D
-	for <io-uring@vger.kernel.org>; Sat, 23 Nov 2024 00:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2570638DD3
+	for <io-uring@vger.kernel.org>; Sat, 23 Nov 2024 09:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732322983; cv=none; b=P4Y5zlizZLt1MvcWpj3qAmhcxAlja0peiZjg+R8381nPrKb/wm8oq0aZfKjM13VjTo3kt84xsQ9j1a7f5qiviOl4vzYUlU63zg1D6bASZBqnG5ewX4SR6EMvsZ74UqgMFOgOK2qmKwHPTEWaHawqdju5zVmal36+h9PfU9oBVMk=
+	t=1732352496; cv=none; b=l/kIDdOr2X1fJLreE8lGhcE+Kh3sfQS5MtjrJE6Tt6iaWBMqKIw/vt5o9Yg37nD+hbPTaDeFpVnziqBJ3egVc/i6C1pP2CP/ZujGJ6bUyex8PLCl4eVweA0PPldcoYNPhrlBYX+8DQtjKXPVMjF8G3k2dU0w84TlG/IwCSmaEqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732322983; c=relaxed/simple;
-	bh=Y6GM2xHwmGNoHDmJbuKB78ziPGMbdEBp0BT0kMP2iZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fP2mIWLwL6TI5cg1658Asb47QgNi5oiABF5MWxDY6jH2EnYxlVJR736fMMccALe5CJ97rCfSeFCNC1/jyCWmwFJ0Vl951XwjVtDcaPIdrF5WFb28GTPWdBT4mEAkOLt8PttJqd0kWkSZ+YooEZejAGBXYYDpbUG+3g+FqLc71yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDpXJDZR; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d01db666ceso1775696a12.0
-        for <io-uring@vger.kernel.org>; Fri, 22 Nov 2024 16:49:41 -0800 (PST)
+	s=arc-20240116; t=1732352496; c=relaxed/simple;
+	bh=jn3jBILo+uDYc8/UF9FILhwsx3ELCEnKu2+O4+G1BA8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sLF8OJL+fhUpyZPKbdnLY1PfICNp2zjby/TyIraoUpLqR769L2hBj8Hna+3e0XVwhgltgjn8tfNq3HbeqGuXxnn/shJVER9faElMTXqWkLg8xbG40zdyV71JqMEqrgaAxdw4+a0LhTcrNz3YVvJkuPi+YirUzTIb6B/otNPBOnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Krh3un5w; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-46098928354so19872751cf.1
+        for <io-uring@vger.kernel.org>; Sat, 23 Nov 2024 01:01:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732322980; x=1732927780; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HelRoQFFlQYtqSZ+TKpMxUvKUvfk7K3G0E9Nb73PWSs=;
-        b=jDpXJDZRc71tahSkBtbSw+hw/gVpXQZC97YkGKJx9sDDmMUhOnNRHxawRhv0mt1a7A
-         tiLLMg5U3H1vY+nlVaw/+NKflitwXqxF0s6VoH7HbdDgBr1EKCl+ASC3nUNbVpy/noMf
-         EW3fyi4Ror7H5a8V25Om9x7XxkKiUlByuiXscCecXrTylHzmKGBgQgBEsteV3gkICPW/
-         VLOAdxMEwmJsB+QHjXPlWLEerOfJFvnpmyLCMhi74MLw/oni51CyaCWcF/DyM9paNEmQ
-         Cq7mZk2Z8FhqaLiey/T8p36tNTpzEMbI9xRnkRYn4Xk3O/zgUc36fo+lC//dH2BgQMNj
-         GnbQ==
+        d=szeredi.hu; s=google; t=1732352492; x=1732957292; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DFiXzXBKT2EId4oxO52uRUCqeKRX7R+7nWgLka8QQYU=;
+        b=Krh3un5wS9/WiWRQ+PsgWFeBPBvSVOxUpL0P+Gzj88Li8neGW7MHgkEbTfRJhZeV7/
+         JzK0Jta/pkHZXKQRZFYFtMey9gzliZuXFpv3aeTPmjrdp/jbSioc4bM2w5LmvknqKpFY
+         Cxx9c6R8m+qYDeLArdhEiPUp0963UpO+v4bbs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732322980; x=1732927780;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HelRoQFFlQYtqSZ+TKpMxUvKUvfk7K3G0E9Nb73PWSs=;
-        b=GwV6FIiX8+ttmASzk6MN1PkGDN4nea5HYiDz4TQA1JTTyPiDtDCN5GIHHTm0aARg3m
-         9TOifKeHBRniG4p6TQWE/seQmcT38p6CKcF874Ad1/Ea+xrcGn9dPQ87PYjLTe//mVMY
-         LjJMZhPhcYUXnnRw7JB4LyGbDx747nAGq0vdYyYbnXQLE0FzuPOQWDq1BP6JbFtKWK1l
-         WsaIjcxaxxsXpJPtvasxUrbOMl86+ipZZdLQFznfZfMQ06BV3iDhLCiNcs7yUEzre5yD
-         lRhyiv25c3MfC4jEPsSOdRviTztAe6t6TzwyE6Rho4n9fYyg1fReU8olU9DtOpkOCg2m
-         WDGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXu/w2v+GMN3JGRDPIgDZJgxMEy4nwtgtj1kuPqz51kDUj4jJYkeNnnsxL02n4ZuNP4o2xyCZutIg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2xFRmbMaLwvyrJ1Eiv+7aegTEdptzZJ09Xa46Ee6CTa20VI3n
-	rVApWLOnH4uPIs+dny0Iaut2aBvkaYOFQTIMpfrGNsvzYXxIMEGV
-X-Gm-Gg: ASbGncuCm58g2EU7RwZlKJY79c5GfLlu4fK4WYaS2unoEw4w5Wp4jgu/HBBY+T3NRXt
-	UPRV0j9EmF5EHM9Hi4/DbpeYnT2foKtvTzZe4bxd0VnuonCgbrCJuwIpw2Ux7zJG8TGbMfOAPzA
-	d0mf2t1IiZk65bvfrZqz5eXjgXiykQfawrnJ5v0yD/nmBz1Fabm/Jo23ftS5VqxS06bmhaGOvKw
-	20oqxDKGCD66JjwSrH4QcVF7QshnwmionVYyS8DvwUujt+CdCLP1v1thWImtQ==
-X-Google-Smtp-Source: AGHT+IHA6zCMxRaTCdhqdalWAjT0MfyJIMTikalTv6GpeUjaqDiIwGM53zCH/dcaAcWCEua4NkhnPw==
-X-Received: by 2002:a17:907:778b:b0:aa4:9ab1:1982 with SMTP id a640c23a62f3a-aa50997617cmr426867566b.4.1732322979973;
-        Fri, 22 Nov 2024 16:49:39 -0800 (PST)
-Received: from [192.168.42.180] ([148.252.140.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa524615e8fsm83370366b.182.2024.11.22.16.49.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 16:49:39 -0800 (PST)
-Message-ID: <e5dac423-ba5a-4fc7-b3f0-09e2a03082da@gmail.com>
-Date: Sat, 23 Nov 2024 00:50:32 +0000
+        d=1e100.net; s=20230601; t=1732352492; x=1732957292;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DFiXzXBKT2EId4oxO52uRUCqeKRX7R+7nWgLka8QQYU=;
+        b=AZSiEmvrQtt4+nzzpd2dW6a9ECs/l/dzRnCx3+R3e7FT/bMmMmtfxmosgApb+5duYT
+         WOempywgtzNOqkcaSxzJYSBKE5aznc0bSyO3RKWKyCbJ21Vum/+69LxVN/ywg6m/Pl9m
+         da6kIQpmjd+2nl0o/LXQstE3OE8bjUkoHQHL4FNMV7qiMRsGT2DWswoJ+dQvZMUXQ3ez
+         NS89vHpzUHlFt40s2cVlsudQ9q3RlsHo4PTT+9u/P7O/6nt2KRqravxJf1K/o4UUnT78
+         vk7D2e6UC61g0zbss4saGjbcEC3W5RZvg97Qti0Xkf/9Am5DGVGw/G7cVZN1JXMlfcN7
+         5Zaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIP4PS284b0lwSOyttHiPQii0tumdA5zVVualqZFWYUUhIwAv4v0i1v8cp3ImS3oDkJgjqScY/tg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfs0lKWZU2I4KctL3mRrueibRC/EwqvxjFXCoT5JCjKTqm2C8+
+	0w8rJIycD4sjOcXFnG7fYp3WZnBWinskY5mw/CSTgSG/dE4RDkjRVYNUSQE139jGPM8r0yLgjiq
+	O0xaomGKThGW0akkzfcL1Mnb2Vn0Vd/2NWufIMg==
+X-Gm-Gg: ASbGncufZs+N+JD3MFtez8N2aTXsKOiwGXRKsVYAUj1xK3w+4DbQ6zTaKbW1Gz/soZR
+	Pp7lBvzU4xbuKS651fbRRclrIbGcMn9iSeQ==
+X-Google-Smtp-Source: AGHT+IF85E/yXEC4k+4bx41PiOx4JBk4RgLR089oIqv0TSCWg27hIBqkf+JsWUUQwo2HY7/suEoxPtLxQChNoQWC0QE=
+X-Received: by 2002:a05:622a:188f:b0:461:22e9:5c54 with SMTP id
+ d75a77b69052e-4653d5c30e6mr72458871cf.26.1732352491772; Sat, 23 Nov 2024
+ 01:01:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next v1 2/2] io_uring: limit local tw done
-To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
- io-uring@vger.kernel.org
-References: <20241120221452.3762588-1-dw@davidwei.uk>
- <20241120221452.3762588-3-dw@davidwei.uk>
- <f32b768f-e4a4-4b8c-a4f8-0cdf0a506713@gmail.com>
- <95470d11-c791-4b00-be95-45c2573c6b86@kernel.dk>
- <614ce5a4-d289-4c3a-be5b-236769566557@gmail.com>
- <b7170b8e-9346-465b-be60-402c8f125e54@kernel.dk>
- <66fa0bfd-13aa-4608-a390-17ea5f333940@gmail.com>
- <9859667c-0fbf-4aa5-9779-dae91a9c128b@kernel.dk>
- <3e6a574c-27ae-47f4-a3e3-2be2c385f89b@kernel.dk>
- <357a3a72-5918-44e1-b84f-54ae093cf419@gmail.com>
- <375a1b30-5e68-439d-be55-444eaa19d7ef@kernel.dk>
- <c2f80710-7253-4dfb-a275-6698f65ab25c@gmail.com>
- <80eeba88-2738-405e-b539-516d67f0dcd2@kernel.dk>
- <e7a2ed0e-fe0a-4a19-86bf-90bd38bc6b61@kernel.dk>
- <c7c5f1e6-e794-4cef-a45e-773e05aa4d71@gmail.com>
- <390502d5-2de4-42e0-a899-a0e25d1ee5d7@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <390502d5-2de4-42e0-a899-a0e25d1ee5d7@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241122-fuse-uring-for-6-10-rfc4-v6-0-28e6cdd0e914@ddn.com> <20241122-fuse-uring-for-6-10-rfc4-v6-5-28e6cdd0e914@ddn.com>
+In-Reply-To: <20241122-fuse-uring-for-6-10-rfc4-v6-5-28e6cdd0e914@ddn.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Sat, 23 Nov 2024 10:01:21 +0100
+Message-ID: <CAJfpeguPCUajx=LX-M2GFO4hzi6A2uc-8tijHEFVSipK7xFU5A@mail.gmail.com>
+Subject: Re: [PATCH RFC v6 05/16] fuse: make args->in_args[0] to be always the header
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>, 
+	bernd@bsbernd.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/22/24 17:08, Jens Axboe wrote:
-> On 11/22/24 10:01 AM, Pavel Begunkov wrote:
->> On 11/21/24 17:05, Jens Axboe wrote:
->>> On 11/21/24 9:57 AM, Jens Axboe wrote:
->>>> I did run a basic IRQ storage test as-is, and will compare that with the
->>>> llist stuff we have now. Just in terms of overhead. It's not quite a
->>>> networking test, but you do get the IRQ side and some burstiness in
->>>> terms of completions that way too, at high rates. So should be roughly
->>>> comparable.
->>>
->>> Perf looks comparable, it's about 60M IOPS. Some fluctuation with IRQ
->>
->> 60M with iopoll? That one normally shouldn't use use task_work
-> 
-> Maybe that wasn't clear, but it's IRQ driven IO. Otherwise indeed
-> there'd be no task_work in use.
-> 
->>> driven, so won't render an opinion on whether one is faster than the
->>> other. What is visible though is that adding and running local task_work
->>> drops from 2.39% to 2.02% using spinlock + io_wq_work_list over llist,
->>
->> Do you summed it up with io_req_local_work_add()? Just sounds a bit
->> weird since it's usually run off [soft]irq. I have doubts that part
->> became faster. Running could be, especially with high QD and
->> consistency of SSD. Btw, what QD was it? 32?
+On Fri, 22 Nov 2024 at 00:44, Bernd Schubert <bschubert@ddn.com> wrote:
 
-Why I asked about QD is because storage tests reliably give
-you a list of QD task work items, the longer the list the
-more expensive the reverse with washing out cache lines.
+> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+> index 12ef91d170bb3091ac35a33d2b9dc38330b00948..e459b8134ccb089f971bebf8da1f7fc5199c1271 100644
+> --- a/fs/fuse/dax.c
+> +++ b/fs/fuse/dax.c
+> @@ -237,14 +237,17 @@ static int fuse_send_removemapping(struct inode *inode,
+>         struct fuse_inode *fi = get_fuse_inode(inode);
+>         struct fuse_mount *fm = get_fuse_mount(inode);
+>         FUSE_ARGS(args);
+> +       struct fuse_zero_in zero_arg;
 
-For QD=32 it's 32 entry list reversal, so I'd get if you're
-seeing some perf imrpovement. With QD=1 would be the opposite.
-With David's thing is similar, he gets a long list because of
-wait based batching. Users who don't do it might get a worse
-performance (which might be fine).
+I'd move this to global scope (i.e. just a single instance for all
+uses) and rename to zero_header.
 
-> It may just trigger more in frequency in terms of profiling, since the
-> list reversal is done. Profiling isn't 100% exact.
-> 
->>> and we entirely drop 2.2% of list reversing in the process.
->>
->> We actually discussed it before but in some different patchset,
->> perf is not helpful much here, the overhead and cache loading
->> moves around a lot between functions.
->>
->> I don't think we have a solid proof here, especially for networking
->> workloads, which tend to hammer it more from more CPUs. Can we run
->> some net benchmarks? Even better to do a good prod experiment.
-> 
-> Already in motion. I ran some here and didn't show any differences at
-> all, but task_work load was also fairly light. David is running the
-> networking side and we'll see what it says.
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index fd8898b0c1cca4d117982d5208d78078472b0dfb..6cb45b5332c45f322e9163469ffd114cbc07dc4f 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -1053,6 +1053,19 @@ static int fuse_copy_args(struct fuse_copy_state *cs, unsigned numargs,
+>
+>         for (i = 0; !err && i < numargs; i++)  {
+>                 struct fuse_arg *arg = &args[i];
+> +
+> +               /* zero headers */
+> +               if (arg->size == 0) {
+> +                       if (WARN_ON_ONCE(i != 0)) {
+> +                               if (cs->req)
+> +                                       pr_err_once(
+> +                                               "fuse: zero size header in opcode %d\n",
+> +                                               cs->req->in.h.opcode);
+> +                               return -EINVAL;
+> +                       }
 
-That's great, if it survives high traffic prod there should be
-less need to worry about it in terms of regressing.
+Just keep the WARN_ON_ONCE() and drop everything else, including
+return -EINVAL.  The same thing should happen without the arg->size ==
+0 check.
 
-The eerie part is that we're switching it back and forth rediscovering
-same problems. Even the reordering issue was mentioned and warned
-about before the wait-free list got merged, but successfully ignored
-until we've got latency issues. And now we're back the full circle.
-Would be nice to find some peace (or something inarguably better).
-
-
-> I don't particularly love list + lock for this, but at the end of the
-> day, the only real downside is the irq disabling nature of it.
-> Everything else is both simpler, and avoids the really annoying LIFO
-> nature of llist. I'd expect, all things being equal, that list + lock is
-> going to be ever so slightly slower. Both will bounce the list
-> cacheline, no difference in cost on that side. But when you add list
-> reversal to the mix, that's going to push it to being an overall win.
-> 
-
--- 
-Pavel Begunkov
+Thanks,
+Miklos
 

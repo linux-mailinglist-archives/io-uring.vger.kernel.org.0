@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-4999-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5000-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5999D66D8
-	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 01:36:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D189D66DC
+	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 01:49:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4CCF28182D
-	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 00:36:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47604B20DEB
+	for <lists+io-uring@lfdr.de>; Sat, 23 Nov 2024 00:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A74323BE;
-	Sat, 23 Nov 2024 00:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D082905;
+	Sat, 23 Nov 2024 00:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pz+SmA3C"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDpXJDZR"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C64920E3
-	for <io-uring@vger.kernel.org>; Sat, 23 Nov 2024 00:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08051257D
+	for <io-uring@vger.kernel.org>; Sat, 23 Nov 2024 00:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732322159; cv=none; b=dGLnqr6fRgaxi6/R8Kbebbc9dlgj97gBapqRIgoOzowJg6gSg9Ri2NHPmsYywIse4/cp0gMYUcZZ5+blJhv7tJbui7qHaYeIIvnzogksU02+OP8QjhIUJEeay2os6vh2Q7IOY+Rt1tWqXs+YWM4jr+QI9DY5r0VTE6Lba4h2ihc=
+	t=1732322983; cv=none; b=P4Y5zlizZLt1MvcWpj3qAmhcxAlja0peiZjg+R8381nPrKb/wm8oq0aZfKjM13VjTo3kt84xsQ9j1a7f5qiviOl4vzYUlU63zg1D6bASZBqnG5ewX4SR6EMvsZ74UqgMFOgOK2qmKwHPTEWaHawqdju5zVmal36+h9PfU9oBVMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732322159; c=relaxed/simple;
-	bh=Q23qB6RUYLYuFF8LcezBhpJ6ez8i9a5x361nwB89yGs=;
+	s=arc-20240116; t=1732322983; c=relaxed/simple;
+	bh=Y6GM2xHwmGNoHDmJbuKB78ziPGMbdEBp0BT0kMP2iZg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=myq3Y/+CWzXYWvuoBS2/5L1V9TdTvSWBIyDyIXpsvBLAfbfxdyVF1z7dqS/dhkQqSXYSLtji5khoBGa3QSc5GSGbEA+V0TPFbqwnZpVtB0QEyqiV1Sb6bJ2FgS5sy1u32ErM7lqpQ1kHIpm6M431Akz2ga5biLYFFNyK6WtaYbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pz+SmA3C; arc=none smtp.client-ip=209.85.218.42
+	 In-Reply-To:Content-Type; b=fP2mIWLwL6TI5cg1658Asb47QgNi5oiABF5MWxDY6jH2EnYxlVJR736fMMccALe5CJ97rCfSeFCNC1/jyCWmwFJ0Vl951XwjVtDcaPIdrF5WFb28GTPWdBT4mEAkOLt8PttJqd0kWkSZ+YooEZejAGBXYYDpbUG+3g+FqLc71yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDpXJDZR; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9aa8895facso438171566b.2
-        for <io-uring@vger.kernel.org>; Fri, 22 Nov 2024 16:35:57 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d01db666ceso1775696a12.0
+        for <io-uring@vger.kernel.org>; Fri, 22 Nov 2024 16:49:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732322156; x=1732926956; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732322980; x=1732927780; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=SSiCoNUMyVsuoJS9eXcq8z67gZGIDt3/VrkLO4ePI80=;
-        b=Pz+SmA3CKwSblq2jDudnIJIO+1jKCncmhEPKJfsfuZQMY95RVYtPz03NztXr867NAu
-         jwDERi79rpHTOalTdi4keSzrDIYjwJTMPAP2FDmgcleZfIhMgL8oqwjOjiDZR+W+At6A
-         QPMvkOQvpPTTf88bQha/NqP22zcaS+aPIPMKs9BAGcl/C952gQf5LNK5q46unau3rhyu
-         blU+2L7FdzIo7KMaoOGH+7FAZnhQBT0XkHbAf88+CsdjVwWxuHObQpPYPY3HfxneviTh
-         g9SNq2Qmr8nIFtJVwl2SaaVdDKWHUDn3kMiu2oAMBsf95EmUQKnySKcIQMDxl5VPo4JG
-         PD+Q==
+        bh=HelRoQFFlQYtqSZ+TKpMxUvKUvfk7K3G0E9Nb73PWSs=;
+        b=jDpXJDZRc71tahSkBtbSw+hw/gVpXQZC97YkGKJx9sDDmMUhOnNRHxawRhv0mt1a7A
+         tiLLMg5U3H1vY+nlVaw/+NKflitwXqxF0s6VoH7HbdDgBr1EKCl+ASC3nUNbVpy/noMf
+         EW3fyi4Ror7H5a8V25Om9x7XxkKiUlByuiXscCecXrTylHzmKGBgQgBEsteV3gkICPW/
+         VLOAdxMEwmJsB+QHjXPlWLEerOfJFvnpmyLCMhi74MLw/oni51CyaCWcF/DyM9paNEmQ
+         Cq7mZk2Z8FhqaLiey/T8p36tNTpzEMbI9xRnkRYn4Xk3O/zgUc36fo+lC//dH2BgQMNj
+         GnbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732322156; x=1732926956;
+        d=1e100.net; s=20230601; t=1732322980; x=1732927780;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SSiCoNUMyVsuoJS9eXcq8z67gZGIDt3/VrkLO4ePI80=;
-        b=QEIQbaviuGzRmvclGzKpvYJ4nySgDRsPQmXQhEA52rYZWKh0I57aWsdjN112Y+0THf
-         DSvVt7cg1xYOdidOuTTrWLQy+74m5thxWLi6un7TVW/EiHT1nE7xcivK6++Kv1UBumxZ
-         K4EEb7d+C9yv77vZ0oaQ6OcS3pJPNbim/gP0NKPLyriX+fHS2OREqlkwf1uC7bnrChtp
-         6BjswEL9QXX+DN+Eo/M8KlgcpFDGuJ8tAjKfEHlVyr4GLMvqIId3zV+peIkAOWiALG8x
-         JSHahBLDDkSfJ3qUVRL4bQbYSaYioa72mfBBnWRdre725rnW1Ty9fErsYyZ0R6nIPbJl
-         Muqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTLsONIVt1ItCoR8uCZe73gzdrDYU7HODg6AL90hj93BeV6ReD1XKptlIq/6GscLObqPbvCmXung==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI+6RFemx3OflFZg1duawQiADvWJVDHklFO3lhdFihLDFsSVgb
-	28Sj4mBpB/9JqFiuhU3sP1FcQ1KlIVFnOVbTLnZm7CDzyIsI6cINGWPdCA==
-X-Gm-Gg: ASbGnct+e0Lvk9nRSS8ya/kwj3fDO0HaLSkq03RLv/M4/XT3ToY9PdxwZWTVeRRrykm
-	02dM7ICVOGa8e3KgUeZZ93KtE4C2VaegS6D+k02kFpNInlbtHOV/Vw9ChR22RPKIX4Uw3cji7sG
-	mEeTwWA6/wlBVNI86hfoaVNLhoZoRUPj1yDRZXmML4RRt5sOWrpjBJKdDv08BxDqzP7313PgpgE
-	xtzUlFLTl13GNCSRjrZ0ZLhJbTSQk/oA1P3fCrs4iBwjRBfawSju2e/ifTjug==
-X-Google-Smtp-Source: AGHT+IHYFafDblW6rQ7BIZMhggEDe2g9y0jhbNVswuU63vXYQxwNYmUBY90Lo5Bobg2ZvkxhFJzjOA==
-X-Received: by 2002:a17:906:bfea:b0:aa1:e050:89 with SMTP id a640c23a62f3a-aa50997d270mr379442866b.25.1732322155416;
-        Fri, 22 Nov 2024 16:35:55 -0800 (PST)
+        bh=HelRoQFFlQYtqSZ+TKpMxUvKUvfk7K3G0E9Nb73PWSs=;
+        b=GwV6FIiX8+ttmASzk6MN1PkGDN4nea5HYiDz4TQA1JTTyPiDtDCN5GIHHTm0aARg3m
+         9TOifKeHBRniG4p6TQWE/seQmcT38p6CKcF874Ad1/Ea+xrcGn9dPQ87PYjLTe//mVMY
+         LjJMZhPhcYUXnnRw7JB4LyGbDx747nAGq0vdYyYbnXQLE0FzuPOQWDq1BP6JbFtKWK1l
+         WsaIjcxaxxsXpJPtvasxUrbOMl86+ipZZdLQFznfZfMQ06BV3iDhLCiNcs7yUEzre5yD
+         lRhyiv25c3MfC4jEPsSOdRviTztAe6t6TzwyE6Rho4n9fYyg1fReU8olU9DtOpkOCg2m
+         WDGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXu/w2v+GMN3JGRDPIgDZJgxMEy4nwtgtj1kuPqz51kDUj4jJYkeNnnsxL02n4ZuNP4o2xyCZutIg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2xFRmbMaLwvyrJ1Eiv+7aegTEdptzZJ09Xa46Ee6CTa20VI3n
+	rVApWLOnH4uPIs+dny0Iaut2aBvkaYOFQTIMpfrGNsvzYXxIMEGV
+X-Gm-Gg: ASbGncuCm58g2EU7RwZlKJY79c5GfLlu4fK4WYaS2unoEw4w5Wp4jgu/HBBY+T3NRXt
+	UPRV0j9EmF5EHM9Hi4/DbpeYnT2foKtvTzZe4bxd0VnuonCgbrCJuwIpw2Ux7zJG8TGbMfOAPzA
+	d0mf2t1IiZk65bvfrZqz5eXjgXiykQfawrnJ5v0yD/nmBz1Fabm/Jo23ftS5VqxS06bmhaGOvKw
+	20oqxDKGCD66JjwSrH4QcVF7QshnwmionVYyS8DvwUujt+CdCLP1v1thWImtQ==
+X-Google-Smtp-Source: AGHT+IHA6zCMxRaTCdhqdalWAjT0MfyJIMTikalTv6GpeUjaqDiIwGM53zCH/dcaAcWCEua4NkhnPw==
+X-Received: by 2002:a17:907:778b:b0:aa4:9ab1:1982 with SMTP id a640c23a62f3a-aa50997617cmr426867566b.4.1732322979973;
+        Fri, 22 Nov 2024 16:49:39 -0800 (PST)
 Received: from [192.168.42.180] ([148.252.140.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b5b7077sm155536366b.174.2024.11.22.16.35.54
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa524615e8fsm83370366b.182.2024.11.22.16.49.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 16:35:55 -0800 (PST)
-Message-ID: <c95b6e96-d16e-4713-a7e3-a98abdda0afa@gmail.com>
-Date: Sat, 23 Nov 2024 00:36:47 +0000
+        Fri, 22 Nov 2024 16:49:39 -0800 (PST)
+Message-ID: <e5dac423-ba5a-4fc7-b3f0-09e2a03082da@gmail.com>
+Date: Sat, 23 Nov 2024 00:50:32 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,89 +80,102 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] io_uring: replace defer task_work llist with
- io_wq_work_list
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <20241122161645.494868-1-axboe@kernel.dk>
- <20241122161645.494868-3-axboe@kernel.dk>
- <f0c124b6-9a38-45ed-86ac-b219a51917e9@gmail.com>
- <988485cb-a8da-4113-bcd5-3c1d1b2ab24f@kernel.dk>
- <dd280b03-aa0d-478d-b5b0-36646c0c8fcb@gmail.com>
- <0c964cee-98cd-4783-983e-b39505519316@kernel.dk>
+Subject: Re: [PATCH next v1 2/2] io_uring: limit local tw done
+To: Jens Axboe <axboe@kernel.dk>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org
+References: <20241120221452.3762588-1-dw@davidwei.uk>
+ <20241120221452.3762588-3-dw@davidwei.uk>
+ <f32b768f-e4a4-4b8c-a4f8-0cdf0a506713@gmail.com>
+ <95470d11-c791-4b00-be95-45c2573c6b86@kernel.dk>
+ <614ce5a4-d289-4c3a-be5b-236769566557@gmail.com>
+ <b7170b8e-9346-465b-be60-402c8f125e54@kernel.dk>
+ <66fa0bfd-13aa-4608-a390-17ea5f333940@gmail.com>
+ <9859667c-0fbf-4aa5-9779-dae91a9c128b@kernel.dk>
+ <3e6a574c-27ae-47f4-a3e3-2be2c385f89b@kernel.dk>
+ <357a3a72-5918-44e1-b84f-54ae093cf419@gmail.com>
+ <375a1b30-5e68-439d-be55-444eaa19d7ef@kernel.dk>
+ <c2f80710-7253-4dfb-a275-6698f65ab25c@gmail.com>
+ <80eeba88-2738-405e-b539-516d67f0dcd2@kernel.dk>
+ <e7a2ed0e-fe0a-4a19-86bf-90bd38bc6b61@kernel.dk>
+ <c7c5f1e6-e794-4cef-a45e-773e05aa4d71@gmail.com>
+ <390502d5-2de4-42e0-a899-a0e25d1ee5d7@kernel.dk>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <0c964cee-98cd-4783-983e-b39505519316@kernel.dk>
+In-Reply-To: <390502d5-2de4-42e0-a899-a0e25d1ee5d7@kernel.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/22/24 17:44, Jens Axboe wrote:
-> On 11/22/24 10:25 AM, Pavel Begunkov wrote:
->> On 11/22/24 17:11, Jens Axboe wrote:
->>> On 11/22/24 10:07 AM, Pavel Begunkov wrote:
->>>> On 11/22/24 16:12, Jens Axboe wrote:
->>>> ...
->>>>>     static inline void io_req_local_work_add(struct io_kiocb *req,
->>>>>                          struct io_ring_ctx *ctx,
->>>>> -                     unsigned flags)
->>>>> +                     unsigned tw_flags)
->>>>>     {
->>>>> -    unsigned nr_wait, nr_tw, nr_tw_prev;
->>>>> -    struct llist_node *head;
->>>>> +    unsigned nr_tw, nr_tw_prev, nr_wait;
->>>>> +    unsigned long flags;
->>>>>           /* See comment above IO_CQ_WAKE_INIT */
->>>>>         BUILD_BUG_ON(IO_CQ_WAKE_FORCE <= IORING_MAX_CQ_ENTRIES);
->>>>>           /*
->>>>> -     * We don't know how many reuqests is there in the link and whether
->>>>> -     * they can even be queued lazily, fall back to non-lazy.
->>>>> +     * We don't know how many requests are in the link and whether they can
->>>>> +     * even be queued lazily, fall back to non-lazy.
->>>>>          */
->>>>>         if (req->flags & (REQ_F_LINK | REQ_F_HARDLINK))
->>>>> -        flags &= ~IOU_F_TWQ_LAZY_WAKE;
->>>>> +        tw_flags &= ~IOU_F_TWQ_LAZY_WAKE;
->>>>>     -    guard(rcu)();
->>>>
->>>> protects against ctx->task deallocation, see a comment in
->>>> io_ring_exit_work() -> synchronize_rcu()
+On 11/22/24 17:08, Jens Axboe wrote:
+> On 11/22/24 10:01 AM, Pavel Begunkov wrote:
+>> On 11/21/24 17:05, Jens Axboe wrote:
+>>> On 11/21/24 9:57 AM, Jens Axboe wrote:
+>>>> I did run a basic IRQ storage test as-is, and will compare that with the
+>>>> llist stuff we have now. Just in terms of overhead. It's not quite a
+>>>> networking test, but you do get the IRQ side and some burstiness in
+>>>> terms of completions that way too, at high rates. So should be roughly
+>>>> comparable.
 >>>
->>> Yeah that's just an editing mistake.
->>>
->>>>> +    spin_lock_irqsave(&ctx->work_lock, flags);
->>>>> +    wq_list_add_tail(&req->io_task_work.work_node, &ctx->work_list);
->>>>> +    nr_tw_prev = ctx->work_items++;
->>>>
->>>> Is there a good reason why it changes the semantics of
->>>> what's stored across adds? It was assigning a corrected
->>>> nr_tw, this one will start heavily spamming with wake_up()
->>>> in some cases.
->>>
->>> Not sure I follow, how so? nr_tw_prev will be the previous count, just
->>> like before. Except we won't need to dig into the list to find it, we
->>> have it readily available. nr_tw will be the current code, or force wake
->>> if needed. As before.
+>>> Perf looks comparable, it's about 60M IOPS. Some fluctuation with IRQ
 >>
->> The problem is what it stores, not how and where. Before req->nr_tw
->> could've been set to IO_CQ_WAKE_FORCE, in which case following
->> requests are not going to attempt waking up the task, now work_items
->> is just a counter.
->>
->> Let's say you've got a bunch of non-lazy adds coming close to each
->> other. The first sets IO_CQ_WAKE_FORCE and wakes the task, and
->> others just queue themselves in the list. Now, every single one
->> of them will try to wake_up() as long as ->cq_wait_nr is large
->> enough.
+>> 60M with iopoll? That one normally shouldn't use use task_work
 > 
-> If we really care about the non-lazy path as much, we can just use the
+> Maybe that wasn't clear, but it's IRQ driven IO. Otherwise indeed
+> there'd be no task_work in use.
+> 
+>>> driven, so won't render an opinion on whether one is faster than the
+>>> other. What is visible though is that adding and running local task_work
+>>> drops from 2.39% to 2.02% using spinlock + io_wq_work_list over llist,
+>>
+>> Do you summed it up with io_req_local_work_add()? Just sounds a bit
+>> weird since it's usually run off [soft]irq. I have doubts that part
+>> became faster. Running could be, especially with high QD and
+>> consistency of SSD. Btw, what QD was it? 32?
 
-Well, it's all linked requests, some of sendzc notif until
-I optimise it, maybe something else?
+Why I asked about QD is because storage tests reliably give
+you a list of QD task work items, the longer the list the
+more expensive the reverse with washing out cache lines.
 
-> same storing scheme as we did in req->nr_tw, except in ->work_items
-> instead. Not a big deal imho.
+For QD=32 it's 32 entry list reversal, so I'd get if you're
+seeing some perf imrpovement. With QD=1 would be the opposite.
+With David's thing is similar, he gets a long list because of
+wait based batching. Users who don't do it might get a worse
+performance (which might be fine).
 
-Yes please. It wouldn't be great sneaking them in the same
-commit either way.
+> It may just trigger more in frequency in terms of profiling, since the
+> list reversal is done. Profiling isn't 100% exact.
+> 
+>>> and we entirely drop 2.2% of list reversing in the process.
+>>
+>> We actually discussed it before but in some different patchset,
+>> perf is not helpful much here, the overhead and cache loading
+>> moves around a lot between functions.
+>>
+>> I don't think we have a solid proof here, especially for networking
+>> workloads, which tend to hammer it more from more CPUs. Can we run
+>> some net benchmarks? Even better to do a good prod experiment.
+> 
+> Already in motion. I ran some here and didn't show any differences at
+> all, but task_work load was also fairly light. David is running the
+> networking side and we'll see what it says.
+
+That's great, if it survives high traffic prod there should be
+less need to worry about it in terms of regressing.
+
+The eerie part is that we're switching it back and forth rediscovering
+same problems. Even the reordering issue was mentioned and warned
+about before the wait-free list got merged, but successfully ignored
+until we've got latency issues. And now we're back the full circle.
+Would be nice to find some peace (or something inarguably better).
+
+
+> I don't particularly love list + lock for this, but at the end of the
+> day, the only real downside is the irq disabling nature of it.
+> Everything else is both simpler, and avoids the really annoying LIFO
+> nature of llist. I'd expect, all things being equal, that list + lock is
+> going to be ever so slightly slower. Both will bounce the list
+> cacheline, no difference in cost on that side. But when you add list
+> reversal to the mix, that's going to push it to being an overall win.
+> 
 
 -- 
 Pavel Begunkov

@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-5008-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5009-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61BBA9D7835
-	for <lists+io-uring@lfdr.de>; Sun, 24 Nov 2024 22:12:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C5C9D7836
+	for <lists+io-uring@lfdr.de>; Sun, 24 Nov 2024 22:12:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0558E162C23
-	for <lists+io-uring@lfdr.de>; Sun, 24 Nov 2024 21:12:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537DB281EA5
+	for <lists+io-uring@lfdr.de>; Sun, 24 Nov 2024 21:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FC315B97D;
-	Sun, 24 Nov 2024 21:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB6913FD72;
+	Sun, 24 Nov 2024 21:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErhkeFsh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="btr6UIMz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9071613FD72
-	for <io-uring@vger.kernel.org>; Sun, 24 Nov 2024 21:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF5B163
+	for <io-uring@vger.kernel.org>; Sun, 24 Nov 2024 21:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732482725; cv=none; b=S21xsfv29r8ir5Km6tfKUJhC0w9+t04lKf4u1CQrImd/u+/rEj9gQN9ZTHMMxpz84t1obtJ9oHkjnXMzsg/zAe9TjDmwUAq/Eb9jyCbpIU5wW/nRjGsLY4Znn4RSZCQ92uNdzwDOBKNNcCkLBaANQtO/GzvhgkJRJOwzHWhc5+A=
+	t=1732482726; cv=none; b=h4/kUCsz/PY93yyPTPNvJ4bz6RqzdYeFsqejLxEnQfqURYfjlwbpNmBqti1T9BfufiGpQl3bfXjbgV3EIoV7PuekF2QC4gPRWO06cCzFwldVLfrmqNDJxG9SXdGJ2RVK44Wi9twXLKydPP0SSmI4RHgXcZl436rzP3PngtPEgDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732482725; c=relaxed/simple;
-	bh=QA+01plKRIkmGEc891jaogWe5XZER36lyT3oLddZ68E=;
+	s=arc-20240116; t=1732482726; c=relaxed/simple;
+	bh=1jmb/YGUScs5yrYsukVscAuiJXOxz0cRSODGRVeVGzI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hrQa4fydy7qOSV3eJ3eQFg2sjH9wV+rvLMiWVXC4qzEU79H+pZExRaD8yCsuhefjgW900399Aom+/86UuSttfHuZBcAsSBiZuf0cVZJ0ER8uAieP87zbIdsKjvy+HPiVWTKnwUVbXDql2xxjV4odd44cNNUXfivUXA9eKv6EjRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ErhkeFsh; arc=none smtp.client-ip=209.85.128.44
+	 MIME-Version; b=SKOYXeU/KnVUWTqGIxPlmi9N6sPSulSybkCom3S8uqBO7hNhV3kfZMS9NCpjWgTdVxz/MeqzlNIO/WogE8FydNiVZsQ+phxkCSAyT8jr7abzYyYS/KNxNUEJLTmmFz4rAyWOWo3HBFQdLEEYFq+HLpFACDJmu5ua+LqLEtvtY9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=btr6UIMz; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4349cc45219so6848425e9.3
-        for <io-uring@vger.kernel.org>; Sun, 24 Nov 2024 13:12:03 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434a099ba95so129555e9.0
+        for <io-uring@vger.kernel.org>; Sun, 24 Nov 2024 13:12:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732482722; x=1733087522; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732482723; x=1733087523; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J8cmqKslAko5zF5qRZC7c7DtkzAvHjFueUMLswLyZOw=;
-        b=ErhkeFshrCdNhjRCbHSe1CeJfo1rkLz/hLkDWSwE9hy70oYXJy8FcRZCN0dAJLGoDC
-         K38EMRKEuLmFWcYKHnzJLZdzVHQ+GWJ40evCZ3IXRTJHeWDikDKP1EbVnVhDq++us1o9
-         LvIBF3poYpHTVXWmlslAACEb53xB/W7hRgh4M39G5omBkCr3rODtEgKTI30VpFBWiDtH
-         BInrQNat5dJ3Ojmr1ub3HzZ+1gFZQ4XE+eRwM+69rQmvlhrBJHarHtzPdqtpK0hSCcmi
-         I+EA9a4VDX/a0j/ilSZhs+ib8XUaEUVqMQEJUjXKBESRn8MYouTbm4ukipuRQpyGhYSj
-         KYfA==
+        bh=gaPvSNc+wa5krf/6t9pRuh8xeS0CHz0dlFRi5Cy4Ht8=;
+        b=btr6UIMzI88dtQ0kKhuLu1jrhnNZ9jqjCfhixpxFAmtXPfkHF2nxdF0hZdT9h+7CAt
+         meQW7CKMZdOT8THsrsB5GfbhysL2j1ldO1UjttS8O7GNZkyR7QtnKNxqH7iBxmPqFjWz
+         wX+wNFv6m5XBpwbyWWze+1eXozP7tP3NUOUFfeYr6nQAcFYx6sH4McxxBEZFNhNIE9Sa
+         lkbSVhyO9C5r3etmw3+Aju+6Km1fdzB2Fn+zYLSV4Jm5rJlCFdv6qwBCLlnyiElifGoV
+         KZ9f8J/4uVYH3KC9L06KxT2zJA611xSzzzRcr1h6SewPSRfxnUOefuNNkFTtarIthFCD
+         UzKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732482722; x=1733087522;
+        d=1e100.net; s=20230601; t=1732482723; x=1733087523;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J8cmqKslAko5zF5qRZC7c7DtkzAvHjFueUMLswLyZOw=;
-        b=hEpIfLTlUl8k5MR03s1d+pC23Grrmx/p0z3eFmuEdNUY4ZDPbMjhdUrRWhScFyrCkG
-         LOXAxh3htJcIbklPZp2EyCPj1J0H9sF8yhi8yznpsHElkimYjd/Uo/m16QyL23Ix/0kQ
-         Z2xasKLVWupy3zTIKNTnCqTntpE5Kbdx5xZl0VZlUVpCbuzUqUH8bN+fjsdxj55ANugi
-         N2MDBL7M+sVocEeFBpYw+Wpuw9VgRu312iP8anmdW+NudgcraRA2wCwdDDoTIF3Lc1Jc
-         c0Qj5mEY/83gkIXIIrlIHNFgz9gpRUs5rCQSuHZx8pYMUUZ3bk+r9jpmgPiGF/M1EY4W
-         7u5A==
-X-Gm-Message-State: AOJu0Yxl0WsBWfZrd9b17pLsnQU2FYek1e+SMtakU0kA7H0KEEAyT0ws
-	EOJl8fkD9t9KEcdgQUiSpp01KhuV3HIKegbxca2n+XN+su6gvFfa9nr9rA==
-X-Gm-Gg: ASbGnct93t/c1FMh8VE//Ivo114CXyFGdbIC/T7iOecuacD/lrymnEKbNdI6Y5fCe0u
-	FUb4tGGgJ6rZSlo3kRQn+hQHkosnBfVEKGKBlkVlA7qVdWQrNqBdhX6bwydt6FuHd5PrPon3Lz5
-	ipOO8N4rttNs/FjoflrzvU7K32LWWPPryVaKQu/nVvyWwtNIAFQJaOD+4mEUgK4sG580O8SdGsF
-	NMEB41qD565rylet3wx/5MPGdnNe1FEig8p9PTvzOkuQVEQtkvCarsJCTnaO40=
-X-Google-Smtp-Source: AGHT+IFM/h858U0X4lLXNs4Y0gGcK3hy36gRenWrADttddu7sssVWGQRt/zQzttG/DhVbQLx/j7zsQ==
-X-Received: by 2002:a05:600c:a06:b0:42c:bb10:7292 with SMTP id 5b1f17b1804b1-433ce4100c1mr79800945e9.1.1732482721499;
-        Sun, 24 Nov 2024 13:12:01 -0800 (PST)
+        bh=gaPvSNc+wa5krf/6t9pRuh8xeS0CHz0dlFRi5Cy4Ht8=;
+        b=jH9F5Atjk4v/Qw2N77GxK5/b/2gL3Vg98moG6N2veyFPfCBtmjRk0Jz7nrwhnavcfN
+         cTblDy0VSC5JKVMtrex8I43A7ld5zdhInAWjUMbUifIljDLpQ3ClTXjo5MEqbsU+/SIQ
+         EKurx4s/wZlaRSJ6M64bI7dt+vpQwROaOIei0fA9R2c7qoGpos0kjgEKLxP/1BdDp7kp
+         c+YT8DKs7fe/S7eFcyeY0rMgpFOT5EWpJJ9cfiXscGGM37B74e8zjbvxDE070m9guJ1p
+         42t0Q6PhGh9N21iUGI5A1phUAJdvgCEwpWzN499783WR3eIojIg+gnTpmmcwqynXm3dM
+         DnPg==
+X-Gm-Message-State: AOJu0Ywyplx0cCH+SK+Zlbf9t2RUzPmWkN292CJWuxLboeNrjLRekvM+
+	ZNTQBgCfSBMp7BLaZ5rzkhvCe3IZ//jtpmmIh2amRet4TaigqGIynoWiBg==
+X-Gm-Gg: ASbGncvPyR/0rkA1weSEBzWo+fFSgUWk9gipr+OMJiYaR2sk0x/jBv00QjejYliO5rN
+	8jGHy7tL+b1SExKRBjpBGy7McCdrBNYlPMkU1SJfapu+jxOb2Uw3DJ//xFgAfMBofcRqejjMc6X
+	xk8uK6GDLkrp7CerZSLcbr8KYK61oonJVwQNSAsKaAs+UB9the0DFqagBw7WbOtTrEbD5/vi02F
+	5gJZ6daexg6/i3M1NJ8GrJ/9A55nNXSX2cNXbLyTpGe5If8NH0VkO/PWxVuxRQ=
+X-Google-Smtp-Source: AGHT+IGZO+gfmdQKj8NYX5z7sQDyeONWOeooKM6+STiKR/au2AZVcwRCAKoSsARdhKCyRCHSTIBFug==
+X-Received: by 2002:a05:6000:401f:b0:37c:d57d:71cd with SMTP id ffacd0b85a97d-38260be22f9mr9864420f8f.52.1732482722480;
+        Sun, 24 Nov 2024 13:12:02 -0800 (PST)
 Received: from 127.0.0.1localhost ([85.255.235.224])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f643b299sm132733745e9.0.2024.11.24.13.12.00
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f643b299sm132733745e9.0.2024.11.24.13.12.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sun, 24 Nov 2024 13:12:01 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH v2 01/18] io_uring: rename ->resize_lock
-Date: Sun, 24 Nov 2024 21:12:18 +0000
-Message-ID: <d05df413f877c7163f882febb3277d1e499aa3be.1732481694.git.asml.silence@gmail.com>
+Subject: [PATCH v2 02/18] io_uring/rsrc: export io_check_coalesce_buffer
+Date: Sun, 24 Nov 2024 21:12:19 +0000
+Message-ID: <4a82c18ed2615f3381f1849f108a421c2022c846.1732481694.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1732481694.git.asml.silence@gmail.com>
 References: <cover.1732481694.git.asml.silence@gmail.com>
@@ -87,107 +87,115 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-->resize_lock is used for resizing rings, but it's a good idea to reuse
-it in other cases as well. Rename it into mmap_lock as it's protects
-from races with mmap.
+io_try_coalesce_buffer() is a useful helper collecting useful info about
+a set of pages, I want to reuse it for analysing ring/etc. mappings. I
+don't need the entire thing and only interested if it can be coalesced
+into a single page, but that's better than duplicating the parsing.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring_types.h | 2 +-
- io_uring/io_uring.c            | 2 +-
- io_uring/memmap.c              | 6 +++---
- io_uring/register.c            | 8 ++++----
- 4 files changed, 9 insertions(+), 9 deletions(-)
+ io_uring/rsrc.c | 22 ++++++++++++----------
+ io_uring/rsrc.h |  4 ++++
+ 2 files changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 3e934feb3187..adb36e0da40e 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -423,7 +423,7 @@ struct io_ring_ctx {
- 	 * side will need to grab this lock, to prevent either side from
- 	 * being run concurrently with the other.
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index adaae8630932..e51e5ddae728 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -626,11 +626,12 @@ static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page **pages,
+ 	return ret;
+ }
+ 
+-static bool io_do_coalesce_buffer(struct page ***pages, int *nr_pages,
+-				struct io_imu_folio_data *data, int nr_folios)
++static bool io_coalesce_buffer(struct page ***pages, int *nr_pages,
++				struct io_imu_folio_data *data)
+ {
+ 	struct page **page_array = *pages, **new_array = NULL;
+ 	int nr_pages_left = *nr_pages, i, j;
++	int nr_folios = data->nr_folios;
+ 
+ 	/* Store head pages only*/
+ 	new_array = kvmalloc_array(nr_folios, sizeof(struct page *),
+@@ -667,15 +668,14 @@ static bool io_do_coalesce_buffer(struct page ***pages, int *nr_pages,
+ 	return true;
+ }
+ 
+-static bool io_try_coalesce_buffer(struct page ***pages, int *nr_pages,
+-					 struct io_imu_folio_data *data)
++bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
++			      struct io_imu_folio_data *data)
+ {
+-	struct page **page_array = *pages;
+ 	struct folio *folio = page_folio(page_array[0]);
+ 	unsigned int count = 1, nr_folios = 1;
+ 	int i;
+ 
+-	if (*nr_pages <= 1)
++	if (nr_pages <= 1)
+ 		return false;
+ 
+ 	data->nr_pages_mid = folio_nr_pages(folio);
+@@ -687,7 +687,7 @@ static bool io_try_coalesce_buffer(struct page ***pages, int *nr_pages,
+ 	 * Check if pages are contiguous inside a folio, and all folios have
+ 	 * the same page count except for the head and tail.
  	 */
--	struct mutex			resize_lock;
-+	struct mutex			mmap_lock;
+-	for (i = 1; i < *nr_pages; i++) {
++	for (i = 1; i < nr_pages; i++) {
+ 		if (page_folio(page_array[i]) == folio &&
+ 			page_array[i] == page_array[i-1] + 1) {
+ 			count++;
+@@ -715,7 +715,8 @@ static bool io_try_coalesce_buffer(struct page ***pages, int *nr_pages,
+ 	if (nr_folios == 1)
+ 		data->nr_pages_head = count;
  
- 	/*
- 	 * If IORING_SETUP_NO_MMAP is used, then the below holds
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index bfa93888f862..fee3b7f50176 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -351,7 +351,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	INIT_WQ_LIST(&ctx->submit_state.compl_reqs);
- 	INIT_HLIST_HEAD(&ctx->cancelable_uring_cmd);
- 	io_napi_init(ctx);
--	mutex_init(&ctx->resize_lock);
-+	mutex_init(&ctx->mmap_lock);
+-	return io_do_coalesce_buffer(pages, nr_pages, data, nr_folios);
++	data->nr_folios = nr_folios;
++	return true;
+ }
  
- 	return ctx;
+ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+@@ -729,7 +730,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+ 	size_t size;
+ 	int ret, nr_pages, i;
+ 	struct io_imu_folio_data data;
+-	bool coalesced;
++	bool coalesced = false;
  
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index 3d71756bc598..771a57a4a16b 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -322,7 +322,7 @@ __cold int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
- 	unsigned int npages;
- 	void *ptr;
- 
--	guard(mutex)(&ctx->resize_lock);
-+	guard(mutex)(&ctx->mmap_lock);
- 
- 	ptr = io_uring_validate_mmap_request(file, vma->vm_pgoff, sz);
- 	if (IS_ERR(ptr))
-@@ -358,7 +358,7 @@ unsigned long io_uring_get_unmapped_area(struct file *filp, unsigned long addr,
- 	if (addr)
- 		return -EINVAL;
- 
--	guard(mutex)(&ctx->resize_lock);
-+	guard(mutex)(&ctx->mmap_lock);
- 
- 	ptr = io_uring_validate_mmap_request(filp, pgoff, len);
- 	if (IS_ERR(ptr))
-@@ -408,7 +408,7 @@ unsigned long io_uring_get_unmapped_area(struct file *file, unsigned long addr,
- 	struct io_ring_ctx *ctx = file->private_data;
- 	void *ptr;
- 
--	guard(mutex)(&ctx->resize_lock);
-+	guard(mutex)(&ctx->mmap_lock);
- 
- 	ptr = io_uring_validate_mmap_request(file, pgoff, len);
- 	if (IS_ERR(ptr))
-diff --git a/io_uring/register.c b/io_uring/register.c
-index 1e99c783abdf..ba61697d7a53 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -486,15 +486,15 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
+ 	if (!iov->iov_base)
+ 		return NULL;
+@@ -749,7 +750,8 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
  	}
  
- 	/*
--	 * We'll do the swap. Grab the ctx->resize_lock, which will exclude
-+	 * We'll do the swap. Grab the ctx->mmap_lock, which will exclude
- 	 * any new mmap's on the ring fd. Clear out existing mappings to prevent
- 	 * mmap from seeing them, as we'll unmap them. Any attempt to mmap
- 	 * existing rings beyond this point will fail. Not that it could proceed
- 	 * at this point anyway, as the io_uring mmap side needs go grab the
--	 * ctx->resize_lock as well. Likewise, hold the completion lock over the
-+	 * ctx->mmap_lock as well. Likewise, hold the completion lock over the
- 	 * duration of the actual swap.
- 	 */
--	mutex_lock(&ctx->resize_lock);
-+	mutex_lock(&ctx->mmap_lock);
- 	spin_lock(&ctx->completion_lock);
- 	o.rings = ctx->rings;
- 	ctx->rings = NULL;
-@@ -561,7 +561,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
- 	ret = 0;
- out:
- 	spin_unlock(&ctx->completion_lock);
--	mutex_unlock(&ctx->resize_lock);
-+	mutex_unlock(&ctx->mmap_lock);
- 	io_register_free_rings(&p, to_free);
+ 	/* If it's huge page(s), try to coalesce them into fewer bvec entries */
+-	coalesced = io_try_coalesce_buffer(&pages, &nr_pages, &data);
++	if (io_check_coalesce_buffer(pages, nr_pages, &data))
++		coalesced = io_coalesce_buffer(&pages, &nr_pages, &data);
  
- 	if (ctx->sq_data)
+ 	imu = kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
+ 	if (!imu)
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 7a4668deaa1a..c8b093584461 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -40,6 +40,7 @@ struct io_imu_folio_data {
+ 	/* For non-head/tail folios, has to be fully included */
+ 	unsigned int	nr_pages_mid;
+ 	unsigned int	folio_shift;
++	unsigned int	nr_folios;
+ };
+ 
+ struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int type);
+@@ -66,6 +67,9 @@ int io_register_rsrc_update(struct io_ring_ctx *ctx, void __user *arg,
+ int io_register_rsrc(struct io_ring_ctx *ctx, void __user *arg,
+ 			unsigned int size, unsigned int type);
+ 
++bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
++			      struct io_imu_folio_data *data);
++
+ static inline struct io_rsrc_node *io_rsrc_node_lookup(struct io_rsrc_data *data,
+ 						       int index)
+ {
 -- 
 2.46.0
 

@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-5021-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5022-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A28A9D7841
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D1D9D7842
 	for <lists+io-uring@lfdr.de>; Sun, 24 Nov 2024 22:12:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF1D4281D5E
-	for <lists+io-uring@lfdr.de>; Sun, 24 Nov 2024 21:12:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 474DC162BCC
+	for <lists+io-uring@lfdr.de>; Sun, 24 Nov 2024 21:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8482A15FD13;
-	Sun, 24 Nov 2024 21:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6D913FD72;
+	Sun, 24 Nov 2024 21:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhjVJrUF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lRaHQGKc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C946163
-	for <io-uring@vger.kernel.org>; Sun, 24 Nov 2024 21:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582CE156960
+	for <io-uring@vger.kernel.org>; Sun, 24 Nov 2024 21:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732482742; cv=none; b=GleTxjcn8/pmfAv0eIYLBfQDEHS681JAUlhV4oRPeXZSSlHAt104mQjgdplfN7KvVklD9Mjx+BpAvuNULDqHDc3861Dbr+ix8/AMw0mowO7xj7dlxbicAc6FvhSM6ukbsGd9KmTDNk9hE2g8xPMJezaHNNAKu01YsuNO89Qz4+M=
+	t=1732482743; cv=none; b=gxjjE0u7NywVvLeBWVGtsOtFXnLEbUI4+TWRMIFMF2BrkyHs+PCNcTZdpI/bnvYXpww1hJj7/cyeeB69fHIstRhEc+zn1NYXVcJJTtyysUhv5+uDXSyhi0U7Bzk8iqW+6j+YiQ882wy7Nf5aFZXIpkR/XlWBPDpn4YeHBNAJadw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732482742; c=relaxed/simple;
-	bh=qunIwsik9CJrbGOX0b2lyFAD0nodsGoh4Aek47k9Smw=;
+	s=arc-20240116; t=1732482743; c=relaxed/simple;
+	bh=6E56ks1kypMJjgmiNbwiHW0OEsH6fT3SvMKVVQrd8Go=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xa17B9P5GmLPgzQli1IfZLX+EBIfVgWaYpxT8oqnbZEef9+RQOEptPQVg2a9LtPv42JSmJaUcbhBGH7sFsGkPNkcB9zLj9pgZlkKgh9w+f2mCTmQJBcT59a8CCAY8inOlnIFQ0S7Wc2J0iixGpuDxsmjA8p+rC7krj56camNXPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhjVJrUF; arc=none smtp.client-ip=209.85.221.53
+	 MIME-Version; b=d51I7S3g5d7ySL4VahISdzwGO1dr/5TsVEOvHOIPI/A1yeVnYMA7Hv9ibGz2iH1soEZ/LNo5nfF/fS19B9kEzUMk7tGLxGRKebZyBuF6WHPhClOcKvtZ/H4SqcwB2vHQ7hFYHJd5LHCXy3ZguqzqaPvjt5XLrs89cAcswmVymMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lRaHQGKc; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-382588b7a5cso2429666f8f.3
-        for <io-uring@vger.kernel.org>; Sun, 24 Nov 2024 13:12:20 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43158625112so34980275e9.3
+        for <io-uring@vger.kernel.org>; Sun, 24 Nov 2024 13:12:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732482738; x=1733087538; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732482739; x=1733087539; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BSQND+9XVUkAsmMkZ/9UPwxAYa30YwMjtyKoN9vzpOY=;
-        b=DhjVJrUFEuo7ZnQnSpOzAzdLER7vcNcLMhHvrOWt6Ich3sTDl+y67HqpYrUrmO+VOE
-         vuTZtEH/lpgtf9TzswPfC5luD1oH33fZpyyNhH57d/dM8WlRNlBREbWOcmLcnDKS2bjN
-         8KtrTrDMbrc6c/cZZ1BAV8TCcYDSW3QNpXxNbTj5sOtarNm+Pn1B3gHcbv01gIuXhIPP
-         8+PrhkDmiN7pwxJSZ4fl/2kk7M5SjPNpuPQL/oFdUzSt5Hv9gBYgfhsVfhtNLeZE6VkE
-         eJiiLONYlO941wjR1COseEZUyq/VouuQ0mzIwIovu1OPZus9W5bFWZrxXF7Hry0Z3V1E
-         2SAA==
+        bh=UMqCVFH4bCWU9Q/bAjVPrMRtHJHe9onTMmao6gGbEpU=;
+        b=lRaHQGKcFdiLXaW9rCXzM5IztELkN7zMxstGWiAnh8cb/8THEHyxT4c4DM6fvzmYMq
+         Xsjym4gKzktXQJskFwyWoJ8YZULhVNXihqmGxmXb89WjBpQ8DX+YcwWC63aogRfNzEmX
+         ETxWGp4MXhnrSZQTSvkhMF0/fEZdSK8G/I/eVr/vnMbql3jGCE23vfG0G5f5+DtrxGX7
+         xncTUzWwae4Gs1PptNrwW6QYKO7981l9wnNxe9lkQvFyf8PzSVgb4WLma38S0Reb31mJ
+         HfNimDaJojp7ljsNeBhcIZeJMf0KVe6FBZeJssOG4f3mgfUT3MKuAiVGmzrU4Sb3iNw/
+         Jb8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732482738; x=1733087538;
+        d=1e100.net; s=20230601; t=1732482739; x=1733087539;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BSQND+9XVUkAsmMkZ/9UPwxAYa30YwMjtyKoN9vzpOY=;
-        b=aI4MaBCOQQt1gbiwDmGrydkC9mpeqc9bjc9i9n8wkTNEpxjdx+suJNruUMpLFmhOY2
-         OefqWWkk71AmYuUWlG7a1ti0yJM+PiHZuDuiY/bus8bg7qHxxG5E2dBWKtSRKUo/bBrE
-         phd4+PK3StV8r+tuk6gCLcmWNfJUbk1hH+jWS0vv33Ry22rXSa1ngFa3jR/oihN21Eaw
-         uWQMpf4VC6uSZe3D/GdC6DE9eUOM2cjgJMLeU8auCisgy5G/wjh9YC97epdbAXb7CwQl
-         UIjYBYK5WLNjRtc/UYnoJ4u+kjxAGDVb4d82OWSxpCY63hAAg/aqNRmI1OFE6xE2hLAu
-         yzPA==
-X-Gm-Message-State: AOJu0Yy0GHyuM/oxFtg2uGvhag9/hqykR4aRX4Pwl+dZR0RempydB+fV
-	DFzi1NWV3/tMNG74975qcNws8W7HtImiGjryHooe1YOrWbEXdmDZJYQOEA==
-X-Gm-Gg: ASbGnctsapGkhI4qxtMuhiG7MrlI0fEK507NsgL5APGAfsSuHpUufca+PTJGFIe2x83
-	1Jy1vMmFFSNxo95KRBfC9s6ttD44C9VLBDbGH95b1FvEIoTYjpZeHhKhGwYaaGK6qOjuUGz/Exr
-	tqwO2FaeQ4n5+1887aHUT/dlgakEVJvqZDaz484uZDDyGc0FB7Z4plA5s3nG0qfU17bMh0DfXiG
-	wcgxIFEy4Elpg7vxL2KY4G/nC7xKV8Uc4YE8zzDKiGNtfpHiBiGlckkrqD6Clg=
-X-Google-Smtp-Source: AGHT+IE6FdhDbY37LYSDxMZ2H98HUCqBgPSJcqB5Iq+AWlY8RWtD9hL8JqWCaPAUMNyofrEKbiC8ig==
-X-Received: by 2002:a5d:5f53:0:b0:382:4bb8:e1d with SMTP id ffacd0b85a97d-38260b4d616mr8587174f8f.1.1732482738491;
-        Sun, 24 Nov 2024 13:12:18 -0800 (PST)
+        bh=UMqCVFH4bCWU9Q/bAjVPrMRtHJHe9onTMmao6gGbEpU=;
+        b=niHXEvbirueRaKU1FmyDow+AVsx21J/jyc4+VS6yARW7LgxrCMNnWgLHJ2hh2fwH3y
+         gCbc7w6HZJBLXYkeGBd/MUl0OB1tUfy2LAo80K+2rzU+y4p4C+vswZfyGBv7qY0BCvlS
+         A9w2xrTpk2n+T8KfpoiwCccY/sBVs0/+IBdSXxhp4wkKyebeBOdpxJ4l/BSTYm9yq/8O
+         TTkv5S5KRleQ1wQd37Meqj86GQ8crO84lvAcGjUzJqwz3wQPyx1BJ1j8zF0UV3/tnx6J
+         q29hMSclDwo0AJe9lC9PJ+92MJ22yrXBjHoMplA3EYbtLg7czt4v+hV6gdjUgsDshvU3
+         ZHbw==
+X-Gm-Message-State: AOJu0YxvbpTbx9w3aDbvF8F0+c10BYEyUwqUS2dl+C5S04VriK15BPV3
+	MaugyWNE9J/y3Sn/a0B2HZkUozzTlux8ALATdIUW1Px4hTDf/B89bzxbiA==
+X-Gm-Gg: ASbGncvmxv+h0DJpA1F3/nsjZh9wPNIRuCPlzArjwi0HkQQwdJSZm4Mue1d9Mk/quXX
+	sV29+rX2gyBxLAif4H1kN8AfeTR0xXtZgm2SdTxJ5rg9LF1arBdW27MefUzNUuIqrmcTmkD1Qjo
+	pBgyGKxEHXoU8zn5ZjJhJXnjPgetihRkzP1Uj6oPIPOpy6BJlEb/Pr/z4tXzzyC/WrAEugrOWd6
+	FmPIFPJbMwTR3A1E5kEKz52ylpqrUkzlATO4NH0TuiVJseCZLcDabYgEUGj7mQ=
+X-Google-Smtp-Source: AGHT+IHEmzT58X5BKSfsoIJvpsCMD50MrbnUO0cXtfm0i1tSOMplwjyCTHvg1pBFtjuqga5w2vE28w==
+X-Received: by 2002:a05:600c:1d08:b0:431:5465:807b with SMTP id 5b1f17b1804b1-433ce4e2582mr84337325e9.32.1732482739539;
+        Sun, 24 Nov 2024 13:12:19 -0800 (PST)
 Received: from 127.0.0.1localhost ([85.255.235.224])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f643b299sm132733745e9.0.2024.11.24.13.12.17
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f643b299sm132733745e9.0.2024.11.24.13.12.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 13:12:18 -0800 (PST)
+        Sun, 24 Nov 2024 13:12:19 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH v2 14/18] io_uring: use region api for CQ
-Date: Sun, 24 Nov 2024 21:12:31 +0000
-Message-ID: <42b3eda88aed4b3542534747cb0ce22744042d98.1732481694.git.asml.silence@gmail.com>
+Subject: [PATCH v2 15/18] io_uring/kbuf: use mmap_lock to sync with mmap
+Date: Sun, 24 Nov 2024 21:12:32 +0000
+Message-ID: <62eec2e533534f4f023929fc3c3695947d45e131.1732481694.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1732481694.git.asml.silence@gmail.com>
 References: <cover.1732481694.git.asml.silence@gmail.com>
@@ -87,286 +87,174 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert internal parts of the CQ/SQ array managment to the region API.
+A preparation / cleanup patch simplifying the buf ring - mmap
+synchronisation. Instead of relying on RCU, which is trickier, do it by
+grabbing the mmap_lock when when anyone tries to publish or remove a
+registered buffer to / from ->io_bl_xa.
+
+Modifications of the xarray should always be protected by both
+->uring_lock and ->mmap_lock, while lookups should hold either of them.
+While a struct io_buffer_list is in the xarray, the mmap related fields
+like ->flags and ->buf_pages should stay stable.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring_types.h |  8 +----
- io_uring/io_uring.c            | 36 +++++++---------------
- io_uring/memmap.c              | 55 +++++-----------------------------
- io_uring/memmap.h              |  4 ---
- io_uring/register.c            | 35 ++++++++++------------
- 5 files changed, 36 insertions(+), 102 deletions(-)
+ include/linux/io_uring_types.h |  5 +++
+ io_uring/kbuf.c                | 56 +++++++++++++++-------------------
+ io_uring/kbuf.h                |  1 -
+ 3 files changed, 29 insertions(+), 33 deletions(-)
 
 diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 3f353f269c6e..2db252841509 100644
+index 2db252841509..091d1eaf5ba0 100644
 --- a/include/linux/io_uring_types.h
 +++ b/include/linux/io_uring_types.h
-@@ -426,14 +426,8 @@ struct io_ring_ctx {
+@@ -293,6 +293,11 @@ struct io_ring_ctx {
+ 
+ 		struct io_submit_state	submit_state;
+ 
++		/*
++		 * Modifications are protected by ->uring_lock and ->mmap_lock.
++		 * The flags, buf_pages and buf_nr_pages fields should be stable
++		 * once published.
++		 */
+ 		struct xarray		io_bl_xa;
+ 
+ 		struct io_hash_table	cancel_table;
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index d407576ddfb7..662e928cc3b0 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -45,10 +45,11 @@ static int io_buffer_add_list(struct io_ring_ctx *ctx,
+ 	/*
+ 	 * Store buffer group ID and finally mark the list as visible.
+ 	 * The normal lookup doesn't care about the visibility as we're
+-	 * always under the ->uring_lock, but the RCU lookup from mmap does.
++	 * always under the ->uring_lock, but lookups from mmap do.
  	 */
- 	struct mutex			mmap_lock;
- 
--	/*
--	 * If IORING_SETUP_NO_MMAP is used, then the below holds
--	 * the gup'ed pages for the two rings, and the sqes.
--	 */
--	unsigned short			n_ring_pages;
--	struct page			**ring_pages;
--
- 	struct io_mapped_region		sq_region;
-+	struct io_mapped_region		ring_region;
- 	/* used for optimised request parameter and wait argument passing  */
- 	struct io_mapped_region		param_region;
- };
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index a1dca7bce54a..b346a1f5f353 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2626,26 +2626,10 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
- 	return READ_ONCE(rings->cq.head) == READ_ONCE(rings->cq.tail) ? ret : 0;
+ 	bl->bgid = bgid;
+ 	atomic_set(&bl->refs, 1);
++	guard(mutex)(&ctx->mmap_lock);
+ 	return xa_err(xa_store(&ctx->io_bl_xa, bgid, bl, GFP_KERNEL));
  }
  
--static void *io_rings_map(struct io_ring_ctx *ctx, unsigned long uaddr,
--			  size_t size)
--{
--	return __io_uaddr_map(&ctx->ring_pages, &ctx->n_ring_pages, uaddr,
--				size);
--}
--
- static void io_rings_free(struct io_ring_ctx *ctx)
+@@ -388,7 +389,7 @@ void io_put_bl(struct io_ring_ctx *ctx, struct io_buffer_list *bl)
  {
--	if (!(ctx->flags & IORING_SETUP_NO_MMAP)) {
--		io_pages_unmap(ctx->rings, &ctx->ring_pages, &ctx->n_ring_pages,
--				true);
--	} else {
--		io_pages_free(&ctx->ring_pages, ctx->n_ring_pages);
--		ctx->n_ring_pages = 0;
--		vunmap(ctx->rings);
--	}
--
- 	io_free_region(ctx, &ctx->sq_region);
--
-+	io_free_region(ctx, &ctx->ring_region);
- 	ctx->rings = NULL;
- 	ctx->sq_sqes = NULL;
- }
-@@ -3476,15 +3460,17 @@ static __cold int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 	if (size == SIZE_MAX)
- 		return -EOVERFLOW;
- 
--	if (!(ctx->flags & IORING_SETUP_NO_MMAP))
--		rings = io_pages_map(&ctx->ring_pages, &ctx->n_ring_pages, size);
--	else
--		rings = io_rings_map(ctx, p->cq_off.user_addr, size);
--
--	if (IS_ERR(rings))
--		return PTR_ERR(rings);
-+	memset(&rd, 0, sizeof(rd));
-+	rd.size = PAGE_ALIGN(size);
-+	if (ctx->flags & IORING_SETUP_NO_MMAP) {
-+		rd.user_addr = p->cq_off.user_addr;
-+		rd.flags |= IORING_MEM_REGION_TYPE_USER;
-+	}
-+	ret = io_create_region(ctx, &ctx->ring_region, &rd, IORING_OFF_CQ_RING);
-+	if (ret)
-+		return ret;
-+	ctx->rings = rings = io_region_get_ptr(&ctx->ring_region);
- 
--	ctx->rings = rings;
- 	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
- 		ctx->sq_array = (u32 *)((char *)rings + sq_array_offset);
- 	rings->sq_ring_mask = p->sq_entries - 1;
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index 0a2d03bd312b..52afe0576be6 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -118,18 +118,6 @@ void io_pages_unmap(void *ptr, struct page ***pages, unsigned short *npages,
- 	*npages = 0;
+ 	if (atomic_dec_and_test(&bl->refs)) {
+ 		__io_remove_buffers(ctx, bl, -1U);
+-		kfree_rcu(bl, rcu);
++		kfree(bl);
+ 	}
  }
  
--void io_pages_free(struct page ***pages, int npages)
--{
--	struct page **page_array = *pages;
--
--	if (!page_array)
--		return;
--
--	unpin_user_pages(page_array, npages);
--	kvfree(page_array);
--	*pages = NULL;
--}
--
- struct page **io_pin_pages(unsigned long uaddr, unsigned long len, int *npages)
- {
- 	unsigned long start, end, nr_pages;
-@@ -167,34 +155,6 @@ struct page **io_pin_pages(unsigned long uaddr, unsigned long len, int *npages)
- 	return ERR_PTR(ret);
- }
+@@ -397,10 +398,17 @@ void io_destroy_buffers(struct io_ring_ctx *ctx)
+ 	struct io_buffer_list *bl;
+ 	struct list_head *item, *tmp;
+ 	struct io_buffer *buf;
+-	unsigned long index;
  
--void *__io_uaddr_map(struct page ***pages, unsigned short *npages,
--		     unsigned long uaddr, size_t size)
--{
--	struct page **page_array;
--	unsigned int nr_pages;
--	void *page_addr;
--
--	*npages = 0;
--
--	if (uaddr & (PAGE_SIZE - 1) || !size)
--		return ERR_PTR(-EINVAL);
--
--	nr_pages = 0;
--	page_array = io_pin_pages(uaddr, size, &nr_pages);
--	if (IS_ERR(page_array))
--		return page_array;
--
--	page_addr = vmap(page_array, nr_pages, VM_MAP, PAGE_KERNEL);
--	if (page_addr) {
--		*pages = page_array;
--		*npages = nr_pages;
--		return page_addr;
--	}
--
--	io_pages_free(&page_array, nr_pages);
--	return ERR_PTR(-ENOMEM);
--}
--
- enum {
- 	IO_REGION_F_VMAP			= 1,
- 	IO_REGION_F_USER_PINNED			= 2,
-@@ -383,9 +343,10 @@ static void *io_region_validate_mmap(struct io_ring_ctx *ctx,
- 
- static int io_region_mmap(struct io_ring_ctx *ctx,
- 			  struct io_mapped_region *mr,
--			  struct vm_area_struct *vma)
-+			  struct vm_area_struct *vma,
-+			  unsigned max_pages)
- {
--	unsigned long nr_pages = mr->nr_pages;
-+	unsigned long nr_pages = min(mr->nr_pages, max_pages);
- 
- 	vm_flags_set(vma, VM_DONTEXPAND);
- 	return vm_insert_pages(vma, vma->vm_start, mr->pages, &nr_pages);
-@@ -449,7 +410,7 @@ __cold int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
- 	struct io_ring_ctx *ctx = file->private_data;
- 	size_t sz = vma->vm_end - vma->vm_start;
- 	long offset = vma->vm_pgoff << PAGE_SHIFT;
--	unsigned int npages;
-+	unsigned int page_limit;
- 	void *ptr;
- 
- 	guard(mutex)(&ctx->mmap_lock);
-@@ -461,14 +422,14 @@ __cold int io_uring_mmap(struct file *file, struct vm_area_struct *vma)
- 	switch (offset & IORING_OFF_MMAP_MASK) {
- 	case IORING_OFF_SQ_RING:
- 	case IORING_OFF_CQ_RING:
--		npages = min(ctx->n_ring_pages, (sz + PAGE_SIZE - 1) >> PAGE_SHIFT);
--		return io_uring_mmap_pages(ctx, vma, ctx->ring_pages, npages);
-+		page_limit = (sz + PAGE_SIZE - 1) >> PAGE_SHIFT;
-+		return io_region_mmap(ctx, &ctx->ring_region, vma, page_limit);
- 	case IORING_OFF_SQES:
--		return io_region_mmap(ctx, &ctx->sq_region, vma);
-+		return io_region_mmap(ctx, &ctx->sq_region, vma, UINT_MAX);
- 	case IORING_OFF_PBUF_RING:
- 		return io_pbuf_mmap(file, vma);
- 	case IORING_MAP_OFF_PARAM_REGION:
--		return io_region_mmap(ctx, &ctx->param_region, vma);
-+		return io_region_mmap(ctx, &ctx->param_region, vma, UINT_MAX);
+-	xa_for_each(&ctx->io_bl_xa, index, bl) {
+-		xa_erase(&ctx->io_bl_xa, bl->bgid);
++	while (1) {
++		unsigned long index = 0;
++
++		scoped_guard(mutex, &ctx->mmap_lock) {
++			bl = xa_find(&ctx->io_bl_xa, &index, ULONG_MAX, XA_PRESENT);
++			if (bl)
++				xa_erase(&ctx->io_bl_xa, bl->bgid);
++		}
++		if (!bl)
++			break;
+ 		io_put_bl(ctx, bl);
  	}
  
- 	return -EINVAL;
-diff --git a/io_uring/memmap.h b/io_uring/memmap.h
-index 2402bca3d700..7395996eb353 100644
---- a/io_uring/memmap.h
-+++ b/io_uring/memmap.h
-@@ -4,7 +4,6 @@
- #define IORING_MAP_OFF_PARAM_REGION		0x20000000ULL
+@@ -589,11 +597,7 @@ int io_provide_buffers(struct io_kiocb *req, unsigned int issue_flags)
+ 		INIT_LIST_HEAD(&bl->buf_list);
+ 		ret = io_buffer_add_list(ctx, bl, p->bgid);
+ 		if (ret) {
+-			/*
+-			 * Doesn't need rcu free as it was never visible, but
+-			 * let's keep it consistent throughout.
+-			 */
+-			kfree_rcu(bl, rcu);
++			kfree(bl);
+ 			goto err;
+ 		}
+ 	}
+@@ -736,7 +740,7 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
+ 		return 0;
+ 	}
  
- struct page **io_pin_pages(unsigned long ubuf, unsigned long len, int *npages);
--void io_pages_free(struct page ***pages, int npages);
- int io_uring_mmap_pages(struct io_ring_ctx *ctx, struct vm_area_struct *vma,
- 			struct page **pages, int npages);
- 
-@@ -13,9 +12,6 @@ void *io_pages_map(struct page ***out_pages, unsigned short *npages,
- void io_pages_unmap(void *ptr, struct page ***pages, unsigned short *npages,
- 		    bool put_pages);
- 
--void *__io_uaddr_map(struct page ***pages, unsigned short *npages,
--		     unsigned long uaddr, size_t size);
--
- #ifndef CONFIG_MMU
- unsigned int io_uring_nommu_mmap_capabilities(struct file *file);
- #endif
-diff --git a/io_uring/register.c b/io_uring/register.c
-index 44cd64923d31..f1698c18c7cb 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -367,26 +367,19 @@ static int io_register_clock(struct io_ring_ctx *ctx,
-  * either mapping or freeing.
-  */
- struct io_ring_ctx_rings {
--	unsigned short n_ring_pages;
--	struct page **ring_pages;
- 	struct io_rings *rings;
--
- 	struct io_uring_sqe *sq_sqes;
-+
- 	struct io_mapped_region sq_region;
-+	struct io_mapped_region ring_region;
- };
- 
- static void io_register_free_rings(struct io_ring_ctx *ctx,
- 				   struct io_uring_params *p,
- 				   struct io_ring_ctx_rings *r)
- {
--	if (!(p->flags & IORING_SETUP_NO_MMAP)) {
--		io_pages_unmap(r->rings, &r->ring_pages, &r->n_ring_pages,
--				true);
--	} else {
--		io_pages_free(&r->ring_pages, r->n_ring_pages);
--		vunmap(r->rings);
--	}
- 	io_free_region(ctx, &r->sq_region);
-+	io_free_region(ctx, &r->ring_region);
+-	kfree_rcu(free_bl, rcu);
++	kfree(free_bl);
+ 	return ret;
  }
  
- #define swap_old(ctx, o, n, field)		\
-@@ -436,13 +429,18 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
- 	if (size == SIZE_MAX)
- 		return -EOVERFLOW;
+@@ -760,7 +764,9 @@ int io_unregister_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
+ 	if (!(bl->flags & IOBL_BUF_RING))
+ 		return -EINVAL;
  
--	if (!(p.flags & IORING_SETUP_NO_MMAP))
--		n.rings = io_pages_map(&n.ring_pages, &n.n_ring_pages, size);
--	else
--		n.rings = __io_uaddr_map(&n.ring_pages, &n.n_ring_pages,
--						p.cq_off.user_addr, size);
--	if (IS_ERR(n.rings))
--		return PTR_ERR(n.rings);
-+	memset(&rd, 0, sizeof(rd));
-+	rd.size = PAGE_ALIGN(size);
-+	if (p.flags & IORING_SETUP_NO_MMAP) {
-+		rd.user_addr = p.cq_off.user_addr;
-+		rd.flags |= IORING_MEM_REGION_TYPE_USER;
+-	xa_erase(&ctx->io_bl_xa, bl->bgid);
++	scoped_guard(mutex, &ctx->mmap_lock)
++		xa_erase(&ctx->io_bl_xa, bl->bgid);
++
+ 	io_put_bl(ctx, bl);
+ 	return 0;
+ }
+@@ -795,29 +801,13 @@ struct io_buffer_list *io_pbuf_get_bl(struct io_ring_ctx *ctx,
+ 				      unsigned long bgid)
+ {
+ 	struct io_buffer_list *bl;
+-	bool ret;
+ 
+-	/*
+-	 * We have to be a bit careful here - we're inside mmap and cannot grab
+-	 * the uring_lock. This means the buffer_list could be simultaneously
+-	 * going away, if someone is trying to be sneaky. Look it up under rcu
+-	 * so we know it's not going away, and attempt to grab a reference to
+-	 * it. If the ref is already zero, then fail the mapping. If successful,
+-	 * the caller will call io_put_bl() to drop the the reference at at the
+-	 * end. This may then safely free the buffer_list (and drop the pages)
+-	 * at that point, vm_insert_pages() would've already grabbed the
+-	 * necessary vma references.
+-	 */
+-	rcu_read_lock();
+ 	bl = xa_load(&ctx->io_bl_xa, bgid);
+ 	/* must be a mmap'able buffer ring and have pages */
+-	ret = false;
+-	if (bl && bl->flags & IOBL_MMAP)
+-		ret = atomic_inc_not_zero(&bl->refs);
+-	rcu_read_unlock();
+-
+-	if (ret)
+-		return bl;
++	if (bl && bl->flags & IOBL_MMAP) {
++		if (atomic_inc_not_zero(&bl->refs))
++			return bl;
 +	}
-+	ret = io_create_region_mmap_safe(ctx, &n.ring_region, &rd, IORING_OFF_CQ_RING);
-+	if (ret) {
-+		io_register_free_rings(ctx, &p, &n);
-+		return ret;
-+	}
-+	n.rings = io_region_get_ptr(&n.ring_region);
  
- 	n.rings->sq_ring_mask = p.sq_entries - 1;
- 	n.rings->cq_ring_mask = p.cq_entries - 1;
-@@ -552,8 +550,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
+ 	return ERR_PTR(-EINVAL);
+ }
+@@ -829,6 +819,8 @@ int io_pbuf_mmap(struct file *file, struct vm_area_struct *vma)
+ 	struct io_buffer_list *bl;
+ 	int bgid, ret;
  
- 	ctx->rings = n.rings;
- 	ctx->sq_sqes = n.sq_sqes;
--	swap_old(ctx, o, n, n_ring_pages);
--	swap_old(ctx, o, n, ring_pages);
-+	swap_old(ctx, o, n, ring_region);
- 	swap_old(ctx, o, n, sq_region);
- 	to_free = &o;
- 	ret = 0;
++	lockdep_assert_held(&ctx->mmap_lock);
++
+ 	bgid = (pgoff & ~IORING_OFF_MMAP_MASK) >> IORING_OFF_PBUF_SHIFT;
+ 	bl = io_pbuf_get_bl(ctx, bgid);
+ 	if (IS_ERR(bl))
+diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
+index 36aadfe5ac00..d5e4afcbfbb3 100644
+--- a/io_uring/kbuf.h
++++ b/io_uring/kbuf.h
+@@ -25,7 +25,6 @@ struct io_buffer_list {
+ 			struct page **buf_pages;
+ 			struct io_uring_buf_ring *buf_ring;
+ 		};
+-		struct rcu_head rcu;
+ 	};
+ 	__u16 bgid;
+ 
 -- 
 2.46.0
 

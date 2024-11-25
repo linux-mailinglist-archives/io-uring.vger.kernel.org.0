@@ -1,100 +1,129 @@
-Return-Path: <io-uring+bounces-5040-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5041-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112769D8A3E
-	for <lists+io-uring@lfdr.de>; Mon, 25 Nov 2024 17:25:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E12ED9D8EE5
+	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 00:09:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBD1AB3B47C
-	for <lists+io-uring@lfdr.de>; Mon, 25 Nov 2024 15:34:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8585C169B2F
+	for <lists+io-uring@lfdr.de>; Mon, 25 Nov 2024 23:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BBB14E2E8;
-	Mon, 25 Nov 2024 15:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83311925AD;
+	Mon, 25 Nov 2024 23:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="OfsNQbt7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8/h6TrA"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0064D17C61
-	for <io-uring@vger.kernel.org>; Mon, 25 Nov 2024 15:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF71B1E480;
+	Mon, 25 Nov 2024 23:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732548888; cv=none; b=ehOdxI8xg1Ehe7HnL2vhS0M0HQRsEnfy8zggSR0/QystltjW4QlcwTDDnjrtS/f3ciXzpXAG3qbDlTTtk68fX3W/INfXoQrH4XLRDIooDd2WZEhOFjvQtTItjMj01rXWWgNf8povTywbHthJ/NI8ufo7mO+xlbPldb4/MA8gTFA=
+	t=1732576166; cv=none; b=LXwobAvpQ9dpFPcWkN0TVgTHtVOmy9W8bT+F452Peb68jA1EBOSSW3dNvEDLSobFzNQlnMD9VMoeYs/iHWiqXHHx71VN1qawSGxOjKV8beKv3kju5EmSRptoxp8guJ4o7V58kSvEKroOpCiCQ3oP7O2nVmcorHIEP8tjqhluQWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732548888; c=relaxed/simple;
-	bh=86nOUeUagQJ2k/h5shMlidVE6VHGCZdOo0proGfjevI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kw5JlmTZ54b2aC1kYI7xxw2Y2dxHU7b/ff5UlRxA4RLTzWlXsosAEqrh5qvMSP8jWilZA5gckv8H2/8YjemJp8964qbly+LDEkYFHKBy10whtJUaT7deKcghUkK5GlxaQJGXci9057mKGSuUaqP1JDL41eXY698JTfoJ9vW64x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=OfsNQbt7; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4668f208f5fso9968311cf.0
-        for <io-uring@vger.kernel.org>; Mon, 25 Nov 2024 07:34:46 -0800 (PST)
+	s=arc-20240116; t=1732576166; c=relaxed/simple;
+	bh=PJCmuQ4lMcanbRMirOcCM5Bjb+hCuj2GTmNSE+zMJaA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=tPN84iDQc2xZ00uee+2YKO+nuMMkusgyG+Gnuaa2RsoJ8T6/SO0TZrp1LBWQEJlMmApd0HtVFNniYpl4fAzanQwMtKuutjl//ZEJziBvTQIjxtjvJtO/Ki5u+QsSyBF1RvdCt+H2CFfJa7jJ6IK89Vgj4AJ4+Oug79orkjN6ifs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8/h6TrA; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38241435528so3274564f8f.2;
+        Mon, 25 Nov 2024 15:09:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1732548886; x=1733153686; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=86nOUeUagQJ2k/h5shMlidVE6VHGCZdOo0proGfjevI=;
-        b=OfsNQbt75Y92G90NPfYCwQIfl+3mg/HRedxfuTOuyEYNVC3yADlppMzKWg6br4qoW2
-         8EY1JowPBEROFAHhq/zTzGBuZ+V2jBjkpCeRebKs8mRnknJ7Y+obK0HAr7ijJFA4xAjV
-         JXq49DJjMmjIZgbfJ63qh5rDk0sN/NiTIBWkI=
+        d=gmail.com; s=20230601; t=1732576163; x=1733180963; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wZOY2+Zq+Uw5TtuUXacSqok50DLyY9YzgfmyZp7nZkg=;
+        b=b8/h6TrAgEcBPc8lon5eZMU22GvEdILFTDZV9oXOa6xNUUtV5RMrOphbJko8V+d2Bk
+         ITejYRbumio+l5FrPtF3/TQz/RCiRAj2IGQYsAgeK2ir/iXw5SQUB2x53myIbuBqugcP
+         nAGGy2Irjxt1OHhRNqzNyCpwBRs6tgdfI+GneBJuPHFcYj6CxD4zQxY5FIajRl2hUL7F
+         0J0kfsqGNgAI5D/9nnY/gqwZ+HYlsuEoUqRvpRD1Ut9V1ALqCQOmf0UGQltP89g9n/fn
+         zDZilaf91l8UYEdYjHDYSxjnfDapxfjYk3X5GYXdVDWwyqFQSrdHgi9h4Nj5wUbGMggl
+         lIEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732548886; x=1733153686;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=86nOUeUagQJ2k/h5shMlidVE6VHGCZdOo0proGfjevI=;
-        b=hGFoOZznX2cWCU/W81TjdZ9saMmgV6vPbvG8Q0A9hnB0hupfWTpUj2F1UIwhGRz/xT
-         Yi7A6J0vUCzsYqw0RqcESoMmaVADEdtKx3Qgwz/pHgBqaCR60kgUZhK/Px1/LB1Z9Isi
-         WujP527du5pr2FInQtgtdqBZqhJFpgg65Tvwx3lq7z6UguMqxaOfRFWAbhIriq5wAsBm
-         FMObrussiMzqH0ZIdzY2K++UkoJlSlduG7FAwj36gMKmGm/ihibWAPsR4ZucEPCOMzK0
-         s+d/SrRQlv7BDKC5EFrml7oJpa7uhNP8b3vPl6JvEx8tHM8atc/yCbB4TYofFoBgFQFQ
-         LSYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmnrqkO9bM8Q+hulG0ltHknZmqvGfd5xTrVethIZaQHrJ1VCg0JmF5Py1cQK3SNLvRhgTUSM2AJw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yysb8fQhGPUrm3rQspZJpH60UsQSbSYNZ5aVtAst6KXdvUwc9Of
-	rbJFSeNH10YZSwcMSJB2G5t41ztGT2jSyemN9Lk3g8SbWRGEfuK2PUhIIPxCw+Xhol1OeQPZ87I
-	6EvJugi9SjInXT+2x9ootcvp9pAgkih766E00wQ==
-X-Gm-Gg: ASbGncvERqGNagmdJ8w0xHR4rzkeJm5QwIVlx0WOeKlVnNUX9n8g1Jl5db5naHaAL6c
-	N6TYDN7qU49q1rUVrwOIVR+ecmwDVMVCi7g==
-X-Google-Smtp-Source: AGHT+IEa8TehfeXB1Kg5BxElG/ZzztNpk45tPPXLV7SWp4eBM8bxfkmfKbGitCLixO+1HWeTBCGI/yZEmiS8+6bwsk8=
-X-Received: by 2002:a05:622a:1807:b0:461:6aa9:9479 with SMTP id
- d75a77b69052e-4653d631425mr152114451cf.53.1732548886013; Mon, 25 Nov 2024
- 07:34:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732576163; x=1733180963;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wZOY2+Zq+Uw5TtuUXacSqok50DLyY9YzgfmyZp7nZkg=;
+        b=shUagO2baUym7N9cB8MLwF7vSNQEP1p8tmZROw+hY4S367GA6KuMTzWdezzt3hr5Rr
+         YH8reg+o27Aep3wmfUd/EpMhAdz650LIh1ynP3On2C3PT2Or+nMCf7a0ec0/HddiwIay
+         1Xv1N68arUl9Ai5vPJSPt8pfQF4k9Uvs7ikJXlFBF6PY47LxxNr6j5pq+dZWaoSrXjP6
+         rMNRwcrRNFpt74tstKQypq4Kdfl2T+P+oz9gWdmmY75gEfDB0cNJoZnt/IRoolYCsDdT
+         8EGTja07CnaWP/FPDqEXqEtj2cPOMDhfmjdALx3PIb9Gz6wTwuRTlw97TUrCziDLlrua
+         yxWw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+1kVIHxP0sp6e5OGcVrv5b2r2Qdvxo8RBUjMZ/MY11wMlOA0DHX1TJAMTpFDA5EpV0uIWL5dlXA==@vger.kernel.org, AJvYcCXuxETze5cfa1MBwmez//NFN7pQXoyawVkaf4b3tZFJTerBxuTxHdSkBtE6sITmVLSc+6sO04k/Uri31gqP@vger.kernel.org
+X-Gm-Message-State: AOJu0YynO4/9v3r1pOe/Bk+ZEYwze2Bk3QACd+157rPm8b9atrJzevoZ
+	ZrLNtnjfZQDt/kX2OUi2ujHHk6zxBzvBHeu6Q8b/3Kn+OuECv54L
+X-Gm-Gg: ASbGnctpty+DqUwdo2Ni943qUwhd5nyTwKMpEmqJmZfosHARUEtD3jNDFqIo7Rf8uEb
+	C9hH7csdG8pyLBNtdr79tPIoXCq/ceGCdy4CqCqBUhS6XrgCp0eFtZmsin9+RfiC5CNuPdpl/Cn
+	4yxIz2nVZx86xjV5Q/bParw/CN19MMaPXy7t7l0cQwHbO8sdbkGYmcX7lJxB3fUNEmF6BDRdSAs
+	ExORlDJT/NUt/hoK1eotPUhU5SBi7X5vwIbPolVUfKaLfI3daCdE1lgK6o=
+X-Google-Smtp-Source: AGHT+IEAvhRyubWGmJrGoBa6eObFznxLem+K1BoEP7lNbFWgLmd88TKnPzPEGV/NdKFRegw7oxz2EQ==
+X-Received: by 2002:a05:6000:2c8:b0:382:4926:98e0 with SMTP id ffacd0b85a97d-38260be53f0mr12726095f8f.52.1732576163170;
+        Mon, 25 Nov 2024 15:09:23 -0800 (PST)
+Received: from [192.168.42.143] ([85.255.233.86])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafedbcsm11803444f8f.41.2024.11.25.15.09.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 15:09:22 -0800 (PST)
+Message-ID: <4db729f9-eece-4732-8d6d-405a997ed35c@gmail.com>
+Date: Mon, 25 Nov 2024 23:10:10 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122-fuse-uring-for-6-10-rfc4-v6-0-28e6cdd0e914@ddn.com>
- <20241122-fuse-uring-for-6-10-rfc4-v6-5-28e6cdd0e914@ddn.com>
- <CAJfpeguPCUajx=LX-M2GFO4hzi6A2uc-8tijHEFVSipK7xFU5A@mail.gmail.com> <6876e1cf-9bd2-483d-bd49-c52967c88397@fastmail.fm>
-In-Reply-To: <6876e1cf-9bd2-483d-bd49-c52967c88397@fastmail.fm>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 25 Nov 2024 16:34:35 +0100
-Message-ID: <CAJfpegvCZ8z54dX_bp=f039q_KAonNjCNVEum-CnXxuj-W6taA@mail.gmail.com>
-Subject: Re: [PATCH RFC v6 05/16] fuse: make args->in_args[0] to be always the header
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Bernd Schubert <bschubert@ddn.com>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>, 
-	Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>, bernd@bsbernd.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] WARNING in io_pin_pages
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: syzbot <syzbot+2159cbb522b02847c053@syzkaller.appspotmail.com>,
+ axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <67406232.050a0220.3c9d61.018e.GAE@google.com>
+ <ea5487ba-bed6-4a0a-833d-262bc70cfe46@gmail.com>
+Content-Language: en-US
+In-Reply-To: <ea5487ba-bed6-4a0a-833d-262bc70cfe46@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 25 Nov 2024 at 15:46, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+On 11/22/24 15:02, Pavel Begunkov wrote:
+> On 11/22/24 10:51, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    ae58226b89ac Add linux-next specific files for 20241118
+>> git tree:       linux-next
+>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14a67378580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=45719eec4c74e6ba
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=2159cbb522b02847c053
+>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137beac0580000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177beac0580000
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/fd3d650cd6b6/disk-ae58226b.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/89a0fb674130/vmlinux-ae58226b.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/92120e1c6775/bzImage-ae58226b.xz
+>>
+>> The issue was bisected to:
+>>
+>> commit 68685fa20edc5307fc893a06473c19661c236f29
+>> Author: Pavel Begunkov <asml.silence@gmail.com>
+>> Date:   Fri Nov 15 16:54:38 2024 +0000
+>>
+>>      io_uring: fortify io_pin_pages with a warning
+> 
+> Seems I wasn't too paranoid. I'll send a fix
 
-> I have to remove the WARN_ON_ONCE condition altogether, gets triggered by
-> /dev/fuse read (i.e. with io-uring being disabled), in generic/062,
-> op code=39 (FUSE_IOCTL).
-> Without the pr_err_once() and printing the op code it would have been impossible
-> to see which op code that is - the trace does not help here.
+#syz test: https://github.com/isilence/linux.git syz/sanitise-cqsq
 
-It should, since commit 396b209e405a ("fuse: add simple request tracepoints").
-
-Thanks,
-Miklos
+-- 
+Pavel Begunkov
 

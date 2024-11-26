@@ -1,118 +1,106 @@
-Return-Path: <io-uring+bounces-5054-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5055-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745859D9A16
-	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 16:01:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E31B9D9A2B
+	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 16:08:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFD6BB26487
-	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 15:00:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F099E2814C8
+	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 15:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1782C1D61BB;
-	Tue, 26 Nov 2024 15:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MQLqb3BB"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47E71D54E3;
+	Tue, 26 Nov 2024 15:07:56 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78961D54E3
-	for <io-uring@vger.kernel.org>; Tue, 26 Nov 2024 15:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EC31D5CFE
+	for <io-uring@vger.kernel.org>; Tue, 26 Nov 2024 15:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732633218; cv=none; b=b2tjWxnCnI+Bco1RuerHGBdQt/rU3grTHQHwK8gbwmDkKnZoUWxcPPgHPAmotux3SRXAvea2aaIuUmy8DpdoCDuzOhBaQAGUIdBOBeYxQFOKbF1sz+WmNx50ckRthpGJwgoJOnFuBA3Qtx4WFWSlnxpEYwAk5mRLd1AF1VN6Ztg=
+	t=1732633676; cv=none; b=OEXevWpT+Re+FHsO6a2a/SAJDekHMQfFIC7bBiNERfj9zEfabpzccB1x1ZV1YcNNLRsHaStPdnpE32scQWStimBBf5LOJtBvPKKk7DbQ8K+gqhHr+8jW/glpPzvbLOKWEGKfmyxLPK2hjNig/VDHWSmzXlce7JQ8FbFX1baP4rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732633218; c=relaxed/simple;
-	bh=YkiGRdnVhlW7312v3oPy0Uf+imzBh4qpk/2n7nxrQxE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=H7bRHzbmC3KDR/UaXjJVct+rkps+y1IF5+ZuxZxlpYf7TemdQe9Ukifc2hjNAPxjIBR6vKIq7Y9HNUlE/7MHx4BL6NVx460l/djWyK0oMME6nHHqTIvqpEdFsTqSYHV5hPH2YmN53mK7Vdc7qoXFMMD1Vnbn5uKNYwHk4rhBatE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MQLqb3BB; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-29654932226so2605140fac.0
-        for <io-uring@vger.kernel.org>; Tue, 26 Nov 2024 07:00:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732633215; x=1733238015; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gBHnZHzwv+OEohp+SYBzRiV6gRmj7OTrPSQQTza3cM0=;
-        b=MQLqb3BBs2oPbXwKjFdk1r+nzPVk7FZgTZjRhL2ftW71vIQJYhxnnp8ZPkYPYApbRv
-         C2P+LS6CTFbNx/hXj3WE3H4ldgbkWiA/yF/wh9fvvW9+U6Hu+uRd9FXaLfq+JX+XRlwR
-         ooNap4tR/V8S6jLSwUfUsxk4nK0snS33L1c+IaCcFev0Z36UZXe9INk1oiq+NFknIbe+
-         IZJ93S3xx125rmO1rTismWcAQFI6oRC0R2qUnlLScVTIA4YDNgzX4mqHI059u0vSzdpQ
-         yKR3tHPKDMu8lPgT+epJ1msBY9P+3c2dfOLbLC2/9QE5p/fLQBrE27DO0Es+BchgSLQw
-         ogBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732633215; x=1733238015;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gBHnZHzwv+OEohp+SYBzRiV6gRmj7OTrPSQQTza3cM0=;
-        b=O4whmowK4VUw2Aq+9ItS+SKxO0QOlPcGtpIMna5wKVoZ1zACwbqvZSCoObNV9XJepg
-         CCcjyA7Nrez+couDSX6yk+4xRWISxq4+L7JiGF08KT7ugctchfSDgc84wkiBwfLw4zUr
-         DAg7sw6peJYUAjLl/1onhivvtnsOIvglQjIB632H0erq5Blxf2Cpi5v7o/F0i5xXAi/m
-         +zxFVEc1gKAIiSFmuPHi9ma6owX0UXCxsdeCttEJMWmuYmPRpwYqIURF63E1na2/9GZU
-         OUWjsN6pnl+STBg/JdYPlyxwVqQClU1kl/LVqIan1SfIEAr+W9O046o89dUhBR6ZIXiP
-         AdRg==
-X-Gm-Message-State: AOJu0Yx9akqtX3cvHYAdaqnup6Kx2DvNBiTMKyjGK+dltk7LuoXWklFo
-	+JEiXXEPtOrrPFulbiM7zKJE+IxJdRsn49FPB1aemlS29/qjSYS8L2NjX/6Xw9I=
-X-Gm-Gg: ASbGncum4KkmRPCoOUY3/oQGV/3NsbOk4HcNuV8DTfXbKsUWDq0xQiv3GbRXZ+aeJyG
-	F/GOrQk6B3cM2yFNJoOStmlA3u1e9hP7K3ngcW9ehMU8avbpX/mYjBSMYC1XHka31clcJIMuYtn
-	Q7t+TDtYO3tOgFzeAr9dyMZNJ88Ec/BVF0o22qV+rpQ8y2tr+spahYZVymNsghMlFdHgXPfwl78
-	2ZK0WYTKLxdtCLzYCS3AvWrlXDNon6ov7VWD+KL
-X-Google-Smtp-Source: AGHT+IFYuSuguPdblsVVA42WBueXanzcnpLXJeRq2mU+liPwAncUi+sXUCQL7qVVLvhKzIpF9HVZGg==
-X-Received: by 2002:a05:6871:e983:b0:294:6577:16d8 with SMTP id 586e51a60fabf-298af712279mr1521162fac.12.1732633214778;
-        Tue, 26 Nov 2024 07:00:14 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2971d56cfdfsm3998512fac.5.2024.11.26.07.00.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 07:00:13 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: syzbot+2159cbb522b02847c053@syzkaller.appspotmail.com
-In-Reply-To: <1b7520ddb168e1d537d64be47414a0629d0d8f8f.1732581026.git.asml.silence@gmail.com>
-References: <1b7520ddb168e1d537d64be47414a0629d0d8f8f.1732581026.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring: check for overflows in io_pin_pages
-Message-Id: <173263321276.43959.14162906343487265344.b4-ty@kernel.dk>
-Date: Tue, 26 Nov 2024 08:00:12 -0700
+	s=arc-20240116; t=1732633676; c=relaxed/simple;
+	bh=KJU/wn41E41PdXO0rTwEAHu2R7CWppT/fVqJT51yYiw=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Dp3YeJePvPYBLRUqmmp/rzuA5IyHIrUIrzrwkgGsz07QVdHQfHSn53bd+tdoMW/zBpHXaOgP30zJFSnkaTqHDzv784mLsxl0ZurUFxwkw8URgkh5HDFRivjJ1/bJDMlWJVBzXcWnDvS30F6XJVdNPa3DvsupQPNjrYOZrFLOUHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XyQq52qFtzPpq6;
+	Tue, 26 Nov 2024 23:05:05 +0800 (CST)
+Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9F1A8140137;
+	Tue, 26 Nov 2024 23:07:51 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 26 Nov 2024 23:07:51 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Tue, 26 Nov 2024 23:07:51 +0800
+From: lizetao <lizetao1@huawei.com>
+To: Jens Axboe <axboe@kernel.dk>
+CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"asml.silence@gmail.com" <asml.silence@gmail.com>
+Subject: re: [PATCH -next] io_uring: add support for fchmod
+Thread-Topic: [PATCH -next] io_uring: add support for fchmod
+Thread-Index: AdtAFPBlum2L39VhQky8w4+VWsNEYw==
+Date: Tue, 26 Nov 2024 15:07:51 +0000
+Message-ID: <ad222c8b35e54627b0244d5ee4d54f0c@huawei.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-86319
 
-
-On Tue, 26 Nov 2024 00:34:18 +0000, Pavel Begunkov wrote:
-> WARNING: CPU: 0 PID: 5834 at io_uring/memmap.c:144 io_pin_pages+0x149/0x180 io_uring/memmap.c:144
-> CPU: 0 UID: 0 PID: 5834 Comm: syz-executor825 Not tainted 6.12.0-next-20241118-syzkaller #0
-> Call Trace:
->  <TASK>
->  __io_uaddr_map+0xfb/0x2d0 io_uring/memmap.c:183
->  io_rings_map io_uring/io_uring.c:2611 [inline]
->  io_allocate_scq_urings+0x1c0/0x650 io_uring/io_uring.c:3470
->  io_uring_create+0x5b5/0xc00 io_uring/io_uring.c:3692
->  io_uring_setup io_uring/io_uring.c:3781 [inline]
->  ...
->  </TASK>
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] io_uring: check for overflows in io_pin_pages
-      commit: 0c0a4eae26ac78379d0c1db053de168a8febc6c9
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+SGksDQoNCj5PbiAxMS8yMy8yNCA1OjIzIEFNLCBsaXpldGFvIHdyb3RlOg0KPj4gSGkNCj4+IA0K
+Pj4+PiBPbiAxMS8xOS8yNCAxOjEyIEFNLCBsaXpldGFvIHdyb3RlOg0KPj4+PiBBZGRzIHN1cHBv
+cnQgZm9yIGRvaW5nIGNobW9kIHRocm91Z2ggaW9fdXJpbmcuIElPUklOR19PUF9GQ0hNT0QgDQo+
+Pj4+IGJlaGF2ZXMgbGlrZSBmY2htb2QoMikgYW5kIHRha2VzIHRoZSBzYW1lIGFyZ3VtZW50cy4N
+Cj4+IA0KPj4+IExvb2tzIHByZXR0eSBzdHJhaWdodCBmb3J3YXJkLiBUaGUgb25seSBkb3duc2lk
+ZSBpcyB0aGUgZm9yY2VkIHVzZSBvZiBSRVFfRl9GT1JDRV9BU1lOQyAtIGRpZCB5b3UgbG9vayBp
+bnRvIGhvdyBmZWFzaWJsZSBpdCB3b3VsZCBiZSB0byBhbGxvdyBub24tYmxvY2tpbmcgaXNzdWUg
+b2YgdGhpcz8gV291bGQgaW1hZ2luZSB0aGUgbWFqb3JpdHkgb2YgZmNobW9kIGNhbGxzIGVuZCB1
+cCBub3QgYmxvY2tpbmcgaW4gdGhlIGZpcnN0IHBsYWNlLg0KPj4gDQo+PiBZZXMsIEkgY29uc2lk
+ZXJlZCBmY2htb2QgdG8gYWxsb3cgYXN5bmNocm9ub3VzIGV4ZWN1dGlvbiBhbmQgd3JvdGUgYSB0
+ZXN0IGNhc2UgdG8gdGVzdCBpdCwgdGhlIHJlc3VsdHMgYXJlIGFzIGZvbGxvd3M6DQo+PiANCj4+
+IGZjaG1vZDoNCj4+IHJlYWwJMG0xLjQxM3MNCj4+IHVzZXIJMG0wLjI1M3MNCj4+IHN5cwkwbTEu
+MDc5cw0KPj4gDQo+PiBpb191cmluZyArIGZjaG1vZDoNCj4+IHJlYWwJMG0xLjI2OHMNCj4+IHVz
+ZXIJMG0wLjAxNXMNCj4+IHN5cwkwbTUuNzM5cw0KPj4gDQo+PiBUaGVyZSBpcyBhYm91dCBhIDEw
+JSBpbXByb3ZlbWVudC4NCg0KPiBBbmQgdGhhdCBtYWtlcyBzZW5zZSBpZiB5b3UncmUga2VlcGlu
+ZyBzb21lIGZjaG1vZCBpbmZsaWdodCwgYXMgeW91J2QgZ2VuZXJhbGx5IGp1c3QgaGF2ZSBvbmUg
+aW8td3EgcHJvY2Vzc2luZyB0aGVtIGFuZCBydW5uaW5nIHRoaW5ncyBpbiBwYXJhbGxlbCB3aXRo
+IHN1Ym1pc3Npb24uIEJ1dCB3aGF0IHlvdSB5b3Uga2VlcCBhbiBpbmRlcHRoIGNvdW50IG9mIDEs
+IGVnIGRvIHN5bmMgZmNobW9kPyBUaGVuIGl0J2QgYmUgY29uc2lkZXJhYmx5IHNsb3dlciB0aGFu
+IHRoZSBzeXNjYWxsLg0KSW5kZWVkLCBXaGVuIHBlcmZvcm1pbmcgUkVRX0ZfRk9SQ0VfQVNZTkMg
+b3BlcmF0aW9ucyBhdCBkZXB0aCAxLCBwZXJmb3JtYW5jZSBpcyBkZWdyYWRlZC4gVGhlIHJlc3Vs
+dHMgYXJlIGFzIGZvbGxvd3M6DQoNCmZjaG1vZDoNCnJlYWwJMG0yLjI4NXMNCnVzZXIJMG0wLjA1
+MHMNCnN5cwkwbTEuOTk2cw0KDQppb191cmluZyArIGZjaG1vZDoNCnJlYWwJMG0yLjU0MXMNCnVz
+ZXIJMG0wLjAxM3MNCnN5cwkwbTIuMzc5cw0KDQo+VGhpcyBpc24ndCBuZWNlc3NhcmlseSBzb21l
+dGhpbmcgdG8gd29ycnkgYWJvdXQsIGJ1dCBmYWN0IGlzIHRoYXQgaWYgeW91IGNhbiBkbyBhIG5v
+bmJsb2NrIGlzc3VlIGFuZCBoYXZlIGl0IHN1Y2NlZWQgbW9zdCBvZiB0aGUgdGltZSwgdGhhdCds
+bCBiZSBtb3JlIGVmZmljaWVudCAoYW5kIGZhc3RlciBmb3IgbG93L3N5bmMgZmNobW9kKSB0aGFu
+IHNvbWV0aGluZyB0aGF0IGp1c3Qgb2ZmbG9hZHMgdG8gaW8td3EuIFlvdSBjYW4gc2VlIHRoYXQg
+ZnJvbSB5b3VyIHJlc3VsdHMgdG9vLCBjb21wYXJpbmcgdGhlIHN5cyBudW1iZXIgbmV0d2VlbiB0
+aGUgdHdvLg0KSG93ZXZlciwgd2hlbiBJIHJlbW92ZSBSRVFfRl9GT1JDRV9BU1lOQyBhbmQgdXNl
+IElPX1VSSU5HX0ZfTk9OQkxPQ0ssIHRoZSBwZXJmb3JtYW5jZSBpcyBub3QgaW1wcm92ZWQuIFRo
+ZSBtZWFzdXJlZCByZXN1bHRzIGFyZSBhcyBmb2xsb3dzOg0KZmNobW9kOg0KcmVhbAkwbTIuMTMy
+cw0KdXNlcgkwbTAuMDQ4cw0Kc3lzCTBtMS44NDVzDQoNCmlvX3VyaW5nICsgZmNobW9kOg0KcmVh
+bAkwbTIuMTk2cw0KdXNlcgkwbTAuMDA1cw0Kc3lzCTBtMi4wOTdzDQoNCj5IZW5jZSB3aHkgSSdt
+IGFza2luZyBpZiB5b3UgbG9va2VkIGludG8gZG9pbmcgYSBub25ibG9ja2luZyBpc3N1ZSBhdCBh
+bGwuIFRoaXMgd29uJ3QgbmVjZXNzYXJpbHkgZ2F0ZSB0aGUgaW5jbHVzaW9uIG9mIHRoZSBwYXRj
+aCwgYW5kIGl0IGlzIHNvbWV0aGluZyB0aGF0IGNhbiBiZSBjaGFuZ2VkIGRvd24gdGhlIGxpbmUs
+IEknbSBtb3N0bHkganVzdCBjdXJpb3VzLg0KRG9lcyB0aGlzIHJlc3VsdCBtZWV0IGV4cGVjdGF0
+aW9ucz8gT3IgbWF5YmUgSSBtaXNzZWQgc29tZXRoaW5nLCBwbGVhc2UgbGV0IG1lIGtub3cNCg0K
+Pi0tDQo+SmVucyBBeGJvZQ0KDQotLS0NCkxpIFpldGFvDQo=
 

@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-5052-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5053-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0109D97D7
-	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 14:00:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20EEB9D97E1
+	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 14:03:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD09728248B
-	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 13:00:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5442166C2E
+	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 13:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F3D1D042A;
-	Tue, 26 Nov 2024 13:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47DD1CD219;
+	Tue, 26 Nov 2024 13:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6UmYTTc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4l3bgYz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2422C95;
-	Tue, 26 Nov 2024 13:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFD72F32;
+	Tue, 26 Nov 2024 13:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732626021; cv=none; b=AgriG2yo4JTLFAhBL3ETJNjTRseO33JBhrOFTgKkgSniTScCU6PCPuUPe4/DlV03BJFBCE2ASG7aVxzk9OyVCA2ZtIg4jY9BCiNho82wjGzUYzuZmZB09WHICanVdtBsHhmk/pgwY+FfhXeY0w98KzJkC+sdmREI5u9hUqQIyu0=
+	t=1732626226; cv=none; b=ndkK1P6eFxj1lgdBKA6l+96eyEIDbrE+kjkhtw/xYDihxf0MbTTCVjrQmNuF8OFgDlTOj12c/56qeDyx3JCLKSiuk4q1hIzFPoLEkMph+EcdCIsCD3YhTmFbYXkDBFRAVXhiijNVKj43Z/6euFjywrkNkg+HNeG+9zfh9VCJ6W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732626021; c=relaxed/simple;
-	bh=G34qdhCAqH9iqyq5N1T9gpB25ZjHSNbvW52DdTDvZ9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XYPabFYfYRZ6Q7W89XG3PBh3vivs27npBJYkjwLz0VV6o7NyoczmLgVeCmdcnhoboURGcd9GNFsCmUoS87RWFG43p3SwPx5cSHAtFVXLE2+2bxxmGHPrOMl5BQ3/WbsPO05mlbO3ACzoaSaSn/YXZNkVt8p/R7xDn24NVz1KWWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6UmYTTc; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1732626226; c=relaxed/simple;
+	bh=FXB4PuxmOEd2vZ5z4u6K66VlomCc0+/oFMfpy5SDFF4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=MgTo3OfFo5BFWuUGeRfcXV/VKOgdOZIpAMLIV5/oEr6o7+Q1ZfDluI7Cut3slBnRN4e4vRu2/JoRRibslomEPKImT9ixUSSDlciPNhBo1jqIqSl2G6isIqsS0wvZQQCwuGjfCfVxolXik3cTOeufbz1mc+WgsT9U0Z+o50YPZ44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4l3bgYz; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d036963a6eso4164646a12.3;
-        Tue, 26 Nov 2024 05:00:18 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a0ec0a94fso796860066b.1;
+        Tue, 26 Nov 2024 05:03:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732626017; x=1733230817; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F3yoydyNiuN0rSJxRIOYTIsz5+plA0TViJjCd+DIF2Q=;
-        b=F6UmYTTcvKp1KTv/srMZduhW9D/++BIH+agxVpGbfayV6Smh/1FmrjPnc/iVtmK1cd
-         TOPiiwnzbPoLyKw8hvOT8/E1Sqhy3vum7zxQi33HI+KfUYelFBRmn4ENeP5mTfUruz49
-         RCLTOz1QdxQWEqXZ/FJmW7NpRwFNIhwIAiCulj/yOztLXiB/4tVGrjymaT6ed7f/7oK7
-         fQ4akDBDPNLMt9esHTkJXdJOXhA/VEKiTVj2fnaivqi3zdrmnPwLXiXapO2fSDM49ZUG
-         yVmgitCq9/kcWfoqjZGdnwVTA+bQHwMRGFAo3HrESvtpsZTnnBVcf8SpcPtF1suzV3ns
-         Kl/A==
+        d=gmail.com; s=20230601; t=1732626223; x=1733231023; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=M1sK9vv1q3OjkhDWkUYaudPgFH+wG3hp3SHQxCzra7k=;
+        b=B4l3bgYzyHLJHXkaMH7IpUJNzgIJvFaF1GjAqjvdM/7gr3UF5BuirYlDmXyxma21WT
+         coZOk/enFsEOb/iqEsFrivR8XuKPa+u6G2CMM/4wfxWGO/d+EkHl33HJOlERHhq0WT7W
+         aQ5TbqYQqDE6jS9Sy5vDowJ9K0B4wbQf812Vc1egLACiLN39b6NMO1LPJ6QJmKDnJFJQ
+         BZCzM0rWoVZ2A83QAp8FCmbu30CIcBr/x/mSKhEmf8PsqC6uREFwBkj7HbkyCzpZSFfx
+         WFAP+kJGPewIxv+C1EmSji9R/H3oXNz++cfL7gtEkmdl7F/wM7iwdzoetgJcQ14XOHui
+         kwHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732626017; x=1733230817;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1732626223; x=1733231023;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F3yoydyNiuN0rSJxRIOYTIsz5+plA0TViJjCd+DIF2Q=;
-        b=UbNnGMmzUrk9nrSe1zH5Emk2v1Yni+CNyUXK0HrSRu3a6ySHHJQYaL5Cj7SoiUHGHh
-         gszYPZ5j8qgtQRGQ+je7ld73Ta+K69q+d22SzZmZ0tJXc3TgQtMOjb1Bjf59SPuNHDNq
-         JbzElAQkxlZiJ90EFCsp8GnL54ASNILP6aDFKvD+PHir1izuqrVq6n0mMBn7Mh8VmX3c
-         6U89J0kh3Zmbd5kKdAd0UQ/8ZKFkLYR8XCKhRHgz8YKqfUtPntkvyoUaHVc4/ETfzuqt
-         4PAcpZFMAA4YRUJjGzXvrd7BeT96+9cC4InfeuC9WqV5BC7NtqBApfRVRhzVcG+9qndb
-         7oZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJBumcCC5Bjw/SI53GGIn4eFU4L0mIKIBTiBEN4e82uuUqAvxsJOyCXEsUKmWTR9S37o8h6BCpeRooEA==@vger.kernel.org, AJvYcCVoVhgCP6BCDCw1TR+nD+dK9JgJRdzvdtqHkBtql8xZavZfTvZ7SCDdMvdx39sjK+vWOPJ5OMdiJEaMoQ==@vger.kernel.org, AJvYcCXUFg/s0QTcgmbZoICuFm/MNETQOH7d3ZcKN42s5rn0lb/xXtvZPzzrRsbqU0EOQEjiHMzp0/0Fs92jINz1bw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT+Ysh89eYw3IXipcVCuMeyn1AR1tcspNO/5KFy2//jX2bU6pv
-	GOhVt960N06YJv5ewlD3RecmoBCtGBZYj2k4pWZqqBBD4PZdY4PP
-X-Gm-Gg: ASbGncsioyxleTHmGw9VXrixQbEtW8QFAkgwJmZwfKSQFNX1zPuSrPmf/Q9+RWhRDk+
-	DsSu/jtR5IBlgVIw1G+73yH994KPca2owuqYRbnxiMhLsZqSqP93XdER0OgzzN1wDNOZy89aiJk
-	oS72/0cBQ0X4KNpR3WlJxHD7gdNvfITp8fIfv5PEH4ZGScYAaCydUsNconfZr0kNyvwDBFVWFP2
-	Scfo0+FWsgqKM0HWjDAPrXAZhu9Xh219HwDDWd9wvkRLa1k6KHyL4B8t+VkbQ==
-X-Google-Smtp-Source: AGHT+IEP82AjkuoW0ZVsrpYLJBWQ9XK9zYr9tk2OCe5t4oYFiJxerefDCiqo9eMqXwn0bVG+EkwlPA==
-X-Received: by 2002:a17:907:770d:b0:aa5:29ef:3aa6 with SMTP id a640c23a62f3a-aa529ef3b9fmr1061664966b.23.1732626016527;
-        Tue, 26 Nov 2024 05:00:16 -0800 (PST)
+        bh=M1sK9vv1q3OjkhDWkUYaudPgFH+wG3hp3SHQxCzra7k=;
+        b=M7hvzzWid/YgIOAPH4AanaQUgWsjrw67jmzhG4paJBaXaRIo52U0YnPBdKw2UItCVT
+         e8knmkKtzFXVe4GMH5ktj+Qx7OFusluhWYZXXktcBL4/QfoSXmRxqkNaWQCWZ7pfFBro
+         /ccNug6keTSjqAbjn2DN7aWzktIrOSjXkThaJESXcVzPdsOO2X0gQVMq0FH/xcpYMSjo
+         yAgohNwU+EEfjs6GL61KAMBkaoziCU1ZayriT7Ju2MQMSoXF97fIFVnKtuGvYa0mY7qf
+         LoX85CuEhTPmB/Rv9Qj3HicVBlmbXm205OQy+IAQYspy8nQaYGZfzAJkYulELkoPHTcg
+         U6wA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdIf9HP/WeBg/btYs4hnLfe8N92kLiWWZJDZe+kw9Lx8oR2bp4u/H2H2JMOIXpAqT08f5mPhqdENaUrpGOXA==@vger.kernel.org, AJvYcCVlyz2OWkHTbSiglCeL3D6CFKs1XNshNqYrd7yJaIiV9+0oKru0xvLoU3WYpHIC8sP1McPPwd/7kaV5LA==@vger.kernel.org, AJvYcCXPfrDqDWBrxOH1HS8m09HzUlhO4ujgpqXqdzlxQ/tgO5WwYx45MFUf3UI7aGy8MTmam7GW9jD3zIhQjw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3w1wiTaS6ycGdou6dD4iyXuP8/1f4j+VBD9caoZt7C79nijut
+	Wd5g6Qafv4CV0dvjxxAD3Gn9xQJNi7f3Ih/e9ek4lDWQkNnuPaci
+X-Gm-Gg: ASbGncuAggpSo7PAYxBFVtkhCXoaQOKRNIs/2QjnG7WfkW3hr7hFFZZ4JbiFSewnL1X
+	wNWvEkSY6XGC5XK8l66u+yJjFSMpumUr5CV1Xv3ZwTKSH/y9oPpJecdTScj1/HPsfgNsVpX7EaA
+	wEp275t+RdB4YM1GuH+VagkainM2jBR7CNl1hY/mw9DyI3TY9EMUIYuQxf76R0B8og4pi8jzct6
+	KE456rZKN4mzMDeYdqfEmPo3+0uQmhCnYD6NUwbyh430h2TE9jjM6BLNu3foA==
+X-Google-Smtp-Source: AGHT+IGUJJ67zkkw70cU7BTJtW/UZE3uVK6vKazeu4jCOhtR1atDsPsUa64nDbaBqFhJig6PgL/VRA==
+X-Received: by 2002:a17:906:9ca:b0:aa5:3663:64ba with SMTP id a640c23a62f3a-aa536636946mr882554866b.43.1732626216465;
+        Tue, 26 Nov 2024 05:03:36 -0800 (PST)
 Received: from [192.168.42.208] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa52e45391dsm480198366b.60.2024.11.26.05.00.15
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b2efbf1sm591067766b.44.2024.11.26.05.03.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 05:00:16 -0800 (PST)
-Message-ID: <2cbbe4eb-6969-499e-87b5-02d19f53258f@gmail.com>
-Date: Tue, 26 Nov 2024 13:01:03 +0000
+        Tue, 26 Nov 2024 05:03:36 -0800 (PST)
+Message-ID: <ad230264-62c1-4e52-b412-d951be514593@gmail.com>
+Date: Tue, 26 Nov 2024 13:04:23 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,6 +82,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v10 06/10] io_uring: introduce attributes for read/write
  and PI support
+From: Pavel Begunkov <asml.silence@gmail.com>
 To: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, hch@lst.de,
  kbusch@kernel.org, martin.petersen@oracle.com, anuj1072538@gmail.com,
  brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk
@@ -92,39 +93,44 @@ Cc: io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
 References: <20241125070633.8042-1-anuj20.g@samsung.com>
  <CGME20241125071502epcas5p46c373574219a958b565f20732797893f@epcas5p4.samsung.com>
  <20241125070633.8042-7-anuj20.g@samsung.com>
+ <2cbbe4eb-6969-499e-87b5-02d19f53258f@gmail.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241125070633.8042-7-anuj20.g@samsung.com>
+In-Reply-To: <2cbbe4eb-6969-499e-87b5-02d19f53258f@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/25/24 07:06, Anuj Gupta wrote:
-...
-> +/* sqe->attr_type_mask flags */
-> +#define ATTR_FLAG_PI	(1U << ATTR_TYPE_PI)
-> +/* PI attribute information */
-> +struct io_uring_attr_pi {
-> +		__u16	flags;
-> +		__u16	app_tag;
-> +		__u32	len;
-> +		__u64	addr;
-> +		__u64	seed;
-> +		__u64	rsvd;
-> +};
-> +
-> +/* attribute information along with type */
-> +struct io_uring_attr {
-> +	enum io_uring_attr_type	attr_type;
+On 11/26/24 13:01, Pavel Begunkov wrote:
+> On 11/25/24 07:06, Anuj Gupta wrote:
+> ...
+>> +/* sqe->attr_type_mask flags */
+>> +#define ATTR_FLAG_PI    (1U << ATTR_TYPE_PI)
+>> +/* PI attribute information */
+>> +struct io_uring_attr_pi {
+>> +        __u16    flags;
+>> +        __u16    app_tag;
+>> +        __u32    len;
+>> +        __u64    addr;
+>> +        __u64    seed;
+>> +        __u64    rsvd;
+>> +};
+>> +
+>> +/* attribute information along with type */
+>> +struct io_uring_attr {
+>> +    enum io_uring_attr_type    attr_type;
+> 
+> Hmm, I think there will be implicit padding, we need to deal
+> with it.
 
-Hmm, I think there will be implicit padding, we need to deal
-with it.
+And it's better to be explicitly sized, e.g.
+s/enum io_uring_attr_type/__u16/
 
-> +	/* type specific struct here */
-> +	struct io_uring_attr_pi	pi;
-> +};
-
-This also looks PI specific but with a generic name. Or are
-attribute structures are supposed to be unionised?
+>> +    /* type specific struct here */
+>> +    struct io_uring_attr_pi    pi;
+>> +};
+> 
+> This also looks PI specific but with a generic name. Or are
+> attribute structures are supposed to be unionised?
+> 
 
 -- 
 Pavel Begunkov

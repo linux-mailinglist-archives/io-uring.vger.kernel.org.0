@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-5051-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5052-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2CD39D9796
-	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 13:53:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0109D97D7
+	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 14:00:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 762C0B2664D
-	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 12:53:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD09728248B
+	for <lists+io-uring@lfdr.de>; Tue, 26 Nov 2024 13:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A5D1D4324;
-	Tue, 26 Nov 2024 12:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F3D1D042A;
+	Tue, 26 Nov 2024 13:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q3PexHtl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6UmYTTc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816981CDFBE;
-	Tue, 26 Nov 2024 12:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2422C95;
+	Tue, 26 Nov 2024 13:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732625594; cv=none; b=ujY0qDHzXSj4xAOrazI8To6pcbDD+vc7MDE/pfLRKB5KuHtEA5Zo2k2sMawjIYIfHAtu2+WaNfQ5RtmFTSiCpOWyN5BM/EEYSiLXjXleH5qQzworSzadrlFFNVP64tBwnYh02jyKDa6Ve+Ek3K0K/aEK1+zJSOYuABf2kauh46E=
+	t=1732626021; cv=none; b=AgriG2yo4JTLFAhBL3ETJNjTRseO33JBhrOFTgKkgSniTScCU6PCPuUPe4/DlV03BJFBCE2ASG7aVxzk9OyVCA2ZtIg4jY9BCiNho82wjGzUYzuZmZB09WHICanVdtBsHhmk/pgwY+FfhXeY0w98KzJkC+sdmREI5u9hUqQIyu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732625594; c=relaxed/simple;
-	bh=jp2Iqac2vEBsU1gj8PmSJavL3H1RBYLZs9pt9Vz6+lk=;
+	s=arc-20240116; t=1732626021; c=relaxed/simple;
+	bh=G34qdhCAqH9iqyq5N1T9gpB25ZjHSNbvW52DdTDvZ9E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gHuyISn+0HOBjkZtkQ1DI0ixzFP4bT252LG8p15Ia/3FpKX8k/R9ME+QbyjKu/m8xzRHQrDKSTB9YrNknMNhu0AUnOh/NA5CYXEGeJwIBUDU1IKBoeMljCcfYJegBnEBN4I1D8RZckFnf3optnspFPbkkVtn4fkYCq5L3br7MaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q3PexHtl; arc=none smtp.client-ip=209.85.218.54
+	 In-Reply-To:Content-Type; b=XYPabFYfYRZ6Q7W89XG3PBh3vivs27npBJYkjwLz0VV6o7NyoczmLgVeCmdcnhoboURGcd9GNFsCmUoS87RWFG43p3SwPx5cSHAtFVXLE2+2bxxmGHPrOMl5BQ3/WbsPO05mlbO3ACzoaSaSn/YXZNkVt8p/R7xDn24NVz1KWWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6UmYTTc; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9e44654ae3so756900566b.1;
-        Tue, 26 Nov 2024 04:53:12 -0800 (PST)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d036963a6eso4164646a12.3;
+        Tue, 26 Nov 2024 05:00:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732625591; x=1733230391; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732626017; x=1733230817; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=TYeQkAYIxhkFR/C0PdfSBmynLd1wfKbnNjKfq6tkF10=;
-        b=Q3PexHtlcwr9hfgZ9R7h9aQkc3uX+WY7YyTzmhfB/sqpLacd/+f4/1XNAMesZ1kD/y
-         xRHo3GbS7goAQW15TvODXq7HeGEQ9jEJW2NxAkcSEWu9rJvqwleVt2dJ3f0qJgTv9Hsq
-         CXHW8POTzPD70flvQaHi/fgBaKuUk+RJ8qAFciNZ2UyiLoJAogAVjPjptCIgNIJcLnmr
-         /nyFDvjxY0zI0LkAOU5p8hPZ9BGaF71vjwL6tUEReU+LoKw9Nvak1CfrF/ZNpY0uTgTf
-         6USl7ndBvxQu6S+Gwhxp+//m27hWklYduA7uVsLqVbH8mqwDadtyb+b8LKr4UsLGi7pd
-         2SSg==
+        bh=F3yoydyNiuN0rSJxRIOYTIsz5+plA0TViJjCd+DIF2Q=;
+        b=F6UmYTTcvKp1KTv/srMZduhW9D/++BIH+agxVpGbfayV6Smh/1FmrjPnc/iVtmK1cd
+         TOPiiwnzbPoLyKw8hvOT8/E1Sqhy3vum7zxQi33HI+KfUYelFBRmn4ENeP5mTfUruz49
+         RCLTOz1QdxQWEqXZ/FJmW7NpRwFNIhwIAiCulj/yOztLXiB/4tVGrjymaT6ed7f/7oK7
+         fQ4akDBDPNLMt9esHTkJXdJOXhA/VEKiTVj2fnaivqi3zdrmnPwLXiXapO2fSDM49ZUG
+         yVmgitCq9/kcWfoqjZGdnwVTA+bQHwMRGFAo3HrESvtpsZTnnBVcf8SpcPtF1suzV3ns
+         Kl/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732625591; x=1733230391;
+        d=1e100.net; s=20230601; t=1732626017; x=1733230817;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TYeQkAYIxhkFR/C0PdfSBmynLd1wfKbnNjKfq6tkF10=;
-        b=Dky8D/ANErFcxGCBoe6MU8QMolNU7SzASuN7YBu6b/FUBfQ8UNkOKgp9mgDFeV7r65
-         0Mbi55J27mObaUhf0EdDDHRVgCpIbstZooZheInk3bfqj1YIwCHvFsropq5UoKrTnROr
-         RJsX8uVovT5+ELp28lf4jDV6JPDoRRAjWpOS3qgDLEz0IvKh6yZTxhN8jjqeJVj2RmkW
-         wSalLcEYtNAbwNSfcPPQoOIrnqVcOySi4uotXzjZvLHzVfqjB9GziPohxQFVJVW6dxcN
-         jQC0XZeOHhF+pJI9HM5PJK8fuyFBRJS8t04NvIuzwaE6ZfNrXww164FiBYn8SrSNIti2
-         Z1/g==
-X-Forwarded-Encrypted: i=1; AJvYcCU9h2IurkCq5S3U0QvZCeKVo4fWE7MihHIwTx47LbSocSFeJdepJPQDFRLtQFqvgRRN5HQz+sKOBDcRtLs=@vger.kernel.org, AJvYcCWViGAKDM9Pj9zj5oL8Png55+7JI2EMkehhFLSsmMIqAZwEpRNk3um2tWRvZp8dweS5sw6cGwuYhA==@vger.kernel.org, AJvYcCWd+1i2jB9widXSdo4N8Rch/fgM4AcyAGAbJIC5uwkks56uH90Cp+lfkxXOcCg0Sr8gOrff2udKacp1sQ==@vger.kernel.org, AJvYcCXG7MBiAlbZpOxVc3BULhuwsBwaDe8+huaUNzVyBcMt5wHmCVjq0ZuP8p8HcjWfeMVoUs8mA4/DMaLzipySQw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEp4V32HHMRj+D0rpaurXV1XXTuIyBirsNhRO+7gtWkt68u3uw
-	lFBN1kJsIfdi6r6h98GM7nVCWpTNCflMT86xi5O/ygdqWiUBk9/Y
-X-Gm-Gg: ASbGncuX0+ImVQUe8ULBaSN33zhR2gCZPcliTm7hSVCiLEB4aevy2YSMk63+uJPrdy5
-	dmoLupNy8IT6//oXp7OdRyHTPELK0S6a0H5BVRJuddAd6VjPYTWQZbSWs/dxGNFdtKdjmEACZ77
-	q3rCTyMv1Ag5GkkRtEP4OaSYpKpOXKxM8VuJx59cbChG3EYv5S5+jIYMl9+4T+PkmENvWxkfSOo
-	V2pJtTWwKwI/MJ9EcgvvbZ46bsBXhGu/8uILlUY4lAh2UhADVcTU3TJB4drng==
-X-Google-Smtp-Source: AGHT+IGkolV4gihApPpCMJ1KiZPbLGP6lKKAGid5kl9EQsMAfw6bzTw1axV/cNE6wN4oES6cLCpT/A==
-X-Received: by 2002:a17:907:7854:b0:a9a:6bc2:c0a3 with SMTP id a640c23a62f3a-aa50990b2c0mr1380344766b.7.1732625590540;
-        Tue, 26 Nov 2024 04:53:10 -0800 (PST)
+        bh=F3yoydyNiuN0rSJxRIOYTIsz5+plA0TViJjCd+DIF2Q=;
+        b=UbNnGMmzUrk9nrSe1zH5Emk2v1Yni+CNyUXK0HrSRu3a6ySHHJQYaL5Cj7SoiUHGHh
+         gszYPZ5j8qgtQRGQ+je7ld73Ta+K69q+d22SzZmZ0tJXc3TgQtMOjb1Bjf59SPuNHDNq
+         JbzElAQkxlZiJ90EFCsp8GnL54ASNILP6aDFKvD+PHir1izuqrVq6n0mMBn7Mh8VmX3c
+         6U89J0kh3Zmbd5kKdAd0UQ/8ZKFkLYR8XCKhRHgz8YKqfUtPntkvyoUaHVc4/ETfzuqt
+         4PAcpZFMAA4YRUJjGzXvrd7BeT96+9cC4InfeuC9WqV5BC7NtqBApfRVRhzVcG+9qndb
+         7oZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJBumcCC5Bjw/SI53GGIn4eFU4L0mIKIBTiBEN4e82uuUqAvxsJOyCXEsUKmWTR9S37o8h6BCpeRooEA==@vger.kernel.org, AJvYcCVoVhgCP6BCDCw1TR+nD+dK9JgJRdzvdtqHkBtql8xZavZfTvZ7SCDdMvdx39sjK+vWOPJ5OMdiJEaMoQ==@vger.kernel.org, AJvYcCXUFg/s0QTcgmbZoICuFm/MNETQOH7d3ZcKN42s5rn0lb/xXtvZPzzrRsbqU0EOQEjiHMzp0/0Fs92jINz1bw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT+Ysh89eYw3IXipcVCuMeyn1AR1tcspNO/5KFy2//jX2bU6pv
+	GOhVt960N06YJv5ewlD3RecmoBCtGBZYj2k4pWZqqBBD4PZdY4PP
+X-Gm-Gg: ASbGncsioyxleTHmGw9VXrixQbEtW8QFAkgwJmZwfKSQFNX1zPuSrPmf/Q9+RWhRDk+
+	DsSu/jtR5IBlgVIw1G+73yH994KPca2owuqYRbnxiMhLsZqSqP93XdER0OgzzN1wDNOZy89aiJk
+	oS72/0cBQ0X4KNpR3WlJxHD7gdNvfITp8fIfv5PEH4ZGScYAaCydUsNconfZr0kNyvwDBFVWFP2
+	Scfo0+FWsgqKM0HWjDAPrXAZhu9Xh219HwDDWd9wvkRLa1k6KHyL4B8t+VkbQ==
+X-Google-Smtp-Source: AGHT+IEP82AjkuoW0ZVsrpYLJBWQ9XK9zYr9tk2OCe5t4oYFiJxerefDCiqo9eMqXwn0bVG+EkwlPA==
+X-Received: by 2002:a17:907:770d:b0:aa5:29ef:3aa6 with SMTP id a640c23a62f3a-aa529ef3b9fmr1061664966b.23.1732626016527;
+        Tue, 26 Nov 2024 05:00:16 -0800 (PST)
 Received: from [192.168.42.208] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fcf9sm588338766b.118.2024.11.26.04.53.09
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa52e45391dsm480198366b.60.2024.11.26.05.00.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 04:53:10 -0800 (PST)
-Message-ID: <37ba07f6-27a5-45bc-86c4-df9c63908ef9@gmail.com>
-Date: Tue, 26 Nov 2024 12:53:57 +0000
+        Tue, 26 Nov 2024 05:00:16 -0800 (PST)
+Message-ID: <2cbbe4eb-6969-499e-87b5-02d19f53258f@gmail.com>
+Date: Tue, 26 Nov 2024 13:01:03 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,95 +82,49 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v10 06/10] io_uring: introduce attributes for read/write
  and PI support
-To: Anuj Gupta <anuj20.g@samsung.com>
-Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
- martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
- jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
- gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+To: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, hch@lst.de,
+ kbusch@kernel.org, martin.petersen@oracle.com, anuj1072538@gmail.com,
+ brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk
+Cc: io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-block@vger.kernel.org, gost.dev@samsung.com,
+ linux-scsi@vger.kernel.org, vishak.g@samsung.com,
  linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
 References: <20241125070633.8042-1-anuj20.g@samsung.com>
  <CGME20241125071502epcas5p46c373574219a958b565f20732797893f@epcas5p4.samsung.com>
  <20241125070633.8042-7-anuj20.g@samsung.com>
- <a28b46a0-9eb5-45db-80ec-93fdc0eec35e@gmail.com>
- <20241126104050.GA22537@green245>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241126104050.GA22537@green245>
+In-Reply-To: <20241125070633.8042-7-anuj20.g@samsung.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/26/24 10:40, Anuj Gupta wrote:
-> On Mon, Nov 25, 2024 at 02:58:19PM +0000, Pavel Begunkov wrote:
->> On 11/25/24 07:06, Anuj Gupta wrote:
->>
->> ATTR_TYPE sounds too generic, too easy to get a symbol collision
->> including with user space code.
->>
->> Some options: IORING_ATTR_TYPE_PI, IORING_RW_ATTR_TYPE_PI.
->> If it's not supposed to be io_uring specific can be
->> IO_RW_ATTR_TYPE_PI
->>
-> 
-> Sure, will change to a different name in the next iteration.
-> 
->>> +
->>> +/* attribute information along with type */
->>> +struct io_uring_attr {
->>> +	enum io_uring_attr_type	attr_type;
->>
->> I'm not against it, but adding a type field to each attribute is not
->> strictly needed, you can already derive where each attr placed purely
->> from the mask. Are there some upsides? But again I'm not against it.
->>
-> 
-> The mask indicates what all attributes have been passed. But while
-> processing we would need to know where exactly the attributes have been
-> placed, as attributes are of different sizes (each attribute is of
-> fixed size though) and they could be placed in any order. Processing when
-> multiple attributes are passed would look something like this:
-> 
-> attr_ptr = READ_ONCE(sqe->attr_ptr);
-> attr_mask = READ_ONCE(sqe->attr_type_mask);
-> size = total_size_of_attributes_passed_from_attr_mask;
-> 
-> copy_from_user(attr_buf, attr_ptr, size);
-> 
-> while (size > 0) {
-> 	if (sizeof(io_uring_attr_type) > size)
-> 		break;
-> 
-> 	attr_type = get_type(attr_buf);
-> 	attr_size = get_size(attr_type);
-> 
-> 	process_attr(attr_type, attr_buf);
-> 	attr_buf += attr_size;
-> 	size -= attr_size;
-> }
-> 
-> We cannot derive where exactly the attribute information is placed
-> purely from the mask, so we need the type field. Do you see it
-> differently?
+On 11/25/24 07:06, Anuj Gupta wrote:
+...
+> +/* sqe->attr_type_mask flags */
+> +#define ATTR_FLAG_PI	(1U << ATTR_TYPE_PI)
+> +/* PI attribute information */
+> +struct io_uring_attr_pi {
+> +		__u16	flags;
+> +		__u16	app_tag;
+> +		__u32	len;
+> +		__u64	addr;
+> +		__u64	seed;
+> +		__u64	rsvd;
+> +};
+> +
+> +/* attribute information along with type */
+> +struct io_uring_attr {
+> +	enum io_uring_attr_type	attr_type;
 
-In the mask version I outlined attributes go in the array in order
-of their types, max 1 attribute of each type, in which case the
-mask fully describes the placement.
+Hmm, I think there will be implicit padding, we need to deal
+with it.
 
-static attr_param_sizes[] = {[TYPE_PI] = sizeof(pi), ...};
-mask = READ_ONCE(sqe->mask);
-off = 0;
+> +	/* type specific struct here */
+> +	struct io_uring_attr_pi	pi;
+> +};
 
-for (type = 0; type < NR_TYPE; type++) { // or find_next_bit trick
-	if (!(mask & BIT(i)))
-		continue;
-	process(type=i, pointer= base + attr_param_sizes[i]);
-	off += attr_param_sizes[i];
-}
-
-
-Maybe it's a good idea to have a type field for double checking
-though, and with it we don't have to commit to one version or
-another yet.
+This also looks PI specific but with a generic name. Or are
+attribute structures are supposed to be unionised?
 
 -- 
 Pavel Begunkov

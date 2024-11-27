@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-5063-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5064-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084499DA5F6
-	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 11:38:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2222A9DA6CB
+	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 12:23:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E597B2A38E
-	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 10:35:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6798281836
+	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 11:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD00193067;
-	Wed, 27 Nov 2024 10:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAAA1F6674;
+	Wed, 27 Nov 2024 11:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSll/P6/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNBxFTZH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F097192D7F;
-	Wed, 27 Nov 2024 10:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187A41F6664;
+	Wed, 27 Nov 2024 11:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732703703; cv=none; b=k1lKNC8Qi+TGzHQJmGcexoqiF2drjIULJ2EFeJG2UdlU5NmlP+gjVaHME6hDBSgaPxWlOpVyVLzh6zcYGgsZdUBDCL9jToVIYs6cKc8FZjCxda0I2CMlQe04qWueRZilZDsDGM3R+LEYDCD3qFKlTjer29XjrGn4Ta9GkurlR5M=
+	t=1732706600; cv=none; b=qyIzL5yLZ8EuIA6dJNUfvv5JnnsXvWMfge08s8cUUHbpdParKmLkpRKLjnCQsKaWWKuEvk9GU0yICGyhstffYgdqr2YNE3O+E+hL/WAHojY0ikasUQh+eDa52xGLMtBzyj7UFn9ojq/wy2qPwyHBtsPVrwHV/u9Thx7PnU9pFSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732703703; c=relaxed/simple;
-	bh=3Wpn5UYrFssZipkh5pS29bUTggjto2nrp9MITQ5FvlM=;
+	s=arc-20240116; t=1732706600; c=relaxed/simple;
+	bh=jPYE7nUJ0PQxj0TL68kBGwrZJwMQjdjzfszDvmh33UA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fAdaor/1dIzgSvMFa3qLp1uRRblCjbd+UeqKgkCI7MEoemvZyH7QNa8xo9AvreoXx56bUtqdQHgQVVNrQuFnzwDeo4z50wDdRJEz77P9X6uHpZyAdAzKLbA5F1ANNJFHsbw6+Q5Gyz89syTtLRZVY84/Aw7DFJaXWyxhktUngQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QSll/P6/; arc=none smtp.client-ip=209.85.221.48
+	 In-Reply-To:Content-Type; b=c4b8aDiURTydIf/fCd1M8Gd82aPpg78091vZg1YT1S/sqiBAgWFxeuXPTgpJBHlElTPj01yPOsdbbQdNeCKyPmGm83pliNLkReE+wb0fAl0k9cZ1hwuSmUytg88NNwoFl8wxrw8EQ+VJizLoz2/uDSCxOOTlvRipB0FMwc7/FmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BNBxFTZH; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3824a089b2cso3996389f8f.1;
-        Wed, 27 Nov 2024 02:35:01 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso1068462566b.1;
+        Wed, 27 Nov 2024 03:23:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732703700; x=1733308500; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732706597; x=1733311397; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9ZlrO5h50BcTQskeYOFGG+Op70eMgkFj46C8sSDAd2w=;
-        b=QSll/P6/+pKAW+XwaWtPG0ag7FmIpWx/KVGQhiH6z6y9o1xH+krpAlHkFEan3ZRY7W
-         7DxKTR7yNy7WHb1sfi/qDZj1SMxU/LUebggHWKRBQDCb7Qehd+nA+WCHv+p9K2keWBX4
-         yT86lqFv/91LTy8yihxoe0fQkxHK31TXu40bCE0D5ZtK7yC+r/VUjKCluhW8z544m/Cd
-         lL8cLfa2+nrFnw+k2m3iOiLEyb2QvOMyCIyZQmzuBW9JLnuBMD0llAAVwV2lDuLKmEo+
-         2n29Dla4kQuTUvORF80bq7isNh5Du3MLDLR9EPPV2WuvpJJHSxP+zSz+yCgsE16RwU/B
-         G6dA==
+        bh=CehglWY5cUyKQpTdTFxSNmTAz6hCZtKrvb/Ae4vWfPc=;
+        b=BNBxFTZHRkZxBfRsrWIJ9cKC4dPepDwljBsZMoCnC/zw8HQt6vRWT2K4oCAl9yHxHF
+         EBvWo4BPgZeAaLk1r5nSof/WniACOXhk6AkY3z7fVpbo7mEtfRaVghKoAY9MBfzfvyXL
+         5RYio4fVQz8e1FCupMskX1ZP1h3X254VB/vsFVHQD9QKridV6kLRAHf+2y+VcObdVFA9
+         w2xJ3HNEgY9gREEACXk+odOYQtXBUSq7zgOwub3aqNPAutrY91wsFraPRNT0dfb9OhB4
+         yJktSKZ6k5pR6BAvMf28lpQozJEIl3T1dSDwu1HsEb1cjkt2ziGpqIxFuDj/KVqSjo+0
+         uQXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732703700; x=1733308500;
+        d=1e100.net; s=20230601; t=1732706597; x=1733311397;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ZlrO5h50BcTQskeYOFGG+Op70eMgkFj46C8sSDAd2w=;
-        b=iUk3TvRugStLKdHwIgDns9AjujvOhY1q8WeY5jq0Yp35esB3dCeHWBoH91oDL5FJkY
-         x2lUf6K7ymbbhwNdThmoBgT7Wqee3LI6OKAXwki/tAMowNfU8gU0emilFB28moPGet/i
-         FSm9g2ospE4bsglnESfK7/TY6kBUclkRYXFOcm26Uink/peCQpyfYKoGAXsrNXXryPeK
-         rkS9/okgNp31enzbpEiae8StCND5dPPdCVVKz6OHuaHOPBHeG/Xl/k2y/IUOK0MEW9cF
-         hmorQ7lV1AegNh+gZKxqmb7x9XRl+SF+4mY98kFM5w4zdIPrEQ3kqQYO6ope9Mzkx1OF
-         goZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUd3S4j/8+sDUM00ylpc1bxo6kOngjVNkuL0Pd/kDGUlfrGJvf5R1gPm0Lb8hBl79mXnG9RC3jfclLoaAA=@vger.kernel.org, AJvYcCVqRZgQJ8Cvp6SO0aqTO0WHMpwYAFxXvagc5DFan1mx4jQYMBvGtJzPK4C7lzTk8KDf0SrxfbcSFZpHcvNAyw==@vger.kernel.org, AJvYcCWXkN0qCVHxs+4demj4CQVk9YsVrM1pE1O5smagIVSwW0A0XS0GXr9wXsE1f4B4fp2R674n971O5fV8yQ==@vger.kernel.org, AJvYcCXDb2EAfvHMkaCjccRpJ1H1WKhq859O6NBVoTqpbLOHOopoh9N9n+0T5bB+RpiPM2H8Q8125G4/OQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZf2sekUgHkdy3F0kOgWKLtR7xQqL4+PFlmzynIOTQhqXtgoxS
-	4Eg3ubKefV9OdUcUyr03N3hE7MucaSx/P7o6ECKPRd70EclFQJNK
-X-Gm-Gg: ASbGncs6wlSQdJJz1fQy3FIX6+m5G55JpMcPsP2Xov9eyISsq7b9VLrd7NxCJaJUfTd
-	yprDdMjielNpQa7ZAYcuUIybqwKtvliaAF+EgJKY+hDQix8HeSIdOXhJZqAl0xJxi8LbPmsL1c7
-	Vi0FwSRGT7A+9pLFuH6oe8kJ98tPpONW0eSMZCyKbAh0e3oTrr960Fnnd0zyd1n6BBcl9E/Z49p
-	8SCwtr7mUlvJ13sAmIm4zLoRCr/P+9kEUUIxSyZsmUqzHCJjkPXe759QQ==
-X-Google-Smtp-Source: AGHT+IFk0SXZCKGCnlLrTdF+H7B8tOKDqCjKa0psfP+s3ClB+df5BuAqqiAyl+b/3U4nAA+9UpIchQ==
-X-Received: by 2002:a05:6000:440c:b0:382:3f31:f39b with SMTP id ffacd0b85a97d-385c6ebd533mr1529071f8f.25.1732703700155;
-        Wed, 27 Nov 2024 02:35:00 -0800 (PST)
-Received: from [192.168.42.80] ([85.255.233.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafe207sm15991312f8f.36.2024.11.27.02.34.59
+        bh=CehglWY5cUyKQpTdTFxSNmTAz6hCZtKrvb/Ae4vWfPc=;
+        b=nwyUnEL0q8v7AVovDKn8fwyyG5PosKhRZCN63VjE6b+/3uxZBjdRM6hS9620VSJWVL
+         j5TCrXBy28O6TxmqLjuclcYih8rOawUhabd7ZEN4LAYcc04DAELgPGTqgIKUn/6C5gPA
+         EmqPMoW8d/96Cz4JRVViTOevH14h1/vvuPL50GHkkENxbwSAL5slUIu0AX+w4cBaQykI
+         C/k/hSu4tRO00CxsYLBN5fIxJO1yg4sl5HXeXZMg3P2A7xHInQ1fnGOgL+J9s3M82ElS
+         7g1ZwfKeyBMIwlwnhJF0IZa/m9EyDUX+GA5+V3F3okHEhaQxyTNthiFMHbUCOw3thyIq
+         5m7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUbTqGpPgImuTR1QVS1xzPjQGZlt/6xbPSRkVyuuP8ygsaTHzHYnzZVCgJqmQ04lZVE4l9JlKkkY2FWQifzFA==@vger.kernel.org, AJvYcCUt3yYZfzQgNC6ft9dx7ZPedssoX/YSK3q7hiawkHozztDFUkiHAkllZtOWSvk4/xNkmC+YKKV+vPwMlg==@vger.kernel.org, AJvYcCW+ZlibOMZVMUKQRrwW3ciW7OfvC2d7UdKOl5w2wOhmcaXpeKrKIA1HY5spis6l0rP/5UnPkM3nudzjDpI=@vger.kernel.org, AJvYcCXvudKq0MDdYKXIWd8Sc/11s/OoCjSxfZM9uSJJa3Gkkcp7M4Jp5K5yVZjaXG5Ik3UgI0wV7TwOzA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLv5BPQ2dp8BJ8jLZaVuVFMBuKoJ/IhNAN4M+QAWgxAiFZjR4E
+	F254AVM7v0yxI8DYFIAyqm4pu76ioZbLOmIWY/KEdXEb+jYkNpjx
+X-Gm-Gg: ASbGncuDYF9896DyuCBg5rZfpi8/pJLDwDc1B1NL4EVWMQj9yuH6XR+pKA6PNo52+yu
+	TU4I8JlSPRhN3i2mS041Xf3TPowEtBgyYfM8JWTXRus1aTmUSNedAKO94fS33/6YBkublrrfdAM
+	7aLFOpMsICb5iqzKgzvl8FPpiByFf+VYK+/cFaYjz0sZUIIPR5/owcPlyFEwOOreE/Ae99s0ssM
+	8ZxN0zbHDESiKBPw0eDjjWAAZqHEgjUW/9SnUB4RHWSHkFHoO7WstsToBPajQ==
+X-Google-Smtp-Source: AGHT+IFsufWWnsFArYdPuvs9Ad81sVtZ17075H7eNLYpimFeYT75Kvd58Sonb/NBCuJN36c+6qQFJg==
+X-Received: by 2002:a17:906:1da9:b0:aa5:274b:60e9 with SMTP id a640c23a62f3a-aa580f4df12mr158891366b.33.1732706597304;
+        Wed, 27 Nov 2024 03:23:17 -0800 (PST)
+Received: from [192.168.42.127] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5372002aasm536402466b.66.2024.11.27.03.23.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 02:34:59 -0800 (PST)
-Message-ID: <5f77cc2b-d589-42db-9985-e56bac1da569@gmail.com>
-Date: Wed, 27 Nov 2024 10:35:46 +0000
+        Wed, 27 Nov 2024 03:23:16 -0800 (PST)
+Message-ID: <6c870f8d-6293-4d4b-be2b-f0e221cd103f@gmail.com>
+Date: Wed, 27 Nov 2024 11:24:03 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,9 +82,9 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v10 06/10] io_uring: introduce attributes for read/write
  and PI support
-To: Anuj gupta <anuj1072538@gmail.com>
-Cc: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, hch@lst.de,
- kbusch@kernel.org, martin.petersen@oracle.com, brauner@kernel.org,
+To: Anuj Gupta <anuj20.g@samsung.com>
+Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
+ martin.petersen@oracle.com, anuj1072538@gmail.com, brauner@kernel.org,
  jack@suse.cz, viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
  linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
  gost.dev@samsung.com, linux-scsi@vger.kernel.org, vishak.g@samsung.com,
@@ -95,44 +95,64 @@ References: <20241125070633.8042-1-anuj20.g@samsung.com>
  <2cbbe4eb-6969-499e-87b5-02d19f53258f@gmail.com>
  <20241126135423.GB22537@green245>
  <a9d500a4-2609-4dd6-a687-713ae1472a88@gmail.com>
- <CACzX3AtBc-Vio1H28MM2tRvcLzTYBTFJt8CKgF5NeGTniKFUbQ@mail.gmail.com>
+ <20241127094644.GC22537@green245>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CACzX3AtBc-Vio1H28MM2tRvcLzTYBTFJt8CKgF5NeGTniKFUbQ@mail.gmail.com>
+In-Reply-To: <20241127094644.GC22537@green245>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 11/26/24 16:23, Anuj gupta wrote:
-> On Tue, Nov 26, 2024 at 9:14 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
-...
->> This example would be incorrect. Even if it's just one attribute
->> the user would be wasting space on stack. The only use for it I
->> see is having ephemeral pointers during parsing, ala
+On 11/27/24 09:46, Anuj Gupta wrote:
+> On Tue, Nov 26, 2024 at 03:45:09PM +0000, Pavel Begunkov wrote:
+>> On 11/26/24 13:54, Anuj Gupta wrote:
+>>> On Tue, Nov 26, 2024 at 01:01:03PM +0000, Pavel Begunkov wrote:
+>>>> On 11/25/24 07:06, Anuj Gupta wrote:
 >>
->> void parse(voud *attributes, offset) {
->>          struct io_uring_attr *attr = attributes + offset;
->>
->>          if (attr->type == PI) {
->>                  process_pi(&attr->pi);
->>                  // or potentially fill_pi() in userspace
->>          }
->> }
->>
->> But I don't think it's worth it. I'd say, if you're leaving
->> the structure, let's rename it to struct io_uring_attr_type_pi
->> or something similar. We can always add a new one later, it
->> doesn't change the ABI.
+>> Hmm, I have doubts it's going to work well because the union
+>> members have different sizes. Adding a new type could grow
+>> struct io_uring_attr, which is already bad for uapi. And it
+>> can't be stacked:
 >>
 > 
-> In that case I can just drop the io_uring_attr_pi structure then. We can
-> keep the mask version where we won't need the type and attributes would go
-> in the array in order of their types as you suggested here [1]. Does that
-> sound fine?
+> How about something like this [1]. I have removed the io_uring_attr
+> structure, and with the mask scheme the user would pass attributes in
+> order of their types. Do you still see some cracks?
 
-That should work, the approach in this patchset is fine as well.
-I'll take a look at the path a bit later today.
+Looks good to me
 
-> [1] https://lore.kernel.org/io-uring/37ba07f6-27a5-45bc-86c4-df9c63908ef9@gmail.com/
+> --- a/io_uring/rw.c
+> +++ b/io_uring/rw.c
+...
+> +static int io_prep_rw_pi(struct io_kiocb *req, struct io_rw *rw, int ddir,
+> +			 u64 attr_ptr, u64 attr_type_mask)
+> +{
+> +	struct io_uring_attr_pi pi_attr;
+> +	struct io_async_rw *io;
+> +	int ret;
+> +
+> +	if (copy_from_user(&pi_attr, u64_to_user_ptr(attr_ptr),
+> +	    sizeof(pi_attr)))
+> +		return -EFAULT;
+> +
+> +	if (pi_attr.rsvd)
+> +		return -EINVAL;
+> +
+> +	io = req->async_data;
+> +	io->meta.flags = pi_attr.flags;
+> +	io->meta.app_tag = pi_attr.app_tag;
+> +	io->meta.seed = READ_ONCE(pi_attr.seed);
+
+Seems an unnecessary READ_ONCE slipped here
+
+> +	ret = import_ubuf(ddir, u64_to_user_ptr(pi_attr.addr),
+> +			  pi_attr.len, &io->meta.iter);
+> +	if (unlikely(ret < 0))
+> +		return ret;
+> +	rw->kiocb.ki_flags |= IOCB_HAS_METADATA;
+> +	io_meta_save_state(io);
+> +	return ret;
+> +}
+...
 
 -- 
 Pavel Begunkov

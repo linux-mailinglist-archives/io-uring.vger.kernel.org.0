@@ -1,190 +1,247 @@
-Return-Path: <io-uring+bounces-5060-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5061-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421F09DA08E
-	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 03:10:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AACE99DA0BF
+	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 03:55:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D69E168316
+	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 02:55:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC8F3EA71;
+	Wed, 27 Nov 2024 02:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="L7gWo6Gh";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="oqw3clMm"
+X-Original-To: io-uring@vger.kernel.org
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CCEAB22DF4
-	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 02:10:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169AA17BA2;
-	Wed, 27 Nov 2024 02:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ytrIqmmr"
-X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEFA38FAD
-	for <io-uring@vger.kernel.org>; Wed, 27 Nov 2024 02:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732673446; cv=none; b=OGZYV1HLbXcJKJv+ukLj6pDQEcWb64mIhk9WC2gvjTi+hEVn88HtRgudS/FuRTzgWue1+oxDsCCSTD0Mcv0PanrsRo8Ll1WrCOp7AQr8exNnknUA9A0gqSUGWRHiEfbqzZ4ahcDODk6WADZ36M5ekesJoVNDSyVDC9LLylWzS6A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732673446; c=relaxed/simple;
-	bh=tmCSlbCU3KjQLwp+92HsJhs+KG3V5m+P6ft1AAG5Buo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lcLDr9UYrVgK1bkyBaRBjiEIJlB7QH4zN91xwYcuYxIjlK2yeJi3T6ZUpeZB31Pt8JmmAbmTXFNkh8+Y9NCivjsh16yZrWhimNteOZNlqPBoJjtHS8fNK7TJpToUPo3cFwaddjg7VwXdxx/R6+SXfIErkuH2int0bZjrmGSZEXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ytrIqmmr; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fc2b84bc60so2164773a12.1
-        for <io-uring@vger.kernel.org>; Tue, 26 Nov 2024 18:10:44 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A2D1BC20;
+	Wed, 27 Nov 2024 02:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732676133; cv=fail; b=e7J9rNm6SO/Q730x5JKieCYAjX5v02myd/0UWYZBB59XQU7p+BoPLMAcPcJu1bUSYMAoQEBGqf8lHF+x2VSz/3YeK3UL0T6WjIztMf5suy06Q6ldufMwCeTrpFvfxU8iDJVmppq0iSPj2m07/gI2DfP+oujJcN8kHAdTzCATdEY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732676133; c=relaxed/simple;
+	bh=ZRIIGQtoSOmpd6Q49dX67R87jl0AD4wxNC7a1uM7vcU=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=UKVKvFxSkTCm7wb53WfoAs7bFaDEH2Pf9GtL4U2JJKpTop/oZ3i/hlVnsVvgmG1PabxC4Cy0KF/2dVtDHvEuYE2jg6ygB/linYW0rIgfXvrTEwnBcW3RwT9UHUEYcE74LKXwjrNz7TnnsSfAPPnMLHiPEHomZ0lMGM3t9lVcwmE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=L7gWo6Gh; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=oqw3clMm; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR0fcJO006899;
+	Wed, 27 Nov 2024 02:55:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=Up1otqPEH7Kx4Hx0Ja
+	qdcIMIn8Iokv11lObNnBTfe0Q=; b=L7gWo6Gh1LOtDAxBKqEx6GkCcPoJql2fHb
+	eEWIJMZzCyha5VliqIZre7FEgrys0GVs2f3R8PrOz/9rSsXVJ+s9SJt+TmkkRWdt
+	J6KX8Fr5XeEXldnorDQHpa3UL2MoJRtrXieb0jM1L+D7FZ7M+1hpJm87XL+pK9Sl
+	BL/YBpg9o2QtV+xekBvDpBRQV6BMNhqhXMHZbzsEEUsCg6vQrJnmIAOlwqC5WkVh
+	D53+4+yJjwp4ZrpRnXNhc6MFLgPiMMFHlwjYMFOc8dU94+u0K9CY2WAoZazKMyym
+	q4CDgolxPOJuJf2B+6+09qsc/kn1c03tHOJ9gQqbKDUEuRH2fnqg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 433869xykc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 27 Nov 2024 02:55:00 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR0GDnO010108;
+	Wed, 27 Nov 2024 02:55:00 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4335ga34wv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 27 Nov 2024 02:54:59 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NZmhTwu0nFpC9M6bxT9RwsSka0m0jy17fMULOxJ8+uCZZJOnBQ4BOcDnXItsF2vMbfwqIcwQ1gb5HPKt7FPvsPSWvKjzV9GsUTaOdsK81FYQQt+IgsjvCUSnJAggZJa8y4PyotWXDJsR6iUpfUhmcdKI+zNLv1OSrkBRsGxBaL+v4B7R/KvrLzklhb0WUC2pp/xAGqIamuiSG+olXY7BTB4gli11Lpc0rzng/PuIslAfZaP1/wVypcqRbuou7WhYurX6gTYrQ9HSKjCCFubRIxvnNbsFU56fXFd+SWxnSFDAkgihV5SRmDaHUEeaty8V0EYWkV50YxnzC6G5YWs9Dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Up1otqPEH7Kx4Hx0JaqdcIMIn8Iokv11lObNnBTfe0Q=;
+ b=BX70EmdYmA2AEylGf0mwmYONZMttMrrqSceFPO1I/6UIAmwNBhHgrh7ImA9BAvvR40SG8FU+R5vSWwg3w2y/c7X6iVcouLsa2fFiDTakgfqGHsSI9CTn+S/8o2ZXyyEwNI4gnSdT/UK6MCsYA8g2x4H94YP/2tVylhiGqxu/qUm6BJFHK5o1GyBD6PK3AcIc13AvFH4c/TRAdtqn1RYmAyYjBxiq7J+6k8vKPkbM5DQ/xEP5n7F+7Xki3HbAo8rPNsff1PpE0Nj+oYYlfYNFVtX8D68q3S6KIo5rpb099ZGXBo8t2Kd5UozEVKcT8ishfq6kVSB+O7luOHRsxIcccA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732673443; x=1733278243; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bN0OJ4Bm1lJFlb51vvB5T5hdENjLiQmr8uWBqBhmsFI=;
-        b=ytrIqmmrJotcq4EjWmZAaK4uWGJkY+5HlS/woLV09fbTOxjGw8PQ8537Yn5HRCtkVR
-         6CfsblHHFEwOX3uxuJS5amGUIhxKRRmUbhstNq7G4mHvu3yGHYk3PalNsmsEC8Ovtv3P
-         F3P19Qww+aRYjxoDAb3OlrsOM8ze9hv/10MjXJcepsddrT2jK2IlZZI6oXupis+eDsg3
-         /2tNLm9bpp0Xr85CZ2nhTTbE8NwNr1ByZl71VViySuY829CHuZelcBXkmbSccOsJJVDf
-         HeEXIGVx/+5T+5tIWkUFESODErANe0RYfkAHQC2N/iU5woM2y8OnL5iJSPGR6+28KG8j
-         IUoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732673443; x=1733278243;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bN0OJ4Bm1lJFlb51vvB5T5hdENjLiQmr8uWBqBhmsFI=;
-        b=kZjx4TDNn6neJEsveXzsWTYoIVX6snVFJHusJgDftqIfZu3msvRLgBRLNhHMRsSFJ0
-         kLQH7QK8cTc/J/oQ2K5lTlp/8BS18NqDmN4hyAFNeq+MQLcGiUTN7cWFxdZVnPDTa7Dc
-         6ZRSSXmDlA/XluPv0pjcb7pO3RHQ9618VWz2tKlX9v7ZqJQFwM0Sfi5EuVZ2LZGr/jjZ
-         mS11t0q5zhH3Tu52QzjfqnhG0H3KU//eGHc2yMZzTwqYdVxBHW+apFu5qv9hWC/MGtiP
-         XjdToixGmJOxdzYD4jDKxJCyEObF8lR83hcvQ9kAcTTP6AToURzdShrsBBtOaltuKqE+
-         jqCw==
-X-Gm-Message-State: AOJu0Yy3rC5HyvRhtOVOFvH4wO0hBMkFQaB7GrFZ4tj5flxYcktXy3q+
-	nKfqZZ6fFxhTqQnh70i/EHWRPo649B90ioc9DDzkb0VEAPDDOPGb5TdICa63m+M=
-X-Gm-Gg: ASbGncuaSLnubWkZ4uREe9KcqdMamsCD1TlRIlJNUdTNoo7bQh7t17fTVJExJo7Q3Gi
-	8ERX87hiPUsCtGWrA/Pr2lfIwWSWwzeUVjevqhJdUhXfHxefEfwfkLRkfsLaoGbq4jJMdTgd0iG
-	hwIhzvp8WdGXMHksFoyeOpxxh6JFvF2MXM5GcZ3Zv8j+YJIPkgv9YeWMsVMA21Rj4LJ2kFWqtuF
-	kS2py/YiEAUMq4qSRgvugcvB3DGEyZDyw9tkZzbSXbCdmQ=
-X-Google-Smtp-Source: AGHT+IHyCjyArazp4Kv+QAet0OwgoauPRpA8UZJ0doQRguV0LK0oU8Aqd3kwqL8U6VmfnA4taK2Z3Q==
-X-Received: by 2002:a05:6a20:2449:b0:1db:eb56:be7c with SMTP id adf61e73a8af0-1e0e0b5377cmr2466242637.35.1732673443643;
-        Tue, 26 Nov 2024 18:10:43 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de47d186sm9165002b3a.76.2024.11.26.18.10.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 18:10:43 -0800 (PST)
-Message-ID: <4face69c-50f7-4dc7-827a-b3b91a4f7a3a@kernel.dk>
-Date: Tue, 26 Nov 2024 19:10:42 -0700
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Up1otqPEH7Kx4Hx0JaqdcIMIn8Iokv11lObNnBTfe0Q=;
+ b=oqw3clMm0nahWJcQbhJ1a1z9qNSE2EBG2cccBE6GVdlp8fA0MkHG6zJKphsW92Yzb7hqWzIBo2LTKSTnZlPUGKzNcuGcTvpFKDIIPiJ9xicHpHYmlmvHR0Sb5avxn7c3PfGrpkTcXS4SjBYaaBZrJmQEGiuSzuikbHeKKwnum2s=
+Received: from SN6PR10MB2957.namprd10.prod.outlook.com (2603:10b6:805:cb::19)
+ by PH0PR10MB5870.namprd10.prod.outlook.com (2603:10b6:510:143::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Wed, 27 Nov
+ 2024 02:54:56 +0000
+Received: from SN6PR10MB2957.namprd10.prod.outlook.com
+ ([fe80::72ff:b8f4:e34b:18c]) by SN6PR10MB2957.namprd10.prod.outlook.com
+ ([fe80::72ff:b8f4:e34b:18c%4]) with mapi id 15.20.8182.018; Wed, 27 Nov 2024
+ 02:54:56 +0000
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Nitesh Shetty
+ <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>,
+        Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "joshi.k@samsung.com" <joshi.k@samsung.com>
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org> (Bart Van Assche's
+	message of "Mon, 25 Nov 2024 15:21:47 -0800")
+Organization: Oracle Corporation
+Message-ID: <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
+References: <20241105155014.GA7310@lst.de> <Zy0k06wK0ymPm4BV@kbusch-mbp>
+	<20241108141852.GA6578@lst.de> <Zy4zgwYKB1f6McTH@kbusch-mbp>
+	<CGME20241108165444eucas1p183f631e2710142fbbc7dee9300baf77a@eucas1p1.samsung.com>
+	<Zy5CSgNJtgUgBH3H@casper.infradead.org>
+	<d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
+	<2b5a365a-215a-48de-acb1-b846a4f24680@acm.org>
+	<20241111093154.zbsp42gfiv2enb5a@ArmHalley.local>
+	<a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
+	<20241112135233.2iwgwe443rnuivyb@ubuntu>
+	<yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
+	<9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
+Date: Tue, 26 Nov 2024 21:54:52 -0500
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P123CA0149.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:188::10) To SN6PR10MB2957.namprd10.prod.outlook.com
+ (2603:10b6:805:cb::19)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] io_uring: add support for fchmod
-To: lizetao <lizetao1@huawei.com>
-Cc: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "asml.silence@gmail.com" <asml.silence@gmail.com>
-References: <ad222c8b35e54627b0244d5ee4d54f0c@huawei.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ad222c8b35e54627b0244d5ee4d54f0c@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR10MB2957:EE_|PH0PR10MB5870:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3cde5a3-7967-4985-3c05-08dd0e8ee039
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?W2Txskgo576espi+8rlUGkPmMLa+Mbz+aSDmuaxRLlSeL3ntEp3pcoU2Kc6y?=
+ =?us-ascii?Q?Px+pQru4LbxcU7hC59R/Y4us0raIReb/B18G4FFalI2mqxK3sPP/x/EN3gsS?=
+ =?us-ascii?Q?4EsHxtzy3KXxCMD/c62W75npCAttlXN571b6RLW+0WCByy3LD+VYyvN+J64r?=
+ =?us-ascii?Q?jIXM27tOs3hEP2ZvDjbTJ2T2a/OYu5PczkfIEi/8g/7tc8/Rcehb/J1mzYKQ?=
+ =?us-ascii?Q?S4xujCOvaVj/6y1FwPzsqQNsR4ZGqwykYQ4LFyjZEGLXQZurYNhGxUpddqh6?=
+ =?us-ascii?Q?hEaPL4u/a7MYTAvS48sdcP3y2UPbRRBoIPHfQHMNEoS5JCloKLPdN+Uv4cXB?=
+ =?us-ascii?Q?YL4bQnj0R886WpyTdCF5h146Rp9dWbqTbciZdt+ipUcuyojjs6fX1+DG1F39?=
+ =?us-ascii?Q?7QqCvbuI8zqdEMJ02XLl9IJawSovKuIypXmSYTvyBcGJDDy7xpJr2/Txth74?=
+ =?us-ascii?Q?AitemjUH/MmxRYrel7+PP9bCGAnRH8TnHyFg0jjTUCilnQTswqK6F5VnysV1?=
+ =?us-ascii?Q?0JFvcKSutHkVIGwuHwpLy0n5wj572M9S4M6tcsop7/V93Fzjt5iKlgDSr2bs?=
+ =?us-ascii?Q?dAb/MvwbR7JzS8RLMXcYZwgwbCxT4xKWkuiYO6nDEIowr4NEjgbKN0iD3YAp?=
+ =?us-ascii?Q?A1YhRnDzZ9KBNPi5aKUfRN646D9qeH0//Q8+mmvbTnEyQJoTKGYyVDTCEMAJ?=
+ =?us-ascii?Q?YcKUJhiKs72ASfes7Gv7zgx49Jhf0Aa0fHO8s1ox6oyDNfxwbQi0u2Uz8htk?=
+ =?us-ascii?Q?3OZwGD0JeLtPy+Ccf/xjLkStChM+XsHo8mdnYBZwnC3K58XCnbRDRJxrGehC?=
+ =?us-ascii?Q?/AmW69iBBUXXdv8/daXD4NIgmi7wLB3YwmJmwVgBcEc97OGCAJWhlZRaZr+r?=
+ =?us-ascii?Q?dh66/8MPQCOdXO8CG5iSHCSDStATpRTG00z7nkMkOXiQRDDqnGgkaSSftiDb?=
+ =?us-ascii?Q?es07c1AOe/vFeZSpKD8hl+BnTqsusfcy7EHg6ntiTfU09NNdOR9gjzMApN5p?=
+ =?us-ascii?Q?dJx8IrbekaEuJnyw/pAyPzr8Um4iyvq9EkpUtgpVaT/rwv0aEIF1Fm6CfcTf?=
+ =?us-ascii?Q?om2fnsr/XEdZmGPgXel5bnY+xpGbflDaPbdwoCiN9p34TXgGggGAKuyGdqi2?=
+ =?us-ascii?Q?2xLY6scN3Jgs487vQQyiYrK+e8aubgDYF45Ik/5TCBko0BwFRZi8hyyWYm3R?=
+ =?us-ascii?Q?WF79JmodLDz6aaYxBUYMM3Nqg1z6NULelpbsXpytqEs0qmGSaOKIxkEpmQl0?=
+ =?us-ascii?Q?pFRCf6D5vpGwWmG/g+92WE5wSdUXOafGZ9NJad81KD3hgfmeAPdLkhyz75te?=
+ =?us-ascii?Q?ifAz4/sbAU7HHvbdKZrHBABONP2dwojm3qAMbbCRXUxvEg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR10MB2957.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?H5ffpwvzk02yjQr782nAieikz3cS4/mcvry3YRuSPDlZ4ilZtd3kS8X4qyVs?=
+ =?us-ascii?Q?UwIS6B6L/ySa7hovWl0SIeeeB8e47LEW6imBDDy/0zROl0fDQgcQWgRA+MEY?=
+ =?us-ascii?Q?Jp6ku/Lvhh8C6g5fHLE0cqhSNPBK9Hl2MDWtW2pM2XYXJZY/BMaHNOCV20Qv?=
+ =?us-ascii?Q?yg7dIkuNZtZRQff8vH4jw4YaGalwdk1rrcvzQy1AMBPF2hzwTseP01rXL/R3?=
+ =?us-ascii?Q?vAu+OUpZN1Nms3Ly21W0CL2oETj37JK1IigiNmufbpbU4ozOR5yQBW2dboWi?=
+ =?us-ascii?Q?Sbj3bBlXYI1UpUimjR63Lfi2RuW7RSrx0q3KHvmFpCh9EGfOYWfo/pQI6uig?=
+ =?us-ascii?Q?2P7wFcqhqcqDF1NGwXj8QIxTxrUzJyyTTkIhWKZ+6yt1xjCZ9csRMtqPOvvQ?=
+ =?us-ascii?Q?UWmaBfmVIrt9l9bWUOPU5XdX3kPi39PS9c1QSi0ldDkRHqwLUS33vaCrYL30?=
+ =?us-ascii?Q?9vDqp+OUblKfLrVBJidbesHnpiRg3tiSCqfR6wd8oJAleZXe7PMt7kIGf1Qo?=
+ =?us-ascii?Q?m6eFVudBk8F+gyAR3K4KORWqJHuS9VOq3FkAJKgYqlY5s2kWpzmM/SbHfdEa?=
+ =?us-ascii?Q?Le+yahuHmunT8GCAMyh7cbDQ/LSewrT+wV0Q9aHSIDSiaTNclEzyrD6GhUFZ?=
+ =?us-ascii?Q?LnNtgYmoBstonZRKwFBkoZFB8i0BFMUE18+Nf0/OeTHl22d9QmnPNDb8sMbU?=
+ =?us-ascii?Q?Geabf0pRoeFNN4mzVtWV1mjIs/MZ+JdsRLFQcrBI86/zgmqdGNBHRihypQ2k?=
+ =?us-ascii?Q?OsODycQsjjsHvST8tr3fAjgNFV7k21iCzJlZkpKK5N/cyRSwGYixk3pbZEUi?=
+ =?us-ascii?Q?YYlonsvPMzMG7M518nvjHQHmieHqy4+Jb4L9bAPGXFYSHIOwwS2u7+ph/heB?=
+ =?us-ascii?Q?6JdcBOGxcyYS5+5ow9NLNw0+83t8y3sdeEdaYUpV9kS851Vj6MJ2/XLXSsGO?=
+ =?us-ascii?Q?1aQfJRkXQ8fxY8tdcNRevd9Ioi41Wc3ZdvJQpkgct1kuKC6ukrfBdV7zQJJB?=
+ =?us-ascii?Q?KjMEhiwNu8VdAvLJA2h0qonzXAqyNSfRwLcIFJox6186nusHw5vVRf6rWj2M?=
+ =?us-ascii?Q?TR9TGGEjK9StbCDcN4PVhq104Vb3o1zmInF6T5wdkxV8OxEOBXqLCxxi2d2N?=
+ =?us-ascii?Q?KOAkPz1pgD75tnyhsC2T681f/UGYcXtSTTm3raFK+LWj9vmQ2jk8e6Ejw28J?=
+ =?us-ascii?Q?CYkgDS2yYZEJqyi0v2sBNocFGf0wiSrfdDstwGGMrJt8oUe/V3JNNDiAKhJ9?=
+ =?us-ascii?Q?JBV06QBgbN86Hl4z2uK7YoexXx4ZI7wCOg6vEQZyUC0zMEPwmBTAUbCBNYAL?=
+ =?us-ascii?Q?ITqmbU36N2jXfJ1q3ED7WcSc3VsZK46Muzu3gkMXXLTcKLwjqd6/75gwSb7Q?=
+ =?us-ascii?Q?bGEiEl+NN1lk2/y/NWHbawjqGMx80BifNwSU/jXzRHuvstuiGIT6PXV/7QkK?=
+ =?us-ascii?Q?LhUjvA1Do8/X/QGeP2nDrkJDQIQsMKekjoI1OvHafBmYAl3GodzYedt9qm41?=
+ =?us-ascii?Q?MbRhyCEihqwmTdLrv7KCBLrtWCVS8sm5Tg55ZT09XC9coT2CUML3lJhUlNWr?=
+ =?us-ascii?Q?PM4OP2B2VicxXWY5hpGHoDnRpa0TuwNJ3y1Wkc/kzO6RIlVAQgCcpCoEVsmc?=
+ =?us-ascii?Q?dw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	vazJUGsbDWrFarOGLtiFn5FE3lQQBGQJfFT6KzyrSw2ZJHIGOwUNDQDr78bx2ljO6t2QJgNU6OJRQ0mwEuRvEH3zLmTC/u0Veb12EN0SBAYtFBnjIjedhfMxD6h8mJPBCbs8iBqtYDW3mnv6Zxezr2f4n+3FaYEYgKHTJ+a9fJb+QGWeJcZRlFwjrYkUCER5T2Ygr8pTfW1C0RxyBr4hTXMbCvKsZ6D3rFwqks9ghM4NjXBoFgKhoA2cDm4+BLYG7YW9i32dJwYDz2nAwIVOYkaird1rKbvyKWqf1JyxWShwM1zK+L8L/H7W30Fafyo65peybhhwVDsSAlkGRFxFpuCe4n9w4xdYVIav0VNZB8/2bwiUTU5T1ffR+TUFxNGEcmVAfIbOkHoh3WqypaoJUIHJPpJf6a0aSe7TPrp48h4n3ttBERRFncdvUnRzC93a/NvdM4qtqG2aTipn4oh0e9an74vBZAurWSazHWNilcyT1ETtR8GkNsKNAcPJTJg7Gq4EvDbnOs/JAmdc9uOIdcFOo9kLaCqNAUplfL0M/MwVLr1tj4LzXKertB2O3Ig3eHHdO+nxADnldOK9w4spZ5erXDeNKUthMCq2Gde+hKc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3cde5a3-7967-4985-3c05-08dd0e8ee039
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR10MB2957.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 02:54:56.8642
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UUbfyedkzHLI9wq4BQiemyra2TN8GD6JpLA8Pqken+xwDkE7uu5ylR1of7eb5mPqhDAK+32LS8/P2Fv3oSMibLgflE6PXQ4fxFgBB2uxbuA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5870
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-11-26_16,2024-11-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=793
+ spamscore=0 suspectscore=0 mlxscore=0 phishscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2411270024
+X-Proofpoint-ORIG-GUID: MkiKOjwPfZ53bRR5qCqnyJxj9kVuAd9I
+X-Proofpoint-GUID: MkiKOjwPfZ53bRR5qCqnyJxj9kVuAd9I
 
-On 11/26/24 8:07 AM, lizetao wrote:
-> Hi,
-> 
->> On 11/23/24 5:23 AM, lizetao wrote:
->>> Hi
->>>
->>>>> On 11/19/24 1:12 AM, lizetao wrote:
->>>>> Adds support for doing chmod through io_uring. IORING_OP_FCHMOD 
->>>>> behaves like fchmod(2) and takes the same arguments.
->>>
->>>> Looks pretty straight forward. The only downside is the forced use
->>>> of REQ_F_FORCE_ASYNC - did you look into how feasible it would be
->>>> to allow non-blocking issue of this? Would imagine the majority of
->>>> fchmod calls end up not blocking in the first place.
->>>
->>> Yes, I considered fchmod to allow asynchronous execution and wrote a
->>> test case to test it, the results are as follows:
 
->>>
->>> fchmod:
->>> real	0m1.413s
->>> user	0m0.253s
->>> sys	0m1.079s
->>>
->>> io_uring + fchmod:
->>> real	0m1.268s
->>> user	0m0.015s
->>> sys	0m5.739s
->>>
->>> There is about a 10% improvement.
-> 
->> And that makes sense if you're keeping some fchmod inflight, as you'd
->> generally just have one io-wq processing them and running things in
->> parallel with submission. But what you you keep an indepth count of
->> 1, eg do sync fchmod? Then it'd be considerably slower than the
->> syscall.
->
-> Indeed, When performing REQ_F_FORCE_ASYNC operations at depth 1,
-> performance is degraded. The results are as follows:
->
-> fchmod:
-> real	0m2.285s
-> user	0m0.050s
-> sys	0m1.996s
-> 
-> io_uring + fchmod:
-> real	0m2.541s
-> user	0m0.013s
-> sys	0m2.379s
+Bart,
 
-That's what I expected. But actually looks like io-wq does a good job in
-this case, that's pretty close.
+> There are some strong arguments in this thread from May 2024 in favor of
+> representing the entire copy operation as a single REQ_OP_ operation:
+> https://lore.kernel.org/linux-block/20240520102033.9361-1-nj.shetty@samsung.com/
 
->> This isn't necessarily something to worry about, but fact is that if
->> you can do a nonblock issue and have it succeed most of the time,
->> that'll be more efficient (and faster for low/sync fchmod) than
->> something that just offloads to io-wq. You can see that from your
->> results too, comparing the sys number netween the two.
->
-> However, when I remove REQ_F_FORCE_ASYNC and use IO_URING_F_NONBLOCK,
-> the performance is not improved. The measured results are as follows:
-> fchmod:
-> real	0m2.132s
-> user	0m0.048s
-> sys	0m1.845s
-> 
-> io_uring + fchmod:
-> real	0m2.196s
-> user	0m0.005s
-> sys	0m2.097s
+As has been discussed many times, a copy operation is semantically a
+read operation followed by a write operation. And, based on my
+experience implementing support for both types of copy offload in Linux,
+what made things elegant was treating the operation as a read followed
+by a write throughout the stack. Exactly like the token-based offload
+specification describes.
 
-You would not expect it to be faster, as it's really just doing the same
-work through a different mechanism. I'd expect that to roughly be within
-normal variance, and if you're not doing a submit_and_wait mechanism (eg
-you're doing submit and wait separately, hence doing 2 syscalls for each
-fchmod), then that likely explains the discrepancy, if there is any.
+> Token-based copy offloading (called ODX by Microsoft) could be
+> implemented by maintaining a state machine in the SCSI sd driver
 
-And you'd also need to actually be able to remove REQ_F_FORCE_ASYNC to
-have this as something that could be included. Otherwise if vfs_fchmod()
-blocks, then you're now stalling the whole pipeline. Removing it just as
-a test is fine, as you did.
+I suspect the SCSI maintainer would object strongly to the idea of
+maintaining cross-device copy offload state and associated object
+lifetime issues in the sd driver.
 
->> Hence why I'm asking if you looked into doing a nonblocking issue at
->> all. This won't necessarily gate the inclusion of the patch, and it
->> is something that can be changed down the line, I'm mostly just
->> curious.
->
-> Does this result meet expectations? Or maybe I missed something,
-> please let me know
+> I'm assuming that the IMMED bit will be set to zero in the WRITE USING
+> TOKEN command. Otherwise one or more additional RECEIVE ROD TOKEN
+> INFORMATION commands would be required to poll for the WRITE USING TOKEN
+> completion status.
 
-Yep that looks like I expected. io-wq offload will be fine if you're
-doing a bunch of fchmod, in fact it'll probably end up being faster as
-you reported. But if you're doing single (or few) fchmod at the time,
-then io-wq offload will be a bit slower.
+What would the benefit of making WRITE USING TOKEN be a background
+operation? That seems like a completely unnecessary complication.
+
+> I guess that the block layer maintainer wouldn't be happy if all block
+> drivers would have to deal with three or four phases for copy
+> offloading just because ODX is this complicated.
+
+Last I looked, EXTENDED COPY consumed something like 70 pages in the
+spec. Token-based copy is trivially simple and elegant by comparison.
 
 -- 
-Jens Axboe
+Martin K. Petersen	Oracle Linux Engineering
 

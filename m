@@ -1,125 +1,99 @@
-Return-Path: <io-uring+bounces-5082-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5083-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4311E9DA8EF
-	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 14:45:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5BEA9DAC1E
+	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 17:57:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08738281165
-	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 13:45:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 025A9B22CD6
+	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 16:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31881E526;
-	Wed, 27 Nov 2024 13:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C479200B8B;
+	Wed, 27 Nov 2024 16:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="ls0XdH9n";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="1KKakUS3"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EVkoPE+I"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2728F1DFDE;
-	Wed, 27 Nov 2024 13:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE99425760
+	for <io-uring@vger.kernel.org>; Wed, 27 Nov 2024 16:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732715144; cv=none; b=Cypk9noUQc90o3sYF9RQjdSsFXkp4sB3EOW0Fz2OcfBGy92w0T73SJfSTFIUmqp4b+NsAa66E9d42/S15umIS0uviyD06Qo8pxMTe1RsKmzOs1S1hjLnCCAusfnJNB2S41KsWmqt9E9RpdQ5VnpQ5hNZ0XkKgcW5cJTfnI/j1LM=
+	t=1732726662; cv=none; b=nbXzLfbBblhUpkWQcm7O/S35deubbTyYm04+vqm1k0lF++DAJ4CMZOF8JmRHpvii1vLwbp/QWsWE++35b8mCmSAxwJVzLEYBWVJoxjsIGL3ZAWytiM89yBqtnYcflndJHT/Qy/QOLqWB66ggYrNryIhJwOXBT51e/T4eYHa0F7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732715144; c=relaxed/simple;
-	bh=WASvX6hE/rWlVrt9suJmdieDasH6GZNfFERR2LOcQo8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QvCpK+Kb52PPAu5e+odnQfSQsnw4uheG/ZbfrPdaOK1UFZj15OJbK7MlAu5BRAbcopVpgxKMVf93J2myBOP9pmabsHhb9bngP9wifBf02m/TDyL9yotAhSUIGh9mCL4YoOq1BTe3DRXaC0ZJeqgqcz5P75nry/yPhG0pbUMLu7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=ls0XdH9n; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=1KKakUS3; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1E5DF1140176;
-	Wed, 27 Nov 2024 08:45:41 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Wed, 27 Nov 2024 08:45:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1732715141;
-	 x=1732801541; bh=WASvX6hE/rWlVrt9suJmdieDasH6GZNfFERR2LOcQo8=; b=
-	ls0XdH9nMrnVo4q23xg4eN6u9OvcFHMVLANpmjWNt/FhRrUcigL2BAXRfLXUjM1y
-	bsVeCIt0GgphkhpLCjxuRKcFkdC2uIPWZygQ3D/eSLS+iawptOl01D5OnI4oM+77
-	ainM754U3IXlvGvhMPJK/7nOcIkkRCowARStT8yIxJ4VU2uAfK9R4mikzkp5nhJp
-	QfBBVAzauEL2IALfTS8I6zJAOgkuc6SjYuvWYQb+C2zkxd96bMAmFW0Tr4mmYOsl
-	Ao2MWIJEC7EIFYeYbWiedwOE47VuRugloXE0OFm2b6IBRaY5/LVymqo1V5ybtIKC
-	CYdGbJV2wQffUvb2nrTsLw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732715141; x=
-	1732801541; bh=WASvX6hE/rWlVrt9suJmdieDasH6GZNfFERR2LOcQo8=; b=1
-	KKakUS3x7pr08JKrmEHxjhuEnH1Tb0GGXY0OqmUWu981UuHsV7GH1dF7r6jLU2pX
-	ADJbks1qGZQB1di+YlotTMaYJpwOM6XCT2VVl3pVq75oYZks59YKVs3jRPe5BYP/
-	XUaVM/ucuW4HjvUpRPcB4PiMLWIroVKEmL5S6py12kRYk6R2nQC4TXVRkTDZAhVG
-	vygpeOjFaiAr/M5NfCfCvGZZTKkjfgTf9sMcUiABFfCL+syn57hTD01/g3j+WPTd
-	jxLB9aqG98wU/NbNwSX9ebW/u5zUEFmLXEamGBS4n+AznomgkKQoMgUMsdfITgsV
-	KU0PobM6u8wyIZbsXo11Q==
-X-ME-Sender: <xms:hCJHZ8_gjzhFAOA_ZiIC2rWgY0d7TPVjwHvuTYv8Gm8o7XgeL7Zuug>
-    <xme:hCJHZ0vOBmIKpykQh69737ctQ5uABO45CwJ677Oj0VTbpGAYCZ1IUhZoBm3qT3d8v
-    az3OrIsa2VVezKF>
-X-ME-Received: <xmr:hCJHZyCQwQgA6NKgmwrjBi6JDGM-lrA-UWv6oB7NSct1sM093rgKvdu0Q7XkGK7cOMPSHLIqUpO_Io114bmDGmpu1V5m7kkEpxNlLernYAcOXFWVFmNx>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeelgdehvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
-    ucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrh
-    htsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddugfdt
-    gfegleefvdehfeeiveejieefveeiteeggffggfeulefgjeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthes
-    fhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopegsshgthhhusggvrhhtseguughnrdgtohhmpdhrtghpthhtohep
-    mhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopegrgigsohgvsehkvghrnh
-    gvlhdrughkpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtth
-    hopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopegrmhhirhej
-    fehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:hCJHZ8eJSoQa65jLX3Sz1rmcZepTGDbyGDirymdx2q60qKK56v3LjQ>
-    <xmx:hCJHZxM4PR16H1lIwKHyLOaUTo246KngNdGmihf97P7Qs8TVdRxtjg>
-    <xmx:hCJHZ2mO3B-srq6zK2pCAqQejNMrmjm21kR1pJFpO1UQ7zPMG4yocQ>
-    <xmx:hCJHZzuKRII2NrQ0jbP11dliVard0_b_3kmalnc4I8C_JeCPr-Rk1w>
-    <xmx:hSJHZ1mP4wXp--MdfTTQ9lcSCBzqWlJccRFeJHUUSa_IyQ-0EYlq3-vB>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Nov 2024 08:45:38 -0500 (EST)
-Message-ID: <821bcf94-4e95-4be7-9136-f5839c18009f@fastmail.fm>
-Date: Wed, 27 Nov 2024 14:45:37 +0100
+	s=arc-20240116; t=1732726662; c=relaxed/simple;
+	bh=zV8DAPljRgz7vNiJSquCmNtThDdjwLeq0i5+TJ0owsw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=h1Y0lBGuAMfhqVpsVGX2D3tg2hU8RjJM3CrBP/4TYMmNfy3ANWwYr+kfBhMyQ1rvsC2LQtew4mpHimis4eL7ClAwyQ734Tkv60gvHc/pYehAT2aXbuR0dgo6Wn/5YIoVOOrMiEYYgTprWYSIKDDnrRCsqjXsJHTX2zOhwy51oUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EVkoPE+I; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5cfc18d5259so11243a12.1
+        for <io-uring@vger.kernel.org>; Wed, 27 Nov 2024 08:57:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732726659; x=1733331459; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zV8DAPljRgz7vNiJSquCmNtThDdjwLeq0i5+TJ0owsw=;
+        b=EVkoPE+IPINN8wKj4d/569SiywVT16o+D18gx7jrLqvQPthBkjH3UgrFFd+WIbIzIF
+         GMXKVV6uN/CLTNvvvBlh1+ecOXRDOpu+pJSu9idq79IfsiPuapeRhkLYdR0dm2i5ivRQ
+         29eRQ8SU9vi547Ta7tkK+6tyZg4K4EAcOmt6chpl9M8Mvt8Re/yHe5oMM9gtdNYz6luy
+         ptk3MPB8Z/7Xj3c8FvCHrdTbjBri/lPB+TdBUumM7PPcsGKmprBGQrS6kUnNtsLWMPPO
+         K6qnYrsd/0DYTMpKfXgwqn3fdhigmlgZ2rfO9yxAmfHdjSGR6GSb7Q4lGNbXQcfgedar
+         rv6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732726659; x=1733331459;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zV8DAPljRgz7vNiJSquCmNtThDdjwLeq0i5+TJ0owsw=;
+        b=K7HrhHq2kgDj+Dj8SYdNQKjYD8xcpwejjsYEAbIRUXDhCPNlZIBnFIsLutcsov9NPV
+         w1J9ixWqleLMIPE72SgvJoJGSxT9w+zU8sfP8RO50R6nm9vXpKdrwEp4iHQ8z7xA0FXb
+         C60XkCL8wO+OqHQtnhGUapZ5Q5ZLoZqTyvY6eSpX1jxppKGs9FXXLuM6JjLqvyF0eeHv
+         mmKkKIAwJbdqNuPk1hHCj/XbmR5qUozZueFdnQcoRakjg2e9W8Ih2LHHsEMX73939gOX
+         CBAHWjKg1vWzfnZgFP1Aj78/hRAmxTLhLm/3fUKzOHrjAHgBSyeG60XU8QW6vdblWNiV
+         E2kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhivs4kQ1OCanFIXdGSxjeKGgNmavaKIWUN9/AxvnHawiV/VdVvhwX3BMKwin2ejrpYNSkg6WBdg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8WcakVJmIQxi/kugqP6BhwL3XJj3mdEXl4ckIN20pNwTEeB5+
+	6pF88ppie9eXG5uYj3SYAhrKYp19JyzxJAvr1yrh/2RseRAYThHjg1evCINN2vM2V1czYNmJ1G9
+	Z0p0jwIN780ZDVHUPvsmqyYP/tILpq8C1WA9K
+X-Gm-Gg: ASbGncuG90tf2p5uqvNU33ibXEFapySuHb017QeB98CRmTBuPy6XdSutpmMw4a4DnhG
+	hstZcDS17HRKT1EDHCwWhj3gqlhFH5dlmPZ2ZEVzaYu7YN10ydaqSJiI48fM=
+X-Google-Smtp-Source: AGHT+IGQ9jgicjt+kWH1dNUS0ZsDi3II7a3kom0Ep+yb8h5w/6qbGHt84K1Y7lvl5V6Y3Mq5BRi1R/n3oXlcmdvRKJo=
+X-Received: by 2002:aa7:cd50:0:b0:5d0:f39:9c7 with SMTP id 4fb4d7f45d1cf-5d083570c07mr73959a12.7.1732726658907;
+ Wed, 27 Nov 2024 08:57:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v7 00/16] fuse: fuse-over-io-uring
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>,
- David Wei <dw@davidwei.uk>, bernd@bsbernd.com
-References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Jann Horn <jannh@google.com>
+Date: Wed, 27 Nov 2024 17:57:03 +0100
+Message-ID: <CAG48ez21ZtMJ6gcUND6bLV6XD6b--CXmKSRjKq+D33jhRh1LPw@mail.gmail.com>
+Subject: bcachefs: suspicious mm pointer in struct dio_write
+To: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org
+Cc: kernel list <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, io-uring <io-uring@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi!
 
+In fs/bcachefs/fs-io-direct.c, "struct dio_write" contains a pointer
+to an mm_struct. This pointer is grabbed in bch2_direct_write()
+(without any kind of refcount increment), and used in
+bch2_dio_write_continue() for kthread_use_mm()/kthread_unuse_mm()
+which are used to enable userspace memory access from kthread context.
+I believe kthread_use_mm()/kthread_unuse_mm() require that the caller
+guarantees that the MM hasn't gone through exit_mmap() yet (normally
+by holding an mmget() reference).
 
-On 11/27/24 14:40, Bernd Schubert wrote:
-> [I removed RFC status as the design should be in place now
-> and as xfstests pass. I still reviewing patches myself, though
-> and also repeatings tests with different queue sizes.]
+If we reach this codepath via io_uring, do we have a guarantee that
+the mm_struct that called bch2_direct_write() is still alive and
+hasn't yet gone through exit_mmap() when it is accessed from
+bch2_dio_write_continue()?
 
-Sorry, my intend was to remove RFC status, but then forgot to
-actually unset it :/
+I don't know the async direct I/O codepath particularly well, so I
+cc'ed the uring maintainers, who probably know this better than me.
 

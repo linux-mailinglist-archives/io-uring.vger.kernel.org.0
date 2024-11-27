@@ -1,152 +1,148 @@
-Return-Path: <io-uring+bounces-5092-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5094-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82119DAE9D
-	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 21:45:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DD409DAEC8
+	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 22:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B4C21644DA
-	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 20:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4103016616E
+	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 21:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75F9202F8B;
-	Wed, 27 Nov 2024 20:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420A214658C;
+	Wed, 27 Nov 2024 21:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n4xBvR6M"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="uCEoSSMJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 001.lax.mailroute.net (001.lax.mailroute.net [199.89.1.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA14202F7F
-	for <io-uring@vger.kernel.org>; Wed, 27 Nov 2024 20:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BCC140E38;
+	Wed, 27 Nov 2024 21:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732740301; cv=none; b=OYIXz/mfjl1cCZgxwaHUwtqQenDDdYgq+yNv9rZLiVNu/cU4mhY7HKXCf4MVI7y8j92i4+/VLoeX86ifoxZA2JrTHIgA/T/HQJ9JMgxlVn1VYVevf3L6lD44eUSkLrd0YvypLk0IqryUnVv+5g0694H/08I+hy6+BcWheFcTh9I=
+	t=1732741754; cv=none; b=MiQ5Hw5aYT/+pJivCPZWu/lBJvjfWOkc+pNle+jOUvbFaSKpWZMB9+ZIAjhV70x1naekDpBEAOhXBU2mn8SdGUn6DRV/9zGJH95c6qznuoM0wbG0yffpaon7f3aF7DmbVA9Dh1FEjNb2x+IRz1hxbQmyd8Z63Lrk8mair08M2zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732740301; c=relaxed/simple;
-	bh=jggjXI19QomOcJC0VrOzKt7+E3raOImS+ezgvPUnZc0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M9hM8vPhrGr2eJcTYaGPQz330N5OYnpPbXlNw1f0q1WuvK5tQK6XYvkYBSAUK9HmPdJ1EocH0Cq9hOm9u/3+Tw2Q+NsHfjuFT/jBjUz21LpLt5GdYZR4DT58hD2CRNBPyKETJlDN2AcTooceRiTlSiVmGyxeAw3JGqW9V2JIQQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n4xBvR6M; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cfb81a0af9so1238a12.0
-        for <io-uring@vger.kernel.org>; Wed, 27 Nov 2024 12:44:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732740298; x=1733345098; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jggjXI19QomOcJC0VrOzKt7+E3raOImS+ezgvPUnZc0=;
-        b=n4xBvR6MJDL+2p5LRR4BSyUs4ZF6kKh3QXyTjVveK6Rz/fQPhnpGHIlfyNCIHyTPqR
-         Mjwf3lwHJUxyxyX9JcjKBuP5MHurCZ3zxEULxDLXy2PyX91FNXV4G+m5lktSglxMQeyQ
-         0PiF9ZHcIq+5jTtlJIOcYKFyZM86dkTLoNJE4HuMHJDYdO7ZJnKzung+9rjHPkPh8C1U
-         3G5oM/3LyDz+JR0KEZz22O0Y/KtHBGPT9CdzOfgikyFmyUhpOQcy9pVmDsI/HP9fHQOl
-         i5LjRdVNsACQru5UWZieU1F7Wou2xrtpaXq3LOCuWfCKHPWG/WVN4A6QmSEUzMNlvN52
-         0D2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732740298; x=1733345098;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jggjXI19QomOcJC0VrOzKt7+E3raOImS+ezgvPUnZc0=;
-        b=ae3jKxpa+hbvnW8QQn3eeKm7EOFoAovOFXHkPIWZ+vOICESFR2O9njmlXtCkh8QDkT
-         e2M+IxNNPIIXQH/vcKL0FzNsG6+VXSyFzNNADpgjSwh9Og0X+f9jnkb6pxE6xTwY0VtM
-         QN52PBZkWRZaeSlbjhIIMlnfrFpG1sxALz29ane+cor74iHT1Q1AIJeZze0KB9THhZKC
-         TjpfvR9LX1c2iHCNAhdjjE6dZTfNJMbtKJkpKVPpvDk8jdSXxuNTt4DXYq75CuNR318h
-         2y3BxbPMfilMPQXA32r5Ez/HY5nCJR9zTBYEeQMi8psaH9xMqs7StwDCXF9S1n8kq7ex
-         N53g==
-X-Forwarded-Encrypted: i=1; AJvYcCW7db7RSWW8gmL2Xdq8PfQzbDF7jWMRfy+2RllxqZex8I+gp6RqxG1nNDah5a9cXCEFnWY6xpg7gg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBNymNPxBn8fQKK6qiVzlcGfxmUuhhsqqlJAd71zG/nkBy7MGW
-	oD3U17P84CJ4slCwmB70kfu/s6tsjyIGEkN5i8rUiqpISHDRaHstjvTcGnUegZH+d2AHtIhhdJL
-	zS1s8nGBGVVZaQtRQb6UtEUyLGpk2ZlKk9kON
-X-Gm-Gg: ASbGncv3T4DD77WlkrNTpWRFqwUlHrY6jl4ANF35PtbfKbS7apKJRnpctrv6fRuCKmP
-	0U0u6+3xflRzEn4cQShnmsuDAsDl/aClnRy5k+yqeAvGAHowxc8gUUGRAbKg=
-X-Google-Smtp-Source: AGHT+IHQB+8oGSK3zdPvtgz6S6SyiqPETkntE12pYAX253PuYuK4Vzv21Xyw9t/bTWzeeChut+pQa8GfhYvgY9/IrYY=
-X-Received: by 2002:a05:6402:3184:b0:5d0:8723:487d with SMTP id
- 4fb4d7f45d1cf-5d096427400mr8792a12.5.1732740297709; Wed, 27 Nov 2024 12:44:57
- -0800 (PST)
+	s=arc-20240116; t=1732741754; c=relaxed/simple;
+	bh=D5XBnnBSHb+YFe5/5cmsGkYiGUO3cyT7bmOr+0fb0Ys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YE6TLVd2k7NpuElKYxRaiFnhiYlxOV3cdw25vQB+k8OQm1kICgVpJmae5cRMf7hjXDElJGOlUEVruok2V5ixptbRlZMtM5G3RDvwjTNQqY11rriotfCaLPp97cY+wIm9kG7sYmP5ZK6cIu6s/WSkv03yA/wHd4onfjMtzj7XAB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=uCEoSSMJ; arc=none smtp.client-ip=199.89.1.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 001.lax.mailroute.net (Postfix) with ESMTP id 4XzBnh0yn9zCm9g;
+	Wed, 27 Nov 2024 21:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1732741585; x=1735333586; bh=ISWmwIbPKWfnjDw9QIg1JLPO
+	j+G2EW60oaWfrSMy0X4=; b=uCEoSSMJdJz7xp88pY1TWob0jGDsqDNccGMqS43u
+	t5Z4bVukZBCn6nC6PMTFXOnHMzPBWW2zKn/aCxyRBv4nwjGB7o5mw659cFHHaYM4
+	HXR1VdI28t5MqtRgLAccV10Xn9SQbt6vuR+yU+Ot3NCOtIUehoYfemN/zz4dMywy
+	lmfUsQA/pf/KYtnsGVSShANNiEx7oCSbheaKC5pZRww61kY0mUq5ASvHtczAaX2n
+	wlG1kxyWGAXUY0rcNElD+heejviIukL/DvU79d56l6Z/RT7YZWxA0N3q9mxIa/ee
+	kJMK3rsFLKILTjEKHplUUCazHjODyGjOQvo+7SkBzixi3w==
+X-Virus-Scanned: by MailRoute
+Received: from 001.lax.mailroute.net ([127.0.0.1])
+ by localhost (001.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 9S9ba-RE9LAW; Wed, 27 Nov 2024 21:06:25 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 001.lax.mailroute.net (Postfix) with ESMTPSA id 4XzBnR0q0kzCm9f;
+	Wed, 27 Nov 2024 21:06:18 +0000 (UTC)
+Message-ID: <7835e7e2-2209-4727-ad74-57db09e4530f@acm.org>
+Date: Wed, 27 Nov 2024 13:06:17 -0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAG48ez21ZtMJ6gcUND6bLV6XD6b--CXmKSRjKq+D33jhRh1LPw@mail.gmail.com>
- <69510752-d6f9-4cf1-b93d-dcd249d911ef@kernel.dk> <3ajlmjyqz6aregccuysq3juhxrxy5zzgdrufrfwjfab55cv2aa@oneydwsnucnj>
-In-Reply-To: <3ajlmjyqz6aregccuysq3juhxrxy5zzgdrufrfwjfab55cv2aa@oneydwsnucnj>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 27 Nov 2024 21:44:21 +0100
-Message-ID: <CAG48ez2y+6dJq2ghiMesKjZ38Rm7aHc7hShWJDbBL0Baup-HyQ@mail.gmail.com>
-Subject: Re: bcachefs: suspicious mm pointer in struct dio_write
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-bcachefs@vger.kernel.org, 
-	kernel list <linux-kernel@vger.kernel.org>, Pavel Begunkov <asml.silence@gmail.com>, 
-	io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Nitesh Shetty <nj.shetty@samsung.com>,
+ Javier Gonzalez <javier.gonz@samsung.com>,
+ Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "joshi.k@samsung.com" <joshi.k@samsung.com>
+References: <20241105155014.GA7310@lst.de> <Zy0k06wK0ymPm4BV@kbusch-mbp>
+ <20241108141852.GA6578@lst.de> <Zy4zgwYKB1f6McTH@kbusch-mbp>
+ <CGME20241108165444eucas1p183f631e2710142fbbc7dee9300baf77a@eucas1p1.samsung.com>
+ <Zy5CSgNJtgUgBH3H@casper.infradead.org>
+ <d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
+ <2b5a365a-215a-48de-acb1-b846a4f24680@acm.org>
+ <20241111093154.zbsp42gfiv2enb5a@ArmHalley.local>
+ <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
+ <20241112135233.2iwgwe443rnuivyb@ubuntu>
+ <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
+ <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
+ <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
+ <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
+ <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 27, 2024 at 9:25=E2=80=AFPM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
-> On Wed, Nov 27, 2024 at 11:09:14AM -0700, Jens Axboe wrote:
-> > On 11/27/24 9:57 AM, Jann Horn wrote:
-> > > Hi!
-> > >
-> > > In fs/bcachefs/fs-io-direct.c, "struct dio_write" contains a pointer
-> > > to an mm_struct. This pointer is grabbed in bch2_direct_write()
-> > > (without any kind of refcount increment), and used in
-> > > bch2_dio_write_continue() for kthread_use_mm()/kthread_unuse_mm()
-> > > which are used to enable userspace memory access from kthread context=
-.
-> > > I believe kthread_use_mm()/kthread_unuse_mm() require that the caller
-> > > guarantees that the MM hasn't gone through exit_mmap() yet (normally
-> > > by holding an mmget() reference).
-> > >
-> > > If we reach this codepath via io_uring, do we have a guarantee that
-> > > the mm_struct that called bch2_direct_write() is still alive and
-> > > hasn't yet gone through exit_mmap() when it is accessed from
-> > > bch2_dio_write_continue()?
-> > >
-> > > I don't know the async direct I/O codepath particularly well, so I
-> > > cc'ed the uring maintainers, who probably know this better than me.
-> >
-> > I _think_ this is fine as-is, even if it does look dubious and bcachefs
-> > arguably should grab an mm ref for this just for safety to avoid future
-> > problems. The reason is that bcachefs doesn't set FMODE_NOWAIT, which
-> > means that on the io_uring side it cannot do non-blocking issue of
-> > requests. This is slower as it always punts to an io-wq thread, which
-> > shares the same mm. Hence if the request is alive, there's always a
-> > thread with the same mm alive as well.
-> >
-> > Now if FMODE_NOWAIT was set, then the original task could exit. I'd nee=
-d
-> > to dig a bit deeper to verify that would always be safe and there's not
-> > a of time today with a few days off in the US looming, so I'll defer
-> > that to next week. It certainly would be fine with an mm ref grabbed.
->
-> Wouldn't delivery of completions be tied to an address space (not a
-> process) like it is for aio?
+On 11/27/24 12:14 PM, Martin K. Petersen wrote:
+> Once I had support for token-based copy offload working, it became clear
+> to me that this approach is much simpler than pointer matching, bio
+> pairs, etc. The REQ_OP_COPY_IN operation and the REQ_OP_COPY_OUT
+> operation are never in flight at the same time. There are no
+> synchronization hassles, no lifetimes, no lookup tables in the sd
+> driver, no nonsense. Semantically, it's a read followed by a write.
 
-An io_uring instance is primarily exposed to userspace as a file
-descriptor, so AFAIK it is possible for the io_uring instance to live
-beyond when the last mmput() happens. io_uring initially only holds an
-mmgrab() reference on the MM (a comment above that explains: "This is
-just grabbed for accounting purposes"), which I think is not enough to
-make it stable enough for kthread_use_mm(); I think in io_uring, only
-the worker threads actually keep the MM fully alive (and AFAIK the
-uring worker threads can exit before the uring instance itself is torn
-down).
+What if the source LBA range does not require splitting but the
+destination LBA range requires splitting, e.g. because it crosses a
+chunk_sectors boundary? Will the REQ_OP_COPY_IN operation succeed in
+this case and the REQ_OP_COPY_OUT operation fail? Does this mean that a
+third operation is needed to cancel REQ_OP_COPY_IN operations if the
+REQ_OP_COPY_OUT operation fails?
 
-To receive io_uring completions, there are multiple ways, but they
-don't use a pointer from the io_uring instance to the MM to access
-userspace memory. Instead, you can have a VMA that points to the
-io_uring instance, created by calling mmap() on the io_uring fd; or
-alternatively, with IORING_SETUP_NO_MMAP, you can have io_uring grab
-references to userspace-provided pages.
+Additionally, how to handle bugs in REQ_OP_COPY_* submitters where a
+large number of REQ_OP_COPY_IN operations is submitted without
+corresponding REQ_OP_COPY_OUT operation? Is perhaps a mechanism required
+to discard unmatched REQ_OP_COPY_IN operations after a certain time?
 
-On top of that, I think it might currently be possible to use the
-io_uring file descriptor from another task to submit work. (That would
-probably be fairly nonsensical, but I think the kernel does not
-currently prevent it.)
+> Aside from making things trivially simple, the COPY_IN/COPY_OUT semantic
+> is a *requirement* for token-based offload devices.
+
+Hmm ... we may each have a different opinion about whether or not the 
+COPY_IN/COPY_OUT semantics are a requirement for token-based copy
+offloading.
+
+Additionally, I'm not convinced that implementing COPY_IN/COPY_OUT for
+ODX devices is that simple. The COPY_IN and COPY_OUT operations have
+to be translated into three SCSI commands, isn't it? I'm referring to
+the POPULATE TOKEN, RECEIVE ROD TOKEN INFORMATION and WRITE USING TOKEN
+commands. What is your opinion about how to translate the two block
+layer operations into these three SCSI commands?
+
+> Why would we even consider having two incompatible sets of copy
+> offload semantics coexist in the block layer?
+I am not aware of any proposal to implement two sets of copy operations
+in the block layer. All proposals I have seen so far involve adding a
+single set of copy operations to the block layer. Opinions differ
+however about whether to add a single copy operation primitive or
+separate IN and OUT primitives.
+
+Thanks,
+
+Bart.
+
+
+
 

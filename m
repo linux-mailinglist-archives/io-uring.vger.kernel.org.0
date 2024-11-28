@@ -1,195 +1,194 @@
-Return-Path: <io-uring+bounces-5104-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5105-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7DF9DAF5E
-	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 23:54:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CAD9DB037
+	for <lists+io-uring@lfdr.de>; Thu, 28 Nov 2024 01:19:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 566AC166F03
-	for <lists+io-uring@lfdr.de>; Wed, 27 Nov 2024 22:54:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AD79B22139
+	for <lists+io-uring@lfdr.de>; Thu, 28 Nov 2024 00:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9840F13BC35;
-	Wed, 27 Nov 2024 22:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B7D4A35;
+	Thu, 28 Nov 2024 00:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZmhRU+el"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hvh7o7Ic"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53AB204081
-	for <io-uring@vger.kernel.org>; Wed, 27 Nov 2024 22:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5B3A935;
+	Thu, 28 Nov 2024 00:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732748031; cv=none; b=WYm1IlT53oaJjtotvbjoZQBVKukjsHVKXFxzI/FHLCAPy2WPdWeQmZYIQzNLxPhZdqSLCr492j4V23wwM+1JB1AX80ZuDNmRWhg1mlHGa4O80d8GWYnue/aXaqZFax+osGQEGbHEFubaCdTJZJiA97s7cdYV3/k6/nCRpsIA69g=
+	t=1732753172; cv=none; b=nH2kwyOVOzMC3c+SOLoKBSgoFmk0f5mpYZsqr7eaYmCm974IGIZiz8bCqHviquQdQL6ejM5UhzCRS/6CgVpCMz9ekYaGCR6OSHJGznlos14zLggdoMVNXRqyJOisUEJRWRF+BJ7v/Jf4oOX5Cy8bjphmagc13nRk4feH7aTEw2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732748031; c=relaxed/simple;
-	bh=FTdkXYT3MbCr2UlyGLRQDYjmo7m1sFUqPEejSlQ9bJg=;
+	s=arc-20240116; t=1732753172; c=relaxed/simple;
+	bh=HlSTxNed9m4Q39gNcyPVC7WZOlpvCEyU1ZrCHZJiYhc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JmjMO4viqgD4efHqWwpMzuz29Py1QTbY2W1SO+ksbMoUCpzdVy9p7x0HWgi6BpXBT6/ZF7atL39a7dJRmpE3hi2XdIxLeRGr8gcMUxGW0z3TNclmWK4l3NpUpIVAyigVx21sAHUpRjm0dwBcUdkQUC9KKnYoTAfq8jiWYbzQchU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZmhRU+el; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfc18d5259so311a12.1
-        for <io-uring@vger.kernel.org>; Wed, 27 Nov 2024 14:53:49 -0800 (PST)
+	 To:Cc:Content-Type; b=tX7pyuGkAkLxJOAyIu/4R0GHZjzMnnzywHkCgU4haiHzT4X67QkcVnTpfHN/s5JTIpIcGcUCAu8pQQeft3InnrY3hJdw0cSCbvfnfViDv9WYuG0imofCEYxl6i9WQY6IfGbgrfIErBUnBIwDp96kAPCA+kck0cKo6iHf4cCMDeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hvh7o7Ic; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4668f208f5fso2476181cf.0;
+        Wed, 27 Nov 2024 16:19:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732748028; x=1733352828; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732753169; x=1733357969; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9Rcv11/t22rS5AI6Q5DxcJyoDs0LYfTQoHvoxeEY324=;
-        b=ZmhRU+elRjGDDTyeS7DyBblmmwbCCY6FK7xXo/kg32cEt6/2xExL8CWme3F5HyN/CR
-         lm1l+pJAMr7D/tfxr2bXYqnWAySXLjLkUgHeQvCyKo14QZMgfwQaKUuUjIsP9utENHe1
-         SfkX8IOmSp338v4J5eNfRFGNdRA4yb5cjHqdw2qHXLpSymiPUG1zLP2kMZ9HtANPZjAS
-         L03CAUU53aIUqB0PFQtcZFowVHJ1Fr6vhMOhkzFKwPavEtHmd05XHfVVpWeTrlTpW8wg
-         6khkPZwqqJae3DWBuxMJLf7wkIseII1tqcbgsUuQow4fmQzYBj3Ms8mXQoaRbvFJVfNF
-         SjTQ==
+        bh=KvI8+Z6yxtZMlzQvuoKlEClGPgHwzd6xUpgtxwNOTDo=;
+        b=Hvh7o7IchEtOCx8Y+gmkt1Vtf//847ogODcr24TWSRN938aoHVHuLuynZ2+LGFLmOj
+         IDIloVQijTRv+jiR3fBj4frf36k0wAm42V1e05eLo17yWYIhpDNujvSv74cTDWyGbh6x
+         uCEZWJaGWKI+fZPK8phqpfuZjJRLuf0KWjjA+oboG22r7NWzKyMjGKisCDOI890PVlnh
+         SC23gMlTxyKBge4yo71sb34OVoFNX0CfyrqDkOrLnpLXVRssXKADXrTVkdeYJp9TGm4K
+         ur5WOKx6zp9/3GFeLWrmL0ETtiF0YUSNiaGkAcLwr5+2jRFNa5wCnXHc4m9Sea9AZgbA
+         DY0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732748028; x=1733352828;
+        d=1e100.net; s=20230601; t=1732753169; x=1733357969;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9Rcv11/t22rS5AI6Q5DxcJyoDs0LYfTQoHvoxeEY324=;
-        b=aA/9RDi49Q43JBkKWu8o1LcPxK1j7K3ZOQ7VklWYtTPafOnDNCThdD9PwhgNiqdB1y
-         9qA6mD+6vHttCMCmdMmgx+zSayIan9sGgjGAOWdtVqV1KjEdiWvAvmD+7y/55Pu5RxSt
-         D5Coi6auYhSO13UjReVt8KwzIaPw1bD+zJzc4x2P/Qf4pIwnx8TdjrnMubq8YxDZo4Xm
-         YuLJOz+DFZ9cn4FAci+pTVZee/6sJfDCc8EKrPvK6OpikHkaoT7CB8t22WH+vitxSaXK
-         Nhpzvuv3FdXg40KPRADX0NsuKquOTBkyS60YB4KhtE7iIrF9Em8HsueCf/AsvRRehqH1
-         z+NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOEe2loHzQ7xdj95W03uFY+DYjeo+jCB//XZ/AWZPJZ5YMQtTui7nF2197quKkA5lBGUfqrrf8GQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPm+Cj+Py0YUZA+H3uokbxaK0FyXlcTvOLuaLtgNAJmU+HaQ2v
-	AtDMqHfQNjQXb8eFy1gIe+6RZiB4AujlGO+LJYgTuHyuNQP/0JRPnaXiKiKN79+H+LUgipPIrm7
-	15sBAQT+tHw5He7jVU4QGaxQWugksjwIFoKKVRGQBa9GilsMgDNoRl5Y=
-X-Gm-Gg: ASbGncv2kCbzBDuzqnnelbHHPqWeaAM4utLI1ZFexwIhoCfkr4A0mwUcnCpdWAS1/qR
-	1I+GvtahACIsE9iiGb/Jq+T19EchLF7VFGX6Fz+WROf8O4HkMPYUchI0B5EM=
-X-Google-Smtp-Source: AGHT+IGQK2NIR/Mj25JZwAIsnaefw5zRd8osQmsPGjtPZihEj18wQ3Zld5gWQM5+JyIK2eyWtjTBVR/3UzBoC24V9Gc=
-X-Received: by 2002:a50:ab50:0:b0:5d0:3bfb:c479 with SMTP id
- 4fb4d7f45d1cf-5d098206dfamr5491a12.3.1732748027540; Wed, 27 Nov 2024 14:53:47
- -0800 (PST)
+        bh=KvI8+Z6yxtZMlzQvuoKlEClGPgHwzd6xUpgtxwNOTDo=;
+        b=pJ0WE10sv+ly+JGirx5ELz9IwRFc9SjsCesN2m3+Cqll3Fmj1I65Tb5gM7iC677Mbc
+         Z1IOJr383XxO2VCEV7l7dVmSN4ImGNrMT/jdZejDhF1KZnXajXp33pWfoUC5rz11DinZ
+         fiQIkbhhHVTGcfFdnv4xd31JmQnQhGNiMXjNgLXp4Uhhp/xHxEwaLtFZirOtPA2c67gg
+         UZqmT3ximxN6bblgp13bawkwQCcS4Xu6plegy8Tqhw96g3fBdHmMKbbZr1gSUW1gtlV4
+         TRt1yPOv9wt+vYCJZG5oUQnHDtgBYR6qVxIPDMy2VOSb2w5zhWRIrAwoiAC/KWqpE3Pt
+         hFbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/p/uHh8AsZ6nRPLZmALiORUzTTWeGErCRpDYVCwVNt1cDVQnyAwu2iJeoa4SQuHgL68ww4mz/NA==@vger.kernel.org, AJvYcCWT4Sl+x1dcNrLZ8ZTgYzVau8uoY39A9YoXNpOaSxOApL80Tr8wxRd2AkH0REDtkSJ6nynMo9vW+mOhXYvTJA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6o7hL3rWoZ4EpptQiz0DpFWYOQnWiSHhrJQQM/PehcNiskAkN
+	vCWaCYJeCeX5Nsx44fX8pw1FGnRsZDcM47Zc8Ib0Fw69rygnlhQXErtkhMP2OtemLHyS6dsl1ev
+	3P92PoXplrtDohMiPmpnVBM2ePnw=
+X-Gm-Gg: ASbGnctHJeQwOi6etJLNbXBkDsr8Levb5YNGPd0uH3sNfGfs8SwHmGPTDByarLSMhfK
+	h8GoN5HWq5Nmk80kQLcuCgndlmgOZANqjgvf8Na0iWpSDM7k=
+X-Google-Smtp-Source: AGHT+IFnlTgnrcYW38HN35OhKME2+zudnPGxgqhAvM774mOQOMTM5VaA9MrrKw3v8OchEaE8UJS1mpyBaELszNIIoh0=
+X-Received: by 2002:ac8:7f11:0:b0:466:a7d8:fd0c with SMTP id
+ d75a77b69052e-466b354087bmr72790991cf.30.1732753168670; Wed, 27 Nov 2024
+ 16:19:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <fd36cd900023955c763bd424c0895ae5828f68a0.1731979403.git.asml.silence@gmail.com>
- <0dfd1032-6ddd-49b3-a422-569af2307d3b@kernel.dk> <d5e9c79f-d571-4f3a-9145-f7e349e532ae@gmail.com>
- <278a1964-b795-4146-8f24-19f112af75b0@kernel.dk> <8bc3b927-b7f0-425f-8874-a3905b30759d@gmail.com>
-In-Reply-To: <8bc3b927-b7f0-425f-8874-a3905b30759d@gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 27 Nov 2024 23:53:11 +0100
-Message-ID: <CAG48ez3QNBvryTaf7s6G--Cgcuq2_vUmgJQOFxPLeySbsGj0Kg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] io_uring: prevent reg-wait speculations
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com> <20241127-fuse-uring-for-6-10-rfc4-v7-1-934b3a69baca@ddn.com>
+In-Reply-To: <20241127-fuse-uring-for-6-10-rfc4-v7-1-934b3a69baca@ddn.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 27 Nov 2024 16:19:17 -0800
+Message-ID: <CAJnrk1bdOKvVs3mngJgcCc1q9cJ-_93ZMnxY=PSj9wNc5noA-A@mail.gmail.com>
+Subject: Re: [PATCH RFC v7 01/16] fuse: rename to fuse_dev_end_requests and
+ make non-static
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>, 
+	bernd@bsbernd.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 21, 2024 at 1:12=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
-> On 11/19/24 01:59, Jens Axboe wrote:
-> > On 11/18/24 6:43 PM, Pavel Begunkov wrote:
-> >> On 11/19/24 01:29, Jens Axboe wrote:
-> >>> On 11/18/24 6:29 PM, Pavel Begunkov wrote:
-> >>>> With *ENTER_EXT_ARG_REG instead of passing a user pointer with argum=
-ents
-> >>>> for the waiting loop the user can specify an offset into a pre-mappe=
-d
-> >>>> region of memory, in which case the
-> >>>> [offset, offset + sizeof(io_uring_reg_wait)) will be intepreted as t=
-he
-> >>>> argument.
-> >>>>
-> >>>> As we address a kernel array using a user given index, it'd be a sub=
-ject
-> >>>> to speculation type of exploits.
-> >>>>
-> >>>> Fixes: d617b3147d54c ("io_uring: restore back registered wait argume=
-nts")
-> >>>> Fixes: aa00f67adc2c0 ("io_uring: add support for fixed wait regions"=
-)
-> >>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> >>>> ---
-> >>>>    io_uring/io_uring.c | 1 +
-> >>>>    1 file changed, 1 insertion(+)
-> >>>>
-> >>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> >>>> index da8fd460977b..3a3e4fca1545 100644
-> >>>> --- a/io_uring/io_uring.c
-> >>>> +++ b/io_uring/io_uring.c
-> >>>> @@ -3207,6 +3207,7 @@ static struct io_uring_reg_wait *io_get_ext_ar=
-g_reg(struct io_ring_ctx *ctx,
-> >>>>                 end > ctx->cq_wait_size))
-> >>>>            return ERR_PTR(-EFAULT);
-> >>>>    +    barrier_nospec();
-> >>>>        return ctx->cq_wait_arg + offset;
-> >>>
-> >>> We need something better than that, barrier_nospec() is a big slow
-> >>> hammer...
-> >>
-> >> Right, more of a discussion opener. I wonder if Jann can help here
-> >> (see the other reply). I don't like back and forth like that, but if
-> >> nothing works there is an option of returning back to reg-wait array
-> >> indexes. Trivial to change, but then we're committing to not expanding
-> >> the structure or complicating things if we do.
-> >
-> > Then I think it should've been marked as a discussion point, because we
-> > definitely can't do this. Soliciting input is perfectly fine. And yeah,
-> > was thinking the same thing, if this is an issue then we just go back t=
-o
-> > indexing again. At least both the problem and solution is well known
-> > there. The original aa00f67adc2c0 just needed an array_index_nospec()
-> > and it would've been fine.
-> >
-> > Not a huge deal in terms of timing, either way.
-> >
-> > I suspect we can do something similar here, with just clamping the
-> > indexing offset. But let's hear what Jann thinks.
+On Wed, Nov 27, 2024 at 5:41=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> =
+wrote:
 >
-> That what I hope for, but I can't say I entirely understand it. E.g.
-> why can_do_masked_user_access() exists and guards mask_user_address().
+> This function is needed by fuse_uring.c to clean ring queues,
+> so make it non static. Especially in non-static mode the function
+> name 'end_requests' should be prefixed with fuse_
+>
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-FWIW, my understanding is that x86-64 can do this because there is a
-really big hole in the virtual address space between userspace
-addresses and kernel addresses (over 2^63 bytes big); so if you check
-that the address at which you start accessing memory is in userspace,
-and then you access memory more or less linearly forward from there,
-you'll never reach kernelspace addresses.
+Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 
-> IIRC, with invalid argument the mask turns the index into 0. A complete
-> speculation from my side of how it works is that you then able to
-> "inspect" or what's the right word the value of array[0] but not a
-> address of memory of choice.
-
-Yeah, exactly, that's the idea of array_index_nospec(). As the comment
-above the generic version of array_index_mask_nospec() describes, the
-mask used for the bitwise AND in array_index_nospec() is generated as
-follows:
-"When @index is out of bounds (@index >=3D @size), the sign bit will be
-set.  Extend the sign bit to all bits and invert, giving a result of
-zero for an out of bounds index, or ~0 if within bounds [0, @size)."
-
-The X86 version of array_index_mask_nospec() just does the same with
-optimized assembly code. But there are architectures, like arm64, that
-actually do more than just this - arm64's array_index_mask_nospec()
-additionally includes a csdb(), which is some arm64 barrier for some
-kinds of speculation. (So, for example, open-coding a bitwise AND may
-not be enough on all architectures.)
-
-> Then in our case, considering that
-> mappings are page sized, array_index_nospec() would clamp it to either
-> first 32 bytes of the first page or to absolute addresses [0, 32)
-> in case size=3D=3D0 and the mapping is NULL. But that could be just my
-> fantasy.
-
-Without having looked at this uring code in detail: What you're saying
-sounds reasonable to me. Though one thing to be careful with is that
-if the value you're masking is a byte offset, you should ideally make
-sure to give array_index_mask_nospec() a limit that is something like
-the size of the region minus the size of an element - you should
-probably assume that the preceding "if (unlikely(offset %
-sizeof(long)))" could be bypassed in speculation, though in practice
-that's probably unlikely since it'd compile into something
-straightforward like a bitmask-and-test with immediate operands.
+> ---
+>  fs/fuse/dev.c        | 11 +++++------
+>  fs/fuse/fuse_dev_i.h | 14 ++++++++++++++
+>  2 files changed, 19 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 1f64ae6d7a69e53c8d96f2e1f5caca3ff2b4ab26..09b73044a9b6748767d2479dd=
+a0a09a97b8b4c0f 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -7,6 +7,7 @@
+>  */
+>
+>  #include "fuse_i.h"
+> +#include "fuse_dev_i.h"
+>
+>  #include <linux/init.h>
+>  #include <linux/module.h>
+> @@ -34,8 +35,6 @@ MODULE_ALIAS("devname:fuse");
+>
+>  static struct kmem_cache *fuse_req_cachep;
+>
+> -static void end_requests(struct list_head *head);
+> -
+>  static struct fuse_dev *fuse_get_dev(struct file *file)
+>  {
+>         /*
+> @@ -1873,7 +1872,7 @@ static void fuse_resend(struct fuse_conn *fc)
+>                 spin_unlock(&fiq->lock);
+>                 list_for_each_entry(req, &to_queue, list)
+>                         clear_bit(FR_PENDING, &req->flags);
+> -               end_requests(&to_queue);
+> +               fuse_dev_end_requests(&to_queue);
+>                 return;
+>         }
+>         /* iq and pq requests are both oldest to newest */
+> @@ -2192,7 +2191,7 @@ static __poll_t fuse_dev_poll(struct file *file, po=
+ll_table *wait)
+>  }
+>
+>  /* Abort all requests on the given list (pending or processing) */
+> -static void end_requests(struct list_head *head)
+> +void fuse_dev_end_requests(struct list_head *head)
+>  {
+>         while (!list_empty(head)) {
+>                 struct fuse_req *req;
+> @@ -2295,7 +2294,7 @@ void fuse_abort_conn(struct fuse_conn *fc)
+>                 wake_up_all(&fc->blocked_waitq);
+>                 spin_unlock(&fc->lock);
+>
+> -               end_requests(&to_end);
+> +               fuse_dev_end_requests(&to_end);
+>         } else {
+>                 spin_unlock(&fc->lock);
+>         }
+> @@ -2325,7 +2324,7 @@ int fuse_dev_release(struct inode *inode, struct fi=
+le *file)
+>                         list_splice_init(&fpq->processing[i], &to_end);
+>                 spin_unlock(&fpq->lock);
+>
+> -               end_requests(&to_end);
+> +               fuse_dev_end_requests(&to_end);
+>
+>                 /* Are we the last open device? */
+>                 if (atomic_dec_and_test(&fc->dev_count)) {
+> diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..4fcff2223fa60fbfb844a3f8e=
+1252a523c4c01af
+> --- /dev/null
+> +++ b/fs/fuse/fuse_dev_i.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + *
+> + * FUSE: Filesystem in Userspace
+> + * Copyright (C) 2001-2008  Miklos Szeredi <miklos@szeredi.hu>
+> + */
+> +#ifndef _FS_FUSE_DEV_I_H
+> +#define _FS_FUSE_DEV_I_H
+> +
+> +#include <linux/types.h>
+> +
+> +void fuse_dev_end_requests(struct list_head *head);
+> +
+> +#endif
+> +
+>
+> --
+> 2.43.0
+>
 

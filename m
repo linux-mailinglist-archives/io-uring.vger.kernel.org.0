@@ -1,141 +1,148 @@
-Return-Path: <io-uring+bounces-5152-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5153-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A939DE85C
-	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 15:24:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F309DEA1D
+	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 17:04:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E40C163710
-	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 14:24:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A266FB21662
+	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 16:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539A84C9D;
-	Fri, 29 Nov 2024 14:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37A914A098;
+	Fri, 29 Nov 2024 16:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ajW7rprp"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CKB83FSa"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09451DA23
-	for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 14:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD7914F126
+	for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 16:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732890294; cv=none; b=n3SnydJwGfanf0ZDRpPY66FjrT/ns1Slo7DiThBQ0/9ssHLvisIBCUMHeb+idGM/H9FvvZWnW6Ltq2gLasF2zZWZiegN9NuRLu6t7wp8S879yFwWYJUSFFuvHoPtkFczV5Idlj9rGWKcmImyYUQrAlDm/C80KYKk10opgT5izw8=
+	t=1732896256; cv=none; b=gn6aYj4L8hf5ztlO867fVF5VRRSvFWCAUwN/HoZUuqPtaC8TkfiPdkhveXg1q1MXM7dsukvilIx/KzKXf4xAdg6LmuB9zA4Jqbj+t0B/UYugozUzzpv5Kd66timFPldo7OmI/VkE4jfLUrLHiAXEOwyz2SWeaRnrpSqq+6PEqpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732890294; c=relaxed/simple;
-	bh=78/GHYILp3TDWgld2pBYkjmeZ7jNr8iurkPDdI+F4os=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=AHx4FGrnm59gGslRIwHkXWmTF1oJfHK3i99/GHzPl4e8O8GYU+OuAix6LaTxoqkhzB2VbbcCxRkR5iEiuTI/N9xDjYiL+gmKAksW+omelTuJYXtKGM/bUvQ9BKHL8fVpL8YpneedpwGxmONblQumZELkT0xBE+FzveUNsufXCuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ajW7rprp; arc=none smtp.client-ip=209.85.215.172
+	s=arc-20240116; t=1732896256; c=relaxed/simple;
+	bh=Zqci7O9j5rM8ZCG21LOcWaj1xtRU4bg8AN66phncH+Q=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=iBWCgkrZs6s+ESXxghhaf3oAxu4jzziErlRsmx9dafs+CtJgrGywri7dBmymxwTUtTvju6nFOxI86KmpQjWlrgSh5iqxSIt2a7FzJrL/ELTCHcnmL3hC/PpKnvlivJIk5RE292oK3D6Y4zY/x+1W+66uuwxLFinjYtGA6fEbDqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CKB83FSa; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7fc8f0598cdso2018857a12.1
-        for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 06:24:51 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21260209c68so21087195ad.0
+        for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 08:04:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732890290; x=1733495090; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c5z1pyNfiiMsXiyKiAhr3SDLSW0JkO7tlykp1i5DiBc=;
-        b=ajW7rprpIHEO+g1QPSGXp8Z15Qg2jwrFtki1KDyZPLFRs6XltErIncMz7bd5nd3MUR
-         HejAhsoDMJXXW9ikNl1R2rRig62AOlAcEvMFOGtyzVnuUkKKSakIhnJ711TXHA0rdDgS
-         cmOl1eJyH8Wj5Mp1SCHuJQ1qMTJf2lxM9DkKzi0cw8SHgzPbn7pMGZC/9vHrNAMFEaRc
-         /yW39AxdXt51tIkFuTkmiaOjxhCIkQXxKqUFnoLYA/Y/30NzFzLJKRPNqg8HeRqOjUnD
-         fGG0Xq7jJK8mS3RC8AAsX3XbqvOrxPU0YRp1FGgP1gWVyisMIu1Kuht1twVf/o0HBPbT
-         LTPw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732896253; x=1733501053; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5NhEbu6ESbP8r4lc+93ETbodXsjweitvDr6notsG0O0=;
+        b=CKB83FSaTUw3rPNiwf9FTV5ZnyeX2H2kdIDHPNo8q00YzeSwGFLCtLxMwAPiL5hRG+
+         Ut6uq1dnWe9SmtwFBMptDExF5UqPS31uNREhjXgXqPX8FIdLE3Mip2xo5+EKmQleezvC
+         Vydsak/mp89An4e9YxGj/DwV2AuuSTx8TLf44u2FJi9zvMBWV9tWJzNt171kHHBeuh/f
+         QO3aWTjNGNBzS6xtU/cOl8xTDDTu5LEfk5qdYeFZLmMCyLButKF0i82ICparmtLZ3+rr
+         2ncuhPAr+iFRLz1NPNmXP/nx/rmNihdc0m5bqoHxzdLr/FoSLqtSgEcuw7aZO2Z5LvXD
+         INCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732890290; x=1733495090;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=c5z1pyNfiiMsXiyKiAhr3SDLSW0JkO7tlykp1i5DiBc=;
-        b=eezsLj2bNBbADHHErtzv5nb/nIXmE40x6YlTRiKx7FOc0DijnrYEAvA2hsLyG3zCuF
-         GeDNHBuu9GkVC5rL3fODiIK74KwoCk1L3FQUPP1kDc68gkliF8ysSp4DNgFZvLPbDT70
-         GjL4LdZTICHjJLBBbX51f3708/GszI5u87gFsXG6RV/PiY2u4u64LSNwK1w72jJ7Z2Zs
-         5jwvYVj17uHWHh3OTwRAuQcvZ0D9Emc9VSyohXG3n6RaoXwZ34js7L8eU4UDBxo2I6Pm
-         KX/hCzI/dMVon8LXndrPIGauza8Mp/ijck1Cpwp44zLK413n+Z4G4D4EosV0Axraoa7Y
-         yc3A==
-X-Gm-Message-State: AOJu0Yz5qmrs20qB3EC4KipJD5K61aYNmLjglLJ81j7k2l/bBTBmGa3b
-	TWeQ+ZvtDs309JPcItKJL/WtnhhfhANFXcNqrK1/Mf8Iq9ufRgYuv/YGXQ+/Tu6udoYaaZh7RXQ
-	W
-X-Gm-Gg: ASbGncsf5GDJTsL84X+l3RnjsFVwq5ktBz7QpTA2s6uPURu1JBy0xieN9OacmnowMB2
-	NXgWcMw7ilHADSmLg99UatR4JFSEU5Q+7EIX8ZMIGJNufaBAHFxT7haSc4+GtvVriK4ebuB97Hl
-	HKTaToPlyoRBdumq/BNQ5H+l0WS+ZlWtiYSdrXcGA6vmCWEfHKKIuRdDjKJEbJzXt1QcpUvcRVU
-	zt/jm+FxtAFpimqJH0Y5AiwH84FWdtdaCTfGHitBGgdlNU=
-X-Google-Smtp-Source: AGHT+IGv/ozhMRhhEpkVKWHelm9EXL8mB5s3CDg+3MSHdDSpf0Sx3LXQnSwlpTjzxLxsQ53kAITKKQ==
-X-Received: by 2002:a05:6a20:734b:b0:1e0:c713:9a92 with SMTP id adf61e73a8af0-1e0ec7fcc77mr13722373637.6.1732890290212;
-        Fri, 29 Nov 2024 06:24:50 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c2f7802sm3143655a12.27.2024.11.29.06.24.49
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 06:24:49 -0800 (PST)
-Message-ID: <7c857055-1ab8-4525-b9c1-5de6e6d1c3d6@kernel.dk>
-Date: Fri, 29 Nov 2024 07:24:48 -0700
+        d=1e100.net; s=20230601; t=1732896253; x=1733501053;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5NhEbu6ESbP8r4lc+93ETbodXsjweitvDr6notsG0O0=;
+        b=HsvfgVA7KF/73s3BrHqaSR4UY76Bx+escny+zZbxnbQDiINd+2MshU0KPwz4OTTIEs
+         iRk0RsJKj1Oco0KdG99YFLUXErOyCBXrBZXre3+kUyvrEt4wPErv+3lWK8TQsSx6WRqu
+         wILv57LQ9oZDFwlC74d/AeZO+VYclUeBHneMXami/C3a/yEPXPguByXmBcyvKKAOKres
+         fBcZ/gAOxDF+KKMDkThsPWuKa/oPOYppuV5o8VPcH+8fOyTFToWAZGX/2/SHq6DJmtZ4
+         HQJgeSoO5eyNxqQWjhPZy1QS1LCi2kxjka+5vGw8fIzhydr/Urrie1He+JF+PBbFT7/r
+         Lcew==
+X-Gm-Message-State: AOJu0YwxnsKKnNGn7pHnjug+D9i2zjjXJJBY45f+Ndjwzvb3Y49CDeZp
+	DEGm6rSS/+wxwrjdYFs+wTbfSXHBgXHtMlEazqPfw36AoLhTpHTGpQFgk60b6D5ikrKnAogta59
+	e
+X-Gm-Gg: ASbGncthXIYvKrx5HzedwA1CxTSb1WPqx/5J4OV5AuX/xMRlB/mMHmWrS7hqILi3suq
+	GsWIOwjKLILqlhesHd5Lzg98EOWl1M7q0GzP7V8sfLTxdY8ORMDZpX8/p51GfShHGvZt/zoCdox
+	FFle4BzPShu6hCKCcOPsRmUf+WQT0WPNXvWOGiwdNJ4u/CeGLceNl+/xFrN/dihKEiPGc1U87bw
+	l5Ewxx04n3N4j47PwYkrDxYkP/u1vxpKcWw/gMSLA==
+X-Google-Smtp-Source: AGHT+IHHSLUtU8GQs5Vpi9SSUCFn2H328nWMS1aRj7198UFAqJ/Vp34+UoMrL8vq+rW7ZMTha2ORbg==
+X-Received: by 2002:a17:902:f104:b0:215:531f:8e39 with SMTP id d9443c01a7336-215531f9156mr6245375ad.11.1732896253079;
+        Fri, 29 Nov 2024 08:04:13 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215218f46a1sm32302925ad.39.2024.11.29.08.04.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 08:04:12 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1732886067.git.asml.silence@gmail.com>
+References: <cover.1732886067.git.asml.silence@gmail.com>
+Subject: Re: [PATCH v3 00/18] kernel allocated regions and convert memmap
+ to regions
+Message-Id: <173289625227.195012.15675729738665564524.b4-ty@kernel.dk>
+Date: Fri, 29 Nov 2024 09:04:12 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/tctx: work around xa_store() allocation error issue
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-86319
 
-syzbot triggered the following WARN_ON:
 
-WARNING: CPU: 0 PID: 16 at io_uring/tctx.c:51 __io_uring_free+0xfa/0x140 io_uring/tctx.c:51
+On Fri, 29 Nov 2024 13:34:21 +0000, Pavel Begunkov wrote:
+> The first part of the series (Patches 1-11) implement kernel allocated
+> regions, which is the classical way SQ/CQ are created. It should be
+> straightforward with simple preparations patches and cleanups. The main
+> part is Patch 10, which internally implements kernel allocations, and
+> Patch 11 that implementing the mmap part and exposes it to reg-wait /
+> parameter region users.
+> 
+> [...]
 
-which is the
+Applied, thanks!
 
-WARN_ON_ONCE(!xa_empty(&tctx->xa));
+[01/18] io_uring: rename ->resize_lock
+        commit: e4e0f7d04627a3a8380bda82c4690f598b095b66
+[02/18] io_uring/rsrc: export io_check_coalesce_buffer
+        commit: b5c715ee796dee285f902276c38c808f6a7799cf
+[03/18] io_uring/memmap: flag vmap'ed regions
+        commit: ea57c4c88ffb3f7247200275435bf4aa4894f965
+[04/18] io_uring/memmap: flag regions with user pages
+        commit: 67b855ba258319abe9fac15e6ddf07e57c1589c5
+[05/18] io_uring/memmap: account memory before pinning
+        commit: 85652c20eda52bdf2ecb059da0e5d9c50f2824b7
+[06/18] io_uring/memmap: reuse io_free_region for failure path
+        commit: 3e0b1575a596cded61eee4ef75870a741a40fcc4
+[07/18] io_uring/memmap: optimise single folio regions
+        commit: 1e80236d16da642240292194c9e34fb37664f606
+[08/18] io_uring/memmap: helper for pinning region pages
+        commit: 5e015f23f7d382ed1a301d015284bc8cca87335b
+[09/18] io_uring/memmap: add IO_REGION_F_SINGLE_REF
+        commit: 8acfcf152fef8566a19fe9cdbacdb6a6bdec5520
+[10/18] io_uring/memmap: implement kernel allocated regions
+        commit: 9407cfd8c016024e23ef9c37e422b204dfaf435c
+[11/18] io_uring/memmap: implement mmap for regions
+        commit: efd160a19fdb27db0436a21194972a4ce49bab2d
+[12/18] io_uring: pass ctx to io_register_free_rings
+        commit: 458b0ea4de8d5045e446035a1cdb49f1e6f01789
+[13/18] io_uring: use region api for SQ
+        commit: 5f58f826fcbff03f392fda796445992d59d34a80
+[14/18] io_uring: use region api for CQ
+        commit: 9c0966c93e771eb17da6a41721c4f6613f616212
+[15/18] io_uring/kbuf: use mmap_lock to sync with mmap
+        commit: 8dec4fa7082c0f8dd9692ac110777a994258a798
+[16/18] io_uring/kbuf: remove pbuf ring refcounting
+        commit: 6a2036aec3830a293a5ca2d6059b5e4a450a4e0e
+[17/18] io_uring/kbuf: use region api for pbuf rings
+        commit: d67839c6abfe5dd505390710502e2f9944a51126
+[18/18] io_uring/memmap: unify io_uring mmap'ing code
+        commit: 17f5a7960c70c9a1ec4cb9a63be0898a47af804a
 
-sanity check in __io_uring_free() when a io_uring_task is going through
-its final put. The syzbot test case includes injecting memory allocation
-failures, and it very much looks like xa_store() can fail one of its
-memory allocations and end up with ->head being non-NULL even though no
-entries exist in the xarray.
-
-Until this issue gets sorted out, work around it by attempting to
-iterate entries in our xarray, and WARN_ON_ONCE() if one is found.
-
-Reported-by: syzbot+cc36d44ec9f368e443d3@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/io-uring/673c1643.050a0220.87769.0066.GAE@google.com/
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index 503f3ff8bc4f..adc6e42c14df 100644
---- a/io_uring/tctx.c
-+++ b/io_uring/tctx.c
-@@ -47,8 +47,19 @@ static struct io_wq *io_init_wq_offload(struct io_ring_ctx *ctx,
- void __io_uring_free(struct task_struct *tsk)
- {
- 	struct io_uring_task *tctx = tsk->io_uring;
-+	struct io_tctx_node *node;
-+	unsigned long index;
- 
--	WARN_ON_ONCE(!xa_empty(&tctx->xa));
-+	/*
-+	 * Fault injection forcing allocation errors in the xa_store() path
-+	 * can lead to xa_empty() returning false, even though no actual
-+	 * node is stored in the xarray. Until that gets sorted out, attempt
-+	 * an iteration here and warn if any entries are found.
-+	 */
-+	xa_for_each(&tctx->xa, index, node) {
-+		WARN_ON_ONCE(1);
-+		break;
-+	}
- 	WARN_ON_ONCE(tctx->io_wq);
- 	WARN_ON_ONCE(tctx->cached_refs);
- 
+Best regards,
 -- 
 Jens Axboe
+
+
 
 

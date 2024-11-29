@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-5146-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5147-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4794A9DE7B2
-	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 14:34:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9AB9DE7B6
+	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 14:34:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A24DB23AF5
-	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 13:34:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ED48164637
+	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 13:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B46199E89;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D9819E97F;
 	Fri, 29 Nov 2024 13:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eJy4hLyf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3/8JUh2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9907D19E980
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D428519CC27
 	for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 13:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732887252; cv=none; b=U6BVvatg5E+XjvmrttZowHK8mCtZMMPtkwrI5j4KFFS3bCPgFTAVMwEZttrmVYowROa4kpeGkwi4wuPCSlkwf/bkPg76hBLAFv1jRDaMylrVj/HXqfnvBa109ODW3X62Oi/PU8U/W8Z/YGJbpAYhdADwwEJDa/GILYCf5+AG2Vw=
+	t=1732887252; cv=none; b=LKltf+dbTs3P8xruLdAShjK5MRd3rXTjG4EK5SKHhQTG2Q04K5OYMxx9otoAaqPxaGArCkDWcz2LUf/DzcyS1u3FdGWF9iH0quGovAs8+giG0FUFL/UkUpc+CX+J6bykZz+yo+RIOwgQE01DcF48hX0paQOrdUmqXpC17AK25ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732887252; c=relaxed/simple;
-	bh=i4q5zoh+RVcVUtG+p4DEvHPHxUCZOGcdxw6RV/ymmA0=;
+	bh=RUAORC0z2zGFT8COGi88os5W9yBRTJewsClQX5h78kw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FLGqn1DILU2yuo9+bE7yXuQOoF/RV6tma8xpfGt4fc9DajcSMR2qS85EpPrZSjSgWZ9UxXyo+d35xKm+KJ6RuVMSpyTrEoSWLzTt5FMBhgFssqio72YbLV+qeTUiH/pQS92bhWIkywHXFISHwrayqqOJu6om9ap7MSN6VM5pcSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eJy4hLyf; arc=none smtp.client-ip=209.85.208.171
+	 MIME-Version; b=QxNeghuxpwHZ1upUJ+jUQ1+I5MNT2EXlXIUCoE3y+S+d/qTcqCeRHwvX8YTayWOWiY0PSWjPmngNE7ZrR9/BynRFsLb3M848UX7C7xWUJFIDxdsPcTE7i+bC73JxVEdbe6DQHGCQxEXGjlZMdxV6BUXnjRmEYStU0OJmsQKZMkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3/8JUh2; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffc3f2b3a9so28133921fa.1
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa53a971480so251455666b.1
         for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 05:34:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732887248; x=1733492048; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732887249; x=1733492049; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3MlVDCt73aMY59x9K9s6HGMef2pKI7M9nX1Jols9I8s=;
-        b=eJy4hLyfWQbzalDW/SkuVVvnZo5O9wBHHnDO5dOtE1QQ/Qz5fW1PKh0q8nMSXbNAMl
-         4muNRfqTsgXOXlxN5CUvfdZ/9rXrX3+Laqdh3GaS7HWs5U3BQt2pPMsBv4AaOxg5+ta3
-         4+QyeCzlKHHAdFw8m7ERePgEsltgL8KnVQFoe5RyLLrQsLwjpsCZ/JAQYhSkfp3/36ih
-         sSZsH4JLcnugJ8QSK/mUYTa8iBiSLNLoHbSUiWIO8/LNGUs3R9Au0/ES2JAVh8K1hOrP
-         5J2d23miFWWdFJuBypiXWNcYtAxLHKmDqkYFkrOEnvhcjA/GqfyAEL0/KP2TEkvtZ4tC
-         7b8Q==
+        bh=u4UMJAzKdYLVQw7XV+oSOHtwiytjSC+QvOsVrzAustw=;
+        b=E3/8JUh2+kegIPZZ8/TS9QktQ6m2lWUmFdyo+VksXWlpxgrBc+aVgn1tpFAjeeKBPr
+         as57PdRJVTtwWODBsfx1lUnylvre0uXx41C7s/C1R4DUklQgz9giU4PntNkbPphrvabD
+         3h1sq2/RGa0oBDEatr4dBSGDG6SZmDa/cdviWs/ch4f+r9AGoHLnxv7kRxZmWY01ErtY
+         14ZJS9kL3Y4fm/yr0FgQuB8vv/fENkTlt4pFOLcTdTTk//fDU2yHyrOj9jm72qd+35BP
+         T47b/i6YJGbYKFE912zrLBcTDLMFt+fZ/ypzOzA1TrnIap8c3NlYARje0mF18hYDSzsx
+         ux0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732887248; x=1733492048;
+        d=1e100.net; s=20230601; t=1732887249; x=1733492049;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3MlVDCt73aMY59x9K9s6HGMef2pKI7M9nX1Jols9I8s=;
-        b=vc7kmfgnxXID0/tVMcSRR5JPBq71mDPkK/TAslmWUydvtP/MQn3qmaBCfnWLLj6aOV
-         QC28v4dEIc8KX/yQ6f1Bd85A/5gfi/R0EJFdEAhXKtZ/34nqs2eSnOkPcnR46h/Xy06q
-         I1/C9BHG+fTaZTX943dSWgBxuEfSJNGlNQWccr3sWgI1W1NGrzIA5N08yr6hhHemZ+el
-         V/JBkZYflr8Y4+YddzxmsM3F/jOPJTasMxyLniAImPPbbBoiP8oZ7a2ZeOo+TtXZOrvb
-         9ZWxdww2tb6Cqg8lOOVWWr3+yPy8CekGtIq73q6e/0S3Bp3IDbI6uvB1Fol1kpCYqQ8v
-         enDw==
-X-Gm-Message-State: AOJu0Ywe4Cfi/bfwGSL4CBEXts94e90LD8NDpUvZ/ZRTWJDi4W/885I5
-	KK2rFPmNmjiXKqiSFqi4t1lX1DPNWVvq1IvDOiPO0/KCGkpZtrP6/dhq7w==
-X-Gm-Gg: ASbGncsgEREcQXHwdj2FbUaqfiZgIjkimfcdVzawKzq8bGe882dKOQzgc1u+fdr7cd8
-	H5A2iW1lxBlGPXV4DBbF6KsKTFcpGyLM5gFUcMFaPz6QsiChhCUrzR5nldfPCGkSGMI0GK916o8
-	e6/QiqnaGKfMGKupBT57mFyuHZNbPvn6nntwXUzKS2QVHRp/RtoYYh/RJDukk03GtT1BnI9qVHu
-	sUknAoyOrx3InUybP+i6jGWiEBCyCV+6XmsrrhfNfZ+4pe4UE4QsvXOjOBogrjj
-X-Google-Smtp-Source: AGHT+IEC9Nr3jv9IOdfVLOqyjYo65D+PQvIY/jfS1Zo0sYD4VuowdY+npIwh8kBcJWpiomfb3Ks+xQ==
-X-Received: by 2002:a05:651c:508:b0:2ff:cb81:c016 with SMTP id 38308e7fff4ca-2ffd6028d77mr108125271fa.19.1732887248090;
+        bh=u4UMJAzKdYLVQw7XV+oSOHtwiytjSC+QvOsVrzAustw=;
+        b=Hr/JX4FgQKlZrONNVcoQNJ1oL6IS27vToszhgOja2VGBO6rkGhXbS1Ajx+EE6+U2mi
+         o/qnch5hSvjqlxno9V55QtJNR38lij03mmCC67xiAS2yBrggerNE+gYLfdaSJ+uvxdcZ
+         4H4fBLn7SOaKIFF6zK8yn8P5kB+7Dhr6dMwovUUl3lv1Y7kZ1edca2+U8vpEE9iNvMBS
+         1VoFazq32ump+UPSBVmrA7tBBqwmD9JhoCCNf4fxzKiIAUJxxtqO1BtwSvTjZkhF+g6r
+         dt7AuUvH8A3LPljUMjLci9uZpvogcnBLoGvsLP+isfAZ5GB+5lUizeKXjXMNpskLHIjJ
+         Evyw==
+X-Gm-Message-State: AOJu0YxK42mxBAn45KGX2CX4IUPmQuTCyH3wDUZjqKmmgk0/xR71OR1N
+	yrlMkhlPqsL6b9ixQ0NUHuJZGHMns5KL2AelygF9bk1nBPJ7LEt5xE89PQ==
+X-Gm-Gg: ASbGncs2Zglvr6cztQKSXx5vYBYqdMm1lMWn+9rb4VIhyMD223cYuxhItX42Iju34m5
+	Dq4yHUvry6U2As1+NNbmP3KUp+njGcfJE8jvRQFFZ3UL+BujlE/IYQHKfqbjEjHDexZyHN1JVdI
+	hem84RBKeXQ8jd3Gw0ugqM4w0586BrNFa++ON8FX/a5au5EOP22oKTB0fb/ojvLiytPh/PPWeDk
+	K32kdEcmEdG71Nu0rZ/34kW/lSyrUXHdld1tPMHSpuCBUnRVw1dVIdEt+h76lMh
+X-Google-Smtp-Source: AGHT+IFVbbe6bZpLwZbx4Ki6eBspXglMQYh7Ks1e2jhMfk/HvTXGl2BFtxU8TZ2R9ifueiyUi1q5Yw==
+X-Received: by 2002:a17:906:31cc:b0:a9a:bbcc:508c with SMTP id a640c23a62f3a-aa580ef2b02mr829547866b.2.1732887248786;
         Fri, 29 Nov 2024 05:34:08 -0800 (PST)
 Received: from 127.0.0.1localhost ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996c2471sm173996866b.13.2024.11.29.05.34.07
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996c2471sm173996866b.13.2024.11.29.05.34.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 05:34:07 -0800 (PST)
+        Fri, 29 Nov 2024 05:34:08 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH v3 15/18] io_uring/kbuf: use mmap_lock to sync with mmap
-Date: Fri, 29 Nov 2024 13:34:36 +0000
-Message-ID: <af13bde56ee1a26bcaefaa9aad37a9ea318a590e.1732886067.git.asml.silence@gmail.com>
+Subject: [PATCH v3 16/18] io_uring/kbuf: remove pbuf ring refcounting
+Date: Fri, 29 Nov 2024 13:34:37 +0000
+Message-ID: <4a9cc54bf0077bb2bf2f3daf917549ddd41080da.1732886067.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1732886067.git.asml.silence@gmail.com>
 References: <cover.1732886067.git.asml.silence@gmail.com>
@@ -87,174 +87,108 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A preparation / cleanup patch simplifying the buf ring - mmap
-synchronisation. Instead of relying on RCU, which is trickier, do it by
-grabbing the mmap_lock when when anyone tries to publish or remove a
-registered buffer to / from ->io_bl_xa.
-
-Modifications of the xarray should always be protected by both
-->uring_lock and ->mmap_lock, while lookups should hold either of them.
-While a struct io_buffer_list is in the xarray, the mmap related fields
-like ->flags and ->buf_pages should stay stable.
+struct io_buffer_list refcounting was needed for RCU based sync with
+mmap, now  we can kill it.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/linux/io_uring_types.h |  5 +++
- io_uring/kbuf.c                | 56 +++++++++++++++-------------------
- io_uring/kbuf.h                |  1 -
- 3 files changed, 29 insertions(+), 33 deletions(-)
+ io_uring/kbuf.c   | 21 +++++++--------------
+ io_uring/kbuf.h   |  3 ---
+ io_uring/memmap.c |  1 -
+ 3 files changed, 7 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 2db252841509..091d1eaf5ba0 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -293,6 +293,11 @@ struct io_ring_ctx {
- 
- 		struct io_submit_state	submit_state;
- 
-+		/*
-+		 * Modifications are protected by ->uring_lock and ->mmap_lock.
-+		 * The flags, buf_pages and buf_nr_pages fields should be stable
-+		 * once published.
-+		 */
- 		struct xarray		io_bl_xa;
- 
- 		struct io_hash_table	cancel_table;
 diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index d407576ddfb7..662e928cc3b0 100644
+index 662e928cc3b0..644f61445ec9 100644
 --- a/io_uring/kbuf.c
 +++ b/io_uring/kbuf.c
-@@ -45,10 +45,11 @@ static int io_buffer_add_list(struct io_ring_ctx *ctx,
- 	/*
- 	 * Store buffer group ID and finally mark the list as visible.
- 	 * The normal lookup doesn't care about the visibility as we're
--	 * always under the ->uring_lock, but the RCU lookup from mmap does.
-+	 * always under the ->uring_lock, but lookups from mmap do.
+@@ -48,7 +48,6 @@ static int io_buffer_add_list(struct io_ring_ctx *ctx,
+ 	 * always under the ->uring_lock, but lookups from mmap do.
  	 */
  	bl->bgid = bgid;
- 	atomic_set(&bl->refs, 1);
-+	guard(mutex)(&ctx->mmap_lock);
+-	atomic_set(&bl->refs, 1);
+ 	guard(mutex)(&ctx->mmap_lock);
  	return xa_err(xa_store(&ctx->io_bl_xa, bgid, bl, GFP_KERNEL));
  }
+@@ -385,12 +384,10 @@ static int __io_remove_buffers(struct io_ring_ctx *ctx,
+ 	return i;
+ }
  
-@@ -388,7 +389,7 @@ void io_put_bl(struct io_ring_ctx *ctx, struct io_buffer_list *bl)
+-void io_put_bl(struct io_ring_ctx *ctx, struct io_buffer_list *bl)
++static void io_put_bl(struct io_ring_ctx *ctx, struct io_buffer_list *bl)
  {
- 	if (atomic_dec_and_test(&bl->refs)) {
- 		__io_remove_buffers(ctx, bl, -1U);
--		kfree_rcu(bl, rcu);
-+		kfree(bl);
- 	}
+-	if (atomic_dec_and_test(&bl->refs)) {
+-		__io_remove_buffers(ctx, bl, -1U);
+-		kfree(bl);
+-	}
++	__io_remove_buffers(ctx, bl, -1U);
++	kfree(bl);
  }
  
-@@ -397,10 +398,17 @@ void io_destroy_buffers(struct io_ring_ctx *ctx)
- 	struct io_buffer_list *bl;
- 	struct list_head *item, *tmp;
- 	struct io_buffer *buf;
--	unsigned long index;
+ void io_destroy_buffers(struct io_ring_ctx *ctx)
+@@ -804,10 +801,8 @@ struct io_buffer_list *io_pbuf_get_bl(struct io_ring_ctx *ctx,
  
--	xa_for_each(&ctx->io_bl_xa, index, bl) {
--		xa_erase(&ctx->io_bl_xa, bl->bgid);
-+	while (1) {
-+		unsigned long index = 0;
-+
-+		scoped_guard(mutex, &ctx->mmap_lock) {
-+			bl = xa_find(&ctx->io_bl_xa, &index, ULONG_MAX, XA_PRESENT);
-+			if (bl)
-+				xa_erase(&ctx->io_bl_xa, bl->bgid);
-+		}
-+		if (!bl)
-+			break;
- 		io_put_bl(ctx, bl);
- 	}
- 
-@@ -589,11 +597,7 @@ int io_provide_buffers(struct io_kiocb *req, unsigned int issue_flags)
- 		INIT_LIST_HEAD(&bl->buf_list);
- 		ret = io_buffer_add_list(ctx, bl, p->bgid);
- 		if (ret) {
--			/*
--			 * Doesn't need rcu free as it was never visible, but
--			 * let's keep it consistent throughout.
--			 */
--			kfree_rcu(bl, rcu);
-+			kfree(bl);
- 			goto err;
- 		}
- 	}
-@@ -736,7 +740,7 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 		return 0;
- 	}
- 
--	kfree_rcu(free_bl, rcu);
-+	kfree(free_bl);
- 	return ret;
- }
- 
-@@ -760,7 +764,9 @@ int io_unregister_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 	if (!(bl->flags & IOBL_BUF_RING))
- 		return -EINVAL;
- 
--	xa_erase(&ctx->io_bl_xa, bl->bgid);
-+	scoped_guard(mutex, &ctx->mmap_lock)
-+		xa_erase(&ctx->io_bl_xa, bl->bgid);
-+
- 	io_put_bl(ctx, bl);
- 	return 0;
- }
-@@ -795,29 +801,13 @@ struct io_buffer_list *io_pbuf_get_bl(struct io_ring_ctx *ctx,
- 				      unsigned long bgid)
- {
- 	struct io_buffer_list *bl;
--	bool ret;
- 
--	/*
--	 * We have to be a bit careful here - we're inside mmap and cannot grab
--	 * the uring_lock. This means the buffer_list could be simultaneously
--	 * going away, if someone is trying to be sneaky. Look it up under rcu
--	 * so we know it's not going away, and attempt to grab a reference to
--	 * it. If the ref is already zero, then fail the mapping. If successful,
--	 * the caller will call io_put_bl() to drop the the reference at at the
--	 * end. This may then safely free the buffer_list (and drop the pages)
--	 * at that point, vm_insert_pages() would've already grabbed the
--	 * necessary vma references.
--	 */
--	rcu_read_lock();
  	bl = xa_load(&ctx->io_bl_xa, bgid);
  	/* must be a mmap'able buffer ring and have pages */
--	ret = false;
--	if (bl && bl->flags & IOBL_MMAP)
--		ret = atomic_inc_not_zero(&bl->refs);
--	rcu_read_unlock();
--
--	if (ret)
--		return bl;
-+	if (bl && bl->flags & IOBL_MMAP) {
-+		if (atomic_inc_not_zero(&bl->refs))
-+			return bl;
-+	}
+-	if (bl && bl->flags & IOBL_MMAP) {
+-		if (atomic_inc_not_zero(&bl->refs))
+-			return bl;
+-	}
++	if (bl && bl->flags & IOBL_MMAP)
++		return bl;
  
  	return ERR_PTR(-EINVAL);
  }
-@@ -829,6 +819,8 @@ int io_pbuf_mmap(struct file *file, struct vm_area_struct *vma)
+@@ -817,7 +812,7 @@ int io_pbuf_mmap(struct file *file, struct vm_area_struct *vma)
+ 	struct io_ring_ctx *ctx = file->private_data;
+ 	loff_t pgoff = vma->vm_pgoff << PAGE_SHIFT;
  	struct io_buffer_list *bl;
- 	int bgid, ret;
+-	int bgid, ret;
++	int bgid;
  
-+	lockdep_assert_held(&ctx->mmap_lock);
-+
- 	bgid = (pgoff & ~IORING_OFF_MMAP_MASK) >> IORING_OFF_PBUF_SHIFT;
- 	bl = io_pbuf_get_bl(ctx, bgid);
+ 	lockdep_assert_held(&ctx->mmap_lock);
+ 
+@@ -826,7 +821,5 @@ int io_pbuf_mmap(struct file *file, struct vm_area_struct *vma)
  	if (IS_ERR(bl))
+ 		return PTR_ERR(bl);
+ 
+-	ret = io_uring_mmap_pages(ctx, vma, bl->buf_pages, bl->buf_nr_pages);
+-	io_put_bl(ctx, bl);
+-	return ret;
++	return io_uring_mmap_pages(ctx, vma, bl->buf_pages, bl->buf_nr_pages);
+ }
 diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index 36aadfe5ac00..d5e4afcbfbb3 100644
+index d5e4afcbfbb3..dff7444026a6 100644
 --- a/io_uring/kbuf.h
 +++ b/io_uring/kbuf.h
-@@ -25,7 +25,6 @@ struct io_buffer_list {
- 			struct page **buf_pages;
- 			struct io_uring_buf_ring *buf_ring;
- 		};
--		struct rcu_head rcu;
- 	};
- 	__u16 bgid;
+@@ -35,8 +35,6 @@ struct io_buffer_list {
+ 	__u16 mask;
  
+ 	__u16 flags;
+-
+-	atomic_t refs;
+ };
+ 
+ struct io_buffer {
+@@ -83,7 +81,6 @@ void __io_put_kbuf(struct io_kiocb *req, int len, unsigned issue_flags);
+ 
+ bool io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags);
+ 
+-void io_put_bl(struct io_ring_ctx *ctx, struct io_buffer_list *bl);
+ struct io_buffer_list *io_pbuf_get_bl(struct io_ring_ctx *ctx,
+ 				      unsigned long bgid);
+ int io_pbuf_mmap(struct file *file, struct vm_area_struct *vma);
+diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+index 668b1c3579a2..73b73f4ea1bd 100644
+--- a/io_uring/memmap.c
++++ b/io_uring/memmap.c
+@@ -383,7 +383,6 @@ static void *io_uring_validate_mmap_request(struct file *file, loff_t pgoff,
+ 		if (IS_ERR(bl))
+ 			return bl;
+ 		ptr = bl->buf_ring;
+-		io_put_bl(ctx, bl);
+ 		return ptr;
+ 		}
+ 	case IORING_MAP_OFF_PARAM_REGION:
 -- 
 2.47.1
 

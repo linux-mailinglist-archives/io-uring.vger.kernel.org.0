@@ -1,81 +1,81 @@
-Return-Path: <io-uring+bounces-5133-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5134-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE7AD9DE7A5
-	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 14:34:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C943B9DE7A6
+	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 14:34:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19539B20E8F
-	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 13:34:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A174B20C82
+	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 13:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D31819CC27;
-	Fri, 29 Nov 2024 13:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB7D19CC3F;
+	Fri, 29 Nov 2024 13:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PT/sjML/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L8pD3vXs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFD61990C1
-	for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 13:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5435019E806
+	for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 13:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732887242; cv=none; b=a8+/vhAbaEcVnl5wD8+2FsDkIHhR0nhkKWKhPMNnx6ffjhNvG0mHMD2INPBxSPZHNM06FPf4+NuyFWuu53jy4qYm7FKVewKe5rkmwg83cSipjKrrf9vojUPjay8FNIIkAiNtu/ERqdB2sgeMKXFV7BnMctwPGu6nRya//CBX/Vo=
+	t=1732887243; cv=none; b=HlMQ+BQzrUSv2OMzVGqEWLYK7VLBmVzJL9XIMhUZ1IaedaKBll7gwMScH7dzHd31YH9d4Etn5B8S2XxgZ0UQ+dU/oeJo9V4/ijg9/bX8TaNE+qttGOSbis3lWvJxH7Cv2Hae4NHMU9IxTY3ks8V3VRBTbNL1Tj4LoLvJA/Ci+BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732887242; c=relaxed/simple;
-	bh=gaoXkVQK/6Blrim3pGwGX4MUitHU/mfc/W6Tz0e1OaQ=;
+	s=arc-20240116; t=1732887243; c=relaxed/simple;
+	bh=lxgwNXsgAQULEZiqtAC9jgEbihBiURSI4NO0D5BvzgI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ANyXkoQSqlOBicAbe8I2WVeDB9gO9IP1Lu43ybkR4FnE+Ud3P3C69uXviEpKUnj33WTQCn0z8g8C60FX5UZ0sUq4/l88YWQtas0s6i9/J3JLs46TT0OE10SULYPwT9EP1mJpsuCTNs1QMgtdts2IZDovWPWHeyN6IUltjxuntPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PT/sjML/; arc=none smtp.client-ip=209.85.218.50
+	 MIME-Version; b=ggYemEcjQ8ZNb/i4WS0jAh2j1VwcBt1uTtR44mhqSKAZdbvpKvQqC1ZLLUfQPzsiBk3kLut7DTuqhNFOPRy8BxCoxdISjKvp8RF+WNbjJYuaXpC5jgqys/klbp1QRTabJQ8xER9VCbVti8QyQ1zE3JfHdKNvBoo2PuKdkexvLHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L8pD3vXs; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa503cced42so260484266b.3
-        for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 05:34:00 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso248258766b.1
+        for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 05:34:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732887238; x=1733492038; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732887239; x=1733492039; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3ioUfww6d+xizvBRIqAxbXDWFBnTg25uUcpGNl2DpxI=;
-        b=PT/sjML/WRqH+sBtbU37oybP5L0xFZnK4MSt2gJJaLPTqypltzzZqQLBHeSrfynrEz
-         VAJUeCTtq2gRVXYf9cvVSmCbMBoNWfWtQVd8MxtOGuSC1TEj8wiZe/TtbUUkBVHE1Haj
-         bnofmWXGzbLrkV+7oIKILrkM9xoLPUIyxmZ9z1wCLfOS+cBIwv2OlExYWUS4M+XkudGl
-         bbFkh6x2/8+Kgf6rA8saO8UAixFH57IWqgOliLVTuz6d8wZSBN8EEGNNk33kCNjymD3j
-         G9qxq69WXMfbgljouhle1YfsUdw1HRYbfVpzDOl3LKCzrJTUmBK9M/5VjVt7wiAbiops
-         gXJw==
+        bh=Mpfk03/A34fMYNA5TQQ0uM4WtTPml/veC3omIRerQwY=;
+        b=L8pD3vXs47swq7GXWagx5xYNXjktIM/5g+jQiwlVGWROlt2CJ9IPNgpjtZi1BSmCZv
+         qLNqN5Hz4+BwzzIQKwS/sxD3UyYyNQF3zUppG2WESMmAGfLAbM+21XhRLYWHhL06+ddW
+         CxWNQcoBFBip070S/zQCnqvzpn9g4DgB9XuVHTsV+QB7WjoJbOxe/LYMs/92rMthmdnc
+         EGfaXKY9RxfOinSr3l5djX7oBdq3Wj9dAi6UTzbo6jCTLNmV/HNLzdft90tvA4RDC9nF
+         o5wltqCMjY+y8dG2XTWVCe5GE9Azj2q3dn1zT3dLrQfgqNyHTMuWWAyTxKggJGplMq0o
+         N6qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732887238; x=1733492038;
+        d=1e100.net; s=20230601; t=1732887239; x=1733492039;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3ioUfww6d+xizvBRIqAxbXDWFBnTg25uUcpGNl2DpxI=;
-        b=t7JPMg4r7GHLEORSdb+d5TlJsK13zA2UNyIFtxCej7xnHFleEYn922OJtqf5ycXxi5
-         r4+3qjMpn9NEczVU3X60F6K8cSS2SKQhvystNmJ6poYBzsqhp9WQNjtAy+P8LiSF0HrH
-         0J3lj8xnHZ5/OtcgE+7C4xVspGsAOF4PWwAWap+Ru3utC6NUJ6tWGVSU8aVrh6zb+vbb
-         qBCbucD1/JYiMbQ4NEU5U7SWudmzwSsvCbX4F1Nw3zePnA1VvuY6KDWwhDM+gEa1cw9w
-         XcRlup/G++TrwUwPkyM1PgNbdrKHS3X6ll+vJBAnYxC0gTbCJhXBgI8R5IKUClpxIL+e
-         ulZg==
-X-Gm-Message-State: AOJu0YwFjsWS4LR4/R/4mtTKmktswFJ2q+5V29cFo0gHms0sYOPs0F1W
-	meKwGZjZD8XAos0rYndOyyjnzYvVXw8bu6VPb3pS5cNMeR7PJESNalUf4Q==
-X-Gm-Gg: ASbGncvjmBCXuN8ubfzUlkXWBuq3CY23G7Vb83dyq1RQw42FpH17+FsGjL5wuHZj1Ps
-	gL6+y98o/sWksAAY6Wpwqoq4GKKSjt7VxeGaB5DsAfXMILuC3Dervjaw2b9Lgle3xYmFCwgyRaG
-	3lQwxOvqimQpeKCQNAb0Nr3W6yPXlzpjSEcMCp6rO9Oap5rqvGv7AHl0GmSTRH6lHJW/rBRia/q
-	AOAtlle3/8ZRYobAbzj+L6u4PJ+FW0UjwePEF6+6rsucP3KXx+pXvKre4VAL9Lm
-X-Google-Smtp-Source: AGHT+IG/E9Pevr9S3N9dRvZeS4JpzGj93YMh+NZmIjGRxBdZJychllAeQAR5qarAGwrwcdCw82CC9A==
-X-Received: by 2002:a17:907:7808:b0:aa5:2d9a:152c with SMTP id a640c23a62f3a-aa580f1e03emr863113866b.13.1732887238290;
+        bh=Mpfk03/A34fMYNA5TQQ0uM4WtTPml/veC3omIRerQwY=;
+        b=Hd7WlWDiJ6+/3V0NJfX1Ea3Wy2N7fnXYnwQ1awe5I20CelNmrSYbgjrj/1CE8roovD
+         0ZIURtwCZRHWNb6JKprjoqCVjhnRzSEbrWNA5UwVNeVHlNrdt7fN0dYEloED+wPxt3fs
+         FzucE0MwQtbIF0BBGw8AItWVFs+qZr3saN6LLU+Q9BSqMSz1XEQKyEubHONoVjQ8hgra
+         3mcV9C9XfV49OfWeGjZYESaSZbI8kiBg1V29+VNe/PRxFNrIEa0x2sxEGrUAouIHfJ5e
+         ZZ39wdAPxWMyz4VKf+NND4JdU9Z3UVDGBgzbeU+UEdW+Ze/kruOHGEvMhrd8dotvWB1W
+         r0oA==
+X-Gm-Message-State: AOJu0YzdIeahkoKYhFtjo/Ad2m3XGLiQ9Dos2JytUxGobY/GQRZ4V+Q8
+	OPtGuAk3BnzHHlYHIaEtlYFEv8xd2wCBOif2AJYbfppdE7E07bIss1RCHA==
+X-Gm-Gg: ASbGncs09TXKFajmbmDIJ3HHP5bGTd7jvvV7nVePmOA04Btc88BUqJZnVb40Tj7FCp3
+	VfIdzvxQzGHdznvQ0Q8N9ErMJKEMyQS1ciUM9drtIWWHMzguN+LhPhgdbvr4D1SQ6dcBoFApnml
+	37TenrP/vu8eGpQWbZtddKFOk7BZb+1QKp2nqJ96NvfWSHpOD61v1CjjrQKndSYzXCov0jMDwMH
+	5zS1L84ErN0IOvSja2hMhQtEOeJID7267fRDPnrBfzDqwBoFnN9MgyzR2y40YQ/
+X-Google-Smtp-Source: AGHT+IEx18Y2eRtotDUUoSe+2iSEZqfzTfnJPAJbSK38mnVNFhgip4sxnRbnhNtPhyMBDVTtINGL7A==
+X-Received: by 2002:a17:907:7241:b0:a9e:c947:8c5e with SMTP id a640c23a62f3a-aa5810634e2mr1147167466b.57.1732887238785;
         Fri, 29 Nov 2024 05:33:58 -0800 (PST)
 Received: from 127.0.0.1localhost ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996c2471sm173996866b.13.2024.11.29.05.33.57
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996c2471sm173996866b.13.2024.11.29.05.33.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 05:33:57 -0800 (PST)
+        Fri, 29 Nov 2024 05:33:58 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH v3 02/18] io_uring/rsrc: export io_check_coalesce_buffer
-Date: Fri, 29 Nov 2024 13:34:23 +0000
-Message-ID: <353b447953cd5d34c454a7d909bb6024c391d6e2.1732886067.git.asml.silence@gmail.com>
+Subject: [PATCH v3 03/18] io_uring/memmap: flag vmap'ed regions
+Date: Fri, 29 Nov 2024 13:34:24 +0000
+Message-ID: <5a3d8046a038da97c0f8a8c8f1733fa3fc689d31.1732886067.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1732886067.git.asml.silence@gmail.com>
 References: <cover.1732886067.git.asml.silence@gmail.com>
@@ -87,115 +87,93 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-io_try_coalesce_buffer() is a useful helper collecting useful info about
-a set of pages, I want to reuse it for analysing ring/etc. mappings. I
-don't need the entire thing and only interested if it can be coalesced
-into a single page, but that's better than duplicating the parsing.
+Add internal flags for struct io_mapped_region. The first flag we need
+is IO_REGION_F_VMAPPED, that indicates that the pointer has to be
+unmapped on region destruction. For now all regions are vmap'ed, so it's
+set unconditionally.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/rsrc.c | 22 ++++++++++++----------
- io_uring/rsrc.h |  4 ++++
- 2 files changed, 16 insertions(+), 10 deletions(-)
+ include/linux/io_uring_types.h |  5 +++--
+ io_uring/memmap.c              | 14 ++++++++++----
+ io_uring/memmap.h              |  2 +-
+ 3 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index adaae8630932..e51e5ddae728 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -626,11 +626,12 @@ static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page **pages,
- 	return ret;
- }
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index adb36e0da40e..4cee414080fd 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -77,8 +77,9 @@ struct io_hash_table {
  
--static bool io_do_coalesce_buffer(struct page ***pages, int *nr_pages,
--				struct io_imu_folio_data *data, int nr_folios)
-+static bool io_coalesce_buffer(struct page ***pages, int *nr_pages,
-+				struct io_imu_folio_data *data)
- {
- 	struct page **page_array = *pages, **new_array = NULL;
- 	int nr_pages_left = *nr_pages, i, j;
-+	int nr_folios = data->nr_folios;
- 
- 	/* Store head pages only*/
- 	new_array = kvmalloc_array(nr_folios, sizeof(struct page *),
-@@ -667,15 +668,14 @@ static bool io_do_coalesce_buffer(struct page ***pages, int *nr_pages,
- 	return true;
- }
- 
--static bool io_try_coalesce_buffer(struct page ***pages, int *nr_pages,
--					 struct io_imu_folio_data *data)
-+bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
-+			      struct io_imu_folio_data *data)
- {
--	struct page **page_array = *pages;
- 	struct folio *folio = page_folio(page_array[0]);
- 	unsigned int count = 1, nr_folios = 1;
- 	int i;
- 
--	if (*nr_pages <= 1)
-+	if (nr_pages <= 1)
- 		return false;
- 
- 	data->nr_pages_mid = folio_nr_pages(folio);
-@@ -687,7 +687,7 @@ static bool io_try_coalesce_buffer(struct page ***pages, int *nr_pages,
- 	 * Check if pages are contiguous inside a folio, and all folios have
- 	 * the same page count except for the head and tail.
- 	 */
--	for (i = 1; i < *nr_pages; i++) {
-+	for (i = 1; i < nr_pages; i++) {
- 		if (page_folio(page_array[i]) == folio &&
- 			page_array[i] == page_array[i-1] + 1) {
- 			count++;
-@@ -715,7 +715,8 @@ static bool io_try_coalesce_buffer(struct page ***pages, int *nr_pages,
- 	if (nr_folios == 1)
- 		data->nr_pages_head = count;
- 
--	return io_do_coalesce_buffer(pages, nr_pages, data, nr_folios);
-+	data->nr_folios = nr_folios;
-+	return true;
- }
- 
- static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
-@@ -729,7 +730,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
- 	size_t size;
- 	int ret, nr_pages, i;
- 	struct io_imu_folio_data data;
--	bool coalesced;
-+	bool coalesced = false;
- 
- 	if (!iov->iov_base)
- 		return NULL;
-@@ -749,7 +750,8 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
- 	}
- 
- 	/* If it's huge page(s), try to coalesce them into fewer bvec entries */
--	coalesced = io_try_coalesce_buffer(&pages, &nr_pages, &data);
-+	if (io_check_coalesce_buffer(pages, nr_pages, &data))
-+		coalesced = io_coalesce_buffer(&pages, &nr_pages, &data);
- 
- 	imu = kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
- 	if (!imu)
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 7a4668deaa1a..c8b093584461 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -40,6 +40,7 @@ struct io_imu_folio_data {
- 	/* For non-head/tail folios, has to be fully included */
- 	unsigned int	nr_pages_mid;
- 	unsigned int	folio_shift;
-+	unsigned int	nr_folios;
+ struct io_mapped_region {
+ 	struct page		**pages;
+-	void			*vmap_ptr;
+-	size_t			nr_pages;
++	void			*ptr;
++	unsigned		nr_pages;
++	unsigned		flags;
  };
  
- struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int type);
-@@ -66,6 +67,9 @@ int io_register_rsrc_update(struct io_ring_ctx *ctx, void __user *arg,
- int io_register_rsrc(struct io_ring_ctx *ctx, void __user *arg,
- 			unsigned int size, unsigned int type);
+ /*
+diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+index a0d4151d11af..31fb8c8ffe4e 100644
+--- a/io_uring/memmap.c
++++ b/io_uring/memmap.c
+@@ -202,14 +202,19 @@ void *__io_uaddr_map(struct page ***pages, unsigned short *npages,
+ 	return ERR_PTR(-ENOMEM);
+ }
  
-+bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
-+			      struct io_imu_folio_data *data);
++enum {
++	/* memory was vmap'ed for the kernel, freeing the region vunmap's it */
++	IO_REGION_F_VMAP			= 1,
++};
 +
- static inline struct io_rsrc_node *io_rsrc_node_lookup(struct io_rsrc_data *data,
- 						       int index)
+ void io_free_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr)
  {
+ 	if (mr->pages) {
+ 		unpin_user_pages(mr->pages, mr->nr_pages);
+ 		kvfree(mr->pages);
+ 	}
+-	if (mr->vmap_ptr)
+-		vunmap(mr->vmap_ptr);
++	if ((mr->flags & IO_REGION_F_VMAP) && mr->ptr)
++		vunmap(mr->ptr);
+ 	if (mr->nr_pages && ctx->user)
+ 		__io_unaccount_mem(ctx->user, mr->nr_pages);
+ 
+@@ -225,7 +230,7 @@ int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
+ 	void *vptr;
+ 	u64 end;
+ 
+-	if (WARN_ON_ONCE(mr->pages || mr->vmap_ptr || mr->nr_pages))
++	if (WARN_ON_ONCE(mr->pages || mr->ptr || mr->nr_pages))
+ 		return -EFAULT;
+ 	if (memchr_inv(&reg->__resv, 0, sizeof(reg->__resv)))
+ 		return -EINVAL;
+@@ -260,8 +265,9 @@ int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
+ 	}
+ 
+ 	mr->pages = pages;
+-	mr->vmap_ptr = vptr;
++	mr->ptr = vptr;
+ 	mr->nr_pages = nr_pages;
++	mr->flags |= IO_REGION_F_VMAP;
+ 	return 0;
+ out_free:
+ 	if (pages_accounted)
+diff --git a/io_uring/memmap.h b/io_uring/memmap.h
+index f361a635b6c7..2096a8427277 100644
+--- a/io_uring/memmap.h
++++ b/io_uring/memmap.h
+@@ -28,7 +28,7 @@ int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
+ 
+ static inline void *io_region_get_ptr(struct io_mapped_region *mr)
+ {
+-	return mr->vmap_ptr;
++	return mr->ptr;
+ }
+ 
+ static inline bool io_region_is_set(struct io_mapped_region *mr)
 -- 
 2.47.1
 

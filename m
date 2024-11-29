@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-5150-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5151-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4389DE809
-	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 14:51:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85BE19DE853
+	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 15:18:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE26281D18
-	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 13:51:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22FF91635CD
+	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 14:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242E619E804;
-	Fri, 29 Nov 2024 13:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D151F92A;
+	Fri, 29 Nov 2024 14:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DUB/kHQz"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kRnGrl+V"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353D1198E61
-	for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 13:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF331DA23
+	for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 14:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732888292; cv=none; b=J+z7B3LgjBTuqaYvZGw+JtoJ5UnvxBamVtyyoefgrrgrDVQdVfi8qwwI9piqUHkGUGJwIWMO/Sg8kQUH8zTGqWLOoxMCpRVHsNDUT1CwGFJG5Tz0vgyexmUq9jxz/qRPn1xQ0A1+X2gm81HD17D0zhSn0w4WC9DysMPk7aw8cWc=
+	t=1732889880; cv=none; b=g0Qx4TRlLmpvtKL59/Ts+x4ZrBdRNtvQ8iAezINs98JnYiEj3uQfL1AKrXTQWaVTefueKf/JCRMVgJsSLigDaHww+BieYktWFec0mV5s2jSb8PWA2/TMwftyvmIkaiGjQ2IdlDonIKteu5YTuCc/IfKTDOwkW2g9WXJ0fsSTPeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732888292; c=relaxed/simple;
-	bh=H5pi23/iHg3Ss5iB2KXRwlltaihcz76z4vWMpMu89hw=;
+	s=arc-20240116; t=1732889880; c=relaxed/simple;
+	bh=W0DmtYs/ivDPnZwWHT8UHad7UvF/caiQ/9exehD/LVE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EPmQMUPuXfuk8rAqQxjC5Q04bcAyzemEPEk9E4xSUxlIYsZ4DkaQV/g8595FopfbeZvUk191WiUvMDXDiOM3aJ7s+2iOkvcF07pnZySdJ0UuLtQtMEw7oqauClqM0qZbZK17YSl2CUKNLbs9wh9ehUhpd1RWEQRjmJIpYxyrBeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DUB/kHQz; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cfadf851e2so2736530a12.2
-        for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 05:51:29 -0800 (PST)
+	 In-Reply-To:Content-Type; b=oJl/8LaJ3NVBtQ+UH/HraLknNTnrmN0CPsKpRUeX41KR5e3YIB2FQjU4ZW7vI/SsaRcz8jBD0UrxPBk+dRzYXLQyjwVb/KMFWuDVk8lfqQBMrDMYcXB8w769qZqd/nsqi8jI04pjCeOj/t/0L5K/vsSJhL56Inm475mW/QCt2bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kRnGrl+V; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7fc340eb006so1476189a12.0
+        for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 06:17:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732888288; x=1733493088; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732889877; x=1733494677; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=M3vxe4QNEainutxyDCwNQg7DtSw6Vf5FtzfVVp4kRMI=;
-        b=DUB/kHQzRS3YAmILhs17ZOqLJ2SFS7AgQh6NJiFaEldPz9F12JpJIleQhCHwMMOLBb
-         XfVWUtenZ4Z1rsvajSjV3RqNcXlb/45DXbGUPogOTkaxnC6Z6tg3yFClvGmYxTzYc91P
-         FPJx68AxQ8NSPJxK0c98E1Owu6aOWllYx02U5gf97XlM974WJGqegXH4/aF0f+9pQSK2
-         7O/0/Pw5h+dVsYZdkb98r4Rx6nS4DtInk11WMVjAJrmXwlQiKgKbVv6/KfIc/2LnU2CN
-         3btBZKzuaxRAXJ2fXT0wQd3iKpJ0jWzHxt5LkQaIPXY3BjvalcLuNZpHvMKpsOVS5csh
-         SAwA==
+        bh=qTjLakjVQ8CuPE9b+KJbasKB+qT5ruuRyMKmxE0mpHE=;
+        b=kRnGrl+Vc3ICIM0amrhgMkRRqHxAZ+u63GopygY+q2sAJ5JCZ2o5tKakg/wSUL3EzH
+         Nl1mu00t47i23HzE8cgE8T4q1WZ4dV3bpQdKYD3wp+9JTPC/pZtUtUbxfO6qkHwdWnEW
+         e9EHENf6Wf6PIivyTax2KdDh5/pjMpj5KaOmYAl03Yfo0+muRwIG4DezARl6Kr1JVXwL
+         Vo2Gj1RtRvqv68B0OsLn7fDxz8pitq6nDlcdIc9JLM0qXByPLsNDFbnnS6OPaHRhp5we
+         kJCJGrarUPtWdGBPXrMGHYgV7nsn7Bq56hCH8a402B+Yyh7ZUv/w0aNWS8wrJ/gofHx1
+         bmxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732888288; x=1733493088;
+        d=1e100.net; s=20230601; t=1732889877; x=1733494677;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M3vxe4QNEainutxyDCwNQg7DtSw6Vf5FtzfVVp4kRMI=;
-        b=kbuaWT8lL51xLYJsZrDyyv4yuCq31u/STRKfyuSUPyEDsXTzrz2XwMxiZXMy4B28kX
-         7TeyiKJrQ+E4bIOgKjm/0rz9HAjXZyKq98FaoqvhFftGHDDGW7UWwkSejqKR06ARGZDf
-         1GeONM6yDyZGLWT3O+N3CqQHpjqbV16Xoj8ngXHDVDsexigCmzuDJ35t0xAZQ+TgnIyv
-         r7D9RIbBolpKOoT/PNom/YiY3dsXjDuQFVN8/J7n7tkhI/IbZdxfiCgkE6Uw0SM+F519
-         LtopKBxFj4tJAlQwJw41iyqRIApCzB7sCMO8RiS7TEi1kfJFvVVHpfghXzANAGCQswMk
-         l54Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU7w11u/FlB0eL2VPOVKpNzKWvfAFByDdG7+IitbTtQaWgvwnFw02pWAOr43haVAxsO9S34w7UquQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUYw0JefsRo4LSYGvHeYXFK27Szi5lNGAQgh4jI55sIlRtawSt
-	VHm2jzqdI1gwzYJWdcb/gi8yo8EQtH8ZSJmkfoAsic75w4iF386s
-X-Gm-Gg: ASbGncu3G265awUJ4KoCfpFhX15+Bb81uoJ2SaEQ6vf3wiwSKm/Jjp5oiQVJei9ePCc
-	7RBNxN5A7IYDdoj4n8TiX3f/IpCSI6wKzrY6IxX8yK1eXPkfk9PjCxkdDVRz3fw3jzrHbTGwbIn
-	7Je/TEVxjaIpOgdEo97gU20naoL42bV9SnW97KUR78gaKjCf0kmvIm74S18lHQ0zweHWcoqrmMD
-	tH/1VM9YcPeFYmmHcl1rjKfAOUdwi5i9XiAZwXBwiO6mQW1EfQ7jYdfUh+4nQ==
-X-Google-Smtp-Source: AGHT+IFO12YolPnDwRgxplFPWyni9BV5uCksCGo8ruF610O8Si6GbK2IYpoZ5XgnFXONR7Odqc7m2A==
-X-Received: by 2002:a05:6402:35cb:b0:5d0:9686:39b2 with SMTP id 4fb4d7f45d1cf-5d096863abfmr8592661a12.18.1732888288382;
-        Fri, 29 Nov 2024 05:51:28 -0800 (PST)
-Received: from [192.168.42.227] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e64c4sm175502266b.97.2024.11.29.05.51.27
+        bh=qTjLakjVQ8CuPE9b+KJbasKB+qT5ruuRyMKmxE0mpHE=;
+        b=RztY6bR0eFZL+WxaXk7/3rfg963u2KNpVH2Ogh3l1XmT3ND3fOmb4NatDjNJlpC2sZ
+         Us3g9F9/By+H/JvthH7FHacuEOmctIQFRXhv2svTHIl7mkagijnPr6M7BqkTFhAra9Fn
+         +6EtlLTxh4cbeY8UmZYBYiXvloSJxN15Oys4FHOugRGBkMwoBQGie8CV++pEpyf7HO+U
+         bQFAkRRAZ70cVI4VFl8aU1mX7OorhaiQJ5u8S0dQkzo56wHoCKURpGIGglzZG58/X8/B
+         4mfaCucTjsb1oRBGWM2gSp6ZFdw+K9K87NMkqQeZuIXb1Ja3v6N8XmQF+b4tg8B4eQAi
+         /VQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvDNE7l7HSfB3gXv9yVj1jXZDJJY9kql/TZqlDoId3Saiut8ed91i7FOj/9c+qnnJGvnxH9OzFZw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl61MHIlZuy0cmq3DP6LN6B2EX9NfpDjwuA7FZ4dYb1z2bP8X6
+	CTMYrj/Drc/ZP17spviqPW/FsqBFFg+0d9E/nij0eQkEmcx8Pt5R62RbaUUps6k=
+X-Gm-Gg: ASbGncvHyAuWZY8Ob8wcLAFiYQfcEgcr6rjz8UtnPwKOlGtF5nu0su0XQ265gXMm+J3
+	DS9mCmF5UP396/qH7lGm5KXC1qJnW6PbxvkdO4dRWhmQWv61ScBqB9ChLVUN8c47YOfXVSgnA/B
+	wO9scblRLuiJQKRIfnBPN/PRXyWKesnJ0BuwNouPmqo4uoWkWd9U+w1H/eRDv7b9iIc70Syz1Wp
+	5kf+7z+Ad/4YuAKhqWA3nUngdghRTfssX52HBN/z4dYwtI=
+X-Google-Smtp-Source: AGHT+IGex/wnF/hyoCx+DzF6xIc9C3Ts1sMz2ZwLBUPzctWWBqn39zKEoU35OVLZuarjSrOdSTzJsA==
+X-Received: by 2002:a05:6a20:430d:b0:1d9:3957:8a14 with SMTP id adf61e73a8af0-1e0e0afa6d6mr16379131637.1.1732889877136;
+        Fri, 29 Nov 2024 06:17:57 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c30e2d8sm2749399a12.38.2024.11.29.06.17.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 05:51:28 -0800 (PST)
-Message-ID: <ae07905f-76f0-4742-9c40-d784cf0143dd@gmail.com>
-Date: Fri, 29 Nov 2024 13:52:12 +0000
+        Fri, 29 Nov 2024 06:17:56 -0800 (PST)
+Message-ID: <bc40bd75-7eac-4635-8c91-ccd42c2f1aa6@kernel.dk>
+Date: Fri, 29 Nov 2024 07:17:55 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,130 +80,57 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] io_uring: prevent reg-wait speculations
-To: Jann Horn <jannh@google.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <fd36cd900023955c763bd424c0895ae5828f68a0.1731979403.git.asml.silence@gmail.com>
- <0dfd1032-6ddd-49b3-a422-569af2307d3b@kernel.dk>
- <d5e9c79f-d571-4f3a-9145-f7e349e532ae@gmail.com>
- <278a1964-b795-4146-8f24-19f112af75b0@kernel.dk>
- <8bc3b927-b7f0-425f-8874-a3905b30759d@gmail.com>
- <CAG48ez3QNBvryTaf7s6G--Cgcuq2_vUmgJQOFxPLeySbsGj0Kg@mail.gmail.com>
+Subject: Re: [syzbot] [io-uring?] WARNING in __io_uring_free
+To: Matthew Wilcox <willy@infradead.org>, Jann Horn <jannh@google.com>
+Cc: syzbot <syzbot+cc36d44ec9f368e443d3@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <673c1643.050a0220.87769.0066.GAE@google.com>
+ <CAG48ez0uhdGNCopX2nspLzWZKfuZp0XLyUk90kYku=sP7wsWfg@mail.gmail.com>
+ <Z0kDWtjmlI_LwP5S@casper.infradead.org>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAG48ez3QNBvryTaf7s6G--Cgcuq2_vUmgJQOFxPLeySbsGj0Kg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Z0kDWtjmlI_LwP5S@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/27/24 22:53, Jann Horn wrote:
-> On Thu, Nov 21, 2024 at 1:12 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->> On 11/19/24 01:59, Jens Axboe wrote:
->>> On 11/18/24 6:43 PM, Pavel Begunkov wrote:
->>>> On 11/19/24 01:29, Jens Axboe wrote:
->>>>> On 11/18/24 6:29 PM, Pavel Begunkov wrote:
->>>>>> With *ENTER_EXT_ARG_REG instead of passing a user pointer with arguments
->>>>>> for the waiting loop the user can specify an offset into a pre-mapped
->>>>>> region of memory, in which case the
->>>>>> [offset, offset + sizeof(io_uring_reg_wait)) will be intepreted as the
->>>>>> argument.
->>>>>>
->>>>>> As we address a kernel array using a user given index, it'd be a subject
->>>>>> to speculation type of exploits.
->>>>>>
->>>>>> Fixes: d617b3147d54c ("io_uring: restore back registered wait arguments")
->>>>>> Fixes: aa00f67adc2c0 ("io_uring: add support for fixed wait regions")
->>>>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>>>>> ---
->>>>>>     io_uring/io_uring.c | 1 +
->>>>>>     1 file changed, 1 insertion(+)
->>>>>>
->>>>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>>>>> index da8fd460977b..3a3e4fca1545 100644
->>>>>> --- a/io_uring/io_uring.c
->>>>>> +++ b/io_uring/io_uring.c
->>>>>> @@ -3207,6 +3207,7 @@ static struct io_uring_reg_wait *io_get_ext_arg_reg(struct io_ring_ctx *ctx,
->>>>>>                  end > ctx->cq_wait_size))
->>>>>>             return ERR_PTR(-EFAULT);
->>>>>>     +    barrier_nospec();
->>>>>>         return ctx->cq_wait_arg + offset;
->>>>>
->>>>> We need something better than that, barrier_nospec() is a big slow
->>>>> hammer...
->>>>
->>>> Right, more of a discussion opener. I wonder if Jann can help here
->>>> (see the other reply). I don't like back and forth like that, but if
->>>> nothing works there is an option of returning back to reg-wait array
->>>> indexes. Trivial to change, but then we're committing to not expanding
->>>> the structure or complicating things if we do.
->>>
->>> Then I think it should've been marked as a discussion point, because we
->>> definitely can't do this. Soliciting input is perfectly fine. And yeah,
->>> was thinking the same thing, if this is an issue then we just go back to
->>> indexing again. At least both the problem and solution is well known
->>> there. The original aa00f67adc2c0 just needed an array_index_nospec()
->>> and it would've been fine.
->>>
->>> Not a huge deal in terms of timing, either way.
->>>
->>> I suspect we can do something similar here, with just clamping the
->>> indexing offset. But let's hear what Jann thinks.
+On 11/28/24 4:57 PM, Matthew Wilcox wrote:
+> On Fri, Nov 29, 2024 at 12:30:35AM +0100, Jann Horn wrote:
+>>> ------------[ cut here ]------------
+>>> WARNING: CPU: 0 PID: 16 at io_uring/tctx.c:51 __io_uring_free+0xfa/0x140 io_uring/tctx.c:51
 >>
->> That what I hope for, but I can't say I entirely understand it. E.g.
->> why can_do_masked_user_access() exists and guards mask_user_address().
-> 
-> FWIW, my understanding is that x86-64 can do this because there is a
-> really big hole in the virtual address space between userspace
-> addresses and kernel addresses (over 2^63 bytes big); so if you check
-> that the address at which you start accessing memory is in userspace,
-> and then you access memory more or less linearly forward from there,
-> you'll never reach kernelspace addresses.
-> 
->> IIRC, with invalid argument the mask turns the index into 0. A complete
->> speculation from my side of how it works is that you then able to
->> "inspect" or what's the right word the value of array[0] but not a
->> address of memory of choice.
-> 
-> Yeah, exactly, that's the idea of array_index_nospec(). As the comment
-> above the generic version of array_index_mask_nospec() describes, the
-> mask used for the bitwise AND in array_index_nospec() is generated as
-> follows:
-> "When @index is out of bounds (@index >= @size), the sign bit will be
-> set.  Extend the sign bit to all bits and invert, giving a result of
-> zero for an out of bounds index, or ~0 if within bounds [0, @size)."
-> 
-> The X86 version of array_index_mask_nospec() just does the same with
-> optimized assembly code. But there are architectures, like arm64, that
-> actually do more than just this - arm64's array_index_mask_nospec()
-> additionally includes a csdb(), which is some arm64 barrier for some
-> kinds of speculation. (So, for example, open-coding a bitwise AND may
-> not be enough on all architectures.)
+>> This warning is a check for WARN_ON_ONCE(!xa_empty(&tctx->xa)); and as
+>> Jens pointed out, this was triggered after error injection caused a
+>> memory allocation inside xa_store() to fail.
+>>
+>> Is there maybe an issue where xa_store() can fail midway through while
+>> allocating memory for the xarray, so that xa_empty() is no longer true
+>> even though there is nothing in the xarray? (And if yes, is that
+>> working as intended?)
 
-Good to know, thanks
+Heh, I had the exact same thought when I originally looked at this
+issue. I did code inspection on the io_uring side and tried with error
+injection, but could not trigger it. Hence the io_uring side looks fine,
+so must be lower down.
 
->> Then in our case, considering that
->> mappings are page sized, array_index_nospec() would clamp it to either
->> first 32 bytes of the first page or to absolute addresses [0, 32)
->> in case size==0 and the mapping is NULL. But that could be just my
->> fantasy.
-> 
-> Without having looked at this uring code in detail: What you're saying
-> sounds reasonable to me. Though one thing to be careful with is that
-> if the value you're masking is a byte offset, you should ideally make
-> sure to give array_index_mask_nospec() a limit that is something like
-> the size of the region minus the size of an element - you should
+> Yes, that's a known possibility.  We have similar problems when people
+> use error injection with mapping->i_pages.  The effort to fix it seems
+> disproportionate to the severity of the problem.
 
-Good point, thanks. I'll prepare something based on it.
+Doesn't seem like a big deal, particularly when you essentially need
+fault injection to trigger it. As long as the xa_empty() is the only
+false positive. I wonder if I should just change the io_uring side to do
+something ala:
 
-> probably assume that the preceding "if (unlikely(offset %
-> sizeof(long)))" could be bypassed in speculation, though in practice
+xa_for_each(&tctx->xa, index, node) {
+	WARN_ON_ONCE(1);
+	break;
+}
 
-That is there because of arches that don't like unaligned accesses,
-and size checks don't rely on it. It doesn't seems we should worry
-about it.
-
-> that's probably unlikely since it'd compile into something
-> straightforward like a bitmask-and-test with immediate operands.
+rather than the xa_empty() warn on. That should get rid of it on my side
+at least.
 
 -- 
-Pavel Begunkov
+Jens Axboe
 

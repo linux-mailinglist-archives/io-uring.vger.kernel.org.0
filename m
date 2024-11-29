@@ -1,60 +1,55 @@
-Return-Path: <io-uring+bounces-5128-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5129-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A3E9DBE29
-	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 00:57:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747DD163AA8
-	for <lists+io-uring@lfdr.de>; Thu, 28 Nov 2024 23:57:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E521940A2;
-	Thu, 28 Nov 2024 23:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NVeH6hxn"
-X-Original-To: io-uring@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D069DBF71
+	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 07:19:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77365211C;
-	Thu, 28 Nov 2024 23:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E021281CA1
+	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 06:19:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B146B1537CB;
+	Fri, 29 Nov 2024 06:19:49 +0000 (UTC)
+X-Original-To: io-uring@vger.kernel.org
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB78333C5;
+	Fri, 29 Nov 2024 06:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732838242; cv=none; b=KDApxuQ6WDjaH+hvxHSqn2ocMDvwspQ7f1Afd5McPuNCFdkRnDZU0D9XFB6XG741ZyIna0V0Gw1zh29yLwKk2SIegdqM0dG2wvGoEOXsJRTJ9HwjTCYgkYnwGeTJQ5V4xtNykgQdFziW+ZpKpmG2Lvzr+3xEvTDgDX3qlHGiHlo=
+	t=1732861189; cv=none; b=hHoct4W3Oho/fVPgt0OnXuAcFfOVxtFw4lxw4mvp9eTKCoz3a/cXG+Gffv57VSuezEL+hWccOgbonFAlhWgXhQtQWxYIupO5I0b7UnD2Pr16w1YVOln1m41lo/IGBm0gGxuxTohVH1QstdlYmB+ZbamqosH0qjFMc0qtPig7aDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732838242; c=relaxed/simple;
-	bh=9ji3H8fVHUjH72z/Rew8W0jSVxV2FEfIPTBs/eVMFjg=;
+	s=arc-20240116; t=1732861189; c=relaxed/simple;
+	bh=qSqLb7BZcVT2uKGBag8OryyBOgcsQgYjO4br+Pg3knY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EeHPXFfIFFkh+/vALVLnDfh66RDo7bOu70PC+EMxnmrRQa/QLYy8fZiRTL6LCbcSwG/R9hbay68ZfjfSZryhVVbXjkTtSIYOI4B5aVA3myqgMQjiDEwulTj+F9kU9MN1ECFM6PriT9oVDo7dVc81kqgKjXe06WRNd5VgHCzRwQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NVeH6hxn; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=n5TzocNg5NSMR/EMBC9MaqP0bB5Vs+X18ru/ZYSehlg=; b=NVeH6hxn/aRlD0e0Tsx+goBKac
-	XZ3mNsUUfAD7UxJGfUsaJZBZlFf0mo9HwddjDwKC9TqK6TCtl+qt8sbxiQMgiCap1IvXyc7PhHf9G
-	YjVowoOEYQF3NJUGIhQG54GSJBfodIxFdlYdcIcoTZEW57AThHJCh/UoEJ4iHjEOn19F0COJuI5/5
-	KZEl//ULOvdxunN9yysC2lTLatv+lFX5PjqGlmPBNsh3sNKr2XgW+UMdhA6VhlitebIFxSc8g0Bck
-	fG+AE/EhlMnxI8bd+ATgWFcNhnX6LSjoX80i+mh+Mw+mGdEDBq6HIEvtVKu+zaVdGAU0skOaWxjNz
-	nzvQUFhw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGoNm-00000003GRQ-1N8k;
-	Thu, 28 Nov 2024 23:57:14 +0000
-Date: Thu, 28 Nov 2024 23:57:14 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jann Horn <jannh@google.com>
-Cc: syzbot <syzbot+cc36d44ec9f368e443d3@syzkaller.appspotmail.com>,
-	asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [syzbot] [io-uring?] WARNING in __io_uring_free
-Message-ID: <Z0kDWtjmlI_LwP5S@casper.infradead.org>
-References: <673c1643.050a0220.87769.0066.GAE@google.com>
- <CAG48ez0uhdGNCopX2nspLzWZKfuZp0XLyUk90kYku=sP7wsWfg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQp3UhE6lZ0cOeBwTbwTWjRnSIKQhugvSeXlWN+Uapx1vBroZxq26AmoFQCaCJOfwCuYc5Zh+WDGdUaTJbNaMs05kPA0oEoulv8fdE/SOW9NnQMkfMlX+Sdp+fclzgmwO5fZNT3xoLZYt5aCGA/a+q3YZbCREuIOlzWXevhGZyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 29B9D68D1C; Fri, 29 Nov 2024 07:19:42 +0100 (CET)
+Date: Fri, 29 Nov 2024 07:19:41 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Nitesh Shetty <nj.shetty@samsung.com>,
+	Javier Gonzalez <javier.gonz@samsung.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Keith Busch <kbusch@meta.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"joshi.k@samsung.com" <joshi.k@samsung.com>
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+Message-ID: <20241129061941.GA2545@lst.de>
+References: <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org> <20241112135233.2iwgwe443rnuivyb@ubuntu> <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com> <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org> <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com> <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org> <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com> <7835e7e2-2209-4727-ad74-57db09e4530f@acm.org> <yq1ed2wupli.fsf@ca-mkp.ca.oracle.com> <9e9ca761-6356-4a97-a314-d08bd5ea0916@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -63,22 +58,26 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez0uhdGNCopX2nspLzWZKfuZp0XLyUk90kYku=sP7wsWfg@mail.gmail.com>
+In-Reply-To: <9e9ca761-6356-4a97-a314-d08bd5ea0916@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Fri, Nov 29, 2024 at 12:30:35AM +0100, Jann Horn wrote:
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 16 at io_uring/tctx.c:51 __io_uring_free+0xfa/0x140 io_uring/tctx.c:51
+On Thu, Nov 28, 2024 at 05:51:52PM +0900, Damien Le Moal wrote:
+> > Maybe. But you'll have a hard time convincing me to add any kind of
+> > state machine or bio matching magic to the SCSI stack when the simplest
+> > solution is to treat copying like a read followed by a write. There is
+> > no concurrency, no kernel state, no dependency between two commands, nor
+> > two scsi_disk/scsi_device object lifetimes to manage.
 > 
-> This warning is a check for WARN_ON_ONCE(!xa_empty(&tctx->xa)); and as
-> Jens pointed out, this was triggered after error injection caused a
-> memory allocation inside xa_store() to fail.
-> 
-> Is there maybe an issue where xa_store() can fail midway through while
-> allocating memory for the xarray, so that xa_empty() is no longer true
-> even though there is nothing in the xarray? (And if yes, is that
-> working as intended?)
+> And that also would allow supporting a fake copy offload with regular
+> read/write BIOs very easily, I think. So all block devices can be
+> presented as supporting "copy offload". That is nice for FSes.
 
-Yes, that's a known possibility.  We have similar problems when people
-use error injection with mapping->i_pages.  The effort to fix it seems
-disproportionate to the severity of the problem.
+Just as when that showed up in one of the last copy offload series
+I'm still very critical of a stateless copy offload emulation.  The
+reason for that is that a host based copy helper needs scratch space
+to read into, and doing these large allocation on every copy puts a
+lot of pressure onto the allocator.  Allocating the buffer once at
+mount time and the just cycling through it is generally a lot more
+efficient.
+
 

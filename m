@@ -1,165 +1,209 @@
-Return-Path: <io-uring+bounces-5156-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5157-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE9C9DEAEC
-	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 17:27:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F356D9DEEFE
+	for <lists+io-uring@lfdr.de>; Sat, 30 Nov 2024 05:49:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04436B209C6
-	for <lists+io-uring@lfdr.de>; Fri, 29 Nov 2024 16:27:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E1D2B209A8
+	for <lists+io-uring@lfdr.de>; Sat, 30 Nov 2024 04:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768EE149E17;
-	Fri, 29 Nov 2024 16:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1627080D;
+	Sat, 30 Nov 2024 04:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="O9BSLrya"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GI1wQ/YJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D88645BEC
-	for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 16:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC1F29A0;
+	Sat, 30 Nov 2024 04:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732897661; cv=none; b=YDuuoFvfF3E7h+sUP5P3nniRw+bjUJrrj/UFE2eLvJ5MqjEja7PKIsUk7B2gx/CBeQtgfYKiiXil+RYJW0R4bSXOTINn1MeBehfNkvfeCvMxBUELEnRZs8e9V4jm2WR6nMeDl7DVcylqDLrOPMC98pb8k6D2jkXQwDfenDLLtBU=
+	t=1732942160; cv=none; b=aUDL8DZr9WfknPQW+e6htdl/O3kmSOWBzx5FLYESSmn52fJBvGL/RrNLQz1kSItjFsWjMtdpGuHIvgvCejVLohwLZELnREuc3zjvhRdJIAFLaDrwozUGKvQVgv3TkRGDzwfx3P0hL6sgEr31DA9DZOe0frzsO8g8oQfWPk7EwdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732897661; c=relaxed/simple;
-	bh=7oC68dLt+3lFaPQLx5y7vxaOm4NGg/3Vj02oeuv2CqU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=aXEGMxZnrsAwtKaZPwMBReX9PT8TEAOivTCbIkliHaBWjVfRxvku/9KDSNuk7eiR/CtVHGfp4bMMSScipvwZhvNjpC8LGktvn30h4SyhMo+mg2QZ7HQ8+YVKSva0RDXg2JaRTo+7yEmG4dGWeippuGPz1J+zTB3Bu8TLH1hkbbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=O9BSLrya; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-724f0f6300aso2295616b3a.2
-        for <io-uring@vger.kernel.org>; Fri, 29 Nov 2024 08:27:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732897657; x=1733502457; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oASEyJ1zRyFgWyNoO9O/z2XFPPdfl7lpJNGxZoc8WsI=;
-        b=O9BSLryaCe1knuojEa1rjlSVteSJ/SOqggX3Uuk+Jf9HIFFwgXTz2kpb6dZwO4GKcr
-         lmxRtRCXkxNvmYEQqz165AyH6PG8KYHr1FdVQMyiitM3aPEDQSqx71ugsIE4c8QUyZuC
-         t9oaM/hSp61AsgOpPEzp1vj2X1/wDML1KXC9c92JntAKQ4ea0cx6a8GjXCquccwH1o/B
-         iZH7HcfbX9x9nXybsUDaFf8BNRQejAc+g0WwiuTlgTgvPE4SYDJOMlXzJbtBHHTlQI7M
-         X8BxNyL5HrHGPQxspINUSzqB5D3sYaRzXrsF/n50S59uKFAXT8u+VZj7OJJHOk7xECtZ
-         NK3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732897657; x=1733502457;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oASEyJ1zRyFgWyNoO9O/z2XFPPdfl7lpJNGxZoc8WsI=;
-        b=ChgDWXnemaouCzKfuj3skOoX3yg420NCL8zvBikuQDFWdxcttZEMxvhP/U+hksCc/q
-         WXFe946qwmR+YrROkrS/Lld9PUoCeNi2LI/lhWuQMUxfd8XfkKRvl48gfV7RNcJIGKRl
-         pV5mrktRmY0/NcULNS+yUkDLcDAI73eVdUrtfu6HItwGTh7Jv2jX635kGuKMWqBDXqRu
-         20xTqato+ZeDwzhOOpIoXRX4E66a3eTPcNDbqWQPTqRcDqpudAr+qGzXje6twEt+/+It
-         9FZW14f0c78rp24Loxi7ykXbZChNFjKE5IsclRTpmy/MJnmKUpl6K7tghMUo0ogUhi9i
-         iHdw==
-X-Gm-Message-State: AOJu0Yxe3WaXRjSGr3c/R8/zRlFa6U0s2oLAX4dlR04PO5uuNeMZyse/
-	Kvklz0EdnuL20K6Zg7TCH6SDfNTQOFYa/ewOSYcaktVVXjFC0Tdc4Z62DnhF/PG3Y21eNk5lA8i
-	7
-X-Gm-Gg: ASbGncsIOe0Y+vsNk9GzbFjgT0BxCR6ItttIreTvOLu+qhzUpap2Mt8yWj1cdMvyCsj
-	Ynr6qmvEFUPY9tjimCTylRdnqZ0BeOUECryIYUF9daHLoAeJV3WjoGQpLv4gc+uGFnR27KvvYyc
-	22JH6X5VYA97NZX1+O0le9FHxLcPdMsqyO97Su1YlYh6uK5cK27PySVX3V2uxT31cYOHOj5mY1J
-	L41W3XZWv8tp94yUI9FtEQ45Q9xJ1oU6c7Jisf0839vvwQ=
-X-Google-Smtp-Source: AGHT+IGxkVtbYxLPHHCXFt/4xXigrQPty143j+jfnxUYO3WHgnqjWbSEaDwuWayJ/bzDFs8UkKPE4w==
-X-Received: by 2002:a17:90b:33ce:b0:2ea:6f90:ce09 with SMTP id 98e67ed59e1d1-2ee094caf5amr14118114a91.27.1732897657510;
-        Fri, 29 Nov 2024 08:27:37 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee45ec551asm2415207a91.16.2024.11.29.08.27.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 08:27:36 -0800 (PST)
-Message-ID: <4fa8aaa8-78e5-4e75-98ce-5d79c2b98dd2@kernel.dk>
-Date: Fri, 29 Nov 2024 09:27:36 -0700
+	s=arc-20240116; t=1732942160; c=relaxed/simple;
+	bh=7a+G0bORdE2giUr3BfncHUbUhxIoNcU4LB5xeDPWjC0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cqOHN5yG8sbpqD5HIJj8xSr0eqW3CTm4xAS0Gsjrl9da/slCdeBrvooWE/HijI21FHos1bAQgnr/Mciu66qpsy9nns2+Qr6CUhBKu91J7r144oZaf/S3QZ/E6o23NtLl5KaJk4zlB5VhYXq+avCAmneF6pmNax+EQOMv42qDNaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GI1wQ/YJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B319DC4CECC;
+	Sat, 30 Nov 2024 04:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732942159;
+	bh=7a+G0bORdE2giUr3BfncHUbUhxIoNcU4LB5xeDPWjC0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GI1wQ/YJnVYzohfA+pkUBuCpZ7wmxmedH3w63YwPYzewyxYdEl0OgB6j0OpKX69kP
+	 gHCQDqAsGzSlc7cSAnQx4/T++rPZOCA6VXS8vFoTxin2qWiLmfxBWIB4M0ggiKzcwG
+	 EALQDbzN0Gk3lZ8JTYwgfGYA/+FefzNwcO4MTFw1dSOceBPmUVLOHrPmalQ62C9l6i
+	 QUe4V2BmgIriWzUlbuc2osu6jamacQ4TlSkrNsWVvBZHm8vWf3GWqF5SwZl9GJzF2u
+	 b+fAt858jkaIDXPzS7VoWh+9H/2aWNuInIscckjflwohp4CUaA3Sjm72pUc6hot48/
+	 W3imNrwytJ5sA==
+From: Kees Cook <kees@kernel.org>
+To: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] exec: Make sure task->comm is always NUL-terminated
+Date: Fri, 29 Nov 2024 20:49:14 -0800
+Message-Id: <20241130044909.work.541-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] Final io_uring changes for 6.13-rc1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4500; i=kees@kernel.org; h=from:subject:message-id; bh=7a+G0bORdE2giUr3BfncHUbUhxIoNcU4LB5xeDPWjC0=; b=owGbwMvMwCVmps19z/KJym7G02pJDOleM738HBLK3jN2iE/6eH1DywlDV//zrlOz/B20zoSrF TcWRqh2lLIwiHExyIopsgTZuce5eLxtD3efqwgzh5UJZAgDF6cATKSmnZFhhnD59S3JD5jX3D1Q mbmj6tqU1GW6Zs+WWgddMvkW5bPjByPDewHbf9LBK0Ic3Q08T3n7tfyLWvl1wUbxiKnnNR5G8O7 iAAA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+Using strscpy() meant that the final character in task->comm may be
+non-NUL for a moment before the "string too long" truncation happens.
 
-Various fixes and changes for io_uring that should go into the 6.13
-merge window. This pull request contains:
+Instead of adding a new use of the ambiguous strncpy(), we'd want to
+use memtostr_pad() which enforces being able to check at compile time
+that sizes are sensible, but this requires being able to see string
+buffer lengths. Instead of trying to inline __set_task_comm() (which
+needs to call trace and perf functions), just open-code it. But to
+make sure we're always safe, add compile-time checking like we already
+do for get_task_comm().
 
-- Remove a leftover struct from when the cqwait registered waiting was
-  transitioned to regions.
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
 
-- Fix for an issue introduced in this merge window, where nop->fd might
-  be used uninitialized. Ensure it's always set.
+Here's what I'd prefer to use to clean up set_task_comm(). I merged
+Linus and Eric's suggestions and open-coded memtostr_pad().
+---
+ fs/exec.c             | 12 ++++++------
+ include/linux/sched.h |  9 ++++-----
+ io_uring/io-wq.c      |  2 +-
+ io_uring/sqpoll.c     |  2 +-
+ kernel/kthread.c      |  3 ++-
+ 5 files changed, 14 insertions(+), 14 deletions(-)
 
-- Add capping of the task_work run in local task_work mode, to prevent
-  bursty and long chains from adding too much latency.
-
-- Work around xa_store() leaving ->head non-NULL if it encounters an
-  allocation error during storing. Just a debug trigger, and can go away
-  once xa_store() behaves in a more expected way for this condition. Not
-  a major thing as it basically requires fault injection to trigger it.
-
-- Fix a few mapping corner cases
-
-- Fix KCSAN complaint on reading the table size post unlock. Again not a
-  "real" issue, but it's easy to silence by just keeping the reading
-  inside the lock that protects it.
-
-Please pull!
-
-
-The following changes since commit a652958888fb1ada3e4f6b548576c2d2c1b60d66:
-
-  io_uring/region: fix error codes after failed vmap (2024-11-17 09:01:35 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.13-20242901
-
-for you to fetch changes up to 7eb75ce7527129d7f1fee6951566af409a37a1c4:
-
-  io_uring/tctx: work around xa_store() allocation error issue (2024-11-29 07:20:28 -0700)
-
-----------------------------------------------------------------
-io_uring-6.13-20242901
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      io_uring/region: return negative -E2BIG in io_create_region()
-
-David Wei (2):
-      io_uring: add io_local_work_pending()
-      io_uring: limit local tw done
-
-Jens Axboe (3):
-      io_uring/nop: ensure nop->fd is always initialized
-      io_uring: fix task_work cap overshooting
-      io_uring/tctx: work around xa_store() allocation error issue
-
-Pavel Begunkov (4):
-      io_uring: remove io_uring_cqwait_reg_arg
-      io_uring: protect register tracing
-      io_uring: check for overflows in io_pin_pages
-      io_uring: fix corner case forgetting to vunmap
-
- include/linux/io_uring_types.h |  1 +
- include/uapi/linux/io_uring.h  | 14 --------
- io_uring/io_uring.c            | 75 ++++++++++++++++++++++++++++--------------
- io_uring/io_uring.h            |  9 +++--
- io_uring/memmap.c              | 13 ++++++--
- io_uring/nop.c                 |  6 +++-
- io_uring/register.c            |  3 +-
- io_uring/tctx.c                | 13 +++++++-
- 8 files changed, 87 insertions(+), 47 deletions(-)
-
+diff --git a/fs/exec.c b/fs/exec.c
+index e0435b31a811..5f16500ac325 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1200,16 +1200,16 @@ char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
+ EXPORT_SYMBOL_GPL(__get_task_comm);
+ 
+ /*
+- * These functions flushes out all traces of the currently running executable
+- * so that a new one can be started
++ * This is unlocked -- the string will always be NUL-terminated, but
++ * may show overlapping contents if racing concurrent reads.
+  */
+-
+ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
+ {
+-	task_lock(tsk);
++	size_t len = min(strlen(buf), sizeof(tsk->comm) - 1);
++
+ 	trace_task_rename(tsk, buf);
+-	strscpy_pad(tsk->comm, buf, sizeof(tsk->comm));
+-	task_unlock(tsk);
++	memcpy(tsk->comm, buf, len);
++	memset(&tsk->comm[len], 0, sizeof(tsk->comm) - len);
+ 	perf_event_comm(tsk, exec);
+ }
+ 
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index e6ee4258169a..ac9f429ddc17 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1932,11 +1932,10 @@ static inline void kick_process(struct task_struct *tsk) { }
+ #endif
+ 
+ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec);
+-
+-static inline void set_task_comm(struct task_struct *tsk, const char *from)
+-{
+-	__set_task_comm(tsk, from, false);
+-}
++#define set_task_comm(tsk, from) ({			\
++	BUILD_BUG_ON(sizeof(from) != TASK_COMM_LEN);	\
++	__set_task_comm(tsk, from, false);		\
++})
+ 
+ extern char *__get_task_comm(char *to, size_t len, struct task_struct *tsk);
+ #define get_task_comm(buf, tsk) ({			\
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index a38f36b68060..5d0928f37471 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -634,7 +634,7 @@ static int io_wq_worker(void *data)
+ 	struct io_wq_acct *acct = io_wq_get_acct(worker);
+ 	struct io_wq *wq = worker->wq;
+ 	bool exit_mask = false, last_timeout = false;
+-	char buf[TASK_COMM_LEN];
++	char buf[TASK_COMM_LEN] = {};
+ 
+ 	set_mask_bits(&worker->flags, 0,
+ 		      BIT(IO_WORKER_F_UP) | BIT(IO_WORKER_F_RUNNING));
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index a26593979887..90011f06c7fb 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -271,7 +271,7 @@ static int io_sq_thread(void *data)
+ 	struct io_ring_ctx *ctx;
+ 	struct rusage start;
+ 	unsigned long timeout = 0;
+-	char buf[TASK_COMM_LEN];
++	char buf[TASK_COMM_LEN] = {};
+ 	DEFINE_WAIT(wait);
+ 
+ 	/* offload context creation failed, just exit */
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index db4ceb0f503c..162d55811744 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -736,10 +736,11 @@ EXPORT_SYMBOL(kthread_stop_put);
+ 
+ int kthreadd(void *unused)
+ {
++	static const char comm[TASK_COMM_LEN] = "kthreadd";
+ 	struct task_struct *tsk = current;
+ 
+ 	/* Setup a clean context for our children to inherit. */
+-	set_task_comm(tsk, "kthreadd");
++	set_task_comm(tsk, comm);
+ 	ignore_signals(tsk);
+ 	set_cpus_allowed_ptr(tsk, housekeeping_cpumask(HK_TYPE_KTHREAD));
+ 	set_mems_allowed(node_states[N_MEMORY]);
 -- 
-Jens Axboe
+2.34.1
 
 

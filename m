@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-5174-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5175-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD169E1DA3
-	for <lists+io-uring@lfdr.de>; Tue,  3 Dec 2024 14:33:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B10449E1E05
+	for <lists+io-uring@lfdr.de>; Tue,  3 Dec 2024 14:44:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1182DB29BE3
-	for <lists+io-uring@lfdr.de>; Tue,  3 Dec 2024 12:04:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 542E6B389E2
+	for <lists+io-uring@lfdr.de>; Tue,  3 Dec 2024 12:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1011E47BE;
-	Tue,  3 Dec 2024 12:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E471E4930;
+	Tue,  3 Dec 2024 12:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRvg8noI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fzgcehbx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A351E0493;
-	Tue,  3 Dec 2024 12:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42161E570D;
+	Tue,  3 Dec 2024 12:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733227470; cv=none; b=RMXm45w6zwhsQee3YYpPzFBTmwtkG5gkDd7tacdCBCRfxOnjuuK++P4fUVJqVQv99KQ8mlbxGNT8L0wQtlH4wqGOoaUpvX8aAtOc5/gADATa/VawdXbWcYookixDHO7gYVP7LQR93Q1A7UrdyciCkJGJNxVZAyLohBPZQ1NEs+g=
+	t=1733228052; cv=none; b=pz3M9AiDbpUkfmMQ63/QgMu9W+3VS3OB83mCaTLNj1YdcYypwYm6LjHKEzNdkUCH6S+p9f7vVyQiWmvwJ+KULhMqYdb/J1CL37QH96qFko+gv/5rPJwRUDENH3vbfXTAZdNspwrJWNvLfkUdPJjwOH8KqWuNQHXDyEKaBZz8c3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733227470; c=relaxed/simple;
-	bh=FEiLx00zqYf4+51Ik7ASoOyO046tjcnO+cRI+fUxJlA=;
+	s=arc-20240116; t=1733228052; c=relaxed/simple;
+	bh=tAO0ZeRGqCmiIAKdtHt4tYNfmovaSCv8wWfWgBeLvH0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WlZL5ZEH/UD3Iwbp2ZgHcO7CAq0uz9MTOryvDGgk0z6Al8j+XBOH2v8nqcYWeO0qODFDcK4JmWWKaCa2R6vkKh2psEJNptdTpcTjCyf+2wQA7yphPiaWVyY0tgYv2OkSzxdbFB5J7+btnWy/YQaECCzuUMYXwYwVbDOdG0Ao7aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRvg8noI; arc=none smtp.client-ip=209.85.218.41
+	 In-Reply-To:Content-Type; b=l96ugr3lTkzDsbP4/EjsuKY6rARZFUagnakO0xlGFMr06YQPd4d+Uf6++8/aCCXO+HGy3TPDaSdRCBWO3yL53MLdQI7bdiMHL1jG30Akb5/aVPNkncMJ7W12NnVGl9UPC5UngkRA05VA8Y1oPoL3/m/GRuCSA0ypGMs90NNaHTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fzgcehbx; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa549f2f9d2so669717766b.3;
-        Tue, 03 Dec 2024 04:04:28 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d0be79e7e7so4943523a12.0;
+        Tue, 03 Dec 2024 04:14:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733227467; x=1733832267; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733228049; x=1733832849; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DdFGz1GNvwzX3FJYNRanwNsMLzriIeqibMElvzGNDoo=;
-        b=IRvg8noIVekIE5KeRZ38qkRm+8niaBlikr0R1tyO9r1GkYbVlfMfV5k7+sEG9mSfzg
-         KcV5oh0sGmxa1NlMHumk4GGJHaURugxfkflFkSglod8b+b9BlRNIajWgCnX3EP3cXhtj
-         X9z83Q8IOXybcd/xhdKJW5g/9iGCD0RA+s8fokj6uh6NzIB9HPuZIMfOUkQt2fsiQa0y
-         BoJjKLAZRwfKVD19H4ksTjHEDOSizlqqkB7AxpJDMpPQS1lpIwrzKVvaO6EgT06U5fOC
-         xdIQTdIrQAJLRgkZ5p+pVTN2KKsYSIEcNRFBP+0/g3pCQDErYh0J2V7rHO0YmZktZTln
-         HRzg==
+        bh=aYa41I3tMLsmNfstYOxMKi/+Fg9Ns9dKhwH3u1EbE6g=;
+        b=Fzgcehbxc5865TMJS4MEfjbvTxSLhboxjfNoc83ux3m4y5ohiBHaGzxNOWRMQoKX52
+         uuHnhRa0BAo0Udfg9+pH5yI6MV7mFUvfiF+X0cX11IvUGpjTrAfs4stj1fgU0BHJNX/o
+         4ucOfjBCLI+NnmAXDPMGHbzV2tCczf4VBdo49cypllJmWyrpkro5gBe4D5MbV5lAUHW5
+         A6b/T4G8YwLVB1hFGcZEz1sUZc2UEw7/262eLYmNZvp3cJRIUhHTKPCNimKpFfISd4Ug
+         VqSggmfZAIH1Kc+LpesCiBZNujs+L0sTxGiR2Idy+MkkNjOj69/giRkSDESd99uu+wSV
+         pCJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733227467; x=1733832267;
+        d=1e100.net; s=20230601; t=1733228049; x=1733832849;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DdFGz1GNvwzX3FJYNRanwNsMLzriIeqibMElvzGNDoo=;
-        b=PoSGXjPbZ1RO1Orxs6Bl/ZitiZB4lzCgCmDrdZWVAilqle35ewZjVm/vJpnR6LSvrj
-         CLM9M6VY0LBDf54vgM6b49FajCHUsd1TiC5vh7mReK/JPI5G4ws9hASyrHhhNJC0rLwZ
-         LQfDPlIysNtfJ1slM7WvKnh8BNQ9Wbcw0ss7OEIppk0zlADZjCq2+hRmOeh5y/Xi7XJY
-         msbmQS8wdk4xxX55Z9tFCsDyK40AUCuIKycJglDiPU4zRCpo6++9UviUgFn+SuyVxNDR
-         IpclAGmA/i5UqiRsLTjj/GPyUGHgAoHzRUeyf1DbIlZEbpRQM0n7b7Ed0QWtF1iEwT/I
-         O/EA==
-X-Forwarded-Encrypted: i=1; AJvYcCViT7nNBsOoFmCHYYDvU2VymWDUk4nU5bqCU58C5J3xN1AJJnXHMg+AazP1QUYw5LlI9IvzbZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO9xJYDRXH4KLZzrDTcqG2WdxCZhrLzTa0K3HWfoeDm4bmJEhw
-	Lix1jD/5r0un3ffjdq4HBdz7bnTGt/pA9URhvdK5ch1DK7TJQHN30wXZYQ==
-X-Gm-Gg: ASbGnct/KDnCg3OIGf7Zb4+dP4YRQTNRXoT/hZ8LJkF6PS8bbbNDfqt7hqrasE33kqw
-	Vm8ogwp17dWJlW+5JM4cK36OFbvt6Q1iZB2Gvy3Qs3tNGSk8Jz5fEyaPm24t1nqFps6sQhbB2EX
-	HEoBKBuVcvNhDHBRQNRjsOnuWzFuQxz6LbJCCMd92uocPQXnOeLjv0jPXG1QMymYNKvPv/4d5Ap
-	7UrpqNqTTM+/BDpOiHF0ylPr/PpL7Ma2nQMrsBgDOlE/ETFGQH9fmYsFcMUDg==
-X-Google-Smtp-Source: AGHT+IFFAQkr1ErihNvl9V76tIRJQVSJ3c0SYsmQ1aGe2ujcXBz43wzm1KQfi/ymtbdHl5j/Q22log==
-X-Received: by 2002:a17:906:bfea:b0:aa5:3853:5535 with SMTP id a640c23a62f3a-aa5f7eef1fdmr162439966b.38.1733227467171;
-        Tue, 03 Dec 2024 04:04:27 -0800 (PST)
+        bh=aYa41I3tMLsmNfstYOxMKi/+Fg9Ns9dKhwH3u1EbE6g=;
+        b=T2KaZp1xXUC4ku9GJMDLrQUn+HDNhyaFEKNKKdixTKSEKUl2nqRRdsSecpiSictEWG
+         mwmK9b3YYwnHRSdEOXz2duCV+lbN9TOfhy7zlxNCl5bMwft3MXHTSw9Zmw6nHLInizBK
+         UcpRvlOxwsVleE0THhCRDvTdvgByhSwCNsbGrLbU/is7lmhqxdGpP5iSatg/mjBVBZ2a
+         kOlSTHFe3Ox7EpzXwMFaYcT4BQNExFLerC/kOXlxjxmows3oy+w8P83/NKc5EHXVXXa1
+         wxFAXzC6WcCouW29ZPwAlI9aF6wI07w3Sj2KknhkHimxUwrqH7gMCedtbbsEzQHJXDzX
+         3Wug==
+X-Forwarded-Encrypted: i=1; AJvYcCVpZ8BW3w/vuJzH51V9tasF31yZJBI2ou00KZieuks1dJQVIm7cG50tPVnh/Ty8BgEJiBcTD50HVPy6jRCCDA==@vger.kernel.org, AJvYcCWNIj4vzg+RNVhmY78cx1IQqJcqtCC7sxPutyrHeAtcXmTgVhtJ6s/980+xczQgXa0ee27YeDUSUA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWiMS9qvsJLDrnKRLFalPhZ/708u6WSj9mMq+NqrVht0o78rjZ
+	oeytTjvnACtPZg8fKNbm8AqCoX2Q37Byo3+rbY4fHZgSWB2P8dHnlD7USQ==
+X-Gm-Gg: ASbGncvhLCPBIt/UHK3Ankrx5tGRqIffshXBWotuFjGUb4K1BAHxIOZIweF8WJYVI9y
+	X9jjjqFgHy/5fj2Q56VzREHa9uqiA0600sDpKqKq+hm4cvmj2YBj/Hlk2Rg56/rvB6NoEEOkSmC
+	yb4uf5NjMw8QKx/VywZPmElCUNUjjweyquwZXK09ABNuyD//ACP8TzwNEHVCBDFRlGpxJ2LVViA
+	Ly1FsfnVMqNhjSCqsBgUYaI8MbsxBBz9ZFfwfQ/DJh7vO6XQ76dhxtpL5dYZw==
+X-Google-Smtp-Source: AGHT+IFkUm6A9sR4sJL2tWNsExNALXeHj8sXuW+Op8uDwwRc1e/kSYJE816Fi9ms5GgmtPIoWY1dEA==
+X-Received: by 2002:a05:6402:34d4:b0:5d0:ac78:57 with SMTP id 4fb4d7f45d1cf-5d10cb9a204mr1506296a12.30.1733228048921;
+        Tue, 03 Dec 2024 04:14:08 -0800 (PST)
 Received: from [192.168.42.213] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599953d53sm611295766b.181.2024.12.03.04.04.26
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0d49fc12bsm3269535a12.73.2024.12.03.04.14.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2024 04:04:26 -0800 (PST)
-Message-ID: <b21af3fd-09de-48e2-a21c-318f23344528@gmail.com>
-Date: Tue, 3 Dec 2024 12:05:23 +0000
+        Tue, 03 Dec 2024 04:14:08 -0800 (PST)
+Message-ID: <2d156fde-117d-45c1-9216-eafbd437cfae@gmail.com>
+Date: Tue, 3 Dec 2024 12:15:04 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,31 +80,34 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] io_uring: Change res2 parameter type in
- io_uring_cmd_done
-To: Bernd Schubert <bschubert@ddn.com>, Jens Axboe <axboe@kernel.dk>,
- Kanchan Joshi <joshi.k@samsung.com>
-Cc: io-uring@vger.kernel.org, stable@vger.kernel.org,
- Li Zetao <lizetao1@huawei.com>
-References: <20241203-io_uring_cmd_done-res2-as-u64-v2-1-5e59ae617151@ddn.com>
+Subject: Re: [PATCH RFC v7 13/16] io_uring/cmd: let cmds to know about dying
+ task
+To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
+ bernd@bsbernd.com
+References: <20241127-fuse-uring-for-6-10-rfc4-v7-0-934b3a69baca@ddn.com>
+ <20241127-fuse-uring-for-6-10-rfc4-v7-13-934b3a69baca@ddn.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241203-io_uring_cmd_done-res2-as-u64-v2-1-5e59ae617151@ddn.com>
+In-Reply-To: <20241127-fuse-uring-for-6-10-rfc4-v7-13-934b3a69baca@ddn.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/3/24 10:31, Bernd Schubert wrote:
-> Change the type of the res2 parameter in io_uring_cmd_done from ssize_t
-> to u64. This aligns the parameter type with io_req_set_cqe32_extra,
-> which expects u64 arguments.
-> The change eliminates potential issues on 32-bit architectures where
-> ssize_t might be 32-bit.
+On 11/27/24 13:40, Bernd Schubert wrote:
+> From: Pavel Begunkov <asml.silence@gmail.com>
 > 
-> Only user of passing res2 is drivers/nvme/host/ioctl.c and it actually
-> passes u64.
+> When the taks that submitted a request is dying, a task work for that
+> request might get run by a kernel thread or even worse by a half
+> dismantled task. We can't just cancel the task work without running the
+> callback as the cmd might need to do some clean up, so pass a flag
+> instead. If set, it's not safe to access any task resources and the
+> callback is expected to cancel the cmd ASAP.
 
-LGTM. We can also convert all parameters to match the ABI, i.e.
-io_uring_cqe::res is s32, "ssize_t ret" is just truncated.
+It was merged through btrfs tree, so when you rebase patches onto
+something branching off v6.13-rc1 it should already be there.
 
 -- 
 Pavel Begunkov

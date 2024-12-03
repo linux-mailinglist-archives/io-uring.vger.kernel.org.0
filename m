@@ -1,244 +1,154 @@
-Return-Path: <io-uring+bounces-5172-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5173-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A779E194C
-	for <lists+io-uring@lfdr.de>; Tue,  3 Dec 2024 11:31:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A459E1B82
+	for <lists+io-uring@lfdr.de>; Tue,  3 Dec 2024 12:59:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7241641F2
-	for <lists+io-uring@lfdr.de>; Tue,  3 Dec 2024 10:31:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A66A166757
+	for <lists+io-uring@lfdr.de>; Tue,  3 Dec 2024 11:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A6C1E0DEB;
-	Tue,  3 Dec 2024 10:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D06579FE;
+	Tue,  3 Dec 2024 11:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="1z6U+VJ2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IN/x506m"
 X-Original-To: io-uring@vger.kernel.org
-Received: from outbound-ip168b.ess.barracuda.com (outbound-ip168b.ess.barracuda.com [209.222.82.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030A01E22FC;
-	Tue,  3 Dec 2024 10:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733221905; cv=fail; b=nxNYy/Q927wVzHHFXJXxtPTPEl9dpLHwWK3aCVMxeQIGks6Lhu3XCJktnJgEiIR+qMSKZO7t1AddF/0R3Yc+gUhRlyaHQNdUx+tqnrds6EYBM038Sn8yampEF2sF6PukFjvs70uehYJ85Hi25Z46F+h7ZjInZ8y+xgDiw5jEl9w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733221905; c=relaxed/simple;
-	bh=nHOmP131y8Oa0pNAcfAJzQe30Jz/Aighg/q+swsXXwk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=buDmVRU8etU/urTEKOkL5xWrLC/Fj6NsO4eBkFR+sU+VSFIQO0XXZn35ufTIfFfprm4p0bZIwdLChJQcsD/okh5EkA8MiGgKUXwCPrkxhmsSUWZ+GvRCKQKghJvhhR08fldbT/qrSTRRzUHCQRSVYN5to/6uh8gYKRE3am5Q2xY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=1z6U+VJ2; arc=fail smtp.client-ip=209.222.82.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2176.outbound.protection.outlook.com [104.47.59.176]) by mx-outbound43-165.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Tue, 03 Dec 2024 10:31:10 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dmMDBqwW1p1iQDTdmZn7ydxhNfhdmOyaIVuwGcGuX3WGRV6WfZuc31AeR9fqRO2sXh5bGo+OTY+RNuq8VRnLD5gHhQ/GNeO7Mxe++Ei3Mow0CavEJMcesBEaXPTuj46cUweqqVVYT7kgNoqJPT+BZ7eeBhR5CzUz2bBfXb0reeoXi696t5anDI7ObCY9TZoCnyxdORynx6EC5s9Zk5sev76z7Zj70dCN6a3ngMTes07ZPWeaGmgnZ09DMAGyepFauF62PCsvq9q4XKUNvsfqRQIPp6qTVpYuElqHCelRJS7kv29nZzTh2/4nzKPvMAbIteffthVR+kAFPpKSOgqySw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wVm4H8RXRaqZ8LBjd2ZCTdPtiLPehx//xhmLmyaFlEE=;
- b=ina2YTmhmwDi1oCxjTENhC3Dz6IN7CAxOhxl4tAfMx85kXZ+Fbsq6rj7TugPILvOSPzMVS79pzaWp1+oTsYCEoLnu8IzjFO6ZtscfUoXiWm+PvhtKROJ69enaMR6CiUtF1fSjlb6RSeWyS6ByUMV3lO9MvR1SVEy0S+bthYORxeayjY7PhW/uV6U01efwFhbjwS5oSasXYao5fwpXYaC2DzDfAqNmIIEO9W7Bkw6lM/tXaNo2fguFk+7a8YRrWp8MdHXDOpRjKqyJTA+TQpl46gTiwLWuIQ1eDuXJzN5x/tr8R27JukX7kYdn+1kvPQ43ZaOSrx9WVD1AqTDn2MKRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wVm4H8RXRaqZ8LBjd2ZCTdPtiLPehx//xhmLmyaFlEE=;
- b=1z6U+VJ2fSHHN1WCrLUMeXQUHHk449npu6OGEVvkPomK9LkkAxJ4Jtb+x85mObt21keZODnglEoXyFE9RpIz2wiJ16u+ZZKKiWs6kgqfwCMXZvZGTlxhkqxSXq7Mr2uXkJoWstS7d2pv2czi762mlX4LJA3zurFjUg99zgm226g=
-Received: from CH0PR13CA0005.namprd13.prod.outlook.com (2603:10b6:610:b1::10)
- by CO6PR19MB5402.namprd19.prod.outlook.com (2603:10b6:303:149::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Tue, 3 Dec
- 2024 10:31:07 +0000
-Received: from CH1PEPF0000A345.namprd04.prod.outlook.com
- (2603:10b6:610:b1:cafe::a0) by CH0PR13CA0005.outlook.office365.com
- (2603:10b6:610:b1::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.9 via Frontend Transport; Tue, 3
- Dec 2024 10:31:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
- smtp.mailfrom=ddn.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ddn.com;
-Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
- 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
- client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
-Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
- CH1PEPF0000A345.mail.protection.outlook.com (10.167.244.8) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.7
- via Frontend Transport; Tue, 3 Dec 2024 10:31:06 +0000
-Received: from localhost (unknown [10.68.0.8])
-	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id 09A2E2D;
-	Tue,  3 Dec 2024 10:31:05 +0000 (UTC)
-From: Bernd Schubert <bschubert@ddn.com>
-Date: Tue, 03 Dec 2024 11:31:05 +0100
-Subject: [PATCH v2] io_uring: Change res2 parameter type in
- io_uring_cmd_done
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585A26FC3;
+	Tue,  3 Dec 2024 11:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733227188; cv=none; b=NMydsAGsljvqLVaTc5nC0VOKsac2A9Dr8oHk959iuCEcQeerqIKsb54thzuTNVKLQ8KkklAGmA7aMJZYrFdPQ0BRi+/n14+7jxwZfpLl85qaQ/hwO1BMTgb59IboJrTvJR/2SwamACJO4W/WhPabbPU8wjCUQEvPmxD3Rm8Xi8g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733227188; c=relaxed/simple;
+	bh=5f7uC9CEMYhOatLZfF783ior1u8CO4DdxN0J/XgPd+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KeWOKdxxJ7xue1A3CIbrZEVWuEykftFuKDfnEQjIM/0FM6aT20eJebRQzZgidxTeynYt4iocL+LIrVr8Ls6htZrm4y4yKvhQPYw35i2/E0XbLILSb9ocL6H5rC27UaDgxm5yxalrNKfU53zCAwNv15ILvmjaYjEjGnATdXZA5mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IN/x506m; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa5500f7a75so850678766b.0;
+        Tue, 03 Dec 2024 03:59:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733227186; x=1733831986; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Wrpw/gEIImhg5C05XMjsYpabyaleC2cQZtMyShGtK8A=;
+        b=IN/x506mhVwHF1Qi9PZrYjU89q+0UbAJU+23B6rIZ8dbO3HywuwXxh2SufNLRMK2wE
+         jihhFSRToujKVT5gSImhcNzw2AicdK09hoiZ4BPPY50fb2GIvNGfwNQE2BOEKr1i7lcu
+         2gfI/Vyh8jXqS5UHXs4FgjSHmdFZwxst2SFsxoNClQnaJauqBhfgVgcWYA+Qgu3nq38A
+         8ujEcWz0qpXf2GenuexK3PHikGL/lGzuWfJUbVp7GL7lZNDugvROysNE4q3Aj5c5E0Wc
+         L8+QRdBzOo+Y9AQmfkx1cIaNQFso+ZbAB3xkibc5kWaLG0VlSjIYAW1PEqOb/B8c9cn4
+         VRzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733227186; x=1733831986;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wrpw/gEIImhg5C05XMjsYpabyaleC2cQZtMyShGtK8A=;
+        b=GyZHsXOriMd0DwgXoHUyaQGMjkJ1Tlk9J6LfUywRPkEQ2A4RLfAr1DyFPYdWAHK0b1
+         +NnIRlXGOXeycIPaUNU4KskJXDKyOLefzdd36HDgQnHDW0ixJrnO5GW60vQ4aj9GOdpu
+         dj16h0stFjSECkgnr+O3xNXR1NZgSw/9nLTyhC+1TvvaFw+4vXIcTX5RO47ZyCGH0w4Q
+         kd2whAsehVjjtb3m5O3/a0gtKWUtBk6C7wL26JS/K+xa/EbTUbZPdsYbgPDKrautAA/C
+         B63Yj/JF8CRijEnHqOaUUFILSgMjwd7F+GhLA1IpyV3wjw+cFH9Apr3BgEH50W34nkz0
+         +Mdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVY+L2Vbo/CUMFYHOTz4v+W8sFTPHyzAQG905oneOA4JsUZXJhRabBwDPeyQbyFTk6s4kcG4gwZrScn8w==@vger.kernel.org, AJvYcCX1ougLJK+81c3ybFd21Fu+eVyQfoJ1EePRIqYZ+wE9T9bSAfBfhWxGu0zeiVzYfMdraa8VsQFSNvO447sCRA==@vger.kernel.org, AJvYcCXPr33tD5q8iFqO4Y0FIXSzcPlEpl2gXFZvw52nrRMeJhLCo9UG/91bqzrpoQLPAFyVmIPrMYXCdJRvHXw=@vger.kernel.org, AJvYcCXug9OwHMNQ98db0RYsAtSzRj2us187VX7FKWEjce0zwnH+4k2c6r1spXfCc8PT7hNKqckz+EtD6g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8BYXWO5UOWnGHc+Zp7eTgcCixoz1cDBPkBFdFQiqxt+SSD8fO
+	w1NAns2zPdz1WwnC7PG0bSG4+vRXjjVvnBkwuc7pIhaw1vlhKSNa
+X-Gm-Gg: ASbGncvgyWBEYcUMX8x1RDvLaajy4ByFSKXbrUAfTe37VRKRLOIEq+X0D7GdN1pxKF0
+	UpqA23VsOedIi33dWsZWMwn8Rj8AqA+zVWpa1srHIVBvCH8eR0l3LGonqdgtvZfSFORKat9y6iB
+	fK2Aaqw3vtN66oW9ZF/Sr9Vha6KIXbv3aikzFdzhOkph+jsnYPlSJJecZWx5vIPi7ixztJaaONY
+	ppx0YY8w/3TRbymtYcm8Vsn5xZf7svY2reTbVe0vIHTyYy6hkFKiOGlRsOjFg==
+X-Google-Smtp-Source: AGHT+IG4y9LGZwq9NfK9cdHd+NVO7Xgo2sU20E7rmPmT2a1si682Vjey0TVrQO9Z6X+iYPB4Df14SQ==
+X-Received: by 2002:a17:906:4c9:b0:aa5:44cf:3ea7 with SMTP id a640c23a62f3a-aa5f7f4773dmr171377066b.56.1733227185269;
+        Tue, 03 Dec 2024 03:59:45 -0800 (PST)
+Received: from [192.168.42.213] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599801591sm605350766b.91.2024.12.03.03.59.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2024 03:59:44 -0800 (PST)
+Message-ID: <b8574010-e2fc-4566-9df8-80046fec2845@gmail.com>
+Date: Tue, 3 Dec 2024 12:00:41 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 06/10] io_uring: introduce attributes for read/write
+ and PI support
+To: Anuj Gupta <anuj20.g@samsung.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org, anuj1072538@gmail.com,
+ brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
+ io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-block@vger.kernel.org, gost.dev@samsung.com,
+ linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+ linux-fsdevel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>
+References: <20241128112240.8867-1-anuj20.g@samsung.com>
+ <CGME20241128113109epcas5p46022c85174da65853c85a8848b32f164@epcas5p4.samsung.com>
+ <20241128112240.8867-7-anuj20.g@samsung.com>
+ <yq1r06psey3.fsf@ca-mkp.ca.oracle.com> <20241203065645.GA19359@green245>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241203065645.GA19359@green245>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-io_uring_cmd_done-res2-as-u64-v2-1-5e59ae617151@ddn.com>
-X-B4-Tracking: v=1; b=H4sIAOjdTmcC/42NTQrCMBBGr1Jm7Yj5wVRX3kNKicmknUUTSWxRS
- u9u7AncfPC+xXsrFMpMBa7NCpkWLpxiBXlowI02DoTsK4M8SS3qIKd+zhyH3k2+9ykSZioSbcH
- 5rFEKYzVp87ioANXxzBT4vfvvXeWRyyvlz55bxO/917wIFGh0UEq1rVO+vXkfjy5N0G3b9gXyC
- z3GyAAAAA==
-X-Change-ID: 20241202-io_uring_cmd_done-res2-as-u64-217a4e47b93f
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
- Kanchan Joshi <joshi.k@samsung.com>
-Cc: io-uring@vger.kernel.org, stable@vger.kernel.org, 
- Li Zetao <lizetao1@huawei.com>, Bernd Schubert <bschubert@ddn.com>
-X-Mailer: b4 0.15-dev-2a633
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733221865; l=2910;
- i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
- bh=nHOmP131y8Oa0pNAcfAJzQe30Jz/Aighg/q+swsXXwk=;
- b=0U6Vw6jig85BFWmh3BSXWa7em1TjIOR0bhui/6Y+pU7E+mEQLkmrrPQZ6UKEAWIRyf2JYnMBC
- XEvB3vBqXisBPKNwTeKWFKVAYbU0SpYWmZcps2N15ENRXRHztoP+2Au
-X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
- pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A345:EE_|CO6PR19MB5402:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2c9a0a2-414a-4e11-77a9-08dd138598b6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NXRsTjJFRmpnMFMrMGFTdy83MG9SVktHUHl4dHhKYUJKaVJzelZFS1BaVHhy?=
- =?utf-8?B?L0hVQUorNi9ZbVk1MGdvMldjOW9aY1Q5cWtRbU43K3RmSUVDVE4xcVFDRXZu?=
- =?utf-8?B?bUlBMlc0QjVtY1R2T0hPZzBFaWx2SFFLL1hlclRQbjFWRXdHdDNyN0VMckJZ?=
- =?utf-8?B?SWlIZW1aMzhqdm5Vand0Q3BPWkpad0lwaDM5alByTGVFV2VlQlJncHlRT0w1?=
- =?utf-8?B?UVN3dlM1c0t6YjJzaHJxREpPMEZyN0pqZnlLNk9udEU0QXdIS21CeXpKbjdo?=
- =?utf-8?B?UGVhakRlcUkwN3lQZ2FJM1M2ZWhCdE8waVRIaUJlV1VBTllvM3czdWVQaFha?=
- =?utf-8?B?Y2ZUcHA0Z3FFRC81T3FpQmU3THgycVVQL3Y0QzZMZHZaMGRvOUt1emFtT3k1?=
- =?utf-8?B?MnJMTy9oUlkweEo4ZzBQM1hVZGp3UWJLNVh1Z3ZkRk1lT0l4SXB4WUZ3QSsr?=
- =?utf-8?B?aWxpMXVzVzZTMjBWc0RDdnFhdlpJZkIzMFVZRitySEl3ZTh3UCs3dGdsbzR0?=
- =?utf-8?B?R3prTmpiVzZ2T2pwVDZyRGNIYWczRStNVENPckF1dDJpUWkxeGNTdlNrS3BK?=
- =?utf-8?B?cUdNYWtLQ2FWa21tR2NUZUIweDNpWUxBT1I1M0tUT0xTcTBybWkxN0ovbHZi?=
- =?utf-8?B?QUVzVlNVKzluSVJrNmFhcmExeTU4L29sUkR6a3RhVStKN2xuanhrTlRKeDBU?=
- =?utf-8?B?NEZPU3R0bktXand0MjQ0M2txQnRJSHBMZ3ZZOGNQY0dLQko2OENGanBTY21K?=
- =?utf-8?B?cDdPbzkvR2t5RUYzWEJIZHdwZU9VTFVuNjRZd3pTUGRmai9oU1ozSURFZUx5?=
- =?utf-8?B?SUIvQWFBSkE0RVZuYWZoYnMySkR5OHBackxVN0lVRFIxUTJVa3NyNTdDTndr?=
- =?utf-8?B?QkdVc2hEQVU4K2xISWdwaC90M01xQzFYaURCWFFtRUFvR1lNUU9WOVRwcFdh?=
- =?utf-8?B?Vi96aEJJdDJGNUNNalJwSkxuUzdvK0pieC9WY0xGSmN0NHZrSnFUNzJCWFkr?=
- =?utf-8?B?dzg0THo4dzM4bHNTZU53V3ptUGRPYm8vTHk5aTZ5OVhrTXZIeEVobG02WHRW?=
- =?utf-8?B?WHMyQUxybkJrZTZiakRaUUpFRG9QM0p6aThjQjBSMWRRQkF3a2xEcUlieEx0?=
- =?utf-8?B?TXZGRGpDUi9WV3pQcjBCY040eDVJU1p0dy8rMmpoSElodWNvanQvazJ6dTBz?=
- =?utf-8?B?TUY1bnFzd1dYTkY1c1pBY25uWUQ5Y2xZVEgxalRrODFrenN6V2xUUTBtNy9Z?=
- =?utf-8?B?SW82V0I3MVVyRkpZNFlxeXczUXQ5YVpWbWNZekJqMHhCekJ2VnRsYkdBYVp0?=
- =?utf-8?B?cEswU091WUNXTzkwNmpWZEExSmkyKzBoNHRoblRlVy9SaUVINnlaemkwMCta?=
- =?utf-8?B?U2pSSFRmdGwrZEhYaTAxTE5NNEErZVJQNStnMzl3NHg2Mkk1RkpoS3dDTWUx?=
- =?utf-8?B?VGRUTGQ2M2V6cFUzN1d6bjdad3V1QWhKRXcwSHlLOHF5VEpmcjljalBHZVV5?=
- =?utf-8?B?MDVaSld3MEszcWV0YjgzelJXbTd0YVVPWGJUNU9MOFJ5dGEzOHRQbU5zU0E3?=
- =?utf-8?B?b2FzeUVFUWRGZXZtTVU5cGR0NjQ0VWNFNWlQYkxJY1dsYW1jSDVBQjR0emZm?=
- =?utf-8?B?SUk4aUZnejBrNG9zWHFSUTEwUG5hL0tWLzd3R2dPUUtUelZYQTlDdHBNZHZ3?=
- =?utf-8?B?NFBEdjVKQ0o4MkJhRHo1YldvMlM2a25DUzM1S1BUTXhmUTN2NXJCRE10VTJh?=
- =?utf-8?B?ZkJmbkc1R0RXUGlBdjlqdFFhYWVnbXB5M2QvWWVqa2VKTVJoa1Z1TDNrS2dD?=
- =?utf-8?B?TkVzOTBvSlF2c1VOcWM0Wlpxcnk2U2xnU2F6SE0zMXVsQ2IvQS9JRXVFN2ww?=
- =?utf-8?B?MFNrUUMxblRUUGRoT3NFbUlHSW5pMm4wZm1RRDBoQU9OU1RWdlZmRXllelFD?=
- =?utf-8?Q?Zk1+S9oPDs3X9C0Wv3uslEnyi18U+lz2?=
-X-Forefront-Antispam-Report:
-	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	v3txr2d348mNjUEUZOxByHvdmNznyBC19QKedNgpOEzHz4T0PLPRP3ya6I9s8MGXVLxqvEzcGDy9Q7Kf0nKgTVV52KMv/zr9cMUwerzAwCQSAoAJajGsdYHrivrLD57lZcbZdn+pcHDUdHqJ/LAoX9Nk7VsPnHI0HAk/h4KSYqgemk1Inkg6lwibqRSI5Unh7ZFyn3dLfDGmPB8j4Nm8SWchhnUC69huadR6caV0LdLK77lN/Yp1WhIU2KbeD8f4Si+S1AjQ/QaKx/wEhntHq2gC4jV/NWTaD3L0Q7FqYXtpIPLfYcwrhZKM31gUnpq9HUr+CaaN/4jhnZm2MXFWaNSWiokKFWRcSFMIWTkuICPdwc4wd9r1YKkWO1nHAeC59oKkNiXIGkmkwKsVVJuk0U1RY+s+Sy8iICJaK18kgZbDel0FBd871jIMM1ADIaZJ87gDx2xkZcgmg0sXSPWs4hieocjRAwmrkiO1xW68zcKN0aLA9F9rGG/O94QXxz/cwFlx+vxNn1c5mR7P6mNUe2FyFuaR73Sv2bdxAhWwtSgpdO0eKcM15FUS3HdAbUCMoQW7vGTQrn1evcvEJxe0YJ7kCpShNSemn/4eDrKoIeHUJDVzH+Imw0U9Wt5pa5qc2y/79XXeKNkgWgmnafHoUw==
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2024 10:31:06.8276
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2c9a0a2-414a-4e11-77a9-08dd138598b6
-X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A345.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR19MB5402
-X-BESS-ID: 1733221870-111173-13374-2072-1
-X-BESS-VER: 2019.1_20241126.2220
-X-BESS-Apparent-Source-IP: 104.47.59.176
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkYWJiZAVgZQ0MAyySDV1CzVIC
-	XN3MzYMM0iMc3S2NwsMSUpycLcyDhJqTYWAKvmSClBAAAA
-X-BESS-Outbound-Spam-Score: 0.50
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.260854 [from 
-	cloudscan19-146.us-east-2b.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.50 BSF_RULE7568M          META: Custom Rule 7568M 
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
 
-Change the type of the res2 parameter in io_uring_cmd_done from ssize_t
-to u64. This aligns the parameter type with io_req_set_cqe32_extra,
-which expects u64 arguments.
-The change eliminates potential issues on 32-bit architectures where
-ssize_t might be 32-bit.
+On 12/3/24 06:56, Anuj Gupta wrote:
+> On Mon, Dec 02, 2024 at 09:13:14PM -0500, Martin K. Petersen wrote:
+>>
+>> I have things running on my end on top of Jens' tree (without error
+>> injection, that's to come).
+>>
+>> One question, though: How am I to determine that the kernel supports
+>> attr_ptr and IORING_RW_ATTR_FLAG_PI? Now that we no longer have separate
+>> IORING_OP_{READ,WRITE}_META commands I can't use IO_URING_OP_SUPPORTED
+>> to find out whether the running kernel supports PI passthrough.
+> 
+> Martin, right currently there is no way to probe whether the kernel
+> supports read/write attributes or not.
+> 
+> Jens, Pavel how about introducing a new IO_URING_OP_* flag (something
+> like IO_URING_OP_RW_ATTR_SUPPORTED) to probe whether read/write attributes
+> are supported or not. Something like this [*]
 
-Only user of passing res2 is drivers/nvme/host/ioctl.c and it actually
-passes u64.
+An IORING_FEAT_ flag might be simpler for now. Or is it in plans to
+somehow support IORING_OP_READ_MULTISHOT as well?
 
-Fixes: ee692a21e9bf ("fs,io_uring: add infrastructure for uring-cmd")
-Cc: stable@vger.kernel.org
-Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
-Tested-by: Li Zetao <lizetao1@huawei.com>
-Reviewed-by: Li Zetao <lizetao1@huawei.com>
-Signed-off-by: Bernd Schubert <bschubert@ddn.com>
----
-Changes in v2:
-- As suggested by Li Zetao, also update the type with CONFIG_IO_URING=n
-- Link to v1: https://lore.kernel.org/r/20241202-io_uring_cmd_done-res2-as-u64-v1-1-74f33388c3d8@ddn.com
----
- include/linux/io_uring/cmd.h | 4 ++--
- io_uring/uring_cmd.c         | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+I have to say Adding a good probing infra is long overdue. For example a
+user might want to know which attributes are supported. And beyond
+io_uring it might be interesting to probe whether a particular file
+supports it.
 
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index 578a3fdf5c719cf45fd4b6f9c894204d6b4f946c..0d5448c0b86cdde2e9764842adebafa1f8f49e61 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -43,7 +43,7 @@ int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-  * Note: the caller should never hard code @issue_flags and is only allowed
-  * to pass the mask provided by the core io_uring code.
-  */
--void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, ssize_t res2,
-+void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, u64 res2,
- 			unsigned issue_flags);
- 
- void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
-@@ -67,7 +67,7 @@ static inline int io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
- 	return -EOPNOTSUPP;
- }
- static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
--		ssize_t ret2, unsigned issue_flags)
-+		u64 ret2, unsigned issue_flags)
- {
- }
- static inline void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index d9fb2143f56ff5d13483687fa949c293f9b8dbef..af842e9b4eb975ba56aaeaaa0c2e207a7732beba 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -151,7 +151,7 @@ static inline void io_req_set_cqe32_extra(struct io_kiocb *req,
-  * Called by consumers of io_uring_cmd, if they originally returned
-  * -EIOCBQUEUED upon receiving the command.
-  */
--void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret, ssize_t res2,
-+void io_uring_cmd_done(struct io_uring_cmd *ioucmd, ssize_t ret, u64 res2,
- 		       unsigned issue_flags)
- {
- 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
 
----
-base-commit: 7af08b57bcb9ebf78675c50069c54125c0a8b795
-change-id: 20241202-io_uring_cmd_done-res2-as-u64-217a4e47b93f
+> [*]
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 38f0d6b10eaf..787a2df8037f 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -723,6 +723,7 @@ struct io_uring_rsrc_update2 {
+>   #define IORING_REGISTER_FILES_SKIP	(-2)
+>   
+>   #define IO_URING_OP_SUPPORTED	(1U << 0)
+> +#define IO_URING_OP_RW_ATTR_SUPPORTED	(1U << 1)
+>   
+>   struct io_uring_probe_op {
+>   	__u8 op;
+> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
+> index 3de75eca1c92..64e1e5d48dec 100644
+> --- a/io_uring/opdef.c
+> +++ b/io_uring/opdef.c
+> @@ -67,6 +67,7 @@ const struct io_issue_def io_issue_defs[] = {
 
-Best regards,
+io_cold_defs would be better
+
 -- 
-Bernd Schubert <bschubert@ddn.com>
+Pavel Begunkov
 
 

@@ -1,227 +1,121 @@
-Return-Path: <io-uring+bounces-5202-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5203-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA019E3E22
-	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 16:23:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACBEF9E3E7B
+	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 16:39:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 343011666EA
-	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 15:23:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D575281116
+	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 15:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DA320C462;
-	Wed,  4 Dec 2024 15:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE20820C47C;
+	Wed,  4 Dec 2024 15:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPz35+Z2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATH+asxk"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6F720D515;
-	Wed,  4 Dec 2024 15:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0D120C02C;
+	Wed,  4 Dec 2024 15:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733325759; cv=none; b=GbhJxDDLhfIybXKtsyXNx14eGKRMpG51fMTIlRrHGavmEDkOwHOgxokqTTcfb+Zh4T4Off+q969NFQrxm8wA9fviJTTcWn/J3EazZZ3SIihvbP/Z2o9DV4qGC55Ezy238IMNUeGKSDKthIX5nDbGJTkghGRuN9zjp3MOOO5HNp8=
+	t=1733326770; cv=none; b=Q5s3mI000tUqojBzQ0KqzPhWnoFS81mVKhUztNkRYL99SnEHeXK5XNaL7N6AIDCxDUOqxqQIq0H2uwfYLIq9ATYeyQ0HD8S20xsdEbq4bDTVt2IR5yLfD66XbC5/du6cncngkn93HHAWKw20l1Jc+j4AhK/MrcPRiyrInF0gLt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733325759; c=relaxed/simple;
-	bh=/TqB+llnTobyT0lJGCG96e4ET+EL+pZmgIbBSFix2GQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BLTjlDcZJyXgTFv3JcW+sL699VwT4AKWcj+93tgqtqX5p1Utrnkl+ozpG/WMg3ow0wxVQx/rdVo+Mk7Jfn8yTTvxMESvO56WmAwIaJ4UM8nlT984o4lETHFfxEFzFGVWC78V0NZbr3Q00l55eN9k4jD1MONclxr1yLFucABsrA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPz35+Z2; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1733326770; c=relaxed/simple;
+	bh=1KLvifziJbjh4pRqHKFaVZ0dtAKC1haIZRmPiJO9xZY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=f3/c176S73Gm1HlBz5+Jv+3izR456t4YubIWwxxYE/Ozcz9AWzNYdAtzuQmQR6SgjFjScmZPKMZqL+bIum9DEYOd3dii0pQvxw52Y6Yj23exHcbD21X6COzinmz/bFAMGd5umKlZfdjce8IItwpQDTJdvgksc2638aDurFGN17Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATH+asxk; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53df1e0641fso7557360e87.1;
-        Wed, 04 Dec 2024 07:22:37 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434aafd68e9so57328965e9.0;
+        Wed, 04 Dec 2024 07:39:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733325755; x=1733930555; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6afsJ2yFcI+Yl2bO9iFMRGUkAKAq+plwoBxQXkyhF8w=;
-        b=fPz35+Z2A/fzjc4FQxNh7Q384YP37jY/xeMeCrd6dTrxNLsZTb/ZYF6GqmO9tQcJsr
-         EPk/ezxh6HMHh0gGlNDl435JXdOce1H48UH2C8aSIolcnUyCP7Aw7nFyRPSEZ1TJvA/T
-         HOr3EnQ2MYB+kYwIb1u6wBAIBWQar5TtVOL0UwebNvMNTgfCIwBa7EXD+DXhY9g/hX22
-         8DICNQbKg0A1cFQL26sL6MAD/QRIoxemetlzX/gQV9UKQe60OSnmkHpIuRXFZj39kuOq
-         hjv+Hf5Vq+6U5APUKMjaRizh9H4ySok8Zye+ihxBwFunI7hunm2pW3yVmkbbN8Ro2JeU
-         7S2Q==
+        d=gmail.com; s=20230601; t=1733326764; x=1733931564; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aMys5V1UTDgHq7pxYmVg8DrcO/JHKqHwaoAxkhnrpU0=;
+        b=ATH+asxkFAdUw4bQkq1Z7ArhuiWnmcxTi4wh0Eq1mb+zIpvW3ZcfU1W/ga6nBJlDw/
+         hNsiQRVp3hHklfmbuCRQ6YkWVYVDIJOt5A5X/jzdj4y02RLXPd3LAh3tE8TaaPHhvkSQ
+         Vtg/2Ry143dKdoxh8kA0Gl8XfW9vz1PmHudDuIpbIVTGAP+5XUe6g/22vqkz9DeLTHAs
+         k9Tu+3By9DxFqSp+4rIZF1EMPVYVAp84G6TegwfxRuBYxMlv5R4dXm+Tvh49kkNDPgKO
+         6zDUJfEdr2UvSkAn+z6LelE9SZc3WmUsZ/xu4mNUi1hKRwR9ylFccfD/UCTFjWCtV4t8
+         8OCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733325755; x=1733930555;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6afsJ2yFcI+Yl2bO9iFMRGUkAKAq+plwoBxQXkyhF8w=;
-        b=j4hiCuJd2iYiVs3WC9Jr22lvkqSAzYSrsjiVXlWmI0R8JxX45BR2AVXU3Kscxz+DdS
-         lhiUvvMA3DVuNSCi67YyMNCDXFDMB0EbgqTpoA2HcLTEXPBndrMbQEITgLrJS9hQ1PtA
-         p+EUqn7NP/olvaORIBoPuoIUTdVvbnGNxCxoWGHf5xAuqbur0fhjzJJ6B9XAEaC0xkuG
-         BcJyg0chcJQXHw1rOvh258QGT9A+BJJwDpVlVA2gSh8bptPMSIxuVb26p2PqRHvHYo51
-         wpwbG8MvSpXGlgJMfsfxQnYk2szHUbG1NRTE+plULCIYRGp7xKNePwxAbDsd+EnSyjvz
-         /2rA==
-X-Forwarded-Encrypted: i=1; AJvYcCVv31eCFLK/5RByiSZMRuvudEVDzgiv8CCFFbwORZYC5f20p5J/ATL6C0UwJaFq8rtPeIl4rBk15gUYRFp4@vger.kernel.org, AJvYcCWa8Fjx/wZ+RPiyOIeUcUx6uRZuK+OiSvytKnGeYs13vme9pecN2MqCE1IFpLLYaxkOCOzhivzSow==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQPGFXtgdLQqB2tiR/nGAiP+bqpka8ahJVNKSYpwkd6mia+iBG
-	8/+tnhgyz00KcGXBrZ5OChSCr5L+UfHHNifUN+YHHLmuDdaEt1VQOrHxKSaQm9atE2UXSwrcWLV
-	08+AAIXBxRcT7kZ+M21AOCCdp7Ys=
-X-Gm-Gg: ASbGncsxYIvj8fKJVGA+iXmmzpyNGgl+KvUxIK9nYPPZoko6hOgiVznrqBMwpsQh2sJ
-	LtdPqAJIDabGTx5jLleD6VgyZdf087Mj7MnxLaJAPt7a4ZRzYBt8JHVDZ+ImlaOhvJQ==
-X-Google-Smtp-Source: AGHT+IGNUnqm/nSeoXYDXT045TPno+we4Z8y/9Tq82fC+/vSNin5ySvIB++nP7ahTG1Ao72yddkowVJnH/FzCUkbJ64=
-X-Received: by 2002:a05:6512:3f1f:b0:53d:d420:7241 with SMTP id
- 2adb3069b0e04-53e129ffeeamr3404666e87.20.1733325755214; Wed, 04 Dec 2024
- 07:22:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733326764; x=1733931564;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aMys5V1UTDgHq7pxYmVg8DrcO/JHKqHwaoAxkhnrpU0=;
+        b=GX9lCm2niZ1bNPyOrbVYSApzAwSXlhhfEJaccyditMqe8Qht4YxiKsGK0LxLeJtWQj
+         j3T+mzr8RZBVo10DiWY6RDlWKsNv1DrllQk2fv6o6wQoOZ+ae17kcBBGyq6FdL3X5x96
+         NKFTrIGPSAF+pdbn/ZMUuMVCF2CT2UlzUpA48p5iJm6TZL6d6iggohYrLNf6fJWbCFgy
+         Qa412AKIqISnwei4BCs8AySSfkgzp8X9OJPENEsb+d9v4TN1T895pVJkkIpXfjKU/0ND
+         r9bFP0yuAsfOv5B1g5x8Q5OY73soLnlHYK1mgkb5aexschLs9nQkaZ6Q5g0kKPay5RVQ
+         Cq1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUcfRVxO2mvcrspbnO11ZyWsudnac2xgnQZsagukw5+mbyI4K2wxWICxeeswS0i0/2ByiaD7ZYnjA==@vger.kernel.org, AJvYcCVeiTe17DkOwAQYXrcusABnUdJ/agTnzadhfLZ/ofZHcVGuF0relMgfXjg0Dos4ekKUp4Lijxfop22A98d1@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwl+ECLCvNfnbvWOoFLdKD0egN0e0fOWfjHm+/AIJnCSIh2Ydx
+	y+uEvngQENse56dPBnbEE4rvQkokKh6gqGAaWc2gn6TrZgMBP10SWiLc/lukuH3vkQ==
+X-Gm-Gg: ASbGnctsHNw8jxi9wC8bcMevaNr04/I8718rCgyyHMPjrR9EU3o6eg1xalFyH5XXJ5r
+	oqLRd3hkp0HQUiycYJlx/Sv+uO/pPW8dYawusNE/E9/7gE9qz5zp7S9qpbLjvs3VXsC2tF9fJNz
+	znYrc+U8PyBvri7ERBMxgMyv6zNsigr9bddI0VrwDTB6aNiJOtVkLOh/An4iFr91rIJKllyC2O+
+	Y1Q+rmU6UcDsORsWCIYwlULAMCJRL9lZgSUbOBcaKAsgJilQQw=
+X-Google-Smtp-Source: AGHT+IFDtt6Y8nH2grDoAeaoEZHxBB0gdeNB563wKehiNeGHaviDfMWxStlrMNFWOalCeJSFG7AR+Q==
+X-Received: by 2002:a05:600c:1ca2:b0:434:9e1d:7629 with SMTP id 5b1f17b1804b1-434d0a1dab3mr53925035e9.33.1733326764433;
+        Wed, 04 Dec 2024 07:39:24 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52a46e6sm29130355e9.30.2024.12.04.07.39.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 07:39:24 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	io-uring@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] io_uring/kbuf: fix unintentional sign extension on shift of reg.bgid
+Date: Wed,  4 Dec 2024 15:39:23 +0000
+Message-Id: <20241204153923.401674-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67505f88.050a0220.17bd51.0069.GAE@google.com> <6be84787-b1d9-4a20-85f3-34d8d9a0d492@kernel.dk>
- <a41eb55f-01b3-4388-a98c-cc0de15179bd@kernel.dk>
-In-Reply-To: <a41eb55f-01b3-4388-a98c-cc0de15179bd@kernel.dk>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 4 Dec 2024 10:21:59 -0500
-Message-ID: <CAJ-ks9kN_qddZ3Ne5d=cADu5POC1rHd4rQcbVSD_spnZOrLLZg@mail.gmail.com>
-Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Write in sys_io_uring_register
-To: Jens Axboe <axboe@kernel.dk>
-Cc: syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 4, 2024 at 10:10=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 12/4/24 8:01 AM, Jens Axboe wrote:
-> > On 12/4/24 6:56 AM, syzbot wrote:
-> >> Hello,
-> >>
-> >> syzbot found the following issue on:
-> >>
-> >> HEAD commit:    c245a7a79602 Add linux-next specific files for 2024120=
-3
-> >> git tree:       linux-next
-> >> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D10ae840f98=
-0000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Daf3fe1d01b=
-9e7b7
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3D092bbab7da23=
-5a02a03a
-> >> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
-Debian) 2.40
-> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14a448df=
-980000
-> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D15cca33058=
-0000
-> >>
-> >> Downloadable assets:
-> >> disk image: https://storage.googleapis.com/syzbot-assets/8cc90a2ea120/=
-disk-c245a7a7.raw.xz
-> >> vmlinux: https://storage.googleapis.com/syzbot-assets/0f6b1a1a0541/vml=
-inux-c245a7a7.xz
-> >> kernel image: https://storage.googleapis.com/syzbot-assets/9fa3eac09dd=
-c/bzImage-c245a7a7.xz
-> >>
-> >> IMPORTANT: if you fix the issue, please add the following tag to the c=
-ommit:
-> >> Reported-by: syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com
-> >>
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/lin=
-ux/instrumented.h:96 [inline]
-> >> BUG: KASAN: null-ptr-deref in atomic_long_sub_and_test include/linux/a=
-tomic/atomic-instrumented.h:4521 [inline]
-> >> BUG: KASAN: null-ptr-deref in put_cred_many include/linux/cred.h:255 [=
-inline]
-> >> BUG: KASAN: null-ptr-deref in put_cred include/linux/cred.h:269 [inlin=
-e]
-> >> BUG: KASAN: null-ptr-deref in io_unregister_personality io_uring/regis=
-ter.c:82 [inline]
-> >> BUG: KASAN: null-ptr-deref in __io_uring_register io_uring/register.c:=
-698 [inline]
-> >> BUG: KASAN: null-ptr-deref in __do_sys_io_uring_register io_uring/regi=
-ster.c:902 [inline]
-> >> BUG: KASAN: null-ptr-deref in __se_sys_io_uring_register+0x1227/0x3b60=
- io_uring/register.c:879
-> >> Write of size 8 at addr 0000000000000406 by task syz-executor274/5828
-> >>
-> >> CPU: 1 UID: 0 PID: 5828 Comm: syz-executor274 Not tainted 6.13.0-rc1-n=
-ext-20241203-syzkaller #0
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIO=
-S Google 09/13/2024
-> >> Call Trace:
-> >>  <TASK>
-> >>  __dump_stack lib/dump_stack.c:94 [inline]
-> >>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> >>  print_report+0xe8/0x550 mm/kasan/report.c:492
-> >>  kasan_report+0x143/0x180 mm/kasan/report.c:602
-> >>  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
-> >>  instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-> >>  atomic_long_sub_and_test include/linux/atomic/atomic-instrumented.h:4=
-521 [inline]
-> >>  put_cred_many include/linux/cred.h:255 [inline]
-> >>  put_cred include/linux/cred.h:269 [inline]
-> >>  io_unregister_personality io_uring/register.c:82 [inline]
-> >>  __io_uring_register io_uring/register.c:698 [inline]
-> >>  __do_sys_io_uring_register io_uring/register.c:902 [inline]
-> >>  __se_sys_io_uring_register+0x1227/0x3b60 io_uring/register.c:879
-> >>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> >>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >> RIP: 0033:0x7f65bbcb03a9
-> >> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 8=
-9 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0=
- ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> >> RSP: 002b:00007ffe8fac7478 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-> >> RAX: ffffffffffffffda RBX: 000000000000371d RCX: 00007f65bbcb03a9
-> >> RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000000000003
-> >> RBP: 0000000000000003 R08: 00000000000ac5f8 R09: 00000000000ac5f8
-> >> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> >> R13: 00007ffe8fac7648 R14: 0000000000000001 R15: 0000000000000001
-> >>  </TASK>
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > Not sure what's going on with -next, but this looks like nonsense - we
-> > store a valid pointer in the xarry, and then attempt to delete an
-> > invalid index which then returns a totally garbage pointer!? I'll check
-> > what is in -next, but this very much does not look like an io_uring
-> > issue.
->
-> Took a quick look, and it's this patch:
->
-> commit d2e88c71bdb07f1e5ccffbcc80d747ccd6144b75
-> Author: Tamir Duberstein <tamird@gmail.com>
-> Date:   Tue Nov 12 14:25:37 2024 -0500
->
->     xarray: extract helper from __xa_{insert,cmpxchg}
->
-> in the current -next tree. Adding a few folks who might be interested.
->
-> --
-> Jens Axboe
+Shifting reg.bgid << IORING_OFF_PBUF_SHIFT results in a promotion
+from __u16 to a 32 bit signed integer, this is then sign extended
+to a 64 bit unsigned long on 64 bit architectures. If reg.bgid is
+greater than 0x7fff then this leads to a sign extended result where
+all the upper 32 bits of mmap_offset are set to 1. Fix this by
+casting reg.bgid to the same type as mmap_offset before performing
+the shift.
 
-Yep, looks broken. I believe the missing bit is
+Fixes: ff4afde8a61f ("io_uring/kbuf: use region api for pbuf rings")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ io_uring/kbuf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 2af86bede3c1..5da8d18899a1 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1509,7 +1509,7 @@ static void *xas_result(struct xa_state *xas, void *c=
-urr)
- void *__xa_erase(struct xarray *xa, unsigned long index)
- {
-  XA_STATE(xas, xa, index);
-- return xas_result(&xas, xas_store(&xas, NULL));
-+ return xas_result(&xas, xa_zero_to_null(xas_store(&xas, NULL)));
- }
- EXPORT_SYMBOL(__xa_erase);
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index e91260a6156b..15e5e6ec5968 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -640,7 +640,7 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
+ 			return -ENOMEM;
+ 	}
+ 
+-	mmap_offset = reg.bgid << IORING_OFF_PBUF_SHIFT;
++	mmap_offset = (unsigned long)reg.bgid << IORING_OFF_PBUF_SHIFT;
+ 	ring_size = flex_array_size(br, bufs, reg.ring_entries);
+ 
+ 	memset(&rd, 0, sizeof(rd));
+-- 
+2.39.5
 
-This would explain deletion of a reserved entry returning
-`XA_ZERO_ENTRY` rather than `NULL`.
-
-My apologies for this breakage. Should I send a new version? A new
-"fixes" patch?
-tamird
 

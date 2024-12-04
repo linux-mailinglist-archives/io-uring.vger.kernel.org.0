@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-5245-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5246-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4399E49FD
-	for <lists+io-uring@lfdr.de>; Thu,  5 Dec 2024 00:49:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EFE9E4A0A
+	for <lists+io-uring@lfdr.de>; Thu,  5 Dec 2024 00:50:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D9F228D506
-	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 23:49:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B81028DF26
+	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 23:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632E7224B1A;
-	Wed,  4 Dec 2024 23:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F26D226EDD;
+	Wed,  4 Dec 2024 23:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8C8aS5y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRukhFpe"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3710F224B17;
-	Wed,  4 Dec 2024 23:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441AA226EDC;
+	Wed,  4 Dec 2024 23:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733355354; cv=none; b=WGAPQtMEeP814/09pQ5nHwXJF+3q1VhSonpl8EnwualDfg/cP91S4jFm8HY+0wSxPTfJMw2jFkktgfZc68t/VimxYUzmrozh+D3nLZ7pV5EX8uUa/W6AgC56SpS2npL9SDiVLsp30lZ4Qs/xios2rXg3YdX103JtO3RJrhKXdGU=
+	t=1733355369; cv=none; b=TsPPeir5rmF5fv/vhA9QglTn6p6njiJWV7n3ySvPGZlWRYzfxyeq65ekP7lC9aaBJH81XDsgoDqC5sKxsuRhjy9fzaMVJKgY5XI2RaO5VRR1IMrox1/f0tJKh8CPNrzh1MNN0cJtFJNq4zuAlII2xs44TCkJYRdNlL+K5HNBMa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733355354; c=relaxed/simple;
-	bh=LrCwv/xA6yOQwsDPd5GsKlTBmspBObiOds2AdXGx3pM=;
+	s=arc-20240116; t=1733355369; c=relaxed/simple;
+	bh=su6DGtx91bYNMGzrJMR47XvYAvuxo7/HbpJbzxf8zqs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nPZDlEM8hzELnbr0icVWhhZUN1k6Q0oLuSkYlAwIb2SWDtICeyEJ8qWLpEQsxjSrM47YiKCivVVmBoSf3bupGv5kf501mcQMP53Gt084be8aC+RHZStjkhGfmesynbJH0OnNgCw8mWANPt5hqXDr4ZdQXN/0ERIlXNXUBqrN72c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U8C8aS5y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47B4BC4CED6;
-	Wed,  4 Dec 2024 23:35:53 +0000 (UTC)
+	 MIME-Version; b=DdnsFPurFJK1YHrMya7hprGteQOYI6evd/f5jpdEAImu8r7VPGKxDdqtUvDyRQ6yOFvptxxOkGiFMNk4H1VL6hrzg63FhyInmfkZfG17XoLr8G3oc0S1RZMLz7fwIo8SOqf4eTpVC8O/yo7sddM7VHKJTomKFl/D4CvxL4m86bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRukhFpe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9E0C4CED2;
+	Wed,  4 Dec 2024 23:36:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733355354;
-	bh=LrCwv/xA6yOQwsDPd5GsKlTBmspBObiOds2AdXGx3pM=;
+	s=k20201202; t=1733355368;
+	bh=su6DGtx91bYNMGzrJMR47XvYAvuxo7/HbpJbzxf8zqs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=U8C8aS5y91RzMfAZRCcjr+/RhnCVeWGz74ckCnlYac+hkQMiIICgKSA3LCGclgeij
-	 r47vp+p68LsuIl83nuXj5n8QfgUZkjPXSyCAWxeBZZFw5+fPAsqr+2YqUE0DIFsgic
-	 MxVeK+uxkLzlTqcwSSad+OEO6oIj4twSj2oCJVQmO+SEN3/5U/xYYP9sHL4mU1jdPM
-	 V/A7wso4OxdL2vMt/IIGHa8Us6yGIwoNgYB0nXqp3QoM1QecrqekbnRfvuH/6r/WIF
-	 Wbo6GPifS1H7pmreg3Wnxz+ZDc+TxuI9vbmybSCMeURg8Byg6VmYnqk0BaugFlYqYf
-	 EMEDRRm4W1d/A==
+	b=oRukhFpev+GX8McRA8vuwcpyJDiFLPe7WqwGSXIn+HinSv9DUvLrC8LJ4LN73egZg
+	 1/rfQJ0DJXPjHEAVN01TV7An1mUJZkHEfjZkqOCtwYhhBGuJKMg1QH84UsRsooV272
+	 tk4hkVJ729I1lscsUnKGtk1Lwxn9K07wFKGKtAgeNu202sF0Dl0ZwTuj/RPWODnZFx
+	 Obc5cV1fOVkJ9UTB8cFDVMXCNL/f9oMi8tiW0SyuVcy7cbwMBJwTYz8s29Y+V9Y4i2
+	 J2kTopomlqb3WGBKOhrpU5Jrh8mWodFW5DuPDLC9yU2PuxiF0I/JxalvTYUlxnGfOF
+	 4GITASEGPJ/IQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -49,12 +49,12 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <sashal@kernel.org>,
 	asml.silence@gmail.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 6/6] io_uring/tctx: work around xa_store() allocation error issue
-Date: Wed,  4 Dec 2024 17:24:15 -0500
-Message-ID: <20241204222425.2250046-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 4/4] io_uring/tctx: work around xa_store() allocation error issue
+Date: Wed,  4 Dec 2024 17:24:36 -0500
+Message-ID: <20241204222444.2250332-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204222425.2250046-1-sashal@kernel.org>
-References: <20241204222425.2250046-1-sashal@kernel.org>
+In-Reply-To: <20241204222444.2250332-1-sashal@kernel.org>
+References: <20241204222444.2250332-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.63
+X-stable-base: Linux 6.1.119
 Content-Transfer-Encoding: 8bit
 
 From: Jens Axboe <axboe@kernel.dk>
@@ -96,7 +96,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/io_uring/tctx.c b/io_uring/tctx.c
-index c043fe93a3f23..84f6a83857204 100644
+index 4324b1cf1f6af..51b05fda8e455 100644
 --- a/io_uring/tctx.c
 +++ b/io_uring/tctx.c
 @@ -47,8 +47,19 @@ static struct io_wq *io_init_wq_offload(struct io_ring_ctx *ctx,

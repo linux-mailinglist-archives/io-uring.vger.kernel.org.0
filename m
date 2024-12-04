@@ -1,131 +1,117 @@
-Return-Path: <io-uring+bounces-5207-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5208-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3369E4154
-	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 18:23:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1887F9E41E6
+	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 18:39:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BDB9B2B84C
-	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 16:31:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74A59B2E52F
+	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 16:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5492D1F1316;
-	Wed,  4 Dec 2024 16:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCED20CCC7;
+	Wed,  4 Dec 2024 16:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSHhA1dJ"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="e62okoPB"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9554923BB;
-	Wed,  4 Dec 2024 16:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8584A28
+	for <io-uring@vger.kernel.org>; Wed,  4 Dec 2024 16:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733329866; cv=none; b=Sl+LSrde1qGOGWI8/jCss6fEcx84+MIGzBcBn1V10PLTZmEFF+ahLd6TuTmiVT+kERDXEZJS5Q0vsc6bSBq/gatPleCIZPszsHMgWjddPcP/59UMZ2wcU4aYLdv7t8A894Xo9xKo2U+xdAaqEIO1Jh01IMO9a9KPLJG1aAklI7g=
+	t=1733330423; cv=none; b=qS7e0UmeQTXIilhHQDyOiZMQ7AKl9P2aDIh59eQyM8trjVKHa7NJZcH/nzmG8iJlaKbvkotX96bsuMsCXOhQ+Ydy6NAwy2uNqqQd+0dS3zwx9wUfVJA4Nx2yrHLFJmPMhjBAAR2VTNuvbQaFCHvMHiMWz0d4nAtQM3oF12DXS00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733329866; c=relaxed/simple;
-	bh=CsrXA5416l2IYRWcR6d7oNUF9vC31crT8AA0rDUnZ3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h0QTR5Wl3bG275eeh5m+fFFSLYIIFxvFejPF5CJdYxUOHppYVizAmS/cqBQTjmYmttD7VTvLZq8rqXg5vHjVo2ymnncGhNC0DHS1E+XZfs+LhSCtajX5KBPuBqtkwA1+40xN7JTcO3Dm83+gDgxr+V7Kb4XFA4m/r+0UpiPHkqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSHhA1dJ; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ffa97d99d6so71653781fa.1;
-        Wed, 04 Dec 2024 08:31:04 -0800 (PST)
+	s=arc-20240116; t=1733330423; c=relaxed/simple;
+	bh=/04I5Sh36cVEWH0Dc57OoZdAbdAokopOpW2ylNRnEV4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OZmvssqMn4JVQgJeQsXEO5yoAFC3PqQfdRMLH9hRHh0wNjtCFkW4oFCCVlMTqWAN54fbL2fE+hy/2nxgAJYxi4fAlSIpM0idVrCjcobPxCiAe04zZZ11vD03xKoyMCz30FplvlWcnw/BWTeKJe4pkmUpGoK6ZZC+yH8SUQghRMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=e62okoPB; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-215a0390925so37997995ad.0
+        for <io-uring@vger.kernel.org>; Wed, 04 Dec 2024 08:40:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733329863; x=1733934663; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733330422; x=1733935222; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1NacqQweZL2ZRpwzejzKHzHAYa4r44TWJmVad/FV5fQ=;
-        b=NSHhA1dJgVgJ3/LbARmMTJYHpnPv2D1OJrUHTmlq9w+21vZmCIaEjT7jkGu3SM1Uf0
-         tf70F/wXSyYj5b5ccCz1lck5WOWdZ6PjN3g7AWelTYM+2gRvheFys3IhmGnkufLEN7v1
-         /+8hThOWJcHTt+CMyNzWCh81Hrhms88eFQUV3XMdRbhfm158aEyLIdWYyl0QOplvYv0D
-         bphGkXBa3qVnaWlF/AEY6Ifn6nSeAxnysyMZBggv9C2Wt6zBJtNF82ALOdTsvejirhOF
-         h7yt1n/C6EhA6f7vfqPv7zA8lMCL5ut+jpGJhHqVSb+CdgyLZ4ouPqYhxnuWLT3sNR5r
-         yhew==
+        bh=Ea41nc8IA/yWz0s00ynnrLVfux7dYksfDzuAH1K99H4=;
+        b=e62okoPBN1EZ1e62EceYghK3vwedofJo6Jdpz1L0w695AosDS8l13OWPT8C4yK8aun
+         7VVEzLMs53pysJwQOIM440Jj2vsqGCVku0WzJepWBrm5I+GeMcY80KZM2NL8ipDGLah8
+         IwamuyP3RBN7H5aRBURiBrQLCDREimvS1cCgxWyHG7wGv8I+FWhw7Ws0i7Qxy9GnIgMk
+         /I4PkPWL7Q7V7iK2PkRHTxyZmMLlgAbal1efn42tR3noFAxEEw+X4dPk0iIcShoCvC/m
+         j2xSQrGvBSoe2dzIwb69Fx7kdxZXDaxSZ/FU5qUzU0JLainIuYREQ8kZzx7a+TfPPm1R
+         q7zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733329863; x=1733934663;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733330422; x=1733935222;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1NacqQweZL2ZRpwzejzKHzHAYa4r44TWJmVad/FV5fQ=;
-        b=wqs717BYhlo+m7fVP6PMkbsJM5RAn5cyMRWiVE/zxD2VCScEhWRrh5aMgNNqUloV15
-         4qkpXNa2b+YilwSc+RU9uzU26n7U4+/gh2V6ce1D23+k+mAs5C6XLTGkGZVoQwsAXExG
-         I39t1otqn3jfjXUJFVZphp3qYfdlyZJ9eEGWfkRJJrK5i0i62mthCjjbbgSdH+QrXNpH
-         T749QspMxnKM+jzZHT2gXD0vNXiSi/m/Y+4rpA6RrPc1xVI3FLPATl54GOz0SUgZHS7D
-         7sklkz+fInbyuPU8cS8ARBaoVifjWOinHSqn/wcAM0zWvaviN9gKjxKnhNHxRyFIRHZ+
-         LPOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvVAF1nWMRQnltneBiEu30tbOVoPWbPG+veORbhlcyGG9XoRKXL1gKeu8PtnVkz2bN3GGP1JnGWNKmNI4G@vger.kernel.org, AJvYcCVUwOnuZgyd+yLgl2uudO+8H3rSOC9xSEYBgDtLRMXc0sDSF5jPbm4tnYI7GIpdNQO9Xza/PJe/Rw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq+VpfYXGg63IIp4jKlnrCVvJWWWlMmRwblWkLOao/+Ot8HNGV
-	VXko69EFWTTly41BuONXz32lqmhlVoNEP6A3ym2Gt7Kz1FJD/BAgTOStI79FwmEt8X35lNK3qjk
-	49jtf1L4vo2viTpM6soEjdJiPdbA=
-X-Gm-Gg: ASbGncvzPZsZPgrDvC2h80Qb887LmB4CNy6juuXfpCHim+R/EXVAXAmnToUFuo6jenu
-	YuJy60Z0Ed90KqnNzNQbOqMIp0Q7jjMHj6k2A7psKd12CV2kex29sLOmmZ7k1AfVxbw==
-X-Google-Smtp-Source: AGHT+IGo6X4WvDvWh7GVi3qy8Q1hzgU1W7HelK+qTO+jbdpbCv+ASz8/hzTHDpi5Ayqtnvg1GaUvYkxme8e5tr/x4v8=
-X-Received: by 2002:a2e:bc1d:0:b0:2ff:a7c1:8c50 with SMTP id
- 38308e7fff4ca-30009c52bb7mr33937911fa.19.1733329862395; Wed, 04 Dec 2024
- 08:31:02 -0800 (PST)
+        bh=Ea41nc8IA/yWz0s00ynnrLVfux7dYksfDzuAH1K99H4=;
+        b=HbXg3d6dCrbE0KblGTlRCIoZR0H2dqOwVLi7x04P2Nd2qfRSpLmgpIIskEZ+yRC4tP
+         TLUxtekarDv1F+LX77207ahy9VO+tuo9YX1oB29mUDKuTA5IAwGPoW/sHEfgKaFNjhe2
+         /kp2Iu7TRigr+d3OiG372Nv7o3Sc3i6bDUxiXjJyuzt4hobKsbH91yrcnKzPjinQZ9K+
+         2Sc85eNLKSNUV9UWer25TZQo+8L5EjX/3NhCupV1GTiYeKuK0bv+9ioXJA2PQVq0EI/L
+         i+gusNKZIEwgO58gBoK+SwKfKrW6ZPWfWf8PbPOFpz31jFUOUq3vTEbogeY7Xvs5c8EZ
+         80Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmp4dbLYaUg23lqjnB7MmqECqP3yKnq/GLXrq8GFmZ63cYQ2RHn8FLh9ilaRpLlWS39Po/xQlFlA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqGfl6zPw13g3Or4kRKlz1sSPNE3kk5fJn3CyErNB0CjzSOp9r
+	ntp4TeEun0S5JWGh5jBF+KV2UCRQXKlFLCxT/tDBA7ofelwJTwiBrBt/pvoK9uE=
+X-Gm-Gg: ASbGncuIh/eXYQPFwc62ONa1Y/re5pwQvi6fBO0y85jl4rIqyMleZx+kTN+NVBnXbT+
+	lsTOpHXPMWYY2Y8jzR4/mQjPQPL8wbGrxQkwur+o/H2dTR1+GUG2wbUbrirAgocrY53iADMtQ7o
+	nlhiFegWkFk0V9mq4dM9pGzAxA68MoAZF0cDyCK9LIlcrx5BZbFAMZ6diJXD+9q+YHuLnwBWQX3
+	XclASqRLPJxu+20AoZGxVzX3SPEyg==
+X-Google-Smtp-Source: AGHT+IHvExbzUsZz3phLvXEVX1hQ65i0mcWOe7p/CmHEt2r2LOx5jc+H2no4a9V5TPiVKl76Q80KNQ==
+X-Received: by 2002:a17:903:41c6:b0:215:9642:4d7a with SMTP id d9443c01a7336-215bd0ed2efmr111425035ad.0.1733330421907;
+        Wed, 04 Dec 2024 08:40:21 -0800 (PST)
+Received: from [127.0.0.1] ([2620:10d:c090:600::1:a7a9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2154e1c34a4sm88508675ad.260.2024.12.04.08.40.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 08:40:21 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241204153923.401674-1-colin.i.king@gmail.com>
+References: <20241204153923.401674-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] io_uring/kbuf: fix unintentional sign extension
+ on shift of reg.bgid
+Message-Id: <173333042069.512655.8947541818653406492.b4-ty@kernel.dk>
+Date: Wed, 04 Dec 2024 09:40:20 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67505f88.050a0220.17bd51.0069.GAE@google.com> <6be84787-b1d9-4a20-85f3-34d8d9a0d492@kernel.dk>
- <a41eb55f-01b3-4388-a98c-cc0de15179bd@kernel.dk> <CAJ-ks9kN_qddZ3Ne5d=cADu5POC1rHd4rQcbVSD_spnZOrLLZg@mail.gmail.com>
- <1ab4e254-0254-4089-888b-2ec2ce152302@kernel.dk> <Z1CCbyZVOXQRDz_2@casper.infradead.org>
-In-Reply-To: <Z1CCbyZVOXQRDz_2@casper.infradead.org>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 4 Dec 2024 11:30:25 -0500
-Message-ID: <CAJ-ks9k5BZ1eSezMZX2oRT8JbNDra1-PoFa+dWnboW_kT4d11A@mail.gmail.com>
-Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Write in sys_io_uring_register
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jens Axboe <axboe@kernel.dk>, 
-	syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-86319
 
-On Wed, Dec 4, 2024 at 11:25=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Wed, Dec 04, 2024 at 09:17:27AM -0700, Jens Axboe wrote:
-> > >   XA_STATE(xas, xa, index);
-> > > - return xas_result(&xas, xas_store(&xas, NULL));
-> > > + return xas_result(&xas, xa_zero_to_null(xas_store(&xas, NULL)));
-> > >  }
-> > >  EXPORT_SYMBOL(__xa_erase);
-> > >
-> > > This would explain deletion of a reserved entry returning
-> > > `XA_ZERO_ENTRY` rather than `NULL`.
-> >
-> > Yep this works.
-> >
-> > > My apologies for this breakage. Should I send a new version? A new
-> > > "fixes" patch?
-> >
-> > Since it seems quite drastically broken, and since it looks like Andrew
-> > is holding it, seems like the best course of action would be to have it
-> > folded with the existing patch.
->
-> ... and please include an addition to the test-suite that would catch
-> this bug.
->
-> Wait, why doesn't this one catch it?  You did run the test-suite, right?
->
->         /* xa_insert treats it as busy */
->         XA_BUG_ON(xa, xa_reserve(xa, 12345678, GFP_KERNEL) !=3D 0);
->         XA_BUG_ON(xa, xa_insert(xa, 12345678, xa_mk_value(12345678), 0) !=
-=3D
->                         -EBUSY);
->         XA_BUG_ON(xa, xa_empty(xa));
->         XA_BUG_ON(xa, xa_erase(xa, 12345678) !=3D NULL);
->         XA_BUG_ON(xa, !xa_empty(xa));
 
-I thought I did, but when I ran it again just now, this test did catch
-it. So there is coverage.
+On Wed, 04 Dec 2024 15:39:23 +0000, Colin Ian King wrote:
+> Shifting reg.bgid << IORING_OFF_PBUF_SHIFT results in a promotion
+> from __u16 to a 32 bit signed integer, this is then sign extended
+> to a 64 bit unsigned long on 64 bit architectures. If reg.bgid is
+> greater than 0x7fff then this leads to a sign extended result where
+> all the upper 32 bits of mmap_offset are set to 1. Fix this by
+> casting reg.bgid to the same type as mmap_offset before performing
+> the shift.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] io_uring/kbuf: fix unintentional sign extension on shift of reg.bgid
+      commit: e54fb80b57e4534ae91e65ea14cc66b9f21b4b7a
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 

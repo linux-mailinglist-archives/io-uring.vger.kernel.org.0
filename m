@@ -1,121 +1,185 @@
-Return-Path: <io-uring+bounces-5241-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5242-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F31879E468F
-	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 22:24:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDAB9E471F
+	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 22:47:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84B40283D08
-	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 21:24:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E3D1691C4
+	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 21:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EFC19007D;
-	Wed,  4 Dec 2024 21:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420BF18FC83;
+	Wed,  4 Dec 2024 21:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="QHgbGh8U"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6It1eNo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03D018FC9F
-	for <io-uring@vger.kernel.org>; Wed,  4 Dec 2024 21:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6280B2391A0;
+	Wed,  4 Dec 2024 21:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733347467; cv=none; b=p+2IcEK7oXn03kavW3XX128jhV3NoCO8R1UMGlYzWDykbdPkhhFir71tuxmD8j0yYbBicyB5lo0D8+wvNOm5dwqMea1bjGoIf7Cu9CTctiNOqdepmwqqHriViUkDWnel9oNc5hg8rx7tkjA3BlxmB1KAbHcos9MiVVWXWHMt7/4=
+	t=1733348854; cv=none; b=f8EPWhbB4xBFVeqjrae1G5BGQOrj+jMDkSpZdCDVAU1q0+JFM61YM6eYhueW0vR1DYA2RL5Lg9tu74TEyXPkaArsulmGBzJ18v9FsQLK2hmRrV8Zs5uxxry1i9jtZ5qctoL7hJZnPpChMEHcHCWIJoIzW5ZuH0OYRELLxnx4tIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733347467; c=relaxed/simple;
-	bh=lANPNiZn9wCjpWgldRHJcgcPHj+OE9gFpeBp2mR2dBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lc8zkM4uO+pN6q6iXmgI9lwJHr9szaYXJ0uKfyPT2wt5HLeDuzqqyqbF/8+s8WvU/itQPiCx7xC3m6RwCkKYlprHstCYrE8DcHm8h/U+ug4mXl+IB7aAtdThAmNz8hBEmnbw4oy75XPE1+ujIhmqJV4D6qPsMw9HH0llPIKBQ44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=QHgbGh8U; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2155157c58cso1329135ad.0
-        for <io-uring@vger.kernel.org>; Wed, 04 Dec 2024 13:24:25 -0800 (PST)
+	s=arc-20240116; t=1733348854; c=relaxed/simple;
+	bh=IJ+Tr5WrQEHCU2L/vBaaxP7MLc42N0SWwf2O9ZVrmJM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FP1uRA52T4EdiapJi7Kc7PdMRQZLvNd0WOJAMOAM1IEXD8iPxe1RgFo0KT77arbRWC6pN3MuP7DgQyd4gXJ90h+xXa3ly1YV4yfFqnJn+rDgFyruE/yjY+H8Q7c44PbV5IL36DBJhwl4IlMK/Km83nXMH6VC63Jl4GDBfnZaluI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a6It1eNo; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d122cf8dd1so294974a12.2;
+        Wed, 04 Dec 2024 13:47:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1733347465; x=1733952265; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HVxm73LRxMgGtdBIKKSOYaD34YEdUEHwzi3mWR3Ztqw=;
-        b=QHgbGh8UQHqn6GT8KT3qSpyX3fDmg/ey2vLn8UR13TVHzFJ8nFM5sidZQJIld05373
-         k/QAS8+TWxMgav6FgGjnnt94QmfML1g9bh9Xnr0jRluQAgrn5Ep03sR+mDEhOVkAuVSU
-         KngvxeSC7S5TKtGMef15iO//jaEN+BIGnlvFX2OTF2ysrjG8ohom79koHPEJZlTOi2Er
-         AEbbRGV7JvreXflOpWjs9+bvAGNKbzWeIH+2tBsPmTIiHgpFgJUHUiGtnRFI8i5kjEO0
-         sPN6C/eS/GGYxxbVRbUIMixBC/cnYCJaPrKg/pls9Lx8n0a72jCerGjYsFHpDmnp3CoK
-         P2hg==
+        d=gmail.com; s=20230601; t=1733348851; x=1733953651; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fKaI88AD29BFrp8QioqFZOOJyEQFk+/T1lAVWcKhhT8=;
+        b=a6It1eNoFco4bdB2bLEqkTCAfvDiOFA1Yj8yhxEGEJWgXj0oK1Q70pxpMYZrb6S/hh
+         zCgx5RDzOqKs7FLRbIXqg+zW8N5HUIeOE0kkqWvISLSym59uQL8odltQA94s4LyaHF65
+         kIg9QfljDyJMyTP6gKyTgSUrgwIsap4/VkLTCC+yTBOeUFVrkU53j9l0wGpsI11l7O58
+         kKgJekcfloZusDn0yZI/NLx7J7rkh3z51eNNm7wrBALfSbhZLxGzOmZgsauIdoNTbP/k
+         h28xrJZL/iokGC8aM/66bwy4d5fMgLmqmgQKpzllw9LM6NLDbHMBWEmuwMJJDDqxcdXX
+         0gvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733347465; x=1733952265;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HVxm73LRxMgGtdBIKKSOYaD34YEdUEHwzi3mWR3Ztqw=;
-        b=MCbXvXFxZa/PSz56GwMxvhv52gRMLAT7Cdv18zzQvlNeJ9MVqPvmhNvUps/ImNzh9S
-         iyXIZhgyG3hpTNHh88kdB7cbuMSHIw/pZaNNaZHxhGR5MEMjbe2KFwsin4yjBvQXHdNH
-         +afHPoGVIjGJj5pAM+vx8mK+xzJHPLSX9uI8v3YDbjESEil+irRMD4/kjgJ/FnNil2Av
-         REGPE8/JvNscvrYCvukhW+iblFGkkalR1RcseZevm/coC0Ny1fdN3+bK23MUaPo+UBLG
-         yMqbVn+EH/wh3gbHfI4W/j0U6eSmnZJ4RdP6CsQbhVw97kdLQFLOKVTG/+XrzSQL9Fsc
-         BMYQ==
-X-Gm-Message-State: AOJu0Yyugw416H1uAtB+cmCz9n1vzqD/4ehv1gMvPVOQwnAnYMLpwo63
-	PE7/rStptMIUXltmTRAd3qB1ePtHGhX1CVh03syKvub4IwI4AU94IrhMxuHlCl8=
-X-Gm-Gg: ASbGncv1ni0DhFOYQBaCYGoxR34u7ELhNud5Ck1IGvL5DlCrPT8Q9KWgC56oIN61E/D
-	YN0p3eoqlm7mWhXzUIp7j3GUBN8HoLo24DLtbFOnysjkwC5qozVRUdQiAoE1vGAWT3fJPS9qhjf
-	+7mLvschd0k1tmKPA2mJYpWSNFjlsxnpqx14o7m4Oc+8BX6PI2mbJNYS70IqfPpihTuTRlccdh8
-	NVv0JYFDA+dLKyoE7EFI4Mjj3EhAO2c2hNf62++g7Jk/E2+vnpnWJrRr9PON+WSCky0sV/XfAd/
-	RfK+Oz/UHUQt
-X-Google-Smtp-Source: AGHT+IHpTGPxyFhHO8MRwvjmGdmAjs1Zq0nyCPmZ/HjAV1D2bqZQUoG6G3AE/jVlEnKO6Sau+K1tmA==
-X-Received: by 2002:a17:902:cf0c:b0:215:5aae:50a1 with SMTP id d9443c01a7336-215bd11fc28mr123227335ad.32.1733347464923;
-        Wed, 04 Dec 2024 13:24:24 -0800 (PST)
-Received: from ?IPV6:2a03:83e0:1151:15:44f:b37e:6801:5444? ([2620:10d:c090:500::7:8999])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21530d2073esm109249945ad.73.2024.12.04.13.24.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 13:24:24 -0800 (PST)
-Message-ID: <fdc742c6-6b5c-4a7d-b933-b67e22d7c60d@davidwei.uk>
-Date: Wed, 4 Dec 2024 13:24:22 -0800
+        d=1e100.net; s=20230601; t=1733348851; x=1733953651;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fKaI88AD29BFrp8QioqFZOOJyEQFk+/T1lAVWcKhhT8=;
+        b=CZPrI2LniyuCMfx1LAoD+B1PZDSLH+zKEcNl9g+VMzj+tZdzaYVJYU6eGfyXgFAAHe
+         aIir7Fjkhu0oVk+JyQDtSsoxaExEpUpGistTWwwk+lAAaKYRghBUJRSnAFY1/GZI5ffr
+         9n3lP+m9eOVXNbeLGGHBRmc9Q2MJ7LK1IDUcrmHI+4ej1Et0WNnvSrBxnPbmVxK28nM5
+         6FiezV6XlbHveI3s1wSf+aj2BdE2l0gOUWCWxFmJ8bNKhMRq19LVSi28rMSr6oJjNEbB
+         jay7g2LQEcsr/YTocTSG3oX/or5/FKLovm0EDR/lPwX51a3+4Uteke9816oJTx3QX0gn
+         bgCg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4Lo/XiwmAIFuOc/Dvzz7X3szifUkswwnnsVZrnOKHB1nEiaqJNVEl2caKGqTFDKyqfZVad4xEIA==@vger.kernel.org, AJvYcCXxtZ/S+2evXBD/zrV8GNoYMjtIjTVBkXonD9mejsKRoHGRZRW7StbDyMAwIv3hHQkeB4E8quzmOjyXxBve@vger.kernel.org, AJvYcCXyimpqz9mCWQw9mm1YgUjXGb6Gr2c8fhK6wsgvIaZBRR4tSmtrBQZWt4Hx2mbWel84MgyNvp9wGgIAfOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+PQjjhbwEA2VGYyg2Y8Pa0eVpJCerc1pF4/WrViEJGwHE0uEo
+	3SXGrf7Jh/PN9AY7taaROJqyEQbLXPGl4jyADvi2gyheeNT+nfkaqYd8SHbt2D72Rot/eE3DBNp
+	9Lt4fpNILrzWHIxKIQATSqagrY+I=
+X-Gm-Gg: ASbGncuQYk2+hHEUzHJwgrNUNNDnR0VS7841jig2QYDOsVUHx/FWQe8NiSZgDCFqqyX
+	rZtJpN3EUUPiW6q2Xc7oLwbSvMR8XIA==
+X-Google-Smtp-Source: AGHT+IGjeAWiYGkcl48wjHQuQfHn6HqZ1slDmfNXVWuNj+ailjPxy/721i4S3q0jxp+4ZIX1TsGbVhAz0VuLWgIFfBI=
+X-Received: by 2002:a05:6402:40c3:b0:5cf:4527:4325 with SMTP id
+ 4fb4d7f45d1cf-5d113cf65c0mr7138144a12.24.1733348850513; Wed, 04 Dec 2024
+ 13:47:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v8 01/17] net: prefix devmem specific helpers
-Content-Language: en-GB
-To: Mina Almasry <almasrymina@google.com>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>
-References: <20241204172204.4180482-1-dw@davidwei.uk>
- <20241204172204.4180482-2-dw@davidwei.uk>
- <CAHS8izO=8C9nv2e0HKWA4Ksv-Hq7yoYH6c+rbZcUXvbVwevwwg@mail.gmail.com>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <CAHS8izO=8C9nv2e0HKWA4Ksv-Hq7yoYH6c+rbZcUXvbVwevwwg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241203121424.19887-1-mengferry@linux.alibaba.com>
+In-Reply-To: <20241203121424.19887-1-mengferry@linux.alibaba.com>
+From: Stefan Hajnoczi <stefanha@gmail.com>
+Date: Wed, 4 Dec 2024 16:47:18 -0500
+Message-ID: <CAJSP0QW2GWNCtekar68bniwB6xX=ADsh7YjFjq_bQvExRNxnyA@mail.gmail.com>
+Subject: Re: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for virtio-blk
+To: Ferry Meng <mengferry@linux.alibaba.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, linux-block@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Jeffle Xu <jefflexu@linux.alibaba.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, Kevin Wolf <kwolf@redhat.com>, Ming Lei <ming.lei@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-12-04 13:00, Mina Almasry wrote:
-> On Wed, Dec 4, 2024 at 9:22 AM David Wei <dw@davidwei.uk> wrote:
->>
->> From: Pavel Begunkov <asml.silence@gmail.com>
->>
->> Add prefixes to all helpers that are specific to devmem TCP, i.e.
->> net_iov_binding[_id].
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> Signed-off-by: David Wei <dw@davidwei.uk>
-> 
-> It may be good to retain Reviewed-by's from previous iterations.
-> 
-> Either way, this still looks good to me.
-> 
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
-> 
+On Tue, 3 Dec 2024 at 07:17, Ferry Meng <mengferry@linux.alibaba.com> wrote=
+:
+>
+> We seek to develop a more flexible way to use virtio-blk and bypass the b=
+lock
+> layer logic in order to accomplish certain performance optimizations. As =
+a
+> result, we referred to the implementation of io_uring passthrough in NVMe
+> and implemented it in the virtio-blk driver. This patch series adds io_ur=
+ing
+> passthrough support for virtio-blk devices, resulting in lower submit lat=
+ency
+> and increased flexibility when utilizing virtio-blk.
 
-I'm sorry I forgot to do this. Will make sure it is propagated in the
-next version.
+First I thought this was similar to Stefano Garzarella's previous
+virtio-blk io_uring passthrough work where a host io_uring was passed
+through into the guest:
+https://static.sched.com/hosted_files/kvmforum2020/9c/KVMForum_2020_io_urin=
+g_passthrough_Stefano_Garzarella.pdf
+
+But now I see this is a uring_cmd interface for sending virtio_blk
+commands from userspace like the one offered by the NVMe driver.
+
+Unlike NVMe, the virtio-blk command set is minimal and does not offer
+a rich set of features. Is the motivation really virtio-blk command
+passthrough or is the goal just to create a fast path for I/O?
+
+If the goal is just a fast path for I/O, then maybe Jens would
+consider a generic command set that is not device-specific? That way
+any driver (NVMe, virtio-blk, etc) can implement this uring_cmd
+interface and any application can use it without worrying about the
+underlying command set. I think a generic fast path would be much more
+useful to applications than driver-specific interfaces.
+
+>
+> To test this patch series, I changed fio's code:
+> 1. Added virtio-blk support to engines/io_uring.c.
+> 2. Added virtio-blk support to the t/io_uring.c testing tool.
+> Link: https://github.com/jdmfr/fio
+>
+> Using t/io_uring-vblk, the performance of virtio-blk based on uring-cmd
+> scales better than block device access. (such as below, Virtio-Blk with Q=
+EMU,
+> 1-depth fio)
+> (passthru) read: IOPS=3D17.2k, BW=3D67.4MiB/s (70.6MB/s)
+> slat (nsec): min=3D2907, max=3D43592, avg=3D3981.87, stdev=3D595.10
+> clat (usec): min=3D38, max=3D285,avg=3D53.47, stdev=3D 8.28
+> lat (usec): min=3D44, max=3D288, avg=3D57.45, stdev=3D 8.28
+> (block) read: IOPS=3D15.3k, BW=3D59.8MiB/s (62.7MB/s)
+> slat (nsec): min=3D3408, max=3D35366, avg=3D5102.17, stdev=3D790.79
+> clat (usec): min=3D35, max=3D343, avg=3D59.63, stdev=3D10.26
+> lat (usec): min=3D43, max=3D349, avg=3D64.73, stdev=3D10.21
+>
+> Testing the virtio-blk device with fio using 'engines=3Dio_uring_cmd'
+> and 'engines=3Dio_uring' also demonstrates improvements in submit latency=
+.
+> (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O=
+0 -n1 -u1 /dev/vdcc0
+> IOPS=3D189.80K, BW=3D741MiB/s, IOS/call=3D4/3
+> IOPS=3D187.68K, BW=3D733MiB/s, IOS/call=3D4/3
+> (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -=
+n1 -u0 /dev/vdc
+> IOPS=3D101.51K, BW=3D396MiB/s, IOS/call=3D4/3
+> IOPS=3D100.01K, BW=3D390MiB/s, IOS/call=3D4/4
+>
+> The performance overhead of submitting IO can be decreased by 25% overall
+> with this patch series. The implementation primarily references 'nvme io_=
+uring
+> passthrough', supporting io_uring_cmd through a separate character interf=
+ace
+> (temporarily named /dev/vdXc0). Since this is an early version, many
+> details need to be taken into account and redesigned, like:
+> =E2=97=8F Currently, it only considers READ/WRITE scenarios, some more co=
+mplex operations
+> not included like discard or zone ops.(Normal sqe64 is sufficient, in my =
+opinion;
+> following upgrades, sqe128 and cqe32 might not be needed).
+> =E2=97=8F ......
+>
+> I would appreciate any useful recommendations.
+>
+> Ferry Meng (3):
+>   virtio-blk: add virtio-blk chardev support.
+>   virtio-blk: add uring_cmd support for I/O passthru on chardev.
+>   virtio-blk: add uring_cmd iopoll support.
+>
+>  drivers/block/virtio_blk.c      | 325 +++++++++++++++++++++++++++++++-
+>  include/uapi/linux/virtio_blk.h |  16 ++
+>  2 files changed, 336 insertions(+), 5 deletions(-)
+>
+> --
+> 2.43.5
+>
+>
 

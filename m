@@ -1,140 +1,94 @@
-Return-Path: <io-uring+bounces-5237-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5239-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA359E4493
-	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 20:27:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 908489E457C
+	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 21:18:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9167EB2AFDE
-	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 18:58:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5546E165BC2
+	for <lists+io-uring@lfdr.de>; Wed,  4 Dec 2024 20:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280231A8F74;
-	Wed,  4 Dec 2024 18:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMEbfYYA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA951F03E4;
+	Wed,  4 Dec 2024 20:18:05 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C81E1A8F76;
-	Wed,  4 Dec 2024 18:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597071F03C8
+	for <io-uring@vger.kernel.org>; Wed,  4 Dec 2024 20:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733338724; cv=none; b=CDVJHWIt5wkray28eakRYnKOYpvzmlN3oGjxi9We5+CHOvtO0or1b4S+LqRW4xNc16LxShgp1lha9Q7QHm2QbyLy/syT6fT9hSp79l8Gty4snTUwg+QoP619MmviHS9/uAIu3Pnd9yPxqLlgBlvUIrKSJBgF5r9T3RtfdgZBXYs=
+	t=1733343485; cv=none; b=BLk+hENuciVuR03+sjDxjZ3aeoylApKuiLkPdu01HoDZCLf3TrborGFdd4k9krbb8l3vrA5reucL5fyPEuIkyIZRwtOYZrSs2Kk1ltsDf8uq6HlSaHHHyZCVrEOHjT10ReZZIALa4JrvRCw/Ge50uY3rqMqb3/yPRWEagUbd1s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733338724; c=relaxed/simple;
-	bh=huN4Cw1QheplR6PlW65YlwFGApsbNogiicDY2c+kuyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hm6A0vBFmBAxBsIbwOedw2CQm0hw6Q+rbcAaIFSB0F6Mn6MeFXWwNcV6mR7aX6+L6dBOt4rqSY/iyzPwUz13k1Jq713ery4JHyMd9ttelGkB/n40FycHtg+ePSsAFIHmG2MS8SD8h67GMtBQEGhIDZh64zWKJhbNQH3QWL0WHJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMEbfYYA; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d0cd8a0e91so31996a12.3;
-        Wed, 04 Dec 2024 10:58:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733338720; x=1733943520; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+acUKc1gmJkftQGWaeIg2xjMp0m4rStQk1RIHhFeK7M=;
-        b=mMEbfYYARTkOEySj2g7TgvaqrAcSTepv9U+U2WkTN4ZP6DRFNQ4SXw6XBNxHSIrY1r
-         GER7tY2a6yrupkuSxPq2DaCllUyROJmBjZq+wBKXDBHHJvAsCyjd7DP7DvHsub5R+Hke
-         4nD8xftD+5q5ZoFnn1jxQRCKdgiv1GQCkDBfdTv5z4f+7XSqbStC9HqC8Rdy1PLQReeM
-         8PwgL1cfOHjOTlR1bts2/6T0Y3QwxPaDk/7sgiKnZK3tVDrnNlHP4c0FftZ8tfsBZhhl
-         tHZTLygr2cK53KceOy5c0UPnu7v8+cEgvde+23OV3j9pw5keNHvWgZwsPY3mo5JEpQqQ
-         r2iw==
+	s=arc-20240116; t=1733343485; c=relaxed/simple;
+	bh=NNeyfjKy8ZGP7PYgviKBfqCS/QI22FJoxQGC4XnQdu0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=m9D9rCzQ1NH3Q4uuYGK6PlujMoI8arXbznqp2W2aXdzSKgnso6XuG2Lou0CtZLYdrmLWqiu/V2RH7GKASpuK9zQvK75Db+QWeXkUA1CvG+Xs8KzJlWb9gCqFssUynDwabAo5Ja9FJ9Iz/TKt94bGdcBzUWEvGVgH0y4Xv9HuLHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a76690f813so998225ab.2
+        for <io-uring@vger.kernel.org>; Wed, 04 Dec 2024 12:18:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733338720; x=1733943520;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1733343483; x=1733948283;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+acUKc1gmJkftQGWaeIg2xjMp0m4rStQk1RIHhFeK7M=;
-        b=uPDw/spS0EzQNwZr28YFpDc71UPaJTsjdBPBloCEBA4D6wre/VRUl4n7JSZdSfO0k8
-         FwDXiTxwAkW7G22w+jlJkYc/PX0dtyLFFH9p4ovZllNu9dUMNQs+/PUuAe/o6U3EwCwS
-         wy3LRd0Wf3hepNj0C9wmPIQsP5SqButpibuth7IhKq5ON9/C/EF1mi59wuRaRL/mDIHq
-         vVvx+LUBM7O95WwyM857KNlxD2GjdgbN0sCxaSqFz01ZBFRIb3WYaKytqPagOqvDpkVz
-         t0NEnwqrux32FQtDLJYwkDJY8cof80VKfWzJHUYc204Vw6hJUOc5qdbOXpR809sMuoIm
-         HprA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7YeGP+e7tL+Dd9JQox7iriCNydM7Qain7k1A4BOHhHFwr0qiBFUPKq8bY2jjWrOgJmYAKgwQI@vger.kernel.org, AJvYcCVIF/1ijI9Mfufil7TVPljmiM7JB5qJQ2LtcaZdy76CGQiayI170UEoi8pwrMAjlXFsCNtJie/oIQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMGh8xK1htPMohRXnyZBLuAgQXr2UPlyPhGowezXw0iIAA7FjZ
-	nxzueyGieNMv27B155qy9fvqykELGHbA9/yk9yfMPOIt+GKWbuAV
-X-Gm-Gg: ASbGncsAYOvMg5MYq+PVRbiX9eNueD9BxtyuvwB8Yv56AIDtbST+iZU3a+blJLSDWY5
-	TJJTGMgshnclWSupYEfEauBM6PHLCprgX4MEnrochLQhsjzjEjbkWIW94ysf7rUpl7UubIxP67h
-	YYvnBy/VTgJUCGYmnf9Yd0TIZ6W7OPANJyED4Y1Afk/jQFlusSPG1AjXJIZ0c5GVodjryv13lO3
-	wX5zp5Y94LaVC4uxZS3cGW+693Assj4eEVakLlfiwaGzADjrqod7n2xYYK7Dg==
-X-Google-Smtp-Source: AGHT+IGi0cZAMiCjuWGwMA3dx7xBX3Kr+qPeTNyx2k96P+UBvcSiEU4eMMJIijBIYx0z2t8TOHLTWQ==
-X-Received: by 2002:a17:906:310a:b0:aa5:48b1:d282 with SMTP id a640c23a62f3a-aa5f7ee66d4mr664142966b.37.1733338719442;
-        Wed, 04 Dec 2024 10:58:39 -0800 (PST)
-Received: from [192.168.42.131] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0f6cf4bbesm3319608a12.43.2024.12.04.10.58.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 10:58:38 -0800 (PST)
-Message-ID: <41da1af6-edf0-4c8c-ad72-4f51f1056da3@gmail.com>
-Date: Wed, 4 Dec 2024 18:59:31 +0000
+        bh=GvYz/F16WGhbDx4cNvT6lI6TdEMFQnM9OQcYijyTMAI=;
+        b=Y4HHql15STBbG6COGr64K/vxueQ7fVYfXHbWX3mE3ndcsofhgxJFqm9NnkPjfL3VGh
+         D3HYvL2AzCCZ6KaHmmlBcDL4Ph7Kpo6a+CEZZ0MnNfEjNSXaObYtOg75FCgwf5pyhvJY
+         P/5GbC9YzBd3MoH/Nl1ZIqgQkCg3iz2uj9Dkcnmoh9qZbNvaNj/dxmiz3CVsK/lbK3Pw
+         plXYSq3MR4AS8QdexBYjd3ypDkGcxZrGL4+rOVdSnnucN3cuVc0nziZqhXtB/9coB3k/
+         w4pTeeKZil17NUtTBg5qXVDEA8BdGvP5oNdRfajlHd3X+huHad0tVTORlmSP3AnrU7c+
+         l6eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+lct+l9uHrWm4z+Q9KlBBbRBswBW7u9d1ks+A3np9EMufvG/2RSxZXe/v3zDBQjemKBaE3xHQ7g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg675CvzlwUhL2sOlMsiGnu92W+3PCmLfWIoLneo9n+i0m/kbM
+	/IT8j6EMYv6J71MEjO3zL2Um5mBNjTMQkUFm9NpSEcayeEFxIlsQrL0sNsj/cfR8uyvghBoo2z1
+	MyjFfajNukho87hUAaTN7mNmWz7cjks5F3X81ILwBNuIVvvP64hcAt9I=
+X-Google-Smtp-Source: AGHT+IEhH0cr5PTn2QWjKnJaTq5+Nve/ysWwfEdZrM2AyUkDS34xX+n3rmiLxI7NpJNwWzFqTBe2/YDMHcnDgWJGHKQ6KXm6TTL+
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v8 00/17] io_uring zero copy rx
-To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>
-References: <20241204172204.4180482-1-dw@davidwei.uk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20241204172204.4180482-1-dw@davidwei.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:b2d:b0:3a7:c5cb:8bf3 with SMTP id
+ e9e14a558f8ab-3a7f9a3ba65mr102881145ab.9.1733343483592; Wed, 04 Dec 2024
+ 12:18:03 -0800 (PST)
+Date: Wed, 04 Dec 2024 12:18:03 -0800
+In-Reply-To: <67505f88.050a0220.17bd51.0069.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6750b8fb.050a0220.17bd51.0074.GAE@google.com>
+Subject: Re: [syzbot] [mm] KASAN: null-ptr-deref Write in sys_io_uring_register
+From: syzbot <syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, asml.silence@gmail.com, axboe@kernel.dk, 
+	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, tamird@gmail.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/4/24 17:21, David Wei wrote:
-> This patchset adds support for zero copy rx into userspace pages using
-> io_uring, eliminating a kernel to user copy.
-> We configure a page pool that a driver uses to fill a hw rx queue to
-> hand out user pages instead of kernel pages. Any data that ends up
-> hitting this hw rx queue will thus be dma'd into userspace memory
-> directly, without needing to be bounced through kernel memory. 'Reading'
-> data out of a socket instead becomes a _notification_ mechanism, where
-> the kernel tells userspace where the data is. The overall approach is
-> similar to the devmem TCP proposal.
-> 
-> This relies on hw header/data split, flow steering and RSS to ensure
-> packet headers remain in kernel memory and only desired flows hit a hw
-> rx queue configured for zero copy. Configuring this is outside of the
-> scope of this patchset.
-> 
-> We share netdev core infra with devmem TCP. The main difference is that
-> io_uring is used for the uAPI and the lifetime of all objects are bound
-> to an io_uring instance. Data is 'read' using a new io_uring request
-> type. When done, data is returned via a new shared refill queue. A zero
-> copy page pool refills a hw rx queue from this refill queue directly. Of
-> course, the lifetime of these data buffers are managed by io_uring
-> rather than the networking stack, with different refcounting rules.
-> 
-> This patchset is the first step adding basic zero copy support. We will
-> extend this iteratively with new features e.g. dynamically allocated
-> zero copy areas, THP support, dmabuf support, improved copy fallback,
-> general optimisations and more.
-> 
-> In terms of netdev support, we're first targeting Broadcom bnxt. Patches
-> aren't included since Taehee Yoo has already sent a more comprehensive
-> patchset adding support in [1]. Google gve should already support this,
-> and Mellanox mlx5 support is WIP pending driver changes.
+syzbot has bisected this issue to:
 
-It misses some changes and has unaddressed concerns from Jakub,
-so that should rather be an RFC.
+commit d2e88c71bdb07f1e5ccffbcc80d747ccd6144b75
+Author: Tamir Duberstein <tamird@gmail.com>
+Date:   Tue Nov 12 19:25:37 2024 +0000
 
--- 
-Pavel Begunkov
+    xarray: extract helper from __xa_{insert,cmpxchg}
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17435fc0580000
+start commit:   c245a7a79602 Add linux-next specific files for 20241203
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=14c35fc0580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10c35fc0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af3fe1d01b9e7b7
+dashboard link: https://syzkaller.appspot.com/bug?extid=092bbab7da235a02a03a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a448df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cca330580000
+
+Reported-by: syzbot+092bbab7da235a02a03a@syzkaller.appspotmail.com
+Fixes: d2e88c71bdb0 ("xarray: extract helper from __xa_{insert,cmpxchg}")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 

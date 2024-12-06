@@ -1,125 +1,138 @@
-Return-Path: <io-uring+bounces-5275-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5279-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C44C09E7677
-	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 17:53:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CF21161575
-	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 16:53:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344A71F4E32;
-	Fri,  6 Dec 2024 16:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrmGSzWu"
-X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E39ED9E7BAC
+	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 23:24:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7A8206262;
-	Fri,  6 Dec 2024 16:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C5D9283BB2
+	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 22:24:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801611714DF;
+	Fri,  6 Dec 2024 22:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="eEBHxEti"
+X-Original-To: io-uring@vger.kernel.org
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D044022C6C1
+	for <io-uring@vger.kernel.org>; Fri,  6 Dec 2024 22:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733503997; cv=none; b=KK9tEsgzQcyancwZ7csELyHBohESXSMuzLYpR02/36hMIf4TIDwcSZp18Y7wtSORoOWMrH6ZBcgUXyB0YRQo9BNuuhq3+dZRSA+mQ81+Kagw4o9N/R2Dw9o3DRjww25oIY5bsrBCnhSOnu65FrnIba4LSXLXbr+sBUapyeJr1kE=
+	t=1733523851; cv=none; b=nNncDFL2PavJE9uquWORUNcmd6BPT1vD9XNM6Gze38ijddxciWL9BJ6P0XhCirmVZZFAJ4hbTkXPV22uij2ydTrvuIQMkFZnJCrcU/kb828Dddm5sB5Wl3Ycdb2oB8gBwOUmrBcpUCWf6GxBlOzCT1P/cF4tNGr8df+UNhN1vXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733503997; c=relaxed/simple;
-	bh=E4OmwzABQyPH64Cigqh7KGY0PBH7U5WPajekdK8ToSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fVG00M1bzmAYDkl0vGSyvgRJrJ/V5q7tWc8H+nxNDVIc8vSUmAVKl9Ah9vKAPx05VX8poU/H57mRxy9zdXmbEY8Cwal05iF1Mc87uqPKncd1JmI0dY9Na1P3zKILYfPNAV7n/iLFGfVBtm0Nk2IiaTmdkInt6GJJkFeIp0QrHf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrmGSzWu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A9A8C4CED1;
-	Fri,  6 Dec 2024 16:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733503996;
-	bh=E4OmwzABQyPH64Cigqh7KGY0PBH7U5WPajekdK8ToSI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OrmGSzWuLCUiSHe1eGmiA7DgbCZLdxqtps+bnCCJlChdAeuyqNmidVJz6Gew5u3sI
-	 rY/UqZPfzKkKhtIfUFzJCQV5RVMrNDnW6WzxcFFhnHwg8JHG97+NZ+TOwpxLlz3HPe
-	 bwI6zM6yDHq0103ngcU/ffITezcW009p7F5K9R3KQYedMsNjdTuWBlCiJ59YkFyEIf
-	 bOQ3PAZbuFg7sE43mq82XhHKr8+9ycvChGIF1prNCRjDYW6mBZSDXo+65Tq+XHd0xK
-	 +eVU/vsg7XxNMPDXNByKGhZj2HnalWHHHz369KspkTMHKXMlQNwUhJZbGM7kcojDJN
-	 0/JOVR9T2oQgw==
-Date: Fri, 6 Dec 2024 08:53:14 -0800
-From: Keith Busch <kbusch@kernel.org>
-To: Kanchan Joshi <joshi.k@samsung.com>
-Cc: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-	sagi@grimberg.me, asml.silence@gmail.com
-Subject: Re: [PATCHv11 03/10] io_uring: add write stream attribute
-Message-ID: <Z1Mr-rcFOVW2eS8-@kbusch-mbp.dhcp.thefacebook.com>
-References: <20241206015308.3342386-1-kbusch@meta.com>
- <CGME20241206015353epcas5p174318c263e73bfe8728d49b5e90a14e8@epcas5p1.samsung.com>
- <20241206015308.3342386-4-kbusch@meta.com>
- <bcfd9c63-797b-4f6b-aa6e-0e639247003b@samsung.com>
+	s=arc-20240116; t=1733523851; c=relaxed/simple;
+	bh=r3koaxsuV7KRYMQQuL1iABt/DZExJ5OsjL7aJy+EW8s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jLDNTOPXxHQEL3TG/D6hIgu8xsMs4BzZTNJGLJFdUkKD2qZ0GH0oGhftg/ACJgnPTPG5ZJWSqmWe0NnBoV3YbK0DlOwLhecEC3FsCBAZm/uo2yQgdNd6A0EUiTLNzYAmyYOMIMjjSIwM2uaB/P0lwGn2is7uJynIFOMyy8erRyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=eEBHxEti; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+	by m0089730.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 4B6LhBt5028061
+	for <io-uring@vger.kernel.org>; Fri, 6 Dec 2024 14:24:08 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2021-q4; bh=eoz5xj3OlJBjoZHpah
+	qecFAxl1o6Z2RPCniU5IcA/qM=; b=eEBHxEti/bAnRVfXulFldRSKPWw0qFq2x3
+	c3Pd8K+teNcXkJ43y4Rvw15j6ngrp0yz+2/71PSPPGQ5Q5bI942kZ1oHYMzxAvWn
+	3m+AW+p3fSTvcbOnF6luXY34LojeckIwR+c92lK4sxzzjwvLdNqF8gTd+8vgyxRa
+	YccmM14u33WBk9tWtmRmSt6+GHtjhEHP59Bvbry4R1VWyTt/m4kRhZsDCMrGPrX9
+	KogTkr6c1+Wk/ngVKg9tM+8tsas+SZMQGRysb64IqssiCGNYbpoG9rVrGUV6T3Xq
+	VS1p1TLllBFmv0khgSvNLB22T7fpU9hMZ1BTORyh87wynNYE7bPw==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by m0089730.ppops.net (PPS) with ESMTPS id 43c1ggkvha-10
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Fri, 06 Dec 2024 14:24:08 -0800 (PST)
+Received: from twshared3815.08.ash9.facebook.com (2620:10d:c085:208::7cb7) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.11; Fri, 6 Dec 2024 22:24:03 +0000
+Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
+	id E2A8015B8CB67; Fri,  6 Dec 2024 14:18:26 -0800 (PST)
+From: Keith Busch <kbusch@meta.com>
+To: <axboe@kernel.dk>, <hch@lst.de>, <linux-block@vger.kernel.org>,
+        <linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+        <io-uring@vger.kernel.org>
+CC: <sagi@grimberg.me>, <asml.silence@gmail.com>, <anuj20.g@samsung.com>,
+        <joshi.k@samsung.com>, Keith Busch <kbusch@kernel.org>
+Subject: [PATCHv12 00/12] block write streams with nvme fdp
+Date: Fri, 6 Dec 2024 14:17:49 -0800
+Message-ID: <20241206221801.790690-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bcfd9c63-797b-4f6b-aa6e-0e639247003b@samsung.com>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: JS93UFkGtLIooYVLchT2abvKdNQTOS0l
+X-Proofpoint-ORIG-GUID: JS93UFkGtLIooYVLchT2abvKdNQTOS0l
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
 
-On Fri, Dec 06, 2024 at 06:14:29PM +0530, Kanchan Joshi wrote:
-> On 12/6/2024 7:23 AM, Keith Busch wrote:
-> > From: Keith Busch <kbusch@kernel.org>
-> > 
-> > Adds a new attribute type to specify a write stream per-IO.
-> > 
-> > Signed-off-by: Keith Busch <kbusch@kernel.org>
-> > ---
-> >   include/uapi/linux/io_uring.h |  9 ++++++++-
-> >   io_uring/rw.c                 | 28 +++++++++++++++++++++++++++-
-> >   2 files changed, 35 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> > index 5fa38467d6070..263cd57aae72d 100644
-> > --- a/include/uapi/linux/io_uring.h
-> > +++ b/include/uapi/linux/io_uring.h
-> > @@ -123,7 +123,14 @@ struct io_uring_attr_pi {
-> >   	__u64	rsvd;
-> >   };
-> >   
-> > -#define IORING_RW_ATTR_FLAGS_SUPPORTED (IORING_RW_ATTR_FLAG_PI)
-> > +#define IORING_RW_ATTR_FLAG_WRITE_STREAM (1U << 1)
-> > +struct io_uring_write_stream {
-> > +	__u16	write_stream;
-> > +	__u8	rsvd[6];
-> > +};
-> 
-> So this needs 8 bytes. Maybe passing just 'u16 write_stream' is better? 
-> Or do you expect future additions here (to keep rsvd).
+From: Keith Busch <kbusch@kernel.org>
 
-I don't have any plans to use it. It's just padded for alignment. I am
-not sure what future attributes might be proposed, but I don't want to
-force them be align to a 2-byte boundary.
- 
-> Optimization is possible (now or in future) if it's 4 bytes or smaller, 
-> as that can be placed in SQE along with a new RW attribute flag that 
-> says it's placed inline. Like this -
+changes from v11:
 
-Oh, that's definitely preferred IMO, because it is that much easier to
-reach the capability. Previous versions of this proposal had the field
-in the next union, so I for some reason this union you're showing here
-was unavailable for new fields, but it looks like it's unused for
-read/write. So, yeah, let's put it in the sqe if there's no conflict
-here.
+ - Place the write hint in an unused io_uring SQE field
+   - Obviates the need to modify the external "attributes" stuff that
+     support PI
+   - Make it a u8 to match the type the block layer supports
+   - And it's just easier to use for the user
 
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -92,6 +92,10 @@ struct io_uring_sqe {
->                          __u16   addr_len;
->                          __u16   __pad3[1];
->                  };
-> +               struct {
-> +                       __u16   write_hint;
-> +                       __u16   __rsvd[1];
-> +               };
->          };
->          union {
->                  struct {
+ - Fix the sparse warnings from FDP definitions
+   - Just use the patches that Christoph posted a few weeks ago since
+     it already defined it in a way that makes sparse happy; I just made
+     some minor changes to field names to match what the spec calls them
+
+ - Actually include the first patch in this series
+
+Christoph Hellwig (7):
+  fs: add a write stream field to the kiocb
+  block: add a bi_write_stream field
+  block: introduce a write_stream_granularity queue limit
+  block: expose write streams for block device nodes
+  nvme: add a nvme_get_log_lsi helper
+  nvme: pass a void pointer to nvme_get/set_features for the result
+  nvme.h: add FDP definitions
+
+Keith Busch (5):
+  fs: add write stream information to statx
+  block: introduce max_write_streams queue limit
+  io_uring: enable per-io write streams
+  nvme: register fdp parameters with the block layer
+  nvme: use fdp streams if write stream is provided
+
+ Documentation/ABI/stable/sysfs-block |  15 +++
+ block/bdev.c                         |   6 +
+ block/bio.c                          |   2 +
+ block/blk-crypto-fallback.c          |   1 +
+ block/blk-merge.c                    |   4 +
+ block/blk-sysfs.c                    |   6 +
+ block/bounce.c                       |   1 +
+ block/fops.c                         |  23 ++++
+ drivers/nvme/host/core.c             | 160 ++++++++++++++++++++++++++-
+ drivers/nvme/host/nvme.h             |   9 +-
+ fs/stat.c                            |   2 +
+ include/linux/blk_types.h            |   1 +
+ include/linux/blkdev.h               |  16 +++
+ include/linux/fs.h                   |   1 +
+ include/linux/nvme.h                 |  77 +++++++++++++
+ include/linux/stat.h                 |   2 +
+ include/uapi/linux/io_uring.h        |   4 +
+ include/uapi/linux/stat.h            |   7 +-
+ io_uring/io_uring.c                  |   2 +
+ io_uring/rw.c                        |   1 +
+ 20 files changed, 332 insertions(+), 8 deletions(-)
+
+--=20
+2.43.5
+
 

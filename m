@@ -1,55 +1,77 @@
-Return-Path: <io-uring+bounces-5265-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5266-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C36D9E63F1
-	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 03:18:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD27F1884BAD
-	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 02:18:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E2113C8FF;
-	Fri,  6 Dec 2024 02:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j23gqL9N"
-X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CFA09E66D7
+	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 06:28:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5062AE9A;
-	Fri,  6 Dec 2024 02:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC897284A02
+	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 05:28:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745C3197548;
+	Fri,  6 Dec 2024 05:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="by6NMBS3"
+X-Original-To: io-uring@vger.kernel.org
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC83196C67;
+	Fri,  6 Dec 2024 05:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733451483; cv=none; b=P0+y3eQwoaq6WdIzzEmMZ5WSJ5PO3GgM603C0CH+3ukrSZQ3gI6Pgi1sO+uDyB2vk1QN/FKap8mta0X5/JWJnfg/gNdvpF5Hs3YD7dRh2acBjp50g6Cm0w2dyY5/T3i2Y0jKbGbIC7WWyme4K0NF+lZhdoG57AeLVpbsDh0QyjY=
+	t=1733462873; cv=none; b=HGhUcl1R6jGWljjBEvaogx7+eHbHgkWaUXDRf7Crr1KAk8dGprOspB7ok/EynQV0c/7uv58t+RyCLnI/M3KalAOwHADjeZgESEirXwQh8f89P/EVL0Y2eGEyD7V2Qh41ay13Ap0tp3h/yJu9SZDuEGo9Vn/e2PJa7IAxJrh87To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733451483; c=relaxed/simple;
-	bh=r87v6RI14MYvQVvrhHKKo5H2rpySP4RbfqYlrBpFKZM=;
+	s=arc-20240116; t=1733462873; c=relaxed/simple;
+	bh=X9VFMKr7/fJOGLXPS8atTYCy0j+P7k6TXaVhXB6yhIM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3uKhbaPz3IQcM+yQq9woYOG+u7X/LOZoPUhw/zBxUzJ9+bfbb1Fud2DGdg6+ASYDXfwNYzS+nHMNsHkiWf8RODUyAtibU/8c8uEGtPE0J2aPb8zHe4MW4pP9iBQAiChjxAt384JEwNXDCnFj0jL9Lam0KlyhDkO+ApXjaha43o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j23gqL9N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82697C4CED1;
-	Fri,  6 Dec 2024 02:18:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733451482;
-	bh=r87v6RI14MYvQVvrhHKKo5H2rpySP4RbfqYlrBpFKZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j23gqL9NEopbGtSbdZPKivdMJRqAbKO9sZrmDC9Ftd7yGWUZjm7lqHDO+LEwRqY8d
-	 ravnVsXVQyLyjxep89kWNPXh6GBbszdLpwXr949hXgA6myo8XkrUh38CEWu3Y0E3yP
-	 7VefFhA/L9eD9sJ66hry0eg642xiu0axIFqdVHWLzKa/ja1ZGPaVMuAkHxWMIo3CB/
-	 fAo/MnU4QUa0oycKNt2Mayt0BIqPwAOI8FthnQDHJLTdt/uhxBJOTc9zB3E9wQRs2O
-	 PcJnm9gXJ2c9Ka0TZKACIgHBjNatA9vsIO4mutBw3MyVnf6t1GyMe3eiD+NdyQFfLC
-	 2IYRR7LQK3HRA==
-Date: Thu, 5 Dec 2024 18:18:00 -0800
-From: Keith Busch <kbusch@kernel.org>
-To: Keith Busch <kbusch@meta.com>
-Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, sagi@grimberg.me, asml.silence@gmail.com
-Subject: Re: [PATCHv11 00/10] block write streams with nvme fdp
-Message-ID: <Z1Je2Do8Tj_NYePW@kbusch-mbp.dhcp.thefacebook.com>
-References: <20241206015308.3342386-1-kbusch@meta.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n8M9YefnSIBv4yb2KtLI/SHHF31X8WJWEboCl3TcmQmSWFGuwarLUKqwP6ACXGStxaF3cS2gadtWxKnRcR/fDm8n0EIw+YLXsDme9Zo2lgoqw1uU6YdYyP7kIg5Lx1QJ+hGrlADDYoh4Zah+KxhPPFbuZ9/7gU+wQkasWtzVcpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=by6NMBS3; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733462871; x=1764998871;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X9VFMKr7/fJOGLXPS8atTYCy0j+P7k6TXaVhXB6yhIM=;
+  b=by6NMBS3uuoSS7jABjt9Zm3SNEQdWKKljeRvA2gA5evSGQVa+tuRN77R
+   E+FmhGtvHfLck/XXpnliXxwOep7ut6Oti0NmIF2zrSn3BFofTrHro9Hy9
+   b3M6oeU2hXU/JRV5yuutDkrlRavEEppee1yGMbqz1ymoEPmJWTGmk+W0n
+   DmN2OeIc0Ct6h4LLss1B8zmCbe1mkqxaBsV0LwZnir1md/5xJcf2Xb4XH
+   9ywufUdn6dwbQusn1Ukfo79lzwSf8SFUur/h1xG4NZHLwlYhEqXHlyLUi
+   S2F4fd0xg/+oTAfYuW4YkI/cVDIz6N1KCiyQaBMgSoGPC3Lh9//r7RDn4
+   g==;
+X-CSE-ConnectionGUID: c1q1MMzBTMSHzEULQZ/MOQ==
+X-CSE-MsgGUID: G1cJ9ZENSpGms5A9Jyq/pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="56299061"
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="56299061"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 21:27:50 -0800
+X-CSE-ConnectionGUID: 46M0KqbPSFGW7xrYdXXJNA==
+X-CSE-MsgGUID: DsKRuo40THuu3yk9bYd+6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="131724228"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 05 Dec 2024 21:27:48 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJQsT-0000jD-1x;
+	Fri, 06 Dec 2024 05:27:45 +0000
+Date: Fri, 6 Dec 2024 13:26:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, sagi@grimberg.me,
+	asml.silence@gmail.com, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv11 09/10] nvme: register fdp queue limits
+Message-ID: <202412061328.YMG9MZn5-lkp@intel.com>
+References: <20241206015308.3342386-10-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -58,101 +80,110 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241206015308.3342386-1-kbusch@meta.com>
+In-Reply-To: <20241206015308.3342386-10-kbusch@meta.com>
 
-On Thu, Dec 05, 2024 at 05:52:58PM -0800, Keith Busch wrote:
-> Changes from v10:
-> 
->  Merged up to block for-6.14/io_uring, which required some
->  new attribute handling.
-> 
->  Not mixing write hints usage with write streams. This effectively
->  abandons any attempts to use the existing fcntl API for use with
->  filesystems in this series.
-> 
->  Exporting the stream's reclaim unit nominal size.
-> 
-> Christoph Hellwig (5):
->   fs: add a write stream field to the kiocb
->   block: add a bi_write_stream field
->   block: introduce a write_stream_granularity queue limit
->   block: expose write streams for block device nodes
->   nvme: add a nvme_get_log_lsi helper
-> 
-> Keith Busch (5):
->   io_uring: protection information enhancements
->   io_uring: add write stream attribute
->   block: introduce max_write_streams queue limit
->   nvme: register fdp queue limits
->   nvme: use fdp streams if write stream is provided
+Hi Keith,
 
-I fucked up the format-patch command by ommitting a single patch. The
-following should have been "PATCH 1/11", but I don't want to resend for
-just this:
+kernel test robot noticed the following build warnings:
 
-commit 9e40f4a4da6d0cef871d1c5daf55cc0497fd9c39
-Author: Keith Busch <kbusch@kernel.org>
-Date:   Tue Nov 19 13:16:15 2024 +0100
+[auto build test WARNING on axboe-block/for-next]
+[also build test WARNING on next-20241205]
+[cannot apply to brauner-vfs/vfs.all hch-configfs/for-next linus/master v6.13-rc1]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-    fs: add write stream information to statx
-    
-    Add new statx field to report the maximum number of write streams
-    supported and the granularity for them.
-    
-    Signed-off-by: Keith Busch <kbusch@kernel.org>
-    [hch: renamed hints to streams, add granularity]
-    Signed-off-by: Christoph Hellwig <hch@lst.de>
+url:    https://github.com/intel-lab-lkp/linux/commits/Keith-Busch/fs-add-a-write-stream-field-to-the-kiocb/20241206-095707
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/20241206015308.3342386-10-kbusch%40meta.com
+patch subject: [PATCHv11 09/10] nvme: register fdp queue limits
+config: i386-buildonly-randconfig-003 (https://download.01.org/0day-ci/archive/20241206/202412061328.YMG9MZn5-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241206/202412061328.YMG9MZn5-lkp@intel.com/reproduce)
 
-diff --git a/fs/stat.c b/fs/stat.c
-index 0870e969a8a0b..00e4598b1ff25 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -729,6 +729,8 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
- 	tmp.stx_atomic_write_unit_min = stat->atomic_write_unit_min;
- 	tmp.stx_atomic_write_unit_max = stat->atomic_write_unit_max;
- 	tmp.stx_atomic_write_segments_max = stat->atomic_write_segments_max;
-+	tmp.stx_write_stream_granularity = stat->write_stream_granularity;
-+	tmp.stx_write_stream_max = stat->write_stream_max;
- 
- 	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
- }
-diff --git a/include/linux/stat.h b/include/linux/stat.h
-index 3d900c86981c5..36d4dfb291abd 100644
---- a/include/linux/stat.h
-+++ b/include/linux/stat.h
-@@ -57,6 +57,8 @@ struct kstat {
- 	u32		atomic_write_unit_min;
- 	u32		atomic_write_unit_max;
- 	u32		atomic_write_segments_max;
-+	u32		write_stream_granularity;
-+	u16		write_stream_max;
- };
- 
- /* These definitions are internal to the kernel for now. Mainly used by nfsd. */
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index 887a252864416..547c62a1a3a7c 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -132,9 +132,11 @@ struct statx {
- 	__u32	stx_atomic_write_unit_max;	/* Max atomic write unit in bytes */
- 	/* 0xb0 */
- 	__u32   stx_atomic_write_segments_max;	/* Max atomic write segment count */
--	__u32   __spare1[1];
-+	__u32   stx_write_stream_granularity;
- 	/* 0xb8 */
--	__u64	__spare3[9];	/* Spare space for future expansion */
-+	__u16   stx_write_stream_max;
-+	__u16	__sparse2[3];
-+	__u64	__spare3[8];	/* Spare space for future expansion */
- 	/* 0x100 */
- };
- 
-@@ -164,6 +166,7 @@ struct statx {
- #define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
- #define STATX_SUBVOL		0x00008000U	/* Want/got stx_subvol */
- #define STATX_WRITE_ATOMIC	0x00010000U	/* Want/got atomic_write_* fields */
-+#define STATX_WRITE_STREAM	0x00020000U	/* Want/got write_stream_* */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412061328.YMG9MZn5-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/nvme/host/core.c:8:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/x86/include/asm/cacheflush.h:5:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/nvme/host/core.c:2178:18: warning: variable 'h' is uninitialized when used here [-Wuninitialized]
+    2178 |         n = le16_to_cpu(h->numfdpc) + 1;
+         |                         ^
+   include/linux/byteorder/generic.h:91:21: note: expanded from macro 'le16_to_cpu'
+      91 | #define le16_to_cpu __le16_to_cpu
+         |                     ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   drivers/nvme/host/core.c:2157:36: note: initialize the variable 'h' to silence this warning
+    2157 |         struct nvme_fdp_config_log hdr, *h;
+         |                                           ^
+         |                                            = NULL
+   2 warnings generated.
+
+
+vim +/h +2178 drivers/nvme/host/core.c
+
+  2153	
+  2154	static int nvme_check_fdp(struct nvme_ns *ns, struct nvme_ns_info *info,
+  2155				  u8 fdp_idx)
+  2156	{
+  2157		struct nvme_fdp_config_log hdr, *h;
+  2158		size_t size = sizeof(hdr);
+  2159		int i, n, ret;
+  2160		void *log;
+  2161	
+  2162		info->runs = 0;
+  2163		ret = nvme_get_log_lsi(ns->ctrl, 0, NVME_LOG_FDP_CONFIG, 0, NVME_CSI_NVM,
+  2164				   (void *)&hdr, size, 0, info->endgid);
+  2165		if (ret)
+  2166			return ret;
+  2167	
+  2168		size = le32_to_cpu(hdr.sze);
+  2169		log = kzalloc(size, GFP_KERNEL);
+  2170		if (!log)
+  2171			return 0;
+  2172	
+  2173		ret = nvme_get_log_lsi(ns->ctrl, 0, NVME_LOG_FDP_CONFIG, 0, NVME_CSI_NVM,
+  2174				   log, size, 0, info->endgid);
+  2175		if (ret)
+  2176			goto out;
+  2177	
+> 2178		n = le16_to_cpu(h->numfdpc) + 1;
+  2179		if (fdp_idx > n)
+  2180			goto out;
+  2181	
+  2182		h = log;
+  2183		log = h->configs;
+  2184		for (i = 0; i < n; i++) {
+  2185			struct nvme_fdp_config_desc *config = log;
+  2186	
+  2187			if (i == fdp_idx) {
+  2188				info->runs = le64_to_cpu(config->runs);
+  2189				break;
+  2190			}
+  2191			log += le16_to_cpu(config->size);
+  2192		}
+  2193	out:
+  2194		kfree(h);
+  2195		return ret;
+  2196	}
+  2197	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 

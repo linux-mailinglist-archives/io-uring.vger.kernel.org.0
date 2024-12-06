@@ -1,66 +1,59 @@
-Return-Path: <io-uring+bounces-5274-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5275-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A451F9E751A
-	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 17:05:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C44C09E7677
+	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 17:53:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 846BB1608C8
-	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 16:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CF21161575
+	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 16:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A54F207E0C;
-	Fri,  6 Dec 2024 16:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344A71F4E32;
+	Fri,  6 Dec 2024 16:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4YK4Dge"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrmGSzWu"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321BBBA20;
-	Fri,  6 Dec 2024 16:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7A8206262;
+	Fri,  6 Dec 2024 16:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733501117; cv=none; b=Io6EFAcPz/bQYB1oS7bYGvxqD2vFVdfYzOVztF0L/ShNG2IZgq/a7CxaKJS3HYlkkfvl/3Zbw2EF7biAwItU6q77B3Y9g5AMo8o1jztcYfgKD0bjmtirnzLDQVxoTCaOaSqh+UVIQM8txrUZ92w7qq4clXQwwHoxqqAxScqbLfk=
+	t=1733503997; cv=none; b=KK9tEsgzQcyancwZ7csELyHBohESXSMuzLYpR02/36hMIf4TIDwcSZp18Y7wtSORoOWMrH6ZBcgUXyB0YRQo9BNuuhq3+dZRSA+mQ81+Kagw4o9N/R2Dw9o3DRjww25oIY5bsrBCnhSOnu65FrnIba4LSXLXbr+sBUapyeJr1kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733501117; c=relaxed/simple;
-	bh=/fCk0+zZfe7tdUZvLJPAKEs1Sm3hugcNfZSIpGOqhY8=;
+	s=arc-20240116; t=1733503997; c=relaxed/simple;
+	bh=E4OmwzABQyPH64Cigqh7KGY0PBH7U5WPajekdK8ToSI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NhneIj+yqktiZ3I/IiXh9UkviVpB+uZMVHaF/YcFj8oreF5iqaBYTqJRNW7IJsuxdZ8ESHSNiZ2yLEU13n4zrXaALESrL5Vx6sy7ScioVEqtCCUt5zjWDuFTZ7F50eTP+vC+QNcRjch/FU5ncqiWgWQ3UuDyB4xbE27A17DEnRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4YK4Dge; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1451C4CED1;
-	Fri,  6 Dec 2024 16:05:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fVG00M1bzmAYDkl0vGSyvgRJrJ/V5q7tWc8H+nxNDVIc8vSUmAVKl9Ah9vKAPx05VX8poU/H57mRxy9zdXmbEY8Cwal05iF1Mc87uqPKncd1JmI0dY9Na1P3zKILYfPNAV7n/iLFGfVBtm0Nk2IiaTmdkInt6GJJkFeIp0QrHf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrmGSzWu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A9A8C4CED1;
+	Fri,  6 Dec 2024 16:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733501116;
-	bh=/fCk0+zZfe7tdUZvLJPAKEs1Sm3hugcNfZSIpGOqhY8=;
+	s=k20201202; t=1733503996;
+	bh=E4OmwzABQyPH64Cigqh7KGY0PBH7U5WPajekdK8ToSI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i4YK4DgeK20Cnxd0RT6rUcjv0euSPTJczpeSHlDO8I5NCxd4TN3ByUzk3iKPCE7KO
-	 45mU2nJU2u/DS+RiOHSDFVUMnURxy9UmhBqS6gDsOA3v2ITcgwMF822ijoj4xDcz0Z
-	 meH/ugC/aZEg4HbPxduOZrJRXDJQ8e+Y8fiw0nO8S27n5tm8ST5VbbRElAJ9hwMHr6
-	 Lg6EzEtYNLBmKzW1jvHPOwk9wYbdAEhCX9IMkGcWUdkuZwJbgvJF310t9wubmbq3Tt
-	 V/EM1CdenMyqLauODB9WEUPxt7/btuMKGdU+/gr3PmCgHtwdaK4almGNbZAP4IkUMH
-	 +o+2MhRUcV+Bg==
-Date: Fri, 6 Dec 2024 16:05:11 +0000
-From: Simon Horman <horms@kernel.org>
-To: David Wei <dw@davidwei.uk>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Stanislav Fomichev <stfomichev@gmail.com>,
-	Joe Damato <jdamato@fastly.com>,
-	Pedro Tammela <pctammela@mojatatu.com>
-Subject: Re: [PATCH net-next v8 09/17] io_uring/zcrx: add interface queue and
- refill queue
-Message-ID: <20241206160511.GY2581@kernel.org>
-References: <20241204172204.4180482-1-dw@davidwei.uk>
- <20241204172204.4180482-10-dw@davidwei.uk>
+	b=OrmGSzWuLCUiSHe1eGmiA7DgbCZLdxqtps+bnCCJlChdAeuyqNmidVJz6Gew5u3sI
+	 rY/UqZPfzKkKhtIfUFzJCQV5RVMrNDnW6WzxcFFhnHwg8JHG97+NZ+TOwpxLlz3HPe
+	 bwI6zM6yDHq0103ngcU/ffITezcW009p7F5K9R3KQYedMsNjdTuWBlCiJ59YkFyEIf
+	 bOQ3PAZbuFg7sE43mq82XhHKr8+9ycvChGIF1prNCRjDYW6mBZSDXo+65Tq+XHd0xK
+	 +eVU/vsg7XxNMPDXNByKGhZj2HnalWHHHz369KspkTMHKXMlQNwUhJZbGM7kcojDJN
+	 0/JOVR9T2oQgw==
+Date: Fri, 6 Dec 2024 08:53:14 -0800
+From: Keith Busch <kbusch@kernel.org>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+	sagi@grimberg.me, asml.silence@gmail.com
+Subject: Re: [PATCHv11 03/10] io_uring: add write stream attribute
+Message-ID: <Z1Mr-rcFOVW2eS8-@kbusch-mbp.dhcp.thefacebook.com>
+References: <20241206015308.3342386-1-kbusch@meta.com>
+ <CGME20241206015353epcas5p174318c263e73bfe8728d49b5e90a14e8@epcas5p1.samsung.com>
+ <20241206015308.3342386-4-kbusch@meta.com>
+ <bcfd9c63-797b-4f6b-aa6e-0e639247003b@samsung.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -69,111 +62,64 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241204172204.4180482-10-dw@davidwei.uk>
+In-Reply-To: <bcfd9c63-797b-4f6b-aa6e-0e639247003b@samsung.com>
 
-On Wed, Dec 04, 2024 at 09:21:48AM -0800, David Wei wrote:
-> From: David Wei <davidhwei@meta.com>
+On Fri, Dec 06, 2024 at 06:14:29PM +0530, Kanchan Joshi wrote:
+> On 12/6/2024 7:23 AM, Keith Busch wrote:
+> > From: Keith Busch <kbusch@kernel.org>
+> > 
+> > Adds a new attribute type to specify a write stream per-IO.
+> > 
+> > Signed-off-by: Keith Busch <kbusch@kernel.org>
+> > ---
+> >   include/uapi/linux/io_uring.h |  9 ++++++++-
+> >   io_uring/rw.c                 | 28 +++++++++++++++++++++++++++-
+> >   2 files changed, 35 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> > index 5fa38467d6070..263cd57aae72d 100644
+> > --- a/include/uapi/linux/io_uring.h
+> > +++ b/include/uapi/linux/io_uring.h
+> > @@ -123,7 +123,14 @@ struct io_uring_attr_pi {
+> >   	__u64	rsvd;
+> >   };
+> >   
+> > -#define IORING_RW_ATTR_FLAGS_SUPPORTED (IORING_RW_ATTR_FLAG_PI)
+> > +#define IORING_RW_ATTR_FLAG_WRITE_STREAM (1U << 1)
+> > +struct io_uring_write_stream {
+> > +	__u16	write_stream;
+> > +	__u8	rsvd[6];
+> > +};
 > 
-> Add a new object called an interface queue (ifq) that represents a net
-> rx queue that has been configured for zero copy. Each ifq is registered
-> using a new registration opcode IORING_REGISTER_ZCRX_IFQ.
-> 
-> The refill queue is allocated by the kernel and mapped by userspace
-> using a new offset IORING_OFF_RQ_RING, in a similar fashion to the main
-> SQ/CQ. It is used by userspace to return buffers that it is done with,
-> which will then be re-used by the netdev again.
-> 
-> The main CQ ring is used to notify userspace of received data by using
-> the upper 16 bytes of a big CQE as a new struct io_uring_zcrx_cqe. Each
-> entry contains the offset + len to the data.
-> 
-> For now, each io_uring instance only has a single ifq.
-> 
-> Signed-off-by: David Wei <dw@davidwei.uk>
+> So this needs 8 bytes. Maybe passing just 'u16 write_stream' is better? 
+> Or do you expect future additions here (to keep rsvd).
 
-...
+I don't have any plans to use it. It's just padded for alignment. I am
+not sure what future attributes might be proposed, but I don't want to
+force them be align to a 2-byte boundary.
+ 
+> Optimization is possible (now or in future) if it's 4 bytes or smaller, 
+> as that can be placed in SQE along with a new RW attribute flag that 
+> says it's placed inline. Like this -
 
-> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+Oh, that's definitely preferred IMO, because it is that much easier to
+reach the capability. Previous versions of this proposal had the field
+in the next union, so I for some reason this union you're showing here
+was unavailable for new fields, but it looks like it's unused for
+read/write. So, yeah, let's put it in the sqe if there's no conflict
+here.
 
-...
-
-> +int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
-> +			  struct io_uring_zcrx_ifq_reg __user *arg)
-> +{
-> +	struct io_uring_zcrx_ifq_reg reg;
-> +	struct io_uring_region_desc rd;
-> +	struct io_zcrx_ifq *ifq;
-> +	size_t ring_sz, rqes_sz;
-> +	int ret;
-> +
-> +	/*
-> +	 * 1. Interface queue allocation.
-> +	 * 2. It can observe data destined for sockets of other tasks.
-> +	 */
-> +	if (!capable(CAP_NET_ADMIN))
-> +		return -EPERM;
-> +
-> +	/* mandatory io_uring features for zc rx */
-> +	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN &&
-> +	      ctx->flags & IORING_SETUP_CQE32))
-> +		return -EINVAL;
-> +	if (ctx->ifq)
-> +		return -EBUSY;
-> +	if (copy_from_user(&reg, arg, sizeof(reg)))
-> +		return -EFAULT;
-> +	if (copy_from_user(&rd, u64_to_user_ptr(reg.region_ptr), sizeof(rd)))
-> +		return -EFAULT;
-> +	if (memchr_inv(&reg.__resv, 0, sizeof(reg.__resv)))
-> +		return -EINVAL;
-> +	if (reg.if_rxq == -1 || !reg.rq_entries || reg.flags)
-> +		return -EINVAL;
-> +	if (reg.rq_entries > IO_RQ_MAX_ENTRIES) {
-> +		if (!(ctx->flags & IORING_SETUP_CLAMP))
-> +			return -EINVAL;
-> +		reg.rq_entries = IO_RQ_MAX_ENTRIES;
-> +	}
-> +	reg.rq_entries = roundup_pow_of_two(reg.rq_entries);
-> +
-> +	if (!reg.area_ptr)
-> +		return -EFAULT;
-> +
-> +	ifq = io_zcrx_ifq_alloc(ctx);
-> +	if (!ifq)
-> +		return -ENOMEM;
-> +
-> +	ret = io_allocate_rbuf_ring(ifq, &reg, &rd);
-> +	if (ret)
-> +		goto err;
-> +
-> +	ifq->rq_entries = reg.rq_entries;
-> +	ifq->if_rxq = reg.if_rxq;
-> +
-> +	ring_sz = sizeof(struct io_uring);
-> +	rqes_sz = sizeof(struct io_uring_zcrx_rqe) * ifq->rq_entries;
-
-Hi David,
-
-A minor nit from my side: rqes_sz is set but otherwise unused in this
-function. Perhaps it can be removed?
-
-Flagged by W=1 builds.
-
-> +	reg.offsets.rqes = ring_sz;
-> +	reg.offsets.head = offsetof(struct io_uring, head);
-> +	reg.offsets.tail = offsetof(struct io_uring, tail);
-> +
-> +	if (copy_to_user(arg, &reg, sizeof(reg)) ||
-> +	    copy_to_user(u64_to_user_ptr(reg.region_ptr), &rd, sizeof(rd))) {
-> +		ret = -EFAULT;
-> +		goto err;
-> +	}
-> +
-> +	ctx->ifq = ifq;
-> +	return 0;
-> +err:
-> +	io_zcrx_ifq_free(ifq);
-> +	return ret;
-> +}
-
-...
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -92,6 +92,10 @@ struct io_uring_sqe {
+>                          __u16   addr_len;
+>                          __u16   __pad3[1];
+>                  };
+> +               struct {
+> +                       __u16   write_hint;
+> +                       __u16   __rsvd[1];
+> +               };
+>          };
+>          union {
+>                  struct {
 

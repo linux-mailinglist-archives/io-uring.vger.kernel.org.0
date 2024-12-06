@@ -1,192 +1,199 @@
-Return-Path: <io-uring+bounces-5271-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5272-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4A679E6EA2
-	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 13:55:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3869E6EA7
+	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 13:56:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9043616492F
-	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 12:53:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB953188504F
+	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 12:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A65201116;
-	Fri,  6 Dec 2024 12:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736252066DF;
+	Fri,  6 Dec 2024 12:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Rn+ED/6+"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fwvESw4z"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8726201019
-	for <io-uring@vger.kernel.org>; Fri,  6 Dec 2024 12:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65E72066DD
+	for <io-uring@vger.kernel.org>; Fri,  6 Dec 2024 12:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733489596; cv=none; b=kOLa5KwSAQkRtQ5rznoy30wyuYdx+mMJ4+3MiqNkrmAq1JOOylLo3/Yuzg5ixyurqrvfUDjXL1z6A2/N906ZlQTxcvad5GDp5upUdSpnJc9rviPy7GKtY4GdDhSWTXou06/leqLuYyULIMFOarh52RoZLUCf3G7EExarqeN7F9Q=
+	t=1733489598; cv=none; b=ft/U7aEmS+fg2G10HmQtS4tDoGsC2sS+hIDK7yD2B7lJxoNr90BxSV3JCafS83PmW+1ur2O8BFPdwM5rMUvaCriFxnf6yaf4IWK7CnZi+pkpqSQ4UxpuKXprt8advyltSi12yfyiOt0elGoPEj1tMEvpgPqtt+UJ5Nle1dx/MDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733489596; c=relaxed/simple;
-	bh=XLUACG+CS94s2TGZJxylCyIQ0GGrYpAyiX36ASj9ow8=;
+	s=arc-20240116; t=1733489598; c=relaxed/simple;
+	bh=3gyn0P2WBGi8VdVYfuLo1gQO5OT3TgYcL5YCwlOpEnM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=TtuSSf6PGITu8U7fqiUAXOVc0UGS6KA3EaNPWg6LKwZOO8uh82/dNiR43/fFbPaTvChqjfiUvluOcH4AKontFNSD4F8nuCxJiQranIkxZEmj2gIZUyVXT7ciah+184bI3HJS0dHVprOOK7ndNqLXr5n0l+KDvFdq5HK7M7Oi4pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Rn+ED/6+; arc=none smtp.client-ip=203.254.224.34
+	 Content-Type:References; b=GZd+6I29ZiQkDLraE6WYDTtm9s6ojUQi1wVOL9U+hFLp7Usjw+XIatpaF7+JQIMRfbRfih7uLVR4LTulzNT5rK27khvIwP3J+sXJk10G9S2mhv/NMuGKxr4GPpXzkZRQAvTnGdllx6Fo+0vXOSi4RrKOzxD77OVr41kwTfIUsTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fwvESw4z; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241206125310epoutp04ac7a9eb978f213c9f720447a31693bb8~Ol5k2ULWV1595315953epoutp04i
-	for <io-uring@vger.kernel.org>; Fri,  6 Dec 2024 12:53:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241206125310epoutp04ac7a9eb978f213c9f720447a31693bb8~Ol5k2ULWV1595315953epoutp04i
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241206125314epoutp03bfc27cba9f175972af577c49a1e0c282~Ol5ogCqF72595325953epoutp033
+	for <io-uring@vger.kernel.org>; Fri,  6 Dec 2024 12:53:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241206125314epoutp03bfc27cba9f175972af577c49a1e0c282~Ol5ogCqF72595325953epoutp033
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733489590;
-	bh=lmjPq207zxiZXvb3s8mxzYr5pL9OZCvX4A75sj+1CW0=;
+	s=mail20170921; t=1733489594;
+	bh=r0eb+1efv9hue/wz6nmaPD5kfRQiRJaq4jva+IfysW0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Rn+ED/6+Uhs5r7x3U0g5oM6DV9wnVJUmDTSxaKPdaDoP1T5S3FaSU3Vfaq7rXq2r6
-	 yKZEc3HUIBTA9ZC83TIQWlj2k2QdygKq9URqla7S7R2S6X3eJyqJSqn/WzB3PgyFG0
-	 mVrSswBCqkkBRUpHMUgdQGUvIGFTNqQWCgwkqaXA=
+	b=fwvESw4zNiq3NLNBrbRJjgXfIhBgYKtTOyZ2q67KGRHLmeOOxL0PKoZAtiR37qOt5
+	 fDp/DbyBCKxdbq65tkzXbKNmz8Dt0D9kpyAjY+IKI6dc5TyHlnFPjhaqoIL/7jLFJ5
+	 DvQTQBFz5nklmydT6JYnb5bXZFZ7ojiolHpu0mok=
 Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241206125309epcas5p14a47153232da08249365959fa2c5f6b5~Ol5kBQwi-1382213822epcas5p1q;
-	Fri,  6 Dec 2024 12:53:09 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Y4WQD5rm8z4x9Ps; Fri,  6 Dec
-	2024 12:53:08 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20241206125314epcas5p2d4513540aec6da02541338747e6d2156~Ol5n_IMSa3164331643epcas5p25;
+	Fri,  6 Dec 2024 12:53:14 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Y4WQK11Vzz4x9Pp; Fri,  6 Dec
+	2024 12:53:13 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
 	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	21.38.19933.4B3F2576; Fri,  6 Dec 2024 21:53:08 +0900 (KST)
+	C2.38.19933.8B3F2576; Fri,  6 Dec 2024 21:53:13 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
 	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241206095739epcas5p1ee968cb92c9d4ceb25a79ad80521601f~OjgVH94jN2378523785epcas5p1O;
-	Fri,  6 Dec 2024 09:57:39 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	20241206100326epcas5p17d4dad663ccc6c6f40cfab98437e63f3~OjlYLUq262561725617epcas5p1Q;
+	Fri,  6 Dec 2024 10:03:26 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241206095739epsmtrp15f13725bf84ffaa5ec486bb3f456a7f3~OjgVHLqGr2843928439epsmtrp1o;
-	Fri,  6 Dec 2024 09:57:39 +0000 (GMT)
-X-AuditID: b6c32a4a-b87c770000004ddd-ba-6752f3b4067c
+	20241206100326epsmtrp1adc8403b8ba8b2f0edff705221848541~OjlYKdIiS3264032640epsmtrp1M;
+	Fri,  6 Dec 2024 10:03:26 +0000 (GMT)
+X-AuditID: b6c32a4a-b87c770000004ddd-c4-6752f3b81d45
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	84.E0.33707.39AC2576; Fri,  6 Dec 2024 18:57:39 +0900 (KST)
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D9.D0.18729.EEBC2576; Fri,  6 Dec 2024 19:03:26 +0900 (KST)
 Received: from green245 (unknown [107.99.41.245]) by epsmtip1.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20241206095738epsmtip1237e22ac714aded712e44ea5142c8ccd~OjgTmFoCM0321303213epsmtip1q;
-	Fri,  6 Dec 2024 09:57:38 +0000 (GMT)
-Date: Fri, 6 Dec 2024 15:19:36 +0530
+	20241206100325epsmtip119b3f07b19ba66c4ef8dd431a5ef4e75~OjlWi51oG0795007950epsmtip1K;
+	Fri,  6 Dec 2024 10:03:24 +0000 (GMT)
+Date: Fri, 6 Dec 2024 15:25:36 +0530
 From: Anuj Gupta <anuj20.g@samsung.com>
 To: Keith Busch <kbusch@meta.com>
 Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
 	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
 	io-uring@vger.kernel.org, sagi@grimberg.me, asml.silence@gmail.com, Keith
 	Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv11 02/10] io_uring: protection information enhancements
-Message-ID: <20241206094936.icgalpwjytzirbhv@green245>
+Subject: Re: [PATCHv11 03/10] io_uring: add write stream attribute
+Message-ID: <20241206095536.pxnjbsaxg5jfaixo@green245>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241206015308.3342386-3-kbusch@meta.com>
+In-Reply-To: <20241206015308.3342386-4-kbusch@meta.com>
 User-Agent: NeoMutt/20171215
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmlu6Wz0HpBkuealvMWbWN0WL13X42
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCJsWRmVeSWpSXmKPExsWy7bCmuu7Oz0HpBoeOM1rMWbWN0WL13X42
 	i5WrjzJZvGs9x2Ix6dA1RoszVxeyWOy9pW2xZ+9JFov5y56yW6x7/Z7Fgctj56y77B7n721k
 	8bh8ttRj06pONo/NS+o9dt9sYPM4d7HC4/MmuQCOqGybjNTElNQihdS85PyUzLx0WyXv4Hjn
 	eFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKADlRTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2
-	SqkFKTkFJgV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGVdOH2IqOMhX0ff6HHsDYz9PFyMnh4SA
-	icTPcyfYQWwhgd2MEg27OLsYuYDsT4wSu8+uZYFzuj6/Y4PpePlzNRNEYiejxIVbu1khnGeM
-	Eg+X72XsYuTgYBFQkVixOQWkgU1AXeLI81ZGEFtEQFHiPDAQQGxmkPqFp2JAyoUFvCUurywC
-	CfMKmEn8evGIEcIWlDg58wkLiM0pYC5xq/kOE4gtKiAjMWPpV2aQtRICczkktq6exg5xnIvE
-	o2ndjBC2sMSr41ug4lISL/vboOx0iR+XnzJB2AUSzcf2QdXbS7Se6meGuC1DYtONr1BxWYmp
-	p9YxQcT5JHp/P4Hq5ZXYMQ/GVpJoXzkHypaQ2HuuAcr2kDh58QsTJHi3A4P3SNIERvlZSH6b
-	hWQdhG0l0fmhiXUWMFiYBaQllv/jgDA1Jdbv0l/AyLqKUTK1oDg3PbXYtMAoL7UcHt3J+bmb
-	GMGpV8trB+PDBx/0DjEycTAeYpTgYFYS4a0MC0wX4k1JrKxKLcqPLyrNSS0+xGgKjKmJzFKi
-	yfnA5J9XEm9oYmlgYmZmZmJpbGaoJM77unVuipBAemJJanZqakFqEUwfEwenVAOT+xL5LYmz
-	LU50MTfMfdC5xDnzwTeHnl9rD/TbJr+Z/bKu0a/zwOeFO5XPia9nFwjZaa55ZcfdhM+hZ3jr
-	v20PkHviP9Pd+Kbo4nef1D56dPOp++xsuvF2Rtm2ssZ7l3R3nHRt/vJm/rT2mc3lMpU6alUK
-	s23Zjznnz7fwS5B5lv5e7MrEk/cvuwru3vi2+NLX6S0Kzbtkz9y/uK6jSfeXqIzstlqdJrW4
-	21ksPi8WB3g+kc3YJ7XlynIefVH59odbexs19avvJU5StVp5ViP4UGGOr9v1szkvmv4uqakw
-	+dDf0qYxtyju4VyXZs+sHaqiF5uUd/q9sxKac+rt+SVPX4VmdG26eZBttXD8B52fSizFGYmG
-	WsxFxYkAjJN3P0YEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSnO7kU0HpBsvbjC3mrNrGaLH6bj+b
-	xcrVR5ks3rWeY7GYdOgao8WZqwtZLPbe0rbYs/cki8X8ZU/ZLda9fs/iwOWxc9Zddo/z9zay
-	eFw+W+qxaVUnm8fmJfUeu282sHmcu1jh8XmTXABHFJdNSmpOZllqkb5dAlfGxQ2bGQs+c1dc
-	eN/G3sB4m7OLkZNDQsBE4uXP1UxdjFwcQgLbGSX+n//DBpGQkDj1chkjhC0ssfLfc3aIoieM
-	ElPO/wZKcHCwCKhIrNicAlLDJqAuceR5K1i9iICixHmgS0DqmQWeMUrs2rOCGaReWMBb4vLK
-	IpAaXgEziV8vHoGNERJIlph6SxUiLChxcuYTFhCbGahk3uaHYJ3MAtISy/9xgIQ5BcwlbjXf
-	YQKxRQVkJGYs/co8gVFwFpLuWUi6ZyF0L2BkXsUomlpQnJuem1xgqFecmFtcmpeul5yfu4kR
-	HCtaQTsYl63/q3eIkYmD8RCjBAezkghvZVhguhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe5ZzO
-	FCGB9MSS1OzU1ILUIpgsEwenVAPTwm59dYm/KQnlJVWvlrgKlOWunfEjQTUqMiaiT0fLNjA4
-	eK19gS1v4KWnP1Mf7ZPaqsMV6f5uxclGe+02ZsOq7WIf11y5HjYjYtsX7SWyl8MsOAxr7+aU
-	pQbLL2bacnbrsQPrhLdlHVTy37qH82C665N/jJObfTYfyD1aZGqvvSrR5+RHZz+Ho5MXlyRa
-	apouXCt3pvLlpFPTQhKF73+7YP4s8a3gGh2b6ev7YnSWS5wzyQoo/Z/e2at8bEbZ2er2tZuz
-	c55kf9TjfJAVK7v5x4Ki6T7mq1QmN9npGX94dFGu8m9v4neDjxZvIqbeOi012Xe2zmZ5ZY/O
-	MtNEzvLdUreWVIbsN1moEW5nuVuJpTgj0VCLuag4EQCy28/HBAMAAA==
-X-CMS-MailID: 20241206095739epcas5p1ee968cb92c9d4ceb25a79ad80521601f
+	SqkFKTkFJgV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGZv27mIsWCFYce3LYtYGxvd8XYwcHBIC
+	JhJ/nmp3MXJxCAnsZpSYM/sxI4TziVGibf87NgjnG6PE2rMTmbsYOcE67i1qYIJI7GWUeLl3
+	MSuE8wyof9YsFpAqFgEViZ49J9lBbDYBdYkjz1sZQWwRAUWJ88BQALGZQRoWnooBsYUFnCSu
+	zn4GFucVMJOYu3s2lC0ocXLmE7CZnALmEiuvtzKB2KICMhIzln6Fumgph8TK9eYQ/7hIvFwT
+	DhEWlnh1fAs7hC0l8bK/DcpOl/hx+SkThF0g0XxsHyOEbS/ReqqfGeK0DIk/q89D1chKTD21
+	jgkizifR+/sJVJxXYsc8GFtJon3lHChbQmLvuQYo20Pi9aXn0CDdzihx40Y30wRG+VlIXpuF
+	ZB+EbSXR+aGJdRbQO8wC0hLL/3FAmJoS63fpL2BkXcUomVpQnJueWmxaYJSXWg6P7+T83E2M
+	4OSr5bWD8eGDD3qHGJk4GA8xSnAwK4nwVoYFpgvxpiRWVqUW5ccXleakFh9iNAVG1URmKdHk
+	fGD6zyuJNzSxNDAxMzMzsTQ2M1QS533dOjdFSCA9sSQ1OzW1ILUIpo+Jg1OqgUlGi0fVycU1
+	SmP5ERnBLRYSPQY36g7OmGD+tDKz94udhGRq1rHH3M/4YlaZdL+XK7k3I4uP64jjtIt/PqUz
+	zH/lvWVa2DLbxTeFl7Bu06vg2Vc8YdLGlayph3YKe/qbfrnUMTspfrGEUa18oLdUPd+WuPWm
+	R/ur1j7w8CjkWayidPeU288dhgIpS+deZH0Qr7vR5T/XTi/z6Dk3XrabqTm6VL15M2sX+y1x
+	LYYZzjvNzhxlnL5O8nvO3A+ro0OXZv5icXT/9Hn7tNDHrFP1qmdP4L16yPnxjckzuG9yaB+4
+	+vdUhcnvBc9i2Lg45j1hOyAi6NNoyD+n2TTSxvWdxQqGPYGWMjtFs1OFS38dv6XEUpyRaKjF
+	XFScCADZvOB4RwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnO6700HpBjd/q1vMWbWN0WL13X42
+	i5WrjzJZvGs9x2Ix6dA1RoszVxeyWOy9pW2xZ+9JFov5y56yW6x7/Z7Fgctj56y77B7n721k
+	8bh8ttRj06pONo/NS+o9dt9sYPM4d7HC4/MmuQCOKC6blNSczLLUIn27BK6M3t19TAW3+Cq+
+	XD/L3MC4m6eLkZNDQsBE4t6iBqYuRi4OIYHdjBLdc5rYIRISEqdeLmOEsIUlVv57zg5R9IRR
+	4vzzbWBFLAIqEj17ToLZbALqEkeet4I1iAgoSpwHOgWkgVngGaPErj0rmEESwgJOEldnP2MD
+	sXkFzCTm7p4NZgsJJEvc27eEESIuKHFy5hMWEJsZqGbe5odAvRxAtrTE8n8cIGFOAXOJlddb
+	mUBsUQEZiRlLvzJPYBSchaR7FpLuWQjdCxiZVzFKphYU56bnFhsWGOallusVJ+YWl+al6yXn
+	525iBEeOluYOxu2rPugdYmTiYDzEKMHBrCTCWxkWmC7Em5JYWZValB9fVJqTWnyIUZqDRUmc
+	V/xFb4qQQHpiSWp2ampBahFMlomDU6qByZXHNYLBSrfJ8H/sqbLEGS1Lzm+8GL7srNHaM8qS
+	DdryO1i9Vwt3fD3xeNd/1U/5d59MkeaPfnphV+Ld01oyW34I/2o4b7NGt7lofdNP5l2fpKYJ
+	151ap655M3du+bnDDzcY70vXWfFd4OvSOr2N/w+KKt8J+HHv1V0D5flubq25Ky29249vYYnp
+	+ML2dutp1szZO+Kr33PVKkYpSOVnf3/4vvFrTdVDy+WT+bwTlx0X0lm7/W1X2mnWSRY/FRKN
+	QusnPlvM1nUnrnpNMafm1l+L2LgNz3TcPcHekLl01RdBWXPJpBc8Wur+Hv+P2O3a+O6y1dS5
+	Sr9Y2m85uHS/D5zXGOgo578wSHbS4mcnDiuxFGckGmoxFxUnAgDti1QBCwMAAA==
+X-CMS-MailID: 20241206100326epcas5p17d4dad663ccc6c6f40cfab98437e63f3
 X-Msg-Generator: CA
 Content-Type: multipart/mixed;
-	boundary="----YdMQOF_WoWeg2u_t4KSKhNTuhss8l_igc36-I4U5-7l0BmvH=_634a7_"
+	boundary="----lzW.cJR_-6sCvQYD.lREqa.H-32Z9TKwpDxBjmCjs3VZTSBT=_63789_"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241206095739epcas5p1ee968cb92c9d4ceb25a79ad80521601f
+X-CMS-RootMailID: 20241206100326epcas5p17d4dad663ccc6c6f40cfab98437e63f3
 References: <20241206015308.3342386-1-kbusch@meta.com>
-	<20241206015308.3342386-3-kbusch@meta.com>
-	<CGME20241206095739epcas5p1ee968cb92c9d4ceb25a79ad80521601f@epcas5p1.samsung.com>
+	<20241206015308.3342386-4-kbusch@meta.com>
+	<CGME20241206100326epcas5p17d4dad663ccc6c6f40cfab98437e63f3@epcas5p1.samsung.com>
 
-------YdMQOF_WoWeg2u_t4KSKhNTuhss8l_igc36-I4U5-7l0BmvH=_634a7_
+------lzW.cJR_-6sCvQYD.lREqa.H-32Z9TKwpDxBjmCjs3VZTSBT=_63789_
 Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
 
 On 05/12/24 05:53PM, Keith Busch wrote:
 >From: Keith Busch <kbusch@kernel.org>
 >
+>Adds a new attribute type to specify a write stream per-IO.
+>
+>Signed-off-by: Keith Busch <kbusch@kernel.org>
+>---
+> include/uapi/linux/io_uring.h |  9 ++++++++-
+> io_uring/rw.c                 | 28 +++++++++++++++++++++++++++-
+> 2 files changed, 35 insertions(+), 2 deletions(-)
+>
+>diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>index 5fa38467d6070..263cd57aae72d 100644
+>--- a/include/uapi/linux/io_uring.h
+>+++ b/include/uapi/linux/io_uring.h
+>@@ -123,7 +123,14 @@ struct io_uring_attr_pi {
+> 	__u64	rsvd;
+> };
+>
+>-#define IORING_RW_ATTR_FLAGS_SUPPORTED (IORING_RW_ATTR_FLAG_PI)
+>+#define IORING_RW_ATTR_FLAG_WRITE_STREAM (1U << 1)
+>+struct io_uring_write_stream {
+Nit:
+You can consider keeping a io_uring_attr_* prefix here, so that it aligns
+with current attribute naming style.
+s/io_uring_write_stream/io_uring_attr_write_stream
+
+>+	__u16	write_stream;
+>+	__u8	rsvd[6];
+>+};
+>+
+>+#define IORING_RW_ATTR_FLAGS_SUPPORTED (IORING_RW_ATTR_FLAG_PI | 	\
+>+					IORING_RW_ATTR_FLAG_WRITE_STREAM)
+>
+> /*
+>  * If sqe->file_index is set to this for opcodes that instantiate a new
 >diff --git a/io_uring/rw.c b/io_uring/rw.c
->index 04e4467ab0ee8..a2987aefb2cec 100644
+>index a2987aefb2cec..69b566e296f6d 100644
 >--- a/io_uring/rw.c
 >+++ b/io_uring/rw.c
->@@ -272,14 +272,14 @@ static inline void io_meta_restore(struct io_async_rw *io, struct kiocb *kiocb)
-> }
->
-> static int io_prep_rw_pi(struct io_kiocb *req, struct io_rw *rw, int ddir,
->-			 u64 attr_ptr, u64 attr_type_mask)
->+			 u64 *attr_ptr)
-> {
-> 	struct io_uring_attr_pi pi_attr;
-> 	struct io_async_rw *io;
-> 	int ret;
->
->-	if (copy_from_user(&pi_attr, u64_to_user_ptr(attr_ptr),
->-	    sizeof(pi_attr)))
->+	if (copy_from_user(&pi_attr, u64_to_user_ptr(*attr_ptr),
->+			   sizeof(pi_attr)))
-> 		return -EFAULT;
->
-> 	if (pi_attr.rsvd)
->@@ -295,6 +295,7 @@ static int io_prep_rw_pi(struct io_kiocb *req, struct io_rw *rw, int ddir,
-> 		return ret;
-> 	rw->kiocb.ki_flags |= IOCB_HAS_METADATA;
-> 	io_meta_save_state(io);
->+	*attr_ptr += sizeof(pi_attr);
+>@@ -299,6 +299,22 @@ static int io_prep_rw_pi(struct io_kiocb *req, struct io_rw *rw, int ddir,
 > 	return ret;
 > }
 >
->@@ -335,8 +336,7 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
-> 	if (attr_type_mask) {
-> 		u64 attr_ptr;
->
->-		/* only PI attribute is supported currently */
->-		if (attr_type_mask != IORING_RW_ATTR_FLAG_PI)
->+		if (attr_type_mask & ~IORING_RW_ATTR_FLAGS_SUPPORTED)
-> 			return -EINVAL;
->
-> 		attr_ptr = READ_ONCE(sqe->attr_ptr);
->-- 
+>+static int io_prep_rw_write_stream(struct io_rw *rw, u64 *attr_ptr)
+>+{
+>+	struct io_uring_write_stream write_stream;
+>+
+>+	if (copy_from_user(&write_stream, u64_to_user_ptr(*attr_ptr),
+>+			   sizeof(write_stream)))
+>+		return -EFAULT;
+>+
+>+	if (!memchr_inv(write_stream.rsvd, 0, sizeof(write_stream.rsvd)))
+This should be:
+	if (memchr_inv(write_stream.rsvd, 0, sizeof(write_stream.rsvd)))
 
-Nit:
-Although the next patch does it, but the call to io_prep_rw_pi should
-pass a u64 pointer in this patch itself.
-
-------YdMQOF_WoWeg2u_t4KSKhNTuhss8l_igc36-I4U5-7l0BmvH=_634a7_
+------lzW.cJR_-6sCvQYD.lREqa.H-32Z9TKwpDxBjmCjs3VZTSBT=_63789_
 Content-Type: text/plain; charset="utf-8"
 
 
-------YdMQOF_WoWeg2u_t4KSKhNTuhss8l_igc36-I4U5-7l0BmvH=_634a7_--
+------lzW.cJR_-6sCvQYD.lREqa.H-32Z9TKwpDxBjmCjs3VZTSBT=_63789_--
 

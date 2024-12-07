@@ -1,87 +1,98 @@
-Return-Path: <io-uring+bounces-5290-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5291-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FCBC9E7E35
-	for <lists+io-uring@lfdr.de>; Sat,  7 Dec 2024 05:33:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3F59E7E47
+	for <lists+io-uring@lfdr.de>; Sat,  7 Dec 2024 06:19:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 919BB16639F
-	for <lists+io-uring@lfdr.de>; Sat,  7 Dec 2024 04:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ABF01885BB6
+	for <lists+io-uring@lfdr.de>; Sat,  7 Dec 2024 05:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC0138FA6;
-	Sat,  7 Dec 2024 04:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTDDRcT7"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878D81BDCF;
+	Sat,  7 Dec 2024 05:19:49 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BA52E822
-	for <io-uring@vger.kernel.org>; Sat,  7 Dec 2024 04:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1505928FC
+	for <io-uring@vger.kernel.org>; Sat,  7 Dec 2024 05:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733546018; cv=none; b=skfbjj+CUJ2BILTjtrlETD4mh+HCi03QnEtYZhED7beDJAimVCTr/nhf58HNq3Vyc5+QFqpRi7a6cHnXC7jZKINV/GOket3kRO5fNuOPJ4DohiIp2E3kpIUmeZFXfJM/Wx6+nXDH5q+fD9J4zPomMJWN4toAE5AaMH1bO8zgWAY=
+	t=1733548789; cv=none; b=L+9VCsIN0AuA9h2ckssCR0vm02RGkUGiHA+eMs1WZ8HBFajceSfPaSxlehYi/qooXQFrsQ0C0+cAlPijLxdpXQJETkHxy5MmVyBQUaC2MUzG4soTeuD8mB322b/178O86VTS8W1pBTDg4ZZdITeENvrcDrpbc54HZ8OOnRzs96o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733546018; c=relaxed/simple;
-	bh=MqMMIGxYbYF4+DRo7FNW5WJTo6sFyFp0T9m21NkHwfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t2MBa3y3Nh9HZ0rxzKdzf4/x9hqdSQ9YoBUPebYgEM7F0H1lF3whWkUoVMhOWyQp1KJxztfe3+b6z6kp6woREOidZ5G1XfNca/YpbEXpS6Lk7aMXPi8rD0FG122mOOoBmyhLmRRebukAs3paxman5kgVksTYKE9Y0/ek1zSYQWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTDDRcT7; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9e44654ae3so441401966b.1
-        for <io-uring@vger.kernel.org>; Fri, 06 Dec 2024 20:33:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733546015; x=1734150815; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MqMMIGxYbYF4+DRo7FNW5WJTo6sFyFp0T9m21NkHwfU=;
-        b=aTDDRcT78bwjc+7z4U4uHj7Sy6ZCEMzLOtQOmekKHGe0AR0ahWOPbCtqvRTtVXECR7
-         lVsxgy6dyk+APdhdPXVuMVEMqHcSnc7LBIh3givX/Hs9h+giLlsRi8xkY+mBqX7CPP8j
-         foAhAK/dnmZLEyMi/sZmvUCb8pWKL5bHtGG12IDXut22jUFeiYl7G1xFh9VXrosiqDWr
-         wtwJ3uqRCxKOZvtwi60o+NKGlzqXJ7cvHtd1oL2rowJqppAoP5kLETHZRWrYw0e1F7ZU
-         BFUmDNCLp9xMb2XzWFQJCUxkch1PZoLZEZXM3DZ+9xaXEEYZlfjk95XvK1/P3NR5yExo
-         92Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733546015; x=1734150815;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MqMMIGxYbYF4+DRo7FNW5WJTo6sFyFp0T9m21NkHwfU=;
-        b=hljRzWhaNHR12bl7z79FL4URYQOBGK3+r68NjS9RM9JaIH/dHeYXy/gvzt8GXRNaTt
-         FQfTxixAWtNa3Sq4UmZhANaIfeAaFRWDPejxWK7n3b9ynia9AxFPE1if0P3YevT7j1Vx
-         mKiKCsbpwYIckMX6U4Fo48Rbfz115VqzBLV2NjLzVFg7CDOPA3M0tYlgznq2+Ervdrvo
-         ey7NLyFJswx8qwChS9mtyrv/To5ylwwDKyutnN18LsM+sSkvxz4NPggf6cezdxThZ1wg
-         JG8H9cr+iEO6XMfjTrJwkjGqGgfhCUUKJVRG32vOhFEBafKPs5XjdA4fzfJ6CFHV+1fJ
-         jRCQ==
-X-Gm-Message-State: AOJu0YwHbzR5n9Zh9Utf5yTVmf8CZGjjP0CKIbJi9EF/NjWKIMxgycUd
-	j8rwWMPjte1Djin1NnjdGd0Yj27vJ1AEQz64gA/5Wsw8Iwxa3GFZ4ttxVY07U2MsAZ1s0XzsemL
-	D7o+pW9TmlKa/aRR+PRKBXwvy3w==
-X-Gm-Gg: ASbGncv3LW+V3vqlLZP/M3nPoiVKHakXFEka3XilMvdOgcKqu2wEgNMpoM2hmh0t9mI
-	uMDFvynoIo/pqkq41zEoFPPnqx7uA/uD2NnFiPrU5Rd1lY7sePNazKC0NXNeilg==
-X-Google-Smtp-Source: AGHT+IH0jTV9cRshdCyNhCnCQvzaVBReQt5Qjfb7MH7iopBiES4/qRMs1p3TIiybbuwCZmlxRg0auz1JXUrXwKJlPnY=
-X-Received: by 2002:a17:907:3a0f:b0:aa6:3f93:fb99 with SMTP id
- a640c23a62f3a-aa63f9405bamr415767566b.36.1733546014802; Fri, 06 Dec 2024
- 20:33:34 -0800 (PST)
+	s=arc-20240116; t=1733548789; c=relaxed/simple;
+	bh=QS4zMrssLXtvMeSJqnGuhItkdiXuGZamCdbKo7mEFe4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=TderYNV5B5dABSKGXEEL7hhHRU+Kad4PBYNxBk8xXqlaciBvvHgwgT0UmfCuTCrr2xZ1QZN3S/7reISjs1pzoSd6XL0Hkk1BFzpehvbcZ9vNamYb1f+aWSL6zzMKz3D7KsbUbNLLPTRo2sTmfvX6NVds2oZ0+DYo7+XPo2Yr0eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y4xF04cWRz11M3R;
+	Sat,  7 Dec 2024 13:16:36 +0800 (CST)
+Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0EFC718007C;
+	Sat,  7 Dec 2024 13:19:37 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Sat, 7 Dec 2024 13:19:36 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Sat, 7 Dec 2024 13:19:33 +0800
+From: lizetao <lizetao1@huawei.com>
+To: David Wei <dw@davidwei.uk>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>
+CC: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
+Subject: RE: [PATCH for-next] io_uring: clean up io_prep_rw_setup()
+Thread-Topic: [PATCH for-next] io_uring: clean up io_prep_rw_setup()
+Thread-Index: AQHbSEDVaNypHsebjUu78aiyI549BbLaPiOQ
+Date: Sat, 7 Dec 2024 05:19:33 +0000
+Message-ID: <62af3d54790b4b3f9a83234d6259ca97@huawei.com>
+References: <20241207004144.783631-1-dw@davidwei.uk>
+In-Reply-To: <20241207004144.783631-1-dw@davidwei.uk>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241207004144.783631-1-dw@davidwei.uk>
-In-Reply-To: <20241207004144.783631-1-dw@davidwei.uk>
-From: Anuj gupta <anuj1072538@gmail.com>
-Date: Sat, 7 Dec 2024 10:02:58 +0530
-Message-ID: <CACzX3AvtPS-GZ0z1LdL7NJAEzOdSguMtqX56rnzjDzfbU6TKjg@mail.gmail.com>
-Subject: Re: [PATCH for-next] io_uring: clean up io_prep_rw_setup()
-To: David Wei <dw@davidwei.uk>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 
-Looks good.
-Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRGF2aWQgV2VpIDxkd0Bk
+YXZpZHdlaS51az4NCj4gU2VudDogU2F0dXJkYXksIERlY2VtYmVyIDcsIDIwMjQgODo0MiBBTQ0K
+PiBUbzogaW8tdXJpbmdAdmdlci5rZXJuZWwub3JnDQo+IENjOiBEYXZpZCBXZWkgPGR3QGRhdmlk
+d2VpLnVrPjsgSmVucyBBeGJvZSA8YXhib2VAa2VybmVsLmRrPjsgUGF2ZWwNCj4gQmVndW5rb3Yg
+PGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+DQo+IFN1YmplY3Q6IFtQQVRDSCBmb3ItbmV4dF0gaW9f
+dXJpbmc6IGNsZWFuIHVwIGlvX3ByZXBfcndfc2V0dXAoKQ0KPiANCj4gUmVtb3ZlIHVubmVjZXNz
+YXJ5IGNhbGwgdG8gaW92X2l0ZXJfc2F2ZV9zdGF0ZSgpIGluIGlvX3ByZXBfcndfc2V0dXAoKSBh
+cw0KPiBpb19pbXBvcnRfaW92ZWMoKSBhbHJlYWR5IGRvZXMgdGhpcy4gVGhlbiB0aGUgcmVzdWx0
+IGZyb20NCj4gaW9faW1wb3J0X2lvdmVjKCkgY2FuIGJlIHJldHVybmVkIGRpcmVjdGx5Lg0KPiAN
+Cj4gU2lnbmVkLW9mZi1ieTogRGF2aWQgV2VpIDxkd0BkYXZpZHdlaS51az4NCj4gLS0tDQo+ICBp
+b191cmluZy9ydy5jIHwgOCArLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
+KCspLCA3IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2lvX3VyaW5nL3J3LmMgYi9p
+b191cmluZy9ydy5jIGluZGV4IDA0ZTQ0NjdhYjBlZS4uNWIyNGZkOGI2OWY2DQo+IDEwMDY0NA0K
+PiAtLS0gYS9pb191cmluZy9ydy5jDQo+ICsrKyBiL2lvX3VyaW5nL3J3LmMNCj4gQEAgLTI0MCw3
+ICsyNDAsNiBAQCBzdGF0aWMgaW50IGlvX3J3X2FsbG9jX2FzeW5jKHN0cnVjdCBpb19raW9jYiAq
+cmVxKQ0KPiBzdGF0aWMgaW50IGlvX3ByZXBfcndfc2V0dXAoc3RydWN0IGlvX2tpb2NiICpyZXEs
+IGludCBkZGlyLCBib29sIGRvX2ltcG9ydCkgIHsNCj4gIAlzdHJ1Y3QgaW9fYXN5bmNfcncgKnJ3
+Ow0KPiAtCWludCByZXQ7DQo+IA0KPiAgCWlmIChpb19yd19hbGxvY19hc3luYyhyZXEpKQ0KPiAg
+CQlyZXR1cm4gLUVOT01FTTsNCj4gQEAgLTI0OSwxMiArMjQ4LDcgQEAgc3RhdGljIGludCBpb19w
+cmVwX3J3X3NldHVwKHN0cnVjdCBpb19raW9jYiAqcmVxLCBpbnQNCj4gZGRpciwgYm9vbCBkb19p
+bXBvcnQpDQo+ICAJCXJldHVybiAwOw0KPiANCj4gIAlydyA9IHJlcS0+YXN5bmNfZGF0YTsNCj4g
+LQlyZXQgPSBpb19pbXBvcnRfaW92ZWMoZGRpciwgcmVxLCBydywgMCk7DQo+IC0JaWYgKHVubGlr
+ZWx5KHJldCA8IDApKQ0KPiAtCQlyZXR1cm4gcmV0Ow0KPiAtDQo+IC0JaW92X2l0ZXJfc2F2ZV9z
+dGF0ZSgmcnctPml0ZXIsICZydy0+aXRlcl9zdGF0ZSk7DQo+IC0JcmV0dXJuIDA7DQo+ICsJcmV0
+dXJuIGlvX2ltcG9ydF9pb3ZlYyhkZGlyLCByZXEsIHJ3LCAwKTsNCj4gIH0NCj4gDQo+ICBzdGF0
+aWMgaW5saW5lIHZvaWQgaW9fbWV0YV9zYXZlX3N0YXRlKHN0cnVjdCBpb19hc3luY19ydyAqaW8p
+DQo+IC0tDQo+IDIuNDMuNQ0KPiANCg0KTG9vayBnb29kIHRvIG1lLiBObyBsb2dpYyBjaGFuZ2Vz
+LCBvbmx5IGNvbXBpbGF0aW9uIGFuZCB0ZXN0aW5nLg0KVGVzdGVkLWJ5OiBMaSBaZXRhbyA8bGl6
+ZXRhbzFAaHVhd2VpLmNvbT4NCg==
 

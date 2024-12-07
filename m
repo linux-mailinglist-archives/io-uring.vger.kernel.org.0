@@ -1,183 +1,127 @@
-Return-Path: <io-uring+bounces-5276-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5289-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3AA49E7BA6
-	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 23:24:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 572D49E7D92
+	for <lists+io-uring@lfdr.de>; Sat,  7 Dec 2024 01:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A42CA283BBC
-	for <lists+io-uring@lfdr.de>; Fri,  6 Dec 2024 22:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DC80284F3F
+	for <lists+io-uring@lfdr.de>; Sat,  7 Dec 2024 00:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D0C203D45;
-	Fri,  6 Dec 2024 22:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A27022C6C5;
+	Sat,  7 Dec 2024 00:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="KZ/WZCSS"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="ubjyqSf+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA201714DF
-	for <io-uring@vger.kernel.org>; Fri,  6 Dec 2024 22:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C07628F5
+	for <io-uring@vger.kernel.org>; Sat,  7 Dec 2024 00:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733523839; cv=none; b=baapU33FETHPJ4bhhbYGEcqXdw+vBnFRWWwoZHLaEGUBi/zNLHb8/hRcJvzCc5/FQMGofyRD1W+6zIJzf2JzYqHPxVHkXeZv9UfDZ2wL2Mp5TFUIM+9eKvqT8ny+4MHqpLhvYEMW/gBdnAo/dFovWzHrslRzhwQwl1qS6ad2ef8=
+	t=1733532115; cv=none; b=Z+VOZY3OSF7tQTCqxQ+zfJV3MS7dg+XJjoShQC69bz3JXyUcksUOeb2I2DQXnKk6lR0+2c5wr7ss7e5aOWaciOZn6y3GQwVNZFiJgMYTeRqXauHrtn9JmhiJzaqZCv8n5tfuwfudpDumNfbmsnP1teCiSnOr3OjoXiYCVCdMJYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733523839; c=relaxed/simple;
-	bh=X03FMPt3YRruUGWT/ETkFQmoWtcDIiXUMKL9Tc4WryA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XN6OotNqLuCe5/V3Rum8hErl1y65+8VqPuUUmWmJTc5rtCBu6Kzg0gfVuoJ39lnoPMQzOkw88NX5i9SPVT6BPzv+7CZkfu+POZ82cmQGpKRqLU4xmwGEsEl1WooGJGHKVjjYDL30UkfOwQVMFF4Wj8tCM6UHhbO6At7QXUEBlG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=KZ/WZCSS; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6Lh29F015724
-	for <io-uring@vger.kernel.org>; Fri, 6 Dec 2024 14:23:56 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2021-q4;
-	 bh=/nE2U8jG/bZjifVEojFrO7fPI6rw7U6tKwDNJZHWRpQ=; b=KZ/WZCSSsx3B
-	yv6GBsOv49NpVtTqF/lxgBegB1G2TPhxWdxv1Dw0Sp+m/bKxWjy3VdZ5wmSLIev2
-	vaLFHK1/I1HhOtegUlCMiNk8ZZe1tMSYJAGLt3wDyANC5pVKiWvBYy1zOXrIrSSg
-	0YAnmvfCkWZ7zPf8ZfQFUZZlpMUmi8C1EtCDevhzlYGmBiez0Pz6whtYXcoftneY
-	KqTENp3ZEaZBzU+SDznOD80+fnfI2rsFqm5ek8MiL0uFWS4Io4R1ZzLjJLejQQVR
-	nIyOSeLXt5jfmWUwWjtEimyIkiVk2iPdE1pzwEks7h4kyMPdSPb5LScNJ+7mZ4pL
-	hBIMjRICLA==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 43c2xhbch6-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Fri, 06 Dec 2024 14:23:56 -0800 (PST)
-Received: from twshared9216.15.frc2.facebook.com (2620:10d:c0a8:1b::30) by
- mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.11; Fri, 6 Dec 2024 22:23:53 +0000
-Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
-	id 7C16515B8CB94; Fri,  6 Dec 2024 14:18:27 -0800 (PST)
-From: Keith Busch <kbusch@meta.com>
-To: <axboe@kernel.dk>, <hch@lst.de>, <linux-block@vger.kernel.org>,
-        <linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
-        <io-uring@vger.kernel.org>
-CC: <sagi@grimberg.me>, <asml.silence@gmail.com>, <anuj20.g@samsung.com>,
-        <joshi.k@samsung.com>, Keith Busch <kbusch@kernel.org>
-Subject: [PATCHv12 12/12] nvme: use fdp streams if write stream is provided
-Date: Fri, 6 Dec 2024 14:18:01 -0800
-Message-ID: <20241206221801.790690-13-kbusch@meta.com>
+	s=arc-20240116; t=1733532115; c=relaxed/simple;
+	bh=zP7ebWxe9g3DAiSxA5kkmZzp1hNsAkpYzbVcBZfZ0mI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g4VEjOW0ag6Y4iH6oycQJ8u47Pco+Ilg8vf3qLN3BSmMR1qgGhXGMWh8oYlLUoV87z6DEo8L14CxVUEldNQrWclrl1mhD+dtvCNagI4Lf+R+pafsiwRhGUeOqS6iHLRiNR1cxtzFYGMGrMRbvApsi83X0dFbXD3Rk2uFkQ+0Azw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=ubjyqSf+; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-724e1742d0dso2453079b3a.0
+        for <io-uring@vger.kernel.org>; Fri, 06 Dec 2024 16:41:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1733532111; x=1734136911; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j7mYa6jWU0GfQ3BnbC7hZLbjFgqXpblx7lc2NnYmzno=;
+        b=ubjyqSf+ztAX69zwWFZfX8ITgY1dQWVo5DCnoBCFRYrNGZ75N7WkY6MJ1w+8njayZ1
+         Z5VazBMD06JL1s2aimOuq43knFt9nVUNe9E3zm2AU/PVsC9ctQKGcaG2jRFeDspSdZIN
+         OHcnMw9zb6L6tkiKwwsJDu/wDW3g/0gV9Aiqn1VhBdMX/0whsxyl+cbeADnl/2M7BTOT
+         GSK+YIKAvvWfms+Q70PouiqIfVaury5uzbUBXDSP6QtjKfeh9VCap3+W2clZ9znTjaZQ
+         nPGo/tb/VhQIED+b0NBG4lR8L5MT6dZq7afN1Kcu6DJ0nFigY2lEqCXAQGE16BtpFg3n
+         HWvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733532111; x=1734136911;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j7mYa6jWU0GfQ3BnbC7hZLbjFgqXpblx7lc2NnYmzno=;
+        b=h8QFZIISnxle+JNDQumQGTS2ZgMzIag7EsPBGTgDEB+dqcYjJliZf76MYiYHn5W9GY
+         i7D3Wb3+m3AZjeDpkaS3N49tffB9g0bSGRektP+5fmzWyVQf9L2qLjhYfgyLWCGKGvsl
+         q94hcKL6AS81bEB3yekV56qg4RdklA91AjbcEsO2ObSAdgV2OQzEK8LfVLqA15th08wN
+         WiQIIh3eAT2npG+0IY12VnRbBfieeJaNAIoH/oM9J3pL8QcJMT/7O1iyo2J4ViEcQBU6
+         Ku7rGk4cgTKdY+kLqGHoEwDvGmBTxXOByLoT32R68hDYMxtSxIP+n7SIvrcf3VHQhXBQ
+         tbkA==
+X-Gm-Message-State: AOJu0YzMCqmxhVTs2lswEUcM4Z3RjZMyfT2e2ojDtyoR9qDniOVuSpBt
+	Net06qNcwcGCFVOllBHYMJG+5VFDMmDyTat9FvKDIf7zSusmg2EydcCqrO0S9vYiMDRabvzS8m0
+	m
+X-Gm-Gg: ASbGnctDXliickUnv/FIVq0U61Ptd09aummyfL4Sxaee+Js30Av/r8z5AZjTvZ+O4MU
+	pONGVyxpoHeKBUiwXcln4PiMPQ9nYBlzKZe4SrKsVObhLyL2kxMqVeozurts58nNDELn+iMpNcu
+	t5ZUYTpKYheKVlB1Q83EUXuONLs7mzNT5z9fUa7NlBKbY6XNRLBqT5/vt5wovTNoAbwQYZUvXms
+	2TaNFKtLkh4DiWmHCba4+udsANXdND8Rx8=
+X-Google-Smtp-Source: AGHT+IF5kHLfiOPOn/SPhP9MsvkUlvrDDYhmZVwsYly887ajoNWj6CUVMkkqgJ0wa6mHH7j2chwsMA==
+X-Received: by 2002:a05:6a00:17a9:b0:71d:fe64:e3fa with SMTP id d2e1a72fcca58-725b81f2514mr8838703b3a.19.1733532111462;
+        Fri, 06 Dec 2024 16:41:51 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:14::])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29eb432sm3523602b3a.72.2024.12.06.16.41.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 16:41:51 -0800 (PST)
+From: David Wei <dw@davidwei.uk>
+To: io-uring@vger.kernel.org
+Cc: David Wei <dw@davidwei.uk>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH for-next] io_uring: clean up io_prep_rw_setup()
+Date: Fri,  6 Dec 2024 16:41:44 -0800
+Message-ID: <20241207004144.783631-1-dw@davidwei.uk>
 X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241206221801.790690-1-kbusch@meta.com>
-References: <20241206221801.790690-1-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: p1VKMUQy2q-hz887tJ8Fo6LCigkSLJCe
-X-Proofpoint-ORIG-GUID: p1VKMUQy2q-hz887tJ8Fo6LCigkSLJCe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
+Content-Transfer-Encoding: 8bit
 
-From: Keith Busch <kbusch@kernel.org>
+Remove unnecessary call to iov_iter_save_state() in io_prep_rw_setup()
+as io_import_iovec() already does this. Then the result from
+io_import_iovec() can be returned directly.
 
-Maps a user requested write stream to an FDP placement ID if possible.
-
-Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: David Wei <dw@davidwei.uk>
 ---
- drivers/nvme/host/core.c | 32 +++++++++++++++++++++++++++++++-
- drivers/nvme/host/nvme.h |  1 +
- 2 files changed, 32 insertions(+), 1 deletion(-)
+ io_uring/rw.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 5f802e243736a..63c8a117b3b4a 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -997,6 +997,18 @@ static inline blk_status_t nvme_setup_rw(struct nvme=
-_ns *ns,
- 	if (req->cmd_flags & REQ_RAHEAD)
- 		dsmgmt |=3D NVME_RW_DSM_FREQ_PREFETCH;
-=20
-+	if (op =3D=3D nvme_cmd_write && ns->head->nr_plids) {
-+		u16 write_stream =3D req->bio->bi_write_stream;
-+
-+		if (WARN_ON_ONCE(write_stream > ns->head->nr_plids))
-+			return BLK_STS_INVAL;
-+
-+		if (write_stream) {
-+			dsmgmt |=3D ns->head->plids[write_stream - 1] << 16;
-+			control |=3D NVME_RW_DTYPE_DPLCMT;
-+		}
-+	}
-+
- 	if (req->cmd_flags & REQ_ATOMIC && !nvme_valid_atomic_write(req))
- 		return BLK_STS_INVAL;
-=20
-@@ -2194,11 +2206,12 @@ static int nvme_check_fdp(struct nvme_ns *ns, str=
-uct nvme_ns_info *info,
-=20
- static int nvme_query_fdp_info(struct nvme_ns *ns, struct nvme_ns_info *=
-info)
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 04e4467ab0ee..5b24fd8b69f6 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -240,7 +240,6 @@ static int io_rw_alloc_async(struct io_kiocb *req)
+ static int io_prep_rw_setup(struct io_kiocb *req, int ddir, bool do_import)
  {
-+	struct nvme_fdp_ruh_status_desc *ruhsd;
- 	struct nvme_ns_head *head =3D ns->head;
- 	struct nvme_fdp_ruh_status *ruhs;
- 	struct nvme_fdp_config fdp;
- 	struct nvme_command c =3D {};
--	int size, ret;
-+	int size, ret, i;
-=20
- 	ret =3D nvme_get_features(ns->ctrl, NVME_FEAT_FDP, info->endgid, NULL, =
-0,
- 				&fdp);
-@@ -2231,6 +2244,19 @@ static int nvme_query_fdp_info(struct nvme_ns *ns,=
- struct nvme_ns_info *info)
- 	if (!head->nr_plids)
- 		goto free;
-=20
-+	head->nr_plids =3D min(head->nr_plids, NVME_MAX_PLIDS);
-+	head->plids =3D kcalloc(head->nr_plids, sizeof(head->plids),
-+			      GFP_KERNEL);
-+	if (!head->plids) {
-+		ret =3D -ENOMEM;
-+		goto free;
-+	}
-+
-+	for (i =3D 0; i < head->nr_plids; i++) {
-+		ruhsd =3D &ruhs->ruhsd[i];
-+		head->plids[i] =3D le16_to_cpu(ruhsd->pid);
-+	}
-+
- 	kfree(ruhs);
- 	return 0;
-=20
-@@ -2285,6 +2311,10 @@ static int nvme_update_ns_info_block(struct nvme_n=
-s *ns,
- 				"FDP failure status:0x%x\n", ret);
- 		if (ret < 0)
- 			goto out;
-+	} else {
-+		ns->head->nr_plids =3D 0;
-+		kfree(ns->head->plids);
-+		ns->head->plids =3D NULL;
- 	}
-=20
- 	blk_mq_freeze_queue(ns->disk->queue);
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 914cc93e91f6d..49b234bfb42c4 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -495,6 +495,7 @@ struct nvme_ns_head {
- 	struct gendisk		*disk;
-=20
- 	u16			nr_plids;
-+	u16			*plids;
- #ifdef CONFIG_NVME_MULTIPATH
- 	struct bio_list		requeue_list;
- 	spinlock_t		requeue_lock;
---=20
+ 	struct io_async_rw *rw;
+-	int ret;
+ 
+ 	if (io_rw_alloc_async(req))
+ 		return -ENOMEM;
+@@ -249,12 +248,7 @@ static int io_prep_rw_setup(struct io_kiocb *req, int ddir, bool do_import)
+ 		return 0;
+ 
+ 	rw = req->async_data;
+-	ret = io_import_iovec(ddir, req, rw, 0);
+-	if (unlikely(ret < 0))
+-		return ret;
+-
+-	iov_iter_save_state(&rw->iter, &rw->iter_state);
+-	return 0;
++	return io_import_iovec(ddir, req, rw, 0);
+ }
+ 
+ static inline void io_meta_save_state(struct io_async_rw *io)
+-- 
 2.43.5
 
 

@@ -1,95 +1,95 @@
-Return-Path: <io-uring+bounces-5310-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5311-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F271A9E8D8A
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 09:33:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400649E8D8E
+	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 09:34:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 299341882507
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 08:33:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF1628126A
+	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 08:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04260215188;
-	Mon,  9 Dec 2024 08:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7661215077;
+	Mon,  9 Dec 2024 08:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MH83HXq0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JdLVv0Qd";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MH83HXq0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JdLVv0Qd"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yU8IysRR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/Gf+rWPV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yU8IysRR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/Gf+rWPV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B43D21519F;
-	Mon,  9 Dec 2024 08:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F97712CDAE;
+	Mon,  9 Dec 2024 08:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733733214; cv=none; b=Ja9P6Q2tw9eehGs8kau0D3uavYgwl8Cdvg7wND2AW5c5Jp5hKfPldWL8Vw82KccvwCx/lhLrxNxQdq+SD4lYPpykibsheojp3EJCDVqvmivsyaB+OaeQ7KLU6/631YGgavX19RDRALJyEX80n2Qn4eOB+N45MLDMzSlsmi+7JyM=
+	t=1733733250; cv=none; b=Ze7gb4Kp+SM58PJFldVQalxprClyLeukBeRJmaf4Z1SQERkSeAvxsqi0nRaMpT5uR1Uut6fCFyl7X4jVXSMYsjLLO17B+UKMuK0oSz/0Qt3oBJ0iWHIkoZk911MarWg0YJgPqZg/g+eiLkIZGuwHXSxwiKiuwb3lJ1ecGOwDVfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733733214; c=relaxed/simple;
-	bh=KmMwyrO21ZZKFSRTpbXZzmyEHmjHHVaB3KoT7axoK1s=;
+	s=arc-20240116; t=1733733250; c=relaxed/simple;
+	bh=Lj96Xxo6L7OqokPTUrnDSKgFNZE6NwC4Q/xJJ0dPyRs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mHaVMhdWPa0HCeI/ERj95kTxwxGMIW+eLNYuwsbO8EuvBxVEulMOKlifkI/rieDrfWPTrG/mGjsgTAmR4MCt5DwUM+Uf50fCfT/xlQX1z67zWSSXwwRmI6/PXfMr7CNlRKkVEu5pdp1wQk8QI+sgmvspvRvmqN2lkX+MC3q6Tm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MH83HXq0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JdLVv0Qd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MH83HXq0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JdLVv0Qd; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:Content-Type; b=OXF1OOwyXCjwRgbz5d7qoIPT6zM56gaKw4Zh6wYqMG08RDUxNTXSwfJfVjCoRen5CPkkdeQPpXT7ZpRhNGLP6iU0iV/R1TIYPVBaD1h4/EHj7T8IPCwVMjdNhV6YpM02UYucOVAsAf3Jjxq3cTkKDp2h4qOudcotnHSMvIwIU48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yU8IysRR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/Gf+rWPV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yU8IysRR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/Gf+rWPV; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A69EB1F74A;
-	Mon,  9 Dec 2024 08:33:31 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 599EA211B3;
+	Mon,  9 Dec 2024 08:34:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733733211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1733733247; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=w3eNA3hRD/YIW3yLrVH3YYj2NEgLCvcTYt7qLx7blmU=;
-	b=MH83HXq02b+P3Y0PxvFwNdY/clxQfrqYU4WRgJf1NuSqH+BBmRGmfux+ZxLutYOtJ6a/bf
-	ECkE5B1ckto9RYoihFucEFfS+ZvUFoFogHiwGm9LkCrBRZs28XwVjPx+zyBV0jJcywnJIR
-	CMLvaaWb4CdZ2VyPnL37Zqj8o71oC3g=
+	bh=q674GERQT/Yuga/kRSM/uZR0E043dDMBdq7o2ipN3/g=;
+	b=yU8IysRRDrNsQNviAqJDz7bn/nSGk5kJrmYlmifsspn8wHNyfKI3G9PPoXUOtMwa/AVWis
+	w0wvR0xx2xIFfnpL64svsn2ahQ3V/Ozibdq5aNMxcX3irokxLyS4S7vUrHLJ1ZMuUNhRWF
+	A/nJ+KbP9uKoqdtijtujJ/jRNjua5jA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733733211;
+	s=susede2_ed25519; t=1733733247;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=w3eNA3hRD/YIW3yLrVH3YYj2NEgLCvcTYt7qLx7blmU=;
-	b=JdLVv0Qd+YY6QHLv8zYMj4b8IC5LZqspu8K9atO+2IoL65C+HagfG6Vf8Vc7gN0HASMGBl
-	8tB8z4EWMT7jPUCA==
-Authentication-Results: smtp-out2.suse.de;
+	bh=q674GERQT/Yuga/kRSM/uZR0E043dDMBdq7o2ipN3/g=;
+	b=/Gf+rWPVfngHfLCW6R3c73r/5HvI23ufiau0WdWwoFTFNBprxSHdNFfvRDte0/8KoiBm4k
+	C8j3JtbcB5uVbRDQ==
+Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733733211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1733733247; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=w3eNA3hRD/YIW3yLrVH3YYj2NEgLCvcTYt7qLx7blmU=;
-	b=MH83HXq02b+P3Y0PxvFwNdY/clxQfrqYU4WRgJf1NuSqH+BBmRGmfux+ZxLutYOtJ6a/bf
-	ECkE5B1ckto9RYoihFucEFfS+ZvUFoFogHiwGm9LkCrBRZs28XwVjPx+zyBV0jJcywnJIR
-	CMLvaaWb4CdZ2VyPnL37Zqj8o71oC3g=
+	bh=q674GERQT/Yuga/kRSM/uZR0E043dDMBdq7o2ipN3/g=;
+	b=yU8IysRRDrNsQNviAqJDz7bn/nSGk5kJrmYlmifsspn8wHNyfKI3G9PPoXUOtMwa/AVWis
+	w0wvR0xx2xIFfnpL64svsn2ahQ3V/Ozibdq5aNMxcX3irokxLyS4S7vUrHLJ1ZMuUNhRWF
+	A/nJ+KbP9uKoqdtijtujJ/jRNjua5jA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733733211;
+	s=susede2_ed25519; t=1733733247;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=w3eNA3hRD/YIW3yLrVH3YYj2NEgLCvcTYt7qLx7blmU=;
-	b=JdLVv0Qd+YY6QHLv8zYMj4b8IC5LZqspu8K9atO+2IoL65C+HagfG6Vf8Vc7gN0HASMGBl
-	8tB8z4EWMT7jPUCA==
+	bh=q674GERQT/Yuga/kRSM/uZR0E043dDMBdq7o2ipN3/g=;
+	b=/Gf+rWPVfngHfLCW6R3c73r/5HvI23ufiau0WdWwoFTFNBprxSHdNFfvRDte0/8KoiBm4k
+	C8j3JtbcB5uVbRDQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 369FB13B35;
-	Mon,  9 Dec 2024 08:33:31 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E130313B38;
+	Mon,  9 Dec 2024 08:34:06 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FnGtC1urVmcuDwAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 09 Dec 2024 08:33:31 +0000
-Message-ID: <35e86972-4fd8-45b0-9ec6-5dab9eda8ec1@suse.de>
-Date: Mon, 9 Dec 2024 09:33:30 +0100
+	id i2RdNX6rVmdfDwAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 09 Dec 2024 08:34:06 +0000
+Message-ID: <cd388aa1-32e6-4427-958e-041f7d6a73ac@suse.de>
+Date: Mon, 9 Dec 2024 09:34:06 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -97,62 +97,60 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv12 10/12] nvme.h: add FDP definitions
+Subject: Re: [PATCHv12 11/12] nvme: register fdp parameters with the block
+ layer
 To: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
  linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
  linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
 Cc: sagi@grimberg.me, asml.silence@gmail.com, anuj20.g@samsung.com,
  joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
 References: <20241206221801.790690-1-kbusch@meta.com>
- <20241206221801.790690-11-kbusch@meta.com>
+ <20241206221801.790690-12-kbusch@meta.com>
 Content-Language: en-US
 From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20241206221801.790690-11-kbusch@meta.com>
+In-Reply-To: <20241206221801.790690-12-kbusch@meta.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Level: 
 X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+	BAYES_HAM(-3.00)[99.99%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	RCPT_COUNT_TWELVE(0.00)[12];
 	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	FROM_HAS_DN(0.00)[];
 	FREEMAIL_CC(0.00)[grimberg.me,gmail.com,samsung.com,kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,lst.de:email,suse.de:email,suse.de:mid]
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
 X-Spam-Score: -2.80
 X-Spam-Flag: NO
 
-On 12/6/24 23:17, Keith Busch wrote:
-> From: Christoph Hellwig <hch@lst.de>
+On 12/6/24 23:18, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> Add the config feature result, config log page, and management receive
-> commands needed for FDP.
+> Register the device data placement limits if supported. This is just
+> registering the limits with the block layer. Nothing beyond reporting
+> these attributes is happening in this patch.
 > 
-> Partially based on a patch from Kanchan Joshi <joshi.k@samsung.com>.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> [kbusch: renamed some fields to match spec]
 > Signed-off-by: Keith Busch <kbusch@kernel.org>
 > ---
->   include/linux/nvme.h | 77 ++++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 77 insertions(+)
+>   drivers/nvme/host/core.c | 112 +++++++++++++++++++++++++++++++++++++++
+>   drivers/nvme/host/nvme.h |   4 ++
+>   2 files changed, 116 insertions(+)
 > 
-
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,

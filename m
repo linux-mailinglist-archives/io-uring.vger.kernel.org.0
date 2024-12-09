@@ -1,151 +1,200 @@
-Return-Path: <io-uring+bounces-5393-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5394-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C44BF9EA752
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 05:49:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6AB29EA89F
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 07:17:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B401D164952
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 06:16:57 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E2B22B5BE;
+	Tue, 10 Dec 2024 06:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sPjGZioq"
+X-Original-To: io-uring@vger.kernel.org
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 838F3288BA3
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 04:49:54 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BFF168BE;
-	Tue, 10 Dec 2024 04:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsfFXL4n"
-X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B2579FD;
-	Tue, 10 Dec 2024 04:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB7635967
+	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 06:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733806192; cv=none; b=Sdf510ReYEXjwvDBbjE+WgnnFxlpaIO4JQ6qM6e9Zj7QlOuCdiqGszcMUcW3K+L574diUU9/rpsSfHN9pVlqv+voR/e9sKDHBdNcABRSP7X0B0pSSe1E2JwtjBbfx7nUepps+CxYXMQgsZjARC21qKkqrNAcbyIXBtyqgB+xCQE=
+	t=1733811414; cv=none; b=TabX7mmuvWTyG7LD0rqae5N07uH+ieDQI5wNiymzG0UXCS1GIxNax6rF/yzu2YFym+cqHRofwGbsqz3Mz4bamC9OttaSyt8dzwLoaLTHBeW83ZnbXdsvkpa46uwUYOLIXM7Tkg5qvVhQZFnXo9SX9Ga9o9fVLV0aUZ2FLOUyBFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733806192; c=relaxed/simple;
-	bh=6nEWeQAeyMiZD24G516Y/lc+ymSXSnZHEG/uO2/zZeg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WnOTgA/qGMIfOpZERsJXXHYiJG48Faf3vcIVdBr+YzM6CMqSNOgp/w8ikOX7sOehKKX3AId8xoDAT0DCgKjEzq4tIOzIUqAd7iXT0RjwrKSbGXyRhq+92Va7zUFdtg45FCinvA3X45jbn4muvof9RJar+J836uxVfVgymQkopTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsfFXL4n; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3863494591bso1349412f8f.1;
-        Mon, 09 Dec 2024 20:49:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733806189; x=1734410989; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hu+E1d6FVD8TmkXkZ+JdeZuo4py52+CscSEktFlyu6Q=;
-        b=TsfFXL4nNHQG5uzIT2Lr92HQRbujciOjmT50jRO6BsXCKTOWg7efJNMSlwLWqtSDyV
-         qIlBbQS1Z8KUdhPaRfAoX6f8cfthHfCyiZELDFYF//n2gEciinjlO6vnAwvsNMLswV3f
-         UD6aTr+kXV3rsuZSeV42Nb9mYxsZ3VaSOJIubj4DWQhbkU3JZp1ZGozaVfCsWbpRMCs1
-         AyE9mMHq2+rPUcuUa8zptUbosd7c2YrRGEMGdMF+TWwW/lj2kE3zYhin61xe68C3gioW
-         AYWxy8OWCrAVukFqUB0C4FyMEsEkLhzhrqCDZ/3Q9r6MudBMfq6isHDeIIhVVUe0pnNJ
-         sk8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733806189; x=1734410989;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hu+E1d6FVD8TmkXkZ+JdeZuo4py52+CscSEktFlyu6Q=;
-        b=O70oPQn1dxNA5tKv9tgbDZcr4g7rHhUGR4ABXBKZVtIpq25YVKcpIRGnMPI2wjrZyC
-         0t/17ggXehjV7r9faPateDBNsnlMyVQ/YBEc5dg2yrXnFnJgvclCzoBfLnSWT0mIm3zX
-         +DgQRcpE2SxUqsy/2C8koBYpaTxWMNcVJME+3m/AAPopVhN3m8RLmyKUTlgaSg9UMOtW
-         mU72vw/SqzUE8OG0FOwFUiYo5WekMnUMO+IaaiBnLDJlD/u4v+M34nc9DuY06OPojvPW
-         nmozxYDI3Dr0gG1ydkacQur2Ag1sxsirYdoS1uEjdjYURZvZJ8eTaoztWxiqC+YV09pz
-         W8oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUq733kbS3nebB+zE2CjPiA375fN5AocCk6PkjJxln7copXDyqZKfMXALc2Va8QYz4flD8t2hU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaUlF3bvxoJTv7tzOTbmQFZIGAOCMyrWReDyh6iQ3ZluXcnuFy
-	5UHfXliDqAL/4DYZ6yTKCORTnfD1OoG+8Glpk/Lp1L3ICyKqOuUm
-X-Gm-Gg: ASbGncsOIQc9ZQPrPDVGALn5xzwC0dnBauV8PH3+LzH3mbZIh0+aCVMZCoPTvALsqom
-	aszPKQc3hCZwFnfdM96xXjdyJ6WS2Y6ImaDXbXqVmYGjOhOEcjcbG78fEmfHnY2erq1j5Zygy07
-	8kXozJE0hSk2RfmB4rVz3axIomKkhh9jkeR2ymQN07wVY6F+CP1CFz71LxV6LLTFHj2LmijWgNk
-	kHvHHG0eZnML1QkMx0OSr1hV9N6FNG/BLdGy5vFefSiV7IAwinNDkl8btkoD/k=
-X-Google-Smtp-Source: AGHT+IFIw2w0JFuGvd1xfKCVx4eU3Kt9sjdDpvZP4uintKlNPZOnwH7y58Pn+4B/jZwUa0qMRBN3RA==
-X-Received: by 2002:a05:6000:4604:b0:385:e17a:ce6f with SMTP id ffacd0b85a97d-386453dbd0cmr2525862f8f.24.1733806189176;
-        Mon, 09 Dec 2024 20:49:49 -0800 (PST)
-Received: from [192.168.42.90] ([85.255.235.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861ecf3cd1sm14715389f8f.11.2024.12.09.20.49.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 20:49:48 -0800 (PST)
-Message-ID: <3572bf15-333c-4db2-a714-edef2ce09f26@gmail.com>
-Date: Tue, 10 Dec 2024 04:50:40 +0000
+	s=arc-20240116; t=1733811414; c=relaxed/simple;
+	bh=VS5AgK+cHumRrzq48vKvRtsV7k/hWSfwmjl2fWxAy/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=EMTMzYk75tngVbeV6VbS2M4nqK5fYK055r+GCjUMxyMlXdHHun/hMqHYlTa/+EyoJmzViLTkT2OGXVAio0GTbJ2oVmucoawdA4geAQFwJ0O/lBVER0eIMl7RRE5GmHRuK0QfQaLAKY7m8JhMD0OwogBtQIn2cAWGye3uMW4VZ7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sPjGZioq; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241210061648epoutp03c7e8ce38c44d8b9f4f74cc166807deec~PvEpEo_xx2395623956epoutp03a
+	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 06:16:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241210061648epoutp03c7e8ce38c44d8b9f4f74cc166807deec~PvEpEo_xx2395623956epoutp03a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733811408;
+	bh=E0Ds7is/PRD15Mta+Na2E4igKDBZuHKLd0eyDKuyE6c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sPjGZioqV1em46uM0YFjZKmLIeaxTQervp8bWkviudxOneYXCqXGUZocJL0JyoZuk
+	 DzEeifkHdla54mVc2ybhqmjMwIPaqaKVRn6XhCXUvfQszQLR+BVO6QkIsvMBY49Y7R
+	 DgDKY2YPqBCf6kRAP2VlXGe1dQVVIstv4tyeyc7Y=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20241210061648epcas5p18e93e2747f53434c1ae5d54c4d241dd9~PvEond7fF2959829598epcas5p1_;
+	Tue, 10 Dec 2024 06:16:48 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Y6pR23mN7z4x9Q8; Tue, 10 Dec
+	2024 06:16:46 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	67.D5.19710.ECCD7576; Tue, 10 Dec 2024 15:16:46 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20241209110649epcas5p41df7db0f7ea58f250da647106d25134b~PfYkGHV-L1052810528epcas5p4U;
+	Mon,  9 Dec 2024 11:06:49 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241209110649epsmtrp2cf7b5119e46635b3d3157059bff59c36~PfYkFKM8Q1974719747epsmtrp2b;
+	Mon,  9 Dec 2024 11:06:49 +0000 (GMT)
+X-AuditID: b6c32a44-36bdd70000004cfe-a8-6757dcceb44a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	84.03.18949.84FC6576; Mon,  9 Dec 2024 20:06:48 +0900 (KST)
+Received: from ubuntu (unknown [107.99.41.245]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241209110647epsmtip22855f77258d46586d09929b1447a8cd8~PfYiZTKgG1603516035epsmtip2J;
+	Mon,  9 Dec 2024 11:06:47 +0000 (GMT)
+Date: Mon, 9 Dec 2024 16:28:53 +0530
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Keith Busch <kbusch@meta.com>
+Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, sagi@grimberg.me, asml.silence@gmail.com,
+	anuj20.g@samsung.com, joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv12 06/12] block: expose write streams for block device
+ nodes
+Message-ID: <20241209105844.boc4k6oshthruyep@ubuntu>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v8 11/17] io_uring/zcrx: implement zerocopy
- receive pp memory provider
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>, David Wei <dw@davidwei.uk>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>
-References: <20241204172204.4180482-1-dw@davidwei.uk>
- <20241204172204.4180482-12-dw@davidwei.uk>
- <20241209200156.3aaa5e24@kernel.org>
- <aa20a0fd-75fb-4859-bd0e-74d0098daae8@gmail.com>
-Content-Language: en-US
-In-Reply-To: <aa20a0fd-75fb-4859-bd0e-74d0098daae8@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241206221801.790690-7-kbusch@meta.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmpu65O+HpBpseSVo0TfjLbDFn1TZG
+	i9V3+9ksVq4+ymTxrvUci8XR/2/ZLCYdusZocebqQhaLvbe0LfbsPcliMX/ZU3aLda/fszjw
+	eOycdZfd4/y9jSwel8+Wemxa1cnmsXlJvcfumw1sHucuVnj0bVnF6PF5k1wAZ1S2TUZqYkpq
+	kUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QvUoKZYk5pUChgMTi
+	YiV9O5ui/NKSVIWM/OISW6XUgpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7IzutY9YCvYK
+	VRzd8JqlgfEcfxcjB4eEgInE/xbfLkYuDiGB3YwSi7+3skA4nxgl7r3czQrhfGOU6F+xEMjh
+	BOu48Go+VGIvo8S6Jy1MEM4TRomzDXfZQKpYBFQkvq74ygSyg01AW+L0fw6QsIiAosR5YEiA
+	1DMLTGSS+H2oiR0kISwQJNF99isLiM0LtOHq5p1MELagxMmZT8DinAJmEoc/tYE1Swis5JDY
+	P/kC1EkuEreO3WCEsIUlXh3fwg5hS0l8freXDcIul1g5ZQVUcwujxKzrs6Aa7CVaT/Uzg9jM
+	AhkSL3o2QTXLSkw9tY4JIs4n0fv7CRNEnFdixzwYW1lizfoFUAskJa59b4SyPSTWX1gBDaOt
+	jBKtbXtZJjDKzULy0Swk+yBsK4nOD02ss4AhxiwgLbH8HweEqSmxfpf+AkbWVYySqQXFuemp
+	yaYFhnmp5fBoTs7P3cQITsRaLjsYb8z/p3eIkYmD8RCjBAezkggvh3douhBvSmJlVWpRfnxR
+	aU5q8SFGU2AMTWSWEk3OB+aCvJJ4QxNLAxMzMzMTS2MzQyVx3tetc1OEBNITS1KzU1MLUotg
+	+pg4OKUamHYwTY4R+q+1RaRh1czdB7mDpCXEHbZ1Bia5bJtXvHTLzwnC6adYy/0mK5c+mtie
+	41DN3tr7KXHu8t+Z/9lit+/K+SbZ9T3wKX+kwYlmjsgD7IwLzO4zHntpsWb+hCSbb+V+a97U
+	3nA5w2Bh/OvIIs29LeJPpHfpsu39bXtwU0fcWYlC09M/ApWPHjPVlPWee2yz+KT7drIsGzyf
+	rZBh43w8I/OiqPD9OQbXX7qITJnkPuHdqjc6893Mr++Y1y90uTI96dQHW+XjWaFatRM+znnI
+	JzVpZqVTuanvbv6C9w+2CngJlF5ly10bwpI8h3/9+tRlJgXd15vqJyf7d5mELHi/o7d9glGO
+	Vn/azGlKq5VYijMSDbWYi4oTAf+3R7tNBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFLMWRmVeSWpSXmKPExsWy7bCSvK7H+bB0g++LLCyaJvxltpizahuj
+	xeq7/WwWK1cfZbJ413qOxeLo/7dsFpMOXWO0OHN1IYvF3lvaFnv2nmSxmL/sKbvFutfvWRx4
+	PHbOusvucf7eRhaPy2dLPTat6mTz2Lyk3mP3zQY2j3MXKzz6tqxi9Pi8SS6AM4rLJiU1J7Ms
+	tUjfLoEr4+OZI2wF7/kr5vxaxtbAOIu3i5GTQ0LAROLCq/msXYxcHEICuxklfh+5ywKRkJRY
+	9vcIM4QtLLHy33N2iKJHjBLH1p9hB0mwCKhIfF3xlamLkYODTUBb4vR/DpCwiICixHmgc0Dq
+	mQUmM0k8n3kMbKiwQJBE99mvYDYv0Oarm3cygdhCAokSh1q3Q8UFJU7OfAJmMwuYSczb/JAZ
+	ZD6zgLTE8n9g8zmBwoc/tbFNYBSYhaRjFpKOWQgdCxiZVzFKphYU56bnFhsWGOWllusVJ+YW
+	l+al6yXn525iBEePltYOxj2rPugdYmTiYDzEKMHBrCTCy+Edmi7Em5JYWZValB9fVJqTWnyI
+	UZqDRUmc99vr3hQhgfTEktTs1NSC1CKYLBMHp1QDk+lNCd2O/vnf5jDdleXL4fi85mzeTo/5
+	IsH3bNvPZN9beZoh7btVRc686rBuLqvPl9W8lv3ckii3vVvAWGXDQ8ZdC+M07bb2lx1QXcOg
+	/jFc5dmXNUsy9/Rdkk/+l2u8ooSbITbgjTvPPtdThRKc91YcPRf+5bZ/YobQg0Mmsx1VrLqK
+	byhs/vbe4kW6s3Lr8d3/jropPfavMzndsMjf0cfQ9lXuh7vbuxazKD3Rf1+f9EH3BesBnnXb
+	v2pNdE9q6tg3r9xfmqUsesHPeSUi2/e/+5MQpfxPc8FWz6MtPOd6Hre4rm05pPqwXqR3VXuI
+	m01J58qEVhGtXXtaDi5t3V9/ddrcrW9vrPWv37YjXYmlOCPRUIu5qDgRAM7C0f8NAwAA
+X-CMS-MailID: 20241209110649epcas5p41df7db0f7ea58f250da647106d25134b
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241209110649epcas5p41df7db0f7ea58f250da647106d25134b
+References: <20241206221801.790690-1-kbusch@meta.com>
+	<20241206221801.790690-7-kbusch@meta.com>
+	<CGME20241209110649epcas5p41df7db0f7ea58f250da647106d25134b@epcas5p4.samsung.com>
 
-On 12/10/24 04:45, Pavel Begunkov wrote:
-> On 12/10/24 04:01, Jakub Kicinski wrote:
->> On Wed,  4 Dec 2024 09:21:50 -0800 David Wei wrote:
->>> Then, either the buffer is dropped and returns back to the page pool
->>> into the ->freelist via io_pp_zc_release_netmem, in which case the page
->>> pool will match hold_cnt for us with ->pages_state_release_cnt. Or more
->>> likely the buffer will go through the network/protocol stacks and end up
->>> in the corresponding socket's receive queue. From there the user can get
->>> it via an new io_uring request implemented in following patches. As
->>> mentioned above, before giving a buffer to the user we bump the refcount
->>> by IO_ZC_RX_UREF.
->>>
->>> Once the user is done with the buffer processing, it must return it back
->>> via the refill queue, from where our ->alloc_netmems implementation can
->>> grab it, check references, put IO_ZC_RX_UREF, and recycle the buffer if
->>> there are no more users left. As we place such buffers right back into
->>> the page pools fast cache and they didn't go through the normal pp
->>> release path, they are still considered "allocated" and no pp hold_cnt
->>> is required. For the same reason we dma sync buffers for the device
->>> in io_zc_add_pp_cache().
->>
->> Can you say more about the IO_ZC_RX_UREF bias? net_iov is not the page
->> struct, we can add more fields. In fact we have 8B of padding in it
->> that can be allocated without growing the struct. So why play with
-> 
-> I guess we can, though it's growing it for everyone not just
-> io_uring considering how indexing works, i.e. no embedding into
-> a larger struct.
-> 
->> biases? You can add a 32b atomic counter for how many refs have been
->> handed out to the user.
-> 
-> This set does it in a stupid way, but the bias allows to coalesce
-> operations with it into a single atomic. Regardless, it can be
-> placed separately, though we still need a good way to optimise
-> counting. Take a look at my reply with questions in the v7 thread,
-> I outlined what can work quite well in terms of performance but
-> needs a clear api for that from net/
+------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-FWIW, I tried it and placed user refs into a separate array.
-Without optimisations it'll be additional atomics + cache
-bouncing, which is not great, but if we can somehow reuse the
-frag ref as in replies to v7, that might work even better than
-with the bias. Devmem might reuse that as well.
+On 06/12/24 02:17PM, Keith Busch wrote:
+>From: Christoph Hellwig <hch@lst.de>
+>
+>Export statx information about the number and granularity of write
+>streams, use the per-kiocb write hint and map temperature hints
+>to write streams (which is a bit questionable, but this shows how it is
+>done).
+>
+>Signed-off-by: Christoph Hellwig <hch@lst.de>
+>Signed-off-by: Keith Busch <kbusch@kernel.org>
+>---
+> block/bdev.c |  6 ++++++
+> block/fops.c | 23 +++++++++++++++++++++++
+> 2 files changed, 29 insertions(+)
+>
+>diff --git a/block/bdev.c b/block/bdev.c
+>index 738e3c8457e7f..c23245f1fdfe3 100644
+>--- a/block/bdev.c
+>+++ b/block/bdev.c
+>@@ -1296,6 +1296,12 @@ void bdev_statx(struct path *path, struct kstat *stat,
+> 		stat->result_mask |= STATX_DIOALIGN;
+> 	}
+>
+>+	if ((request_mask & STATX_WRITE_STREAM) &&
+We may not reach this point, if user application doesn't set either of
+STATX_DIOALIGN or STATX_WRITE_ATOMIC.
 
--- 
-Pavel Begunkov
+>+	    bdev_max_write_streams(bdev)) {
+>+		stat->write_stream_max = bdev_max_write_streams(bdev);
+>+		stat->result_mask |= STATX_WRITE_STREAM;
+statx will show value of 0 for write_stream_granularity.
 
+Below is the fix which might help you,
+
+diff --git a/block/bdev.c b/block/bdev.c
+index c23245f1fdfe..290577e20457 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -1275,7 +1275,8 @@ void bdev_statx(struct path *path, struct kstat *stat,
+  	struct inode *backing_inode;
+  	struct block_device *bdev;
+  
+-	if (!(request_mask & (STATX_DIOALIGN | STATX_WRITE_ATOMIC)))
++	if (!(request_mask & (STATX_DIOALIGN | STATX_WRITE_ATOMIC |
++		STATX_WRITE_STREAM)))
+  		return;
+  
+  	backing_inode = d_backing_inode(path->dentry);
+@@ -1299,6 +1300,7 @@ void bdev_statx(struct path *path, struct kstat *stat,
+  	if ((request_mask & STATX_WRITE_STREAM) &&
+  	    bdev_max_write_streams(bdev)) {
+  		stat->write_stream_max = bdev_max_write_streams(bdev);
++		stat->write_stream_granularity = bdev_write_stream_granularity(bdev);
+  		stat->result_mask |= STATX_WRITE_STREAM;
+  	}
+
+
+------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_
+Content-Type: text/plain; charset="utf-8"
+
+
+------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_6c9ae_--
 

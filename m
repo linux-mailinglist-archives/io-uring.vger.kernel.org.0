@@ -1,123 +1,194 @@
-Return-Path: <io-uring+bounces-5358-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5359-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568529EA2D5
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 00:31:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D007A9EA301
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 00:43:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9898318822C6
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 23:31:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD47616671A
+	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 23:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF73D212F84;
-	Mon,  9 Dec 2024 23:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DFD19B3EE;
+	Mon,  9 Dec 2024 23:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dpnRolIA"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="H3RDFSRj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FgylPE9F";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="H3RDFSRj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FgylPE9F"
 X-Original-To: io-uring@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522F5212B1F;
-	Mon,  9 Dec 2024 23:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D1F224884
+	for <io-uring@vger.kernel.org>; Mon,  9 Dec 2024 23:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733787091; cv=none; b=KTnF4HGtF3fL1SgQglQkuPIDfryYkBVSrptlzucUsGrH0QfVt+DiDzpGlCGHj/iiBiNm4pCLpPliFmEB9318tDTwL0tAamzOyrMn+UOjIwtj99gJCoFxI7lTUnv1wIaGNn48pveK2/YYVCTMIma70ofkNjF1vWF5wp6+2SwWj7o=
+	t=1733787814; cv=none; b=Z90TYNZxYr1uWzzt46lY2Eh8xt/XLGaicm5j5p9VvtJuuEpsrAP6D6GOJzpivhQGiAiS7tfiXIvC2sP8/8cm/KTkQrmd+tOUgyAJy6UwdM4SieC27BA8g/eOlt3Id1Qm6Oby/XjR7U/bvNxQhATVx8baB5Q4n5Nri4RnrFzphKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733787091; c=relaxed/simple;
-	bh=8kHGzy49CBa7AuLHPCglNjjHwr1xdjiGB6GiRtwNVhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vAUivXaCJ1k2Dc9XN6RlvRz6eYwY+CBpC3xp1VVtmoEQheqOGWStiPxyKMbLS275f/jtWXl8oSeWCLZ2zSxjtji2eR/7vMNC/aEq89uhWrlRAkv98LZtlu7o4SAeEkV9G9VYUOxZlCqsSCiSlB2MbgHIOR525DYHyZtY4/YEWyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dpnRolIA; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=hnYryxs5fAFAEeNlJ/22fquHamymjdpDvKQADj8yK+k=; b=dpnRolIAhWJAxtAgvTts6JqV0x
-	0Xn709vr5TWG4JYGpD+UA41WayzULhAiKkL9s13N/kBcYYtzF+mJ9GEqGuRzmdcxIxLXEx/fudB6O
-	i4vID4WHc+whH9Tx2SzTdhqlOPZ/wRAm+YZDaby2YdFx/q09MuSAjoLZ2ZZEdPfx8OykViN87fMJy
-	HeXRDdkmIHyLxnSaq+6kBN0vmzR5XvSHc8NIqhPeqggAsioGb9qWyZYKzvS7kilnU4zVXkT4elpMa
-	HN2FIeHIQXZNuIIFQwvroG+gb+A1WWq0s4TnXFACj1QclXjfZrIRxSPXam2RZdRaov3TLIiR72NqP
-	gZiUg44w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKnDh-00000005Nat-1gls;
-	Mon, 09 Dec 2024 23:31:17 +0000
-Date: Mon, 9 Dec 2024 23:31:17 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Nitesh Shetty <nj.shetty@samsung.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Javier Gonzalez <javier.gonz@samsung.com>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@meta.com>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"joshi.k@samsung.com" <joshi.k@samsung.com>
-Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
-Message-ID: <Z1d9xfBwp0e8jxf4@casper.infradead.org>
-References: <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
- <20241112135233.2iwgwe443rnuivyb@ubuntu>
- <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
- <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
- <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
- <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
- <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
- <CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
- <20241205080342.7gccjmyqydt2hb7z@ubuntu>
- <c639f90f-bdd1-4808-aeb7-e9b667822413@acm.org>
+	s=arc-20240116; t=1733787814; c=relaxed/simple;
+	bh=PReUK/sHd/nI3MqI7F9tQRJN8nEpWdpge5O3TSkSv2Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GvvuU8cLkb+ZoRnpFk8FHw5wgEFn4albJUr3+zanSJtDMoMH1VBWTyJysBfrcCaUVqVUwmJqp2Q7RbcOd4QStNXtjrKjEBUKDtBXb7GXDROQ78Aqfj2SkxbGD0imCOZO7akgI77qsMsjPO3bqJrPTVfLUte6KjeXtSK3YsiPbQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=H3RDFSRj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FgylPE9F; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=H3RDFSRj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FgylPE9F; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8EB211F441;
+	Mon,  9 Dec 2024 23:43:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733787809; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=FzUNWkjuvzUcs4Ldep1waUEr0DKlwCOGYzTvQbM1LBU=;
+	b=H3RDFSRjJigXzA1Pq5i3qxIfal0OWTC6lxbVJ2VmUCdjv5Gg76tOvvPs2efV/zzscBa2W/
+	rPQhOM8cQIRCsPtA1jB+aQDO8vdVAFtdo3llWFeGLch14KKrvKQSJqwRCRXRAvo5uyJZPj
+	KPTiqWSL0gq7MX3yARlwagmGTCFn75s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733787809;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=FzUNWkjuvzUcs4Ldep1waUEr0DKlwCOGYzTvQbM1LBU=;
+	b=FgylPE9FYBuJPRjWs7SlqR/1c4dte4SjE0hXhYDgN8Nsa+7CqIC/F4p+aNld7Khh6cst36
+	HG93uhzEmbaKZDDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=H3RDFSRj;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=FgylPE9F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733787809; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=FzUNWkjuvzUcs4Ldep1waUEr0DKlwCOGYzTvQbM1LBU=;
+	b=H3RDFSRjJigXzA1Pq5i3qxIfal0OWTC6lxbVJ2VmUCdjv5Gg76tOvvPs2efV/zzscBa2W/
+	rPQhOM8cQIRCsPtA1jB+aQDO8vdVAFtdo3llWFeGLch14KKrvKQSJqwRCRXRAvo5uyJZPj
+	KPTiqWSL0gq7MX3yARlwagmGTCFn75s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733787809;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=FzUNWkjuvzUcs4Ldep1waUEr0DKlwCOGYzTvQbM1LBU=;
+	b=FgylPE9FYBuJPRjWs7SlqR/1c4dte4SjE0hXhYDgN8Nsa+7CqIC/F4p+aNld7Khh6cst36
+	HG93uhzEmbaKZDDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53D87138A5;
+	Mon,  9 Dec 2024 23:43:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id d5hhDKGAV2fkHAAAD6G6ig
+	(envelope-from <krisman@suse.de>); Mon, 09 Dec 2024 23:43:29 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: axboe@kernel.dk,
+	asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org,
+	josh@joshtriplett.org,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH RFC 0/9] Launching processes with io_uring
+Date: Mon,  9 Dec 2024 18:43:02 -0500
+Message-ID: <20241209234316.4132786-1-krisman@suse.de>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c639f90f-bdd1-4808-aeb7-e9b667822413@acm.org>
+X-Rspamd-Queue-Id: 8EB211F441
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[kernel.dk,gmail.com];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -1.51
+X-Spam-Flag: NO
 
-On Mon, Dec 09, 2024 at 02:13:40PM -0800, Bart Van Assche wrote:
-> On 12/5/24 12:03 AM, Nitesh Shetty wrote:
-> > But where do we store the read sector info before sending write.
-> > I see 2 approaches here,
-> > 1. Should it be part of a payload along with write ?
-> >      We did something similar in previous series which was not liked
-> >      by Christoph and Bart.
-> > 2. Or driver should store it as part of an internal list inside
-> > namespace/ctrl data structure ?
-> >      As Bart pointed out, here we might need to send one more fail
-> >      request later if copy_write fails to land in same driver.
-> 
-> Hi Nitesh,
-> 
-> Consider the following example: dm-linear is used to concatenate two
-> block devices. An NVMe device (LBA 0..999) and a SCSI device (LBA
-> 1000..1999). Suppose that a copy operation is submitted to the dm-linear
-> device to copy LBAs 1..998 to LBAs 2..1998. If the copy operation is
+During LPC 2022, Josh Triplett proposed io_uring_spawn as a mechanism to
+fork and exec new processes through io_uring [1].  The goal, according
+to him, was to have a very efficient mechanism to quickly execute tasks,
+eliminating the multiple roundtrips to userspace required to fork,
+perform multiple $PATH lookup and finally execve.  In addition, he
+mentioned this would allow for a more simple implementation of
+preparatory tasks, such as file redirection configuration, and handling
+of stuff like posix_spawn_file_actions_t.
 
-Sorry, I don't think that's a valid operation -- 1998 - 2 = 1996 and 998
-- 1 is 997, so these ranges are of different lengths.
+This RFC revives his original patchset.  I fixed all the pending issues
+I found with task submission, including the issue blocking the work at
+the time, a kernel corruption after a few spawns, converted the execve
+command into execveat* variant, cleaned up the code and surely
+introduced a few bugs of my own along the way.  At this point, I made it
+an RFC because I have a few outstanding questions about the design, in
+particular whether the CLONE context would be better implemented as a
+special io-wq case to avoid the exposure of io_issue_sqe and
+duplication of the dispatching logic.
 
-I presume you're trying to construct an operation which is entirely
-reading within the first device, and then is going to write across both
-devices.  So let's say you want to read 1-900 and write to 501-1400.
+I'm also providing the liburing support in a separate patchset,
+including a testcase that exemplifies the $PATH lookup mechanism
+proposed by Josh.
 
-> submitted as two separate operations (REQ_OP_COPY_SRC and
-> REQ_OP_COPY_DST) then the NVMe device will receive the REQ_OP_COPY_SRC
-> operation and the SCSI device will receive the REQ_OP_COPY_DST
-> operation. The NVMe and SCSI device drivers should fail the copy operations
-> after a timeout because they only received half of the copy
-> operation.
+Thanks,
 
-... no?  The SRC operation succeeds, but then the DM driver gets the DST
-operation and sees that it crosses the boundary and fails the DST op.
-Then the pair of ops can be retried using an in-memory buffer.
+[1]  https://lwn.net/Articles/908268/
 
-I'm not quite clear on the atomicity; whether there could be an initial
-copy of 500-900 to 1000-1400 and then a remap of 1-499 to 501-999.
+Gabriel Krisman Bertazi (6):
+  io_uring: Drop __io_req_find_next_prep
+  io_uring: Expose failed request helper in internal header
+  kernel/fork: Don't inherit PF_USER_WORKER from parent
+  fs/exec: Expose do_execveat symbol
+  io_uring: Let commands run with current credentials
+  io_uring: Let ->issue know if it was called from spawn thread
+
+Josh Triplett (3):
+  kernel/fork: Add helper to fork from io_uring
+  io_uring: Introduce IORING_OP_CLONE
+  io_uring: Introduce IORING_OP_EXEC command
+
+ fs/exec.c                      |   2 +-
+ include/linux/binfmts.h        |   5 +
+ include/linux/io_uring_types.h |   3 +
+ include/linux/sched/task.h     |   1 +
+ include/uapi/linux/io_uring.h  |   3 +
+ io_uring/Makefile              |   2 +-
+ io_uring/io_uring.c            |  27 ++---
+ io_uring/io_uring.h            |   8 ++
+ io_uring/opdef.c               |  18 +++
+ io_uring/opdef.h               |   2 +
+ io_uring/spawn.c               | 195 +++++++++++++++++++++++++++++++++
+ io_uring/spawn.h               |  13 +++
+ kernel/fork.c                  |  21 ++++
+ 13 files changed, 279 insertions(+), 21 deletions(-)
+ create mode 100644 io_uring/spawn.c
+ create mode 100644 io_uring/spawn.h
+
+-- 
+2.47.0
+
 

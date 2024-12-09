@@ -1,120 +1,136 @@
-Return-Path: <io-uring+bounces-5355-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5356-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434039EA11B
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 22:17:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF609EA1A8
+	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 23:14:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19B31162A96
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 21:17:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0222928405B
+	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 22:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784F7153828;
-	Mon,  9 Dec 2024 21:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B8419D09C;
+	Mon,  9 Dec 2024 22:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1p5T7VTg"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="jDq10gFK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E590B49652
-	for <io-uring@vger.kernel.org>; Mon,  9 Dec 2024 21:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A91E19D090;
+	Mon,  9 Dec 2024 22:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733778971; cv=none; b=gXL4HCOPVc08Xtx47bQkNMwcf3zmyigFq1h4RfUZll+SaG3624o62yqYO6Rz8j9kppDoqeBiPlnDFPLomhFRnpoW7h+FxKByRIaL34UWWhXmzY9PtmpSY/P/pgUHEkLwHbvC2aspk1N3YLZU6uKcdGZATWnJ2J1WT5jE8nT2A2U=
+	t=1733782437; cv=none; b=dvE8rGeVIMBRW/NDws6dugIfz8cekkhWvYopguqlrJWAOm8hnGoOF9h/hJSgD2ZLoZwIUr4ir91bwAR2rNbgm5yz0h8T+nL2LTSgrDpzUPiIiHkdTDz66V75Sl+boteLc/iLRODMRY09wdlX2z7xB0karAuN3uUYdcewnPzF2wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733778971; c=relaxed/simple;
-	bh=e71bzvWSAy/tCVJZHVAa2ZiVacG6qkebfBnhFiZFjjU=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jr4e83ABX7LcAMXKPyYWwyBVmRZOKD82KY2ni2Kj+v1d2PEZHDjPrWLGF35vVfGtZnsVQs725aNxMnWHV0qFx+Eqk953Gqghg2VK5AjOEag9jAusUr9C6xb7e+VHcjehiq6SZJTOxwDqumfV6I0iKhZcg3u9gzceB8Ngk14Vt5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1p5T7VTg; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3eb5bd4f9daso606193b6e.1
-        for <io-uring@vger.kernel.org>; Mon, 09 Dec 2024 13:16:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733778965; x=1734383765; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pMOF9IP8EoUOdTpFv1dm+2zvfhVGJ04UhfRGaWmPKZo=;
-        b=1p5T7VTg6a5H6/w2Hs8QUapi8tflo/Kmj1VGl74IgHfMhEIe/F1Ju4G/YtO14fBI2g
-         sBWyCTB8Ve9wMapM+y8EDOw9jfG3xToDlOKu3EhxFV0oTRnp76Pda/fWVk6MOy/2lvs7
-         Ns0ttfbY8h8Ha249/fhsRwNI2y/GEh32ZJNZ862EZLxrPunMfFGATHfSTljMBdymQkrx
-         y/wPRJd0IPW0ytc+/PTyMAbLAS9zHjyGRqPIzBOTGG3rqL0uybiMSwz6Fn/UkB3PfESY
-         z96sjMg0iZ/EFkwuqbZKt8al/Nzp2IcujcZZXXS7EJVrSDJVVl/5mDJbh0+YlmkoPLJq
-         Zd4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733778965; x=1734383765;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pMOF9IP8EoUOdTpFv1dm+2zvfhVGJ04UhfRGaWmPKZo=;
-        b=QkC3lELpxSMfO36fg0Uw9kXfxNcxQERO1mEjlLrmbARN77LXGl33blu8n+he8Pv+vD
-         jEY9B6sGlJppS5Zb8yLDQrcyxR2CGPPNzhPd5C+yYBD9UvZd7XfBus2h6I5L/FNCRddT
-         v8Ht12//oLmdZaYoFwh5EbuAnCtXO8GVvV4Yq8XnTPGbfvKpYJPklsVAW/114eM3ypFI
-         ThMH2xuNUgktkwRaNJqbUmvGOCKmgMUfKceeyjcEPR/3EERr1NP5xZ3x6JXMVnpEZQWO
-         KnVlg6fgfJanXeMmTTFJGHr3CQpJXIJo+l7CjHkbgj55TAinZZ05MTtDipR9J1VRlDyI
-         g/hg==
-X-Gm-Message-State: AOJu0YwtXu5Fj4diLH7ohJGKMVNinf9vpprQLl7gUxofKf+PqVGpDYoW
-	6WSLFD8KQ33MeDo8T8aGxXLjTf5dSx1HB5L/yseG/VWlZw6XXwciOAgDPGsKYpI=
-X-Gm-Gg: ASbGncvYb5Nz1tVhXr4xrWoQXDNr8c1o9BlHTCQ6pq4Ypd7w9awcW7dqlX+Sok0VEuv
-	SvdSWJfiP8KDYFz0ZBVZawDUZ8jJd31ToIZ6e6nVPJNe1P7OS0Qv7cT3DQIqIv9qi4dxaaTC2TD
-	lmV7/MIHBxLKbRPqUT67l8rkynr0JRhDKjJvicFZK6GpuPjXH7ZaQp9diS5o2VEHhgseB1opjZa
-	TQGj/sSqC3qEr8lyY9lQRoPvKR1iK10Mhn5+iaW8c3u
-X-Google-Smtp-Source: AGHT+IFtwA6zFjPePk2iNE0P9CmlCjVdWPvrx52YXii9jikvd8pJ7B5026tD0JIRbCI1Au6DOPJoZQ==
-X-Received: by 2002:a05:6808:202a:b0:3e7:a201:dc31 with SMTP id 5614622812f47-3eb66e13c8bmr1308210b6e.23.1733778964755;
-        Mon, 09 Dec 2024 13:16:04 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71dfa0ec8a9sm520329a34.31.2024.12.09.13.16.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 13:16:04 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1731987026.git.asml.silence@gmail.com>
-References: <cover.1731987026.git.asml.silence@gmail.com>
-Subject: Re: [PATCH liburing 0/4] test kernel allocated regions
-Message-Id: <173377896392.323933.10570370010328158212.b4-ty@kernel.dk>
-Date: Mon, 09 Dec 2024 14:16:03 -0700
+	s=arc-20240116; t=1733782437; c=relaxed/simple;
+	bh=Zoicv6FCB+iFzMQfrU4Z9XfeuHWSrSqyKjxadK6Xa+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MLDV5Aw7cIbs5lup6f/Mgy5Jxd5JWGkxqGRVre65B9kh0wTyQvtm5wYiOvahzkI3eG6nC+vTFQ+SUuvypmZNXuqY6zx24kpDg1NGWvAc9eM4936HevFtt0fI+UnYJYH0xWUcN4Zb2XbgOQSDKjR0K6KAJULQ2zvhtxFJSUhh7BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=jDq10gFK; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Y6bjv2dDszlfflB;
+	Mon,  9 Dec 2024 22:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1733782429; x=1736374430; bh=IQKVDEMj0TrHltVURdtOup6I
+	IRHQAQ4lIbXGduLnT6I=; b=jDq10gFK/44haFYNLdurY4fNR+uBNg0nU4knZqPa
+	ibGTnIO0Rl5EA+MPlZ4I5pCwvbTrPvQCB0DiYqmkZrE3zzRRmiECLY4uOJmZeKv7
+	OvGmexAE5Z2hai0js6fM7Rxwg9PbyphTBqFEKalOQQwR3nhHwRigEY0paW1OxGug
+	M4l/G846p7QRGdNb/z3j99331bgyzQ4FIDPiarmykDUolWZSB4WwgRcPCZmftVms
+	Djmn6GlTt3+3AMAUhRq8HUJHiFM0NdmTdZ3XvlxPqfEGKY9Aqo41s+CwgyysZ5v1
+	fcIIUCBF06cRgzg2HVDqMe/aiIe8MCu1CPv879TXpzViqQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id jToVKEuMeHKC; Mon,  9 Dec 2024 22:13:49 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Y6bjf55d1zlfflY;
+	Mon,  9 Dec 2024 22:13:41 +0000 (UTC)
+Message-ID: <c639f90f-bdd1-4808-aeb7-e9b667822413@acm.org>
+Date: Mon, 9 Dec 2024 14:13:40 -0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-86319
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+To: Nitesh Shetty <nj.shetty@samsung.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Javier Gonzalez <javier.gonz@samsung.com>,
+ Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "joshi.k@samsung.com" <joshi.k@samsung.com>
+References: <d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
+ <2b5a365a-215a-48de-acb1-b846a4f24680@acm.org>
+ <20241111093154.zbsp42gfiv2enb5a@ArmHalley.local>
+ <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
+ <20241112135233.2iwgwe443rnuivyb@ubuntu>
+ <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
+ <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
+ <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
+ <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
+ <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
+ <CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
+ <20241205080342.7gccjmyqydt2hb7z@ubuntu>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241205080342.7gccjmyqydt2hb7z@ubuntu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
+On 12/5/24 12:03 AM, Nitesh Shetty wrote:
+> But where do we store the read sector info before sending write.
+> I see 2 approaches here,
+> 1. Should it be part of a payload along with write ?
+>  =C2=A0=C2=A0=C2=A0=C2=A0We did something similar in previous series wh=
+ich was not liked
+>  =C2=A0=C2=A0=C2=A0=C2=A0by Christoph and Bart.
+> 2. Or driver should store it as part of an internal list inside
+> namespace/ctrl data structure ?
+>  =C2=A0=C2=A0=C2=A0=C2=A0As Bart pointed out, here we might need to sen=
+d one more fail
+>  =C2=A0=C2=A0=C2=A0=C2=A0request later if copy_write fails to land in s=
+ame driver.
 
-On Wed, 20 Nov 2024 23:39:47 +0000, Pavel Begunkov wrote:
-> Patch 1 excersices one additional failure path for user provided regions,
-> and the rest test kernel allocated regions.
-> 
-> Pavel Begunkov (4):
->   tests/reg-wait: test registering RO memory
->   test/reg-wait: basic test + probing of kernel regions
->   test/reg-wait: add allocation abstraction
->   test/reg-wait: test kernel allocated regions
-> 
-> [...]
+Hi Nitesh,
 
-Applied, thanks!
+Consider the following example: dm-linear is used to concatenate two
+block devices. An NVMe device (LBA 0..999) and a SCSI device (LBA
+1000..1999). Suppose that a copy operation is submitted to the dm-linear
+device to copy LBAs 1..998 to LBAs 2..1998. If the copy operation is
+submitted as two separate operations (REQ_OP_COPY_SRC and
+REQ_OP_COPY_DST) then the NVMe device will receive the REQ_OP_COPY_SRC
+operation and the SCSI device will receive the REQ_OP_COPY_DST
+operation. The NVMe and SCSI device drivers should fail the copy=20
+operations after a timeout because they only received half of the copy
+operation. After the timeout the block layer core can switch from
+offloading to emulating a copy operation. Waiting for a timeout is
+necessary because requests may be reordered.
 
-[1/4] tests/reg-wait: test registering RO memory
-      commit: 67a8f570f9e14aef41c880d60edb675f4517f267
-[2/4] test/reg-wait: basic test + probing of kernel regions
-      commit: 30ce99006af9403ffdb84ea31223fb0c13f7612e
-[3/4] test/reg-wait: add allocation abstraction
-      commit: b526f2354b49acc120ff9abd9cd245ef62f07325
-[4/4] test/reg-wait: test kernel allocated regions
-      commit: 895b45b59e10b543f5c0b9d901d9f39da7687c07
+I think this is a strong argument in favor of representing copy
+operations as a single operation. This will allow stacking drivers
+as dm-linear to deal in an elegant way with copy offload requests
+where source and destination LBA ranges map onto different block
+devices and potentially different block drivers.
 
-Best regards,
--- 
-Jens Axboe
+Thanks,
 
-
-
+Bart.
 

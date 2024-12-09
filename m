@@ -1,114 +1,120 @@
-Return-Path: <io-uring+bounces-5354-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5355-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C041F9EA0ED
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 22:14:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 434039EA11B
+	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 22:17:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E541668B3
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 21:14:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19B31162A96
+	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 21:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4800919D093;
-	Mon,  9 Dec 2024 21:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784F7153828;
+	Mon,  9 Dec 2024 21:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EX99a9N2"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1p5T7VTg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC5C19B5BE
-	for <io-uring@vger.kernel.org>; Mon,  9 Dec 2024 21:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E590B49652
+	for <io-uring@vger.kernel.org>; Mon,  9 Dec 2024 21:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733778830; cv=none; b=h7vE0NXBl1MxpmwRapfHizIoO/PGkfmyMSAGlwwMHqmu5yJi6sE0RihfvEkwE0K9P0LOBKrGrLQfPXtOg6AyEDQQSqFrKnnGeMLlAkKo5Kd8KdmZ8ZRq2GL02xs8gw9U8LnJP5Y/0ImSyIX1PWPK/o57dddbnzmUwpI8FVjOlt4=
+	t=1733778971; cv=none; b=gXL4HCOPVc08Xtx47bQkNMwcf3zmyigFq1h4RfUZll+SaG3624o62yqYO6Rz8j9kppDoqeBiPlnDFPLomhFRnpoW7h+FxKByRIaL34UWWhXmzY9PtmpSY/P/pgUHEkLwHbvC2aspk1N3YLZU6uKcdGZATWnJ2J1WT5jE8nT2A2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733778830; c=relaxed/simple;
-	bh=NHf4zQZ1guLHSVFEyaYqwJHGnh4DR//biRYgCiS5f34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=q4HxbZaYjodxnDxjdPveXpVR1C3ufqD4aNTnigWmj63SrDadID9Z72r2ZtpPHoEnMlZJAhaplnUCzCgD4HGRydJu6+XCIP5o7NrpkPtBTkCm9wAqdKhjA9956NgefsLWNWjPgBYkaFaThXMUrPsqwfD/iBa3dCYYkk+d74VQedM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EX99a9N2; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-435004228c0so6950725e9.0
-        for <io-uring@vger.kernel.org>; Mon, 09 Dec 2024 13:13:48 -0800 (PST)
+	s=arc-20240116; t=1733778971; c=relaxed/simple;
+	bh=e71bzvWSAy/tCVJZHVAa2ZiVacG6qkebfBnhFiZFjjU=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jr4e83ABX7LcAMXKPyYWwyBVmRZOKD82KY2ni2Kj+v1d2PEZHDjPrWLGF35vVfGtZnsVQs725aNxMnWHV0qFx+Eqk953Gqghg2VK5AjOEag9jAusUr9C6xb7e+VHcjehiq6SZJTOxwDqumfV6I0iKhZcg3u9gzceB8Ngk14Vt5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1p5T7VTg; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3eb5bd4f9daso606193b6e.1
+        for <io-uring@vger.kernel.org>; Mon, 09 Dec 2024 13:16:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733778827; x=1734383627; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pjppuwRNGRfKc20bu5r5ntnx3dVlzentUmiO0zMtJ+g=;
-        b=EX99a9N2CYZyC6KB+vQL7nPsXFQAsIHK8D9KNo2KXoWRDlswrF0N3CEJPNEjRGNPXz
-         5k/1vYJNiqCBePkVTvnZWJ+RKM3L6NQsrVsIJSJ48KPGhMr8V3R8TbSJaNWYxVHma75x
-         PHgeG7HBTyf/3TZYDxoaZaoFQ0zL8C5U64zbmUe7fBrOuwa/+26kLABiOIIGNNhI/En3
-         ABrccl6a1KBABnecOjwlXvnmiufQCcKni6FFlPpm4Hht55kcj98vOrhOJiJ8ggDjSvI6
-         /choKnlcppR8h/+GjMP2SuJswL7YfVLHLsBj7fG1X+T44vWyqqOgaFFjUF8S4r5WRIEH
-         RU5w==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733778965; x=1734383765; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pMOF9IP8EoUOdTpFv1dm+2zvfhVGJ04UhfRGaWmPKZo=;
+        b=1p5T7VTg6a5H6/w2Hs8QUapi8tflo/Kmj1VGl74IgHfMhEIe/F1Ju4G/YtO14fBI2g
+         sBWyCTB8Ve9wMapM+y8EDOw9jfG3xToDlOKu3EhxFV0oTRnp76Pda/fWVk6MOy/2lvs7
+         Ns0ttfbY8h8Ha249/fhsRwNI2y/GEh32ZJNZ862EZLxrPunMfFGATHfSTljMBdymQkrx
+         y/wPRJd0IPW0ytc+/PTyMAbLAS9zHjyGRqPIzBOTGG3rqL0uybiMSwz6Fn/UkB3PfESY
+         z96sjMg0iZ/EFkwuqbZKt8al/Nzp2IcujcZZXXS7EJVrSDJVVl/5mDJbh0+YlmkoPLJq
+         Zd4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733778827; x=1734383627;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pjppuwRNGRfKc20bu5r5ntnx3dVlzentUmiO0zMtJ+g=;
-        b=eCfeKTtH26yxrNhhn+bhYMzeXGMzfHdBxwXB8cnayqtc+xulImNvE2jwUsxmAzspzD
-         TO7uGGskbdLuXwvicIiZLaQJh1Ldzy0zjvh8KXfbhsmH6IvTQavLik1+LmAC3X5q9jGG
-         4ASYvwT1IRawhPJJDTYKDZCD+iSwcAi5XHKv6MrasqknlMKs77YWOL7gJXYtsui5rJ49
-         yKOnlB2y2RDCXecHA8K67/LLLs4bWI47GaYd9BkBYQKjQNnOX89127UZLnqHnx9tBGUJ
-         OncRImLoBHadEycQwGf/Eqm/gGZ9B0/00KE13RMsWn+Ndh3V5V7Z/oAEzLsRZSW8AB3T
-         k0pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6ZDqjV35mxFbnO0U5eR6eB0hVa72uOucqfFPB4yxBZ93n/FKnp7Xv7h6q674mI6I204jaysyTkA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcAIv4fY2oOHd/rXJnKSCDTgjiuL8SSdHkkoatbJqywAwu2TCy
-	U2BqtHvczxbwNva4S0tGiPgkyk04qpCzxq4YvSZYqvvVzQnJ/5n3
-X-Gm-Gg: ASbGnctZniabM8DI/w3rUOj+Khov8lmhlZucI07WqqF1xhOhl+QoI60jO+pQYoSl9Mb
-	MftLNx4GSKI33WrXj95C+qNOsMyBrLRzNOBZ7LEzFVKlAEms2qlmv5wXo18lu9foxNjwefmN4F8
-	OFqVJLwZSE8kiU/GBRXSFurp7IeygfEUBVCfhJ7xxk+sOBn3UgDJTwb/pX+/k4k//tkTLYiuQLP
-	/NwglGPGgRP2BrpFNIJ8rE0RQwdXGUAdZ9QrxYF76d5dPz6BJzhiTywH5bRZwY=
-X-Google-Smtp-Source: AGHT+IFWc65/sUgE6zxRJMTAbK7UQ/a7JiX+sI43xLCr9YLpH3nk61rzPOMS18QEGUdfDnTy9Bx+NA==
-X-Received: by 2002:a05:600c:3b04:b0:434:a706:c0fb with SMTP id 5b1f17b1804b1-434fff3dcfbmr28133325e9.10.1733778826433;
-        Mon, 09 Dec 2024 13:13:46 -0800 (PST)
-Received: from [192.168.42.90] ([85.255.235.153])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434e83f3958sm104544125e9.25.2024.12.09.13.13.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 13:13:46 -0800 (PST)
-Message-ID: <99c548cd-b384-475d-b16d-07bfb7ba4a80@gmail.com>
-Date: Mon, 9 Dec 2024 21:14:40 +0000
+        d=1e100.net; s=20230601; t=1733778965; x=1734383765;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pMOF9IP8EoUOdTpFv1dm+2zvfhVGJ04UhfRGaWmPKZo=;
+        b=QkC3lELpxSMfO36fg0Uw9kXfxNcxQERO1mEjlLrmbARN77LXGl33blu8n+he8Pv+vD
+         jEY9B6sGlJppS5Zb8yLDQrcyxR2CGPPNzhPd5C+yYBD9UvZd7XfBus2h6I5L/FNCRddT
+         v8Ht12//oLmdZaYoFwh5EbuAnCtXO8GVvV4Yq8XnTPGbfvKpYJPklsVAW/114eM3ypFI
+         ThMH2xuNUgktkwRaNJqbUmvGOCKmgMUfKceeyjcEPR/3EERr1NP5xZ3x6JXMVnpEZQWO
+         KnVlg6fgfJanXeMmTTFJGHr3CQpJXIJo+l7CjHkbgj55TAinZZ05MTtDipR9J1VRlDyI
+         g/hg==
+X-Gm-Message-State: AOJu0YwtXu5Fj4diLH7ohJGKMVNinf9vpprQLl7gUxofKf+PqVGpDYoW
+	6WSLFD8KQ33MeDo8T8aGxXLjTf5dSx1HB5L/yseG/VWlZw6XXwciOAgDPGsKYpI=
+X-Gm-Gg: ASbGncvYb5Nz1tVhXr4xrWoQXDNr8c1o9BlHTCQ6pq4Ypd7w9awcW7dqlX+Sok0VEuv
+	SvdSWJfiP8KDYFz0ZBVZawDUZ8jJd31ToIZ6e6nVPJNe1P7OS0Qv7cT3DQIqIv9qi4dxaaTC2TD
+	lmV7/MIHBxLKbRPqUT67l8rkynr0JRhDKjJvicFZK6GpuPjXH7ZaQp9diS5o2VEHhgseB1opjZa
+	TQGj/sSqC3qEr8lyY9lQRoPvKR1iK10Mhn5+iaW8c3u
+X-Google-Smtp-Source: AGHT+IFtwA6zFjPePk2iNE0P9CmlCjVdWPvrx52YXii9jikvd8pJ7B5026tD0JIRbCI1Au6DOPJoZQ==
+X-Received: by 2002:a05:6808:202a:b0:3e7:a201:dc31 with SMTP id 5614622812f47-3eb66e13c8bmr1308210b6e.23.1733778964755;
+        Mon, 09 Dec 2024 13:16:04 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71dfa0ec8a9sm520329a34.31.2024.12.09.13.16.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 13:16:04 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1731987026.git.asml.silence@gmail.com>
+References: <cover.1731987026.git.asml.silence@gmail.com>
+Subject: Re: [PATCH liburing 0/4] test kernel allocated regions
+Message-Id: <173377896392.323933.10570370010328158212.b4-ty@kernel.dk>
+Date: Mon, 09 Dec 2024 14:16:03 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing 0/4] test kernel allocated regions
-To: Pavel Begunkov <asml.silence@gmail.com>,
- io-uring <io-uring@vger.kernel.org>
-References: <cover.1731987026.git.asml.silence@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1731987026.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-86319
 
-On 11/20/24 23:39, Pavel Begunkov wrote:
+
+On Wed, 20 Nov 2024 23:39:47 +0000, Pavel Begunkov wrote:
 > Patch 1 excersices one additional failure path for user provided regions,
 > and the rest test kernel allocated regions.
-
-This set should still be good to go, I've been testing with it
-all along.
-
-
+> 
 > Pavel Begunkov (4):
->    tests/reg-wait: test registering RO memory
->    test/reg-wait: basic test + probing of kernel regions
->    test/reg-wait: add allocation abstraction
->    test/reg-wait: test kernel allocated regions
+>   tests/reg-wait: test registering RO memory
+>   test/reg-wait: basic test + probing of kernel regions
+>   test/reg-wait: add allocation abstraction
+>   test/reg-wait: test kernel allocated regions
 > 
->   test/reg-wait.c | 181 +++++++++++++++++++++++++++++++++++++++---------
->   1 file changed, 147 insertions(+), 34 deletions(-)
-> 
+> [...]
 
+Applied, thanks!
+
+[1/4] tests/reg-wait: test registering RO memory
+      commit: 67a8f570f9e14aef41c880d60edb675f4517f267
+[2/4] test/reg-wait: basic test + probing of kernel regions
+      commit: 30ce99006af9403ffdb84ea31223fb0c13f7612e
+[3/4] test/reg-wait: add allocation abstraction
+      commit: b526f2354b49acc120ff9abd9cd245ef62f07325
+[4/4] test/reg-wait: test kernel allocated regions
+      commit: 895b45b59e10b543f5c0b9d901d9f39da7687c07
+
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+
 
 

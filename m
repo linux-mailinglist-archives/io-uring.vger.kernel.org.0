@@ -1,46 +1,47 @@
-Return-Path: <io-uring+bounces-5317-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5318-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 531989E94D4
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 13:51:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD389E956E
+	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 14:02:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1761281DEC
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 12:51:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6971D18867D5
+	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 13:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C232248AA;
-	Mon,  9 Dec 2024 12:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF3E22B59F;
+	Mon,  9 Dec 2024 12:55:17 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957292163B5;
-	Mon,  9 Dec 2024 12:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2063228C87;
+	Mon,  9 Dec 2024 12:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733748700; cv=none; b=Wf6q7TogGWN1FjTCESdgd4CXuQb2796h2dI3ugTpIjP/JmG/O/iVgI9T9qVM2u10qh9ygz8lftNmNVv7zeCEEG23LD7qPvVNAkUXtzReww1bGr2kWDVSUqifEnFR7ZViTGD6XAn+8MXrzavRraby2CxU9WmJcaYCU06ux4dC8BI=
+	t=1733748917; cv=none; b=I461Jklf94/5OzsZZWAYnAPmVx++xt/devtcKvV80aZvlz8+vs1tUHJ/Y4tMLHxUAVupSa1RHwdMuAO0MOUIxzAeiYAKzKP+CMxi/5YJiZTA/XvkcgOmr8G5l2JdZQZ0VbGf60TPp00Is173iSg4n9DXAoVWS0O5Ctcitz1sC0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733748700; c=relaxed/simple;
-	bh=RE85zvcWsHYYRWwdh+rcsRyrlZVndsgijOMo5PCCN8g=;
+	s=arc-20240116; t=1733748917; c=relaxed/simple;
+	bh=ISQMp13i+XML2yrJqJzeydPpwbwjqrUhzZ9FHyUhw2Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YXjxxN0Gcrjpe6Up7NkkfEB9spCNrSPgZORKTLyiF/6UypQFSXoNuYYx9XEv56Frt712cUgZLoxXCoaIEhX9zLSTIwoNRncq/dnvF9ZWtu/1JKni+LK7q/vg4CKvKbcqnjV0yNIw7NiFW0oJ5e+6C/BgyQ8kK/0TAQOZOZKECmk=
+	 Content-Type:Content-Disposition:In-Reply-To; b=eX2pREtbE4sDf1evZZ+7pFznKwpOgPp56SBEARzZ6sI7xI1T3As6uPbuGCTLOEm2rWvLV90+2j9DiDuQRQH7JqK/TdOHWcdLx4IrkUyt6BqkB9dkAPex/zzk7casrZCLuafHAdfoLxqWwW9IkJVHJCoe1GIWrmITbcFmah4MGOU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id BB78D68D09; Mon,  9 Dec 2024 13:51:33 +0100 (CET)
-Date: Mon, 9 Dec 2024 13:51:32 +0100
+	id AD09C68D09; Mon,  9 Dec 2024 13:55:11 +0100 (CET)
+Date: Mon, 9 Dec 2024 13:55:11 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Keith Busch <kbusch@meta.com>
 Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
 	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
 	io-uring@vger.kernel.org, sagi@grimberg.me, asml.silence@gmail.com,
+	anuj20.g@samsung.com, joshi.k@samsung.com,
 	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv11 00/10] block write streams with nvme fdp
-Message-ID: <20241209125132.GA14316@lst.de>
-References: <20241206015308.3342386-1-kbusch@meta.com>
+Subject: Re: [PATCHv12 00/12] block write streams with nvme fdp
+Message-ID: <20241209125511.GB14316@lst.de>
+References: <20241206221801.790690-1-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -49,24 +50,26 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241206015308.3342386-1-kbusch@meta.com>
+In-Reply-To: <20241206221801.790690-1-kbusch@meta.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Note: I skipped back to this because v12 only had the log vs v11.
+I just compared this to a crude rebase of what I last sent out, and
+AFAICS the differences are:
 
-On Thu, Dec 05, 2024 at 05:52:58PM -0800, Keith Busch wrote:
-> 
->  Not mixing write hints usage with write streams. This effectively
->  abandons any attempts to use the existing fcntl API for use with
->  filesystems in this series.
+ 1) basically all new io_uring handling due to the integrity stuff that
+   went in
+ 2) fixes for the NVMe FDP log page parsing
+ 3) drop the support for the remapping of per-partition streams
+ 
+conceptually this all looks fine to me.  I'll throw in a few nitpicks
+on the nvme bits, and I'd need to get up to speed a bit more on the
+io_uring bits before commenting useful.
 
-That's not true as far as I can tell given that this is basically the
-architecture from my previous posting.  The block code still maps the
-rw hints into write streams, and file systems can do exactly the same.
-You just need to talk to the fs maintainers and convince them it's a
-good thing for their particular file system.  Especially for simple
-file systems that task should not be too hard, even if they might want
-to set a stream or two aside for fs usage.  Similarly a file system
-can implement the stream based API.
+One thing that came I was pondering for a new version is if statx
+really is the right vehicle for this as it is a very common fast-path
+information.  If we had a separate streaminfo ioctl or fcntl it might
+be easier to leave a bit spare space for extensibility.  I can try to
+prototype that or we can leave it as-is because everyone is tired of
+the series.
 
 

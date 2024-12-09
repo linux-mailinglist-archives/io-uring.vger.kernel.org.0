@@ -1,95 +1,95 @@
-Return-Path: <io-uring+bounces-5304-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5305-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59259E8D5B
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 09:27:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D539E8D5F
+	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 09:29:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FB0C282645
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 08:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50C84163D2B
+	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 08:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335EA215191;
-	Mon,  9 Dec 2024 08:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBD01C2DA2;
+	Mon,  9 Dec 2024 08:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UiK7P4nS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UsRaztyf";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UiK7P4nS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UsRaztyf"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WF3WZ7Rg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IzbpKzuE";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WF3WZ7Rg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IzbpKzuE"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8101C374EA;
-	Mon,  9 Dec 2024 08:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD93374EA;
+	Mon,  9 Dec 2024 08:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733732867; cv=none; b=bylCg5T6Bm5suUid7l8RMEXLEbR6ujay1lxL+PTU7eJaZgnDom0Zj6UXTGGS5cjflnSsgeYO6H+mjkmxgUGEKPLaUjwQy1tzMnK/r+OwA/ygwiMJ1o9jcsLzQJndpLTVVNTv0vmCLh1na8chBok8lgva1mztNFOROv+UZzqNv1o=
+	t=1733732980; cv=none; b=P/hr08Orm34n1AzYMInUqjD1IFT+kWB3nG3/UToi9+HV+XNKUmjYTeFAq/SmtgVkXfsQ4uvdLrRjUj23nNrSCVKvf2mqh+cjIvpvfY9Eo8hxb0VTAqezTGh2kPOaU0CYaShQ6whFqgpT94tutNSeti7UcP75z8Sa9Zs1eZbQ+z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733732867; c=relaxed/simple;
-	bh=L1Kle1p8gw3b4xRLAnJprHGjpqHEOAP8LLmQuZtMSNk=;
+	s=arc-20240116; t=1733732980; c=relaxed/simple;
+	bh=7Mbhoe4WjVsfqdwY/IKcsiT02FOUO1FubG5PSm7zCo4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xx43swmAw1Fyz+NQ4DFoIYpVLuOllmUgZv7Opg7utx/41G7pJHo5S65pf495qiRstVHdGi20TEcYybBFIhFB5sVjhELmpSzfgwCP2JOlKbhZqztI//cEeLH1dpDpx8jb0ux6jhE9zKPnbsSytzwquRf+TwF4EBB6SvIeY2aHrmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UiK7P4nS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UsRaztyf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UiK7P4nS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UsRaztyf; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=eoqrDePc6SIGsExlVFcpUkZFsKVjixS0k764xJBrUYQEF3ZF3My+XRZxPVgnlcoAglz7uAq+8NPlOfKAajKqfZ83DyxQelk1YNvpAhBPXbVcu8Jn2qTo/dXWB3zLqpO2M2korihlpps0dpeETBe2WhsryKC/P9NztGnt6RvzriQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WF3WZ7Rg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IzbpKzuE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WF3WZ7Rg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IzbpKzuE; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0015A21160;
-	Mon,  9 Dec 2024 08:27:43 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6A6D520653;
+	Mon,  9 Dec 2024 08:29:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733732864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1733732977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mERKmteGMVMhlEcxx4GuYhnsdA7nWRdbAD9zSTOjz/o=;
-	b=UiK7P4nSoX6587tH70cGOP7kiSyI/jLorzPyzeqpJwzTFA6J5ncB4kt5FO/poE6CVCe3kB
-	OwU1STMkzWREdX7l0L4U8HEBq42EEqzUmy+LeDD5QzQEkV6pBTyr30816jikRr7fEG5+N7
-	aKjjugdgO1oCgfFcBe6mhTsOKYv6p3Q=
+	bh=RtMhn/ytJn4lebYTKmH6iouLQnLKkE93zAmSyItthAo=;
+	b=WF3WZ7RgNeLn1XmG6OuOw1lI0dPi3GjG0DhtY0c/qkPMyrcnYBE06FDMxqiIu+gVC6tVFE
+	RlzdpfaruKePXapxrZG5QBHXhrcqER7gPoARrsQctupAeG7CUSDgR7gbR3w3M/pQ2mQbfB
+	RdtkUG2yeazfy2maYxCnjnpm6gxsVtg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733732864;
+	s=susede2_ed25519; t=1733732977;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mERKmteGMVMhlEcxx4GuYhnsdA7nWRdbAD9zSTOjz/o=;
-	b=UsRaztyf3SnX1F2OOl3OB/1G7MEs2mDZzZEavVQeyR1zd8Kuv6ZYW9wOj/qeRIf0v3RYKq
-	C9NQgAdFdRDehpAw==
-Authentication-Results: smtp-out1.suse.de;
+	bh=RtMhn/ytJn4lebYTKmH6iouLQnLKkE93zAmSyItthAo=;
+	b=IzbpKzuE4k8fmGEGDQKKIx5mrimhtAOPZEMjgFJZkLua9QeSxL9xN6K/PpVKc/UavtAcvr
+	5vQesqaSHVdxITAQ==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733732864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1733732977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mERKmteGMVMhlEcxx4GuYhnsdA7nWRdbAD9zSTOjz/o=;
-	b=UiK7P4nSoX6587tH70cGOP7kiSyI/jLorzPyzeqpJwzTFA6J5ncB4kt5FO/poE6CVCe3kB
-	OwU1STMkzWREdX7l0L4U8HEBq42EEqzUmy+LeDD5QzQEkV6pBTyr30816jikRr7fEG5+N7
-	aKjjugdgO1oCgfFcBe6mhTsOKYv6p3Q=
+	bh=RtMhn/ytJn4lebYTKmH6iouLQnLKkE93zAmSyItthAo=;
+	b=WF3WZ7RgNeLn1XmG6OuOw1lI0dPi3GjG0DhtY0c/qkPMyrcnYBE06FDMxqiIu+gVC6tVFE
+	RlzdpfaruKePXapxrZG5QBHXhrcqER7gPoARrsQctupAeG7CUSDgR7gbR3w3M/pQ2mQbfB
+	RdtkUG2yeazfy2maYxCnjnpm6gxsVtg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733732864;
+	s=susede2_ed25519; t=1733732977;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mERKmteGMVMhlEcxx4GuYhnsdA7nWRdbAD9zSTOjz/o=;
-	b=UsRaztyf3SnX1F2OOl3OB/1G7MEs2mDZzZEavVQeyR1zd8Kuv6ZYW9wOj/qeRIf0v3RYKq
-	C9NQgAdFdRDehpAw==
+	bh=RtMhn/ytJn4lebYTKmH6iouLQnLKkE93zAmSyItthAo=;
+	b=IzbpKzuE4k8fmGEGDQKKIx5mrimhtAOPZEMjgFJZkLua9QeSxL9xN6K/PpVKc/UavtAcvr
+	5vQesqaSHVdxITAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9414C138D2;
-	Mon,  9 Dec 2024 08:27:43 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F0B4B13AF4;
+	Mon,  9 Dec 2024 08:29:36 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 46FIIv+pVmc9DQAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 09 Dec 2024 08:27:43 +0000
-Message-ID: <76facd58-e1a6-41bd-b4df-45c19683c05b@suse.de>
-Date: Mon, 9 Dec 2024 09:27:43 +0100
+	id g3S/OHCqVmfoDQAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 09 Dec 2024 08:29:36 +0000
+Message-ID: <016cce77-a71e-4bef-9712-f469c45653dd@suse.de>
+Date: Mon, 9 Dec 2024 09:29:36 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -97,20 +97,21 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv12 04/12] block: introduce max_write_streams queue limit
+Subject: Re: [PATCHv12 05/12] block: introduce a write_stream_granularity
+ queue limit
 To: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
  linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
  linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
 Cc: sagi@grimberg.me, asml.silence@gmail.com, anuj20.g@samsung.com,
  joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
 References: <20241206221801.790690-1-kbusch@meta.com>
- <20241206221801.790690-5-kbusch@meta.com>
+ <20241206221801.790690-6-kbusch@meta.com>
 Content-Language: en-US
 From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20241206221801.790690-5-kbusch@meta.com>
+In-Reply-To: <20241206221801.790690-6-kbusch@meta.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
+X-Spam-Score: -2.80
 X-Spamd-Result: default: False [-2.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -133,24 +134,23 @@ X-Spamd-Result: default: False [-2.80 / 50.00];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid,lst.de:email]
-X-Spam-Score: -2.80
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email,lst.de:email]
 X-Spam-Flag: NO
+X-Spam-Level: 
 
 On 12/6/24 23:17, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
+> From: Christoph Hellwig <hch@lst.de>
 > 
-> Drivers with hardware that support write streams need a way to export how
-> many are available so applications can generically query this.
+> Export the granularity that write streams should be discarded with,
+> as it is essential for making good use of them.
 > 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> [hch: renamed hints to streams, removed stacking]
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
 > ---
->   Documentation/ABI/stable/sysfs-block | 7 +++++++
+>   Documentation/ABI/stable/sysfs-block | 8 ++++++++
 >   block/blk-sysfs.c                    | 3 +++
->   include/linux/blkdev.h               | 9 +++++++++
->   3 files changed, 19 insertions(+)
+>   include/linux/blkdev.h               | 7 +++++++
+>   3 files changed, 18 insertions(+)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 

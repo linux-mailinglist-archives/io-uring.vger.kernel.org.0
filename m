@@ -1,78 +1,63 @@
-Return-Path: <io-uring+bounces-5372-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5373-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393F69EA320
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 00:50:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A419C9EA394
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 01:22:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85F2518817EC
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 00:22:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC571522A;
+	Tue, 10 Dec 2024 00:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="rPJYrBog"
+X-Original-To: io-uring@vger.kernel.org
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6A73281EEA
-	for <lists+io-uring@lfdr.de>; Mon,  9 Dec 2024 23:50:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CC419D88F;
-	Mon,  9 Dec 2024 23:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="DdBdyI+4"
-X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291D01E48A
-	for <io-uring@vger.kernel.org>; Mon,  9 Dec 2024 23:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C1F380;
+	Tue, 10 Dec 2024 00:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733788233; cv=none; b=RUmsbeIURQJL89Aq9l8FGdPjTAeIAFXVu5xbDsg5X2gpGh4TprM3i51VtCgvqVWfswoiPykbUZW6nzm2DZZK9OgAfoPXEHwtXpfxM35opXJaeTOph1rm3L6tIQ3QIVTCYa/iFfJq1w+H+aattNvH3NltVB1JcFTgTsJ54PtLunk=
+	t=1733790166; cv=none; b=gDuRDyXR4cpkd07aREpx28ojxTs/XPS3PcH5SvN+Sl30ShkdSQSmatCmZT5969ki88JfATyrunlSPRNBItdtKR2nDOk0a5ai3dT6VQ7T23M2Ugj8LOKjI+LxrIDZCxyEOI8sCqa+fJF3wrF3cAo4aq2FtPcLwXGg1LNsMmr7irc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733788233; c=relaxed/simple;
-	bh=MQ6BGMkiTZAjDeCz1zpPsWTpFJwiXq+uTUSr/QdtR2w=;
+	s=arc-20240116; t=1733790166; c=relaxed/simple;
+	bh=xG648u7NabNoT9l1RnDhFkcp9e9ZHmhgWkAuJwCeqVk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ze9uOk5HreqbTla2Mr+J3Axl6p8Vv6ZmYwJ1Nf/zXI4IpR9YYT755eZeiDZ63AoU2ugNlF2J2Mn9NwCg1HSghbSnEh8N/spT+L+RbX1P/m2uirCk/1pvvsi8Z56OrYGyyIU+w4YLOnw0PeJCUN9Yh/aIE8RQFkW0jYhBbTjHTWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=DdBdyI+4; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ee709715d9so3585208a91.3
-        for <io-uring@vger.kernel.org>; Mon, 09 Dec 2024 15:50:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1733788231; x=1734393031; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/d2FdrRp4xEcwuQRCr1uin+p1CVpDEnp1yj0gHgEBek=;
-        b=DdBdyI+4KWHBMuREHH91F/hEbn1X3+hq1EasOjwYg69aP0T8rbt17FM6TxwAeoWuwp
-         KvDxFI4qKeCB4/wKKCEW/TZDH5xuv8inejw5NqpO514qkcSSsGJmdVthOMS0AkojlbzH
-         hbt5dH5T+6o3zgMiKxHNRNZj3AlSllk+6j+U4HhE/NKPPwvFyC5qwRVxDVaJrfd0iFI3
-         Ofv042kL2Rxp0SkVVvT9UKDpandPUXTfbaZzYnO09/rRReySFG65MJED9A02/6KpbCmZ
-         Ajn4Zp1qmiOR0cSEFYfxZ+ckn5gPHHo/RKzozosAHguDMD27MoTU4+BHezgsSe+vhYNX
-         ilbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733788231; x=1734393031;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/d2FdrRp4xEcwuQRCr1uin+p1CVpDEnp1yj0gHgEBek=;
-        b=iVDvuQrTDF5j48uPFDZ1Svht4fV3Olj9IYvpa0uiZj8yZ27A7o7jui4Oh2fZmxYRHS
-         Lg3xXCaHC82pozmx0TYjn76Wxo2wEdnTDOlGQ2araxp+uzMUSS8X4Pu4szV7G0B6/bFn
-         EguBQRsPHZNHstxDOWdsz7GHfhtABRUCmV49DXcx+pY2VC5Ekm1kI40iVaVjaazcNDuP
-         f67g1Mem4Antrs2Msd2ydiuQ7UKbdjFBaWJiYrP5Rxr3Rs8JpUVRIdzxQnHIfzxE5Hxn
-         ZrRoli3uAQd7jFbrhB00PXqB3ByiVLbgDqIJdeISFCmgsqDds0Lneo/CuHZrqCLsjdsZ
-         SGlg==
-X-Gm-Message-State: AOJu0Yw7lse/Nc/z8AKYyMe36/s9NNazrL9igqepDRvMHt1L2/Y1sEjU
-	Ox89tnXhipWMV+zF610xJfW4yFPVvrgxbftoazryNy53jBAu3ohgndbH4P+g1G8=
-X-Gm-Gg: ASbGncup0SqAk5L0TlG4AQJNi+vm+jMHemV2Urx8qW8w8cBvrcDXUFPoVzJcr8v53dc
-	BK/d4UJqGXJ0+S40n+LeklAahmS7mZ8u8dO87dMamN6MapCbOkNkdlTCyFdXw76G4z3HpppyKjI
-	m0PNjUCm0YZp0rlm7lJqqs7/DyxcqazRj2vKrN5HzowG8N40wvMFebdMfirp2wCbWRnBJUytq4i
-	unLhujqBUdaatKLBmKfaiqU3W4QYFeg3rLdQe9ZUFfsK8Z3aYqCKyDh24Z3JKpJvr1vqTdZk5nk
-	wnPpbT3z1g6xpyg=
-X-Google-Smtp-Source: AGHT+IHvqU5pnkLyZyz2Esg/i0XdEZjhmzi7tZ11Jn/xVvlZMUV7WLcTQnNgJYfzKr2uxDkP6wyRvg==
-X-Received: by 2002:a17:90b:1d52:b0:2ee:c797:e276 with SMTP id 98e67ed59e1d1-2efcef044b1mr3951123a91.0.1733788231391;
-        Mon, 09 Dec 2024 15:50:31 -0800 (PST)
-Received: from ?IPV6:2a03:83e0:1256:1:80c:c984:f4f1:951f? ([2620:10d:c090:500::7:8c2b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef45ff77b9sm8543784a91.36.2024.12.09.15.50.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 15:50:30 -0800 (PST)
-Message-ID: <5a72c16f-311e-46d9-baed-f0a25d2a3dff@davidwei.uk>
-Date: Mon, 9 Dec 2024 15:50:27 -0800
+	 In-Reply-To:Content-Type; b=Im6GLzOVyo+vyIEUwUBeyVw2t3om2cRSq9hvZ4qYq2JrVSTy06eL4XWGKOOAG81A5CyR/Cz+sLul1cZSBHpq6SpAMThAd3ldybRgDti/IIGynoJcVNlaiJVr1c8+hMJP2A1rQeshE8b4L81EZzmGWOGTY/4mi8M07DO8ekB8y/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=rPJYrBog; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Y6fZX0YSDz6ClY8q;
+	Tue, 10 Dec 2024 00:22:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1733790156; x=1736382157; bh=QQ76MNsFLRb0EE0rvSOt9g2F
+	jwM0I0ZKaeF9BRmS5j0=; b=rPJYrBogSCqi+UC1qqPF+fPQLmD+D4x29PRYDWKk
+	2z0zPY8OvP3+Aws0jdIk/FBnmhiGCJzA5bRHBuJpJYfARKeHtzX3dkGpYB4V+0ev
+	z/SUYM5DlwgWvAXz0B8DRg2FupLbd0q23ScpNuuXRabwGKwir5mVYXZ0KVltluel
+	furT9Q3o2xpKIdnskOkViWS5rhspJuFj4iFh1EV2JagH35rvHkzXFsbIUflw6yt2
+	H72/n0GZv8HS5dPC1b/H/78BwGBr+SM1IpBHup9Ghl3Pjwyybo8Mfug9ABaAsqS5
+	yD881NKI39O4cY4+75RYmqq27AmMcdGMQ5gt9pMLa01zvQ==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id xUfLJokapvMy; Tue, 10 Dec 2024 00:22:36 +0000 (UTC)
+Received: from [192.168.3.219] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Y6fZK0GTsz6CmM6d;
+	Tue, 10 Dec 2024 00:22:32 +0000 (UTC)
+Message-ID: <8b1f8abc-b567-4927-a8dc-2214d79f8b42@acm.org>
+Date: Mon, 9 Dec 2024 16:22:31 -0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,112 +65,71 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v8 09/17] io_uring/zcrx: add interface queue and
- refill queue
-To: Simon Horman <horms@kernel.org>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>
-References: <20241204172204.4180482-1-dw@davidwei.uk>
- <20241204172204.4180482-10-dw@davidwei.uk> <20241206160511.GY2581@kernel.org>
-Content-Language: en-GB
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <20241206160511.GY2581@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Nitesh Shetty <nj.shetty@samsung.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Javier Gonzalez <javier.gonz@samsung.com>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "joshi.k@samsung.com" <joshi.k@samsung.com>
+References: <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
+ <20241112135233.2iwgwe443rnuivyb@ubuntu>
+ <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
+ <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
+ <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
+ <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
+ <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
+ <CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
+ <20241205080342.7gccjmyqydt2hb7z@ubuntu>
+ <c639f90f-bdd1-4808-aeb7-e9b667822413@acm.org>
+ <Z1d9xfBwp0e8jxf4@casper.infradead.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <Z1d9xfBwp0e8jxf4@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2024-12-06 08:05, Simon Horman wrote:
-> On Wed, Dec 04, 2024 at 09:21:48AM -0800, David Wei wrote:
->> From: David Wei <davidhwei@meta.com>
->>
->> Add a new object called an interface queue (ifq) that represents a net
->> rx queue that has been configured for zero copy. Each ifq is registered
->> using a new registration opcode IORING_REGISTER_ZCRX_IFQ.
->>
->> The refill queue is allocated by the kernel and mapped by userspace
->> using a new offset IORING_OFF_RQ_RING, in a similar fashion to the main
->> SQ/CQ. It is used by userspace to return buffers that it is done with,
->> which will then be re-used by the netdev again.
->>
->> The main CQ ring is used to notify userspace of received data by using
->> the upper 16 bytes of a big CQE as a new struct io_uring_zcrx_cqe. Each
->> entry contains the offset + len to the data.
->>
->> For now, each io_uring instance only has a single ifq.
->>
->> Signed-off-by: David Wei <dw@davidwei.uk>
+On 12/9/24 3:31 PM, Matthew Wilcox wrote:
+> On Mon, Dec 09, 2024 at 02:13:40PM -0800, Bart Van Assche wrote:
+>> Consider the following example: dm-linear is used to concatenate two
+>> block devices. An NVMe device (LBA 0..999) and a SCSI device (LBA
+>> 1000..1999). Suppose that a copy operation is submitted to the dm-linear
+>> device to copy LBAs 1..998 to LBAs 2..1998. If the copy operation is
 > 
-> ...
-> 
->> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-> 
-> ...
-> 
->> +int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
->> +			  struct io_uring_zcrx_ifq_reg __user *arg)
->> +{
->> +	struct io_uring_zcrx_ifq_reg reg;
->> +	struct io_uring_region_desc rd;
->> +	struct io_zcrx_ifq *ifq;
->> +	size_t ring_sz, rqes_sz;
->> +	int ret;
->> +
->> +	/*
->> +	 * 1. Interface queue allocation.
->> +	 * 2. It can observe data destined for sockets of other tasks.
->> +	 */
->> +	if (!capable(CAP_NET_ADMIN))
->> +		return -EPERM;
->> +
->> +	/* mandatory io_uring features for zc rx */
->> +	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN &&
->> +	      ctx->flags & IORING_SETUP_CQE32))
->> +		return -EINVAL;
->> +	if (ctx->ifq)
->> +		return -EBUSY;
->> +	if (copy_from_user(&reg, arg, sizeof(reg)))
->> +		return -EFAULT;
->> +	if (copy_from_user(&rd, u64_to_user_ptr(reg.region_ptr), sizeof(rd)))
->> +		return -EFAULT;
->> +	if (memchr_inv(&reg.__resv, 0, sizeof(reg.__resv)))
->> +		return -EINVAL;
->> +	if (reg.if_rxq == -1 || !reg.rq_entries || reg.flags)
->> +		return -EINVAL;
->> +	if (reg.rq_entries > IO_RQ_MAX_ENTRIES) {
->> +		if (!(ctx->flags & IORING_SETUP_CLAMP))
->> +			return -EINVAL;
->> +		reg.rq_entries = IO_RQ_MAX_ENTRIES;
->> +	}
->> +	reg.rq_entries = roundup_pow_of_two(reg.rq_entries);
->> +
->> +	if (!reg.area_ptr)
->> +		return -EFAULT;
->> +
->> +	ifq = io_zcrx_ifq_alloc(ctx);
->> +	if (!ifq)
->> +		return -ENOMEM;
->> +
->> +	ret = io_allocate_rbuf_ring(ifq, &reg, &rd);
->> +	if (ret)
->> +		goto err;
->> +
->> +	ifq->rq_entries = reg.rq_entries;
->> +	ifq->if_rxq = reg.if_rxq;
->> +
->> +	ring_sz = sizeof(struct io_uring);
->> +	rqes_sz = sizeof(struct io_uring_zcrx_rqe) * ifq->rq_entries;
-> 
-> Hi David,
-> 
-> A minor nit from my side: rqes_sz is set but otherwise unused in this
-> function. Perhaps it can be removed?
-> 
-> Flagged by W=1 builds.
+> Sorry, I don't think that's a valid operation -- 1998 - 2 = 1996 and 998
+> - 1 is 997, so these ranges are of different lengths.
 
-Hi Simon, thanks for flagging this, I'll remove it in the next version.
+Agreed that the ranges should have the same length. I have been
+traveling and I'm under jet lag, hence the range length mismatch. I 
+wanted to construct a copy operation from the first to the second block
+device: 1..998 to 1001..1998.
+
+>> submitted as two separate operations (REQ_OP_COPY_SRC and
+>> REQ_OP_COPY_DST) then the NVMe device will receive the REQ_OP_COPY_SRC
+>> operation and the SCSI device will receive the REQ_OP_COPY_DST
+>> operation. The NVMe and SCSI device drivers should fail the copy operations
+>> after a timeout because they only received half of the copy
+>> operation.
+> 
+> ... no?  The SRC operation succeeds, but then the DM driver gets the DST
+> operation and sees that it crosses the boundary and fails the DST op.
+> Then the pair of ops can be retried using an in-memory buffer.
+
+Since the second range can be mapped onto the second block device, the
+dm-linear driver can only fail the REQ_OP_COPY_DST operation if it keeps
+track of the source LBA regions of pending copy operations. Which would
+be an unnecessary complexity.
+
+A possible alternative is to specify the source and destination range
+information in every REQ_OP_COPY_SRC and in every REQ_OP_COPY_DST
+operation (see also Damien's email).
+
+Thanks,
+
+Bart.
 

@@ -1,131 +1,139 @@
-Return-Path: <io-uring+bounces-5412-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5413-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DED19EB736
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 17:54:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60999EB73A
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 17:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7406167AB0
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 16:54:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B32EB1881236
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 16:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB342343BB;
-	Tue, 10 Dec 2024 16:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EEF230D01;
+	Tue, 10 Dec 2024 16:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="JPdf85vb"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bCdpW0n9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074FC1BD9CB
-	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 16:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E6D22FE1E
+	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 16:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733849657; cv=none; b=tqyYnc0R8TOxK/NHFL7ZGk/nixgUyLbkN5sogHOIlO1YTkaV86bNkkweHcztYhymo1t77vMCltid7d5k86rhmPYQR41AGxCNX/xzaRp5HRy9ox9udy75sICT8mA9E1E0M5d57tWEpYiDa+elQtUItSanLk3IKa88moMX/vkASC8=
+	t=1733849759; cv=none; b=tL8qC/GHSr5lH/2RE/L2r73GA75KXsgd3mYoiwUKWA2PjmllDcoy7DJRrKZGPA8E0CtaxamOupN1U7Oz/2lebY42c5o0M8kfZJ/jgkKPzIPEhcwZP0nUbUsIDDJOotIs4UM3w4k75+LaSAY2G6OYFwrBieHVmmNRdpvkiSIQXHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733849657; c=relaxed/simple;
-	bh=bqxl1CIIYKwmPZtxdkAyjqzAJBVDP0ffV4559BZ6DJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gv32OV/NshgFpLtrKMOBtjRGMOIVPbThvyUKAtzQ9XTfdY5J+6QzGuWvJFjk3/P6+TRLJB73diAvE9mZpwSSGQFFAtZluKiWMQYb5CJP1bZ0Zig8DhNvFftf5Ad8ojGvELrn0Imnp7mniwbC6/TpyjxMwzdZTD7OAydM2F1MY3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=JPdf85vb; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso4228998a91.0
-        for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 08:54:15 -0800 (PST)
+	s=arc-20240116; t=1733849759; c=relaxed/simple;
+	bh=/LxO6WPdDUxZ8Hgbs/2Wun67rLijCC4KxC688SOw/d4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cDMeVvHnvAGergSkTflFA9nNuOQQTmavMIS5oNmR6ZkJF+IkZTU4xnNWuhZydaZQDbmupfsdUcJyArKAcT0LdBQVxAg/EbEf+JYk3cbnwNkyVTIQeHDgNQRQhVPWryR/yJ8G7eWiFV6xYZKqmGkl1prmmRCMOm1YZGPi9AvnZ4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bCdpW0n9; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4675936f333so180421cf.0
+        for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 08:55:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1733849655; x=1734454455; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3tlCM28/gCfiNIykDUL+CIjEYNxB0b/4lwLtIZm92Rs=;
-        b=JPdf85vbZ/+ml6X3fEj9LVyhxkjpUskMXd7ENqnAEqB+S7Z22eMnUIrh/2WxXogzKt
-         qGvj7Hr5ZKQhvFnMnF8v7/hoXttVknCypOVEDVfpnuBRBBLIVsUb1mfGa4M3+c/L4G6X
-         f9CMP7J0twuCcZsOowyweL2OJD+SCU9lzMqpH6CxVHDiQRP06wfhM5o8tMmLhVNixtA9
-         f7FK9xAUjKdxPFmoELauaInoyuM4Pe5xqGM+VfGFvMwZFoK/2yrHH4Zib5uQ5IwdM4j/
-         +d+/STzi05qBMvct31c2GXGZdrPKGOQCqzrb9ElWJYHEcfFHbrhDqxIEWFgxAVB0ex1o
-         S1qg==
+        d=google.com; s=20230601; t=1733849756; x=1734454556; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W7tKKwXbpN1GVUNkR1kL9d2a06AChiLqalDl9Gjh9wY=;
+        b=bCdpW0n9vVjAxr6pBDxPiP7Rujahlqk0UlGIR+0SOOJeD4/3Ppru/PrTXepERW5UjR
+         qMBy4pqyc2C+9V/MAo4pt+ZlVPBv1HEZLWdkibpLImtP6U8LmD1qahjI9lJmsPEtdf3L
+         7Qes0S9fKJdFatQp1VQW1CgDk3Px8VeXyEBoEwdv2bnFvfY1dfSAlM+NlhlHbKzd1+1p
+         BDbLoLZY3JGtBx8QhLkCOasOVXkQKAK9aUPFXQEpf1iFQoeW0NqOYRk6vb9DPPUYgt8u
+         MnimGIKCPCI+37uTq1muMRUXzSZbR6m1qub5tH+Z4C05Mtdref04XQ7bSWBou+hAvw7/
+         ReSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733849655; x=1734454455;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3tlCM28/gCfiNIykDUL+CIjEYNxB0b/4lwLtIZm92Rs=;
-        b=v233A4Mw+Kvwc1c2wFDmvXppy+xmJvPH/OaBM0me2+ZEnRvxwFZwisZ4tDUk4cZNwY
-         RbAt5pMDT0w9gEhr0v7+Rc+F8bnS5IYfyH3QLOAt9rFdBv+eTIO31De4ekywPn39LOTj
-         xLiSVeDzQNzzTgVREz9Z2fNGXOFLXR+/5XIZFwafp5eMmBNUUQbnCYFzn2nlgAfW4cOb
-         yKTkdPvk6Vsy9KIYhnJtKBWVD6D5X8bJAxJN3X9MGRAWhjYxHZaK+V8xyDnswSeugFMB
-         /bFD2ot4seL+DKDCIaKzJfNXpdMKjIUzgldkcn2/AWcvNPGFL0urBJSbW0wvFbpqSRvz
-         DFTw==
-X-Gm-Message-State: AOJu0Yw1L7M6k0PtvnC65yZTxfmxbcNyzpIjrDkAO4AJiwvexdPdU0Gj
-	M1j49h0qpBNJh0t2cUhuTL8Dn1Zq2SGeyVDr/0AaUvqwBQ2px+YDucwjMraGRIE=
-X-Gm-Gg: ASbGncv4/1EdjDkTH2s+DNTKr/PjpgeMYfy65ZQInDrWCNhtxrLKKJcXmYWniAOruM7
-	jGygS7qR1Hy7jan3bva24CYhLLHdN9WOBtjWZllQAezxh3OKq0bdc0gtNTRZ8Y3XjNoBVXlYTkR
-	bXP9DvdsqGmxMWeerDNGy22SWlZ2X9KbCaFv/m84rQGoE424koQFIy0Mhn7/gScSKNX6ASuuJmi
-	qlfHFR40GN1/mXDUVdqVWeXDsc/+6zxhxDblZUkILDZRAv2svQwbaR65afRzt9FLx1Watv7c0D+
-	a3MPA5l1AJM7PEY=
-X-Google-Smtp-Source: AGHT+IEbGnJeu1ItNoEhpSTmBcJSLUfbZfKsGkLOt7zfegiklcE5jIueF9W/ww1RAn2axD/UyuawHw==
-X-Received: by 2002:a17:90b:2790:b0:2ee:bbd8:2b7e with SMTP id 98e67ed59e1d1-2efcf1384a3mr9656295a91.12.1733849655329;
-        Tue, 10 Dec 2024 08:54:15 -0800 (PST)
-Received: from ?IPV6:2a03:83e0:1256:1:80c:c984:f4f1:951f? ([2620:10d:c090:500::6:fd3a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2161fd39ddcsm70445245ad.86.2024.12.10.08.54.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 08:54:14 -0800 (PST)
-Message-ID: <c635218a-eab6-48af-bc07-0abe7d3606d7@davidwei.uk>
-Date: Tue, 10 Dec 2024 08:54:12 -0800
+        d=1e100.net; s=20230601; t=1733849756; x=1734454556;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W7tKKwXbpN1GVUNkR1kL9d2a06AChiLqalDl9Gjh9wY=;
+        b=jDJLA76bLDbYoqz9Y6Y0f1H3jXC0kOX2WRhUvGA81ZbotAsmUYcm/ULhASPrnDclOK
+         2TfbPotulWOQuun4tnS2kB/SWVUAcW9SvXWkv0GqW0NEOvAgIUAE5SSTepxGut/7Ynxa
+         h2ikFdBLNoCNwOh2eT+wq5CbQHowxlp5Jf52oYND9aqPGDhR7pWWwG8pgI3J3xn+5v3N
+         JbVglcowInUL2WQtIILUwPKO2dwe2O8i+Cb/NXmq232uBBRrSIF6kapkvgiMWk9JCBWh
+         SnkcxdFLpguHM0vBsXVzh8+xGIUarCIlefiJ6962/OFAx1o0Dgsr6z3P2V3pZlk+zK48
+         t3LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIeG5GYnUWOgweT6MZAFXDgMZWjHrL1MA7JP4oCukcpTZdNqahIKIstDG2Pk0ykrpSqoqEHx9dRA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7jkR2y3h8rCgaCXzwRCcIkDvVoUXlIMFk3Fut9yQFI2eEGI4+
+	6qGKyVe/TmBF7245ORyvZ4gZvzCj+7oE7sdz+V4fMbucw732lXEtTeEHg37RaLZrhTTuTsYYRTv
+	m4u2gDJNRwIRkXf0W7H9K7N/pZeSdPaVXOeQm
+X-Gm-Gg: ASbGnctxeoEZAlQX0FmMZlMNQnqOySggI+WrrQVsUjkBEMXa7eHViBsHSNNnMWDJp1f
+	ixg5nfGQCjLYgT6x/IkCQm8ZfMEhfiAInnOg=
+X-Google-Smtp-Source: AGHT+IHlPKeiLD6rlP5LINUtZzJpapiZf38wS5NZhgH5AdGxy6cSCKvr6QshYKht0RWFh9n5cZ+ju+NxtKL7siLDKnQ=
+X-Received: by 2002:a05:622a:1e08:b0:467:5fea:d4c4 with SMTP id
+ d75a77b69052e-467776c91b4mr3272711cf.27.1733849756351; Tue, 10 Dec 2024
+ 08:55:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v8 16/17] net: add documentation for io_uring
- zcrx
-Content-Language: en-GB
-To: Mina Almasry <almasrymina@google.com>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>
-References: <20241204172204.4180482-1-dw@davidwei.uk>
- <20241204172204.4180482-17-dw@davidwei.uk>
- <CAHS8izO29gnvrqtj2jA9m1mNQK2UC9yCHd=Gtn+fA1Mv0+Vthw@mail.gmail.com>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <CAHS8izO29gnvrqtj2jA9m1mNQK2UC9yCHd=Gtn+fA1Mv0+Vthw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241204172204.4180482-1-dw@davidwei.uk> <20241204172204.4180482-12-dw@davidwei.uk>
+ <20241209200156.3aaa5e24@kernel.org>
+In-Reply-To: <20241209200156.3aaa5e24@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Tue, 10 Dec 2024 08:55:44 -0800
+Message-ID: <CAHS8izMSD5+cbidwRukv55wG2b1VsiCD176gvk6_CFy8_wiAsw@mail.gmail.com>
+Subject: Re: [PATCH net-next v8 11/17] io_uring/zcrx: implement zerocopy
+ receive pp memory provider
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org, netdev@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+	Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>, 
+	Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-12-09 09:52, Mina Almasry wrote:
-> On Wed, Dec 4, 2024 at 9:23 AM David Wei <dw@davidwei.uk> wrote:
->>
->> Add documentation for io_uring zero copy Rx that explains requirements
->> and the user API.
->>
->> Signed-off-by: David Wei <dw@davidwei.uk>
->> ---
->>  Documentation/networking/iou-zcrx.rst | 201 ++++++++++++++++++++++++++
->>  1 file changed, 201 insertions(+)
->>  create mode 100644 Documentation/networking/iou-zcrx.rst
->>
->> diff --git a/Documentation/networking/iou-zcrx.rst b/Documentation/networking/iou-zcrx.rst
-> 
-> I think you need a link to Documentation/networking/index.rst to point
-> to your new docs.
-> 
-> ....
-> 
->> +Testing
->> +=======
->> +
->> +See ``tools/testing/selftests/net/iou-zcrx.c``
-> 
-> Link is wrong I think. The path in this series is
-> tools/testing/selftests/drivers/net/hw/iou-zcrx.c.
-> 
+On Mon, Dec 9, 2024 at 8:01=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
+te:
+>
+> On Wed,  4 Dec 2024 09:21:50 -0800 David Wei wrote:
+> > Then, either the buffer is dropped and returns back to the page pool
+> > into the ->freelist via io_pp_zc_release_netmem, in which case the page
+> > pool will match hold_cnt for us with ->pages_state_release_cnt. Or more
+> > likely the buffer will go through the network/protocol stacks and end u=
+p
+> > in the corresponding socket's receive queue. From there the user can ge=
+t
+> > it via an new io_uring request implemented in following patches. As
+> > mentioned above, before giving a buffer to the user we bump the refcoun=
+t
+> > by IO_ZC_RX_UREF.
+> >
+> > Once the user is done with the buffer processing, it must return it bac=
+k
+> > via the refill queue, from where our ->alloc_netmems implementation can
+> > grab it, check references, put IO_ZC_RX_UREF, and recycle the buffer if
+> > there are no more users left. As we place such buffers right back into
+> > the page pools fast cache and they didn't go through the normal pp
+> > release path, they are still considered "allocated" and no pp hold_cnt
+> > is required. For the same reason we dma sync buffers for the device
+> > in io_zc_add_pp_cache().
+>
+> Can you say more about the IO_ZC_RX_UREF bias? net_iov is not the page
+> struct, we can add more fields. In fact we have 8B of padding in it
+> that can be allocated without growing the struct. So why play with
+> biases? You can add a 32b atomic counter for how many refs have been
+> handed out to the user.
 
-Thanks, will fix both.
+Great idea IMO. I would prefer niov->pp_frag_ref to remain reserved
+for pp refs used by dereferencing paths shared with pages and devmem
+like napi_pp_put_page. Using an empty field in net_iov would alleviate
+that concern.
+
+I think I suggested something similar on v7, although maybe I
+suggested putting it in an io_uring specific struct that hangs off the
+net_iov to keep anything memory type specific outside of net_iov, but
+a new field in net_iov is fine IMO.
+
+--=20
+Thanks,
+Mina
 

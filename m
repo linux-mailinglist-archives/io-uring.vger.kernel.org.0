@@ -1,70 +1,70 @@
-Return-Path: <io-uring+bounces-5420-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5421-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B65B9EBB6B
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 22:02:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82F091682BA
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 21:02:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8252B22FAC5;
-	Tue, 10 Dec 2024 21:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="exEi167u";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UVy2CqM0"
-X-Original-To: io-uring@vger.kernel.org
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8634B9EBB7F
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 22:06:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8590D1BD9E9
-	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 21:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35BB286957
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 21:06:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C6C230268;
+	Tue, 10 Dec 2024 21:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="Vuvn2IUI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HPLIYFv3"
+X-Original-To: io-uring@vger.kernel.org
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C0E22FE17
+	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 21:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733864523; cv=none; b=LNyGjg3iEjZGulqd+PVpu7Ac3DlufpFAKsIYghGZNjEYFam9ndgIzXU/xkWg70xGaJ/eKAZ95qjfKNjzouSfpQeWsfP5dqLM+IAfXl8ayI4Zp3EAVT6NtcN8rcNwAB+GZbz1bMQKL9TWC52z31d0eIlrzzUZEGqL/lcTQvxA3qg=
+	t=1733864767; cv=none; b=oPJJsCVgC4lYgUbgTvgvYn7gfvLoufH+LuZqQxgJXeol4jZvv1DYAKaNlsAahbCrZQcQznBludvZgmU8RkVAAMUJVk6EKkeTD1hUA8OV2QjjRmQMnSi82qoPh3jALGUTXNws9ixwHnbSOolWT1ifrWUwKLRzPZ8k159mqvE8hOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733864523; c=relaxed/simple;
-	bh=4r1TMo05ra0mRXeuWRpErjhCqtx44GbwwijeoKgDTO0=;
+	s=arc-20240116; t=1733864767; c=relaxed/simple;
+	bh=+gOhWDoONSdCG20KUQeUhAwE8QN2I2+flDvr5vguhfE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oVDK2Iq5kC5u8AmomP5znWoA7yTUov2Jb3SzqbxsOp+sz2Ek5MqLVIpPO8cqOItISHPagvZYjtTSkUuqQ+7IZycYBuuGFhYJ2Tk7ztIJhPSh4HqhqDFiGSTi9SUAHy0cY17y5i10S9VgHJfJxMRE2/hpFhQDxL7ihh3ycCJf2q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=exEi167u; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UVy2CqM0; arc=none smtp.client-ip=103.168.172.157
+	 Content-Type:Content-Disposition:In-Reply-To; b=o/fOyls8p1gdyynZWe+sRNFdP+yVRFeAH33++NUDABEqcpB6P98Nw+rkI1T3i92ZNq7991OCNDWTJMEAUDTM/g1eBHimGp+ZqpPyukbYar5BoXJ3sC70YrNqdOgSwjTUqeUAuWimEwayQ2fnkjQwuhaw96LMfeFw7JxeJb4Z0HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=Vuvn2IUI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HPLIYFv3; arc=none smtp.client-ip=103.168.172.146
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 5FF3A1140174;
-	Tue, 10 Dec 2024 16:01:59 -0500 (EST)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id CF1D01384162;
+	Tue, 10 Dec 2024 16:06:04 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 10 Dec 2024 16:01:59 -0500
+  by phl-compute-09.internal (MEProxy); Tue, 10 Dec 2024 16:06:04 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	joshtriplett.org; h=cc:cc:content-type:content-type:date:date
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1733864519;
-	 x=1733950919; bh=7CBmR5FSshZ4hRU++KIi+gfh7UPAc3EVL7C+EHW4XhI=; b=
-	exEi167u5kkiMlqJV53GZrg2J3riB29TiIJPifMCHEfsT1oaaFGMNfcVhQc8RgFl
-	R3otq5cezxR4Ylb/vgsGJPsIEy9R67zn/iQvW/eC9o8qBWl6UN6kijoBfbXZcEL3
-	TEDAbklnW46rTKcHw4wBULPXvR4ValaoyUEOXulCudmRZmDSf2jEfSnklxYnc2b5
-	Qis7I/Ldp4/jCqz2z/XmHAR0bRguKTLwRinBC48wYT0oVsu1vf+XjhOUF1pDb5fS
-	KpjP3OzQCVEpOOKWiqCUf7QVVnk75q0hZg/nwv7OolE2lPd7EmoyglR2Q5/6Bx3M
-	xN3tYdsZkUkJ76J4RAXabg==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1733864764;
+	 x=1733951164; bh=zrqer1XdO80Cx0S+KwaOfMLZ9jymNjSfLLZvG9uw7eM=; b=
+	Vuvn2IUItWNS0NtbQKAt/qMu7yzev9B1njHnYii77AKgrrs1On+WcdHQJeKexBUl
+	CrjUon6VV80wmU4se6PSLJ/TPwLBvlZyxUz9lo85wDgQXTGBALZXrKan2i/iiVBl
+	I2BpOQj+4fVYvxNxdGTPuqkHmCf6FFWSV6M3YMuWsLLBvg6xk7YuucU2lPp/bu/F
+	VUWw1nUNgyayoDxwfHH0p7m4yBVT2ZTNNYVIkTOjqQW++L5/zp/dOT3g/Z2KK364
+	3YUy1h505Bj/IifCfb+QDHN8kmjSkNpaTpaERJ9WCKhKjFL8uigvN9qrsy7D0lpF
+	Hzc5bwe5IhRyBn2QJW7dbw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1733864519; x=1733950919; bh=7CBmR5FSshZ4hRU++KIi+gfh7UPAc3EVL7C
-	+EHW4XhI=; b=UVy2CqM0s1Gu/GxWLuBRa/bsu9yGiXSj9Yn8Dnu6VTugVWZNf+A
-	fkw6Z764xV9a6jhsxAXIE2a/4xzJHzMYNZOKnlKlmCtmAvnlkvyQ1I/UBVFYp7Mm
-	CVsfMW+0N4THqhtZOTFq2SZd/OnD4csm1IKet88GZ5q/6Pkun3W69S36FpvR2Ske
-	FByllVGvyKbrdhhzEJFLqizxB0RKvkVmMSH/DxpVH9XKetnywTYDY+t3Rmzi0ryZ
-	ZJkWVAp2sAx+GfQ+lAHjLiN3mUcSqu5/59/eTndvGGB3PFCCKFTkaADmy/HK7jZ6
-	RkJppqkpQXiZoLBHCgFVeHrT1o8doYRl1+A==
-X-ME-Sender: <xms:RqxYZxKX9P7vNMA7T6FDDmyD6VuRoeociHpRjTg_NdNZSrb1yCNZZg>
-    <xme:RqxYZ9KabHZ4FcUakl27gWqsaAi-slyp8rlbYuhhkzeq54PuowHmSO2yOZshbZhVo
-    HVkKa_MAd7Ir4j5xLQ>
-X-ME-Received: <xmr:RqxYZ5vvTsy4omarrXYC9BW-4nCMnZOkfSn2t7Q8ZiaPbe09aMsLeVKtzIhi8NuVdhOfL1GtWapTswwrRpLRiI0XBI8aNw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeekgddugedvucetufdoteggodetrfdotf
+	1733864764; x=1733951164; bh=zrqer1XdO80Cx0S+KwaOfMLZ9jymNjSfLLZ
+	vG9uw7eM=; b=HPLIYFv3UnsBDHRcwxL0A+ZUXfeAQ+TCEAN+FwYKkd6nG0pn0BY
+	CyW7H//zAgQEfc+I3eisvk3FMYLHD6kw4KYq3MhHqFSnE47a0wxVI4bFGlM/qBqp
+	tfm+PsoeTJpCntD4LPlqlqHqsjjq4a1w6zbrDcyPJj0R3DFWnAIHQtNL3mmhLTGW
+	DggcEDVU9/b/AvBQo+z4DZQEPuVzbcMkbyrvaCxDNu6gObtbxRXcMkBPtw7pYsj4
+	O8f06YmplKHgMBDzen+doWYDBTXIZ8SgQUj22/7ty2uEJuUb5XZ/08v4MpIpLX7A
+	n5IifNmhH53jLyKuslfPK+Us1D16P7J+PnA==
+X-ME-Sender: <xms:PK1YZ3WzAnF59mBHHgybsNKKBPTFo3hxbdmxVBnei5zAajo4GzpgEg>
+    <xme:PK1YZ_miM7kwBizdJ7aYXq9eASL89Dal12peiK-8WP6XjrM--Uflf4G0QJSBdZkEa
+    PPXGvrxQWmjSdXieh0>
+X-ME-Received: <xmr:PK1YZzZyVGK6W7f7tdPXhZVfmD1jXIlr1Vv-DLK9LZ3X3j8WYAv5cHUPSx0C2NvKifWL-WesdOPw4VMSox6wAjkEjs4Cag>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeekgddugeegucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
     htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
@@ -76,22 +76,22 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeekgddugedvucetufdoteggod
     hishhmrghnsehsuhhsvgdruggvpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgu
     khdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtph
     htthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:RqxYZyazqHohJlmofNWZ_q-Ii92EfJ5Vh_UVbMX-DU2164eoKWU8nA>
-    <xmx:RqxYZ4YvFCLsV2WjN9R2On018fg20b7W8Vgu8y4P-Pb-qvSHqDGWEQ>
-    <xmx:RqxYZ2A8uSnh8_OMk67qf-A3wZiJqgIl0XmnAj-2z6TE8yasNQd7dw>
-    <xmx:RqxYZ2aGOosGhyf5yObcskaqESYupgZ5mZq-h61-pqHnkjtQTbxW9g>
-    <xmx:R6xYZ_U7tGc-rcixq7tpnfA6TZd_WTMjIV73pGGrtSjNT8SEgbxPRDUl>
+X-ME-Proxy: <xmx:PK1YZyWRPB9EIHrjMuq4-YADPX94Tae_aEw87nLCfg60xDW5e75W3g>
+    <xmx:PK1YZxnPkNdhj8WplYXtAfoCfU5WlfCuv4QB7ya8ilFtYtj9_lYmfA>
+    <xmx:PK1YZ_c_q_xecwTBfLKegpfyqvG2T1Ru1lvMKnKr9NIBVYZG6gZTWQ>
+    <xmx:PK1YZ7G3swwd0rJ2dek7EreBiQLPuPBhMMH93W3qyKY0ZCNt9Zcvvg>
+    <xmx:PK1YZ6AryBLwVIgO7hmMkUeWKiDTVStPllvKLlhMbwgZwTPiZGF1Z-n9>
 Feedback-ID: i83e94755:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 Dec 2024 16:01:58 -0500 (EST)
-Date: Tue, 10 Dec 2024 13:01:57 -0800
+ 10 Dec 2024 16:06:03 -0500 (EST)
+Date: Tue, 10 Dec 2024 13:06:02 -0800
 From: Josh Triplett <josh@joshtriplett.org>
 To: Gabriel Krisman Bertazi <krisman@suse.de>
 Cc: axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org
-Subject: Re: [PATCH RFC 9/9] io_uring: Introduce IORING_OP_EXEC command
-Message-ID: <Z1isRTCg2pkJW_Ev@localhost>
-References: <20241209234316.4132786-1-krisman@suse.de>
- <20241209234316.4132786-10-krisman@suse.de>
+Subject: Re: [PATCH RFC liburing 1/2] Add IORING_OP_CLONE/EXEC support
+Message-ID: <Z1itOpICd4Lrz-36@localhost>
+References: <20241209234421.4133054-1-krisman@suse.de>
+ <20241209234421.4133054-2-krisman@suse.de>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -100,46 +100,42 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241209234316.4132786-10-krisman@suse.de>
+In-Reply-To: <20241209234421.4133054-2-krisman@suse.de>
 
-On Mon, Dec 09, 2024 at 06:43:11PM -0500, Gabriel Krisman Bertazi wrote:
-> From: Josh Triplett <josh@joshtriplett.org>
-> 
-> This command executes the equivalent of an execveat(2) in a previously
-> spawned io_uring context, causing the execution to return to a new
-> program indicated by the SQE.
-> 
-> As an io_uring command, it is special in a few ways, requiring some
-> quirks. First, it can only be executed from the spawned context linked
-> after the IORING_OP_CLONE command; In addition, the first successful
-> IORING_OP_EXEC command will terminate the link chain, causing
-> further operations to fail with -ECANCELED.
-> 
-> There are a few reason for the first limitation: First, it wouldn't make
-> much sense to execute IORING_OP_EXEC in an io-wq, as it would simply
-> mean "stealing" the worker thread from io_uring; It would also be
-> questionable to execute inline or in a task work, as it would terminate
-> the execution of the ring.  Another technical reason is that we'd
-> immediately deadlock (fixable), because we'd need to complete the
-> command and release the reference after returning from the execve, but
-> the context has already been invalidated by terminating the process.
-> All in all, considering io_uring's purpose to provide an asynchronous
-> interface, I'd (Gabriel) like to focus on the simple use-case first,
-> limiting it to the cloned context for now.
+On Mon, Dec 09, 2024 at 06:44:20PM -0500, Gabriel Krisman Bertazi wrote:
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 
-This seems like a reasonable limitation for now. I'd eventually like to
-handle things like "install these fds, do some other setup calls, then
-execveat" as a ring submission (perhaps as a synchronous one), but
-leaving that out for now seems reasonable.
+One issue noted below; with that fixed:
+Reviewed-by: Josh Triplett <josh@joshtriplett.org>
 
-The combination of clone and exec should probably get advertised as a
-new capability. If we add exec-without-clone in the future, that can be
-a second new capability.
+> --- a/src/include/liburing.h
+> +++ b/src/include/liburing.h
+> @@ -1229,6 +1229,31 @@ IOURINGINLINE void io_uring_prep_socket_direct_alloc(struct io_uring_sqe *sqe,
+>  	__io_uring_set_target_fixed_file(sqe, IORING_FILE_INDEX_ALLOC - 1);
+>  }
+>  
+> +static inline void io_uring_prep_clone(struct io_uring_sqe *sqe)
+> +{
+> +	io_uring_prep_rw(IORING_OP_CLONE, sqe, 0, NULL, 0, 0);
+> +}
+> +
+> +static inline void io_uring_prep_execveat(struct io_uring_sqe *sqe, int dfd,
+> +					  const char *filename, char *const *argv,
+> +					  char *const *envp, int flags)
+> +{
+> +	io_uring_prep_rw(IORING_OP_EXECVEAT, sqe, dfd, filename, 0, 0);
+> +	sqe->addr2 = (unsigned long)(void *)argv;
+> +	sqe->addr3 = (unsigned long)(void *)envp;
+> +	sqe->execve_flags = flags;
+> +}
+> +
+> +static inline void io_uring_prep_exec(struct io_uring_sqe *sqe,
+> +				      const char *filename, char *const *argv,
+> +                                      char *const *envp)
+> +{
+> +       io_uring_prep_rw(IORING_OP_EXECVEAT, sqe, 0, filename, 0, 0);
 
-The commit message should probably also document the rationale for dfd
-not accepting a ring index (for now) rather than an installed fd. That
-*also* seems like a perfectly reasonable limitation for now, just one
-that needs documenting.
+Shouldn't this helper use AT_FDCWD, rather than 0?
 
-Otherwise, LGTM, and thank you again for updating this!
+
 

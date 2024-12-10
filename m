@@ -1,137 +1,153 @@
-Return-Path: <io-uring+bounces-5415-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5417-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BF59EBA46
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 20:42:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2E49EBA95
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 21:04:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBD6E1888B7E
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 19:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F1881884E0E
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 20:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA402226193;
-	Tue, 10 Dec 2024 19:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8F91D356E;
+	Tue, 10 Dec 2024 20:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="IdmhmIIF"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="i1/Lxjyt"
 X-Original-To: io-uring@vger.kernel.org
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A522226191;
-	Tue, 10 Dec 2024 19:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7CF8633A
+	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 20:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733859720; cv=none; b=CKfb/+wVvDvsrYrbzM9TpjQBLkZFmg0hbXWLEnFk34FFNDv54GB5JBRvw6RZvyn3rdSobAmpgMGKJg1xHm7lNXeTL8eStvdK8JA8Z1rTSsZCQLo4ZbGQRwedCsItDbX9/HRpXNpuosJW386NTGG2D4D5EI4eQK5wmi4W35jhvic=
+	t=1733861089; cv=none; b=nyk/qVZwUzBi45/fh/YCTD0l7VoYK1pgMGgMOHE59tMbtDKFOe7Quuk4J6a+XugVtxFYKWg3uvHlz+NYhjfvQZWd6r6t9raJs9QDj7+2bWfmlIGI4+fOlKMeBDkxPe7ax3pIOWjzNMueoFvLWIwQEoF2QFPNh9paBW7EhHWppJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733859720; c=relaxed/simple;
-	bh=ThHt6M9yVg7ZajuFJo/1je2cPjWgkF7cZXmmg6W5y8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qw8kZoUto4AWGufbyaDToyLUJ07bDz504l2sGXgT4WIM9LB68Oos4nm+1Fm6S6FCJiu62Jni/WhpSFsl/w4fq7lfBaVYLg69m891jZiwnjTgXJ3xTKazCdKlBiwCfzN8bpNCmwO4/zURhyhdaMQfKPlsuZETWAFrVW5P0NtWwic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=IdmhmIIF; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Y78J64BV3zlffky;
-	Tue, 10 Dec 2024 19:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1733859712; x=1736451713; bh=iF76jqXkDDi7DY14T8DVXQNb
-	8hrSak0UEQ35lCWhfXI=; b=IdmhmIIFnWb86VH/zbpiNQAl1iF5QHSh7tiknbD7
-	fwYmgVufnj2yHTdZrQ2ydlzbFbmrYK8KymywrjRL7M/8Xrh3RDLXWhHSr1MCy1nv
-	U/hp6li8gDhZD5U564JOPdY8W9TViwfwGLOahRF5V+BIgsQzgVcwkGeZ0x60xMb4
-	XNvSQxQaQFccgboQ7oINay/kr1L/GocXgXopXAMcT3NMspefV1U7HN35/M4E9cL7
-	inSf34D/3AZtDGg9f6KqdDkGGZ7CRW+seV4g17qrqXGAf4cfMazlsWE+EIwE9V0c
-	hGD6TL/Gig0v0vQgB4sz/wNiODEJ7/1YV5waUAXMYkWFSw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id BuScKu7QmEgN; Tue, 10 Dec 2024 19:41:52 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Y78Hx4znCzlfl5W;
-	Tue, 10 Dec 2024 19:41:49 +0000 (UTC)
-Message-ID: <7d06cc60-7640-4431-a1cb-043a959e2ff3@acm.org>
-Date: Tue, 10 Dec 2024 11:41:48 -0800
+	s=arc-20240116; t=1733861089; c=relaxed/simple;
+	bh=x5FAuAHlWfJxZCfiPnAfDv6VsD0ypUIU+reJg7JyMuQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QgWOqp7/+ZjfVYK7n/zhaBqx8S3dpyk7PloSUB1hpvQ33CBWeH75guEmvbOz/jwlQSdUAnB68MAN/HRfuW1pE1+Jz1cSRjefRGiDVfrc6pMYMIe6pebp4DUPBFFIKGGVep/tETGf9iBabhcO8sLoI9KhCQVsHzd6DWRa7x3EOZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=i1/Lxjyt; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAFTcQL002558
+	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 12:04:46 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2021-q4; bh=ZtDYxbjHiaugtFmzLq
+	be9j/YPTnjBLHkM7Z0sBvStvs=; b=i1/LxjytsrUE2esRwd3xvkCBcnoiRiXuyU
+	pbeKfuULkMjMu0pa+MTaqto5feRfwEeTIeHQF1QgRbTZfCjzLDfwXgPC27TsvqYV
+	5gb2ODWwzrYYP7V57XvJDs/tZROnH8DWmBkW/c74Ms8mnkQ0fcsGn+zzPEPGzTLb
+	GnT45+0dFOv9r7UHNNP1fxNDqZXJShVHfCyiixEztSlanHuXDtzRqW8KMzDEtLy/
+	T8eSGXHqBDMmmL7RiixMCDLGK2vxfT9zCTyNZkbxKdHdoM0oxaaQOgu/0kF5U78F
+	kpTpOMzIyAYV8074XVkLyHhwgAPyd8uZlhFUfG0Mvp2w0artKgAQ==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 43eraujb8t-6
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 12:04:45 -0800 (PST)
+Received: from twshared9216.15.frc2.facebook.com (2620:10d:c0a8:1b::30) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.11; Tue, 10 Dec 2024 20:04:31 +0000
+Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
+	id 207B715D5C7B7; Tue, 10 Dec 2024 11:48:08 -0800 (PST)
+From: Keith Busch <kbusch@meta.com>
+To: <axboe@kernel.dk>, <hch@lst.de>, <linux-block@vger.kernel.org>,
+        <linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+        <io-uring@vger.kernel.org>
+CC: <sagi@grimberg.me>, <asml.silence@gmail.com>, <anuj20.g@samsung.com>,
+        <joshi.k@samsung.com>, Keith Busch <kbusch@kernel.org>
+Subject: [PATCHv13 00/11] block write streams with nvme fdp
+Date: Tue, 10 Dec 2024 11:47:11 -0800
+Message-ID: <20241210194722.1905732-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Nitesh Shetty <nj.shetty@samsung.com>,
- Javier Gonzalez <javier.gonz@samsung.com>,
- Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "joshi.k@samsung.com" <joshi.k@samsung.com>
-References: <d7b7a759dd9a45a7845e95e693ec29d7@CAMSVWEXC02.scsc.local>
- <2b5a365a-215a-48de-acb1-b846a4f24680@acm.org>
- <20241111093154.zbsp42gfiv2enb5a@ArmHalley.local>
- <a7ebd158-692c-494c-8cc0-a82f9adf4db0@acm.org>
- <20241112135233.2iwgwe443rnuivyb@ubuntu>
- <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
- <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
- <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
- <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
- <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
- <CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
- <20241205080342.7gccjmyqydt2hb7z@ubuntu>
- <yq1a5d9op6p.fsf@ca-mkp.ca.oracle.com>
- <d9cc57b5-d998-4896-b5ec-efa5fa06d5a5@acm.org>
- <yq1frmwl1zf.fsf@ca-mkp.ca.oracle.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <yq1frmwl1zf.fsf@ca-mkp.ca.oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: sYZqWPUhk6_dhXgzbWGi7kRvGnCL64p6
+X-Proofpoint-ORIG-GUID: sYZqWPUhk6_dhXgzbWGi7kRvGnCL64p6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
 
-On 12/9/24 6:20 PM, Martin K. Petersen wrote:
-> What would be the benefit of submitting these operations concurrently?
+From: Keith Busch <kbusch@kernel.org>
 
-I expect that submitting the two copy operations concurrently would 
-result in lower latency for NVMe devices because the REQ_OP_COPY_DST
-operation can be submitted without waiting for the REQ_OP_COPY_SRC
-result.
+Previous discussion threads:
 
-> As I have explained, it adds substantial complexity and object lifetime
-> issues throughout the stack. To what end?
+  v12: https://lore.kernel.org/linux-nvme/20241206221801.790690-1-kbusch@=
+meta.com/T/#u
+  v11: https://lore.kernel.org/linux-nvme/20241206015308.3342386-1-kbusch=
+@meta.com/T/#u
 
-I think the approach of embedding the ROD token in the bio payload would
-add complexity in the block layer. The token-based copy offload approach
-involves submitting at least the following commands to the SCSI device:
-* POPULATE TOKEN with a list identifier and source data ranges as
-   parameters to send the source data ranges to the device.
-* RECEIVE ROD TOKEN INFORMATION with a list identifier as parameter to
-   receive the ROD token.
-* WRITE USING TOKEN with the ROD token and the destination ranges as
-   parameters to tell the device to start the copy operation.
+Changes from v12:
 
-If the block layer would have to manage the ROD token, how would the ROD
-token be provided to the block layer? Bidirectional commands have been
-removed from the Linux kernel a while ago so the REQ_OP_COPY_IN
-parameter data would have to be used to pass parameters to the SCSI
-driver and also to pass the ROD token back to the block layer. A
-possible approach is to let the SCSI core allocate memory for the ROD
-token with kmalloc and to pass that pointer back to the block layer
-by writing that pointer into the REQ_OP_COPY_IN parameter data. While
-this can be implemented, I'm not sure that we should integrate support
-in the block layer for managing ROD tokens since ROD tokens are a
-concept that is specific to the SCSI protocol.
+ - Removed statx. We need additional time to consider the best way to
+   expose these attributes. Until then, applications can fallback to the
+   sysfs block attribute to query write stream settings.
 
-Thanks,
+ - More verbose logging on error.
 
-Bart.
+ - Added reviews.
+
+ - Explicitly clear the return value to 0 for unsupported or
+   unrecognized FDP configs; while it's not technically needed (it's
+   already 0 in these paths), it makes it clear that a non-error return
+   wasn't an accidental oversight.
+
+ - Fixed the compiler warnings from unitialized variable; switched the
+   do-while to a more clear for-loop.
+
+ - Fixed long-line wrapping
+
+ - Memory leak when cleaning up the namespace head.
+
+ - Don't rescan FDP configuration if we successfully set it up before.
+   The namespaces' FDP configuration is static.
+
+ - Better function name querying the size granularity of the FDP reclaim
+   unit.
+
+Christoph Hellwig (7):
+  fs: add a write stream field to the kiocb
+  block: add a bi_write_stream field
+  block: introduce a write_stream_granularity queue limit
+  block: expose write streams for block device nodes
+  nvme: add a nvme_get_log_lsi helper
+  nvme: pass a void pointer to nvme_get/set_features for the result
+  nvme: add FDP definitions
+
+Keith Busch (4):
+  block: introduce max_write_streams queue limit
+  io_uring: enable per-io write streams
+  nvme: register fdp parameters with the block layer
+  nvme: use fdp streams if write stream is provided
+
+ Documentation/ABI/stable/sysfs-block |  15 +++
+ block/bio.c                          |   2 +
+ block/blk-crypto-fallback.c          |   1 +
+ block/blk-merge.c                    |   4 +
+ block/blk-sysfs.c                    |   6 +
+ block/bounce.c                       |   1 +
+ block/fops.c                         |  23 ++++
+ drivers/nvme/host/core.c             | 186 ++++++++++++++++++++++++++-
+ drivers/nvme/host/nvme.h             |   7 +-
+ include/linux/blk_types.h            |   1 +
+ include/linux/blkdev.h               |  16 +++
+ include/linux/fs.h                   |   1 +
+ include/linux/nvme.h                 |  77 +++++++++++
+ include/uapi/linux/io_uring.h        |   4 +
+ io_uring/io_uring.c                  |   2 +
+ io_uring/rw.c                        |   1 +
+ 16 files changed, 341 insertions(+), 6 deletions(-)
+
+--=20
+2.43.5
+
 

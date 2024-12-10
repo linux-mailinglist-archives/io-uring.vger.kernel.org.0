@@ -1,83 +1,129 @@
-Return-Path: <io-uring+bounces-5388-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5389-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AECD9EA6FF
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 05:08:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8B29188983C
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 04:08:00 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EFB22489F;
-	Tue, 10 Dec 2024 04:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5Cx/u6T"
-X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F9E9EA712
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 05:10:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A0622371B;
-	Tue, 10 Dec 2024 04:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38094288A00
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 04:10:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA8822489F;
+	Tue, 10 Dec 2024 04:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VB3Qcj3+"
+X-Original-To: io-uring@vger.kernel.org
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE48B13635E;
+	Tue, 10 Dec 2024 04:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733803677; cv=none; b=BdGuxag+Agl5f24dFMzd/vLlGWe5zeqZN3uUVBf+sJCbZb9Yt1eh/+quMhSm+Hp/nqsxqUu/+R5qQct6AEWVh8631C5twux7M7phkaQ5bDaS7fmtQaGmcYWUg4jWvZNaeBnZ+hcoQpwrBf3MjwocU7833G3CjQCyfjfcHK51Dt4=
+	t=1733803842; cv=none; b=AO3CLy7tbNdT29I+eW8tdXC6cICckV7xf7Y6CaWhnSMo9WLp49lzaAXkN83n81mX5JGjgS8USoWcvoWxVu+hR8hqRrznsRNXPEZh9lE77kiUmyZQB8QMWzlynLkFl1pCsMuBykO8mFEht4Qgk/rRzm9IaMlajoha5Ai83nNphtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733803677; c=relaxed/simple;
-	bh=zoo1XexIv2JhN3L7IphblXb6SaQg+P4ejGJwyIF+uwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VYd+4HuNhV8m/noNB5VLdsQ4M6SiISLJhRoJd3dN8mdcDOSlut52xjp+Htmf3ouR3zaHREUKrmCeE8KTYHAEFSCqPqFQgLNMrRP9AuG6bTlbA70kIqIfkAkMU6pY/81FUycJr2WefejUeo2o/nl/53g461hRIiQEqU/HFAHS5RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5Cx/u6T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A05CC4CED6;
-	Tue, 10 Dec 2024 04:07:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733803676;
-	bh=zoo1XexIv2JhN3L7IphblXb6SaQg+P4ejGJwyIF+uwU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D5Cx/u6T+OlCWbRV713YGXBUo2tp068nPWdN1yiDozPt5XQH8eqKXY/+34+lex+ja
-	 Sfwat3gI2mXhNYMnk2d6CCqlRkENeFHrbHyRzCgUy9vo4TBDgiZLxpEEoT4qh9cAu9
-	 pRPLAcv5kHVtmCeTp8rqJJLdtkSSm7GM8yP8rcCqewuDeFjkCIegY3qb7yq5gWVIL/
-	 nPrgeW2EKqrjeqvpFDojEifq4MvBZHq1QIHQfbEGQYjPQFBPQKEV2yc0fcWVX+rtL9
-	 hrrfstqbtPqB4qQIbQ1U2C2np5VDJOcPQf17wb9OD51HQUC1PW2bFzTCuMKUREIjGR
-	 bKvCYT2tQ9gug==
-Date: Mon, 9 Dec 2024 20:07:55 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Paolo Abeni
- <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, David
- Ahern <dsahern@kernel.org>, Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>
-Subject: Re: [PATCH net-next v8 09/17] io_uring/zcrx: add interface queue
- and refill queue
-Message-ID: <20241209200755.357d4ed6@kernel.org>
-In-Reply-To: <9debb3d5-d1a2-434e-b188-0e1a9d5c0ad3@gmail.com>
-References: <20241204172204.4180482-1-dw@davidwei.uk>
-	<20241204172204.4180482-10-dw@davidwei.uk>
-	<20241209194920.3bc07355@kernel.org>
-	<9debb3d5-d1a2-434e-b188-0e1a9d5c0ad3@gmail.com>
+	s=arc-20240116; t=1733803842; c=relaxed/simple;
+	bh=t/PmcYDnBMqBQKctltRFjQpiUYJsCmoRC4ECgxOEfHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EDS9RWZS3ArlrLK0ZT5FE+V21bAxhFmlQ/mQ2VgN9IHU1jURkbkIdBfvof7DzgPxWQDvCxSYW50hWeGQDwUj1Dg7xfXqrTxNs9gqpy1pMv6ABVjgT3Mzvv9K10VlUhAo4gBPCPkj4mU8i843qdAP+EpEUX4KjQ4KoMyMXti8W80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VB3Qcj3+; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434b3e32e9dso55689665e9.2;
+        Mon, 09 Dec 2024 20:10:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733803839; x=1734408639; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6GwwAvNkiVn22SGPZCFlNonL6ljUKJrRHzaRDKU+3zo=;
+        b=VB3Qcj3+ccjEyXi1bkhUbTrXzeCl/OAmwXh2wgD8M0t9aj0m9mDmK7vgarRKCmXdjq
+         keG6aN7y2oosTbwSsWC24s5WD/MrmF4Wyto9+Xz1D7RnQHvUSmkz2Wf3sJPLPl7r75B3
+         xzoix+/dG03mWatKdPaKCTxRNSfnb6zuoCPxHoGAQfyTmwzPd1LQ1C7Y7+SPhBqz0FYX
+         MW6cuZMxzduCjw+QR8WIeUSjKr92y3JYsysrj7PY+Dm51M3DPCLaq6Omb88TzKTzJ5qR
+         YwQUjFGtFNuv9+gvjZp3zmlbIinDYXSqQuLRBiRxNy+oYiMDa9TSuS40UiJUsd59cXw8
+         GGmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733803839; x=1734408639;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6GwwAvNkiVn22SGPZCFlNonL6ljUKJrRHzaRDKU+3zo=;
+        b=B/wUwWc5zlKML/Ns/fFoSmQWRLqFAUbPaMhorMQ3BLxE2UawX8DO2BAWaCQA4qjq4Q
+         o3y+0tGTws7pErIgAVQn09SHk48uQ6s5lC/goEwORYKTrEjnoxkSPDenLzlBDWrg9KSk
+         7dx4NtZLeXCAARht/ofMHcuNLotgdNulYb/BS4KGd/Qz1MpvzY389aAKwW/5h4gMV9jZ
+         ZLhmkEBG2F5ZfjZ3Zgp7z/ym8B67d54nImQ6fsQWm1th8ooWx3hkLbvOhYxokUPu6K5U
+         oFLQ5KVCJbcrUnlMnG/r5+1NSNALTvuP8zCbNOdmWk1lvlSY6VuNLOaMJ1oaGq2YkwI/
+         MfrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWC7qi0K6ruNZ971anM8wxq6o4/Zs5yT5AI9ujVqhhHHvlJJUBH1kulzPUOR/QcPTvmdyGEo+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmFBgNSxKGTMuP9DRZ8FClD8L7qQmh9ayTyMeTbc5BGOB5h0tn
+	pcGyuHVogW+cwLMmWgqMPiMppLP4RjjFQw3GW+hyLGGR1yFxsyC+
+X-Gm-Gg: ASbGncvcqqc7J4AW+Ip2yChIVxJHI2vW0AURTZtLPlETl0HdmaXvgLiyQa+JiRv1Q24
+	y9Hh5XOO+Dz/jwpq1RVocXqQR+RDRU75UTVKzssmQyljuQOtv3cQjC4jWgO2By05Rxhk7+rBfEe
+	uR2SWu0uey3YTStUUUqUURWJVHsa/HVt4O3QVgQ7X6XwrsFOMb4yqQ08xdrTDcYpJ4Gu01ab33p
+	vef0igacoz5dK4Gh6l84kaytSuIWDR8Dnp+2EZPPIMd5vz3kXsoSvtd3h2iRe8=
+X-Google-Smtp-Source: AGHT+IFtODhIbJug8TyKcapcGw4+YyAnXd8yOc+w5ASrEk7FQ6i+CzfbIBl1t8Biki5GufuBt5Nhzw==
+X-Received: by 2002:a05:6000:402c:b0:385:e1a8:e28e with SMTP id ffacd0b85a97d-3862b34477fmr11974206f8f.10.1733803839161;
+        Mon, 09 Dec 2024 20:10:39 -0800 (PST)
+Received: from [192.168.42.90] ([85.255.235.153])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861f4a85f2sm14652517f8f.29.2024.12.09.20.10.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 20:10:38 -0800 (PST)
+Message-ID: <601572a4-f5a8-4dec-a07d-0c035c4fbb79@gmail.com>
+Date: Tue, 10 Dec 2024 04:11:31 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v8 08/17] net: add helper executing custom
+ callback from napi
+To: Jakub Kicinski <kuba@kernel.org>, David Wei <dw@davidwei.uk>
+Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, Paolo Abeni <pabeni@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
+ Mina Almasry <almasrymina@google.com>,
+ Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
+ Pedro Tammela <pctammela@mojatatu.com>
+References: <20241204172204.4180482-1-dw@davidwei.uk>
+ <20241204172204.4180482-9-dw@davidwei.uk>
+ <20241209194447.26eaffd5@kernel.org>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241209194447.26eaffd5@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 10 Dec 2024 04:03:32 +0000 Pavel Begunkov wrote:
-> On 12/10/24 03:49, Jakub Kicinski wrote:
-> > On Wed,  4 Dec 2024 09:21:48 -0800 David Wei wrote:  
-> >> +	depends on INET  
-> > 
-> > Interesting, why INET? Just curious, in theory there shouldn't
-> > be anything IP related in ZC.  
+On 12/10/24 03:44, Jakub Kicinski wrote:
+> On Wed,  4 Dec 2024 09:21:47 -0800 David Wei wrote:
+>> It's useful to have napi private bits and pieces like page pool's fast
+>> allocating cache, so that the hot allocation path doesn't have to do any
+>> additional synchronisation. In case of io_uring memory provider
+>> introduced in following patches, we keep the consumer end of the
+>> io_uring's refill queue private to napi as it's a hot path.
+>>
+>> However, from time to time we need to synchronise with the napi, for
+>> example to add more user memory or allocate fallback buffers. Add a
+>> helper function napi_execute that allows to run a custom callback from
+>> under napi context so that it can access and modify napi protected
+>> parts of io_uring. It works similar to busy polling and stops napi from
+>> running in the meantime, so it's supposed to be a slow control path.
 > 
-> Because of direct calls to tcp_read_sock(). With more protocols
-> should be turned into a callback (or sharing it with splice).
+> Let's leave this out, please. I seriously doubt this works reliably
+> and the bar for adding complexity to NAPI is fairly high. A commit
+> which doesn't even quote any perf numbers will certainly not clear it.
 
-Ah, I guess that comes in later patches :S Makes sense.
+I reworked it and got rid of the patch, though I don't see why
+performance here would matter. It's a very slow path if all
+paths failed, batching inside wasn't done right on the io_uring
+for simplicity, but that was certainly planned a follow up.
+
+-- 
+Pavel Begunkov
+
 

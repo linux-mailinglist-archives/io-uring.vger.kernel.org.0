@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-5380-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5381-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AC19EA6C2
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 04:41:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FB39EA6C6
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 04:44:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73F8B1679AA
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 03:40:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B55A164C3B
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 03:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FA6168BE;
-	Tue, 10 Dec 2024 03:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7BC1D14EC;
+	Tue, 10 Dec 2024 03:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRUwD7Hs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AXjq6h7/"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE783AD5A;
-	Tue, 10 Dec 2024 03:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A181D0F62;
+	Tue, 10 Dec 2024 03:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733802059; cv=none; b=NsPau34oykCXXwSEkKt7NH+zb3flzrkFd0MNhyHXkXaBSSrHTWp5akJ8Es6vG6+o0ab6JUV+0S8IWw26xNDlqruO24mtrPa7oMTlvAM6fKiwjcVN/Ef0H4Nsup6uXuWkA06slpARtCy7gGLP+WhTUf+8tCSp8JQnE5N9CsBMTeE=
+	t=1733802289; cv=none; b=qnqcQ5fppxv4tq2t/a47GQoNbLSwYdth6UJq3nAZq/Mz4ITFJOD59szJ0G7xqL4wu0RYuz00igDcMPPbDUXF5/cKatZB62914/XlTyUeclElNRcAkIr8N+xs3opDFmiLxV424ufRiPQ51fywbVrdjDco9pBoTJQBE0xUt1ii8FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733802059; c=relaxed/simple;
-	bh=gYok4tQZmyOvYQ2Dl+Gn48EII0mGjsbBoIhzt4ebACU=;
+	s=arc-20240116; t=1733802289; c=relaxed/simple;
+	bh=YMQRPpRBSXAw1WfX4Ql32vJNtEhEsk0IWB0Aphy5vcc=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FhPICaGhlgiu5IxaYK3ZRlxZAL6ymyp9FrDAJddgERDAPWVCmy5aYNi05+sTS/rnlbHMKeQTQtrHGR4M49HSezdkbTdAgp4XkM6ejc6Euxh74SaR3VkZq4U0+DoG0RkyQ+r/armKzIHd4WKgzm+40Xu8b4rdXQKK2oHrYoDNY6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRUwD7Hs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6013C4CED6;
-	Tue, 10 Dec 2024 03:40:57 +0000 (UTC)
+	 MIME-Version:Content-Type; b=dlxqNgFlpAcJD/81bWdAtfQRfrEJdRQWsSE89/WnNe9fEcFVpy2pDeYtri7Ki6X5zFFb4ZMyNcJuI3gdr/y0gAkcfjcA+kpObeyh2Ols0DHehvJVvpAg3RuCfZXj3Qmqx4xR3jfHdND6n1YPOANsGTVlorGMqJxO9ghW7yU2ugI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AXjq6h7/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E247C4CEDE;
+	Tue, 10 Dec 2024 03:44:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733802058;
-	bh=gYok4tQZmyOvYQ2Dl+Gn48EII0mGjsbBoIhzt4ebACU=;
+	s=k20201202; t=1733802288;
+	bh=YMQRPpRBSXAw1WfX4Ql32vJNtEhEsk0IWB0Aphy5vcc=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JRUwD7HsTt7/sZ3+nVEw6pmn4cmHV9TZqe+dEQSxYwFUSrBPl+PnTELtbyZ1p7TkJ
-	 khOYk9U7IAY3kCLaAhekhogGsLsL0SlQGVZS+kaCm4psV2TMOBPqpn7p+Ut9MEExrE
-	 O4ZzKnp/iQr3n5CA1+rYTYERGFDqDwkxd4mLbEEb9CarCMiOojRkURV40AIBTi4Zw2
-	 hRteubKciIlAz0gcF+LEF1jS67gqydg2Vdo2UywFl/o5JRP4wXQsZtF/L20BdPCWUb
-	 629Ap8qaeS81CeDmatTU5s/dD6kHRCFJWp86RjUvxl4VnNtIRpAP43NkqSDOBRpMTX
-	 7m9HYo2vppMVg==
-Date: Mon, 9 Dec 2024 19:40:57 -0800
+	b=AXjq6h7/Ot4/OrXDFsbDftcIjZCoZGiGRLC8DoTnX7y06t1d0GXar8DhkbdRErUs3
+	 0TSO0qDmdc3ft+ZbbYCE5YjEr27PKiDvJkN3aTwpMa74rbNjKqU8UnuIjmJWfzYJpD
+	 +uVcQUhEN2MuJ8+REzx72dxNeI6evVj3Wa77EjrymqJLmIp+vn9+bC6YHlOtLdvXG/
+	 c1vzqm9Mz5paf6h07f4s0B9u9eV1cW72wqcoqRTxztLwmehVZLZ6nvOVGfYvnaSNHN
+	 OkA9KU7arYBEFogsDNSGOmzBAYrhw/lfTRQ9A/DFSJn9H7ZPwnkis6FqWaW8o8wHPy
+	 lvOppV+ZoU+cw==
+Date: Mon, 9 Dec 2024 19:44:47 -0800
 From: Jakub Kicinski <kuba@kernel.org>
 To: David Wei <dw@davidwei.uk>
 Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, Jens Axboe
@@ -51,12 +51,12 @@ Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, Jens Axboe
  Ahern <dsahern@kernel.org>, Mina Almasry <almasrymina@google.com>,
  Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
  Pedro Tammela <pctammela@mojatatu.com>
-Subject: Re: [PATCH net-next v8 07/17] net: page_pool: introduce
- page_pool_mp_return_in_cache
-Message-ID: <20241209194057.161e9183@kernel.org>
-In-Reply-To: <20241204172204.4180482-8-dw@davidwei.uk>
+Subject: Re: [PATCH net-next v8 08/17] net: add helper executing custom
+ callback from napi
+Message-ID: <20241209194447.26eaffd5@kernel.org>
+In-Reply-To: <20241204172204.4180482-9-dw@davidwei.uk>
 References: <20241204172204.4180482-1-dw@davidwei.uk>
-	<20241204172204.4180482-8-dw@davidwei.uk>
+	<20241204172204.4180482-9-dw@davidwei.uk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -66,47 +66,21 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed,  4 Dec 2024 09:21:46 -0800 David Wei wrote:
-> +/*
-> + * page_pool_mp_return_in_cache() - return a netmem to the allocation cache.
-> + * @pool:	pool from which pages were allocated
-> + * @netmem:	netmem to return
-> + *
-> + * Return already allocated and accounted netmem to the page pool's allocation
-> + * cache. The function doesn't provide synchronisation and must only be called
-> + * from the napi context.
+On Wed,  4 Dec 2024 09:21:47 -0800 David Wei wrote:
+> It's useful to have napi private bits and pieces like page pool's fast
+> allocating cache, so that the hot allocation path doesn't have to do any
+> additional synchronisation. In case of io_uring memory provider
+> introduced in following patches, we keep the consumer end of the
+> io_uring's refill queue private to napi as it's a hot path.
+> 
+> However, from time to time we need to synchronise with the napi, for
+> example to add more user memory or allocate fallback buffers. Add a
+> helper function napi_execute that allows to run a custom callback from
+> under napi context so that it can access and modify napi protected
+> parts of io_uring. It works similar to busy polling and stops napi from
+> running in the meantime, so it's supposed to be a slow control path.
 
-NAPI is irrelevant, this helper, IIUC, has to be called down the call
-chain from mp_ops->alloc().
-
-> + */
-> +void page_pool_mp_return_in_cache(struct page_pool *pool, netmem_ref netmem)
-> +{
-> +	if (WARN_ON_ONCE(pool->alloc.count >= PP_ALLOC_CACHE_REFILL))
-> +		return;
-
-I'd
-
-	return false;
-
-without a warning.
-
-> +	page_pool_dma_sync_for_device(pool, netmem, -1);
-> +	page_pool_fragment_netmem(netmem, 1);
-> +	pool->alloc.cache[pool->alloc.count++] = netmem;
-
-and here:
-
-	return true;
-
-this say mps can use return value as a stop condition in a do {} while()
-loop, without having to duplicate the check.
-
-	do {
-		netmem = alloc...
-		... logic;
-	} while (page_pool_mp_alloc_refill(pp, netmem));
-
-	/* last netmem didn't fit in the cache */
-	return netmem;
+Let's leave this out, please. I seriously doubt this works reliably
+and the bar for adding complexity to NAPI is fairly high. A commit
+which doesn't even quote any perf numbers will certainly not clear it.
 

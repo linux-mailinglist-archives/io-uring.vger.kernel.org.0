@@ -1,221 +1,187 @@
-Return-Path: <io-uring+bounces-5403-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5404-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0369EAAEE
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 09:45:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA909EADCD
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 11:17:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180CE1889B9D
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 08:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 789F2281EAD
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 10:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5852309AA;
-	Tue, 10 Dec 2024 08:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5634B190685;
+	Tue, 10 Dec 2024 10:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bf4YECzl"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iR1lnLMp"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA5F22617D
-	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 08:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9D423DE8D
+	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 10:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733820351; cv=none; b=L/eDSOCWzCqaaEq/5JzCs+h40tM4iC4+jFnm572O11cpjyobi+Fkmho24vbhIXoGVoRNsNW2ED/WCB2cAar0Jr6YO6WlydAs2vq4RAVhb/tKvJm+9bC89+coGnhN3ragqLOKGZ+Gt+iFZzzvLfOgaxl0tpv0zLBrIaGOJsbhDD8=
+	t=1733825858; cv=none; b=Ujr54EM8knvJ/Zka3dpojv/Xef1o3x3gipgZx7nN+9XqsndAb04O0cEexGD1GK32SIbdcW8/C9uPjeaKyCvNYNueG8E1GI5QubbK4aw3A7zBDBhfIAOM/ljqgxMFmCcqQz0NFxpno56wlYTzGLaILbzkCyxjLyuTEpNU6GG8Cmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733820351; c=relaxed/simple;
-	bh=WIWAsIkTD/ygTaEqJZlgomNhVL+0e/j6V2MWkNKDLuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=fG4k24TwkYYsU1DfQlY4lXKduOjY2OtmhS4oITuU1ZAY7NFJtVZ+eUZrpLdJzpWaVp/Lv7HgXXUFXAn21Hxt0MIsk2aEoMUd7a/jddgz6oRN1xruOVKMApRbPPrTrgkcj2xA8Jq7XE5+WEHAa5X151DUlzU6WHeWc+x0HDRToJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bf4YECzl; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434ab114753so34884645e9.0
-        for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 00:45:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733820347; x=1734425147; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jblJqgnONYB3Ttb04kcM1REB0r64XNYjHV8iVLuGuGg=;
-        b=bf4YECzlvCJBBvcz4bkEyZ4gxTe01o6uC3yBlu2RnA3G8huebiT4V6qTP3t0OIPQ+S
-         voTQCa9l8oj5y6pHJLC7MVBza0hxCafznlB12ZLUEs9ZVPPrKyubYuRzS3K5gAU46M2t
-         fDhjnfH9m2acYtGKgPqXV6SIfYU600lMxXTJ8UYwu47RQbd439sHfzn2kZS+w3K4iaeZ
-         t1ePVBOD2utvFaUTPB5OtPgkJr8lMCAAWJe5afrflzUKJ9TQWPAhtBQRStoDCc8Kf76R
-         e5tdNHM0Sy39JJ52IVXp5oyFKuuL9n8Yn6kryOzZctvyHT4xZMYeiBigeH2ZTJSjWWQa
-         BHmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733820347; x=1734425147;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jblJqgnONYB3Ttb04kcM1REB0r64XNYjHV8iVLuGuGg=;
-        b=ErPgGPe/C1MfS6ei/EAB1Lotd8MYF01MU4iLidreybulMcJGMeJu4/+kFcUOttSj6O
-         fK5Pr6gBeXrfpizWg/7nqX7x7euZ+8Dvu1lZItZXJnwePynJsMWXZfMWb4z9TFVmd+Ia
-         dVyP/QlS8mQh+B32yPg9RERVCK3eYiTPXC7Gx60vetuhdWow4PQIinpZ0LthcHuRq3Pr
-         kSacIkUTRuAFwft2AL0BnRrBnjwcZuEunjYl0t/KXRwcVggEqU+vnBoMA3CAcUCNLtEp
-         mn59QHLkdNGdYwaLjtvk5XPHHS0w7iypww2rz5u0Q4+IUBjX/50ZxiYY3yuINVEgX1u0
-         CPNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlpNnIkLgosSNIl92Ed2+EsXkaitsx1+HfRDE0EdGrT1lLB1M+f2gRznLDehCj0SYWXqYe9YrfgQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4qE9lRopZZ35khaOhcgkIsUaYw3He8SYs7jVjj8S8N6YRp7Ku
-	EzlIfsbxjWCLHCQDlvOkqpPJpBos/rdrNfIv0bbxMXmxXn0vqgOf+k+IzTDr4dI=
-X-Gm-Gg: ASbGncuFOIPQiLNRvxeei2yy/DnHGYDYLOAtWJXSLM5qG2Tg/n0C74eJYIYOpQ5mlrN
-	2mTXngc5nNfiK/Rwb04Z3+v9sHODTcQZRNEt9Aju3KItxAMWnYJ8bel0XMOVay0C9s1KRSQM0px
-	EWr2uCp0l3Pjac9ICbYY3jYX0n0wKFWqVFMrBKMe/XkxhePt6ehTfb8aw6EZH4BjoXE3sMNvCVY
-	I3YvFar6kFdg2ttdKwdlYKBZecXQTuL8EB2NguPICpTFsTD+HxvsH0k+xQ=
-X-Google-Smtp-Source: AGHT+IHBg7FH0RfI63+Vg3g5RF/j5aX39c5DAnNY2YHqX7RE5+k+C41N38XjDYzZeGnDTOmqptoH7w==
-X-Received: by 2002:a05:600c:4e8a:b0:434:ffd7:6fca with SMTP id 5b1f17b1804b1-434fff36e7cmr31129635e9.2.1733820346746;
-        Tue, 10 Dec 2024 00:45:46 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d526b577sm224504225e9.3.2024.12.10.00.45.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 00:45:46 -0800 (PST)
-Date: Tue, 10 Dec 2024 11:45:43 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Keith Busch <kbusch@meta.com>,
-	axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, sagi@grimberg.me,
-	asml.silence@gmail.com, anuj20.g@samsung.com, joshi.k@samsung.com,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv12 11/12] nvme: register fdp parameters with the block
- layer
-Message-ID: <8d69680a-a958-4e9d-a1ba-097489fe98d1@stanley.mountain>
+	s=arc-20240116; t=1733825858; c=relaxed/simple;
+	bh=zvA4BHDw3LfYGAlNahI+LaAncARYU6p/zWepiBNst/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=h35TberZ0sXIzFnX0E+4SvtHZpm1Ai4wD685C2HzK6dwyVfZs8nWokE9Dkp0jxUWOQvFPm81QkrnqqyRSxQcnuwfUy6Kb0KTj/9j3JVn1zlRvo6ZSuHqfpdPj+trnvv8XqJ7jcK/kMbyBlpHEv0ZVG/Jpmc1wSEW01dtK/yesfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iR1lnLMp; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241210101733epoutp039f1afc1fe7bda492fba18c3d7f5087e1~PyW1-Tc430205602056epoutp03E
+	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 10:17:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241210101733epoutp039f1afc1fe7bda492fba18c3d7f5087e1~PyW1-Tc430205602056epoutp03E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733825853;
+	bh=hagd1kzu2Y9OGheeixtNt3W/s8dl8yLxLzpPJfeIvwU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iR1lnLMpYDYJx/Z9i3wSxADUJyrzCFOk/K3udY7ws8XcFfii1TEMgfRzeT2YEwa83
+	 vjWq56dgdkTioaKTkfSCC57IjZi5H8WAxwO7cMxowgB18APwQe/I13McYuHQLJaFeS
+	 85n2fV/NeA44/xy4nb30QDucjw1ufLGCHqLToPik=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20241210101733epcas5p2647b0a49c806514de8c3de261e0d7424~PyW1hgjpi2747027470epcas5p20;
+	Tue, 10 Dec 2024 10:17:33 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y6vmr0GFKz4x9Pv; Tue, 10 Dec
+	2024 10:17:32 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	09.86.19933.B3518576; Tue, 10 Dec 2024 19:17:31 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241210100129epcas5p20a9f10663931e6772650d37131dfcee0~PyIzkLKw30188301883epcas5p2F;
+	Tue, 10 Dec 2024 10:01:29 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241210100128epsmtrp152a243d9c4553b9e5e900f77b4a0b973~PyIzjAwmZ2079820798epsmtrp1Q;
+	Tue, 10 Dec 2024 10:01:28 +0000 (GMT)
+X-AuditID: b6c32a4a-c1fda70000004ddd-00-6758153b6972
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4B.10.18729.87118576; Tue, 10 Dec 2024 19:01:28 +0900 (KST)
+Received: from ubuntu (unknown [107.99.41.245]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241210100126epsmtip197d4d20d160964c8a59a1bd49bc8a0e2~PyIxogehw3155031550epsmtip1B;
+	Tue, 10 Dec 2024 10:01:26 +0000 (GMT)
+Date: Tue, 10 Dec 2024 15:23:33 +0530
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, Javier Gonzalez
+	<javier.gonz@samsung.com>, Matthew Wilcox <willy@infradead.org>, Keith Busch
+	<kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Keith Busch
+	<kbusch@meta.com>, "linux-block@vger.kernel.org"
+	<linux-block@vger.kernel.org>, "linux-nvme@lists.infradead.org"
+	<linux-nvme@lists.infradead.org>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "joshi.k@samsung.com" <joshi.k@samsung.com>
+Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
+Message-ID: <20241210095333.7qcnuwvnowterity@ubuntu>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <yq1frmwl1zf.fsf@ca-mkp.ca.oracle.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNJsWRmVeSWpSXmKPExsWy7bCmpq61aES6wc4TZhbTPvxktli5+iiT
+	xbvWcywWj+98Zrc4+v8tm8WkQ9cYLc5cXchisfeWtsWevSdZLOYve8pu0X19B5vF8uP/mCx+
+	/5jD5sDrcfmKt8fmFVoem1Z1snlsXlLvsftmA5vHuYsVHh+f3mLx6NuyitHj8ya5AM6obJuM
+	1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoJuVFMoSc0qB
+	QgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZh/6n
+	FLzkrvh47y5TA2MLVxcjJ4eEgInE1Hm32bsYuTiEBHYzSvScf8wC4XxilJi39wQbhPONUWLP
+	5x+sMC1tu5czQiT2Mkr86b7KBOE8YZTY8fkQI0gVi4CqxLX9+4ESHBxsAtoSp/9zgIRFBEwl
+	Jn/aygZiMwucZJHovmYBYgsLOEv0zL3LCFLOC7Tg2uQ4kDCvgKDEyZlPWEBsTgFjidNvG8BW
+	SQjs4JC4O7ubDaReQsBF4m+/CMRtwhKvjm9hh7ClJF72t0HZ5RIrp6xgg+htYZSYdX0WI0TC
+	XqL1VD8zxD0ZEv37+lkg4rISU0+tY4KI80n0/n7CBBHnldgxD8ZWllizfgEbhC0pce17I5Tt
+	IdF6pRMapi+YJbZPes0ygVFuFpKHZiHZB2FbSXR+aGKdBfQPs4C0xPJ/HBCmpsT6XfoLGFlX
+	MUqmFhTnpqcWmxYY5aWWw+M4OT93EyM4FWt57WB8+OCD3iFGJg7GQ4wSHMxKIrwc3qHpQrwp
+	iZVVqUX58UWlOanFhxhNgdEzkVlKNDkfmA3ySuINTSwNTMzMzEwsjc0MlcR5X7fOTRESSE8s
+	Sc1OTS1ILYLpY+LglGpg6ug9NeF4zVGrK6ZKr741XHix4uiRovfyyjZzsqfyyXM3SEeUdz/V
+	7raNqbj8xLntz7Ud7MGGe2VD4rTD5TMv956OX2OUa7lsStcusedn1R4vWMe0SeuoyIJr93KX
+	eR58K2vF//5d47I/l6Vu76wpcjPc9LRsybHyHf2f2qRfrUzYe5R7TXud7u+30S/vlqf82dD5
+	+yDvW2WDR6ELVJ/apm4OXDnb8odhWllOfJbcISWNnR+2H15eV5NYVdets3oJe1TT7vVHBPML
+	r9u+nqTUPIM98pT8rXorV0H/fIetC9Yt3ek/43GgowBX7iLrepGHfv1v3PUv2yR959ns+j4x
+	JuLcvcxJm+6/WBC/IrW+RYmlOCPRUIu5qDgRAP6aM31OBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsWy7bCSnG6FYES6weJJ5hbTPvxktli5+iiT
+	xbvWcywWj+98Zrc4+v8tm8WkQ9cYLc5cXchisfeWtsWevSdZLOYve8pu0X19B5vF8uP/mCx+
+	/5jD5sDrcfmKt8fmFVoem1Z1snlsXlLvsftmA5vHuYsVHh+f3mLx6NuyitHj8ya5AM4oLpuU
+	1JzMstQifbsErozfbz+zFczmrNjwcAJLA+MF9i5GTg4JAROJtt3LGbsYuTiEBHYzSkzaNB0q
+	ISmx7O8RZghbWGLlv+fsEEWPGCV6F8xiAkmwCKhKXNu/H8jm4GAT0JY4/Z8DJCwiYCox+dNW
+	NpB6ZoGzLBLvvj4AqxcWcJbomXuXEaSeF2jztclxEDNfMEvsXNjPCFLDKyAocXLmExYQm1nA
+	TGLe5ofMIPXMAtISy/+BzecUMJY4/baBaQKjwCwkHbOQdMxC6FjAyLyKUTK1oDg3PbfYsMAw
+	L7Vcrzgxt7g0L10vOT93EyM4irQ0dzBuX/VB7xAjEwfjIUYJDmYlEV4O79B0Id6UxMqq1KL8
+	+KLSnNTiQ4zSHCxK4rziL3pThATSE0tSs1NTC1KLYLJMHJxSDUxqip1NZuuvnAm2nlCRO1la
+	IZN/uhUv995jLH9cD2WtWmryVFjRlrn866orEnm3tkUHx83OKkpc+8x/thGj9hPdnPU33ZZP
+	u5+/uLTpapSgbUjuy6rVzEreWvui1u96e8xu7o3yBocyhRdKCyWf1anHbjqQuy/eyOfV8nxn
+	OY9Z7c+rZkX8OzOLM3PeJWte9ynn7l+p19556b7ZGpX5HpMO/t2ZcvN+a8oB8eLtZ3MbuCcc
+	zJjzKphz5a/MQ5kN3p3qfWbX5vUrpCRPi/QQ1K+fu3Th7lOJDmnvN660fvDRVjt57uK5nI+m
+	vXp3YkfWsS1/BFbnnru8xunILo6txv4rdfcxPOQ1ValndhH3WWepxFKckWioxVxUnAgAR6T/
+	BxEDAAA=
+X-CMS-MailID: 20241210100129epcas5p20a9f10663931e6772650d37131dfcee0
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_721d0_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1
+References: <yq1ed38roc9.fsf@ca-mkp.ca.oracle.com>
+	<9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
+	<yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
+	<8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
+	<yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
+	<CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
+	<20241205080342.7gccjmyqydt2hb7z@ubuntu>
+	<yq1a5d9op6p.fsf@ca-mkp.ca.oracle.com>
+	<d9cc57b5-d998-4896-b5ec-efa5fa06d5a5@acm.org>
+	<yq1frmwl1zf.fsf@ca-mkp.ca.oracle.com>
+
+------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_721d0_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
-In-Reply-To: <20241206221801.790690-12-kbusch@meta.com>
 
-Hi Keith,
+On 09/12/24 09:20PM, Martin K. Petersen wrote:
+>
+>Bart,
+>
+>> Does "cookie" refer to the SCSI ROD token? Storing the ROD token in
+>> the REQ_OP_COPY_DST bio implies that the REQ_OP_COPY_DST bio is only
+>> submitted after the REQ_OP_COPY_SRC bio has completed.
+>
+>Obviously. You can't issue a WRITE USING TOKEN until you have the token.
+>
+>> NVMe users may prefer that REQ_OP_COPY_SRC and REQ_OP_COPY_DST bios
+>> are submitted simultaneously.
+>
+>What would be the benefit of submitting these operations concurrently?
+>As I have explained, it adds substantial complexity and object lifetime
+>issues throughout the stack. To what end?
+>
+>-- 
+Bart,
+We did implement payload based approach in the past[1] which aligns
+with this. Since we wait till the REQ_OP_COPY_SRC completes, there won't
+be issue with async type of dm IOs.
+Since this would be an internal kernel plumbing, we can optimize/change
+the approach moving forward.
+If you are okay with the approach, I can give a respin to that version.
 
-kernel test robot noticed the following build warnings:
+Thanks,
+Nitesh Shetty
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[1]
+https://lore.kernel.org/linux-block/20230605121732.28468-1-nj.shetty@samsung.com/T/#mecd04c060cd4285a4b036ca79cc58713308771fe
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Keith-Busch/fs-add-write-stream-information-to-statx/20241207-063826
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/20241206221801.790690-12-kbusch%40meta.com
-patch subject: [PATCHv12 11/12] nvme: register fdp parameters with the block layer
-config: csky-randconfig-r072-20241209 (https://download.01.org/0day-ci/archive/20241210/202412100319.Y5vv98P8-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.2.0
+------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_721d0_
+Content-Type: text/plain; charset="utf-8"
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202412100319.Y5vv98P8-lkp@intel.com/
 
-New smatch warnings:
-drivers/nvme/host/core.c:2187 nvme_check_fdp() error: uninitialized symbol 'i'.
-drivers/nvme/host/core.c:2232 nvme_query_fdp_info() warn: missing error code 'ret'
-
-vim +/i +2187 drivers/nvme/host/core.c
-
-04ca0849938146 Keith Busch   2024-12-06  2154  static int nvme_check_fdp(struct nvme_ns *ns, struct nvme_ns_info *info,
-04ca0849938146 Keith Busch   2024-12-06  2155  			  u8 fdp_idx)
-04ca0849938146 Keith Busch   2024-12-06  2156  {
-04ca0849938146 Keith Busch   2024-12-06  2157  	struct nvme_fdp_config_log hdr, *h;
-04ca0849938146 Keith Busch   2024-12-06  2158  	struct nvme_fdp_config_desc *desc;
-04ca0849938146 Keith Busch   2024-12-06  2159  	size_t size = sizeof(hdr);
-04ca0849938146 Keith Busch   2024-12-06  2160  	int i, n, ret;
-04ca0849938146 Keith Busch   2024-12-06  2161  	void *log;
-04ca0849938146 Keith Busch   2024-12-06  2162  
-04ca0849938146 Keith Busch   2024-12-06  2163  	info->runs = 0;
-04ca0849938146 Keith Busch   2024-12-06  2164  	ret = nvme_get_log_lsi(ns->ctrl, 0, NVME_LOG_FDP_CONFIGS, 0, NVME_CSI_NVM,
-04ca0849938146 Keith Busch   2024-12-06  2165  			   (void *)&hdr, size, 0, info->endgid);
-04ca0849938146 Keith Busch   2024-12-06  2166  	if (ret)
-04ca0849938146 Keith Busch   2024-12-06  2167  		return ret;
-04ca0849938146 Keith Busch   2024-12-06  2168  
-04ca0849938146 Keith Busch   2024-12-06  2169  	size = le32_to_cpu(hdr.sze);
-04ca0849938146 Keith Busch   2024-12-06  2170  	h = kzalloc(size, GFP_KERNEL);
-04ca0849938146 Keith Busch   2024-12-06  2171  	if (!h)
-04ca0849938146 Keith Busch   2024-12-06  2172  		return 0;
-04ca0849938146 Keith Busch   2024-12-06  2173  
-04ca0849938146 Keith Busch   2024-12-06  2174  	ret = nvme_get_log_lsi(ns->ctrl, 0, NVME_LOG_FDP_CONFIGS, 0, NVME_CSI_NVM,
-04ca0849938146 Keith Busch   2024-12-06  2175  			   h, size, 0, info->endgid);
-04ca0849938146 Keith Busch   2024-12-06  2176  	if (ret)
-04ca0849938146 Keith Busch   2024-12-06  2177  		goto out;
-04ca0849938146 Keith Busch   2024-12-06  2178  
-04ca0849938146 Keith Busch   2024-12-06  2179  	n = le16_to_cpu(h->numfdpc) + 1;
-04ca0849938146 Keith Busch   2024-12-06  2180  	if (fdp_idx > n)
-04ca0849938146 Keith Busch   2024-12-06  2181  		goto out;
-04ca0849938146 Keith Busch   2024-12-06  2182  
-04ca0849938146 Keith Busch   2024-12-06  2183  	log = h + 1;
-04ca0849938146 Keith Busch   2024-12-06  2184  	do {
-04ca0849938146 Keith Busch   2024-12-06  2185  		desc = log;
-04ca0849938146 Keith Busch   2024-12-06  2186  		log += le16_to_cpu(desc->dsze);
-04ca0849938146 Keith Busch   2024-12-06 @2187  	} while (i++ < fdp_idx);
-                                                         ^
-i needs to be initialized to zero at the start.
-
-04ca0849938146 Keith Busch   2024-12-06  2188  
-04ca0849938146 Keith Busch   2024-12-06  2189  	info->runs = le64_to_cpu(desc->runs);
-04ca0849938146 Keith Busch   2024-12-06  2190  out:
-04ca0849938146 Keith Busch   2024-12-06  2191  	kfree(h);
-04ca0849938146 Keith Busch   2024-12-06  2192  	return ret;
-04ca0849938146 Keith Busch   2024-12-06  2193  }
-04ca0849938146 Keith Busch   2024-12-06  2194  
-04ca0849938146 Keith Busch   2024-12-06  2195  static int nvme_query_fdp_info(struct nvme_ns *ns, struct nvme_ns_info *info)
-04ca0849938146 Keith Busch   2024-12-06  2196  {
-04ca0849938146 Keith Busch   2024-12-06  2197  	struct nvme_ns_head *head = ns->head;
-04ca0849938146 Keith Busch   2024-12-06  2198  	struct nvme_fdp_ruh_status *ruhs;
-04ca0849938146 Keith Busch   2024-12-06  2199  	struct nvme_fdp_config fdp;
-04ca0849938146 Keith Busch   2024-12-06  2200  	struct nvme_command c = {};
-04ca0849938146 Keith Busch   2024-12-06  2201  	int size, ret;
-04ca0849938146 Keith Busch   2024-12-06  2202  
-04ca0849938146 Keith Busch   2024-12-06  2203  	ret = nvme_get_features(ns->ctrl, NVME_FEAT_FDP, info->endgid, NULL, 0,
-04ca0849938146 Keith Busch   2024-12-06  2204  				&fdp);
-04ca0849938146 Keith Busch   2024-12-06  2205  	if (ret)
-04ca0849938146 Keith Busch   2024-12-06  2206  		goto err;
-04ca0849938146 Keith Busch   2024-12-06  2207  
-04ca0849938146 Keith Busch   2024-12-06  2208  	if (!(fdp.flags & FDPCFG_FDPE))
-04ca0849938146 Keith Busch   2024-12-06  2209  		goto err;
-04ca0849938146 Keith Busch   2024-12-06  2210  
-04ca0849938146 Keith Busch   2024-12-06  2211  	ret = nvme_check_fdp(ns, info, fdp.fdpcidx);
-04ca0849938146 Keith Busch   2024-12-06  2212  	if (ret || !info->runs)
-04ca0849938146 Keith Busch   2024-12-06  2213  		goto err;
-04ca0849938146 Keith Busch   2024-12-06  2214  
-04ca0849938146 Keith Busch   2024-12-06  2215  	size = struct_size(ruhs, ruhsd, NVME_MAX_PLIDS);
-04ca0849938146 Keith Busch   2024-12-06  2216  	ruhs = kzalloc(size, GFP_KERNEL);
-04ca0849938146 Keith Busch   2024-12-06  2217  	if (!ruhs) {
-04ca0849938146 Keith Busch   2024-12-06  2218  		ret = -ENOMEM;
-04ca0849938146 Keith Busch   2024-12-06  2219  		goto err;
-04ca0849938146 Keith Busch   2024-12-06  2220  	}
-04ca0849938146 Keith Busch   2024-12-06  2221  
-04ca0849938146 Keith Busch   2024-12-06  2222  	c.imr.opcode = nvme_cmd_io_mgmt_recv;
-04ca0849938146 Keith Busch   2024-12-06  2223  	c.imr.nsid = cpu_to_le32(head->ns_id);
-04ca0849938146 Keith Busch   2024-12-06  2224  	c.imr.mo = NVME_IO_MGMT_RECV_MO_RUHS;
-04ca0849938146 Keith Busch   2024-12-06  2225  	c.imr.numd = cpu_to_le32(nvme_bytes_to_numd(size));
-04ca0849938146 Keith Busch   2024-12-06  2226  	ret = nvme_submit_sync_cmd(ns->queue, &c, ruhs, size);
-04ca0849938146 Keith Busch   2024-12-06  2227  	if (ret)
-04ca0849938146 Keith Busch   2024-12-06  2228  		goto free;
-04ca0849938146 Keith Busch   2024-12-06  2229  
-04ca0849938146 Keith Busch   2024-12-06  2230  	head->nr_plids = le16_to_cpu(ruhs->nruhsd);
-04ca0849938146 Keith Busch   2024-12-06  2231  	if (!head->nr_plids)
-04ca0849938146 Keith Busch   2024-12-06 @2232  		goto free;
-
-ret = -EINVAL?
-
-04ca0849938146 Keith Busch   2024-12-06  2233  
-04ca0849938146 Keith Busch   2024-12-06  2234  	kfree(ruhs);
-04ca0849938146 Keith Busch   2024-12-06  2235  	return 0;
-04ca0849938146 Keith Busch   2024-12-06  2236  
-04ca0849938146 Keith Busch   2024-12-06  2237  free:
-04ca0849938146 Keith Busch   2024-12-06  2238  	kfree(ruhs);
-04ca0849938146 Keith Busch   2024-12-06  2239  err:
-04ca0849938146 Keith Busch   2024-12-06  2240  	head->nr_plids = 0;
-04ca0849938146 Keith Busch   2024-12-06  2241  	info->runs = 0;
-04ca0849938146 Keith Busch   2024-12-06  2242  	return ret;
-04ca0849938146 Keith Busch   2024-12-06  2243  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+------x2Ox1x5iNi7PYvDn9sIpGVgpr3_-t8l_a8xeGFysXFeU9Shi=_721d0_--
 

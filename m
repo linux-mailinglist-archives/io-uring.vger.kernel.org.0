@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-5411-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5412-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC5B9EB72E
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 17:54:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DED19EB736
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 17:54:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E5BA282A75
-	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 16:54:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7406167AB0
+	for <lists+io-uring@lfdr.de>; Tue, 10 Dec 2024 16:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3810233159;
-	Tue, 10 Dec 2024 16:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB342343BB;
+	Tue, 10 Dec 2024 16:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="sp2wlh1+"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="JPdf85vb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B4B231C91
-	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 16:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074FC1BD9CB
+	for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 16:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733849633; cv=none; b=sSe6T3p6sdaPMEEyWNCavah+zEVP2LmQPOBwhUa4+7703UsUTBgRblbIetwsLY04TNNrTsmMLc4ReeATKPRgfM2LZMCUmT1g9gmuxGOZTEzhuJ6ubjKhBWB/6jZdh27zvAQrR27IHq31NmjqXyjiEu87lBi1auG9xzBG/HYE6hY=
+	t=1733849657; cv=none; b=tqyYnc0R8TOxK/NHFL7ZGk/nixgUyLbkN5sogHOIlO1YTkaV86bNkkweHcztYhymo1t77vMCltid7d5k86rhmPYQR41AGxCNX/xzaRp5HRy9ox9udy75sICT8mA9E1E0M5d57tWEpYiDa+elQtUItSanLk3IKa88moMX/vkASC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733849633; c=relaxed/simple;
-	bh=wYPAes464Dj1y9SQACu3q4HX4MCF+mm+9hhGLO/HRBU=;
+	s=arc-20240116; t=1733849657; c=relaxed/simple;
+	bh=bqxl1CIIYKwmPZtxdkAyjqzAJBVDP0ffV4559BZ6DJw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JDP2vQ6yqAubM/GHNDNaF9wkTnfVvIE1GYAilXPpI7TxfNVZ/YKOmuAlwyf0WnxD+pbauabfeXDTxdge0nGXg5rPvlNn+Gu0S7z10LedEGOJL5uGVWEDW/uaOQMTgdBDnQToMA/2xszVUdz2bsiIODRdovFg1/yjDBOMBWH0n/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=sp2wlh1+; arc=none smtp.client-ip=209.85.216.52
+	 In-Reply-To:Content-Type; b=Gv32OV/NshgFpLtrKMOBtjRGMOIVPbThvyUKAtzQ9XTfdY5J+6QzGuWvJFjk3/P6+TRLJB73diAvE9mZpwSSGQFFAtZluKiWMQYb5CJP1bZ0Zig8DhNvFftf5Ad8ojGvELrn0Imnp7mniwbC6/TpyjxMwzdZTD7OAydM2F1MY3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=JPdf85vb; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ee86a1a92dso4220443a91.1
-        for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 08:53:52 -0800 (PST)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso4228998a91.0
+        for <io-uring@vger.kernel.org>; Tue, 10 Dec 2024 08:54:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1733849632; x=1734454432; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1733849655; x=1734454455; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=4xLQK3sBXluSw2kUrvl0E9jKpohZ+Wpp/ckniyFefNs=;
-        b=sp2wlh1+NnFjHVNUIak931ldE9l7YS+MnMDaTZZG/NFIXoXqaQhbDybcwQEdp6yf0L
-         g/HLaQSiDXex5p2e5+z1vXusonwiE87MeNuleX775OMrjqn3JeY7VzJoR9waehx6giKL
-         VH+z7A/5dtovB1Pg40H0h/CH8Leu1R5e5Uxv0f8p3tC4oNd4lLRa5bROOxpMyrAgICPV
-         v0P2DPH3XFvjFTkIVaq1td9fiC1U6xuO1CuTsj2UYpgdeEztKcrXwIeeD/mYBm+Q9Psn
-         +jMr5/B5oyUB1Lqda8oFLFWvUWRFAKaqY3gpSEnB5cgu1mJrFUIjUTszyS454suHscBB
-         YGlQ==
+        bh=3tlCM28/gCfiNIykDUL+CIjEYNxB0b/4lwLtIZm92Rs=;
+        b=JPdf85vbZ/+ml6X3fEj9LVyhxkjpUskMXd7ENqnAEqB+S7Z22eMnUIrh/2WxXogzKt
+         qGvj7Hr5ZKQhvFnMnF8v7/hoXttVknCypOVEDVfpnuBRBBLIVsUb1mfGa4M3+c/L4G6X
+         f9CMP7J0twuCcZsOowyweL2OJD+SCU9lzMqpH6CxVHDiQRP06wfhM5o8tMmLhVNixtA9
+         f7FK9xAUjKdxPFmoELauaInoyuM4Pe5xqGM+VfGFvMwZFoK/2yrHH4Zib5uQ5IwdM4j/
+         +d+/STzi05qBMvct31c2GXGZdrPKGOQCqzrb9ElWJYHEcfFHbrhDqxIEWFgxAVB0ex1o
+         S1qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733849632; x=1734454432;
+        d=1e100.net; s=20230601; t=1733849655; x=1734454455;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4xLQK3sBXluSw2kUrvl0E9jKpohZ+Wpp/ckniyFefNs=;
-        b=emCJE53z6mM+OW7iGnTRy9CXm/2vSHE6G7jp+HIF4rMacy5FrD3sgwOUQDa/ri5pMG
-         7cUvsesMUDjpdJbT+vQxl/mjYe7RuY+fxW6hkaRXJtEgQikvpS3zL4SbTYrz+LAYIFaj
-         7um2EKewhtXHW6HewZg+CHIFYolDuMD3wDBKZ6EWNIU5Xnsy1im6OGETG8IH+nGTUmDK
-         jEnEqWcvLnXM1rDkMsCd6KSOLcgBvQRIInamZaJZbXPRzjaUN3b3DRxAYAP/t72AHPyn
-         KPTZ9LT1v1y7oS7upc2xG3kldvpL9ZLZh0eYgGijIySW0kj7fTmFpIvNfRDjJZHAWBOc
-         43lA==
-X-Gm-Message-State: AOJu0YynqaweWjce0BG/xAyeYauQ1uODsZkfUAuf74Av2UF2oLphkepT
-	RPV6BL6m3IwuJcq2AhELfHTAfBakRDBpXBRJr8VMFm/K+lLLC26PTzX9nF9Gt5U=
-X-Gm-Gg: ASbGncvol6J/m05pRGHDcd0g9OKsp1Qphofbe8No41oilGZyEySl481mGvQlqvtlljq
-	V0H/cO1eEUFEu/FVxyptqWMWKtC/I+RhScrIGcyz1kfkeNMkgTN0SJ7RnmoJT6zHdu1n533X/a9
-	lbYgBpxx5jzSa4OS2oAP7I6kMJHE5g3jGuJaptK4lj9k1YS0goL60GUoN1HEgNY/+U/Uy9WerxW
-	MMBCzsruG4LGxrSRqB5dkq6FGoo5O/VaozPuJrVFTFOFMuzsY2HMc82cY8MZJb0Yw91qhZq/2ZW
-	mbLaN+SSoAB3tno=
-X-Google-Smtp-Source: AGHT+IGWtX922Y1+q4FOGSeAie94K0z49xgUM1aXfUKUHFURDEp13KZ78l+eCYAq+f1E0VpHxikH1A==
-X-Received: by 2002:a17:90b:4f4e:b0:2ee:eb5b:6e06 with SMTP id 98e67ed59e1d1-2efcf26f285mr7223693a91.36.1733849631859;
-        Tue, 10 Dec 2024 08:53:51 -0800 (PST)
+        bh=3tlCM28/gCfiNIykDUL+CIjEYNxB0b/4lwLtIZm92Rs=;
+        b=v233A4Mw+Kvwc1c2wFDmvXppy+xmJvPH/OaBM0me2+ZEnRvxwFZwisZ4tDUk4cZNwY
+         RbAt5pMDT0w9gEhr0v7+Rc+F8bnS5IYfyH3QLOAt9rFdBv+eTIO31De4ekywPn39LOTj
+         xLiSVeDzQNzzTgVREz9Z2fNGXOFLXR+/5XIZFwafp5eMmBNUUQbnCYFzn2nlgAfW4cOb
+         yKTkdPvk6Vsy9KIYhnJtKBWVD6D5X8bJAxJN3X9MGRAWhjYxHZaK+V8xyDnswSeugFMB
+         /bFD2ot4seL+DKDCIaKzJfNXpdMKjIUzgldkcn2/AWcvNPGFL0urBJSbW0wvFbpqSRvz
+         DFTw==
+X-Gm-Message-State: AOJu0Yw1L7M6k0PtvnC65yZTxfmxbcNyzpIjrDkAO4AJiwvexdPdU0Gj
+	M1j49h0qpBNJh0t2cUhuTL8Dn1Zq2SGeyVDr/0AaUvqwBQ2px+YDucwjMraGRIE=
+X-Gm-Gg: ASbGncv4/1EdjDkTH2s+DNTKr/PjpgeMYfy65ZQInDrWCNhtxrLKKJcXmYWniAOruM7
+	jGygS7qR1Hy7jan3bva24CYhLLHdN9WOBtjWZllQAezxh3OKq0bdc0gtNTRZ8Y3XjNoBVXlYTkR
+	bXP9DvdsqGmxMWeerDNGy22SWlZ2X9KbCaFv/m84rQGoE424koQFIy0Mhn7/gScSKNX6ASuuJmi
+	qlfHFR40GN1/mXDUVdqVWeXDsc/+6zxhxDblZUkILDZRAv2svQwbaR65afRzt9FLx1Watv7c0D+
+	a3MPA5l1AJM7PEY=
+X-Google-Smtp-Source: AGHT+IEbGnJeu1ItNoEhpSTmBcJSLUfbZfKsGkLOt7zfegiklcE5jIueF9W/ww1RAn2axD/UyuawHw==
+X-Received: by 2002:a17:90b:2790:b0:2ee:bbd8:2b7e with SMTP id 98e67ed59e1d1-2efcf1384a3mr9656295a91.12.1733849655329;
+        Tue, 10 Dec 2024 08:54:15 -0800 (PST)
 Received: from ?IPV6:2a03:83e0:1256:1:80c:c984:f4f1:951f? ([2620:10d:c090:500::6:fd3a])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef45ff7852sm10006503a91.35.2024.12.10.08.53.49
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2161fd39ddcsm70445245ad.86.2024.12.10.08.54.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 08:53:51 -0800 (PST)
-Message-ID: <3d3e952b-73d7-4c63-8d0e-cb972bd3daeb@davidwei.uk>
-Date: Tue, 10 Dec 2024 08:53:49 -0800
+        Tue, 10 Dec 2024 08:54:14 -0800 (PST)
+Message-ID: <c635218a-eab6-48af-bc07-0abe7d3606d7@davidwei.uk>
+Date: Tue, 10 Dec 2024 08:54:12 -0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -93,13 +93,13 @@ Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
  Pedro Tammela <pctammela@mojatatu.com>
 References: <20241204172204.4180482-1-dw@davidwei.uk>
  <20241204172204.4180482-17-dw@davidwei.uk>
- <CAHS8izP3mo=BYNxKawetg5vNxgRhtUOU2qykJxkWpvua8HQU6g@mail.gmail.com>
+ <CAHS8izO29gnvrqtj2jA9m1mNQK2UC9yCHd=Gtn+fA1Mv0+Vthw@mail.gmail.com>
 From: David Wei <dw@davidwei.uk>
-In-Reply-To: <CAHS8izP3mo=BYNxKawetg5vNxgRhtUOU2qykJxkWpvua8HQU6g@mail.gmail.com>
+In-Reply-To: <CAHS8izO29gnvrqtj2jA9m1mNQK2UC9yCHd=Gtn+fA1Mv0+Vthw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 2024-12-09 09:51, Mina Almasry wrote:
+On 2024-12-09 09:52, Mina Almasry wrote:
 > On Wed, Dec 4, 2024 at 9:23 AM David Wei <dw@davidwei.uk> wrote:
 >>
 >> Add documentation for io_uring zero copy Rx that explains requirements
@@ -112,44 +112,20 @@ On 2024-12-09 09:51, Mina Almasry wrote:
 >>  create mode 100644 Documentation/networking/iou-zcrx.rst
 >>
 >> diff --git a/Documentation/networking/iou-zcrx.rst b/Documentation/networking/iou-zcrx.rst
->> new file mode 100644
->> index 000000000000..0a3af8c08c7e
->> --- /dev/null
-...
->> +Usage
->> +=====
->> +
->> +Setup NIC
->> +---------
->> +
->> +Must be done out of band for now.
 > 
-> I would remove any 'for now' instances in the docs. Uapis are going to
-> be maintained as-is for posterity. Even if you in the future add new
-> APIs which auto-configure headersplit/flow steering/rss, I'm guessing
-> the current API would live on for backward compatibility reasons.
-
-The UAPI will be extended in a way that does not affect backwards
-compatibility e.g. extending io_uring_zcrx_ifq_reg. Such that any of the
-following will work:
-
-1. Configure NIC using ethtool
-2. Call io_uring_register_ifq()
-
-1. Configure NIC using new io_uring UAPI
-2. Call io_uring_register_ifq()
-
-1. Configure NIC by setting new fields in io_uring_zcrx_ifq_reg
-2. Call io_uring_register_ifq()
-
-Therefore the "for now" is intended.
-
+> I think you need a link to Documentation/networking/index.rst to point
+> to your new docs.
 > 
+> ....
+> 
+>> +Testing
+>> +=======
 >> +
->> +Ensure there are enough queues::
+>> +See ``tools/testing/selftests/net/iou-zcrx.c``
 > 
-> Was not clear to me what are enough queues. Technically you only need
-> 2 queues, right? (one for iozcrx and one for normal traffic).
+> Link is wrong I think. The path in this series is
+> tools/testing/selftests/drivers/net/hw/iou-zcrx.c.
+> 
 
-I'll change it to "ensure there are at least two queues".
+Thanks, will fix both.
 

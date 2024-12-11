@@ -1,123 +1,140 @@
-Return-Path: <io-uring+bounces-5445-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5446-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F019ED35D
-	for <lists+io-uring@lfdr.de>; Wed, 11 Dec 2024 18:27:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93859ED3BC
+	for <lists+io-uring@lfdr.de>; Wed, 11 Dec 2024 18:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00515283439
-	for <lists+io-uring@lfdr.de>; Wed, 11 Dec 2024 17:27:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CBC3280E1B
+	for <lists+io-uring@lfdr.de>; Wed, 11 Dec 2024 17:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732251FECC0;
-	Wed, 11 Dec 2024 17:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2520D1DE2A0;
+	Wed, 11 Dec 2024 17:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Jn6+ZsKH"
+	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="N/O8Eg+V";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IuckqzLg"
 X-Original-To: io-uring@vger.kernel.org
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA9F1FECB6;
-	Wed, 11 Dec 2024 17:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52791DDC19
+	for <io-uring@vger.kernel.org>; Wed, 11 Dec 2024 17:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733938049; cv=none; b=EZZ+3HBvvSs7MlvLquVmIO66jtk9xJJTSy3Q9P0djAjJg378sLKxIRg3JbrLzAXQdcT4slPDUta7NrKR6c99gIoWNeUGR5r4YfOpdLkZLX0ifFnmbhDX3g6v3VWECjilP0T9VvFb3oYjfzK6jaZW1wn/EDCh5Afk2l8HQQqgno8=
+	t=1733938492; cv=none; b=pUto804z1dTbH7DDl3GpxG7hHh+oNxR6Cn35LzR76KrOAD7MmBOyCCphELsR6iTeVXleBIvL62I0/0KusOxneZTPFseFaiKaLJBwi+TF5U46m06UcEKHHhJ9Wc160sPDKV6ec15RW2JkXHr1qGlSDpOvKt40No2hUlZB54Kznus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733938049; c=relaxed/simple;
-	bh=uerRqakrwvO4G34fxy4mWJpHc8Jzm+HfcVjh/HslRvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lh66R23qBQiG1bmMndl5vywrupKsSCqTMrD7pvNbYULN+hRH9i47VX0lC5jK6UtSHF39xn5BWuU4Czi/tx88abI6lL/WnFe5Dg2DYVjkaoVS8OSC15kvET6jNbOhPZXn/mnrj6hqf1nS8ouxMiVeTiY5qbwkmovX/G2UkpeB6UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Jn6+ZsKH; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Y7jGQ6jb4z6Cr2Gt;
-	Wed, 11 Dec 2024 17:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1733938040; x=1736530041; bh=gmWh5tFfs7soVBLFuSO/qLnX
-	u+8CTMZDvRiQMaBPqDA=; b=Jn6+ZsKHbREar6WFe1GZ0ByPNPgeHh1eoVH5k3Bf
-	mH/A5t7lCLVsuWak0fNQXlIKOfzO8126Uzjxaba+goDPEjzFT9AjaBJtIULKzqe0
-	9IWyuEoe9yd53BI+GN7KPYPmZUQw52b/ofwJJtzgSSYTRROAPtiBuqxT82oaIDf0
-	HpAedfiM8HBcDPijE4nqorCERsOU0bxylbNfd0qb4M7fHn2k9LptP8qKw51lM4H9
-	G1dmjVSE85gGToRztGnGgtDPO/kpi57nFluPjq0j5JEQ0KcPP4ChqlvrsRIflYeH
-	ORJIpf7HL5DSubgUBgwRZ2ik7TSML8T1sqIGrppT0jkkhA==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 7pH0caqGSLM7; Wed, 11 Dec 2024 17:27:20 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Y7jGC4KWJz6Cr2Fp;
-	Wed, 11 Dec 2024 17:27:14 +0000 (UTC)
-Message-ID: <2f260b23-006a-4ea2-a508-39f2bace1bec@acm.org>
-Date: Wed, 11 Dec 2024 09:27:13 -0800
+	s=arc-20240116; t=1733938492; c=relaxed/simple;
+	bh=+x6VENLo9WiZ/QHGgMi+eZE/tHMdS35kGDP2uQjRmpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ceDp4bkNcGj2++DHfeZzppUVaq6mQpMXJaVSpadss2u9D0PxoBx55hUAqZ9MTTd54bwNPHYOWsGyjVFKehRjCv0pwPPrWX3ZtrEAzegK6+f1ZRyLGkAOxc1Mf+0ufKHkg7SZXyJNZKgeR0WyhkJm13MJ/eFxvvrOqlEXD2bkJj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=N/O8Eg+V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IuckqzLg; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id C36CA11400AF;
+	Wed, 11 Dec 2024 12:34:48 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Wed, 11 Dec 2024 12:34:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	joshtriplett.org; h=cc:cc:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1733938488;
+	 x=1734024888; bh=l0KeTUe4gEhaRbNt+AWr7a73fPenG5tTHycYDlleLj4=; b=
+	N/O8Eg+VOBD2M4u5VBeEGbLCLQ35ALYYMUIGxf5ihK8DMIeWuAsnxIC5Su9jd+It
+	ft3wGkUGfxI0bPtuEjVBd2x6IiWAHtIqYDJBTqSonPUSLDRx275VthDO/Jqpu8yv
+	5qDDGRd5hqB9XdTeH+WFzZd4KmZGFsQm7g8j3BfCkLq6N844pyzaKYqhimFYJmBs
+	JEiqkcrLyrNlrTqrVv34aV8ns3D7fH9D5hWi5+Zmn4akmuzWh+OaOm1gF2KGVYpS
+	Pq5h3pihoIRn2flVrTwwroLu89w2P2yNbn4YyScikfp6MNbc0eojWY17sg//lmWO
+	GvAwEgxMFD0ytEVY6lxnSw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1733938488; x=1734024888; bh=l0KeTUe4gEhaRbNt+AWr7a73fPenG5tTHyc
+	YDlleLj4=; b=IuckqzLgJ+MUPwl9Ih+WLPjeG0FSFKOoFz7sJ3E+gC5XdTYdLTq
+	/R60pY9nwtbXZ7V1yNYQq2MAQG4rI//i4rpmwFjAz7EOdTe++BfGYMJQiExoWO3R
+	SpNqbZr0h6Lh1bDHsOibR2VG035L2dk159a4GpF3IZhZGc16u5tH9ZeYeGZp2u0w
+	Sg6op9DcjG+xJ6P5kAXsjaPLNbiy8EhH8QXVWDodz8kuWlc5+u6URToyb6FcMjlk
+	6vqJY4+hGZD3sYQVpdvZ6bA5bpewtTxlxZFoDihzHqCm+Fsxvy+hnY+W1TpxisS1
+	a1z2603bGpKuyHOXFNB/R0FDI+wbEtCD6/w==
+X-ME-Sender: <xms:OM1ZZ41mUUpxaJAmm_nZWsZCyoVkHyLSEIgbzGYR2x0tx8wGDNfQDA>
+    <xme:OM1ZZzF0vd4YbI7bj-ONZoiKO4rokMB4bo6k44uXDniYrIfH8b6QTOv9pQ-pqMQ5I
+    mVQpQkerBA-kmBsHA4>
+X-ME-Received: <xmr:OM1ZZw7Xmp9ISmSIoGjXWFp6psYr9HUgeMNxyvhYFv8BGI76bP2AI5n2n53YQTtIN2vvIKOXL8KDHuODiL8HLgvghZ7RHA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkedtgddutdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomheplfhoshhhucfvrhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhplh
+    gvthhtrdhorhhgqeenucggtffrrghtthgvrhhnpeduieegheeijeeuvdetudefvedtjeef
+    geeufefghfekgfelfeetteelvddtffetgfenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
+    pdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrsh
+    hmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopehkrhhishhmrghn
+    sehsuhhsvgdruggvpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtph
+    htthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:OM1ZZx2R77vLoAPdhUkXz7aaRFMxDNrOkYAUDEogaFIdlLRXVxTpxQ>
+    <xmx:OM1ZZ7GbYGp-LF5EBc0iENCX52h5LEv3wsQjKaj4YXh0cdmmpeMk_g>
+    <xmx:OM1ZZ6_sFZ06FeEm4ILKS2SrRtaS3yd-3lT3Morp6twGl2zSDxtgMA>
+    <xmx:OM1ZZwmS7Pru4SPURon8OTS4Hf8ILgjSFX6gUVs4RRw5zRdRrbdEBA>
+    <xmx:OM1ZZ_j4cE57fLoIAbYFDMkLfY_UbLNsWcSooMMn-O8XHYacXUUFConY>
+Feedback-ID: i83e94755:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 Dec 2024 12:34:47 -0500 (EST)
+Date: Wed, 11 Dec 2024 09:34:46 -0800
+From: Josh Triplett <josh@joshtriplett.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>, axboe@kernel.dk,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC 0/9] Launching processes with io_uring
+Message-ID: <Z1nNNr_a4P0bgihN@localhost>
+References: <20241209234316.4132786-1-krisman@suse.de>
+ <fd219866-b0d3-418b-aee2-f9d1815bfde0@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv10 0/9] write hints with nvme fdp, scsi streams
-To: Nitesh Shetty <nj.shetty@samsung.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
- Javier Gonzalez <javier.gonz@samsung.com>,
- Matthew Wilcox <willy@infradead.org>, Keith Busch <kbusch@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "joshi.k@samsung.com" <joshi.k@samsung.com>
-References: <9d61a62f-6d95-4588-bcd8-de4433a9c1bb@acm.org>
- <yq1plmhv3ah.fsf@ca-mkp.ca.oracle.com>
- <8ef1ec5b-4b39-46db-a4ed-abf88cbba2cd@acm.org>
- <yq1jzcov5am.fsf@ca-mkp.ca.oracle.com>
- <CGME20241205081138epcas5p2a47090e70c3cf19e562f63cd9fc495d1@epcas5p2.samsung.com>
- <20241205080342.7gccjmyqydt2hb7z@ubuntu>
- <yq1a5d9op6p.fsf@ca-mkp.ca.oracle.com>
- <d9cc57b5-d998-4896-b5ec-efa5fa06d5a5@acm.org>
- <yq1frmwl1zf.fsf@ca-mkp.ca.oracle.com>
- <7d06cc60-7640-4431-a1cb-043a959e2ff3@acm.org>
- <20241211093549.n6dvl6c6xp4blccd@ubuntu>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241211093549.n6dvl6c6xp4blccd@ubuntu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd219866-b0d3-418b-aee2-f9d1815bfde0@gmail.com>
 
-On 12/11/24 1:36 AM, Nitesh Shetty wrote:
-> Block layer can allocate a buffer and send this as part of copy
-> operation.
+On Wed, Dec 11, 2024 at 02:02:14PM +0000, Pavel Begunkov wrote:
+> 1) It creates a special path that tries to mimick the core
+> path, but not without a bunch of troubles and in quite a
+> special way.
+> 
+> 2) There would be a special set of ops that can only be run
+> from that special path.
 
-The block layer can only do that if it knows how large the buffer should
-be. Or in other words, if knowledge of a SCSI buffer size is embedded in
-the block layer. That doesn't sound ideal to me.
+The goal would be for the exec op to work just fine from the normal
+path, too, for processes that want to do the equivalent of "do several
+syscalls then exec to replace myself", rather than doing a fork/exec.
+The current implementation defers supporting exec on a non-clone ring,
+but I'd expect that limitation to be lifted in the future.
 
-> This scheme will require sequential submission of SRC and DST
-> bio's. This might increase in latency, but allows to have simpler design.
-> Main use case for copy is GC, which is mostly a background operation.
+> 3) And I don't believe that path can ever be allowed to run
+> anything but these ops from (2) and maybe a very limited subset
+> of normal ops like nop requests but no read/write/send/etc. (?)
 
-I still prefer a single REQ_OP_COPY operation instead of separate
-REQ_OP_COPY_SRC and REQ_OP_COPY_DST operations. While this will require
-additional work in the SCSI disk (sd) driver (implementation of a state
-machine), it prevents that any details about the SCSI copy offloading
-approach have to be known by the block layer. Even if copy offloading
-would be implemented as two operations (REQ_OP_COPY_SRC and 
-REQ_OP_COPY_DST), a state machine is required anyway in the SCSI disk
-driver because REQ_OP_COPY_SRC would have to be translated into two SCSI
-commands (POPULATE TOKEN + RECEIVE ROD TOKEN INFORMATION).
+I would ideally expect it to be able to run almost *any* op, in the
+context of the new process: write, send, open, accept, connect,
+unlinkat, FIXED_FD_INSTALL, ring messaging, ...
 
-Thanks,
+> 4) And it all requires links, which already a bad sign for
+> a bunch of reasons.
 
-Bart.
+In theory you don't *have* to have everything linked for a batch of
+operations like this, as long as it's clear what to run in the new task.
 
+> At this point it raises a question why it even needs io_uring
+> infra? I don't think it's really helping you. E.g. why not do it
+> as a list of operation in a custom format instead of links?
+
+Because, as mentioned above, the intention *is* to support almost any
+io_uring operation, not just a tiny subset.
 

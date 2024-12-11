@@ -1,140 +1,141 @@
-Return-Path: <io-uring+bounces-5446-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5448-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C93859ED3BC
-	for <lists+io-uring@lfdr.de>; Wed, 11 Dec 2024 18:34:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3D99ED658
+	for <lists+io-uring@lfdr.de>; Wed, 11 Dec 2024 20:20:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CBC3280E1B
-	for <lists+io-uring@lfdr.de>; Wed, 11 Dec 2024 17:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A3DA188BCF4
+	for <lists+io-uring@lfdr.de>; Wed, 11 Dec 2024 19:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2520D1DE2A0;
-	Wed, 11 Dec 2024 17:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C95B2210F2;
+	Wed, 11 Dec 2024 19:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="N/O8Eg+V";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IuckqzLg"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="JX8RI6Cw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52791DDC19
-	for <io-uring@vger.kernel.org>; Wed, 11 Dec 2024 17:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702A42288CF
+	for <io-uring@vger.kernel.org>; Wed, 11 Dec 2024 19:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733938492; cv=none; b=pUto804z1dTbH7DDl3GpxG7hHh+oNxR6Cn35LzR76KrOAD7MmBOyCCphELsR6iTeVXleBIvL62I0/0KusOxneZTPFseFaiKaLJBwi+TF5U46m06UcEKHHhJ9Wc160sPDKV6ec15RW2JkXHr1qGlSDpOvKt40No2hUlZB54Kznus=
+	t=1733944130; cv=none; b=ea9pCLfmDCQWUOhT4i/FqD65iR+DkKvo02exaQWqmsxUp6jIaifor6GV2OFth9iQVXeU4seDn2/kwmvH5agb1QwIf7XdeHovI9RAST/YdZ5fa/pDGHFNfsAf4e/LiV5VIlynIx/XRrvN8DDXlkBTHK6YiwuEQydRfLQ79wQ2F7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733938492; c=relaxed/simple;
-	bh=+x6VENLo9WiZ/QHGgMi+eZE/tHMdS35kGDP2uQjRmpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ceDp4bkNcGj2++DHfeZzppUVaq6mQpMXJaVSpadss2u9D0PxoBx55hUAqZ9MTTd54bwNPHYOWsGyjVFKehRjCv0pwPPrWX3ZtrEAzegK6+f1ZRyLGkAOxc1Mf+0ufKHkg7SZXyJNZKgeR0WyhkJm13MJ/eFxvvrOqlEXD2bkJj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=N/O8Eg+V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IuckqzLg; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id C36CA11400AF;
-	Wed, 11 Dec 2024 12:34:48 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Wed, 11 Dec 2024 12:34:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	joshtriplett.org; h=cc:cc:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1733938488;
-	 x=1734024888; bh=l0KeTUe4gEhaRbNt+AWr7a73fPenG5tTHycYDlleLj4=; b=
-	N/O8Eg+VOBD2M4u5VBeEGbLCLQ35ALYYMUIGxf5ihK8DMIeWuAsnxIC5Su9jd+It
-	ft3wGkUGfxI0bPtuEjVBd2x6IiWAHtIqYDJBTqSonPUSLDRx275VthDO/Jqpu8yv
-	5qDDGRd5hqB9XdTeH+WFzZd4KmZGFsQm7g8j3BfCkLq6N844pyzaKYqhimFYJmBs
-	JEiqkcrLyrNlrTqrVv34aV8ns3D7fH9D5hWi5+Zmn4akmuzWh+OaOm1gF2KGVYpS
-	Pq5h3pihoIRn2flVrTwwroLu89w2P2yNbn4YyScikfp6MNbc0eojWY17sg//lmWO
-	GvAwEgxMFD0ytEVY6lxnSw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1733938488; x=1734024888; bh=l0KeTUe4gEhaRbNt+AWr7a73fPenG5tTHyc
-	YDlleLj4=; b=IuckqzLgJ+MUPwl9Ih+WLPjeG0FSFKOoFz7sJ3E+gC5XdTYdLTq
-	/R60pY9nwtbXZ7V1yNYQq2MAQG4rI//i4rpmwFjAz7EOdTe++BfGYMJQiExoWO3R
-	SpNqbZr0h6Lh1bDHsOibR2VG035L2dk159a4GpF3IZhZGc16u5tH9ZeYeGZp2u0w
-	Sg6op9DcjG+xJ6P5kAXsjaPLNbiy8EhH8QXVWDodz8kuWlc5+u6URToyb6FcMjlk
-	6vqJY4+hGZD3sYQVpdvZ6bA5bpewtTxlxZFoDihzHqCm+Fsxvy+hnY+W1TpxisS1
-	a1z2603bGpKuyHOXFNB/R0FDI+wbEtCD6/w==
-X-ME-Sender: <xms:OM1ZZ41mUUpxaJAmm_nZWsZCyoVkHyLSEIgbzGYR2x0tx8wGDNfQDA>
-    <xme:OM1ZZzF0vd4YbI7bj-ONZoiKO4rokMB4bo6k44uXDniYrIfH8b6QTOv9pQ-pqMQ5I
-    mVQpQkerBA-kmBsHA4>
-X-ME-Received: <xmr:OM1ZZw7Xmp9ISmSIoGjXWFp6psYr9HUgeMNxyvhYFv8BGI76bP2AI5n2n53YQTtIN2vvIKOXL8KDHuODiL8HLgvghZ7RHA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkedtgddutdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomheplfhoshhhucfvrhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhplh
-    gvthhtrdhorhhgqeenucggtffrrghtthgvrhhnpeduieegheeijeeuvdetudefvedtjeef
-    geeufefghfekgfelfeetteelvddtffetgfenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
-    pdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrsh
-    hmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopehkrhhishhmrghn
-    sehsuhhsvgdruggvpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtph
-    htthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:OM1ZZx2R77vLoAPdhUkXz7aaRFMxDNrOkYAUDEogaFIdlLRXVxTpxQ>
-    <xmx:OM1ZZ7GbYGp-LF5EBc0iENCX52h5LEv3wsQjKaj4YXh0cdmmpeMk_g>
-    <xmx:OM1ZZ6_sFZ06FeEm4ILKS2SrRtaS3yd-3lT3Morp6twGl2zSDxtgMA>
-    <xmx:OM1ZZwmS7Pru4SPURon8OTS4Hf8ILgjSFX6gUVs4RRw5zRdRrbdEBA>
-    <xmx:OM1ZZ_j4cE57fLoIAbYFDMkLfY_UbLNsWcSooMMn-O8XHYacXUUFConY>
-Feedback-ID: i83e94755:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 Dec 2024 12:34:47 -0500 (EST)
-Date: Wed, 11 Dec 2024 09:34:46 -0800
-From: Josh Triplett <josh@joshtriplett.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>, axboe@kernel.dk,
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH RFC 0/9] Launching processes with io_uring
-Message-ID: <Z1nNNr_a4P0bgihN@localhost>
-References: <20241209234316.4132786-1-krisman@suse.de>
- <fd219866-b0d3-418b-aee2-f9d1815bfde0@gmail.com>
+	s=arc-20240116; t=1733944130; c=relaxed/simple;
+	bh=sIHNlv58GzR8qJbuqoxtcjO1QTMLtUk280QOTIo8ols=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P1ALqubERs5eBuuowWUBYw+KTarJi5jAfd9UKmIaqs0rV141twh6DRVIJF0W3LISxrTuvemG1c597wCzLSGTFKi9zqwPDAtKXIRdjLaniuzZapwkz5HKzL7jq36cDGw5uYIMyRl/hdG8epmDfRfxlS9wxZ3bkU+BNQv9FCCVxNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=JX8RI6Cw; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBIaOQE026402
+	for <io-uring@vger.kernel.org>; Wed, 11 Dec 2024 11:08:47 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2021-q4; bh=s8GAwMobQbYzm1WpzP
+	fIBLt+oYBnnbj6arNEC9wHIYw=; b=JX8RI6CwFXQDwtwFdYbP50iojC2l8fBcjJ
+	ZvB57GxwQ9odca3acZmX/DzDndAevyQ7vugOdzBvCC9NmQWzeBXTOGxHPy18a7nY
+	JMH6rZ7RzRmzLiFM+KGg/+I3Nj81fYQqduP2dehfBDdfF2EZ0dyX6gEP4QKIQ+Dg
+	Gxx8/pPzqfY2bx86MHi34cJnXuLc4IehQz2YCd5ZP8prr4GM1YKVVsHG5rV5h6ct
+	4wheMzhn1pa353euov2DT6t8OlTk5pIsAPzkmdvX+yN92NpTRBdX3PU4f4Zs/c8A
+	vkDMAQdOccifqH6MNJliWG+Z8B7/YnGbI5NZX/x3s9W2xjgpZ82g==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 43fg5k87q2-11
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Wed, 11 Dec 2024 11:08:47 -0800 (PST)
+Received: from twshared55211.03.ash8.facebook.com (2620:10d:c085:208::7cb7) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.11; Wed, 11 Dec 2024 19:08:40 +0000
+Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
+	id C094E15DE394C; Wed, 11 Dec 2024 10:35:15 -0800 (PST)
+From: Keith Busch <kbusch@meta.com>
+To: <axboe@kernel.dk>, <hch@lst.de>, <linux-block@vger.kernel.org>,
+        <linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+        <io-uring@vger.kernel.org>
+CC: <sagi@grimberg.me>, <asml.silence@gmail.com>, <anuj20.g@samsung.com>,
+        <joshi.k@samsung.com>, Keith Busch <kbusch@kernel.org>
+Subject: [PATCHv14 00/11] block write streams with nvme fdp
+Date: Wed, 11 Dec 2024 10:35:03 -0800
+Message-ID: <20241211183514.64070-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd219866-b0d3-418b-aee2-f9d1815bfde0@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: AbNmIYM4HoCK2Q32CC_ZGt6YbnZz2niz
+X-Proofpoint-ORIG-GUID: AbNmIYM4HoCK2Q32CC_ZGt6YbnZz2niz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
 
-On Wed, Dec 11, 2024 at 02:02:14PM +0000, Pavel Begunkov wrote:
-> 1) It creates a special path that tries to mimick the core
-> path, but not without a bunch of troubles and in quite a
-> special way.
-> 
-> 2) There would be a special set of ops that can only be run
-> from that special path.
+From: Keith Busch <kbusch@kernel.org>
 
-The goal would be for the exec op to work just fine from the normal
-path, too, for processes that want to do the equivalent of "do several
-syscalls then exec to replace myself", rather than doing a fork/exec.
-The current implementation defers supporting exec on a non-clone ring,
-but I'd expect that limitation to be lifted in the future.
+Previous discussion:
 
-> 3) And I don't believe that path can ever be allowed to run
-> anything but these ops from (2) and maybe a very limited subset
-> of normal ops like nop requests but no read/write/send/etc. (?)
+https://lore.kernel.org/linux-nvme/20241210194722.1905732-1-kbusch@meta.c=
+om/T/#u
 
-I would ideally expect it to be able to run almost *any* op, in the
-context of the new process: write, send, open, accept, connect,
-unlinkat, FIXED_FD_INSTALL, ring messaging, ...
+Changes from v13:
 
-> 4) And it all requires links, which already a bad sign for
-> a bunch of reasons.
+  Fixed up printing size_t format (kernel test robot)
 
-In theory you don't *have* to have everything linked for a batch of
-operations like this, as long as it's clear what to run in the new task.
+  Use %d for endgid (John)
 
-> At this point it raises a question why it even needs io_uring
-> infra? I don't think it's really helping you. E.g. why not do it
-> as a list of operation in a custom format instead of links?
+  Removed bdev write stream granularity helper (no user in this series)
+  (John)
 
-Because, as mentioned above, the intention *is* to support almost any
-io_uring operation, not just a tiny subset.
+  Clamp variable size FDP config log page size to max order (Hannes)
+
+  Ensure the log descriptor sizes make sense (Hannes)
+
+  Comment typos (Nitesh)
+
+  Commit log description fix for where to find the write stream
+  parameters (Nitesh).
+
+Christoph Hellwig (7):
+  fs: add a write stream field to the kiocb
+  block: add a bi_write_stream field
+  block: introduce a write_stream_granularity queue limit
+  block: expose write streams for block device nodes
+  nvme: add a nvme_get_log_lsi helper
+  nvme: pass a void pointer to nvme_get/set_features for the result
+  nvme: add FDP definitions
+
+Keith Busch (4):
+  block: introduce max_write_streams queue limit
+  io_uring: enable per-io write streams
+  nvme: register fdp parameters with the block layer
+  nvme: use fdp streams if write stream is provided
+
+ Documentation/ABI/stable/sysfs-block |  15 +++
+ block/bio.c                          |   2 +
+ block/blk-crypto-fallback.c          |   1 +
+ block/blk-merge.c                    |   4 +
+ block/blk-sysfs.c                    |   6 +
+ block/bounce.c                       |   1 +
+ block/fops.c                         |  23 ++++
+ drivers/nvme/host/core.c             | 192 ++++++++++++++++++++++++++-
+ drivers/nvme/host/nvme.h             |   7 +-
+ include/linux/blk_types.h            |   1 +
+ include/linux/blkdev.h               |  10 ++
+ include/linux/fs.h                   |   1 +
+ include/linux/nvme.h                 |  77 +++++++++++
+ include/uapi/linux/io_uring.h        |   4 +
+ io_uring/io_uring.c                  |   2 +
+ io_uring/rw.c                        |   1 +
+ 16 files changed, 341 insertions(+), 6 deletions(-)
+
+--=20
+2.43.5
+
 

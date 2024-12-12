@@ -1,75 +1,96 @@
-Return-Path: <io-uring+bounces-5461-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5462-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86FA9EE53F
-	for <lists+io-uring@lfdr.de>; Thu, 12 Dec 2024 12:40:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D272A9EE78F
+	for <lists+io-uring@lfdr.de>; Thu, 12 Dec 2024 14:14:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99767282535
-	for <lists+io-uring@lfdr.de>; Thu, 12 Dec 2024 11:40:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6E21188891C
+	for <lists+io-uring@lfdr.de>; Thu, 12 Dec 2024 13:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A57221129D;
-	Thu, 12 Dec 2024 11:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFC5209F5F;
+	Thu, 12 Dec 2024 13:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AZExY53S"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gtWBHBP+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kwzDA7ab";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gtWBHBP+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kwzDA7ab"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815DB210F62
-	for <io-uring@vger.kernel.org>; Thu, 12 Dec 2024 11:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6A0213E84;
+	Thu, 12 Dec 2024 13:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734003601; cv=none; b=h0F/yU3Lydt60AZzBxrvu1pidBfo6M6V2W1DQXlWLp7BcGIzZ7v9pKRZ2H9KITJZDzmaHeIjSoEV08L2aSuIu34K7JUtSK07DjBQ0MDnEjT8vzR7A9GKJDy3G+WVXHdXbnA1UTTUp1Xb//7D1UKS1/ZW2PT9KQk8di4RA7YC5/M=
+	t=1734009256; cv=none; b=C3+OhEo1tOAEsGQu2bNzdoEvJQag17sHO48AvC3grNiY9HoShyFvBMpje0YC0r+4lmcyiEujDZTTU9r0jXPlV/k+L1tiePyABJRedSlvSdr45dazMIB3nHc+xrGDeMc0XARVyyPu7K/a1xVYMjJXyNK/MKI7sxEKL+lg2R9CMQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734003601; c=relaxed/simple;
-	bh=gq5HIoLOaRrwWTFMhl4akmkUagye1PVMUPy8Br/WayU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=a31++B2NqUc4dKxXmKKJ7GvfOji688Bz+PCYyab3a6J+Ji8vgvE53uJ9QCg9z8NrRXL9qQHvtUpw+71/GPW9aQD+N78JIZjtFrd6m23P+n5VUuRJdEo1RiiJfMqFkPAEoRPS1Xo/ft0iKOpPGkdDhUa1h+iMxmUK+00iWGLGf24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AZExY53S; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241212113956epoutp04c0e668596474e0f5172f4691d6941453~QaxVk_KVf0982709827epoutp04O
-	for <io-uring@vger.kernel.org>; Thu, 12 Dec 2024 11:39:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241212113956epoutp04c0e668596474e0f5172f4691d6941453~QaxVk_KVf0982709827epoutp04O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1734003596;
-	bh=gq5HIoLOaRrwWTFMhl4akmkUagye1PVMUPy8Br/WayU=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=AZExY53StDExVRIy9il+SoWJcySMFVIAGu+MKUFU/uC87U4rv/5XfTFtzBxcnBaj3
-	 qsQ4Tm7liNMXmXO1jyMfcrlqyLWprW0+RytxoY9RulaUCYpRjejNhLdrQt5eByflks
-	 tXdA2DACaj9nPBf6yiG/nIZFisttvtdoS6heK/yc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20241212113955epcas5p4ba3542ee4c4267058ee4f5bdc727415b~QaxUt9OAM2487724877epcas5p4l;
-	Thu, 12 Dec 2024 11:39:55 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y89Vy0JxZz4x9Pt; Thu, 12 Dec
-	2024 11:39:54 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B6.3B.19933.98BCA576; Thu, 12 Dec 2024 20:39:53 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241212113953epcas5p42a9eb3b5e449b08d18402016f6657ea8~QaxTPVz2S2487624876epcas5p4f;
-	Thu, 12 Dec 2024 11:39:53 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241212113953epsmtrp2f2b12fd0c7e22158831e27899ce2d073~QaxTOa7wi2144721447epsmtrp2c;
-	Thu, 12 Dec 2024 11:39:53 +0000 (GMT)
-X-AuditID: b6c32a4a-c1fda70000004ddd-51-675acb897929
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5F.F2.33707.98BCA576; Thu, 12 Dec 2024 20:39:53 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241212113951epsmtip1dbc895aaaa00061ddf03ca96691ec892~QaxRqadna2973429734epsmtip1i;
-	Thu, 12 Dec 2024 11:39:51 +0000 (GMT)
-Message-ID: <6cf38922-2dfc-4788-8cea-304f16d3abfc@samsung.com>
-Date: Thu, 12 Dec 2024 17:09:50 +0530
+	s=arc-20240116; t=1734009256; c=relaxed/simple;
+	bh=VdsrmDh/jsl2Cx7SgccfTdErXAO6t50Y02RJzT/pqbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eih2NZHViVR7/Mo7tXuxWNUwxI0UNpvaG1j5B9r7UWOMCQPn85YGwoMVg96o1tdfYkblx+lnXhrMLXEw+rkZ0tk79T10Sby66miE2xyoGjG7ZxYyyDn/uhd4IdcWrG3msP6GocmyrwdNr2hs/LlzKnC4pm5757dUXBIw6SBzdlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gtWBHBP+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kwzDA7ab; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gtWBHBP+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kwzDA7ab; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7B7BF1F383;
+	Thu, 12 Dec 2024 13:14:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1734009252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RvKJQCY4UAGhGZ5rWD6wzbX/j5iNZb8I49LUPn4nhpY=;
+	b=gtWBHBP+YtqrUAN3iawUKFdx0R9yJ0QDJ3JxPhvdy19qazHC2MmwZDzXsu5jWgKXOUN2Mw
+	tpAQdQiBdVqqhat8HZbstu01mU1SB982ml2xxS69csoaOHr99Yb0ovhPT23C1PBOCgITrJ
+	ZT7cp0a6GTq8zl7abbk5tf+5uV7N2xI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1734009252;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RvKJQCY4UAGhGZ5rWD6wzbX/j5iNZb8I49LUPn4nhpY=;
+	b=kwzDA7ab2xM2vAay11d3F+S8hk7ft4K1IePIdVEv67PGeCoGEgC3uXNlCjPpR2gQiqbT5H
+	om4zqWXEs3X2kiAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=gtWBHBP+;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=kwzDA7ab
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1734009252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RvKJQCY4UAGhGZ5rWD6wzbX/j5iNZb8I49LUPn4nhpY=;
+	b=gtWBHBP+YtqrUAN3iawUKFdx0R9yJ0QDJ3JxPhvdy19qazHC2MmwZDzXsu5jWgKXOUN2Mw
+	tpAQdQiBdVqqhat8HZbstu01mU1SB982ml2xxS69csoaOHr99Yb0ovhPT23C1PBOCgITrJ
+	ZT7cp0a6GTq8zl7abbk5tf+5uV7N2xI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1734009252;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RvKJQCY4UAGhGZ5rWD6wzbX/j5iNZb8I49LUPn4nhpY=;
+	b=kwzDA7ab2xM2vAay11d3F+S8hk7ft4K1IePIdVEv67PGeCoGEgC3uXNlCjPpR2gQiqbT5H
+	om4zqWXEs3X2kiAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2F04713508;
+	Thu, 12 Dec 2024 13:14:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id h63/CqThWmeGVwAAD6G6ig
+	(envelope-from <hare@suse.de>); Thu, 12 Dec 2024 13:14:12 +0000
+Message-ID: <b796253f-73f3-4a05-ad88-1fb118e0171f@suse.de>
+Date: Thu, 12 Dec 2024 14:14:11 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -77,62 +98,77 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv14 00/11] block write streams with nvme fdp
+Subject: Re: [PATCHv14 10/11] nvme: register fdp parameters with the block
+ layer
 To: Keith Busch <kbusch@meta.com>, axboe@kernel.dk, hch@lst.de,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Cc: sagi@grimberg.me, asml.silence@gmail.com, anuj20.g@samsung.com, Keith
-	Busch <kbusch@kernel.org>
+ linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Cc: sagi@grimberg.me, asml.silence@gmail.com, anuj20.g@samsung.com,
+ joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
+References: <20241211183514.64070-1-kbusch@meta.com>
+ <20241211183514.64070-11-kbusch@meta.com>
 Content-Language: en-US
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20241211183514.64070-1-kbusch@meta.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmpm7n6ah0g7f3rS2aJvxltpizahuj
-	xeq7/WwWK1cfZbJ413qOxWLSoWuMFmeuLmSx2HtL22LP3pMsFvOXPWW3WPf6PYsDt8fOWXfZ
-	Pc7f28jicflsqcemVZ1sHpuX1HvsvtnA5nHuYoVH35ZVjB6fN8kFcEZl22SkJqakFimk5iXn
-	p2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAnaqkUJaYUwoUCkgsLlbSt7Mp
-	yi8tSVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAyBSpMyM5o+f2RuaCg4uXSi0wN
-	jHFdjJwcEgImEmdP9bJ2MXJxCAnsZpT4tPgzM4TziVHi5uwpjHDOlXnzmWFadhyfxApiCwns
-	ZJQ4ci8Eougto8TTTQdYQBK8AnYS3bs+MYHYLAKqEt3P3rJCxAUlTs58AlYjKiAvcf/WDHYQ
-	W1jAXuL38xksIINEBHYwSnS+fArWzCyQKjHh53FmCFtc4taT+UBxDg42AU2JC5NLQcKcAqYS
-	Xx7chyqRl9j+dg7YCxICezgkDn3oY4G42kXizvmLbBC2sMSr41vYIWwpic/v9kLFsyUePHoA
-	VV8jsWNzHyuEbS/R8OcGK8heZqC963fpQ+zik+j9/QTsHAkBXomONiGIakWJe5OeQnWKSzyc
-	sYQVosRDYuFNN0hQdTBK/DnSwDyBUWEWUqjMQvLkLCTfzEJYvICRZRWjZGpBcW56arFpgVFe
-	ajk8tpPzczcxgpOxltcOxocPPugdYmTiYDzEKMHBrCTCe8M+Ml2INyWxsiq1KD++qDQntfgQ
-	oykweiYyS4km5wPzQV5JvKGJpYGJmZmZiaWxmaGSOO/r1rkpQgLpiSWp2ampBalFMH1MHJxS
-	DUyWTfcnuHQ+dkhM2uQr3/1/4UzLnu3J0cUnytb4PnsQU9LH9usf021Nk0k6hv7c1tH1rtdj
-	t/c8+van9+7BS7s1Fukm72N5+Tcjd1KBwPSU6n8hE488i+XKCJ1YvEJ96xZBmeYHWzecuH9a
-	uGGW95rVYbLLSpeELGJR3VJlI3Y4cPt8wZBKdX0fvjeFkn+fakl1xW39e0pp6Sz9WBe1h57m
-	U/7N5LYJucrgtk3jSzenXMSCIobwnU+3a5ys7Tr3xa6Z79aVf5vL7hxd2tZUu+u0C5/W0wUz
-	xD+qJp6QX7rCrFgm6ubpVpm0nkl2M8Sl/NRf3JPeNy3j8+ONn/Ofmep3SPcdjgrd9n2Lp8hT
-	PTklluKMREMt5qLiRADFMo4TTwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGIsWRmVeSWpSXmKPExsWy7bCSnG7n6ah0g6fTVCyaJvxltpizahuj
-	xeq7/WwWK1cfZbJ413qOxWLSoWuMFmeuLmSx2HtL22LP3pMsFvOXPWW3WPf6PYsDt8fOWXfZ
-	Pc7f28jicflsqcemVZ1sHpuX1HvsvtnA5nHuYoVH35ZVjB6fN8kFcEZx2aSk5mSWpRbp2yVw
-	ZbT8/shcUFDxculFpgbGuC5GTg4JAROJHccnsXYxcnEICWxnlNjwdDsbREJcovnaD3YIW1hi
-	5b/n7BBFrxklXl+czQiS4BWwk+je9YkJxGYRUJXofvaWFSIuKHFy5hMWEFtUQF7i/q0ZYIOE
-	Bewlfj+fwQIySERgB6PE/3U7wbYxC6RKzP64kA1iQwejxIFn09ghEuISt57MB9rAwcEmoClx
-	YXIpSJhTwFTiy4P7zBAlZhJdW7sYIWx5ie1v5zBPYBSaheSOWUgmzULSMgtJywJGllWMoqkF
-	xbnpuckFhnrFibnFpXnpesn5uZsYwVGnFbSDcdn6v3qHGJk4GA8xSnAwK4nw3rCPTBfiTUms
-	rEotyo8vKs1JLT7EKM3BoiTOq5zTmSIkkJ5YkpqdmlqQWgSTZeLglGpgYlfe9aJPdbeh9/rr
-	11JX/lE6lr3sd9rmy74JOpuqftjniugdDZQWLbMvblb0dK++Oc+k8/z+yT8t7J2mLnJbYH69
-	+KXd31ldQkGsqxteLb/O9ebEAil2IS6FzyYfjAzKp7w7+GX7ibhfBdNMjfe9uu0d5PfYfeI1
-	/rkLzseY5Hg4Rh4qTGyY+zt2y4/nTMZa1dU3n6e72SfPCSp5F8s0R7ar5/mafaXexvuMn/Kd
-	b8ts+DtDfvrpBTfajj5KbcqP/ii4g2XBzur4suKNd7ligucraX14/kayjIF/r7PrP6mzPFJB
-	H9Onfj0wIU+LYa7bkhnGJf+Fow4pLt+1puzdpDuHRNzfR9Wvrd/gsen3VCWW4oxEQy3mouJE
-	AI0/9NApAwAA
-X-CMS-MailID: 20241212113953epcas5p42a9eb3b5e449b08d18402016f6657ea8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241211190851epcas5p2a359c12000fc73df8920e4801563504c
-References: <CGME20241211190851epcas5p2a359c12000fc73df8920e4801563504c@epcas5p2.samsung.com>
-	<20241211183514.64070-1-kbusch@meta.com>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20241211183514.64070-11-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 7B7BF1F383
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[grimberg.me,gmail.com,samsung.com,kernel.org];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-For
-> 16 files changed, 341 insertions(+), 6 deletions(-)
+On 12/11/24 19:35, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> Register the device data placement limits if supported. This is just
+> registering the limits with the block layer. Nothing beyond reporting
+> these attributes is happening in this patch.
+> 
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
+>   drivers/nvme/host/core.c | 145 +++++++++++++++++++++++++++++++++++++++
+>   drivers/nvme/host/nvme.h |   2 +
+>   2 files changed, 147 insertions(+)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 

@@ -1,112 +1,106 @@
-Return-Path: <io-uring+bounces-5477-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5478-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D28B9F0CA9
-	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 13:47:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4EB9F0EC0
+	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 15:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 799CE16643F
-	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 12:46:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C5F165372
+	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 14:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DEB1DF721;
-	Fri, 13 Dec 2024 12:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640761E0DD6;
+	Fri, 13 Dec 2024 14:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="TbEcGjai"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Vn/DV3wt"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EECD1A0AF7
-	for <io-uring@vger.kernel.org>; Fri, 13 Dec 2024 12:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43CE1E0DB3
+	for <io-uring@vger.kernel.org>; Fri, 13 Dec 2024 14:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734094018; cv=none; b=vENkZf6RFHP4GQVI0NajiBJSm6SFemQb5yihc1nw3gE/y8P8EfcRbnZ34IbxBvUMFnXZfNZSDGGhSuz6vYEh+LNoFbU6Hv6a+H8fIhx0sDp6tldmDtYr5Pn46OOkGWHPa0nlcJ2oSozhWbRtNQe/JuW0MQVlvcV+ALgQ7nN84uI=
+	t=1734098994; cv=none; b=qZ3VKR3fXgM0wfjlDZe3UDu5cJxCSNDYCLg6xWJcv9Iqa6SZVtWPxxPU3zdIOhuNRdJmsdKkTLJxFpnzaxw5cXM2cIymCXHtlZYXgNyi/oI9P/Yb6tuNSERPu8L/qfoisS3KxA1b7WCqGwFEH8WsKxwVPerLsuA5OjO0WKQS1zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734094018; c=relaxed/simple;
-	bh=FizzQNMfYJYpGIUlG3svTjPfChZDtuv2fwFtfpjrEso=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kY4brCMVFrrt2iee98WHljxWReTDne3UizZsV6Lt89oya/FTroPy38i24tzwrwy8VhIoDUSL4/BokiAHL2uX/RHGDHDKMSk8joFGSnrN9id8SOBKnjRsh9c7QRUmu4j8uY2DVPnMtRv+Z4co8KN+Y7KuakZo4Kb2eKM64Zwdax0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b=TbEcGjai; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD7qPQm018813
-	for <io-uring@vger.kernel.org>; Fri, 13 Dec 2024 04:46:55 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=facebook; bh=xJ8+6khN1QLGsUgMZlX3B6H
-	pCPyrBbuHoERWnx2myIo=; b=TbEcGjaiGZxXcgervFHtybYKOROWW5zqLa4lLYQ
-	HY4wXB+Nf2ofALBGiGlnnh0DGyl1Jgu4uNlLq0evbpoomRhJsGUuxWnNtfqPOFXA
-	IFgnd9Wa/6TDmXYfL8DKHI/rGL6CONfIt0UKQx6UEk8ZBg6lZ4H3+Zbl3w0vnFtU
-	NFUE=
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 43ggwm16tv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Fri, 13 Dec 2024 04:46:55 -0800 (PST)
-Received: from twshared9216.15.frc2.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.11; Fri, 13 Dec 2024 12:46:54 +0000
-Received: by devbig276.nha1.facebook.com (Postfix, from userid 660015)
-	id 981F79847C19; Fri, 13 Dec 2024 12:46:37 +0000 (GMT)
-From: Mark Harmstone <maharmstone@fb.com>
-To: <linux-btrfs@vger.kernel.org>, <io-uring@vger.kernel.org>
-CC: Mark Harmstone <maharmstone@fb.com>,
-        Pavel Begunkov
-	<asml.silence@gmail.com>
-Subject: [PATCH] btrfs: check if task has died in btrfs_uring_read_finished()
-Date: Fri, 13 Dec 2024 12:46:15 +0000
-Message-ID: <20241213124626.130075-1-maharmstone@fb.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1734098994; c=relaxed/simple;
+	bh=Z4k204suA60/SXJuVjRwwHu5G541O7oLWa1RT9V0WnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IklatAGS0ZZxn+KVUPiPk+qv83CK+SfXK+L9JidnlX+bWhYxEL1VZwnQFh4COk1iz+2A5icWtNjyzxuX2kl03xIp8Z44rn38s9KgO3EBpDQF78A0V0WqqALTIbOTFu1EPPBnlPR6WB15OFwBr8O3VJifhR4MmRWb//PeIa3C1ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Vn/DV3wt; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a7d7db4d89so5490775ab.1
+        for <io-uring@vger.kernel.org>; Fri, 13 Dec 2024 06:09:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734098990; x=1734703790; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zWSFlALklVPWBvuhYOI1ONlxQ38UgxUHGcn3LfxanEU=;
+        b=Vn/DV3wtc/ogxNV6n2/+2nsw3tHZKk2PY00DIkiBRDa8Y/p1HaHpnk6g42NMHk3jbA
+         4lTjdxYJwrYDr3Dcb+g0or85oQIvmCb18gZL1TDmV4yP3Bet1W252zlBiCZ2BHHKeM7i
+         9cfssRgsYSGdf3OM+pDd7rSlE2R8kPY2nhKuLUaXhzMJH37MzGGMQ5E2CzLDUNvryQHb
+         8YJFFqGp027b8UGhn2dWkI3G0AoSz1vO5TF71gWByjp1+UUNuPJGNvKLZiYle43JGcUi
+         jrhhWU1hW1amrzd9wHOTF8SHHKRo2yihL+YVzNs2x7fMef94OQ7hRjzQHrsKqAT0XfxN
+         3FsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734098990; x=1734703790;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zWSFlALklVPWBvuhYOI1ONlxQ38UgxUHGcn3LfxanEU=;
+        b=hK/jOZcxEoKPGfiKktO6mUFsadguQCCwk78ImIuiB2bYHp5XO0NDiHTGtzq+kSXKrU
+         YSdoKijrS/vbdiKTOTFJIKvEG41foyb8nJ6hrPNOCiqNBdLud3b2159/2yP1FTGA6lsU
+         8iE8ACy7v0Sikqxi5wyq6OCo0qzSkk9L3m6Xy4cDKG/hLbgVUrjOSV3eXB6zgUhg6cz0
+         pYy4MLI1gjl+ow2JbJFu6YposBc8gMMcg4xyEGCe9h+OEOUKc9Q9gN9PUA6lXBaK2JV7
+         CsPOlNfKvAB+7FkqJpK8R2XUWuv+eIuisAIfc39o11dRmGXx5JP18y9vFHNQo3Rmnmpu
+         COog==
+X-Forwarded-Encrypted: i=1; AJvYcCVPZ7uCFvn5E/kGj1e+XSb+cvzHoRikqIUUPMxLkeW5k4tohTacVLLVtRTxfbhe3ay+hWo54g9N7g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDyJrIV6JHLv8V48lyYeDQK6lakpRFExwFI5BpQrtGsNA0Kfhy
+	OKSGnpi/8WLtA+/s9KZ6ZfwAsPBwWtEhaMFHehmd82P1BIO098qIIEDQfdF/GKo=
+X-Gm-Gg: ASbGnctkE9y5B2E3GgY4JqA2hxtpxTkEAUDvw/vC9rRFdZn7Tg3mL+4UXLn2Hcc+r3a
+	KhIu4lvh6fWwrHaCfDwJ2cUpriDEoXQCuf7HbMty00pUfmw6nKRYdVRPu4V+Jc4w61+vsLpplyw
+	cdXl0/DyhstDYrFYv8ZmrsKkLtSH9/4ELA10nQe/Y6sDsVHe89/kOCSXbIaGFZaQmKvbLK9n299
+	TuLvtb9CVQV3a2VKSeUZkB6flnz/S30NLEGaq1g+CF4GGQrbwvF
+X-Google-Smtp-Source: AGHT+IFxfLsEYNSzt1ijeVP2axPSjVHTMFNfMKOLhfeGPGhogWa2tIb3yIz5mXqPGgr0csMBvr1Vfw==
+X-Received: by 2002:a05:6e02:13a5:b0:3a7:e0c0:5f0d with SMTP id e9e14a558f8ab-3aff4616f35mr34733195ab.3.1734098990648;
+        Fri, 13 Dec 2024 06:09:50 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a808cdcdd1sm50139615ab.0.2024.12.13.06.09.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 06:09:49 -0800 (PST)
+Message-ID: <b4b2993e-1684-47b5-b8d2-5ade368c6b28@kernel.dk>
+Date: Fri, 13 Dec 2024 07:09:49 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: eM1PMJGa42Z_K7z1Rx6Kmr50jIiLBHh-
-X-Proofpoint-ORIG-GUID: eM1PMJGa42Z_K7z1Rx6Kmr50jIiLBHh-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [io-uring] general protection fault in io_register_clone_buffers
+To: chase xd <sl1589472800@gmail.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CADZouDRcO6QORhUUHGRBQvZ_q8nip0S+Mn4Hb61W8zi_OfmSag@mail.gmail.com>
+ <85c4b3a6-559a-4f1d-bf2d-ec2db876dec7@kernel.dk>
+ <CADZouDRVN0eVMNXDPX9vSGXYbOPSHRgspWz20VO4fzNeFq18ew@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CADZouDRVN0eVMNXDPX9vSGXYbOPSHRgspWz20VO4fzNeFq18ew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-If the task has died by the time we call btrfs_uring_read_finished(),
-return -ECANCELED rather than trying to copy the pages back to
-userspace.
+On 12/13/24 2:39 AM, chase xd wrote:
+> Sure, I'm glad I could help. The kernel no longer crashes after this
+> patch, so it seems to be the right fix.
 
-Signed-off-by: Mark Harmstone <maharmstone@fb.com>
-Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
----
-(This is quite possibly a resend. I intended this to be the sequel to
-"[PATCH 1/2] io_uring/cmd: let cmds to know about dying task", but I
-can't find it anywhere on the mailing lists now.)
+Great, thanks for testing. The fix will go into the next 6.13-rc. And
+thanks again for running syzbot against the current git tree and sending
+reports, very useful!
 
- fs/btrfs/ioctl.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 64cebc32fe76..6913967083fe 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -4754,6 +4754,11 @@ static void btrfs_uring_read_finished(struct io_ur=
-ing_cmd *cmd, unsigned int iss
- 	/* The inode lock has already been acquired in btrfs_uring_read_extent.=
-  */
- 	btrfs_lockdep_inode_acquire(inode, i_rwsem);
-=20
-+	if (unlikely(issue_flags & IO_URING_F_TASK_DEAD)) {
-+		ret =3D -ECANCELED;
-+		goto out;
-+	}
-+
- 	if (priv->err) {
- 		ret =3D priv->err;
- 		goto out;
---=20
-2.45.2
-
+-- 
+Jens Axboe
 

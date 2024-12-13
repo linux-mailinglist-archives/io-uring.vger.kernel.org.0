@@ -1,217 +1,155 @@
-Return-Path: <io-uring+bounces-5470-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5471-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E2C9F0261
-	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 02:41:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D8B9F0481
+	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 07:01:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5A00188B171
+	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 06:01:41 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42E24A21;
+	Fri, 13 Dec 2024 06:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="agigrxIn"
+X-Original-To: io-uring@vger.kernel.org
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70CDF28551C
-	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 01:41:27 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD471F95E;
-	Fri, 13 Dec 2024 01:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kDx4npIr"
-X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B3D17BA1;
-	Fri, 13 Dec 2024 01:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927B01547CC
+	for <io-uring@vger.kernel.org>; Fri, 13 Dec 2024 06:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734054084; cv=none; b=kRh0f8Xe0ogV92e0YrG3FK24S14bZBej87k6fTTltoq2pMVCO979z6wc5upWEqTZtbz7RbO76N/nMJMAUwwywzoDuk/eC6ei+chGNUp7PoSzKbwKs3MHMYM1W6mo4swWj/rEQgMqCR+2n3MgGK8t52xKe5EjUzDWNzxBfbYqfFU=
+	t=1734069698; cv=none; b=p5BcmmWK9rS7Wt94cOrpQtBWpTZFVy8eOkEGhhLaFQFrJaqs1BATNg+PKZixPd0KsHRSNbWCcbu03B5PLgIZwFiYpJSjMar7eNV6Ty45iXApA0/PW0LAklYPwUdsUzqEQUpIYxj9IwHzYAfNLisQvn0s/WyMIvYjxnR0o3xErrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734054084; c=relaxed/simple;
-	bh=BOcbPZ7Zy/kzmIDP1Ntl5ZMa5BxR3I2l7FvIGpVJ4nU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=akcH9D0hFI6K1f8vS9wCsy8REKpFtHfCBHTk5mRGxCXrC8j+J7868DCSod26BTgNUSIGrtIWY6LXNTGzG2uoePD5h+wFfJhVX+w7ehekkDDxfLrvxZQJFv2YQPvqNzme3jgtIpdjyTXiiPQcYsU/ug0LpPVmxHJU5v9emhqqXCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kDx4npIr; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b68e73188cso147353585a.0;
-        Thu, 12 Dec 2024 17:41:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734054082; x=1734658882; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W9Vw3wI3qoyHZavfODkszBeG55pY3i/Phzlwyf4XUk0=;
-        b=kDx4npIrDgZ0NkkZLfFaxYjMdEiaeylSu6prKcuVQL5f6QcKf7fYW7la/zMt6rzWNr
-         l5UWAZ6nofdVW72+hN1BjZCHXZ5MlpNFXeiiLpUjescuOsbwxodzxq4cfEQDFAdjj+i6
-         lOeYte6/n7sfh1MnMMr8BVO+vOhsbzV3Lf+u8PIE1UIAzXA5qRqBvdBRY9yUb8ULZiv5
-         LPfeJUHlObBS9imbsxuTeePrFwgjgECb/1GTL+mVCk2gLF0AxiFclpOT4D6HgTMLqQ0j
-         PntSM8fO/eLPSwAOSE5gC8k8+LhU1OaQGXW9A/pQN13GgeF2EmL4mTo44+3J6s3+sxta
-         21Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734054082; x=1734658882;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W9Vw3wI3qoyHZavfODkszBeG55pY3i/Phzlwyf4XUk0=;
-        b=EW3b+2K1594tH02sloHS0E3YbXCVrfJ5asuEoFtzJjwrbetXutgu+qCI/JKHdcEyPg
-         s/se29+9zaCFsQYrB+jzQhCb7ZIIGbu1UfdRNQ8io27Xl0WDqY6SYm5WBw3RDh20odGX
-         L3LF8Z6yhnvY1chMFcH3L8xfo1ujWQn1v+VZPp/nJU2RFhXxziZiWuoUuKspOiNnVosx
-         hXKKZoU7RRRRFrmw5GftGShoR47H39o4U05OF1sg2PfbZJ3Nk28hucn2H+PBVuMpPT9K
-         hteV8FAKUn2L02unHYrhMma1k5JRsPcdulw+HpzO4KaOJyiHsToTK3urvgr8Of2Sm7hQ
-         p5Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVa5q17rtxC9TLZ2rTrCiB7wtALM6KSb91KI7NDcHW1bPNKIZ40rBU48r1IlUlpPuCbIILhoU+xmw==@vger.kernel.org, AJvYcCXulokjOI1/TakW6204+0tCMAx2CPUrHwvy53F0DNf7T55b897tO528tb+mmjGZ/TpT3AVBtO0uRReHhU5BOA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlqEZKVb4nzEy60DQtpPJt4SjtK0U3i7HLTuvMLcuI5+aCmY9D
-	pbWbqhFMBXWYwuyrfF9Nr9jlSAwCmglSMeZcnZYCvtvc16vD1hAX6YacWEMUfg9q9Y5EhHGOKX9
-	2m+Jxc+iKISF+UC8OsYT/61hV3P4=
-X-Gm-Gg: ASbGncuo3JBVOlGzCwaMOaM/4mURa+kfGUCdY7HFzPh/Us3KAL97Ut4Ff1IrRlhT84D
-	GqNWGPZ4VogtUyXTdCMpFsDY0zhRjn9okoyo4OMclnzVisOfWB1xv
-X-Google-Smtp-Source: AGHT+IFegU3FKH5QX8plRhx1QPzCJzeKyMq4iORYQqwxh8u3zQDOfW+uhhhfi9JftiMjmvSmooqvOskmY7BvtisQDEA=
-X-Received: by 2002:a05:620a:720b:b0:7b6:ecbb:592 with SMTP id
- af79cd13be357-7b6fbf7cc86mr85739885a.54.1734054082027; Thu, 12 Dec 2024
- 17:41:22 -0800 (PST)
+	s=arc-20240116; t=1734069698; c=relaxed/simple;
+	bh=Gc3Jt8blBw7jT0/gisSOyP9+e9/2TScJtmc2wxbTh64=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=MIpTPwzvWdagjHOsDMWwzF92Aj5rHIHD33OuvP6HmOwC9ELGBjtv+WaIsZ2BKlxDuXOcDLTt69BXISSg0GvhZ8EaFpElWy49LONBBb6hL14MLVOgJqCWzFEDXRGvJ2VPEWIXPLJOxiwYEYlpquuyqvtUChudg4rCek3Lu5IVbNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=agigrxIn; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241213060129epoutp04b640c31bbe9cd2d30301f1c5aac735c7~QpzHbMQ8I1351913519epoutp04_
+	for <io-uring@vger.kernel.org>; Fri, 13 Dec 2024 06:01:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241213060129epoutp04b640c31bbe9cd2d30301f1c5aac735c7~QpzHbMQ8I1351913519epoutp04_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1734069689;
+	bh=Gc3Jt8blBw7jT0/gisSOyP9+e9/2TScJtmc2wxbTh64=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=agigrxInquIQZrTdhkRMRkqOGXx/4s/QFzpHTRsh7kS7CqbhB7hdEbJGAkjFf6A3u
+	 0boOSjWgPD8ApQ+3v+IZfV0DbT8P1Gh/WGHGxuDGSPkBibRwpdaP2k4GaPFDtl1jHQ
+	 swEfaLTEOnb9V26Z2gcSQ29lfXaUCK56nXykN9Eg=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20241213060128epcas5p14ff115b9b8eb9a4ad609393dabc21f08~QpzHIUKrT1879718797epcas5p1J;
+	Fri, 13 Dec 2024 06:01:28 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y8dxz08p9z4x9QB; Fri, 13 Dec
+	2024 06:01:27 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D6.8F.19933.5BDCB576; Fri, 13 Dec 2024 15:01:25 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241213060117epcas5p33e93030b04f8d51f0367d375faa2adaf~Qpy871bXn1217912179epcas5p3q;
+	Fri, 13 Dec 2024 06:01:17 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241213060117epsmtrp16131439c5b74bccf83c6d6a2b4a078b4~Qpy84dGvw1127611276epsmtrp1l;
+	Fri, 13 Dec 2024 06:01:17 +0000 (GMT)
+X-AuditID: b6c32a4a-b87c770000004ddd-80-675bcdb5a785
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	ED.91.18729.DADCB576; Fri, 13 Dec 2024 15:01:17 +0900 (KST)
+Received: from ubuntu (unknown [107.99.41.245]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241213060115epsmtip1db0b0c6b8b3b9dd4cfe4ed6ce87873c1~Qpy7HlTGq1086010860epsmtip1m;
+	Fri, 13 Dec 2024 06:01:15 +0000 (GMT)
+Date: Fri, 13 Dec 2024 11:23:21 +0530
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Keith Busch <kbusch@meta.com>
+Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, sagi@grimberg.me, asml.silence@gmail.com,
+	anuj20.g@samsung.com, joshi.k@samsung.com, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv14 10/11] nvme: register fdp parameters with the block
+ layer
+Message-ID: <20241213055321.rh6qdkru53ao5wr4@ubuntu>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209-fuse-uring-for-6-10-rfc4-v8-0-d9f9f2642be3@ddn.com> <20241209-fuse-uring-for-6-10-rfc4-v8-9-d9f9f2642be3@ddn.com>
-In-Reply-To: <20241209-fuse-uring-for-6-10-rfc4-v8-9-d9f9f2642be3@ddn.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 12 Dec 2024 17:41:11 -0800
-Message-ID: <CAJnrk1b3vEiN2ASS=54KLEM=QXYiDgbFU4hRS8TgCW0CsejQVA@mail.gmail.com>
-Subject: Re: [PATCH v8 09/16] fuse: {io-uring} Make hash-list req unique
- finding functions non-static
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>, 
-	bernd@bsbernd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241211183514.64070-11-kbusch@meta.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCJsWRmVeSWpSXmKPExsWy7bCmuu7Ws9HpBse36Fk0TfjLbDFn1TZG
+	i9V3+9ksVq4+ymTxrvUci8XR/2/ZLCYdusZocebqQhaLvbe0LfbsPcliMX/ZU3aLda/fszjw
+	eOycdZfd4/y9jSwel8+Wemxa1cnmsXlJvcfumw1sHucuVnj0bVnF6PF5k1wAZ1S2TUZqYkpq
+	kUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QvUoKZYk5pUChgMTi
+	YiV9O5ui/NKSVIWM/OISW6XUgpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7IxJezrYCi6w
+	Vsy8OpetgfEnSxcjB4eEgInEzkflXYycHEICuxklZv5y6mLkArI/MUo8W93IDpH4xiixfzU/
+	TP2Pw4IQNXsZJebfuMUI4TwBqrl6nhmkgUVAVeLk7yZmkAY2AW2J0/85QMIiAooS54HBAFLP
+	LDCRSeL3oSawBcICQRJ/JjwC6+UFWnB293E2CFtQ4uTMJywgNqeAmURT22owW0JgKYfEqTXR
+	EAe5SPRfk4YIC0u8Or6FHcKWknjZ3wZll0usnLICbK+EQAujxKzrsxghEvYSraf6wfYyC2RI
+	XLh/CqpBVmLqqXVMEHE+id7fT5gg4rwSO+bB2MoSa9YvYIOwJSWufW+Esj0k5kxdwgoJuC2M
+	EodOq09glJuF5J1ZSNZB2FYSnR+aWGcBvcMsIC2x/B8HhKkpsX6X/gJG1lWMkqkFxbnpqcWm
+	BUZ5qeXwCE7Oz93ECE6+Wl47GB8++KB3iJGJg/EQowQHs5II7w37yHQh3pTEyqrUovz4otKc
+	1OJDjKbA6JnILCWanA9M/3kl8YYmlgYmZmZmJpbGZoZK4ryvW+emCAmkJ5akZqemFqQWwfQx
+	cXBKNTD1Hcx598B0zdEfz5XqZ8i/3DbD7LvY/nXqTbMKUxwOt+2bEtX/2cI+zebCgShVjagn
+	L9+J3FxiK/zAWqK6oWa++3sju//lRTk2OxdpVq750rrU5Ns7+cuOf35Om//X4tndLxPuBB2S
+	jM9ZUj45tcu+eqnDLKXahggO5xdnA59vcTjx9WGh8azPjFc23HN61cW9Y45xefC+x7v7zYK1
+	m+5xte6+IFC868H3+ZcqA/YbejtMP/fIvWT2P+UQRrEsLj/BWOkN/7/tEBGPlXXNlmlvVwp8
+	NDc/NoTF4XrmDaZqs9kz+LgKfeqCPe6r9ic4+s6JqCrrtL6gc0x50vte1w3/zE5MiakIP7p7
+	l1SZiIcSS3FGoqEWc1FxIgD7RCtcRwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnO7as9HpBk/W6lg0TfjLbDFn1TZG
+	i9V3+9ksVq4+ymTxrvUci8XR/2/ZLCYdusZocebqQhaLvbe0LfbsPcliMX/ZU3aLda/fszjw
+	eOycdZfd4/y9jSwel8+Wemxa1cnmsXlJvcfumw1sHucuVnj0bVnF6PF5k1wAZxSXTUpqTmZZ
+	apG+XQJXxoeVZxgLmpgrml/FNTAeZepi5OCQEDCR+HFYsIuRi0NIYDejxO3DFxm7GDmB4pIS
+	y/4eYYawhSVW/nvODlH0iFFi9oMFLCAJFgFViZO/m5hBBrEJaEuc/s8BEhYRUJQ4D3QMSD2z
+	wGQmieczj4HVCwsESfyZ8AhsKC/Q4rO7j7OB2EICCRId156wQcQFJU7OfAJWzyxgJjFv80Ow
+	+cwC0hLL/4HN5wQKN7WtZpnAKDALSccsJB2zEDoWMDKvYpRMLSjOTc8tNiwwzEst1ytOzC0u
+	zUvXS87P3cQIjhwtzR2M21d90DvEyMTBeIhRgoNZSYT3hn1kuhBvSmJlVWpRfnxRaU5q8SFG
+	aQ4WJXFe8Re9KUIC6YklqdmpqQWpRTBZJg5OqQam3eL9GxkyHAu4XNMnr19eYFzwc+aG6tml
+	bw5PnGTH8F75Z6rc84UeiXYie180d62eYqfccviXsDmDpLdY+ddV18QVJ3e5cQoXHy92jlKy
+	Sl/+QSdykVNjwVq1sE4trj0pF+s4n1RO/el2tXVXTUZBm95jkbe5c52OpFU2V+++9KBuhxDL
+	vbYEOYOzFX5FTGeM3y9ec13Wz7vznUG/oVD9MTPOXuerx/T3xAQeXvx6W1PKa4P6k1/Ny3uL
+	8p5PmtH6uTA7OsP7xtpZy552MW+rO6sv5xNbt0V7Vn4Oz/mQy17Fq231UlTL/jyX//3hzBbH
+	NTscJO67Vfud2Hew4uXTRsOEhwZfC936bgETlhJLcUaioRZzUXEiACUZdmcLAwAA
+X-CMS-MailID: 20241213060117epcas5p33e93030b04f8d51f0367d375faa2adaf
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_806f4_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241213060117epcas5p33e93030b04f8d51f0367d375faa2adaf
+References: <20241211183514.64070-1-kbusch@meta.com>
+	<20241211183514.64070-11-kbusch@meta.com>
+	<CGME20241213060117epcas5p33e93030b04f8d51f0367d375faa2adaf@epcas5p3.samsung.com>
 
-On Mon, Dec 9, 2024 at 6:57=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> w=
-rote:
->
-> fuse-over-io-uring uses existing functions to find requests based
-> on their unique id - make these functions non-static.
->
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_806f4_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
+On 11/12/24 10:35AM, Keith Busch wrote:
+>From: Keith Busch <kbusch@kernel.org>
+>
+>Register the device data placement limits if supported. This is just
+>registering the limits with the block layer. Nothing beyond reporting
+>these attributes is happening in this patch.
+>
+>Signed-off-by: Keith Busch <kbusch@kernel.org>
+>---
 
-> ---
->  fs/fuse/dev.c        | 6 +++---
->  fs/fuse/fuse_dev_i.h | 6 ++++++
->  fs/fuse/fuse_i.h     | 5 +++++
->  fs/fuse/inode.c      | 2 +-
->  4 files changed, 15 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 2ba153054f7ba61a870c847cb87d81168220661f..a45d92431769d4aadaf5c5792=
-086abc5dda3c048 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -220,7 +220,7 @@ u64 fuse_get_unique(struct fuse_iqueue *fiq)
->  }
->  EXPORT_SYMBOL_GPL(fuse_get_unique);
->
-> -static unsigned int fuse_req_hash(u64 unique)
-> +unsigned int fuse_req_hash(u64 unique)
->  {
->         return hash_long(unique & ~FUSE_INT_REQ_BIT, FUSE_PQ_HASH_BITS);
->  }
-> @@ -1910,7 +1910,7 @@ static int fuse_notify(struct fuse_conn *fc, enum f=
-use_notify_code code,
->  }
->
->  /* Look up request on processing list by unique ID */
-> -static struct fuse_req *request_find(struct fuse_pqueue *fpq, u64 unique=
-)
-> +struct fuse_req *fuse_request_find(struct fuse_pqueue *fpq, u64 unique)
->  {
->         unsigned int hash =3D fuse_req_hash(unique);
->         struct fuse_req *req;
-> @@ -1994,7 +1994,7 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *f=
-ud,
->         spin_lock(&fpq->lock);
->         req =3D NULL;
->         if (fpq->connected)
-> -               req =3D request_find(fpq, oh.unique & ~FUSE_INT_REQ_BIT);
-> +               req =3D fuse_request_find(fpq, oh.unique & ~FUSE_INT_REQ_=
-BIT);
->
->         err =3D -ENOENT;
->         if (!req) {
-> diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
-> index 0708730b656b97071de9a5331ef4d51a112c602c..d7bf72dabd84c3896d1447380=
-649e2f4d20b0643 100644
-> --- a/fs/fuse/fuse_dev_i.h
-> +++ b/fs/fuse/fuse_dev_i.h
-> @@ -7,6 +7,7 @@
->  #define _FS_FUSE_DEV_I_H
->
->  #include <linux/types.h>
-> +#include <linux/fs.h>
+Reviewed-by: Nitesh Shetty <nj.shetty@samsung.com>
 
-Is this include needed?
+------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_806f4_
+Content-Type: text/plain; charset="utf-8"
 
->
->  /* Ordinary requests have even IDs, while interrupts IDs are odd */
->  #define FUSE_INT_REQ_BIT (1ULL << 0)
-> @@ -14,6 +15,8 @@
->
->  struct fuse_arg;
->  struct fuse_args;
-> +struct fuse_pqueue;
-> +struct fuse_req;
->
->  struct fuse_copy_state {
->         int write;
-> @@ -43,6 +46,9 @@ static inline struct fuse_dev *fuse_get_dev(struct file=
- *file)
->         return READ_ONCE(file->private_data);
->  }
->
-> +unsigned int fuse_req_hash(u64 unique);
-> +struct fuse_req *fuse_request_find(struct fuse_pqueue *fpq, u64 unique);
-> +
->  void fuse_dev_end_requests(struct list_head *head);
->
->  void fuse_copy_init(struct fuse_copy_state *cs, int write,
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index d75dd9b59a5c35b76919db760645464f604517f5..e545b0864dd51e82df61cc39b=
-df65d3d36a418dc 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -1237,6 +1237,11 @@ void fuse_change_entry_timeout(struct dentry *entr=
-y, struct fuse_entry_out *o);
->   */
->  struct fuse_conn *fuse_conn_get(struct fuse_conn *fc);
->
-> +/**
-> + * Initialize the fuse processing queue
-> + */
-> +void fuse_pqueue_init(struct fuse_pqueue *fpq);
-> +
->  /**
->   * Initialize fuse_conn
->   */
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index e4f9bbacfc1bc6f51d5d01b4c47b42cc159ed783..328797b9aac9a816a4ad2c69b=
-6880dc6ef6222b0 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -938,7 +938,7 @@ static void fuse_iqueue_init(struct fuse_iqueue *fiq,
->         fiq->priv =3D priv;
->  }
->
-> -static void fuse_pqueue_init(struct fuse_pqueue *fpq)
-> +void fuse_pqueue_init(struct fuse_pqueue *fpq)
->  {
->         unsigned int i;
->
->
-> --
-> 2.43.0
->
+
+------OTMyRIxA-vjvkyMBIEVTa8B.hsA2RhXFaIa_oKBleWSyrD67=_806f4_--
 

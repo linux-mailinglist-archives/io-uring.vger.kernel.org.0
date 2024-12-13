@@ -1,104 +1,140 @@
-Return-Path: <io-uring+bounces-5475-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5476-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F3E9F0B7E
-	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 12:43:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32089F0C12
+	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 13:19:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C75F16424A
-	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 11:43:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44B32853A5
+	for <lists+io-uring@lfdr.de>; Fri, 13 Dec 2024 12:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70301DF73B;
-	Fri, 13 Dec 2024 11:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8561DF964;
+	Fri, 13 Dec 2024 12:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZI/cWOQS"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD041DF25C
-	for <io-uring@vger.kernel.org>; Fri, 13 Dec 2024 11:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CD41DF27B
+	for <io-uring@vger.kernel.org>; Fri, 13 Dec 2024 12:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734090185; cv=none; b=pZtpsO21B5Cey8r4em7sMlzZTfShZoDV0nzCAjjTohWpTsY5zYZ+bkWzteG0T+X5bbEgSSa8M4vbzQEpwTosdeyrfTOs+YANEJRQdglWZqsNZabIokizGxLcsZTShGm7+BrGSHtc5qrGi2WVZL0EH/1igg9lkC2VV8jrGptD8Vs=
+	t=1734092356; cv=none; b=QZKgYwKVq4hdgbQy0rbMgwj97rwFBIygsmxKHTSbAD6yCHQQe5GHKDkKf1/tomCq5J/A9AKz9fRK7rQBR3yW6UpYn7b0jn1wTlDyJOlEZLXAIkAV2CFh7fw+cRMoJT7Ye9UHNV7uGDleppEpj/nA++7oo06SHNSIAhGrnmqlPvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734090185; c=relaxed/simple;
-	bh=estDcRIo9Ps/V70akpJUOEghJnsuWqhCaWrCUbyCJD8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BH2TtFEiqLPK4AbXw59CjJBK47E1Qd0oaiPAkTTbBhLxJfw8vnCmvSukkTsv7j05GFxOGAZCFEBjwxH6OyCPQJzT6iqXAJ3lao4qCb7kv7jsDrLghKD+RTOkG8j5LGuSxHTfRlYSbRxNprDyI+NgLhaK/808febIjnmcQ+MhAxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83e5dd390bfso237528939f.1
-        for <io-uring@vger.kernel.org>; Fri, 13 Dec 2024 03:43:03 -0800 (PST)
+	s=arc-20240116; t=1734092356; c=relaxed/simple;
+	bh=+agX/hxnK7PsbXVWPwKhiB1V054xuEENK8nIoWK3fi0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I/mNVk2yJexUwx2ST3nPpbUXbcwqef8Q21Q43J1jygyOw4VKncJJXaEQ+CV6PcQGj7fL4juNMpGyy9rfhdqGBp9b+7Ksb4E9dCcg41t8lbiGjzvVuS6wpXnjPVBU9i3R4W3lUlm60j+E4nyg/dnWH3wsanIzLz3CFDDKyuDEaiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZI/cWOQS; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d0f6fa6f8bso2527062a12.0
+        for <io-uring@vger.kernel.org>; Fri, 13 Dec 2024 04:19:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734092353; x=1734697153; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rswNLiWFuDKiW42rbnE3/FFvogIGFwro7QX3xwapVa8=;
+        b=ZI/cWOQSTK7j4jTHtoeuwX9Lb+TTFgPctFxAljDqcqJJdejmoMXhJrrdZHRmEGK9x+
+         F4dQZxd3p2sLGblz6ghca40YOLqTyK3h15sJaOQ6ii0zZMQm4c4ShqymyH6RH4ri6eKl
+         kOZNPGAfnRFZEXJjuxUzKr1E90D9Ki0qaMTiDYN1nqfq9Fjjlxd2ddSaUbiyYsU0z10C
+         Ij8a/AvyprryOGojNbPzulITQGxaUUOii5FEoUSsHoHFPsCvH8h6QVHj92tu+TZYS9Yw
+         0epvuWXhOpJIpzQttx/C8mnurNpx2oGBUH2JrpIkYcBaAoHvu3aLbmbtRdL0Le4aQBBo
+         lG9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734090182; x=1734694982;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6njtYwuuhlt+oJFig9mpzBM61IwvHlJyPr4iUNckOYs=;
-        b=IpzodxmKG3UGQCvvOmkMSpdYZHYr9w0HjGnJh6b/yY80/udZ4+v53NAozika0z3CGm
-         ExCqq8M0wr/s2BzpoH5iUgBnJFDrk3hSZROa1TPYunxNpN3pAotczEWMAYO7nfadeEyC
-         7GVsH3Uwl1TWfAK2a3Tv/5pbNvHt36gGCSs9lCCJs8OyRGL0JjLnf89V1oNaLiqiBjhR
-         oPI9PWEqcJC7XFBLLxly9f/Veh8X0RR1eP7V267G0skGSACURnQmhnoEgnIG4wCk56L0
-         VmKaCIFtqga+dl2UsWAFwqyLBl4n/7aTNrcUPInGpk+3K2RxYocU0J7k68WlIgBJ6c06
-         PGVA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2DRmuUbrU28cSjt7eOdainqIJlU5+UvJSmmx78cuVifiGFedH4qRaj2ofI7GCq+4gp2A8WWb/Qw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6au8BINJBg9MJjl2DVLpwfLssiVbrjDyQ78ZWAE1hbJqW6vty
-	43UW5yZ6VRs40fCQGx1PidoW4M5r1vzvheNFYZl00Vis20ht5gMPcZdoKoH7JhlWiWLHbeGZqfL
-	JUfhCgaIlsywr9gTxWaajcsgY29YIjbpLGaxAhORiREr25mIPnuwsFrM=
-X-Google-Smtp-Source: AGHT+IHDAFY/TJurokeAD58Ic6k8Gv/vDg0siFvYAkQ1NFVck19SuU1w02dmhAQMhWSSadJDht8QTW+J8baOcxgzM5T4zE7FxWYz
+        d=1e100.net; s=20230601; t=1734092353; x=1734697153;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rswNLiWFuDKiW42rbnE3/FFvogIGFwro7QX3xwapVa8=;
+        b=qoLk375VkS9zU5Gf8ZKMt25UPLRM6bKLr1fhoWvSqKXL7lYfc/ByTuVBCQGYtp4p7f
+         OIaRYCVhFfGbJiSkOQ0wG8uiG/OVYFRERfvzeDKIFt91mWxnKY00TXrYSwBucW2vynGI
+         rLYUYnb7hZWvt6HGrtY2NHN/pkfBlPalTyNnep9POs4oT3wMHjJz5JUhiA5mSzSgrEPt
+         gOMKt4L5CA5xUrKu/x+4MvWxQCCP8cDkWljZQpRK4O6uxneVszgSgpU9VjHSoLvk+z56
+         s/b42gZXjGYWK9OedFMZmDY+ztavlfqQ5WwDdi4ExmHaEREGArI3BIyiAdYAITluPNpd
+         viiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKCV+SenSshSi4GFc48BHcxa/5jCaFz81IpDxc4teyDpjbSytCrjrD9qTUMDGwoDz67ZUEDdTZ+g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuzpjMPioqt1/fDjZXX8mzys948L6s5JDH3QJ8Dg5J49g1KMSU
+	WCuOTXliV6CdCs/lV8WXAtsGxsiIWHGQYqF+ABvRxsXJNU1ku1+8hzylXigTuQcxG8alh8cz0IE
+	KIeGbKNt4n/wP1JoHWfBTuDkCG5DRq7RFtLBP
+X-Gm-Gg: ASbGncuUgFDV0uzq8KQIRv54QIVTT4Ipock7Y0xJykWqO2ujZUavyjZFzsmzPA8GkWO
+	M5ge574zUGa481Zwig1QAd2qUi5VSDcgSMiyGKA==
+X-Google-Smtp-Source: AGHT+IGRpkdDBASQbA4W9W4t1BgK2dSzLTzvJG9Vc9UhANfCeYe2U4Z/qo2tMOoP0ps7OytKBednRAPV6i81BAZBwaE=
+X-Received: by 2002:a05:6402:2790:b0:5d0:b51c:8478 with SMTP id
+ 4fb4d7f45d1cf-5d63c3158c3mr1721305a12.12.1734092352701; Fri, 13 Dec 2024
+ 04:19:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c47:b0:3a7:c81e:825f with SMTP id
- e9e14a558f8ab-3b02d78812bmr23955515ab.9.1734090182295; Fri, 13 Dec 2024
- 03:43:02 -0800 (PST)
-Date: Fri, 13 Dec 2024 03:43:02 -0800
-In-Reply-To: <675b61aa.050a0220.599f4.00bb.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675c1dc6.050a0220.17d782.000c.GAE@google.com>
+References: <675b61aa.050a0220.599f4.00bb.GAE@google.com> <675c1dc6.050a0220.17d782.000c.GAE@google.com>
+In-Reply-To: <675c1dc6.050a0220.17d782.000c.GAE@google.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 13 Dec 2024 13:19:01 +0100
+Message-ID: <CANn89i+Zm_0a5jqtsL5m-S4=E06mdQXA8RLaFEF75Y6umFWxpQ@mail.gmail.com>
 Subject: Re: [syzbot] [tipc?] kernel BUG in __pskb_pull_tail
-From: syzbot <syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com>
-To: alsa-devel@alsa-project.org, asml.silence@gmail.com, axboe@kernel.dk, 
+To: syzbot <syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com>
+Cc: alsa-devel@alsa-project.org, asml.silence@gmail.com, axboe@kernel.dk, 
 	clm@fb.com, davem@davemloft.net, dennis.dalessandro@cornelisnetworks.com, 
-	dsterba@suse.com, edumazet@google.com, eric.dumazet@gmail.com, 
-	horms@kernel.org, io-uring@vger.kernel.org, jasowang@redhat.com, 
-	jdamato@fastly.com, jgg@ziepe.ca, jmaloy@redhat.com, josef@toxicpanda.com, 
-	kuba@kernel.org, kvm@vger.kernel.org, leon@kernel.org, 
-	linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, miklos@szeredi.hu, mst@redhat.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, pbonzini@redhat.com, 
-	perex@perex.cz, stable@vger.kernel.org, stefanha@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net, 
-	tiwai@suse.com, viro@zeniv.linux.org.uk, 
-	virtualization@lists.linux-foundation.org, ying.xue@windriver.com
+	dsterba@suse.com, eric.dumazet@gmail.com, horms@kernel.org, 
+	io-uring@vger.kernel.org, jasowang@redhat.com, jdamato@fastly.com, 
+	jgg@ziepe.ca, jmaloy@redhat.com, josef@toxicpanda.com, kuba@kernel.org, 
+	kvm@vger.kernel.org, leon@kernel.org, linux-block@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, miklos@szeredi.hu, 
+	mst@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	pbonzini@redhat.com, perex@perex.cz, stable@vger.kernel.org, 
+	stefanha@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tipc-discussion@lists.sourceforge.net, tiwai@suse.com, 
+	viro@zeniv.linux.org.uk, virtualization@lists.linux-foundation.org, 
+	ying.xue@windriver.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+On Fri, Dec 13, 2024 at 12:43=E2=80=AFPM syzbot
+<syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has bisected this issue to:
+>
+> commit de4f5fed3f231a8ff4790bf52975f847b95b85ea
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Wed Mar 29 14:52:15 2023 +0000
+>
+>     iov_iter: add iter_iovec() helper
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1742473058=
+0000
+> start commit:   96b6fcc0ee41 Merge branch 'net-dsa-cleanup-eee-part-1'
+> git tree:       net-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D14c2473058=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D10c2473058000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1362a5aee630f=
+f34
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D4f66250f6663c0c=
+1d67e
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D166944f8580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1287ecdf98000=
+0
+>
+> Reported-by: syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com
+> Fixes: de4f5fed3f23 ("iov_iter: add iter_iovec() helper")
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
 
-commit de4f5fed3f231a8ff4790bf52975f847b95b85ea
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Wed Mar 29 14:52:15 2023 +0000
+Great, thanks syzbot.
 
-    iov_iter: add iter_iovec() helper
+Patch is under review :
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17424730580000
-start commit:   96b6fcc0ee41 Merge branch 'net-dsa-cleanup-eee-part-1'
-git tree:       net-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14c24730580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c24730580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
-dashboard link: https://syzkaller.appspot.com/bug?extid=4f66250f6663c0c1d67e
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=166944f8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1287ecdf980000
-
-Reported-by: syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com
-Fixes: de4f5fed3f23 ("iov_iter: add iter_iovec() helper")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+https://patchwork.kernel.org/project/netdevbpf/patch/20241212222247.724674-=
+1-edumazet@google.com/
 

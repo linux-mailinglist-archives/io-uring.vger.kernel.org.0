@@ -1,101 +1,101 @@
-Return-Path: <io-uring+bounces-5505-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5506-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350AB9F3C0C
-	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 22:04:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2D89F3C0E
+	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 22:04:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EAF11655AE
-	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 21:03:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5321D7A5B83
+	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 21:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34D21D5AB7;
-	Mon, 16 Dec 2024 20:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E671D5CE0;
+	Mon, 16 Dec 2024 20:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vrDAFRQ4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UbZYN3F+";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vrDAFRQ4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UbZYN3F+"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Fq8ab15z";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rWCymyrt";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Fq8ab15z";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rWCymyrt"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6D11D0E26
-	for <io-uring@vger.kernel.org>; Mon, 16 Dec 2024 20:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACD81D434F
+	for <io-uring@vger.kernel.org>; Mon, 16 Dec 2024 20:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734381994; cv=none; b=MqfWL73ZDjGCn6NS7ObaZ4cXnvB1cURzRwBRLiuWgLq4jYpSSNiQv+AU6yL5hQxCg8e3+9pD7F+AmAideojFsNpiyn7K6A1/qg1if10WmgXeVTCJxjGEJ8wi2goGrt42FtnWvbqTpTf+OfDsd+fOmipijFNs52HdY5jWr+zjR6Y=
+	t=1734381996; cv=none; b=Q2XVFJridmjBokkNrNHNAq47hDBz2BVHX2I2qMcC1givXsCF5a+89S5Zhl0H+48NAqB2M5d2enqmgiAlerz6T8xXALUwU34X71/5/w19H/jJJdqWLC+Oh4S7jMTDp65RsSfAr31q8bzJj6MXDSKZ5ak3MZek4iy6eixwya+HFUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734381994; c=relaxed/simple;
-	bh=6id6AWdRZMb1HMZ1jX4utNWInmMtEe8b4LL6wdSyBwY=;
+	s=arc-20240116; t=1734381996; c=relaxed/simple;
+	bh=kFBkDnSnEZZ1VfI5FksgAvdRIAP5QPxLBN+/Yu2XlRA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j+Pac0x7o1t55KVyW2omN2+1G2DDHzkBeH6MzYToLTyvB2TbeKnI+Rjf+u8uJ7V+rMxm/+lMvu0ha20KfEb57hjvd3+nchadXO9F0Di7kicqpoqyBUXfk5KDCBrGo1yZSkopi6du34Ln1k9BOrfHZK+v1nhshV7qpahD6poHZ+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vrDAFRQ4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UbZYN3F+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vrDAFRQ4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UbZYN3F+; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=mTn2ZL8Z4jdSTFZO02i+3zO4w/INUKmxLAiXhof2ZbRdj8rHpUuC/ESLvhTs3LzXHuOUwcdz3kvhDhYkji5xygySzvKv7KitaPkMGsvkX6J26yFoluTPHHGdz9ouh5YoO28bSiXlUtnQBGRstloR3B33E0ztqrJxQtAAdbtqx6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Fq8ab15z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rWCymyrt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Fq8ab15z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rWCymyrt; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6259C2111F;
-	Mon, 16 Dec 2024 20:46:31 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2B59E1F37E;
+	Mon, 16 Dec 2024 20:46:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1734381991; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734381993; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TQOa2byvDqO6GB87pBRBG7/hj3M2AXVfopBemjXfnig=;
-	b=vrDAFRQ4TWwiY9Z5zIlALpCVHFbuovIeQdoU6UYveYfDnIYQbMlBrkunchQrRzCF5e3vHh
-	gGVqikXzC94/ZfvSXWHWJHdSHvGGucgbByv3EAjZXPIo+9YglpiV7d0ZS1hGp29/MUYvHZ
-	UxNZ6dsYzVMmxiiScke4nFh/7FcRjl4=
+	bh=Zf3j+7x8OWqZs5Flqu4Qd02MEQlkGNkjLaHkJZbmiPk=;
+	b=Fq8ab15zLwMJeAcPPchg2JxEmVpMu7TNStBTYe+WK7joiuL2w08lSnO6e2fT8N0aYgUN3w
+	S6r+Z0G+a+zvcqQVKfd71OYRQeKEWh+0XbBYmJ6gY/qXl40vYAp2ktK3J32eAkONhNYKiS
+	nwjqmjiCXPjqFIE46zgjGJyQX9xq/Fo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1734381991;
+	s=susede2_ed25519; t=1734381993;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TQOa2byvDqO6GB87pBRBG7/hj3M2AXVfopBemjXfnig=;
-	b=UbZYN3F+iW72rqNoWAtgVDW7gi7kSrc2CX8OO1Bfn1HoVQ3njCF5c6xcX//AtzgHf4JM7H
-	Dm+5VOIzSNWKxyAA==
-Authentication-Results: smtp-out1.suse.de;
+	bh=Zf3j+7x8OWqZs5Flqu4Qd02MEQlkGNkjLaHkJZbmiPk=;
+	b=rWCymyrtoEBRhsmkHgTRbBBmhwNwhZpD3ySnhk2LHZEYzKRKfsvB/tbEvpMHwLQpU+6Kp5
+	XvGXsau6GEOVkhAw==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1734381991; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734381993; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TQOa2byvDqO6GB87pBRBG7/hj3M2AXVfopBemjXfnig=;
-	b=vrDAFRQ4TWwiY9Z5zIlALpCVHFbuovIeQdoU6UYveYfDnIYQbMlBrkunchQrRzCF5e3vHh
-	gGVqikXzC94/ZfvSXWHWJHdSHvGGucgbByv3EAjZXPIo+9YglpiV7d0ZS1hGp29/MUYvHZ
-	UxNZ6dsYzVMmxiiScke4nFh/7FcRjl4=
+	bh=Zf3j+7x8OWqZs5Flqu4Qd02MEQlkGNkjLaHkJZbmiPk=;
+	b=Fq8ab15zLwMJeAcPPchg2JxEmVpMu7TNStBTYe+WK7joiuL2w08lSnO6e2fT8N0aYgUN3w
+	S6r+Z0G+a+zvcqQVKfd71OYRQeKEWh+0XbBYmJ6gY/qXl40vYAp2ktK3J32eAkONhNYKiS
+	nwjqmjiCXPjqFIE46zgjGJyQX9xq/Fo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1734381991;
+	s=susede2_ed25519; t=1734381993;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TQOa2byvDqO6GB87pBRBG7/hj3M2AXVfopBemjXfnig=;
-	b=UbZYN3F+iW72rqNoWAtgVDW7gi7kSrc2CX8OO1Bfn1HoVQ3njCF5c6xcX//AtzgHf4JM7H
-	Dm+5VOIzSNWKxyAA==
+	bh=Zf3j+7x8OWqZs5Flqu4Qd02MEQlkGNkjLaHkJZbmiPk=;
+	b=rWCymyrtoEBRhsmkHgTRbBBmhwNwhZpD3ySnhk2LHZEYzKRKfsvB/tbEvpMHwLQpU+6Kp5
+	XvGXsau6GEOVkhAw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2B8EB137CF;
-	Mon, 16 Dec 2024 20:46:31 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB406137CF;
+	Mon, 16 Dec 2024 20:46:32 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LCGjBKeRYGffZAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Mon, 16 Dec 2024 20:46:31 +0000
+	id v8rsKqiRYGfiZAAAD6G6ig
+	(envelope-from <krisman@suse.de>); Mon, 16 Dec 2024 20:46:32 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: axboe@kernel.dk,
 	asml.silence@gmail.com
 Cc: io-uring@vger.kernel.org,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH RESEND v2 2/9] io_uring: Add generic helper to allocate async data
-Date: Mon, 16 Dec 2024 15:46:08 -0500
-Message-ID: <20241216204615.759089-3-krisman@suse.de>
+Subject: [PATCH RESEND v2 3/9] io_uring/futex: Allocate ifd with generic alloc_cache helper
+Date: Mon, 16 Dec 2024 15:46:09 -0500
+Message-ID: <20241216204615.759089-4-krisman@suse.de>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241216204615.759089-1-krisman@suse.de>
 References: <20241216204615.759089-1-krisman@suse.de>
@@ -135,35 +135,45 @@ X-Spamd-Result: default: False [-5.30 / 50.00];
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-This helper replaces io_alloc_async_data by using the folded allocation.
-Do it in a header to allow the compiler to decide whether to inline.
+Instead of open-coding the allocation, use the generic alloc_cache
+helper.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- io_uring/io_uring.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ io_uring/futex.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 12abee607e4a..cd7bf71574e4 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -222,6 +222,16 @@ static inline void io_req_set_res(struct io_kiocb *req, s32 res, u32 cflags)
- 	req->cqe.flags = cflags;
+diff --git a/io_uring/futex.c b/io_uring/futex.c
+index e29662f039e1..30139cc150f2 100644
+--- a/io_uring/futex.c
++++ b/io_uring/futex.c
+@@ -251,17 +251,6 @@ static void io_futex_wake_fn(struct wake_q_head *wake_q, struct futex_q *q)
+ 	io_req_task_work_add(req);
  }
  
-+static inline void *io_uring_alloc_async_data(struct io_alloc_cache *cache,
-+					      struct io_kiocb *req,
-+					      void (*init_once)(void *obj))
-+{
-+	req->async_data = io_cache_alloc(cache, GFP_KERNEL, init_once);
-+	if (req->async_data)
-+		req->flags |= REQ_F_ASYNC_DATA;
-+	return req->async_data;
-+}
-+
- static inline bool req_has_async_data(struct io_kiocb *req)
+-static struct io_futex_data *io_alloc_ifd(struct io_ring_ctx *ctx)
+-{
+-	struct io_futex_data *ifd;
+-
+-	ifd = io_alloc_cache_get(&ctx->futex_cache);
+-	if (ifd)
+-		return ifd;
+-
+-	return kmalloc(sizeof(struct io_futex_data), GFP_NOWAIT);
+-}
+-
+ int io_futexv_wait(struct io_kiocb *req, unsigned int issue_flags)
  {
- 	return req->flags & REQ_F_ASYNC_DATA;
+ 	struct io_futex *iof = io_kiocb_to_cmd(req, struct io_futex);
+@@ -331,7 +320,7 @@ int io_futex_wait(struct io_kiocb *req, unsigned int issue_flags)
+ 	}
+ 
+ 	io_ring_submit_lock(ctx, issue_flags);
+-	ifd = io_alloc_ifd(ctx);
++	ifd = io_cache_alloc(&ctx->futex_cache, GFP_NOWAIT, NULL);
+ 	if (!ifd) {
+ 		ret = -ENOMEM;
+ 		goto done_unlock;
 -- 
 2.47.0
 

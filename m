@@ -1,117 +1,172 @@
-Return-Path: <io-uring+bounces-5502-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5503-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ECE69F35AC
-	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 17:19:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A139F3C0A
+	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 22:03:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE0118889C2
-	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 16:17:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E42C164E6E
+	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 21:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103922066DB;
-	Mon, 16 Dec 2024 16:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378CF1D45F2;
+	Mon, 16 Dec 2024 20:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWRI19WO"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kAiayW3l";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Jf6b8rNz";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kAiayW3l";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Jf6b8rNz"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2D22066D1;
-	Mon, 16 Dec 2024 16:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E931D434F
+	for <io-uring@vger.kernel.org>; Mon, 16 Dec 2024 20:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734365653; cv=none; b=R0biebMCYHbUs0ve/sE3p+HUZIaRtzuolk+E5Rp35/YjzOIl81tj2dQ6l5X7b5hZfsWu320hm/6DXV7JSyl8wmwOdiKpaJEWefhq3BCMhpqjH3eqNM15rg60kHTdph7IVy0/jykDRcpDYGpzP7Nf5nE6J+htEjXIrHVQY6Insrk=
+	t=1734381991; cv=none; b=pCTM7CCGpqpEO6Pmq3fYGBY4tD1SeZPHUgCnySS3Ws53+JqMMLTZFxA7GRgCLV4IrzHoaDy5t/pi0vPbATFKXZDuFP3p9o/lodmSefwbHuRrgW5Kfm3kRckk6Onhk+nQMYQEfpHiP2ipLevA7ltifU0F6RXiJhcOCdkBnd5nK0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734365653; c=relaxed/simple;
-	bh=Sn3chrE/m9+5fI4KxN090tU8mgWC4Aj8lyQMOoz6teM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u6XXWSVBPefUDH1jnLWPYRivJ7Dy33EJJ7Edi3xF8QWQsEpUYArYn+o88N6IF9VFEyTbP9JGhY4dmHnMp90Ucl8CADIU+p+hfxPlGSfeqq0anfO5XBAWxQ7451dDn74rlaEJ/dauE4ABXWSzskGv38Z/gPF0i4y14GeVDiA6z48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hWRI19WO; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cecbddb574so7314329a12.1;
-        Mon, 16 Dec 2024 08:14:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734365650; x=1734970450; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZHJ2lOqPcI4uWgZuisuf6hiF/EJ4Ewdtymu38Ng39Fs=;
-        b=hWRI19WOvDHBJLOq6US846HUQfNvNvTYmuy8lYk9lJJ+DOMmOLh1QNRmCXVc1xeGp2
-         hhZ0wbV3/yodngnNeeds+8yPa+kd43XA4u2HbrKipPRjjsmDzeO2J9coA0p62F8QAy4I
-         2Pyi2gjhsIuxSvdMWayIc0vF544D/RswAo3cNta+BgTaPs0YM7/qo47dN0EFaVNNWeBo
-         JKxdOFjndP6CEj7uDg/Sad8shtxXKrZnpTVvdLetduUFybW//XNyHH8wdqQjHIyIYU8r
-         Lxd4xiz4LIxjj0Tco7RI80Xp2FTsZsny1voJiAbi2JScWf/vVUHFQsXbHY9q0zjQk0Vc
-         JEIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734365650; x=1734970450;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZHJ2lOqPcI4uWgZuisuf6hiF/EJ4Ewdtymu38Ng39Fs=;
-        b=Q+NP5qfU2eEwoUVTBh9G2beuvpgxU9wGSa5XS75O7Mvmj9tzQ66wWOT8uOgLDLM1OI
-         ptdv9cyyflTqJXBXdu77fpdsXZORxlHI5O4dfJgAehx1stMal8grAAzW2/eCMUtgQ+Sh
-         iDRuaGWdThXy4gzMLst4fshuf6YqYCRkmiQvewCNwOySG6dmTogSuY7iDDfhaQEl7SNn
-         ZcYQpIh/ruS5shtKpPna8uxMenibWe45jwRIrhK4U31VJrf/U+UhUn0McndW1a1cbrbp
-         xDq1D6xr2mA1gbwPOo1Z/ABJBl91mK5pgawLyuPDU/8uUnChaO/y45ZBISx5gClNJEWc
-         cIWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpm+L6aZbXEGhuw0domRXexmcacGr9LkmU2nX3WLY3oVJw+jd5uno4ADOv9ZepvAwKkafT3H7lBRtwRcTl@vger.kernel.org, AJvYcCWe/EKMoH6RYwdDRF1yPBQFvkfuKG0CLgqsNP+DuIPgU+btFiXlVBrSFFT0/AuPZzN4BWIxcqr0aXfrn6Q=@vger.kernel.org, AJvYcCX0dEUtHvLHIKDz9dVFzgz+9cLziMQ+sim9f9WH6+JBkarjR4nOSHDq5NJXiQrSHuI2lsHxaAvSMA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy59TYO+NszgLlqJXBc7GGp8lxvY6LdDMsK5l7FbH/KFXOzxV52
-	GIKRBGCunO3SOWQYgifGKyXFFtqJ8hIwUZvbSRNgHbtKRWC0/B5EOUqV/JR6yXjOwwxF+xp2EBP
-	4QY2s3Y2E8Cmp1g1LrowoRGiTHJmx4Q==
-X-Gm-Gg: ASbGncsE3LXxaKlfaOblEy5mRImza0CM2msbqDhSLR5uMZOG4QAdsgJjX+QCXdOgOKm
-	TiLYFsdw94OpHPnR9FkXeI9dDFTScRQXL1+7t
-X-Google-Smtp-Source: AGHT+IGpUyDeh2IFWn704xO0ehU/HUo5hO1pZVdfXYwfm9voS07OecSnnJ41T38qduxnCKav2XsaiBT/Q8IVjk4NfGI=
-X-Received: by 2002:a05:6402:1914:b0:5d0:d91d:c195 with SMTP id
- 4fb4d7f45d1cf-5d63c42dd88mr11156129a12.32.1734365649482; Mon, 16 Dec 2024
- 08:14:09 -0800 (PST)
+	s=arc-20240116; t=1734381991; c=relaxed/simple;
+	bh=eKmTenzsjDa9AyTJprUvtNfpcY4RZJh8rLp8pr7ocUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hG8wUytKvikUgaUXMzuEcb9//XWyCSAZPeVFU1Gip2HAzdZawWkcI/AeQSc+p0RWfknewLw/uJUH/3hd2x9shdNCTGgqf4e1TjpXIdRiO8AaAbZPeoJBCmN7+kMrG4smM+Rdb+8giItihoy1q2WqpN2WLr9h68P+VJyh+3QNYzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kAiayW3l; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Jf6b8rNz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kAiayW3l; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Jf6b8rNz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 870E91F37E;
+	Mon, 16 Dec 2024 20:46:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1734381987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yM4E++QMx6GuseBwerzzRzJi6bqTTfo1+njNuLPbQI4=;
+	b=kAiayW3lE6WURQkFXHZZHUkm8f0G6Zp0E9VlYIOX7y/H3THgi1GZyjgJYHTzAwj8rlrFE7
+	jevJM3D9xvRzLJytBK5XULQjBUw669Szh/MoOOwPMMkbHV285nHScXHpojRf1xYx9wny+v
+	IkuWhcjHpauLpZEVNJ4/aAswPnFqFCk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1734381987;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yM4E++QMx6GuseBwerzzRzJi6bqTTfo1+njNuLPbQI4=;
+	b=Jf6b8rNzgkWRqAragjPk+avgF48b2QLVJkLCqOZJ9lKqf7lqJVBhQoPIdSASrkQLYkV0oP
+	bWVQQ9yr9GbcfjCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1734381987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yM4E++QMx6GuseBwerzzRzJi6bqTTfo1+njNuLPbQI4=;
+	b=kAiayW3lE6WURQkFXHZZHUkm8f0G6Zp0E9VlYIOX7y/H3THgi1GZyjgJYHTzAwj8rlrFE7
+	jevJM3D9xvRzLJytBK5XULQjBUw669Szh/MoOOwPMMkbHV285nHScXHpojRf1xYx9wny+v
+	IkuWhcjHpauLpZEVNJ4/aAswPnFqFCk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1734381987;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yM4E++QMx6GuseBwerzzRzJi6bqTTfo1+njNuLPbQI4=;
+	b=Jf6b8rNzgkWRqAragjPk+avgF48b2QLVJkLCqOZJ9lKqf7lqJVBhQoPIdSASrkQLYkV0oP
+	bWVQQ9yr9GbcfjCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2AECB137CF;
+	Mon, 16 Dec 2024 20:46:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iaAJOqKRYGfSZAAAD6G6ig
+	(envelope-from <krisman@suse.de>); Mon, 16 Dec 2024 20:46:26 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: axboe@kernel.dk,
+	asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH RESEND v2 0/9] Clean up alloc_cache allocations
+Date: Mon, 16 Dec 2024 15:46:06 -0500
+Message-ID: <20241216204615.759089-1-krisman@suse.de>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203121424.19887-1-mengferry@linux.alibaba.com> <Z2BNHWFWgLjEMiAn@infradead.org>
-In-Reply-To: <Z2BNHWFWgLjEMiAn@infradead.org>
-From: Stefan Hajnoczi <stefanha@gmail.com>
-Date: Mon, 16 Dec 2024 11:13:57 -0500
-Message-ID: <CAJSP0QXU_uNqL-9LmLRkDdPPSdUAGdesQ2DFuCMHnjyEuREvXQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for virtio-blk
-To: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Ferry Meng <mengferry@linux.alibaba.com>, "Michael S . Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, linux-block@vger.kernel.org, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[kernel.dk,gmail.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, 16 Dec 2024 at 10:54, Christoph Hellwig <hch@infradead.org> wrote:
->
-> Hacking passthrough into virtio_blk seems like not very good layering.
-> If you have a use case where you want to use the core kernel virtio code
-> but not the protocol drivers we'll probably need a virtqueue passthrough
-> option of some kind.
+Hi, Jens, Pavel.
 
-I think people are finding that submitting I/O via uring_cmd is faster
-than traditional io_uring. The use case isn't really passthrough, it's
-bypass :).
+I sent this v2 originally during US thanksgiving week, so I'm resending
+now under a more suitable time, rebased and retested on top of Jen's
+for-6.14/io_uring branch.  It keeps the changes requested in v1:
+renaming the allocation helper and introducing a callback instead of
+zeroing the entire object, as suggested by Jens.
 
-That's why I asked Jens to weigh in on whether there is a generic
-block layer solution here. If uring_cmd is faster then maybe a generic
-uring_cmd I/O interface can be defined without tying applications to
-device-specific commands. Or maybe the traditional io_uring code path
-can be optimized so that bypass is no longer attractive.
+This was tested against liburing testsuite, with lockdep and KASAN
+enabled.
 
-The virtio-level virtqueue passthrough idea is interesting for use
-cases that mix passthrough applications with non-passthrough
-applications. VFIO isn't enough because it prevents sharing and
-excludes non-passthrough applications. Something similar to  VDPA
-might be able to pass through just a subset of virtqueues that
-userspace could access via the vhost_vdpa driver. This approach
-doesn't scale if many applications are running at the same time
-because the number of virtqueues is finite and often the same as the
-number of CPUs.
+For v1, please see:
+  https://lore.kernel.org/io-uring/87plmrnstq.fsf@mailhost.krisman.be/T/#t
 
-Stefan
+Thanks,
+
+
+
+Gabriel Krisman Bertazi (9):
+  io_uring: Fold allocation into alloc_cache helper
+  io_uring: Add generic helper to allocate async data
+  io_uring/futex: Allocate ifd with generic alloc_cache helper
+  io_uring/poll: Allocate apoll with generic alloc_cache helper
+  io_uring/uring_cmd: Allocate async data through generic helper
+  io_uring/net: Allocate msghdr async data through helper
+  io_uring/rw: Allocate async data through helper
+  io_uring: Move old async data allocation helper to header
+  io_uring/msg_ring: Drop custom destructor
+
+ io_uring/alloc_cache.h | 13 +++++++++++++
+ io_uring/futex.c       | 13 +------------
+ io_uring/io_uring.c    | 17 ++---------------
+ io_uring/io_uring.h    | 23 +++++++++++++++++++++++
+ io_uring/msg_ring.c    |  7 -------
+ io_uring/msg_ring.h    |  1 -
+ io_uring/net.c         | 35 ++++++++++++++++++-----------------
+ io_uring/poll.c        | 13 +++++--------
+ io_uring/rw.c          | 36 ++++++++++++++++--------------------
+ io_uring/timeout.c     |  5 ++---
+ io_uring/uring_cmd.c   | 20 ++------------------
+ io_uring/waitid.c      |  4 ++--
+ 12 files changed, 84 insertions(+), 103 deletions(-)
+
+-- 
+2.47.0
+
 

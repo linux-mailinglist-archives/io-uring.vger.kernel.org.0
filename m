@@ -1,129 +1,189 @@
-Return-Path: <io-uring+bounces-5497-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5498-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F8559F2856
-	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 03:01:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D284B9F2B03
+	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 08:39:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 461A3163054
-	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 02:01:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5308C1888F06
+	for <lists+io-uring@lfdr.de>; Mon, 16 Dec 2024 07:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5809D17C7C;
-	Mon, 16 Dec 2024 02:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899231F7096;
+	Mon, 16 Dec 2024 07:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ACE5nSmM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IS29diS5"
 X-Original-To: io-uring@vger.kernel.org
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D2EC13C;
-	Mon, 16 Dec 2024 02:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F6A1F7093
+	for <io-uring@vger.kernel.org>; Mon, 16 Dec 2024 07:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734314494; cv=none; b=NDoGUDjztbPZxTqm2lGC0sWxbJJFm3O5pOTTl5bnCmjRPKSHUmrBAiVpBpQjnz+0v08SUoecOih+Yvj1u6lsqIWiErWuebonf6XczRX35INnl0uIdYeTMSPqQBhnvIuNLGhp6IujEJp+NI4ASZ6SlfWY5zLJ+yIJPqXByele5oA=
+	t=1734334739; cv=none; b=PUOpZhdfRX4t2pSe6v9sfHWBjrBQQ6ZJmMHCNmR5/16GS63SyAL0F/PjoCc8Zd62z654uF0zwp9A99+aw9NlRGubBx8WfIBLFt9krU3FRP5ao2HXu0BeKRYOXhDgynhtS2Vny1syXIf2IbEaGXCYGFf4nmvJ7Ql75b92TwuoIlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734314494; c=relaxed/simple;
-	bh=jy6JeXs2Y4N4FEgapoAuxphq3YytVmsqFHhFWkE4yrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mqV2LlATHwWkgf48dpHT4oT1nszGzciP9GTQQsjqZ4TlcELW0WEELmnOy+uSJR5mR5BGqLZ9D8InhelX8HCxVSsxNyKLSWg5O24VhKqk/mdqexbwhXU+tiOJpEFQweDGNnAKqoPsqXdQRVyPwljZo9hd8z7lvnkrfLJ2+0WhmOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ACE5nSmM; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1734314483; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Uzhd86AP6M1PVIFrrHesQFgI9H7FZF3bFho2hW5Z7uI=;
-	b=ACE5nSmMAKL4JbL4EcIrrCvUUtrI/dedKF+czL8EMpArIF6Q8ndanIhE294OtTLEtbFtS3E9CmCld+4x+tFGuPYJDLxZ6SkSDqhliPBPimOQr+3LGSo8vAqKT4Nq6T1kTo23fk16Uek7++nR/nIZa8uNtsilMkAS1JGlPylCGf0=
-Received: from 30.221.131.67(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0WLVCjR4_1734314481 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 16 Dec 2024 10:01:22 +0800
-Message-ID: <2d4ad724-f9da-4502-9079-432935f5719d@linux.alibaba.com>
-Date: Mon, 16 Dec 2024 10:01:21 +0800
+	s=arc-20240116; t=1734334739; c=relaxed/simple;
+	bh=3pNaM1YfE2UVhLcTpBnTmligBHcggqB0+5jBqTTBZgc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gio7KQmEyPL3JA7s/WqBH2hXTDmO3ioLFsqBztQ6bJ3/zSzXnwC+JHrdu1rY55SVDKwRaKT72VzED5fLv5A1KWEaESXeM7wKFG9ncQk9if7vT6imzi4jQE91YHiK/kz9/1guRgfCsuV9eCXKSjejoPN9dhASxkei1X8O5rd+Lr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IS29diS5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734334736;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7btIxl0I/5GL5jIBG+4D/1C7xmoGgE0Ue5vy6Ib9S6I=;
+	b=IS29diS5shxmBCF0HbC1yT4CaZH1nZAvg3C6KQXbVazUpySei1xsmg8CMWCLyEUAj104pq
+	4zi1hT1nF2AfGBZbGJn/9A1YZ5CXF1yoSlEcETMYM2cR1n4vC+hmdxm5nvS0jxZQpHQR56
+	MzMVaV2uVgO9N2+GmYF97MngiGI16nI=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-530-HJ3xew7rPJ27UZR6-k1WcQ-1; Mon, 16 Dec 2024 02:38:54 -0500
+X-MC-Unique: HJ3xew7rPJ27UZR6-k1WcQ-1
+X-Mimecast-MFC-AGG-ID: HJ3xew7rPJ27UZR6-k1WcQ
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ee86953aeaso3372159a91.2
+        for <io-uring@vger.kernel.org>; Sun, 15 Dec 2024 23:38:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734334733; x=1734939533;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7btIxl0I/5GL5jIBG+4D/1C7xmoGgE0Ue5vy6Ib9S6I=;
+        b=DQ/riMb4GNzeZBzrT4Vq4bJ0Gk1H9hLj5Y27DvRDsDuWQneybSAVFw6j4ra5xJd8wr
+         2ZNkgsZUKQJjkbWO17aEM9aow0Bjhh4bi3bzk2nReSmXilJTpfbw9NwXnaNRYmFp4dKw
+         T8ftGHDfftFifUzNID+xqt0h0Kh46XeMAeUQ2yBWGYbfG4eKpjO0VlaQ+4lxi1ENLmLv
+         C1/5iyKW7osN/3RD3D3skKBWDoIwZI5Kxgw4VzcBJcl88d2pCIa65dHpWISAYgmcLrJQ
+         ROY+1aL6CJVP/LPSLYKABQnU9mJGDf3KDgMYPWz9sEhy22ON9uddj1q2R9zkWY6y26Fv
+         w1Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbo5nEyTb7d3xvBrG0nOjIr9K407Q6y/ywhETlxEzfHGNEQkGQA1yvVeNcKu9IAk5P1UaZeAm/SA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhJiEBaX9So5yK+UFzhnkXD85culMiWfySKIBMtXJe4fc+elH3
+	Q8U0OA8J1TRFIys9d9RvB4DabM1TU80eIwyhY0/5FHKmiI/fAEH/77XsjHIY4quql7Y98jAVf4F
+	0d4v/SpK8Vkp+QCIieYYqdaca0Ex3GMyWydER9w9IeRcx+f4ADjOxDQR0LUDfFXCG3ivlkJDQ/2
+	Gyb+gFwvPuQTPMN4i1zTDhaEhUvyBQ6SAfCFGYydQ=
+X-Gm-Gg: ASbGnctbuPIA4njob069QM0zSEGRVABGXdtMbH8JCBqgqlAt2gjztlyXFnMljko5rvG
+	L7QtEQldoOK3AQMMRuu8CZMi4Lbq1tIYiwFmb4LM=
+X-Received: by 2002:a17:90b:4c12:b0:2ee:97d1:d818 with SMTP id 98e67ed59e1d1-2f28fb5060amr16268216a91.3.1734334733617;
+        Sun, 15 Dec 2024 23:38:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFaM8RTKKP0AQqAiQH8PDIO4GC+uugqyOOQfClkGY2zjYqFPx3vPpIcrBgvnI0U66uTMndB7hGCm1+y/89c5ww=
+X-Received: by 2002:a17:90b:4c12:b0:2ee:97d1:d818 with SMTP id
+ 98e67ed59e1d1-2f28fb5060amr16268195a91.3.1734334733156; Sun, 15 Dec 2024
+ 23:38:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for
- virtio-blk
-To: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- virtualization@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
- Joseph Qi <joseph.qi@linux.alibaba.com>,
- Jeffle Xu <jefflexu@linux.alibaba.com>
-References: <20241203121424.19887-1-mengferry@linux.alibaba.com>
-Content-Language: en-US
-From: Ferry Meng <mengferry@linux.alibaba.com>
-In-Reply-To: <20241203121424.19887-1-mengferry@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241203121424.19887-1-mengferry@linux.alibaba.com> <2d4ad724-f9da-4502-9079-432935f5719d@linux.alibaba.com>
+In-Reply-To: <2d4ad724-f9da-4502-9079-432935f5719d@linux.alibaba.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 16 Dec 2024 15:38:42 +0800
+Message-ID: <CACGkMEuAgAcCDrCMhNHr7gcRB6NtMPPLdSFAOGdt4dXGoQr4Yg@mail.gmail.com>
+Subject: Re: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for virtio-blk
+To: Ferry Meng <mengferry@linux.alibaba.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, linux-block@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Jeffle Xu <jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Dec 16, 2024 at 10:01=E2=80=AFAM Ferry Meng <mengferry@linux.alibab=
+a.com> wrote:
+>
+>
+> On 12/3/24 8:14 PM, Ferry Meng wrote:
+> > We seek to develop a more flexible way to use virtio-blk and bypass the=
+ block
+> > layer logic in order to accomplish certain performance optimizations. A=
+s a
+> > result, we referred to the implementation of io_uring passthrough in NV=
+Me
+> > and implemented it in the virtio-blk driver. This patch series adds io_=
+uring
+> > passthrough support for virtio-blk devices, resulting in lower submit l=
+atency
+> > and increased flexibility when utilizing virtio-blk.
+> >
+> > To test this patch series, I changed fio's code:
+> > 1. Added virtio-blk support to engines/io_uring.c.
+> > 2. Added virtio-blk support to the t/io_uring.c testing tool.
+> > Link: https://github.com/jdmfr/fio
+> >
+> > Using t/io_uring-vblk, the performance of virtio-blk based on uring-cmd
+> > scales better than block device access. (such as below, Virtio-Blk with=
+ QEMU,
+> > 1-depth fio)
+> > (passthru) read: IOPS=3D17.2k, BW=3D67.4MiB/s (70.6MB/s)
+> > slat (nsec): min=3D2907, max=3D43592, avg=3D3981.87, stdev=3D595.10
+> > clat (usec): min=3D38, max=3D285,avg=3D53.47, stdev=3D 8.28
+> > lat (usec): min=3D44, max=3D288, avg=3D57.45, stdev=3D 8.28
+> > (block) read: IOPS=3D15.3k, BW=3D59.8MiB/s (62.7MB/s)
+> > slat (nsec): min=3D3408, max=3D35366, avg=3D5102.17, stdev=3D790.79
+> > clat (usec): min=3D35, max=3D343, avg=3D59.63, stdev=3D10.26
+> > lat (usec): min=3D43, max=3D349, avg=3D64.73, stdev=3D10.21
+> >
+> > Testing the virtio-blk device with fio using 'engines=3Dio_uring_cmd'
+> > and 'engines=3Dio_uring' also demonstrates improvements in submit laten=
+cy.
+> > (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 =
+-O0 -n1 -u1 /dev/vdcc0
+> > IOPS=3D189.80K, BW=3D741MiB/s, IOS/call=3D4/3
+> > IOPS=3D187.68K, BW=3D733MiB/s, IOS/call=3D4/3
+> > (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0=
+ -n1 -u0 /dev/vdc
+> > IOPS=3D101.51K, BW=3D396MiB/s, IOS/call=3D4/3
+> > IOPS=3D100.01K, BW=3D390MiB/s, IOS/call=3D4/4
+> >
+> > The performance overhead of submitting IO can be decreased by 25% overa=
+ll
+> > with this patch series. The implementation primarily references 'nvme i=
+o_uring
+> > passthrough', supporting io_uring_cmd through a separate character inte=
+rface
+> > (temporarily named /dev/vdXc0). Since this is an early version, many
+> > details need to be taken into account and redesigned, like:
+> > =E2=97=8F Currently, it only considers READ/WRITE scenarios, some more =
+complex operations
+> > not included like discard or zone ops.(Normal sqe64 is sufficient, in m=
+y opinion;
+> > following upgrades, sqe128 and cqe32 might not be needed).
+> > =E2=97=8F ......
+> >
+> > I would appreciate any useful recommendations.
+> >
+> > Ferry Meng (3):
+> >    virtio-blk: add virtio-blk chardev support.
+> >    virtio-blk: add uring_cmd support for I/O passthru on chardev.
+> >    virtio-blk: add uring_cmd iopoll support.
+> >
+> >   drivers/block/virtio_blk.c      | 325 +++++++++++++++++++++++++++++++=
+-
+> >   include/uapi/linux/virtio_blk.h |  16 ++
+> >   2 files changed, 336 insertions(+), 5 deletions(-)
+>
+> Hi, Micheal & Jason :
+>
+> What about yours' opinion? As virtio-blk maintainer. Looking forward to
+> your reply.
+>
+> Thanks
 
-On 12/3/24 8:14 PM, Ferry Meng wrote:
-> We seek to develop a more flexible way to use virtio-blk and bypass the block
-> layer logic in order to accomplish certain performance optimizations. As a
-> result, we referred to the implementation of io_uring passthrough in NVMe
-> and implemented it in the virtio-blk driver. This patch series adds io_uring
-> passthrough support for virtio-blk devices, resulting in lower submit latency
-> and increased flexibility when utilizing virtio-blk.
->
-> To test this patch series, I changed fio's code:
-> 1. Added virtio-blk support to engines/io_uring.c.
-> 2. Added virtio-blk support to the t/io_uring.c testing tool.
-> Link: https://github.com/jdmfr/fio
->
-> Using t/io_uring-vblk, the performance of virtio-blk based on uring-cmd
-> scales better than block device access. (such as below, Virtio-Blk with QEMU,
-> 1-depth fio)
-> (passthru) read: IOPS=17.2k, BW=67.4MiB/s (70.6MB/s)
-> slat (nsec): min=2907, max=43592, avg=3981.87, stdev=595.10
-> clat (usec): min=38, max=285,avg=53.47, stdev= 8.28
-> lat (usec): min=44, max=288, avg=57.45, stdev= 8.28
-> (block) read: IOPS=15.3k, BW=59.8MiB/s (62.7MB/s)
-> slat (nsec): min=3408, max=35366, avg=5102.17, stdev=790.79
-> clat (usec): min=35, max=343, avg=59.63, stdev=10.26
-> lat (usec): min=43, max=349, avg=64.73, stdev=10.21
->
-> Testing the virtio-blk device with fio using 'engines=io_uring_cmd'
-> and 'engines=io_uring' also demonstrates improvements in submit latency.
-> (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -n1 -u1 /dev/vdcc0
-> IOPS=189.80K, BW=741MiB/s, IOS/call=4/3
-> IOPS=187.68K, BW=733MiB/s, IOS/call=4/3
-> (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -n1 -u0 /dev/vdc
-> IOPS=101.51K, BW=396MiB/s, IOS/call=4/3
-> IOPS=100.01K, BW=390MiB/s, IOS/call=4/4
->
-> The performance overhead of submitting IO can be decreased by 25% overall
-> with this patch series. The implementation primarily references 'nvme io_uring
-> passthrough', supporting io_uring_cmd through a separate character interface
-> (temporarily named /dev/vdXc0). Since this is an early version, many
-> details need to be taken into account and redesigned, like:
-> ● Currently, it only considers READ/WRITE scenarios, some more complex operations
-> not included like discard or zone ops.(Normal sqe64 is sufficient, in my opinion;
-> following upgrades, sqe128 and cqe32 might not be needed).
-> ● ......
->
-> I would appreciate any useful recommendations.
->
-> Ferry Meng (3):
->    virtio-blk: add virtio-blk chardev support.
->    virtio-blk: add uring_cmd support for I/O passthru on chardev.
->    virtio-blk: add uring_cmd iopoll support.
->
->   drivers/block/virtio_blk.c      | 325 +++++++++++++++++++++++++++++++-
->   include/uapi/linux/virtio_blk.h |  16 ++
->   2 files changed, 336 insertions(+), 5 deletions(-)
+If I understand this correctly, this proposal wants to make io_uring a
+transport of the virito-blk command. So the application doesn't need
+to worry about compatibility etc. This seems to be fine.
 
-Hi, Micheal & Jason :
-
-What about yours' opinion? As virtio-blk maintainer. Looking forward to 
-your reply.
+But I wonder what's the security consideration, for example do we
+allow all virtio-blk commands to be passthroughs and why.
 
 Thanks
+
+>
 
 

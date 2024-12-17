@@ -1,253 +1,138 @@
-Return-Path: <io-uring+bounces-5523-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5527-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2059F559A
-	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 19:08:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7032F9F56BA
+	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 20:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15E6D188618F
-	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 18:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FEA18838A1
+	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 19:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551BF1F866E;
-	Tue, 17 Dec 2024 18:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FFA13EFF3;
+	Tue, 17 Dec 2024 19:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Fp0/9Kn5"
+	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="BiCfzlNz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KiWAHpNc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E7050276
-	for <io-uring@vger.kernel.org>; Tue, 17 Dec 2024 18:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1572B442F
+	for <io-uring@vger.kernel.org>; Tue, 17 Dec 2024 19:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734458538; cv=none; b=Bh9mpVuhQGeiayPs8ls+sCvyfq6CcfBO2pTffomwHNcjh7uxg4Lj8MGA39zfz/VTZb5tUZoBp3BOAZ7nAeEqYmruLLtMkZi/Ix8xTMWKZ5Oy7ikQSyGgVfAlKxIo7Q6jV6juxgNR8fgDvulMYEDTwaDO/5508y4W+R02+kZOAx0=
+	t=1734462893; cv=none; b=cIdGPPHPkbjEA/o/6JDSv+RxCCjQH9fCb1Lpese4zmSKDG7Kaw43fPv+DJE6PZqc9g31eQF98ZTTYA2ltZtSQEaphSJOpRYwhSqXQvjMkCLZEpW+cxmAnezyiWkb6ngncXtvovOgpBwLOtLtiI56za7i7ItCZ7As0TKqXh+FeWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734458538; c=relaxed/simple;
-	bh=5yqhbwARB2dfOC2OxL9NeLiIhrPSsYRRj4S+/+XGylE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b03Rh2ZaeC4D2Qz/HhrmnD9yo2haannSXWMzMxhAzpF/w4J/UhRQUWM8TjJMcQybOHTWVx9n5xq5H2gtMwzq+cEvaEyblrJ+E4bsmts+nmI9sgQgrjJtuzOFxUMGNlZumi/klvhoe3t8XvgpLwKd5VPkOmlFZVPsn1czizMiI48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b=Fp0/9Kn5; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHI1CDo010924
-	for <io-uring@vger.kernel.org>; Tue, 17 Dec 2024 10:02:15 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=facebook; bh=1
-	YMYRxo9wVOGVZereeoruzokqxg0JBG4GmlvMe9HwW8=; b=Fp0/9Kn5oqdNSRw2o
-	Yj8r0oExDPuDGv+inWcoij4RzJHebRyhZnl+ycQHBqqX2ZufJrNLCbYdFNpM/SxR
-	v0BWzy28FUyg1spLNW6z1U6DCwatUVt7POGnVm9PNpF5aRhAg67USJceyfmV1rli
-	K90KNn8REQSxVmocQC2QbN4yRk=
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 43ke7480dq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Tue, 17 Dec 2024 10:02:15 -0800 (PST)
-Received: from twshared18153.09.ash9.facebook.com (2620:10d:c0a8:fe::f072) by
- mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.11; Tue, 17 Dec 2024 18:02:14 +0000
-Received: by devbig276.nha1.facebook.com (Postfix, from userid 660015)
-	id 5B5A89A41152; Tue, 17 Dec 2024 18:02:12 +0000 (GMT)
-From: Mark Harmstone <maharmstone@fb.com>
-To: <linux-btrfs@vger.kernel.org>, <io-uring@vger.kernel.org>
-CC: Mark Harmstone <maharmstone@fb.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v3 4/4] btrfs: don't read from userspace twice in btrfs_uring_encoded_read()
-Date: Tue, 17 Dec 2024 18:02:02 +0000
-Message-ID: <20241217180210.4044318-4-maharmstone@fb.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241217180210.4044318-1-maharmstone@fb.com>
-References: <20241217180210.4044318-1-maharmstone@fb.com>
+	s=arc-20240116; t=1734462893; c=relaxed/simple;
+	bh=Kju+EShWacB+iMaqrJ7JKxNeaTrleMlHC8s4l8ALL2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f0REXlMSvaystTw0zYb/vugPjCRlXTgAg0+m3BHVX8CtzFTxHh6Ftslvu/1GCQw0MUesJPFBTbeeIrQtNlm75rMsq1cGERNc+Bo759a4H2O6XfSr2Yaris4YaNw/odRKr4SmCpuXTDUp0WFSq06vaPVn62KXhlnoO2jC8pSfoGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=BiCfzlNz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KiWAHpNc; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id E9BA4114014E;
+	Tue, 17 Dec 2024 14:14:48 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Tue, 17 Dec 2024 14:14:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	joshtriplett.org; h=cc:cc:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1734462888;
+	 x=1734549288; bh=kDOLcef3jeuvNsxFYtyM772Bsppb3I84ASeaEOoxEsk=; b=
+	BiCfzlNzT0CfIOFa/kOivE7vx7ZAWUIw8rCPXX0WFIekMLrq+DYrzUwUJl6v5LbH
+	NMINCMbIXaJktUe36LtBhZOYV7GRbY4t+5olsewFGyLIyoq1glxft4tQoH/didrK
+	OUpoAH2gpTO/mxZJvoFh5dyetFU1LdItlBLPNz9knQszuBWEk/HWjm1AhTPnhYGJ
+	MGa4LclqCTYtJGlM0mN9ixWDuzVcYYPfrgHKklzpO44xIVYKYfm6J7Z5jcmGZPxO
+	8ebQIyT48FKr529su5abs70I2yu+IDXC3OTzbHIpAW6u3CKJdaluNvcSMFhq15pi
+	CB/a/fgCy7pL060deJpVJA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1734462888; x=1734549288; bh=kDOLcef3jeuvNsxFYtyM772Bsppb3I84ASe
+	aEOoxEsk=; b=KiWAHpNcjMLFZKWyQLC3BJSLeMZKg9RHs6kw52bUdQfyQFUMRXg
+	ML+X4vynx+EXE53/LhzVvC/UC8MT+aMWX4XZIBaQr8GcyJffBX3a5/wbpR6JccTr
+	DEvlzPX2B4cEVAZ176iwG395ATsndN2GpMJOfBrBWSq3IOyIHiuttUBIqP7ZvYv8
+	w+/kGoHMryney4giOjAOZfjfVmfPOAc7hgrgIMNbvwmG7NKKXO1zLZ/Yh9yRkfrC
+	89UUOrdFhgw4q7lNZ3LAlaaayrjEjvhb+BGGSaHOdG6M+dO78Tw16NAYCY4b1kuh
+	crZlr98JGiOhHv1ODppEJsIq3TG8lndBmQg==
+X-ME-Sender: <xms:qM1hZxG7N30o7mBtCUyGMlbgpQu5VfRoHMbLbAEI0xg43OZ6kit9IQ>
+    <xme:qM1hZ2UIbtwA8OjI3iGycxTxSwIP6PVJnRoafqL8pkFL5qh3W2_tMdVM2w7LTtUXk
+    NLDDgYMWBD7S__shJQ>
+X-ME-Received: <xmr:qM1hZzKp4AC0Tyj3HgLERpvLA5kXrP84nzJ-_Xxfyuan1SKo2aYDguo3OQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleehgdduvdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomheplfhoshhhucfvrhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhplh
+    gvthhtrdhorhhgqeenucggtffrrghtthgvrhhnpeduieegheeijeeuvdetudefvedtjeef
+    geeufefghfekgfelfeetteelvddtffetgfenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
+    pdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrsh
+    hmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopehkrhhishhmrghn
+    sehsuhhsvgdruggvpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtph
+    htthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:qM1hZ3FiptISB-liCqlVeZnsGEiFnqLOZ8xUJMQNoAjlr-2BD31R3Q>
+    <xmx:qM1hZ3U0uSccAmcll7nyYijjN0PHnt5h5qQ3cpCoyrXZkuWstYgXIA>
+    <xmx:qM1hZyMQv6GbpX-RAsMCiOrtRjv_0rAqGML3kEoqUT7KH9wekAgUFQ>
+    <xmx:qM1hZ23iujNB-gyV_WiPaSRVOBBuV7_3sBCyisia2LtqCyt9yLN9-w>
+    <xmx:qM1hZ9xxa3-1ikIJ7PNGlXqMIp_eoE2VrHy2_JzI0NWdusUd469jGYVe>
+Feedback-ID: i83e94755:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 17 Dec 2024 14:14:47 -0500 (EST)
+Date: Tue, 17 Dec 2024 11:14:46 -0800
+From: Josh Triplett <josh@joshtriplett.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>, axboe@kernel.dk,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH RFC 7/9] io_uring: Introduce IORING_OP_CLONE
+Message-ID: <Z2HNpmgUzUqXhFM_@localhost>
+References: <20241209234316.4132786-1-krisman@suse.de>
+ <20241209234316.4132786-8-krisman@suse.de>
+ <4100233a-a715-4c62-89e4-ab1054f97fce@gmail.com>
+ <Z1nLRcwaKPv7lAsB@localhost>
+ <c51a815f-89f3-483d-bfc6-0f7877885aa8@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: 2uITFNg9wkJvCq2WGwMev5vYqgHTkJGn
-X-Proofpoint-ORIG-GUID: 2uITFNg9wkJvCq2WGwMev5vYqgHTkJGn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c51a815f-89f3-483d-bfc6-0f7877885aa8@gmail.com>
 
-If we return -EAGAIN the first time because we need to block,
-btrfs_uring_encoded_read() will get called twice. Take a copy of args
-the first time, to prevent userspace from messing around with it.
+On Tue, Dec 17, 2024 at 11:03:27AM +0000, Pavel Begunkov wrote:
+> On 12/11/24 17:26, Josh Triplett wrote:
+> > On Wed, Dec 11, 2024 at 01:37:40PM +0000, Pavel Begunkov wrote:
+> > > Also, do you block somewhere all other opcodes? If it's indeed
+> > > an under initialised task then it's not safe to run most of them,
+> > > and you'd never know in what way, unfortunately. An fs write
+> > > might need a net namespace, a send/recv might decide to touch
+> > > fs_struct and so on.
+> > 
+> > I would not expect the new task to be under-initialised, beyond the fact
+> > that it doesn't have a userspace yet (e.g. it can't return to userspace
+> 
+> I see, that's good. What it takes to setup a userspace? and is
+> it expensive? I remember there were good numbers at the time and
+> I'm to see where the performance improvement comes from. Is it
+> because the page table is shared? In other word what's the
+> difference comparing to spinning a new (user space) thread and
+> executing the rest with a new io_uring instance from it?
 
-Signed-off-by: Mark Harmstone <maharmstone@fb.com>
-Reported-by: Jens Axboe <axboe@kernel.dk>
-Fixes: 34310c442e17 ("btrfs: add io_uring command for encoded reads (ENCO=
-DED_READ ioctl)")
----
- fs/btrfs/ioctl.c | 74 +++++++++++++++++++++++++++++++-----------------
- 1 file changed, 48 insertions(+), 26 deletions(-)
+The goal is to provide all the advantages of `vfork` (and then some),
+but without the incredibly unsafe vfork limitations.
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 7872de140489..da91cdb88324 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -4791,7 +4791,7 @@ static int btrfs_uring_encoded_read(struct io_uring=
-_cmd *cmd, unsigned int issue
- {
- 	size_t copy_end_kernel =3D offsetofend(struct btrfs_ioctl_encoded_io_ar=
-gs, flags);
- 	size_t copy_end;
--	struct btrfs_ioctl_encoded_io_args args =3D { 0 };
-+	struct btrfs_ioctl_encoded_io_args *args;
- 	int ret;
- 	u64 disk_bytenr, disk_io_size;
- 	struct file *file;
-@@ -4806,6 +4806,7 @@ static int btrfs_uring_encoded_read(struct io_uring=
-_cmd *cmd, unsigned int issue
- 	struct extent_state *cached_state =3D NULL;
- 	u64 start, lockend;
- 	void __user *sqe_addr;
-+	struct io_uring_cmd_data *data =3D io_uring_cmd_get_async_data(cmd);
-=20
- 	if (!capable(CAP_SYS_ADMIN)) {
- 		ret =3D -EPERM;
-@@ -4819,32 +4820,53 @@ static int btrfs_uring_encoded_read(struct io_uri=
-ng_cmd *cmd, unsigned int issue
-=20
- 	if (issue_flags & IO_URING_F_COMPAT) {
- #if defined(CONFIG_64BIT) && defined(CONFIG_COMPAT)
--		struct btrfs_ioctl_encoded_io_args_32 args32;
--
- 		copy_end =3D offsetofend(struct btrfs_ioctl_encoded_io_args_32, flags)=
-;
--		if (copy_from_user(&args32, sqe_addr, copy_end)) {
--			ret =3D -EFAULT;
--			goto out_acct;
--		}
--		args.iov =3D compat_ptr(args32.iov);
--		args.iovcnt =3D args32.iovcnt;
--		args.offset =3D args32.offset;
--		args.flags =3D args32.flags;
- #else
- 		return -ENOTTY;
- #endif
- 	} else {
- 		copy_end =3D copy_end_kernel;
--		if (copy_from_user(&args, sqe_addr, copy_end)) {
--			ret =3D -EFAULT;
-+	}
-+
-+	args =3D data->op_data;
-+
-+	if (!args) {
-+		args =3D kzalloc(sizeof(*args), GFP_NOFS);
-+		if (!args) {
-+			ret =3D -ENOMEM;
- 			goto out_acct;
- 		}
--	}
-=20
--	if (args.flags !=3D 0)
--		return -EINVAL;
-+		data->op_data =3D args;
-=20
--	ret =3D import_iovec(ITER_DEST, args.iov, args.iovcnt, ARRAY_SIZE(iovst=
-ack),
-+		if (issue_flags & IO_URING_F_COMPAT) {
-+#if defined(CONFIG_64BIT) && defined(CONFIG_COMPAT)
-+			struct btrfs_ioctl_encoded_io_args_32 args32;
-+
-+			if (copy_from_user(&args32, sqe_addr, copy_end)) {
-+				ret =3D -EFAULT;
-+				goto out_acct;
-+			}
-+
-+			args->iov =3D compat_ptr(args32.iov);
-+			args->iovcnt =3D args32.iovcnt;
-+			args->offset =3D args32.offset;
-+			args->flags =3D args32.flags;
-+#endif
-+		} else {
-+			if (copy_from_user(args, sqe_addr, copy_end)) {
-+				ret =3D -EFAULT;
-+				goto out_acct;
-+			}
-+		}
-+
-+		if (args->flags !=3D 0) {
-+			ret =3D -EINVAL;
-+			goto out_acct;
-+		}
-+	}
-+
-+	ret =3D import_iovec(ITER_DEST, args->iov, args->iovcnt, ARRAY_SIZE(iov=
-stack),
- 			   &iov, &iter);
- 	if (ret < 0)
- 		goto out_acct;
-@@ -4854,8 +4876,8 @@ static int btrfs_uring_encoded_read(struct io_uring=
-_cmd *cmd, unsigned int issue
- 		goto out_free;
- 	}
-=20
--	pos =3D args.offset;
--	ret =3D rw_verify_area(READ, file, &pos, args.len);
-+	pos =3D args->offset;
-+	ret =3D rw_verify_area(READ, file, &pos, args->len);
- 	if (ret < 0)
- 		goto out_free;
-=20
-@@ -4868,15 +4890,15 @@ static int btrfs_uring_encoded_read(struct io_uri=
-ng_cmd *cmd, unsigned int issue
- 	start =3D ALIGN_DOWN(pos, fs_info->sectorsize);
- 	lockend =3D start + BTRFS_MAX_UNCOMPRESSED - 1;
-=20
--	ret =3D btrfs_encoded_read(&kiocb, &iter, &args, &cached_state,
-+	ret =3D btrfs_encoded_read(&kiocb, &iter, args, &cached_state,
- 				 &disk_bytenr, &disk_io_size);
- 	if (ret < 0 && ret !=3D -EIOCBQUEUED)
- 		goto out_free;
-=20
- 	file_accessed(file);
-=20
--	if (copy_to_user(sqe_addr + copy_end, (const char *)&args + copy_end_ke=
-rnel,
--			 sizeof(args) - copy_end_kernel)) {
-+	if (copy_to_user(sqe_addr + copy_end, (const char *)args + copy_end_ker=
-nel,
-+			 sizeof(*args) - copy_end_kernel)) {
- 		if (ret =3D=3D -EIOCBQUEUED) {
- 			unlock_extent(io_tree, start, lockend, &cached_state);
- 			btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
-@@ -4893,7 +4915,7 @@ static int btrfs_uring_encoded_read(struct io_uring=
-_cmd *cmd, unsigned int issue
- 		 * undo this.
- 		 */
- 		if (!iov) {
--			iov =3D kmemdup(iovstack, sizeof(struct iovec) * args.iovcnt,
-+			iov =3D kmemdup(iovstack, sizeof(struct iovec) * args->iovcnt,
- 				      GFP_NOFS);
- 			if (!iov) {
- 				unlock_extent(io_tree, start, lockend, &cached_state);
-@@ -4906,13 +4928,13 @@ static int btrfs_uring_encoded_read(struct io_uri=
-ng_cmd *cmd, unsigned int issue
- 		count =3D min_t(u64, iov_iter_count(&iter), disk_io_size);
-=20
- 		/* Match ioctl by not returning past EOF if uncompressed. */
--		if (!args.compression)
--			count =3D min_t(u64, count, args.len);
-+		if (!args->compression)
-+			count =3D min_t(u64, count, args->len);
-=20
- 		ret =3D btrfs_uring_read_extent(&kiocb, &iter, start, lockend,
- 					      cached_state, disk_bytenr,
- 					      disk_io_size, count,
--					      args.compression, iov, cmd);
-+					      args->compression, iov, cmd);
-=20
- 		goto out_acct;
- 	}
---=20
-2.45.2
+Or, to look at it a different way, posix_spawn but with all the power of
+io_uring available rather than a handful of "spawn attributes".
 
+> > without exec-ing first); if it is, that'd be a bug. It *should* be
+> > possible to do almost any reasonable opcode. For instance, reasonable
+> > possibilities include "write a byte to a pipe, open a file,
+> > install/rearrange some file descriptors, then exec".
 

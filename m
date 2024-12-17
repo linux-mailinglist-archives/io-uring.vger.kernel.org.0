@@ -1,132 +1,209 @@
-Return-Path: <io-uring+bounces-5513-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5514-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A2A9F3EA6
-	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 01:05:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3335E9F405D
+	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 03:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 865AF7A323A
-	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 00:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19FE118843C7
+	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 02:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA72647;
-	Tue, 17 Dec 2024 00:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0AD482DD;
+	Tue, 17 Dec 2024 02:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Da1wes0l"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dFvvBJy/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45669479
-	for <io-uring@vger.kernel.org>; Tue, 17 Dec 2024 00:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BC743AB9
+	for <io-uring@vger.kernel.org>; Tue, 17 Dec 2024 02:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734393929; cv=none; b=CcmcB89c7fhMlijz2i5Uo1Vr4naRWv8J9Fn/Ib/EOTEky/6tIo3jgCmlZSQOC3eHo1ggzngxcutvFywhMuRSVm+gFzIks+NyLFwBIJxd23mD2FRZ3CRfvqcKgbDiuYvttLaRWuGnfWVOLyFl3tpAIhiHbd4oVrngvySMPqskKVo=
+	t=1734401319; cv=none; b=r9Uk9COrOIkI68hx3jV6hEqvAG5YzLnL3bjVA0dzqGEdhXVbGzY2XBLG5Ll9X3P0wMF+7Ccuet2uFJlZtpEQIi4aFt8RQea4U/9BtddpQE5Z8hkQ6lfatc0DjLCiANZoicFhjw97IoNDE6nBv9d4Ip/nep68fSwohBE1nM7BoZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734393929; c=relaxed/simple;
-	bh=qR+fzpC2KdHlW/SiO0ikbl/QrdyDYXM5cnZq0oy1Rxc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=R3VrbPZkg5UqEv8exCvKaO/pTc0BtgvS+OPjUzyKxG0hgGPCmSv76LNSDpChu1Q5jA/Sj224U1Z4IrDiFM2T5onCG3A5+UxVjYETZoSCFrjSwyFX9+5zJn4UV1vlvtC1yWRKGhVXSncniUOpPa2WlcECSYga0vVMUg5kB5CuXw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Da1wes0l; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-725ef0397aeso4150509b3a.2
-        for <io-uring@vger.kernel.org>; Mon, 16 Dec 2024 16:05:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734393926; x=1734998726; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7a9uXY1exkTESDyjNuDOUj4cVSEwjPkQpQkrJ6UBFQM=;
-        b=Da1wes0lFEp0SiZt/mH7rAWgidJ885VdYBbvTYu1dOMGP6W5fp5PGzwuOKh/kZudvL
-         twb/E/yHD0rMrioolhtWVoA/DZqFPhLnQW+XW+JEIlSAquLLymJgnDIasS57IBCghJvs
-         3af5Mm2xukh0v+82CWDM1rwGzblGlYqzsDokRe7q3EpaXRSzFdfHS1YhGf7OGcnrInOn
-         zqk1RVGO0CDt1nOGEI31265/aEvCNe0AxxPuVQ/qzr+9aOUzUK06UA62rRF4pwfRJLB1
-         hSWQ3GE8fkS5BfHBOQJMvY19nDB/9K789TuD2D3liGKQ/9RvL/BBHxURGW4yDxfBIk/U
-         Y15g==
+	s=arc-20240116; t=1734401319; c=relaxed/simple;
+	bh=uPuIiUbsfbaVY8C1ARkHWtTdlRSDUTpdWk9CZsPNLcA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dsQSSyRtvphwfzTsatjwtd1scVc6ZVlun9tFLlDKUeHfnuL1SgzJ6ZtemGPKEfL793jNc7rcYZKuwIxanrfosDM9KyayK0SA5n62w2Jg/aIfn9l/oFWd/EtqNO10dr3iMo3AZkBsLzkTRKgfsWA7/LMJhKW0ZMI6286SW7sx+M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dFvvBJy/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734401316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BC3XHS0g1+Pm5jNP82Vf/B/xxujhL2pP6iO6VJ0dVao=;
+	b=dFvvBJy/BWEEq7e8hqQ2K5JdYKs7Z6raK5gIzw6698PR1eP/YDUspdih/TreseTEt62Lof
+	wNBG5ixGCmvE6yxV3frE36Xp7WZQapGXz9nJaOLNQvYvHV4EWLDbr03y6AXqN0Rdniogq6
+	AAuxombK/GtK7QtcfJqBU+RlBbzz+eg=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-624-we82nIVaMhebFO-P1JEptA-1; Mon, 16 Dec 2024 21:08:34 -0500
+X-MC-Unique: we82nIVaMhebFO-P1JEptA-1
+X-Mimecast-MFC-AGG-ID: we82nIVaMhebFO-P1JEptA
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2efa74481fdso4503073a91.1
+        for <io-uring@vger.kernel.org>; Mon, 16 Dec 2024 18:08:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734393926; x=1734998726;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1734401314; x=1735006114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7a9uXY1exkTESDyjNuDOUj4cVSEwjPkQpQkrJ6UBFQM=;
-        b=njsawYALaWCxnKLmlhgbrY4LuZbgi2cJQX8k2AZXQeKGIMw+zFvmZMbQ/UxCWARkEF
-         MR98u8/+bcDe4BYsLFrDtGWFPRZiLNs2IZnFa3VBWZtHBt+fbyOqHAxzCnQOJtpklq1V
-         Wm/OPZ7slLtHef54r9RLl8B1OjrJNJyZ9vgXnobzCgBRSzFwrfMcjmd31w/zSYb82mRj
-         tauTRHPjOKb2U3ag4acGtMZu4vFByTONVYhBXPsx6AgKO/tqC41fV7Jwe4QS1PVrAPou
-         d81c/BER6a53g7+kIjpEIk71h1FFSIphMYlBPMn0a79v6i9+aT4OZGG7k97FSuQDHgRm
-         sutg==
-X-Gm-Message-State: AOJu0Yy+sA2Q+eq7XoeWj3AdFdolEmYQu+nUnZ9X6uEEZnMjdO53Kv6j
-	z0oaFmdy7071zA/K+ggk7Cfgmd4ldp/jI1o45WyhVyYhOLOMw783TD8hYF/1EKTDxB+l8HFZyGr
-	P
-X-Gm-Gg: ASbGnct3gq3ufaXiiv54s2+XYS63RUs1RCkabFsNg8gLbvmokOpaxg0DcMBJGyeitCS
-	uCClQAJtj82uh1qmxRZWgcJIQc8DvF72usqXp6QeKBxt6DSc1+iUjXK6BiTh9rVMIpdU5NpCNa9
-	iRHbl6UPkMs3pwkO/dmpHemKYTXt6ymuj5NBGip4jiDeFs2nVuWL2JbMlzPoDf5aJT1KU8sS6VZ
-	X48CwwzG3cH7Vylju7nl2fU5sU2uFflYOG9COTtqIs4SOGq
-X-Google-Smtp-Source: AGHT+IF0scbqvrHxRN1aYusxWZyFSS3jmFADOoukfKTJ2n3E8cjuiDTkeccx9sUoMBsyj825JmGQyA==
-X-Received: by 2002:a05:6a20:db0a:b0:1e1:72ce:fefc with SMTP id adf61e73a8af0-1e1dfdcb7famr21524552637.22.1734393925665;
-        Mon, 16 Dec 2024 16:05:25 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918bad9easm5507861b3a.140.2024.12.16.16.05.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 16:05:25 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: asml.silence@gmail.com, Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring@vger.kernel.org
-In-Reply-To: <20241216204615.759089-1-krisman@suse.de>
-References: <20241216204615.759089-1-krisman@suse.de>
-Subject: Re: [PATCH RESEND v2 0/9] Clean up alloc_cache allocations
-Message-Id: <173439392472.114512.16832467394329793575.b4-ty@kernel.dk>
-Date: Mon, 16 Dec 2024 17:05:24 -0700
+        bh=BC3XHS0g1+Pm5jNP82Vf/B/xxujhL2pP6iO6VJ0dVao=;
+        b=ZMOIfQxdaylV3Dl1Q44t+vPb52vh4vFqfgBzip5F3AAOGln3iaGiKz1CtoJ/siOmbo
+         CGjQlx/BU5Q/DJyqltVR6nuxOam1hDynFXxQ7h4sGYUrlD3J0WZ2AxM00u4XfQbiAGFB
+         jZB/mwGzsRxhuZiTcFRYsGEno/6Yrlrnhi/IB97kkmMQPxlfwEsqebtILwdM4jcUamFZ
+         TdHcFsy7baqqmq4mRF3k7gMazOrOn04JI1L99rpi6Ricuc8ivACq+CbPqVAtAa25MQSM
+         FtCUylwa79Xy1DdeBKkR66LFj4PMfP79TMvppT4tdB5hYMNYlNbVuypPFN1LF5Whq9cg
+         /OQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXb9ldQxgSCe1AhKv6MirvlYYY+KN3i83g+00pViufKh+0xKIhmGvNc5y+DZQhzDhVh4sJlXBl5FQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YynKAoE6vzCOTLUjubeeiNLJ7nOay5FigRJaqEWj+6jT52PZ1rg
+	Gi0/FQO1fIUFU60Zq3wOqI0PRG/n1kl7zyY3a0scT927vokfSYMg+K7jyPNm5bjlIyXS0CbsTyN
+	d9kquoJlruNVoMTXQn4fToWMbm5W7h0md0Ihk58tUBmWFdOKmzyA0G785D0o0PWmAALQ6E0cbJU
+	hqS2Py1WuMtEIDFx0302519OyFRFz0nUQ=
+X-Gm-Gg: ASbGncvQQm6+KB1wP1f3J6SH4p4BhWD6FeHBBOAKLtotKBwdahKumdfEI9Q0GOc2LB4
+	oEHph7hVPqcvXDYYi2XtZu63gkettcQbrk7jRviE=
+X-Received: by 2002:a17:90b:184f:b0:2ee:964e:67ce with SMTP id 98e67ed59e1d1-2f28fa54f41mr20682455a91.3.1734401313824;
+        Mon, 16 Dec 2024 18:08:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFfMpqPFGAQFMOheaP9Yc1CtnnOl4j6a294K7HSySSXs4dpUWZNqPIp6FbuAeM2HZd4FWrBbt/h0vjti8cfQ+U=
+X-Received: by 2002:a17:90b:184f:b0:2ee:964e:67ce with SMTP id
+ 98e67ed59e1d1-2f28fa54f41mr20682422a91.3.1734401313332; Mon, 16 Dec 2024
+ 18:08:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-86319
+References: <20241203121424.19887-1-mengferry@linux.alibaba.com>
+ <2d4ad724-f9da-4502-9079-432935f5719d@linux.alibaba.com> <CACGkMEuAgAcCDrCMhNHr7gcRB6NtMPPLdSFAOGdt4dXGoQr4Yg@mail.gmail.com>
+ <60fd6f1a-ddf5-4b53-8353-18dcd8f6f93c@linux.alibaba.com>
+In-Reply-To: <60fd6f1a-ddf5-4b53-8353-18dcd8f6f93c@linux.alibaba.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 17 Dec 2024 10:08:21 +0800
+Message-ID: <CACGkMEu4=nt0R1pmTauuK_vcc_fbObmyWqe0TO0HhuexmZWHJQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for virtio-blk
+To: Ferry Meng <mengferry@linux.alibaba.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, linux-block@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Jeffle Xu <jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Dec 16, 2024 at 8:07=E2=80=AFPM Ferry Meng <mengferry@linux.alibaba=
+.com> wrote:
+>
+>
+> On 12/16/24 3:38 PM, Jason Wang wrote:
+> > On Mon, Dec 16, 2024 at 10:01=E2=80=AFAM Ferry Meng <mengferry@linux.al=
+ibaba.com> wrote:
+> >>
+> >> On 12/3/24 8:14 PM, Ferry Meng wrote:
+> >>> We seek to develop a more flexible way to use virtio-blk and bypass t=
+he block
+> >>> layer logic in order to accomplish certain performance optimizations.=
+ As a
+> >>> result, we referred to the implementation of io_uring passthrough in =
+NVMe
+> >>> and implemented it in the virtio-blk driver. This patch series adds i=
+o_uring
+> >>> passthrough support for virtio-blk devices, resulting in lower submit=
+ latency
+> >>> and increased flexibility when utilizing virtio-blk.
+> >>>
+> >>> To test this patch series, I changed fio's code:
+> >>> 1. Added virtio-blk support to engines/io_uring.c.
+> >>> 2. Added virtio-blk support to the t/io_uring.c testing tool.
+> >>> Link: https://github.com/jdmfr/fio
+> >>>
+> >>> Using t/io_uring-vblk, the performance of virtio-blk based on uring-c=
+md
+> >>> scales better than block device access. (such as below, Virtio-Blk wi=
+th QEMU,
+> >>> 1-depth fio)
+> >>> (passthru) read: IOPS=3D17.2k, BW=3D67.4MiB/s (70.6MB/s)
+> >>> slat (nsec): min=3D2907, max=3D43592, avg=3D3981.87, stdev=3D595.10
+> >>> clat (usec): min=3D38, max=3D285,avg=3D53.47, stdev=3D 8.28
+> >>> lat (usec): min=3D44, max=3D288, avg=3D57.45, stdev=3D 8.28
+> >>> (block) read: IOPS=3D15.3k, BW=3D59.8MiB/s (62.7MB/s)
+> >>> slat (nsec): min=3D3408, max=3D35366, avg=3D5102.17, stdev=3D790.79
+> >>> clat (usec): min=3D35, max=3D343, avg=3D59.63, stdev=3D10.26
+> >>> lat (usec): min=3D43, max=3D349, avg=3D64.73, stdev=3D10.21
+> >>>
+> >>> Testing the virtio-blk device with fio using 'engines=3Dio_uring_cmd'
+> >>> and 'engines=3Dio_uring' also demonstrates improvements in submit lat=
+ency.
+> >>> (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B=
+0 -O0 -n1 -u1 /dev/vdcc0
+> >>> IOPS=3D189.80K, BW=3D741MiB/s, IOS/call=3D4/3
+> >>> IOPS=3D187.68K, BW=3D733MiB/s, IOS/call=3D4/3
+> >>> (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -=
+O0 -n1 -u0 /dev/vdc
+> >>> IOPS=3D101.51K, BW=3D396MiB/s, IOS/call=3D4/3
+> >>> IOPS=3D100.01K, BW=3D390MiB/s, IOS/call=3D4/4
+> >>>
+> >>> The performance overhead of submitting IO can be decreased by 25% ove=
+rall
+> >>> with this patch series. The implementation primarily references 'nvme=
+ io_uring
+> >>> passthrough', supporting io_uring_cmd through a separate character in=
+terface
+> >>> (temporarily named /dev/vdXc0). Since this is an early version, many
+> >>> details need to be taken into account and redesigned, like:
+> >>> =E2=97=8F Currently, it only considers READ/WRITE scenarios, some mor=
+e complex operations
+> >>> not included like discard or zone ops.(Normal sqe64 is sufficient, in=
+ my opinion;
+> >>> following upgrades, sqe128 and cqe32 might not be needed).
+> >>> =E2=97=8F ......
+> >>>
+> >>> I would appreciate any useful recommendations.
+> >>>
+> >>> Ferry Meng (3):
+> >>>     virtio-blk: add virtio-blk chardev support.
+> >>>     virtio-blk: add uring_cmd support for I/O passthru on chardev.
+> >>>     virtio-blk: add uring_cmd iopoll support.
+> >>>
+> >>>    drivers/block/virtio_blk.c      | 325 ++++++++++++++++++++++++++++=
++++-
+> >>>    include/uapi/linux/virtio_blk.h |  16 ++
+> >>>    2 files changed, 336 insertions(+), 5 deletions(-)
+> >> Hi, Micheal & Jason :
+> >>
+> >> What about yours' opinion? As virtio-blk maintainer. Looking forward t=
+o
+> >> your reply.
+> >>
+> >> Thanks
+> > If I understand this correctly, this proposal wants to make io_uring a
+> > transport of the virito-blk command. So the application doesn't need
+> > to worry about compatibility etc. This seems to be fine.
+> >
+> > But I wonder what's the security consideration, for example do we
+> > allow all virtio-blk commands to be passthroughs and why.
+>
+> About 'security consideration', the generic char-dev belongs to root, so
+> only root can use this passthrough path.
 
-On Mon, 16 Dec 2024 15:46:06 -0500, Gabriel Krisman Bertazi wrote:
-> I sent this v2 originally during US thanksgiving week, so I'm resending
-> now under a more suitable time, rebased and retested on top of Jen's
-> for-6.14/io_uring branch.  It keeps the changes requested in v1:
-> renaming the allocation helper and introducing a callback instead of
-> zeroing the entire object, as suggested by Jens.
-> 
-> This was tested against liburing testsuite, with lockdep and KASAN
-> enabled.
-> 
-> [...]
+This seems like a restriction. A lot of applications want to be run
+without privilege to be safe.
 
-Applied, thanks!
+>
+> On the other hand, to what I know, virtio-blk commands are all related
+> to 'I/O operations', so we can support all those opcodes with bypassing
+> vfs&block layer (if we want). I just realized the most  basic read/write
+> in this RFC patch series, others will be considered later.
+>
+> > Thanks
+> >
+>
 
-[1/9] io_uring: Fold allocation into alloc_cache helper
-      commit: b1031968b14f83f4bb96ecc4de4f6350ae0f6dad
-[2/9] io_uring: Add generic helper to allocate async data
-      commit: 694022b01368387cc1ed8485e279dfe27939ee43
-[3/9] io_uring/futex: Allocate ifd with generic alloc_cache helper
-      commit: b42176e5055a628217ff1536111a9e2df23db835
-[4/9] io_uring/poll: Allocate apoll with generic alloc_cache helper
-      commit: 4cc6fd392489cd76c7aa138eddace19dbcea366e
-[5/9] io_uring/uring_cmd: Allocate async data through generic helper
-      commit: 02b3c515d0be7e77dd19920e30cf637e9c7a167d
-[6/9] io_uring/net: Allocate msghdr async data through helper
-      commit: 23d91035cafa30d186242ebdf583aa1b55f1c59e
-[7/9] io_uring/rw: Allocate async data through helper
-      commit: 8cf0c459993ee2911f4f01fba21b1987b102c887
-[8/9] io_uring: Move old async data allocation helper to header
-      commit: 6cd2993dcdc17cac5cf6b11034abc6014caab71b
-[9/9] io_uring/msg_ring: Drop custom destructor
-      commit: cd7f9fee711c9ca4b909ffaadcac0302358db841
-
-Best regards,
--- 
-Jens Axboe
-
-
+Thanks
 
 

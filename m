@@ -1,138 +1,116 @@
-Return-Path: <io-uring+bounces-5527-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5528-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7032F9F56BA
-	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 20:14:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9929F5731
+	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 20:52:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FEA18838A1
-	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 19:15:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 160C1189526C
+	for <lists+io-uring@lfdr.de>; Tue, 17 Dec 2024 19:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FFA13EFF3;
-	Tue, 17 Dec 2024 19:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788E01F9EB3;
+	Tue, 17 Dec 2024 19:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="BiCfzlNz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KiWAHpNc"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Oh1clw47"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1572B442F
-	for <io-uring@vger.kernel.org>; Tue, 17 Dec 2024 19:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4D342A9B
+	for <io-uring@vger.kernel.org>; Tue, 17 Dec 2024 19:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734462893; cv=none; b=cIdGPPHPkbjEA/o/6JDSv+RxCCjQH9fCb1Lpese4zmSKDG7Kaw43fPv+DJE6PZqc9g31eQF98ZTTYA2ltZtSQEaphSJOpRYwhSqXQvjMkCLZEpW+cxmAnezyiWkb6ngncXtvovOgpBwLOtLtiI56za7i7ItCZ7As0TKqXh+FeWc=
+	t=1734464738; cv=none; b=YX0E6V6H203wkuo6xLoNHLm8r/NRsidOIPyCgRdv2ENxQ7nVZxOg5PNk0gjvdhsESLV/IUFJVtJfB5em/R19ATC3ptd/BzRTet7QhN0ALObcoRxL+EmKWUP1YR16xs/E03KZggujZBNfxdXor1dsDSlIcj38tczS/8nB43J0W5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734462893; c=relaxed/simple;
-	bh=Kju+EShWacB+iMaqrJ7JKxNeaTrleMlHC8s4l8ALL2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f0REXlMSvaystTw0zYb/vugPjCRlXTgAg0+m3BHVX8CtzFTxHh6Ftslvu/1GCQw0MUesJPFBTbeeIrQtNlm75rMsq1cGERNc+Bo759a4H2O6XfSr2Yaris4YaNw/odRKr4SmCpuXTDUp0WFSq06vaPVn62KXhlnoO2jC8pSfoGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=BiCfzlNz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KiWAHpNc; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id E9BA4114014E;
-	Tue, 17 Dec 2024 14:14:48 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Tue, 17 Dec 2024 14:14:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	joshtriplett.org; h=cc:cc:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1734462888;
-	 x=1734549288; bh=kDOLcef3jeuvNsxFYtyM772Bsppb3I84ASeaEOoxEsk=; b=
-	BiCfzlNzT0CfIOFa/kOivE7vx7ZAWUIw8rCPXX0WFIekMLrq+DYrzUwUJl6v5LbH
-	NMINCMbIXaJktUe36LtBhZOYV7GRbY4t+5olsewFGyLIyoq1glxft4tQoH/didrK
-	OUpoAH2gpTO/mxZJvoFh5dyetFU1LdItlBLPNz9knQszuBWEk/HWjm1AhTPnhYGJ
-	MGa4LclqCTYtJGlM0mN9ixWDuzVcYYPfrgHKklzpO44xIVYKYfm6J7Z5jcmGZPxO
-	8ebQIyT48FKr529su5abs70I2yu+IDXC3OTzbHIpAW6u3CKJdaluNvcSMFhq15pi
-	CB/a/fgCy7pL060deJpVJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1734462888; x=1734549288; bh=kDOLcef3jeuvNsxFYtyM772Bsppb3I84ASe
-	aEOoxEsk=; b=KiWAHpNcjMLFZKWyQLC3BJSLeMZKg9RHs6kw52bUdQfyQFUMRXg
-	ML+X4vynx+EXE53/LhzVvC/UC8MT+aMWX4XZIBaQr8GcyJffBX3a5/wbpR6JccTr
-	DEvlzPX2B4cEVAZ176iwG395ATsndN2GpMJOfBrBWSq3IOyIHiuttUBIqP7ZvYv8
-	w+/kGoHMryney4giOjAOZfjfVmfPOAc7hgrgIMNbvwmG7NKKXO1zLZ/Yh9yRkfrC
-	89UUOrdFhgw4q7lNZ3LAlaaayrjEjvhb+BGGSaHOdG6M+dO78Tw16NAYCY4b1kuh
-	crZlr98JGiOhHv1ODppEJsIq3TG8lndBmQg==
-X-ME-Sender: <xms:qM1hZxG7N30o7mBtCUyGMlbgpQu5VfRoHMbLbAEI0xg43OZ6kit9IQ>
-    <xme:qM1hZ2UIbtwA8OjI3iGycxTxSwIP6PVJnRoafqL8pkFL5qh3W2_tMdVM2w7LTtUXk
-    NLDDgYMWBD7S__shJQ>
-X-ME-Received: <xmr:qM1hZzKp4AC0Tyj3HgLERpvLA5kXrP84nzJ-_Xxfyuan1SKo2aYDguo3OQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleehgdduvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomheplfhoshhhucfvrhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhplh
-    gvthhtrdhorhhgqeenucggtffrrghtthgvrhhnpeduieegheeijeeuvdetudefvedtjeef
-    geeufefghfekgfelfeetteelvddtffetgfenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
-    pdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrsh
-    hmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopehkrhhishhmrghn
-    sehsuhhsvgdruggvpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtph
-    htthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:qM1hZ3FiptISB-liCqlVeZnsGEiFnqLOZ8xUJMQNoAjlr-2BD31R3Q>
-    <xmx:qM1hZ3U0uSccAmcll7nyYijjN0PHnt5h5qQ3cpCoyrXZkuWstYgXIA>
-    <xmx:qM1hZyMQv6GbpX-RAsMCiOrtRjv_0rAqGML3kEoqUT7KH9wekAgUFQ>
-    <xmx:qM1hZ23iujNB-gyV_WiPaSRVOBBuV7_3sBCyisia2LtqCyt9yLN9-w>
-    <xmx:qM1hZ9xxa3-1ikIJ7PNGlXqMIp_eoE2VrHy2_JzI0NWdusUd469jGYVe>
-Feedback-ID: i83e94755:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 17 Dec 2024 14:14:47 -0500 (EST)
-Date: Tue, 17 Dec 2024 11:14:46 -0800
-From: Josh Triplett <josh@joshtriplett.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>, axboe@kernel.dk,
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH RFC 7/9] io_uring: Introduce IORING_OP_CLONE
-Message-ID: <Z2HNpmgUzUqXhFM_@localhost>
-References: <20241209234316.4132786-1-krisman@suse.de>
- <20241209234316.4132786-8-krisman@suse.de>
- <4100233a-a715-4c62-89e4-ab1054f97fce@gmail.com>
- <Z1nLRcwaKPv7lAsB@localhost>
- <c51a815f-89f3-483d-bfc6-0f7877885aa8@gmail.com>
+	s=arc-20240116; t=1734464738; c=relaxed/simple;
+	bh=6K4U6l8/fj/4AXVCwFLrges1RyYyNn/Ut9dMR7I9bWA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jMucxzqjxdAL/rRZpIxfCxN8mGZXbWEQhQ3pTQmA1cMRXxDIchvMVYO6v3JuK67Rl1yYE3W/S8pCj7GrfS/xfJ4QItRLndSp7YfgjWNdhhjj7b3amwgLpdHlEXpnX4rrcC7/pmr/vgLGL8qHUsnd/NTq258gJgWSgvH0N8YS/5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Oh1clw47; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-844e7bc6d84so2238239f.0
+        for <io-uring@vger.kernel.org>; Tue, 17 Dec 2024 11:45:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734464735; x=1735069535; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jCN4B3w2mKEhCqLXRtvXS/XvjuV5n0c30iYYiulYORE=;
+        b=Oh1clw47kbKTJgwx9jtcsR53NcmMwxXR5CQ7Im2phoKD3xImukG6XJ7fexLfZ6UNG0
+         qDeUvll0FSOvzoyT7j0wctY6GDvn3XcD6BCqDp2lfjnaRpq1f/4imf5msRIq1V9Hw9A2
+         lk8yJRzZdD+ugh0Z6gkQbjzTqLM0TYagDVpH2ewD5q424YgZ07MmnTL5MmtBOcK9XuMv
+         q5t1yziNf79DZ6b0POf/f80UiyNutGIrk2vx11/H9Mtkxv3FXxUxNW+i/lmFVbedIoo8
+         aGOU0Pwd+HwNMm6+vzBYGOYCDEA5u01aFnTH2mMHblUSTl4K+A2Wtz+OLsPcl95e5SLb
+         2l8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734464735; x=1735069535;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jCN4B3w2mKEhCqLXRtvXS/XvjuV5n0c30iYYiulYORE=;
+        b=XCT4Z/J0JCl58esCMrsSHugu9nv/Guv3muhwWChZtmpTzNwodih9wBH41QjNEt0OWf
+         /d5M/D1F1V0uNBFoC+w511hO8NgYCSXqo88ekzHtagyAjOt2Fo8PeOcMHJEcDHpCV7ut
+         15YnzP/eicK5MR1prKwk02CVJ0kR1NKVqavuHCJMz/vVMy+e9t19u8GZleXSDOiZkoIX
+         /cmYDQmwGQ0TJJNe1CDZX5U1pdzLWp4oC5X1Qc2ElKyq8pzzuSwD1ADh/A4n6Yz7uW8X
+         nwRgHhhZri2Ze0kvC8A8B7fNtYC2Bi1QnmQuese0f53Gud2EN4egrv0/GWHyF/vvcf3F
+         LmJw==
+X-Gm-Message-State: AOJu0Yyva/uD5HfKQDoyProwaLvBdjtRSTAljBslQ0W25jPeEZHQBVle
+	hcrwm38bVvHYSgLH5KxvEfG90pD2GKhqUcMahmgG/ea91/DP1HXLED8NgKyES5IFb+w/9Ir4lYU
+	h
+X-Gm-Gg: ASbGncvMuR9X546BaEMoaPlI7OzzoEhCJQGHzW6IA0ftS4qKW6T+gKIaVZPJfbISMpE
+	KHeRLoNzrX3xiPiwzfKIAsBUrMrx0SPil6CFweWg/A80Hbo1ud0qKkQW01HRDpJ+diBydppBKr9
+	rxbHKHEjhEgWenPFlleVyB+LZiIg4VwU/14UISlwAe7DWBYqUBSC2XWvE6u4lq9YeGkapPvPbP2
+	REAHKFBgLXiX1tIZ0jD33drm9w0pdyeh4A1R+oDFozeEKRVkefX
+X-Google-Smtp-Source: AGHT+IE4oKNfpSQqa0sQ+Z4p/JG0qT+mf08KGHUA2MHLXQFwwmTGC5iXrNOE7GGbiaVAnD8vQmpH/A==
+X-Received: by 2002:a05:6602:1413:b0:844:7896:8cb4 with SMTP id ca18e2360f4ac-847589ea367mr4497139f.1.1734464735310;
+        Tue, 17 Dec 2024 11:45:35 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e5e378c1f9sm1801850173.134.2024.12.17.11.45.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 11:45:34 -0800 (PST)
+Message-ID: <987219ec-d6ba-427e-a9fa-9ac63660bb72@kernel.dk>
+Date: Tue, 17 Dec 2024 12:45:34 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c51a815f-89f3-483d-bfc6-0f7877885aa8@gmail.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/rw: use NULL for rw->free_iovec assigment
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 17, 2024 at 11:03:27AM +0000, Pavel Begunkov wrote:
-> On 12/11/24 17:26, Josh Triplett wrote:
-> > On Wed, Dec 11, 2024 at 01:37:40PM +0000, Pavel Begunkov wrote:
-> > > Also, do you block somewhere all other opcodes? If it's indeed
-> > > an under initialised task then it's not safe to run most of them,
-> > > and you'd never know in what way, unfortunately. An fs write
-> > > might need a net namespace, a send/recv might decide to touch
-> > > fs_struct and so on.
-> > 
-> > I would not expect the new task to be under-initialised, beyond the fact
-> > that it doesn't have a userspace yet (e.g. it can't return to userspace
-> 
-> I see, that's good. What it takes to setup a userspace? and is
-> it expensive? I remember there were good numbers at the time and
-> I'm to see where the performance improvement comes from. Is it
-> because the page table is shared? In other word what's the
-> difference comparing to spinning a new (user space) thread and
-> executing the rest with a new io_uring instance from it?
+It's a pointer, don't use 0 for that. sparse throws a warning for that,
+as the kernel test robot noticed.
 
-The goal is to provide all the advantages of `vfork` (and then some),
-but without the incredibly unsafe vfork limitations.
+Fixes: 8cf0c459993e ("io_uring/rw: Allocate async data through helper")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202412180253.YML3qN4d-lkp@intel.com/
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Or, to look at it a different way, posix_spawn but with all the power of
-io_uring available rather than a handful of "spawn attributes".
+---
 
-> > without exec-ing first); if it is, that'd be a bug. It *should* be
-> > possible to do almost any reasonable opcode. For instance, reasonable
-> > possibilities include "write a byte to a pipe, open a file,
-> > install/rearrange some file descriptors, then exec".
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index d0ac4a51420e..75f70935ccf4 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -212,7 +212,7 @@ static void io_rw_async_data_init(void *obj)
+ {
+ 	struct io_async_rw *rw = (struct io_async_rw *)obj;
+ 
+-	rw->free_iovec = 0;
++	rw->free_iovec = NULL;
+ 	rw->bytes_done = 0;
+ }
+ 
+-- 
+Jens Axboe
+
 

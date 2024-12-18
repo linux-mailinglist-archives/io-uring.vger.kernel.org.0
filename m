@@ -1,44 +1,44 @@
-Return-Path: <io-uring+bounces-5561-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5562-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118189F61B6
-	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2024 10:31:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25A39F61C1
+	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2024 10:33:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43EAF188A185
-	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2024 09:31:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBDDF160502
+	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2024 09:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B886E195980;
-	Wed, 18 Dec 2024 09:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF9419C54B;
+	Wed, 18 Dec 2024 09:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hpCZgHyI"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WNjfkRs0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324B8194A64;
-	Wed, 18 Dec 2024 09:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FAA1F2C4E;
+	Wed, 18 Dec 2024 09:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734513931; cv=none; b=XgCleKWScDBHyHiloEAz8DNRvuPx8AscE47Xo9QnZ19CB4ytF3YpstspFi0hHkuWdUq36cFfPPkqvH/GMxg2Th+E6WOn+PlrEeXE91BTl4Vcjd8skoo0ZVv6Y9xXjZIWQwWtQqZ3sm+cSn/bDSDxtKxW8nkWh7iVm3/vWOwEBp0=
+	t=1734513941; cv=none; b=OvHSLKb/JQmX7luMNeFDIsUHf2DMaZSb6B5aZzzaBtQMlFEtZ2CtDi+glCzHkHAq1pctOlo36qyEkXu/7p88JQLFiFnHFNOpHteytYmtJ3ZK0TH5sKvxTlfOM6cH1NTwKTAGTEP6RnG3mE332W/j2r0NgNHaj4S++07th7BWuG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734513931; c=relaxed/simple;
-	bh=suVFN18f6l88ll5bXCZiLUvgX6JmXNTjyUNOVTCHtl8=;
+	s=arc-20240116; t=1734513941; c=relaxed/simple;
+	bh=1dUDjvklw8CdmcX76Sk+ybghTOnxw5Ebox+D4h/sRbI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OF5TLkpMctqcwMq6HWTOmRrtdxdt9Fp9hr6GwSKT9t+SKRynJDl77kiqzL2rOWFJVE8oowcYtLaReJTu0QVQcDtM1dFkknVsBsnsknRCU+fxALpWFxevb83ZPb+fP5iafalIKXQvJO5sR2asdJX1HCR7EKjyjCz5PshlXi/plhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hpCZgHyI; arc=none smtp.client-ip=115.124.30.101
+	 MIME-Version; b=rEtVowYV+ScmKIW++BlXYSf1+U7WTQgz1oRwd4T21uEU59w+DQQbeO+AYW+d73yGnAiaTzxka5yIf1y1BRZciKmPJgR9Q5g1/h25ZMzXYyOGqRwJEMtmz4CXI4qfQL0cGmj8MCJesGrAVjqdBz+QiKEy7KxrrPEN24mWKCrSP2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WNjfkRs0; arc=none smtp.client-ip=115.124.30.98
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1734513925; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=hM3NMjNyhiKp7OTl4GYAGnFmUrECoxmiKjcfQlgfIyg=;
-	b=hpCZgHyIrDGjK8nqiLqQcNcxyYEakceievlwKln2BZcLe8BV7qdLziY+KNCAIDCz8qVynzyMdsqWLvwdo28vpr8FpKGkWfb8tCDENuRpNv6acp/IPrEaec0FJs8v7Qeyt7Zh/69O/YSEIMO6jYLqzbSkk6f3Yi3/wPoV+o+DyHU=
-Received: from localhost(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0WLmBURS_1734513920 cluster:ay36)
+	t=1734513935; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=It6WpETL+kZApHz8TGniTfkXHKeh4P2xD3b1fedrDXI=;
+	b=WNjfkRs02uwRmz21omW5vnFu8Wc8ithUlb/H7W0H6PtV/W0s8rq4F2bcm5cvug0KwYCLW1c1IYJ1rsrV6qa8FEGqNuP7oDS3p3MtV+CIVVGE8wRzFB/x0JlwqqD4ap5zC0JfkIYCm/jB8deT1ceaJgXpi5sDNmafu6aOJGYoNBo=
+Received: from localhost(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0WLm.dHT_1734513930 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Wed, 18 Dec 2024 17:25:24 +0800
+          Wed, 18 Dec 2024 17:25:34 +0800
 From: Ferry Meng <mengferry@linux.alibaba.com>
 To: "Michael S . Tsirkin" <mst@redhat.com>,
 	Jason Wang <jasowang@redhat.com>,
@@ -52,9 +52,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Joseph Qi <joseph.qi@linux.alibaba.com>,
 	Jeffle Xu <jefflexu@linux.alibaba.com>,
 	Ferry Meng <mengferry@linux.alibaba.com>
-Subject: [PATCH v1 1/3] virtio-blk: add virtio-blk chardev support.
-Date: Wed, 18 Dec 2024 17:24:33 +0800
-Message-Id: <20241218092435.21671-2-mengferry@linux.alibaba.com>
+Subject: [PATCH v1 2/3] virtio-blk: add uring_cmd support for I/O passthru on chardev.
+Date: Wed, 18 Dec 2024 17:24:34 +0800
+Message-Id: <20241218092435.21671-3-mengferry@linux.alibaba.com>
 X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 In-Reply-To: <20241218092435.21671-1-mengferry@linux.alibaba.com>
 References: <20241218092435.21671-1-mengferry@linux.alibaba.com>
@@ -66,191 +66,336 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce character interfaces for block device (per-device), facilitating
-access to block devices through io_uring I/O passsthrough.
-
-Besides, vblk initialize only use kmalloc with GFP_KERNEL flag, but for
-char device support, we should ensure cdev kobj must be zero before
-initialize. So better initial this struct with __GFP_ZERO flag.
-
-Now the character devices only named as
-
-	- /dev/vdXc0
-
-Currently, only one character interface is created for one actual
-virtblk device, although it has been partitioned.
+Add ->uring_cmd() support for virtio-blk chardev (/dev/vdXc0).
+According to virtio spec, in addition to passing 'hdr' info into kernel,
+we also need to pass vaddr & data length of the 'iov' requeired for the
+writev/readv op.
 
 Signed-off-by: Ferry Meng <mengferry@linux.alibaba.com>
 ---
- drivers/block/virtio_blk.c | 84 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 83 insertions(+), 1 deletion(-)
+ drivers/block/virtio_blk.c      | 223 +++++++++++++++++++++++++++++++-
+ include/uapi/linux/virtio_blk.h |  16 +++
+ 2 files changed, 235 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index 194417abc105..3487aaa67514 100644
+index 3487aaa67514..cd88cf939144 100644
 --- a/drivers/block/virtio_blk.c
 +++ b/drivers/block/virtio_blk.c
-@@ -17,6 +17,7 @@
- #include <linux/numa.h>
+@@ -18,6 +18,9 @@
  #include <linux/vmalloc.h>
  #include <uapi/linux/virtio_ring.h>
-+#include <linux/cdev.h>
+ #include <linux/cdev.h>
++#include <linux/io_uring/cmd.h>
++#include <linux/types.h>
++#include <linux/uio.h>
  
  #define PART_BITS 4
  #define VQ_NAME_LEN 16
-@@ -25,6 +26,8 @@
- /* The maximum number of sg elements that fit into a virtqueue */
- #define VIRTIO_BLK_MAX_SG_ELEMS 32768
+@@ -54,6 +57,20 @@ static struct class *vd_chr_class;
  
-+#define VIRTBLK_MINORS		(1U << MINORBITS)
-+
- #ifdef CONFIG_ARCH_NO_SG_CHAIN
- #define VIRTIO_BLK_INLINE_SG_CNT	0
- #else
-@@ -45,6 +48,10 @@ MODULE_PARM_DESC(poll_queues, "The number of dedicated virtqueues for polling I/
- static int major;
- static DEFINE_IDA(vd_index_ida);
- 
-+static DEFINE_IDA(vd_chr_minor_ida);
-+static dev_t vd_chr_devt;
-+static struct class *vd_chr_class;
-+
  static struct workqueue_struct *virtblk_wq;
  
- struct virtio_blk_vq {
-@@ -84,6 +91,10 @@ struct virtio_blk {
- 
- 	/* For zoned device */
- 	unsigned int zone_sectors;
++struct virtblk_uring_cmd_pdu {
++	struct request *req;
++	struct bio *bio;
++	int status;
++};
 +
-+	/* For passthrough cmd */
-+	struct cdev cdev;
-+	struct device cdev_device;
++struct virtblk_command {
++	struct virtio_blk_outhdr out_hdr;
++
++	__u64	data;
++	__u32	data_len;
++	__u32	flag;
++};
++
+ struct virtio_blk_vq {
+ 	struct virtqueue *vq;
+ 	spinlock_t lock;
+@@ -122,6 +139,11 @@ struct virtblk_req {
+ 	struct scatterlist sg[];
  };
  
- struct virtblk_req {
-@@ -1239,6 +1250,55 @@ static const struct blk_mq_ops virtio_mq_ops = {
++static void __user *virtblk_to_user_ptr(uintptr_t ptrval)
++{
++	return (void __user *)ptrval;
++}
++
+ static inline blk_status_t virtblk_result(u8 status)
+ {
+ 	switch (status) {
+@@ -259,9 +281,6 @@ static blk_status_t virtblk_setup_cmd(struct virtio_device *vdev,
+ 	if (!IS_ENABLED(CONFIG_BLK_DEV_ZONED) && op_is_zone_mgmt(req_op(req)))
+ 		return BLK_STS_NOTSUPP;
+ 
+-	/* Set fields for all request types */
+-	vbr->out_hdr.ioprio = cpu_to_virtio32(vdev, req_get_ioprio(req));
+-
+ 	switch (req_op(req)) {
+ 	case REQ_OP_READ:
+ 		type = VIRTIO_BLK_T_IN;
+@@ -309,9 +328,11 @@ static blk_status_t virtblk_setup_cmd(struct virtio_device *vdev,
+ 		type = VIRTIO_BLK_T_ZONE_RESET_ALL;
+ 		break;
+ 	case REQ_OP_DRV_IN:
++	case REQ_OP_DRV_OUT:
+ 		/*
+ 		 * Out header has already been prepared by the caller (virtblk_get_id()
+-		 * or virtblk_submit_zone_report()), nothing to do here.
++		 * virtblk_submit_zone_report() or io_uring passthrough cmd), nothing
++		 * to do here.
+ 		 */
+ 		return 0;
+ 	default:
+@@ -323,6 +344,7 @@ static blk_status_t virtblk_setup_cmd(struct virtio_device *vdev,
+ 	vbr->in_hdr_len = in_hdr_len;
+ 	vbr->out_hdr.type = cpu_to_virtio32(vdev, type);
+ 	vbr->out_hdr.sector = cpu_to_virtio64(vdev, sector);
++	vbr->out_hdr.ioprio = cpu_to_virtio32(vdev, req_get_ioprio(req));
+ 
+ 	if (type == VIRTIO_BLK_T_DISCARD || type == VIRTIO_BLK_T_WRITE_ZEROES ||
+ 	    type == VIRTIO_BLK_T_SECURE_ERASE) {
+@@ -832,6 +854,7 @@ static int virtblk_get_id(struct gendisk *disk, char *id_str)
+ 	vbr = blk_mq_rq_to_pdu(req);
+ 	vbr->in_hdr_len = sizeof(vbr->in_hdr.status);
+ 	vbr->out_hdr.type = cpu_to_virtio32(vblk->vdev, VIRTIO_BLK_T_GET_ID);
++	vbr->out_hdr.ioprio = cpu_to_virtio32(vblk->vdev, req_get_ioprio(req));
+ 	vbr->out_hdr.sector = 0;
+ 
+ 	err = blk_rq_map_kern(q, req, id_str, VIRTIO_BLK_ID_BYTES, GFP_KERNEL);
+@@ -1250,6 +1273,197 @@ static const struct blk_mq_ops virtio_mq_ops = {
  	.poll		= virtblk_poll,
  };
  
-+static void virtblk_cdev_rel(struct device *dev)
++static inline struct virtblk_uring_cmd_pdu *virtblk_get_uring_cmd_pdu(
++		struct io_uring_cmd *ioucmd)
 +{
-+	ida_free(&vd_chr_minor_ida, MINOR(dev->devt));
++	return (struct virtblk_uring_cmd_pdu *)&ioucmd->pdu;
 +}
 +
-+static void virtblk_cdev_del(struct cdev *cdev, struct device *cdev_device)
++static void virtblk_uring_task_cb(struct io_uring_cmd *ioucmd,
++		unsigned int issue_flags)
 +{
-+	cdev_device_del(cdev, cdev_device);
-+	put_device(cdev_device);
++	struct virtblk_uring_cmd_pdu *pdu = virtblk_get_uring_cmd_pdu(ioucmd);
++	struct virtblk_req *vbr = blk_mq_rq_to_pdu(pdu->req);
++	u64 result = 0;
++
++	if (pdu->bio)
++		blk_rq_unmap_user(pdu->bio);
++
++	/* currently result has no use, it should be zero as cqe->res */
++	io_uring_cmd_done(ioucmd, vbr->in_hdr.status, result, issue_flags);
 +}
 +
-+static int virtblk_cdev_add(struct virtio_blk *vblk,
-+		const struct file_operations *fops)
++static enum rq_end_io_ret virtblk_uring_cmd_end_io(struct request *req,
++						   blk_status_t err)
 +{
-+	struct cdev *cdev = &vblk->cdev;
-+	struct device *cdev_device = &vblk->cdev_device;
-+	int minor, ret;
++	struct io_uring_cmd *ioucmd = req->end_io_data;
++	struct virtblk_uring_cmd_pdu *pdu = virtblk_get_uring_cmd_pdu(ioucmd);
 +
-+	minor = ida_alloc(&vd_chr_minor_ida, GFP_KERNEL);
-+	if (minor < 0)
-+		return minor;
-+
-+	cdev_device->parent = &vblk->vdev->dev;
-+	cdev_device->devt = MKDEV(MAJOR(vd_chr_devt), minor);
-+	cdev_device->class = vd_chr_class;
-+	cdev_device->release = virtblk_cdev_rel;
-+	device_initialize(cdev_device);
-+
-+	ret = dev_set_name(cdev_device, "%sc0", vblk->disk->disk_name);
-+	if (ret)
-+		goto err;
-+
-+	cdev_init(cdev, fops);
-+	ret = cdev_device_add(cdev, cdev_device);
-+	if (ret) {
-+		put_device(cdev_device);
-+		goto err;
++	/*
++	 * For iopoll, complete it directly. Note that using the uring_cmd
++	 * helper for this is safe only because we check blk_rq_is_poll().
++	 * As that returns false if we're NOT on a polled queue, then it's
++	 * safe to use the polled completion helper.
++	 *
++	 * Otherwise, move the completion to task work.
++	 */
++	if (blk_rq_is_poll(req)) {
++		if (pdu->bio)
++			blk_rq_unmap_user(pdu->bio);
++		io_uring_cmd_iopoll_done(ioucmd, 0, pdu->status);
++	} else {
++		io_uring_cmd_do_in_task_lazy(ioucmd, virtblk_uring_task_cb);
 +	}
-+	return ret;
 +
-+err:
-+	ida_free(&vd_chr_minor_ida, minor);
++	return RQ_END_IO_FREE;
++}
++
++static struct virtblk_req *virtblk_req(struct request *req)
++{
++	return blk_mq_rq_to_pdu(req);
++}
++
++static inline enum req_op virtblk_req_op(const struct virtblk_uring_cmd *cmd)
++{
++	return (cmd->type & VIRTIO_BLK_T_OUT) ? REQ_OP_DRV_OUT : REQ_OP_DRV_IN;
++}
++
++static struct request *virtblk_alloc_user_request(
++		struct request_queue *q, struct virtblk_command *cmd,
++		blk_opf_t rq_flags, blk_mq_req_flags_t blk_flags)
++{
++	struct request *req;
++
++	req = blk_mq_alloc_request(q, rq_flags, blk_flags);
++	if (IS_ERR(req))
++		return req;
++
++	req->rq_flags |= RQF_DONTPREP;
++	memcpy(&virtblk_req(req)->out_hdr, &cmd->out_hdr, sizeof(struct virtio_blk_outhdr));
++	return req;
++}
++
++static int virtblk_map_user_request(struct request *req, u64 ubuffer,
++		unsigned int bufflen, struct io_uring_cmd *ioucmd,
++		bool vec)
++{
++	struct request_queue *q = req->q;
++	struct virtio_blk *vblk = q->queuedata;
++	struct block_device *bdev = vblk ? vblk->disk->part0 : NULL;
++	struct bio *bio = NULL;
++	int ret;
++
++	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
++		struct iov_iter iter;
++
++		/* fixedbufs is only for non-vectored io */
++		if (WARN_ON_ONCE(vec))
++			return -EINVAL;
++		ret = io_uring_cmd_import_fixed(ubuffer, bufflen,
++				rq_data_dir(req), &iter, ioucmd);
++		if (ret < 0)
++			goto out;
++		ret = blk_rq_map_user_iov(q, req, NULL,
++			&iter, GFP_KERNEL);
++	} else {
++		ret = blk_rq_map_user_io(req, NULL,
++				virtblk_to_user_ptr(ubuffer),
++				bufflen, GFP_KERNEL, vec, 0,
++				0, rq_data_dir(req));
++	}
++	if (ret)
++		goto out;
++
++	bio = req->bio;
++	if (bdev)
++		bio_set_dev(bio, bdev);
++	return 0;
++
++out:
++	blk_mq_free_request(req);
 +	return ret;
 +}
 +
-+static const struct file_operations virtblk_chr_fops = {
-+	.owner		= THIS_MODULE,
++static int virtblk_uring_cmd_io(struct virtio_blk *vblk,
++		struct io_uring_cmd *ioucmd, unsigned int issue_flags, bool vec)
++{
++	struct virtblk_uring_cmd_pdu *pdu = virtblk_get_uring_cmd_pdu(ioucmd);
++	const struct virtblk_uring_cmd *cmd = io_uring_sqe_cmd(ioucmd->sqe);
++	struct request_queue *q = vblk->disk->queue;
++	struct virtblk_req *vbr;
++	struct virtblk_command d;
++	struct request *req;
++	blk_opf_t rq_flags = REQ_ALLOC_CACHE | virtblk_req_op(cmd);
++	blk_mq_req_flags_t blk_flags = 0;
++	int ret;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EACCES;
++
++	d.out_hdr.ioprio = cpu_to_virtio32(vblk->vdev, READ_ONCE(cmd->ioprio));
++	d.out_hdr.type = cpu_to_virtio32(vblk->vdev, READ_ONCE(cmd->type));
++	d.out_hdr.sector = cpu_to_virtio64(vblk->vdev, READ_ONCE(cmd->sector));
++	d.data = READ_ONCE(cmd->data);
++	d.data_len = READ_ONCE(cmd->data_len);
++
++	if (issue_flags & IO_URING_F_NONBLOCK) {
++		rq_flags |= REQ_NOWAIT;
++		blk_flags = BLK_MQ_REQ_NOWAIT;
++	}
++	if (issue_flags & IO_URING_F_IOPOLL)
++		rq_flags |= REQ_POLLED;
++
++	req = virtblk_alloc_user_request(q, &d, rq_flags, blk_flags);
++	if (IS_ERR(req))
++		return PTR_ERR(req);
++
++	vbr = virtblk_req(req);
++	vbr->in_hdr_len = sizeof(vbr->in_hdr.status);
++	if (d.data && d.data_len) {
++		ret = virtblk_map_user_request(req, d.data, d.data_len, ioucmd, vec);
++		if (ret)
++			return ret;
++	}
++
++	/* to free bio on completion, as req->bio will be null at that time */
++	pdu->bio = req->bio;
++	pdu->req = req;
++	req->end_io_data = ioucmd;
++	req->end_io = virtblk_uring_cmd_end_io;
++	blk_execute_rq_nowait(req, false);
++	return -EIOCBQUEUED;
++}
++
++
++static int virtblk_uring_cmd(struct virtio_blk *vblk, struct io_uring_cmd *ioucmd,
++			     unsigned int issue_flags)
++{
++	int ret;
++
++	BUILD_BUG_ON(sizeof(struct virtblk_uring_cmd_pdu) > sizeof(ioucmd->pdu));
++
++	switch (ioucmd->cmd_op) {
++	case VIRTBLK_URING_CMD_IO:
++		ret = virtblk_uring_cmd_io(vblk, ioucmd, issue_flags, false);
++		break;
++	case VIRTBLK_URING_CMD_IO_VEC:
++		ret = virtblk_uring_cmd_io(vblk, ioucmd, issue_flags, true);
++		break;
++	default:
++		ret = -ENOTTY;
++	}
++
++	return ret;
++}
++
++static int virtblk_chr_uring_cmd(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
++{
++	struct virtio_blk *vblk = container_of(file_inode(ioucmd->file)->i_cdev,
++			struct virtio_blk, cdev);
++
++	return virtblk_uring_cmd(vblk, ioucmd, issue_flags);
++}
++
+ static void virtblk_cdev_rel(struct device *dev)
+ {
+ 	ida_free(&vd_chr_minor_ida, MINOR(dev->devt));
+@@ -1297,6 +1511,7 @@ static int virtblk_cdev_add(struct virtio_blk *vblk,
+ 
+ static const struct file_operations virtblk_chr_fops = {
+ 	.owner		= THIS_MODULE,
++	.uring_cmd	= virtblk_chr_uring_cmd,
+ };
+ 
+ static unsigned int virtblk_queue_depth;
+diff --git a/include/uapi/linux/virtio_blk.h b/include/uapi/linux/virtio_blk.h
+index 3744e4da1b2a..93b6e1b5b9a4 100644
+--- a/include/uapi/linux/virtio_blk.h
++++ b/include/uapi/linux/virtio_blk.h
+@@ -313,6 +313,22 @@ struct virtio_scsi_inhdr {
+ };
+ #endif /* !VIRTIO_BLK_NO_LEGACY */
+ 
++struct virtblk_uring_cmd {
++	/* VIRTIO_BLK_T* */
++	__u32 type;
++	/* io priority. */
++	__u32 ioprio;
++	/* Sector (ie. 512 byte offset) */
++	__u64 sector;
++
++	__u64 data;
++	__u32 data_len;
++	__u32 flag;
 +};
 +
- static unsigned int virtblk_queue_depth;
- module_param_named(queue_depth, virtblk_queue_depth, uint, 0444);
- 
-@@ -1456,7 +1516,7 @@ static int virtblk_probe(struct virtio_device *vdev)
- 		goto out;
- 	index = err;
- 
--	vdev->priv = vblk = kmalloc(sizeof(*vblk), GFP_KERNEL);
-+	vdev->priv = vblk = kzalloc(sizeof(*vblk), GFP_KERNEL);
- 	if (!vblk) {
- 		err = -ENOMEM;
- 		goto out_free_index;
-@@ -1544,6 +1604,10 @@ static int virtblk_probe(struct virtio_device *vdev)
- 	if (err)
- 		goto out_cleanup_disk;
- 
-+	err = virtblk_cdev_add(vblk, &virtblk_chr_fops);
-+	if (err)
-+		goto out_cleanup_disk;
++#define VIRTBLK_URING_CMD_IO		1
++#define VIRTBLK_URING_CMD_IO_VEC	2
 +
- 	return 0;
- 
- out_cleanup_disk:
-@@ -1568,6 +1632,8 @@ static void virtblk_remove(struct virtio_device *vdev)
- 	/* Make sure no work handler is accessing the device. */
- 	flush_work(&vblk->config_work);
- 
-+	virtblk_cdev_del(&vblk->cdev, &vblk->cdev_device);
-+
- 	del_gendisk(vblk->disk);
- 	blk_mq_free_tag_set(&vblk->tag_set);
- 
-@@ -1674,13 +1740,27 @@ static int __init virtio_blk_init(void)
- 		goto out_destroy_workqueue;
- 	}
- 
-+	error = alloc_chrdev_region(&vd_chr_devt, 0, VIRTBLK_MINORS,
-+				"vblk-generic");
-+	if (error < 0)
-+		goto unregister_chrdev;
-+
-+	vd_chr_class = class_create("vblk-generic");
-+	if (IS_ERR(vd_chr_class)) {
-+		error = PTR_ERR(vd_chr_class);
-+		goto unregister_chrdev;
-+	}
-+
- 	error = register_virtio_driver(&virtio_blk);
- 	if (error)
- 		goto out_unregister_blkdev;
-+
- 	return 0;
- 
- out_unregister_blkdev:
- 	unregister_blkdev(major, "virtblk");
-+unregister_chrdev:
-+	unregister_chrdev_region(vd_chr_devt, VIRTBLK_MINORS);
- out_destroy_workqueue:
- 	destroy_workqueue(virtblk_wq);
- 	return error;
-@@ -1690,7 +1770,9 @@ static void __exit virtio_blk_fini(void)
- {
- 	unregister_virtio_driver(&virtio_blk);
- 	unregister_blkdev(major, "virtblk");
-+	unregister_chrdev_region(vd_chr_devt, VIRTBLK_MINORS);
- 	destroy_workqueue(virtblk_wq);
-+	ida_destroy(&vd_chr_minor_ida);
- }
- module_init(virtio_blk_init);
- module_exit(virtio_blk_fini);
+ /* And this is the final byte of the write scatter-gather list. */
+ #define VIRTIO_BLK_S_OK		0
+ #define VIRTIO_BLK_S_IOERR	1
 -- 
 2.43.5
 

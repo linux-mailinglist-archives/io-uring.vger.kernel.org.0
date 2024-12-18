@@ -1,76 +1,76 @@
-Return-Path: <io-uring+bounces-5550-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5551-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9709F5BBD
-	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2024 01:39:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320D49F5BCD
+	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2024 01:41:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 631B87A256D
-	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2024 00:39:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5103118875CA
+	for <lists+io-uring@lfdr.de>; Wed, 18 Dec 2024 00:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEFA13C3C2;
-	Wed, 18 Dec 2024 00:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C8E13D8A3;
+	Wed, 18 Dec 2024 00:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="gYj/39d2"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="SMaVC01T"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9E5137930
-	for <io-uring@vger.kernel.org>; Wed, 18 Dec 2024 00:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E238B13BAEE
+	for <io-uring@vger.kernel.org>; Wed, 18 Dec 2024 00:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734482292; cv=none; b=bcp6Nbf0tqJGRYazjwP1L9e2kYJTEP09+rLEWzVBEeTMP/o4K0xsUi68vPefmfthHpqkvrq+l+p5aImMGy2GEL4FGkCkLn5rpt7C+TRzUNWYetU5Rb05xXqiEz+E+ouOVxFCCkOAmxTzoi56ScEABD32qKSSwZbqsbMfbEqTupY=
+	t=1734482293; cv=none; b=BdFnN4I6nUBKOLdmNcsphOzg0ToGuPe2GFE5qebwqBjftOT1XEqa/EX6+jwm3JMxs6k3vsg+rgetVTOGC9dBjMpJrecxo2dUFKyihaNGsvoi6XV8ffTOkOUMfySAK0I43f+NElUYxNcx9Q0NRmHkH43VlgR2Li5itCcZd++TlJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734482292; c=relaxed/simple;
-	bh=NRFL2+PeYQBpke3MuIFNDap9yjTLOeiLgLS3XvL+I/Q=;
+	s=arc-20240116; t=1734482293; c=relaxed/simple;
+	bh=3FYWOzv7GI9lx7mwhuutMTOmOihGpo6sHz92R4r6kzA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jPe3nNCZydHNkvUdwhDkUEmcw5N2f4TUKCQFHjrCNFj8MCQ3sXI6zYxx5kRSTmQ8RR9naE1eyRyHw/VvUtBrWm6slgd0ykdJezsFdvCFDMHmZF8RU/BGDw33unfmG1ASZCvyYfXXrEXtW/RPy1fuVwalBgrSfcGPzZwSwKxaOb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=gYj/39d2; arc=none smtp.client-ip=209.85.210.180
+	 MIME-Version; b=kxcfXF03ivpdbliLRR/1rUg/2GlOGT98uCEhrD9p5ANyzvpCppMdND67EgSjGWbeFporE3PSeAn5n2WQ5mUX2dr9yR6kl41PHGbkbgpZC+ym6QTEabGG8Rk0d9jgAyxGYjsnwiJZ5+VaauAicvCq5goKei3pwM/gafVD7mtlHro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=SMaVC01T; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-728e729562fso5116295b3a.0
-        for <io-uring@vger.kernel.org>; Tue, 17 Dec 2024 16:38:10 -0800 (PST)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-728e3826211so4743354b3a.0
+        for <io-uring@vger.kernel.org>; Tue, 17 Dec 2024 16:38:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1734482290; x=1735087090; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1734482291; x=1735087091; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N2rr3bFZ4xcAeCxIuffGlTrB+I+DvsKrMkXA8KeXORw=;
-        b=gYj/39d23fYDT5eAQfjh6vLk3Vf1QtN40DtLx7/rDFVaFJh1GRMsnq5fgcZwHKbndm
-         52JvI2b0E3ZJE9iAoADjoR/24WGUJjXywJCW2yT5QcdzZrfTHaxvIC5ghTKkMbiHRben
-         1BztSd3Ui9nF5Z9wFi9i7Le2wbv0q+nbzm2b0MA2pwdk+Jj2/g+SwvLUter9JCSWPtlG
-         /5li0izdRnn9YJotiaMvnX8solZ9SJ7Adu0Al54IkD6dMcxaYFX1aIga9DX0Yx5wb8EJ
-         CYLwGqGvdv0cEVaGAJJTSEzvgcFMpNk9ysXpIxcM/YrX7X2Auq1nS4G+wKwjJgDwvUEs
-         mDkA==
+        bh=VHQGzO085Dbg8z+SUztmKbhehQYfjKmzsCXFZJE+G38=;
+        b=SMaVC01TISE3JoQWpkZqkJYEoFnnpLfZjmHua9Vb+iNL3VZwPIB0FiyLWE+o7kL8Sz
+         2O1ZNkoqDBWxxFJVmdDOHrtSS5GDMwLr5ABlNo/xQJbaQkokOJQ2O1QRumH4DHIQuoLy
+         dVs7s6nDl/l7hbYbqt5tYMuSTk+4WhJexLymhWD2lb95ChbpB57h5I++/Dz3KLm1maIW
+         ZRvPjWkMch/XGoUXM3E5nCIHwJLJR8xniCFvxLcqRUHZMKU8KO5fwVuQasXj77C0stKT
+         iopwfmt9pl4TMJKviUbLSIgHY+bRqCKjM9rMXI7xN143IVW90U85YKyzX52S0YwTvsTw
+         NIjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734482290; x=1735087090;
+        d=1e100.net; s=20230601; t=1734482291; x=1735087091;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=N2rr3bFZ4xcAeCxIuffGlTrB+I+DvsKrMkXA8KeXORw=;
-        b=Hll+IOxYyXP+yHKlw4rcHmhPDDZXsAVuliJyrHu2BHd2imzDERk9bQcPXxjiTIeImL
-         4Oz3vRTqI75CFrZp1V3IvNkQeof0cOHlxI77Ute9yoNIpJtm9yWCkm9a74sl4cGwk2pw
-         GvGCLzammqQDBfNkNyYEcKY5U6z75jqnyETtgh4Xy4biS9/YKEan2cjWfCGr7n0sk6nZ
-         NIuwVIrm5wEeivFMNkMnvNSZspGmPTguphAk11BI3y6aSwxQ7PAIgugkZ2+L13klUtkT
-         luYxmYlRCN9hAQGFmbR4e9EYarDerTOdmSwss8hggwkqbnTQ+QspckKeOxWDIa2/rC7n
-         6LaQ==
-X-Gm-Message-State: AOJu0YzSqvwywmwwA2vxw/PsdgPJbA8LWQh0UhEF0YgcSLTTQpgvo48r
-	gwwhW7i0JbQIslk20KXMh+5uVFeGEHQaEu4A21rqEIZcFOvObiwCGTd9x2shg2iUrBjEWtaVGMd
-	o
-X-Gm-Gg: ASbGncsMC0DmuHRLwP/qZBZwidNYhUhbBIonLO4EjpNfJmSPQpZq8gvSivl335SsvyY
-	MwK4yeoHOspHqxFWxa3mThpGN/rYLpclirC8KVIEH0RsvmRHVfMUmbfRZbAhiZVlpX9We4GHJFi
-	pVgM9IaGy+ctS1gQeTkv+JkJbcDHgdrzRcWA2BTe4KKGMvr5X6KfPyYf3UHujHzNze3YoYeAPgb
-	xAaRjjuZ1uNkAkvRyUSGT/tqpZ1AmlOtdYK3v+pPQ==
-X-Google-Smtp-Source: AGHT+IE5LWeBYUo39S/rAUJIC66HtimKMqRa3eFWsBxg5kxpIdN2gzU1mmJgkXRFCD1/tZShgt7iow==
-X-Received: by 2002:a05:6a00:1948:b0:728:9d19:d2ea with SMTP id d2e1a72fcca58-72a8d2611e6mr1662236b3a.13.1734482290015;
-        Tue, 17 Dec 2024 16:38:10 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:1b::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918af0f01sm7332001b3a.87.2024.12.17.16.38.09
+        bh=VHQGzO085Dbg8z+SUztmKbhehQYfjKmzsCXFZJE+G38=;
+        b=AKnxJO6Rd1JKhk8gQtA3yYFM9E5dY+JUQwheHXumjVJ3Og5yckIo1rd9DrBnuEamot
+         DKT1iHOXC0OlnKEwGReCQ374VfEcYDos9uboPLS5kNxmnrEK8+JclXAbS3YGDyX/rhrY
+         nRIQERIaATKixHnRj9W42k3u3L9MmbvdE9t2SKCD1cUrGr1d9Z1akW1qz5LzL/Yh6Wsr
+         WP4bBhnxSR2LbI+D0dvuyHjqt6riwlJGSp8nq7w9fsXeVTa+iue8KB8Ygv8BGCVgBXM4
+         TIWCbyvKX9RbBmrlg4AEV5ZveUOnNXBFF132OiLk4Mo2T4mOb9QsW1d9NZPemX1S87to
+         Xvpw==
+X-Gm-Message-State: AOJu0Yyu5Kvgf5B8PnqyE9LaYu4WmM2SfJK0Fjjz1YxjZ3keSGOMRbSS
+	OXcE75eVamI3lRmE/OwrhlvUxPaIYzBr/xKf7HmSHQCJzQXarXjoVQgFYbsRGr6GDdKiTqCQtQR
+	5
+X-Gm-Gg: ASbGnct5gdLb5dC6/7OvXVmDZV9EvlSNa9s593stZx+HJilRgffecx5NofZGR67Avad
+	N9YAMdW+Hn7i+EOknESYIcyOfDvFvoxlYhPqLRxtvfKfUQM9kNzsb3iKZW1JWVoC3deJDUEBeJd
+	C7qQ68oe4oeHHQXImo8mmTHa4zjCPbDDCM4Qnqv8hgkBM23yM9j+WNuidU9LFRfxJ05r34MX2qe
+	853k/3TT9tT2NIW8c7jvZE7kLIsiW6yPLNLQgOxcw==
+X-Google-Smtp-Source: AGHT+IHyJo80ER+2cYHjOYQYCiTLHf0WPuVqPkbdGqdarTU8UyCaxQIIjztwSgcQbCsUmwCDhcsOoA==
+X-Received: by 2002:a17:90a:d00b:b0:2ee:ba84:5cac with SMTP id 98e67ed59e1d1-2f2e91a9adbmr1275798a91.7.1734482291218;
+        Tue, 17 Dec 2024 16:38:11 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:74::])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2ed62cdabsm131945a91.14.2024.12.17.16.38.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 16:38:09 -0800 (PST)
+        Tue, 17 Dec 2024 16:38:10 -0800 (PST)
 From: David Wei <dw@davidwei.uk>
 To: io-uring@vger.kernel.org,
 	netdev@vger.kernel.org
@@ -86,9 +86,9 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	Stanislav Fomichev <stfomichev@gmail.com>,
 	Joe Damato <jdamato@fastly.com>,
 	Pedro Tammela <pctammela@mojatatu.com>
-Subject: [PATCH net-next v9 12/20] io_uring/zcrx: grab a net device
-Date: Tue, 17 Dec 2024 16:37:38 -0800
-Message-ID: <20241218003748.796939-13-dw@davidwei.uk>
+Subject: [PATCH net-next v9 13/20] net: page pool: export page_pool_set_dma_addr_netmem()
+Date: Tue, 17 Dec 2024 16:37:39 -0800
+Message-ID: <20241218003748.796939-14-dw@davidwei.uk>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241218003748.796939-1-dw@davidwei.uk>
 References: <20241218003748.796939-1-dw@davidwei.uk>
@@ -100,75 +100,95 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+Export page_pool_set_dma_addr_netmem() in page_pool/helpers.h. This is
+needed by memory provider implementations that are outside of net/ to be
+able to set the dma addrs on net_iovs during alloc/free.
 
-Zerocopy receive needs a net device to bind to its rx queue and dma map
-buffers. As a preparation to following patches, resolve a net device
-from the if_idx parameter with no functional changes otherwise.
-
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: David Wei <dw@davidwei.uk>
 ---
- io_uring/zcrx.c | 10 ++++++++++
- io_uring/zcrx.h |  3 +++
- 2 files changed, 13 insertions(+)
+ include/net/page_pool/helpers.h |  5 +++++
+ net/core/page_pool.c            | 16 ++++++++++++++++
+ net/core/page_pool_priv.h       | 17 -----------------
+ 3 files changed, 21 insertions(+), 17 deletions(-)
 
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 04883a3ae80c..e6cca6747148 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -3,6 +3,8 @@
- #include <linux/errno.h>
- #include <linux/mm.h>
- #include <linux/io_uring.h>
-+#include <linux/netdevice.h>
-+#include <linux/rtnetlink.h>
+diff --git a/include/net/page_pool/helpers.h b/include/net/page_pool/helpers.h
+index d968eebc4322..00eea5dd6f88 100644
+--- a/include/net/page_pool/helpers.h
++++ b/include/net/page_pool/helpers.h
+@@ -486,6 +486,7 @@ static inline void page_pool_nid_changed(struct page_pool *pool, int new_nid)
+ #if defined(CONFIG_PAGE_POOL)
+ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem);
+ void page_pool_clear_pp_info(netmem_ref netmem);
++bool page_pool_set_dma_addr_netmem(netmem_ref netmem, dma_addr_t addr);
  
- #include <uapi/linux/io_uring.h>
- 
-@@ -136,6 +138,8 @@ static void io_zcrx_ifq_free(struct io_zcrx_ifq *ifq)
- 	if (ifq->area)
- 		io_zcrx_free_area(ifq->area);
- 
-+	if (ifq->dev)
-+		netdev_put(ifq->dev, &ifq->netdev_tracker);
- 	io_free_rbuf_ring(ifq);
- 	kfree(ifq);
+ void page_pool_mp_return_in_cache(struct page_pool *pool, netmem_ref netmem);
+ #else
+@@ -493,6 +494,10 @@ static inline void page_pool_set_pp_info(struct page_pool *pool,
+ 					 netmem_ref netmem)
+ {
  }
-@@ -195,6 +199,12 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 	ifq->rq_entries = reg.rq_entries;
- 	ifq->if_rxq = reg.if_rxq;
++static inline bool page_pool_set_dma_addr_netmem(netmem_ref netmem,
++						 dma_addr_t addr)
++{
++}
+ static inline void page_pool_clear_pp_info(netmem_ref netmem)
+ {
+ }
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index bd7f33d02652..3d1ed8b8f79e 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -655,6 +655,22 @@ void page_pool_clear_pp_info(netmem_ref netmem)
+ 	netmem_set_pp(netmem, NULL);
+ }
  
-+	ret = -ENODEV;
-+	ifq->dev = netdev_get_by_index(current->nsproxy->net_ns, reg.if_idx,
-+					&ifq->netdev_tracker, GFP_KERNEL);
-+	if (!ifq->dev)
-+		goto err;
++bool page_pool_set_dma_addr_netmem(netmem_ref netmem, dma_addr_t addr)
++{
++	if (PAGE_POOL_32BIT_ARCH_WITH_64BIT_DMA) {
++		netmem_set_dma_addr(netmem, addr >> PAGE_SHIFT);
 +
- 	reg.offsets.rqes = sizeof(struct io_uring);
- 	reg.offsets.head = offsetof(struct io_uring, head);
- 	reg.offsets.tail = offsetof(struct io_uring, tail);
-diff --git a/io_uring/zcrx.h b/io_uring/zcrx.h
-index 53fd94b65b38..46988a1dbd54 100644
---- a/io_uring/zcrx.h
-+++ b/io_uring/zcrx.h
-@@ -4,6 +4,7 @@
++		/* We assume page alignment to shave off bottom bits,
++		 * if this "compression" doesn't work we need to drop.
++		 */
++		return addr != (dma_addr_t)netmem_get_dma_addr(netmem)
++				       << PAGE_SHIFT;
++	}
++
++	netmem_set_dma_addr(netmem, addr);
++	return false;
++}
++
+ static __always_inline void __page_pool_release_page_dma(struct page_pool *pool,
+ 							 netmem_ref netmem)
+ {
+diff --git a/net/core/page_pool_priv.h b/net/core/page_pool_priv.h
+index 11a45a5f3c9c..cac300c83e29 100644
+--- a/net/core/page_pool_priv.h
++++ b/net/core/page_pool_priv.h
+@@ -13,23 +13,6 @@ int page_pool_list(struct page_pool *pool);
+ void page_pool_detached(struct page_pool *pool);
+ void page_pool_unlist(struct page_pool *pool);
  
- #include <linux/io_uring_types.h>
- #include <net/page_pool/types.h>
-+#include <net/net_trackers.h>
- 
- struct io_zcrx_area {
- 	struct net_iov_area	nia;
-@@ -27,6 +28,8 @@ struct io_zcrx_ifq {
- 	u32				rq_entries;
- 
- 	u32				if_rxq;
-+	struct net_device		*dev;
-+	netdevice_tracker		netdev_tracker;
- };
- 
- #if defined(CONFIG_IO_URING_ZCRX)
+-static inline bool
+-page_pool_set_dma_addr_netmem(netmem_ref netmem, dma_addr_t addr)
+-{
+-	if (PAGE_POOL_32BIT_ARCH_WITH_64BIT_DMA) {
+-		netmem_set_dma_addr(netmem, addr >> PAGE_SHIFT);
+-
+-		/* We assume page alignment to shave off bottom bits,
+-		 * if this "compression" doesn't work we need to drop.
+-		 */
+-		return addr != (dma_addr_t)netmem_get_dma_addr(netmem)
+-				       << PAGE_SHIFT;
+-	}
+-
+-	netmem_set_dma_addr(netmem, addr);
+-	return false;
+-}
+-
+ static inline bool page_pool_set_dma_addr(struct page *page, dma_addr_t addr)
+ {
+ 	return page_pool_set_dma_addr_netmem(page_to_netmem(page), addr);
 -- 
 2.43.5
 

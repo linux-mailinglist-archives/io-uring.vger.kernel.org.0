@@ -1,79 +1,82 @@
-Return-Path: <io-uring+bounces-5582-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5583-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A17F9F9C9F
-	for <lists+io-uring@lfdr.de>; Fri, 20 Dec 2024 23:12:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9BF9F9CA5
+	for <lists+io-uring@lfdr.de>; Fri, 20 Dec 2024 23:14:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D2E160A51
-	for <lists+io-uring@lfdr.de>; Fri, 20 Dec 2024 22:12:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79BF1895A49
+	for <lists+io-uring@lfdr.de>; Fri, 20 Dec 2024 22:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7853226881;
-	Fri, 20 Dec 2024 22:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442EA21E08B;
+	Fri, 20 Dec 2024 22:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tP4caqKm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPx57VVy"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93361227565
-	for <io-uring@vger.kernel.org>; Fri, 20 Dec 2024 22:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8DA215702;
+	Fri, 20 Dec 2024 22:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734732710; cv=none; b=OREIQHINAWA2kSfPAEra0FUNXmtcO/2+rYBlG5XJ0TZn4Z26NgnL+30A3Bi0vrQOJYdDmn+NmvEyLIMvIwFNUMQjPDX5iNjXc9ZRuUbzPjEYVVGuBvhS4/VRHe2ZAFFaPPjTgjZNQFGzNyS1HqFObNDTCRjijvu9Z0yh6k6ddRM=
+	t=1734732878; cv=none; b=ubRTvbiDoQtaSCSZWF8FmiHAQOF8kMqKFrY/d2ZuR94ZQIzsEh2JxywPN9ViGeVMaKU+jW2RnCIHY+tOj3eb+Tx/sfnE/653332c1XuOfAbxWr95IzRGQApya0hW5M/zjbcH/5ieWlONv6Gb+FQxGjuCy1hipR+8a/nD+M72EmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734732710; c=relaxed/simple;
-	bh=u+u7tJv2hRXMasn4uLP9oJNv7cLYAtqY4FClfYbI2mY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=bG9++/c6ZKPoRCPZXE0N1a5m3w/MtnQc5/LrrQ4IfXwaAnaVzjOZSRStnXxiTIosGZENaPzYFu1P9m8Y+PS7m0JrCKatSqH5Gfr1wnLqK0kOAY8CdZkhy21F7LZkEIYkHl/NuvfvVJkFrmJD/DIN37xyEF+4447CYVmvbr3KcAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tP4caqKm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC5AC4CECD;
-	Fri, 20 Dec 2024 22:11:50 +0000 (UTC)
+	s=arc-20240116; t=1734732878; c=relaxed/simple;
+	bh=KPVLL6ry6+VBOb5Qf+5gdDX6jK2LZpJO3B8rr0t/SIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JQNvRsuHqO5i/611lkHKTtixavCg4WM+KTXEghk5u1df4ne0LO203bRhawTgHDjrKl1dhldv+q3WhOgkF2lP7KSWHXSc30xeGAnkW1OBKaD3dKbuh3lfCEL+NPLzAUdPLdvjRsZsUHXXIOfq8UDquHBLUOtWp6tRKjDzFGPR6nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPx57VVy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30581C4CECD;
+	Fri, 20 Dec 2024 22:14:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734732710;
-	bh=u+u7tJv2hRXMasn4uLP9oJNv7cLYAtqY4FClfYbI2mY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=tP4caqKmlUzpOkmXkoG1sXYu3OP7Nn5UsILZjdmvCnoz/WOoD/DCtzx9L7ZZ+ZqOD
-	 EKvJvmffACXvCahsFqsTiYphg6oek50GQv0rHaZZztBg1pT2r+O51CEvK1UMK9Eec4
-	 PvTvY4BdPUlrod8LPK7ahb49HTYzxt443OeMok019V01uOdrEFVTgRj4jwpiMvyetY
-	 TUTxCbzN5fMw3JzjuEcPo4yufDnWxRxq9SH0D0m+v+U2QSGrHxq71ZxMj7V3b3r6KX
-	 E1vSGXl697wooINGU4AIGRVH66axBxlNG7SFrwpX/cIej4NbY9+iVEsBXZNOw8Rprj
-	 2bHVeDO71Grkw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BDA3806656;
-	Fri, 20 Dec 2024 22:12:09 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 6.13-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <785290eb-4182-4ea0-bce1-b3d895de09bf@kernel.dk>
-References: <785290eb-4182-4ea0-bce1-b3d895de09bf@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <785290eb-4182-4ea0-bce1-b3d895de09bf@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.13-20241220
-X-PR-Tracked-Commit-Id: dbd2ca9367eb19bc5e269b8c58b0b1514ada9156
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7c05bd92305d13e18945270b7bfaf300d53f6ed2
-Message-Id: <173473272777.3035596.13892821208371673065.pr-tracker-bot@kernel.org>
-Date: Fri, 20 Dec 2024 22:12:07 +0000
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+	s=k20201202; t=1734732877;
+	bh=KPVLL6ry6+VBOb5Qf+5gdDX6jK2LZpJO3B8rr0t/SIY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TPx57VVymhj5rplhjC7jeu0L/fw0EATG+VaW/iilfTlv02k3bQ65XT116nVoTeu4Z
+	 8PPPghEKq2qBnfvpc2ZADNHZIn7X16W8lmGBrJ/tXOkioLG5JE1OAwIzS3vscHYmYt
+	 SQgsbzjfHblq5O9A06CRV5+Ih81zPHWFfHkSwGBJWQNwrjcUgSQL9vG4k+CWcn/uyA
+	 p9+caSlTb2pBlX7gzDsp0xIvQvjAD5eYDmRg/bmVauTQF4gZmUDS5YmKno0YA/khPA
+	 4yO2Vb6k08JqWvH3kENriDWq9zFPw9zuNW7qkze+kmGAWCbMtL8zBbTJ19MTwkV6UI
+	 c+/pjXsbB0Ytg==
+Date: Fri, 20 Dec 2024 14:14:36 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: David Wei <dw@davidwei.uk>
+Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, Jens Axboe
+ <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, Paolo Abeni
+ <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, David
+ Ahern <dsahern@kernel.org>, Mina Almasry <almasrymina@google.com>,
+ Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
+ Pedro Tammela <pctammela@mojatatu.com>
+Subject: Re: [PATCH net-next v9 03/20] net: generalise net_iov chunk owners
+Message-ID: <20241220141436.65513ff7@kernel.org>
+In-Reply-To: <20241218003748.796939-4-dw@davidwei.uk>
+References: <20241218003748.796939-1-dw@davidwei.uk>
+	<20241218003748.796939-4-dw@davidwei.uk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Fri, 20 Dec 2024 09:24:27 -0700:
+On Tue, 17 Dec 2024 16:37:29 -0800 David Wei wrote:
+>  struct dmabuf_genpool_chunk_owner {
+> -	/* Offset into the dma-buf where this chunk starts.  */
+> -	unsigned long base_virtual;
+> +	struct net_iov_area area;
+> +	struct net_devmem_dmabuf_binding *binding;
+>  
+>  	/* dma_addr of the start of the chunk.  */
+>  	dma_addr_t base_dma_addr;
 
-> git://git.kernel.dk/linux.git tags/io_uring-6.13-20241220
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7c05bd92305d13e18945270b7bfaf300d53f6ed2
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Is there a good reason why dma addr is not part of net_iov_area?
+net_iov_area is one chunk of continuous address space.
+Instead of looping over pages in io_zcrx_map_area we could map 
+the whole thing in one go.
 

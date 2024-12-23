@@ -1,205 +1,110 @@
-Return-Path: <io-uring+bounces-5598-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5599-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97EE49FB5E3
-	for <lists+io-uring@lfdr.de>; Mon, 23 Dec 2024 21:53:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 507289FB5F0
+	for <lists+io-uring@lfdr.de>; Mon, 23 Dec 2024 21:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE841885946
-	for <lists+io-uring@lfdr.de>; Mon, 23 Dec 2024 20:53:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4501885C67
+	for <lists+io-uring@lfdr.de>; Mon, 23 Dec 2024 20:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548CD1CEE8E;
-	Mon, 23 Dec 2024 20:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772D11AE01E;
+	Mon, 23 Dec 2024 20:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="gYmBetze"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="F9RmjoM/"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BDA1B5823
-	for <io-uring@vger.kernel.org>; Mon, 23 Dec 2024 20:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112C71D5CC1
+	for <io-uring@vger.kernel.org>; Mon, 23 Dec 2024 20:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734987192; cv=none; b=XFGZtqTooJUjuz139cgMaFqq2sjhlFqL2jcsW85x4TgwCvST5+tVRvXr6oQqUrfg4pCz9apiG3HyuZf/qtumP5GtqZYYjVh9tnfn3sIyC/SRMV/Ow8TJ2ZhhnbaEJ1g05hnDFFkXqG+wFPMfUz6kBB2PFdqDBeZJMPGUgEy71S8=
+	t=1734987332; cv=none; b=qWSmu83R7AD5lKxs9U92i6+e4fkVPu2kL1QdCDuCwuPf1Sttdn70XG1NSYRSOZVgMHEHnQkVw1Kijob+jYucqfGHufd5Dtw9nRXlgHtJcYEEu1fd22Wyyg7MM1kFrjDLh7qAJR+2LW4NF3TyAuJREj08UjnHiB4bUbMli/mBtOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734987192; c=relaxed/simple;
-	bh=TWJ9TzS1vI0IQ5rlA53vuVQ/LGtGL4sU1Q5sYw066PU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RmVB7bCR8TV9n1xXHhZCXc0jiaDXneRdowQAikpyLVETBT3zHPMQZlpFXzUzYDWISSmZFk5W+r+FjOK8jFRJ5TjjA9qr+HEoGB25VhLJTrfnNcMQkbzxD70nryj9kROzGtDI6a1+UJN5WvsI2wvStliKPexaLhPdeY0J00ZrB34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=gYmBetze; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ee8ecb721dso802249a91.3
-        for <io-uring@vger.kernel.org>; Mon, 23 Dec 2024 12:53:10 -0800 (PST)
+	s=arc-20240116; t=1734987332; c=relaxed/simple;
+	bh=VSPoKX7WwLzga4Nf5YGkeN3wuogJrbCdSBNajadGbMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MUE0nU9/G9nTVSXy9bHuQbNyWAWxLCXGnj0UqSw2LGkfFO2SPVFvCiTABzHuNTQfYUjqV4Ay02gQAfAMNGB36T+RjdKBefT0zhp8QJbqKqQW1QuEYeY5gcFqv1sIQ3D+efl+KNDn7r4Tkn8ujCGQaPfRV0l4j4zSivDd1WIsnzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=F9RmjoM/; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2167141dfa1so41390425ad.1
+        for <io-uring@vger.kernel.org>; Mon, 23 Dec 2024 12:55:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1734987189; x=1735591989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Nhj9knVFWKgfOyDcQ4dW41LW41FRJnmwV/sgtvm0OE=;
-        b=gYmBetze9bEvsnkrc0cykzhk8IAAYcW8+4jmY96671e/AOqrIgKxnRDR1qw0Je8oeo
-         8A8XvuR265K3l96bqnz89NDUrAXNqi+Sf/mocrxzJb7Toy2s4m6EY+TM+jOKmcFOO4kT
-         MKGjJ9vnyb33ynuMpJEFCaMsdEC2l0eMqZi0K0qRwYOqyLssB4kgfdjnRIF+FrV7jNjQ
-         e3DBAqUGtyG2jkvjbjgtgQgnd14843lMOfxsfJpZeUiEk9wSEj32mCf5aIxaOqkf0pCp
-         VWz4dBpmh2TEJv7zdkZH8mwJm6cjrQg24XvruyMKvOIt+T+VqrYNUqS471B3SlNv8oKG
-         LP3Q==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734987330; x=1735592130; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j5J3/RmK37VMndJ+ng5woBQlhZld9vGGJhdS8VQxeTU=;
+        b=F9RmjoM/2ub5ixLRrI91C1TJUjGUIzSiOrgeKah9iw6KHZpvie4b9Bjh/j/bzgFRF1
+         d5Ze+k1T/KZyXq123tDu5m/zzpKGrtXRsPAAsZcTWIebEi8qPm//jOqUW3MJiJq46NCx
+         NPsrn5aJLgVJTzja7Jok5tcFKNzGmdkNXeHtxtRmFaUoypprkmco4KcbKu+YSkPQZIeJ
+         96ns0U0TZvl1GxcDprd/+0c1RELr5fgSOCfnpa74X4A2mcSPWNqPcs1xb6cYXilOpjUU
+         LNaNYUf8jcHQUrCGX3y1hdb/gSp+oYNLYFqR7qXqOi/r7aakySIHUad4JPuDf5J7h8TF
+         +fYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734987189; x=1735591989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0Nhj9knVFWKgfOyDcQ4dW41LW41FRJnmwV/sgtvm0OE=;
-        b=ZfReS/J12/4HwCrB0P+ZuZwh1bewlLPV9NSdU5n3wNtAowleCqHmHcMi1ImvLfrtPz
-         YrvuryngFObmQATKrJUbmNvXccarahE+hGNooFyNxlaO4ISWIfdDy6Y7uaOtjUD0gR14
-         TxR8DpQ5t+Kt2GE9aQWvcSK8iXVaCp0Ads7H+W0AU7mZMMopiMHdEIbobIFuGpHm0s6l
-         I1/eBicQiX1nnld0p7Mp7A5bRPPN4GQGZiBzrx+SVaHMje2q87c0aC2wvq9zao8MW2XP
-         0TI+RsEuxLvi3qQqlRwcnrz5aRq4wfZVr58wOlFw5MMqrllk48PecIscLJsH3ngzmob3
-         rC6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXnniQSwHbK+duel0cKvkY+W+gIM70MfAuWZdCqWgAbWK1ZujpIDRzWtOJl1m7esgCNkLHMlIcn/Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4HPnW48w7TiwWXhsaFdBDEp1IvU0IepYB+fey41lZBwuV/74v
-	bnXFpeKoyY2+vO5GlESSV1Bm785X4bNFSaQx3p171cC5vf+zlOXKQoZha1LspW7PmL6nwizNAVo
-	CICcSA9kv/tAT1VnhOa/ojDo6iErdJuuZLGgaSg==
-X-Gm-Gg: ASbGncs2hpOaO9uvH3m0/3SLgmkFA2CdRez9Ai/j+y4u+X2CRh/Wunswtxv9ghUqaza
-	VCl0Mha5A/XyhxbMFyAItlQIzsfLdBk8wHoq3Z8I=
-X-Google-Smtp-Source: AGHT+IEwNYCz/q03cvl0NmtG4zb4kLejw2dkqOB7byKTe0SGTZPM1XYnnV5uCQbPfb5f49c+qAMeH5NQ/7BzxSQo2Lo=
-X-Received: by 2002:a17:90b:1345:b0:2ee:cbc9:d50b with SMTP id
- 98e67ed59e1d1-2f452eac10amr8154667a91.4.1734987189478; Mon, 23 Dec 2024
- 12:53:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734987330; x=1735592130;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j5J3/RmK37VMndJ+ng5woBQlhZld9vGGJhdS8VQxeTU=;
+        b=hBUNDtafbrhqrK51v/6MZJBM89UsFDFG6aZ+tC/ceVAhfxv1wUTB+VsJzY+5dNjMx5
+         ZQ4FyTkBanE1p7MmgVUXf1u6iORNgwMnfa5R0ewyqHlzrewv7hMTDQIZFZjF9AwfgxPF
+         iGDCtaLdh6EClTmIyqmk0Gx1+gVd2vx48Svl3meiJjhvmWNlQl8KpjE5C1X0k3KbpR/6
+         HjS39uFI6mzB9OW9WYFx8mVs/It2zpl23eJr2yH9CQBawUs+Y0BsDgTS3ZaYMrAU/uLM
+         IQ0uGoPpBtxt3YU+ha9QbGbS2XGZKH/Dd/+804z6duuwT/5ERLFRCmjLKiX3OfZvhKLG
+         UtLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcwPQvYaDZRMwHn9/4tZAlUajPkfnVzsTqqkM4ybaRJhfBD8oRwk0xe2xmfuROU5qQovZhDeOM0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGRjkeR3jVOiWe/IuYM6KAthrwDzl+/7Tazhp62r77g17sfPql
+	Jf3X/uAQB3qPmzWtch0tqY8l0nGSPljgP2Rbh8lenbngTvlFeVzsbzvoXj8YSek=
+X-Gm-Gg: ASbGncv7QW23gQpenXJf+NV1NureQiagA7AZCg6rz4O22FGKLBQjiIYTBTluiT5DK4M
+	d2xT8Qzo46cFEZsVhNqWabXbcjI1GQ2oZc5femMMgYLqmG9q6QCK4bjRElFtGCsR2nXWUG8U/+D
+	vEwSc2P/1VsTNEfRq/8SQgQ5K/VU1GGmZ0FAKr0mWFAnRMuCpSz8OGdNp1BCB22J54ZJyRNpzuv
+	hIzwwMtANJZnC54+x6rEpWzUt060DFnkWalslSUt047xIJT6H2ssQ==
+X-Google-Smtp-Source: AGHT+IEWgE+EhGuszPyZ3kVvfPYlZaWJ44Btw4stqijwKKKrA6aoF9URRe9k4cpnxjeiI1InxNPI2Q==
+X-Received: by 2002:a17:903:320a:b0:215:4f99:4ef5 with SMTP id d9443c01a7336-219e6d6cc31mr220176655ad.28.1734987330428;
+        Mon, 23 Dec 2024 12:55:30 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc9f7d83sm77971375ad.226.2024.12.23.12.55.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Dec 2024 12:55:29 -0800 (PST)
+Message-ID: <ea8b4924-e397-4ff2-85b5-9efbe63a9e0e@kernel.dk>
+Date: Mon, 23 Dec 2024 13:55:28 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6769bf7b.050a0220.226966.0041.GAE@google.com> <2f80272f-6cab-489d-ba2b-c1d545ac3485@kernel.dk>
-In-Reply-To: <2f80272f-6cab-489d-ba2b-c1d545ac3485@kernel.dk>
-From: Caleb Sander <csander@purestorage.com>
-Date: Mon, 23 Dec 2024 12:52:58 -0800
-Message-ID: <CADUfDZqtiT8B_LvTRuzT9QB+7z+7pNqYJd_n2gQYK1d8cKkxqA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [syzbot] [io-uring?] BUG: unable to handle kernel NULL pointer
  dereference in percpu_ref_put_many
-To: Jens Axboe <axboe@kernel.dk>
-Cc: syzbot <syzbot+3dcac84cc1d50f43ed31@syzkaller.appspotmail.com>, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>, Hannes Reinecke <hare@suse.de>, 
-	Sagi Grimberg <sagi@grimberg.me>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Caleb Sander <csander@purestorage.com>
+Cc: syzbot <syzbot+3dcac84cc1d50f43ed31@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ Hannes Reinecke <hare@suse.de>, Sagi Grimberg <sagi@grimberg.me>
+References: <6769bf7b.050a0220.226966.0041.GAE@google.com>
+ <2f80272f-6cab-489d-ba2b-c1d545ac3485@kernel.dk>
+ <CADUfDZqtiT8B_LvTRuzT9QB+7z+7pNqYJd_n2gQYK1d8cKkxqA@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CADUfDZqtiT8B_LvTRuzT9QB+7z+7pNqYJd_n2gQYK1d8cKkxqA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This is probably the same bug that is being addressed by
-https://lore.kernel.org/lkml/20241218185000.17920-2-leocstone@gmail.com/T/
+On 12/23/24 1:52 PM, Caleb Sander wrote:
+> This is probably the same bug that is being addressed by
+> https://lore.kernel.org/lkml/20241218185000.17920-2-leocstone@gmail.com/T/
 
-On Mon, Dec 23, 2024 at 12:35=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote=
-:
->
-> On 12/23/24 12:52 PM, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    eabcdba3ad40 Merge tag 'for-6.13-rc3-tag' of git://git.=
-ker..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D10871f44580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc22efbd20f8=
-da769
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D3dcac84cc1d50=
-f43ed31
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for=
- Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D141bccf85=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D135f7730580=
-000
->
-> I ran this one but his this instead:
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: slab-out-of-bounds in nvmet_root_discovery_nqn_store+0x110/0x=
-180
-> Write of size 256 at addr ffff000009e71180 by task refcrash/775
->
-> CPU: 0 UID: 0 PID: 775 Comm: refcrash Not tainted 6.13.0-rc4 #2
-> Hardware name: linux,dummy-virt (DT)
-> Call trace:
->  show_stack+0x1c/0x30 (C)
->  __dump_stack+0x24/0x30
->  dump_stack_lvl+0x60/0x80
->  print_address_description+0x88/0x220
->  print_report+0x4c/0x60
->  kasan_report+0x94/0xf0
->  kasan_check_range+0x248/0x288
->  __asan_memset+0x30/0x60
->  nvmet_root_discovery_nqn_store+0x110/0x180
->  configfs_write_iter+0x220/0x2e8
->  do_iter_readv_writev+0x2e0/0x458
->  vfs_writev+0x220/0x728
->  do_writev+0xf8/0x1a8
->  __arm64_sys_writev+0x80/0x98
->  invoke_syscall+0x7c/0x258
->  el0_svc_common+0x108/0x1d0
->  do_el0_svc+0x4c/0x60
->  el0_svc+0x4c/0xa0
->  el0t_64_sync_handler+0x70/0x100
->  el0t_64_sync+0x170/0x178
->
-> Allocated by task 1:
->  kasan_save_track+0x2c/0x60
->  kasan_save_alloc_info+0x3c/0x48
->  __kasan_kmalloc+0x80/0x98
->  __kmalloc_node_track_caller_noprof+0x2f0/0x590
->  kstrndup+0x4c/0xb8
->  nvmet_subsys_alloc+0x1c4/0x498
->  nvmet_init_discovery+0x20/0x48
->  nvmet_init+0x18c/0x1c0
->  do_one_initcall+0x1a4/0x718
->  do_initcall_level+0x178/0x348
->  do_initcalls+0x58/0xa0
->  do_basic_setup+0x7c/0x98
->  kernel_init_freeable+0x268/0x380
->  kernel_init+0x24/0x148
->  ret_from_fork+0x10/0x20
->
-> The buggy address belongs to the object at ffff000009e71180
->  which belongs to the cache kmalloc-64 of size 64
-> The buggy address is located 0 bytes inside of
->  allocated 37-byte region [ffff000009e71180, ffff000009e711a5)
->
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x49e7=
-1
-> anon flags: 0x3ffe00000000000(node=3D0|zone=3D0|lastcpupid=3D0x1fff)
-> page_type: f5(slab)
-> raw: 03ffe00000000000 ffff0000070028c0 fffffdffc0523d80 dead000000000005
-> raw: 0000000000000000 0000000000200020 00000001f5000000 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff000009e71080: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
->  ffff000009e71100: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
-> >ffff000009e71180: 00 00 00 00 05 fc fc fc fc fc fc fc fc fc fc fc
-> Zero length message leads to an empty skb
->                                ^
->  ffff000009e71200: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
->  ffff000009e71280: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Disabling lock debugging due to kernel taint
->
-> which makes me think something else is the culprit here. The test case
-> doesn't do much outside of creating two rings, it doesn't actually use
-> them.
->
-> CC'ing likely suspects on the nvme front. This is on 6.13-rc4 fwiw.
->
-> --
-> Jens Axboe
->
+Yep that looks highly plausible. We should get this queued for 6.12 and
+marked for stable, it's missing the cc stable tag.
+
+-- 
+Jens Axboe
+
 

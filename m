@@ -1,152 +1,110 @@
-Return-Path: <io-uring+bounces-5606-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5607-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C93709FCBF1
-	for <lists+io-uring@lfdr.de>; Thu, 26 Dec 2024 17:48:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 675789FCC03
+	for <lists+io-uring@lfdr.de>; Thu, 26 Dec 2024 17:56:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55FE71882A73
-	for <lists+io-uring@lfdr.de>; Thu, 26 Dec 2024 16:48:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07AFF18824DD
+	for <lists+io-uring@lfdr.de>; Thu, 26 Dec 2024 16:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D535258;
-	Thu, 26 Dec 2024 16:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6F91369AE;
+	Thu, 26 Dec 2024 16:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iw8ADVVX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vb0OBDMG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0BAEC5
-	for <io-uring@vger.kernel.org>; Thu, 26 Dec 2024 16:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08EE3EA83;
+	Thu, 26 Dec 2024 16:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735231727; cv=none; b=eT39YyscI6HArIxG628IM7SCrKcMEIrgym1iMokJJfyyTbqNTmpxNiT1m24djikq59a2RT1Y56PMdNLy/qTdAcuqVHm5Rr4B9VcDFdcPnxzQpxQgY9PG9ztImLtzZnDlJqQOpMd1BpvzT/5qWkrOuaKskM2P5Q8cCI7yoM4z+GA=
+	t=1735232180; cv=none; b=ekrTkpOgnMvVi6DcC/zsG2nvhS86WPy9iiQv9+b3m1UVK30KGqXXoe0ZR0BrQSuHNKuxs0T2c+SiZ5IviHxWoT3o3sZcQx0ry5X4B4DSZDdzuGRhec0jSxDbpPjp4IVJRo/xLA7lYXeH4qHEowvQREjS/saDny7HkeCzaNdiTbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735231727; c=relaxed/simple;
-	bh=y50Q7JSYEBWCvnm/itlmAHLXrlvDX5/6wcV2RjvjFlI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RUvIAfCCR42eG3N9zwFU3NP4VeJemeIiJfaCHT8QmyGb+1pNwVNC2iBQ6LUXxeG5zJ25CC6DojD0KAS+IW/tYWMpgfed2HqDZ0qP2Sgfc+y4tpvLVbSnzzMNi75r7ARaVOw/Sgs0emSxP+PamKtG3aAcZsltepsiHESB7bClQc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iw8ADVVX; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1735232180; c=relaxed/simple;
+	bh=Wn+SM1PCWl4KDvtSfiVHfDay3hbu16k8+gTEbMN7SXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gk9Ywl6PHRUp+vY/k1vsuWXKASH+wNHUJxUGk15sKwUIHXMqSJTcuun82jRoBk1WtDKX6zqcf5TCGqcQcmoA3rrDpzjhmY5rtiM1Wqpf01I9Kivd5CC+FLNtgE6hEe260KFg2m4XdF3d+e0N4jjtyb5/jpCSGQAiCkVIopPb/P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vb0OBDMG; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aabfb33aff8so1156980666b.0
-        for <io-uring@vger.kernel.org>; Thu, 26 Dec 2024 08:48:45 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d7e527becaso10377455a12.3;
+        Thu, 26 Dec 2024 08:56:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735231724; x=1735836524; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z3/fwzhk/iUJlY8C2c4OnK82rxR48Cr0nCcv7JoE2Sc=;
-        b=iw8ADVVXRHxhDX2bnvzvC3b5iJIgN931wrlBMHE/R82fosyXFW0BqfWCeqrDE5Udb/
-         Ba6MjSZ/ncIKflgEGGxDZfR71dlLvOoV3P6IRmCEg3U3MfsuYqh/QSdV9UVm4W7pz9sO
-         iSRQgppNoZBi0uJh3idjxlmepnOUBuBvcqGFiKZ84As88hDLH8Kvvm3O7TSFJhNpXTD9
-         vfSoQsf4eTV1pCG1znH8rnbgJEqGqtk017pF/MXvRLW89eCeyDUAd4KbGadQfVZH/DK5
-         h9wPBOJ9NhPkwZ0w5z9+GEU/86DvH02gsBXB3ApekU9wokIsHzV+RUKyTadJF35Pvt2b
-         eO/g==
+        d=gmail.com; s=20230601; t=1735232177; x=1735836977; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YH7uEN9ztieXz7OTfhHoXrUv7O5OyWowjr7LGPNs6ak=;
+        b=Vb0OBDMGMd+KacnYKOZ5qmN/Pza9nZszqKGQLNJSROmAFOtiloJTZyfsMy44X56/+d
+         8BU49DRQncHdaa6OU3Axj0IqRtz8OA43LEdwXbWe5EtTU11Mn53t1Nh2046gH4OFzMm8
+         B/ZmWCQrczCdzk5TP12RT/ZVh6wxM6sztKzCdAO8KKyecFGRdRcb/UGLPqVvKq8ymIkO
+         c3O4bpi0k1MW+LedHzk3rnnD0ZIhhFb6D7p/PIikHLWwLSNJRtaYK3yabIYEiqUXG4rD
+         LmefJ6Nq64v8YSVHOGi6FZNL83zEpnTYzJudFSVBJ25weAnclkc/mc2UNla4BjoyvGW7
+         lGqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735231724; x=1735836524;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z3/fwzhk/iUJlY8C2c4OnK82rxR48Cr0nCcv7JoE2Sc=;
-        b=TcBW661rASz9K3gBpVDDEo2CYHES09wMXW8Tv2klk7Iqes5c4GqVKayHQ0+MPiMgnK
-         /QE9I1eZfnqzrKaiMA27gEMgQv4jATdJf4YR2bxpjR0hn6K6BPqikUUn9bkqiuf/qSh4
-         0wWgf0JgQps1WCKdhMI7Ya5V0ba5MxdpHxg6xUmR9FqGhZzvhtNBWcd1RP97rcjssSTB
-         xinuhi/f2e084Q0JaocL+MhsO2lBCFH63txjr63+qv1QCLZ+ZC4TsH6DlGX1HOJeRU4d
-         UmxoJZ3jGbiCymN30p4Gftd9AFyy0Ev/loXnEbC7Lgk39r8q3CYjKdCW3uzrpdo0xrPi
-         5UGw==
-X-Gm-Message-State: AOJu0YynJzzhm/ryaCdREUwWDUfMrNs9tx6GhvCvuA4X/KStwQS5l9TT
-	iOLB3EQ7ePOP8g7QfIx87bmkm0loRDmd4GdO1vABj/tO4i2S+4XjEyXcIQ==
-X-Gm-Gg: ASbGnctPQjK5BN+ifhQUg5vZ0QvRmPO+2lNdB9bL4qXDINmDGayE4/NY55Jj6ZmFDXq
-	BRyMQXV7CVp4rtL4FJJZydQEtgPvqHvQUGqh2b2Nz4WYJJjuGjeKIOHbTy+a+JQdgcbbE8egtEK
-	QwbeQA5MVHSoOSqxqxFh9wYyQdND5h4tQT9jcwIa1OV2IJEWC77U9CBFReO/Ftix8Lqrj0GI/+I
-	ZVRIwXL/FwMOzZa5icQFKFysrRb73H97FibFv5gqMpHtIahqvrevUotrbJ5Ju4dFBdJYA==
-X-Google-Smtp-Source: AGHT+IGKyJ3Kp+FUFVscOrBKgl6wV75SajfzX6LIicj62NCC/5KDOHUM7ZotZHwfto0VrpKGpYOS1g==
-X-Received: by 2002:a17:907:d9e:b0:aa6:7c36:3428 with SMTP id a640c23a62f3a-aac26bd5317mr2386442466b.0.1735231723615;
-        Thu, 26 Dec 2024 08:48:43 -0800 (PST)
-Received: from 127.0.0.1localhost ([85.255.234.252])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0f0159f1sm976442366b.154.2024.12.26.08.48.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2024 08:48:43 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	Kun Hu <huk23@m.fudan.edu.cn>
-Subject: [PATCH 1/1] io_uring/sqpoll: fix sqpoll error handling races
-Date: Thu, 26 Dec 2024 16:49:23 +0000
-Message-ID: <0f2f1aa5729332612bd01fe0f2f385fd1f06ce7c.1735231717.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.47.1
+        d=1e100.net; s=20230601; t=1735232177; x=1735836977;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YH7uEN9ztieXz7OTfhHoXrUv7O5OyWowjr7LGPNs6ak=;
+        b=oc52IB8T5D8tbYKVI8sSVqY2NaBXdsHrNulsiborFH0obEeXfhLNjYOKtJWDhP7Qwc
+         HBGULkrPJe7aFKXaHqiyE10/+RAhyWh6zoHf6u7wvgY98z3lIt4IWBlVG+ZEv9TS3qv9
+         DnZelQQUx2Gf83Ou+rpR2p3DEnbkc8yXY88ncivov4u06jh6h0WZcE4wlnesYgtbSMpQ
+         Tc4hQQHThxxfI+IlOU20AERNKziAljsDeGeWuyBvlLrra9eLHULmombp8/PGP+0tjjVz
+         3nKGLmI1KzHp38oj5MvbOZYO/I10pyEe+CpqrSnSz9anZkwAIGIeVamB0S0tVxFt7KjV
+         yd3w==
+X-Forwarded-Encrypted: i=1; AJvYcCW6IM8Inve5TwyVUpRaEI4O3DDkooLhWW8yKAn9l2lkSBOUJY+7llmFVamYAR3XcxCao1SbiYyfFg==@vger.kernel.org, AJvYcCXTYh4p23Z3qQPenboyzxxHNsuNZrSDkFeWl19WfkI8R+y207at4FLq0dh2ANYy9cEk+SJvPXdOlnVNAM2d@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZzJNuSjYIt5iASFu3I1zSVZlp/hVKmVnIcaOToWRekV+0rOV/
+	NbeJiCM/sUZ2bsGasrD1VgV1Mn48BZE+w4uZtLZEqcnKLUD6iZ8F
+X-Gm-Gg: ASbGncsAgdUKEKM4aw1Ibg3sLVNz6sLtNUyDFh1iMSdcHV2438g0vcSb9vrm6S8XUE9
+	xnOdGOIj12jSvjRDobM0x1PQBzzJ40n0UsyS7i7OY2CLfca//QBubjeQrk1kVXuPXzMrMMPQ9kP
+	wO9hHVZ69XiuUXKsxzcEAWj11Xk0dKfx5dBPorbb7p09T1iwxh7CjMuFr/UZiLgI5eVInOP3MwB
+	T/DA/3zDf2CLMkKlRkK6T5DbPjpB5xfd6d9FrMhreeS1azhLI9y5Me9/iTdaeQe2Q==
+X-Google-Smtp-Source: AGHT+IF0Bz+2Ktc7Nq2pnVs8GQ5Ak8X/yEgTB5ND+0RrcvzdesYruV0xofMM2C6l4MLEzLt6IegWaw==
+X-Received: by 2002:a05:6402:2749:b0:5d0:ed92:cdf6 with SMTP id 4fb4d7f45d1cf-5d81ddc1b64mr52513069a12.19.1735232177003;
+        Thu, 26 Dec 2024 08:56:17 -0800 (PST)
+Received: from [192.168.42.17] ([85.255.234.252])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d80675a6d0sm9384689a12.14.2024.12.26.08.56.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Dec 2024 08:56:16 -0800 (PST)
+Message-ID: <d4d4da73-5d00-4476-9fd2-bee4e64b1304@gmail.com>
+Date: Thu, 26 Dec 2024 16:57:08 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Bug: slab-use-after-free Read in try_to_wake_up
+To: Kun Hu <huk23@m.fudan.edu.cn>, Waiman Long <llong@redhat.com>,
+ axboe@kernel.dk
+Cc: peterz@infradead.org, mingo@redhat.com, will@kernel.org,
+ boqun.feng@gmail.com, linux-kernel@vger.kernel.org,
+ "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>, io-uring@vger.kernel.org
+References: <1CF89E16-3A37-494F-831C-5CA24BCEEE50@m.fudan.edu.cn>
+ <abe46bc0-d4a7-4076-bed8-c48e0267ebed@redhat.com>
+ <7556DAC6-20C1-4FCA-A9C8-633E36281341@m.fudan.edu.cn>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <7556DAC6-20C1-4FCA-A9C8-633E36281341@m.fudan.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-BUG: KASAN: slab-use-after-free in __lock_acquire+0x370b/0x4a10 kernel/locking/lockdep.c:5089
-Call Trace:
-<TASK>
-...
-_raw_spin_lock_irqsave+0x3d/0x60 kernel/locking/spinlock.c:162
-class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
-try_to_wake_up+0xb5/0x23c0 kernel/sched/core.c:4205
-io_sq_thread_park+0xac/0xe0 io_uring/sqpoll.c:55
-io_sq_thread_finish+0x6b/0x310 io_uring/sqpoll.c:96
-io_sq_offload_create+0x162/0x11d0 io_uring/sqpoll.c:497
-io_uring_create io_uring/io_uring.c:3724 [inline]
-io_uring_setup+0x1728/0x3230 io_uring/io_uring.c:3806
-...
+On 12/26/24 03:43, Kun Hu wrote:
+>> This is not caused by a locking bug. The freed structure is a task_struct which is passed by io_sq_thread() to try_to_wake_up(). So the culprit is probably in the io_uring code. cc'ing the io_uring developers for further review.
+> 
+> Thanks. This also seems to involve sqpoll.c and io_uring.c. I'm sending an email to both Pavel Begunkov and Jens Axboe, with a cc to io_uring.
 
-Kun Hu reports that the SQPOLL creating error path has UAF, which
-happens if io_uring_alloc_task_context() fails and then io_sq_thread()
-manages to run and complete before the rest of error handling code,
-which means io_sq_thread_finish() is looking at already killed task.
+Kun Hu, can you try out the patch I sent? It should likely be
+it, but I couldn't reproduce without hand tailoring the kernel
+code with sleeping and such.
 
-Cc: stable@vger.kernel.org
-Reported-by: Kun Hu <huk23@m.fudan.edu.cn>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/sqpoll.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 6df5e649c413..9e5bd79fd2b5 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -405,6 +405,7 @@ void io_sqpoll_wait_sq(struct io_ring_ctx *ctx)
- __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
- 				struct io_uring_params *p)
- {
-+	struct task_struct *task_to_put = NULL;
- 	int ret;
- 
- 	/* Retain compatibility with failing for an invalid attach attempt */
-@@ -480,6 +481,7 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
- 		}
- 
- 		sqd->thread = tsk;
-+		task_to_put = get_task_struct(tsk);
- 		ret = io_uring_alloc_task_context(tsk, ctx);
- 		wake_up_new_task(tsk);
- 		if (ret)
-@@ -490,11 +492,15 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
- 		goto err;
- 	}
- 
-+	if (task_to_put)
-+		put_task_struct(task_to_put);
- 	return 0;
- err_sqpoll:
- 	complete(&ctx->sq_data->exited);
- err:
- 	io_sq_thread_finish(ctx);
-+	if (task_to_put)
-+		put_task_struct(task_to_put);
- 	return ret;
- }
- 
 -- 
-2.47.1
+Pavel Begunkov
 
 

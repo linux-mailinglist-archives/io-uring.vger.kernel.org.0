@@ -1,120 +1,117 @@
-Return-Path: <io-uring+bounces-5608-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5609-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D1B9FCC1B
-	for <lists+io-uring@lfdr.de>; Thu, 26 Dec 2024 18:01:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C11E9FCDB3
+	for <lists+io-uring@lfdr.de>; Thu, 26 Dec 2024 21:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C542218828F1
-	for <lists+io-uring@lfdr.de>; Thu, 26 Dec 2024 17:01:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8988161855
+	for <lists+io-uring@lfdr.de>; Thu, 26 Dec 2024 20:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B577F7FC;
-	Thu, 26 Dec 2024 17:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7C585260;
+	Thu, 26 Dec 2024 20:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="tHYTnSrR"
+	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="ICu9SZbp"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297ED13D891
-	for <io-uring@vger.kernel.org>; Thu, 26 Dec 2024 17:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA3C323D;
+	Thu, 26 Dec 2024 20:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735232495; cv=none; b=B+9dG+V5NgJuPE8ADjO41Ys1m/8CIjXWvHCZ7xrVvAxJzD7plEFal50tU4/nuJUJQ/4e5hX+WggHPgnGq9OfSuJBBNIGN1MieObAVf75+0/SegAzD6MobVNxrBXMpLx8umjtiwTa1h99blbxmDG5eedkzmJDPDtWXngfFCjQxLk=
+	t=1735246070; cv=none; b=rJVkba9t9GiNLxWYUxLjstkBPCLsRocHMtY5jOb/9gAhyDgmlcB0dOI9xzecrC26R0Ry6eIEvZbREcrAamgbt4hmLA89csYmoVwGXL2IAQwIa6c7VlJ8IGCMT80+pHnd1CztcfuFkUot/bKKicXPnvjvXGLiHFlTioQ0hL13J2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735232495; c=relaxed/simple;
-	bh=l5Orn3PX4mqDneZSu2j0R0MePqTm1Xj96u+vYI25Q+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r8DnDyTTAuTGXnjR0cLAO/y/nze/msY81X4PNFN1lmFmwtcMnWTleneQlomzePf4RYDH462Y+2pOnNETgDJm63y86TJuMjgrC8Luq7GTjYpjnB5vyxsG9QSQ4LUkrCXvXtVzpr/0VHI18onEVjw+e7iBC2OJBttUj5fu8TWdZIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=tHYTnSrR; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21a1e6fd923so5076865ad.1
-        for <io-uring@vger.kernel.org>; Thu, 26 Dec 2024 09:01:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1735232491; x=1735837291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HnZYTjOSbAiVdsDDecXP13lw0RuVCo4tPFLHYgjjdic=;
-        b=tHYTnSrRyw8KtdsbZvMlCH490QDJG5XXEsjcRmclcIgXzujZw69vutou5kdE6UcPC3
-         yEd9CJxW+Khl8EnAn/nH9RfCxeKczBkw3Yxrj3opy2rB3LB5nI6dYZlbDmF9DLsqG/Ef
-         nXfsBZ3lFudMpR6Wvt0uK9f5VRQ3lZPfe4q6YIj/sagwVLkB/BKFnJE3yP3xi0Ih7nW3
-         2t9IW7Ra0wLOwPBHR6IPIYQV0dCEFqHaP+cXQBgZIlUwolBKeDArug1EOYBfyRS2pA7K
-         EytxIoqy5kMyGK4vxc7xIBl+Zs4BNGIPcJ7awekZ9sC9EjImbAJGuBB449gqvJOo3vyX
-         U5xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735232491; x=1735837291;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HnZYTjOSbAiVdsDDecXP13lw0RuVCo4tPFLHYgjjdic=;
-        b=dHh3Xu/q1ba2SgswI9nd46vjxNyIyMHIvOJqXUMhMS0sZf3MJi0sZuW7ZwTb0tTNeX
-         6m7MqQic5Zgv5iAycwORt3QvTXnPIpHzFMoa/BApRWWKZ1ZN0+/DCJ4WePf2uqeDiPqn
-         AcKgE/6y1qJ07/UtTKETBe2LX6CAK9MFQ6o2xz2bK5/JYOW5GiLxkWvfpTAqVf2Hb8uE
-         Y8o2Z9cSiwVTgNLeaUv/e48C/m9eeDHYwRTBqzkRPNtoG9f+V040mtg584qLjSfnSQjL
-         aG4aysCbak3Ag0YsrZP8me9SHfdvqb6noITZ5es/xvCrn/NI4T+caBCZ82nowOuUok1x
-         frvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUG4LDCPm2SdtTMhNEuHFf650eSFaLtx2W4ar4J6yey+IwWUX7gFz2G5ywfh70EwmxdTuFBhx9Pdw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0IZB6FRUhmXT4/qNC8W8IxPoj96UyhT19DCn96vBQMoMWoEeB
-	G41Th3Wz8ah0fSbNYzi8M8rNh/XQBIOC7BNsnY4sDfVnoYXPVSS5Qilip2Ol9maOzrMCpNWyTa2
-	A
-X-Gm-Gg: ASbGncupQ3jjUZ7w0/smekIvI3KRDsQMpePZXi3WIpYcGx12ufxI2kTt534kUIkwogn
-	ZiMCs63XGX8/TUv1ECDD6t5BsR4tOikC+iQTvnVzC/Rj5nEz2rKkacBMnxq1tFsSv/HAUSJPTsl
-	ZEtQX7azDVkJgeTxZTYer7UQLYz4KsyW3F601E451IVZd3fOzYr1SWyt6uG27L+0bxzWCloa/IZ
-	Vwr0xD2WiqD/sSx9ZeJaTVWuYqJXkL9slRXsw++jYUm3jHynPmYNg==
-X-Google-Smtp-Source: AGHT+IHzBi9eQd0h+2qgwRz+urrHBnQQnt5NgdBFImDEjmcVYFmYOQjQy1Zy+7mHHXwxR/IpP5II5Q==
-X-Received: by 2002:a05:6a00:44cc:b0:725:df1a:275 with SMTP id d2e1a72fcca58-72abdeb7016mr37754052b3a.23.1735232491332;
-        Thu, 26 Dec 2024 09:01:31 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72aad8fb941sm13122560b3a.160.2024.12.26.09.01.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Dec 2024 09:01:30 -0800 (PST)
-Message-ID: <39435dbf-7c37-49d4-af10-e773ab3eb0a0@kernel.dk>
-Date: Thu, 26 Dec 2024 10:01:29 -0700
+	s=arc-20240116; t=1735246070; c=relaxed/simple;
+	bh=AbJZOdMLGW1l6VGwcuCZfCHeO+0RTAfZY/bUW8n5Vog=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=bdMujTUrZstbOckp2Dx6NA8RLkE/uQrPuaWIt2MGgtdceQgumBF3u+VIhKVixeJpRcEF064aCVWooMZbykydoY2LksaUxLS7HptveCtVXtY8gF+7L6MmQrp6778sEkGmcwt0so5M51zm77gI4algatpe4hhqakH7z5qv27JhSCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=ICu9SZbp; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
+	s=sorc2401; t=1735245933;
+	bh=AbJZOdMLGW1l6VGwcuCZfCHeO+0RTAfZY/bUW8n5Vog=;
+	h=From:Mime-Version:Subject:Date:Message-Id:To;
+	b=ICu9SZbpz4UsvQUBrnlMC4IwEL9nimivtaa34cSK2BNSucRad6fCzRAuP8c9/PwkP
+	 WLqbwCK6oYwBOV1KxrVfbm2CrvNYekXdRSeuJIMpH3KLwZvI5yP42NnOcl9khHrOvP
+	 SEzyAeh0aiyEVMrPIA0nvjFR1/iSgEz2qyKmrgl4=
+X-QQ-mid: bizesmtpip4t1735245926t8akn96
+X-QQ-Originating-IP: /BmEPIias2EYHT9LZz29w3KOG2VCLhGuoeAvc52zyz8=
+Received: from smtpclient.apple ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 27 Dec 2024 04:45:24 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11289566792857868994
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Fudam <huk23@m.fudan.edu.cn>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] io_uring/sqpoll: fix sqpoll error handling races
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc: Kun Hu <huk23@m.fudan.edu.cn>
-References: <0f2f1aa5729332612bd01fe0f2f385fd1f06ce7c.1735231717.git.asml.silence@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <0f2f1aa5729332612bd01fe0f2f385fd1f06ce7c.1735231717.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (1.0)
+Subject: Re: Bug: slab-use-after-free Read in try_to_wake_up
+Date: Fri, 27 Dec 2024 04:45:14 +0800
+Message-Id: <DA2747F7-5D2A-4515-9764-B214AAD1DB37@m.fudan.edu.cn>
+References: <d4d4da73-5d00-4476-9fd2-bee4e64b1304@gmail.com>
+Cc: Waiman Long <llong@redhat.com>, axboe@kernel.dk, peterz@infradead.org,
+ mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com,
+ linux-kernel@vger.kernel.org, jjtan24@m.fudan.edu.cn,
+ io-uring@vger.kernel.org
+In-Reply-To: <d4d4da73-5d00-4476-9fd2-bee4e64b1304@gmail.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+X-Mailer: iPhone Mail (22C152)
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Me+wKRRrSrO/Z7hxBQ9Lo6qeWxLuM1s7sV44osJnr3j4yZSvKPY2VTad
+	97YrMKzKS7bPx8q5GtyAkcobkz9osWA0mImvMQVexyu2aHJGqd4yH7A1gaYLKGMdrEZk7/w
+	/8IjVc9lEGEwk51SRQgvACYOL56i2L8KjjtHf72Fn3BHWI6QaAybcIMdG/gfsXvLIKw0w7f
+	+ClrTepLy5MZn956C3Myk2HwK8r7SIHEfGJw/Rxp6x3SG6mSB1fCBtxTdglYRvIAQFEOVXt
+	HJ3BvY8wojiU1vQHko5Ek2q8j6lp2y4UTFhv9fhtWFR5IEubMCvzrC8Y+NMlWl9pVxTf2ce
+	xpzeQ8cEZiDWAkN9h62r40AeahioUvfuopbkuIwcSjF/+F65vQJTju6RFcrzAWdx35p3bc/
+	EZBWFI7imFf6kVYCVXXwhn44wCAx6jae/12iioGFbCmMcM7aauGOF6la1VwpphEjyNO3TTG
+	jSIN2dA0z4JCMhnMtuZLZTO2G/y6CIK0eDXc9ZCuST7wK5tFuULjBLtZNAd7T0a8OMB/0b/
+	szuB+3uUcJArV2VvejJz+9O8O0GFhZg6YS5SpIPK35IrJOXa31vHyJ1i/gpHDn/Alc2fDSQ
+	ME2ijyg/ZZX0m5PSzPT+FZTuUlur/9Fdk/WNMOQsiREaqCYYJNusyhmH8alMZyDST/f3zBE
+	h9mGEc2hRbu6F1LYyIPwyG/fbMOzhlo9G+jm3PtgCbjeW6waufrzpnSUJ5pW0+zSK4nov+V
+	+VI7rxAXe5hHSemtv+sUvo4GY9hZqk61O+/Eiyv5hokp1zUrM7K1pn2eucvGuQjHyXW16md
+	acNBhqsZcGuSPothWVLPzTOi5buHxuhZ8u3M8VzG3Lce9ZPv3IhT5XFPm0GmLvgtpMeWhTz
+	kej57PjYAsoTgqRl33EJWPnuvkpqhRmiVwg4spOBX7s=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On 12/26/24 9:49 AM, Pavel Begunkov wrote:
-> BUG: KASAN: slab-use-after-free in __lock_acquire+0x370b/0x4a10 kernel/locking/lockdep.c:5089
-> Call Trace:
-> <TASK>
-> ...
-> _raw_spin_lock_irqsave+0x3d/0x60 kernel/locking/spinlock.c:162
-> class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
-> try_to_wake_up+0xb5/0x23c0 kernel/sched/core.c:4205
-> io_sq_thread_park+0xac/0xe0 io_uring/sqpoll.c:55
-> io_sq_thread_finish+0x6b/0x310 io_uring/sqpoll.c:96
-> io_sq_offload_create+0x162/0x11d0 io_uring/sqpoll.c:497
-> io_uring_create io_uring/io_uring.c:3724 [inline]
-> io_uring_setup+0x1728/0x3230 io_uring/io_uring.c:3806
-> ...
-> 
-> Kun Hu reports that the SQPOLL creating error path has UAF, which
-> happens if io_uring_alloc_task_context() fails and then io_sq_thread()
-> manages to run and complete before the rest of error handling code,
-> which means io_sq_thread_finish() is looking at already killed task.
+> Kun Hu, can you try out the patch I sent? It should likely be
+> it, but I couldn't reproduce without hand tailoring the kernel
+> code with sleeping and such.
 
-Might be worth mentioning that this is only really a fault injection
-thing. But ouside of that, looks fine to me - thanks!
 
--- 
-Jens Axboe
+Okay, I=E2=80=99ll try again. Please wait for me for a moment. But you mean y=
+ou couldn=E2=80=99t reproduce using the c program I provided unless you tail=
+or the kernel code?
+
+> =E5=9C=A8 2024=E5=B9=B412=E6=9C=8827=E6=97=A5=EF=BC=8C00:56=EF=BC=8CPavel B=
+egunkov <asml.silence@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> =EF=BB=BFOn 12/26/24 03:43, Kun Hu wrote:
+>>> This is not caused by a locking bug. The freed structure is a task_struc=
+t which is passed by io_sq_thread() to try_to_wake_up(). So the culprit is p=
+robably in the io_uring code. cc'ing the io_uring developers for further rev=
+iew.
+>> Thanks. This also seems to involve sqpoll.c and io_uring.c. I'm sending a=
+n email to both Pavel Begunkov and Jens Axboe, with a cc to io_uring.
+>=20
+> Kun Hu, can you try out the patch I sent? It should likely be
+> it, but I couldn't reproduce without hand tailoring the kernel
+> code with sleeping and such.
+>=20
+> --
+> Pavel Begunkov
+>=20
+>=20
 
 

@@ -1,186 +1,106 @@
-Return-Path: <io-uring+bounces-5626-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5627-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B77A9FDE14
-	for <lists+io-uring@lfdr.de>; Sun, 29 Dec 2024 10:01:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F83C9FE04C
+	for <lists+io-uring@lfdr.de>; Sun, 29 Dec 2024 20:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A21511882657
-	for <lists+io-uring@lfdr.de>; Sun, 29 Dec 2024 09:01:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AE9B7A0FBA
+	for <lists+io-uring@lfdr.de>; Sun, 29 Dec 2024 19:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B952594AD;
-	Sun, 29 Dec 2024 09:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5059192B95;
+	Sun, 29 Dec 2024 19:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="hWH7DfBA"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C962D057
-	for <io-uring@vger.kernel.org>; Sun, 29 Dec 2024 09:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FB82594BC;
+	Sun, 29 Dec 2024 19:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735462883; cv=none; b=TxW3mxy02x8QeqYLUkB7vtvF/BgIqt54RSR3bjz5UN8Ha00gtdEZPqWcn8mW09OLXm8L7ZvfgEyvdoJHfVGPFYbjis3SdYiGOI/PeiizJo8/U/sabg/Uz68ylvfbQiSOsfM/mjlIjboLxO3RpQZ4t8PVa0yUVvqSkPol+OXAL+Q=
+	t=1735501360; cv=none; b=HRPAF9jj/p+CQOF9J9idFbmrOE5+jOvcundYIIsSNwFw6kBPsCeCBqBKCFzfmE/0Xn8OI2R1o8CEqv08TabYwEEBzYMFEZPqlR+bkwvMy1U6WqrKRioXqT8Vornse9eXJ9YpqyDxYddDHZ+W8vX1Q/P3jl9QFRcVQJjLgGedHz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735462883; c=relaxed/simple;
-	bh=DakjHU/5EqAFl6w1dBdeo075DH3PGCAoL+ZF094M9pE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=law+6nNtF7SINIFrNnuIJRHs6slkxuGH/eTruGisLcb0EozzJGyHhdoPVNtFW/Rqxabl9CLKDM7FwSgdOmBpLUPh0eHs+yZScUOCBN+x/SySs5lkIFihA0ih3NsR82SINEc0PXdirvoIH/Y6l2rhtNTgPSoaseGwdwsdzjtOvGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a9d3e48637so82847255ab.1
-        for <io-uring@vger.kernel.org>; Sun, 29 Dec 2024 01:01:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735462881; x=1736067681;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=daCCEn/1ANLJXY3OzsPHbrILxzq7Mu2AbRodggJztYU=;
-        b=V8PybqgL36+evh09t9MCaid5v4mZcK+GW9/ZtdHDdeJL6Vq1sJqgB4koNE3QwT0VR4
-         jRwABcmq8WKX3rIk9aFo6Y9OS99+VBOiBKlguTGztRr9acXL4nraiFUybyPZUrNCsoQq
-         XJAh894qhQ9cUTUd2ApkG+BqzUBVhexHkRq9GKhgk5XxjOqAlLzjGTgpQQeRMeQq4/at
-         R/SgFC3hBOcfavnOQkM0J5CptGrLwhoDiTjmhgExHkn86ZA/AdjqCCis1uupEZUxd4FL
-         V25PlhNqsyVCgR0gJ/NEp64iRH0FFGiz3Mc/ozRCK+U6WIZxc23tYd/a5ZZL3KMM8GuO
-         yg/A==
-X-Forwarded-Encrypted: i=1; AJvYcCX/n4/dJ11MN2YaZbMfgB5A70+6Hk8NYUGUBWYJr4HfUH8dERwa5Sx1LglW5YBHJIvpQo7Rq6/g6g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP/tylaLat54sgb59f1NNo9UiHp60jghotaS5VI+pESMtuaEP8
-	bUfKOtOIyv0KzWIh3+e7MBMJ+hcpiZdP+ZxcN5Ld/GIdNb4Lz1TbtXrKgOe5piWuBzQ2ihWGzmf
-	kfXdyAxOxjUBEqcb5HwbECS2ticI9P49dT/j+PAaNxUi2QI6S81huVxQ=
-X-Google-Smtp-Source: AGHT+IGwH9NK9dgykbiEF3bm2cVLjBukn/l7O8VNeaLcqZWKx4/9WmG7aM/vh+mg/TBsB/xAej59aYhmYdZodNOBMbGx5VLTG2Zj
+	s=arc-20240116; t=1735501360; c=relaxed/simple;
+	bh=B5Yzr1DlE3ZbPLFmZHpdS43ieOvU/CzRyfoxcJy/wgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=N5WGB3Fla+GtbSGH7vpmzcJxkY+VGAn3/vCp0jGFCknfvm1SI3Hnh/AAgVysYM9Xvmo3QWivoMzNtqm0HTIiMrj5no2Mx4goWe+sdaha0UHJkyTt7/tYXkru2g4o7iXBlzzwRk6Wjzrzgx1ObSBv5fvz+IPhAmn/v2HzN7CSeo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=hWH7DfBA; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc (unknown [10.10.165.4])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 23861518E78F;
+	Sun, 29 Dec 2024 19:42:28 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 23861518E78F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1735501348;
+	bh=SPG/YizN2O05q44/je00g9z52uR4tR/e5GEzszjGkDk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=hWH7DfBASDbUxD1oo27LoY3qI0QIyOGu8axT/ftS4tP8Q+7kYuBLNL30PrzdcKSKc
+	 7tqomdl32cJUFyMZT4EHCy+ev3VPN9s43IM5qAKbOV/zS+ehaH5MTbuF+hwcKaJikE
+	 AxBJomFLvWhTtS9O5GMbMuJ8T0kRIg693RO6xiU0=
+Date: Sun, 29 Dec 2024 22:42:17 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jann Horn <jannh@google.com>,
+	syzbot <syzbot+cc36d44ec9f368e443d3@syzkaller.appspotmail.com>,
+	asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [syzbot] [io-uring?] WARNING in __io_uring_free
+Message-ID: <20241229-aa972fa46c7415a89006f784-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180a:b0:3a7:d082:651 with SMTP id
- e9e14a558f8ab-3c2d2d50c91mr254579465ab.12.1735462880856; Sun, 29 Dec 2024
- 01:01:20 -0800 (PST)
-Date: Sun, 29 Dec 2024 01:01:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67710fe0.050a0220.226966.00bd.GAE@google.com>
-Subject: [syzbot] [fs?] [io-uring?] WARNING: locking bug in eventfd_signal_mask
-From: syzbot <syzbot+b1fc199a40b65d601b65@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, bigeasy@linutronix.de, 
-	brauner@kernel.org, clrkwllms@kernel.org, io-uring@vger.kernel.org, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rt-devel@lists.linux.dev, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z0kDWtjmlI_LwP5S@casper.infradead.org>
 
-Hello,
+Matthew Wilcox wrote:
+> On Fri, Nov 29, 2024 at 12:30:35AM +0100, Jann Horn wrote:
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 0 PID: 16 at io_uring/tctx.c:51 __io_uring_free+0xfa/0x140 io_uring/tctx.c:51
+> > 
+> > This warning is a check for WARN_ON_ONCE(!xa_empty(&tctx->xa)); and as
+> > Jens pointed out, this was triggered after error injection caused a
+> > memory allocation inside xa_store() to fail.
+> > 
+> > Is there maybe an issue where xa_store() can fail midway through while
+> > allocating memory for the xarray, so that xa_empty() is no longer true
+> > even though there is nothing in the xarray? (And if yes, is that
+> > working as intended?)
+> 
+> Yes, that's a known possibility.  We have similar problems when people
+> use error injection with mapping->i_pages.  The effort to fix it seems
+> disproportionate to the severity of the problem.
 
-syzbot found the following issue on:
+Found this discussion while investigating memory leak in radix_tree_insert [1].
+That report has a similar cause - a fault injection in the innards of
+radix_tree (say, xarray) allocating loop, then the absence of release of
+already allocated internal xarray memory afterall.
 
-HEAD commit:    9b2ffa6148b1 Merge tag 'mtd/fixes-for-6.13-rc5' of git://g..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=128f74c4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d269ef41b9262400
-dashboard link: https://syzkaller.appspot.com/bug?extid=b1fc199a40b65d601b65
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1469890f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154b22f8580000
+I wonder whether just the plain usage of xa_destroy() should be considered
+a fix for these kinds of failures. Are there any pitfalls? xa_destroy() is
+claimed to cleanup the internal xarray memory.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9015cc2b19ac/disk-9b2ffa61.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3ddeabd5e7eb/vmlinux-9b2ffa61.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/36e13b0305d0/bzImage-9b2ffa61.xz
+Judging by ca6484cd308a ("io_uring: no need to call xa_destroy() on empty
+xarray"), seems some pitfalls do exist but still..
 
-The issue was bisected to:
+Would be glad to have a look into the previous discussions of this problem
+if they exist - in case I'm raising the questions that were already
+answered. Thanks!
 
-commit 020b40f3562495f3c703a283ece145ffec19e82d
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Tue Dec 17 15:21:46 2024 +0000
+P.S. there is no variant of xa_destroy() for radix tree. I think nobody
+noticed this since it may have an effect only on these types of bugs
+triggered by fault injection. If you think adding it overall makes sense
+then I'd try to prepare a patch.
 
-    io_uring: make ctx->timeout_lock a raw spinlock
+[1]: https://syzkaller.appspot.com/bug?extid=006987d1be3586e13555
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=124d0018580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=114d0018580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=164d0018580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b1fc199a40b65d601b65@syzkaller.appspotmail.com
-Fixes: 020b40f35624 ("io_uring: make ctx->timeout_lock a raw spinlock")
-
-=============================
-[ BUG: Invalid wait context ]
-6.13.0-rc4-syzkaller-00012-g9b2ffa6148b1 #0 Not tainted
------------------------------
-kworker/u8:2/35 is trying to lock:
-ffff888033f47a20 (&ctx->wqh){....}-{3:3}, at: eventfd_signal_mask+0x7a/0x1f0 fs/eventfd.c:71
-other info that might help us debug this:
-context-{5:5}
-6 locks held by kworker/u8:2/35:
- #0: ffff88801bb04948 ((wq_completion)iou_exit){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801bb04948 ((wq_completion)iou_exit){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1840 kernel/workqueue.c:3310
- #1: ffffc90000ab7d00 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc90000ab7d00 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1840 kernel/workqueue.c:3310
- #2: ffff888033bee3d8 (&ctx->completion_lock){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
- #2: ffff888033bee3d8 (&ctx->completion_lock){+.+.}-{3:3}, at: io_kill_timeouts+0x3c/0x230 io_uring/timeout.c:670
- #3: ffff888033bee358 (&ctx->timeout_lock){....}-{2:2}, at: io_kill_timeouts+0x4b/0x230 io_uring/timeout.c:671
- #4: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #4: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #4: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: class_rcu_constructor include/linux/rcupdate.h:1161 [inline]
- #4: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: io_req_local_work_add+0xb5/0x5c0 io_uring/io_uring.c:1161
- #5: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #5: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #5: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: io_eventfd_grab+0xc2/0x6a0 io_uring/eventfd.c:97
-stack backtrace:
-CPU: 0 UID: 0 PID: 35 Comm: kworker/u8:2 Not tainted 6.13.0-rc4-syzkaller-00012-g9b2ffa6148b1 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: iou_exit io_ring_exit_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
- check_wait_context kernel/locking/lockdep.c:4898 [inline]
- __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
- eventfd_signal_mask+0x7a/0x1f0 fs/eventfd.c:71
- __io_eventfd_signal io_uring/eventfd.c:65 [inline]
- io_eventfd_signal+0x96/0x1d0 io_uring/eventfd.c:123
- io_req_local_work_add+0x408/0x5c0 io_uring/io_uring.c:1202
- io_req_task_work_add io_uring/io_uring.h:149 [inline]
- io_req_queue_tw_complete io_uring/io_uring.h:451 [inline]
- io_kill_timeout+0x27b/0x310 io_uring/timeout.c:101
- io_kill_timeouts+0x1b7/0x230 io_uring/timeout.c:676
- io_uring_try_cancel_requests+0x480/0x560 io_uring/io_uring.c:3117
- io_ring_exit_work+0x231/0x8a0 io_uring/io_uring.c:2901
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 

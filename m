@@ -1,165 +1,170 @@
-Return-Path: <io-uring+bounces-5634-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5635-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244CB9FE671
-	for <lists+io-uring@lfdr.de>; Mon, 30 Dec 2024 14:29:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642679FE8EB
+	for <lists+io-uring@lfdr.de>; Mon, 30 Dec 2024 17:09:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D65C5161D85
-	for <lists+io-uring@lfdr.de>; Mon, 30 Dec 2024 13:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302F51881F5D
+	for <lists+io-uring@lfdr.de>; Mon, 30 Dec 2024 16:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C291A8407;
-	Mon, 30 Dec 2024 13:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56A31A0BDB;
+	Mon, 30 Dec 2024 16:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHMHF86i"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UAAWpUUr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WbDYMCTU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UAAWpUUr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WbDYMCTU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5651A840B
-	for <io-uring@vger.kernel.org>; Mon, 30 Dec 2024 13:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C3719DFA2
+	for <io-uring@vger.kernel.org>; Mon, 30 Dec 2024 16:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735565390; cv=none; b=nDZoADNHX/7/emcrlMbo3Be6rvFYDYlxoz1Xj8IxKKTEVjetmFAqoZtB8/x3urGDEm9y8SBqw2urWbLhm0WUPRtFbK/A5U/x1BpOOT58Yjqc7L6MpCE9zgVEucgeBNlmeVShifrY/nb8MiAD9Xae6APAD32fBij5PSqMkSRJrKs=
+	t=1735574943; cv=none; b=QDLr3cyThT/1wu0lOZ04vGaJ0o4QM15mY19LH9pVJXCBiQXJEQBm7xixYYDJqzy+v4i53qtVdkbl1cb6V+YLiI+3V11pGiNOoQ9ysxU7vVz9NToqTXhAB2MgdDGWIE6oND4sYINw48wpJoTWpg3exPKcV+TayLJZKYb75+Etk44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735565390; c=relaxed/simple;
-	bh=IDD18nfOacHH6xthKMwD+JSo1KFKeCmsSiilhvik5R8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j0Z+yIJWAhGGs6KQN3VJAklR0oMZ5ChXQWQ1Ml2oG8F46g4PK0Z46azdAVNg0RPIHyYrHZtDU2EjNRXXQgFznQ3DuTDXIIAGfitoMz6J/Jec8GPgv74MRbAKaqMEqAPpj6zPocXgEQwquhW88TmVKpSX7NxrJJS29/kcYnKBOJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aHMHF86i; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa6b4cc7270so1317955666b.0
-        for <io-uring@vger.kernel.org>; Mon, 30 Dec 2024 05:29:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735565387; x=1736170187; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nyT+dmpD0OjpuzQVnEahu3gllLOIz9gM7y0hDq3JK58=;
-        b=aHMHF86iWi/oc/mZiE0RlmkUqwSzuuwD0Hrg4mXrx176y3EfTxrz4Yuau8dEb2oehB
-         en/fo+jtZkvN0IF+JAOgIzvOblmxSZvUyZD+0MD/ZcPxwu7zV78DA2cIXgeq+WjS8Jlm
-         WfvOx0kYvFXwqCM6s5jojBG6O4NhhBEfhGwk4OJdxSIq7nqglVeSCbAKev/ojwVpJ6a7
-         ugYtX9t1SfSi4wry783r1QHnVOHNdMfKRKZHVKhmpCj8T6F/ZmUR4AOFjxayMIRubDGb
-         XTv7afrSaUQ4Q42SM4vLOzsonzC0gzyZ5pAZT6oy0tJxSoVraKOAccd2hnBwUyAXNkZd
-         qC9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735565387; x=1736170187;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nyT+dmpD0OjpuzQVnEahu3gllLOIz9gM7y0hDq3JK58=;
-        b=Qbm/E8ILrfoc3TwA3Bh8bx8+hklR/59UCpkXoc4hp21m/Hfte2V/W+0y21LLSwnSkH
-         uTH3l0F/c9Bmw1g4qwtPsNAYuygDeojFgMKkVE9RzBQqU55WQ2l/x4tpnqppO2cHoEA1
-         HLP1moxVRrNlbcUK41cCf4d2uM3S3cymHhwUJv6waelvdneQgrO1Na7fgAdVRNSECRTO
-         FASDTtRTQwV1156nk8qh5gSTDWfc15BNyrFOdH8IetgIYoOfCYLsbXn0eMlSz9M39rka
-         Lq3Fihj/z/hpiCKSpoZ+UpA/iHSKiUpTfLkaahPGBsiJvQQGnOTCwsGDuIArYdp22OnH
-         4Taw==
-X-Gm-Message-State: AOJu0YztnIi73ilrQsJz79ger648N+tmih5GV/sCkTKy9vOCUeWbA7uv
-	KVYn1nnD35ebfU5ayNACIf1Q0MtKsKWARbFXoRG6ynPjgyNgGeNuKvHq8A==
-X-Gm-Gg: ASbGncu4JNXbyPT4/ogUL15fkwZsQHrKXWXHML8RjRnJe1RoMR82KjbHTHZjon1BtK2
-	XEdY9Y768jicPZq7/h8PpV5OF07Py03TTYENh1jJXS+Jk0Xjd6sOl/OAeKU6eYASsJXFAZ82ADY
-	iIDNuYuXfKg3QWKpDO52U0kibaLRV7S8ybRFmWDp4kyfj8DlPeuJVkkHp5qiiJcKuUbwdpQAz5m
-	zLk2qTaD8N7TSPvJDm4eQW04qtgoVtF3LGUZ8o+YHv+1JhL0rU/AoEafxmy+fYPxJsDDw==
-X-Google-Smtp-Source: AGHT+IEMoC+fgEDZrp6dJmyI5ozwoogttigIrd2SEoYzMt7Yfx2NSCd9OAH0Camo+Kzhn82C4pFG6Q==
-X-Received: by 2002:a05:6402:35c2:b0:5d0:ea4f:972f with SMTP id 4fb4d7f45d1cf-5d81dd9af30mr73089455a12.8.1735565387302;
-        Mon, 30 Dec 2024 05:29:47 -0800 (PST)
-Received: from 127.0.0.1localhost ([85.255.235.209])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d80679f35csm14694286a12.51.2024.12.30.05.29.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Dec 2024 05:29:46 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: [PATCH 4/4] io_uring/rw: pre-mapped rw attributes
-Date: Mon, 30 Dec 2024 13:30:24 +0000
-Message-ID: <ea95e358ce21fe69200df6a0b1e747b8817a6ec6.1735301337.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <cover.1735301337.git.asml.silence@gmail.com>
-References: <cover.1735301337.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1735574943; c=relaxed/simple;
+	bh=BG9uVi5Lr9LMQtZfAgXGsVh/NUT++6bLjjaA/lGQSSs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NFrZmnf6AwQgxaQgy1dK0x5LFTZV4gjGT7bpz5JQ/MTJZDefaxie5YFqZBcxz8Ory0LxXplaALvf41PbhMaCvzX1bqUSQFKscTKOo52J0uZ4/KKJZOUMpXoHN3E+M0DrW/kTG2nq1aBUYw8Bp+m55CHnHx1qlS28qZWVbrGgTm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UAAWpUUr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WbDYMCTU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UAAWpUUr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WbDYMCTU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8278B1F37C;
+	Mon, 30 Dec 2024 16:08:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1735574939; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vHy45/1or21zW0DsMVwqFJdbtR1DcRnLG09/E2BDmJI=;
+	b=UAAWpUUrEc6CWnlYlbTsIoqBnkWxX45HGv+nSBLn+XR5BGGmeCyOD0XxvXGPumDSTcvTYa
+	KqmT8x6CCvlx4VzaSA2t4dIKM6CyTljVjEFm5QGvRNRn8gK3B0fzekSuoz+3mLAEqduWJX
+	j1ApRpFtYFJQdeHcbhczoInBWzTZ4m8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1735574939;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vHy45/1or21zW0DsMVwqFJdbtR1DcRnLG09/E2BDmJI=;
+	b=WbDYMCTUW2nWcpDMw6CSqxoCa+0UKWltVS6zDLfF2h8/M0VmePdgTWcnhP+3AF8MKwd2PM
+	Lm3NKp+d3UnQa/CQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1735574939; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vHy45/1or21zW0DsMVwqFJdbtR1DcRnLG09/E2BDmJI=;
+	b=UAAWpUUrEc6CWnlYlbTsIoqBnkWxX45HGv+nSBLn+XR5BGGmeCyOD0XxvXGPumDSTcvTYa
+	KqmT8x6CCvlx4VzaSA2t4dIKM6CyTljVjEFm5QGvRNRn8gK3B0fzekSuoz+3mLAEqduWJX
+	j1ApRpFtYFJQdeHcbhczoInBWzTZ4m8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1735574939;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vHy45/1or21zW0DsMVwqFJdbtR1DcRnLG09/E2BDmJI=;
+	b=WbDYMCTUW2nWcpDMw6CSqxoCa+0UKWltVS6zDLfF2h8/M0VmePdgTWcnhP+3AF8MKwd2PM
+	Lm3NKp+d3UnQa/CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A868F13A6C;
+	Mon, 30 Dec 2024 16:08:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FVxRHprFcmdhMQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Mon, 30 Dec 2024 16:08:58 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH] io_uring/rw: always clear ->bytes_done on io_async_rw
+ setup
+In-Reply-To: <1e3d150c-8d0c-42b9-b479-0aa55f0ab86f@kernel.dk> (Jens Axboe's
+	message of "Fri, 27 Dec 2024 09:53:43 -0700")
+References: <1e3d150c-8d0c-42b9-b479-0aa55f0ab86f@kernel.dk>
+Date: Mon, 30 Dec 2024 11:08:56 -0500
+Message-ID: <87wmfh6tlz.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MIME_TRACE(0.00)[0:+]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Instead of copy_from_user()'ing request attributes, allow it to be
-grabbwd from a registered pre-registered parameter region like we do
-with registered wait arguments.
+Jens Axboe <axboe@kernel.dk> writes:
 
-Suggested-by: Anuj Gupta <anuj20.g@samsung.com>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- include/uapi/linux/io_uring.h |  4 +++-
- io_uring/rw.c                 | 19 ++++++++++++++-----
- 2 files changed, 17 insertions(+), 6 deletions(-)
+> A previous commit mistakenly moved the clearing of the in-progress byte
+> count into the section that's dependent on having a cached iovec or not,
+> but it should be cleared for any IO. If not, then extra bytes may be
+> added at IO completion time, causing potentially weird behavior like
+> over-reporting the amount of IO done.
 
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 38f0d6b10eaf..ec6e6fd37d1c 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -112,7 +112,9 @@ struct io_uring_sqe {
- };
- 
- /* sqe->attr_type_mask flags */
--#define IORING_RW_ATTR_FLAG_PI	(1U << 0)
-+#define IORING_RW_ATTR_FLAG_PI		(1UL << 0)
-+#define IORING_RW_ATTR_REGISTERED	(1UL << 63)
-+
- /* PI attribute information */
- struct io_uring_attr_pi {
- 		__u16	flags;
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index dc1acaf95db1..b1db4595788b 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -271,10 +271,17 @@ static int io_prep_rw_pi(struct io_kiocb *req, struct io_rw *rw, int ddir,
- 	size_t pi_len;
- 	int ret;
- 
--	if (copy_from_user(&__pi_attr, u64_to_user_ptr(attr_ptr),
--	    sizeof(pi_attr)))
--		return -EFAULT;
--	pi_attr = &__pi_attr;
-+	if (attr_type_mask & IORING_RW_ATTR_REGISTERED) {
-+		pi_attr = io_args_get_ptr(&req->ctx->sqe_args, attr_ptr,
-+					  sizeof(pi_attr));
-+		if (IS_ERR(pi_attr))
-+			return PTR_ERR(pi_attr);
-+	} else {
-+		if (copy_from_user(&__pi_attr, u64_to_user_ptr(attr_ptr),
-+		    sizeof(pi_attr)))
-+			return -EFAULT;
-+		pi_attr = &__pi_attr;
-+	}
- 
- 	if (pi_attr->rsvd)
- 		return -EINVAL;
-@@ -294,6 +301,8 @@ static int io_prep_rw_pi(struct io_kiocb *req, struct io_rw *rw, int ddir,
- 	return ret;
- }
- 
-+#define IO_RW_ATTR_ALLOWED_MASK (IORING_RW_ATTR_FLAG_PI | IORING_RW_ATTR_REGISTERED)
-+
- static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		      int ddir, bool do_import)
- {
-@@ -332,7 +341,7 @@ static int io_prep_rw(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		u64 attr_ptr;
- 
- 		/* only PI attribute is supported currently */
--		if (attr_type_mask != IORING_RW_ATTR_FLAG_PI)
-+		if (attr_type_mask & IO_RW_ATTR_ALLOWED_MASK)
- 			return -EINVAL;
- 
- 		attr_ptr = READ_ONCE(sqe->attr_ptr);
+Hi Jens,
+
+Sorry for the delay.  I went completely offline during the christmas
+week.
+
+Did this solve the sysbot report?  I'm failing to understand how it can
+happen.  This could only be hit if the allocation returned a cached
+object that doesn't have a free_iov, since any newly kmalloc'ed object
+will have this field cleaned inside the io_rw_async_data_init callback.
+But I don't understand where we can cache the rw object without having a
+valid free_iov - it didn't seem possible to me before or now.
+
+the iov is freed only by io_rw_iovec_free, which is called from
+
+(1) io_rw_recycle, in the case where we don't cache.  we drop also
+drop the CLEANUP flag, so we will just call kfree inside io_clean_op later.
+(2) io_readv_writev_cleanup: where we also don't cache, since we are inside
+    the io_clean_op, we'll just hit the kfree(req->async_data), and
+(3) io_rw_cache_free:  where we are emptying the cache to shut down.
+
+> diff --git a/io_uring/rw.c b/io_uring/rw.c
+> index 75f70935ccf4..ca1b19d3d142 100644
+> --- a/io_uring/rw.c
+> +++ b/io_uring/rw.c
+> @@ -228,8 +228,8 @@ static int io_rw_alloc_async(struct io_kiocb *req)
+>  		kasan_mempool_unpoison_object(rw->free_iovec,
+>  					      rw->free_iov_nr * sizeof(struct iovec));
+>  		req->flags |= REQ_F_NEED_CLEANUP;
+> -		rw->bytes_done = 0;
+>  	}
+> +	rw->bytes_done = 0;
+>  	return 0;
+>  }
+
 -- 
-2.47.1
-
+Gabriel Krisman Bertazi
 

@@ -1,106 +1,276 @@
-Return-Path: <io-uring+bounces-5627-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5628-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F83C9FE04C
-	for <lists+io-uring@lfdr.de>; Sun, 29 Dec 2024 20:42:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AC99FE368
+	for <lists+io-uring@lfdr.de>; Mon, 30 Dec 2024 08:47:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AE9B7A0FBA
-	for <lists+io-uring@lfdr.de>; Sun, 29 Dec 2024 19:42:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57EA188219C
+	for <lists+io-uring@lfdr.de>; Mon, 30 Dec 2024 07:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5059192B95;
-	Sun, 29 Dec 2024 19:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3F019F13B;
+	Mon, 30 Dec 2024 07:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="hWH7DfBA"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="yeNLXiNM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FB82594BC;
-	Sun, 29 Dec 2024 19:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8797C155345;
+	Mon, 30 Dec 2024 07:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735501360; cv=none; b=HRPAF9jj/p+CQOF9J9idFbmrOE5+jOvcundYIIsSNwFw6kBPsCeCBqBKCFzfmE/0Xn8OI2R1o8CEqv08TabYwEEBzYMFEZPqlR+bkwvMy1U6WqrKRioXqT8Vornse9eXJ9YpqyDxYddDHZ+W8vX1Q/P3jl9QFRcVQJjLgGedHz0=
+	t=1735544861; cv=none; b=M0l7+tuOIC2Bc+5plK2b2qIVItfUsCnplajxNDpQD8oIOKfn0uivsGX1uYVGK2sHoHhUJtpA5queAjt5AXPaQROK454QNrSbggzDkupJD9kAWJRCFLDuppuSLEkvsyp0vWi86FocwjymboLBbder1jJD64aORzbg2KfetDpVIDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735501360; c=relaxed/simple;
-	bh=B5Yzr1DlE3ZbPLFmZHpdS43ieOvU/CzRyfoxcJy/wgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=N5WGB3Fla+GtbSGH7vpmzcJxkY+VGAn3/vCp0jGFCknfvm1SI3Hnh/AAgVysYM9Xvmo3QWivoMzNtqm0HTIiMrj5no2Mx4goWe+sdaha0UHJkyTt7/tYXkru2g4o7iXBlzzwRk6Wjzrzgx1ObSBv5fvz+IPhAmn/v2HzN7CSeo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=hWH7DfBA; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fpc (unknown [10.10.165.4])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 23861518E78F;
-	Sun, 29 Dec 2024 19:42:28 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 23861518E78F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1735501348;
-	bh=SPG/YizN2O05q44/je00g9z52uR4tR/e5GEzszjGkDk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=hWH7DfBASDbUxD1oo27LoY3qI0QIyOGu8axT/ftS4tP8Q+7kYuBLNL30PrzdcKSKc
-	 7tqomdl32cJUFyMZT4EHCy+ev3VPN9s43IM5qAKbOV/zS+ehaH5MTbuF+hwcKaJikE
-	 AxBJomFLvWhTtS9O5GMbMuJ8T0kRIg693RO6xiU0=
-Date: Sun, 29 Dec 2024 22:42:17 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jann Horn <jannh@google.com>,
-	syzbot <syzbot+cc36d44ec9f368e443d3@syzkaller.appspotmail.com>,
-	asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [syzbot] [io-uring?] WARNING in __io_uring_free
-Message-ID: <20241229-aa972fa46c7415a89006f784-pchelkin@ispras.ru>
+	s=arc-20240116; t=1735544861; c=relaxed/simple;
+	bh=S4wyVh8bgI+5iwQAypm2B1A1qlCaf8xm+WuEjqqB14w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mm9QhDzLGR4DWnBxapIBX/aWNKEB5n7TsyXLSi0GCFILNDdhFh/FoqFTel0PMSbxPSJWv2A/JNEdbblNlU+X5hN91aqrf1M2pNT6O5h1Fag6DAusFkXHkfno+GASrUNaQ32otRDzS5KZlBgMoKR06Qrrbl0GjAq17bIkWnudHbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=yeNLXiNM; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1735544850; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Q89ZrFao1DqP4ZXjkltYWF7Oqwsz2Y8oiw0M0MX52R4=;
+	b=yeNLXiNMtamFGwcDpgEs2XBUJdNcTDFdiLNL4rHTmG14c8QJaJxihggGOWKPmbqzd3x+I9sDEQl/P+HIKS/ouNaQvdHjuXqj5d9GrUTx2kJMCDe9MgmbVrquzSPE901d9EXR4uvOYQh3qU5dT2KX8QQKCEjmEvZL5RBu5eUn+vo=
+Received: from 30.221.129.25(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WMU8xBE_1735544848 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 30 Dec 2024 15:47:29 +0800
+Message-ID: <9ac0d010-0592-4047-8e59-2db72dfe5111@linux.alibaba.com>
+Date: Mon, 30 Dec 2024 15:47:27 +0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z0kDWtjmlI_LwP5S@casper.infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] virtio-blk: add virtio-blk chardev support.
+To: Ferry Meng <mengferry@linux.alibaba.com>
+Cc: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+ Stefan Hajnoczi <stefanha@redhat.com>, Christoph Hellwig
+ <hch@infradead.org>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+ "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ linux-block <linux-block@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ virtualization@lists.linux.dev
+References: <20241218092435.21671-1-mengferry@linux.alibaba.com>
+ <20241218092435.21671-2-mengferry@linux.alibaba.com>
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20241218092435.21671-2-mengferry@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Matthew Wilcox wrote:
-> On Fri, Nov 29, 2024 at 12:30:35AM +0100, Jann Horn wrote:
-> > > ------------[ cut here ]------------
-> > > WARNING: CPU: 0 PID: 16 at io_uring/tctx.c:51 __io_uring_free+0xfa/0x140 io_uring/tctx.c:51
-> > 
-> > This warning is a check for WARN_ON_ONCE(!xa_empty(&tctx->xa)); and as
-> > Jens pointed out, this was triggered after error injection caused a
-> > memory allocation inside xa_store() to fail.
-> > 
-> > Is there maybe an issue where xa_store() can fail midway through while
-> > allocating memory for the xarray, so that xa_empty() is no longer true
-> > even though there is nothing in the xarray? (And if yes, is that
-> > working as intended?)
+
+
+On 2024/12/18 17:24, Ferry Meng wrote:
+> Introduce character interfaces for block device (per-device), facilitating
+> access to block devices through io_uring I/O passsthrough.
 > 
-> Yes, that's a known possibility.  We have similar problems when people
-> use error injection with mapping->i_pages.  The effort to fix it seems
-> disproportionate to the severity of the problem.
+> Besides, vblk initialize only use kmalloc with GFP_KERNEL flag, but for
+> char device support, we should ensure cdev kobj must be zero before
+> initialize. So better initial this struct with __GFP_ZERO flag.
+> 
+> Now the character devices only named as
+> 
+> 	- /dev/vdXc0
+> 
+> Currently, only one character interface is created for one actual
+> virtblk device, although it has been partitioned.
+> 
+> Signed-off-by: Ferry Meng <mengferry@linux.alibaba.com>
+> ---
+>  drivers/block/virtio_blk.c | 84 +++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 83 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+> index 194417abc105..3487aaa67514 100644
+> --- a/drivers/block/virtio_blk.c
+> +++ b/drivers/block/virtio_blk.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/numa.h>
+>  #include <linux/vmalloc.h>
+>  #include <uapi/linux/virtio_ring.h>
+> +#include <linux/cdev.h>
+>  
+>  #define PART_BITS 4
+>  #define VQ_NAME_LEN 16
+> @@ -25,6 +26,8 @@
+>  /* The maximum number of sg elements that fit into a virtqueue */
+>  #define VIRTIO_BLK_MAX_SG_ELEMS 32768
+>  
+> +#define VIRTBLK_MINORS		(1U << MINORBITS)
+> +
+>  #ifdef CONFIG_ARCH_NO_SG_CHAIN
+>  #define VIRTIO_BLK_INLINE_SG_CNT	0
+>  #else
+> @@ -45,6 +48,10 @@ MODULE_PARM_DESC(poll_queues, "The number of dedicated virtqueues for polling I/
+>  static int major;
+>  static DEFINE_IDA(vd_index_ida);
+>  
+> +static DEFINE_IDA(vd_chr_minor_ida);
+> +static dev_t vd_chr_devt;
+> +static struct class *vd_chr_class;
+> +
+>  static struct workqueue_struct *virtblk_wq;
+>  
+>  struct virtio_blk_vq {
+> @@ -84,6 +91,10 @@ struct virtio_blk {
+>  
+>  	/* For zoned device */
+>  	unsigned int zone_sectors;
+> +
+> +	/* For passthrough cmd */
+> +	struct cdev cdev;
+> +	struct device cdev_device;
+>  };
+>  
+>  struct virtblk_req {
+> @@ -1239,6 +1250,55 @@ static const struct blk_mq_ops virtio_mq_ops = {
+>  	.poll		= virtblk_poll,
+>  };
+>  
+> +static void virtblk_cdev_rel(struct device *dev)
+> +{
+> +	ida_free(&vd_chr_minor_ida, MINOR(dev->devt));
+> +}
+> +
+> +static void virtblk_cdev_del(struct cdev *cdev, struct device *cdev_device)
+> +{
+> +	cdev_device_del(cdev, cdev_device);
+> +	put_device(cdev_device);
+> +}
+> +
+> +static int virtblk_cdev_add(struct virtio_blk *vblk,
+> +		const struct file_operations *fops)
+> +{
+> +	struct cdev *cdev = &vblk->cdev;
+> +	struct device *cdev_device = &vblk->cdev_device;
+> +	int minor, ret;
+> +
+> +	minor = ida_alloc(&vd_chr_minor_ida, GFP_KERNEL);
+> +	if (minor < 0)
+> +		return minor;
+> +
+> +	cdev_device->parent = &vblk->vdev->dev;
+> +	cdev_device->devt = MKDEV(MAJOR(vd_chr_devt), minor);
+> +	cdev_device->class = vd_chr_class;
+> +	cdev_device->release = virtblk_cdev_rel;
+> +	device_initialize(cdev_device);
+> +
+> +	ret = dev_set_name(cdev_device, "%sc0", vblk->disk->disk_name);
+> +	if (ret)
+> +		goto err;
+> +
+> +	cdev_init(cdev, fops);
+> +	ret = cdev_device_add(cdev, cdev_device);
+> +	if (ret) {
+> +		put_device(cdev_device);
+> +		goto err;
 
-Found this discussion while investigating memory leak in radix_tree_insert [1].
-That report has a similar cause - a fault injection in the innards of
-radix_tree (say, xarray) allocating loop, then the absence of release of
-already allocated internal xarray memory afterall.
+put_device() will call cdev_device->release() to free vd_chr_minor_ida.
 
-I wonder whether just the plain usage of xa_destroy() should be considered
-a fix for these kinds of failures. Are there any pitfalls? xa_destroy() is
-claimed to cleanup the internal xarray memory.
+> +	}
+> +	return ret;
+> +
+> +err:
+> +	ida_free(&vd_chr_minor_ida, minor);
+> +	return ret;
+> +}
+> +
+> +static const struct file_operations virtblk_chr_fops = {
+> +	.owner		= THIS_MODULE,
+> +};
+> +
+>  static unsigned int virtblk_queue_depth;
+>  module_param_named(queue_depth, virtblk_queue_depth, uint, 0444);
+>  
+> @@ -1456,7 +1516,7 @@ static int virtblk_probe(struct virtio_device *vdev)
+>  		goto out;
+>  	index = err;
+>  
+> -	vdev->priv = vblk = kmalloc(sizeof(*vblk), GFP_KERNEL);
+> +	vdev->priv = vblk = kzalloc(sizeof(*vblk), GFP_KERNEL);
+>  	if (!vblk) {
+>  		err = -ENOMEM;
+>  		goto out_free_index;
+> @@ -1544,6 +1604,10 @@ static int virtblk_probe(struct virtio_device *vdev)
+>  	if (err)
+>  		goto out_cleanup_disk;
+>  
+> +	err = virtblk_cdev_add(vblk, &virtblk_chr_fops);
+> +	if (err)
+> +		goto out_cleanup_disk;
 
-Judging by ca6484cd308a ("io_uring: no need to call xa_destroy() on empty
-xarray"), seems some pitfalls do exist but still..
+Missing remove the added disk before.
 
-Would be glad to have a look into the previous discussions of this problem
-if they exist - in case I'm raising the questions that were already
-answered. Thanks!
+> +
+>  	return 0;
+>  
+>  out_cleanup_disk:
+> @@ -1568,6 +1632,8 @@ static void virtblk_remove(struct virtio_device *vdev)
+>  	/* Make sure no work handler is accessing the device. */
+>  	flush_work(&vblk->config_work);
+>  
+> +	virtblk_cdev_del(&vblk->cdev, &vblk->cdev_device);
+> +
+>  	del_gendisk(vblk->disk);
+>  	blk_mq_free_tag_set(&vblk->tag_set);
+>  
+> @@ -1674,13 +1740,27 @@ static int __init virtio_blk_init(void)
+>  		goto out_destroy_workqueue;
+>  	}
+>  
+> +	error = alloc_chrdev_region(&vd_chr_devt, 0, VIRTBLK_MINORS,
+> +				"vblk-generic");
+> +	if (error < 0)
+> +		goto unregister_chrdev;
 
-P.S. there is no variant of xa_destroy() for radix tree. I think nobody
-noticed this since it may have an effect only on these types of bugs
-triggered by fault injection. If you think adding it overall makes sense
-then I'd try to prepare a patch.
+Should unregister blkdev.
 
-[1]: https://syzkaller.appspot.com/bug?extid=006987d1be3586e13555
+> +
+> +	vd_chr_class = class_create("vblk-generic");
+> +	if (IS_ERR(vd_chr_class)) {
+> +		error = PTR_ERR(vd_chr_class);
+> +		goto unregister_chrdev;
+> +	}
+> +
+>  	error = register_virtio_driver(&virtio_blk);
+>  	if (error)
+>  		goto out_unregister_blkdev;
+
+You've missed destroying vd_chr_class.
+
+> +
+>  	return 0;
+>  
+>  out_unregister_blkdev:
+>  	unregister_blkdev(major, "virtblk");
+> +unregister_chrdev:
+> +	unregister_chrdev_region(vd_chr_devt, VIRTBLK_MINORS);
+
+The out labels should be re-ordered, e.g. move this up.
+
+>  out_destroy_workqueue:
+>  	destroy_workqueue(virtblk_wq);
+>  	return error;
+> @@ -1690,7 +1770,9 @@ static void __exit virtio_blk_fini(void)
+>  {
+>  	unregister_virtio_driver(&virtio_blk);
+>  	unregister_blkdev(major, "virtblk");
+
+Also missed destroying vd_chr_class.
+
+Thanks,
+Joseph
+
+> +	unregister_chrdev_region(vd_chr_devt, VIRTBLK_MINORS);
+>  	destroy_workqueue(virtblk_wq);
+> +	ida_destroy(&vd_chr_minor_ida);
+>  }
+>  module_init(virtio_blk_init);
+>  module_exit(virtio_blk_fini);
 
 

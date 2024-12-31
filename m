@@ -1,227 +1,150 @@
-Return-Path: <io-uring+bounces-5641-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5642-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D959FEBAA
-	for <lists+io-uring@lfdr.de>; Tue, 31 Dec 2024 00:38:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2BB9FEBC2
+	for <lists+io-uring@lfdr.de>; Tue, 31 Dec 2024 01:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 426E43A1FA4
-	for <lists+io-uring@lfdr.de>; Mon, 30 Dec 2024 23:38:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 554631882A92
+	for <lists+io-uring@lfdr.de>; Tue, 31 Dec 2024 00:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E0F19CD17;
-	Mon, 30 Dec 2024 23:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFC836D;
+	Tue, 31 Dec 2024 00:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="znI0uN0h";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mQp575EL";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wgumitoJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zjL89gwV"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ro+HEflr"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7EF199EB0
-	for <io-uring@vger.kernel.org>; Mon, 30 Dec 2024 23:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD35E163
+	for <io-uring@vger.kernel.org>; Tue, 31 Dec 2024 00:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735601919; cv=none; b=hl6k487k5w/lBeO+fwGjr6KduDAHMaz5e6g4yGTzX7YiJ5tbWyLKzRomW1N+bQPQCVHsO/84OvBwAtwwe+wjomk6IfSUFduPuSVvfe3wPa3kfkOwso6K5REAwjd0BDII1KpbDMHSgjlUBN7DQAAdH2r5cArmdYf++V9184LLpNw=
+	t=1735604000; cv=none; b=kZSYjdUbttecfqJmJTBvmYtsVn8tztsZ0GrSEqFat5p3e2TiufzkuuG4vSXAZJcW/ccl2j1Ntpl51/s/XRFE53HWo3Kewk+sj5LnTm2mZ47BiIx1iwapfWa1l0MNCfakhifmP22OqFOqpJyoIzj4xMcUiZ9GEn/z/ZjUqzh1ejQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735601919; c=relaxed/simple;
-	bh=YafW0xp/BlQ7Cwbq5GMq0BVjocqz2SjYaYQek0ezoBo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FmyvaGwQbU2GKtHMJLYHlEARplt/0DrF3tQS3IXEQh53DP6mpIjIh6H0aEiuLqcjRYZtjZNKn5C4tUHSEJo6lQaaGcF/VhZ6sl6HFbT3DNhG/7khv7WH6zkduofVm2OXeKI77Kz5Uk0iHN/BB+/bk3eFzaVYzc/1mDI2SRYxzls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=znI0uN0h; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mQp575EL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wgumitoJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zjL89gwV; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4AE0F1F37E;
-	Mon, 30 Dec 2024 23:38:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1735601915; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HE502r3E28Qb+k1IZ8mFXwtk4GtlvcLUzTaBNPFkuU0=;
-	b=znI0uN0hoJ232Wy3yaaxGl9gtI4RuIqvwB6RvtL2rkd3vd9zXbpgN/EZihMQdH93WXFNE/
-	V2iaOHab73QteSUpL01/o4xPUr+awtZfDJkOFfkZmJrzymy3gt9xpeXvz0cUUewKFyPMWz
-	qQSX5MExr5L6elQZhwLztwQ3JHlv3As=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1735601915;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HE502r3E28Qb+k1IZ8mFXwtk4GtlvcLUzTaBNPFkuU0=;
-	b=mQp575EL+JkYzYs3JlwQ59PsHlius+bdWGU6Cr2Job0WBOoZYH84YIU9xGqaXRjbOuS506
-	GztlyQH4DUsYTqDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=wgumitoJ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zjL89gwV
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1735601914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HE502r3E28Qb+k1IZ8mFXwtk4GtlvcLUzTaBNPFkuU0=;
-	b=wgumitoJxGPQO9+ANFCgzfQLJ63e0HZhSZDCa/OsDlQBOpPcHkfEIp6b+Mp9Ebohqqa/6h
-	I2u/vcdZXMtUFr0XszZEoeoEImLBe7GgZt5RpUdBHT3iiMKRqodl8rDQhIe8lfqCv8tcRO
-	kzJBiVD6vO1FA31Uhp+r3s8PsZe54v8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1735601914;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HE502r3E28Qb+k1IZ8mFXwtk4GtlvcLUzTaBNPFkuU0=;
-	b=zjL89gwVRNYWLK7truqCPb43LPpA/NoCLo27RAjd+rBqpTNCo2u0qQsA2kMizOczd0mG3b
-	AqIPpklbFKnvLPAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EBAFE13A30;
-	Mon, 30 Dec 2024 23:38:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id haFhLfkuc2fmEAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Mon, 30 Dec 2024 23:38:33 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: axboe@kernel.dk,  io-uring@vger.kernel.org,  josh@joshtriplett.org
-Subject: Re: [PATCH RFC 0/9] Launching processes with io_uring
-In-Reply-To: <1ae79f05-1a07-40aa-acf7-8af98b14b94f@gmail.com> (Pavel
-	Begunkov's message of "Tue, 17 Dec 2024 16:10:39 +0000")
-Organization: SUSE
-References: <20241209234316.4132786-1-krisman@suse.de>
-	<fd219866-b0d3-418b-aee2-f9d1815bfde0@gmail.com>
-	<87wmg3tk7j.fsf@mailhost.krisman.be>
-	<1ae79f05-1a07-40aa-acf7-8af98b14b94f@gmail.com>
-Date: Mon, 30 Dec 2024 18:38:32 -0500
-Message-ID: <87jzbg7nd3.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1735604000; c=relaxed/simple;
+	bh=5oNlkK+CfjG+3LCajdhL1Ar58kBGxyYf1JXr6C2trDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lsz91Nzv5/UN3mTrJNJwYR6Odw7AwaBPPZ4/HI7gATQAapP1AcOvO1R7AuxMwVv9IDmHBtJYA9u7Uq5VQSHpYl+z1z5e2CQrKQNh5XaKcGVSTRo9kF9tQEApGnWDLXavS9y2pawj29UjcWVUmrzZ4IF2Mgi4+lQ6m+Mhm8eQq2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ro+HEflr; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2eeb4d643a5so13142568a91.3
+        for <io-uring@vger.kernel.org>; Mon, 30 Dec 2024 16:13:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1735603996; x=1736208796; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=15ywTqFuRE+m18j9c+tnqw6PnvvvA2E6epIAQ4hw4NI=;
+        b=Ro+HEflrlGrE/rElfKnGjVl0eVZNkxDKeh8mK5ErwmS2DznVcMJunZR44MsS6XE8Lu
+         V93Eht7I/qtzWVb68paQAKxmNzXBKdXxwQaxWa68nFWG5h2paprJNEeq7OxELZfkPHYQ
+         6JiZSzktjac6fpuhle9aAkC9CJ3ZOvCrd/sO8Hgu/WnxCkUM7pOWY3MLEb2ctZrT8U+l
+         X0pWknJZWvHald2NDx3rlEklWtHX/oZDLC2jalwUNWWRVzKIKZcq7m5p8RxNybKQ8UY8
+         0Mfnwsqg6tnPmDlLthKokiFe/3bSPybWNrxy2eGFMIBuXUFywhKN2ME3WfW31AV3bYOm
+         qsSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735603996; x=1736208796;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=15ywTqFuRE+m18j9c+tnqw6PnvvvA2E6epIAQ4hw4NI=;
+        b=m/juvD/HUaWhEjut6jmDbjUhUxNsPpqgmM6Mo7pHopM/wiX84dM6AZ94SWwvxLtzuz
+         DAHBiiBlCmG7Ol2kqgzGIbbDckKIh9D2VnxSSQhEo0Vo1thiWnpFwiwj/JT3SRQki1HZ
+         x1WhUSmjpCwTlWpdAolDOURzCBU67etIVxO3gu9vJQkfukSWmYJZZhZXxD/CHpKskM6V
+         zoy4b6eZkqlA1BKRWrHw1wuQX6MBnQ6cmY/+I6CgcUGtNNKrJqLnS/dqTH8bHUpKPR84
+         uHQFO6qzjmunaF0780JDdh7+30/IMNqcbmx+waN447tt7483FRnWRMhh65jPIJcAI9i8
+         teQQ==
+X-Gm-Message-State: AOJu0Yzm4YHqAO6h2MypOc6xEhqhMnA3pMEAvjbA/2esTPPpRiZThhR3
+	hs4eeDfw/MCGwAEKiQPaYCwg5wmW4olffVgyQr19f5+A0XRnmnwsHX9WvFEtdr6z5/oGhTYCNKY
+	E
+X-Gm-Gg: ASbGncvpaQkac1iu+lLk7iLs0aHq/Rb2I87hYVe/Ug/T+oSBubpS05r964eIk2CDVNc
+	Km2nVi0TmNKCe/vI3KasyUuBYK2ZWrqXOgbTIddtyDYOIa+0NgNVgmI5CVI2anU4rwVmHB1LWWB
+	RucMjIwfBdsEQTOwhTgZKG3AnM06IzjgybWbYXJSqtpRLSDYLwa9sMSlNaSQdUaPNZPJeFBzdIf
+	x7oYgxvbca9O4LV4gj9hlQLTOxT6S7/Qgs3cZEisU7ol6MzqD/zNQ==
+X-Google-Smtp-Source: AGHT+IHkrX3hoNe0Na//goFXM6nbOmX7xQPFfRjB0k6NlTKA8VaYWEN0pBRciuuwt5Vx0kUDUtp55w==
+X-Received: by 2002:a17:90b:524b:b0:2ee:9d49:3ae6 with SMTP id 98e67ed59e1d1-2f452e1d12fmr55616766a91.10.1735603996111;
+        Mon, 30 Dec 2024 16:13:16 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2ed82d273sm23268342a91.30.2024.12.30.16.13.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Dec 2024 16:13:15 -0800 (PST)
+Message-ID: <7b9f9a66-4ebb-4f01-9226-b1002e7b0ddf@kernel.dk>
+Date: Mon, 30 Dec 2024 17:13:14 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 4AE0F1F37E
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	HAS_ORG_HEADER(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,mailhost.krisman.be:mid]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/rw: always clear ->bytes_done on io_async_rw
+ setup
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: io-uring <io-uring@vger.kernel.org>
+References: <1e3d150c-8d0c-42b9-b479-0aa55f0ab86f@kernel.dk>
+ <87wmfh6tlz.fsf@mailhost.krisman.be>
+ <394c611c-4089-4137-b690-939bf544e6a8@kernel.dk>
+ <87seq47p0o.fsf@mailhost.krisman.be>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <87seq47p0o.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Pavel Begunkov <asml.silence@gmail.com> writes:
+On 12/30/24 4:02 PM, Gabriel Krisman Bertazi wrote:
+> Jens Axboe <axboe@kernel.dk> writes:
+> 
+>> On 12/30/24 9:08 AM, Gabriel Krisman Bertazi wrote:
+>>> Jens Axboe <axboe@kernel.dk> writes:
+>>>
+>>>> A previous commit mistakenly moved the clearing of the in-progress byte
+>>>> count into the section that's dependent on having a cached iovec or not,
+>>>> but it should be cleared for any IO. If not, then extra bytes may be
+>>>> added at IO completion time, causing potentially weird behavior like
+>>>> over-reporting the amount of IO done.
+>>>
+>>> Hi Jens,
+>>>
+>>> Sorry for the delay.  I went completely offline during the christmas
+>>> week.
+>>
+>> No worries, sounds like a good plan!
+>>
+>>> Did this solve the sysbot report?  I'm failing to understand how it can
+>>> happen.  This could only be hit if the allocation returned a cached
+>>> object that doesn't have a free_iov, since any newly kmalloc'ed object
+>>> will have this field cleaned inside the io_rw_async_data_init callback.
+>>> But I don't understand where we can cache the rw object without having a
+>>> valid free_iov - it didn't seem possible to me before or now.
+>>
+>> Not sure I follow - you may never have a valid free_iov, it completely
+>> depends on whether or not the existing rw user needed to allocate an iov
+>> or not.
+> 
+>> Hence it's indeed possible that there's a free_iov and the user
+>> doesn't need or use it, or the opposite of there not being one and the
+>> user then allocating one that persists.
+>>
+>> In any case, it's of course orthogonal to the issue here, which is that
+>> ->bytes_done must _always_ be initialized, it has no dependency on a
+>> free_iovec or not. Whenever someone gets an 'rw', it should be pristine
+>> in that sense.
+> 
+> I see. In addition, I was actually confusing rw->free_iov_nr with
+> rw->bytes_done when writing my previous message.  The first needs to
+> have a valid value if ->free_iov is valid. Thanks for the explanation
+> and making me review this code.
 
-Hi Pavel,
+Ah right, yes free_iov_nr would obviously need to be valid if free_iov
+is set.
 
-Sorry for the delay. I took the chance to stay offline for a while on
-the christmas week.
+> The fix looks good to me now, obviously.
 
->> I fully agree this is one of the main problem with the series.  I'm
->> interested in how we can merge this implementation into the existing
->> io_uring paths.  My idea, which I hinted in the cover letter, is to have
->> a flavor of io-wq that executes one linked sequence and then terminates.
->> When a work is queued there, the newly spawned worker thread will live
->> only until the end of that link.  This wq is only used to execute the
->> link following a IORING_OP_CLONE and the user can pass CLONE_ flags to
->> determine how it is created.  This allows the user to create a detached
->> file descriptor table in the worker thread, for instance.
->> It'd allows us to reuse the dispatching infrastructure of io-wq, hide
->> io_uring internals from the OP_CLONE implementation, and
->> enable, if I understand correctly, the workarounds to execute
->> task_works.  We'd need to ensure nothing from the link gets
->> executed outside of this context.
->
-> One problem with io-wq is that it's not guaranteed that it's able to
-> serve all types of requests. Though it's limited to multishots atm,
-> which you might not need, but the situation might change. And there
-> is no guarantee that the request is completed by the time it returns
-> from ->issue(), it might even change hands from inside the callback
-> via task_work or by any other mean.
-
-Multishot is the least of my concerns for this feature, tbh.  I don't
-see how it could be useful in the context of spawning a new thread, so
-in terms of finding sane semantics, we could just reject them at
-submission time if linked from a CLONE.
->
-> It also sounds like you want the cloned task to be a normal
-> io_uring submmiter in terms of infra even though it can't
-> initiate a syscall, which also sounds a bit like an SQPOLL task.
->
-> And do we really need to execute everything from the new task
-> context, or ops can take a task as an argument and run whenever
-> while final exec could be special cased inside the callback?
-
-Wouldn't this be similar to the original design of the io-wq/sqpoll, which
-attempted to impersonate the submitter task and resulted in some issues?
-Executing directly from the new task is much simpler than trying to do the
-operations on the context of another thread.
-
->>> requests be run as normal by the original task, each will take the
->>> half created and not yet launched task as a parameter (in some form),
->>> modify it, and the final exec would launch it?
->> A single operation would be a very complex operation doing many things
->> at once , and much less flexible.  This approach is flexible: you
->> can combine any (in theory) io_uring operation to obtain the desired
->> behavior.
->
-> Ok. And links are not flexible enough for it either. Think of
-> error handling, passing results from one request to another and
-> more complex relations. Unless chains are supposed to be very
-> short and simple, it'd need to be able to return back to user
-> space (the one issuing requests) for error handling.
-
-We are posting the completions to the submitter ring.  If a request
-fails, we kill the context, but the user is notified of what operation
-failed and need to resubmit the entire link with a new spawn.
-
-We could avoid links by letting the spawned task linger, and provide a
-way for the user to submit more operations to be executed by this
-specific context.  The new task exists until an op to kill the worker is
-issued or when the execve command executes.  This would allow the user
-to keep multiple partially initialized contexts around for quick
-userspace thread dispatching.  we could provide a mechanism to clone
-these pre-initialized tasks.
-
-Perhaps it is a stupid idea, but not new - i've seen it discussed
-before: I'm thinking of a workload like a thread scheduler in userspace
-or a network server.  It could keep a partially initialized worker
-thread that never and, when needed, the main task would duplicate it with
-another uring command and make the copy return to userspace, mitigating
-the cost of copying and reinitializing the task.
+Thanks for checking!
 
 -- 
-Gabriel Krisman Bertazi
+Jens Axboe
 

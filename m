@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-5642-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5643-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2BB9FEBC2
-	for <lists+io-uring@lfdr.de>; Tue, 31 Dec 2024 01:13:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659759FEBEA
+	for <lists+io-uring@lfdr.de>; Tue, 31 Dec 2024 01:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 554631882A92
-	for <lists+io-uring@lfdr.de>; Tue, 31 Dec 2024 00:13:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B431161E33
+	for <lists+io-uring@lfdr.de>; Tue, 31 Dec 2024 00:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFC836D;
-	Tue, 31 Dec 2024 00:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6E463B9;
+	Tue, 31 Dec 2024 00:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ro+HEflr"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rmoSpLS9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD35E163
-	for <io-uring@vger.kernel.org>; Tue, 31 Dec 2024 00:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E0F4C7D
+	for <io-uring@vger.kernel.org>; Tue, 31 Dec 2024 00:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735604000; cv=none; b=kZSYjdUbttecfqJmJTBvmYtsVn8tztsZ0GrSEqFat5p3e2TiufzkuuG4vSXAZJcW/ccl2j1Ntpl51/s/XRFE53HWo3Kewk+sj5LnTm2mZ47BiIx1iwapfWa1l0MNCfakhifmP22OqFOqpJyoIzj4xMcUiZ9GEn/z/ZjUqzh1ejQ=
+	t=1735605421; cv=none; b=GSRZYdr1srKuGI9ZWl0mMY3wOiguz5YQQUjpfWDehjsDTLBk/IxLZzj4HqPnhkPw1pLApy8MiaFXo8fy2QOMF8z9ETuJ6gkA9Car/aClH20VHLOhIrIhCLuB7HHEGv91AP19reBus/pD2Psmw7AYb5y7sNa5Ux0oAmB4Ij7LUck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735604000; c=relaxed/simple;
-	bh=5oNlkK+CfjG+3LCajdhL1Ar58kBGxyYf1JXr6C2trDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lsz91Nzv5/UN3mTrJNJwYR6Odw7AwaBPPZ4/HI7gATQAapP1AcOvO1R7AuxMwVv9IDmHBtJYA9u7Uq5VQSHpYl+z1z5e2CQrKQNh5XaKcGVSTRo9kF9tQEApGnWDLXavS9y2pawj29UjcWVUmrzZ4IF2Mgi4+lQ6m+Mhm8eQq2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ro+HEflr; arc=none smtp.client-ip=209.85.216.50
+	s=arc-20240116; t=1735605421; c=relaxed/simple;
+	bh=cyCduOb9ngrKe9+KdZwEeOeCKexwhaUDrW/2RrVhCWk=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=bcY/sxMn2GdIndop+r2D7z2RIWHMk1QCkn1dgxHuYlZqGOecHuzu8W8gRWK7rVRW064qRkTb1IMfUZyfwu7vUZ8J0qYkXpiEK30G4H2ROK2JR0L47ynU+UbvW6HetbmShAbjUvtcWOmRBzx3vo8yNP00kApopRrt6HCD5C782v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rmoSpLS9; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2eeb4d643a5so13142568a91.3
-        for <io-uring@vger.kernel.org>; Mon, 30 Dec 2024 16:13:16 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21631789fcdso95668745ad.1
+        for <io-uring@vger.kernel.org>; Mon, 30 Dec 2024 16:36:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1735603996; x=1736208796; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=15ywTqFuRE+m18j9c+tnqw6PnvvvA2E6epIAQ4hw4NI=;
-        b=Ro+HEflrlGrE/rElfKnGjVl0eVZNkxDKeh8mK5ErwmS2DznVcMJunZR44MsS6XE8Lu
-         V93Eht7I/qtzWVb68paQAKxmNzXBKdXxwQaxWa68nFWG5h2paprJNEeq7OxELZfkPHYQ
-         6JiZSzktjac6fpuhle9aAkC9CJ3ZOvCrd/sO8Hgu/WnxCkUM7pOWY3MLEb2ctZrT8U+l
-         X0pWknJZWvHald2NDx3rlEklWtHX/oZDLC2jalwUNWWRVzKIKZcq7m5p8RxNybKQ8UY8
-         0Mfnwsqg6tnPmDlLthKokiFe/3bSPybWNrxy2eGFMIBuXUFywhKN2ME3WfW31AV3bYOm
-         qsSg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1735605417; x=1736210217; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cbOp4xLCRlIScCU4lvZTyaQmOeBQZsF/0po/FyPlVUo=;
+        b=rmoSpLS9j57LtxpBIhgpe3aqTjC+Sy9WDwjz5X+Uqyoj0zQSqtbFf74wJn2Rl0ICI9
+         5IRYtzj1Zv6IWSXbCq7fmZu0nqamSGCjuXaJGXnLLuei4FrxIZtTeoVFVq0WTm29wwGt
+         EWGqU5i6GVqKwGJHB88TZB9uanmbh4r6SHMsz4Q5+tALo4rSLm1jXCPYHDSBz8JveC4D
+         tr3ji1b2wQ9aHklDiVZ+GFXVdPBBtG6+X2agS36N6YbI+yuzeawkCspUT9VOsgnu1wMt
+         n08I98QkVzhVcQi+IttTzFfj8Km0bpw8qvq7gy1VGQsH0o6dJtICCW547/WTdamg7SqG
+         WMbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735603996; x=1736208796;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=15ywTqFuRE+m18j9c+tnqw6PnvvvA2E6epIAQ4hw4NI=;
-        b=m/juvD/HUaWhEjut6jmDbjUhUxNsPpqgmM6Mo7pHopM/wiX84dM6AZ94SWwvxLtzuz
-         DAHBiiBlCmG7Ol2kqgzGIbbDckKIh9D2VnxSSQhEo0Vo1thiWnpFwiwj/JT3SRQki1HZ
-         x1WhUSmjpCwTlWpdAolDOURzCBU67etIVxO3gu9vJQkfukSWmYJZZhZXxD/CHpKskM6V
-         zoy4b6eZkqlA1BKRWrHw1wuQX6MBnQ6cmY/+I6CgcUGtNNKrJqLnS/dqTH8bHUpKPR84
-         uHQFO6qzjmunaF0780JDdh7+30/IMNqcbmx+waN447tt7483FRnWRMhh65jPIJcAI9i8
-         teQQ==
-X-Gm-Message-State: AOJu0Yzm4YHqAO6h2MypOc6xEhqhMnA3pMEAvjbA/2esTPPpRiZThhR3
-	hs4eeDfw/MCGwAEKiQPaYCwg5wmW4olffVgyQr19f5+A0XRnmnwsHX9WvFEtdr6z5/oGhTYCNKY
-	E
-X-Gm-Gg: ASbGncvpaQkac1iu+lLk7iLs0aHq/Rb2I87hYVe/Ug/T+oSBubpS05r964eIk2CDVNc
-	Km2nVi0TmNKCe/vI3KasyUuBYK2ZWrqXOgbTIddtyDYOIa+0NgNVgmI5CVI2anU4rwVmHB1LWWB
-	RucMjIwfBdsEQTOwhTgZKG3AnM06IzjgybWbYXJSqtpRLSDYLwa9sMSlNaSQdUaPNZPJeFBzdIf
-	x7oYgxvbca9O4LV4gj9hlQLTOxT6S7/Qgs3cZEisU7ol6MzqD/zNQ==
-X-Google-Smtp-Source: AGHT+IHkrX3hoNe0Na//goFXM6nbOmX7xQPFfRjB0k6NlTKA8VaYWEN0pBRciuuwt5Vx0kUDUtp55w==
-X-Received: by 2002:a17:90b:524b:b0:2ee:9d49:3ae6 with SMTP id 98e67ed59e1d1-2f452e1d12fmr55616766a91.10.1735603996111;
-        Mon, 30 Dec 2024 16:13:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1735605417; x=1736210217;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cbOp4xLCRlIScCU4lvZTyaQmOeBQZsF/0po/FyPlVUo=;
+        b=XRC3Lu0atay6oYiJjovpkjnrRcLksnCFZLTmqJBSE00uM00NBfs93cHBJseMMsuQ2m
+         evAXIqeZ3xzlttpDf5e5F2J5ij/RUVkhEnpDuGTqWDi2tTePKF6yGIGfTBLSqG8eC4WF
+         I8Qtfln5rgSNfsccCCobDWDsYHoSXuhf2wvHwvb/dbzBf55QcYuydMMV91FSZaKO87F1
+         0i33mm2lIkSumskD1zFIzeUeIUNFedaoj7mpYjppu2GCdBDk5gTzSso1OXxezrltlErE
+         zXjcrm8rQNbUTrLGzZQk9x5KGkcv1EHpDt2lADRROaaORd92LnxozyUzJiXJ5w+2gVcy
+         XJzQ==
+X-Gm-Message-State: AOJu0Yx2Ptkj7qo6BgX3foXPX3qzAivfGWSOYWOObYvKWSiMVhODZhSO
+	2bkTVoQT3yXSTVwCsL1C/H0Fbj5BHrYI83fGrBIMlhzkCKUa2om0X6MYbmmzASEOxSd6/T+fsvK
+	C
+X-Gm-Gg: ASbGncuurjXcQlPF3G3ORl6nyEadzIS+pdTdBPMtw4ZqSxKNgFvGG3VwGra+WiaTx7c
+	feqDEyUI8atoGN5AAY1SjXLTD65MS7ki3VKytWcX8dDqGWrOGtL1ajzlOpVsMvWVdu3twSWJnhp
+	6woQf3pQOFiuFCb8/bFOLtFVL1RBjtsZS2to6THyEvR23kTI4i4Tc7ikRwzpBCfvOMDl6pKBvCu
+	7VM6hyNqq1aMHJue+sfRRL4uAnBM0vENXqL6zqD8Vihs2/HY570oA==
+X-Google-Smtp-Source: AGHT+IEL6f7ej0rQuqZaeHaYxD5wpDorInVus7EpcoWfo6KPUFvoLuMIV54T6WAv+A3AqEB1GJHJMA==
+X-Received: by 2002:a05:6a00:858b:b0:725:f359:4641 with SMTP id d2e1a72fcca58-72abdab904fmr58263703b3a.1.1735605417332;
+        Mon, 30 Dec 2024 16:36:57 -0800 (PST)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2ed82d273sm23268342a91.30.2024.12.30.16.13.15
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72aad8dbc01sm20413113b3a.125.2024.12.30.16.36.56
+        for <io-uring@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Dec 2024 16:13:15 -0800 (PST)
-Message-ID: <7b9f9a66-4ebb-4f01-9226-b1002e7b0ddf@kernel.dk>
-Date: Mon, 30 Dec 2024 17:13:14 -0700
+        Mon, 30 Dec 2024 16:36:56 -0800 (PST)
+Message-ID: <c1596f5f-405b-4370-997d-f42c8303c58c@kernel.dk>
+Date: Mon, 30 Dec 2024 17:36:55 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,71 +80,61 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rw: always clear ->bytes_done on io_async_rw
- setup
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: io-uring <io-uring@vger.kernel.org>
-References: <1e3d150c-8d0c-42b9-b479-0aa55f0ab86f@kernel.dk>
- <87wmfh6tlz.fsf@mailhost.krisman.be>
- <394c611c-4089-4137-b690-939bf544e6a8@kernel.dk>
- <87seq47p0o.fsf@mailhost.krisman.be>
 Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <87seq47p0o.fsf@mailhost.krisman.be>
+Subject: [PATCH for-next] io_uring: ensure io_queue_deferred() is out-of-line
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/30/24 4:02 PM, Gabriel Krisman Bertazi wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
-> 
->> On 12/30/24 9:08 AM, Gabriel Krisman Bertazi wrote:
->>> Jens Axboe <axboe@kernel.dk> writes:
->>>
->>>> A previous commit mistakenly moved the clearing of the in-progress byte
->>>> count into the section that's dependent on having a cached iovec or not,
->>>> but it should be cleared for any IO. If not, then extra bytes may be
->>>> added at IO completion time, causing potentially weird behavior like
->>>> over-reporting the amount of IO done.
->>>
->>> Hi Jens,
->>>
->>> Sorry for the delay.  I went completely offline during the christmas
->>> week.
->>
->> No worries, sounds like a good plan!
->>
->>> Did this solve the sysbot report?  I'm failing to understand how it can
->>> happen.  This could only be hit if the allocation returned a cached
->>> object that doesn't have a free_iov, since any newly kmalloc'ed object
->>> will have this field cleaned inside the io_rw_async_data_init callback.
->>> But I don't understand where we can cache the rw object without having a
->>> valid free_iov - it didn't seem possible to me before or now.
->>
->> Not sure I follow - you may never have a valid free_iov, it completely
->> depends on whether or not the existing rw user needed to allocate an iov
->> or not.
-> 
->> Hence it's indeed possible that there's a free_iov and the user
->> doesn't need or use it, or the opposite of there not being one and the
->> user then allocating one that persists.
->>
->> In any case, it's of course orthogonal to the issue here, which is that
->> ->bytes_done must _always_ be initialized, it has no dependency on a
->> free_iovec or not. Whenever someone gets an 'rw', it should be pristine
->> in that sense.
-> 
-> I see. In addition, I was actually confusing rw->free_iov_nr with
-> rw->bytes_done when writing my previous message.  The first needs to
-> have a valid value if ->free_iov is valid. Thanks for the explanation
-> and making me review this code.
+This is not the hot path, it's a slow path. Yet the locking for it is
+in the hot path, and __cold does not prevent it from being inlined.
 
-Ah right, yes free_iov_nr would obviously need to be valid if free_iov
-is set.
+Move the locking to the function itself, and mark it noinline as well
+to avoid it polluting the icache of the hot path.
 
-> The fix looks good to me now, obviously.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Thanks for checking!
+---
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 42d4cc5da73b..db198bd435b5 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -550,8 +550,9 @@ void io_req_queue_iowq(struct io_kiocb *req)
+ 	io_req_task_work_add(req);
+ }
+ 
+-static __cold void io_queue_deferred(struct io_ring_ctx *ctx)
++static __cold noinline void io_queue_deferred(struct io_ring_ctx *ctx)
+ {
++	spin_lock(&ctx->completion_lock);
+ 	while (!list_empty(&ctx->defer_list)) {
+ 		struct io_defer_entry *de = list_first_entry(&ctx->defer_list,
+ 						struct io_defer_entry, list);
+@@ -562,6 +563,7 @@ static __cold void io_queue_deferred(struct io_ring_ctx *ctx)
+ 		io_req_task_queue(de->req);
+ 		kfree(de);
+ 	}
++	spin_unlock(&ctx->completion_lock);
+ }
+ 
+ void __io_commit_cqring_flush(struct io_ring_ctx *ctx)
+@@ -570,11 +572,8 @@ void __io_commit_cqring_flush(struct io_ring_ctx *ctx)
+ 		io_poll_wq_wake(ctx);
+ 	if (ctx->off_timeout_used)
+ 		io_flush_timeouts(ctx);
+-	if (ctx->drain_active) {
+-		spin_lock(&ctx->completion_lock);
++	if (ctx->drain_active)
+ 		io_queue_deferred(ctx);
+-		spin_unlock(&ctx->completion_lock);
+-	}
+ 	if (ctx->has_evfd)
+ 		io_eventfd_flush_signal(ctx);
+ }
 
 -- 
 Jens Axboe
+
 

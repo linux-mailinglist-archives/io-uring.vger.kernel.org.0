@@ -1,107 +1,129 @@
-Return-Path: <io-uring+bounces-5648-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5649-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400DB9FF969
-	for <lists+io-uring@lfdr.de>; Thu,  2 Jan 2025 13:38:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D9C49FFB26
+	for <lists+io-uring@lfdr.de>; Thu,  2 Jan 2025 16:51:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 109967A1494
-	for <lists+io-uring@lfdr.de>; Thu,  2 Jan 2025 12:38:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4849E18834C9
+	for <lists+io-uring@lfdr.de>; Thu,  2 Jan 2025 15:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2017C1A4E77;
-	Thu,  2 Jan 2025 12:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197051A8419;
+	Thu,  2 Jan 2025 15:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IY8em29k"
 X-Original-To: io-uring@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A142F1A38E3
-	for <io-uring@vger.kernel.org>; Thu,  2 Jan 2025 12:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519471A4F21;
+	Thu,  2 Jan 2025 15:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735821533; cv=none; b=M37EODs5BggL+if+M1XwcuTFO0snx2iQAXhDaj+jwadyfVGfbP6Rr/woJ5QYuGjwMZzwatMeWQrsa23iR6lBZssLmw1JaxwP9zb5yR0KGY8lFiERUqlDtjO9ylfxmTx7m+t2VQCxth9dO96MxrDRKP+kD32CaH1DEOh/W1isetw=
+	t=1735833076; cv=none; b=SZOVcpPVyY0gdeWzyHzUtgF6z4VdNzuDRk6DlsyHElJluX+nPQswwn+mErza6pBij5jtDjuP0ZEM7eyZPE+2+JZ+pY4kpaJsEfyTuoVc6RKKIo71DCAGF6D1I5yTWWxN+kq1d4ao6AR26iYCnQO/98H8hzWqgfnzX95RHiWCVZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735821533; c=relaxed/simple;
-	bh=kBFrtIXZcTkUAgGyqaoYAgt3kNXRJzNPWqgLmHdLWS4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PflWHYMN8XweCpH2VNr/qpA6LPHrAuUjYPImT7luUBgBb5IJTWsh0fBVbKI6H0Rb877/GRj0pwtTjbFR1/HTl12+P8SS7mscjWVmNjIlK9KTsHQBAkcjhQFPAtkQ4W+jblsjZPxKWo8mo6dqxVFhLEirFSSxLYPxQeTqupOFGgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YP5lh13FZzgbGN;
-	Thu,  2 Jan 2025 20:35:44 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
-	by mail.maildlp.com (Postfix) with ESMTPS id E183A140382;
-	Thu,  2 Jan 2025 20:38:46 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 2 Jan 2025 20:38:46 +0800
-Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
- kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Thu, 2 Jan 2025 20:38:46 +0800
-From: lizetao <lizetao1@huawei.com>
-To: Jens Axboe <axboe@kernel.dk>
-CC: io-uring <io-uring@vger.kernel.org>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggZm9yLW5leHRdIGlvX3VyaW5nOiBlbnN1cmUgaW9f?=
- =?utf-8?Q?queue=5Fdeferred()_is_out-of-line?=
-Thread-Topic: [PATCH for-next] io_uring: ensure io_queue_deferred() is
- out-of-line
-Thread-Index: AQHbWxwit1rECkjHTky1CpVJgUVA97MDbx5w
-Date: Thu, 2 Jan 2025 12:38:46 +0000
-Message-ID: <9b1201df8c2d4f8cbe957c57deac2f95@huawei.com>
-References: <c1596f5f-405b-4370-997d-f42c8303c58c@kernel.dk>
-In-Reply-To: <c1596f5f-405b-4370-997d-f42c8303c58c@kernel.dk>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1735833076; c=relaxed/simple;
+	bh=4/6V49JRnDk7qZKEliSb58XJbbuyntCVOMdpEIp0qJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PBDHZTOrxiKptKqd/1VkD16nSn9z8hoHNTXsl5HuMC4TvyI7EqbAVhhwG22/bAt4+AHDkn32PofMHwUtPuPWcwmWS+Cc9Awle7v1ZLRWH5GW0Fy4+wLjYgn+O0TVDbxalnyMYm+u3HUxlZaz/R6J6SmFaE5fF5UOrbMBDqizIiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IY8em29k; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d3d0205bd5so17003564a12.3;
+        Thu, 02 Jan 2025 07:51:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1735833072; x=1736437872; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bx135fJjyjVgK9hkfzgEFuM9fJK7cYqbqkL1EB2ekRs=;
+        b=IY8em29kegm0bhe9p2k4C3eDnGBTXNgSjFrhGdBNSrX0F7ay+C8gbRBnEgnf4/TKqo
+         c4e04dmz8hcv11DQHXCHlO1qPb9rZByd28Mjr0TXxAq2DmKoeuTrdY8KFzTI81OLMx++
+         EembKNP4f3G2kBT9Zc6M2oJkOmkXn0uzmVjUFR2hF9O8IEigDzK3/6VaIC//kyUfPpHF
+         WhTkanVgJ3r5fL6MsbQsJD5yTYFBsCgbS+bVELHsj4DJdaDrgq6ZlbsHPa6vHBihQ9k2
+         Nc9YIwOmDKM22genI6SBQc91XT6Pb7hWvzvpOL2Dw1PoSYNOE2V1UCF5uANabdBYwex8
+         EQHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735833072; x=1736437872;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bx135fJjyjVgK9hkfzgEFuM9fJK7cYqbqkL1EB2ekRs=;
+        b=JZdNWRdFfzo9ejhuSBJ9xXOpjujurbV57jGB2sJwsJi/Ywlc6G7LHD68JAS5uaiWEO
+         RrVDiPT1IdgLA7TbAcJDJ+dFqRNaY35b/O7cQLqFHz8f6ySpp1MpKeIMNSkNMH2wwrGf
+         kfEu1IKujr1NGN6vyJRVq0mQsxysz8XeH80D5yQSHAzbI40ayEcANDb2TJFEoJjg7x6w
+         7KkKSxPrTWuMEHgSJfbZidijJs0CQ6CrDnJfaF+UbbxIFdiwGymfOHYnbLA4fnxyehOx
+         dZQU4Zeii880euUZTBaBmXBYGybcN2UqzTrgwWGX76KfAaoJw9iXzLYf5K/4dDa8C5OH
+         erXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV01V2jC/v7uWf8T/A678uoSMPbmAUJ2e1DbVjFaVemH63slU/8Q3gDT93PdqJJxlVv0Iwwdf4n2w==@vger.kernel.org, AJvYcCX+zfBt6R473nZeKndqMUlRh8AS0eWKmhiKh7qfy41metlGi67s/KlPm0JTUxK0qTGCvlxDnIqf@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlUiXSjOZ+vwmWercQtqdXbCZ7u475NKfdrmndPLy3N2QaPZCG
+	iVMUVJuWMhAX7fhR/Ls3nwrZeDxJxHEMWEPDV132ftpdqbBfD+ZEbNZQVg==
+X-Gm-Gg: ASbGnct59HKCnnINCvkDgG4Z70j91ac5pI2MccDr2TDThAFkphR4LR+s4VgODUtwfez
+	s0oNGzlu+kvlRokFvRGR29OKiikgek18cJIe7M8roZrG7GTJmcK4shmkdfacx+7xgXNaEj2Hs4U
+	EbaVLIbxs9euqw9oop3y4N+hWwo5jC09lYbrtro9NJPckqiialJeXj71Dn3FrBIuudeKy7S+kfs
+	fAXBIte9IqeAxOq6CAoYDWaesRmMaHV3Hp38BycBnIf8oVl5Q4bB0OUqtC4qUJ0ZzJ6
+X-Google-Smtp-Source: AGHT+IE6s5+nnJQCZ8j52PwmLU2wroCxhQ+GNqezbfGCdc1AFnfy7IZR/4BPaH25AIHdNGIBng/oGw==
+X-Received: by 2002:a05:6402:2814:b0:5d0:b7c5:c3fc with SMTP id 4fb4d7f45d1cf-5d81dd5e8e2mr48514016a12.3.1735833072142;
+        Thu, 02 Jan 2025 07:51:12 -0800 (PST)
+Received: from [192.168.42.201] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d80675a3ebsm18435262a12.7.2025.01.02.07.51.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Jan 2025 07:51:11 -0800 (PST)
+Message-ID: <c9d83a4a-8942-49dd-aaf8-962770f820f7@gmail.com>
+Date: Thu, 2 Jan 2025 15:52:06 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 03/20] net: generalise net_iov chunk owners
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
+ netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
+ Mina Almasry <almasrymina@google.com>,
+ Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
+ Pedro Tammela <pctammela@mojatatu.com>
+References: <20241218003748.796939-1-dw@davidwei.uk>
+ <20241218003748.796939-4-dw@davidwei.uk> <20241220141436.65513ff7@kernel.org>
+ <5d308d1b-4c9d-430e-b116-e669bd778b30@gmail.com>
+ <20241220181709.3e48c266@kernel.org>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241220181709.3e48c266@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmVucyBBeGJvZSA8
-YXhib2VAa2VybmVsLmRrPg0KPiBTZW50OiBUdWVzZGF5LCBEZWNlbWJlciAzMSwgMjAyNCA4OjM3
-IEFNDQo+IFRvOiBpby11cmluZyA8aW8tdXJpbmdAdmdlci5rZXJuZWwub3JnPg0KPiBTdWJqZWN0
-OiBbUEFUQ0ggZm9yLW5leHRdIGlvX3VyaW5nOiBlbnN1cmUgaW9fcXVldWVfZGVmZXJyZWQoKSBp
-cyBvdXQtb2YtbGluZQ0KPiANCj4gVGhpcyBpcyBub3QgdGhlIGhvdCBwYXRoLCBpdCdzIGEgc2xv
-dyBwYXRoLiBZZXQgdGhlIGxvY2tpbmcgZm9yIGl0IGlzIGluIHRoZSBob3QgcGF0aCwNCj4gYW5k
-IF9fY29sZCBkb2VzIG5vdCBwcmV2ZW50IGl0IGZyb20gYmVpbmcgaW5saW5lZC4NCj4gDQo+IE1v
-dmUgdGhlIGxvY2tpbmcgdG8gdGhlIGZ1bmN0aW9uIGl0c2VsZiwgYW5kIG1hcmsgaXQgbm9pbmxp
-bmUgYXMgd2VsbCB0byBhdm9pZCBpdA0KPiBwb2xsdXRpbmcgdGhlIGljYWNoZSBvZiB0aGUgaG90
-IHBhdGguDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBKZW5zIEF4Ym9lIDxheGJvZUBrZXJuZWwuZGs+
-DQo+IA0KPiAtLS0NCj4gDQo+IGRpZmYgLS1naXQgYS9pb191cmluZy9pb191cmluZy5jIGIvaW9f
-dXJpbmcvaW9fdXJpbmcuYyBpbmRleA0KPiA0MmQ0Y2M1ZGE3M2IuLmRiMTk4YmQ0MzViNSAxMDA2
-NDQNCj4gLS0tIGEvaW9fdXJpbmcvaW9fdXJpbmcuYw0KPiArKysgYi9pb191cmluZy9pb191cmlu
-Zy5jDQo+IEBAIC01NTAsOCArNTUwLDkgQEAgdm9pZCBpb19yZXFfcXVldWVfaW93cShzdHJ1Y3Qg
-aW9fa2lvY2IgKnJlcSkNCj4gIAlpb19yZXFfdGFza193b3JrX2FkZChyZXEpOw0KPiAgfQ0KPiAN
-Cj4gLXN0YXRpYyBfX2NvbGQgdm9pZCBpb19xdWV1ZV9kZWZlcnJlZChzdHJ1Y3QgaW9fcmluZ19j
-dHggKmN0eCkNCj4gK3N0YXRpYyBfX2NvbGQgbm9pbmxpbmUgdm9pZCBpb19xdWV1ZV9kZWZlcnJl
-ZChzdHJ1Y3QgaW9fcmluZ19jdHggKmN0eCkNCj4gIHsNCj4gKwlzcGluX2xvY2soJmN0eC0+Y29t
-cGxldGlvbl9sb2NrKTsNCkp1c3QgYSBkaWdyZXNzaW9uLCB3aGV0aGVyIHRoZSBpb191cmluZyBz
-dWJzeXN0ZW0gd2VsY29tZXMgc2NvcGUtYmFzZWQgY2xlYW51cCBoZWxwZXJzLCB0aGlzIGlzIHNv
-bWV3aGF0DQpjb250cm92ZXJzaWFsIGluIG90aGVyIHN1Ym1vZHVsZXMuDQo+ICAJd2hpbGUgKCFs
-aXN0X2VtcHR5KCZjdHgtPmRlZmVyX2xpc3QpKSB7DQo+ICAJCXN0cnVjdCBpb19kZWZlcl9lbnRy
-eSAqZGUgPSBsaXN0X2ZpcnN0X2VudHJ5KCZjdHgtPmRlZmVyX2xpc3QsDQo+ICAJCQkJCQlzdHJ1
-Y3QgaW9fZGVmZXJfZW50cnksIGxpc3QpOw0KPiBAQCAtNTYyLDYgKzU2Myw3IEBAIHN0YXRpYyBf
-X2NvbGQgdm9pZCBpb19xdWV1ZV9kZWZlcnJlZChzdHJ1Y3QgaW9fcmluZ19jdHgNCj4gKmN0eCkN
-Cj4gIAkJaW9fcmVxX3Rhc2tfcXVldWUoZGUtPnJlcSk7DQo+ICAJCWtmcmVlKGRlKTsNCj4gIAl9
-DQo+ICsJc3Bpbl91bmxvY2soJmN0eC0+Y29tcGxldGlvbl9sb2NrKTsNCj4gIH0NCj4gDQo+ICB2
-b2lkIF9faW9fY29tbWl0X2NxcmluZ19mbHVzaChzdHJ1Y3QgaW9fcmluZ19jdHggKmN0eCkgQEAg
-LTU3MCwxMSArNTcyLDgNCj4gQEAgdm9pZCBfX2lvX2NvbW1pdF9jcXJpbmdfZmx1c2goc3RydWN0
-IGlvX3JpbmdfY3R4ICpjdHgpDQo+ICAJCWlvX3BvbGxfd3Ffd2FrZShjdHgpOw0KPiAgCWlmIChj
-dHgtPm9mZl90aW1lb3V0X3VzZWQpDQo+ICAJCWlvX2ZsdXNoX3RpbWVvdXRzKGN0eCk7DQo+IC0J
-aWYgKGN0eC0+ZHJhaW5fYWN0aXZlKSB7DQo+IC0JCXNwaW5fbG9jaygmY3R4LT5jb21wbGV0aW9u
-X2xvY2spOw0KPiArCWlmIChjdHgtPmRyYWluX2FjdGl2ZSkNCj4gIAkJaW9fcXVldWVfZGVmZXJy
-ZWQoY3R4KTsNCj4gLQkJc3Bpbl91bmxvY2soJmN0eC0+Y29tcGxldGlvbl9sb2NrKTsNCj4gLQl9
-DQo+ICAJaWYgKGN0eC0+aGFzX2V2ZmQpDQo+ICAJCWlvX2V2ZW50ZmRfZmx1c2hfc2lnbmFsKGN0
-eCk7DQo+ICB9DQo+IA0KPiAtLQ0KPiBKZW5zIEF4Ym9lDQo+IA0KDQpSZXZpZXdlZC1ieTogTGkg
-WmV0YW88bGl6ZXRhbzFAaHVhd2VpLmNvbT4NCg0KLS0tDQpMaSBaZXRhbw0K
+On 12/21/24 02:17, Jakub Kicinski wrote:
+> On Sat, 21 Dec 2024 00:50:37 +0000 Pavel Begunkov wrote:
+>>> Is there a good reason why dma addr is not part of net_iov_area?
+>>> net_iov_area is one chunk of continuous address space.
+>>> Instead of looping over pages in io_zcrx_map_area we could map
+>>> the whole thing in one go.
+>>
+>> It's not physically contiguous. The registration API takes
+>> contig user addresses, but that's not a hard requirement
+>> either.
+> 
+> Okay, I was thrown off by the base_virtual being in the common struct.
+> But it appears you don't use that?
+
+Right, but io_uring can make use of it, it just needs better types,
+which is why I left it there to follow up later.
+  
+> AFAIR for devmem each area is physically contiguous if the region is
+> not it gets split into areas.
+
+Seems so, it's split into areas / chunk owners by following the
+sg list layout.
+
+-- 
+Pavel Begunkov
+
 

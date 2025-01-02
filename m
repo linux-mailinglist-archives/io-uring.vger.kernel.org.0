@@ -1,106 +1,107 @@
-Return-Path: <io-uring+bounces-5647-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5648-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6173C9FF946
-	for <lists+io-uring@lfdr.de>; Thu,  2 Jan 2025 13:15:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400DB9FF969
+	for <lists+io-uring@lfdr.de>; Thu,  2 Jan 2025 13:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0AC3A120D
-	for <lists+io-uring@lfdr.de>; Thu,  2 Jan 2025 12:15:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 109967A1494
+	for <lists+io-uring@lfdr.de>; Thu,  2 Jan 2025 12:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A447192B62;
-	Thu,  2 Jan 2025 12:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2017C1A4E77;
+	Thu,  2 Jan 2025 12:38:53 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAE71AA791
-	for <io-uring@vger.kernel.org>; Thu,  2 Jan 2025 12:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A142F1A38E3
+	for <io-uring@vger.kernel.org>; Thu,  2 Jan 2025 12:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735820105; cv=none; b=tGSpQwifqML6TS2vG4t3FUIhBbGgbSLtH0vYcuoO6MDK/f62N0XhtzX6B2RaCChnj1PQfvTN06HeG4WXjWsUKAdS14pddTvvTSj374Gb7Vht8wCxM8acBvK/B1TfmPqNdijGEZJ/H1mAGEwDt6Fth3M9dxEZRq0wBtk+R+ez5UM=
+	t=1735821533; cv=none; b=M37EODs5BggL+if+M1XwcuTFO0snx2iQAXhDaj+jwadyfVGfbP6Rr/woJ5QYuGjwMZzwatMeWQrsa23iR6lBZssLmw1JaxwP9zb5yR0KGY8lFiERUqlDtjO9ylfxmTx7m+t2VQCxth9dO96MxrDRKP+kD32CaH1DEOh/W1isetw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735820105; c=relaxed/simple;
-	bh=C54pwfuEx7CSMPHpbYxBPrjO+xocElt5qFrT0JyWZdM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MCwqRmZ12GT7dPluLqXhD/MRkn2GEP+HIGAm1FiRuULXxv32wCEa+1D5c6/DJt3pzSYLHCvAXeFZ8MrkP6y5kdpyzE5dpBfeeTHO6+HwyfIbMSlALsJZxFcpiKdXHuG/CnKHG/lgZQRANl1Czm4/7ABtZV8WOz3NuSkDQ9IjSBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a812f562bbso241522215ab.1
-        for <io-uring@vger.kernel.org>; Thu, 02 Jan 2025 04:15:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735820103; x=1736424903;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F5BADL3FQIi6j8hDt22luWH9Cz2dG2Si6xImp0h98Uo=;
-        b=N3Th9ohTr+M0fS6N1PegI+BjTJcwRkImuWVmbLXFlx/q4RtnlW4Mz/p/I0vh5Ro9c9
-         uhyzFNWXqlcj1qRRB3eRvZTxasG48HV9cU5EaGhylh8h1h78L/BIsVSDPXjFlMELyWIJ
-         k/32J3UhIrmceKfEl0aP9dHh4Ot6HZ2JwPYSIp/lk8kQXJK9VcvkcVdM/m8Nikuq/Y63
-         Ny8TB75zYmOomfJ1jpmkWnxxfbSNrNGc0HH5KpBp6aHD4z9EOnO6ltuEZSPYGd2nz8zw
-         J2oNIgOelkqoIXjQDD+hAD4kL/xfdCr74QGRHETrnQM5VJD41z0oAZOWroedsDpgcer2
-         rAHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYZZ6hveREm1levA5pgSb1rcSQ4pIktbBODkuHN0awVQYkNjE/J5nj966vKKEBovecXyPE1N8SkQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp8Kw6hqQRzHTT/tZpbQ44sa7vtE8TMqHaXxlYFNOjt0LXsJ/z
-	pPDRR+O7HtJuyctjozuZuxxmPoPD8rcwWnZomoOSXbEpNBtqbQdCsVFr8/RJItMIIBQ23ld3So8
-	c9S8fZd7541NSYjAoGQCFHcxrh01v021CalZRPuPYrQi+DAQl7vtHC0U=
-X-Google-Smtp-Source: AGHT+IEwWMEMVl1DAt3Rpw7MNelzWofqL7AXxOU2IUua+0OLmcJWpYccYw8WduDUeKpM4YUw+Zdd8VE5w0y929gRrqstq1C9qOgQ
+	s=arc-20240116; t=1735821533; c=relaxed/simple;
+	bh=kBFrtIXZcTkUAgGyqaoYAgt3kNXRJzNPWqgLmHdLWS4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PflWHYMN8XweCpH2VNr/qpA6LPHrAuUjYPImT7luUBgBb5IJTWsh0fBVbKI6H0Rb877/GRj0pwtTjbFR1/HTl12+P8SS7mscjWVmNjIlK9KTsHQBAkcjhQFPAtkQ4W+jblsjZPxKWo8mo6dqxVFhLEirFSSxLYPxQeTqupOFGgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YP5lh13FZzgbGN;
+	Thu,  2 Jan 2025 20:35:44 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
+	by mail.maildlp.com (Postfix) with ESMTPS id E183A140382;
+	Thu,  2 Jan 2025 20:38:46 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 2 Jan 2025 20:38:46 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Thu, 2 Jan 2025 20:38:46 +0800
+From: lizetao <lizetao1@huawei.com>
+To: Jens Axboe <axboe@kernel.dk>
+CC: io-uring <io-uring@vger.kernel.org>
+Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggZm9yLW5leHRdIGlvX3VyaW5nOiBlbnN1cmUgaW9f?=
+ =?utf-8?Q?queue=5Fdeferred()_is_out-of-line?=
+Thread-Topic: [PATCH for-next] io_uring: ensure io_queue_deferred() is
+ out-of-line
+Thread-Index: AQHbWxwit1rECkjHTky1CpVJgUVA97MDbx5w
+Date: Thu, 2 Jan 2025 12:38:46 +0000
+Message-ID: <9b1201df8c2d4f8cbe957c57deac2f95@huawei.com>
+References: <c1596f5f-405b-4370-997d-f42c8303c58c@kernel.dk>
+In-Reply-To: <c1596f5f-405b-4370-997d-f42c8303c58c@kernel.dk>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16c8:b0:3a7:d84c:f2b0 with SMTP id
- e9e14a558f8ab-3c2d277f25cmr459566485ab.8.1735820102866; Thu, 02 Jan 2025
- 04:15:02 -0800 (PST)
-Date: Thu, 02 Jan 2025 04:15:02 -0800
-In-Reply-To: <0000000000006d4e02061b6cbf22@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67768346.050a0220.3a8527.0039.GAE@google.com>
-Subject: Re: [syzbot] [kernel] WARNING: locking bug in sched_core_balance
-From: syzbot <syzbot+14641d8d78cc029add8a@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, bp@alien8.de, 
-	daniel.vetter@ffwll.ch, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, mairacanal@riseup.net, 
-	mcanal@igalia.com, mingo@redhat.com, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
-
-commit 7908632f2927b65f7486ae6b67c24071666ba43f
-Author: Ma=C3=ADra Canal <mcanal@igalia.com>
-Date:   Thu Sep 14 10:19:02 2023 +0000
-
-    Revert "drm/vkms: Fix race-condition between the hrtimer and the atomic=
- commit"
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D111018b05800=
-00
-start commit:   ccb98ccef0e5 Merge tag 'platform-drivers-x86-v6.13-4' of g.=
-.
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D131018b05800=
-00
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D151018b0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1c541fa8af5c9cc=
-7
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D14641d8d78cc029ad=
-d8a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D127f381858000=
-0
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D172306c4580000
-
-Reported-by: syzbot+14641d8d78cc029add8a@syzkaller.appspotmail.com
-Fixes: 7908632f2927 ("Revert "drm/vkms: Fix race-condition between the hrti=
-mer and the atomic commit"")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
-n
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmVucyBBeGJvZSA8
+YXhib2VAa2VybmVsLmRrPg0KPiBTZW50OiBUdWVzZGF5LCBEZWNlbWJlciAzMSwgMjAyNCA4OjM3
+IEFNDQo+IFRvOiBpby11cmluZyA8aW8tdXJpbmdAdmdlci5rZXJuZWwub3JnPg0KPiBTdWJqZWN0
+OiBbUEFUQ0ggZm9yLW5leHRdIGlvX3VyaW5nOiBlbnN1cmUgaW9fcXVldWVfZGVmZXJyZWQoKSBp
+cyBvdXQtb2YtbGluZQ0KPiANCj4gVGhpcyBpcyBub3QgdGhlIGhvdCBwYXRoLCBpdCdzIGEgc2xv
+dyBwYXRoLiBZZXQgdGhlIGxvY2tpbmcgZm9yIGl0IGlzIGluIHRoZSBob3QgcGF0aCwNCj4gYW5k
+IF9fY29sZCBkb2VzIG5vdCBwcmV2ZW50IGl0IGZyb20gYmVpbmcgaW5saW5lZC4NCj4gDQo+IE1v
+dmUgdGhlIGxvY2tpbmcgdG8gdGhlIGZ1bmN0aW9uIGl0c2VsZiwgYW5kIG1hcmsgaXQgbm9pbmxp
+bmUgYXMgd2VsbCB0byBhdm9pZCBpdA0KPiBwb2xsdXRpbmcgdGhlIGljYWNoZSBvZiB0aGUgaG90
+IHBhdGguDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBKZW5zIEF4Ym9lIDxheGJvZUBrZXJuZWwuZGs+
+DQo+IA0KPiAtLS0NCj4gDQo+IGRpZmYgLS1naXQgYS9pb191cmluZy9pb191cmluZy5jIGIvaW9f
+dXJpbmcvaW9fdXJpbmcuYyBpbmRleA0KPiA0MmQ0Y2M1ZGE3M2IuLmRiMTk4YmQ0MzViNSAxMDA2
+NDQNCj4gLS0tIGEvaW9fdXJpbmcvaW9fdXJpbmcuYw0KPiArKysgYi9pb191cmluZy9pb191cmlu
+Zy5jDQo+IEBAIC01NTAsOCArNTUwLDkgQEAgdm9pZCBpb19yZXFfcXVldWVfaW93cShzdHJ1Y3Qg
+aW9fa2lvY2IgKnJlcSkNCj4gIAlpb19yZXFfdGFza193b3JrX2FkZChyZXEpOw0KPiAgfQ0KPiAN
+Cj4gLXN0YXRpYyBfX2NvbGQgdm9pZCBpb19xdWV1ZV9kZWZlcnJlZChzdHJ1Y3QgaW9fcmluZ19j
+dHggKmN0eCkNCj4gK3N0YXRpYyBfX2NvbGQgbm9pbmxpbmUgdm9pZCBpb19xdWV1ZV9kZWZlcnJl
+ZChzdHJ1Y3QgaW9fcmluZ19jdHggKmN0eCkNCj4gIHsNCj4gKwlzcGluX2xvY2soJmN0eC0+Y29t
+cGxldGlvbl9sb2NrKTsNCkp1c3QgYSBkaWdyZXNzaW9uLCB3aGV0aGVyIHRoZSBpb191cmluZyBz
+dWJzeXN0ZW0gd2VsY29tZXMgc2NvcGUtYmFzZWQgY2xlYW51cCBoZWxwZXJzLCB0aGlzIGlzIHNv
+bWV3aGF0DQpjb250cm92ZXJzaWFsIGluIG90aGVyIHN1Ym1vZHVsZXMuDQo+ICAJd2hpbGUgKCFs
+aXN0X2VtcHR5KCZjdHgtPmRlZmVyX2xpc3QpKSB7DQo+ICAJCXN0cnVjdCBpb19kZWZlcl9lbnRy
+eSAqZGUgPSBsaXN0X2ZpcnN0X2VudHJ5KCZjdHgtPmRlZmVyX2xpc3QsDQo+ICAJCQkJCQlzdHJ1
+Y3QgaW9fZGVmZXJfZW50cnksIGxpc3QpOw0KPiBAQCAtNTYyLDYgKzU2Myw3IEBAIHN0YXRpYyBf
+X2NvbGQgdm9pZCBpb19xdWV1ZV9kZWZlcnJlZChzdHJ1Y3QgaW9fcmluZ19jdHgNCj4gKmN0eCkN
+Cj4gIAkJaW9fcmVxX3Rhc2tfcXVldWUoZGUtPnJlcSk7DQo+ICAJCWtmcmVlKGRlKTsNCj4gIAl9
+DQo+ICsJc3Bpbl91bmxvY2soJmN0eC0+Y29tcGxldGlvbl9sb2NrKTsNCj4gIH0NCj4gDQo+ICB2
+b2lkIF9faW9fY29tbWl0X2NxcmluZ19mbHVzaChzdHJ1Y3QgaW9fcmluZ19jdHggKmN0eCkgQEAg
+LTU3MCwxMSArNTcyLDgNCj4gQEAgdm9pZCBfX2lvX2NvbW1pdF9jcXJpbmdfZmx1c2goc3RydWN0
+IGlvX3JpbmdfY3R4ICpjdHgpDQo+ICAJCWlvX3BvbGxfd3Ffd2FrZShjdHgpOw0KPiAgCWlmIChj
+dHgtPm9mZl90aW1lb3V0X3VzZWQpDQo+ICAJCWlvX2ZsdXNoX3RpbWVvdXRzKGN0eCk7DQo+IC0J
+aWYgKGN0eC0+ZHJhaW5fYWN0aXZlKSB7DQo+IC0JCXNwaW5fbG9jaygmY3R4LT5jb21wbGV0aW9u
+X2xvY2spOw0KPiArCWlmIChjdHgtPmRyYWluX2FjdGl2ZSkNCj4gIAkJaW9fcXVldWVfZGVmZXJy
+ZWQoY3R4KTsNCj4gLQkJc3Bpbl91bmxvY2soJmN0eC0+Y29tcGxldGlvbl9sb2NrKTsNCj4gLQl9
+DQo+ICAJaWYgKGN0eC0+aGFzX2V2ZmQpDQo+ICAJCWlvX2V2ZW50ZmRfZmx1c2hfc2lnbmFsKGN0
+eCk7DQo+ICB9DQo+IA0KPiAtLQ0KPiBKZW5zIEF4Ym9lDQo+IA0KDQpSZXZpZXdlZC1ieTogTGkg
+WmV0YW88bGl6ZXRhbzFAaHVhd2VpLmNvbT4NCg0KLS0tDQpMaSBaZXRhbw0K
 

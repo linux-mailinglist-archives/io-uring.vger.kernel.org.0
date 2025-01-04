@@ -1,79 +1,67 @@
-Return-Path: <io-uring+bounces-5668-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5669-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C8BA010F5
-	for <lists+io-uring@lfdr.de>; Sat,  4 Jan 2025 00:24:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659E8A01516
+	for <lists+io-uring@lfdr.de>; Sat,  4 Jan 2025 14:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC94164B4D
-	for <lists+io-uring@lfdr.de>; Fri,  3 Jan 2025 23:23:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2F0D18842FC
+	for <lists+io-uring@lfdr.de>; Sat,  4 Jan 2025 13:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E38D1BEF6C;
-	Fri,  3 Jan 2025 23:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGBFbpko"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF57518D63E;
+	Sat,  4 Jan 2025 13:55:19 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016944A18
-	for <io-uring@vger.kernel.org>; Fri,  3 Jan 2025 23:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAAF2BCF5;
+	Sat,  4 Jan 2025 13:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735946535; cv=none; b=Ye4hrPgo8pxZmfHDAVZB6z9nonBZiXmxWDDLFKZzrFHzd74cdu4betkaqTEzIAMigB2ddUJHFuyrvUVPHdr+CCMRY8nEuvtI0rxYRrZDLZ5VTtByfnULF1Q0BMilxbAnBjiYNUylCtw18FvYiHKdWBjzR48pJexoJ3ZKrLJGrWc=
+	t=1735998919; cv=none; b=k8IygaA7hr8wJm/fwgdncXmUu1+SjvM86oeYb7yKdZVhJi5TzfX4W1LWQIcc9Ccf+Lrr7B6Bi8n8nqy+K5rF7k49avwq8cYwF1pd8aJ+G3ti74TmCB3nHqCzECMGZdCrbIg5Y51vZLCINfdeUaSMSxKioDx45K5qVCgopdWR7Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735946535; c=relaxed/simple;
-	bh=ddM8r3NFZMEundoLop8ZmxlQmYrrXw9nbeJUTtHWSzs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=hgHvFttecMu/wCbofSsiWEehdK2efwhE7lOt1pcIfvMg9ewQBFTsbzwp28JVba1t1p/pEqwTT6MVT29OEahVzU3RWeer8Q8GSTedzUYmzNZ+yBE0o7vAdqXYAN4cUZng+31QbGUhPDh6OR91lyVUQDGuOQNJUOdw9pzAc3GrE7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGBFbpko; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC5BC4CEDD;
-	Fri,  3 Jan 2025 23:22:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735946534;
-	bh=ddM8r3NFZMEundoLop8ZmxlQmYrrXw9nbeJUTtHWSzs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=DGBFbpkoYJbTJiVBNSyTImh3yAzH97RU2lxAZx9drpLrtbCD4lCBC0M4sPo3vl376
-	 mDN10obgDQ39VoPIdG39ZP5fajFh5pjHPrwRtrt30av6lYUHKiNilSs0re9V5CeWCO
-	 yA5u/WnTA+Ib5GJzRua4yDRRLfy/u+eKvnTKmcmAhvAcqAJ59vAwP3rRO2l1D+GPcE
-	 8/pMRgicUa3LygLowoUkL59TVQkFxcI27U3NDiT2ID5b6k0P4OXR6i3wswJiazbtT2
-	 E/xusgyoSUOKguY6YUnCxRcsfgLpQufTj3QjRfL0HMNYzIG+EKv5A75p8IwRww2U1+
-	 FOYvBeD19sAjg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DB5380A974;
-	Fri,  3 Jan 2025 23:22:36 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 6.13-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <af2442f7-b26c-4584-a267-d0ca85580a92@kernel.dk>
-References: <af2442f7-b26c-4584-a267-d0ca85580a92@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <af2442f7-b26c-4584-a267-d0ca85580a92@kernel.dk>
-X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.13-20250103
-X-PR-Tracked-Commit-Id: ed123c948d06688d10f3b10a7bce1d6fbfd1ed07
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a984e234fcdce25a276be882c799e5fda1b32812
-Message-Id: <173594655500.2324745.11842495501403871866.pr-tracker-bot@kernel.org>
-Date: Fri, 03 Jan 2025 23:22:35 +0000
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+	s=arc-20240116; t=1735998919; c=relaxed/simple;
+	bh=IGk95VCEudAv4vDRoF2lx16EXGgTwg5PcB2eBxilmvA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aYx7mndz+ymnERIOsZq9Osr8H4jKeDcRm5sLnLiaN8AeJDQX1A/oA/IRiK0dSK0TnRmVvlUrkywSRPMJy2IsHiF7cdvr0oxGtzmID7BuzLXbJUKUTN6cfgj9qJUd5Oq3bT1MSjhNkzR3t9m7vHjZwvm7XAbhDPpKIxuFioAfcmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 504Dt7qu096100;
+	Sat, 4 Jan 2025 22:55:07 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 504Dt78i096090
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 4 Jan 2025 22:55:07 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <c786e645-7fd6-4f62-9f9c-56e3434f6e58@I-love.SAKURA.ne.jp>
+Date: Sat, 4 Jan 2025 22:55:05 +0900
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] BUG: unable to handle kernel NULL pointer
+ dereference in percpu_ref_put_many
+To: syzbot <syzbot+3dcac84cc1d50f43ed31@syzkaller.appspotmail.com>,
+        asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <6769bf7b.050a0220.226966.0041.GAE@google.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <6769bf7b.050a0220.226966.0041.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav302.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-The pull request you sent on Fri, 3 Jan 2025 13:03:32 -0700:
+#syz dup: general protection fault in account_kernel_stack (3)
 
-> git://git.kernel.dk/linux.git tags/io_uring-6.13-20250103
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a984e234fcdce25a276be882c799e5fda1b32812
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 

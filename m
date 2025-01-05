@@ -1,123 +1,88 @@
-Return-Path: <io-uring+bounces-5676-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5677-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE85A019A5
-	for <lists+io-uring@lfdr.de>; Sun,  5 Jan 2025 14:51:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC66FA019AE
+	for <lists+io-uring@lfdr.de>; Sun,  5 Jan 2025 15:13:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C441625EA
-	for <lists+io-uring@lfdr.de>; Sun,  5 Jan 2025 13:51:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63C673A2FA3
+	for <lists+io-uring@lfdr.de>; Sun,  5 Jan 2025 14:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901B51EA80;
-	Sun,  5 Jan 2025 13:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoXJOVet"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95588155326;
+	Sun,  5 Jan 2025 14:13:06 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6F3849C;
-	Sun,  5 Jan 2025 13:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE34148FF6
+	for <io-uring@vger.kernel.org>; Sun,  5 Jan 2025 14:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736085097; cv=none; b=PXO6Lsq1OMGrTlCWfKybqE+hvpBQcwt1T6EE4hXt94PDc8kX7c/hb8MShaJ5fqOnHJxpxiTPuvOwbLrZZvyo5qaHHNlMJruXpcrzuvWi1ewFWLmVXJCnKZdfJwycsQsfRlTcU3b79suXeBPTuw5SrcSnJqLMMRx5WNIltpENvNw=
+	t=1736086386; cv=none; b=EzTV+W8Ig8wro5bFywFgWyNhNkOap21WjWb2vCqjNU46fU4yd+j1fIgSgAB0NBTsOS+MQ/FHAxfqrZ8dfSHAWW1c4O2wZj5kKhZAwn+29/1ttQvwRZ4IRUzdAjdvdRWmXZSn7EcQ6T4ao5JBdia/6NGgrQNCWYfpXrbNp18xHAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736085097; c=relaxed/simple;
-	bh=i9P42Dosj1G2bxeAy60RZ48HxHacvLji6CnfZjS9MbI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=U7htqkow+/cUktO+fdSPYER8wOJQ6iFfbVZ9Ku1relrT7s5yvD5NPi7nVTbJR9x3vh/BQtudK8xvWqQibemrIXn9hQzVA40N/LbuqpQ2N0l9Tt5Reom21vlqSFvAK7RfdVYODQuWXnpUklM+Pr2C1X6l2GLPo6PKVBRIL138PZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EoXJOVet; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa6c0d1833eso2824644766b.1;
-        Sun, 05 Jan 2025 05:51:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736085094; x=1736689894; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h/Q73UfzbaIcmeWh9jKVJyQ3XNF+VainRugSJxsQ4oE=;
-        b=EoXJOVetGejgM2ZG3c3SDFHBxAM1WZyWBOumn34At7byP08kdGT7X/vKD1u0d933gI
-         01MN8fK2vvYS5n8o+YnPVviRmMapgejxkrab6sdJH5rEaUnhrKAFagu3ndPZs743EsPQ
-         NaNrK3z0Fn5tS6tRUpyWveXS089OISUxg2nEktvAp8UfxemG0oeiD8EoZQYfhTaF99rW
-         2Z29WDQ4fihbsaVx9hNdNvUMNRQKgaDLyoCL1BI06zeTSCwGbl/q+lr3cfDfEyC/jnbV
-         3NCobpjpqD8ONK1lJ1bLHmucjoG0egHrHyXrnK44lcGipjllaX4xLZCbC2QD+8tWnSRn
-         Scjw==
+	s=arc-20240116; t=1736086386; c=relaxed/simple;
+	bh=aRVI0PM1TCZY+aBpxAJ+62P59vvRgZkacfDEhUzEy0M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gdS3FAD1Y3rOXv8jg1198JSWd1QqW7Bom+t2+78SI8pTKJouJF63wQ69q02RHIizgKVgzTLWwznxoPDalzy2DVmGHQakVxFgdnbwvNOrJ5lp5xkHkRiw+/4Z5ApR3pMDMH3QCnqYXDGXU/N0MP+s43oU3/IV7tADv0P/klUyfcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a9d4ea9e0cso133839685ab.0
+        for <io-uring@vger.kernel.org>; Sun, 05 Jan 2025 06:13:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736085094; x=1736689894;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1736086383; x=1736691183;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h/Q73UfzbaIcmeWh9jKVJyQ3XNF+VainRugSJxsQ4oE=;
-        b=meawumq3QBeOiXo9wd5vEjzjES37fp/Da49I5bdbSvrPFcXQ6KoOyc05jJfpLhAE+1
-         GLM7yD905GH4dh+Cx6vMYoob2121k798ahNZ5aGcC48T7XrkS46d8m09DFLk+5IMzlSe
-         tMFrZdVmBG5VNM9/CORi5+wv3TL7Uuq2I3g3xIAT4tqBcDfP6SLii9GlJxahcG9Ifm1m
-         w0mnigWhmhT1z5iB0vqQHOFoSKPUtswU9b1GBYW2lEa8QK4Xm06zPHzmh7TcWjzNBPdo
-         GggAFNut6MUOywvrCQyBU16+2D2p2PIlAXLC+miwfU14ikN1kwIZ+tJ0FJL/KxJMcb8W
-         10qg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5KgmjS4yoBgRn4WQZ0Cb4WpHftgjJVcL8aKfefj2jxvIXyeNGSRzGUzWyIliMtXY6bcwZvzIcDCoPk0SD@vger.kernel.org, AJvYcCW8FUSa9MZzgy6JepwIf8D8NqOZ2gljy/10fI0WKsiPDTBtUpAdUBQzfV6PQJ5K1xjJm7FXfYXEBw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YztR/s//Ec1SDABfWVltoYKL86mXhvm6OUDhnEbknM78ehF3v7s
-	NSQlsyoAlCmgoAkXPHBnnHglj6GZYYi+P8WHGL7g110bCZY3HSL5
-X-Gm-Gg: ASbGncv9pwn52+M0dPyU7g2gfp3gCOfpdo323UIY8GMiTQhRYgv81RL0t/Z8DxNK71l
-	bIhyCkSB7ztB3nZhsvWLYsRLj6hEYv0GkFpNeuDjgfy1fBjcGNfE4N+nI2mIuVeojzrzFwIS4pQ
-	tPT45Qa0H2ZC+pHGjg08PYW5VZHnI75Rxp/zMNQ2/PbO4dczCVNNDRGyOr5JPBdLjBRdEdkg8Qa
-	/8hLWJ4JT9x8rY9nMUxonKCLK14stuFMZunYJ3rCijE/6wRY2pBpVU4N3SkqpzdYYya
-X-Google-Smtp-Source: AGHT+IHvQ4kC7Uf6usvBDCeJVOW2BCJeKTUQWF2ZlkudeXgD7AiZy10a7QLVI4YsYF8YoyTDdr9aKA==
-X-Received: by 2002:a17:906:ef09:b0:aa6:acd6:b30d with SMTP id a640c23a62f3a-aac3355fea1mr4551342266b.48.1736085093690;
-        Sun, 05 Jan 2025 05:51:33 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325::46? ([2620:10d:c092:600::1:6814])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0efe497dsm2131382166b.132.2025.01.05.05.51.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Jan 2025 05:51:33 -0800 (PST)
-Message-ID: <bb2cb6bd-d2ec-4378-bf9d-339571f7c53a@gmail.com>
-Date: Sun, 5 Jan 2025 13:52:29 +0000
+        bh=l3DB2kfv19UOQ2ASZU5/bUQYFRtWSL2cfvxrxetgTnI=;
+        b=G8LPAlXmVFLAmLvnGlZ7ExsBf5aKTJr4w8SWNIoWFlLTiBIgFKIlS2lBR35iCwweLN
+         cQvIJCOG/vYIRqBCOLVJXaKdIPDAc9GgPdtNATND0LwGO7IqJ/FHYmqMjGP3kBq99RKT
+         Y47eaG0dkQ2o7szVvWYgsIXw2Ul0S84XtcsXpqohCvsaKqdyabSuUDFfJE66ZYOrkT4T
+         IBkXDMCmi87QNASQrxFdyH5jQBG2BJtd7hcN7ExRtdEE0iyWMTYIdfsIUfVSI9gnVuz1
+         YzHFAL0f13RSDgXLGD6JxMxlot4HH8SBHXir/+jZEmnQnvfY2CzGcjkpav2tpmhoeMWp
+         VCXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXE9Jloiy28NkLNMb9yRxy3D4eJ4jJQpU6+gG8r37vUoBhNmDsf6n10knTrYMqeDGccUpHwWRq90g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyPAeo1ocRpm6TuMFLfWZn6brlq7SlOkffv1OiH3ZBkk/gJc+D
+	OxlH3Eb934VePhg4Uiu+pPdG9BkOYeaaxvtvG24yAMDW/QooI6SMbgRx4fg0TDo90r55ePLoM9o
+	qbgQrFKlEePefTPogeR+hR5MKmp3aaUKK0YQ5+Al799LTKFZpTPQc2Dg=
+X-Google-Smtp-Source: AGHT+IHxzMjnKXExBQMo37LZAfLa9UGGqoFvwxTlkRXXoCuftgsmlE97ewepOgJj0J0+Qbf4H4BwFNR/PH6YXej0l/nHtWIA/xaq
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+X-Received: by 2002:a05:6e02:1a63:b0:3a8:1195:f1f9 with SMTP id
+ e9e14a558f8ab-3c2d2564124mr539801975ab.6.1736086382906; Sun, 05 Jan 2025
+ 06:13:02 -0800 (PST)
+Date: Sun, 05 Jan 2025 06:13:02 -0800
+In-Reply-To: <bb2cb6bd-d2ec-4378-bf9d-339571f7c53a@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <677a936e.050a0220.3b53b0.005a.GAE@google.com>
 Subject: Re: [syzbot] [io-uring?] WARNING in __io_submit_flush_completions
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: syzbot <syzbot+1bcb75613069ad4957fc@syzkaller.appspotmail.com>,
- axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <6765b448.050a0220.15b956.00d4.GAE@google.com>
- <62983fd8-d5f6-470e-88e2-6f4737bfed79@gmail.com>
-Content-Language: en-US
-In-Reply-To: <62983fd8-d5f6-470e-88e2-6f4737bfed79@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: syzbot <syzbot+1bcb75613069ad4957fc@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/24/24 13:57, Pavel Begunkov wrote:
-> On 12/20/24 18:15, syzbot wrote:
->>
->> HEAD commit:    8faabc041a00 Merge tag 'net-6.13-rc4' of git://git.kernel...
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=13249e0f980000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=c22efbd20f8da769
->> dashboard link: https://syzkaller.appspot.com/bug?extid=1bcb75613069ad4957fc
->> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12172fe8580000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111f92df980000
->>
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/0bdb6cecaf61/disk-8faabc04.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/98b22dfadac0/vmlinux-8faabc04.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/65a511d3ba7f/bzImage-8faabc04.xz
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+1bcb75613069ad4957fc@syzkaller.appspotmail.com
-> 
-> I can't reproduce but it makes sense. It shouldn't be a real
-> problem as it's protected by ->uring_lock
+Hello,
 
-#syz test: https://github.com/isilence/linux.git syz/get-cqe-lockdep
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
--- 
-Pavel Begunkov
+Reported-by: syzbot+1bcb75613069ad4957fc@syzkaller.appspotmail.com
+Tested-by: syzbot+1bcb75613069ad4957fc@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         77c096ca io_uring: silence false positive warnings
+git tree:       https://github.com/isilence/linux.git syz/get-cqe-lockdep
+console output: https://syzkaller.appspot.com/x/log.txt?x=15d86edf980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c078001e66e4a17e
+dashboard link: https://syzkaller.appspot.com/bug?extid=1bcb75613069ad4957fc
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 

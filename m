@@ -1,105 +1,158 @@
-Return-Path: <io-uring+bounces-5681-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5682-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB63A025E7
-	for <lists+io-uring@lfdr.de>; Mon,  6 Jan 2025 13:48:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB85BA027E0
+	for <lists+io-uring@lfdr.de>; Mon,  6 Jan 2025 15:24:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9B5818852F6
-	for <lists+io-uring@lfdr.de>; Mon,  6 Jan 2025 12:48:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 755FF188657F
+	for <lists+io-uring@lfdr.de>; Mon,  6 Jan 2025 14:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E071DC04C;
-	Mon,  6 Jan 2025 12:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9331DE4D3;
+	Mon,  6 Jan 2025 14:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qlh86TYw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wv6kRoLx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cXlrbb5P";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UKvhm9CM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC411DE4E0;
-	Mon,  6 Jan 2025 12:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A61127726;
+	Mon,  6 Jan 2025 14:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736167650; cv=none; b=XJK8CPDSRFT7HGv5zDgaIrHEtS4KqrLDcIIHdw55AsTZI5v7QmZchZxCjmpJxQreqQ93zd4a3/OXnp4X5U8bSzsODLCTuh5k0490J1gUI9JDiuc/7gMWKZvZVycd/z/W6Y6PmovkQqnHQh/BGoKpVGO2fEzhqA6Kf3MoeQHW/74=
+	t=1736173454; cv=none; b=l9eGyJrlys8RrHAef0TQFPsYqW0FzZYKMHW6ONMBvse6p2qKU/e+r3KwuN5PusTraxqC/RgfAvau2/7+IgXrFz28YxLJEQP9nbbEmUeYHa6G/k5p62Ea4WvFMQ0GQPk00YibrcjYI1uu/O0dw4rb1dD25XtFXsGj0TrnS9vdvGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736167650; c=relaxed/simple;
-	bh=omKhY5SHSObfh9cRxI3ADc2s160SuGOoLL1fZzia7m8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bKPp59SJM1xfO3VeXrfei19s4OZkR95an0UfPTQPhGClQKIwcWyB+yR0rp/hEui7mfKuUzz3oYnz/0+h53dlgaBi3LYzxIAd68xc8fCEKBH7iI3pEqBm6wCFinRSq8maEc+5ZweKEBrgtVnBhjQWovtX+4NHJy+pDLkts65KDnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4YRYmj3ghmzRkjr;
-	Mon,  6 Jan 2025 20:45:09 +0800 (CST)
-Received: from kwepemd200011.china.huawei.com (unknown [7.221.188.251])
-	by mail.maildlp.com (Postfix) with ESMTPS id B383718010A;
-	Mon,  6 Jan 2025 20:47:22 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd200011.china.huawei.com (7.221.188.251) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 6 Jan 2025 20:47:22 +0800
-Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
- kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Mon, 6 Jan 2025 20:47:22 +0800
-From: lizetao <lizetao1@huawei.com>
-To: Mark Harmstone <maharmstone@fb.com>, Jens Axboe <axboe@kernel.dk>
-CC: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Subject: RE: [PATCH 2/4] io_uring/cmd: add per-op data to struct
- io_uring_cmd_data
-Thread-Topic: [PATCH 2/4] io_uring/cmd: add per-op data to struct
- io_uring_cmd_data
-Thread-Index: AQHbXfCReYc9ryeva0GJNdEZEtgE0rMJtTwg
-Date: Mon, 6 Jan 2025 12:47:22 +0000
-Message-ID: <974022e6b52a4ae39f10ea4410dd8e25@huawei.com>
+	s=arc-20240116; t=1736173454; c=relaxed/simple;
+	bh=8pcc7gHbFLclrwUL0GrGnMA4ur0kfYCu/aN08ZplDH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XeYff5Sj1Xiq/LzyrxX//ZvAscmvGfq0/IvYkTZmF0w3HRtGJYkTwzPiRuLCdksvdTMWzUWDZyl5E0BLeymrDhIx4A8nd9qIZ3NuaOsb9YfdJpyt4+CvQoB7I7FKgDOOJ1ReKzEXmSQjRzoIALJkFoJ9eswZOyA7GB2jf9QjXzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qlh86TYw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wv6kRoLx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cXlrbb5P; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UKvhm9CM; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1FD2A1F399;
+	Mon,  6 Jan 2025 14:24:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736173451;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oUjlqNFPvyzwOamyHIREUk4JctcwgP8ETMj3R5IQCxo=;
+	b=Qlh86TYwV++ybubc55y+r5ySSqMgmEIqd5o5VOv7bPNcW1/Zx/ec5qtatiG2CFi0aEBahd
+	nkeQzYmpZyosPC2VyImsIfvGSF3qyX+XPVTEOsmAN4yi6e3IOkNGmPoHldrO0bVtiTrrw+
+	V71zDEq2BqVwhaeAajsz4sTMIp1n9AQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736173451;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oUjlqNFPvyzwOamyHIREUk4JctcwgP8ETMj3R5IQCxo=;
+	b=Wv6kRoLx2hI/C9jaOdi+wfhVxpo3SEv2O7602+CVzw9deJ+AD7aKU+We283xBULJEAwMcP
+	pyNe1SGQnEVpRPCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cXlrbb5P;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UKvhm9CM
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1736173450;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oUjlqNFPvyzwOamyHIREUk4JctcwgP8ETMj3R5IQCxo=;
+	b=cXlrbb5PqXST1qK9cjkXtmnRk3RDgfxCYfQrczcIBKgRFibvrB8XcjoIVei87oJgwHNIZZ
+	71NjPT8qSu3kVTBJPlLZGiV6fFb5K6a4SrTJGsIXGzTN7X1TUDAWbix56GyHVsEJDH9JGh
+	2vl7QnasHbc5Q68oJ2qgWHJiDWbs/5M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1736173450;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oUjlqNFPvyzwOamyHIREUk4JctcwgP8ETMj3R5IQCxo=;
+	b=UKvhm9CMIr5zm4Mr80eMLXTwc8CZ95dBKlzVFZFqAXW92MvqOQXlFz4nky0Ygq5d5AJK3a
+	wSCZf7LxXJdcvcCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 05DFF137DA;
+	Mon,  6 Jan 2025 14:24:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ld0wAYrne2cjOQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 06 Jan 2025 14:24:10 +0000
+Date: Mon, 6 Jan 2025 15:24:08 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Mark Harmstone <maharmstone@fb.com>
+Cc: linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] btrfs: fix reading from userspace in
+ btrfs_uring_encoded_read()
+Message-ID: <20250106142408.GX31418@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
 References: <20250103150233.2340306-1-maharmstone@fb.com>
- <20250103150233.2340306-3-maharmstone@fb.com>
-In-Reply-To: <20250103150233.2340306-3-maharmstone@fb.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250103150233.2340306-1-maharmstone@fb.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 1FD2A1F399
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:replyto,twin.jikos.cz:mid];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,twin.jikos.cz:mid,suse.cz:dkim,suse.cz:replyto]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.21
+X-Spam-Flag: NO
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFyayBIYXJtc3Rv
-bmUgPG1haGFybXN0b25lQGZiLmNvbT4NCj4gU2VudDogRnJpZGF5LCBKYW51YXJ5IDMsIDIwMjUg
-MTE6MDIgUE0NCj4gVG86IGxpbnV4LWJ0cmZzQHZnZXIua2VybmVsLm9yZzsgaW8tdXJpbmdAdmdl
-ci5rZXJuZWwub3JnDQo+IENjOiBKZW5zIEF4Ym9lIDxheGJvZUBrZXJuZWwuZGs+DQo+IFN1Ympl
-Y3Q6IFtQQVRDSCAyLzRdIGlvX3VyaW5nL2NtZDogYWRkIHBlci1vcCBkYXRhIHRvIHN0cnVjdA0K
-PiBpb191cmluZ19jbWRfZGF0YQ0KPiANCj4gRnJvbTogSmVucyBBeGJvZSA8YXhib2VAa2VybmVs
-LmRrPg0KPiANCj4gSW4gY2FzZSBhbiBvcCBoYW5kbGVyIGZvciAtPnVyaW5nX2NtZCgpIG5lZWRz
-IHN0YWJsZSBzdG9yYWdlIGZvciB1c2VyIGRhdGEsIGl0DQo+IGNhbiBhbGxvY2F0ZSBpb191cmlu
-Z19jbWRfZGF0YS0+b3BfZGF0YSBhbmQgdXNlIGl0IGZvciB0aGUgZHVyYXRpb24gb2YgdGhlDQo+
-IHJlcXVlc3QuIFdoZW4gdGhlIHJlcXVlc3QgZ2V0cyBjbGVhbmVkIHVwLCB1cmluZ19jbWQgd2ls
-bCBmcmVlIGl0DQo+IGF1dG9tYXRpY2FsbHkuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBKZW5zIEF4
-Ym9lIDxheGJvZUBrZXJuZWwuZGs+DQo+IC0tLQ0KPiAgaW5jbHVkZS9saW51eC9pb191cmluZy9j
-bWQuaCB8ICAxICsNCj4gIGlvX3VyaW5nL3VyaW5nX2NtZC5jICAgICAgICAgfCAxMyArKysrKysr
-KysrKy0tDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
-KC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9pb191cmluZy9jbWQuaCBiL2lu
-Y2x1ZGUvbGludXgvaW9fdXJpbmcvY21kLmggaW5kZXgNCj4gNjFmOTdhMzk4ZTlkLi5hNjVjNzA0
-MzA3OGYgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvaW9fdXJpbmcvY21kLmgNCj4gKysr
-IGIvaW5jbHVkZS9saW51eC9pb191cmluZy9jbWQuaA0KPiBAQCAtMjAsNiArMjAsNyBAQCBzdHJ1
-Y3QgaW9fdXJpbmdfY21kIHsNCj4gDQo+ICBzdHJ1Y3QgaW9fdXJpbmdfY21kX2RhdGEgew0KPiAg
-CXN0cnVjdCBpb191cmluZ19zcWUJc3Flc1syXTsNCj4gKwl2b2lkCQkJKm9wX2RhdGE7DQo+ICB9
-Ow0KPiANCj4gIHN0YXRpYyBpbmxpbmUgY29uc3Qgdm9pZCAqaW9fdXJpbmdfc3FlX2NtZChjb25z
-dCBzdHJ1Y3QgaW9fdXJpbmdfc3FlICpzcWUpIGRpZmYNCj4gLS1naXQgYS9pb191cmluZy91cmlu
-Z19jbWQuYyBiL2lvX3VyaW5nL3VyaW5nX2NtZC5jIGluZGV4DQo+IDYyOWNiNDI2NmRhNi4uY2U3
-NzI2YTA0ODgzIDEwMDY0NA0KPiAtLS0gYS9pb191cmluZy91cmluZ19jbWQuYw0KPiArKysgYi9p
-b191cmluZy91cmluZ19jbWQuYw0KPiBAQCAtMjMsMTIgKzIzLDE2IEBAIHN0YXRpYyBzdHJ1Y3Qg
-aW9fdXJpbmdfY21kX2RhdGENCj4gKmlvX3VyaW5nX2FzeW5jX2dldChzdHJ1Y3QgaW9fa2lvY2Ig
-KnJlcSkNCj4gDQo+ICAJY2FjaGUgPSBpb19hbGxvY19jYWNoZV9nZXQoJmN0eC0+dXJpbmdfY2Fj
-aGUpOw0KPiAgCWlmIChjYWNoZSkgew0KPiArCQljYWNoZS0+b3BfZGF0YSA9IE5VTEw7DQoNCldo
-eSBpcyBvcF9kYXRhIHNldCB0byBOVUxMIGhlcmU/IElmIHlvdSBhcmUgd29ycmllZCBhYm91dCBz
-b21lIG9taXNzaW9ucywgd291bGQgaXQgYmUNCmJldHRlciB0byB1c2UgV0FSTl9PTiB0byBhc3Nl
-cnQgdGhhdCBvcF9kYXRhIGlzIGEgbnVsbCBwb2ludGVyPyBUaGlzIHdpbGwgYWxzbyBtYWtlIGl0
-IGVhc2llcg0KdG8gYW5hbHl6ZSB0aGUgY2F1c2Ugb2YgdGhlIHByb2JsZW0uDQoNCi0tLQ0KTGkg
-WmV0YW8NCg==
+On Fri, Jan 03, 2025 at 03:02:22PM +0000, Mark Harmstone wrote:
+> Version 4 of mine and Jens' patches, to make sure that when our io_uring
+> function gets called a second time, it doesn't accidentally read
+> something from userspace that's gone out of scope or otherwise gotten
+> corrupted.
+> 
+> I sent a version 3 on December 17, but it looks like that got forgotten
+> about over Christmas (unsurprisingly).
+
+V3 lacked the cover letter and it was not obvious if it's urgent fix,
+new devlopemnent or a regular fix. Also it touched code outside of
+btrfs, did not have any acks or word agreement that it would be ok to
+take the fixes via btrfs tree.
 

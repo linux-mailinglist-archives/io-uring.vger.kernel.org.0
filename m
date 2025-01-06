@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-5693-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5694-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01143A03344
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 00:21:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C44A0335A
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 00:35:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA9D2163BDE
-	for <lists+io-uring@lfdr.de>; Mon,  6 Jan 2025 23:21:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11C33A4CBD
+	for <lists+io-uring@lfdr.de>; Mon,  6 Jan 2025 23:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D1D1E1A39;
-	Mon,  6 Jan 2025 23:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252D51E1C3B;
+	Mon,  6 Jan 2025 23:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="Bk+9aD0R"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="rs4gXC1L"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D511D86F2
-	for <io-uring@vger.kernel.org>; Mon,  6 Jan 2025 23:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A881E1A28
+	for <io-uring@vger.kernel.org>; Mon,  6 Jan 2025 23:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736205673; cv=none; b=BNbUIcC+L95m6Mg7ffgyAIqNmqUISD+AiBmWsbuB7QoWVRF4yWWqfv2Zbu9RXPeDR36GjKEkCxEIJvJq1JFpSc1WdLsPV9HgZakoB3Q2qqgJPAw2N/RwkJ4Qi1Y97GqUOzLweWm43nbzfWGu8HU39tO5HbsMOuYvcjGgxOFHOhg=
+	t=1736206494; cv=none; b=KFewi0TKBBV8XYsNAwzSusY0hX6dNJqoXJyZfQhmUQ0u5COD3ADfQ+RGYSOZN53J2aS8LNod7tGUXHhFyUPGBN/TxzQviIWLNNvNWJylp2+E44WqMxXf8j5gYmbl8fZ2n3uRcCnHxv8kQJqcaxj58U6g8RwAI7v8+MGPN0mJo3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736205673; c=relaxed/simple;
-	bh=JQKjqxT/n7Qy/CQq8Z0WY0oy0m5g7hw10SZWyTECRm8=;
+	s=arc-20240116; t=1736206494; c=relaxed/simple;
+	bh=dOQMsCiePOQPkJrNukLB4kFYcv15Dg3+YtzV1IDUT2o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uGBp/9MMG3C99kbf4tokBeQpfiH74nirnnLqvibxEy79qs+IEpXUt4spQ5GNq7hnMX9YKbjg0IauxRQLWzQfkyf31WZ1FvKAiPwrK2q+qZo/s0RP2LfHf2Rxh2I8QlT0A5vm+zu7NVZrHUCEma8Iv7B2esyaI+iwMYUDZRhhdJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=Bk+9aD0R; arc=none smtp.client-ip=209.85.216.54
+	 In-Reply-To:Content-Type; b=QRTSULIDaoK0AZTz0ZuEqzu+MHUeM0285Pq+u+3scFWppmKikirHmAxX1tvXQxzqIzsbLRsqojR2PXStt9+xqYPAPH5M49QPBVR7O04FR+d7TWo/S1Vhe/teehpcinZQOIAipJOapp8KuUka8zP5F0uY8GT8HeEQroWIDEWoN5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=rs4gXC1L; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ee86a1a92dso17373514a91.1
-        for <io-uring@vger.kernel.org>; Mon, 06 Jan 2025 15:21:11 -0800 (PST)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ee50ffcf14so19272948a91.0
+        for <io-uring@vger.kernel.org>; Mon, 06 Jan 2025 15:34:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1736205671; x=1736810471; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1736206492; x=1736811292; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=CK+KGRiXC69ScV4d92KuoSjC2TWRqIuwrLibztHnLfI=;
-        b=Bk+9aD0R9xhsuCO8A0TXnb4gGb7/nta8ziPGYB/6Xt1N7Usss0tkVie/6wSIXJ2pQn
-         8ZQiTrFGrhGum1CtGurF/6DjK0EWJvZknStFyS+ExiWnrvr+3zPPrw+TVhs61obvgZpr
-         6qo2oqTi5f1OuzeP9sLNuPHtwAXdLW+C4eYGvaWGvjzCb1beAOa7yV8ZFXItapba1LJM
-         oaeyJhsYAL4aCpuuRN32e/dqAIj+7mZWDtx8UrOaTTp2CpY1wH/AMC5J1uepy+VTm0Wt
-         IZxYhdeHR2ZmyjcP4wzvm8PkLzQwzFtToJpZVFJVCXiXhyCsDPhkuwyUg2dLTALIUt4p
-         6vZw==
+        bh=aUTiUhcVs4m61lunwDl4byPY1WkO7CyeT91vAkQ/pZM=;
+        b=rs4gXC1Li/FQOkB4DbedlzcIb9HE/buS1Zg0PbgqulnSLv/fIluhgxE5xaJYzZUY8u
+         WDs3MDGpUOKSHuNHVxLCBz/yHNe3GsIoCCpYjcglngVerkvaGoyyOnr6NVUcfaZ2jBDo
+         ChuqiBcL4NFfUs2U+5opWIy83DuVXYLM+8OtCZLf4uGrH/lauzTSaJ7nKwoCx6jBgO/m
+         O+BgyDpP3wqLwghUAJoTHOfYM+iN6XEVVpImLtHCeK0nTfY72NPtsgvmS+xnTsn94U7O
+         OQ9rwPzv+B5pBYgSi9sf6utEBkfpJQg6xylCzrBybbkCYiwW8eX9AdRQ/qzD/GbXMcQo
+         0oQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736205671; x=1736810471;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1736206492; x=1736811292;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CK+KGRiXC69ScV4d92KuoSjC2TWRqIuwrLibztHnLfI=;
-        b=wkxlWyYIEgMlDEUZqokYwkCS3Q3DSyGA6snXvjTtybAaTZxs/L4WH6DDT+Sjtxsp4f
-         2/2uk6mJctVTku2iWEAPilCPhCA1Lb5hBhUnvwz+QlNKQCNWyTPsVsqOaV1eGzRpcbzs
-         1gCz8vJa31oojufWcfmBrwUI3zbgXMcCtBEvC9qcnpwJ7XcG86rIU6qnUggWFCjeLk3q
-         zaws3rPVQDm6Dhxlovplz8bxrThVaNYfFLq/Namqbc31FomfS7sFDjR3s7krnEGLVt68
-         uBSfSMowBQSk6q9gUIkhh1v/k7Z4/j2K3Ggc2K7ffl61AGx+R1EmPxA0dKWkUKwp8YsZ
-         mRjg==
-X-Gm-Message-State: AOJu0Yz6PzoutZoWUnGnheUYMkVSrf786bLbPZVW2D3bWW6R9XRNzFMU
-	fuo8YnCJjF2YQrSPNAF3DCHk+90NPZbWSQcJqY08bG6vWAJksSUy2iN65HR1gEw=
-X-Gm-Gg: ASbGncv3r9hwindExL6Z5I2Ie8MvkqbvrqdmzdSdO4+O+ReHs7l78LndYwNKLBh4yHM
-	9znb0rahPX8oXwaMvSaKOdymFiEpCVqR8oVLGCzMdDGLCZHlLY2vt4tC3B//G06zPgEbh9Ym+Tq
-	td6FkG17MbPIEbmB6WV4MlvuGrHEUkfYD0P5ukaKg234/vlBz2lyplQXa334JLkfv/OrhWSt2W6
-	0G956RHMbCAAGLMkuVq0r4a+0woAPGJtzIwn39UIaOAe5nGBmKxn2jZg6W6vbB1R/Jth4UmXv2M
-	umUdlmEnsek0rpJ16w==
-X-Google-Smtp-Source: AGHT+IFFwFLny6E41cgiMDZVQtQCQ5x0znx47KcvxCwnBUWN3yMzHn1UKFP6zpH1wXzzVtR2QAzkzQ==
-X-Received: by 2002:a05:6a00:2181:b0:729:49a:2db0 with SMTP id d2e1a72fcca58-72abdebf27cmr81858887b3a.25.1736205671089;
-        Mon, 06 Jan 2025 15:21:11 -0800 (PST)
+        bh=aUTiUhcVs4m61lunwDl4byPY1WkO7CyeT91vAkQ/pZM=;
+        b=LjSUuu/OXvt0LDWeDFRr8Ao+o1WIbdl/EKvkLEV/AitDFi5p/jIVdGyNy5mCK9JSCz
+         qUYuVP44HRvrrzHw9djhRTKg8MNECuZulGdiG9RqsKaX1mnL7KYkRpx32MUTov7nmEoE
+         8JPX2zWACRRqRWudANRLHn6sevbeomqobiuo8BAQgURbkV89nK/57KO5BdTAGBOd5SkA
+         HP3u5OQvf6SF9SsPrbttuRNaL8tknlObZRtNL7JMyyvVQ0Xma95Hb3MDlPBSAv2LwmAb
+         hHmLA92cSIQGkI+O0kvSu8KQ5tLkq1VqV4W0wavwuyvCz5SuR5CrTfV838dvwA3ou0tN
+         g9eg==
+X-Gm-Message-State: AOJu0YzuCWQH1SDJiJexKFIeX4qHXaR49a9wHKljrAIAme+XSiWvSaN1
+	RE2/dUs5gYb4QL9q5+Lu9c2zhn7GGVGPmXIme7mN/E46DSvbW1y3yZq9DIVnXNc=
+X-Gm-Gg: ASbGncuHbQ13fSjgT43LF0EIMVtPGnmbMMB1fqysmZnfe4UkO7rQ/PFtGo2EHRD2vm8
+	zS43DPbKcIznNhgkJ1E1slP/e/9xPMO8L3rYYIr7o09IZYLCwdBl6wpkg7VEyh/dr89y62rIDlo
+	2TLUXKOSiojnJknIBA5R9Oq05Nrhs5PWcFof4XvD6GgQ/bTz0y88trP0iXLH5Chj8MhU/Rlsh3n
+	Ck0WnOvfxJMF72KYdehV1EVttlPmGJERIYniMYE62tLA3qKfU31abMxznLpZdIWoeqEwj4B82+B
+	3VagowV59ziIIXIOfQ==
+X-Google-Smtp-Source: AGHT+IFHyZS+a8vYLflU88Kwe+xpc+voo0We9E/F3wAylPGZ4CoE6XiuyVY3nDtSSYxyJkTAiwxbqA==
+X-Received: by 2002:a05:6a00:2445:b0:725:d64c:f122 with SMTP id d2e1a72fcca58-72d1036a99fmr1574276b3a.2.1736206491633;
+        Mon, 06 Jan 2025 15:34:51 -0800 (PST)
 Received: from ?IPV6:2a03:83e0:1256:1:80c:c984:f4f1:951f? ([2620:10d:c090:500::5:7895])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72aad8dbae4sm32018985b3a.96.2025.01.06.15.21.09
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-842e25951c2sm29273629a12.71.2025.01.06.15.34.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jan 2025 15:21:10 -0800 (PST)
-Message-ID: <66aa384c-9413-4c7a-a148-7b46d7d73414@davidwei.uk>
-Date: Mon, 6 Jan 2025 15:21:08 -0800
+        Mon, 06 Jan 2025 15:34:51 -0800 (PST)
+Message-ID: <0698763f-0a98-4f0b-b287-6e131ef6b99f@davidwei.uk>
+Date: Mon, 6 Jan 2025 15:34:49 -0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,43 +80,110 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 05/20] net: page_pool: add mp op for netlink
- reporting
-To: Jakub Kicinski <kuba@kernel.org>
+Subject: Re: [PATCH net-next v9 06/20] net: page_pool: add a mp hook to
+ unregister_netdevice*
+Content-Language: en-GB
+To: Mina Almasry <almasrymina@google.com>
 Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
  Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
  Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
  Pedro Tammela <pctammela@mojatatu.com>
 References: <20241218003748.796939-1-dw@davidwei.uk>
- <20241218003748.796939-6-dw@davidwei.uk> <20241220141611.6d95a37c@kernel.org>
-Content-Language: en-GB
+ <20241218003748.796939-7-dw@davidwei.uk>
+ <CAHS8izOg0V5kGq8gsGLC=6t+1VWfk1we_R9gecC+WbOJAdeXgw@mail.gmail.com>
 From: David Wei <dw@davidwei.uk>
-In-Reply-To: <20241220141611.6d95a37c@kernel.org>
+In-Reply-To: <CAHS8izOg0V5kGq8gsGLC=6t+1VWfk1we_R9gecC+WbOJAdeXgw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024-12-20 14:16, Jakub Kicinski wrote:
-> On Tue, 17 Dec 2024 16:37:31 -0800 David Wei wrote:
+On 2025-01-06 13:44, Mina Almasry wrote:
+> On Tue, Dec 17, 2024 at 4:38 PM David Wei <dw@davidwei.uk> wrote:
+>>
 >> From: Pavel Begunkov <asml.silence@gmail.com>
 >>
->> Add a mandatory memory provider callback that prints information about
->> the provider.
+>> Devmem TCP needs a hook in unregister_netdevice_many_notify() to upkeep
+>> the set tracking queues it's bound to, i.e. ->bound_rxqs. Instead of
+>> devmem sticking directly out of the genetic path, add a mp function.
 >>
 >> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 >> Signed-off-by: David Wei <dw@davidwei.uk>
+>> ---
+>>  include/net/page_pool/types.h |  3 +++
+>>  net/core/dev.c                | 15 ++++++++++++++-
+>>  net/core/devmem.c             | 36 ++++++++++++++++-------------------
+>>  net/core/devmem.h             |  5 -----
+>>  4 files changed, 33 insertions(+), 26 deletions(-)
+>>
+>> diff --git a/include/net/page_pool/types.h b/include/net/page_pool/types.h
+>> index a473ea0c48c4..140fec6857c6 100644
+>> --- a/include/net/page_pool/types.h
+>> +++ b/include/net/page_pool/types.h
+>> @@ -152,12 +152,15 @@ struct page_pool_stats {
+>>   */
+>>  #define PAGE_POOL_FRAG_GROUP_ALIGN     (4 * sizeof(long))
+>>
+>> +struct netdev_rx_queue;
+>> +
+>>  struct memory_provider_ops {
+>>         netmem_ref (*alloc_netmems)(struct page_pool *pool, gfp_t gfp);
+>>         bool (*release_netmem)(struct page_pool *pool, netmem_ref netmem);
+>>         int (*init)(struct page_pool *pool);
+>>         void (*destroy)(struct page_pool *pool);
+>>         int (*nl_report)(const struct page_pool *pool, struct sk_buff *rsp);
+>> +       void (*uninstall)(void *mp_priv, struct netdev_rx_queue *rxq);
 > 
-> Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+> nit: the other params take struct page_pool *pool as input, and find
+> the mp_priv in there if they need, it may be nice for consistency to
+> continue to pass the entire pool to these ops.
 > 
->> diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
->> index 8d31c71bea1a..61212f388bc8 100644
->> --- a/net/core/page_pool_user.c
->> +++ b/net/core/page_pool_user.c
+> AFAIU this is the first added non-mandatory op, right? Please specify
+> it as so, maybe something like:
 > 
-> net/core/page_pool_user.c doesn't have to include devmem.h any more
+> /* optional: called when the memory provider is uninstalled from the
+> netdev_rx_queue due to the interface going down or otherwise. The
+> memory provider may perform whatever cleanup necessary here if it
+> needs to. */
 
-Will remove the include in the next version.
+Sounds good, I'll make the change in the next version.
+
+> 
+>>  };
+>>
+>>  struct pp_memory_provider_params {
+>> diff --git a/net/core/dev.c b/net/core/dev.c
+>> index c7f3dea3e0eb..aa082770ab1c 100644
+>> --- a/net/core/dev.c
+>> +++ b/net/core/dev.c
+>> @@ -11464,6 +11464,19 @@ void unregister_netdevice_queue(struct net_device *dev, struct list_head *head)
+>>  }
+>>  EXPORT_SYMBOL(unregister_netdevice_queue);
+>>
+>> +static void dev_memory_provider_uninstall(struct net_device *dev)
+>> +{
+>> +       unsigned int i;
+>> +
+>> +       for (i = 0; i < dev->real_num_rx_queues; i++) {
+>> +               struct netdev_rx_queue *rxq = &dev->_rx[i];
+>> +               struct pp_memory_provider_params *p = &rxq->mp_params;
+>> +
+>> +               if (p->mp_ops && p->mp_ops->uninstall)
+> 
+> Previous versions of the code checked p->mp_priv to check if the queue
+> is mp enabled or not, I guess you check mp_ops and that is set/cleared
+> along with p->mp_priv. I guess that is fine. It would have been nicer,
+> maybe, to have all the mp stuff behind one pointer/struct. I would
+> dread some code path setting one of mp_[ops|priv] but forgetting to
+> set the other... :shrug:
+
+We can follow up with helpers that do the set/unset/check to make sure
+it is consistent.
+
+> 
+> Anyhow:
+> 
+> Reviewed-by: Mina Almasry <almasrymina@google.com>
+> 
 

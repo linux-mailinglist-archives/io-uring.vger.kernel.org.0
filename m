@@ -1,158 +1,157 @@
-Return-Path: <io-uring+bounces-5682-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5683-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB85BA027E0
-	for <lists+io-uring@lfdr.de>; Mon,  6 Jan 2025 15:24:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1C7A0286C
+	for <lists+io-uring@lfdr.de>; Mon,  6 Jan 2025 15:47:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 755FF188657F
-	for <lists+io-uring@lfdr.de>; Mon,  6 Jan 2025 14:24:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46E6C7A2F78
+	for <lists+io-uring@lfdr.de>; Mon,  6 Jan 2025 14:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9331DE4D3;
-	Mon,  6 Jan 2025 14:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7536C1DE8B9;
+	Mon,  6 Jan 2025 14:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qlh86TYw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wv6kRoLx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cXlrbb5P";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UKvhm9CM"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CIQqeIkc"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A61127726;
-	Mon,  6 Jan 2025 14:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DA81DEFFC
+	for <io-uring@vger.kernel.org>; Mon,  6 Jan 2025 14:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736173454; cv=none; b=l9eGyJrlys8RrHAef0TQFPsYqW0FzZYKMHW6ONMBvse6p2qKU/e+r3KwuN5PusTraxqC/RgfAvau2/7+IgXrFz28YxLJEQP9nbbEmUeYHa6G/k5p62Ea4WvFMQ0GQPk00YibrcjYI1uu/O0dw4rb1dD25XtFXsGj0TrnS9vdvGQ=
+	t=1736174783; cv=none; b=YJLoUojnQ6hriHD6Ari3pwuPgPDW5tSsbwQ/iS5FiXUnnAVsZEfvDDS0PNEtLPqhT9ftGG9KHob3cc+JkqEMtrcm1yMOf7e1Z08fYrEazoifSDn9+VX+SMAGN1gYBc2c706fl4J1CKVMP9F5Zw4us//80ziZdiNenyC2yv7WKtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736173454; c=relaxed/simple;
-	bh=8pcc7gHbFLclrwUL0GrGnMA4ur0kfYCu/aN08ZplDH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XeYff5Sj1Xiq/LzyrxX//ZvAscmvGfq0/IvYkTZmF0w3HRtGJYkTwzPiRuLCdksvdTMWzUWDZyl5E0BLeymrDhIx4A8nd9qIZ3NuaOsb9YfdJpyt4+CvQoB7I7FKgDOOJ1ReKzEXmSQjRzoIALJkFoJ9eswZOyA7GB2jf9QjXzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qlh86TYw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wv6kRoLx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cXlrbb5P; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UKvhm9CM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1FD2A1F399;
-	Mon,  6 Jan 2025 14:24:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736173451;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oUjlqNFPvyzwOamyHIREUk4JctcwgP8ETMj3R5IQCxo=;
-	b=Qlh86TYwV++ybubc55y+r5ySSqMgmEIqd5o5VOv7bPNcW1/Zx/ec5qtatiG2CFi0aEBahd
-	nkeQzYmpZyosPC2VyImsIfvGSF3qyX+XPVTEOsmAN4yi6e3IOkNGmPoHldrO0bVtiTrrw+
-	V71zDEq2BqVwhaeAajsz4sTMIp1n9AQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736173451;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oUjlqNFPvyzwOamyHIREUk4JctcwgP8ETMj3R5IQCxo=;
-	b=Wv6kRoLx2hI/C9jaOdi+wfhVxpo3SEv2O7602+CVzw9deJ+AD7aKU+We283xBULJEAwMcP
-	pyNe1SGQnEVpRPCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cXlrbb5P;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UKvhm9CM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736173450;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oUjlqNFPvyzwOamyHIREUk4JctcwgP8ETMj3R5IQCxo=;
-	b=cXlrbb5PqXST1qK9cjkXtmnRk3RDgfxCYfQrczcIBKgRFibvrB8XcjoIVei87oJgwHNIZZ
-	71NjPT8qSu3kVTBJPlLZGiV6fFb5K6a4SrTJGsIXGzTN7X1TUDAWbix56GyHVsEJDH9JGh
-	2vl7QnasHbc5Q68oJ2qgWHJiDWbs/5M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736173450;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oUjlqNFPvyzwOamyHIREUk4JctcwgP8ETMj3R5IQCxo=;
-	b=UKvhm9CMIr5zm4Mr80eMLXTwc8CZ95dBKlzVFZFqAXW92MvqOQXlFz4nky0Ygq5d5AJK3a
-	wSCZf7LxXJdcvcCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 05DFF137DA;
-	Mon,  6 Jan 2025 14:24:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ld0wAYrne2cjOQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 06 Jan 2025 14:24:10 +0000
-Date: Mon, 6 Jan 2025 15:24:08 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Mark Harmstone <maharmstone@fb.com>
-Cc: linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] btrfs: fix reading from userspace in
- btrfs_uring_encoded_read()
-Message-ID: <20250106142408.GX31418@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250103150233.2340306-1-maharmstone@fb.com>
+	s=arc-20240116; t=1736174783; c=relaxed/simple;
+	bh=fI6q8J3o5JaswHTvLY9YJ3sKyyUvEy2uQ3VI6pQNS9s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lcY4On+ZqTHZ4UrtM2SxGjNfaKtjqS4tb6ko/V4kYtQXobPCA5ZPWrvbLwjVRhm3pXv3akenmyxFaKVHxxx8HqO/MSNtx1bzQRlxZZDtYQL/vIUpW02/EFpVAEaSovRbTMpLohkSbLNbZLKhVmS6+wEaRl5+1o6y9YpaEnbXIbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CIQqeIkc; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-844c9993c56so1217770839f.2
+        for <io-uring@vger.kernel.org>; Mon, 06 Jan 2025 06:46:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736174773; x=1736779573; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WVgilT65vfqrcUMZ0DhwA8Ndt2ESjpsIJjgmGlx8op0=;
+        b=CIQqeIkcF4v/XTOI1dGIrMK5JjnFNewWbu3GgI6wboF0QjrKDwc8cWoE6ZAPffnNSF
+         MwoHOr7B30fJE7D4MKrVwEBZFL8ewkWFNsw3JWo9x2u5oFpi/ZUO2eATMCml27uUVxq0
+         +tanGPoWKdaP1Ij8DoX5cGEFoprrEAc87h9xAENp7J3V7stF/emgbg1ZjhiSUyr16LdI
+         PNNnuPSq4mAuobWtrjiZrVAVqtfkpbyrPn99bLnmUd0ZU5plllsFd2UEHCjCbX6TYTJl
+         L6jkEXalcrAJxO2LAH4MFgp68aCx3xCT/64Vr/q5e9VXMzUkh+sGAFttyQC50YBPXS8H
+         Z5Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736174773; x=1736779573;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WVgilT65vfqrcUMZ0DhwA8Ndt2ESjpsIJjgmGlx8op0=;
+        b=XDFUZXeeZx4+QLTV4IKSSEYm8lDi2KstB1lRgZU4m5R+lmdr03N+I0l3C6FrP7cN1r
+         RsshHifiwNwxryltvjaIAW2ozqis0j++CVuZKY8kH6BWJVHaNt2IFVI4QdnXrmxiMZ5j
+         M2MNa+IpXrZzA/W+nl49auK1Mg6/+MtqxS3fKVEwyL2z/xETgNhMj9lAiuRKOwPgTpWR
+         acCRLZARFhDNPeQdi5qYLRqMUICI6WwUmQpFO71Kshr6RLLBfsUioFn6PyNm2vek05cv
+         lNHCfnXAi5+NGs6wTIXW5qh0DXIYtSsW63DLSFEVCPAf2yD+C7vRJpyNUmC2d+uzIeqa
+         S8UA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzAOHJ8yBJ61B8J51pqsld01BCrfows7reMPkwM8OrgvHMJftMSKrl31KUelYrI+qOP6mFnOdfZg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yylmx8OCqsKVRnX7CQfx7K2ZQMW4nAvE/5GX+ypYdCz64XdqZ2M
+	AJBCr97Ppj9XlZ3D6Glb4j4bhoQOaW1iPyGvGYgBknMYrf/cPoTFTB2a8bYNCsskIomPHPIIStF
+	E
+X-Gm-Gg: ASbGncuouHMx+I37AzLV6y/0HVJj6zkSIOsjiWnUmiyU56MWcDxxlOiGvBt5Twmw87l
+	nTyJgIeXz1WJIb3PNPYjsSlgZfv26ZbsVcqjmftqfXW+qUj67AiAmpVPbg8cehnH2/XELT/YQac
+	+mQyDyfEhuSHtxxvmKvs1uCAYFhEvcM1/fCcOyJLfKuE+/3xzeofYpBhsmK3VVuwy1+vQ1r6VZl
+	jKaSItDaiWaFzV9JxvVgXxB1lY6uziTD4xWLC9IPNFJSA+aOG2o
+X-Google-Smtp-Source: AGHT+IGi8d8jE557Qg+wQsb7isNA0citi6JnuJMLFdV0VvarYPCeZnNnZoK7/w6GlL38PUXiC5uSsA==
+X-Received: by 2002:a92:cda6:0:b0:3a7:8720:9e9f with SMTP id e9e14a558f8ab-3c2d14d1c30mr438784285ab.2.1736174773305;
+        Mon, 06 Jan 2025 06:46:13 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e68c1de6e0sm9494948173.127.2025.01.06.06.46.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Jan 2025 06:46:12 -0800 (PST)
+Message-ID: <01b838d9-485f-47a5-9ee6-f2d79f71ae32@kernel.dk>
+Date: Mon, 6 Jan 2025 07:46:12 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250103150233.2340306-1-maharmstone@fb.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 1FD2A1F399
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:replyto,twin.jikos.cz:mid];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,twin.jikos.cz:mid,suse.cz:dkim,suse.cz:replyto]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] io_uring/cmd: add per-op data to struct
+ io_uring_cmd_data
+To: lizetao <lizetao1@huawei.com>, Mark Harmstone <maharmstone@fb.com>
+Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <20250103150233.2340306-1-maharmstone@fb.com>
+ <20250103150233.2340306-3-maharmstone@fb.com>
+ <974022e6b52a4ae39f10ea4410dd8e25@huawei.com>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <974022e6b52a4ae39f10ea4410dd8e25@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 03, 2025 at 03:02:22PM +0000, Mark Harmstone wrote:
-> Version 4 of mine and Jens' patches, to make sure that when our io_uring
-> function gets called a second time, it doesn't accidentally read
-> something from userspace that's gone out of scope or otherwise gotten
-> corrupted.
+On 1/6/25 5:47 AM, lizetao wrote:
+> Hi,
 > 
-> I sent a version 3 on December 17, but it looks like that got forgotten
-> about over Christmas (unsurprisingly).
+>> -----Original Message-----
+>> From: Mark Harmstone <maharmstone@fb.com>
+>> Sent: Friday, January 3, 2025 11:02 PM
+>> To: linux-btrfs@vger.kernel.org; io-uring@vger.kernel.org
+>> Cc: Jens Axboe <axboe@kernel.dk>
+>> Subject: [PATCH 2/4] io_uring/cmd: add per-op data to struct
+>> io_uring_cmd_data
+>>
+>> From: Jens Axboe <axboe@kernel.dk>
+>>
+>> In case an op handler for ->uring_cmd() needs stable storage for user data, it
+>> can allocate io_uring_cmd_data->op_data and use it for the duration of the
+>> request. When the request gets cleaned up, uring_cmd will free it
+>> automatically.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>  include/linux/io_uring/cmd.h |  1 +
+>>  io_uring/uring_cmd.c         | 13 +++++++++++--
+>>  2 files changed, 12 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h index
+>> 61f97a398e9d..a65c7043078f 100644
+>> --- a/include/linux/io_uring/cmd.h
+>> +++ b/include/linux/io_uring/cmd.h
+>> @@ -20,6 +20,7 @@ struct io_uring_cmd {
+>>
+>>  struct io_uring_cmd_data {
+>>  	struct io_uring_sqe	sqes[2];
+>> +	void			*op_data;
+>>  };
+>>
+>>  static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe) diff
+>> --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c index
+>> 629cb4266da6..ce7726a04883 100644
+>> --- a/io_uring/uring_cmd.c
+>> +++ b/io_uring/uring_cmd.c
+>> @@ -23,12 +23,16 @@ static struct io_uring_cmd_data
+>> *io_uring_async_get(struct io_kiocb *req)
+>>
+>>  	cache = io_alloc_cache_get(&ctx->uring_cache);
+>>  	if (cache) {
+>> +		cache->op_data = NULL;
+> 
+> Why is op_data set to NULL here? If you are worried about some
+> omissions, would it be better to use WARN_ON to assert that op_data is
+> a null pointer? This will also make it easier to analyze the cause of
+> the problem.
 
-V3 lacked the cover letter and it was not obvious if it's urgent fix,
-new devlopemnent or a regular fix. Also it touched code outside of
-btrfs, did not have any acks or word agreement that it would be ok to
-take the fixes via btrfs tree.
+Clearing the per-op data is prudent when allocating getting this struct,
+to avoid previous garbage. The alternative would be clearing it when
+it's freed, either way is fine imho. A WARN_ON would not make sense, as
+it can validly be non-NULL already.
+
+-- 
+Jens Axboe
 

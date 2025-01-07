@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-5718-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5719-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161A3A034FC
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 03:17:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C54E5A0352B
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 03:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4F4316403A
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 02:17:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A479B164498
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 02:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EA58248D;
-	Tue,  7 Jan 2025 02:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228322AE90;
+	Tue,  7 Jan 2025 02:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KzG//src"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="l9SopVA9"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2657827462
-	for <io-uring@vger.kernel.org>; Tue,  7 Jan 2025 02:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB7A39FF3
+	for <io-uring@vger.kernel.org>; Tue,  7 Jan 2025 02:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736216265; cv=none; b=VIRjavv5nnklQcmKwL6XdyI98Yc8cwkUvRwOzhrBnT8hCCiXTXGd00LtwIGqMPhcBVSv9exfiBTnG0FRu5dEKJHUtbPTJGTefP+GaN7uG45W/7EV+g6+rNv8xlchIgy4RoZAVZEFi9dvSZ3ekKNy/FMy6RJ6AGX3RlyG5gyR4kw=
+	t=1736217192; cv=none; b=W9M6A4dXlX1UGB4Ebg1K0Pu1mXVMoHkMpzQb7AHUaHl61V2dPJciEAu6Hr0kvOa5srrASQK97YiSSdImAyvx1XucqYoBGNjoBg0RgSGJVTSRLw894xoc70ZrwleHTzoC1M2ujJE5VlXnvjMMisn4hCVsI/7a1irXmaPjD/LhdxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736216265; c=relaxed/simple;
-	bh=h4KyeIx/1I2PTmM4mENZb7zjGTWH935/w25CwO7qc1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IWjw/ZA4m5tewo5S3k6NgoQ+uemXFrTqQj6CwJibLwO05tSr/35AIHGGUvEzlHYKw/Dq7SQTZ1wryTHCiEBgHgkHJa7+3WdrQoCug8pPA5MjI8aCuMYBwNWCLWByTxO/xPOywN+kOqoe4M0JfOqFw/HDYDLJ8bBGzvFYRalrr6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KzG//src; arc=none smtp.client-ip=209.85.166.181
+	s=arc-20240116; t=1736217192; c=relaxed/simple;
+	bh=ZsSsEZKHRdnIi511g/rJS0yTgjwUV3K3oAj+xrlPOyU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=gP65eJjHsngXeRNU2RiNCAIY3XhvZS0V+Vp3Sq5ksVaHtpH1CsWh/8nH6TK1fRynP5EHKW/XPuYVRqUndHUKARqcMTENBXlYDU7upejMP6W7fQoAOW7jffnx1p6+KR9MYQ/OTgtv+F9qv0xCm41XJg79c0lR1zp6azRCVS597U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=l9SopVA9; arc=none smtp.client-ip=209.85.166.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3cdce23f3e7so22063505ab.0
-        for <io-uring@vger.kernel.org>; Mon, 06 Jan 2025 18:17:41 -0800 (PST)
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a813899384so58042105ab.1
+        for <io-uring@vger.kernel.org>; Mon, 06 Jan 2025 18:33:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736216261; x=1736821061; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=92MtV43/q/VStM5ltOEmavD/9Z5kJUjPvTOj5sLJlLM=;
-        b=KzG//srcpvVhKLpq2QL2q8RVCMQNGyEvPV9JU+QEaDN8z0/DJqKpdHPrbAnuLwV76T
-         KY+9x1pZIKB9u5aMF024MewPk3XZwGFUlBDah6mK+231qllKbk7VrhbMqalMnz5GFb49
-         VqTRjJ1V+WpQcTSMmY5ZRaU7CraJSwb4eho4zOL3X92cQe20+epwteUuHb+3Hk8YE0Ql
-         dH1dRQrj2J3j/swMy9bgg0qAYmq1SN+j2kzRGWDUEJ8kN103ohldZnR2C5+Rz3yfROfI
-         9UOrELe4FAZ5CnlZN+LOcvy0ql2sEiI+ujlfptQlq2biDV2UhUKhmC3bgU7RNR2G7+Fh
-         QOfA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736217186; x=1736821986; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rNiBYrsHAL6YWEURVoXDaY/TAujYtnLraBnR91xzwjI=;
+        b=l9SopVA9LShxahMWHyTi2OneOIMJyRq4+hDOkdniv6gMh5QHPuP19NdLrU09kNhtnI
+         LEJ/mRc86cSuggcx8RLI3wc1RQSRv5ZrGXop1SYsHZ5ubb1bpe9NvqQCebWm70NkpnLB
+         oSKQJ07XpPKspnp9Jvl9Ilx9+L8hwK16tFB5e/yveyH18Gzl6knIIztThLAnePYOxEnT
+         rxyIqB5pAjArs8ZX3Anwckfn77Eudd/0GDyAsLvCPkits4MlmHwLEt9JypfoRtcVp3Mz
+         4xzHHa2AV83g3SGo7CvUOAFLgD9iLNurhpAx8w3g2aCcoA1zPTczNU0ifS1ck+mucDBm
+         B1kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736216261; x=1736821061;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1736217186; x=1736821986;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=92MtV43/q/VStM5ltOEmavD/9Z5kJUjPvTOj5sLJlLM=;
-        b=BfvlF+aFKV7nWco7v8r3FQuDdN1nTDB/txJ22IU5scQJZgVksxzdtSH6vmN5t7m+T6
-         GtWYqRZ6GiCCyHIz15Xgv5/JfirMxH+EsfKN0lWG5HA/4TMWuBmRKgxsL8/VO6syrWun
-         agxtLrx7qLjMvFcmkwvn5Up3GYTGEBl+E14KCtNVYvPSAJZ1ts6XjqImRWn2O97iEA2n
-         C0Cv1ree/nE+tyda3Aa26orSsTOc8xr8slv/CmBqEJfEIGpvPYZCUovQ+WrcsL7pMW+c
-         ng9SIlSnWIGsGsb5N2UiwwSQZ/q1w2GvBNtMJ/IbJXRB3h93NcQ+5tKFPXEgZdD+bs4o
-         M7jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVICiEEOcyKVr6zKh1PrLCRs9BoJJgeStFY3hnpN8VYE0G+r8NQzO5orUVG+GghMLkBHQzNJLsFjg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyHwUqpmrHTEFWajtZwVJ+si6fHJUkXVAoSJB19uC8dYEr/Yqb
-	F3MkQafvGQGtldVxYB4IzSn9LdkpMvXDPPpTcl+QgMtb5+rDhJskembhF94bezM=
-X-Gm-Gg: ASbGncvYtA27+CXu9hrD6YQwWYGI33dnBrSahoM55xnTiYxEYo2v/Wxuc/kWWgTIHlB
-	v0OirmErnIj/xH8LtDe4HWTtWob6l6nvnEE6liPOVtrD/DN0NRoGv1k9HFd+EmlOuJr6Myg1PbE
-	jdCO3J+tvzg8M1pcofsirO89r9tdvSXqy51U3WXQYS3N67pHJ1MMv32HVdaG6q9U4jk+gED7pKG
-	bjAoxbkEpY3v0bkwhsBlTs+coViu0UCkcJRDLKm9+kMGPM6McOJAg==
-X-Google-Smtp-Source: AGHT+IHmnGCUUshvzjHQeuqswxB8rbutUI8Kl2ImwYXkMiyxDAQKLnZTe6a08hQz567k4iiXro5NQw==
-X-Received: by 2002:a92:8748:0:b0:3cc:b7e4:6264 with SMTP id e9e14a558f8ab-3ccb7e464b3mr192134895ab.0.1736216261181;
-        Mon, 06 Jan 2025 18:17:41 -0800 (PST)
+        bh=rNiBYrsHAL6YWEURVoXDaY/TAujYtnLraBnR91xzwjI=;
+        b=KmVnGeSNKZBvKps4RKpDNoTLB4X608SoNiPnGUBFT2zKnb7//QuQYl0IDYyzo8oBUb
+         zHtJfOl0rFbpLZvl2wnCkI99a/iZXMors4JtgHfMkdxr9nz9Wt15cW5rMBNQ0gqAZawj
+         vQqk+8bVeBIb5WuMjLgJvJPDtU2XQUQipB5hlgLnn94GMNzR/zlaE2nphr2NhKBMz/GH
+         T+Uc/6kXYs1XQ8C7wWEzUgA9AlKsEGiv99dAX+lpAvuj2w4laL25OgbYyHzeZYyBgaFq
+         7xjkwv+dZwXisY08qRolP4g0M70Mk/ZUSjrxdniDzjezJb+0wW2yVF3w0a/aS4XQDMJz
+         EHpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVifsnobn/XZYZ6DEsMAyfBz/gWk0nZMcOTeLKlDNM+bJ42LumjMnUQXbEo2NfMmwficn/ECZxo1Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3boApzBSn9Sl7nC84YJKKH6xpi8K2oSzmelmpmPnpz/S79/UO
+	4lvutr2ZO+4jpnyXPEmhZmz3qrXtA6z3UQUyDI2Cnx62IU7n33Q9V+gSy6zY3g0=
+X-Gm-Gg: ASbGncsWAmWz7x4OGSwT+Q+E/JIJkURs44A6KuKBHSiZ+rqDTTEJ0r6GO16RSgW9PNm
+	x/WvxwPXJ02PUUHIe8I7zn0rLXJQqXzhnEtUca7ss8xkUk/keNKVDLwoFU94XMhMGPsct+EK71j
+	9MyGqAmeecpccBDq/8WJ8cYko/JU0bieCJhcul0DXvdsYAOnMkh9c8VGkK/7jwn0CYF/JAdOHk0
+	bEC526ciWdoe+uz8ri9mJIXt4XPoTY8XcIBzP/DFwJPH/ZCaNqOag==
+X-Google-Smtp-Source: AGHT+IHctLqwmFsbcK6ASUJEd75OoaVBuDOBmJvGZE79ukigdQ8KGKkiwpkibOgJcgb15C78ftLBZg==
+X-Received: by 2002:a05:6e02:3d03:b0:3a7:d84c:f2a0 with SMTP id e9e14a558f8ab-3c2d25669e3mr445866135ab.7.1736217186392;
+        Mon, 06 Jan 2025 18:33:06 -0800 (PST)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e68c199afesm9760858173.94.2025.01.06.18.17.40
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3c0df949b6bsm99961885ab.39.2025.01.06.18.33.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jan 2025 18:17:40 -0800 (PST)
-Message-ID: <aa9a7b74-a9c6-4333-bb25-490655eadb45@kernel.dk>
-Date: Mon, 6 Jan 2025 19:17:39 -0700
+        Mon, 06 Jan 2025 18:33:05 -0800 (PST)
+Message-ID: <da6375f5-602f-4edd-8d27-1c70cc28b30e@kernel.dk>
+Date: Mon, 6 Jan 2025 19:33:05 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,102 +80,81 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] io_uring/cmd: add per-op data to struct
- io_uring_cmd_data
-To: lizetao <lizetao1@huawei.com>, Mark Harmstone <maharmstone@fb.com>
-Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-References: <20250103150233.2340306-1-maharmstone@fb.com>
- <20250103150233.2340306-3-maharmstone@fb.com>
- <974022e6b52a4ae39f10ea4410dd8e25@huawei.com>
- <01b838d9-485f-47a5-9ee6-f2d79f71ae32@kernel.dk>
- <3e2e277ed6bf40ae87890b41133f5314@huawei.com>
+Subject: Re: Bug? CQE.res = -EAGAIN with nvme multipath driver
 From: Jens Axboe <axboe@kernel.dk>
+To: "Haeuptle, Michael" <michael.haeuptle@hpe.com>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <DS7PR84MB31105C2C63CFA47BE8CBD6EE95102@DS7PR84MB3110.NAMPRD84.PROD.OUTLOOK.COM>
+ <fe2c7e3c-9cec-4f30-8b9b-4b377c567411@kernel.dk>
 Content-Language: en-US
-In-Reply-To: <3e2e277ed6bf40ae87890b41133f5314@huawei.com>
+In-Reply-To: <fe2c7e3c-9cec-4f30-8b9b-4b377c567411@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 1/6/25 7:04 PM, lizetao wrote:
-> Hi,
-> 
->> -----Original Message-----
->> From: Jens Axboe <axboe@kernel.dk>
->> Sent: Monday, January 6, 2025 10:46 PM
->> To: lizetao <lizetao1@huawei.com>; Mark Harmstone <maharmstone@fb.com>
->> Cc: linux-btrfs@vger.kernel.org; io-uring@vger.kernel.org
->> Subject: Re: [PATCH 2/4] io_uring/cmd: add per-op data to struct
->> io_uring_cmd_data
+On 1/6/25 4:53 PM, Jens Axboe wrote:
+> On 1/6/25 1:03 PM, Haeuptle, Michael wrote:
+>> Hello,
 >>
->> On 1/6/25 5:47 AM, lizetao wrote:
->>> Hi,
->>>
->>>> -----Original Message-----
->>>> From: Mark Harmstone <maharmstone@fb.com>
->>>> Sent: Friday, January 3, 2025 11:02 PM
->>>> To: linux-btrfs@vger.kernel.org; io-uring@vger.kernel.org
->>>> Cc: Jens Axboe <axboe@kernel.dk>
->>>> Subject: [PATCH 2/4] io_uring/cmd: add per-op data to struct
->>>> io_uring_cmd_data
->>>>
->>>> From: Jens Axboe <axboe@kernel.dk>
->>>>
->>>> In case an op handler for ->uring_cmd() needs stable storage for user
->>>> data, it can allocate io_uring_cmd_data->op_data and use it for the
->>>> duration of the request. When the request gets cleaned up, uring_cmd
->>>> will free it automatically.
->>>>
->>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>> ---
->>>>  include/linux/io_uring/cmd.h |  1 +
->>>>  io_uring/uring_cmd.c         | 13 +++++++++++--
->>>>  2 files changed, 12 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/include/linux/io_uring/cmd.h
->>>> b/include/linux/io_uring/cmd.h index 61f97a398e9d..a65c7043078f
->>>> 100644
->>>> --- a/include/linux/io_uring/cmd.h
->>>> +++ b/include/linux/io_uring/cmd.h
->>>> @@ -20,6 +20,7 @@ struct io_uring_cmd {
->>>>
->>>>  struct io_uring_cmd_data {
->>>>  	struct io_uring_sqe	sqes[2];
->>>> +	void			*op_data;
->>>>  };
->>>>
->>>>  static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe
->>>> *sqe) diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c index
->>>> 629cb4266da6..ce7726a04883 100644
->>>> --- a/io_uring/uring_cmd.c
->>>> +++ b/io_uring/uring_cmd.c
->>>> @@ -23,12 +23,16 @@ static struct io_uring_cmd_data
->>>> *io_uring_async_get(struct io_kiocb *req)
->>>>
->>>>  	cache = io_alloc_cache_get(&ctx->uring_cache);
->>>>  	if (cache) {
->>>> +		cache->op_data = NULL;
->>>
->>> Why is op_data set to NULL here? If you are worried about some
->>> omissions, would it be better to use WARN_ON to assert that op_data is
->>> a null pointer? This will also make it easier to analyze the cause of
->>> the problem.
+>> I?m using the nvme multipath driver (NVMF/RDMA) and io-uring. When a
+>> path goes away, I sometimes get a CQE.res = -EAGAIN in user space.
+>> This is unexpected since the nvme multipath driver should handle this
+>> transparently. It?s somewhat workload related but easy to reproduce
+>> with fio.
 >>
->> Clearing the per-op data is prudent when allocating getting this struct, to avoid
->> previous garbage. The alternative would be clearing it when it's freed, either
->> way is fine imho. A WARN_ON would not make sense, as it can validly be non-
->> NULL already.
+>> The multipath driver uses kblockd worker to re-queue the failed NVME
+>> bios
+>> (https://github.com/torvalds/linux/blob/13563da6ffcf49b8b45772e40b35f96926a7ee1e/drivers/nvme/host/multipath.c#L126).
+>> The original request is ended. 
+>>
+>> When the nvme_requeue_work callback is executed, the blk layer tries
+>> to allocate a new request for the bios but that fails and the bio
+>> status is set to BLK_STS_AGAIN
+>> (https://elixir.bootlin.com/linux/v6.12.6/source/block/blk-mq.c#L2987).
+>> The failure to allocate a new req seems to be due to all tags for the
+>> queue being used up.
+>>
+>> Eventually, this makes it into io_uring?s io_rw_should_reissue and
+>> hits same_thread_group(req->tctx->task, current) = false (in
+>> https://github.com/torvalds/linux/blob/13563da6ffcf49b8b45772e40b35f96926a7ee1e/io_uring/rw.c#L437).
+>> As a result, CQE.res = -EAGAIN and thrown back to the user space
+>> program.
+>>
+>> Here?s a stack dump when we hit same_thread_group(req->tctx->task,
+>> current) = false 
+>>
+>> kernel: [237700.098733]  dump_stack_lvl+0x44/0x5c
+>> kernel: [237700.098737]  io_rw_should_reissue.cold+0x5d/0x64
+>> kernel: [237700.098742]  io_complete_rw+0x9a/0xc0
+>> kernel: [237700.098745]  blkdev_bio_end_io_async+0x33/0x80
+>> kernel: [237700.098749]  blk_mq_submit_bio+0x5b5/0x620
+>> kernel: [237700.098756]  submit_bio_noacct_nocheck+0x163/0x370
+>> kernel: [237700.098760]  ? submit_bio_noacct+0x79/0x4b0
+>> kernel: [237700.098764]  nvme_requeue_work+0x4b/0x60 [nvme_core]
+>> kernel: [237700.098776]  process_one_work+0x1c7/0x380
+>> kernel: [237700.098782]  worker_thread+0x4d/0x380
+>> kernel: [237700.098786]  ? _raw_spin_lock_irqsave+0x23/0x50
+>> kernel: [237700.098791]  ? rescuer_thread+0x3a0/0x3a0
+>> kernel: [237700.098794]  kthread+0xe9/0x110
+>> kernel: [237700.098798]  ? kthread_complete_and_exit+0x20/0x20
+>> kernel: [237700.098802]  ret_from_fork+0x22/0x30
+>> kernel: [237700.098811]  </TASK>
+>>
+>> Is the same_thread_group() check really needed in this case? The
+>> thread groups are certainly different? Any side effects if this check
+>> is being removed?
 > 
-> I still can't fully understand, the usage logic of op_data should be
-> as follows: When applying for and initializing the cache, op_data has
-> been set to NULL. In io_req_uring_cleanup, the op_data memory will be
-> released and set to NULL. So if the cache in uring_cache, its op_data
-> should be NULL? If it is non-NULL, is there a risk of memory leak if
-> it is directly set to null?
+> It's their for safety reasons - across all request types, it's not
+> always safe. For this case, absolutely the check does not need to be
+> there. So probably best to ponder ways to bypass it selectively.
+> 
+> Let me ponder a bit what the best approach would be here...
 
-Ah forgot I did clear it for freeing. So yes, this NULL setting on the
-alloc side is redundant. But let's just leave it for now, once this gets
-merged with the alloc cache cleanups that are pending for 6.14, it'll go
-away anyway.
+Actually I think we can just remove it. The actual retry will happen out
+of context anyway, and the comment about the import is no longer valid
+as the import will have been done upfront since 6.10.
+
+Do you want to send a patch for that, or do you want me to send one out
+referencing this report?
 
 -- 
 Jens Axboe

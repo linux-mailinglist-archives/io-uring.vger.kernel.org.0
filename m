@@ -1,78 +1,79 @@
-Return-Path: <io-uring+bounces-5742-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5743-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193FBA048CE
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 19:00:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B47CA04904
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 19:13:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E1803A6B69
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 18:00:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3574B165DD4
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 18:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA39219883C;
-	Tue,  7 Jan 2025 18:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F1118CBE8;
+	Tue,  7 Jan 2025 18:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HsEjY7GP"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1I/NoNL1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED40A1F37DA
-	for <io-uring@vger.kernel.org>; Tue,  7 Jan 2025 18:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0244018C900
+	for <io-uring@vger.kernel.org>; Tue,  7 Jan 2025 18:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736272832; cv=none; b=VxQbLcdZmqef+Tc+FKY63ZqbO7x9paN6rFV1o8lRpH/+LhDyPYwv0eaHH9axVzkMznqkWzcg0F9/W5QIgsW7Ort8R24/WwJJ29rUvmHRb7F3+u5RzLq2gEiO5VG9SCFiPLJKG6d92liJVuaTAiFK8xwKUyogwbiXVnTrUTjivNs=
+	t=1736273577; cv=none; b=oKskxfHyb+Z/AFQqvbTr1zt77LL0ZJgr00lxnliZnBUxxdumuPpTdwxPU0SCAtebIcWXO6r1ccVcstaGLiFLaWfobwEh371dPSLT7qNIY7C7m7bJ7ozNzNYtrZ4Xa2IZmU/0+7eXqN9ZMU8zUcYfPFf6yzoNo/3kjgtUDSq3aHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736272832; c=relaxed/simple;
-	bh=SylAn33hs2HJ9CMked7Db42/rfJkW18uobs9TO0qbPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FGDvNl6LD5ykNc83QYLQbazadjjw0SKvqOeqm0Vp19k/VzY+keSFfbB0G93GdlJ+QKbOuhRk+yF8S84RmFba1h4ijRButAV+jPEaFuZQXh6jKok6M1k9rC4SMk6OIRYdkO/v8mWr1AmSzQ+8S2bU60Gq5zARaFl5wGtRPZ06GhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HsEjY7GP; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d122cf8dd1so27686134a12.2
-        for <io-uring@vger.kernel.org>; Tue, 07 Jan 2025 10:00:27 -0800 (PST)
+	s=arc-20240116; t=1736273577; c=relaxed/simple;
+	bh=Y5NpFZWvLq8MqtbHDLWfB2TfxMY2GCkdJP0LHgdJ4Ew=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=igg+S9LL15nEOrsiGu//mp4lk8cyhxAykDYKStLH7Acx4CQ5UiMl8CHpEWB58MlEY2vWlfQ+LeP/IUmVOGrCl/NOVKqfIBr8jCt4IRkZtYyi2tUaDTt8jGRVZebxmwOVITooWE7dWsg5oqr0Y0njB4ZVtbZN+6eB1ybykMHhyDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1I/NoNL1; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-844bff5ba1dso1249189539f.1
+        for <io-uring@vger.kernel.org>; Tue, 07 Jan 2025 10:12:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736272825; x=1736877625; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Tj1jtjXVIU7lLo7fiOZqYPaplm+Kw6HMsGozkDkiwgM=;
-        b=HsEjY7GPsYbx+ktIiR1OXLAEXX84O303fUTm483Iadc8XF+zdVcp5MmlZ+JB+XIiK0
-         qyc/45GRn1giTmmn3zhIt1leq7oG/NiSABBJT5QvFCnGzny75wksxQomcGhKb0jxyJOc
-         91lUVSozWLQN6AsiEHTbZn6Uq1DHmfzvOfFSowKX9yPlUdL25xx4FNpoMupKY/qMIRVi
-         BlO1nFrlmiVjR/29MjS3v33PKg0sX0Iimvbhj1DXkVgqyhIcwkFiZSDA60qBmlqClKxW
-         AXOyAe/f0Ed3Aq4UpDaPD+T94Pm10QyB5zNmLcwNn89s+/4dY/FrpBafLIBiTnu9zBBF
-         fZoQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736273572; x=1736878372; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dhHjl8LY1wV38OqaGnhfFBmxqodWke7YmZ47bd1kV6E=;
+        b=1I/NoNL1LQ+byFmH/z45nw+9G+yIV2UZ4+tfDwxfKSQ8n5YNhbst8eLYdwJhEFtLpu
+         0h3ibGsvltmrzwXAavI0OYmr7qYehnjurJ2QiqEhTJV2D8bSKBdEysKtPLif2Am8cuDm
+         d9M7voQc5AWT8U6pIcWeiLvNH7FMIdOm/gONEC0axMjWoNKPlaVjbB5fIP9SLpeStwSh
+         cuMs1okqDIC8v2XQF6HDprc1gUpJg3fmnhnmnGCfSfdTc17dG28TInkrXWlSSv+5fm2j
+         CK6sgwvsDw4oe0lfmIdneluQthUC9gZynkOmXCEo/WEfKrhPpIrn3AjFTKDPP1vdUxK5
+         rClQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736272825; x=1736877625;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1736273572; x=1736878372;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tj1jtjXVIU7lLo7fiOZqYPaplm+Kw6HMsGozkDkiwgM=;
-        b=qvVvxEg7IS8iK5MxfH0DM0oG+ncLjRtnY9QO+k0mkTAqQd0N2SHNU/aQkNO2v74mAA
-         lc4lMxQc64SYuYoVjD4COnfRELvwnHCHnMvCT11XYauT5UnfyU0JnI01Z1Sw7oQiJ2vv
-         jTZseQZNWtHlqT9wpbwdr11LIGOF2Wr4MzOXXlesmHRfsbsJLsWQuZ9OlbzbaiW+OtlL
-         gJbnKd+MJqrsBzawSoEqj/54Zei6IQ5lbdjHE19oTlQDKA7lN5B5EKwutC+ADOMJIxo4
-         jek6O5f0PK2srTOfvamlHUTT4QibBSVADoy+sBfoQUdTBZiLSk5+kWCFDtn6q/CCpis8
-         aOLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVg/vr6dISABMs+oKdNzSutc9Cie3546tktAcy5clNC8qwZVAQIn3HFY6vzsDDnE7dWXO3w85DiHw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3A9YUpeFaHQ/PK52KmQLtEvHECF0UHa9eaQifqcd4z82ol68s
-	5zgwAGYDuSW73PKkVYkJka7T02neHjphi/3yYM90ZHgjk9iJvWbCy7WEmQ==
-X-Gm-Gg: ASbGncsGdMt/q2SIOyQYCZs5zyjTxcDBIyGymOnVQ/3BMJjQ/KknwzfL1dqkJApOXRY
-	i4NBbfKOfE5ae77KL2RImWtqjHNGaatE5dorLcVYmV2AaA/FMvK3tIZic3rAGShNerljRdzybWV
-	I7RVo64ypwcmatApEuIrU1Atw3Kt92dBijwhlrKXusR8/Q/gZ9zgIAeEdgrRroVX9sai2RZG3ci
-	JKaiCkF5pmFWhLFg75h3OSK/pN56at87S6zqtp27FwBN3j360CmTiWWoWJ6BJl2CQU7
-X-Google-Smtp-Source: AGHT+IHwTyD2TrRV6tiG2JobJHVSxanpFFFQJvUFM0x417CQhB3oH3Po8WF4RxW4ZA6nWmf3DJ8pug==
-X-Received: by 2002:a17:907:84a:b0:aab:9842:71fe with SMTP id a640c23a62f3a-aac2adbd17fmr5315138566b.13.1736272825286;
-        Tue, 07 Jan 2025 10:00:25 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325::46? ([2620:10d:c092:600::1:2b66])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0e82f2fasm2403530766b.9.2025.01.07.10.00.24
+        bh=dhHjl8LY1wV38OqaGnhfFBmxqodWke7YmZ47bd1kV6E=;
+        b=kgVoaPc02ibCmid1v44XkptRPcF43OdjQDwlQnxxPRH25Hu4L1OAhSGC7dOV6brqwI
+         2iOPfejYw+lCJ+POXTRq7nTIrx9qTz3OsvUlP5hQSH32xn1aaq5Ag3iL5alF/BhhoDNE
+         zkMkwP4xznl2EptWnHA3nm3PK4CziZcwROjRETwohnE/MIxZVGoR4RoTxEO1Lky+kx1b
+         QXjRIsCF15kyUdzCz+8A6VEPYzmKYHgdnJHstymS0nPRGosLM+VJaFeiyXdusOotOReP
+         5Q34Aq8ATptyMgrMaoXuxW0pctkUSaGhTt37xT7CJ2SH/49qozr+DW0EJUfjB/fTHH7r
+         UHBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTbtsZVvEvA0FHjoYyV0/xPYloqT8K7CaTbWdQz/GsWoAbiVe8dup4u8NU/TX0YjcaEeAnv05JmA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YylmIRsHPK5jImi9w4hpyphw0vLBCRFM6UPnRjcnDAFHpnsrdME
+	flgO9U+osu109WR9tfzsI6jacd0cFYp7vcg2GcoWn3PvHdrFEVf6vDxlWXKVz+qFCzhQ0eA32no
+	C
+X-Gm-Gg: ASbGncsUU1Nl71HRE16eNGVqXyJXIXR52iRb3Poz34kNlWYU05OzbnAWUpcjnfj1Idw
+	Kr5D4DHi0FOWti5f++9kheDa31/gNNkMB23xCq021Meh79T3BLgRYp+7nAjAAAv+TkM9BN5h+/w
+	fj4igmkiH/he/9stFBNRHRe18iZuvaE246tdIM7QCks7twBxShWqApgrlTKI5h6bLgOBVsIlMbC
+	5lov+KxDgXnb506EgnZGvvUXHN8f+SDZn+Yx9uD/Zrx25NbsI+I
+X-Google-Smtp-Source: AGHT+IGHIMY3AEn2qc4TTY2ckO2cDEDHWAx/zKm1wf1aTaIoVZUVebI9wN6ii7922Xb1FAV58cAXJw==
+X-Received: by 2002:a05:6602:4742:b0:84c:da71:b127 with SMTP id ca18e2360f4ac-84ce0080f59mr3607639f.5.1736273572036;
+        Tue, 07 Jan 2025 10:12:52 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8498d8279afsm937771539f.30.2025.01.07.10.12.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jan 2025 10:00:25 -0800 (PST)
-Message-ID: <1dffcb9d-855b-4d25-b364-98f6216dafe6@gmail.com>
-Date: Tue, 7 Jan 2025 18:01:24 +0000
+        Tue, 07 Jan 2025 10:12:51 -0800 (PST)
+Message-ID: <df4c7e5a-8395-4af9-ad87-2625b2e48e9a@kernel.dk>
+Date: Tue, 7 Jan 2025 11:12:50 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,32 +81,101 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] io_uring/rw: reissue only from the same task
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-References: <e769b0d12b3c70861c2144b3ea58d3f08d542bbc.1736259071.git.asml.silence@gmail.com>
- <66a3fab2-dc5d-4a59-96a0-3e85c69fad03@kernel.dk>
+Subject: Re: Bug? CQE.res = -EAGAIN with nvme multipath driver
+From: Jens Axboe <axboe@kernel.dk>
+To: "Haeuptle, Michael" <michael.haeuptle@hpe.com>,
+ "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <DS7PR84MB31105C2C63CFA47BE8CBD6EE95102@DS7PR84MB3110.NAMPRD84.PROD.OUTLOOK.COM>
+ <fe2c7e3c-9cec-4f30-8b9b-4b377c567411@kernel.dk>
+ <da6375f5-602f-4edd-8d27-1c70cc28b30e@kernel.dk>
+ <8330be7f-bb41-4201-822b-93c31dd649fe@kernel.dk>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <66a3fab2-dc5d-4a59-96a0-3e85c69fad03@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <8330be7f-bb41-4201-822b-93c31dd649fe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 1/7/25 14:31, Jens Axboe wrote:
-> On 1/7/25 7:11 AM, Pavel Begunkov wrote:
->> io_rw_should_reissue() tries to propagate EAGAIN back to io_uring when
->> happens off the submission path, which is when it's staying within the
->> same task, and so thread group checks don't make much sense.
+On 1/6/25 7:39 PM, Jens Axboe wrote:
+> On 1/6/25 7:33 PM, Jens Axboe wrote:
+>> On 1/6/25 4:53 PM, Jens Axboe wrote:
+>>> On 1/6/25 1:03 PM, Haeuptle, Michael wrote:
+>>>> Hello,
+>>>>
+>>>> I?m using the nvme multipath driver (NVMF/RDMA) and io-uring. When a
+>>>> path goes away, I sometimes get a CQE.res = -EAGAIN in user space.
+>>>> This is unexpected since the nvme multipath driver should handle this
+>>>> transparently. It?s somewhat workload related but easy to reproduce
+>>>> with fio.
+>>>>
+>>>> The multipath driver uses kblockd worker to re-queue the failed NVME
+>>>> bios
+>>>> (https://github.com/torvalds/linux/blob/13563da6ffcf49b8b45772e40b35f96926a7ee1e/drivers/nvme/host/multipath.c#L126).
+>>>> The original request is ended. 
+>>>>
+>>>> When the nvme_requeue_work callback is executed, the blk layer tries
+>>>> to allocate a new request for the bios but that fails and the bio
+>>>> status is set to BLK_STS_AGAIN
+>>>> (https://elixir.bootlin.com/linux/v6.12.6/source/block/blk-mq.c#L2987).
+>>>> The failure to allocate a new req seems to be due to all tags for the
+>>>> queue being used up.
+>>>>
+>>>> Eventually, this makes it into io_uring?s io_rw_should_reissue and
+>>>> hits same_thread_group(req->tctx->task, current) = false (in
+>>>> https://github.com/torvalds/linux/blob/13563da6ffcf49b8b45772e40b35f96926a7ee1e/io_uring/rw.c#L437).
+>>>> As a result, CQE.res = -EAGAIN and thrown back to the user space
+>>>> program.
+>>>>
+>>>> Here?s a stack dump when we hit same_thread_group(req->tctx->task,
+>>>> current) = false 
+>>>>
+>>>> kernel: [237700.098733]  dump_stack_lvl+0x44/0x5c
+>>>> kernel: [237700.098737]  io_rw_should_reissue.cold+0x5d/0x64
+>>>> kernel: [237700.098742]  io_complete_rw+0x9a/0xc0
+>>>> kernel: [237700.098745]  blkdev_bio_end_io_async+0x33/0x80
+>>>> kernel: [237700.098749]  blk_mq_submit_bio+0x5b5/0x620
+>>>> kernel: [237700.098756]  submit_bio_noacct_nocheck+0x163/0x370
+>>>> kernel: [237700.098760]  ? submit_bio_noacct+0x79/0x4b0
+>>>> kernel: [237700.098764]  nvme_requeue_work+0x4b/0x60 [nvme_core]
+>>>> kernel: [237700.098776]  process_one_work+0x1c7/0x380
+>>>> kernel: [237700.098782]  worker_thread+0x4d/0x380
+>>>> kernel: [237700.098786]  ? _raw_spin_lock_irqsave+0x23/0x50
+>>>> kernel: [237700.098791]  ? rescuer_thread+0x3a0/0x3a0
+>>>> kernel: [237700.098794]  kthread+0xe9/0x110
+>>>> kernel: [237700.098798]  ? kthread_complete_and_exit+0x20/0x20
+>>>> kernel: [237700.098802]  ret_from_fork+0x22/0x30
+>>>> kernel: [237700.098811]  </TASK>
+>>>>
+>>>> Is the same_thread_group() check really needed in this case? The
+>>>> thread groups are certainly different? Any side effects if this check
+>>>> is being removed?
+>>>
+>>> It's their for safety reasons - across all request types, it's not
+>>> always safe. For this case, absolutely the check does not need to be
+>>> there. So probably best to ponder ways to bypass it selectively.
+>>>
+>>> Let me ponder a bit what the best approach would be here...
+>>
+>> Actually I think we can just remove it. The actual retry will happen out
+>> of context anyway, and the comment about the import is no longer valid
+>> as the import will have been done upfront since 6.10.
+>>
+>> Do you want to send a patch for that, or do you want me to send one out
+>> referencing this report?
 > 
-> Since there's the nvme multipath retry issue, let's skip this for now
-> and focus on sanitizing the retry stuff for 6.14 with an eye towards
-> just backporting that to 6.10+ where we have some sanity on the
-> import side with persistent data across issues.
+> Also see:
+> 
+> commit 039a2e800bcd5beb89909d1a488abf3d647642cf
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Thu Apr 25 09:04:32 2024 -0600
+> 
+>     io_uring/rw: reinstate thread check for retries
+> 
+> let me take a closer look tomorrow...
 
-Agree, and as mentioned the patch is troubled anyway. And something
-tells me it'll turn into more of a rw request "lifetime" change rather
-than iovec / buffer persistency thing.
+If you can test a custom kernel, can you give this branch a try?
+
+git://git.kernel.dk/linux.git io_uring-rw-retry
 
 -- 
-Pavel Begunkov
+Jens Axboe
 
 

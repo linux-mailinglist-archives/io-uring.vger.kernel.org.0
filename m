@@ -1,79 +1,96 @@
-Return-Path: <io-uring+bounces-5745-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5746-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B77A04929
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 19:26:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 331FBA049C4
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 19:59:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28CEA3A49E7
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 18:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97EBC1883314
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 18:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE6919C54F;
-	Tue,  7 Jan 2025 18:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C1A1F37B4;
+	Tue,  7 Jan 2025 18:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="f/TeJRDQ"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="HTxOcFlV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ldMbbGtX"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7FB86330
-	for <io-uring@vger.kernel.org>; Tue,  7 Jan 2025 18:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA681F2C3F;
+	Tue,  7 Jan 2025 18:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736274401; cv=none; b=nWTSvGMpjOHrnyHPXbfnZE2i27yO8saYRMQ92yhRTSHVaijo12JtNMIWiQX92Y6PEMBR1y4O5hGwbnCKeHpnEy2vf9vFaR9uAg/jdXa8RMdN0/bPO+3Ulv5OTc0lWNOI/56oP6/5ChxYSQRGmmA7T3rdZXOsSGplxYJxO6Ua/Zs=
+	t=1736276353; cv=none; b=KMvr5W5b1aAZrmi3cDDHrk8Givuw61tROpCkY+oStruFGPTpDqX7n0Ebw5wNjbLe8eg7QHRdh97ssPfo6nkDiOM5YjVFYEMH+qfkfc0cLG9ThucTLEOElZeILkWQ5/BJCn2aSCPFGVzxNW8MLEOhQYaeARLKx3DJNVfbOzbYY5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736274401; c=relaxed/simple;
-	bh=LJC92LBxdT99kNk6rjqSUZuVZfl+9W5Yza7/nO6GH7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PWwpUHi8AR2X6JPLvv8nWLJiRqorlo+7GzXNXCvooIYSLqZmJPz7a3DVkp0M+iZC59o+nyBJdu1WTdkWi6nwl2cyxZrq7C8yljPPE7Ro1JlUkCyZKKJEcPR72+miA6edgIQJVqyBHxflwnySOcFR/TcQLHcSfFB0rrqmrePbrNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=f/TeJRDQ; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3cda56e1dffso19580635ab.1
-        for <io-uring@vger.kernel.org>; Tue, 07 Jan 2025 10:26:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736274399; x=1736879199; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4CQyxguET1UERd70gvv8fQ8eFbyVPeXPr/OhZ6rFLow=;
-        b=f/TeJRDQSIdAuchTpKzRnrvu/FDmVzL1Qn0MvEJF3vMUTueo2SRVOHs8kT/2WtG9KM
-         DzTolEqETUa/rCPQfPIH0hKu43x4qVNuJ+C12Pu9RVsj2owp/2joaiwk3X3yxpVH/Xrx
-         IjqOXqJ3l6o6IRs+9Qu+C9f9FnGVnwE5H8dTsB2smmTve84YNUSfOW5uvFOuY6bAVFXK
-         0lV94KQWgpYZ60CQ6u4MRJNSUHhU+WZbZAnogvmJGAfzbSS6dLvx97uH1aPedg6gHVso
-         A1IET+5wres167NfE6lXN7+43qRN1BWIBdNoj6jX271JueNPHk3px2ITR8GvAbsS4d3U
-         Q6bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736274399; x=1736879199;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4CQyxguET1UERd70gvv8fQ8eFbyVPeXPr/OhZ6rFLow=;
-        b=Autips22YZ0qi+2EbJXw7cnFWn7DbNxZ0fXzIW3CrDVVyRt3nP2+QNAvIH1CwHh3q/
-         sRBEJwYzwpSTt+hVVHejj+LexSlc8OQZQNVWzZzyeQfcRlKEdeyiy9GB1AlzNc/CSe0D
-         9+wpY0R9w7qxdLxN2VuZXkkNjt7sasJHpPt2VpxpRUuELQx8GxFQkkJY/H5D+9VpmhUU
-         JLwkbnqHLS2oyqViZBGyN8uumuItKK26Znb5e86ytnYI46VwzDRqdwthDu34yyjDBKwE
-         Ka2erO21Ksfkgzm8XNOx84PC86AdCDwTObBIniafPym/+uQLJiyqCTt8xMiGvyS04zni
-         S01A==
-X-Forwarded-Encrypted: i=1; AJvYcCXFzFJY9QRviEURSudIwf6X2GTSKiQ5+2fla1bBdzM2ATnP/v1krqUBR/hdYwEGTPjFGemR7uW5hA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQa4IORli/xgeO+T0GL9uohBi9uekJLEKWKet35JMW+kkT/yE5
-	JJmNONynoDpemAzeV4Q0uPF5Kca6XEE/62ruNz4O2jEjWuFFB5ZP8IsjqGqoV/c+rY2yWVPvmpG
-	F
-X-Gm-Gg: ASbGncvzzgixV95Phi/mH31lm8qw/tKPQm3GSUWNqcIWEGoMQoNeqzEyPDG/syy8MR3
-	7BXvYWqx8Chezl6p4g7NZwsK6bfNZtZ/3X2QUjskb7YnMshvI1aFwOwydq8H3giuCYpCbgpjd/B
-	FYsSmSULIUOvaQbL1LEtvOSDVDWxKIniJPaDNacWMGGWJ9ovSTHVZv/pCegyYgTRipRa/WyRKet
-	ad20jf4GqUZETGC+/JedzdO1E2wdE334GbflZlJuXva8mtP04Po
-X-Google-Smtp-Source: AGHT+IGq8SSKQMQ1QHmkkO0MYWxwhkS+6UrfWVqaB9JW4aW2r1BW3Dkcu07/3oE122me3fTbqfgZ2g==
-X-Received: by 2002:a05:6e02:1c8e:b0:3ce:3016:fbc3 with SMTP id e9e14a558f8ab-3ce3a8882c6mr1681105ab.14.1736274398767;
-        Tue, 07 Jan 2025 10:26:38 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3c0e47d6d6fsm103526395ab.69.2025.01.07.10.26.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jan 2025 10:26:38 -0800 (PST)
-Message-ID: <4c531b2d-c852-4a33-bed6-b8bbc3393f98@kernel.dk>
-Date: Tue, 7 Jan 2025 11:26:37 -0700
+	s=arc-20240116; t=1736276353; c=relaxed/simple;
+	bh=05dXKPp3UeggAAObe7YFouMLps+ul1mZpEJYQEKYVLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rB8Jjf+fI40t2ogQTNrtbcNDYfJtZ35x4B66bGwZ9z2hm3KkDMCoFJlFy9O1G+2gboxSiScWwsy8j7a3soLRwoQv421RahCGHRaj5zruAPu9U4WaNzvFvALV+a5Fk46o8kQreWoj1KYvM1dmEmROHJ8F/0/yarbeilUOGRMpT6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=HTxOcFlV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ldMbbGtX; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id 20A7A1380237;
+	Tue,  7 Jan 2025 13:59:10 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Tue, 07 Jan 2025 13:59:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1736276350;
+	 x=1736362750; bh=GkQ4VTpp0Z7U0EdUHbP4HtEemK6HZFuRWZwXdkmDPDw=; b=
+	HTxOcFlV8+bxWDaDRnenEsiPf2b2x9nECmO2yYgpf45yhWpygbFYjB6ipxK1+89p
+	iL7uA0dOpkzUWDIgmuyYh0RNbstUQShH2+NrQjPQIm0eTFDZrY58s/TwGgUrVTfq
+	b5BiFWLldUQVQIgX+/11t9ZFDRpkDt11QWf0pRm3cSAqe/xcmFZmMlAfoCUgZr86
+	6beVVE6h2bAsFHulo6DHMqy47Evijikod4JdgUqD7y722sxI+vXPlGlp+/DJYGyb
+	VhkempmJfwovDMZPW/3NZ6ucLNxQdDNbrr4KygajmKqsNR8VCoPX1Snib8raQY8l
+	vK6W2s7AajOnRu3NAuh1dA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1736276350; x=
+	1736362750; bh=GkQ4VTpp0Z7U0EdUHbP4HtEemK6HZFuRWZwXdkmDPDw=; b=l
+	dMbbGtXpV7cY6uDctTdK9MmTgekVrWdnCmVZzpNLqPqknw1LqrjOiIw4KRW73OBZ
+	6dXcxySTydpW78WALLlzrGSUOqidr5bzr56IkpnJ1JvWtubZmMGAfss/3JIdPD1d
+	TQukmZaGkjH4rjXCaZGdHG1yuZup6hyoeVGlFt3Z0d4fZNRB4gi3tn7bygwJBgm+
+	xr3JSs0iaks9qdJ7onPzY0Nj4o3oAHQ7ibUcFTaeyBLNwhc5t8BLWB+hfEtYj04h
+	MIDQl+4rVnM3TrkOHxBL/lRogzaSl0kcMdyABUh/M+y2P9SUFN1YootP/OcpkOho
+	QMv+NGQDYkSSXFhrw7Wuw==
+X-ME-Sender: <xms:fXl9Z37L9eBxQ4LAzRrVRuZ3g7Q2BOO2PMERWHHfXoZ4Q34xXZkuuA>
+    <xme:fXl9Z870mMEQG1rWjQ-sBB7q0N0k1nTeKbHiLOanEMXX4Z8fgXwj1O2BmSV16Pjkg
+    StOefvlAGhS8Tw_>
+X-ME-Received: <xmr:fXl9Z-enWSPsb_EU1EUjVwP1SwuWBGWuAG3DNjaiB4tn5tGYQ03UrXU31-nWs7GMDg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudegvddguddukecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
+    hnugdrtghomheqnecuggftrfgrthhtvghrnhephefhjeeujeelhedtheetfedvgfdtleff
+    uedujefhheegudefvdfhheeuveduueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtghomhdpnhgspghr
+    tghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehluhhishesih
+    hgrghlihgrrdgtohhmpdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdp
+    rhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprgigsg
+    hovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhm
+    rghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhm
+X-ME-Proxy: <xmx:fXl9Z4Jz3fm7mPnTUHRok_l-bPI11jJs4dhlb_tXgPV81ig8h5ox3w>
+    <xmx:fXl9Z7K-LM1xOKnpIE2xROn1XxcZFp2uPVJopFDtPXuSv1lG3A7Kgg>
+    <xmx:fXl9Zxy6XzhlwxWH4LroaQPIvzb6zUIDW2yP-KwzXzGQBEEJA4h1SQ>
+    <xmx:fXl9Z3L3ZE6bPJIh_goR2qTXTsA0Pj8VroMGBXnnDtB5ckKtHj8FMg>
+    <xmx:fnl9Z1C45TcIA-3OPPoeUUJjVPSewX7hpmd5sKJwsAMluSG_CF853w1e>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 Jan 2025 13:59:07 -0500 (EST)
+Message-ID: <87a9354b-4371-4862-b94c-8797e77b0068@bsbernd.com>
+Date: Tue, 7 Jan 2025 19:59:06 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,39 +98,133 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Bug? CQE.res = -EAGAIN with nvme multipath driver
-To: "Haeuptle, Michael" <michael.haeuptle@hpe.com>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-References: <DS7PR84MB31105C2C63CFA47BE8CBD6EE95102@DS7PR84MB3110.NAMPRD84.PROD.OUTLOOK.COM>
- <fe2c7e3c-9cec-4f30-8b9b-4b377c567411@kernel.dk>
- <da6375f5-602f-4edd-8d27-1c70cc28b30e@kernel.dk>
- <8330be7f-bb41-4201-822b-93c31dd649fe@kernel.dk>
- <df4c7e5a-8395-4af9-ad87-2625b2e48e9a@kernel.dk>
- <IA1PR84MB310838E47FDAAFD543B8239A95112@IA1PR84MB3108.NAMPRD84.PROD.OUTLOOK.COM>
-From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v9 13/17] fuse: Allow to queue fg requests through
+ io-uring
+To: Luis Henriques <luis@igalia.com>, Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+ Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>
+References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
+ <20250107-fuse-uring-for-6-10-rfc4-v9-13-9c786f9a7a9d@ddn.com>
+ <87a5c239ho.fsf@igalia.com>
+From: Bernd Schubert <bernd@bsbernd.com>
 Content-Language: en-US
-In-Reply-To: <IA1PR84MB310838E47FDAAFD543B8239A95112@IA1PR84MB3108.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <87a5c239ho.fsf@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 1/7/25 11:24 AM, Haeuptle, Michael wrote:
-> Thanks for the quick response!
+
+
+On 1/7/25 16:54, Luis Henriques wrote:
+
+[...]
+
+>> @@ -785,10 +830,22 @@ static void fuse_uring_do_register(struct fuse_ring_ent *ring_ent,
+>>   				   unsigned int issue_flags)
+>>   {
+>>   	struct fuse_ring_queue *queue = ring_ent->queue;
+>> +	struct fuse_ring *ring = queue->ring;
+>> +	struct fuse_conn *fc = ring->fc;
+>> +	struct fuse_iqueue *fiq = &fc->iq;
+>>   
+>>   	spin_lock(&queue->lock);
+>>   	fuse_uring_ent_avail(ring_ent, queue);
+>>   	spin_unlock(&queue->lock);
+>> +
+>> +	if (!ring->ready) {
+>> +		bool ready = is_ring_ready(ring, queue->qid);
+>> +
+>> +		if (ready) {
+>> +			WRITE_ONCE(ring->ready, true);
+>> +			fiq->ops = &fuse_io_uring_ops;
 > 
-> When I remove that check on the 6.1.85 kernel version we're using,
-> then it seems that the user space program is losing IOs. I confirmed
-> this with fio. When we hit this issue, fio never completes and is
-> stuck.
+> Shouldn't we be taking the fiq->lock to protect the above operation?
 
-That's because the io_uring logic assumes it happens inline via
-submission, and for your case it does not. Which is also why it gets
-failed. And hence setting the retry flag in that condition will do
-absolutely nothing, as nobody is there to see it.
+I switched the order and changed it to WRITE_ONCE. fiq->lock would
+require that doing the operations would also hold lock.
+Also see "[PATCH v9 16/17] fuse: block request allocation until",
+there should be no races anyone.
 
-> I can certainly try that later kernel with your fix, if you think
-> there are other changes that prevent losing IOs.
+> 
+>> +		}
+>> +	}
+>>   }
+>>   
+>>   /*
+>> @@ -979,3 +1036,119 @@ int __maybe_unused fuse_uring_cmd(struct io_uring_cmd *cmd,
+>>   
+>>   	return -EIOCBQUEUED;
+>>   }
+>> +
+>> +/*
+>> + * This prepares and sends the ring request in fuse-uring task context.
+>> + * User buffers are not mapped yet - the application does not have permission
+>> + * to write to it - this has to be executed in ring task context.
+>> + */
+>> +static void
+>> +fuse_uring_send_req_in_task(struct io_uring_cmd *cmd,
+>> +			    unsigned int issue_flags)
+>> +{
+>> +	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
+>> +	struct fuse_ring_queue *queue = ent->queue;
+>> +	int err;
+>> +
+>> +	if (unlikely(issue_flags & IO_URING_F_TASK_DEAD)) {
+>> +		err = -ECANCELED;
+>> +		goto terminating;
+>> +	}
+>> +
+>> +	err = fuse_uring_prepare_send(ent);
+>> +	if (err)
+>> +		goto err;
+> 
+> Suggestion: simplify this function flow.  Something like:
+> 
+> 	int err = 0;
+> 
+> 	if (unlikely(issue_flags & IO_URING_F_TASK_DEAD))
+> 		err = -ECANCELED;
+> 	else if (fuse_uring_prepare_send(ent)) {
+> 		fuse_uring_next_fuse_req(ent, queue, issue_flags);
+> 		return;
+> 	}
+> 	spin_lock(&queue->lock);
+>          [...]
 
-Please try the branch and see how it fares for you.
+That makes it look like fuse_uring_prepare_send is not an
+error, but expected. How about like this?
 
--- 
-Jens Axboe
+static void
+fuse_uring_send_req_in_task(struct io_uring_cmd *cmd,
+			    unsigned int issue_flags)
+{
+	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
+	struct fuse_ring_queue *queue = ent->queue;
+	int err;
+
+	if (!(issue_flags & IO_URING_F_TASK_DEAD)) {
+		err = fuse_uring_prepare_send(ent);
+		if (err) {
+			fuse_uring_next_fuse_req(ent, queue, issue_flags);
+			return;
+		}
+	} else {
+		err = -ECANCELED;
+	}
+
+	spin_lock(&queue->lock);
+	ent->state = FRRS_USERSPACE;
+	list_move(&ent->list, &queue->ent_in_userspace);
+	spin_unlock(&queue->lock);
+
+	io_uring_cmd_done(cmd, err, 0, issue_flags);
+	ent->cmd = NULL;
+}
+
+
+
+Thanks,
+Bernd
 

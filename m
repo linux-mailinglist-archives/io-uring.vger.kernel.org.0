@@ -1,70 +1,70 @@
-Return-Path: <io-uring+bounces-5746-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5747-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331FBA049C4
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 19:59:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B17A049D2
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 20:04:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97EBC1883314
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 18:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56FDE3A582B
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 19:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C1A1F37B4;
-	Tue,  7 Jan 2025 18:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BE818C937;
+	Tue,  7 Jan 2025 19:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="HTxOcFlV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ldMbbGtX"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="Sq52CCdp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hFNKskRK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA681F2C3F;
-	Tue,  7 Jan 2025 18:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02A82594BF;
+	Tue,  7 Jan 2025 19:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736276353; cv=none; b=KMvr5W5b1aAZrmi3cDDHrk8Givuw61tROpCkY+oStruFGPTpDqX7n0Ebw5wNjbLe8eg7QHRdh97ssPfo6nkDiOM5YjVFYEMH+qfkfc0cLG9ThucTLEOElZeILkWQ5/BJCn2aSCPFGVzxNW8MLEOhQYaeARLKx3DJNVfbOzbYY5I=
+	t=1736276643; cv=none; b=CXRfTuK3gFDtZWLj/kIFcm4DczjRJQcG4Hu1gw4haFgQlATN8Zb+VYWMn6i4hs4JqhmqI5zgOYaIXbGGTh0GKLed8YLvJTabfxIHj2Oh8lWCRJsEng6BAePuiZYZlExixEJqZkcNknyY74PPitmtYkWez2NFXNYtbbxkdG5AD2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736276353; c=relaxed/simple;
-	bh=05dXKPp3UeggAAObe7YFouMLps+ul1mZpEJYQEKYVLc=;
+	s=arc-20240116; t=1736276643; c=relaxed/simple;
+	bh=B0v5Wf1J9g8T2rsckSgr9tOH+kSnSlQnBA8G0ByaFSI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rB8Jjf+fI40t2ogQTNrtbcNDYfJtZ35x4B66bGwZ9z2hm3KkDMCoFJlFy9O1G+2gboxSiScWwsy8j7a3soLRwoQv421RahCGHRaj5zruAPu9U4WaNzvFvALV+a5Fk46o8kQreWoj1KYvM1dmEmROHJ8F/0/yarbeilUOGRMpT6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=HTxOcFlV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ldMbbGtX; arc=none smtp.client-ip=103.168.172.144
+	 In-Reply-To:Content-Type; b=LG+xisUmKA53lX5ej3J0CLCmATKrazsCnEYueodyVlXY0XTfbDJW3HxDkCtxtLtwZnHtT7pm1L8xwvwuPcNDrOdS7c9+6aya3bQw/+pyqH4o78oDNCc8wtHqbVCmwZe8P1DxP9ZYmaKE4KXI4rw8JedPVtJAN0IJ+hbtbzz6mbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=Sq52CCdp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hFNKskRK; arc=none smtp.client-ip=103.168.172.156
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 20A7A1380237;
-	Tue,  7 Jan 2025 13:59:10 -0500 (EST)
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id D17B8114018C;
+	Tue,  7 Jan 2025 14:03:59 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 07 Jan 2025 13:59:10 -0500
+  by phl-compute-11.internal (MEProxy); Tue, 07 Jan 2025 14:03:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1736276350;
-	 x=1736362750; bh=GkQ4VTpp0Z7U0EdUHbP4HtEemK6HZFuRWZwXdkmDPDw=; b=
-	HTxOcFlV8+bxWDaDRnenEsiPf2b2x9nECmO2yYgpf45yhWpygbFYjB6ipxK1+89p
-	iL7uA0dOpkzUWDIgmuyYh0RNbstUQShH2+NrQjPQIm0eTFDZrY58s/TwGgUrVTfq
-	b5BiFWLldUQVQIgX+/11t9ZFDRpkDt11QWf0pRm3cSAqe/xcmFZmMlAfoCUgZr86
-	6beVVE6h2bAsFHulo6DHMqy47Evijikod4JdgUqD7y722sxI+vXPlGlp+/DJYGyb
-	VhkempmJfwovDMZPW/3NZ6ucLNxQdDNbrr4KygajmKqsNR8VCoPX1Snib8raQY8l
-	vK6W2s7AajOnRu3NAuh1dA==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1736276639;
+	 x=1736363039; bh=LNlu29SBoT4cO06+asoL/bU8Mvs0dktvMs3JhJ6uGs0=; b=
+	Sq52CCdpUXcVsW7/kylLf3nloQZtQ1K4iAwwkoVh+SgRSJv+MlgPIlm0dqnQON7w
+	VLZ9mbDV/h8ydFsFA6IDQZDMJmbOXaTyaz4p1CEpTjTxT5myvC0kVYHtBlnwotaV
+	ttx0TRae8eh968qADpdrwsUYZDQNFYdE3/pdUnZwwO2td3Ln8mBKudj72Cvpe8Q0
+	BRv7H0XfkBtV/52F+fbznUptVICESoQKroXaoQA45R+2ibpvty+jEqDgpa4XxAjM
+	XXyInbm+u0SxG0dsY8o//4KTf4FHAMLhBFZ3KOTGLIOUTlXP9REbl30b/MDz14lN
+	i79HJOQCq5lcxgeUldSscA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1736276350; x=
-	1736362750; bh=GkQ4VTpp0Z7U0EdUHbP4HtEemK6HZFuRWZwXdkmDPDw=; b=l
-	dMbbGtXpV7cY6uDctTdK9MmTgekVrWdnCmVZzpNLqPqknw1LqrjOiIw4KRW73OBZ
-	6dXcxySTydpW78WALLlzrGSUOqidr5bzr56IkpnJ1JvWtubZmMGAfss/3JIdPD1d
-	TQukmZaGkjH4rjXCaZGdHG1yuZup6hyoeVGlFt3Z0d4fZNRB4gi3tn7bygwJBgm+
-	xr3JSs0iaks9qdJ7onPzY0Nj4o3oAHQ7ibUcFTaeyBLNwhc5t8BLWB+hfEtYj04h
-	MIDQl+4rVnM3TrkOHxBL/lRogzaSl0kcMdyABUh/M+y2P9SUFN1YootP/OcpkOho
-	QMv+NGQDYkSSXFhrw7Wuw==
-X-ME-Sender: <xms:fXl9Z37L9eBxQ4LAzRrVRuZ3g7Q2BOO2PMERWHHfXoZ4Q34xXZkuuA>
-    <xme:fXl9Z870mMEQG1rWjQ-sBB7q0N0k1nTeKbHiLOanEMXX4Z8fgXwj1O2BmSV16Pjkg
-    StOefvlAGhS8Tw_>
-X-ME-Received: <xmr:fXl9Z-enWSPsb_EU1EUjVwP1SwuWBGWuAG3DNjaiB4tn5tGYQ03UrXU31-nWs7GMDg>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1736276639; x=
+	1736363039; bh=LNlu29SBoT4cO06+asoL/bU8Mvs0dktvMs3JhJ6uGs0=; b=h
+	FNKskRKlHv50ldCLZuxiI744YiYz4xwcYND74tA0MzAeI2OFJOCB1IxcyK0zRICR
+	8GJfu32Q9FOOnbYMbl/lIg58Ul8KD61r0dwOxaXKAvC3fq6Zm+RactPfNvMx1zyK
+	nzv4qshp+7cf9tGH6a+5rk2IZPAuqdYHM9bdDeS3C0LEbhyef4mrn/jjcxzwNv19
+	0dnHNhTDJ93DtHWL8HP/UNYk1JEuD7pRThreBkeJ4rDpFHr3iRYsGYrYXg0w9+za
+	J37uRVlTR2SFCWLz2OxuUkwQ4nk4t99jOAT8GUnH/t6dtKKaZ8qJaInZ3CuQ8v2A
+	cUA/F05wIzO2WXEcea6qA==
+X-ME-Sender: <xms:n3p9Zw1wHpzT9lFJy7hOqWbswpi7I5i0GD8Nx9fcqCVjJZ_SZMHjyQ>
+    <xme:n3p9Z7F_k6sytSs8EvvTLYnCG0qmVfp_gJQQZxvywqiMCF_Z0v1lZSQWr09V_Is6P
+    PXKVJZP7AD7mnuh>
+X-ME-Received: <xmr:n3p9Z468Er9bNUSL_3e5QYfETS7paC9nTAiqVUSgJplISuttJjdqHeX56z2aWcu_KA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudegvddguddukecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
     uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
@@ -81,16 +81,16 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudegvddguddukecutefuodetgg
     gvrhhnvghlrdhorhhgpdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhn
     vghlrdhorhhgpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtoh
     hmpdhrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggrrdgtohhm
-X-ME-Proxy: <xmx:fXl9Z4Jz3fm7mPnTUHRok_l-bPI11jJs4dhlb_tXgPV81ig8h5ox3w>
-    <xmx:fXl9Z7K-LM1xOKnpIE2xROn1XxcZFp2uPVJopFDtPXuSv1lG3A7Kgg>
-    <xmx:fXl9Zxy6XzhlwxWH4LroaQPIvzb6zUIDW2yP-KwzXzGQBEEJA4h1SQ>
-    <xmx:fXl9Z3L3ZE6bPJIh_goR2qTXTsA0Pj8VroMGBXnnDtB5ckKtHj8FMg>
-    <xmx:fnl9Z1C45TcIA-3OPPoeUUJjVPSewX7hpmd5sKJwsAMluSG_CF853w1e>
+X-ME-Proxy: <xmx:n3p9Z51ILWx7MbNr0v6WSFTCMtTrrqmiUoaGe16vuDV1qVcF6_Ug2g>
+    <xmx:n3p9ZzG9hBEgeDq9hneQckYZWjThc9ardu1XwYwWMs3tL-qhBKEYtQ>
+    <xmx:n3p9Zy8wkR-uuvnlSiBNkSq9UtHwggQJ37DyK7AFPoUARupgcdHvZw>
+    <xmx:n3p9Z4lPDYIx2BAORdU1ZPbpUKHyx_-BM4AP3iBL6UwTOxODYHEYbA>
+    <xmx:n3p9ZydEwDD_egn8vs50Yb_TCAcLHq21KqfP-qjfCbf_-2F4wvxeavVJ>
 Feedback-ID: i5c2e48a5:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 7 Jan 2025 13:59:07 -0500 (EST)
-Message-ID: <87a9354b-4371-4862-b94c-8797e77b0068@bsbernd.com>
-Date: Tue, 7 Jan 2025 19:59:06 +0100
+ 7 Jan 2025 14:03:57 -0500 (EST)
+Message-ID: <48e6311c-b5ea-41d6-87b8-dbd782e9f6f5@bsbernd.com>
+Date: Tue, 7 Jan 2025 20:03:57 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -98,8 +98,8 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 13/17] fuse: Allow to queue fg requests through
- io-uring
+Subject: Re: [PATCH v9 15/17] fuse: {io-uring} Prevent mount point hang on
+ fuse-server termination
 To: Luis Henriques <luis@igalia.com>, Bernd Schubert <bschubert@ddn.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>,
  Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org,
@@ -107,122 +107,52 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>,
  Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
  Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>
 References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
- <20250107-fuse-uring-for-6-10-rfc4-v9-13-9c786f9a7a9d@ddn.com>
- <87a5c239ho.fsf@igalia.com>
+ <20250107-fuse-uring-for-6-10-rfc4-v9-15-9c786f9a7a9d@ddn.com>
+ <8734hu38ko.fsf@igalia.com>
 From: Bernd Schubert <bernd@bsbernd.com>
 Content-Language: en-US
-In-Reply-To: <87a5c239ho.fsf@igalia.com>
+In-Reply-To: <8734hu38ko.fsf@igalia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 1/7/25 16:54, Luis Henriques wrote:
-
-[...]
-
->> @@ -785,10 +830,22 @@ static void fuse_uring_do_register(struct fuse_ring_ent *ring_ent,
->>   				   unsigned int issue_flags)
->>   {
->>   	struct fuse_ring_queue *queue = ring_ent->queue;
->> +	struct fuse_ring *ring = queue->ring;
->> +	struct fuse_conn *fc = ring->fc;
->> +	struct fuse_iqueue *fiq = &fc->iq;
+On 1/7/25 17:14, Luis Henriques wrote:
+> On Tue, Jan 07 2025, Bernd Schubert wrote:
+> 
+>> When the fuse-server terminates while the fuse-client or kernel
+>> still has queued URING_CMDs, these commands retain references
+>> to the struct file used by the fuse connection. This prevents
+>> fuse_dev_release() from being invoked, resulting in a hung mount
+>> point.
+>>
+>> This patch addresses the issue by making queued URING_CMDs
+>> cancelable, allowing fuse_dev_release() to proceed as expected
+>> and preventing the mount point from hanging.
+>>
+>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+>> ---
+>>   fs/fuse/dev.c         |  2 ++
+>>   fs/fuse/dev_uring.c   | 71 ++++++++++++++++++++++++++++++++++++++++++++++++---
+>>   fs/fuse/dev_uring_i.h |  9 +++++++
+>>   3 files changed, 79 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+>> index afafa960d4725d9b64b22f17bf09c846219396d6..1b593b23f7b8c319ec38c7e726dabf516965500e 100644
+>> --- a/fs/fuse/dev.c
+>> +++ b/fs/fuse/dev.c
+>> @@ -599,8 +599,10 @@ static int fuse_request_queue_background(struct fuse_req *req)
+>>   	}
+>>   	__set_bit(FR_ISREPLY, &req->flags);
 >>   
->>   	spin_lock(&queue->lock);
->>   	fuse_uring_ent_avail(ring_ent, queue);
->>   	spin_unlock(&queue->lock);
->> +
->> +	if (!ring->ready) {
->> +		bool ready = is_ring_ready(ring, queue->qid);
->> +
->> +		if (ready) {
->> +			WRITE_ONCE(ring->ready, true);
->> +			fiq->ops = &fuse_io_uring_ops;
+>> +#ifdef CONFIG_FUSE_IO_URING
+>>   	if (fuse_uring_ready(fc))
+>>   		return fuse_request_queue_background_uring(fc, req);
+>> +#endif
 > 
-> Shouldn't we be taking the fiq->lock to protect the above operation?
 
-I switched the order and changed it to WRITE_ONCE. fiq->lock would
-require that doing the operations would also hold lock.
-Also see "[PATCH v9 16/17] fuse: block request allocation until",
-there should be no races anyone.
-
-> 
->> +		}
->> +	}
->>   }
->>   
->>   /*
->> @@ -979,3 +1036,119 @@ int __maybe_unused fuse_uring_cmd(struct io_uring_cmd *cmd,
->>   
->>   	return -EIOCBQUEUED;
->>   }
->> +
->> +/*
->> + * This prepares and sends the ring request in fuse-uring task context.
->> + * User buffers are not mapped yet - the application does not have permission
->> + * to write to it - this has to be executed in ring task context.
->> + */
->> +static void
->> +fuse_uring_send_req_in_task(struct io_uring_cmd *cmd,
->> +			    unsigned int issue_flags)
->> +{
->> +	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
->> +	struct fuse_ring_queue *queue = ent->queue;
->> +	int err;
->> +
->> +	if (unlikely(issue_flags & IO_URING_F_TASK_DEAD)) {
->> +		err = -ECANCELED;
->> +		goto terminating;
->> +	}
->> +
->> +	err = fuse_uring_prepare_send(ent);
->> +	if (err)
->> +		goto err;
-> 
-> Suggestion: simplify this function flow.  Something like:
-> 
-> 	int err = 0;
-> 
-> 	if (unlikely(issue_flags & IO_URING_F_TASK_DEAD))
-> 		err = -ECANCELED;
-> 	else if (fuse_uring_prepare_send(ent)) {
-> 		fuse_uring_next_fuse_req(ent, queue, issue_flags);
-> 		return;
-> 	}
-> 	spin_lock(&queue->lock);
->          [...]
-
-That makes it look like fuse_uring_prepare_send is not an
-error, but expected. How about like this?
-
-static void
-fuse_uring_send_req_in_task(struct io_uring_cmd *cmd,
-			    unsigned int issue_flags)
-{
-	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
-	struct fuse_ring_queue *queue = ent->queue;
-	int err;
-
-	if (!(issue_flags & IO_URING_F_TASK_DEAD)) {
-		err = fuse_uring_prepare_send(ent);
-		if (err) {
-			fuse_uring_next_fuse_req(ent, queue, issue_flags);
-			return;
-		}
-	} else {
-		err = -ECANCELED;
-	}
-
-	spin_lock(&queue->lock);
-	ent->state = FRRS_USERSPACE;
-	list_move(&ent->list, &queue->ent_in_userspace);
-	spin_unlock(&queue->lock);
-
-	io_uring_cmd_done(cmd, err, 0, issue_flags);
-	ent->cmd = NULL;
-}
-
+Oh sorry, I had tried to remove the ifdef in v9, but didn't succeed
+and added back in the wrong patch.
 
 
 Thanks,

@@ -1,113 +1,105 @@
-Return-Path: <io-uring+bounces-5726-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5728-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4594DA041EE
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 15:15:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F4BA0429B
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 15:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CB07167DFB
-	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 14:12:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C733161137
+	for <lists+io-uring@lfdr.de>; Tue,  7 Jan 2025 14:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84911F4262;
-	Tue,  7 Jan 2025 14:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293871E131B;
+	Tue,  7 Jan 2025 14:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsxJ7uib"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CzDjCrZO"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408001F2C45
-	for <io-uring@vger.kernel.org>; Tue,  7 Jan 2025 14:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778152940F
+	for <io-uring@vger.kernel.org>; Tue,  7 Jan 2025 14:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736259071; cv=none; b=XyieqgdPlvr6/kK+xwjnInSHi1TyN2fxiqQvP90qv++V5bjhUSaA1DMxkrDXLMqPI1slUdNV/5YiQSyrnmXiNeyoxvxqCVtYJWVXJ2gsEmamuyR9WDFPzsa2pxfWCtk4JH67FySP/HdWuPsbo7YRn8n2l+5aBvtKHrWy7HIPNYU=
+	t=1736260351; cv=none; b=YN3pBCClGd+zIUgrp+UYPfImGHitJGUww/lFxBtk+sQz5zWYUrd+h1LxawZJV+ug8tiSZj/b6gvliWDJ4YmPHPpNawk3JVlRyqcIMRBsZvylI1iTCm/wmJ6TH/G50srz2W2Amoc2aI12T9k+y7PY0yy1ULjVs8KKBHTkrl3cHxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736259071; c=relaxed/simple;
-	bh=/OEpI+hErthwQr6/ZeGti7oaesYJnfHzyWz/+GNh+q4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I2v7O7p7FRGH/tH93s9ylz922xklx4bBv9M9Hju33wU9RKKOUSkq/iDa37Q89xU4Esnc+OczZ35OXIBTbW82ipopUX/2CKevJVcI0LgglCSoVdSTw8SpW8mAqpd+X9CgIJuZpkTsD2aD0wepqbpGvv84N+y9ywsbWZM6f+fSoqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsxJ7uib; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa67f31a858so2806650566b.2
-        for <io-uring@vger.kernel.org>; Tue, 07 Jan 2025 06:11:05 -0800 (PST)
+	s=arc-20240116; t=1736260351; c=relaxed/simple;
+	bh=hJneiDjDMgTQcL838+5qJIxPMw7HvUEH5mnf09NuzBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UQEoPqrB+f8Hmj1cqwXiJ7DoBvXEOPozen/jgM6XZGzbTX+sHV/cdbrqxr6HEj5AMd9FY3qAJyUQzAGdoWtZS6ewGCauIYUuxRrzihAC3ovhC784zBVrS+Oy1thMEI/LaiAskZTPNtyILAmt6seWKD9JCRkZ8DgR2og1W4ksRME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CzDjCrZO; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-844d5444b3dso590321239f.1
+        for <io-uring@vger.kernel.org>; Tue, 07 Jan 2025 06:32:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736259063; x=1736863863; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UGh/tgXi2Vy9Zhpo6lxTL6CZsFAYLpfoWGWSZG6TQUo=;
-        b=dsxJ7uibsdmwYkhC0xaX81SVAZL5wDWK4SE5lvulrCCxmSAqwpoho+OFC+vn3UpO/0
-         l7ADws6bZFHsvMyqlj8s2PRRSseLXCwbE8z9+W0niav2fFPv+0NBP/98y4zj6+rL4kLg
-         wWgZrxha5TcbRJG5/ZlCpLtEB6vjsCufLcWetRChMWznCL9jjeX1tbdC3TJz9cRz5XVM
-         VE1OIy77omAfiuSiQfimjsDW8pHkcR81yaDDlLCB5b4WLXwRwVoQJB2O2G2dGLMcyO4V
-         arMZ8BWYwDBBpWsmAx7Lbc/KJUIn/6bnfi4ShAGCLzLzYsWrf4eeXl9UsqMGZiAZvQPl
-         7N1A==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736260347; x=1736865147; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PPcN8d2I/iCmqp1AscGx7152N/qGhMDr9UQFfGA8QFI=;
+        b=CzDjCrZOyoYsCpRjYw8GTPXkb8gAfF3mECBcTHQigtFHe7tKSP4rw4QjTqbXzzgVl4
+         l2FEAbfkrXymJ+4YOacaCqln9wMQ3Z7fWxOOzds6CqHM2uQrzi0PF/F5YjaaAv/O/nV8
+         ZMvN5cBkWwZHLND/+HFGlosB+N9/mE6sGR1/uLf1duR79fEBeh8fiXGroU0wJsACRVUd
+         vprVT0dqTfS5SknZRhLQuIQdk9fPZv4SMbVG6StE9KDoGhVgdHU43HWr+bhrMamFNJ/Y
+         2F1Oau62JLfSsY/rmCLNcAb/F8uztitDFBTMc4T3QN9mzUb8NGqlqDj7E9BtFkbrDTEp
+         PIgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736259063; x=1736863863;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UGh/tgXi2Vy9Zhpo6lxTL6CZsFAYLpfoWGWSZG6TQUo=;
-        b=ZyC/mBcqy4sLDUDPNIWBDiJAOSNfua8x1TOt32iq88kli+nimqxc8mjVXL+UvnLh7l
-         gAWuh7jrgTVr/LDKmmt3DJfwv+bbNGhAcV53XE8oWpRQNtXkGZtT+ak7AmrL2rekvDdI
-         8PODBteQApRSOpaetrxC+vXZLH9YrW/tdHaQrR8M2O5asBAP4NOL1/1axTUqPR7GV0gF
-         bxZxtnylcFv8AuvVho4SJJ4EF7A92Lwq3NGBfTnmu8tHbllO/5IPI7aeEJoCMsnZK4zr
-         525w/aKGgEOeZSWVOKsYJ/y/cMzZLVlxX/QUvlkFcT4NQ5be0C39VzoUuiaO3tN6fupk
-         D5qA==
-X-Gm-Message-State: AOJu0YwucDiRVuOa36AdulU11VR+RgnceZ8jwbQnyW0sfynaXdxbVbW3
-	QyWxaz+/tfbiDKHtXeQ6CIojHhSkllZjWY7cyrCXO11g8leXvT8/DCnoXQ==
-X-Gm-Gg: ASbGncv5890/Kotl2Xwf/dubAOXiJAYnSR/Me6XKRO8KvVLohTRfM6OlF/tWOzpz9b1
-	2DdcgIOKXbBrjaerzP4HYRr/QJbmn7Ouuj4+gZi5u6tjsex9W29JuQxZsmO1bHT4cCKpqWXL4FQ
-	FRkBGa2rPxkGLt9aC0/TNeDkfbDYZMa4Xvvwx8/FinWpvFs82qYUmYMg4qK3V7laSQw9CeL7Ekg
-	y85tV1iWjI8IfAE7idwWYsFqzHJpoOxxe2f7Sy0
-X-Google-Smtp-Source: AGHT+IEoXNEf0YMpc1CzUA2RJnjGcwlXUGNdqzzAGBKI3BVknq4EeuV9piv3pqiZEVn9tF/2zYHilA==
-X-Received: by 2002:a17:907:3f87:b0:aa6:a732:212b with SMTP id a640c23a62f3a-aac3365de80mr5683534866b.58.1736259062767;
-        Tue, 07 Jan 2025 06:11:02 -0800 (PST)
-Received: from 127.com ([2620:10d:c092:600::1:7fae])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0e82f58asm2390451166b.39.2025.01.07.06.11.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2025 06:11:02 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH 1/1] io_uring/rw: reissue only from the same task
-Date: Tue,  7 Jan 2025 14:11:56 +0000
-Message-ID: <e769b0d12b3c70861c2144b3ea58d3f08d542bbc.1736259071.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.47.1
+        d=1e100.net; s=20230601; t=1736260347; x=1736865147;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PPcN8d2I/iCmqp1AscGx7152N/qGhMDr9UQFfGA8QFI=;
+        b=YBgX63M0OHexrlDBCi/HGBhxjsj+zehAxWEoJO/jPsQHhGC+yB7ukVkX7AJjVPV/F3
+         Al+fTPGSsk6dJWn09tKT3Gcf0Fsyzys1tus8HkbHL5FNG+Hz6paArAfLkTqRzRVukagN
+         mb+ewmtxIg/Pij8Sq5IyE84QckgsJOSi1kb09HvAYEgzsI8sy1kSk6RGkEkswK0FqWBa
+         cqU2zLvz0LlddSxrSZ3ku5beA+KQJSugdbjPgoeemsrVpoJaRWzo/LY9mLBv9sNeGr4Y
+         tc4v1Ge8pgoInQ3iJHBQxPVJP/4ccYzyefFoW4jsf14mY8SBsLnyoRWwdoIvaUiRaynG
+         QFjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkQDVcjJ4w2FleymdmOUv5uk3xfbDbOEPjQGKP/BMuMiuxqZRVpxvbk5ee9A9EPMYAk8Xb/jYAVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxecOWrhvn/BmLlWvxfvM/ZdKDBrvf5J3IDQdcuBN9LQvJupiyK
+	w31GGkrlv75FdUWVFpaqo+mWr7jFfvHQRQ+phPpTauLIGQ8jD7VVMMYFNQt2CNc=
+X-Gm-Gg: ASbGncuBY1EmlGxzx/x/5aOSKDFDrkCQjcAjbJvMGwQyInuFExjeIEaHP5+teAaja/4
+	VWbUcL/GPlmy3wQrrsdrKPfM8Lu/GvZUXY6GwrBkChUhwLZVXDSemA4Th75XkAK66wRudl2fhnZ
+	kkIU+KebDZmFFaPzYOkjm0+7tjuqqPh+mmFU1Sbed0oaELcvsnMF5FXSEdqplZNu2sfnzTScqUx
+	zrScbX+nAh6ANNc47r1VtDpAYrPbMfEtGaDffiZyb/efiAhm5zP
+X-Google-Smtp-Source: AGHT+IGe/lXj5gyiWqbp6rP9b14lFc64wN53iEHxB9kz1N05/nd8fd0SZZ+4eJ7ot3k2UB9OtLLing==
+X-Received: by 2002:a05:6602:7519:b0:844:2ef3:a95a with SMTP id ca18e2360f4ac-84cd2e8318amr264273339f.7.1736260296161;
+        Tue, 07 Jan 2025 06:31:36 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8498d7dd8c4sm924819639f.12.2025.01.07.06.31.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jan 2025 06:31:35 -0800 (PST)
+Message-ID: <66a3fab2-dc5d-4a59-96a0-3e85c69fad03@kernel.dk>
+Date: Tue, 7 Jan 2025 07:31:34 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] io_uring/rw: reissue only from the same task
+To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+References: <e769b0d12b3c70861c2144b3ea58d3f08d542bbc.1736259071.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <e769b0d12b3c70861c2144b3ea58d3f08d542bbc.1736259071.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-io_rw_should_reissue() tries to propagate EAGAIN back to io_uring when
-happens off the submission path, which is when it's staying within the
-same task, and so thread group checks don't make much sense.
+On 1/7/25 7:11 AM, Pavel Begunkov wrote:
+> io_rw_should_reissue() tries to propagate EAGAIN back to io_uring when
+> happens off the submission path, which is when it's staying within the
+> same task, and so thread group checks don't make much sense.
 
-Cc: stable@vger.kernel.org
-Fixes: ef04688871f33 ("io_uring: don't block level reissue off completion path")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/rw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Since there's the nvme multipath retry issue, let's skip this for now
+and focus on sanitizing the retry stuff for 6.14 with an eye towards
+just backporting that to 6.10+ where we have some sanity on the
+import side with persistent data across issues.
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index ca1b19d3d142..4d5aeff79130 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -485,7 +485,7 @@ static bool io_rw_should_reissue(struct io_kiocb *req)
- 	 * Play it safe and assume not safe to re-import and reissue if we're
- 	 * not in the original thread group (or in task context).
- 	 */
--	if (!same_thread_group(req->tctx->task, current) || !in_task())
-+	if (req->tctx->task != current || !in_task())
- 		return false;
- 	return true;
- }
 -- 
-2.47.1
+Jens Axboe
 
 

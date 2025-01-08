@@ -1,76 +1,76 @@
-Return-Path: <io-uring+bounces-5755-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5756-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6EAEA067CE
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E0AA067CD
 	for <lists+io-uring@lfdr.de>; Wed,  8 Jan 2025 23:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33B3418885D9
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jan 2025 22:07:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0AF3A6DBB
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jan 2025 22:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BDC2046A9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0B82046B3;
 	Wed,  8 Jan 2025 22:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="GJPHVQ7i"
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="BAV2BZ3k"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5251202C4F
-	for <io-uring@vger.kernel.org>; Wed,  8 Jan 2025 22:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028922040B0
+	for <io-uring@vger.kernel.org>; Wed,  8 Jan 2025 22:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736374027; cv=none; b=fPNOT4W5uZ3TfYhYYPrVnuXDZ8rfz/tHUaE1DsCKRrLzKdehKHOXvRiOT3vLbc3YWwNhRuRIe69maTJOIRFPPH5pXfuvfVx1PCiLcBfZXViZfOxb02MjxZI1aOmxU3FOrgAEKcbvXrgeFLC97vRDgIyHcht0QYsXljrIx7lge+g=
+	t=1736374027; cv=none; b=au9OZi/RtSjKmrMoc40zAf5U0NNZ+J2O2XUbLUHR+VyAHM29xeui8BAKu0AutM3OtTAEtyHnAM68eqU2tYyL6LbmH3U9qGeyfu7pWH5/8ikgBhhLEsbj9Ez5P4EQlKU1juRYqBwTMauVUaKFFMSgLeT/EvDXAC2VSvHo4WaKPqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1736374027; c=relaxed/simple;
-	bh=VAoUMQEGqjLFxP/Xbi0jSPU2djzzUYFnXJh5BOeqN14=;
+	bh=RN9FRieTmgxqv0c+YKrWG+l7gQJLp/gap7HunHQoqkE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i9jR4p0Vlkaqf3sDIJwDdxGTICACnNunwO3sn25hyI3q81FEAy3hfYive+mjjfpaC604CmlvNCidZcOcZ3FugRpqvVpJ1UzLatFjy/DTgPICeHoDGi6n30NR1IgVphnS+kQrPKYDEKCcuoJxOTw9DQH9Ds+6g6I7iWjPxfxaoiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=GJPHVQ7i; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version; b=gxRyjSGLWbdLxhZXLhqNer7cpvcVz8j88MXnQS0uqBpfICEhAO9sFdp1A2xdazxujZgy90wlqgr+SfrbeUpDj/PJY2/UOhmY5URlHe/yFLR1SU5fgbCgCAWs30AuYxrZnsnLxxGFa81tV+OzmBVelHpFebNaHhvrOTLXtwGXk8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=BAV2BZ3k; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21669fd5c7cso3270005ad.3
-        for <io-uring@vger.kernel.org>; Wed, 08 Jan 2025 14:07:04 -0800 (PST)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2f42992f608so431833a91.0
+        for <io-uring@vger.kernel.org>; Wed, 08 Jan 2025 14:07:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1736374024; x=1736978824; darn=vger.kernel.org;
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1736374025; x=1736978825; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qtABS+dmyoe0kdyaoBin9gQ/i6vhks1kSLsluvXpY8o=;
-        b=GJPHVQ7inCWfegO88IZpUo3aoT5KH4s8ZEgdc753YYwwzzEWt6WnlSGNw0Xp4IDtWP
-         P37Zz4GIf/qLi3dFEeohaIRVx/SRNTTDE84LD6mqdkXe9ERGOEsvW/QcwnR6UczhtNia
-         r3XGz83qXoeG2mISTDahcwrwapk3KNNHPZdleolvN7cwO1lml8HH1cun0YLStEtCshC8
-         ahVkXdAKaAXJlkKnYmebk3+JZWN8pjumiWJOH6uOOdvS4zfhN8djdA7LymwktMsBiFfx
-         vAwQuXUp7JvDjgQxGAGrRNBm+y10gQnXp73Wh3AmRPCAo2qnMRovmEFBZEJtX+BkDHYh
-         9LRg==
+        bh=4BJhQIF+q/BdwFZrWY61E+04UcDJKhF4LPhTAqO37Wg=;
+        b=BAV2BZ3kQYK6YyEsezI1M8hrzvZs5pJh8WP2ve3NvkeKK60GuSHIblp91jGSHwB1mM
+         nky2Hg/boYDQVEyGdpcpfbYfFYcUq8wr7LyUS1lc9oYWTmQqwXiCV1Uz0oTJsNS5PB5r
+         vf/cRwig1oVZ4TGSqOgLlZ8tmQQ+CqRXB+HDG8sIADBE2hFxGi9cqNPahffFib4uKQ2y
+         QavVf+isq3xY/ZF5+zswvCXJAV2WrFnkTW17qsju8cJROYRiEt6HDlVGPz8wbO+2BSUi
+         iHVw4Rc31Y8KxkrEV24leFxHvM+JM9Rs4QpTNADFe1EZYiY4aaRrl6zghwq/A6/GQk7Q
+         Cb3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736374024; x=1736978824;
+        d=1e100.net; s=20230601; t=1736374025; x=1736978825;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qtABS+dmyoe0kdyaoBin9gQ/i6vhks1kSLsluvXpY8o=;
-        b=sssSH1+BnQ6TAJn3yCf/NqTU+9pMO5lRMS3g/4App9E4W8Hsit7PLIrWUMhDfDIY8h
-         umXSrTmabz3xqGEuSGWo/zESwUlNm6+FN03QIaS4Yy7I25OtiZCJnQBO6Xe2k4fI6b+h
-         kZfOCopzgU3qpqE9mlj48vF3FMfa/aa6YMFwdssuhsnR5xfLfa0T/YKiVLnJtCy4i+z8
-         ND9Y3ZiYvK7i3QJusTGHr9SGKATN28w/02uCpV2pRYJ1xZY8r6mpJxlmAIUSVfUciUNP
-         Ny62VLrpv3geqBklhIcaH8Kf8oOyp9HmavlVDLhUEB88RCiNS9BUIYhiJ6AOjcl16lFq
-         +rNw==
-X-Gm-Message-State: AOJu0YxxfrkOeuUFF9svrC2LXu5KPLXmHomgpqzMou7XjI3eOPotmLzY
-	anJ3ea73ipSEedFzXfUHkqsNiv8IiPjxdK5D0oPGhNIO9r/S8Avaq+ryLsbu2veZdPjRNSEa/LP
-	z
-X-Gm-Gg: ASbGnctbv5/pzquAecXUeL9XSCHEELZzY+p61fMQK4fb3qDeXM6NBhiA0cH1pbE6pl7
-	8yefsomda0e+jBNeBMWqkA8dSVlWQLC25QWLL/9VXcGkTy+vbWlQksnbsCJQyFjZFyI30mMbBsv
-	QWcf17FVNM1a5daUGpkBIWFEnFvGXv9+4mSrFXARdDLBwxSgVDLH7djqL9WgRU+P6dxpczGeb5x
-	OyimRtkjTna4dkHgQI83B9Vz0zefuOwSSvLwolM
-X-Google-Smtp-Source: AGHT+IGDDgScB0l1nhJ5EZNjTq3i4T3SvpWHOaO5xF5nuTlOcFaaBYfOnCUs22uz9e2PIY798zrLKA==
-X-Received: by 2002:a05:6a20:c88d:b0:1dc:e8d:c8f0 with SMTP id adf61e73a8af0-1e88d0bfd48mr8336038637.29.1736374024131;
-        Wed, 08 Jan 2025 14:07:04 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:3::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72aad8dbafesm36622053b3a.128.2025.01.08.14.07.03
+        bh=4BJhQIF+q/BdwFZrWY61E+04UcDJKhF4LPhTAqO37Wg=;
+        b=xCgfERlqK+hVNH1AWB9XlePdg3OQKznGEe1KP1COVNhPXtxAwvZVq4r5sjT39wVhxw
+         LQ/mvQ7dmJlWyUbF6Oaw6zQ1OPIZgquY7rsEd4xaUmz2OMf32na1johDuHK0e+kOoRxi
+         v5aTfQgDc9oQdNPX4/Yek1pkfBCLv6emnDQsNbZq8MI6DHjoQt5gp+cbyZCwgdDqKhxI
+         Q8A+1CTIVjhhEa2Oi8zplY4u6n5zhdAwyXKhxxQnRPv36PF/Mmt2FGcFvhpg6O7U7TQu
+         Z88PBR/TXYInhJWts2+nrWNISCtDUrCk8b44uVsQJ4PXuEXNDcWvSdnH/3wKWU6tEY2l
+         zV+A==
+X-Gm-Message-State: AOJu0YyKj/1+fZPMXz6LG51zys2S2LH1F21288BJgJ0QbYbs24k8+Lml
+	TXDAAOn59UEQ1TBhJirR14hZphX0RRcrIaBVLL5tFMsHCZKXm03ehrG8Mufg94VAmTBIhLafeoG
+	p
+X-Gm-Gg: ASbGncvuJ8osMaU8gmSl+Mp72J2/mI4spb/xdVVx8ZNjtHK3rhPhEZa28NmUKuOFsh1
+	fzGN0adoBHfPNiCyKIxQjnVU7fN3w8+X6im/+UInVUof8V0lKOhfL8QZvanSqGpd0RW+ycw6LCa
+	ietgcvthTdulYLhxXsRFlAsbcTtm8VBKadQne/GrMN8EEsOwQO4EeHTfgYsl5BQPnJ2RfU1DMVa
+	qxAWUtWSLXCCmgnLLtoeQRUDvnvDH/hdN8+Nqjngg==
+X-Google-Smtp-Source: AGHT+IG30t7WuCDSwHCzEWAOGT9TEAdPgdISqVX1a/HXZhmUwyes9kCEGDD0QvKCmgEhlrcZgDT4AA==
+X-Received: by 2002:a17:90b:2f0e:b0:2f4:49d8:e718 with SMTP id 98e67ed59e1d1-2f548eac0bfmr6895925a91.9.1736374025407;
+        Wed, 08 Jan 2025 14:07:05 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:17::])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f54a2ab6e8sm2096423a91.23.2025.01.08.14.07.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2025 14:07:03 -0800 (PST)
+        Wed, 08 Jan 2025 14:07:05 -0800 (PST)
 From: David Wei <dw@davidwei.uk>
 To: io-uring@vger.kernel.org,
 	netdev@vger.kernel.org
@@ -86,9 +86,9 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	Stanislav Fomichev <stfomichev@gmail.com>,
 	Joe Damato <jdamato@fastly.com>,
 	Pedro Tammela <pctammela@mojatatu.com>
-Subject: [PATCH net-next v10 01/22] net: make page_pool_ref_netmem work with net iovs
-Date: Wed,  8 Jan 2025 14:06:22 -0800
-Message-ID: <20250108220644.3528845-2-dw@davidwei.uk>
+Subject: [PATCH net-next v10 02/22] net: page_pool: don't cast mp param to devmem
+Date: Wed,  8 Jan 2025 14:06:23 -0800
+Message-ID: <20250108220644.3528845-3-dw@davidwei.uk>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250108220644.3528845-1-dw@davidwei.uk>
 References: <20250108220644.3528845-1-dw@davidwei.uk>
@@ -102,29 +102,32 @@ Content-Transfer-Encoding: 8bit
 
 From: Pavel Begunkov <asml.silence@gmail.com>
 
-page_pool_ref_netmem() should work with either netmem representation, but
-currently it casts to a page with netmem_to_page(), which will fail with
-net iovs. Use netmem_get_pp_ref_count_ref() instead.
+page_pool_check_memory_provider() is a generic path and shouldn't assume
+anything about the actual type of the memory provider argument. It's
+fine while devmem is the only provider, but cast away the devmem
+specific binding types to avoid confusion.
 
+Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+Reviewed-by: Mina Almasry <almasrymina@google.com>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 Signed-off-by: David Wei <dw@davidwei.uk>
 ---
- include/net/page_pool/helpers.h | 2 +-
+ net/core/page_pool_user.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/net/page_pool/helpers.h b/include/net/page_pool/helpers.h
-index 543f54fa3020..582a3d00cbe2 100644
---- a/include/net/page_pool/helpers.h
-+++ b/include/net/page_pool/helpers.h
-@@ -307,7 +307,7 @@ static inline long page_pool_unref_page(struct page *page, long nr)
- 
- static inline void page_pool_ref_netmem(netmem_ref netmem)
+diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
+index 48335766c1bf..8d31c71bea1a 100644
+--- a/net/core/page_pool_user.c
++++ b/net/core/page_pool_user.c
+@@ -353,7 +353,7 @@ void page_pool_unlist(struct page_pool *pool)
+ int page_pool_check_memory_provider(struct net_device *dev,
+ 				    struct netdev_rx_queue *rxq)
  {
--	atomic_long_inc(&netmem_to_page(netmem)->pp_ref_count);
-+	atomic_long_inc(netmem_get_pp_ref_count_ref(netmem));
- }
+-	struct net_devmem_dmabuf_binding *binding = rxq->mp_params.mp_priv;
++	void *binding = rxq->mp_params.mp_priv;
+ 	struct page_pool *pool;
+ 	struct hlist_node *n;
  
- static inline void page_pool_ref_page(struct page *page)
 -- 
 2.43.5
 

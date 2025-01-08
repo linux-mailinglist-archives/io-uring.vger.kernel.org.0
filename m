@@ -1,119 +1,108 @@
-Return-Path: <io-uring+bounces-5751-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5752-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC8FA05FB3
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jan 2025 16:11:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052D5A061C2
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jan 2025 17:24:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08E60166530
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jan 2025 15:11:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DB7188258C
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jan 2025 16:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FDE15E5B8;
-	Wed,  8 Jan 2025 15:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gofRoO42"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185E119F489;
+	Wed,  8 Jan 2025 16:24:32 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04491FC7F1;
-	Wed,  8 Jan 2025 15:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F77F1FE46F;
+	Wed,  8 Jan 2025 16:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736349092; cv=none; b=YXrqcUSJrhKYIL8r8yHLlymX0UG4ams5DrIovbXWgCR7cUrwT6Spmi6d40djjQ+06HR3I+u5a0euY7mPq2aGusAympzu7d0LKa6VPQ9RRWST64tO6Z6qngekfE2bey22A615ytDzxUM5ueRW52B9YkLYq2iKossSp1BzDZJ27uQ=
+	t=1736353472; cv=none; b=kjadaSWd46+WEwCAwP+0+q6bYEyWsAgAWZm3IdYsqI+JDoaBi17QlbbOB4F/lVX5HF5sd5nQJk0JpdbYSbgn5fGh46zCCAdTEFklchAWrVKk370tkIonemxiMULRE1NQs5Gj326O2QD5CaWm2aX7keRWxJuzmqRQ9gJBMwj1U/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736349092; c=relaxed/simple;
-	bh=KTsp/tV3YPsfXDpwRBor5ImA0hPArukZ8JeDx2l8lB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O/5qX9Cp7/1YUU0/ZZfFLibIkE8YpkzINkt+UU1ZXjDdnqAcEQDWiTwCSAYOnHwkZQqVm05zyXqh4Qbm5BmZoRoAcQsMUU7YwaGIxPsa7l9Y/fmXdIaYAmGQ32uCprJwAJ1K8W7HHm5rjGme9ZpiiPOcGk1xD+AlYJ8wrSJLVQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gofRoO42; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21a1e6fd923so1032685ad.1;
-        Wed, 08 Jan 2025 07:11:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736349089; x=1736953889; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iSbK8QkAl50gexJ4FOFV1wkVyHKU7FzwWr05wKflf2o=;
-        b=gofRoO42SlxzBWn7c9/V+3gC4KaDEgjp5rxQawk7krsnzPWPrzx7voEc5Z9W8qyz8/
-         tgf0VYcoFtRByubiuzO+geZdBWofODGxjEvFeE3c8ee9E8/KWsBPIfCg6RfuEK72Eu4l
-         CdcOM/TtQP/lRXUEqna8ghUUcVz3UQyma+oUBHokTQpJPmLszHeM8j/68925a3vNBeQ5
-         f5LOtTo0t8FicLYDyHmggfUdTbPzm2AxXZ1JbOCdlmh1fsBhbO2uJ/VVKgJ5o6ByvU3j
-         Qp0a3iFUjh2nU6ZlFi1KL2XaSYGWMWNY7/L4s34xrs2KC0K/vuVwccUVJBESyrxmYMLV
-         kDxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736349089; x=1736953889;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iSbK8QkAl50gexJ4FOFV1wkVyHKU7FzwWr05wKflf2o=;
-        b=Az6ktUDjI6XqS+8QyO7ugJfeavbboo+6yFt4LhYxII8sARYzlbe2utJu5YuNNWrjCP
-         BqZon9k2WtBrjsIlc0PUPUdbI2ZWndaV/oSztTRU57Of1X7Q5dUGMeo8p71dg+SKUiPa
-         1BkNgjeCyPrPmS0D9q40SnUnHK8nI7IqwvuFhY4Rp7PU7X+3KstzEUfv6CoM/2BnZpQL
-         BTqER3r2XX0Bu8G/+F0t0xC0T55P2KpgI3c1418plB24Udyp0Vn3dSk2PxsD+1R72NcG
-         RGH9STCAQPUpYhEIqfzWdok9aqXD+YDz6cWUv6HkvkXaKHb1IDkk8/aSq6xT8B621dL7
-         bwTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUye6YaOibHU6yfwWc+dmUEAdrgRco6KIGmCjw77/9GbyeXmYU6o2r3CAPNcrl1w8QINrVGe0uwTw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGEpjVddbngejDLY2wsDXEGBeF8cITtIkBoQWIRkC1krJ0OMBN
-	zKHW5aAJNvmOXBXFBgFs8Kn3RXhnSzTUUoHyL6kiXEuRKjuusg0Pr7OdreHW
-X-Gm-Gg: ASbGnctiS0boEBO9KIjhs/3YqYvv6LUxcSFkfLzeXuiuTqgQyJcjOqWKzuiE6/liZBV
-	r05PAGTfxfFBHrxVqBSDWhes9W7LtaMsNufrart2mzo6or1N02xTt5QJOrYqrCOpZ6Aaekz4Niz
-	4iDmj9I0DbKQfK+3q74nqQFNc9a07QcOufgZ1Y1oh+I/uj9LRIVH6by+/tI5c2HF5ia0ueN+thH
-	HdsphlT/yiKDDii1HPXYFoZQF+Rh6w3jXICcFCX/phSCTR1UMa19Ii+2g==
-X-Google-Smtp-Source: AGHT+IGLN+CleE//JmLu0/bx32Cw4I99p6cNeyFOUJ50KYmr9Ruy8KPBsIp4PIDwNpG47j8uPJYn7g==
-X-Received: by 2002:a17:902:da87:b0:215:9642:4d7a with SMTP id d9443c01a7336-21a83da6a40mr56353865ad.0.1736349089306;
-        Wed, 08 Jan 2025 07:11:29 -0800 (PST)
-Received: from local.. ([2001:ee0:4f0f:f760:15b:fa4:b44a:9b06])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-219dc964b84sm328731865ad.50.2025.01.08.07.11.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2025 07:11:28 -0800 (PST)
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Bui Quang Minh <minhquangbui99@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	io-uring@vger.kernel.org,
-	syzbot+5988142e8a69a67b1418@syzkaller.appspotmail.com
-Subject: [PATCH] io_uring/sqpoll: annotate data race for access in debug check
-Date: Wed,  8 Jan 2025 22:10:51 +0700
-Message-ID: <20250108151052.7944-1-minhquangbui99@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1736353472; c=relaxed/simple;
+	bh=0izXUeylTPPB6pOFED07FfZTJc4xNq6BsMjvdQXVAlY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tGTqiedENB+pt4I1fXo2oH5kqDsXaTQexGSdZnDa3NEu6SiTfdUCff7w2GisjSXvFw/f7S6BynoCrNbtZd9H3mUGuOGxkPjrAWUzsTDTBRcIhzfhwx/TTZY6SV4lwDT0hTlg69BUTH8jwmR5Y7ZZsuISxtX6HGzfK15DGRmGCsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YStWn6RqXz1JHGN;
+	Thu,  9 Jan 2025 00:23:33 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
+	by mail.maildlp.com (Postfix) with ESMTPS id 779C0140159;
+	Thu,  9 Jan 2025 00:24:19 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd500012.china.huawei.com (7.221.188.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 9 Jan 2025 00:24:19 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Thu, 9 Jan 2025 00:24:19 +0800
+From: lizetao <lizetao1@huawei.com>
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+CC: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+	"syzbot+5988142e8a69a67b1418@syzkaller.appspotmail.com"
+	<syzbot+5988142e8a69a67b1418@syzkaller.appspotmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] io_uring/sqpoll: annotate data race for access in debug
+ check
+Thread-Topic: [PATCH] io_uring/sqpoll: annotate data race for access in debug
+ check
+Thread-Index: AQHbYd+rla2mhaKv1kenQH6NEOAxvrMNDeaA
+Date: Wed, 8 Jan 2025 16:24:19 +0000
+Message-ID: <71f1cec18e94459995dfb4bed9a79939@huawei.com>
+References: <20250108151052.7944-1-minhquangbui99@gmail.com>
+In-Reply-To: <20250108151052.7944-1-minhquangbui99@gmail.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-sqd->thread must only be access while holding sqd->lock. In
-io_sq_thread_stop, the sqd->thread access to wake up the sq thread is
-placed while holding sqd->lock, but the access in debug check is not. As
-this access if for debug check only, we can safely ignore the data race
-here. So we annotate this access with data_race to silence KCSAN.
-
-Reported-by: syzbot+5988142e8a69a67b1418@syzkaller.appspotmail.com
-Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
----
- io_uring/sqpoll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 9e5bd79fd2b5..2088c56dbaa0 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -57,7 +57,7 @@ void io_sq_thread_park(struct io_sq_data *sqd)
- 
- void io_sq_thread_stop(struct io_sq_data *sqd)
- {
--	WARN_ON_ONCE(sqd->thread == current);
-+	WARN_ON_ONCE(data_race(sqd->thread) == current);
- 	WARN_ON_ONCE(test_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state));
- 
- 	set_bit(IO_SQ_THREAD_SHOULD_STOP, &sqd->state);
--- 
-2.43.0
-
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQnVpIFF1YW5nIE1p
+bmggPG1pbmhxdWFuZ2J1aTk5QGdtYWlsLmNvbT4NCj4gU2VudDogV2VkbmVzZGF5LCBKYW51YXJ5
+IDgsIDIwMjUgMTE6MTEgUE0NCj4gVG86IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4g
+Q2M6IEJ1aSBRdWFuZyBNaW5oIDxtaW5ocXVhbmdidWk5OUBnbWFpbC5jb20+OyBKZW5zIEF4Ym9l
+DQo+IDxheGJvZUBrZXJuZWwuZGs+OyBQYXZlbCBCZWd1bmtvdiA8YXNtbC5zaWxlbmNlQGdtYWls
+LmNvbT47IGlvLQ0KPiB1cmluZ0B2Z2VyLmtlcm5lbC5vcmc7DQo+IHN5emJvdCs1OTg4MTQyZThh
+NjlhNjdiMTQxOEBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tDQo+IFN1YmplY3Q6IFtQQVRDSF0g
+aW9fdXJpbmcvc3Fwb2xsOiBhbm5vdGF0ZSBkYXRhIHJhY2UgZm9yIGFjY2VzcyBpbiBkZWJ1ZyBj
+aGVjaw0KPiANCj4gc3FkLT50aHJlYWQgbXVzdCBvbmx5IGJlIGFjY2VzcyB3aGlsZSBob2xkaW5n
+IHNxZC0+bG9jay4gSW4NCj4gaW9fc3FfdGhyZWFkX3N0b3AsIHRoZSBzcWQtPnRocmVhZCBhY2Nl
+c3MgdG8gd2FrZSB1cCB0aGUgc3EgdGhyZWFkIGlzIHBsYWNlZA0KPiB3aGlsZSBob2xkaW5nIHNx
+ZC0+bG9jaywgYnV0IHRoZSBhY2Nlc3MgaW4gZGVidWcgY2hlY2sgaXMgbm90LiBBcyB0aGlzIGFj
+Y2VzcyBpZg0KPiBmb3IgZGVidWcgY2hlY2sgb25seSwgd2UgY2FuIHNhZmVseSBpZ25vcmUgdGhl
+IGRhdGEgcmFjZSBoZXJlLiBTbyB3ZSBhbm5vdGF0ZQ0KPiB0aGlzIGFjY2VzcyB3aXRoIGRhdGFf
+cmFjZSB0byBzaWxlbmNlIEtDU0FOLg0KPiANCj4gUmVwb3J0ZWQtYnk6IHN5emJvdCs1OTg4MTQy
+ZThhNjlhNjdiMTQxOEBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tDQo+IFNpZ25lZC1vZmYtYnk6
+IEJ1aSBRdWFuZyBNaW5oIDxtaW5ocXVhbmdidWk5OUBnbWFpbC5jb20+DQo+IC0tLQ0KPiAgaW9f
+dXJpbmcvc3Fwb2xsLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
+IDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9pb191cmluZy9zcXBvbGwuYyBiL2lv
+X3VyaW5nL3NxcG9sbC5jIGluZGV4DQo+IDllNWJkNzlmZDJiNS4uMjA4OGM1NmRiYWEwIDEwMDY0
+NA0KPiAtLS0gYS9pb191cmluZy9zcXBvbGwuYw0KPiArKysgYi9pb191cmluZy9zcXBvbGwuYw0K
+PiBAQCAtNTcsNyArNTcsNyBAQCB2b2lkIGlvX3NxX3RocmVhZF9wYXJrKHN0cnVjdCBpb19zcV9k
+YXRhICpzcWQpDQo+IA0KPiAgdm9pZCBpb19zcV90aHJlYWRfc3RvcChzdHJ1Y3QgaW9fc3FfZGF0
+YSAqc3FkKSAgew0KPiAtCVdBUk5fT05fT05DRShzcWQtPnRocmVhZCA9PSBjdXJyZW50KTsNCj4g
+KwlXQVJOX09OX09OQ0UoZGF0YV9yYWNlKHNxZC0+dGhyZWFkKSA9PSBjdXJyZW50KTsNCj4gIAlX
+QVJOX09OX09OQ0UodGVzdF9iaXQoSU9fU1FfVEhSRUFEX1NIT1VMRF9TVE9QLCAmc3FkLQ0KPiA+
+c3RhdGUpKTsNCj4gDQo+ICAJc2V0X2JpdChJT19TUV9USFJFQURfU0hPVUxEX1NUT1AsICZzcWQt
+PnN0YXRlKTsNCj4gLS0NCj4gMi40My4wDQo+IA0KDQpUaGUgbW9kaWZpY2F0aW9uIG9mIHRoaXMg
+cGF0Y2ggaXRzZWxmIGlzIGZpbmUsIGJ1dCB0aGVyZSBhcmUgdHdvIG90aGVyIHRoaW5ncyBJIG5l
+ZWQgdG8gY29uZmlybS4NCjHjgIFEb2VzIHRoZSBpb191cmluZ19jYW5jZWxfZ2VuZXJpYygpIHJl
+cXVpcmUgdGhlIHNhbWUgbW9kaWZpY2F0aW9uPw0KMuOAgUl0IGlzIG5vdCBob2xkaW5nIHNxZC0+
+bG9jayBpbiBpb19yZXFfbm9ybWFsX3dvcmtfYWRkKCksIGlzIGl0IHNhZmU/DQoNClRoYW5rcy4N
+ClJldmlld2VkLWJ5OiBMaSBaZXRhbzxsaXpldGFvMUBodWF3ZWkuY29tPg0KDQotLS0NCkxpIFpl
+dGFvDQo=
 

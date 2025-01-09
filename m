@@ -1,218 +1,205 @@
-Return-Path: <io-uring+bounces-5787-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5788-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C83B5A07DAA
-	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2025 17:34:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2A2A07EB8
+	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2025 18:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFBBF168010
-	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2025 16:34:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31FAB188D17B
+	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2025 17:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185BA221DA0;
-	Thu,  9 Jan 2025 16:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9817F192D7E;
+	Thu,  9 Jan 2025 17:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hA87lGiW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ExRLZH9J"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C260221D9F;
-	Thu,  9 Jan 2025 16:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C9EB644
+	for <io-uring@vger.kernel.org>; Thu,  9 Jan 2025 17:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736440471; cv=none; b=gh31tqfKvuZYndNVSygVSHGjc1bKrrOXKXwpsqYzLgEw+7/3WpPezTzzD4oq5MkyDCo+xyVtg/MyaFHnJAtie3f4Nggp2WrZBYTsfDKth9jpb40Zza/wDs/+tHbMuymcVBMVzWB2hcfdGAnMTBguXC9W+KNfv/Ai8mmXDH+aaHY=
+	t=1736443642; cv=none; b=oS0/HaW6SAsFgpKRtioZrkL8tzfCJMWU88V1F7vaq6QKdXLQnxmFJOQj5r2tn3d9+87eNWL07HDwXcuCzbTGR9Wa6HDKDhKx0Uov1+hNyXvg1JAaEDYt5vinqCdGDxYBq7tT5g/eK0B+Mu/cWJwXL1cQWK9WZXbXzEiokrewIro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736440471; c=relaxed/simple;
-	bh=ueFL1CBryXUlfftmzQLzDSzQEITm2NofTaEk6ZjBUMk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VM8BtWKcyzjKxthB8VhqgbziNJXtkm6KmdOX9QIbG/LYPrCUu1G8+GkGdcMd5g7++z644YHiy5RegPaXhOxcJEssw70hEipIYcllCPGXJkyAcW/8c5I9F1q1mQ8a6vkYPbhCUNUcFCEHPg1ayi462mF01gaiwiuKieg9e+GFR2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hA87lGiW; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d4e2aa7ea9so2158662a12.2;
-        Thu, 09 Jan 2025 08:34:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736440467; x=1737045267; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PbCAHwTNJcPmiKkw7sa8F/shTPtNkn2gNNvE+XP3WqY=;
-        b=hA87lGiW5ior+QJkb87wUsTDMPufz5IgI73WfsBZVpEuV0hS2gcswBUkvOfQIX0HEm
-         uuWmOrvWArpRtMnzTKytJsV3mBDRV881mnaovX8q13OmcsUuMl3doEmFDgpy/Xn/ouSj
-         xfetn6uw92dVmwPNMKotu9HnqBcZXV0ceTQUvbvtMeRq09msrb8bvkAURLPPXD+aK/77
-         jSUHD08VAv3PLViJEtREsyZl9uyo4usHkDivb/rhZSXRW4dOaj9wNtuAcNP3YOE6rIPE
-         sAFc752NEpIFwMd/xFZ/epcasas/2ILJV62SUUdxVpaNbErsQHFX0KaZ01XlJRfalgqE
-         KOIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736440467; x=1737045267;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PbCAHwTNJcPmiKkw7sa8F/shTPtNkn2gNNvE+XP3WqY=;
-        b=fnpTxfi/y+0VQSV8dSMJLKDS/V60/1FKxZ8URzBxf7S30IabSMklDWjxlnWvj97Qtq
-         Fgyi7V+0oiX2LCQZUeVkht4Rr0x5YaiZCAuL9dU9thXpmuYzox6bBoxRXHUHhqKL47ka
-         oUT8GnB2tZHaqEfwQl5SkZrnciCCCCoQlDNdEmKlG3Qhhi8FMI4opOxcq2b1fmsbBDKA
-         ru1iDnEhRi/V5igesPF0lMnQOykB27hUiUSINa1AmjbQ8G/x+OI1eTuoliPNkTMUxVMY
-         rmCMAcxt8bFwfADB+fcaMR+WpcyyB1Fs0LQ9q9y4IqQ2wJD36OJ9n1bVAGnvqBZ0wfDO
-         lx6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVA6UQlwYbhpdP8qR1cu14QAzfH/5nKOpz6/XGri3kvud3EgbJgwZmRosSDr7mFqBoPPHCRtCU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCKJinpv69EnN8Dad/BoEf751MO92Ubfwq5siM6EHQj+v9s82M
-	0IEM25sZgOZNqdYGwqUcKxf3N9U49m/LQYYLYR67wa1/lBJtvvRf
-X-Gm-Gg: ASbGncveMNLKN0y5wwD5HMZbCrCfXVuZYhgqsgXDd4K8GfrXphL0JLGlfq1ZmTUpCMj
-	OXAKUv5edQ/neaJlVhodT+MTe6hYHrub1MDOyTjc18OW/6QlHkBm0DIlA/FkGb5pZrnmysf0lbW
-	AyatAVbGyQ9dmdHMsar8M44oB89NS4YrBGs3kOD5kSMkXp+wJwZBCMF3IX38VhKANYOJ88o2zt9
-	HJFkSt0FIbW/Fo3q/pIJi4Yp3rI3FoQSgx1RGHMpEwqOYn4wnubsSlDQp+qaU6vgxaK
-X-Google-Smtp-Source: AGHT+IG0STaExcIhY50fQB53bCM9txNpPuKVYuktCIMEB+K2/5IDBL/77O2bYHYTXOgHx48oUtKYZQ==
-X-Received: by 2002:a05:6402:538d:b0:5d3:d7ae:a893 with SMTP id 4fb4d7f45d1cf-5d972e48691mr7311332a12.25.1736440467052;
-        Thu, 09 Jan 2025 08:34:27 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325::46? ([2620:10d:c092:600::1:140d])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d99046a05asm764043a12.67.2025.01.09.08.34.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jan 2025 08:34:26 -0800 (PST)
-Message-ID: <eb0b843e-6da3-46a6-bf51-1c56f5919933@gmail.com>
-Date: Thu, 9 Jan 2025 16:35:22 +0000
+	s=arc-20240116; t=1736443642; c=relaxed/simple;
+	bh=kHu+GTsLpij/qrWD7LEXSugYuuXT9Cxa+9S+SVJ5pR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e7f/O6nOhvOQQNAEDtNQru92nZbvoO5EGMJSpOF6uHZmweL18eB0X41auz6uJ2LKCbAdZIvwXRAbjx9hNrom018MmK0GVCMxznILdnr02grJT9bomjZni1CDJ58O7b1nBMVECHg5E2q+plwHhx/eoBOBmEAsXsId5TK5wywgSus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ExRLZH9J; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736443638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pQbYtM+vj6QMOXJpXz2slqBkN/ZxPHq8K4lAZBFA1DA=;
+	b=ExRLZH9JiihU2OxqZ2oPX0zIKEcw+rMJm3qhw2WLJT0+P79Hl2xzvLbWC7S9G/a1L6vxqf
+	fO/m+FJnpyuJm/KbO4UtNVjWb9OyNFIQLvkJjQyYS3g1/YazsZPRTMThb/e21kad/0f+Zj
+	1Xq47Zo4xigszy0AbPevJR8WmPIlYJ4=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-527-wMhoz6a5O3Gj9HHvWaKu2g-1; Thu,
+ 09 Jan 2025 12:27:15 -0500
+X-MC-Unique: wMhoz6a5O3Gj9HHvWaKu2g-1
+X-Mimecast-MFC-AGG-ID: wMhoz6a5O3Gj9HHvWaKu2g
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1CE0E1956053;
+	Thu,  9 Jan 2025 17:27:13 +0000 (UTC)
+Received: from localhost (unknown [10.2.16.220])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CFC63195E3D9;
+	Thu,  9 Jan 2025 17:27:11 +0000 (UTC)
+Date: Thu, 9 Jan 2025 12:27:10 -0500
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Ferry Meng <mengferry@linux.alibaba.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>, linux-block@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+	Christoph Hellwig <hch@infradead.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>
+Subject: Re: [PATCH v1 0/3] virtio-blk: add io_uring passthrough support.
+Message-ID: <20250109172710.GA192961@fedora>
+References: <20241218092435.21671-1-mengferry@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 14/20] io_uring/zcrx: dma-map area for the
- device
-To: Mina Almasry <almasrymina@google.com>, David Wei <dw@davidwei.uk>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>
-References: <20241218003748.796939-1-dw@davidwei.uk>
- <20241218003748.796939-15-dw@davidwei.uk>
- <CAHS8izMKM_if=jZj3Cw0XAaKrfhX31EoqzRR9Dh+7MbiUkUS1w@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CAHS8izMKM_if=jZj3Cw0XAaKrfhX31EoqzRR9Dh+7MbiUkUS1w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3VE3BC/I/P4n9b3B"
+Content-Disposition: inline
+In-Reply-To: <20241218092435.21671-1-mengferry@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 1/7/25 20:23, Mina Almasry wrote:
-> On Tue, Dec 17, 2024 at 4:38 PM David Wei <dw@davidwei.uk> wrote:
-...
->> +
->> +               if (unlikely(niov_idx >= area->nia.num_niovs))
->> +                       continue;
->> +               niov_idx = array_index_nospec(niov_idx, area->nia.num_niovs);
->> +
->> +               niov = &area->nia.niovs[niov_idx];
->> +               if (!io_zcrx_put_niov_uref(niov))
->> +                       continue;
-> 
-> I have a suspicion that uref is now redundant in this series, although
 
-It's not. You can't lose track of buffers given to the user. It plays
-a similar role to devmem's ->sk_user_frags, think what happens if you
-don't have it and don't track buffers in any other way.
+--3VE3BC/I/P4n9b3B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I'm not 100% sure. You seem to acquire a uref and pp_ref in tandem in
-> io_zcrx_recv_frag and drop both in tandem in this function, which
-> makes me think the uref maybe is redundant now.
-> 
-> io_zcrx_copy_chunk acquires a uref but not a pp_ref. I wonder if
-> copy_chunk can do a page_pool_ref_netmem() instead of a uref, maybe
+On Wed, Dec 18, 2024 at 05:24:32PM +0800, Ferry Meng wrote:
+> This patchset implements io_uring passthrough surppot in virtio-blk
+> driver, bypass vfs and part of block layer logic, resulting in lower
+> submit latency and increased flexibility when utilizing virtio-blk.
+>=20
+> In this version, currently only supports READ/WRITE vec/no-vec operations,
+> others like discard or zoned ops not considered in. So the userspace-rela=
+ted
 
-It takes both references.
+If WRITE is supported then FLUSH is also required so that written data
+can be persisted without falling back to another API.
 
-> you would be able to make do without urefs at all. I have not looked
-> at the copy fallback code closely.
+> struct is not complicated.
+>=20
+> struct virtblk_uring_cmd {
+> 	__u32 type;
+> 	__u32 ioprio;
+> 	__u64 sector;
+> 	/* above is related to out_hdr */
+> 	__u64 data;  // user buffer addr or iovec base addr.
+> 	__u32 data_len; // user buffer length or iovec count.
+> 	__u32 flag;  // only contains whether a vector rw or not.
+> };=20
+>=20
+> To test this patch series, I changed fio's code:=20
+> 1. Added virtio-blk support to engines/io_uring.c.
+> 2. Added virtio-blk support to the t/io_uring.c testing tool.
+> Link: https://github.com/jdmfr/fio
+>=20
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Performance
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> Using t/io_uring-vblk, the performance of virtio-blk based on uring-cmd
+> scales better than block device access. (such as below, Virtio-Blk with Q=
+EMU,
+> 1-depth fio)=20
+> (passthru) read: IOPS=3D17.2k, BW=3D67.4MiB/s (70.6MB/s)=20
+> slat (nsec): min=3D2907, max=3D43592, avg=3D3981.87, stdev=3D595.10=20
+> clat (usec): min=3D38, max=3D285,avg=3D53.47, stdev=3D 8.28=20
+> lat (usec): min=3D44, max=3D288, avg=3D57.45, stdev=3D 8.28
+> (block) read: IOPS=3D15.3k, BW=3D59.8MiB/s (62.7MB/s)=20
+> slat (nsec): min=3D3408, max=3D35366, avg=3D5102.17, stdev=3D790.79=20
+> clat (usec): min=3D35, max=3D343, avg=3D59.63, stdev=3D10.26=20
+> lat (usec): min=3D43, max=3D349, avg=3D64.73, stdev=3D10.21
+>=20
+> Testing the virtio-blk device with fio using 'engines=3Dio_uring_cmd'
+> and 'engines=3Dio_uring' also demonstrates improvements in submit latency.
+> (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O=
+0 -n1 -u1 /dev/vdcc0=20
+> IOPS=3D189.80K, BW=3D741MiB/s, IOS/call=3D4/3
+> IOPS=3D187.68K, BW=3D733MiB/s, IOS/call=3D4/3=20
+> (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -=
+n1 -u0 /dev/vdc=20
+> IOPS=3D101.51K, BW=3D396MiB/s, IOS/call=3D4/3
+> IOPS=3D100.01K, BW=3D390MiB/s, IOS/call=3D4/4
 
-If we're talking about optimisations, there is a way I described
-and going to pursue, but that's not for the initial set.
+This iodepth=3D8 (submission/completion batching 4) result surprised me
+because the io_uring calls are already batched but there is still a 4
+microsecond improvement per request.
 
->> +
->> +               netmem = net_iov_to_netmem(niov);
->> +               if (page_pool_unref_netmem(netmem, 1) != 0)
->> +                       continue;
->> +
->> +               if (unlikely(niov->pp != pp)) {
-> 
->  From niov->pp != pp I surmise in this iteration one io_zcrx_area can
-> serve niovs to multiple RX queues?
+I was expecting to see less improvement when iodepth is increased
+because the syscall, io_uring, and some block layer cost is amortized
+thanks to batching and block plugging.
 
-It should, but the main goal was rather to support multiple pools
-per queue because of queue api shortcomings, even if it almost
-never happens.
+Is the virtio-blk driver submitting 4 requests at a time for both
+passthru and block? I wonder if something else is going on here.
 
-> The last 5 lines or so is basically doing  what page_pool_put_netmem()
-> does, except there is a pp != niov->pp check in the middle. Can we
-> call page_pool_put_netmem() directly if pp != niov->pp? It would just
-> reduce the code duplication a bit and reduce the amount of custom
-> reffing code we need to add for this mp.
+>=20
+> =3D=3D=3D=3D=3D=3D=3D
+> Changes
+> =3D=3D=3D=3D=3D=3D=3D
+>=20
+> Changes in v1:
+> --------------
+> * remove virtblk_is_write() helper
+> * fix rq_flags type definition (blk_opf_t), add REQ_ALLOC_CACHE flag.
+> https://lore.kernel.org/io-uring/202412042324.uKQ5KdkE-lkp@intel.com/
+>=20
+> RFC discussion:
+> ---------------
+> https://lore.kernel.org/io-uring/20241203121424.19887-1-mengferry@linux.a=
+libaba.com/
+>=20
+> Ferry Meng (3):
+>   virtio-blk: add virtio-blk chardev support.
+>   virtio-blk: add uring_cmd support for I/O passthru on chardev.
+>   virtio-blk: add uring_cmd iopoll support.
+>=20
+>  drivers/block/virtio_blk.c      | 320 +++++++++++++++++++++++++++++++-
+>  include/uapi/linux/virtio_blk.h |  16 ++
+>  2 files changed, 331 insertions(+), 5 deletions(-)
+>=20
+> --=20
+> 2.43.5
+>=20
 
-Right, that sub path is basically page_pool_put_netmem(). Can be
-replaced, but it's not going to de-duplicate code as the path is
-shared with page_pool_mp_return_in_cache(). And it'd likely bloat
-the binary a bit, though it's not that important.
+--3VE3BC/I/P4n9b3B
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> +                       continue;
->> +               }
->> +
->> +               page_pool_mp_return_in_cache(pp, netmem);
-> 
-> So if niov->pp != pp, we end up basically doing a
-> page_pool_put_netmem(), which is the 'correct' way to return a netmem
-> to the page_pool, or at least is the way to return a netmem that all
-> the other devmem/pages memory types uses. However if niov->pp == pp,
-> we end up page_pool_mp_return_in_cache(), which is basically the same
-> as page_pool_put_unrefed_netmem but skips the ptr_ring, so it's
-> slightly faster and less overhead.
+-----BEGIN PGP SIGNATURE-----
 
-Jumping through the loops is surely not great, but there are bigger
-semantical reasons. page_pool_put_netmem() has always been called by
-users from the outside, this one is off the page pool allocation path.
-For example, it'd nest io_uring with ptr_ring, which is not a bug and
-not so bad, but that's something you'd need to always consider while
-patching generic page pool. On top with the ptr_ring path in there,
-either providers would need to make implicit assumptions that it'd
-never happen, which is shabby, or the code should be prepared to that.
-I'd say it should be more convenient to have a separate and simple
-for all that.
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmeABu4ACgkQnKSrs4Gr
+c8jHyggAxZwQ29QQgfNp3N2lpMZshj7//KYUnpXptKL3DjiPOrqv0kP/zLgFnb0Q
+1M3YhF6zyll4nhfOSR6PadGIuDeqOWUo0Ya7jpkkETnevPi0BexjOC+3fCRUNP+p
+JuJhefhvObAggCiVQXepycJ4URpwmRhA8DluuNux+TsQI+fyslMJ55VO3dEyqzQq
+i2iDy8rZ9AWZc90u1BRQ5cIptU6Sdbn2rQpwFaVk1+cMp1WdfF5BsKq+BVsIWm5v
+zDlCg0kl3yhc1pJ/h374XNINjlnYS3YEB3YPlO89+KNVtEbzJe0677vA+y6YO7VB
+4z6ILKuGVIptHC7Aa4JKwUWAiCDN/A==
+=dyzO
+-----END PGP SIGNATURE-----
 
-We can play with the API more, hopefully after it's merged, but
-just replacing it with page_pool_put_netmem() would do a disservice.
-
-> I would honestly elect to page_pool_put_netmem() regardless of
-> niov->pp/pp check. Sure it would be a bit more overhead than the code
-> here, but it would reduce the custom pp refing code we need to add for
-> this mp and it will replenish the ptr_ring in both cases, which may be
-> even faster by reducing the number of times we need to replenish. We
-> can always add micro optimizations like skipping the ptr_ring for
-> slightly faster code if there is evidence there is significant perf
-> improvement.
-> 
->> +       } while (--entries);
->> +
->> +       smp_store_release(&ifq->rq_ring->head, ifq->cached_rq_head);
->> +       spin_unlock_bh(&ifq->rq_lock);
->> +}
->> +
-...
->> +static bool io_pp_zc_release_netmem(struct page_pool *pp, netmem_ref netmem)
->> +{
->> +       if (WARN_ON_ONCE(!netmem_is_net_iov(netmem)))
->> +               return false;
->> +
->> +       if (page_pool_unref_netmem(netmem, 1) == 0)
-> 
-> Check is redundant, AFAICT. pp would never release a netmem unless the
-> pp refcount is 1.
-
-Good catch, it was applied to v10
-
--- 
-Pavel Begunkov
+--3VE3BC/I/P4n9b3B--
 
 

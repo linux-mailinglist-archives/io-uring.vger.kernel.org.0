@@ -1,125 +1,81 @@
-Return-Path: <io-uring+bounces-5796-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5797-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3DF2A07FAF
-	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2025 19:20:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B745A08EA2
+	for <lists+io-uring@lfdr.de>; Fri, 10 Jan 2025 11:56:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEEAD3A6F39
-	for <lists+io-uring@lfdr.de>; Thu,  9 Jan 2025 18:20:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8543A9D74
+	for <lists+io-uring@lfdr.de>; Fri, 10 Jan 2025 10:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DC419DF7D;
-	Thu,  9 Jan 2025 18:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BED207656;
+	Fri, 10 Jan 2025 10:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="aB7YFTBz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEDp7c71"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F4B19CC33
-	for <io-uring@vger.kernel.org>; Thu,  9 Jan 2025 18:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040041F8F08;
+	Fri, 10 Jan 2025 10:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736446794; cv=none; b=R4mFWbhJgZgTovSsZFvBgQ3p5+tChOXA7oNOipzRiG1s9BR/1UeB8N1Xx1LVOJWY+X23NMSDN3UK7i3p3psctOewt+wVjdxhvvoFF0iFaWiTtmWjDEmTVom4sW7kO9mVQWladHgYkkd6isFOy9Kn3TP5djQ0d7nJTmxxHWKWZ3A=
+	t=1736506593; cv=none; b=OEdV/+owLeSNmLVsJ3QHurnMBUXsGQTnaSDb2DdGrOg1NebaHA5fFE7DB9OHs429HqZhQf9rbpecKyBQBnYwQaLTfx+2AGX0fhpMJyq6+wR6pHwHyX/Y2F+JrRJYWOxIa+641ek0clmSN+wE4fDm/DtPImtz2NvvXkxS7nExrrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736446794; c=relaxed/simple;
-	bh=xRrwNxj1/rvIJwkTHMgNtHwQ4dOt/tgHSab6xmTzMos=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rcusIHOSEmvzyPbxUJtweYoOsfpQcKVAQ1xzQqVBvPg/OpQwDTEOANbXbFoVdiSGyJAfMLfmWBAC7hXtCt+nKtvbRUyy27PNWUbRYWt0V8Enx8PogcATRQqTN5tlgGrMxu5i5tw7SFLAatMlHenhGcNAwVZ9RsxXaV7Zu6Nul6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=aB7YFTBz; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-84cdacbc373so33944539f.1
-        for <io-uring@vger.kernel.org>; Thu, 09 Jan 2025 10:19:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736446791; x=1737051591; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w1t+BVTlt/VRdOOgz4cjVebKkTsKM66n/VWi2wFFbBI=;
-        b=aB7YFTBzh07BcNoGuusIuMh1fUJoHXekKGoM3UECnN3f0RQcLUjCeigrBeDcOIR9Gr
-         HYNYNJmG9SKQ4ScS5Y6KY3tRfj9XVJV+uRMSDUyfik2wnSI61O2ceBXNdTgJfCKmLdxs
-         Gmf7VAr8E6xYV/4fYPkYNpByurFTtpYnLZaeGDkdzJnoHjuNccgYCsWDcSD0PHJg++sT
-         bjjiqui1M9XOsCiIMGVBVyfyB/kKJp/hWshitDCqLiK20rZveP9lvitTT0Abmxa9vdCY
-         p0hGyKp8yPCy2KOxQbZKTmLnVvKWJW8JEZI+qXs5nGIju+DOHApk407j3/OSUuXb+QeV
-         EvmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736446791; x=1737051591;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w1t+BVTlt/VRdOOgz4cjVebKkTsKM66n/VWi2wFFbBI=;
-        b=c1QqNVA0N8dFICyUuQlxKM3gXI2sR+on0D2TXPcDUElKeZ7LAmMoWZ2YgXdB5gGNSs
-         So1W8xleUhPduGczqMcfnE9hAMA+21w2NmA6cmXETNQoMH3AEh7E1BTjIVPV+woHHwM0
-         nWwN2MkF+HeoZWM2QWQov66s+BM2T4WlQiVwSNrn+6ehTLFJveL80Qz0+RmoacXM5AOq
-         SHcNMa5LV6FP1TUTDvvxZ0d+lrW/ojD57DiPrfzqB4WD+gOJQC0DKyy0lxCCLcAmKi7h
-         IV4lQUSqJe+SI7ckMr8TW3a88byXxkULV/jTndCZhJCQ5u7bqI+QQ5VWAJb3IqYj75K8
-         UAZg==
-X-Gm-Message-State: AOJu0YyW31lNaX1r8nl6V0lpSmWO+mxp6JT+iJuxCy9vcYbe5mz5ibCC
-	SKknOZmZrdla1OoZZaOgNstv1w0VqIxwiPSmv9JrpSJV3+38laNO2hJnMbpUO5lU8G3I1APMxlS
-	g
-X-Gm-Gg: ASbGncubVno2kEYjP3nzJJXMNp9lmDJZJ8agJmfrJ5VBBHenWUmKSWXS0EuRrrPm9WP
-	Hb+QW6DuE6fDvgexG+2FLKrlvbicZSKkIzizsSVSHyHm//WO7WKLnh1GCGL1iySbeFi2cMXxsJ6
-	/45vJZoJhhguhXnPhJDCa8Y6l3WdkI+hPk7RqSf/t5XxuoEwy5NmsEuI0tlhLnivCgPnTKFPdFm
-	s2iDiGAUu8KrxqmdG+Bf1Dd5+TWmPrL/hk6otmLU+I8ezfXbQ7qFDwv3S9EkQ==
-X-Google-Smtp-Source: AGHT+IEA96I3wYkhuEk8WILlWjczhdB5ioOkiXPLpQ7zMZJA5qHuPRI3e7Uc/3Ez8O82NztxGt+PdQ==
-X-Received: by 2002:a05:6e02:3201:b0:3a7:7811:1101 with SMTP id e9e14a558f8ab-3ce3a8df631mr66420645ab.20.1736446789423;
-        Thu, 09 Jan 2025 10:19:49 -0800 (PST)
-Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ea1b71763asm440672173.103.2025.01.09.10.19.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2025 10:19:48 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	"Haeuptle, Michael" <michael.haeuptle@hpe.com>
-Subject: [PATCH 3/3] io_uring/rw: don't gate retry on completion context
-Date: Thu,  9 Jan 2025 11:15:41 -0700
-Message-ID: <20250109181940.552635-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250109181940.552635-1-axboe@kernel.dk>
-References: <20250109181940.552635-1-axboe@kernel.dk>
+	s=arc-20240116; t=1736506593; c=relaxed/simple;
+	bh=nWe4tgkC5qGXTMJClC08HcpEepa8GsmA1+p1gbVHz6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hPXJUWK2oTL6lsBCmIKxYqVjVCOkPmHd8aHCthnOAB3y+KiJc1pcSeArlcTym6ewicjNNv+HZpJEKAJqwa/EIEk9otCGldzs3iiIxbW2P79RqZLS3HdKL8iuAQKxj3/KLwHbmOWA/uUnsIesjlTNmyjzuTcidhncFXuhCp0yIF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEDp7c71; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE21C4CED6;
+	Fri, 10 Jan 2025 10:56:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736506592;
+	bh=nWe4tgkC5qGXTMJClC08HcpEepa8GsmA1+p1gbVHz6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GEDp7c71v5tspOridq4B8NRV6EyvBjsk32pq1lQRD4f5pzz5J+IMscvG7ATPX9vff
+	 iwJQSCpxNp0wyvyGpE3OHgTwjFyNG3F06xkrhPyrdwFjJXm5XWr0LDxks9qO0z/qPM
+	 59lvf1QlqS2r5pvXlA1z8ceCgl687VEDMmM2ugMvBB76ncbo5UR9GgxjO2Hysdp/FE
+	 XLChy3bD//daQpRi2GOt3dgK8KNkPExvOKJsF+wrt044HJ8BmlRQ8dfUA35aYCKjlH
+	 M2vLZbgCO8LTo43pzrY96KBYXSQtw5VWJOoQWu9pI7bb4h2RGy3XEHqadhRbHYdRkW
+	 vtHhOlNteJybA==
+Date: Fri, 10 Jan 2025 11:56:27 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, 
+	Manfred Spraul <manfred@colorfullife.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, WangYuli <wangyuli@uniontech.com>, linux-kernel@vger.kernel.org, 
+	io-uring@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 0/5] poll_wait: add mb() to fix theoretical race between
+ waitqueue_active() and .poll()
+Message-ID: <20250110-ratsam-bahnfahren-3bac59730ea6@brauner>
+References: <20250107162649.GA18886@redhat.com>
+ <CAHk-=wgvpziaLOTNV9cbitHXf7Lz0ZAW+gstacZqJqRqR8h66A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgvpziaLOTNV9cbitHXf7Lz0ZAW+gstacZqJqRqR8h66A@mail.gmail.com>
 
-nvme multipath reports that they see spurious -EAGAIN bubbling back to
-userspace, which is caused by how they handle retries internally through
-a kworker. However, any data that needs preserving or importing for
-a read/write request has always been done so at prep time, and we can
-sanely skip this check.
+On Tue, Jan 07, 2025 at 09:38:36AM -0800, Linus Torvalds wrote:
+> On Tue, 7 Jan 2025 at 08:27, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > I misread fs/eventpoll.c, it has the same problem. And more __pollwait()-like
+> > functions, for example p9_pollwait(). So 1/5 adds mb() into poll_wait(), not
+> > into __pollwait().
+> 
+> Ack on all five patches, looks sane to me.
+> 
+> Christian, I'm assuming this goes through your tree? If not, holler,
+> and I can take it directly.
 
-Reported-by: "Haeuptle, Michael" <michael.haeuptle@hpe.com>
-Link: https://lore.kernel.org/io-uring/DS7PR84MB31105C2C63CFA47BE8CBD6EE95102@DS7PR84MB3110.NAMPRD84.PROD.OUTLOOK.COM/
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- io_uring/rw.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index c52c0515f0a2..ee5d38db9b48 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -475,12 +475,6 @@ static bool io_rw_should_reissue(struct io_kiocb *req)
- 	 */
- 	if (percpu_ref_is_dying(&ctx->refs))
- 		return false;
--	/*
--	 * Play it safe and assume not safe to re-import and reissue if we're
--	 * not in the original thread group (or in task context).
--	 */
--	if (!same_thread_group(req->tctx->task, current) || !in_task())
--		return false;
- 
- 	io_meta_restore(io, &rw->kiocb);
- 	iov_iter_restore(&io->iter, &io->iter_state);
--- 
-2.47.1
-
+Yes, on it. Sorry, this took a bit. I'm trying to work downwards through
+all the mail.
 

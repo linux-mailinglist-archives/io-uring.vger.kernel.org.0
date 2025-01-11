@@ -1,269 +1,234 @@
-Return-Path: <io-uring+bounces-5819-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5820-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66465A09FA2
-	for <lists+io-uring@lfdr.de>; Sat, 11 Jan 2025 01:46:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E55A0A09F
+	for <lists+io-uring@lfdr.de>; Sat, 11 Jan 2025 04:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BCF2188F0DB
-	for <lists+io-uring@lfdr.de>; Sat, 11 Jan 2025 00:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0091188B3B3
+	for <lists+io-uring@lfdr.de>; Sat, 11 Jan 2025 03:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52898184E;
-	Sat, 11 Jan 2025 00:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A39819CD1D;
+	Sat, 11 Jan 2025 03:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYIIPFSQ"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="r/fYonRJ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2190979D2;
-	Sat, 11 Jan 2025 00:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDF91990DB
+	for <io-uring@vger.kernel.org>; Sat, 11 Jan 2025 03:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736556383; cv=none; b=PnCUa3ZEkPhO6y48QY5lTpOFRz4PFMwP5qPP8ZzuXsiuBHpA0/6IVse1MhziBVtKyOtDfFnkQ+9W+oeevkC4vjhAvd+JnhRZdCnTr/+B/HOGiUBhMDnp5nzqMGz/yPoPTz70mjGYMuHSMgYFJ5wMSjM3kuysuoivVWvkNGT/39A=
+	t=1736566421; cv=none; b=d0AP+gQov9dcG1OvyGFBfNg0pnMOjcfKniZtnPlpJvSpwVwQaUXQLR7qfW7lHdSsnHOp4b/y1hWNN9Yj/z5R6um2BvHHCk+fjVz+j4+9Ki/PXYu3I5hROdvPJmfhu/RuLr1O1dm67oRZFGib0GkXkxtQ9T5edpIXdQikXxkfN3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736556383; c=relaxed/simple;
-	bh=foRgl5imLj1rA3LH5J0pIYz2bryPDPVy04AvXejUU24=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MG4ciFFhqP1Kfz8/UF9lXi7QzTJsQF0hksyTyz2fL33J9TEewT6B4zVJbcBgW89vPWnVWcOlVAtkMDd3xkVYN2xunuQIjmilL8ASKdVal3laWFhlm9hCIckkp0qPe4aPAm13OWPNOkTKZkg5+4rPIHTB8DVvMO+lmN8RGbCnAI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYIIPFSQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68FB9C4CED6;
-	Sat, 11 Jan 2025 00:46:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736556382;
-	bh=foRgl5imLj1rA3LH5J0pIYz2bryPDPVy04AvXejUU24=;
-	h=From:To:Cc:Subject:Date:From;
-	b=tYIIPFSQ81oLpVqvO80tl0IGWoNcSpjWJ1GC+7gG2FcPcNuTUHhFVFwm/m2l9GLua
-	 1PqkNwtXZRSH0F3mI6hZkC2vBaAaXo39am3xMa08bfDOQNIPYOkyuRnHhw2waacTwv
-	 6E+SmRpRBTFIsYN7epk3QlagY34xEeLhzFq9P7F2Q7mlFVKkB811BTp4srxrDnWHFG
-	 2SFQOctqnUyyk007eyIG296aFVV/YQytcRxwFhRN3wuGMYC7sb4wrl/sHcP6lBT8ad
-	 +Sy6fbytnHEt+H6FZWHpGTBjvZcKi3UO9P2+HiU/JJTapAWHk4H9GTxiB9eSRetUin
-	 J4HeR8PZxuO7g==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	damon@lists.linux.dev,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH] mm/madvise: remove redundant mmap_lock operations from process_madvise()
-Date: Fri, 10 Jan 2025 16:46:18 -0800
-Message-Id: <20250111004618.1566-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1736566421; c=relaxed/simple;
+	bh=BFi5xFbwB2b0+fpMjFjnBcucoqX7Z5MCJy5sCqe+UQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Rq8JaCWii/vhzhj8/Hft3veYzPzRRkZhznV9LOHDgaWbvJo6SDhls79aUT/ramOzMSKM9Q2Au3X3aaF5QKZLaOadGpVNWVhgFF1VaoU+82+Gdo4vq9d8fx2NqiKzwqfLjeAQ7McE5gRZbVkJ6MLFpBxuDwKYwKgatkan2/9nkgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=r/fYonRJ; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3cdce23f3e7so18646335ab.0
+        for <io-uring@vger.kernel.org>; Fri, 10 Jan 2025 19:33:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736566416; x=1737171216; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LrL3tBboriimTgVbAlmP6jkLPelsvtJH+bwBnQx1YIo=;
+        b=r/fYonRJ5OreefYxqPyh36bse5X15DDrSG0ODnjybi+unnpz3m9cciqqU1IFkQq0uE
+         PhfOzxvz79FED46UWY+UyI4bDlEhWRCQPBb+O+FwYZQktRxa/Fyh2VjCsJYExrJEmXLN
+         zP/p30voS73/BFizirZeFRetsaHEFRTsJYITk6C73ozuh9Z8RJWl9Sh5/VHgnTCLYZDg
+         nTPr6WvM9zMEs2tD1ORvMC3ODSeku1BLE66D+nQNTTNdWO1hV+wNH6QLDV5ylgvBoBvJ
+         kBu9gK9vrZwyZwE5JUd42NlCOn4GZ8ug+P465Nnl7wfSHFBC8cDB6ylFKn1BbrnmcDTF
+         orxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736566416; x=1737171216;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LrL3tBboriimTgVbAlmP6jkLPelsvtJH+bwBnQx1YIo=;
+        b=KRUI7W/kCNcr22uvRplvIze+2pQMSJAsPHOcbnzB7K+RaDH/OYehQRUNoXzjlKm+W/
+         La+UibmUApMLfSDLHF63dKuPQz6n8bQlv4Ff+Dar4hG7Eli/jQNyPgbC74VCj5sQkU/1
+         mX47yPWuSsv/vH9On50xcOZSWS39/1nydzxuQx6EMynKeW3oLQSZKqf26XrDsrtHvb0y
+         but9TWgj4d2ZcHmZs4jlg9DtevZBdtTzVJB2/VAJggU37nhrySuQtgKE9PGkudy6LkXm
+         o/LoUjI4GR1mdIMJd62v3cP/L8sEFG8yIsfxChkvLhcmuJMmuMFkBd0jKV3gPI/PoeWS
+         LlvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLhdMiWdK8pzjdomvgH9BXTU+EvtRk+rcD2b9KQZjCyILuzupvEgiF9oJVCT+2hUs3/c7BanEQ+Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZqPc2S3Dab42me1WsMf7gT4pyMxuXUgGwNpgwuT6siuiY3fjz
+	rs6IhtBmtgDhIZ7weCJZhSPEWLvdZWUfPJGFmZVR20Sd3mDgvTAptTckANVJeaw=
+X-Gm-Gg: ASbGnct8c9A3CA+ffipnP+rv0PrmeUxoMplFDIBK+Asw3XrnTDVCsr+t9/h0j3CPuDt
+	xVW4ar6ibtvWu2bkuvgVwDs16ftHPV/LPkbyyDZ+Yx1pDt1DUji+orcx5eLZLn6rLrJ7z4aKwOq
+	x4+1pEWsn4YDQ21NsXCcM0DJtMKul1biMmsJLnCjG9RcJPL91w0BAxjQ11NGIhjKtTyJbWyErmA
+	pj0ycuI2gxJyjR1IM4NqVqkYWm2J1YEnDsGZWPzxO1qwzL+wnzb9w==
+X-Google-Smtp-Source: AGHT+IGlrzYaPnVt6J+CpShPV3tQvbWK0kEiljd1tejoQM1KCkNHYEDfsBrYFKmrpyr6gf+UQ2+Szw==
+X-Received: by 2002:a05:6e02:512:b0:3ce:3d5a:4520 with SMTP id e9e14a558f8ab-3ce3d5a4825mr72260755ab.17.1736566416329;
+        Fri, 10 Jan 2025 19:33:36 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ea1b745799sm1237535173.114.2025.01.10.19.33.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2025 19:33:35 -0800 (PST)
+Message-ID: <3b78348b-a804-4072-b088-9519353edb10@kernel.dk>
+Date: Fri, 10 Jan 2025 20:33:34 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: futex+io_uring: futex_q::task can maybe be dangling (but is not
+ actually accessed, so it's fine)
+To: Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ kernel list <linux-kernel@vger.kernel.org>,
+ Pavel Begunkov <asml.silence@gmail.com>, io-uring <io-uring@vger.kernel.org>
+References: <CAG48ez2HHU+vSCcurs5TsFXiEfUhLSXbEzcugBSTBZgBWkzpuA@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAG48ez2HHU+vSCcurs5TsFXiEfUhLSXbEzcugBSTBZgBWkzpuA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-process_madvise() calls do_madvise() for each address range.  Then, each
-do_madvise() invocation holds and releases same mmap_lock.  Optimize the
-redundant lock operations by doing the locking in process_madvise(), and
-inform do_madvise() that the lock is already held and therefore can be
-skipped.
+On 1/10/25 3:26 PM, Jann Horn wrote:
+> Hi!
+> 
+> I think there is some brittle interaction between futex and io_uring;
+> but to be clear, I don't think that there is actually a bug here.
+> 
+> In io_uring, when a IORING_OP_FUTEX_WAIT SQE is submitted with
+> IOSQE_ASYNC, an io_uring worker thread can queue up futex waiters via
+> the following path:
+> 
+> ret_from_fork -> io_wq_worker -> io_worker_handle_work ->
+> io_wq_submit_work[called as ->do_work] -> io_issue_sqe ->
+> io_futex_wait[called as .issue] -> futex_queue -> __futex_queue
+> 
+> futex_q instances normally describe synchronously waiting tasks, and
+> __futex_queue() records the identity of the calling task (which is
+> normally the waiter) in futex_q::task. But io_uring waits on futexes
+> asynchronously instead; from io_uring's perspective, a pending futex
+> wait is not tied to the task that called into futex_queue(), it is
+> just tied to the userspace task on behalf of which the io_uring worker
+> is acting (I think). So when a futex wait operation is started by an
+> io_uring worker task, I think that worker task could go away while the
+> futex_q is still queued up on the futex, and so I think we can end up
+> with a futex_q whose "task" member points to a freed task_struct.
+> 
+> The good part is that (from what I understand) that "task" member is
+> only used for two purposes:
+> 
+> 1. futexes that are either created through the normal futex syscalls
+> use futex_wake_mark as their .wake callback, which needs the task
+> pointer to know which task should be woken.
+> 2. PI futexes use it for priority inheritance magic (and AFAICS there
+> is no way for io_uring to interface with PI futexes)
+> 
+> I'm not sure what is the best thing to do is here - maybe the current
+> situation is fine, and I should just send a patch that adds a comment
+> describing this to the definition of the "task" member? Or maybe it
+> would be better for robustness to ensure that the "task" member is
+> NULLed out in those cases, though that would probably make the
+> generated machine code a little bit more ugly? (Or maybe I totally
+> misunderstand what's going on and there isn't actually a dangling
+> pointer...)
 
-Evaluation
-==========
+Good find. And yes the io-wq task could go away, if there's more of
+them.
 
-I measured the time to apply MADV_DONTNEED advice to 256 MiB memory
-using multiple madvise() calls, 4 KiB per each call.  I also do the same
-with process_madvise(), but with varying iovec size from 1 to 1024.
-The source code for the measurement is available at GitHub[1].
+While it isn't an issue, dangling pointers make me nervous. We could do
+something like the (totally untested) below patch, where io_uring just
+uses __futex_queue() and make __futex_queue() take a task_struct as
+well. Other callers pass in 'current'.
 
-The measurement results are as below.  'sz_batches' column shows the
-iovec size of process_madvise() calls.  '0' is for madvise() calls case.
-'before' and 'after' columns are the measured time to apply
-MADV_DONTNEED to the 256 MiB memory buffer in nanoseconds, on kernels
-that built without and with this patch, respectively.  So lower value
-means better efficiency.  'after/before' column is the ratio of 'after'
-to 'before'.
+It's quite possible that it'd be safe to just use __futex_queue() and
+clear ->task after the queue, but if we pass in NULL from the get-go,
+then there's definitely not a risk of anything being dangling.
 
-    sz_batches  before     after      after/before
-    0           124062365  96670188   0.779206393494111
-    1           136341258  113915688  0.835518827323714
-    2           105314942  78898211   0.749164453796119
-    4           82012858   59778998   0.728897875989153
-    8           82562651   51003069   0.617749895167489
-    16          71474930   47575960   0.665631431888076
-    32          71391211   42902076   0.600943385033768
-    64          68225932   41337835   0.605896230190011
-    128         71053578   42467240   0.597679120395598
-    256         85094126   41630463   0.489228398679364
-    512         68531628   44049763   0.6427654542221
-    1024        79338892   43370866   0.546653285755491
 
-The measurement shows this patch reduces the process_madvise() latency,
-proportional to the batching size, from about 25% with the batch size 2
-to about 55% with the batch size 1,024.  The trend is somewhat we can
-expect.
-
-Interestingly, this patch has also optimize madvise() and single batch
-size process_madvise(), though.  I ran this test multiple times, but the
-results are consistent.  I'm still investigating if there are something
-I'm missing.  But I believe the investigation may not necessarily be a
-blocker of this RFC, so just posting this.  I will add updates of the
-madvise() and single batch size process_madvise() investigation later.
-
-[1] https://github.com/sjp38/eval_proc_madvise
-
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- include/linux/mm.h |  3 ++-
- io_uring/advise.c  |  2 +-
- mm/damon/vaddr.c   |  2 +-
- mm/madvise.c       | 54 +++++++++++++++++++++++++++++++++++-----------
- 4 files changed, 45 insertions(+), 16 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 612b513ebfbd..e3ca5967ebd4 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3459,7 +3459,8 @@ int do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 		    unsigned long end, struct list_head *uf, bool unlock);
- extern int do_munmap(struct mm_struct *, unsigned long, size_t,
- 		     struct list_head *uf);
--extern int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int behavior);
-+extern int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in,
-+		int behavior, bool lock_held);
+diff --git a/io_uring/futex.c b/io_uring/futex.c
+index 30139cc150f2..985ad10cc6d5 100644
+--- a/io_uring/futex.c
++++ b/io_uring/futex.c
+@@ -338,7 +338,12 @@ int io_futex_wait(struct io_kiocb *req, unsigned int issue_flags)
+ 		hlist_add_head(&req->hash_node, &ctx->futex_list);
+ 		io_ring_submit_unlock(ctx, issue_flags);
  
- #ifdef CONFIG_MMU
- extern int __mm_populate(unsigned long addr, unsigned long len,
-diff --git a/io_uring/advise.c b/io_uring/advise.c
-index cb7b881665e5..010b55d5a26e 100644
---- a/io_uring/advise.c
-+++ b/io_uring/advise.c
-@@ -56,7 +56,7 @@ int io_madvise(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
- 
--	ret = do_madvise(current->mm, ma->addr, ma->len, ma->advice);
-+	ret = do_madvise(current->mm, ma->addr, ma->len, ma->advice, false);
- 	io_req_set_res(req, ret, 0);
- 	return IOU_OK;
- #else
-diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-index a6174f725bd7..30b5a251d73e 100644
---- a/mm/damon/vaddr.c
-+++ b/mm/damon/vaddr.c
-@@ -646,7 +646,7 @@ static unsigned long damos_madvise(struct damon_target *target,
- 	if (!mm)
- 		return 0;
- 
--	applied = do_madvise(mm, start, len, behavior) ? 0 : len;
-+	applied = do_madvise(mm, start, len, behavior, false) ? 0 : len;
- 	mmput(mm);
- 
- 	return applied;
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 49f3a75046f6..c107376db9d5 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -1637,7 +1637,8 @@ int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
-  *  -EAGAIN - a kernel resource was temporarily unavailable.
-  *  -EPERM  - memory is sealed.
-  */
--int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int behavior)
-+int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in,
-+		int behavior, bool lock_held)
- {
- 	unsigned long end;
- 	int error;
-@@ -1668,12 +1669,14 @@ int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int beh
- 		return madvise_inject_error(behavior, start, start + len_in);
- #endif
- 
--	write = madvise_need_mmap_write(behavior);
--	if (write) {
--		if (mmap_write_lock_killable(mm))
--			return -EINTR;
--	} else {
--		mmap_read_lock(mm);
-+	if (!lock_held) {
-+		write = madvise_need_mmap_write(behavior);
-+		if (write) {
-+			if (mmap_write_lock_killable(mm))
-+				return -EINTR;
-+		} else {
-+			mmap_read_lock(mm);
-+		}
+-		futex_queue(&ifd->q, hb);
++		/*
++		 * Don't pass in current as the task associated with the
++		 * futex queue, that only makes sense for sync syscalls.
++		 */
++		__futex_queue(&ifd->q, hb, NULL);
++		spin_unlock(&hb->lock);
+ 		return IOU_ISSUE_SKIP_COMPLETE;
  	}
  
- 	start = untagged_addr_remote(mm, start);
-@@ -1692,17 +1695,19 @@ int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int beh
- 	}
- 	blk_finish_plug(&plug);
- 
--	if (write)
--		mmap_write_unlock(mm);
--	else
--		mmap_read_unlock(mm);
-+	if (!lock_held) {
-+		if (write)
-+			mmap_write_unlock(mm);
-+		else
-+			mmap_read_unlock(mm);
-+	}
- 
- 	return error;
+diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+index ebdd76b4ecbb..3db8567f5a44 100644
+--- a/kernel/futex/core.c
++++ b/kernel/futex/core.c
+@@ -532,7 +532,8 @@ void futex_q_unlock(struct futex_hash_bucket *hb)
+ 	futex_hb_waiters_dec(hb);
  }
  
- SYSCALL_DEFINE3(madvise, unsigned long, start, size_t, len_in, int, behavior)
+-void __futex_queue(struct futex_q *q, struct futex_hash_bucket *hb)
++void __futex_queue(struct futex_q *q, struct futex_hash_bucket *hb,
++		   struct task_struct *task)
  {
--	return do_madvise(current->mm, start, len_in, behavior);
-+	return do_madvise(current->mm, start, len_in, behavior, false);
+ 	int prio;
+ 
+@@ -548,7 +549,7 @@ void __futex_queue(struct futex_q *q, struct futex_hash_bucket *hb)
+ 
+ 	plist_node_init(&q->list, prio);
+ 	plist_add(&q->list, &hb->chain);
+-	q->task = current;
++	q->task = task;
  }
  
- /* Perform an madvise operation over a vector of addresses and lengths. */
-@@ -1711,12 +1716,28 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
+ /**
+diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
+index 99b32e728c4a..2d3f1d53c854 100644
+--- a/kernel/futex/futex.h
++++ b/kernel/futex/futex.h
+@@ -285,7 +285,8 @@ static inline int futex_get_value_locked(u32 *dest, u32 __user *from)
+ }
+ 
+ extern void __futex_unqueue(struct futex_q *q);
+-extern void __futex_queue(struct futex_q *q, struct futex_hash_bucket *hb);
++extern void __futex_queue(struct futex_q *q, struct futex_hash_bucket *hb,
++				struct task_struct *task);
+ extern int futex_unqueue(struct futex_q *q);
+ 
+ /**
+@@ -303,7 +304,7 @@ extern int futex_unqueue(struct futex_q *q);
+ static inline void futex_queue(struct futex_q *q, struct futex_hash_bucket *hb)
+ 	__releases(&hb->lock)
  {
- 	ssize_t ret = 0;
- 	size_t total_len;
-+	bool hold_lock = true;
-+	int write;
+-	__futex_queue(q, hb);
++	__futex_queue(q, hb, current);
+ 	spin_unlock(&hb->lock);
+ }
  
- 	total_len = iov_iter_count(iter);
+diff --git a/kernel/futex/pi.c b/kernel/futex/pi.c
+index d62cca5ed8f4..635c7d5d4222 100644
+--- a/kernel/futex/pi.c
++++ b/kernel/futex/pi.c
+@@ -982,7 +982,7 @@ int futex_lock_pi(u32 __user *uaddr, unsigned int flags, ktime_t *time, int tryl
+ 	/*
+ 	 * Only actually queue now that the atomic ops are done:
+ 	 */
+-	__futex_queue(&q, hb);
++	__futex_queue(&q, hb, current);
  
-+#ifdef CONFIG_MEMORY_FAILURE
-+	if (behavior == MADV_HWPOISON || behavior == MADV_SOFT_OFFLINE)
-+		hold_lock = false;
-+#endif
-+	if (hold_lock) {
-+		write = madvise_need_mmap_write(behavior);
-+		if (write) {
-+			if (mmap_write_lock_killable(mm))
-+				return -EINTR;
-+		} else {
-+			mmap_read_lock(mm);
-+		}
-+	}
-+
- 	while (iov_iter_count(iter)) {
- 		ret = do_madvise(mm, (unsigned long)iter_iov_addr(iter),
--				 iter_iov_len(iter), behavior);
-+				 iter_iov_len(iter), behavior, hold_lock);
- 		/*
- 		 * An madvise operation is attempting to restart the syscall,
- 		 * but we cannot proceed as it would not be correct to repeat
-@@ -1739,6 +1760,13 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
- 		iov_iter_advance(iter, iter_iov_len(iter));
- 	}
- 
-+	if (hold_lock) {
-+		if (write)
-+			mmap_write_unlock(mm);
-+		else
-+			mmap_read_unlock(mm);
-+	}
-+
- 	ret = (total_len - iov_iter_count(iter)) ? : ret;
- 
- 	return ret;
+ 	if (trylock) {
+ 		ret = rt_mutex_futex_trylock(&q.pi_state->pi_mutex);
+
 -- 
-2.39.5
+Jens Axboe
 

@@ -1,185 +1,122 @@
-Return-Path: <io-uring+bounces-5830-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5831-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E52D0A0A802
-	for <lists+io-uring@lfdr.de>; Sun, 12 Jan 2025 10:37:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B37BA0A839
+	for <lists+io-uring@lfdr.de>; Sun, 12 Jan 2025 11:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5A971888622
-	for <lists+io-uring@lfdr.de>; Sun, 12 Jan 2025 09:37:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01FEC1886B80
+	for <lists+io-uring@lfdr.de>; Sun, 12 Jan 2025 10:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4BA15CD49;
-	Sun, 12 Jan 2025 09:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFF21A23BE;
+	Sun, 12 Jan 2025 10:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="euE49UPT"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C5lWoEHG"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFAB18FDBA;
-	Sun, 12 Jan 2025 09:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D2F3E499
+	for <io-uring@vger.kernel.org>; Sun, 12 Jan 2025 10:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736674624; cv=none; b=S0UEfdXJ6DAdwEvNonJ71jek2/5r/DJy86jT9kPQCXlYEbAEHeFVatRdpWqGM4V8tIBqIhxVgJs+Ayke/NsLJuzEbaoUzCUTw+P9/oF8MDKjaGLRxCnvoHSsC8STjZvv6tdh5XKxHYJQP8VNWsBRqpheh5xvxGHrrV5EujmEBiw=
+	t=1736678208; cv=none; b=Zq1PuppDy2d7yWdEyH047ATLMBCuxTg5IKWyr8JBvOH9eXSSbcm8vIcVdiu81fjeb2vmHAGUNyxfJiyDczfeMt2d0WwHjV883rxwRXTUmFfNmn8M4DDhpLWc+Q6DuDYx2oaIzRGKf3WUtZQKy0vuH/6glOkQTwUyszwvmkGQsSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736674624; c=relaxed/simple;
-	bh=ZIMLLtAPhZ+7Tg3hGHiQI8w5U7t85kdgcWit0we0+LE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LAugUNRXrCmzqWdUvclgrtk142oZcjY3VoGlJ+KR30u4Ov+QvuMj/xmKSCShvTZjdX2HNIf52P6vrtuyfAQiiKvHQLQhLGJQWHgGyMuBfuBJN9WTIYojWVmUnSWmBMZmTn+EVaEbfXzSa3jPCw8kqwwrcOHSHIv5PuvIR/Q+yc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=euE49UPT; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-216634dd574so37444135ad.2;
-        Sun, 12 Jan 2025 01:37:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736674622; x=1737279422; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BMKQUcDgVaPO2H691VPylKmZ2TSWdTuuFVdh5tTqnac=;
-        b=euE49UPTrEOPO447IP8WSP6BHhF0rmfxUM/0ybfn3KHdfE8heiM2xfSo3sMG/4TFdZ
-         h0efOguyLrrDP0LvgCM50yH/rpbaGctOxzlffNcth3WU+etdMby68N85Y1i6wPivhEsU
-         uF6TP8o56IFtHpFL9XjUDLRm2gVJ8ds34YocVI8ReZDMFeynOi3Jr8YD5niSULU62Ha7
-         ZNgoryjOMv26WRf/6L7w3dBWYLVmMGu02aYpG+nlvD+5jLeCrezO40UJFNlaLo5VXjL7
-         bijVzJr/noyVycGWxL+IRdA0wRedFJMEGdEp6VDCiAbN+sP9GxUZOG9QGfVWpxVK3qLG
-         Bb5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736674622; x=1737279422;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BMKQUcDgVaPO2H691VPylKmZ2TSWdTuuFVdh5tTqnac=;
-        b=jmRnNWCwSHPPPJSYco+09E+V3aKaQ4vKhHFTNTDwl+rA/OgzhI62K03UwtZ4ZFXg5P
-         AwbWdl++PNxNi3mkQa7kw9ZkBHFa4nlyeMuTwdLpWrQsIOFvHZ8QyrWXDATnjbEBQtrN
-         Jr+U4i4zJTOFRmx17F8WGVP8rCxXmytdGlxvli0FYBkCDFM3JLl9hhp+uWO+nz7Hw+xP
-         xFq7mTcO1DpgaVaStkLLaVHPGPgXsobokxFLrwqx7QfemsDX3A1b+Ef8hMLioeKVheIP
-         ee3QplI2gipyizbU53/vtlgMcSS7x3ugL+mjxwnseDpbE5Si58WOmGFFV894myCED5Cb
-         w9ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRGI9Ix5xqZzuvTumWvRMTImwI5WiDQgzinjFze4QTAlj0ty3OFM9N8NKxt2AGPrNSNFc+RKfJ/w==@vger.kernel.org, AJvYcCWVWgHDpXJKc1noPHlFPNFPqp6IvIj6JQ32+GABm6P0VTQ7210mY/OQo1f7SlHCL9sqoL44Lscm9grnaf4A@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0FWMvOax51FuQvvij3VeHxHG7wJ/qamvxc856zxP7stbeYtG4
-	HODoxYOKJIgQdOtHh/zL7CDQig+skQuLXLxR++nfzVBbshzdme9Dtwz3UQ==
-X-Gm-Gg: ASbGncuLQ+KqhTbWkMA15aYxZxuDzhQCrjaacZlKqyLy4CR4pfk1+axtPzV5o9Lvimq
-	W0NVmPODmzOD3+xnxdRcsp6hjXN4Le1zdH9ZJvvwNh/79G3hjxLG39P5CtZVmq5xLUbsvChIkd6
-	ZjQvQBcOuCZ4Ic6AvDghIAPN+ldUoby9syy+yjWgRKlp8BieBikG/AkAHY6UDLi6vBFfu7B20Ij
-	l2JwDV12IfRpAZOrt/Dlt6TB04KG4IInRKr2LMRZNmz8R6wnVFg2xyLwwjycMZMJCxJ9TlCr1sq
-	1yH4ee8kIJy0AXN0Sz4rM1yBsPE3j6c2
-X-Google-Smtp-Source: AGHT+IFIcHOax5U3GNZdWcO63GZpDG8iUKsft65JkYu8LBCo3Q1sElzosX8kF+6NG8SO2kFxBrtaig==
-X-Received: by 2002:a17:902:d2d2:b0:216:3889:6f6f with SMTP id d9443c01a7336-21a83f4e4e9mr249048555ad.17.1736674621870;
-        Sun, 12 Jan 2025 01:37:01 -0800 (PST)
-Received: from ?IPV6:2001:ee0:4f4c:d5a0:f0b6:d66:6352:a79c? ([2001:ee0:4f4c:d5a0:f0b6:d66:6352:a79c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9f2192f7sm36614475ad.148.2025.01.12.01.36.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Jan 2025 01:37:00 -0800 (PST)
-Message-ID: <1d0a7d54-fcc7-495a-b9e7-be3344d21b6c@gmail.com>
-Date: Sun, 12 Jan 2025 16:36:56 +0700
+	s=arc-20240116; t=1736678208; c=relaxed/simple;
+	bh=REgFctRGG2i+aWyJ1ZRxJ6TwTZBV1cOPjFQdvPEnzK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NACwWrlprZo7GIWeMCl2R+++sxx7rsvlnrgIwyEDhUxR2nZpD2/VtA+PwiXlbrvbAZuqzkI9MIjUYHvcDQaavkvr+2IvYtvxhuXleNWktTE92u7jG1f9S9i4fcbh7dU3iAZPwjdc3raKgM10SjBINMPgvYR3nCXoMEQQEVqbZG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C5lWoEHG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736678205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sjZIf+MqzlX40O8hdTacUc+jXg2UIC0x4trWd6422To=;
+	b=C5lWoEHGZn5UcZQqc8zGTsFIizU25jP1fo4lfOoo2wT/10/TsZTmatKegzDhxZmthRB5hn
+	cuYDIxfS0deNQVWwlPcGwyrRdDI93/LjBpOqqlwO1e5kgK6VV0u2nWc0hzcWkRB1CT/+G5
+	pQRa4QPkQknEA86DKDKKUZQt2S5fQ3I=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-543-0DSN8VPiNBSr_DA-YHIeIA-1; Sun,
+ 12 Jan 2025 05:36:43 -0500
+X-MC-Unique: 0DSN8VPiNBSr_DA-YHIeIA-1
+X-Mimecast-MFC-AGG-ID: 0DSN8VPiNBSr_DA-YHIeIA
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A2F3A19560BB;
+	Sun, 12 Jan 2025 10:36:36 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.4])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5808B195608A;
+	Sun, 12 Jan 2025 10:36:31 +0000 (UTC)
+Date: Sun, 12 Jan 2025 18:36:27 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
+	codalist@coda.cs.cmu.edu, linux-mm@kvack.org,
+	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+	io-uring@vger.kernel.org, bpf@vger.kernel.org,
+	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+	Song Liu <song@kernel.org>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Corey Minyard <cminyard@mvista.com>
+Subject: Re: [PATCH v2] treewide: const qualify ctl_tables where applicable
+Message-ID: <Z4ObK5hkQ7qjWgbf@MiWiFi-R3L-srv>
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: annotate sqd->thread access with data race in
- cancel path
-To: Pavel Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
- syzbot+3c750be01dab672c513d@syzkaller.appspotmail.com,
- Li Zetao <lizetao1@huawei.com>
-References: <20250111105920.38083-1-minhquangbui99@gmail.com>
- <02961c66-19b2-4f55-b785-3c4a132a5da3@gmail.com>
- <524e9337-47af-4433-979d-b02788d41ca6@gmail.com>
- <cb3419a7-988e-4133-8ec0-c27953c5da4a@gmail.com>
-Content-Language: en-US
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-In-Reply-To: <cb3419a7-988e-4133-8ec0-c27953c5da4a@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 1/12/25 08:21, Pavel Begunkov wrote:
-> On 1/11/25 13:57, Bui Quang Minh wrote:
->> On 1/11/25 19:02, Pavel Begunkov wrote:
->>> On 1/11/25 10:59, Bui Quang Minh wrote:
->>>> The sqd->thread access in io_uring_cancel_generic is just for debug 
->>>> check
->>>> so we can safely ignore the data race.
->>>>
->>>> The sqd->thread access in io_uring_try_cancel_requests is to check 
->>>> if the
->>>> caller is the sq threadi with the check ctx->sq_data->thread == 
->>>> current. In
->>>> case this is called in a task other than the sq thread, we expect the
->>>> expression to be false. And in that case, the sq_data->thread read 
->>>> can race
->>>> with the NULL write in the sq thread termination. However, the race 
->>>> will
->>>> still make ctx->sq_data->thread == current be false, so we can safely
->>>> ignore the data race.
->>>>
->>>> Reported-by: syzbot+3c750be01dab672c513d@syzkaller.appspotmail.com
->>>> Reported-by: Li Zetao <lizetao1@huawei.com>
->>>> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
->>>> ---
->>>>   io_uring/io_uring.c | 15 ++++++++++++---
->>>>   1 file changed, 12 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>>> index ff691f37462c..b1a116620ae1 100644
->>>> --- a/io_uring/io_uring.c
->>>> +++ b/io_uring/io_uring.c
->>>> @@ -3094,9 +3094,18 @@ static __cold bool 
->>>> io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
->>>>           ret |= (cret != IO_WQ_CANCEL_NOTFOUND);
->>>>       }
->>>> -    /* SQPOLL thread does its own polling */
->>>> +    /*
->>>> +     * SQPOLL thread does its own polling
->>>> +     *
->>>> +     * We expect ctx->sq_data->thread == current to be false when
->>>> +     * this function is called on a task other than the sq thread.
->>>> +     * In that case, the sq_data->thread read can race with the
->>>> +     * NULL write in the sq thread termination. However, the race
->>>> +     * will still make ctx->sq_data->thread == current be false,
->>>> +     * so we can safely ignore the data race here.
->>>> +     */
->>>>       if ((!(ctx->flags & IORING_SETUP_SQPOLL) && cancel_all) ||
->>>> -        (ctx->sq_data && ctx->sq_data->thread == current)) {
->>>> +        (ctx->sq_data && data_race(ctx->sq_data->thread) == 
->>>> current)) {
->>>>           while (!wq_list_empty(&ctx->iopoll_list)) {
->>>>               io_iopoll_try_reap_events(ctx);
->>>>               ret = true;
->>>
->>> data_race() is a hammer we don't want to use to just silence warnings,
->>> it can hide real problems. The fact that it needs 6 lines of comments
->>> to explain is also not a good sign.
->>>
->>> Instead, you can pass a flag, i.e. io_uring_cancel_generic() will have
->>> non zero sqd IFF it's the SQPOLL task.
->>
->> At first, I think of using READ_ONCE here and WRITE_ONCE in the sq 
->> thread termination to avoid the data race. What do you think about 
->> this approach?
-> 
-> Same thing, that'd be complicating synchronisation when there
-> shouldn't be any races in the first place. Having no races is
-> easier than wrapping them into READ_ONCE and keeping in mind
-> what that's even fine.
+On 01/10/25 at 03:16pm, Joel Granados wrote:
+...snip...
+> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> index c0caa14880c3..71b0809e06d6 100644
+> --- a/kernel/kexec_core.c
+> +++ b/kernel/kexec_core.c
+> @@ -925,7 +925,7 @@ static int kexec_limit_handler(const struct ctl_table *table, int write,
+>  	return proc_dointvec(&tmp, write, buffer, lenp, ppos);
+>  }
+>  
+> -static struct ctl_table kexec_core_sysctls[] = {
+> +static const struct ctl_table kexec_core_sysctls[] = {
+>  	{
+>  		.procname	= "kexec_load_disabled",
+>  		.data		= &kexec_load_disabled,
 
-Okay, I'll send another patch with a new flag for the cancel path.
+For the kexec/kdump part,
 
-> Btw, the line you're changing doesn't even look right. SQPOLL
-> clears sqd->task right before starting with cancellations, so
-> sounds like it's mindlessly comparing NULL == current.
-
-Hmm, I think it's correct but quite easy to get confused here. In the 
-io_sq_thread, we explicitly call io_uring_cancel_generic before setting 
-sqd->thread = NULL. The later io_uring_cancel_generic call in do_exit 
-actually does nothing as we already set the task_struct->io_uring to 
-NULL in the previous call.
-
-Thanks,
-Quang Minh.
+Acked-by: Baoquan He <bhe@redhat.com>
+......
 
 

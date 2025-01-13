@@ -1,99 +1,99 @@
-Return-Path: <io-uring+bounces-5848-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5849-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C6FBA0C3D3
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2025 22:34:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 422C0A0C4CC
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2025 23:35:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A646716197B
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2025 21:34:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CD737A5011
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2025 22:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA18C1D2F42;
-	Mon, 13 Jan 2025 21:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CC51FA14B;
+	Mon, 13 Jan 2025 22:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMl0U/zb"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="nVLQx/Mw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358F51C8FD4;
-	Mon, 13 Jan 2025 21:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294FB1F9419
+	for <io-uring@vger.kernel.org>; Mon, 13 Jan 2025 22:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736804049; cv=none; b=CknVUDIjNTvElJj/s/enpoT5GY6XC41kFjNfHaqcI+D7cJKfv5yxWm1asxjkYVJJuBaesWAD2xZ2HaPk9T/mPJDFidfQ8UXCq48CfA6biQ3C38eeNdOgLp+QLn85ji1E6LUea/wDATXNtbEnMkI+cQV7pXCJN+qVlMEEhqfiKsk=
+	t=1736807412; cv=none; b=IBYT9WPO/x/5EikxQNUaOMPGdDHb989yi/g2/jC4rdVTbBZhMzTICmsFLS6MX9DUHAnOOinANcytyawV2qtDGr8hibsuIXYXkkbYvdMqgNLfSsYfpGcN0jpQbWLyrNyPH/otPQzqNVLgUN4cSCJHPUQPJm5yTA21ccw6lNVFapU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736804049; c=relaxed/simple;
-	bh=jhhN0jPMcNUiuSD+ojKOnfUL+3CmnZQNj0cx5yAjRng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IVfL2MWTW6xLVTXlm4SCy0+XuTpAst9B0SBiXAgtsV0LQGMhpPL56mDepKM7w3S6sByeOfDOVg1lplSMHQROBSpqEY7Egr4Grl/yrw+tt7dbtwkqmXvk4BrROucW9hU+D8vb2jXxvzawEvZnVmYpHQYjtEHSehTFwIATvfaw0O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dMl0U/zb; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa67333f7d2so735203566b.0;
-        Mon, 13 Jan 2025 13:34:07 -0800 (PST)
+	s=arc-20240116; t=1736807412; c=relaxed/simple;
+	bh=hUgEwdoHcBT26rlpizn+ruY8wmBwdO0kVUnA0F84F0w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JL7DDohonu770G66Ayy+Ypo1bVtGqRRfM+jc7VLZAzdltF+2seNg0SpMLWnysKZKJfPBJfBv5htbex11JQZvA+cEG3Lre/BdJHQ45xPgHZikjs7HUdaFzqTdxxEBH/ks6wmWrcd0AsXOL/45kuTh3WiEhM6yZWd0omsM2ZtJ8gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=nVLQx/Mw; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3cda56e1dffso11861615ab.1
+        for <io-uring@vger.kernel.org>; Mon, 13 Jan 2025 14:30:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736804046; x=1737408846; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wn5PiGDMRHL3obexVx5xGt37YBdMlSBj/q8mI20QHj4=;
-        b=dMl0U/zb+dcVXvR3zkILyStEgFmA90y+COzsliF4UMT7c1mEZBnkLIsTESseGA1FPy
-         DhM7Di5k0W8l9jLlaPWvdri0lXx5gpWJDqgklMqm/4tshPDjGM7s0OWMoYSEZGudvA0D
-         /goeQC5Qq5NIivwkj1csDJNAQBvWXubb0ydHTpsfJJMnXpsza8KqD+6UOyAVgk32zkaR
-         3xgnp44fkeCm1sI4j3ZuSJTW2piPvZ9yua6rY9qXS9YVA2ZNFg4XIzdthCXZMo85E13m
-         oMwSxBv2HLu6+ypeKW7QnnkI/ufW9LJ0fOz3mkK1wk7Bgg/R0s/dv4E5CsLmCCHhT8z3
-         7szw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736807407; x=1737412207; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zEtnQ2duiHf3hSpucZN3b3BFYLg18RCwSD6UbrLwQ40=;
+        b=nVLQx/Mwb+j32c5c99r+XJXUJRHckAJGiJP7lexYDIZV9j6xtRVXgd3w9X80fJNAzk
+         xqtXKYCHc+fRVDMZYA+w7OHHzF7GbmWBgiSVNgb8ejSmidr9nOOJQMqGV63v26f2CcRY
+         xJ3kbPyymphljxBOzG1pV/MDERyHP4/sYq1do/LkZhV6YSmcA5vI8RD4e++uRb2JaU2E
+         GdRRoI3g0xuWnKYbPIHRjlTIVpj5reGPBI6UU01up22mm77DOnyEaIfu6jA6ow7xBYPY
+         PMaNrHFFHwlCNDgjrU3tXUnrAuoUoXzXZAdLwzf6bGd8vl9Fm6zelcHmog1kMCw6yRgq
+         lffw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736804046; x=1737408846;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wn5PiGDMRHL3obexVx5xGt37YBdMlSBj/q8mI20QHj4=;
-        b=vAzDx600hC8FOaicrU1l1EyWC+xrNc1Eu9kRwXNqqgpfdPvBZHxO4A/wYA8I6d4Zey
-         /fCmKdUxrFCWKhlTm7s8WVXrvg6uocVJvYhAeTES+sQDmGA2lanIireFMQpY0dImkIiU
-         y4NzWAQUBT5Au1TG7lCJuGuMoxksdyRxaw4jCDccrBt5Wi2ucZOq1HGpOGN/G51mO0gP
-         zyjlSNms6q6NhVvWEaL0xA+K+s5WeudONRvbJhh7XMzs71cASfJ0frQzG/FXadQMqdF0
-         exQkyF0iQ3egUi4iOsXqXjp5puy8SB7yE5dvNCwsgLZzEexIszQ+x2ooYIhtlWKpuNqR
-         OIiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhsxo67f/xP+vLDqGmvDK/pXcM7MwwMrQxLvDAacGn4ksemkIoxNN8JPx8RSEHkQcyfCELwAMVAw==@vger.kernel.org, AJvYcCWwMJ6RaKsQjGfuSRUkIxYMIb+sWGM5e47GcBiQgyWcFEz3x72B0p0n0sxoCQpmz6otBviOC692D0fus5RI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjzfO2Jd1ppP9aR6H5FmqRygur8H7+Gt6YwShP4bPs4NaqRvK1
-	NoIcLhS1Py+NX5cLL+G6bpTYITNrR4h2b9DrJo3k43zVwMxMzVQpa5KYD70Z
-X-Gm-Gg: ASbGnct6qPRyVqbDGCZVODMbhKrLZd9v64X5ui1JESg/ppxQ1WawSct7Hvyud5QdOIZ
-	uLpTp7dBeVd/OUx1T+uJP3Ei9b+9DH19NcOPTgswVczuOTMCzPVMYg5a81e+V3jFupG4n743jMm
-	Mwyku5ei9rFmiylJNrkFN3/mTAg5UrQ7APBLFcqP+ZU4JNCLepVFHbKB/EU/qFKofPmJ72qqGMm
-	SJ2W2w2atQlDetnRCT1ZCvseTC/8qOYrgO6qfzglk1B0al7J6OkoLeNHcSxrU7OPgg=
-X-Google-Smtp-Source: AGHT+IFsgFwYwfKfY6Ix2/iLBkRp2j7EtYZwnZkn7jRZttkGZIWyoZGG+UTOY/PeCdjtrzyQd+Hlkg==
-X-Received: by 2002:a17:907:7f90:b0:aaf:300b:d1f7 with SMTP id a640c23a62f3a-ab2ab709c82mr1750075666b.13.1736804046391;
-        Mon, 13 Jan 2025 13:34:06 -0800 (PST)
-Received: from [192.168.8.100] ([148.252.140.152])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c905cd15sm547298666b.5.2025.01.13.13.34.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jan 2025 13:34:05 -0800 (PST)
-Message-ID: <a5910007-017c-4b80-b0ae-e36569c88b15@gmail.com>
-Date: Mon, 13 Jan 2025 21:34:56 +0000
+        d=1e100.net; s=20230601; t=1736807407; x=1737412207;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zEtnQ2duiHf3hSpucZN3b3BFYLg18RCwSD6UbrLwQ40=;
+        b=whmWB1tfuNslw1b6E0OFExKjeMcnTRnbL4PfR8xGSojmgL8EiRzYphCCO0NQmsMsNG
+         9truBOqjQQ098knmHz9etVdeeUsdFhd/PmSFoaKi3JchsXwvlz4XedI4eXqJaWURa8uv
+         Iz2cAmEm06e0xRXbCqsCqwUlLPjLZIE4SD8a4zV4nJJthh7GbgJzLKCLfVjiofBbQ0pm
+         f4J+Dy05BgbbgTZqw1RWoLfuX3H2sjdz/KrM6tchyNnQbeMFmHXt2R1/L+EnuEFg/6Qq
+         nVWDSTZjFG5soN8fP7a3rpowLGBjZk3+Mfkq+j/vl9rQHsBD8CFmKkDpuMio1Zp+hmHS
+         2yoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhYx3yyYEp7OZ484UkaFxhcwoObyR/7KjT68M8ZJmwFOgZUUZ9O5YocPnF90Y+nmgF4y3Q1GQHCQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUS1c991JHRpsawsAXDBEGooUGU0R2k+gMe8tpk6AfYJ62djvE
+	/kDm1FXB2uvKL9Q/lW9ikdMTApbVTsfgz1j98y4INIiQOPZDXag/YhE6SWu/evY=
+X-Gm-Gg: ASbGncshrtezHP4Vp3JxUnmNqsOdMdDUOOXo/6iDdGkVcp/Vqew9y5Z29+yo88Qmxj5
+	+GUB8hixSUeXv01GV2/9IAQu5o0ad6h0gjU9KtXFIWE61Hq0HYCeBMbtD25cnPVzmUYLIqAx5gx
+	jJIqyvh39Sxh69Pa6LWeTAU7RO1DL4gZIFLHPSi4yvKqi8FCPmFx3ouwuHP8vd/eoADg57ZIR8j
+	8c4MUkBc58grm6RgYZFhJqsDeybT1D2JwQic3uwIMYBWA+c
+X-Google-Smtp-Source: AGHT+IH14nhDCfcE/VicXuUGkNCUwz79Cq5l77YJlqvmJudS4QIjKRZEFSv70F1oHkafS+cFB2okYw==
+X-Received: by 2002:a05:6e02:154b:b0:3a7:e286:a572 with SMTP id e9e14a558f8ab-3ce3a86a535mr161533645ab.3.1736807407481;
+        Mon, 13 Jan 2025 14:30:07 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ea1b7177e4sm3019798173.92.2025.01.13.14.30.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2025 14:30:06 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: linux-kernel@vger.kernel.org, Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
+ syzbot+3c750be01dab672c513d@syzkaller.appspotmail.com, 
+ Li Zetao <lizetao1@huawei.com>
+In-Reply-To: <20250113160331.44057-1-minhquangbui99@gmail.com>
+References: <20250113160331.44057-1-minhquangbui99@gmail.com>
+Subject: Re: [PATCH v2] io_uring: simplify the SQPOLL thread check when
+ cancelling requests
+Message-Id: <173680740642.1193220.11121663333496197972.b4-ty@kernel.dk>
+Date: Mon, 13 Jan 2025 15:30:06 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] io_uring: simplify the SQPOLL thread check when
- cancelling requests
-To: Bui Quang Minh <minhquangbui99@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
- syzbot+3c750be01dab672c513d@syzkaller.appspotmail.com,
- Li Zetao <lizetao1@huawei.com>
-References: <20250113160331.44057-1-minhquangbui99@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250113160331.44057-1-minhquangbui99@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-14bd6
 
-On 1/13/25 16:03, Bui Quang Minh wrote:
+
+On Mon, 13 Jan 2025 23:03:31 +0700, Bui Quang Minh wrote:
 > In io_uring_try_cancel_requests, we check whether sq_data->thread ==
 > current to determine if the function is called by the SQPOLL thread to do
 > iopoll when IORING_SETUP_SQPOLL is set. This check can race with the SQPOLL
@@ -104,15 +104,17 @@ On 1/13/25 16:03, Bui Quang Minh wrote:
 > whether the current is SQPOLL thread already. And the SQPOLL thread never
 > reaches io_ring_exit_work.
 > 
-> So to avoid the racy check, this commit adds a boolean flag to
-> io_uring_try_cancel_requests to determine if the caller is SQPOLL thread.
+> [...]
 
-I think the comment is excessive, but let's leave it at that if
-you don't want to respin it.
+Applied, thanks!
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+[1/1] io_uring: simplify the SQPOLL thread check when cancelling requests
+      commit: a13030fd194c88961be4679f87a1380f1bda0ebe
 
+Best regards,
 -- 
-Pavel Begunkov
+Jens Axboe
+
+
 
 

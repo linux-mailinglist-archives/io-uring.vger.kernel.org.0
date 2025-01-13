@@ -1,110 +1,136 @@
-Return-Path: <io-uring+bounces-5838-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5839-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BFCA0AC17
-	for <lists+io-uring@lfdr.de>; Sun, 12 Jan 2025 23:02:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76307A0AE7B
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2025 05:41:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E197A3A5B28
-	for <lists+io-uring@lfdr.de>; Sun, 12 Jan 2025 22:02:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 841171612B6
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2025 04:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD13F839F4;
-	Sun, 12 Jan 2025 22:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HjySOqVq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32812170A0A;
+	Mon, 13 Jan 2025 04:40:56 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69741494D8
-	for <io-uring@vger.kernel.org>; Sun, 12 Jan 2025 22:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1777C2F56;
+	Mon, 13 Jan 2025 04:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736719341; cv=none; b=s7aGMAzXMiPEFmBmgHSqAPhmk4jYm5imSrEgUPozVyYzAqqFs6oSS10g+MK+kcagGeROBLpHcgr92h7QZssv5Cpl9blG6++ywUvff/JloBTX6DUIb3+65ZT1C1+yzedScFmcaexQtkCkkgtZIs7v/PMfqfwbx/pDQEUxGeJiuDU=
+	t=1736743256; cv=none; b=PnTBWvEzbJKWw/shYPZrXyW/4CXLnMgkFJLTpT/zHG7xoF2Ul3qtOwF9ABJhagU6Ar5+p3n19p/DR5MqmkfxwpnlMbGxtgTzbstSnyxc3/5h/5QO06FP/P0Lz30qyU3Axqp6yMeIbJKtQ89Ox6H6ic+twO7NxE34PfehHBEFwAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736719341; c=relaxed/simple;
-	bh=3AliTRGKQ/C0sYSOxntIOn2ITKIC0fmLQo/J0FfCzmg=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=F4GwoHqbEpi9tMJ3NaM/T53Ce+S3kpDOuVKq6v9PI/O6RqUdC0EYWICTUGs6wIar41qcy2wZrIE8bL0kQTZspPJ/S/6PBiO147q1ykwRo1GQSqbzsnXELvI3aXfEcHhsk4kxH6eDK7Qb6KHfHeQK7Y7B/Ji+hdGy3OyLrnBPpJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HjySOqVq; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a9628d20f0so24952735ab.2
-        for <io-uring@vger.kernel.org>; Sun, 12 Jan 2025 14:02:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736719339; x=1737324139; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DyYZlaYDStoyCftQAb2AMqXEE6Y4fSOTr88Ian73x5U=;
-        b=HjySOqVqqsGBtDeawcZbf8KAjNX1iEBhrKKyV0vxsPTKW2fi/LOt3N7QGx4COXpEcj
-         ROi/hyr4924uU5PttqaOwJprlT8+h4DaEA9KHWTLshLM7VmrVFwBZqoX+wfYukrly4Nw
-         dUoBVR46yvEXN9nwt6G5teUjIbJD9DhLR8qT8NCTaYhlkAAd5+TK7qQsOF/pYFcw3thX
-         yHS7mtK+pjH0HG5YJEIkbiLDOQQXx8BYAl/ptW12CCZpbxUjuhivMJw/Bze4ktH4lk4e
-         oY2NU6I8DAKpGirO/PmRoQEpK3oJfVxt+F9NDKxTpG78BhQEMqGebBNX1yKree6k5dur
-         URaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736719339; x=1737324139;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DyYZlaYDStoyCftQAb2AMqXEE6Y4fSOTr88Ian73x5U=;
-        b=D70nyFDg9kf3ihV1uyE94mdIN6SwhtFg5ViAswEM7CXkyAXDPCumKVBBFpEf8MvqNs
-         2+pDZad1hei1xdmLF2l1gna2V0crZJNuUA2Sn/XlTB5pXP5NbbLiNt971h6JIna6Uvw3
-         GrO7ofmBMI6cTRwSUUHX3IK5xuw4o6f82ter83hzlJyS4P3Q3ljSFKW5bJAdmQA+pXa0
-         jnRzUvf6ZOmDoYgvnpNRdhJFZrmGnk5MMZbzascAD3BbRiMKrwU2T9WDRiQQlEK1wLeu
-         ENqjfUcGUBpBiZ0rTLskGDtjOfLBGaGxO4UeQAd2WEyGMtF0O0OFNHrYkzvqFyL99Qsm
-         BuWQ==
-X-Gm-Message-State: AOJu0Yx0/Kcw+lhPGflqSNHJXlLMGULY4/4M7H3xMTavWboRtyXkJJ9M
-	q60PtQyE7fix1cUvSHzkZLLzPB6ze7j6ohkty97V7ZV+JGWXibUkaN0S+MqpPujdUuP/Mh1n3DL
-	d
-X-Gm-Gg: ASbGncvK8Zkx7v2xZLSJeylOU+4brdWbie7BkEjQ4OZME4rU88g1vRRkMfnH0/j3k9m
-	0PTG9ZlS2nB+ZCxgWjowFq8i6Ey7u5f2BRRqFz8d4YuiGcughfilJqL5jWK05uSS+pDPnc5nJTz
-	ZNJP0uXnp25sMIfByC6mvla73JR6nxtq23bHLETRpbmPGUzFJuc3+amWviGpKhcfowqfKU7e0lg
-	qmzG3pJDFX86p+w4higkjfgcpAR4MXgQELh+R7LZNffL41y
-X-Google-Smtp-Source: AGHT+IEftSmWbHX0LuAwGyKIQNDlV/Qpm6u4ak1+viIBp6tX2Wt9bXG0Ex4C/T+PrlrkFCJ0Gkn2Hw==
-X-Received: by 2002:a05:6e02:1908:b0:3ce:6af4:78d8 with SMTP id e9e14a558f8ab-3ce6af47a4cmr32317155ab.12.1736719339050;
-        Sun, 12 Jan 2025 14:02:19 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ea1b5f82desm2346625173.19.2025.01.12.14.02.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jan 2025 14:02:18 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20250112180831.18612-1-marcel@holtmann.org>
-References: <20250112180831.18612-1-marcel@holtmann.org>
-Subject: Re: [PATCH liburing] examples/io_uring-test: Fix memory leak
-Message-Id: <173671933815.1103166.13622970529782808467.b4-ty@kernel.dk>
-Date: Sun, 12 Jan 2025 15:02:18 -0700
+	s=arc-20240116; t=1736743256; c=relaxed/simple;
+	bh=cVHDtU1Ye/Co0xDzOHaJcHrb83HM5RcLbXbyvIPVLiY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BB55hxu3fI5ZlG5u03Fd+1XxFN1M3gt2d+PF6v3Kzfn4eawMv6LAPTVVve45o0H/5YVfnhI7Z3dfzK3CMDmuHTvTmwAl/sj5hMW1PV8bP3mcAp+OwB6PIpqJMFA5vJ7IQTwBNuQrszu2c6x/NOfEYM+VaYjrob0gkGBuVBW/Qkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YWfd24tmQz1kyCV;
+	Mon, 13 Jan 2025 12:37:42 +0800 (CST)
+Received: from kwepemd200011.china.huawei.com (unknown [7.221.188.251])
+	by mail.maildlp.com (Postfix) with ESMTPS id E82F91402E0;
+	Mon, 13 Jan 2025 12:40:49 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd200011.china.huawei.com (7.221.188.251) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 13 Jan 2025 12:40:49 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Mon, 13 Jan 2025 12:40:49 +0800
+From: lizetao <lizetao1@huawei.com>
+To: Pavel Begunkov <asml.silence@gmail.com>, Bui Quang Minh
+	<minhquangbui99@gmail.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Jens Axboe <axboe@kernel.dk>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>,
+	"syzbot+3c750be01dab672c513d@syzkaller.appspotmail.com"
+	<syzbot+3c750be01dab672c513d@syzkaller.appspotmail.com>
+Subject: RE: [PATCH] io_uring: simplify the SQPOLL thread check when
+ cancelling requests
+Thread-Topic: [PATCH] io_uring: simplify the SQPOLL thread check when
+ cancelling requests
+Thread-Index: AQHbZQBAfPWaG4hxx06y9utYvVroALMTRYCQ//+EZoCAAFRSgIABAbTw
+Date: Mon, 13 Jan 2025 04:40:49 +0000
+Message-ID: <7a3696740cd546cd95cd821a7a7be03c@huawei.com>
+References: <20250112143358.49671-1-minhquangbui99@gmail.com>
+ <aff011219272498a900f052d0142978c@huawei.com>
+ <3cab5ad8-3089-46c7-868e-38bd3c250b26@gmail.com>
+ <75e12d85-9c2e-4b06-99d1-bc29c5422b69@gmail.com>
+In-Reply-To: <75e12d85-9c2e-4b06-99d1-bc29c5422b69@gmail.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-14bd6
 
-
-On Sun, 12 Jan 2025 19:08:30 +0100, Marcel Holtmann wrote:
-> The iovecs structure is leaking even for the succesful case and since
-> everything else gets cleaned up before exit, just free the iovecs
-> allocated memory as well.
-> 
-> 
-
-Applied, thanks!
-
-[1/1] examples/io_uring-test: Fix memory leak
-      commit: 3124a4619e4daf26b06d48ccf0186a947070c415
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUGF2ZWwgQmVndW5r
+b3YgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+DQo+IFNlbnQ6IE1vbmRheSwgSmFudWFyeSAxMywg
+MjAyNSA1OjE2IEFNDQo+IFRvOiBCdWkgUXVhbmcgTWluaCA8bWluaHF1YW5nYnVpOTlAZ21haWwu
+Y29tPjsgbGl6ZXRhbw0KPiA8bGl6ZXRhbzFAaHVhd2VpLmNvbT47IGxpbnV4LWtlcm5lbEB2Z2Vy
+Lmtlcm5lbC5vcmcNCj4gQ2M6IEplbnMgQXhib2UgPGF4Ym9lQGtlcm5lbC5kaz47IGlvLXVyaW5n
+QHZnZXIua2VybmVsLm9yZzsNCj4gc3l6Ym90KzNjNzUwYmUwMWRhYjY3MmM1MTNkQHN5emthbGxl
+ci5hcHBzcG90bWFpbC5jb20NCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gaW9fdXJpbmc6IHNpbXBs
+aWZ5IHRoZSBTUVBPTEwgdGhyZWFkIGNoZWNrIHdoZW4NCj4gY2FuY2VsbGluZyByZXF1ZXN0cw0K
+PiANCj4gT24gMS8xMi8yNSAxNjoxNCwgQnVpIFF1YW5nIE1pbmggd3JvdGU6DQo+IC4uLg0KPiA+
+Pj4gQEAgLTI4OTgsNyArMjg5OSwxMiBAQCBzdGF0aWMgX19jb2xkIHZvaWQgaW9fcmluZ19leGl0
+X3dvcmsoc3RydWN0DQo+ID4+PiB3b3JrX3N0cnVjdCAqd29yaykNCj4gPj4+IMKgwqDCoMKgwqDC
+oMKgwqDCoCBpZiAoY3R4LT5mbGFncyAmIElPUklOR19TRVRVUF9ERUZFUl9UQVNLUlVOKQ0KPiA+
+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaW9fbW92ZV90YXNrX3dvcmtfZnJvbV9sb2Nh
+bChjdHgpOw0KPiA+Pj4NCj4gPj4+IC3CoMKgwqDCoMKgwqDCoCB3aGlsZSAoaW9fdXJpbmdfdHJ5
+X2NhbmNlbF9yZXF1ZXN0cyhjdHgsIE5VTEwsIHRydWUpKQ0KPiA+Pj4gK8KgwqDCoMKgwqDCoMKg
+IC8qDQo+ID4+PiArwqDCoMKgwqDCoMKgwqDCoCAqIEV2ZW4gaWYgU1FQT0xMIHRocmVhZCByZWFj
+aGVzIHRoaXMgcGF0aCwgZG9uJ3QgZm9yY2UNCj4gPj4+ICvCoMKgwqDCoMKgwqDCoMKgICogaW9w
+b2xsIGhlcmUsIGxldCB0aGUgaW9fdXJpbmdfY2FuY2VsX2dlbmVyaWMgaGFuZGxlDQo+ID4+PiAr
+wqDCoMKgwqDCoMKgwqDCoCAqIGl0Lg0KPiA+Pg0KPiA+PiBKdXN0IGN1cmlvdXMsIHdpbGwgc3Ff
+dGhyZWFkIGVudGVyIHRoaXMgaW9fcmluZ19leGl0X3dvcmsgcGF0aD8NCj4gPg0KPiA+IEFGQUlL
+LCB5ZXMuIFRoZSBTUVBPTEwgdGhyZWFkIGlzIGNyZWF0ZWQgd2l0aCBjcmVhdGVfaW9fdGhyZWFk
+LCB0aGlzIGZ1bmN0aW9uDQo+IGNyZWF0ZXMgYSBuZXcgdGFzayB3aXRoIENMT05FX0ZJTEVTLiBT
+byBhbGwgdGhlIG9wZW4gZmlsZXMgaXMgc2hhcmVkLiBUaGVyZSB3aWxsDQo+IGJlIGNhc2UgdGhh
+dCB0aGUgcGFyZW50IGNsb3NlcyBpdHMgaW9fdXJpbmcgZmlsZSBhbmQgU1FQT0xMIHRocmVhZCBi
+ZWNvbWUgdGhlDQo+IG9ubHkgb3duZXIgb2YgdGhhdCBmaWxlLiBTbyBpdCBjYW4gcmVhY2ggdGhp
+cyBwYXRoIHdoZW4gdGVybWluYXRpbmcuDQo+IA0KPiBUaGUgZnVuY3Rpb24gaXMgcnVuIGJ5IGEg
+c2VwYXJhdGUga3RocmVhZCwgdGhlIHNxcG9sbCB0YXNrIGRvZXNuJ3QgY2FsbCBpdCBkaXJlY3Rs
+eS4NCg0KSSBhbHNvIHRoaW5rIHNvLCB0aGUgc3Fwb2xsIHRhc2sgbWF5IG5vdCBjYWxsIGlvX3Jp
+bmdfZXhpdF93b3JrKCkuDQo+IA0KPiBbLi4uXQ0KPiA+Pj4+IGlvX3VyaW5nLA0KPiA+Pj4gLcKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCBjYW5jZWxfYWxsKTsNCj4gPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2FuY2Vs
+X2FsbCwNCj4gPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdHJ1ZSk7DQo+ID4+PiDCoMKgwqDCoMKgwqDC
+oMKgwqAgfQ0KPiA+Pj4NCj4gPj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAobG9vcCkgew0KPiA+
+Pj4gLS0NCj4gPj4+IDIuNDMuMA0KPiA+Pj4NCj4gPj4NCj4gPj4gTWF5YmUgeW91IG1pc3Mgc29t
+ZXRoaW5nLCBqdXN0IGxpa2UgQmVndW5rb3YgbWVudGlvbmVkIGluIHlvdXIgbGFzdA0KPiB2ZXJz
+aW9uIHBhdGNoOg0KPiA+Pg0KPiA+PiDCoMKgIGlvX3VyaW5nX2NhbmNlbF9nZW5lcmljDQo+ID4+
+IMKgwqDCoMKgIFdBUk5fT05fT05DRShzcWQgJiYgc3FkLT50aHJlYWQgIT0gY3VycmVudCk7DQo+
+ID4+DQo+ID4+IFRoaXMgV0FSTl9PTl9PTkNFIHdpbGwgbmV2ZXIgYmUgdHJpZ2dlcmVkLCBzbyB5
+b3UgY291bGQgcmVtb3ZlIGl0Lg0KPiA+DQo+ID4gSGUgbWVhbnQgdGhhdCB3ZSBkb24ndCBuZWVk
+IHRvIGFubm90YXRlIHNxZC0+dGhyZWFkIGFjY2VzcyBpbiB0aGlzIGRlYnVnDQo+IGNoZWNrLiBU
+aGUgaW9fdXJpbmdfY2FuY2VsX2dlbmVyaWMgZnVuY3Rpb24gaGFzIGFzc3VtcHRpb24gdGhhdCB0
+aGUgc2dkIGlzIG5vdA0KPiBOVUxMIG9ubHkgd2hlbiBpdCdzIGNhbGxlZCBieSBhIFNRUE9MTCB0
+aHJlYWQuIFNvIHRoZSBjaGVjayBtZWFucyB0byBlbnN1cmUNCj4gdGhpcyBhc3N1bXB0aW9uLiBB
+IGRhdGEgcmFjZSBoYXBwZW5zIG9ubHkgd2hlbiB0aGlzIGZ1bmN0aW9uIGlzIGNhbGxlZCBieSBv
+dGhlcg0KPiB0YXNrcyB0aGFuIHRoZSBTUVBPTEwgdGhyZWFkLCBzbyBpdCBjYW4gcmFjZSB3aXRo
+IHRoZSBTUVBPTEwgdGVybWluYXRpb24uDQo+IEhvd2V2ZXIsIHRoZSBzZ2QgaXMgbm90IE5VTEwg
+b25seSB3aGVuIHRoaXMgZnVuY3Rpb24gaXMgY2FsbGVkIGJ5IFNRUE9MTA0KPiB0aHJlYWQuIElu
+IG5vcm1hbCBzaXR1YXRpb24gZm9sbG93aW5nIHRoZSBpb191cmluZ19jYW5jZWxfZ2VuZXJpYydz
+IGFzc3VtcHRpb24sDQo+IHRoZSBkYXRhIHJhY2UgY2Fubm90IGhhcHBlbi4gQW5kIGluIGNhc2Ug
+dGhlIGFzc3VtcHRpb24gaXMgYnJva2VuLCB0aGUNCj4gd2FybmluZyBhbG1vc3QgYWx3YXlzIGlz
+IHRyaWdnZXJlZCBldmVuIGlmIGRhdGEgcmFjZSBoYXBwZW5zLiBTbyB3ZSBjYW4gaWdub3JlDQo+
+IHRoZSByYWNlIGhlcmUuDQo+IA0KPiBSaWdodC4gQW5kIHRoYXQncyB0aGUgcG9pbnQgb2Ygd2Fy
+bmluZ3MsIHRoZXkncmUgc3VwcG9zZWQgdG8gYmUgdW50cmlnZ2VyYWJsZSwNCj4gb3RoZXJ3aXNl
+IHRoZXJlIGlzIGEgcHJvYmxlbSB3aXRoIHRoZSBjb2RlIHRoYXQgbmVlZHMgdG8gYmUgZml4ZWQu
+DQoNCk9rYXksIEkgdW5kZXJzdGFuZCB0aGUgbWVhbmluZyBvZiB0aGlzIFdBUk4uDQo+IA0KPiAt
+LQ0KPiBQYXZlbCBCZWd1bmtvdg0KDQotLS0NCkxpIFpldGFvDQoNCg==
 

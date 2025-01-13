@@ -1,135 +1,181 @@
-Return-Path: <io-uring+bounces-5844-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5845-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17106A0BC1A
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2025 16:33:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87E9A0BCD6
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2025 17:03:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F84C1884598
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2025 15:33:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792DD3A6F0C
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jan 2025 16:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5CC29D19;
-	Mon, 13 Jan 2025 15:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12981C5D7F;
+	Mon, 13 Jan 2025 16:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QIZvP06Y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvEPO4Yh"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29C8240245;
-	Mon, 13 Jan 2025 15:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6578F240222;
+	Mon, 13 Jan 2025 16:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736782405; cv=none; b=mCZJFvyoAFpuRRErecatW/mMca6IgztK3ndq/GMZdRnAYSNUF0F3WmI4Z3y+hR6B2Vgolx7jPeCuxV366uUmhgPHAAOyTAHtHqt7LntcXl3C0inAT/3yyCIlBPkKZBRvF0Gj4lQ38UJcIsc14lzQqzO74EeWEVLLogWIuU74uOo=
+	t=1736784221; cv=none; b=rppwlcnh8KJ6PbVlaXjStWc/fpWamTUVi59lnmKf/0IpBl6iC2qgT6BAarCM/9F/G/h7g4BSHIO8GPDiHmfeZaw8vlwSgZkOY89n14PrWSYR4yRvMxsW4AvaH3LcjbFqcY25W/BTvXR2sudiAxmCTkF7kOJNgG9C26l1v4ZWW9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736782405; c=relaxed/simple;
-	bh=yTH2Oggo0lcoM47iqJCtspvY0MbBlCLSOu4Xey5Ndf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sQnZPm8C/gLhVct6PFcRmlbGJpcrVRrhw9x0Xva9x2t+zT1GErkUeZMjkKc7YD06RYzpBLjB76TF1R2RQVpmooanISWg7OvbbDyCEVO7mkojuaIMV1TjT9WyDkMizP1blCNqhBdXZMT3YkJ8XmvBXHQ/5g7t49h1LOX7onjjtuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QIZvP06Y; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1736784221; c=relaxed/simple;
+	bh=DIA3f01PRm+9cG+7OO0HWpQflWb522k/RZkWi0R2kfY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bIg/O0rmHlYI+LxFSnYu+RdNV2AFOInZ6lj4T5WgdW4jmDi9BI98VW1VGax1T52fuiuchOFdANL6A4AHkbPjMcDORhzrOAGLJLs/ORbrHKGdufot/kkZnv2CrcSaLhuT9T0as/oeZYgWv67S8APHEXUQW7K2UOp5At6qobrM5bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvEPO4Yh; arc=none smtp.client-ip=209.85.216.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21654fdd5daso75096085ad.1;
-        Mon, 13 Jan 2025 07:33:23 -0800 (PST)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ef28f07dbaso6010260a91.2;
+        Mon, 13 Jan 2025 08:03:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736782403; x=1737387203; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CDDA2rXyQq16FfCh1gqaGctIL4mxg3rKVYqPYLPEUaY=;
-        b=QIZvP06Y4EhkOpIOIOtsCiO5t9W/JvQLxNSe/hv8NYLurS9n9XZKryc2X+JsetVH3X
-         ldxebm/ex1pSP/7AQU6mDSSG/4mzJL+O5LVNS+L3foBLKTn0Dn+/rxiLcOKMWEe4AyCh
-         znsaXmMUsZPOKPnbYyNgZp49OLtZ2FCI+fj+LGHi2f22QzT0weXwzdNdZqe6pJ1x5dO5
-         an6FQaQce6PUklrNFBK4aUwwjKgIbX5nbMy6ztu+QfAPxwOU+TKc5SJn5yvy1+Qdn9gC
-         yATXCYO3b0rE0KOD3EZ+6DmCZEhwWBwOT6O+FiONK90qar6nCC8GodiQSvS95c4odQxG
-         0EfQ==
+        d=gmail.com; s=20230601; t=1736784219; x=1737389019; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d3IquNHAW1qHgGiVDv2yAa0lk1cZ/kp3rCUXm/k12NA=;
+        b=lvEPO4YhaKey5zQrXdC2Uur+mp3jCi6moKrQJXrNHQdX0knz6c8dJNLO8NEuMu7A5N
+         +XUFOKIyBQXaSfN2H37oQfwew3psdfmA+HtCaqjP+i+Ow35Bcz7h2b7ebt4oAVoi0dtP
+         mUDwpXC/UaoJuLtS06pxyb8gECfWcMC2JE4wlSZUG8Le8A3p6KD6nbCUduXDwab+sfMf
+         oFQ4RDeTWl+NsR+52luKQlqfA+5fGH263UC+iqCWPSJLzJf1rVuV/0AQjpTFVsGlJP03
+         dtZr5K7JUHdY+KQU50xKpKT8skkJ8EpdZepE2EQJq9iPiN29JiH0/p6YWzSspY48cqxT
+         l5RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736782403; x=1737387203;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CDDA2rXyQq16FfCh1gqaGctIL4mxg3rKVYqPYLPEUaY=;
-        b=oYsrYkUVT7paLURf7XGhjrfYfLcauFCAFKU4fPXAVMWjJFYX5eTxgrNwfhx9Fa0H5h
-         eQJ6XDQ38LYbt7VA3qL7+c95DHHLqutvX0V2O6yHyCRWT8mHphN3cnyPKvYGECFEKRyx
-         P+zUL8NCN76dJ3SV7MwYwp37l42dyFO3I2kbXO89z0k7nvfXWXOeHQOQemfhEUBdlohX
-         etpMJBIdRwEabPNfrmyP3LyNKA7MLGtne2SoXCuUOJgd4cZiG2NujLHZMYUjuWg2yfSr
-         df8z2G9VbXi5gskux8l/zgEi4WJIRwQZbUwSjwtL2r3xg260MQzEbc0xydZLUWSqBntA
-         4ZOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUE2gE3m992OUHXe0Qgc34Vv3qbesRDc8Buu4xzsuKqWoS2HppgOESvwJe7LEKu7MRI5AHtmbmkRKXQ10cn@vger.kernel.org, AJvYcCWPsjdNX63qT/OwhTRt9yoYa68XeI3QTqsVJV7ulTKBV5TYSnIyTpxt9+03n3n2a0cr4nepFzIXjQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5Sw+gUllOdepbf3TmcbrQxFiujyyKTNjSD7ytcAdXkh428F2C
-	T9forPIbo15ToLODg5pUMm7CaGQSHir5ARJg72Pzv6/4hRqPW9sX
-X-Gm-Gg: ASbGncvzsShC/4+hNEbWiiQVLmg+iTgERqqFWJfLIc6Q00L6ORMfdB67hCAa/sL9CCd
-	YX/PJpaJCUqH7o3SpzDptjYyR1ZNvrb0T0Gp0VWe/5Nk2EH4nlxYtVj5Kr+I2owGQZvgf5i3clm
-	K88DdQ3rdH4rBN0Gel3ln3gLhW4Sppd0229FHfoolrOkhtVsKf/bg921vZ5mxkQAb0YDACY50X5
-	nMBrA2khXZCL2GfKRjH0Oy2i5OmBkXwf94WMM5UZt2WIptdSGNDR/Lr9vksCZOzDd0FLExJPgk/
-	M0uvpsErNOQYX67Tb0eSGtL35Nzujef2jQA=
-X-Google-Smtp-Source: AGHT+IEUIKbzcU5VEKNhmTWHRErSrM+VGBrEEj6WxhG5F3wd29lziIZXlZkikyHJwI4OlakTVUpB7g==
-X-Received: by 2002:a05:6a20:8423:b0:1e6:8f39:d635 with SMTP id adf61e73a8af0-1e88cf7f7a1mr32122730637.9.1736782401043;
-        Mon, 13 Jan 2025 07:33:21 -0800 (PST)
-Received: from ?IPV6:2001:ee0:4f4c:d5a0:7984:f0b3:c5d7:378f? ([2001:ee0:4f4c:d5a0:7984:f0b3:c5d7:378f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-a318e055fccsm7057562a12.34.2025.01.13.07.33.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jan 2025 07:33:20 -0800 (PST)
-Message-ID: <fe804e02-f791-4885-94b7-ffdf2476573b@gmail.com>
-Date: Mon, 13 Jan 2025 22:33:15 +0700
+        d=1e100.net; s=20230601; t=1736784219; x=1737389019;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d3IquNHAW1qHgGiVDv2yAa0lk1cZ/kp3rCUXm/k12NA=;
+        b=CPxc2IMW77f0pNo+FdPWXJvSQfE6BVU/FwtzbTEgeuXYU6jCev1ACPcd02YKOhL1NV
+         Dc1fthAJ6aCK4DYjWMpCfKlEEAd3qKW0YQymR7cYYt9B7oTMRUZfx37WWy6kPreTFygi
+         OObA6xFDcaiTcTMwjIEg/0N2T0dlfq/XjeOGYf66xlxAWz0PalGioQjKT/W9X4C7OxSH
+         rfsxYGfddchXzLX6FmXzB/lqQAR0vQqwLmHw6/yDvYe0NIvm6JOQAkCBvemEI1OyUyy1
+         wKUXbwHE3GkV60KpHwgFTbxjvmMsT+BQ6Bi8AN91fgc1whQYULYlBprCQJmmzLz5+eMo
+         OI6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWek7sp7XnZHXeBHHOkBPo7CIhChUg6/gYPJNUDvQKySjfebMkIjczWj6GpdoaMWHitlQBCz4Jw9w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeFa4IjoO0fStACNu14e0s2yR0x90Dbo+aGk8/600MrJJ7bNRk
+	m7oUIGjOZdTnP9SU909LvqGpNB6yIisTpDYAlnsNbqPM4IjmJ+pDoUUUvQ==
+X-Gm-Gg: ASbGncsJ70IctnfPIscc/RmyaJbQtJPGLNX8WhIoQ5XNp+xhEzKY6rpG1CXisQFqH8w
+	IMZqkwq1Nb125CL1yxmCt8beYCgr68TLFqEWLuglDOktIEAX2lKwtBlhZTX6J0Vw+WA2Wr6ZApJ
+	zZEpz6Ts4G1G+A67QhHxVLIHcnhzzj25p0zHmGXQUp/gFUmnaKjPQlcIFIBzleTVQ3BPuQkjPX9
+	x+28eZG/QvRb+W8jzURAktceCJaDJJYH+mxDcPAH/rUqV6c0rM8NSYLLp6M
+X-Google-Smtp-Source: AGHT+IFIoRFBe4SSxBmtKBF+iLSZUDsY8RxHAR9d/Qn0yGrxfYAq70YRAhe+fvP58gf8fXd33pbAfA==
+X-Received: by 2002:a17:90b:5146:b0:2ee:bbe0:98cd with SMTP id 98e67ed59e1d1-2f548e9a547mr31964190a91.7.1736784219151;
+        Mon, 13 Jan 2025 08:03:39 -0800 (PST)
+Received: from local.. ([2001:ee0:4f4c:d5a0:7984:f0b3:c5d7:378f])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2f54a34e456sm11268806a91.35.2025.01.13.08.03.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2025 08:03:38 -0800 (PST)
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Bui Quang Minh <minhquangbui99@gmail.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	io-uring@vger.kernel.org,
+	syzbot+3c750be01dab672c513d@syzkaller.appspotmail.com,
+	Li Zetao <lizetao1@huawei.com>
+Subject: [PATCH v2] io_uring: simplify the SQPOLL thread check when cancelling requests
+Date: Mon, 13 Jan 2025 23:03:31 +0700
+Message-ID: <20250113160331.44057-1-minhquangbui99@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: simplify the SQPOLL thread check when
- cancelling requests
-To: Pavel Begunkov <asml.silence@gmail.com>, lizetao <lizetao1@huawei.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- "syzbot+3c750be01dab672c513d@syzkaller.appspotmail.com"
- <syzbot+3c750be01dab672c513d@syzkaller.appspotmail.com>
-References: <20250112143358.49671-1-minhquangbui99@gmail.com>
- <aff011219272498a900f052d0142978c@huawei.com>
- <3cab5ad8-3089-46c7-868e-38bd3c250b26@gmail.com>
- <75e12d85-9c2e-4b06-99d1-bc29c5422b69@gmail.com>
-Content-Language: en-US
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-In-Reply-To: <75e12d85-9c2e-4b06-99d1-bc29c5422b69@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 1/13/25 04:15, Pavel Begunkov wrote:
-> On 1/12/25 16:14, Bui Quang Minh wrote:
-> ...
->>>> @@ -2898,7 +2899,12 @@ static __cold void io_ring_exit_work(struct
->>>> work_struct *work)
->>>>           if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
->>>>               io_move_task_work_from_local(ctx);
->>>>
->>>> -        while (io_uring_try_cancel_requests(ctx, NULL, true))
->>>> +        /*
->>>> +         * Even if SQPOLL thread reaches this path, don't force
->>>> +         * iopoll here, let the io_uring_cancel_generic handle
->>>> +         * it.
->>>
->>> Just curious, will sq_thread enter this io_ring_exit_work path?
->>
->> AFAIK, yes. The SQPOLL thread is created with create_io_thread, this 
->> function creates a new task with CLONE_FILES. So all the open files is 
->> shared. There will be case that the parent closes its io_uring file 
->> and SQPOLL thread become the only owner of that file. So it can reach 
->> this path when terminating.
-> 
-> The function is run by a separate kthread, the sqpoll task doesn't
-> call it directly.
+In io_uring_try_cancel_requests, we check whether sq_data->thread ==
+current to determine if the function is called by the SQPOLL thread to do
+iopoll when IORING_SETUP_SQPOLL is set. This check can race with the SQPOLL
+thread termination.
 
-Yeah, the io_uring_release can be called in sqpoll thread but the 
-io_ring_exit_work is queued in the io_uring workqueue so that function 
-is executed in a kthread worker.
+io_uring_cancel_generic is used in 2 places: io_uring_cancel_generic and
+io_ring_exit_work. In io_uring_cancel_generic, we have the information
+whether the current is SQPOLL thread already. And the SQPOLL thread never
+reaches io_ring_exit_work.
 
-I will update the comment and commit message.
+So to avoid the racy check, this commit adds a boolean flag to
+io_uring_try_cancel_requests to determine if the caller is SQPOLL thread.
 
-Thanks,
-Quang Minh.
+Reported-by: syzbot+3c750be01dab672c513d@syzkaller.appspotmail.com
+Reported-by: Li Zetao <lizetao1@huawei.com>
+Reviewed-by: Li Zetao <lizetao1@huawei.com>
+Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+---
+
+Changes in v2
+- Update the comment, commit message, change the name of new flag
+
+ io_uring/io_uring.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index ff691f37462c..b529d6c8d781 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -143,7 +143,8 @@ struct io_defer_entry {
+ 
+ static bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 					 struct io_uring_task *tctx,
+-					 bool cancel_all);
++					 bool cancel_all,
++					 bool is_sqpoll_thread);
+ 
+ static void io_queue_sqe(struct io_kiocb *req);
+ 
+@@ -2898,7 +2899,8 @@ static __cold void io_ring_exit_work(struct work_struct *work)
+ 		if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
+ 			io_move_task_work_from_local(ctx);
+ 
+-		while (io_uring_try_cancel_requests(ctx, NULL, true))
++		/* The SQPOLL thread never reaches this path */
++		while (io_uring_try_cancel_requests(ctx, NULL, true, false))
+ 			cond_resched();
+ 
+ 		if (ctx->sq_data) {
+@@ -3066,7 +3068,8 @@ static __cold bool io_uring_try_cancel_iowq(struct io_ring_ctx *ctx)
+ 
+ static __cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 						struct io_uring_task *tctx,
+-						bool cancel_all)
++						bool cancel_all,
++						bool is_sqpoll_thread)
+ {
+ 	struct io_task_cancel cancel = { .tctx = tctx, .all = cancel_all, };
+ 	enum io_wq_cancel cret;
+@@ -3096,7 +3099,7 @@ static __cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
+ 
+ 	/* SQPOLL thread does its own polling */
+ 	if ((!(ctx->flags & IORING_SETUP_SQPOLL) && cancel_all) ||
+-	    (ctx->sq_data && ctx->sq_data->thread == current)) {
++	    is_sqpoll_thread) {
+ 		while (!wq_list_empty(&ctx->iopoll_list)) {
+ 			io_iopoll_try_reap_events(ctx);
+ 			ret = true;
+@@ -3169,13 +3172,15 @@ __cold void io_uring_cancel_generic(bool cancel_all, struct io_sq_data *sqd)
+ 					continue;
+ 				loop |= io_uring_try_cancel_requests(node->ctx,
+ 							current->io_uring,
+-							cancel_all);
++							cancel_all,
++							false);
+ 			}
+ 		} else {
+ 			list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
+ 				loop |= io_uring_try_cancel_requests(ctx,
+ 								     current->io_uring,
+-								     cancel_all);
++								     cancel_all,
++								     true);
+ 		}
+ 
+ 		if (loop) {
+-- 
+2.43.0
+
 

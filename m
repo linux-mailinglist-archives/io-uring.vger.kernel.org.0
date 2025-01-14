@@ -1,117 +1,273 @@
-Return-Path: <io-uring+bounces-5860-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5861-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EACE0A10F8D
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 19:14:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C46B8A10FB3
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 19:17:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A5B9188B52B
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 18:14:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3353A9B06
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 18:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C071FDA93;
-	Tue, 14 Jan 2025 18:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE23149C57;
+	Tue, 14 Jan 2025 18:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TtUt0xtu"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s3TX6lvt"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BDF1FC7FD
-	for <io-uring@vger.kernel.org>; Tue, 14 Jan 2025 18:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D819D1F9A81
+	for <io-uring@vger.kernel.org>; Tue, 14 Jan 2025 18:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736878207; cv=none; b=E2aelWcWIqUnGHnB1dZDKeZMzKcUTzj99TJp0fF5FntdS1+WbY5ZJEP7TQsVbAA9JqlMrwp5pK9pCHhzZf9QGO6fILJCTcn3KJ71raRLncWOeGrdt6bcXtJO5VxLsB+KW2935A2LtjoPT8ITMuoti3Ej441+8j5ebrRUKtp2h7g=
+	t=1736878435; cv=none; b=ZhuUSWT6ttrOphnEBAIB8P71oSodEMWcmpsXE666cXY+9/v+sXLOAqEsxxuYboE8eCBOVzVEiWBajL7RLFvJuoy7Y2f5SubfX0S0KYg4Kk2ifXTYN5of8fly62o9kb3U6j/uHrWa6vvr/Bvv7zdwxIYNaLwDAYV576UfrLzeAbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736878207; c=relaxed/simple;
-	bh=xt2EUpR+Drgf9WZVcSI4e/bScCfCLpE0kwHYQgg2tlA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iAllNM/lemtpvzs/AOy24OH+okjqja4UPg0Jbr+0wo8C+QMAWxbuOI2wn5ChYBUg6MrYq7dG6zkcDkSQJSaNOhmDhGP6z2rZg5ZpRh8VSpD1j/k4rZZK55DSdjikBULK5eFti2FN+uEWu2mxA5MUc+PfFjrh0BQJBG4oXjoM+y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TtUt0xtu; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a9628d20f0so37584545ab.2
-        for <io-uring@vger.kernel.org>; Tue, 14 Jan 2025 10:10:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736878205; x=1737483005; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gaooOFOGtKSVaMzqMlIyw6V93Yl6VrFQA2qk2SuiUTE=;
-        b=TtUt0xtuXiHuJP68t7ijiM7HYbc7asuyQ5pGEpIIs8tdrVYj2NmppEcTVP/bgitnZq
-         xtD+WvLdP6yOkq+lDyhxUNAhhydjF+0L0LBnVTsBoGFYV4PUZc4Dg+GS4Uu7JPDAp+l6
-         RjpQuXfnZdsfCR3a+4ph0FcnorA733EAqIi46Lid/UjYQhBer9Rs+IK9RpLHx0pA0mOV
-         R9mO7Az7a4/z/WGTUtxs/ewr+VTMv1EjOEIvm7gB2qUbybbIpN6QPALVjwel5QX3csSH
-         Ob54G3ptt2K3I6jHdrnR6Mw0boubc9ILcSjo/J2tCHnCSICMKMDFQypSZDSuoSwAZXCs
-         bYhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736878205; x=1737483005;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gaooOFOGtKSVaMzqMlIyw6V93Yl6VrFQA2qk2SuiUTE=;
-        b=RDAwQxvzZ7ZHYeFA8hwtW6hDd8WuyPvppBO2Cix06BKr/lnsSsAuk9y7dJPV2Dbvh0
-         S9c5hC2gSDNKsCZ9iinzhle3CcJ0tVGl/YZk0AkdL73xFDSkeY5R5iO9jBC8Phkp+QVX
-         sjz8VmAW+89J1YEciDuzUoG732Me0gSSwPHSO/1N2Lj2d5YdlwVdw+8lg/DJ5Auyx+N7
-         8PUAU9eXQAp6iI9gqxhrxbTERbNRkNdTxV+i7Mhl/P+qe9NyH/BPbKQj1qwUrmnQTPzB
-         b1FbAoBxTHf66cC8kMKb9KDu4svkrEdM9RaF5PZXi//AT206XNYqIgizoS4OeRZ3P+Vu
-         TJ2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXI0qNcd4VIEDdqcnQ2bPs9r5Aw4Itd+BdDt7JqCb9sjpuaJn0XN6M8wavsnMsNAwyO8yQEH94FMw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxABKMSDjpYg4dAlDp6gTRFf9mFO6XToew+Bb41dxuamFgmFQuT
-	B5LKLx9HSo4Wb5WSNc+1Xz8kIDT0xAaksc3N0JWX8rfNcV9JJ8kacnfhVdG0TVI=
-X-Gm-Gg: ASbGncsUaxDBtd2Fh06KTYXbWozRc50wVMsz0zPMCk/H3yFwdsbe6YF6zyS3RHmCjjv
-	4GoNTre90L/Bw1UTeOo1vvVdwGkvijbeoJ64rcaw/jbjHw2TRqz8fHtbQiZYyxv+Cq/aU3JaYt/
-	9/i78T/LsWpw6SzUsIs7O8UWkOJs1po6ayg2xJ2PRH6Xzu08BBL22ts0LNVOcB9OHbggnMILN+a
-	IQO+09MqkSgJpRyUGv+8KVE6m+Y6K7FjxLpsoIgC/lqfTs=
-X-Google-Smtp-Source: AGHT+IESxb4ZBWnQjANqv633zPRNwgXlL5qp0koS0neZNYlYqJdfFfgNSI/Dd5CsOfd6P4zPzpKMpw==
-X-Received: by 2002:a05:6e02:1f8a:b0:3cc:b7e4:6264 with SMTP id e9e14a558f8ab-3ce3a892c05mr203910065ab.0.1736878205032;
-        Tue, 14 Jan 2025 10:10:05 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ce6c1fc60dsm18220165ab.7.2025.01.14.10.10.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 10:10:04 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
- Jann Horn <jannh@google.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20250114-uring-check-accounting-v1-1-42e4145aa743@google.com>
-References: <20250114-uring-check-accounting-v1-1-42e4145aa743@google.com>
-Subject: Re: [PATCH] io_uring/rsrc: require cloned buffers to share
- accounting contexts
-Message-Id: <173687820427.1326090.9681462149230294879.b4-ty@kernel.dk>
-Date: Tue, 14 Jan 2025 11:10:04 -0700
+	s=arc-20240116; t=1736878435; c=relaxed/simple;
+	bh=veMYBYVe2lytPqk3nQOYjhyjrZFcIasHoTc4zVm6vvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9TYcHCiDg2LWBoBrKA45UskPn/rTC2aYEGDsMP+gbMspA96+FFp2mTlbiX0pYuhyvJrdhwebPAPAE3iHL18NPL2kion7QHaFmeey+BaaWultAY/c+VgptChtEOnlFkjAc09L14MWMT7OZCqhUzGDGXd/oC7LVEv4e5KVzxZ5b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s3TX6lvt; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 14 Jan 2025 10:13:40 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1736878424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vbLq7bgoJ4Eohsw7Izd1/q6MtF3gwn3as+coqDROMA4=;
+	b=s3TX6lvtRZERvGPYFIxS+ysEU3wtuzBBuuVfeTAQepjyryMCnKKmlx2/f3yT9K3B7jar9R
+	yL7JHe9+842QPf7Kw5Jz0uqDaTBgPfucuVESjpCcVNzQT5cHhnhSz6m5T+9Ucax7leILFU
+	nsbt4kV7NgaHlxaPfv1r2ISppx4ZkIE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: SeongJae Park <sj@kernel.org>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Liam.Howlett@oracle.com, Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, damon@lists.linux.dev, 
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH] mm/madvise: remove redundant mmap_lock operations
+ from process_madvise()
+Message-ID: <awmc5u2j2jmn3xir2tmmxivxpastptevay5kgspgtembiw4et7@5ryv5dnjzdcv>
+References: <20250111004618.1566-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-14bd6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250111004618.1566-1-sj@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
+Ccing relevant folks.
 
-On Tue, 14 Jan 2025 18:49:00 +0100, Jann Horn wrote:
-> When IORING_REGISTER_CLONE_BUFFERS is used to clone buffers from uring
-> instance A to uring instance B, where A and B use different MMs for
-> accounting, the accounting can go wrong:
-> If uring instance A is closed before uring instance B, the pinned memory
-> counters for uring instance B will be decremented, even though the pinned
-> memory was originally accounted through uring instance A; so the MM of
-> uring instance B can end up with negative locked memory.
+On Fri, Jan 10, 2025 at 04:46:18PM -0800, SeongJae Park wrote:
+> process_madvise() calls do_madvise() for each address range.  Then, each
+> do_madvise() invocation holds and releases same mmap_lock.  Optimize the
+> redundant lock operations by doing the locking in process_madvise(), and
+> inform do_madvise() that the lock is already held and therefore can be
+> skipped.
 > 
-> [...]
-
-Applied, thanks!
-
-[1/1] io_uring/rsrc: require cloned buffers to share accounting contexts
-      commit: 19d340a2988d4f3e673cded9dde405d727d7e248
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+> Evaluation
+> ==========
+> 
+> I measured the time to apply MADV_DONTNEED advice to 256 MiB memory
+> using multiple madvise() calls, 4 KiB per each call.  I also do the same
+> with process_madvise(), but with varying iovec size from 1 to 1024.
+> The source code for the measurement is available at GitHub[1].
+> 
+> The measurement results are as below.  'sz_batches' column shows the
+> iovec size of process_madvise() calls.  '0' is for madvise() calls case.
+> 'before' and 'after' columns are the measured time to apply
+> MADV_DONTNEED to the 256 MiB memory buffer in nanoseconds, on kernels
+> that built without and with this patch, respectively.  So lower value
+> means better efficiency.  'after/before' column is the ratio of 'after'
+> to 'before'.
+> 
+>     sz_batches  before     after      after/before
+>     0           124062365  96670188   0.779206393494111
+>     1           136341258  113915688  0.835518827323714
+>     2           105314942  78898211   0.749164453796119
+>     4           82012858   59778998   0.728897875989153
+>     8           82562651   51003069   0.617749895167489
+>     16          71474930   47575960   0.665631431888076
+>     32          71391211   42902076   0.600943385033768
+>     64          68225932   41337835   0.605896230190011
+>     128         71053578   42467240   0.597679120395598
+>     256         85094126   41630463   0.489228398679364
+>     512         68531628   44049763   0.6427654542221
+>     1024        79338892   43370866   0.546653285755491
+> 
+> The measurement shows this patch reduces the process_madvise() latency,
+> proportional to the batching size, from about 25% with the batch size 2
+> to about 55% with the batch size 1,024.  The trend is somewhat we can
+> expect.
+> 
+> Interestingly, this patch has also optimize madvise() and single batch
+> size process_madvise(), though.  I ran this test multiple times, but the
+> results are consistent.  I'm still investigating if there are something
+> I'm missing.  But I believe the investigation may not necessarily be a
+> blocker of this RFC, so just posting this.  I will add updates of the
+> madvise() and single batch size process_madvise() investigation later.
+> 
+> [1] https://github.com/sjp38/eval_proc_madvise
+> 
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  include/linux/mm.h |  3 ++-
+>  io_uring/advise.c  |  2 +-
+>  mm/damon/vaddr.c   |  2 +-
+>  mm/madvise.c       | 54 +++++++++++++++++++++++++++++++++++-----------
+>  4 files changed, 45 insertions(+), 16 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 612b513ebfbd..e3ca5967ebd4 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3459,7 +3459,8 @@ int do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>  		    unsigned long end, struct list_head *uf, bool unlock);
+>  extern int do_munmap(struct mm_struct *, unsigned long, size_t,
+>  		     struct list_head *uf);
+> -extern int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int behavior);
+> +extern int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in,
+> +		int behavior, bool lock_held);
+>  
+>  #ifdef CONFIG_MMU
+>  extern int __mm_populate(unsigned long addr, unsigned long len,
+> diff --git a/io_uring/advise.c b/io_uring/advise.c
+> index cb7b881665e5..010b55d5a26e 100644
+> --- a/io_uring/advise.c
+> +++ b/io_uring/advise.c
+> @@ -56,7 +56,7 @@ int io_madvise(struct io_kiocb *req, unsigned int issue_flags)
+>  
+>  	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
+>  
+> -	ret = do_madvise(current->mm, ma->addr, ma->len, ma->advice);
+> +	ret = do_madvise(current->mm, ma->addr, ma->len, ma->advice, false);
+>  	io_req_set_res(req, ret, 0);
+>  	return IOU_OK;
+>  #else
+> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+> index a6174f725bd7..30b5a251d73e 100644
+> --- a/mm/damon/vaddr.c
+> +++ b/mm/damon/vaddr.c
+> @@ -646,7 +646,7 @@ static unsigned long damos_madvise(struct damon_target *target,
+>  	if (!mm)
+>  		return 0;
+>  
+> -	applied = do_madvise(mm, start, len, behavior) ? 0 : len;
+> +	applied = do_madvise(mm, start, len, behavior, false) ? 0 : len;
+>  	mmput(mm);
+>  
+>  	return applied;
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 49f3a75046f6..c107376db9d5 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1637,7 +1637,8 @@ int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
+>   *  -EAGAIN - a kernel resource was temporarily unavailable.
+>   *  -EPERM  - memory is sealed.
+>   */
+> -int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int behavior)
+> +int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in,
+> +		int behavior, bool lock_held)
+>  {
+>  	unsigned long end;
+>  	int error;
+> @@ -1668,12 +1669,14 @@ int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int beh
+>  		return madvise_inject_error(behavior, start, start + len_in);
+>  #endif
+>  
+> -	write = madvise_need_mmap_write(behavior);
+> -	if (write) {
+> -		if (mmap_write_lock_killable(mm))
+> -			return -EINTR;
+> -	} else {
+> -		mmap_read_lock(mm);
+> +	if (!lock_held) {
+> +		write = madvise_need_mmap_write(behavior);
+> +		if (write) {
+> +			if (mmap_write_lock_killable(mm))
+> +				return -EINTR;
+> +		} else {
+> +			mmap_read_lock(mm);
+> +		}
+>  	}
+>  
+>  	start = untagged_addr_remote(mm, start);
+> @@ -1692,17 +1695,19 @@ int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int beh
+>  	}
+>  	blk_finish_plug(&plug);
+>  
+> -	if (write)
+> -		mmap_write_unlock(mm);
+> -	else
+> -		mmap_read_unlock(mm);
+> +	if (!lock_held) {
+> +		if (write)
+> +			mmap_write_unlock(mm);
+> +		else
+> +			mmap_read_unlock(mm);
+> +	}
+>  
+>  	return error;
+>  }
+>  
+>  SYSCALL_DEFINE3(madvise, unsigned long, start, size_t, len_in, int, behavior)
+>  {
+> -	return do_madvise(current->mm, start, len_in, behavior);
+> +	return do_madvise(current->mm, start, len_in, behavior, false);
+>  }
+>  
+>  /* Perform an madvise operation over a vector of addresses and lengths. */
+> @@ -1711,12 +1716,28 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
+>  {
+>  	ssize_t ret = 0;
+>  	size_t total_len;
+> +	bool hold_lock = true;
+> +	int write;
+>  
+>  	total_len = iov_iter_count(iter);
+>  
+> +#ifdef CONFIG_MEMORY_FAILURE
+> +	if (behavior == MADV_HWPOISON || behavior == MADV_SOFT_OFFLINE)
+> +		hold_lock = false;
+> +#endif
+> +	if (hold_lock) {
+> +		write = madvise_need_mmap_write(behavior);
+> +		if (write) {
+> +			if (mmap_write_lock_killable(mm))
+> +				return -EINTR;
+> +		} else {
+> +			mmap_read_lock(mm);
+> +		}
+> +	}
+> +
+>  	while (iov_iter_count(iter)) {
+>  		ret = do_madvise(mm, (unsigned long)iter_iov_addr(iter),
+> -				 iter_iov_len(iter), behavior);
+> +				 iter_iov_len(iter), behavior, hold_lock);
+>  		/*
+>  		 * An madvise operation is attempting to restart the syscall,
+>  		 * but we cannot proceed as it would not be correct to repeat
+> @@ -1739,6 +1760,13 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
+>  		iov_iter_advance(iter, iter_iov_len(iter));
+>  	}
+>  
+> +	if (hold_lock) {
+> +		if (write)
+> +			mmap_write_unlock(mm);
+> +		else
+> +			mmap_read_unlock(mm);
+> +	}
+> +
+>  	ret = (total_len - iov_iter_count(iter)) ? : ret;
+>  
+>  	return ret;
+> -- 
+> 2.39.5
 

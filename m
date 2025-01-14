@@ -1,151 +1,122 @@
-Return-Path: <io-uring+bounces-5857-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5858-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB3FA10E27
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 18:49:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 162A9A10EC4
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 19:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4528B1887FF2
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 17:49:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D183ADC0A
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 18:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E8D1CB501;
-	Tue, 14 Jan 2025 17:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FA01FAC45;
+	Tue, 14 Jan 2025 17:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1WKTnpll"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="czibEJnn"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B08E1B2193
-	for <io-uring@vger.kernel.org>; Tue, 14 Jan 2025 17:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D394F204F82
+	for <io-uring@vger.kernel.org>; Tue, 14 Jan 2025 17:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736876957; cv=none; b=BMaLtvhiFwuW2d1kQeS0o53VTQsLQTqLFSkLBvnewppjPry26mPStYrLyUtFw0pL3u9gMH9BvSEk+tVkDJWKFgmJM39f41rdQ02AkdFTxG1DGpSl5YGtm1zdMSOnyzUxdB7Tlr6UdQ75RkABGLHoalHYsK3kWaG8/oaVVGcnEws=
+	t=1736877476; cv=none; b=NmY4khoxQvy2leL8dXDuvBPjyXmN5mx9fEPzfMffKp+TgGbLe5TRIkHx7B7Ig2QCL+edgw8fBBdJgXrhBcjMlGv4+z2xalwS+pjZ0o6BHcVuekyJ8Q8+8rz4tYZYZI2015AmzRHrGaZWg9j6AW9ImubuGDFCShTnD26zk1BVTkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736876957; c=relaxed/simple;
-	bh=+z7ZnXqzo+JwTlyzEMh+aCsl6hsl7DxqJLFJMsWnKp0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ji1canmDkxnzkS0XAEV02Cbao2GS+WbtxfAr74lfqPkpdJ9xhGk8z87njM+P0GwHAtygJTDozj14O5+b8NbgNuXG/cw4lH0dFlNkIVlMrDgmHYvoKcFEo5g/rWJKSd1flJPx7/63l3gL3HSE7NLTlutJkno41m8/cpQip10qwTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1WKTnpll; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-435b0df5dbdso69765e9.0
-        for <io-uring@vger.kernel.org>; Tue, 14 Jan 2025 09:49:15 -0800 (PST)
+	s=arc-20240116; t=1736877476; c=relaxed/simple;
+	bh=TxMRwYzCnwl6uQRq6op+ElWOVvdYd8d7nOPZlZWcNiQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U+TolpaofATxIB4pZq6GnA4CHxtqNnw+k+D5P+6tZTSpPbmkcfhX/2uPbeN+zLC4HzJUIxh/ZWoK+SaNZH/lH6YNXMFLh0/xWNppuX6qh1lHJLWDsOCYWMomWmgWjPkdRcWzMhRId3+JivD1hVYllCIICTzR6vPb9ZA10jIlovc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=czibEJnn; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-84ceaf2667aso318938539f.3
+        for <io-uring@vger.kernel.org>; Tue, 14 Jan 2025 09:57:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1736876954; x=1737481754; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y/EhUj+Z89V6RZrUYPhJfVMhULBGhnCEDRDY/TBf0Dc=;
-        b=1WKTnpllxHYy9OCIJZeUAvXCuCLQWGMUHrC2mkU10FGafHBRZnVpdxREume+4AkVzU
-         UOWZAoxjSZZwd5jEa0uuUwZp4iXzlF7cGQL1fm0JX0Ar2N7a2iZO+BKRywd6QfpMyI9e
-         NkphNXdhLBo8EVL5J8gegaDwIOkPgSRFa0Ia48U1ZMCjyUeOr2TJ4ini0P12HVVktzoe
-         3nbtK4OulmZVg7OaOgfqhF8kH4y+Hu8ySGC5pb+L6vpYBPz3edVTBefzUD7EoB8zHr9O
-         dWkdmg7hug1BiLJvJeb+kyMyYocQVm1h5uLsYft1L9SOLh6su4BeeiqQh0CbHvYzPX34
-         4gag==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1736877472; x=1737482272; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y7YZstDiXjyB1zPsdbBPJIDIgikogr6PNjNg2k0F+Dc=;
+        b=czibEJnnlPjSEmQf3W1mQ0be8cVy88K6ROUwxTx7LgIsvr58aSpOyQf+Hv3NZHbbjA
+         YpsavFDpjDD229EFN6Er6t4vVAzWxhwgmZzYBBGkAXvBFSvxxEL5kqSp2PMHp5btgopn
+         6ISBj5bHsfdwrYQTqE80N/WRIrwRHLN5LyEhyT7bfC7erHOMVy6IfJNkgiDivCbeBAd2
+         /bYw9D9PTo3DuY+OtGiVsLcxMVN8OcHsSrB7zRQHhtZJ6vFOFRrwv5REiux7yV1foZ05
+         ouObLz05BIqBzrSMWrJSpeUrkFLfzxypZqZQ2og9V16QObTrEdFElQ9Ovplm/ffOLYUw
+         4Zmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736876954; x=1737481754;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y/EhUj+Z89V6RZrUYPhJfVMhULBGhnCEDRDY/TBf0Dc=;
-        b=J5dSuUrIpEP8c6Q4tkHKUaMcVs2lODuVipQwacWppwcPKc53fek5iSMMsznw4xji5Y
-         HEqXejaiGPaMuPrzFcNG5cu7Sd7MVjpxE1lFKCd9jIEqGmDuqD7H6IoS3zA+bcxFAjcQ
-         JWJ18fAz5nRwBI/nVM86U865vRZUPuIXlanUUSx399EXN7StdW9avmlCacHfoYovdPUG
-         4bSGU9UVZN5FGBWgxQ3rF/c5hyRA/a4Xgz1yFU/egAD5bIPcdDERB1T3MZQmAGzPj1fx
-         pzMce9pD7ut8FPFcK6syC6bCXm2RhgTr8Es7Q+jX6jQtzSlWJdQ9xzer5UTykZNpbD+r
-         BFVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpAPQwHT0F7YkUwWqhxrK9DBuHBXQgZH2PrQTUvf3diLDuZKCEyesWukRF62z9ob6+rfS64ENxIA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9MzAjECaaIQJA31S87dYTZhEDKmZ8kd69aEqk2GRfkCVn7tGA
-	RekcNU+UCJlwD5R14NlYLwi8n+MmCIvG9IoGUJrJTkQEc5y4RKb0CaVojAVnZg==
-X-Gm-Gg: ASbGncvI+OKiF+bViAXyRUXv0cXH7b1tuU6YBT5aen35/DWGg5tLcEO2vKtdisHfvaK
-	LkA7KwrM8mlZNtsm6J2VTEbEvKzDs1XRlmsptuPtbaLPIGFWB4cl5U/KMKVykR6PRVx49CZdqfn
-	KKsgcJIsPuaQ1+dzKhfbf4e/EKCXcRon0xSmW2YElCydT8dnvt7tsuxNAlOuSeOqOmuMej+9JqU
-	2K0C38yzZ5aZzgIkAPXfohqEs4zL4QzdXrBeMB1RDY5ZQ==
-X-Google-Smtp-Source: AGHT+IHB5PEFMbygc74F/+oeDv4I6J+5PXKLGLeXGDUSZBKuRtqQ+Nu5FLfyHIAgxEZOSAQ6TxIaRQ==
-X-Received: by 2002:a05:600c:1c26:b0:436:186e:13a6 with SMTP id 5b1f17b1804b1-437735f9974mr1504555e9.6.1736876953451;
-        Tue, 14 Jan 2025 09:49:13 -0800 (PST)
-Received: from localhost ([2a00:79e0:9d:4:f0c9:ad9d:2327:39f5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9d8fd03sm188665915e9.6.2025.01.14.09.49.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 09:49:12 -0800 (PST)
-From: Jann Horn <jannh@google.com>
-Date: Tue, 14 Jan 2025 18:49:00 +0100
-Subject: [PATCH] io_uring/rsrc: require cloned buffers to share accounting
- contexts
+        d=1e100.net; s=20230601; t=1736877472; x=1737482272;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y7YZstDiXjyB1zPsdbBPJIDIgikogr6PNjNg2k0F+Dc=;
+        b=OtZsDcWSayxXma1mgkYHArxhekvooxi2S5N1aq6pX82fcTOzChNYBs8wBCqvTnslZT
+         8A2bjivpyYVs9IGCmnrNB7cwmW/L1XS0YQ1X4O+ct36cHx+2SEB2ByZYtaCq2XdMd2H4
+         Tki3qxCdCG4ijeKD7HkS7MTiONnCO6L3xZPdFDuxyhgusYnXwsrF1TO34UMe6cGqBHBN
+         der/CzzzUzckJIShuXRt1YYWCIezsQ/G9MYRfLI4ucuQJAAIX+2gFEEHKd2U6w93GlQE
+         dCkT7m+OQPuQZlpz9w40tyi/nV8UFaQwoIRTPRnxdDG9NmrNPnTI/Xfb+W8XG0Ezs4vu
+         Cekw==
+X-Forwarded-Encrypted: i=1; AJvYcCVx4cTOuEBSk4MS6t2mdMw9hKT5pFccQA2HXtNspm0ab++NJ8G4Ne8mldhfLcmFlXIh9JmEgimf7g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHpVdBJdJXEvP4UkfKGThYkccT1wzd5Cl8K0SIXTBenk3dF0nv
+	xNrBHhX+BfILzXYb38U5qw5rAVUZW2KYEGpqeYphsl7g2iOcbUFFV2ALLcP4ay8=
+X-Gm-Gg: ASbGncsAIOBzvyDexKk0OJ4gdfAxhCSwl0XwSEjaoO06C/4UKfWRyxOm6upCDJ1DArJ
+	QVDGr3Oh7UHPPaAWxBnJBkdLMQ3bBr6t6HdUddkbrF1hlvOunyLIU+nyevRMIZOymz4/5XprzGP
+	GwPxL44zf8ZRe6OQbxUezsFrNHid078O2dzB4w6q8n1r6Mhdyi3f5BQHZlvhKrjUSbek7qcwvsS
+	F9Ph9AzfDkHP3AfqIsBrMiG14F1Gz8Rol2DOhhcG8xvsVmJFgph
+X-Google-Smtp-Source: AGHT+IGM2drpw9X/rMTH6z+8c5xpupNIqajcv4pvVlwSoOOaEK5ifp+uXOoIV7PQX3wBEh9KYkSR2g==
+X-Received: by 2002:a05:6e02:1d94:b0:3ce:7ab4:1afc with SMTP id e9e14a558f8ab-3ce7ab4225dmr38914715ab.7.1736877471927;
+        Tue, 14 Jan 2025 09:57:51 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ea1b7459desm3632119173.125.2025.01.14.09.57.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Jan 2025 09:57:51 -0800 (PST)
+Message-ID: <d6208848-ecb5-44df-9d68-8845cd25d1b6@kernel.dk>
+Date: Tue, 14 Jan 2025 10:57:50 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250114-uring-check-accounting-v1-1-42e4145aa743@google.com>
-X-B4-Tracking: v=1; b=H4sIAIujhmcC/x2MWwqAIBAArxL7naC96yrRR22rLYGFVgTh3bM+Z
- 2DmAU+OyUOXPODoYs+bjaDSBHAZrSHBc2TIZFZKpQpxOrZG4EK4ihFxO+3xiSIvK91MrcK8hhj
- vjjTf/7gfQngBZfYV3mgAAAA=
-X-Change-ID: 20250114-uring-check-accounting-4356f8b91c37
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/rsrc: require cloned buffers to share accounting
+ contexts
+To: Jann Horn <jannh@google.com>, Pavel Begunkov <asml.silence@gmail.com>,
  io-uring@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1736876949; l=1948;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=+z7ZnXqzo+JwTlyzEMh+aCsl6hsl7DxqJLFJMsWnKp0=;
- b=rT6imj0L69M67jWPfzUa4j3r15LHqo9N/M1tgoPDIYs3PyYjjQaqkzUMEUM0rjLK+d71yUF7K
- VfBwaaiceztBH5kuBGGFABgLUxRisIXDO9iYv6BJm4AvG3e4CrZlc3M
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250114-uring-check-accounting-v1-1-42e4145aa743@google.com>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <20250114-uring-check-accounting-v1-1-42e4145aa743@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When IORING_REGISTER_CLONE_BUFFERS is used to clone buffers from uring
-instance A to uring instance B, where A and B use different MMs for
-accounting, the accounting can go wrong:
-If uring instance A is closed before uring instance B, the pinned memory
-counters for uring instance B will be decremented, even though the pinned
-memory was originally accounted through uring instance A; so the MM of
-uring instance B can end up with negative locked memory.
+On 1/14/25 10:49 AM, Jann Horn wrote:
+> When IORING_REGISTER_CLONE_BUFFERS is used to clone buffers from uring
+> instance A to uring instance B, where A and B use different MMs for
+> accounting, the accounting can go wrong:
+> If uring instance A is closed before uring instance B, the pinned memory
+> counters for uring instance B will be decremented, even though the pinned
+> memory was originally accounted through uring instance A; so the MM of
+> uring instance B can end up with negative locked memory.
+> 
+> Cc: stable@vger.kernel.org
+> Closes: https://lore.kernel.org/r/CAG48ez1zez4bdhmeGLEFxtbFADY4Czn3CV0u9d_TMcbvRA01bg@mail.gmail.com
+> Fixes: 7cc2a6eadcd7 ("io_uring: add IORING_REGISTER_COPY_BUFFERS method")
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+> To be clear, I think this is a very minor issue, feel free to take your
+> time landing it.
+> 
+> I put a stable marker on this, but I'm ambivalent about whether this
+> issue even warrants landing a fix in stable - feel free to remove the
+> Cc stable marker if you think it's unnecessary.
 
-Cc: stable@vger.kernel.org
-Closes: https://lore.kernel.org/r/CAG48ez1zez4bdhmeGLEFxtbFADY4Czn3CV0u9d_TMcbvRA01bg@mail.gmail.com
-Fixes: 7cc2a6eadcd7 ("io_uring: add IORING_REGISTER_COPY_BUFFERS method")
-Signed-off-by: Jann Horn <jannh@google.com>
----
-To be clear, I think this is a very minor issue, feel free to take your
-time landing it.
-
-I put a stable marker on this, but I'm ambivalent about whether this
-issue even warrants landing a fix in stable - feel free to remove the
-Cc stable marker if you think it's unnecessary.
----
- io_uring/rsrc.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 077f84684c18a0b3f5e622adb4978b6a00353b2f..caecc18dd5be03054ae46179bc0918887bf609a4 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -931,6 +931,13 @@ static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx
- 	int i, ret, off, nr;
- 	unsigned int nbufs;
- 
-+	/*
-+	 * Accounting state is shared between the two rings; that only works if
-+	 * both rings are accounted towards the same counters.
-+	 */
-+	if (ctx->user != src_ctx->user || ctx->mm_account != src_ctx->mm_account)
-+		return -EINVAL;
-+
- 	/* if offsets are given, must have nr specified too */
- 	if (!arg->nr && (arg->dst_off || arg->src_off))
- 		return -EINVAL;
-
----
-base-commit: c45323b7560ec87c37c729b703c86ee65f136d75
-change-id: 20250114-uring-check-accounting-4356f8b91c37
+I'll just queue it up for 6.14. Let's just get it towards stable, if
+nothing else it provides consistent behavior across kernels. IMHO that's
+enough reason to move it to stable.
 
 -- 
-Jann Horn <jannh@google.com>
-
+Jens Axboe
 

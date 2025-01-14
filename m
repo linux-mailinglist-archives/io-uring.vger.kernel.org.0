@@ -1,96 +1,141 @@
-Return-Path: <io-uring+bounces-5853-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5854-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E435A0FE73
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 03:07:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A371BA10C20
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 17:21:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AB7E7A1BA9
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 02:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48A39164D7A
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 16:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05291EB2E;
-	Tue, 14 Jan 2025 02:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227B8189B8F;
+	Tue, 14 Jan 2025 16:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRgYytgB"
 X-Original-To: io-uring@vger.kernel.org
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA248493
-	for <io-uring@vger.kernel.org>; Tue, 14 Jan 2025 02:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F811CAA7F
+	for <io-uring@vger.kernel.org>; Tue, 14 Jan 2025 16:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736820416; cv=none; b=aXRx4q7+BFjM8TzH7btNWM5BjOgxvqEL0eg0sc6EsuF5JndMO5OYT4LNzq/wcqX1n/6XM+YJfh++qIhLzrJVulbVG9yC061xr11sQqx9Arj0bqOcdcVMjMbJg+P89+xHFnDOD1eqY3ZdX/w+iotIueBPSNsiiTJ99FG1iOVThU4=
+	t=1736871698; cv=none; b=QeWe3nyXYbAc+rE07Z+UDgg8Y7zp8jabCQXmYFGxeWj/vv3b+tGa11EmdG9D7pLbVD/QHasp72OSHffNq3i5Gdj00opVy+RWxWXFwVNHBw3Mtv6dvFqqbV/wT3Pm0Xq997AEGuDK8ki/rcs6YJR7vFfRRQy+FooHOGfCj0aGrV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736820416; c=relaxed/simple;
-	bh=YgaC0fzUTNraUPayw/nF1wraGESscFUv5sbDTjUJlII=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=mGJHvS07VCti6o7VjFDSaO2v1w8ggazQc5YZnjNmQ8BiO0vbZruxGIugDHg9CfjqiSP/FoSDy8HQc0Wpm22UUklu3fKx+rXXGOECxbCUbXCQzROg9etb7MX6l0Dfw5Pdbly4VpGfcpycPWHkfoU+rHAJMIoD8yH79+TaUVodEdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4YXC9n6PgrzRlHP;
-	Tue, 14 Jan 2025 10:04:29 +0800 (CST)
-Received: from kwepemd100010.china.huawei.com (unknown [7.221.188.107])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4158A1802E1;
-	Tue, 14 Jan 2025 10:06:51 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd100010.china.huawei.com (7.221.188.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 14 Jan 2025 10:06:50 +0800
-Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
- kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Tue, 14 Jan 2025 10:06:50 +0800
-From: lizetao <lizetao1@huawei.com>
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
-CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Subject: [PATCH] io_uring/io-wq: Fix a small time window for reading
- work->flags
-Thread-Topic: [PATCH] io_uring/io-wq: Fix a small time window for reading
- work->flags
-Thread-Index: AdtmKOA8sg05Tt97QvCw7GBc1hDbnw==
-Date: Tue, 14 Jan 2025 02:06:50 +0000
-Message-ID: <5fd306d40ebb4da0a657da9a9be5cec1@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1736871698; c=relaxed/simple;
+	bh=HUkOq1DcysSOQKkah/8o4O6cgApow6VcXpSHYdJVe1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hgc4wij611XEohKsk1P0KmKgcjX/f4jDTUSmG6kf4A7duUfqMrVCMJAc+I0PXvkKD/29Aq3n+9JwrazOMITrHmC0TpTHskYApb6Jk9zbiBpOKCi+vkE0AXNfNKiYD7BAzkniN3Ww8E/Uarq9p3XKdlg0cwGUdRZHWbKpK8h4adg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YRgYytgB; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3dce16a3dso3514940a12.1
+        for <io-uring@vger.kernel.org>; Tue, 14 Jan 2025 08:21:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736871694; x=1737476494; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EZVKtQ2Ngf+cig7SnFtTFa4m0VruxR79qB9y9EOYwIM=;
+        b=YRgYytgBcv75CYCon0etrLgUkBHP8yNLCpZYVdNeT90wpqyxl+Xe8WUo18CDN2M3gM
+         eclWAsunQHp5bvPiUd8Zexi789QBjq4ckckHiNhdbnOiwCUM/lXkWbjk2GijIwikd4Gt
+         aFVU59QOsnOWQZiRAxIEBdH2H3jMPpowqYGQZK5t7XnRh/okx7sjA0zyjoUPM61QOKjP
+         oKOcHm7NZCsxaeS8dUhddWrfwQQAeXCYlORlMl/A+cO0dqmC1n1sZciQevr9MRzOlIGo
+         DoYtJXvGC/gy1mSqBdNm7M6y6OF8YnxpaPubsT1iVD4ndzYwp5DH+bALxslj3IaJK4L3
+         6j5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736871694; x=1737476494;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EZVKtQ2Ngf+cig7SnFtTFa4m0VruxR79qB9y9EOYwIM=;
+        b=B5xmd1PvJYj/eLFG/bNt2UeDV71VH845NDaBVI6euua3uIImfMn8U6UaBir9losYk1
+         fCAfA6MnvfPtq8vf5pQjF4GPMxDRHy5o/cGIC+eUUqPPiZgcFUeO6Or0jCNild81WVbU
+         UrhCW7GVu6dSZvd30F/gRfxd8n/NOdWWtN2gh4hBDwX5qT2O3WxzGQRStYSpzyc54zOF
+         tF5I2G9ApERz1vSt3YAUMUww3sxZfeTp0AwNI1Lphpf0BVRmmYed0sUOijA47+cqgcGX
+         BgQfzgkBsVQ/a6ZQfYdFGhiThgxPvlMmynX5qwaEk2lCpOPalJHEN3pF2yxXjUF5j9tA
+         1mVw==
+X-Gm-Message-State: AOJu0YyFFybg0s9jpm0iVP9zx2VpVpQHon8ajCzp6H8JVQDmqZg85VO4
+	0XjaWqYl+u833cWg3D12t8gXe6AGAfkc032d7wSd4UhQ99DP4n8d
+X-Gm-Gg: ASbGncs9ylAKGcYMp3cA1THQrOGc1ZV9yvVRt3gWF+BmsmykCd/3jJA57zv/P6jXPyc
+	LvwlmhPCYm09z3yfvKgnAEDQZc7H+62ClFArbDTC3pv/ryq5cwa6ptLzw4xhapZPLj232nV7qXT
+	H+jr8g6IP/5RjQ1Jr8jwzb71nvuLx+ggVTbZNt7oQ8y7CMyJfbZQomnNAZdhk46QuDohKXHSCgm
+	e67GSPKTxgmRrbK2+ryJHKZks+Gc3DXBA8cbhC5f8pPtNoYo82hB970bBZBq4Qz3g==
+X-Google-Smtp-Source: AGHT+IHwE+2/CuOt97Zj9GH+2iNv/Q+k85zoMT6h1zfQWmEdGHzQpx9IIcs8pGTBjQjsGO4mvifuAw==
+X-Received: by 2002:a05:6402:3483:b0:5d0:d06b:cdc4 with SMTP id 4fb4d7f45d1cf-5d98a50fa60mr18040484a12.15.1736871694037;
+        Tue, 14 Jan 2025 08:21:34 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.147.29])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d99008c423sm6443445a12.4.2025.01.14.08.21.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Jan 2025 08:21:33 -0800 (PST)
+Message-ID: <0993bb5e-debd-4513-9481-a7d93f8c3c25@gmail.com>
+Date: Tue, 14 Jan 2025 16:22:22 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/io-wq: Fix a small time window for reading
+ work->flags
+To: lizetao <lizetao1@huawei.com>, Jens Axboe <axboe@kernel.dk>
+Cc: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <5fd306d40ebb4da0a657da9a9be5cec1@huawei.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <5fd306d40ebb4da0a657da9a9be5cec1@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-VGhlcmUgaXMgYSBzbWFsbCB0aW1lIHdpbmRvdyB0aGF0IGlzIG1vZGlmaWVkIGJ5IG90aGVyIHRh
-c2tzIGFmdGVyDQpyZWFkaW5nIHdvcmstPmZsYWdzLiBJdCBpcyBjaGFuZ2VkIHRvIHJlYWQgYmVm
-b3JlIHVzZSwgd2hpY2ggaXMgbW9yZQ0KaW4gbGluZSB3aXRoIHRoZSBzZW1hbnRpY3Mgb2YgYXRv
-bXMuDQoNCkZpeGVzOiAzNDc0ZDFiOTNmODkgKCJpb191cmluZy9pby13cTogbWFrZSBpb193cV93
-b3JrIGZsYWdzIGF0b21pYyIpDQpTaWduZWQtb2ZmLWJ5OiBMaSBaZXRhbyA8bGl6ZXRhbzFAaHVh
-d2VpLmNvbT4NCi0tLQ0KIGlvX3VyaW5nL2lvLXdxLmMgfCA1ICsrLS0tDQogMSBmaWxlIGNoYW5n
-ZWQsIDIgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2lvX3Vy
-aW5nL2lvLXdxLmMgYi9pb191cmluZy9pby13cS5jDQppbmRleCBhMzhmMzZiNjgwNjAuLjc1MDk2
-ZTc3YjFmZSAxMDA2NDQNCi0tLSBhL2lvX3VyaW5nL2lvLXdxLmMNCisrKyBiL2lvX3VyaW5nL2lv
-LXdxLmMNCkBAIC05MzIsNyArOTMyLDYgQEAgc3RhdGljIGJvb2wgaW9fd3Ffd29ya19tYXRjaF9p
-dGVtKHN0cnVjdCBpb193cV93b3JrICp3b3JrLCB2b2lkICpkYXRhKQ0KIHZvaWQgaW9fd3FfZW5x
-dWV1ZShzdHJ1Y3QgaW9fd3EgKndxLCBzdHJ1Y3QgaW9fd3Ffd29yayAqd29yaykNCiB7DQogCXN0
-cnVjdCBpb193cV9hY2N0ICphY2N0ID0gaW9fd29ya19nZXRfYWNjdCh3cSwgd29yayk7DQotCXVu
-c2lnbmVkIGludCB3b3JrX2ZsYWdzID0gYXRvbWljX3JlYWQoJndvcmstPmZsYWdzKTsNCiAJc3Ry
-dWN0IGlvX2NiX2NhbmNlbF9kYXRhIG1hdGNoID0gew0KIAkJLmZuCQk9IGlvX3dxX3dvcmtfbWF0
-Y2hfaXRlbSwNCiAJCS5kYXRhCQk9IHdvcmssDQpAQCAtOTQ1LDcgKzk0NCw3IEBAIHZvaWQgaW9f
-d3FfZW5xdWV1ZShzdHJ1Y3QgaW9fd3EgKndxLCBzdHJ1Y3QgaW9fd3Ffd29yayAqd29yaykNCiAJ
-ICogYmVlbiBtYXJrZWQgYXMgb25lIHRoYXQgc2hvdWxkIG5vdCBnZXQgZXhlY3V0ZWQsIGNhbmNl
-bCBpdCBoZXJlLg0KIAkgKi8NCiAJaWYgKHRlc3RfYml0KElPX1dRX0JJVF9FWElULCAmd3EtPnN0
-YXRlKSB8fA0KLQkgICAgKHdvcmtfZmxhZ3MgJiBJT19XUV9XT1JLX0NBTkNFTCkpIHsNCisJICAg
-IChhdG9taWNfcmVhZCgmd29yay0+ZmxhZ3MpICYgSU9fV1FfV09SS19DQU5DRUwpKSB7DQogCQlp
-b19ydW5fY2FuY2VsKHdvcmssIHdxKTsNCiAJCXJldHVybjsNCiAJfQ0KQEAgLTk1OSw3ICs5NTgs
-NyBAQCB2b2lkIGlvX3dxX2VucXVldWUoc3RydWN0IGlvX3dxICp3cSwgc3RydWN0IGlvX3dxX3dv
-cmsgKndvcmspDQogCWRvX2NyZWF0ZSA9ICFpb193cV9hY3RpdmF0ZV9mcmVlX3dvcmtlcih3cSwg
-YWNjdCk7DQogCXJjdV9yZWFkX3VubG9jaygpOw0KIA0KLQlpZiAoZG9fY3JlYXRlICYmICgod29y
-a19mbGFncyAmIElPX1dRX1dPUktfQ09OQ1VSUkVOVCkgfHwNCisJaWYgKGRvX2NyZWF0ZSAmJiAo
-KGF0b21pY19yZWFkKCZ3b3JrLT5mbGFncykgJiBJT19XUV9XT1JLX0NPTkNVUlJFTlQpIHx8DQog
-CSAgICAhYXRvbWljX3JlYWQoJmFjY3QtPm5yX3J1bm5pbmcpKSkgew0KIAkJYm9vbCBkaWRfY3Jl
-YXRlOw0KIA0KLS0gDQoyLjMzLjANCg==
+On 1/14/25 02:06, lizetao wrote:
+> There is a small time window that is modified by other tasks after
+> reading work->flags. It is changed to read before use, which is more
+
+Can you elaborate on what races with what? I don't immediately
+see any race here.
+
+> in line with the semantics of atoms.
+> Fixes: 3474d1b93f89 ("io_uring/io-wq: make io_wq_work flags atomic")
+> Signed-off-by: Li Zetao <lizetao1@huawei.com>
+> ---
+>   io_uring/io-wq.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+> index a38f36b68060..75096e77b1fe 100644
+> --- a/io_uring/io-wq.c
+> +++ b/io_uring/io-wq.c
+> @@ -932,7 +932,6 @@ static bool io_wq_work_match_item(struct io_wq_work *work, void *data)
+>   void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+>   {
+>   	struct io_wq_acct *acct = io_work_get_acct(wq, work);
+> -	unsigned int work_flags = atomic_read(&work->flags);
+>   	struct io_cb_cancel_data match = {
+>   		.fn		= io_wq_work_match_item,
+>   		.data		= work,
+> @@ -945,7 +944,7 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+>   	 * been marked as one that should not get executed, cancel it here.
+>   	 */
+>   	if (test_bit(IO_WQ_BIT_EXIT, &wq->state) ||
+> -	    (work_flags & IO_WQ_WORK_CANCEL)) {
+> +	    (atomic_read(&work->flags) & IO_WQ_WORK_CANCEL)) {
+>   		io_run_cancel(work, wq);
+>   		return;
+>   	}
+> @@ -959,7 +958,7 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+>   	do_create = !io_wq_activate_free_worker(wq, acct);
+>   	rcu_read_unlock();
+>   
+> -	if (do_create && ((work_flags & IO_WQ_WORK_CONCURRENT) ||
+> +	if (do_create && ((atomic_read(&work->flags) & IO_WQ_WORK_CONCURRENT) ||
+>   	    !atomic_read(&acct->nr_running))) {
+>   		bool did_create;
+>   
+
+-- 
+Pavel Begunkov
+
 

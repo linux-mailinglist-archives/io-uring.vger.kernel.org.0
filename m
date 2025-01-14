@@ -1,178 +1,96 @@
-Return-Path: <io-uring+bounces-5852-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5853-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA5FA0FD36
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 01:11:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E435A0FE73
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 03:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27BB2166029
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 00:11:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AB7E7A1BA9
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jan 2025 02:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D44B17FE;
-	Tue, 14 Jan 2025 00:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YxqxM13d"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05291EB2E;
+	Tue, 14 Jan 2025 02:06:56 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3DF4A23;
-	Tue, 14 Jan 2025 00:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA248493
+	for <io-uring@vger.kernel.org>; Tue, 14 Jan 2025 02:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736813514; cv=none; b=C7SP4jZkTiqBvWUMNEys0usb+nXWNMnY/2XkbZhfB5OrpMc5BBIwJ1CyaQqu74JGCJg8tt3KHtaOicG3mMLAo3YsJPenaT2aRihXZpjQmGCGpa/2BSlzk9bvIwZ9MhMyolOKwuSquNJXDq5CYhS2KDylTFfFmt/h3bfzq0LPhlo=
+	t=1736820416; cv=none; b=aXRx4q7+BFjM8TzH7btNWM5BjOgxvqEL0eg0sc6EsuF5JndMO5OYT4LNzq/wcqX1n/6XM+YJfh++qIhLzrJVulbVG9yC061xr11sQqx9Arj0bqOcdcVMjMbJg+P89+xHFnDOD1eqY3ZdX/w+iotIueBPSNsiiTJ99FG1iOVThU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736813514; c=relaxed/simple;
-	bh=L084qJu5dOb2JKaaqx/uddWn1hNRgC9R6NTUzNbXfU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W91MLs2R3YqXLjwEbWJZ/MUft8fXrfrj50NZ8YW86mqJjzWcaZjpHNNcNi2CEp1IzX0z90lZ+BZDkSFQ+oVOykZaWtM+q4Au7wBqe0UVaILtSrXxGYLrnA3/Y+nq1Ac0YEC8kW1nuFAvE3/1HQM6CyV/5kXL4nJY0cuIHTPpo/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YxqxM13d; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21649a7bcdcso83203275ad.1;
-        Mon, 13 Jan 2025 16:11:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736813512; x=1737418312; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fIEAYx4Iaru+5nZG90gYHiCdSZAzHHpQuvX3nHkx7eg=;
-        b=YxqxM13dJmOV6ijcWWGHYIoOMKJkI4suGesxsqAYLAjbYAuIS0TGaauOfNh/K6YKTh
-         vylvcogPaDIjY7EU9U74p7vKG/Z1tfkIo5RCBsdfbmfwwaOpv3FWR98KLad2MwWnjtjZ
-         +9L/ovhcWWoGXuLrLapdzvP0O9c8mPuxh9Ru1kpg+WBTTeLSVevngz3J3MpUByh4fTsl
-         yLDJCE8jqN8ckqhrJbxPxLxhU0R7gU5LtC7VlvrQsQM/nqsDz6gXctpm1qpK0CC5MIEO
-         BOw1leseq5EOEPVYJU41teUECptrWbJNkzGTmVU8fVJWde6xW+5VK9rXQ5q85a3u27U5
-         Nv7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736813512; x=1737418312;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fIEAYx4Iaru+5nZG90gYHiCdSZAzHHpQuvX3nHkx7eg=;
-        b=FOZ4Jchapl+XAyu2eLbQUW4QM8bm1sUL31YIVQJZTFAhYej99HxtCfRu7/56S1OAzX
-         tFmfv+mPFUv9hax1m95whD+zBXNzWzBh32T2AEDLCq2Gv4mgmfmo5nQrKDYq/VkMcn4x
-         AXhj6EfsO5pGRtIVlazG6e7HiiwCgo1a/+nE3qzZUBYXxapz/RrOILXU7a6z/tCgYoJi
-         MYwwUmjN66Ep+bUPiSL1YOjlvVHvvk8V2N4b0b2nkgw8MspZXvv8Zp+jBoeJDoXzAnvI
-         6OhL2AMLhw357I1d4n+Zc7BYe8zGwLlS6ar6AYJQjlppD0uxXsvlEfxDD9wHId3BA0jO
-         ywfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUD8Zo1qQK3vjsGFrg6Aa5FaV9/bFW21MW+XY8EB0StviUFtyMdHMfd+OKgjt8bJIl+FA0Lbk/+CA==@vger.kernel.org, AJvYcCV04t/xWApc0MK1qxWNQYRt+8vFrDFSHoemBNJCLUMzsYF4SO2igoFKzXDSSV4S0MArwCAH/cCY@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgfy1HL58eFhsGxW6Gzbmz9Ax90vNSyZh8p9bLKOsUiD4TCd0l
-	5UtmHhPKteBwq1a+fMZOgdDlJ8wFUSmfP9O+hKheEZRPo0u3p+LF/wgm
-X-Gm-Gg: ASbGncuKjaaoVQ4BWsP7AclYeA1iV5mMR3bdf3H0WYvbLHOd/wc40C57X35ke2izBin
-	MgrYt6TEZ/aSpkdpFu3w7NHnZ6Dw/L5OdA95o9TQJPWG62PfPQzlLMqf3KBKFLjtZrzMiG2pPWJ
-	47yOGUL5EKLel87RPLgVNs7gYZoyiYw1clpteVjp3m1CZj6L57ia1MULErO9fuw/ZyOfgK6XUh0
-	m0eMR7ocob+IAjGhGQkDT9ChycO+vM/Aq3ik3cgWHO4ihTHhWPpNHl9
-X-Google-Smtp-Source: AGHT+IHaZgmeaFXUjCRQqcIz+w95EwiX/7Rslm/9T6lYywrbC6UkQWGSZv08IGJKAjC8ZFJ19FyEmw==
-X-Received: by 2002:a17:903:41c3:b0:216:31c2:3db8 with SMTP id d9443c01a7336-21a83fc0665mr311282225ad.37.1736813512080;
-        Mon, 13 Jan 2025 16:11:52 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9f130004sm58210665ad.80.2025.01.13.16.11.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2025 16:11:51 -0800 (PST)
-Date: Mon, 13 Jan 2025 16:11:50 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
-	netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Joe Damato <jdamato@fastly.com>,
-	Pedro Tammela <pctammela@mojatatu.com>
-Subject: Re: [PATCH net-next v10 22/22] io_uring/zcrx: add selftest
-Message-ID: <Z4WrxoAB6zv01GYR@mini-arch>
-References: <20250108220644.3528845-1-dw@davidwei.uk>
- <20250108220644.3528845-23-dw@davidwei.uk>
- <Z4AIhGgAZPe8Ie-g@mini-arch>
- <a58b7f2a-2441-4e71-9f56-76f78d0180e4@davidwei.uk>
- <08bc45ec-93d4-4220-81d5-7377b3daa5cc@gmail.com>
+	s=arc-20240116; t=1736820416; c=relaxed/simple;
+	bh=YgaC0fzUTNraUPayw/nF1wraGESscFUv5sbDTjUJlII=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=mGJHvS07VCti6o7VjFDSaO2v1w8ggazQc5YZnjNmQ8BiO0vbZruxGIugDHg9CfjqiSP/FoSDy8HQc0Wpm22UUklu3fKx+rXXGOECxbCUbXCQzROg9etb7MX6l0Dfw5Pdbly4VpGfcpycPWHkfoU+rHAJMIoD8yH79+TaUVodEdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4YXC9n6PgrzRlHP;
+	Tue, 14 Jan 2025 10:04:29 +0800 (CST)
+Received: from kwepemd100010.china.huawei.com (unknown [7.221.188.107])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4158A1802E1;
+	Tue, 14 Jan 2025 10:06:51 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd100010.china.huawei.com (7.221.188.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 14 Jan 2025 10:06:50 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Tue, 14 Jan 2025 10:06:50 +0800
+From: lizetao <lizetao1@huawei.com>
+To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
+CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+Subject: [PATCH] io_uring/io-wq: Fix a small time window for reading
+ work->flags
+Thread-Topic: [PATCH] io_uring/io-wq: Fix a small time window for reading
+ work->flags
+Thread-Index: AdtmKOA8sg05Tt97QvCw7GBc1hDbnw==
+Date: Tue, 14 Jan 2025 02:06:50 +0000
+Message-ID: <5fd306d40ebb4da0a657da9a9be5cec1@huawei.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <08bc45ec-93d4-4220-81d5-7377b3daa5cc@gmail.com>
 
-On 01/13, Pavel Begunkov wrote:
-> On 1/9/25 17:50, David Wei wrote:
-> > On 2025-01-09 09:33, Stanislav Fomichev wrote:
-> > > On 01/08, David Wei wrote:
-> > > > Add a selftest for io_uring zero copy Rx. This test cannot run locally
-> > > > and requires a remote host to be configured in net.config. The remote
-> > > > host must have hardware support for zero copy Rx as listed in the
-> > > > documentation page. The test will restore the NIC config back to before
-> > > > the test and is idempotent.
-> > > > 
-> [...]
-> > > > +
-> > > > +		if (addr &&
-> > > > +		    inet_pton(AF_INET6, addr, &(addr6->sin6_addr)) != 1)
-> > > > +			error(1, 0, "ipv6 parse error: %s", addr);
-> > > > +		break;
-> > > 
-> > > nit: let's drop explicit af_inet support and use dual-stack af_inet6 sockets
-> > > explicitly? Take a look at parse_address in
-> > > tools/testing/selftests/drivers/net/hw/ncdevmem.c on how to
-> > > transparently fallback to v4 (maybe even move that parsing function into
-> > > some new networking_helpers.c lib similar to bpf subtree?).
-> > > 
-> > > (context: pure v4 environments are unlikely to exist at this point;
-> > > anything that supports v6 can use v4-mapped-v6 addresses)
-> > > 
-> > > > +	default:
-> > > > +		error(1, 0, "illegal domain");
-> > > > +	}
-> > > > +
-> > > > +	if (cfg_payload_len > max_payload_len)
-> > > > +		error(1, 0, "-l: payload exceeds max (%d)", max_payload_len);
-> > > > +}
-> > > > +
-> ...
-> > > [..]
-> > > 
-> > > > +def _get_rx_ring_entries(cfg):
-> > > > +    eth_cmd = "ethtool -g {} | awk '/RX:/ {{count++}} count == 2 {{print $2; exit}}'"
-> > > > +    res = cmd(eth_cmd.format(cfg.ifname), host=cfg.remote)
-> > > > +    return int(res.stdout)
-> > > > +
-> > > > +
-> > > > +def _get_combined_channels(cfg):
-> > > > +    eth_cmd = "ethtool -l {} | awk '/Combined:/ {{count++}} count == 2 {{print $2; exit}}'"
-> > > > +    res = cmd(eth_cmd.format(cfg.ifname), host=cfg.remote)
-> > > > +    return int(res.stdout)
-> > > > +
-> > > > +
-> > > > +def _set_flow_rule(cfg, chan):
-> > > > +    eth_cmd = "ethtool -N {} flow-type tcp6 dst-port 9999 action {} | awk '{{print $NF}}'"
-> > > > +    res = cmd(eth_cmd.format(cfg.ifname, chan), host=cfg.remote)
-> > > > +    return int(res.stdout)
-> > > 
-> > > Most of these (except installing flow steering rule) can be done over
-> > > ethtool ynl family. Should we try to move them over to YNL calls instead
-> > > of shelling out to ethtool binary? There are some examples in rss_ctx.py
-> > > on how to work with ethtool spec.
-> > > 
-> > > Same for setting/resetting number of queues below.
-> > 
-> > I wanted to use YNL, but these commands are run on the remote host and
-> > it's currently challenging to use YNL there.
-> > 
-> > > 
-> > > For the rest, there is also a ethtool() wrapper so you don't have to
-> > > do cmd("ethtool ...") and can do ethtool("...").
-> > 
-> > SG, I will update to use ethtool() helper.
-> 
-> If there will be no more issues / concerns, I'd assume we can merge
-> this series and follow up on top, as it rather sounds like an
-> improvement but not a real problem. Stan, does it work for you?
-
-Sure, can be fixed separately.
+VGhlcmUgaXMgYSBzbWFsbCB0aW1lIHdpbmRvdyB0aGF0IGlzIG1vZGlmaWVkIGJ5IG90aGVyIHRh
+c2tzIGFmdGVyDQpyZWFkaW5nIHdvcmstPmZsYWdzLiBJdCBpcyBjaGFuZ2VkIHRvIHJlYWQgYmVm
+b3JlIHVzZSwgd2hpY2ggaXMgbW9yZQ0KaW4gbGluZSB3aXRoIHRoZSBzZW1hbnRpY3Mgb2YgYXRv
+bXMuDQoNCkZpeGVzOiAzNDc0ZDFiOTNmODkgKCJpb191cmluZy9pby13cTogbWFrZSBpb193cV93
+b3JrIGZsYWdzIGF0b21pYyIpDQpTaWduZWQtb2ZmLWJ5OiBMaSBaZXRhbyA8bGl6ZXRhbzFAaHVh
+d2VpLmNvbT4NCi0tLQ0KIGlvX3VyaW5nL2lvLXdxLmMgfCA1ICsrLS0tDQogMSBmaWxlIGNoYW5n
+ZWQsIDIgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2lvX3Vy
+aW5nL2lvLXdxLmMgYi9pb191cmluZy9pby13cS5jDQppbmRleCBhMzhmMzZiNjgwNjAuLjc1MDk2
+ZTc3YjFmZSAxMDA2NDQNCi0tLSBhL2lvX3VyaW5nL2lvLXdxLmMNCisrKyBiL2lvX3VyaW5nL2lv
+LXdxLmMNCkBAIC05MzIsNyArOTMyLDYgQEAgc3RhdGljIGJvb2wgaW9fd3Ffd29ya19tYXRjaF9p
+dGVtKHN0cnVjdCBpb193cV93b3JrICp3b3JrLCB2b2lkICpkYXRhKQ0KIHZvaWQgaW9fd3FfZW5x
+dWV1ZShzdHJ1Y3QgaW9fd3EgKndxLCBzdHJ1Y3QgaW9fd3Ffd29yayAqd29yaykNCiB7DQogCXN0
+cnVjdCBpb193cV9hY2N0ICphY2N0ID0gaW9fd29ya19nZXRfYWNjdCh3cSwgd29yayk7DQotCXVu
+c2lnbmVkIGludCB3b3JrX2ZsYWdzID0gYXRvbWljX3JlYWQoJndvcmstPmZsYWdzKTsNCiAJc3Ry
+dWN0IGlvX2NiX2NhbmNlbF9kYXRhIG1hdGNoID0gew0KIAkJLmZuCQk9IGlvX3dxX3dvcmtfbWF0
+Y2hfaXRlbSwNCiAJCS5kYXRhCQk9IHdvcmssDQpAQCAtOTQ1LDcgKzk0NCw3IEBAIHZvaWQgaW9f
+d3FfZW5xdWV1ZShzdHJ1Y3QgaW9fd3EgKndxLCBzdHJ1Y3QgaW9fd3Ffd29yayAqd29yaykNCiAJ
+ICogYmVlbiBtYXJrZWQgYXMgb25lIHRoYXQgc2hvdWxkIG5vdCBnZXQgZXhlY3V0ZWQsIGNhbmNl
+bCBpdCBoZXJlLg0KIAkgKi8NCiAJaWYgKHRlc3RfYml0KElPX1dRX0JJVF9FWElULCAmd3EtPnN0
+YXRlKSB8fA0KLQkgICAgKHdvcmtfZmxhZ3MgJiBJT19XUV9XT1JLX0NBTkNFTCkpIHsNCisJICAg
+IChhdG9taWNfcmVhZCgmd29yay0+ZmxhZ3MpICYgSU9fV1FfV09SS19DQU5DRUwpKSB7DQogCQlp
+b19ydW5fY2FuY2VsKHdvcmssIHdxKTsNCiAJCXJldHVybjsNCiAJfQ0KQEAgLTk1OSw3ICs5NTgs
+NyBAQCB2b2lkIGlvX3dxX2VucXVldWUoc3RydWN0IGlvX3dxICp3cSwgc3RydWN0IGlvX3dxX3dv
+cmsgKndvcmspDQogCWRvX2NyZWF0ZSA9ICFpb193cV9hY3RpdmF0ZV9mcmVlX3dvcmtlcih3cSwg
+YWNjdCk7DQogCXJjdV9yZWFkX3VubG9jaygpOw0KIA0KLQlpZiAoZG9fY3JlYXRlICYmICgod29y
+a19mbGFncyAmIElPX1dRX1dPUktfQ09OQ1VSUkVOVCkgfHwNCisJaWYgKGRvX2NyZWF0ZSAmJiAo
+KGF0b21pY19yZWFkKCZ3b3JrLT5mbGFncykgJiBJT19XUV9XT1JLX0NPTkNVUlJFTlQpIHx8DQog
+CSAgICAhYXRvbWljX3JlYWQoJmFjY3QtPm5yX3J1bm5pbmcpKSkgew0KIAkJYm9vbCBkaWRfY3Jl
+YXRlOw0KIA0KLS0gDQoyLjMzLjANCg==
 

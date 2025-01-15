@@ -1,157 +1,218 @@
-Return-Path: <io-uring+bounces-5870-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5871-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30508A11ABF
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 08:16:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF74FA11D12
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 10:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32BE3A6272
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 07:15:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2A7116571A
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 09:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89661DB12A;
-	Wed, 15 Jan 2025 07:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5BA246A35;
+	Wed, 15 Jan 2025 09:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b="EYvKTF3c";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rTPUsX2Y"
 X-Original-To: io-uring@vger.kernel.org
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D688B1DB123;
-	Wed, 15 Jan 2025 07:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF11C246A05
+	for <io-uring@vger.kernel.org>; Wed, 15 Jan 2025 09:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736925341; cv=none; b=qWosq0WvN6lakidZb9LZo4UFXNmDi7YUy5H+YSQlAQz80sQ6JJuU0t0fUH8KpQkc4+uunOfTOPZkV6qE6dlsVsrmku0S1ak1WSZ5UIJiuf71o7cYTe2m8nLpRrJ6mDXeFdNLcfZYI7oV4o6w9wlU6JJAqbMc8n9kKULS+UJhSVE=
+	t=1736932491; cv=none; b=uQKkps9VqhE9ZAQFduVUecN2N3ZWi/H5rMNL7rrh2hrPhXW8nHWcrJFMmEpkeb5yKa8MZJj49B1gIRI3DBgGa6ODuSxblGfS0L9geQzS4OiuXLAZCwPdjZJW9jLXJK4sd46Z7FrrDpyb6Pew6oPu/LRr9s7XTp7+9KrlrBrIE6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736925341; c=relaxed/simple;
-	bh=XTfYeOYdNjhi9x2oJK4o0/XfD+i/tlZy1DRxSaja6sY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=WE1q+OrA32cFdavVPSWgJNNF9FlMNv3yFVSEXuZ9ZPb3hNuhiMkPHl1CjEgak0srgTae0mY/Na6YzMKMu/ouJmVmn4fVHDxRDv4eZrygXRRsgHmaT7Q33QShDJj393wAEcO5UyaNtUS8wI17Gi13cA5zkJksXNvsz66XI7AKk28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3e1ff7000001d7ae-93-67876096efa2
-Message-ID: <c210f152-5eb7-456a-8cd3-ec75e1a5b266@sk.com>
-Date: Wed, 15 Jan 2025 16:15:34 +0900
+	s=arc-20240116; t=1736932491; c=relaxed/simple;
+	bh=Qyc5xQXiK0+aY/0FKY1g8ENtbrSnDyizPl5pLfXeH3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KV6RzvMmNp7P/DCCN/sPOqqvy6gMEmmpK/bpfxwSwzgTXsj1MPun+qUbzPuQu0uRE5NAeNYm/2CJQL9o/HY5J1wTwoT9345DtI83TYLOoOpGNRAw/p9rC56Qg6Ny1K8kLAaH46Sj7B9eszS9g/1LtGahqti1vLjf7SMsiNGaWqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org; spf=pass smtp.mailfrom=joshtriplett.org; dkim=pass (2048-bit key) header.d=joshtriplett.org header.i=@joshtriplett.org header.b=EYvKTF3c; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rTPUsX2Y; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joshtriplett.org
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id D1AAA13801DC;
+	Wed, 15 Jan 2025 04:14:47 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Wed, 15 Jan 2025 04:14:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	joshtriplett.org; h=cc:cc:content-type:content-type:date:date
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm2; t=1736932487; x=1737018887; bh=j/h8tOhehf
+	hMAqUqnUQy84IBvjqb40Fk+9NPcO2oXks=; b=EYvKTF3cg01cM7tsX0hhxontqo
+	40zodjD1+Lps4B/+dGMm7LOyjVT6XilpjX+0ZeJAjRRo8r+yPUH2kHZ3nXR71sGk
+	SREBeaP5bxmFdEENbqpkzeE586ZtmBhZRTztKQIRysduRpQ66YSHCVa+Xz1LQzjJ
+	TqR467l9KF8BWRqTa9gazA8ocdd0J0a5qZ3FINHhAPkzlgEBy0jNROqciDRW4eUb
+	eiizJW/P6NuUrqiZMUZfyZWRsc9+0DVR7ycs8T+lL/T5ynQ38RqvlLf8YpZHY0y6
+	g1K6R+iZWTY8FbuezK/VycvIwuDGJDJUr3X0uuL43iXtgcyWEv6fAgCGzY/g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1736932487; x=
+	1737018887; bh=j/h8tOhehfhMAqUqnUQy84IBvjqb40Fk+9NPcO2oXks=; b=r
+	TPUsX2YB98yovx723WasraezM+28otLPNqNy+NviwpZL6plq//CI9iAVyTsmeRiW
+	f8CnBMddQk5ldtYqBpld5oVvX0gasfywG2X3IFAILu9x7fAAOlioPmuZAy3mdEFf
+	zFKRPBD0MDywwOLIPR8wBaZyijf8dHIzd2RhIfrkxvu/HwdFr7/ZxsJHt7RktVEm
+	ftvgTgCevxb55e8EPfvDQzp1nUE9d6Lm27FV3jaHIB6wrqwOANMtyXoHdySaqjRP
+	F2J66DNhrQ4LYFoNsLk78kve6hWqiqaAU3Xc1jZ7eZ1IQ9HMfRG9zodS6Cjugpui
+	Vwumcf1PqFXIXo/Gvp9AA==
+X-ME-Sender: <xms:h3yHZ9cKniYpchVbOEyUWn1mhjTJFtpvIglJb8aSG7l0qQBqw72H-Q>
+    <xme:h3yHZ7PjMSfCUqlDjWw7k2KZAMcYgOwEIqdZWAYXRvyhvdLWTLP6ihKbrmnC57U8I
+    hWGd0wegdV-woCixgY>
+X-ME-Received: <xmr:h3yHZ2gdNZ0SqTydz1WFH9BAUPyuw7o5t700xW-oFYuBMIlsCSfKWggPglc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudehkedgtddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkgggtugesthdtredttddtvdenucfh
+    rhhomheplfhoshhhucfvrhhiphhlvghtthcuoehjohhshhesjhhoshhhthhrihhplhgvth
+    htrdhorhhgqeenucggtffrrghtthgvrhhnpeduvdelheettdfgvddvleegueefudegudev
+    ffekjeegffefvdeikeehvdehleekhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhgpdhn
+    sggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrgigsoh
+    gvsehkvghrnhgvlhdrughkpdhrtghpthhtoheprghsmhhlrdhsihhlvghntggvsehgmhgr
+    ihhlrdgtohhmpdhrtghpthhtohepihhoqdhurhhinhhgsehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:h3yHZ29hzDjkm_BNTk7npddLMQYJLf-8VNA-Kzw28dmPomo_p-pgug>
+    <xmx:h3yHZ5v6Jh_BovoAM_Yr5cW-TU8cK8GeYZzHKslUC2XGe1XkvDx9QA>
+    <xmx:h3yHZ1GSijr3fcJOIJ114hXTBiWF2h8DJHNdrnt97D4ZpnvE3idpSw>
+    <xmx:h3yHZwOkvv8Ebg3NcYsNV7HykYuzo-c_H-i6Cs5hTABCFSq3KG7Dkw>
+    <xmx:h3yHZxKRGvdKmvwE-mhw3PTYJvKfb5kRoUMb5V1ZeuvFOMYjJx3kvQk4>
+Feedback-ID: i83e94755:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 15 Jan 2025 04:14:42 -0500 (EST)
+Date: Wed, 15 Jan 2025 11:14:33 +0200
+From: Josh Triplett <josh@joshtriplett.org>
+To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
+Subject: [PATCH] io_uring: Factor out a function to parse restrictions
+Message-ID: <9bac2b4d1b9b9ab41c55ea3816021be847f354df.1736932318.git.josh@joshtriplett.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: kernel_team@skhynix.com, Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- damon@lists.linux.dev, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com
-Subject: Re: [RFC PATCH] mm/madvise: remove redundant mmap_lock operations
- from process_madvise()
-Content-Language: ko
-To: SeongJae Park <sj@kernel.org>
-References: <20250115061910.58938-1-sj@kernel.org>
-From: Honggyu Kim <honggyu.kim@sk.com>
-In-Reply-To: <20250115061910.58938-1-sj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42LhesuzSHdaQnu6wY7HChZz1q9hs5izahuj
-	xeq7/WwWT/7/ZrV413qOxWJ7wwN2i8u75rBZ3Fvzn9Xi5KyVLBaHv75hcuDy2DnrLrvH5bOl
-	HptWdbJ5bPo0id3jxIzfLB4vNs9k9Pj49BaLx+dNcgEcUVw2Kak5mWWpRfp2CVwZM9ZeYC94
-	K1bRf/8MUwPjRqEuRg4OCQETiZkzE7oYOcHMm3f3MoKEeQUsJabN5wUxWQRUJZ4fDAWp4BUQ
-	lDg58wkLiC0qIC9x/9YM9i5GLg5mgbVMEjOmTmEGSQgLJEtMv3OQDcRmFhCRmN3ZBhYXEVCU
-	OPf4IiuILSRgJHHy9xqwQWwCahJXXk5iAtnFKWAs8f1fPUSrmUTX1i5GCFteYvvbOcwguyQE
-	XrNJrH47jRHiZEmJgytusExgFJyF5L5ZSFbPQjJrFpJZCxhZVjEKZeaV5SZm5pjoZVTmZVbo
-	JefnbmIExtCy2j/ROxg/XQg+xCjAwajEw3shvi1diDWxrLgy9xCjBAezkgjvErbWdCHelMTK
-	qtSi/Pii0pzU4kOM0hwsSuK8Rt/KU4QE0hNLUrNTUwtSi2CyTBycUg2Moi+Pe/88486y0fZK
-	XhxTcPzM1eXXvcqULuzOPrPNWMRx9d8codmtV0JEVhf0iDes3vYkMtq9nPukxbMjSWyTT1xQ
-	mr92D4P9f5mr9581HgzRbTr+6QJTn5XyDHH29YbFH+VLftuar7kY8kNE6/TWwFL5v/GXRTgS
-	l5m4F1nNnKx7bM37Xb/MlViKMxINtZiLihMBHWf0NZ0CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsXCNUNLT3daQnu6wappYhZz1q9hs5izahuj
-	xeq7/WwWT/7/ZrV413qOxeLw3JOsFtsbHrBbXN41h83i3pr/rBYnZ60ESnx9w+TA7bFz1l12
-	j8tnSz02repk89j0aRK7x4kZv1k8Xmyeyejx8ektFo/FLz4weXzeJBfAGcVlk5Kak1mWWqRv
-	l8CVMWPtBfaCt2IV/ffPMDUwbhTqYuTkkBAwkbh5dy9jFyMHB6+ApcS0+bwgJouAqsTzg6Eg
-	FbwCghInZz5hAbFFBeQl7t+awd7FyMXBLLCWSWLG1CnMIAlhgWSJ6XcOsoHYzAIiErM728Di
-	IgKKEuceX2QFsYUEjCRO/l4DNohNQE3iystJTCC7OAWMJb7/q4doNZPo2trFCGHLS2x/O4d5
-	AiPfLCRnzEKyYRaSlllIWhYwsqxiFMnMK8tNzMwx1SvOzqjMy6zQS87P3cQIjIlltX8m7mD8
-	ctn9EKMAB6MSD++JiLZ0IdbEsuLK3EOMEhzMSiK8S9ha04V4UxIrq1KL8uOLSnNSiw8xSnOw
-	KInzeoWnJggJpCeWpGanphakFsFkmTg4pRoYtzzpXvyi377+pZWLhxzLb9/LR3ZsW/RYtiz0
-	Z0au3oR9HWLP+VunPDlo/YM79kznW7dkk6kf2Hcm3V3JV/HJv5lPgktJzPRFUNiG35s3r5Pb
-	0M66YlOxT/J1YeuImdFay6o6Q7Ru2BtLtkRskHrsnqeWLBxU2yP0rP3KnUy2vfViOayXxLYo
-	sRRnJBpqMRcVJwIA58YCEoUCAAA=
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi SeongJae,
+Preparation for subsequent work on inherited restrictions.
 
-I'm resending this because my new mail client mistakenly set the mail
-format to HTML. Sorry for the noise.
+Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+---
+ io_uring/register.c | 64 +++++++++++++++++++++++----------------------
+ 1 file changed, 33 insertions(+), 31 deletions(-)
 
-On 1/15/2025 3:19 PM, SeongJae Park wrote:
-> Hi Honggyu,
-> 
-> On Wed, 15 Jan 2025 13:35:48 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
-> 
->> Hi SeongJae,
->>
->> I have a simple comment on this.
->>
->> On 1/11/2025 9:46 AM, SeongJae Park wrote:
->>> process_madvise() calls do_madvise() for each address range.  Then, each
->>> do_madvise() invocation holds and releases same mmap_lock.  Optimize the
->>> redundant lock operations by doing the locking in process_madvise(), and
->>> inform do_madvise() that the lock is already held and therefore can be
->>> skipped.
-> [...]
->>> ---
->>>    include/linux/mm.h |  3 ++-
->>>    io_uring/advise.c  |  2 +-
->>>    mm/damon/vaddr.c   |  2 +-
->>>    mm/madvise.c       | 54 +++++++++++++++++++++++++++++++++++-----------
->>>    4 files changed, 45 insertions(+), 16 deletions(-)
->>>
->>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>> index 612b513ebfbd..e3ca5967ebd4 100644
->>> --- a/include/linux/mm.h
->>> +++ b/include/linux/mm.h
->>> @@ -3459,7 +3459,8 @@ int do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma,
->>>    		    unsigned long end, struct list_head *uf, bool unlock);
->>>    extern int do_munmap(struct mm_struct *, unsigned long, size_t,
->>>    		     struct list_head *uf);
->>> -extern int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int behavior);
->>> +extern int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in,
->>> +		int behavior, bool lock_held);
->>>    
->>>    #ifdef CONFIG_MMU
->>>    extern int __mm_populate(unsigned long addr, unsigned long len,
->>> diff --git a/io_uring/advise.c b/io_uring/advise.c
->>> index cb7b881665e5..010b55d5a26e 100644
->>> --- a/io_uring/advise.c
->>> +++ b/io_uring/advise.c
->>> @@ -56,7 +56,7 @@ int io_madvise(struct io_kiocb *req, unsigned int issue_flags)
->>>    
->>>    	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
->>>    
->>> -	ret = do_madvise(current->mm, ma->addr, ma->len, ma->advice);
->>> +	ret = do_madvise(current->mm, ma->addr, ma->len, ma->advice, false);
->>
->> I feel like this doesn't look good in terms of readability. Can we
->> introduce an enum for this?
-> 
-> I agree that's not good to read.  Liam alos pointed out a similar issue but
-
-Right. I didn't carefully read his comment. Thanks for the info.
-
-> suggested splitting functions with clear names[1].  I think that also fairly
-> improves readability, and I slightly prefer that way, since it wouldn't
-> introduce a new type for only a single use case.  Would that also work for your
-> concern, or do you have a different opinion?
-> 
-> [1] https://lore.kernel.org/20250115041750.58164-1-sj@kernel.org
-
-I don't have any other concern.
-
-Thanks,
-Honggyu
-
-> Thanks,
-> SJ
-> 
-> [...]
+diff --git a/io_uring/register.c b/io_uring/register.c
+index fdd44914c39c..c13a34dd2255 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -104,21 +104,13 @@ static int io_register_personality(struct io_ring_ctx *ctx)
+ 	return id;
+ }
+ 
+-static __cold int io_register_restrictions(struct io_ring_ctx *ctx,
+-					   void __user *arg, unsigned int nr_args)
++static __cold int io_parse_restrictions(void __user *arg, unsigned int nr_args,
++					struct io_restriction *restrictions)
+ {
+ 	struct io_uring_restriction *res;
+ 	size_t size;
+ 	int i, ret;
+ 
+-	/* Restrictions allowed only if rings started disabled */
+-	if (!(ctx->flags & IORING_SETUP_R_DISABLED))
+-		return -EBADFD;
+-
+-	/* We allow only a single restrictions registration */
+-	if (ctx->restrictions.registered)
+-		return -EBUSY;
+-
+ 	if (!arg || nr_args > IORING_MAX_RESTRICTIONS)
+ 		return -EINVAL;
+ 
+@@ -130,47 +122,57 @@ static __cold int io_register_restrictions(struct io_ring_ctx *ctx,
+ 	if (IS_ERR(res))
+ 		return PTR_ERR(res);
+ 
+-	ret = 0;
++	ret = -EINVAL;
+ 
+ 	for (i = 0; i < nr_args; i++) {
+ 		switch (res[i].opcode) {
+ 		case IORING_RESTRICTION_REGISTER_OP:
+-			if (res[i].register_op >= IORING_REGISTER_LAST) {
+-				ret = -EINVAL;
+-				goto out;
+-			}
+-
+-			__set_bit(res[i].register_op,
+-				  ctx->restrictions.register_op);
++			if (res[i].register_op >= IORING_REGISTER_LAST)
++				goto err;
++			__set_bit(res[i].register_op, restrictions->register_op);
+ 			break;
+ 		case IORING_RESTRICTION_SQE_OP:
+-			if (res[i].sqe_op >= IORING_OP_LAST) {
+-				ret = -EINVAL;
+-				goto out;
+-			}
+-
+-			__set_bit(res[i].sqe_op, ctx->restrictions.sqe_op);
++			if (res[i].sqe_op >= IORING_OP_LAST)
++				goto err;
++			__set_bit(res[i].sqe_op, restrictions->sqe_op);
+ 			break;
+ 		case IORING_RESTRICTION_SQE_FLAGS_ALLOWED:
+-			ctx->restrictions.sqe_flags_allowed = res[i].sqe_flags;
++			restrictions->sqe_flags_allowed = res[i].sqe_flags;
+ 			break;
+ 		case IORING_RESTRICTION_SQE_FLAGS_REQUIRED:
+-			ctx->restrictions.sqe_flags_required = res[i].sqe_flags;
++			restrictions->sqe_flags_required = res[i].sqe_flags;
+ 			break;
+ 		default:
+-			ret = -EINVAL;
+-			goto out;
++			goto err;
+ 		}
+ 	}
+ 
+-out:
++	ret = 0;
++
++err:
++	kfree(res);
++	return ret;
++}
++
++static __cold int io_register_restrictions(struct io_ring_ctx *ctx,
++					   void __user *arg, unsigned int nr_args)
++{
++	int ret;
++
++	/* Restrictions allowed only if rings started disabled */
++	if (!(ctx->flags & IORING_SETUP_R_DISABLED))
++		return -EBADFD;
++
++	/* We allow only a single restrictions registration */
++	if (ctx->restrictions.registered)
++		return -EBUSY;
++
++	ret = io_parse_restrictions(arg, nr_args, &ctx->restrictions);
+ 	/* Reset all restrictions if an error happened */
+ 	if (ret != 0)
+ 		memset(&ctx->restrictions, 0, sizeof(ctx->restrictions));
+ 	else
+ 		ctx->restrictions.registered = true;
+-
+-	kfree(res);
+ 	return ret;
+ }
+ 
+-- 
+2.48.0.rc1.219.gb6b6757d772
 
 

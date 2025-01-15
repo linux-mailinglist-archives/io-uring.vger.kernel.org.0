@@ -1,110 +1,133 @@
-Return-Path: <io-uring+bounces-5872-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5873-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54474A11F12
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 11:20:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C82BA12431
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 13:55:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAE727A05D8
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 10:20:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27529169673
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 12:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52ADD1E7C3A;
-	Wed, 15 Jan 2025 10:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C442459A9;
+	Wed, 15 Jan 2025 12:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wk5y4P5L";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EEOFwqw3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7awR7Ny"
 X-Original-To: io-uring@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DE51DB138;
-	Wed, 15 Jan 2025 10:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6402459A1
+	for <io-uring@vger.kernel.org>; Wed, 15 Jan 2025 12:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736936421; cv=none; b=SmN/Os0WJXY0FXhMFZFjUDwB0P2uu6sd2iO2sxhmW6bMdPqqF1uXDW12jM6Z/RsuzMaiX+KUkgCUre2fzOzSmyy16fyr9A60hjy7E8Ui94vExvNAbydjJbJ7EFLULuW2WHEoadl649T3AjySwRpQE2M+cNlHZ0OwJMiN99Wq3SI=
+	t=1736945709; cv=none; b=mQ2SswE5tDApS/l6dZ/onIKEjlAuZ4DaFOLSANRSAJC7Mwh6g45swKSThfFneMWRGspWGQqH8faVbS4KBlOfVEQolCne7sYzbUYN/NdaffJEr2LnmTf5b2Jv+GprD0KhRxG0NPIcGQvZxyjhDkSWWTqVqOFqOqHw4PSxgUjvwsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736936421; c=relaxed/simple;
-	bh=Y0or7/8tzk48diYGJj30iKKvQT6l5W9TsksC08Pubrg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DsSWJy6WfGwhFz6jfYoOkpbIT8MOLyuVl4tdcLFfgFCt5thZTAB/Oio4owuaq1Nzpq3mxoWCK28akrFW2dCuC62lKJT0p+fVUzTRkICQilCtHMOIFRgJWFWmv/XfOt7imcTtvdS0WBLkzpSiPQH2bfjF9T/gKrfJdtgJR/Ba0yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wk5y4P5L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EEOFwqw3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1736936417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DYAdghFWryxhhOmYuAiL9vh2ANqpxi52Spuw5tailW4=;
-	b=Wk5y4P5Lh2PIfpF16vk0CYtb54T/c9Bw6jjfCOF8oeO1ZUDwDk+ZGqCBwezm+vKu3ZpMEe
-	6f2i6AoS6RqVRuby0Y8dvE2vggpJ5KAOMzRqeVEexs5cDxvXCcu/CQDgN5UolwMQRret4w
-	DNfLQQyDTntSexQuqkFyT9s64s10GgGiui3u0P9K+JOG0NWZK0RVbBqkjAFtH7EOQm/oCp
-	4jH0cOk2k0JBq38b0FkuRACPfdoKHkZpmcMWINN49VjxJLcwSAg5KQxYMRUtCZ8palUxlx
-	vY2Ugvdr7yd+9LxYmBsQhOVXoo0oahFXFhDyDinCf6bE8I7TCgjLJr42gE7Diw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1736936417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DYAdghFWryxhhOmYuAiL9vh2ANqpxi52Spuw5tailW4=;
-	b=EEOFwqw3TZqY4T0wVPn57iR1Jt3845RLYV8II8DB9IoF64VzJoBcImjcLbXEJt7uOiMlD5
-	SzulT8DObroa7VBA==
-To: Peter Zijlstra <peterz@infradead.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>, Darren
- Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?utf-8?Q?Andr=C3=A9?=
- Almeida <andrealmeid@igalia.com>, kernel list
- <linux-kernel@vger.kernel.org>, Pavel Begunkov <asml.silence@gmail.com>,
- io-uring <io-uring@vger.kernel.org>
-Subject: Re: futex+io_uring: futex_q::task can maybe be dangling (but is not
- actually accessed, so it's fine)
-In-Reply-To: <20250113143832.GH5388@noisy.programming.kicks-ass.net>
-References: <CAG48ez2HHU+vSCcurs5TsFXiEfUhLSXbEzcugBSTBZgBWkzpuA@mail.gmail.com>
- <3b78348b-a804-4072-b088-9519353edb10@kernel.dk>
- <20250113143832.GH5388@noisy.programming.kicks-ass.net>
-Date: Wed, 15 Jan 2025 11:20:17 +0100
-Message-ID: <877c6wcra6.ffs@tglx>
+	s=arc-20240116; t=1736945709; c=relaxed/simple;
+	bh=2ETBJ9R0VXX0vNF/SecuIXPRy+KC1FhnsrfU2DJbvh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RIFPN6Hkgdi2EiHYPNsxLKsysF/69WSh5WDm5jb3mw74+ROq9cx9wsd+dNdq16KxRjcfCktPkOpt7HPs/w+s7PORf/lDbvcPY3UyVQHyHptmfMf8bost3v/XnB84J3Objpcr34x86vNAi4Uz2L1XbWHdn2uGUptJIsZ6iwVFZRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7awR7Ny; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa679ad4265so171094466b.0
+        for <io-uring@vger.kernel.org>; Wed, 15 Jan 2025 04:55:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736945705; x=1737550505; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N1iHONOCza+os8UxbeFa/qAOR/we0+yHQ3rLJfNaRPo=;
+        b=h7awR7Nyr2oxIiOkUdFMzPzHluV1JfHklMUXEuh1izXT7r6T69PUalmIBqbsVKUBpv
+         bbALcLwtCYi0fNGlfGGqZYGAxuoE7yZGwRBUsdhOiXeRmKw6MOFqc6tEyO6Fe86PJKtS
+         mCrsyXzOcKhhsB62Lb4wRFap+Tv+maioEKTDSUlr95T/khjfd4yBG6ABMwLewi9F/h5I
+         bgDYjK9tgThhgBeI2wZZs7LIJgPIddvvKucTMFjLM8NwLphsNdktFKbzBiXYJUeMA0jc
+         od9TdRfuoc5kpOkbsy3wAoOZQGbFJ3GMzLbKorq5asMe7Prtx+W3XVV9E/mKo/Vr6XJg
+         +aNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736945705; x=1737550505;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N1iHONOCza+os8UxbeFa/qAOR/we0+yHQ3rLJfNaRPo=;
+        b=fLcZflz/s0fyHJ+aq28N7x8nQ3+L/2EQWferfGj4vmYbYttCGzZVEA4j+zo3l30YSJ
+         je4YGSp0ekJrvCj6L6nhURGwmVDO7gqx9d75yQ1ghxE2m+ug7qj3eEIUp8zSA54OE3T8
+         Lr0j4EwSVYBvynQuXPSHtl6Oj8pC42ze8rGdgE1lThgsMaAuVXKddfReAJWb4HTZ7nga
+         VCfb5ssXFSFjSP7oG6gSU+jthrmE7u7IJl5jJvJktzgKo+/G1ptH9lIyXRd8vLMDxEEw
+         P7Vrnch2aJ3GoMMGwYX7Ga6bi8RQAiDleH6V0fMIfCTJRJVEmKX6YcDqSoQYvx0+8W7M
+         mcuw==
+X-Gm-Message-State: AOJu0YxUWS5YDog/hOr0pMnk3Yqq4c7YfePYuQtA7PalTHs7seA+GJEB
+	ZHcI9Mr80v9YLo8mYYhKP/dDyh1r3m8gB5CDWS82OIeWr9SFzFtn
+X-Gm-Gg: ASbGnct1+Bcpgq8SrAVKF60TuEvN2JlEWReTQT8hZutIdLhsDaoARGb8sVHXT8FMkBe
+	vt5ZDM6D0ev7A8F7wdFttjW8kcKJsnrG8b+QYVjfSxKM/FBzpVaGCZVCMa780KCWG0A70bUUvkJ
+	ZfuA+Ipt+v2/YL+yuExqhi5BwQBNf7Ej+PCu+MjWs3iotinawp2g8rmK9TQeaOkdgSmAdGtQDwN
+	aUSm6Ham9SUmlt2cUIko1NVmhnyYH8BkBcpgMqIcxULisUfwtzqcYUyNEWJyJn21xA8HnGfID0u
+	gE3fLAEzs1chEQ==
+X-Google-Smtp-Source: AGHT+IFGwbFBNFMyOQ/FbBTI7ym+oI9LAiQoAAIXNW9x9+i36cRiYdOGga/wrIY91AdXDHszX/j1pw==
+X-Received: by 2002:a17:907:7282:b0:a9a:6c41:50a8 with SMTP id a640c23a62f3a-ab2c3c79cf5mr2278139166b.17.1736945705172;
+        Wed, 15 Jan 2025 04:55:05 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:66c0])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c95ae536sm751890466b.139.2025.01.15.04.55.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jan 2025 04:55:04 -0800 (PST)
+Message-ID: <1a849a84-0866-4b38-a1ba-1b2810948ceb@gmail.com>
+Date: Wed, 15 Jan 2025 12:55:53 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/io-wq: Fix a small time window for reading
+ work->flags
+To: lizetao <lizetao1@huawei.com>, Jens Axboe <axboe@kernel.dk>
+Cc: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <5fd306d40ebb4da0a657da9a9be5cec1@huawei.com>
+ <0993bb5e-debd-4513-9481-a7d93f8c3c25@gmail.com>
+ <6d68ba2ae0d74895aec47379e94997cb@huawei.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <6d68ba2ae0d74895aec47379e94997cb@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jan 13 2025 at 15:38, Peter Zijlstra wrote:
-> On Fri, Jan 10, 2025 at 08:33:34PM -0700, Jens Axboe wrote:
->
->> @@ -548,7 +549,7 @@ void __futex_queue(struct futex_q *q, struct futex_hash_bucket *hb)
->>  
->>  	plist_node_init(&q->list, prio);
->>  	plist_add(&q->list, &hb->chain);
->> -	q->task = current;
->> +	q->task = task;
->>  }
->>  
->>  /**
->
-> The alternative is, I suppose, to move the q->task assignment out to
-> these two callsites instead. Thomas, any opinions?
+On 1/15/25 01:50, lizetao wrote:
+> Hi,
+> 
+>> -----Original Message-----
+>> From: Pavel Begunkov <asml.silence@gmail.com>
+>> Sent: Wednesday, January 15, 2025 12:22 AM
+>> To: lizetao <lizetao1@huawei.com>; Jens Axboe <axboe@kernel.dk>
+>> Cc: io-uring@vger.kernel.org
+>> Subject: Re: [PATCH] io_uring/io-wq: Fix a small time window for reading work-
+>>> flags
+>>
+>> On 1/14/25 02:06, lizetao wrote:
+>>> There is a small time window that is modified by other tasks after
+>>> reading work->flags. It is changed to read before use, which is more
+>>
+>> Can you elaborate on what races with what? I don't immediately see any race
+>> here.
+> 
+> There is such a race context:
+> 	
+> 	worker												process
+> io_worker_handle_work:										IORING_OP_ASYNC_CANCEL
+> 	io_wq_enqueue										__io_wq_worker_cancel
+> 		work_flags = atomic_read(&work->flags);	// no IO_WQ_WORK_CANCEL		
+> 													atomic_or(IO_WQ_WORK_CANCEL, &work->flags);
 
-That's fine as long as hb->lock is held, but the explicit argument makes
-all of this simpler to understand.
+													^^^
 
-Though I'm not really a fan of this part:
+That can't happen, the request is not discoverable via iowq yet.
 
-> +		__futex_queue(&ifd->q, hb, NULL);
-> +		spin_unlock(&hb->lock);
+> 		if (work_flags & IO_WQ_WORK_CANCEL)	// false
 
-Can we please add that @task argument to futex_queue() and keep the
-internals in the futex code instead of pulling more stuff into io_uring?
+This check is for requests that came with the flag already set.
 
-Thanks,
-
-        tglx
-
+-- 
+Pavel Begunkov
 
 

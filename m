@@ -1,116 +1,176 @@
-Return-Path: <io-uring+bounces-5874-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5875-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8C0DA12474
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 14:10:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D638A125DE
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 15:20:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 712B33A438B
-	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 13:10:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75B79188052B
+	for <lists+io-uring@lfdr.de>; Wed, 15 Jan 2025 14:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ADA2459AA;
-	Wed, 15 Jan 2025 13:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84ED024A7D0;
+	Wed, 15 Jan 2025 14:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="gq5g8nHq"
 X-Original-To: io-uring@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8199B2459A3
-	for <io-uring@vger.kernel.org>; Wed, 15 Jan 2025 13:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F5C24A7D1
+	for <io-uring@vger.kernel.org>; Wed, 15 Jan 2025 14:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736946615; cv=none; b=a8N7YqChJ4SoAUKfH7Ey1Y0oNlJdLa7F7Z/5fgrb/Oke33TlZfUYbiJ42AiH6SoxIXcKFs7Qo8mOJohc98YGzhUoFWFpG3GpLlPmyro0o7xl46fImWEf3y+BM+W00C6spRBn3L8mrCP45FUJ/mIOqrq35QZX1fdjWFYXsl0m4cM=
+	t=1736950846; cv=none; b=AtZVkQ81UmT/cBrfNMVfdc7XjClC3sUBgs+9PEQl07/IfsjVTjf0YRA7dqmqpC2t9oypX3VmizULw6y09IEfLRFmvlfu0eVHyu1vH0/C8KOMq2QlC1ooSUlJxnPa8pPFQBleVg18IRVPQ2CRwjO4SDG6EoQqe0fIfky2q8iuM5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736946615; c=relaxed/simple;
-	bh=qp+FUUG0qWx5N5JB2aJeyNxnALeDYwotFojNI8zEUEc=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=BT4PbXlYbdHkz3MUXpWXQfAmVfFc0i6WwUimU0xTN41fsFxZ2js3SIA3Ci+7Luzzbx4RjRd59APNhZh5pAWMST/y/j9aveqKUq0zc0wMVpHpOhrGCQGW1K9OlDkTxJrS+Z4yKwh1AbYhUVE4MglNm4GaNfxqZ2LqL+AbB3u/9ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YY5qr6p15z11SRM;
-	Wed, 15 Jan 2025 21:07:04 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6C1781402C7;
-	Wed, 15 Jan 2025 21:10:07 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 15 Jan 2025 21:10:07 +0800
-Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
- kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Wed, 15 Jan 2025 21:10:07 +0800
-From: lizetao <lizetao1@huawei.com>
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
-CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Subject: [PATCH] test/defer: fix deadlock when io_uring_submit fail
-Thread-Topic: [PATCH] test/defer: fix deadlock when io_uring_submit fail
-Thread-Index: AdtnTle0AdCKvQv4QCG1RPRIudIQww==
-Date: Wed, 15 Jan 2025 13:10:06 +0000
-Message-ID: <77ab74b3fdff491db2a5596b1edc86b6@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1736950846; c=relaxed/simple;
+	bh=wZJVHr50tVRxJgD4/Q9lPNz+wSttlrEe1Q5ocQ1GPrU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YQmnpu97B0bQmoKlYwThkcIXN+om1XrVpGzpv93u2dQXepe5QPTAP2Dqdb1HLmstQpsKPO930K+oCsNDauiQAJKAjeS0VEqn4ahP8ADSUE3f4D1DTB5eFzC9+1aAWEsgefBbo3kFWCJ1dky53uHXJLW35/U87VXfaWt6cWhbU0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=gq5g8nHq; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2166022c5caso107850045ad.2
+        for <io-uring@vger.kernel.org>; Wed, 15 Jan 2025 06:20:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1736950843; x=1737555643; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=okGeS6v1lzJs8M0nmHzMylENZ9EbVE9huMjoGku+U6Y=;
+        b=gq5g8nHqmipeEoJF8QdEPGaKNbPO8VeOD8NLfD8UrWEHe7Q26Gy1SrAr+RjLzrFehb
+         l8K3L+DhuB0gafN8+0pQVvAEqV/xIrJ+fR4agsnVXmZHNfMW0lyfNSOATJDd2bqoaOtD
+         ARijuIjjRX6IDA3nLFvKflueqxPtA/PrSnYKeulgnDKpaBc7U5uHvGxwYjdw47vmTXKh
+         IU8qK3PvuV+jDM6VNhUSG0DuJpnch9rSZWfe2amgaL0poehIif3yHIzi5nNmi3Hs5NIm
+         ORtIT5mqMyuqSHoCAfM+u5k4WoL+ZRKB9ay7ebKSpPYm4NXn91D7rCGD0MqgFh/SRW6p
+         6Uvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736950843; x=1737555643;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=okGeS6v1lzJs8M0nmHzMylENZ9EbVE9huMjoGku+U6Y=;
+        b=G6HqFjJcbV5xWDIDJtF6nimOid0sow5w4wxZJto2QsFzQqutcpArS8eOZlujgapHNL
+         OUwQCWUZ/igQFums3Jcaz+x0Dsx5fgq8trhRX18SVgkRGKTYM8rlohPQHIEIW7yjwIHC
+         zcFBYQwQaS27VVnmFd12g0Z6njYavx4a3QoHq4HthIyRIJ+WNVvsAz72CLp7zXaR6yZS
+         X97jojfZEgnF2SFqn7U/5MJ+qC9nDownU8WnygxjLYA1OAvBE6bVvUD2PZ8B1K4/97g8
+         Tafag+Qh/hAX6GVf2Y9NNlIV0DhxeYHFNeWVIhxO4kpAzIXACcHzi2GUV5pR3+365nzz
+         XKgA==
+X-Gm-Message-State: AOJu0YxfT1x/iyOT7B/SSvU77jIF1jBlP/PR7h7i1JihqCwQf9Bu0OyT
+	o2U0488ut/yPjlSuLOEsI7zoRI7FZHpcYh1GG6APdM9X4LZYkWogXLFXKpcbxcmKykmg7pIp6f0
+	BM8w=
+X-Gm-Gg: ASbGncuQPqKbTEfsZBiHbUSU5gKpZ6r1fg6wK4K2b5kLx4b8xW7F7dFzDFF6A2Bvsu0
+	vmX7REIAz3Zbc86IgmOj1Fqjm9VDeeeJoZ3KBF5RMz84xPYIeZIYjRWSh39HOLpuacUc0jU4dH1
+	glpBWFVU6zvtAStnfGgm3FMXs0WBgaTBYz2p5a9cLZotWkCu0b7XhusmkJDHt1oKYShW/6wjRoQ
+	rDoe3B3nuRZ1Bs5ZcVvKG49qnFHuohOI7ZC0xYriWBgQNNP2LbqBhCr0r3s1c1dDJdnuB2sK+UL
+	qy6zOulWt/zKnl87xhk0jPg=
+X-Google-Smtp-Source: AGHT+IHJBb2A6zzSfaOB45ZLJdFB5XjzXN1eQFNJGd3MnMGWGxlpLPeREnQe89zrmw/fNs1ESMUTBg==
+X-Received: by 2002:a17:903:1110:b0:215:7b7b:5cc9 with SMTP id d9443c01a7336-21a83f54bf6mr474510175ad.22.1736950843512;
+        Wed, 15 Jan 2025 06:20:43 -0800 (PST)
+Received: from sidong-vm.sidong.yang.office.furiosa.vpn ([175.195.128.78])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9f2545f5sm83362275ad.217.2025.01.15.06.20.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2025 06:20:43 -0800 (PST)
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: io-uring <io-uring@vger.kernel.org>
+Cc: Sidong Yang <sidong.yang@furiosa.ai>
+Subject: [PATCH] io_uring/rsrc: remove unused parameter ctx for io_rsrc_node_alloc()
+Date: Wed, 15 Jan 2025 14:20:31 +0000
+Message-ID: <20250115142033.658599-1-sidong.yang@furiosa.ai>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-V2hpbGUgcGVyZm9ybWluZyBmYXVsdCBpbmplY3Rpb24gdGVzdGluZywgYSBidWcgcmVwb3J0IHdh
-cyB0cmlnZ2VyZWQ6DQoNCiAgRkFVTFRfSU5KRUNUSU9OOiBmb3JjaW5nIGEgZmFpbHVyZS4NCiAg
-bmFtZSBmYWlsX3VzZXJjb3B5LCBpbnRlcnZhbCAxLCBwcm9iYWJpbGl0eSAwLCBzcGFjZSAwLCB0
-aW1lcyAwDQogIENQVTogMTIgVUlEOiAwIFBJRDogMTg3OTUgQ29tbTogZGVmZXIudCBUYWludGVk
-OiBHICAgICAgICAgICBPICAgICAgIDYuMTMuMC1yYzYtZ2YyYTBhMzdiMTc0YiAjMTcNCiAgVGFp
-bnRlZDogW09dPU9PVF9NT0RVTEUNCiAgSGFyZHdhcmUgbmFtZTogbGludXgsZHVtbXktdmlydCAo
-RFQpDQogIENhbGwgdHJhY2U6DQogICBzaG93X3N0YWNrKzB4MjAvMHgzOCAoQykNCiAgIGR1bXBf
-c3RhY2tfbHZsKzB4NzgvMHg5MA0KICAgZHVtcF9zdGFjaysweDFjLzB4MjgNCiAgIHNob3VsZF9m
-YWlsX2V4KzB4NTQ0LzB4NjQ4DQogICBzaG91bGRfZmFpbCsweDE0LzB4MjANCiAgIHNob3VsZF9m
-YWlsX3VzZXJjb3B5KzB4MWMvMHgyOA0KICAgZ2V0X3RpbWVzcGVjNjQrMHg3Yy8weDI1OA0KICAg
-X19pb190aW1lb3V0X3ByZXArMHgzMWMvMHg3OTgNCiAgIGlvX2xpbmtfdGltZW91dF9wcmVwKzB4
-MWMvMHgzMA0KICAgaW9fc3VibWl0X3NxZXMrMHg1OWMvMHgxZDUwDQogICBfX2FybTY0X3N5c19p
-b191cmluZ19lbnRlcisweDhkYy8weGZhMA0KICAgaW52b2tlX3N5c2NhbGwrMHg3NC8weDI3MA0K
-ICAgZWwwX3N2Y19jb21tb24uY29uc3Rwcm9wLjArMHhiNC8weDI0MA0KICAgZG9fZWwwX3N2Yysw
-eDQ4LzB4NjgNCiAgIGVsMF9zdmMrMHgzOC8weDc4DQogICBlbDB0XzY0X3N5bmNfaGFuZGxlcisw
-eGM4LzB4ZDANCiAgIGVsMHRfNjRfc3luYysweDE5OC8weDFhMA0KDQpUaGUgZGVhZGxvY2sgc3Rh
-Y2sgaXMgYXMgZm9sbG93czoNCg0KICBpb19jcXJpbmdfd2FpdCsweGE2NC8weDEwNjANCiAgX19h
-cm02NF9zeXNfaW9fdXJpbmdfZW50ZXIrMHg0NmMvMHhmYTANCiAgaW52b2tlX3N5c2NhbGwrMHg3
-NC8weDI3MA0KICBlbDBfc3ZjX2NvbW1vbi5jb25zdHByb3AuMCsweGI0LzB4MjQwDQogIGRvX2Vs
-MF9zdmMrMHg0OC8weDY4DQogIGVsMF9zdmMrMHgzOC8weDc4DQogIGVsMHRfNjRfc3luY19oYW5k
-bGVyKzB4YzgvMHhkMA0KICBlbDB0XzY0X3N5bmMrMHgxOTgvMHgxYTANCg0KVGhpcyBpcyBiZWNh
-dXNlIGFmdGVyIHRoZSBzdWJtaXNzaW9uIGZhaWxzLCB0aGUgZGVmZXIudCB0ZXN0Y2FzZSBpcyBz
-dGlsbCB3YWl0aW5nIHRvIHN1Ym1pdCB0aGUgZmFpbGVkIHJlcXVlc3QsIHJlc3VsdGluZyBpbiBh
-biBldmVudHVhbCBkZWFkbG9jay4NClNvbHZlIHRoZSBwcm9ibGVtIGJ5IHRlbGxpbmcgd2FpdF9j
-cWVzIHRoZSBudW1iZXIgb2YgcmVxdWVzdHMgdG8gd2FpdCBmb3IuDQoNCkZpeGVzOiA2ZjZkZTQ3
-ZDYxMjYgKCJ0ZXN0L2RlZmVyOiBUZXN0IGRlZmVycmluZyB3aXRoIGRyYWluIGFuZCBsaW5rcyIp
-DQpTaWduZWQtb2ZmLWJ5OiBMaSBaZXRhbyA8bGl6ZXRhbzFAaHVhd2VpLmNvbT4NCi0tLQ0KIHRl
-c3QvZGVmZXIuYyB8IDEyICsrKysrKy0tLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlv
-bnMoKyksIDYgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS90ZXN0L2RlZmVyLmMgYi90ZXN0
-L2RlZmVyLmMgaW5kZXggYjA3NzBlZi4uMjQ0N2JlMCAxMDA2NDQNCi0tLSBhL3Rlc3QvZGVmZXIu
-Yw0KKysrIGIvdGVzdC9kZWZlci5jDQpAQCAtNjksMTIgKzY5LDEyIEBAIGVycjoNCiAJcmV0dXJu
-IDE7DQogfQ0KIA0KLXN0YXRpYyBpbnQgd2FpdF9jcWVzKHN0cnVjdCB0ZXN0X2NvbnRleHQgKmN0
-eCkNCitzdGF0aWMgaW50IHdhaXRfY3FlcyhzdHJ1Y3QgdGVzdF9jb250ZXh0ICpjdHgsIGludCBu
-dW0pDQogew0KIAlpbnQgcmV0LCBpOw0KIAlzdHJ1Y3QgaW9fdXJpbmdfY3FlICpjcWU7DQogDQot
-CWZvciAoaSA9IDA7IGkgPCBjdHgtPm5yOyBpKyspIHsNCisJZm9yIChpID0gMDsgaSA8IG51bTsg
-aSsrKSB7DQogCQlyZXQgPSBpb191cmluZ193YWl0X2NxZShjdHgtPnJpbmcsICZjcWUpOw0KIA0K
-IAkJaWYgKHJldCA8IDApIHsNCkBAIC0xMDUsNyArMTA1LDcgQEAgc3RhdGljIGludCB0ZXN0X2Nh
-bmNlbGVkX3VzZXJkYXRhKHN0cnVjdCBpb191cmluZyAqcmluZykNCiAJCWdvdG8gZXJyOw0KIAl9
-DQogDQotCWlmICh3YWl0X2NxZXMoJmN0eCkpDQorCWlmICh3YWl0X2NxZXMoJmN0eCwgcmV0KSkN
-CiAJCWdvdG8gZXJyOw0KIA0KIAlmb3IgKGkgPSAwOyBpIDwgbnI7IGkrKykgew0KQEAgLTEzOSw3
-ICsxMzksNyBAQCBzdGF0aWMgaW50IHRlc3RfdGhyZWFkX2xpbmtfY2FuY2VsKHN0cnVjdCBpb191
-cmluZyAqcmluZykNCiAJCWdvdG8gZXJyOw0KIAl9DQogDQotCWlmICh3YWl0X2NxZXMoJmN0eCkp
-DQorCWlmICh3YWl0X2NxZXMoJmN0eCwgcmV0KSkNCiAJCWdvdG8gZXJyOw0KIA0KIAlmb3IgKGkg
-PSAwOyBpIDwgbnI7IGkrKykgew0KQEAgLTE4NSw3ICsxODUsNyBAQCBzdGF0aWMgaW50IHRlc3Rf
-ZHJhaW5fd2l0aF9saW5rZWRfdGltZW91dChzdHJ1Y3QgaW9fdXJpbmcgKnJpbmcpDQogCQlnb3Rv
-IGVycjsNCiAJfQ0KIA0KLQlpZiAod2FpdF9jcWVzKCZjdHgpKQ0KKwlpZiAod2FpdF9jcWVzKCZj
-dHgsIHJldCkpDQogCQlnb3RvIGVycjsNCiANCiAJZnJlZV9jb250ZXh0KCZjdHgpOw0KQEAgLTIx
-Miw3ICsyMTIsNyBAQCBzdGF0aWMgaW50IHJ1bl9kcmFpbmVkKHN0cnVjdCBpb191cmluZyAqcmlu
-ZywgaW50IG5yKQ0KIAkJZ290byBlcnI7DQogCX0NCiANCi0JaWYgKHdhaXRfY3FlcygmY3R4KSkN
-CisJaWYgKHdhaXRfY3FlcygmY3R4LCByZXQpKQ0KIAkJZ290byBlcnI7DQogDQogCWZyZWVfY29u
-dGV4dCgmY3R4KTsNCi0tDQoyLjMzLjANCg==
+io_uring_ctx parameter for io_rsrc_node_alloc() is unused for now.
+This patch removes the parameter and fixes the callers accordingly.
+
+Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+---
+ io_uring/filetable.c |  2 +-
+ io_uring/rsrc.c      | 10 +++++-----
+ io_uring/rsrc.h      |  2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/io_uring/filetable.c b/io_uring/filetable.c
+index a21660e3145a..dd8eeec97acf 100644
+--- a/io_uring/filetable.c
++++ b/io_uring/filetable.c
+@@ -68,7 +68,7 @@ static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
+ 	if (slot_index >= ctx->file_table.data.nr)
+ 		return -EINVAL;
+ 
+-	node = io_rsrc_node_alloc(ctx, IORING_RSRC_FILE);
++	node = io_rsrc_node_alloc(IORING_RSRC_FILE);
+ 	if (!node)
+ 		return -ENOMEM;
+ 
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 077f84684c18..f30efb1c1ef1 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -118,7 +118,7 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_rsrc_node *node)
+ 	}
+ }
+ 
+-struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int type)
++struct io_rsrc_node *io_rsrc_node_alloc(int type)
+ {
+ 	struct io_rsrc_node *node;
+ 
+@@ -203,7 +203,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 				err = -EBADF;
+ 				break;
+ 			}
+-			node = io_rsrc_node_alloc(ctx, IORING_RSRC_FILE);
++			node = io_rsrc_node_alloc(IORING_RSRC_FILE);
+ 			if (!node) {
+ 				err = -ENOMEM;
+ 				fput(file);
+@@ -525,7 +525,7 @@ int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 			goto fail;
+ 		}
+ 		ret = -ENOMEM;
+-		node = io_rsrc_node_alloc(ctx, IORING_RSRC_FILE);
++		node = io_rsrc_node_alloc(IORING_RSRC_FILE);
+ 		if (!node) {
+ 			fput(file);
+ 			goto fail;
+@@ -734,7 +734,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+ 	if (!iov->iov_base)
+ 		return NULL;
+ 
+-	node = io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
++	node = io_rsrc_node_alloc(IORING_RSRC_BUFFER);
+ 	if (!node)
+ 		return ERR_PTR(-ENOMEM);
+ 	node->buf = NULL;
+@@ -994,7 +994,7 @@ static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx
+ 		if (!src_node) {
+ 			dst_node = NULL;
+ 		} else {
+-			dst_node = io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
++			dst_node = io_rsrc_node_alloc(IORING_RSRC_BUFFER);
+ 			if (!dst_node) {
+ 				ret = -ENOMEM;
+ 				goto out_put_free;
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index 7a4668deaa1a..68b6127673e0 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -42,7 +42,7 @@ struct io_imu_folio_data {
+ 	unsigned int	folio_shift;
+ };
+ 
+-struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int type);
++struct io_rsrc_node *io_rsrc_node_alloc(int type);
+ void io_free_rsrc_node(struct io_ring_ctx *ctx, struct io_rsrc_node *node);
+ void io_rsrc_data_free(struct io_ring_ctx *ctx, struct io_rsrc_data *data);
+ int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr);
+-- 
+2.43.0
+
 

@@ -1,90 +1,136 @@
-Return-Path: <io-uring+bounces-5913-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5914-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9FBA13188
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 03:48:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC72A13193
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 03:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02E39164045
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 02:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C33FE3A06C1
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 02:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84413BB48;
-	Thu, 16 Jan 2025 02:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC3F45C18;
+	Thu, 16 Jan 2025 02:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDModgfc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HzGhlX48"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA6717BD3;
-	Thu, 16 Jan 2025 02:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D173BB48
+	for <io-uring@vger.kernel.org>; Thu, 16 Jan 2025 02:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736995732; cv=none; b=ejpegEn2Ivk4yEAziXAV8ePla3hDwaScCwmnW1BQWp/t6AzBKPy/At+k/sM4qEtSvFdebT6nJYaowrPAIvU8hN5bhJDPpGx6iEXQm90bR9G16g+dO0leXgV1BRXxOYSJE9BJBmkh/jQyeFwhA8uFP37+GTtBYxZYXp1Rl++iMk0=
+	t=1736995976; cv=none; b=d4lIyCO9mi0fRSClno3QGUv++ECbYKEkBKatbKXaCJ7QjL3b8sEyUPheZG4nASx/3B/TNm7j6ZrsJtgpmkfG8SrJ98Vppc91Gaf6OsezRZd7bNGFn4tisMC4iP8aOdmZj89LnKtIQrMLH42A3VY9Ms7aQ+3Oh0gYtA7YVA8dEOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736995732; c=relaxed/simple;
-	bh=5ETaFEkTljab3ojVYsXyNwdOM6bFvmz7QnYyt2ttLZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bI7C+Sh/UELj7qNbPgXjZVKWHHHgiMXQeH/r+Ykd+OXmJk6WHmXe8O2HKVGrGcssHcHARbFLm/GkAd8OyVlpMu0ROV1dvtlPrBcYaMZVcxhcNjdyHt40nCRKqhySywhJvK7Pr6HDiSn+N91JarX7+r6YxsXLygsghy7OUEV8jlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gDModgfc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8757AC4CED1;
-	Thu, 16 Jan 2025 02:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736995732;
-	bh=5ETaFEkTljab3ojVYsXyNwdOM6bFvmz7QnYyt2ttLZI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gDModgfcodXAhBnQqgwvUtLlCJEnFJLTVI3fFDcQDTjBnCMs6tMVzZsWZhy8TR6eX
-	 5b3xHIoh2t6B0P9aPDnlmbs60/v61PpEVtittIIi7o/KHeXcN+lTpuQG6HNkJUz2lr
-	 vFAuMW5pQ0j8K4CB+TZxRk2P/EcITwHPQz2SIJ/XxMh8+DSTGb4a/vAXFxIP4I9lWJ
-	 /hG5oE8UZ/S58kl/g9DgI5x4R545wonRCZTiv22MlQ0BCP5aPsWhdfah7kP0cKwMj5
-	 UHNC6S8cTJ6RhmmYiTo2jcCCR1u9uw5lik9rAfkGQnNy1cQUXgp6QyKh6FNJxipyaw
-	 xwrZmac6TEsJQ==
-Date: Wed, 15 Jan 2025 18:48:50 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Paolo Abeni
- <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, David
- Ahern <dsahern@kernel.org>, Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>
-Subject: Re: [PATCH net-next v10 01/22] net: make page_pool_ref_netmem work
- with net iovs
-Message-ID: <20250115184850.4d30e408@kernel.org>
-In-Reply-To: <52fffbfb-dadb-48fe-84e4-8296b18fd22e@gmail.com>
-References: <20250108220644.3528845-1-dw@davidwei.uk>
-	<20250108220644.3528845-2-dw@davidwei.uk>
-	<20250115163019.3e810c0d@kernel.org>
-	<52fffbfb-dadb-48fe-84e4-8296b18fd22e@gmail.com>
+	s=arc-20240116; t=1736995976; c=relaxed/simple;
+	bh=sXjFu2u+mOTnILuMQLYgAmOJVQ9CgHpsxccKyXADVnk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U8Y24nYBQva6CyNrHGUU9CaWvCT6QFlNduVFso9TAZPrJwZdA8njQzJ1x1IxseYqeXiKW7Ja8PwLfARPjlTrEgyuhLaeaJX98v44FJuMkglPV9+1uxize77wROriTthsK7e/hZtz1UOq1bSKOgPAaf7dkSXlRuGR4T7K57AFA9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HzGhlX48; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d9837f201aso2857767a12.0
+        for <io-uring@vger.kernel.org>; Wed, 15 Jan 2025 18:52:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736995973; x=1737600773; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eLzRA36j2FOA6zebunqfbWe073hNQZK8jDednnE31xc=;
+        b=HzGhlX480LdlhhnVTuin7GG8Jhp6jvne4lF84b6475ZCfljOzzyMrTvfz3nm7bFN5p
+         IYE9tho4vGnw5oyAp1RnISIu/Cd1jJ7c80V5ruMDyNYjJ2h3UDB7FR9QYfC5FLrccv6w
+         oD5Cd4f9PkmmfdH+e4cohTqMJNy6XbYCsJIVKbgLg53o8sBvVeRFoaaf7F8qqqtIH18Q
+         LfxitOy6dKvdl8/Z0VbLsInUWSMKEOAkf4mZr1tSPsy1OCGx0afFIOysXM5wMDj/LZQq
+         s2lQesPuvGhs5kgET0P6UU7GjY8zj5bAQ9VhdKide8IFF46nvI+QqIdYMS+BnLYD8YT3
+         FGkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736995973; x=1737600773;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eLzRA36j2FOA6zebunqfbWe073hNQZK8jDednnE31xc=;
+        b=T2WE/nBR1JiHxG39E7sIIXwTcRlWgIjG3CSoNBYnaXg51fgHRH91bFLSUTAAwsIGRP
+         8ScxIRdsCY/zlvRCjHZ0osdg81n8Gv/ZgR7xSCeNgroJC3nOW1hO4jCfi3T3UCsqpjrB
+         auDny7lY2b8C38bQj4qn66A8OvI9qDbuecrgo//hvlG6mpbPi5J8u5q9u3GjR3sYtzMz
+         dyJyrNhD5qsrRLyTM3uUlXaB8hOwmCOBczXm+gofZKJs4LzmXknu+jto8CnCDJlnt/9a
+         BNJ9ULONbvtIUFkKTFElaJ2RhUevAwCPwB11lyKm2x6z+TJOD5nDDxKCfhWZ9478cFCn
+         7lrw==
+X-Gm-Message-State: AOJu0YxRQp/lTzBDx+YcbVpOyQuSpql5F7YwINmgggFv/m1KkNOOEl2j
+	1QsAuF41VKCyg9QWqagbz5GQutyWMvud/F5OJ9I3admEvVEFt49VBn3I9yOw
+X-Gm-Gg: ASbGncs+yLDNkz56Jhqh9HUKHmeKLQSFLMkBGT0G1v9yikAQ08PXL3VA4PL3rWNFpQk
+	76tTDJVQLHDFt6GHoJA4/0w0HJPdlpdOrY9yO52UAUMtkCDi4SzQRzmSjPKNvMWfKTXJ56I63Yu
+	zIJSW3HtdJT4zixvDf3VGhmc4l4WcIxe5mcfaqk9ocLNSubtriKFT0QCxm2Ou+k1/hT84/m8tY4
+	9Ykm04F9JdWil7ATNe5LGwG1xG3TBhy+7+xGB4C6sF+kufHNcaBVSNcTW1fOVwaMGVLOBw=
+X-Google-Smtp-Source: AGHT+IE04aH16PNz4B9Js7Jxpf7JsPMvTmAHsB5zzeNyJDNTxgGICBWMC6RBFofvfot41o6L0Vka7Q==
+X-Received: by 2002:a17:907:9905:b0:ab3:3283:faf9 with SMTP id a640c23a62f3a-ab36e433e77mr80000566b.24.1736995972945;
+        Wed, 15 Jan 2025 18:52:52 -0800 (PST)
+Received: from 127.0.0.1localhost ([148.252.147.234])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c913628csm838279766b.86.2025.01.15.18.52.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2025 18:52:52 -0800 (PST)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com
+Subject: [PATCH 1/1] io_uring: clean up io_uring_register_get_file()
+Date: Thu, 16 Jan 2025 02:53:26 +0000
+Message-ID: <0d0b13a63e8edd6b5d360fc821dcdb035cb6b7e0.1736995897.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 16 Jan 2025 02:12:06 +0000 Pavel Begunkov wrote:
-> On 1/16/25 00:30, Jakub Kicinski wrote:
-> > On Wed,  8 Jan 2025 14:06:22 -0800 David Wei wrote:  
-> >> From: Pavel Begunkov <asml.silence@gmail.com>
-> >>
-> >> page_pool_ref_netmem() should work with either netmem representation, but
-> >> currently it casts to a page with netmem_to_page(), which will fail with
-> >> net iovs. Use netmem_get_pp_ref_count_ref() instead.  
-> > 
-> > This is a fix, right? If we try to coalesce a cloned netmem skb
-> > we'll crash.  
-> 
-> True, I missed it it's actually used.
+Make it always reference the returned file. It's safer, especially with
+unregistrations happening under it. And it makes the api cleaner with no
+conditional clean ups by the caller.
 
-I'll add:
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ io_uring/register.c | 6 ++++--
+ io_uring/rsrc.c     | 4 ++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-Fixes: 8ab79ed50cf1 ("page_pool: devmem support")
+diff --git a/io_uring/register.c b/io_uring/register.c
+index 5e48413706ac..a93c979c2f38 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -841,6 +841,8 @@ struct file *io_uring_register_get_file(unsigned int fd, bool registered)
+ 			return ERR_PTR(-EINVAL);
+ 		fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
+ 		file = tctx->registered_rings[fd];
++		if (file)
++			get_file(file);
+ 	} else {
+ 		file = fget(fd);
+ 	}
+@@ -907,7 +909,7 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
+ 	trace_io_uring_register(ctx, opcode, ctx->file_table.data.nr,
+ 				ctx->buf_table.nr, ret);
+ 	mutex_unlock(&ctx->uring_lock);
+-	if (!use_registered_ring)
+-		fput(file);
++
++	fput(file);
+ 	return ret;
+ }
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 964a47c8d85e..792c22b6f2d4 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -1073,7 +1073,7 @@ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg)
+ 	if (IS_ERR(file))
+ 		return PTR_ERR(file);
+ 	ret = io_clone_buffers(ctx, file->private_data, &buf);
+-	if (!registered_src)
+-		fput(file);
++
++	fput(file);
+ 	return ret;
+ }
+-- 
+2.47.1
 
-and we'll send it to Linus tomorrow. Hope that's okay.
 

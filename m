@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-5900-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5901-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCBCA13016
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 01:39:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC783A13022
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 01:44:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 891163A596D
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 00:39:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6602164FF6
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 00:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1263A957;
-	Thu, 16 Jan 2025 00:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126C5C139;
+	Thu, 16 Jan 2025 00:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HD7TeAlq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVIU+cwj"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A642A18C0C;
-	Thu, 16 Jan 2025 00:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2D7A50;
+	Thu, 16 Jan 2025 00:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736987969; cv=none; b=gXYyzZ7/5prQNmKlHcgNdIzfPJPAVrlsZvBUr4dJgxAfCDL75TTv6JkYGpLVu8IRUrs1K4Xo3t978t/S4dQbwcgyOPkF/8w7pUkJOsBGsoAJyf6yK4k3IsBZKeITWBuXPyhBeOx0Ymm1zD40w5xx88DOvgMlabspOQV6/oQrWwY=
+	t=1736988261; cv=none; b=SXjNFSDmjJyFwbekGvb0dMUDbJFb1Kkxx8Od4S6nmtGkYoWVje+sFS3GTml9+6zC1Ut+guRpJ2eIDKu3VLAVYEsyDZrjZnYavViqROeHWZHNSYJsEchDDMtWuKqaNtCuXIy4mzHBAZuXZ+H43TykzrLxrmoxLgWElxL52qHkgn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736987969; c=relaxed/simple;
-	bh=MO0KkE1QiznuBHY3LxHa3qFCP8lKsi1qSOlWXWXbF3Q=;
+	s=arc-20240116; t=1736988261; c=relaxed/simple;
+	bh=jyKgxWK707iuWzRs0V+2tOXoQ9+CXPqSmuChQV9W5nk=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AgiZwW9onS1vdpUIJ3JPhwvloxIw3Kz85+3vhpoDhCdgdI0sDAjx1aQSB/Y4Kj3tGauE14fi6JQRyMhtdRp7BC60QASf26RVJywEE/H6mXYSMzCTdzGARyt3c4Abz45hQIobU7ilqkP+RSzss4LhPHm2/PHSwpOFFTFhzsVnc1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HD7TeAlq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C8F6C4CED1;
-	Thu, 16 Jan 2025 00:39:28 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Mq0CSHfBpeUeWy+ieZAq73odeBDPQaCXjQ69Y5KVeMBBWOvAYZ2rQV+fw7KFSJJuMocLArzROxswkBBXegAkPW4otmGIXZm1pL4zCk876p+/+muV0QTbCspZqo2hsITIlhSnNrIgVQgLaTQ5BoygCS7LlmxkRaa+qt2QWPaEVwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVIU+cwj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8E4FC4CED1;
+	Thu, 16 Jan 2025 00:44:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736987969;
-	bh=MO0KkE1QiznuBHY3LxHa3qFCP8lKsi1qSOlWXWXbF3Q=;
+	s=k20201202; t=1736988260;
+	bh=jyKgxWK707iuWzRs0V+2tOXoQ9+CXPqSmuChQV9W5nk=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HD7TeAlqVpMs3gNSzwq59hHxQqsiB3lZJ3TJ1L2XtS0hKKMVjyTCx86AyUvBTTZBh
-	 wKxOd9trM5UwAbiAPnBC9R8uqp2Vhgr8I6vbnTRk8UAJwP3YndoLbzUSsTTZWEMAUc
-	 7/kpx0dU7VhIITpVZkAWlWx3agu8t2PrlDJAySQ4yNv3390Hpr5Wd/I974z1dWc8mD
-	 qK2HcAEAhJqQAnoUAzQCW61YcukMfsKrL3u8PQDXibK68hLAvXq0cZJkTDRjxlUXx2
-	 RrlhGvm4cm3kio62wA16vXcC4f5s0tgx3M/KDz7jupxKcwCXsD3d+Pq3HWeqLh+YMn
-	 IHGKyyhiOHCRQ==
-Date: Wed, 15 Jan 2025 16:39:27 -0800
+	b=ZVIU+cwjgolz/gjZRPZ5QSdRr9k/ZOUM8vEN7qNH123VEg/TYvWpA6MjV5y5xtNLR
+	 bJJ8F1KzN5i9x58ivESQJWI2VlyoV8Hr5DYe7XVuUhQPNy684EqUWL+hfpUBMc0amq
+	 Gwl6y+I2F1eb/NDxq/cpkF8Z3mFgsnsyOSG7KVkXlNp2WEce/G1I4WVvEed0lbl+7M
+	 Vs9lDDX1SpPhbd4FnMDnF1gFygCOGWkePwibnhF5RK6JV2nP2h4enMFfohzWjtCafi
+	 OjBYjVKwLC7OO8EFPnt70OrOJgq1MhsX+zoKYV8+oyBX6I+rHvQEPnoscvYRum6WS9
+	 0LFBgYcC53ryg==
+Date: Wed, 15 Jan 2025 16:44:19 -0800
 From: Jakub Kicinski <kuba@kernel.org>
 To: David Wei <dw@davidwei.uk>
 Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, Jens Axboe
@@ -51,13 +51,12 @@ Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, Jens Axboe
  Ahern <dsahern@kernel.org>, Mina Almasry <almasrymina@google.com>,
  Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
  Pedro Tammela <pctammela@mojatatu.com>
-Subject: Re: [PATCH net-next v10 05/22] net: page pool: export
- page_pool_set_dma_addr_netmem()
-Message-ID: <20250115163927.07713dca@kernel.org>
-In-Reply-To: <20250115163521.273482c5@kernel.org>
+Subject: Re: [PATCH net-next v10 06/22] net: page_pool: create hooks for
+ custom memory providers
+Message-ID: <20250115164419.38837cd0@kernel.org>
+In-Reply-To: <20250108220644.3528845-7-dw@davidwei.uk>
 References: <20250108220644.3528845-1-dw@davidwei.uk>
-	<20250108220644.3528845-6-dw@davidwei.uk>
-	<20250115163521.273482c5@kernel.org>
+	<20250108220644.3528845-7-dw@davidwei.uk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -67,15 +66,62 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 15 Jan 2025 16:35:21 -0800 Jakub Kicinski wrote:
-> On Wed,  8 Jan 2025 14:06:26 -0800 David Wei wrote:
-> > Export page_pool_set_dma_addr_netmem() in page_pool/helpers.h. This is
-> > needed by memory provider implementations that are outside of net/ to be
-> > able to set the dma addrs on net_iovs during alloc/free.  
+On Wed,  8 Jan 2025 14:06:27 -0800 David Wei wrote:
+> From: Jakub Kicinski <kuba@kernel.org>
 > 
-> Please keep helpers.h focused on the driver-facing API.
-> Maybe create a new header page_pool/private.h would be
-> sufficiently suggestive.
+> A spin off from the original page pool memory providers patch by Jakub,
+> which allows extending page pools with custom allocators. One of such
+> providers is devmem TCP, and the other is io_uring zerocopy added in
+> following patches.
+> 
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
 
-Or you can put it in the memory_provider one from the next patch.
+Something odd with authorship here. You list me as author (From)
+but didn't add my SoB. Maybe add something like "Based on 
+earlier work by Jakub" to the commit and reset the tags?
+Or the Suggested-by is just for the warning on ops not being built in?
+
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> Signed-off-by: David Wei <dw@davidwei.uk>
+> ---
+>  include/net/page_pool/memory_provider.h | 20 ++++++++++++++++++++
+>  include/net/page_pool/types.h           |  4 ++++
+>  net/core/devmem.c                       | 15 ++++++++++++++-
+>  net/core/page_pool.c                    | 23 +++++++++++++++--------
+>  4 files changed, 53 insertions(+), 9 deletions(-)
+>  create mode 100644 include/net/page_pool/memory_provider.h
+> 
+> diff --git a/include/net/page_pool/memory_provider.h b/include/net/page_pool/memory_provider.h
+> new file mode 100644
+> index 000000000000..79412a8714fa
+> --- /dev/null
+> +++ b/include/net/page_pool/memory_provider.h
+> @@ -0,0 +1,20 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + *
+> + * page_pool/memory_provider.h
+> + *	Author:	Pavel Begunkov <asml.silence@gmail.com>
+> + *	Author:	David Wei <dw@davidwei.uk>
+
+Not a customary thing in networking to list authors in comments.
+
+> + */
+> +#ifndef _NET_PAGE_POOL_MEMORY_PROVIDER_H
+> +#define _NET_PAGE_POOL_MEMORY_PROVIDER_H
+> +
+> +#include <net/netmem.h>
+> +#include <net/page_pool/types.h>
+
+No need? All you need is forward declarations for types at this stage. 
+
+> +struct memory_provider_ops {
+> +	netmem_ref (*alloc_netmems)(struct page_pool *pool, gfp_t gfp);
+> +	bool (*release_netmem)(struct page_pool *pool, netmem_ref netmem);
+> +	int (*init)(struct page_pool *pool);
+> +	void (*destroy)(struct page_pool *pool);
+> +};
+> +
+> +#endif
+
+Rest LGTM.
 

@@ -1,104 +1,133 @@
-Return-Path: <io-uring+bounces-5916-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5917-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB564A13A87
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 14:09:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59016A13BE0
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 15:13:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149E73A0581
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 13:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67D53AA162
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 14:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392B31E98FE;
-	Thu, 16 Jan 2025 13:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E6122B8D2;
+	Thu, 16 Jan 2025 14:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fxrQt2za"
 X-Original-To: io-uring@vger.kernel.org
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDBE1DE4DF
-	for <io-uring@vger.kernel.org>; Thu, 16 Jan 2025 13:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EAB22ACCA
+	for <io-uring@vger.kernel.org>; Thu, 16 Jan 2025 14:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737032987; cv=none; b=pvpKbpzKdxJqMZpXk0lptI50xoCwZKKmjOmxClHEXpNXgue4AwiAnTIILcpY4BqH717+dA1O7U/hI4lvfDU4uaIB+X1xkSAWonTOUHU8FGTOm4834zzsKwij7rFh1qCPPk7r83YKsKvGoIDUYy1Z0l1bG4FoYQCbh7gW5NwKe9Y=
+	t=1737036619; cv=none; b=eM2RXrlpgeOfkq4r8AIOxydjWF4h2XWm21bn1SQfUQrW/3YaMgCmGUuiFTUqjLhl+sS4iw/MxNJ93DSOObGnadN+Vrxcak0duL6YtgxJ+AmuzNZMY7por1De0xL0Q/YhTtOfjEMOBNRU4ORyiHvrKdD4KhCowOgtCS10gUb1Axk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737032987; c=relaxed/simple;
-	bh=at7XW0yItEMdQHkUb15Up9RzkB4xonyajFGgIzESR0E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=KEMmWXnOtHHnkLU/pio+1P0QtxwhAx9cBIGaKnNtVtDNNjhGhFFiYlJ6yBtx+g+VXI0j0uo4iH2FzAJJPYrEV7lxR26nJUMJHIMDFxh4NTBGeWnfC7UtB24/YY68J/rMdybHvtbl9bNPGtkTT4CDoWV4G78vyu2rHt+BDNfT5Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4YYjrm39WMz20nyG;
-	Thu, 16 Jan 2025 21:10:00 +0800 (CST)
-Received: from kwepemd500011.china.huawei.com (unknown [7.221.188.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2DC701A0188;
-	Thu, 16 Jan 2025 21:09:36 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd500011.china.huawei.com (7.221.188.45) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 16 Jan 2025 21:09:35 +0800
-Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
- kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Thu, 16 Jan 2025 21:09:35 +0800
-From: lizetao <lizetao1@huawei.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, Jens Axboe
-	<axboe@kernel.dk>
-Subject: RE: [PATCH 1/1] io_uring: clean up io_uring_register_get_file()
-Thread-Topic: [PATCH 1/1] io_uring: clean up io_uring_register_get_file()
-Thread-Index: AQHbZ8HH3VRcq8Oa/0mmwg6MNUJV77MZX/EA
-Date: Thu, 16 Jan 2025 13:09:35 +0000
-Message-ID: <5c2d3f69cb7c48d48b33c1a84dddaa8c@huawei.com>
-References: <0d0b13a63e8edd6b5d360fc821dcdb035cb6b7e0.1736995897.git.asml.silence@gmail.com>
-In-Reply-To: <0d0b13a63e8edd6b5d360fc821dcdb035cb6b7e0.1736995897.git.asml.silence@gmail.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1737036619; c=relaxed/simple;
+	bh=syGnBX0RBGHdtNP3ojey18Ws/A7mzJsMDko9+9169M8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SC8HNnvui6cCHBR3lWKLMrv2JgNmlRC81hOSgToxWV9RyMgVQDXNQizLCk3nrHRSp+t155FtT1r4JGXCVS/LehMH0WQG3DzezjQlQ/RWJtIXiCT659b2FczeT+v0iT6AI+Hz9afLbpCTjKyJmY2c1rdcmRHIhW5pUzDRp6HKnQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fxrQt2za; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3ce915a8a25so3127875ab.1
+        for <io-uring@vger.kernel.org>; Thu, 16 Jan 2025 06:10:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1737036614; x=1737641414; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9ndLuW2fV04ESZeeP++y4naYWGWMtA/jjlcwVROPYdw=;
+        b=fxrQt2zaVRaVfm4VMvbq/4fm81CY/kUbOnm837/UTYd28YNnPA3px8j+Zs5A1XPtzX
+         wL1Q4Gce/AQjRzxHTA1bSo0oNZdNiqgOsa8sZpIvLsYmoSesKBCoBOQc5srthEhgEgMj
+         +GLq21rXUorMajehbPXXWwVTc5Q0mDKSdeCi8k3Ij08vLRmcex52DT+aF8hJxhaJielz
+         ocD5Uy2coXMUXCF+1QONxmxy/V5YHKSXN9Gm6eZJPGNl8Dh7WPNlPE+aRt8w3YWj4LC3
+         D3rRpTkrqzQqXEU+SICQ+/Bs3rhs1Y1N+jJFdP2UbtyuuwFBHPlZVn+pyZJbISiITo1O
+         3iiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737036614; x=1737641414;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ndLuW2fV04ESZeeP++y4naYWGWMtA/jjlcwVROPYdw=;
+        b=S+9hwkieipUKH5okUUY+145MC1NorOQ+ujg0fCQA/+/HJW59M+1BbPtJ7YmH9u9kdZ
+         J1L02bKNkugAZM6COy5/qlPdXHmcf/iFfFHoXn2tM17VABv8f5P+6dpLlrFaDKYExZvP
+         yMHmPHxSor+hDI+OOZl2OTR+kr3+NlGI12vREYqiriAKPLacInwtSc4T5LTQdwvLWNSW
+         QNZWhC1sY3GXgGOTyd4KHtPghW3JaS0rUnAP+Yd1fs95okRvaU4S/3LOlxXH49/7p/Om
+         eqgNYE0NUzeYenUtOP+lp/+AUrsKhR+tKTblvAeBYGkzUTzXtTLpwacH6Kot9lahLsxR
+         XckA==
+X-Gm-Message-State: AOJu0Yz1VSXYPhPs8aiP7NP9Xftc+AEX7gBzwG20+RasVWm/TsPhbua/
+	H6ioHoYnHeqgQPubO/7OlFj269H5zFfb1IBLR3KsImeYHwhGiZtxG95RNDTy6dtmhYdzk6RxfZm
+	z
+X-Gm-Gg: ASbGncue/HrdDwAPmc/EFfu/lBlUxdJYk3mH2i5qyoYH/EiwxIlnraFVRk2sC15Q218
+	n+eDm+TlgqKHLD0PvRqi0scnIzG9/Pc1BdbehSfmZEF06hDBM5tRrZwB+gEGo9jd+3w5ro2f46f
+	EFXWH8yKn2aOmxWbeWwUDPGd+tBH8oLl0pTh4zP0j5DL5FgzvW/CvwGmYXUM5gZ9MEldCsiANCc
+	PG64Izl/l8AURxeOcuHGjmSUfqhMmmHAnxQXFAjjKaImXOkGqsn
+X-Google-Smtp-Source: AGHT+IHgxrCPSh2R1e5jmGHCS2HQBv4XifTzn5o53qyyEQJ/lOq3h4jOiEvh58laHW9DLCy/qAVyvA==
+X-Received: by 2002:a05:6e02:1:b0:3ce:7bbd:971c with SMTP id e9e14a558f8ab-3ce7bbd9852mr105065835ab.15.1737036614550;
+        Thu, 16 Jan 2025 06:10:14 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3cf71ab002fsm198815ab.37.2025.01.16.06.10.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jan 2025 06:10:13 -0800 (PST)
+Message-ID: <eb0fb2c4-bf88-4fa8-bbe3-4eca830606aa@kernel.dk>
+Date: Thu, 16 Jan 2025 07:10:13 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] io_uring: clean up io_uring_register_get_file()
+To: lizetao <lizetao1@huawei.com>, Pavel Begunkov <asml.silence@gmail.com>
+Cc: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
+References: <0d0b13a63e8edd6b5d360fc821dcdb035cb6b7e0.1736995897.git.asml.silence@gmail.com>
+ <5c2d3f69cb7c48d48b33c1a84dddaa8c@huawei.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <5c2d3f69cb7c48d48b33c1a84dddaa8c@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUGF2ZWwgQmVndW5r
-b3YgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBKYW51YXJ5IDE2
-LCAyMDI1IDEwOjUzIEFNDQo+IFRvOiBpby11cmluZ0B2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGFz
-bWwuc2lsZW5jZUBnbWFpbC5jb20NCj4gU3ViamVjdDogW1BBVENIIDEvMV0gaW9fdXJpbmc6IGNs
-ZWFuIHVwIGlvX3VyaW5nX3JlZ2lzdGVyX2dldF9maWxlKCkNCj4gDQo+IE1ha2UgaXQgYWx3YXlz
-IHJlZmVyZW5jZSB0aGUgcmV0dXJuZWQgZmlsZS4gSXQncyBzYWZlciwgZXNwZWNpYWxseSB3aXRo
-DQo+IHVucmVnaXN0cmF0aW9ucyBoYXBwZW5pbmcgdW5kZXIgaXQuIEFuZCBpdCBtYWtlcyB0aGUg
-YXBpIGNsZWFuZXIgd2l0aCBubw0KPiBjb25kaXRpb25hbCBjbGVhbiB1cHMgYnkgdGhlIGNhbGxl
-ci4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFBhdmVsIEJlZ3Vua292IDxhc21sLnNpbGVuY2VAZ21h
-aWwuY29tPg0KPiAtLS0NCj4gIGlvX3VyaW5nL3JlZ2lzdGVyLmMgfCA2ICsrKystLQ0KPiAgaW9f
-dXJpbmcvcnNyYy5jICAgICB8IDQgKystLQ0KPiAgMiBmaWxlcyBjaGFuZ2VkLCA2IGluc2VydGlv
-bnMoKyksIDQgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW9fdXJpbmcvcmVnaXN0
-ZXIuYyBiL2lvX3VyaW5nL3JlZ2lzdGVyLmMgaW5kZXgNCj4gNWU0ODQxMzcwNmFjLi5hOTNjOTc5
-YzJmMzggMTAwNjQ0DQo+IC0tLSBhL2lvX3VyaW5nL3JlZ2lzdGVyLmMNCj4gKysrIGIvaW9fdXJp
-bmcvcmVnaXN0ZXIuYw0KPiBAQCAtODQxLDYgKzg0MSw4IEBAIHN0cnVjdCBmaWxlICppb191cmlu
-Z19yZWdpc3Rlcl9nZXRfZmlsZSh1bnNpZ25lZCBpbnQgZmQsDQo+IGJvb2wgcmVnaXN0ZXJlZCkN
-Cj4gIAkJCXJldHVybiBFUlJfUFRSKC1FSU5WQUwpOw0KPiAgCQlmZCA9IGFycmF5X2luZGV4X25v
-c3BlYyhmZCwgSU9fUklOR0ZEX1JFR19NQVgpOw0KPiAgCQlmaWxlID0gdGN0eC0+cmVnaXN0ZXJl
-ZF9yaW5nc1tmZF07DQo+ICsJCWlmIChmaWxlKQ0KPiArCQkJZ2V0X2ZpbGUoZmlsZSk7DQoNClNo
-b3VsZCBwZXJmb3JtYW5jZSBiZSBhIHByaW9yaXR5IGhlcmU/DQo+ICAJfSBlbHNlIHsNCj4gIAkJ
-ZmlsZSA9IGZnZXQoZmQpOw0KPiAgCX0NCj4gQEAgLTkwNyw3ICs5MDksNyBAQCBTWVNDQUxMX0RF
-RklORTQoaW9fdXJpbmdfcmVnaXN0ZXIsIHVuc2lnbmVkIGludCwgZmQsDQo+IHVuc2lnbmVkIGlu
-dCwgb3Bjb2RlLA0KPiAgCXRyYWNlX2lvX3VyaW5nX3JlZ2lzdGVyKGN0eCwgb3Bjb2RlLCBjdHgt
-PmZpbGVfdGFibGUuZGF0YS5uciwNCj4gIAkJCQljdHgtPmJ1Zl90YWJsZS5uciwgcmV0KTsNCj4g
-IAltdXRleF91bmxvY2soJmN0eC0+dXJpbmdfbG9jayk7DQo+IC0JaWYgKCF1c2VfcmVnaXN0ZXJl
-ZF9yaW5nKQ0KPiAtCQlmcHV0KGZpbGUpOw0KPiArDQo+ICsJZnB1dChmaWxlKTsNCj4gIAlyZXR1
-cm4gcmV0Ow0KPiAgfQ0KPiBkaWZmIC0tZ2l0IGEvaW9fdXJpbmcvcnNyYy5jIGIvaW9fdXJpbmcv
-cnNyYy5jIGluZGV4DQo+IDk2NGE0N2M4ZDg1ZS4uNzkyYzIyYjZmMmQ0IDEwMDY0NA0KPiAtLS0g
-YS9pb191cmluZy9yc3JjLmMNCj4gKysrIGIvaW9fdXJpbmcvcnNyYy5jDQo+IEBAIC0xMDczLDcg
-KzEwNzMsNyBAQCBpbnQgaW9fcmVnaXN0ZXJfY2xvbmVfYnVmZmVycyhzdHJ1Y3QgaW9fcmluZ19j
-dHggKmN0eCwNCj4gdm9pZCBfX3VzZXIgKmFyZykNCj4gIAlpZiAoSVNfRVJSKGZpbGUpKQ0KPiAg
-CQlyZXR1cm4gUFRSX0VSUihmaWxlKTsNCj4gIAlyZXQgPSBpb19jbG9uZV9idWZmZXJzKGN0eCwg
-ZmlsZS0+cHJpdmF0ZV9kYXRhLCAmYnVmKTsNCj4gLQlpZiAoIXJlZ2lzdGVyZWRfc3JjKQ0KPiAt
-CQlmcHV0KGZpbGUpOw0KPiArDQo+ICsJZnB1dChmaWxlKTsNCj4gIAlyZXR1cm4gcmV0Ow0KPiAg
-fQ0KPiAtLQ0KPiAyLjQ3LjENCj4gDQoNCg0KLS0tDQpMaSBaZXRhbw0K
+On 1/16/25 6:09 AM, lizetao wrote:
+> Hi,
+> 
+>> -----Original Message-----
+>> From: Pavel Begunkov <asml.silence@gmail.com>
+>> Sent: Thursday, January 16, 2025 10:53 AM
+>> To: io-uring@vger.kernel.org
+>> Cc: asml.silence@gmail.com
+>> Subject: [PATCH 1/1] io_uring: clean up io_uring_register_get_file()
+>>
+>> Make it always reference the returned file. It's safer, especially with
+>> unregistrations happening under it. And it makes the api cleaner with no
+>> conditional clean ups by the caller.
+>>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>  io_uring/register.c | 6 ++++--
+>>  io_uring/rsrc.c     | 4 ++--
+>>  2 files changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/io_uring/register.c b/io_uring/register.c index
+>> 5e48413706ac..a93c979c2f38 100644
+>> --- a/io_uring/register.c
+>> +++ b/io_uring/register.c
+>> @@ -841,6 +841,8 @@ struct file *io_uring_register_get_file(unsigned int fd,
+>> bool registered)
+>>  			return ERR_PTR(-EINVAL);
+>>  		fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
+>>  		file = tctx->registered_rings[fd];
+>> +		if (file)
+>> +			get_file(file);
+> 
+> Should performance be a priority here?
+
+Performance only really matters for high frequency invocations, of which
+the register part is not. So no, should not matter at all.
+
+-- 
+Jens Axboe
 

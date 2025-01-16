@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-5903-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5904-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC1EA13028
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 01:46:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B1A1A1302E
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 01:49:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 469FF3A3C2B
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 00:46:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B55163A3DE1
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 00:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A50C13B;
-	Thu, 16 Jan 2025 00:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D96C139;
+	Thu, 16 Jan 2025 00:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaSBli8v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gowDLU7D"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DBA1372;
-	Thu, 16 Jan 2025 00:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192F328691;
+	Thu, 16 Jan 2025 00:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736988377; cv=none; b=JYeZAfeSV8O2B23ku9hBMJsdVLMMnON802LPhMrkdXHf3AXNGafL9f0Yh7EVVa+6Q9B6Loc2ktut8jHRl4akd3yH7vihuaeGrA960l3b4roGlSGA4H+97VCQKLr9joeYHEiFL0YbMVz2I7pDRZ/gUpSheW6Z6ECo9y3iwCmaeEI=
+	t=1736988576; cv=none; b=lKLQ/FjAhQvj0zvsIuIH9Htc4U24Av+3V5qh1o/YuQh4O3JNazyq4v8LbJdy6YRshUHqNg60Hd7U81QIEbH6sQ726Qi1jxiYiJoVWf5qSY5a7ikbb6Gdc9h0engF3mbbBxEBoq7N83mSyUrxf3gUen+UgwvC9kOhaxV4unL1ffE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736988377; c=relaxed/simple;
-	bh=psYx8CafJ6z47v1zMdeFnbkS/0Ig7nN1TZUByWYoV+0=;
+	s=arc-20240116; t=1736988576; c=relaxed/simple;
+	bh=L7tBeIh9o6JZ5K22NgKyOy72Vq/eCt7bcfYNS6B8kNQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nnZgjCDI0LVGM5PtlHrH+tinu4x8TMB2BLHrIrQTbajRz/3V14IqoUTPE2DRhNfMqFxspT8CHCImURsHVTMFCD50hdWLG5f/1PSteYLozH2VDz+ClHL080qJi15lkloNfMX3RjY2qMWdzeO8S3XQ8RQTvKW8BYaPb/sJmdQALxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaSBli8v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CF5EC4CED1;
-	Thu, 16 Jan 2025 00:46:16 +0000 (UTC)
+	 MIME-Version:Content-Type; b=lE8ywDmPsAyy5b78hJMBetrHP1lZ1aSK0mdnmc3Vb0RuiKVdl9NAvm8UfTzQ2Ci3IXa+SBERmsaGZBNdVKSJuycyhh/V8BLe6uo2smyO+TAGIstOoYpTCr9nrkplRS2TCUwrzLnN1JFfGt3L0E+JfXuTrE02ri/MraW8TjvINio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gowDLU7D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CCE0C4CED1;
+	Thu, 16 Jan 2025 00:49:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736988376;
-	bh=psYx8CafJ6z47v1zMdeFnbkS/0Ig7nN1TZUByWYoV+0=;
+	s=k20201202; t=1736988575;
+	bh=L7tBeIh9o6JZ5K22NgKyOy72Vq/eCt7bcfYNS6B8kNQ=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SaSBli8vJ7SSeAw2JMDObrmk8/YoscLfYdAG4gSqC/MUHsltQjo1AT+6+K4cwuhru
-	 JGHFHTuPqhFQIrXtzSFFe4WWdCNo5X2XnqHI5MPtb42bb/sdMQrC+dd16VpKAYEDYD
-	 vFB2gu5atJSoce38pnCfBnwWR4VIkUtc0FcW+iRRPg5PqaNIJYUEEmV+COdNozg4Yp
-	 /ULZir+I+6KMdg7yGjf5hKfvfuAOpJMUAhHE0p5R4mF2wFJkYyNgJ3VXjnFnvVsZsc
-	 HSScqxnf4N0qkkeLDk93D5sv3ZyMv1gwzx1R7/p0Ek53dvNHr++LpCsXYeV0nF2fif
-	 KNVV3a0i+I51Q==
-Date: Wed, 15 Jan 2025 16:46:15 -0800
+	b=gowDLU7D1l7R/wsKVO0YhRV8SAdQDbMyRdkp1uK/71Ek9a7TyhtiT4iVhc3UijgE2
+	 +VCjwEeXCOG+xCPXw6hr7+BS9y8PznmLpEGswo4BaLoejRG2qxi+A1to70pq+4Vegd
+	 HhIK4A4lonRrHY/xVxD04Jq7Z7RwrjJkNPI/ynACtdh2TPn8JIFIK/z8Z0Ljb08nYr
+	 eQolgz5lRYP0xdDbpiZznu+DzzDkWQ7ecNTdK5Ik59+n2szuIAgzyNwSD7z8QF+o+F
+	 QsxNYmhhZUbrx/jdVYrBqrRAYWrTUvWOYD5bZKPGNqsOHvRLey6QoLCfp9nLvtPrcB
+	 71cFj25hr4URg==
+Date: Wed, 15 Jan 2025 16:49:34 -0800
 From: Jakub Kicinski <kuba@kernel.org>
 To: David Wei <dw@davidwei.uk>
 Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, Jens Axboe
@@ -51,12 +51,12 @@ Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, Jens Axboe
  Ahern <dsahern@kernel.org>, Mina Almasry <almasrymina@google.com>,
  Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
  Pedro Tammela <pctammela@mojatatu.com>
-Subject: Re: [PATCH net-next v10 08/22] net: page_pool: add callback for mp
- info printing
-Message-ID: <20250115164615.037c34bf@kernel.org>
-In-Reply-To: <20250108220644.3528845-9-dw@davidwei.uk>
+Subject: Re: [PATCH net-next v10 11/22] net: page_pool: add memory provider
+ helpers
+Message-ID: <20250115164934.27b8ea19@kernel.org>
+In-Reply-To: <20250108220644.3528845-12-dw@davidwei.uk>
 References: <20250108220644.3528845-1-dw@davidwei.uk>
-	<20250108220644.3528845-9-dw@davidwei.uk>
+	<20250108220644.3528845-12-dw@davidwei.uk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -66,14 +66,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed,  8 Jan 2025 14:06:29 -0800 David Wei wrote:
-> From: Pavel Begunkov <asml.silence@gmail.com>
-> 
-> Add a mandatory callback that prints information about the memory
-> provider to netlink.
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> Signed-off-by: David Wei <dw@davidwei.uk>
+On Wed,  8 Jan 2025 14:06:32 -0800 David Wei wrote:
+> +void net_mp_niov_set_page_pool(struct page_pool *pool, struct net_iov *niov);
+> +void net_mp_niov_clear_page_pool(struct net_iov *niov);
+> +
+> +/*
 
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+nit: if you meant this to be a kdoc you're missing a * here.
+
+> + * net_mp_netmem_place_in_cache() - give a netmem to a page pool
+> + * @pool:      the page pool to place the netmem into
+> + * @netmem:    netmem to give
+> + *
+> + * Push an accounted netmem into the page pool's allocation cache. The caller
+> + * must ensure that there is space in the cache. It should only be called off
+> + * the mp_ops->alloc_netmems() path.
+> + */
+> +static inline void net_mp_netmem_place_in_cache(struct page_pool *pool,
+> +						netmem_ref netmem)
+> +{
+> +	pool->alloc.cache[pool->alloc.count++] = netmem;
+> +}
 

@@ -1,136 +1,91 @@
-Return-Path: <io-uring+bounces-5914-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5915-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC72A13193
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 03:53:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BFFFA131AD
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 04:12:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C33FE3A06C1
-	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 02:52:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A20231886238
+	for <lists+io-uring@lfdr.de>; Thu, 16 Jan 2025 03:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC3F45C18;
-	Thu, 16 Jan 2025 02:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD3826AEC;
+	Thu, 16 Jan 2025 03:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HzGhlX48"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJIZWcvU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D173BB48
-	for <io-uring@vger.kernel.org>; Thu, 16 Jan 2025 02:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316D4136326;
+	Thu, 16 Jan 2025 03:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736995976; cv=none; b=d4lIyCO9mi0fRSClno3QGUv++ECbYKEkBKatbKXaCJ7QjL3b8sEyUPheZG4nASx/3B/TNm7j6ZrsJtgpmkfG8SrJ98Vppc91Gaf6OsezRZd7bNGFn4tisMC4iP8aOdmZj89LnKtIQrMLH42A3VY9Ms7aQ+3Oh0gYtA7YVA8dEOc=
+	t=1736997141; cv=none; b=mRAwxWnbmfGbhjueY6LpgE300syRA22z2unVgtutwbK6+nEUO6CRXun0SwM9lS89M4D6qo+zJASBAhgYT821K8BFzh6171L7knDzsU/+GWw4inXjHQleWRK1jo9A19MtYYc/SIRUmR3NXuQ+nKN0MGqqVUb6aLa4EP7/U1T/w7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736995976; c=relaxed/simple;
-	bh=sXjFu2u+mOTnILuMQLYgAmOJVQ9CgHpsxccKyXADVnk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U8Y24nYBQva6CyNrHGUU9CaWvCT6QFlNduVFso9TAZPrJwZdA8njQzJ1x1IxseYqeXiKW7Ja8PwLfARPjlTrEgyuhLaeaJX98v44FJuMkglPV9+1uxize77wROriTthsK7e/hZtz1UOq1bSKOgPAaf7dkSXlRuGR4T7K57AFA9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HzGhlX48; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d9837f201aso2857767a12.0
-        for <io-uring@vger.kernel.org>; Wed, 15 Jan 2025 18:52:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736995973; x=1737600773; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eLzRA36j2FOA6zebunqfbWe073hNQZK8jDednnE31xc=;
-        b=HzGhlX480LdlhhnVTuin7GG8Jhp6jvne4lF84b6475ZCfljOzzyMrTvfz3nm7bFN5p
-         IYE9tho4vGnw5oyAp1RnISIu/Cd1jJ7c80V5ruMDyNYjJ2h3UDB7FR9QYfC5FLrccv6w
-         oD5Cd4f9PkmmfdH+e4cohTqMJNy6XbYCsJIVKbgLg53o8sBvVeRFoaaf7F8qqqtIH18Q
-         LfxitOy6dKvdl8/Z0VbLsInUWSMKEOAkf4mZr1tSPsy1OCGx0afFIOysXM5wMDj/LZQq
-         s2lQesPuvGhs5kgET0P6UU7GjY8zj5bAQ9VhdKide8IFF46nvI+QqIdYMS+BnLYD8YT3
-         FGkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736995973; x=1737600773;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eLzRA36j2FOA6zebunqfbWe073hNQZK8jDednnE31xc=;
-        b=T2WE/nBR1JiHxG39E7sIIXwTcRlWgIjG3CSoNBYnaXg51fgHRH91bFLSUTAAwsIGRP
-         8ScxIRdsCY/zlvRCjHZ0osdg81n8Gv/ZgR7xSCeNgroJC3nOW1hO4jCfi3T3UCsqpjrB
-         auDny7lY2b8C38bQj4qn66A8OvI9qDbuecrgo//hvlG6mpbPi5J8u5q9u3GjR3sYtzMz
-         dyJyrNhD5qsrRLyTM3uUlXaB8hOwmCOBczXm+gofZKJs4LzmXknu+jto8CnCDJlnt/9a
-         BNJ9ULONbvtIUFkKTFElaJ2RhUevAwCPwB11lyKm2x6z+TJOD5nDDxKCfhWZ9478cFCn
-         7lrw==
-X-Gm-Message-State: AOJu0YxRQp/lTzBDx+YcbVpOyQuSpql5F7YwINmgggFv/m1KkNOOEl2j
-	1QsAuF41VKCyg9QWqagbz5GQutyWMvud/F5OJ9I3admEvVEFt49VBn3I9yOw
-X-Gm-Gg: ASbGncs+yLDNkz56Jhqh9HUKHmeKLQSFLMkBGT0G1v9yikAQ08PXL3VA4PL3rWNFpQk
-	76tTDJVQLHDFt6GHoJA4/0w0HJPdlpdOrY9yO52UAUMtkCDi4SzQRzmSjPKNvMWfKTXJ56I63Yu
-	zIJSW3HtdJT4zixvDf3VGhmc4l4WcIxe5mcfaqk9ocLNSubtriKFT0QCxm2Ou+k1/hT84/m8tY4
-	9Ykm04F9JdWil7ATNe5LGwG1xG3TBhy+7+xGB4C6sF+kufHNcaBVSNcTW1fOVwaMGVLOBw=
-X-Google-Smtp-Source: AGHT+IE04aH16PNz4B9Js7Jxpf7JsPMvTmAHsB5zzeNyJDNTxgGICBWMC6RBFofvfot41o6L0Vka7Q==
-X-Received: by 2002:a17:907:9905:b0:ab3:3283:faf9 with SMTP id a640c23a62f3a-ab36e433e77mr80000566b.24.1736995972945;
-        Wed, 15 Jan 2025 18:52:52 -0800 (PST)
-Received: from 127.0.0.1localhost ([148.252.147.234])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c913628csm838279766b.86.2025.01.15.18.52.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2025 18:52:52 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH 1/1] io_uring: clean up io_uring_register_get_file()
-Date: Thu, 16 Jan 2025 02:53:26 +0000
-Message-ID: <0d0b13a63e8edd6b5d360fc821dcdb035cb6b7e0.1736995897.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1736997141; c=relaxed/simple;
+	bh=ayWlPiJDYf6hwDZV3evf4S+Fawp2noEsHywZrdNbg4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T/iWoEBj8DlV6whoZyVtdoguNcTUWirlTQ5IMd1HFnvr360XYNmI9Yv5dJ45QtJaQdnZ9clKg1ZX3MhR+vN7NhH84HOyU9D8zTqeqwckMBgRd0ilD6ZdipWcQnf66lzjeKEOJRlEL7v8ol4/CYsb7tYlq+2lpEoVe0WB9HbEAaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJIZWcvU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B241AC4CED1;
+	Thu, 16 Jan 2025 03:12:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736997139;
+	bh=ayWlPiJDYf6hwDZV3evf4S+Fawp2noEsHywZrdNbg4Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dJIZWcvUC0m82XbYEiG7+EgFCNPTbE6mvPr4BnEZ1TAxyXZ6lNx965Bt67NJfozzS
+	 6nCIoSgMsNkxQ9s4eQa3BhEqghitNFjLeYyuL40bYIUwlLxUnISAgmOXs9KqU+kZBh
+	 W1t+cYTW7dmgrU0wwdv5ms6j4ueLIgCkc+p85HT6ruhUnJHIrOIa1O/AiHYQ3oYr9F
+	 HSgoAV7C53e61yR3vfamTAj13FcLD4Np9KObOIgK8Gea/mQvW6OGbb8ncfiqSJ9fMT
+	 kpznUSbCS+zmLsJPZxdzK7Y3WN3F+lMxNx+OTnA/HvFmQKn6nV8dNuufegE8nbgMyg
+	 vVcG5QW6cC5gA==
+Date: Wed, 15 Jan 2025 19:12:17 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
+ netdev@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Paolo Abeni
+ <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, David
+ Ahern <dsahern@kernel.org>, Mina Almasry <almasrymina@google.com>,
+ Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
+ Pedro Tammela <pctammela@mojatatu.com>
+Subject: Re: [PATCH net-next v10 14/22] io_uring/zcrx: grab a net device
+Message-ID: <20250115191217.5ab89aa3@kernel.org>
+In-Reply-To: <bb19ef4d-6871-4ae9-b478-34dd2efcb361@gmail.com>
+References: <20250108220644.3528845-1-dw@davidwei.uk>
+	<20250108220644.3528845-15-dw@davidwei.uk>
+	<20250115170644.57409b2f@kernel.org>
+	<bb19ef4d-6871-4ae9-b478-34dd2efcb361@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Make it always reference the returned file. It's safer, especially with
-unregistrations happening under it. And it makes the api cleaner with no
-conditional clean ups by the caller.
+On Thu, 16 Jan 2025 02:33:06 +0000 Pavel Begunkov wrote:
+> On 1/16/25 01:06, Jakub Kicinski wrote:
+> > On Wed,  8 Jan 2025 14:06:35 -0800 David Wei wrote:  
+> >> From: Pavel Begunkov <asml.silence@gmail.com>
+> >>
+> >> Zerocopy receive needs a net device to bind to its rx queue and dma map
+> >> buffers. As a preparation to following patches, resolve a net device
+> >> from the if_idx parameter with no functional changes otherwise.  
+> > 
+> > How do you know if someone unregisters this netdevice?
+> > The unregister process waits for all the refs to be released,
+> > for *ekhm* historic reasons. Normally ref holders subscribe
+> > to netdev events and kill their dependent objects. Perhaps
+> > it is somewhere else/later in the series...  
+> 
+> Ok, I can pin the struct device long term instead and kill
+> netdev in the uninstall callback off
+> unregister_netdevice_many_notify(), if that works with you.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/register.c | 6 ++++--
- io_uring/rsrc.c     | 4 ++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/io_uring/register.c b/io_uring/register.c
-index 5e48413706ac..a93c979c2f38 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -841,6 +841,8 @@ struct file *io_uring_register_get_file(unsigned int fd, bool registered)
- 			return ERR_PTR(-EINVAL);
- 		fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
- 		file = tctx->registered_rings[fd];
-+		if (file)
-+			get_file(file);
- 	} else {
- 		file = fget(fd);
- 	}
-@@ -907,7 +909,7 @@ SYSCALL_DEFINE4(io_uring_register, unsigned int, fd, unsigned int, opcode,
- 	trace_io_uring_register(ctx, opcode, ctx->file_table.data.nr,
- 				ctx->buf_table.nr, ret);
- 	mutex_unlock(&ctx->uring_lock);
--	if (!use_registered_ring)
--		fput(file);
-+
-+	fput(file);
- 	return ret;
- }
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 964a47c8d85e..792c22b6f2d4 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -1073,7 +1073,7 @@ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg)
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
- 	ret = io_clone_buffers(ctx, file->private_data, &buf);
--	if (!registered_src)
--		fput(file);
-+
-+	fput(file);
- 	return ret;
- }
--- 
-2.47.1
-
+I think that would work. You mean the "underlying" device, right,
+netdev->dev.parent ? Like page_pool itself does. SG.
 

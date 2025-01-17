@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-5969-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5970-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255DCA14EAF
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 12:46:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D375BA14EBC
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 12:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 862283A3F43
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 11:46:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8C5A168E2A
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 11:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A889D1F790F;
-	Fri, 17 Jan 2025 11:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D39935960;
+	Fri, 17 Jan 2025 11:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgpcnuJp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K46pZpWM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3F81FCD08;
-	Fri, 17 Jan 2025 11:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B5925A658;
+	Fri, 17 Jan 2025 11:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737114395; cv=none; b=FSUwh05D/P4QjsWsJsd1G/Z6LRitOj1wddMCSoP3lz5/jPR8WGOunucsJ/mOFPgmmeYIvR9hVJ9PRwRdabKoRghoDYZ/TEDYV2haeTwqmOhufWr0qHZR1sDly1pUYNQGisq1CK+222LRGq6bQ1GEoh0764KobTJlhyw1fmvNrSs=
+	t=1737114523; cv=none; b=CSAfLSzixfMtoLxabtxkJMqKgpFiGVevW+LaQnUr1pI6kZb4xvBZFzZcMOUC6fCjolmrf1dw6WeJNNhfFdzNQRRaDliDA0wVQeSYGXB+6sJFQA50MeJRe975BavlVIkUKixaSIw/o7IuaAEXNs3lY9To/4YlBHbkmps+RlmxeQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737114395; c=relaxed/simple;
-	bh=wy2sGlgkCHB8XoFf72DgQXzchRd6Dnj4sl3xWt2ivSc=;
+	s=arc-20240116; t=1737114523; c=relaxed/simple;
+	bh=nv07x0s7t+mgqJ3uTt+hjGjJQYONLene+H/UVg6zd4g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CmBAWTNpHreq+OxmmoF7h1FnL/n9E7AEzwMtSGwpqc2Ffvry7cvzQ0FLsUo5mTe//KalouMaALKbd2+usXc/In9f7CeNv8Cbbu8NZbTiLOf/RWmwghPWb3olSGmgD4B36ZVTjJOq8ey3MH+d2LX+G7miTzw5uEBHCyaY5L8mFJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgpcnuJp; arc=none smtp.client-ip=209.85.208.51
+	 In-Reply-To:Content-Type; b=s6K8EHK20qsJsr4MklgAamPYFXDGUDVsB7br7iY10QrLF5UO6tR+I7YBNt2a4MfsTKZMVvPU78rHo7ZPa3NMcwlnOiLdQSow8e5dM9YDs3aWfj4A1nj1Mls2NYE8wKbTKawR3KAeelTAdNkGQ7UzKItm2BdHHFkyHY06RtxRdXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K46pZpWM; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d7e3f1fdafso3949334a12.0;
-        Fri, 17 Jan 2025 03:46:33 -0800 (PST)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d7e3f1fdafso3952325a12.0;
+        Fri, 17 Jan 2025 03:48:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737114392; x=1737719192; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1737114520; x=1737719320; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xx3KHsMXHlOHH2FEIkfq59/+Y9ujoUpH+gbFLMORCwg=;
-        b=UgpcnuJpfhvPGuPW41pJmwCJDke8mTNaWjZEeKNIb8m43iTrcK/lxlfsalVJm9iew7
-         SaF0kNcqYIuD7TbJzE29/2ywWLIiEp+HJPCoc7fWDF6xAPx4MoqMKTK25/r3K889B0K1
-         kn7M7XJ6OAIom5iQs0a514jVE8pUvinX0reahPLNgvMuj7BZ3h3SIwazDK4fudWMS4z3
-         8D2k+uvwtOfSgAdOMOyITVBqeeBTMkIU2qk7BJZOe6iCCJs32YMaPiU5mRq7I0sfsxrB
-         KMOoMHjkamQQcRYCn5trITxbR4EBHL3dAnSGHmcnYDGgHBmJ2HPSpiNM3bDuTu+lNvT5
-         y82A==
+        bh=n+q/MKZtQ2i9KSscg0qw4oKnakpdQBBLDGkuk4AHxm4=;
+        b=K46pZpWMFI30XTROzNZDLAXtHb7TyTe0sSXl8TDZJ6CDZWEZ646mw6QMbYvOwh3mNQ
+         ItI317SSDozplysq0QK9ptDXNUJUUaI1poaAeQbUPnaReJCFND7hddeNuQowx2xsOZNf
+         7rTdSxgCv27f4hGliBBiwahwnyLHMiZ/Yag/G6bH1Hv6VH8O0alL40GCfandSDwhkFUl
+         TVVOMEH3NC+5o3dt+AJHploWQxd47AIOFfjZmTW0LwTzm8q7AbN4yLKR4chjAlXSe+1y
+         d85h2Bq2KYIJcRIvfeXeVsXCpBip3MSBtX583t6JbgwgQfq59Ley/fMUR43N5TqRAfUm
+         /TQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737114392; x=1737719192;
+        d=1e100.net; s=20230601; t=1737114520; x=1737719320;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xx3KHsMXHlOHH2FEIkfq59/+Y9ujoUpH+gbFLMORCwg=;
-        b=D3e82d7LE0CJcbGNRe4EcUJk3+qW43u1fbMRt9S7R18lRZRf4lUNfsfsXojHZUUwQ2
-         sfTn+U4N+v7YrgtW4NWxmfI2zdioK+SV6NE5xY0Eu6pvs6vsQCYHOTGYOgvm/9BNAXVo
-         F3SFkWOlJvEAoSxfNeEMSj6Qysdo8kjtcDwdHzD4C1CVz6qG6oAH6B5v/RBTo1X6sGCc
-         YXuHgvVrkobDiGuD8uw92dO9l+fSoyUP6hNKzOUdHT3xQ3zhv9IpAhTjSldf5iTvqoXQ
-         xxcVXKEmOEBuoG5SeYFPqjTHrxBe2FhQsLSTisvjgMsaltWKqwQ0gSgiBGNYqQn0+Pzt
-         /vBw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0FSEWgtpJIQFgNfuebCQUfVpB0ZMmzFkqkuiKg2uS4WAO6ALc02Lmh0SbTVrOebgTxDOK8jUnPNfr2+Vqgw==@vger.kernel.org, AJvYcCXAnJy5oZdqvzQd/PaxM3o7a+03OuOl24CM4Udi4wuLdxHSg7zDavoLBskymGvir5tChsMLIZIdpA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyyrxh77ljHJmDZ63HnMRf2N8hyVBWmCZMKiNYhYnmuxqnDfhW+
-	NolF25VpK2NqUb+JZpOK4lU6GkunaqmGuuGdGQ8vo6ww3tS7MrTM
-X-Gm-Gg: ASbGncsgHJuAHMA+JzqCRNhbChL1Y+QUwrlStJNHFY6U9MDHoWNcj6ojFeLtDBfXJ1y
-	sbVyaVP0IR60Y2h7jjsSSP/IYJOxOUw438ov3kyh9UOI8WXph7B34DNqpWC8usZMT/sweUQ2wwp
-	9RKn/RBLyMXc5KWyEufPv+WgqYQnzJnRcy2teV8CRbVP6zNVu8bW7a3yDKBP1w5OUzFsiSmbQLf
-	iLIdvKvWd31OkfBZS/LqTmDW+Lx0e/lTFtw2dAUxB76tI2XljLEsQb4syEKznHFAlNnygQkrDu0
-	EolTq7RPLSYAvg==
-X-Google-Smtp-Source: AGHT+IFovGRiXvvOZKvsxXv/Tl/6arXE38x9R+vMzWWevtGXnm07GgBJcFQNKzcK+M604x1OYKpTCQ==
-X-Received: by 2002:a05:6402:2110:b0:5da:c38:b1cf with SMTP id 4fb4d7f45d1cf-5db7d2dc135mr1905328a12.3.1737114391896;
-        Fri, 17 Jan 2025 03:46:31 -0800 (PST)
+        bh=n+q/MKZtQ2i9KSscg0qw4oKnakpdQBBLDGkuk4AHxm4=;
+        b=wg5tnCHpLzohYg8EVVCErtr4+lv65armqCJY4LTNRBSSQtxzXj7MX2xqsOjDn7HI8k
+         4E4cVSJqb3h0+Ds8ythEgAQFUM6evQ26bsb7/Hfe9A2A7tsydSLH0NmwwISmjvX/AsRc
+         Qg2eAVHWG88GAqWbcws1Mj6B8kxXHeikU0StzAeec0eKOdKQodsy47cuNGukrZZR2r/N
+         Gmw/wxmwXCOL4RnfaEuVsPVaE+lV95CVSOeMj1gK0sG5FUibKYMukBkXPp6sHTgLs9EL
+         69rY+YZlmOoYJ2nM1OZ8B7+8oC3ybw+SFUTqvianYlGlQLiXhJPgwpNRGHNgcA6y53bt
+         4pZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVb0lWkWLxtVpb/u+EgZL6EQvrd4kYhDlxRNwMVwnokrwfUiqhUU+v1W840ZO1k1sSYez86IjR92Toh7SkoEA==@vger.kernel.org, AJvYcCXUy8XQO5QcxbnPw0gkq+GbsUWTAj5mPykfMy4QBT1qdT6Tntuq4NBF7a6V5F0ASwJEn8b1KsHsqA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs1+KUdCAab8gIfUI0N0sZtkO0/yVnSwg+gr6AW5Fk+7EhK/ZM
+	AZSRTy08A2t4wcPDlmWqHfHKMarUpZfX4EvScTJgoHwKOexcf7/j
+X-Gm-Gg: ASbGncvBggWbOQJDPG+D1hqRs2bVDlCLVLtjk39VJLF7Ad/YhgWOIIBbpijqIuZ+ecQ
+	E+oDkYsk8j2lHR3wdhtYDXzvPJadeX94TzRcfKsa/idwjQot6/UVdSWrNfl0qVV/Jra5DrLPJK5
+	pmJHshp/nkzU87tT1QxTll52Kd4LLk8UPSrk8JDVPkjXV/edviRg7ExAEyoo2EWjtOH1cmCUbOZ
+	lbryCGKYDGo4FAagwiyR/62DsP31l2W/qbtC8yL2PEvLR+7IvHRCp1EJX/3oQSVddu0aLVSl+3C
+	5G7awvUyyHkpqK+qKPkboFHrSOI=
+X-Google-Smtp-Source: AGHT+IFJNsQffDjkmWyl9dKBuWxWxVmoFAdc7UltVP2pIKVUWEhyXGiD1JWeO+AJplnvTg+kC1w50g==
+X-Received: by 2002:a05:6402:2807:b0:5db:7316:6309 with SMTP id 4fb4d7f45d1cf-5db7d2dc140mr2109240a12.7.1737114520365;
+        Fri, 17 Jan 2025 03:48:40 -0800 (PST)
 Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:56de])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5db73eb769dsm1350228a12.50.2025.01.17.03.46.31
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5db73eb56fbsm1380963a12.64.2025.01.17.03.48.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jan 2025 03:46:31 -0800 (PST)
-Message-ID: <946df966-b50b-483c-a8cf-e480e8f9b4c3@gmail.com>
-Date: Fri, 17 Jan 2025 11:47:16 +0000
+        Fri, 17 Jan 2025 03:48:39 -0800 (PST)
+Message-ID: <a9519c9d-1f73-43b0-a47b-d635ddbd35d6@gmail.com>
+Date: Fri, 17 Jan 2025 11:49:24 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,7 +81,7 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 13/17] fuse: Allow to queue fg requests through
+Subject: Re: [PATCH v9 14/17] fuse: Allow to queue bg requests through
  io-uring
 To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
 Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
@@ -90,68 +90,32 @@ Cc: Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
  Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
  bernd@bsbernd.com
 References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
- <20250107-fuse-uring-for-6-10-rfc4-v9-13-9c786f9a7a9d@ddn.com>
+ <20250107-fuse-uring-for-6-10-rfc4-v9-14-9c786f9a7a9d@ddn.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250107-fuse-uring-for-6-10-rfc4-v9-13-9c786f9a7a9d@ddn.com>
+In-Reply-To: <20250107-fuse-uring-for-6-10-rfc4-v9-14-9c786f9a7a9d@ddn.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 1/7/25 00:25, Bernd Schubert wrote:
-> This prepares queueing and sending foreground requests through
+> This prepares queueing and sending background requests through
 > io-uring.
+
 
 Reviewed-by: Pavel Begunkov <asml.silence@gmail.com> # io_uring
 
-
+> 
 > Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 > ---
->   fs/fuse/dev_uring.c   | 185 ++++++++++++++++++++++++++++++++++++++++++++++++--
->   fs/fuse/dev_uring_i.h |  11 ++-
->   2 files changed, 187 insertions(+), 9 deletions(-)
+>   fs/fuse/dev.c         | 24 ++++++++++++-
+>   fs/fuse/dev_uring.c   | 99 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>   fs/fuse/dev_uring_i.h | 12 +++++++
+>   3 files changed, 134 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index 01a908b2ef9ada14b759ca047eab40b4c4431d89..89a22a4eee23cbba49bac7a2d2126bb51193326f 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -26,6 +26,29 @@ bool fuse_uring_enabled(void)
->   	return enable_uring;
->   }
->  
-...
-> +
-> +/*
-> + * This prepares and sends the ring request in fuse-uring task context.
-> + * User buffers are not mapped yet - the application does not have permission
-> + * to write to it - this has to be executed in ring task context.
-> + */
-> +static void
-> +fuse_uring_send_req_in_task(struct io_uring_cmd *cmd,
-> +			    unsigned int issue_flags)
-> +{
-> +	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
-> +	struct fuse_ring_queue *queue = ent->queue;
-> +	int err;
-> +
-> +	if (unlikely(issue_flags & IO_URING_F_TASK_DEAD)) {
-> +		err = -ECANCELED;
-> +		goto terminating;
-> +	}
-> +
-> +	err = fuse_uring_prepare_send(ent);
-> +	if (err)
-> +		goto err;
-> +
-> +terminating:
-> +	spin_lock(&queue->lock);
-> +	ent->state = FRRS_USERSPACE;
-> +	list_move(&ent->list, &queue->ent_in_userspace);
-> +	spin_unlock(&queue->lock);
-> +	io_uring_cmd_done(cmd, err, 0, issue_flags);
-> +	ent->cmd = NULL;
-
-Might be worth moving inside the critical section as well.
-
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index ecf2f805f456222fda02598397beba41fc356460..afafa960d4725d9b64b22f17bf09c846219396d6 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
 
 -- 
 Pavel Begunkov

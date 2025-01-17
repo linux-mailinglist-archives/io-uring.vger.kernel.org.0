@@ -1,213 +1,145 @@
-Return-Path: <io-uring+bounces-5987-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5988-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD71A153E2
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 17:12:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D3DA15410
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 17:18:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DB6D3A793F
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 16:12:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 496B17A3355
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 16:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458F11A0B0E;
-	Fri, 17 Jan 2025 16:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6474319ABAB;
+	Fri, 17 Jan 2025 16:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6qutVqo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="msbZ6pG3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE931A01D4;
-	Fri, 17 Jan 2025 16:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D369443;
+	Fri, 17 Jan 2025 16:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737130291; cv=none; b=IsB/tOlXtG5v1egW+UuvPy4pzlZE+n1kbqK55Dd6kQVUqyXbk6dyMUsrkzT/kqjUpIx5PMbZyuAIpogNOlxT5m3/iRUe6lUxiP/WQub7tSMAulwumGi1sclzvEUtNHUSnyJcroTi1En2EZY7fzkdY/CDa6MJIa3zpsxRqo3Hv9Y=
+	t=1737130709; cv=none; b=Y8QJPsZANcyoew/j/Wykl8JsHjQQ0o3EAPuiI+NNC8wl5F/Yl3aVOmMmxd9pEiHlEd0xiUt5y4N6eEVrBxI3R+wPbOUBYCO+W/c1PcVUJ3BhF3AVM8+eCoTF2bV7x2RV4BJ47GTtIlabPNLYpezUr46k8iByhgvaoBbb0NXcbiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737130291; c=relaxed/simple;
-	bh=SB1uvCcLKvxV8PevAgK5gt5B+TT8KvSjoci9vgD8tcg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T2HIcuxH37orQbd+8JXGjHv9V7T4FnlOPljuIkGl5yWnqfioNPRVhIYDTEwlBeI5HLibiZUSveLjacKvQw3DS+9UBzWmXsfeOeHLi8XfSj2yqQ/jYVAACd4/zDFW+peDiRD6vRiB74WwdmQSDg75vYystubfRv8VDNVwFvP9n3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6qutVqo; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1737130709; c=relaxed/simple;
+	bh=H30YAu54q3FjWz55Z5MS665Mz7D7iGOCU9G8Q8djKPM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BTLD78xT/8sJ3sMRNyoT8h1AnbFtGfrSbUvKABlKmxdr2jXd6wraUVETRNteRdRM9zIe49OHgKk/3aJ7qGZg2WWbWnWu5U4pn5SSnZ+VlbpL7giTCBjRW1WXuGSzQzDWmeEx1I276fKiL4BFh4NePwj3Vu7+lERKGIfaZGNtRHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=msbZ6pG3; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab2e308a99bso477338966b.1;
-        Fri, 17 Jan 2025 08:11:29 -0800 (PST)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ab39f84cbf1so38549266b.3;
+        Fri, 17 Jan 2025 08:18:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737130288; x=1737735088; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t7dfg+74umbk+ITjMhIMvDKTxg0EYGAZyZgxeW3moQQ=;
-        b=P6qutVqou43oijhZ0palMomaNMotdioL0W2D8O4f9qxDUpSc349C8jqwSCmmmdDlwH
-         iks8ip62IqKIm3X9B6367Ck7CH6gmmCDbR/93eDIPZK0Te8g+6AoHnvCVPN5rLwP4+Xt
-         NiYRJJ5+2WtTyLcmira4hx4465PIcxa+m/HouDCBFx+jER+gTgzu0TyswsgiA4nclZuB
-         hkHsg02Toog0S0pVYJiNFFqJNuxdYMF+nPrF8fXbS1/TyeO+sHL0sB3XamFIICvDN7RY
-         BzwycPKFkzR7ozgBhY1m6f/O+19Wkfp3j9I5paUohC0Ks5YY8ZQ91d8YsgWKWs+BiWrB
-         tsfw==
+        d=gmail.com; s=20230601; t=1737130706; x=1737735506; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8co1a7wv4+Y2VVTmsu7Jr8NcJfElBwN78vRge4ydYT8=;
+        b=msbZ6pG3lLUnzSkBmACQScShnLDdjxRVY4KCAhvE/MSPdamteiS+mAfyo0/XN5G/vX
+         4Cnrht63Rr126j9V9U5GHMw5fwQvqjZjQnwhQYjm7vku7xYGEjReHaRXy8qg/PlwiNbk
+         BKAHVT/2BVV8loDaejPOb9lMBHZ5OB9FNI7AFGUnKxL0Y2oBzjV2prl/56LgYqAeVyrJ
+         pjVmIebXtMOipFBriJA9VjtkO3QoDl8bVhwMvB4tb6ArpS2A2y2YIGBYpR55unD7Yiw8
+         918JF3Z2LG1qp+wobGindU50JoQ98Pi54WE5Ljr6NjHtciDVAnSbkaqboeZPe2qmW++X
+         lTFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737130288; x=1737735088;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t7dfg+74umbk+ITjMhIMvDKTxg0EYGAZyZgxeW3moQQ=;
-        b=I8PGmfU/f6hlDJLWLTy9S6+bRHkt9e6Q41WvDeX13+Pny/nwKZ01cdnbE33s9olZVQ
-         gJH2vEi9cl7OycD+Tp/JAct9QJIjomjZOIZJcVl/410LEZBL1QsNOlJ6L0/vVbGRljhT
-         /F6j0dQSvLXbChz6k0+O2IQlEvAjnukdi5XkU6lQMn3zQDmRQsGSam/LuaQ44TNgF6tj
-         mZMRHb2Hwt2UFKlcVoGj1BwZXUaR31LVq7MeVoulqq1mcZsOGWThmNtSfLNUpru+Lscc
-         7z9lLvDyAsKdLvYeP3wOLiWUssF3RokX3twneh+j/WLWiHS943HOwMehSASCrZQOhyic
-         CoUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8GiIrYN5S+TS0cWMSpwiQHyeXc/jFbFe7Eoosg4fE+XWdYvZz67s+Arrovr8bpbA2MHqVKqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMdz5ZAF/z4ICAb3swbVUn7bgLeBlW4itq3VmB98hoNtf3fRQW
-	KEKpTJDZhm16gKADebqzwVp3hxEtp65NWg/LAhRxHwJIi/UxpUSGws8dHw==
-X-Gm-Gg: ASbGncsjiY+yHbLYUUVRad+SvVOq1nkcCS93jyuR6PcB2/4EvWG3e9gL+Gw4qFAgbXW
-	THFZyKgt3MX/6Ai72zdQISFfOLt3DNGmCPYHFxGhRLo3ve+znDse2nbLa+Q0xrAM1WGHlrBRoo8
-	p/V9Zt0rBM80dWwr7zINZ1gjDn82VETOvJdeHJjXS9HhzRv/LPKsucL338ztwqCtm5jZKJKZ9Ma
-	bRIVKpry6dwSam3trQT+3wYd73QTaYTIURE63uY
-X-Google-Smtp-Source: AGHT+IGYFHbH2ri6ai17wNuYmsnebUXj5qhYaZNWRpGcMog9apppumAPuJgk1mnTbPfSRYY+DxiwhQ==
-X-Received: by 2002:a17:907:9611:b0:aa6:9540:570f with SMTP id a640c23a62f3a-ab36e30b50emr624419366b.18.1737130287406;
-        Fri, 17 Jan 2025 08:11:27 -0800 (PST)
-Received: from 127.com ([2620:10d:c092:600::1:56de])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab384f23007sm193716366b.96.2025.01.17.08.11.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2025 08:11:26 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	Jens Axboe <axboe@kernel.dk>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Stanislav Fomichev <stfomichev@gmail.com>,
-	Joe Damato <jdamato@fastly.com>,
-	Pedro Tammela <pctammela@mojatatu.com>,
-	David Wei <dw@davidwei.uk>
-Subject: [PATCH net-next v12 10/10] net: add helpers for setting a memory provider on an rx queue
-Date: Fri, 17 Jan 2025 16:11:48 +0000
-Message-ID: <0ed20ccc0c99e8b729cfbde6fb3fc571fcf38294.1737129699.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <cover.1737129699.git.asml.silence@gmail.com>
-References: <cover.1737129699.git.asml.silence@gmail.com>
+        d=1e100.net; s=20230601; t=1737130706; x=1737735506;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8co1a7wv4+Y2VVTmsu7Jr8NcJfElBwN78vRge4ydYT8=;
+        b=CrkwvMISpVzhzHEyrxyXoeVWE+rQem7XoHWtTgLs2ifk5JF4l53TIyqgyzGGqsOKVT
+         +xWQYgg2f5kThFHbxx7c54f7uLEP/X2xZFVWM+2bbFA9wHo4Do/h7cm2DJfe7criBsyI
+         Xv6zOb4BYeTzafQn4jZ+IJ5gsKG3Fasag1nLfzclIgFLcxlswb7fR/GwLJNcoCGSlFP8
+         ACi1kNL+5GlafIwjy+6BTgaTBbluNzn491+DCdjyOgdeO8AhxAkwFEGY/cXgr2MSeqe6
+         LW+xJiSo5TeQOiYJZspPy9cSepo7iPy8U0Uu0tVxPciiEYsgFqUIB8S4ww7Ufzwexy1/
+         JZ2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUbZXklcMvep+3huqO8RjsbRYCbkto8JxQvgv1HGpHDzNpQivN6AQorrahZSbmOt8C3f5xiNnCQIg==@vger.kernel.org, AJvYcCWOY9Yl3RGYqeUWeLOJoCcum9GWnZB3WhjpU6L9ee/yy2r0VoJK8Bt8ujopYqqJTFqnhnIimJv0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzymIuAINjOhES+24EQMlMPjTgn1iZSPckNcZ3JsnXXXKDkJ1YH
+	Hhn3ZrZP0ozMp5fw3TWCkuvg07sh+4QEhaizHptb3gw4HU+hUe0A
+X-Gm-Gg: ASbGncvI32Z6FYMNc7VP+Agy7dhlt9HEpwExNy5R2e3FSksKwprym7Lshj4g35PLfir
+	Vhm5ES4tVRiWaSN74fEtLcwKCa661xl98/WKW8wyDoHm9sYU+qcnwwvHxFx60Ua/n3w71XNb2cZ
+	sw9KkZgTt3ZzwcSExcH8YmMS9L+sAhpNxiQ8rq6bOODw0wsxRFlIjRgKSsn0gZangweIEeD0/nN
+	zq2v33ulIuKlkjSrWojQnQYY0b5f7PtguziHPEPFEfmYg1v2tX08x2zZVNcflTR8AXO7T6FcuXz
+	wpMCXqPEH/9Phw==
+X-Google-Smtp-Source: AGHT+IGo7pRyf6/gnIgkcTwwx90nAh1ndHVKLlnZo67jxd++rcz5yWQb77oRDz4SsXn1vUQCuJqUfw==
+X-Received: by 2002:a17:907:940d:b0:aa6:a05c:b068 with SMTP id a640c23a62f3a-ab38b3d6ec1mr297745766b.56.1737130705975;
+        Fri, 17 Jan 2025 08:18:25 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:56de])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab384c61388sm192232566b.20.2025.01.17.08.18.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jan 2025 08:18:25 -0800 (PST)
+Message-ID: <dfa31033-c4c1-4430-81b2-5df41afc33a2@gmail.com>
+Date: Fri, 17 Jan 2025 16:19:09 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 00/21] io_uring zero copy rx
+To: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
+ Mina Almasry <almasrymina@google.com>,
+ Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
+ Pedro Tammela <pctammela@mojatatu.com>, David Wei <dw@davidwei.uk>,
+ io-uring@vger.kernel.org, netdev@vger.kernel.org
+References: <20250116231704.2402455-1-dw@davidwei.uk>
+ <406fcbd2-55af-4919-abee-7cd80fb449d3@redhat.com>
+ <ce9caef4-0d95-4e81-bdb8-536236377f81@gmail.com>
+ <c25f6c3f-e576-4c56-ba4b-328dfecbfb35@redhat.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <c25f6c3f-e576-4c56-ba4b-328dfecbfb35@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: David Wei <dw@davidwei.uk>
+On 1/17/25 16:05, Paolo Abeni wrote:
+> On 1/17/25 3:42 PM, Pavel Begunkov wrote:
+>> On 1/17/25 14:28, Paolo Abeni wrote:
+>>> On 1/17/25 12:16 AM, David Wei wrote:
+>>>> This patchset adds support for zero copy rx into userspace pages using
+>>>> io_uring, eliminating a kernel to user copy.
+>>>>
+...
+>>>> Broadcom bnxt support:
+>>>> [1]: https://lore.kernel.org/netdev/20241003160620.1521626-8-ap420073@gmail.com/
+>>>>
+>>>> Linux kernel branch:
+>>>> [2]: https://github.com/spikeh/linux.git zcrx/v9
+>>>>
+>>>> liburing for testing:
+>>>> [3]: https://github.com/isilence/liburing.git zcrx/next
+>>>>
+>>>> kperf for testing:
+>>>> [4]: https://git.kernel.dk/kperf.git
+>>>
+>>> We are getting very close to the merge window. In order to get this
+>>> series merged before such deadline the point raised by Jakub on this
+>>> version must me resolved, the next iteration should land to the ML
+>>> before the end of the current working day and the series must apply
+>>> cleanly to net-next, so that it can be processed by our CI.
+>>
+>> Sounds good, thanks Paolo.
+>>
+>> Since the merging is not trivial, I'll send a PR for the net/
+>> patches instead of reposting the entire thing, if that sounds right
+>> to you. The rest will be handled on the io_uring side.
+> 
+> I agree it is the more straight-forward path. @Jakub: do you see any
+> problem with the above?
 
-Add helpers that properly prep or remove a memory provider for an rx
-queue then restart the queue.
+I couldn't cleanly base it onto linus' branch, so after talking it
+over with Jens, I sent it as a normal patchset. Jens will help to
+handle the rest if the net patches are merged.
 
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: David Wei <dw@davidwei.uk>
----
- include/net/page_pool/memory_provider.h |  5 ++
- net/core/netdev_rx_queue.c              | 62 +++++++++++++++++++++++++
- 2 files changed, 67 insertions(+)
-
-diff --git a/include/net/page_pool/memory_provider.h b/include/net/page_pool/memory_provider.h
-index 4f0ffb8f6a0a..b3e665897767 100644
---- a/include/net/page_pool/memory_provider.h
-+++ b/include/net/page_pool/memory_provider.h
-@@ -22,6 +22,11 @@ bool net_mp_niov_set_dma_addr(struct net_iov *niov, dma_addr_t addr);
- void net_mp_niov_set_page_pool(struct page_pool *pool, struct net_iov *niov);
- void net_mp_niov_clear_page_pool(struct net_iov *niov);
- 
-+int net_mp_open_rxq(struct net_device *dev, unsigned ifq_idx,
-+		    struct pp_memory_provider_params *p);
-+void net_mp_close_rxq(struct net_device *dev, unsigned ifq_idx,
-+		      struct pp_memory_provider_params *old_p);
-+
- /**
-   * net_mp_netmem_place_in_cache() - give a netmem to a page pool
-   * @pool:      the page pool to place the netmem into
-diff --git a/net/core/netdev_rx_queue.c b/net/core/netdev_rx_queue.c
-index db82786fa0c4..a13deedf6fc1 100644
---- a/net/core/netdev_rx_queue.c
-+++ b/net/core/netdev_rx_queue.c
-@@ -3,6 +3,7 @@
- #include <linux/netdevice.h>
- #include <net/netdev_queues.h>
- #include <net/netdev_rx_queue.h>
-+#include <net/page_pool/memory_provider.h>
- 
- #include "page_pool_priv.h"
- 
-@@ -80,3 +81,64 @@ int netdev_rx_queue_restart(struct net_device *dev, unsigned int rxq_idx)
- 	return err;
- }
- EXPORT_SYMBOL_NS_GPL(netdev_rx_queue_restart, "NETDEV_INTERNAL");
-+
-+static int __net_mp_open_rxq(struct net_device *dev, unsigned ifq_idx,
-+			     struct pp_memory_provider_params *p)
-+{
-+	struct netdev_rx_queue *rxq;
-+	int ret;
-+
-+	if (ifq_idx >= dev->real_num_rx_queues)
-+		return -EINVAL;
-+	ifq_idx = array_index_nospec(ifq_idx, dev->real_num_rx_queues);
-+
-+	rxq = __netif_get_rx_queue(dev, ifq_idx);
-+	if (rxq->mp_params.mp_ops)
-+		return -EEXIST;
-+
-+	rxq->mp_params = *p;
-+	ret = netdev_rx_queue_restart(dev, ifq_idx);
-+	if (ret) {
-+		rxq->mp_params.mp_ops = NULL;
-+		rxq->mp_params.mp_priv = NULL;
-+	}
-+	return ret;
-+}
-+
-+int net_mp_open_rxq(struct net_device *dev, unsigned ifq_idx,
-+		    struct pp_memory_provider_params *p)
-+{
-+	int ret;
-+
-+	rtnl_lock();
-+	ret = __net_mp_open_rxq(dev, ifq_idx, p);
-+	rtnl_unlock();
-+	return ret;
-+}
-+
-+static void __net_mp_close_rxq(struct net_device *dev, unsigned ifq_idx,
-+			      struct pp_memory_provider_params *old_p)
-+{
-+	struct netdev_rx_queue *rxq;
-+
-+	if (WARN_ON_ONCE(ifq_idx >= dev->real_num_rx_queues))
-+		return;
-+
-+	rxq = __netif_get_rx_queue(dev, ifq_idx);
-+
-+	if (WARN_ON_ONCE(rxq->mp_params.mp_ops != old_p->mp_ops ||
-+			 rxq->mp_params.mp_priv != old_p->mp_priv))
-+		return;
-+
-+	rxq->mp_params.mp_ops = NULL;
-+	rxq->mp_params.mp_priv = NULL;
-+	WARN_ON(netdev_rx_queue_restart(dev, ifq_idx));
-+}
-+
-+void net_mp_close_rxq(struct net_device *dev, unsigned ifq_idx,
-+		      struct pp_memory_provider_params *old_p)
-+{
-+	rtnl_lock();
-+	__net_mp_close_rxq(dev, ifq_idx, old_p);
-+	rtnl_unlock();
-+}
 -- 
-2.47.1
+Pavel Begunkov
 
 

@@ -1,112 +1,104 @@
-Return-Path: <io-uring+bounces-5959-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5960-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF25FA14830
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 03:17:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81153A14839
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 03:26:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60E703AB787
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 02:17:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0D7D3AA165
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 02:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2633B1E1C09;
-	Fri, 17 Jan 2025 02:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D4B1F5606;
+	Fri, 17 Jan 2025 02:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="Ngw2H7bj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Az1AAbjF"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D9A7DA73
-	for <io-uring@vger.kernel.org>; Fri, 17 Jan 2025 02:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883B81096F;
+	Fri, 17 Jan 2025 02:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737080257; cv=none; b=CqXh95MT5jNqGW6Dlj/dPgoYXV2m79HuoJdPROUpdEexQZ5brmccwlLoV2D+VLf3wT705kMdiLUlj2yTeyUWZFSQDVwgEcf2F0i3x0dwZHUkOKqtVeY9f4o3TvzQHFS+QcXGF9HirL84mxfFvQ8a0HowtOVBuOu8XVKMx6AhwZo=
+	t=1737080760; cv=none; b=Y3MBRdtcie/+hl/uZw0bQxoJfjHNabxDLDRs+rNXQwc4zKx3YMrJ14uyNuQ+cflNqGbR56HCGTMTpYfTPzZRz2LhWUWPgELP5h2bWRuGaEXQy9bjv69j6ZYyUN1nsE4cYReTyzd2eInLkoNFmtZbYWGgB3iZy57SG254DySzD48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737080257; c=relaxed/simple;
-	bh=3m/FrXZDTAyAWeSkN4gKvMb83gnoTmYBJ5PoCqaJPBQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G7uOpTz1/mn1wdUsyAavX6FmS97sIyBlalHgPsV/Jj7KDVE7ar23vGNDBl7wsMr2Oyn77pDNYQBjMdUDEYuyp9H9K2HRExfoR/eIaX9gcVCIXr9HGU3FUUrUZNakUs1BNl6Vn6q4Q4ebJOETjw4g8EGlsI7siQdggxe/ZPuuZpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=Ngw2H7bj; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-216426b0865so27920485ad.0
-        for <io-uring@vger.kernel.org>; Thu, 16 Jan 2025 18:17:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1737080255; x=1737685055; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=miBHI/awUJGjxSBVIbXN+cKjr09MpAjHeZ0pzpQ1XKk=;
-        b=Ngw2H7bjHE6kMnASq4YBU39Q3GycVwiwjaSNS0Su0LgABjprXCdz04FWrBE0/LPuB6
-         33432RcSnvuAXoqUYaqDy2vXO3g2OC2QQHjv7pPNS2h0RWyRWqgKkOcm6m3pCybpxHAY
-         ySXhS6T37AuAVTb8PSpm9noeJ8bWO0fVL4alhoxYqEHbpC/N57uC96vNet0UIZogOmgb
-         qt0OCyp6QRZY7fBNRQBscesPhoFUaon92Y0WBmfFft0CHCNRx6CAN5WKq2TW9D36dhAV
-         VnlTUTDoVYXEh5WI9KWomIZo4BUmn6yReHhHuvhDZkUcmd3JPKNA4ei6HthSVipLraQn
-         R8wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737080255; x=1737685055;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=miBHI/awUJGjxSBVIbXN+cKjr09MpAjHeZ0pzpQ1XKk=;
-        b=XJk4OGvaPKIwmBtG8aO1ofdtrXLNfSPseQgb3GzbJHKNeLj3eO8okg3qaRCtP3g0YW
-         KYO9xxc4kr8tl/sUyQr1wT4ZA3XCpU8/DZpfkHla9EzzhywOYzOk1zMa2IvuYBvzvzTk
-         pJvXSMeHjbaYnHmv58bqh7wVTkDVcu/lHJiWGRt1uGqOUJMk5VHbjVzZO+zbeD1IMNw0
-         zWifIhafSW2jzAbF2d6W4v9TbZP5lCb4MaIPJluSYsTb13nJkBVqOEFttqoJhAIg2Ukz
-         C+7/qT+3kZS/WaXedD59nNFgAEgUZApRdz9M7FQiBmyTzF/k1kebgKRk4IOKB0o60Zbb
-         ab/A==
-X-Gm-Message-State: AOJu0Yx7GDRQgh+d1pr+M0r3w30o7CQ+64dUpwATjLXJla6t6asyK1Cw
-	rnPEJ6jvmzqTV/8guZ71UEwBpkS73cssElHoVrSZi9fuztJ4tzZcui4eTQxyafM=
-X-Gm-Gg: ASbGncugnHVXUzY2eZYlSOILW8mOy73QPlE5EzU06W+77xAbTZizIoeDCl70t+eE+1C
-	h2NggmbUa3Dx/HOLhOFMb96WpRt7lxlfdZajRV4kz2lF/BiYjG3wFbHvFHUMWO1T5qYc2DDtMZN
-	VrLUz/ersbap0AyrFJ/+qK8KuMZXCW9eTNoxVZDD0ShUAvWQpkW9BvMm7ialiAvXbq3S3KKAaZ7
-	DhxjuK+hgrygOqKub/JBWKNnqaPb74WNDUFjxqlkWb9boFVNpwZuKD14P2PEGHKsvPSbdDDG9eu
-	+MbJMlGhBPGFyFAAZg==
-X-Google-Smtp-Source: AGHT+IEZ6x3fVj78RCuO0ppzn/afHK5Zc/Yxld78Pqth6r/PPg2Qn6CyA/nHBoOswyU2z/12NVF6tw==
-X-Received: by 2002:a17:902:f64b:b0:215:b087:5d62 with SMTP id d9443c01a7336-21c355b5684mr16995125ad.36.1737080255145;
-        Thu, 16 Jan 2025 18:17:35 -0800 (PST)
-Received: from ?IPV6:2a03:83e0:1156:1:cf1:8047:5c7b:abf4? ([2620:10d:c090:500::4:b8ed])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21c2cea2e94sm6337345ad.28.2025.01.16.18.17.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2025 18:17:34 -0800 (PST)
-Message-ID: <bca59c3c-0105-4bb9-811e-a8334b066751@davidwei.uk>
-Date: Thu, 16 Jan 2025 18:17:33 -0800
+	s=arc-20240116; t=1737080760; c=relaxed/simple;
+	bh=qVbxRSsTHZamwBW++n7OJxtgHbjxQOskNuqIoYmuvmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TbEitcIxlO68T/zr/wkZxy14xGSLQlIps1dsh0VLY4ae7Q47VnrfitMijfNQdGS4kW9Zxy5CMXFHnlSmn7SqaVMm8oOhhy5QNwEUvW8GkUjaix3ZCXwmylJKMOgVXtqNp2iy+pM/WCnM6N/D3HH2FFPHrGlHxeiqnJBko7xgykk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Az1AAbjF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7463BC4CED6;
+	Fri, 17 Jan 2025 02:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737080760;
+	bh=qVbxRSsTHZamwBW++n7OJxtgHbjxQOskNuqIoYmuvmk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Az1AAbjF9AoALnQk57zkS+knVyEAAUa57aamq1C/S96bJRFM4VB0zcHC/+WuSX1wT
+	 ko3ywryspfP7Mi4hz0zavYQOxWHXs0L5Kx9q8eGIjEBA86Jxqxh0nUAsXaCsXC5DJj
+	 FnOu6aAVcyGKJGDyCN8m2L8BP1eRByupEB21zDc+kqvdAI5jxFzrs/N5QLD1pdJ2Ga
+	 DSlg7qt8xtElq9k54/14pbSvIEARzqr3E59hkFQ6PZLs0UbeeGG52FYIiAed0HrI5k
+	 3Knv4Zxh6UHs+mKrXea6I0P40DhCUgYiLW8o7f9wxZLoLY8QixpgnVFDF9JbsEd5DP
+	 8CugNy75F9nEg==
+Date: Thu, 16 Jan 2025 18:25:58 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: David Wei <dw@davidwei.uk>
+Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org, Jens Axboe
+ <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, Paolo Abeni
+ <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, David
+ Ahern <dsahern@kernel.org>, Mina Almasry <almasrymina@google.com>,
+ Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
+ Pedro Tammela <pctammela@mojatatu.com>
+Subject: Re: [PATCH net-next v11 10/21] net: add helpers for setting a
+ memory provider on an rx queue
+Message-ID: <20250116182558.4c7b66f6@kernel.org>
+In-Reply-To: <20250116231704.2402455-11-dw@davidwei.uk>
+References: <20250116231704.2402455-1-dw@davidwei.uk>
+	<20250116231704.2402455-11-dw@davidwei.uk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 14/21] io_uring/zcrx: implement zerocopy
- receive pp memory provider
-Content-Language: en-GB
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: io-uring@vger.kernel.org, netdev@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>
-References: <20250116231704.2402455-1-dw@davidwei.uk>
- <20250116231704.2402455-15-dw@davidwei.uk>
- <20250116180723.21a4e637@kernel.org>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <20250116180723.21a4e637@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2025-01-16 18:07, Jakub Kicinski wrote:
-> On Thu, 16 Jan 2025 15:16:56 -0800 David Wei wrote:
->> +	type = rxq ? NETDEV_A_QUEUE_IO_URING : NETDEV_A_PAGE_POOL_IO_URING;
->> +	nest = nla_nest_start(rsp, type);
->> +	nla_nest_end(rsp, nest);
-> 
-> nla_nest_start() can fail, you should return -EMSGSIZE if it does
+On Thu, 16 Jan 2025 15:16:52 -0800 David Wei wrote:
+> +static void __net_mp_close_rxq(struct net_device *dev, unsigned ifq_idx,
+> +			      struct pp_memory_provider_params *old_p)
+> +{
+> +	struct netdev_rx_queue *rxq;
+> +	int ret;
+> +
+> +	if (WARN_ON_ONCE(ifq_idx >= dev->real_num_rx_queues))
+> +		return;
+> + 
+> +	rxq = __netif_get_rx_queue(dev, ifq_idx);
 
-Thanks, will fix.
+I think there's a small race between io_uring closing and the netdev
+unregister. We can try to uninstall twice, let's put
+
+	/* Callers holding a netdev ref may get here after we already
+	 * went thru shutdown via dev_memory_provider_uninstall().
+	 */
+	if (dev->reg_state > NETREG_REGISTERED &&
+	    !rxq->mp_params.mp_ops)
+		return;
+
+here, and in dev_memory_provider_uninstall() clear the pointers?
+
+> +	if (WARN_ON_ONCE(rxq->mp_params.mp_ops != old_p->mp_ops ||
+> +			 rxq->mp_params.mp_priv != old_p->mp_priv))
+> +		return;
+> +
+> +	rxq->mp_params.mp_ops = NULL;
+> +	rxq->mp_params.mp_priv = NULL;
+> +	ret = netdev_rx_queue_restart(dev, ifq_idx);
+> +	if (ret)
+> +		pr_devel("Could not restart queue %u after removing memory provider.\n",
+> +			 ifq_idx);
+> +}
 

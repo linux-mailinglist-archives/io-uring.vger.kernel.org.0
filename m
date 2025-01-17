@@ -1,127 +1,79 @@
-Return-Path: <io-uring+bounces-5947-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5948-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B79A146EC
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 01:07:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DE2A1479D
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 02:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BACD169334
-	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 00:06:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F042E188D26F
+	for <lists+io-uring@lfdr.de>; Fri, 17 Jan 2025 01:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAC717E;
-	Fri, 17 Jan 2025 00:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95ED82E40E;
+	Fri, 17 Jan 2025 01:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FPtzjQnm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUXtOWtI"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BE5647
-	for <io-uring@vger.kernel.org>; Fri, 17 Jan 2025 00:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7A32D613
+	for <io-uring@vger.kernel.org>; Fri, 17 Jan 2025 01:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737072412; cv=none; b=WZx3h6/zA8va+38CzTIcNy/UfNT6vVgBQHC/xaKH+KGLObtB66i+iyl/C340TjI/LKQPHmLGpxn3/yjez5g3psaPWH6Rv3koFh0zEYacTstWivEs6wMA80GvBw5uYZNbBGTgSvvmBCKyjitzEeXvId+wZQ1lTqJLJCDaNGWtPDg=
+	t=1737077970; cv=none; b=FxE2/mdqh7ekw1VwvRwx4d0KKOH2PSqaNiW2cLCDVo+DvsYclQgpWFyEN0a43wcwEqqs9EyaLp2Etm1dPTjDtNy1pCG9A7BmERTRM8LKQ37a9n7lo2M4aOaYFEFkvh0hm1+BLJ78tKbsAVKMCTLoQ7OZzk55MWDbf2Ii/jdm6Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737072412; c=relaxed/simple;
-	bh=bA1jhnb/KQscNhg0S0E6HUdaCOp4Ip4M/yoAeS7OJfc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=qhcDFrN2pZq62a7yFyz77kpzphAAV1S8altcjnQMczE7MamiazWmXX1Np1X1OPNPsZ+tJoPAZCEeE0ar3y+TAUdM0KHvW1GvXTwVyhUKPOSGZ7F3YOM1ruCmJEelKTngZKQpFTI6OcFevjYZKL7ILgD1SSDnS3ElWvbvYJ2RYf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FPtzjQnm; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3ce34c6872aso13498085ab.0
-        for <io-uring@vger.kernel.org>; Thu, 16 Jan 2025 16:06:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1737072409; x=1737677209; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9LJqyha/CZK1JadKu8JvqqCr2Ew9i16jXaYtdPVlscY=;
-        b=FPtzjQnmnB+/rq8fq0uCF8zTNdvbcB5s/6BPb05HOK2vPTtyWrjcs9yeywO67zHmgv
-         /gnwy4y8BKqUGp9Pu2KwEmgMdLXVpzs5XEk6nIEhCtpL/IdYwu3Ss6dbtvnL2wX0CarG
-         iJMZrvJRnO5bwF5SSqXXXuvsXyqvR5jYX8mpdb85EaTzh6bwHOVixq4P6VzLB3Gxf8y+
-         HFlyFZ65WdBr8EAT+zba92dpT4fwYQIdXS9WULlXlasvknSYNVXU0Af8kDfvWpbQKR6f
-         gn1DsA3UMobj0iX+WMS3UoBSIkoty2Td9/0Jr5kupaWSQTBKIxc9Jn4l0U4eGl093nmq
-         DdJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737072409; x=1737677209;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9LJqyha/CZK1JadKu8JvqqCr2Ew9i16jXaYtdPVlscY=;
-        b=utTdt61FMZ0Kd+icFQOA+BgIotph4G/D5kIySK6kNSeQPaFWT0Ixg6ODQdObPUbvp8
-         K0AMb7Oz+6SIi59hp5fXY333RC/M2f86xhev1g1EvvRJHEGPY1W/cTQrUGVq7IMaYC1M
-         b69kKNPcp706Xgz10MMLQY07iqUKaS/YNObxDwiAi9CqQhubengCDh+xXfsYcOyFNfFz
-         UfzumRFUW3NWEZgrEQTIHfNYUCbvyP3+A/qUlW+om3zbIq88A3jMdTfC4HZzL0PFhalM
-         r4nMLLTvTvO2WnUCpHhgm3Dfl4D2meHX5oxjn1sHqUa3Y1rqip8OXV3IscM6hvW8ljNG
-         OH9w==
-X-Gm-Message-State: AOJu0Ywy40VMWUxhYRdhrh/tl+a8U2j7+wXL6W65BS1cb0Q3x/K8GMOf
-	kJGFtcP9QYXUj5gjm7cCkcZVTWHkdcz07w7qJdRsXrRy0ow2+m0ArWK829IkTSg=
-X-Gm-Gg: ASbGncsH1Hcn2mnECjf7jJjDeH0nGJ6o5Xmje7bXiIatnc4zuiGlntJBRUtXr3GDoS9
-	y9SPkpHdLM/5HnRhuKS0OY99nAJ7I+MO47EK3EAdTj82ocTp59QfdGoIoRy4sSJHri/lolnZb+W
-	sSUp2bP01w8niSh/XCzCEKSX3HLKVmnccQHJ7o5ojzvMKnfKFMo9i7CUUQV4DpyngNZBBKe13d+
-	H6/oIwh7OAXzQFqcVbtV7bMrv1h0009ybRGJ+ZZ+zgpvSNWJM6bZQ==
-X-Google-Smtp-Source: AGHT+IFHYrNB0xuYUsg845k5sfXswZCncPTNMLfzhPSsAJt+k85sTsVh+9SqWe2Fps3cbSWynVj0pQ==
-X-Received: by 2002:a05:6e02:3a11:b0:3ce:6b10:17fc with SMTP id e9e14a558f8ab-3cf743ca060mr5947425ab.4.1737072409043;
-        Thu, 16 Jan 2025 16:06:49 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3cf71b682cbsm2723695ab.67.2025.01.16.16.06.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2025 16:06:48 -0800 (PST)
-Message-ID: <4194f9f4-07fc-431b-9af1-5888c07193ba@kernel.dk>
-Date: Thu, 16 Jan 2025 17:06:47 -0700
+	s=arc-20240116; t=1737077970; c=relaxed/simple;
+	bh=PmkhnXPhZ3cEOqEZJzS5MlWjZleCCru0sj3Xw61X4SU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ioV1T5XT2s2kVmwub8OQ4yOwJxtCLsTexhfwiHkbBd7Os6JoRYhd+yFVqEkL3F4Nsq8NbbtS5Ru3FP4E/Hz8FeURTMBt1Nkw3kufhM1r35ZrCQdx29JLqGN6/sTvDlMPws6TJfwgpLtHa1DxdLuBOHxJC0ku8wzM2xmjJysSynY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JUXtOWtI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EF6FC4CED6;
+	Fri, 17 Jan 2025 01:39:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737077970;
+	bh=PmkhnXPhZ3cEOqEZJzS5MlWjZleCCru0sj3Xw61X4SU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=JUXtOWtIC7K2D9L2VaGrGm3Cpt1rNGIg4BtHfrjMuvXHFWb6PpnT4yaRhkS3qBVXL
+	 YMCaG719My5tgig2aK10MKuikdMtxM+VpZcET+yK8je2s4MC5QdXOynbjFcYGAPBXc
+	 IWMQ+QcH7kbXvp3ZATqCglkGB5gF6GNBjzV+F5TeTzx/2TJ2t49wUktFi7UTTefAFO
+	 kcyWd8v8N6mfrQJO/5Uvl2NjQfQOIr9pJFHjIb1WrxhbLcpvhpwxVPz+SgVfEBST+5
+	 dixGn2LKCawWMBYU76ISfjtaoSl6yHi0otFXL2umw7Jv69GkOto6E6gCssLweXO296
+	 Q/6l9rSobBNaQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B0087380AA63;
+	Fri, 17 Jan 2025 01:39:54 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fixes for 6.13-final
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <4194f9f4-07fc-431b-9af1-5888c07193ba@kernel.dk>
+References: <4194f9f4-07fc-431b-9af1-5888c07193ba@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <4194f9f4-07fc-431b-9af1-5888c07193ba@kernel.dk>
+X-PR-Tracked-Remote: git://git.kernel.dk/linux.git tags/io_uring-6.13-20250116
+X-PR-Tracked-Commit-Id: 6f7a644eb7db10f9993039bab7740f7982d4edf4
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a634dda26186cf9a51567020fcce52bcba5e1e59
+Message-Id: <173707799325.1651717.17622177516182154332.pr-tracker-bot@kernel.org>
+Date: Fri, 17 Jan 2025 01:39:53 +0000
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 6.13-final
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+The pull request you sent on Thu, 16 Jan 2025 17:06:47 -0700:
 
-One fix for the error handling in buffer cloning, and one fix for the
-ring resizing. Two minor followups for the latter as well. Both of these
-issues only affect 6.13, so not marked for stable.
+> git://git.kernel.dk/linux.git tags/io_uring-6.13-20250116
 
-Please pull!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a634dda26186cf9a51567020fcce52bcba5e1e59
 
-
-The following changes since commit bd2703b42decebdcddf76e277ba76b4c4a142d73:
-
-  io_uring: don't touch sqd->thread off tw add (2025-01-10 14:00:25 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux.git tags/io_uring-6.13-20250116
-
-for you to fetch changes up to 6f7a644eb7db10f9993039bab7740f7982d4edf4:
-
-  io_uring/register: cache old SQ/CQ head reading for copies (2025-01-15 08:39:15 -0700)
-
-----------------------------------------------------------------
-io_uring-6.13-20250116
-
-----------------------------------------------------------------
-Jens Axboe (4):
-      io_uring/rsrc: fixup io_clone_buffers() error handling
-      io_uring/register: use stable SQ/CQ ring data during resize
-      io_uring/register: document io_register_resize_rings() shared mem usage
-      io_uring/register: cache old SQ/CQ head reading for copies
-
- io_uring/register.c | 52 +++++++++++++++++++++++++++++++---------------------
- io_uring/rsrc.c     | 10 +---------
- 2 files changed, 32 insertions(+), 30 deletions(-)
+Thank you!
 
 -- 
-Jens Axboe
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 

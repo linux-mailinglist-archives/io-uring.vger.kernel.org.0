@@ -1,110 +1,202 @@
-Return-Path: <io-uring+bounces-5996-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-5997-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB05A15C44
-	for <lists+io-uring@lfdr.de>; Sat, 18 Jan 2025 11:00:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A31A15D87
+	for <lists+io-uring@lfdr.de>; Sat, 18 Jan 2025 16:02:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC433A81CC
-	for <lists+io-uring@lfdr.de>; Sat, 18 Jan 2025 10:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A633A827E
+	for <lists+io-uring@lfdr.de>; Sat, 18 Jan 2025 15:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0427816CD33;
-	Sat, 18 Jan 2025 10:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB4E172BB9;
+	Sat, 18 Jan 2025 15:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="26AaB3l4"
 X-Original-To: io-uring@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93551552E3
-	for <io-uring@vger.kernel.org>; Sat, 18 Jan 2025 10:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105E517B421
+	for <io-uring@vger.kernel.org>; Sat, 18 Jan 2025 15:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737194439; cv=none; b=WL9LStvaKgnw9UjPZ1qUB2dBqcfLbTth3oIyrRCkMaeF2mHDz7yRfxBbzo/SW7hq+jimHZN5Oc+NeMwk5gQAbB5LZblX+s+AqFzykPih7ckg1sKq6qXNy0VJj5WubYJj8Bof+rslY5Lt3MNryUS6KDl3z0Hmuvf4NwiD1/Em6RQ=
+	t=1737212562; cv=none; b=Ek8rAy63DJXd7j8Ea2suGyxnLwnj1ZUEQgiplqJ5ASpMHV5sMgtG2wx3uH4PzwOcqcciG+YWo1WxAhRNyNWsjJzT4jeSDmmJ2xfDHGLCqTS0lhQfDUBn+Bi68njTuZ0iCpGw6mk67aAN4I34DEDlUJbyo+zonCsNLhkDrDeVR/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737194439; c=relaxed/simple;
-	bh=1CKjoC61DsdZ/dOV9au4mXeUpJDgxSjBG7C0mAnUAHs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=drnBi8+W3SsKxuJwRu8361AxbBpvQLuZoEroPKZIfTcxYrQc60j7zmqfvRDuxbUOClrUyoPe7TrjfQsb74oAAS7pvjYXYO5Mvr5VqFlN7VfdxtTzrZOfxkEbq783k9pUHa7qrOysyRirZ4hfH5rzPWzeyLMukVhe3cwBFSMEx9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YZs681kxyzrSVT;
-	Sat, 18 Jan 2025 17:40:32 +0800 (CST)
-Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
-	by mail.maildlp.com (Postfix) with ESMTPS id D5E49180217;
-	Sat, 18 Jan 2025 17:42:11 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd200010.china.huawei.com (7.221.188.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Sat, 18 Jan 2025 17:42:11 +0800
-Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
- kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Sat, 18 Jan 2025 17:42:11 +0800
-From: lizetao <lizetao1@huawei.com>
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
-CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>
-Subject: RE: [PATCH] test/defer: fix deadlock when io_uring_submit fail
-Thread-Topic: [PATCH] test/defer: fix deadlock when io_uring_submit fail
-Thread-Index: AdtnTle0AdCKvQv4QCG1RPRIudIQwwAlLjSAAGp9rIA=
-Date: Sat, 18 Jan 2025 09:42:11 +0000
-Message-ID: <e3567f48dad84d06bbca5d40d1ec79c0@huawei.com>
-References: <77ab74b3fdff491db2a5596b1edc86b6@huawei.com>
- <70895666-4ec5-4a2e-a9c2-33c296087beb@kernel.dk>
-In-Reply-To: <70895666-4ec5-4a2e-a9c2-33c296087beb@kernel.dk>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1737212562; c=relaxed/simple;
+	bh=Ob0eexNFxLX/uszBPzKcXPy9tHfgF2F+/a4DmhBo8No=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H4yyTNKLb8tV+1Scs32MBgOWWMoqfeMNgqJhKWKbbN+Olayh+X/poiaV+QvKWyynvwtWNYvbOumAlHmgcbMWA8hT0uMo3Qq1LbUZYEL9hChFP2iDKc6fG/4gdQorVeDMtzCWYB97qb4Rgd4Y/UpaP3ahhB7s/wAzbgHnr8adIGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=26AaB3l4; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-844d7f81dd1so108186639f.2
+        for <io-uring@vger.kernel.org>; Sat, 18 Jan 2025 07:02:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1737212557; x=1737817357; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jCVGHiLOIHwhwiWmLRg6KlEVGdmx+jR4E4pD9bsH/Tg=;
+        b=26AaB3l4sYkacZZO5/54SdNLpzBr9aD7zvUZGfXBqJZRJJSXLOI4TSpioQkMWsY5Ad
+         muL83DZ2v/TPN1rLpf8gUWHCugww/G0fVmDOP8MuGi0IOlO5QODOIIclpbDvmSdnU6bB
+         EXTciJ9XmvFtBgqSB9SsKvkUyi83nb961sCib05o210/Q3rgzlUt+lCwbzBAzFd1k+X8
+         5rOAXMvBRW0M0W4Colse6ODb+Huud+QiE8G+GwXEpwuYG2YVDcX6YvixbqDyMjzQW5Hl
+         R8mloeiYKXfvG+QS8izOnsULMuTSNyp83cEmwClXlqvlVdCe/MCppxXpm2ljsNM0Uooy
+         ZNDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737212557; x=1737817357;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jCVGHiLOIHwhwiWmLRg6KlEVGdmx+jR4E4pD9bsH/Tg=;
+        b=rNZmwUfNVHdCaZZTxSvfvGZAKg8PpbeueXS/oq6IiPfcBE2hDvmp1O2Mc4x81tBxkj
+         ueAKfB66M1d6cmSWEOXU5yI5gCGLhM7iGk2SVM3MV6f+8mEABZSyRNXQlvpnqkqkL0Q6
+         fGLDhZwY/XCoBSoqWC9rCcYjzscV4X6NC/AG1mlzsicuXe8gZiExY7tUufTYNfmxdk0g
+         s+bxrHGjd6+xE9TC/WvuELhMTgNTDyAKftJagK0COC6OeE85Qi6OSiQ1rhtL5MN2qjTj
+         VDHnamwWJKB40XUs7+lZiiHBginsYG0M8d4yX1+2RFyIO+X8VGwiOX1EL6zHORUgebev
+         mduA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVUtE8f4uO8s51fIiEVGyjrcw417M274IsH6Cs4laMm4EkM1uylwjER9wqif/i66wqMXejgcNsPg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhJz1ZEbflp70b32BNwEZn0bKTZmycdeTmfvyPEsaEml3mCZRq
+	n0oIER8b26BMjsTMsfD0mefkvm3dCV9HWq6naRxP5TACvVaFPL/fnnFEzpXkO1k=
+X-Gm-Gg: ASbGncvkhvsrjb20Th1BPClBeNy2FMNAfVshTdl39nc63wzXXWmMb/2wnGItPAvNFUQ
+	fyoBoynpi+13g+1FURdspov+ZH5c32YsgKYZdY07AQPbjb+kNNjx6QhTxB6MTKuuPtoDu3ijOR0
+	CXpPc7OphbeXxp46du5fQJMYEjs9MAbFM9i+JoP2K1KYy32yIzf8iQnzqG7rT0kJzVEnxhwsfyl
+	XvBVjvvU9QEgt910XxD/AJwg6ORLJD6pJB8m6Z1Bff2SaLkElfXD21KzEPTTnspQsw=
+X-Google-Smtp-Source: AGHT+IG/G0F20vBCgcLgBLyQAt7AU7VvDlOWtwu1/dj16Rm+I+2RhznMyoeFB7hsHm/nGzUTg9R8/g==
+X-Received: by 2002:a05:6602:2b8a:b0:84c:b404:f21f with SMTP id ca18e2360f4ac-851b65226c5mr501759839f.13.1737212556699;
+        Sat, 18 Jan 2025 07:02:36 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-851b01f2c82sm120287739f.20.2025.01.18.07.02.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Jan 2025 07:02:35 -0800 (PST)
+Message-ID: <cf13b64b-29fb-47b9-ae2d-1dcedd8cc415@kernel.dk>
+Date: Sat, 18 Jan 2025 08:02:34 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH] fix io_uring_show_fdinfo() misuse of ->d_iname
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20250118025717.GU1977892@ZenIV>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <20250118025717.GU1977892@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmVucyBBeGJvZSA8
-YXhib2VAa2VybmVsLmRrPg0KPiBTZW50OiBUaHVyc2RheSwgSmFudWFyeSAxNiwgMjAyNSAxMDo1
-MSBQTQ0KPiBUbzogbGl6ZXRhbyA8bGl6ZXRhbzFAaHVhd2VpLmNvbT47IFBhdmVsIEJlZ3Vua292
-IDxhc21sLnNpbGVuY2VAZ21haWwuY29tPg0KPiBDYzogaW8tdXJpbmdAdmdlci5rZXJuZWwub3Jn
-DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIHRlc3QvZGVmZXI6IGZpeCBkZWFkbG9jayB3aGVuIGlv
-X3VyaW5nX3N1Ym1pdCBmYWlsDQo+IA0KPiBPbiAxLzE1LzI1IDY6MTAgQU0sIGxpemV0YW8gd3Jv
-dGU6DQo+ID4gV2hpbGUgcGVyZm9ybWluZyBmYXVsdCBpbmplY3Rpb24gdGVzdGluZywgYSBidWcg
-cmVwb3J0IHdhcyB0cmlnZ2VyZWQ6DQo+ID4NCj4gPiAgIEZBVUxUX0lOSkVDVElPTjogZm9yY2lu
-ZyBhIGZhaWx1cmUuDQo+ID4gICBuYW1lIGZhaWxfdXNlcmNvcHksIGludGVydmFsIDEsIHByb2Jh
-YmlsaXR5IDAsIHNwYWNlIDAsIHRpbWVzIDANCj4gPiAgIENQVTogMTIgVUlEOiAwIFBJRDogMTg3
-OTUgQ29tbTogZGVmZXIudCBUYWludGVkOiBHICAgICAgICAgICBPDQo+IDYuMTMuMC1yYzYtZ2Yy
-YTBhMzdiMTc0YiAjMTcNCj4gPiAgIFRhaW50ZWQ6IFtPXT1PT1RfTU9EVUxFDQo+ID4gICBIYXJk
-d2FyZSBuYW1lOiBsaW51eCxkdW1teS12aXJ0IChEVCkNCj4gPiAgIENhbGwgdHJhY2U6DQo+ID4g
-ICAgc2hvd19zdGFjaysweDIwLzB4MzggKEMpDQo+ID4gICAgZHVtcF9zdGFja19sdmwrMHg3OC8w
-eDkwDQo+ID4gICAgZHVtcF9zdGFjaysweDFjLzB4MjgNCj4gPiAgICBzaG91bGRfZmFpbF9leCsw
-eDU0NC8weDY0OA0KPiA+ICAgIHNob3VsZF9mYWlsKzB4MTQvMHgyMA0KPiA+ICAgIHNob3VsZF9m
-YWlsX3VzZXJjb3B5KzB4MWMvMHgyOA0KPiA+ICAgIGdldF90aW1lc3BlYzY0KzB4N2MvMHgyNTgN
-Cj4gPiAgICBfX2lvX3RpbWVvdXRfcHJlcCsweDMxYy8weDc5OA0KPiA+ICAgIGlvX2xpbmtfdGlt
-ZW91dF9wcmVwKzB4MWMvMHgzMA0KPiA+ICAgIGlvX3N1Ym1pdF9zcWVzKzB4NTljLzB4MWQ1MA0K
-PiA+ICAgIF9fYXJtNjRfc3lzX2lvX3VyaW5nX2VudGVyKzB4OGRjLzB4ZmEwDQo+ID4gICAgaW52
-b2tlX3N5c2NhbGwrMHg3NC8weDI3MA0KPiA+ICAgIGVsMF9zdmNfY29tbW9uLmNvbnN0cHJvcC4w
-KzB4YjQvMHgyNDANCj4gPiAgICBkb19lbDBfc3ZjKzB4NDgvMHg2OA0KPiA+ICAgIGVsMF9zdmMr
-MHgzOC8weDc4DQo+ID4gICAgZWwwdF82NF9zeW5jX2hhbmRsZXIrMHhjOC8weGQwDQo+ID4gICAg
-ZWwwdF82NF9zeW5jKzB4MTk4LzB4MWEwDQo+ID4NCj4gPiBUaGUgZGVhZGxvY2sgc3RhY2sgaXMg
-YXMgZm9sbG93czoNCj4gPg0KPiA+ICAgaW9fY3FyaW5nX3dhaXQrMHhhNjQvMHgxMDYwDQo+ID4g
-ICBfX2FybTY0X3N5c19pb191cmluZ19lbnRlcisweDQ2Yy8weGZhMA0KPiA+ICAgaW52b2tlX3N5
-c2NhbGwrMHg3NC8weDI3MA0KPiA+ICAgZWwwX3N2Y19jb21tb24uY29uc3Rwcm9wLjArMHhiNC8w
-eDI0MA0KPiA+ICAgZG9fZWwwX3N2YysweDQ4LzB4NjgNCj4gPiAgIGVsMF9zdmMrMHgzOC8weDc4
-DQo+ID4gICBlbDB0XzY0X3N5bmNfaGFuZGxlcisweGM4LzB4ZDANCj4gPiAgIGVsMHRfNjRfc3lu
-YysweDE5OC8weDFhMA0KPiA+DQo+ID4gVGhpcyBpcyBiZWNhdXNlIGFmdGVyIHRoZSBzdWJtaXNz
-aW9uIGZhaWxzLCB0aGUgZGVmZXIudCB0ZXN0Y2FzZSBpcyBzdGlsbCB3YWl0aW5nIHRvDQo+IHN1
-Ym1pdCB0aGUgZmFpbGVkIHJlcXVlc3QsIHJlc3VsdGluZyBpbiBhbiBldmVudHVhbCBkZWFkbG9j
-ay4NCj4gPiBTb2x2ZSB0aGUgcHJvYmxlbSBieSB0ZWxsaW5nIHdhaXRfY3FlcyB0aGUgbnVtYmVy
-IG9mIHJlcXVlc3RzIHRvIHdhaXQgZm9yLg0KPiANCj4gSSBzdXNwZWN0IHRoaXMgd291bGQgYmUg
-Zml4ZWQgYnkgc2V0dGluZyBJT1JJTkdfU0VUVVBfU1VCTUlUX0FMTCBmb3IgcmluZyBpbml0LA0K
-PiBzb21ldGhpbmcgcHJvYmFibHkgYWxsL21vc3QgdGVzdHMgc2hvdWxkIHNldC4NCg0KDQpJIHRl
-c3RlZCBpdCBhbmQgZm91bmQgdGhhdCBJT1JJTkdfU0VUVVBfU1VCTUlUX0FMTCBjYW4gaW5kZWVk
-IHNvbHZlIHRoaXMgcHJvYmxlbS4gDQpTaG91bGQgSSBqdXN0IG1vZGlmeSB0aGlzIHByb2JsZW0g
-b3IgYWRkIElPUklOR19TRVRVUF9TVUJNSVRfQUxMIHRvIHRoZSBnZW5lcmFsIHBhdGggdG8NCnNv
-bHZlIG1vc3QgcG9zc2libGUgcHJvYmxlbXM/DQo+IA0KPiAtLQ0KPiBKZW5zIEF4Ym9lDQoNCi0t
-LQ0KTGkgWmV0YW8NCg0K
+On 1/17/25 7:57 PM, Al Viro wrote:
+> 	The output of io_uring_show_fdinfo() is crazy - for
+> each slot of io_uring file_table it produces either
+> INDEX: <none>
+> or
+> INDEX: NAME
+> where INDEX runs through all numbers from 0 to ctx->file_table.data.nr-1
+> and NAME is usually the last component of pathname of file in slot
+> #INDEX.  Usually == if it's no longer than 39 bytes.  If it's longer,
+> you get junk.  Oh, and if it contains newlines, you get several lines and
+> no way to tell that it has happened, them's the breaks.  If it's happens
+> to be /home/luser/<none>, well, what you see is indistinguishable from what
+> you'd get if it hadn't been there...
+> 
+> According to Jens, it's *not* cast in stone, so we should be able to
+> change that to something saner.  I see two options:
+> 
+> 1) replace NAME with actual pathname of the damn file, quoted to reasonable
+> extent.
+> 
+> 2) same, and skip the INDEX: <none> lines.  It's not as if they contained
+> any useful information - the size of table is printed right before that,
+> so you'd get
+> 
+> ...
+> UserFiles:	16
+>     0: foo
+>    11: bar
+> UserBufs:	....
+> 
+> instead of
+> 
+> ...
+> UserFiles:	16
+>     0: foo
+>     1: <none>
+>     2: <none>
+>     3: <none>
+>     4: <none>
+>     5: <none>
+>     6: <none>
+>     7: <none>
+>     8: <none>
+>     9: <none>
+>    10: <none>
+>    11:	bar
+>    12: <none>
+>    13: <none>
+>    14: <none>
+>    15: <none>
+> UserBufs:	....
+> 
+> IMO the former is more useful for any debugging purposes.
+> 
+> The patch is trivial either way - (1) is
+> ------------------------
+> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+> index b214e5a407b5..1017249ae610 100644
+> --- a/io_uring/fdinfo.c
+> +++ b/io_uring/fdinfo.c
+> @@ -211,10 +211,12 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
+>  
+>  		if (ctx->file_table.data.nodes[i])
+>  			f = io_slot_file(ctx->file_table.data.nodes[i]);
+> +		seq_printf(m, "%5u: ", i);
+>  		if (f)
+> -			seq_printf(m, "%5u: %s\n", i, file_dentry(f)->d_iname);
+> +			seq_file_path(m, f, " \t\n\\<");
+>  		else
+> -			seq_printf(m, "%5u: <none>\n", i);
+> +			seq_puts(m, "<none>");
+> +		seq_puts(m, "\n");
+>  	}
+>  	seq_printf(m, "UserBufs:\t%u\n", ctx->buf_table.nr);
+>  	for (i = 0; has_lock && i < ctx->buf_table.nr; i++) {
+> ------------------------
+> and (2) -
+> ------------------------
+> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+> index b214e5a407b5..f60d0a9d505e 100644
+> --- a/io_uring/fdinfo.c
+> +++ b/io_uring/fdinfo.c
+> @@ -211,10 +211,11 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
+>  
+>  		if (ctx->file_table.data.nodes[i])
+>  			f = io_slot_file(ctx->file_table.data.nodes[i]);
+> -		if (f)
+> -			seq_printf(m, "%5u: %s\n", i, file_dentry(f)->d_iname);
+> -		else
+> -			seq_printf(m, "%5u: <none>\n", i);
+> +		if (f) {
+> +			seq_printf(m, "%5u: ", i);
+> +			seq_file_path(m, f, " \t\n\\");
+> +			seq_puts(m, "\n");
+> +		}
+>  	}
+>  	seq_printf(m, "UserBufs:\t%u\n", ctx->buf_table.nr);
+>  	for (i = 0; has_lock && i < ctx->buf_table.nr; i++) {
+> ------------------------
+> 
+> Preferences?  The difference in seq_printf() argument is due to the need
+> to quote < in filenames if we need to distinguish them from <none>;
+> whitespace and \ needs to be quoted in either case.
+
+I like #2, there's no reason to dump the empty nodes. Thanks Al!
+
+-- 
+Jens Axboe
 

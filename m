@@ -1,114 +1,105 @@
-Return-Path: <io-uring+bounces-6026-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6027-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8EB9A17285
-	for <lists+io-uring@lfdr.de>; Mon, 20 Jan 2025 19:07:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7CB0A17287
+	for <lists+io-uring@lfdr.de>; Mon, 20 Jan 2025 19:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 274A4163C98
-	for <lists+io-uring@lfdr.de>; Mon, 20 Jan 2025 18:07:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938023A5870
+	for <lists+io-uring@lfdr.de>; Mon, 20 Jan 2025 18:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D3A1EC016;
-	Mon, 20 Jan 2025 18:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40961EC016;
+	Mon, 20 Jan 2025 18:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wkZAwit1"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Br25QNwN"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E939C1EC00E
-	for <io-uring@vger.kernel.org>; Mon, 20 Jan 2025 18:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5B01EE010
+	for <io-uring@vger.kernel.org>; Mon, 20 Jan 2025 18:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737396428; cv=none; b=h8g5YC6xpFNpsmbI7pIDqnI5koHATyl976yfeIgATuNVUj3iH5H5QBQQA2GSKlK9v8ow38+J6nMsKAfrhUDEqNfug7a/VcYniZhk8FD0BmD/cG9wORW2zog7KJMFRaO2lshM6dezEgJ0cJraTew7JkSZ8dU8v+b12MssapMdDso=
+	t=1737396452; cv=none; b=fo8AsjR7I5urH6dsGVVcJNT95ZDq/p9EoSq59hWME3yuKNYMcpeB45exLZBU8dteHtt1CCCZV9CKHGpd660ZCUtVMlEzOfTRcNR1Um2I1sSE1kcb1IuOAzaTDlWPGJ6X/4Z/44VaF8mVlXb8zBaKeruimh65hvvxo3AoRr00plM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737396428; c=relaxed/simple;
-	bh=8AdyMzVl3VyDGO8YGEbcZY38N6ptSUkUngU1LwT4/ik=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EKRfZh2puoWvIx0uhqmtFfjzBXiaq3RewYmoMqTyCfC4x3PYyjjcFS8gpWsgfn1R8yRLNZ8ab13kjV5US7PViso/SWgwMlPO4b642hJEl3XFLKqvp654LJt/olCMbAhKrgR4wE6d9J7vKqCSru1D11YHygsssVJzf5hWuHHvrWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=wkZAwit1; arc=none smtp.client-ip=209.85.166.42
+	s=arc-20240116; t=1737396452; c=relaxed/simple;
+	bh=8o1+gDmLzIoy9QcfJXrcR8i/C7txPinz6Gyifob8WPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iJnxMISksUl2Vp4i4PcZycrBC/wHIYAyKjY9BZ1p4huttSLbvKHqT++AQLzNzb7Gkn1g3AQTsKKpOf8DovyhMJIV2ntc3kJ9jHxQuGhuZAS11DYYu+YNA88KPTswf0G0Fi8PdhIf97jn85KZpucLEuU85INlUN8C3nF/npwxroc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Br25QNwN; arc=none smtp.client-ip=209.85.166.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-844e9b8b0b9so374431939f.0
-        for <io-uring@vger.kernel.org>; Mon, 20 Jan 2025 10:07:04 -0800 (PST)
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-844e7bc6d84so144084639f.0
+        for <io-uring@vger.kernel.org>; Mon, 20 Jan 2025 10:07:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1737396424; x=1738001224; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tc6EjsY8XkMBH4MPv8CRSs+PVzget+pwyf0+O80F6gI=;
-        b=wkZAwit1/9DhYwcvlgfDSsZySc5dUwv54Rsnwlj1jFbUEz1srYKpZ92nDRU+obm8Y8
-         6zKgSWleqp3R500F8TA+13SOGLiuaJd8/icWlkaKJDJAre1dp66PuPJyFRdKHoxohZE8
-         RLefVQKnolCKeGEdkusuD7xtxTn4yzoBnmOByVnBma1Wb/Jjdye8Tj8ERAhFCnZG8h1J
-         jKbltXL709EgE8JpBMuDlMbO+10gy4N8Gx4IN51Dy2LPfKunbCkTmxVXThPrbOZ/w1fx
-         c2XRorOQYoNNz7OovGYFR0Lms62m37g+GinAwbTCn/dY4zX16SVj+cUvYy+/UrJOxaRC
-         3Nnw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1737396449; x=1738001249; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sUE5BSP8rOO/RztouXu4UPmBIQ8Lb41c+zpHn5kWrgI=;
+        b=Br25QNwNYPlR4H1V7ulfZ+UzQNieuYxUxQ9ux+zBoFpH7o+nR5RzEo27CTlLXL2Nt8
+         /5U5wf6JT9lqWih+4dGgoFgCbfSptPXsAmAXIpE21Zl74mcXa4kTQd4EU83TEtQIMSic
+         /J5NVTmAOM4eWGs/3hkHgt2zUfwPRkAX2979hRFWzP28wrhleQucAxzjKwqzfeq6w8jH
+         L2s95E5SpoX0V+L77SZirU+4eAO7yKNdQGy7uCVHqR8+QuP19lFXUSn/HjuQVV7Dxxoy
+         DwYpR1z1Mq/NEv7Z2JpUyTyqGEUcQgU3duWnnF6ryUipqJpTkmLNSS8EfSYthu69OAEW
+         1/iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737396424; x=1738001224;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tc6EjsY8XkMBH4MPv8CRSs+PVzget+pwyf0+O80F6gI=;
-        b=jXTROFeX/w0Ih5XMQyulIWBKfn7ET4msmOjZ4pnEQxxkDXT8fDVXaTQjQ3ZU5Ll/Yc
-         k9F0lQUOxvgQqh/eBq6g+6dfwPy8IC8FrOmB0ijmb+vp32FTfZVyGbTc20LBrPPwqP9P
-         QDfOssqaVBWmIVcNprVHJOPW46OAq/BYKU55SBE7GZj0C4tDpLxch1F2sbMjpIKE6xML
-         bcpjCJqemIH8hAkIYlZV0SGxDfF42REFyisyTPv/4j/uNEICfXKFm/uU3puE40yhJ7ay
-         qrpxTqUTG6dS3UX4354TQyQ+u8B2cPw5dDA3PCQyVOlhaeS/VBivDByQ1HSse05yOzIU
-         dk/w==
-X-Gm-Message-State: AOJu0YziJTni7S5UHJZlgx2XMoTmksoHFLff6uTzWhjQCmgX+P4/IqFT
-	iF44U2sZJ6zXENIyzsp240wtIoepP7MI6GMPiJX8bawTDJQZitePcKCHHzW/UeE=
-X-Gm-Gg: ASbGncsDfrSJS24V+h7qoRCwr7IRmk3A0e+rWEv0uW1sTkJc3peA0+FoEthrrwa7N5/
-	O86iANry/6Yz44xeSH/REK/ucmqTCgy1MiYpO6YFRZFNGy8qdqdzSiZlVdZax0LougVtJRBqMFI
-	BcAFMNKlSMJnyZRlh/f0DDN3A1ve6cNmCvD/s3u4DoICMsFTVyOjt2VG/yo/w75oWLEFr3BEtVO
-	LC2QuLwBs+fw5AtMv/p5dyOU/53+tEukv8mIx3iBp/KGfzu7FwHW6lOoYd4OxzgH/21NTL8
-X-Google-Smtp-Source: AGHT+IGPw5HyUk2SgXUvSBgUaH4W6NMJLND5LcuhdKNVUETW9RBbUW2uvTreOCdvMesDSPA7wm1JIg==
-X-Received: by 2002:a05:6602:394a:b0:844:debf:2b42 with SMTP id ca18e2360f4ac-851b619fc96mr1314858539f.2.1737396423709;
-        Mon, 20 Jan 2025 10:07:03 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ea756bae75sm2661825173.132.2025.01.20.10.07.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2025 10:07:02 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, Jann Horn <jannh@google.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250120-uring-lockdep-assert-earlier-v1-1-68d8e071a4bb@google.com>
-References: <20250120-uring-lockdep-assert-earlier-v1-1-68d8e071a4bb@google.com>
-Subject: Re: [PATCH] io_uring/rsrc: Move lockdep assert from
- io_free_rsrc_node() to caller
-Message-Id: <173739642251.137076.1833330906555536038.b4-ty@kernel.dk>
-Date: Mon, 20 Jan 2025 11:07:02 -0700
+        d=1e100.net; s=20230601; t=1737396449; x=1738001249;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sUE5BSP8rOO/RztouXu4UPmBIQ8Lb41c+zpHn5kWrgI=;
+        b=E3076q+h2uoxX+1W701hlnjR3ElDXF0FBBNiNY6TOY6eMAkG19zdr/eBeBabc7HvNi
+         eu0nF74M392vuwrb10Ws3wo9CpkLsFoZFKY1LP6mlJ2aZxzT4x2TFHHh8g8NeAJER3CU
+         ON2KZczd4EsfXNF5Vh/6UbHypQJkSRlYacOfKBn+QtNF4sRuWDffqfMVOn7Srmqlyk4C
+         vojzABYj6RNfkrktEdm8Jn/wBYjxAqqthD7F57qVnM48n4iofOSMy6Ia3BRfOyzesR9a
+         O3xJH8iw5Ph/Ltgdh+SKwPqKYpPXh4R/qhcVxM9s2VDttdZ+7hxYHdXl4FgmTEhwCbQw
+         Sc9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWgjhrXw+iGZDzYzh0uUahdhCRNbYazecSKNHxateEAk4Z1wClWZJaP5QwJgAduGjvwER8+gV9WaQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMo/TqOQ9XIXsS1AVLHYbR3yY/kghQLT99o8xYii/maq71NpS3
+	mA819fiGYtWO/YP5T2Z8HBUf2IFrJgS3EB6iMAZ7TR/gkTugPtL/TWCK11AnHhs=
+X-Gm-Gg: ASbGnctDXW6v2pYACC27Gcox8pUli8ZsFDtooigRADaQelHZqCmX6Py/jfAEppthtGQ
+	5KulMfg+wJdQ3XwPLhoj9eFc0eM7+FBlxTrrjSZIqXEFRZzMgR6bbd9clWqtHz2+UQvNT/+X3/s
+	hVy8bmyqGw/XTu4YmermUjoMuiGDBeqy115u83CQQLyJKW4jqio9h+7kGuemyg+6b6r1mw2+JKg
+	ZCWWc7OtMUVAyUtAFTuPlCjLPv2Ir/BV+iegO72465QOd+BAD/GRSiVKFGyyIrpKzQ=
+X-Google-Smtp-Source: AGHT+IHuzO+olop4YQS4jYDZNrpRjwXCk320aAu90Szkp9KUnyMdxROxfVHGVXQCsgBMVDb/BtAMmA==
+X-Received: by 2002:a05:6602:3b83:b0:841:ab27:acac with SMTP id ca18e2360f4ac-84f672d4e27mr1558590239f.2.1737396449475;
+        Mon, 20 Jan 2025 10:07:29 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ea756496fdsm2648910173.98.2025.01.20.10.07.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jan 2025 10:07:28 -0800 (PST)
+Message-ID: <424c0ea0-fa0b-4d67-91f9-1aaafeba381c@kernel.dk>
+Date: Mon, 20 Jan 2025 11:07:27 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: change 'unsigned' to 'unsigned int'
+To: Ethan Carter Edwards <ethan@ethancedwards.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <o3qnrb2qffnsogqtswyd4nvkgcl4yhjbb57oiduzs7epileol5@narvnqug6uym>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <o3qnrb2qffnsogqtswyd4nvkgcl4yhjbb57oiduzs7epileol5@narvnqug6uym>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-14bd6
 
+On 1/20/25 10:52 AM, Ethan Carter Edwards wrote:
+> Prefer 'unsigned int' to bare 'unsigned', as reported by checkpatch.pl:
+> WARNING: Prefer 'unsigned int' to bare use of 'unsigned'.
 
-On Mon, 20 Jan 2025 17:21:57 +0100, Jann Horn wrote:
-> Checking for lockdep_assert_held(&ctx->uring_lock) in io_free_rsrc_node()
-> means that the assertion is only checked when the resource drops to zero
-> references.
-> Move the lockdep assertion up into the caller io_put_rsrc_node() so that it
-> instead happens on every reference count decrement.
-> 
-> 
-> [...]
+Let's please not, it'll just be a backporting nightmare with absolutely
+zero benefit.
 
-Applied, thanks!
-
-[1/1] io_uring/rsrc: Move lockdep assert from io_free_rsrc_node() to caller
-      commit: 8c4b2fd5908d2260dfac8d4b74aae1bb5deea379
-
-Best regards,
 -- 
 Jens Axboe
-
-
 
 

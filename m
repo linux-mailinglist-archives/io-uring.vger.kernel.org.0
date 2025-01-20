@@ -1,62 +1,62 @@
-Return-Path: <io-uring+bounces-6020-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6019-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A34A16525
-	for <lists+io-uring@lfdr.de>; Mon, 20 Jan 2025 02:30:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22A9A16523
+	for <lists+io-uring@lfdr.de>; Mon, 20 Jan 2025 02:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB4603A18A8
-	for <lists+io-uring@lfdr.de>; Mon, 20 Jan 2025 01:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECAFC1662B4
+	for <lists+io-uring@lfdr.de>; Mon, 20 Jan 2025 01:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A207D28E3F;
-	Mon, 20 Jan 2025 01:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7C4DDC5;
+	Mon, 20 Jan 2025 01:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="rDVe6lPB"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="BRF5cQRg"
 X-Original-To: io-uring@vger.kernel.org
 Received: from outbound-ip168a.ess.barracuda.com (outbound-ip168a.ess.barracuda.com [209.222.82.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC5E29408;
-	Mon, 20 Jan 2025 01:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E163D28E3F;
+	Mon, 20 Jan 2025 01:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.36
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737336580; cv=fail; b=fzs8ma0pF+5E0B4xqOMUyfEfYVUG31bhWJZJL4iJPWrYivylXQEFeRlSdHsgDCs3QhSYrPm+MJVFrYOh2bhX3dKF+0OM2tgJGddtLPh0mgMvISLSSSLoiM+R38VKMz839hdf25kyu5poceG96OhN1eFmX6fTX9tzYW0lO87DpeI=
+	t=1737336579; cv=fail; b=HazHjUvhguzOiBiB1QZkwEI9GPyPuez9q5dTw3nz+dpMjwjz81eUG2X9AgJWlB3qH2q0lF0zwAyawrTP3lFmnkw6i94sYVO7ClA4Soq61WqwiIofD0PH2yKgjbgA4qhfYvT7C6ke+9jth6TWVFAzFqJvlcZ3apWZdzCkvmYmiHY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737336580; c=relaxed/simple;
-	bh=kvxZ2XTh1mcC5XvtjF/RhKXqggBAhZ3d9JSPoUzZN20=;
+	s=arc-20240116; t=1737336579; c=relaxed/simple;
+	bh=PtkHbQtgTwdO+BfyISwQHmB+lYymfSW2vYL89BCuf6Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hfteQ17gldo238TTsI99+Z1NAJv7ZBBwYdznVsLOqp30MUPN1nF39Cj1V8M1Y7ULsaMhCwCKOXANpxUJfkf7w+AcJR7yShVhcP4fw2RlkL3Iq2DxZ+RqB8XzlJvkDOBXKMiRaAfVJyMG1GS0oprCbZaiZ97+K3kjmdQBwUoLzgc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=rDVe6lPB; arc=fail smtp.client-ip=209.222.82.36
+	 In-Reply-To:To:Cc; b=fag6wh229TPgMxbXoeRqB/0zzI5o/b92S7YP5BjSqJdvj1U9WKhVxiRsQawlyyRzUEpksMHNc5COrGB4e/vXnzcU06XfGSGLjOrhMqFypv0CV7bToBckGGuBRFbL7oC94V7L1qariGb8BM6moTCtLijAMHumuUlRQGHHVDzcvkU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=BRF5cQRg; arc=fail smtp.client-ip=209.222.82.36
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2040.outbound.protection.outlook.com [104.47.58.40]) by mx-outbound8-131.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 20 Jan 2025 01:29:21 +0000
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2043.outbound.protection.outlook.com [104.47.56.43]) by mx-outbound8-131.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 20 Jan 2025 01:29:21 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kfpH0zIxJQPZgS0lgtMGymV7Fuh3+AUonE1LNX88SFvTzARuFGUs75N3Ja4Iscn9EQwWAGGyjnxO7+4VTi4pECs4sXNEOK5sooE1xjUuJWrEv/hxpojO7u+hfLsmHKUREzmYs2+PV50GWxKNvyaGmFO4Ibqei8hGfRPAmea8SDdJCWw5HAiYUjX6WfrialhZGaCZDYq0SoR+fwLcwmLLvARAAgNuOKMtAWeO3LTLNME1adLCiTM59duj/SsyOCQvQXT8qdaPYadbhZhaoItFzpAtXj5nsjBLm7ErLZgHc3c0fRfm0OXvwegg3YLQ1kD0+td6MWUlcBzH6bCHxYsIJw==
+ b=lwuD8udJ1bp5GfV0rmrSJTOpAT4dI2TYDIaEwqaFsoUKSkNulIOdQHMoYlqCYZFvDX46P8+HdFlW95jU3GKEfT4higZ5ZcSw7MXoaRr2RLS3lUFl7rdzQ2gXTkNUu4FnWdGtOjEbdqrOCKTFmpPpnUj6/k7NSobkHLFqNA2nVy8sd96Gfhs80ata3p9QnvXPzfniTRiR2kebnvQfeQD0999EOdk4UKoPgU1Powyh3jxVQQLmLTRLWHYZ7/9SdghOLb374joGaRjcoZoBILTW4YS6Tw8QTSGlcqx64ptDB6Aja6k+cLzo78H6b2O8pWrPmywYck5en1MSuvb0o1Vvig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aDI3GQZ2NuVrZvSSq/m9Dnu0ngsqHn3awlPtUrzI6dY=;
- b=c8Gds4L++m6MTbd8VnBc2w16WBjNUiRyx5U3xDmMjXSJ+tu26RJ/ODj12vTnOF/gnL6eLDlg6srEqZSvWIsinFguZ2oa75Hej7FIYwD2XQ0nM+RomNeJ8TjR9huyeN16utXDmFCgWKtnrDllhaT/LYWQxVhUrMY9MtQ6jPWbFNi14EqoPK+R/Vmu0fSZeNdcc8J1ZWKRioRekv0QSVEJIJQem7KG1EISD8FkxV/qWwq1aoScVojnMirajM/vg9NcdD4fYwso1JWn4GBABqI2wxTGZ3zUxQpyh6WaNdVb07SjnLF7rNUBKYcSoCrN84KxTJD6cjK5LdiTFk02rwc/Mw==
+ bh=G804zKEHS0lOfYhRhWhJaw9vJglZVJlLF+b8lscdVQY=;
+ b=OowtGWpRtEqLi8o7+AKMIPPWiwcw/h97qCcxGd1UUKBo+4cC68XtTMLopkpk2OS4DIPNb+Xt3iXZ2Oo3/q9GohJv0N1uei4dX9DFiiYYroGnGKohRuPqz7pxLQ7gF9Vn6jsTP0F1UHy+fw/EiuRncC9GLjukD243yUVJ+AISs/gjJeh/PGNQn+v9dXL2C9TIAErRiKE0peH3L2OIP9tjx/IKvkG7UAvMkKL3VNFWnjEzV5k5/urhVCZjEmqyIIoY80/IRzDQao+AO4ePGqkmDHbCFkLyeiY/szrbo9ShT6wcb7Rx6ZIdctCPZlB2bb6DOhJDXIIRXar1hLPnRw/6FQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  50.222.100.11) smtp.rcpttodomain=bsbernd.com smtp.mailfrom=ddn.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ddn.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aDI3GQZ2NuVrZvSSq/m9Dnu0ngsqHn3awlPtUrzI6dY=;
- b=rDVe6lPBACMGQXbxfqwHMFO9a5vZ66dEZoS+SbrVwwb8gwbClBVIkGJLSH9IycUvYRiTBZeo0qgz7uSysKul47l2sUNpxrHsVjT6rGEcKqNCesTdOs4lSJvZVNhfhGtrgo33wcY8FpQ9fBJs9YNitswIC3ud6EEHNAm8RtccEJ8=
-Received: from MN2PR18CA0003.namprd18.prod.outlook.com (2603:10b6:208:23c::8)
- by PH8PR19MB6811.namprd19.prod.outlook.com (2603:10b6:510:1be::12) with
+ bh=G804zKEHS0lOfYhRhWhJaw9vJglZVJlLF+b8lscdVQY=;
+ b=BRF5cQRgHbjroUYex+1/tcfFqvG/1ADPpt7oSRmHlnnQFNfvU945f7lCtoxXCDCFWnQU4hNdz/bZoq5msFDVZDJYAmn28vY2GNhjaQrwogU/hIsOQIt8m8t0uiBqPKLWC3ayj7CkkoeqOJp7rx+dxIr4HgsyE1CEU2SKwv/Ee8A=
+Received: from SJ0PR03CA0218.namprd03.prod.outlook.com (2603:10b6:a03:39f::13)
+ by SN7PR19MB4749.namprd19.prod.outlook.com (2603:10b6:806:106::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8356.21; Mon, 20 Jan
- 2025 01:29:18 +0000
-Received: from BL6PEPF0001AB75.namprd02.prod.outlook.com
- (2603:10b6:208:23c:cafe::c9) by MN2PR18CA0003.outlook.office365.com
- (2603:10b6:208:23c::8) with Microsoft SMTP Server (version=TLS1_3,
+ 2025 01:29:19 +0000
+Received: from CO1PEPF000066ED.namprd05.prod.outlook.com
+ (2603:10b6:a03:39f:cafe::b4) by SJ0PR03CA0218.outlook.office365.com
+ (2603:10b6:a03:39f::13) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8356.21 via Frontend Transport; Mon,
- 20 Jan 2025 01:29:17 +0000
+ 20 Jan 2025 01:29:18 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
  smtp.mailfrom=ddn.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=ddn.com;
@@ -64,16 +64,16 @@ Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
  50.222.100.11 as permitted sender) receiver=protection.outlook.com;
  client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
 Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
- BL6PEPF0001AB75.mail.protection.outlook.com (10.167.242.168) with Microsoft
+ CO1PEPF000066ED.mail.protection.outlook.com (10.167.249.10) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8377.8
- via Frontend Transport; Mon, 20 Jan 2025 01:29:17 +0000
+ via Frontend Transport; Mon, 20 Jan 2025 01:29:18 +0000
 Received: from localhost (unknown [10.68.0.8])
-	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id 827B54E;
-	Mon, 20 Jan 2025 01:29:16 +0000 (UTC)
+	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id 7B2C634;
+	Mon, 20 Jan 2025 01:29:17 +0000 (UTC)
 From: Bernd Schubert <bschubert@ddn.com>
-Date: Mon, 20 Jan 2025 02:29:08 +0100
-Subject: [PATCH v10 15/17] fuse: {io-uring} Prevent mount point hang on
- fuse-server termination
+Date: Mon, 20 Jan 2025 02:29:09 +0100
+Subject: [PATCH v10 16/17] fuse: block request allocation until io-uring
+ init is complete
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250120-fuse-uring-for-6-10-rfc4-v10-15-ca7c5d1007c0@ddn.com>
+Message-Id: <20250120-fuse-uring-for-6-10-rfc4-v10-16-ca7c5d1007c0@ddn.com>
 References: <20250120-fuse-uring-for-6-10-rfc4-v10-0-ca7c5d1007c0@ddn.com>
 In-Reply-To: <20250120-fuse-uring-for-6-10-rfc4-v10-0-ca7c5d1007c0@ddn.com>
 To: Miklos Szeredi <miklos@szeredi.hu>
@@ -93,80 +93,80 @@ Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
  David Wei <dw@davidwei.uk>, bernd@bsbernd.com, 
  Luis Henriques <luis@igalia.com>, Bernd Schubert <bschubert@ddn.com>
 X-Mailer: b4 0.15-dev-2a633
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1737336541; l=6263;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1737336541; l=2934;
  i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
- bh=kvxZ2XTh1mcC5XvtjF/RhKXqggBAhZ3d9JSPoUzZN20=;
- b=wdFEcwQZyh1xyuXEqktX+nD1NncJnNIiNQGbyxdkfa94bVtfnLs1g89/4C1DcW4BNQYfgbU92
- 36ksfxxvheKA/5f5f0jdyAGkFHyUBl8wVtEhDsk5+mUM4P9MtZ0fmvf
+ bh=gfucKS4wCiZXcsbZYV4HxvxB7feQM2tuYjq92kan4BU=;
+ b=A9ILRCoq5jQ8uDeb5rLZPV30U9Xe8njTfUKtHXfjJyjawpn031b+BwdHuop5dZNe9BJuIh3l6
+ TxCmOnTAAtOAhDwtFddzSURBwVk+iIzicWlJE1BIHIeXHaKGf8Iw8a8
 X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
  pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB75:EE_|PH8PR19MB6811:EE_
-X-MS-Office365-Filtering-Correlation-Id: 03d300f7-062f-4ef6-539d-08dd38f1db6b
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066ED:EE_|SN7PR19MB4749:EE_
+X-MS-Office365-Filtering-Correlation-Id: 66ee525f-1cbd-40a8-e9f5-08dd38f1dbca
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QktYdTJrYm55Umc4MW4wZmtjbWRaT1F1Zkc5Y09EZmdDWURmQXZFcmJMVTV2?=
- =?utf-8?B?aTRrajdDbXNVSHN5cm8rUEhualhQS0U4Z1FPOFRRMjZETUlRYzhDYWkvU2Jn?=
- =?utf-8?B?cllpbWNPQTJtdFR1MHhmcnRqSmtIcG91dzF0WDJLLzk5dkhMZmNqOXlwRytV?=
- =?utf-8?B?VjIyeDZRK3p3Tmxvd0NtWTdzZUVLQm9jNERNaGg2UWVuRE5RWmRPazVTMFZQ?=
- =?utf-8?B?dHRGa2xtTWVBbG5UQVpWSzJjU0NidGl1alFxU1JKWkFYVHZYR3EvekRHeGI3?=
- =?utf-8?B?Z0tqaWVwU20zRFBEQ1RUNXRwV0U1YVBsdDU3VW5HVE5qeUdtK3pZa3g1Z21Q?=
- =?utf-8?B?VWNjcVY1S1p5dTJ2SnpjaHBpZkRLaGJGN2VuRllaWDEvNVEyczZROGhwdkJh?=
- =?utf-8?B?VW9wYUZqc2RMN1RnSDcyYXY3S25tOU5sR2RZdGhDbU1TWDZuVHRYSEEvQ0tU?=
- =?utf-8?B?UVR6VW1yNkszbmdaOFBQckZCNFhiNktDc2YyeUs2ek5UUTM3a2xQTFcrQkNR?=
- =?utf-8?B?ZmxWSmIyY1dDTVM2bVJpbUZ0cHlZNlVOTkRwQUw0WU5MYXZxaWZteUtZZThv?=
- =?utf-8?B?blFWM04rOXNwT0lNd1pOTkRJcm5OVUNSNzFVZElKR3ltek9pNHhmRzZFNGNN?=
- =?utf-8?B?ZXUySUg0bHVlNUUrQ1hPUXNhR1o2aDB6MEV6NWJRd1lMVVA2c1dyZ1VKa2la?=
- =?utf-8?B?Nk5lV2NpZFVRdXMybVN2N1BzOHlsa2hIM3YxbU5qV2Z1RFpudzRCb0Zia2JU?=
- =?utf-8?B?MUY0Q2RaZ2dkTmxUVkQ2SWZjaml5V0VLblhza2RSejlmQ3NlbVJXakxSTUZx?=
- =?utf-8?B?OHF2anZJM3BuQ3pBbXgvaFQ4K2dBNCt6NTkyZXVoRWFEbjBWdUxUL0JxTTh0?=
- =?utf-8?B?NzdJRmNzRWdGZkgrRlkxSndwcEJOWEQxcGlDRUNYaG1uSkxudkh1dGV5bHUz?=
- =?utf-8?B?KzVoWmtjUDB2c3ZxeTgwa0t2ZFp6N2h3aGdWMkRoVnlVSTE2SjN1Q0V3bTJu?=
- =?utf-8?B?WkhHdUc0TjFFNXFKQnNjcjZjM1liRXY0RHAyRGdJRkpCNVBNYWZPd3loZzdz?=
- =?utf-8?B?RnhndGNuNjNlQUh5WnlURzZGNEpsaXhmSy9OTTU3UWkwbDFSeXVtOTlwNGpB?=
- =?utf-8?B?Q1Faam9TTEtqVTN1cDRtdENUOXRidUloaFV6M0dOWUJCSXBwb2ZLZEVQcWtr?=
- =?utf-8?B?aDRsN21rSHlOblRXRG45amt0MmdTZFh3a3BsaHpoYUdQNW1adHh0Q0lwbzl3?=
- =?utf-8?B?S1l0bVBTeWRZKzIvcERPMW5nSklnS0FOSFgyamhkRlhiYjlGa0g5MkN2S0tE?=
- =?utf-8?B?NC90UVFQNFE4V2w5UExyU2c2ZHdXbm1DLzNSZEd2RjAxeTFWcjZvOVlHVHha?=
- =?utf-8?B?aW1sbGovNDVWdHlHOUo5WHlMUGo2Yzk1QmxXcGU3ck4zMFZOMk00TWUzTlgw?=
- =?utf-8?B?L2pOdXdPSURuM24vR0RDWVdqVFBLNG84UHVkakl5V3d5WGQ1ZHp5cjdqT0NY?=
- =?utf-8?B?aWtNL0dUMyt3b2dwcURiMTVZS2VlS3VXZ1c3WERTeG5WQllmVUd1MkswMVJH?=
- =?utf-8?B?OTVuNlI3ZS8zZFVnSFpsYVY5VnRPS25SOHZlREZPV2FlbzlTc1ZlM2RkTnY1?=
- =?utf-8?B?TDJFeVdpQmlqc053cFpycUxOMXNIRThVcW1WZENXc1grd09mNGFsemdDcjU2?=
- =?utf-8?B?c3FZRkdMUnZSR2ZyNWkwTkRoNDB6cHJlVmRHRk9XQTlnclVLZXJLZnhscXhs?=
- =?utf-8?B?SHJ1SU52N2tMc2tkdGFzeTgxUWRUZkVid1EyMjRpcDJLcmcrVWV2VnlTUDhB?=
- =?utf-8?B?eWJib2RqTzgrdVFYZHlkckhtR2xPWVR4d3Q3R21SMmNKZVgzWUQwejBiTU84?=
- =?utf-8?B?Q28zTEtaOUtSYzJGU2YwMFZoU3lxZnFBRnp1dFI3V3IyVUs2Zi94aERqSlB2?=
- =?utf-8?B?QWl6QlFYQy9XakdVcDZQUHUzUDZZRGtHQzJLUXRpbitzVjdhTWdmSWl2dEZk?=
- =?utf-8?Q?RmgX+K4GXRRfYd4YXxqLzPyy3YUXR8=3D?=
+	=?utf-8?B?WTVMT05BSjNwQ1RabTdNT0x1UkIwZUxvRS9YbmFiTm56ZFg5bExZYjhlNWVx?=
+ =?utf-8?B?MHA2UkNSc211Q1JjVnB1UDdUZFZQSThLMlN1UzB4MWFxbFNtcEx3QXVaUVZW?=
+ =?utf-8?B?L1RNZGlVWHhEN2RhR1crR0NrZ2xlbGhpR0QrZ0VKaC9mWFpiQkNMTWNIVXdN?=
+ =?utf-8?B?amRydGh1U0FkVEhoN2hRNDRMUXB4eCtUYythaCtmbE9zU1JFMWNMMFlTRDV1?=
+ =?utf-8?B?cHBwczNoUFNkVW52MHNpNEhiblVkZ0xRZG9FbHhCZW1aZzVvY3Q4RTBtaHg0?=
+ =?utf-8?B?dmtTWUpEbG1OcEhrZTVHeUo1VkJpUnBmMU0xS3JnWHhPS3hUUmZYZmE2RG52?=
+ =?utf-8?B?RThCa0U3N1BoSTNnbWszWFRsZC80UWtsZ28wWHp2WEpUYVVuRHRSRlc2M1pu?=
+ =?utf-8?B?Y2dYMXBsWTZWL0FHdlVMRFN0bGFBZGtxS3JsaXJ0TElwSm5hRlQ5MWhUV3pU?=
+ =?utf-8?B?L0wzekk0Q3BGUGlISzRpSUlQelhJM3ZvT3o1ZHJ1TXFPVWl5bmJ2enM5QXg5?=
+ =?utf-8?B?OHFpaThFSHkvenRLNjV5RXNVaTQwcTV5K3ZpT2VwWGNBTkhqYXNHUDY4Y2ZD?=
+ =?utf-8?B?bHVEQnB1Nm41Z2lLTG5NdnkwYzZrdlIwS1l0dWptZUdray80dXh3cXFIc1Z2?=
+ =?utf-8?B?Zk8xVnY4S3pOeUQvclRScURvNk9VNU0vc09NYlNWM1NsMzhJRFAyZ2o4d3Ix?=
+ =?utf-8?B?dm92WHNpT3ZXSEJaWnVQTXg2cWR5b0UxR0ZySitTMUNYdjltTG5LN2RNT3l0?=
+ =?utf-8?B?YldseTRnaWNLUEN4MDV3bDFnRkVhSnpod3ltWHpCSGFLMXJsUHJFYlhrZGhX?=
+ =?utf-8?B?RkVDWnVtVndkZmR0MGpDVy8vRzB3dy9ySWN1OEdKTi92TjFkbW5vbFpPc3d4?=
+ =?utf-8?B?bTE3eStMY08rZUIvQnk0NEw3WStncGVTWGQyS2VsZHBoVW9vc3J3d0U5dTR1?=
+ =?utf-8?B?MUFiM1RWN1B6Ulg3S0FQZW9yK296Z2xHeXdhYlNXcTFCZk1CZzU2Q1hVc3Ba?=
+ =?utf-8?B?MFBaVzZidVN3YUFMRFdPNzc5M09sUDRaTVE2bDE0N0JCODg5b2hERVZXSGk5?=
+ =?utf-8?B?OWRpNEtUNm1mQTdLUmg5cm42MEtIM0dQY3RTQWxKWEM3WTM5K1dWS29ITE1P?=
+ =?utf-8?B?MURWUGYvL0ViMytKaXNwQmdUbXVMMzB0ZnE0aEZGTGNEbnVUaG84akw2MGtJ?=
+ =?utf-8?B?Q2NhZnQ4ZWhhVUZoUlh4ZjNLQVdxdzlNYndGWENHaW5wa1Q0VDFiUnl6VW1T?=
+ =?utf-8?B?UXRFanVmSThTdGNoOFFKN1A2UXk3T2w3UUNxZWVodFdKaGlsUmxTd1FhVG5t?=
+ =?utf-8?B?c1dSY0ZlYVdkdnhCNmRYdHlaL3UyT1hFYnJJQzV1VWdQSjZzTTJHY29GSjlM?=
+ =?utf-8?B?Z3FHbmVtZVZ6ci8rTDlkMUZFZko1aEpwQlkxNFpPU0lQVEM5bSsxU1RpbUF3?=
+ =?utf-8?B?RlVaem5oWlRCTWo5N0RoVDJkZmNrRFVOcWJpck16aVNwOHlTYkVyanlMcytl?=
+ =?utf-8?B?VWhXbGhZNWpnam9ORWFWa0h0M1Q5MjByNEtFeXFHTDhxcW5nOXJkK0NIVHRB?=
+ =?utf-8?B?Q1JpaDRhZ21ubVFxMzJYcVFUWkw5a1FJZEdEK3FEZno2OXNaT0hmdFhwM3RC?=
+ =?utf-8?B?bEVpenVBaWtCQkM0dFZpajU0ZkpYczI3RDQrWmp1NC96VjA5dURYYnB5RXg4?=
+ =?utf-8?B?YUhncldEYStEMnRpNlBRU2lEblFHbHBHOXdoY2x3cytEVk1ZMVBDVHFzc1lJ?=
+ =?utf-8?B?U25hcG14MTNsZmFOYm9WYXZuS3R4S2gxQTlzUlFER3RaNHlVN2xXTFV6Z3J5?=
+ =?utf-8?B?ZDdvZ2szNE5sTmxIMmlCUnVrUi9jZXdodzVVMWlMOEVINVZCTENjYVVxQ2s5?=
+ =?utf-8?B?UGI1VW0wMSthaTRkaHBrdVYvZWk3ZHJicnhvVllYVGpHOExDNTMzdVBrbGo5?=
+ =?utf-8?B?RHZDN0lwOHAxeUJCR29ZL1hnTFVGSGN4NG92V21DTmVGdzBMTXQ3b2JyZVZs?=
+ =?utf-8?Q?hjECuMpuOE23sC6OXG1fdsAQlHFCBo=3D?=
 X-Forefront-Antispam-Report:
-	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1102;
+	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026)(7053199007);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	VgS2nQSzBc9jYVRDiehtQy9LRZQXNgwc3YWX8QJ04mjQsNSiR4yYs8VGNrG4FiKFTPVpEJrhQsQS6hi5OiTO5fcUZH/opOg5bIMsRyVoosDPygB//2eLXH1KqFITHFCvgXGqiANc1tEU4Oq9sVLLLyQCt2Uvep7vSjaEjiZpLukDLiLRCgufpYLKuz1uK9MiMas3auOP1cjwClchWfh6WNllPjYjDAMpAldj49rZ8T3V1rzoJuzEoqNLqVb88rAqjTwFw2ul0M0meS2Ns2ujBjHk12UKANzurcg/VOTPKP9+2uwzNTgNrB7mBpc/I/iObgL6xIKEq2N161C0/zdFMz22yZ2ZzuEr15PrOmfjnOs/J45efQutVOJz/L6H4pM/53SWhqOkFfmKamQ1T1Qvs/7fUZWTpyPcnZS7Zy+tC32D0NSDAH1Hjzv/BYruCsgWUoLcslO/HtCWgsdJtzZXFk4IS+h985DyuMUP5zve1w45X8PWuMHrcX6NHJT4u2/C7TyaKSvTyp7LCfyKTN0yknWBUFP8OzXWxM8fBUQKQ+vzCO6uSD1BWhHfrCZraFWyNAxVNc6QnrzyYDWl+kngzP+zYzsXjR5xwIjkscnZ9H6VpB0S/XStyhsGMhhRZUea1Rx+Gi7GDvbHJhBQZxazIQ==
+	Mcc0/rEaAhGu/HiFvTZKhQUaW1gCwIdqlN4rd2GFHJQeasNr6LpfkHaNIZQ8g2cHBpZjPBhRNG3yv20kLaP5PiQUQyTGt0XdaxMse3CnqWPI/1DpG/ZmkWBSqEFG57PVpZRaY/e5mbQAW2OaY1r2Fe+tF1/Tx0zYoS4PKdIGqEOv7/WbFYxZMXZcAT2BgksRiteOtlpdDY+zG0qkv7RjxEmKfQ6PW8KI9lMWCPLcmt4/3v9HMENz1IssJ/XhgKQ0vTaesplTIrPyUYMluHBpOhCBqB0/dDAQVLYWGXVQmV02PjAUyCq2TZsE9mErgsAkZZNUYVfK+1r9sp6lMWhtFIXa8iZ3LjWWJ2PS7dDDCSxQ4o8qRsntGeH4JKeWHtzWL3Hi4PxHUKnn2M0qSEyIpEgwJk3HTsfg+4kSqqr59jk7/4pvJsT7HVQ3ZCIL8vFtPXbNz1J26XdUdGGv80uTm+C6Q5/64Lc8/bmYkiQ4uTCOaOnrysOR/PgPr/RvkKZNJ8k3LuLlt/+A24/gcOEhWLC1fsKD36CyQJD2Mzn1Joeb1Stbh0Cgr3dOC7/kRw872FcvHxfqBNoHHFj/rnu3MLf+2r17wor3ZU1CgrZkOjwDf3Jf+y6q5duWQ9syZUWrRl4b5D0JZKfgz3rFThreiA==
 X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2025 01:29:17.4121
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2025 01:29:18.1323
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03d300f7-062f-4ef6-539d-08dd38f1db6b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66ee525f-1cbd-40a8-e9f5-08dd38f1dbca
 X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB75.namprd02.prod.outlook.com
+	CO1PEPF000066ED.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR19MB6811
-X-BESS-ID: 1737336561-102179-13333-11612-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR19MB4749
+X-BESS-ID: 1737336561-102179-13331-11611-1
 X-BESS-VER: 2019.1_20250117.1903
-X-BESS-Apparent-Source-IP: 104.47.58.40
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVmYG5sZAVgZQ0DTJIMnEMDnJwi
-	LJONk01TDJ1MjMwNgsJdHULDkpychIqTYWABgG18RBAAAA
+X-BESS-Apparent-Source-IP: 104.47.56.43
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkYWlgZAVgZQ0NgyyTgxxczUID
+	Up1dDC0izZKNHC0tw4xSTJxMI0xdhYqTYWAMsn8YZBAAAA
 X-BESS-Outbound-Spam-Score: 0.50
 X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.261928 [from 
-	cloudscan15-221.us-east-2a.ess.aws.cudaops.com]
+	cloudscan12-61.us-east-2a.ess.aws.cudaops.com]
 	Rule breakdown below
 	 pts rule name              description
 	---- ---------------------- --------------------------------
@@ -175,194 +175,92 @@ X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.261928 [from
 X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status:1
 
-When the fuse-server terminates while the fuse-client or kernel
-still has queued URING_CMDs, these commands retain references
-to the struct file used by the fuse connection. This prevents
-fuse_dev_release() from being invoked, resulting in a hung mount
-point.
+From: Bernd Schubert <bernd@bsbernd.com>
 
-This patch addresses the issue by making queued URING_CMDs
-cancelable, allowing fuse_dev_release() to proceed as expected
-and preventing the mount point from hanging.
+Avoid races and block request allocation until io-uring
+queues are ready.
 
-Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com> # io_uring
+This is a especially important for background requests,
+as bg request completion might cause lock order inversion
+of the typical queue->lock and then fc->bg_lock
+
+    fuse_request_end
+       spin_lock(&fc->bg_lock);
+       flush_bg_queue
+         fuse_send_one
+           fuse_uring_queue_fuse_req
+           spin_lock(&queue->lock);
+
+Signed-off-by: Bernd Schubert <bernd@bsbernd.com>
 ---
- fs/fuse/dev_uring.c   | 70 +++++++++++++++++++++++++++++++++++++++++++++++++--
- fs/fuse/dev_uring_i.h |  9 +++++++
- 2 files changed, 77 insertions(+), 2 deletions(-)
+ fs/fuse/dev.c       | 3 ++-
+ fs/fuse/dev_uring.c | 3 +++
+ fs/fuse/fuse_i.h    | 3 +++
+ fs/fuse/inode.c     | 2 ++
+ 4 files changed, 10 insertions(+), 1 deletion(-)
 
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 1b593b23f7b8c319ec38c7e726dabf516965500e..f002e8a096f97ba8b6e039309292942995c901c5 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -76,7 +76,8 @@ void fuse_set_initialized(struct fuse_conn *fc)
+ 
+ static bool fuse_block_alloc(struct fuse_conn *fc, bool for_background)
+ {
+-	return !fc->initialized || (for_background && fc->blocked);
++	return !fc->initialized || (for_background && fc->blocked) ||
++	       (fc->io_uring && !fuse_uring_ready(fc));
+ }
+ 
+ static void fuse_drop_waiting(struct fuse_conn *fc)
 diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index 859e53893eeb5544d57dd961da0e99e7b3d5d9a9..fcce03174ee18153d597e9cd1a2659b1c237e3eb 100644
+index fcce03174ee18153d597e9cd1a2659b1c237e3eb..1249c7fd4d63692413d103e72eaa5e502188d3bc 100644
 --- a/fs/fuse/dev_uring.c
 +++ b/fs/fuse/dev_uring.c
-@@ -150,6 +150,7 @@ void fuse_uring_destruct(struct fuse_conn *fc)
- 
- 	for (qid = 0; qid < ring->nr_queues; qid++) {
- 		struct fuse_ring_queue *queue = ring->queues[qid];
-+		struct fuse_ring_ent *ent, *next;
- 
- 		if (!queue)
- 			continue;
-@@ -159,6 +160,12 @@ void fuse_uring_destruct(struct fuse_conn *fc)
- 		WARN_ON(!list_empty(&queue->ent_commit_queue));
- 		WARN_ON(!list_empty(&queue->ent_in_userspace));
- 
-+		list_for_each_entry_safe(ent, next, &queue->ent_released,
-+					 list) {
-+			list_del_init(&ent->list);
-+			kfree(ent);
-+		}
-+
- 		kfree(queue->fpq.processing);
- 		kfree(queue);
- 		ring->queues[qid] = NULL;
-@@ -242,6 +249,7 @@ static struct fuse_ring_queue *fuse_uring_create_queue(struct fuse_ring *ring,
- 	INIT_LIST_HEAD(&queue->ent_in_userspace);
- 	INIT_LIST_HEAD(&queue->fuse_req_queue);
- 	INIT_LIST_HEAD(&queue->fuse_req_bg_queue);
-+	INIT_LIST_HEAD(&queue->ent_released);
- 
- 	queue->fpq.processing = pq;
- 	fuse_pqueue_init(&queue->fpq);
-@@ -280,6 +288,7 @@ static void fuse_uring_stop_fuse_req_end(struct fuse_ring_ent *ent)
-  */
- static void fuse_uring_entry_teardown(struct fuse_ring_ent *ent)
- {
-+	struct fuse_ring_queue *queue = ent->queue;
- 	if (ent->cmd) {
- 		io_uring_cmd_done(ent->cmd, -ENOTCONN, 0, IO_URING_F_UNLOCKED);
- 		ent->cmd = NULL;
-@@ -288,8 +297,16 @@ static void fuse_uring_entry_teardown(struct fuse_ring_ent *ent)
- 	if (ent->fuse_req)
- 		fuse_uring_stop_fuse_req_end(ent);
- 
--	list_del_init(&ent->list);
--	kfree(ent);
-+	/*
-+	 * The entry must not be freed immediately, due to access of direct
-+	 * pointer access of entries through IO_URING_F_CANCEL - there is a risk
-+	 * of race between daemon termination (which triggers IO_URING_F_CANCEL
-+	 * and accesses entries without checking the list state first
-+	 */
-+	spin_lock(&queue->lock);
-+	list_move(&ent->list, &queue->ent_released);
-+	ent->state = FRRS_RELEASED;
-+	spin_unlock(&queue->lock);
- }
- 
- static void fuse_uring_stop_list_entries(struct list_head *head,
-@@ -309,6 +326,7 @@ static void fuse_uring_stop_list_entries(struct list_head *head,
- 			continue;
+@@ -957,6 +957,7 @@ static void fuse_uring_do_register(struct fuse_ring_ent *ent,
+ 		if (ready) {
+ 			WRITE_ONCE(fiq->ops, &fuse_io_uring_ops);
+ 			WRITE_ONCE(ring->ready, true);
++			wake_up_all(&fc->blocked_waitq);
  		}
- 
-+		ent->state = FRRS_TEARDOWN;
- 		list_move(&ent->list, &to_teardown);
- 	}
- 	spin_unlock(&queue->lock);
-@@ -423,6 +441,46 @@ void fuse_uring_stop_queues(struct fuse_ring *ring)
  	}
  }
+@@ -1130,6 +1131,8 @@ int __maybe_unused fuse_uring_cmd(struct io_uring_cmd *cmd,
+ 		if (err) {
+ 			pr_info_once("FUSE_IO_URING_CMD_REGISTER failed err=%d\n",
+ 				     err);
++			fc->io_uring = 0;
++			wake_up_all(&fc->blocked_waitq);
+ 			return err;
+ 		}
+ 		break;
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index e71556894bc25808581424ec7bdd4afeebc81f15..886c3af2195892cb2ca0a171cd7b930b6e92484c 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -867,6 +867,9 @@ struct fuse_conn {
+ 	/* Use pages instead of pointer for kernel I/O */
+ 	unsigned int use_pages_for_kvec_io:1;
  
-+/*
-+ * Handle IO_URING_F_CANCEL, typically should come on daemon termination.
-+ *
-+ * Releasing the last entry should trigger fuse_dev_release() if
-+ * the daemon was terminated
-+ */
-+static void fuse_uring_cancel(struct io_uring_cmd *cmd,
-+			      unsigned int issue_flags)
-+{
-+	struct fuse_ring_ent *ent = uring_cmd_to_ring_ent(cmd);
-+	struct fuse_ring_queue *queue;
-+	bool need_cmd_done = false;
++	/* Use io_uring for communication */
++	unsigned int io_uring;
 +
-+	/*
-+	 * direct access on ent - it must not be destructed as long as
-+	 * IO_URING_F_CANCEL might come up
-+	 */
-+	queue = ent->queue;
-+	spin_lock(&queue->lock);
-+	if (ent->state == FRRS_AVAILABLE) {
-+		ent->state = FRRS_USERSPACE;
-+		list_move(&ent->list, &queue->ent_in_userspace);
-+		need_cmd_done = true;
-+		ent->cmd = NULL;
-+	}
-+	spin_unlock(&queue->lock);
-+
-+	if (need_cmd_done) {
-+		/* no queue lock to avoid lock order issues */
-+		io_uring_cmd_done(cmd, -ENOTCONN, 0, issue_flags);
-+	}
-+}
-+
-+static void fuse_uring_prepare_cancel(struct io_uring_cmd *cmd, int issue_flags,
-+				      struct fuse_ring_ent *ring_ent)
-+{
-+	uring_cmd_set_ring_ent(cmd, ring_ent);
-+	io_uring_cmd_mark_cancelable(cmd, issue_flags);
-+}
-+
- /*
-  * Checks for errors and stores it into the request
-  */
-@@ -836,6 +894,7 @@ static int fuse_uring_commit_fetch(struct io_uring_cmd *cmd, int issue_flags,
- 	spin_unlock(&queue->lock);
+ 	/** Maximum stack depth for passthrough backing files */
+ 	int max_stack_depth;
  
- 	/* without the queue lock, as other locks are taken */
-+	fuse_uring_prepare_cancel(cmd, issue_flags, ent);
- 	fuse_uring_commit(ent, issue_flags);
- 
- 	/*
-@@ -885,6 +944,8 @@ static void fuse_uring_do_register(struct fuse_ring_ent *ent,
- 	struct fuse_conn *fc = ring->fc;
- 	struct fuse_iqueue *fiq = &fc->iq;
- 
-+	fuse_uring_prepare_cancel(cmd, issue_flags, ent);
-+
- 	spin_lock(&queue->lock);
- 	ent->cmd = cmd;
- 	fuse_uring_ent_avail(ent, queue);
-@@ -1035,6 +1096,11 @@ int __maybe_unused fuse_uring_cmd(struct io_uring_cmd *cmd,
- 		return -EOPNOTSUPP;
- 	}
- 
-+	if ((unlikely(issue_flags & IO_URING_F_CANCEL))) {
-+		fuse_uring_cancel(cmd, issue_flags);
-+		return 0;
-+	}
-+
- 	/* This extra SQE size holds struct fuse_uring_cmd_req */
- 	if (!(issue_flags & IO_URING_F_SQE128))
- 		return -EINVAL;
-diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-index 0182be61778b26a94bda2607289a7b668df6362f..2102b3d0c1aed1105e9c1200c91e1cb497b9a597 100644
---- a/fs/fuse/dev_uring_i.h
-+++ b/fs/fuse/dev_uring_i.h
-@@ -28,6 +28,12 @@ enum fuse_ring_req_state {
- 
- 	/* The ring entry is in or on the way to user space */
- 	FRRS_USERSPACE,
-+
-+	/* The ring entry is in teardown */
-+	FRRS_TEARDOWN,
-+
-+	/* The ring entry is released, but not freed yet */
-+	FRRS_RELEASED,
- };
- 
- /** A fuse ring entry, part of the ring queue */
-@@ -79,6 +85,9 @@ struct fuse_ring_queue {
- 	/* entries in userspace */
- 	struct list_head ent_in_userspace;
- 
-+	/* entries that are released */
-+	struct list_head ent_released;
-+
- 	/* fuse requests waiting for an entry slot */
- 	struct list_head fuse_req_queue;
- 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 328797b9aac9a816a4ad2c69b6880dc6ef6222b0..e9db2cb8c150878634728685af0fa15e7ade628f 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1390,6 +1390,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 				else
+ 					ok = false;
+ 			}
++			if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
++				fc->io_uring = 1;
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
 
 -- 
 2.43.0

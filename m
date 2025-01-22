@@ -1,234 +1,226 @@
-Return-Path: <io-uring+bounces-6039-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6040-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE1FA1899B
-	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2025 02:37:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77239A19149
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2025 13:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 620F6163D6B
-	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2025 01:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 570B43A7AB0
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2025 12:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4684C9F;
-	Wed, 22 Jan 2025 01:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDE621171D;
+	Wed, 22 Jan 2025 12:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LuTIDFyd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRnNn+6T"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4724315A;
-	Wed, 22 Jan 2025 01:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC0F1741D2;
+	Wed, 22 Jan 2025 12:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737509869; cv=none; b=q21uyb7mhnxd0lcSy1P+UyRZkMGsHxMASrJMWbhb7CBWbGfMwcaNZ1eR1WSn0f6IncjSvSReEdaSAFX7swTR89iCMqsX9KPLkuIIgtVAwUVCQ24Fe20TvmK9m00O+xUww6V29785yOeW2aDZ/RLV2WtoltZ1KrfDj/jsFGWGQtk=
+	t=1737548752; cv=none; b=qnGqUlKQTDT0U4gCk5hvog4zl9TJUzcU0WMuHPufmSqMUVPUNhOC2YpQQxvWNiRRRFrZZgtGO/22oFmEueqlX6L74rSdRrOTk3EptdzXz7Qf8ttgYYNucfgVoFADtW4Q4mxZPQrl5gWDoHpv/8GPKWLcEd1MsmyqS8P1zu6q8Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737509869; c=relaxed/simple;
-	bh=ijBgCnXP6XfghHIoBcu6fcXatbTuRqiF5wZxfYYPW+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QSxhl6HMU/DnxcsLKJbjqxXsOI+B+dSZRAX37OVbdny1SpkmWSODtjwfAD0vLHr7sJInhAxUdEMNUR8I4p3y6mVAo5hxrrZlo8MY9DEsVX7U+1KLMcwtP7NfTvhPNrTw+ZQWfgKZujlLvpabG4atgEeaF/tTY7oncWM27JGFy7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LuTIDFyd; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-467a3f1e667so38587081cf.0;
-        Tue, 21 Jan 2025 17:37:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737509867; x=1738114667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RTzeSI7yleXf8qYiMIfn95qzeF+jMIAd/tmzeH52K4s=;
-        b=LuTIDFydkcLTZ3TY95E6E0cQK/ycYYC2dTIOotCPlF5doiQ7ymhnM4bjXNNiy/iiHZ
-         YTQrm8ODWk5/I6TRkPcSKHMP1PANoyGWxhOrVMKFCVWveEAuBCBNGE5hqlt0C/4lyOax
-         eBKjqHpwuFsoMrG/ICYOUjaoc4L3A8H5cxVCVEWtEyLIIIvYZHJQJyfBFhG1x0NtNuCV
-         pPl90PRrIKg1JTirJ59Jx55e0gHHdM+QrrieqqH/H7UYdLZDfWyUCHUPEoMmo6546szr
-         ijl+DMIM+FjIN1jK00YbesDtYieBrVMISmEG9tIe3ifyuW9a5brDcU718YmiEqueOyoN
-         cvaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737509867; x=1738114667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RTzeSI7yleXf8qYiMIfn95qzeF+jMIAd/tmzeH52K4s=;
-        b=LLVz/e+LaMtAUjQACUGrDeR6DSId7YQg2GKvAE0lu/cd/iYPEu4ZzBQLzkAb0tcsg4
-         /PrerS+e3zPGbOAjAlqKofC+QLFQbwnyNwd24KPCoW/mfXFE+VAsBvgzILaIaHnCAUqp
-         3LBfUOizrCzMpgkmluT/pPUhmCoz22bOylI2FoqTF3DEJ4p3o/XjU1yFJ0rKqfL+Ngja
-         IjlkAlU3wke4NLTqroZVvM1boRvq+AkVM0rOq4fNXVU0HXi9AFdQmNOThcZHaTlKYTA0
-         pljY/k2MoK/j6mjDyC5vccBO2E9j/scJpG9b9Ae2J2hXxDDILT8Dvzh3+oveLTx68Fb0
-         8+jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUF+ALiD0+RZ44jVLJdKw7cmEmH2w702ZOOP2eUsTfAeDqhMvxaOeyJzl5lB78RN8roVeE8Tm0TwA==@vger.kernel.org, AJvYcCXtCQC4n9rl+I1z8hH+oyLyWmmGE1Eho5+GqppYCJv48yUd686QwWaf/bTTFWdmYUBMiF5wuu4K5IDmD+IICw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2/cuy2W2sZJYg7fPfFqccexcY/Nw6w2TcyD6oDpEwvGltCmP8
-	l7vpqYEcECj90S559RE+bvb7KUIOf/Y23kUECEK76T3NHrgIen6mddQd8SYW9h3XQvXnY3t7Mpo
-	h7UuBlw7tRVbgkP4OSLwn7xnfzZo=
-X-Gm-Gg: ASbGncuj+CBnoJZTSD1ejgnvzQCqYoJnON4DEz9KnITnGIU4rf2/mqlANrwdRALc/Yu
-	QAsDnHhl37C301Tp42U8p7+g1Gg+e7cVvWGaQhG7KVwZzCUR/uarw
-X-Google-Smtp-Source: AGHT+IEkJNCrmlEG13jy4BmryZRTQGBPV1jIvtsJPeiRrekW2MfSR4nCE1A7MSHs5IBv6VATNiDVxPI9NngWXAJ5Rec=
-X-Received: by 2002:a05:622a:3cb:b0:467:86fa:6b72 with SMTP id
- d75a77b69052e-46e12a5549bmr298772581cf.12.1737509866878; Tue, 21 Jan 2025
- 17:37:46 -0800 (PST)
+	s=arc-20240116; t=1737548752; c=relaxed/simple;
+	bh=Xfp892u0X0rMtHWkGD3r2bVHj+FTM/t28M4VtoJ0Wyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QsZDIYuM3YLxcVPftsPxOuU1sP4RDHFDfVb9zezSQC5YrFdwaiye+oZEeAJ/O28IT0LvOb/M0kHjy2j/K/i9coMPBUg08ULrFcWquW9r9ilmqYQuKfwyPSk0GZk6mj7BfkC3UxQv4+XCL8HmhAYUYbDrbULLujtYFDD15MoZVJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZRnNn+6T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DED6C4CED6;
+	Wed, 22 Jan 2025 12:25:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737548751;
+	bh=Xfp892u0X0rMtHWkGD3r2bVHj+FTM/t28M4VtoJ0Wyc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZRnNn+6Tt76019xBirdMVmzRbeL8Q2odMq6HFhgkth9P5ZrYdpErYPlXsxL6Fl3rj
+	 ZI5VtP10jvH/fQAv6HRDykVpsfGmvb0d/xEWjnDE5tgAnq++jvuWWHT6WYDemhqEh2
+	 qhtEzGq7/MMx5/wpO74r4FRgEujUuclOLSKI/Yy3NZM6X5dfnqSKY4Ag8uJB7GG8XW
+	 AQ7J/NzQdgEpLRKLYUKh7jqPAvOBjZZ+gq5nRJ0qTwqiguA+mChUjtx0pX3QTt2bwy
+	 E0gMyTw1G3DnV5TJGaTuN+E86ySP5PQe5fDrGHlTa+/9p9roru7zJ1Awo7fm8PfyZm
+	 vQJdRIi7afA0Q==
+Date: Wed, 22 Jan 2025 13:25:46 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
+	netfs@lists.linux.dev, codalist@coda.cs.cmu.edu, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
+	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	keyrings@vger.kernel.org, Song Liu <song@kernel.org>, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Jani Nikula <jani.nikula@intel.com>, 
+	Corey Minyard <cminyard@mvista.com>
+Subject: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
+ applicable
+Message-ID: <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+ <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250107-fuse-uring-for-6-10-rfc4-v9-0-9c786f9a7a9d@ddn.com>
- <20250107-fuse-uring-for-6-10-rfc4-v9-10-9c786f9a7a9d@ddn.com>
- <CAJnrk1afYmo+GNRb=OF7CUQzY5ocEus0h=93ax8usA9oa_qM4Q@mail.gmail.com>
- <eafad58d-07ec-4e7f-9482-26f313f066cc@bsbernd.com> <CAJnrk1asVwkm8kG-Rfmgi-gPXjYxA8HcA_vauqVi+zjuPNtaJQ@mail.gmail.com>
- <605815bc-40ca-49c1-a727-a36f961b8ad6@bsbernd.com> <CAJnrk1bg_ZwuV1w8x6to50_LYk+o6=HAzC_eQ_U4QGLkyXVwsA@mail.gmail.com>
- <48989a7f-0536-496b-8880-71bfc5da5c19@bsbernd.com> <2ccdb79c-fb2a-46be-8e3d-ac92a19e32f1@bsbernd.com>
-In-Reply-To: <2ccdb79c-fb2a-46be-8e3d-ac92a19e32f1@bsbernd.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 21 Jan 2025 17:37:36 -0800
-X-Gm-Features: AbW1kvaG5tkzvEZXTDoqstyzd6yk3HTJN4vBWdAaEavn0t5OH5PaF31yOSd9A04
-Message-ID: <CAJnrk1ZchvBpaith-ALN2jG=SQB1YELvdG-4cVJZR5uB3domtQ@mail.gmail.com>
-Subject: Re: [PATCH v9 10/17] fuse: Add io-uring sqe commit and fetch support
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
 
-On Tue, Jan 21, 2025 at 4:55=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> =
-wrote:
->
->
->
-> On 1/22/25 01:49, Bernd Schubert wrote:
-> >
-> >
-> > On 1/22/25 01:45, Joanne Koong wrote:
-> >> On Tue, Jan 21, 2025 at 4:18=E2=80=AFPM Bernd Schubert <bernd@bsbernd.=
-com> wrote:
-> >>>
-> >> ...
-> >>>>>
-> >>>>>>
-> >>>>>>> +
-> >>>>>>> +       err =3D fuse_ring_ent_set_commit(ring_ent);
-> >>>>>>> +       if (err !=3D 0) {
-> >>>>>>> +               pr_info_ratelimited("qid=3D%d commit_id %llu stat=
-e %d",
-> >>>>>>> +                                   queue->qid, commit_id, ring_e=
-nt->state);
-> >>>>>>> +               spin_unlock(&queue->lock);
-> >>>>>>> +               return err;
-> >>>>>>> +       }
-> >>>>>>> +
-> >>>>>>> +       ring_ent->cmd =3D cmd;
-> >>>>>>> +       spin_unlock(&queue->lock);
-> >>>>>>> +
-> >>>>>>> +       /* without the queue lock, as other locks are taken */
-> >>>>>>> +       fuse_uring_commit(ring_ent, issue_flags);
-> >>>>>>> +
-> >>>>>>> +       /*
-> >>>>>>> +        * Fetching the next request is absolutely required as qu=
-eued
-> >>>>>>> +        * fuse requests would otherwise not get processed - comm=
-itting
-> >>>>>>> +        * and fetching is done in one step vs legacy fuse, which=
- has separated
-> >>>>>>> +        * read (fetch request) and write (commit result).
-> >>>>>>> +        */
-> >>>>>>> +       fuse_uring_next_fuse_req(ring_ent, queue, issue_flags);
-> >>>>>>
-> >>>>>> If there's no request ready to read next, then no request will be
-> >>>>>> fetched and this will return. However, as I understand it, once th=
-e
-> >>>>>> uring is registered, userspace should only be interacting with the
-> >>>>>> uring via FUSE_IO_URING_CMD_COMMIT_AND_FETCH. However for the case
-> >>>>>> where no request was ready to read, it seems like userspace would =
-have
-> >>>>>> nothing to commit when it wants to fetch the next request?
-> >>>>>
-> >>>>> We have
-> >>>>>
-> >>>>> FUSE_IO_URING_CMD_REGISTER
-> >>>>> FUSE_IO_URING_CMD_COMMIT_AND_FETCH
-> >>>>>
-> >>>>>
-> >>>>> After _CMD_REGISTER the corresponding ring-entry is ready to get fu=
-se
-> >>>>> requests and waiting. After it gets a request assigned and handles =
-it
-> >>>>> by fuse server the _COMMIT_AND_FETCH scheme applies. Did you possib=
-ly
-> >>>>> miss that _CMD_REGISTER will already have it waiting?
-> >>>>>
-> >>>>
-> >>>> Sorry for the late reply. After _CMD_REGISTER and _COMMIT_AND_FETCH,
-> >>>> it seems possible that there is no fuse request waiting until a late=
-r
-> >>>> time? This is the scenario I'm envisioning:
-> >>>> a) uring registers successfully and fetches request through _CMD_REG=
-ISTER
-> >>>> b) server replies to request and fetches new request through _COMMIT=
-_AND_FETCH
-> >>>> c) server replies to request, tries to fetch new request but no
-> >>>> request is ready, through _COMMIT_AND_FETCH
-> >>>>
-> >>>> maybe I'm missing something in my reading of the code, but how will
-> >>>> the server then fetch the next request once the request is ready? It
-> >>>> will have to commit something in order to fetch it since there's onl=
-y
-> >>>> _COMMIT_AND_FETCH which requires a commit, no?
-> >>>>
-> >>>
-> >>> The right name would be '_COMMIT_AND_FETCH_OR_WAIT'. Please see
-> >>> fuse_uring_next_fuse_req().
-> >>>
-> >>> retry:
-> >>>         spin_lock(&queue->lock);
-> >>>         fuse_uring_ent_avail(ent, queue);           --> entry availab=
-le
-> >>>         has_next =3D fuse_uring_ent_assign_req(ent);
-> >>>         spin_unlock(&queue->lock);
-> >>>
-> >>>         if (has_next) {
-> >>>                 err =3D fuse_uring_send_next_to_ring(ent, issue_flags=
-);
-> >>>                 if (err)
-> >>>                         goto retry;
-> >>>         }
-> >>>
-> >>>
-> >>> If there is no available request, the io-uring cmd stored in ent->cmd=
- is
-> >>> just queued/available.
-> >>
-> >> Could you point me to where the wait happens?  I think that's the part
-> >> I'm missing. In my reading of the code, if there's no available
-> >> request (eg queue->fuse_req_queue is empty), then I see that has_next
-> >> will return false and fuse_uring_next_fuse_req() /
-> >> fuse_uring_commit_fetch() returns without having fetched anything.
-> >> Where does the "if there is no available request, the io-uring cmd is
-> >> just queued/available" happen?
-> >>
-> >
-> > You need to read it the other way around, without "has_next" the
-> > avail/queued entry is not removed from the list - it is available
-> > whenever a new request comes in. Looks like we either need refactoring
-> > or at least a comment.
->
-> It also not the current task operation that waits - that happens in
-> io-uring with 'io_uring_submit_and_wait' and wait-nr > 0. In fuse is is
-> really just _not_ running io_uring_cmd_done() that make ent->cmd to be
-> available.
+On Tue, Jan 21, 2025 at 02:40:16PM +0100, Alexander Gordeev wrote:
+> On Fri, Jan 10, 2025 at 03:16:08PM +0100, Joel Granados wrote:
+> 
+> Hi Joel,
+> 
+> > Add the const qualifier to all the ctl_tables in the tree except for
+> > watchdog_hardlockup_sysctl, memory_allocation_profiling_sysctls,
+> > loadpin_sysctl_table and the ones calling register_net_sysctl (./net,
+> > drivers/inifiniband dirs). These are special cases as they use a
+> > registration function with a non-const qualified ctl_table argument or
+> > modify the arrays before passing them on to the registration function.
+> > 
+> > Constifying ctl_table structs will prevent the modification of
+> > proc_handler function pointers as the arrays would reside in .rodata.
+> > This is made possible after commit 78eb4ea25cd5 ("sysctl: treewide:
+> > constify the ctl_table argument of proc_handlers") constified all the
+> > proc_handlers.
+> 
+> I could identify at least these occurences in s390 code as well:
+Hey Alexander
 
-Oh I see, the io_uring_cmd_done handles it internally. It's the
-.send_req =3D fuse_uring_queue_fuse_req -> fuse_uring_send_req_in_task()
--> io_uring_cmd_done() that gets triggered and signals to userspace
-that a fetch is ready when a new request is available later on. It
-makes sense to me now, thanks.
+Thx for bringing these to my attention. I had completely missed them as
+the spatch only deals with ctl_tables outside functions.
 
->
-> Does it help?
->
->
-> Thanks,
-> Bernd
+Short answer:
+These should not be included in the current patch because they are a
+different pattern from how sysctl tables are usually used. So I will not
+include them.
+
+With that said, I think it might be interesting to look closer at them
+as they seem to be complicating the proc_handler (I have to look at them
+closer).
+
+I see that they are defining a ctl_table struct within the functions and
+just using the data (from the incoming ctl_table) to forward things down
+to proc_do{u,}intvec_* functions. This is very odd and I have only seen
+it done in order to change the incoming ctl_table (which is not what is
+being done here).
+
+I will take a closer look after the merge window and circle back with
+more info. Might take me a while as I'm not very familiar with s390
+code; any additional information on why those are being used inside the
+functions would be helpfull.
+
+Best
+
+
+> 
+> diff --git a/arch/s390/appldata/appldata_base.c b/arch/s390/appldata/appldata_base.c
+> index dd7ba7587dd5..9b83c318f919 100644
+> --- a/arch/s390/appldata/appldata_base.c
+> +++ b/arch/s390/appldata/appldata_base.c
+> @@ -204,7 +204,7 @@ appldata_timer_handler(const struct ctl_table *ctl, int write,
+>  {
+>  	int timer_active = appldata_timer_active;
+>  	int rc;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &timer_active,
+>  		.maxlen		= sizeof(int),
+> @@ -237,7 +237,7 @@ appldata_interval_handler(const struct ctl_table *ctl, int write,
+>  {
+>  	int interval = appldata_interval;
+>  	int rc;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &interval,
+>  		.maxlen		= sizeof(int),
+> @@ -269,7 +269,7 @@ appldata_generic_handler(const struct ctl_table *ctl, int write,
+>  	struct list_head *lh;
+>  	int rc, found;
+>  	int active;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.data		= &active,
+>  		.maxlen		= sizeof(int),
+>  		.extra1		= SYSCTL_ZERO,
+> diff --git a/arch/s390/kernel/hiperdispatch.c b/arch/s390/kernel/hiperdispatch.c
+> index 7857a7e8e56c..7d0ba16085c1 100644
+> --- a/arch/s390/kernel/hiperdispatch.c
+> +++ b/arch/s390/kernel/hiperdispatch.c
+> @@ -273,7 +273,7 @@ static int hiperdispatch_ctl_handler(const struct ctl_table *ctl, int write,
+>  {
+>  	int hiperdispatch;
+>  	int rc;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &hiperdispatch,
+>  		.maxlen		= sizeof(int),
+> diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+> index 6691808bf50a..26e50de83d80 100644
+> --- a/arch/s390/kernel/topology.c
+> +++ b/arch/s390/kernel/topology.c
+> @@ -629,7 +629,7 @@ static int topology_ctl_handler(const struct ctl_table *ctl, int write,
+>  	int enabled = topology_is_enabled();
+>  	int new_mode;
+>  	int rc;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &enabled,
+>  		.maxlen		= sizeof(int),
+> @@ -658,7 +658,7 @@ static int polarization_ctl_handler(const struct ctl_table *ctl, int write,
+>  {
+>  	int polarization;
+>  	int rc;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &polarization,
+>  		.maxlen		= sizeof(int),
+> diff --git a/arch/s390/mm/cmm.c b/arch/s390/mm/cmm.c
+> index 939e3bec2db7..8e354c90a3dd 100644
+> --- a/arch/s390/mm/cmm.c
+> +++ b/arch/s390/mm/cmm.c
+> @@ -263,7 +263,7 @@ static int cmm_pages_handler(const struct ctl_table *ctl, int write,
+>  			     void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+>  	long nr = cmm_get_pages();
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &nr,
+>  		.maxlen		= sizeof(long),
+> @@ -283,7 +283,7 @@ static int cmm_timed_pages_handler(const struct ctl_table *ctl, int write,
+>  				   loff_t *ppos)
+>  {
+>  	long nr = cmm_get_timed_pages();
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &nr,
+>  		.maxlen		= sizeof(long),
+> 
+> 
+> > Best regards,
+> > -- 
+> > Joel Granados <joel.granados@kernel.org>
+> 
+> Thanks!
+
+-- 
+
+Joel Granados
 

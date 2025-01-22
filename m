@@ -1,223 +1,673 @@
-Return-Path: <io-uring+bounces-6042-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6043-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5B2A192F4
-	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2025 14:51:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4DBA195E1
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2025 16:57:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D253188D7C0
-	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2025 13:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C7BE18896DB
+	for <lists+io-uring@lfdr.de>; Wed, 22 Jan 2025 15:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A9A1E4AB;
-	Wed, 22 Jan 2025 13:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E985F2147E5;
+	Wed, 22 Jan 2025 15:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSSmsHHi"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="h9TR7bVX"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEDE2135A8
-	for <io-uring@vger.kernel.org>; Wed, 22 Jan 2025 13:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52701214205;
+	Wed, 22 Jan 2025 15:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737553868; cv=none; b=CyhfXCGiq3Iqx3mEF2JRHikOmnBbZpUTo0z0HErcnVMtaDPC82VXAo1kGAagbxhkCok9ju9rNG+GWdRYGH9tzSQiCB+o9yfDGzFYcDgDt89zgifJDKMpkS+YzfhkdiqwVMAvfmZsQLP0J4QPY7RKlxNi5P6rpta5nuzqCUp583A=
+	t=1737561417; cv=none; b=oqVEaCK45C3b83kvW6ZWREIru7foBt+KDuRnQrsDTJ8GFOtXC/OY4YrCLy5xjq0vPRFEV+wbUwKa80l5C4U81VWENu2IejUuaKCt6I98AjnkoQa31d1Po9Q5CLD8DCM7B/74K5azmNT/IawtR5GWANOFXyEnspVscr9btFvq5pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737553868; c=relaxed/simple;
-	bh=WwNffDyTpn5l7pNJxB7XpfD1sNbIY0eMqdXVedc72pk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BnF5fPVOBCrZJX0v7IJAU9jm54PpsLqf2JdUprdoi0lKcM/K7EXhj5AbpABI+LcHvGSsS6RipWqJraHL13ZiRa3nrBkPwdgK7JYSunqounsc0qBQphpuSBpNtEaok0ZcfUKx3IYKe3Y/zkbAGCyOJmZlC73hLRmr/9myHE+o/38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSSmsHHi; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3862c78536bso341412f8f.2
-        for <io-uring@vger.kernel.org>; Wed, 22 Jan 2025 05:51:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737553865; x=1738158665; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zVX2FJ2hCr5swG6CFbz13/hPQt22h2FbZGX8nYTRstg=;
-        b=hSSmsHHimzX6bCUzukAAdbj9GRq4EL0c5e8bYX6o2SKW0uwIlSqYDIQ3VkIBpwGri9
-         bFF2e3o7QB8NJq+XigPmGBDHVfbASvCjrnj4qfLS3Z9cocqiMvXHxEvCBEMpAN3EyYnc
-         ubh9+LDgd09/uzmoAWKKyxEBciN4Nsh8+XQI144q/qiLqR+Z8MMMWQdm1fB4mcvE/nGV
-         srBrNvwOvmKaVHgs2EA4h+iqtKdc6fyuf+nF1aPB/GXcyHX1fF+dw5iWZhkEdgU8cVkN
-         iSfWIinyzDg490ZgrIxVH9clAD5JAxQwKm0J0s8B0d9hy7sIb8isQsWNjXUvKA9Gmu/Q
-         juOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737553865; x=1738158665;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zVX2FJ2hCr5swG6CFbz13/hPQt22h2FbZGX8nYTRstg=;
-        b=TijHiYRN51fne3mKsUw/V0Fr/1kvMe5+pUTFxV64Q9yRtpAZJAfcZbGzPVmdKHSpXZ
-         qPXptuxmG27jMFUW5eExy8Iea4BzOrGc3d/0XgF4av1OT2gOngh9/mrc/+0CJ+rojJ0c
-         1omJDeJ/bY1j4hoJZiC/+l7WXcU3AjVnFx44kJockmcORaW2RQoYgzgSUWk2O1I6RsVd
-         tDJXn/bDM9UTnx2HLJODzpBm8p89tGgfH+ln44/26brHR49x03Zs58okxZ9biRN10Z4d
-         SY6k+KjFGkNNu48fFBOQf1H+TJlOTczeroyNOUNsfq2hAp/o5wIzBON8e7SUQYhuG/zp
-         nmCA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2gc2Yc1/Q5It1gQBHLkhmiteossVt3a/C4jLg8qapXTZu8CJTkrJNtHdB+h3cbZtDELmqaRoS1g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUTAUJd0sDgF4Z5EYoISr5kHckoWdOqUWxaxeUMZw/skOvWjcf
-	xVNwVqOPC7tB0gxwpkmxlZ7IsxzdwNBCH+QGbXb19IMDgsHXuCm6qzhhQtyS20BCFT32j9CQdJ3
-	RKbyHHvX2MtBnoCUgfN5/NtDtmvU=
-X-Gm-Gg: ASbGncuhjZFN1RTLJBVwLy+va5ogR0pN73L62X6yU4RZeTwediGeeV0wPDEWStUHpHW
-	VrKjF6Q1hdthJc2qsK/5iXOPlTyvAf2/WjW+klBpD1+FP539xoLqOkpDksV3l2DHks8CglquTuD
-	7Q9HUZdj4So/BDF1Ac
-X-Google-Smtp-Source: AGHT+IG7kF++06UO3VS6y6oI6g/IIKgNnz7ft8/xBBfb7wwOwNPItOTgMnwum+wAp3Qd9ADUgiwmaVuhHYz+sSkHEQE=
-X-Received: by 2002:a5d:47c5:0:b0:38a:8784:9137 with SMTP id
- ffacd0b85a97d-38bf57a8f56mr7575141f8f.9.1737553864742; Wed, 22 Jan 2025
- 05:51:04 -0800 (PST)
+	s=arc-20240116; t=1737561417; c=relaxed/simple;
+	bh=gErql0MqfJBAyuX7vuYdjhGOuXaJMcj1PFhfFYgA9fw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HyeyT53is+Rf+wTepJgh6liE+E0EVQI5DKbdqS44P6F/z0Hxbef9hoW5V0Vns3NMoO4n85N28UrucQrzYp7WPZ04jrbtox5klkq1DV86Qnalx9GMLGlhcHpf4PIoI4UfwJT+3XyaEKnIcSfIWcwd50oLa+UUfGPFLJow6oYzICI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=h9TR7bVX; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=HyjsPgmvoou5Jc8L45eILCIFBPjtpPRTZAJLX7lAmY8=; b=h9TR7bVXFry98MkGVtbZdcrmSS
+	u5zuFSX/nPhTB2YnrOyCugykvHewP5PR5+T875bDk3TJLON7uG200qLjCuUag4pPvA59cPPOlYOsM
+	7bg37doBXvKiiXAC9U0biHwzh4PJnPvuq6OluLRICmwKeLISc2zmSaSO5VhNeio4UIFhu6UQ4gpHl
+	0uRSyIqEbK/VriZSiH3xkIxYo9ZuI+re5906iXcZWVgzditYes3Bnq4pjccgZH9+ICE8Y5o3DK5z1
+	UF2yQly5MEz4zJmwpMngeZfYVj4jg04dw6CEjbnY72RLdCK5qJ27Xpnn9wS42/5s8SBLBuZejP8WC
+	23Jy/HSg==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tad5x-000nee-Qk; Wed, 22 Jan 2025 16:56:45 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  Jens Axboe <axboe@kernel.dk>,
+  Pavel Begunkov <asml.silence@gmail.com>,  linux-fsdevel@vger.kernel.org,
+  io-uring@vger.kernel.org,  Joanne Koong <joannelkoong@gmail.com>,  Josef
+ Bacik <josef@toxicpanda.com>,  Amir Goldstein <amir73il@gmail.com>,  Ming
+ Lei <tom.leiming@gmail.com>,  David Wei <dw@davidwei.uk>,
+  bernd@bsbernd.com
+Subject: Re: [PATCH v10 10/17] fuse: Add io-uring sqe commit and fetch support
+In-Reply-To: <20250120-fuse-uring-for-6-10-rfc4-v10-10-ca7c5d1007c0@ddn.com>
+	(Bernd Schubert's message of "Mon, 20 Jan 2025 02:29:03 +0100")
+References: <20250120-fuse-uring-for-6-10-rfc4-v10-0-ca7c5d1007c0@ddn.com>
+	<20250120-fuse-uring-for-6-10-rfc4-v10-10-ca7c5d1007c0@ddn.com>
+Date: Wed, 22 Jan 2025 15:56:01 +0000
+Message-ID: <87zfjietbi.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ec2a6ca08c614c10853fbb1270296ac4@huawei.com> <98125b67-7b63-427f-b822-a12779d50a13@kernel.dk>
- <c14929fc328f43baa7ac2ad8f85a8f2b@huawei.com>
-In-Reply-To: <c14929fc328f43baa7ac2ad8f85a8f2b@huawei.com>
-From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Date: Wed, 22 Jan 2025 14:49:51 +0100
-X-Gm-Features: AWEUYZmZpJb_nJXGrc0VFB4A-A68-6fMudm0dEEboziQ_Zudc-pl8fDXoa4w9hg
-Message-ID: <CAPAsAGwzBeGXbVtWtZKhbUDbD4b4PtgAS9MJYU2kkiNHgyKpfQ@mail.gmail.com>
-Subject: Re: KASAN reported an error while executing accept-reust.t testcase
-To: lizetao <lizetao1@huawei.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>, 
-	Pavel Begunkov <asml.silence@gmail.com>, 
-	"juntong.deng@outlook.com" <juntong.deng@outlook.com>, 
-	"kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>, Andrey Konovalov <andreyknvl@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jan 12, 2025 at 7:45=E2=80=AFAM lizetao <lizetao1@huawei.com> wrote=
-:
->
-> Hi,
->
-> > -----Original Message-----
-> > From: Jens Axboe <axboe@kernel.dk>
-> > Sent: Sunday, January 12, 2025 1:13 AM
-> > To: lizetao <lizetao1@huawei.com>; io-uring <io-uring@vger.kernel.org>
-> > Cc: Pavel Begunkov <asml.silence@gmail.com>
-> > Subject: Re: KASAN reported an error while executing accept-reust.t tes=
-tcase
-> >
-> > On 1/11/25 7:07 AM, lizetao wrote:
-> > > Hi all,
-> > >
-> > > When I run the testcase liburing/accept-reust.t with CONFIG_KASAN=3Dy
-> > > and CONFIG_KASAN_EXTRA_INFO=3Dy, I got a error reported by KASAN:
-> >
-> > Looks more like you get KASAN crashing...
-> >
-> > > Unable to handle kernel paging request at virtual address
-> > > 00000c6455008008 Mem abort info:
-> > >   ESR =3D 0x0000000096000004
-> > >   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-> > >   SET =3D 0, FnV =3D 0
-> > >   EA =3D 0, S1PTW =3D 0
-> > >   FSC =3D 0x04: level 0 translation fault Data abort info:
-> > >   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
-> > >   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-> > >   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0 user pgtable: 4k=
- pages,
-> > > 48-bit VAs, pgdp=3D00000001104c5000 [00000c6455008008]
-> > > pgd=3D0000000000000000, p4d=3D0000000000000000 Internal error: Oops:
-> > > 0000000096000004 [#1] PREEMPT SMP Modules linked in:
-> > > CPU: 6 UID: 0 PID: 352 Comm: kworker/u128:5 Not tainted
-> > > 6.13.0-rc6-g0a2cb793507d #5 Hardware name: linux,dummy-virt (DT)
-> > > Workqueue: iou_exit io_ring_exit_work
-> > > pstate: 10000005 (nzcV daif -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--) pc =
-:
-> > > __kasan_mempool_unpoison_object+0x38/0x170
-> > > lr : io_netmsg_cache_free+0x8c/0x180
-> > > sp : ffff800083297a90
-> > > x29: ffff800083297a90 x28: ffffd4d7f67e88e4 x27: 0000000000000003
-> > > x26: 1fffe5958011502e x25: ffff2cabff976c18 x24: 1fffe5957ff2ed83
-> > > x23: ffff2cabff976c10 x22: 00000c6455008000 x21: 0002992540200001
-> > > x20: 0000000000000000 x19: 00000c6455008000 x18: 00000000489683f8
-> > > x17: ffffd4d7f68006ac x16: ffffd4d7f67eb3e0 x15: ffffd4d7f67e88e4
-> > > x14: ffffd4d7f766deac x13: ffffd4d7f6619030 x12: ffff7a9b012e3e26
-> > > x11: 1ffffa9b012e3e25 x10: ffff7a9b012e3e25 x9 : ffffd4d7f766debc
-> > > x8 : ffffd4d80971f128 x7 : 0000000000000001 x6 : 00008564fed1c1db
-> > > x5 : ffffd4d80971f128 x4 : ffff7a9b012e3e26 x3 : ffff2cabff976c00
-> > > x2 : ffffc1ffc0000000 x1 : 0000000000000000 x0 : 0002992540200001 Cal=
-l
-> > > trace:
-> > >  __kasan_mempool_unpoison_object+0x38/0x170 (P)
-> > >  io_netmsg_cache_free+0x8c/0x180
-> > >  io_ring_exit_work+0xd4c/0x13a0
-> > >  process_one_work+0x52c/0x1000
-> > >  worker_thread+0x830/0xdc0
-> > >  kthread+0x2bc/0x348
-> > >  ret_from_fork+0x10/0x20
-> > > Code: aa0003f5 aa0103f4 8b131853 aa1303f6 (f9400662) ---[ end trace
-> > > 0000000000000000 ]---
-> > >
-> > >
-> > > I preliminary analyzed the accept and connect code logic. In the
-> > > accept-reuse.t testcase, kmsg->free_iov is not used, so when calling
-> > > io_netmsg_cache_free(), the
-> > > kasan_mempool_unpoison_object(kmsg->free_iov...) path should not be
-> > > executed.
-> > >
-> > >
-> > > I used the hardware watchpoint to capture the first scene of modifyin=
-g kmsg-
-> > >free_iov:
-> > >
-> > > Thread 3 hit Hardware watchpoint 7: *0xffff0000ebfc5410 Old value =3D=
- 0
-> > > New value =3D -211812350 kasan_set_track (stack=3D<optimized out>,
-> > > track=3D<optimized out>) at ./arch/arm64/include/asm/current.h:21
-> > > 21          return (struct task_struct *)sp_el0;
-> > >
-> > > # bt
-> > > kasan_set_track
-> > > kasan_save_track
-> > > kasan_save_free_info
-> > > poison_slab_object
-> > > __kasan_mempool_poison_object
-> > > kasan_mempool_poison_object
-> > > io_alloc_cache_put
-> > > io_netmsg_recycle
-> > > io_req_msg_cleanup
-> > > io_connect
-> > > io_issue_sqe
-> > > io_queue_sqe
-> > > io_req_task_submit
-> > > ...
-> > >
-> > >
-> > > It's a bit strange. It was modified by KASAN. I can't understand this=
-.
-> > > Maybe I missed something? Please let me know. Thanks.
-> >
-> > Looks like KASAN with the extra info ends up writing to io_async_msghdr=
--
-> > >free_iov somehow. No idea... For the test case in question, ->free_iov=
- should
-> > be NULL when initially allocated, and the io_uring code isn't storing t=
-o it. Yet
-> > it's non-NULL when you later go and free it, after calling
-> > kasan_mempool_poison_object().
->
-> I also think so and would Juntong and Ryabinin or others KASAN developers=
- be interested
-> In this problem?
->
+On Mon, Jan 20 2025, Bernd Schubert wrote:
 
-Hi, thanks for reporting.
-KASAN stores some info about freed slab object in the object itself
-until it is reallocated or the slab page is released.
-And since the  b556a462eb8d ("kasan: save free stack traces for slab
-mempools") we do the same thing in kasan_mempool_poison_object().
-In the most use cases this wasn't the problem, because callers expect
-uninitialized objects from mempool.
+> This adds support for fuse request completion through ring SQEs
+> (FUSE_URING_CMD_COMMIT_AND_FETCH handling). After committing
+> the ring entry it becomes available for new fuse requests.
+> Handling of requests through the ring (SQE/CQE handling)
+> is complete now.
+>
+> Fuse request data are copied through the mmaped ring buffer,
+> there is no support for any zero copy yet.
 
-However, this isn't the case for io_alloc_cache. AFAICS io_uring code
-expects that io_alloc_cache_put/get leaves objects unmodified.
-So I'm thinking we'd need to add some parameter to the
-kasan_mempool_poison_object() to avoid modifying objects.
+Single comment below.
+
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com> # io_uring
+> ---
+>  fs/fuse/dev_uring.c   | 448 ++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  fs/fuse/dev_uring_i.h |  12 ++
+>  fs/fuse/fuse_i.h      |   4 +
+>  3 files changed, 464 insertions(+)
+>
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index 60e38ff1ecef3b007bae7ceedd7dd997439e463a..74aa5ccaff30998cf58e805f7=
+c1b7ebf70d5cd6d 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -24,6 +24,18 @@ bool fuse_uring_enabled(void)
+>  	return enable_uring;
+>  }
+>=20=20
+> +static void fuse_uring_req_end(struct fuse_ring_ent *ent, int error)
+> +{
+> +	struct fuse_req *req =3D ent->fuse_req;
+> +
+> +	if (error)
+> +		req->out.h.error =3D error;
+> +
+> +	clear_bit(FR_SENT, &req->flags);
+> +	fuse_request_end(ent->fuse_req);
+> +	ent->fuse_req =3D NULL;
+> +}
+> +
+>  void fuse_uring_destruct(struct fuse_conn *fc)
+>  {
+>  	struct fuse_ring *ring =3D fc->ring;
+> @@ -39,8 +51,11 @@ void fuse_uring_destruct(struct fuse_conn *fc)
+>  			continue;
+>=20=20
+>  		WARN_ON(!list_empty(&queue->ent_avail_queue));
+> +		WARN_ON(!list_empty(&queue->ent_w_req_queue));
+>  		WARN_ON(!list_empty(&queue->ent_commit_queue));
+> +		WARN_ON(!list_empty(&queue->ent_in_userspace));
+>=20=20
+> +		kfree(queue->fpq.processing);
+>  		kfree(queue);
+>  		ring->queues[qid] =3D NULL;
+>  	}
+> @@ -99,20 +114,34 @@ static struct fuse_ring_queue *fuse_uring_create_que=
+ue(struct fuse_ring *ring,
+>  {
+>  	struct fuse_conn *fc =3D ring->fc;
+>  	struct fuse_ring_queue *queue;
+> +	struct list_head *pq;
+>=20=20
+>  	queue =3D kzalloc(sizeof(*queue), GFP_KERNEL_ACCOUNT);
+>  	if (!queue)
+>  		return NULL;
+> +	pq =3D kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL);
+> +	if (!pq) {
+> +		kfree(queue);
+> +		return NULL;
+> +	}
+> +
+>  	queue->qid =3D qid;
+>  	queue->ring =3D ring;
+>  	spin_lock_init(&queue->lock);
+>=20=20
+>  	INIT_LIST_HEAD(&queue->ent_avail_queue);
+>  	INIT_LIST_HEAD(&queue->ent_commit_queue);
+> +	INIT_LIST_HEAD(&queue->ent_w_req_queue);
+> +	INIT_LIST_HEAD(&queue->ent_in_userspace);
+> +	INIT_LIST_HEAD(&queue->fuse_req_queue);
+> +
+> +	queue->fpq.processing =3D pq;
+> +	fuse_pqueue_init(&queue->fpq);
+>=20=20
+>  	spin_lock(&fc->lock);
+>  	if (ring->queues[qid]) {
+>  		spin_unlock(&fc->lock);
+> +		kfree(queue->fpq.processing);
+>  		kfree(queue);
+>  		return ring->queues[qid];
+>  	}
+> @@ -126,6 +155,213 @@ static struct fuse_ring_queue *fuse_uring_create_qu=
+eue(struct fuse_ring *ring,
+>  	return queue;
+>  }
+>=20=20
+> +/*
+> + * Checks for errors and stores it into the request
+> + */
+> +static int fuse_uring_out_header_has_err(struct fuse_out_header *oh,
+> +					 struct fuse_req *req,
+> +					 struct fuse_conn *fc)
+> +{
+> +	int err;
+> +
+> +	err =3D -EINVAL;
+> +	if (oh->unique =3D=3D 0) {
+> +		/* Not supported through io-uring yet */
+> +		pr_warn_once("notify through fuse-io-uring not supported\n");
+> +		goto err;
+> +	}
+> +
+> +	if (oh->error <=3D -ERESTARTSYS || oh->error > 0)
+> +		goto err;
+> +
+> +	if (oh->error) {
+> +		err =3D oh->error;
+> +		goto err;
+> +	}
+> +
+> +	err =3D -ENOENT;
+> +	if ((oh->unique & ~FUSE_INT_REQ_BIT) !=3D req->in.h.unique) {
+> +		pr_warn_ratelimited("unique mismatch, expected: %llu got %llu\n",
+> +				    req->in.h.unique,
+> +				    oh->unique & ~FUSE_INT_REQ_BIT);
+> +		goto err;
+> +	}
+> +
+> +	/*
+> +	 * Is it an interrupt reply ID?
+> +	 * XXX: Not supported through fuse-io-uring yet, it should not even
+> +	 *      find the request - should not happen.
+> +	 */
+> +	WARN_ON_ONCE(oh->unique & FUSE_INT_REQ_BIT);
+> +
+> +	err =3D 0;
+> +err:
+> +	return err;
+> +}
+> +
+> +static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
+> +				     struct fuse_req *req,
+> +				     struct fuse_ring_ent *ent)
+> +{
+> +	struct fuse_copy_state cs;
+> +	struct fuse_args *args =3D req->args;
+> +	struct iov_iter iter;
+> +	int err;
+> +	struct fuse_uring_ent_in_out ring_in_out;
+> +
+> +	err =3D copy_from_user(&ring_in_out, &ent->headers->ring_ent_in_out,
+> +			     sizeof(ring_in_out));
+> +	if (err)
+> +		return -EFAULT;
+> +
+> +	err =3D import_ubuf(ITER_SOURCE, ent->payload, ring->max_payload_sz,
+> +			  &iter);
+> +	if (err)
+> +		return err;
+> +
+> +	fuse_copy_init(&cs, 0, &iter);
+> +	cs.is_uring =3D 1;
+> +	cs.req =3D req;
+> +
+> +	return fuse_copy_out_args(&cs, args, ring_in_out.payload_sz);
+> +}
+> +
+> + /*
+> +  * Copy data from the req to the ring buffer
+> +  */
+> +static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_r=
+eq *req,
+> +				   struct fuse_ring_ent *ent)
+> +{
+> +	struct fuse_copy_state cs;
+> +	struct fuse_args *args =3D req->args;
+> +	struct fuse_in_arg *in_args =3D args->in_args;
+> +	int num_args =3D args->in_numargs;
+> +	int err;
+> +	struct iov_iter iter;
+> +	struct fuse_uring_ent_in_out ent_in_out =3D {
+> +		.flags =3D 0,
+> +		.commit_id =3D req->in.h.unique,
+> +	};
+> +
+> +	err =3D import_ubuf(ITER_DEST, ent->payload, ring->max_payload_sz, &ite=
+r);
+> +	if (err) {
+> +		pr_info_ratelimited("fuse: Import of user buffer failed\n");
+> +		return err;
+> +	}
+> +
+> +	fuse_copy_init(&cs, 1, &iter);
+> +	cs.is_uring =3D 1;
+> +	cs.req =3D req;
+> +
+> +	if (num_args > 0) {
+> +		/*
+> +		 * Expectation is that the first argument is the per op header.
+> +		 * Some op code have that as zero size.
+> +		 */
+> +		if (args->in_args[0].size > 0) {
+> +			err =3D copy_to_user(&ent->headers->op_in, in_args->value,
+> +					   in_args->size);
+> +			if (err) {
+> +				pr_info_ratelimited(
+> +					"Copying the header failed.\n");
+> +				return -EFAULT;
+> +			}
+> +		}
+> +		in_args++;
+> +		num_args--;
+> +	}
+> +
+> +	/* copy the payload */
+> +	err =3D fuse_copy_args(&cs, num_args, args->in_pages,
+> +			     (struct fuse_arg *)in_args, 0);
+> +	if (err) {
+> +		pr_info_ratelimited("%s fuse_copy_args failed\n", __func__);
+> +		return err;
+> +	}
+> +
+> +	ent_in_out.payload_sz =3D cs.ring.copied_sz;
+> +	err =3D copy_to_user(&ent->headers->ring_ent_in_out, &ent_in_out,
+> +			   sizeof(ent_in_out));
+> +	return err ? -EFAULT : 0;
+> +}
+> +
+> +static int fuse_uring_copy_to_ring(struct fuse_ring_ent *ent,
+> +				   struct fuse_req *req)
+> +{
+> +	struct fuse_ring_queue *queue =3D ent->queue;
+> +	struct fuse_ring *ring =3D queue->ring;
+> +	int err;
+> +
+> +	err =3D -EIO;
+> +	if (WARN_ON(ent->state !=3D FRRS_FUSE_REQ)) {
+> +		pr_err("qid=3D%d ring-req=3D%p invalid state %d on send\n",
+> +		       queue->qid, ent, ent->state);
+> +		return err;
+> +	}
+> +
+> +	err =3D -EINVAL;
+> +	if (WARN_ON(req->in.h.unique =3D=3D 0))
+> +		return err;
+> +
+> +	/* copy the request */
+> +	err =3D fuse_uring_args_to_ring(ring, req, ent);
+> +	if (unlikely(err)) {
+> +		pr_info_ratelimited("Copy to ring failed: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	/* copy fuse_in_header */
+> +	err =3D copy_to_user(&ent->headers->in_out, &req->in.h,
+> +			   sizeof(req->in.h));
+> +	if (err) {
+> +		err =3D -EFAULT;
+> +		return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int fuse_uring_prepare_send(struct fuse_ring_ent *ent)
+> +{
+> +	struct fuse_req *req =3D ent->fuse_req;
+> +	int err;
+> +
+> +	err =3D fuse_uring_copy_to_ring(ent, req);
+> +	if (!err)
+> +		set_bit(FR_SENT, &req->flags);
+> +	else
+> +		fuse_uring_req_end(ent, err);
+> +
+> +	return err;
+> +}
+> +
+> +/*
+> + * Write data to the ring buffer and send the request to userspace,
+> + * userspace will read it
+> + * This is comparable with classical read(/dev/fuse)
+> + */
+> +static int fuse_uring_send_next_to_ring(struct fuse_ring_ent *ent,
+> +					unsigned int issue_flags)
+> +{
+> +	struct fuse_ring_queue *queue =3D ent->queue;
+> +	int err;
+> +	struct io_uring_cmd *cmd;
+> +
+> +	err =3D fuse_uring_prepare_send(ent);
+> +	if (err)
+> +		return err;
+> +
+> +	spin_lock(&queue->lock);
+> +	cmd =3D ent->cmd;
+> +	ent->cmd =3D NULL;
+> +	ent->state =3D FRRS_USERSPACE;
+> +	list_move(&ent->list, &queue->ent_in_userspace);
+> +	spin_unlock(&queue->lock);
+> +
+> +	io_uring_cmd_done(cmd, 0, 0, issue_flags);
+> +	return 0;
+> +}
+> +
+>  /*
+>   * Make a ring entry available for fuse_req assignment
+>   */
+> @@ -137,6 +373,210 @@ static void fuse_uring_ent_avail(struct fuse_ring_e=
+nt *ent,
+>  	ent->state =3D FRRS_AVAILABLE;
+>  }
+>=20=20
+> +/* Used to find the request on SQE commit */
+> +static void fuse_uring_add_to_pq(struct fuse_ring_ent *ent,
+> +				 struct fuse_req *req)
+> +{
+> +	struct fuse_ring_queue *queue =3D ent->queue;
+> +	struct fuse_pqueue *fpq =3D &queue->fpq;
+> +	unsigned int hash;
+> +
+> +	req->ring_entry =3D ent;
+> +	hash =3D fuse_req_hash(req->in.h.unique);
+> +	list_move_tail(&req->list, &fpq->processing[hash]);
+> +}
+> +
+> +/*
+> + * Assign a fuse queue entry to the given entry
+> + */
+> +static void fuse_uring_add_req_to_ring_ent(struct fuse_ring_ent *ent,
+> +					   struct fuse_req *req)
+> +{
+> +	struct fuse_ring_queue *queue =3D ent->queue;
+> +	struct fuse_conn *fc =3D req->fm->fc;
+> +	struct fuse_iqueue *fiq =3D &fc->iq;
+> +
+> +	lockdep_assert_held(&queue->lock);
+> +
+> +	if (WARN_ON_ONCE(ent->state !=3D FRRS_AVAILABLE &&
+> +			 ent->state !=3D FRRS_COMMIT)) {
+> +		pr_warn("%s qid=3D%d state=3D%d\n", __func__, ent->queue->qid,
+> +			ent->state);
+> +	}
+> +
+> +	spin_lock(&fiq->lock);
+> +	clear_bit(FR_PENDING, &req->flags);
+> +	spin_unlock(&fiq->lock);
+> +	ent->fuse_req =3D req;
+> +	ent->state =3D FRRS_FUSE_REQ;
+> +	list_move(&ent->list, &queue->ent_w_req_queue);
+> +	fuse_uring_add_to_pq(ent, req);
+> +}
+> +
+> +/*
+> + * Release the ring entry and fetch the next fuse request if available
+> + *
+> + * @return true if a new request has been fetched
+> + */
+> +static bool fuse_uring_ent_assign_req(struct fuse_ring_ent *ent)
+> +	__must_hold(&queue->lock)
+> +{
+> +	struct fuse_req *req;
+> +	struct fuse_ring_queue *queue =3D ent->queue;
+> +	struct list_head *req_queue =3D &queue->fuse_req_queue;
+> +
+> +	lockdep_assert_held(&queue->lock);
+> +
+> +	/* get and assign the next entry while it is still holding the lock */
+> +	req =3D list_first_entry_or_null(req_queue, struct fuse_req, list);
+> +	if (req) {
+> +		fuse_uring_add_req_to_ring_ent(ent, req);
+> +		return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +/*
+> + * Read data from the ring buffer, which user space has written to
+> + * This is comparible with handling of classical write(/dev/fuse).
+> + * Also make the ring request available again for new fuse requests.
+> + */
+> +static void fuse_uring_commit(struct fuse_ring_ent *ent,
+> +			      unsigned int issue_flags)
+> +{
+> +	struct fuse_ring *ring =3D ent->queue->ring;
+> +	struct fuse_conn *fc =3D ring->fc;
+> +	struct fuse_req *req =3D ent->fuse_req;
+> +	ssize_t err =3D 0;
+> +
+> +	err =3D copy_from_user(&req->out.h, &ent->headers->in_out,
+> +			     sizeof(req->out.h));
+> +	if (err) {
+> +		req->out.h.error =3D err;
+
+Shouldn't 'req->out.h.error' be set to -EFAULT instead?
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+> +		goto out;
+> +	}
+> +
+> +	err =3D fuse_uring_out_header_has_err(&req->out.h, req, fc);
+> +	if (err) {
+> +		/* req->out.h.error already set */
+> +		goto out;
+> +	}
+> +
+> +	err =3D fuse_uring_copy_from_ring(ring, req, ent);
+> +out:
+> +	fuse_uring_req_end(ent, err);
+> +}
+> +
+> +/*
+> + * Get the next fuse req and send it
+> + */
+> +static void fuse_uring_next_fuse_req(struct fuse_ring_ent *ent,
+> +				     struct fuse_ring_queue *queue,
+> +				     unsigned int issue_flags)
+> +{
+> +	int err;
+> +	bool has_next;
+> +
+> +retry:
+> +	spin_lock(&queue->lock);
+> +	fuse_uring_ent_avail(ent, queue);
+> +	has_next =3D fuse_uring_ent_assign_req(ent);
+> +	spin_unlock(&queue->lock);
+> +
+> +	if (has_next) {
+> +		err =3D fuse_uring_send_next_to_ring(ent, issue_flags);
+> +		if (err)
+> +			goto retry;
+> +	}
+> +}
+> +
+> +static int fuse_ring_ent_set_commit(struct fuse_ring_ent *ent)
+> +{
+> +	struct fuse_ring_queue *queue =3D ent->queue;
+> +
+> +	lockdep_assert_held(&queue->lock);
+> +
+> +	if (WARN_ON_ONCE(ent->state !=3D FRRS_USERSPACE))
+> +		return -EIO;
+> +
+> +	ent->state =3D FRRS_COMMIT;
+> +	list_move(&ent->list, &queue->ent_commit_queue);
+> +
+> +	return 0;
+> +}
+> +
+> +/* FUSE_URING_CMD_COMMIT_AND_FETCH handler */
+> +static int fuse_uring_commit_fetch(struct io_uring_cmd *cmd, int issue_f=
+lags,
+> +				   struct fuse_conn *fc)
+> +{
+> +	const struct fuse_uring_cmd_req *cmd_req =3D io_uring_sqe_cmd(cmd->sqe);
+> +	struct fuse_ring_ent *ent;
+> +	int err;
+> +	struct fuse_ring *ring =3D fc->ring;
+> +	struct fuse_ring_queue *queue;
+> +	uint64_t commit_id =3D READ_ONCE(cmd_req->commit_id);
+> +	unsigned int qid =3D READ_ONCE(cmd_req->qid);
+> +	struct fuse_pqueue *fpq;
+> +	struct fuse_req *req;
+> +
+> +	err =3D -ENOTCONN;
+> +	if (!ring)
+> +		return err;
+> +
+> +	if (qid >=3D ring->nr_queues)
+> +		return -EINVAL;
+> +
+> +	queue =3D ring->queues[qid];
+> +	if (!queue)
+> +		return err;
+> +	fpq =3D &queue->fpq;
+> +
+> +	spin_lock(&queue->lock);
+> +	/* Find a request based on the unique ID of the fuse request
+> +	 * This should get revised, as it needs a hash calculation and list
+> +	 * search. And full struct fuse_pqueue is needed (memory overhead).
+> +	 * As well as the link from req to ring_ent.
+> +	 */
+> +	req =3D fuse_request_find(fpq, commit_id);
+> +	err =3D -ENOENT;
+> +	if (!req) {
+> +		pr_info("qid=3D%d commit_id %llu not found\n", queue->qid,
+> +			commit_id);
+> +		spin_unlock(&queue->lock);
+> +		return err;
+> +	}
+> +	list_del_init(&req->list);
+> +	ent =3D req->ring_entry;
+> +	req->ring_entry =3D NULL;
+> +
+> +	err =3D fuse_ring_ent_set_commit(ent);
+> +	if (err !=3D 0) {
+> +		pr_info_ratelimited("qid=3D%d commit_id %llu state %d",
+> +				    queue->qid, commit_id, ent->state);
+> +		spin_unlock(&queue->lock);
+> +		req->out.h.error =3D err;
+> +		clear_bit(FR_SENT, &req->flags);
+> +		fuse_request_end(req);
+> +		return err;
+> +	}
+> +
+> +	ent->cmd =3D cmd;
+> +	spin_unlock(&queue->lock);
+> +
+> +	/* without the queue lock, as other locks are taken */
+> +	fuse_uring_commit(ent, issue_flags);
+> +
+> +	/*
+> +	 * Fetching the next request is absolutely required as queued
+> +	 * fuse requests would otherwise not get processed - committing
+> +	 * and fetching is done in one step vs legacy fuse, which has separated
+> +	 * read (fetch request) and write (commit result).
+> +	 */
+> +	fuse_uring_next_fuse_req(ent, queue, issue_flags);
+> +	return 0;
+> +}
+> +
+>  /*
+>   * fuse_uring_req_fetch command handling
+>   */
+> @@ -318,6 +758,14 @@ int __maybe_unused fuse_uring_cmd(struct io_uring_cm=
+d *cmd,
+>  			return err;
+>  		}
+>  		break;
+> +	case FUSE_IO_URING_CMD_COMMIT_AND_FETCH:
+> +		err =3D fuse_uring_commit_fetch(cmd, issue_flags, fc);
+> +		if (err) {
+> +			pr_info_once("FUSE_IO_URING_COMMIT_AND_FETCH failed err=3D%d\n",
+> +				     err);
+> +			return err;
+> +		}
+> +		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
+> index ae1536355b368583132d2ab6878b5490510b28e8..44bf237f0d5abcadbb768ba39=
+40c3fec813b079d 100644
+> --- a/fs/fuse/dev_uring_i.h
+> +++ b/fs/fuse/dev_uring_i.h
+> @@ -20,6 +20,9 @@ enum fuse_ring_req_state {
+>  	/* The ring entry is waiting for new fuse requests */
+>  	FRRS_AVAILABLE,
+>=20=20
+> +	/* The ring entry got assigned a fuse req */
+> +	FRRS_FUSE_REQ,
+> +
+>  	/* The ring entry is in or on the way to user space */
+>  	FRRS_USERSPACE,
+>  };
+> @@ -67,7 +70,16 @@ struct fuse_ring_queue {
+>  	 * entries in the process of being committed or in the process
+>  	 * to be sent to userspace
+>  	 */
+> +	struct list_head ent_w_req_queue;
+>  	struct list_head ent_commit_queue;
+> +
+> +	/* entries in userspace */
+> +	struct list_head ent_in_userspace;
+> +
+> +	/* fuse requests waiting for an entry slot */
+> +	struct list_head fuse_req_queue;
+> +
+> +	struct fuse_pqueue fpq;
+>  };
+>=20=20
+>  /**
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index e545b0864dd51e82df61cc39bdf65d3d36a418dc..e71556894bc25808581424ec7=
+bdd4afeebc81f15 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -438,6 +438,10 @@ struct fuse_req {
+>=20=20
+>  	/** fuse_mount this request belongs to */
+>  	struct fuse_mount *fm;
+> +
+> +#ifdef CONFIG_FUSE_IO_URING
+> +	void *ring_entry;
+> +#endif
+>  };
+>=20=20
+>  struct fuse_iqueue;
+>
+> --=20
+> 2.43.0
+>
 

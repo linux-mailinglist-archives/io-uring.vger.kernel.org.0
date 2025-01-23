@@ -1,77 +1,79 @@
-Return-Path: <io-uring+bounces-6054-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6055-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5A4A19BCF
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 01:32:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19703A19C1A
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 02:10:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D837188D78B
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 00:32:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A7E6160C5D
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 01:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426C846B5;
-	Thu, 23 Jan 2025 00:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2ADAD27;
+	Thu, 23 Jan 2025 01:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="uFMbUwoo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rhad0kjn"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2261DFE8
-	for <io-uring@vger.kernel.org>; Thu, 23 Jan 2025 00:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09C71E519
+	for <io-uring@vger.kernel.org>; Thu, 23 Jan 2025 01:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737592351; cv=none; b=euQ5jpr54D17eE9Q+cOEGWQszcUnYQm/qd4ih0atcuVSvhGqFKJmbdmoONzB98oV3+kheRxVSZInBWNy7aDPlYVGj8HvABFLvcSfGVKj2r8Qmpcvf8q8CvKLiEGNmOLSS3Z0QYB9PR1xBup2f0PijtiY+4+o8s94y1A1pRRiZWs=
+	t=1737594605; cv=none; b=IBDr9iNTytw1naC382i1JNXJzLcFEIx0w/u+gLlCGMUmOLiukab9jzsgNkktUpjnR9EpgLI9p0wO/rv9DSXRyJA9uF1Y0D5vPYrtxqS1NVzebpkhhO0Kxzmtm68DgHpzAcIxYYn+R33xbnzEoij7ZhXo170ASmv2t2IB27FAy+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737592351; c=relaxed/simple;
-	bh=7nATugSeGc2Uwh5wrb3lV0SPpNfUD8EOgHQGxEzGg18=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=Q5CBIGEow9Uar2Y3mZRubdnzhRfVAHFQTwvQxGnbGi2b3ta0/a0HMDj/UoaoTLkMHHFiQ5JYe20r3FNWDKi93UXtFBxCA/RqNxXkPIAnJC0BbwrhtVcXuCpypsf3fYCh8d/rB7sByHHXPGCPGAOsP3ys9gbGmRlU83/PXvtfHeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=uFMbUwoo; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3ce85545983so1277065ab.0
-        for <io-uring@vger.kernel.org>; Wed, 22 Jan 2025 16:32:29 -0800 (PST)
+	s=arc-20240116; t=1737594605; c=relaxed/simple;
+	bh=MHw0qvhnTJJPVQqdH9o+gtSovsANsN0+zim+6qBWE/M=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hGyvAJa8g9BVUAMfjqyFnTmDf5a+nOlQUY2VGe/Klf64+Hx1fxoqUIEsqgDTo4sYn28AGxC2vuphW1SXrVCiI6v0ZkG0ZkeYOnlWECUkE7IyzmtKt6sA8HZtk5nMBcQKbRb3DlYzvoITSWsvSdgpJBo+Av6bdfSBQcg/KX2snsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rhad0kjn; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso2513055e9.1
+        for <io-uring@vger.kernel.org>; Wed, 22 Jan 2025 17:10:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1737592348; x=1738197148; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p7V2ioFfzxL2YVmuaP9xru2Gw9+UmYZ6MZlSVF+MOTk=;
-        b=uFMbUwooah0w5mHTEZy7K2f1E/aLDk/pmeuzSU7GM12QLM24Y2q0yCwPmT7gntNEQE
-         46wAQ9BjhvIVoUs02UuRSeygLSsZ1ym+dIFR17afQQPkO4y+4df/j7SQzVQiBfIo8NQC
-         s6r0MwKIarFxs/cJB2y/I+EStt3HmUHqncp/Vr7BPPnOwAPESxYtjCPfhH8XdcCqe1J+
-         1IiAwl6m7nhBglXPc2/rRTbtH2fdNoTRnlny1Yn4qidmaqoKdDO1IzF8qx9gmWfBqvof
-         YToZmAGRc7yiCOlrpbPi+zdUgOpIFEvzIJ7fFx4B5iV8/4pXEiO+DN/fDBF+RC/fHvQE
-         vCSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737592348; x=1738197148;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+        d=gmail.com; s=20230601; t=1737594602; x=1738199402; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=p7V2ioFfzxL2YVmuaP9xru2Gw9+UmYZ6MZlSVF+MOTk=;
-        b=KjxuAWDKvRzgTbU8Pho4fO+PxmQLGlDv9XdbMemGczpL3+qGwSgD47WWxgthJFijQF
-         8QiUeFVbLPjmZvU0QZXrkdUPAFQM2qhAccnWvH8HviTmBJC2XUiDueOduuUul3LWWHCN
-         ySBsL6lCi05AVYynDNkRlGxAnRK5KVzYuYDe4G+Ofu9ccKlwS7kCGS2UC2TyqOTNTkEg
-         Kq9ZnrzNCnuNIECc+mV8bkUZ0nGeiZGHen+eRwsGebtxiaosnWdXrbInJXz+ichZUP68
-         ee97ngPM+H/UPb7fslMlXcanZWcUMMRsVZKiFBGMYvqKXgL6TO5aUuGpBUurtcvy1jOQ
-         8nnQ==
-X-Gm-Message-State: AOJu0YyZT5DsZq8cmsaOAwmfEa24710J9niEBUA37fA/hkugf64DecaW
-	r0hepVZj2z+pD1hGU4cs38DUQm/yH3nbpXXg5hiAeLiCs2II5xFTIN7Lj952QEmyBJZgD60Z1zj
-	w
-X-Gm-Gg: ASbGnctUE4hUgLOKvyKlMdnZtj5tcirpAWamOwkvtYOtnsPSHknXxcn6UA1bZycCzDd
-	XmZv+hw13h6opHbPeExQMOle2mkdEjN3dPFF4EyPXHV4/sFVbjey4HX272S1S8ZyZhYnn8t4FR6
-	EaXOqj3iH9zzIxQJMhJ5FOf/9gdEcc+ySH7tGWHwPvII+NIYrRoGksGWS1ahBVS5b05wwGvDzgF
-	knPmKJTPbWWPk/GO5V/LHCHGudnUay850dwzOuShN6cljRT6t4Vb9EtLtviXqARoaA=
-X-Google-Smtp-Source: AGHT+IFZ04wFQU3KRgfgRbrT2AQDpeJ2gyPKzQTnP8ato1K1ze+W7haIlGdV9FTpOj7eL3S2sIdASw==
-X-Received: by 2002:a05:6e02:450b:b0:3a7:e1c3:11f5 with SMTP id e9e14a558f8ab-3cfbc16e8d6mr12103065ab.6.1737592347817;
-        Wed, 22 Jan 2025 16:32:27 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3cfb4ceb471sm7112945ab.22.2025.01.22.16.32.26
+        bh=pW5nVefi6LB4tdxlOC30BQ16Xhxspqlmownh7ujn+4U=;
+        b=Rhad0kjnv122LI1oCZRT3GrNuTRbDRYhxu8gWvYCEPNjb8poNDeDigLfUfVjgiw0MN
+         YppYk/nCMU6lnTQydkXkRSjEF5EOJVkVe0bJUQQXBZgOGaKKRRulU7Dei3m53u3dAIIm
+         dPiYUZ18KvdTD1hDHaN9e5uX/cKzsnifDZnLHKuSLFKIH75GnOvTS3YmHkfNqy24xQdW
+         GfciYbXcOt4jPb2qHCnkdmHvorp5J4d//NQ+BbnqW5jRmQZa2IAfpE5r2iBuPdxwz71l
+         5Q0NVdiTbN3fh8ktaMPoiMfPZlk4q8VVwb10niKo1j8hRGOCH9eEvUeF2XQWSd6GYVQo
+         z9LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737594602; x=1738199402;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pW5nVefi6LB4tdxlOC30BQ16Xhxspqlmownh7ujn+4U=;
+        b=uGAFs3rZG8/dikfvWsZSBYKppkbgSxtl7komOj747Rncuq9tleaxQSIvgIqoA7tBvx
+         cWUsIPa3TWziuGI5pzTd1jnN3IL/9wJNiGah0b9vK4NjKubQEYffjqP2tkGltREc+0rl
+         8IpOmV96r7LTaIGqzpG1oHCWdoaSlurB3BfjibLxmMLYazbkUBP0zK5KSi6gT/8Dd8Qi
+         2wydvFLO5iIfR2TG8gI5LyQVwojFCE2ZYSiBuQUBwGv8GGUwpjT9S4fC1XvuEyJIm1eJ
+         Z+FKRDCXReGiJIpAHYfFnwYwVs7oeL2DRMOovufAi2+NCbmHbTWnYk5rv0tJAX5h4ssc
+         kLRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsaTnk6hNjHOeSPC5waCA5dwZkkdp/GCY/5K1DjgLAaM2rp4XmeIt9aRVd4MS1ekzdgh0srFodQQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxbsie2BsTyNejlrRKlhBztVqWr0yOZh5H742Ogwgp0SEjbpaU+
+	PTMYActXwuch2WjKAdG9ElaSW2kOYzfJ8kDO1qMZpmeTeXc3pmnL
+X-Gm-Gg: ASbGncv1gCUzVlYDH0LlDIwM3DPV3DabeXmozDOmFgRsWFWAY65b0X0LYQrQNMOYfFF
+	1sIw4QKwgs4QRC6DDimAY5BEjT40dacp211UDWE0BN0w+MMxiH2NncvICYt9uetVfMfNbOMXn8Y
+	t/y4Of1ZmDO5uy/tn83oSdo0w96QewaAkoNoIwjLZfyhBNSAFBhLNtQa+RJcnkvQGEa6BUyQAc6
+	6TRF19Cb7NfOV2nTOHpbWf89mDbb3cE+dHVsB4pGuq+oHGGF3kDzqLoNlDVUC6qLVwaCIhfPB9G
+	y5tC/cmZkEM/fqs=
+X-Google-Smtp-Source: AGHT+IFwwG9dDCXEQRcy6GX29S1ftRD6T+I/QRsa8f6mcOgMSAhNXZ7d6AqtJ8iPp1BzE8D+WVc8NQ==
+X-Received: by 2002:a05:600c:21ce:b0:434:e65e:457b with SMTP id 5b1f17b1804b1-438b883ed8amr11609835e9.3.1737594601594;
+        Wed, 22 Jan 2025 17:10:01 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.147.156])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438b319fac7sm42210785e9.13.2025.01.22.17.10.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jan 2025 16:32:27 -0800 (PST)
-Message-ID: <5301f9fd-70e3-4156-bfe2-864adda9b71d@kernel.dk>
-Date: Wed, 22 Jan 2025 17:32:26 -0700
+        Wed, 22 Jan 2025 17:10:01 -0800 (PST)
+Message-ID: <a7989b50-0ec5-4c78-a251-f1db7df102a2@gmail.com>
+Date: Thu, 23 Jan 2025 01:10:35 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -79,38 +81,51 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/9] Launching processes with io_uring
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
+ josh <josh@joshtriplett.org>, krisman <krisman@suse.de>
+References: <fd219866-b0d3-418b-aee2-f9d1815bfde0@gmail.com>
+ <20250118223309.3930747-1-safinaskar@zohomail.com>
+ <9ee30fc7-0329-4a69-b686-3131ce323c97@gmail.com>
+ <194906b5253.5821bf1b68241.219025268281574714@zohomail.com>
+ <ce08e62b-0439-4968-8b1e-510c8bacbf3a@gmail.com>
 Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/uring_cmd: use cached cmd_op in io_uring_cmd_sock()
-Cc: Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <ce08e62b-0439-4968-8b1e-510c8bacbf3a@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-io_uring_cmd_sock() does a read of cmd->sqe->cmd_op, which may look
-like it's the userspace shared SQE, but it's a copy at this point.
-Use cmd->cmd_op rather than dip into the allocated SQE copy - it's
-both simpler and faster and leaves less room for confusion.
+On 1/23/25 00:31, Pavel Begunkov wrote:
+> On 1/22/25 23:49, Askar Safin wrote:
+>>   ---- On Sun, 19 Jan 2025 07:03:51 +0400  Pavel Begunkov  wrote ---
+>>   > I also wonder, if copying the page table is a performance problem, why
+>>   > CLONE_VM + exec is not an option?
+>>
+>> Do you mean CLONE_VFORK? Anyway, CLONE_VM surprisingly turns out
+> 
+> No, vfork is troublesome. What I mean is a task that shares
+> the page table, or in other words a vfork that doesn't block
+> and has a dedicated stack.
+> 
+>> to be a good solution. So thank you!
+>>
+>> There is a bug in libc or in Linux: https://sourceware.org/bugzilla/show_bug.cgi?id=32565 .
+>>
+>> I suspect this is actually a Linux bug.
+>>
+>> After receiving your letter I decided to try CLONE_VM. And it works!
+>> There is no bug in CLONE_VM version! You can see more details here:
+>> https://www.openwall.com/lists/musl/2025/01/22/1
+> 
+> I haven't looked at the bug, but IIUC fundamentally posix_spawn()
+> does the same thing, and if so it's likely that any problem you
+> have with posix_spawn() could be triggered for your hand crafted
+> version.
 
-Link: https://lore.kernel.org/r/20250121-uring-sockcmd-fix-v1-1-add742802a29@google.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Seems I was wrong, posix_spawn(3) mentions it uses CLONE_VFORK.
 
----
-
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index fc94c465a985..3993c9339ac7 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -350,7 +350,7 @@ int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
- 	if (!prot || !prot->ioctl)
- 		return -EOPNOTSUPP;
- 
--	switch (cmd->sqe->cmd_op) {
-+	switch (cmd->cmd_op) {
- 	case SOCKET_URING_OP_SIOCINQ:
- 		ret = prot->ioctl(sk, SIOCINQ, &arg);
- 		if (ret)
 -- 
-Jens Axboe
+Pavel Begunkov
 
 

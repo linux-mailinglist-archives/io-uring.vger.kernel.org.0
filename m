@@ -1,96 +1,79 @@
-Return-Path: <io-uring+bounces-6094-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6095-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649CEA1A67B
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 16:03:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F44BA1A67E
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 16:04:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9673AC9F9
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 15:02:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D6D17A1B43
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 15:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F238E2116F7;
-	Thu, 23 Jan 2025 15:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C131620F994;
+	Thu, 23 Jan 2025 15:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="NOh/rMb+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SdZD/A8R"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f32AY7pD"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9208C2116F0;
-	Thu, 23 Jan 2025 15:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FFA20FAB7
+	for <io-uring@vger.kernel.org>; Thu, 23 Jan 2025 15:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737644581; cv=none; b=AQgl2p51GEZmHYsXEX8LM+heBEKXTvEatFmrEOvm8nbgkIlrYPugzSEumbroD9WD0H/0rlHtOWNVCGJfXJrnA5w/7m42yS1vPPLHNAW3exVk4HrasDTfAXwujrTs1Kf0Oa8/QzMhpPDNst4BxL1/q/L2SKAQAaQ0hp+7+Q36F0k=
+	t=1737644675; cv=none; b=sLyLS92XC5y9XUU3HPtMhTVQPhbINWyWJvNc9YVKH5mToCXw2gEqg4Vno+0zsmuH502TuyLr0LRxeCDI6fHDUvk9lN8AqLRhwTgQfFT6KHJtNILzoCKgTczXElW4RAGGL3vHoooLHW6fIIy+TR1TvESYQ3qh8pi3U9gUxEo/zvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737644581; c=relaxed/simple;
-	bh=Z/EDfFbRlgpMx2NCz15vpaBTpxPumg3vUGBy2K8L10g=;
+	s=arc-20240116; t=1737644675; c=relaxed/simple;
+	bh=KcZfNumlMpeOvfAVwgX+TCKYZp+nB8+LE4iCBYZKe8M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QqBllrt4B9ZHfJcLU58stttHDTyTHJbTt1RGxfRzOPx9rWxeZaQNcCw9v2clvg6qbDlF0LTsu1+YYnw1aHbpQ330B3w5LlAAP84uRLLuIa/zeu6uRGmq/NwJ5/c14zxcO/6ZZfZ42wX55Z8xKLNePVQN0aZ9jw32AyKWRBMmMtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=NOh/rMb+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SdZD/A8R; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 78E021140096;
-	Thu, 23 Jan 2025 10:02:58 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 23 Jan 2025 10:02:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1737644578;
-	 x=1737730978; bh=o/d6b6eVW/XFDokEz+VR83w1zd0LrcwPR/6asWacYqI=; b=
-	NOh/rMb+BW/RS0/y4D6OteMOqc7PLxK2rensXEnV9sEevYB6Egii52x7Is4aywQF
-	/f1FeG+6rDs3hpm9+2lMJUOf/D84xg9J7TM1y+xi33/rS0d7LWTfCXmr8l80MupZ
-	dES+xUpAbTIxZflP+6NWd5Lr4DCzzFOQIc+4QCuRNZvCCOzXWrkXG0XYMdJAR9I6
-	C6TZN1k/AUAvuXT6KoDtYL9ArV48dIUtcepZ0TTiAdWzcohnWBuKm1X8XLF71MpQ
-	jy00FA0tjjYs9pmkmszaFS6lL20sPi5BABNnDtx2s/FQ71mCkwKJcS/r8jd7i7pS
-	CcJ9p4k95D+MhkqBwzjb5A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1737644578; x=
-	1737730978; bh=o/d6b6eVW/XFDokEz+VR83w1zd0LrcwPR/6asWacYqI=; b=S
-	dZD/A8RXi04SjkLB4II94aUujNvV1BCWSCu+7VGWBbWyIHcOMrOc6zUACXFcIaYC
-	zC8ZciU3UBiMhcn/d3af8b2t5TkK2KsXDQUWoGJDiiMd2TFjSBpcnofN3aKPERYN
-	qJnfClyNI8iBfSJF3gzLFinHnl01qkLPE9NczdxGfDniXVx4+Axe/MGVaw0IBCpH
-	T5PnPXH5oAQoGBGeZpkQi7PNeHCoWCrMFBMX2wbnF1XcWIfclt8IoetVZhkqvKe4
-	qco9ABsZISZN8zP89Dy8u+9+K5Co2ANfBN6IRS5wpI2bYdwlIDbQYRcu0KfSa6VI
-	WVVqtKgC/2Wyxv1yIfQDg==
-X-ME-Sender: <xms:IlqSZ2Ku_XYc-5AxMzz2UXeWH-ecPMS8kVzfLzrWk9GxXM79VW9UVg>
-    <xme:IlqSZ-Jn_Zorm1F_ri54pxosMRFlfvfZwLm_DWOAg4DFOuxHGQK3DOTXX6vkFYigN
-    bNWoMRuts_DNuVB>
-X-ME-Received: <xmr:IlqSZ2uf8mCAEgXRYRvfapOYk8ZOwFoiNsMOXl4uyJb82YJaO4OVH26WwR_OMp8K8An0CjZzc3wC2Buhilq80Mms15LWS5vmDOXTKvK-hjmec3SvIKWo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudejgedgudeljecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
-    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
-    hnugdrtghomheqnecuggftrfgrthhtvghrnhephefhjeeujeelhedtheetfedvgfdtleff
-    uedujefhheegudefvdfhheeuveduueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtghomhdpnhgspghr
-    tghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhklhhosh
-    esshiivghrvgguihdrhhhupdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtgho
-    mhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheprghsmh
-    hlrdhsihhlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhs
-    uggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohdquhhrih
-    hnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnhhnvghlkhho
-    ohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnh
-    gurgdrtghomhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:IlqSZ7ZuD0jSwvcNOwKy1hGSSBFu9f13wsv1zCqZNHm75VIHqHujbA>
-    <xmx:IlqSZ9ZrFaziaYDHDTfTz2msqIQfx7QWSKlrVOTdwyl0_wLK4llg1w>
-    <xmx:IlqSZ3DKLwLil4gRO3d6RbN5KGQtfd1OMf3dKI6m9jGbAbHNomOcYA>
-    <xmx:IlqSZzZjFxDas4pDWnHUm3Rf1y8npQl0naKJ30SfeAaLo_vVa3sXvg>
-    <xmx:IlqSZzwZsX8_9HqRipXb8AGK_XcWvRLsvRMBw3L5g2Kf2NyRXJisjyNc>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Jan 2025 10:02:56 -0500 (EST)
-Message-ID: <73edbb01-fb11-4230-b8aa-a2d81f4a836c@bsbernd.com>
-Date: Thu, 23 Jan 2025 16:02:55 +0100
+	 In-Reply-To:Content-Type; b=EI0hJNmxue2JvpQiXilMvF/vJnQGK6LCUIf/jLxVItm5x9wPqJ6vLg/72OW0EoNczqDXB3RAole1sBrZh4EmQ6eyUFwh9x6OWg0Wx+euaTmZfrUJlUP+zsqC1u/a7RoL1LEIjWGzkZg78hB7FHBWkIW09JSYgjfOLZQitChoIjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f32AY7pD; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab643063598so157790766b.2
+        for <io-uring@vger.kernel.org>; Thu, 23 Jan 2025 07:04:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737644672; x=1738249472; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LHpc51u0EBf2yDgjENbWSsMVeIIonqHq353kkjUinuc=;
+        b=f32AY7pD8LrUvdhkSMDCIFKHjYJcOdVBw+LzvgFixTXFbgVZAsQro65eMs8Tg8dnDU
+         fSDhEy7s8trGZknfmv1X1RO+mirQ8IrqAHgDZaA1ekVPwR/JAClTWcB5FDdeTKIA3mX6
+         BqdFl1m0t9AviEkMvI10g0zLsmzORPhs+DJyrcfXTy5z9nTK+Y2ZHcbkL7gzsXFLEQBq
+         vW1qmjVkJcT4j6AZ+oGoXoMeEIqrAVPXDxO63HJRdGs0yIobHl9sEvqG+C1+Go0uk8P3
+         6N621eIHELMBj6APo6XDOvlZwUSh29cn01UdE99ZYsS1qT8kE5oQITuSC5QuG32Bm9YK
+         TeRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737644672; x=1738249472;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LHpc51u0EBf2yDgjENbWSsMVeIIonqHq353kkjUinuc=;
+        b=mcaUXIFCG1zjyyqeznY72BdHrwQnX5bt9+7sYqMUOZU65uwvL1jQrM/YmdR2Ze6o7E
+         pMxuQ+axtKuXTanxor3N3YiL4QpU4JWvSqoMTjAeiqlLKEmkaDKBEszzkx5ji9cByvni
+         EyvrpALTlFwykGpuLnn/RMsUEUComUes2dHlzu8t4eDYP94p6/POI2ssUN9ekbfbwpPI
+         dWMAEQulawchpKnH1bnSbuIp2dTi+5DicWJRlom/BZP82JmZyrGPmfweSjUBguSUtaDS
+         i/kDlU1/R4gVPvNH+lxu29sKUiGz6uwW+ZVSZtnHLMK2/QPvX+ZB/kKgT0gnzrrL1rBG
+         Y38w==
+X-Forwarded-Encrypted: i=1; AJvYcCVe9K2qj3tU8yVR+pCTHp6kqRGhkSjlAFSOS3AEbehmpqscQj0vjBQreWjLKk0Bi/ga6A6vfynSJQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwDAws9y/NafoSZ9zZOhbzaciUC/Ja6+oOEp0sm/TC4Fmw9whl
+	Xf5aYy/zZCAWP5X7sDCXBNNa6IcWigHWrD1C3b7afUR8gOBCMhtDZt8mlw==
+X-Gm-Gg: ASbGncuRZiIjlMELKDzmsvmD8IMvFADOJw0WE5BOkws01Xu1twg9L4dJMtFXA4j7BB0
+	sqHq68b2JevdpYusZvrRWwsjZkBiVlZNBU/QYeF4ym9U89u/3rCI3SLDPLOtLjwEEpnzEa+e8a8
+	ft8KsutaOhAPw+0XfHo1IIw/e0+3HEGzA7TcReB4oBZFRaP2aUQ2q4uoAeIPAvtL1MEJ/kbUBzu
+	SGsxmk2RaDGhabyhLCr+fgoiK3SQZArKCGHN0hIKcCihzwVuv/iTlZeHd8WdXGLvKb5d4oqx5dY
+	NQi8OT2RiCpIcHUvYd2nelsLYtBJdQtcoqn5hA==
+X-Google-Smtp-Source: AGHT+IFr7A/aVGCIUcI1UUXj1s4OIp8IrE1ytpEmuwyNvLtTitauFMcna1H4yHMv6AKlxHzgYWr21w==
+X-Received: by 2002:a05:6402:4313:b0:5db:f5e9:6760 with SMTP id 4fb4d7f45d1cf-5dbf5e96a10mr16216965a12.2.1737644671665;
+        Thu, 23 Jan 2025 07:04:31 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:7d36])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dc124ac16dsm551927a12.56.2025.01.23.07.04.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Jan 2025 07:04:31 -0800 (PST)
+Message-ID: <c779efa7-e5c2-4ab9-a851-fadad19c167d@gmail.com>
+Date: Thu, 23 Jan 2025 15:05:04 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -98,41 +81,83 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 00/18] fuse: fuse-over-io-uring
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bschubert@ddn.com>, Jens Axboe <axboe@kernel.dk>,
- Pavel Begunkov <asml.silence@gmail.com>, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, Joanne Koong <joannelkoong@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
- Ming Lei <tom.leiming@gmail.com>, David Wei <dw@davidwei.uk>,
- Luis Henriques <luis@igalia.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- Miklos Szeredi <mszeredi@redhat.com>
-References: <20250123-fuse-uring-for-6-10-rfc4-v11-0-11e9cecf4cfb@ddn.com>
- <9516f61a-1335-4e2b-a6e7-140a0c5c123d@bsbernd.com>
- <CAJfpegu0Pyxo3qLHNA=++RHTspTN-8HHDPNBT0opL0URue3WEQ@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJfpegu0Pyxo3qLHNA=++RHTspTN-8HHDPNBT0opL0URue3WEQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 2/2] io_uring: get rid of alloc cache init_once handling
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc: krisman@suse.de
+References: <20250123142301.409846-1-axboe@kernel.dk>
+ <20250123142301.409846-3-axboe@kernel.dk>
+ <cebeb4b6-0604-43cb-b916-e03ee79cf713@gmail.com>
+ <f3c9c1bf-4356-4cb7-9fd1-980444db83a6@gmail.com>
+ <c8e4efdb-4f41-41a5-8470-14afb963c9e4@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <c8e4efdb-4f41-41a5-8470-14afb963c9e4@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 1/23/25 15:59, Miklos Szeredi wrote:
-> On Thu, 23 Jan 2025 at 15:53, Bernd Schubert <bernd@bsbernd.com> wrote:
+On 1/23/25 14:55, Jens Axboe wrote:
+> On 1/23/25 7:47 AM, Pavel Begunkov wrote:
+>> On 1/23/25 14:27, Pavel Begunkov wrote:
+>>> On 1/23/25 14:21, Jens Axboe wrote:
+>>>> init_once is called when an object doesn't come from the cache, and
+>>>> hence needs initial clearing of certain members. While the whole
+>>>> struct could get cleared by memset() in that case, a few of the cache
+>>>> members are large enough that this may cause unnecessary overhead if
+>>>> the caches used aren't large enough to satisfy the workload. For those
+>>>> cases, some churn of kmalloc+kfree is to be expected.
+>>>>
+>>>> Ensure that the 3 users that need clearing put the members they need
+>>>> cleared at the start of the struct, and place an empty placeholder
+>>>> 'init' member so that the cache initialization knows how much to
+>>>> clear.
+>>>>
+>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>>>> ---
+>>>>    include/linux/io_uring/cmd.h   |  3 ++-
+>>>>    include/linux/io_uring_types.h |  3 ++-
+>>>>    io_uring/alloc_cache.h         | 30 +++++++++++++++++++++---------
+>>>>    io_uring/futex.c               |  4 ++--
+>>>>    io_uring/io_uring.c            | 13 ++++++++-----
+>>>>    io_uring/io_uring.h            |  5 ++---
+>>>>    io_uring/net.c                 | 11 +----------
+>>>>    io_uring/net.h                 |  7 +++++--
+>>>>    io_uring/poll.c                |  2 +-
+>>>>    io_uring/rw.c                  | 10 +---------
+>>>>    io_uring/rw.h                  |  5 ++++-
+>>>>    io_uring/uring_cmd.c           | 10 +---------
+>>>>    12 files changed, 50 insertions(+), 53 deletions(-)
+>>>>
+>>>> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+>>>> index a3ce553413de..8d7746d9fd23 100644
+>>>> --- a/include/linux/io_uring/cmd.h
+>>>> +++ b/include/linux/io_uring/cmd.h
+>>>> @@ -19,8 +19,9 @@ struct io_uring_cmd {
+>>>>    };
+>>>>    struct io_uring_cmd_data {
+>>>> -    struct io_uring_sqe    sqes[2];
+>>>>        void            *op_data;
+>>>> +    int            init[0];
+>>>
+>>> What do you think about using struct_group instead?
 >>
->> Hi Miklos,
->>
->> or shall I send you a fix-patch instead of resending the entire series?
+>> And why do we care not clearing it all on initial alloc? If that's
+>> because of kasan, we can disable it until ("kasan, mempool: don't
+>> store free stacktrace in io_alloc_cache objects") lands.
 > 
-> Yeah, you should send incremental fixes.  Much less bandwidth that way
-> making review easier, and I can still fold it into the original series
-> if it makes sense.
+> Not sure I follow - on initial alloc they do need clearing, that's when
+> they need clearing. If they are coming from the cache, the state should
+> be consistent.
 
-Ok, will do, I just tried to make your life easier, so that you could
-just apply the patches. Fortunately just small changes (just in a
-meeting, will send immediately after).
+If we forget about kasan, ->init_clear is only really used right
+after allocation().
 
-Thanks,
-Bernd
++	obj = kmalloc(cache->elem_size, gfp);
++	if (obj && cache->init_clear)
++		memset(obj, 0, cache->init_clear);
+
+Why not kzalloc() it?
+
+-- 
+Pavel Begunkov
+
 

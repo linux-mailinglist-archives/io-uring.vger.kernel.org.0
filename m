@@ -1,78 +1,78 @@
-Return-Path: <io-uring+bounces-6096-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6097-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308EFA1A6B6
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 16:09:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B8AAA1A6C0
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 16:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E327C3A061E
-	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 15:09:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8153165B91
+	for <lists+io-uring@lfdr.de>; Thu, 23 Jan 2025 15:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C07721170D;
-	Thu, 23 Jan 2025 15:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16DF21147C;
+	Thu, 23 Jan 2025 15:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FbdB+SKz"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ed59xVzn"
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FDE20E711
-	for <io-uring@vger.kernel.org>; Thu, 23 Jan 2025 15:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D7E211A3A
+	for <io-uring@vger.kernel.org>; Thu, 23 Jan 2025 15:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737644983; cv=none; b=kjrSdTZLTkr9lpmmMgvHlfEZwYtLIyxCA+y283XSkaJgXrPBmhCNJrhDdMh2l6UHUjLWWVG4ne48mPew8Fbw1Ymg5Ugj13zikrAQtAWDhHxL2WElmvOhiXLJ0eGxk3N3ytNoCFVF7VHWDGz7d3G5RnVwAGM0us3jX9ylPccNjj0=
+	t=1737645099; cv=none; b=D+iRsj9KrtY6un28ANSg6kWEWAcslAGZiw4KEyrXu7GIEDsTl7UC/V0I1l/N9KTjk2uD0ItPIyLwBPdx8qz8j6ggawOAyesGAVZVHYr46PB/EJMZP7yREBZhFZdxz1NfkOQrzHujErzFsQJ6rlNrHfhrWm2o2OBKrmQGIXrqEw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737644983; c=relaxed/simple;
-	bh=/SgpWjpy/v2XNWP1pe8j1mJKYJ7CFVUQXoIRkq6L5IE=;
+	s=arc-20240116; t=1737645099; c=relaxed/simple;
+	bh=UVZ6NArjF1ZcMZyxotnmH4G0QHWDEIgCrE9ut+q8Xc4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EGcHUj/LhTvOMbtOtL1/ycLJSeHFtsjWD6Sjw76fVwQmynqJsT4AARfGT8wGNhn9YNLXzzsQ/jlU/mc+nipsQfth4DMPQkUepQBL6lH1iCldTANS+5OVnKxj8BMW7nQ29fqQlRR9zhneZntvRJt+YqcTSKlYSMoUAAmTxDLxhzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FbdB+SKz; arc=none smtp.client-ip=209.85.166.181
+	 In-Reply-To:Content-Type; b=CZLi13nB5VmnZ99J4s03rQGGOkLK5YYPMXKkvR5WBDZlkX6a8y5QF8G3VGEzo/hasLTkcisxvsqtJETJkerFG2d7pGT33J0Vu/XKxtSokoGDzDARLgg4DIRbo0phQgAh15q/g9/jCxMZma07CQIs8kL5ruTTsNpi81hTLqhVkU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ed59xVzn; arc=none smtp.client-ip=209.85.166.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3ce8a4e95f3so8396645ab.2
-        for <io-uring@vger.kernel.org>; Thu, 23 Jan 2025 07:09:40 -0800 (PST)
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a81324bbdcso7526605ab.1
+        for <io-uring@vger.kernel.org>; Thu, 23 Jan 2025 07:11:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1737644979; x=1738249779; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1737645097; x=1738249897; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xqnXltgy2/q3fVrb00LkipaaFrAlaQGFQURxSOjsJf4=;
-        b=FbdB+SKznqvgRfeG5aKqbxQbKVNE7WEJsHmV5LAerqK3DZ7kj+CvCGGeoTeGgZARhg
-         heA3VKSP34mGllaRSSjs4GbZeqFUI4RCY3/34TagAxxa7Rl00HYd8+27ydLLSPZ9iqRE
-         1vP9cw53rITJefUAVtBrklXbeJO2GiAD5YzMI//jsXOt7SiPRZAyYwIGWUmJ99a2rRaK
-         vkeub/BjhVzn3JZVtKJw9Di36cZeUoc6PEO168NQZLwoPExgmiIPHdRn7C5dq1IT9DrK
-         L8VOblBiJFvZCGYaDOpDph8OVcvXifdb0ao2PW00DhOwbslEarG7EAYO2gpQqFCGUgT9
-         DRyw==
+        bh=wm83wscrQUkd5TN8872EIFISEWysD3t/grREQ5ujlzc=;
+        b=ed59xVznQlMsauQdnQdYChqnqKYo09oFJPuuMKh7ZyNuxc+9M9XPvdl83c0LhTeEXO
+         Ha/qP4+tcdbcz53UCFyI0RflS/b1V5xVxFb2waHLeAuw/4fLHxHjY9aLHAdxcop+mYzn
+         rRCgcc3IKmTda4CytsqHZlpkMCllmG70R8Y3/Nivy4RRRBiQ77Cy3JNNTMqjT57cv3XV
+         hw1I983hXWxuRSpl1qC4ve2mK+1/mWw7to+J7hB1XHhKWS+rYOeBUmi+0vZ6gzmAShSn
+         eRm/UrxsbQI/6B9WTe1W+fSmBY9wwxIb1axRLjp5It91PwNF1t3hkH4CxpJdu+c/s8Br
+         F16A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737644979; x=1738249779;
+        d=1e100.net; s=20230601; t=1737645097; x=1738249897;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xqnXltgy2/q3fVrb00LkipaaFrAlaQGFQURxSOjsJf4=;
-        b=vBX6APj7uc2PMoqwGuBwSAqN8+nXsUoQ0mrnwqk3j2cDWJ8aJjQPLncA0T/6ULWZ5C
-         2G9hA2WZVYvEQa87I4Du0M5byouwoPYO/DZkxv3oUhsakchaVjCXvABiGkTIN4MCPpQq
-         CKpWElZrAkZQN10ALlI5cMvoyXtUS9ubpOaPnAHTvi8pARdazLqabE9ZL+Yzmz0GRTR3
-         N2C3Jflr4YP8+qYmN/GLzARKsMCkQDQmfQjRW5WW7QmAeNzm4y9jZbCGaIahe0FqW2Up
-         xtvLdWXfJJ9bhuhTmyAI6fj/VktuII1e/4ou/AhH0Yuu2kRKXpMRnHG6Yhx7I48hldi9
-         DZsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAAH05jyctSr4pnVvUOIYTyPRSYhOMfdofgykK3ReQsfNJCCpvVdXnIsaR7VnXZrSn+XjbvFZDUw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeklMdxS4D6ZWlCb/cTTYak9VfuW0W+VsyN9ZN/BXbrmY7/YgT
-	k1iPlJRgNqO2GekoCMM4dS+ZoiizEFvae9UpQZvnyEqtG1XRiIyOL+vSEL28Cto=
-X-Gm-Gg: ASbGnctwSLcU7yNOHCZGFlqHTpstMPAV3WuiH0WZnG0sYEq0j3d0BAnthT8TkIT91H/
-	rikPFXjTaz+21+jb2yOFKkYFn5GA+Tc6oLRbYbtHbV58egqOrcKV3ty1biYeTgkThsT5MkJIJx/
-	BXl/tXPrncp+NBshhCC5/+FTx0zesuGL5/m4tDwcKl3uP5oLOEi7sdV4wQO7Mm5wBoPXvUPzexD
-	mw/WZ1GGklSjfyVyZ6EbsvagFdhqGQ8lgsqEnuyODlBUrX/Huua1B1hFmIFYw2JBWg5YrbayheA
-X-Google-Smtp-Source: AGHT+IEquHdbnktMOgDKiUOpMxhKzsQ2mPmEVWVMMHiat5rTPULiuYO4ki0A3+cm6nTfvcjJMBVtpQ==
-X-Received: by 2002:a92:c26d:0:b0:3ce:46e2:42a7 with SMTP id e9e14a558f8ab-3cf74410c4fmr199868195ab.9.1737644979626;
-        Thu, 23 Jan 2025 07:09:39 -0800 (PST)
+        bh=wm83wscrQUkd5TN8872EIFISEWysD3t/grREQ5ujlzc=;
+        b=OM7obE5TFYi5ARlI41CYjVZoAopGJ9gAictjI/L7LyQzIbYdzTTK5pEd2/zkzSB/0w
+         41tFl5wuFIn9+UntbddWF4WOOWEVN0YqDbz4GexAwYSAvl3Xx+mrAIszHSUBBFirS+dX
+         p+S9kSv7UN244mf+dA+3LK8AITxE8E/Le16EedskJw3kAYMRRp9Txa8AJuE1lqUiuSgU
+         X62/IzuievzAYt4pKengOo4eL4idPKUz/EZQYhGU0VJg9PQR7+UKZptuQJegSzfD9Jba
+         IAJmXTUx8kkadkNzGjVrdvdy4Vkd1bifckGCvR1lBs6q9lgg9x8eWg+iVWWal5a7ySi0
+         KY9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV3etDvMHQ9f/c1IisdvGbTc+xTZ1YS8mnRfmlYAANhyu0Ab80ykGpYoNii2NYmtuAJLwyWKNzY5g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAQhlkyXLIYj/mR+FC78K1SfKEF2OfT7k1tF/S0QrIwtO7x+4D
+	NnOMGyxXW3RGClCgWuwJOznQGm+F9mjaBsICp5ttVMWx8XePSNXcyiaaZ0MJadg=
+X-Gm-Gg: ASbGncurxzKJpMTldGOuozZp5HkTeOnq0LGF82fZFEBzxbJUX8E4xpGo4SRJSOJETiv
+	9K2TGiMt4SxVeTXEAZ9Jdktqjx9I/QkghP7CkbgC6lEv+IFVf1tzdAck2sMqDW0jkMb7BH4LN35
+	4Db/Xg1eOKN8RYpSv1Prpkw8c7RDWv/N4M735wY8+6lM67qjZtSa88JaO8+v62+ARHMnBf3yFjr
+	AemiuZKNk/vh9TSorm1lzLnepDdDpguTYHqj8Yp0YQHz9g7shEc928jeP2e9NRg0Pqu6s7C7kEZ
+X-Google-Smtp-Source: AGHT+IGe+UG483tiaLa5Jk8Cj7iFRNaZ4YZSe8w/dn+nAvwTG5bujucefh9nlhgP2jHIWeWkQZCw2g==
+X-Received: by 2002:a92:cda1:0:b0:3a7:955e:1cc5 with SMTP id e9e14a558f8ab-3cf743b9350mr238785155ab.1.1737645096856;
+        Thu, 23 Jan 2025 07:11:36 -0800 (PST)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3cfc59d1317sm1023105ab.37.2025.01.23.07.09.38
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3cf71aae907sm42399885ab.35.2025.01.23.07.11.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2025 07:09:38 -0800 (PST)
-Message-ID: <0d886adb-81d7-4f09-b4e0-07dc7c753363@kernel.dk>
-Date: Thu, 23 Jan 2025 08:09:38 -0700
+        Thu, 23 Jan 2025 07:11:36 -0800 (PST)
+Message-ID: <9a4261bd-7c8c-4413-b9ac-ae1aeead1060@kernel.dk>
+Date: Thu, 23 Jan 2025 08:11:35 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -80,92 +80,51 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] io_uring: get rid of alloc cache init_once handling
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc: krisman@suse.de
-References: <20250123142301.409846-1-axboe@kernel.dk>
- <20250123142301.409846-3-axboe@kernel.dk>
- <cebeb4b6-0604-43cb-b916-e03ee79cf713@gmail.com>
- <f3c9c1bf-4356-4cb7-9fd1-980444db83a6@gmail.com>
- <c8e4efdb-4f41-41a5-8470-14afb963c9e4@kernel.dk>
- <c779efa7-e5c2-4ab9-a851-fadad19c167d@gmail.com>
+Subject: Re: [PATCH] io_uring/uring_cmd: add missing READ_ONCE() on shared
+ memory read
+To: Jann Horn <jannh@google.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250121-uring-sockcmd-fix-v1-1-add742802a29@google.com>
+ <173757472950.267317.14676213787840454554.b4-ty@kernel.dk>
+ <4bf7e5d1-4e66-496d-a503-5dc349efe398@kernel.dk>
+ <CAG48ez0r4_U-9TfZOnZA0TKKPc64eYgYQt-3jHDYEqE9OuhLxQ@mail.gmail.com>
 Content-Language: en-US
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <c779efa7-e5c2-4ab9-a851-fadad19c167d@gmail.com>
+In-Reply-To: <CAG48ez0r4_U-9TfZOnZA0TKKPc64eYgYQt-3jHDYEqE9OuhLxQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 1/23/25 8:05 AM, Pavel Begunkov wrote:
-> On 1/23/25 14:55, Jens Axboe wrote:
->> On 1/23/25 7:47 AM, Pavel Begunkov wrote:
->>> On 1/23/25 14:27, Pavel Begunkov wrote:
->>>> On 1/23/25 14:21, Jens Axboe wrote:
->>>>> init_once is called when an object doesn't come from the cache, and
->>>>> hence needs initial clearing of certain members. While the whole
->>>>> struct could get cleared by memset() in that case, a few of the cache
->>>>> members are large enough that this may cause unnecessary overhead if
->>>>> the caches used aren't large enough to satisfy the workload. For those
->>>>> cases, some churn of kmalloc+kfree is to be expected.
->>>>>
->>>>> Ensure that the 3 users that need clearing put the members they need
->>>>> cleared at the start of the struct, and place an empty placeholder
->>>>> 'init' member so that the cache initialization knows how much to
->>>>> clear.
->>>>>
->>>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>>> ---
->>>>>    include/linux/io_uring/cmd.h   |  3 ++-
->>>>>    include/linux/io_uring_types.h |  3 ++-
->>>>>    io_uring/alloc_cache.h         | 30 +++++++++++++++++++++---------
->>>>>    io_uring/futex.c               |  4 ++--
->>>>>    io_uring/io_uring.c            | 13 ++++++++-----
->>>>>    io_uring/io_uring.h            |  5 ++---
->>>>>    io_uring/net.c                 | 11 +----------
->>>>>    io_uring/net.h                 |  7 +++++--
->>>>>    io_uring/poll.c                |  2 +-
->>>>>    io_uring/rw.c                  | 10 +---------
->>>>>    io_uring/rw.h                  |  5 ++++-
->>>>>    io_uring/uring_cmd.c           | 10 +---------
->>>>>    12 files changed, 50 insertions(+), 53 deletions(-)
->>>>>
->>>>> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
->>>>> index a3ce553413de..8d7746d9fd23 100644
->>>>> --- a/include/linux/io_uring/cmd.h
->>>>> +++ b/include/linux/io_uring/cmd.h
->>>>> @@ -19,8 +19,9 @@ struct io_uring_cmd {
->>>>>    };
->>>>>    struct io_uring_cmd_data {
->>>>> -    struct io_uring_sqe    sqes[2];
->>>>>        void            *op_data;
->>>>> +    int            init[0];
->>>>
->>>> What do you think about using struct_group instead?
+On 1/23/25 7:44 AM, Jann Horn wrote:
+> On Thu, Jan 23, 2025 at 1:18?AM Jens Axboe <axboe@kernel.dk> wrote:
+>> On 1/22/25 12:38 PM, Jens Axboe wrote:
 >>>
->>> And why do we care not clearing it all on initial alloc? If that's
->>> because of kasan, we can disable it until ("kasan, mempool: don't
->>> store free stacktrace in io_alloc_cache objects") lands.
+>>> On Tue, 21 Jan 2025 17:09:59 +0100, Jann Horn wrote:
+>>>> cmd->sqe seems to point to shared memory here; so values should only be
+>>>> read from it with READ_ONCE(). To ensure that the compiler won't generate
+>>>> code that assumes the value in memory will stay constant, add a
+>>>> READ_ONCE().
+>>>> The callees io_uring_cmd_getsockopt() and io_uring_cmd_setsockopt() already
+>>>> do this correctly.
+>>>>
+>>>> [...]
+>>>
+>>> Applied, thanks!
+>>>
+>>> [1/1] io_uring/uring_cmd: add missing READ_ONCE() on shared memory read
+>>>       commit: 0963dba3dc006b454c54fd019bbbdb931e7a7c70
 >>
->> Not sure I follow - on initial alloc they do need clearing, that's when
->> they need clearing. If they are coming from the cache, the state should
->> be consistent.
+>> I took a closer look and this isn't necessary. Either ->sqe is a full
+>> copy at this point. Should probably be renamed as such... If we want to
+>> make this clearer, then we should do:
 > 
-> If we forget about kasan, ->init_clear is only really used right
-> after allocation().
-> 
-> +    obj = kmalloc(cache->elem_size, gfp);
-> +    if (obj && cache->init_clear)
-> +        memset(obj, 0, cache->init_clear);
-> 
-> Why not kzalloc() it?
+> Are you sure? On mainline (at commit 21266b8df522), I applied the
+> attached diff that basically adds some printf debugging and adds this
+> in io_uring_cmd_sock():
 
-We obviously could, but rw/net is 2-300b in size, and most of it we
-don't need to clear. Yes this is only for the "slower" path of hitting
-alloc rather than the cache, but it's not a given at all that any
-workload will fit within the cache, unfortunately. That's quite a lot of
-memset for those cases.
-
-But maybe I'm overdoing it and we just kzalloc() it. It'd obviously be a
-lot simpler.
+Yeah you are right, braino on my part. If we don't go async, it's not
+copied. The changed fix is still better, but I'll reword the commit
+message to be more accurate.
 
 -- 
 Jens Axboe

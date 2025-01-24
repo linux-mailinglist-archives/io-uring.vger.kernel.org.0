@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-6111-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6112-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3860A1B388
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2025 11:33:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02F23A1B6E4
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2025 14:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B78FC3A92DC
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2025 10:33:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5330716D000
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2025 13:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EFD1CDA04;
-	Fri, 24 Jan 2025 10:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC53481D1;
+	Fri, 24 Jan 2025 13:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZy0joCs"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="uI4JidEv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510131CDA01;
-	Fri, 24 Jan 2025 10:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4BC6EB7C
+	for <io-uring@vger.kernel.org>; Fri, 24 Jan 2025 13:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737714783; cv=none; b=IWhSpoUYCQUlcQ/ho93Ztm9E7Z4l7ODwnNdGYSelavxQQzj/55nbuMOnDaUOhT/AcxZBBztCJmblIbdoI/PM7996uXZ5ZPuZJ/e+kYToJQ3YqyKanrmWdoMKzsnZG+BngvrYag8vjCkgAUArRPkFYQltWBQWK4zEg7+C+faIMCo=
+	t=1737725838; cv=none; b=UM6UuUiw23+juuxA2YbpO4TtMrOUiwkG0OHMK12whqiyhCu59rbI9t8FdB23dtx39eRSr0jScVL3TA8G5jck86vUY19X6jeR7zSbVecbsryzhk7efYJjM7LKuuUmEpHsytCJ0IRe0n+pMdkYbrEJNsn5ciOH5CvAdXE8MoLz9yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737714783; c=relaxed/simple;
-	bh=8axQrrGMHiL3eQFWzhxZnpffZ4V3yNIfs662kh3BDpE=;
+	s=arc-20240116; t=1737725838; c=relaxed/simple;
+	bh=Qaxc7Aq2vbeKmueGFnZyik1RAK/DpTeNvPuCoVgZNwc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZQD/ZmwtLQwQ2TTxUsCvFQpUAWHb1lBTYWoAhnDNWUbWnemgwlILD5TejH3CIW/T//MsRslYY5pltBl+uMZrDhdWfLxPIjCnyUL56ia5Hp7O6Fj/0yxt7OE83uo/5D61tM8BSfag8JEPtZiDlAtLAuPzRa0ZTRf9TzwXTZaor0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZy0joCs; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d4e2aa7ea9so3628132a12.2;
-        Fri, 24 Jan 2025 02:33:01 -0800 (PST)
+	 In-Reply-To:Content-Type; b=OcfwdSsohovP8Yi9GKa5dUivbykBvKpUl0a/ll17xZ1AZlwX1oOezOjXd/69FfZ2S5WMna4p2rSh/zCSi16wAAD+hYktgDInaKPsV5DdHCAuK/i/6slqB15A21xwLXfy/ZXLGZESFGic7GjxnhVsiZ6hI2TXKw3shQ1NP+/HwKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=uI4JidEv; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-844dfe4b136so50989239f.3
+        for <io-uring@vger.kernel.org>; Fri, 24 Jan 2025 05:37:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737714780; x=1738319580; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1737725835; x=1738330635; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=k6EDJaIcbkXZEeUcwvwxCuXiJHi7KYMC5Mo0eFKKxs4=;
-        b=PZy0joCslrxXDPwtU417lIjJ6N2j2cuS8Ilo9IOMJQ0YrKInWOLJ7V6SHSoIJ1t6Bf
-         4M8sFQfZRz7mqB3vzSauCERe7AZ0nCuzUaoSGiQdQfa+J/WBwgD4DUorwCVfxf6p5spC
-         LM2Av1y8kxcnBqIuwrXT0mI0QxB3QCUi+aHKN65kYFhnwfdBfeyyXjpDxu/J1rCzRwpo
-         tOY13QK17iwGcyAiDK/uupPoniWhp9b5IutgKY2cmyZCDXyM7bf8+7vjHoMbBtBjVT/B
-         OHj/a1j/PoSCQlJsQbTimNJvgrHVbclQhSuLkeOTHUAhNy2HzoNdlVM5AS+cIv1VtQVq
-         UC7A==
+        bh=yrGYr6eVwHPpCt167JHw2EBDaiMMaOHcFHwHRNK7KgE=;
+        b=uI4JidEv1dHxBrNT6BO8H4RPUyLp7q2MexY1EhXpKHN0S8VEGqolKH4py2Ky8zK5jn
+         5ZYCAGRyxiB+5Cu2/G1KNMS91ekrsAuhaD7pVo1t+PSvyuDx3QimNfJ+NoPJMeq69GCJ
+         ZljVXFHjkU7Q/IpinDT+q54/5hxNeraRbIPgI1M5Y/ZU/9wWDqtZYjKEkFjGcfWRK82+
+         BIzgJoBarjJNCD24U6GlRbjjqIyNvSNQeLZhh+G3ye0QjREIxBBSfIlUPxjQB+Y/+lf4
+         Zw9ELFzZFO6ADkLPwsyrKjKIxn0aphdxd0mz13/UYS+t2LyurMoL34slRU1DHq6aK45m
+         sn+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737714780; x=1738319580;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1737725835; x=1738330635;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k6EDJaIcbkXZEeUcwvwxCuXiJHi7KYMC5Mo0eFKKxs4=;
-        b=onx5XHVyeYStKLqK7Ris0vINS0cWbezSXFpdw/J9Lud36XxuE2JdRTsgFq/sk+/BS1
-         TU9O9luAiQzQGa+QPf+wWv7aUpaLHtFDtdViMLOnXbW/1LCrkfY0fuq/Y5DyUlwAd9D+
-         xY4K1guUG7dRjLURwfDedLZwltu2dFxaDg7I3hl0lO8i0SPMUI0cLOLAZe+Kx7nSrAdo
-         r5nYhigTl1rgZvbcTRc5qQgmIDifaHpD24YzEduTspiQDklT2iy7mSRyqvJ0tDPHCI6Y
-         OokkwA/aSMZ58EQIoJ/Cs5jsrJZEdHGDrMaknIlRADVao7yiD+EoOax5F/qTN+XZVo9E
-         bg5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWCx5xt7SkzB85dw1ZWBNXBM4vkXBLerI8R739rO3h8wRtOpJuMkMmCF1HTFk8f+SjeVlvwfmkKJ8u2//rc@vger.kernel.org, AJvYcCWoPUtohFmZP7yg85G+y99AZXyws32t+WwzeJHOEtQMEdtJ7IJPawVxtuNSOdvtxwt1lQHAtU/OGQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXQNfGdP6rrSISejxtbyD+KBwE9lk9ymWTbzpd98cP/UAkbc49
-	Fu5z0UwR3PXCp0phDvC+I5T+q7lYfN1AO4VgqJkxYXyKzAno5+xN
-X-Gm-Gg: ASbGncvHrTISXmXxJ1TCvQKVgOxEUBX02d8V0Y9PMLmQO0y+WDFB2G7RMKNJT6VgsX9
-	72bjenSX/C2mRetz6CWi4vjHD8suIU2yBWhUQsz6lYM/rq9DH6pZuMUdXj0DYPW4rfCcYxxD+4L
-	qFqmTuIfwEXcDiXj5OaRtRjGl7StS3Z2/oYroDrmP6r+m/tBPWcRm4n6kz9QfhykrpyyTwDZT/6
-	f2DYpOEW8KQJJwf8mIQ3BYwtyQyZwxGfWkyQ6Z561xbfNMZVQv6AA4Cb1Pka8Rabd4aVxnJDm5F
-	Epm2u2CIi6sVuUA=
-X-Google-Smtp-Source: AGHT+IGmZ6mjtjHGEsKRqrQ9z8gi/MOxMI4EPFwm88h7HKV8BSpMckLTfLQXtMRMRxY+IuA2gliR3g==
-X-Received: by 2002:a17:906:6a25:b0:aaf:afb3:ad63 with SMTP id a640c23a62f3a-ab38b44e0e2mr2678162066b.43.1737714779308;
-        Fri, 24 Jan 2025 02:32:59 -0800 (PST)
-Received: from [192.168.8.100] ([148.252.147.156])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6760ab311sm107296066b.97.2025.01.24.02.32.58
+        bh=yrGYr6eVwHPpCt167JHw2EBDaiMMaOHcFHwHRNK7KgE=;
+        b=pz8cY6ysyZDdXuqpWGcB1HUnJCeVPtHjpVYbpx9O9l2MdaHB+rkKWleeyTjykODvB1
+         U/YhGn8d3Pb4dFAYWamkbcRtHis25mwWlJbdSU3rB0rnELmhEtu78oOhdTRNwCMW/Gwj
+         YiQhAYx7CQMd1wcPtJXMt4lUp/2iHBL2xpA0tPyl3nG2OMCYBvWOUuaxaOzP+4ROHgVg
+         i1RinibsTmmjD5HGwsw71pN3hhcXsQ+PPSu0k+i+iTly3QE6RpmujO9KHNz5jgNgASZa
+         OkPIsM8eGYI6SMfKp/ijm7DVJ5rSYQeuGdGXVl6yQd9ZlipUcuKmljS4/5HzKWDM1dL5
+         0g8A==
+X-Gm-Message-State: AOJu0YwmANfYiSJ8iGcb30fVC8Yh/691NmDSrZ+u5MGbf6oXbQZdnxnw
+	BLa9DDpG9NwpIPuTZJOjuScaRS33+EqXS2GWoROnnfuozNkGE+ijYqPtoQbXWWky6U6K66zCG6A
+	0
+X-Gm-Gg: ASbGnct73+0q5Nai9wQl5C6sO6FG+daPirCR+1FEm59J9HuD+VpTN5z0uu5l74av56O
+	Iutrfcgbk9QMot0rnUTsZzX5eq74Zu3LBbsBlBkf6PfwlYfR3n/9Baf3tcM4wz4vxHMs/guH/eM
+	6BIY3fyK9g/Y5iQ3VvlIXywsmg8v60WQKxEbaqQMlYAVhg2UyaJu0+4OKVO3gIIR9AxKltI0xMh
+	wZsKz5v+Poq8uymldNshBlf3zwSetUxjctvhoUJUof1tFaRnaQbmIa9UnP0VcKuFnN4CPFwOajz
+	CA==
+X-Google-Smtp-Source: AGHT+IGfPztoFDWaWDgaNgKDxOdbiT9/J7fj88v5ljBhkqESoOy2xn5Un8tFZJ/wjf2EVNBlO7BhfA==
+X-Received: by 2002:a05:6602:4747:b0:84f:44de:9ca7 with SMTP id ca18e2360f4ac-851b619f673mr2367032839f.3.1737725834761;
+        Fri, 24 Jan 2025 05:37:14 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec1db6c48dsm595646173.90.2025.01.24.05.37.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jan 2025 02:32:58 -0800 (PST)
-Message-ID: <a29ad9ab-15c2-4788-a839-009ca6fdd00f@gmail.com>
-Date: Fri, 24 Jan 2025 10:33:30 +0000
+        Fri, 24 Jan 2025 05:37:14 -0800 (PST)
+Message-ID: <5bc2877a-7125-48e1-9dd7-6497c3bd5d5d@kernel.dk>
+Date: Fri, 24 Jan 2025 06:37:13 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,96 +81,43 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Bug#1093243: Upgrade to 6.1.123 kernel causes mariadb hangs
-To: Salvatore Bonaccorso <carnil@debian.org>
-Cc: Xan Charbonnet <xan@charbonnet.com>, 1093243@bugs.debian.org,
- Jens Axboe <axboe@kernel.dk>, Bernhard Schmidt <berni@debian.org>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <173706089225.4380.9492796104667651797.reportbug@backup22.biblionix.com>
- <dde09d65-8912-47e4-a1bb-d198e0bf380b@charbonnet.com>
- <Z5KrQktoX4f2ysXI@eldamar.lan>
- <fa3b4143-f55d-4bd0-a87f-7014b0fad377@gmail.com>
- <Z5MkJ5sV-PK1m6_H@eldamar.lan>
+Subject: Re: [PATCH] io-uring: futex: cache io_futex_data than kfree
+To: Sidong Yang <sidong.yang@furiosa.ai>
+Cc: io-uring <io-uring@vger.kernel.org>
+References: <20250123105008.212752-1-sidong.yang@furiosa.ai>
+ <a366bb4b-dd8c-486e-91b5-46dad940e603@kernel.dk>
+ <Z5LppkEQ9tGdfwrX@sidongui-MacBookPro.local>
+From: Jens Axboe <axboe@kernel.dk>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Z5MkJ5sV-PK1m6_H@eldamar.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <Z5LppkEQ9tGdfwrX@sidongui-MacBookPro.local>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 1/24/25 05:24, Salvatore Bonaccorso wrote:
-> HI Pavel, hi Jens,
+On 1/23/25 6:15 PM, Sidong Yang wrote:
+> On Thu, Jan 23, 2025 at 06:36:06AM -0700, Jens Axboe wrote:
 > 
-> On Thu, Jan 23, 2025 at 11:20:40PM +0000, Pavel Begunkov wrote:
->> On 1/23/25 20:49, Salvatore Bonaccorso wrote:
->>> Hi Xan,
->>>
->>> On Thu, Jan 23, 2025 at 02:31:34PM -0600, Xan Charbonnet wrote:
->>>> I rented a Linode and have been trying to load it down with sysbench
->>>> activity while doing a mariabackup and a mysqldump, also while spinning up
->>>> the CPU with zstd benchmarks.  So far I've had no luck triggering the fault.
->>>>
->>>> I've also been doing some kernel compilation.  I followed this guide:
->>>> https://www.dwarmstrong.org/kernel/
->>>> (except that I used make -j24 to build in parallel and used make
->>>> localmodconfig to compile only the modules I need)
->>>>
->>>> I've built the following kernels:
->>>> 6.1.123 (equivalent to linux-image-6.1.0-29-amd64)
->>>> 6.1.122
->>>> 6.1.121
->>>> 6.1.120
->>>>
->>>> So far they have all exhibited the behavior.  Next up is 6.1.119 which is
->>>> equivalent to linux-image-6.1.0-28-amd64.  My expectation is that the fault
->>>> will not appear for this kernel.
->>>>
->>>> It looks like the issue is here somewhere:
->>>> https://www.kernel.org/pub/linux/kernel/v6.x/ChangeLog-6.1.120
->>>>
->>>> I have to work on some other things, and it'll take a while to prove the
->>>> negative (that is, to know that the failure isn't happening).  I'll post
->>>> back with the 6.1.119 results when I have them.
->>>
->>> Additionally please try with 6.1.120 and revert this commit
->>>
->>> 3ab9326f93ec ("io_uring: wake up optimisations")
->>>
->>> (which landed in 6.1.120).
->>>
->>> If that solves the problem maybe we miss some prequisites in the 6.1.y
->>> series here?
+> Hi, Jens.
+> Thanks for review!
+> 
+>> On 1/23/25 3:50 AM, Sidong Yang wrote:
+>>> If futex_wait_setup() fails in io_futex_wait(), Old code just releases
+>>> io_futex_data. This patch tries to cache io_futex_data before kfree.
 >>
->> I'm not sure why the commit was backported (need to look it up),
->> but from a quick look it does seem to miss a barrier present in
->> the original patch.
+>> It's not that the patch is incorrect, but:
+>>
+>> 1) This is an error path, surely we do not care about caching in
+>>    that case. If it's often hit, then the application would be buggy.
+>>
+>> 2) If you're going to add an io_free_ifd() helper, then at least use it
+>>    for the normal case too that still open-codes it.
 > 
-> Ack, this was here for reference:
-> https://lore.kernel.org/stable/57b048be-31d4-4380-8296-56afc886299a@kernel.dk/
-> 
-> Xan Charbonnet was able to confirm in https://bugs.debian.org/1093243#99 that
-> indeed reverting the commit fixes the mariadb related hangs.
+> Agreed, So this patch could be make it buggy. You can drop this patch. I'll
+> find another task to work on. 
 
-Thanks for narrowing it down. Xan, can you try this change please?
-Waiters can miss wake ups without it, seems to match the description.
-
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 9b58ba4616d40..e5a8ee944ef59 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -592,8 +592,10 @@ static inline void __io_cq_unlock_post_flush(struct io_ring_ctx *ctx)
-  	io_commit_cqring(ctx);
-  	spin_unlock(&ctx->completion_lock);
-  	io_commit_cqring_flush(ctx);
--	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
-+	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN)) {
-+		smp_mb();
-  		__io_cqring_wake(ctx);
-+	}
-  }
-  
-  void io_cq_unlock_post(struct io_ring_ctx *ctx)
+It won't make it buggy, it's just a bit questionnable if it's worth
+doing. And if it is, then it should have io_free_ifd() being used in the
+other place that puts to the cache as well, to make it complete.
 
 -- 
-Pavel Begunkov
-
+Jens Axboe
 

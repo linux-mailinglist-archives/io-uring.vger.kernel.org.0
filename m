@@ -1,119 +1,154 @@
-Return-Path: <io-uring+bounces-6109-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6110-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278CBA1AE7E
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2025 03:23:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329E2A1AFDA
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2025 06:25:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E3116AFFC
-	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2025 02:23:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 523CD16D624
+	for <lists+io-uring@lfdr.de>; Fri, 24 Jan 2025 05:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0281CCED2;
-	Fri, 24 Jan 2025 02:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6C01D61A7;
+	Fri, 24 Jan 2025 05:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=charbonnet.com header.i=@charbonnet.com header.b="iyLNbYjF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkoQorUv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from h5.fbrelay.privateemail.com (h5.fbrelay.privateemail.com [162.0.218.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24951E495;
-	Fri, 24 Jan 2025 02:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.0.218.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568CA1D5CF2;
+	Fri, 24 Jan 2025 05:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737685429; cv=none; b=Fl2FA7W7Dwo7mdxTxiixiAVDTnxqUDCTT/mrU+pxpIBbOSp8kJvNllOTsjQv1J4DR64voUjlRc/jx2b4g4Mh5Y65z8Kz0LqQuBbDCRZSvtPwBKJZxLa4Te1nmMOiFTBMD64es5420YQbKQ/fUqxAG4/UbmfY8fLw7KqWesT7ge8=
+	t=1737696301; cv=none; b=mCBWH21H4jGrQy3/r4NodK5CeAD34DrdPKegebHSRbGWy3tR0NTvY692NQ+sLV1i/k8JAdByyz3A2Zt9BpVTnJcRBHIsZizUb0LzGR6SRkQcZOVMEm+12J3so0OQLiuDxmDhvS+TRblc+IXPBiAc2ZgXEgPZogThkOiTkb7eX64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737685429; c=relaxed/simple;
-	bh=24UfeayJe1CCp+uWofUrj78s9qE5M8t4tx7WrBmfMgs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RokBBBC4qcBaePRwpskuzhphJo341uKGzhGbmA+Gk5Lpgd6TH3C2faZkny/NxtuOQYDwT8vWObkhFTY683iEE0Q+kGVFVfKRYOT09yOZwwp0PHYaI+dRm/QaMUhPVbUExv74y8K08v69DaXKoVJz3AIVpXBLEn1KT273Qa7hZx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=charbonnet.com; spf=pass smtp.mailfrom=charbonnet.com; dkim=pass (2048-bit key) header.d=charbonnet.com header.i=@charbonnet.com header.b=iyLNbYjF; arc=none smtp.client-ip=162.0.218.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=charbonnet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=charbonnet.com
-Received: from MTA-06-4.privateemail.com (mta-06.privateemail.com [198.54.118.213])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by h5.fbrelay.privateemail.com (Postfix) with ESMTPSA id 4YfLrn1l6nz31bv;
-	Fri, 24 Jan 2025 02:11:05 +0000 (UTC)
-Received: from mta-06.privateemail.com (localhost [127.0.0.1])
-	by mta-06.privateemail.com (Postfix) with ESMTP id 4YfLrd12ljz3hhTn;
-	Thu, 23 Jan 2025 21:10:57 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=charbonnet.com;
-	s=default; t=1737684657;
-	bh=24UfeayJe1CCp+uWofUrj78s9qE5M8t4tx7WrBmfMgs=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=iyLNbYjF7tC/b9OrGZ1j3Hl64IBehGidy//tBx9OITVfHDXWgG71onD8vxNcUPm5m
-	 lx3JQb8lHiOCaBBi8FC+m5VRKFVSMxeKhYDDY3NwneEI3Kp0XJ1f9/rIwR7tb5vyFO
-	 0XnIKoLTyQ+g4lyfX2eP3mOdzCFMyNzYv0uUtLGKo9eIZFi28AsZGHA/J2bL5PVqEz
-	 1IZlir5+miWi4igaRPR7WHmShUBOUcy70MeSZ3LtX7upsJ3+LrbVmNN54oxToWU0/m
-	 dyjKTFaWbtxltQPTdjyzAzITUP/AYjmOo1Xv7xjVo83Y1ungAytdFQpdOcuhYtBPY0
-	 7B6dKha7x8BLw==
-Received: from [192.168.1.91] (2019.charbonnet.com [69.30.239.106])
-	by mta-06.privateemail.com (Postfix) with ESMTPA;
-	Thu, 23 Jan 2025 21:10:49 -0500 (EST)
-Message-ID: <6baae9c9-b296-47b8-a7e2-56368bd7e84a@charbonnet.com>
-Date: Thu, 23 Jan 2025 20:10:48 -0600
+	s=arc-20240116; t=1737696301; c=relaxed/simple;
+	bh=wUsnlwYFTdc+MvnuZ8vrb+p4T3M2yRpjztiGdhiJh7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GGk6CtlhjnVsxwM4E4AFFIyGLMr3VrXWNnqJ+ALPGe/qsIR2dUuhtBcOqkVCFoLcovh3TheavQWYT3SMPzNG79lHaPIpi1Z7Ldx44aizNUk2wtqob8h8K8AzvD2BbRhXmL0xMR4FwKu9WYVWfq0dpMcqWayW2MCbfsDfHz3zHDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkoQorUv; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3e6f6cf69so2785400a12.1;
+        Thu, 23 Jan 2025 21:24:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737696297; x=1738301097; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fKweFn49YcSgRl7XNnglleppGHVhMNQ1QlteyLFd6Fg=;
+        b=YkoQorUv/d9Yj3MoWiZVDmQzZFPmwO0dq1DYElVOWBhjqO8rqhZwCvdMeRyCmvWjao
+         3iMO5A7aupT85d3ZhdAqxho0M4Z8M6h2M05nLXn64W61KGUfs2T+VYvjYl3GaSPmVfK/
+         ywVxQJ5bFrAw9fRShlAp23i10sczo1cc1riGTW4e0RpaoI6Q/3FZHBXONWCDnmVCrzIj
+         dsnNcokNPipYU40BQ+m4exsK/cle6/0M/VPdJxUbd5cFxYEEx+6zUVlF82baJEeUZ3NB
+         Fx51o9xKtnz22eD2+omPgzIwxDbYvCYHvmiHqPLdyvFaQhmfuHue8x3JEr/ARUiIUfvH
+         wASA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737696297; x=1738301097;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fKweFn49YcSgRl7XNnglleppGHVhMNQ1QlteyLFd6Fg=;
+        b=IJt2g3SuV8j98JlBUjdujGvKNliYLGxJ36UZqchvZTR9mPPMHBrrP3JL1/Bg8WkL6S
+         Hu8y+Yn3Bqg1IeopaTZdvQUJbIgztW0qB1NI4fEAYCLcFnBYu8Pa/aVxMY11deDkd+wh
+         vfGYzexrYwJiuSJkmz/zuQbKt5ZFl3rToYq035NSkw83fr0ecRxt+N6WvogXiL5V1VnH
+         jCNgUWc1sqKI2ppkL66TjskyVQkjFPxM5Rqd4zuxUurE5xdLLv69XkApj9u7cZyZaj/d
+         S7eGGaTfW9QlWwxcdWWv8grVL23oMee/CCNE42fXkSjcfl1xvr9BG82Ib3xIo57qsrGL
+         vQ5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU4yMSXkEF06V+ZHPxUPkQoBXVCa3T/1FP6gNh9LKMVAiud3dB3GIFM1Xc2zrNwMgWw2zjX6CuN2A==@vger.kernel.org, AJvYcCXwDeOWIGVK5+CrEHg9VcEG3Xk+dS6g2POIKQ4Ak43N818vnyz73DPx9KsqSTuUFRv5qPSHrazFj51UKIUG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo0GSeYAd2kkfcl4sEGWe+iRSenRP5MHPN1pQX9YPIG+LqViqe
+	WlHiW45sEoyKrNhIF/nArR/JafJ+qhJAurQ8sfm4jRDA32IYZQas
+X-Gm-Gg: ASbGncuxbVeCJWbgZ4aT9uARVZwmCGrroH5DQXH8DsFC0F2VVyN6KlawIwD1JD+lQcF
+	l3T9Eh4pYzKtCMff0QRm/edVnvfmixXhP2QKNTmn+RM5R7HQRKeOB1NCjU6ufZiEfplMLDxlhX5
+	FEhKQI36q6Ob4Or+NVM4oN34pS3O3bPBvIDqjup+20LIxglA1zzUotAgvSK5HfIoP83CgaLIbqr
+	WbpREx1hZdq/pB6wjsr0kvPBNQ1fLUd9nWTrrGJvox7VFKfssyaVDJiqdEyTaS4z8MZjEuN7+cW
+	y71PDQAbAIXJF3VLzrJIl0VSc/Xau4HWovgp6Q==
+X-Google-Smtp-Source: AGHT+IE9HFq7mNLOm/QvCIMuTTT0B1SRwpLbjCALcY22IM2Vh1Rb9eDeebeyEpJBRTvY320BIsVPVw==
+X-Received: by 2002:a17:907:9408:b0:aab:daf9:972 with SMTP id a640c23a62f3a-ab38b29cf07mr2500248266b.28.1737696297229;
+        Thu, 23 Jan 2025 21:24:57 -0800 (PST)
+Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6760b76acsm65810666b.113.2025.01.23.21.24.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jan 2025 21:24:56 -0800 (PST)
+Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 435E1BE2EE7; Fri, 24 Jan 2025 06:24:55 +0100 (CET)
+Date: Fri, 24 Jan 2025 06:24:55 +0100
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Xan Charbonnet <xan@charbonnet.com>, 1093243@bugs.debian.org,
+	Jens Axboe <axboe@kernel.dk>, Bernhard Schmidt <berni@debian.org>,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Bug#1093243: Upgrade to 6.1.123 kernel causes mariadb hangs
+Message-ID: <Z5MkJ5sV-PK1m6_H@eldamar.lan>
+References: <173706089225.4380.9492796104667651797.reportbug@backup22.biblionix.com>
+ <dde09d65-8912-47e4-a1bb-d198e0bf380b@charbonnet.com>
+ <Z5KrQktoX4f2ysXI@eldamar.lan>
+ <fa3b4143-f55d-4bd0-a87f-7014b0fad377@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Xan Charbonnet <xan@charbonnet.com>
-Subject: Re: Bug#1093243: Upgrade to 6.1.123 kernel causes mariadb hangs
-To: Pavel Begunkov <asml.silence@gmail.com>,
- Salvatore Bonaccorso <carnil@debian.org>, 1093243@bugs.debian.org,
- Jens Axboe <axboe@kernel.dk>
-Cc: Bernhard Schmidt <berni@debian.org>, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <173706089225.4380.9492796104667651797.reportbug@backup22.biblionix.com>
- <dde09d65-8912-47e4-a1bb-d198e0bf380b@charbonnet.com>
- <Z5KrQktoX4f2ysXI@eldamar.lan>
- <fa3b4143-f55d-4bd0-a87f-7014b0fad377@gmail.com>
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <fa3b4143-f55d-4bd0-a87f-7014b0fad377@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP
 
-On 1/23/25 20:49, Salvatore Bonaccorso wrote:
-> Additionally please try with 6.1.120 and revert this commit
->
-> 3ab9326f93ec ("io_uring: wake up optimisations")
->
-> (which landed in 6.1.120).
->
-> If that solves the problem maybe we miss some prequisites in the 6.1.y
-> series here?
+HI Pavel, hi Jens,
 
+On Thu, Jan 23, 2025 at 11:20:40PM +0000, Pavel Begunkov wrote:
+> On 1/23/25 20:49, Salvatore Bonaccorso wrote:
+> > Hi Xan,
+> > 
+> > On Thu, Jan 23, 2025 at 02:31:34PM -0600, Xan Charbonnet wrote:
+> > > I rented a Linode and have been trying to load it down with sysbench
+> > > activity while doing a mariabackup and a mysqldump, also while spinning up
+> > > the CPU with zstd benchmarks.  So far I've had no luck triggering the fault.
+> > > 
+> > > I've also been doing some kernel compilation.  I followed this guide:
+> > > https://www.dwarmstrong.org/kernel/
+> > > (except that I used make -j24 to build in parallel and used make
+> > > localmodconfig to compile only the modules I need)
+> > > 
+> > > I've built the following kernels:
+> > > 6.1.123 (equivalent to linux-image-6.1.0-29-amd64)
+> > > 6.1.122
+> > > 6.1.121
+> > > 6.1.120
+> > > 
+> > > So far they have all exhibited the behavior.  Next up is 6.1.119 which is
+> > > equivalent to linux-image-6.1.0-28-amd64.  My expectation is that the fault
+> > > will not appear for this kernel.
+> > > 
+> > > It looks like the issue is here somewhere:
+> > > https://www.kernel.org/pub/linux/kernel/v6.x/ChangeLog-6.1.120
+> > > 
+> > > I have to work on some other things, and it'll take a while to prove the
+> > > negative (that is, to know that the failure isn't happening).  I'll post
+> > > back with the 6.1.119 results when I have them.
+> > 
+> > Additionally please try with 6.1.120 and revert this commit
+> > 
+> > 3ab9326f93ec ("io_uring: wake up optimisations")
+> > 
+> > (which landed in 6.1.120).
+> > 
+> > If that solves the problem maybe we miss some prequisites in the 6.1.y
+> > series here?
+> 
+> I'm not sure why the commit was backported (need to look it up),
+> but from a quick look it does seem to miss a barrier present in
+> the original patch.
 
-I hope I did all this right.  I found this:
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=3181e22fb79910c7071e84a43af93ac89e8a7106
+Ack, this was here for reference:
+https://lore.kernel.org/stable/57b048be-31d4-4380-8296-56afc886299a@kernel.dk/
 
-and attempted to undo that change in the vanilla 6.1.124 source by 
-making the following change to io_uring/io_uring.c:
+Xan Charbonnet was able to confirm in https://bugs.debian.org/1093243#99 that
+indeed reverting the commit fixes the mariadb related hangs.
 
-585,594d584
-< static inline void __io_cq_unlock_post_flush(struct io_ring_ctx *ctx)
-<       __releases(ctx->completion_lock)
-< {
-<       io_commit_cqring(ctx);
-<       spin_unlock(&ctx->completion_lock);
-<       io_commit_cqring_flush(ctx);
-<       if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
-<               __io_cqring_wake(ctx);
-< }
-<
-1352c1342
-<       __io_cq_unlock_post_flush(ctx);
----
- >         __io_cq_unlock_post(ctx);
-
-
-I rebooted into the resulting kernel and am happy to report that the 
-problem did NOT occur!
-
+Regards,
+Salvatore
 

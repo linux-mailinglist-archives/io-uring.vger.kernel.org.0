@@ -1,58 +1,59 @@
-Return-Path: <io-uring+bounces-6126-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6125-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A25C6A1C1FF
-	for <lists+io-uring@lfdr.de>; Sat, 25 Jan 2025 08:03:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 040FEA1C1F9
+	for <lists+io-uring@lfdr.de>; Sat, 25 Jan 2025 07:59:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEDED164C5F
-	for <lists+io-uring@lfdr.de>; Sat, 25 Jan 2025 07:03:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E7DF7A1245
+	for <lists+io-uring@lfdr.de>; Sat, 25 Jan 2025 06:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E061CCEC8;
-	Sat, 25 Jan 2025 07:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336D8207667;
+	Sat, 25 Jan 2025 06:59:13 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5828118A6B0
-	for <io-uring@vger.kernel.org>; Sat, 25 Jan 2025 07:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE97B1D5CEB;
+	Sat, 25 Jan 2025 06:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737788621; cv=none; b=UiYBZMTqqSC/Q9BBuE/cG7kKnDMpTMIvff/lMvBwIlEwbJgMSrceNqJuaTTh7xthd0YQUVisSBxUwHEf1P96lOc06p05MsFfhaPZmgO6SM7F49nAGC3dWo2vHeejYw0uzkgVYVorpRNA9nhpaDvgmzlN7VEzTeBmjyVjP3JoCWY=
+	t=1737788353; cv=none; b=ss5ppDwlLfKGNfSd1SEjaLbe+ObjDeFN+V2LGc0hC0wZmEXwXqxtBx79H84aBp41j6SWZKak728HqBTX9LFBT1wrgHdAEFj4ox6NVL3ImtUIyNaaHJgxFRZzvkJOIh0o2RpXk9ugU5foTtFNggQ5e0NGs2heY7gHJ6isQYwR20w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737788621; c=relaxed/simple;
-	bh=WWcD8QvEhWfsatg3dxK+k5tfddRUGHySvHxw92iyUgg=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=V2vuuX9UCY4FeUIUi4339VNdyI5Zw/FnrdG9vih8qYf/TYfsGzGf+AHlRiXo2ajTy+oirpIneXxD8lxMqHNFYBHUabLF+aYaA0m/arGyKoJu9oFl9Zx5JJKqlN9K1Xj38zlqevdEhQs+vPKomsJALOhhQDB6Fcm/8IqLLJAJo1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+	s=arc-20240116; t=1737788353; c=relaxed/simple;
+	bh=JA1JAzJ1EfU1wv6nUQhdJonbSORd8QY0tbKV6r659BM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jp3TbwFVImiJfZBfSpcWomlXpkarej6u/qLfsfvGfVCHEgSQFdWIQsDPnzJjNp7NdhpHyl9wgngI+DTEjiON48BnGyi6Ezv55FOYdU93kDg3dUHPxVpqwNC1uiEq8OrjoC5xGvUDeYrrJdcBCMWDj5b9uUgqRj8/3paTqtxj/zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Yg4sr5RzDz1V4vJ;
-	Sat, 25 Jan 2025 14:44:32 +0800 (CST)
-Received: from kwepemd100010.china.huawei.com (unknown [7.221.188.107])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2B9B61402C7;
-	Sat, 25 Jan 2025 14:47:56 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Yg56m0Vvrz1l00X;
+	Sat, 25 Jan 2025 14:55:44 +0800 (CST)
+Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
+	by mail.maildlp.com (Postfix) with ESMTPS id ADD341402C4;
+	Sat, 25 Jan 2025 14:59:06 +0800 (CST)
 Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd100010.china.huawei.com (7.221.188.107) with Microsoft SMTP Server
+ kwepemd200010.china.huawei.com (7.221.188.124) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Sat, 25 Jan 2025 14:47:55 +0800
+ 15.2.1258.34; Sat, 25 Jan 2025 14:59:06 +0800
 Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
  kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Sat, 25 Jan 2025 14:47:45 +0800
+ Sat, 25 Jan 2025 14:59:06 +0800
 From: lizetao <lizetao1@huawei.com>
-To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-Subject: RE: [PATCH] io_uring/register: use atomic_read/write for sq_flags
- migration
-Thread-Topic: [PATCH] io_uring/register: use atomic_read/write for sq_flags
- migration
-Thread-Index: AQHbbqfhAneC9VTBIkihYzpe3TBmDbMnDJmA
-Date: Sat, 25 Jan 2025 06:47:45 +0000
-Message-ID: <6e3287d0d5c349a4a511ab338bb8fd3a@huawei.com>
-References: <58689f80-097c-4644-a748-2e848629b379@kernel.dk>
-In-Reply-To: <58689f80-097c-4644-a748-2e848629b379@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Xan Charbonnet <xan@charbonnet.com>, Salvatore Bonaccorso
+	<carnil@debian.org>
+Subject: RE: [PATCH stable-6.1 1/1] io_uring: fix waiters missing wake ups
+Thread-Topic: [PATCH stable-6.1 1/1] io_uring: fix waiters missing wake ups
+Thread-Index: AQHbbpFPgOGrLlGZ8UW45KUl0YJ2IrMnD/Gg
+Date: Sat, 25 Jan 2025 06:59:06 +0000
+Message-ID: <da9d505df3f648ad8660ad6e53a6f77c@huawei.com>
+References: <760086647776a5aebfa77cfff728837d476a4fd8.1737718881.git.asml.silence@gmail.com>
+In-Reply-To: <760086647776a5aebfa77cfff728837d476a4fd8.1737718881.git.asml.silence@gmail.com>
 Accept-Language: en-US
 Content-Language: zh-CN
 X-MS-Has-Attach:
@@ -66,35 +67,36 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmVucyBBeGJvZSA8YXhi
-b2VAa2VybmVsLmRrPg0KPiBTZW50OiBTYXR1cmRheSwgSmFudWFyeSAyNSwgMjAyNSA1OjM1IEFN
-DQo+IFRvOiBpby11cmluZyA8aW8tdXJpbmdAdmdlci5rZXJuZWwub3JnPg0KPiBTdWJqZWN0OiBb
-UEFUQ0hdIGlvX3VyaW5nL3JlZ2lzdGVyOiB1c2UgYXRvbWljX3JlYWQvd3JpdGUgZm9yIHNxX2Zs
-YWdzDQo+IG1pZ3JhdGlvbg0KPiANCj4gQSBwcmV2aW91cyBjb21taXQgY2hhbmdlZCBhbGwgb2Yg
-dGhlIG1pZ3JhdGlvbiBmcm9tIHRoZSBvbGQgdG8gdGhlIG5ldyByaW5nDQo+IGZvciByZXNpemlu
-ZyB0byB1c2UgUkVBRC9XUklURV9PTkNFLiBIb3dldmVyLCAtPnNxX2ZsYWdzIGlzIGFuIGF0b21p
-Y190LCBhbmQNCj4gd2hpbGUgbW9zdCBhcmNocyB3b24ndCBjb21wbGFpbiBvbiB0aGlzLCBzb21l
-IHdpbGwgaW5kZWVkIGZsYWcgdGhpczoNCj4gDQo+IGlvX3VyaW5nL3JlZ2lzdGVyLmM6NTU0Ojk6
-IHNwYXJzZTogc3BhcnNlOiBjYXN0IHRvIG5vbi1zY2FsYXINCj4gaW9fdXJpbmcvcmVnaXN0ZXIu
-Yzo1NTQ6OTogc3BhcnNlOiBzcGFyc2U6IGNhc3QgZnJvbSBub24tc2NhbGFyDQo+IA0KPiBKdXN0
-IHVzZSBhdG9taWNfc2V0L2F0b21pY19yZWFkIGZvciBoYW5kbGluZyB0aGlzIGNhc2UuDQo+IA0K
-PiBSZXBvcnRlZC1ieToga2VybmVsIHRlc3Qgcm9ib3QgPGxrcEBpbnRlbC5jb20+DQo+IENsb3Nl
-czogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvb2Uta2J1aWxkLWFsbC8yMDI1MDEyNDIwMDAuQTJz
-S3FhQ0wtDQo+IGxrcEBpbnRlbC5jb20vDQo+IEZpeGVzOiAyYzVhYWUxMjlmNDIgKCJpb191cmlu
-Zy9yZWdpc3RlcjogZG9jdW1lbnQgaW9fcmVnaXN0ZXJfcmVzaXplX3JpbmdzKCkNCj4gc2hhcmVk
-IG1lbSB1c2FnZSIpDQo+IFNpZ25lZC1vZmYtYnk6IEplbnMgQXhib2UgPGF4Ym9lQGtlcm5lbC5k
-az4NCj4gDQo+IC0tLQ0KPiANCj4gZGlmZiAtLWdpdCBhL2lvX3VyaW5nL3JlZ2lzdGVyLmMgYi9p
-b191cmluZy9yZWdpc3Rlci5jIGluZGV4DQo+IDBkYjE4MTQzN2FlMy4uOWE0ZDJmYmNlNGFlIDEw
-MDY0NA0KPiAtLS0gYS9pb191cmluZy9yZWdpc3Rlci5jDQo+ICsrKyBiL2lvX3VyaW5nL3JlZ2lz
-dGVyLmMNCj4gQEAgLTU1Miw3ICs1NTIsNyBAQCBzdGF0aWMgaW50IGlvX3JlZ2lzdGVyX3Jlc2l6
-ZV9yaW5ncyhzdHJ1Y3QgaW9fcmluZ19jdHgNCj4gKmN0eCwgdm9pZCBfX3VzZXIgKmFyZykNCj4g
-IAljdHgtPmNxZV9jYWNoZWQgPSBjdHgtPmNxZV9zZW50aW5lbCA9IE5VTEw7DQo+IA0KPiAgCVdS
-SVRFX09OQ0Uobi5yaW5ncy0+c3FfZHJvcHBlZCwgUkVBRF9PTkNFKG8ucmluZ3MtDQo+ID5zcV9k
-cm9wcGVkKSk7DQo+IC0JV1JJVEVfT05DRShuLnJpbmdzLT5zcV9mbGFncywgUkVBRF9PTkNFKG8u
-cmluZ3MtPnNxX2ZsYWdzKSk7DQo+ICsJYXRvbWljX3NldCgmbi5yaW5ncy0+c3FfZmxhZ3MsIGF0
-b21pY19yZWFkKCZvLnJpbmdzLT5zcV9mbGFncykpOw0KPiAgCVdSSVRFX09OQ0Uobi5yaW5ncy0+
-Y3FfZmxhZ3MsIFJFQURfT05DRShvLnJpbmdzLT5jcV9mbGFncykpOw0KPiAgCVdSSVRFX09OQ0Uo
-bi5yaW5ncy0+Y3Ffb3ZlcmZsb3csIFJFQURfT05DRShvLnJpbmdzLQ0KPiA+Y3Ffb3ZlcmZsb3cp
-KTsNCj4gDQo+IC0tDQo+IEplbnMgQXhib2UNCj4gDQoNClJldmlld2VkLWJ5OiBMaSBaZXRhbyA8
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUGF2ZWwgQmVndW5rb3Yg
+PGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+DQo+IFNlbnQ6IFNhdHVyZGF5LCBKYW51YXJ5IDI1LCAy
+MDI1IDI6NTQgQU0NCj4gVG86IGlvLXVyaW5nQHZnZXIua2VybmVsLm9yZzsgc3RhYmxlQHZnZXIu
+a2VybmVsLm9yZw0KPiBDYzogYXNtbC5zaWxlbmNlQGdtYWlsLmNvbTsgWGFuIENoYXJib25uZXQg
+PHhhbkBjaGFyYm9ubmV0LmNvbT47DQo+IFNhbHZhdG9yZSBCb25hY2NvcnNvIDxjYXJuaWxAZGVi
+aWFuLm9yZz4NCj4gU3ViamVjdDogW1BBVENIIHN0YWJsZS02LjEgMS8xXSBpb191cmluZzogZml4
+IHdhaXRlcnMgbWlzc2luZyB3YWtlIHVwcw0KPiANCj4gWyB1cHN0cmVhbSBjb21taXQgMzE4MWUy
+MmZiNzk5MTBjNzA3MWU4NGE0M2FmOTNhYzg5ZThhNzEwNiBdDQo+IA0KPiBUaGVyZSBhcmUgcmVw
+b3J0cyBvZiBtYXJpYWRiIGhhbmdzLCB3aGljaCBpcyBjYXVzZWQgYnkgYSBtaXNzaW5nIGJhcnJp
+ZXIgaW4gdGhlDQo+IHdha2luZyBjb2RlIHJlc3VsdGluZyBpbiB3YWl0ZXJzIGxvc2luZyBldmVu
+dHMuDQo+IA0KPiBUaGUgcHJvYmxlbSB3YXMgaW50cm9kdWNlZCBpbiBhIGJhY2twb3J0DQo+IDNh
+YjkzMjZmOTNlYzQgKCJpb191cmluZzogd2FrZSB1cCBvcHRpbWlzYXRpb25zIiksIGFuZCB0aGUg
+Y2hhbmdlIHJlc3RvcmVzDQo+IHRoZSBiYXJyaWVyIHByZXNlbnQgaW4gdGhlIG9yaWdpbmFsIGNv
+bW1pdA0KPiAzYWI5MzI2ZjkzZWM0ICgiaW9fdXJpbmc6IHdha2UgdXAgb3B0aW1pc2F0aW9ucyIp
+DQo+IA0KPiBSZXBvcnRlZCBieTogWGFuIENoYXJib25uZXQgPHhhbkBjaGFyYm9ubmV0LmNvbT4N
+Cj4gRml4ZXM6IDNhYjkzMjZmOTNlYzQgKCJpb191cmluZzogd2FrZSB1cCBvcHRpbWlzYXRpb25z
+IikNCj4gTGluazogaHR0cHM6Ly9idWdzLmRlYmlhbi5vcmcvY2dpLWJpbi9idWdyZXBvcnQuY2dp
+P2J1Zz0xMDkzMjQzIzk5DQo+IFNpZ25lZC1vZmYtYnk6IFBhdmVsIEJlZ3Vua292IDxhc21sLnNp
+bGVuY2VAZ21haWwuY29tPg0KPiAtLS0NCj4gIGlvX3VyaW5nL2lvX3VyaW5nLmMgfCA0ICsrKy0N
+Cj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+
+IGRpZmYgLS1naXQgYS9pb191cmluZy9pb191cmluZy5jIGIvaW9fdXJpbmcvaW9fdXJpbmcuYyBp
+bmRleA0KPiA5YjU4YmE0NjE2ZDQwLi5lNWE4ZWU5NDRlZjU5IDEwMDY0NA0KPiAtLS0gYS9pb191
+cmluZy9pb191cmluZy5jDQo+ICsrKyBiL2lvX3VyaW5nL2lvX3VyaW5nLmMNCj4gQEAgLTU5Miw4
+ICs1OTIsMTAgQEAgc3RhdGljIGlubGluZSB2b2lkIF9faW9fY3FfdW5sb2NrX3Bvc3RfZmx1c2go
+c3RydWN0DQo+IGlvX3JpbmdfY3R4ICpjdHgpDQo+ICAJaW9fY29tbWl0X2NxcmluZyhjdHgpOw0K
+PiAgCXNwaW5fdW5sb2NrKCZjdHgtPmNvbXBsZXRpb25fbG9jayk7DQo+ICAJaW9fY29tbWl0X2Nx
+cmluZ19mbHVzaChjdHgpOw0KPiAtCWlmICghKGN0eC0+ZmxhZ3MgJiBJT1JJTkdfU0VUVVBfREVG
+RVJfVEFTS1JVTikpDQo+ICsJaWYgKCEoY3R4LT5mbGFncyAmIElPUklOR19TRVRVUF9ERUZFUl9U
+QVNLUlVOKSkgew0KPiArCQlzbXBfbWIoKTsNCj4gIAkJX19pb19jcXJpbmdfd2FrZShjdHgpOw0K
+PiArCX0NCj4gIH0NCj4gDQo+ICB2b2lkIGlvX2NxX3VubG9ja19wb3N0KHN0cnVjdCBpb19yaW5n
+X2N0eCAqY3R4KQ0KPiAtLQ0KPiAyLjQ3LjENCj4gDQoNClJldmlld2VkLWJ5OiBMaSBaZXRhbyA8
 bGl6ZXRhbzFAaHVhd2VpLmNvbT4NCg0KLS0NCkxpIFpldGFvDQo=
 

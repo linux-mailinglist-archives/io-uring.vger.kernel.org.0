@@ -1,158 +1,143 @@
-Return-Path: <io-uring+bounces-6131-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6132-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD72A1C618
-	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2025 03:06:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9535FA1CF10
+	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2025 23:57:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0823A589B
-	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2025 02:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A731886AA6
+	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2025 22:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A9338389;
-	Sun, 26 Jan 2025 02:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD5A4F218;
+	Sun, 26 Jan 2025 22:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=charbonnet.com header.i=@charbonnet.com header.b="jA3DZRhb"
 X-Original-To: io-uring@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from mail.charbonnet.com (2024.charbonnet.com [96.126.120.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AFE288DA
-	for <io-uring@vger.kernel.org>; Sun, 26 Jan 2025 02:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3415672;
+	Sun, 26 Jan 2025 22:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.126.120.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737857210; cv=none; b=Uo6iU4JXn+KxG53C7m9oxc/x3hv+3IA0flczbPkfE9R4y8WMobZE26okp2bCrnJvC70xyn0UpkHxqS1TOm0RErQmXLGjCN5NW8Slb4n8Nr4/UY1e5xYwgJSJ54yJyhCw6p+w2C2tTSzAjURuSMFjqtshzBBVmmhjH7e/vtwRqUk=
+	t=1737932245; cv=none; b=ibJmp8CMM3HJNj9MU/7QhC9sDAnSsO38sreX9EW1YhGwPcQ8p+jvnRgo7+FwFLNMfeaFYYul2cB0gQRp72fV2ngOEAjW1QeR2+9r1HqCQw/gU9MTm9jTowl4Pb3T9ipHNCuLnCJflk500S9dklhelOgTZPlaOy8gAD82bz7UXjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737857210; c=relaxed/simple;
-	bh=iL2Zi78bgiw0L8URg8PaxJXEE0Gh5j3lxO9iE6LYP6o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nFkrPuu+dWzj3OH5Xvq2rzdctNtr6nET1eVOxHhsaFBjP8Sz/2CJUyYiOA71hTuKtKs9pQTdzRAqwN6FXFxwEAeLt2gvwvt106mX6qNPPzdDdZ857ylGsoCFHQe/FRS47vMPMA5MdFRi8bQW+liXSO8vSP+gurTZTu6S0KahyIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YgZcZ6ydGzrSb4;
-	Sun, 26 Jan 2025 10:04:46 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2472F1402C1;
-	Sun, 26 Jan 2025 10:06:25 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Sun, 26 Jan 2025 10:06:24 +0800
-Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
- kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Sun, 26 Jan 2025 10:06:24 +0800
-From: lizetao <lizetao1@huawei.com>
-To: Sidong Yang <sidong.yang@furiosa.ai>
-CC: io-uring <io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
-Subject: RE: [PATCH v4] io_uring/futex: Factor out common free logic into
- io_free_ifd()
-Thread-Topic: [PATCH v4] io_uring/futex: Factor out common free logic into
- io_free_ifd()
-Thread-Index: AQHbb4Dmp7p0zOOlF06ZUhNQNpzHPbMoTrMA
-Date: Sun, 26 Jan 2025 02:06:24 +0000
-Message-ID: <7160405e60db436599585a6be115e1db@huawei.com>
-References: <20250125232828.10228-1-sidong.yang@furiosa.ai>
-In-Reply-To: <20250125232828.10228-1-sidong.yang@furiosa.ai>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1737932245; c=relaxed/simple;
+	bh=yx7SHhHWK9Lw5CC2KqCTNCpn80eR5UVm53gvGlBGmM4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=e9ke1yjBnvDF7XOWN92gOdAz43fqI+nngXCf7WcJOCBZoe2qjCdTx27NPHnReaFuTTtmknlrxAUQymcTpAAztQ7ua6IuAoNNCNm3gDbP69Z5ePwJniFqFFJuwyazxQTyF0l6W7NBIpM3RYqTN7kQhv7sboZEwqXA98wEGv6H+tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=charbonnet.com; spf=pass smtp.mailfrom=charbonnet.com; dkim=pass (1024-bit key) header.d=charbonnet.com header.i=@charbonnet.com header.b=jA3DZRhb; arc=none smtp.client-ip=96.126.120.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=charbonnet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=charbonnet.com
+Received: from [192.168.1.91] (unknown [136.49.120.240])
+	by mail.charbonnet.com (Postfix) with ESMTPSA id 5637182553;
+	Sun, 26 Jan 2025 16:48:58 -0600 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=charbonnet.com;
+	s=2024121401; t=1737931741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qZNtCZ5u4Huw6JMS0aSdWhqmVcj52WkMxglgye6aiXY=;
+	b=jA3DZRhbxOzy0hQo2UJvYEv+NRqa5VzUWoGwHXyvz7ezFFDe9gJ7JtJAPpuV3tKY7JluO5
+	k5olgaFh/5tkR+m7alGXuQzJYTf6zQxJcyH48wuRNYHKW8+87j7kg3rQ+Bwq9ACA7x8LS5
+	NbIZEoSQ7D7Ml9aPwmnUw142WOSnwQ8=
+Message-ID: <a2f5ea66-7506-4256-b69c-a2d6c2f72eb4@charbonnet.com>
+Date: Sun, 26 Jan 2025 16:48:57 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Xan Charbonnet <xan@charbonnet.com>
+Subject: Re: Bug#1093243: Upgrade to 6.1.123 kernel causes mariadb hangs
+To: Jens Axboe <axboe@kernel.dk>, Salvatore Bonaccorso <carnil@debian.org>,
+ Pavel Begunkov <asml.silence@gmail.com>
+Cc: 1093243@bugs.debian.org, Bernhard Schmidt <berni@debian.org>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev
+References: <173706089225.4380.9492796104667651797.reportbug@backup22.biblionix.com>
+ <dde09d65-8912-47e4-a1bb-d198e0bf380b@charbonnet.com>
+ <Z5KrQktoX4f2ysXI@eldamar.lan>
+ <fa3b4143-f55d-4bd0-a87f-7014b0fad377@gmail.com>
+ <Z5MkJ5sV-PK1m6_H@eldamar.lan>
+ <a29ad9ab-15c2-4788-a839-009ca6fdd00f@gmail.com>
+ <df3b4c93-ea70-4b66-9bb5-b5cf6193190e@charbonnet.com>
+ <8af1733b-95a8-4ac9-b931-6a403f5b1652@gmail.com>
+ <Z5P5FNVjn9dq5AYL@eldamar.lan>
+ <13ba3fc4-eea3-48b1-8076-6089aaa978fb@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <13ba3fc4-eea3-48b1-8076-6089aaa978fb@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Since applying the final patch on Friday, I have seen no problems with 
+either the backup snapshot or catching up with replication.  It sure 
+seems like things are all fixed.  I haven't yet tried it on our 
+production Galera cluster, but I expect to on Monday.
+
+Here are Debian packages containing the modified kernel.  Use at your 
+own risk of course.  Any feedback about how this works or doesn't work 
+would be very helpful.
+
+https://charbonnet.com/linux-image-6.1.0-29-with-proposed-1093243-fix_amd64.deb
+https://charbonnet.com/linux-image-6.1.0-30-with-proposed-1093243-fix_amd64.deb
 
 
 
-> -----Original Message-----
-> From: Sidong Yang <sidong.yang@furiosa.ai>
-> Sent: Sunday, January 26, 2025 7:28 AM
-> To: io-uring <io-uring@vger.kernel.org>; Jens Axboe <axboe@kernel.dk>; li=
-zetao
-> <lizetao1@huawei.com>
-> Cc: Sidong Yang <sidong.yang@furiosa.ai>
-> Subject: [PATCH v4] io_uring/futex: Factor out common free logic into
-> io_free_ifd()
->=20
-> This patch introduces io_free_ifd() that try to cache or free io_futex_da=
-ta. It
-> could be used for completion. It also could be used for error path in
-> io_futex_wait(). Old code just release the ifd but it could be cached.
->=20
-> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> ---
-> v2: use io_free_ifd() for completion
-> v3: format, inline, remove reduntant init.
-> v4: inline static -> static inline format
-> ---
->  io_uring/futex.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
->=20
-> diff --git a/io_uring/futex.c b/io_uring/futex.c index
-> e29662f039e1..6d724435cf23 100644
-> --- a/io_uring/futex.c
-> +++ b/io_uring/futex.c
-> @@ -44,6 +44,12 @@ void io_futex_cache_free(struct io_ring_ctx *ctx)
->  	io_alloc_cache_free(&ctx->futex_cache, kfree);  }
->=20
-> +static inline void io_free_ifd(struct io_ring_ctx *ctx, struct
-> +io_futex_data *ifd) {
-> +	if (!io_alloc_cache_put(&ctx->futex_cache, ifd))
-> +		kfree(ifd);
-> +}
-> +
->  static void __io_futex_complete(struct io_kiocb *req, struct io_tw_state=
- *ts)
-> {
->  	req->async_data =3D NULL;
-> @@ -57,8 +63,7 @@ static void io_futex_complete(struct io_kiocb *req, str=
-uct
-> io_tw_state *ts)
->  	struct io_ring_ctx *ctx =3D req->ctx;
->=20
->  	io_tw_lock(ctx, ts);
-> -	if (!io_alloc_cache_put(&ctx->futex_cache, ifd))
-> -		kfree(ifd);
-> +	io_free_ifd(ctx, ifd);
->  	__io_futex_complete(req, ts);
->  }
->=20
-> @@ -321,7 +326,7 @@ int io_futex_wait(struct io_kiocb *req, unsigned int
-> issue_flags)  {
->  	struct io_futex *iof =3D io_kiocb_to_cmd(req, struct io_futex);
->  	struct io_ring_ctx *ctx =3D req->ctx;
-> -	struct io_futex_data *ifd =3D NULL;
-> +	struct io_futex_data *ifd;
->  	struct futex_hash_bucket *hb;
->  	int ret;
->=20
-> @@ -353,13 +358,13 @@ int io_futex_wait(struct io_kiocb *req, unsigned in=
-t
-> issue_flags)
->  		return IOU_ISSUE_SKIP_COMPLETE;
->  	}
->=20
-> +	io_free_ifd(ctx, ifd);
->  done_unlock:
->  	io_ring_submit_unlock(ctx, issue_flags);
->  done:
->  	if (ret < 0)
->  		req_set_fail(req);
->  	io_req_set_res(req, ret, 0);
-> -	kfree(ifd);
->  	return IOU_OK;
->  }
->=20
-> --
-> 2.43.0
 
-Reviewed-by: Li Zetao <lizetao1@huawei.com>
+On 1/24/25 14:51, Jens Axboe wrote:
+> On 1/24/25 1:33 PM, Salvatore Bonaccorso wrote:
+>> Hi Pavel,
+>>
+>> On Fri, Jan 24, 2025 at 06:40:51PM +0000, Pavel Begunkov wrote:
+>>> On 1/24/25 16:30, Xan Charbonnet wrote:
+>>>> On 1/24/25 04:33, Pavel Begunkov wrote:
+>>>>> Thanks for narrowing it down. Xan, can you try this change please?
+>>>>> Waiters can miss wake ups without it, seems to match the description.
+>>>>>
+>>>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>>>>> index 9b58ba4616d40..e5a8ee944ef59 100644
+>>>>> --- a/io_uring/io_uring.c
+>>>>> +++ b/io_uring/io_uring.c
+>>>>> @@ -592,8 +592,10 @@ static inline void __io_cq_unlock_post_flush(struct io_ring_ctx *ctx)
+>>>>>         io_commit_cqring(ctx);
+>>>>>         spin_unlock(&ctx->completion_lock);
+>>>>>         io_commit_cqring_flush(ctx);
+>>>>> -    if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
+>>>>> +    if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN)) {
+>>>>> +        smp_mb();
+>>>>>             __io_cqring_wake(ctx);
+>>>>> +    }
+>>>>>     }
+>>>>>     void io_cq_unlock_post(struct io_ring_ctx *ctx)
+>>>>>
+>>>>
+>>>>
+>>>> Thanks Pavel!  Early results look very good for this change.  I'm now running 6.1.120 with your added smp_mb() call.  The backup process which had been quickly triggering the issue has been running longer than it ever did when it would ultimately fail.  So that's great!
+>>>>
+>>>> One sour note: overnight, replication hung on this machine, which is another failure that started happening with the jump from 6.1.119 to 6.1.123.  The machine was running 6.1.124 with the __io_cq_unlock_post_flush function removed completely.  That's the kernel we had celebrated yesterday for running the backup process successfully.
+>>>>
+>>>> So, we might have two separate issues to deal with, unfortunately.
+>>>
+>>> Possible, but it could also be a side effect of reverting the patch.
+>>> As usual, in most cases patches are ported either because they're
+>>> fixing sth or other fixes depend on it, and it's not yet apparent
+>>> to me what happened with this one.
+>>
+>> I researched bit the lists, and there was the inclusion request on the
+>> stable list itself. Looking into the io-uring list I found
+>> https://lore.kernel.org/io-uring/CADZouDRFJ9jtXHqkX-PTKeT=GxSwdMC42zEsAKR34psuG9tUMQ@mail.gmail.com/
+>> which I think was the trigger to later on include in fact the commit
+>> in 6.1.120.
+> 
+> Yep indeed, was just looking for the backstory and that is why it got
+> backported. Just missed the fact that it should've been an
+> io_cqring_wake() rather than __io_cqring_wake()...
+> 
 
---
-Li Zetao
 

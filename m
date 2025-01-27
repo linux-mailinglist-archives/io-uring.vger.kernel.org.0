@@ -1,208 +1,91 @@
-Return-Path: <io-uring+bounces-6140-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6141-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227F7A1DA0C
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 16:59:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569D2A1DAB4
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 17:39:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC0D91888FC4
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 15:59:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0983A4DCE
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 16:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60F214D6ED;
-	Mon, 27 Jan 2025 15:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3997715CD74;
+	Mon, 27 Jan 2025 16:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PtDl01qI"
+	dkim=pass (1024-bit key) header.d=charbonnet.com header.i=@charbonnet.com header.b="VHCSvNSw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47561155747;
-	Mon, 27 Jan 2025 15:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail.charbonnet.com (2024.charbonnet.com [96.126.120.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81541433CB;
+	Mon, 27 Jan 2025 16:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.126.120.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737993578; cv=none; b=QSFtM7AGZJDAVc6sIVg6BU1x45V3Dgw7LkCppwsFyQ1LXWzOOztgl9JKxy3743YpzXEsiUvN6PKN0nuqcbp3J/DHI0WTRz8KOmTuF7rj3dEAKPRtDsBbFNikjAQvvVx5eOPdF+D4LM3OOLHtVlgtLsAFEjN4lL2EH3Tf0khQQp8=
+	t=1737995939; cv=none; b=ROSLDynaR9MTD6r7FPadyx/pzXDXgT5y2zX3aoH0OqZ40Dx1hmbpL8ya2PYteqTh7UpAP5BoUDM+2A0mkNZJGruRaINUO1iX3kYMUTQWIIV3OZBdqQ+nz48ufeN2O3I9gueXN+Ec0Rru198zM3XO1MpSeWSGbSbZ4/o+dYq5ePs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737993578; c=relaxed/simple;
-	bh=Q7+SMiJKxbIvDSMi+10SwSyW9NdNz2BjBUNgb4kYIoI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=msvQUI8IyOT93HMKCWQ2Jk6wcjSWrinxZv1b0vjgW/2wkMarMyPCC5yZnqaBwBP/hr950cjhliw5+q7XGjPb3a0aZOYUQ3jFQA/33DVshA+Uut5Bon20oPvCTMG1Ckq8mdC3N1gEMe576CbQ4WnsdZl6gdu2g7SA7mT0kUZcYl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PtDl01qI; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from hm-sls2.corp.microsoft.com (unknown [184.146.177.43])
-	by linux.microsoft.com (Postfix) with ESMTPSA id F2AE72066C1C;
-	Mon, 27 Jan 2025 07:59:29 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F2AE72066C1C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1737993571;
-	bh=2/udn9ZmxbFIXLbmMids8xdWRcpso7DJ8fjy/XbvBwM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PtDl01qIGWaAIkA7uy/rx3VGXP1OSQ/fvxYLkugwDZnb7uxpxW1dAlrShz7coKMur
-	 ZLjOs8uHLSTojcH6QKmobhXUHygChiruD2oh5AWOOUXIF8li8VbbHwL8jKEoXUfoZE
-	 sAjj0BaY3Xo127WFH9z9H7ec8q3sOe3BzMpVDgUc=
-From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-To: linux-kernel@vger.kernel.org
-Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
-	=?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>,
-	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-security-module@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: [PATCH v3 2/2] lsm,io_uring: add LSM hooks for io_uring_setup()
-Date: Mon, 27 Jan 2025 10:57:18 -0500
-Message-ID: <20250127155723.67711-2-hamzamahfooz@linux.microsoft.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
-References: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
+	s=arc-20240116; t=1737995939; c=relaxed/simple;
+	bh=mXEEXfmrmakj98sGLZO/IOPtBusrR/3HL7Qsyr/0wDM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tPup0rKcRuQjS+U8gt6keL7KwmNLNsG2Guw88s2lYtAyaRY9zA5dlhQIKoHXV1g0Vm3iYXIwNB1GqlAvaBbvc5r3yviRoiQHfKpyTfI9YcYfxajoN5Uo5WJqt2ISYni+W3h6XhFupzbYl/LCZbTL9xB/jO6p8NRIx9IV8QEGqzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=charbonnet.com; spf=pass smtp.mailfrom=charbonnet.com; dkim=pass (1024-bit key) header.d=charbonnet.com header.i=@charbonnet.com header.b=VHCSvNSw; arc=none smtp.client-ip=96.126.120.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=charbonnet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=charbonnet.com
+Received: from [192.168.1.91] (unknown [136.49.120.240])
+	by mail.charbonnet.com (Postfix) with ESMTPSA id E27E782617;
+	Mon, 27 Jan 2025 10:38:53 -0600 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=charbonnet.com;
+	s=2024121401; t=1737995934;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Og1NWrKSu5KLjb2WBrkxQ39OxcXauckEp53FnMwltCw=;
+	b=VHCSvNSwENpoG7gzaT4lOTBwkFmRG9KX1dGxVl8vI/tG+TIQXHVsFnaKThsWIoU32aOQ1X
+	raB47rHyw0NAG7cILXaWhqN5yzEyMgClO9t2Q9VAyPEqvKPpzpMlt7oVhBdU00Q0xFocBh
+	KOYeqJ/9EVJsbC13ShNHRf2XHu7TDqQ=
+Message-ID: <dfc6006d-10cf-4090-aafd-77d62c341911@charbonnet.com>
+Date: Mon, 27 Jan 2025 10:38:53 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Bug#1093243: Upgrade to 6.1.123 kernel causes mariadb hangs
+From: Xan Charbonnet <xan@charbonnet.com>
+To: Jens Axboe <axboe@kernel.dk>, Salvatore Bonaccorso <carnil@debian.org>,
+ Pavel Begunkov <asml.silence@gmail.com>
+Cc: 1093243@bugs.debian.org, Bernhard Schmidt <berni@debian.org>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev
+References: <173706089225.4380.9492796104667651797.reportbug@backup22.biblionix.com>
+ <dde09d65-8912-47e4-a1bb-d198e0bf380b@charbonnet.com>
+ <Z5KrQktoX4f2ysXI@eldamar.lan>
+ <fa3b4143-f55d-4bd0-a87f-7014b0fad377@gmail.com>
+ <Z5MkJ5sV-PK1m6_H@eldamar.lan>
+ <a29ad9ab-15c2-4788-a839-009ca6fdd00f@gmail.com>
+ <df3b4c93-ea70-4b66-9bb5-b5cf6193190e@charbonnet.com>
+ <8af1733b-95a8-4ac9-b931-6a403f5b1652@gmail.com>
+ <Z5P5FNVjn9dq5AYL@eldamar.lan>
+ <13ba3fc4-eea3-48b1-8076-6089aaa978fb@kernel.dk>
+ <a2f5ea66-7506-4256-b69c-a2d6c2f72eb4@charbonnet.com>
+Content-Language: en-US
+In-Reply-To: <a2f5ea66-7506-4256-b69c-a2d6c2f72eb4@charbonnet.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-It is desirable to allow LSM to configure accessibility to io_uring
-because it is a coarse yet very simple way to restrict access to it. So,
-add an LSM for io_uring_allowed() to guard access to io_uring.
+The MariaDB developers are wondering whether another corruption bug, 
+MDEV-35334 ( https://jira.mariadb.org/browse/MDEV-35334 ) might be related.
 
-Cc: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
----
- include/linux/lsm_hook_defs.h       |  1 +
- include/linux/security.h            |  5 +++++
- io_uring/io_uring.c                 |  2 +-
- security/security.c                 | 12 ++++++++++++
- security/selinux/hooks.c            | 14 ++++++++++++++
- security/selinux/include/classmap.h |  2 +-
- 6 files changed, 34 insertions(+), 2 deletions(-)
+The symptom was described as:
+the first 1 byte of a .ibd file is changed from 0 to 1, or the first 4 
+bytes are changed from 0 0 0 0 to 1 0 0 0.
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index e2f1ce37c41e..9eb313bd0c93 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -455,6 +455,7 @@ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
- LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
- LSM_HOOK(int, 0, uring_sqpoll, void)
- LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
-+LSM_HOOK(int, 0, uring_allowed, void)
- #endif /* CONFIG_IO_URING */
- 
- LSM_HOOK(void, LSM_RET_VOID, initramfs_populated, void)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 980b6c207cad..3e68f8468a22 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -2362,6 +2362,7 @@ static inline int security_perf_event_write(struct perf_event *event)
- extern int security_uring_override_creds(const struct cred *new);
- extern int security_uring_sqpoll(void);
- extern int security_uring_cmd(struct io_uring_cmd *ioucmd);
-+extern int security_uring_allowed(void);
- #else
- static inline int security_uring_override_creds(const struct cred *new)
- {
-@@ -2375,6 +2376,10 @@ static inline int security_uring_cmd(struct io_uring_cmd *ioucmd)
- {
- 	return 0;
- }
-+extern int security_uring_allowed(void)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_SECURITY */
- #endif /* CONFIG_IO_URING */
- 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index c2d8bd4c2cfc..9df7b3b556ef 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3808,7 +3808,7 @@ static inline int io_uring_allowed(void)
- 		return -EPERM;
- 
- allowed_lsm:
--	return 0;
-+	return security_uring_allowed();
- }
- 
- SYSCALL_DEFINE2(io_uring_setup, u32, entries,
-diff --git a/security/security.c b/security/security.c
-index 143561ebc3e8..c9fae447327e 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -5999,6 +5999,18 @@ int security_uring_cmd(struct io_uring_cmd *ioucmd)
- {
- 	return call_int_hook(uring_cmd, ioucmd);
- }
-+
-+/**
-+ * security_uring_allowed() - Check if io_uring_setup() is allowed
-+ *
-+ * Check whether the current task is allowed to call io_uring_setup().
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
-+int security_uring_allowed(void)
-+{
-+	return call_int_hook(uring_allowed);
-+}
- #endif /* CONFIG_IO_URING */
- 
- /**
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 7b867dfec88b..fb37e87df226 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7137,6 +7137,19 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
- 	return avc_has_perm(current_sid(), isec->sid,
- 			    SECCLASS_IO_URING, IO_URING__CMD, &ad);
- }
-+
-+/**
-+ * selinux_uring_allowed - check if io_uring_setup() can be called
-+ *
-+ * Check to see if the current task is allowed to call io_uring_setup().
-+ */
-+static int selinux_uring_allowed(void)
-+{
-+	u32 sid = current_sid();
-+
-+	return avc_has_perm(sid, sid, SECCLASS_IO_URING, IO_URING__ALLOWED,
-+			    NULL);
-+}
- #endif /* CONFIG_IO_URING */
- 
- static const struct lsm_id selinux_lsmid = {
-@@ -7390,6 +7403,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(uring_override_creds, selinux_uring_override_creds),
- 	LSM_HOOK_INIT(uring_sqpoll, selinux_uring_sqpoll),
- 	LSM_HOOK_INIT(uring_cmd, selinux_uring_cmd),
-+	LSM_HOOK_INIT(uring_allowed, selinux_uring_allowed),
- #endif
- 
- 	/*
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index 03e82477dce9..8a8f3908aac8 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -177,7 +177,7 @@ const struct security_class_mapping secclass_map[] = {
- 	{ "perf_event",
- 	  { "open", "cpu", "kernel", "tracepoint", "read", "write", NULL } },
- 	{ "anon_inode", { COMMON_FILE_PERMS, NULL } },
--	{ "io_uring", { "override_creds", "sqpoll", "cmd", NULL } },
-+	{ "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", NULL } },
- 	{ "user_namespace", { "create", NULL } },
- 	/* last one */ { NULL, {} }
- };
--- 
-2.47.1
+Is it possible that an io_uring issue might be causing that as well? 
+Thanks.
+
+-Xan
 
 

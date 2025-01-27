@@ -1,143 +1,356 @@
-Return-Path: <io-uring+bounces-6132-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6133-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9535FA1CF10
-	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2025 23:57:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76518A1CF97
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 03:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A731886AA6
-	for <lists+io-uring@lfdr.de>; Sun, 26 Jan 2025 22:57:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F38D11887779
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 02:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD5A4F218;
-	Sun, 26 Jan 2025 22:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=charbonnet.com header.i=@charbonnet.com header.b="jA3DZRhb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5962179BF;
+	Mon, 27 Jan 2025 02:56:02 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail.charbonnet.com (2024.charbonnet.com [96.126.120.97])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3415672;
-	Sun, 26 Jan 2025 22:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.126.120.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851FF126BEE;
+	Mon, 27 Jan 2025 02:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737932245; cv=none; b=ibJmp8CMM3HJNj9MU/7QhC9sDAnSsO38sreX9EW1YhGwPcQ8p+jvnRgo7+FwFLNMfeaFYYul2cB0gQRp72fV2ngOEAjW1QeR2+9r1HqCQw/gU9MTm9jTowl4Pb3T9ipHNCuLnCJflk500S9dklhelOgTZPlaOy8gAD82bz7UXjM=
+	t=1737946562; cv=none; b=KkNzV83WIRcu4iQ0D186NL7OgYSvE9zs/gDeDv/P6dWwGyZvY9VWj8oN91eQslZkOnA0fyEA4+DZvgJocV5nO3PuNzBu4DEJup+jn3eIGcVICbHcJx9QYmtqoTBsmB4/k+2+1fLU3Et197mztyL5fB6KRLigb3fDHpAYBrrtR6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737932245; c=relaxed/simple;
-	bh=yx7SHhHWK9Lw5CC2KqCTNCpn80eR5UVm53gvGlBGmM4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=e9ke1yjBnvDF7XOWN92gOdAz43fqI+nngXCf7WcJOCBZoe2qjCdTx27NPHnReaFuTTtmknlrxAUQymcTpAAztQ7ua6IuAoNNCNm3gDbP69Z5ePwJniFqFFJuwyazxQTyF0l6W7NBIpM3RYqTN7kQhv7sboZEwqXA98wEGv6H+tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=charbonnet.com; spf=pass smtp.mailfrom=charbonnet.com; dkim=pass (1024-bit key) header.d=charbonnet.com header.i=@charbonnet.com header.b=jA3DZRhb; arc=none smtp.client-ip=96.126.120.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=charbonnet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=charbonnet.com
-Received: from [192.168.1.91] (unknown [136.49.120.240])
-	by mail.charbonnet.com (Postfix) with ESMTPSA id 5637182553;
-	Sun, 26 Jan 2025 16:48:58 -0600 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=charbonnet.com;
-	s=2024121401; t=1737931741;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qZNtCZ5u4Huw6JMS0aSdWhqmVcj52WkMxglgye6aiXY=;
-	b=jA3DZRhbxOzy0hQo2UJvYEv+NRqa5VzUWoGwHXyvz7ezFFDe9gJ7JtJAPpuV3tKY7JluO5
-	k5olgaFh/5tkR+m7alGXuQzJYTf6zQxJcyH48wuRNYHKW8+87j7kg3rQ+Bwq9ACA7x8LS5
-	NbIZEoSQ7D7Ml9aPwmnUw142WOSnwQ8=
-Message-ID: <a2f5ea66-7506-4256-b69c-a2d6c2f72eb4@charbonnet.com>
-Date: Sun, 26 Jan 2025 16:48:57 -0600
+	s=arc-20240116; t=1737946562; c=relaxed/simple;
+	bh=RF47p+2oBYjmf339fDtUDEtK0jI6cTVSyOlT4oUTV1g=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=UbndFTibqwT2NY+8gaEoZUl6R0j5cz5zemGApa+AIhg93hU9vqHUCJuTfr4EMCKfDiWhWgyH7CSz85mW7rdBrQqsZhkIqBCwUrFMZYiAyU4B7Q4A30s3DX3sgcGcY1jcm9/oFa46uJd/UF19k/nt+Wq0668FcBByIWiB7skB5J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YhCdC4Kdtz2Fc75;
+	Mon, 27 Jan 2025 10:52:31 +0800 (CST)
+Received: from kwepemd100012.china.huawei.com (unknown [7.221.188.214])
+	by mail.maildlp.com (Postfix) with ESMTPS id BB7CC180042;
+	Mon, 27 Jan 2025 10:55:56 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd100012.china.huawei.com (7.221.188.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 27 Jan 2025 10:55:56 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Mon, 27 Jan 2025 10:55:56 +0800
+From: lizetao <lizetao1@huawei.com>
+To: David Wei <dw@davidwei.uk>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jesper
+ Dangaard Brouer" <hawk@kernel.org>, David Ahern <dsahern@kernel.org>, "Mina
+ Almasry" <almasrymina@google.com>, Stanislav Fomichev <stfomichev@gmail.com>,
+	Joe Damato <jdamato@fastly.com>, Pedro Tammela <pctammela@mojatatu.com>
+Subject: RE: [PATCH net-next v11 12/21] io_uring/zcrx: add io_zcrx_area
+Thread-Topic: [PATCH net-next v11 12/21] io_uring/zcrx: add io_zcrx_area
+Thread-Index: AQHbaG0Gu2QjYqoQfUWmPmDzLSgt+LMp/MDw
+Date: Mon, 27 Jan 2025 02:55:56 +0000
+Message-ID: <14d20c4b8e304ee09f8cb76f5981a526@huawei.com>
+References: <20250116231704.2402455-1-dw@davidwei.uk>
+ <20250116231704.2402455-13-dw@davidwei.uk>
+In-Reply-To: <20250116231704.2402455-13-dw@davidwei.uk>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Xan Charbonnet <xan@charbonnet.com>
-Subject: Re: Bug#1093243: Upgrade to 6.1.123 kernel causes mariadb hangs
-To: Jens Axboe <axboe@kernel.dk>, Salvatore Bonaccorso <carnil@debian.org>,
- Pavel Begunkov <asml.silence@gmail.com>
-Cc: 1093243@bugs.debian.org, Bernhard Schmidt <berni@debian.org>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- regressions@lists.linux.dev
-References: <173706089225.4380.9492796104667651797.reportbug@backup22.biblionix.com>
- <dde09d65-8912-47e4-a1bb-d198e0bf380b@charbonnet.com>
- <Z5KrQktoX4f2ysXI@eldamar.lan>
- <fa3b4143-f55d-4bd0-a87f-7014b0fad377@gmail.com>
- <Z5MkJ5sV-PK1m6_H@eldamar.lan>
- <a29ad9ab-15c2-4788-a839-009ca6fdd00f@gmail.com>
- <df3b4c93-ea70-4b66-9bb5-b5cf6193190e@charbonnet.com>
- <8af1733b-95a8-4ac9-b931-6a403f5b1652@gmail.com>
- <Z5P5FNVjn9dq5AYL@eldamar.lan>
- <13ba3fc4-eea3-48b1-8076-6089aaa978fb@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <13ba3fc4-eea3-48b1-8076-6089aaa978fb@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Since applying the final patch on Friday, I have seen no problems with 
-either the backup snapshot or catching up with replication.  It sure 
-seems like things are all fixed.  I haven't yet tried it on our 
-production Galera cluster, but I expect to on Monday.
+Hi,
 
-Here are Debian packages containing the modified kernel.  Use at your 
-own risk of course.  Any feedback about how this works or doesn't work 
-would be very helpful.
+> -----Original Message-----
+> From: David Wei <dw@davidwei.uk>
+> Sent: Friday, January 17, 2025 7:17 AM
+> To: io-uring@vger.kernel.org; netdev@vger.kernel.org
+> Cc: Jens Axboe <axboe@kernel.dk>; Pavel Begunkov <asml.silence@gmail.com>=
+;
+> Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; David =
+S.
+> Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>;
+> Jesper Dangaard Brouer <hawk@kernel.org>; David Ahern
+> <dsahern@kernel.org>; Mina Almasry <almasrymina@google.com>; Stanislav
+> Fomichev <stfomichev@gmail.com>; Joe Damato <jdamato@fastly.com>;
+> Pedro Tammela <pctammela@mojatatu.com>
+> Subject: [PATCH net-next v11 12/21] io_uring/zcrx: add io_zcrx_area
+>=20
+> Add io_zcrx_area that represents a region of userspace memory that is use=
+d for
+> zero copy. During ifq registration, userspace passes in the uaddr and len=
+ of
+> userspace memory, which is then pinned by the kernel.
+> Each net_iov is mapped to one of these pages.
+>=20
+> The freelist is a spinlock protected list that keeps track of all the net=
+_iovs/pages
+> that aren't used.
+>=20
+> For now, there is only one area per ifq and area registration happens imp=
+licitly
+> as part of ifq registration. There is no API for adding/removing areas ye=
+t. The
+> struct for area registration is there for future extensibility once we su=
+pport
+> multiple areas and TCP devmem.
+>=20
+> Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> Signed-off-by: David Wei <dw@davidwei.uk>
+> ---
+>  include/uapi/linux/io_uring.h |  9 ++++
+>  io_uring/rsrc.c               |  2 +-
+>  io_uring/rsrc.h               |  1 +
+>  io_uring/zcrx.c               | 89
+> ++++++++++++++++++++++++++++++++++-
+>  io_uring/zcrx.h               | 16 +++++++
+>  5 files changed, 114 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.=
+h index
+> 3af8b7a19824..e251f28507ce 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -980,6 +980,15 @@ struct io_uring_zcrx_offsets {
+>  	__u64	__resv[2];
+>  };
+>=20
+> +struct io_uring_zcrx_area_reg {
+> +	__u64	addr;
+> +	__u64	len;
+> +	__u64	rq_area_token;
+> +	__u32	flags;
+> +	__u32	__resv1;
+> +	__u64	__resv2[2];
+> +};
+> +
+>  /*
+>   * Argument for IORING_REGISTER_ZCRX_IFQ
+>   */
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c index f2ff108485c8..d0f11b=
+5aec0d
+> 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -77,7 +77,7 @@ static int io_account_mem(struct io_ring_ctx *ctx,
+> unsigned long nr_pages)
+>  	return 0;
+>  }
+>=20
+> -static int io_buffer_validate(struct iovec *iov)
+> +int io_buffer_validate(struct iovec *iov)
+>  {
+>  	unsigned long tmp, acct_len =3D iov->iov_len + (PAGE_SIZE - 1);
+>=20
+> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h index c8b093584461..0ae54d=
+deb1fd
+> 100644
+> --- a/io_uring/rsrc.h
+> +++ b/io_uring/rsrc.h
+> @@ -66,6 +66,7 @@ int io_register_rsrc_update(struct io_ring_ctx *ctx, vo=
+id
+> __user *arg,
+>  			    unsigned size, unsigned type);
+>  int io_register_rsrc(struct io_ring_ctx *ctx, void __user *arg,
+>  			unsigned int size, unsigned int type);
+> +int io_buffer_validate(struct iovec *iov);
+>=20
+>  bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
+>  			      struct io_imu_folio_data *data); diff --git
+> a/io_uring/zcrx.c b/io_uring/zcrx.c index f3ace7e8264d..04883a3ae80c 1006=
+44
+> --- a/io_uring/zcrx.c
+> +++ b/io_uring/zcrx.c
+> @@ -10,6 +10,7 @@
+>  #include "kbuf.h"
+>  #include "memmap.h"
+>  #include "zcrx.h"
+> +#include "rsrc.h"
+>=20
+>  #define IO_RQ_MAX_ENTRIES		32768
+>=20
+> @@ -44,6 +45,79 @@ static void io_free_rbuf_ring(struct io_zcrx_ifq *ifq)
+>  	ifq->rqes =3D NULL;
+>  }
+>=20
+> +static void io_zcrx_free_area(struct io_zcrx_area *area) {
+> +	kvfree(area->freelist);
+> +	kvfree(area->nia.niovs);
+> +	if (area->pages) {
+> +		unpin_user_pages(area->pages, area->nia.num_niovs);
+> +		kvfree(area->pages);
+> +	}
+> +	kfree(area);
+> +}
+> +
+> +static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+> +			       struct io_zcrx_area **res,
+> +			       struct io_uring_zcrx_area_reg *area_reg) {
+> +	struct io_zcrx_area *area;
+> +	int i, ret, nr_pages;
+> +	struct iovec iov;
+> +
+> +	if (area_reg->flags || area_reg->rq_area_token)
+> +		return -EINVAL;
+> +	if (area_reg->__resv1 || area_reg->__resv2[0] || area_reg->__resv2[1])
+> +		return -EINVAL;
+> +	if (area_reg->addr & ~PAGE_MASK || area_reg->len & ~PAGE_MASK)
+> +		return -EINVAL;
+> +
+> +	iov.iov_base =3D u64_to_user_ptr(area_reg->addr);
+> +	iov.iov_len =3D area_reg->len;
+> +	ret =3D io_buffer_validate(&iov);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D -ENOMEM;
+> +	area =3D kzalloc(sizeof(*area), GFP_KERNEL);
+> +	if (!area)
+> +		goto err;
+> +
+> +	area->pages =3D io_pin_pages((unsigned long)area_reg->addr, area_reg->l=
+en,
+> +				   &nr_pages);
+> +	if (IS_ERR(area->pages)) {
+> +		ret =3D PTR_ERR(area->pages);
+> +		area->pages =3D NULL;
+> +		goto err;
+> +	}
+> +	area->nia.num_niovs =3D nr_pages;
+> +
+> +	area->nia.niovs =3D kvmalloc_array(nr_pages, sizeof(area->nia.niovs[0])=
+,
+> +					 GFP_KERNEL | __GFP_ZERO);
+> +	if (!area->nia.niovs)
+> +		goto err;
+> +
+> +	area->freelist =3D kvmalloc_array(nr_pages, sizeof(area->freelist[0]),
+> +					GFP_KERNEL | __GFP_ZERO);
+> +	if (!area->freelist)
+> +		goto err;
+> +
+> +	for (i =3D 0; i < nr_pages; i++)
+> +		area->freelist[i] =3D i;
 
-https://charbonnet.com/linux-image-6.1.0-29-with-proposed-1093243-fix_amd64.deb
-https://charbonnet.com/linux-image-6.1.0-30-with-proposed-1093243-fix_amd64.deb
+This is redundant as patch 14 will reinitialize it.
+> +
+> +	area->free_count =3D nr_pages;
+> +	area->ifq =3D ifq;
+> +	/* we're only supporting one area per ifq for now */
+> +	area->area_id =3D 0;
+> +	area_reg->rq_area_token =3D (u64)area->area_id <<
+> IORING_ZCRX_AREA_SHIFT;
+> +	spin_lock_init(&area->freelist_lock);
+> +	*res =3D area;
+> +	return 0;
+> +err:
+> +	if (area)
+> +		io_zcrx_free_area(area);
+> +	return ret;
+> +}
+> +
+>  static struct io_zcrx_ifq *io_zcrx_ifq_alloc(struct io_ring_ctx *ctx)  {
+>  	struct io_zcrx_ifq *ifq;
+> @@ -59,6 +133,9 @@ static struct io_zcrx_ifq *io_zcrx_ifq_alloc(struct
+> io_ring_ctx *ctx)
+>=20
+>  static void io_zcrx_ifq_free(struct io_zcrx_ifq *ifq)  {
+> +	if (ifq->area)
+> +		io_zcrx_free_area(ifq->area);
+> +
+>  	io_free_rbuf_ring(ifq);
+>  	kfree(ifq);
+>  }
+> @@ -66,6 +143,7 @@ static void io_zcrx_ifq_free(struct io_zcrx_ifq *ifq) =
+ int
+> io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+>  			  struct io_uring_zcrx_ifq_reg __user *arg)  {
+> +	struct io_uring_zcrx_area_reg area;
+>  	struct io_uring_zcrx_ifq_reg reg;
+>  	struct io_uring_region_desc rd;
+>  	struct io_zcrx_ifq *ifq;
+> @@ -99,7 +177,7 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+>  	}
+>  	reg.rq_entries =3D roundup_pow_of_two(reg.rq_entries);
+>=20
+> -	if (!reg.area_ptr)
+> +	if (copy_from_user(&area, u64_to_user_ptr(reg.area_ptr),
+> +sizeof(area)))
+>  		return -EFAULT;
+>=20
+>  	ifq =3D io_zcrx_ifq_alloc(ctx);
+> @@ -110,6 +188,10 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+>  	if (ret)
+>  		goto err;
+>=20
+> +	ret =3D io_zcrx_create_area(ifq, &ifq->area, &area);
+> +	if (ret)
+> +		goto err;
+> +
+>  	ifq->rq_entries =3D reg.rq_entries;
+>  	ifq->if_rxq =3D reg.if_rxq;
+>=20
+> @@ -122,7 +204,10 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
+>  		ret =3D -EFAULT;
+>  		goto err;
+>  	}
+> -
+> +	if (copy_to_user(u64_to_user_ptr(reg.area_ptr), &area, sizeof(area))) {
+> +		ret =3D -EFAULT;
+> +		goto err;
+> +	}
+>  	ctx->ifq =3D ifq;
+>  	return 0;
+>  err:
+> diff --git a/io_uring/zcrx.h b/io_uring/zcrx.h index
+> 58e4ab6c6083..53fd94b65b38 100644
+> --- a/io_uring/zcrx.h
+> +++ b/io_uring/zcrx.h
+> @@ -3,9 +3,25 @@
+>  #define IOU_ZC_RX_H
+>=20
+>  #include <linux/io_uring_types.h>
+> +#include <net/page_pool/types.h>
+> +
+> +struct io_zcrx_area {
+> +	struct net_iov_area	nia;
+> +	struct io_zcrx_ifq	*ifq;
+> +
+> +	u16			area_id;
+> +	struct page		**pages;
+> +
+> +	/* freelist */
+> +	spinlock_t		freelist_lock ____cacheline_aligned_in_smp;
+> +	u32			free_count;
+> +	u32			*freelist;
+> +};
+>=20
+>  struct io_zcrx_ifq {
+>  	struct io_ring_ctx		*ctx;
+> +	struct io_zcrx_area		*area;
+> +
+>  	struct io_uring			*rq_ring;
+>  	struct io_uring_zcrx_rqe	*rqes;
+>  	u32				rq_entries;
+> --
+> 2.43.5
+>=20
+>=20
 
-
-
-
-On 1/24/25 14:51, Jens Axboe wrote:
-> On 1/24/25 1:33 PM, Salvatore Bonaccorso wrote:
->> Hi Pavel,
->>
->> On Fri, Jan 24, 2025 at 06:40:51PM +0000, Pavel Begunkov wrote:
->>> On 1/24/25 16:30, Xan Charbonnet wrote:
->>>> On 1/24/25 04:33, Pavel Begunkov wrote:
->>>>> Thanks for narrowing it down. Xan, can you try this change please?
->>>>> Waiters can miss wake ups without it, seems to match the description.
->>>>>
->>>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>>>> index 9b58ba4616d40..e5a8ee944ef59 100644
->>>>> --- a/io_uring/io_uring.c
->>>>> +++ b/io_uring/io_uring.c
->>>>> @@ -592,8 +592,10 @@ static inline void __io_cq_unlock_post_flush(struct io_ring_ctx *ctx)
->>>>>         io_commit_cqring(ctx);
->>>>>         spin_unlock(&ctx->completion_lock);
->>>>>         io_commit_cqring_flush(ctx);
->>>>> -    if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
->>>>> +    if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN)) {
->>>>> +        smp_mb();
->>>>>             __io_cqring_wake(ctx);
->>>>> +    }
->>>>>     }
->>>>>     void io_cq_unlock_post(struct io_ring_ctx *ctx)
->>>>>
->>>>
->>>>
->>>> Thanks Pavel!  Early results look very good for this change.  I'm now running 6.1.120 with your added smp_mb() call.  The backup process which had been quickly triggering the issue has been running longer than it ever did when it would ultimately fail.  So that's great!
->>>>
->>>> One sour note: overnight, replication hung on this machine, which is another failure that started happening with the jump from 6.1.119 to 6.1.123.  The machine was running 6.1.124 with the __io_cq_unlock_post_flush function removed completely.  That's the kernel we had celebrated yesterday for running the backup process successfully.
->>>>
->>>> So, we might have two separate issues to deal with, unfortunately.
->>>
->>> Possible, but it could also be a side effect of reverting the patch.
->>> As usual, in most cases patches are ported either because they're
->>> fixing sth or other fixes depend on it, and it's not yet apparent
->>> to me what happened with this one.
->>
->> I researched bit the lists, and there was the inclusion request on the
->> stable list itself. Looking into the io-uring list I found
->> https://lore.kernel.org/io-uring/CADZouDRFJ9jtXHqkX-PTKeT=GxSwdMC42zEsAKR34psuG9tUMQ@mail.gmail.com/
->> which I think was the trigger to later on include in fact the commit
->> in 6.1.120.
-> 
-> Yep indeed, was just looking for the backstory and that is why it got
-> backported. Just missed the fact that it should've been an
-> io_cqring_wake() rather than __io_cqring_wake()...
-> 
-
+--
+Li Zetao
 

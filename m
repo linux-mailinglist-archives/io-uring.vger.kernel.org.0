@@ -1,103 +1,132 @@
-Return-Path: <io-uring+bounces-6138-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6139-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3EE0A1D9BB
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 16:43:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A75A1DA09
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 16:59:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3116E18883FF
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 15:43:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 414DA1656CB
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 15:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C1B13AA2E;
-	Mon, 27 Jan 2025 15:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27EB14F9FD;
+	Mon, 27 Jan 2025 15:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Pyozw0ts"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ne6wBdfP"
 X-Original-To: io-uring@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F368A19BBA;
-	Mon, 27 Jan 2025 15:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F51E14D6ED;
+	Mon, 27 Jan 2025 15:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737992581; cv=none; b=hlKJ084b+wIEqZXyGUKaz7+c0w8WaWn5o0hoAaeubRTleSjf1mswjJTKsK59jZOs2Vz3B0rrY+AlvAbz449SGJkZ/003U2pbuza3vd4wk/cmUUvDjhUAXv8nqfyaARgsKu+LYmanLs4LbwRrC0GtHk4l/nVs0yDkh941/nwwHR0=
+	t=1737993575; cv=none; b=OOB78cG+a5zAC7Ml6MzVA+f83zahAW7m4PTT1wbInVxqZ9iLg9NAZ9DvCsnLYWtio2PugMH2GpIA1VewfafUJAO7qy6Rr5BJQ3NlhuJ/ePAl4JQHO5dQ58fPJ5d/x/GkIbK4JyDMep5XeOSzwqv0xAhXYdgAXWZJect7NFYbn9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737992581; c=relaxed/simple;
-	bh=754tTQ0Xv0FV1pAPiQ7XMzOqvV5Ru3eT2/4MtIxHkKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pcxjjWPHVuwrYIY3AW5zCkXqNuIvI2fQQ0VJx0xLK3WwbCAoyoO1pu4yLS/kX6gczLJqYNs4V2wyhB3ULJzgKjwL/IDvffeq1CbImkTFPDwGY7ajdNyjpUetqcdWx+dtSyOqy04rVVlQvjLsKbrQIrM+Zsrco896Xe2Q6pjCfmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Pyozw0ts; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=754tTQ0Xv0FV1pAPiQ7XMzOqvV5Ru3eT2/4MtIxHkKc=; b=Pyozw0tsKLD9gp97o+N6ZbHkTo
-	Il8/2Vpa4F0aqTQ5eLNtncdojFavxqC+3hOoMyt2pPZYgpxoa7oSXp+1z19h2FwdJ9ksectEr6L5y
-	pdndzuM9IJbuYbMGyY8OnttTeia0ZsfUEQN3vE3Kvu3ywzVzVm7PiaoVN1j+XGx7cGtNMyIWcHM2K
-	IHU9EJmiTnsw2atKedPjlIYgnndG3plYffG/psV0clxoDlPsLg9vBJ8MCt7RCyZQNR2Rl4uIk2hOI
-	SGpvgckCCBw+KC2Pto4K/lzMPYNt+Lyqoqjs99RL8H5P/AQH7nlJDuMDpJ1IZ/IMsyAIp8YsG+ytq
-	PlpOQ/eA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tcRG3-00000009b8r-2Zcd;
-	Mon, 27 Jan 2025 15:42:39 +0000
-Date: Mon, 27 Jan 2025 15:42:39 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: Joel Granados <joel.granados@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
-	xen-devel@lists.xenproject.org, linux-aio@kvack.org,
-	linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
-	codalist@coda.cs.cmu.edu, linux-mm@kvack.org,
-	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev,
-	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
-	io-uring@vger.kernel.org, bpf@vger.kernel.org,
-	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-	Song Liu <song@kernel.org>,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Corey Minyard <cminyard@mvista.com>
-Subject: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
- applicable
-Message-ID: <Z5epb86xkHQ3BLhp@casper.infradead.org>
-References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
- <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
- <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
- <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
- <87jzag9ugx.fsf@intel.com>
+	s=arc-20240116; t=1737993575; c=relaxed/simple;
+	bh=H+g4ZMD0yhyfee4133CeWuDA9psgDECOgETg+acbf8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DLaKXPPYlt1SQO80l24dw9VMhSncTXfWfdQAt5KTUdltcIUadlPPJ2iD82CjgLGtzoTxdr0BcGhi+wPY75OF6a9Vff2Yhh50HI8kjJWC5mi9LWsurZrv9CxEfRlN6iQSbn6U2+GuHZrMJURGlB0liOSbNkPjH9Y8x9TRtV6UWZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ne6wBdfP; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from hm-sls2.corp.microsoft.com (unknown [184.146.177.43])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 391DD20545AC;
+	Mon, 27 Jan 2025 07:59:27 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 391DD20545AC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1737993568;
+	bh=VjAmq2kOp0FdSGzONSmhJBT9T9J4PGigVc+QqkE8Hg4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ne6wBdfPgCNAVY8zJTkzZB0vL7nPZyMKZ+YDr+jMyYXOmaOFNdrloHzVgQSd6nlO+
+	 1rgQ37nJXRH6ekV9/k1e3vjc76DQ6Cky1pMq4gBKEfwIgmieLxCnePIF5WauDf53Bf
+	 jMW1QCNkr2s3xBXdoec1sG5UxpkQKt8NYVhnqH44=
+From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+To: linux-kernel@vger.kernel.org
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	=?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>,
+	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
+	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-security-module@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH v3 1/2] io_uring: refactor io_uring_allowed()
+Date: Mon, 27 Jan 2025 10:57:17 -0500
+Message-ID: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87jzag9ugx.fsf@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 27, 2025 at 04:55:58PM +0200, Jani Nikula wrote:
-> You could have static const within functions too. You get the rodata
-> protection and function local scope, best of both worlds?
+Have io_uring_allowed() return an error code directly instead of
+true/false. This is needed for follow-up work to guard io_uring_setup()
+with LSM.
 
-timer_active is on the stack, so it can't be static const.
+Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+---
+ io_uring/io_uring.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-Does this really need to be cc'd to such a wide distribution list?
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 7bfbc7c22367..c2d8bd4c2cfc 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3789,29 +3789,36 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 	return io_uring_create(entries, &p, params);
+ }
+ 
+-static inline bool io_uring_allowed(void)
++static inline int io_uring_allowed(void)
+ {
+ 	int disabled = READ_ONCE(sysctl_io_uring_disabled);
+ 	kgid_t io_uring_group;
+ 
+ 	if (disabled == 2)
+-		return false;
++		return -EPERM;
+ 
+ 	if (disabled == 0 || capable(CAP_SYS_ADMIN))
+-		return true;
++		goto allowed_lsm;
+ 
+ 	io_uring_group = make_kgid(&init_user_ns, sysctl_io_uring_group);
+ 	if (!gid_valid(io_uring_group))
+-		return false;
++		return -EPERM;
++
++	if (!in_group_p(io_uring_group))
++		return -EPERM;
+ 
+-	return in_group_p(io_uring_group);
++allowed_lsm:
++	return 0;
+ }
+ 
+ SYSCALL_DEFINE2(io_uring_setup, u32, entries,
+ 		struct io_uring_params __user *, params)
+ {
+-	if (!io_uring_allowed())
+-		return -EPERM;
++	int ret;
++
++	ret = io_uring_allowed();
++	if (ret)
++		return ret;
+ 
+ 	return io_uring_setup(entries, params);
+ }
+-- 
+2.47.1
+
 

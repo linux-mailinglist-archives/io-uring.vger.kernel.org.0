@@ -1,130 +1,117 @@
-Return-Path: <io-uring+bounces-6144-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6145-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1D9A1DB2A
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 18:21:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD18A1FF9B
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 22:23:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6990A16187A
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 17:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA443A04D2
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 21:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41B318A6A1;
-	Mon, 27 Jan 2025 17:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4B31A83E8;
+	Mon, 27 Jan 2025 21:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aZEAU1Nz"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IL6qGAdP"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0F87DA6A;
-	Mon, 27 Jan 2025 17:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9D21991DB
+	for <io-uring@vger.kernel.org>; Mon, 27 Jan 2025 21:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737998455; cv=none; b=lmdRBcANkeQtfylrMJpEkROvrgf/B3KdV/ztn4FRwek6Sr1IRvp+Sj/TV94ZuXPBfcRSUCROvmO9TcR1WkgJFqqyM2kiwo0JAvejC1IEN10hmhiZKQ6KnJKZn+aXh9woic6zj95UMrnjXbmQv66nRkWSC7Vi71wq5aRGjd+DPMw=
+	t=1738012998; cv=none; b=YnV2kq+3gHdzlVsfyXJs/54ZR21ejALsy5rCRYSH58BJdpcAT3CPdFFLXpWRQX2bmIjyMeVXaqPnq+8pR2Coq/W3X7N8AUcCN8njB+ZTbzIl2nd1jl0TnvfmsVR1V/jj8D2sLLycLjXh1dU2mFy3tRRa01RqrXf2IDjHbPuyFDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737998455; c=relaxed/simple;
-	bh=yqPicxUgCQMEwQTzgfNwfR3qsG9uHV2+cIxR1WbFFdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xt1Qk3Wqg9+yM2L7EvCTph/FQ19QitgEAy20J/O+m9bWyZb3fmiSYGFkk1AfQ92plOrxRZiLwg5ajpdbJeKTm094bqHIsxIKBr+VA5hw1fAzt4IV2SD2dgHRo7w0ADWzjoetk8hqF4OOjeF3qXlnjHon4/XOVGub5GA9Z2Sf560=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aZEAU1Nz; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38a88ba968aso4688254f8f.3;
-        Mon, 27 Jan 2025 09:20:53 -0800 (PST)
+	s=arc-20240116; t=1738012998; c=relaxed/simple;
+	bh=XAyVRpnsN3psIErJlMt7zXtv2npL60nto/i5id7ai5s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dy8tqydlBp/D1pZtIawAI+LcpCUz4Jv1yXyITwciOb7Ph6CUa8CqpOeVyHaWfYDCBu4grkfP3cBJ73rUBs5Ienmob1xAUQ/QS5BcsmBkQZbcR1aIXn0uPqS34L5ADlH/er7JSLshbsfc6YBKBpVcd4LmsDi+oNZEGseJp8H4kRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IL6qGAdP; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e4a6b978283so9481793276.0
+        for <io-uring@vger.kernel.org>; Mon, 27 Jan 2025 13:23:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737998452; x=1738603252; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=28lhis4UtCxFF+i+kMA+ZCR2L5v7+n/05OVkMSX+dvk=;
-        b=aZEAU1NzVfWX/jp6JXN+36bLm6uV+xO6jQAc8wzoPswud68o0+C7s/LIQQwTrceajF
-         iGH1awH7Wx7qsm2B/a/hGs5kJw1Ko7cYMLdRXDHnrFkHC5Yg9XLrxcYFp//8yncWk8qH
-         me+RddlXvfqCBmXgSRvnsPvJ8V0LB00IyS6tK9gIfPLS1ckkKHTzGVZ4BEqpXY6qc+hq
-         ZMMTVM7yryIOataTpH5zSgG1PnvwJzV4Y6cpf8ySWoulK7NQ5OtOxWJ/TlXEu2cJ5wLf
-         zDfaK3s9IJgzjTBffV4KGlTP3mPPUQQivwy2OSjOjkUVXf8UeO4iAy+Z4q8F2tVkr62i
-         GF/g==
+        d=paul-moore.com; s=google; t=1738012995; x=1738617795; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XAyVRpnsN3psIErJlMt7zXtv2npL60nto/i5id7ai5s=;
+        b=IL6qGAdP5KtEU89F6UIipJRoq4GL+ZhA3eAAkGqA4SrDh2TYRUAF8DRvUZgaMK+4Em
+         Vju0utuOfqEV1TK7KYxBVastQt5wpBxkkdonXc8DXT9wUvL3Cqto44Qc60CG29f+RV+9
+         DACf/0mKDPDIs8FdEYC1UXQOV+1d0MvgLqw4Ru5YsoWIkSPoiDHFS0EHKAk6FWeUkaB6
+         +JRCJR3+V7ULJ4i7DtH0Ev2VWq4XIEr80GK+hHjpsVggPeLqUblieuofzX65wZL9kksq
+         BbEo4qE9nkXEm36GuprA9WhIeou12fGcioXTjGRlogmf4wW+5GXiTcfXx4vYU9DkUlx1
+         EouQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737998452; x=1738603252;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=28lhis4UtCxFF+i+kMA+ZCR2L5v7+n/05OVkMSX+dvk=;
-        b=h+w606sMtmlc+PNPwIC9kLzyNwNtavEmIbhKAP4wXs+Ul2kEsSOSGHIrym7EPj452I
-         5/3j4bjM/M0jZ01dYPSwIsqU1mhhi/YvlDsXgcgeAOyZOb8y/unw4pC+aQtmOMhcDHGU
-         nvZrJww7rvXSlaR0HONQTPnRMG1CxcVQb8ZXbYsQLPAiQqhAJadUpgS02wRd1z+LEwT7
-         qpp4DxH0E+GIiE53J5QLSfGhTjmW9hXKV4i211OBS0+KkcPhmkpjMlzCylBNvJAtwLgE
-         /HLCgYFdPv9twjiwCqZ4UYmJdC3ajcWYnbE6g3vZgDx5WZqAsRtwYqfP75vvkPFFxNQ6
-         UZBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdzKAF3ha+HEA85Kb4jNN5s5Gesg3vScMSHeCujVZ7CfervDAF64D8ZY0zNlbmdrNWr0vgRJ56P/x3/+dS@vger.kernel.org, AJvYcCXarY1c8uEGMEhVCHtxAvIYNfFXYSOcndRDlspB8Hv5B+nMqDfJefR+Qn30eg01ucTxUUamx/zwXQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8gTRclvxuOMzULwEgp3Xccu+5UF14tO/kCeP0IBf3uiO94vBt
-	1vP0nOBHIihGZYWlwxzVWGlLCtGR2T+yRgbjSCnbuu4KzFGld7QN
-X-Gm-Gg: ASbGncudzSoHKceiJVcxZGtMbfWBSWWaOXoID+Dm2GJln9FrA52Y/7WZVgsGuvd/xYZ
-	96FkkTwE31f09TD6BlxbvYNYHPlwki2HiODw/eCsPoAzIP39RXAyWqLDWq+h28s67TUTILTARIo
-	6ojIAn18CA5WeuMEblsYQ+jtTQFBLT7fVZ6CNYAWlHejkH23J7CegAymgz4FGQ5AhKpYdJozXV7
-	+edyiuOJYJuzqswwIGrqarQM9/0Ofa5QL6ePwpGT2ZdhIQn5xeEMQQaWqBoNTntMnWx3V5/cz9I
-	bSYf2Tj1OnS2ZQ==
-X-Google-Smtp-Source: AGHT+IFIGDGFCCTrTcCnx+mL8c9X5JFtSEWhZsxLfsbzes6Hwq8V9rn2BPbiep8h5DEXXBw5N3/J6w==
-X-Received: by 2002:a05:6000:2a9:b0:38a:50f7:24fa with SMTP id ffacd0b85a97d-38bf57bed8emr43897711f8f.54.1737998452253;
-        Mon, 27 Jan 2025 09:20:52 -0800 (PST)
-Received: from [192.168.8.100] ([148.252.145.92])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab675e64da5sm618850466b.60.2025.01.27.09.20.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jan 2025 09:20:51 -0800 (PST)
-Message-ID: <999aeda3-5565-44a3-96d4-00dcd91a4cbd@gmail.com>
-Date: Mon, 27 Jan 2025 17:21:15 +0000
+        d=1e100.net; s=20230601; t=1738012995; x=1738617795;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XAyVRpnsN3psIErJlMt7zXtv2npL60nto/i5id7ai5s=;
+        b=cLaegQmFfs1r6UfOOmBPAceO3M+H6EbO3h8NWEq6nprziQwrvHL4L2YLFSj3dO5wcY
+         biNQRz0CGjtiLswiB1+5W9s23mlRjw042sBoglStJ1WZWlYKeTfg7N/j0xxjvCNFp0dT
+         bg7LRMp5xC5AzPWNDyMOmiegj9ej8EvzX+/fyBUDV4+npGTw0OFbIma1sKhFeMn4cUG5
+         tbNqFLq0ExQnJgTpgcTavnL2ZNV8UGR4/NvRtTPqNae3JbDNQBj8kGLfPfEXIJqMxP7Q
+         VMV95MSul+2K7A9J7NgCXZ8KGYW4Yc+u8FNt2MepF+3kFopibgH4jK3Nx++O0nHxKrdu
+         UU5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUNO6ljQwHdMISTIMlT/DwxE+Zh9sMoUhWDQYeBLiY68Z7esdJzcPb30Byl+FP8/+KuziTNPUcqpQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YySqrSSIEGDuD5I3wOqGc90PC1Kmvv+fZBozVOENL6g478Wm1kL
+	lJKFBRxeLgvxHl4DaXjuaa/tREe55j2z1wTGPKJfYX/omXSZqlK6O7ePvY7FyDH7pWgfux9BArV
+	QyUeQxUwEba+lTl+M2AJkAKP9RLfB2zzAIxUX
+X-Gm-Gg: ASbGnctj2+HBHcqxOuA3zX/gqugLKyDrM3+ALn4FCxl30XIpy3lAymDiyCVvXjOjNYR
+	VBGiagd3MiBWRJkdI3PIh3VuCxA81L0l08SxkHJ23CMowbFARiM7x9L8MqCq3
+X-Google-Smtp-Source: AGHT+IF5t5BkdSOg4TSJrHoTqiHeMhIdCAWFpEFPilYMsqGS822/Rm3nUcgF1QsJ8yeEYre5K2r6eTgn+B9c1RFUO7c=
+X-Received: by 2002:a05:690c:7342:b0:6ea:88d4:fd4f with SMTP id
+ 00721157ae682-6f7976f7cc0mr9495627b3.18.1738012995453; Mon, 27 Jan 2025
+ 13:23:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Bug#1093243: Upgrade to 6.1.123 kernel causes mariadb hangs
-To: Xan Charbonnet <xan@charbonnet.com>, Jens Axboe <axboe@kernel.dk>,
- Salvatore Bonaccorso <carnil@debian.org>
-Cc: 1093243@bugs.debian.org, Bernhard Schmidt <berni@debian.org>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- regressions@lists.linux.dev
-References: <173706089225.4380.9492796104667651797.reportbug@backup22.biblionix.com>
- <dde09d65-8912-47e4-a1bb-d198e0bf380b@charbonnet.com>
- <Z5KrQktoX4f2ysXI@eldamar.lan>
- <fa3b4143-f55d-4bd0-a87f-7014b0fad377@gmail.com>
- <Z5MkJ5sV-PK1m6_H@eldamar.lan>
- <a29ad9ab-15c2-4788-a839-009ca6fdd00f@gmail.com>
- <df3b4c93-ea70-4b66-9bb5-b5cf6193190e@charbonnet.com>
- <8af1733b-95a8-4ac9-b931-6a403f5b1652@gmail.com>
- <Z5P5FNVjn9dq5AYL@eldamar.lan>
- <13ba3fc4-eea3-48b1-8076-6089aaa978fb@kernel.dk>
- <a2f5ea66-7506-4256-b69c-a2d6c2f72eb4@charbonnet.com>
- <dfc6006d-10cf-4090-aafd-77d62c341911@charbonnet.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <dfc6006d-10cf-4090-aafd-77d62c341911@charbonnet.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
+ <20250127155723.67711-2-hamzamahfooz@linux.microsoft.com> <bd6c2bee-b9bb-4eba-9216-135df204a10e@schaufler-ca.com>
+In-Reply-To: <bd6c2bee-b9bb-4eba-9216-135df204a10e@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 27 Jan 2025 16:23:04 -0500
+X-Gm-Features: AWEUYZk_66DBXYyyXGpF3__XoAd1UXYaUgnN9Z9hxMeEkqEEj3wnGpO9yXQUN_Q
+Message-ID: <CAHC9VhRaXgLKo6NbEVBiZOA1NowbwdoYNkFEpZ65VJ6h0TSdFw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] lsm,io_uring: add LSM hooks for io_uring_setup()
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, linux-kernel@vger.kernel.org, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?Q?Bram_Bonn=C3=A9?= <brambonne@google.com>, 
+	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, linux-security-module@vger.kernel.org, 
+	io-uring@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 1/27/25 16:38, Xan Charbonnet wrote:
-> The MariaDB developers are wondering whether another corruption bug, MDEV-35334 ( https://jira.mariadb.org/browse/MDEV-35334 ) might be related.
-> 
-> The symptom was described as:
-> the first 1 byte of a .ibd file is changed from 0 to 1, or the first 4 bytes are changed from 0 0 0 0 to 1 0 0 0.
-> 
-> Is it possible that an io_uring issue might be causing that as well? Thanks.
+On Mon, Jan 27, 2025 at 12:18=E2=80=AFPM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> On 1/27/2025 7:57 AM, Hamza Mahfooz wrote:
+> > It is desirable to allow LSM to configure accessibility to io_uring
+> > because it is a coarse yet very simple way to restrict access to it. So=
+,
+> > add an LSM for io_uring_allowed() to guard access to io_uring.
+>
+> I don't like this at all at all. It looks like you're putting in a hook
+> so that io_uring can easily deflect any responsibility for safely
+> interacting with LSMs.
 
-The hang bug is just that, waiters not waking up. The completions
-users get back should still be correct when they get them, and it's
-not even close to code that might corrupt data.
+That's not how this works Casey, unless you're seeing something different?
 
-I believe someone mentioned corruption reports from killing the hang
-task, I'd assume it should tolerate even sigkills (?). It's much more
-likely it's either some other kernel or even io_uring issue, or the
-db doesn't handle it right since the update. For that other report,
-did they update the kernel? I don't see a dmesg log in the report,
-that could also be useful to have in case some subsystem complained.
+This is an additional access control point for io_uring, largely to
+simplify what a LSM would need to do to help control a process' access
+to io_uring, it does not replace any of the io_uring LSM hooks or
+access control points.
 
--- 
-Pavel Begunkov
-
+--=20
+paul-moore.com
 

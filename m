@@ -1,117 +1,148 @@
-Return-Path: <io-uring+bounces-6134-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6135-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462D9A1D6F2
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 14:36:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FBB8A1D780
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 14:55:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79CA6164FE9
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 13:36:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39FD83A7D24
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 13:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5041FF7BB;
-	Mon, 27 Jan 2025 13:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1761C1FF7A5;
+	Mon, 27 Jan 2025 13:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XEXvaxPH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITreSYYk"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD9E1FDA9C;
-	Mon, 27 Jan 2025 13:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9505E1FFC68;
+	Mon, 27 Jan 2025 13:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737984986; cv=none; b=mZhTXvy/27QHdWlZigg1lT5gN04Ss46bE4ON3/tJMFIvjh1d59mM5u+kl991dfYfwtRvYsOSvYK+DyTkyHd1zEdaqDAIB0BxIwz0i9a+Bq8l6HExgNzVfGrRLsiAy2zMiOxLC662aSUzKNiqnXGfHs1SOtp3LazGHuii1eqXNA4=
+	t=1737985801; cv=none; b=F7MeqUMwDh9AqnAbz9VTF0CPfrtHPsda2VMB/wELMoluxT+jFHPryUKSs55sirg/JaTbiKeoQpZC3XaV1emjPPZwTa8TM8aRf86wN60F8WHhSeBnTDqVBvObJDdcZ4JhtUPpTYgZMMl2hmaEjlJP4yTS7NtSLLMEC6CGc9+GtpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737984986; c=relaxed/simple;
-	bh=/F2O78bKsyqpJgf4I2uHLIckmztjlBfhVY6KmE/E7PI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tQRUTa5ALeXus56a3n57hp53dYd8OGVUcJReyhVL4uooU18aXjfGhghXm91N/GFIRFhrCuE0aXG4APl2fHK4lAYeygoX8IX8ci3jltFKAqIS/WLuRWrEELn+/aKxnBT/nedfj5dstlhhNEBvns/XNxRl3JbgqRKNbJPIB5Ta3hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XEXvaxPH; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4363298fff2so2775735e9.3;
-        Mon, 27 Jan 2025 05:36:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737984983; x=1738589783; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CHlG6AWWEnigDewIm8jICn9LKhM+kgmczZJmbvtFgt4=;
-        b=XEXvaxPH9qisAaBu4FNZuTOHhtyimhokfop7Ex+1+lrXNI4HTJfMjT0vhWb45xovTB
-         HtTT8+buIBkWS3q00Aq/w3D685PiijULRQQtxD5vL/WTQ6uu5UOYudXV6buXtRkZCbM6
-         ek/dJHq7QDK9l5Y6TN1dmXv2DhcKtQqBIuw84F44mIyOep1uUISs9n0tceh8pNB1jpQl
-         eo68gMXJ2BvDmJFuOyC8C7hqm/ultFF+PajOf0ggXT/jSdbbWSyAtSbfBIat8Z9BWD91
-         cpY4PBDS5NfImYpvwEUuzEXYyiW7FaPmjP2j2PND+fRROsX/5QION6Ci1+3ARGJ4CuYq
-         sCJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737984983; x=1738589783;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CHlG6AWWEnigDewIm8jICn9LKhM+kgmczZJmbvtFgt4=;
-        b=xQJZZ72RI9ncLOpEDdltBfexcwWKC/RqtO3mzstZDWiqAwXDNmeBw6jfyJYxtsXYdx
-         oJZbyvCWwr8KxN+3AYJ06aXIvNP8urLcwgNRctytVQ82tdf11TMv6IIZwa8FR2oOMels
-         zULeVZkc+X2VkrwOL2u5W6CxLefEnj6oDCc34WeqXBPh7mtBTS9TtE3JSphy2cTFBdTP
-         yZeQ4YnYuid5XY0Z1O4yTYvsftX7rQHBL1FZZvjm1GRKMZaM1ViI/QizCacaQizU9xAT
-         3UjEWsMUfDXZqTAXLlJMDUO0CM5/Et0m4rut7cHonVrhDIi+/5ebyEd4XWYcacfqHPFK
-         2gJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmRnQBgLbQyo6izapzY8BjQOjELiOIHLaN9pyn9SBLXVwfDMLBbdQWdUVzy1x6taeEoZegDswX3w==@vger.kernel.org, AJvYcCVgpjN5LwqQUbHOd2roOPoDVwgSZKfOPzjACJJKxMDhv5+Y1rFyvuHLJ1pA3104D8ps1AkVuPeE@vger.kernel.org, AJvYcCW2uNCA5C+mU8D/9TgfIQGvdrjVkZkDEa3NnMn6XYXWrCXYFSWESNXd9ryxxFJhXdLeawHQOQln@vger.kernel.org, AJvYcCXjncwo/lCk6UyNCel7xvpdtEDWOK+oS/CNAm+BOV8FXvbYPe/lczz7RJ/Xk82yeMAh2EzuKrCBXwzDZgy+@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZSQsLC/JZeJu3+vPANEEDe07wnqu5FlTOLAaGjqlRuF+dca0y
-	QiAZNs/MCJaWlwM/sum1xW2YNKg2sRzZGgadFm66xDgXEZs+1yVn2F0hamnVhR9rcln6qVvYnmZ
-	ZBKcZOvTsVvLnS6gWro+VSozn4vI=
-X-Gm-Gg: ASbGncvJp41ME5nAByuNAMuFU7sVUaOZTHUTsf4UrwsLUy1DcwR/Aq7FeUCceYERGRZ
-	LTTYoCgPGcHwDm+gr9zInIvqM9OC8ui+8jomQL0azb7tDCIIzqJWqyXSfOcen83q7xVdIFO01J7
-	pMI4BoND8QTJm5XtqA
-X-Google-Smtp-Source: AGHT+IEwQVGDIO9MKpdkIIvrOhuXW1o8nFtUK6gztIT8hZx4gsH6RlXtlNX/S1wokPE91HdAIbcgS9rbkhD0dmLxJcM=
-X-Received: by 2002:a05:6000:4022:b0:385:ef39:6ce3 with SMTP id
- ffacd0b85a97d-38c1a7d087cmr7134980f8f.0.1737984982791; Mon, 27 Jan 2025
- 05:36:22 -0800 (PST)
+	s=arc-20240116; t=1737985801; c=relaxed/simple;
+	bh=laZX1iWKmTFe6EBXe6dQ6V5dBHky9feUPubV8bbHYy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMORzqWZio7hChDXr3/Qm5jAoxmn3zfTl1CgvY0LxIyhoT2v86KB7bEl152QlrUFCUzkwCK29e3++AnjuJnmM48HlKCBcmgXNkS2Mxz1JA1n2RJFuhe8lXQwgO9o9FcUCrsk0Ls4rQo8d942Fvsaj2FBbZIzb3I4Q4SunH6SlLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ITreSYYk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 881ACC4CED2;
+	Mon, 27 Jan 2025 13:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737985800;
+	bh=laZX1iWKmTFe6EBXe6dQ6V5dBHky9feUPubV8bbHYy0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ITreSYYkYqJo0yzT/NmeCNaU8ylN9fF82uixbVQhbAMNhn/x1ksvsdeN2BZIjx7Av
+	 6jRzLOfnz1KOiZ8BN/+a6yzSKjX86nOzP6ewnKK12LbyYoLRgr6MitIVZMs+Q9nRjt
+	 1O56sOuQWf9/oW9JBeL1K1Ep9SPnbGRY0gAqf1BfWdrmsV6P6rbrAzrEzJaWATIpCg
+	 PxgyGHOSh+1Dp+na/sGNdWcGsgzNCRs4/nnMHS16Kt8UOkwJO9cYsDiIOKruHAZkDs
+	 tuJVwo0MPlNeiRHuQkLVgJEWRQ8mSboCfx8PwGZonQ0+bdJkEjI8BLPDWS5oZchNDY
+	 iBi9Q4ViZ4cfA==
+Date: Mon, 27 Jan 2025 14:49:55 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Kees Cook <kees@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
+	netfs@lists.linux.dev, codalist@coda.cs.cmu.edu, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
+	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	keyrings@vger.kernel.org, Song Liu <song@kernel.org>, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Jani Nikula <jani.nikula@intel.com>, 
+	Corey Minyard <cminyard@mvista.com>
+Subject: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
+ applicable
+Message-ID: <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+ <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
+ <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPAsAGwzBeGXbVtWtZKhbUDbD4b4PtgAS9MJYU2kkiNHgyKpfQ@mail.gmail.com>
- <20250122160645.28926-1-ryabinin.a.a@gmail.com> <CA+fCnZdU2GdAw4eUk9b3Ox8_nLXv-s4isxdoTXePU2J6x5pcGw@mail.gmail.com>
-In-Reply-To: <CA+fCnZdU2GdAw4eUk9b3Ox8_nLXv-s4isxdoTXePU2J6x5pcGw@mail.gmail.com>
-From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Date: Mon, 27 Jan 2025 14:35:03 +0100
-X-Gm-Features: AWEUYZlL-o4Q2NjgFkTgV84l7QgdO4LRWJbYKyDVa5jE4weNS1kRLZqv5Yt4eEU
-Message-ID: <CAPAsAGy8HBMFpeV900thoXUr8QC6V5sCzRh65+NNbYGpJpYgHg@mail.gmail.com>
-Subject: Re: [PATCH] kasan, mempool: don't store free stacktrace in
- io_alloc_cache objects.
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, 
-	io-uring@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, juntong.deng@outlook.com, lizetao1@huawei.com, 
-	stable@vger.kernel.org, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
 
-On Sat, Jan 25, 2025 at 1:03=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail.=
-com> wrote:
->
-> On Wed, Jan 22, 2025 at 5:07=E2=80=AFPM Andrey Ryabinin <ryabinin.a.a@gma=
-il.com> wrote:
-
-> > @@ -261,7 +262,7 @@ bool __kasan_slab_free(struct kmem_cache *cache, vo=
-id *object, bool init,
-> >         if (!kasan_arch_is_ready() || is_kfence_address(object))
-> >                 return false;
+On Wed, Jan 22, 2025 at 01:41:35PM +0100, Ard Biesheuvel wrote:
+> On Wed, 22 Jan 2025 at 13:25, Joel Granados <joel.granados@kernel.org> wrote:
 > >
-> > -       poison_slab_object(cache, object, init, still_accessible);
-> > +       poison_slab_object(cache, object, init, still_accessible, true)=
-;
->
-> Should notrack be false here?
->
+> > On Tue, Jan 21, 2025 at 02:40:16PM +0100, Alexander Gordeev wrote:
+> > > On Fri, Jan 10, 2025 at 03:16:08PM +0100, Joel Granados wrote:
+> > >
+> > > Hi Joel,
+> > >
+> > > > Add the const qualifier to all the ctl_tables in the tree except for
+> > > > watchdog_hardlockup_sysctl, memory_allocation_profiling_sysctls,
+> > > > loadpin_sysctl_table and the ones calling register_net_sysctl (./net,
+> > > > drivers/inifiniband dirs). These are special cases as they use a
+> > > > registration function with a non-const qualified ctl_table argument or
+> > > > modify the arrays before passing them on to the registration function.
+> > > >
+> > > > Constifying ctl_table structs will prevent the modification of
+> > > > proc_handler function pointers as the arrays would reside in .rodata.
+> > > > This is made possible after commit 78eb4ea25cd5 ("sysctl: treewide:
+> > > > constify the ctl_table argument of proc_handlers") constified all the
+> > > > proc_handlers.
+> > >
+> > > I could identify at least these occurences in s390 code as well:
+> > Hey Alexander
+> >
+> > Thx for bringing these to my attention. I had completely missed them as
+> > the spatch only deals with ctl_tables outside functions.
+> >
+> > Short answer:
+> > These should not be included in the current patch because they are a
+> > different pattern from how sysctl tables are usually used. So I will not
+> > include them.
+> >
+> > With that said, I think it might be interesting to look closer at them
+> > as they seem to be complicating the proc_handler (I have to look at them
+> > closer).
+> >
+> > I see that they are defining a ctl_table struct within the functions and
+> > just using the data (from the incoming ctl_table) to forward things down
+> > to proc_do{u,}intvec_* functions. This is very odd and I have only seen
+> > it done in order to change the incoming ctl_table (which is not what is
+> > being done here).
+> >
+> > I will take a closer look after the merge window and circle back with
+> > more info. Might take me a while as I'm not very familiar with s390
+> > code; any additional information on why those are being used inside the
+> > functions would be helpfull.
+> >
+> 
+> Using const data on the stack is not as useful, because the stack is
+> always mapped writable.
+> 
+> Global data structures marked 'const' will be moved into an ELF
+> section that is typically mapped read-only in its entirely, and so the
+> data cannot be modified by writing to it directly. No such protection
+> is possible for the stack, and so the constness there is only enforced
+> at compile time.
+I completely agree with you. No reason to use const within those
+functions. But why define those ctl_tables in function to begin with.
+Can't you just use the ones that are defined outside the functions?
 
-Yep.
+Best
+
+
+-- 
+
+Joel Granados
 

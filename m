@@ -1,174 +1,337 @@
-Return-Path: <io-uring+bounces-6136-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6137-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA114A1D8D3
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 15:56:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F74A1D8F9
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 16:05:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 353D27A1819
-	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 14:56:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 348ED3A48F6
+	for <lists+io-uring@lfdr.de>; Mon, 27 Jan 2025 15:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C399355897;
-	Mon, 27 Jan 2025 14:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7CB38DEC;
+	Mon, 27 Jan 2025 15:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WVed1oKV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8jrHqCH"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E4538DE9;
-	Mon, 27 Jan 2025 14:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8442D7BF;
+	Mon, 27 Jan 2025 15:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737989776; cv=none; b=V5GBqUkDNOeZWitYA2XfvQY+fSpuuSzJX10edxhXNQQRk/IdKek95ROewjYlFbQw3WbBtSyfITVYEY0iqeD1KfbBVNzl0SiIi8c7WAzuMqNcrCdJzQm/FviB1MVhnv1AYeGxAGKENg/3q140Y3ph94OMeVJTeZnLlB/jAL3K5L8=
+	t=1737990315; cv=none; b=DvQ60pCgDLzps/tunArerORIHg6HKp9e289Q0uydLQuciFky+HchRBORrn59aOnHt9GVG/Ij7eB53T6Pfbkv22JrOzDJSuQXz3TBdLjs8chnyAAh4Q/TcHSXntwX8kg3kyCA8GygqjAVo6pmvuO/QUbAfPJxpSk4EIM7MYmCmyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737989776; c=relaxed/simple;
-	bh=jgZ2GO8S3cXCdWyE6ZvOdFoqm0rhCqZC3ICQKad44uQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qESKVxqOrAXe9OgMwi4km3msue6Z+bStm5HR/sKuHk705JFMXZO/XF4UIO2wht6UtiU7QZzQmMSPdFyJ0eJKeisPSCmuESl0ZAL5Xo8WCRf0A7gE1UM7D9hrBwdkvYeoN/jxu7Qa37qygysMiCtB8+/QlkTDXAc5mWlqoKi8VnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WVed1oKV; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1737989775; x=1769525775;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=jgZ2GO8S3cXCdWyE6ZvOdFoqm0rhCqZC3ICQKad44uQ=;
-  b=WVed1oKVFkzK/oETPO0J8VpsIwi4ypJTg0lX+AcJEgqH+erXdJNaC/zx
-   vwuxJ5EvFrKw8crBjfrH3OrZkmYyiIBfNFMF7HidrQkt6uq0J8zqSAp/C
-   45ZUNEiKIjk56k4gUxBaq3cmZw4dCPXjJfc0nYZR7zJGhVo2kmA6NEUXR
-   0KWBG3Cls9htsZqhlU+aXWYz+V2nSgl8rO7BSXBFLVrHPboFTM4jos7U7
-   sXSVvlfFUG6DsyEBbPRooxxmuhyYGXhs3SfVRgtB3m5OhDLEzWHgORxHb
-   nG6Ys7jT0v1Ol5wgE5vgBrxk+WOrx/f94U1RMMbUu5Eo/yUWua9d7E6Dh
-   w==;
-X-CSE-ConnectionGUID: 6HP7/vAvQ/yiDPBSiq3Asw==
-X-CSE-MsgGUID: yhqiLSZiQVmyFVnUzK1mOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11328"; a="49104680"
-X-IronPort-AV: E=Sophos;i="6.13,238,1732608000"; 
-   d="scan'208";a="49104680"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2025 06:56:13 -0800
-X-CSE-ConnectionGUID: Z9Coz29cQ6uqfPwc/L4sHg==
-X-CSE-MsgGUID: XE2pskZGQO2Q6A9y4rThjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113598177"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.14])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2025 06:56:01 -0800
-From: Jani Nikula <jani.nikula@intel.com>
-To: Joel Granados <joel.granados@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Thomas =?utf-8?Q?Wei=C3=9F?=
- =?utf-8?Q?schuh?=
- <linux@weissschuh.net>, Kees Cook <kees@kernel.org>, Luis Chamberlain
- <mcgrof@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-crypto@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-raid@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-aio@kvack.org,
- linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
- codalist@coda.cs.cmu.edu, linux-mm@kvack.org, linux-nfs@vger.kernel.org,
- ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev,
- linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org,
- kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, Song Liu
- <song@kernel.org>, "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>, "Darrick J. Wong"
- <djwong@kernel.org>, Corey Minyard <cminyard@mvista.com>
-Subject: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
- applicable
-In-Reply-To: <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
- <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
- <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
- <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
-Date: Mon, 27 Jan 2025 16:55:58 +0200
-Message-ID: <87jzag9ugx.fsf@intel.com>
+	s=arc-20240116; t=1737990315; c=relaxed/simple;
+	bh=2GHpFZLB6pKhMP7oeSbkXwAVGGLiGJn5ZVZLv5GwvQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VKCZT8hrza2/ABrM69L1NdPGQGZSB1ICu4rv7OyAPFlffK0/+XNONaKOIv7qbjj9sqvLdsBb7x1OCvQ4CEg3DxBtuQzXncuhUhwPTu1D8pwD5GmHYp2ebaVDGfJCLH1IefDSjC8E25ucYyAUjvNSTlHxpjFjj+7mqfF8jdQ6SJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i8jrHqCH; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-542678284e3so804383e87.1;
+        Mon, 27 Jan 2025 07:05:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737990312; x=1738595112; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a99Cj+rOUzLKKfU2RGwugGZfMRB43qPpEZQgebXePjs=;
+        b=i8jrHqCHmGa6RvUNrwPSfNvXDzjT1q+NiPXFmuIQ1B6ktzW8aVDCepdaUuL6Dies4s
+         P/nMLsiFLyP3sZe4ffWHC0FjrRAGD+s+1zM+I5GqcFCERZYA+MAWqZFmwCLek8nggOfe
+         /mLbyFZo9H8ZkmUtighFed2Y9FlVGy6+05z8mh6HZxS0HY21qMG2ESgEsFpBVkZ3GfwM
+         zFvfVj0l1JqtzIWrQcZRIcJIPRsJVCD7vrJ/oBlK79YskCAUPG7vbmkt4nPnWaTN7ySS
+         lZFfBYqN7aA0G7AMOioa2a8Qe8nGk4VBDO395JyZ1p0VtwKo8IZMAyB8m+nrvDtt+/lP
+         E7Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737990312; x=1738595112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a99Cj+rOUzLKKfU2RGwugGZfMRB43qPpEZQgebXePjs=;
+        b=Yh/XwPpEq8owWKj1Lt5CLRHHINVptHWENzsD5OYfCEZW+Feyrk8wP0oyiiUkm/Tkrc
+         9g3Y8kvkqZRwLje6SJOOMLMkOAui/FaNcc6fk+IwJ59xdE7XOGJ1ujcPV68fDfw1GUW7
+         0Y2eDVG3dNlbwIOc/SQfS8f+alW6VDx1a9Tg0xiCQ0YT8UPByWRVKZXA8/ODXfiUmH8F
+         UjmzFPmge9Ehdnq2+nXScRMuyqYsybRZ3CyztlIgSeHr0eODm+CL3wEo1E6TN03gLG+G
+         HMO9mCoAAmBX105BcpaEeS7wRjRXzL+mEtSW692iIjnovyjAdAxqC3/AYqTYxuuZqs5Z
+         MevA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhhjBms7ciyL+4tCQKIJb1QcMpaXF0fMOQkqoHITp+We1GFXwcVMd/RZMGI15rhNubFWoEFaikjw==@vger.kernel.org, AJvYcCWAV3N6JM3kg0x/v2voS2X7p6GoPAdI1a8akzgRjKBO697zKWnLjs35ViGZoCTx/bt4CYyCQoKd@vger.kernel.org, AJvYcCWn/Apj6styM2Enr63uBPSzGIDngeJbbC0f+lPbrHv2AG3Fd1wGternn8yKi0+FcQ+/Zer9yrAe@vger.kernel.org, AJvYcCXCNsoBKErYpgk+e+Jf5yrgKiSxPuNzpxUExyiubwU4Hh+wznpiJ5zpznFBBtWpR169++/2iPz8qpMp+ApR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA92ZrXrnobacFX6J6pYtN2MwPY1VKVPUXd5z8naeIQMHubbza
+	/DsvAKv0NUiirF2TwTaJJZPzTqo0TxTiOalGNUJPOSpcrYFrNcvp
+X-Gm-Gg: ASbGncuPmNp3PSFmbko+BtHYjg8AlhFftAFStR702NXYdlT16rbA0XQwFOTB6D6a96x
+	ZIyxqMyeAzymhIXgeW5sVWUuLWRwqVSfae0pdMBn/aEaKLgnk4gat+b+uyxka3G7eCdOyqqgOfV
+	f9F5uGIf2gCwdRxMe0+/Xswr1zP2QD3QLC7OL/Cu7YhUuefHAPYn0ZUJSbpWxKO/E9LKoWYba+h
+	Xa3RnQOS+PCqVSy2cXillchqrC6rpB38AhKp0hzbzi92b7b4lOmlWjEFPIoiq3M29z3a5v5KUPx
+	+UTnpQwFPxCK/eblNw1B1n1TcJs=
+X-Google-Smtp-Source: AGHT+IHeIZIN8oQR3WZy6k1X7FnNxiCnPJubuJR42xuKYwGelkaQbvxKLzFF0Y0dYY2Ot+nJGIpTnA==
+X-Received: by 2002:ac2:4c4f:0:b0:542:297e:86c with SMTP id 2adb3069b0e04-543bb2ecf6emr3097051e87.0.1737990311100;
+        Mon, 27 Jan 2025 07:05:11 -0800 (PST)
+Received: from dellarbn.yandex.net ([80.93.240.68])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-543c83684c6sm1321436e87.107.2025.01.27.07.05.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jan 2025 07:05:10 -0800 (PST)
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kasan-dev@googlegroups.com,
+	io-uring@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	juntong.deng@outlook.com,
+	lizetao1@huawei.com,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	stable@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH v2] kasan, mempool: don't store free stacktrace in io_alloc_cache objects.
+Date: Mon, 27 Jan 2025 16:03:57 +0100
+Message-ID: <20250127150357.13565-1-ryabinin.a.a@gmail.com>
+X-Mailer: git-send-email 2.45.3
+In-Reply-To: <20250122160645.28926-1-ryabinin.a.a@gmail.com>
+References: <20250122160645.28926-1-ryabinin.a.a@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Mon, 27 Jan 2025, Joel Granados <joel.granados@kernel.org> wrote:
-> On Wed, Jan 22, 2025 at 01:41:35PM +0100, Ard Biesheuvel wrote:
->> On Wed, 22 Jan 2025 at 13:25, Joel Granados <joel.granados@kernel.org> wrote:
->> >
->> > On Tue, Jan 21, 2025 at 02:40:16PM +0100, Alexander Gordeev wrote:
->> > > On Fri, Jan 10, 2025 at 03:16:08PM +0100, Joel Granados wrote:
->> > >
->> > > Hi Joel,
->> > >
->> > > > Add the const qualifier to all the ctl_tables in the tree except for
->> > > > watchdog_hardlockup_sysctl, memory_allocation_profiling_sysctls,
->> > > > loadpin_sysctl_table and the ones calling register_net_sysctl (./net,
->> > > > drivers/inifiniband dirs). These are special cases as they use a
->> > > > registration function with a non-const qualified ctl_table argument or
->> > > > modify the arrays before passing them on to the registration function.
->> > > >
->> > > > Constifying ctl_table structs will prevent the modification of
->> > > > proc_handler function pointers as the arrays would reside in .rodata.
->> > > > This is made possible after commit 78eb4ea25cd5 ("sysctl: treewide:
->> > > > constify the ctl_table argument of proc_handlers") constified all the
->> > > > proc_handlers.
->> > >
->> > > I could identify at least these occurences in s390 code as well:
->> > Hey Alexander
->> >
->> > Thx for bringing these to my attention. I had completely missed them as
->> > the spatch only deals with ctl_tables outside functions.
->> >
->> > Short answer:
->> > These should not be included in the current patch because they are a
->> > different pattern from how sysctl tables are usually used. So I will not
->> > include them.
->> >
->> > With that said, I think it might be interesting to look closer at them
->> > as they seem to be complicating the proc_handler (I have to look at them
->> > closer).
->> >
->> > I see that they are defining a ctl_table struct within the functions and
->> > just using the data (from the incoming ctl_table) to forward things down
->> > to proc_do{u,}intvec_* functions. This is very odd and I have only seen
->> > it done in order to change the incoming ctl_table (which is not what is
->> > being done here).
->> >
->> > I will take a closer look after the merge window and circle back with
->> > more info. Might take me a while as I'm not very familiar with s390
->> > code; any additional information on why those are being used inside the
->> > functions would be helpfull.
->> >
->> 
->> Using const data on the stack is not as useful, because the stack is
->> always mapped writable.
->> 
->> Global data structures marked 'const' will be moved into an ELF
->> section that is typically mapped read-only in its entirely, and so the
->> data cannot be modified by writing to it directly. No such protection
->> is possible for the stack, and so the constness there is only enforced
->> at compile time.
-> I completely agree with you. No reason to use const within those
-> functions. But why define those ctl_tables in function to begin with.
-> Can't you just use the ones that are defined outside the functions?
+Running the testcase liburing/accept-reust.t with CONFIG_KASAN=y and
+CONFIG_KASAN_EXTRA_INFO=y leads to the following crash:
 
-You could have static const within functions too. You get the rodata
-protection and function local scope, best of both worlds?
+    Unable to handle kernel paging request at virtual address 00000c6455008008
+    ...
+    pc : __kasan_mempool_unpoison_object+0x38/0x170
+    lr : io_netmsg_cache_free+0x8c/0x180
+    ...
+    Call trace:
+     __kasan_mempool_unpoison_object+0x38/0x170 (P)
+     io_netmsg_cache_free+0x8c/0x180
+     io_ring_exit_work+0xd4c/0x13a0
+     process_one_work+0x52c/0x1000
+     worker_thread+0x830/0xdc0
+     kthread+0x2bc/0x348
+     ret_from_fork+0x10/0x20
 
-BR,
-Jani.
+Since the commit b556a462eb8d ("kasan: save free stack traces for slab mempools")
+kasan_mempool_poison_object() stores some info inside an object.
+It was expected that the object must be reinitialized after
+kasan_mempool_unpoison_object() call, and this is what happens in the
+most of use cases.
 
+However io_uring code expects that io_alloc_cache_put/get doesn't modify
+the object, so kasan_mempool_poison_object() end up corrupting it leading
+to crash later.
 
+Add @notrack argument to kasan_mempool_poison_object() call to tell
+KASAN to avoid storing info in objects for io_uring use case.
+
+Reported-by: lizetao <lizetao1@huawei.com>
+Closes: https://lkml.kernel.org/r/ec2a6ca08c614c10853fbb1270296ac4@huawei.com
+Fixes: b556a462eb8d ("kasan: save free stack traces for slab mempools")
+Cc: stable@vger.kernel.org
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>
+Signed-off-by: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+---
+ - Changes since v1:
+    s/true/false @notrack in __kasan_slab_free() per @andreyknvl
+
+ include/linux/kasan.h  | 13 +++++++------
+ io_uring/alloc_cache.h |  2 +-
+ io_uring/net.c         |  2 +-
+ io_uring/rw.c          |  2 +-
+ mm/kasan/common.c      | 11 ++++++-----
+ mm/mempool.c           |  2 +-
+ net/core/skbuff.c      |  2 +-
+ 7 files changed, 18 insertions(+), 16 deletions(-)
+
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index 890011071f2b..4d0bf4af399d 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -328,18 +328,19 @@ static __always_inline void kasan_mempool_unpoison_pages(struct page *page,
+ 		__kasan_mempool_unpoison_pages(page, order, _RET_IP_);
+ }
+ 
+-bool __kasan_mempool_poison_object(void *ptr, unsigned long ip);
++bool __kasan_mempool_poison_object(void *ptr, bool notrack, unsigned long ip);
+ /**
+  * kasan_mempool_poison_object - Check and poison a mempool slab allocation.
+  * @ptr: Pointer to the slab allocation.
++ * @notrack: Don't record stack trace of this call in the object.
+  *
+  * This function is intended for kernel subsystems that cache slab allocations
+  * to reuse them instead of freeing them back to the slab allocator (e.g.
+  * mempool).
+  *
+  * This function poisons a slab allocation and saves a free stack trace for it
+- * without initializing the allocation's memory and without putting it into the
+- * quarantine (for the Generic mode).
++ * (if @notrack == false) without initializing the allocation's memory and
++ * without putting it into the quarantine (for the Generic mode).
+  *
+  * This function also performs checks to detect double-free and invalid-free
+  * bugs and reports them. The caller can use the return value of this function
+@@ -354,10 +355,10 @@ bool __kasan_mempool_poison_object(void *ptr, unsigned long ip);
+  *
+  * Return: true if the allocation can be safely reused; false otherwise.
+  */
+-static __always_inline bool kasan_mempool_poison_object(void *ptr)
++static __always_inline bool kasan_mempool_poison_object(void *ptr, bool notrack)
+ {
+ 	if (kasan_enabled())
+-		return __kasan_mempool_poison_object(ptr, _RET_IP_);
++		return __kasan_mempool_poison_object(ptr, notrack, _RET_IP_);
+ 	return true;
+ }
+ 
+@@ -456,7 +457,7 @@ static inline bool kasan_mempool_poison_pages(struct page *page, unsigned int or
+ 	return true;
+ }
+ static inline void kasan_mempool_unpoison_pages(struct page *page, unsigned int order) {}
+-static inline bool kasan_mempool_poison_object(void *ptr)
++static inline bool kasan_mempool_poison_object(void *ptr, bool notrack)
+ {
+ 	return true;
+ }
+diff --git a/io_uring/alloc_cache.h b/io_uring/alloc_cache.h
+index a3a8cfec32ce..dd508dddea33 100644
+--- a/io_uring/alloc_cache.h
++++ b/io_uring/alloc_cache.h
+@@ -10,7 +10,7 @@ static inline bool io_alloc_cache_put(struct io_alloc_cache *cache,
+ 				      void *entry)
+ {
+ 	if (cache->nr_cached < cache->max_cached) {
+-		if (!kasan_mempool_poison_object(entry))
++		if (!kasan_mempool_poison_object(entry, true))
+ 			return false;
+ 		cache->entries[cache->nr_cached++] = entry;
+ 		return true;
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 85f55fbc25c9..a954e37c7fd3 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -149,7 +149,7 @@ static void io_netmsg_recycle(struct io_kiocb *req, unsigned int issue_flags)
+ 	iov = hdr->free_iov;
+ 	if (io_alloc_cache_put(&req->ctx->netmsg_cache, hdr)) {
+ 		if (iov)
+-			kasan_mempool_poison_object(iov);
++			kasan_mempool_poison_object(iov, true);
+ 		req->async_data = NULL;
+ 		req->flags &= ~REQ_F_ASYNC_DATA;
+ 	}
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index a9a2733be842..cba475003ba7 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -167,7 +167,7 @@ static void io_rw_recycle(struct io_kiocb *req, unsigned int issue_flags)
+ 	iov = rw->free_iovec;
+ 	if (io_alloc_cache_put(&req->ctx->rw_cache, rw)) {
+ 		if (iov)
+-			kasan_mempool_poison_object(iov);
++			kasan_mempool_poison_object(iov, true);
+ 		req->async_data = NULL;
+ 		req->flags &= ~REQ_F_ASYNC_DATA;
+ 	}
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index ed4873e18c75..f08752dcd50b 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -230,7 +230,8 @@ static bool check_slab_allocation(struct kmem_cache *cache, void *object,
+ }
+ 
+ static inline void poison_slab_object(struct kmem_cache *cache, void *object,
+-				      bool init, bool still_accessible)
++				      bool init, bool still_accessible,
++				      bool notrack)
+ {
+ 	void *tagged_object = object;
+ 
+@@ -243,7 +244,7 @@ static inline void poison_slab_object(struct kmem_cache *cache, void *object,
+ 	kasan_poison(object, round_up(cache->object_size, KASAN_GRANULE_SIZE),
+ 			KASAN_SLAB_FREE, init);
+ 
+-	if (kasan_stack_collection_enabled())
++	if (kasan_stack_collection_enabled() && !notrack)
+ 		kasan_save_free_info(cache, tagged_object);
+ }
+ 
+@@ -261,7 +262,7 @@ bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
+ 	if (!kasan_arch_is_ready() || is_kfence_address(object))
+ 		return false;
+ 
+-	poison_slab_object(cache, object, init, still_accessible);
++	poison_slab_object(cache, object, init, still_accessible, false);
+ 
+ 	/*
+ 	 * If the object is put into quarantine, do not let slab put the object
+@@ -495,7 +496,7 @@ void __kasan_mempool_unpoison_pages(struct page *page, unsigned int order,
+ 	__kasan_unpoison_pages(page, order, false);
+ }
+ 
+-bool __kasan_mempool_poison_object(void *ptr, unsigned long ip)
++bool __kasan_mempool_poison_object(void *ptr, bool notrack, unsigned long ip)
+ {
+ 	struct folio *folio = virt_to_folio(ptr);
+ 	struct slab *slab;
+@@ -519,7 +520,7 @@ bool __kasan_mempool_poison_object(void *ptr, unsigned long ip)
+ 	if (check_slab_allocation(slab->slab_cache, ptr, ip))
+ 		return false;
+ 
+-	poison_slab_object(slab->slab_cache, ptr, false, false);
++	poison_slab_object(slab->slab_cache, ptr, false, false, notrack);
+ 	return true;
+ }
+ 
+diff --git a/mm/mempool.c b/mm/mempool.c
+index 3223337135d0..283df5d2b995 100644
+--- a/mm/mempool.c
++++ b/mm/mempool.c
+@@ -115,7 +115,7 @@ static inline void poison_element(mempool_t *pool, void *element)
+ static __always_inline bool kasan_poison_element(mempool_t *pool, void *element)
+ {
+ 	if (pool->alloc == mempool_alloc_slab || pool->alloc == mempool_kmalloc)
+-		return kasan_mempool_poison_object(element);
++		return kasan_mempool_poison_object(element, false);
+ 	else if (pool->alloc == mempool_alloc_pages)
+ 		return kasan_mempool_poison_pages(element,
+ 						(unsigned long)pool->pool_data);
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index a441613a1e6c..c9f58a698bb7 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -1457,7 +1457,7 @@ static void napi_skb_cache_put(struct sk_buff *skb)
+ 	struct napi_alloc_cache *nc = this_cpu_ptr(&napi_alloc_cache);
+ 	u32 i;
+ 
+-	if (!kasan_mempool_poison_object(skb))
++	if (!kasan_mempool_poison_object(skb, false))
+ 		return;
+ 
+ 	local_lock_nested_bh(&napi_alloc_cache.bh_lock);
 -- 
-Jani Nikula, Intel
+2.45.3
+
 

@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-6168-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6169-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31EA3A2134D
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DACA2134E
 	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 21:56:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34E8E1884A20
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 20:56:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83180188474C
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 20:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A6D1E0090;
-	Tue, 28 Jan 2025 20:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C391E0489;
+	Tue, 28 Jan 2025 20:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c3Sdma8E"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGRrlObM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C550D1E3DF8
-	for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 20:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B84A1A841A
+	for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 20:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738097770; cv=none; b=FJTTq0fYSFs2GDuERDY/O3nQbwTN5U6SNnHKClV7tR8X1ZLaldAmx1F3mikfl9Ejv4xViAO2EBvLUdFy6wPilnCFNmVFFds5PGtyzLbXIdPov0hOgjpYAt+33HLBxGUMFPlhTtRyWIWcgYebh3uZAW4k39fg4Ju+eTTCbNdb050=
+	t=1738097772; cv=none; b=ks1qhZNVmNHuehGJEGl/eoOPsDMX/wy34peZIpR8r0yUXdKFAufqbOn1I13ttNXxEjMntziJ3Q+bA0Qdh21ST+ggutxQzSxepkiXqKHE7OEXefR5/o4lCye6Bh6GJ2ydcQYNjSAKMEcOp9gSt6tFsVGkVYjyqJAw2Ckn6wtdpXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738097770; c=relaxed/simple;
-	bh=0AwgUZFfoduAhGqQ+GRGD7wQFd69kXbD/I8JB7tN0sc=;
+	s=arc-20240116; t=1738097772; c=relaxed/simple;
+	bh=FSQUUyxmIvTUpNUYonhod43TJ9bFkCPWt10RH2ijo2o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TAix+i7Sc1DcnFzEHsX2TpfNWIwibPuJpPUyA7o2VViob5NrElorccLGzIRq8y+N3Lcb8Z8RyeJdJxSU+ThS0eTmOxGRMc/jdPOBg6PgnCW2SBhTAbV+G6KlJiTtLFf+CBtPKfkAMfviCL5FrnFmEun9kAOS9VelhKszaZDp/YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c3Sdma8E; arc=none smtp.client-ip=209.85.208.44
+	 MIME-Version; b=du4hekiTUuS7JX8C9fG1eKEfLzGAA1OgYiN2Y2xBy5j8mE9b5PcD92dpjFyrpbuPuxnCM0QC9Ho8m9LKSeMw73ys57sMivmJLxIx8ueG+PF5NMUJgvzRBy/EuH6V8xenJB0odlgD4NUUWGBeT/IfQsnNyNluFmepbpA3WlImHcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGRrlObM; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3ecae02beso8361902a12.0
-        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 12:56:08 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dc0522475eso11937841a12.1
+        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 12:56:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738097767; x=1738702567; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738097768; x=1738702568; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=61S3ynbxLsRmBQWo1PSXkO+mooFqEeYxcq4XV8RbRr0=;
-        b=c3Sdma8EcoCHuCnQtyHgTDlXR6UZezmqia8LyoO6NAibf5Yk2gnYHjuf9weU5ymmJ7
-         61oZofAOYYOLo5pCT5DkD2tClXObuJTi3W8l25r9QhbfFAGSz5UmF1PCIaZbh2o2AaQK
-         VtwVLsZjc2pFQ77cAf4cuJnkP3HMku4QLrbWQCJuaSwAUhLIxSoOqC4VKwgnxXyByDFT
-         PM5q8+cBW1cSmHLv3gSXk2lK1yEualtGMqpBOqW+ecs+iBhjgtzmKMv6Ar107ehMD+2s
-         aAys6uOPBf6rRJvaxjY0fTaVqE5hcU8OvW49uuMIGKQHHmjAqR5rE3AxZLb1qgN9ytzf
-         BkiQ==
+        bh=iGgwEnXvp7tSCOvb4Gb+rPCh98jlMRpMv9IgYw6dreg=;
+        b=jGRrlObMkSLSLBqagx0ANnOaemXXA2aJez/S3bSj70SH6oXRjW7OqJesl9zQ+eil9i
+         pLwcxUoK2HLSNrCN3CwWyDESAqwYJAxkFUQXWMO9vp31wc/Juy7hKGALMaHj3EXvbskv
+         QbBGmP+SYMGdOSduV6X7yQjMAN8ASHpXD3r5VoGpU2ue5husfYTSkx5JdRIC6UmO+fOT
+         syeT9tbK4q6p32yNZvKp2gB3W3xfhkJWILiO73nZZkBuxLVaQQbY4kb+bP1XqWTn00EH
+         ligOYvo7k/I/qcQXJ4GOB8WUqUJkywNJ0X4or8IQt9K4THqb7wcrkKClKK3qMTWncTpg
+         Y7xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738097767; x=1738702567;
+        d=1e100.net; s=20230601; t=1738097768; x=1738702568;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=61S3ynbxLsRmBQWo1PSXkO+mooFqEeYxcq4XV8RbRr0=;
-        b=SXhzSWOZxeoZu55joKRzzdbFl+vMJwIFqengzBxPTWeKhYUzUkfSSeIcKnY6rZEeII
-         x5bERLidXv1cPyKlk3BvVg0Pvetq+AAmwPRIdp4cFgj10gZYgH1SzBCL2YNd2Z5eTAzs
-         /bLCs2iz+ZiixVW2+fbTNju24xAHRFzyS4yqGXRhiy2OFSvAd9LRyxAKmXyqNmRAsoeS
-         Os2Q9RNP0pEQ7f/OfKxlY/ulnK0JyFWJtOuItFkZDRhv6YFfVpMMzJ/A94HDM8YAHrU8
-         NQGlf6E8Ui2S2/aeNq25rWTZz6neAsdYws9tyiI8iJu+EFik/KexiSMP2r4ZCQsrGXbt
-         T/JA==
-X-Gm-Message-State: AOJu0YyjuaxC2iYvYFAmDVY8jiUhvcIw8NuT1SZGQZ9/7utVm4BAEY71
-	s7Z8+16/5aR//GASN/7pJ7Box5/v0afpqBNEy4whhiex5dVRrhTlvil4aA==
-X-Gm-Gg: ASbGncuKkHSTKnz7IqPdOvSHZUG2AXfCodEhzgo1XR4rE/N9qKqlH9Ij+bewl6gh2jY
-	AnERAbVFPLxS+Z+MB4n98tttAHQJHS+MPYr2E+n8a7m9OWcj84HOOaxMRs9Ts8mecMU2/eTQMxX
-	zbL17LpaxXXsjQQvUtY3OJM2eXo7Cvu/d/Yp3QhKTwt6Z+wBT+q8zPweBlRyhQysLZ3bAu7WYMb
-	fOy05SuIls7fO5a8vnGjY5+O8Ak9Df8h3irJQbA3e9iTAgLMAY+rkrBs+6438Wqg2gD2CUnGMz+
-	cgCBhgaT0ecAbNKVRTy4yptoYVB4
-X-Google-Smtp-Source: AGHT+IH+ZbK+e9QLJS/73So+tjE8aHRlJtdm8hA8PZzC2+o/RIHBLXhzajdsR4LVFkRXAQ6zOiqMSQ==
-X-Received: by 2002:a05:6402:2711:b0:5d3:bc1d:e56d with SMTP id 4fb4d7f45d1cf-5dc5f01e7famr322858a12.31.1738097766663;
-        Tue, 28 Jan 2025 12:56:06 -0800 (PST)
+        bh=iGgwEnXvp7tSCOvb4Gb+rPCh98jlMRpMv9IgYw6dreg=;
+        b=k0L8s/mVDa3FqfE/ofNPSm0yydMO/IFdWcbhmQ4G2nI9q4GVTDiu1p4+4Usm3MlDWm
+         2DFkMoWutwI+pxjlXIx9iIT4DRnsD8wMlAhbpUR3lOEQefpztvz21cbesN8nR+XNBSBl
+         VCuMxb7pOUQWdayj85xxYJaGgOZCmhJLRXHbsl3JJtBdksdNPE0EVlY+uI1kbdKPEYv7
+         gX7/sXQMMw/z4Zn1fG01EBoSSQI0eqL386IAglZkirOn3Msez3G88Ku6kc1WoorkgnzJ
+         KT+asPcLni0WzRwKwlAbZsmy0GXJeKTw74PDTW9ycOiBsePH2Lh7kvSm7Y+do7GJDAeP
+         En4g==
+X-Gm-Message-State: AOJu0YzzhCDz2CmTGmHsu/kWgBjunTsmiB2jZYUIikquPDOvHwdVBFFZ
+	5BUYaTo7WVPHd6iNCCzDusHlt0jiRiaLgd3dZFC+uVhBRc0h6rmNiAsAoA==
+X-Gm-Gg: ASbGncs9Q0tJOJMGca8wU0zlB31Ua+5vR2JjuFhrJxaqNrgwnYad97waOdMov9in1x3
+	U2axZRZNT6y+Ykc9EtM1WceEGHLpwNwulXOpaV92DzO1hQ4hhflOtRVAgdQXFPlddkL2vHhgqXV
+	GjjHeH+aNY8RExqW8LKvzIx85pMPw3APxon8uB6f1I3+zc9YAZz60UgjozV7s5R91BFmVN0Vlj7
+	wm8sQmHbsZQVNv//+hXDDH2cg7vkIHUrUqhAoPA+Kjt1CyxNLxy+mTWnYsnIEv7lwT4Jb7QWND1
+	qp96I1Ks5F4Boq0OF1wmxTYR4Hzb
+X-Google-Smtp-Source: AGHT+IEaJgGHifGNITQK0+bBnVhDq4TcVjC7Ecrdz67a2fWnKhLjpIA0Pk5lWsrjVZiIh5QqnN4n6Q==
+X-Received: by 2002:a05:6402:4406:b0:5db:f317:98d7 with SMTP id 4fb4d7f45d1cf-5dc5efbdd51mr481720a12.6.1738097767589;
+        Tue, 28 Jan 2025 12:56:07 -0800 (PST)
 Received: from 127.0.0.1localhost ([148.252.145.92])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dc18619351sm7736949a12.5.2025.01.28.12.56.05
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dc18619351sm7736949a12.5.2025.01.28.12.56.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2025 12:56:05 -0800 (PST)
+        Tue, 28 Jan 2025 12:56:07 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 7/8] io_uring: remove !KASAN guards from cache free
-Date: Tue, 28 Jan 2025 20:56:15 +0000
-Message-ID: <d6078a51c7137a243f9d00849bc3daa660873209.1738087204.git.asml.silence@gmail.com>
+Subject: [PATCH 8/8] io_uring/rw: simplify io_rw_recycle()
+Date: Tue, 28 Jan 2025 20:56:16 +0000
+Message-ID: <14f83b112eb40078bea18e15d77a4f99fc981a44.1738087204.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1738087204.git.asml.silence@gmail.com>
 References: <cover.1738087204.git.asml.silence@gmail.com>
@@ -88,49 +88,53 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Test setups (with KASAN) will avoid !KASAN sections, and so it's not
-testing paths that would be exercised otherwise. That's bad as to be
-sure that your code works you now have to specifically test both KASAN
-and !KASAN configs.
-
-Remove !CONFIG_KASAN guards from io_netmsg_cache_free() and
-io_rw_cache_free(). The free functions should always be getting valid
-entries, and even though for KASAN iovecs should already be cleared,
-that's better than skipping the chunks completely.
+Instead of freeing iovecs in case of IO_URING_F_UNLOCKED in
+io_rw_recycle(), leave it be and rely on the core io_uring code to
+call io_readv_writev_cleanup() later. This way the iovec will get
+recycled and we can clean up io_rw_recycle() and kill
+io_rw_iovec_free().
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/net.c | 2 --
- io_uring/rw.c  | 2 --
- 2 files changed, 4 deletions(-)
+ io_uring/rw.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 4d21f7bd2149e..d89c39f853e39 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -1813,10 +1813,8 @@ void io_netmsg_cache_free(const void *entry)
- {
- 	struct io_async_msghdr *kmsg = (struct io_async_msghdr *) entry;
- 
--#if !defined(CONFIG_KASAN)
- 	if (kmsg->free_iov)
- 		io_netmsg_iovec_free(kmsg);
--#endif
- 	kfree(kmsg);
- }
- #endif
 diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 991ecfbea88e3..c496f195aae2b 100644
+index c496f195aae2b..7aa1e4c9f64a3 100644
 --- a/io_uring/rw.c
 +++ b/io_uring/rw.c
-@@ -1309,9 +1309,7 @@ void io_rw_cache_free(const void *entry)
+@@ -146,23 +146,13 @@ static inline int io_import_iovec(int rw, struct io_kiocb *req,
+ 	return 0;
+ }
+ 
+-static void io_rw_iovec_free(struct io_async_rw *rw)
+-{
+-	if (rw->free_iovec) {
+-		kfree(rw->free_iovec);
+-		rw->free_iov_nr = 0;
+-		rw->free_iovec = NULL;
+-	}
+-}
+-
+ static void io_rw_recycle(struct io_kiocb *req, unsigned int issue_flags)
  {
+ 	struct io_async_rw *rw = req->async_data;
+ 
+-	if (unlikely(issue_flags & IO_URING_F_UNLOCKED)) {
+-		io_rw_iovec_free(rw);
++	if (unlikely(issue_flags & IO_URING_F_UNLOCKED))
+ 		return;
+-	}
++
+ 	io_alloc_cache_kasan(&rw->free_iovec, &rw->free_iov_nr);
+ 	if (io_alloc_cache_put(&req->ctx->rw_cache, rw)) {
+ 		req->async_data = NULL;
+@@ -1310,6 +1300,6 @@ void io_rw_cache_free(const void *entry)
  	struct io_async_rw *rw = (struct io_async_rw *) entry;
  
--#if !defined(CONFIG_KASAN)
  	if (rw->free_iovec)
- 		io_rw_iovec_free(rw);
--#endif
+-		io_rw_iovec_free(rw);
++		kfree(rw->free_iovec);
  	kfree(rw);
  }
 -- 

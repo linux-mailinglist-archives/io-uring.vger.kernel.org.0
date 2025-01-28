@@ -1,76 +1,77 @@
-Return-Path: <io-uring+bounces-6154-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6153-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCAD5A20B65
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECCFA20B64
 	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 14:40:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37A91165C4D
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 13:40:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E92D3A6DF0
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 13:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D901ACECC;
-	Tue, 28 Jan 2025 13:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AFA1ACEB7;
+	Tue, 28 Jan 2025 13:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="gpyXwnBB"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="eRTpXbZo"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510CF1A83E8
-	for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 13:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857261A9B2A
+	for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 13:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738071583; cv=none; b=QPLPccQxHh2cK4IVj2Ei4MGenC3xAQ8eYJ1ZZqlspaByHTSQnmjfgAxyMQfqZIarbjBjeFvFg21loKmdUDixPAx7nJJYbfaYrb7Jz5mQdrTmGw00aChL/Od8Qiam2PWMlmm6kuG+LzH0jq0UKgPaxkGMDA9wFzZjOLuTUHoYypE=
+	t=1738071583; cv=none; b=N0YbjWGcYigTn4GH9dygE/PT9fbYlDrQRZ53gkr4n7DPPE90IgS4IIkLIr1VCbEus+ojC0fSW8P/whrARK/hQXy1egZL+/BBVpgaTPvcmovGiICnjVmJrChTwF7JoJceTj9rBSSfQES14aQKpsN7CGHbSp3C8TZIPWcbEMhA8wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1738071583; c=relaxed/simple;
-	bh=b9q0H6JlHPZhx/QToXEjyQgV/SZEBw6Z/m//xQGJlOo=;
+	bh=nxpfJ3wB5nCck0yc+TIyGkKA+HJxeVDU44WyMwYM6D8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BB5jAKCUCqlJd1bVj5kc1NJuLEEarteMSZtYs1UOr519tXV0BpZKu6KgLKxhznLy9hniqbfXOf/WWN1TGApXpiFF1XcjogZ5iM4OPHdFahVDYrwBLPU8ZfyxOgLoJPhXcHA2Y30L6Dq3vCtoN6XgNtjnh5Ui85HdZf9xp4aoV/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=gpyXwnBB; arc=none smtp.client-ip=209.85.221.68
+	 MIME-Version; b=thnTVqwX5yQ4ZDTj9PxP5ppO7QBf/gq7j1uLNMAzpe/j2Rodwre/oiXmuuHJIDlxDaLwfsLoMfAtE8UFpdwRlOYkEQgE9k8T9TUWYyIiTCjQ/+85ZMlD7lmuluMREpAQH4CzG9lCpOqhw/xQWqWPkLoOEdNDxxM1v/vPdlyG98k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=eRTpXbZo; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-38a8b17d7a7so3036375f8f.2
-        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 05:39:40 -0800 (PST)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38637614567so2743724f8f.3
+        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 05:39:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1738071579; x=1738676379; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1738071580; x=1738676380; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=juRRYQ1dTFnhLtP+KRntaqf9hUoGq/7yGgLWvGvQH84=;
-        b=gpyXwnBB6oq+IaNdNwzqbfUbclMGt1xFE0ySyT/KIk6aiv4R+rkrduCRJbYxF3EDrl
-         uEZo3u/H85rtibk9fr7aQwWCWOKKGXpOx8keTUVsPENpa5kwkA5pQkwJttn25yWNW+a0
-         f0XKnQKhJvcSW8hrPe9qbHctz9E5hyb3y4+DvOaRpCi2mMusKxAvgtzvXhwSXLxAsFw0
-         /jxzlBz0zydUmT7dx7XKuEh2JWphhts7FV8tETk+MJEut6Nh/p5+YDrr83VOTk3IIR7f
-         cvGDrcSE8eHXzT+lwnPl2gk9elHf320Yk4QfNgoEDcOqGJjAZKmR4/MIKXicIsa43EPF
-         +7Cw==
+        bh=q0Sb1zzl9lHTXysx3Zj4dezvRrbNaG/3CIED1Ppo3HQ=;
+        b=eRTpXbZo0q2KH4RaOi4L4vOHpN94ehAMpw7bXAForil75RQdh3FDWOZRpEZ/KHC2ky
+         Cg5JSf1drvBFLgUjjMwU2ignlHkaXDN5x2i7gldGGML6v3YaGU/nS8EOrngNECxgEqQ6
+         lNbdXH8/rmV2m7HDcj1DpXEjVqaQ1c3K6sKYVbPr2WEUZK99lPEjorFme5aG5/FU3UpV
+         tABRum2vIikFLNjIsToRoUIzn3c4+ABiOVF6hXIceIDipyyQ6qf7nsXH2WLHwR7NYT6Q
+         vGLhgyBVBBMD9sc9A2qjDaQlQfDEmjgJvmh6rpJJeL9EktYw+XU0aJdSaD6vcb8cJApM
+         ixtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738071579; x=1738676379;
+        d=1e100.net; s=20230601; t=1738071580; x=1738676380;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=juRRYQ1dTFnhLtP+KRntaqf9hUoGq/7yGgLWvGvQH84=;
-        b=mNtaQJaOV5R956N+g/+9I8nzsv9slY/xcfcq483929WQx1oOHealRpMrOZ3sdwaMqw
-         IiCEO02fRdTCcMC/4T2ip+Yj7abCiaJnk1x8X6ve0kk7OP5mr13YVcPMeEJ77NfVSTGx
-         L2IYjoiIZFRRroCeBLCamm/noE2yRbuei5kCs0PCzcZUGbK4AU0C62+QZO0FiOBm8BAo
-         ymjYvD1QmHZN3PEBcOUwZ2JxhSww4B+Rpcj0yBqJje5gkwgiCVo6i1ScKW3qvlm4L2P6
-         mJ7fbpnq4cDZp50ncxnCl03MmtRRrSvJu6P26CvdPP547xZd9a1WBTxYBe83rDHuhiSz
-         3ctQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3sDv3RLDzEcY8cOZoCd/wki8juqPKfBDCDlu3tuIhAPGwy6evkfW0C7toMySPV+hlGPZfCBzUaw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSF6XCtQtpEl97pyG4+ikoWp114XPUaZuSnxnhpdpoKztulXEt
-	7YZHDyy+IFpOxyNUorvq1BaCt8pHMp+R7HsO9ntArhPx5y6IvHH38Qy6NApvpHI=
-X-Gm-Gg: ASbGnctGfl58jrkTjLy/+Z7QOSjJsRY5pED05scUSyQYa6rg9JpKlXFoLZDPzxfe4Rn
-	QxHGtioMdjHR9/YapBxl/r3/1G+NTl/ZdovU766Z7AyOFvtLYp0U4R0EKYIP9SHjqFEXlDH1eAZ
-	O0GKCJXn+Ci/Z8HInZrpIpCwzwMVPIchpSiUjY7ILTK/KrsiWd40Hp1flwPPGX+yOCNkbnAJNcp
-	7fS7nogQEwapY0sh1CVsd+jTCl8UCx44+PN6i2WGJJV/luEex4ucPwtaTzGXQ7TPSfE1C2ILhGS
-	hTcq1z10Dn5cUO1l3ympaBc2tynzbibh906Ocp3nfyNRER5kTW510Q/ASxqHCH8w8fNo26fO6eW
-	A9T1EPxuJiAWdg9aAkIHlPF6opA==
-X-Google-Smtp-Source: AGHT+IGH5LVV10FXWTscWf1MbdV29OFTGXN+TK6mO0EpZ8qDDcqBVSdd1lNBnzoUoaG3JTtQpj/JMg==
-X-Received: by 2002:a5d:59a4:0:b0:38b:f3f4:57ae with SMTP id ffacd0b85a97d-38bf5655726mr41692567f8f.10.1738071578528;
-        Tue, 28 Jan 2025 05:39:38 -0800 (PST)
+        bh=q0Sb1zzl9lHTXysx3Zj4dezvRrbNaG/3CIED1Ppo3HQ=;
+        b=NU9UwbSn/JkrN1UTYDcaYkHLjjsjsmECk+zENseE45OGx84Ub6HKL3FX9ApBQLR0As
+         wAVRol8sknyioU0IVKyWHeAVu9ZP5QUrrlAx1BXLrEirOkx/n+58UP+qmRGggl5LBRY6
+         TKLw6rQoPqOPXR4hERJnQ/QRCOZijrozt2ng0Zj85MEqq5G5eN2U0nYFVsX2ItX3jreI
+         mLe0S70Bxesdxsv6Ciq3k5aArQXHPQ5mUYySOrHu4urc2yL4y3s7eYNZJnev/FlJ1L7d
+         kmGW8tCrqqK2jDgxxtxo0DTWSudPSs1izffRjZRw/2uJKwhz4yi/V8JebgD1DN86uUC8
+         C/FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUz6iPLQ63CgQia+QF/8rHcuRYLO2forgG6Xtlb/Rj8Syu3rBDoRyH93APcg9n8KuNm7BwlHMFLVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw40auSDnwwjwPamytzlK4XnSqS4YaoWYMuPKl2Gx5xNMFw+Cd6
+	bCSGLJh/KOB1pswEpmbUrPPX0j0xdxeDPqe8uuXJrPSDI1QNOoGGQQ/xc9NR4p7+qOgep49Mfis
+	V2A4=
+X-Gm-Gg: ASbGncuQaoN1M/DtG8gxWhrJCpK017pxvqF3N5rU71xBxCrFrifX7XyIBUw9J7a2cHN
+	qj2hLST17UtKFS7dVi0EVXEolblFsvcjP+KWLN2yV+aDJmDo7s4kQNk3bnyViGWo8177rIRMaja
+	oBjnsM8V3OK/NdrbzEKlrQSIEw5qrXdAyjmX5crZMWAROjHF2/0/Wb7HQBAZYD2LuChjus9V2Z8
+	NLiOvhY+eaIrpxDxSbqdg4M49Xw+hsue053WqUmiH12fXv0WSOtrqVhseSitqauJ4CnychcsT+X
+	UXoHgPHdA621UgXsg1VRPGcx//ZRmdGlR4LuvVattHGRRKBg++q01lSKrx5s2ifpxNx1/1pqUzq
+	TSq3Ndjz+DMTBXNQ=
+X-Google-Smtp-Source: AGHT+IGcdEBNubL7sukg4uu3ewHXC+3+vOT/IFRpwXZUOGiTZ50OLbhjM/qTzmALbuEz5d8UD8/mSw==
+X-Received: by 2002:a05:6000:18a9:b0:38a:86fe:52dc with SMTP id ffacd0b85a97d-38c3b0cbb61mr9338899f8f.13.1738071579794;
+        Tue, 28 Jan 2025 05:39:39 -0800 (PST)
 Received: from raven.intern.cm-ag (p200300dc6f2b6900023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f2b:6900:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c2a1bb02dsm14160780f8f.70.2025.01.28.05.39.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c2a1bb02dsm14160780f8f.70.2025.01.28.05.39.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 28 Jan 2025 05:39:38 -0800 (PST)
 From: Max Kellermann <max.kellermann@ionos.com>
@@ -79,9 +80,9 @@ To: axboe@kernel.dk,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH 3/8] io_uring/io-wq: move worker lists to struct io_wq_acct
-Date: Tue, 28 Jan 2025 14:39:22 +0100
-Message-ID: <20250128133927.3989681-4-max.kellermann@ionos.com>
+Subject: [PATCH 4/8] io_uring/io-wq: cache work->flags in variable
+Date: Tue, 28 Jan 2025 14:39:23 +0100
+Message-ID: <20250128133927.3989681-5-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250128133927.3989681-1-max.kellermann@ionos.com>
 References: <20250128133927.3989681-1-max.kellermann@ionos.com>
@@ -93,459 +94,173 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Have separate linked lists for bounded and unbounded workers.  This
-way, io_acct_activate_free_worker() sees only workers relevant to it
-and doesn't need to skip irrelevant ones.  This speeds up the
-linked list traversal (under acct->lock).
+This eliminates several redundant atomic reads and therefore reduces
+the duration the surrounding spinlocks are held.
 
-The `io_wq.lock` field is moved to `io_wq_acct.workers_lock`.  It did
-not actually protect "access to elements below", that is, not all of
-them; it only protected access to the worker lists.  By having two
-locks instead of one, contention on this lock is reduced.
+In several io_uring benchmarks, this reduced the CPU time spent in
+queued_spin_lock_slowpath() considerably:
+
+io_uring benchmark with a flood of `IORING_OP_NOP` and `IOSQE_ASYNC`:
+
+    38.86%     -1.49%  [kernel.kallsyms]  [k] queued_spin_lock_slowpath
+     6.75%     +0.36%  [kernel.kallsyms]  [k] io_worker_handle_work
+     2.60%     +0.19%  [kernel.kallsyms]  [k] io_nop
+     3.92%     +0.18%  [kernel.kallsyms]  [k] io_req_task_complete
+     6.34%     -0.18%  [kernel.kallsyms]  [k] io_wq_submit_work
+
+HTTP server, static file:
+
+    42.79%     -2.77%  [kernel.kallsyms]     [k] queued_spin_lock_slowpath
+     2.08%     +0.23%  [kernel.kallsyms]     [k] io_wq_submit_work
+     1.19%     +0.20%  [kernel.kallsyms]     [k] amd_iommu_iotlb_sync_map
+     1.46%     +0.15%  [kernel.kallsyms]     [k] ep_poll_callback
+     1.80%     +0.15%  [kernel.kallsyms]     [k] io_worker_handle_work
+
+HTTP server, PHP:
+
+    35.03%     -1.80%  [kernel.kallsyms]     [k] queued_spin_lock_slowpath
+     0.84%     +0.21%  [kernel.kallsyms]     [k] amd_iommu_iotlb_sync_map
+     1.39%     +0.12%  [kernel.kallsyms]     [k] _copy_to_iter
+     0.21%     +0.10%  [kernel.kallsyms]     [k] update_sd_lb_stats
 
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
- io_uring/io-wq.c | 162 ++++++++++++++++++++++++++++-------------------
- 1 file changed, 96 insertions(+), 66 deletions(-)
+ io_uring/io-wq.c | 33 +++++++++++++++++++++------------
+ io_uring/io-wq.h |  7 ++++++-
+ 2 files changed, 27 insertions(+), 13 deletions(-)
 
 diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index 197352ef78c7..dfdd45ebe4bb 100644
+index dfdd45ebe4bb..ba9974e6f521 100644
 --- a/io_uring/io-wq.c
 +++ b/io_uring/io-wq.c
-@@ -76,9 +76,27 @@ struct io_worker {
- #define IO_WQ_NR_HASH_BUCKETS	(1u << IO_WQ_HASH_ORDER)
+@@ -170,9 +170,9 @@ static inline struct io_wq_acct *io_get_acct(struct io_wq *wq, bool bound)
+ }
  
- struct io_wq_acct {
-+	/**
-+	 * Protects access to the worker lists.
-+	 */
-+	raw_spinlock_t workers_lock;
-+
- 	unsigned nr_workers;
- 	unsigned max_workers;
- 	atomic_t nr_running;
-+
-+	/**
-+	 * The list of free workers.  Protected by #workers_lock
-+	 * (write) and RCU (read).
-+	 */
-+	struct hlist_nulls_head free_list;
-+
-+	/**
-+	 * The list of all workers.  Protected by #workers_lock
-+	 * (write) and RCU (read).
-+	 */
-+	struct list_head all_list;
-+
- 	raw_spinlock_t lock;
- 	struct io_wq_work_list work_list;
- 	unsigned long flags;
-@@ -110,12 +128,6 @@ struct io_wq {
- 
- 	struct io_wq_acct acct[IO_WQ_ACCT_NR];
- 
--	/* lock protects access to elements below */
--	raw_spinlock_t lock;
--
--	struct hlist_nulls_head free_list;
--	struct list_head all_list;
--
- 	struct wait_queue_entry wait;
- 
- 	struct io_wq_work *hash_tail[IO_WQ_NR_HASH_BUCKETS];
-@@ -190,9 +202,9 @@ static void io_worker_cancel_cb(struct io_worker *worker)
- 	struct io_wq *wq = worker->wq;
- 
- 	atomic_dec(&acct->nr_running);
--	raw_spin_lock(&wq->lock);
-+	raw_spin_lock(&acct->workers_lock);
- 	acct->nr_workers--;
--	raw_spin_unlock(&wq->lock);
-+	raw_spin_unlock(&acct->workers_lock);
- 	io_worker_ref_put(wq);
- 	clear_bit_unlock(0, &worker->create_state);
- 	io_worker_release(worker);
-@@ -211,6 +223,7 @@ static bool io_task_worker_match(struct callback_head *cb, void *data)
- static void io_worker_exit(struct io_worker *worker)
+ static inline struct io_wq_acct *io_work_get_acct(struct io_wq *wq,
+-						  struct io_wq_work *work)
++						  unsigned int work_flags)
  {
- 	struct io_wq *wq = worker->wq;
-+	struct io_wq_acct *acct = io_wq_get_acct(worker);
+-	return io_get_acct(wq, !(atomic_read(&work->flags) & IO_WQ_WORK_UNBOUND));
++	return io_get_acct(wq, !(work_flags & IO_WQ_WORK_UNBOUND));
+ }
  
- 	while (1) {
- 		struct callback_head *cb = task_work_cancel_match(wq->task,
-@@ -224,11 +237,11 @@ static void io_worker_exit(struct io_worker *worker)
- 	io_worker_release(worker);
- 	wait_for_completion(&worker->ref_done);
- 
--	raw_spin_lock(&wq->lock);
-+	raw_spin_lock(&acct->workers_lock);
- 	if (test_bit(IO_WORKER_F_FREE, &worker->flags))
- 		hlist_nulls_del_rcu(&worker->nulls_node);
- 	list_del_rcu(&worker->all_list);
--	raw_spin_unlock(&wq->lock);
-+	raw_spin_unlock(&acct->workers_lock);
- 	io_wq_dec_running(worker);
- 	/*
- 	 * this worker is a goner, clear ->worker_private to avoid any
-@@ -267,8 +280,7 @@ static inline bool io_acct_run_queue(struct io_wq_acct *acct)
-  * Check head of free list for an available worker. If one isn't available,
-  * caller must create one.
-  */
--static bool io_wq_activate_free_worker(struct io_wq *wq,
--					struct io_wq_acct *acct)
-+static bool io_acct_activate_free_worker(struct io_wq_acct *acct)
- 	__must_hold(RCU)
- {
- 	struct hlist_nulls_node *n;
-@@ -279,13 +291,9 @@ static bool io_wq_activate_free_worker(struct io_wq *wq,
- 	 * activate. If a given worker is on the free_list but in the process
- 	 * of exiting, keep trying.
- 	 */
--	hlist_nulls_for_each_entry_rcu(worker, n, &wq->free_list, nulls_node) {
-+	hlist_nulls_for_each_entry_rcu(worker, n, &acct->free_list, nulls_node) {
- 		if (!io_worker_get(worker))
- 			continue;
--		if (io_wq_get_acct(worker) != acct) {
--			io_worker_release(worker);
--			continue;
--		}
- 		/*
- 		 * If the worker is already running, it's either already
- 		 * starting work or finishing work. In either case, if it does
-@@ -312,13 +320,13 @@ static bool io_wq_create_worker(struct io_wq *wq, struct io_wq_acct *acct)
- 	if (unlikely(!acct->max_workers))
- 		pr_warn_once("io-wq is not configured for unbound workers");
- 
--	raw_spin_lock(&wq->lock);
-+	raw_spin_lock(&acct->workers_lock);
- 	if (acct->nr_workers >= acct->max_workers) {
--		raw_spin_unlock(&wq->lock);
-+		raw_spin_unlock(&acct->workers_lock);
- 		return true;
- 	}
- 	acct->nr_workers++;
--	raw_spin_unlock(&wq->lock);
-+	raw_spin_unlock(&acct->workers_lock);
- 	atomic_inc(&acct->nr_running);
- 	atomic_inc(&wq->worker_refs);
- 	return create_io_worker(wq, acct);
-@@ -342,13 +350,13 @@ static void create_worker_cb(struct callback_head *cb)
- 	worker = container_of(cb, struct io_worker, create_work);
- 	wq = worker->wq;
- 	acct = worker->acct;
--	raw_spin_lock(&wq->lock);
-+	raw_spin_lock(&acct->workers_lock);
- 
- 	if (acct->nr_workers < acct->max_workers) {
- 		acct->nr_workers++;
- 		do_create = true;
- 	}
--	raw_spin_unlock(&wq->lock);
-+	raw_spin_unlock(&acct->workers_lock);
- 	if (do_create) {
- 		create_io_worker(wq, acct);
- 	} else {
-@@ -427,25 +435,25 @@ static void io_wq_dec_running(struct io_worker *worker)
-  * Worker will start processing some work. Move it to the busy list, if
-  * it's currently on the freelist
-  */
--static void __io_worker_busy(struct io_wq *wq, struct io_worker *worker)
-+static void __io_worker_busy(struct io_wq_acct *acct, struct io_worker *worker)
- {
- 	if (test_bit(IO_WORKER_F_FREE, &worker->flags)) {
- 		clear_bit(IO_WORKER_F_FREE, &worker->flags);
--		raw_spin_lock(&wq->lock);
-+		raw_spin_lock(&acct->workers_lock);
- 		hlist_nulls_del_init_rcu(&worker->nulls_node);
--		raw_spin_unlock(&wq->lock);
-+		raw_spin_unlock(&acct->workers_lock);
+ static inline struct io_wq_acct *io_wq_get_acct(struct io_worker *worker)
+@@ -457,9 +457,14 @@ static void __io_worker_idle(struct io_wq_acct *acct, struct io_worker *worker)
  	}
  }
  
- /*
-  * No work, worker going to sleep. Move to freelist.
-  */
--static void __io_worker_idle(struct io_wq *wq, struct io_worker *worker)
--	__must_hold(wq->lock)
-+static void __io_worker_idle(struct io_wq_acct *acct, struct io_worker *worker)
-+	__must_hold(acct->workers_lock)
- {
- 	if (!test_bit(IO_WORKER_F_FREE, &worker->flags)) {
- 		set_bit(IO_WORKER_F_FREE, &worker->flags);
--		hlist_nulls_add_head_rcu(&worker->nulls_node, &wq->free_list);
-+		hlist_nulls_add_head_rcu(&worker->nulls_node, &acct->free_list);
- 	}
- }
- 
-@@ -580,7 +588,7 @@ static void io_worker_handle_work(struct io_wq_acct *acct,
- 		if (!work)
- 			break;
- 
--		__io_worker_busy(wq, worker);
-+		__io_worker_busy(acct, worker);
- 
- 		io_assign_current_work(worker, work);
- 		__set_current_state(TASK_RUNNING);
-@@ -651,20 +659,20 @@ static int io_wq_worker(void *data)
- 		while (io_acct_run_queue(acct))
- 			io_worker_handle_work(acct, worker);
- 
--		raw_spin_lock(&wq->lock);
-+		raw_spin_lock(&acct->workers_lock);
- 		/*
- 		 * Last sleep timed out. Exit if we're not the last worker,
- 		 * or if someone modified our affinity.
- 		 */
- 		if (last_timeout && (exit_mask || acct->nr_workers > 1)) {
- 			acct->nr_workers--;
--			raw_spin_unlock(&wq->lock);
-+			raw_spin_unlock(&acct->workers_lock);
- 			__set_current_state(TASK_RUNNING);
- 			break;
- 		}
- 		last_timeout = false;
--		__io_worker_idle(wq, worker);
--		raw_spin_unlock(&wq->lock);
-+		__io_worker_idle(acct, worker);
-+		raw_spin_unlock(&acct->workers_lock);
- 		if (io_run_task_work())
- 			continue;
- 		ret = schedule_timeout(WORKER_IDLE_TIMEOUT);
-@@ -725,18 +733,18 @@ void io_wq_worker_sleeping(struct task_struct *tsk)
- 	io_wq_dec_running(worker);
- }
- 
--static void io_init_new_worker(struct io_wq *wq, struct io_worker *worker,
-+static void io_init_new_worker(struct io_wq *wq, struct io_wq_acct *acct, struct io_worker *worker,
- 			       struct task_struct *tsk)
- {
- 	tsk->worker_private = worker;
- 	worker->task = tsk;
- 	set_cpus_allowed_ptr(tsk, wq->cpu_mask);
- 
--	raw_spin_lock(&wq->lock);
--	hlist_nulls_add_head_rcu(&worker->nulls_node, &wq->free_list);
--	list_add_tail_rcu(&worker->all_list, &wq->all_list);
-+	raw_spin_lock(&acct->workers_lock);
-+	hlist_nulls_add_head_rcu(&worker->nulls_node, &acct->free_list);
-+	list_add_tail_rcu(&worker->all_list, &acct->all_list);
- 	set_bit(IO_WORKER_F_FREE, &worker->flags);
--	raw_spin_unlock(&wq->lock);
-+	raw_spin_unlock(&acct->workers_lock);
- 	wake_up_new_task(tsk);
- }
- 
-@@ -772,20 +780,20 @@ static void create_worker_cont(struct callback_head *cb)
- 	struct io_worker *worker;
- 	struct task_struct *tsk;
- 	struct io_wq *wq;
-+	struct io_wq_acct *acct;
- 
- 	worker = container_of(cb, struct io_worker, create_work);
- 	clear_bit_unlock(0, &worker->create_state);
- 	wq = worker->wq;
-+	acct = io_wq_get_acct(worker);
- 	tsk = create_io_thread(io_wq_worker, worker, NUMA_NO_NODE);
- 	if (!IS_ERR(tsk)) {
--		io_init_new_worker(wq, worker, tsk);
-+		io_init_new_worker(wq, acct, worker, tsk);
- 		io_worker_release(worker);
- 		return;
- 	} else if (!io_should_retry_thread(worker, PTR_ERR(tsk))) {
--		struct io_wq_acct *acct = io_wq_get_acct(worker);
--
- 		atomic_dec(&acct->nr_running);
--		raw_spin_lock(&wq->lock);
-+		raw_spin_lock(&acct->workers_lock);
- 		acct->nr_workers--;
- 		if (!acct->nr_workers) {
- 			struct io_cb_cancel_data match = {
-@@ -793,11 +801,11 @@ static void create_worker_cont(struct callback_head *cb)
- 				.cancel_all	= true,
- 			};
- 
--			raw_spin_unlock(&wq->lock);
-+			raw_spin_unlock(&acct->workers_lock);
- 			while (io_acct_cancel_pending_work(wq, acct, &match))
- 				;
- 		} else {
--			raw_spin_unlock(&wq->lock);
-+			raw_spin_unlock(&acct->workers_lock);
- 		}
- 		io_worker_ref_put(wq);
- 		kfree(worker);
-@@ -829,9 +837,9 @@ static bool create_io_worker(struct io_wq *wq, struct io_wq_acct *acct)
- 	if (!worker) {
- fail:
- 		atomic_dec(&acct->nr_running);
--		raw_spin_lock(&wq->lock);
-+		raw_spin_lock(&acct->workers_lock);
- 		acct->nr_workers--;
--		raw_spin_unlock(&wq->lock);
-+		raw_spin_unlock(&acct->workers_lock);
- 		io_worker_ref_put(wq);
- 		return false;
- 	}
-@@ -844,7 +852,7 @@ static bool create_io_worker(struct io_wq *wq, struct io_wq_acct *acct)
- 
- 	tsk = create_io_thread(io_wq_worker, worker, NUMA_NO_NODE);
- 	if (!IS_ERR(tsk)) {
--		io_init_new_worker(wq, worker, tsk);
-+		io_init_new_worker(wq, acct, worker, tsk);
- 	} else if (!io_should_retry_thread(worker, PTR_ERR(tsk))) {
- 		kfree(worker);
- 		goto fail;
-@@ -860,14 +868,14 @@ static bool create_io_worker(struct io_wq *wq, struct io_wq_acct *acct)
-  * Iterate the passed in list and call the specific function for each
-  * worker that isn't exiting
-  */
--static bool io_wq_for_each_worker(struct io_wq *wq,
--				  bool (*func)(struct io_worker *, void *),
--				  void *data)
-+static bool io_acct_for_each_worker(struct io_wq_acct *acct,
-+				    bool (*func)(struct io_worker *, void *),
-+				    void *data)
- {
- 	struct io_worker *worker;
- 	bool ret = false;
- 
--	list_for_each_entry_rcu(worker, &wq->all_list, all_list) {
-+	list_for_each_entry_rcu(worker, &acct->all_list, all_list) {
- 		if (io_worker_get(worker)) {
- 			/* no task if node is/was offline */
- 			if (worker->task)
-@@ -881,6 +889,18 @@ static bool io_wq_for_each_worker(struct io_wq *wq,
- 	return ret;
- }
- 
-+static bool io_wq_for_each_worker(struct io_wq *wq,
-+				  bool (*func)(struct io_worker *, void *),
-+				  void *data)
++static inline unsigned int __io_get_work_hash(unsigned int work_flags)
 +{
-+	for (int i = 0; i < IO_WQ_ACCT_NR; i++) {
-+		if (!io_acct_for_each_worker(&wq->acct[i], func, data))
-+			return false;
-+	}
-+
-+	return true;
++	return work_flags >> IO_WQ_HASH_SHIFT;
 +}
 +
- static bool io_wq_worker_wake(struct io_worker *worker, void *data)
+ static inline unsigned int io_get_work_hash(struct io_wq_work *work)
  {
- 	__set_notify_signal(worker->task);
-@@ -949,7 +969,7 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+-	return atomic_read(&work->flags) >> IO_WQ_HASH_SHIFT;
++	return __io_get_work_hash(atomic_read(&work->flags));
+ }
+ 
+ static bool io_wait_on_hash(struct io_wq *wq, unsigned int hash)
+@@ -489,17 +494,19 @@ static struct io_wq_work *io_get_next_work(struct io_wq_acct *acct,
+ 	struct io_wq *wq = worker->wq;
+ 
+ 	wq_list_for_each(node, prev, &acct->work_list) {
++		unsigned int work_flags;
+ 		unsigned int hash;
+ 
+ 		work = container_of(node, struct io_wq_work, list);
+ 
+ 		/* not hashed, can run anytime */
+-		if (!io_wq_is_hashed(work)) {
++		work_flags = atomic_read(&work->flags);
++		if (!__io_wq_is_hashed(work_flags)) {
+ 			wq_list_del(&acct->work_list, node, prev);
+ 			return work;
+ 		}
+ 
+-		hash = io_get_work_hash(work);
++		hash = __io_get_work_hash(work_flags);
+ 		/* all items with this hash lie in [work, tail] */
+ 		tail = wq->hash_tail[hash];
+ 
+@@ -596,12 +603,13 @@ static void io_worker_handle_work(struct io_wq_acct *acct,
+ 		/* handle a whole dependent link */
+ 		do {
+ 			struct io_wq_work *next_hashed, *linked;
+-			unsigned int hash = io_get_work_hash(work);
++			unsigned int work_flags = atomic_read(&work->flags);
++			unsigned int hash = __io_get_work_hash(work_flags);
+ 
+ 			next_hashed = wq_next_work(work);
+ 
+ 			if (do_kill &&
+-			    (atomic_read(&work->flags) & IO_WQ_WORK_UNBOUND))
++			    (work_flags & IO_WQ_WORK_UNBOUND))
+ 				atomic_or(IO_WQ_WORK_CANCEL, &work->flags);
+ 			wq->do_work(work);
+ 			io_assign_current_work(worker, NULL);
+@@ -917,18 +925,19 @@ static void io_run_cancel(struct io_wq_work *work, struct io_wq *wq)
+ 	} while (work);
+ }
+ 
+-static void io_wq_insert_work(struct io_wq *wq, struct io_wq_acct *acct, struct io_wq_work *work)
++static void io_wq_insert_work(struct io_wq *wq, struct io_wq_acct *acct,
++			      struct io_wq_work *work, unsigned int work_flags)
+ {
+ 	unsigned int hash;
+ 	struct io_wq_work *tail;
+ 
+-	if (!io_wq_is_hashed(work)) {
++	if (!__io_wq_is_hashed(work_flags)) {
+ append:
+ 		wq_list_add_tail(&work->list, &acct->work_list);
+ 		return;
+ 	}
+ 
+-	hash = io_get_work_hash(work);
++	hash = __io_get_work_hash(work_flags);
+ 	tail = wq->hash_tail[hash];
+ 	wq->hash_tail[hash] = work;
+ 	if (!tail)
+@@ -944,8 +953,8 @@ static bool io_wq_work_match_item(struct io_wq_work *work, void *data)
+ 
+ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+ {
+-	struct io_wq_acct *acct = io_work_get_acct(wq, work);
+ 	unsigned int work_flags = atomic_read(&work->flags);
++	struct io_wq_acct *acct = io_work_get_acct(wq, work_flags);
+ 	struct io_cb_cancel_data match = {
+ 		.fn		= io_wq_work_match_item,
+ 		.data		= work,
+@@ -964,7 +973,7 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+ 	}
+ 
+ 	raw_spin_lock(&acct->lock);
+-	io_wq_insert_work(wq, acct, work);
++	io_wq_insert_work(wq, acct, work, work_flags);
+ 	clear_bit(IO_ACCT_STALLED_BIT, &acct->flags);
  	raw_spin_unlock(&acct->lock);
  
- 	rcu_read_lock();
--	do_create = !io_wq_activate_free_worker(wq, acct);
-+	do_create = !io_acct_activate_free_worker(acct);
- 	rcu_read_unlock();
+diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
+index b3b004a7b625..d4fb2940e435 100644
+--- a/io_uring/io-wq.h
++++ b/io_uring/io-wq.h
+@@ -54,9 +54,14 @@ int io_wq_cpu_affinity(struct io_uring_task *tctx, cpumask_var_t mask);
+ int io_wq_max_workers(struct io_wq *wq, int *new_count);
+ bool io_wq_worker_stopped(void);
  
- 	if (do_create && ((work_flags & IO_WQ_WORK_CONCURRENT) ||
-@@ -960,12 +980,12 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
- 		if (likely(did_create))
- 			return;
- 
--		raw_spin_lock(&wq->lock);
-+		raw_spin_lock(&acct->workers_lock);
- 		if (acct->nr_workers) {
--			raw_spin_unlock(&wq->lock);
-+			raw_spin_unlock(&acct->workers_lock);
- 			return;
- 		}
--		raw_spin_unlock(&wq->lock);
-+		raw_spin_unlock(&acct->workers_lock);
- 
- 		/* fatal condition, failed to create the first worker */
- 		io_acct_cancel_pending_work(wq, acct, &match);
-@@ -1072,11 +1092,22 @@ static void io_wq_cancel_pending_work(struct io_wq *wq,
- 	}
- }
- 
-+static void io_acct_cancel_running_work(struct io_wq_acct *acct,
-+					struct io_cb_cancel_data *match)
++static inline bool __io_wq_is_hashed(unsigned int work_flags)
 +{
-+	raw_spin_lock(&acct->workers_lock);
-+	io_acct_for_each_worker(acct, io_wq_worker_cancel, match);
-+	raw_spin_unlock(&acct->workers_lock);
++	return work_flags & IO_WQ_WORK_HASHED;
 +}
 +
- static void io_wq_cancel_running_work(struct io_wq *wq,
- 				       struct io_cb_cancel_data *match)
+ static inline bool io_wq_is_hashed(struct io_wq_work *work)
  {
- 	rcu_read_lock();
--	io_wq_for_each_worker(wq, io_wq_worker_cancel, match);
-+
-+	for (int i = 0; i < IO_WQ_ACCT_NR; i++)
-+		io_acct_cancel_running_work(&wq->acct[i], match);
-+
- 	rcu_read_unlock();
+-	return atomic_read(&work->flags) & IO_WQ_WORK_HASHED;
++	return __io_wq_is_hashed(atomic_read(&work->flags));
  }
  
-@@ -1099,16 +1130,14 @@ enum io_wq_cancel io_wq_cancel_cb(struct io_wq *wq, work_cancel_fn *cancel,
- 	 * as an indication that we attempt to signal cancellation. The
- 	 * completion will run normally in this case.
- 	 *
--	 * Do both of these while holding the wq->lock, to ensure that
-+	 * Do both of these while holding the acct->workers_lock, to ensure that
- 	 * we'll find a work item regardless of state.
- 	 */
- 	io_wq_cancel_pending_work(wq, &match);
- 	if (match.nr_pending && !match.cancel_all)
- 		return IO_WQ_CANCEL_OK;
- 
--	raw_spin_lock(&wq->lock);
- 	io_wq_cancel_running_work(wq, &match);
--	raw_spin_unlock(&wq->lock);
- 	if (match.nr_running && !match.cancel_all)
- 		return IO_WQ_CANCEL_RUNNING;
- 
-@@ -1132,7 +1161,7 @@ static int io_wq_hash_wake(struct wait_queue_entry *wait, unsigned mode,
- 		struct io_wq_acct *acct = &wq->acct[i];
- 
- 		if (test_and_clear_bit(IO_ACCT_STALLED_BIT, &acct->flags))
--			io_wq_activate_free_worker(wq, acct);
-+			io_acct_activate_free_worker(acct);
- 	}
- 	rcu_read_unlock();
- 	return 1;
-@@ -1171,14 +1200,15 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
- 		struct io_wq_acct *acct = &wq->acct[i];
- 
- 		atomic_set(&acct->nr_running, 0);
-+
-+		raw_spin_lock_init(&acct->workers_lock);
-+		INIT_HLIST_NULLS_HEAD(&acct->free_list, 0);
-+		INIT_LIST_HEAD(&acct->all_list);
-+
- 		INIT_WQ_LIST(&acct->work_list);
- 		raw_spin_lock_init(&acct->lock);
- 	}
- 
--	raw_spin_lock_init(&wq->lock);
--	INIT_HLIST_NULLS_HEAD(&wq->free_list, 0);
--	INIT_LIST_HEAD(&wq->all_list);
--
- 	wq->task = get_task_struct(data->task);
- 	atomic_set(&wq->worker_refs, 1);
- 	init_completion(&wq->worker_done);
-@@ -1364,14 +1394,14 @@ int io_wq_max_workers(struct io_wq *wq, int *new_count)
- 
- 	rcu_read_lock();
- 
--	raw_spin_lock(&wq->lock);
- 	for (i = 0; i < IO_WQ_ACCT_NR; i++) {
- 		acct = &wq->acct[i];
-+		raw_spin_lock(&acct->workers_lock);
- 		prev[i] = max_t(int, acct->max_workers, prev[i]);
- 		if (new_count[i])
- 			acct->max_workers = new_count[i];
-+		raw_spin_unlock(&acct->workers_lock);
- 	}
--	raw_spin_unlock(&wq->lock);
- 	rcu_read_unlock();
- 
- 	for (i = 0; i < IO_WQ_ACCT_NR; i++)
+ typedef bool (work_cancel_fn)(struct io_wq_work *, void *);
 -- 
 2.45.2
 

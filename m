@@ -1,87 +1,91 @@
-Return-Path: <io-uring+bounces-6151-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6150-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1854A20B61
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 14:39:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CFEA20B5E
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 14:39:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21CBB1883E9D
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 13:39:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 632B43A6718
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 13:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903DC1A9B34;
-	Tue, 28 Jan 2025 13:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30891A8418;
+	Tue, 28 Jan 2025 13:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Q+JIiPXn"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="dyk+YEbt"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8A61A725A
-	for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 13:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A131A76AC
+	for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 13:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738071581; cv=none; b=aKtJO/f8MJufbXHBvc7irWMe1OZywPvTj69kvNxJcxMSUsjuDXfrhnF7Mg76a1fK9UL0d14b2J1tTzgzAyyYJz/dbO3FrqLOtLjHUCmVN9heUBAqrY3cSbocun8w4dNIBKoENz3ZSzkMFyH1oDTLNfJUJxMPMTNAeGbnrbrrgOA=
+	t=1738071580; cv=none; b=ZvKuX7IHbcBeyoPenq0iilqTyIoOXThtJxHLwm3FkLEfS3g9f3id1wxfaKyyh6kY6ZoSzFpgzrlnjiFd1rrZ8fVHToOymj88VL/SF+IigTxQIiVwLcV5rY+GBMSpywb1/Hr2C0zyrH/F/07tTADJI7muw3vSS+AdMO8P6Lsmm78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738071581; c=relaxed/simple;
-	bh=K0chwOk8j+gfblQqMSn8zaQQwXrnqJlL2AW5smVHg8Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mSv+85e8dYx1e4KtZbfKX+fWPU8AxK0V7x/NK9l7QdTI7q34+dpEi8wjevANCnbi5/J15P9sQsxTiq6ttNouEENfK5absIGB/Op1vvCw9+WrCsZjXo+PEvXRt65+KWpMKCRCYHRxxk5WBzH+jlu3m0BIRdFXYrOKNgIihFiwR30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Q+JIiPXn; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1738071580; c=relaxed/simple;
+	bh=srkResxdP4Pqydq94udETtB9G/kWLvauGsd1OifrxTQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CHzgV5liSzrPodOyeRPxL5Ulg4IXJg7MZT5fygthFyeEp74nMBZg/Ptjic9H6lx7D0IT1Y+4jRaVmMawMzKhwYGwcSIT9QpCb5Iw+nTzzzpG/89TPmC271f8vC53HVv93ZhG1srqheQo9NRsDPvF/P8+pHMGJx264jMZPbO+o6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=dyk+YEbt; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385d7f19f20so2888707f8f.1
-        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 05:39:37 -0800 (PST)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-386329da1d9so2904606f8f.1
+        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 05:39:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1738071576; x=1738676376; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hK6gm4w3aip1p6X/TmteESgDCFv0ITdAvMjv3TFp//Y=;
-        b=Q+JIiPXnE8L7CrxQrda/qLx8Kh57ysVoRMzz12yQfNw5Dk0gIIwodbAFoxtZh3TQab
-         hl9L0lZkj7e0N8+RN+zo7U1b/dCmh6hY08HjPMoa5/oEX6ZE5Y3QiGuT34ywfVdvidMC
-         G7bTuBY5D4vOOP6v8MibWARv9yU81I//Nj1r+eZIWfUFHpgHheKVflXkvoixbfs3zz85
-         vNFI2LAf5Z1jdJMxBXXWMjkyUVVHWmbgY1z5JbfQvCOLTA2bjiiCh68xAEWBlau5kZKR
-         oZaERXVOWINVKYa6H/alMV15ekvre5JPRt21e43q8xa+aNgYZd1340cctFKgOpXmAHYK
-         WdyQ==
+        d=ionos.com; s=google; t=1738071577; x=1738676377; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CelVTbMR7GPzFcsvtgcyQD9/IaPZPL2IppoN0M2ePcg=;
+        b=dyk+YEbthISWkdcqxuLiVFjyarAOmKSoohVqr6g4AIo3AVs06haipYSpJStqqYlj/c
+         uZr5cQb5czQzA2BJMjX8YrVI7uGgQ7aXEQYMlARjZCEbydkcn5yqLB+kbyZ9wIAzdxN3
+         hOKg1Ed6Id9TQu4FDJ6N4n9fOrZwKzRQjOD/GhUfaOjF8WDaA1n/mWUjNlUw7slDAtsB
+         wlsvCVPGYpywLO9yd/2aViQWO4fYDH3FlhEZ0+y8qxjxzfXEt4jmFboqr3Qif/0uFW/v
+         V6gkjSBEJYLLGXY68b7SEmAUk0dhh7udzkAseEIRHsMr4nNHlVhZNInk9VpXJ47B5bWW
+         26Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738071576; x=1738676376;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hK6gm4w3aip1p6X/TmteESgDCFv0ITdAvMjv3TFp//Y=;
-        b=VM8ko3OSWV192CXlDpVLCgxnTflWL8XJYDIZcGTVU+XH9xf1qLXYipvxMdlU5Rv80W
-         6nItRM3nkH+p/gJNOLDCD3mlIoGt4yI4y4tfacudQ6Uag5V6Jjuoewy8Y1Sbv/Ig2pu/
-         OyaHehIV+tl+Dwq7/15Iaqzk35atq0nXqX8Uqe0Dm8771amS6pMT2vUfNuNP44gHr7xR
-         YK6n/eCSKN/GA7t0255qTwjlk/f6mdfQbkIdw+Tjusvp48VtsWb7JBaewpcDNBLc6mfQ
-         g9NDjreS5wAxo5SLT3a2kN+n1wVJLngSy0oLfyjL1jE3qDFwUXYaHRDuyoRKx5ags0L/
-         u6Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVho4+Cvz3kegJmMejSHpxARuuP4CJS5lAVNhhdQh89Fjuy1nQ8uK4fyE5OFnOvDaX1UtIAS6oM8g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHWUMowY1EnUDYVtqAdfbIxj56MKVi/EzERSeH5vMstpyKLWu+
-	suS+n/5q12cz2OQxWVboNxuaTmLlem4uRtiF614JSSGfNhw4vuv6mchCzCqGjxvXEksnnzo591c
-	Zjd8=
-X-Gm-Gg: ASbGncuv28mc30mIJAwrf1BxmORv29h9zz7XVZ8eYxYKhfWlxJ2sEN/iqhkkfn7qGly
-	no5mY4y81FWvhRsrR3uHD3M1ghYtfVZ+xsssbUdg7nLJ/PWEImehaYbKmxk4KQdiBxLp9uuhpo2
-	NemISWr5POkJlqGy3TjG5uNXg0jEZgP3mEIivZ7Lnc6UbfrUR/vVzUSVTuEqg9NgVSkOX/j7OP6
-	W+EBCfv+dMXDLqeJdsQ1B3D0XvXSgWe/DbZFk7N7Y/sY0qrDcVDgOH1QMSQJOGGZYaKzxexpX/i
-	0G4Ml0zQj16JfnuVLj3xcOjwk0jH6HLiB4fl60giWn6CydS2GQSORRP8sglcGALSiwbRtfM/0U+
-	J+r0g4uAoZAlE68Q=
-X-Google-Smtp-Source: AGHT+IEa5+xB0pJnhusdcQsnmAOsVGLJFO6EMVx0QymFEmPYEr1LFSe9P9cZFAeEoCBOIOfrrx0nvQ==
-X-Received: by 2002:adf:a1cc:0:b0:38a:a074:9f3c with SMTP id ffacd0b85a97d-38bf5663dbcmr35768742f8f.16.1738071576010;
+        d=1e100.net; s=20230601; t=1738071577; x=1738676377;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CelVTbMR7GPzFcsvtgcyQD9/IaPZPL2IppoN0M2ePcg=;
+        b=fI9C6OxX5xOA0eGj2BS3Whs1S33K1fiVfH4jZ5kDQPKPXRDPu263lKDYxrHyouz9Tp
+         INhwvilGLxYZnKLTS6Mhq0JJFXdA9XQtR/FQoEYqfV0su5yDb9eFLMroMUbXnlETsF/I
+         oCL5J1GyeGfO1HcDPBJ7mvuVSr6dkEW1YaOFjDG60UarYqTpy7Uo6DLc2wpsTiQKVLaF
+         Ob9HpdpnhAgV6sz5dthJq0GBm8zD5mws/IIxiRryZ4BPE0jXOsfRA2IF5IJVLdKB9mHZ
+         XwpEGA4GwHjaghmVGSeyJgzuC+MuZZ3AUXoMToSE5Fr2yAIbOYb3SahIGEbAeiCUsVVS
+         AU4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWvuiwXVZiAClpQwsutQRHBrLyWZRiDUQUgOSNfvYO2SLZKuJ1rTKH9G6GV7Xf3VozFRPzTFNpSA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy14IyX1IzAxnN2mlswniaeUoEsccDOTvHtJgKcu7EIa6q2tosB
+	27RZIYUGehHPZMFs+yqEtXmG3GWVy7ilur6ZFkKMZZINcPu5hxIfzLqf4sH2HncYTt4ob8WEMpt
+	hUwc=
+X-Gm-Gg: ASbGncvptqKi07edmZm1kx9XrL+MNS2MMw2mVHbWJG3yHJe0p+yCJxoLiqC/k7Dmkx2
+	3PXrHtJYaQVGkiRdS0IaWG0oSPfySVXX54GdogGbmV3wU2xL1D1d1dFRMo0mBb5e/skbOS5r7tb
+	bNB+NRBG570zImMmsjdo9TAESCQncG4pOkQc/shQ2YE5GJiK5nbKUdG/PuyEVv8EOdliS0gXsaV
+	Q7snb7oWHVotogDH27Tt4KQUR3X9l4UctsP0lktQxsX7mM72TDBIi5K6GAKW7w2j6YTOpBCpxxH
+	XiHEEC47v4MeqS/+wn0O3p6qD7DnlD/emfTNVUofwFQBRVom6y+Z1JENIhTOhh+lVU5VcEvt92x
+	z/aEgvQ8K2KsEy7k=
+X-Google-Smtp-Source: AGHT+IF8M/ADaKWu3naSkh4B3oSig0LdPOLITkVOWQq8v9u1yCs+3hetH7yo8n6SXAQJJZxuKwKRAQ==
+X-Received: by 2002:a05:6000:1a8c:b0:38a:888c:6786 with SMTP id ffacd0b85a97d-38bf57c063fmr41035427f8f.52.1738071576767;
         Tue, 28 Jan 2025 05:39:36 -0800 (PST)
 Received: from raven.intern.cm-ag (p200300dc6f2b6900023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f2b:6900:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c2a1bb02dsm14160780f8f.70.2025.01.28.05.39.35
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c2a1bb02dsm14160780f8f.70.2025.01.28.05.39.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2025 05:39:35 -0800 (PST)
+        Tue, 28 Jan 2025 05:39:36 -0800 (PST)
 From: Max Kellermann <max.kellermann@ionos.com>
 To: axboe@kernel.dk,
 	asml.silence@gmail.com,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH 0/8] Various io_uring micro-optimizations (reducing lock contention)
-Date: Tue, 28 Jan 2025 14:39:19 +0100
-Message-ID: <20250128133927.3989681-1-max.kellermann@ionos.com>
+Subject: [PATCH 1/8] io_uring/io-wq: eliminate redundant io_work_get_acct() calls
+Date: Tue, 28 Jan 2025 14:39:20 +0100
+Message-ID: <20250128133927.3989681-2-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250128133927.3989681-1-max.kellermann@ionos.com>
+References: <20250128133927.3989681-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -90,86 +94,62 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-While optimizing my io_uring-based web server, I found that the kernel
-spends 35% of the CPU time waiting for `io_wq_acct.lock`.  This patch
-set reduces contention of this lock, though I believe much more should
-be done in order to allow more worker concurrency.
+Instead of calling io_work_get_acct() again, pass acct to
+io_wq_insert_work() and io_wq_remove_pending().
 
-I measured these patches with my HTTP server (serving static files and
-running a tiny PHP script) and with a micro-benchmark that submits
-millions of `IORING_OP_NOP` entries (with `IOSQE_ASYNC` to force
-offloading the operation to a worker, so this offload overhead can be
-measured).
+This atomic access in io_work_get_acct() was done under the
+`acct->lock`, and optimizing it away reduces lock contention a bit.
 
-Some of the optimizations eliminate memory accesses, e.g. by passing
-values that are already known to (inlined) functions and by caching
-values in local variables.  These are useful optimizations, but they
-are too small to measure them in a benchmark (too much noise).
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ io_uring/io-wq.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Some of the patches have a measurable effect and they contain
-benchmark numbers that I could reproduce in repeated runs, despite the
-noise.
-
-I'm not confident about the correctness of the last patch ("io_uring:
-skip redundant poll wakeups").  This seemed like low-hanging fruit, so
-low that it seemed suspicious to me.  If this is a useful
-optimization, the idea could probably be ported to other wait_queue
-users, or even into the wait_queue library.  What I'm not confident
-about is whether the optimization is valid or whether it may miss
-wakeups, leading to stalls.  Please advise!
-
-Total "perf diff" for `IORING_OP_NOP`:
-
-    42.25%     -9.24%  [kernel.kallsyms]     [k] queued_spin_lock_slowpath
-     4.79%     +2.83%  [kernel.kallsyms]     [k] io_worker_handle_work
-     7.23%     -1.41%  [kernel.kallsyms]     [k] io_wq_submit_work
-     6.80%     +1.23%  [kernel.kallsyms]     [k] io_wq_free_work
-     3.19%     +1.10%  [kernel.kallsyms]     [k] io_req_task_complete
-     2.45%     +0.94%  [kernel.kallsyms]     [k] try_to_wake_up
-               +0.81%  [kernel.kallsyms]     [k] io_acct_activate_free_worker
-     0.79%     +0.64%  [kernel.kallsyms]     [k] __schedule
-
-Serving static files with HTTP (send+receive on local+TCP,splice
-file->pipe->TCP):
-
-    42.92%     -7.84%  [kernel.kallsyms]     [k] queued_spin_lock_slowpath
-     1.53%     -1.51%  [kernel.kallsyms]     [k] ep_poll_callback
-     1.18%     +1.49%  [kernel.kallsyms]     [k] io_wq_free_work
-     0.61%     +0.60%  [kernel.kallsyms]     [k] try_to_wake_up
-     0.76%     -0.43%  [kernel.kallsyms]     [k] _raw_spin_lock_irqsave
-     2.22%     -0.33%  [kernel.kallsyms]     [k] io_wq_submit_work
-
-Running PHP script (send+receive on local+TCP, splice pipe->TCP):
-
-    33.01%     -4.13%  [kernel.kallsyms]     [k] queued_spin_lock_slowpath
-     1.57%     -1.56%  [kernel.kallsyms]     [k] ep_poll_callback
-     1.36%     +1.19%  [kernel.kallsyms]     [k] io_wq_free_work
-     0.94%     -0.61%  [kernel.kallsyms]     [k] _raw_spin_lock_irqsave
-     2.56%     -0.36%  [kernel.kallsyms]     [k] io_wq_submit_work
-     2.06%     +0.36%  [kernel.kallsyms]     [k] io_worker_handle_work
-     1.00%     +0.35%  [kernel.kallsyms]     [k] try_to_wake_up
-
-(The `IORING_OP_NOP` benchmark finishes after a hardcoded number of
-operations; the two HTTP benchmarks finish after a certain wallclock
-duration, and therefore more HTTP requests were handled.)
-
-Max Kellermann (8):
-  io_uring/io-wq: eliminate redundant io_work_get_acct() calls
-  io_uring/io-wq: add io_worker.acct pointer
-  io_uring/io-wq: move worker lists to struct io_wq_acct
-  io_uring/io-wq: cache work->flags in variable
-  io_uring/io-wq: do not use bogus hash value
-  io_uring/io-wq: pass io_wq to io_get_next_work()
-  io_uring: cache io_kiocb->flags in variable
-  io_uring: skip redundant poll wakeups
-
- include/linux/io_uring_types.h |  10 ++
- io_uring/io-wq.c               | 230 +++++++++++++++++++--------------
- io_uring/io-wq.h               |   7 +-
- io_uring/io_uring.c            |  63 +++++----
- io_uring/io_uring.h            |   2 +-
- 5 files changed, 187 insertions(+), 125 deletions(-)
-
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index 5d0928f37471..6d26f6f068af 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -903,9 +903,8 @@ static void io_run_cancel(struct io_wq_work *work, struct io_wq *wq)
+ 	} while (work);
+ }
+ 
+-static void io_wq_insert_work(struct io_wq *wq, struct io_wq_work *work)
++static void io_wq_insert_work(struct io_wq *wq, struct io_wq_acct *acct, struct io_wq_work *work)
+ {
+-	struct io_wq_acct *acct = io_work_get_acct(wq, work);
+ 	unsigned int hash;
+ 	struct io_wq_work *tail;
+ 
+@@ -951,7 +950,7 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+ 	}
+ 
+ 	raw_spin_lock(&acct->lock);
+-	io_wq_insert_work(wq, work);
++	io_wq_insert_work(wq, acct, work);
+ 	clear_bit(IO_ACCT_STALLED_BIT, &acct->flags);
+ 	raw_spin_unlock(&acct->lock);
+ 
+@@ -1021,10 +1020,10 @@ static bool io_wq_worker_cancel(struct io_worker *worker, void *data)
+ }
+ 
+ static inline void io_wq_remove_pending(struct io_wq *wq,
++					struct io_wq_acct *acct,
+ 					 struct io_wq_work *work,
+ 					 struct io_wq_work_node *prev)
+ {
+-	struct io_wq_acct *acct = io_work_get_acct(wq, work);
+ 	unsigned int hash = io_get_work_hash(work);
+ 	struct io_wq_work *prev_work = NULL;
+ 
+@@ -1051,7 +1050,7 @@ static bool io_acct_cancel_pending_work(struct io_wq *wq,
+ 		work = container_of(node, struct io_wq_work, list);
+ 		if (!match->fn(work, match->data))
+ 			continue;
+-		io_wq_remove_pending(wq, work, prev);
++		io_wq_remove_pending(wq, acct, work, prev);
+ 		raw_spin_unlock(&acct->lock);
+ 		io_run_cancel(work, wq);
+ 		match->nr_pending++;
 -- 
 2.45.2
 

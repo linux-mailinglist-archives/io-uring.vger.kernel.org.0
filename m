@@ -1,143 +1,157 @@
-Return-Path: <io-uring+bounces-6169-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6170-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DACA2134E
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 21:56:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F23AA213C9
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 23:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83180188474C
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 20:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7371888ED6
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 22:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C391E0489;
-	Tue, 28 Jan 2025 20:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC8C19755B;
+	Tue, 28 Jan 2025 22:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGRrlObM"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eSUBPTJ9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SR353Ox3";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eSUBPTJ9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SR353Ox3"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B84A1A841A
-	for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 20:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF18195B1A
+	for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 22:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738097772; cv=none; b=ks1qhZNVmNHuehGJEGl/eoOPsDMX/wy34peZIpR8r0yUXdKFAufqbOn1I13ttNXxEjMntziJ3Q+bA0Qdh21ST+ggutxQzSxepkiXqKHE7OEXefR5/o4lCye6Bh6GJ2ydcQYNjSAKMEcOp9gSt6tFsVGkVYjyqJAw2Ckn6wtdpXk=
+	t=1738101612; cv=none; b=E+c++3jSHG+8UzhaNZsbYvU4cL0BOmG1cK5IwQGEAwlqbrQEe2l/3T8sKGw9KxaOpeRx8Y/ySc/fCYpK2+CkiTFyEuTS+Y8H8my3BB5Se0zxteRPYp1aV1b46mvMBB2d3enAR2k3eS/94nfcPSyvrKTWEAflaf3ZkL37bZRcIm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738097772; c=relaxed/simple;
-	bh=FSQUUyxmIvTUpNUYonhod43TJ9bFkCPWt10RH2ijo2o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=du4hekiTUuS7JX8C9fG1eKEfLzGAA1OgYiN2Y2xBy5j8mE9b5PcD92dpjFyrpbuPuxnCM0QC9Ho8m9LKSeMw73ys57sMivmJLxIx8ueG+PF5NMUJgvzRBy/EuH6V8xenJB0odlgD4NUUWGBeT/IfQsnNyNluFmepbpA3WlImHcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGRrlObM; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dc0522475eso11937841a12.1
-        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 12:56:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738097768; x=1738702568; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iGgwEnXvp7tSCOvb4Gb+rPCh98jlMRpMv9IgYw6dreg=;
-        b=jGRrlObMkSLSLBqagx0ANnOaemXXA2aJez/S3bSj70SH6oXRjW7OqJesl9zQ+eil9i
-         pLwcxUoK2HLSNrCN3CwWyDESAqwYJAxkFUQXWMO9vp31wc/Juy7hKGALMaHj3EXvbskv
-         QbBGmP+SYMGdOSduV6X7yQjMAN8ASHpXD3r5VoGpU2ue5husfYTSkx5JdRIC6UmO+fOT
-         syeT9tbK4q6p32yNZvKp2gB3W3xfhkJWILiO73nZZkBuxLVaQQbY4kb+bP1XqWTn00EH
-         ligOYvo7k/I/qcQXJ4GOB8WUqUJkywNJ0X4or8IQt9K4THqb7wcrkKClKK3qMTWncTpg
-         Y7xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738097768; x=1738702568;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iGgwEnXvp7tSCOvb4Gb+rPCh98jlMRpMv9IgYw6dreg=;
-        b=k0L8s/mVDa3FqfE/ofNPSm0yydMO/IFdWcbhmQ4G2nI9q4GVTDiu1p4+4Usm3MlDWm
-         2DFkMoWutwI+pxjlXIx9iIT4DRnsD8wMlAhbpUR3lOEQefpztvz21cbesN8nR+XNBSBl
-         VCuMxb7pOUQWdayj85xxYJaGgOZCmhJLRXHbsl3JJtBdksdNPE0EVlY+uI1kbdKPEYv7
-         gX7/sXQMMw/z4Zn1fG01EBoSSQI0eqL386IAglZkirOn3Msez3G88Ku6kc1WoorkgnzJ
-         KT+asPcLni0WzRwKwlAbZsmy0GXJeKTw74PDTW9ycOiBsePH2Lh7kvSm7Y+do7GJDAeP
-         En4g==
-X-Gm-Message-State: AOJu0YzzhCDz2CmTGmHsu/kWgBjunTsmiB2jZYUIikquPDOvHwdVBFFZ
-	5BUYaTo7WVPHd6iNCCzDusHlt0jiRiaLgd3dZFC+uVhBRc0h6rmNiAsAoA==
-X-Gm-Gg: ASbGncs9Q0tJOJMGca8wU0zlB31Ua+5vR2JjuFhrJxaqNrgwnYad97waOdMov9in1x3
-	U2axZRZNT6y+Ykc9EtM1WceEGHLpwNwulXOpaV92DzO1hQ4hhflOtRVAgdQXFPlddkL2vHhgqXV
-	GjjHeH+aNY8RExqW8LKvzIx85pMPw3APxon8uB6f1I3+zc9YAZz60UgjozV7s5R91BFmVN0Vlj7
-	wm8sQmHbsZQVNv//+hXDDH2cg7vkIHUrUqhAoPA+Kjt1CyxNLxy+mTWnYsnIEv7lwT4Jb7QWND1
-	qp96I1Ks5F4Boq0OF1wmxTYR4Hzb
-X-Google-Smtp-Source: AGHT+IEaJgGHifGNITQK0+bBnVhDq4TcVjC7Ecrdz67a2fWnKhLjpIA0Pk5lWsrjVZiIh5QqnN4n6Q==
-X-Received: by 2002:a05:6402:4406:b0:5db:f317:98d7 with SMTP id 4fb4d7f45d1cf-5dc5efbdd51mr481720a12.6.1738097767589;
-        Tue, 28 Jan 2025 12:56:07 -0800 (PST)
-Received: from 127.0.0.1localhost ([148.252.145.92])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dc18619351sm7736949a12.5.2025.01.28.12.56.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2025 12:56:07 -0800 (PST)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com
-Subject: [PATCH 8/8] io_uring/rw: simplify io_rw_recycle()
-Date: Tue, 28 Jan 2025 20:56:16 +0000
-Message-ID: <14f83b112eb40078bea18e15d77a4f99fc981a44.1738087204.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <cover.1738087204.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1738101612; c=relaxed/simple;
+	bh=PZKWuVYSszWy2CvJHY7avE1267Q/of+QQhh3Klj6L1U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=U0EiYdQSn10AjqvgZ2i+Y73W7f4eLaMazoQTcsInjFp/hiIHxoCmoGy7I5KKysHluIqvk+PMC/z8WwWsG9urRe6XDmdSe9TfwsaTNybso/q9+qHkry/o3cB6komadaKVlBkaPX4M2f+dIVyVQVbfuKcudGt38ued38dUntzBHc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eSUBPTJ9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SR353Ox3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eSUBPTJ9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SR353Ox3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D0317218D6;
+	Tue, 28 Jan 2025 22:00:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1738101608; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zPH3bPIG3i45BD+kkHmEbvYMehvKo7na8uuxkl2gyq0=;
+	b=eSUBPTJ9XkpZricQ6OmeKhQUnwbYbSGDA219X9rrf8JJDZtX7q/qHJ1oPKEEZYVZAz49tt
+	TpbdoVWeoUTHsqA5WzD/9ek2inHClLpaHuEqza26U2nH1FfT/0EHzzmLp+CS7bqOL1t/hX
+	gjW2vHocQB0pBSPsS1eQ4YpkA8JV3uk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1738101608;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zPH3bPIG3i45BD+kkHmEbvYMehvKo7na8uuxkl2gyq0=;
+	b=SR353Ox3UhXoWyeOxbnRK3/ng2B1odMiUtmDESwOhSeZ9SZPm5ZjH78M/jEtKpt7TPD5Ug
+	VvJL4LLhXtNHjACQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1738101608; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zPH3bPIG3i45BD+kkHmEbvYMehvKo7na8uuxkl2gyq0=;
+	b=eSUBPTJ9XkpZricQ6OmeKhQUnwbYbSGDA219X9rrf8JJDZtX7q/qHJ1oPKEEZYVZAz49tt
+	TpbdoVWeoUTHsqA5WzD/9ek2inHClLpaHuEqza26U2nH1FfT/0EHzzmLp+CS7bqOL1t/hX
+	gjW2vHocQB0pBSPsS1eQ4YpkA8JV3uk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1738101608;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zPH3bPIG3i45BD+kkHmEbvYMehvKo7na8uuxkl2gyq0=;
+	b=SR353Ox3UhXoWyeOxbnRK3/ng2B1odMiUtmDESwOhSeZ9SZPm5ZjH78M/jEtKpt7TPD5Ug
+	VvJL4LLhXtNHjACQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 99CA913A60;
+	Tue, 28 Jan 2025 22:00:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id M7aaH2hTmWeTKQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 28 Jan 2025 22:00:08 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org
+Subject: Re: [PATCH 0/8] alloc cache and iovec assorted cleanups
+In-Reply-To: <cover.1738087204.git.asml.silence@gmail.com> (Pavel Begunkov's
+	message of "Tue, 28 Jan 2025 20:56:08 +0000")
 References: <cover.1738087204.git.asml.silence@gmail.com>
+Date: Tue, 28 Jan 2025 16:59:59 -0500
+Message-ID: <874j1ik3a8.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Instead of freeing iovecs in case of IO_URING_F_UNLOCKED in
-io_rw_recycle(), leave it be and rely on the core io_uring code to
-call io_readv_writev_cleanup() later. This way the iovec will get
-recycled and we can clean up io_rw_recycle() and kill
-io_rw_iovec_free().
+Pavel Begunkov <asml.silence@gmail.com> writes:
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/rw.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+> A bunch of patches cleaning allocation caches and various bits
+> related to io vectors.
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index c496f195aae2b..7aa1e4c9f64a3 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -146,23 +146,13 @@ static inline int io_import_iovec(int rw, struct io_kiocb *req,
- 	return 0;
- }
- 
--static void io_rw_iovec_free(struct io_async_rw *rw)
--{
--	if (rw->free_iovec) {
--		kfree(rw->free_iovec);
--		rw->free_iov_nr = 0;
--		rw->free_iovec = NULL;
--	}
--}
--
- static void io_rw_recycle(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_async_rw *rw = req->async_data;
- 
--	if (unlikely(issue_flags & IO_URING_F_UNLOCKED)) {
--		io_rw_iovec_free(rw);
-+	if (unlikely(issue_flags & IO_URING_F_UNLOCKED))
- 		return;
--	}
-+
- 	io_alloc_cache_kasan(&rw->free_iovec, &rw->free_iov_nr);
- 	if (io_alloc_cache_put(&req->ctx->rw_cache, rw)) {
- 		req->async_data = NULL;
-@@ -1310,6 +1300,6 @@ void io_rw_cache_free(const void *entry)
- 	struct io_async_rw *rw = (struct io_async_rw *) entry;
- 
- 	if (rw->free_iovec)
--		io_rw_iovec_free(rw);
-+		kfree(rw->free_iovec);
- 	kfree(rw);
- }
+Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
+
+>
+> Pavel Begunkov (8):
+>   io_uring: include all deps for alloc_cache.h
+>   io_uring: dont ifdef io_alloc_cache_kasan()
+>   io_uring: add alloc_cache.c
+>   io_uring/net: make io_net_vec_assign() return void
+>   io_uring/net: clean io_msg_copy_hdr()
+>   io_uring/net: extract io_send_select_buffer()
+>   io_uring: remove !KASAN guards from cache free
+>   io_uring/rw: simplify io_rw_recycle()
+>
+>  io_uring/Makefile      |   2 +-
+>  io_uring/alloc_cache.c |  44 +++++++++++++++++
+>  io_uring/alloc_cache.h |  60 +++++++----------------
+>  io_uring/net.c         | 105 +++++++++++++++++++++++------------------
+>  io_uring/rw.c          |  18 ++-----
+>  5 files changed, 123 insertions(+), 106 deletions(-)
+>  create mode 100644 io_uring/alloc_cache.c
+
 -- 
-2.47.1
-
+Gabriel Krisman Bertazi
 

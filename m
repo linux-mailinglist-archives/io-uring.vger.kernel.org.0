@@ -1,114 +1,141 @@
-Return-Path: <io-uring+bounces-6159-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6160-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B69A20BB9
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 15:07:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E554A20D51
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 16:43:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42D97163128
-	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 14:07:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86C68167DED
+	for <lists+io-uring@lfdr.de>; Tue, 28 Jan 2025 15:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9847A1A0B08;
-	Tue, 28 Jan 2025 14:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EAC1D6182;
+	Tue, 28 Jan 2025 15:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="uERtR2xS"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZzdR8vdI"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E47199FC9
-	for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 14:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E1E1D61A4
+	for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 15:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738073231; cv=none; b=fCVE//iLOhyu1yZ3are3YTnLKUO5MeG5Zf6il9nQKGSu3YIyEY3BZMHlFEAROorwDgq2te+a0zJgdlVWP9EcDeMieV+7SrQXvDPDARo9gt6vxJNrLdzgljWlDp1brPGtvIWs4fC1/bvkmGcRo3vnds3D8h+TFMmRPMGLwu/jxSc=
+	t=1738079006; cv=none; b=GEnAdSk+Ej29aluXzoMCC5nt79uGpO9gNpLINyjBPT1/DTtR9kRMgCxLnDWmLhbs22TKVWmzqX2ZYiHjFNGY0L43juYkbyTLq5U1IXNeesuq2H8yHcJGigrdjGEXZqPduohefQdmO36W0Rhw1wgZo2DRnDHK1WQmgsyCxHsvZiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738073231; c=relaxed/simple;
-	bh=gq2NWccl/XiAv9vrtcGToa+Sw6KkF7qE0pi4mz/eWUA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dXmlG5cUWKu6mKJ5LjerBuHPUCGKJEL65plZ5xUvcSIcFWUsDw1vTdhsNK+7MCcwjtU5jGss02wUAXulJX4+oQZxzjuaYVkTLTUtUjD2JD9jC4+HgTE0ej8ndLv/M8vQXjihMxB4D1Isxgq/N2Z2F2/4gbEbdA/l2Eb4JUJp90U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=uERtR2xS; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a7dd54af4bso12765365ab.2
-        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 06:07:07 -0800 (PST)
+	s=arc-20240116; t=1738079006; c=relaxed/simple;
+	bh=4CM+Y34LzyqTPbJa964bMKTZoegb6ZCbeVLJYvxkr2Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OMt+AABMPuVgu7ja5s1rp9eLS84Yh5NYyPLm0iPu7GsIbZ0f2vnK3d0oRfBQjVxiRBWBIYpAVVinACgPqtmNY8+3IgWwGUmgbMhg9iqPcSYFTJB3ZtzjJqzGBXpVvTOcsVZodRINwFeSS/c9F8ewctDNEojiQX+Su0l1OzcCsQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZzdR8vdI; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e549b0f8d57so9734990276.3
+        for <io-uring@vger.kernel.org>; Tue, 28 Jan 2025 07:43:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1738073226; x=1738678026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1738079001; x=1738683801; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b4dCPe6Bj7dBOwFNPRfSXyFqFuAX7t38ECheNdkI/Qc=;
-        b=uERtR2xS6jmnUAqJrCJP1hyZb2ftA81zdtHH46AKROeK4GmbaraTk0ww9OAp6DfrCf
-         x8QpWL7bcJ7Dm0O5K/EKBOdegI9s2Dvc8w4hHjb2Kr7EfPUuDAXE7bBMaLNic75NWrW4
-         LnUa6EdkSPfYybYlzZtKLEfAWEpwXTrrmkU7wmYUowZG9mH6BdikcnNw6twS5thsciHI
-         hMI7ioZfvwiLMe308POSmsq90CFEDqtqK/leVWiNku79LX4p0ByrMgmH2DgWX5PLONNC
-         63giHE0SRrpumHQL4h8qxBwJ2zxJGRfbJ6sVDGK5vKXiUXJDI2cR8XywzwprzF1sLiPw
-         M99g==
+        bh=4CM+Y34LzyqTPbJa964bMKTZoegb6ZCbeVLJYvxkr2Y=;
+        b=ZzdR8vdIiohnoZ4hKdRsx8vjUSASU/72vdBDURxTPxW6Y5y+xqJe1XFJv37MN3/RSh
+         1N9DWACiMe42Ssr+6RyacQYB0mKZF7r9X4dw06gLm3TJ5kXU+QA6Pwxa8XDIazhEp8C0
+         9uU7YdXy5cLi0N5EPxtYGd6vErWsFg/mLsK5lwXF/VP7H3vmwwe2R2U45ytaFkUMk6Za
+         lp6jed/BVTI9FjvFUI0MN7HYChc3iERhjHp52qu+iW++/bUjLH+wfDW2Jw7AJF6Rr/MJ
+         y67AxGiMWpozGojGCejMex/pBvJsfQOTerwdd08tOqwT12ksmB/+EE0jtUDQTB2nY1qi
+         QFbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738073226; x=1738678026;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1738079001; x=1738683801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b4dCPe6Bj7dBOwFNPRfSXyFqFuAX7t38ECheNdkI/Qc=;
-        b=VOqs/9h85gB9CjQiXe9LzGwFcJsudjYjpa5pV40cLViyTvmkJVSJpgec15IxiqW85y
-         RH/mQCUXom1sAfoUywPAz0w8F+1QB0vAPaR6RlyAI9talwQbPw3amhQsb/sKDZrYDjCI
-         vZg1TRu0sCki6YuoZoqAwrl/x9GX19+yHYtWN1CAGuIfRs8K/jCmcquhcaNRKOaGXk9e
-         jeZLLE9HH0gKDUzDb3h4GrWbjnpkhY59gj6B9le58dczYfkFAzI4V01ZRCtXtPBHc6qu
-         CIG88rbi64PAPAlUWouQD4CuwrdNsOtdEsxCZS868HhuAfkAJyFTdaxQp4eHTSSsA0mR
-         cHVQ==
-X-Gm-Message-State: AOJu0YwmgoYb06+WmhTBqfs7yP785KemtCkGnYIA4cCd0Vx7xxiMKblj
-	RONvv5DWcgBIjqdHFAPhjhspVN/+nMY+XDum8z1fO+xf+DmCF78nPEsQPHMLTQYuVsV7I6wmSYh
-	z
-X-Gm-Gg: ASbGnct2vSemxcf+1ayBEl/T53/HAxZqLZxxRkoyGpIYf+eX0WeI0dvXkRTZuwtCA/7
-	7zZAd2MXm7XwtVnKbUtC66KpirCqQwimrjKf9J+M/hLAQGLSbHpTY9kX+PO4LWGjrNWPlq56qXk
-	cCw03PzjjV91udKnuXtAEJjCFkwecUvKuS9OBuqcD3VhBtxLwbU4xBBx1rk4mojH1vM5Jb1Y7ck
-	S9gGJ0zCXzJiXl2AeghUhzlTWTS+iJ8jnXf/7ltfKxLmZhvbmKTJpeekZQARMXBBxjk5sHFDsIM
-	9tEATw==
-X-Google-Smtp-Source: AGHT+IGE54K6eo8yCsuqUpicJqTzWYuG3QmdfpLl9fAKDchKm8dxlwtlDeqdDu/BT3FotpYnB9y64w==
-X-Received: by 2002:a05:6e02:148a:b0:3cf:cf25:ec83 with SMTP id e9e14a558f8ab-3cfcf25ecdemr118615375ab.11.1738073225933;
-        Tue, 28 Jan 2025 06:07:05 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec1da2de7esm3139366173.32.2025.01.28.06.07.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2025 06:07:05 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>
-Cc: Muhammad Ramdhan <ramdhan@starlabs.sg>, 
- Bing-Jhong Billy Jheng <billy@starlabs.sg>, 
- Jacob Soo <jacob.soo@starlabs.sg>
-In-Reply-To: <1bfc9990fe435f1fc6152ca9efeba5eb3e68339c.1738025570.git.asml.silence@gmail.com>
-References: <1bfc9990fe435f1fc6152ca9efeba5eb3e68339c.1738025570.git.asml.silence@gmail.com>
-Subject: Re: [PATCH 1/1] io_uring: fix multishots with selected buffers
-Message-Id: <173807322480.85622.1680325412012201454.b4-ty@kernel.dk>
-Date: Tue, 28 Jan 2025 07:07:04 -0700
+        bh=4CM+Y34LzyqTPbJa964bMKTZoegb6ZCbeVLJYvxkr2Y=;
+        b=w1jaIsZL1wtG5LJK6zgDFdychQB1eqcs7Er2Feb46VOyI1OpB95pNPUdt5FEdfRBRb
+         Fjs2d6y2918bhEYI8XDRKxPYAIy74+0wmvqd5wYd7JCFCnfB/vZWumTNdwLgaedb9iUd
+         GApFFy+SvaI4TgXqtCQ2Ft0EK3fHzU1+EU+xvVP1cTd/cPhCo7w39fJhXdwvkK1vvYBc
+         449raKaS1oLG7sFT2D9FndKs7xNuSyB2Mln80BtSlN9V5J/Zamrh7SF4qwoefJYXmX1C
+         uIXfEoCOUm7GUFlUaEXJj/Bqb8ASZh/hnPm1e9fBUvyIafPeT3U1yFT7XcZmiOcQNXSY
+         f26g==
+X-Forwarded-Encrypted: i=1; AJvYcCU5LR/8AO3lDh2sT4/i6r8Ji99tsbkyP4Y/Nbj0gHrNe2OESp5cQdaAOOCfmi/W6pZpHZpk8iMtjg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwkhKzS7BObyvVkLDIjE9O4wjnooWElAXVfPYYOApBhX9f0xOO
+	q/vN8Zn1B9cxuU69pcm0wwwrvQFNGautgSnAKgqz0gC5B/ngNoXS7T/IkSmtpwfwGwu854+68YP
+	v8QHi102qwbvJpIdOZyn+F2fOo/mbgK3Bbw7c
+X-Gm-Gg: ASbGncv5UO1miW3EMQTpDEApilPdo4yK3yyteY6Vr+FGkDrcM2gHxTKxa697qy9tvkD
+	eChhAgpCZWBPz8CBA6GIs7d6pV9GPTPdszzeb4msZrIe0u6lbpcudWVNTBsyxYpg+XfYCxTA=
+X-Google-Smtp-Source: AGHT+IGuLqrmdoXiE8apV7tzhOJZ5Xm1OF/NxWm8Kjkh7RMoG05FR1MdO9WMx2ebniwyt0o5rEC0Jv+xP432BtVJDY0=
+X-Received: by 2002:a05:690c:4d02:b0:6ef:6646:b50a with SMTP id
+ 00721157ae682-6f6eb6b2881mr361409457b3.20.1738079001445; Tue, 28 Jan 2025
+ 07:43:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-14bd6
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+ <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
+ <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
+ <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
+ <87jzag9ugx.fsf@intel.com> <Z5epb86xkHQ3BLhp@casper.infradead.org> <u2fwibsnbfvulxj6adigla6geiafh2vuve4hcyo4vmeytwjl7p@oz6xonrq5225>
+In-Reply-To: <u2fwibsnbfvulxj6adigla6geiafh2vuve4hcyo4vmeytwjl7p@oz6xonrq5225>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 28 Jan 2025 10:43:10 -0500
+X-Gm-Features: AWEUYZkHRaUuCTQsu1U9C5jhigmIE9c2_8OmkE_i2Qv7ILXtAaTfDLC5EcLBZNk
+Message-ID: <CAHC9VhQnB_bsQaezBfAcA0bE7Zoc99QXrvO1qjpHA-J8+_doYg@mail.gmail.com>
+Subject: Re: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where applicable
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Jani Nikula <jani.nikula@intel.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-serial@vger.kernel.org, xen-devel@lists.xenproject.org, 
+	linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev, 
+	codalist@coda.cs.cmu.edu, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
+	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, 
+	Song Liu <song@kernel.org>, "Steven Rostedt (Google)" <rostedt@goodmis.org>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Corey Minyard <cminyard@mvista.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jan 28, 2025 at 6:22=E2=80=AFAM Joel Granados <joel.granados@kernel=
+.org> wrote:
+> On Mon, Jan 27, 2025 at 03:42:39PM +0000, Matthew Wilcox wrote:
+> > On Mon, Jan 27, 2025 at 04:55:58PM +0200, Jani Nikula wrote:
+> > > You could have static const within functions too. You get the rodata
+> > > protection and function local scope, best of both worlds?
+> >
+> > timer_active is on the stack, so it can't be static const.
+> >
+> > Does this really need to be cc'd to such a wide distribution list?
+> That is a very good question. I removed 160 people from the original
+> e-mail and left the ones that where previously involved with this patch
+> and left all the lists for good measure. But it seems I can reduce it
+> even more.
+>
+> How about this: For these treewide efforts I just leave the people that
+> are/were involved in the series and add two lists: linux-kernel and
+> linux-hardening.
+>
+> Unless someone screams, I'll try this out on my next treewide.
 
-On Tue, 28 Jan 2025 00:55:24 +0000, Pavel Begunkov wrote:
-> We do io_kbuf_recycle() when arming a poll but every iteration of a
-> multishot can grab more buffers, which is why we need to flush the kbuf
-> ring state before continuing with waiting.
-> 
-> 
+I'm not screaming about it :) but anything that touches the LSM,
+SELinux, or audit code (or matches the regex in MAINTAINERS) I would
+prefer to see on the associated mailing list.
 
-Applied, thanks!
-
-[1/1] io_uring: fix multishots with selected buffers
-      commit: d63b0e8a628e62ca85a0f7915230186bb92f8bb4
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+--=20
+paul-moore.com
 

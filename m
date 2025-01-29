@@ -1,128 +1,141 @@
-Return-Path: <io-uring+bounces-6174-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6175-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9954A2194B
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2025 09:49:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC9CA222AD
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2025 18:19:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 015A3188600C
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2025 08:49:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B36B16489B
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2025 17:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389A919F116;
-	Wed, 29 Jan 2025 08:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE841DF728;
+	Wed, 29 Jan 2025 17:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+6QRneb"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="p3i6sA6c"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19F62D627;
-	Wed, 29 Jan 2025 08:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891211DF739
+	for <io-uring@vger.kernel.org>; Wed, 29 Jan 2025 17:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738140560; cv=none; b=dMzd52IIQTon1xJXbCdXqpfMDcWb2IeXuH9R1SgKanZxacguMprU/Hg7Ll5XYR4ivg3F+1Wv4+aQokMcFTAhcDq4d+nCOB+GPhKIr9OyAgUzDX1zwvcylPdEDf6K7+ZZGzDaSeP8oSXRTqSftjkJMNnYcr8F1auxuXh1eYeMYL8=
+	t=1738171141; cv=none; b=L3/KsHcYRYw28NQL93nbJhOrmngVBQY7K9ajdN1MkjXMK9pQGSRzL0+8cw5HN+jj0SRoXsPsII34Gh6WyD4GNrEz+O7Rkd2N0p1Z3NuADkRfxnn600Hj/EilqsCaT3SNVq+e6KLZGYbyK9PS4aLHroK+OHqi9w5I5b9riFcf8Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738140560; c=relaxed/simple;
-	bh=bkecGghn49Q0kcBr4/Q4RAYEqTU2lzStxg+kMBkUviM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EF0OhxvyF0kaEvrafy1BX3zzWeBuyJSo+qySUHfcv1VSkqFwetU/NmqcRTdUSpAfFwY+MEF00yXvJWaX+n8YqoVny+ir4VpKtsuf6BjmHCrLXTyravxLj1Ov8tO5WrOXCEBSoXa9YI4i3vBsifIaEYj1uHKWsH044/ity2GPCKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+6QRneb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAFA1C4CED3;
-	Wed, 29 Jan 2025 08:49:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738140558;
-	bh=bkecGghn49Q0kcBr4/Q4RAYEqTU2lzStxg+kMBkUviM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D+6QRnebTmdCsTn/fBIyawZ8F2h5FOi1VkBceKjrJE9gQqYhsE4MpI+DUnmOyvn9r
-	 jy2STn2XFJrPEPFrh+vO/ZWYbctxdvY6UR3Ry6YZK+y8a1MhcK6ynlBs1p1BMMkJ1P
-	 w6gLTDQPv35AYJJgnh4TzBlS6e9ascDPFne+p1YDjEpGVHG5PR2AxRH9J1o9Q9BPKi
-	 anvTB+Oa86UvplOCcaBDT4qhHCCSJO/P11ip4o+2DBjUNcnkNIz/KxsEnezLq+wofc
-	 pmlKCTkKHhEdUE5jBQ13DTAnVV4ZlV/QW5dr1RzqeBZB57C+fkYnuuFh6jqnxMpijz
-	 QxNX1fm0X2YKQ==
-Date: Wed, 29 Jan 2025 09:49:13 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Jani Nikula <jani.nikula@intel.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, 
-	xen-devel@lists.xenproject.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
-	netfs@lists.linux.dev, codalist@coda.cs.cmu.edu, linux-mm@kvack.org, 
-	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
-	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
-	keyrings@vger.kernel.org, Song Liu <song@kernel.org>, 
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Corey Minyard <cminyard@mvista.com>
-Subject: Re: Re: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables
- where applicable
-Message-ID: <umk5gfo7iq7krppvqsal57hlzds26bdqd3g7kccjzuudjikdws@k2oknd6zx6g7>
-References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
- <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
- <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
- <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
- <87jzag9ugx.fsf@intel.com>
- <Z5epb86xkHQ3BLhp@casper.infradead.org>
- <u2fwibsnbfvulxj6adigla6geiafh2vuve4hcyo4vmeytwjl7p@oz6xonrq5225>
- <CAHC9VhQnB_bsQaezBfAcA0bE7Zoc99QXrvO1qjpHA-J8+_doYg@mail.gmail.com>
+	s=arc-20240116; t=1738171141; c=relaxed/simple;
+	bh=Qpo6BXmmCgcP1UMtDbKBtggpRFeozLB6csiR+6/ekDg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BYoceyZ8AR34Az8C/74nGHA1Ae1KS3l8/xGEbhetmJBnWuRMn8mU+hHFWfkfU5oWQlzuTCoa8hJTqy7tRzjKNSFa1bxnZJtW0+rIHyYztPnW5s1myL2rDsD8fxHlqvFNLHAe0CCbup1RmeiV67WWg0knrCMhQM3zdCeMODUiVdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=p3i6sA6c; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3cf880d90bdso25878835ab.3
+        for <io-uring@vger.kernel.org>; Wed, 29 Jan 2025 09:18:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1738171138; x=1738775938; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4YrXDkFbxkCXefK8GrhGms9vWROL/OmV/z1ZfdXAhr4=;
+        b=p3i6sA6cWNwwCBfAH7j1HHUGQIXiI3pp3FDstczWkSoOoyCPEg5oaLLc4DZ/jz1ph5
+         xGEqB/hIsKpRZBlRF5egjtDy3kpxymJoflFwB8Y+lZB4kge2PkiON4LTfImMu6XJJrBc
+         91nI2ohIpfvSL4Ih/uJL9V+JSM5XPuaShOGvhv9kZirIBtQMo/Xtu7b6a5Or0P54KtON
+         seWBYhROOVzJwWe87SoJGWqkL0UtbQcPbGuQ1kvZaL4F+6wvWPWy/OlkEq151pE5f6Fk
+         4v87Xe7w62W+6R6C3qjaw0r81iRK8P1puLiimCNpXSTjvlPA0CMzDHW2XuRBO6oS5SIW
+         oCpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738171138; x=1738775938;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4YrXDkFbxkCXefK8GrhGms9vWROL/OmV/z1ZfdXAhr4=;
+        b=rbGWDCQcwkMxj6v6WCbZXcrmVJXDbCYupWNJeLiZM0VxAwg7TnXdo6GPV9udHS+5AT
+         yB0CpBs26X8yYiXACOj5qDNIMN6E/fSu3bw4ic1/zk3ON+PdUcB1f3w68/ZfjkH2ARZP
+         nYBggn32zEn42nAV4a/Ceqofuaz5GesFGGhwknYNA8v1/fv19LHx2f8x+vzyla8/2e90
+         4i7GQx1Je7aO+yLF2SmslghaOGfBsmEacxK2lfp93lTJr7sXfYueM/BD0VW/Y8WXrVUV
+         BUsqWG5ZgnONMwd2XhCLBuIB3+tMKWfcC6yIlQ4ZJT0BKyEJAwSBBMWUmJvS88Zuo8gi
+         2bjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVG77aZseReIVHE6PobrjNPa4CtZu+L+0IHXVJIDomgi6muxwrn8Bi1ngESmFjqZWGR+jL2IXAzew==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzcdkbuNftXUrYcZks7+eXPHHHcmzUcrFIIp6IpRBwSwG3JpkR
+	q651CL8w+lepB+/aiBDNk5QsMjyt8rkKC4+5zY4QHSNhcMxebRSlTn/McwG1i+Bmm7WZLACJeGp
+	G
+X-Gm-Gg: ASbGncvHAvk/48JyIcKzPXu6S3y3re2LcTadcAkLDST46IURoX6upgdmO58PbjBQteb
+	Jerw0ROaJ7+fTi720z8uVlceYxjyvCYwxqSqLaAPiLIVgwG88Wq8V8UDfoiJRBJ8aWlpb0IpAzj
+	Oh4JvjCkSqEwtcbU1zy8DyT/l5Sat08HJbgs3/GW69+sNo59zEttjxq/uCaJBPQQYVgTYOZoJfq
+	iXwJ/Y4V5ePXUComedecxevoJkqcvhPxb1evi3dSpag/9fmw1rBenCJ0JJ3kkIbE+YG6yPV0DyU
+	Ycgs3xXIuZE=
+X-Google-Smtp-Source: AGHT+IHzD6Z9zQTAbpRMyRN6aKAFeOBmR4VIDzNJqwIftFhVzzSg0ywN1LPugVYxNQ//Xxd7QaB03g==
+X-Received: by 2002:a05:6e02:2611:b0:3cf:c9ad:46a5 with SMTP id e9e14a558f8ab-3cffe470194mr33172525ab.16.1738171138583;
+        Wed, 29 Jan 2025 09:18:58 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3cfc743439asm38294065ab.20.2025.01.29.09.18.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jan 2025 09:18:57 -0800 (PST)
+Message-ID: <7f046e6e-bb9d-4e72-9683-2cdfeabf51bc@kernel.dk>
+Date: Wed, 29 Jan 2025 10:18:56 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQnB_bsQaezBfAcA0bE7Zoc99QXrvO1qjpHA-J8+_doYg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/8] Various io_uring micro-optimizations (reducing lock
+ contention)
+To: Max Kellermann <max.kellermann@ionos.com>, asml.silence@gmail.com,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250128133927.3989681-1-max.kellermann@ionos.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250128133927.3989681-1-max.kellermann@ionos.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jan 28, 2025 at 10:43:10AM -0500, Paul Moore wrote:
-> On Tue, Jan 28, 2025 at 6:22 AM Joel Granados <joel.granados@kernel.org> wrote:
-> > On Mon, Jan 27, 2025 at 03:42:39PM +0000, Matthew Wilcox wrote:
-> > > On Mon, Jan 27, 2025 at 04:55:58PM +0200, Jani Nikula wrote:
-> > > > You could have static const within functions too. You get the rodata
-> > > > protection and function local scope, best of both worlds?
-> > >
-> > > timer_active is on the stack, so it can't be static const.
-> > >
-> > > Does this really need to be cc'd to such a wide distribution list?
-> > That is a very good question. I removed 160 people from the original
-> > e-mail and left the ones that where previously involved with this patch
-> > and left all the lists for good measure. But it seems I can reduce it
-> > even more.
-> >
-> > How about this: For these treewide efforts I just leave the people that
-> > are/were involved in the series and add two lists: linux-kernel and
-> > linux-hardening.
-> >
-> > Unless someone screams, I'll try this out on my next treewide.
+On 1/28/25 6:39 AM, Max Kellermann wrote:
+> While optimizing my io_uring-based web server, I found that the kernel
+> spends 35% of the CPU time waiting for `io_wq_acct.lock`.  This patch
+> set reduces contention of this lock, though I believe much more should
+> be done in order to allow more worker concurrency.
 > 
-> I'm not screaming about it :) but anything that touches the LSM,
-I'll consider it as a scream :) So I'll keep my previous approach of
-leaving only personal mails that are involved, but leaving all the lists
-that b4 suggests.
+> I measured these patches with my HTTP server (serving static files and
+> running a tiny PHP script) and with a micro-benchmark that submits
+> millions of `IORING_OP_NOP` entries (with `IOSQE_ASYNC` to force
+> offloading the operation to a worker, so this offload overhead can be
+> measured).
+> 
+> Some of the optimizations eliminate memory accesses, e.g. by passing
+> values that are already known to (inlined) functions and by caching
+> values in local variables.  These are useful optimizations, but they
+> are too small to measure them in a benchmark (too much noise).
+> 
+> Some of the patches have a measurable effect and they contain
+> benchmark numbers that I could reproduce in repeated runs, despite the
+> noise.
+> 
+> I'm not confident about the correctness of the last patch ("io_uring:
+> skip redundant poll wakeups").  This seemed like low-hanging fruit, so
+> low that it seemed suspicious to me.  If this is a useful
+> optimization, the idea could probably be ported to other wait_queue
+> users, or even into the wait_queue library.  What I'm not confident
+> about is whether the optimization is valid or whether it may miss
+> wakeups, leading to stalls.  Please advise!
 
-> SELinux, or audit code (or matches the regex in MAINTAINERS) I would
-> prefer to see on the associated mailing list.
+That last patch is the only one that needs a bit more checking, so I'd
+suggest we just ignore that one for now. We're in the middle of the
+merge window anyway, so all of this would have to wait for the 6.15
+merge window anyway - iow, plenty of time.
 
-General comment sent to the void:
-It is tricky to know exactly who wants to be informed of all this and
-who thinks its useless. I think that if we want more focus it should
-come from automated tools like b4. Maybe some string in MAINTAINERS
-stating that the list should not be used in cases of tree-wide commits?
+The other patches look pretty straight forward to me. Only thing that
+has me puzzled a bit is why you have so much io-wq activity with your
+application, in general I'd expect 0 activity there. But Then I saw the
+forced ASYNC flag, and it makes sense. In general, forcing that isn't a
+great idea, but for a benchmark for io-wq it certainly makes sense.
 
-Best
+I'll apply 1-7 once 6.14-rc1 is out and I can kick off a
+for-6.15/io_uring branch. Thanks!
 
 -- 
-
-Joel Granados
+Jens Axboe
 

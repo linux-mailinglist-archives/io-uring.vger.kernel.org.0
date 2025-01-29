@@ -1,104 +1,111 @@
-Return-Path: <io-uring+bounces-6181-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6180-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C95A2246A
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2025 20:11:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C51A22468
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2025 20:11:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9773A2B99
-	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2025 19:11:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D769C1887E71
+	for <lists+io-uring@lfdr.de>; Wed, 29 Jan 2025 19:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794F31E2606;
-	Wed, 29 Jan 2025 19:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2653A1E1C1F;
+	Wed, 29 Jan 2025 19:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="aO79BLrK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQ+AuUaY"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270401E1C1F
-	for <io-uring@vger.kernel.org>; Wed, 29 Jan 2025 19:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724AB194089;
+	Wed, 29 Jan 2025 19:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738177893; cv=none; b=RdqfyrXiYGeAfBicrbrqkNA1KWgY/Ik75KYrpzMHpcosiIUs5tlj2T8GwPXjjuLxiawud9xg+P3lMaRginM/aMC+uKd/OU8VRqdr3cFYs0Q1CV1FXbhjrGKjJ7k59o3RsWR1ckyIHJZqUnMk17DC6YcwRDOwwaD4VsBWZAgDORA=
+	t=1738177869; cv=none; b=dh/EJ0Ij2Bi7tilPpcVpXdsoURu3QIM9ZzRWgtAgGMmtq3gUFHuZJNDlwgy38PAbbeH3prIyoyCcC+/KgwGNoGAYepNjXklJ2NNMCikm/8NRMhxpFJQ1H60EyjCXrqvFWfmr2O9fQ0NL5SJN+RcAn9hR2bDt14wlbSowKXjG9BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738177893; c=relaxed/simple;
-	bh=GhlIZMqOwR1HkQLXtngsck0tPKlOdv4q2Zj0KZS+n1w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FnBZEMhGlAGuKeUSNcrlutRvyNjSiazbHxd0/6N3T8HAXQupQyzeOC8fMl9li+/HJ+hJO5uFjTw67F6gDnLwnte7FDK2ADXamGahXHBk+MXRTrdoarAtcs80AgSakeuw48OO5uJXfliZ7RoABP9mTimEOy04gckZkwu6mg8g6zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=aO79BLrK; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab68a4ab074so8308266b.0
-        for <io-uring@vger.kernel.org>; Wed, 29 Jan 2025 11:11:30 -0800 (PST)
+	s=arc-20240116; t=1738177869; c=relaxed/simple;
+	bh=Z3hEyDlfLsij0qd9ZTKWy2lWob92wfkk08MbVtVNmLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NFvUtIotEEv1OngWuOmsmKJsft6VBLrXGhiwYzIR9hBE3i53nUo8aLnKd2V1jgPBntHDby8OH9Rpf5Xc8rPHVTkWuim3fj9a4mmaYybWbKmx3qmNw3wxQ/ZC2IuTuKEGuDxkwPbXxLnqyFqio92eIKeCp6o+hH+tDlWkCriYWhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQ+AuUaY; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43625c4a50dso49129285e9.0;
+        Wed, 29 Jan 2025 11:11:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1738177889; x=1738782689; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GhlIZMqOwR1HkQLXtngsck0tPKlOdv4q2Zj0KZS+n1w=;
-        b=aO79BLrK6bDQp/LUQK8713J+ND8yGLewCXZUowQNDQxa9MSvwRw0IUyHNiNe1EIPch
-         pdhlUMsI1lLMJLTPKoqK4nA6HYijYOND+7FqTREnRSajvWiBCC4tVdvZMpokzsAKAJyi
-         7KZgUNEekrf4xhbMQzZ8rHEj4fTxLuQMl4lVKZYXKf3tFcSIV/k+pY2wj9d7JxII4sG3
-         xc9kEqOkkXehTnihAGXzKrG14pA9/BaxKZiMu8wA+wgRog5X0ntC7RbNKI7BNJGByUb7
-         zAB+RY3EtgbznJPJTEYzBL0fH8hNV9udnc+r8uIblBNI+QZjmyfQRTzOoe8q0EzaO0cy
-         XxoQ==
+        d=gmail.com; s=20230601; t=1738177866; x=1738782666; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=QgeY7iYAvB41Lp1Ji64FMn5cPOZfexlcQFJUwtwrKjg=;
+        b=CQ+AuUaYk8QHDi1oyZLuU2xXhsMmESw/XuZ9W5C5HNO7sTje/Vx+YWlK4vVXmfrcc6
+         jdAecKI4Mu9KZzlkKb69fhpg2FRtsFi/4SK5f4LBY8ZC53zPO1WfgUaGu0ViE3cCpGNs
+         Sfww4KaiQ79fKCH3kXKMHoU6XN7qPkkQ64dmSHmB8kDrAMiRIeJeeD1E/BC0DbBW8Vxp
+         G+mEiwQFudf4cmVhYN/x90jlhAp86E3BA0qmH8axyVjcxzuyaij+uWHQJJkM0+KVektU
+         SMAcORL2qKxaJQtMOu3af5OUlV8O2ejZ344EFS7tskW7CpSt5YByowfMz85BL6mcv8hS
+         /asw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738177889; x=1738782689;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GhlIZMqOwR1HkQLXtngsck0tPKlOdv4q2Zj0KZS+n1w=;
-        b=QyR54WKULJPZjDbeyN1FQE5Xs37QB/frRLyZgW+3iO2tY4lQ9xZnXsQWkLze9eW6rA
-         0trXEL2U0s3MlxLX9NO/rpOVyX9khzmT8D2z8txL6eEWqkNfe6C3fD4O5ygRGt0/pe/U
-         PhXcXwGxrrKbuAqY+TZnr614Xqj3wWLe5C/4UA3euuLfneQ0YflzOJVzs78kVRfeZOqk
-         POlLdY7MRded9lDySXLNIDiScTmuWi970vHPGlI5C/7wLosRnJUSdLbkkpEGgkU956v5
-         l5Bll9bDoXfEI1mArRreECQNhgBQJEnxNPj4mGM8Rt1/+iSeL2I0cyRXGnozV0JM3n3w
-         hcVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmEWlTAjYLcCwASRi6OmW6DaohZTPGgn1c2hOioPMqpk/u6fC1UxQ+hb8TysECmXLqTAuCS/HyGQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwtkGOi8/Qn4MtKfjm2sE99hRVyieLPZg4y5YASdkeSTuO4KVq
-	1vXYJ/u+VqeJjgPY+lD2omilp8nSxSOGT3EopRcM7fYgdt/aEtffPMzn7Tt2/zKacqXP/yVNtkw
-	hcK1tHqVcnweaqSe98Lno2gqFDxUV4Fmd7SpPQGFoPvwzx5QZdDek5Q==
-X-Gm-Gg: ASbGncuz5QlcBWbYxebPtcfXscFLzhMjXhheDJ98H7AfAT0KcknOKWvTmu4lSAtIbpQ
-	9RFPla7wP1gX5coQ2A69Oq28oPKRyyqDh7jBcywiPw/CDGvClomLzrbz4/H5FQHPDZOxOTPFtTU
-	tFTvgK9U9Gkfg2y13okYMCIIccWQ==
-X-Google-Smtp-Source: AGHT+IE219ZwdyYxwg9UGBTR/PKOr2GHzNh2WNdhnHDSJJCT1n3/BOB/tMcF5dlhHm1Q++2IGQ4hA9rQdGrBzYdnw0w=
-X-Received: by 2002:a05:6402:3511:b0:5d0:81f5:a398 with SMTP id
- 4fb4d7f45d1cf-5dc5efa8b65mr8934946a12.1.1738177889464; Wed, 29 Jan 2025
- 11:11:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738177866; x=1738782666;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QgeY7iYAvB41Lp1Ji64FMn5cPOZfexlcQFJUwtwrKjg=;
+        b=aa15EiCeeHcu1zBK8HrE6Rjl3O9yc1JiZrPveka2STKSHNlQY/TJdq3DbmVXejsr5A
+         GFENC8AiOWCm8Xi5g9pmSwctk5SE4rzS2hPujFP4tXuvOisB7Jpbh21lsyeKaJ4nvv7F
+         a2sg1kxdznw1JdKNX7YHhfJ8NsKOkbxgtvRWpzkDPt1qb55j6TSJTBOlxFPe9JceFSA9
+         wY2o/zI71prxLvvP/PFyvrZBlWoWffSE9jqqMux/22Qq/VOdf8r2jEMblSGll2zpggT0
+         xGsOKkkko/DUinpLXV+oqrzzQV7vALFHOrdP7ZmsqgGg0VvoDGzi0C6338PRK2TjfxUW
+         bRlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXncrHiVfzSa0oMn9OnFMaKPa6ELYzIqbsXadOTUQuZsalZd/cT/ZJ6bv2+ZcoQ+PFGHHexJqOhxMsaoER@vger.kernel.org, AJvYcCVNwOHSLWV2NU7D3JaOfNYd8Fa0PtDKI0MtJLHJJEXCjeOfHERvEzc/pGVnLcbeHV2spwHqz17Hcw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZC6Fw53Gm9wgU5DWypImMabfavU7NhNCPuK74yUHpbupP9v5y
+	2CuhKYQdMWH6ArUvMh5+ivW6tM8bgFdISgOb/02rkAlfpRaPDJ6ehSMOeA==
+X-Gm-Gg: ASbGncuCPTXzvhC+cX4OxGN9V0c7MptrnRnNhGMevKL/QlB2ZrDkSxCAyYeE8CRR7/f
+	/9aM77Acuv20oZ/NcER98CNQuuZPUdnwHfXoOqtfgbTRDK2eiwBC+aoUfpjB04Frh69dDVOtGWE
+	YKbm1RYxJXjMM6VkgCzPoIjhsCBMkcz65psqSNJ3pKm7kPah4fzXW0lePX1RBZnPN5VDPVKlLnm
+	JQlvuDeESQ76tXg0KeL6FWnCv90KHhcQ6DUUOmws8Ork5zIWzASZSts2YEbZmoM0UYwlHpnVcaA
+	3RDLhVbAW+uFsjl0XRvA2TGZ1Q==
+X-Google-Smtp-Source: AGHT+IEwAcbssK88/hcC6plD/ZBGatEP/2v+f8dosmhfagc3cV7z+G1s72FHIfFXsaFedr+LdrEIcQ==
+X-Received: by 2002:a05:6000:1faa:b0:38a:9f27:838c with SMTP id ffacd0b85a97d-38c520a0fd9mr3506850f8f.55.1738177865531;
+        Wed, 29 Jan 2025 11:11:05 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.147.217])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438dcc2e239sm31894565e9.18.2025.01.29.11.11.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jan 2025 11:11:04 -0800 (PST)
+Message-ID: <a7733b94-c7c0-4e95-975d-e45562d54f3f@gmail.com>
+Date: Wed, 29 Jan 2025 19:11:23 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] io_uring: cache io_kiocb->flags in variable
+To: Max Kellermann <max.kellermann@ionos.com>, axboe@kernel.dk,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250128133927.3989681-1-max.kellermann@ionos.com>
- <20250128133927.3989681-5-max.kellermann@ionos.com> <856ed55d-b07b-499c-b340-2efa70c73f7a@gmail.com>
-In-Reply-To: <856ed55d-b07b-499c-b340-2efa70c73f7a@gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 29 Jan 2025 20:11:17 +0100
-X-Gm-Features: AWEUYZlW_MDfPCAWAmFfh5_6BXOC71Ep2fITVNb9uw3ezdU1iUJLGAdCwxk2vGA
-Message-ID: <CAKPOu+-Mfx9q79nin7tGi1Rr4qGGY=y-2OhuP80U=7EtRpfBdg@mail.gmail.com>
-Subject: Re: [PATCH 4/8] io_uring/io-wq: cache work->flags in variable
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <20250128133927.3989681-8-max.kellermann@ionos.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250128133927.3989681-8-max.kellermann@ionos.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jan 29, 2025 at 7:56=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
-com> wrote:
-> What architecture are you running? I don't get why the reads
-> are expensive while it's relaxed and there shouldn't even be
-> any contention. It doesn't even need to be atomics, we still
-> should be able to convert int back to plain ints.
+On 1/28/25 13:39, Max Kellermann wrote:
+> This eliminates several redundant reads, some of which probably cannot
+> be optimized away by the compiler.
 
-I measured on an AMD Epyc 9654P.
-As you see in my numbers, around 40% of the CPU time was wasted on
-spinlock contention. Dozens of io-wq threads are trampling on each
-other's feet all the time.
-I don't think this is about memory accesses being exceptionally
-expensive; it's just about wringing every cycle from the code section
-that's under the heavy-contention spinlock.
+Let's not, it hurts readability with no clear benefits. In most cases
+the compiler will be able to optimise it just where it matters, and
+in cold paths we're comparing the overhead of reading a cached variable
+with taking locks and doing indirect calls, and even then it'd likely
+need to be saved onto the stack and loaded back.
+
+The only place where it might be worth it is io_issue_sqe(), and
+even then I'd doubt it.
+
+-- 
+Pavel Begunkov
+
 

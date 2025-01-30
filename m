@@ -1,165 +1,132 @@
-Return-Path: <io-uring+bounces-6186-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6187-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC35A229D7
-	for <lists+io-uring@lfdr.de>; Thu, 30 Jan 2025 09:51:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4BCA230AD
+	for <lists+io-uring@lfdr.de>; Thu, 30 Jan 2025 15:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA6E6188798C
-	for <lists+io-uring@lfdr.de>; Thu, 30 Jan 2025 08:51:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E4BD162567
+	for <lists+io-uring@lfdr.de>; Thu, 30 Jan 2025 14:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139341AF0D5;
-	Thu, 30 Jan 2025 08:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810541D88DB;
+	Thu, 30 Jan 2025 14:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="vjdEmCTA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L+uznQEE"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GwzrqH5+"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA081922D8;
-	Thu, 30 Jan 2025 08:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9271D1E376C
+	for <io-uring@vger.kernel.org>; Thu, 30 Jan 2025 14:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738227073; cv=none; b=iE899nkKXNoxmLQj6oMgjMJLPLvs6YgCFkB5D8pPhUvIKecxFdxTvI1xDSu4LxsFWE+by9uCTAgMPUpr+xVDWcpMdthf2SsTWafyf4MG1pbh1ewD6AaMPuIWYOyBE+F9W9cRha+Tq4FkIw1qNiMz8/EsgaIWCMWHtlW0iZ+v6bY=
+	t=1738248892; cv=none; b=LCX6GNtPCQT3AiKQTh+xKBZuYSjVIBd6umd0e3wQDhdqKj/mTGwo7iSoRCDicHDFbrUQUK/S4AGtq05b3p/RTmlQQ93F0cE8tHhWhHZDa5He3eWvInizl+ED1BPRZBCBH/+lneIkHWtguxXU5RniJyhW7GsEH3wzOAJWH7XcyuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738227073; c=relaxed/simple;
-	bh=ybJ34VRE+yB38dGXPDJwu1C1v6BXAzq008gahZppNTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OV7wP2Bz8vI/OHL+3svSchsDTioYJsyAjGGz6eukSyjXsHyfERMsTXAGqQn9/2V/W2wNunGJhFIx5+3z7zXX93rJ/ggsupLqc1Oj6OI6DpqJGeod1kwMbnnhMKq/bqKwuqSKQsboCtsmaJkQ8phImZcQ1FKbTDJSexGaNvYxQDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=vjdEmCTA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L+uznQEE; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 7C9471140117;
-	Thu, 30 Jan 2025 03:51:08 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Thu, 30 Jan 2025 03:51:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1738227068; x=1738313468; bh=5yr9ViFbki
-	C3MNrNLYa+pJvgCeqHEbp+4tHMwTThKc4=; b=vjdEmCTA5ulGZakAFZS2nfMJbZ
-	vEf0+rbt7508/jljNHHMBTnvPvJJ3QNrZs+B2cdW/dZOMvZc+r8asTeJgbTf43wD
-	TTApfbNlJTT7cUzPQHyIKgHWTcNUZSF9p6jTsLzrKhl//MpM4EyYSxri6uYP77po
-	UM494/m8Es4BAzzxX6dcoGwY1AyuMFAJA5t4ZMuXGbItbfZH73IjkL7wHuisYPlj
-	SFn8Clx/CgcolrwfTfsoEUJsSS7dgcZoOQBrk/FKS9pcCwz+KfXz7+cJRPTe3n7c
-	HspSGkQO90/kyTYXtHm2p/MWcQrSVnP4gVGlueaJS3pbnOPDrNYnVwwUO/CA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1738227068; x=1738313468; bh=5yr9ViFbkiC3MNrNLYa+pJvgCeqHEbp+4tH
-	MwTThKc4=; b=L+uznQEE4WUFGuZRf30ZGnzQ0VH3dlYxogRLMlRNntr/slLMDSB
-	FG2J0mx5JdQUtCZQIjIcyLZJySP22lYGLpzTUzZT2hvFeZxGy4KkFc61I0K1LlUy
-	A4S2yaZh6obHaw65SQqS4WBeonErvZ4+8V4QVljcFNkbIZ4OegRahntBSQpO1Dfp
-	pZUx3m6DSuKynS3YUkf50t6XET5jLvs+UJ5EEigkGqaAFnGr7xWIQY4u5QkHUtpb
-	zJ3xh9jvgSIHzbl9TN4buPb919pLls91pcvmpmaqbYC7rPkwLXC7a6dlCl2DtmAc
-	4bT0+2JRs9Kh4vmz6FWscKPnk+GPnq8tRmA==
-X-ME-Sender: <xms:ez2bZ_Q350Rw2BGwR2Y54UBGtNKRMBbr03iAxyy8CF1ZjjtWxC_sFw>
-    <xme:ez2bZwwnnofXziZkV4654Rj7nISXbYNmCG4c8NkxTxh1uQZ9GMDxEMVrcFLN09zDS
-    6mWrKC1ktiOgA>
-X-ME-Received: <xmr:ez2bZ03A2zPUPGI8kll4PnGRSmDc6gm6z1Tr80fOrFQkXa4Fw-ZBOskclveKvBPA0CBqrxC3Q-VwJA7dEKgdOCXc1tO9Ni_CKMncYA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehfeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvve
-    fukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghg
-    sehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeejudeggffgffffhffhvdfhgf
-    ehvdetgeetuefhieefhfeuvedvfeefudeghefgkeenucffohhmrghinhepuggvsghirghn
-    rdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtoheplhhiiigvthgrohdusehhuhgrfigvihdrtghomhdprh
-    gtphhtthhopegrshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthho
-    pehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsth
-    grsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeigrghnsegthhgr
-    rhgsohhnnhgvthdrtghomhdprhgtphhtthhopegtrghrnhhilhesuggvsghirghnrdhorh
-    hg
-X-ME-Proxy: <xmx:ez2bZ_B6NdX2ymxdO0S8RAY6tr-YKyVDvgJbRkcq2rRvfjdhpx4q4g>
-    <xmx:ez2bZ4i8vIVWTowLRQdkSozY9-XM0Golf7fEvopAY-xOkbDZUUg5Zw>
-    <xmx:ez2bZzoSBcH3zxRpe-BghIRgIJLznFfTiZJpoewmlMZ6lUIJLnVNIg>
-    <xmx:ez2bZzhwnkkBkm-9zGt-9AqALDcsPkKX0rtPu0nagK8kdzryF7g7Yg>
-    <xmx:fD2bZ5buJm6xjmxhPNalbuO5-884LgiBptIxDzX2jQKThJVueUv2aorY>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Jan 2025 03:51:07 -0500 (EST)
-Date: Thu, 30 Jan 2025 09:51:03 +0100
-From: Greg KH <greg@kroah.com>
-To: lizetao <lizetao1@huawei.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	Xan Charbonnet <xan@charbonnet.com>,
-	Salvatore Bonaccorso <carnil@debian.org>
-Subject: Re: [PATCH stable-6.1 1/1] io_uring: fix waiters missing wake ups
-Message-ID: <2025013058-outnumber-relapse-f270@gregkh>
-References: <760086647776a5aebfa77cfff728837d476a4fd8.1737718881.git.asml.silence@gmail.com>
- <da9d505df3f648ad8660ad6e53a6f77c@huawei.com>
+	s=arc-20240116; t=1738248892; c=relaxed/simple;
+	bh=TMQl5rfvRVr5SnoZcEJDLgdQ5XZJ/i3ctaiDEkjr4jI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dghIfGh0fd/mj1BAPhzecXYE4Fk99YDsocUVJ3OGDCh19nBBYhir2y84NrOY2EIcwYpNR+ZHWmVmiVj+FhzWhn+5k0oMvfMMx3DD1lCbODwgJLEAwWn7EW4AlS4dkaZohO8OwHkmfEr3dx6x3VzMPXS+MGv0zQcVii3accMl6K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GwzrqH5+; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4afdf300d07so554313137.3
+        for <io-uring@vger.kernel.org>; Thu, 30 Jan 2025 06:54:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1738248888; x=1738853688; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F1UHNnF/D0xuHW2VMmWfJ1WGt6Iflmdx5dnF7fMQdOg=;
+        b=GwzrqH5+C++J4VCIsYPMpciQxPl8Mo7w0EIIVv9FvDaMbKK6kS/y66WXFHGZfO33B6
+         akr6atv/JnMlzIqwT5DtQDiafrTVML4uMJ2BJGqfNj6pX8BGz8XsdP3/ZhwAz1Bort3d
+         HMdkI0oj4qOQdw/uTqN97RgSQtGmlhUCyN/NL6f5DMD2HQ11vY7+MWtgTjFbL/SF2GBP
+         8PobKU3jo56vendeSYii4c7CoQwjWVsuMcPd1Rh/4OeUy4FNUsN3Xw/rjQH6zpfVS6UE
+         DgluwE1pcCcZl4xYzKZr9dCHBYSNbaiLL0tdm7EVbvs2yxnLuaUDmKgiIXjevPnAAq1t
+         lFWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738248888; x=1738853688;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F1UHNnF/D0xuHW2VMmWfJ1WGt6Iflmdx5dnF7fMQdOg=;
+        b=MLh2TKx4xKGk+bp4p1ZgjxS27Ja4XQaTdcuURFdblszI1rYwWB4imtH/ruX4zpeXV9
+         eNe6RLZq05THJIzAQ7WQuCCMMS95qlmBXHpflMTMeE6CLlv8VxJ88FW2/zSUbILNuoZR
+         uj3+QbNTWf4Tvn5Dwf0g2iO2JfRRz3ZrvLB8tsxdNciG1IMoGsShzInjFPi/ox6sFO1g
+         fgmZwHh4Bzbo6n8bS+muO6L45bi4NEmvz4o+UKoghLFpU3j9Xrbdz/n8ZHzVfbpEJC6L
+         RZIWajuy3EZVQd2SW/9dH4WRJ6eOcmLuMTe6p076A5cIcMiZ3imbjnnlP9jM8YFA65lM
+         WyoA==
+X-Gm-Message-State: AOJu0YywLdSWgqYBS/qXx4lHqvAKi8kGtXrfxk+MlLRX0YyhI2k88dBn
+	dLQhW8V9W/pXk3CLfxbcPYtEWzmkBWQKvSzuglilq7Ry8/PH5mvDNoxH+zO7A85dRhfOyyo6+5C
+	I
+X-Gm-Gg: ASbGnctr32wcIZlPs5+YTkP2vXJ9/xWaBHZxiWibWpoeEQDSlHFH9RA0Xlp/syVtmX0
+	H2bscSr8N8AkbGeFGpzmKbXfaFBb/LcyplR8kLuIy7EyjdHR1sFj9xEnXStJgp/2kath28k3S1v
+	fhytPKBzQTliZefIWPnLoXqZI80JlAonPgAfvhQlnNMvAUR7Sn5lCOk0VLDseIow8NUkR3Rx9UJ
+	THlXBW4M2ldFhC5ZHyD8lFeZqMe4rfeUt9V1n+NUVRgGDUAVNGSAfMZ+nT3wuczwE+R8cDDXFwG
+	M+SMA010Gsc=
+X-Google-Smtp-Source: AGHT+IGkqgU29cscaX28kSOW5d/8/UHkajIQjAhHSd6Ez0oybhdmKVoz4YyFx87CK+uM3LcMnII5KA==
+X-Received: by 2002:a05:6602:2b10:b0:84c:e8ce:b531 with SMTP id ca18e2360f4ac-85439fbb605mr820918539f.14.1738248877649;
+        Thu, 30 Jan 2025 06:54:37 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec746c0ed8sm365185173.108.2025.01.30.06.54.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jan 2025 06:54:36 -0800 (PST)
+Message-ID: <178c6f1b-cfda-46cb-8c15-a25a5319f6e4@kernel.dk>
+Date: Thu, 30 Jan 2025 07:54:36 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da9d505df3f648ad8660ad6e53a6f77c@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/8] io_uring/io-wq: cache work->flags in variable
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ Max Kellermann <max.kellermann@ionos.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250128133927.3989681-1-max.kellermann@ionos.com>
+ <20250128133927.3989681-5-max.kellermann@ionos.com>
+ <856ed55d-b07b-499c-b340-2efa70c73f7a@gmail.com>
+ <CAKPOu+-Mfx9q79nin7tGi1Rr4qGGY=y-2OhuP80U=7EtRpfBdg@mail.gmail.com>
+ <19750632-1f9d-4075-ac5c-f44fab3690a6@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <19750632-1f9d-4075-ac5c-f44fab3690a6@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jan 25, 2025 at 06:59:06AM +0000, lizetao wrote:
+On 1/29/25 4:41 PM, Pavel Begunkov wrote:
+> On 1/29/25 19:11, Max Kellermann wrote:
+>> On Wed, Jan 29, 2025 at 7:56?PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>> What architecture are you running? I don't get why the reads
+>>> are expensive while it's relaxed and there shouldn't even be
+>>> any contention. It doesn't even need to be atomics, we still
+>>> should be able to convert int back to plain ints.
+>>
+>> I measured on an AMD Epyc 9654P.
+>> As you see in my numbers, around 40% of the CPU time was wasted on
+>> spinlock contention. Dozens of io-wq threads are trampling on each
+>> other's feet all the time.
+>> I don't think this is about memory accesses being exceptionally
+>> expensive; it's just about wringing every cycle from the code section
+>> that's under the heavy-contention spinlock.
 > 
-> 
-> > -----Original Message-----
-> > From: Pavel Begunkov <asml.silence@gmail.com>
-> > Sent: Saturday, January 25, 2025 2:54 AM
-> > To: io-uring@vger.kernel.org; stable@vger.kernel.org
-> > Cc: asml.silence@gmail.com; Xan Charbonnet <xan@charbonnet.com>;
-> > Salvatore Bonaccorso <carnil@debian.org>
-> > Subject: [PATCH stable-6.1 1/1] io_uring: fix waiters missing wake ups
-> > 
-> > [ upstream commit 3181e22fb79910c7071e84a43af93ac89e8a7106 ]
-> > 
-> > There are reports of mariadb hangs, which is caused by a missing barrier in the
-> > waking code resulting in waiters losing events.
-> > 
-> > The problem was introduced in a backport
-> > 3ab9326f93ec4 ("io_uring: wake up optimisations"), and the change restores
-> > the barrier present in the original commit
-> > 3ab9326f93ec4 ("io_uring: wake up optimisations")
-> > 
-> > Reported by: Xan Charbonnet <xan@charbonnet.com>
-> > Fixes: 3ab9326f93ec4 ("io_uring: wake up optimisations")
-> > Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1093243#99
-> > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> > ---
-> >  io_uring/io_uring.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c index
-> > 9b58ba4616d40..e5a8ee944ef59 100644
-> > --- a/io_uring/io_uring.c
-> > +++ b/io_uring/io_uring.c
-> > @@ -592,8 +592,10 @@ static inline void __io_cq_unlock_post_flush(struct
-> > io_ring_ctx *ctx)
-> >  	io_commit_cqring(ctx);
-> >  	spin_unlock(&ctx->completion_lock);
-> >  	io_commit_cqring_flush(ctx);
-> > -	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
-> > +	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN)) {
-> > +		smp_mb();
-> >  		__io_cqring_wake(ctx);
-> > +	}
-> >  }
-> > 
-> >  void io_cq_unlock_post(struct io_ring_ctx *ctx)
-> > --
-> > 2.47.1
-> > 
-> 
-> Reviewed-by: Li Zetao <lizetao1@huawei.com>
+> Ok, then it's an architectural problem and needs more serious
+> reengineering, e.g. of how work items are stored and grabbed, and it
+> might even get some more use cases for io_uring. FWIW, I'm not saying
+> smaller optimisations shouldn't have place especially when they're
+> clean.
 
-Now queued up, thanks.
+Totally agree - io-wq would need some improvements on the where to queue
+and pull work to make it scale better, which may indeed be a good idea
+to do and would open it up to more use cases that currently don't make
+much sense.
 
-greg k-h
+That said, also agree that the minor optimizations still have a place,
+it's not like they will stand in the way of general improvements as
+well.
+
+-- 
+Jens Axboe
 

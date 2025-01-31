@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-6205-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6206-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A6DFA241E0
-	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2025 18:26:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D6CFA241E2
+	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2025 18:28:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAB71887F71
-	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2025 17:27:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8840167A2A
+	for <lists+io-uring@lfdr.de>; Fri, 31 Jan 2025 17:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1601EC00C;
-	Fri, 31 Jan 2025 17:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CA21C3C18;
+	Fri, 31 Jan 2025 17:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dZSKqD2w"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHWJMwWU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76C6136351
-	for <io-uring@vger.kernel.org>; Fri, 31 Jan 2025 17:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2266136351
+	for <io-uring@vger.kernel.org>; Fri, 31 Jan 2025 17:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738344414; cv=none; b=Gj21O8etAtgWcU2OO4vtNIySoqq4eOhspAV6dZYf3YaVY/p+kFfdhTW4yATAuDyvdsnL8GE3eBS+TkA6B6YRA5IPnqBEn1UieZrl5R2h8HL9htXLk0bUA+5e4xUnO7oZKBmOEddfcqCkC9lwUXWCUDVdJbM8X6mwIXlmllYXDNY=
+	t=1738344492; cv=none; b=kmQJ69yD3mKwCW6U2Rp88w30bW3BcdeNsgiQeCzYUSZV85tr+R8XcLVZcPdWFAWa6jNLf7wjcsLdTKTd19LIhfnr1kKWYkByryyeOu1Qu8veGvPjj11jCUmJjeozUcYvce6XNQ7OUgK/pxMgO0XQEMOhx6WHtJjHpw54UUR6gM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738344414; c=relaxed/simple;
-	bh=ynI0+2fKuM5FuDwtcmZyl6SB9Y5QvbLzsTnD6WSMyXU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uEx787/84Qc6szU4O1+icN1o6ZYkg6/JwaWi6s1j7ZXnSDvSZTJ+hqmYzenH6RRAZWElLjD9xiVvoGJjx6AB6MTABdCSaBmZlTXcjIx5ZYktRBhezZCGetuS1Ck5E1yV6jWFgtmuAAshbUkHn9VSq3G+b53XTjbxOkMpxTexo6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dZSKqD2w; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1738344492; c=relaxed/simple;
+	bh=ozTEm+S37RquHiEWuFvZNWNVyaEaUhNf2+puBALeOJg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I56ERoekLjTmMWIXHInBPwSp3bkvKkWVk3QTI2Yz00g4/euKM2VrBw/C0z5GFjDTdFSnI9JSYRrhnbdDzlhSSX2NY2WczY300twSaDgpo79fPzMHxNRoTUusXlI6dSSzDqaYkXu2nkai2brl2A5ZIpm3p562mtxrwSZ3DkZlqRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHWJMwWU; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4361f796586so26870895e9.3
-        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2025 09:26:52 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab6ed8a5a04so317500866b.3
+        for <io-uring@vger.kernel.org>; Fri, 31 Jan 2025 09:28:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738344410; x=1738949210; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738344488; x=1738949288; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PH3D0o8pFa3Scn32FuoBbUyFDazvYmH3CqKwUPsnYZA=;
-        b=dZSKqD2w5phBvGw/Dk+LXs7a1h6OAM80Y61/+R4rKihs088x7VqXs3BrxGWYKrTwqr
-         h05GqN2QXdGE+22KZSSZH8XaLrsfDqxE4KYh4W+99fOa2cJxONFIbrT5MYjYv5hdpq9n
-         Dtu85ojKNcB95mIEW898fn+bYQE6BLQOD9uYmRd4pf7wNZsxSBti3dhZ54m7SVgM76PN
-         756MUlew36mwgL/JvWftASQchkmWmvSM0o1+ABCaCT514bSjktITWPnWiqyek3831D3l
-         Ca+2cdE5hlsPIQdG5s3CYdExU2/Fd3nHiwbt+DcgYrLM0D7w3hkGn6+itZFrPuxqX/yw
-         oGhw==
+        bh=dSMqhGjCnh2icx3eBn/umw/Pm6A+NJfu87cyEiFX1rY=;
+        b=JHWJMwWU3Fxhs96lx9i1twkIK7jkazW9OKdxSGGz30sKutXGkxRTRPiorvXWrUZwt8
+         F40S9gTccbNmV1j1Fe9N68+4jhz0K/h9YCVBy/Lyguw6Gt9iDPzCiLcsHGHP/4QxitYr
+         JtWF/WNuQ7qNbTp6tjpgVk+/UcsZ18qPKoZmdrAO9NsKlFfYQ1XGXHssPgNFhP70Ta+/
+         H2vANSA9qX7vHXkzzgbqQe2EJ3AUv6nUCewog0w5yf3cOpQprtyqDmHo/W8N5fm7PQkw
+         R1aqj5tsQQoZOsewmC8JtFJz6Nu+GSXnSyFdwqzzZAGE6aXkTXv+FwKz8USS8y/Ao08E
+         JIdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738344410; x=1738949210;
+        d=1e100.net; s=20230601; t=1738344488; x=1738949288;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PH3D0o8pFa3Scn32FuoBbUyFDazvYmH3CqKwUPsnYZA=;
-        b=qb5PrcJng30QLS3dPlmhqRA8mdhpGna4ober7cJw+yJIN8dP2jmLVEO5spKfiuT2/z
-         RfenC0CY79bVdPkCyJDfaUtD5x7mYMH84kA1IF2pE4mKeL2cnvdkFkNhaAwZ9YZRkMiR
-         qnnopzr9BJRswAmKZzEr6tnPXsoz0w9aYLmR0OKoV2B7vvS1xB8cslZPoY2ZoCGAPuJi
-         qhS0HZ2HwH9Z4SqfBCt40zdjSc6iZEqCMf0Bioe0CSLcs7Jsi46tnrX/t9CHJIqW4q3y
-         ys6xJI+4AX5EyDIIvlEJGOzPSa7lZ8T0udT5D/TJKw5phqFbjeY2mT6Z42J76NdjN2X8
-         d6ow==
-X-Gm-Message-State: AOJu0YwxVVi+G2Ml2JL3DPCzn116hn+E+1Z7LusnkmO7tAnPdMOeiRUI
-	M7saYVeTUNfFG4Ru7NpR88ud0bXv0XEfFxfFUEwITDpJQOJaLFb+3rkMaA==
-X-Gm-Gg: ASbGncvqVPSciG4Gc/H1p0MS6yu8WeDzUv/7jUB/755parZgTHrri8otWB5tVymHH3n
-	Oyy4x+sZpOKKppl3RJLd+Vf4SMeCTantkfjt9bxOcFMo3/qN36qGM21/SkJZSgH+bGwfigSCD5A
-	6/8RDdHxJv1CFUTU7OMBva1aChQE4RPYlLqPGXCJ4Y8i7AX1UiEkAt2Bc5BlKuTDseygPAr+Baa
-	J2YgPpc51yR7satO33OmGLG5wND1zcfKHCu504trLb/5m93PONRh2dcbrlICI8qvYgtDCA/3Dw=
-X-Google-Smtp-Source: AGHT+IGFZpbClAIw2vWjtN6iVRhN6ZJuYUQFRMcXyDZeNWfCcAEaqAjZwj84BMp1pGAMZOt8CPqtIw==
-X-Received: by 2002:a05:6000:1842:b0:38c:5fbf:10ca with SMTP id ffacd0b85a97d-38c5fbf1211mr6930198f8f.39.1738344410477;
-        Fri, 31 Jan 2025 09:26:50 -0800 (PST)
+        bh=dSMqhGjCnh2icx3eBn/umw/Pm6A+NJfu87cyEiFX1rY=;
+        b=NShipSv6zmWWjEv36ZYnt6x5jofCeywwbCmAPLBRK+EAnxjlAmfMdcluy1EycXx29m
+         uStwzihgEcyzaEaDNc0BWXLeeWrvgcBcUcU52Gq3i3WN/caFUjgzQ0MP7z6R3fzwMGkN
+         mhv9sbn0J/JF4lslYCZbnHGPv8vtmJPa0Ig9v3qvIrr4quKhVEKKr9OLfEn24fOEwBoT
+         sTGi5kbCF+EP4qUp47y0mJp98AR3HkydBuBRjIz0fiESzDl6gMStjJWFNRH5t/k87V+7
+         ID8q+mo2tpRYe5yd1FG9LJTsZYpNu68kbZVhPOFFG0TqRUJtXqzeMAOnydQp4Fi2ISa3
+         dplA==
+X-Gm-Message-State: AOJu0Yx5TATRYNktwQqmly8gzhGUbn7Pf1/b0tCQn9BDB8ibGDi/lT7O
+	A/JpXMRF5dBlCULHP8eTZqO+yKF/4kkrfcEbuzqiFuDyq8OZtFo3ffJW0A==
+X-Gm-Gg: ASbGncvl9mcoG2uFcGuSh09U028ohVauKOrOq5vGgwXV8Pop3uVLTEuKqbN2FPP21L2
+	tULvTz94YMiLsVaAP0bXbdwdSc52ZdiqFn91/ZNhLhvMtePIsUB/DLdh8FOdu5dbUQVODVh+uk/
+	6ooLiOQd5XKokXrvaYFxoZVkrHrDvcs7JS+W1Uz5Bspncoff9090CqxUhI0flsA5qiJfrnOCEXg
+	ScaSCdZI4GQc4/L+n+AS0CQdU8/0zhceSg4GWTGJeu81nidcz4yoFlHt1NPemr/+yxmBhYbx4A=
+X-Google-Smtp-Source: AGHT+IFsX0Z4hRD5fhvMNcy5K/JcosyJcweJX8eK8nDcftJbFhXbfSRBYZvtJyc5EHfpJAHsHMDSsQ==
+X-Received: by 2002:a17:906:f5a9:b0:aa6:a87e:f2df with SMTP id a640c23a62f3a-ab6cfce8a6amr1236776866b.25.1738344488397;
+        Fri, 31 Jan 2025 09:28:08 -0800 (PST)
 Received: from 127.com ([2620:10d:c092:600::1:7071])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e47a7b1asm327203966b.31.2025.01.31.09.26.49
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e47cf8bfsm324311766b.40.2025.01.31.09.28.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2025 09:26:49 -0800 (PST)
+        Fri, 31 Jan 2025 09:28:07 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 1/1] io_uring: deduplicate caches deallocation
-Date: Fri, 31 Jan 2025 17:27:02 +0000
-Message-ID: <b6b0125677c58bdff99eda91ab320137406e8562.1738342562.git.asml.silence@gmail.com>
+Subject: [PATCH v3 1/1] io_uring: check for iowq alloc_workqueue failure
+Date: Fri, 31 Jan 2025 17:28:21 +0000
+Message-ID: <3a046063902f888f66151f89fa42f84063b9727b.1738343083.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
@@ -83,64 +83,31 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a function that frees all ring caches since we already have two
-spots repeating the same thing and it's easy to miss it and change only
-one of them.
+alloc_workqueue() can fail even during init in io_uring_init(), check
+the result and panic if anything went wrong.
 
+Fixes: 73eaa2b583493 ("io_uring: use private workqueue for exit work")
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/io_uring.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+
+v3: BUG_ON() since it seems nobody checks errors
+v2: drop kmem_cache checking
+
+ io_uring/io_uring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 4d6d2c494046c..ca5aa46e83c30 100644
+index 263e504be4a8b..dfebd949b8f37 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -282,6 +282,16 @@ static int io_alloc_hash_table(struct io_hash_table *table, unsigned bits)
- 	return 0;
- }
+@@ -3920,6 +3920,7 @@ static int __init io_uring_init(void)
+ 					  SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
  
-+static void io_free_alloc_caches(struct io_ring_ctx *ctx)
-+{
-+	io_alloc_cache_free(&ctx->apoll_cache, kfree);
-+	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
-+	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
-+	io_alloc_cache_free(&ctx->uring_cache, kfree);
-+	io_alloc_cache_free(&ctx->msg_cache, kfree);
-+	io_futex_cache_free(ctx);
-+}
-+
- static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- {
- 	struct io_ring_ctx *ctx;
-@@ -360,12 +370,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- free_ref:
- 	percpu_ref_exit(&ctx->refs);
- err:
--	io_alloc_cache_free(&ctx->apoll_cache, kfree);
--	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
--	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
--	io_alloc_cache_free(&ctx->uring_cache, kfree);
--	io_alloc_cache_free(&ctx->msg_cache, kfree);
--	io_futex_cache_free(ctx);
-+	io_free_alloc_caches(ctx);
- 	kvfree(ctx->cancel_table.hbs);
- 	xa_destroy(&ctx->io_bl_xa);
- 	kfree(ctx);
-@@ -2702,12 +2707,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 	io_sqe_files_unregister(ctx);
- 	io_cqring_overflow_kill(ctx);
- 	io_eventfd_unregister(ctx);
--	io_alloc_cache_free(&ctx->apoll_cache, kfree);
--	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
--	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
--	io_alloc_cache_free(&ctx->uring_cache, kfree);
--	io_alloc_cache_free(&ctx->msg_cache, kfree);
--	io_futex_cache_free(ctx);
-+	io_free_alloc_caches(ctx);
- 	io_destroy_buffers(ctx);
- 	io_free_region(ctx, &ctx->param_region);
- 	mutex_unlock(&ctx->uring_lock);
+ 	iou_wq = alloc_workqueue("iou_exit", WQ_UNBOUND, 64);
++	BUG_ON(!iou_wq);
+ 
+ #ifdef CONFIG_SYSCTL
+ 	register_sysctl_init("kernel", kernel_io_uring_disabled_table);
 -- 
 2.47.1
 

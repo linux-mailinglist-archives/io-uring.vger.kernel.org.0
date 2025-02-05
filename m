@@ -1,82 +1,82 @@
-Return-Path: <io-uring+bounces-6266-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6267-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC78A28965
-	for <lists+io-uring@lfdr.de>; Wed,  5 Feb 2025 12:37:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD7CA28966
+	for <lists+io-uring@lfdr.de>; Wed,  5 Feb 2025 12:37:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB2D3A5961
-	for <lists+io-uring@lfdr.de>; Wed,  5 Feb 2025 11:36:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EE2F3A4E2F
+	for <lists+io-uring@lfdr.de>; Wed,  5 Feb 2025 11:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A5322ACF3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E8B22A7EF;
 	Wed,  5 Feb 2025 11:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9gj5YfG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ze3tnAA0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4EB22A7EF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AB222A4F2
 	for <io-uring@vger.kernel.org>; Wed,  5 Feb 2025 11:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738755412; cv=none; b=ay3lY46Yg/HaEpxf8kh5CdcY+En5HjZFs4rb+ihFLiK0CF/J0EcOghMu6c0N/iEFm5IA4BEjxEAkQ0FF857pqOCkgzzzlpnUHEU3WzFbi9uSRT4i5ZyuS5DOykL/73kL0dgPkQRwv1svcPWcRuPEBw4ymKhRfcUYR3KVsb+zjKM=
+	t=1738755412; cv=none; b=SzxxdHbSbU7pagVtcW/Y4FLfF7xQnvpBdt0aszSLlhkagnAVXY36lUQQvFAeCwp95k9hWSTZX1iaaZZy6+HQQ+WYzohrk2ii74tBUlUFoozbRYF71Y+xkGCrV9jbzRYDQYqm9caUrhgp2i2fOhdbLWG/dJUrTTlKQUKFToKZqzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1738755412; c=relaxed/simple;
-	bh=2ePhBV5dU0vBGOGo6Yf2+eDlMzr7q4dCMoUf81Lbt0c=;
+	bh=R8B2bAOqbdY9BKKM8Zmeep2GB7REgWnCUGhbUhJNYQ0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rSzisF0ojcguURer1YTo1u5/Gr3EI71p7DJJMfvsrikibgzt/x2iIGNUWDzvLvGXlDfZdSxiswexGSDNIY4+dU/PPZYDBL9otDJ5AR5NvmsUdkZiL1Uwi9iH7vipNhpeIXWUy4QSNRKCX5kcH3se0Yh2o5mx0MvDuphglGo5syg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9gj5YfG; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version; b=Tnp4ot0Rm4thj59A0+zilaCLPYllpq/epkF8i3e4tfR8mCadhDZBTtgoc8EbwIXypOr2l2r+ad+H4y+Wl84sxfhy2EcFeLEnmk9nmF6qJ0Abx+Ur4HcR+KJjVd3tFc8JUkSuyo8XDMIWemy8Mx/3DKX0LOE4Aetg3fErlgB5T9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ze3tnAA0; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-436a39e4891so45782625e9.1
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38db0146117so811533f8f.3
         for <io-uring@vger.kernel.org>; Wed, 05 Feb 2025 03:36:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738755408; x=1739360208; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738755409; x=1739360209; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RVgW6hEFQQ7YI5zAH9fN6CiNeQYki6D9SMOXqmnbQ1Q=;
-        b=j9gj5YfGlo/teMn1Yy3P12tZ6m0Ne7RKfOZfnK780xUHG/BvGE/9WQK+uppru+orwn
-         Y/qr/UAJp9kvOcpCpsVbhCXcSzCU2stuh86o135dm5PrakrimnjzTFxT40FcXaf89vU0
-         2tsJZ2VdDtXm0hpWCgj1tl+mU1Yj1yd0kP8k9QYJ8NlbaOFp+fCNaRe8O7BkYDQaAjd2
-         2rSoRe/D/vKEtTcr1aWD8Sm2MAMnJHV6t/9+RymxjglArOJ5A3zQa/sa+T013Q+u3/iM
-         SRxU++PoXSE347YgFCEeNHIpD/48w7oQIzH2N4/Z6wkeBJSYCbPlUal8UYCr9o7pjEB/
-         kj3A==
+        bh=KdQMMM+vu69NjwQNUGDxHQUFtinRBBO5UjK5C9xPV8E=;
+        b=Ze3tnAA0K00Llx6r7ILGHobBY55jUNF9HefIciZ0SaB7E8TsSXvgkirXNa28QcGaBt
+         VL/V910flj/04kXfIbvfcrp3/5FKPF3mJouq0EcNTj8+bKQzSzZMeFLaQF1m7kUUO5Qf
+         QXhAml1t/HwbdEjtJILwDOFcWcVhjxgTosGDllOmw/W2tmj7qw/zQ4Zy15ZUxlqotqaZ
+         I0rmFCbuNGYCP187ff6nbwlWjkp+UJpsXJ1IOIjP3swwSVSrX8XbzcAQLRqCSrTKJ5qH
+         0E6aTBrTELTEyTXyvRLJdnuVTA+KRdf7XYP40uhJAC07YRnN4w8aQ9jx6S+wJkI0kGwP
+         s2tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738755408; x=1739360208;
+        d=1e100.net; s=20230601; t=1738755409; x=1739360209;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RVgW6hEFQQ7YI5zAH9fN6CiNeQYki6D9SMOXqmnbQ1Q=;
-        b=iSetgdAY9BJM45jTQenO7V/UnNjCueVzUBEp+eVCkdxUo5ty7I2bujpyi7VwsCs/uw
-         mBT4QOyxHIG8+yTXRbgKyC/R6kNQo9jssXZI9sBZgwAp6J2saliiNqCplAiE2Zj2hRz1
-         mB6bjeyY9JVT4aDVUn07QOLAMOfbmInnVch2aObQtiZWj50PIEx24dtdX4gspkdXfCkF
-         /SCp+otpYN9gOg8PWPNwIOkr8pgpvkg/MaWm550FIN3aT5vfPtSHzLSRHSWANU02qrcj
-         WmFbzpR+ypDb2hNJQGRCBTwbe0dcadfv8watbKB9EzYozmmnO2Zhjf94a1Xo+YUXrN/m
-         UGqw==
-X-Gm-Message-State: AOJu0Yz8281+8JIX/uu68JGIBTunftaX/V6xPO80GjtxfXhg5fB84shC
-	ESUtZl9DnjDoieYQutK0kZKkgoKgwDV+qeXGKw2M/LPRjwFsVco3f0ZQjQ==
-X-Gm-Gg: ASbGncucmNXDUXdDYQpks/mPHZiREVJKOminPLsx/ksYiGNa6AKeUejN59XbPwFKg5C
-	DW3oH9M9gB0w5qS/mbqZFpQIPFXsnEc8m8hiDxxm9SKe1cLYlsX7W0H7QI9QPt3Fguq8HuDDej0
-	yr83sHjT34f8hJ/q0CR3A6TFiCGzdUT6WtV0vhIuOLh4ubU+rBRxZN4IvAxALR5mkRWtqWoyjTj
-	GOclNOBrKQLZCRhPTMOhm4xSHdG5kIKlLI9bBNt84ydjmSDOJfvlN4CUrCFqgMuVHp6Bdk1l0/l
-	nTZvPNFDTR5vidj51YAEERpdaPs=
-X-Google-Smtp-Source: AGHT+IFXLbRIO3pJ86xQMpxZIiVon+0LI5KjFWQVFFWQkZiPc3Bb4a0idfHEBsMAhxVMuKVLEC62/w==
-X-Received: by 2002:a5d:5f56:0:b0:38a:88bc:ace1 with SMTP id ffacd0b85a97d-38db4929f66mr1767154f8f.34.1738755407121;
-        Wed, 05 Feb 2025 03:36:47 -0800 (PST)
+        bh=KdQMMM+vu69NjwQNUGDxHQUFtinRBBO5UjK5C9xPV8E=;
+        b=bvHg+EH1buSxeZLpXJq/ha0HsdcSw6XCeFY4hbGWEbBYOdmDr+nzqG8QojXi++gZN+
+         8HavFgVYYB8UVQAiwddiC5+30WlOG34NHsF2awneUbmikKx1+ShVYsr2D6vKWNOGOHzd
+         oX1vQXVeRi7t13Pn3ZdwmotTq0N9XPI4ztpqAb/wQEMraeYez3/rvVntquAq1XtqJ9v3
+         HAa+xgUaPbxkTjVP3FMjy7Nf3p+DD9UxXHfnICYOU1W6zrCECo9c7wpPAr0bI890i4LZ
+         B8mE0pY9SWIrMNXC8OPfPBzynx0wEU3XqiX97oLWqOnuiNe4LS1dgRzdhz+uQiNYqm2y
+         BCZg==
+X-Gm-Message-State: AOJu0Yz116BByrwRmx1I3KrI5ZWQKKtrelLm3BK0n4sCNfbbfdGa893Y
+	DatgDtxxDjH4nHEEr2p56IPHlLlrhfHioc7VsK5zPQenPti9Ur6n2kPdJQ==
+X-Gm-Gg: ASbGnct155pQDc8iSG3tPtBx5vc01uJjgfZPObtwzRCkiG2Jlm9xo5lnImvjyMkCTOP
+	VrZWwfOvO7UqnfIbd97Qzucl3+bXcZCblf0gQoMGFHjoR0WE4Dp9e7sPcgIOu/LMZv1xYj4wooP
+	ZTzQkf2u7CQsxZXGbRaDsgRs2r7VqdJXdbO/v1tQFMNeD10emdaFGpkm4TSnCSKdC8HJwWNbYWX
+	mzs7bOJt2lKVHRT4F1EiKZ3aIJrhp4GApGIM6hXNVxp27VMG6LhWppjEATM6w1S/yZA7G+LLeVp
+	qYhNEN6jGgV9HqruazJjAAa7dXg=
+X-Google-Smtp-Source: AGHT+IFaSD1ST6tOUeoAkdO+dC3bmWlV/NtvNiZ5zKonnHn6PHHWg8YZ1RkBkpDtS/1ylSSOeq+xQw==
+X-Received: by 2002:a5d:64ec:0:b0:38d:adcd:a05e with SMTP id ffacd0b85a97d-38db48fda85mr1723558f8f.39.1738755408357;
+        Wed, 05 Feb 2025 03:36:48 -0800 (PST)
 Received: from 127.0.0.1localhost ([148.252.128.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4390d94d7d4sm18514505e9.10.2025.02.05.03.36.45
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4390d94d7d4sm18514505e9.10.2025.02.05.03.36.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2025 03:36:46 -0800 (PST)
+        Wed, 05 Feb 2025 03:36:47 -0800 (PST)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com
-Subject: [PATCH 1/8] io_uring/kbuf: remove legacy kbuf bulk allocation
-Date: Wed,  5 Feb 2025 11:36:42 +0000
-Message-ID: <a064d70370e590efed8076e9501ae4cfc20fe0ca.1738724373.git.asml.silence@gmail.com>
+Subject: [PATCH 2/8] io_uring/kbuf: remove legacy kbuf kmem cache
+Date: Wed,  5 Feb 2025 11:36:43 +0000
+Message-ID: <8195c207d8524d94e972c0c82de99282289f7f5c.1738724373.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1738724373.git.asml.silence@gmail.com>
 References: <cover.1738724373.git.asml.silence@gmail.com>
@@ -88,65 +88,71 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Legacy provided buffers are slow and discouraged in favour of the ring
-variant. Remove the bulk allocation to keep it simpler as we don't care
-about performance.
+Remove the kmem cache used by legacy provided buffers.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/kbuf.c | 30 +++++-------------------------
- 1 file changed, 5 insertions(+), 25 deletions(-)
+ io_uring/io_uring.c | 2 --
+ io_uring/io_uring.h | 1 -
+ io_uring/kbuf.c     | 6 ++----
+ 3 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 04bf493eecae0..0bed40f6fe3a5 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -494,12 +494,9 @@ int io_provide_buffers_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
- 	return 0;
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index e34a92c73a5d8..6fa1e88e40fbe 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3927,8 +3927,6 @@ static int __init io_uring_init(void)
+ 	req_cachep = kmem_cache_create("io_kiocb", sizeof(struct io_kiocb), &kmem_args,
+ 				SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT |
+ 				SLAB_TYPESAFE_BY_RCU);
+-	io_buf_cachep = KMEM_CACHE(io_buffer,
+-					  SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
+ 
+ 	iou_wq = alloc_workqueue("iou_exit", WQ_UNBOUND, 64);
+ 	BUG_ON(!iou_wq);
+diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+index ab619e63ef39c..85bc8f76ca190 100644
+--- a/io_uring/io_uring.h
++++ b/io_uring/io_uring.h
+@@ -418,7 +418,6 @@ static inline bool io_req_cache_empty(struct io_ring_ctx *ctx)
  }
  
--#define IO_BUFFER_ALLOC_BATCH 64
--
- static int io_refill_buffer_cache(struct io_ring_ctx *ctx)
- {
--	struct io_buffer *bufs[IO_BUFFER_ALLOC_BATCH];
--	int allocated;
-+	struct io_buffer *buf;
+ extern struct kmem_cache *req_cachep;
+-extern struct kmem_cache *io_buf_cachep;
  
- 	/*
- 	 * Completions that don't happen inline (eg not under uring_lock) will
-@@ -517,27 +514,10 @@ static int io_refill_buffer_cache(struct io_ring_ctx *ctx)
+ static inline struct io_kiocb *io_extract_req(struct io_ring_ctx *ctx)
+ {
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index 0bed40f6fe3a5..ea9fb3c124e56 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -20,8 +20,6 @@
+ /* BIDs are addressed by a 16-bit field in a CQE */
+ #define MAX_BIDS_PER_BGID (1 << 16)
+ 
+-struct kmem_cache *io_buf_cachep;
+-
+ struct io_provide_buf {
+ 	struct file			*file;
+ 	__u64				addr;
+@@ -411,7 +409,7 @@ void io_destroy_buffers(struct io_ring_ctx *ctx)
+ 
+ 	list_for_each_safe(item, tmp, &ctx->io_buffers_cache) {
+ 		buf = list_entry(item, struct io_buffer, list);
+-		kmem_cache_free(io_buf_cachep, buf);
++		kfree(buf);
+ 	}
+ }
+ 
+@@ -514,7 +512,7 @@ static int io_refill_buffer_cache(struct io_ring_ctx *ctx)
  		spin_unlock(&ctx->completion_lock);
  	}
  
--	/*
--	 * No free buffers and no completion entries either. Allocate a new
--	 * batch of buffer entries and add those to our freelist.
--	 */
--
--	allocated = kmem_cache_alloc_bulk(io_buf_cachep, GFP_KERNEL_ACCOUNT,
--					  ARRAY_SIZE(bufs), (void **) bufs);
--	if (unlikely(!allocated)) {
--		/*
--		 * Bulk alloc is all-or-nothing. If we fail to get a batch,
--		 * retry single alloc to be on the safe side.
--		 */
--		bufs[0] = kmem_cache_alloc(io_buf_cachep, GFP_KERNEL);
--		if (!bufs[0])
--			return -ENOMEM;
--		allocated = 1;
--	}
--
--	while (allocated)
--		list_add_tail(&bufs[--allocated]->list, &ctx->io_buffers_cache);
--
-+	buf = kmem_cache_alloc(io_buf_cachep, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+	list_add_tail(&buf->list, &ctx->io_buffers_cache);
- 	return 0;
- }
- 
+-	buf = kmem_cache_alloc(io_buf_cachep, GFP_KERNEL);
++	buf = kmalloc(sizeof(*buf), GFP_KERNEL_ACCOUNT);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 	list_add_tail(&buf->list, &ctx->io_buffers_cache);
 -- 
 2.47.1
 

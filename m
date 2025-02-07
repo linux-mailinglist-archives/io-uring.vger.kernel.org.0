@@ -1,79 +1,79 @@
-Return-Path: <io-uring+bounces-6294-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6295-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF658A2C2D9
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 13:38:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF4E6A2C2E4
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 13:41:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F34EF3A61F2
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 12:38:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82D5316295D
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 12:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B88217C68;
-	Fri,  7 Feb 2025 12:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12E51624E4;
+	Fri,  7 Feb 2025 12:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LkVn+wBk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="md7a5Tgw"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6588A33EC;
-	Fri,  7 Feb 2025 12:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E802B33EC;
+	Fri,  7 Feb 2025 12:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738931924; cv=none; b=rdWndBRM5HyKKa9KcYD0VFGcv9kmxzJ1GCXrISz9ZIoF7XrqD4aXJacMaPbE1rIPvD/AgfzEj+3x1w7iu25rk6Ck3/j7ICdX0styZOvJ6xxWVqU0GcQtY0wdaTVyTGsFXtCVXq6Sk96zDhVvFibDIEJCT6zrJpdjUgd7LGR5hE8=
+	t=1738932075; cv=none; b=f+pfmjOad77brdHh5kxy1UITdxODjsz93Q5efITT+PnEl8wC6Fkai8oyNPcDhNED3RIqcW9FUQwT5xQDYmup7Twp2+dPX2iWLVdYlTzstEkhZezKiAcnRNAQXwkjighFe2kTqn8pqCw/s7MWVTvfLhP89XpRSwmSoyEcf2z8xKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738931924; c=relaxed/simple;
-	bh=MRbTbPFwH9hUAxmyGetO9VAyItOPs/KNcYoOmzm5J/w=;
+	s=arc-20240116; t=1738932075; c=relaxed/simple;
+	bh=MspCQtuF1L1uj1gmBsMFVAfZQuU7Dmgijjzp4TtZSCs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Od/12cHmNNh2VBTz/IqBELY5NX/jlYUMsJ2U26Yq5599ngFpr9AGl1ETAHjc2fJpBhL8SvO7KYP3AQ+bgy54K7R+Th3oNoshyfyWUF/FzuLDh3stW0mnTpXGUGfi0CjTLz4JinXsrBVRNtHxmaEJ1CmsTeYiYv/+1l6/R1bvtrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LkVn+wBk; arc=none smtp.client-ip=209.85.218.51
+	 In-Reply-To:Content-Type; b=W8XzRIuhjG7bPcc/hbM+pNrs9NFXqWZpym7kV1FrhKB2TTk4fO8R0FpkMIVmwgR1lRY9Ve09tnmmdIKhe4yeV68ZkmlwlL9S5REgG3bXya/ads+S+BJrkw0DaKbW0IF5dr1A3l/gANj3F8/Ax8qPWhh4r5HxAqJokC2ME28BYrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=md7a5Tgw; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa66c1345caso40280066b.3;
-        Fri, 07 Feb 2025 04:38:41 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ab7430e27b2so375557666b.3;
+        Fri, 07 Feb 2025 04:41:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738931920; x=1739536720; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738932072; x=1739536872; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NRXFECRHhAWPRIcdZAWNt7kyqy4jeSNvv2ZN6DIzB1Q=;
-        b=LkVn+wBkEk8tOqdnTeTZcvjPITaw44u4BfsaK0BKAuIfKWXoQ94Z3VFRstb7JC7W3E
-         6dIWxGOjQdDNhJU47pe5w6B1OtwC6HBzUqs1u0IIqCzyIXyVp782LtFaj8ujic32IaEm
-         sjf5pE2paLhyE4MGZ+EN5bOACQcZlylfN64h/wIgtd7qLngYtEhA2j/ghObaKWuumTnq
-         B8uYqD0ouGbAdkUGjIiLxwsEZJG476woOaWl2C2dXerDjwHgaPlBqB5kWF72Tm20vmct
-         5w3BBrMBH82RvQSYpB3bZrIGwha2e0cl+9hstVgar+xYovRjAfiEHaRLEiqobR/DpDgL
-         lPpA==
+        bh=luRbu+qxp5tYTbAPnrQjWIZLwECTkT6rgueITNh5cGE=;
+        b=md7a5TgwSdD5p9WvJ7A4TvBNjEWSKL9bJ06h4ZbPeQMWMqih+hY0005ORKMDijNWK8
+         8q6hsj6a1Q5d9b+JAjj6mNfl5NxW4s4Gx9dMTYQDQ1s6tTKcbsxFtjkMYEbZUndGQ3Uf
+         ISgpASLfd0jVr+7AG4gYR52IjzXig0Z1aPEHymX0IFT43B9p+s51ySqDYuRnJZOEppFU
+         UcVbu2Kst1mCDCOMTagFnoju0CYbJ4ESu+OyHnQM1fJChMeqRixCJSpDeJ4Ez+qrYL29
+         pE0DZY2Pl/WFOiGQJpik+d53ti9Dj6irYPI4IASBXvh3RFjPBOmBN3N3ifacTU7SrOox
+         QNRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738931920; x=1739536720;
+        d=1e100.net; s=20230601; t=1738932072; x=1739536872;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NRXFECRHhAWPRIcdZAWNt7kyqy4jeSNvv2ZN6DIzB1Q=;
-        b=UwvSBi//C+jOuXqqX5PKutucmh7SRcyGOQiVSeTcSLO/BwcKB9ndWCmEIV8I4ZpBZT
-         LsMGlrtLX+AkGRkXOqPAvjAjRDLrUG82DwxOPSPVl0pgWeFVGWhqINl0ltc3cfZcaY4r
-         x1xObiJtzUYPJdfMok6Wvg11HNjOo43vQiUXU35oVRgdel1F9mSv/o63SWE9MZCiZXB8
-         5yXTklNhxMSlvceXbllhOj1UeJYcg7nRzQ8nzWybiTQYI/JXf9ph7hZePbcbJL75J8Z+
-         MGAcp6IwgEGjXnD6V3TeqDg3meeVB68nJLqsM56++zjgF0rlxFohZ6T0pJT6wwOwzafi
-         8agQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkObTIxPh4KYh87CgMBvpmNIETMHHaOM+sPWMTR9mJthZsbsqyBKM0+e7Vb8HlSBUXR+XibOBEzA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQSigTM3A37sQkwpa6uaH6xYv3kWSeD+aY0Pfc43rVJoHV8DdR
-	riVnFHHp/FOZKMmjzm2Prxb9IV4OTZYbp0rMGBPlPe22pNGNk43s
-X-Gm-Gg: ASbGncuUfuB+Fmw8g+mcACqh8d0BMx/H85zgnIEFlz9dedwWQDM7TvG6JRrDtmwQV3d
-	AUvPYbC+8K270bA4sU39Jy1YwUwdqGrBAQp+bStHovKHlUvar2ePO1oQok0h0+/WZqTeN/LTkQp
-	2Yucdj1LBX5P5e4nbJBFXUGEQ1AhEOVek3D59O+oIPDs7vVir7O4zFjnkvDH4/fPRx7lGPAwj0U
-	Zg0f12kp0QqIRP7pcKRmW+wmh+TZwL6LnQRButuPAqfnE4OAm6TjCWq3SxJhVTwMM6zxyzItw8M
-	ZXsZWH8iqg9/FgwgLI+AQP+JAvQURImhxDAR755Pk0zQ9xO2
-X-Google-Smtp-Source: AGHT+IEvkzdc4DBthu3R+FesJexfkkHpD7pub6V0X3wRA+RwWxB26NzVoiPTLkbYv2hECl8cvWYadQ==
-X-Received: by 2002:a17:907:6d1a:b0:ab6:f68c:746e with SMTP id a640c23a62f3a-ab789c3dcafmr336079466b.41.1738931920170;
-        Fri, 07 Feb 2025 04:38:40 -0800 (PST)
+        bh=luRbu+qxp5tYTbAPnrQjWIZLwECTkT6rgueITNh5cGE=;
+        b=MiCXosY62bLT6XJTTuSaeBNSNHbTAL9y7nm7HwiQuDED/VA5KB6oO/FND979NCvrSg
+         qLSW2W602AxBP1K5YJMdHsHHPj7JyN/MSGSYzSLZZX9eCK3fbgB0iYdoqmKd1+/7fcGH
+         thBWtMrbTM550IiArh0dlS96Gtev6ZdLq4roe6SGp71VLEd8PI9Skk4qZzfekGTBaY39
+         5HLag0NLc1SmzugDpsrzP3eqQSVReDBIb+CKKuKGuVsU9U5UdzRQnjnAN9hi5RfFspKt
+         jc+MxndttmrzUVJN4DMwxGstvSyIH4/Lbm2yAvZ+6EtFxBs8jJsI6pQcQGhz1VOxFnZ2
+         L6PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSYXpInzrjftDXxrM/+k3tThORyf/gzUjFI0zamzA+ehkOpmSO0Gpqp06c7xvD8APQhjy0b4LLRdug3Ig=@vger.kernel.org, AJvYcCUtwohtkNhINDpzmyPnygDQG+wjoiJYh/0aY/Do3U4+sG9iyuibLgUm9xF6gIELiRPxZguxsBgqVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb6v9KjqExVJSMp7RtvL6bdaLMj7cmlbvRO9N4r24qXk3nfxEA
+	vuHj7JNnv42UPd5gjHexCrVyrMBQo9GE1jJJYJm+gxzRQi032rNQiiRWsA==
+X-Gm-Gg: ASbGncubcpAfxQveY0S0iIACInjcE7dJzB7WRqGf7hec71ajoJDgSVXBl+3E1w+/XAE
+	IfKuRQtcRaEH6O0G/h0vGjKJhz8eKQm7jLz8LH+c7yGI8u1lVPlLBsY7niW6NOOh6gap9vIt8rP
+	4BT444ojxiOMFqmutqadeFvV5zNatD4MaJisV6TE2KNG6LUW4fD65nHL7M8IB0/YbTFEZoUCsH7
+	5AInecjb+TlhAZz/UBd0w537ymQAwtnRhW6seQrhClmWDDxkkwqJ5r4FVgvINXNktbYhI5ohrt3
+	wO0G28HTyXCXL9cEAnucnyplqjlvnoImvhFOb1EgcStjtDUh
+X-Google-Smtp-Source: AGHT+IFe67U49RcIQtd8/cPi8kX86e5CxUBCkNHuuOrF9vP5BxLv5warogiRIPjyMz/W5j2EcWNvCw==
+X-Received: by 2002:a17:907:d8f:b0:aac:1e96:e7d2 with SMTP id a640c23a62f3a-ab789c834f5mr310503966b.54.1738932071849;
+        Fri, 07 Feb 2025 04:41:11 -0800 (PST)
 Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:8e12])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab772fdb6bcsm260418366b.86.2025.02.07.04.38.39
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab795848f79sm7424666b.52.2025.02.07.04.41.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Feb 2025 04:38:39 -0800 (PST)
-Message-ID: <a48b35ed-b509-40a3-ad00-4834872bb39c@gmail.com>
-Date: Fri, 7 Feb 2025 12:38:45 +0000
+        Fri, 07 Feb 2025 04:41:11 -0800 (PST)
+Message-ID: <a6845bcf-8881-4b92-acc0-0aab8d98cba9@gmail.com>
+Date: Fri, 7 Feb 2025 12:41:17 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,126 +81,106 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/11] io_uring/epoll: add support for
- IORING_OP_EPOLL_WAIT
-To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org
-References: <20250204194814.393112-1-axboe@kernel.dk>
- <20250204194814.393112-10-axboe@kernel.dk>
+Subject: Re: [PATCH 6/6] io_uring: cache nodes and mapped buffers
+To: Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org,
+ linux-block@vger.kernel.org, ming.lei@redhat.com, axboe@kernel.dk
+Cc: Keith Busch <kbusch@kernel.org>
+References: <20250203154517.937623-1-kbusch@meta.com>
+ <20250203154517.937623-7-kbusch@meta.com>
 Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250204194814.393112-10-axboe@kernel.dk>
+In-Reply-To: <20250203154517.937623-7-kbusch@meta.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/4/25 19:46, Jens Axboe wrote:
-> For existing epoll event loops that can't fully convert to io_uring,
-> the used approach is usually to add the io_uring fd to the epoll
-> instance and use epoll_wait() to wait on both "legacy" and io_uring
-> events. While this work, it isn't optimal as:
+On 2/3/25 15:45, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> 1) epoll_wait() is pretty limited in what it can do. It does not support
->     partial reaping of events, or waiting on a batch of events.
+> Frequent alloc/free cycles on these is pretty costly. Use an io cache to
+> more efficiently reuse these buffers.
 > 
-> 2) When an io_uring ring is added to an epoll instance, it activates the
->     io_uring "I'm being polled" logic which slows things down.
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
+>   include/linux/io_uring_types.h |  16 ++---
+>   io_uring/filetable.c           |   2 +-
+>   io_uring/rsrc.c                | 108 ++++++++++++++++++++++++---------
+>   io_uring/rsrc.h                |   2 +-
+>   4 files changed, 92 insertions(+), 36 deletions(-)
 > 
-> Rather than use this approach, with EPOLL_WAIT support added to io_uring,
-> event loops can use the normal io_uring wait logic for everything, as
-> long as an epoll wait request has been armed with io_uring.
-> 
-> Note that IORING_OP_EPOLL_WAIT does NOT take a timeout value, as this
-> is an async request. Waiting on io_uring events in general has various
-> timeout parameters, and those are the ones that should be used when
-> waiting on any kind of request. If events are immediately available for
-> reaping, then This opcode will return those immediately. If none are
-> available, then it will post an async completion when they become
-> available.
-> 
-> cqe->res will contain either an error code (< 0 value) for a malformed
-> request, invalid epoll instance, etc. It will return a positive result
-> indicating how many events were reaped.
-> 
-> IORING_OP_EPOLL_WAIT requests may be canceled using the normal io_uring
-> cancelation infrastructure. The poll logic for managing ownership is
-> adopted to guard the epoll side too.
-...
-> diff --git a/io_uring/epoll.c b/io_uring/epoll.c
-> index 7848d9cc073d..5a47f0cce647 100644
-> --- a/io_uring/epoll.c
-> +++ b/io_uring/epoll.c
-...
-> +static void io_epoll_retry(struct io_kiocb *req, struct io_tw_state *ts)
-> +{
-> +	int v;
+> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+> index aa661ebfd6568..c0e0c1f92e5b1 100644
+> --- a/include/linux/io_uring_types.h
+> +++ b/include/linux/io_uring_types.h
+> @@ -67,8 +67,17 @@ struct io_file_table {
+>   	unsigned int alloc_hint;
+>   };
+>   
+> +struct io_alloc_cache {
+> +	void			**entries;
+> +	unsigned int		nr_cached;
+> +	unsigned int		max_cached;
+> +	size_t			elem_size;
+> +};
 > +
-> +	do {
-> +		v = atomic_read(&req->poll_refs);
-> +		if (unlikely(v != 1)) {
-> +			if (WARN_ON_ONCE(!(v & IO_POLL_REF_MASK)))
-> +				return;
-> +			if (v & IO_POLL_CANCEL_FLAG) {
-> +				__io_epoll_cancel(req);
-> +				return;
-> +			}
-> +			if (v & IO_POLL_FINISH_FLAG)
-> +				return;
-> +		}
-> +		v &= IO_POLL_REF_MASK;
-> +	} while (atomic_sub_return(v, &req->poll_refs) & IO_POLL_REF_MASK);
+>   struct io_buf_table {
+>   	struct io_rsrc_data	data;
+> +	struct io_alloc_cache	node_cache;
+> +	struct io_alloc_cache	imu_cache;
 
-I haven't looked deep into the set, but this loop looks very
-suspicious. The entire purpose of the twin loop in poll.c is
-not to lose events while doing processing, which is why the
-processing happens before the decrement...
+We can avoid all churn if you kill patch 5/6 and place put the
+caches directly into struct io_ring_ctx. It's a bit better for
+future cache improvements and we can even reuse the node cache
+for files.
 
-> +	io_req_task_submit(req, ts);
-
-Maybe the issue is supposed to handle that, but this one is
-not allowed unless you fully unhash all the polling. Once you
-dropped refs the poll wait entry feels free to claim the request,
-and, for example, queue a task work, and io_req_task_submit()
-would decide to queue it as well. It's likely not the only
-race that can happen.
-
-> +}
-> +
-> +static int io_epoll_execute(struct io_kiocb *req)
-> +{
-> +	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
-> +
-> +	list_del_init_careful(&iew->wait.entry);
-> +	if (io_poll_get_ownership(req)) {
-> +		req->io_task_work.func = io_epoll_retry;
-> +		io_req_task_work_add(req);
-> +	}
-> +
-> +	return 1;
-> +}
 ...
-> +int io_epoll_wait(struct io_kiocb *req, unsigned int issue_flags)
-> +{
-> +	struct io_epoll_wait *iew = io_kiocb_to_cmd(req, struct io_epoll_wait);
-> +	struct io_ring_ctx *ctx = req->ctx;
-> +	int ret;
-> +
-> +	io_ring_submit_lock(ctx, issue_flags);
-> +
-> +	ret = epoll_wait(req->file, iew->events, iew->maxevents, NULL, &iew->wait);
-> +	if (ret == -EIOCBQUEUED) {
-> +		if (hlist_unhashed(&req->hash_node))
-> +			hlist_add_head(&req->hash_node, &ctx->epoll_list);
-> +		io_ring_submit_unlock(ctx, issue_flags);
-> +		return IOU_ISSUE_SKIP_COMPLETE;
-> +	} else if (ret < 0) {
-> +		req_set_fail(req);
-> +	}
-> +	hlist_del_init(&req->hash_node);
-> +	io_ring_submit_unlock(ctx, issue_flags);
-> +	io_req_set_res(req, ret, 0);
-> +	return IOU_OK;
-> +}
-...
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 864c2eabf8efd..5434b0d992d62 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -117,23 +117,39 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_rsrc_node *node)
+>   				unpin_user_page(imu->bvec[i].bv_page);
+>   		if (imu->acct_pages)
+>   			io_unaccount_mem(ctx, imu->acct_pages);
+> -		kvfree(imu);
+> +		if (struct_size(imu, bvec, imu->nr_bvecs) >
+> +				ctx->buf_table.imu_cache.elem_size ||
+
+It could be quite a large allocation, let's not cache it if
+it hasn't came from the cache for now. We can always improve
+on top.
+
+And can we invert how it's calculated? See below. You'll have
+fewer calculations in the fast path, and I don't really like
+users looking at ->elem_size when it's not necessary.
+
+
+#define IO_CACHED_BVEC_SEGS	N
+
+io_alloc_cache_init(&table->imu_cache, ...,
+		    /* elem_size */ struct_size(imu, ..., IO_CACHED_BVEC_SEGS));
+
+alloc(bvec_segs) {
+	if (bvec_segs <= IO_CACHED_BVEC_SEGS)
+		/* use the cache */
+	...
+}
+
+free() {
+	if (imu->nr_segs == IO_CACHED_BVEC_SEGS)
+		/* return to cache */
+	else {
+		WARN_ON_ONCE(imu->nr_segs < IO_CACHED_BVEC_SEGS);
+		...
+	}
+}
+
+
+> +		    !io_alloc_cache_put(&ctx->buf_table.imu_cache, imu))
+> +			kvfree(imu);
+>   	}
+>   }
+>   
+
 -- 
 Pavel Begunkov
 

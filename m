@@ -1,286 +1,224 @@
-Return-Path: <io-uring+bounces-6289-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6290-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C54CA2B548
-	for <lists+io-uring@lfdr.de>; Thu,  6 Feb 2025 23:39:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB83A2B8F9
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 03:22:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0F3B166F75
-	for <lists+io-uring@lfdr.de>; Thu,  6 Feb 2025 22:39:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8E4A1678BC
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 02:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6987219CC36;
-	Thu,  6 Feb 2025 22:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="YO3dbOV6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAAA18B499;
+	Fri,  7 Feb 2025 02:20:50 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f227.google.com (mail-il1-f227.google.com [209.85.166.227])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109D123C380
-	for <io-uring@vger.kernel.org>; Thu,  6 Feb 2025 22:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D124617B418
+	for <io-uring@vger.kernel.org>; Fri,  7 Feb 2025 02:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738881563; cv=none; b=DAM0+PazlVxDzY5IMAbGuYtMypnsBXeSgFx6NAb9kq6asz0eBfQVdolYjh681MyUb9obVJyzQCqIArd7QyRcC/6vfqqtPqSvbuekBKPgM5MZAItjKacO9FtFbuGZPrdEwKHrGI08dG+9R0/ABDJO6iooclfEVfYgMddgf+Az/LA=
+	t=1738894850; cv=none; b=gfieoBfjaghjy8qejlEFmhTR2TfRubVwvIKcuc8bxv63n6+NqI3VFh6kiQaHvC+Z7IHUNkPaqLPNGuKuA1AMmPrI4Ilv52GPml7HzAus9W9PY+s7d6JkFzLO5GKdlRQg3T+pXPDTlRI0t9nAD5NIKwSppId9e3POvka9L7quwbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738881563; c=relaxed/simple;
-	bh=Nrg0g1NU//t049z0PlkNMbyoN3JRs+gc/YpabR/RWEE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kZlMxgA8hT2dF5HNevXhleumdAirw1q41Uu0gmIDOnkiHOcm5hw8xATyGBxNVdiP2CPFClSZ6DxH9lDCLd4qnrhzAy9bEiPECo7J9xlIPy4B79hqNLfV8jNRHpjSGcr44yyaQnyjYMuTf22XYMdOIwr/QClNOVu7WS9eGHNfvc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=YO3dbOV6; arc=none smtp.client-ip=209.85.166.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-il1-f227.google.com with SMTP id e9e14a558f8ab-3ce886a2d5bso12513545ab.1
-        for <io-uring@vger.kernel.org>; Thu, 06 Feb 2025 14:39:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1738881560; x=1739486360; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhBeQh7Zdw/l4mcGmN2xzJz9jOXegs73RTrIYNhiVUE=;
-        b=YO3dbOV6V1HHttrBpZqoMntKfHUnCx7lRwXWf0NyLAmWLba6TmSYPN9v4CQ5eCP5tw
-         OOtReEoEsDJrMixq4OQsRqjYRqeP8UeR/0KTuSDjcaChvIpm2REgV5MCGKSAdEP0DeCs
-         UAmNbgvac6TU4wQfIFsOie5sq3rizkboeXNrkNfX5bMjdOjzq6mRriQcudPxpLw+/L8e
-         t9DREBcuPZsXP3gQOwC7fA4EazGcjbBqx+1NSwGj7zQm2OZ2RQZf7kt9kSdCpS65ZHxg
-         0UDwUfEi2FmJfxGw7vH2HpKlGXyJxpnXBjzj/ul23/zzzlVoBp6wCQ9QGwiUKm7diFP2
-         sBVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738881560; x=1739486360;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zhBeQh7Zdw/l4mcGmN2xzJz9jOXegs73RTrIYNhiVUE=;
-        b=rd6rHsegxIhf1juAgH77OPReF035wKG+dWc3W0SU3iPRAB6gtm2zKRA3MtbuVxeofp
-         5dBToJgpyYPMRui7kQpuYqZq3BORVrE5RLq6soYC4ygsvTq31QCmV5qd6RYttT2XhnuQ
-         CLncKhs+oo/6iy/Ik0GQjlagWnmr8Ad8dsSe7Xq/17URTlBZRfGWcVJ+GFHq4aumgSrp
-         6py6W7LHtr1B2ZxBOog82eHnUqtjGNI18BUP6JhBHXL9HL38d66I09t+tyd8gK+qeg5P
-         /Q8gokFbIa3cCHnvjqwKRG0b2JsDWDKSxtXnpjrwhhaJqgHNkM4WJGICVPt33H68hX/l
-         agSQ==
-X-Gm-Message-State: AOJu0YzqLHOk01BfpxJrJJM50PNfjxiK645pZlndWEpUI4yOYF3nKc0k
-	ausd/tdjijkj+HII0OX5S3equ2QJWMge/3G7LNcdYRvsh5sstw2HBEJVnyqg5iM3YMv/2bXJnsN
-	kZJtRWjIp9RPgSixwcZrshp69LqAY+TMk
-X-Gm-Gg: ASbGncvU4oSK8llj0KgCnRxLm5nK/DnBwmoVyNZZ5PhLNDFPix3qz4/YsDUy1DP2eC7
-	/abjTKL7ONleP/MNhkyT8D96xqVfUnIKQNybAAqV4wKZLeFcgy/sy9eh533qoeUBMsoKiVAKQPK
-	nlvki+cjGvawjT5OPnROfN9WcE4MJCJwvvIHPYDinebwNM9ANf3OOTa5uyzjroh0I4swdoitkSc
-	bLJ93M3IfV1OWujx0S2ZoDU9RqST9eWq75PP0RmKXy/S7onHLtFdmzYg2AcqNp3GF+2C4Dghk26
-	s2FVTwUFvQf9SPYOY3kqSOOzNgmIbzpfPb3UfsE=
-X-Google-Smtp-Source: AGHT+IF6mtXYoU8DcSicBlQPvfysMyAzXQooMtAXlC4iKsFOHbacr4uMJSDjzn5dyhKUiGO+TZmDEYKs5nlr
-X-Received: by 2002:a05:6e02:1d8d:b0:3d0:4e0c:2c96 with SMTP id e9e14a558f8ab-3d13de77ae3mr6812215ab.2.1738881560004;
-        Thu, 06 Feb 2025 14:39:20 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3d05e8d9272sm1422705ab.1.2025.02.06.14.39.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2025 14:39:19 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [IPv6:2620:125:9007:640:7:70:36:0])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 59E8C34014E;
-	Thu,  6 Feb 2025 15:39:18 -0700 (MST)
-Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
-	id 4EFFEE55F7E; Thu,  6 Feb 2025 15:39:18 -0700 (MST)
-From: Uday Shankar <ushankar@purestorage.com>
-Date: Thu, 06 Feb 2025 15:38:53 -0700
-Subject: [PATCH] io-wq: backoff when retrying worker creation
+	s=arc-20240116; t=1738894850; c=relaxed/simple;
+	bh=pg95GeMkvx4NFwKbSy6HIeFfTy1K0rEFLJtB0VA5XF4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EaOkfU2yuVqj14aGrCTQqUeC0fQX83a5cTbIeXTWfxKFvqrIITSDiALSRJlFdCH/5S9ma+2HkctMzPc4nV3NKCy4rbxQ9DDrmvv3WoL0UOOdSe/bnYfGPptQD7d+HuDd0fvDLdCe/iZ5BcubMQAxwUDnwHP238gC7kUtq7VA/FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YpyMz0CNWz1JJd5;
+	Fri,  7 Feb 2025 10:19:27 +0800 (CST)
+Received: from kwepemd500010.china.huawei.com (unknown [7.221.188.84])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5AB1D140257;
+	Fri,  7 Feb 2025 10:20:44 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd500010.china.huawei.com (7.221.188.84) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 7 Feb 2025 10:20:44 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Fri, 7 Feb 2025 10:20:43 +0800
+From: lizetao <lizetao1@huawei.com>
+To: Uday Shankar <ushankar@purestorage.com>
+CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, Jens Axboe
+	<axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
+Subject: RE: [PATCH] io-wq: backoff when retrying worker creation
+Thread-Topic: [PATCH] io-wq: backoff when retrying worker creation
+Thread-Index: AQHbeOf+zS7JPCJGAU2QX893c4H6N7M7GrLg
+Date: Fri, 7 Feb 2025 02:20:43 +0000
+Message-ID: <c2da8716122e47ce902e0397e66cf124@huawei.com>
+References: <20250206-wq_retry-v1-1-6d79bde1e69f@purestorage.com>
+In-Reply-To: <20250206-wq_retry-v1-1-6d79bde1e69f@purestorage.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250206-wq_retry-v1-1-6d79bde1e69f@purestorage.com>
-X-B4-Tracking: v=1; b=H4sIAPw5pWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIwMz3fLC+KLUkqJKXcPkJPM002RDS2PTFCWg8oKi1LTMCrBR0bG1tQC
- 5rjn7WgAAAA==
-X-Change-ID: 20250206-wq_retry-1cb7f5c1935d
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>
-X-Mailer: b4 0.14.2
 
-When io_uring submission goes async for the first time on a given task,
-we'll try to create a worker thread to handle the submission. Creating
-this worker thread can fail due to various transient conditions, such as
-an outstanding signal in the forking thread, so we have retry logic with
-a limit of 3 retries. However, this retry logic appears to be too
-aggressive/fast - we've observed a thread blowing through the retry
-limit while having the same outstanding signal the whole time. Here's an
-excerpt of some tracing that demonstrates the issue:
-
-First, signal 26 is generated for the process. It ends up getting routed
-to thread 92942.
-
- 0)   cbd-92284    /* signal_generate: sig=26 errno=0 code=-2 comm=psblkdASD pid=92934 grp=1 res=0 */
-
-This causes create_io_thread in the signalled thread to fail with
-ERESTARTNOINTR, and thus a retry is queued.
-
-13) task_th-92942  /* io_uring_queue_async_work: ring 000000007325c9ae, request 0000000080c96d8e, user_data 0x0, opcode URING_CMD, flags 0x8240001, normal queue, work 000000006e96dd3f */
-13) task_th-92942  io_wq_enqueue() {
-13) task_th-92942    _raw_spin_lock();
-13) task_th-92942    io_wq_activate_free_worker();
-13) task_th-92942    _raw_spin_lock();
-13) task_th-92942    create_io_worker() {
-13) task_th-92942      __kmalloc_cache_noprof();
-13) task_th-92942      __init_swait_queue_head();
-13) task_th-92942      kprobe_ftrace_handler() {
-13) task_th-92942        get_kprobe();
-13) task_th-92942        aggr_pre_handler() {
-13) task_th-92942          pre_handler_kretprobe();
-13) task_th-92942          /* create_enter: (create_io_thread+0x0/0x50) fn=0xffffffff8172c0e0 arg=0xffff888996bb69c0 node=-1 */
-13) task_th-92942        } /* aggr_pre_handler */
-...
-13) task_th-92942        } /* copy_process */
-13) task_th-92942      } /* create_io_thread */
-13) task_th-92942      kretprobe_rethook_handler() {
-13) task_th-92942        /* create_exit: (create_io_worker+0x8a/0x1a0 <- create_io_thread) arg1=0xfffffffffffffdff */
-13) task_th-92942      } /* kretprobe_rethook_handler */
-13) task_th-92942    queue_work_on() {
-...
-
-The CPU is then handed to a kworker to process the queued retry:
-
-------------------------------------------
- 13) task_th-92942  => kworker-54154
-------------------------------------------
-13) kworker-54154  io_workqueue_create() {
-13) kworker-54154    io_queue_worker_create() {
-13) kworker-54154      task_work_add() {
-13) kworker-54154        wake_up_state() {
-13) kworker-54154          try_to_wake_up() {
-13) kworker-54154            _raw_spin_lock_irqsave();
-13) kworker-54154            _raw_spin_unlock_irqrestore();
-13) kworker-54154          } /* try_to_wake_up */
-13) kworker-54154        } /* wake_up_state */
-13) kworker-54154        kick_process();
-13) kworker-54154      } /* task_work_add */
-13) kworker-54154    } /* io_queue_worker_create */
-13) kworker-54154  } /* io_workqueue_create */
-
-And then we immediately switch back to the original task to try creating
-a worker again. This fails, because the original task still hasn't
-handled its signal.
-
------------------------------------------
- 13) kworker-54154  => task_th-92942
-------------------------------------------
-13) task_th-92942  create_worker_cont() {
-13) task_th-92942    kprobe_ftrace_handler() {
-13) task_th-92942      get_kprobe();
-13) task_th-92942      aggr_pre_handler() {
-13) task_th-92942        pre_handler_kretprobe();
-13) task_th-92942        /* create_enter: (create_io_thread+0x0/0x50) fn=0xffffffff8172c0e0 arg=0xffff888996bb69c0 node=-1 */
-13) task_th-92942      } /* aggr_pre_handler */
-13) task_th-92942    } /* kprobe_ftrace_handler */
-13) task_th-92942    create_io_thread() {
-13) task_th-92942      copy_process() {
-13) task_th-92942        task_active_pid_ns();
-13) task_th-92942        _raw_spin_lock_irq();
-13) task_th-92942        recalc_sigpending();
-13) task_th-92942        _raw_spin_lock_irq();
-13) task_th-92942      } /* copy_process */
-13) task_th-92942    } /* create_io_thread */
-13) task_th-92942    kretprobe_rethook_handler() {
-13) task_th-92942      /* create_exit: (create_worker_cont+0x35/0x1b0 <- create_io_thread) arg1=0xfffffffffffffdff */
-13) task_th-92942    } /* kretprobe_rethook_handler */
-13) task_th-92942    io_worker_release();
-13) task_th-92942    queue_work_on() {
-13) task_th-92942      clear_pending_if_disabled();
-13) task_th-92942      __queue_work() {
-13) task_th-92942      } /* __queue_work */
-13) task_th-92942    } /* queue_work_on */
-13) task_th-92942  } /* create_worker_cont */
-
-The pattern repeats another couple times until we blow through the retry
-counter, at which point we give up. All outstanding work is canceled,
-and the io_uring command which triggered all this is failed with
-ECANCELED:
-
-13) task_th-92942  io_acct_cancel_pending_work() {
-...
-13) task_th-92942  /* io_uring_complete: ring 000000007325c9ae, req 0000000080c96d8e, user_data 0x0, result -125, cflags 0x0 extra1 0 extra2 0  */
-
-Finally, the task gets around to processing its outstanding signal 26,
-but it's too late.
-
-13) task_th-92942  /* signal_deliver: sig=26 errno=0 code=-2 sa_handler=59566a0 sa_flags=14000000 */
-
-Try to address this issue by adding a small scaling delay when retrying
-worker creation. This should give the forking thread time to handle its
-signal in the above case. This isn't a particularly satisfying solution,
-as sufficiently paradoxical scheduling would still have us hitting the
-same issue, and I'm open to suggestions for something better. But this
-is likely to prevent this (already rare) issue from hitting in practice.
-
-Signed-off-by: Uday Shankar <ushankar@purestorage.com>
----
- io_uring/io-wq.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index f7d328feb7225d809601707e423c86a85ebb1c3c..173c77b70060bbbb2cd6009614c079095fab3e3c 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -63,7 +63,7 @@ struct io_worker {
- 
- 	union {
- 		struct rcu_head rcu;
--		struct work_struct work;
-+		struct delayed_work work;
- 	};
- };
- 
-@@ -784,6 +784,18 @@ static inline bool io_should_retry_thread(struct io_worker *worker, long err)
- 	}
- }
- 
-+static void queue_create_worker_retry(struct io_worker *worker)
-+{
-+	/*
-+	 * We only bother retrying because there's a chance that the
-+	 * failure to create a worker is due to some temporary condition
-+	 * in the forking task (e.g. outstanding signal); give the task
-+	 * some time to clear that condition.
-+	 */
-+	schedule_delayed_work(
-+		&worker->work, msecs_to_jiffies(worker->init_retries * 5));
-+}
-+
- static void create_worker_cont(struct callback_head *cb)
- {
- 	struct io_worker *worker;
-@@ -823,12 +835,13 @@ static void create_worker_cont(struct callback_head *cb)
- 
- 	/* re-create attempts grab a new worker ref, drop the existing one */
- 	io_worker_release(worker);
--	schedule_work(&worker->work);
-+	queue_create_worker_retry(worker);
- }
- 
- static void io_workqueue_create(struct work_struct *work)
- {
--	struct io_worker *worker = container_of(work, struct io_worker, work);
-+	struct io_worker *worker = container_of(
-+		work, struct io_worker, work.work);
- 	struct io_wq_acct *acct = io_wq_get_acct(worker);
- 
- 	if (!io_queue_worker_create(worker, acct, create_worker_cont))
-@@ -866,8 +879,8 @@ static bool create_io_worker(struct io_wq *wq, struct io_wq_acct *acct)
- 		kfree(worker);
- 		goto fail;
- 	} else {
--		INIT_WORK(&worker->work, io_workqueue_create);
--		schedule_work(&worker->work);
-+		INIT_DELAYED_WORK(&worker->work, io_workqueue_create);
-+		queue_create_worker_retry(worker);
- 	}
- 
- 	return true;
-
----
-base-commit: ec4ef55172d4539abff470568a4369a6e1c317b8
-change-id: 20250206-wq_retry-1cb7f5c1935d
-
-Best regards,
--- 
-Uday Shankar <ushankar@purestorage.com>
-
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogVWRheSBTaGFua2Fy
+IDx1c2hhbmthckBwdXJlc3RvcmFnZS5jb20+DQo+IFNlbnQ6IEZyaWRheSwgRmVicnVhcnkgNywg
+MjAyNSA2OjM5IEFNDQo+IFRvOiBKZW5zIEF4Ym9lIDxheGJvZUBrZXJuZWwuZGs+OyBQYXZlbCBC
+ZWd1bmtvdiA8YXNtbC5zaWxlbmNlQGdtYWlsLmNvbT4NCj4gQ2M6IGlvLXVyaW5nQHZnZXIua2Vy
+bmVsLm9yZzsgVWRheSBTaGFua2FyIDx1c2hhbmthckBwdXJlc3RvcmFnZS5jb20+DQo+IFN1Ympl
+Y3Q6IFtQQVRDSF0gaW8td3E6IGJhY2tvZmYgd2hlbiByZXRyeWluZyB3b3JrZXIgY3JlYXRpb24N
+Cj4gDQo+IFdoZW4gaW9fdXJpbmcgc3VibWlzc2lvbiBnb2VzIGFzeW5jIGZvciB0aGUgZmlyc3Qg
+dGltZSBvbiBhIGdpdmVuIHRhc2ssIHdlJ2xsIHRyeSB0bw0KPiBjcmVhdGUgYSB3b3JrZXIgdGhy
+ZWFkIHRvIGhhbmRsZSB0aGUgc3VibWlzc2lvbi4gQ3JlYXRpbmcgdGhpcyB3b3JrZXIgdGhyZWFk
+IGNhbg0KPiBmYWlsIGR1ZSB0byB2YXJpb3VzIHRyYW5zaWVudCBjb25kaXRpb25zLCBzdWNoIGFz
+IGFuIG91dHN0YW5kaW5nIHNpZ25hbCBpbiB0aGUgZm9ya2luZw0KPiB0aHJlYWQsIHNvIHdlIGhh
+dmUgcmV0cnkgbG9naWMgd2l0aCBhIGxpbWl0IG9mIDMgcmV0cmllcy4gSG93ZXZlciwgdGhpcyBy
+ZXRyeSBsb2dpYw0KPiBhcHBlYXJzIHRvIGJlIHRvbyBhZ2dyZXNzaXZlL2Zhc3QgLSB3ZSd2ZSBv
+YnNlcnZlZCBhIHRocmVhZCBibG93aW5nIHRocm91Z2ggdGhlDQo+IHJldHJ5IGxpbWl0IHdoaWxl
+IGhhdmluZyB0aGUgc2FtZSBvdXRzdGFuZGluZyBzaWduYWwgdGhlIHdob2xlIHRpbWUuIEhlcmUn
+cyBhbg0KPiBleGNlcnB0IG9mIHNvbWUgdHJhY2luZyB0aGF0IGRlbW9uc3RyYXRlcyB0aGUgaXNz
+dWU6DQo+IA0KPiBGaXJzdCwgc2lnbmFsIDI2IGlzIGdlbmVyYXRlZCBmb3IgdGhlIHByb2Nlc3Mu
+IEl0IGVuZHMgdXAgZ2V0dGluZyByb3V0ZWQgdG8gdGhyZWFkDQo+IDkyOTQyLg0KPiANCj4gIDAp
+ICAgY2JkLTkyMjg0ICAgIC8qIHNpZ25hbF9nZW5lcmF0ZTogc2lnPTI2IGVycm5vPTAgY29kZT0t
+Mg0KPiBjb21tPXBzYmxrZEFTRCBwaWQ9OTI5MzQgZ3JwPTEgcmVzPTAgKi8NCj4gDQo+IFRoaXMg
+Y2F1c2VzIGNyZWF0ZV9pb190aHJlYWQgaW4gdGhlIHNpZ25hbGxlZCB0aHJlYWQgdG8gZmFpbCB3
+aXRoIEVSRVNUQVJUTk9JTlRSLA0KPiBhbmQgdGh1cyBhIHJldHJ5IGlzIHF1ZXVlZC4NCj4gDQo+
+IDEzKSB0YXNrX3RoLTkyOTQyICAvKiBpb191cmluZ19xdWV1ZV9hc3luY193b3JrOiByaW5nIDAw
+MDAwMDAwNzMyNWM5YWUsDQo+IHJlcXVlc3QgMDAwMDAwMDA4MGM5NmQ4ZSwgdXNlcl9kYXRhIDB4
+MCwgb3Bjb2RlIFVSSU5HX0NNRCwgZmxhZ3MNCj4gMHg4MjQwMDAxLCBub3JtYWwgcXVldWUsIHdv
+cmsgMDAwMDAwMDA2ZTk2ZGQzZiAqLw0KPiAxMykgdGFza190aC05Mjk0MiAgaW9fd3FfZW5xdWV1
+ZSgpIHsNCj4gMTMpIHRhc2tfdGgtOTI5NDIgICAgX3Jhd19zcGluX2xvY2soKTsNCj4gMTMpIHRh
+c2tfdGgtOTI5NDIgICAgaW9fd3FfYWN0aXZhdGVfZnJlZV93b3JrZXIoKTsNCj4gMTMpIHRhc2tf
+dGgtOTI5NDIgICAgX3Jhd19zcGluX2xvY2soKTsNCj4gMTMpIHRhc2tfdGgtOTI5NDIgICAgY3Jl
+YXRlX2lvX3dvcmtlcigpIHsNCj4gMTMpIHRhc2tfdGgtOTI5NDIgICAgICBfX2ttYWxsb2NfY2Fj
+aGVfbm9wcm9mKCk7DQo+IDEzKSB0YXNrX3RoLTkyOTQyICAgICAgX19pbml0X3N3YWl0X3F1ZXVl
+X2hlYWQoKTsNCj4gMTMpIHRhc2tfdGgtOTI5NDIgICAgICBrcHJvYmVfZnRyYWNlX2hhbmRsZXIo
+KSB7DQo+IDEzKSB0YXNrX3RoLTkyOTQyICAgICAgICBnZXRfa3Byb2JlKCk7DQo+IDEzKSB0YXNr
+X3RoLTkyOTQyICAgICAgICBhZ2dyX3ByZV9oYW5kbGVyKCkgew0KPiAxMykgdGFza190aC05Mjk0
+MiAgICAgICAgICBwcmVfaGFuZGxlcl9rcmV0cHJvYmUoKTsNCj4gMTMpIHRhc2tfdGgtOTI5NDIg
+ICAgICAgICAgLyogY3JlYXRlX2VudGVyOiAoY3JlYXRlX2lvX3RocmVhZCsweDAvMHg1MCkNCj4g
+Zm49MHhmZmZmZmZmZjgxNzJjMGUwIGFyZz0weGZmZmY4ODg5OTZiYjY5YzAgbm9kZT0tMSAqLw0K
+PiAxMykgdGFza190aC05Mjk0MiAgICAgICAgfSAvKiBhZ2dyX3ByZV9oYW5kbGVyICovDQo+IC4u
+Lg0KPiAxMykgdGFza190aC05Mjk0MiAgICAgICAgfSAvKiBjb3B5X3Byb2Nlc3MgKi8NCj4gMTMp
+IHRhc2tfdGgtOTI5NDIgICAgICB9IC8qIGNyZWF0ZV9pb190aHJlYWQgKi8NCj4gMTMpIHRhc2tf
+dGgtOTI5NDIgICAgICBrcmV0cHJvYmVfcmV0aG9va19oYW5kbGVyKCkgew0KPiAxMykgdGFza190
+aC05Mjk0MiAgICAgICAgLyogY3JlYXRlX2V4aXQ6IChjcmVhdGVfaW9fd29ya2VyKzB4OGEvMHgx
+YTAgPC0NCj4gY3JlYXRlX2lvX3RocmVhZCkgYXJnMT0weGZmZmZmZmZmZmZmZmZkZmYgKi8NCj4g
+MTMpIHRhc2tfdGgtOTI5NDIgICAgICB9IC8qIGtyZXRwcm9iZV9yZXRob29rX2hhbmRsZXIgKi8N
+Cj4gMTMpIHRhc2tfdGgtOTI5NDIgICAgcXVldWVfd29ya19vbigpIHsNCj4gLi4uDQo+IA0KPiBU
+aGUgQ1BVIGlzIHRoZW4gaGFuZGVkIHRvIGEga3dvcmtlciB0byBwcm9jZXNzIHRoZSBxdWV1ZWQg
+cmV0cnk6DQo+IA0KPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0N
+Cj4gIDEzKSB0YXNrX3RoLTkyOTQyICA9PiBrd29ya2VyLTU0MTU0DQo+IC0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAxMykga3dvcmtlci01NDE1NCAgaW9fd29y
+a3F1ZXVlX2NyZWF0ZSgpIHsNCj4gMTMpIGt3b3JrZXItNTQxNTQgICAgaW9fcXVldWVfd29ya2Vy
+X2NyZWF0ZSgpIHsNCj4gMTMpIGt3b3JrZXItNTQxNTQgICAgICB0YXNrX3dvcmtfYWRkKCkgew0K
+PiAxMykga3dvcmtlci01NDE1NCAgICAgICAgd2FrZV91cF9zdGF0ZSgpIHsNCj4gMTMpIGt3b3Jr
+ZXItNTQxNTQgICAgICAgICAgdHJ5X3RvX3dha2VfdXAoKSB7DQo+IDEzKSBrd29ya2VyLTU0MTU0
+ICAgICAgICAgICAgX3Jhd19zcGluX2xvY2tfaXJxc2F2ZSgpOw0KPiAxMykga3dvcmtlci01NDE1
+NCAgICAgICAgICAgIF9yYXdfc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgpOw0KPiAxMykga3dvcmtl
+ci01NDE1NCAgICAgICAgICB9IC8qIHRyeV90b193YWtlX3VwICovDQo+IDEzKSBrd29ya2VyLTU0
+MTU0ICAgICAgICB9IC8qIHdha2VfdXBfc3RhdGUgKi8NCj4gMTMpIGt3b3JrZXItNTQxNTQgICAg
+ICAgIGtpY2tfcHJvY2VzcygpOw0KPiAxMykga3dvcmtlci01NDE1NCAgICAgIH0gLyogdGFza193
+b3JrX2FkZCAqLw0KPiAxMykga3dvcmtlci01NDE1NCAgICB9IC8qIGlvX3F1ZXVlX3dvcmtlcl9j
+cmVhdGUgKi8NCj4gMTMpIGt3b3JrZXItNTQxNTQgIH0gLyogaW9fd29ya3F1ZXVlX2NyZWF0ZSAq
+Lw0KPiANCj4gQW5kIHRoZW4gd2UgaW1tZWRpYXRlbHkgc3dpdGNoIGJhY2sgdG8gdGhlIG9yaWdp
+bmFsIHRhc2sgdG8gdHJ5IGNyZWF0aW5nIGEgd29ya2VyDQo+IGFnYWluLiBUaGlzIGZhaWxzLCBi
+ZWNhdXNlIHRoZSBvcmlnaW5hbCB0YXNrIHN0aWxsIGhhc24ndCBoYW5kbGVkIGl0cyBzaWduYWwu
+DQo+IA0KPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAgMTMp
+IGt3b3JrZXItNTQxNTQgID0+IHRhc2tfdGgtOTI5NDINCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IDEzKSB0YXNrX3RoLTkyOTQyICBjcmVhdGVfd29ya2Vy
+X2NvbnQoKSB7DQo+IDEzKSB0YXNrX3RoLTkyOTQyICAgIGtwcm9iZV9mdHJhY2VfaGFuZGxlcigp
+IHsNCj4gMTMpIHRhc2tfdGgtOTI5NDIgICAgICBnZXRfa3Byb2JlKCk7DQo+IDEzKSB0YXNrX3Ro
+LTkyOTQyICAgICAgYWdncl9wcmVfaGFuZGxlcigpIHsNCj4gMTMpIHRhc2tfdGgtOTI5NDIgICAg
+ICAgIHByZV9oYW5kbGVyX2tyZXRwcm9iZSgpOw0KPiAxMykgdGFza190aC05Mjk0MiAgICAgICAg
+LyogY3JlYXRlX2VudGVyOiAoY3JlYXRlX2lvX3RocmVhZCsweDAvMHg1MCkNCj4gZm49MHhmZmZm
+ZmZmZjgxNzJjMGUwIGFyZz0weGZmZmY4ODg5OTZiYjY5YzAgbm9kZT0tMSAqLw0KPiAxMykgdGFz
+a190aC05Mjk0MiAgICAgIH0gLyogYWdncl9wcmVfaGFuZGxlciAqLw0KPiAxMykgdGFza190aC05
+Mjk0MiAgICB9IC8qIGtwcm9iZV9mdHJhY2VfaGFuZGxlciAqLw0KPiAxMykgdGFza190aC05Mjk0
+MiAgICBjcmVhdGVfaW9fdGhyZWFkKCkgew0KPiAxMykgdGFza190aC05Mjk0MiAgICAgIGNvcHlf
+cHJvY2VzcygpIHsNCj4gMTMpIHRhc2tfdGgtOTI5NDIgICAgICAgIHRhc2tfYWN0aXZlX3BpZF9u
+cygpOw0KPiAxMykgdGFza190aC05Mjk0MiAgICAgICAgX3Jhd19zcGluX2xvY2tfaXJxKCk7DQo+
+IDEzKSB0YXNrX3RoLTkyOTQyICAgICAgICByZWNhbGNfc2lncGVuZGluZygpOw0KPiAxMykgdGFz
+a190aC05Mjk0MiAgICAgICAgX3Jhd19zcGluX2xvY2tfaXJxKCk7DQo+IDEzKSB0YXNrX3RoLTky
+OTQyICAgICAgfSAvKiBjb3B5X3Byb2Nlc3MgKi8NCj4gMTMpIHRhc2tfdGgtOTI5NDIgICAgfSAv
+KiBjcmVhdGVfaW9fdGhyZWFkICovDQo+IDEzKSB0YXNrX3RoLTkyOTQyICAgIGtyZXRwcm9iZV9y
+ZXRob29rX2hhbmRsZXIoKSB7DQo+IDEzKSB0YXNrX3RoLTkyOTQyICAgICAgLyogY3JlYXRlX2V4
+aXQ6IChjcmVhdGVfd29ya2VyX2NvbnQrMHgzNS8weDFiMCA8LQ0KPiBjcmVhdGVfaW9fdGhyZWFk
+KSBhcmcxPTB4ZmZmZmZmZmZmZmZmZmRmZiAqLw0KPiAxMykgdGFza190aC05Mjk0MiAgICB9IC8q
+IGtyZXRwcm9iZV9yZXRob29rX2hhbmRsZXIgKi8NCj4gMTMpIHRhc2tfdGgtOTI5NDIgICAgaW9f
+d29ya2VyX3JlbGVhc2UoKTsNCj4gMTMpIHRhc2tfdGgtOTI5NDIgICAgcXVldWVfd29ya19vbigp
+IHsNCj4gMTMpIHRhc2tfdGgtOTI5NDIgICAgICBjbGVhcl9wZW5kaW5nX2lmX2Rpc2FibGVkKCk7
+DQo+IDEzKSB0YXNrX3RoLTkyOTQyICAgICAgX19xdWV1ZV93b3JrKCkgew0KPiAxMykgdGFza190
+aC05Mjk0MiAgICAgIH0gLyogX19xdWV1ZV93b3JrICovDQo+IDEzKSB0YXNrX3RoLTkyOTQyICAg
+IH0gLyogcXVldWVfd29ya19vbiAqLw0KPiAxMykgdGFza190aC05Mjk0MiAgfSAvKiBjcmVhdGVf
+d29ya2VyX2NvbnQgKi8NCj4gDQo+IFRoZSBwYXR0ZXJuIHJlcGVhdHMgYW5vdGhlciBjb3VwbGUg
+dGltZXMgdW50aWwgd2UgYmxvdyB0aHJvdWdoIHRoZSByZXRyeSBjb3VudGVyLA0KPiBhdCB3aGlj
+aCBwb2ludCB3ZSBnaXZlIHVwLiBBbGwgb3V0c3RhbmRpbmcgd29yayBpcyBjYW5jZWxlZCwgYW5k
+IHRoZSBpb191cmluZw0KPiBjb21tYW5kIHdoaWNoIHRyaWdnZXJlZCBhbGwgdGhpcyBpcyBmYWls
+ZWQgd2l0aA0KPiBFQ0FOQ0VMRUQ6DQo+IA0KPiAxMykgdGFza190aC05Mjk0MiAgaW9fYWNjdF9j
+YW5jZWxfcGVuZGluZ193b3JrKCkgeyAuLi4NCj4gMTMpIHRhc2tfdGgtOTI5NDIgIC8qIGlvX3Vy
+aW5nX2NvbXBsZXRlOiByaW5nIDAwMDAwMDAwNzMyNWM5YWUsIHJlcQ0KPiAwMDAwMDAwMDgwYzk2
+ZDhlLCB1c2VyX2RhdGEgMHgwLCByZXN1bHQgLTEyNSwgY2ZsYWdzIDB4MCBleHRyYTEgMCBleHRy
+YTIgMCAgKi8NCj4gDQo+IEZpbmFsbHksIHRoZSB0YXNrIGdldHMgYXJvdW5kIHRvIHByb2Nlc3Np
+bmcgaXRzIG91dHN0YW5kaW5nIHNpZ25hbCAyNiwgYnV0IGl0J3MgdG9vDQo+IGxhdGUuDQo+IA0K
+PiAxMykgdGFza190aC05Mjk0MiAgLyogc2lnbmFsX2RlbGl2ZXI6IHNpZz0yNiBlcnJubz0wIGNv
+ZGU9LTINCj4gc2FfaGFuZGxlcj01OTU2NmEwIHNhX2ZsYWdzPTE0MDAwMDAwICovDQo+IA0KPiBU
+cnkgdG8gYWRkcmVzcyB0aGlzIGlzc3VlIGJ5IGFkZGluZyBhIHNtYWxsIHNjYWxpbmcgZGVsYXkg
+d2hlbiByZXRyeWluZyB3b3JrZXINCj4gY3JlYXRpb24uIFRoaXMgc2hvdWxkIGdpdmUgdGhlIGZv
+cmtpbmcgdGhyZWFkIHRpbWUgdG8gaGFuZGxlIGl0cyBzaWduYWwgaW4gdGhlIGFib3ZlDQo+IGNh
+c2UuIFRoaXMgaXNuJ3QgYSBwYXJ0aWN1bGFybHkgc2F0aXNmeWluZyBzb2x1dGlvbiwgYXMgc3Vm
+ZmljaWVudGx5IHBhcmFkb3hpY2FsDQo+IHNjaGVkdWxpbmcgd291bGQgc3RpbGwgaGF2ZSB1cyBo
+aXR0aW5nIHRoZSBzYW1lIGlzc3VlLCBhbmQgSSdtIG9wZW4gdG8gc3VnZ2VzdGlvbnMNCj4gZm9y
+IHNvbWV0aGluZyBiZXR0ZXIuIEJ1dCB0aGlzIGlzIGxpa2VseSB0byBwcmV2ZW50IHRoaXMgKGFs
+cmVhZHkgcmFyZSkgaXNzdWUgZnJvbQ0KPiBoaXR0aW5nIGluIHByYWN0aWNlLg0KPiANCj4gU2ln
+bmVkLW9mZi1ieTogVWRheSBTaGFua2FyIDx1c2hhbmthckBwdXJlc3RvcmFnZS5jb20+DQo+IC0t
+LQ0KPiAgaW9fdXJpbmcvaW8td3EuYyB8IDIzICsrKysrKysrKysrKysrKysrKy0tLS0tDQo+ICAx
+IGZpbGUgY2hhbmdlZCwgMTggaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCj4gDQo+IGRp
+ZmYgLS1naXQgYS9pb191cmluZy9pby13cS5jIGIvaW9fdXJpbmcvaW8td3EuYyBpbmRleA0KPiBm
+N2QzMjhmZWI3MjI1ZDgwOTYwMTcwN2U0MjNjODZhODVlYmIxYzNjLi4xNzNjNzdiNzAwNjBiYmJi
+MmNkNjAwOQ0KPiA2MTRjMDc5MDk1ZmFiM2UzYyAxMDA2NDQNCj4gLS0tIGEvaW9fdXJpbmcvaW8t
+d3EuYw0KPiArKysgYi9pb191cmluZy9pby13cS5jDQo+IEBAIC02Myw3ICs2Myw3IEBAIHN0cnVj
+dCBpb193b3JrZXIgew0KPiANCj4gIAl1bmlvbiB7DQo+ICAJCXN0cnVjdCByY3VfaGVhZCByY3U7
+DQo+IC0JCXN0cnVjdCB3b3JrX3N0cnVjdCB3b3JrOw0KPiArCQlzdHJ1Y3QgZGVsYXllZF93b3Jr
+IHdvcms7DQo+ICAJfTsNCj4gIH07DQo+IA0KPiBAQCAtNzg0LDYgKzc4NCwxOCBAQCBzdGF0aWMg
+aW5saW5lIGJvb2wgaW9fc2hvdWxkX3JldHJ5X3RocmVhZChzdHJ1Y3QNCj4gaW9fd29ya2VyICp3
+b3JrZXIsIGxvbmcgZXJyKQ0KPiAgCX0NCj4gIH0NCj4gDQo+ICtzdGF0aWMgdm9pZCBxdWV1ZV9j
+cmVhdGVfd29ya2VyX3JldHJ5KHN0cnVjdCBpb193b3JrZXIgKndvcmtlcikgew0KPiArCS8qDQo+
+ICsJICogV2Ugb25seSBib3RoZXIgcmV0cnlpbmcgYmVjYXVzZSB0aGVyZSdzIGEgY2hhbmNlIHRo
+YXQgdGhlDQo+ICsJICogZmFpbHVyZSB0byBjcmVhdGUgYSB3b3JrZXIgaXMgZHVlIHRvIHNvbWUg
+dGVtcG9yYXJ5IGNvbmRpdGlvbg0KPiArCSAqIGluIHRoZSBmb3JraW5nIHRhc2sgKGUuZy4gb3V0
+c3RhbmRpbmcgc2lnbmFsKTsgZ2l2ZSB0aGUgdGFzaw0KPiArCSAqIHNvbWUgdGltZSB0byBjbGVh
+ciB0aGF0IGNvbmRpdGlvbi4NCj4gKwkgKi8NCj4gKwlzY2hlZHVsZV9kZWxheWVkX3dvcmsoDQo+
+ICsJCSZ3b3JrZXItPndvcmssIG1zZWNzX3RvX2ppZmZpZXMod29ya2VyLT5pbml0X3JldHJpZXMg
+KiA1KSk7IH0NCg0KV2h5IGNob29zZSAod29ya2VyLT5pbml0X3JldHJpZXMgKiA1KSBhcyB0aGUg
+ZGVsYXkgdGltZSBoZXJlPyBJcyBpdCB0aGUgZXN0aW1hdGVkIHRpbWUNCnRvIHByb2Nlc3MgdGhl
+IHNpZ25hbD8NCg0KPiArDQo+ICBzdGF0aWMgdm9pZCBjcmVhdGVfd29ya2VyX2NvbnQoc3RydWN0
+IGNhbGxiYWNrX2hlYWQgKmNiKSAgew0KPiAgCXN0cnVjdCBpb193b3JrZXIgKndvcmtlcjsNCj4g
+QEAgLTgyMywxMiArODM1LDEzIEBAIHN0YXRpYyB2b2lkIGNyZWF0ZV93b3JrZXJfY29udChzdHJ1
+Y3QgY2FsbGJhY2tfaGVhZA0KPiAqY2IpDQo+IA0KPiAgCS8qIHJlLWNyZWF0ZSBhdHRlbXB0cyBn
+cmFiIGEgbmV3IHdvcmtlciByZWYsIGRyb3AgdGhlIGV4aXN0aW5nIG9uZSAqLw0KPiAgCWlvX3dv
+cmtlcl9yZWxlYXNlKHdvcmtlcik7DQo+IC0Jc2NoZWR1bGVfd29yaygmd29ya2VyLT53b3JrKTsN
+Cj4gKwlxdWV1ZV9jcmVhdGVfd29ya2VyX3JldHJ5KHdvcmtlcik7DQo+ICB9DQo+IA0KPiAgc3Rh
+dGljIHZvaWQgaW9fd29ya3F1ZXVlX2NyZWF0ZShzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspICB7
+DQo+IC0Jc3RydWN0IGlvX3dvcmtlciAqd29ya2VyID0gY29udGFpbmVyX29mKHdvcmssIHN0cnVj
+dCBpb193b3JrZXIsIHdvcmspOw0KPiArCXN0cnVjdCBpb193b3JrZXIgKndvcmtlciA9IGNvbnRh
+aW5lcl9vZigNCj4gKwkJd29yaywgc3RydWN0IGlvX3dvcmtlciwgd29yay53b3JrKTsNCj4gIAlz
+dHJ1Y3QgaW9fd3FfYWNjdCAqYWNjdCA9IGlvX3dxX2dldF9hY2N0KHdvcmtlcik7DQo+IA0KPiAg
+CWlmICghaW9fcXVldWVfd29ya2VyX2NyZWF0ZSh3b3JrZXIsIGFjY3QsIGNyZWF0ZV93b3JrZXJf
+Y29udCkpIEBAIC04NjYsOA0KPiArODc5LDggQEAgc3RhdGljIGJvb2wgY3JlYXRlX2lvX3dvcmtl
+cihzdHJ1Y3QgaW9fd3EgKndxLCBzdHJ1Y3QgaW9fd3FfYWNjdA0KPiAqYWNjdCkNCj4gIAkJa2Zy
+ZWUod29ya2VyKTsNCj4gIAkJZ290byBmYWlsOw0KPiAgCX0gZWxzZSB7DQo+IC0JCUlOSVRfV09S
+Sygmd29ya2VyLT53b3JrLCBpb193b3JrcXVldWVfY3JlYXRlKTsNCj4gLQkJc2NoZWR1bGVfd29y
+aygmd29ya2VyLT53b3JrKTsNCj4gKwkJSU5JVF9ERUxBWUVEX1dPUksoJndvcmtlci0+d29yaywg
+aW9fd29ya3F1ZXVlX2NyZWF0ZSk7DQo+ICsJCXF1ZXVlX2NyZWF0ZV93b3JrZXJfcmV0cnkod29y
+a2VyKTsNCj4gIAl9DQo+IA0KPiAgCXJldHVybiB0cnVlOw0KPiANCj4gLS0tDQo+IGJhc2UtY29t
+bWl0OiBlYzRlZjU1MTcyZDQ1MzlhYmZmNDcwNTY4YTQzNjlhNmUxYzMxN2I4DQo+IGNoYW5nZS1p
+ZDogMjAyNTAyMDYtd3FfcmV0cnktMWNiN2Y1YzE5MzVkDQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+
+IC0tDQo+IFVkYXkgU2hhbmthciA8dXNoYW5rYXJAcHVyZXN0b3JhZ2UuY29tPg0KPiANCg0KLS0t
+DQpMaSBaZXRhbw0K
 

@@ -1,85 +1,85 @@
-Return-Path: <io-uring+bounces-6308-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6309-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DFFA2CA56
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 18:37:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5F3A2CA55
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 18:37:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D20E43AC206
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 17:37:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F4E416B041
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 17:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CAC71A2399;
-	Fri,  7 Feb 2025 17:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D7019A2A3;
+	Fri,  7 Feb 2025 17:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="0bZ8m5V9"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HZ0PTeKW"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E76B19C558
-	for <io-uring@vger.kernel.org>; Fri,  7 Feb 2025 17:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8C619F12D
+	for <io-uring@vger.kernel.org>; Fri,  7 Feb 2025 17:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738949811; cv=none; b=HLI+veb5rYOboMDK7Gss5C6DrWAQ87ELyNNAcehto7jrOH8h09rMAiQq4rG5dcD/KAAgI8mUkknYL/M+7DrGUtpMLZmyxXygBI+TbRe3KPc6q4qJM9+oiBDXzD6OHte7vZSKJ/VI/qTyRMNW0oNw2//ndpYAVSp2LG0gBxIOzhk=
+	t=1738949812; cv=none; b=B50rv9MLcra0PWSdy9U0yw3ILKzcac/LK2nlxA8ZnJRItHZyu0LiUbnywpaekxy0o0GDfiQZEBU/hHWYQ2Lrt/Eh8OuB4yPLDs/TbhWqNMW2k/VNW0sR0r04KWr9+e7BA6QTde0NDXUSsTQIl4WJ6xwB28jFNrKYW6VRqjf268s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738949811; c=relaxed/simple;
-	bh=dyJDv1DYIwNakHlB93t6AK28i1AjFOufLyKR9k8IhYg=;
+	s=arc-20240116; t=1738949812; c=relaxed/simple;
+	bh=AJ4EpG+a/HnjEaQKeFR8lZf7Ex4++mtSxvprrt1iy8A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XRwebidnOQ9Kug5m7sFgxk/D07b8XMVrHGozReV5nRyEN4jnpM1Aaf/BlidmJ4ebL0xiWM1ogYjBHGP7II+Ja3ZTpAXRzGsmzZobxUxAE+GFqpm7Dj52hs6m3L5gcjKA6Wo4+vRbf2EB8z52CQSXTo/GD/geQt5Yxr3EsyvRYAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=0bZ8m5V9; arc=none smtp.client-ip=209.85.166.175
+	 MIME-Version; b=GF39cUKBU9il8OaPVYc5KJKECKL4A09r2humftQEuDhxXB6F5FWcUc0SVgKUEkJAN7dYbzG6yf7Z6VUU2rcz66nDb/c1afX44opaklYitvs9QNMmHKVu0WeR8x7/piyReILX5ZOVoLC7SHJADrhVRQlnoqk08rB6qBvikaagH+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HZ0PTeKW; arc=none smtp.client-ip=209.85.166.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3d13e4dd0f2so7799595ab.3
-        for <io-uring@vger.kernel.org>; Fri, 07 Feb 2025 09:36:49 -0800 (PST)
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3d03d2bd7d2so20587075ab.0
+        for <io-uring@vger.kernel.org>; Fri, 07 Feb 2025 09:36:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1738949808; x=1739554608; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1738949809; x=1739554609; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dZUJaBdxvX3TYFAnJ+wUNjux1qeKKL9lzbYxbO/HoGo=;
-        b=0bZ8m5V9pINo8eK4nUQtE/1BpjYxi/EAVnkRs3RKvO/uSmPPqVwkuGC42MhL1TIngd
-         HPiDHIsDUJXKYyvtC3TL9VB36HhzQl4VvL9jeFUgzmhNIIKPcZQ1VjUi46UMcOlO/IAt
-         JA3QlHzh+EVixegrBogkF+Wip5bCMX1eLo76qOrLxIzdt8WYpXnRfI7tVV3/ciMpoB8r
-         52Yb8chfHyTxkwJfPIVngmRofW/EzRJXrjVb6i13HRJBUSSJbSQ22c8LwNlzU8a/yhE9
-         EHPbPqYHHyMEalNU+Ip/kPiDuovn+duNjPJ/15D1L+JLwvJ6YMbhkE1AwsR5Tb4s2H7p
-         ZjOA==
+        bh=Yl4I89AW9N+9ZjPLUSwNXzZLneK6YdFoM+i0fKJ0Giw=;
+        b=HZ0PTeKWdgPzlRTKYZUtkF3n4dgc6kmTN0yRvmnKb+WWyaRLPx1ZT0Exx30cqPEJpQ
+         NFvPNl8bXhCdkXGWvFORVCq7z0kjQ02nLwqY35ebken9jBUjLqZOR2/VjSDGvePo9yNH
+         G1w6gdu7aF6uJIU1XEYJJ5yp4Dj4get3WNBfR0eqnNis1Hbj96NyXLxhYnosNDn+GSIe
+         ePXzoVkYbp5N5XU/i716UqhwQq9HGQ2vTfBa11kyvL1tt+gll1bcol+4PY3t7w9DrGYz
+         10XtITW9mtN9FoiodpD1/VwiN+r3w53hfhznX79wk3qg84Rq1lSNzuZXjxvGzJTQi5zG
+         HbDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738949808; x=1739554608;
+        d=1e100.net; s=20230601; t=1738949809; x=1739554609;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dZUJaBdxvX3TYFAnJ+wUNjux1qeKKL9lzbYxbO/HoGo=;
-        b=AsJJJDwgVyA4u1uUtYk4UKab+JA3bAxsNbDRB69o7DeeQ4c7+XARUPJPo3eBCUv5Ie
-         LW4/Hwve5jRGFMxkrTh1gGsF4y1cYoyvpcjErhyAWiu7VTPXwAD4MJniqaUwkZI2O7n0
-         6mEeIKNAzLMQskmyiM7rzPsx5Yetxea+4dY2vdrQoHS6Fk5LI8gsZOpFBl+NDnL+VM7N
-         I9TmZwGbAtUqu9M2jmv7xQFMN0mvG7DFulTxzg/LU/pEZL7W1nmeZh20hsvSWLwnp3dV
-         aFVlpqcJR0b2TkA6c2rZ9SFzqLkGzCg8TW48x9jokG6Wbx2g5QRp1zK1tKArTXdYx7jj
-         wyCg==
-X-Gm-Message-State: AOJu0YyW4a+gKCYfIPZ2NQPSKyx04TouFCCwOgAXqrYIjMBvAtk9Co7C
-	0otgIHo/dprwh+5UP0AH0Z3QUpgZdeIknq46zLwu7gyjdpUvdIIG2onLnV03NtoQaLo+L5/cN54
-	a
-X-Gm-Gg: ASbGnctosDeBZtS6P0CblZv/5FHTxDYG0r4QfKtvEAuvKGOUKxOkGv3avMiBtfyoJOc
-	EWQGkOZbd+Y7kYLWI5iLms7bVIiEZdHhHE5kHu+n04amQC3SqJkIvTXcMwekmFt8rcfRiZvKDbx
-	7tVl9ABHfhE15a5SiQroFR+Qzyd+VU/X9H34GQ2CN1g2fYvd+FfvHNeoFZ8ZTKmLRFyyRp6nWib
-	ezmWldb/lo+zmHzFFFNva3rdYnUFaV03ml5Mv7tPgYS5U0cQOHNFrvT8QHTLj9lwVeJF/ab5ty9
-	wwensV0TvfJPHaQvE+M=
-X-Google-Smtp-Source: AGHT+IHESkWaXYphqvlRLTxkdoYMY8NNXw/bbXA1U4bM78mkr25yds7t2Z+or5Lwm4/xJAfCW9GsRw==
-X-Received: by 2002:a05:6e02:1a2c:b0:3cf:c773:6992 with SMTP id e9e14a558f8ab-3d13dd66668mr34070995ab.12.1738949808113;
-        Fri, 07 Feb 2025 09:36:48 -0800 (PST)
+        bh=Yl4I89AW9N+9ZjPLUSwNXzZLneK6YdFoM+i0fKJ0Giw=;
+        b=N2Br6LtjPe6mpDyCOTY+uonWQMjS0qxDg/1AQZESJ+xA5+Ssq1jmRC/aS81lUbNvUm
+         4+FVLiXUBe9U4HRLS21T6yyCmmP8YFWdM0dtSUZj2S8mbVt12kV18nB8J99YvSs7m8JG
+         BtGHu3hhk/NHrpLGOpfWGGEwsB/lM7dgfQ8yS4sdhbmC11AoaqotPB+uYO5ZL/dwjd5Y
+         9vk7+t0Nvy5F1qKvCFD7j67skpcO/J7YSB0pErWe4L3OEeDQ7LKvD+lsPMkk+WGDQh23
+         CEtoT4peuw9YECXOh8jdyHTQbtN4fk0D4OdFWxsm4A8kPW3UrvtyW36AonYzsNJ8MlDr
+         brQA==
+X-Gm-Message-State: AOJu0YxkhEvPdPZzqzOm1AlzWNX3Bz/JIdRntdsJZ+eWPLxj3NYTWOEU
+	lF8kbfbEp96eLJgJ+lFSGtYkuWFRDr8A+C4PCg+y4gvfv3OksE8538qlD7XAeUulUcG2DVI2CKr
+	Z
+X-Gm-Gg: ASbGncv/ee6NCLJIvLY/jLPZxSX1UOfeO8AshK3KVl9L+Y64B+OjrbASfail/q4F9pR
+	VCMa0Nb7LPnNRmHkT8p9EMCXxXjKyWx4p+JKWrBZfmv30NoSHbvvcs/EAXfDeiJ93vxu0TbZhf/
+	M6ZjQhehNCdHfch5DJfFBzctbkSS29tgp3KxxXlYC/GRTRQQ7+4MAXzlqwB55DrIjls9R2ffFZh
+	Dlldo1bve1uP4Hl1iE51jiDKN4dzTAfewHG/L4ndYOc7CH4/Hn3Eplur/wO1EFzoUzkc3a8Mk2h
+	1ZIrwHiCUhA9P2AGKBE=
+X-Google-Smtp-Source: AGHT+IFf5yFHbi0FpkwI0St9Frw/m6TmD/MzSZjJpnF8PSyMprcyK2hlYpYREkjfvbItwT4qYeHWRA==
+X-Received: by 2002:a05:6e02:338f:b0:3cf:c9ad:46a1 with SMTP id e9e14a558f8ab-3d13de7ae05mr31235335ab.13.1738949809397;
+        Fri, 07 Feb 2025 09:36:49 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ece0186151sm206241173.111.2025.02.07.09.36.46
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ece0186151sm206241173.111.2025.02.07.09.36.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2025 09:36:47 -0800 (PST)
+        Fri, 07 Feb 2025 09:36:48 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4/7] eventpoll: add helper to remove wait entry from wait queue head
-Date: Fri,  7 Feb 2025 10:32:27 -0700
-Message-ID: <20250207173639.884745-5-axboe@kernel.dk>
+Subject: [PATCH 5/7] io_uring/epoll: remove CONFIG_EPOLL guards
+Date: Fri,  7 Feb 2025 10:32:28 -0700
+Message-ID: <20250207173639.884745-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250207173639.884745-1-axboe@kernel.dk>
 References: <20250207173639.884745-1-axboe@kernel.dk>
@@ -91,107 +91,52 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-__epoll_wait_remove() is the core helper, it kills a given
-wait_queue_entry from the eventpoll wait_queue_head. Use it internally,
-and provide an overall helper, epoll_wait_remove(), which takes a struct
-file and provides the same functionality.
+Just have the Makefile add the object if epoll is enabled, then it's
+not necessary to guard the entire epoll.c file inside an CONFIG_EPOLL
+ifdef.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/eventpoll.c            | 58 +++++++++++++++++++++++++--------------
- include/linux/eventpoll.h |  3 ++
- 2 files changed, 40 insertions(+), 21 deletions(-)
+ io_uring/Makefile | 9 +++++----
+ io_uring/epoll.c  | 2 --
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index d3ac466ad415..b96cc9193517 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2023,6 +2023,42 @@ static int ep_poll_queue(struct eventpoll *ep,
- 	return -EIOCBQUEUED;
+diff --git a/io_uring/Makefile b/io_uring/Makefile
+index d695b60dba4f..7114a6dbd439 100644
+--- a/io_uring/Makefile
++++ b/io_uring/Makefile
+@@ -11,9 +11,10 @@ obj-$(CONFIG_IO_URING)		+= io_uring.o opdef.o kbuf.o rsrc.o notif.o \
+ 					eventfd.o uring_cmd.o openclose.o \
+ 					sqpoll.o xattr.o nop.o fs.o splice.o \
+ 					sync.o msg_ring.o advise.o openclose.o \
+-					epoll.o statx.o timeout.o fdinfo.o \
+-					cancel.o waitid.o register.o \
+-					truncate.o memmap.o alloc_cache.o
++					statx.o timeout.o fdinfo.o cancel.o \
++					waitid.o register.o truncate.o \
++					memmap.o alloc_cache.o
+ obj-$(CONFIG_IO_WQ)		+= io-wq.o
+ obj-$(CONFIG_FUTEX)		+= futex.o
+-obj-$(CONFIG_NET_RX_BUSY_POLL) += napi.o
++obj-$(CONFIG_EPOLL)		+= epoll.o
++obj-$(CONFIG_NET_RX_BUSY_POLL)	+= napi.o
+diff --git a/io_uring/epoll.c b/io_uring/epoll.c
+index 89bff2068a19..7848d9cc073d 100644
+--- a/io_uring/epoll.c
++++ b/io_uring/epoll.c
+@@ -12,7 +12,6 @@
+ #include "io_uring.h"
+ #include "epoll.h"
+ 
+-#if defined(CONFIG_EPOLL)
+ struct io_epoll {
+ 	struct file			*file;
+ 	int				epfd;
+@@ -58,4 +57,3 @@ int io_epoll_ctl(struct io_kiocb *req, unsigned int issue_flags)
+ 	io_req_set_res(req, ret, 0);
+ 	return IOU_OK;
  }
- 
-+static int __epoll_wait_remove(struct eventpoll *ep,
-+			       struct wait_queue_entry *wait, int timed_out)
-+{
-+	int eavail;
-+
-+	/*
-+	 * We were woken up, thus go and try to harvest some events. If timed
-+	 * out and still on the wait queue, recheck eavail carefully under
-+	 * lock, below.
-+	 */
-+	eavail = 1;
-+
-+	if (!list_empty_careful(&wait->entry)) {
-+		write_lock_irq(&ep->lock);
-+		/*
-+		 * If the thread timed out and is not on the wait queue, it
-+		 * means that the thread was woken up after its timeout expired
-+		 * before it could reacquire the lock. Thus, when wait.entry is
-+		 * empty, it needs to harvest events.
-+		 */
-+		if (timed_out)
-+			eavail = list_empty(&wait->entry);
-+		__remove_wait_queue(&ep->wq, wait);
-+		write_unlock_irq(&ep->lock);
-+	}
-+
-+	return eavail;
-+}
-+
-+int epoll_wait_remove(struct file *file, struct wait_queue_entry *wait)
-+{
-+	if (is_file_epoll(file))
-+		return __epoll_wait_remove(file->private_data, wait, false);
-+	return -EINVAL;
-+}
-+
- /**
-  * ep_poll - Retrieves ready events, and delivers them to the caller-supplied
-  *           event buffer.
-@@ -2135,27 +2171,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 							      HRTIMER_MODE_ABS);
- 		__set_current_state(TASK_RUNNING);
- 
--		/*
--		 * We were woken up, thus go and try to harvest some events.
--		 * If timed out and still on the wait queue, recheck eavail
--		 * carefully under lock, below.
--		 */
--		eavail = 1;
--
--		if (!list_empty_careful(&wait.entry)) {
--			write_lock_irq(&ep->lock);
--			/*
--			 * If the thread timed out and is not on the wait queue,
--			 * it means that the thread was woken up after its
--			 * timeout expired before it could reacquire the lock.
--			 * Thus, when wait.entry is empty, it needs to harvest
--			 * events.
--			 */
--			if (timed_out)
--				eavail = list_empty(&wait.entry);
--			__remove_wait_queue(&ep->wq, &wait);
--			write_unlock_irq(&ep->lock);
--		}
-+		eavail = __epoll_wait_remove(ep, &wait, timed_out);
- 	}
- }
- 
-diff --git a/include/linux/eventpoll.h b/include/linux/eventpoll.h
-index 8de16374b8fe..6c088d5e945b 100644
---- a/include/linux/eventpoll.h
-+++ b/include/linux/eventpoll.h
-@@ -29,6 +29,9 @@ void eventpoll_release_file(struct file *file);
- int epoll_queue(struct file *file, struct epoll_event __user *events,
- 		int maxevents, struct wait_queue_entry *wait);
- 
-+/* Remove wait entry */
-+int epoll_wait_remove(struct file *file, struct wait_queue_entry *wait);
-+
- /*
-  * This is called from inside fs/file_table.c:__fput() to unlink files
-  * from the eventpoll interface. We need to have this facility to cleanup
+-#endif
 -- 
 2.47.2
 

@@ -1,53 +1,53 @@
-Return-Path: <io-uring+bounces-6301-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6302-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B77D7A2C746
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 16:33:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5976A2C831
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 17:01:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACEFE7A3654
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 15:32:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB871889D14
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 16:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD03238D50;
-	Fri,  7 Feb 2025 15:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18A923C8CA;
+	Fri,  7 Feb 2025 15:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElbOKM7x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdUD3nyk"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D3E238D30;
-	Fri,  7 Feb 2025 15:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BE616C687;
+	Fri,  7 Feb 2025 15:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738942423; cv=none; b=rPgkhazWdmqLEh5xZPM6nOjE+Xss7Q/igOStNUOkIs+7qV1kvXlo9qnxDgHNwJkQbolACOe2nTXUXRwYFPV+y2HMOZokkQ0cKczJYYJRo8Gex/17U0mG9fLyVfrkfamH0WcMdHholjGqHfDlMGA8WZ1bKT5o+ZVMkUilNNsqOZU=
+	t=1738943969; cv=none; b=UeG4VqCBnLvasQnk6KVET/ETrzeeycrF6AbZbwnjzrBIwinqu7DpkBNEqR6lE2gCN1p9VJ3b8otwgy+7nikd1ZhUqEH95y8i8Mie6+cxIAHgv9xMS/dLUKjyY+TbX9pMLNvg3SzLXnWJNydLSx+Rc9uXcQUGd0vt0S939hw/OCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738942423; c=relaxed/simple;
-	bh=H1BNwtjaWX8L4WPZsskzlctwJBjjbFpwX/Uw6xucKyo=;
+	s=arc-20240116; t=1738943969; c=relaxed/simple;
+	bh=LJOiLSWAK0vaWYv7KAnaLQW7l9bCOqNVj1TJAVX8q1Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dEZtmol/+7vFzQr0SQo7yhJJ2uLLrZwZ7r0xyeLw6VJdi3m72yMGEMZ+TBL27r8pDVVen7kwu9PFbOVQEQhztDP9DmeECcjmaFqjxw9slBNOi0mkyOwjI7muSis5tsnxJRoTLxKQIiProqmY32+y5h2ZNer0VCAH5cp0n2DHVww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElbOKM7x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D01C4CED1;
-	Fri,  7 Feb 2025 15:33:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2zpe7s8o7HhYWDdiz2XmoPWtZFSmg9YNVEY13aaknOQmgExeDjLHbjVm0vLSvEvAwquWwAOk06EXaMUphfkTbn6hc6J4xuoSYNoc7tvIFVnpis7wKFvaPgqDlR9qsqAMIYMnFHzypPtTwNt4rpXylGsoZstxdB/k6JgMo5m7Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdUD3nyk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF7EC4CEE2;
+	Fri,  7 Feb 2025 15:59:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738942423;
-	bh=H1BNwtjaWX8L4WPZsskzlctwJBjjbFpwX/Uw6xucKyo=;
+	s=k20201202; t=1738943969;
+	bh=LJOiLSWAK0vaWYv7KAnaLQW7l9bCOqNVj1TJAVX8q1Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ElbOKM7x2T1SKrlde+70WWmO8FcR4THqeBCQT1NDMcAzONUxlBmLIA9fSPVPDanB0
-	 iYqtR07ITx0Qu3HqMRw2foQ8a8227S92kBH5e5/H3oi4pB6rJd5gbWglPhATyf1IdO
-	 uga7t2I5V6gz8tn6/+Fhy1//Q6d/djxETnwgIj8Sd7mArB9wsgPV7YCmIIfyU9S/7B
-	 6Hppqjqn+cVqZ8wVDLu7TMlksfPyCEFhBl590a+1WHj0rKG5VLwG2lIPSiC+S5Fczr
-	 i4Cgnmc1NVALGprv+YeSK3/h83DRP+skMjx62Ff3swhQhZk73BR0gCHLprlAaph5Vz
-	 obRLeNGBlIGOA==
-Date: Fri, 7 Feb 2025 08:33:40 -0700
+	b=IdUD3nykJTsFyCEPFFvDAJDdfwkgZwOmHV0MRc4qG//A9Tssb7zCOXuTnT2jgzMyZ
+	 cz2r0mgbHAxnbH3xwoncx76RNP0AVKGxIXhovOPJZMNPZQy2EwMUZlhg71zvZFVUC5
+	 rOe9MkV0Eb0wJJuKYKNnC2x9p0McuX50Jqc4GoOdpbgY1qBbeoYFAeMkSzdKRAoPEQ
+	 cwWAWQwtxYOTTuyEGcCIQ20Q8QO1SEUOzI72fY98b2gE8nxVzKW9KSycDRef7Al6Tr
+	 eZQi+LpeQKgkjiJh5CZeAr5PPv2H8UNpRWMd1Qi/1HO95Srgg8kZK1kx2ND04LgSYK
+	 3M7z8Id477+FQ==
+Date: Fri, 7 Feb 2025 08:59:26 -0700
 From: Keith Busch <kbusch@kernel.org>
 To: Pavel Begunkov <asml.silence@gmail.com>
 Cc: Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org,
 	linux-block@vger.kernel.org, ming.lei@redhat.com, axboe@kernel.dk
 Subject: Re: [PATCH 6/6] io_uring: cache nodes and mapped buffers
-Message-ID: <Z6Yn1GOPlMfpZqsf@kbusch-mbp>
+Message-ID: <Z6Yt3o7LKtVdFx32@kbusch-mbp>
 References: <20250203154517.937623-1-kbusch@meta.com>
  <20250203154517.937623-7-kbusch@meta.com>
  <a6845bcf-8881-4b92-acc0-0aab8d98cba9@gmail.com>
@@ -63,26 +63,6 @@ In-Reply-To: <a6845bcf-8881-4b92-acc0-0aab8d98cba9@gmail.com>
 
 On Fri, Feb 07, 2025 at 12:41:17PM +0000, Pavel Begunkov wrote:
 > On 2/3/25 15:45, Keith Busch wrote:
-> > From: Keith Busch <kbusch@kernel.org>
-> > 
-> > Frequent alloc/free cycles on these is pretty costly. Use an io cache to
-> > more efficiently reuse these buffers.
-> > 
-> > Signed-off-by: Keith Busch <kbusch@kernel.org>
-> > ---
-> >   include/linux/io_uring_types.h |  16 ++---
-> >   io_uring/filetable.c           |   2 +-
-> >   io_uring/rsrc.c                | 108 ++++++++++++++++++++++++---------
-> >   io_uring/rsrc.h                |   2 +-
-> >   4 files changed, 92 insertions(+), 36 deletions(-)
-> > 
-> > diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> > index aa661ebfd6568..c0e0c1f92e5b1 100644
-> > --- a/include/linux/io_uring_types.h
-> > +++ b/include/linux/io_uring_types.h
-> > @@ -67,8 +67,17 @@ struct io_file_table {
-> >   	unsigned int alloc_hint;
-> >   };
 > > +struct io_alloc_cache {
 > > +	void			**entries;
 > > +	unsigned int		nr_cached;
@@ -99,39 +79,13 @@ On Fri, Feb 07, 2025 at 12:41:17PM +0000, Pavel Begunkov wrote:
 > caches directly into struct io_ring_ctx. It's a bit better for
 > future cache improvements and we can even reuse the node cache
 > for files.
-> 
-> ...
-> > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> > index 864c2eabf8efd..5434b0d992d62 100644
-> > --- a/io_uring/rsrc.c
-> > +++ b/io_uring/rsrc.c
-> > @@ -117,23 +117,39 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_rsrc_node *node)
-> >   				unpin_user_page(imu->bvec[i].bv_page);
-> >   		if (imu->acct_pages)
-> >   			io_unaccount_mem(ctx, imu->acct_pages);
-> > -		kvfree(imu);
-> > +		if (struct_size(imu, bvec, imu->nr_bvecs) >
-> > +				ctx->buf_table.imu_cache.elem_size ||
-> 
-> It could be quite a large allocation, let's not cache it if
-> it hasn't came from the cache for now. We can always improve
-> on top.
 
-Eh? This already skips inserting into the cache if it wasn't allocated
-out of the cache.
+I had this that way in an earlier version. The cache is tightly
+connected to the buf table, though, so splitting them up makes for some
+awkward cleanup. Grouping them together makes it clear their lifetimes
+are as a single unit.
 
-I picked an arbitrary size, 512b, as the threshold for caching. If you
-need more bvecs than fit in that, it falls back to a kvmalloc/kvfree.
-The allocation overhead is pretty insignificant when you're transferring
-large payloads like that, and 14 vectors was chosen as the tipping point
-because it fits in a nice round number.
- 
-> And can we invert how it's calculated? See below. You'll have
-> fewer calculations in the fast path, and I don't really like
-> users looking at ->elem_size when it's not necessary.
-> 
-> 
-> #define IO_CACHED_BVEC_SEGS	N
-
-Yah, that's fine.
+The filetable could have moved its bitmap into io_ring_ctx too, but it's
+in its own structure like this, and it conceptually makes sense. This is
+following in that same pattern.
 

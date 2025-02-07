@@ -1,85 +1,85 @@
-Return-Path: <io-uring+bounces-6305-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6306-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BCEA2CA4F
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 18:37:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA4BA2CA52
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 18:37:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 617933AA913
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 17:36:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF08C3A686A
+	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 17:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E156118E050;
-	Fri,  7 Feb 2025 17:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF9C19F130;
+	Fri,  7 Feb 2025 17:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="IEsG3nTz"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QIq1ROp2"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4831219D89E
-	for <io-uring@vger.kernel.org>; Fri,  7 Feb 2025 17:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB0A19DF75
+	for <io-uring@vger.kernel.org>; Fri,  7 Feb 2025 17:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738949806; cv=none; b=CsXUktko5sq37MA7B3eX4LbwK0ssPtdQEuSA2/Tjo09l5NxnVQHpVutDEPz4wK5LL9j5275KFlUJXProSX1U6EmzYbf6hatR1/cdtJO8EK43bFQe+9ZEX2bADxeLYcm3hKpITLecx0PlKfkISiLr8/olRkQSu70h9DMEbPl3XcA=
+	t=1738949808; cv=none; b=ZaL3yxdXd3pysEWGPzgr60UZgTPwHWH8NsQGuJ3mxndmRKMJ+1otENxmSacWHomIWmZ3XxolwVa9wuYkN6+uTYI65mwpi17HJzpO34tK6QK5OUU1NtuOz1tu5o2VVCQFs21s4YPgvmcU8HX7p4EafiIJp0Q058Vv/zuvkiDL08Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738949806; c=relaxed/simple;
-	bh=DuDffcRazxoqdMbIXpn7+EyJfMiPkF/egp+v1oEJbYo=;
+	s=arc-20240116; t=1738949808; c=relaxed/simple;
+	bh=9CqAH+/+dru0tVXL9nfonyeHwVvUOEnm71GkeIjGvRA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TAJfHUgb9FrQs5hRadFS5AunF+mO/3B2BiQf9JjthPFDok6tIG5MuO2CthBg/63ollb46ykqe+4uUSovI1Igrd7pqfV5+lL14n4D1tCbv9jCSrz6rlYEq9CqWryY8VYHL0VBVssVJItr5asW1KjogLMMkoiipNPq1uzCwj0wsv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=IEsG3nTz; arc=none smtp.client-ip=209.85.166.169
+	 MIME-Version; b=Nf7PbfSYs6WnzVVN0Ms4Wya7+lN4U9jQKJEnazWY2utZjHlG/ZUOMwgMbxOol/Fba8iUV8EfZkHmWxMuYC3fpUDDYFZ0bBPwK/jxr/OOjN24wxxrvsHH6Uw6edqNXPq7zKUQLfhiaQdV0KITGN7Kepvj/WaNaSnghakSgz072ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QIq1ROp2; arc=none smtp.client-ip=209.85.166.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d03ac846a7so7375285ab.2
-        for <io-uring@vger.kernel.org>; Fri, 07 Feb 2025 09:36:44 -0800 (PST)
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d07df73412so12669905ab.1
+        for <io-uring@vger.kernel.org>; Fri, 07 Feb 2025 09:36:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1738949804; x=1739554604; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1738949805; x=1739554605; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=buVgqb/rrfd7qjVWy9KC8hfJsXJN99hoK7Ry2+u0vJ0=;
-        b=IEsG3nTz3F6aeEo9oDmNacLXyXHNlV8rDaMEhSOWiPsvQa5+/CUoQ5NyXyJiODPE4A
-         5DHhfHJ3zPHNwbYisRm1PNZ9+szzsgO6nmUJdnRwCezhAV6AVenua3GwxmdEicVjB4sL
-         Y/hOLo1Ru8ia2NEx0shLv2RrUDsDZMpfCAsZ+tRYtPSUsb1h/g89DbMHsQko5nyU1meM
-         4Ed25Oy6DXxMepYO+tO4kNa5tB6qZ+APY9U2BZxj9TGmpA6qcr6SUZJCWxV+AreYddX8
-         0R6J9va5icsPROShVbXbJGiTg5prHuG8DqEZsfM5QgtwQtveXS53nMOOSkZc26xV1u3T
-         9ehA==
+        bh=K9Ti6y1QSLcy76M2w8lkpqmCcvr5mUocCPUpPmYueYw=;
+        b=QIq1ROp2jPQ7vXDU0UDHMqpovJ+0bFWWAVB0jqVuKplQIv6Ms/n0gspR4LpFhqvxtz
+         MVMoZU38S0KEV6mdVt6yPRZ5vhZI52FrK6z/lvmvz/Jt74JDQJq5U+F0RAxaKZFqi8MY
+         eW04mjaDSR1FcDaTYH1QGz/82I3ALxjn9Vnqcb8t0cwDS64tdoS8dDt9mvQBK1bNDFZg
+         Ibf19/R2F3whADMzvbM+nviLqQ+cvq+FHv7J8HAnS3FFJr6HlHJIdHfE2xCCHArjye/d
+         K/TuIgIRyJTCUUETgDIFwAIDdpaKi8M/3IXQ6QLDt6rDCXMMG1yF2fx/Rm0YDAw7jerK
+         9p7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738949804; x=1739554604;
+        d=1e100.net; s=20230601; t=1738949805; x=1739554605;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=buVgqb/rrfd7qjVWy9KC8hfJsXJN99hoK7Ry2+u0vJ0=;
-        b=KYL4cwyCcqeakmDxjs0MD/RVgRpt4HtorCkxvGDuIMZSTb5dyN1tdqjHgJ58kpvIAt
-         C39ramdg/MEo0T5dphHE5BJdd5ot9+3bDaBxPVUYmRD0FA59f4R87tlVPGqYFgdOxENW
-         Ucsnjux4bz/uAJJaXpQWj5l6ZdnuD4mw7jzixbB5lsGiwBqhA/rMSuDwGIkCh8v0JjwE
-         5Nm3Lf/gt5swsud9yeCz5rqeIRgfEciWL7c/xOejmuOsutc7O9pP48jnlCcTGtkwXgs+
-         mHNM6n1TfXaOtl/0wE60a+ToG+qDd4X40aNJJ5R6EsZRNEors8X8CUcHe3aq3Do3F/fQ
-         0oPw==
-X-Gm-Message-State: AOJu0YxM0v1A8Ik5JEp0dMIJxu8/EqXc8RUH4vI5VzuthBT54kDYmIkx
-	nUwk73L5aabZTisp7cYrY571n7Etj3cHB/DRAVTn6prOlFd6FmhQAm6gKVKnS6lj6WuK8XKBnyg
-	5
-X-Gm-Gg: ASbGncvd7nOTCJGjfz/mrWIjkOJpZKOjWiiLgilrvNdA2K239RpuJNOk9ic+AyG/Pvm
-	9AKI+cBERT3qdimMbhaEthzBNrm7nm5zAfqwgLwEZWKZunf7izfY2jI3ZNOw5eMkoSgKyGexNA1
-	/FKwkCACnUJOqjsZiOGjOL4oMuYINoqtIsW8QGj78ziy53bRnaeRK8bEOshAZM6Acx2nRGXSp6w
-	C/RC65bvWaKbp9wVm5uwGoqLyckrl+n+cjz+NJO0UPNkiXiEnmWesW+1SZ4db/d5Cp+umHPyM/6
-	j6sXvb0kZIQjjN6fEgQ=
-X-Google-Smtp-Source: AGHT+IH38njmpGOj3YxkEMJe5TX+OtPLNpsOMIhwPC104gcD+CbCCGR51nFfPMBz+iu5SQLer100dw==
-X-Received: by 2002:a92:c241:0:b0:3cf:c85c:4f60 with SMTP id e9e14a558f8ab-3d13dd4ba6amr31410065ab.11.1738949803847;
-        Fri, 07 Feb 2025 09:36:43 -0800 (PST)
+        bh=K9Ti6y1QSLcy76M2w8lkpqmCcvr5mUocCPUpPmYueYw=;
+        b=mnl/GHNbtKcfmpxttnwkmjSCESb2l4ZzeS3zSpYsQl9WcZlfNi4Hc2TvUaNoX3I80K
+         gGRSKoqjaMO8Vpjsw0ALns8dYVbtYilg7HqHqdOzgptAulg/RHIkrHo3RlY4LTeHZ7T2
+         BR7xi+1DbIsEJd0To7XMDW+JWHPo3E6NuBRnfMbVYxMs9JdbY0AmuKLUTw6YFTWwL35y
+         g5hK/gjDDW8Q8xvKZkYBYMR1OJPVtyRFmyC5kphSPf7nDn+r6jr/4UpAEoX/pt2alyUd
+         7bE0oHsXeVviTnuOo9ps0tsKBjIkGTd5kIVDOHUFMqfeMv1CoBxrxpWQOfnTCHH1Odx9
+         YntQ==
+X-Gm-Message-State: AOJu0Yxo3zeEP7INIdbT07ZKkwhTWL6Z2QVQM86hg7d7liTvy9yQ3MCM
+	Q9hfTiOVD1sfZVplZ2WrAEHpUbSdMkx2StZB4TqUcIHnnu8UmdcT2oCcDfHK4Lg+D6FBfRXe9OD
+	u
+X-Gm-Gg: ASbGncs/S+famOlgniqMNsHR3h9/aKW3FyNc8L/EbggEESapror99JIhJwlLmwvlPYX
+	H+Cj6hcuTB/wEHS3YySXsnpKT5U9d5P23ET2DoOMrDUlaeb9xbvx9y2piSMVPMXgujVszmElWyB
+	MVYcR7+u+Sn8EJAYpdM73UX0bCbnYT3bNQwscGIGCuwiNss15EASpGZeYpi5Yoznf46YM7YfjGd
+	uHeN7wnxXVib9m4hFZmW2P6L3Ojp1umm76vCQWpl3B+emL/jC2r8UY7jeQ6kKb2ulgsNXALLMU8
+	8LxBq3eaXdMkzgOCf+s=
+X-Google-Smtp-Source: AGHT+IFPmeblSOGaVkG5w0Ux/nI58zc+Fqb2IC9VZwr48nevrVhclD4bfbjaJIUg0GayPfKZ5zroMg==
+X-Received: by 2002:a92:c263:0:b0:3cf:f88b:b51a with SMTP id e9e14a558f8ab-3d13dcfce6cmr34571995ab.2.1738949805333;
+        Fri, 07 Feb 2025 09:36:45 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ece0186151sm206241173.111.2025.02.07.09.36.42
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ece0186151sm206241173.111.2025.02.07.09.36.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2025 09:36:42 -0800 (PST)
+        Fri, 07 Feb 2025 09:36:44 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/7] eventpoll: abstract out ep_try_send_events() helper
-Date: Fri,  7 Feb 2025 10:32:24 -0700
-Message-ID: <20250207173639.884745-2-axboe@kernel.dk>
+Subject: [PATCH 2/7] eventpoll: abstract out parameter sanity checking
+Date: Fri,  7 Feb 2025 10:32:25 -0700
+Message-ID: <20250207173639.884745-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250207173639.884745-1-axboe@kernel.dk>
 References: <20250207173639.884745-1-axboe@kernel.dk>
@@ -91,61 +91,77 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for reusing this helper in another epoll setup helper,
-abstract it out.
+Add a helper that checks the validity of the file descriptor and
+other parameters passed in to epoll_wait().
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/eventpoll.c | 28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ fs/eventpoll.c | 39 +++++++++++++++++++++++++--------------
+ 1 file changed, 25 insertions(+), 14 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 7c0980db77b3..67d1808fda0e 100644
+index 67d1808fda0e..14466765b85d 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -1980,6 +1980,22 @@ static int ep_autoremove_wake_function(struct wait_queue_entry *wq_entry,
- 	return ret;
+@@ -2453,6 +2453,27 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
+ 	return do_epoll_ctl(epfd, op, fd, &epds, false);
  }
  
-+static int ep_try_send_events(struct eventpoll *ep,
-+			      struct epoll_event __user *events, int maxevents)
++static int ep_check_params(struct file *file, struct epoll_event __user *evs,
++			   int maxevents)
 +{
-+	int res;
++	/* The maximum number of event must be greater than zero */
++	if (maxevents <= 0 || maxevents > EP_MAX_EVENTS)
++		return -EINVAL;
++
++	/* Verify that the area passed by the user is writeable */
++	if (!access_ok(evs, maxevents * sizeof(struct epoll_event)))
++		return -EFAULT;
 +
 +	/*
-+	 * Try to transfer events to user space. In case we get 0 events and
-+	 * there's still timeout left over, we go trying again in search of
-+	 * more luck.
++	 * We have to check that the file structure underneath the fd
++	 * the user passed to us _is_ an eventpoll file.
 +	 */
-+	res = ep_send_events(ep, events, maxevents);
-+	if (res > 0)
-+		ep_suspend_napi_irqs(ep);
-+	return res;
++	if (!is_file_epoll(file))
++		return -EINVAL;
++
++	return 0;
 +}
 +
- /**
-  * ep_poll - Retrieves ready events, and delivers them to the caller-supplied
-  *           event buffer.
-@@ -2031,17 +2047,9 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ /*
+  * Implement the event wait interface for the eventpoll file. It is the kernel
+  * part of the user space epoll_wait(2).
+@@ -2461,26 +2482,16 @@ static int do_epoll_wait(int epfd, struct epoll_event __user *events,
+ 			 int maxevents, struct timespec64 *to)
+ {
+ 	struct eventpoll *ep;
+-
+-	/* The maximum number of event must be greater than zero */
+-	if (maxevents <= 0 || maxevents > EP_MAX_EVENTS)
+-		return -EINVAL;
+-
+-	/* Verify that the area passed by the user is writeable */
+-	if (!access_ok(events, maxevents * sizeof(struct epoll_event)))
+-		return -EFAULT;
++	int ret;
  
- 	while (1) {
- 		if (eavail) {
--			/*
--			 * Try to transfer events to user space. In case we get
--			 * 0 events and there's still timeout left over, we go
--			 * trying again in search of more luck.
--			 */
--			res = ep_send_events(ep, events, maxevents);
--			if (res) {
--				if (res > 0)
--					ep_suspend_napi_irqs(ep);
-+			res = ep_try_send_events(ep, events, maxevents);
-+			if (res)
- 				return res;
--			}
- 		}
+ 	/* Get the "struct file *" for the eventpoll file */
+ 	CLASS(fd, f)(epfd);
+ 	if (fd_empty(f))
+ 		return -EBADF;
  
- 		if (timed_out)
+-	/*
+-	 * We have to check that the file structure underneath the fd
+-	 * the user passed to us _is_ an eventpoll file.
+-	 */
+-	if (!is_file_epoll(fd_file(f)))
+-		return -EINVAL;
++	ret = ep_check_params(fd_file(f), events, maxevents);
++	if (unlikely(ret))
++		return ret;
+ 
+ 	/*
+ 	 * At this point it is safe to assume that the "private_data" contains
 -- 
 2.47.2
 

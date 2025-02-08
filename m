@@ -1,290 +1,154 @@
-Return-Path: <io-uring+bounces-6330-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6331-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF888A2D8B2
-	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2025 21:42:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B4FA2D8FA
+	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2025 22:40:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD4733A4E3A
-	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2025 20:42:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4423165651
+	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2025 21:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6413318C011;
-	Sat,  8 Feb 2025 20:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E036119993D;
+	Sat,  8 Feb 2025 21:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="RJIwAaxi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cZ93xXhv"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-il1-f226.google.com (mail-il1-f226.google.com [209.85.166.226])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AE6243946
-	for <io-uring@vger.kernel.org>; Sat,  8 Feb 2025 20:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BB233DB;
+	Sat,  8 Feb 2025 21:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739047347; cv=none; b=tM4AvNeECv1aVNb/0wGfKLPNq9odyfUNNflhmEC2GO+Dzo5cI7ifpon/kd7Qfm2rBSyXWycJCK+qHb2ZTLASSp5dE2up+f/vEY0P8ErAwvLBkSJUvMojGpicmoPDgGo3lFMPWaMni7QpNEUAMslHv4iEjTEDbkrOquUi2m7VMag=
+	t=1739050825; cv=none; b=PrKvBcaVA9vhcBWaRNFv6AYjEJ/W7HBp8UcEBpkZ+AzyuHCOFA6U8atsDZYhirfuXZ3My10+3kKKEE7nDNEq9gyY2WSA9qb6mzwxjGbmxG2n6bv8ZLCVAOA5ZgakJ/G44hS2CCLkMrajYsDDlJiQo5vrXhqz1bq5e578M4lJSEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739047347; c=relaxed/simple;
-	bh=3kK5Hxyr/aJhwGzAFiwDO5Kz9JZ+xPTsz1vD21g4Vz8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Tl8wDvjQClDEzW+GgSJn8DdGWZo4r8kWqlU5DsoO1vdvRFiO7hjClEvinoO8nnHCB3xM8Py1RwWCB00xDlDV7sB9ZdkdE6bia29taxBWl02mdencS0DlJgh67bxbwNFUXqCAKQn/bqJOhzg/ea9VeRIq++mBR9xhsnzhlTCxSJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=RJIwAaxi; arc=none smtp.client-ip=209.85.166.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-il1-f226.google.com with SMTP id e9e14a558f8ab-3d0558c61f4so10428935ab.0
-        for <io-uring@vger.kernel.org>; Sat, 08 Feb 2025 12:42:24 -0800 (PST)
+	s=arc-20240116; t=1739050825; c=relaxed/simple;
+	bh=NvFMcd30jMo2W3gTKgjEJzdytysiCYjpOZPfsaqfh7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EmmW+xAbprqEar+9YXBJOfH0x1CltmzBro/71nYNWEwx14ab97RxoQ9HxeFkQ1MPpxH430uai7Bo6iAMWa2JSMuDa/2cv5xoNkI+zBx+mQRgFegnYxNDmGsxuTbghkDznBLEYnV5mZEE5VCjvoQF9rQNAS4BEBpU/1lotGumFWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cZ93xXhv; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5dced61e5a3so5828593a12.0;
+        Sat, 08 Feb 2025 13:40:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1739047344; x=1739652144; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vkSDcudyQNBFX7vkCWwUHhcJCg0qiHa5NHkG+m9azLM=;
-        b=RJIwAaxijCpU3XjOPBl9hLn7OD17CB7P+wmOg29PcCPBQGw0BkKJAddx1mhzN/rh+F
-         4ACCDg9xDWhSxx9prJbiEXxYBXPCAIolP/pTf0gf8BX/IkOkwcy2KJhQZW4f2dK0g6Dm
-         S+ZCLHx18SDW5O2vTdgJE5fG7p0u9p7wfe76tyXcaPVmjjEQkx9sMlO5N01qOfmt5zhk
-         NP3icfxbKaV7JcJ2JnkQQxTIFdCTly2DM30mkY5iGl5Id1jL49LZJYUKAN2HrtLVmFND
-         bHtXEpfNPoZMf1VQ47SXG2Qz6A4bMIeckI6HBCRXKK/RmR5gsrun1+lW/5HLbFts0v77
-         iNEg==
+        d=gmail.com; s=20230601; t=1739050822; x=1739655622; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ggXxobOKOAWHPlVZQhCvjuMnfln2GaczcCxd/sZN16Q=;
+        b=cZ93xXhvf7JqHvzpoKVovUIb5uw4xvfepsZCyjsIEUh81EAiOAoM+sQ7gHwlfmUAMz
+         Pgo+oX9QpVKw+0TDoRFfGZdwmA0MprO4b9VzaKJpCrrYgq/nkqJHk/j6F3+mP5yRmJIZ
+         KwoR7FayhhFA/Q2dYufkIajhZoWx+JNESvQx/6Y+RIBJnd6nwHBQBg34R4rCyE/i+/55
+         kmwqBpHPbXr/KjG1VTxNuBj9CkHqaeP4BH/UGrX5U4q6lxDQQcnT/g9sfxC7rKnUH6xX
+         PuMGN9dOuQHmqSSoowdqHs4zvHWsBXciRp46uRz2VCsJ98VMQSzzzf2kuFlE8MtqfVql
+         uJCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739047344; x=1739652144;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vkSDcudyQNBFX7vkCWwUHhcJCg0qiHa5NHkG+m9azLM=;
-        b=QKqmikjsCeqKmP4gWTC6axZoy82GV/1A/ZVLSCr+nVhU98aizjLmR+h89Qd0G4bcqw
-         5DN99BcL/AZT/mNTQ3sLx9Zq660n8Cl9Vm0v4pxOIHnO0SpJ2SyRB9K7WRzdl01rCaZ4
-         lLA/nrk/0sYOaEjiphpC36TN0PMMssnEmo5ASjVLHUjyCOeVmdQfsoaF6bKAa2C07XRy
-         l2OtXjjnggYO2KwT8INF2gtcUYJZ7VHOABdB/xB2eM7Sab8vWpX4Fw2IUbgecweUYYBg
-         7RTP6GhYrrdLecslYt/2NoaBSWkeBgGh8+eKLPbXhOCg485VmbeABOR3SVCrw1dVYSMD
-         O+Dw==
-X-Gm-Message-State: AOJu0Yyo/YsIKaf3pDLF6v6qVrRv+3tJEhn1Mzybp6v8cFqy5nSA3h/Q
-	qooLnSQ7AK7lyE1HpaQYY2cvneJNI2upfT76mw/gU03ZQfS8XH0Ndvyg4+F/J807L7rGL12JzNc
-	w9k3ogCfF8odInK8mTulpVE8Y2TGsHpwCiIFBRjvl+i8d4bJD
-X-Gm-Gg: ASbGncubFmzfhIybFFxUgSuauL/6pt8WCT728zegnAQO6P9AUTMHrb+q+nBqEZ0WNwt
-	dVySUfvuUQteOxSpOQV8+s6spUWU5Ok1Xrak0ihb5OBbTER/uPfAzyZr0ob0nCMcZjEikzbmxUc
-	qm8zIAadCROj2Toktth+qJ8Yrq8w2bw4+P9akh5zKZFVzHmfQMLjNpIgl1mi2bwYf/yBkDs0Evi
-	MFSsVrCgSLCFcr3tofxQtYrMb5UM29eM/s5u/X9mE4TeXwpcEORlwdw09pt2NZg+ArCWnkIGm98
-	ysYm7Ei/bvXtFjUiexh45Gd6
-X-Google-Smtp-Source: AGHT+IFUi4uCtAlJRkwCDylnYJezEGgITa4jrO4HAqZTF3OZwWV0ZbBQgulJF0FBlhO5zHEKEWpFDUzzUfV2
-X-Received: by 2002:a92:cf44:0:b0:3d1:4747:f387 with SMTP id e9e14a558f8ab-3d14747fbe8mr38164155ab.0.1739047344166;
-        Sat, 08 Feb 2025 12:42:24 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3d05e6d7213sm4357605ab.0.2025.02.08.12.42.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Feb 2025 12:42:24 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [IPv6:2620:125:9007:640:7:70:36:0])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 5FC933402F6;
-	Sat,  8 Feb 2025 13:42:22 -0700 (MST)
-Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
-	id 511B9E55B0C; Sat,  8 Feb 2025 13:42:22 -0700 (MST)
-From: Uday Shankar <ushankar@purestorage.com>
-Date: Sat, 08 Feb 2025 13:42:13 -0700
-Subject: [PATCH v2] io-wq: backoff when retrying worker creation
+        d=1e100.net; s=20230601; t=1739050822; x=1739655622;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ggXxobOKOAWHPlVZQhCvjuMnfln2GaczcCxd/sZN16Q=;
+        b=gOeWmAYUsQ8sFLffuag6IDP017uZjd+lUnPgiOq66odctOuU0AdrzGNf+ZlLDSTix8
+         uJE8tUDQ8K95xuGn5BGvabutd1NX2aIKjtX5GwAqOWXtT1lqTH4UvpdvXaEGgLXadjwm
+         Bd1M4gAQ/P3Q7tfVpvCmFazUMqG2imE9AwxJ/98cPSh51aaH+wqs+hp8+VocvOgWR+jE
+         HojhNsnmU0JBrtljitBOSuFdgsevHekSMvD0i/wXMOT+CdEIa3a4ajUp1m2KyyLD3k8S
+         yLODnYV6Mt0o3AI2rHXY43mU6dXMquEMEu0kVU+RRxn9MLq3W9tqkVLOPGYqH/adAABM
+         Jh8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUoWLS8FB6Fa3rLHw15bwshSmsb+EQyACEVwb9j1bliK8Q/JUlD7UNlCy90tnHkR6ysXj4xLOzdVg==@vger.kernel.org, AJvYcCV1Mf1/fkOM/KQFdWjLKKNAhd0ogLO2mwtjwHeU4XFJyxLMvNu+zObQyxX6/WjV5o8DQJFP5airl7QIePk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZavL5z0U2Ok9Cq0XOo9KewYwldxKLdnXFJyT8ZTkOekm2KHyt
+	DJ9OKK1BqfqR3qyj53f2Q8O8dW8MYIlIj/unPNAPdmt9pcAprCduqjUpuA==
+X-Gm-Gg: ASbGncsz6IAuCbyry9qqQbcWYHossyE0BPDAjUwqnXJIVPXD9rm5UnmDCFeArdzjOIH
+	evE9tF/S4V50d2fZre5yk/5kMITOOXXHqaGzPQ5jEwQSdDL6XiegCLXa1hvc0Z6RaWEDroMfGJ3
+	a9THXGlTddHiH05BTLft+i6xiVlu1bHGkT5wY5tt/GOtVXtFkBjne8RGGNvuWGVcZdpqgMtCvCM
+	4kxa7ie782R9/XJZUmbZ8nOFUIPzeIYh3Y5fPssIJURneBIhV/+bc4TB3U90ZLCU4J69Mi7JSsr
+	W2N50jT8WzRgVIHL3JTdDKdXdw==
+X-Google-Smtp-Source: AGHT+IFOIgqK8rTNPt4qp59bkX4QOAIJPXx2bmTW2YFSdHlt69yR1zOZnCFFBV83RSLJWNpZwFYouQ==
+X-Received: by 2002:a17:907:971e:b0:ab7:a1a4:8d9b with SMTP id a640c23a62f3a-ab7a1a48f7amr370716066b.1.1739050822180;
+        Sat, 08 Feb 2025 13:40:22 -0800 (PST)
+Received: from [192.168.8.100] ([148.252.133.220])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7a7829d4csm157521966b.9.2025.02.08.13.40.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Feb 2025 13:40:21 -0800 (PST)
+Message-ID: <68256da6-bb13-4498-a0e0-dce88bb32242@gmail.com>
+Date: Sat, 8 Feb 2025 21:40:22 +0000
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] ublk zero-copy support
+To: Keith Busch <kbusch@kernel.org>
+Cc: Ming Lei <ming.lei@redhat.com>, Keith Busch <kbusch@meta.com>,
+ io-uring@vger.kernel.org, linux-block@vger.kernel.org, axboe@kernel.dk,
+ Bernd Schubert <bernd@bsbernd.com>
+References: <20250203154517.937623-1-kbusch@meta.com>
+ <Z6WDVdYxxQT4Trj8@fedora> <Z6YTfi29FcSQ1cSe@kbusch-mbp>
+ <Z6bvSXKF9ESwJ61r@fedora> <b6211101-3f74-4dea-a880-81bb75575dbd@gmail.com>
+ <Z6e6-w_L4GZwKuN8@kbusch-mbp>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <Z6e6-w_L4GZwKuN8@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250208-wq_retry-v2-1-4f6f5041d303@purestorage.com>
-X-B4-Tracking: v=1; b=H4sIAKTBp2cC/22MwQ6DIBAFf8XsuTRAA4ae+h+NaRQW5VC1i6U1h
- n8veu5xXt7MBhEpYIRrtQFhCjFMYwF5qsAO7dgjC64wSC4Vl1yzz+tBuNDKhO1qr6wwF+Wg3Gd
- CH75H6t4UHkJcJlqPchL7+ieSBBNMu9p0DgVq42/zm3AX2x7PdnpCk3P+Aaoo/w2mAAAA
-X-Change-ID: 20250206-wq_retry-1cb7f5c1935d
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>
-X-Mailer: b4 0.14.2
 
-When io_uring submission goes async for the first time on a given task,
-we'll try to create a worker thread to handle the submission. Creating
-this worker thread can fail due to various transient conditions, such as
-an outstanding signal in the forking thread, so we have retry logic with
-a limit of 3 retries. However, this retry logic appears to be too
-aggressive/fast - we've observed a thread blowing through the retry
-limit while having the same outstanding signal the whole time. Here's an
-excerpt of some tracing that demonstrates the issue:
+On 2/8/25 20:13, Keith Busch wrote:
+> On Sat, Feb 08, 2025 at 02:16:15PM +0000, Pavel Begunkov wrote:
+>> On 2/8/25 05:44, Ming Lei wrote:
+>>> On Fri, Feb 07, 2025 at 07:06:54AM -0700, Keith Busch wrote:
+>>>> On Fri, Feb 07, 2025 at 11:51:49AM +0800, Ming Lei wrote:
+>>>>> On Mon, Feb 03, 2025 at 07:45:11AM -0800, Keith Busch wrote:
+>>>>>>
+>>>>>> The previous version from Ming can be viewed here:
+>>>>>>
+>>>>>>     https://lore.kernel.org/linux-block/20241107110149.890530-1-ming.lei@redhat.com/
+>>>>>>
+>>>>>> Based on the feedback from that thread, the desired io_uring interfaces
+>>>>>> needed to be simpler, and the kernel registered resources need to behave
+>>>>>> more similiar to user registered buffers.
+>>>>>>
+>>>>>> This series introduces a new resource node type, KBUF, which, like the
+>>>>>> BUFFER resource, needs to be installed into an io_uring buf_node table
+>>>>>> in order for the user to access it in a fixed buffer command. The
+>>>>>> new io_uring kernel API provides a way for a user to register a struct
+>>>>>> request's bvec to a specific index, and a way to unregister it.
+>>>>>>
+>>>>>> When the ublk server receives notification of a new command, it must
+>>>>>> first select an index and register the zero copy buffer. It may use that
+>>>>>> index for any number of fixed buffer commands, then it must unregister
+>>>>>> the index when it's done. This can all be done in a single io_uring_enter
+>>>>>> if desired, or it can be split into multiple enters if needed.
+>>>>>
+>>>>> I suspect it may not be done in single io_uring_enter() because there
+>>>>> is strict dependency among the three OPs(register buffer, read/write,
+>>>>> unregister buffer).
+>>>>
+>>>> The registration is synchronous. io_uring completes the SQE entirely
+>>>> before it even looks at the read command in the next SQE.
+>>>
+>>> Can you explain a bit "synchronous" here?
+>>
+>> I'd believe synchronous here means "executed during submission from
+>> the submit syscall path". And I agree that we can't rely on that.
+>> That's an implementation detail and io_uring doesn't promise that,
+> 
+> The commands are processed in order under the ctx's uring_lock. What are
+> you thinking you might do to make this happen in any different order?
 
-First, signal 26 is generated for the process. It ends up getting routed
-to thread 92942.
+Bunch of stuff. IOSQE_ASYNC will reorder them. Drain can push it to
+a different path with no guarantees what happens there, even when you
+only used drain only for some past requests. Or it can get reordered
+by racing with draining. Someone floated (not merged) idea before of
+hybrid task / sqpoll execution, things like that might be needed at
+some point, and that will reorder requests. Or you might want to
+offload more aggressively, e.g. to already waiting tasks or the
+thread pool.
 
- 0)   cbd-92284    /* signal_generate: sig=26 errno=0 code=-2 comm=psblkdASD pid=92934 grp=1 res=0 */
-
-This causes create_io_thread in the signalled thread to fail with
-ERESTARTNOINTR, and thus a retry is queued.
-
-13) task_th-92942  /* io_uring_queue_async_work: ring 000000007325c9ae, request 0000000080c96d8e, user_data 0x0, opcode URING_CMD, flags 0x8240001, normal queue, work 000000006e96dd3f */
-13) task_th-92942  io_wq_enqueue() {
-13) task_th-92942    _raw_spin_lock();
-13) task_th-92942    io_wq_activate_free_worker();
-13) task_th-92942    _raw_spin_lock();
-13) task_th-92942    create_io_worker() {
-13) task_th-92942      __kmalloc_cache_noprof();
-13) task_th-92942      __init_swait_queue_head();
-13) task_th-92942      kprobe_ftrace_handler() {
-13) task_th-92942        get_kprobe();
-13) task_th-92942        aggr_pre_handler() {
-13) task_th-92942          pre_handler_kretprobe();
-13) task_th-92942          /* create_enter: (create_io_thread+0x0/0x50) fn=0xffffffff8172c0e0 arg=0xffff888996bb69c0 node=-1 */
-13) task_th-92942        } /* aggr_pre_handler */
-...
-13) task_th-92942        } /* copy_process */
-13) task_th-92942      } /* create_io_thread */
-13) task_th-92942      kretprobe_rethook_handler() {
-13) task_th-92942        /* create_exit: (create_io_worker+0x8a/0x1a0 <- create_io_thread) arg1=0xfffffffffffffdff */
-13) task_th-92942      } /* kretprobe_rethook_handler */
-13) task_th-92942    queue_work_on() {
-...
-
-The CPU is then handed to a kworker to process the queued retry:
-
-------------------------------------------
- 13) task_th-92942  => kworker-54154
-------------------------------------------
-13) kworker-54154  io_workqueue_create() {
-13) kworker-54154    io_queue_worker_create() {
-13) kworker-54154      task_work_add() {
-13) kworker-54154        wake_up_state() {
-13) kworker-54154          try_to_wake_up() {
-13) kworker-54154            _raw_spin_lock_irqsave();
-13) kworker-54154            _raw_spin_unlock_irqrestore();
-13) kworker-54154          } /* try_to_wake_up */
-13) kworker-54154        } /* wake_up_state */
-13) kworker-54154        kick_process();
-13) kworker-54154      } /* task_work_add */
-13) kworker-54154    } /* io_queue_worker_create */
-13) kworker-54154  } /* io_workqueue_create */
-
-And then we immediately switch back to the original task to try creating
-a worker again. This fails, because the original task still hasn't
-handled its signal.
-
------------------------------------------
- 13) kworker-54154  => task_th-92942
-------------------------------------------
-13) task_th-92942  create_worker_cont() {
-13) task_th-92942    kprobe_ftrace_handler() {
-13) task_th-92942      get_kprobe();
-13) task_th-92942      aggr_pre_handler() {
-13) task_th-92942        pre_handler_kretprobe();
-13) task_th-92942        /* create_enter: (create_io_thread+0x0/0x50) fn=0xffffffff8172c0e0 arg=0xffff888996bb69c0 node=-1 */
-13) task_th-92942      } /* aggr_pre_handler */
-13) task_th-92942    } /* kprobe_ftrace_handler */
-13) task_th-92942    create_io_thread() {
-13) task_th-92942      copy_process() {
-13) task_th-92942        task_active_pid_ns();
-13) task_th-92942        _raw_spin_lock_irq();
-13) task_th-92942        recalc_sigpending();
-13) task_th-92942        _raw_spin_lock_irq();
-13) task_th-92942      } /* copy_process */
-13) task_th-92942    } /* create_io_thread */
-13) task_th-92942    kretprobe_rethook_handler() {
-13) task_th-92942      /* create_exit: (create_worker_cont+0x35/0x1b0 <- create_io_thread) arg1=0xfffffffffffffdff */
-13) task_th-92942    } /* kretprobe_rethook_handler */
-13) task_th-92942    io_worker_release();
-13) task_th-92942    queue_work_on() {
-13) task_th-92942      clear_pending_if_disabled();
-13) task_th-92942      __queue_work() {
-13) task_th-92942      } /* __queue_work */
-13) task_th-92942    } /* queue_work_on */
-13) task_th-92942  } /* create_worker_cont */
-
-The pattern repeats another couple times until we blow through the retry
-counter, at which point we give up. All outstanding work is canceled,
-and the io_uring command which triggered all this is failed with
-ECANCELED:
-
-13) task_th-92942  io_acct_cancel_pending_work() {
-...
-13) task_th-92942  /* io_uring_complete: ring 000000007325c9ae, req 0000000080c96d8e, user_data 0x0, result -125, cflags 0x0 extra1 0 extra2 0  */
-
-Finally, the task gets around to processing its outstanding signal 26,
-but it's too late.
-
-13) task_th-92942  /* signal_deliver: sig=26 errno=0 code=-2 sa_handler=59566a0 sa_flags=14000000 */
-
-Try to address this issue by adding a small scaling delay when retrying
-worker creation. This should give the forking thread time to handle its
-signal in the above case. This isn't a particularly satisfying solution,
-as sufficiently paradoxical scheduling would still have us hitting the
-same issue, and I'm open to suggestions for something better. But this
-is likely to prevent this (already rare) issue from hitting in practice.
-
-Signed-off-by: Uday Shankar <ushankar@purestorage.com>
----
-Changes in v2:
-- Indentation fixes (Jens Axboe)
-- Link to v1: https://lore.kernel.org/r/20250206-wq_retry-v1-1-6d79bde1e69f@purestorage.com
----
- io_uring/io-wq.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index f7d328feb7225d809601707e423c86a85ebb1c3c..04a75d66619510211ed36711327a513835224fd9 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -63,7 +63,7 @@ struct io_worker {
- 
- 	union {
- 		struct rcu_head rcu;
--		struct work_struct work;
-+		struct delayed_work work;
- 	};
- };
- 
-@@ -784,6 +784,18 @@ static inline bool io_should_retry_thread(struct io_worker *worker, long err)
- 	}
- }
- 
-+static void queue_create_worker_retry(struct io_worker *worker)
-+{
-+	/*
-+	 * We only bother retrying because there's a chance that the
-+	 * failure to create a worker is due to some temporary condition
-+	 * in the forking task (e.g. outstanding signal); give the task
-+	 * some time to clear that condition.
-+	 */
-+	schedule_delayed_work(&worker->work,
-+			      msecs_to_jiffies(worker->init_retries * 5));
-+}
-+
- static void create_worker_cont(struct callback_head *cb)
- {
- 	struct io_worker *worker;
-@@ -823,12 +835,13 @@ static void create_worker_cont(struct callback_head *cb)
- 
- 	/* re-create attempts grab a new worker ref, drop the existing one */
- 	io_worker_release(worker);
--	schedule_work(&worker->work);
-+	queue_create_worker_retry(worker);
- }
- 
- static void io_workqueue_create(struct work_struct *work)
- {
--	struct io_worker *worker = container_of(work, struct io_worker, work);
-+	struct io_worker *worker = container_of(work, struct io_worker,
-+						work.work);
- 	struct io_wq_acct *acct = io_wq_get_acct(worker);
- 
- 	if (!io_queue_worker_create(worker, acct, create_worker_cont))
-@@ -866,8 +879,8 @@ static bool create_io_worker(struct io_wq *wq, struct io_wq_acct *acct)
- 		kfree(worker);
- 		goto fail;
- 	} else {
--		INIT_WORK(&worker->work, io_workqueue_create);
--		schedule_work(&worker->work);
-+		INIT_DELAYED_WORK(&worker->work, io_workqueue_create);
-+		queue_create_worker_retry(worker);
- 	}
- 
- 	return true;
-
----
-base-commit: ec4ef55172d4539abff470568a4369a6e1c317b8
-change-id: 20250206-wq_retry-1cb7f5c1935d
-
-Best regards,
 -- 
-Uday Shankar <ushankar@purestorage.com>
+Pavel Begunkov
 
 

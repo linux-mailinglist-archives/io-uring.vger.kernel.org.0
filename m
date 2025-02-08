@@ -1,154 +1,127 @@
-Return-Path: <io-uring+bounces-6317-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6318-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29DA6A2D063
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 23:22:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D71A2D260
+	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2025 01:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 102697A396A
-	for <lists+io-uring@lfdr.de>; Fri,  7 Feb 2025 22:21:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25993A6C41
+	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2025 00:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F1C1AF0AF;
-	Fri,  7 Feb 2025 22:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F583D68;
+	Sat,  8 Feb 2025 00:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SvhxL5Vf"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="uRAVrVHF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nkj80CHT"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70978479
-	for <io-uring@vger.kernel.org>; Fri,  7 Feb 2025 22:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7F9EBE;
+	Sat,  8 Feb 2025 00:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738966915; cv=none; b=mA6xdRZUAFal0TFnsCJ+rEIMoBBSiBgAXRItxvqdRbhJiCD69zwOVBzqaqIgJXZ8oyUyiChh4LRsYp2GwucytbU1TgY/bF60xlVoJbN508nAkfjUFkELxQ2bvKRDk/D3qoWqAAjOJJAufOA+dHtJU3Z6pqV8z+WnIhvId2TUHns=
+	t=1738975880; cv=none; b=ISjwtyVW8HAVN5cU1OV1IUiD6ath2mwK7EMtd4gcz4pJxDmsp6iw7GJYBAjw9rMOXKllUfj1bbdUXgbbF1fiUoWmip8GrVQ7/vMRnOTp3yldhw1bsCMz7lHmgpm6sJB3L51yT42MUHJdiaaB4NqQmXdijwVyc3HlEppzxuOKuR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738966915; c=relaxed/simple;
-	bh=tK3rfULmuKjq5ZkQcPkvEUu0wfRoYfeMb1VFEZvdmi8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lISW5QBLi2ZmfwBLXXFHZMNoHVkq4IXWkSa4UVEhr/zUz0ccRRxB29TT0QtSCRzO0Pq+T3HfbFIvH0QE9gqBSSGaHZ2KftNRuFQ0BmSg+mtMXEU5kx1RJIn9NYCNDlzZbX8bXPXZUqWS4grg7+2fdBUxgZxklspJcd1eL7JsX8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SvhxL5Vf; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6f768e9be1aso31435277b3.0
-        for <io-uring@vger.kernel.org>; Fri, 07 Feb 2025 14:21:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1738966912; x=1739571712; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cEPaswESS1PjI7HNTDsrPk0/PCf34GKT+5GZnVwgZXY=;
-        b=SvhxL5VfunWjdcxlzGG8u4EHGFeoE7Hsd7VSpFB7mWXw538cZ6lDN4xCKYTXb/F+ny
-         JbRof8Ynh2JOOl8IEVEzxfhATq8HT3CWC6o87hI1Dl3UZ3xrmnLWMIGhmVi/pE05I+rY
-         wXAW8Gxfq1MDGFgixyMSTZ7C6RkY/wCTbtpQY/iUWB4Px9eYadHPzV5zmwu0p1ba1Fls
-         KqkW5/VjK9BGXv1fuP1CZ9vmL9Az40NU67ezIiqr+Ds75KxDZMG7loRBZdD1GTsngRdi
-         tzNxoG0aRQBGjAxlrwK8Jz8epBG8jx9S+R7TsMHL4XvmInAhe0rtltaxBlCKY3sgmmVa
-         lQSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738966912; x=1739571712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cEPaswESS1PjI7HNTDsrPk0/PCf34GKT+5GZnVwgZXY=;
-        b=EIFKtlyrGT1LB+a2XezpeYiFBk5sHWL13wVRT6hRfqkZzH6cuDEmH7I6cb5RecEAPV
-         vkPu1exhBSET6pYjSTkPZJv6EmuLP4WpT7qZHixm5rxS45omzTYBPAlHUqRVvIoQ0vUL
-         V8LLn6eM0CYZCxNIXj+by2Fef6+NZ3zvI0rbnfTBVGuE5eVnHsJ8J80CBkKyTz87gXCm
-         nSvNA0JJWwPTWtitCndND3g3+fWGPZcE5+OqH+N0vgTmlOVDXAQ+IlCdg8raPjAYY7XB
-         9eRbXVYDz/oWP9GVpt4SSHOw/I4gSAcXEY8tW3bMyEvE2wWFxJ+m5B4zJmxKdworoA7c
-         oiaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmvNbcKiYCHZFXZJz51uW50CbW3zYUgo1suK1qbFgk2I+jQxW4ITmFuUKT4tToDDc01sFVKYvicw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeFzem9zpdjiK1KWwTFI19FGRUE0YWdZ3oyBN/gq5lGJXP7Yuj
-	RRffIi8VMmehgvUVNQwEL6iOAw8OD6+VLnq8qLss7mTEKt0MLTDIUieABlG6HiTvZFlLZ1cY7wA
-	HxdFrS4hKoRUmrKxm8kaxOGHhxRhCUYtTpYck
-X-Gm-Gg: ASbGnctUO6InjgtMxgxy41/pzvHkSKlB50/rfbNefzBzz/bChp5hMvAHvayMUamOyqN
-	jNtchcjiZP3EpsDUg9oAKsBgGw3UjTJBO43aCdH+g83eGM7TqHvvoFlo6xJdptUc+isXuaIU=
-X-Google-Smtp-Source: AGHT+IHBRA127lA39kegDN775o8sxuc/2TfRWjm6n/rOOXgCq5OxY/YTyMkihpXgx3uBbbWMJZ1NIqaD8HwuOOVN9kc=
-X-Received: by 2002:a05:690c:730a:b0:6f9:c6e2:89a8 with SMTP id
- 00721157ae682-6f9c6e2c8b3mr21691667b3.6.1738966912666; Fri, 07 Feb 2025
- 14:21:52 -0800 (PST)
+	s=arc-20240116; t=1738975880; c=relaxed/simple;
+	bh=gjJNzpNM9ApoL9TyIvOqm3oRzhAyI9vLBK92oUmdw1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D1EMS/tPaEC9bodEqD/rt75lTYgl5XWjPdEGduaimleuiw4am4p6sbdmft+oEQaKmbENPGcxkdDdjhTJdbztzuvK+OQS+tHSFkqsl2A7lvo8hfgWnp538Mu2B1TC3/XJfyn5I40CpNTIBEze9QJAYYGFaZ8k0TLLednBUdtNLso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=uRAVrVHF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nkj80CHT; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id 607751140157;
+	Fri,  7 Feb 2025 19:51:14 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Fri, 07 Feb 2025 19:51:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1738975874;
+	 x=1739062274; bh=D8dWss3j45ZZkgJBmvb6coXG0YqDaF+50BBK7n5fYZo=; b=
+	uRAVrVHF/yqIlc9dPMFvutcLROGpoCB/s/9ngaLBCMeiBGmoorqzTBSGdEVnr6SD
+	V4V8f/hA158xrV3Ogv1xcTA2kh4FdlrIkxf21cfsQVHZIqiPJKAfPV7lp/O+uHgB
+	l+in4K9d1JyFnkz2zr9zv5eno+xj4qCOiDFclTjrENUee+YdQ48AvFo0knSqVjmO
+	jMFxUCPv77I7AVtb92NIxGXnnZ0ju5L8j9HHc38kKVzCNH579NDnsutrb3R+KqAF
+	jzqBFOndcjchI6uBRF2rWGMlciEDPLrcBzzIpzxXh41E5bB7Rw6T785iPi+5YFcE
+	GyKQ5WGtEOEoye9R3FxFCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1738975874; x=
+	1739062274; bh=D8dWss3j45ZZkgJBmvb6coXG0YqDaF+50BBK7n5fYZo=; b=n
+	kj80CHTk7V9tqLAF8Z4x+kCVi4PgjcfjKIK8H3QDuyCuPtgxtLMpIZjJn/3f9j9k
+	7yJ9zvwsNSm/ycLMSZRDMGjZ5bex9iXrtt+LA0hJS7+TpA1ncnylsRrdbllV5lg1
+	dq5TgKL83yR3jlxZtAWcytGL8wLIfsMagdtj9OUKcAhYx76ZSLqrS9u8+gaNMyt1
+	xzDDp/Vm7fAbxsQ48tb2tU7/rUn3ZJ2jcPcCc76ukybACENbo3x1c9DE9SYawiCB
+	0uufSOjADCy/usXxBZ0CKLEkDWI7JlxkAsquBGIQxVkVYa3EjiiNDidt2h+F4gMg
+	9CDuyBJQ5eb6TAz80KOmQ==
+X-ME-Sender: <xms:gaqmZ8KTntMhXzZtUQ742nXGyKMXzWaFNj9YLJyzE5zpgclAWcteaw>
+    <xme:gaqmZ8JRE050-vWs2Uvycbir2GXEyNBffDAFDDcVm54zZ6g9lTHyeebcxG_1hfYvv
+    5EfYn9iNag0Wl-d>
+X-ME-Received: <xmr:gaqmZ8tz5ivXe857vgnR3CKSvuHfR6XgxTsZaluqPDYP2XEqMHpRg89KG1nTNKkimpIv2ao_8R5PRmJif6jU_uMP4TfMtJvXoL2vwOmaEZDTznexU8Lg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdejjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
+    hnugdrtghomheqnecuggftrfgrthhtvghrnhephefhjeeujeelhedtheetfedvgfdtleff
+    uedujefhheegudefvdfhheeuveduueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtghomhdpnhgspghr
+    tghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepkhgsuhhstghhse
+    hmvghtrgdrtghomhdprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdgslhhotghksehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepmhhinhhgrdhlvghisehrvgguhhgrthdrtghomhdprhgt
+    phhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheprghsmhhlrdhsih
+    hlvghntggvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhgsuhhstghhsehkvghrnhgv
+    lhdrohhrgh
+X-ME-Proxy: <xmx:gaqmZ5YbL8swAomkkgRwv4Wx5mNXETxcAjZ7aRbM5FhRxn7m7K5x9Q>
+    <xmx:gaqmZzZHY5Q9-W5ePFO3jPSsHMkD4nuduLiJKzAnlWWs8u0A5GMy4A>
+    <xmx:gaqmZ1By7lq-lpxg6HDMOnqAnuWIpyZtkQMXP41gVu_pMTOfKEhmgw>
+    <xmx:gaqmZ5YdmCaHSgIzgY8DSAGr9KA0ArjgZ-O5VkekYIsWtVJB6SfUIw>
+    <xmx:gqqmZ37Q3Lfvaas9__S4vy302EHdMzmt7dYr42SY25aDgiI6Bd425ErZ>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 7 Feb 2025 19:51:12 -0500 (EST)
+Message-ID: <5f6f6798-8658-4676-8626-44ac6e9b66af@bsbernd.com>
+Date: Sat, 8 Feb 2025 01:51:11 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
- <8743aa5049b129982f7784ad24b2ec48@paul-moore.com> <f4efd956-ebe9-4a02-8b98-b80e16db95af@kernel.dk>
-In-Reply-To: <f4efd956-ebe9-4a02-8b98-b80e16db95af@kernel.dk>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 7 Feb 2025 17:21:42 -0500
-X-Gm-Features: AWEUYZm96FCzr6LWRjIh3Nuf8FgTiXEW22PFLZ07c4RqLniYHD_Dg4aIbl2L02M
-Message-ID: <CAHC9VhQDMSw9VNzd1pLRv1a3v8y2wz9rM4k0wa1t-Wq8KO6kFw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] io_uring: refactor io_uring_allowed()
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Pavel Begunkov <asml.silence@gmail.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
-	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
-	=?UTF-8?Q?Bram_Bonn=C3=A9?= <brambonne@google.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, linux-security-module@vger.kernel.org, 
-	io-uring@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] ublk zero-copy support
+To: Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org,
+ linux-block@vger.kernel.org, ming.lei@redhat.com, axboe@kernel.dk,
+ asml.silence@gmail.com
+Cc: Keith Busch <kbusch@kernel.org>
+References: <20250203154517.937623-1-kbusch@meta.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20250203154517.937623-1-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 7, 2025 at 4:54=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
-> On 2/7/25 2:42 PM, Paul Moore wrote:
-> > On Jan 27, 2025 Hamza Mahfooz <hamzamahfooz@linux.microsoft.com> wrote:
-> >>
-> >> Have io_uring_allowed() return an error code directly instead of
-> >> true/false. This is needed for follow-up work to guard io_uring_setup(=
-)
-> >> with LSM.
-> >>
-> >> Cc: Jens Axboe <axboe@kernel.dk>
-> >> Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-> >> ---
-> >>  io_uring/io_uring.c | 21 ++++++++++++++-------
-> >>  1 file changed, 14 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> >> index 7bfbc7c22367..c2d8bd4c2cfc 100644
-> >> --- a/io_uring/io_uring.c
-> >> +++ b/io_uring/io_uring.c
-> >> @@ -3789,29 +3789,36 @@ static long io_uring_setup(u32 entries, struct=
- io_uring_params __user *params)
-> >>      return io_uring_create(entries, &p, params);
-> >>  }
-> >>
-> >> -static inline bool io_uring_allowed(void)
-> >> +static inline int io_uring_allowed(void)
-> >>  {
-> >>      int disabled =3D READ_ONCE(sysctl_io_uring_disabled);
-> >>      kgid_t io_uring_group;
-> >>
-> >>      if (disabled =3D=3D 2)
-> >> -            return false;
-> >> +            return -EPERM;
-> >>
-> >>      if (disabled =3D=3D 0 || capable(CAP_SYS_ADMIN))
-> >> -            return true;
-> >> +            goto allowed_lsm;
-> >
-> > I'd probably just 'return 0;' here as the "allowed_lsm" goto label
-> > doesn't make a lot of sense until patch 2/2, but otherwise this
-> > looks okay to me.
->
-> Agree, get rid of this unnecessary goto.
+Hi Keith,
 
-Done.  Converted to return in patch 1/2 and brought the goto/label
-back in patch 2/2.
+On 2/3/25 16:45, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> This is a new look at supporting zero copy with ublk.
 
-> > Jens, are you okay with this patch?  If yes, can we get an ACK from you=
-?
->
-> With that change, yep I'm fine with both of these and you can add my
-> acked-by to them.
+will try to look at it over the weekend. Could you please keep me in the
+loop for future versions?
 
-Great.  Both patches have now been merged into lsm/dev, thanks everyone!
 
---=20
-paul-moore.com
+Thanks,
+Bernd
+
+
 

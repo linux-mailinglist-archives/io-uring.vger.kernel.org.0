@@ -1,79 +1,78 @@
-Return-Path: <io-uring+bounces-6327-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6328-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56144A2D709
-	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2025 16:49:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96905A2D7D6
+	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2025 18:51:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9F8C7A379B
-	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2025 15:48:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28B031666A0
+	for <lists+io-uring@lfdr.de>; Sat,  8 Feb 2025 17:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319C92475D7;
-	Sat,  8 Feb 2025 15:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFDC241120;
+	Sat,  8 Feb 2025 17:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A22tfOrj"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qP4M5M4Y"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC191990DB;
-	Sat,  8 Feb 2025 15:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7273241103
+	for <io-uring@vger.kernel.org>; Sat,  8 Feb 2025 17:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739029788; cv=none; b=pcLxQ/x69Wbgpn/ldC2Ofs7N8Ox4MaJjEBt7ow5nxVoNSY4FMA4i2EG0ceC8lXhxqAxrWAMxgdiFEuzEx9uNk5/8PgL+bbdruf69vB8UuQGaPcrGN9JBF0mJ+k0O1J2hx6wGpC8SXqS86BbrxZXYB3fB+XHp+cYxnYUBes+XHh8=
+	t=1739037055; cv=none; b=Ang25GXU7mtSKV97t94oxwNunhYnvCXRy4blbIpbxjGOpIrRxcMUBXVivsQCFJw1ZjU6kbAcNpRgGK4SfOzv4D1C1ZZYTO3c0aOSP7FZWLFlY4mvjxJnORkaOVyCcppCwETN1CTvmPre3sqgUP5rth+oJ6JS/g+P3NlJUTdSANM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739029788; c=relaxed/simple;
-	bh=ZrdwyVQsygUXXi+QfnaZu4lDBNZHEuJf32aJZrB7qCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nxaUG5hKNneQfNoE/pzhg4ZBqh1UVHC0KDpfVWcEj6mPkFNwXzdCTRzocKFjbdlANsVgKenziwNMpdXi0UYKq+srnMXyMle6fegn9HXcVpOdvekn6dWgNPHCv2IUxV77zCkuV36eKOdZbkUQIeD+T6x4ZpVBlslH6sWmJqtdyXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A22tfOrj; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa68b513abcso567434666b.0;
-        Sat, 08 Feb 2025 07:49:45 -0800 (PST)
+	s=arc-20240116; t=1739037055; c=relaxed/simple;
+	bh=5ImuewTfy2hnmROQQx8WVQrO+ZRDXJoeV5T4/w2KdYo=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=hA5kbBP+VnUGFScl08mbTCdJrWo8vL+FE46vf2X6Yl3vYXy2Fsev/DzX0If5jU9lXtknRaDyAuT2gWyLPKVE3xRVReB+BI9em0BDoexxEw+yfuR0WpTdh5hn/f65vXtT5TUQhtxc51IYBR1s+wm+J+k7daECKfXrkP7Yp5xxdXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qP4M5M4Y; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3cf880d90bdso9570745ab.3
+        for <io-uring@vger.kernel.org>; Sat, 08 Feb 2025 09:50:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739029784; x=1739634584; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xf1jLQbPTI19WcGCKwB7IveX87RvDlQZm4hpR+Jqi0Y=;
-        b=A22tfOrjr2EJ0Y3cbW4eGN2alUVbFocnZ8hf2aXdZUd9UwhxoN5pIPj7PodL/iKdq8
-         ZE17AwLxbESltT/ZlohH10+gyHAGHplLthC8yCN7Tw4P52jQJ1/KnTLQRP98b1OdLGGT
-         1mfE4QC9ATBuR5k5gIPkqAtVXn3E3uO2uSRBvV4VYc8wfIGH8LnxvyrSSOH+sB2LYqLQ
-         A07QBSv9mzRsKRAKcUum29c83+gLRRogwvAyBlui1ISnHwadIBL8cpIPgKLWKQ5165zg
-         MepfhUTkHY6SclAHnAaOkjteeBdpsw5OtpO59emHALfBFSr4Y3u+/6aYstBPVNIbN8B2
-         dX3w==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739037036; x=1739641836; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+KgKsNKhhkCD/+18y08J/Xo1NN1mI4t+vTxkoP7kn5g=;
+        b=qP4M5M4Yls8MJpIsTwQSmx5br5JOA8H1D+1hXjSNLzjOi0aI9TKH7vvIvRz0xIGa77
+         vzKcdxD7iUbj7is/xPH9H0kh0zoe+Ggbc2pr4ADtRpAzy7rGjn2L6aIEgeSVeUzQBGo9
+         MhoKkjB8q1za249idVgEAoOAxGw/d2YqD4Q5QJMZb6VClLUOpUWfDh8HecFUAXudNBgx
+         2BPQC6Q9p69u9Urm+XksYCBJkBwO33D7Dj0VXaY+PnZIL+9gCOiPfen9ln9n4iGVT6fQ
+         VV51nd825ZvfkqvJ2WK6cGEttoBp2DkILaNrk/tBg4RxjMfG/laDUio6TkrdzvWfy4tC
+         U3fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739029784; x=1739634584;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xf1jLQbPTI19WcGCKwB7IveX87RvDlQZm4hpR+Jqi0Y=;
-        b=DUYUScNDDxDvXMiolnUzyEJNx38h7zx0485Hl2b2lpzlHp/i0IMKPhxG3/SsCg0BfU
-         NnA7qZVirtrbFEGZSVfBbcobpGSfjQaDtMcQlJniERSfL3N+VegzJccDnciEz0Mj9Mhl
-         ED0nUr/RLaEazA0l0ekzeY60ML8aegu4jLNen1zlPB/1ff/6ZnWKGLm0lTFCiNXf807x
-         pWTO6viKztJ2fbEhN0JbdFv1/d7lASElCjl+2TF6NNYPbeRWazIVzc5xG0hoM11pebCM
-         Whs5mlKPSWMj1R/nRDklkpVn1zo9/7Ic0NKpl8kGFDDe27xB6HiYLGbKTIMrkgZl6psZ
-         k6nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUX60UnmRmFbkmn2FcTshRy9Kww+IUBM1XzzpIK+TLeclLOfyEPHLPsFDY+bWp149k5LMz6gT9Puw==@vger.kernel.org, AJvYcCVGst9aY6Ss9EYKTcE/Lxq2xde1IaxoRe2oPjdr1K7zo0torxxGQAJkqs5HZOVGTSA+IRpPpMfCihMe/5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH4/kCuLCZC+mA6Vnp4fCDXfg6ri0nSt0b0Xrigefg+YMsoG2w
-	Kue0Fq1tQLA0z+cCFDxOJyxN0Zp4Nyn1L5tt/IAR/wnCnPam94bD
-X-Gm-Gg: ASbGncvAsY1vOX8csdP7Izcm8vzLSrFuDBSOBf3Fktz7pAn5dx+CbEcm8kPMgozxW7D
-	CAKwHff9AEYg86Jl5MVy1DIW7XKbNLe27gALNxgveMTrjrdSMWjPQQFVruTbTLldEgjF+SF9QrW
-	DXIo5CAVo0f2vV1yAaM2kwXudftTApDhogtjE+UBSkkTEitSjRmzkYy+AawCM6f7GFwBSsEaJ3u
-	klgmOY0hjpbBZ0Lwz+uudM+zM13V4NuPK9mOHf9dH1HwKbF224Mv5IAQDwQanzj+5848u+gkgom
-	8PHWaWujtaJKmVp7JODVpaa5aQ==
-X-Google-Smtp-Source: AGHT+IHJquoREIzpdt9NN5spCyISGwZLJcUAkz2K2O/6sEgxG1dRtuB/3nsHrahWNxwxoeW3flmtKw==
-X-Received: by 2002:a17:906:585b:b0:ab7:8d90:29bf with SMTP id a640c23a62f3a-ab78d902ceemr514797066b.17.1739029784303;
-        Sat, 08 Feb 2025 07:49:44 -0800 (PST)
-Received: from [192.168.8.100] ([148.252.133.220])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab772f84417sm496704866b.53.2025.02.08.07.49.42
+        d=1e100.net; s=20230601; t=1739037036; x=1739641836;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+KgKsNKhhkCD/+18y08J/Xo1NN1mI4t+vTxkoP7kn5g=;
+        b=eoDkhPnRQFuF3tmJasFU1y0uOAIAXTK2qGKK8Q0Ng251QGx2E7nh2eLz4si5xcL9Gg
+         xLP0w+KSynpzM66KdY71PgU4RmWghyPBXLJ+0nEVOOU7kbjM7zIxeNEZmEHAXkPh98Hk
+         CGkdoZaz6pK73kf9jmpCGaL/kLo9+Trm/HzQkoCuFEYtqgM8KoQcgTQaQcPRht6/RYc4
+         N0pBj+/IfJAo0ZtLtFK+OJvwpcWMyk8guNeXsTGq5EC1Q6/z6R/HHRaYBXdnz0R8AJMX
+         arIxHE0b5CaGwbeio68Hkc36Lj/00KeShbMS1vGJNqibScRkhtU3K12hIu84BwA8s1MM
+         BYmw==
+X-Gm-Message-State: AOJu0Yytw8EsE0x7yEhQM18M/LiOxh5pqtT2ZX68TvMuEVHG0SgWR52L
+	rb57XDp4wdKg/VaIcjEr8lBXKozV9FMgjLE88lfIOpD1BL9k3uD5LhoiQKTyyGMu61NU6Hho4DV
+	W
+X-Gm-Gg: ASbGnculsxvln3U4CYwXPmn3PPoDrL+6qVQgBQih5lJ/CHrdHlxProeJIbz+ovbLAF2
+	wMOVG0wOxlo/8RB0CNBDDaQZfHLB4qoXq3js9EJz+oWD3bL4jzu8UlP4qyGII7L4MPL7TrPS+sL
+	G5S/7mKB2SnMIuyvwbqSR0m95G2jUuFyBXl/hlQFFg5Sk+Sx2Z7lVS4FuCtvNH2aiXxOdwcG454
+	Vm8P7diGkL82G/xDmomSUgZM12OVXw6lcTt5wON9wBIUEgk+ez+lGj5UR029XEpnpX3HZg7DP6g
+	et4ZydBcpqR1
+X-Google-Smtp-Source: AGHT+IFepd5UWtCtftLEFgxlBYQfNrWTOudHoZAP8tcnpxZYONpKs1W9T2gjRXNGNycgg9OoHGdvmQ==
+X-Received: by 2002:a05:6e02:1c0e:b0:3d0:4e57:bbd3 with SMTP id e9e14a558f8ab-3d13dfa2297mr68912565ab.22.1739037035800;
+        Sat, 08 Feb 2025 09:50:35 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d05e87923bsm13370525ab.9.2025.02.08.09.50.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Feb 2025 07:49:43 -0800 (PST)
-Message-ID: <67d9624f-5785-4c5b-993f-db9f08ca0215@gmail.com>
-Date: Sat, 8 Feb 2025 15:49:47 +0000
+        Sat, 08 Feb 2025 09:50:35 -0800 (PST)
+Message-ID: <184f9f92-a682-4205-a15d-89e18f664502@kernel.dk>
+Date: Sat, 8 Feb 2025 10:50:34 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -81,133 +80,132 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] io_uring: add support for kernel registered bvecs
-To: Keith Busch <kbusch@kernel.org>
-Cc: Keith Busch <kbusch@meta.com>, io-uring@vger.kernel.org,
- linux-block@vger.kernel.org, ming.lei@redhat.com, axboe@kernel.dk
-References: <20250203154517.937623-1-kbusch@meta.com>
- <20250203154517.937623-4-kbusch@meta.com>
- <b36f0c87-71ad-444f-b234-f71953ca58ba@gmail.com>
- <Z6YkFsathkU6ltTS@kbusch-mbp>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Z6YkFsathkU6ltTS@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH RFC] io_uring/net: improve recv bundles
+Cc: norman_maurer@apple.com, David Wei <dw@davidwei.uk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2/7/25 15:17, Keith Busch wrote:
-> On Fri, Feb 07, 2025 at 02:08:23PM +0000, Pavel Begunkov wrote:
->> On 2/3/25 15:45, Keith Busch wrote:
->>>    		struct io_rsrc_node *node;
->>>    		u64 tag = 0;
->>> +		i = array_index_nospec(up->offset + done, ctx->buf_table.nr);
->>> +		node = io_rsrc_node_lookup(&ctx->buf_table, i);
->>> +		if (node && node->type != IORING_RSRC_BUFFER) {
->>
->> We might need to rethink how it's unregistered. The next patch
->> does it as a ublk commands, but what happens if it gets ejected
->> by someone else?  get_page might protect from kernel corruption
->> and here you try to forbid ejections, but there is io_rsrc_data_free()
->> and the io_uring ctx can die as well and it will have to drop it.
-> 
-> We prevent clearing an index through the typical user register update
-> call. The expected way to clear for a well functioning program is
-> through the kernel interfaces.
+Current recv bundles are only supported for multishot receives, and
+additionally they also always post at least 2 CQEs if more data is
+available than what a buffer will hold. This happens because the initial
+bundle recv will do a single buffer, and then do the rest of what is in
+the socket as a followup receive. As shown in a test program, if 1k
+buffers are available and 32k is available to receive in the socket,
+you'd get the following completions:
 
-What I'm saying, it's a sanity check, but it doesn't prevent it
-from happening from other paths, and I understand that you're
-trying to cover for that.
+bundle=1, mshot=0
+cqe res 1024
+cqe res 1024
+[...]
+cqe res 1024
 
-> Other than that, there's nothing special about kernel buffers here. You
-> can kill the ring or tear down registered buffer table, but that same
-> scenario exists for user registered buffers. The only thing io_uring
+bundle=1, mshot=1
+cqe res 1024
+cqe res 31744
 
-For registered buffers the user can and will have to handle it, but in
-case of this proposal the end ublk user wouldn't even know there is
-an io_uring and registered buffers, so ultimately the ublk driver will
-have to handle edge cases. And for ublk driver to be able to handle it
-well even in case of ublk server failures, it'll need to be able to wait
-until io_uring releases the buffer.
+where bundle=1 && mshot=0 will post 32 1k completions, and bundle=1 &&
+mshot=1 will post a 1k completion and then a 31k completion.
 
-For example, the ublk server crashes, which closes io_uring => there
-is no way to do unregister cmd anymore. IIUC, the ublk driver will
-want to complete the block request returning an error, but if it's
-done before io_uring releases the buffer, the end ublk user may
-attempt to reuse the memory while io_uring is still concurrently
-writing to / reading from it, which would be disastrous.
+To support bundle recv without multishot, it's possible to simply retry
+the recv immediately and post a single completion, rather than split it
+into two completions. With the below patch, the same test looks as
+follows:
 
-One thing I like about ublk unregister cmd though, is that you can
-add some more control like reporting back a short IO, but I doubt we
-can do it sanely without sending some sort of a notification back
-to ublk. So, maybe it should be both, and in case of forced
-unregistration ublk will consider it to be a failure. Another option
-is to do it all through normal(ish) io_uring buffer unregisteration
-path, but maybe enhanced with additional custom arguments. This way
-we have only one path doing that.
-  
+bundle=1, mshot=0
+cqe res 32768
 
-> needs to ensure is that nothing gets corrupted. User registered buffers
-> hold a pin on the user pages while the node is referenced. Kernel
-> registered buffers hold a page reference while the node is referenced.
-> Nothing special.
-> 
->> And then you don't really have clear ownership rules. Does ublk
->> releases the block request and "returns ownership" over pages to
->> its user while io_uring is still dying and potenially have some
->> IO inflight against it?
->>
->> That's why I liked more the option to allow removing buffers from
->> the table as per usual io_uring api / rules instead of a separate
->> unregister ublk cmd.
-> 
-> ublk is the only entity that knows about the struct request that
-> provides the bvec we want to use for zero-copy, so it has to be ublk
-> that handles the registration. Moving the unregister outside of that
-> breaks the symmetry and requires an indirect call.
+bundle=1, mshot=1
+cqe res 32768
 
-cmd execution takes 2 indirect calls, not like there is a
-difference here.
+where mshot=0 works fine for bundles, and both of them post just a
+single 32k completion rather than split it into separate completions.
+Posting fewer completions is always a nice win, and not needing
+multishot for proper bundle efficiency is nice for cases that can't
+necessarily use multishot.
 
-> 
->> And inside, when all node refs are dropped,
->> it'd call back to ublk. This way you have a single mechanism of
->> how buffers are dropped from io_uring perspective. Thoughts?
->>
->>> +			err = -EBUSY;
->>> +			break;
->>> +		}
->>> +
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-...
+---
 
->> ...
->>>    			unsigned long seg_skip;
->>> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
->>> index abd0d5d42c3e1..d1d90d9cd2b43 100644
->>> --- a/io_uring/rsrc.h
->>> +++ b/io_uring/rsrc.h
->>> @@ -13,6 +13,7 @@
->>>    enum {
->>>    	IORING_RSRC_FILE		= 0,
->>>    	IORING_RSRC_BUFFER		= 1,
->>> +	IORING_RSRC_KBUF		= 2,
->>
->> The name "kbuf" is already used, to avoid confusion let's rename it.
->> Ming called it leased buffers before, I think it's a good name.
-> 
-> These are just fixed buffers, just like user space onces. The only
-> difference is where the buffer comes from: kernel or userspace? I don't
-> see what the term "lease" has to do with this.
-
-In this particular case, there is a kernel component that expects
-it back, that's the leasing part, but thinking about it more, you're
-right, the interface can support workflows different from it as well.
-
-I actually like kbuf, but again it's confusing because already used
-for an entirely different thing. Maybe it's fine if it doesn't leak
-outside of node types.
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 17852a6616ff..10344b3a6d89 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -76,6 +76,7 @@ struct io_sr_msg {
+ 	/* initialised and used only by !msg send variants */
+ 	u16				buf_group;
+ 	u16				buf_index;
++	bool				retry;
+ 	void __user			*msg_control;
+ 	/* used only for send zerocopy */
+ 	struct io_kiocb 		*notif;
+@@ -187,6 +188,7 @@ static inline void io_mshot_prep_retry(struct io_kiocb *req,
+ 
+ 	req->flags &= ~REQ_F_BL_EMPTY;
+ 	sr->done_io = 0;
++	sr->retry = false;
+ 	sr->len = 0; /* get from the provided buffer */
+ 	req->buf_index = sr->buf_group;
+ }
+@@ -402,6 +404,7 @@ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
+ 
+ 	sr->done_io = 0;
++	sr->retry = false;
+ 
+ 	if (req->opcode != IORING_OP_SEND) {
+ 		if (sqe->addr2 || sqe->file_index)
+@@ -785,6 +788,7 @@ int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	struct io_sr_msg *sr = io_kiocb_to_cmd(req, struct io_sr_msg);
+ 
+ 	sr->done_io = 0;
++	sr->retry = false;
+ 
+ 	if (unlikely(sqe->file_index || sqe->addr2))
+ 		return -EINVAL;
+@@ -833,6 +837,9 @@ int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	return io_recvmsg_prep_setup(req);
+ }
+ 
++/* bits to clear in old and inherit in new cflags on bundle retry */
++#define CQE_F_MASK	(IORING_CQE_F_SOCK_NONEMPTY|IORING_CQE_F_MORE)
++
+ /*
+  * Finishes io_recv and io_recvmsg.
+  *
+@@ -852,9 +859,19 @@ static inline bool io_recv_finish(struct io_kiocb *req, int *ret,
+ 	if (sr->flags & IORING_RECVSEND_BUNDLE) {
+ 		cflags |= io_put_kbufs(req, *ret, io_bundle_nbufs(kmsg, *ret),
+ 				      issue_flags);
++		if (sr->retry)
++			cflags = req->cqe.flags | (cflags & CQE_F_MASK);
+ 		/* bundle with no more immediate buffers, we're done */
+ 		if (req->flags & REQ_F_BL_EMPTY)
+ 			goto finish;
++		/* if more is available, retry and append to this one */
++		if (!sr->retry && kmsg->msg.msg_inq > 0 && *ret > 0) {
++			req->cqe.flags = cflags & ~CQE_F_MASK;
++			sr->len = kmsg->msg.msg_inq;
++			sr->done_io += *ret;
++			sr->retry = true;
++			return false;
++		}
+ 	} else {
+ 		cflags |= io_put_kbuf(req, *ret, issue_flags);
+ 	}
+@@ -1233,6 +1250,7 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	struct io_kiocb *notif;
+ 
+ 	zc->done_io = 0;
++	zc->retry = false;
+ 	req->flags |= REQ_F_POLL_NO_LAZY;
+ 
+ 	if (unlikely(READ_ONCE(sqe->__pad2[0]) || READ_ONCE(sqe->addr3)))
 
 -- 
-Pavel Begunkov
+Jens Axboe
 
 

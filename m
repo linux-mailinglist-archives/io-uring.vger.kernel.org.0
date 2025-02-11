@@ -1,46 +1,46 @@
-Return-Path: <io-uring+bounces-6344-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6345-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FD9A3001B
-	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2025 02:31:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A75F6A30065
+	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2025 02:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1943C166677
-	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2025 01:31:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF90E1884D5F
+	for <lists+io-uring@lfdr.de>; Tue, 11 Feb 2025 01:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806601DB34B;
-	Tue, 11 Feb 2025 01:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9131F0E4A;
+	Tue, 11 Feb 2025 01:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ueTEKO/D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="te5O2QA0"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5496D34CF5;
-	Tue, 11 Feb 2025 01:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6123E1F0E42;
+	Tue, 11 Feb 2025 01:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739237405; cv=none; b=uznaJapGtO3Jdhk2ngIKbJmhaSAn2wvkQl4pIgEFLdQIinCkzMrzFMEQWDhIc2+B1H1LkiJVUKJbM+F8+vNw0CdgF4sXG968/EZ2TUacBZWb4LKI2uWvK5+DXP+9+SBx0j0Q3SlmoAJkrywJlO/abibk0QbzrwrKrRar2emrQoc=
+	t=1739237458; cv=none; b=mSk61JGM3H497laTF86JSmIZBW/1zGR5QVQX7aK5/sYdVpZxMydPAk6UX6FiyEiil2vLphSulI4rNlKNf6RX9Tb2MRyuGs1oKVL9uXODd+j9b1YfG+ccU05N25IHW50VgmRnwXrQ4CB2jgWD8pyFZDaYqaCFbtGa3lsrNTKgy6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739237405; c=relaxed/simple;
-	bh=hFtL0x/+GUZwi7+zGRJFNZQHyYh0YyIT9e3JHkAa0hI=;
+	s=arc-20240116; t=1739237458; c=relaxed/simple;
+	bh=rdCS7DT4FRpvkM4l8TBKCiuvAJ8b/eC7sdjK2Ghv6Sw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mHCB8OoWXq3yUj7Ezenk6vUBHGcq8EGE8WL4KsEXcUSAC3Xo8g2bon6qmBH1n9+RXEDEAx6FTplnncxjG0ucPEBoiaPNfGZAcVgdZR9QtJNF/TkIKGKoKY5O7h89c7VxAEnQUleGU6bTpCZhfxoaDKsj82pCR0cThOIjwXGqN4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ueTEKO/D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE317C116C6;
-	Tue, 11 Feb 2025 01:30:03 +0000 (UTC)
+	 MIME-Version; b=VqQr7dI4ijVRdufhWXx0NMrTZZ1o3A+C1/knRh+Y0cNegrSHELZmB695p+Z4MPsxpsODKiJQwzDcy5IRtL+42Zux13FMSaPHyjQL4lMUQ3upCH22PyBxcAS8hg8c5r58+5uGKWtl8IdrgQ5jQN5AIzNKpMJ6EdHDR8jFcACSXbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=te5O2QA0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D61A8C4CED1;
+	Tue, 11 Feb 2025 01:30:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739237404;
-	bh=hFtL0x/+GUZwi7+zGRJFNZQHyYh0YyIT9e3JHkAa0hI=;
+	s=k20201202; t=1739237457;
+	bh=rdCS7DT4FRpvkM4l8TBKCiuvAJ8b/eC7sdjK2Ghv6Sw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ueTEKO/DsAyGDfIvo2ko+OO8cP+C5P90b42cF+OoAsh4n45+q2IOVRXpyW2hUcoLw
-	 SPp3rozDRr38vjBvjcjkqxoicfAif4lR/Lnxf9C4z/sdXvheuWY05HW3hGyPCcO4GU
-	 DMlM7LSpQ9qityJ+hUXC3YcfYNk/298txONa5VmW7e9xngMcXTdt6K+MWd6WKw0vWC
-	 uAu77vgJJrnT8kvW3o8k1kZOeQMdciBZiXJYt53emfFJmm1aNTKQfeQVSpXd8rgtK1
-	 IDnRTID5+1MqXX+5SMA4EVH5iilJxChEEV5KO2UYA+Q434lC+S8QIP1869e/mwBPPw
-	 VSt8PWiAOGoQQ==
+	b=te5O2QA0jDSLpVqU5IIdZWMluic2/wkSpHseskh4B2NI32jm8wmGhPYuICliJXTIb
+	 tK0s1TiGvhYkhpjPcFOmBBn7JX2PBu1diF81/hIKu2atthFdoZxXj6VTcOCmV8UsNO
+	 LxnONcPDGOWxsI+UgbbufN/oATu4TK24RAEMav3LtK6wOGSp9nQBoJF+dLZ0gHcjjF
+	 HiZ57gG3lYPXwsWyhIrPxinwOY0lr3XVt9hzzXwRgigGbiiG2AqV0CTGVMMyt5AJ8X
+	 lqYNjPLGE7UhmlANz/MuvxOx74epN3cN/KkeV04hsiSeaJ7/g8OcRqJmhRtyqMtYCK
+	 QGMBQfiFU/W3g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -51,12 +51,12 @@ Cc: Jens Axboe <axboe@kernel.dk>,
 	asml.silence@gmail.com,
 	mingo@redhat.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.13 06/21] futex: Pass in task to futex_queue()
-Date: Mon, 10 Feb 2025 20:29:39 -0500
-Message-Id: <20250211012954.4096433-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 06/19] futex: Pass in task to futex_queue()
+Date: Mon, 10 Feb 2025 20:30:34 -0500
+Message-Id: <20250211013047.4096767-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250211012954.4096433-1-sashal@kernel.org>
-References: <20250211012954.4096433-1-sashal@kernel.org>
+In-Reply-To: <20250211013047.4096767-1-sashal@kernel.org>
+References: <20250211013047.4096767-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.13.2
+X-stable-base: Linux 6.12.13
 Content-Transfer-Encoding: 8bit
 
 From: Jens Axboe <axboe@kernel.dk>
@@ -100,7 +100,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  5 files changed, 15 insertions(+), 9 deletions(-)
 
 diff --git a/io_uring/futex.c b/io_uring/futex.c
-index e29662f039e1a..f108da4ff863c 100644
+index 914848f46beb2..01f044f89f8fa 100644
 --- a/io_uring/futex.c
 +++ b/io_uring/futex.c
 @@ -349,7 +349,7 @@ int io_futex_wait(struct io_kiocb *req, unsigned int issue_flags)
@@ -113,10 +113,10 @@ index e29662f039e1a..f108da4ff863c 100644
  	}
  
 diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index ebdd76b4ecbba..3db8567f5a44e 100644
+index 136768ae26375..010607a991949 100644
 --- a/kernel/futex/core.c
 +++ b/kernel/futex/core.c
-@@ -532,7 +532,8 @@ void futex_q_unlock(struct futex_hash_bucket *hb)
+@@ -554,7 +554,8 @@ void futex_q_unlock(struct futex_hash_bucket *hb)
  	futex_hb_waiters_dec(hb);
  }
  
@@ -126,7 +126,7 @@ index ebdd76b4ecbba..3db8567f5a44e 100644
  {
  	int prio;
  
-@@ -548,7 +549,7 @@ void __futex_queue(struct futex_q *q, struct futex_hash_bucket *hb)
+@@ -570,7 +571,7 @@ void __futex_queue(struct futex_q *q, struct futex_hash_bucket *hb)
  
  	plist_node_init(&q->list, prio);
  	plist_add(&q->list, &hb->chain);
@@ -136,11 +136,11 @@ index ebdd76b4ecbba..3db8567f5a44e 100644
  
  /**
 diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
-index 99b32e728c4ad..6b2f4c7eb720f 100644
+index 8b195d06f4e8e..12e47386232ed 100644
 --- a/kernel/futex/futex.h
 +++ b/kernel/futex/futex.h
-@@ -285,13 +285,15 @@ static inline int futex_get_value_locked(u32 *dest, u32 __user *from)
- }
+@@ -230,13 +230,15 @@ extern int futex_get_value_locked(u32 *dest, u32 __user *from);
+ extern struct futex_q *futex_top_waiter(struct futex_hash_bucket *hb, union futex_key *key);
  
  extern void __futex_unqueue(struct futex_q *q);
 -extern void __futex_queue(struct futex_q *q, struct futex_hash_bucket *hb);
@@ -156,7 +156,7 @@ index 99b32e728c4ad..6b2f4c7eb720f 100644
   *
   * The hb->lock must be held by the caller, and is released here. A call to
   * futex_queue() is typically paired with exactly one call to futex_unqueue().  The
-@@ -299,11 +301,14 @@ extern int futex_unqueue(struct futex_q *q);
+@@ -244,11 +246,14 @@ extern int futex_unqueue(struct futex_q *q);
   * or nothing if the unqueue is done as part of the wake process and the unqueue
   * state is implicit in the state of woken task (see futex_wait_requeue_pi() for
   * an example).
@@ -174,10 +174,10 @@ index 99b32e728c4ad..6b2f4c7eb720f 100644
  }
  
 diff --git a/kernel/futex/pi.c b/kernel/futex/pi.c
-index d62cca5ed8f4c..635c7d5d42220 100644
+index 5722467f27379..8ec12f1aff83b 100644
 --- a/kernel/futex/pi.c
 +++ b/kernel/futex/pi.c
-@@ -982,7 +982,7 @@ int futex_lock_pi(u32 __user *uaddr, unsigned int flags, ktime_t *time, int tryl
+@@ -981,7 +981,7 @@ int futex_lock_pi(u32 __user *uaddr, unsigned int flags, ktime_t *time, int tryl
  	/*
  	 * Only actually queue now that the atomic ops are done:
  	 */

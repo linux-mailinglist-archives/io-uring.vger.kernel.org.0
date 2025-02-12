@@ -1,186 +1,299 @@
-Return-Path: <io-uring+bounces-6385-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6386-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA26A33130
-	for <lists+io-uring@lfdr.de>; Wed, 12 Feb 2025 22:02:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3BF5A33154
+	for <lists+io-uring@lfdr.de>; Wed, 12 Feb 2025 22:15:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BC543A813B
-	for <lists+io-uring@lfdr.de>; Wed, 12 Feb 2025 21:02:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99334164F3F
+	for <lists+io-uring@lfdr.de>; Wed, 12 Feb 2025 21:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC44202C5C;
-	Wed, 12 Feb 2025 21:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70844202F8D;
+	Wed, 12 Feb 2025 21:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="iAQ9fRTI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTUtnn/I"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020651E260C
-	for <io-uring@vger.kernel.org>; Wed, 12 Feb 2025 21:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BD2200BA3;
+	Wed, 12 Feb 2025 21:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739394126; cv=none; b=uhXvw79KFvWM/2wxJGmfEWqP8FAIOMnBvujds/Oo5z0LjcV1aRh06pBB5Lmgnypl2ajVI56iYff90h3vkw5IWpS+H8QW62A6fti+hEVg5Y2OqWaYzRpJzx1+HFku/u8Cy4uhIcDwwWR6PyAA/EFXUmbfh6LgHF1qoaRCs7gQktc=
+	t=1739394909; cv=none; b=KoCbPfwVwIeILXwVsPh8iVBaqrclmkThLKhwlD1lHAOt8jRpvtoDX/0ny1OpO4CvBf1GYLXZjMI/O7N4ZIF+Yy6uGBp+K6LRm+QmDN/uFGX/g72+KPh/abG1fn3Nl1DclJMsn4Zw3ajGFoGLwi7fRVJLLWH3jtewl1WOiNXy+JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739394126; c=relaxed/simple;
-	bh=37WHG0BZlPCXddrRTjVBqTDTx+dN7uo4aIbb/vw21ig=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=C+gTak5cfTJ2w5Y0dyJ5w1h1IeP44WiyBSLfC3YozGSdo/BV3r04H8eq9dKvRJnkjq0A9Hw6oU1fX5etke5egpdxgeUy8RhFuSTsG5KfnhFN0aEvxoSiLCeeL3iOFrC+nBVJ6XeGCWsrta82r6TTQ9NXniCXYuiJ3Pq5cNkR+d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=iAQ9fRTI; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-8555e673b2bso6975739f.0
-        for <io-uring@vger.kernel.org>; Wed, 12 Feb 2025 13:02:02 -0800 (PST)
+	s=arc-20240116; t=1739394909; c=relaxed/simple;
+	bh=8oFaZGYB7aKcn3LSIDmTGouwbqxlkl5PDh9Fdqo1MdM=;
+	h=From:MIME-Version:Date:Message-ID:Subject:To:Cc:Content-Type; b=gqB2wABoould1n/bsNZKuC7VK/sCwtO2J39d01uHsCzDIfvxUYHhB9V1sb1plcta6LYQUi5y/+Ww8lFSUnYSWlbrue5mf2SaNNiBx9ORrr4LKU4fGuPz8xczw7eWdfR2COFHVoc1/brnqyc1r5zg/9h3p5pcgccn22HX5P4ZGu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTUtnn/I; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e442b79de4so2105966d6.2;
+        Wed, 12 Feb 2025 13:15:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739394122; x=1739998922; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=A2qVwVfu1lfq9SDbxbqN79ICyHcSg4LU3QV0l4opQl0=;
-        b=iAQ9fRTIw7hHjxKOrchnyQwISbLAxz10VNPriSbmMtds47J0uCnpCF7kR3oCrPdHvu
-         CHIHCQ5nY469+fCBeFz5Y4u2IAp7sg6KGS5HHBb98HVb0q+cEKGmuqs80kPZKX2eyNnM
-         iOZgHaKAJgF/uKGT27DpwRkuBo+Ng6hBsX+JvC/Nlb6xzzV8b3FQbv4+31FyVfbMakke
-         3Yp8nZZHXvgFQ1RqsV8f23k62agSgrIJf5n5idKOCt400fc8iAxkdp+xAin7UDeu/K2O
-         cqxRIE/59N4fUZIm/FEJwLSIqZwyUW0ZDkDSFfJll10bDJBnM06iq65x+zLWyMYBz6Vd
-         8Aiw==
+        d=gmail.com; s=20230601; t=1739394906; x=1739999706; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:mime-version:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PRpTMU+QQrOptneUAcLbMg6GtdMWUJRT8ADEFKtR/MA=;
+        b=cTUtnn/ItXm4nrb/1mnkKDIYbJP0uXrzN5YVUorbM+L6TXfKUBO8iO3JNWQR0Bda3Y
+         yUV5fHASajLOrp2hJPKX1mPl+4YTZCjWp1HOmTEOmRoqcykJTLG4jvxZ0uiO7wVKXz1W
+         CaLHq9llg3aQI8ESJbcNriqU52M/1h//TSk1MGUOrZLc0OH5AxZH7bXZZ+VI34B7DKzD
+         6F4wTGGRqI9GMIEPSpIqIdU2SARZb1liSDHfFD+FCgMW9yhQXB/r1FUZz4YZLvVN7jRV
+         C9txyadlHIyrAIXiWy97HvQcwfOZFatbrfdexj0eIa6/MENY0ibVVC1Dv0JT+VIdUEuN
+         Doaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739394122; x=1739998922;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A2qVwVfu1lfq9SDbxbqN79ICyHcSg4LU3QV0l4opQl0=;
-        b=wIxeCLFYr1QF1r4vGEJ7uDDAIFs14y6k4pXh22BiYZX9vUkrKOHQdqxKB9xQjnAMYG
-         5Rl5LW3wLC7VQOhoA9r+UGQwn4XC9iwpqAg8OQzqCggOoaNs4trk+RNpMVXvMYPJ2k3g
-         rvnFjTzNsJI9cRuSXrr96LEyqYuMqcx63EMS2mJJc9ggmwzAGXNJaloXarCdqg0u5BF2
-         SpRdJtVsm70w2kTuKYNQe5dd/puyVe/qmAwjxPRzIrmAmxoAndrLniyxK/atFx8zX3FK
-         xd9Kg0dYi8TLUoIsGGcyb/Z4C0k4HC3zFMlf2jac9wu66pNZSfXVSG0hiist/RT3YSRF
-         WZxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnNt+HX4cKXp9VSrGF5dJVPkEZyU9JGKBx8H3NfnH/xodmpfDfuO4QU5oibe3XHPB94kEUWITnvA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDn/s5Ctoto+TfsE88MYDmE7P7ZvKqW2S7u/Ah9HKcdHeDw7VF
-	HfJhtqaCAeqFnQTTgpTWDElhexcjaHZaUDG7kkFAdTpEC9SMI8jOil8Seo9w4Q8=
-X-Gm-Gg: ASbGncsPyKPGywrjBwowY7cFJglfKsnVTBRdY7+JPhbrinFljOHL3MlsaSxa3/G9gT7
-	7C7xE88qaXn0M99efinq+f8qAGUeYOVFWe4KF8mIq9pWyrOB/A6nQLHE4TQ6g5ynrmRdVkM2xvp
-	A68NvhViv3tMJW7oZ6bFeHbjPnc1EjcN2nNNJS/vzmRISfg7Ye0lRNM2OsGjWQhHngmIPp60AhJ
-	d5ZqF+JNOr6gZn1OQvDcsltLUyBvZAeqBU3+Lpx0PF+sHhKq21sCT5xVFcn+Mg9I0BOR3rLrqfJ
-	rk+Ft0gfD1g=
-X-Google-Smtp-Source: AGHT+IGvjQx0sAHyNOIQkle6qQTPtpxNNBhNT3fL29MqucbkBu5KPBkiJcSQxQwu/s/6Iuu+B10X0g==
-X-Received: by 2002:a05:6602:6194:b0:82c:ec0f:a081 with SMTP id ca18e2360f4ac-8556528161bmr38148739f.4.1739394121844;
-        Wed, 12 Feb 2025 13:02:01 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ed1f84f281sm307907173.9.2025.02.12.13.02.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2025 13:02:01 -0800 (PST)
-Message-ID: <50caa50c-5126-4072-8cfc-33b83b524489@kernel.dk>
-Date: Wed, 12 Feb 2025 14:02:00 -0700
+        d=1e100.net; s=20230601; t=1739394906; x=1739999706;
+        h=cc:to:subject:message-id:date:mime-version:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PRpTMU+QQrOptneUAcLbMg6GtdMWUJRT8ADEFKtR/MA=;
+        b=kM9keaTp1HGekmXXmDUtOY+folKG886jFhQe91n/iGkdLANZuQhMcKifyjvzC9R5kg
+         1nEt9MGzobydnxCZped7PbifReu/wHayAyZoxgj90wHheoQN+FPzLGJNmyPi4PGhot+x
+         jjbexVh/A4LHdPTFjHNmgw48yGvAVIS8x9/DfwHgMtR3hqZDuZfFqswz/4x1f4Cx8dAx
+         BCkJRzfnr1OQmAf426+WGUQczOraqpxHc0eGDZ6s7assLXvmwK9Si79t2YZYlwFo4Fg0
+         1QeZj9xWKvSbt07eJAmxa5rlXvb4xLnz40u6bsXNH2k4tPCxchchwZxhV/UmoHA6IWIN
+         NUzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUu8rNKtk4/ss7HYj+n5ZfUbjRd1bxhdqTdQX+r8DIoG77DRr1Yb1/Wx0vm3GzCkZtRyl8nINT2xU8=@vger.kernel.org, AJvYcCVJ77zZVL13Ph3MuUeltJH0geI5ND21/kcjx8HFR/R2d4FVH5SslbsPNhVcP8g51Aab8BmrQ1VBhSJTlt2M2g==@vger.kernel.org, AJvYcCVmgtKI0S54NyzFJBwq2UMX51xN4ItASYB/kzvZPqorM97UtUIeXuPDdAOEKj2l1rCDX0I=@vger.kernel.org, AJvYcCVn3E5p1WUbySe9vOTah5hTAA31+TIEqb2I/ZA8caHXLtcQB4/4aCo9dteQwRCrDoAVUVLIOaQa7iJ/TORP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmRbWCCvXFNXa5y2ZtQ88kZ4yeClNyjC0MMREObUbmUeb627X+
+	gFn7AfD2bMnx4o4jsG59QP4fqrxfhRgASMb5HYzR9EomLWJSrWWzNkYjot1qTPDZzdLgDQtHH9B
+	wqDhDV3QzfoAl036IH8WXrTD+gpQMaVqj8I0=
+X-Gm-Gg: ASbGncv7JNwKlOqugTmStqVMBK4p5elZugqh/fdkwHHAb8Zxxj0lZ2uedfbNIG1ed6a
+	7dY0Q3dUgXx+LW1LIVv/c2rzE+6+/7vxzzoGBkU4NtnHSLUjQe+gicrEU093Y68uF4hFZar0y
+X-Google-Smtp-Source: AGHT+IH/wfGm3/CAsTBU+YAwWOZncBAj615IMgx+6j59WDBDXnbe//4t1nBqJ8S/66IEaHeTZF3BiaCQpNfOJfjQjQY=
+X-Received: by 2002:a05:6214:29c2:b0:6d8:8a60:ef24 with SMTP id
+ 6a1803df08f44-6e46ed77efcmr70712546d6.9.1739394906262; Wed, 12 Feb 2025
+ 13:15:06 -0800 (PST)
+Received: from 270782892852 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 12 Feb 2025 16:15:05 -0500
+Received: from 270782892852 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 12 Feb 2025 16:15:05 -0500
+From: Stefano Jordhani <sjordhani@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] uring_cmd SQE corruptions
-From: Jens Axboe <axboe@kernel.dk>
-To: Caleb Sander Mateos <csander@purestorage.com>,
- Pavel Begunkov <asml.silence@gmail.com>
-Cc: Riley Thomasson <riley@purestorage.com>, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250212204546.3751645-1-csander@purestorage.com>
- <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Wed, 12 Feb 2025 16:15:05 -0500
+X-Gm-Features: AWEUYZktblv-CWUc8KgHQzjBmPtXup2CD1xGkAjazST08bCQ32ye5meR_Nki59M
+Message-ID: <CAEEYqun=uM-VuWZJ5puHnyp7CY06fr5kOU3hYwnOG+AydhhmNA@mail.gmail.com>
+Subject: [PATCH net-next] net: use napi_id_valid helper
+To: netdev@vger.kernel.org
+Cc: Stefano Jordhani <sjordhani@gmail.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Willem de Bruijn <willemb@google.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
+	Magnus Karlsson <magnus.karlsson@intel.com>, 
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Joe Damato <jdamato@fastly.com>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
+	Sridhar Samudrala <sridhar.samudrala@intel.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Mina Almasry <almasrymina@google.com>, 
+	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:IO_URING" <io-uring@vger.kernel.org>, 
+	"open list:XDP SOCKETS (AF_XDP)" <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/12/25 1:55 PM, Jens Axboe wrote:
-> On 2/12/25 1:45 PM, Caleb Sander Mateos wrote:
->> In our application issuing NVMe passthru commands, we have observed
->> nvme_uring_cmd fields being corrupted between when userspace initializes
->> the io_uring SQE and when nvme_uring_cmd_io() processes it.
->>
->> We hypothesized that the uring_cmd's were executing asynchronously after
->> the io_uring_enter() syscall returned, yet were still reading the SQE in
->> the userspace-mapped SQ. Since io_uring_enter() had already incremented
->> the SQ head index, userspace reused the SQ slot for a new SQE once the
->> SQ wrapped around to it.
->>
->> We confirmed this hypothesis by "poisoning" all SQEs up to the SQ head
->> index in userspace upon return from io_uring_enter(). By overwriting the
->> nvme_uring_cmd nsid field with a known garbage value, we were able to
->> trigger the err message in nvme_validate_passthru_nsid(), which logged
->> the garbage nsid value.
->>
->> The issue is caused by commit 5eff57fa9f3a ("io_uring/uring_cmd: defer
->> SQE copying until it's needed"). With this commit reverted, the poisoned
->> values in the SQEs are no longer seen by nvme_uring_cmd_io().
->>
->> Prior to the commit, each uring_cmd SQE was unconditionally memcpy()ed
->> to async_data at prep time. The commit moved this memcpy() to 2 cases
->> when the request goes async:
->> - If REQ_F_FORCE_ASYNC is set to force the initial issue to go async
->> - If ->uring_cmd() returns -EAGAIN in the initial non-blocking issue
->>
->> This patch set fixes a bug in the EAGAIN case where the uring_cmd's sqe
->> pointer is not updated to point to async_data after the memcpy(),
->> as it correctly is in the REQ_F_FORCE_ASYNC case.
->>
->> However, uring_cmd's can be issued async in other cases not enumerated
->> by 5eff57fa9f3a, also leading to SQE corruption. These include requests
->> besides the first in a linked chain, which are only issued once prior
->> requests complete. Requests waiting for a drain to complete would also
->> be initially issued async.
->>
->> While it's probably possible for io_uring_cmd_prep_setup() to check for
->> each of these cases and avoid deferring the SQE memcpy(), we feel it
->> might be safer to revert 5eff57fa9f3a to avoid the corruption risk.
->> As discussed recently in regard to the ublk zero-copy patches[1], new
->> async paths added in the future could break these delicate assumptions.
-> 
-> I don't think it's particularly delicate - did you manage to catch the
-> case queueing a request for async execution where the sqe wasn't already
-> copied? I did take a quick look after our out-of-band conversation, and
-> the only missing bit I immediately spotted is using SQPOLL. But I don't
-> think you're using that, right? And in any case, lifetime of SQEs with
-> SQPOLL is the duration of the request anyway, so should not pose any
-> risk of overwriting SQEs. But I do think the code should copy for that
-> case too, just to avoid it being a harder-to-use thing than it should
-> be.
-> 
-> The two patches here look good, I'll go ahead with those. That'll give
-> us a bit of time to figure out where this missing copy is.
+In commit 6597e8d35851 ("netdev-genl: Elide napi_id when not present"),
+napi_id_valid function was added. Use the helper to refactor open-coded
+checks in the source.
 
-Can you try this on top of your 2 and see if you still hit anything odd?
+Suggested-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Stefano Jordhani <sjordhani@gmail.com>
+---
+ fs/eventpoll.c            | 8 ++++----
+ include/net/busy_poll.h   | 4 ++--
+ io_uring/napi.c           | 4 ++--
+ net/core/dev.c            | 6 +++---
+ net/core/netdev-genl.c    | 2 +-
+ net/core/page_pool_user.c | 2 +-
+ net/core/sock.c           | 2 +-
+ net/xdp/xsk.c             | 2 +-
+ 8 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index bcfca18395c4..15a8a67f556e 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -177,10 +177,13 @@ static void io_uring_cmd_cache_sqes(struct io_kiocb *req)
- 	ioucmd->sqe = cache->sqes;
- }
- 
-+#define SQE_COPY_FLAGS	(REQ_F_FORCE_ASYNC|REQ_F_LINK|REQ_F_HARDLINK|REQ_F_IO_DRAIN)
-+
- static int io_uring_cmd_prep_setup(struct io_kiocb *req,
- 				   const struct io_uring_sqe *sqe)
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 7c0980db77b3..2fecf66661e9 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -447,7 +447,7 @@ static bool ep_busy_loop(struct eventpoll *ep, int nonblock)
+ 	if (!budget)
+ 		budget = BUSY_POLL_BUDGET;
+
+-	if (napi_id >= MIN_NAPI_ID && ep_busy_loop_on(ep)) {
++	if (napi_id_valid(napi_id) && ep_busy_loop_on(ep)) {
+ 		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end,
+ 			       ep, prefer_busy_poll, budget);
+ 		if (ep_events_available(ep))
+@@ -492,7 +492,7 @@ static inline void ep_set_busy_poll_napi_id(struct
+epitem *epi)
+ 	 *	or
+ 	 * Nothing to do if we already have this ID
+ 	 */
+-	if (napi_id < MIN_NAPI_ID || napi_id == ep->napi_id)
++	if (!napi_id_valid(napi_id) || napi_id == ep->napi_id)
+ 		return;
+
+ 	/* record NAPI ID for use in next busy poll */
+@@ -546,7 +546,7 @@ static void ep_suspend_napi_irqs(struct eventpoll *ep)
  {
- 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
-+	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_uring_cmd_data *cache;
- 
- 	cache = io_uring_alloc_async_data(&req->ctx->uring_cache, req);
-@@ -190,7 +193,7 @@ static int io_uring_cmd_prep_setup(struct io_kiocb *req,
- 
- 	ioucmd->sqe = sqe;
- 	/* defer memcpy until we need it */
--	if (unlikely(req->flags & REQ_F_FORCE_ASYNC))
-+	if (unlikely(ctx->flags & IORING_SETUP_SQPOLL || req->flags & SQE_COPY_FLAGS))
- 		io_uring_cmd_cache_sqes(req);
- 	return 0;
+ 	unsigned int napi_id = READ_ONCE(ep->napi_id);
+
+-	if (napi_id >= MIN_NAPI_ID && READ_ONCE(ep->prefer_busy_poll))
++	if (napi_id_valid(napi_id) && READ_ONCE(ep->prefer_busy_poll))
+ 		napi_suspend_irqs(napi_id);
  }
 
+@@ -554,7 +554,7 @@ static void ep_resume_napi_irqs(struct eventpoll *ep)
+ {
+ 	unsigned int napi_id = READ_ONCE(ep->napi_id);
+
+-	if (napi_id >= MIN_NAPI_ID && READ_ONCE(ep->prefer_busy_poll))
++	if (napi_id_valid(napi_id) && READ_ONCE(ep->prefer_busy_poll))
+ 		napi_resume_irqs(napi_id);
+ }
+
+diff --git a/include/net/busy_poll.h b/include/net/busy_poll.h
+index 741fa7754700..cab6146a510a 100644
+--- a/include/net/busy_poll.h
++++ b/include/net/busy_poll.h
+@@ -119,7 +119,7 @@ static inline void sk_busy_loop(struct sock *sk,
+int nonblock)
+ #ifdef CONFIG_NET_RX_BUSY_POLL
+ 	unsigned int napi_id = READ_ONCE(sk->sk_napi_id);
+
+-	if (napi_id >= MIN_NAPI_ID)
++	if (napi_id_valid(napi_id))
+ 		napi_busy_loop(napi_id, nonblock ? NULL : sk_busy_loop_end, sk,
+ 			       READ_ONCE(sk->sk_prefer_busy_poll),
+ 			       READ_ONCE(sk->sk_busy_poll_budget) ?: BUSY_POLL_BUDGET);
+@@ -134,7 +134,7 @@ static inline void skb_mark_napi_id(struct sk_buff *skb,
+ 	/* If the skb was already marked with a valid NAPI ID, avoid overwriting
+ 	 * it.
+ 	 */
+-	if (skb->napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(skb->napi_id))
+ 		skb->napi_id = napi->napi_id;
+ #endif
+ }
+diff --git a/io_uring/napi.c b/io_uring/napi.c
+index b1ade3fda30f..4a10de03e426 100644
+--- a/io_uring/napi.c
++++ b/io_uring/napi.c
+@@ -44,7 +44,7 @@ int __io_napi_add_id(struct io_ring_ctx *ctx,
+unsigned int napi_id)
+ 	struct io_napi_entry *e;
+
+ 	/* Non-NAPI IDs can be rejected. */
+-	if (napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(napi_id))
+ 		return -EINVAL;
+
+ 	hash_list = &ctx->napi_ht[hash_min(napi_id, HASH_BITS(ctx->napi_ht))];
+@@ -87,7 +87,7 @@ static int __io_napi_del_id(struct io_ring_ctx *ctx,
+unsigned int napi_id)
+ 	struct io_napi_entry *e;
+
+ 	/* Non-NAPI IDs can be rejected. */
+-	if (napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(napi_id))
+ 		return -EINVAL;
+
+ 	hash_list = &ctx->napi_ht[hash_min(napi_id, HASH_BITS(ctx->napi_ht))];
+diff --git a/net/core/dev.c b/net/core/dev.c
+index d5ab9a4b318e..bcb266ab2912 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -1008,7 +1008,7 @@ struct net_device *dev_get_by_napi_id(unsigned
+int napi_id)
+
+ 	WARN_ON_ONCE(!rcu_read_lock_held());
+
+-	if (napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(napi_id))
+ 		return NULL;
+
+ 	napi = napi_by_id(napi_id);
+@@ -6740,7 +6740,7 @@ static void napi_hash_add(struct napi_struct *napi)
+
+ 	/* 0..NR_CPUS range is reserved for sender_cpu use */
+ 	do {
+-		if (unlikely(++napi_gen_id < MIN_NAPI_ID))
++		if (unlikely(!napi_id_valid(++napi_gen_id)))
+ 			napi_gen_id = MIN_NAPI_ID;
+ 	} while (napi_by_id(napi_gen_id));
+
+@@ -6911,7 +6911,7 @@ netif_napi_dev_list_add(struct net_device *dev,
+struct napi_struct *napi)
+
+ 	higher = &dev->napi_list;
+ 	list_for_each_entry(pos, &dev->napi_list, dev_list) {
+-		if (pos->napi_id >= MIN_NAPI_ID)
++		if (napi_id_valid(pos->napi_id))
+ 			pos_id = pos->napi_id;
+ 		else if (pos->config)
+ 			pos_id = pos->config->napi_id;
+diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+index 0dcd4faefd8d..cdcd39724cb3 100644
+--- a/net/core/netdev-genl.c
++++ b/net/core/netdev-genl.c
+@@ -267,7 +267,7 @@ netdev_nl_napi_dump_one(struct net_device *netdev,
+struct sk_buff *rsp,
+
+ 	prev_id = UINT_MAX;
+ 	list_for_each_entry(napi, &netdev->napi_list, dev_list) {
+-		if (napi->napi_id < MIN_NAPI_ID)
++		if (!napi_id_valid(napi->napi_id))
+ 			continue;
+
+ 		/* Dump continuation below depends on the list being sorted */
+diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
+index 9d8a3d8597fa..c82a95beceff 100644
+--- a/net/core/page_pool_user.c
++++ b/net/core/page_pool_user.c
+@@ -233,7 +233,7 @@ page_pool_nl_fill(struct sk_buff *rsp, const
+struct page_pool *pool,
+ 		goto err_cancel;
+
+ 	napi_id = pool->p.napi ? READ_ONCE(pool->p.napi->napi_id) : 0;
+-	if (napi_id >= MIN_NAPI_ID &&
++	if (napi_id_valid(napi_id) &&
+ 	    nla_put_uint(rsp, NETDEV_A_PAGE_POOL_NAPI_ID, napi_id))
+ 		goto err_cancel;
+
+diff --git a/net/core/sock.c b/net/core/sock.c
+index eae2ae70a2e0..84dbdc78dea3 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2041,7 +2041,7 @@ int sk_getsockopt(struct sock *sk, int level, int optname,
+ 		v.val = READ_ONCE(sk->sk_napi_id);
+
+ 		/* aggregate non-NAPI IDs down to 0 */
+-		if (v.val < MIN_NAPI_ID)
++		if (!napi_id_valid(v.val))
+ 			v.val = 0;
+
+ 		break;
+diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
+index 89d2bef96469..0edf25973072 100644
+--- a/net/xdp/xsk.c
++++ b/net/xdp/xsk.c
+@@ -875,7 +875,7 @@ static bool xsk_no_wakeup(struct sock *sk)
+ #ifdef CONFIG_NET_RX_BUSY_POLL
+ 	/* Prefer busy-polling, skip the wakeup. */
+ 	return READ_ONCE(sk->sk_prefer_busy_poll) && READ_ONCE(sk->sk_ll_usec) &&
+-		READ_ONCE(sk->sk_napi_id) >= MIN_NAPI_ID;
++		napi_id_valid(READ_ONCE(sk->sk_napi_id));
+ #else
+ 	return false;
+ #endif
+
+base-commit: 39f54262ba499d862420a97719d2f0eea0cbd394
 -- 
-Jens Axboe
+2.43.0
 

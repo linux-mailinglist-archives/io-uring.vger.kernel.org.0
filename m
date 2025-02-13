@@ -1,112 +1,157 @@
-Return-Path: <io-uring+bounces-6407-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6408-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654C0A346B6
-	for <lists+io-uring@lfdr.de>; Thu, 13 Feb 2025 16:27:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA420A34792
+	for <lists+io-uring@lfdr.de>; Thu, 13 Feb 2025 16:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92943AC8C6
-	for <lists+io-uring@lfdr.de>; Thu, 13 Feb 2025 15:12:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8500416F159
+	for <lists+io-uring@lfdr.de>; Thu, 13 Feb 2025 15:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8113726B097;
-	Thu, 13 Feb 2025 15:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4EF19D092;
+	Thu, 13 Feb 2025 15:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jf0zeghU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A3926B0A4
-	for <io-uring@vger.kernel.org>; Thu, 13 Feb 2025 15:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0D618DF6E
+	for <io-uring@vger.kernel.org>; Thu, 13 Feb 2025 15:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739459574; cv=none; b=tNcL9ZA2VOeOVbMIhXaoqr9qxc50M9Q8jgGM3gdrziFCDA1Z9GBjm9Z+nVnUlIIL9UBR4VehFlybqpfVr6EzyvqqJA5N43J+cQNizX97l7FRwe2Yx6rFb5ikHBcayfXY+fWUzqpCif9rk2sA6dPGeGu92UNZ3dQdLo4r2Y6lhTk=
+	t=1739460617; cv=none; b=EArYe4fvAlxSw8M4kjZdWCSzDKndL4yqJuktZZLicb26aNmimWVh0clMfjLhPM9qKfr0FZ27GCM5bQWuLVEv+sksp7jAWw/HvWMUSb5OJkCWGQu3mvZFOKCHb+JEhCOhzGaoiUhj/AGAJKCJIcp3U6pE7L8jIO21xAmZqhtBHzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739459574; c=relaxed/simple;
-	bh=XPpyt8tli3OMOzVDvxhqfrJuiwPfZ4ysU7k9wbzI0vs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JDIYLcqbk19L1pToi50htBOgpIgCnk2kft1XHKjXV64FKYFUniBTVzhpsInUDovgoLuusPSjB4VtQBO84X2u4pIU6KTVAJ7cvsKs/0nras+tiEtH/0G1rtA4Hr4ikLzVClwoAkWshOYd34AgctUijbBsVN3d3MAqGH1gqxX63co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Ytz9L4qzFzkXKS;
-	Thu, 13 Feb 2025 23:09:10 +0800 (CST)
-Received: from kwepemd100010.china.huawei.com (unknown [7.221.188.107])
-	by mail.maildlp.com (Postfix) with ESMTPS id 86D8218010B;
-	Thu, 13 Feb 2025 23:12:44 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
- kwepemd100010.china.huawei.com (7.221.188.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 13 Feb 2025 23:12:44 +0800
-Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
- kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
- Thu, 13 Feb 2025 23:12:44 +0800
-From: lizetao <lizetao1@huawei.com>
-To: Keith Busch <kbusch@meta.com>
-CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, "axboe@kernel.dk"
-	<axboe@kernel.dk>
-Subject: RE: [PATCHv2 0/6] ublk zero-copy support
-Thread-Topic: [PATCHv2 0/6] ublk zero-copy support
-Thread-Index: AQHbfB/vq06q5HS6S0+pcuuiJTiiHrNFWNrg
-Date: Thu, 13 Feb 2025 15:12:43 +0000
-Message-ID: <83fd69a8aa77450093acb1ada05c188f@huawei.com>
-References: <20250211005646.222452-1-kbusch@meta.com>
-In-Reply-To: <20250211005646.222452-1-kbusch@meta.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1739460617; c=relaxed/simple;
+	bh=zY7Eq93waFJS2XIqC1mypuHNKI7vSO/zoqvM3Y4gR7I=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Z2ReGgszkLStLkQ71swJgw9NFwtPf/cljeAJ/2YOvs1EQhRTh3AT61CNvZp8qNewHlK1Z62ALqT6AWig0nymkxaZpHLrpBpKa70ve1ceFw+O8FAvtS5KPorV4nmmMhMTj57I+8sOaZHn4U8FaO0OtR/y779EqygW+7+po704MSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jf0zeghU; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d04fc1ea14so7994855ab.2
+        for <io-uring@vger.kernel.org>; Thu, 13 Feb 2025 07:30:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739460614; x=1740065414; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sg1Hwu+PdWOLCn0jKNH+ouZgFIMt0/37E6LhxtinNHk=;
+        b=jf0zeghUlWTssOYqzZlIqocAACiQapV/PJ0nmExawXeXK5JLwDFxk2za0T+O9yk81+
+         RI2iX1kBbWP0UetdSRwWTc7o9biJZU+F/1Dl7okoWjsNrDMGdBHvx0yd4r5a+FwxPnwX
+         8tvKzxSltYGe+Z+Imr88vTpNxHgqKzgjXaXsXgOMFqfMQtGwlVqS5P2Rcurjxd4XsO2E
+         syy79HSsVGJE6W7lxGW32KoFwpAWAsZwa+VknaB9zytNhQA50l5yGo0rGpkkAlHxTr/E
+         9P7MzQwrjJ6rHTOGknJNHtKmqAEobqzOa0jr+AMAk09tjM+VI2ttRA3Kn/1qwLp74wr1
+         N+iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739460614; x=1740065414;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Sg1Hwu+PdWOLCn0jKNH+ouZgFIMt0/37E6LhxtinNHk=;
+        b=T5R8fntcOuj8/HW7/1kmGMAvrgubTbxscDufiHYjbhIQ6xnnSMdMRKvi+r2Ig0dg9i
+         rORBy1StgWY6p4+WiUOkeLmmLiE09QGmJPpHfbbQaBhPvH6/2Xr1GDDNTwP9xBOrXeKO
+         Y7V4QgDLgler8LucTXRio5O+4wLFss77M66zMvUd98hnsZTAFsNG1X28xzifU+4uMrPn
+         dDy7xwZ3b9HKhWuQhWLMp3vk6m0WIN+KpbUnItEeIVOhGCY/vxV1NWXWMF1tphbO5q0N
+         5nnJRlLG/7mpUm+Mwl0bFUfu41Oy+kS0WMnD/Xhw1mksehYa7gBWBEQif8og4KQ7toha
+         0rFA==
+X-Gm-Message-State: AOJu0Yz6Jwyut1QG+hBjewny4My3xRtq7mGuvqTS/LX1BU6wJjEA+8hX
+	KW0et4HTBH1KOV2cWjGiJR0GMo9mirlyXUp65iNNDr8p8m/JQHk5HqSilcv/CGDqkmbB2ClyFH0
+	m
+X-Gm-Gg: ASbGncsFsSgAYrVQ8IS6KNKhoXR+g74fxDa6OE/tVNJxYnR2d7aHpFhe50VKtwmKLTI
+	T/eVuaxl1PNhRkTv86KLJUrOfluuFzNleeN6mN/SHe3ygV+6qb3oXZ9G5puSpC1RjLtJFX1Odn7
+	RWfrETBaW9xB9IagfxukEFFoFEEBjs9Pgq6pUqYUxhzsVswuYtr16llAgSxgZ6YEMdESP69nkem
+	xAOaunKqFuPu6Y+bwdOghBo5DjrazeoQUv4YKvQkn2HW+2P6NKgOoQYFmsaMQI4ep2nfKlZxuMs
+	hgc37hO9iwk=
+X-Google-Smtp-Source: AGHT+IEJd9YPpkZtntZFqCjhLQ9VjQODVGz94Xw7diFYLzjk6PMHAlOJbjX154aDT84rDtNzoqoKyQ==
+X-Received: by 2002:a05:6e02:1aad:b0:3ce:69ca:ef99 with SMTP id e9e14a558f8ab-3d17d092128mr62265165ab.6.1739460613768;
+        Thu, 13 Feb 2025 07:30:13 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d18f9c5a01sm2872585ab.26.2025.02.13.07.30.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2025 07:30:13 -0800 (PST)
+Message-ID: <9698ab08-3f36-42f1-b412-e2190d2e5b6b@kernel.dk>
+Date: Thu, 13 Feb 2025 08:30:12 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: io-uring <io-uring@vger.kernel.org>
+Cc: Caleb Sander Mateos <csander@purestorage.com>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] io_uring/uring_cmd: unconditionally copy SQEs at prep time
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS2VpdGggQnVzY2gg
-PGtidXNjaEBtZXRhLmNvbT4NCj4gU2VudDogVHVlc2RheSwgRmVicnVhcnkgMTEsIDIwMjUgODo1
-NyBBTQ0KPiBUbzogbWluZy5sZWlAcmVkaGF0LmNvbTsgYXNtbC5zaWxlbmNlQGdtYWlsLmNvbTsg
-YXhib2VAa2VybmVsLmRrOyBsaW51eC0NCj4gYmxvY2tAdmdlci5rZXJuZWwub3JnOyBpby11cmlu
-Z0B2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGJlcm5kQGJzYmVybmQuY29tOyBLZWl0aCBCdXNjaCA8
-a2J1c2NoQGtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6IFtQQVRDSHYyIDAvNl0gdWJsayB6ZXJvLWNv
-cHkgc3VwcG9ydA0KPiANCj4gRnJvbTogS2VpdGggQnVzY2ggPGtidXNjaEBrZXJuZWwub3JnPg0K
-PiANCj4gUHJldmlvdXMgdmVyc2lvbiB3YXMgZGlzY3Vzc2VkIGhlcmU6DQo+IA0KPiAgIGh0dHBz
-Oi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LWJsb2NrLzIwMjUwMjAzMTU0NTE3LjkzNzYyMy0xLQ0K
-PiBrYnVzY2hAbWV0YS5jb20vDQo+IA0KPiBUaGUgc2FtZSB1Ymxrc3J2IHJlZmVyZW5jZSBjb2Rl
-IGluIHRoYXQgbGluayB3YXMgdXNlZCB0byB0ZXN0IHRoZSBrZXJuZWwgc2lkZQ0KPiBjaGFuZ2Vz
-Lg0KPiANCj4gQmVmb3JlIGxpc3Rpbmcgd2hhdCBoYXMgY2hhbmdlZCwgSSB3YW50IHRvIG1lbnRp
-b24gd2hhdCBpcyB0aGUgc2FtZTogdGhlDQo+IHJlbGlhbmNlIG9uIHRoZSByaW5nIGN0eCBsb2Nr
-IHRvIHNlcmlhbGl6ZSB0aGUgcmVnaXN0ZXIgYWhlYWQgb2YgYW55IHVzZS4gSSdtIG5vdA0KPiBp
-Z25vcmluZyB0aGUgZmVlZGJhY2s7IEkganVzdCBkb24ndCBoYXZlIGEgc29saWQgYW5zd2VyIHJp
-Z2h0IG5vdywgYW5kIHdhbnQgdG8NCj4gcHJvZ3Jlc3Mgb24gdGhlIG90aGVyIGZyb250cyBpbiB0
-aGUgbWVhbnRpbWUuDQo+IA0KPiBIZXJlJ3Mgd2hhdCdzIGRpZmZlcmVudCBmcm9tIHRoZSBwcmV2
-aW91czoNCj4gDQo+ICAtIEludHJvZHVjZWQgYW4gb3B0aW9uYWwgJ3JlbGVhc2UnIGNhbGxiYWNr
-IHdoZW4gdGhlIHJlc291cmNlIG5vZGUgaXMNCj4gICAgbm8gbG9uZ2VyIHJlZmVyZW5jZWQuIFRo
-ZSBjYWxsYmFjayBhZGRyZXNzZXMgYW55IGJ1Z2d5IGFwcGxpY2F0aW9ucw0KPiAgICB0aGF0IG1h
-eSBjb21wbGV0ZSB0aGVpciByZXF1ZXN0IGFuZCB1bnJlZ2lzdGVyIHRoZWlyIGluZGV4IHdoaWxl
-IElPDQo+ICAgIGlzIGluIGZsaWdodC4gVGhpcyBvYnZpYXRlcyBhbnkgbmVlZCB0byB0YWtlIGV4
-dHJhIHBhZ2UgcmVmZXJlbmNlcw0KPiAgICBzaW5jZSBpdCBwcmV2ZW50cyB0aGUgcmVxdWVzdCBm
-cm9tIGNvbXBsZXRpbmcuDQo+IA0KPiAgLSBSZW1vdmVkIHBlZWtpbmcgaW50byB0aGUgaW9fY2Fj
-aGUgZWxlbWVudCBzaXplIGFuZCBpbnN0ZWFkIHVzZSBhDQo+ICAgIG1vcmUgaW50dWl0aXZlIGJ2
-ZWMgc2VnbWVudCBjb3VudCBsaW1pdCB0byBkZWNpZGUgaWYgd2UncmUgY2FjaGluZw0KPiAgICB0
-aGUgaW11IChzdWdnZXN0ZWQgYnkgUGF2ZWwpLg0KPiANCj4gIC0gRHJvcHBlZCB0aGUgY29uc3Qg
-cmVxdWVzdCBjaGFuZ2VzOyBpdCdzIG5vdCBuZWVkZWQuDQoNCkkgdGVzdGVkIHRoaXMgcGF0Y2gg
-c2V0LiBXaGVuIEkgdXNlIG51bGwgYXMgdGhlIGRldmljZSwgdGhlIHRlc3QgcmVzdWx0cyBhcmUg
-bGlrZSB5b3VyIHYxLg0KV2hlbiB0aGUgYnMgaXMgNGssIHRoZXJlIGlzIGEgc2xpZ2h0IGltcHJv
-dmVtZW50OyB3aGVuIHRoZSBicyBpcyA2NGssIHRoZXJlIGlzIGEgc2lnbmlmaWNhbnQgaW1wcm92
-ZW1lbnQuDQpIb3dldmVyLCB3aGVuIEkgdXNlZCBsb29wIGFzIHRoZSBkZXZpY2UsIEkgZm91bmQg
-dGhhdCB0aGVyZSB3YXMgbm8gaW1wcm92ZW1lbnQsIHdoZXRoZXIgdXNpbmcgNGsgb3IgNjRrLiBB
-cyBmb2xsb3c6DQoNCiAgdWJsayBhZGQgLXQgbG9vcCAtZiAuL3VibGstbG9vcC5pbWcgDQogIHVi
-bGsgYWRkIC10IGxvb3AgLWYgLi91YmxrLWxvb3AtemVyb2NvcHkuaW1nDQoNCiAgZmlvIC1maWxl
-bmFtZT0vZGV2L3VibGtiMCAtZGlyZWN0PTEgLXJ3PXJlYWQgLWlvZGVwdGg9MSAtaW9lbmdpbmU9
-aW9fdXJpbmcgLWJzPTEyOGsgLXNpemU9NUcNCiAgICByZWFkOiBJT1BTPTIwMTUsIEJXPTEyNk1p
-Qi9zICgxMzJNQi9zKSgxMjYwTWlCLzEwMDA1bXNlYykNCg0KICBmaW8gLWZpbGVuYW1lPS9kZXYv
-dWJsa2IxIC1kaXJlY3Q9MSAtcnc9cmVhZCAtaW9kZXB0aD0xIC1pb2VuZ2luZT1pb191cmluZyAt
-YnM9MTI4ayAtc2l6ZT01Rw0KICAgIHJlYWQ6IElPUFM9MTk5OCwgQlc9MTI1TWlCL3MgKDEzMU1C
-L3MpKDEyNTBNaUIvMTAwMDVtc2VjKQ0KDQoNClNvLCB0aGlzIHBhdGNoIHNldCBpcyBvcHRpbWl6
-ZWQgZm9yIG51bGwgdHlwZSBkZXZpY2VzPyBPciBpZiBJJ3ZlIG1pc3NlZCBhbnkga2V5IGluZm9y
-bWF0aW9uLCBwbGVhc2UgbGV0IG1lIGtub3cuDQoNCg0KLS0tDQpMaSBaZXRhbw0KDQo=
+This isn't generally necessary, but conditions have been observed where
+SQE data is accessed from the original SQE after prep has been done and
+outside of the initial issue. Opcode prep handlers must ensure that any
+SQE related data is stable beyond the prep phase, but uring_cmd is a bit
+special in how it handles the SQE which makes it susceptible to reading
+stale data. If the application has reused the SQE before the original
+completes, then that can lead to data corruption.
+
+Down the line we can relax this again once uring_cmd has been sanitized
+a bit, and avoid unnecessarily copying the SQE.
+
+Reported-by: Caleb Sander Mateos <csander@purestorage.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+
+Let's just do the unconditional copy for now. I kept it on top of the
+other patches deliberately, as they tell a story of how we got there.
+This will 100% cover all cases, obviously, and then we can focus on
+future work on avoiding the copy when unnecessary without having any
+rush on that front.
+
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 8af7780407b7..b78d050aaa3f 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -186,9 +186,14 @@ static int io_uring_cmd_prep_setup(struct io_kiocb *req,
+ 	cache->op_data = NULL;
+ 
+ 	ioucmd->sqe = sqe;
+-	/* defer memcpy until we need it */
+-	if (unlikely(req->flags & REQ_F_FORCE_ASYNC))
+-		io_uring_cmd_cache_sqes(req);
++	/*
++	 * Unconditionally cache the SQE for now - this is only needed for
++	 * requests that go async, but prep handlers must ensure that any
++	 * sqe data is stable beyond prep. Since uring_cmd is special in
++	 * that it doesn't read in per-op data, play it safe and ensure that
++	 * any SQE data is stable beyond prep. This can later get relaxed.
++	 */
++	io_uring_cmd_cache_sqes(req);
+ 	return 0;
+ }
+ 
+@@ -251,16 +256,8 @@ int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags)
+ 	}
+ 
+ 	ret = file->f_op->uring_cmd(ioucmd, issue_flags);
+-	if (ret == -EAGAIN) {
+-		struct io_uring_cmd_data *cache = req->async_data;
+-
+-		if (ioucmd->sqe != cache->sqes)
+-			io_uring_cmd_cache_sqes(req);
+-		return -EAGAIN;
+-	} else if (ret == -EIOCBQUEUED) {
+-		return -EIOCBQUEUED;
+-	}
+-
++	if (ret == -EAGAIN || ret == -EIOCBQUEUED)
++		return ret;
+ 	if (ret < 0)
+ 		req_set_fail(req);
+ 	io_req_uring_cleanup(req, issue_flags);
+-- 
+Jens Axboe
+
 

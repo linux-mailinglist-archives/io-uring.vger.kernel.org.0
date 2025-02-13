@@ -1,126 +1,112 @@
-Return-Path: <io-uring+bounces-6406-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6407-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1CDCA343D5
-	for <lists+io-uring@lfdr.de>; Thu, 13 Feb 2025 15:58:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654C0A346B6
+	for <lists+io-uring@lfdr.de>; Thu, 13 Feb 2025 16:27:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE70E1889158
-	for <lists+io-uring@lfdr.de>; Thu, 13 Feb 2025 14:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92943AC8C6
+	for <lists+io-uring@lfdr.de>; Thu, 13 Feb 2025 15:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C3B24503E;
-	Thu, 13 Feb 2025 14:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gk4Xe4vs"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8113726B097;
+	Thu, 13 Feb 2025 15:12:54 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD8F241693;
-	Thu, 13 Feb 2025 14:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A3926B0A4
+	for <io-uring@vger.kernel.org>; Thu, 13 Feb 2025 15:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739458044; cv=none; b=QdSOHbqO/bHhVUSmy4cTPlVaAlph6n0+rkPHEUK72kmUSIgQAQugQk6sZAlvL7A9R0Qm3L81VL00SZYkDIckY2Tw41EbNAhobdlaZKDXRu2MD0Ivh73BRpMqdfPkGCtwdF9o67VuvgUQrgDO/Q5gycDWTW9HRBZVVNOvJ+Kv67Y=
+	t=1739459574; cv=none; b=tNcL9ZA2VOeOVbMIhXaoqr9qxc50M9Q8jgGM3gdrziFCDA1Z9GBjm9Z+nVnUlIIL9UBR4VehFlybqpfVr6EzyvqqJA5N43J+cQNizX97l7FRwe2Yx6rFb5ikHBcayfXY+fWUzqpCif9rk2sA6dPGeGu92UNZ3dQdLo4r2Y6lhTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739458044; c=relaxed/simple;
-	bh=I3jFuvHS8o4agGi7brMj/lvLVs781SP/e6tBVZBxD7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tOA5ESgSxDagDgmIJPo+y77yg1vBQEzJ3An8N981CGvuDlv0++XdQC9yiURmsqqnL7mQgsvn9slVmmxocOpDoO7PH/DVQy4LiHZlsrH5lIJMLHvFsPVe7br/FL1KcoVSbnuiZlh665iNn4NOc10w9cb/sSAKoztH8bPpwUSq27Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gk4Xe4vs; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7d451f7c4so148157766b.0;
-        Thu, 13 Feb 2025 06:47:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739458041; x=1740062841; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=06OYv2TswrzKR1suFIolZWczB03Gq9L+IFYKoiouClM=;
-        b=Gk4Xe4vsLntXmeiIh0yrnhbAgP3GZB/xuk7qrbHh2nRWwKrEj0gMzbdEoOC5G/03dK
-         ew97tpml7YIYKyDquRPsAlBci5Ge41mp3nhEwGnMj+BGPTQqQFnk6L+7IxiLeer9EAnV
-         4jOPHvUtgFUe15Xf6LhgUFuJTb6QfyOPbkWm8Y03U/lV40UudU5WoB+tiHU8GkTG5R7l
-         fhK3YaIPZMmBOSl7kDX70RwQL+CkLCTtB4xbwtcKHUNRFXekf7Xhd0/wLWVPIqwYBEiA
-         NK/naRvyJko9ig4ECgbls6rOQ85S6Oyqn72q0khINqiqd42aXWE/TZGIx+ScVUPw7wMP
-         nmKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739458041; x=1740062841;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=06OYv2TswrzKR1suFIolZWczB03Gq9L+IFYKoiouClM=;
-        b=xKfdloMSXbIBtHtt4gzfVorziigBgOjJGSyijxUlBVKzCtL7a3/srhil/BMHST5QcE
-         WXDoyga1/VfvgSFG1q0xpjFwNPOv9VPergSPv6a771SlT5Pa1urPTihZoUUd8aMdkDMN
-         AHVqRtgEYBNnEAOPOKua1fGVc9S3K1ujl7RMANaKkXQBM3b6fbAa/R527+BOu1/vJw3x
-         IFOwxRceHFVs05u4r9OUxhcUq2Yw20uQEUH7dmVC5pZdp5721SMVYj98BABUIa7+laVo
-         0iTV+YhrLarNS+aqULrKGAUmndG+38KAbDL/nr2R++oqSe/ix2I5akiyGsLmEXy2CiZZ
-         HeLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLL1cpE0NN62lUXf1i9UTB7YBQjzAy0poqs06oR8ao18tAi2xqFEvI0xunZAFssXftP8xhggygdp07cOD/@vger.kernel.org, AJvYcCVjbknwekLJYk/tAbuwvX/G6ZjsgwdPlCmsoNU/BoZZV+M9D+ofrlSnxhgYij7LCPF3oUkc51B63Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwHuK/f3hBQg1m+lwhaT91wtDMB3gbV0QnVPgO5IrMJBwft8T0
-	jsNZ9Y3f4cwPPpZbXLDoDgeYxdmG9BT0rRkb/t09Zw6Eoku7SD2Q
-X-Gm-Gg: ASbGnctQxBQby8QS4BrEZEkyd08oh6HZ9wAg6bW/Xbmwex21Mxw2WwYwRy8YD/xxTj/
-	vvZ4Wg9TRZ4QSzhbFO+OCJGul8ncLbzUp8vd2pZOSRBgw3t1FoqmlYFPwDn7aGgEN6GDe3T4+5m
-	IxkoIu8L83TEDm6EYKioQJh24f7lcKE0n0A8tmip6ctb54tUlmi6yoT8uBQQURi491nYhsRf/9G
-	UyGhMFvR8sLzdtvwJUXfFbmYJID8MZCaPhZ5GqZzp/Ss0E5Du6X7eAnxO/ssKgTWe+iHRWUNIjc
-	ejUJmm6dRvCs57S4IlZJvF6Ok4XulcDANYs00T18qTvN3bvI
-X-Google-Smtp-Source: AGHT+IEitT4dyOw7PhDa6cc/O9Vw8vdiY1AHe/URB28OVtMRKKGyh0KUaTeNhJOT9eQLnFtj5scH4Q==
-X-Received: by 2002:a17:907:7ea8:b0:ab7:10e1:8779 with SMTP id a640c23a62f3a-ab7f33d24e4mr804277566b.27.1739458040964;
-        Thu, 13 Feb 2025 06:47:20 -0800 (PST)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:1cb7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba5a4f4cb4sm65403866b.118.2025.02.13.06.47.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 06:47:20 -0800 (PST)
-Message-ID: <5a8d2867-68fe-4c73-bf5f-dcecb6501fb6@gmail.com>
-Date: Thu, 13 Feb 2025 14:48:19 +0000
+	s=arc-20240116; t=1739459574; c=relaxed/simple;
+	bh=XPpyt8tli3OMOzVDvxhqfrJuiwPfZ4ysU7k9wbzI0vs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=JDIYLcqbk19L1pToi50htBOgpIgCnk2kft1XHKjXV64FKYFUniBTVzhpsInUDovgoLuusPSjB4VtQBO84X2u4pIU6KTVAJ7cvsKs/0nras+tiEtH/0G1rtA4Hr4ikLzVClwoAkWshOYd34AgctUijbBsVN3d3MAqGH1gqxX63co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Ytz9L4qzFzkXKS;
+	Thu, 13 Feb 2025 23:09:10 +0800 (CST)
+Received: from kwepemd100010.china.huawei.com (unknown [7.221.188.107])
+	by mail.maildlp.com (Postfix) with ESMTPS id 86D8218010B;
+	Thu, 13 Feb 2025 23:12:44 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (7.221.188.25) by
+ kwepemd100010.china.huawei.com (7.221.188.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 13 Feb 2025 23:12:44 +0800
+Received: from kwepemd500012.china.huawei.com ([7.221.188.25]) by
+ kwepemd500012.china.huawei.com ([7.221.188.25]) with mapi id 15.02.1258.034;
+ Thu, 13 Feb 2025 23:12:44 +0800
+From: lizetao <lizetao1@huawei.com>
+To: Keith Busch <kbusch@meta.com>
+CC: "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>, "axboe@kernel.dk"
+	<axboe@kernel.dk>
+Subject: RE: [PATCHv2 0/6] ublk zero-copy support
+Thread-Topic: [PATCHv2 0/6] ublk zero-copy support
+Thread-Index: AQHbfB/vq06q5HS6S0+pcuuiJTiiHrNFWNrg
+Date: Thu, 13 Feb 2025 15:12:43 +0000
+Message-ID: <83fd69a8aa77450093acb1ada05c188f@huawei.com>
+References: <20250211005646.222452-1-kbusch@meta.com>
+In-Reply-To: <20250211005646.222452-1-kbusch@meta.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] uring_cmd SQE corruptions
-To: Jens Axboe <axboe@kernel.dk>,
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: Riley Thomasson <riley@purestorage.com>, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250212204546.3751645-1-csander@purestorage.com>
- <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <401f9f7a-b813-43b0-b97f-0165072e2758@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 2/12/25 20:55, Jens Axboe wrote:
-> On 2/12/25 1:45 PM, Caleb Sander Mateos wrote:
-...
->> However, uring_cmd's can be issued async in other cases not enumerated
->> by 5eff57fa9f3a, also leading to SQE corruption. These include requests
->> besides the first in a linked chain, which are only issued once prior
->> requests complete. Requests waiting for a drain to complete would also
->> be initially issued async.
->>
->> While it's probably possible for io_uring_cmd_prep_setup() to check for
->> each of these cases and avoid deferring the SQE memcpy(), we feel it
->> might be safer to revert 5eff57fa9f3a to avoid the corruption risk.
->> As discussed recently in regard to the ublk zero-copy patches[1], new
->> async paths added in the future could break these delicate assumptions.
-> 
-> I don't think it's particularly delicate - did you manage to catch the
-> case queueing a request for async execution where the sqe wasn't already
-> copied? I did take a quick look after our out-of-band conversation, and
-> the only missing bit I immediately spotted is using SQPOLL. But I don't
-> think you're using that, right? And in any case, lifetime of SQEs with
-> SQPOLL is the duration of the request anyway, so should not pose any
-
-Not really, it's not bound to the syscall, but the user could always
-check or wait (i.e. IORING_ENTER_SQ_WAIT) for empty sqes and reuse
-them before completion.
-
--- 
-Pavel Begunkov
-
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS2VpdGggQnVzY2gg
+PGtidXNjaEBtZXRhLmNvbT4NCj4gU2VudDogVHVlc2RheSwgRmVicnVhcnkgMTEsIDIwMjUgODo1
+NyBBTQ0KPiBUbzogbWluZy5sZWlAcmVkaGF0LmNvbTsgYXNtbC5zaWxlbmNlQGdtYWlsLmNvbTsg
+YXhib2VAa2VybmVsLmRrOyBsaW51eC0NCj4gYmxvY2tAdmdlci5rZXJuZWwub3JnOyBpby11cmlu
+Z0B2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGJlcm5kQGJzYmVybmQuY29tOyBLZWl0aCBCdXNjaCA8
+a2J1c2NoQGtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6IFtQQVRDSHYyIDAvNl0gdWJsayB6ZXJvLWNv
+cHkgc3VwcG9ydA0KPiANCj4gRnJvbTogS2VpdGggQnVzY2ggPGtidXNjaEBrZXJuZWwub3JnPg0K
+PiANCj4gUHJldmlvdXMgdmVyc2lvbiB3YXMgZGlzY3Vzc2VkIGhlcmU6DQo+IA0KPiAgIGh0dHBz
+Oi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LWJsb2NrLzIwMjUwMjAzMTU0NTE3LjkzNzYyMy0xLQ0K
+PiBrYnVzY2hAbWV0YS5jb20vDQo+IA0KPiBUaGUgc2FtZSB1Ymxrc3J2IHJlZmVyZW5jZSBjb2Rl
+IGluIHRoYXQgbGluayB3YXMgdXNlZCB0byB0ZXN0IHRoZSBrZXJuZWwgc2lkZQ0KPiBjaGFuZ2Vz
+Lg0KPiANCj4gQmVmb3JlIGxpc3Rpbmcgd2hhdCBoYXMgY2hhbmdlZCwgSSB3YW50IHRvIG1lbnRp
+b24gd2hhdCBpcyB0aGUgc2FtZTogdGhlDQo+IHJlbGlhbmNlIG9uIHRoZSByaW5nIGN0eCBsb2Nr
+IHRvIHNlcmlhbGl6ZSB0aGUgcmVnaXN0ZXIgYWhlYWQgb2YgYW55IHVzZS4gSSdtIG5vdA0KPiBp
+Z25vcmluZyB0aGUgZmVlZGJhY2s7IEkganVzdCBkb24ndCBoYXZlIGEgc29saWQgYW5zd2VyIHJp
+Z2h0IG5vdywgYW5kIHdhbnQgdG8NCj4gcHJvZ3Jlc3Mgb24gdGhlIG90aGVyIGZyb250cyBpbiB0
+aGUgbWVhbnRpbWUuDQo+IA0KPiBIZXJlJ3Mgd2hhdCdzIGRpZmZlcmVudCBmcm9tIHRoZSBwcmV2
+aW91czoNCj4gDQo+ICAtIEludHJvZHVjZWQgYW4gb3B0aW9uYWwgJ3JlbGVhc2UnIGNhbGxiYWNr
+IHdoZW4gdGhlIHJlc291cmNlIG5vZGUgaXMNCj4gICAgbm8gbG9uZ2VyIHJlZmVyZW5jZWQuIFRo
+ZSBjYWxsYmFjayBhZGRyZXNzZXMgYW55IGJ1Z2d5IGFwcGxpY2F0aW9ucw0KPiAgICB0aGF0IG1h
+eSBjb21wbGV0ZSB0aGVpciByZXF1ZXN0IGFuZCB1bnJlZ2lzdGVyIHRoZWlyIGluZGV4IHdoaWxl
+IElPDQo+ICAgIGlzIGluIGZsaWdodC4gVGhpcyBvYnZpYXRlcyBhbnkgbmVlZCB0byB0YWtlIGV4
+dHJhIHBhZ2UgcmVmZXJlbmNlcw0KPiAgICBzaW5jZSBpdCBwcmV2ZW50cyB0aGUgcmVxdWVzdCBm
+cm9tIGNvbXBsZXRpbmcuDQo+IA0KPiAgLSBSZW1vdmVkIHBlZWtpbmcgaW50byB0aGUgaW9fY2Fj
+aGUgZWxlbWVudCBzaXplIGFuZCBpbnN0ZWFkIHVzZSBhDQo+ICAgIG1vcmUgaW50dWl0aXZlIGJ2
+ZWMgc2VnbWVudCBjb3VudCBsaW1pdCB0byBkZWNpZGUgaWYgd2UncmUgY2FjaGluZw0KPiAgICB0
+aGUgaW11IChzdWdnZXN0ZWQgYnkgUGF2ZWwpLg0KPiANCj4gIC0gRHJvcHBlZCB0aGUgY29uc3Qg
+cmVxdWVzdCBjaGFuZ2VzOyBpdCdzIG5vdCBuZWVkZWQuDQoNCkkgdGVzdGVkIHRoaXMgcGF0Y2gg
+c2V0LiBXaGVuIEkgdXNlIG51bGwgYXMgdGhlIGRldmljZSwgdGhlIHRlc3QgcmVzdWx0cyBhcmUg
+bGlrZSB5b3VyIHYxLg0KV2hlbiB0aGUgYnMgaXMgNGssIHRoZXJlIGlzIGEgc2xpZ2h0IGltcHJv
+dmVtZW50OyB3aGVuIHRoZSBicyBpcyA2NGssIHRoZXJlIGlzIGEgc2lnbmlmaWNhbnQgaW1wcm92
+ZW1lbnQuDQpIb3dldmVyLCB3aGVuIEkgdXNlZCBsb29wIGFzIHRoZSBkZXZpY2UsIEkgZm91bmQg
+dGhhdCB0aGVyZSB3YXMgbm8gaW1wcm92ZW1lbnQsIHdoZXRoZXIgdXNpbmcgNGsgb3IgNjRrLiBB
+cyBmb2xsb3c6DQoNCiAgdWJsayBhZGQgLXQgbG9vcCAtZiAuL3VibGstbG9vcC5pbWcgDQogIHVi
+bGsgYWRkIC10IGxvb3AgLWYgLi91YmxrLWxvb3AtemVyb2NvcHkuaW1nDQoNCiAgZmlvIC1maWxl
+bmFtZT0vZGV2L3VibGtiMCAtZGlyZWN0PTEgLXJ3PXJlYWQgLWlvZGVwdGg9MSAtaW9lbmdpbmU9
+aW9fdXJpbmcgLWJzPTEyOGsgLXNpemU9NUcNCiAgICByZWFkOiBJT1BTPTIwMTUsIEJXPTEyNk1p
+Qi9zICgxMzJNQi9zKSgxMjYwTWlCLzEwMDA1bXNlYykNCg0KICBmaW8gLWZpbGVuYW1lPS9kZXYv
+dWJsa2IxIC1kaXJlY3Q9MSAtcnc9cmVhZCAtaW9kZXB0aD0xIC1pb2VuZ2luZT1pb191cmluZyAt
+YnM9MTI4ayAtc2l6ZT01Rw0KICAgIHJlYWQ6IElPUFM9MTk5OCwgQlc9MTI1TWlCL3MgKDEzMU1C
+L3MpKDEyNTBNaUIvMTAwMDVtc2VjKQ0KDQoNClNvLCB0aGlzIHBhdGNoIHNldCBpcyBvcHRpbWl6
+ZWQgZm9yIG51bGwgdHlwZSBkZXZpY2VzPyBPciBpZiBJJ3ZlIG1pc3NlZCBhbnkga2V5IGluZm9y
+bWF0aW9uLCBwbGVhc2UgbGV0IG1lIGtub3cuDQoNCg0KLS0tDQpMaSBaZXRhbw0KDQo=
 

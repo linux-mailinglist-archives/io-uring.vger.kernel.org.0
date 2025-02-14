@@ -1,116 +1,314 @@
-Return-Path: <io-uring+bounces-6445-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6446-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3DBA364A9
-	for <lists+io-uring@lfdr.de>; Fri, 14 Feb 2025 18:35:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16831A3659A
+	for <lists+io-uring@lfdr.de>; Fri, 14 Feb 2025 19:18:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 940E2188F47B
-	for <lists+io-uring@lfdr.de>; Fri, 14 Feb 2025 17:35:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1DC716927B
+	for <lists+io-uring@lfdr.de>; Fri, 14 Feb 2025 18:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208BA86328;
-	Fri, 14 Feb 2025 17:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBE4267B08;
+	Fri, 14 Feb 2025 18:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="iGfxIr57"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4aRYVJM"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1318264FA7
-	for <io-uring@vger.kernel.org>; Fri, 14 Feb 2025 17:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB65C14B942;
+	Fri, 14 Feb 2025 18:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739554496; cv=none; b=KFRCyo8xN/iC7XS3Z62bNxiuc5lxhuOyB9i+xuWTekoC0dIdLRqLj1wJAQtvV11prz5VSrUF+inFginPuSGXu+x9eHT3JzrPH/Nq3tYJr/hTECOYKejR8H+vwuPv5H5+f5285vLygU1PsS2YfupJaCPT5iPfNlgkacx1pvZR2BQ=
+	t=1739557088; cv=none; b=E7zDMwGQVLg4rqBM2wv0rwkD5KaDW3ChvEIVkYmpfgL9sasyaPMt8/9hXC4NRWV2ZhzqAmu2yFJ9QIeOE6AsByrNwsfblT/V4XLNfnFTNZiWgrUJP+buLwhTzmAr4FQWf/9hHDtESQ0AmkK3PYhFtkhJJiILluRtrNmnHYUZKcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739554496; c=relaxed/simple;
-	bh=TM7DHSQJLRWtlmmkySl8PM31ys8eZ093xIkinbYk2Gc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S1+leYRx6Tzh4ka2czL15g916sAZrkeujMlQ6ZXdMihlvNrjuGDlU+YV/vXaNCyVb2mDpoFu+gOdqYps28CGcUFgrWXgfRAOPcvUvWcMFQzZ4XlsR0pbC6LyjeiZEdcZuEkalVMd0G0ZcYVLdilY7kOQdeSMa0Pkn0M1Y3Ffg6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=iGfxIr57; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-854a68f5a9cso179069039f.0
-        for <io-uring@vger.kernel.org>; Fri, 14 Feb 2025 09:34:53 -0800 (PST)
+	s=arc-20240116; t=1739557088; c=relaxed/simple;
+	bh=Ic5gJeq/hmjUXYKjE77BAaCqGzsk84AUFkY8a5hRTes=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E77RQK/JWSdg+mYbzRYifTWYw6Vj0WK1Jxt/7NAB6hSuUKo2qpo60wclemzHtObjTf0oY47ZRLaDzYVBvd/4nc8oA/TYn6+ryReOZJwnJk4g02SPMQV5j3O/srBuqtwlRInuhsJf+ZH77Ux2KbSZKE1Z+yQR+z+nCeFMfdLR5IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4aRYVJM; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e46f491275so38415296d6.3;
+        Fri, 14 Feb 2025 10:18:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739554493; x=1740159293; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=npntsKsDC5GjqqYANStP1hTs06gZC9RHKxVwl9giDBM=;
-        b=iGfxIr57d685qFmMcY3y/pfrgHMBDWg+49JEtyz0g5Yq6V7CUrY2BsJiTrk59M5nZv
-         dAmfeAesfmTHkxj1xj9vPAIydvYtVO9LIfERPV5xTqPZgQ7rAUYskHCwH4YMWIWVR+89
-         jxZHpyFoUh3w9GJDnSZK3x8OgCOdzoRCx6gZuLJFDmMynuae3u1S9ujE0A1ojsJjdpH8
-         FHEvzmsdn8TbU3c4ZZSn/wiQPz2iCiy7+lhzHo2cKfwgyxaDPm6TK3/TK8qf2oGUujs4
-         tOK6Qm7W2WeI9vsdoBy1uXEU28SZRiVLudTOEGov7p5wo4rMNWH7ObK4GllRcwm2f0e1
-         hSnA==
+        d=gmail.com; s=20230601; t=1739557085; x=1740161885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8JmWqruVNU4EPMFiD9C7xsM6jzfCuUrZ2XHs9HxCY5c=;
+        b=E4aRYVJMGQI8XyrKdxsBDXx1T8GcjZ/ZSz/Mpay97PV2sUiWyxvV6iUTle4UP6bn8L
+         iNMQTN+a3TrCuiCvJQRb69LyoglrIwM+MVC9lWaxUFu/4XNMjnQYiVLNa0xux9ubmpmP
+         UzoLji8x0L96ANJui8OYOKti2Etw0mQxYStp4ecdjGcRkbTUAGrwQPqZ1SDAqNo6IHHf
+         6GUmQNcQjviq1Hadtf7+P5Cq75gqaUzVgO1Lb2J8Hw7o81ntS7uIjZ0BQ4DeMsc2LlCL
+         r58FoGkNr9L7cZLIWQ6kOPNhR0C4hbfV1Ldb0ieE37YMZFu/yjM4f9ouhlDtE0SXQsaa
+         oQkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739554493; x=1740159293;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=npntsKsDC5GjqqYANStP1hTs06gZC9RHKxVwl9giDBM=;
-        b=L4WcUFf8l6owwrYbVU0Nn/db+W+sZR1eD3tW0qAcs+zl0PSsOm+C2FnnluxRCvg2jR
-         cLrqY1A57JTzluCI7nSSohyfsPMHA8wb7pt31Zv2+23juNsMJltGAVEmTVWsE8hPK2L1
-         sZj8hPvQPd/o6Jtzyh+9iz7zUREibCxQsV+g3PejIDIh6PtU0TXljqnpUGNRriYqFg2b
-         TirU/P7nC7UKFeUVp1d/uTlaGO49nGu2Ge+sJY2ASH3Yu+0rne/C2WxtxstV5KrE7YyY
-         OnUw+gXTFtg/LRgeioEwKbFYdkO/aRcDcbashm88/Q2kc5fP+7dRQJt/OE1rBtmbIt1p
-         dyFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJoOllYtH5iFd1ZALvO9y/S+hxGg1XyRQ/+lJ4H3T+zC10isGhkxTX7VkQkmMsc+Ht6BHSM+Ws6Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwifvTIYHzK8o+aswCx0fpd8axMJgRhxhmOksgLPmlz1aIKaRf7
-	WIX8VWEXkFDEJbZtfLVLGPUY34fdeQslCfrCwruMT0oWNmltp3SxPvoVTGH6L60=
-X-Gm-Gg: ASbGncuMlcajLvUe5JwZL9klIcWNqE2TGHu+whwLp8obPYUT2IP4EPW0Szb4xIFzTvO
-	1ioT3YXBa46MJ1W7SPWt4WB+vkkx24FIMXE4LKvrBZCrJFAD3DaKc+LLcEmAnpQL2jVSw06zg98
-	SmxlgaqO0T5pfq+8CP2ijOJ19Fj6klUGtv8Nw/Kqgv0PE0lMgL+yVT1LK5zDwrlocpNNdBBw6kk
-	w1My3VnpRgnAkg+09Kq62tQyqS/T2KhALPkldA79iU9sU3G30oWqzYCOjo9b9eL1lOuc7Pir3We
-	lieEYNCDhLVH
-X-Google-Smtp-Source: AGHT+IFkLxsLfJ0ToZHb6of7v/wFlEdjlDrOt7iWxeXCVI0Ppx8SPqj7+FKMt1eQB6TFZyywZfHkBA==
-X-Received: by 2002:a05:6602:1606:b0:855:7643:5ac7 with SMTP id ca18e2360f4ac-8557a0b0b22mr52627439f.3.1739554492605;
-        Fri, 14 Feb 2025 09:34:52 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ed282dd03csm908171173.124.2025.02.14.09.34.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 09:34:52 -0800 (PST)
-Message-ID: <a3daa76d-3b1e-4dfb-a47a-1af282a5c7bc@kernel.dk>
-Date: Fri, 14 Feb 2025 10:34:51 -0700
+        d=1e100.net; s=20230601; t=1739557085; x=1740161885;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8JmWqruVNU4EPMFiD9C7xsM6jzfCuUrZ2XHs9HxCY5c=;
+        b=uJjGe0OKT9o6QqwmTzFns4o72sQLkQB8VmBhECl9cj4ly58C/Dqzyfvc43LXNQm8Nd
+         1VgyisxsVuOw0ps4iLrTiNRS+dq5mqZvR0GZC20rlFWFuORLBex4sgVGTvgBAVnOjta+
+         qULTJLk0gmkRvm174nv3AVBO9A9etkspLdN76VaLCL6Cee277SHCsA8hX0jXz1yL3S+F
+         DJCDGSLudrklsjqzqSG1Y8HALgNVPaXXeQYLRIUP+hg+iUl169Nxgcp0WYUKK80ojjcc
+         CRjYDTMUvAIPOWW2hTvMemup9nK+64jQ8NMdKkEWd6Mmk8zACmYkSPsvJeK9BnZ2ogjT
+         e0sw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBEh7B2aGIBkEv90g06gtsB7qMgWvItpG8yv2WRJdo/q/DLyp6gRLk2FD5YyyajOTzrYa1J29VRq0=@vger.kernel.org, AJvYcCUF0FHJyXmntCUs5SMGSEGyqkSLLEfsAMNL8SGQvf88ya+T/tNljHpbrrPLwhd+WtI5jzg=@vger.kernel.org, AJvYcCUcA3Xy6ufJQs3dIT3krkD+d+3KPgDj2s6vU/7Y22tmbqcYphcfEarkUM7kNm0OywlZ8+Ym3y7N7kvETCtX@vger.kernel.org, AJvYcCWwksrRW/KIhFJ7pBuC0kPzrCWjLePBd/lpyFUGLH9LnkW6BBikhfI5C9fMSabaJB54OJaWEtvX++hedE7R4A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyandrBeQqFHahfKL+4MOtmHefn81kbHcys3sJcZJDsYTixjX7b
+	f/kc1+FF7zUxz5jXLmE+WY6NqgUSdSU7mBVhee58ZtnE/qBIkUEmUUhjbhWMZJU=
+X-Gm-Gg: ASbGncuW5M6IlpeTHPkCgDHgdIf8jiBP8jchFF7RzSwm3nGISllpz1515G+Tvg1A6ho
+	ZRyDtBN+YDDLCvBXAy5sB+aV8c0sJFxD11gCTsWeTVU638Asci+ZymwutELmL+pAX2CL0PBmGeG
+	0ok+63ujMl0XgFXTNcwiG6yX9+XXB7g9gvJovBu8TOjttsRj1tBKtryXV98Fhsx3xXLqNVwCJSU
+	WANLUh2ApmvmKQueIsYdaFmRtdfbsyIOkCsYYO9HYrjhM8TnP9AJTMQr2Fi9vAu8mFuM5mVItvr
+	uwqdjfh8kjI+uI1r27KMy8MlO8jKv/M0eWd2zYU7Ugh6WtV7Hh92nTbL/0hs0joUCZpRIhVZsIY
+	t2+4Tn4M=
+X-Google-Smtp-Source: AGHT+IGzjod+G/33V3jUtrDFJ9knjHyMbQE4yzF1qZkf3yP5N2geQeFqVOHZev/nQYcS30sz78pBtQ==
+X-Received: by 2002:a05:6214:21c8:b0:6e1:697c:d9b8 with SMTP id 6a1803df08f44-6e66cc8b653mr4522336d6.9.1739557085377;
+        Fri, 14 Feb 2025 10:18:05 -0800 (PST)
+Received: from stef-kernel-development.. (syn-075-130-252-044.res.spectrum.com. [75.130.252.44])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471c2a30b98sm19905811cf.34.2025.02.14.10.18.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 10:18:04 -0800 (PST)
+From: Stefano Jordhani <sjordhani@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Stefano Jordhani <sjordhani@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Joe Damato <jdamato@fastly.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Willem de Bruijn <willemb@google.com>,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>,
+	Magnus Karlsson <magnus.karlsson@intel.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Jonathan Lemon <jonathan.lemon@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Mina Almasry <almasrymina@google.com>,
+	David Wei <dw@davidwei.uk>,
+	linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and infrastructure)),
+	linux-kernel@vger.kernel.org (open list),
+	io-uring@vger.kernel.org (open list:IO_URING),
+	bpf@vger.kernel.org (open list:XDP SOCKETS (AF_XDP))
+Subject: [PATCH net-next v2] net: use napi_id_valid helper
+Date: Fri, 14 Feb 2025 18:17:51 +0000
+Message-ID: <20250214181801.931-1-sjordhani@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: avoid implicit conversion to ktime_t
-To: Dmitry Antipov <dmantipov@yandex.ru>
-Cc: Jeff Moyer <jmoyer@redhat.com>, io-uring@vger.kernel.org
-References: <20250214073954.3641025-1-dmantipov@yandex.ru>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250214073954.3641025-1-dmantipov@yandex.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/14/25 12:39 AM, Dmitry Antipov wrote:
-> In 'io_get_ext_arg()', do not assume that 'min_wait_usec' of 'struct
-> io_uring_getevents_arg' (which is '__u32') multiplied by NSEC_PER_USEC
-> may be implicitly converted to 'ktime_t' but use the convenient
-> 'us_to_ktime()' helper instead. Compile tested only.
-> 
-> Suggested-by: Jeff Moyer <jmoyer@redhat.com>
-> Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
-> ---
-> I didn't add Fixes: as per Jeff's remark at
-> https://lore.kernel.org/io-uring/x49ed01lkso.fsf@segfault.usersys.redhat.com/T/#t;
-> if you think that it should be, most likely they are:
-> 
-> aa00f67adc2c ("io_uring: add support for fixed wait regions")
-> 7ed9e09e2d13 ("io_uring: wire up min batch wake timeout")
+In commit 6597e8d35851 ("netdev-genl: Elide napi_id when not present"),
+napi_id_valid function was added. Use the helper to refactor open-coded
+checks in the source.
 
-I don't think that's needed, as it's not really fixing anything.
-Using us_to_ktime() is identical to the code that's already there.
+Suggested-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Stefano Jordhani <sjordhani@gmail.com>
+Reviewed-by: Joe Damato <jdamato@fastly.com>
+Reviewed-by: Jens Axboe <axboe@kernel.dk> # for iouring
+---
+v2:
+ - Added Joe's and Jens' (for iouring) Reviewed-by tags. 
+ - Respinning because my email client mangled my previous patch.
 
+ fs/eventpoll.c            | 8 ++++----
+ include/net/busy_poll.h   | 4 ++--
+ io_uring/napi.c           | 4 ++--
+ net/core/dev.c            | 6 +++---
+ net/core/netdev-genl.c    | 2 +-
+ net/core/page_pool_user.c | 2 +-
+ net/core/sock.c           | 2 +-
+ net/xdp/xsk.c             | 2 +-
+ 8 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 7c0980db77b3..2fecf66661e9 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -447,7 +447,7 @@ static bool ep_busy_loop(struct eventpoll *ep, int nonblock)
+ 	if (!budget)
+ 		budget = BUSY_POLL_BUDGET;
+ 
+-	if (napi_id >= MIN_NAPI_ID && ep_busy_loop_on(ep)) {
++	if (napi_id_valid(napi_id) && ep_busy_loop_on(ep)) {
+ 		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end,
+ 			       ep, prefer_busy_poll, budget);
+ 		if (ep_events_available(ep))
+@@ -492,7 +492,7 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
+ 	 *	or
+ 	 * Nothing to do if we already have this ID
+ 	 */
+-	if (napi_id < MIN_NAPI_ID || napi_id == ep->napi_id)
++	if (!napi_id_valid(napi_id) || napi_id == ep->napi_id)
+ 		return;
+ 
+ 	/* record NAPI ID for use in next busy poll */
+@@ -546,7 +546,7 @@ static void ep_suspend_napi_irqs(struct eventpoll *ep)
+ {
+ 	unsigned int napi_id = READ_ONCE(ep->napi_id);
+ 
+-	if (napi_id >= MIN_NAPI_ID && READ_ONCE(ep->prefer_busy_poll))
++	if (napi_id_valid(napi_id) && READ_ONCE(ep->prefer_busy_poll))
+ 		napi_suspend_irqs(napi_id);
+ }
+ 
+@@ -554,7 +554,7 @@ static void ep_resume_napi_irqs(struct eventpoll *ep)
+ {
+ 	unsigned int napi_id = READ_ONCE(ep->napi_id);
+ 
+-	if (napi_id >= MIN_NAPI_ID && READ_ONCE(ep->prefer_busy_poll))
++	if (napi_id_valid(napi_id) && READ_ONCE(ep->prefer_busy_poll))
+ 		napi_resume_irqs(napi_id);
+ }
+ 
+diff --git a/include/net/busy_poll.h b/include/net/busy_poll.h
+index 741fa7754700..cab6146a510a 100644
+--- a/include/net/busy_poll.h
++++ b/include/net/busy_poll.h
+@@ -119,7 +119,7 @@ static inline void sk_busy_loop(struct sock *sk, int nonblock)
+ #ifdef CONFIG_NET_RX_BUSY_POLL
+ 	unsigned int napi_id = READ_ONCE(sk->sk_napi_id);
+ 
+-	if (napi_id >= MIN_NAPI_ID)
++	if (napi_id_valid(napi_id))
+ 		napi_busy_loop(napi_id, nonblock ? NULL : sk_busy_loop_end, sk,
+ 			       READ_ONCE(sk->sk_prefer_busy_poll),
+ 			       READ_ONCE(sk->sk_busy_poll_budget) ?: BUSY_POLL_BUDGET);
+@@ -134,7 +134,7 @@ static inline void skb_mark_napi_id(struct sk_buff *skb,
+ 	/* If the skb was already marked with a valid NAPI ID, avoid overwriting
+ 	 * it.
+ 	 */
+-	if (skb->napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(skb->napi_id))
+ 		skb->napi_id = napi->napi_id;
+ #endif
+ }
+diff --git a/io_uring/napi.c b/io_uring/napi.c
+index b1ade3fda30f..4a10de03e426 100644
+--- a/io_uring/napi.c
++++ b/io_uring/napi.c
+@@ -44,7 +44,7 @@ int __io_napi_add_id(struct io_ring_ctx *ctx, unsigned int napi_id)
+ 	struct io_napi_entry *e;
+ 
+ 	/* Non-NAPI IDs can be rejected. */
+-	if (napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(napi_id))
+ 		return -EINVAL;
+ 
+ 	hash_list = &ctx->napi_ht[hash_min(napi_id, HASH_BITS(ctx->napi_ht))];
+@@ -87,7 +87,7 @@ static int __io_napi_del_id(struct io_ring_ctx *ctx, unsigned int napi_id)
+ 	struct io_napi_entry *e;
+ 
+ 	/* Non-NAPI IDs can be rejected. */
+-	if (napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(napi_id))
+ 		return -EINVAL;
+ 
+ 	hash_list = &ctx->napi_ht[hash_min(napi_id, HASH_BITS(ctx->napi_ht))];
+diff --git a/net/core/dev.c b/net/core/dev.c
+index d5ab9a4b318e..bcb266ab2912 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -1008,7 +1008,7 @@ struct net_device *dev_get_by_napi_id(unsigned int napi_id)
+ 
+ 	WARN_ON_ONCE(!rcu_read_lock_held());
+ 
+-	if (napi_id < MIN_NAPI_ID)
++	if (!napi_id_valid(napi_id))
+ 		return NULL;
+ 
+ 	napi = napi_by_id(napi_id);
+@@ -6740,7 +6740,7 @@ static void napi_hash_add(struct napi_struct *napi)
+ 
+ 	/* 0..NR_CPUS range is reserved for sender_cpu use */
+ 	do {
+-		if (unlikely(++napi_gen_id < MIN_NAPI_ID))
++		if (unlikely(!napi_id_valid(++napi_gen_id)))
+ 			napi_gen_id = MIN_NAPI_ID;
+ 	} while (napi_by_id(napi_gen_id));
+ 
+@@ -6911,7 +6911,7 @@ netif_napi_dev_list_add(struct net_device *dev, struct napi_struct *napi)
+ 
+ 	higher = &dev->napi_list;
+ 	list_for_each_entry(pos, &dev->napi_list, dev_list) {
+-		if (pos->napi_id >= MIN_NAPI_ID)
++		if (napi_id_valid(pos->napi_id))
+ 			pos_id = pos->napi_id;
+ 		else if (pos->config)
+ 			pos_id = pos->config->napi_id;
+diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+index c18bb53d13fd..22ac51356d9f 100644
+--- a/net/core/netdev-genl.c
++++ b/net/core/netdev-genl.c
+@@ -267,7 +267,7 @@ netdev_nl_napi_dump_one(struct net_device *netdev, struct sk_buff *rsp,
+ 
+ 	prev_id = UINT_MAX;
+ 	list_for_each_entry(napi, &netdev->napi_list, dev_list) {
+-		if (napi->napi_id < MIN_NAPI_ID)
++		if (!napi_id_valid(napi->napi_id))
+ 			continue;
+ 
+ 		/* Dump continuation below depends on the list being sorted */
+diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
+index 9d8a3d8597fa..c82a95beceff 100644
+--- a/net/core/page_pool_user.c
++++ b/net/core/page_pool_user.c
+@@ -233,7 +233,7 @@ page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
+ 		goto err_cancel;
+ 
+ 	napi_id = pool->p.napi ? READ_ONCE(pool->p.napi->napi_id) : 0;
+-	if (napi_id >= MIN_NAPI_ID &&
++	if (napi_id_valid(napi_id) &&
+ 	    nla_put_uint(rsp, NETDEV_A_PAGE_POOL_NAPI_ID, napi_id))
+ 		goto err_cancel;
+ 
+diff --git a/net/core/sock.c b/net/core/sock.c
+index a197f0a0b878..53c7af0038c4 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2042,7 +2042,7 @@ int sk_getsockopt(struct sock *sk, int level, int optname,
+ 		v.val = READ_ONCE(sk->sk_napi_id);
+ 
+ 		/* aggregate non-NAPI IDs down to 0 */
+-		if (v.val < MIN_NAPI_ID)
++		if (!napi_id_valid(v.val))
+ 			v.val = 0;
+ 
+ 		break;
+diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
+index 89d2bef96469..0edf25973072 100644
+--- a/net/xdp/xsk.c
++++ b/net/xdp/xsk.c
+@@ -875,7 +875,7 @@ static bool xsk_no_wakeup(struct sock *sk)
+ #ifdef CONFIG_NET_RX_BUSY_POLL
+ 	/* Prefer busy-polling, skip the wakeup. */
+ 	return READ_ONCE(sk->sk_prefer_busy_poll) && READ_ONCE(sk->sk_ll_usec) &&
+-		READ_ONCE(sk->sk_napi_id) >= MIN_NAPI_ID;
++		napi_id_valid(READ_ONCE(sk->sk_napi_id));
+ #else
+ 	return false;
+ #endif
+
+base-commit: 7a7e0197133d18cfd9931e7d3a842d0f5730223f
 -- 
-Jens Axboe
+2.43.0
 
 

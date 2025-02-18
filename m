@@ -1,265 +1,111 @@
-Return-Path: <io-uring+bounces-6501-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6502-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9E5A3A355
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 17:58:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15722A3A379
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 18:02:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E72A1892F71
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 16:58:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D0BE3B0C04
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 17:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD6626FDAA;
-	Tue, 18 Feb 2025 16:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F62426F46D;
+	Tue, 18 Feb 2025 17:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="yq9aPGG4"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bIkddf4N"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F24B26FA6E
-	for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 16:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EA523FC68
+	for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 17:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739897842; cv=none; b=N4sg+820fy8odERrkW1Srcg+5iaZBwHEr9hIkE5vr3JOtLWez2UItf1PLo6yKl+mpkgtWQTG9phsZYT7DBqIE50IqpJ5ZGTMj0B81IPjeBbm63fv/ugQqvlY31r81cuFGRSN3fePA06KFC0imKPBuTbqq5GV5gr5pKiUpP1+Tzw=
+	t=1739898067; cv=none; b=lRC7TKoLGADlLFvDu588B9V9trd3hDFMz3n6c+99pOa9Hn/Tzcgfk19QQ0O3INI21jcfV1tr/Lvl9uA0iuJkGSU6GmxockAGYb+mvEb503RoTDqP18lDEGIroeo9JnBeFzgUYtLDfpivD3VyUcCvMIYqbpsAeYf0aDsXBGW/Sss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739897842; c=relaxed/simple;
-	bh=6PS//lO+rorS7RVWVpqSRGD/hz7YUE+g1sY+VjICbhQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UbJODcUFIEVhzn4STuBnaYYlRKYiv21/Uk9uOtlq249NxzH9bIpSVQvu3VC/xvfOt+r4962q2aonY+7jDh0kMA648pBVNUtCf3b9fZEbYY+RqM1pRwLMnI8+btkBtei88kctnAzrlU7vr0WMsekMO+PlCrxI9FsYypnyqbnemRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=yq9aPGG4; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220e83d65e5so91435345ad.1
-        for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 08:57:20 -0800 (PST)
+	s=arc-20240116; t=1739898067; c=relaxed/simple;
+	bh=ip12vp8LKIQkwvxRBzGL2Qva2TjenJoa7/aZB1dSuaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T0Y0HIDQNB1TcLAxLiQHAX0Ko2jRbRttgs1ZkeasVE1oRSVA0k449Dkjvoz2/eRGXYDbgv4ihIVr0tbkdOOuEF2mj5BxdqoaO4RQnmWTa7d3Pmpd+56XOqDTT4FCv89h6/ZrFzrgHGaOp7c9kXtMGB/+H/FVVKGi77PBpXpFv8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bIkddf4N; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-852050432a8so148031239f.1
+        for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 09:01:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1739897839; x=1740502639; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NOCzxCVxAvNYsJunStzLE+uJyOxRfSh+zzOduGNwM6o=;
-        b=yq9aPGG4SSI1l5G3+l1ot7mMDZrusf7OrhPjabP601YJBGJ9EzVgDSGjHeythqj3Ij
-         fM3CZ8peSFVBX6lE5SWFhWWI3NNqqoP3WAWmzWjHpNxCVt9wHEt8QXoXG38ITi3hPn8S
-         jxYhtuzWfLZKPbkKqgt+cv6c/u2ZugIMzeehD158ra/SZzeaYolU3ldVSnFlzdsBv6+p
-         ZBJ3uU28dXikgDqR5OU8GpBHxkMPgRvVBnsZuqdMLMt8/FQMfIKNa65tpamYMZl4fERi
-         z+/XLvpjUuDzhBnpR+m+1dvmipnlq8iUrelEvn6i9rQXFoHLRxkfyeU2qpenzGOsnTRf
-         FyPw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739898064; x=1740502864; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cBtl4dcGlVqYUfCvOoXlxJyBqOp21mgGHoxj32KV5ps=;
+        b=bIkddf4NQRUuP+jTBhG8uClSTd04/Zl3ssTgyHNTG3KTWvxVVt720XZMa0dZi5M0fX
+         sOhsIpvn+RQQr4N0wTVaPGRlUDBMZfijmPHl5M3Fc6HEmgP2INXqf6vgl2zQlOAECQ1U
+         90QSi812sHZxkU9JUGMWyp7eS90w8Y7oW1EXSvjABeBIszFzwOAcS/5JNeE0Ou6K7uoS
+         VEc9k0Vrj8Y9E3rJPzd3IlLC9JJTiEI5nGSduxQLhjLJxGwjgh6iKsWs4WT/s/GN04qT
+         m+zYXAGp4JfC4kWGPU4D1LIB1H/R2WysjvXqkuGCxawGaHwcDD8py4CQY6jqoyY6P/t5
+         s5Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739897839; x=1740502639;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NOCzxCVxAvNYsJunStzLE+uJyOxRfSh+zzOduGNwM6o=;
-        b=u8WjSKJdnxOPLnxaTL9II97dSlRE21gGQ669tM1HDeNPyKnQm25hAyodPxa7ZutG+O
-         JCZzBRHwZpqqrebUQ8hw37z5Ocv6vfjBt1usN6Rye4m/W2QkS7kCn6havMwJqm5NHlMz
-         lUb/f3mwRWkJkBeOJx4F4HLipue1mugETypPtlT1eQF+OvvNS2pntdp37qFmYZ5uN1KH
-         zcHhRb8lXQn/EkQfCxoEO8qGibCe0e2U3CmW7LQPK+B/eZ/fZzvhEjHgjJUxR9ypMhSp
-         U58eDbKGsHF2HR6EaPCr7pj99dynHs9U796KunCh7uousfWsJoJ4uC7pR/+apuQpePW4
-         CgvQ==
-X-Gm-Message-State: AOJu0Yx5oacCZqbiomBru7ADVRXa9dqNZqTaXsUgPcZcqGNuXS7Gjtaj
-	hC0jMxZCUDQYQ2KUj8L53aaVRBOoIA/ampILqnm7WRlML0xfS3jNvw2SWjQgszegOS7R8pzXc66
-	U
-X-Gm-Gg: ASbGncsNfrHTTopGbvTlIYsUE+2ls0f4TiL7uiNrXlGkz/hFQ7do8Dre9nQOV4PAsaN
-	IqE2k+NJEyKTTAw1yiFD3EDYfn3VjzrDskamKg4GaSOGeDwDB5SUI7pCYv9Uor6NU1FgQMxxVaP
-	hWoQ5g0TkqxikSqUYQxs0CYyRqB9fNtYYLBDaxpLlvALqx6zXQUxq7NOc7bG3orH4sXmg8jbKXQ
-	ZHreiiOs2Jel1qSV1MumAF6Uo9k+BbLw2N6rs6PalUfZX0d63ryGD2FKgvVbxcRWOnZa/KCEjKn
-X-Google-Smtp-Source: AGHT+IHrBY1zHRHYuJwNRTUUiPrjLEbsi+HbbM1cKYH1pTj4lnerUD971C+dgGwGEIVOFndsOX6tnw==
-X-Received: by 2002:a17:902:d2c6:b0:220:be86:a42d with SMTP id d9443c01a7336-22170777df8mr3063875ad.21.1739897839536;
-        Tue, 18 Feb 2025 08:57:19 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:16::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5590770sm90673115ad.231.2025.02.18.08.57.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 08:57:19 -0800 (PST)
-From: David Wei <dw@davidwei.uk>
-To: io-uring@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Simon Horman <horms@kernel.org>
-Subject: [PATCH v1 2/2] io_uring/zcrx: add selftest case for single shot recvzc
-Date: Tue, 18 Feb 2025 08:57:14 -0800
-Message-ID: <20250218165714.56427-3-dw@davidwei.uk>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250218165714.56427-1-dw@davidwei.uk>
-References: <20250218165714.56427-1-dw@davidwei.uk>
+        d=1e100.net; s=20230601; t=1739898064; x=1740502864;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cBtl4dcGlVqYUfCvOoXlxJyBqOp21mgGHoxj32KV5ps=;
+        b=c5LQv/boP7saeNynT3lwuoUqRyDaxxj7NaDnJwUP20KoIvhBlE17ll7EUlVwfFlGvF
+         2NqJ0OUsx9/EezmrlKiW1IvfNJFg7xqNhyf6FKuYOgv9H+GZPTDylQLYk7E9o2DHTqS4
+         cOAorX1ZT2QbTroI4+Dq7r45PZhDIWQL8Ryzw+G6sTkjW4+7xhb+ZiNroFCQlXL0Lvhw
+         l38e/SDmQT5GJS6FFmqSy8l3rFchod1s7eTnQWpbylzIHK+tr99NqkphkGC/AotHKJ8g
+         6WfDXbo93zAxtQrTg5tBnF7C/XR1Bq0hevRq7U45pN+5KepWyHUp1wiml3XXMgoQB1XI
+         w46A==
+X-Forwarded-Encrypted: i=1; AJvYcCVuHzjwpL9NkcgyQ316yrffSeFL5WKOBrOzxIWG16lNq7MaztvJlIs/XvPDDNKV6S7A/1cNnM46vw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFGZD9qZG6rGrGN6m8JJ0o+z1n+YEUpbMUt++eSU0i4w8sRIiD
+	aDukfcGawSoYQxbayF7DNx9eyiz2rhoZPMapr9PXyjhysD2gru2ryi5oc1dZSDc=
+X-Gm-Gg: ASbGncuTGD7yL0jbQxDxjrp5VP8tG4Efc0MvPH5/ytJDbB3C35HjNebukEfYHs8d/qL
+	6rgcmSKvx4MlWG3yK/MJHFJHTkfosDkZyvGs3yzsbrIdOi3Y1vPgJYOvbbV123PTggsofkd/sF4
+	34iqzVYeQC9waQ4p/oKsFUH6z6ArS6MxpsvhOH68ieqaSQkZAFbzs8ldmdlirD7dJhaREX7QExH
+	WYsywHK0PA5G+v/mu/ts9tJJIR+VRJAgMjweLH688/04jwErxzmUvYCA041QLH/lMWZbrmh8McK
+	bloLOU79pClX
+X-Google-Smtp-Source: AGHT+IEw4GP5Q4xX1kcj4T5NJlI2JZqH23qYtDDSSDP9o9eLl7mEbJg8jnnGbbtzLR+SnOk9VolbZQ==
+X-Received: by 2002:a05:6602:1642:b0:841:99cb:776f with SMTP id ca18e2360f4ac-855b2f96922mr77507539f.6.1739898063778;
+        Tue, 18 Feb 2025 09:01:03 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85566e39393sm240410039f.13.2025.02.18.09.01.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 09:01:03 -0800 (PST)
+Message-ID: <98e2abcc-c5b4-40e9-942e-30b1a438e5ed@kernel.dk>
+Date: Tue, 18 Feb 2025 10:01:02 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH liburing v1 0/3] add basic zero copy receive support
+To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+References: <20250215041857.2108684-1-dw@davidwei.uk>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250215041857.2108684-1-dw@davidwei.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add a selftest case to iou-zcrx where the sender sends 4x4K = 16K and
-the receiver does 4x4K single shot recvzc. Validate that the requests
-are successful and the data is not corrupted.
+On 2/14/25 9:18 PM, David Wei wrote:
+> Add basic support for io_uring zero copy receive in liburing. Besides
+> the mandatory syncing of necessary liburing.h headers, add a thin
+> wrapper around the registration op and a unit test.
+> 
+> Users still need to setup by hand e.g. mmap, setup the registration
+> structs, do the registration and then setup the refill queue struct
+> io_uring_zcrx_rq.
+> 
+> In the future, I'll add code to hide the implementation details. But for
+> now, this unblocks the kernel selftest.
 
-Signed-off-by: David Wei <dw@davidwei.uk>
----
- .../selftests/drivers/net/hw/iou-zcrx.c       | 42 ++++++++++++++++---
- .../selftests/drivers/net/hw/iou-zcrx.py      | 27 +++++++++++-
- 2 files changed, 61 insertions(+), 8 deletions(-)
+man pages coming for this too?
 
-diff --git a/tools/testing/selftests/drivers/net/hw/iou-zcrx.c b/tools/testing/selftests/drivers/net/hw/iou-zcrx.c
-index 5d04dd55ae55..e7f0688991ab 100644
---- a/tools/testing/selftests/drivers/net/hw/iou-zcrx.c
-+++ b/tools/testing/selftests/drivers/net/hw/iou-zcrx.c
-@@ -61,6 +61,9 @@ static int cfg_port = 8000;
- static int cfg_payload_len;
- static const char *cfg_ifname;
- static int cfg_queue_id = -1;
-+static bool cfg_oneshot;
-+static int cfg_oneshot_recvs;
-+static int cfg_send_size = SEND_SIZE;
- static struct sockaddr_in6 cfg_addr;
- 
- static char payload[SEND_SIZE] __attribute__((aligned(PAGE_SIZE)));
-@@ -196,6 +199,16 @@ static void add_recvzc(struct io_uring *ring, int sockfd)
- 	sqe->user_data = 2;
- }
- 
-+static void add_recvzc_oneshot(struct io_uring *ring, int sockfd, size_t len)
-+{
-+	struct io_uring_sqe *sqe;
-+
-+	sqe = io_uring_get_sqe(ring);
-+
-+	io_uring_prep_rw(IORING_OP_RECV_ZC, sqe, sockfd, NULL, len, 0);
-+	sqe->user_data = 2;
-+}
-+
- static void process_accept(struct io_uring *ring, struct io_uring_cqe *cqe)
- {
- 	if (cqe->res < 0)
-@@ -204,7 +217,10 @@ static void process_accept(struct io_uring *ring, struct io_uring_cqe *cqe)
- 		error(1, 0, "Unexpected second connection");
- 
- 	connfd = cqe->res;
--	add_recvzc(ring, connfd);
-+	if (cfg_oneshot)
-+		add_recvzc_oneshot(ring, connfd, PAGE_SIZE);
-+	else
-+		add_recvzc(ring, connfd);
- }
- 
- static void process_recvzc(struct io_uring *ring, struct io_uring_cqe *cqe)
-@@ -218,7 +234,7 @@ static void process_recvzc(struct io_uring *ring, struct io_uring_cqe *cqe)
- 	ssize_t n;
- 	int i;
- 
--	if (cqe->res == 0 && cqe->flags == 0) {
-+	if (cqe->res == 0 && cqe->flags == 0 && cfg_oneshot_recvs == 0) {
- 		stop = true;
- 		return;
- 	}
-@@ -226,8 +242,14 @@ static void process_recvzc(struct io_uring *ring, struct io_uring_cqe *cqe)
- 	if (cqe->res < 0)
- 		error(1, 0, "recvzc(): %d", cqe->res);
- 
--	if (!(cqe->flags & IORING_CQE_F_MORE))
-+	if (cfg_oneshot) {
-+		if (cqe->res == 0 && cqe->flags == 0 && cfg_oneshot_recvs) {
-+			add_recvzc_oneshot(ring, connfd, PAGE_SIZE);
-+			cfg_oneshot_recvs--;
-+		}
-+	} else if (!(cqe->flags & IORING_CQE_F_MORE)) {
- 		add_recvzc(ring, connfd);
-+	}
- 
- 	rcqe = (struct io_uring_zcrx_cqe *)(cqe + 1);
- 
-@@ -237,7 +259,7 @@ static void process_recvzc(struct io_uring *ring, struct io_uring_cqe *cqe)
- 
- 	for (i = 0; i < n; i++) {
- 		if (*(data + i) != payload[(received + i)])
--			error(1, 0, "payload mismatch");
-+			error(1, 0, "payload mismatch at ", i);
- 	}
- 	received += n;
- 
-@@ -313,7 +335,7 @@ static void run_server(void)
- 
- static void run_client(void)
- {
--	ssize_t to_send = SEND_SIZE;
-+	ssize_t to_send = cfg_send_size;
- 	ssize_t sent = 0;
- 	ssize_t chunk, res;
- 	int fd;
-@@ -360,7 +382,7 @@ static void parse_opts(int argc, char **argv)
- 		usage(argv[0]);
- 	cfg_payload_len = max_payload_len;
- 
--	while ((c = getopt(argc, argv, "46sch:p:l:i:q:")) != -1) {
-+	while ((c = getopt(argc, argv, "sch:p:l:i:q:o:z:")) != -1) {
- 		switch (c) {
- 		case 's':
- 			if (cfg_client)
-@@ -387,6 +409,14 @@ static void parse_opts(int argc, char **argv)
- 		case 'q':
- 			cfg_queue_id = strtoul(optarg, NULL, 0);
- 			break;
-+		case 'o': {
-+			cfg_oneshot = true;
-+			cfg_oneshot_recvs = strtoul(optarg, NULL, 0);
-+			break;
-+		}
-+		case 'z':
-+			cfg_send_size = strtoul(optarg, NULL, 0);
-+			break;
- 		}
- 	}
- 
-diff --git a/tools/testing/selftests/drivers/net/hw/iou-zcrx.py b/tools/testing/selftests/drivers/net/hw/iou-zcrx.py
-index ea0a346c3eff..d301d9b356f7 100755
---- a/tools/testing/selftests/drivers/net/hw/iou-zcrx.py
-+++ b/tools/testing/selftests/drivers/net/hw/iou-zcrx.py
-@@ -34,14 +34,37 @@ def test_zcrx(cfg) -> None:
-         raise KsftSkipEx('at least 2 combined channels required')
-     rx_ring = _get_rx_ring_entries(cfg)
- 
--    rx_cmd = f"{cfg.bin_remote} -s -p 9999 -i {cfg.ifname} -q {combined_chans - 1}"
--    tx_cmd = f"{cfg.bin_local} -c -h {cfg.remote_v6} -p 9999 -l 12840"
-+    try:
-+        ethtool(f"-G {cfg.ifname} rx 64", host=cfg.remote)
-+        ethtool(f"-X {cfg.ifname} equal {combined_chans - 1}", host=cfg.remote)
-+        flow_rule_id = _set_flow_rule(cfg, combined_chans - 1)
-+
-+        rx_cmd = f"{cfg.bin_remote} -s -p 9999 -i {cfg.ifname} -q {combined_chans - 1}"
-+        tx_cmd = f"{cfg.bin_local} -c -h {cfg.remote_v6} -p 9999 -l 12840"
-+        with bkg(rx_cmd, host=cfg.remote, exit_wait=True):
-+            wait_port_listen(9999, proto="tcp", host=cfg.remote)
-+            cmd(tx_cmd)
-+    finally:
-+        ethtool(f"-N {cfg.ifname} delete {flow_rule_id}", host=cfg.remote)
-+        ethtool(f"-X {cfg.ifname} default", host=cfg.remote)
-+        ethtool(f"-G {cfg.ifname} rx {rx_ring}", host=cfg.remote)
-+
-+
-+def test_zcrx_oneshot(cfg) -> None:
-+    cfg.require_v6()
-+
-+    combined_chans = _get_combined_channels(cfg)
-+    if combined_chans < 2:
-+        raise KsftSkipEx('at least 2 combined channels required')
-+    rx_ring = _get_rx_ring_entries(cfg)
- 
-     try:
-         ethtool(f"-G {cfg.ifname} rx 64", host=cfg.remote)
-         ethtool(f"-X {cfg.ifname} equal {combined_chans - 1}", host=cfg.remote)
-         flow_rule_id = _set_flow_rule(cfg, combined_chans - 1)
- 
-+        rx_cmd = f"{cfg.bin_remote} -s -p 9999 -i {cfg.ifname} -q {combined_chans - 1} -o 4"
-+        tx_cmd = f"{cfg.bin_local} -c -h {cfg.remote_v6} -p 9999 -l 4096 -z 16384"
-         with bkg(rx_cmd, host=cfg.remote, exit_wait=True):
-             wait_port_listen(9999, proto="tcp", host=cfg.remote)
-             cmd(tx_cmd)
 -- 
-2.43.5
+Jens Axboe
 
 

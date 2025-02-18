@@ -1,110 +1,92 @@
-Return-Path: <io-uring+bounces-6512-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6513-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43623A3A7FA
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 20:47:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CA6A3A844
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 21:00:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C443172760
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 19:47:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A13516A3F7
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 19:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A733C1F;
-	Tue, 18 Feb 2025 19:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C891EB5CA;
+	Tue, 18 Feb 2025 19:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="nsRDHHiF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FilE+vTV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A747D21B9EA;
-	Tue, 18 Feb 2025 19:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECF71E51E3;
+	Tue, 18 Feb 2025 19:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739908042; cv=none; b=Gd4NnW72gDcR50m4O/Om4cenX8zkj9amIKQ1dSjVIiOHmHJH1PA16+RZwOj+5jVeIwT3HQrdPRtWoeN5I36Zp0Dec6PN/3TDQR1mmJ3OpbFYkca2GDCdoMOXYT4aJx/+iiQWpf4kP9DIXxzdVprevU16xMdSTH2SOArNgPEX1K4=
+	t=1739908784; cv=none; b=gNNgSEZyC79pGCqxUdR6Vl3gZIPSH+SNiQlsjSbYVPU6uqTeO+mXo+BpWc0ne9kti48k5oNVXIV+nNyFTG6+bpIgBy5hkdMCsdROo4bpriW7sf/N5WORZStamMYtSj6oF+BFZm35HVY8HIhWEgvH88ccpxkV5jPXLLfJbyW0Vds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739908042; c=relaxed/simple;
-	bh=KEeAPqwdWAl+/oPSkdxO2/o1p3K53MqPyinGxQV+SCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ppnf3HU8oz445ebp/ZMN9aSV9hiTWJG39WDSE/UwljAfNiu6q7CZsRk7MV0sNt2LFprRHAJLy8hSBp3pZU9mBQBqe938R/t7spOpibQ5jj8L4aAxUQs/plTx3rbsPFcMAN19GSWDsfxEQloJvEBX9NwDwDXJ2TnJuo87G4M4310=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=nsRDHHiF; arc=none smtp.client-ip=136.144.140.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
-	t=1739907661; bh=KEeAPqwdWAl+/oPSkdxO2/o1p3K53MqPyinGxQV+SCc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nsRDHHiFwywQtXgRDqOg7hjVJsQ0/sF2W7aCUa+/Ad7ruWuhbmpjm4C2LoIVDIiOi
-	 TJT/tnwg1gpZUXUpR+Dgp0vpCap9Xz5JitoJ1ALe3v2y6qt1Ilxs+D6VDeURMB9MGB
-	 85nrbbgQUDZYPxZsG/gJgcCv4UEG30ZUqoonLv6dJXwQdC8BpxfkAc7uXVoprpNsAL
-	 pOQ6Pi1E1OhDqM9SyjgiPiX79y67eEa/ix8uB4XvrbYjgNM9uYbnsLVgS4kIJ6rplr
-	 I0qAPRcTNNXV4T0mV6FtK9ez1tLV6HmJOVdJR9tyQVda0qceQeLkZBMiho5qjri30n
-	 I2GFY+YMwru43a6I8qSPtU5X9Km4zBexDfNW2sDf1cUbON2c1U5U05HhFuy9osCaJJ
-	 qSdr/vqIqZ1+NXPkHByrACB6TdAm4rcsl9BWrubDbOoU4mL61Xl2D6VirfWBndqgaW
-	 gFklSNwK25MDnoO6KrnrHEq+q064+mefWJvQ4nXeUe2lopbn3Ha0IVwZP2m7uVRkrf
-	 otkeUCFbUTNVE1gqawN9cVCywsxSIlrkzJz3K1l5Ihhm2o0qch05nqYz8MFf2lrK7y
-	 cOwdfa2MkuAoW/JwYHn2AdyQ0JRfS9MafLgpMu0TlAYnB7bw2C6uED3x8N1AO6m1cs
-	 XmPfzleEbPJgqicX6UMn9Gwk=
-Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
-	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id 540CF160133;
-	Tue, 18 Feb 2025 20:41:00 +0100 (CET)
-Message-ID: <cc1b81b3-f02c-46d0-b4be-34bba23d20c7@ijzerbout.nl>
-Date: Tue, 18 Feb 2025 20:40:57 +0100
+	s=arc-20240116; t=1739908784; c=relaxed/simple;
+	bh=jVF4ZN9u5ImJ/DMzO4MFVAWJCV9i8sdMon9m7RXuRi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i5ZEOOo+B85HN2vGuT8nJKfdqwDfJstVpT6teviF0HkdKJkCNE9RVWyUpKTe8x70FJjCGYYp3DT68sHEIKl8hXkMOCWqSZXm9L0WtxK632EQr9J09APdd9LzTiFGc2GsyAPnMOFpWDjJPaSH5PNgSQI0VOflk5ZF/parVcQBVx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FilE+vTV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72AA1C4CEE2;
+	Tue, 18 Feb 2025 19:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739908783;
+	bh=jVF4ZN9u5ImJ/DMzO4MFVAWJCV9i8sdMon9m7RXuRi4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FilE+vTVE/xvJrudsSQNsoCNIKj9+PL0te1Bkq9aFE/UZJDa6r4OtERnr16nrkFuZ
+	 e/UP8CoP0OqkYPddUP6jUiFxBGTzOvFXzjQ4jwKn226/uSqy5a+m76I/TSoo31SuSE
+	 oBedlb71ty5SCVwyNt9F2YRX0dyaE1UhXNNDwrP36HeUme5Ys9q3/QqN8dFasu5doR
+	 3i9YzSwQEnlxuSkw4gBv8iVr2u7UnScDY0RzUsnAxxX0LEl4bx+QguwLSGuhn8viIc
+	 sZduh4mAagpglUHS310NdfmBSd7JRcsM+6lP0kRPEkczriNjzUjOFkht4fw5Hvi4ux
+	 HmOhuxPb5EH1w==
+Date: Tue, 18 Feb 2025 12:59:40 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Keith Busch <kbusch@meta.com>, ming.lei@redhat.com,
+	asml.silence@gmail.com, axboe@kernel.dk,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	bernd@bsbernd.com
+Subject: Re: [PATCHv3 2/5] io_uring: add support for kernel registered bvecs
+Message-ID: <Z7TmrB4_aBnZdFbo@kbusch-mbp>
+References: <20250214154348.2952692-1-kbusch@meta.com>
+ <20250214154348.2952692-3-kbusch@meta.com>
+ <CADUfDZpbb0mtGSRSqcepXnM9sijP6-3WAZnzUJrDGbC0AuXTrg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 07/11] io_uring/zcrx: set pp memory provider for an rx
- queue
-To: David Wei <dw@davidwei.uk>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>, lizetao <lizetao1@huawei.com>
-References: <20250215000947.789731-1-dw@davidwei.uk>
- <20250215000947.789731-8-dw@davidwei.uk>
-Content-Language: en-US
-From: Kees Bakker <kees@ijzerbout.nl>
-In-Reply-To: <20250215000947.789731-8-dw@davidwei.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADUfDZpbb0mtGSRSqcepXnM9sijP6-3WAZnzUJrDGbC0AuXTrg@mail.gmail.com>
 
-Op 15-02-2025 om 01:09 schreef David Wei:
-> Set the page pool memory provider for the rx queue configured for zero
-> copy to io_uring. Then the rx queue is reset using
-> netdev_rx_queue_restart() and netdev core + page pool will take care of
-> filling the rx queue from the io_uring zero copy memory provider.
->
-> For now, there is only one ifq so its destruction happens implicitly
-> during io_uring cleanup.
->
-> Reviewed-by: Jens Axboe <axboe@kernel.dk>
-> Signed-off-by: David Wei <dw@davidwei.uk>
-> ---
->   io_uring/zcrx.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
->   1 file changed, 41 insertions(+), 8 deletions(-)
->
-> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-> index 8833879d94ba..7d24fc98b306 100644
-> --- a/io_uring/zcrx.c
-> +++ b/io_uring/zcrx.c
-> [...]
-> @@ -444,6 +475,8 @@ void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx)
->   
->   	if (ctx->ifq)
->   		io_zcrx_scrub(ctx->ifq);
-> +
-> +	io_close_queue(ctx->ifq);
-If ctx->ifq is NULL (which seems to be not unlikely given the if 
-statement above)
-then you'll get a NULL pointer dereference in io_close_queue().
->   }
->   
->   static inline u32 io_zcrx_rqring_entries(struct io_zcrx_ifq *ifq)
+On Fri, Feb 14, 2025 at 12:38:54PM -0800, Caleb Sander Mateos wrote:
+> On Fri, Feb 14, 2025 at 7:45 AM Keith Busch <kbusch@meta.com> wrote:
+> > +
+> > +       nr_bvecs = blk_rq_nr_phys_segments(rq);
+> 
+> Is this guaranteed to match the number of bvecs in the request?
 
+Yes.
+
+> Wouldn't the number of physical segments depend on how the block
+> device splits the bvecs? 
+
+Also yes.
+
+>lo_rw_aio() uses rq_for_each_bvec() to count
+> the number of bvecs, for example.
+
+Hm, that seems unnecessary. The request's nr_phys_segments is
+initialized to the number of bvecs rather than page segments, so it can
+be used instead of recounting them from a given struct request.
+
+The initial number of physical segments for a request is set in
+bio_split_rw_at(), which uses bio_for_each_bvec(). That's what
+rq_for_each_bvec would use, too. The same is used for any bio's that get
+merged into the bio.
 

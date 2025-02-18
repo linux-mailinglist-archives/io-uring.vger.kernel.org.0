@@ -1,113 +1,125 @@
-Return-Path: <io-uring+bounces-6515-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6516-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BA1A3A874
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 21:12:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A53A3A88A
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 21:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6CF188D370
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 20:12:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05F583ACBA0
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 20:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160EC1C8622;
-	Tue, 18 Feb 2025 20:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F161B5ED1;
+	Tue, 18 Feb 2025 20:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gy09Pyp1"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="XgH0y1qs"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFD61BD017;
-	Tue, 18 Feb 2025 20:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDB41B0439
+	for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 20:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739909562; cv=none; b=lD2wvEsgWpJVi3fFdiI0I5wtggby/VTVHT50ggyPR1x7Hxyd5oQmqyoDwSyYmFlTcpidTqyCjozegCkGJSJlWLjxdn5GILRyvZy0yga1Im7vtW0D8ny21m763FXE+V0VIiKOME2kjyAmnDh70IT874xdDgz4bC9ZmX0E5NBwJ2U=
+	t=1739910060; cv=none; b=S0Vi2DTYSrlUULqjdPngLdXEZr4sCMuzR/sq6F5q2LO5jY6ilAcFv8EGPrtXbv5DbnO45/LcCZTGMoQ9n1P8rfoXH9mRhuuxrN3VeFZAdzZXCBjF4Qf++aUzT8LuofrJ5420WX1H7doQkijzAWEsOloEe8Dk0ekO5Uu8DxKAz+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739909562; c=relaxed/simple;
-	bh=cduoBDkcRVdy9/fwUecZLB4Wfm/9MJKCczW2QEMrK1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=igO/2CwiTYcdBjZhZs8zO8a13njeBsR2cmjS4+yQ2GtSD5/YYB5zespGuqCjW5azTfQB3+yC8ADC2qzYT9IIjfFGvKFEjveoX+vKN3Yip1ZtFBZLXcOcIqBUjLmtLc3p1DlQfpA8jVB7TY18n+nMjxMuZKMwG+8xi4VAFDSk4Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gy09Pyp1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB822C4CEE2;
-	Tue, 18 Feb 2025 20:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739909560;
-	bh=cduoBDkcRVdy9/fwUecZLB4Wfm/9MJKCczW2QEMrK1M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gy09Pyp1HO6oMUfxKvrhJQzwzPVOhZAB9Ax/mGVP+4wmiyz9i8E0HixrNh02cCM4l
-	 NIqEz4lMgwprG7DQoJ1oFOVfEg/6boF4MfbxZJW/7/OfZfUAXYNOjuAudRFTs+gTqk
-	 QdpDHxUIFbQDUzkIAHOfXvm5yec4eIAHNz5ihl+aPBEGGwgLjT3VBlz4tF9z+kv2c7
-	 8KHHcbQALnr+f611gpdMLdU0TLc4K1ky3KPB8xge6QcdcgCevKhByjzj9qo6gZmsFF
-	 44aepBjzeVZtT9d7ZuSsGoZkE+6SBXYwjuqe1fVDPq6egAjqAXYihkG92ASUGPMkhh
-	 RSZfsv9Kw02IQ==
-Date: Tue, 18 Feb 2025 13:12:37 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Keith Busch <kbusch@meta.com>, ming.lei@redhat.com,
-	asml.silence@gmail.com, axboe@kernel.dk,
-	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-	bernd@bsbernd.com
-Subject: Re: [PATCHv3 5/5] io_uring: cache nodes and mapped buffers
-Message-ID: <Z7TptdubsPCFulfV@kbusch-mbp>
-References: <20250214154348.2952692-1-kbusch@meta.com>
- <20250214154348.2952692-6-kbusch@meta.com>
- <CADUfDZpM-TXBYQy0B4xRnKjT=-OfX+AYo+6HGA7e7pyT39LxEA@mail.gmail.com>
- <CADUfDZrfmpy3hxD5z0ADxCUkWPbU0aZDMiqpyPE+AZbeDSgZ=g@mail.gmail.com>
+	s=arc-20240116; t=1739910060; c=relaxed/simple;
+	bh=idQR6FMP0hjSHldh+8eNgRaRntbDdUsf2KfANjgGpZ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wv4H/ltSR/WDHxliGTO89ZZdHgCuPDFktvIBFVRLIeyCMNdkTMMhk9WJ1XwEd9Frt8eGxGS0jmvbUfeGwzK3VCS9KvaXY+w4KHaDNFR5A6W1sHSkYA4KilWC1cRn6zNnvxW9bJ8H4cKj/2IDKFU8CxzmSAc/HyOcjlT80lgXa/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=XgH0y1qs; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2fa8c788c74so1235601a91.2
+        for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 12:20:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1739910058; x=1740514858; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rDL5ENmYEobOBOGopXLnOpJxyEOQbkaeafJSwgvXG9c=;
+        b=XgH0y1qsmDPH4+mLUGINeUVHRIrZq0QXqUROBMsdK8TZB2Tsdu0XsvxfHK1FOF02lQ
+         tQVmLhfpj/my6mUds/l4RhLN0eisw6G5GfSItfwVHqYA2Pu+k/9blzrO6tI7n1r6QkDo
+         L8SWcqPIwQDYF9gMFkiCQa8IoKAVSNRjS6L/5nFmNbKEWwB6QKxeIK8H6h2Gr18T0k57
+         ZXCbHLxw9/eTRfDVnOvJvbkkUUvcaJcPBaPQm8Wt4WcnD9DOxLZNlfHRy8PuNZYPVpvS
+         pvOtAEJ9uUS1Qf8+aIogZf/O4mN3BjLxxuR+Htyp5hSePoFTXt/iFWAFI9aD2oqbDMxK
+         Crdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739910058; x=1740514858;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rDL5ENmYEobOBOGopXLnOpJxyEOQbkaeafJSwgvXG9c=;
+        b=CkrEyHVwKfMHPtK0M/XLs+9jqXv2BwISbVDRAxYV8/UMFy3KYPJt+D5ZieCLDbd3lA
+         nLcwdWIykrbF1FhknsnJAMXs4xLT9Q4wruR+CpYwkJsYohk2DziWjtBC2D43SNog8MDm
+         CXcRsjP3TvwEXgmRavbn+Z+gVt72MciJQe6gpO35m7u6F5zdgr0lEUGNmiP5pWz8Fuif
+         9LkHZjnqj2OHkzXmrtyGW8cbFLSIb9yAlHJvku55uDziLLJ0NxmjWHPGP7OhtVoPzT9P
+         E5KbLa+5DTlILcX3HtE6R9/PJFxlJsKQKTBF9EJz3Gxy/dWVxDbK0itwf6hZaea5iZiT
+         NZEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXs0EKy/DYBryDLPEwtE9yXAk5snV5VUOheV1RWhFUxjZuAQ1U2HTcZ3pxRaKpkmkOoj2JxwrJFpw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMKgWpSCgZCsZSyk9tvZg52Y8dMURfQCFclpDv5CzpKqFOG/xl
+	qK7YzePjjBHZ+t8EWQV4++d/llD0F/WYi9v4jEfOxM6UMK0ZZw8yEuBCg3bp4bt2gq0+YPy+qoX
+	6gLzxjxoQXDFvk2dT2Z3kIVE+NCpVRR9x+qrHBw==
+X-Gm-Gg: ASbGncsRMq92Jz2z8wA6K3VDAoTzPlfb2/kgHUs45xX2omxs2uLV7OFPdvP4/OSwZxj
+	BtbfZnsVgZOC8AURldWnxwed+LrhiVjsmA3/driQt5vtFWxF8RXCW9aZnKt4lWPTCjTfrTNs=
+X-Google-Smtp-Source: AGHT+IFzRM9dWI1Dt58bvoJ1SBUSqteELCYJZmXQVmxaJVUkNCmh+yI5Ky9C4ckh4BV7j2wfD7QAXk6K064Fw2GTSEE=
+X-Received: by 2002:a17:90b:33c6:b0:2f4:465d:5c91 with SMTP id
+ 98e67ed59e1d1-2fc41174806mr9071194a91.8.1739910057970; Tue, 18 Feb 2025
+ 12:20:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADUfDZrfmpy3hxD5z0ADxCUkWPbU0aZDMiqpyPE+AZbeDSgZ=g@mail.gmail.com>
+References: <20250214154348.2952692-1-kbusch@meta.com> <20250214154348.2952692-3-kbusch@meta.com>
+ <CADUfDZpbb0mtGSRSqcepXnM9sijP6-3WAZnzUJrDGbC0AuXTrg@mail.gmail.com> <Z7TmrB4_aBnZdFbo@kbusch-mbp>
+In-Reply-To: <Z7TmrB4_aBnZdFbo@kbusch-mbp>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 18 Feb 2025 12:20:46 -0800
+X-Gm-Features: AWEUYZlQ5seoUzPfhkm2G3v0L4jrKcOJ-d0Fq30l0zSfFPjJJDR9eBYRJ3c3ezY
+Message-ID: <CADUfDZorM+T+-Pk4hbsFk_+kJFYMAEaAkLompYdM2UWFucOWsA@mail.gmail.com>
+Subject: Re: [PATCHv3 2/5] io_uring: add support for kernel registered bvecs
+To: Keith Busch <kbusch@kernel.org>
+Cc: Keith Busch <kbusch@meta.com>, ming.lei@redhat.com, asml.silence@gmail.com, 
+	axboe@kernel.dk, linux-block@vger.kernel.org, io-uring@vger.kernel.org, 
+	bernd@bsbernd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 16, 2025 at 02:43:40PM -0800, Caleb Sander Mateos wrote:
-> > > +       io_alloc_cache_free(&table->imu_cache, kfree);
-> > > +}
+On Tue, Feb 18, 2025 at 11:59=E2=80=AFAM Keith Busch <kbusch@kernel.org> wr=
+ote:
+>
+> On Fri, Feb 14, 2025 at 12:38:54PM -0800, Caleb Sander Mateos wrote:
+> > On Fri, Feb 14, 2025 at 7:45=E2=80=AFAM Keith Busch <kbusch@meta.com> w=
+rote:
 > > > +
-> > >  int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
-> > >  {
-> > >         if (!ctx->buf_table.data.nr)
-> > >                 return -ENXIO;
-> > > -       io_rsrc_data_free(ctx, &ctx->buf_table.data);
-> > > +       io_rsrc_buffer_free(ctx, &ctx->buf_table);
-> > >         return 0;
-> > >  }
-> > >
-> > > @@ -716,6 +767,15 @@ bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
-> > >         return true;
-> > >  }
-> > >
-> > > +static struct io_mapped_ubuf *io_alloc_imu(struct io_ring_ctx *ctx,
-> > > +                                          int nr_bvecs)
-> > > +{
-> > > +       if (nr_bvecs <= IO_CACHED_BVECS_SEGS)
-> > > +               return io_cache_alloc(&ctx->buf_table.imu_cache, GFP_KERNEL);
+> > > +       nr_bvecs =3D blk_rq_nr_phys_segments(rq);
 > >
-> > If there is no entry available in the cache, this will heap-allocate
-> > one with enough space for all IO_CACHED_BVECS_SEGS bvecs. Consider
-> > using io_alloc_cache_get() instead of io_cache_alloc(), so the
-> > heap-allocated fallback uses the minimal size.
-> >
-> > Also, where are these allocations returned to the imu_cache? Looks
-> > like kvfree(imu) in io_buffer_unmap() and io_sqe_buffer_register()
-> > needs to try io_alloc_cache_put() first.
-> 
-> Another issue I see is that io_alloc_cache elements are allocated with
-> kmalloc(), so they can't be freed with kvfree(). 
+> > Is this guaranteed to match the number of bvecs in the request?
+>
+> Yes.
+>
+> > Wouldn't the number of physical segments depend on how the block
+> > device splits the bvecs?
+>
+> Also yes.
+>
+> >lo_rw_aio() uses rq_for_each_bvec() to count
+> > the number of bvecs, for example.
+>
+> Hm, that seems unnecessary. The request's nr_phys_segments is
+> initialized to the number of bvecs rather than page segments, so it can
+> be used instead of recounting them from a given struct request.
+>
+> The initial number of physical segments for a request is set in
+> bio_split_rw_at(), which uses bio_for_each_bvec(). That's what
+> rq_for_each_bvec would use, too. The same is used for any bio's that get
+> merged into the bio.
 
-You actually can kvfree(kmalloc()); Here's the kernel doc for it:
+Okay, thanks for verifying!
 
-  kvfree frees memory allocated by any of vmalloc(), kmalloc() or kvmalloc()
-
-> When the imu is
-> freed, we could check nr_bvecs <= IO_CACHED_BVECS_SEGS to tell whether
-> to call io_alloc_cache_put() (with a fallback to kfree()) or kvfree().
-
-But you're right, it shouldn't even hit this path because it's supposed
-to try to insert the imu into the cache if that's where it was allocated
-from.
+Best,
+Caleb
 

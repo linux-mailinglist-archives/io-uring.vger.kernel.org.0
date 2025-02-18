@@ -1,47 +1,47 @@
-Return-Path: <io-uring+bounces-6514-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6515-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C93A3A868
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 21:10:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BA1A3A874
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 21:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727BF1889EE9
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 20:10:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6CF188D370
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 20:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2170D1BCA11;
-	Tue, 18 Feb 2025 20:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160EC1C8622;
+	Tue, 18 Feb 2025 20:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIzyM+gE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gy09Pyp1"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1B81B87D7;
-	Tue, 18 Feb 2025 20:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFD61BD017;
+	Tue, 18 Feb 2025 20:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739909396; cv=none; b=CGoOPNrWP1jiO+w9w6U3MIHEEPQV/Xu/yllys4uHDHlbqD6BChBHG803yPKSdNaYiuEK/okNCiIUWpHL6xtsMbK+OsUzVB+mb+VZAYnPJ4SeU7egsDk2qhalSmVUluTpbXkByk3b4JVgyoSB8JXtyen58LnR1iqCxVUTZHYGqKc=
+	t=1739909562; cv=none; b=lD2wvEsgWpJVi3fFdiI0I5wtggby/VTVHT50ggyPR1x7Hxyd5oQmqyoDwSyYmFlTcpidTqyCjozegCkGJSJlWLjxdn5GILRyvZy0yga1Im7vtW0D8ny21m763FXE+V0VIiKOME2kjyAmnDh70IT874xdDgz4bC9ZmX0E5NBwJ2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739909396; c=relaxed/simple;
-	bh=gZ321uCPRrV5RtLeOm/+PofUPPCbIorajnIjh4B9gS8=;
+	s=arc-20240116; t=1739909562; c=relaxed/simple;
+	bh=cduoBDkcRVdy9/fwUecZLB4Wfm/9MJKCczW2QEMrK1M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ORzrCA7mZHzMzY4laTciY0uVYUai9/ym5TNMqEFhPMZK9zvBh2zgfRIwZ2rrIVt2zZz+YLIJxdsxu6MIZQSkE4Dlug5zMh7Q5uPepKr4SSp5C1kOwBwfh4ILao1l0rOymnAYGT/gRPFZjU1ip71A6CWWm7XgG7LSqht+g+rM4K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIzyM+gE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF925C4CEE4;
-	Tue, 18 Feb 2025 20:09:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=igO/2CwiTYcdBjZhZs8zO8a13njeBsR2cmjS4+yQ2GtSD5/YYB5zespGuqCjW5azTfQB3+yC8ADC2qzYT9IIjfFGvKFEjveoX+vKN3Yip1ZtFBZLXcOcIqBUjLmtLc3p1DlQfpA8jVB7TY18n+nMjxMuZKMwG+8xi4VAFDSk4Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gy09Pyp1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB822C4CEE2;
+	Tue, 18 Feb 2025 20:12:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739909395;
-	bh=gZ321uCPRrV5RtLeOm/+PofUPPCbIorajnIjh4B9gS8=;
+	s=k20201202; t=1739909560;
+	bh=cduoBDkcRVdy9/fwUecZLB4Wfm/9MJKCczW2QEMrK1M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lIzyM+gEu6ukt++ni28DsN49qccZ1bEpQe12+IzWyk+S6k2lpUe+3wDoTW/o9QBsW
-	 /A6T6JF2vfY6f4bavu8IiPe6l1BvYhkWLbK1dFWhK4FZJ4DUb/SAXnuCvK7mEEzNyO
-	 dHDeRUTW5ABQbvtYVZEPZ2pq03qnrb5abkWK/l1rlosLrTQLVL3bkrqZd6tr007Y9K
-	 Yz7dlUAbPPYxyVsDqobJnYhpEcuVzA3RteuGvchewRgH9Ql5XVyaQ8PrNx8IN8iDGC
-	 8Yxedoc/YWOAR6r1Jlvx9SHRZJSm2a5ZLNMDlCc9kbFMR5jOItR323vF6QE+L6LNLq
-	 H/5WqK/WlAe/w==
-Date: Tue, 18 Feb 2025 13:09:52 -0700
+	b=Gy09Pyp1HO6oMUfxKvrhJQzwzPVOhZAB9Ax/mGVP+4wmiyz9i8E0HixrNh02cCM4l
+	 NIqEz4lMgwprG7DQoJ1oFOVfEg/6boF4MfbxZJW/7/OfZfUAXYNOjuAudRFTs+gTqk
+	 QdpDHxUIFbQDUzkIAHOfXvm5yec4eIAHNz5ihl+aPBEGGwgLjT3VBlz4tF9z+kv2c7
+	 8KHHcbQALnr+f611gpdMLdU0TLc4K1ky3KPB8xge6QcdcgCevKhByjzj9qo6gZmsFF
+	 44aepBjzeVZtT9d7ZuSsGoZkE+6SBXYwjuqe1fVDPq6egAjqAXYihkG92ASUGPMkhh
+	 RSZfsv9Kw02IQ==
+Date: Tue, 18 Feb 2025 13:12:37 -0700
 From: Keith Busch <kbusch@kernel.org>
 To: Caleb Sander Mateos <csander@purestorage.com>
 Cc: Keith Busch <kbusch@meta.com>, ming.lei@redhat.com,
@@ -49,10 +49,11 @@ Cc: Keith Busch <kbusch@meta.com>, ming.lei@redhat.com,
 	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
 	bernd@bsbernd.com
 Subject: Re: [PATCHv3 5/5] io_uring: cache nodes and mapped buffers
-Message-ID: <Z7TpEEEubC5a5t6K@kbusch-mbp>
+Message-ID: <Z7TptdubsPCFulfV@kbusch-mbp>
 References: <20250214154348.2952692-1-kbusch@meta.com>
  <20250214154348.2952692-6-kbusch@meta.com>
  <CADUfDZpM-TXBYQy0B4xRnKjT=-OfX+AYo+6HGA7e7pyT39LxEA@mail.gmail.com>
+ <CADUfDZrfmpy3hxD5z0ADxCUkWPbU0aZDMiqpyPE+AZbeDSgZ=g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -61,36 +62,52 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CADUfDZpM-TXBYQy0B4xRnKjT=-OfX+AYo+6HGA7e7pyT39LxEA@mail.gmail.com>
+In-Reply-To: <CADUfDZrfmpy3hxD5z0ADxCUkWPbU0aZDMiqpyPE+AZbeDSgZ=g@mail.gmail.com>
 
-On Fri, Feb 14, 2025 at 06:22:09PM -0800, Caleb Sander Mateos wrote:
-> > +static struct io_mapped_ubuf *io_alloc_imu(struct io_ring_ctx *ctx,
-> > +                                          int nr_bvecs)
-> > +{
-> > +       if (nr_bvecs <= IO_CACHED_BVECS_SEGS)
-> > +               return io_cache_alloc(&ctx->buf_table.imu_cache, GFP_KERNEL);
+On Sun, Feb 16, 2025 at 02:43:40PM -0800, Caleb Sander Mateos wrote:
+> > > +       io_alloc_cache_free(&table->imu_cache, kfree);
+> > > +}
+> > > +
+> > >  int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
+> > >  {
+> > >         if (!ctx->buf_table.data.nr)
+> > >                 return -ENXIO;
+> > > -       io_rsrc_data_free(ctx, &ctx->buf_table.data);
+> > > +       io_rsrc_buffer_free(ctx, &ctx->buf_table);
+> > >         return 0;
+> > >  }
+> > >
+> > > @@ -716,6 +767,15 @@ bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
+> > >         return true;
+> > >  }
+> > >
+> > > +static struct io_mapped_ubuf *io_alloc_imu(struct io_ring_ctx *ctx,
+> > > +                                          int nr_bvecs)
+> > > +{
+> > > +       if (nr_bvecs <= IO_CACHED_BVECS_SEGS)
+> > > +               return io_cache_alloc(&ctx->buf_table.imu_cache, GFP_KERNEL);
+> >
+> > If there is no entry available in the cache, this will heap-allocate
+> > one with enough space for all IO_CACHED_BVECS_SEGS bvecs. Consider
+> > using io_alloc_cache_get() instead of io_cache_alloc(), so the
+> > heap-allocated fallback uses the minimal size.
+> >
+> > Also, where are these allocations returned to the imu_cache? Looks
+> > like kvfree(imu) in io_buffer_unmap() and io_sqe_buffer_register()
+> > needs to try io_alloc_cache_put() first.
 > 
-> If there is no entry available in the cache, this will heap-allocate
-> one with enough space for all IO_CACHED_BVECS_SEGS bvecs. 
+> Another issue I see is that io_alloc_cache elements are allocated with
+> kmalloc(), so they can't be freed with kvfree(). 
 
-The cache can only have fixed size objects in them, so we have to pick
-some kind of trade off. The cache starts off empty and fills up on
-demand, so whatever we allocate needs to be of that cache's element
-size.
+You actually can kvfree(kmalloc()); Here's the kernel doc for it:
 
-> Consider
-> using io_alloc_cache_get() instead of io_cache_alloc(), so the
-> heap-allocated fallback uses the minimal size.
+  kvfree frees memory allocated by any of vmalloc(), kmalloc() or kvmalloc()
 
-We wouldn't be able to fill the cache with the new dynamic object if we
-did that.
+> When the imu is
+> freed, we could check nr_bvecs <= IO_CACHED_BVECS_SEGS to tell whether
+> to call io_alloc_cache_put() (with a fallback to kfree()) or kvfree().
 
-> Also, where are these allocations returned to the imu_cache? Looks
-> like kvfree(imu) in io_buffer_unmap() and io_sqe_buffer_register()
-> needs to try io_alloc_cache_put() first.
-
-Oops. I kind of rushed this series last Friday as I needed to shut down
-very early in the day.
-
-Thanks for the comments. Will take my time for the next version.
+But you're right, it shouldn't even hit this path because it's supposed
+to try to insert the imu into the cache if that's where it was allocated
+from.
 

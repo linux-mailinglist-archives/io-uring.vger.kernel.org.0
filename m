@@ -1,140 +1,123 @@
-Return-Path: <io-uring+bounces-6527-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6528-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8740DA3AB75
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 23:07:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7424FA3ABE3
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 23:43:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48CC33A6B10
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 22:06:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 006723AA5DE
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 22:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4804B1D0F5A;
-	Tue, 18 Feb 2025 22:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50311D7E5F;
+	Tue, 18 Feb 2025 22:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="zqrVF1Iy"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="IIkjq+yn"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE91E1C701B
-	for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 22:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B72286297
+	for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 22:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739916415; cv=none; b=CyWHfOioKcwv3JahvuccOKYecSEvdP7SJr2b2SGwdyOJGWJexOG/ubUOZ6MEFb8Qu+pGZOjpXdF/cEylAsNJm9mWf8ybxFP83CDV+lBkhE5kSTfeSian4vfB8ihdy+hLH9EuT47RM/oeHfhMAYFsLe55KPw5zDGndD6zrsYvXJg=
+	t=1739918576; cv=none; b=JCY6as/RJ8aaxwuiMajH3zSR+5vSF4FAkHudU9bG0Z9lKukgz+ZmR7GLStY9wprCBOd3FM6wcdlDrOMXxQx6q87C0u5RA+a72cTNhGagcYLDD4bpXZw+R37nd/fbTnM3Nu4xYdSghBVAAc1G5JnIJe6Oyu8bwrpXJ2jUt1ho6rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739916415; c=relaxed/simple;
-	bh=AJbD0VhEqktAJuSbrw8sGimzHBizOzGrTkKzm+Z1J4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iYeX3Wk0pkPuqPrgSrcFYCB1mtLadnZ+81bbQnDZjfKxkkEV7YjV/NCtZMEVLb2cL4NW7WkfjVBv8Ji25xkdCdO6ri+pa7fm5mThbl36XcNwHWoA/48skT3/U+ur3NP5oDnmP2d5+3wq0XZHQPzROmfzq3ejRYyl/qJMIcSbbsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=zqrVF1Iy; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220e83d65e5so96582395ad.1
-        for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 14:06:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1739916413; x=1740521213; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vtN7DCDXT4P0ZtMj21KzNqzVT5mPv1hMJBMgdgryY0s=;
-        b=zqrVF1IySSBpyOhu/0aSPsfuiveXWPCbp9G5ROC/M3SefVPTfYT/+tv+JwAnM79zrm
-         SMlqZoTYC6+zxVfLC2ISPsKCXGyoLw4nGHqjKg28eaPAcggu7ZssduFck99rbkw7iN4+
-         zEqf82TRLzk+dQZRYh/0tqKo4Y+/V6UWMWC0aXLe9u3m4Cfb8dH9EeArtTOBY0VsP+ob
-         iuQlchvBghOQWYzzrpqbkDpV2e9XuqDovxO8qyc1J8M1ln/neonmLkmCU54tOl+Vr5dG
-         DllySkkDVYXsUNjdhpSpj8XUrmjnUf4/SCyK0aRrzuY9Dj3NvOo5G5YB8g9nHnDQzE85
-         1isA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739916413; x=1740521213;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vtN7DCDXT4P0ZtMj21KzNqzVT5mPv1hMJBMgdgryY0s=;
-        b=ad2LB6a5LhUpIPO/cXBpOOXzxqjsRL4z9o+p6mGznB1DuElR27TwpzzAExgmQfSAyf
-         tXVUB1DiBEcgW/zJzV0JAX9HRTZyTk6s3Xa7qO8j+NFBPiH+cLxZcrPB/FPPPpaD5+/W
-         /L28Q+i0y4bkgZdahZFfXrY4Ou2iENlGsx3Ybj6OALleamifGdFIcOPflwobwcGPBO7T
-         iJmbhbII+J+IDY0hUZ+9HtOW+EpgwfpRIMOOz726hrk1H7ptz5xdskjBpfHiIlCbAaPQ
-         Gp1ONgn5beD+Nv+S/4cbiNBXzchF3wgKKu5ayE32JmCrWnopn4mXYBRg4h4esA/7wrrd
-         RH6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVVn0iUL/4fckvgHPlOU79SaSKqnqd8gV0AX0Podu/x4mEEjf5EkHsrPPnIoUAgMxLwLNOAri6Gpw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4x55J4Ac09whoNzEj8lIvau2PjGUPrj61QIXKEuEC+c9ZjrYm
-	84x38meR7GUumxwxAr8xwJjrD44lXpT7puWyeJvESM33GAeClsf84EzXj5fYzq0=
-X-Gm-Gg: ASbGncvQPeDFi1BYSYd6xsH1PHCGzQN1k33bz/wjjJ3lOZW7k7robiSsjoI9pgAwByJ
-	bAgFgr210cMOPuUkA1v6aYSBqZk6Ri8K1ghZjiold1AyAjquJs1NRPhfF0ikCv7h66rdGTlXTSH
-	FLgGhlMioYaR9tdE0S19o6g+pgAMujkeTK/2+90fKy4dzu4mflwPFk72SvxxIo+9gRoCaeojCjD
-	UrjDqDJOHkHLbn3ml7rVuMrELKJPzq40Z0pGx4MGFvqzzVGCrtbMZb8wjLaeEe7GarVIAxKPeH0
-	yYDVaiqtc9lT4y+8zjPeQwQS+UW8z7s8nGtk23exSKDF9IuArsCz7Q==
-X-Google-Smtp-Source: AGHT+IG/A/bMTekzmDbdpz3xMBmnVuelBTlzZd10/URTHLkaDPvfz+k5BsAxJxaQjCKm2JetrQ5V7g==
-X-Received: by 2002:a05:6a00:10c3:b0:730:9567:c3d4 with SMTP id d2e1a72fcca58-7329de4f102mr1773986b3a.3.1739916413194;
-        Tue, 18 Feb 2025 14:06:53 -0800 (PST)
-Received: from ?IPV6:2a03:83e0:1156:1:18cb:90d0:372a:99ae? ([2620:10d:c090:500::7:d699])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242546177sm10599035b3a.5.2025.02.18.14.06.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 14:06:52 -0800 (PST)
-Message-ID: <5eac0173-c75e-40b3-a1bd-7cedf86237df@davidwei.uk>
-Date: Tue, 18 Feb 2025 14:06:50 -0800
+	s=arc-20240116; t=1739918576; c=relaxed/simple;
+	bh=fHZLEfX0eVvpMWiOWQKyUceb87Z7nbopPwJUzGmCEMk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YAZXoUGFO5SnLISMdmzqNSP4WyGJpn1v9phRy6/X9Iq2MefhfgQPc5OjoDAE+UToAGg3BK6WnivGrBDYoL02HgbGU/iI8pS9kj2vBf+bmMmPavHhau/PU0FvdIVsE7u3wWxXo9JLQaY1gCatrS3BeOhFxSFKA65cjCrzSRFz6Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=IIkjq+yn; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+	by m0001303.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 51IM833l012484
+	for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 14:42:53 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2021-q4; bh=JiY33QFrLrp0+oqkp0
+	4LqfCKN8Tidwf7MPyeJpoleB8=; b=IIkjq+yn5wAlz1fJMwx3PdHVETP3YNfD3+
+	4y8kWwbRplBC7YYqYPQtad/DtMVxpHAxnkypgq7fuJlVXNZ+miM/iWspG8hoKZe2
+	UnXvHrqF2E9YUgt9OC+Rb+SzyyPXXOk1fOSxPf8BvkQoCoAK/D0Fgo9IxAze8MDs
+	z76pJ13HwxzZwAyPY/GKNgzN67alcS9lOYdj3rslFH4HUZXwEX3eMExXDLahdGtC
+	wAKxhVF/DgFliBX+gjEPuwJ7L5/r+E1xpc1kayoyIDwweXMxO5omTjXWKyYgsSta
+	RPj5aB2bqwpjZ4mPB9V4aLVSsB+5kYX7dJP/RkOiFEw8ulkWX+7w==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by m0001303.ppops.net (PPS) with ESMTPS id 44w018fc2g-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 14:42:53 -0800 (PST)
+Received: from twshared24170.03.ash8.facebook.com (2620:10d:c0a8:1b::30) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Tue, 18 Feb 2025 22:42:47 +0000
+Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
+	id 6B144182F61C3; Tue, 18 Feb 2025 14:42:49 -0800 (PST)
+From: Keith Busch <kbusch@meta.com>
+To: <ming.lei@redhat.com>, <asml.silence@gmail.com>, <axboe@kernel.dk>,
+        <linux-block@vger.kernel.org>, <io-uring@vger.kernel.org>
+CC: <bernd@bsbernd.com>, <csander@purestorage.com>,
+        Keith Busch
+	<kbusch@kernel.org>
+Subject: [PATCHv4 0/5] ublk zero-copy support
+Date: Tue, 18 Feb 2025 14:42:24 -0800
+Message-ID: <20250218224229.837848-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 07/11] io_uring/zcrx: set pp memory provider for an rx
- queue
-Content-Language: en-GB
-To: Kees Bakker <kees@ijzerbout.nl>, io-uring@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>, David Ahern <dsahern@kernel.org>,
- Mina Almasry <almasrymina@google.com>,
- Stanislav Fomichev <stfomichev@gmail.com>, Joe Damato <jdamato@fastly.com>,
- Pedro Tammela <pctammela@mojatatu.com>, lizetao <lizetao1@huawei.com>
-References: <20250215000947.789731-1-dw@davidwei.uk>
- <20250215000947.789731-8-dw@davidwei.uk>
- <cc1b81b3-f02c-46d0-b4be-34bba23d20c7@ijzerbout.nl>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <cc1b81b3-f02c-46d0-b4be-34bba23d20c7@ijzerbout.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: 3_JoE6czktvzscscwVStqAEW4CjdJ8xg
+X-Proofpoint-ORIG-GUID: 3_JoE6czktvzscscwVStqAEW4CjdJ8xg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_10,2025-02-18_01,2024-11-22_01
 
-On 2025-02-18 11:40, Kees Bakker wrote:
-> Op 15-02-2025 om 01:09 schreef David Wei:
->> Set the page pool memory provider for the rx queue configured for zero
->> copy to io_uring. Then the rx queue is reset using
->> netdev_rx_queue_restart() and netdev core + page pool will take care of
->> filling the rx queue from the io_uring zero copy memory provider.
->>
->> For now, there is only one ifq so its destruction happens implicitly
->> during io_uring cleanup.
->>
->> Reviewed-by: Jens Axboe <axboe@kernel.dk>
->> Signed-off-by: David Wei <dw@davidwei.uk>
->> ---
->>   io_uring/zcrx.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
->>   1 file changed, 41 insertions(+), 8 deletions(-)
->>
->> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
->> index 8833879d94ba..7d24fc98b306 100644
->> --- a/io_uring/zcrx.c
->> +++ b/io_uring/zcrx.c
->> [...]
->> @@ -444,6 +475,8 @@ void io_shutdown_zcrx_ifqs(struct io_ring_ctx *ctx)
->>         if (ctx->ifq)
->>           io_zcrx_scrub(ctx->ifq);
->> +
->> +    io_close_queue(ctx->ifq);
-> If ctx->ifq is NULL (which seems to be not unlikely given the if statement above)
-> then you'll get a NULL pointer dereference in io_close_queue().
+From: Keith Busch <kbusch@kernel.org>
 
-The only caller of io_shutdown_zcrx_ifqs() is io_ring_exit_work() which
-checks for ctx->ifq first. That does mean the ctx->ifq check is
-redundant in this function though.
+Changes from v3:
 
->>   }
->>     static inline u32 io_zcrx_rqring_entries(struct io_zcrx_ifq *ifq)
-> 
+  Fixed putting the imu back in the cache on free instead of releasing
+  it to the system (Caleb)
+
+  Fixed the build bisect breakage (Caleb)
+
+  Use appropriate error value if cache initialization fails (Caleb)
+
+  Check data direction when importing the buffer (Ming)
+
+  Using the array_no_spec accessor when using a user index (Pavel)
+
+  Various cleanups
+
+Keith Busch (5):
+  io_uring: move fixed buffer import to issue path
+  io_uring: add support for kernel registered bvecs
+  ublk: zc register/unregister bvec
+  io_uring: add abstraction for buf_table rsrc data
+  io_uring: cache nodes and mapped buffers
+
+ drivers/block/ublk_drv.c       | 137 ++++++++++++-----
+ include/linux/io_uring.h       |   1 +
+ include/linux/io_uring_types.h |  33 ++--
+ include/uapi/linux/ublk_cmd.h  |   4 +
+ io_uring/fdinfo.c              |   8 +-
+ io_uring/filetable.c           |   2 +-
+ io_uring/io_uring.c            |  19 +++
+ io_uring/net.c                 |  25 +---
+ io_uring/nop.c                 |  22 +--
+ io_uring/register.c            |   2 +-
+ io_uring/rsrc.c                | 266 ++++++++++++++++++++++++++-------
+ io_uring/rsrc.h                |   6 +-
+ io_uring/rw.c                  |  45 ++++--
+ io_uring/uring_cmd.c           |  16 +-
+ 14 files changed, 419 insertions(+), 167 deletions(-)
+
+--=20
+2.43.5
+
 

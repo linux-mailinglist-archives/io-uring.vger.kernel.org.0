@@ -1,513 +1,121 @@
-Return-Path: <io-uring+bounces-6533-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6534-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001A5A3ABEE
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 23:43:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FBF6A3AC94
+	for <lists+io-uring@lfdr.de>; Wed, 19 Feb 2025 00:32:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E133F172A72
-	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 22:43:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0192A163FAE
+	for <lists+io-uring@lfdr.de>; Tue, 18 Feb 2025 23:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D573F1D958E;
-	Tue, 18 Feb 2025 22:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1163619CC17;
+	Tue, 18 Feb 2025 23:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="eMscXfoF"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xLuCUpjl"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DD51B6CEC
-	for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 22:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D9A1474D3
+	for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 23:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739918593; cv=none; b=J9v6dIeOmdlTTNG9mMTuBYMRfCThp0FWElB1rhPUJRMaRb0gFrl40yuHjh/kjp8OmcKeOcvp1rTOOo9CSLY7mmNLCQxsFVidMN2S6dPZvqod+yY9QCrL9g6d0dNqQYCOOrKqIW645NolM80/Ql4JpIgXYxjaI/WQz3I5GwllCVw=
+	t=1739921520; cv=none; b=jpOjHACtVyZrJ95XXg8Lp1kwIWL5ragHvkttr60u+yA0B78wjHYD+k/5nYi9EceVi4TJtGQ4kuhh6bFX8un6CT1wTqB5MtubzvbGGdf3+Y1o0O4uEFasopnrsw3qMqyEnSvFOdxYFBVM1SYJ8S+II1xdf7wr5OFNjab2bA1JckQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739918593; c=relaxed/simple;
-	bh=S5Ho4yCZr9ofDr5vtZpZvV8UxIoAwENJuEoPgC+K9Ps=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fbstz7a4i+3pvMjfl4u7eD+cP5pc7CE4/mfTzJ8y7VoXqs+acMZiK2XoeMcaNT9odqyc1TfGMqbsdKaZZR5r8PvqjGYXED0P1xPFmefKUUeRX8VQehst/l8NTtdL1r5lhCTCPPEuO8UhSEVMZq6o0Z3KWsgQlws7J3e7tV+aE/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=eMscXfoF; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IM80hj030431
-	for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 14:43:10 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2021-q4;
-	 bh=MXmF87BHDpeKL6HC7Fl0hfDRRpr6Ju+tFiAcv3THgfc=; b=eMscXfoFLTrX
-	01wzVUVjPmwMhhikDehZV/pc7INR53Lwu5a3UWGyH6/g1Pfryeq3ldyHwZiRuPuP
-	PcYky+Lc/4k7YmuecKIIhxM1RgzsB4wEoqePaqClX0+CH6ZGrW4ct3j3uZPYIqoY
-	cVTrNQED/+T6xZEV0ptqsRKk7d+Zo0zzS3Jaacy7HN5kojzS8hnh/w1Qm1ERKAyx
-	ddyssBhqaCas1TtussATMqKVqYgnQpVE38orGMshpdhS5jJXHhRuteanmrLr2MXV
-	vcRJHlHIlkHuDQLBJQ21/RmI3sGj/L5RKYflkBGrb9QBlCf6lENgoJKqCUbfkQ50
-	kPCLXUEX+g==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 44w01bf90g-17
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 14:43:10 -0800 (PST)
-Received: from twshared40462.17.frc2.facebook.com (2620:10d:c0a8:1b::2d) by
- mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Tue, 18 Feb 2025 22:42:58 +0000
-Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
-	id 97931182F61CD; Tue, 18 Feb 2025 14:42:49 -0800 (PST)
-From: Keith Busch <kbusch@meta.com>
-To: <ming.lei@redhat.com>, <asml.silence@gmail.com>, <axboe@kernel.dk>,
-        <linux-block@vger.kernel.org>, <io-uring@vger.kernel.org>
-CC: <bernd@bsbernd.com>, <csander@purestorage.com>,
-        Keith Busch
-	<kbusch@kernel.org>
-Subject: [PATCHv4 5/5] io_uring: cache nodes and mapped buffers
-Date: Tue, 18 Feb 2025 14:42:29 -0800
-Message-ID: <20250218224229.837848-6-kbusch@meta.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250218224229.837848-1-kbusch@meta.com>
-References: <20250218224229.837848-1-kbusch@meta.com>
+	s=arc-20240116; t=1739921520; c=relaxed/simple;
+	bh=JDgZ2iQYhDITXl1JZ/HUoW5reIXRGMylGjJ1XDxoalk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Uq0lFxcC+atyfsIxVROpIc8fA1WEeb7uR3l2d83zg2i4pCnPcLjssfAiRRJ3Ya3h9VNIBKysBvexfapqTIc2J/DZEyeSXC4q4KJZGLG4fqFr5+6Lk9/3OFoupjaVL6ar1Ncjcylmf+t0rAIcY2dC0ZMpxtMeZ++dEQe3zyj93VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xLuCUpjl; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3cfc8772469so19538995ab.3
+        for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 15:31:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1739921515; x=1740526315; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oJ6wy4Lqqln0rnWdEiOXUcdQIg6geC/lyDaFPvxwzns=;
+        b=xLuCUpjlL4UIEwwiLyLGfrgbhwPk4DE43qDcg1ld+3vSy8jV7Hc7BWs9L10W7XCdmb
+         aH7603MjQW6vY1NReNtHHW0DnDiUPQl1cgK5mdjN20hKbUi/VZBWyeTB/keS3ExCbSkL
+         ATMrERndTPxuY6NjMc9E5s/pVZqb3Yy8yL8x15cQslyDnTDclBXS4lxre1TMMreuX3F3
+         68tjA/Oon4omkn3A+yRGyq1PxEj7hXAlSxu/WeNJ/7qzQCqMnv0A783kjOl4iaWW7Yz6
+         SblALuHl0loMXo6CWJh/hcutK4Jy60ZbvZg83hBAZgdbepbQ+YWIheTRO5N0dXw699Q8
+         Kt1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739921515; x=1740526315;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oJ6wy4Lqqln0rnWdEiOXUcdQIg6geC/lyDaFPvxwzns=;
+        b=A2NyJi+f4Z4hX5T4hmImAipTlamJXDV3gcfApirWKDXpw4ZAcd3LQyfBUOiwMONidP
+         x9UyUaEbJXxHa2GD4ECCAvtY3euy2aaYPfYb8PhD+2Oy9psccPSHpP6hPFLuH4X75bTF
+         LSMruUIxscKdY51ImWJMbIi1YOF46/HRobhCDJPypt/DXtQUKbmhhxWBSIQX14eozJQT
+         sA104ikqFiRu+4Bkpg3L7/aD6aFZOzLthCr98xyjp21zQYqpHlnFpYk+XUp+nvfkQvg/
+         EbxcNLnibXTnzECDD/T8Gf92amcJA6dWfsRhiJ803JOa5FGXtjAnHzltcJCQYnpuNVBB
+         wemQ==
+X-Gm-Message-State: AOJu0YwWkJGitxW/BZn4LqT5KyRGii+M0hkswQQ7wZfoHczKAdR60aHq
+	9oPZTkB1CEPA1mc8CM+fc9ijciyPhp8lnnF8fksaqnBuoCdx/CUyAPL8qnZHgK8=
+X-Gm-Gg: ASbGnctj+Mw0z7/6ieYgqrwtLhB8x03g0Xk/W0g4WSfnwAy+82oclmOkmpzKS3W1G8r
+	NAdrps63Tj4VTRUSVTgd+NpDcqfnG+Nz8ZJwBaDr3Un67ZNB+h1Ii2XTWR3GYuqFsUDjpuuk/ki
+	Bz2j6Emv5Z8QMsbUFW+uwH2RQaRYuJrFCeS/fRv3t0c5gMuBSVTe3tjJUP4vgaS5qLnFE5NogXu
+	i9st+coW1TVyo7W0Zu4WXvKzYKF9wT8dFq2MfktVd4GE5V8U/8su2Gq3YiuKO4fdII3uZrzYofN
+	DPFGS4A=
+X-Google-Smtp-Source: AGHT+IGR/kT92sXk29R8JLojJe6Xfiv5lmdMiSaeOnSB0V2oRZfD1+c6xvan3VbksWUk3i4rKX32wQ==
+X-Received: by 2002:a05:6e02:1d86:b0:3cf:ae67:4115 with SMTP id e9e14a558f8ab-3d2b52bd961mr14441925ab.8.1739921515014;
+        Tue, 18 Feb 2025 15:31:55 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d2b3258a9csm2537195ab.62.2025.02.18.15.31.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 15:31:54 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, David Wei <dw@davidwei.uk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250218220136.2238838-1-dw@davidwei.uk>
+References: <20250218220136.2238838-1-dw@davidwei.uk>
+Subject: Re: [PATCH liburing v2 0/4] add basic zero copy receive support
+Message-Id: <173992151397.1502615.16217151247335702612.b4-ty@kernel.dk>
+Date: Tue, 18 Feb 2025 16:31:53 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Ls512UV8nK7ib1t-ctEHdsa6WQVb4f0-
-X-Proofpoint-GUID: Ls512UV8nK7ib1t-ctEHdsa6WQVb4f0-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-18_10,2025-02-18_01,2024-11-22_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-14bd6
 
-From: Keith Busch <kbusch@kernel.org>
 
-Frequent alloc/free cycles on these is pretty costly. Use an io cache to
-more efficiently reuse these buffers.
+On Tue, 18 Feb 2025 14:01:32 -0800, David Wei wrote:
+> Add basic support for io_uring zero copy receive in liburing. Besides
+> the mandatory syncing of necessary liburing.h headers, add a thin
+> wrapper around the registration op and a unit test.
+> 
+> Users still need to setup by hand e.g. mmap, setup the registration
+> structs, do the registration and then setup the refill queue struct
+> io_uring_zcrx_rq.
+> 
+> [...]
 
-Signed-off-by: Keith Busch <kbusch@kernel.org>
----
- include/linux/io_uring_types.h |  18 ++---
- io_uring/filetable.c           |   2 +-
- io_uring/rsrc.c                | 120 +++++++++++++++++++++++++--------
- io_uring/rsrc.h                |   2 +-
- 4 files changed, 104 insertions(+), 38 deletions(-)
+Applied, thanks!
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
-s.h
-index 810d1dccd27b1..bbfb651506522 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -69,8 +69,18 @@ struct io_file_table {
- 	unsigned int alloc_hint;
- };
-=20
-+struct io_alloc_cache {
-+	void			**entries;
-+	unsigned int		nr_cached;
-+	unsigned int		max_cached;
-+	size_t			elem_size;
-+	unsigned int		init_clear;
-+};
-+
- struct io_buf_table {
- 	struct io_rsrc_data	data;
-+	struct io_alloc_cache	node_cache;
-+	struct io_alloc_cache	imu_cache;
- };
-=20
- struct io_hash_bucket {
-@@ -224,14 +234,6 @@ struct io_submit_state {
- 	struct blk_plug		plug;
- };
-=20
--struct io_alloc_cache {
--	void			**entries;
--	unsigned int		nr_cached;
--	unsigned int		max_cached;
--	unsigned int		elem_size;
--	unsigned int		init_clear;
--};
--
- struct io_ring_ctx {
- 	/* const or read-mostly hot data */
- 	struct {
-diff --git a/io_uring/filetable.c b/io_uring/filetable.c
-index dd8eeec97acf6..a21660e3145ab 100644
---- a/io_uring/filetable.c
-+++ b/io_uring/filetable.c
-@@ -68,7 +68,7 @@ static int io_install_fixed_file(struct io_ring_ctx *ct=
-x, struct file *file,
- 	if (slot_index >=3D ctx->file_table.data.nr)
- 		return -EINVAL;
-=20
--	node =3D io_rsrc_node_alloc(IORING_RSRC_FILE);
-+	node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_FILE);
- 	if (!node)
- 		return -ENOMEM;
-=20
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 261b5535f46c6..d5cac3a234316 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -32,6 +32,8 @@ static struct io_rsrc_node *io_sqe_buffer_register(stru=
-ct io_ring_ctx *ctx,
- #define IORING_MAX_FIXED_FILES	(1U << 20)
- #define IORING_MAX_REG_BUFFERS	(1U << 14)
-=20
-+#define IO_CACHED_BVECS_SEGS	32
-+
- int __io_account_mem(struct user_struct *user, unsigned long nr_pages)
- {
- 	unsigned long page_limit, cur_pages, new_pages;
-@@ -101,6 +103,22 @@ int io_buffer_validate(struct iovec *iov)
- 	return 0;
- }
-=20
-+static struct io_mapped_ubuf *io_alloc_imu(struct io_ring_ctx *ctx,
-+					   int nr_bvecs)
-+{
-+	if (nr_bvecs <=3D IO_CACHED_BVECS_SEGS)
-+		return io_cache_alloc(&ctx->buf_table.imu_cache, GFP_KERNEL);
-+	return kvmalloc(struct_size_t(struct io_mapped_ubuf, bvec, nr_bvecs),
-+			GFP_KERNEL);
-+}
-+
-+static void io_free_imu(struct io_ring_ctx *ctx, struct io_mapped_ubuf *=
-imu)
-+{
-+	if (imu->nr_bvecs > IO_CACHED_BVECS_SEGS ||
-+	    !io_alloc_cache_put(&ctx->buf_table.imu_cache, imu))
-+		kvfree(imu);
-+}
-+
- static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_rsrc_node=
- *node)
- {
- 	struct io_mapped_ubuf *imu =3D node->buf;
-@@ -119,22 +137,35 @@ static void io_buffer_unmap(struct io_ring_ctx *ctx=
-, struct io_rsrc_node *node)
- 			io_unaccount_mem(ctx, imu->acct_pages);
- 	}
-=20
--	kvfree(imu);
-+	io_free_imu(ctx, imu);
- }
-=20
--struct io_rsrc_node *io_rsrc_node_alloc(int type)
-+struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int typ=
-e)
- {
- 	struct io_rsrc_node *node;
-=20
--	node =3D kzalloc(sizeof(*node), GFP_KERNEL);
-+	if (type =3D=3D IORING_RSRC_FILE)
-+		node =3D kmalloc(sizeof(*node), GFP_KERNEL);
-+	else
-+		node =3D io_cache_alloc(&ctx->buf_table.node_cache, GFP_KERNEL);
- 	if (node) {
- 		node->type =3D type;
- 		node->refs =3D 1;
-+		node->tag =3D 0;
-+		node->file_ptr =3D 0;
- 	}
- 	return node;
- }
-=20
--__cold void io_rsrc_data_free(struct io_ring_ctx *ctx, struct io_rsrc_da=
-ta *data)
-+static __cold void __io_rsrc_data_free(struct io_rsrc_data *data)
-+{
-+	kvfree(data->nodes);
-+	data->nodes =3D NULL;
-+	data->nr =3D 0;
-+}
-+
-+__cold void io_rsrc_data_free(struct io_ring_ctx *ctx,
-+			      struct io_rsrc_data *data)
- {
- 	if (!data->nr)
- 		return;
-@@ -142,9 +173,7 @@ __cold void io_rsrc_data_free(struct io_ring_ctx *ctx=
-, struct io_rsrc_data *data
- 		if (data->nodes[data->nr])
- 			io_put_rsrc_node(ctx, data->nodes[data->nr]);
- 	}
--	kvfree(data->nodes);
--	data->nodes =3D NULL;
--	data->nr =3D 0;
-+	__io_rsrc_data_free(data);
- }
-=20
- __cold int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr)
-@@ -158,6 +187,31 @@ __cold int io_rsrc_data_alloc(struct io_rsrc_data *d=
-ata, unsigned nr)
- 	return -ENOMEM;
- }
-=20
-+static __cold int io_rsrc_buffer_alloc(struct io_buf_table *table, unsig=
-ned nr)
-+{
-+	const int imu_cache_size =3D struct_size_t(struct io_mapped_ubuf, bvec,
-+						 IO_CACHED_BVECS_SEGS);
-+	const int node_size =3D sizeof(struct io_rsrc_node);
-+	int ret;
-+
-+	ret =3D io_rsrc_data_alloc(&table->data, nr);
-+	if (ret)
-+		return ret;
-+
-+	if (io_alloc_cache_init(&table->node_cache, nr, node_size, 0))
-+		goto free_data;
-+
-+	if (io_alloc_cache_init(&table->imu_cache, nr, imu_cache_size, 0))
-+		goto free_cache;
-+
-+	return 0;
-+free_cache:
-+	io_alloc_cache_free(&table->node_cache, kfree);
-+free_data:
-+	__io_rsrc_data_free(&table->data);
-+	return -ENOMEM;
-+}
-+
- static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 				 struct io_uring_rsrc_update2 *up,
- 				 unsigned nr_args)
-@@ -207,7 +261,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *=
-ctx,
- 				err =3D -EBADF;
- 				break;
- 			}
--			node =3D io_rsrc_node_alloc(IORING_RSRC_FILE);
-+			node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_FILE);
- 			if (!node) {
- 				err =3D -ENOMEM;
- 				fput(file);
-@@ -459,6 +513,8 @@ void io_free_rsrc_node(struct io_ring_ctx *ctx, struc=
-t io_rsrc_node *node)
- 	case IORING_RSRC_BUFFER:
- 		if (node->buf)
- 			io_buffer_unmap(ctx, node);
-+		if (io_alloc_cache_put(&ctx->buf_table.node_cache, node))
-+			return;
- 		break;
- 	default:
- 		WARN_ON_ONCE(1);
-@@ -527,7 +583,7 @@ int io_sqe_files_register(struct io_ring_ctx *ctx, vo=
-id __user *arg,
- 			goto fail;
- 		}
- 		ret =3D -ENOMEM;
--		node =3D io_rsrc_node_alloc(IORING_RSRC_FILE);
-+		node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_FILE);
- 		if (!node) {
- 			fput(file);
- 			goto fail;
-@@ -547,11 +603,19 @@ int io_sqe_files_register(struct io_ring_ctx *ctx, =
-void __user *arg,
- 	return ret;
- }
-=20
-+static void io_rsrc_buffer_free(struct io_ring_ctx *ctx,
-+				struct io_buf_table *table)
-+{
-+	io_rsrc_data_free(ctx, &table->data);
-+	io_alloc_cache_free(&table->node_cache, kfree);
-+	io_alloc_cache_free(&table->imu_cache, kfree);
-+}
-+
- int io_sqe_buffers_unregister(struct io_ring_ctx *ctx)
- {
- 	if (!ctx->buf_table.data.nr)
- 		return -ENXIO;
--	io_rsrc_data_free(ctx, &ctx->buf_table.data);
-+	io_rsrc_buffer_free(ctx, &ctx->buf_table);
- 	return 0;
- }
-=20
-@@ -732,7 +796,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(st=
-ruct io_ring_ctx *ctx,
- 	if (!iov->iov_base)
- 		return NULL;
-=20
--	node =3D io_rsrc_node_alloc(IORING_RSRC_BUFFER);
-+	node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
- 	if (!node)
- 		return ERR_PTR(-ENOMEM);
- 	node->buf =3D NULL;
-@@ -752,7 +816,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(st=
-ruct io_ring_ctx *ctx,
- 			coalesced =3D io_coalesce_buffer(&pages, &nr_pages, &data);
- 	}
-=20
--	imu =3D kvmalloc(struct_size(imu, bvec, nr_pages), GFP_KERNEL);
-+	imu =3D io_alloc_imu(ctx, nr_pages);
- 	if (!imu)
- 		goto done;
-=20
-@@ -789,7 +853,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(st=
-ruct io_ring_ctx *ctx,
- 	}
- done:
- 	if (ret) {
--		kvfree(imu);
-+		io_free_imu(ctx, imu);
- 		if (node)
- 			io_put_rsrc_node(ctx, node);
- 		node =3D ERR_PTR(ret);
-@@ -802,9 +866,9 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, =
-void __user *arg,
- 			    unsigned int nr_args, u64 __user *tags)
- {
- 	struct page *last_hpage =3D NULL;
--	struct io_rsrc_data data;
- 	struct iovec fast_iov, *iov =3D &fast_iov;
- 	const struct iovec __user *uvec;
-+	struct io_buf_table table;
- 	int i, ret;
-=20
- 	BUILD_BUG_ON(IORING_MAX_REG_BUFFERS >=3D (1u << 16));
-@@ -813,13 +877,14 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx=
-, void __user *arg,
- 		return -EBUSY;
- 	if (!nr_args || nr_args > IORING_MAX_REG_BUFFERS)
- 		return -EINVAL;
--	ret =3D io_rsrc_data_alloc(&data, nr_args);
-+	ret =3D io_rsrc_buffer_alloc(&table, nr_args);
- 	if (ret)
- 		return ret;
-=20
- 	if (!arg)
- 		memset(iov, 0, sizeof(*iov));
-=20
-+	ctx->buf_table =3D table;
- 	for (i =3D 0; i < nr_args; i++) {
- 		struct io_rsrc_node *node;
- 		u64 tag =3D 0;
-@@ -859,10 +924,8 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx,=
- void __user *arg,
- 			}
- 			node->tag =3D tag;
- 		}
--		data.nodes[i] =3D node;
-+		table.data.nodes[i] =3D node;
- 	}
--
--	ctx->buf_table.data =3D data;
- 	if (ret)
- 		io_sqe_buffers_unregister(ctx);
- 	return ret;
-@@ -887,14 +950,15 @@ int io_buffer_register_bvec(struct io_ring_ctx *ctx=
-, struct request *rq,
- 		goto unlock;
- 	}
-=20
--	node =3D io_rsrc_node_alloc(IORING_RSRC_BUFFER);
-+	node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
- 	if (!node) {
- 		ret =3D -ENOMEM;
- 		goto unlock;
- 	}
-=20
- 	nr_bvecs =3D blk_rq_nr_phys_segments(rq);
--	imu =3D kvmalloc(struct_size(imu, bvec, nr_bvecs), GFP_KERNEL);
-+
-+	imu =3D io_alloc_imu(ctx, nr_bvecs);
- 	if (!imu) {
- 		kfree(node);
- 		ret =3D -ENOMEM;
-@@ -1031,7 +1095,7 @@ static void lock_two_rings(struct io_ring_ctx *ctx1=
-, struct io_ring_ctx *ctx2)
- static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx =
-*src_ctx,
- 			    struct io_uring_clone_buffers *arg)
- {
--	struct io_rsrc_data data;
-+	struct io_buf_table table;
- 	int i, ret, off, nr;
- 	unsigned int nbufs;
-=20
-@@ -1062,7 +1126,7 @@ static int io_clone_buffers(struct io_ring_ctx *ctx=
-, struct io_ring_ctx *src_ctx
- 	if (check_add_overflow(arg->nr, arg->dst_off, &nbufs))
- 		return -EOVERFLOW;
-=20
--	ret =3D io_rsrc_data_alloc(&data, max(nbufs, ctx->buf_table.data.nr));
-+	ret =3D io_rsrc_buffer_alloc(&table, max(nbufs, ctx->buf_table.data.nr)=
-);
- 	if (ret)
- 		return ret;
-=20
-@@ -1071,7 +1135,7 @@ static int io_clone_buffers(struct io_ring_ctx *ctx=
-, struct io_ring_ctx *src_ctx
- 		struct io_rsrc_node *src_node =3D ctx->buf_table.data.nodes[i];
-=20
- 		if (src_node) {
--			data.nodes[i] =3D src_node;
-+			table.data.nodes[i] =3D src_node;
- 			src_node->refs++;
- 		}
- 	}
-@@ -1101,7 +1165,7 @@ static int io_clone_buffers(struct io_ring_ctx *ctx=
-, struct io_ring_ctx *src_ctx
- 		if (!src_node) {
- 			dst_node =3D NULL;
- 		} else {
--			dst_node =3D io_rsrc_node_alloc(IORING_RSRC_BUFFER);
-+			dst_node =3D io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
- 			if (!dst_node) {
- 				ret =3D -ENOMEM;
- 				goto out_free;
-@@ -1110,12 +1174,12 @@ static int io_clone_buffers(struct io_ring_ctx *c=
-tx, struct io_ring_ctx *src_ctx
- 			refcount_inc(&src_node->buf->refs);
- 			dst_node->buf =3D src_node->buf;
- 		}
--		data.nodes[off++] =3D dst_node;
-+		table.data.nodes[off++] =3D dst_node;
- 		i++;
- 	}
-=20
- 	/*
--	 * If asked for replace, put the old table. data->nodes[] holds both
-+	 * If asked for replace, put the old table. table.data->nodes[] holds b=
-oth
- 	 * old and new nodes at this point.
- 	 */
- 	if (arg->flags & IORING_REGISTER_DST_REPLACE)
-@@ -1128,10 +1192,10 @@ static int io_clone_buffers(struct io_ring_ctx *c=
-tx, struct io_ring_ctx *src_ctx
- 	 * entry).
- 	 */
- 	WARN_ON_ONCE(ctx->buf_table.data.nr);
--	ctx->buf_table.data =3D data;
-+	ctx->buf_table =3D table;
- 	return 0;
- out_free:
--	io_rsrc_data_free(ctx, &data);
-+	io_rsrc_buffer_free(ctx, &table);
- 	return ret;
- }
-=20
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 81c31b93d4f7b..69cc212ad0c7c 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -49,7 +49,7 @@ struct io_imu_folio_data {
- 	unsigned int	nr_folios;
- };
-=20
--struct io_rsrc_node *io_rsrc_node_alloc(int type);
-+struct io_rsrc_node *io_rsrc_node_alloc(struct io_ring_ctx *ctx, int typ=
-e);
- void io_free_rsrc_node(struct io_ring_ctx *ctx, struct io_rsrc_node *nod=
-e);
- void io_rsrc_data_free(struct io_ring_ctx *ctx, struct io_rsrc_data *dat=
-a);
- int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr);
---=20
-2.43.5
+[1/4] liburing: sync io_uring headers
+      commit: 48d8d54e524a9c37e0cc52921bb41070156a597f
+[2/4] zcrx: sync io_uring headers
+      commit: ce3a65747d43a405cc19a630d5f8a0f613293f5c
+[3/4] zcrx: add basic support
+      commit: d7ec4ce3421fbbdaba07426d589b72e204ac92e9
+[4/4] zcrx: add unit test
+      commit: 30bd7baa5627f066fc0bfbca293f950fdf3ef3f1
+
+Best regards,
+-- 
+Jens Axboe
+
+
 
 

@@ -1,101 +1,135 @@
-Return-Path: <io-uring+bounces-6548-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6549-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5983A3AFE3
-	for <lists+io-uring@lfdr.de>; Wed, 19 Feb 2025 04:04:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20E0A3B00D
+	for <lists+io-uring@lfdr.de>; Wed, 19 Feb 2025 04:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C745818927CC
-	for <lists+io-uring@lfdr.de>; Wed, 19 Feb 2025 03:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9387168F65
+	for <lists+io-uring@lfdr.de>; Wed, 19 Feb 2025 03:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489A485C5E;
-	Wed, 19 Feb 2025 03:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E337C8F7D;
+	Wed, 19 Feb 2025 03:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="fIJvZ5Hc"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="RLn71sKu"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-pl1-f228.google.com (mail-pl1-f228.google.com [209.85.214.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809EF35977
-	for <io-uring@vger.kernel.org>; Wed, 19 Feb 2025 03:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED7317A31A
+	for <io-uring@vger.kernel.org>; Wed, 19 Feb 2025 03:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739934292; cv=none; b=Lk7gtYmvqN8LDRU5vbZzgJz0OI5v4sy/HXmrZWmAg+eMpxetq8BG0mswGI1iT/gJNQB6KOsBljTTeG4NQcL4d494gNmftg9WGUI4Ct0rAOru0YrpeoTMVwyiHM/0BvimVptx9qb/ecYcyEV40xilLKSSyAvHh8rKYPQEQJ04Rq0=
+	t=1739936092; cv=none; b=RK2CP4o8TEHvpMUT/+QCxQeZybU3nHnFeiP8Tw+Hocqs1m70XYsuuwdkGo5+d7DDiE9yxxr8Z94Q7/I5BiMgbBp/8kwYp+SxwHBsdUeQ+B/UfCSCEgayHixtfh9wjjHsvvg0F/nAvScBHDMv4Q9tSz8swmRx86NMUP+aFsFw11k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739934292; c=relaxed/simple;
-	bh=QBu8bnVp7cAAz8xvHD4+V+gCVvlmoZ7hW0/gQcIXuEk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cxSpf7aIJsWv35jDBdVyXrB4ZYz1BB432h1WnBdrO7eHjbc9JKbXzd1sXl95BjK0Yf9JukOEhpuhX09FxdF7YKXsqCfRDhKOny5MTHfiWcr72/LLJG+0MCA09DKzZNwws/J6eF0wS9333ZCBEVTWJ5CDii+g7QN0hlzTP3EI0LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=fIJvZ5Hc; arc=none smtp.client-ip=209.85.216.50
+	s=arc-20240116; t=1739936092; c=relaxed/simple;
+	bh=nps8bhqqW9C31UMiIA1K5irHfRijgaCUHJE1SPI3/+c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OeRJ+RaScVQ0q+dfrZYWfSfzx+7mgkD43o6KtWwJ8zbvdNO6gJclF4UidamLFVeq5buqhRD5o20Iur8Vhp/kAJFuj2UWrFPhvEuAMaUYY3jzVgxKT8Ap7CshfawAUShlAkZMK0Xk8ksqkUB68u3HFzxnMI5pdBYcKHWp2QVdFck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=RLn71sKu; arc=none smtp.client-ip=209.85.214.228
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2f7d35de32dso1411446a91.3
-        for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 19:04:50 -0800 (PST)
+Received: by mail-pl1-f228.google.com with SMTP id d9443c01a7336-220c895af63so15604835ad.0
+        for <io-uring@vger.kernel.org>; Tue, 18 Feb 2025 19:34:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1739934290; x=1740539090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QBu8bnVp7cAAz8xvHD4+V+gCVvlmoZ7hW0/gQcIXuEk=;
-        b=fIJvZ5Hc35+fnDgvhNxNaqctehBa0ApLT/cwuw/95p1SIPny6321d55fEc1I4GE9qg
-         DYnzCmb226iRiTFxW2bc5jC0o5dCcCYI5sk19Gwi/tlUZSzrC7qwMHQytATwy5zBHydq
-         gnp4PWDcKmAdGJWC2Uy/5C/IBkrNHYhsUIwsjAgT7jsfTB9rcjM0qQLA3SjHW7OqBtxh
-         dlHFOAxC8Ab1s/WF4jjCNRPuIZX8zT5+XPTKhE31KGkyIxaZihfS6ld2EFVJPL1EsHc0
-         hPEbmz1LuFyVc/P85RqjeT26pepAJrH88LZ2Ik8ywtz7KWLFLhYrAAJ4nxVcfdpJJWku
-         Vwww==
+        d=purestorage.com; s=google2022; t=1739936090; x=1740540890; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oWmLSi2mB7M9yGiVBZcQbkxr3CzoST/Pj74hRTCGb30=;
+        b=RLn71sKu3iTdBbM0nEP92OSgoR2tQ7Fa1alGlaAB9sS3Mw+agmv39e8w6mLL3HTvxP
+         EojBv5C2t6yTofKhXJZipxiCmOqo1CYaPIdm8vw2WaZzYzIUjTfjbz71o4EpjM1cgFKy
+         rdMoJktL5qWvDrnY25tUCKDQXweGjvPgGLFa96Z1rqw6pkBQjQ8J4TEYHdB+ylKu03Wh
+         reNEEDyACUNgOaOYEcjr1NKMMIe9xy/n1gyEalj/pxCDVinge/y3M/4NlqFhCQvcQxAS
+         jlwCbSZRhFXZtaWt7fuczXtOAYyV81z+SsoLe0rZgbfe/hBmFvfdvUdq7W+dgM1tuRnT
+         sYaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739934290; x=1740539090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QBu8bnVp7cAAz8xvHD4+V+gCVvlmoZ7hW0/gQcIXuEk=;
-        b=J41Gor7bIN84PKj7DLi/Mig6O3bsQ6z85i1ChjrgMrTGjIM79N3HQVp3+5lTbiEOUt
-         qH44ttO+NlIVzPSzNiixIkk0HyTYRLTpCfuOMZ85hWpI0UlcMQnuZcmzY2S0zSuWOAm3
-         0qoNnMwKpJ3Ea4i6cl9qx5liFkOBbiGisajh1/UamgBIQfTjfh7ZOqkj5nhoiAUJl7QL
-         K6LYmrzV6shXlJVj5LNuhnAjLvjXMNlWr6t2mN7qicAww4YXRWFokKF2QmgNdEYZXvbX
-         2A4ifcj8/fjcJuUFKhqhsJK1sBvHGh7azzbCLXFsl1nYFfRwYRm0n513gPs7/BY6YVf4
-         CC/w==
-X-Forwarded-Encrypted: i=1; AJvYcCU+sS21o+PJBTrD/d2mh3GknMOvGNa7PwDdNX/ovk2U59Q139M/ADJkZBhLa4TPrYZGcW3OzeMyOA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzeq3AaUUBzo7OZCQHxb1TxznWAIX2Wzz31qRCEfji4nA4IxCJ7
-	kBRMiioa1a3IaWfaVS4/gNS+1ltnLLzRfXLARDLXkV7TC7wxeoZfewkHItooNB+mq16WEUnFAFR
-	8jlYt5Iu3ykDeIJ0rQjmIwmriKpTLqYkrvpYDuw==
-X-Gm-Gg: ASbGncvBfcoYHt8QBeEfeAo6w0XeUQQVA0KPIiTM01uj45KrJwbhdMDryJaUZSurDIt
-	bbld+OGkcWEOrnNy01H25SePcQD8T/U+hK7PRwXdQK2WKG3vajtKU0OSbgYDO7VDCPlrzx2c=
-X-Google-Smtp-Source: AGHT+IGbWfBTv3bJQBkLTddEsKSVQYYxX+1v0Zon0lOuA5Y7+jEcvxKlg5Z3EeTmqk6WIAlhUNG48r2zK9MjVfqGcQg=
-X-Received: by 2002:a17:90b:33c6:b0:2fb:f9de:94ac with SMTP id
- 98e67ed59e1d1-2fc41173a82mr9136423a91.7.1739934289773; Tue, 18 Feb 2025
- 19:04:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739936090; x=1740540890;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oWmLSi2mB7M9yGiVBZcQbkxr3CzoST/Pj74hRTCGb30=;
+        b=GfVj3WFLF6GItOocNBrru0r2fOyiN384mLzxZ/41PE9lZSqqOqFLe1OQqpOau7DkOo
+         8edJ4JtUlqd5u1PInrEbTocNG30RdhuEElO5luGpPZbZvYYl9a4wOF+eR4s3ehogZn64
+         H2WSbeTpvj7/bJQ2iG/MU0xg6+INbf7zwrBjqEXXBq1SdeT/qhtmvezEPm2MjdnpOY5r
+         0fbPxzP6HVqaxmta71aXyUCufKoY95J8YYC1vwU/JcpPHEvPsm0i1ak42oZRNYEYAj1p
+         MLNDdPHtAEbtUxh6qOlCN82gdweaZ8NxTjEey9kYSbylf6ot/a2amGAZI/7U4t7nFeIS
+         55QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFG/CScd94zHQq/ifMQ6cioxhr5DGQ4cIiXZX5UkL0huaDa3G26cF6iI3kSUFL7EffAlcbvUJ1FQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTggbQv8bxIE7Beyq5gmgDMdBCHkdtlkss8pypZdX1hNFWFE9G
+	byDffx43gBsZlnoPMwy9i6rdcvp3lbsH4p5ZPMm2H0vTqanNytSKMfdR8Iwu07IBbWNO6SDZAgj
+	K3HXzLpG6MjZe6ymo7sM1SZmrTBHciPutgA4fwZ1U19OQkO+4
+X-Gm-Gg: ASbGnctig5iHy4JiFVNSHt0xvhpE9LhvneZD3X/Fh6gsaBg6gmnoxsQl3n2dTYljXVH
+	tN6lCVhNN9yo7I7+r+qvcd1d2Kf/0k3gL5fLgv38aP9mT0I7MGgXbw4Nfjo3J2hQRczwl6V8TCT
+	2PE4h1eeunaXKD7pH+5WnJ3zNu/lmYODd//m9rh3FNBtlZO7indnP43ywmPGGx7VK1uELgHLuIK
+	RkMvymO7m/0Lx6HQU6+Ek3qXzgE1sjeoijpfjmygb3SsdBxtYGbS0dG0+SGpbYaQg/tZS8Tai0Z
+	9HvwWBo8wiXp6hlfQbeH8E4=
+X-Google-Smtp-Source: AGHT+IGSnWI6/oo0pSCxMy/XF1XplpCCogXqJteEhB5BWQPqOLmP54GMkGp0qkgHp8tJhMhpxzRxr1dnG5jd
+X-Received: by 2002:a05:6a21:6da6:b0:1ee:d621:3c3f with SMTP id adf61e73a8af0-1eed6213ceamr1083705637.0.1739936090265;
+        Tue, 18 Feb 2025 19:34:50 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id d2e1a72fcca58-7325b336950sm708046b3a.7.2025.02.18.19.34.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 19:34:50 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id A6765340643;
+	Tue, 18 Feb 2025 20:34:49 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 9FD0EE410B7; Tue, 18 Feb 2025 20:34:49 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring/rsrc: remove unused constants
+Date: Tue, 18 Feb 2025 20:34:43 -0700
+Message-ID: <20250219033444.2020136-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218224229.837848-1-kbusch@meta.com> <20250218224229.837848-5-kbusch@meta.com>
-In-Reply-To: <20250218224229.837848-5-kbusch@meta.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Tue, 18 Feb 2025 19:04:37 -0800
-X-Gm-Features: AWEUYZlhpbl6zo51XLc-9LNMQhJtbstaAczwolRE4Vr2WBmTwGh9LK-vpcwr_Lo
-Message-ID: <CADUfDZp0Q+Dg5jOhDpOAXpmPxcywS6TKajTgw95qZdAaZgn2sA@mail.gmail.com>
-Subject: Re: [PATCHv4 4/5] io_uring: add abstraction for buf_table rsrc data
-To: Keith Busch <kbusch@meta.com>
-Cc: ming.lei@redhat.com, asml.silence@gmail.com, axboe@kernel.dk, 
-	linux-block@vger.kernel.org, io-uring@vger.kernel.org, bernd@bsbernd.com, 
-	Keith Busch <kbusch@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 18, 2025 at 2:43=E2=80=AFPM Keith Busch <kbusch@meta.com> wrote=
-:
->
-> From: Keith Busch <kbusch@kernel.org>
->
-> We'll need to add more fields specific to the registered buffers, so
-> make a layer for it now. No functional change in this patch.
->
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
+IO_NODE_ALLOC_CACHE_MAX has been unused since commit fbbb8e991d86
+("io_uring/rsrc: get rid of io_rsrc_node allocation cache") removed the
+rsrc_node_cache.
 
-Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+IO_RSRC_TAG_TABLE_SHIFT and IO_RSRC_TAG_TABLE_MASK have been unused
+since commit 7029acd8a950 ("io_uring/rsrc: get rid of per-ring
+io_rsrc_node list") removed the separate tag table for registered nodes.
+
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ io_uring/rsrc.h | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+index a6d883c62b22..0297daf02ac7 100644
+--- a/io_uring/rsrc.h
++++ b/io_uring/rsrc.h
+@@ -2,16 +2,10 @@
+ #ifndef IOU_RSRC_H
+ #define IOU_RSRC_H
+ 
+ #include <linux/lockdep.h>
+ 
+-#define IO_NODE_ALLOC_CACHE_MAX 32
+-
+-#define IO_RSRC_TAG_TABLE_SHIFT	(PAGE_SHIFT - 3)
+-#define IO_RSRC_TAG_TABLE_MAX	(1U << IO_RSRC_TAG_TABLE_SHIFT)
+-#define IO_RSRC_TAG_TABLE_MASK	(IO_RSRC_TAG_TABLE_MAX - 1)
+-
+ enum {
+ 	IORING_RSRC_FILE		= 0,
+ 	IORING_RSRC_BUFFER		= 1,
+ };
+ 
+-- 
+2.45.2
+
 

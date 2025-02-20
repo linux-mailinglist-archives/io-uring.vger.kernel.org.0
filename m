@@ -1,258 +1,128 @@
-Return-Path: <io-uring+bounces-6580-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-6584-lists+io-uring=lfdr.de@vger.kernel.org>
 X-Original-To: lists+io-uring@lfdr.de
 Delivered-To: lists+io-uring@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772C9A3DD1B
-	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2025 15:41:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7108A3DD54
+	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2025 15:51:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 317D73BAD80
-	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2025 14:35:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA11117481F
+	for <lists+io-uring@lfdr.de>; Thu, 20 Feb 2025 14:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2961F03CB;
-	Thu, 20 Feb 2025 14:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EC51C6F70;
+	Thu, 20 Feb 2025 14:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="IgLFjm+4"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AwcfAU70"
 X-Original-To: io-uring@vger.kernel.org
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6581D5AD4;
-	Thu, 20 Feb 2025 14:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156851D5CD7
+	for <io-uring@vger.kernel.org>; Thu, 20 Feb 2025 14:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740062105; cv=none; b=fHsRTbdd/gWBGlZiW3gCsRvp90fU0+JTKS0TSBXvciNWi+somUVDg6XJ8EbhNkjVVjmREeD+1/dlcioA+EfgjN4NE2oMJzxTZxa6QSbEzDSk7SRq7IngNQY7qFYIOkP1b7QdCSN2SxxCTPmc12WghrJ7GY2Yi0Bdcs50TrT5H80=
+	t=1740063097; cv=none; b=cMOpyLLaZBuXKSM3SnxM9BnjoMEsC53Sl8co8Uf12+cy2ffb9CDLEgnTTXXqGheG8G5XnLMLghmfb3A9o6YoWNxzz1Xk4akkQaeOZzbz+vN7sxgx0BRhBp/42ie8PkeraOh+njZbEYkk5N1xIt0JsNBAsQ2L9bpT8uteNW6SthY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740062105; c=relaxed/simple;
-	bh=xxoB+UIOPvZk4BVlBN52bLxBYkRLA3Dg2MLLG17vDCw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ngz0MDM+sMIDKS4d6Bu7BhaMEucDrwXBVb6/ZBVyLexk+87KrweSsFC7IJ8nw2+eeJrtsqV9kn21TpyDjIL9ZKcRm2Di+YkbkXGMVcefGzYYn8mDqJC+aD8ipYiNr0yNKt/sfDqII1ykzlfjL/K5WAr5ccHW0Ljd6gBvZrbZtS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=IgLFjm+4; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=default; t=1740062101;
-	bh=xxoB+UIOPvZk4BVlBN52bLxBYkRLA3Dg2MLLG17vDCw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Message-ID:Date:From:
-	 Reply-To:Subject:To:Cc:In-Reply-To:References:Resent-Date:
-	 Resent-From:Resent-To:Resent-Cc:User-Agent:Content-Type:
-	 Content-Transfer-Encoding;
-	b=IgLFjm+4B5/jg7TpCYIrAhgnHeU9KYvsGApQEOzTGIK+JJh/50NFZiosrQ8ja1nHj
-	 RglqIjevgcqDo8TNjzQEUgFLZKsJZlCi9AxQuXikFa/BUuCdZDWS7aRmP5qFZts9EB
-	 uvX64oOvBSisPg5HlVhMxD+miPHftldtwfzLD62Gf4nnuMUptuSXx1nAuHNGOICjZr
-	 wvnAQMxqGY8dfXoHkJpArWr9juJKsdRLKZRfO+YZcoZxht/5tCZlfxKo7D+Wny3rbO
-	 oQTc3LQx66we3Lksx9wzRjVa2X0sqpwy22LXbxY5kScO+8A5RoE+5MRoQBjfUCZA2v
-	 MGkS3Q1TvvPgA==
-Received: from integral2.. (unknown [182.253.126.96])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 59E8320744A7;
-	Thu, 20 Feb 2025 14:34:59 +0000 (UTC)
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-	io-uring Mailing List <io-uring@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
-Subject: [PATCH liburing v1 3/3] Fix missing `aligned_alloc()` on some Android devices
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Thu, 20 Feb 2025 21:34:22 +0700
-Message-Id: <20250220143422.3597245-4-ammarfaizi2@gnuweeb.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740063097; c=relaxed/simple;
+	bh=3G1aWoHZCBKxjsr/eEd6Lg2OmBOk8NsGZmoz2Ik3DU4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=GZUxgndEdi95nSzRLvuPXPalZN+C1IBfN7Jod422bULGBQx3FMOX+OM7bSkA6HfC7Yd7UgmIhO2pvw6leF87ZD6DQrCdlKHnnCzXSQPyPH7XZuPPgA+vSre/AoQ/0lHsXEduhfZZAZKxgvur5HWeLygWeCh9oJTNg9Mb45KLjns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AwcfAU70; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3d191bfeafbso3294465ab.0
+        for <io-uring@vger.kernel.org>; Thu, 20 Feb 2025 06:51:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740063093; x=1740667893; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8x+B4TU1R/TaOWmXY1vZ9LdmepwMb1xawtC/WEbMOlI=;
+        b=AwcfAU70c0WSRfH7dWmFWAoSIjWPRoAHifzuO6EiGhcxD23BejWxn/LlNMElihnmyq
+         9hsWnf2w7Z9/uNWSSX8nGzszWXvC8Fi5alXJHIgFRVNm2A/LL/43J/XlrkuhHZNqp/tm
+         xadZpi426RrV/FLJ4WEYwblAyj7SpUKGNggyLtV4rM0s8zx5iVY9a/TWEvWWr7Ur9h4i
+         51PxLqGcUSGc1V+ov+Dp0s6GqybcPRAp+WcvRtp4miAqb2SdOxkMZHbRQW8KdaBecIw5
+         T3fDa9am20FPNvTwxltLbdmHC38Gi053My0a2pUD1xUihUIgrqE7/6DS0g4t/gG9N//T
+         In9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740063093; x=1740667893;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8x+B4TU1R/TaOWmXY1vZ9LdmepwMb1xawtC/WEbMOlI=;
+        b=LZTwSGDQoeI6BE5CpNNOocQ6aXAO35YY88Hjxvm7e6Fh1wjFvqhCdUbPT02Lyb3YYc
+         mIoSLIZe/I9/iOF70tgYyOHiTHBtqUthU7KdZsEyo+6xR5X0a0hXsXnHIN5UefoatwnL
+         IFKBh9xNLnV040hCl59sHx0EqbFuNqXwxkWB6J9dvYHZ0JspHF68+RKOS1BG6SHiKzL8
+         ooxKYLFaVKvTbHRAX6QC3kOIajv0xMmMGakXEMe7ISVbdmOHGr0gE1HwQ7kd7VcBTSkk
+         n190ngvLQZMNQmiyw20imRxMS2pLx4Em6FZnwY19PO/2AcczcmWZUPhd3GytWaVLPF+m
+         TUmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXa33/d3xLuRujBke1P6SULFT9IT4/FyMjCiCPg7Q+Z/j71RILkQBbJaqgW0NgGRdZ2Us3XVxLyZg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmpwRWDfZ0/jTirF8+CKgZvuEj3vawKlj1COkqEDM31cs6Zl1e
+	X/OMq61E7db5FIXoK+vJxQSxDuy66+oGBum7g5vayKgmntnofs0ckt0m2Z1wTtmbrGKSp4UCCqN
+	M
+X-Gm-Gg: ASbGncs1ljHZD4zbsSreiJoaSTGX5qeV82Hty5om0/KW782NEmkYkxPit5ITodli3m0
+	/BqJcpdG600L95y7D4BEvtGSSuXH7siDgoZW390NvRxtS3qIBAEs9mRr2o1WCec7qdO1EZq6jDq
+	IDEPtzIVGQKPdFtEK5QGbtIDVcGzce8A1K6HZq9yYj3zXtI9rc0Az9e6jkrA2Ea5l0/xTtXzleN
+	c3AS0rOiKYvvm6aOvnzP+IHq0hcMwuLThnuVFZylXY7nqXHDR3yD8QBcJnXQi0di6IeQppIyPkJ
+	ZN7uf5g=
+X-Google-Smtp-Source: AGHT+IEYYi1lQn/B+HL15BpZFo+i19+r8C+N661N0XWhxq/TtpuIkLpqZt1StiRfiPzIhrJPwPPndw==
+X-Received: by 2002:a05:6e02:1b09:b0:3cf:c7d3:e4b with SMTP id e9e14a558f8ab-3d280919df3mr261797085ab.21.1740063093591;
+        Thu, 20 Feb 2025 06:51:33 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d18f9a89a9sm33784445ab.10.2025.02.20.06.51.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 06:51:32 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>, 
+ io-uring Mailing List <io-uring@vger.kernel.org>, 
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+ GNU/Weeb Mailing List <gwml@vger.gnuweeb.org>
 In-Reply-To: <20250220143422.3597245-1-ammarfaizi2@gnuweeb.org>
 References: <20250220143422.3597245-1-ammarfaizi2@gnuweeb.org>
+Subject: Re: [PATCH liburing v1 0/3] Fix Compilation Error on Android and
+ Some Cleanup
+Message-Id: <174006309264.1672035.6610273505554694557.b4-ty@kernel.dk>
+Date: Thu, 20 Feb 2025 07:51:32 -0700
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-14bd6
 
-Some Android versions lack `aligned_alloc()` in `<stdlib.h>`. Compiling
-on Termux 0.118.0 yields this error:
 
-```
-cmd-discard.c:383:11: warning: call to undeclared library function \
-'aligned_alloc' with type 'void *(unsigned long, unsigned long)'; ISO \
-C99 and later do not support implicit function declarations \
-[-Wimplicit-function-declaration]
+On Thu, 20 Feb 2025 21:34:19 +0700, Ammar Faizi wrote:
+> Another day in the thrilling world of cross-platform compatibility...
+> 
+> Alviro discovered that some Android versions are missing `aligned_alloc()`
+> in `<stdlib.h>`, leading to a compilation error on Termux 0.118.0:
+> 
+> ```
+> cmd-discard.c:383:11: warning: call to undeclared library function \
+> 'aligned_alloc' with type 'void *(unsigned long, unsigned long)'; ISO \
+> C99 and later do not support implicit function declarations \
+> [-Wimplicit-function-declaration]
+> 
+> [...]
 
-        buffer = aligned_alloc(lba_size, lba_size);
-                 ^
-```
+Applied, thanks!
 
-To avoid making large changes in tests, define a helper function that
-wraps `posix_memalign()` as our own `aligned_alloc()`.
+[1/3] liburing.h: Remove redundant double negation
+      commit: 1d11475301931478bb35f2573e1741f5d9088132
+[2/3] liburing.h: Explain the history of `io_uring_get_sqe()`
+      commit: d1c100351ffb3483f5d3fc661b2d41d48062bec1
+[3/3] Fix missing `aligned_alloc()` on some Android devices
+      commit: 5c788d514b9ed6d1a3624150de8aa6db403c1c65
 
-Just another day of working around platform quirks.
-
-Co-authored-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Signed-off-by: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
----
- examples/helpers.c  | 10 ++++++++++
- examples/helpers.h  |  7 +++++++
- examples/reg-wait.c |  2 ++
- test/helpers.c      | 10 ++++++++++
- test/helpers.h      |  8 ++++++++
- 5 files changed, 37 insertions(+)
-
-diff --git a/examples/helpers.c b/examples/helpers.c
-index b70ce7c1f314..59b31ecb4aeb 100644
---- a/examples/helpers.c
-+++ b/examples/helpers.c
-@@ -51,12 +51,22 @@ int setup_listening_socket(int port, int ipv6)
- 	if (ret < 0) {
- 		perror("bind()");
- 		return -1;
- 	}
- 
- 	if (listen(fd, 1024) < 0) {
- 		perror("listen()");
- 		return -1;
- 	}
- 
- 	return fd;
- }
-+
-+void *aligned_alloc(size_t alignment, size_t size)
-+{
-+	void *ret;
-+
-+	if (posix_memalign(&ret, alignment, size))
-+		return NULL;
-+
-+	return ret;
-+}
-diff --git a/examples/helpers.h b/examples/helpers.h
-index 9b1cf34f9b0d..d73ee4a5bc1a 100644
---- a/examples/helpers.h
-+++ b/examples/helpers.h
-@@ -1,7 +1,14 @@
- /* SPDX-License-Identifier: MIT */
- #ifndef LIBURING_EX_HELPERS_H
- #define LIBURING_EX_HELPERS_H
- 
- int setup_listening_socket(int port, int ipv6);
- 
-+/*
-+ * Some Android versions lack aligned_alloc in stdlib.h.
-+ * To avoid making large changes in tests, define a helper
-+ * function that wraps posix_memalign as our own aligned_alloc.
-+ */
-+void *aligned_alloc(size_t alignment, size_t size);
-+
- #endif
-diff --git a/examples/reg-wait.c b/examples/reg-wait.c
-index 0e119aaf4f03..ff61b8d10387 100644
---- a/examples/reg-wait.c
-+++ b/examples/reg-wait.c
-@@ -4,24 +4,26 @@
-  *
-  * (C) 2024 Jens Axboe <axboe@kernel.dk>
-  */
- #include <stdint.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
- #include <unistd.h>
- #include <assert.h>
- #include <sys/time.h>
- #include <liburing.h>
- 
-+#include "helpers.h"
-+
- static unsigned long long mtime_since(const struct timeval *s,
- 				      const struct timeval *e)
- {
- 	long long sec, usec;
- 
- 	sec = e->tv_sec - s->tv_sec;
- 	usec = (e->tv_usec - s->tv_usec);
- 	if (sec > 0 && usec < 0) {
- 		sec--;
- 		usec += 1000000;
- 	}
- 
-diff --git a/test/helpers.c b/test/helpers.c
-index e84aaa7aee15..0718691174de 100644
---- a/test/helpers.c
-+++ b/test/helpers.c
-@@ -354,12 +354,22 @@ unsigned long long utime_since(const struct timeval *s, const struct timeval *e)
- 
- 	sec *= 1000000;
- 	return sec + usec;
- }
- 
- unsigned long long utime_since_now(struct timeval *tv)
- {
- 	struct timeval end;
- 
- 	gettimeofday(&end, NULL);
- 	return utime_since(tv, &end);
- }
-+
-+void *aligned_alloc(size_t alignment, size_t size)
-+{
-+	void *ret;
-+
-+	if (posix_memalign(&ret, alignment, size))
-+		return NULL;
-+
-+	return ret;
-+}
-diff --git a/test/helpers.h b/test/helpers.h
-index 9e1cdf5ec05c..d0294eba63e4 100644
---- a/test/helpers.h
-+++ b/test/helpers.h
-@@ -4,36 +4,44 @@
-  */
- #ifndef LIBURING_HELPERS_H
- #define LIBURING_HELPERS_H
- 
- #ifdef __cplusplus
- extern "C" {
- #endif
- 
- #include "liburing.h"
- #include "../src/setup.h"
- #include <arpa/inet.h>
- #include <sys/time.h>
-+#include <stdlib.h>
- 
- enum t_setup_ret {
- 	T_SETUP_OK	= 0,
- 	T_SETUP_SKIP,
- };
- 
- enum t_test_result {
- 	T_EXIT_PASS   = 0,
- 	T_EXIT_FAIL   = 1,
- 	T_EXIT_SKIP   = 77,
- };
- 
-+/*
-+ * Some Android versions lack aligned_alloc in stdlib.h.
-+ * To avoid making large changes in tests, define a helper
-+ * function that wraps posix_memalign as our own aligned_alloc.
-+ */
-+void *aligned_alloc(size_t alignment, size_t size);
-+
- /*
-  * Helper for binding socket to an ephemeral port.
-  * The port number to be bound is returned in @addr->sin_port.
-  */
- int t_bind_ephemeral_port(int fd, struct sockaddr_in *addr);
- 
- 
- /*
-  * Helper for allocating memory in tests.
-  */
- void *t_malloc(size_t size);
- 
+Best regards,
 -- 
-Ammar Faizi
+Jens Axboe
+
+
 
 
